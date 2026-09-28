@@ -5434,6 +5434,235 @@ for (const { theme, inset } of bug22Runs) {
   }
 }
 
+// FG-4: the ExerciseGuide player on the lateral raise. A2 the main chunk holds no form-guide code, the player chunk is at
+// most 150 KB gzip and the exercise is its own chunk; A1 it plays in the Train sheet: the three reps are one chained
+// 12 s timeline (a keyframe set per rep), the figure moves, the dumbbell shows the last logged set; the mistake chip
+// mounts the second figure only while on; A3 reduced motion = Pictures with zero animate() calls; A4 screenshots in
+// Silent Black and Paper at 390 px; A5 the four snapshots paint in all five themes and regenerate on a data-theme change.
+{
+  const tag = 'FG-4';
+  const { gzipSync } = await import('node:zlib');
+  const assets = join(ROOT, 'www/assets');
+  const files = readdirSync(assets);
+  const player = files.find(f => /^FormGuidePlayer-.*\.js$/.test(f));
+  const exChunk = files.find(f => /^lib_dumbbell_lateral_raise-.*\.js$/.test(f));
+  for (const f of files.filter(f => /^index-.*\.js$/.test(f))) {
+    const text = readFileSync(join(assets, f), 'utf8');
+    for (const probe of ['fg-fig', 'transform-box:view-box', 'Dip, shrug and drop', 'data:image/svg+xml;charset=utf-8,']) if (text.includes(probe)) errors.push(`${tag} A2: ${f} (main chunk) holds form-guide code ("${probe}")`);
+    console.log(`${tag} A2: ${f} ${text.length} B raw, ${gzipSync(readFileSync(join(assets, f))).length} B gzip`);
+  }
+  if (!player || !exChunk) errors.push(`${tag} A2: missing chunk (player ${player}, lateral raise ${exChunk})`);
+  else {
+    const p = readFileSync(join(assets, player)), e = readFileSync(join(assets, exChunk));
+    const gz = gzipSync(p).length;
+    console.log(`${tag} A2: ${player} ${p.length} B raw, ${gz} B gzip (cap ${150 * 1024}); ${exChunk} ${e.length} B raw, ${gzipSync(e).length} B gzip`);
+    if (gz > 150 * 1024) errors.push(`${tag} A2: ${player} is ${gz} B gzip, over the 150 KB cap`);
+    if (p.includes('Dip, shrug and drop')) errors.push(`${tag} A2: the lateral raise data is inside the player chunk, not its own`);
+  }
+
+  const seed = ([t]) => {
+    const orig = Element.prototype.animate;
+    window.__fgAnims = [];
+    Element.prototype.animate = function (...a) { const an = orig.apply(this, a); if (this.closest?.('.form-guide')) window.__fgAnims.push(an); return an; };
+    if (localStorage.getItem('marc.state.v1')) return;
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString(), day = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Shoulders', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 3 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [{ id: 's1', splitId: 'sp1', splitName: 'Shoulders', day, startedAt: `${day}T17:00:00.000Z`, endedAt: `${day}T17:30:00.000Z`, durationSec: 1800,
+        exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', name: 'Dumbbell Lateral Raise', sets: [{ kg: 8, reps: 12 }, { kg: 9, reps: 10 }, { kg: 2, reps: 15, kind: 'warmup' }] }],
+        logging: { mode: 'live', trainedAt: `${day}T17:00:00.000Z`, trainedEndAt: `${day}T17:30:00.000Z`, loggedAt: `${day}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } }],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  };
+  const open = async (theme, opts = {}) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, ...opts });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} ${theme} console: ${m.text()}`); });
+    await page.addInitScript(seed, [theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
+    await page.getByRole('button', { name: 'Options', exact: true }).nth(0).click(); await page.waitForTimeout(300);
+    await page.locator('dialog[open]').getByRole('button', { name: 'How to do it', exact: true }).click();
+    const ok = await visible(page.locator('dialog[open] .form-guide .player'));
+    if (!ok) errors.push(`${tag} ${theme}: the lateral raise guide did not open`);
+    return { ctx, page, ok };
+  };
+  const seek = (page, ms) => page.evaluate(ms => { for (const a of window.__fgAnims) if (a.playState !== 'idle') { a.pause(); a.currentTime = ms; } return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }, ms);
+  const fig = (page) => page.evaluate(() => [...document.querySelectorAll('dialog[open] .fg4-scene .fg-fig')].length);
+  const shoulder = (page) => page.evaluate(() => getComputedStyle(document.querySelector('dialog[open] .fg4-scene .j-shoulder_r')).transform);
+  // A5: every tile image decodes and paints: pixels differing from the tile's own corner colour.
+  const tilesPaint = (page) => page.evaluate(async () => {
+    const imgs = [...document.querySelectorAll('dialog[open] .pics .tile img')];
+    const out = [];
+    for (const img of imgs) {
+      await img.decode().catch(() => {});
+      const c = document.createElement('canvas'); c.width = 169; c.height = 176;
+      const x = c.getContext('2d'); x.drawImage(img, 0, 0, c.width, c.height);
+      const d = x.getImageData(0, 0, c.width, c.height).data;
+      let ink = 0; for (let i = 3; i < d.length; i += 4) if (d[i] > 0) ink++;
+      out.push({ ok: img.naturalWidth > 0, ink, vars: decodeURIComponent(img.src).includes('var(') });
+    }
+    return out;
+  });
+
+  for (const theme of themes) {
+    const { ctx, page, ok } = await open(theme);
+    if (!ok) { await ctx.close(); continue; }
+    const title = await page.locator('dialog[open] h2').textContent();
+    if (title !== 'How to do it: Dumbbell Lateral Raise') errors.push(`${tag} ${theme}: sheet title "${title}"`);
+    // A5: the four moments as token-resolved images, non-blank, in this theme.
+    await page.locator('dialog[open] .seg button', { hasText: 'Pictures' }).click(); await page.waitForTimeout(200);
+    const shots = await tilesPaint(page);
+    if (shots.length !== 4 || shots.some(s => !s.ok || s.ink < 2000 || s.vars)) errors.push(`${tag} ${theme} A5: snapshots ${JSON.stringify(shots)}`);
+    if (theme === 'silent-black' || theme === 'paper') await page.screenshot({ path: `${OUT}/${theme}-fg4-pictures.png` });
+    await page.locator('dialog[open] .seg button', { hasText: 'Animation' }).click(); await page.waitForTimeout(200);
+
+    if (theme === 'silent-black' || theme === 'paper') {
+      // A4: phone width, start pose and the top of rep 1; compare mode.
+      const fit = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, p: document.querySelector('dialog[open] .form-guide .player').getBoundingClientRect().right, d: document.querySelector('dialog[open] .sheet-panel').getBoundingClientRect().right }));
+      if (fit.sw > 390 || fit.p > fit.d + 0.5) errors.push(`${tag} ${theme} A4: the player does not fit 390 px (${JSON.stringify(fit)})`);
+      await seek(page, 0); await page.screenshot({ path: `${OUT}/${theme}-fg4-guide-t0.png` });
+      await seek(page, 1000); await page.screenshot({ path: `${OUT}/${theme}-fg4-guide-top.png` });
+      await seek(page, 0);
+    }
+
+    if (theme === 'silent-black') {
+      // A1: one figure, the load of the last logged working set (9 kg; the warm-up does not count), the chained timeline.
+      if (await fig(page) !== 1) errors.push(`${tag} A1: expected one figure before the mistake chip, got ${await fig(page)}`);
+      const label = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .fg4-scene text')].map(t => t.textContent.trim()));
+      if (label.join() !== '9,KG,9,KG') errors.push(`${tag} A1: dumbbell labels ${JSON.stringify(label)}, want the last logged set 9 KG`);
+      const camLabel = await page.locator('dialog[open] .cam-label').textContent();
+      if (camLabel !== 'Front view · 9 kg') errors.push(`${tag} A1: camera label "${camLabel}"`);
+      const s0 = await shoulder(page);
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click(); await page.waitForTimeout(200);
+      const t = await page.evaluate(() => window.__fgAnims.map(a => { const x = a.effect.getTiming(); return `${a.playState} ${x.duration} ${x.iterations} ${x.easing} ${x.fill}`; }));
+      if (!t.length || t.some(s => s !== 'running 12000 1 linear both')) errors.push(`${tag} A1: expected every animation "running 12000 1 linear both", got ${JSON.stringify([...new Set(t)])}`);
+      // Rep 3 lifts slower than rep 1 (movement.slowdown): the shoulder is lower at the same point of its rep.
+      const abdAt = async (ms) => { await seek(page, ms); return shoulder(page); };
+      const top1 = await abdAt(1000), top3 = await abdAt(9000);
+      if (top1 === s0) errors.push(`${tag} A1: the figure did not move (${s0} at 0 and 1 s)`);
+      if (top1 === top3) errors.push(`${tag} A1: rep 3 is the same keyframe set as rep 1 (no slow-down)`);
+      await page.evaluate(() => { for (const a of window.__fgAnims) a.play(); });
+      const cap = await page.locator('dialog[open] .cap').textContent();
+      if (!/^(Lift|Hold|Lower slowly|Reset), /.test(cap ?? '')) errors.push(`${tag} A1: caption while playing "${cap}"`);
+      // Mistake chip: the second figure mounts, joins the clock, and leaves again with its animations cancelled.
+      const nBefore = await page.evaluate(() => window.__fgAnims.length);
+      await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+      const on = await page.evaluate((n) => ({ figs: document.querySelectorAll('dialog[open] .fg4-scene .fg-fig').length, pressed: [...document.querySelectorAll('dialog[open] .chips button')].find(b => b.textContent === 'Mistake').getAttribute('aria-pressed'), added: window.__fgAnims.slice(n).map(a => `${a.playState} ${Math.abs(a.currentTime - window.__fgAnims[0].currentTime) < 50}`), hint: document.querySelector('dialog[open] .hint').textContent }), nBefore);
+      if (on.figs !== 2 || on.pressed !== 'true' || !on.added.length || on.added.some(s => s !== 'running true')) errors.push(`${tag} A1 mistake on: ${JSON.stringify(on)}`);
+      if (!on.hint.startsWith('Dip, shrug and drop: ')) errors.push(`${tag} A1 mistake on: hint "${on.hint}"`);
+      await seek(page, 1300); await page.screenshot({ path: `${OUT}/silent-black-fg4-compare.png` });
+      await page.evaluate(() => { for (const a of window.__fgAnims) if (a.playState !== 'idle') a.play(); });
+      await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+      const off = await page.evaluate((n) => ({ figs: document.querySelectorAll('dialog[open] .fg4-scene .fg-fig').length, idle: window.__fgAnims.slice(n).every(a => a.playState === 'idle') }), nBefore);
+      if (off.figs !== 1 || !off.idle) errors.push(`${tag} A1 mistake off: ${JSON.stringify(off)}`);
+      // The end of rep 3: Replay, and the figure is back on the start pose.
+      await page.evaluate(() => { for (const a of window.__fgAnims) if (a.playState !== 'idle') a.currentTime = 11990; });
+      await page.waitForTimeout(400);
+      const end = await page.evaluate(() => ({ btn: document.querySelector('dialog[open] .controls .btn-icon').getAttribute('aria-label'), cap: document.querySelector('dialog[open] .cap').textContent }));
+      if (end.btn !== 'Replay' || end.cap !== 'Done. Tap Replay to watch again.') errors.push(`${tag} A1: end of 3 reps ${JSON.stringify(end)}`);
+      if (await shoulder(page) !== s0) errors.push(`${tag} A1: after 3 reps the shoulder is ${await shoulder(page)}, not the start pose ${s0}`);
+      // A theme change while paused mid-run remounts the figure on the start pose and resets the rep pill and caption.
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Replay', exact: true }).click(); await page.waitForTimeout(150);
+      await seek(page, 5000);
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Pause', exact: true }).click(); await page.waitForTimeout(150);
+      await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'ember')); await page.waitForTimeout(250);
+      const mid = await page.evaluate(() => ({ pill: document.querySelector('dialog[open] .pill')?.textContent, cap: document.querySelector('dialog[open] .cap').textContent, btn: document.querySelector('dialog[open] .controls .btn-icon').getAttribute('aria-label') }));
+      if (mid.pill !== 'Rep 1 of 3' || mid.cap !== 'Tap Play to watch 3 slow reps.' || mid.btn !== 'Play') errors.push(`${tag} A1: theme change while paused mid-run ${JSON.stringify(mid)}`);
+      if (await shoulder(page) !== s0) errors.push(`${tag} A1: after a theme change the shoulder is ${await shoulder(page)}, not the start pose ${s0}`);
+      await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'silent-black')); await page.waitForTimeout(250);
+      // A5: the pictures regenerate on a data-theme change (the next theme's tokens, new images).
+      await page.locator('dialog[open] .seg button', { hasText: 'Pictures' }).click(); await page.waitForTimeout(200);
+      const before = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .pics .tile img')].map(i => i.src));
+      await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'paper')); await page.waitForTimeout(250);
+      const after = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .pics .tile img')].map(i => i.src));
+      if (after.length !== 4 || after.some((s, i) => s === before[i])) errors.push(`${tag} A5: the pictures did not regenerate on a data-theme change`);
+      const shots2 = await tilesPaint(page);
+      if (shots2.some(s => !s.ok || s.ink < 2000 || s.vars)) errors.push(`${tag} A5 after the theme change: ${JSON.stringify(shots2)}`);
+      // Closing the sheet cancels every animation.
+      await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(600);
+      const left = await page.evaluate(() => ({ n: window.__fgAnims.length, live: window.__fgAnims.filter(a => a.playState !== 'idle').length, open: !!document.querySelector('.form-guide') }));
+      if (!left.n || left.live || left.open) errors.push(`${tag} A1: closing left ${left.live} of ${left.n} animations alive (open ${left.open})`);
+    }
+    await ctx.close();
+  }
+
+  // A3: reduced motion shows Pictures only, with zero animate() calls; the mistake chip swaps the pictures.
+  {
+    const { ctx, page, ok } = await open('paper', { reducedMotion: 'reduce' });
+    if (ok) {
+      const rm = await page.evaluate(() => ({ calls: window.__fgAnims.length, tiles: document.querySelectorAll('dialog[open] .pics .tile img').length, scene: getComputedStyle(document.querySelector('dialog[open] .fg4-scene')).display, hint: document.querySelector('dialog[open] .hint').textContent, anim: document.querySelector('dialog[open] .seg.mode button').disabled, play: document.querySelector('dialog[open] .controls .btn-icon').disabled }));
+      if (rm.calls || rm.tiles !== 4 || rm.scene !== 'none' || rm.hint !== 'Pictures shown because your phone is set to reduce motion.' || !rm.anim || !rm.play) errors.push(`${tag} A3: reduced motion ${JSON.stringify(rm)}`);
+      const shots = await tilesPaint(page);
+      if (shots.some(s => !s.ok || s.ink < 2000)) errors.push(`${tag} A3: reduced-motion pictures ${JSON.stringify(shots)}`);
+      await page.screenshot({ path: `${OUT}/paper-fg4-reduced.png` });
+      await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(200);
+      const m = await page.evaluate(() => ({ calls: window.__fgAnims.length, caps: [...document.querySelectorAll('dialog[open] .pics .tile p')].map(p => p.textContent) }));
+      if (m.calls || m.caps.length !== 4 || !m.caps.every(c => c.startsWith('Mistake: '))) errors.push(`${tag} A3: mistake pictures ${JSON.stringify(m)}`);
+      await page.locator('dialog[open] .chips button', { hasText: 'Zoom' }).click(); await page.waitForTimeout(200);
+      const st = await page.evaluate(() => ({ calls: window.__fgAnims.length, still: !!document.querySelector('dialog[open] .fg4-still')?.naturalWidth }));
+      if (st.calls || !st.still) errors.push(`${tag} A3: the zoom still under reduced motion ${JSON.stringify(st)}`);
+    }
+    await ctx.close();
+  }
+}
+
+// BUG-17 (RECOVERY-F1): a muscle with more than 120 h still to go reads "5+ days" on Today, the
+// Body ready-time tile and the muscle panel's Ready label, never "under 1h". Seed: a novice (no
+// training start), squat to max for 10 sets of 12 on three days in a row, the last ending 1.5 h ago.
+{
+  const tag = 'BUG-17 5+ days';
+  const pinned = new Date(); pinned.setHours(12, 0, 0, 0);
+  const sq = (hoursAgo) => {
+    const at = pinned.getTime() - hoursAgo * 3_600_000, d = new Date(at);
+    const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const s0 = new Date(at).toISOString(), s1 = new Date(at + 1_800_000).toISOString();
+    return { id: `b17-${hoursAgo}`, splitId: 'sp1', splitName: 'Legs', day, startedAt: s0, endedAt: s1, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_barbell_back_squat', name: 'Barbell Back Squat', sets: Array.from({ length: 10 }, () => ({ kg: 100, reps: 12, effort: 'max' })) }],
+      logging: { mode: 'live', trainedAt: s0, trainedEndAt: s1, loggedAt: s1, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } };
+  };
+  const now = new Date().toISOString();
+  const json = JSON.stringify({
+    version: 1, createdAt: now, profile: { name: 'Marc' }, goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions: [sq(50), sq(26), sq(2)], active: null, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([j]) => { localStorage.setItem('marc.state.v1', j); localStorage.setItem('marc.theme', 'silent-black'); }, [json]);
+  await page.clock.install({ time: pinned.getTime() });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(250);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+  const todayRow = await page.evaluate(() => [...document.querySelectorAll('[data-palace="today.recovery"] .row-between')].find(r => r.children[0]?.textContent === 'Quads')?.children[1]?.textContent ?? null);
+  if (!todayRow?.endsWith('· 5+ days')) errors.push(`${tag}: Today's Quads row reads ${JSON.stringify(todayRow)}, expected "N% · 5+ days"`);
+  await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300);
+  const tile = await page.evaluate(() => [...document.querySelectorAll('button.rt-tile')].find(t => t.querySelector('.rt-tile-name')?.textContent === 'Quads')?.textContent ?? null);
+  if (!tile?.includes('5+ days')) errors.push(`${tag}: Body's Quads tile reads ${JSON.stringify(tile)}, expected "5+ days"`);
+  await page.locator('.seg button', { hasText: 'Levels' }).click(); await page.waitForTimeout(200);
+  await page.locator('.list-row', { hasText: 'Quads' }).first().click(); await page.waitForTimeout(300);
+  const tl = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet[open] .mtl-tl-col')].map(c => [c.querySelector('.mtl-tl-key')?.textContent, c.querySelector('.mtl-tl-val')?.textContent]));
+  const ready = tl.find(([k]) => k === 'Ready')?.[1];
+  if (ready !== '5+ days') errors.push(`${tag}: the muscle panel's Ready label reads ${JSON.stringify(ready)} (timeline ${JSON.stringify(tl)}), expected "5+ days"`);
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
