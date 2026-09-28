@@ -5,7 +5,7 @@
 <style>
 @font-face{font-family:'Inter Fallback';src:local('Arial'),local('Helvetica');size-adjust:107%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
 @font-face{font-family:'Instrument Sans Fallback';src:local('Arial'),local('Helvetica');size-adjust:101%;ascent-override:92%;descent-override:23%;line-gap-override:0%}
-@property --light-a{syntax:'<color>';inherits:true;initial-value:rgba(99,91,487,.85)}
+@property --light-a{syntax:'<color>';inherits:true;initial-value:rgba(99,91,255,.85)}
 @property --light-b{syntax:'<color>';inherits:true;initial-value:rgba(0,212,255,.48)}
 /* registered as lengths so the pinned phone's height resolves to px: the script reads it to place the step band under the phone */
 @property --pw{syntax:'<length>';inherits:true;initial-value:240px}
@@ -13,12 +13,12 @@
 :root{
   color-scheme:dark;
   --bg:#0a2540;--s1:#0f2d4d;--s2:#143559;--s3:#1a3f68;--text:#f6f9fc;--text2:#a3b6cc;--text3:#6c839c;
-  --accent:#635bff;--accent-soft:rgba(99,91,487,.18);--accent-line:rgba(99,91,487,.7);--info:#00d4ff;--positive:#3ecf8e;--warning:#ffbb00;--negative:#ff5c5c;
+  --accent:#635bff;--accent-soft:rgba(99,91,255,.18);--accent-line:rgba(99,91,255,.7);--info:#00d4ff;--positive:#3ecf8e;--warning:#ffbb00;--negative:#ff5c5c;
   --border:#263e57;--border-a:rgba(246,249,252,.12);--border-strong:rgba(246,249,252,.22);--shadow:0 18px 44px rgba(3,20,40,.55);
   --bezel:#071a30;--ring:rgba(246,249,252,.18);--white:#fff;--hl:rgba(255,255,255,.14);--hl-soft:rgba(255,255,255,.07);--sheen:rgba(255,255,255,.08);--nav-bg:rgba(10,37,64,.92);
   /* light strength: spec says .55/.35; the blur at 60px on a 1.4x plane needs more ink to read on #0a2540, so violet .85 (the thinnest of the three planes on navy, so it gets the most ink to weigh the same as green and amber), cyan .48, green .62, amber .48 (amber kept lowest so step 3 never blooms yellow) */
-  --light-a:rgba(99,91,487,.85);--light-b:rgba(0,212,255,.48);
-  --la-violet:rgba(99,91,487,.85);--la-green:rgba(62,207,142,.62);--la-amber:rgba(255,187,0,.48);--lb-cyan:rgba(0,212,255,.48);--lb-violet:rgba(99,91,487,.5);
+  --light-a:rgba(99,91,255,.85);--light-b:rgba(0,212,255,.48);
+  --la-violet:rgba(99,91,255,.85);--la-green:rgba(62,207,142,.62);--la-amber:rgba(255,187,0,.48);--lb-cyan:rgba(0,212,255,.48);--lb-violet:rgba(99,91,255,.5);
   --pin-fade:48px;
   --t-silent:#5e6ad2;--t-paper:#2383e2;--t-ember:#ff6363;--t-emerald:#3ecf8e;--t-midnight:#635bff;
   --accent-text:color-mix(in srgb,var(--accent) 65%,var(--text));

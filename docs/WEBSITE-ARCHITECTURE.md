@@ -90,6 +90,20 @@ Why this trio: the two highest-scoring directions, Instrument and Paper Edition,
 - **Render**: `website/renders/option-3-midnight.html`
 
 
+### Review results (28 September 2026)
+
+Each render was rendered in Chromium at 1440x900 and 400x844 by a reviewer agent, fixed by a second agent, and re-checked, up to three rounds; then one polish pass took the reviewer's remaining notes. A render passes at score 8 or more with no blocking item.
+
+| Option | Round 1 | Round 2 | Round 3 | Polish pass | Published |
+|---|---|---|---|---|---|
+| Instrument | 7, four blocking (phone clipping, a browser-install promise, the ruler animating below the fold, source paths breaking mid-word) | 8, passed | not needed | nine layout notes applied | https://claude.ai/artifact/FApo35YX3ZCXcy9KkbvNnK |
+| Paper Edition | 7, five blocking (theme rail broken on phones, frames drawn before the paste-up, first rail caption clipped, browser-install promise, fingerprint wrapping mid-pair) | 7, two blocking (headline promised two ways in, wrong APK file name) | 7, two blocking (wrong test count, rail fade at rest) | both fixed plus nine notes | https://claude.ai/artifact/G5apDFKmu47kPMcLVkFwLc |
+| Midnight Pulse | 6, three blocking (the lit plane rendered as a hard rectangle, the pinned phone covering copy on phones, two stat tiles broken) | 7, one blocking (fingerprint wrapping mid-pair) | 7.5, one blocking (a step lit while its heading was still under the phone on phones) | fixed, phone stays pinned, plus nine notes | https://claude.ai/artifact/1AQUGdTHfCwtXEePi7Q5ZZ |
+
+Corrections made across all three after the reviews: the unit-test count is 1,487 in 116 files (from `npx vitest run`; the earlier 1,255 came from counting `it(` calls), and the verify command names the release file the way release-apk.yml writes it. The review sandbox blocks Google Fonts, so the reviewers' screenshots used size-adjusted fallback faces; the published pages load the real fonts.
+
+What is still open on every option: the web app has no hosted address, so the Install cards say so and point to the APK or the source; the Today screenshot shows a week with nothing logged because the fixture's newest session is the day before the capture (docs/COACHING-DECISIONS.md). Both close once the site is hosted and the screenshots are regenerated from a fixture with a session that week.
+
 ## 5. Build architecture for the real site
 
 Decided once the owner picks a direction. Fixed points that do not depend on the choice:
