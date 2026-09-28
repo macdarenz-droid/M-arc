@@ -135,3 +135,13 @@ describe('W2 wiring: the Today week card and the coach read Profile.plannedDays'
     } finally { vi.useRealTimers(); }
   });
 });
+
+describe('Escobar wiring: coachCtx carries the plan', () => {
+  it('passes plannedDays and daysOff into CoachContext', async () => {
+    const { coachCtx } = await import('@/escobar/tools/context');
+    const { freshState } = await import('@/core/models');
+    const base = freshState();
+    const c = coachCtx({ state: { ...base, daysOff: ['2026-09-29'], profile: { ...base.profile, plannedDays: 2 } }, now: Date.parse('2026-09-28T12:00:00Z'), today: monday });
+    expect([c.plannedDays, c.daysOff]).toEqual([2, ['2026-09-29']]);
+  });
+});

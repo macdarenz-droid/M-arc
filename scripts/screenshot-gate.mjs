@@ -5826,7 +5826,7 @@ for (const theme of ['silent-black', 'paper']) {
   const box = await unset.boundingBox().catch(() => null);
   if (!box || box.x < 0 || box.x + box.width > 390) errors.push(`${tag}: "not set" is off screen at 390 px (${JSON.stringify(box)})`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-adapt-4-planned-days-unset.png` });
-  await field.getByRole('button', { name: '+' }).click(); await page.waitForTimeout(200);
+  await field.getByRole('button', { name: '+', exact: true }).click(); await page.waitForTimeout(200);
   const after = await read();
   if (after !== '4') errors.push(`${tag}: after + from unset it reads ${JSON.stringify(after)}, expected "4"`);
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') ?? '{}').profile?.plannedDays ?? null);
