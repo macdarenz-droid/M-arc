@@ -20,7 +20,7 @@ Owner decision, 2026-09-29 ~17:10 UTC: "Go. Apply all recommendations." Research
 - **Result:** the tool is **not available** in cloud sessions started by the supervisor. That session's tool list was Bash, Write, Edit, Read, Glob, Grep, Agent, NotebookEdit, WebFetch, WebSearch, TaskStop, SearchMcpRegistry, SuggestConnectors, ListConnectors and Artifact. The session refused the request as out of place.
 - **So builders and reviewers can never freeze on a question,** and the timeout setting would do nothing. **Change 4's question-timeout part is dropped,** along with its new "Never" line and "blocked on timeout" line, which have nothing to guard. The resume variables stay: they are documented, and cost nothing when unused.
 - **The real freezes we saw** were a builder waiting idle for a supervisor message that never arrived (a failed one-shot Routine). The alternative that fixes those is change 1 (tick stall repair, one retry per tick, the instruction also posted on the PR) plus change 2 (builders re-read the PR and their HANDOFF on wake).
-- The test session is archived, and the test branch is deleted.
+- The test session is archived. The branch `claude/wf-test-afk` (test only, never to be merged) could not be deleted through the git proxy, so it stays as a record.
 
 ## The proposal as reviewed
 # Proposal: what to take from claude-code-best-practice
