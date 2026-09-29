@@ -25,7 +25,14 @@ export type SolveRig = {
 /** The points of one pose: the rig's shortcut where it has one, else from the frame, drawn once and only if needed. */
 export function pointsOf(rig: SolveRig, pose: Pose): (a: AttachmentId) => Pt {
   let f: Frame | null = null;
-  return a => rig.reach?.(pose, a) ?? rig.point((f ??= rig.frame(pose)), a);
+  const as: AttachmentId[] = [], qs: Pt[] = [];
+  return a => {
+    const i = as.indexOf(a);
+    if (i >= 0) return qs[i]!;
+    const q = rig.reach?.(pose, a) ?? rig.point((f ??= rig.frame(pose)), a);
+    as.push(a); qs.push(q);
+    return q;
+  };
 }
 export type Pose = Record<ChannelId, number>;
 
@@ -164,14 +171,16 @@ function linsolve(J: number[][], r: number[]): number[] | null {
 }
 
 /** A solve: its channel values, its Jacobian (for the next stop) and the frame drawn at the solution. */
-/** A solve: its channel values and its Jacobian (for the next stop). */
-export type Seed = { x: number[]; J: number[][] | null };
+/** A solve: its channel values, its Jacobian (for the next stop) and the points of the solved pose (the last residual
+ * evaluated is always the accepted one, and the solve's working pose holds it when it returns). */
+export type Seed = { x: number[]; J: number[][] | null; pts?: (a: AttachmentId) => Pt };
+let lastPts: ((a: AttachmentId) => Pt) | null = null;
 const where = (u: number, label: string) => `u=${+u.toFixed(4)} (${label})`;
 
 /** The residuals of a system with its channels at x on the given pose (written into `pose`: pass a working copy). */
 function residuals(rig: SolveRig, sys: System, pose: Pose, x: number[], u: number): number[] {
   for (let i = 0; i < x.length; i++) pose[sys.chans[i]!] = x[i]!;
-  const pt = pointsOf(rig, pose), out: number[] = [];
+  const pt = (lastPts = pointsOf(rig, pose)), out: number[] = [];
   for (const c of sys.cons) for (const v of c.res(pt, u)) out.push(v);
   return out;
 }
@@ -219,7 +228,7 @@ export function solveSystem(rig: SolveRig, sys: System, given: Pose, u: number, 
     const [lo, hi] = sys.ranges[i]!;
     if (!(x[i]! >= lo - 1e-9 && x[i]! <= hi + 1e-9)) throw new Error(`${sys.cons.find(k => k.chans.includes(c))!.what}: ${c} = ${x[i]!.toFixed(2)} leaves its range ${lo}..${hi} at ${where(u, label)} (the bend would flip)`);
   });
-  return { x, J };
+  return { x, J, pts: lastPts! };
 }
 const offset = (sys: System, i: number) => sys.cons.slice(0, i).reduce((s, c) => s + c.chans.length, 0);
 

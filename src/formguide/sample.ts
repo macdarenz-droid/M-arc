@@ -260,13 +260,13 @@ function planOf(g: ExerciseGuide, figure: Figure, rep: number, rig: SolveRig | u
   };
   const other = [...byKey.values()][0]?.table[0];
   // each stop starts from the last three, extrapolated (the motion is smooth between stops)
-  const ext = (a: Seed, b: Seed | undefined, c: Seed | undefined): Seed => ({ x: c && b ? a.x.map((v, i) => 3 * v - 3 * b.x[i]! + c.x[i]!) : b ? a.x.map((v, i) => 2 * v - b.x[i]!) : a.x, J: a.J });
+  const ext = (a: Seed, b: Seed | undefined, c: Seed | undefined, d?: Seed): Seed => ({ x: d && c && b ? a.x.map((v, i) => 4 * v - 6 * b.x[i]! + 4 * c.x[i]! - d.x[i]!) : c && b ? a.x.map((v, i) => 3 * v - 3 * b.x[i]! + c.x[i]!) : b ? a.x.map((v, i) => 2 * v - b.x[i]!) : a.x, J: a.J });
   for (let i = 0; i < plan.stops.length; i++) {
-    const u = plan.stops[i]!, a = plan.table[i - 1], b = plan.table[i - 2], c = plan.table[i - 3];
+    const u = plan.stops[i]!, a = plan.table[i - 1], b = plan.table[i - 2], c = plan.table[i - 3], d = plan.table[i - 4];
     let r: ReturnType<typeof solveStop> | null = null;
     if (!a && other) try { r = solveStop(plan, rig, u, other); } catch { r = null; }   // another rep's start, if it holds
-    r ??= solveStop(plan, rig, u, a ? { rel: ext(a.rel, b?.rel, c?.rel), enf: ext(a.enf, b?.enf, c?.enf) } : null);
-    plan.table.push(r.s); plan.poses.push(r.pose); plan.travels.push(plan.travel(pointsOf(rig, r.pose), u));
+    r ??= solveStop(plan, rig, u, a ? { rel: ext(a.rel, b?.rel, c?.rel, d?.rel), enf: ext(a.enf, b?.enf, c?.enf, d?.enf) } : null);
+    plan.table.push(r.s); plan.poses.push(r.pose); plan.travels.push(plan.travel((plan.enforced.cons.length && r.s.enf.pts) || pointsOf(rig, r.pose), u));   // the enforced solve's own points of the final pose
   }
   byKey.set(key, plan);
   return plan;
