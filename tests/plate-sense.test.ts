@@ -373,9 +373,9 @@ describe('LT-1 loadMenu', () => {
 });
 const r3 = (v: number) => Math.round(v * 1000) / 1000;
 
-// LT-4 (§2, §7, add-only): the ask chip's merge rule, on the menus LT-1's loadMenu actually returns.
 import { mergeAskAnswer } from '@/slices/workout/units';
 
+// LT-4 (§2, §7, add-only): the ask chip's merge rule, on the menus LT-1's loadMenu actually returns.
 describe('LT-4 §2 the ask-chip merge rule, on real assumed menus', () => {
   const units: UnitsState = freshUnits('kg');
   const gymId = DEFAULT_GYM_ID;

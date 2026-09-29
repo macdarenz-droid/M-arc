@@ -63,8 +63,12 @@ function mergeLadder(ladder: number[], current: number, answer: number): number[
  * LT-4 (§2): the answer to the Train card's one-time ask ("which weight comes after X here?"), merged
  * into `profile`, in the profile's own unit. A ladder profile merges per `mergeLadder`; any other
  * profile (a stack: step, add-ons or the plain default step) becomes `step = answer − current`.
+ * An answer at or below `current` is not "after" it, so it is rejected: the profile comes back
+ * unchanged (review r1: a bad "Other" value must never reach a stored `step`, even from a caller
+ * that skips `AskWeightChip`'s own Save guard).
  */
 export function mergeAskAnswer(profile: EquipmentProfile, current: number, answer: number): EquipmentProfile {
+  if (!(answer > current)) return profile;
   const updatedAt = new Date().toISOString();
   if (profile.ladder?.length) return { ...profile, ladder: mergeLadder(profile.ladder, current, answer), source: 'user', updatedAt };
   return { ...profile, step: Math.max(0.01, Math.round((answer - current) * 1000) / 1000), source: 'user', updatedAt };

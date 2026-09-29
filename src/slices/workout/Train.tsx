@@ -84,9 +84,13 @@ const askKey = (gymId: string, exerciseId: string): string => `${gymId}|${exerci
 
 /** LT-4 (§2): the chip fires only when the menu is unknown and the snapped jump broke the goal's
  * cap — the `earn` mode, or the `hold` lever whose text names the jump (never the "nothing heavier
- * here" lever, which is not a broken cap: `src/brain/retarget.ts`'s `chooseRung`). */
-export function shouldAskWeight(next: Pick<Suggestion, 'mode' | 'menuConfidence' | 'reason'>): boolean {
+ * here" lever, which is not a broken cap: `src/brain/retarget.ts`'s `chooseRung`) — and only for a
+ * profile §2's merge rule actually covers (a ladder or a stack). A barbell/Smith-machine profile
+ * (`plates`/`barKg`, no `ladder`, no `step`) is never asked about (review r1: an invariant, not an
+ * assumption — the default plate set is fine-grained, but nothing else stopped it from firing). */
+export function shouldAskWeight(next: Pick<Suggestion, 'mode' | 'menuConfidence' | 'reason'>, profile: Pick<EquipmentProfile, 'ladder' | 'step'>): boolean {
   if (next.menuConfidence !== 'assumed') return false;
+  if (!profile.ladder?.length && !(profile.step != null && profile.step > 0)) return false;
   return next.mode === 'earn' || (next.mode === 'hold' && next.reason.includes('is too big a jump'));
 }
 
@@ -548,6 +552,8 @@ function LiveClock({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
 function AskWeightChip({ current, unit, candidates, onAnswer, onDismiss }: { current: number; unit: LoadUnit; candidates: number[]; onAnswer: (value: number) => void; onDismiss: () => void }) {
   const [other, setOther] = useState(false);
   const [draft, setDraft] = useState<WeightChange | undefined>(undefined);
+  // review r1: "after" the current load — at or below it is never a valid answer, so Save stays off.
+  const tooLow = other && draft?.entered != null && !(draft.entered.value > current);
   return (
     <div class="stack-sm" data-testid="ask-weight-chip">
       <p class="hint">Which weight comes after {current} {unit} here?</p>
@@ -557,11 +563,12 @@ function AskWeightChip({ current, unit, candidates, onAnswer, onDismiss }: { cur
         {other && (
           <>
             <WeightInput kg={draft?.kg} entered={draft?.entered} entryUnit={unit} placeholder={unit} ariaLabel={`Next weight in ${unit}`} onChange={setDraft} />
-            <Button variant="primary" onClick={() => { if (draft?.entered && draft.entered.value > 0) onAnswer(draft.entered.value); }}>Save</Button>
+            <Button variant="primary" disabled={!draft?.entered || !(draft.entered.value > current)} onClick={() => { if (draft?.entered && draft.entered.value > current) onAnswer(draft.entered.value); }}>Save</Button>
           </>
         )}
         <Chip onClick={onDismiss}>Not now</Chip>
       </div>
+      {tooLow && <p class="hint" style={{ color: 'var(--warning)' }}>Must be heavier than {current} {unit}.</p>}
     </div>
   );
 }
@@ -587,12 +594,14 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, menu: equipMenu, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
   // LT-4 (§2): the one-time ask, only on an assumed menu whose snapped jump broke the goal's cap.
   const askThisKey = askKey(effectiveGymId, entry.exerciseId);
-  const askVisible = mode === 'weighted' && shouldAskWeight(next) && !askDismissed.value.has(askThisKey);
+  const askVisible = mode === 'weighted' && shouldAskWeight(next, equipMenu.profile) && !askDismissed.value.has(askThisKey);
+  const askCurrent = next.value ?? kgToDisplay(next.kg ?? 0, equipMenu.unit);
   const askAnswer = (value: number) => {
+    if (!(value > askCurrent)) return; // review r1: "after" the current load, never at or below it.
     // equipMenu.profile, not `profile`: on an assumed menu `profileFor` can still pick up a known
     // profile from another gym (resolveProfile's rank 2), whose ladder belongs to that gym, not this
     // one. `equipMenu.profile` is always the LT-1 precedence's own resolved-or-default profile.
-    saveProfile('exercise', entry.exerciseId, mergeAskAnswer(equipMenu.profile, next.value ?? kgToDisplay(next.kg ?? 0, equipMenu.unit), value), effectiveGymId);
+    saveProfile('exercise', entry.exerciseId, mergeAskAnswer(equipMenu.profile, askCurrent, value), effectiveGymId);
     askDismissed.value = new Set(askDismissed.value).add(askThisKey);
     showToast('Saved the next weight for this gym');
   };
@@ -743,7 +752,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         <div class="stack-sm" style={{ marginTop: 12 }}>
           {autoreg && <p class="hint" style={{ color: 'var(--accent-text)' }}>{autoreg.action}</p>}
           {askVisible && (
-            <AskWeightChip current={next.value ?? kgToDisplay(next.kg ?? 0, equipMenu.unit)} unit={equipMenu.unit} candidates={askCandidates(equipMenu, next.kg ?? 0)} onAnswer={askAnswer} onDismiss={askDismiss} />
+            <AskWeightChip current={askCurrent} unit={equipMenu.unit} candidates={askCandidates(equipMenu, next.kg ?? 0)} onAnswer={askAnswer} onDismiss={askDismiss} />
           )}
           {ex && recoveryPct != null && recoveryPct < 60 && (
             <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <button type="button" class="link-btn" onClick={() => setSubOpen(true)}>See substitutes</button> or ease off today.</p>

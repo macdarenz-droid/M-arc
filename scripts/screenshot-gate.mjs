@@ -5900,6 +5900,56 @@ for (const { theme, inset } of bug22Runs) {
   await ctx.close();
 }
 
+// LT-4 (docs/LOAD-AWARE-TARGETS.md §7): "Train shows the ask chip with an assumed menu and an
+// over-cap jump; dismissing it hides it for the run." Seed: two sessions of lib_dumbbell_lateral_raise
+// at 4 kg x 15 (top of lean's accessory range, ideal effort) with no gym unit override, so loadMenu
+// reads `assumed` and the default ladder's 6 kg next rung (a 50% jump) breaks the 15% lean cap —
+// chooseRung's cap-break lever, `shouldAskWeight`'s trigger (verified against this exact fixture
+// in tests/escobar/read.test.ts).
+{
+  const tag = 'LT-4 ask chip';
+  const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const raiseSession = (id, offset) => ({ id, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T18:00:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+    exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', name: 'Dumbbell Lateral Raise', sets: [{ kg: 4, reps: 15, effort: 'ideal' }, { kg: 4, reps: 15, effort: 'ideal' }, { kg: 4, reps: 15, effort: 'ideal' }] }],
+    logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T18:00:00.000Z`, loggedAt: `${day(offset)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  const now = new Date().toISOString();
+  const json = JSON.stringify({
+    version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+    goal: 'lean', splits: [{ id: 'sp1', name: 'Push', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 3 }] }],
+    schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions: [raiseSession('lt4-1', 6), raiseSession('lt4-2', 3)], active: null, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: now }, checkIns: [{ day: day(0), sleepQuality: 4 }], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    units: { gyms: [{ id: 'gym_default', name: 'My gym', defaultUnit: 'kg', createdAt: now }], activeGymId: 'gym_default', byExercise: {}, byEquipment: {} },
+  });
+  await page.addInitScript(([j]) => { localStorage.setItem('marc.state.v1', j); localStorage.setItem('marc.theme', 'silent-black'); }, [json]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  const chip = page.locator('.exercise.active [data-testid="ask-weight-chip"]');
+  if (!(await visible(chip, 3000))) errors.push(`${tag}: the ask chip did not show on an assumed menu with an over-cap jump`);
+  const ask = (await chip.locator('p.hint').first().textContent().catch(() => ''))?.trim() ?? '';
+  if (!/^Which weight comes after 4 kg here\?/.test(ask)) errors.push(`${tag}: chip text ${JSON.stringify(ask)}, expected "Which weight comes after 4 kg here?"`);
+
+  await chip.locator('button', { hasText: 'Not now' }).click(); await page.waitForTimeout(200);
+  if (await chip.isVisible().catch(() => false)) errors.push(`${tag}: the chip stayed visible after Not now`);
+
+  // Hidden for the rest of the run: leave the live session's screen and come back.
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(200);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(300);
+  if (await page.locator('.exercise.active [data-testid="ask-weight-chip"]').isVisible().catch(() => false)) errors.push(`${tag}: the chip reappeared after navigating away and back, in the same run`);
+
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
