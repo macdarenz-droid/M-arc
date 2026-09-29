@@ -11,8 +11,10 @@ import { MACHINES, MACHINE_CARDS, machineFor, type MachineArt } from '@/formguid
 import { STAND_IN, STAND_IN_PLATES } from '@/formguide/machines/stand_in';
 import { cableOps, carriageOps, leverOps, platesFor, stackMarkup, stackOps } from '@/formguide/machines/primitives';
 import { HANDLES, HANDLE_CARDS } from '@/formguide/parts';
-import { STACK_CLASS, cableClass, guideDrive, guideStops, layerFor, layerGroups, layerMarkup, partClass, standInDrive } from '@/formguide/player/machineView';
-import { REPS, guideRig } from '@/formguide/player/guideView';
+import { STACK_CLASS, cableClass, guideDrive, guideStops, layerFor, layerGroups, layerMarkup, partClass, setupSvgs, standInDrive } from '@/formguide/player/machineView';
+import { REPS, guideRig, markupOf, momentFrame } from '@/formguide/player/guideView';
+import { themeReader } from '@/formguide/rig/paint';
+import { VIEWBOXES } from '@/formguide/model';
 import { apply, mmul, opMat, solveFrontArm, type Op } from '@/formguide/rig/pose';
 import type { Mat } from '@/formguide/rig/figureFront';
 import type { Pt } from '@/formguide/rig/ik';
@@ -142,6 +144,15 @@ describe('V1-09 A3: the setup moment differs right and wrong', () => {
     const right = layerMarkup(FX, { kg: 0, settings: { seat: 2 } }), wrong = layerMarkup(FX, { kg: 0, settings: { seat: 2 }, wrong: { setting: 'seat', value: 5 } });
     expect(right).toContain('class="fg-set-seat" transform="translate(0 -20)"');
     expect(wrong).toContain('class="fg-set-seat" transform="translate(0 -50)"');
+  });
+  it('the player\'s setup pair: the machine at the right and the wrong setting under the start pose, fully resolved', () => {
+    const read = themeReader('silent-black'), m = markupOf(FXG, rig, read, { id: 'snap', mistake: false, load: 20 });
+    const pics = setupSvgs(FXG, FX, { markup: m, frame: momentFrame(FXG, rig, 'correct', 0, m) }, read, VIEWBOXES.standingFront, 20);
+    expect(pics.map(p => p.wrong)).toEqual([false, true]);
+    expect(pics[0]!.svg).not.toBe(pics[1]!.svg);
+    for (const p of pics) { expect(p.svg).not.toContain('var('); expect(p.svg.indexOf('fg-machine')).toBeLessThan(p.svg.indexOf('fg-fig')); }
+    const plain = { ...FXG, mistake: { ...FXG.mistake, setup: undefined } } as ExerciseGuide;
+    expect(setupSvgs(plain, FX, { markup: m, frame: momentFrame(plain, rig, 'correct', 0, m) }, read, VIEWBOXES.standingFront, 20)).toHaveLength(1);
   });
   it('and fails when the wrong setting draws the same picture', () => {
     const g = { ...FXG, mistake: { ...FXG.mistake, setup: { ...FXG.mistake.setup!, wrong: 2 } } } as ExerciseGuide;
