@@ -49,6 +49,27 @@ export function setEquipmentUnit(group: string, unit: LoadUnit, gymId = activeGy
   });
 }
 
+const ASK_EPS = 0.005;
+
+/** LT-4 (§2): drops the rungs strictly between `current` and `answer`, adds `answer`, keeps the rest.
+ * Never returns a two-rung ladder: when dropping would leave fewer than three rungs, nothing is dropped. */
+function mergeLadder(ladder: number[], current: number, answer: number): number[] {
+  const dropped = ladder.filter(v => v <= current + ASK_EPS || v >= answer - ASK_EPS);
+  const withAnswer = [...new Set([...dropped, answer])].sort((a, b) => a - b);
+  return withAnswer.length >= 3 ? withAnswer : [...new Set([...ladder, answer])].sort((a, b) => a - b);
+}
+
+/**
+ * LT-4 (§2): the answer to the Train card's one-time ask ("which weight comes after X here?"), merged
+ * into `profile`, in the profile's own unit. A ladder profile merges per `mergeLadder`; any other
+ * profile (a stack: step, add-ons or the plain default step) becomes `step = answer − current`.
+ */
+export function mergeAskAnswer(profile: EquipmentProfile, current: number, answer: number): EquipmentProfile {
+  const updatedAt = new Date().toISOString();
+  if (profile.ladder?.length) return { ...profile, ladder: mergeLadder(profile.ladder, current, answer), source: 'user', updatedAt };
+  return { ...profile, step: Math.max(0.01, Math.round((answer - current) * 1000) / 1000), source: 'user', updatedAt };
+}
+
 export function saveProfile(scope: 'exercise' | 'equipment', key: string, profile: EquipmentProfile, gymId = activeGymId()): void {
   patchUnits(u => scope === 'exercise'
     ? { ...u, byExercise: { ...u.byExercise, [gymId]: { ...(u.byExercise[gymId] ?? {}), [key]: profile } } }

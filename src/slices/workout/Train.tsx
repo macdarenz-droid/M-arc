@@ -7,7 +7,7 @@ import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload, bodyWeightAt } from '@/app/selectors';
 import { checkInDraft, saveCheckIn } from '@/slices/readiness/checkIn';
-import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
+import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput, type WeightChange } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
 import { FormGuideSheet } from '@/slices/formguide/lazy';
@@ -42,8 +42,8 @@ import { restAlertsDenied } from '@/native/notifications';
 import { WatchSheet } from '@/slices/settings/Watch';
 import { recentLiveBpms } from './heart';
 import { usePalaceFocus } from '@/escobar/palace/focus';
-import { activeGymId, addGym, profileFor, setActiveGym, setEquipmentUnit, setExerciseUnit, setGymDefaultUnit, renameGym } from './units';
-import { formatLoadable, formatPerSide, inferGym, loadableNear, plateBreakdown } from '@/brain/units';
+import { activeGymId, addGym, mergeAskAnswer, profileFor, saveProfile, setActiveGym, setEquipmentUnit, setExerciseUnit, setGymDefaultUnit, renameGym } from './units';
+import { formatLoadable, formatPerSide, inferGym, loadableNear, loadMenu, loggedLoads, plateBreakdown, type LoadMenu } from '@/brain/units';
 import { setUnitSuspect, suspectAlternative } from '@/brain/fidelity';
 import { equipmentGroup } from '@/brain/coach/cues';
 import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
@@ -76,6 +76,24 @@ const startingSplit = signal<Split | null>(null);
 export function requestStart(split: Split): void { startingSplit.value = split; }
 /** "Skip" on the check-in sheet, so it doesn't reappear for the rest of this app session. */
 const checkInDismissed = signal(false);
+/** LT-4 (§2): "exercise|gym" pairs the ask-weight chip was dismissed for, or answered, this run —
+ * so it never asks twice in one session. An answered pair also elevates the menu to `known`
+ * (loadMenu's precedence, `src/brain/units.ts`), which alone keeps it from asking again. */
+const askDismissed = signal<Set<string>>(new Set());
+const askKey = (gymId: string, exerciseId: string): string => `${gymId}|${exerciseId}`;
+
+/** LT-4 (§2): the chip fires only when the menu is unknown and the snapped jump broke the goal's
+ * cap — the `earn` mode, or the `hold` lever whose text names the jump (never the "nothing heavier
+ * here" lever, which is not a broken cap: `src/brain/retarget.ts`'s `chooseRung`). */
+export function shouldAskWeight(next: Pick<Suggestion, 'mode' | 'menuConfidence' | 'reason'>): boolean {
+  if (next.menuConfidence !== 'assumed') return false;
+  return next.mode === 'earn' || (next.mode === 'hold' && next.reason.includes('is too big a jump'));
+}
+
+/** LT-4 (§2): up to two menu rungs above `topKg` (canonical kg), in the menu's own unit, for the ask chip. */
+export function askCandidates(menu: Pick<LoadMenu, 'rungsKg' | 'unit'>, topKg: number): number[] {
+  return menu.rungsKg.filter(v => v > topKg + 0.011).slice(0, 2).map(v => kgToDisplay(v, menu.unit));
+}
 /** A9: the open card's next set to do, "62.5 kg × 8" (the exact A1 label), for the rest banner. */
 export const nextUpHint = signal<string | null>(null);
 
@@ -525,6 +543,29 @@ function LiveClock({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
   return <h1 class="num">{formatClock(elapsedSec(a, nowMs.value))}</h1>;
 }
 
+/** LT-4 (§2): "Which weight comes after {current} here?" — chips from the menu plus "Other", and a way
+ * to say not now. Nothing is saved until a chip or "Other" answer is confirmed. */
+function AskWeightChip({ current, unit, candidates, onAnswer, onDismiss }: { current: number; unit: LoadUnit; candidates: number[]; onAnswer: (value: number) => void; onDismiss: () => void }) {
+  const [other, setOther] = useState(false);
+  const [draft, setDraft] = useState<WeightChange | undefined>(undefined);
+  return (
+    <div class="stack-sm" data-testid="ask-weight-chip">
+      <p class="hint">Which weight comes after {current} {unit} here?</p>
+      <div class="wrap">
+        {!other && candidates.map(c => <Chip key={c} onClick={() => onAnswer(c)}>{c} {unit}</Chip>)}
+        {!other && <Chip onClick={() => setOther(true)}>Other</Chip>}
+        {other && (
+          <>
+            <WeightInput kg={draft?.kg} entered={draft?.entered} entryUnit={unit} placeholder={unit} ariaLabel={`Next weight in ${unit}`} onChange={setDraft} />
+            <Button variant="primary" onClick={() => { if (draft?.entered && draft.entered.value > 0) onAnswer(draft.entered.value); }}>Save</Button>
+          </>
+        )}
+        <Chip onClick={onDismiss}>Not now</Chip>
+      </div>
+    </div>
+  );
+}
+
 function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; entry: NonNullable<ReturnType<typeof active>>['entries'][number]; open: boolean; onToggle: () => void; onDone: () => void }) {
   const s = state.value;
   const u = unit.value;
@@ -537,9 +578,25 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const loaded = mode === 'weighted' || mode === 'conditioning';
   const eu = loaded ? profile.unit : u;
   const gymId = s.active?.gymId;
+  const effectiveGymId = gymId ?? activeGymId();
   const memoDeps = [s.sessions, s.customExercises, s.units, s.goal, gymId, entry, today.value, todayReadiness.value, activeDeload.value, s.deload, recoveryPct];
+  // LT-4: the gym's load menu (LT-1), so an increase sees the loads really learned here and the
+  // suggestion carries `menuConfidence` for the ask chip below.
+  const equipMenu = useMemo(() => loadMenu(entry.exerciseId, effectiveGymId, s.units, ex, loggedLoads(s.sessions, entry.exerciseId, s.customExercises)), memoDeps);
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
-  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
+  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, menu: equipMenu, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
+  // LT-4 (§2): the one-time ask, only on an assumed menu whose snapped jump broke the goal's cap.
+  const askThisKey = askKey(effectiveGymId, entry.exerciseId);
+  const askVisible = mode === 'weighted' && shouldAskWeight(next) && !askDismissed.value.has(askThisKey);
+  const askAnswer = (value: number) => {
+    // equipMenu.profile, not `profile`: on an assumed menu `profileFor` can still pick up a known
+    // profile from another gym (resolveProfile's rank 2), whose ladder belongs to that gym, not this
+    // one. `equipMenu.profile` is always the LT-1 precedence's own resolved-or-default profile.
+    saveProfile('exercise', entry.exerciseId, mergeAskAnswer(equipMenu.profile, next.value ?? kgToDisplay(next.kg ?? 0, equipMenu.unit), value), effectiveGymId);
+    askDismissed.value = new Set(askDismissed.value).add(askThisKey);
+    showToast('Saved the next weight for this gym');
+  };
+  const askDismiss = () => { askDismissed.value = new Set(askDismissed.value).add(askThisKey); };
   const [menu, setMenu] = useState(false);
   const [noteDraft, setNoteDraft] = useState<string | null>(null);
   const [stickyDraft, setStickyDraft] = useState<string | null>(null);
@@ -685,6 +742,9 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         {(open || closing) && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
           {autoreg && <p class="hint" style={{ color: 'var(--accent-text)' }}>{autoreg.action}</p>}
+          {askVisible && (
+            <AskWeightChip current={next.value ?? kgToDisplay(next.kg ?? 0, equipMenu.unit)} unit={equipMenu.unit} candidates={askCandidates(equipMenu, next.kg ?? 0)} onAnswer={askAnswer} onDismiss={askDismiss} />
+          )}
           {ex && recoveryPct != null && recoveryPct < 60 && (
             <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <button type="button" class="link-btn" onClick={() => setSubOpen(true)}>See substitutes</button> or ease off today.</p>
           )}
