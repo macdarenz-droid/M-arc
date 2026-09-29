@@ -8,6 +8,7 @@ import { state, update } from '@/core/store';
 import type { AppState, MemoryItem } from '@/core/models';
 import { MAX_MEMORY_ITEMS } from '@/core/models';
 import { todayKey } from '@/core/dates';
+import { getSeries } from '@/core/heartStore';
 import { showToast } from '@/app/toast';
 import { giveInsightFeedback } from '@/slices/coach/coach';
 import { EscobarLoop, type SendInput, type TurnResult } from './loop';
@@ -197,6 +198,8 @@ async function getLoop(mode: EscobarMode): Promise<EscobarLoop> {
     appVersion: APP_VERSION,
     manifest: () => MANIFEST,
     focus: () => currentFocus.value,
+    // BUG-21: heart drift reads the stored series.
+    heartSeries: getSeries,
     online: () => (typeof navigator === 'undefined' || navigator.onLine !== false) && !(online.value === false && Date.now() < offlineUntil),
     imageData,
     imagesSent: evictImages,

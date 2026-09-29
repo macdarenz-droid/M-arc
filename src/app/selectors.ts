@@ -1,6 +1,7 @@
 /** Derived, memoised views over the store that several screens share. */
 import { computed } from '@preact/signals';
 import { state } from '@/core/store';
+import { getSeries } from '@/core/heartStore';
 import { weekdayOf, daysBetween, trainedTodaySessions, nextScheduled } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
@@ -57,7 +58,7 @@ const coachContext = computed((): CoachContext => ({
   today: today.value, now: minuteNow.value, profileHistory: state.value.profileHistory, profile: state.value.profile,
   healthDays: state.value.healthDays, checkIns: state.value.checkIns, freshMarks: state.value.freshMarks,
   recoveryModel: state.value.recoveryModel, deload: state.value.deload, feedback: state.value.insightFeedback,
-  unit: state.value.preferences.weightUnit,
+  unit: state.value.preferences.weightUnit, heartSeries: getSeries,
 }));
 /** COACH-FB: the rules run once; the board and the hidden-notes list both rank from this one list. */
 const rawInsights = computed(() => runInsightRules(coachContext.value));
