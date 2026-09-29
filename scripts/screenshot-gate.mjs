@@ -6193,6 +6193,170 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// FG-V1 (V1-08, docs/FORM-GUIDE-PRODUCTION.md §10.5): a generic gate block for every GUIDE_IDS id that has an exercise
+// file (today only the lateral raise; the chest press waits on V1-09's machines, D-FG-V1). For each such id it opens
+// the Train sheet's guide (ExercisePlayer.tsx, mounted by FormGuidePlayer.tsx whenever `../exercises/<id>.ts` exists)
+// and: probe 1 seeks the *played* WAAPI transforms at 1/120 s (not the sampled stops fg:check already proves) and
+// runs smooth-check (a) edge speed, (b) velocity step and (d) the 4°/tick cap (check/smooth.ts:8 LIM), plus a
+// rep-seam continuity check; not (c) — WAAPI's straight interpolation between stops spikes 120 Hz acceleration
+// (doc:291), so (c) stays proven on the sampled stops by fg:check. Probe 2 confirms every `muscles.target` overlay's
+// tint peaks well above the seeded 0 % floor (ported from the demo's target-visible-at-peak probe, commit fbaa35d).
+// Screenshots: play, compare (Mistake chip) and Pictures at 360 and 390 px in Silent Black and Paper; a setup pair
+// once an id's `mistake.setup` exists (none yet — V1-09).
+{
+  const tag = 'FG-V1';
+  const exists = (p) => { try { readFileSync(p); return true; } catch { return false; } };
+  const registrySrc = readFileSync(join(ROOT, 'src/formguide/registry.ts'), 'utf8');
+  const guideIds = [...registrySrc.matchAll(/'([^']+)'/g)].map(m => m[1]).filter(id => exists(join(ROOT, `src/formguide/exercises/${id}.ts`)));
+  const library = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8'));
+  /** target-muscle ids and whether the file names a machine setup, read from the file's own data literal (no import:
+   * this script is plain Node, the exercise files are TS). Safe because exercise files hold data only (model.ts:34). */
+  const exerciseMeta = (id) => {
+    const src = readFileSync(join(ROOT, `src/formguide/exercises/${id}.ts`), 'utf8');
+    const mm = src.match(/muscles:\s*\{[^}]*?target:\s*\[([^\]]*)\]/);
+    const targets = mm ? [...mm[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : [];
+    return { targets, hasSetup: /\bsetup:\s*\{/.test(src) };
+  };
+
+  const seed = ([id, theme]) => {
+    const orig = Element.prototype.animate;
+    window.__fgAnims = [];
+    Element.prototype.animate = function (...a) { const an = orig.apply(this, a); if (this.closest?.('.form-guide')) window.__fgAnims.push(an); return an; };
+    localStorage.setItem('marc.theme', theme);
+    const now = new Date().toISOString(), day = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Guide', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: id, sets: 3 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [{ id: 's1', splitId: 'sp1', splitName: 'Guide', day, startedAt: `${day}T17:00:00.000Z`, endedAt: `${day}T17:30:00.000Z`, durationSec: 1800,
+        exercises: [{ exerciseId: id, name: 'Guide exercise', sets: [{ kg: 8, reps: 12 }, { kg: 9, reps: 10 }] }],
+        logging: { mode: 'live', trainedAt: `${day}T17:00:00.000Z`, trainedEndAt: `${day}T17:30:00.000Z`, loggedAt: `${day}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } }],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  };
+  const open = async (id, width, theme) => {
+    const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2 });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${id} ${theme} ${width}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} ${id} ${theme} ${width} console: ${m.text()}`); });
+    await page.addInitScript(seed, [id, theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
+    await page.locator('.card.exercise').nth(0).locator('.btn-how-to').click();
+    const ok = await visible(page.locator('dialog[open] .form-guide .player'));
+    if (!ok) errors.push(`${tag} ${id} ${theme} ${width}: the guide did not open`);
+    return { ctx, page, ok };
+  };
+
+  /** Probe 1 + 2 data: every `.fg-j` joint's drawn rotation angle and every `[class*="fg-t-"]` tint's opacity,
+   * sampled at 1/120 s across the whole chained timeline, straight off the paused WAAPI animations (no play needed:
+   * mountAnimations pauses each on mount, waapi.ts:47). */
+  const sample = (page) => page.evaluate(() => {
+    const anims = window.__fgAnims;
+    const dur = Math.max(0, ...anims.map(a => a.effect.getTiming().duration));
+    const joints = [...document.querySelectorAll('dialog[open] .fg4-scene .fg-j')];
+    const tints = [...document.querySelectorAll('dialog[open] .fg4-scene [class*="fg-t-"]')];
+    const angle = (el) => { const m = new DOMMatrixReadOnly(getComputedStyle(el).transform); return Math.atan2(m.b, m.a) * 180 / Math.PI; };
+    const jKey = (el) => [...el.classList].find(c => c.startsWith('j-'));
+    const tKey = (el) => [...el.classList].find(c => c.startsWith('fg-t-'));
+    const dt = 1000 / 120;
+    const times = [];
+    const jointSeries = Object.fromEntries(joints.map(j => [jKey(j), []]));
+    const tintSeries = Object.fromEntries(tints.map(t => [tKey(t), []]));
+    for (let t = 0; t <= dur + 1e-6; t += dt) {
+      for (const a of anims) a.currentTime = Math.min(t, dur);
+      times.push(t);
+      for (const j of joints) jointSeries[jKey(j)].push(angle(j));
+      for (const el of tints) tintSeries[tKey(el)].push(parseFloat(getComputedStyle(el).opacity));
+    }
+    for (const a of anims) a.currentTime = 0;
+    return { dur, dt, times, jointSeries, tintSeries };
+  });
+
+  /** smooth-check (a)/(b)/(d) on the *drawn* angle, plus a rep-seam continuity check; not (c) (see block comment).
+   * LIM cites check/smooth.ts:8; REPS cites guideView.ts:16 ("GU-7a R1-3: three, then hold"). */
+  const LIM = { a: 0.01, b: 0.08, d: 4 }, REPS = 3;
+  const probe1 = (id, { dt, jointSeries }, dur) => {
+    const repLen = dur / REPS;
+    for (const [name, series] of Object.entries(jointSeries)) {
+      for (let i = 1; i < series.length; i++) {
+        const step = Math.abs(series[i] - series[i - 1]);
+        if (step > LIM.d) errors.push(`${tag} ${id} probe1 (d): ${name} moved ${step.toFixed(2)}° in one 1/120 s tick at ${(i * dt).toFixed(1)} ms (limit ${LIM.d}°)`);
+      }
+      for (let r = 0; r < REPS; r++) {
+        const i0 = Math.round((r * repLen) / dt), i1 = Math.min(series.length - 1, Math.round(((r + 1) * repLen) / dt));
+        const seg = series.slice(i0, i1 + 1);
+        const vel = []; for (let i = 1; i < seg.length; i++) vel.push((seg[i] - seg[i - 1]) / dt);
+        const peak = Math.max(0, ...vel.map(Math.abs));
+        if (peak < 1e-6) continue;
+        const e0 = Math.abs(vel[0] ?? 0), e1 = Math.abs(vel[vel.length - 1] ?? 0), edge = Math.max(e0, e1) / peak;
+        if (edge > LIM.a) errors.push(`${tag} ${id} probe1 (a): ${name} rep ${r + 1} edge speed ${(edge * 100).toFixed(1)}% of the phase's top speed (limit ${LIM.a * 100}%)`);
+        let jump = 0, jumpAt = i0;
+        for (let i = 1; i < vel.length; i++) { const j = Math.abs(vel[i] - vel[i - 1]) / peak; if (j > jump) { jump = j; jumpAt = i0 + i; } }
+        if (jump > LIM.b) errors.push(`${tag} ${id} probe1 (b): ${name} rep ${r + 1} velocity step ${(jump * 100).toFixed(1)}% of peak at ${(jumpAt * dt).toFixed(1)} ms (limit ${LIM.b * 100}%)`);
+      }
+      for (let r = 1; r < REPS; r++) {
+        const i = Math.round((r * repLen) / dt);
+        const jump = Math.abs(series[i] - series[i - 1]);
+        if (jump > 0.5) errors.push(`${tag} ${id} probe1 seam: ${name} jumps ${jump.toFixed(2)}° across the rep ${r}/${r + 1} seam at ${(i * dt).toFixed(1)} ms`);
+      }
+    }
+    console.log(`${tag} ${id} probe1: ${Object.keys(jointSeries).length} joints over ${dur} ms at 1/120 s, (a)/(b)/(d) and seam checks ran (not (c), see block comment)`);
+  };
+
+  /** Every named target muscle's tint must peak well clear of 0 (the seeded-hidden floor); tintOf (guideView.ts:19)
+   * is 0.6 * effort, and TORQUE.target (check/effort.ts:17) never drops the target curve below 0.12, so any real
+   * target comfortably clears 0.15. */
+  const probe2 = (id, targets, { tintSeries }) => {
+    if (!targets.length) { errors.push(`${tag} ${id} probe2: no muscles.target in the exercise file`); return; }
+    for (const t of targets) {
+      const keys = Object.keys(tintSeries).filter(k => k.startsWith(`fg-t-${t}_`));
+      if (!keys.length) { errors.push(`${tag} ${id} probe2: target ${t} has no tint overlay in the drawn figure`); continue; }
+      for (const k of keys) {
+        const peak = Math.max(0, ...tintSeries[k]);
+        console.log(`${tag} ${id} probe2: ${k} peak opacity ${peak.toFixed(3)}`);
+        if (peak < 0.15) errors.push(`${tag} ${id} probe2: ${k} peaks at opacity ${peak.toFixed(3)}, under the 0.15 visibility floor`);
+      }
+    }
+  };
+
+  for (const id of guideIds) {
+    const name = library.find((e) => e.id === id)?.name ?? id;
+    const meta = exerciseMeta(id);
+    let data = null;
+    for (const width of [360, 390]) {
+      for (const theme of ['silent-black', 'paper']) {
+        const { ctx, page, ok } = await open(id, width, theme);
+        if (!ok) { await ctx.close(); continue; }
+        const title = await page.locator('dialog[open] h2').textContent();
+        if (title !== `How to do it: ${name}`) errors.push(`${tag} ${id} ${theme} ${width}: sheet title "${title}"`);
+        await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-play.png` });
+        await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+        await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-compare.png` });
+        await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+        await page.locator('dialog[open] .seg button', { hasText: 'Pictures' }).click(); await page.waitForTimeout(200);
+        await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-pictures.png` });
+        if (meta.hasSetup) {
+          // V1-09 wires the machine setup view; once it exists this takes the right/wrong setup pair here.
+          errors.push(`${tag} ${id}: mistake.setup is set but no setup view exists yet to screenshot (V1-09)`);
+        }
+        if (width === 390 && theme === 'silent-black') data = await sample(page);
+        await ctx.close();
+      }
+    }
+    if (data) { probe1(id, data, data.dur); probe2(id, meta.targets, data); }
+    else errors.push(`${tag} ${id}: never reached the 390/silent-black run, probes 1-2 did not run`);
+  }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
