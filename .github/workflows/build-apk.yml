@@ -119,6 +119,18 @@ jobs:
         shell: bash
         run: bash scripts/prepare-android.sh
 
+      # CI-GRADLE-CACHE: reuse Gradle's downloaded dependencies between runs. Maven Central
+      # answered 403 and 429 (Too Many Requests) when many PR runs fetched them at once.
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches/modules-2
+            ~/.gradle/wrapper/dists
+          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
       - name: Verify bundled source and native plugins
         shell: bash
         run: |
