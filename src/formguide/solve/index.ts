@@ -25,12 +25,7 @@ export type SolveRig = {
 /** The points of one pose: the rig's shortcut where it has one, else from the frame, drawn once and only if needed. */
 export function pointsOf(rig: SolveRig, pose: Pose): (a: AttachmentId) => Pt {
   let f: Frame | null = null;
-  const seen = new Map<AttachmentId, Pt>();
-  return a => {
-    let q = seen.get(a);
-    if (!q) seen.set(a, (q = rig.reach?.(pose, a) ?? rig.point((f ??= rig.frame(pose)), a)));
-    return q;
-  };
+  return a => rig.reach?.(pose, a) ?? rig.point((f ??= rig.frame(pose)), a);
 }
 export type Pose = Record<ChannelId, number>;
 
@@ -169,16 +164,16 @@ function linsolve(J: number[][], r: number[]): number[] | null {
 }
 
 /** A solve: its channel values, its Jacobian (for the next stop) and the frame drawn at the solution. */
-/** A solve: its channel values, its Jacobian (for the next stop) and the points of the solved pose. */
-export type Seed = { x: number[]; J: number[][] | null; pts?: (a: AttachmentId) => Pt };
-let lastPts: ((a: AttachmentId) => Pt) | null = null;
+/** A solve: its channel values and its Jacobian (for the next stop). */
+export type Seed = { x: number[]; J: number[][] | null };
 const where = (u: number, label: string) => `u=${+u.toFixed(4)} (${label})`;
 
 /** The residuals of a system with its channels at x on the given pose (written into `pose`: pass a working copy). */
 function residuals(rig: SolveRig, sys: System, pose: Pose, x: number[], u: number): number[] {
-  sys.chans.forEach((c, i) => { pose[c] = x[i]!; });
-  const pt = (lastPts = pointsOf(rig, { ...pose }));
-  return sys.cons.flatMap(c => c.res(pt, u));
+  for (let i = 0; i < x.length; i++) pose[sys.chans[i]!] = x[i]!;
+  const pt = pointsOf(rig, pose), out: number[] = [];
+  for (const c of sys.cons) for (const v of c.res(pt, u)) out.push(v);
+  return out;
 }
 
 /**
@@ -188,7 +183,7 @@ function residuals(rig: SolveRig, sys: System, pose: Pose, x: number[], u: numbe
  */
 export function solveSystem(rig: SolveRig, sys: System, given: Pose, u: number, seed: Seed, label: string): Seed {
   const pose = { ...given };
-  let x = [...seed.x], J = seed.J ? seed.J.map(row => [...row]) : null, fresh = false, r = residuals(rig, sys, pose, x, u), n0 = nrm(r), pts = lastPts!;
+  let x = [...seed.x], J = seed.J ? seed.J.map(row => [...row]) : null, fresh = false, r = residuals(rig, sys, pose, x, u), n0 = nrm(r);
   const jac = (x: number[], r: number[]) => sys.chans.map((_, k) => { const y = [...x]; y[k]! += H; return residuals(rig, sys, pose, y, u).map((v, i) => (v - r[i]!) / H); });
   for (let it = 0; it < MAX_IT && n0 >= TOL; it++) {
     if (!J) { const T = jac(x, r); J = r.map((_, i) => T.map(col => col[i]!)); fresh = true; }
@@ -199,14 +194,19 @@ export function solveSystem(rig: SolveRig, sys: System, given: Pose, u: number, 
     let done: { xn: number[]; rn: number[]; n1: number; step: number[] } | null = null;
     for (let h = 0; h < 12 && !done; h++) {
       const xn = x.map((v, i) => v + dx![i]!), rn = residuals(rig, sys, pose, xn, u), n1 = nrm(rn);
-      if (n1 < n0 || n1 < TOL) { done = { xn, rn, n1, step: dx! }; pts = lastPts!; }
+      if (n1 < n0 || n1 < TOL) done = { xn, rn, n1, step: dx! };
       else if (!fresh) break;
       else dx = dx!.map(v => v / 2);
     }
     if (!done) { if (fresh) break; J = null; continue; }
     // Broyden: the step's change in residual corrects the Jacobian, so the next step needs no new one
     const { xn, rn, n1, step } = done, ss = step.reduce((t, v) => t + v * v, 0);
-    if (ss > 0) J = J.map((row, i) => { const e = rn[i]! - r[i]! - row.reduce((t, v, k) => t + v * step[k]!, 0); return row.map((v, k) => v + (e * step[k]!) / ss); });
+    if (ss > 0) for (let i = 0; i < J.length; i++) {
+      const row = J[i]!;
+      let e = rn[i]! - r[i]!;
+      for (let k = 0; k < row.length; k++) e -= row[k]! * step[k]!;
+      for (let k = 0; k < row.length; k++) row[k]! += (e * step[k]!) / ss;
+    }
     // a stale Jacobian that barely helped is rebuilt
     if (!fresh && n1 > 0.5 * n0) J = null;
     x = xn; r = rn; n0 = n1; fresh = false;
@@ -219,7 +219,7 @@ export function solveSystem(rig: SolveRig, sys: System, given: Pose, u: number, 
     const [lo, hi] = sys.ranges[i]!;
     if (!(x[i]! >= lo - 1e-9 && x[i]! <= hi + 1e-9)) throw new Error(`${sys.cons.find(k => k.chans.includes(c))!.what}: ${c} = ${x[i]!.toFixed(2)} leaves its range ${lo}..${hi} at ${where(u, label)} (the bend would flip)`);
   });
-  return { x, J, pts };
+  return { x, J };
 }
 const offset = (sys: System, i: number) => sys.cons.slice(0, i).reduce((s, c) => s + c.chans.length, 0);
 

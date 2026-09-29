@@ -31,27 +31,46 @@ export type Rig = {
   reach?: (p: Record<ChannelId, number>, a: AttachmentId) => Pt | null;
 };
 
-/** The front arm's own channels: nothing above the shoulder reads them, so the chest's frame does not change with them. */
+/** The front arm's own channels: nothing above the shoulder reads them, so the chest's frame does not change with them.
+ * The chest is drawn once per trunk pose with the sway at 0, and the sway turned onto it (held equal by solve.test.ts). */
 const ARM_CHANNELS = new Set<string>(['shoulder_abd', 'elbow_lead', 'wrist_pron', 'shrug_cm', 'scap_depress_cm'].flatMap(b => [`${b}_l`, `${b}_r`]));
-const TRUNK_CHANNELS = CHANNELS.filter(c => !ARM_CHANNELS.has(c));
+// breath and layer draw their own groups, outside the chest's parent chain (joints.ts PARENT)
+const TRUNK_CHANNELS = CHANNELS.filter(c => !ARM_CHANNELS.has(c) && c !== 'sway' && c !== 'breath' && c !== 'layer');
+/** frontFrame's sway turns the body about the floor point under the pelvis (pose.ts:61): the chest with the sway is the
+ * chest without it, turned about that point. */
+const SWAY_AT: Pt = [FRONT_RIG.pelvis.origin[0], FLOOR];
+const swayed = (a: number, M: Mat): Mat => { const c = Math.cos(a * D), s = Math.sin(a * D), [x, y] = SWAY_AT; return mmul([c, s, -s, c, x - c * x + s * y, y - s * x - c * y], M); };
 /**
  * V1-04 (D-FG7 (b)): the front hand without drawing the frame. The solver moves only arm channels while it holds a hand,
  * so the chest's figure matrix is taken from one drawn frame (kept while the trunk's channels stay the same) and the arm
  * is multiplied on in pose.ts's order, with frontFrame's shoulder, elbow and wrist ops (frontFrame, pose.ts:77-79). Held
  * equal to `point(frame(p))` to 1e-9 by solve.test.ts.
  */
-const WRIST = { l: localMat('wrist_l', { ops: [['r', 0]] }), r: localMat('wrist_r', { ops: [['r', 0]] }) };
+const D = Math.PI / 180;
+/** q turned by a° as pose.ts opMat's rotate turns it. */
+const turn = (a: number, q: Pt): Pt => { const c = Math.cos(a * D), s = Math.sin(a * D); return [c * q[0] - s * q[1], s * q[0] + c * q[1]]; };
+/** The arm joints turn about their own placement (origin [0, 0], figureFront FRONT_RIG), so each one's matrix is its
+ * placement times its ops; the wrist's op is a 0° turn, so the hand is the wrist placement's image of [0, 0]. */
+const HAND = { l: apply(FRONT_RIG.wrist_l.at, [0, 0]), r: apply(FRONT_RIG.wrist_r.at, [0, 0]) };
 function frontReach(id: PoseId) {
-  let key: (number | undefined)[] | null = null, chest: Mat | null = null;
+  let key: (number | undefined)[] | null = null, sway = NaN;
+  const still: Record<'l' | 'r', Mat | null> = { l: null, r: null }, toChest: Record<'l' | 'r', Mat | null> = { l: null, r: null };
   return (p: Record<ChannelId, number>, a: AttachmentId): Pt | null => {
     if (a !== 'hand_l' && a !== 'hand_r') return null;
-    const v = resolve(id, p as Pose);
     let same = !!key;
     for (let i = 0; same && i < TRUNK_CHANNELS.length; i++) same = p[TRUNK_CHANNELS[i]!] === key![i];
-    if (!same || !chest) { key = TRUNK_CHANNELS.map(c => p[c]); chest = worldMat('chest', frontFrame(id, p as Pose)); }
-    const s = a.slice(-1) as 'l' | 'r', abd = v(`shoulder_abd_${s}`), r = riseOf(abd, v(`shrug_cm_${s}`), v(`scap_depress_cm_${s}`));
-    const sh = localMat(`shoulder_${s}`, { ops: [['t', 0, -r], ['r', -abd]] }), el = localMat(`elbow_${s}`, { ops: [['r', v(`elbow_lead_${s}`)]] });
-    return apply(mmul(mmul(mmul(chest, sh), el), WRIST[s]), [0, 0]);
+    if (!same) {
+      key = TRUNK_CHANNELS.map(c => p[c]); sway = NaN;
+      const chest = worldMat('chest', frontFrame(id, { ...p, sway: 0 } as Pose));
+      still.l = mmul(chest, FRONT_RIG.shoulder_l.at); still.r = mmul(chest, FRONT_RIG.shoulder_r.at);
+    }
+    const w = p.sway ?? 0;
+    if (w !== sway) { sway = w; toChest.l = swayed(w, still.l!); toChest.r = swayed(w, still.r!); }
+    // frontFrame's arm ops (pose.ts:77-79), applied to the point from the wrist inward: elbow turn, elbow placement,
+    // shoulder turn, shoulder rise, then the shoulder placement in the chest's figure frame
+    const v = resolve(id, p as Pose), s = a.slice(-1) as 'l' | 'r', abd = v(`shoulder_abd_${s}`), r = riseOf(abd, v(`shrug_cm_${s}`), v(`scap_depress_cm_${s}`));
+    const q = turn(-abd, apply(FRONT_RIG[`elbow_${s}`].at, turn(v(`elbow_lead_${s}`), HAND[s])));
+    return apply(toChest[s]!, [q[0], q[1] - r]);
   };
 }
 

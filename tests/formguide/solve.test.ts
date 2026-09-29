@@ -239,15 +239,16 @@ describe('V1-04 reach: the front rig\'s shortcut to a hand equals the drawn fram
     // a seeded LCG, so the sweep is the same every run; every channel moves, so a trunk change the shortcut misses fails
     let x = 12345;
     const rnd = () => ((x = (Math.imul(x, 1103515245) + 12345) >>> 0) / 4294967296);
-    const RANGE: Record<string, [number, number]> = { shoulder_abd: [0, 180], elbow_lead: [-170, 170], wrist_pron: [-80, 80], shrug_cm: [0, 6], scap_depress_cm: [0, 3], torso_lean: [-20, 20], sway: [-2, 2], hip_flex: [0, 110], knee_flex: [0, 120], hip_abd: [-20, 40] };
+    const RANGE: Record<string, [number, number]> = { shoulder_abd: [0, 180], elbow_lead: [-170, 170], wrist_pron: [-80, 80], shrug_cm: [0, 6], scap_depress_cm: [0, 3], torso_lean: [-20, 20], sway: [-2, 2], breath: [0, 1], layer: [0, 1], hip_flex: [0, 110], knee_flex: [0, 120], hip_abd: [-20, 40] };
     let worst = 0, n = 0;
     for (const g of [FX, variant({ pose: 'standing' }), variant({ mirror: true })]) {
       const rig = rigFor(g, 'front') as Rig;
       for (let i = 0; i < 500; i++) {
         const p = {} as Record<string, number>;
-        for (const [b, [lo, hi]] of Object.entries(RANGE)) for (const s of ['_l', '_r', '']) if (s || ['torso_lean', 'sway'].includes(b)) p[b + s] = lo + (hi - lo) * rnd();
-        // every fifth pose keeps the trunk and moves the arms only, as a solve does, so the kept chest is exercised
-        const pose = (i % 5 && i ? { ...p, torso_lean: 3, sway: 0.4, hip_flex_l: 90, hip_flex_r: 90, knee_flex_l: 90, knee_flex_r: 90 } : p) as Pose;
+        for (const [b, [lo, hi]] of Object.entries(RANGE)) for (const s of ['_l', '_r', '']) if (s ? !['torso_lean', 'sway', 'breath', 'layer'].includes(b) : ['torso_lean', 'sway', 'breath', 'layer'].includes(b)) p[b + s] = lo + (hi - lo) * rnd();
+        // four poses in five keep the trunk and move the arms and the sway only, as a solve does, so the kept chest and the
+        // sway turned onto it are exercised
+        const pose = (i % 5 && i ? { ...p, torso_lean: 3, hip_flex_l: 90, hip_flex_r: 90, knee_flex_l: 90, knee_flex_r: 90 } : p) as Pose;
         const f = rig.frame(pose);
         for (const a of ['hand_l', 'hand_r'] as const) { const q = rig.reach!(pose, a)!, w = rig.point(f, a); worst = Math.max(worst, Math.hypot(q[0] - w[0], q[1] - w[1])); n++; }
       }

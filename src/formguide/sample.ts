@@ -266,7 +266,7 @@ function planOf(g: ExerciseGuide, figure: Figure, rep: number, rig: SolveRig | u
     let r: ReturnType<typeof solveStop> | null = null;
     if (!a && other) try { r = solveStop(plan, rig, u, other); } catch { r = null; }   // another rep's start, if it holds
     r ??= solveStop(plan, rig, u, a ? { rel: ext(a.rel, b?.rel, c?.rel), enf: ext(a.enf, b?.enf, c?.enf) } : null);
-    plan.table.push(r.s); plan.poses.push(r.pose); plan.travels.push(plan.travel((plan.enforced.cons.length && r.s.enf.pts) || pointsOf(rig, r.pose), u));   // the solve's own points of the final pose
+    plan.table.push(r.s); plan.poses.push(r.pose); plan.travels.push(plan.travel(pointsOf(rig, r.pose), u));
   }
   byKey.set(key, plan);
   return plan;
