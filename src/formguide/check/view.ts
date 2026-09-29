@@ -1,10 +1,11 @@
 // FG-3: what the checks need from a drawn view: a frame per pose, the figure-space position of an attachment point and
-// the figure markup. Only the front view exists (FG-1); the side and back views arrive with FG-6, and until then a
-// file drawn in them fails the checks that need a figure, naming the missing view.
+// the figure markup. The front view is FG-1's, the side view FG-6's (wired here by V1-06); the back view is a stub until
+// V1-22 draws it, and a file drawn in it fails the checks that need a figure, naming the reason.
 import type { AttachmentId, ExerciseGuide, PartId } from '../model';
 import type { ChannelId, JointId, Pose, View } from '../rig/joints';
 import { FLOOR, FRONT_RIG, LEG_X, figureFront } from '../rig/figureFront';
-import { apply, frontFrame, handAt, worldMat, type Frame, type PoseId } from '../rig/pose';
+import { apply, frontFrame, handAt, sideGuideRig, worldMat, type Frame, type PoseId } from '../rig/pose';
+import { backGuideRig } from '../rig/figureBack';
 import type { TokenReader } from '../rig/paint';
 import type { Pt } from '../rig/ik';
 import { viewFor } from '../rig/patterns';
@@ -35,7 +36,9 @@ export function viewOf(g: ExerciseGuide, pattern: string | undefined): View | nu
 const FRONT_POSES: readonly string[] = ['standing', 'seated'] satisfies PoseId[];
 /** The rig for a file, or the reason there is none yet. */
 export function rigFor(g: ExerciseGuide, view: View | null): Rig | string {
-  if (view !== 'front') return `no ${view ?? 'known'} view figure yet (FG-6 draws side and back)`;
+  if (view === 'side') return sideGuideRig(g);
+  if (view === 'back') return backGuideRig(g);
+  if (view !== 'front') return `no view: ${g.id} has no library pattern and the file sets no view`;
   if (!FRONT_POSES.includes(g.pose)) return `no ${g.pose} pose in the front view yet`;
   const id = g.pose as PoseId;
   const pivot = (f: Frame, j: JointId) => apply(worldMat(j, f), FRONT_RIG[j].origin);

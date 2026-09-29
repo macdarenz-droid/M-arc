@@ -7,6 +7,7 @@ import { JOINTS, type ChannelId, type Pose } from '../rig/joints';
 import { css, type Frame } from '../rig/pose';
 import type { TokenReader } from '../rig/paint';
 import { figureFront } from '../rig/figureFront';
+import { figureSide } from '../rig/figureSide';
 import { VIEWBOXES, type ExerciseGuide, type RepTempo } from '../model';
 import { repSeconds, sampleGuide, tempoOf, windowsFor, type Figure, type PhaseName, type Window } from '../sample';
 import { effortOf } from '../check/effort';
@@ -19,7 +20,7 @@ export const REPS = 3;
 export const tintOf = (e: number): number => 0.6 * Math.min(1, Math.max(0, e));
 export const bandOf = (e: number): number => Math.min(1, Math.max(0, (e - 0.5) / 0.5));
 
-/** The drawn rig for a guide, or why there is none (only the front view exists until FG-6). */
+/** The drawn rig for a guide, or why there is none (the back view until V1-22, a pose a view does not draw yet). */
 export function guideRig(g: ExerciseGuide, pattern: string | undefined): Rig {
   const r = rigFor(g, viewOf(g, pattern));
   if (typeof r === 'string') throw new Error(`form guide ${g.id}: ${r}`);
@@ -133,9 +134,11 @@ export function clockOf(g: ExerciseGuide, ms: number): { rep: 1 | 2 | 3; phase: 
 }
 
 export type Box = readonly [number, number, number, number];
-/** The scene's viewBox: the full or zoom camera, twice as wide in compare mode (the mistake figure to the right). */
+/** The scene's viewBox: the full or zoom camera, twice as wide in compare mode (the mistake figure to the right). A
+ * mirrored file's camera is reflected about x = 200 with its figure (the full cameras are centred there, so only a zoom
+ * moves). */
 export function cameraOf(g: ExerciseGuide, zoom: boolean, compare: boolean): { box: Box; dx: number } {
-  const b = VIEWBOXES[zoom ? g.camera.zoom : g.camera.full];
+  const v = VIEWBOXES[zoom ? g.camera.zoom : g.camera.full], b: Box = g.mirror ? [400 - v[0] - v[2], v[1], v[2], v[3]] : v;
   return { box: compare ? [b[0], b[1], b[2] * 2, b[3]] : b, dx: b[2] };
 }
 
@@ -144,6 +147,7 @@ export function cameraOf(g: ExerciseGuide, zoom: boolean, compare: boolean): { b
  * figure on the page; `load` is the number the dumbbell label shows (the last logged set, in the display unit).
  */
 export function markupOf(g: ExerciseGuide, rig: Rig, read: TokenReader, o: { id: string; mistake: boolean; load: number | null }): string {
+  if (rig.view === 'side') return figureSide(read, { id: o.id, mistake: o.mistake, mirror: !!g.mirror });
   if (rig.view !== 'front') throw new Error(`form guide ${g.id}: no ${rig.view} figure yet`);
   const db = g.equipment.kind === 'dumbbell' ? { kg: o.load ?? undefined } : undefined;
   return figureFront(read, { id: o.id, mistake: o.mistake, dumbbell: db });

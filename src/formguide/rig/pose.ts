@@ -4,7 +4,7 @@
 import { PARENT, type ChannelId, type JointId, type Pose, type SidedBase } from './joints';
 import { solve2, type Pt } from './ik';
 import { ELB, FIST, FLOOR, FRONT_RIG, HIP, MIRROR, P2, SHIN_H, THIGH_H, TRAP_X, type Mat } from './figureFront';
-import { S_BACK, S_BAR, S_ELB, S_FRONT, S_GRIP, S_HIP_FRONT, S_PELVIS, S_SACRUM, S_SH, S_SOLE, S_WR, figureSide, sideParent, sideRig, type Near, type SideRig } from './figureSide';
+import { S_ANKLE, S_BACK, S_BAR, S_ELB, S_FRONT, S_GRIP, S_HIP, S_HIP_FRONT, S_KNEE, S_PELVIS, S_SACRUM, S_SH, S_SOLE, S_WR, figureSide, sideParent, sideRig, type Near, type SideRig } from './figureSide';
 import type { AttachmentId, ExerciseGuide } from '../model';
 import { poseAt } from '../sample';
 import type { Rig } from '../check/view';
@@ -288,6 +288,48 @@ export function solveSideArm(id: SidePoseId, pose: Pose, s: 'l' | 'r', hand: Pt,
   }
   if (out) return out;
   throw new Error('solveSideArm: no natural elbow bend reaches the target');
+}
+
+/** The side leg's bones in the hip's rest frame: hip pivot → knee pivot, and knee pivot → sole at this ankle angle. */
+function sideLegBones(ankleFlex: number): { K: Pt; Q: Pt } {
+  const q = apply(about(S_ANKLE, ROT(-ankleFlex)), S_SOLE);
+  return { K: [S_KNEE[0] - S_HIP[0], S_KNEE[1] - S_HIP[1]], Q: [q[0] - S_KNEE[0], q[1] - S_KNEE[1]] };
+}
+/**
+ * V1-06: two-bone solve of a side leg to a sole target in figure space (a leg-press platform, a floor spot): the hip_flex
+ * and knee_flex that put the foot attachment point (the sole under the mid-foot) there, the knee bending the natural way
+ * (knee_flex 0..180, the shin back), the ankle and the rest of the pose unchanged. When the pose's support places the
+ * pelvis from this leg (the standing near leg, the seated near foot on the floor) it re-solves until the pelvis holds.
+ * Throws when the target is out of the leg's reach, or when the support moves the pelvis away from every solution.
+ */
+export function solveSideLeg(id: SidePoseId, pose: Pose, s: 'l' | 'r', foot: Pt, o: SideFrameOptions = {}): { hip_flex: number; knee_flex: number } {
+  const mirror = !!o.mirror, wrap = (a: number) => ((a + 540) % 360) - 180, ang = (p: Pt) => Math.atan2(p[1], p[0]) / D;
+  const ch = (b: SidedBase) => `${b}_${s}` as ChannelId, v = (b: SidedBase) => pose[ch(b)] ?? SIDE_POSES[id][ch(b)] ?? 0;
+  const { K, Q } = sideLegBones(v('ankle_flex')), a = Math.hypot(...K), b = Math.hypot(...Q);
+  let cur = { hip_flex: v('hip_flex'), knee_flex: v('knee_flex') };
+  for (let it = 0; it < 60; it++) {
+    const f = sideFrame(id, { ...pose, [ch('hip_flex')]: cur.hip_flex, [ch('knee_flex')]: cur.knee_flex }, o);
+    // the hip's frame before its own rotation: its world matrix with the flexion taken back out
+    const W = mmul(sideWorldMat(`hip_${s}`, f, mirror), about(S_HIP, ROT(cur.hip_flex)));
+    const G = apply(inv(W), foot), g: Pt = [G[0] - S_HIP[0], G[1] - S_HIP[1]], d = Math.hypot(...g);
+    if (d > a + b + 1e-9 || d < Math.abs(a - b) - 1e-9) throw new Error(`solveSideLeg: the ${s} sole target is ${d.toFixed(2)} units from the hip, outside the leg's reach ${Math.abs(a - b).toFixed(2)}..${(a + b).toFixed(2)}`);
+    // the foot sits ahead of the shin's line, so near a straight knee both bends can come out 0..180: keep the one
+    // nearer the pose's own knee (continuity along a driven path)
+    let out: { hip_flex: number; knee_flex: number } | null = null;
+    for (const bend of [1, -1] as const) {
+      const E = d >= a + b ? ([(g[0] * a) / d, (g[1] * a) / d] as Pt) : solve2([0, 0], g, a, b, bend);
+      const hf = wrap(ang(K) - ang(E)), kf = wrap(ang([g[0] - E[0], g[1] - E[1]]) - ang(Q) + hf);
+      if (kf >= -1e-9 && (!out || Math.abs(kf - cur.knee_flex) < Math.abs(out.knee_flex - cur.knee_flex))) out = { hip_flex: hf, knee_flex: Math.max(0, kf) };
+    }
+    if (!out) throw new Error('solveSideLeg: no natural knee bend reaches the target');
+    const moved = Math.abs(out.hip_flex - cur.hip_flex) + Math.abs(out.knee_flex - cur.knee_flex);
+    cur = out;
+    if (moved < 1e-11) break;
+  }
+  const f = sideFrame(id, { ...pose, [ch('hip_flex')]: cur.hip_flex, [ch('knee_flex')]: cur.knee_flex }, o), at = sidePoint(f, `foot_${s}`, mirror);
+  const miss = Math.hypot(at[0] - foot[0], at[1] - foot[1]);
+  if (!(miss <= 1e-7)) throw new Error(`solveSideLeg: the ${id} support moves the pelvis with the ${s} leg; the sole stays ${miss.toFixed(2)} units off the target`);
+  return cur;
 }
 
 /** The side-view rig the §5 checks read (check/view.ts `Rig`), or the reason there is none: a side file in a pose the
