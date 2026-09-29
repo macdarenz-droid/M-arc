@@ -5190,6 +5190,46 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// FG-6: the side figure (docs/FORM-GUIDE-PRODUCTION.md §3, tests/formguide/sideGallery.ts). A2: the bench press (lockout,
+// bar on the chest, facing left) and the back squat (top, bottom) stills, plus the rest poses, each framed by the
+// standing camera in Silent Black and Paper at phone width (390 px): no page error, no sideways scroll, the figure and
+// its parts draw a non-empty box that stays inside its camera (nothing clipped; measured on the drawn shapes, since a
+// group's box in Chrome is the union of its children's boxes turned with them, which overstates a rotated figure), and
+// all 17 joint groups carry the written transforms.
+{
+  const { build } = await import('esbuild');
+  const fg6Out = join(ROOT, 'node_modules/.cache/fg6-gallery.mjs');
+  await build({ entryPoints: [join(ROOT, 'tests/formguide/sideGallery.ts')], bundle: true, format: 'esm', platform: 'node', outfile: fg6Out, logLevel: 'warning' });
+  const { sideGalleryHtml, STILLS } = await import(`file://${fg6Out}?t=${Date.now()}`);
+  for (const theme of ['silent-black', 'paper']) {
+    const tag = `FG-6 side figure ${theme}`;
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: page error ${e.message}`));
+    await page.setContent(sideGalleryHtml(theme));
+    const r = await page.evaluate(() => ({
+      sw: document.documentElement.scrollWidth, iw: innerWidth,
+      cards: [...document.querySelectorAll('figure.card')].map(f => {
+        const svg = f.querySelector('svg'), c = svg.getBoundingClientRect(), bs = [...svg.querySelectorAll(':is(.fg-fig, .fg-part) :is(path, ellipse, circle, rect, polygon)')].map(e => e.getBoundingClientRect());
+        const b = bs.reduce((a, x) => ({ left: Math.min(a.left, x.left), top: Math.min(a.top, x.top), right: Math.max(a.right, x.right), bottom: Math.max(a.bottom, x.bottom) }), { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity });
+        const posed = [...svg.querySelectorAll('.fg-j')].filter(g => g.style.transform).length;
+        return { name: f.dataset.still, w: b.right - b.left, h: b.bottom - b.top, inside: b.left >= c.left - 1 && b.right <= c.right + 1 && b.top >= c.top - 1 && b.bottom <= c.bottom + 1, cardIn: c.right <= innerWidth, posed };
+      }),
+    }));
+    if (r.sw > r.iw) errors.push(`${tag}: scrollWidth ${r.sw} > innerWidth ${r.iw}`);
+    if (r.cards.length !== STILLS.length) errors.push(`${tag}: expected ${STILLS.length} stills, got ${r.cards.length}`);
+    for (const name of ['bench press, lockout', 'bench press, bar on the chest', 'back squat, top', 'back squat, bottom']) if (!r.cards.some(c => c.name === name)) errors.push(`${tag}: missing still "${name}"`);
+    for (const c of r.cards) {
+      if (!(c.w > 40 && c.h > 40)) errors.push(`${tag}: ${c.name} draws an empty box ${c.w}x${c.h}`);
+      if (!c.inside) errors.push(`${tag}: ${c.name} is clipped by its camera`);
+      if (!c.cardIn) errors.push(`${tag}: ${c.name} runs past the screen edge`);
+      if (c.posed !== 17) errors.push(`${tag}: ${c.name} has ${c.posed} of 17 joint groups posed`);
+    }
+    await page.screenshot({ path: `${OUT}/fg6-side-${theme}.png`, fullPage: true });
+    await ctx.close();
+  }
+}
+
 // BUG-22: the floating Escobar dock used to cover the end of long pages ("Log a past session" and
 // the targets line on an 8-exercise split) and anything under it mid-scroll. At 390x844 in Silent
 // Black and Paper: (A1) scrolled to the end of Train, Today, History and Body, with the rest banner
@@ -5444,8 +5484,10 @@ for (const { theme, inset } of bug22Runs) {
     if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
   };
   const options = async (page, i) => { await page.getByRole('button', { name: 'Options', exact: true }).nth(i).click(); await page.waitForTimeout(300); };
-  const howRow = (page) => page.locator('dialog[open]').getByRole('button', { name: 'How to do it', exact: true });
-  const openGuide = async (page) => { await options(page, 0); await howRow(page).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
+  // UI-2: the button lives on the open card's Why-this-target row, not the "..." sheet.
+  const openCard = async (page, i) => { await page.locator('.card.exercise .ex-head').nth(i).click(); await page.waitForTimeout(300); };
+  const howButton = (page, i) => page.locator('.card.exercise').nth(i).locator('.btn-how-to');
+  const openGuide = async (page) => { await howButton(page, 0).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
   const seek = (page, ms) => page.evaluate(ms => { for (const a of window.__fgAnims) { a.pause(); a.currentTime = ms; } return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }, ms);
 
   // A13: each muscle's real hit area (halo + core, round 3 D-R7: a point counts when it hits either) at t 0 and 0.25.
@@ -5503,15 +5545,18 @@ for (const { theme, inset } of bug22Runs) {
     // A11: never on Today.
     if (await page.locator('.form-guide').count()) errors.push(`${tag} ${theme} A11: a .form-guide element is on Today`);
     await startSession(page);
-    // A8: the row is there for the chest press (entry 0) and not for the bench press (entry 1).
-    await options(page, 1);
-    if (await howRow(page).count()) errors.push(`${tag} ${theme} A8: "How to do it" shows for Barbell Bench Press`);
-    await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(300);
+    // UI-2 A2: the button is on the open card, not for the bench press (entry 1, no guide) even once its card is open.
+    await openCard(page, 1);
+    if (await howButton(page, 1).count()) errors.push(`${tag} ${theme} A2: "How to do it" shows for Barbell Bench Press`);
+    // Single accordion: reopen entry 0 (closes entry 1).
+    await openCard(page, 0);
+    // UI-2 A3: the "..." sheet no longer lists it, for the guided exercise either.
     await options(page, 0);
     const labels = await page.locator('dialog[open] .stack-sm > button').allTextContents();
-    const at = labels.indexOf('How to do it');
-    if (at < 0 || labels[at + 1] !== 'Substitute exercise') errors.push(`${tag} ${theme} A8: expected "How to do it" right before "Substitute exercise", got ${JSON.stringify(labels)}`);
-    await howRow(page).click();
+    if (labels.includes('How to do it')) errors.push(`${tag} ${theme} A3: "How to do it" still in the "..." sheet: ${JSON.stringify(labels)}`);
+    await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(300);
+    // UI-2 A1: entry 0 (Machine Chest Press) is open by default; its button opens the guide directly.
+    await howButton(page, 0).click();
     if (!(await visible(page.locator('dialog[open] .form-guide .player')))) { errors.push(`${tag} ${theme}: the guide sheet did not open`); await ctx.close(); continue; }
     const title = await page.locator('dialog[open] h2').textContent();
     if (title !== 'How to do it: Machine Chest Press') errors.push(`${tag} ${theme}: sheet title "${title}"`);
@@ -5658,7 +5703,7 @@ for (const { theme, inset } of bug22Runs) {
     const { ctx, page } = await open('silent-black', { reducedMotion: 'reduce', serviceWorkers: 'block' });
     await page.route(/FormGuidePlayer-.*\.js$/, r => r.abort());
     await startSession(page);
-    await options(page, 0); await howRow(page).click();
+    await howButton(page, 0).click();
     if (!(await visible(page.locator('dialog[open] .hint', { hasText: 'Demo could not load.' })))) errors.push(`${tag} A9: no "Demo could not load." line after a failed chunk`);
     else {
       const f = await page.evaluate(() => ({ title: document.querySelector('dialog[open] h2')?.textContent, reload: [...document.querySelectorAll('dialog[open] button')].some(b => b.textContent === 'Reload') }));
@@ -5730,8 +5775,8 @@ for (const { theme, inset } of bug22Runs) {
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
     if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
     if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
-    await page.getByRole('button', { name: 'Options', exact: true }).nth(0).click(); await page.waitForTimeout(300);
-    await page.locator('dialog[open]').getByRole('button', { name: 'How to do it', exact: true }).click();
+    // UI-2: the button lives on the open card's Why-this-target row, not the "..." sheet.
+    await page.locator('.card.exercise').nth(0).locator('.btn-how-to').click();
     const ok = await visible(page.locator('dialog[open] .form-guide .player'));
     if (!ok) errors.push(`${tag} ${theme}: the lateral raise guide did not open`);
     return { ctx, page, ok };
@@ -5900,8 +5945,83 @@ for (const { theme, inset } of bug22Runs) {
   await ctx.close();
 }
 
+// BUG-23: abductors (label "Outer hips") are drawn on the back-view SVG (gluteus medius left/right
+// in src/svg/bodyMuscles.ts), so the Body tab's back map must show them, never the front one.
+{
+  const tag = 'BUG-23 abductors back view';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(250);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+  await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300);
+  const sides = await page.evaluate(() => {
+    const wraps = [...document.querySelectorAll('.map-wrap > div')];
+    const hasOuterHips = (wrap) => [...(wrap?.querySelectorAll('svg path title') ?? [])].some(t => t.textContent?.startsWith('Outer hips'));
+    return { front: hasOuterHips(wraps[0]), back: hasOuterHips(wraps[1]) };
+  });
+  if (sides.front || !sides.back) errors.push(`${tag}: Outer hips (abductors) should appear only on the back map, got ${JSON.stringify(sides)}`);
+  await ctx.close();
+}
+
+// UI-2: the "How to do it" button lives on the open card's Why-this-target row. A4 accent styling,
+// a 44px tap target, in Silent Black and Paper at 360px; A5 never on a collapsed card, and does not
+// push the set rows off screen at 360px.
+{
+  const tag = 'UI-2';
+  const seed = (t) => {
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, { exerciseId: 'lib_barbell_bench_press', sets: 2 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  };
+  for (const theme of ['silent-black', 'paper']) {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 2 });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+    await page.addInitScript(seed, theme);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
+    const cards = page.locator('.card.exercise');
+    // A1/A2: entry 0 (lateral raise, guided) is open by default and shows the button; entry 1 (bench press, no guide) does not, once opened.
+    const btn0 = cards.nth(0).locator('.btn-how-to');
+    // A1: entry 0 (lateral raise, guided) is open by default and shows the button.
+    if (!(await visible(btn0))) errors.push(`${tag} ${theme} A1: no button on the open guided card`);
+    // Single accordion: opening entry 1 (bench press, no guide) closes entry 0 — neither should show the
+    // button once entry 0's close transition (240ms + 60ms grace, motion.ts DUR.enter) has settled.
+    await cards.nth(1).locator('.ex-head').click(); await page.waitForTimeout(500);
+    if (await cards.nth(1).locator('.btn-how-to').count()) errors.push(`${tag} ${theme} A2: a button shows for an exercise with no guide`);
+    if (await cards.nth(0).locator('.btn-how-to').count()) errors.push(`${tag} ${theme} A5: the button stayed on the now-collapsed guided card`);
+    // Reopen entry 0 (closes entry 1) for the styling and layout checks below.
+    await cards.nth(0).locator('.ex-head').click(); await page.waitForTimeout(300);
+    // A4: accent styling and a 44px tap target.
+    const style = await btn0.evaluate(el => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return { h: r.height, bg: cs.backgroundColor, color: cs.color }; });
+    if (style.h < 44) errors.push(`${tag} ${theme} A4: button is ${style.h}px tall, under 44`);
+    if (style.bg === 'rgba(0, 0, 0, 0)' || style.bg === style.color) errors.push(`${tag} ${theme} A4: no visible accent fill (${JSON.stringify(style)})`);
+    // A5: no horizontal overflow, the set rows still on screen, at 360px.
+    const fit = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, row: document.querySelector('.card.exercise.active .set-grid')?.getBoundingClientRect() ?? null }));
+    if (fit.sw > 360) errors.push(`${tag} ${theme} A5: page scrolls horizontally at 360px (scrollWidth ${fit.sw})`);
+    if (!fit.row || fit.row.right > 360 + 0.5) errors.push(`${tag} ${theme} A5: the set rows are pushed off screen (${JSON.stringify(fit.row)})`);
+    if (theme === 'silent-black' || theme === 'paper') await page.screenshot({ path: `${OUT}/${theme}-ui2-how-to-button.png` });
+    await ctx.close();
+  }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and UI-2 "How to do it" button (open card only, accent styling, 44px target, no 360px overflow) verified.');
