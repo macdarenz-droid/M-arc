@@ -61,6 +61,19 @@ describe('LT3-A6: the next session per §4 (a)', () => {
     expect(restateOffPlan(hist, [6, 12], 2, [25, 27.5, 30, 32.5])).toMatchObject({ kg: 30, repWindow: [10, 11] });
     expect(restateOffPlan(hist, [6, 12], 2, [])).toBeNull();
   });
+  it('a restatement never raises the load on a hold day (review, fix round 1)', () => {
+    // Last session under the plan: bench 50 × 10 ideal against a stored 55 × 8 target.
+    const under = [day('2026-09-25', 50, 10, 'ideal', [55, 8])];
+    for (const ctx of [{ readiness: { loadAdvice: 'no_increase' } as never }, { recoveryPct: 10 }]) {
+      const s = suggestNext(under, EX, 'lean', today, 3, [], ctx);
+      expect(s.kg).toBe(50);
+      expect(s.reason).not.toMatch(/Back on the plan/);
+    }
+    // An ordinary day restates up to the plan; a restatement down (above the plan) holds on a hold day too.
+    expect(suggestNext(under, EX, 'lean', today).kg).toBe(55);
+    const above = suggestNext([day('2026-09-25', 32, 5, 'max', [27.5, 8])], EX, 'lean', today, 3, [], { readiness: { loadAdvice: 'no_increase' } as never });
+    expect(above.kg).toBe(27.5);
+  });
   it('a lighter week or a return week still wins over the restatement (earlier branches)', () => {
     const s = suggestNext([day('2026-09-25', 32, 5, 'max', [27.5, 8])], EX, 'lean', today, 3, [], { readiness: { loadAdvice: 'reduce', reason: 'Low' } as never });
     expect(s.cutSets).toBe(true);
@@ -114,6 +127,13 @@ describe('D-A4 (a): the target is stored at commit and kept when the session fin
     expect(active()!.entries[0]!.target).toBeUndefined();
     setEntryTarget(active()!.entries[0]!.id, { kg: 22.5, reps: 10 });
     expect(active()!.entries[0]!.target).toEqual({ kg: 22.5, reps: 10 });
+  });
+  it('repairState drops a malformed target on an active entry and keeps a valid one', () => {
+    const entry = (id: string, target: unknown) => ({ id, exerciseId: EX, name: 'Bench', sets: [], done: false, skipped: false, target });
+    const raw = { ...freshState(), active: { id: 'a1', splitId: 'b', startedAt: '2026-09-25T07:00:00.000Z', pausedMs: 0, entries: [entry('e1', { kg: 'x', reps: 8 }), entry('e2', { kg: 27.5, reps: 8 })] } };
+    const entries = repairState(raw as never).state.active!.entries;
+    expect('target' in entries[0]!).toBe(false);
+    expect(entries[1]!.target).toEqual({ kg: 27.5, reps: 8 });
   });
   it('the normalize rule drops a malformed target and keeps a valid one', () => {
     expect(withTarget({ target: { kg: 27.5, reps: 8 } })).toEqual({ target: { kg: 27.5, reps: 8 } });

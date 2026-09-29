@@ -437,7 +437,9 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
 
   // LT-3 (§4 a, D-A4): a session lifted off its planned load is restated on the plan's line, not taken as the base.
   const restated = restateOffPlan(hist, range, rirMid(goal), ctx?.menu?.rungsKg ?? (ctx?.equipment ? menuFromProfile(ctx.equipment).rungsKg : []));
-  if (restated) {
+  // Fix round 1: a restatement up to the plan is an increase, so a hold day (amber, or the muscle under 60 %) skips it.
+  const holdDay = ctx?.readiness?.loadAdvice === 'no_increase' || (ctx?.recoveryPct != null && ctx.recoveryPct < RECOVERY_HOLD_PCT);
+  if (restated && !(holdDay && restated.kg > last.workKg)) {
     const w = restated.repWindow;
     return { mode: 'hold', target: `${restated.kg} kg · ${fmtWindow(w)}`, kg: restated.kg, reps: w, repWindow: w, reason: restated.reason, confidence: conf, sets: setPlan(setCount, restated.kg, w[0], null, 'Back on plan') };
   }
