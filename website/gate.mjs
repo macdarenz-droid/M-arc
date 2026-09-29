@@ -145,6 +145,12 @@ async function run(name, path, [w, h], reduced) {
   const loaded = await page.evaluate(() => [...document.fonts].filter((f) => f.status === 'loaded').map((f) => f.family.replace(/^["']|["']$/g, '')));
   FONTS.forEach((f) => { if (!loaded.includes(f)) F(`font not loaded: ${f}`); });
 
+  // Every element in the JetBrains Mono face has ligatures off (W34): its contextual alternates would fuse -- and >- in the verify command.
+  (await page.evaluate(() => [...document.body.querySelectorAll('*')]
+    .filter((el) => { const cs = getComputedStyle(el); return /^["']?JetBrains Mono/.test(cs.fontFamily) && cs.fontVariantLigatures !== 'none'; })
+    .map((el) => `<${el.tagName.toLowerCase()}${el.className ? '.' + [...el.classList].join('.') : ''}> "${el.textContent.trim().slice(0, 40)}"`).slice(0, 6)))
+    .forEach((t) => F(`ligatures on in the mono face: ${t}`));
+
   // Text left invisible in the first viewport once load animations have run.
   (await hiddenText(page, true)).forEach((t) => F(`text at opacity 0 after load: ${t}`));
   if (await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)) F('horizontal scroll at rest');

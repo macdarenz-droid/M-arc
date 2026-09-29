@@ -76,6 +76,8 @@ h3 { font: 600 22px/1.25 var(--fd); letter-spacing: -.012em; text-wrap: balance;
 .cap { font: 400 13px/1.4 var(--fb); color: var(--text2); }
 .stat { font: 600 48px/1 var(--fb); letter-spacing: -.03em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
 .mono, code { font: 400 13px/1.6 var(--fm); letter-spacing: 0; }
+/* JetBrains Mono's contextual alternates fuse -- into one long dash and >- into an arrow tail; the fingerprint, the verify command and the file name must show the exact characters */
+.mono, code, pre, kbd { font-variant-ligatures: none; font-feature-settings: "calt" 0, "liga" 0; }
 .title { font: 600 17px/1.4 var(--fb); letter-spacing: -.01em; color: var(--text); }
 .label { font: 600 12px/1.4 var(--fb); letter-spacing: .08em; text-transform: uppercase; color: var(--text2); }
 .link { color: var(--text2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border-strong); padding: var(--sp-1) 0; display: inline-block; }

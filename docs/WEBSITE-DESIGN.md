@@ -224,7 +224,7 @@ Body defaults: `font: 400 17px/1.5 var(--fb); letter-spacing: -.009em; -webkit-f
 | rest-time | Instrument Sans 600 | 40/1, -.02em, tabular | same | The rest banner's 1:30 |
 | ring-label | Inter 500 | 14/1.3, tabular | same | "Triceps 45%", "90% ready for hard work" |
 | button | Inter 500 | 15/1, -.005em | same | Buttons and nav links; small button 14/1 |
-| mono | JetBrains Mono 400 | 13/1.6, 0 | same | Fingerprint, commands, version lines, the footer's last line |
+| mono | JetBrains Mono 400 | 13/1.6, 0 | same | Fingerprint, commands, version lines, the footer's last line. Every element in this face carries `font-variant-ligatures: none; font-feature-settings: "calt" 0, "liga" 0`: the face's contextual alternates fuse `--` into one long dash and `>-` into an arrow tail, which misread the verify command and the file name (W34) |
 | mono-button | JetBrains Mono 500 | 13/1, 0 | same | The Copy button label |
 | wordmark | Inter 700 | 18/1, -.04em | same | The M/ARC wordmark in the nav (28px mark); 16/1 in the footer and themes row (24px mark). Matches `branding/midnight/lockup.svg` (Inter 700, letter-spacing -1.5 at 38px) |
 
@@ -289,21 +289,21 @@ Screen layers: three `img.layer` at `position: absolute; inset: 0; object-fit: c
 
 | Property | Value |
 |---|---|
-| Grid | `.pg { grid-template-columns: 6fr 6fr; column-gap: 24px }`; hero copy row 1 col 1 (`min-height: max(64svh, <the pin's 765px box>)`, content centred, padding 48px 0, max-width 560px, so the copy and the phone share a vertical middle at 1440x900); `.col-pin` col 2 rows 1 to 3; `.story-bg` and `.story` row 2 col 1 |
+| Grid | `.pg { grid-template-columns: 6fr 6fr; column-gap: 24px }`; hero copy row 1 col 1 (`min-height: max(64svh, <the pin's 765px box>)`, content centred, padding 48px 0, max-width 560px, so the copy and the phone share a vertical middle at 1440x900); the stat strip (6.6) row 2 col 1 with `margin-top: calc(var(--cut) + 48px)`; `.col-pin` col 2 rows 1 to 4; `.story-bg` rows 2 to 4 and `.story` row 3, col 1 |
 | Pin | `.pin { position: sticky; top: max(calc(50vh - 382px), 8px); contain: layout; padding: 48px 64px }`. 382px is half the pin's box: a 320px phone is (320 - 20) × 2.1641 + 20 = 669px tall, plus 96px padding is 765px, half of which is 382px (the render's 394px was 12px off; section 15), so the phone centres in tall viewports and sits 8px under the top edge in short ones |
 | Phone | 320px wide |
 | Light | `.light { position: absolute; inset: -20%; filter: blur(60px); will-change: filter }` with two radial gradients: `50% 40% at 32% 30%` in `--light-a` and `45% 36% at 72% 66%` in `--light-b`, each fading to transparent at 70% |
 | Step band | The middle tenth of the viewport: IntersectionObserver `rootMargin: '-45% 0px -45% 0px'` on the hero copy and the three steps |
-| Steps | `min-height: 100vh`, content centred, `padding: 32px 0`, max-width 460px; the first step `min-height: 0; padding-top: 8px` so the strip and h2 do not push it a full screen down |
+| Steps | `min-height: 100vh`, content centred, `padding: 32px 0`, max-width 460px; the first step `min-height: 0; padding-top: 40px` so the strip and h2 do not push it a full screen down, while the h2 keeps 60px of air before the Step 1 eyebrow |
 | Sticky range end | `.story { padding-bottom: max(calc(50vh - 40px), 64px) }`, so the phone leaves the viewport with the last step instead of stopping while the Train band arrives |
-| Story band | `.story-bg` spans both columns on row 2, bleeds to the viewport edges (`margin-inline: calc(50% - 50vw)`), background `--s1`, `clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%)`: the first of the two diagonal cuts. `.story` gets `padding-top: calc(var(--cut) + 48px)` |
+| Story band | `.story-bg` spans both columns on row 2, bleeds to the viewport edges (`margin-inline: calc(50% - 50vw)`), background `--s1`, `clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%)`: the first of the two diagonal cuts. The strip sits on the band under the cut (its own margin-top); `.story` has no top padding |
 | Dimming | `.step:not([aria-current]) { opacity: .8 }` with a `--dur-base` transition; the active step's eyebrow turns `--accent-text`. Not .6: that put the dimmed body copy at 3.39:1 on `--s1`; .8 keeps it at 4.87:1 (9.1) |
 
 **Phones and tablets (900px and under).** One column. The phone sits under the hero copy at 240px, then pins under the nav and shrinks so the steps can scroll beneath it.
 
 | Property | Value |
 |---|---|
-| Grid | `.pg { grid-template-columns: 1fr; grid-template-rows: auto 0 auto }`; hero copy row 1 (`min-height: 0; padding: 32px 0 40px`); `.col-pin` rows 2 to 4 on the 0px track, `position: relative; padding-top: calc(var(--cut) + 16px); z-index: 2`; story on row 3 |
+| Grid | `.pg { grid-template-columns: 1fr; grid-template-rows: auto auto 0 auto }`; hero copy row 1 (`min-height: 0; padding: 32px 0 40px`); the stat strip row 2 on `--bg` (`margin: 0 0 40px`), before the pin, so it passes under the nav and never under the phone's fade (a round-3 finding: the labels outlived their figures); `.col-pin` rows 3 to 5 on the 0px track, `position: relative; padding-top: calc(var(--cut) + 16px); z-index: 2`; story on row 4. Under `html:not(.m)` the rows are `auto auto auto auto` and `.col-pin` is row 3 |
 | Pin | `top: calc(var(--navh) + env(safe-area-inset-top, 0px) + 8px)`; `padding: 0`; width `--pw0` (240px) at rest |
 | Shrink | Target height `--ph: 44svh` (44vh where svh is unsupported). `--phh0: calc((var(--pw0) - 20px) * 2.1641 + 20px)` (496px, the frame's height at rest; it sizes `.pin-s` and the story's top padding); `--pw: clamp(168px, calc((var(--ph) - 20px) * .4621), var(--pw0))`; `--phh: calc((var(--pw) - 20px) * 2.1641 + 20px)` (the frame's 10px bezel on each side, and 1688/780 = 2.1641). Both registered as `<length>` with `@property` so the script can read the resolved pixel value |
 | Shrink driver | Where `animation-timeline: scroll()` is supported: `.pin { animation: shrink 1s linear both; animation-timeline: --shrink; animation-range: exit 0% exit 100% }` with `@keyframes shrink { to { width: var(--pw) } }`, timed by `.pin-s`, an invisible block of height `calc(var(--phh0) - var(--phh))` at the pin's rest position with `view-timeline: --shrink block; view-timeline-inset: <sticky top> 0` and `timeline-scope: --shrink` on `.col-pin`. Otherwise the script toggles `.stuck` on `.pinblock` once `.pin-s` passes the sticky line and `.pin` transitions `width` over `--dur-light` |
@@ -371,7 +371,7 @@ Every interactive control has a 44px minimum target, a visible focus ring (`outl
 
 ### 6.1 Nav
 
-Anatomy in 2.2. Sizes: 64px tall (57 at 640 and under); lockup mark 28px, wordmark 18px; nav links `min-height: 44px; padding: 0 12px; border-radius: --r1`; current link `background: --accent-soft; color: --text`. States: transparent, solid (`.on`), menu open (`details[open]`, list `position: absolute; left: 0; right: 0; top: 100%; padding: 8px var(--gutter) 16px; background: --bg; border-bottom: 1px solid --border`). Accessibility: `<header>` landmark, `<nav aria-label="Sections">`, the `details` summary is a native disclosure (keyboard works without script). Copy: link labels are the app's tab names plus Privacy; the buttons read "Read the source" and "Install" ("Download the APK" to `#apk` on /install/).
+Anatomy in 2.2. Layout at 901px and up: `.nav-in` is a grid of three tracks (`1fr auto 1fr`: lockup, links, buttons at `justify-self: end`), so the centre group sits at the same x on every page whatever the primary button reads; at 900 and under it is a flex row with `space-between`. Sizes: 64px tall (57 at 640 and under); lockup mark 28px, wordmark 18px; nav links `min-height: 44px; padding: 0 12px; border-radius: --r1`; current link `background: --accent-soft; color: --text`. States: transparent, solid (`.on`), menu open (`details[open]`, list `position: absolute; left: 0; right: 0; top: 100%; padding: 8px var(--gutter) 16px; background: --bg; border-bottom: 1px solid --border`). Accessibility: `<header>` landmark, `<nav aria-label="Sections">`, the `details` summary is a native disclosure (keyboard works without script). Copy: link labels are the app's tab names plus Privacy; the buttons read "Read the source" and "Install" ("Download the APK" to `#apk` on /install/).
 
 ### 6.2 Buttons
 
@@ -403,7 +403,7 @@ Card content order: icon (24px, `--accent-text`, 16px below), `h3.h3-card`, para
 
 ### 6.6 Stat
 
-`b.stat` (figure) over `span` (label, 13 or 14px `--text2`). Figures are real and static: no count-up anywhere. The strip is a `ul` with `aria-label="Four figures about the app"`, four `li` in a row (`repeat(4, max-content)` spaced between, 24px vertical padding, 1px `--border` top and bottom), a 2x2 grid at 640 and under.
+`b.stat` (figure) over `span` (label, 13 or 14px `--text2`). Figures are real and static: no count-up anywhere. The strip is a `ul` with `aria-label="Four figures about the app"`, four `li` in a row (`repeat(4, max-content)` spaced between, 24px vertical padding, 1px `--border` top and bottom), a 2x2 grid at 640 and under. It is a direct child of `.pg`, not of `.story`, so the grid can place it before the pin on phones (5.2).
 
 ### 6.7 Rows with icons
 
@@ -758,7 +758,7 @@ Section 5: `prefers-reduced-motion: reduce` (or no JavaScript) yields the static
 | `/` | M/ARC, a training log that knows how recovered you are | A workout log for Android. Every set you rate feeds a recovery clock for 24 muscles, a readiness score and your next targets. No account. Your data stays on the phone. |
 | `/install/` | Install M/ARC | Download the signed Android APK, check its signing key with apksigner, or add M/ARC through Obtainium. Version __VERSION__. |
 | `/privacy/` | How M/ARC handles your data | What M/ARC stores on your phone, what leaves it only when you turn on Escobar, the two sharing switches, backups, CSV export and the rescue file. |
-| `/404.html` | Page not found | (none; `noindex`) |
+| `/404.html` | Page not found | There is no page at this address. (`noindex`; the description is for the tab and history only) |
 
 Shared head (partial): charset, viewport `width=device-width, initial-scale=1, viewport-fit=cover`, the title and description, `<link rel="canonical">` (2.5), `theme-color`, the three font preloads, `tokens.css` and `site.css` (one stylesheet each, both under 20 KB before compression), the module script with `defer`, and:
 
@@ -840,6 +840,7 @@ The gate (`npm run site:gate`) checks each item on `website/dist` at 1440x900 an
 | W31 | The Escobar panel's image offset and the panel's aspect ratio equal 6.4, so the tab's top card is never inside the panel's box | Gate: computed style check |
 | W32 | `filter: blur()` is declared only on `.light`, `backdrop-filter` only on `.nav`, and `will-change` only on `.light` | Gate: stylesheet scan |
 | W33 | Every colour in `tokens.css` equals the matching `THEMES.midnight` value in `src/theme/themes.ts` (the gate parses that file as text) | Gate |
+| W34 | Every element whose computed font family is JetBrains Mono has `font-variant-ligatures: none`, on all four pages | Gate: computed style scan |
 
 ## 14. Risks and mitigations
 
