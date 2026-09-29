@@ -6207,7 +6207,8 @@ for (const theme of ['silent-black', 'paper']) {
   const tag = 'FG-V1';
   const exists = (p) => { try { readFileSync(p); return true; } catch { return false; } };
   const registrySrc = readFileSync(join(ROOT, 'src/formguide/registry.ts'), 'utf8');
-  const guideIds = [...registrySrc.matchAll(/'([^']+)'/g)].map(m => m[1]).filter(id => exists(join(ROOT, `src/formguide/exercises/${id}.ts`)));
+  const idsMatch = registrySrc.match(/GUIDE_IDS[\s\S]*?Set\(\[([\s\S]*?)\]\)/);
+  const guideIds = (idsMatch ? [...idsMatch[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : []).filter(id => exists(join(ROOT, `src/formguide/exercises/${id}.ts`)));
   const library = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8'));
   /** target-muscle ids and whether the file names a machine setup, read from the file's own data literal (no import:
    * this script is plain Node, the exercise files are TS). Safe because exercise files hold data only (model.ts:34). */
