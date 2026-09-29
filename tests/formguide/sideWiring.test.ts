@@ -18,6 +18,7 @@ import { guideOf, inputFor } from '@/formguide/check/node';
 import { heldOf, rigFor, viewOf } from '@/formguide/check/view';
 import { VIEWBOXES, type ExerciseGuide, type ViewBoxId } from '@/formguide/model';
 import { cameraOf, chainedGroups, guideRig, markupOf, momentFrame, momentsOf } from '@/formguide/player/guideView';
+import { snapshotSvg } from '@/formguide/snapshot';
 import { lib_dumbbell_lateral_raise as LR } from '@/formguide/exercises/lib_dumbbell_lateral_raise';
 import library from '@/data/exercises.json';
 import { STILLS } from './sideGallery';
@@ -185,46 +186,81 @@ describe('A5 the lateral raise is byte-identical', () => {
   });
 });
 
+/** Mounts ExercisePlayer in node: preact's hooks run inline (layout effects once), the DOM is a stub. `reduced` on sends
+ * the player down the Pictures path (controller.ts initial: mode 'pics'), whose tiles are snapshotSvg data URIs. */
+async function mountPlayer(g: ExerciseGuide, reduced: boolean) {
+  const read = themeReader('silent-black'), animated: string[] = [];
+  const el = {
+    innerHTML: '', firstChild: null, cancel: () => {},
+    querySelectorAll: (sel: string) => [{ animate: () => { animated.push(sel); return { pause: () => {} }; } }],
+  };
+  vi.resetModules();
+  vi.doMock('preact/hooks', () => ({
+    useMemo: (f: () => unknown) => f(), useEffect: () => {}, useLayoutEffect: (f: () => void) => { f(); },
+    useState: (i: unknown) => [typeof i === 'function' ? (i as () => unknown)() : i, () => {}],
+    useRef: (i: unknown) => ({ current: i ?? el }),
+  }));
+  vi.doMock('@/ui/motion', () => ({ reduced: () => reduced, onReducedChange: () => () => {} }));
+  vi.stubGlobal('document', { documentElement: { getAttribute: () => 'silent-black' } });
+  vi.stubGlobal('getComputedStyle', () => ({ getPropertyValue: (p: string) => read(p.slice(2) as Parameters<typeof read>[0]) }));
+  try {
+    const { ExercisePlayer } = await import('@/formguide/player/ExercisePlayer');
+    const { guideRig: rigOf } = await import('@/formguide/player/guideView');
+    const vnode = ExercisePlayer({ guide: g, rig: rigOf(g, patternOf(g.id)), name: 'Bench press', load: null });
+    const texts: string[] = [], imgs: string[] = [];
+    const walk = (n: unknown): void => {
+      if (n == null || typeof n === 'boolean') return;
+      if (typeof n === 'string' || typeof n === 'number') { texts.push(String(n)); return; }
+      if (Array.isArray(n)) { n.forEach(walk); return; }
+      const v = n as { type?: unknown; props?: { children?: unknown; class?: string; src?: string } };
+      if (v.type === 'img' && v.props?.src) imgs.push(v.props.src);
+      if (v.props?.class === 'cam-label') { const t: string[] = []; const w = (c: unknown): void => { if (typeof c === 'string' || typeof c === 'number') t.push(String(c)); else if (Array.isArray(c)) c.forEach(w); }; w(v.props.children); texts.push(`cam-label:${t.join('')}`); return; }
+      walk(v.props?.children);
+    };
+    walk(vnode);
+    return { texts, imgs, el, animated };
+  } finally {
+    vi.unstubAllGlobals();
+    vi.doUnmock('preact/hooks');
+    vi.doUnmock('@/ui/motion');
+  }
+}
+
 describe('A2 a side file mounts in the player and shows "Side view"', () => {
   it('ExercisePlayer renders the bench press fixture: side markup mounted, its groups animated, the label "Side view"', async () => {
     const { g } = await fixture('lib_barbell_bench_press');
-    const read = themeReader('silent-black'), animated: string[] = [];
-    const el = {
-      innerHTML: '', firstChild: null, cancel: () => {},
-      querySelectorAll: (sel: string) => [{ animate: () => { animated.push(sel); return { pause: () => {} }; } }],
-    };
-    vi.resetModules();
-    vi.doMock('preact/hooks', () => ({
-      useMemo: (f: () => unknown) => f(), useEffect: () => {}, useLayoutEffect: (f: () => void) => { f(); },
-      useState: (i: unknown) => [typeof i === 'function' ? (i as () => unknown)() : i, () => {}],
-      useRef: (i: unknown) => ({ current: i ?? el }),
-    }));
-    vi.doMock('@/ui/motion', () => ({ reduced: () => false, onReducedChange: () => () => {} }));
-    vi.stubGlobal('document', { documentElement: { getAttribute: () => 'silent-black' } });
-    vi.stubGlobal('getComputedStyle', () => ({ getPropertyValue: (p: string) => read(p.slice(2) as Parameters<typeof read>[0]) }));
-    try {
-      const { ExercisePlayer } = await import('@/formguide/player/ExercisePlayer');
-      const { guideRig: rigOf } = await import('@/formguide/player/guideView');
-      const vnode = ExercisePlayer({ guide: g, rig: rigOf(g, patternOf(g.id)), name: 'Bench press', load: null });
-      const texts = (n: unknown): string[] => {
-        if (n == null || typeof n === 'boolean') return [];
-        if (typeof n === 'string' || typeof n === 'number') return [String(n)];
-        if (Array.isArray(n)) return n.flatMap(texts);
-        const v = n as { props?: { children?: unknown; class?: string } };
-        return v.props?.class === 'cam-label' ? [`cam-label:${texts(v.props.children).join('')}`] : texts(v.props?.children);
-      };
-      expect(texts(vnode)).toContain('cam-label:Side view');
-      expect(el.innerHTML).toContain('fg-side');
-      expect(animated).toContain('.j-shoulder_r');
-      expect(animated).toContain('.j-pelvis');
-    } finally {
-      vi.unstubAllGlobals();
-      vi.doUnmock('preact/hooks');
-      vi.doUnmock('@/ui/motion');
+    const { texts, el, animated } = await mountPlayer(g, false);
+    expect(texts).toContain('cam-label:Side view');
+    expect(el.innerHTML).toContain('fg-side');
+    expect(animated).toContain('.j-shoulder_r');
+    expect(animated).toContain('.j-pelvis');
+  });
+  it('B1: under reduced motion (the Pictures path) it renders the four side moments as images, every colour resolved', async () => {
+    const { g } = await fixture('lib_barbell_bench_press');
+    const { imgs, el } = await mountPlayer(g, true);
+    expect(el.innerHTML).toContain('fg-side');
+    expect(imgs).toHaveLength(4);
+    for (const src of imgs) {
+      const svg = decodeURIComponent(src.replace(/^data:image\/svg\+xml;charset=utf-8,/, ''));
+      expect(svg).toContain('fg-side');
+      expect(svg).not.toContain('var(');
     }
   });
 });
 
+describe('B1 a side moment snapshots with every colour resolved', () => {
+  it.each(FIX)('%s: both facings, both figures, Silent Black and Paper', async id => {
+    const { g: g0 } = await fixture(id);
+    for (const mirror of [false, true]) for (const theme of ['silent-black', 'paper'] as const) for (const mistake of [false, true]) {
+      const g = { ...g0, mirror }, rig = guideRig(g, patternOf(id)), read = themeReader(theme), fig = mistake ? 'mistake' : 'correct';
+      const m = markupOf(g, rig, read, { id: 'snap', mistake, load: null });
+      for (const u of momentsOf(g, fig)) {
+        const svg = snapshotSvg(m, momentFrame(g, rig, fig, u, m), read, cameraOf(g, false, false).box);
+        expect(svg, `${id} mirror=${mirror} ${theme} ${fig} u=${u}`).not.toContain('var(');
+      }
+    }
+  });
+});
 describe('A6 the side hand draws the dumbbell and the end-on barbell', () => {
   const HELD: Held[] = [{ kind: 'dumbbell' }, { kind: 'barbell', kg: 0 }, { kind: 'barbell', kg: 60 }, { kind: 'barbell', kg: 500 }];
   it('each part is at most 25 shapes (paths included) in every theme, both figures, both facings', () => {
