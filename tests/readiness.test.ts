@@ -51,6 +51,8 @@ describe('readiness', () => {
     expect(r).not.toBeNull();
     // ADAPT-2: a 2 and 2 is half a point under the re-centred 3 (0.75) on each part: 50, below normal.
     expect(r!.score).toBe(50);
+    expect(r!.band).toBe('amber');
+    expect(r!.loadAdvice).toBe('no_increase');
   });
   it('is red with reduce advice when recovery and resting HR are both poor', () => {
     const healthDays: DailyHealth[] = Array.from({ length: 28 }, (_, i) => ({ day: day(i), restingHr: i < 7 ? 70 : 55, source: 'health_connect' as const, syncedAt: today }));
