@@ -1,0 +1,30 @@
+{
+  "id": "lib_incline_machine_press",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.3, "lower": 1.5, "rest": 0.5 },
+  "ranges": {
+    "elbow_flex": { "min": 15, "max": 90, "source": "Gravitus Incline Chest Press: \"Press to near full extension without completely locking out the elbows, which maintains tension on the chest\" (illustrative 15 degrees); the bent start at the chest is illustrative at 90 degrees, matching a loaded machine start" },
+    "shrug_cm": { "min": 0, "max": 0.5, "source": "Gravitus Incline Chest Press: \"Allowing the shoulders to rise toward the ears, particularly during the pressing phase, which can reduce chest activation\"" },
+    "torso_lean": { "min": -3, "max": 3, "source": "Gravitus Incline Chest Press: \"Excessively arching the lower back during the pressing movement, which can reduce chest engagement and potentially create lower back stress\"" }
+  },
+  "muscles": {
+    "target": ["upper_chest"],
+    "helps": ["front_delts", "triceps", "chest"],
+    "keepQuiet": ["upper_traps"],
+    "peakAt": 0.28,
+    "peakSource": "Gravitus Incline Chest Press: pressing to near full extension without locking out \"maintains tension on the chest,\" so effort is highest approaching that near-top position"
+  },
+  "mistake": {
+    "name": "Shrug and arch",
+    "tells": [
+      { "text": "The shoulders rise toward the ears through the press.", "joint": "shrug_cm" },
+      { "text": "The lower back arches off the pad to help finish the press.", "joint": "torso_lean" }
+    ],
+    "source": "Gravitus Incline Chest Press: \"Allowing the shoulders to rise toward the ears... can reduce chest activation\"; \"Excessively arching the lower back during the pressing movement... can reduce chest engagement and potentially create lower back stress\""
+  },
+  "sources": [
+    "https://gravitus.com/guides/exercises/incline-chest-press/",
+    "Contact fact (backrest angle, unverified_on_machine): Gravitus gives \"typically 30-45 degrees\" as the setup range, a real-world angle, not this app's `bench` setting unit, so it is not written into `machine.settings` here; the owner's gym checklist confirms the actual rig value"
+  ]
+}
