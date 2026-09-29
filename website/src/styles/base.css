@@ -53,11 +53,17 @@ p { text-wrap: pretty; }
 
 /* layout primitives (3.3) */
 .wrap { max-width: calc(1120px + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
-.g { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--sp-6); align-items: center; }
-.c5 { grid-column: span 5; }
-.c6 { grid-column: span 6; }
-.c7 { grid-column: span 7; }
+/* section grid: heading, media and copy are three items; on desktop the heading and the copy stack in one column (rows 1 and 2, no
+   row gap) and the media spans both rows, so phones can show the heading, then the figure, then the copy in DOM order (7.1) */
+.g { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0 var(--sp-6); align-items: center; }
+.g > .head { grid-row: 1; align-self: end; }
+.g > .copy { grid-row: 2; align-self: start; }
+.g > .media { grid-row: 1 / 3; }
+.c5 { grid-column: 1 / span 5; }
 .c5r { grid-column: 8 / span 5; }
+.c6 { grid-column: 1 / span 6; }
+.c7 { grid-column: 6 / span 7; }
+.c7l { grid-column: 1 / span 7; }
 .band { padding-block: var(--pad); }
 .lift { background: var(--s1); }
 .cut { position: relative; isolation: isolate; overflow: clip; background: transparent; padding-top: calc(var(--cut) + var(--sp-9)); }

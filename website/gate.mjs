@@ -164,12 +164,31 @@ async function run(name, path, [w, h], reduced) {
 
   // Scroll to the bottom the way a wheel does, 100px a notch, recording the story's data-step on the way. Half-viewport jumps
   // could land two steps in the band at once (the first step is under 200px tall), and then only the later one is recorded.
+  // On desktop a step lights when its heading is inside the middle tenth of the viewport (5.2), not when its 100vh box is: at the
+  // notch where data-step changes, the new step's h3 top must sit between 350 and 550 of the 900px viewport (round 4).
   const steps = new Set();
+  let prevStep = null;
   const height = () => page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y < await height(); y += 100) {
     await page.evaluate((y) => scrollTo(0, y), y);
     await page.waitForTimeout(60);
-    steps.add(await page.evaluate(() => document.getElementById('pinblock')?.dataset.step ?? null));
+    const s = await page.evaluate(() => document.getElementById('pinblock')?.dataset.step ?? null);
+    steps.add(s);
+    if (name === 'home' && !reduced && w === 1440 && s !== prevStep && ['1', '2', '3'].includes(s)) {
+      const top = await page.evaluate((s) => Math.round(document.querySelector(`.step[data-i="${s}"] h3`).getBoundingClientRect().top), s);
+      if (top < 350 || top > 550) F(`data-step became ${s} at scroll ${y} with the step's heading at viewport y ${top} (expected 350 to 550, the middle band)`);
+    }
+    prevStep = s;
+  }
+  // A jump (a hash link, a dragged scrollbar, a programmatic scroll) can cross the band in one frame and give the observer nothing
+  // to report: from the top, land with step 3's heading 100px above the viewport and expect step 3 (the one-frame scroll fallback, 5.2).
+  if (name === 'home' && !reduced) {
+    await page.evaluate(() => scrollTo(0, 0));
+    await page.waitForTimeout(250);
+    await page.evaluate(() => { const h = document.querySelector('.step[data-i="3"] h3'); scrollTo(0, scrollY + h.getBoundingClientRect().top + 100); });
+    await page.waitForTimeout(250);
+    const s = await page.evaluate(() => document.getElementById('pinblock').dataset.step);
+    if (s !== '3') F(`after a jump from the top to past step 3's heading, data-step reads "${s}" (expected 3)`);
   }
   await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
   // Lazy images without a layout box (the story's stacked fallback figures are display:none while JS runs) never start

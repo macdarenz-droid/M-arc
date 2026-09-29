@@ -65,7 +65,11 @@
 
 /* phones and tablets */
 @media (max-width: 900px) {
-  .c5, .c6, .c7, .c5r { grid-column: 1 / -1; }
+  /* one column, in DOM order: heading, figure, copy; the h2 gives up its margin because the row gap spaces the three */
+  .c5, .c6, .c7, .c7l, .c5r { grid-column: 1 / -1; }
+  .g { row-gap: var(--sp-7); }
+  .g > .head, .g > .media, .g > .copy { grid-row: auto; }
+  .g > .head h2 { margin-bottom: 0; }
   /* one column: the phone sits under the hero copy at 240px, then pins under the nav and shrinks to 44svh tall as the story reaches it,
      so the steps scroll under a smaller phone; .col-pin spans the story rows on a 0px track so the sticky range is the whole story,
      and the story leaves room above for the phone at rest. */
@@ -86,12 +90,11 @@
   .pin .light { inset: -30% calc(50% - 50vw) 0; -webkit-mask-image: linear-gradient(black calc(100% - 24px), transparent); mask-image: linear-gradient(black calc(100% - 24px), transparent); }
   .story { padding-top: calc(var(--cut) + var(--sp-4) + var(--phh0) + var(--sp-7)); padding-bottom: var(--sp-9); }
   .step, .step:first-child { min-height: 40vh; justify-content: flex-start; padding: var(--sp-9) 0 var(--sp-6); max-width: none; }
-  .fig.first { order: -1; }
   .cards3, .icards { grid-template-columns: 1fr; }
 }
 /* 641 to 900: one column, so the copy keeps the 640px measure of the intros and the prose (4.2) instead of running the full width */
 @media (min-width: 641px) and (max-width: 900px) {
-  .step, .step:first-child, .copy, .rows { max-width: 640px; }
+  .step, .step:first-child, .head, .copy, .rows { max-width: 640px; }
 }
 @media (max-width: 640px) {
   .phone, .phone.s { width: 240px; }

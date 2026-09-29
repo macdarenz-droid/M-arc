@@ -115,6 +115,23 @@ The owner chose Midnight Pulse on 28 September 2026. The design system and page-
 - Hosting: GitHub Pages or Netlify from `main`, decided with the owner because it is a new external service.
 - Checks: the site gets its own Playwright gate (desktop 1440, phone 400, reduced motion on and off, console clean, no horizontal scroll, fonts loaded, every image resolves) run in CI next to the app gate.
 
+### As built (29 September 2026)
+
+- `website/` is a Vite static site in plain HTML, CSS and JavaScript: `index.html` (home), `install/`, `privacy/`, `404.html`; styles in `src/styles/` (tokens, base, components, sections, pages, motion), scripts in `src/scripts/` (site.js, story.js); fonts self-hosted from `website/fonts/`; icons and the generated `og.png` in `public/`; screenshots copied from `website/renders/shots/` at build.
+- Commands (package.json, the only change there): `npm run site:dev`, `site:build` (renders the OG image, then builds to `website/dist/`), `site:preview`, `site:gate`.
+- Gate: `website/gate.mjs` runs the four pages at 1440 and 400 with reduced motion off and on: console and request errors, third-party hosts, horizontal overflow, fonts from the site's origin, images and alt text, internal links, the pinned story's steps and their timing, the jump fallback, fingerprint and command text, mono ligatures off, page weight, contrast as seen. 16 runs, all green.
+- CI: `.github/workflows/website.yml` builds and gates on every push touching `website/**`; runs 3, 4 and 5 on this branch are green. Deploy to GitHub Pages runs only on manual dispatch with the input `confirm` set to `deploy`; the workflow sets `SITE_BASE` for a project page and expects `SITE_URL` in its env for the sharing tags.
+- Review: five rounds by a reviewer agent with fixes between them (scores 7.5, 8, 8, 7.5, then the round-5 fixes measured against the reviewer's own numbers). Every blocking item is closed. Each fix round re-ran the gate, and the checks that caught a regression stay in the gate.
+- Weight: home HTML+CSS+JS about 18 KB compressed, fonts 107 KB, no third-party request, no cookies.
+
+Open items, all outside the site's own scope:
+
+| Item | Who | What it takes |
+|---|---|---|
+| A domain and hosting | owner | Enable GitHub Pages for the repository (or connect Netlify to `website/dist`), set `SITE_URL` in the workflow env, run the Website workflow with `confirm: deploy`. The sharing image and canonical URLs appear as soon as `SITE_URL` is set. |
+| The web app's own address | owner, then a separate task | Host the PWA build (`www/`) under the site, which needs an app build with a matching base path; the Install pages already switch their wording when `SITE_APP_URL` is set. |
+| The em-dash inside the Today screenshot ("Keep loads steady today — skip any increases.") | a separate app task | It is the app's own advice string (src/slices/today), so the screenshot shows it; changing it is an app copy change with its tests. |
+
 ## 6. Risks and mitigations
 
 | Risk | Mitigation |

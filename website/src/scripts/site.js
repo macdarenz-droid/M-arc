@@ -89,6 +89,11 @@ const io = new IntersectionObserver((es) => {
   });
 }, { threshold: [0.2, 0.4] });
 qa('.r, .st, [data-play]').forEach((el) => io.observe(el));
+/* Safety: a capture, a print or a reader that never scrolls must still see every section, so anything not yet revealed
+   3 s after load is revealed in place (the demos keep waiting for their own view). */
+const revealAll = () => qa('.r:not(.in), .st:not(.in)').forEach((el) => { el.classList.add('in'); io.unobserve(el); });
+addEventListener('load', () => setTimeout(revealAll, 3000), { once: true });
+addEventListener('beforeprint', revealAll);
 
 /* each screenshot wipes in when it has loaded */
 qa('img.wipe').forEach((im) => {

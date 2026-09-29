@@ -73,8 +73,8 @@
 </section>
 
 <section class="band lift" id="apk" aria-labelledby="apk-h" tabindex="-1">
-  <div class="wrap apk-grid r">
-    <div class="intro prose">
+  <div class="wrap apk-grid">
+    <div class="apk-copy prose r">
       <h2 id="apk-h">Android APK</h2>
       <p class="mono ver">Version __VERSION__</p>
       <p>The release file is named <span class="mono nb">MARC-v__VERSION__.&lt;run&gt;-signed.apk</span>, where <span class="mono">&lt;run&gt;</span> is the CI run number.</p>
@@ -82,18 +82,13 @@
         <a class="btn btn-p" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
         <a class="link" href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases and changelog</a>
       </div>
+      <ol class="chain" aria-label="Three steps to install">
+        <li><p>Download the APK from the latest release.</p></li>
+        <li><p>Open the file. The first time, Android asks you to allow installs from your browser or file manager. Allow it for this install.</p></li>
+        <li><p>Tap Install. An update installs over the old version and keeps your data. Android allows that only because every M/ARC build carries the same signing key.</p></li>
+      </ol>
     </div>
-    <ol class="chain" aria-label="Three steps to install">
-      <li><p>Download the APK from the latest release.</p></li>
-      <li><p>Open the file. The first time, Android asks you to allow installs from your browser or file manager. Allow it for this install.</p></li>
-      <li><p>Tap Install. An update installs over the old version and keeps your data. Android allows that only because every M/ARC build carries the same signing key.</p></li>
-    </ol>
-  </div>
-</section>
-
-<section class="band" id="verify" aria-labelledby="verify-h" tabindex="-1">
-  <div class="wrap">
-    <div class="prose r">
+    <section class="apk-verify prose r" id="verify" aria-labelledby="verify-h" tabindex="-1">
       <h2 id="verify-h">Verify the signature</h2>
       <p>Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released. You can check it yourself.</p>
       <p class="label" id="fp-l">Signing key SHA-256. Does not change between versions.</p>
@@ -101,22 +96,22 @@
       <p class="label" id="cmd-l">Verify command</p>
       <div class="copyrow"><code class="cmd" id="cmd">apksigner verify <span class="nb">--print-certs</span> <span class="nb">MARC-v__VERSION__.*-signed.apk</span></code><button class="btn btn-s" type="button" data-copy="#cmd" aria-label="Copy the verify command" aria-live="polite">Copy</button></div>
       <p>apksigner ships with the Android SDK build tools. If the fingerprint it prints matches the one above, the file was signed by the M/ARC key and has not been altered.</p>
-    </div>
+    </section>
   </div>
 </section>
 
-<section class="band lift" id="obtainium" aria-labelledby="obtainium-h" tabindex="-1">
+<section class="band" id="obtainium" aria-labelledby="obtainium-h" tabindex="-1">
   <div class="wrap">
     <div class="prose r">
       <h2 id="obtainium-h">Obtainium</h2>
       <p>Obtainium can install M/ARC from the GitHub releases page and keep it updated. Add this address as a source:</p>
-      <div class="copyrow"><code class="cmd" id="repo">https://github.com/macdarenz-droid/M-arc</code><button class="btn btn-s" type="button" data-copy="#repo" aria-label="Copy the repository address" aria-live="polite">Copy</button></div>
+      <div class="copyrow"><code class="cmd" id="repo"><span class="nb">https://github.com/</span><wbr><span class="nb">macdarenz-droid/</span><wbr><span class="nb">M-arc</span></code><button class="btn btn-s" type="button" data-copy="#repo" aria-label="Copy the repository address" aria-live="polite">Copy</button></div>
       <p>Android refuses an update whose signing key differs from the installed app's, so a swapped file cannot install over M/ARC.</p>
     </div>
   </div>
 </section>
 
-<section class="band" id="web" aria-labelledby="web-h" tabindex="-1">
+<section class="band lift" id="web" aria-labelledby="web-h" tabindex="-1">
   <div class="wrap">
     <div class="prose r">
       <h2 id="web-h">In the browser</h2>
@@ -130,7 +125,7 @@
   </div>
 </section>
 
-<section class="band lift" id="checks" aria-labelledby="checks-h" tabindex="-1">
+<section class="band" id="checks" aria-labelledby="checks-h" tabindex="-1">
   <div class="wrap">
     <div class="prose r">
       <h2 id="checks-h">What runs before a release</h2>

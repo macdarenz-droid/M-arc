@@ -15,18 +15,21 @@
 .prose .facts { margin-top: var(--sp-6); }
 .band + .band { border-top: 0; }
 
-/* two-column install intro at 1440 (7.2) */
+/* the APK band at 1024 and up (7.2): the download copy and its steps left in 7 columns, the signing key and the verify command
+   right in 5, both top aligned; under 1024 one column with the verify block after the steps */
 .apk-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--sp-6); align-items: start; }
-.apk-grid .intro { grid-column: span 5; }
-.apk-grid .chain { grid-column: 7 / span 6; margin-top: 0; }
-@media (max-width: 900px) {
+.apk-grid .apk-copy { grid-column: span 7; }
+.apk-grid .apk-verify { grid-column: 8 / span 5; }
+@media (max-width: 1023px) {
   .apk-grid { grid-template-columns: 1fr; }
-  .apk-grid .intro, .apk-grid .chain { grid-column: auto; }
-  .apk-grid .chain { margin-top: var(--sp-7); }
+  .apk-grid .apk-copy, .apk-grid .apk-verify { grid-column: auto; }
+  .apk-grid .apk-verify { margin-top: var(--sp-9); }
 }
 
-/* not found */
+/* not found: the block sits on the same left gutter as the nav, the footer and the other page heads (7.4); a flex item shrinks to
+   its content and its auto margins would centre it, so the wrap takes the full width */
 .nf { min-height: 60svh; display: flex; align-items: center; }
+.nf .wrap { width: 100%; }
 .nf p { color: var(--text2); }
 .nf .ctas { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-7); }
 
@@ -38,8 +41,9 @@
 .prose .chain + p { margin-top: var(--sp-6); }
 .prose .switches { margin-top: var(--sp-6); }
 .wrap.r > .facts { margin-top: var(--sp-7); }
-/* nine short sections on /privacy/ read as one article at 64px, not 128px, between bands */
-.privacy .band { padding-block: var(--sp-10); }
+/* the short bands on /install/ and /privacy/ read as one page at 64px between bands, 48px at 640 and under, not the home page's --pad */
+.install-page .band, .privacy .band { padding-block: var(--sp-10); }
+@media (max-width: 640px) { .install-page .band, .privacy .band { padding-block: var(--sp-9); } }
 /* on /privacy/ the first column wraps at every width and the three columns share the row about 1.2 : 1 : 1.4, so the two longer columns get the room */
 .privacy .facts td:first-child { white-space: normal; }
 @media (min-width: 641px) {
