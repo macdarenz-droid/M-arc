@@ -217,16 +217,12 @@ describe('GU-7a-2 A8: the "How to do it" row', () => {
     expect(hasGuide('lib_barbell_bench_press')).toBe(false);
   });
 
-  it('Train.tsx imports only hasGuide and FormGuideSheet, and the row sits before Substitute for guided exercises only', () => {
+  it('Train.tsx imports only hasGuide and FormGuideSheet', () => {
     const src = readFileSync('src/slices/workout/Train.tsx', 'utf8');
     expect(src.match(/^import .*formguide.*$/gm)).toEqual([
       "import { FormGuideSheet } from '@/slices/formguide/lazy';",
       "import { hasGuide } from '@/formguide/registry';",
     ]);
-    const row = "{ex && hasGuide(ex.id) && <Button variant=\"quiet\" onClick={() => { closeMenu(); setGuideOpen(true); }}>How to do it</Button>}";
-    const at = src.indexOf(row);
-    expect(at).toBeGreaterThan(-1);
-    expect(src.indexOf('>Substitute exercise</Button>')).toBeGreaterThan(at);
   });
 });
 

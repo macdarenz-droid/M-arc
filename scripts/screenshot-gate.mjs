@@ -5444,8 +5444,10 @@ for (const { theme, inset } of bug22Runs) {
     if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
   };
   const options = async (page, i) => { await page.getByRole('button', { name: 'Options', exact: true }).nth(i).click(); await page.waitForTimeout(300); };
-  const howRow = (page) => page.locator('dialog[open]').getByRole('button', { name: 'How to do it', exact: true });
-  const openGuide = async (page) => { await options(page, 0); await howRow(page).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
+  // UI-2: the button lives on the open card's Why-this-target row, not the "..." sheet.
+  const openCard = async (page, i) => { await page.locator('.card.exercise .ex-head').nth(i).click(); await page.waitForTimeout(300); };
+  const howButton = (page, i) => page.locator('.card.exercise').nth(i).locator('.btn-how-to');
+  const openGuide = async (page) => { await howButton(page, 0).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
   const seek = (page, ms) => page.evaluate(ms => { for (const a of window.__fgAnims) { a.pause(); a.currentTime = ms; } return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }, ms);
 
   // A13: each muscle's real hit area (halo + core, round 3 D-R7: a point counts when it hits either) at t 0 and 0.25.
@@ -5503,15 +5505,17 @@ for (const { theme, inset } of bug22Runs) {
     // A11: never on Today.
     if (await page.locator('.form-guide').count()) errors.push(`${tag} ${theme} A11: a .form-guide element is on Today`);
     await startSession(page);
-    // A8: the row is there for the chest press (entry 0) and not for the bench press (entry 1).
-    await options(page, 1);
-    if (await howRow(page).count()) errors.push(`${tag} ${theme} A8: "How to do it" shows for Barbell Bench Press`);
-    await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(300);
+    // UI-2 A2: the button is on the open card, not for the bench press (entry 1, no guide) even once its card is open.
+    await openCard(page, 1);
+    if (await howButton(page, 1).count()) errors.push(`${tag} ${theme} A2: "How to do it" shows for Barbell Bench Press`);
+    await openCard(page, 1); await page.waitForTimeout(300);
+    // UI-2 A3: the "..." sheet no longer lists it, for the guided exercise either.
     await options(page, 0);
     const labels = await page.locator('dialog[open] .stack-sm > button').allTextContents();
-    const at = labels.indexOf('How to do it');
-    if (at < 0 || labels[at + 1] !== 'Substitute exercise') errors.push(`${tag} ${theme} A8: expected "How to do it" right before "Substitute exercise", got ${JSON.stringify(labels)}`);
-    await howRow(page).click();
+    if (labels.includes('How to do it')) errors.push(`${tag} ${theme} A3: "How to do it" still in the "..." sheet: ${JSON.stringify(labels)}`);
+    await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(300);
+    // UI-2 A1: entry 0 (Machine Chest Press) is open by default; its button opens the guide directly.
+    await howButton(page, 0).click();
     if (!(await visible(page.locator('dialog[open] .form-guide .player')))) { errors.push(`${tag} ${theme}: the guide sheet did not open`); await ctx.close(); continue; }
     const title = await page.locator('dialog[open] h2').textContent();
     if (title !== 'How to do it: Machine Chest Press') errors.push(`${tag} ${theme}: sheet title "${title}"`);
@@ -5658,7 +5662,7 @@ for (const { theme, inset } of bug22Runs) {
     const { ctx, page } = await open('silent-black', { reducedMotion: 'reduce', serviceWorkers: 'block' });
     await page.route(/FormGuidePlayer-.*\.js$/, r => r.abort());
     await startSession(page);
-    await options(page, 0); await howRow(page).click();
+    await howButton(page, 0).click();
     if (!(await visible(page.locator('dialog[open] .hint', { hasText: 'Demo could not load.' })))) errors.push(`${tag} A9: no "Demo could not load." line after a failed chunk`);
     else {
       const f = await page.evaluate(() => ({ title: document.querySelector('dialog[open] h2')?.textContent, reload: [...document.querySelectorAll('dialog[open] button')].some(b => b.textContent === 'Reload') }));
@@ -5730,8 +5734,8 @@ for (const { theme, inset } of bug22Runs) {
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
     if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
     if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
-    await page.getByRole('button', { name: 'Options', exact: true }).nth(0).click(); await page.waitForTimeout(300);
-    await page.locator('dialog[open]').getByRole('button', { name: 'How to do it', exact: true }).click();
+    // UI-2: the button lives on the open card's Why-this-target row, not the "..." sheet.
+    await page.locator('.card.exercise').nth(0).locator('.btn-how-to').click();
     const ok = await visible(page.locator('dialog[open] .form-guide .player'));
     if (!ok) errors.push(`${tag} ${theme}: the lateral raise guide did not open`);
     return { ctx, page, ok };
@@ -5900,8 +5904,61 @@ for (const { theme, inset } of bug22Runs) {
   await ctx.close();
 }
 
+// UI-2: the "How to do it" button lives on the open card's Why-this-target row. A4 accent styling,
+// a 44px tap target, in Silent Black and Paper at 360px; A5 never on a collapsed card, and does not
+// push the set rows off screen at 360px.
+{
+  const tag = 'UI-2';
+  const seed = (t) => {
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, { exerciseId: 'lib_barbell_bench_press', sets: 2 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  };
+  for (const theme of ['silent-black', 'paper']) {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 2 });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+    await page.addInitScript(seed, theme);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
+    const cards = page.locator('.card.exercise');
+    // A1/A2: entry 0 (lateral raise, guided) is open by default and shows the button; entry 1 (bench press, no guide) does not, once opened.
+    const btn0 = cards.nth(0).locator('.btn-how-to');
+    if (!(await visible(btn0))) errors.push(`${tag} ${theme} A1: no button on the open guided card`);
+    await cards.nth(1).locator('.ex-head').click(); await page.waitForTimeout(300);
+    if (await cards.nth(1).locator('.btn-how-to').count()) errors.push(`${tag} ${theme} A2: a button shows for an exercise with no guide`);
+    // A5: collapsing the guided card hides its button.
+    await cards.nth(0).locator('.ex-head').click(); await page.waitForTimeout(300);
+    if (await cards.nth(0).locator('.btn-how-to').isVisible().catch(() => false)) errors.push(`${tag} ${theme} A5: the button stayed visible on a collapsed card`);
+    await cards.nth(0).locator('.ex-head').click(); await page.waitForTimeout(300);
+    // A4: accent styling and a 44px tap target.
+    const style = await btn0.evaluate(el => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return { h: r.height, bg: cs.backgroundColor, color: cs.color }; });
+    if (style.h < 44) errors.push(`${tag} ${theme} A4: button is ${style.h}px tall, under 44`);
+    if (style.bg === 'rgba(0, 0, 0, 0)' || style.bg === style.color) errors.push(`${tag} ${theme} A4: no visible accent fill (${JSON.stringify(style)})`);
+    // A5: no horizontal overflow, the set rows still on screen, at 360px.
+    const fit = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, row: document.querySelector('.card.exercise.active .set-grid')?.getBoundingClientRect() ?? null }));
+    if (fit.sw > 360) errors.push(`${tag} ${theme} A5: page scrolls horizontally at 360px (scrollWidth ${fit.sw})`);
+    if (!fit.row || fit.row.right > 360 + 0.5) errors.push(`${tag} ${theme} A5: the set rows are pushed off screen (${JSON.stringify(fit.row)})`);
+    if (theme === 'silent-black' || theme === 'paper') await page.screenshot({ path: `${OUT}/${theme}-ui2-how-to-button.png` });
+    await ctx.close();
+  }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and UI-2 "How to do it" button (open card only, accent styling, 44px target, no 360px overflow) verified.');
