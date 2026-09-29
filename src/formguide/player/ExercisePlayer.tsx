@@ -198,7 +198,7 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
   return (
     <div class="form-guide" ref={rootRef}>
       <div class={v.rootClass}>
-        <div class="stage" onPointerDown={press.down} onPointerMove={press.move} onPointerUp={press.up} onPointerCancel={press.up} onPointerLeave={press.up} onContextMenu={e => e.preventDefault()}>
+        <div class="stage" onPointerDown={press.down} onPointerMove={press.move} onPointerUp={press.up} onPointerCancel={press.leave} onPointerLeave={press.leave} onContextMenu={e => e.preventDefault()}>
           <svg class="scene fg4-scene" viewBox={cam.box.join(' ')} preserveAspectRatio="xMidYMid meet" aria-hidden="true" hidden={!(v.showStage && !still)}>
             <g ref={macRef} />
             <g ref={figRef} />

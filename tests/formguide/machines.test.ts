@@ -222,6 +222,14 @@ describe('V1-09 A6: the frame-rate panel opens only on a long-press and stores n
       expect(fire).not.toHaveBeenCalled();
       vi.advanceTimersByTime(1);
       expect(fire).toHaveBeenCalledTimes(1);
+      // the lift's own clock: held 600 ms fires even if the timer has not run yet; 599 ms or a leave does not
+      lp.down({ ...at, timeStamp: 1000 }); lp.up({ ...at, timeStamp: 1599 }); vi.advanceTimersByTime(1000);
+      lp.down({ ...at, timeStamp: 1000 }); lp.leave(); vi.advanceTimersByTime(1000);
+      expect(fire).toHaveBeenCalledTimes(1);
+      lp.down({ ...at, timeStamp: 1000 }); lp.up({ ...at, timeStamp: 1600 });
+      expect(fire).toHaveBeenCalledTimes(2);
+      vi.advanceTimersByTime(1000);
+      expect(fire).toHaveBeenCalledTimes(2);
     } finally { vi.useRealTimers(); }
   });
   it('the panel renders nothing until opened, then the last play\'s median and p95 and the Stress toggle', () => {

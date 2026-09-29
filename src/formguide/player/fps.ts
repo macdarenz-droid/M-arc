@@ -40,13 +40,18 @@ const WINDOW_TIMERS: Timers = { set: (fn, ms) => setTimeout(fn, ms), clear: h =>
 /** How long a press must be held to open the panel. */
 export const LONG_PRESS_MS = 600;
 
-/** A press held LONG_PRESS_MS without moving more than 10 px fires once; lifting, leaving or moving cancels it. */
+type Press = { clientX: number; clientY: number; timeStamp?: number };
+/** A press held LONG_PRESS_MS without moving more than 10 px fires once; lifting early, leaving or moving cancels it.
+ * A lift that comes after the hold (by the events' own clock) fires too: a busy main thread can run the input before
+ * the timer, and a slow phone must still open the panel. */
 export function longPress(onFire: () => void, timers: Timers = WINDOW_TIMERS) {
-  let h: unknown = null, x = 0, y = 0;
+  let h: unknown = null, x = 0, y = 0, t0 = NaN;
   const cancel = () => { if (h !== null) { timers.clear(h); h = null; } };
+  const fire = () => { cancel(); onFire(); };
   return {
-    down: (e: { clientX: number; clientY: number }) => { cancel(); x = e.clientX; y = e.clientY; h = timers.set(() => { h = null; onFire(); }, LONG_PRESS_MS); },
-    move: (e: { clientX: number; clientY: number }) => { if (h !== null && Math.hypot(e.clientX - x, e.clientY - y) > 10) cancel(); },
-    up: cancel,
+    down: (e: Press) => { cancel(); x = e.clientX; y = e.clientY; t0 = e.timeStamp ?? NaN; h = timers.set(() => { h = null; onFire(); }, LONG_PRESS_MS); },
+    move: (e: Press) => { if (h !== null && Math.hypot(e.clientX - x, e.clientY - y) > 10) cancel(); },
+    up: (e?: Press) => { if (h !== null && e?.timeStamp != null && e.timeStamp - t0 >= LONG_PRESS_MS) fire(); else cancel(); },
+    leave: () => cancel(),
   };
 }
