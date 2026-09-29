@@ -534,7 +534,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   **Why**: the release workflow publishes `MARC-v<version>.<run>-signed.apk` (release-apk.yml lines 215-252); `MARC-debug.apk` is the gate's CI artifact, not a release asset. The run number is not known in advance, so the command uses a shell glob.
   **Source**: .github/workflows/release-apk.yml, .github/workflows/build-apk.yml.
 
-- **Decided**: the hero keeps "for Android and the browser" even though the web app has no hosted address yet; the Install card says so plainly and points to the APK or the source until a URL exists.
+- **Decided** (revised 2026-09-29 after the site review): the site's first line says "for Android" only; the browser path is described in the Install section as coming once the web app has an address. The earlier call (keep "and the browser" in the hero) is withdrawn: on a live site the first line must be true on the day it is read.
   **Why**: the PWA is real (README, service worker) and the site will host it once it goes live; the honest gap is the address, not the platform. A reviewer suggested trimming the hero; the Install card carries the caveat instead so the hero stays true once hosted.
   **Source**: README.md "Run", docs/ARCHITECTURE.md "PWA".
 
