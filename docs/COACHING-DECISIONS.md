@@ -769,12 +769,21 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 
 - **Decided**: §9 item 5 ("LT-5 Verdict and substitution estimate") originally paired the plan-vs-done verdict line (`post.ts`) with the substitution carry-over estimate (`substitute.ts`). The verdict line needs the planned target LT-3 stores (`LoggedExercise.target`, D-A4, acceptance LT3-A5) and so moves to LT-3's card (§9 item 3); LT-5 (§9 item 5) is the substitution estimate only, unchanged from what the LT-5 PR (#76) already built.
   **Why**: LT-3 was already building `LoggedExercise.target` when review found the verdict line unbuilt in the LT-5 PR; splitting the card to match what each branch actually owns avoids one PR blocking on the other's dependency.
-## Escobar as a paid subscription (D-PAY1, PAY-1 planner, 2026-09-29)
+## Escobar paid by activation code (D-PAY1, PAY-1 planner, 2026-09-29)
 
-- **Decided (D-PAY1)**: Escobar is unlocked by a Google Play subscription, and everything else stays free, including the offline coach tips. Full plan: `docs/PAYMENTS-PLAN.md`.
-  - **Billing:** our own Capacitor plugin (`native/PlayBillingPlugin.java`) on Play Billing Library 9.1.0. No npm package and no third-party service. If it fails twice, the fallback is `capacitor-plugin-cdv-purchase`.
-  - **Entitlement:** the Worker checks the purchase token with `purchases.subscriptionsv2` and acknowledges it on the server. It then issues an HMAC pass that lasts 12 h at most and is kept in the app's memory only, so the saved data shape does not change. Every turn needs a valid pass. Each subscription has its own Durable Object with dollar budgets (day, 30 days, trial), and it blocks the turn when it fails. A daily voided-purchases job cuts off refunds.
-  - **Identity:** the Play purchase itself; the Worker keeps only its hash. No accounts, no `obfuscatedAccountId`, and device ids are not a control.
-  - **Rollout:** the Worker's `PAYWALL` switch goes off → log → on. The PWA and phones without Google Play show "Escobar is part of M/ARC on Google Play".
-  - **Price (recommendation, the owner decides):** $9.99 a month or $69.99 a year, with a 7-day trial. A subscription can spend $4 of AI cost a month and a trial $0.75.
-  **Why**: two independent judges scored three designs (own plugin + pass 7.58, community plugin + per-call check with real-time notifications 7.09, RevenueCat 6.65) on security, privacy, Play policy, build risk and owner effort. The chosen design is the winner with the judges' fixes: paid counters that block when they fail, refunds caught by a daily job, a smaller trial budget, a spend limit on the key, test purchases refused, and the `log` stage. It also closes today's hole, where anyone could call the Worker with a made-up device id (`escobar-worker/src/handler.ts:102-103`).
+- **Decided (D-PAY1)**: Escobar is unlocked by 30-day activation codes that the Worker issues and checks. Everything else stays free, including the offline coach tips. Full plan: `docs/PAYMENTS-PLAN.md`.
+  - **The app sells nothing, so it is "consumption-only" under Play's rules** and needs no Play Billing.
+    - It shows "Enter activation code" and one plain-text line, "Codes are sold at <site>".
+    - There is no link, button, price or webview, in any country. The Play listing does not name the site.
+  - **The payment link lives outside the app** (website, social posts, email). After payment the provider sends the buyer to the Worker, which derives the code from the payment session and stores no buyer data.
+  - **The owner mints unlimited free codes** through `/admin/*`. The token for it exists only as a Worker secret.
+  - **How codes behave:**
+    - Each code carries a tag (a keyed signature).
+    - Only its hash is stored.
+    - It must be redeemed within 365 days.
+    - It works on one install at a time and can move to a new install at most 3 times; moves carry the remaining time and add none.
+    - Codes stack, and the owner can revoke them.
+  - **Spending:** each install has dollar budgets in a Durable Object. Each step's worst-case price is reserved first and settled after. The turn is blocked if the counter fails.
+  - **Rollout:** `PAYWALL` goes off, then log, then on.
+  - **Optional later:** a Play subscription (the round-1 design) is kept as §5.5. Choosing it ends consumption-only, and with it the website line.
+  **Why**: round 1 scored three Play designs with two judges (own plugin 7.58, community plugin 7.09, RevenueCat 6.65). The owner then chose codes and a payment link (2026-09-29 11:05). A third judge re-checked the Google policy pages and attacked the code design. It scored 7.10 as drafted and 7.90 after the judge's nine fixes, all applied, against 6.95 for the Play path. Promo codes on the Play path are capped and tied to a Play product, so the Play path alone cannot meet the owner's model. The code design also closes today's hole, where any made-up device id can call the Worker (`escobar-worker/src/handler.ts:102-103`).

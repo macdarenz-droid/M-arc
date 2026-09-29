@@ -191,7 +191,38 @@ The judges' fixes carry into every design below:
 A is kept, trimmed, as the optional Play path in §5.5.
 
 ### 3.2 Round 2: the owner's code model
-[Scores and the reviewer's findings are filled in §3.3 after the independent review.]
+- **Why one judge, not three designers.** The owner fixed the model (codes, a payment link, owner-minted codes), so the design space was narrow and the hard question was policy.
+- **How it was judged.**
+  - The planner drafted the code design (D).
+  - A third judge, who had not worked on it, checked the policy pages again, attacked the design, and scored D against round-1 A with the same weights.
+
+| Design | Security | Privacy | Policy | Build/risk | Owner effort | Weighted /10 |
+|---|---|---|---|---|---|---|
+| **D** Worker codes, consumption-only app (as drafted) | 6 | 8 | 8 | 8 | 6 | 7.10 |
+| **D after the judge's 9 fixes** (this doc) | 8 | 8 | 9 | 8 | 6 | **7.90** (judge's estimate) |
+| A Play subscription (§5.5) | 8 | 7 | 9 | 4 | 5 | 6.95 |
+
+- **A alone cannot meet the owner's model.** Play promo codes are capped and tied to a Play product, so A would still need D's codes.
+- **What the judge confirmed.**
+  - The plain-text website line is allowed in every country for an app with no in-app purchase.
+  - Selling codes on the web to redeem in the app is not named in any policy page. It fits the consumption-only rule by analogy: "access content paid for somewhere else".
+  - No page says Australia allows links from Sep 30, 2026.
+- **What the judge found wrong: the Play listing.** Payments policy Section 4 names "An app's listing in Google Play" as a way of leading users to other payment methods, so the listing must **not** name the site. Fixed in D2.
+
+### 3.3 The judge's must-fix list, and where each fix is
+1. **Rate limits.** Cloudflare's rate-limit binding counts only per 10 s or 60 s, counts separately in each location, and lets calls through on error. So redeem limits and the admin lockout use counters in `EntitleDO` / D1 that block when they fail (W1-A8, W1-A7).
+2. **Parallel turns can overspend.** Spending is charged after the step runs. So before the call, the Worker **reserves** the step's worst-case price (max_tokens at the output price, plus the input it sent), and settles the real price after (W1-A6).
+3. **Budgets must count everything.** Dollar budgets charge input, cache and output, including steps cut short (W1-A6, using `prices.ts`).
+4. **Moves must not add time.** A code's grant (start and end) is fixed when it is first redeemed. A move carries the remaining time and adds none (W1-A2).
+5. **Stacking needs one grant per code.** `EntitleDO` keeps one grant per code, `{codeHash, start, end, budget}`. Access is the union of the grants (W1-A2).
+6. **D1 and the DO must agree.** Redeem is idempotent: repeating it for the same code and install re-applies the grant to the DO. Revoke writes D1 first, then the DO, and retries through a queue row that the daily cron finishes (W1-A4).
+7. **The redeem `UPDATE` needs every guard.** It checks `redeem_by > now`, `revoked = 0`, and bound to this install or unbound or moves left, and uses `RETURNING` (W1-A2, W1-A3).
+8. **No website in the Play listing** (D2-A2).
+9. **Deleting after 40 days needs code.** The daily cron deletes D1 rows and a DO alarm deletes the per-install record, both with tests (W1-A12).
+
+**Should-fix, both taken:**
+- Backups export `escobar.deviceId`: `src/slices/settings/backup.ts:19` saves the whole `state.value`. A restored backup would clone paid access, so restore clears the device id and a new one is made. The user types the code again, which counts as a move (A1-A6).
+- `/buy/done` shows the code again only until it is redeemed, then says "already redeemed". It sends `Referrer-Policy: no-referrer` and `no-store`, and provider lookups are rate-limited (W2-A2, W2-A4).
 
 ---
 
@@ -201,14 +232,14 @@ A is kept, trimmed, as the optional Play path in §5.5.
 
 | Where the user is | Say in the app, in plain text, "Get a code at <site>" (no link, no button) | Clickable link or button to the payment page | Sell inside the app without Play Billing | Type in a code bought elsewhere | Talk about it outside the app (web, social, email) |
 |---|---|---|---|---|---|
-| **Every country, including the Philippines** | Yes (consumption-only rule) | **No** | No | Yes | Yes |
+| **Every country, including the Philippines** | Yes (consumption-only rule) | **No** | No | Yes (by analogy with the consumption-only rule; no page names codes) | Yes, but never on the Play listing |
 | **United States** | Yes | Only after enrolling in the external content links programme, with fees and transaction reports from Oct 1, 2026 | Only through the alternative billing programme | Yes | Yes |
 | **European Economic Area and United Kingdom** | Yes | Only after enrolling in the billing choice programme (10% on subscriptions) | Only through the billing choice programme | Yes | Yes |
 | **Australia** | Yes | Not verified, so treated as **No** (Expanded Billing Choice starts Sep 30, 2026; recheck then) | Only through user choice billing, next to Play Billing | Yes | Yes |
 | **Web version (PWA) and the owner's website** | Yes | Yes (Google Play rules do not cover the web) | Yes | Yes | Yes |
 
 Two rules decide the design:
-1. **The Android app shows the same thing everywhere:** "Have an activation code? Enter it", and one plain-text line, "Codes are sold at <site>". There is no link, no button, no price and no webview anywhere. That is allowed in every country, needs no enrolment and no country check.
+1. **The Android app shows the same thing everywhere:** "Have an activation code? Enter it", and one plain-text line, "Codes are sold at <site>". There is no link, no button, no price and no webview anywhere. That is allowed in every country, needs no enrolment and no country check. **The Play listing is not "outside the app":** Payments policy Section 4 counts it, so it never names the site.
 2. **Adding a Play subscription later** (§5.5) would end consumption-only. From then on the app **may not mention the website at all**, except in countries where the owner enrols in a programme.
 
 ### 4.2 Overview
@@ -225,21 +256,27 @@ Two rules decide the design:
    - `redeemed_at`, `bound` (hash of the device id) and `moves`;
    - `revoked`.
 3. **Redeem.** `POST /v2/redeem {code}` with the existing `x-escobar-device` header:
-   - It is a single atomic `UPDATE … WHERE hash=? AND revoked=0 AND (bound IS NULL OR moves<3)`.
-   - The first redemption binds the code to this install and adds `days` to the install's access, counting from the later of now and its current end date, so a new code stacks.
-   - Typing the same code on a new install (after a reinstall or on a new phone) **moves** it there, at most 3 times. The old install loses access.
-   - A code already bound to another install that has used up its moves → "This code is already in use".
-4. **Per-install record.** The Durable Object `EntitleDO`, keyed by `sha256(deviceId)`, holds the end date, the bound code hash and the dollar counters. `/v2/turn` asks it on every turn, **before** any quota check or model call. If `EntitleDO` fails, the turn gets 503: blocked, never let through.
+   - It is a single atomic `UPDATE … WHERE hash=? AND revoked=0 AND redeem_by>now AND (bound IS NULL OR bound=self OR moves<3) RETURNING …`.
+   - **First redemption.** It binds the code to this install and fixes the code's grant, which then never changes:
+     - `start` is the later of now and the end of the install's last grant, so a new code stacks;
+     - `end` is `start + days`.
+   - **Same code on a new install** (after a reinstall, a restore or a new phone): the grant **moves** there with its remaining time, and gains no extra days. At most 3 moves; the old install loses access.
+   - **Same code on the same install:** idempotent. It re-applies the grant, which repairs a failed DO write.
+   - **Code already bound elsewhere with no moves left** → "This code is already in use".
+4. **Per-install record.** The Durable Object `EntitleDO`, keyed by `sha256(deviceId)`, holds one grant per code (`{codeHash, start, end, budget}`), the dollar counters, and the redeem-attempt counter. `/v2/turn` asks it on every turn, **before** any quota check or model call:
+   - It **reserves** the step's worst-case price, and the real price is settled after the step.
+   - If `EntitleDO` fails, the turn gets 503: blocked, never let through.
 5. **Status.** `GET /v2/status` (device header) returns `{active, until}`. The app shows "Escobar active until 12 Nov". Nothing new is saved on the phone.
 6. **Owner admin** (only with `Authorization: Bearer <ADMIN_TOKEN>`, a Worker secret; constant-time compare; 5 wrong tries an hour per IP locks that IP for the hour):
    - `POST /admin/codes {count 1-100, days 1-400, redeemByDays, budget, note}` returns the codes. This is the only time the codes appear in plain text, and there is no limit on how many times it can be called.
-   - `POST /admin/revoke {code}` revokes a code and ends the install's access at once.
+   - `POST /admin/revoke {code}` revokes a code and ends the install's access on its next turn. D1 is written first, then the DO. A failed DO write leaves a queue row, which the daily cron retries.
    - `GET /admin/codes?status=` lists codes by id (the first 8 characters of the hash), kind, days, dates, note and status.
    - The owner runs a small script, `escobar-worker/scripts/codes.mjs mint 10 --days 30`, which reads the token from an environment variable and never writes it to disk or logs.
 7. **Payment link** (PAY-W2, once the owner picks a provider):
    - The provider hosts the payment page, and after payment redirects to `https://<worker>/buy/done?s=<session id>`.
    - The Worker checks with the provider's API (`PAY_PROVIDER_SECRET`) that the session is paid, for the right product, and not refunded.
-   - It then **derives** the code as `HMAC(CODE_KEY, "pay:" + sessionId)`: opening the page again shows the same code, and the Worker stores no code and no buyer data.
+   - It then **derives** the code as `HMAC(CODE_KEY, "pay:" + sessionId)`. The Worker stores no code and no buyer data.
+   - Opening the page again shows the same code, but only until the code is redeemed; after that it says "already redeemed". The page is sent with `no-store` and `Referrer-Policy: no-referrer`.
    - The page shows the code and "Open M/ARC → Settings → Escobar → Enter code".
    - If the provider sends signed refund events, a refund revokes the code. Otherwise the owner revokes by hand.
 8. **Budgets in dollars.** Each step is priced by the Worker from the usage the API reports, with a price table that matches `src/escobar/state.ts:56-72` (tested). The budgets are Worker variables (§7):
@@ -283,7 +320,9 @@ Two rules decide the design:
 |---|---|
 | Call the Worker with a made-up device id (today's hole) | Once `on`: 402 before any quota check or model call |
 | Edit the app | Nothing changes: the Worker decides |
-| Guess codes | The 20-bit tag rejects about 999,999 guesses in a million before storage. On top: 10 redeem tries an hour per install and 30 per IP bucket. A valid code also needs the 60 random bits |
+| Guess codes | The 20-bit tag rejects about 999,999 guesses in a million before storage. On top: 10 redeem tries an hour per install and 30 per IP bucket, counted in `EntitleDO` / D1, which block when they fail (not Cloudflare's per-location rate-limit binding). A valid code also needs the 60 random bits |
+| Many turns at once to overspend | The worst-case price is reserved before each call |
+| Restore a backup on another phone to clone access | Restore clears the device id; the code must be typed again, which counts as a move |
 | Forge a code | Needs `CODE_KEY`. Codes in D1 are stored only as hashes |
 | Share a code | It works on one install at a time. Moving it has a limit of 3, and each move ends access on the old install |
 | Share the device id (copy the app's data) | Both copies draw on one per-install dollar budget, which the buyer paid for |
@@ -345,13 +384,27 @@ Two rules decide the design:
   - **CORS:** `/v2/redeem` and `/v2/status` use the same allowed origins. `/admin/*` sends no CORS headers, so no browser page can call it.
 - **acceptance** (tests use a fake D1 (sqlite, as `test/d1-sqlite.ts` does) and a fake DO):
   - W1-A1: a code has 16 characters and a correct tag. A code with one wrong character, or a tag made with a different key, → 400 `bad_code` with no D1 read.
-  - W1-A2: redeeming binds the code and adds `days`. A second code stacks from the current end. The same code on the same install changes nothing. The same code on a new install moves it (old install → 402). A 4th move → 409 `code_in_use`.
-  - W1-A3: two redeems of one code at the same time → exactly one wins.
-  - W1-A4: revoked, expired (`redeem_by` passed) and unknown codes → a clear error. Revoking a redeemed code → the next turn on that install gets 402.
+  - W1-A2: redeeming binds the code and fixes its grant (`start`, `end`).
+    - A second code stacks from the end of the last grant.
+    - The same code on the same install re-applies the grant and adds no days.
+    - The same code on a new install moves the grant with its remaining time (old install → 402). A move never extends `end`.
+    - A 4th move → 409 `code_in_use`.
+    - `redeem_by` passed → 410.
+  - W1-A3: two redeems of one code at the same time, from two installs → exactly one wins (`UPDATE … RETURNING`).
+  - W1-A4: revoked, expired and unknown codes → a clear error. Revoking a redeemed code → the next turn on that install gets 402. A DO write that fails during revoke is finished by the cron (test). A DO write that fails during redeem is repaired by redeeming again.
   - W1-A5: with `PAYWALL=on`, an install with no access or with access expired → 402 and the model is never called. With `log`, it never blocks and logs how many it would have blocked. With `off`, behaviour matches today on the existing `handler.test.ts` suite.
-  - W1-A6: when the day, 30-day or pool budget is used up → 429 with a clear message. If `EntitleDO` throws → 503 and the model is never called.
-  - W1-A7: admin needs the token. A wrong token → 401. 5 wrong tries → 429 for that IP for an hour. `/admin/*` returns no CORS headers. Minting 100 codes returns 100 distinct valid codes. `count > 100` → 400.
-  - W1-A8: redeem is limited to 10 an hour per install and 30 per IP bucket.
+  - W1-A6: budgets.
+    - When the day, 30-day or pool budget is used up → 429 with a clear message.
+    - The worst-case price of each step is reserved before the call and settled after. Input, cache and output are all charged, including steps cut short.
+    - 5 parallel turns on an install with $0.10 left cannot spend more than $0.10 plus one step's reserve.
+    - If `EntitleDO` throws → 503 and the model is never called.
+  - W1-A7: admin.
+    - Admin needs the token. A wrong token → 401.
+    - 5 wrong tries → 429 for that IP for an hour, counted in a D1 or DO counter that blocks when it fails.
+    - `/admin/*` returns no CORS headers.
+    - Minting 100 codes returns 100 distinct valid codes. `count > 100` → 400.
+  - W1-A8: redeem is limited to 10 an hour per install and 30 per IP bucket. The counters are stored and block when they fail; Cloudflare's rate-limit binding is not used for these.
+  - W1-A12: records are deleted 40 days after access ends. The daily cron deletes D1 rows, and a DO alarm deletes the install record (tests with a moved clock).
   - W1-A9: no code, token or device id appears in any `console.*` output (a test spies on the console). D1 holds only hashes (a test reads the table).
   - W1-A10: `prices.ts` equals `PRICES` in `src/escobar/state.ts` for each id in `MODE_MODELS`.
   - W1-A11: an app built from `main` before A1 shows the 402 text (from `transport.ts:91-99` and `EscobarSheet.tsx:51-55`; pick the error code to match).
@@ -368,9 +421,9 @@ Two rules decide the design:
 - **write_scope:** `escobar-worker/src/{buy.ts, provider*.ts}`, plus a route in `index.ts`, tests and the README.
 - **acceptance:**
   - W2-A1: an unpaid session, a session for another product, a refunded session, or a made-up session id → no code.
-  - W2-A2: opening the paid page again → the same code (derived, not stored).
+  - W2-A2: opening the paid page again → the same code (derived, not stored), until it is redeemed. After that → "already redeemed".
   - W2-A3: a signed refund event revokes the code. A bad signature → 401.
-  - W2-A4: the page holds no buyer data beyond the code, sends `cache-control: no-store`, and loads no third-party scripts.
+  - W2-A4: the page holds no buyer data beyond the code, sends `cache-control: no-store` and `Referrer-Policy: no-referrer`, and loads no third-party scripts. Provider lookups are rate-limited per IP.
 
 ### PAY-A1: Code entry in the app
 - **outcome:** the user can enter a code, see "active until", and gets clear messages. The Android build contains no link or price, and nothing in the app can be bought.
@@ -380,7 +433,8 @@ Two rules decide the design:
   - `src/escobar/transport.ts`: the 402 mapping;
   - `src/escobar/ui/SettingsSection.tsx`;
   - `src/escobar/session.ts`: wiring only;
-  - `tests/escobar/**`;
+  - `src/slices/settings/backup.ts`: restore clears `escobar.deviceId`;
+  - `tests/escobar/**` and `tests/settings/**`;
   - a `PAY-A1` block in `scripts/screenshot-gate.mjs` and `src/ui/styles.css`.
 - **reserved_paths:** R\*, `src/brain/coach/**` and `native/**`.
 - **acceptance:**
@@ -391,7 +445,8 @@ Two rules decide the design:
   - A1-A3: every Worker error (`bad_code`, `code_in_use`, expired, revoked, rate limit, 503) has its own plain message (a test per code).
   - A1-A4: nothing new is saved. A test spies on `update` and `localStorage`. The code field is cleared after sending.
   - A1-A5: the gate captures code entry in each of the 5 themes. The offline coach works with Escobar locked (test).
-  - A1-F1: the existing Escobar tests stay green.
+  - A1-A6: restoring a backup gives the install a new device id (test: import a backup that has an id → the id after restore differs). The app then asks for the code again.
+  - A1-F1: the existing Escobar and backup tests stay green.
 - **risk:** someone adds a link later by mistake. A1-A1's test stops it.
 
 ### PAY-D1: Privacy policy
@@ -408,7 +463,7 @@ Two rules decide the design:
 - **depends_on:** D1. **write_scope:** this doc, §9.
 - **acceptance:**
   - D2-A1: each answer is traced to the code.
-  - D2-A2: the store listing says "Free app. The Escobar online coach needs an activation code." The listing is outside the app, so it may also name the website.
+  - D2-A2: the store listing says "Free app. The Escobar online coach needs an activation code." It does **not** name the website or say where codes are sold. Payments policy Section 4 counts "An app's listing in Google Play" as leading users to other payment methods.
 
 ### 5.5 Optional later: a Play subscription path (only if the owner wants to sell inside the app)
 - It is the round-1 design A, trimmed:
@@ -436,7 +491,7 @@ Two rules decide the design:
   3. pay out in your country.
 
   Candidates to check yourself: Stripe Payment Links, PayPal, Paddle, Lemon Squeezy. We have not verified which ones pay out in your country. Paddle and Lemon Squeezy act as the seller and handle sales tax (VAT/GST); with Stripe or PayPal, the tax is yours.
-- **O3. Set up the website text.** Decide the site text the app shows ("Codes are sold at …"). Put the payment link on the website, in social posts and in emails, never in the Android app.
+- **O3. Set up the website text.** Decide the site text the app shows ("Codes are sold at …"). Put the payment link on the website, in social posts and in emails. Never put it in the Android app or on the Play listing.
 - **O4. Terms.** Write the terms of sale on the website: 30 days of access per code, no auto-renewal, and your refund rule.
 - **O5. Merge and switch.** Merge W1, mint your own codes, set `PAYWALL=log`, then set `on` once the build with code entry is live.
 - **O6. Play listing and forms.** Update the Play listing and the Data safety form (§9).
