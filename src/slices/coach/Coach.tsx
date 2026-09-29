@@ -5,11 +5,11 @@ import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
 import { IconChevron, IconInfo } from '@/ui/icons';
 import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
 import { pickCue, type Cue } from '@/brain/coach/cues';
-import { weekHasEnoughData, weeklyReviewInsights } from '@/brain/coach/weeklyReview';
+import { reviewWeek, weeklyReviewInsights } from '@/brain/coach/weeklyReview';
 import { trainingAgeMonths } from '@/brain/recovery';
 import { missingProfileSummary, profileCompleteness } from '@/brain/onboarding';
 import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
-import { WEEKDAYS, type Weekday } from '@/core/models';
+import { WEEKDAYS, type AppState, type Weekday } from '@/core/models';
 import { WEEKDAY_LABEL, weekStart, daysBetween, formatLocalStamp } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
@@ -200,19 +200,30 @@ export function ScheduleSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-/** Pinned at the top of Coach on the first open of a new week with >=5 logged days, until dismissed. */
+/**
+ * ADAPT-4: the weekly-review card's line, or null when there is no review yet. It shows once this week
+ * or the week just ended reached the planned sessions (schedule, else Profile.plannedDays, else 3; at least 2).
+ */
+export function weeklyReviewCardLine(s: Pick<AppState, 'sessions' | 'schedule' | 'daysOff' | 'profile'>, day: string, count: number): string | null {
+  const start = reviewWeek(s.sessions, day, { schedule: s.schedule, daysOff: s.daysOff, plannedDays: s.profile.plannedDays });
+  if (start == null) return null;
+  const week = start === weekStart(day) ? 'this week' : 'last week';
+  return count ? `${count} thing${count > 1 ? 's' : ''} worth knowing about ${week}.` : `Steady ${week} — nothing stands out either way.`;
+}
+
+/** Pinned at the top of Coach on the first open of a new week once the review has a week to cover, until dismissed. */
 function WeeklyReviewCard() {
   const s = state.value;
   const thisWeek = weekStart(today.value);
   const dismissed = s.weeklyReviewDismissedWeek === thisWeek;
-  const enough = weekHasEnoughData(s.sessions, today.value);
   // UI-30: hooks run on every render, before any early return.
   const items = useWeeklyReviewItems();
-  if (dismissed || !enough) return null;
+  const line = weeklyReviewCardLine(s, today.value, items.length);
+  if (dismissed || !line) return null;
   return (
     <Card class="card-accent card-press" onClick={() => showPanel('weekly-review')}>
       <div class="row-between"><span class="eyebrow">Weekly review</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
-      <p style={{ marginTop: 6 }}>{items.length ? `${items.length} thing${items.length > 1 ? 's' : ''} worth knowing about this week.` : 'Steady week — nothing stands out either way.'}</p>
+      <p style={{ marginTop: 6 }}>{line}</p>
     </Card>
   );
 }

@@ -83,6 +83,7 @@ export function coachCtx(ctx: ToolCtx): CoachContext {
     profileHistory: s.profileHistory, profile: s.profile, healthDays: s.healthDays, checkIns: s.checkIns, freshMarks: s.freshMarks,
     recoveryModel: s.recoveryModel, deload: s.deload, feedback: s.insightFeedback, unit: s.preferences.weightUnit,
     heartSeries: ctx.heartSeries,
+    daysOff: s.daysOff, plannedDays: s.profile.plannedDays,
   });
 }
 
