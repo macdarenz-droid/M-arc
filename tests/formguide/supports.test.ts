@@ -102,6 +102,46 @@ describe('A3: hanging, the grip holds the bar and the body swings about it, feet
   });
 });
 
+describe('A4: the reclined support, the back on its pad at backrest angles 20-60°', () => {
+  // a leg-press-like seated side file: knees and hips drive, the arms rest, the machine's seat and back pads hold it
+  const PRESS = { ...CURL, id: 'lib_leg_press', joints: { hip_flex: [100, 60], knee_flex: [95, 20], ankle_flex: [10, -5], shoulder_flex: 20, elbow_flex: 40 },
+    equipment: { ...CURL.equipment, kind: 'none', attach: [] }, machine: { id: 'fx_recline', settings: {}, drive: [{ part: 'stack', travel: [0, 1], chain: [] }] } } as unknown as ExerciseGuide;
+  const upright = sideFrame('seated', {}), L = Math.hypot(...([0, 1] as const).map(i => sidePoint(upright, 'back')[i] - sidePoint(upright, 'hip')[i]) as [number, number]);
+  const SEAT: [number, number] = [200, 380];
+  /** Pads at backrest angle th from vertical, reclined toward the figure's back (the mirror reflects it). */
+  const drawing = (th: number, mirror: boolean): MachineDrawing => {
+    const back: [number, number] = [SEAT[0] - L * Math.sin((th * Math.PI) / 180), SEAT[1] - L * Math.cos((th * Math.PI) / 180)];
+    const m = (q: [number, number]): [number, number] => (mirror ? [400 - q[0], q[1]] : q);
+    return { view: 'side', svg: '', parts: { stack: { kind: 'carriage', path: [[0, 0], [0, 1]] } }, pads: [{ attach: 'hip', at: m(SEAT) }, { attach: 'back', at: m(back) }] };
+  };
+  const angles = Array.from({ length: 9 }, (_, i) => 20 + 5 * i);
+  it.each([false, true])('mirror %s: bodyOnPad passes (gap < 0.5, back drift < 0.01 over 481 samples) at every angle, the back along the pad line', mirror => {
+    const g = { ...PRESS, mirror } as ExerciseGuide;
+    for (const th of angles) {
+      const m = drawing(th, mirror), rig = rigFor(g, 'side', m) as Rig;
+      expect(supportOf('seated', m.pads)).toBe('backPad');
+      let drift = 0, sway = 0;
+      const b0 = rig.point(rig.frame(poseAt(g, 0, 'correct', 0, rig)), 'back');
+      for (const u of U) {
+        const p = poseAt(g, u, 'correct', 0, rig), f = rig.frame(p), b = rig.point(f, 'back'), h = rig.point(f, 'hip');
+        drift = Math.max(drift, Math.hypot(b[0] - b0[0], b[1] - b0[1]));
+        sway = Math.max(sway, Math.abs(p.sway));
+        const lean = (Math.atan2((mirror ? -1 : 1) * (h[0] - b[0]), h[1] - b[1]) * 180) / Math.PI;
+        expect(Math.abs(lean - th), `backrest ${th}° drawn at ${lean.toFixed(4)}°`).toBeLessThan(1e-6);
+      }
+      console.info(`[V1-11] A4${mirror ? ' mirrored' : ''} ${th}°: back drift ${drift.toExponential(2)} units, sway to ${sway.toFixed(3)}°`);
+      expect(sway).toBeGreaterThanOrEqual(LIMITS.sway[0]);
+      expect(drift).toBeLessThan(LIMITS.padDrift);
+      const r = runChecks({ ...inputFor('tests/formguide/fixtures/swayDrawn/lib_dumbbell_biceps_curl.ts', g), machines: { fx_recline: m } }, ['bodyOnPad'])[0]!;
+      expect(r.fails, `${th}°`).toEqual([]);
+      // the back pad holds the trunk, so the sway turns the head and neck only, and swayDrawn still sees it
+      const s = swayDrawn(g, rig, poseAt(g, 0, 'correct', 0, rig), LIMITS.sway[0]);
+      expect(s.support).toBe('backPad');
+      expect(s.moved).toBeGreaterThanOrEqual(s.need * (1 - 1e-9));
+    }
+  });
+});
+
 describe('A6: swayDrawn, a seated side figure must draw its sway', () => {
   const rig = rigFor(CURL, 'side') as Rig, p = poseAt(CURL, 0, 'correct', 0, rig);
   it('FG-6 drew no sway when seated (sideFrame read sway only standing): the head stays put and the measure fails', () => {

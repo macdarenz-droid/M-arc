@@ -532,7 +532,7 @@ export function runChecks(input: CheckInput, only: readonly CheckId[] = CHECKS):
   const g = input.guide, view = viewOf(g, input.library.find(e => e.id === g.id)?.pattern);
   const mid = g.machine?.id, drawing = mid ? { ...MACHINES, ...input.machines }[mid] : undefined;
   const machine = !mid ? null : drawing ? (drawing.view === view ? drawing : `machine ${mid} is drawn ${drawing.view}, the file is ${view}`) : `machine ${mid} has no drawing (machines library, FG-7)`;
-  const r = rigFor(g, view);
+  const r = rigFor(g, view, typeof machine === 'object' ? machine : null);   // V1-11: its pads make the support
   // the solver reads the file's machine from its rig (V1-04): the input's drawing (a seeded file's) over the library's
   const c: Ctx = { g, in: input, view, rig: typeof r === 'string' ? r : { ...r, machine: typeof machine === 'object' ? machine : null }, reps: repsOf(g), machine };
   return only.map(check => {

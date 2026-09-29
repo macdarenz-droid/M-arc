@@ -121,20 +121,23 @@ function sides(t: Tree, j: JointId): { child: JointId; parent: JointId[] } {
   return { child, parent: [parent] };
 }
 
-type Row = { view: string; pose: string; channel: string; min: number; at: number; rest: number };
+type Row = { name: string; min: number; at: number; rest: number; floor: number };
+/** D-V1-11b (supervisor's ruling on the check-in): each pair's least overlap across the sweep must stay ≥ min(400, 90 %
+ * of its overlap at the pose's rest, the frame with the channel at its stored start value). */
+const floorOf = (rest: number) => Math.min(MIN, 0.9 * rest);
 function sweep(view: 'front' | 'side', pose: string, tree: Tree, frame: (p: Pose) => Frame): Row[] {
   const rows: Row[] = [];
+  const pair = (all: ReturnType<typeof place>, child: JointId, parent: JointId[]) => overlap(all.filter(x => x.joint === child).map(x => x.poly), all.filter(x => parent.includes(x.joint!)).map(x => x.poly));
   for (const base of (view === 'front' ? DRAWN.front(pose as PoseId) : DRAWN.side())) {
     for (const s of base === 'torso_lean' ? (['r'] as const) : (['l', 'r'] as const)) {
       const ch = (base === 'torso_lean' ? base : `${base}_${s}`) as ChannelId, j = JOINT_OF[base]!(s), { child, parent } = sides(tree, j);
-      let min = Infinity, at = NaN, rest = NaN;
+      let min = Infinity, at = NaN;
+      const rest = pair(place(tree, frame({})), child, parent);
       for (const v of sweepOf(base as keyof typeof AAOS)) {
-        const all = place(tree, frame({ [ch]: v } as Pose));
-        const a = overlap(all.filter(x => x.joint === child).map(x => x.poly), all.filter(x => parent.includes(x.joint!)).map(x => x.poly));
+        const a = pair(place(tree, frame({ [ch]: v } as Pose)), child, parent);
         if (a < min) { min = a; at = v; }
-        if (v === 0) rest = a;
       }
-      rows.push({ view, pose, channel: `${ch} (${child} on ${parent.join('+')})`, min, at, rest });
+      rows.push({ name: `${view} ${pose} ${ch} (${child} on ${parent.join('+')})`, min, at, rest, floor: floorOf(rest) });
     }
   }
   return rows;
@@ -142,12 +145,49 @@ function sweep(view: 'front' | 'side', pose: string, tree: Tree, frame: (p: Pose
 
 const read = themeReader('silent-black');
 const FRONT = walk(figureFront(read, { id: 'q' })), SIDE = { r: walk(figureSide(read, { id: 'q' })) };
-const CASES: [string, () => Row[]][] = [
-  ...(['standing', 'seated'] as const).map(id => [`front ${id}`, () => sweep('front', id, FRONT, p => frontFrame(id, p))] as [string, () => Row[]]),
-  ...(['standing', 'seated', 'lying_supine', 'lying_prone', 'hanging'] as SidePoseId[]).map(id => [`side ${id}`, () => sweep('side', id, SIDE.r, p => sideFrame(id, p))] as [string, () => Row[]]),
+const ROWS: Row[] = [
+  ...(['standing', 'seated'] as const).flatMap(id => sweep('front', id, FRONT, p => frontFrame(id, p))),
+  ...(['standing', 'seated', 'lying_supine', 'lying_prone', 'hanging'] as SidePoseId[]).flatMap(id => sweep('side', id, SIDE.r, p => sideFrame(id, p))),
 ];
+/** The front figure's real failures under D-V1-11b, kept failing until the drawing is fixed (never the rule): the thigh
+ * against the trunk bottom at 30° of hip abduction, the trunk against the thighs at 80° of lean, and standing, the upper
+ * arm's cap on the chest at 35° of abduction (52 units² against 53). `it.fails` turns red the moment one of them starts
+ * to pass, so the mark must go with the fix. */
+const KNOWN = /^front ((standing|seated) (hip_abd_[lr]|torso_lean)|standing shoulder_abd_[lr]) /;
+/** The front knee is a butt joint: D-V1-11b reads it by edge distance (below), not overlap. */
+const BUTT = /^front \w+ knee_flex_[lr] /;
 
-// A5's assertion (the overlap floor per joint) lands after the V1-11 check-in rules on the measured caps.
+describe('A5: no gap in the joint sweep (every drawn joint, 5° steps across AAOS, every pose, both views)', () => {
+  for (const r of ROWS) console.info(`[V1-11] A5 ${r.name}: least ${r.min.toFixed(0)} units² at ${r.at}°, rest ${r.rest.toFixed(0)}, floor ${r.floor.toFixed(0)}`);
+  it('the sweep covers both views and every pose (7 pose-views, 75 pairs)', () => {
+    expect(new Set(ROWS.map(r => r.name.split(' ').slice(0, 2).join(' '))).size).toBe(7);
+    expect(ROWS.length).toBe(75);
+  });
+  for (const r of ROWS.filter(x => !BUTT.test(x.name))) {
+    const known = KNOWN.test(r.name);
+    (known ? it.fails : it)(`${r.name}: least overlap ≥ min(400, 90 % of rest)${known ? ' [D-V1-11b: a real failure of the front drawing, kept failing]' : ''}`, () => {
+      expect(r.min).toBeGreaterThanOrEqual(r.floor);
+    });
+  }
+  // the front knee is a butt joint (the shin starts where the thigh ends, the knee only fore-shortens both), so its
+  // overlap is 0 at rest: "no gap" is the shin's top edge staying on the thigh's bottom edge
+  const segDist = (p: Pt, a: Pt, b: Pt) => { const dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy, t = L ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L)) : 0; return Math.hypot(p[0] - a[0] - dx * t, p[1] - a[1] - dy * t); };
+  // seated, the shin's top corner sits 2 units above the knee line (y 438, not 440), so fore-shortening the shin toward 0
+  // opens that corner by up to 2 units: a real failure of the front drawing, kept failing under D-V1-11b
+  const knee = (id: 'standing' | 'seated', chs: readonly ('knee_flex' | 'hip_flex')[]) => () => {
+    let worst = 0;
+    for (const base of chs) for (const s of ['l', 'r'] as const) for (const v of sweepOf(base)) {
+      const all = place(FRONT, frontFrame(id, { [`${base}_${s}`]: v } as Pose));
+      const shin = all.filter(x => x.joint === `knee_${s}`).flatMap(x => x.poly), thigh = all.filter(x => x.joint === `hip_${s}`).map(x => x.poly);
+      const top = Math.min(...shin.map(p => p[1])), edge = shin.filter(p => p[1] <= top + 3), ends = [edge.reduce((a, b) => (b[0] < a[0] ? b : a)), edge.reduce((a, b) => (b[0] > a[0] ? b : a))];
+      for (const e of ends) worst = Math.max(worst, Math.min(...thigh.flatMap(q => q.map((a, i) => segDist(e, a, q[(i + 1) % q.length]!)))));
+    }
+    console.info(`[V1-11] A5 front ${id} knee: shin top edge ≤ ${worst.toFixed(4)} units from the thigh`);
+    expect(worst).toBeLessThanOrEqual(0.5);
+  };
+  it('front standing knee: the shin\'s top edge stays within 0.5 units of the thigh across the sweep', knee('standing', ['knee_flex']));
+  it.fails('front seated knee: the shin\'s top edge stays within 0.5 units of the thigh across the sweep [D-V1-11b: a real failure of the front drawing, kept failing]', knee('seated', ['knee_flex', 'hip_flex']));
+});
 
 // ---- ANSUR ± 0.08 across views and poses ---------------------------------------------------------------------------
 // FG-6's rows (side.test.ts "review r1"): side depth over FG-1's front width at the same landmark, from the ANSUR II male
