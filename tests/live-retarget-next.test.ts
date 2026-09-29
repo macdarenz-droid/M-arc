@@ -37,8 +37,12 @@ describe('LT3-A6: the next session per §4 (a)', () => {
     expect([s.kg, s.reps]).toEqual([27.5, [9, 9]]);
   });
   it('a load chosen twice becomes the base when its own reps fall inside the window', () => {
-    const s = suggestNext([day('2026-09-22', 32, 8, 'ideal', [27.5, 8]), day('2026-09-25', 32, 8, 'ideal', [27.5, 8])], EX, 'lean', today);
-    expect(s.kg).toBe(32);
+    const two = [day('2026-09-22', 32, 8, 'ideal', [27.5, 8]), day('2026-09-25', 32, 8, 'ideal', [27.5, 8])];
+    expect(suggestNext(two, EX, 'lean', today).kg).toBe(32);
+    // With a rung inside the window (30 for 10 to 11) a single choice is restated, a second one is not.
+    const rungs = [25, 27.5, 30, 32.5];
+    expect(restateOffPlan(exerciseHistory(two.slice(1), EX), [6, 12], 2, rungs)?.kg).toBe(30);
+    expect(restateOffPlan(exerciseHistory(two, EX), [6, 12], 2, rungs)).toBeNull();
   });
   it('a load chosen twice outside the window does not: the plan holds and the reason says so', () => {
     const s = suggestNext([day('2026-09-22', 32, 5, 'max', [27.5, 8]), day('2026-09-25', 32, 5, 'max', [27.5, 8])], EX, 'lean', today);
