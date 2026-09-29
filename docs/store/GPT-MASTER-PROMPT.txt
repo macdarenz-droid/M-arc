@@ -1,0 +1,92 @@
+You are building Google Play screenshot cards for M/ARC, an Android gym tracker. The words and the design are final. Your only job is to build each card exactly as below, using the Python tool (Pillow). Never use the image generator for these cards: it redraws app screens and adds an "AI look", which is exactly what I don't want.
+
+ATTACHED NOW: marc-headlines.png (all 8 finished headlines, one 420 px band per card) and my screenshot for card 1.
+
+DESIGN (same on every card)
+- 1080 x 1920 PNG, RGB, no transparency.
+- Background: flat #08090a. Nothing else on it.
+- Headline: band N of marc-headlines.png, pasted at the top as it is. Never type, redraw or change a headline.
+- Phone: a plain rounded outline, body #1b1c1f, 3 px edge #343536, no notch, no buttons, no shadow. It runs off the bottom edge. My screenshot sits inside it.
+- No logo, no subline, no other text.
+
+HARD RULES
+1. Run the script below as written. Only change a file path if an upload landed at a different path.
+2. My screenshot is only scaled and cropped. Never redraw, restyle, recolour, sharpen, blur, retouch or "improve" it.
+3. Never add or change text, numbers, UI, people, hands, props, gradients, glow, shadows, textures, sparkles, emoji, badges, ratings or icons.
+4. If an attachment is missing or looks like the wrong screen for the card, say so in one line and wait.
+5. If Python gives an error, or the Python tool is not available, reply with one line: "STOPPED: <reason>". Make nothing else. Never use the image generator for these cards.
+6. Before every card, run the whole SCRIPT again (running it twice is safe). If /mnt/data/marc-headlines.png is missing, reply "Please re-attach marc-headlines.png." and wait.
+
+SCRIPT
+```python
+import hashlib
+from PIL import Image, ImageDraw, ImageStat
+W, H, BAND = 1080, 1920, 420
+BG, BODY, EDGE = "#08090a", "#1b1c1f", "#343536"
+STRIP = "/mnt/data/marc-headlines.png"  # the uploaded headline strip
+STRIP_SHA = "3a8fe76498639349a923f1a839f6f2003b311ab00675accbc1126917ee1ce932"
+
+def headline(n):  # band n of the strip: the finished headline for card n
+    s = Image.open(STRIP).convert("RGB")
+    if s.size != (W, 8 * BAND) or hashlib.sha256(s.tobytes()).hexdigest() != STRIP_SHA:
+        raise ValueError("marc-headlines.png was changed on upload. Re-attach it with Attach file.")
+    return s.crop((0, BAND * (n - 1), W, BAND * n))
+
+def phone(im, shot, x, y, w):
+    b, r = 14, 80
+    sw = w - 2 * b
+    s = Image.open(shot).convert("RGB")
+    if s.width < sw:
+        raise ValueError(f"The screenshot is {s.width} px wide. Attach the original with Attach file.")
+    s = s.resize((sw, round(s.height * sw / s.width)), Image.LANCZOS)  # scale only
+    full = y + b + s.height <= H                                       # screen ends on the canvas?
+    ImageDraw.Draw(im).rounded_rectangle([x, y, x + w, y + 2 * b + s.height if full else H + r],
+                                         radius=r, fill=BODY, outline=EDGE, width=3)
+    s = s.crop((0, 0, sw, min(s.height, H - y - b)))                   # crop at canvas bottom
+    m = Image.new("L", s.size, 0)
+    ImageDraw.Draw(m).rounded_rectangle([0, 0, sw - 1, s.height - 1 if full else s.height + r],
+                                        radius=r - b, fill=255)
+    im.paste(s, (x + b, y + b), m)
+
+def by_theme(shots):  # card 8: returns [Silent Black, Paper, Midnight] whatever the upload order
+    look = []
+    for p in shots:
+        m = ImageStat.Stat(Image.open(p).convert("RGB")).mean
+        look.append((sum(m) / 3, m[2] - m[0], p))       # (brightness, blue minus red, path)
+    look.sort()
+    black_or_navy, white = look[:2], look[2]
+    black, navy = sorted(black_or_navy, key=lambda t: t[1])
+    if len(shots) != 3 or white[0] - navy[0] < 80 or white[0] - black[0] < 80 or navy[1] - black[1] < 15:
+        raise ValueError("Card 8 needs one Silent Black, one Paper and one Midnight screenshot of Today.")
+    return [black[2], white[2], navy[2]]
+
+def card(n, shots):
+    im = Image.new("RGB", (W, H), BG)
+    im.paste(headline(n), (0, 0))
+    if n != 8:
+        phone(im, shots[0], 150, 420, 780)
+    else:
+        black, white, navy = by_theme(shots)
+        phone(im, white, -100, 620, 640)
+        phone(im, navy, 540, 620, 640)
+        phone(im, black, 170, 440, 740)
+    out = f"/mnt/data/marc-card-{n}.png"
+    im.save(out, "PNG")
+    chk = Image.open(out)
+    assert chk.size == (W, H) and chk.mode == "RGB"
+    return out
+```
+
+CARDS
+Card 1 (headline "Know what to lift next."). Screenshot: a live workout with one exercise open (set rows with kg and reps). Run card(1, [screenshot]).
+Card 2 (headline "Your progress, lift by lift."). Screenshot: History > Stats with the weekly volume chart and an exercise trend line. Run card(2, [screenshot]).
+Card 3 (headline "Check which muscles are ready."). Screenshot: the Body tab, a front and back muscle map. Run card(3, [screenshot]).
+Card 4 (headline "Today’s plan, on one screen."). Screenshot: the Today tab (greeting, today's workout, readiness). Run card(4, [screenshot]).
+Card 5 (headline "Coaching from your own log."). Screenshot: the Escobar tab scrolled to "Escobar’s notes". Run card(5, [screenshot]).
+Card 6 (headline "See how your session went."). Screenshot: the finish screen ("... done"). Run card(6, [screenshot]).
+Card 7 (headline "Share the work you put in."). Screenshot: the Share sheet with a poster preview. Run card(7, [screenshot]).
+Card 8 (headline "Five themes. Pick yours."). THREE screenshots of the Today tab: one near-black (Silent Black), one white (Paper), one navy (Midnight), in any order. The script tells them apart by colour. Run card(8, [all three screenshots]).
+
+FLOW
+Make card 1 only. Then stop and wait. When I type nxt, make the next card, using the screenshot(s) I attach with it. If I type "redo N" with a new screenshot, make card N again.
+Each reply: only the finished PNG (shown, with its download link) and one line, "Card N of 8". Nothing else.
