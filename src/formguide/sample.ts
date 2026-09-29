@@ -2,7 +2,9 @@
 // come from the file's tempo and order, never a fixed 1/0.5/2/0.5 s. stopsFor and the Channel type are ported from
 // GU-7a (PR #40, rig/stops.ts and moves/types.ts). Pure, no DOM.
 import { BODY, CHANNELS, SIDED, type ChannelId, type Kind, type Order, type Side } from './rig/joints';
-import type { Curve, ExerciseGuide, RepTempo, Tempo } from './model';
+import type { AttachmentId, Curve, ExerciseGuide, RepTempo, Tempo } from './model';
+import type { Frame } from './rig/pose';
+import { compile, firstSeed, needsRig, solveSystem, travelOf, validateSolve, type Seed, type SolveRig, type System } from './solve';
 
 export type PhaseName = 'lift' | 'hold' | 'lower' | 'rest';
 /** One phase of the rep in rep fractions. `move` is 1 or 2 for the first and second moving phase in `order`, else 0;
@@ -168,14 +170,18 @@ function validate(joints: Partial<Record<string, Curve>>, symmetric: boolean, wh
   }
 }
 
-/** Every channel's value at rep fraction u. */
-export function poseAt(g: ExerciseGuide, u: number, figure: Figure = 'correct', rep = 0): Record<ChannelId, number> {
-  return evaluator(g, figure, rep)(u);
+/**
+ * Every channel's value at rep fraction u. A file with contacts, a balance or a followed part is solved on `rig` after
+ * its curves, deltas and sway (V1-04, D-FG7 (b)), and throws without one; any other file ignores `rig`.
+ */
+export function poseAt(g: ExerciseGuide, u: number, figure: Figure = 'correct', rep = 0, rig?: SolveRig): Record<ChannelId, number> {
+  if (!needsRig(g)) return evaluator(g, figure, rep)(u);
+  return solvedAt(g, u, figure, rep, rig).pose;
 }
 
-function evaluator(g: ExerciseGuide, figure: Figure, rep: number): (u: number) => Record<ChannelId, number> {
+function evaluator(g: ExerciseGuide, figure: Figure, rep: number, deltas = true): (u: number) => Record<ChannelId, number> {
   const sym = g.symmetric === true, joints = g.joints as Partial<Record<string, Curve>>;
-  const delta = (figure === 'mistake' ? g.mistake.joints : {}) as Partial<Record<string, Curve>>;
+  const delta = (figure === 'mistake' && deltas ? g.mistake.joints : {}) as Partial<Record<string, Curve>>;
   validate(joints, sym, g.id); validate(delta, sym, `${g.id} mistake`);
   const tempo = tempoOf(g, figure, rep), ws = windowsFor(tempo, g.order, g.kind);
   const base = windowsFor(g.tempo, g.order, g.kind);
@@ -207,13 +213,103 @@ function evaluator(g: ExerciseGuide, figure: Figure, rep: number): (u: number) =
   };
 }
 
-export type Sampled = { tempo: Tempo; windows: Window[]; stops: number[]; channels: Channel[] };
+// ---- V1-04: the solved path (files with contacts, a balance or a followed part) ----------------------------------------
+type Plan = {
+  enforced: System; released: System; base: (u: number) => Record<ChannelId, number>; pre: ((u: number) => Record<ChannelId, number>) | null;
+  travel: (f: Frame, u: number) => number[]; stops: number[]; label: string;
+  /** the continuation over the stops: each stop's solution and Jacobian (released, then enforced) */
+  table: { rel: Seed; enf: Seed }[];
+};
+const plans = new WeakMap<ExerciseGuide, WeakMap<SolveRig, Map<string, Plan>>>();
+
+/** The solve of one rep, cached per file, rig, figure and rep: every stop solved in order, each from the last. */
+function planOf(g: ExerciseGuide, figure: Figure, rep: number, rig: SolveRig | undefined): Plan {
+  if (!rig) throw new Error(`${g.id} declares contacts, a balance or a followed part: it is sampled on a rig (poseAt, sampleGuide and effortOf take one)`);
+  let byRig = plans.get(g);
+  if (!byRig) plans.set(g, (byRig = new WeakMap()));
+  let byKey = byRig.get(rig);
+  if (!byKey) byRig.set(rig, (byKey = new Map()));
+  const key = `${figure}:${figure === 'mistake' ? 0 : rep}`, hit = byKey.get(key);
+  if (hit) return hit;
+  validateSolve(g);
+  const tempo = tempoOf(g, figure, rep), ws = windowsFor(tempo, g.order, g.kind), base = windowsFor(g.tempo, g.order, g.kind);
+  const mBase = figure === 'mistake' ? windowsFor(g.mistake.tempo ?? g.tempo, g.order, g.kind) : ws;
+  const drives = g.machine?.drive ?? [], over = figure === 'mistake' ? g.mistake.travel ?? {} : {};
+  const keyed = (part: string, u: number) => {
+    const o = over[part];
+    if (o !== undefined) return curveAt(o, ws, u, mBase);
+    const d = drives.find(x => x.part === part);
+    return d && 'travel' in d ? curveAt(d.travel, ws, u) : NaN;
+  };
+  const released = new Set<AttachmentId>(figure === 'mistake' ? g.mistake.release ?? [] : []);
+  const { enforced, released: rel } = compile(g, released, rig, keyed);
+  const parts = rig.machine?.parts ?? {};
+  const plan: Plan = {
+    enforced, released: rel, base: evaluator(g, figure, rep), pre: rel.cons.length ? evaluator(g, figure, rep, false) : null,
+    travel: (f, u) => drives.map(d => {
+      if (over[d.part] !== undefined || 'travel' in d) return keyed(d.part, u);
+      const p = parts[d.part];
+      if (!p) throw new Error(`${g.id}: followed part ${d.part} is not in machine ${g.machine!.id}`);
+      return travelOf(p, rig.point(f, d.follow));
+    }),
+    stops: stopsFor(tempo, g.order, g.kind), label: figure === 'mistake' ? 'mistake' : `rep ${rep}`, table: [],
+  };
+  let last: { rel: Seed; enf: Seed } | null = null;
+  for (const u of plan.stops) { last = solveStop(plan, rig, u, last).s; plan.table.push(last); }
+  byKey.set(key, plan);
+  return plan;
+}
+
+/** One solve: the released points on the pose before deltas (their deltas then added), then the enforced ones. */
+function solveStop(plan: Plan, rig: SolveRig, u: number, from: { rel: Seed; enf: Seed } | null) {
+  const pose = plan.base(u);
+  let rel: Seed = { x: [], J: null };
+  if (plan.pre) {
+    const pre = plan.pre(u);
+    rel = from ? solveSystem(rig, plan.released, pre, u, from.rel, plan.label) : firstSeed(rig, plan.released, pre, u, plan.label);
+    plan.released.chans.forEach((c, i) => { pose[c] = rel.x[i]! + (pose[c] - pre[c]); });
+  }
+  let enf: Seed = { x: [], J: null };
+  if (plan.enforced.cons.length) enf = from ? solveSystem(rig, plan.enforced, pose, u, from.enf, plan.label) : firstSeed(rig, plan.enforced, pose, u, plan.label);
+  plan.enforced.chans.forEach((c, i) => { pose[c] = enf.x[i]!; });
+  return { s: { rel, enf }, pose };
+}
+
+/** The solved pose at any u, started from the nearest solved stop (so a stop gives back its own solution). */
+function solvedAt(g: ExerciseGuide, u: number, figure: Figure, rep: number, rig: SolveRig | undefined) {
+  const plan = planOf(g, figure, rep, rig!), st = plan.stops;
+  let lo = 0, hi = st.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (st[m]! <= u) lo = m; else hi = m; }
+  const i = Math.abs(st[hi]! - u) < Math.abs(u - st[lo]!) ? hi : lo;
+  const { pose } = solveStop(plan, rig!, u, plan.table[i]!);
+  return { pose, travel: plan.travel(rig!.frame(pose), u) };
+}
+
+/** The pose and every drive's travel (0..1, in `machine.drive` order) at u: a followed part's is its point projected on
+ * its path, a travel part's its curve, and the mistake's `travel` replaces either. Files without drives give []. */
+export function stateAt(g: ExerciseGuide, u: number, figure: Figure = 'correct', rep = 0, rig?: SolveRig): { pose: Record<ChannelId, number>; travel: number[] } {
+  if (needsRig(g)) return solvedAt(g, u, figure, rep, rig);
+  const ws = windowsFor(tempoOf(g, figure, rep), g.order, g.kind), mBase = windowsFor(g.mistake.tempo ?? g.tempo, g.order, g.kind);
+  const over = figure === 'mistake' ? g.mistake.travel ?? {} : {};
+  return { pose: evaluator(g, figure, rep)(u), travel: (g.machine?.drive ?? []).map(d => (over[d.part] !== undefined ? curveAt(over[d.part]!, ws, u, mBase) : curveAt((d as { travel: [number, number] }).travel, ws, u))) };
+}
+
+/** `travel`: the followed parts' travel at the stops (V1-04), present only when the file follows a part. */
+export type Sampled = { tempo: Tempo; windows: Window[]; stops: number[]; channels: Channel[]; travel?: { part: string; stops: [number, number][] }[] };
 const r4 = (v: number) => { const x = Math.round(v * 1e4) / 1e4; return x === 0 ? 0 : x; };
 
-/** Every channel at every stop of one rep (the correct figure's rep `rep`, or the mistake), values to 1e-4. */
-export function sampleGuide(g: ExerciseGuide, figure: Figure = 'correct', rep = 0): Sampled {
+/** Every channel at every stop of one rep (the correct figure's rep `rep`, or the mistake), values to 1e-4. A solved
+ * file (see poseAt) needs `rig`. */
+export function sampleGuide(g: ExerciseGuide, figure: Figure = 'correct', rep = 0, rig?: SolveRig): Sampled {
   const tempo = tempoOf(g, figure, rep), windows = windowsFor(tempo, g.order, g.kind), stops = stopsFor(tempo, g.order, g.kind);
-  const at = evaluator(g, figure, rep), poses = stops.map(at);
-  const channels = CHANNELS.map(id => ({ id, kind: channelKind(id), stops: stops.map((u, i) => [r4(u), r4(poses[i]![id])] as [number, number]) }));
-  return { tempo, windows, stops, channels };
+  if (!needsRig(g)) {
+    const at = evaluator(g, figure, rep), poses = stops.map(at);
+    const channels = CHANNELS.map(id => ({ id, kind: channelKind(id), stops: stops.map((u, i) => [r4(u), r4(poses[i]![id])] as [number, number]) }));
+    return { tempo, windows, stops, channels };
+  }
+  const states = stops.map(u => solvedAt(g, u, figure, rep, rig));
+  const channels = CHANNELS.map(id => ({ id, kind: channelKind(id), stops: stops.map((u, i) => [r4(u), r4(states[i]!.pose[id])] as [number, number]) }));
+  const drives = g.machine?.drive ?? [], travel = drives.map((d, k) => ({ d, k })).filter(({ d }) => 'follow' in d)
+    .map(({ d, k }) => ({ part: d.part, stops: stops.map((u, i) => [r4(u), r4(states[i]!.travel[k]!)] as [number, number]) }));
+  return { tempo, windows, stops, channels, ...(travel.length ? { travel } : {}) };
 }

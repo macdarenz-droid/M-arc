@@ -9,6 +9,8 @@ import type { TokenReader } from '../rig/paint';
 import type { Pt } from '../rig/ik';
 import { viewFor } from '../rig/patterns';
 import { PART_BUDGET_MARKUP } from '../parts';
+import { solveFrontChain } from '../solve/frontChain';
+import { MACHINES, type MachineDrawing } from './machines';
 
 export type Rig = {
   view: View;
@@ -19,6 +21,10 @@ export type Rig = {
   pivot: (f: Frame, j: JointId) => Pt;
   /** The figure markup, with the file's hand-held part when the figure draws it (part: false leaves it out). */
   markup: (read: TokenReader, mistake: boolean, part?: boolean) => string;
+  /** V1-04: the view's two-joint solve of a limb to a point (the solver starts a two-channel contact from it). */
+  chain?: (p: Record<ChannelId, number>, a: AttachmentId, target: Pt) => Partial<Record<ChannelId, number>> | null;
+  /** V1-04: the drawing of the file's machine, whose parts and pads its contacts name (null: none drawn yet). */
+  machine?: MachineDrawing | null;
 };
 
 /** Parts the figure draws in its own hand groups (FG-1: the lab's dumbbell); other parts come from the parts library. */
@@ -49,8 +55,14 @@ export function rigFor(g: ExerciseGuide, view: View | null): Rig | string {
     return pivot(f, `${a.slice(0, -2)}_${s}` as JointId);   // shoulder_, knee_, ankle_
   };
   const db = g.equipment.kind === 'dumbbell' ? { kg: g.equipment.kg } : undefined;
+  // the front arm: shoulder_abd and elbow_lead to a hand target, the shoulder's rise at its fixed point (V1-04 A10)
+  const chain = (p: Record<ChannelId, number>, a: AttachmentId, target: Pt) => {
+    if (!/^hand_[lr]$/.test(a)) return null;
+    const s = a.slice(-1) as 'l' | 'r', x = solveFrontChain(id, p as Pose, s, target);
+    return { [`shoulder_abd_${s}`]: x.shoulder_abd, [`elbow_lead_${s}`]: x.elbow_lead } as Partial<Record<ChannelId, number>>;
+  };
   return {
-    view, point, pivot,
+    view, point, pivot, chain, machine: g.machine ? MACHINES[g.machine.id] ?? null : null,
     frame: p => frontFrame(id, p as Pose),
     markup: (read, mistake, part = true) => figureFront(read, { id: 'fgc', mistake, dumbbell: part ? db : undefined }),
   };
