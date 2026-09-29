@@ -1,0 +1,30 @@
+{
+  "id": "lib_shoulder_press",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.3, "lower": 1.5, "rest": 0.5 },
+  "ranges": {
+    "elbow_flex": { "min": 15, "max": 90, "source": "ACE Seated Shoulder Press: \"Continue pressing until your elbows are fully extended, but not locked\" (illustrative 15 degrees); Apex Personal Fitness: lower \"until your elbows are roughly level with your shoulders\" (illustrative 90 degrees)" },
+    "torso_lean": { "min": -3, "max": 3, "source": "ACE Seated Shoulder Press: \"Maintain the natural arch in your low back and avoid arching your back throughout the exercise\"" }
+  },
+  "muscles": {
+    "target": ["front_delts", "side_delts"],
+    "helps": ["triceps", "upper_chest"],
+    "keepQuiet": ["lower_back"],
+    "peakAt": 0.28,
+    "peakSource": "ACE Seated Shoulder Press: the rep works toward the elbows \"fully extended, but not locked,\" so delt effort is highest approaching that near-top position"
+  },
+  "mistake": {
+    "name": "Arch and lock",
+    "tells": [
+      { "text": "The low back arches to help drive the press up.", "joint": "torso_lean" },
+      { "text": "The elbows slam to a hard lockout at the top.", "joint": "elbow_flex" }
+    ],
+    "source": "ACE Seated Shoulder Press: \"Maintain the natural arch in your low back and avoid arching your back throughout the exercise\"; \"Continue pressing until your elbows are fully extended, but not locked\""
+  },
+  "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/186/seated-shoulder-press/",
+    "https://apexpersonalfitness.com/shoulder-press-machine-gym/",
+    "Contact fact (seat height, unverified_on_machine): Apex Personal Fitness — \"Sit down and set the seat so the handles start at about shoulder or ear height, not up by your forehead\"; a real-world description, not this app's numeric `seat` setting, so it is not written into `machine.settings` here"
+  ]
+}

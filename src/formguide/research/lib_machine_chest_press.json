@@ -1,0 +1,29 @@
+{
+  "id": "lib_machine_chest_press",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.3, "lower": 1.5, "rest": 0.5 },
+  "ranges": {
+    "elbow_flex": { "min": 15, "max": 90, "source": "ACE Seated Chest Press: \"Continue pressing until your elbows are fully extended, but not locked\" (illustrative 15 degrees); no exact bent-start angle is given, so the starting position at the chest is illustrative at 90 degrees, matching a loaded machine start" },
+    "torso_lean": { "min": -3, "max": 3, "source": "ACE Seated Chest Press: \"Your shoulder blades should continue to make contact with the backrest and not round or bend forward\"" }
+  },
+  "muscles": {
+    "target": ["chest"],
+    "helps": ["front_delts", "triceps"],
+    "keepQuiet": ["upper_traps"],
+    "peakAt": 0.28,
+    "peakSource": "ACE Seated Chest Press: the rep works toward the elbows \"fully extended, but not locked,\" so chest effort is highest approaching that near-extended top"
+  },
+  "mistake": {
+    "name": "Round and lock",
+    "tells": [
+      { "text": "The shoulder blades round forward off the backrest to finish the press.", "joint": "torso_lean" },
+      { "text": "The elbows slam all the way to a hard lockout instead of stopping just short.", "joint": "elbow_flex" }
+    ],
+    "source": "ACE Seated Chest Press: \"A very frequent mistake is when individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest\"; Gravitus Chest Press Machine: \"Continue pressing until your arms are nearly straight, but avoid locking out your elbows completely\""
+  },
+  "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
+    "https://gravitus.com/guides/exercises/chest-press-machine/"
+  ]
+}

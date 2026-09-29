@@ -1,0 +1,33 @@
+{
+  "id": "lib_seated_cable_row",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.5, "lower": 2, "rest": 0.5 },
+  "ranges": {
+    "shoulder_flex": { "min": -20, "max": 30, "source": "ACE Seated Row: arms straight, reaching for the handle (illustrative 30 degrees of forward reach); drive the elbows back close to the ribs until the handle touches the stomach (illustrative -20 degrees of extension). No exact angle is given, so both ends are illustrative" },
+    "elbow_flex": { "min": 5, "max": 100, "source": "ACE Seated Row: arms straight at the reach (illustrative 5 degrees); elbows bend as they drive back until the handle touches the front of the stomach (illustrative 100 degrees). Illustrative, no exact angle given" },
+    "torso_lean": { "min": -5, "max": 5, "source": "Olaben Seated Cable Row: \"Cranking your torso well past upright turns the move into a lower-back exercise and risks strain\"" },
+    "shrug_cm": { "min": 0, "max": 0.5, "source": "TZFIT Seated Cable Row: \"Keep your shoulders pulled down away from your ears throughout\"" }
+  },
+  "muscles": {
+    "target": ["mid_back"],
+    "helps": ["lats", "biceps", "rear_delts"],
+    "keepQuiet": ["upper_traps"],
+    "peakAt": 0.3,
+    "peakSource": "ACE Seated Row: \"pause for one second\" at full contraction, squeezing the shoulder blades together, before slowly returning; back-muscle effort is highest through that squeeze"
+  },
+  "mistake": {
+    "name": "Rock and shrug",
+    "tells": [
+      { "text": "The torso rocks back hard to help finish the pull.", "joint": "torso_lean" },
+      { "text": "The shoulders creep up toward the ears.", "joint": "shrug_cm" }
+    ],
+    "source": "Olaben Seated Cable Row: \"Rocking your torso back and forth to swing the weight is the classic error\"; TZFIT Seated Cable Row: \"If your shoulders rise toward your ears during the pull, your upper traps are taking over\""
+  },
+  "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/48/seated-row/",
+    "https://olaben.com/blogs/olaben-blog/what-is-a-seated-row-proper",
+    "https://tzfit.com/seated-cable-row/",
+    "Contact fact (D-FG7 (j), row handle): V-handle at the low pulley, both hands (ACE Seated Row / Motra Cable V-Handle Seated Row)"
+  ]
+}

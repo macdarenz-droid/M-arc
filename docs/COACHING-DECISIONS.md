@@ -699,6 +699,13 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - Re-solved reps are read to a hundredth, because rungs are stored to the gram and 55 lb re-solves to 7.9993.
   **Why**: §3 and §5b of the spec and the card's A1–A7, checked by `tests/retarget.test.ts` and the LT-2 block of `tests/progression.test.ts` (6 of its 7 tests fail on `main` 5e416d8; the seventh pins a behaviour `main` already has).
 
+## V1-02 research validator (2026-09-29)
+
+- **Decided (V1-02 builder)**: two points D-FG7 (l) leaves open for the research validator (`tests/formguide/research.test.ts`).
+  - **Back view's drawable channels**, needed to check the rear delt fly's mistake tells (D-FG7 (d) gives it the back view). D-FG7 (l) publishes only the front and side lists; back is not drawn yet (`figureBack.ts` is a stub until V1-22). The validator treats back as the front list minus `wrist_pron`: horizontal abduction moves the arm in the same coronal plane as front abduction, just seen from behind, while a grip turn is not visible from behind (nothing in the plan suggests otherwise). Fallback: when V1-22 publishes the real back list, the validator's `BACK_CHANNELS` constant is updated to match, and `tests/formguide/research.test.ts` is the one place that needs it.
+  - **Where a "contact fact" (curl grip, row handle line, pulldown grip width, bar-over-mid-foot, hanging swing) is recorded.** `Research` (`model.ts`) has no dedicated field for these yet (they feed V1-04's solver `contacts`, not built here). Each is written as a plain descriptive entry in the file's top-level `sources` array, e.g. `"Contact fact (D-FG7 (j)): grip stays supinated..."`, so it is cited but does not need a schema change in this card's write scope. Fallback: if a later card adds a `contacts` field to `Research`, these entries move there and the sources array keeps only citations.
+  **Why**: neither point blocks V1-02's write scope (`research/*.json`, `research.test.ts`, `fixtures/research-bad/**`); both follow directly from the published plan and the current schema.
+  **Source**: `docs/FORM-GUIDE-PRODUCTION.md` §10.5 V1-02 card; D-FG7 (d), (j), (l); `src/formguide/model.ts` `Research` type.
 ## Form guide Version 1 plan (V1-00, 2026-09-29)
 
 - **Decided (D-FG7, supervisor-approved plan of the 2026-09-29 planning workflow; recorded by V1-00)**: the decisions the Version 1 cards build on. The plan itself (approach, grafts, card defaults, lanes, merge order, the 25 cards and the owner's device checks) is `docs/FORM-GUIDE-PRODUCTION.md` §10. Each item gives its reason and its fallback.
