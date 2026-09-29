@@ -38,8 +38,9 @@ function holdsOf(g: ExerciseGuide, m: MachineDrawing | null): (Hold | string)[] 
   return out;
 }
 
-/** contactsHeld: the failing lines and the note. */
-export function contactsHeld(g: ExerciseGuide, rig: Rig, m: MachineDrawing | null, passes: Pass[], samples: number, gap: number, where: Where): { fails: string[]; note: string } {
+/** contactsHeld: the failing lines and the note. `rig` solves the file; `drawn` is the rig the points are read on (the
+ * same one in the check; a test draws a shifted one). */
+export function contactsHeld(g: ExerciseGuide, rig: Rig, m: MachineDrawing | null, passes: Pass[], samples: number, gap: number, where: Where, drawn: Rig = rig): { fails: string[]; note: string } {
   const fails: string[] = [], contacts = g.contacts ?? [];
   for (const d of g.machine?.drive ?? []) {
     if (!('follow' in d)) continue;
@@ -55,7 +56,7 @@ export function contactsHeld(g: ExerciseGuide, rig: Rig, m: MachineDrawing | nul
   for (const p of passes) {
     const rel = new Set(p.fig === 'mistake' ? g.mistake.release ?? [] : []);
     for (let i = 0; i <= samples; i++) {
-      const u = i / samples, st = stateAt(g, u, p.fig, p.rep, rig), f = rig.frame(st.pose), pt = (a: AttachmentId) => rig.point(f, a);
+      const u = i / samples, st = stateAt(g, u, p.fig, p.rep, rig), f = drawn.frame(st.pose), pt = (a: AttachmentId) => drawn.point(f, a);
       for (const h of hs) {
         if (rel.has(h.at)) continue;
         const off = h.off(pt, st.travel);

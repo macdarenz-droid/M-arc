@@ -11,7 +11,7 @@
 // SVG text is measured as a box: TEXT_EM wide per character, TEXT_ASCENT above and TEXT_DESCENT below the baseline.
 import type { ExerciseGuide } from '../model';
 import type { Pt } from '../rig/ik';
-import { apply, mmul, opMat, type Frame } from '../rig/pose';
+import { apply, mmul, opMat, type Frame, type Op } from '../rig/pose';
 import type { Mat } from '../rig/figureFront';
 import { compile, type Box, type Compiled } from './svg';
 
@@ -73,8 +73,9 @@ function range3(a: number, b: number, c: number, d: number, lo: number, hi: numb
 }
 /**
  * svg.ts `bbox`, faster for the thousands of frames framing reads: each animated group's ops are multiplied as matrices
- * (bbox writes them as CSS text and parses it back, rounding to 1e-4), and a shape's curves are solved only when the
- * box of its control points (which holds the curve) reaches past the box so far. Held equal to bbox by checksV1.test.ts.
+ * with their numbers rounded to 1e-4 as pose.ts `css` writes them for the browser (bbox writes the CSS text and parses
+ * it back), and a shape's curves are solved only when the box of its control points (which holds the curve) reaches
+ * past the box so far. Held equal to bbox by checksV1.test.ts.
  */
 export function fastBox(c: Compiled, f: Frame): Box {
   const mats: Mat[] = [];
@@ -82,7 +83,7 @@ export function fastBox(c: Compiled, f: Frame): Box {
     let M: Mat = n.parent < 0 ? [1, 0, 0, 1, 0, 0] : mats[n.parent]!;
     if (n.own) M = mmul(M, n.own);
     const xf = n.key ? f[n.key] : undefined;
-    if (xf?.ops) { const [ox, oy] = n.origin!; M = mmul(M, [1, 0, 0, 1, ox, oy]); for (const o of xf.ops) M = mmul(M, opMat(o)); M = mmul(M, [1, 0, 0, 1, -ox, -oy]); }
+    if (xf?.ops) { const [ox, oy] = n.origin!; M = mmul(M, [1, 0, 0, 1, ox, oy]); for (const o of xf.ops) M = mmul(M, opMat(o.map(v => (typeof v === 'number' ? Math.round(v * 1e4) / 1e4 : v)) as Op)); M = mmul(M, [1, 0, 0, 1, -ox, -oy]); }
     mats[i] = M;
   });
   const b: Box = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
