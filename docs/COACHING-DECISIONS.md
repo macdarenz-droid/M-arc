@@ -769,3 +769,29 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 
 - **Decided**: §9 item 5 ("LT-5 Verdict and substitution estimate") originally paired the plan-vs-done verdict line (`post.ts`) with the substitution carry-over estimate (`substitute.ts`). The verdict line needs the planned target LT-3 stores (`LoggedExercise.target`, D-A4, acceptance LT3-A5) and so moves to LT-3's card (§9 item 3); LT-5 (§9 item 5) is the substitution estimate only, unchanged from what the LT-5 PR (#76) already built.
   **Why**: LT-3 was already building `LoggedExercise.target` when review found the verdict line unbuilt in the LT-5 PR; splitting the card to match what each branch actually owns avoids one PR blocking on the other's dependency.
+
+## Privacy policy live and Play forms (DOC-2, 2026-09-29)
+
+- **Decided (D-DOC2, supervisor decision, owner facts 2026-09-29)**: M/ARC's minimum age is **18+**, not a lower age with parental-consent handling.
+  **Why**: (1) Anthropic's Usage Policy defines a minor as under 18 and requires extra safeguards for products serving them, and this app has no such safeguards built; (2) the app handles health data (heart rate, resting heart rate via Health Connect) and gives strength-training advice through Escobar, both inappropriate to hand to a minor unsupervised. Setting 18+ avoids both problems without building anything new, versus supporting a lower age with parental consent, which this app has no mechanism for.
+  **Source**: Anthropic's Usage Policy (minors defined as under 18); `docs/PRIVACY-POLICY.md` "The online coach" and "What stays on your phone" (health data, coaching advice); owner facts for DOC-2, 2026-09-29.
+
+- **Decided**: applicable law is stated as Australia's Privacy Act 1988 (Cth) plus, for Philippine users, the Philippines' Data Privacy Act of 2012 (Republic Act No. 10173) — both names and years confirmed from their official sources (`legislation.gov.au` for the Privacy Act 1988; `officialgazette.gov.ph`/`privacy.gov.ph` for RA 10173, signed 15 August 2012), not assumed from training.
+  **Why**: the owner lives in Australia and the app is available in all countries, especially the Philippines and Australia (owner facts); both acts are the correct, current official names as verified by web search, not similarly-named older or draft bills.
+  **Source**: WebSearch results against `legislation.gov.au`, `officialgazette.gov.ph` and `privacy.gov.ph`, 2026-09-29.
+
+- **Decided**: `docs/PRIVACY-POLICY.md`'s "Last updated" date is set to the DOC-2 build date (2026-09-29), not left as a placeholder, since the owner facts gave a real developer name/contact/URL to fill in now rather than at merge time.
+  **Why**: the card asked to set it "to the merge date"; the exact merge date isn't knowable at build time, so the build date is the closest verifiable stand-in. If the PR merges on a different date, the supervisor or owner should bump this one line before or as part of merging — no other content in the policy depends on the date.
+  **Source**: DOC-2 task card.
+
+- **Decided**: the GitHub Pages page (`.github/workflows/pages.yml`, `scripts/build-privacy-page.mjs`) renders `docs/PRIVACY-POLICY.md` to HTML **at deploy time**, rather than committing a static `site/privacy/index.html` that a test checks for drift.
+  **Why**: a render-at-build-time page can't go stale — there's nothing to fall out of sync, so no drift-detection test is needed at all, and one less generated file needs reviewing in every future privacy-policy PR. The renderer itself (`renderPrivacyPolicy`) is still unit-tested (`tests/privacy-page.test.ts`) against escaping, bold/link handling, lists and "no leftover `[OWNER:`" regressions. `site/` is gitignored; the workflow generates it fresh on every push to `main` that touches the policy or the renderer.
+  **Source**: DOC-2 task card (offered both options); `docs/AGENT-RULES.md`-style "no speculative abstraction" reasoning (a static copy would be a second source of truth with no reader that needs it).
+
+- **Decided**: the Data Safety form's "Anthropic receives the request" case is drafted as **collected and transmitted for app functionality**, not flagged as data "sold" or used for advertising, and Anthropic's role is documented as a data processor fulfilling the user's own coach request.
+  **Why**: `docs/PRIVACY-POLICY.md`'s existing, reviewed wording (D-DOC1) already establishes this framing — no training by default, 30-day deletion, server-side requests so Anthropic never sees the phone's IP. `docs/PLAY-SUBMISSION.md` carries the same framing forward with file:line citations rather than re-deciding it.
+  **Source**: `docs/COACHING-DECISIONS.md` D-DOC1 (review round 1, Anthropic retention); `docs/PRIVACY-POLICY.md` "The online coach".
+
+- **Decided**: the content rating questionnaire's user-generated-content question is answered "no shared/public user-generated content" (marked unknown/conservative in the doc), rather than asserting a specific IARC answer key.
+  **Why**: nothing in the codebase names an IARC question ID or exact wording the current questionnaire uses (Google can reword it), and coach messages/exercise notes are never shown to other users — verified by grep, no multiplayer/social/sharing feature exists in `src/`. Guessing a specific rating board's checkbox label would risk misdeclaring; the doc says what the code does and flags the mapping as the owner's to confirm against the live form.
+  **Source**: grep across `src/` for user-to-user sharing (none found); DOC-2 card's "say unknown where the code can't answer, never guess" instruction.

@@ -1,10 +1,12 @@
 # M/ARC privacy policy
 
-Draft for the owner to publish. Last updated: [OWNER: date of publishing].
+Last updated: 2026-09-29.
 
-M/ARC is made by [OWNER: developer name as on the Play listing]. Contact: [OWNER: contact email]. This policy is published at [OWNER: public web URL of this policy].
+M/ARC is made by Marc Darenz L. Masarate. Contact: macdarenz@gmail.com. This policy is published at https://macdarenz-droid.github.io/M-arc/privacy/.
 
 M/ARC is a workout tracker. It has no accounts, no ads and no analytics. Your data stays on your phone unless you turn on one of the two optional features below: the online coach and error reports. Both are off until you turn them on.
+
+Escobar, the online coach, may become a paid feature in the future. If that happens, this policy will be updated with the payment details before it launches; nothing about payment exists in the app today.
 
 ## What stays on your phone
 - Your workouts, sets, weights, reps, splits, schedule, exercise notes, and profile (name, age, sex, height, body weight, training start).
@@ -30,7 +32,7 @@ Your health data (heart rate, sleep, steps, calories) and body data (weight, bod
 While the app is open, it may also check whether the coach server is reachable. That check sends no data, but the server sees your IP address.
 
 **Who receives it:**
-- **Cloudflare** runs the coach server (a Cloudflare Worker run by [OWNER: developer name]). It passes your request on and keeps no conversation. To limit use, it counts requests per device id and per internet (IP) address for the day; these counters are deleted after 3 days. Its logs record only technical details (which model answered, token counts, timing), not your messages.
+- **Cloudflare** runs the coach server (a Cloudflare Worker run by Marc Darenz L. Masarate). It passes your request on and keeps no conversation. To limit use, it counts requests per device id and per internet (IP) address for the day; these counters are deleted after 3 days. Its logs record only technical details (which model answered, token counts, timing), not your messages.
 - **Anthropic** (the maker of the Claude AI) receives the request from the Worker, in the United States, and writes the coach's answer. The request comes from the server, not your phone, so Anthropic does not see your IP address. Anthropic may keep parts of a request in a short-lived cache (up to one hour) so follow-up messages are faster. Under its policy for API customers, Anthropic deletes API requests and answers within 30 days, keeps them longer only if needed to enforce its usage policy or the law, and does not use them to train its models by default. See https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data and https://privacy.claude.com/en/articles/7996868-is-my-data-used-for-model-training.
 
 ## Error reports, off by default
@@ -46,12 +48,13 @@ The server stores reports in Cloudflare's database for 90 days, then deletes the
 Everything the app sends goes over an encrypted connection (HTTPS). Health data is never sold, never used for ads, and never given to anyone except, when you share it, to answer your own coach request. The app has no ads or tracking.
 
 ## Deleting your data
-"Reset workout data" in Settings (Your data), then "Reset everything", erases everything on the phone, including coach conversations and photos, and gives you a new install id. Uninstalling the app also removes it. Error reports on the server are not linked to your name and are deleted after 90 days. To ask about them, email [OWNER: contact email].
+"Reset workout data" in Settings (Your data), then "Reset everything", erases everything on the phone, including coach conversations and photos, and gives you a new install id. Uninstalling the app also removes it. Error reports on the server are not linked to your name and are deleted after 90 days. To ask about them, email macdarenz@gmail.com.
 
 ## Children
-M/ARC is not meant for children under [OWNER: minimum age]. [OWNER: confirm age and wording for the countries you publish in.]
+M/ARC is intended for adults (18+). It is not meant for children, and its coach gives strength-training advice and reads heart-rate health data that is not suitable for a minor to act on unsupervised.
 
 ## Changes
 If this policy changes, the new version will be posted here with a new date.
 
-Applicable law: [OWNER: country or region whose law applies].
+## Applicable law
+M/ARC is available in all countries, and especially in the Philippines and Australia, where the developer is based. For users in Australia, this policy is written to meet the Australian Privacy Act 1988 (Cth). For users in the Philippines, it is written to meet the Data Privacy Act of 2012 (Republic Act No. 10173).
