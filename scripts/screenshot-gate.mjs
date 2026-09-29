@@ -5940,8 +5940,9 @@ for (const { theme, inset } of bug22Runs) {
     const btn0 = cards.nth(0).locator('.btn-how-to');
     // A1: entry 0 (lateral raise, guided) is open by default and shows the button.
     if (!(await visible(btn0))) errors.push(`${tag} ${theme} A1: no button on the open guided card`);
-    // Single accordion: opening entry 1 (bench press, no guide) closes entry 0 — neither should show the button.
-    await cards.nth(1).locator('.ex-head').click(); await page.waitForTimeout(300);
+    // Single accordion: opening entry 1 (bench press, no guide) closes entry 0 — neither should show the
+    // button once entry 0's close transition (240ms + 60ms grace, motion.ts DUR.enter) has settled.
+    await cards.nth(1).locator('.ex-head').click(); await page.waitForTimeout(500);
     if (await cards.nth(1).locator('.btn-how-to').count()) errors.push(`${tag} ${theme} A2: a button shows for an exercise with no guide`);
     if (await cards.nth(0).locator('.btn-how-to').count()) errors.push(`${tag} ${theme} A5: the button stayed on the now-collapsed guided card`);
     // Reopen entry 0 (closes entry 1) for the styling and layout checks below.
