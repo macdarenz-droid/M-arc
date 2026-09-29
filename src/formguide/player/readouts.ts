@@ -68,7 +68,13 @@ const H = 0.01;
 export function readouts(g: ExerciseGuide, rig: Rig): (figure: Figure, ms: number) => Readout {
   const ch = workingChannel(g), rows = effortRows(g), eff = new Map<string, ReturnType<typeof effortOf>>();
   const side = ch?.endsWith('_l') ? 'l' : 'r', repS = repSeconds(g.tempo);
-  const hand = (figure: Figure, rep: number, u: number) => rig.point(rig.frame(poseAt(g, Math.min(1, Math.max(0, u)), figure, rep)), `hand_${side}`);
+  // Speed shows the rep's motion, not the secondary motion (supervisor re-guide on the check-in): the hand is read on
+  // the pose with the hold tremor and the balance sway at 0, as D-FG3 reads grip paths in the body's frame.
+  const still: ExerciseGuide = { ...g, movement: { ...g.movement, tremorDeg: 0 } };
+  const hand = (figure: Figure, rep: number, u: number) => {
+    const p = poseAt(still, Math.min(1, Math.max(0, u)), figure, rep);
+    return rig.point(rig.frame({ ...p, sway: 0 }), `hand_${side}`);
+  };
   return (figure, ms) => {
     const { r, rep, u } = repAt(g, figure, ms);
     const ws = windowsFor(tempoOf(g, figure, rep), g.order, g.kind);

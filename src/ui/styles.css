@@ -964,9 +964,11 @@ html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-gu
 .form-guide .fg19-tag { transform-box: view-box; transform-origin: 0 0; pointer-events: none; }
 .form-guide .fg19-tag rect { fill: var(--surface-1); stroke: var(--border); }
 .form-guide .fg19-tag text { fill: var(--text); font-size: 11px; font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
+.form-guide .fg4-scene .fg-fig { pointer-events: none; }
 .form-guide .fg19-hot { fill: transparent; stroke: none; pointer-events: all; cursor: pointer; }
+.form-guide .fg19-hot:focus { outline: none; }
 .form-guide .fg19-hot:focus-visible { outline: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; }
-.form-guide .fg19-out { display: none; fill: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; pointer-events: none; }
+.form-guide .fg19-out { display: none; fill: none; stroke: var(--text); stroke-width: 3; stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; pointer-events: none; }
 .form-guide .fg19-out.on { display: inline; }
 .form-guide .fg19-cmp .fg19-trace, .form-guide .fg19-cmp .fg19-arc, .form-guide .fg19-cmp .fg19-tag, .form-guide .fg19-cmp .fg19-hot, .form-guide .fg19-cmp .fg19-out { display: none; }
 .form-guide .fg19-ro { flex: none; display: grid; gap: 6px; font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); }

@@ -141,9 +141,10 @@ export function guidePlan(g: ExerciseGuide, rig: Rig, place?: TagPlacer): GuideP
 const same = (a: Keyframe, b: Keyframe) => a.transform === b.transform && a.strokeDashoffset === b.strokeDashoffset;
 
 /** The markup of the guide layer (arc, tag pill, trace); the player sets the tag's text and, per camera, the scale of
- * the tag and the arc (fitGuides). */
+ * the tag and the arc (sizeHot), and clips the trace above an open bubble (clipTrace). */
 export function guideMarkup(p: GuidePlan): string {
-  return `<path class="fg19-trace" d="${p.trace}"/>`
+  return `<clipPath id="fg19-clip"><rect class="fg19-clip-r" x="-9999" y="-9999" width="99999" height="99999"/></clipPath>`
+    + `<path class="fg19-trace" d="${p.trace}" clip-path="url(#fg19-clip)"/>`
     + `<g class="fg19-arc"><g class="fg19-arc-k"><path class="fg19-arc-c" d="M${ARC_R} 0 A${ARC_R} ${ARC_R} 0 1 1 ${-ARC_R} 0 A${ARC_R} ${ARC_R} 0 1 1 ${ARC_R} 0" stroke-dasharray="${r2(ARC_C)} ${r2(ARC_C)}"/></g></g>`
     + `<g class="fg19-tag"><g class="fg19-tag-k"><rect x="${-TAG_W / 2}" y="${-TAG_H / 2}" width="${TAG_W}" height="${TAG_H}" rx="${TAG_H / 2}"/><text class="fg19-tag-t" x="0" y="4" text-anchor="middle">0°</text></g></g>`;
 }

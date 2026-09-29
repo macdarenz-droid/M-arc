@@ -271,13 +271,24 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
     e.preventDefault();
     apply(tapMuscle(sRef.current, id));
   };
+  // The hand path stops at the top edge of an open bubble (the zoom tip or a muscle's line), so no path runs under it.
+  const clipTrace = () => {
+    const sv = svgRef.current, r = figRef.current?.querySelector('.fg19-clip-r'), b = rootRef.current?.querySelector('.stage > .bubble');
+    const m = sv?.getScreenCTM();
+    if (!sv || !r || !m) return;
+    let h = 99999;
+    if (b) { const p = sv.createSVGPoint(); p.x = 0; p.y = b.getBoundingClientRect().top; h = p.matrixTransform(m.inverse()).y + 9999; }
+    r.setAttribute('height', String(Math.max(0, h)));
+  };
+  useLayoutEffect(clipTrace, [bubble, zoom, compare, theme, v.showStage, still]);
   useEffect(() => {
     figRef.current?.querySelectorAll('.fg19-out').forEach(o => o.classList.toggle('on', o.getAttribute('data-muscle') === v.selMuscle));
   }, [v.selMuscle, theme]);
   useLayoutEffect(() => {
     sizeHot();
-    window.addEventListener('resize', sizeHot);
-    return () => window.removeEventListener('resize', sizeHot);
+    const fit = () => { sizeHot(); clipTrace(); };
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
   }, [zoom, compare, theme, v.showStage, still]);
 
   return (
