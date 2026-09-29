@@ -5508,7 +5508,8 @@ for (const { theme, inset } of bug22Runs) {
     // UI-2 A2: the button is on the open card, not for the bench press (entry 1, no guide) even once its card is open.
     await openCard(page, 1);
     if (await howButton(page, 1).count()) errors.push(`${tag} ${theme} A2: "How to do it" shows for Barbell Bench Press`);
-    await openCard(page, 1); await page.waitForTimeout(300);
+    // Single accordion: reopen entry 0 (closes entry 1).
+    await openCard(page, 0);
     // UI-2 A3: the "..." sheet no longer lists it, for the guided exercise either.
     await options(page, 0);
     const labels = await page.locator('dialog[open] .stack-sm > button').allTextContents();
@@ -5937,12 +5938,13 @@ for (const { theme, inset } of bug22Runs) {
     const cards = page.locator('.card.exercise');
     // A1/A2: entry 0 (lateral raise, guided) is open by default and shows the button; entry 1 (bench press, no guide) does not, once opened.
     const btn0 = cards.nth(0).locator('.btn-how-to');
+    // A1: entry 0 (lateral raise, guided) is open by default and shows the button.
     if (!(await visible(btn0))) errors.push(`${tag} ${theme} A1: no button on the open guided card`);
+    // Single accordion: opening entry 1 (bench press, no guide) closes entry 0 — neither should show the button.
     await cards.nth(1).locator('.ex-head').click(); await page.waitForTimeout(300);
     if (await cards.nth(1).locator('.btn-how-to').count()) errors.push(`${tag} ${theme} A2: a button shows for an exercise with no guide`);
-    // A5: collapsing the guided card hides its button.
-    await cards.nth(0).locator('.ex-head').click(); await page.waitForTimeout(300);
-    if (await cards.nth(0).locator('.btn-how-to').isVisible().catch(() => false)) errors.push(`${tag} ${theme} A5: the button stayed visible on a collapsed card`);
+    if (await cards.nth(0).locator('.btn-how-to').count()) errors.push(`${tag} ${theme} A5: the button stayed on the now-collapsed guided card`);
+    // Reopen entry 0 (closes entry 1) for the styling and layout checks below.
     await cards.nth(0).locator('.ex-head').click(); await page.waitForTimeout(300);
     // A4: accent styling and a 44px tap target.
     const style = await btn0.evaluate(el => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return { h: r.height, bg: cs.backgroundColor, color: cs.color }; });
