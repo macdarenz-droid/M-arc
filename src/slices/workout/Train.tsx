@@ -539,7 +539,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const gymId = s.active?.gymId;
   const memoDeps = [s.sessions, s.customExercises, s.units, s.goal, gymId, entry, today.value, todayReadiness.value, activeDeload.value, s.deload, recoveryPct];
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
-  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
+  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}), ...(entry.plannedId && entry.plannedId !== entry.exerciseId ? { replacedExerciseId: entry.plannedId } : {}) }), memoDeps);
   const [menu, setMenu] = useState(false);
   const [noteDraft, setNoteDraft] = useState<string | null>(null);
   const [stickyDraft, setStickyDraft] = useState<string | null>(null);
