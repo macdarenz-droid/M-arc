@@ -202,13 +202,14 @@ interface LoggedLoad { kg: number; value: number; unit: LoadUnit }
  * BUG-11: the loads the user really lifted on this exercise, in the profile's unit. A 7 kg
  * dumbbell the user logged exists in their gym even when the built-in ladder (2, 4, 6, 8, 10,
  * 12.5 …) has no 7, so a hold at 7 must not be snapped to 6. Only loads entered in the
- * profile's own unit count: a kg entry says nothing about an lb rack.
+ * profile's own unit count: a kg entry says nothing about an lb rack. BUG-24: a set BUG-18 holds
+ * as implausible was not really lifted (yet), so its load is not one the gym has.
  */
 function loggedLoads(sessions: Session[], exerciseId: string, custom: Exercise[], unit: LoadUnit): LoggedLoad[] {
   const out: LoggedLoad[] = [];
   for (const h of exerciseHistory(sessions, exerciseId, custom)) {
     for (const x of h.sets) {
-      if (!(x.kg != null && x.kg > 0)) continue;
+      if (!(x.kg != null && x.kg > 0) || h.held.includes(x)) continue;
       const u = x.entered?.unit ?? 'kg';
       if (u !== unit) continue;
       out.push({ kg: x.kg, value: x.entered?.value ?? kgToDisplay(x.kg, unit), unit });
