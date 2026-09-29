@@ -1,0 +1,36 @@
+Technical Plate (blueprint-plate) mockups: credits and licences
+
+1. The plate itself: no photo, video or stock art. The figure, the positions, the hand path and the angle arc are
+   computed by src/plate.mjs (forward kinematics to SVG) written for this mockup.
+   - Body proportions: segment lengths as fractions of height from D. A. Winter, Biomechanics and Motor Control of
+     Human Movement (4th ed., Wiley 2009), anthropometry chapter (upper arm .186, forearm .146, hand .108,
+     thigh .245, shank .246, shoulder width .259, hip width .191). Numbers only; no figure was copied.
+   - Movement and cues: the M/ARC repo's own files src/formguide/exercises/lib_dumbbell_lateral_raise.ts and
+     src/formguide/research/lib_dumbbell_lateral_raise.json (ACE Lateral Raise; PMC7503819; PMC12277279).
+   None of the free assets from tonight's research list was used, so no third-party imagery needs a licence here.
+
+2. Typeface: Inter Variable (latin wght woff2) from node_modules/@fontsource-variable/inter.
+   SIL Open Font License 1.1, the same file the app ships.
+
+3. Body map paths: src/svg/bodyMuscles.ts in the M/ARC repo, generated from the "body-muscles" package by Ivan Vulovic.
+   Apache License 2.0; see the repo's THIRD_PARTY_NOTICES.md.
+
+4. Escobar mark: src/assets/escobar-mark.png from the M/ARC repo (the owner's own logo).
+
+5. Theme colours: src/theme/themes.ts (bundled to src/themes.mjs with esbuild, themeToCss) and the tokens block
+   of src/ui/styles.css, read from the main worktree at 578bbc8.
+
+6. Icons: redrawn from the app's own src/ui/icons.tsx. Two new glyphs were drawn for this mockup: "angle"
+   (the How to do it pill) and "trace". The status-bar glyphs are generic shapes. No brand logos were used or invented.
+
+7. Changes after the judge's review (2026-09-29), all in src/plate.mjs and src/build.mjs
+   - Body: a skull, jaw and chin (head .13H) narrower at the jaw so a neck shows; a concave trapezius slope from the neck
+     to the acromion; feet about hip-width with thighs that taper, so the legs separate below the crotch.
+   - Dumbbells: in a front view a dumbbell is seen end-on (its handle points at the camera at both the start and the top),
+     so it is drawn as a hex head with the handle end-cap, not as a round ring. The judge asked for "handle plus two plates";
+     that side-on view is not what a camera in front would see, so it was not drawn.
+   - The dotted shoulder-height line now runs from the plate edge to the shoulder joint, under the figure, so the raised
+     hand meets it.
+   - f-trace.mp4 shows only the cited Lift cue ("The elbows lead, the hands follow."); the fourth, uncited cue is gone.
+   - Tempo labels keep at least 6 px apart at 320 px width.
+   It is still a drawn figure. Tracing the outline from a real athlete photo (potrace) remains the production plan.

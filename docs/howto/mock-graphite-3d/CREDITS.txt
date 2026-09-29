@@ -1,0 +1,48 @@
+Graphite Figure (graphite-3d) mockups: credits and licences
+
+1. Stage renders (screens b and c, and everything in renders/)
+   Made tonight for this mockup by src/scene.html. It is our own code, and no third-party image, model or motion was used.
+   - Body: a faceless graphite mannequin built from smoothly blended capsules, cones and ellipsoids at Winter's segment
+     proportions (height 1.78 m). It is ray-marched in WebGL2 inside headless Chromium (SwiftShader, CPU only).
+   - Look, per the option's spec: base #1b1c1f, roughness .55, light sheen; a soft 5600 K key light at 45 deg front-left;
+     a cool rim light back-right; soft contact shadows; a background gradient from #0f1011 to #08090a; a 50 mm-equivalent
+     camera at chest height (1.28 m), locked. Dumbbells are matte #141516 with an edge ring at #8a8f98.
+   - Motion: computed by forward kinematics from the repo's own cited data for the Dumbbell lateral raise
+     (src/formguide/exercises/lib_dumbbell_lateral_raise.ts and src/formguide/research/lib_dumbbell_lateral_raise.json):
+     shoulder abduction 10 -> 88 deg, elbow flexion 14 deg, elbow lead 0 -> 8 deg on the file's keys, knees 6 deg,
+     tempo lift 1 / hold 0.5 / lower 2 / rest 0.5 s, torso upright, no shrug. The research file's sources are ACE, Physiopedia,
+     PMC7503819 and PMC12277279. It is NOT captured motion, and every screen says so.
+   - Muscle glow: the side (lateral) deltoids, warm white #f7f8f8, emission of about 20%, brightest at the cited load peak
+     (research peakAt 0.3125 of the rep, the top hold).
+   Deviation from the mockup plan: the plan named three.js from a CDN. Plain WebGL2 was used instead, with no library and
+   no network. A signed-distance body blends the shoulder into the chest and the thigh into the hip with no seams, which a
+   stack of rasterised capsules cannot do. Nothing was added to the app or to package.json.
+
+   Free assets from tonight's research list: none used here. This option's whole point is a rendered body, so a stock
+   photo on the stage would misrepresent it. The Studio Loop mockup uses the Pexels photo; see its CREDITS.txt.
+
+2. Typeface: Inter Variable (latin wght woff2), copied from node_modules/@fontsource-variable/inter.
+   SIL Open Font License 1.1. It is the same file the app ships.
+
+3. Body map paths: src/svg/bodyMuscles.ts in the M/ARC repo, generated from the "body-muscles" package
+   (Copyright 2024 Ivan Vulović, https://github.com/vulovix/body-muscles). Apache License 2.0; see THIRD_PARTY_NOTICES.md.
+
+4. Escobar mark: src/assets/escobar-mark.png from the M/ARC repo (the owner's own logo).
+
+5. Icons: redrawn from the app's own src/ui/icons.tsx, via the Studio Loop mockup's build script. The status-bar glyphs
+   are generic shapes drawn for the mockup. No brand logos were used or invented, and no competitor UI was copied.
+
+6. Page build: src/build.mjs starts from the Studio Loop mockup's build (the same entry pill, Sheet and player, as this
+   option's spec asks). It adds the Angle control, the Muscles toggle and the Paper theme tokens (themes.ts:127-159).
+
+7. Tools (software, not assets): Chromium with SwiftShader, Playwright, and ffmpeg from imageio-ffmpeg (libx264, libvpx-vp9, libwebp).
+
+8. Changes after the judge's review (2026-09-29)
+   - The Muscles toggle and the muscle-glow renders (45-muscles-peak.png and the 45-degree muscles loop) were withdrawn.
+     The glow lit the whole upper arm and read as light shine, so it pointed at the wrong muscle. A tighter mask was tried;
+     white light on a graphite body still read as shine, so it was removed rather than shown. The MuscleMap under the stage
+     remains the muscle view. Screen c is now c-howto-45-paper.png (45-degree view, Muscles off, Paper theme).
+   - The Angle control sits on the stage (top right), so the sheet fits without scrolling (765 px content in a 765 px panel).
+   - The legend says Main, not Target (the app's MuscleMap legend is Main / Helps / Stabilises; "Keep quiet" is still new).
+   - The cue line reserves one line, and timeline labels keep at least 6 px apart at 320 px width.
+   - The look-test note on the entry screen moved to the top, off the exercise cards.

@@ -1,0 +1,35 @@
+Key Frames mockups: credits and licences (internal mockups only, 2026-09-29)
+
+USED
+1. Photo "A Bodybuilder Holding Dumbbells" by Wagner Robson, Pexels photo 9073248
+   https://www.pexels.com/photo/a-bodybuilder-holding-dumbbells-9073248/
+   Licence: Pexels License (https://www.pexels.com/license/): free for commercial and non-commercial use,
+   no attribution required, may be modified. Identifiable people must not be shown in a bad light or implied
+   to endorse a product.
+   Use here: frame 01 "Start" of Dumbbell Lateral Raise. (The 28 px thumbnail in the entry pill was replaced by a line icon
+   after the judge's review; assets/lr-thumb.webp is no longer used.)
+   Changes: centre-cropped to 4:5, graded near-monochrome with the black point lifted to about #0f1011, vignette,
+   exported as WebP q72 at 720x900 (assets/lr-01-start.webp, 17.7 KB) and a 120 px thumbnail (lr-thumb.webp).
+   It is a STAND-IN: not our athlete, not a form reference, not a matched sequence. The pose matches the lateral
+   raise start (standing, dumbbells at the sides, neutral grip, shoulders relaxed). After the judge's review no guide
+   line is drawn on Start; the only guide belongs on frame 02 (Top), which is still a placeholder. No angle chip: no source states a number for this position.
+   The photo shows a cap, tattoos, a chain, a watch and a small logo on the shorts; the real shoot brief bans these.
+
+2. Inter Variable (latin, wght), SIL Open Font License 1.1, copied from node_modules/@fontsource-variable/inter.
+3. Escobar mark (repo src/assets/escobar-mark.png) and body-map paths (repo src/svg/bodyMuscles.ts, from the
+   body-muscles package by Ivan Vulovic, Apache License 2.0, see THIRD_PARTY_NOTICES.md in the repo).
+
+DOWNLOADED, CHECKED, NOT USED
+- Pexels photo 9073247 (same shoot): shows a one-arm dumbbell row braced on a barrel. Wrong exercise.
+- Pexels video 34708315 ("Focused Workout in Dark Gym Setting", 1440x2560): 1 fps frames show a seated,
+  floor-level pulling movement behind a rack upright that blocks the body, graded blue. Wrong exercise and
+  obstructed, so no same-person start/top pair could be pulled for the lateral raise.
+
+PLACEHOLDERS
+- Frames 02 Top, 03 Lower slowly and 04 Avoid are plain dark studio plates labelled "photo to be shot".
+  No photo of these positions was available under a verified licence, and none was faked.
+
+CHANGES AFTER THE JUDGE'S REVIEW (2026-09-29)
+- Entry pill: a line icon (two stacked frames) in accent-text replaces the round photo thumbnail.
+- Frame 01 (Start) has no guide line. The only guide belongs on frame 02 (Top), still a placeholder.
+- Screen c is captured with the photo fully in view (no half-cut frame). Tempo: Up and Down in the accent colour, the pause in text-3.

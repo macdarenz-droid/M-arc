@@ -1,0 +1,31 @@
+Studio Loop mockups: credits and licences
+
+1. Stage image (screens b and c)
+   "A Bodybuilder Holding Dumbbells", photo 9073248 by Wagner Robson on Pexels.
+   Page:    https://www.pexels.com/photo/a-bodybuilder-holding-dumbbells-9073248/
+   File:    https://images.pexels.com/photos/9073248/pexels-photo-9073248.jpeg (downloaded 2026-09-29, src/p9073248.jpg)
+   Licence: Pexels License (https://www.pexels.com/license/): free to use, including commercially; no attribution required.
+            The licence was marked verified in tonight's research pass. It was not re-checked separately for this mockup.
+   Changes: graded by src/grade.py: the logo on the shorts blurred, cropped square from the neck to mid-thigh (no cap, no face,
+            per the judge's fix 1), near-mono, blacks lifted to #0f1011, soft corner falloff, 720x720.
+            stage-lateral-raise.png is the "playing" frame. stage-lateral-raise.webp (22.3 KB) is the poster, within the 30 KB poster budget.
+            It is a still: no motion is shown, and the stage label says so. The model is still shirtless, which the real brief bans.
+   Why this image: it shows the lateral raise start position, front view: standing, dumbbells at the sides, palms in.
+            The on-screen cues and tempo come from the lateral raise research file, so the image matches them.
+            It is a stand-in only, not our athlete and not a form reference, and every stage says so.
+
+   Checked and not used: the three Pexels videos from the research list (34708315, 34708346, 34583306).
+   Frames pulled from them show a seated pull on the floor, a dark seated machine, and a single-arm cable move.
+   None shows a lateral raise or a chest press, so their cues could not have been accurate. They were deleted.
+   Photo 9073247 (a one-arm row) was downloaded, not used, and deleted.
+
+2. Typeface: Inter Variable (latin wght woff2), copied from node_modules/@fontsource-variable/inter.
+   SIL Open Font License 1.1, the same file the app ships.
+
+3. Body map paths: src/svg/bodyMuscles.ts in the M/ARC repo, generated from the "body-muscles" package by Ivan Vulović.
+   Apache License 2.0; see the repo's THIRD_PARTY_NOTICES.md.
+
+4. Escobar mark: src/assets/escobar-mark.png from the M/ARC repo (the owner's own logo).
+
+5. Icons: redrawn from the app's own src/ui/icons.tsx. The status-bar glyphs are generic shapes drawn for this mockup.
+   No brand logos were used or invented.
