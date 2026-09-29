@@ -12,7 +12,7 @@ Written 2026-09-29 by the Claude supervisor from primary sources. Since 2026-09-
   - individual developers may apply only for Basic device information and Message notification;
   - the launch permission is for a watch app that opens an app on the phone, never for the phone app.
 - **Correction to this record:** earlier versions said Launch specified app was unticked. That came from a screenshot taken before submission, not from what was sent. The supervisor's first message to the owner on 2026-09-29 was right about the launch permission and wrong about sensor permissions, which were never selected.
-- **Application 3 is ready for the owner** (section 3): form answers, a new description (1010 of 1024 characters) and two new PDFs. **Only Basic device information is ticked.**
+- **Application 3 is ready for the owner** (section 3): form answers, a new description (1010 of 1024 characters) and two upload files, Huawei's own .xlsx templates filled in. **Only Basic device information is ticked.**
 - **Owner confirmed on 2026-09-29:**
   - the old `05:A0…` fingerprint is deleted in AppGallery Connect;
   - nothing was submitted after 2026-09-24.
@@ -50,9 +50,9 @@ Read 2026-09-29 from Huawei's documents, EN and CN. Quotes and links are in sect
     - one row per requested permission, deleting the rest;
     - a mandatory "Data Display Path" with phone- and wearable-side screenshots or UX diagrams;
     - App Information and Supplementary Info sheets.
-  - Application 3's PDF follows the newer template.
+  - Application 3's data-permission file is the newer template, filled in.
 - **User Authorization Path template:** "For Android and HarmonyOS applications, the basic device information and message notification permissions are granted by default." The authorization guide says the same for Huawei Health 11.0.3.512 or later. Until approval, the API returns error code 8, so no real authorization screenshot can exist yet.
-- **Upload format:** the form says "Upload an Excel or PDF file smaller than 10 MB". PDF is fine.
+- **Upload format: .xlsx only.** The form says "Upload an Excel or PDF file smaller than 10 MB", but on 2026-09-29 it refused the PDFs with "The file type is not supported. Please upload the xlsx file." (owner's screenshot). The Chinese form already said Excel only. Application 2's PDFs had been accepted on 2026-09-24, so the form changed in between.
 - **Review time:** "Generally, the approval process may take one to two weeks". "An application won't be approved if the submitted materials do not meet the requirements."
 - **Device support:** the GT series from GT 3 onward is listed. App-to-app messaging with lite wearables is open to individual developers.
 - **What reviewers check,** from a Huawei official forum reply on 2025-10-28: the materials are mainly used to check that the permissions requested match what user authorization grants. Mock text or images are accepted when no real screen exists yet. ([forum](https://developer.huawei.com/consumer/cn/forum/topic/0203196964711393095))
@@ -70,8 +70,8 @@ Open the rejected application (as the owner did on 2026-09-29) and change it lik
 | Basic device information | **ticked** |
 | Message notification | unticked (not needed: with a watch app, Basic device information already covers messages, per the template) |
 | Launch specified app | **UNTICKED** (the only reason for rejection 2) |
-| Upload 1 (data permissions) | new `MARC_Data_Permission_and_Usage.pdf` (section 5.4) |
-| Upload 2 (user authorization path) | new `MARC_User_Authorization_Path.pdf` (section 5.4) |
+| Upload 1 (data permissions) | new `MARC_Data_Permission_and_Usage.xlsx` (section 5.4) |
+| Upload 2 (user authorization path) | new `MARC_User_Authorization_Path.xlsx` (section 5.4) |
 
 **Description** (1010 characters, plain ASCII; the form's counter matched Python's count for application 2's 1015-character text):
 
@@ -102,7 +102,7 @@ The cause is now known, so there is no need to wait for Huawei before resubmitti
 1. In AppGallery Connect, the SHA-256 fingerprint shows `05:66:9A…CA:F1:F5` and no `05:A0…` (section 2).
 2. In the form, **only Basic device information is ticked**. Launch specified app and Message notification are unticked.
 3. The description box holds the new text (the counter shows 1010 / 1024).
-4. Both uploads show the green tick and are the new files dated 29 September 2026.
+4. Both uploads show the green tick and are the new .xlsx files from 29 September 2026.
 5. **Send a screenshot of the whole filled form before pressing Submit, and wait for the agent's go.** The agent checks the ticks, the description and both uploads against 3.2.
    - Application 2 went out with Launch specified app ticked because nobody checked the final form.
    - The last screenshot an agent saw was taken before that tick, and "Submitted" was taken as confirmation.
@@ -114,8 +114,8 @@ The cause is now known, so there is no need to wait for Huawei before resubmitti
 - **The watch app isn't built yet, so page 3 shows designs, not screenshots.** The template accepts "screenshots/UX diagrams", and rejection 2 did not repeat rejection 1's request for them. Every design page is labelled proposed.
 - **The watch face shows heart rate and calories.** A reviewer could read that as sensor use. The page says these are sample values, that today's phone heart rate comes from the watch's standard heart-rate broadcast, and that no sensor permission is requested. Sending the watch's heart rate over P2P later uses the same permission, but it would be a new use of data; if it is added, describe it with Modify.
 - **No real authorization screenshot.** None can exist before approval (error code 8). The authorization path document says so, shows the real M/ARC Watch screen and the proposed disclosure, and cites Huawei's rule that the permission is granted by default.
-- **Personal details.** The developer's name and email appear only in the owner's copies of the PDFs (page 1 of the data-permission file). They never go in the repo; the generator takes them on the command line.
-- **The application-2 PDFs carried a signed "made with ChatGPT" content credential** (a C2PA manifest from OpenAI). There's no evidence Huawei checks it. The new PDFs are built fresh and carry none.
+- **Personal details.** The upload files contain no name or email; Huawei's template doesn't ask for them, and the form already knows the account. Nothing personal goes in the repo.
+- **The application-2 PDFs carried a signed "made with ChatGPT" content credential** (a C2PA manifest from OpenAI). There's no evidence Huawei checks it. The new files are built fresh and carry none.
 
 ## 4. Application history
 
@@ -203,7 +203,7 @@ The cause is now known, so there is no need to wait for Huawei before resubmitti
 Everything to submit is in section 3.2, and the PDF contents are in 5.4. What changed from application 2:
 - Launch specified app unticked; only Basic device information requested.
 - A new description that answers the box's actual question, the watch app's main functions.
-- PDFs rebuilt around Huawei's current individual-developer template, with the section 5.3 wording fixes.
+- Uploads are Huawei's own .xlsx templates filled in (the form no longer accepts PDF), with the section 5.3 wording fixes.
 
 ### 4.5 Huawei replies log
 One line per reply or console message, newest last. Update the rest of this record at the same time.
@@ -299,18 +299,36 @@ The rest of the page:
 
 All three are applied in application 3 (5.4).
 
-### 5.4 Application 3 PDFs (built 2026-09-29)
-- **Source of the exact wording:** `docs/wear-engine/make_pdfs.py`.
-  - The developer's name, email and phone screenshots are passed in on the command line, so the script holds no personal data.
-  - Page 3 of each file (the C2 watch screens) is copied unchanged from the application-2 PDF.
-  - The build stops if any page's text runs into the footer.
-  - Needs python3 with reportlab, pypdf and Pillow, plus the DejaVu Sans fonts.
-- **Checked on the built files:**
-  - each file has 4 pages;
-  - no page mentions any permission except Basic device information;
-  - the name and email appear once, on page 1 of the data-permission file;
-  - no content-credential (C2PA) data;
-  - sizes about 1.05 MB and 0.19 MB, both under the 10 MB limit.
+### 5.4 Application 3 uploads (built 2026-09-29)
+- **The uploads are Huawei's own templates, filled in:**
+  - `MARC_Data_Permission_and_Usage.xlsx`, from "Data Permission and Usage Description for Individual Developers.xlsx";
+  - `MARC_User_Authorization_Path.xlsx`, from "User Authorization Path Description.xlsx".
+  - Neither file holds a name or email.
+- **Source of the exact wording:** `docs/wear-engine/make_uploads.py`.
+  - It first builds two PDFs; the pictures inside the .xlsx files are rendered from them.
+  - Page 3 of each PDF (the C2 watch screens) is copied unchanged from the application-2 PDF.
+  - Huawei's templates, the old PDFs and the screenshots are passed in on the command line; none are committed.
+  - The build stops if any PDF page's text runs into its footer.
+  - Needs python3 with reportlab, pypdf, pymupdf, openpyxl and Pillow, plus the DejaVu Sans fonts.
+- **Checked on the built files (2026-09-29):**
+  - both open in openpyxl and in LibreOffice Calc, checked visually;
+  - sizes 0.88 MB and 0.13 MB, under the 10 MB limit;
+  - no name or email;
+  - no permission is named except Basic device information;
+  - Huawei's example screenshot is removed from the authorization template.
+- **Data Permission and Usage** (.xlsx, 3 sheets, as the template has them):
+  - **"Individual Developer (M)":**
+    - column C answers the 5 self-check questions;
+    - one permission row, Basic device information, with the usage scenario (C9), the data display path (D9) and remarks (E9). The remarks answer template notes 3 and 5: why no notification permission, and why phone sync rather than the cloud;
+    - the Message notification row is deleted, as the template asks;
+    - under the table, the pictures for D9: the watch UX page, the usage scenario and data flow page, the phone-inactive page, and three real phone screenshots.
+  - **"App Information (M)":** introduction; "not on AppGallery, so no rating"; the three screenshots.
+  - **"Supplementary Info (M)":** no hardware purchase, no co-marketing, industry sports.
+- **User Authorization Path** (.xlsx):
+  - B2: the 5-step path, noting that the permission is granted by default for Android apps and that Huawei Health's screen can't be captured before approval (error code 8);
+  - C2: a picture of the three screens (the real M/ARC Watch screen, the proposed disclosure, and the card about Huawei Health's screen);
+  - row 3: how to change or remove access (Disconnect).
+- The two PDFs below are the picture sources. They are not uploaded.
 - **Data Permission and Usage Description** (upload 1):
   1. **Page 1:**
      - identity table: phone app, App ID and package, wearable target, [owner] name and email;
@@ -392,7 +410,7 @@ All three are applied in application 3 (5.4).
 - **Never** change the phone signing key `05:66…`.
 - **Only the owner** logs in to Huawei, submits applications, emails Huawei and changes console settings. Agents prepare the text and check it.
 - Keep this file current after every Huawei reply: a line in section 4.5, then sections 1 and 3. Add a Relay `LOG.md` line (no URLs or secrets).
-- **PDFs:** change the wording in `docs/wear-engine/make_pdfs.py` and rebuild. Give the owner the rebuilt files. Never commit built PDFs, screenshots, or the developer's name or email.
+- **Upload files:** change the wording in `docs/wear-engine/make_uploads.py` and rebuild. Give the owner the rebuilt .xlsx files. Never commit built files, screenshots, Huawei's templates, or the developer's name or email.
 
 ## 8. Sources
 - The owner's screenshots:
@@ -400,7 +418,8 @@ All three are applied in application 3 (5.4).
   - the application 2 form page before submission (superseded, see 4.3);
   - rejection 2 email (shared 2026-09-29 about 08:07 UTC);
   - on 2026-09-29: the rejection 2 email again, the rejected application 2 reopened in the console (Launch specified app ticked), and both console messages ("My messages", with dates);
-  - on 2026-09-29: the phone screenshots used in the application 3 PDFs (Workouts, live workout, Watch screen).
+  - on 2026-09-29: the phone screenshots used in the application 3 uploads (Workouts, live workout, Watch screen);
+  - on 2026-09-29: the form refusing the PDFs ("Please upload the xlsx file").
 - The owner's application 2 PDFs, sent again on 2026-09-29:
   - `MARC_Data_Permission_and_Usage.pdf`;
   - `MARC_User_Authorization_Path.pdf`, uploaded twice. Both copies have the same pages; only their embedded ChatGPT content credential differs.

@@ -1,4 +1,4 @@
-"""Layout helpers for make_pdfs.py, matching the look of the application-2 PDFs (A4, DejaVu Sans, lavender cells)."""
+"""Layout helpers for make_uploads.py, matching the look of the application-2 PDFs (A4, DejaVu Sans, lavender cells)."""
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics

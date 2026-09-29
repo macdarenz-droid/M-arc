@@ -1,14 +1,24 @@
-"""Builds the two upload files for M/ARC's Wear Engine application 3.
+"""Builds the upload files for M/ARC's Wear Engine application 3.
 
-The wording here is the source of truth for the PDFs; docs/WATCH-WEAR-ENGINE-APPLICATION.md
-section 5 summarises it. Page 3 of each file (the C2 watch screens) is copied unchanged from
-the application-2 PDFs. Nothing personal is stored in this file: the developer's name and email
-and the phone screenshots are passed in on the command line and never committed.
+The Wear Engine form accepts only .xlsx uploads (it refused PDFs on 2026-09-29), so the uploads are
+Huawei's own templates, filled in:
+  MARC_Data_Permission_and_Usage.xlsx   from "Data Permission and Usage Description for Individual
+                                        Developers.xlsx" (linked from Huawei's "Applying for the
+                                        Wear Engine Service" page)
+  MARC_User_Authorization_Path.xlsx     from "User Authorization Path Description.xlsx" (the form's
+                                        Download Example)
+The pictures inside them are rendered from two PDFs this script also builds; page 3 of each PDF
+(the C2 watch screens) is copied unchanged from the application-2 PDFs.
 
-Needs: python3 with reportlab, pypdf and Pillow, and the DejaVu Sans fonts.
+The wording here is the source of truth; docs/WATCH-WEAR-ENGINE-APPLICATION.md section 5 summarises
+it. Nothing personal is stored in this file. The xlsx files contain no name or email. --name and
+--email only add a developer row to page 1 of the data-permission PDF, which is not uploaded.
 
-  python3 docs/wear-engine/make_pdfs.py --name "..." --email "..." --date "29 September 2026" \
+Needs: python3 with reportlab, pypdf, pymupdf, openpyxl and Pillow, and the DejaVu Sans fonts.
+
+  python3 docs/wear-engine/make_uploads.py --date "29 September 2026" \
     --old-dpu MARC_Data_Permission_and_Usage.pdf --old-aup MARC_User_Authorization_Path.pdf \
+    --dpu-template individual.xlsx --aup-template auth.xlsx \
     --train train.jpg --live live.jpg --watch watch.jpg --out OUT_DIR
 """
 import argparse
@@ -21,6 +31,7 @@ from pypdf import PdfReader, PdfWriter
 from reportlab.lib.utils import ImageReader
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.dont_write_bytecode = True
 from pdfkit import (A4, ACCENT, CELL, INK, L, MUTED, R, RULE, TEXTW, H, Page, Paragraph, canvas,
                     style)
 
@@ -116,7 +127,7 @@ def build_dpu(a, path):
 
     p = Page(c, 'Data Permission and Usage Description',
              f'Wear Engine application | Individual developer | {a.date}', FOOT_DPU, 1, 4)
-    header(p, ('Individual developer', f'{escape(a.name)}<br/>{escape(a.email)}'))
+    header(p, ('Individual developer', f'{escape(a.name)}<br/>{escape(a.email)}') if a.name else None)
     p.heading("Self-check (Huawei's individual-developer template)", 20, 8)
     p.kv([
         ('1  Phone app type', 'Android app, as selected on the request page. Non-Huawei Android phones are '
@@ -310,19 +321,190 @@ def merge(buf, old_pdf, path):
     w = PdfWriter()
     w.add_page(new.pages[0]); w.add_page(new.pages[1]); w.add_page(old.pages[2]); w.add_page(new.pages[2])
     w.add_metadata({'/Title': os.path.splitext(os.path.basename(path))[0].replace('_', ' '),
-                    '/Author': 'M/ARC', '/Creator': 'docs/wear-engine/make_pdfs.py'})
+                    '/Author': 'M/ARC', '/Creator': 'docs/wear-engine/make_uploads.py'})
     with open(path, 'wb') as f:
         w.write(f)
 
 
+# ---------------------------------------------------------------- xlsx uploads
+SELF_CHECK = [  # rows 3-7 of the template, column C ("Self-Check Result (M)")
+    'Android app, the same as selected on the request page. Non-Huawei Android phones are supported '
+    'where Huawei Health runs in the background. There is no iOS or HarmonyOS phone app.',
+    'Yes. The M/ARC watch app for HUAWEI WATCH GT 6 (a lite wearable JS app) is in development. Its '
+    'screens are shown as UX diagrams in the images under this table (see D9).',
+    'Yes. The watch app and the M/ARC phone app exchange Wear Engine P2P messages: a small workout '
+    'snapshot from phone to watch, and the workout actions the user confirms from watch to phone.',
+    'Yes. The phone app UI stays in the foreground and active during the workout, Huawei Health runs in '
+    'the background, and the M/ARC watch app is open in the foreground at the same time. If either app '
+    'is not active, nothing is sent: the watch keeps working locally, shows Phone not connected and '
+    'holds confirmed actions until M/ARC is open again.',
+    'HUAWEI WATCH GT 6',
+]
+USAGE = (
+    'Usage scenario: when the user starts a workout in M/ARC with the phone app in the foreground, M/ARC '
+    'checks that the paired HUAWEI WATCH GT 6 is connected and that the M/ARC watch app is installed, and '
+    'asks the user to install it if it is not. The phone sends the current exercise, set, target weight '
+    'and reps, rest timer and theme to the watch app. The user confirms each action on the watch '
+    '(complete set with weight, reps and effort; add 30 s of rest; skip rest; pause; resume; finish). The '
+    'watch sends it to the phone as one small P2P message with an ID; the phone applies it once, saves it '
+    'in the workout and replies Saved, and the watch shows Pending until then. Taps and swipes are handled '
+    'on the watch; no touch coordinates or gesture stream are sent.\n'
+    'Requirement: the phone app UI is in the foreground and stays active, and the watch app is opened by '
+    "the user from the watch's app list, so both apps are active in the foreground. Huawei Health runs in "
+    'the background.\n'
+    'Used: the paired-device list and connection status, the M/ARC watch app installation status, and P2P '
+    'messages. Not used: battery level, audio and file transfer. Device information stays on the phone.')
+DISPLAY = ('Phone- and wearable-side images are placed under this table, from row 12:\n'
+           '1. Watch app UX diagrams (HUAWEI WATCH GT 6, proposed design, sample data), including the '
+           'Phone not connected and Saved states.\n'
+           '2. Usage scenario and data flow between the phone app and the watch app.\n'
+           '3. What happens when the phone app is not active, and after it reopens.\n'
+           '4. Real screenshots of the current M/ARC phone app.')
+REMARKS = ('Basic device information is the only permission requested.\n'
+           'Note 3: a watch app is developed, so Basic device information alone covers the messages.\n'
+           'Note 5 (why phone sync, not the cloud): M/ARC has no accounts and no workout server. Workout '
+           "records are stored only on the user's phone, and logging works offline in gyms, so the watch "
+           'needs the live workout held by that phone. The only online feature is an optional AI coach that '
+           "answers the user's questions; its relay stores no workout data and the watch link never uses it.\n"
+           'Status: the phone-side handling that applies each action once by its ID is built and tested. The '
+           'watch app and its messaging still need end-to-end testing on the GT 6.')
+APP_INFO = [
+    'App introduction: M/ARC is an Android gym workout tracker by an individual developer. It plans training '
+    'splits, logs exercises, sets, weight, reps and effort, times sessions and rest, and keeps workout '
+    "history on the phone. Today it shows live heart rate from the watch's standard heart-rate broadcast "
+    'over direct Bluetooth, which does not use Wear Engine.',
+    "AppGallery rating: M/ARC is not yet listed on AppGallery, so it has no rating. It is in private "
+    "development and testing on the developer's own Android phone and HUAWEI WATCH GT 6.",
+    'Screenshots of the main function screens (real, current app): Workouts, Live workout, Watch connection.',
+]
+SUPPLEMENTARY = ["No. No Huawei hardware purchase through Huawei is planned; testing uses the developer's "
+                 'own HUAWEI WATCH GT 6.',
+                 'No co-marketing with Huawei is planned.',
+                 'Sports']
+AUTH_TEXT = (
+    'Permission requested: Basic device information only, for P2P messages between the M/ARC phone app '
+    'and the M/ARC watch app. For Android apps it is granted by default (this template, and Huawei Health '
+    '11.0.3.512 or later).\n\n'
+    'How the user reaches it (images in column C):\n'
+    '1. In M/ARC the user opens Settings > Watch and health > Watch, or taps the heart-rate button on the '
+    'workout screen, and chooses Connect HUAWEI WATCH GT 6 (a proposed option on this existing screen; '
+    'screen 1).\n'
+    '2. M/ARC explains what the watch link exchanges and that workout records are stored only on the '
+    'phone. Continue proceeds; Not now keeps normal phone logging (screen 2, proposed design).\n'
+    '3. M/ARC checks the Basic device information permission through Wear Engine. It is granted by default; '
+    'if Huawei Health still asks, it shows its own authorization screen (screen 3). Cancel leaves M/ARC in '
+    'phone-only logging and nothing is sent to the watch. This screen cannot be captured before approval, '
+    'because the API returns error code 8 until then.\n'
+    '4. M/ARC lists the paired devices, the user selects the GT 6, and M/ARC checks that the M/ARC watch '
+    'app is installed; if it is not, M/ARC asks the user to install it on the watch.\n'
+    "5. During a workout the user opens the M/ARC watch app from the watch's app list. Both apps stay open; "
+    'Huawei Health runs in the background.')
+AUTH_MODIFY = ('Changing or removing access: in M/ARC, Settings > Watch and health > Watch > Disconnect '
+               '(screen 1). M/ARC then sends and accepts no watch messages until the user connects again; '
+               'workout logging on the phone continues.')
+
+
+def render(pdf, page, png, clip=None, zoom=1.6):
+    import pymupdf
+    d = pymupdf.open(pdf)
+    rect = pymupdf.Rect(*clip) if clip else None
+    d[page].get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect).save(png)
+    return png
+
+
+def strip(paths, png, width=386, gap=24):
+    """Screenshots side by side on white, same width, top-aligned."""
+    from PIL import Image
+    ims = [Image.open(x).convert('RGB') for x in paths]
+    ims = [im.resize((width, round(im.height * width / im.width))) for im in ims]
+    out = Image.new('RGB', (width * len(ims) + gap * (len(ims) - 1), max(im.height for im in ims)), 'white')
+    for i, im in enumerate(ims):
+        out.paste(im, (i * (width + gap), 0))
+    out.save(png)
+    return png
+
+
+def put(ws, cell, text, height=None, vertical='top'):
+    """Writes wrapped text in black; Huawei's template cells carry blue example styling."""
+    from copy import copy
+    from openpyxl.styles import Alignment
+    ws[cell] = text
+    ws[cell].alignment = Alignment(wrap_text=True, vertical=vertical)
+    font = copy(ws[cell].font)
+    font.color = '000000'
+    ws[cell].font = font
+    if height:
+        ws.row_dimensions[ws[cell].row].height = height
+
+
+def picture(ws, png, cell, width_px):
+    from openpyxl.drawing.image import Image as XImage
+    img = XImage(png)
+    img.height = round(img.height * width_px / img.width)
+    img.width = width_px
+    ws.add_image(img, cell)
+
+
+def build_xlsx(a, tmp):
+    from openpyxl import load_workbook
+    dpu_pdf = os.path.join(tmp, 'MARC_Data_Permission_and_Usage.pdf')
+    aup_pdf = os.path.join(tmp, 'MARC_User_Authorization_Path.pdf')
+    img = lambda n: os.path.join(tmp, n)
+    ux = render(dpu_pdf, 2, img('1_watch_ux.png'), (30, 30, 565, 800))
+    flow = render(dpu_pdf, 1, img('2_scenario_and_flow.png'), (30, 30, 565, 800))
+    inactive = render(aup_pdf, 3, img('3_phone_inactive.png'), (30, 30, 565, 800))
+    phone = strip([a.train, a.live, a.watch], img('4_phone_today.png'))
+    screens = render(aup_pdf, 1, img('auth_screens.png'), (36, 100, 560, 458), 2.0)
+
+    wb = load_workbook(a.dpu_template)
+    ws = wb['Individual Developer (M)']
+    for row, text in zip(range(3, 8), SELF_CHECK):
+        put(ws, f'C{row}', text, max(ws.row_dimensions[row].height or 15, 16 * (len(text) // 60 + 1) + 6))
+    ws.unmerge_cells('E9:E10')
+    ws.delete_rows(10)  # Message notification: "Delete rows for permissions not needed."
+    put(ws, 'C9', USAGE, 330)
+    put(ws, 'D9', DISPLAY)
+    put(ws, 'E9', REMARKS)
+    put(ws, 'B11', 'Images for D9 (Data Display Path): 1 watch app UX, 2 usage scenario and data flow, '
+                   '3 phone app not active, 4 current phone app.')
+    for n, (png, col) in enumerate([(ux, 'B'), (flow, 'C'), (inactive, 'D')], 1):
+        put(ws, f'{col}12', f'{n}.')
+        picture(ws, png, f'{col}13', 440)
+    put(ws, 'B47', '4.')  # below the three page images (about 32 rows tall)
+    picture(ws, phone, 'B48', 640)
+    wi = wb['App Information (M)']
+    for row, text in enumerate(APP_INFO, 2):
+        put(wi, f'A{row}', text, 48)
+    picture(wi, phone, 'A6', 660)
+    wsu = wb['Supplementary Info (M)']
+    for row, text in enumerate(SUPPLEMENTARY, 2):
+        put(wsu, f'B{row}', text, vertical='center')
+    wb.properties.lastModifiedBy = 'M/ARC'
+    wb.save(os.path.join(a.out, 'MARC_Data_Permission_and_Usage.xlsx'))
+
+    wb = load_workbook(a.aup_template)
+    ws = wb.active
+    ws._images = []  # Huawei's example screenshot
+    put(ws, 'B2', AUTH_TEXT, 330)
+    picture(ws, screens, 'C2', 560)
+    put(ws, 'A3', 'User authorization modification (optional)', vertical='center')
+    put(ws, 'B3', AUTH_MODIFY, 60)
+    wb.properties.lastModifiedBy = 'M/ARC'
+    wb.save(os.path.join(a.out, 'MARC_User_Authorization_Path.xlsx'))
+
+
 def main():
     ap = argparse.ArgumentParser()
-    for k in ('name', 'email', 'date', 'old_dpu', 'old_aup', 'train', 'live', 'watch', 'out'):
+    for k in ('date', 'old_dpu', 'old_aup', 'dpu_template', 'aup_template', 'train', 'live', 'watch', 'out'):
         ap.add_argument('--' + k.replace('_', '-'), dest=k, required=True)
+    ap.add_argument('--name'); ap.add_argument('--email')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
-    build_dpu(a, os.path.join(a.out, 'MARC_Data_Permission_and_Usage.pdf'))
-    build_aup(a, os.path.join(a.out, 'MARC_User_Authorization_Path.pdf'))
+    tmp = os.path.join(a.out, 'pdf')
+    os.makedirs(tmp, exist_ok=True)
+    build_dpu(a, os.path.join(tmp, 'MARC_Data_Permission_and_Usage.pdf'))
+    build_aup(a, os.path.join(tmp, 'MARC_User_Authorization_Path.pdf'))
+    build_xlsx(a, tmp)
 
 
 if __name__ == '__main__':
