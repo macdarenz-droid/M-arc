@@ -22,7 +22,7 @@ import { FIGURE_PARTS, PARTS, rigFor, viewOf, type Rig } from './view';
 import { contactsHeld as heldBy, travelRange as travelOf, type Pass } from './contacts';
 import { researchMismatches } from './research';
 import { WIDEST_LABEL, around, drawnFor, fastBox, heldIn, marginsOf, mirrored, union } from './framing';
-import { MIN_TEXT_PX, RATIO, RENDER_PX, markContrast, paintedShapes, parseColour, ratio, textContrast, type RGBA } from './contrast';
+import { MIN_TEXT_PX, RATIO, RENDER_PX, guideContrast, isGuide, markContrast, paintedShapes, parseColour, ratio, textContrast, type RGBA } from './contrast';
 import { centreOfMass, feetOf, groupOf } from './balance';
 import { drawnTints, undrawnTargets } from './drawn';
 import { tintOf } from '../player/guideView';
@@ -615,6 +615,12 @@ const contrast: Fn = (c, fail) => {
             const r = textContrast(shapes, i, page);
             worst.text = Math.min(worst.text, r);
             if (!(r >= RATIO.text)) once(`t${id}${what}${s.text.body}${pg}`, `${id}${what}: text "${s.text.body}" ${f2(r)}:1 < ${RATIO.text}:1 on the ${pg}`);
+          }
+        } else if (isGuide(s)) {
+          for (const [pg, page] of pages) {
+            const r = guideContrast(s, page);
+            worst.mark = Math.min(worst.mark, r);
+            if (!(r >= RATIO.mark)) once(`g${id}${what}${i}${pg}`, `${id}${what}: guide ${s.tag}${s.cls ? ` .${s.cls.split(' ').join('.')}` : ''} ${f2(r)}:1 < ${RATIO.mark}:1 on the ${pg}`);
           }
         } else if (fig && /\bfg-t-/.test(s.cls) && s.fill.length) {
           const r = markContrast(shapes, i, tintOf(1), pages[0]![1]);

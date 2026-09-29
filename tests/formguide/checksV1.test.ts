@@ -78,6 +78,17 @@ describe('contrast', () => {
   });
 });
 
+describe('contrast: guides (angle arc, tag, path trace) are marks against the stage', () => {
+  it('a --guide stroke is read against the page at its opacity; a faint one fails, a solid one passes in Silent Black', async () => {
+    const { paintedShapes, guideContrast, isGuide, parseColour } = await import('@/formguide/check/contrast');
+    const read = themeReader('silent-black'), page = parseColour('#0f1011')!;
+    const [faint, solid, other] = paintedShapes('<g><path class="fg-guide" d="M0 0 L10 0" fill="none" stroke="var(--guide)" opacity=".2"/><path d="M0 0 L10 0" fill="none" stroke="var(--guide)"/><path d="M0 0 L10 0 L0 10 Z" fill="var(--ink)"/></g>', read);
+    expect([isGuide(faint!), isGuide(solid!), isGuide(other!)]).toEqual([true, true, false]);
+    expect(guideContrast(faint!, page)).toBeLessThan(3);
+    expect(guideContrast(solid!, page)).toBeGreaterThanOrEqual(3);
+  });
+});
+
 describe('matchesResearch', () => {
   it('the lateral raise matches its research.json', () => {
     expect(researchMismatches(LR, research)).toEqual([]);

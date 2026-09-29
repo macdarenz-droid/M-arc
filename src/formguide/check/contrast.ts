@@ -45,6 +45,8 @@ export type Painted = {
   tag: string; cls: string;
   /** the fill's colours: one, or every stop of a gradient; empty for none */
   fill: RGBA[];
+  /** the stroke's colours (as fill), and the raw stroke and fill values (a guide is found by its token) */
+  stroke: RGBA[]; raw: { fill: string; stroke: string };
   /** the element's opacity times its groups' and its fill-opacity */
   alpha: number;
   /** outline in figure space at the rest pose, as polygons (cubics flattened) */
@@ -96,7 +98,8 @@ export function paintedShapes(svg: string, read: TokenReader): Painted[] {
       else if (tag === 'polygon' || tag === 'polyline') { const v = nums(attr(a, 'points') ?? ''); for (let i = 0; i + 1 < v.length; i += 2) segs.push([[v[i]!, v[i + 1]!]]); }
       const fillSrc = fr.fill ?? (tag === 'line' || tag === 'polyline' ? 'none' : '#000000');
       const fill = resolve(fillSrc, fr.vars).map(parseColour).filter((c): c is RGBA => !!c);
-      const p: Painted = { tag, cls: attr(a, 'class') ?? '', fill, alpha: fr.op * fillOp, rings: [] };
+      const strokeSrc = attr(a, 'stroke') ?? 'none', stroke = resolve(strokeSrc, fr.vars).map(parseColour).filter((c): c is RGBA => !!c);
+      const p: Painted = { tag, cls: attr(a, 'class') ?? '', fill, stroke, raw: { fill: fillSrc, stroke: strokeSrc }, alpha: fr.op * fillOp, rings: [] };
       // a path's sub-paths start at each M: split the flattened outline there
       if (tag === 'path') {
         let ring: Pt[] = [];
@@ -147,6 +150,15 @@ export function textContrast(shapes: Painted[], i: number, page: RGBA): number {
   const s = shapes[i]!;
   let worst = Infinity;
   for (const q of s.text!.pts) for (const b of under(shapes, i, q, page)) for (const c of s.fill) worst = Math.min(worst, ratio(over(c, s.alpha, b), b));
+  return worst;
+}
+
+/** A guide mark (angle arc, tag, path trace): painted with `--guide` or classed `fg-guide`. Guides sit on the stage. */
+export const isGuide = (s: Painted) => /\bfg-guide\b/.test(s.cls) || /var\(--guide\)/.test(s.raw.fill + s.raw.stroke);
+/** The lowest ratio of a guide's colours (fill and stroke, at its opacity) against the page. */
+export function guideContrast(s: Painted, page: RGBA): number {
+  let worst = Infinity;
+  for (const c of [...s.fill, ...s.stroke]) worst = Math.min(worst, ratio(over(c, s.alpha, page), page));
   return worst;
 }
 
