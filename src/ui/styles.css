@@ -963,7 +963,7 @@ html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-gu
 .form-guide .fg19-arc-c { fill: none; stroke: var(--guide); stroke-width: 2.4; }
 .form-guide .fg19-tag { transform-box: view-box; transform-origin: 0 0; pointer-events: none; }
 .form-guide .fg19-tag rect { fill: var(--surface-1); stroke: var(--border); }
-.form-guide .fg19-tag text { fill: var(--text); font-size: var(--fs-cap); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
+.form-guide .fg19-tag-t { color: var(--text); font-size: var(--fs-cap); line-height: 20px; text-align: center; font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
 .form-guide .fg4-scene .fg-fig { pointer-events: none; }
 .form-guide .fg19-hot { fill: transparent; stroke: none; pointer-events: all; cursor: pointer; }
 .form-guide .fg19-hot:focus { outline: none; }

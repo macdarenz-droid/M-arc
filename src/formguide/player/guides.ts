@@ -146,7 +146,7 @@ export function guideMarkup(p: GuidePlan): string {
   return `<clipPath id="fg19-clip"><rect class="fg19-clip-r" x="-9999" y="-9999" width="99999" height="99999"/></clipPath>`
     + `<path class="fg19-trace" d="${p.trace}" clip-path="url(#fg19-clip)"/>`
     + `<g class="fg19-arc"><g class="fg19-arc-k"><path class="fg19-arc-c" d="M${ARC_R} 0 A${ARC_R} ${ARC_R} 0 1 1 ${-ARC_R} 0 A${ARC_R} ${ARC_R} 0 1 1 ${ARC_R} 0" stroke-dasharray="${r2(ARC_C)} ${r2(ARC_C)}"/></g></g>`
-    + `<g class="fg19-tag"><g class="fg19-tag-k"><rect x="${-TAG_W / 2}" y="${-TAG_H / 2}" width="${TAG_W}" height="${TAG_H}" rx="${TAG_H / 2}"/><text class="fg19-tag-t" x="0" y="4" text-anchor="middle">0°</text></g></g>`;
+    + `<g class="fg19-tag"><g class="fg19-tag-k"><rect x="${-TAG_W / 2}" y="${-TAG_H / 2}" width="${TAG_W}" height="${TAG_H}" rx="${TAG_H / 2}"/><foreignObject x="${-TAG_W / 2}" y="${-TAG_H / 2}" width="${TAG_W}" height="${TAG_H}"><div class="fg19-tag-t">0°</div></foreignObject></g></g>`;
 }
 
 /** The scale of the tag and of the arc for a stage drawn at `px` per unit, capped at the size the tag was placed for. */

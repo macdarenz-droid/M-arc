@@ -9,7 +9,7 @@ import { HOT_MIN_PX, HOT_PX, hotRadius, hotspotsFor, muscleBubble, withHotspots 
 import { themeReader } from '@/formguide/rig/paint';
 import { MUSCLE_BY_ID } from '@/data/muscles';
 import { effortRows, fmtDeg, fmtPct, readoutAt, readouts, workingChannel } from '@/formguide/player/readouts';
-import { chainedFrames, guidePlan, kMax, overlaps, placeTag, pxPerUnit, tagBox, tagClashes } from '@/formguide/player/guides';
+import { chainedFrames, guideMarkup, guidePlan, kMax, overlaps, placeTag, pxPerUnit, tagBox, tagClashes } from '@/formguide/player/guides';
 import { VIEWBOXES, type ExerciseGuide } from '@/formguide/model';
 import { findExercise } from '@/core/exercises';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -247,5 +247,13 @@ describe('V1-19 A4: every GU-7a assertion maps to a passing V1-19 assertion', ()
     const ids = new Set(pushed(v119).map(a => /^ (P\d+)\b/.exec(a)?.[1]).filter(Boolean));
     for (const [, id] of PARITY) expect(ids.has(id), id).toBe(true);
     expect(new Set(PARITY.map(r => r[1])).size).toBe(PARITY.length);
+  });
+});
+
+describe('V1-19: the guide layer adds no SVG <text> to the scene', () => {
+  it("FG-4's dumbbell-label probe reads every `.fg4-scene text`, so the tag's number is HTML in a foreignObject", () => {
+    const g = guideMarkup(guidePlan(LR, rig)!);
+    expect(g).not.toMatch(/<text[\s>]/);
+    expect(g).toMatch(/<foreignObject[^>]*><div class="fg19-tag-t">0°<\/div><\/foreignObject>/);
   });
 });
