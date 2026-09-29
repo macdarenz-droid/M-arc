@@ -963,7 +963,7 @@ html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-gu
 .form-guide .fg19-arc-c { fill: none; stroke: var(--guide); stroke-width: 2.4; }
 .form-guide .fg19-tag { transform-box: view-box; transform-origin: 0 0; pointer-events: none; }
 .form-guide .fg19-tag rect { fill: var(--surface-1); stroke: var(--border); }
-.form-guide .fg19-tag text { fill: var(--text); font-size: 11px; font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
+.form-guide .fg19-tag text { fill: var(--text); font-size: var(--fs-cap); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
 .form-guide .fg4-scene .fg-fig { pointer-events: none; }
 .form-guide .fg19-hot { fill: transparent; stroke: none; pointer-events: all; cursor: pointer; }
 .form-guide .fg19-hot:focus { outline: none; }
@@ -978,11 +978,11 @@ html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-gu
 .form-guide .fg19-v { color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .form-guide .fg19-bar { display: grid; grid-template-columns: 84px minmax(0, 1fr) 36px; gap: 8px; align-items: center; }
 .form-guide .fg19-bar b { font-weight: var(--fw-medium); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.form-guide .fg19-bar > i { display: block; height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+.form-guide .fg19-bar > i { display: block; height: 6px; border-radius: var(--radius-xs); background: var(--surface-3); overflow: hidden; }
 .form-guide .fg19-bar > i > i { display: block; height: 100%; background: var(--target); transform-origin: 0 50%; transform: scaleX(0); }
 .form-guide .fg19-helps > i > i { background: var(--help); }
 .form-guide .fg19-keepQuiet > i > i { background: var(--quiet); }
 .form-guide .fg19-bar span { text-align: right; font-variant-numeric: tabular-nums; }
-.form-guide .fg19-phases { position: relative; display: flex; gap: 2px; height: 16px; }
-.form-guide .fg19-phases span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-top: 4px solid var(--surface-3); padding-top: 0; font-size: 10px; line-height: 12px; }
+.form-guide .fg19-phases { position: relative; display: flex; gap: 2px; height: 18px; }
+.form-guide .fg19-phases span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-top: 4px solid var(--surface-3); padding-top: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); }
 .form-guide .fg19-now { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
