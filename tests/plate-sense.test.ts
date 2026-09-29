@@ -372,3 +372,27 @@ describe('LT-1 loadMenu', () => {
   });
 });
 const r3 = (v: number) => Math.round(v * 1000) / 1000;
+
+import { mergeAskAnswer } from '@/slices/workout/units';
+
+// LT-4 (§2, §7, add-only): the ask chip's merge rule, on the menus LT-1's loadMenu actually returns.
+describe('LT-4 §2 the ask-chip merge rule, on real assumed menus', () => {
+  const units: UnitsState = freshUnits('kg');
+  const gymId = DEFAULT_GYM_ID;
+  it('a stack (Machine/Cable default: step, no ladder) saves step = answer − current', () => {
+    const stack = loadMenu('leg_press', gymId, units, { equipment: 'Machine' }, []).profile;
+    expect(stack.ladder).toBeUndefined();
+    const out = mergeAskAnswer(stack, 40, 45);
+    expect(out).toMatchObject({ step: 5, source: 'user' });
+  });
+  it('a ladder (Dumbbells default) merges around the answer and never leaves a two-rung ladder', () => {
+    const dbProfile = loadMenu('db_press', gymId, units, { equipment: 'Dumbbells' }, []).profile;
+    expect(dbProfile.ladder!.length).toBeGreaterThan(10);
+    const out = mergeAskAnswer(dbProfile, 25, 27);
+    // 27 replaces every default rung strictly between 25 and 27 (there is none at 2.5 kg steps); both sides survive.
+    expect(out.ladder).toContain(27);
+    expect(out.ladder).toContain(25);
+    expect(out.ladder!.length).toBeGreaterThan(2);
+    expect(out.source).toBe('user');
+  });
+});
