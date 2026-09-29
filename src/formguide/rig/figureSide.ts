@@ -151,13 +151,13 @@ function upperArm(p: string, far: boolean, P: Paint | null): string {
     ${far ? '' : `${sl([4, -13, 6, 12, 3, 34, 1, 50], 1.4, D_, .45)}${sl([-6, -12, -5, 8, -6, 26], 1.2, D_, .5, .7)}${sl([-12, -9, -4, -14, 6, -14.4], 2, SP, .5, .75)}`}
     ${inkP('M-17.4 -2 C-13 -14.4 10 -17 19.4 -6 C23.4 4 21.4 20 16 34 C12 42 6 48 1 52.4 C-4 44 -12 34 -16 22', L_, 2.4)}</g>`;
 }
-function foreArm(p: string, far: boolean, P: Paint | null, hand: string): string {
+function foreArm(p: string, far: boolean, P: Paint | null, hand: string, cl: string): string {
   const a = `url(#${p}-${far ? 'aF' : 'af'})`;
   return `<g transform="scale(${ARM_SX} 1)">${rimP('M-13 -6 C-15.4 8 -14.4 28 -10.4 48 C-9.2 62 -8.4 72 -8 84 M8 84 C8.4 72 10 60 12 46 C16 28 17 10 13 -4')}<path d="${FA}" fill="${a}"/>
     ${far ? '' : `${sl([9, -2, 13, 14, 11, 34, 7, 56], 1.8, SP, .45, .6)}${sl([-10, 4, -12, 22, -9, 44], 1.2, D_, .5, .6)}`}
     ${P ? overlay(P, 'forearms') : ''}
     ${inkP('M-13 -6 C-15.4 8 -14.4 28 -10.4 48 C-9.2 62 -8.4 72 -8 84 M8 84 C8.4 72 10 60 12 46 C16 28 17 10 13 -4', L_)}
-    <path d="M-8.6 72 C-3 74 3 74 8.6 72 L9.4 86 C3 88 -3 88 -9.4 86 Z" fill="var(--pants-sh)" stroke="var(--ink)" stroke-width="1.6"/></g>
+    <path d="M-8.6 72 C-3 74 3 74 8.6 72 L9.4 86 C3 88 -3 88 -9.4 86 Z" fill="var(--pants-sh)" stroke="${cl}" stroke-width="1.6"/></g>
     ${hand}`;
 }
 function fist(p: string, far: boolean): string {
@@ -165,19 +165,19 @@ function fist(p: string, far: boolean): string {
     ${far ? '' : `${sl([10, 6, 11.4, 12, 10, 18], 1.1, D_)}${sl([-4, 22, 2, 25, 8, 22], 1, D_, .5, .8)}${sl([-8, 4, -9.4, 10, -7.6, 16], 1.3, SP, .5, .5)}`}`;
 }
 
-const thigh = (p: string, far: boolean, P: Paint | null) => `
+const thigh = (p: string, far: boolean, P: Paint | null, cl: string) => `
   ${rimP(THIGH_EDGE, 4.6, 'butt')}<path d="${THIGH}" fill="url(#${p}-${far ? 'pF' : 'p'})"/>
   ${far ? '' : `${sl([222, 290, 228, 340, 220, 400], 4, 'var(--pants-sh)', .5, .55)}${sl([190, 300, 188, 350, 194, 410], 2.6, 'var(--ph)', .45, .7)}${sl([200, 420, 210, 428, 220, 424], 1.4, 'var(--ph)', .5, .7)}`}
   ${P ? overlay(P, 'quads')
     + overlay(P, 'hamstrings') : ''}
-  ${inkP(THIGH_EDGE, 'var(--ink)')}`;
-const shin = (p: string, far: boolean, P: Paint | null) => `
+  ${inkP(THIGH_EDGE, cl)}`;
+const shin = (p: string, far: boolean, P: Paint | null, cl: string) => `
   ${rimP(SHIN_EDGE, 4.6, 'butt')}<path d="${SHIN}" fill="url(#${p}-${far ? 'pF' : 'p'})"/>
   ${far ? '' : `${sl([196, 444, 208, 450, 218, 446], 1.6, 'var(--ph)', .5, .8)}${sl([184, 462, 182, 484, 186, 506], 3, 'var(--ph)', .45, .55)}${sl([214, 450, 216, 490, 211, 530], 2.4, 'var(--pants-sh)', .5, .6)}`}
   ${P ? overlay(P, 'calves') : ''}
-  ${inkP(SHIN_EDGE, 'var(--ink)')}`;
-const foot = (far: boolean) => `
-  <path d="${FOOT}" fill="${far ? 'var(--pants-sh)' : 'var(--pants)'}" stroke="var(--ink)" stroke-width="2"/>
+  ${inkP(SHIN_EDGE, cl)}`;
+const foot = (far: boolean, cl: string) => `
+  <path d="${FOOT}" fill="${far ? 'var(--pants-sh)' : 'var(--pants)'}" stroke="${cl}" stroke-width="2"/>
   ${far ? '' : sl([186, 561, 226, 562.6, 262, 561], 1.8, 'var(--ph)', .5, .9) + sl([214, 541, 232, 547, 250, 552], 1.4, 'var(--ph)', .4, .7)}`;
 
 /** V1-06: a part held in the hands, drawn in the wrist groups at the grip centre (S_GRIP) so it moves with the hand. The
@@ -225,11 +225,11 @@ export function figureSide(read: TokenReader, o: SideOptions): string {
   const arm = (s: Near) => {
     const isFar = s === far, Q = isFar ? null : P;
     const h = heldPart(p, o.held, isFar);
-    return joint(`shoulder_${s}`, upperArm(p, isFar, Q) + joint(`elbow_${s}`, foreArm(p, isFar, Q, joint(`wrist_${s}`, h.behind + fist(p, isFar) + h.front))));
+    return joint(`shoulder_${s}`, upperArm(p, isFar, Q) + joint(`elbow_${s}`, foreArm(p, isFar, Q, joint(`wrist_${s}`, h.behind + fist(p, isFar) + h.front), b.cloth)));
   };
   const leg = (s: Near) => {
     const isFar = s === far, Q = isFar ? null : P;
-    return joint(`hip_${s}`, joint(`knee_${s}`, shin(p, isFar, Q) + joint(`ankle_${s}`, foot(isFar))) + thigh(p, isFar, Q));
+    return joint(`hip_${s}`, joint(`knee_${s}`, shin(p, isFar, Q, b.cloth) + joint(`ankle_${s}`, foot(isFar, b.cloth))) + thigh(p, isFar, Q, b.cloth));
   };
   const head = `
       ${rimP(HEAD_RIM)}<path d="${HEAD}" fill="url(#${p}-hg)"/>
@@ -266,8 +266,8 @@ export function figureSide(read: TokenReader, o: SideOptions): string {
       ${overlay(P, 'glutes')}
       ${overlay(P, 'hip_flexors')}
       ${sl([168, 284, 172, 300, 184, 308], 2.6, 'var(--ph)', .45, .6)}${sl([200, 300, 212, 296, 222, 288], 2.2, 'var(--pants-sh)', .5, .6)}
-      <path d="${BAND}" fill="var(--pants)" stroke="var(--ink)" stroke-width="1.8"/>${sl([180, 259, 204, 262, 226, 265], 1.3, 'var(--pants-hi)', .5, .9)}
-      <path d="M177 256 C164 272 159.6 290 164 302 C168 313 180 317 192 313.6 C204 309 216 302 225 293" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>`;
+      <path d="${BAND}" fill="var(--pants)" stroke="${b.cloth}" stroke-width="1.8"/>${sl([180, 259, 204, 262, 226, 265], 1.3, 'var(--pants-hi)', .5, .9)}
+      <path d="M177 256 C164 272 159.6 290 164 302 C168 313 180 317 192 313.6 C204 309 216 302 225 293" fill="none" stroke="${b.cloth}" stroke-width="2.2" stroke-linecap="round"/>`;
   const chest = `
       <g class="fg-arms-behind">${arm(far)}</g>
       ${`<g class="fg-p fg-breath" style="transform-origin:210px 170px"><g transform="${sxAttr(TRUNK_SX)}">${trunk}</g></g>`}

@@ -629,9 +629,10 @@ const contrast: Fn = (c, fail) => {
         }
       });
     }
-    // the figure against the page: the body and the clothes, each by its fill or its outline, whichever reads more
+    // the figure against the page: the body and the clothes, each by its fill or the outline the figure draws round it
+    // (the body's --l line, the clothes' bodyPal cloth), whichever reads more
     for (const m of [false, true]) {
-      const b = bodyPal(read, m), regions: [string, string, string][] = [['body', b.base, b.line], ['clothes', read('pants'), read('ink')]];
+      const b = bodyPal(read, m), regions: [string, string, string][] = [['body', b.base, b.line], ['clothes', read('pants'), b.cloth]];
       for (const [pg, page] of pages) for (const [r, fill, line] of regions) {
         const v = Math.max(ratio(parseColour(fill)!, page), ratio(parseColour(line)!, page));
         worst.figure = Math.min(worst.figure, v);

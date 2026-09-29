@@ -13,6 +13,8 @@ export const FIGURE_TOKENS = {
   accent: 'accent', mistake: 'mistake', target: 'target', help: 'help', quiet: 'quiet',
   pants: 'pants', 'pants-hi': 'pantsHi', 'pants-sh': 'pantsSh', ink: 'ink',
   iron: 'iron', 'iron-hi': 'ironHi', 'iron-sh': 'ironSh', eye: 'eye', floor: 'floor', guide: 'guide',
+  // V1-07 (D-V1-07b): the pages the figure is drawn on (the stage and the Pictures tile), read only to reach contrast
+  'surface-1': 'surface1', 'surface-2': 'surface2',
 } as const satisfies Record<string, keyof ThemeTokens>;
 export type Token = keyof typeof FIGURE_TOKENS;
 
@@ -49,13 +51,40 @@ export function mix(read: TokenReader, a: Tone, toward: 'white' | 'black' | Toke
 
 /** The mistake figure is tinted toward --mistake (the lab's 0.62 toward its negative red; D-FG1). */
 export const MISTAKE_TINT = 0.62;
-export type BodyPal = Record<'hi' | 'lit' | 'base' | 'mid' | 'sh' | 'sh2' | 'dk' | 'occ' | 'line' | 'def' | 'spec' | 'rim', string>;
-/** The lab's bodyPal: the body tones, all from --accent (or --accent toward --mistake for the mistake). */
+/** V1-07 (D-V1-07b, WCAG 2.2 1.4.11): what the figure's parts reach, with 0.1 kept over the 3:1 for rounding. */
+export const REACH = 3.1;
+const lum = (c: Rgb) => { const f = (v: number) => { const x = v / 255; return x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
+/** WCAG contrast ratio of two colours. */
+export const contrastOf = (a: Rgb, b: Rgb) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+/** The least mix of `c` toward white or black (0.05 steps, the smaller of the two) that reaches REACH against every
+ * colour in `against`; the best one when none does. */
+function reach(c: Rgb, against: Rgb[]): Rgb {
+  let best: { t: number; r: number; v: Rgb } | null = null;
+  for (const dir of ['white', 'black'] as const) for (let i = 0; i <= 20; i++) {
+    const v = blend(c, PURE[dir], i / 20), r = Math.min(...against.map(a => contrastOf(v, a)));
+    if (r >= REACH) { if (!best || best.r < REACH || i / 20 < best.t) best = { t: i / 20, r, v }; break; }
+    if (!best || (best.r < REACH && r > best.r)) best = { t: i / 20, r, v };
+  }
+  return best!.v;
+}
+/** The body tones; V1-07 adds `cloth`, the clothes' outline, reaching 3:1 against both pages (--ink where it already
+ * does). All flat strings, so every colour the figure paints is one of these values (the themes check reads them so). */
+export type BodyPal = Record<'hi' | 'lit' | 'base' | 'mid' | 'sh' | 'sh2' | 'dk' | 'occ' | 'line' | 'def' | 'spec' | 'rim' | 'cloth', string>;
+/**
+ * The lab's bodyPal: the body tones, all from --accent (or --accent toward --mistake for the mistake). V1-07 (D-V1-07b):
+ * the base is first lifted away from the pages until it reaches 3:1 on both (no change where it already does), and the
+ * clothes' outline is --ink, or where --ink does not reach 3:1 on both pages, --pants mixed toward white or black just
+ * far enough to.
+ */
 export function bodyPal(read: TokenReader, mistake: boolean): BodyPal {
-  const base: Tone = mistake ? { from: 'accent', toward: 'mistake', t: MISTAKE_TINT } : 'accent';
-  const m = (c: 'white' | 'black', t: number) => mix(read, base, c, t);
-  return { hi: m('white', 0.3), lit: m('white', 0.14), base: m('white', 0), mid: m('black', 0.14), sh: m('black', 0.3), sh2: m('black', 0.22),
+  const tone: Tone = mistake ? { from: 'accent', toward: 'mistake', t: MISTAKE_TINT } : 'accent';
+  const pages = (['surface-1', 'surface-2'] as const).map(t => rgbOf(read, t)), b0 = toneRgb(read, tone);
+  const b1 = pages.every(pg => contrastOf(b0, pg) >= REACH) ? b0 : reach(b0, pages);
+  const m = (c: 'white' | 'black', t: number) => out(blend(b1, PURE[c], t));
+  const pal = { hi: m('white', 0.3), lit: m('white', 0.14), base: m('white', 0), mid: m('black', 0.14), sh: m('black', 0.3), sh2: m('black', 0.22),
     dk: m('black', 0.42), occ: m('black', 0.5), line: m('black', 0.8), def: m('black', 0.55), spec: m('white', 0.78), rim: m('white', 0.6) };
+  const ink = rgbOf(read, 'ink');
+  return { ...pal, cloth: out(pages.every(pg => contrastOf(ink, pg) >= REACH) ? ink : reach(rgbOf(read, 'pants'), pages)) };
 }
 
 /** Cel gradient: three hard bands (lab `cel`). */

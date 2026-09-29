@@ -5,7 +5,7 @@
 // Every joint is <g class="fg-j j-<name>"> with its pivot as transform-origin in its parent's user space; a static
 // placement <g transform> sits outside it where the part is drawn in its own frame (arms, the left half).
 import type { JointId } from './joints';
-import { bodyPal, band, cel, lg, mix, packSl, sl, D_, L_, OC, SP, type Token, type TokenReader } from './paint';
+import { bodyPal, band, cel, lg, mix, packSl, sl, D_, L_, OC, SP, type BodyPal, type Token, type TokenReader } from './paint';
 import { dumbbellFar, dumbbellNear } from '../parts/dumbbell';
 
 export const P2 = 303;                                      // units per metre
@@ -80,30 +80,30 @@ const THIGH_FILL = 'M200 262 L251 262 C256 290 257 328 253 366 C249 396 246 416 
 const THIGH_INK = 'M211 440 C210 416 208 394 206 368 C204 344 202 322 200 306 L200 262 L251 262 C256 290 257 328 253 366 C249 396 246 416 245 438';
 const SHIN_FILL = 'M245 438 C244 470 243 506 242 544 L215 544 C214 506 212 472 211 440 Z';
 const SHIN_INK = 'M245 438 C244 470 243 506 242 544 L215 544 C214 506 212 472 211 440';
-const THIGH = (p: string, s: 'R' | 'L') => { const R = s === 'R', H = 'var(--ph)', S = 'var(--pants-sh)'; return `
+const THIGH = (p: string, s: 'R' | 'L', cl: string) => { const R = s === 'R', H = 'var(--ph)', S = 'var(--pants-sh)'; return `
   ${rimP(THIGH_EDGE_OUT + ' ' + THIGH_EDGE_IN, 4.6, 'butt')}
   <path d="${THIGH_FILL}" fill="url(#${p}-p${s})"/>
   ${R ? sl([246, 292, 250, 340, 243, 400], 4, S, .5, .6) : sl([206, 318, 209, 368, 212, 410], 3, S, .5, .5)}
   ${R ? sl([214, 300, 220, 350, 218, 400], 2.6, H, .45, .72) : sl([248, 290, 250, 340, 244, 396], 2.6, H, .45, .72)}
   ${sl([206, 292, 218, 284, 232, 280], 1.4, H, .5, .72)}${sl([207, 306, 220, 298, 234, 294], 1.1, H, .5, .72)}
   ${sl([214, 418, 228, 424, 243, 418], 1.5, H, .5, .72)}${sl([215, 428, 228, 433, 242, 428], 1.2, S, .5, .9)}
-  <path d="${THIGH_INK}" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>`; };
-const SHIN = (p: string, s: 'R' | 'L') => { const R = s === 'R', H = 'var(--ph)'; return `
+  <path d="${THIGH_INK}" fill="none" stroke="${cl}" stroke-width="2.2" stroke-linejoin="round"/>`; };
+const SHIN = (p: string, s: 'R' | 'L', cl: string) => { const R = s === 'R', H = 'var(--ph)'; return `
   ${rimP(SHIN_EDGE, 4.6, 'butt')}
   <path d="${SHIN_FILL}" fill="url(#${p}-p${s})"/>
   ${R ? sl([219, 448, 221, 490, 221, 530], 2, H, .4, .72) : sl([240, 448, 239, 490, 238, 530], 2, H, .4, .72)}
   ${sl([217, 516, 228, 520, 240, 515], 1.2, H, .5, .72)}${sl([216, 530, 228, 534, 241, 529], 1.2, H, .5, .72)}
-  <path d="${SHIN_INK}" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>`; };
-const FOOT = () => `
-  <path d="M213 544 L242 544 C249 549 253 557 251 566 L207 566 C205 557 206 549 213 544 Z" fill="var(--pants)" stroke="var(--ink)" stroke-width="2"/>
+  <path d="${SHIN_INK}" fill="none" stroke="${cl}" stroke-width="2.2" stroke-linejoin="round"/>`; };
+const FOOT = (cl: string) => `
+  <path d="M213 544 L242 544 C249 549 253 557 251 566 L207 566 C205 557 206 549 213 544 Z" fill="var(--pants)" stroke="${cl}" stroke-width="2"/>
   ${sl([207, 561, 229, 562.5, 251, 561], 1.8, 'var(--ph)', .5, .9)}`;
-const LEG = (p: string, s: 'R' | 'L', side: 'r' | 'l') => joint(`hip_${side}`, joint(`knee_${side}`, SHIN(p, s) + joint(`ankle_${side}`, FOOT())) + THIGH(p, s));
+const LEG = (p: string, s: 'R' | 'L', side: 'r' | 'l', cl: string) => joint(`hip_${side}`, joint(`knee_${side}`, SHIN(p, s, cl) + joint(`ankle_${side}`, FOOT(cl))) + THIGH(p, s, cl));
 
 const TRAP_PATH = 'M210 88 C218 94 234 101 246 108 C253 112 258 117 258 125 C250 126.5 240 125.5 232 121.5 C224 117 216 108 212.5 100 C211 96 210 92 210 88 Z';
 
 type Dumbbell = { kg?: number } | null;
 // One arm (lab ARM), local frame: pivot at the shoulder joint, hanging down +y, outward +x.
-function ARM(p: string, s: 'R' | 'L', db: Dumbbell): string {
+function ARM(p: string, s: 'R' | 'L', db: Dumbbell, b: BodyPal): string {
   const side = s === 'R' ? 'r' : 'l';
   const a = `url(#${p}-a)`, am = `url(#${p}-am)`,
     ink = (d: string, w = 2.3) => `<path d="${d}" fill="none" stroke="var(--l)" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`,
@@ -119,7 +119,7 @@ function ARM(p: string, s: 'R' | 'L', db: Dumbbell): string {
     DP = 'M20 -8 C24 -4 25.5 3 25 12 C24.6 21 23.4 29 21.5 36 C17 44 11 50 6 56 C9 51 13 46 17 40 C23 26 23 6 20 -8 Z';
   // The library dumbbell (FG-5, src/formguide/parts/dumbbell.ts): far head behind the forearm, near head in the wrist.
   const eqFar = db ? `<g transform="translate(${FIST[0]} ${FIST[1]})">${part(`eqf_${side}`, [0, 0], dumbbellFar(`${p}-i`))}</g>` : '';
-  const eqNear = db ? part(`eq_${side}`, [0, 0], dumbbellNear(`${p}-i`, db.kg)) : '';
+  const eqNear = db ? part(`eq_${side}`, [0, 0], dumbbellNear(`${p}-i`)) : '';
   const hand = `<g transform="translate(0 ${-FIST[1]})">
       <path d="M-11 77 C-15 86 -14 98 -7 105 C0 110 10 107 13 99 C15 90 12 81 8 77 Z" fill="url(#${p}-af)" stroke="var(--l)" stroke-width="2"/>
       ${sl([-8, 86, 0, 88, 9, 85], 1.1, D_)}${sl([-9, 93, 0, 95, 10, 92], 1.1, D_)}${sl([-7, 100, 0, 102, 8, 99], 1, D_)}</g>`;
@@ -130,7 +130,7 @@ function ARM(p: string, s: 'R' | 'L', db: Dumbbell): string {
       ${sl([-9, -5, -3, -1, 4, -4], 1.2, D_, .5, .8)}${sl([3, -3, 4, 20, 5, 40, 6, 57], 1.3, D_, .45)}${sl([-6, 30, -8, 40, -8, 50, -7, 60], .9, D_, .5, .6)}
       ${sl([9, 2, 13, 10, 14, 18, 13, 28], 1.8, SP, .45, .65)}${sl([-10, 6, -12, 18, -10, 32], 1.2, SP, .5, .35)}
       ${ink(FI)}${ink(FO)}
-      <path d="M-10.5 62 C-4 64 4 64 10.5 62 L11.5 76 C4 78 -4 78 -11.5 76 Z" fill="var(--pants-sh)" stroke="var(--ink)" stroke-width="1.6"/>
+      <path d="M-10.5 62 C-4 64 4 64 10.5 62 L11.5 76 C4 78 -4 78 -11.5 76 Z" fill="var(--pants-sh)" stroke="${b.cloth}" stroke-width="1.6"/>
       ${sl([-9, 65.5, 0, 67.5, 9, 65.5], 1.4, 'var(--pants-hi)', .5)}
       ${joint(`wrist_${side}`, hand + eqNear)}`;
   return `
@@ -159,7 +159,7 @@ export type FrontOptions = {
   id: string;
   /** The mistake figure: body tinted toward --mistake, keep-quiet tint in --mistake. */
   mistake?: boolean;
-  /** A dumbbell in each hand (the lab's), with the load label when kg is given. */
+  /** A dumbbell in each hand (the lab's). The load is not drawn on it (V1-07, D-V1-07b: no label reaches 11 px and 4.5:1 on the iron at 360 px); the player's readout shows it. `kg` is kept for the caller. */
   dumbbell?: Dumbbell;
 };
 
@@ -197,7 +197,7 @@ export function figureFront(read: TokenReader, o: FrontOptions): string {
         ${sl([200, 128, 200, 154, 200, 183], 1.2, D_, .6, .7)}${sl([200, 185, 199.6, 215, 200, 256], 2.2, D_, .45, .95)}
         <path d="M198.4 239 C198 242 199 245.5 200 246 C201 245.5 202 242 201.6 239 C201 238 199 238 198.4 239 Z" fill="var(--l)"/>
         <path d="${SIDE}" fill="none" stroke="var(--l)" stroke-width="2.4"/><path d="${SIDE}" transform="${M}" fill="none" stroke="var(--l)" stroke-width="2.4"/>
-        <path d="M152 257 C184 262 216 262 248 257 L249 270 C216 274 184 274 151 270 Z" fill="var(--pants)" stroke="var(--ink)" stroke-width="1.8"/>
+        <path d="M152 257 C184 262 216 262 248 257 L249 270 C216 274 184 274 151 270 Z" fill="var(--pants)" stroke="${b.cloth}" stroke-width="1.8"/>
         ${sl([156, 260.5, 200, 265, 244, 260.5], 1.3, 'var(--pants-hi)', .5, .9)}`;
   const neckBase = `
       <path d="M185 84 C184 98 181 112 176 125 C184 126 192 126 200 127 C208 126 216 126 224 125 C219 112 216 98 215 84 Z" fill="url(#${p}-t)"/>
@@ -210,7 +210,7 @@ export function figureFront(read: TokenReader, o: FrontOptions): string {
       ${part('trap_r', [0, 0], trap('R'))}
       ${part('trap_l', [0, 0], `<g transform="${M}">${trap('L')}</g>`)}
       ${joint('neck', joint('head', head))}
-      <g class="fg-arms-front">${joint('shoulder_r', ARM(p, 'R', db))}${joint('shoulder_l', ARM(p, 'L', db))}</g>`;
+      <g class="fg-arms-front">${joint('shoulder_r', ARM(p, 'R', db, b))}${joint('shoulder_l', ARM(p, 'L', db, b))}</g>`;
   const ph = mix(read, 'pants-hi', 'white', 0.22);
   return packSl(`<g class="fg-fig" style="--l:${b.line};--d:${b.def};--oc:${b.occ};--sp:${b.spec};--rim:${b.rim};--ph:${ph}">
   <defs>${lg(p + '-mR', 0, 0, .9, 1, mm)}${lg(p + '-mL', 1, 0, .1, 1, mm)}
@@ -221,7 +221,7 @@ export function figureFront(read: TokenReader, o: FrontOptions): string {
     ${band(read, p + '-shS', 'target', 'y')}${band(read, p + '-shT', mistake ? 'mistake' : 'quiet', 'x')}</defs>
   <ellipse cx="200" cy="568" rx="92" ry="11" fill="var(--floor)"/>
   ${joint('pelvis', `
-    ${LEG(p, 'R', 'r')}${LEG(p, 'L', 'l')}
+    ${LEG(p, 'R', 'r', b.cloth)}${LEG(p, 'L', 'l', b.cloth)}
     ${joint('spine', `${part('breath', PART_ORIGIN.breath, trunk)}${joint('chest', chest)}`)}`)}
 </g>`);
 }
