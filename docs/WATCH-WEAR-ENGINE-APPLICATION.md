@@ -200,7 +200,7 @@ The cause is now known, so there is no need to wait for Huawei before resubmitti
   > Follow the instructions in Applying for the Wear Engine Service and submit the corresponding application materials. Go to HUAWEI Developers > Develop > HMS Core > Smart Device > Wear Engine > View documents. If you are unable to find a Huawei contact, please send an email to hihealth@huawei.com.
 
 ### 4.4 Application 3 (submitted 2026-09-29)
-- **Submitted** on 2026-09-29 at about 09:40 UTC. The owner's screenshot shows "The application has been submitted, you will be notified of the approval result by email, SMS message, or internal message."
+- **Submitted** on 2026-09-29 at about 09:19 UTC. The owner's screenshot shows "The application has been submitted, you will be notified of the approval result by email, SMS message, or internal message."
 - **The form, checked by the agent before Submit** (owner's screenshot two minutes earlier):
   - Harmony Lightweight Smart Wearable Device; "Yes, I develop or plan to develop…";
   - **only Basic device information ticked**; Message notification and Launch specified app unticked;
