@@ -4,16 +4,16 @@
   "order": "lower_first",
   "tempo": { "lift": 1, "hold": 0.3, "lower": 1.5, "rest": 0.5 },
   "ranges": {
-    "knee_flex": { "min": 15, "max": 90, "source": "45-degree leg press guides (PureGym, Skelcore, bodybuilding-wizard): press up without locking the knees (15 degrees); lower until the thighs reach roughly 90 degrees or the lower back begins to round off the pad, whichever comes first" },
+    "knee_flex": { "min": 15, "max": 90, "source": "PureGym 45-degree leg press: press up without locking the knees (15 degrees); lower until the thighs reach roughly 90 degrees, keeping the glutes and lower back stationary against the pad" },
     "hip_flex": { "min": 15, "max": 90, "source": "45-degree leg press guides: the hips track with the knees through the same range, since the platform moves the legs as a unit; the limit is the same 90-degree depth before the lower back rounds" },
-    "torso_lean": { "min": -3, "max": 3, "source": "Leg press mistake guides (ISSA, GymPT): keep the hips and lower back flat on the pad; stop lowering at the first hint of the pelvis tucking or the lower back peeling off the pad" }
+    "torso_lean": { "min": -3, "max": 3, "source": "ISSA leg press guide: \"When the buttocks and lower back come up off the pad, this causes excessive rounding in the lumbar spine\"; keep \"your glutes and back against the pad and secured in position\"" }
   },
   "muscles": {
     "target": ["quads", "glutes"],
     "helps": ["hamstrings", "calves"],
     "keepQuiet": ["lower_back"],
     "peakAt": 0.48,
-    "peakSource": "Leg press guides (PureGym, ISSA): the deepest controlled position, just before the drive back up, is where the legs work hardest against the load"
+    "peakSource": "no source gives a within-rep EMG timing for the leg press; the deepest controlled position, just before the drive back up, is the greatest mechanical disadvantage, so this is a reasoned placement, not a specific citation"
   },
   "mistake": {
     "name": "Lock and round",
@@ -21,12 +21,12 @@
       { "text": "The knees slam to a hard lockout at the top of the press.", "joint": "knee_flex" },
       { "text": "The hips curl and the lower back rounds off the pad at the bottom.", "joint": "torso_lean" }
     ],
-    "source": "Leg press mistake guides (ISSA, GymPT): locking the knees at full extension reduces muscle tension and stresses the joint; going too deep tucks the pelvis and rounds the lower back off the pad, compressing the spine"
+    "source": "GymPT: \"Full extension is not the same as snapping the knees back. Hard lockout shifts tension away from the muscles\"; ISSA: \"When the buttocks and lower back come up off the pad, this causes excessive rounding in the lumbar spine and can lead to injury\""
   },
   "sources": [
     "https://www.puregym.com/exercises/legs/quad-exercises/leg-presses/45-degree-leg-press/",
     "https://www.issaonline.com/blogs/training-tips/leg-press-exercise-guide-plus-common-mistakes",
     "https://gympt.app/blog/leg-press-mistakes",
-    "Contact fact (bar/platform over mid-foot): feet planted flat on the platform, shoulder-width apart, toes slightly outward (PureGym, Skelcore); a real-world description, not a numeric `machine.settings` value this research can cite"
+    "Contact fact (bar/platform over mid-foot): PureGym — feet placed \"shoulder-width apart on the footplate, with your toes pointed slightly outward\"; a real-world description, not a numeric `machine.settings` value this research can cite"
   ]
 }

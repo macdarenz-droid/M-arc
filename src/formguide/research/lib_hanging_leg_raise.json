@@ -4,15 +4,15 @@
   "order": "lift_first",
   "tempo": { "lift": 1.5, "hold": 0.5, "lower": 2, "rest": 1 },
   "ranges": {
-    "hip_flex": { "min": 0, "max": 90, "source": "SetForSet / Bodybuilding Wizard hanging leg raise guides: raise the straight legs to about a 90-degree angle at the hip; 0 is the straight hang" },
-    "knee_flex": { "min": 0, "max": 10, "source": "ExRx / SetForSet: the legs stay straight for the full raise; a small natural give is kept inside the AAOS knee row (rig/ranges.ts)" }
+    "hip_flex": { "min": 0, "max": 90, "source": "SetForSet Hanging Leg Raise: \"Raise your legs to parallel with the ground\" - this means a 90-degree angle between the torso and legs; 0 is the straight hang" },
+    "knee_flex": { "min": 0, "max": 10, "source": "the exercise is a straight-leg raise by name and by every cited guide's description; no source gives an exact degree, so a small natural give (0 to 10 degrees) is illustrative, inside the AAOS knee row (rig/ranges.ts)" }
   },
   "muscles": {
     "target": ["abs"],
     "helps": ["hip_flexors"],
     "keepQuiet": ["lower_back"],
     "peakAt": 0.36,
-    "peakSource": "2015 Journal of Physical Therapy Science EMG study (cited by SetForSet/lifefitindia hanging leg raise guides): rectus abdominis activation rises sharply past 45 degrees of leg raise, where the pelvis starts to curl toward the ribs, peaking near the top of the lift"
+    "peakSource": "American Sport & Fitness Association, \"The Leg Raise: Hip Flexors or Abs?\": spinal flexion happens during the leg raise's posterior pelvic tilt, where the abs engage to curl the spine as the legs come up, so ab effort is highest near the top of the lift where that curl happens"
   },
   "mistake": {
     "name": "Swing and short-change it",

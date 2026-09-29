@@ -4,16 +4,16 @@
   "order": "lift_first",
   "tempo": { "lift": 1, "hold": 0.5, "lower": 1.5, "rest": 0.5 },
   "ranges": {
-    "elbow_flex": { "min": 10, "max": 90, "source": "Cable single-arm triceps pushdown guides (fitnessprogramer, endomondo): start with the elbow at a 90-degree angle, upper arm parallel to the floor; push down until the arm is fully extended but not locked out (10 degrees, matching the lateral raise's illustrative not-locked-out convention)" },
-    "shoulder_flex": { "min": -3, "max": 3, "source": "Triceps pushdown form guides (deltabolic, triceps.info): the upper arm is a hinge bolted to the torso and stays vertical for the whole rep, pinned to the side" },
-    "torso_lean": { "min": -3, "max": 3, "source": "Tricep pushdown mistake guides (otfworkouttoday, gravitus): stand upright with minimal lean" }
+    "elbow_flex": { "min": 10, "max": 90, "source": "fitnessprogramer One-Arm Triceps Pushdown: \"Lower the handle until your arm is fully extended but not locked out\" (illustrative 10 degrees); no source gives an exact starting angle, so the bent start is illustrative at 90 degrees, matching the elbow-at-the-side start ACE describes for the two-arm version" },
+    "shoulder_flex": { "min": -3, "max": 3, "source": "ACE Triceps Pushdowns: \"Your elbows are aligned with the mid-point of your trunk, arms positioned firmly by sides\" for the whole rep" },
+    "torso_lean": { "min": -3, "max": 3, "source": "Gravitus Pushdown: warns against \"leaning back or using momentum\" when the weight is too heavy, i.e. stand upright with minimal lean" }
   },
   "muscles": {
     "target": ["triceps"],
     "helps": ["forearms"],
     "keepQuiet": ["front_delts"],
     "peakAt": 0.35,
-    "peakSource": "Single-arm cable pushdown guides: pause briefly at the bottom and squeeze the triceps to maximize engagement there, so effort is highest in that hold just after full extension"
+    "peakSource": "fitnessprogramer One-Arm Triceps Pushdown: the rep works toward \"fully extended but not locked out,\" so triceps effort is highest approaching that near-extended bottom"
   },
   "mistake": {
     "name": "Flare and lean",
@@ -21,12 +21,12 @@
       { "text": "The elbow drifts forward off the ribs instead of staying pinned.", "joint": "shoulder_flex" },
       { "text": "The torso leans into it, using body weight to help push down.", "joint": "torso_lean" }
     ],
-    "source": "Tricep pushdown mistake guides (otfworkouttoday, gravitus, deltabolic): letting the elbow flare/drift forward shifts load from the triceps to the shoulder and chest; leaning over the cable to add body weight turns the pushdown into a full-body press"
+    "source": "Gravitus Pushdown: \"Allowing elbows to flare away from your sides turns this isolation exercise into a less effective movement\"; leaning back or using momentum on a too-heavy weight compromises the form the same way"
   },
   "sources": [
     "https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
     "https://fitnessprogramer.com/exercise/one-arm-triceps-pushdown/",
     "https://gravitus.com/guides/exercises/pushdown/",
-    "Contact fact (D-FG7 (e), the single-arm id): a single D-handle at the high pulley, one hand (fitnessprogramer, endomondo one-arm cable pushdown guides)"
+    "Contact fact (D-FG7 (e), the single-arm id): a single D-handle at the high pulley, one hand (fitnessprogramer One-Arm Triceps Pushdown)"
   ]
 }

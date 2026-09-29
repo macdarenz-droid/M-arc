@@ -4,16 +4,16 @@
   "order": "lift_first",
   "tempo": { "lift": 1, "hold": 0.3, "lower": 1.5, "rest": 0.5 },
   "ranges": {
-    "elbow_flex": { "min": 15, "max": 90, "source": "ACE Incline Chest Press: press to near full extension without completely locking out the elbows (15 degrees), keeping them slightly bent at the top; the bent start at the chest is illustrative at 90 degrees, matching a loaded machine start" },
-    "shrug_cm": { "min": 0, "max": 0.5, "source": "Gravitus Incline Chest Press: keep the shoulders drawn down and back through the whole press, packing the shoulder blades before each rep" },
-    "torso_lean": { "min": -3, "max": 3, "source": "Gravitus Incline Chest Press: keep the head, upper back and glutes in contact with the seat pads; don't excessively arch the lower back off the pad" }
+    "elbow_flex": { "min": 15, "max": 90, "source": "Gravitus Incline Chest Press: \"Press to near full extension without completely locking out the elbows, which maintains tension on the chest\" (illustrative 15 degrees); the bent start at the chest is illustrative at 90 degrees, matching a loaded machine start" },
+    "shrug_cm": { "min": 0, "max": 0.5, "source": "Gravitus Incline Chest Press: \"Allowing the shoulders to rise toward the ears, particularly during the pressing phase, which can reduce chest activation\"" },
+    "torso_lean": { "min": -3, "max": 3, "source": "Gravitus Incline Chest Press: \"Excessively arching the lower back during the pressing movement, which can reduce chest engagement and potentially create lower back stress\"" }
   },
   "muscles": {
     "target": ["upper_chest"],
     "helps": ["front_delts", "triceps", "chest"],
     "keepQuiet": ["upper_traps"],
     "peakAt": 0.28,
-    "peakSource": "Gravitus Incline Chest Press: chest engagement is reduced by arching or by stopping short of near-full extension, so effort is highest approaching that near-locked-out top"
+    "peakSource": "Gravitus Incline Chest Press: pressing to near full extension without locking out \"maintains tension on the chest,\" so effort is highest approaching that near-top position"
   },
   "mistake": {
     "name": "Shrug and arch",
@@ -21,11 +21,10 @@
       { "text": "The shoulders rise toward the ears through the press.", "joint": "shrug_cm" },
       { "text": "The lower back arches off the pad to help finish the press.", "joint": "torso_lean" }
     ],
-    "source": "Gravitus Incline Chest Press: letting the shoulders rise toward the ears during the press, and excessively arching the lower back off the pad, both reduce chest engagement and add joint stress"
+    "source": "Gravitus Incline Chest Press: \"Allowing the shoulders to rise toward the ears... can reduce chest activation\"; \"Excessively arching the lower back during the pressing movement... can reduce chest engagement and potentially create lower back stress\""
   },
   "sources": [
-    "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/",
     "https://gravitus.com/guides/exercises/incline-chest-press/",
-    "Contact fact (backrest angle, unverified_on_machine): ACE / Gravitus give 30 to 45 degrees, but that is a real-world angle, not this app's `bench` setting unit, so it is not written into `machine.settings` here; the owner's gym checklist confirms the actual rig value"
+    "Contact fact (backrest angle, unverified_on_machine): Gravitus gives \"typically 30-45 degrees\" as the setup range, a real-world angle, not this app's `bench` setting unit, so it is not written into `machine.settings` here; the owner's gym checklist confirms the actual rig value"
   ]
 }

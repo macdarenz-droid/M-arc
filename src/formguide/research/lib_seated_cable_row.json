@@ -6,8 +6,8 @@
   "ranges": {
     "shoulder_flex": { "min": -20, "max": 30, "source": "ACE Seated Row: arms straight, reaching for the handle (illustrative 30 degrees of forward reach); drive the elbows back close to the ribs until the handle touches the stomach (illustrative -20 degrees of extension). No exact angle is given, so both ends are illustrative" },
     "elbow_flex": { "min": 5, "max": 100, "source": "ACE Seated Row: arms straight at the reach (illustrative 5 degrees); elbows bend as they drive back until the handle touches the front of the stomach (illustrative 100 degrees). Illustrative, no exact angle given" },
-    "torso_lean": { "min": -5, "max": 5, "source": "Seated cable row form guides (Olaben, TZFIT): sit tall, only a small natural lean; stop the backward lean at roughly upright, as if a pole stood behind the back for the whole set" },
-    "shrug_cm": { "min": 0, "max": 0.5, "source": "Seated cable row form guides: keep the shoulders down and away from the ears through the whole pull" }
+    "torso_lean": { "min": -5, "max": 5, "source": "Olaben Seated Cable Row: \"Cranking your torso well past upright turns the move into a lower-back exercise and risks strain\"" },
+    "shrug_cm": { "min": 0, "max": 0.5, "source": "TZFIT Seated Cable Row: \"Keep your shoulders pulled down away from your ears throughout\"" }
   },
   "muscles": {
     "target": ["mid_back"],
@@ -22,7 +22,7 @@
       { "text": "The torso rocks back hard to help finish the pull.", "joint": "torso_lean" },
       { "text": "The shoulders creep up toward the ears.", "joint": "shrug_cm" }
     ],
-    "source": "Seated cable row mistake guides (Olaben, TZFIT): rocking the torso from a far-forward reach to a far-back finish turns the row into a full-body swing and a lower-back exercise; shrugging hands the pull to the upper traps instead of the mid-back"
+    "source": "Olaben Seated Cable Row: \"Rocking your torso back and forth to swing the weight is the classic error\"; TZFIT Seated Cable Row: \"If your shoulders rise toward your ears during the pull, your upper traps are taking over\""
   },
   "sources": [
     "https://www.acefitness.org/resources/everyone/exercise-library/48/seated-row/",

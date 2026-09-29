@@ -4,8 +4,8 @@
   "order": "lift_first",
   "tempo": { "lift": 1, "hold": 0.5, "lower": 2, "rest": 0.5 },
   "ranges": {
-    "torso_lean": { "min": -15, "max": 0, "source": "ACE Seated Lat Pulldown: lean back slightly, no more than a 30-degree angle, using the legs (not the low back) to hold it; -15 is a conservative mid-point kept well inside that 30-degree cap, matching the production doc's canonical lat pulldown example" },
-    "scap_depress_cm": { "min": 0, "max": 3, "source": "ACE Seated Lat Pulldown: depress and retract the scapulae before the pull and hold that position throughout; Physio-pedia Scapulohumeral Rhythm for the depression mechanics" }
+    "torso_lean": { "min": -15, "max": 0, "source": "ACE Seated Lat Pulldown: \"Lean back slightly (no more than a 30 degree angle), using your legs to support your body (low back)\"; -15 is a conservative mid-point kept well inside that 30-degree cap, matching the production doc's canonical lat pulldown example" },
+    "scap_depress_cm": { "min": 0, "max": 3, "source": "ACE Seated Lat Pulldown: \"Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise\"; Physio-pedia Scapulohumeral Rhythm for the depression mechanics" }
   },
   "muscles": {
     "target": ["lats"],

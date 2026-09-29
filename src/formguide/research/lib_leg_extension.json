@@ -4,15 +4,15 @@
   "order": "lift_first",
   "tempo": { "lift": 1, "hold": 0.3, "lower": 2, "rest": 0.5 },
   "ranges": {
-    "knee_flex": { "min": 5, "max": 90, "source": "Leg extension guides (RitFit, e3rehab): start with the knees at about a 90-degree angle; extend the quads until the legs are nearly straight but not locked out (illustrative 5 degrees); e3rehab notes terminal knee extension creates the highest patellofemoral pressure, so stopping a few degrees short of full (0-degree) extension is the practical, joint-friendly stop" },
-    "hip_flex": { "min": 85, "max": 95, "source": "Leg extension mistake guides (ampainsoc, Art of Manliness): actively pull the hip down into the seat and keep the butt and back in contact with the pads for the whole set, a narrow band around the seated 90-degree hip angle" }
+    "knee_flex": { "min": 5, "max": 90, "source": "e3rehab: \"adjust the machine so your knees are bent as much as possible\"; if the machine limits that to about 90 degrees, e3rehab says to use pads to bend further, so 90 degrees is the illustrative common-machine start; RitFit: \"Terminal knee extension creates the highest patellofemoral contact pressure. Stopping a few degrees short of full extension is a practical modification\" (illustrative 5-degree stop)" },
+    "hip_flex": { "min": 85, "max": 95, "source": "AmpAinSoc leg extension: \"Hips stay seated — they do not lift during the rep\" and \"Glue the hips down throughout,\" a narrow band around the seated 90-degree hip angle" }
   },
   "muscles": {
     "target": ["quads"],
     "helps": [],
     "keepQuiet": ["lower_back"],
     "peakAt": 0.3,
-    "peakSource": "RitFit / e3rehab leg extension guides: terminal knee extension is where quad effort and knee-joint load both peak, which is why form guides say to stop just short of full lockout there"
+    "peakSource": "RitFit leg extension guide: terminal knee extension creates the highest patellofemoral contact pressure, and quad effort is highest approaching that near-locked top, which is why the guide says to stop just short of it"
   },
   "mistake": {
     "name": "Hips up, momentum up",
@@ -20,12 +20,13 @@
       { "text": "The hips lift off the seat as the weight gets heavy.", "joint": "hip_flex" },
       { "text": "The leg bar is kicked up with a jerk and dropped back instead of a controlled extension.", "joint": "knee_flex" }
     ],
-    "source": "Leg extension mistake guides (bodybuilding-wizard, ampainsoc, Art of Manliness): lifting the hips off the seat shifts tension away from the quads; bouncing or swinging the leg bar up with momentum and letting it drop removes the controlled tension the quads need"
+    "source": "AmpAinSoc leg extension: hips lifting off the seat is a \"Sign of too much weight. Glue the hips down throughout\"; Art of Manliness: \"The big mistake people make with this exercise is bouncing/swinging the leg bar up, using momentum, and letting it drop back down\""
   },
   "sources": [
     "https://www.ritfitsports.com/blogs/article/proper-leg-extension-form",
     "https://e3rehab.com/how-to-perform-leg-extensions/",
-    "https://bodybuilding-wizard.com/machine-leg-extension/",
-    "Contact fact (shin pad / ankle strap): the shin pad rests at the ankles, feet facing forward (RitFit); a real-world description, not a numeric `machine.settings` value this research can cite"
+    "https://ampainsoc.org/leg-extension/",
+    "https://www.artofmanliness.com/health-fitness/fitness/how-to-do-leg-extensions/",
+    "Contact fact (shin pad / ankle strap): the shin pad sits against the shins near the ankles on the machine's lever arm — a generic description of the part, not a numeric `machine.settings` value this research can cite"
   ]
 }
