@@ -244,7 +244,7 @@ describe('F11: a flat check-in history still counts a bad day', () => {
     const base: ReadinessInput = { today, now: Date.parse(`${today}T12:00:00Z`), healthDays: [], checkIn: undefined, checkInHistory: history, recovery: [], scheduledSplit: undefined, custom: [], sessions: [] };
     const bad = readiness({ ...base, checkIn: { day: today, mood: 1 } })!;
     const usual = readiness({ ...base, checkIn: { day: today, mood: 3 } })!;
-    expect(usual.score).toBe(50);
+    expect(usual.score).toBe(75); // ADAPT-2: the usual answer reads normal (0.75), was 50
     expect(bad.score).toBeLessThan(usual.score);
   });
 });
