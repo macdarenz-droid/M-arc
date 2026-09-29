@@ -5,9 +5,18 @@ import { basename, dirname, join } from 'node:path';
 import library from '@/data/exercises.json';
 import type { ExerciseGuide, Research } from '../model';
 import type { CheckInput } from './index';
-import hashes from './hashes.json';
 
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
+
+/** The stored hash snapshots under `check/hashes/`, one `<id>.txt` file per exercise, so parallel exercise lanes never
+ * touch the same file. */
+function hashesIn(root: string): Record<string, string> {
+  const dir = join(root, 'src/formguide/check/hashes');
+  if (!existsSync(dir)) return {};
+  return Object.fromEntries(
+    readdirSync(dir).filter(f => f.endsWith('.txt')).map(f => [basename(f, '.txt'), readFileSync(join(dir, f), 'utf8').trim()]),
+  );
+}
 
 /** Everything under src/formguide/ that ships in the form-guide chunk (not exercises/, research/ or check/). */
 export function chunkSource(root: string): string {
@@ -23,6 +32,7 @@ export type Fixture = Partial<Pick<CheckInput, 'machines' | 'parts'>> & { resear
 export function inputFor(path: string, guide: ExerciseGuide, root = process.cwd()): CheckInput {
   const fx: Fixture = existsSync(join(dirname(path), 'fixture.json')) ? readJson(join(dirname(path), 'fixture.json')) : {};
   const rp = join(root, 'src/formguide/research', `${guide.id}.json`);
+  const hashes = hashesIn(root);
   return {
     guide,
     research: fx.research ?? (existsSync(rp) ? readJson(rp) : null),
