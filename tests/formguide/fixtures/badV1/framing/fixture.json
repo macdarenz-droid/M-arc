@@ -1,0 +1,6 @@
+{
+ "parts": {
+  "dumbbell": "<g class=\"fg-part fg-part-dumbbell\"><polygon points=\"8.2,-1.2 -8.4,8.4 -25.0,-1.2 -25.0,-20.3 -8.4,-29.9 8.2,-20.3\" fill=\"url(#fgc-i)\" stroke=\"var(--ink)\" stroke-width=\"1.8\"/><path d=\"M-5.98 -5.98 L7.18 8.38\" stroke=\"var(--iron-sh)\" stroke-width=\"8\" stroke-linecap=\"round\"/>\n        <polygon points=\"29.1,22.7 8.4,34.7 -12.4,22.7 -12.4,-1.2 8.4,-13.2 29.1,-1.2\" fill=\"url(#fgc-i)\" stroke=\"var(--ink)\" stroke-width=\"2\"/>\n        <polygon points=\"22.9,19.1 8.4,27.5 -6.1,19.2 -6.1,2.4 8.4,-6.0 22.9,2.4\" fill=\"none\" stroke=\"var(--iron-sh)\" stroke-width=\"1.4\"/></g>"
+ },
+ "hash": "c1ac61634cd68bd4"
+}

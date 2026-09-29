@@ -1,0 +1,6 @@
+{
+ "parts": {
+  "dumbbell": "<g class=\"fg-part fg-part-dumbbell\"><polygon points=\"6.9,-1.0 -7.0,7.0 -20.9,-1.0 -20.9,-17.0 -7.0,-25.0 6.9,-17.0\" fill=\"url(#fgc-i)\" stroke=\"var(--ink)\" stroke-width=\"1.8\"/><path d=\"M-5 -5 L6 7\" stroke=\"var(--iron-sh)\" stroke-width=\"8\" stroke-linecap=\"round\"/>\n        <polygon points=\"24.3,19.0 7.0,29.0 -10.3,19.0 -10.3,-1.0 7.0,-11.0 24.3,-1.0\" fill=\"url(#fgc-i)\" stroke=\"var(--ink)\" stroke-width=\"2\"/>\n        <polygon points=\"19.1,16.0 7.0,23.0 -5.1,16.0 -5.1,2.0 7.0,-5.0 19.1,2.0\" fill=\"none\" stroke=\"var(--iron-sh)\" stroke-width=\"1.4\"/><g class=\"fg-p fg-t-forearms_r\" opacity=\"0\"><path class=\"fg-tf-forearms_r\" d=\"M-12 -12 L12 -12 L12 12 L-12 12 Z\" fill=\"var(--target)\" fill-opacity=\"0.6\"/><path class=\"fg-tro-forearms_r\" d=\"M-12 -12 L12 -12 L12 12 L-12 12 Z\" fill=\"none\" stroke=\"var(--target)\" stroke-width=\"4.4\"/><path class=\"fg-tri-forearms_r\" d=\"M-12 -12 L12 -12 L12 12 L-12 12 Z\" fill=\"none\" stroke=\"var(--target)\" stroke-width=\"1.8\"/></g></g>"
+ },
+ "hash": "d2f094cae1312e80"
+}

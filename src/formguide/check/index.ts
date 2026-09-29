@@ -17,7 +17,7 @@ import { MACHINES, anchorAt, offPath, setupMarkup, type MachineDrawing } from '.
 import { hasOverlay, type LibraryRow } from './overlays';
 import { effortOf, TORQUE } from './effort';
 import { HZ, LIM, phaseStats, stopJerk } from './smooth';
-import { bbox, colourLiterals, compile, countPaths, forbiddenEffects } from './svg';
+import { bbox, colourLiterals, compile, countPaths, forbiddenEffects, type Box } from './svg';
 import { FIGURE_PARTS, PARTS, rigFor, viewOf, type Rig } from './view';
 import { contactsHeld as heldBy, travelRange as travelOf, type Pass } from './contacts';
 import { researchMismatches } from './research';
@@ -664,12 +664,14 @@ const balance: Fn = (c, fail) => {
   if (!head.shapes.length || !feet.shapes.length) return void fail(`the figure draws ${head.shapes.length} head and ${feet.shapes.length} foot shapes`);
   let least = Infinity, off = 0;
   for (const p of passesOf(c)) {
-    let failed = false;
+    // each figure's worst sample, so the failing line gives its largest excursion
+    let worst: { m: number; x: number; b: Box; u: number } | null = null;
     for (const u of grid(LIMITS.jointSamples)) {
       const f = frameAt(c, rig, u, p.fig, p.rep), cm = centreOfMass(rig, f, head), b = fastBox(feet, f), m = Math.min(cm[0] - b.x0, b.x1 - cm[0]);
       least = Math.min(least, m); off = Math.max(off, Math.abs(cm[0] - (b.x0 + b.x1) / 2));
-      if (!(m >= 0) && !failed) { failed = true; fail(`${p.L}: centre of mass x ${f2(cm[0])} is ${f2(-m)} units outside the foot base ${f2(b.x0)}..${f2(b.x1)} at ${at(u, p.T, p.L)}`); }
+      if (!worst || !(m >= worst.m)) worst = { m, x: cm[0], b, u };
     }
+    if (worst && !(worst.m >= 0)) fail(`${p.L}: centre of mass x ${f2(worst.x)} is ${f2(-worst.m)} units outside the foot base ${f2(worst.b.x0)}..${f2(worst.b.x1)} at ${at(worst.u, p.T, p.L)}`);
   }
   return `centre of mass at most ${f2(off)} units off the base middle, ${f2(least)} units inside`;
 };

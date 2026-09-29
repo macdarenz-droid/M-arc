@@ -72,14 +72,19 @@ export function contactsHeld(g: ExerciseGuide, rig: Rig, m: MachineDrawing | nul
 export function travelRange(g: ExerciseGuide, rig: Rig | undefined, passes: Pass[], samples: number, where: Where): { fails: string[]; note: string } {
   const drives = g.machine?.drive ?? [];
   if (!drives.length) return { fails: [], note: 'no machine drive' };
-  const fails: string[] = [], lo = drives.map(() => Infinity), hi = drives.map(() => -Infinity), seen = new Set<string>();
-  for (const p of passes) for (let i = 0; i <= samples; i++) {
-    const u = i / samples, tr = stateAt(g, u, p.fig, p.rep, rig).travel;
-    drives.forEach((d, k) => {
-      const t = tr[k]!;
-      lo[k] = Math.min(lo[k]!, t); hi[k] = Math.max(hi[k]!, t);
-      if (!(t >= 0 && t <= 1) && !seen.has(d.part + p.L)) { seen.add(d.part + p.L); fails.push(`${d.part} travel ${+t.toFixed(4)} outside the machine's stops 0..1 at ${where(u, p)}`); }
-    });
+  const fails: string[] = [], lo = drives.map(() => Infinity), hi = drives.map(() => -Infinity);
+  for (const p of passes) {
+    // each part's furthest excursion past a stop in this figure (a NaN travel counts as the furthest)
+    const worst = drives.map(() => ({ over: 0, t: 0, u: 0 }));
+    for (let i = 0; i <= samples; i++) {
+      const u = i / samples, tr = stateAt(g, u, p.fig, p.rep, rig).travel;
+      drives.forEach((d, k) => {
+        const t = tr[k]!, over = Number.isNaN(t) ? Infinity : Math.max(-t, t - 1);
+        lo[k] = Math.min(lo[k]!, t); hi[k] = Math.max(hi[k]!, t);
+        if (over > worst[k]!.over) worst[k] = { over, t, u };
+      });
+    }
+    drives.forEach((d, k) => { const w = worst[k]!; if (w.over > 0) fails.push(`${d.part} travel ${+w.t.toFixed(4)} outside the machine's stops 0..1 at ${where(w.u, p)}`); });
   }
   return { fails, note: drives.map((d, k) => `${d.part} ${+lo[k]!.toFixed(3)}..${+hi[k]!.toFixed(3)}`).join(', ') };
 }

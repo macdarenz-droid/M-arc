@@ -1,8 +1,9 @@
 // V1-07: the add-only checks (docs/FORM-GUIDE-PRODUCTION.md §10.5 V1-07; readings in docs/COACHING-DECISIONS.md D-V1-07).
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { readFileSync, readdirSync } from 'node:fs';
 import { ALL_CHECKS, CHECKS, CHECKS_V1, LIMITS, runChecks, type CheckId } from '@/formguide/check';
-import { inputFor } from '@/formguide/check/node';
+import { guideOf, inputFor } from '@/formguide/check/node';
 import { rigFor, type Rig } from '@/formguide/check/view';
 import { bbox, compile } from '@/formguide/check/svg';
 import { fastBox, heldIn, textAsBoxes } from '@/formguide/check/framing';
@@ -160,4 +161,46 @@ describe('D-FG7 (l): the channels each view draws (perturbation)', () => {
     expect(seated).toEqual([...FRONT, 'hip_flex'].sort());
     expect([...new Set([...standing, ...seated])].sort()).toEqual([...validator('FRONT_CHANNELS')].sort());
   });
+});
+
+describe('A1 each V1-07 check fails its own seeded bad file (badV1/, the folder rule of checks.test.ts), naming the numbers', () => {
+  const BAD = 'tests/formguide/fixtures/badV1';
+  const dirs = readdirSync(BAD, { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name);
+  const checkOf = (dir: string) => dir.split('.')[0] as CheckId;
+  it('one folder or more per V1-07 check, and every folder names one', () => {
+    expect([...new Set(dirs.map(checkOf))].sort()).toEqual([...CHECKS_V1].sort());
+  });
+  /** What each folder must say: its case's own rule (A2, A3, the three boundary cases, the follow rule, the stop). */
+  const CASE: Record<string, RegExp> = {
+    contactsHeld: /hand_r leads bar_r \(follow\) but 0 of 2 contacts hold it on bar_r/,
+    matchesResearch: /cue 4 has 75 characters > 60/,
+    framing: /mistake: left margin -2\.58 units < 1 in standingFront/,
+    contrast: /silent-black part dumbbell: text "20 KG" 1\.05:1 < 4\.5:1 on the stage/,
+    'contrast.noring': /mark fg-t-forearms_r has no two-tone boundary \(0 of 2 lines\)/,
+    'contrast.weakring': /mark fg-t-forearms_r inner line [\d.]+:1 < 3:1 against the tint at full effort/,
+    'contrast.restring': /mark fg-t-forearms_r outer line shows at rest \(opacity 1\), not with the effort/,
+    balance: /mistake: centre of mass x [\d.]+ is 18\.54 units outside the foot base/,
+    targetDrawn: /correct front figure draws no fg-t- tint for lats \(1 of 2 targets/,
+    travelRange: /bar_r travel 1\.0859 outside the machine's stops 0\.\.1 at u=[\d.]+ \([\d.]+ s, mistake\)/,
+  };
+  it('every folder has its expected line', () => expect(Object.keys(CASE).sort()).toEqual([...dirs].sort()));
+  it.each(dirs)('%s', async dir => {
+    const check = checkOf(dir), f = readdirSync(`${BAD}/${dir}`).find(x => x.endsWith('.ts'))!, path = `${BAD}/${dir}/${f}`;
+    const g = guideOf(await import(`./fixtures/badV1/${dir}/${f}`), f), rs = runChecks(inputFor(path, g), ALL_CHECKS);
+    const r = rs.find(x => x.check === check)!;
+    console.info(`[V1-07] ${dir}: ${r.fails.find(m => CASE[dir]!.test(m)) ?? r.fails[0]}`);
+    expect(rs.filter(x => !x.ok).map(x => x.check)).toEqual([check]);
+    expect(r.fails.join('\n')).toMatch(CASE[dir]!);
+    for (const m of r.fails) { expect(m.startsWith(`${check} ${g.id}: `), m).toBe(true); expect(m, 'names a number').toMatch(/\d/); }
+  }, 30_000);
+});
+
+describe('A6 fg:check stays within 5 s a file', () => {
+  it('the lateral raise, all 27 checks, bundling included', () => {
+    const t = performance.now(), r = spawnSync('npm', ['run', '-s', 'fg:check', 'lib_dumbbell_lateral_raise'], { encoding: 'utf8' }), s = (performance.now() - t) / 1000;
+    console.info(`[V1-07] A6: fg:check lib_dumbbell_lateral_raise ${s.toFixed(2)} s`);
+    expect(r.stdout).toMatch(/all 20 checks passed\nall 7 V1-07 checks passed/);
+    expect(r.status).toBe(0);
+    expect(s).toBeLessThanOrEqual(5);
+  }, 30_000);
 });
