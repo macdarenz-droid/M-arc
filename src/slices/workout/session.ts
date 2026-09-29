@@ -240,6 +240,8 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   return true;
 }
 
+const withoutTarget = <T extends { target?: unknown }>({ target: _t, ...rest }: T): Omit<T, 'target'> => rest;
+
 /** LT-3 (D-A4 a): keeps set 1's target as shown at its commit, once per entry, so the verdict and the next session never recompute it. */
 export function setEntryTarget(entryId: string | undefined, target: PlannedTarget): void {
   if (!entryId || !(target.kg > 0) || !(target.reps > 0)) return;
@@ -362,7 +364,8 @@ export function insertEntry(sessionId: string, at: number, entry: ActiveSession[
 export function substituteEntry(entry: number, ex: Exercise): void {
   // QA3-8b: keeps the slot's original planned exerciseId (through any earlier substitution too),
   // so templateFromSession can find it by lineage even after a reorder or another substitution.
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(e.sets.length), plannedId: e.plannedId ?? e.exerciseId })) }));
+  // LT-3: the stored target belongs to the replaced lift, so it goes with it.
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...withoutTarget(e), id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(e.sets.length), plannedId: e.plannedId ?? e.exerciseId })) }));
 }
 
 export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {

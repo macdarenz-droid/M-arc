@@ -9,7 +9,8 @@ import { exerciseHistory, restateOffPlan } from '@/brain/history';
 import { planVerdictInsights, postSessionInsights } from '@/brain/coach/post';
 import { repairState, replaceState, state, withTarget } from '@/core/store';
 import { freshState, type LoggedSet, type Session, type Split } from '@/core/models';
-import { active, commitSet, finishSession, setEntryTarget, setSet, startSession } from '@/slices/workout/session';
+import { active, commitSet, finishSession, setEntryTarget, setSet, startSession, substituteEntry } from '@/slices/workout/session';
+import { findExercise } from '@/core/exercises';
 import { session, sets } from './helpers';
 
 const EX = 'lib_barbell_bench_press';
@@ -103,6 +104,16 @@ describe('D-A4 (a): the target is stored at commit and kept when the session fin
     vi.advanceTimersByTime(120_000);
     finishSession(false);
     expect(state.value.sessions.at(-1)!.exercises[0]!.target).toEqual({ kg: 27.5, reps: 8 });
+  });
+  it('a substitution drops the replaced lift\'s target, so the new lift stores its own', () => {
+    startSession(split);
+    setSet(0, 0, { kg: 32, reps: 5, effort: 'max' });
+    commitSet(0, 0);
+    setEntryTarget(active()!.entries[0]!.id, { kg: 27.5, reps: 8 });
+    substituteEntry(0, findExercise('lib_dumbbell_bench_press')!);
+    expect(active()!.entries[0]!.target).toBeUndefined();
+    setEntryTarget(active()!.entries[0]!.id, { kg: 22.5, reps: 10 });
+    expect(active()!.entries[0]!.target).toEqual({ kg: 22.5, reps: 10 });
   });
   it('the normalize rule drops a malformed target and keeps a valid one', () => {
     expect(withTarget({ target: { kg: 27.5, reps: 8 } })).toEqual({ target: { kg: 27.5, reps: 8 } });
