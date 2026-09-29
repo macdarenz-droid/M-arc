@@ -552,7 +552,8 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
  * UI-12 / BUG-17 (RECOVERY-F7): the recovery model rebuilt from history, as finishSession learned it
  * session by session. Each step gets what finish had: the whole prior history (doses are built once
  * for all sessions, then the step's tauScale is applied to those before it), the real training start
- * and the exercise's last summary. `calibrates` says which sessions finish calibrated.
+ * and the exercise's last summary (BUG-25: last by day, as finish reads it). `calibrates` says which
+ * sessions finish calibrated.
  */
 export function replayRecoveryModel(sorted: Session[], custom: Exercise[], profile: Profile, healthDays: DailyHealth[], calibrates: (s: Session) => boolean): RecoveryModel {
   const empty: RecoveryModel = { tauScale: {}, observations: {} };
@@ -582,7 +583,11 @@ export function replayRecoveryModel(sorted: Session[], custom: Exercise[], profi
     for (const e of sess.exercises) {
       const h = exerciseHistory([sess], e.exerciseId, custom);
       const last = h[h.length - 1];
-      if (last) lastSummary.set(keyOf(e.exerciseId), last);
+      // BUG-25: the previous session is the last by day, as finish's lastSummaryAlone reads it; a
+      // tie goes to the later start. A session dated before the one kept does not replace it.
+      const key = keyOf(e.exerciseId);
+      const kept = lastSummary.get(key);
+      if (last && (!kept || last.day >= kept.day)) lastSummary.set(key, last);
     }
   });
   return model;

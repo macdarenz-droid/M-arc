@@ -1,9 +1,0 @@
-{ "research": { "id": "lib_superman", "kind": "rep", "order": "lift_first",
-  "tempo": { "lift": 1, "hold": 0.5, "lower": 2, "rest": 0.5 },
-  "ranges": {
-    "shoulder_flex": { "min": -5, "max": 5, "source": "FG-6 fixture (illustrative)" },
-    "hip_flex": { "min": -20, "max": 0, "source": "FG-6 fixture (illustrative)" },
-    "torso_lean": { "min": 0, "max": 20, "source": "FG-6 fixture (illustrative)" } },
-  "muscles": { "target": ["lower_back"], "helps": ["glutes", "hamstrings"], "keepQuiet": ["upper_traps"], "peakAt": 0.3125, "peakSource": "FG-6 fixture: the top hold" },
-  "mistake": { "name": "Yank up and over-arch", "tells": [{ "text": "The legs kick up past the hips.", "joint": "hip_flex" }, { "text": "The chest jerks up, over-arching.", "joint": "torso_lean" }], "source": "FG-6 fixture" },
-  "sources": ["FG-6 fixture"] } , "hash": "2eccc1389a37e247" }

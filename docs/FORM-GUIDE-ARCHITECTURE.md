@@ -1,3 +1,5 @@
+Paused 2026-09-29 by the owner; the code is removed from the app; backup branch claude/backup-fg-2026-09-29-main.
+
 # M/ARC form guide and machine guide: architecture (research, no build)
 
 Date: 26 September 2026. Status: proposed architecture, before implementation. Matches task board item "Form guide upgrade (owner request): architecture only, build after polish."
