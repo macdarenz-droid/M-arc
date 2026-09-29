@@ -54,10 +54,10 @@ describe('LT-2 A1: the worked rows of §3', () => {
     expect(c).toMatchObject({ kind: 'earn', kg: 16, repWindow: [15, 15] });
     expect(c.text).toBe('No smaller step here. Keep 16 kg and work up to 15 reps; then 20 kg for 6 is ready.');
   });
-  it('row 5, one rep fewer: earn 16 > hi + 3 → lever with the table\'s wording', () => {
-    const c = chooseRung({ topKg: 16, R: 11, rirObs: 2, rawKg: 17.5, menu: ladder([16, 20, 24]), goal: 'lean', role: 'main' });
+  it('row 5 with a 20.5 kg next bell: earn 16 > hi + 3 → lever with the table\'s wording', () => {
+    const c = chooseRung({ topKg: 16, R: 12, rirObs: 2, rawKg: 17.5, menu: ladder([16, 20.5, 24]), goal: 'lean', role: 'main' });
     expect(c).toMatchObject({ kind: 'lever', kg: 16, extraSet: true });
-    expect(c.text).toBe('20 kg is too big a jump for now (about 2 reps). Keep 16 kg and add a set, or try a harder variation.');
+    expect(c.text).toBe('20.5 kg is too big a jump for now (about 2 reps). Keep 16 kg and add a set, or try a harder variation.');
   });
   it('row 6: DB 50 lb × 12, lean main, 5 lb steps → 55 lb (24.948 kg) for about 8', () => {
     const c = chooseRung({ topKg: lb50, R: 12, rirObs: 2, rawKg: 24.5, menu: menuOf(defaultProfile('Dumbbells', 'lb')), goal: 'lean', role: 'main' });
@@ -75,5 +75,56 @@ describe('LT-2 A1: the worked rows of §3', () => {
     const c = chooseRung({ topKg: 35, R: 12, rirObs: 2, rawKg: 37.5, menu: ladder([25, 30, 32.5, 35]), goal: 'lean', role: 'main' });
     expect(c).toMatchObject({ kind: 'lever', kg: 35, extraSet: true });
     expect(c.text).toBe('Nothing heavier here: add a set, or a harder variation.');
+  });
+});
+
+describe('LT-2 A4: no menu or one rung', () => {
+  it('an empty menu keeps the raw kg and the reps unchanged', () => {
+    const c = chooseRung({ topKg: 25, R: 12, rirObs: 2, rawKg: 27, menu: { rungsKg: [], unit: 'kg' }, goal: 'lean', role: 'main' });
+    expect(c).toMatchObject({ kind: 'rung', kg: 27, repWindow: [6, 12], text: '' });
+    expect(chooseRung({ topKg: 25, R: 12, rirObs: 2, rawKg: 27, menu: null, goal: 'lean', role: 'main' }).kg).toBe(27);
+  });
+  it('one rung holds at that rung, no increase', () => {
+    const c = chooseRung({ topKg: 25, R: 12, rirObs: 2, rawKg: 27, menu: ladder([25]), goal: 'lean', role: 'main' });
+    expect(c).toMatchObject({ kind: 'lever', kg: 25, repWindow: [12, 12] });
+  });
+});
+
+describe('LT-2 A5: effort and the strength floor', () => {
+  it('growth accepts at RIR 1, never RIR 0: 30 kg is 6 reps at RIR 0 but 5 at RIR 1 → earn, not the rung', () => {
+    expect(Math.floor(repsAt(25, 12, 2, 30, 0))).toBe(6);
+    const c = chooseRung({ topKg: 25, R: 12, rirObs: 2, rawKg: 27, menu: ladder([25, 30, 35]), goal: 'growth', role: 'main' });
+    expect(c).toMatchObject({ kind: 'earn', kg: 25, repWindow: [13, 13] });
+  });
+  it('strength never goes under 3 reps: 110 kg is 2 reps at RIR 1 → earn toward 3, not the rung', () => {
+    const c = chooseRung({ topKg: 100, R: 5, rirObs: 2, rawKg: 102.5, menu: ladder([100, 110, 120]), goal: 'strength', role: 'main' });
+    expect(c).toMatchObject({ kind: 'earn', kg: 100, repWindow: [6, 6] });
+    expect(c.text).toBe('No smaller step here. Keep 100 kg and work up to 6 reps; then 110 kg for 3 is ready.');
+  });
+  it('strength takes a rung that leaves 3 or more reps', () => {
+    const c = chooseRung({ topKg: 100, R: 5, rirObs: 2, rawKg: 102.5, menu: ladder([100, 105, 110]), goal: 'strength', role: 'main' });
+    expect(c).toMatchObject({ kind: 'rung', kg: 105, repWindow: [3, 3] });
+  });
+});
+
+describe('LT-2 A6: the step-down is sized from performance', () => {
+  it('120 kg on a 5 kg stack → 110 (115 is only 4.2 %)', () => {
+    const c = chooseRung({ topKg: 120, R: 3, rirObs: 0, rawKg: 117.5, menu: stack(5), goal: 'strength', role: 'main', direction: 'down' });
+    expect(c).toMatchObject({ kind: 'down', kg: 110 });
+  });
+  it('60 kg with 1.25 kg plates → 55 (57.5 is only 4.2 %)', () => {
+    const c = chooseRung({ topKg: 60, R: 3, rirObs: 0, rawKg: 57.5, menu: menuOf(defaultProfile('Barbell', 'kg')), goal: 'strength', role: 'main', direction: 'down' });
+    expect(c).toMatchObject({ kind: 'down', kg: 55 });
+  });
+  it('never under the load planned before the failed increase', () => {
+    const args = { topKg: 62.5, R: 5, rirObs: 0, rawKg: 60, menu: menuOf(defaultProfile('Barbell', 'kg')), goal: 'lean' as const, role: 'main' as const, direction: 'down' as const };
+    expect(chooseRung(args).kg).toBe(57.5);
+    expect(chooseRung({ ...args, priorPlannedKg: 60 }).kg).toBe(60);
+  });
+  it('the reps are re-solved for the new rung', () => {
+    const c = chooseRung({ topKg: 120, R: 3, rirObs: 0, rawKg: 117.5, menu: stack(5), goal: 'strength', role: 'main', direction: 'down' });
+    // 120 × 3 at max: 30 × 132 / 110 − 30 − 2 = 4 reps at RIR 2 on 110 kg.
+    expect(c.repWindow).toEqual([4, 4]);
+    expect(c.text).toBe('110 kg for 4.');
   });
 });
