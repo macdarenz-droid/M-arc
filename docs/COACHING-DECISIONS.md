@@ -701,6 +701,14 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - Load snapping (`loggedLoads`): a load only a held set used is not one the gym is known to have, so it is not kept as loadable; it snaps like any other load. Once the load is repeated it counts.
   - Saved data shape unchanged; the stored tauScale of existing users changes only after a rebuild (history edit or delete) when a held typo had moved it.
   **Why**: the audit's correct behaviour (a held set feeds no number, plan 6.17.4) and BUG-17's rule that finish and a rebuild learn the same model. Checked in `tests/bug24.test.ts` (3 of its tests fail on `main` 5e416d8) through finishSession and the store, plus a random-history test that `stepJudge` equals judging each prefix.
+## Recovery rebuild: previous session in day order (BUG-25, 2026-09-29)
+
+- **Decided (D-B25, BUG-25 builder)**: the rebuild (`replayRecoveryModel`) takes an exercise's previous session the way finish does: the last one by day among the sessions started before this one, a tie on the day going to the later start. Before, it kept the last one by start. Finish reads it through `lastSummaryAlone`, which is `exerciseHistory` and so orders by day, and BUG-24's `stepJudge` already took the numbers in day order.
+  - How it went wrong: when a history's day order and start order disagree, the rebuild checked "rated max" and the 7-day window on the last-started session but took the numbers from the last-dated one (review note 1 on #77). Example: A dated day 10 and started first, B started after A but dated day 8, C on day 13. Finish of C compares C with A; the rebuild checked B, and when B was not rated max it learned nothing where finish had learned.
+  - When the orders disagree: `startedAt` and `day` come from the same training time in the app, so they agree unless the day was saved in another time zone, or a backup or repaired save carries a `day` its start time does not give (`repairState` keeps a valid `day` as it is). Retro sessions logged later do not cause it: the rebuild then reads the history as it now is, by design.
+  - Not chosen: moving finish to start order. `exerciseHistory` is day-ordered for every reader (progression, PRs, BUG-18's judgement); only the rebuild's own map differed, so the fix is there. Saved data shape unchanged; a stored tauScale changes only at the next rebuild (history edit or delete), and only for histories whose orders disagree.
+  **Why**: BUG-17's rule that finish and a rebuild learn the same model. Checked by `tests/bug25.test.ts`: a store-driven backdated history (finish learns 1.1 for quads, the rebuild on `main` learned nothing) and 30 random histories with out-of-order days, each rebuild equal to finishing every session in start order.
+
 ## Rung choice and rep re-solve (LT-2, 2026-09-29)
 
 ## Abductors drawn on the back map, not front (BUG-23, 2026-09-29)
