@@ -145,3 +145,25 @@ describe('Escobar wiring: coachCtx carries the plan', () => {
     expect([c.plannedDays, c.daysOff]).toEqual([2, ['2026-09-29']]);
   });
 });
+
+describe('Coach card wiring (supervisor scope extension 2026-09-29): the card uses the plan', () => {
+  const base = { schedule: emptySchedule(), daysOff: [] as string[] };
+  const two = ['2026-09-22', '2026-09-24'].map(d => session(d, [{ id: bench, sets: sets(60, 8) }]));
+  it('plannedDays 2, no schedule, trained twice last week → the card shows on Monday, about last week', async () => {
+    const { weeklyReviewCardLine } = await import('@/slices/coach/Coach');
+    expect(weeklyReviewCardLine({ ...base, sessions: two, profile: { name: 'T', plannedDays: 2 } }, monday, 2)).toBe('2 things worth knowing about last week.');
+    expect(weeklyReviewCardLine({ ...base, sessions: two, profile: { name: 'T', plannedDays: 2 } }, monday, 0)).toBe('Steady last week — nothing stands out either way.');
+  });
+  it('a 6-day schedule: 3 sessions do not show the card; nothing set with 2 sessions does not either', async () => {
+    const { weeklyReviewCardLine } = await import('@/slices/coach/Coach');
+    const six = { ...emptySchedule(), mon: 'a', tue: 'b', wed: 'c', thu: 'd', fri: 'e', sat: 'f' };
+    const three = ['2026-09-22', '2026-09-23', '2026-09-24'].map(d => session(d, [{ id: bench, sets: sets(60, 8) }]));
+    expect(weeklyReviewCardLine({ schedule: six, daysOff: [], sessions: three, profile: { name: 'T' } }, monday, 1)).toBeNull();
+    expect(weeklyReviewCardLine({ ...base, sessions: two, profile: { name: 'T' } }, monday, 1)).toBeNull();
+  });
+  it('this week reached the plan → "this week"', async () => {
+    const { weeklyReviewCardLine } = await import('@/slices/coach/Coach');
+    const thisWeek = ['2026-09-28', '2026-09-30'].map(d => session(d, [{ id: bench, sets: sets(60, 8) }]));
+    expect(weeklyReviewCardLine({ ...base, sessions: thisWeek, profile: { name: 'T', plannedDays: 2 } }, '2026-10-01', 1)).toBe('1 thing worth knowing about this week.');
+  });
+});

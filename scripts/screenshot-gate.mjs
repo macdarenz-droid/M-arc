@@ -5941,6 +5941,46 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// ADAPT-4 G2 (C-5, Coach.tsx scope extension 2026-09-29): a lifter with planned days 2 and no schedule who
+// trained twice last week sees the weekly-review card on Monday, and it says "last week" (on main it
+// needed 5 logged days). Silent Black and Paper, 390 px, clock pinned to a Monday noon.
+for (const theme of ['silent-black', 'paper']) {
+  const tag = `ADAPT-4 weekly review card (${theme})`;
+  const pinned = new Date(2026, 8, 28, 12, 0, 0, 0); // Monday 2026-09-28, local
+  const at = (y, m, d, h) => new Date(y, m, d, h, 0, 0, 0);
+  const sess = (d) => {
+    const s0 = at(2026, 8, d, 17).toISOString(), s1 = at(2026, 8, d, 18).toISOString();
+    return { id: `a4-${d}`, splitId: 'sp1', splitName: 'Push', day: `2026-09-${String(d).padStart(2, '0')}`, startedAt: s0, endedAt: s1, durationSec: 3600, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: Array.from({ length: 3 }, () => ({ kg: 60, reps: 8, effort: 'ideal' })) }],
+      logging: { mode: 'live', trainedAt: s0, trainedEndAt: s1, loggedAt: s1, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } };
+  };
+  const now = pinned.toISOString();
+  const json = JSON.stringify({
+    version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990, plannedDays: 2 }, goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions: [sess(22), sess(24)], active: null, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([j, t]) => { localStorage.setItem('marc.state.v1', j); localStorage.setItem('marc.theme', t); }, [json, theme]);
+  await page.clock.install({ time: pinned.getTime() });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(250);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(300);
+  const card = page.locator('.card-accent', { hasText: 'Weekly review' }).first();
+  const text = await card.textContent({ timeout: 2000 }).catch(() => null);
+  if (!text || !/about last week\.|Steady last week/.test(text)) errors.push(`${tag}: weekly-review card reads ${JSON.stringify(text)}, expected it shown and about "last week"`);
+  const box = await card.boundingBox().catch(() => null);
+  if (text && (!box || box.x < 0 || box.x + box.width > 390)) errors.push(`${tag}: card off screen at 390 px (${JSON.stringify(box)})`);
+  if (text) { await card.scrollIntoViewIfNeeded().catch(() => {}); await settle(page); await page.screenshot({ path: `${OUT}/${theme}-adapt-4-weekly-review-card.png` }); }
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
