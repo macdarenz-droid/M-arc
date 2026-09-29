@@ -516,7 +516,7 @@ export function guideHash(g: ExerciseGuide, rig?: Rig): string {
 const hash: Fn = (c, fail) => {
   const a = guideHash(c.g, rigOf(c)), b = guideHash(c.g, rigOf(c)), want = c.in.hashes[c.g.id];
   if (a !== b) fail(`sampling is not deterministic: ${a} then ${b}`);
-  if (!want) fail(`no stored snapshot for ${c.g.id}: record "${a}" in src/formguide/check/hashes.json`);
+  if (!want) fail(`no stored snapshot for ${c.g.id}: record "${a}" in src/formguide/check/hashes/${c.g.id}.txt`);
   else if (a !== want) fail(`stops hash ${a} ≠ stored ${want}`);
   return a;
 };

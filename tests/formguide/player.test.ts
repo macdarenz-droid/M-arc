@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { clock, finish, initial, isActivateKey, pickZoom, renderVals, setMode, setReduced, setSpeed, tapMuscle, tapStage, togglePlay, type PlayerState } from '@/formguide/player/controller';
 import { mountAnimations, timingFor, type AnimRoot } from '@/formguide/player/waapi';
 import { muscleInfo, stubGuide } from '@/formguide/player/stubGuide';
@@ -211,10 +211,16 @@ describe('GU-7a-2 A9: a failed chunk load', () => {
 });
 
 describe('GU-7a-2 A8: the "How to do it" row', () => {
-  it('registry.ts has no imports and names exactly the 3 guides', () => {
+  it('registry.ts has no imports and names exactly the 2 guides (V1-00: the lat pulldown is off until its file passes)', () => {
     expect(readFileSync('src/formguide/registry.ts', 'utf8')).not.toMatch(/^\s*import\b/m);
-    expect([...GUIDE_IDS].sort()).toEqual(['lib_dumbbell_lateral_raise', 'lib_lat_pulldown', 'lib_machine_chest_press']);
+    expect([...GUIDE_IDS].sort()).toEqual(['lib_dumbbell_lateral_raise', 'lib_machine_chest_press']);
     expect(hasGuide('lib_barbell_bench_press')).toBe(false);
+    expect(hasGuide('lib_lat_pulldown')).toBe(false);
+  });
+
+  it('every GUIDE_IDS id has an exercise file or is the stub\'s id (V1-00 A2)', () => {
+    const orphans = [...GUIDE_IDS].filter(id => !existsSync(`src/formguide/exercises/${id}.ts`) && id !== stubGuide.spec.exerciseId);
+    expect(orphans).toEqual([]);
   });
 
   it('Train.tsx imports only hasGuide and FormGuideSheet, and the row sits before Substitute for guided exercises only', () => {
