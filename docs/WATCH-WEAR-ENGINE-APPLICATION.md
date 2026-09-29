@@ -55,6 +55,8 @@ Read 2026-09-29 from Huawei's documents, EN and CN. Quotes and links are in sect
 - **Upload format:** the form says "Upload an Excel or PDF file smaller than 10 MB". PDF is fine.
 - **Review time:** "Generally, the approval process may take one to two weeks". "An application won't be approved if the submitted materials do not meet the requirements."
 - **Device support:** the GT series from GT 3 onward is listed. App-to-app messaging with lite wearables is open to individual developers.
+- **What reviewers check,** from a Huawei official forum reply on 2025-10-28: the materials are mainly used to check that the permissions requested match what user authorization grants. Mock text or images are accepted when no real screen exists yet. ([forum](https://developer.huawei.com/consumer/cn/forum/topic/0203196964711393095))
+- **The launch permission is brand new.** In February 2026 Huawei's forum still said a watch could not launch a phone app. The watch-side launch API dates from HarmonyOS API 24, and the CN guide describing it was updated on 2026-09-23, one day before application 2. That explains why the checkbox appears on the form without any explanation in Huawei's English docs.
 
 ### 3.2 Form answers for application 3
 Open the rejected application (as the owner did on 2026-09-29) and change it like this:
@@ -91,6 +93,10 @@ The cause is now known, so there is no need to wait for Huawei before resubmitti
 > Kind regards,
 > [your name]
 > M/ARC (individual developer)
+
+**If there is no answer:**
+- Huawei's forum staff send questions about a specific application to the online support ticket (HUAWEI Developers → Support → Submit a ticket, Wear Engine category). Use it if nothing arrives within two weeks of submitting.
+- One individual developer reported that a public forum post got a stuck application enabled within two days (2025, a single report, low reliability). Try it only after the ticket.
 
 ### 3.4 Owner checklist before pressing Submit
 1. In AppGallery Connect, the SHA-256 fingerprint shows `05:66:9A…CA:F1:F5` and no `05:A0…` (section 2).
@@ -406,6 +412,10 @@ All three are applied in application 3 (5.4).
   - [Lite-wearable P2P guide](https://developer.huawei.com/consumer/en/doc/connectivity-guides/send-message-0000001052460491): `ping` opens a lite-wearable JS app.
   - [Wear Engine FAQ](https://developer.huawei.com/consumer/en/doc/connectivity-guides/faq-0000001050818031): code 206 when the lite-wearable app is not in the foreground.
   - [HarmonyOS watch-side P2P guide (CN)](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/watch_p2p_communication), updated 2026-09-23: the launch permission is for a watch app opening an app on the phone.
+  - Huawei developer forum threads (CN), read 2026-09-29:
+    - [0203196964711393095](https://developer.huawei.com/consumer/cn/forum/topic/0203196964711393095): how materials are reviewed, and that mock images are accepted;
+    - [0204205683435135235](https://developer.huawei.com/consumer/cn/forum/topic/0204205683435135235): in February 2026 a watch could not launch a phone app;
+    - [0203182864243725100](https://developer.huawei.com/consumer/cn/forum/topic/0203182864243725100): an individual developer's application enabled after a forum post.
   - [Service introduction (CN)](https://developer.huawei.com/consumer/cn/doc/connectivity-Guides/service-introduction-0000000000018585): GT 3 and later are supported; app-to-app messaging is open to individual developers.
 - Astra's chat, shared with the supervisor on 2026-09-23: application 1 steps, form ticks and description draft.
 - The repo: `docs/WATCH-ARCHITECTURE.md` and `docs/WATCH-INTEGRATION-NOTES.md` on main; `native/wear/GATE-A.md` and `docs/WATCH-PROGRESS.md` on `codex/gt6-gate-a-watch-lab`.
