@@ -219,3 +219,21 @@ describe('machines in the player come from tokens (V1-09)', () => {
     for (const id of THEME_IDS) expect(resolveVars(svg, themeReader(id)), id).not.toContain('var(');
   });
 });
+
+// UI-2 (A4): the "How to do it" button paints only theme tokens (accent-soft fill, accent-text
+// ink) and meets the 44px tap target in every theme.
+describe('"How to do it" button styling (UI-2)', () => {
+  const css = readFileSync('src/ui/styles.css', 'utf8');
+  const ruleAt = css.indexOf('.btn-how-to {');
+  const rule = ruleAt === -1 ? '' : css.slice(ruleAt, css.indexOf('}', ruleAt) + 1);
+  it('is a real rule, sized to the 44px tap target, with no colour literal', () => {
+    expect(rule).not.toBe('');
+    expect(rule).toMatch(/min-height:\s*44px/);
+    expect(rule).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i);
+  });
+  it('paints from the accent tokens, defined in every theme', () => {
+    const vars = [...rule.matchAll(/var\((--[\w-]+)\)/g)].map(m => m[1]);
+    expect(vars).toEqual(expect.arrayContaining(['--accent-soft', '--accent-text']));
+    for (const id of THEME_IDS) for (const v of ['--accent-soft', '--accent-text']) expect(themeToCss(THEMES[id]), `${id} ${v}`).toMatch(new RegExp(`${v}:[^;]+`));
+  });
+});
