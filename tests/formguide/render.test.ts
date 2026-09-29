@@ -53,9 +53,11 @@ describe('--sheet: the front, side and back rest pose', () => {
     expect(moment0).toBeDefined();
     expect(moment0!.svg).toMatch(/<path /);
   });
-  it('side and back have no rig yet, and rigFor gives the reason fg:render --sheet writes to <view>-not-ready.txt', () => {
-    expect(rigFor(SHEET_GUIDE, 'side')).toBe('no side view figure yet (FG-6 draws side and back)');
-    expect(rigFor(SHEET_GUIDE, 'back')).toBe('no back view figure yet (FG-6 draws side and back)');
+  // V1-06 wired the side view, so the back view (V1-22) is the one with no rig and a not-ready reason
+  it('the side view has a rig; the back has none yet, and rigFor gives the reason fg:render --sheet writes to <view>-not-ready.txt', () => {
+    const side = rigFor(SHEET_GUIDE, 'side');
+    expect(typeof side === 'string' ? side : side.view).toBe('side');
+    expect(rigFor(SHEET_GUIDE, 'back')).toBe('back view not drawn yet (V1-22)');
   });
   it('SHEET_VIEWS is exactly front, side, back, in that order (what the CLI iterates)', () => {
     expect(SHEET_VIEWS).toEqual(['front', 'side', 'back']);
@@ -81,13 +83,13 @@ describe('A2 the player and fg:render call the same guideView primitives through
   });
 });
 
-/** A minimal guide file whose view has no rig yet (side, until V1-06): rigFor's own reason, for A3. No import in the
+/** A minimal guide file whose view has no rig yet (back, until V1-22; the side view was until V1-06): rigFor's own reason, for A3. No import in the
  * written file — guideOf only reads the object's shape, so the temp file needs no path alias to resolve. */
 function writeNoRigFixture(): { dir: string; file: string } {
   const dir = mkdtempSync(join(tmpdir(), 'fg-render-'));
   const file = join(dir, 'lib__no_rig.ts');
   const guide = {
-    id: 'lib__no_rig', kind: 'hold', order: 'lift_first', view: 'side',
+    id: 'lib__no_rig', kind: 'hold', order: 'lift_first', view: 'back',
     camera: { full: 'standingFront', zoom: 'standingFront', subject: 'pelvis' },
     pose: 'standing', equipment: { kind: 'none', attach: [], loadFrom: 'bodyweight' },
     tempo: { hold: 1 }, movement: { breathe: 'out on lift' },
@@ -99,14 +101,14 @@ function writeNoRigFixture(): { dir: string; file: string } {
 }
 
 describe('A3 an id with no rig exits 1 with the rig’s reason', () => {
-  it('a side-view file (no rig until V1-06) exits 1 and never touches a browser', () => {
+  it('a back-view file (no rig until V1-22) exits 1 and never touches a browser', () => {
     const { dir, file } = writeNoRigFixture();
     try {
       // a bogus MARC_CHROMIUM: if the exit-1 path ever launched a browser first, this would fail loudly instead of
       // silently passing in an environment that happens to have a real one.
       const r = spawnSync('npm', ['run', '-s', 'fg:render', file], { encoding: 'utf8', env: { ...process.env, MARC_CHROMIUM: '/does/not/exist' } });
       expect(r.status).toBe(1);
-      expect(r.stderr).toContain('no side view figure yet');
+      expect(r.stderr).toContain('back view not drawn yet (V1-22)');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -26,7 +26,7 @@ export function posedMarkup(markup: string, frame: Frame): string {
 /** Every var(--x) replaced by its value: the figure root's own variables first (--l, --d, ...), then the theme tokens. */
 export function resolveVars(svg: string, read: TokenReader): string {
   const own = new Map<string, string>();
-  const root = /class="fg-fig" style="([^"]*)"/.exec(svg);
+  const root = /class="fg-fig(?: [\w -]*)?" style="([^"]*)"/.exec(svg);   // V1-06: the side root is "fg-fig fg-side"
   for (const m of (root?.[1] ?? '').matchAll(/--([\w-]+):([^;"]+)/g)) own.set(m[1]!, m[2]!.trim());
   return svg.replace(/var\(--([\w-]+)\)/g, (_, name: string) => {
     const v = own.get(name) ?? (name in FIGURE_TOKENS ? read(name as Token).trim() : '');

@@ -4,7 +4,7 @@ import type { ExerciseGuide } from '@/formguide/model';
 
 export const lib_barbell_bench_press: ExerciseGuide = {
   id: 'lib_barbell_bench_press', kind: 'rep', order: 'lower_first',
-  camera: { full: 'standingFront', zoom: 'upperFront', subject: 'shoulder_r' }, pose: 'lying_supine',
+  camera: { full: 'lyingSide', zoom: 'upperFront', subject: 'shoulder_r' }, pose: 'lying_supine',
   equipment: { kind: 'barbell', grip: 'overhand, just outside the shoulders', attach: ['hand_l', 'hand_r'], loadFrom: 'lastSet' },
   tempo: { lift: 1, hold: 0.5, lower: 2, rest: 0.5 }, symmetric: true,
   joints: { shoulder_flex: [90, 20], elbow_flex: [2, 85], hip_flex: -20, knee_flex: 80, ankle_flex: 10 },
