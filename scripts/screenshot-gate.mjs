@@ -5509,7 +5509,13 @@ for (const { theme, inset } of bug22Runs) {
     await seek(page, 0);
   };
   // A7 / R1-12: the player fits the sheet; Play stays a 44 px circle; no control overlaps another, leaves the player or clips its label.
+  // BUG-26: openGuide only waits for the player to become visible, not for the sheet's translateY
+  // entrance (sheet-in, --dur-sheet) to finish. A probe taken mid-transform can catch Play's box a
+  // sub-pixel short of 44 (measured: h 43.99993896484375, N=4/50 at 6x CPU throttle) purely from
+  // rendering the in-flight transform, not from any layout rule letting it shrink. Settle first.
   const fitProbe = async (page, where) => {
+    await settle(page);
+    await page.evaluate(() => document.fonts.ready).catch(() => {});
     const f = await page.evaluate(() => {
       const box = e => { const r = e.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom, w: r.width, h: r.height }; };
       const player = box(document.querySelector('dialog[open] .form-guide .player'));
