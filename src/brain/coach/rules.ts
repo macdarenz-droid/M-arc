@@ -9,7 +9,7 @@ import type { LoadUnit } from '@/core/models';
 import { kgToDisplay } from '@/core/units';
 import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
-import { GOAL_BY_ID, type GoalId } from '@/data/goals';
+import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { formatHours, weekdayOf, daysBetween, addDays, weekStart, trainedTodaySessions, nextScheduled, WEEKDAY_LABEL } from '@/core/dates';
 import { muscleDoses, recoveryAt, recoveryStatus, trainingAgeMonths, type MuscleRecovery } from '../recovery';
 import { exerciseHistory, isActive, modeOf } from '../history';
@@ -25,7 +25,7 @@ import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { DRIFT, effortMismatch, hrMax, restingHr, sessionDrift } from '../heart';
 import { readiness, readinessWithInputs, READINESS_INPUT_LABEL, LOAD_DRIVER, type ReadinessBand, type ReadinessInputKey, type ReadinessResult } from '../readiness';
 import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
-import { inLighterWeek } from '../progression';
+import { inLighterWeek, repRange, repsEarnIncrease } from '../progression';
 
 /** BR-04's one span constant, now in trend.ts (BUG-14): a plateau needs six of the eight weeks (spec: never at 3 weeks). */
 export { PLATEAU_MIN_SPAN_DAYS };
@@ -77,6 +77,8 @@ export interface CoachContext {
   now: number;
   profileHistory: ProfileChange[];
   profile: Profile;
+  /** ADAPT-3 (E-8): the training goal, for each lift's rep range. Unset reads every goal's range (ADAPT-5 wires it). */
+  goal?: GoalId;
   healthDays: DailyHealth[];
   checkIns: CheckIn[];
   freshMarks: FreshMark[];
@@ -381,7 +383,19 @@ export const RULES: Rule[] = [
     id: 'data.effort-missing',
     run: ctx => {
       const recent = [...ctx.sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-3);
-      const sets = recent.flatMap(s => s.exercises.flatMap(e => e.sets)).filter(s => isWorkingSet(s) && (s.reps ?? 0) > 0);
+      // ADAPT-3 (E-8): a lift whose reps alone earn the next step needs no ratings. With no goal
+      // known, only a lift that earns it under every goal's range is left out.
+      const goals = ctx.goal ? [ctx.goal] : GOALS.map(g => g.id);
+      const decided = new Map<string, boolean>();
+      const byReps = (id: string) => {
+        if (!decided.has(id)) {
+          const hist = exerciseHistory(ctx.sessions, id, ctx.custom).filter(h => h.held.length < h.sets.length);
+          const meta = findExercise(id, ctx.custom);
+          decided.set(id, modeOf(id, ctx.custom) === 'weighted' && goals.every(g => repsEarnIncrease(hist, repRange(meta, g))));
+        }
+        return decided.get(id)!;
+      };
+      const sets = recent.flatMap(s => s.exercises.filter(e => !byReps(e.exerciseId)).flatMap(e => e.sets)).filter(s => isWorkingSet(s) && (s.reps ?? 0) > 0);
       if (sets.length < 8) return [];
       const rated = sets.filter(s => s.effort).length / sets.length;
       if (rated >= 0.5) return [];
