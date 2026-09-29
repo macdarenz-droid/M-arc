@@ -23,12 +23,10 @@ const RENDER_OUT = resolve('node_modules/.cache/fg-render.mjs');
 await build({ entryPoints: ['src/formguide/check/render.ts'], bundle: true, format: 'esm', platform: 'node', outfile: RENDER_OUT, logLevel: 'warning' });
 const lib = await import(`${pathToFileURL(RENDER_OUT).href}?t=${Date.now()}`);
 
-const SHEET_REST = { id: 'lib__sheet', kind: 'hold', order: 'lift_first', camera: { full: 'standingFront', zoom: 'standingFront', subject: 'pelvis' }, pose: 'standing', equipment: { kind: 'none', attach: [], loadFrom: 'bodyweight' }, tempo: { hold: 1 }, movement: { breathe: 'out on lift' }, muscles: { target: [], helps: [], keepQuiet: [], effort: {} }, cues: [], mistake: { name: '', joints: {}, tells: [] }, sources: [] };
-
 /** What each rendered view needs before Chromium ever launches: its jobs and where a bad-rig view stands. */
 function plan() {
   if (sheet) {
-    return { outDir: resolve(outOverride ?? 'renders/_sheet'), views: ['front', 'side', 'back'].map(view => ({ view, rig: lib.rigFor(SHEET_REST, view) })) };
+    return { outDir: resolve(outOverride ?? 'renders/_sheet'), views: lib.SHEET_VIEWS.map(view => ({ view, rig: lib.rigFor(lib.SHEET_GUIDE, view) })) };
   }
   const path = resolve(/[\\/]|\.ts$/.test(arg) ? arg : `src/formguide/exercises/${arg}.ts`);
   if (!existsSync(path)) { console.error(`fg:render: no exercise file ${path}`); process.exit(2); }
@@ -77,7 +75,7 @@ if (sheet) {
   for (const { view, rig: r } of sheetPlan.views) {
     if (typeof r === 'string') { writeFileSync(`${outDir}/${view}-not-ready.txt`, `${r}\n`); console.log(`sheet ${view}: ${r}`); continue; }
     for (const theme of lib.THEME_IDS) {
-      const moment = lib.svgsFor(SHEET_REST, r, theme, { debug }).find(j => j.name === 'moment-0');
+      const moment = lib.svgsFor(lib.SHEET_GUIDE, r, theme, { debug }).find(j => j.name === 'moment-0');
       if (moment) await shootAll([{ name: view, svg: moment.svg, slots: 1 }], theme);
     }
   }

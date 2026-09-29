@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import { THEME_IDS } from '@/theme/themes';
 import { lib_dumbbell_lateral_raise } from '@/formguide/exercises/lib_dumbbell_lateral_raise';
 import { rigFor, viewOf } from '@/formguide/check/view';
-import { patternOf, svgsFor } from '@/formguide/check/render';
+import { patternOf, svgsFor, SHEET_GUIDE, SHEET_VIEWS } from '@/formguide/check/render';
 import * as guideView from '@/formguide/player/guideView';
 import { sceneOf } from '@/formguide/player/scene';
 import { themeReader } from '@/formguide/rig/paint';
@@ -36,6 +36,25 @@ describe('A1 every theme draws a real, deterministic picture set', () => {
   it.each(THEME_IDS)('%s: two runs draw byte-identical SVGs (so the PNG a screenshot makes from them is byte-identical too)', theme => {
     const svgsOf = () => svgsFor(g, rig, theme).map(j => j.svg);
     expect(svgsOf()).toEqual(svgsOf());
+  });
+});
+
+describe('--sheet: the front, side and back rest pose', () => {
+  it('the front view has a rig and svgsFor draws a real, non-throwing moment-0 (review round 1: SHEET_GUIDE had no top-level `joints`, so evaluator threw before any picture was built)', () => {
+    const front = rigFor(SHEET_GUIDE, 'front');
+    expect(typeof front, front as string).not.toBe('string');
+    if (typeof front === 'string') return;
+    const jobs = svgsFor(SHEET_GUIDE, front, 'silent-black');
+    const moment0 = jobs.find(j => j.name === 'moment-0');
+    expect(moment0).toBeDefined();
+    expect(moment0!.svg).toMatch(/<path /);
+  });
+  it('side and back have no rig yet, and rigFor gives the reason fg:render --sheet writes to <view>-not-ready.txt', () => {
+    expect(rigFor(SHEET_GUIDE, 'side')).toBe('no side view figure yet (FG-6 draws side and back)');
+    expect(rigFor(SHEET_GUIDE, 'back')).toBe('no back view figure yet (FG-6 draws side and back)');
+  });
+  it('SHEET_VIEWS is exactly front, side, back, in that order (what the CLI iterates)', () => {
+    expect(SHEET_VIEWS).toEqual(['front', 'side', 'back']);
   });
 });
 

@@ -4,7 +4,7 @@
 // player would draw for that guide and moment. scripts/fg-render.mjs only turns each string into a PNG with the
 // local Chromium; nothing here touches a page or the DOM.
 import type { AttachmentId, ExerciseGuide } from '../model';
-import { JOINTS, type JointId } from '../rig/joints';
+import { JOINTS, type JointId, type View } from '../rig/joints';
 import type { Frame } from '../rig/pose';
 import type { Pt } from '../rig/ik';
 import { themeReader, type TokenReader } from '../rig/paint';
@@ -27,6 +27,20 @@ const library = libraryJson as LibraryRow[];
 
 /** The pattern an id's library row gives (rigFor/viewOf need it, as runChecks reads it in check/index.ts). */
 export const patternOf = (id: string): string | undefined => library.find(e => e.id === id)?.pattern;
+
+/** `--sheet`'s bare rest pose: a real, fully-typed ExerciseGuide (not a hand-built untyped object in the .mjs
+ * script, which is how the missing `joints` shipped uncaught) — bodyweight, standing, no movement. `evaluator`
+ * (sample.ts) reads `joints` and `mistake.joints` unconditionally, even for a hold with no curves. */
+export const SHEET_GUIDE: ExerciseGuide = {
+  id: 'lib__sheet', kind: 'hold', order: 'lift_first',
+  camera: { full: 'standingFront', zoom: 'standingFront', subject: 'pelvis' },
+  pose: 'standing', equipment: { kind: 'none', attach: [], loadFrom: 'bodyweight' },
+  tempo: { hold: 1 }, movement: { breathe: 'out on lift' },
+  muscles: { target: [], helps: [], keepQuiet: [], effort: {} },
+  cues: [], joints: {}, mistake: { name: '', joints: {}, tells: [] }, sources: [],
+};
+/** The views `--sheet` tries, in order (front, side, back). */
+export const SHEET_VIEWS: readonly View[] = ['front', 'side', 'back'];
 
 /** The page background behind a render (outside the figure's own floor shadow), for a non-transparent screenshot. */
 export const bgOf = (theme: ThemeId): string => THEMES[theme].tokens.bg;
