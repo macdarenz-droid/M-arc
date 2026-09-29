@@ -13,7 +13,7 @@ import { FIGURE_TOKENS, bodyPal, mix, themeReader } from '../rig/paint';
 import type { Frame } from '../rig/pose';
 import type { Pt } from '../rig/ik';
 import { STEPS_PER_PHASE, curveAt, drawnAt, poseAt, repSeconds, sampleGuide, stopsFor, tempoOf, windowsFor, type Figure, type Window } from '../sample';
-import { MACHINES, anchorAt, offPath, setupMarkup, type MachineDrawing } from './machines';
+import { machineFor, anchorAt, offPath, setupMarkup, type MachineDrawing } from './machines';
 import { hasOverlay, type LibraryRow } from './overlays';
 import { effortOf, TORQUE } from './effort';
 import { HZ, LIM, phaseStats, stopJerk } from './smooth';
@@ -524,10 +524,10 @@ const FNS: Record<CheckId, Fn> = {
 /** Runs every §5 check (or the listed ones) on one exercise file. A check that throws fails with the error. */
 export function runChecks(input: CheckInput, only: readonly CheckId[] = CHECKS): CheckResult[] {
   const g = input.guide, view = viewOf(g, input.library.find(e => e.id === g.id)?.pattern);
-  const mid = g.machine?.id, drawing = mid ? { ...MACHINES, ...input.machines }[mid] : undefined;
+  const mid = g.machine?.id, drawing = mid ? machineFor(mid, input.machines) : undefined;
   const c: Ctx = {
     g, in: input, view, rig: rigFor(g, view), reps: repsOf(g),
-    machine: !mid ? null : drawing ? (drawing.view === view ? drawing : `machine ${mid} is drawn ${drawing.view}, the file is ${view}`) : `machine ${mid} has no drawing (machines library, FG-7)`,
+    machine: !mid ? null : typeof drawing === 'object' ? (drawing.view === view ? drawing : `machine ${mid} is drawn ${drawing.view}, the file is ${view}`) : drawing!,
   };
   return only.map(check => {
     const fails: string[] = [];

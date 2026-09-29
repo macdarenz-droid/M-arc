@@ -9,6 +9,9 @@ import { barbell, ezBar } from './barbell';
 import { kettlebell } from './kettlebell';
 import { loosePlate } from './plates';
 import { bench, box, pullUpBar, rack } from './stations';
+import { wide_bar } from './handles/wide_bar';
+import { v_handle } from './handles/v_handle';
+import { d_handle } from './handles/d_handle';
 
 export { asDrawing, place, shapeCount, PART_SHAPES, type Anchors, type Part } from './kit';
 export { dumbbell, dumbbellFar, dumbbellNear, headScale } from './dumbbell';
@@ -42,3 +45,7 @@ export const VARIANTS: Record<FreeWeightPart, () => Part[]> = {
 export const PART_BUDGET_MARKUP: Record<FreeWeightPart, string> = Object.fromEntries(FREE_WEIGHT_PARTS.map(id => [
   id, VARIANTS[id]().map(p => p.svg).reduce((a, b) => (shapeCount(b) > shapeCount(a) ? b : a)),
 ])) as Record<FreeWeightPart, string>;
+
+// V1-09: the cable handles, one slot file each (parts/handles/), filled by the card that draws it.
+export const HANDLE_CARDS = { wide_bar: 'V1-17', v_handle: 'V1-15', d_handle: 'V1-15' } as const satisfies Partial<Record<PartId, string>>;
+export const HANDLES = { wide_bar, v_handle, d_handle } satisfies Record<keyof typeof HANDLE_CARDS, unknown>;

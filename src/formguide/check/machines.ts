@@ -25,8 +25,9 @@ export type MachineDrawing = {
   pads?: { attach: AttachmentId; at: Pt }[];
 };
 
-/** The machines library. Empty until FG-7; a file naming a machine that is not here fails the machine checks. */
-export const MACHINES: Record<string, MachineDrawing> = {};
+/** The machines library (V1-09 `machines/index.ts`: one slot per machine, null until its card draws it). A file naming
+ * a machine with no drawing fails the machine checks with `machineFor`'s reason. */
+export { MACHINES, machineFor } from '../machines';
 
 const D = Math.PI / 180;
 /** Where a part's anchor (handle, pad, cable end) is at drive travel s (0..1; outside that range it leaves the path). */

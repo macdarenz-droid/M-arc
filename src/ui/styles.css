@@ -940,3 +940,17 @@ html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-gu
 .form-guide .fg4-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .form-guide .fg4-key { position: absolute; left: 12px; right: 12px; bottom: 10px; display: flex; justify-content: space-around; font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); pointer-events: none; }
 .form-guide .fg4-key-m::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--mistake); margin-right: 6px; }
+
+/* V1-09: machines in the player (src/formguide/player/machineView.ts): each moving machine group (.fg-mp) turns and
+ * slides by transform only, in the SVG's user units like the figure's joints. The setup pair shows before rep 1; the
+ * frame-rate panel (DC0) opens on a long-press of the stage. */
+.form-guide .fg-mp { transform-box: view-box; }
+.form-guide .stage { -webkit-touch-callout: none; user-select: none; }
+.form-guide .fg9-setup { position: absolute; left: 8px; right: 8px; top: 8px; display: flex; gap: 8px; pointer-events: none; }
+.form-guide .fg9-setup figure { flex: 1 1 0; margin: 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 4px; }
+.form-guide .fg9-setup img { display: block; width: 100%; height: 72px; object-fit: contain; }
+.form-guide .fg9-setup figcaption { font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); }
+.form-guide .fg9-panel { position: absolute; left: 8px; right: 8px; top: 8px; z-index: 2; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 12px; color: var(--text); }
+.form-guide .fg9-stats, .form-guide .fg9-note { margin: 0 0 6px; font-size: var(--fs-meta); line-height: var(--lh-meta); }
+.form-guide .fg9-note { color: var(--text-2); }
+.form-guide .fg9-row { display: flex; gap: 8px; align-items: center; }

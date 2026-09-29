@@ -179,3 +179,22 @@ describe('exercise-title sweep (UI-1)', () => {
     }
   });
 });
+
+// V1-09: the machine layer and the frame-rate panel paint from theme tokens only: the V1-09 stylesheet block names no
+// colour literal, and the stand-in machine's markup (the one machine drawn so far) resolves in every theme.
+describe('machines in the player come from tokens (V1-09)', () => {
+  it('the V1-09 style block and the stand-in are literal-free, and the stand-in resolves in every theme', async () => {
+    const { readFileSync } = await import('node:fs');
+    const { colourLiterals } = await import('./formguide/colourLint');
+    const { STAND_IN } = await import('@/formguide/machines/stand_in');
+    const { layerMarkup } = await import('@/formguide/player/machineView');
+    const { resolveVars } = await import('@/formguide/snapshot');
+    const { themeReader } = await import('@/formguide/rig/paint');
+    const css = readFileSync('src/ui/styles.css', 'utf8'), block = /\/\* V1-09:[\s\S]*?(?=\n\n|\n\/\*|$)/.exec(css)?.[0] ?? '';
+    expect(block).toContain('.fg9-panel');
+    expect(colourLiterals(block)).toEqual([]);
+    const svg = layerMarkup(STAND_IN, { kg: 20 });
+    expect(colourLiterals(svg)).toEqual([]);
+    for (const id of THEME_IDS) expect(resolveVars(svg, themeReader(id)), id).not.toContain('var(');
+  });
+});
