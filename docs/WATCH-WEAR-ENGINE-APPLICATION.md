@@ -97,8 +97,11 @@ The cause is now known, so there is no need to wait for Huawei before resubmitti
 2. In the form, **only Basic device information is ticked**. Launch specified app and Message notification are unticked.
 3. The description box holds the new text (the counter shows 1010 / 1024).
 4. Both uploads show the green tick and are the new files dated 29 September 2026.
-5. **Take a screenshot of the whole filled form just before Submit** and share it, so this record shows exactly what was sent. The wrong entry in section 4.3 happened because the last screenshot was taken before the final changes.
-6. Submit. Then send the email in 3.3 if you want to.
+5. **Send a screenshot of the whole filled form before pressing Submit, and wait for the agent's go.** The agent checks the ticks, the description and both uploads against 3.2.
+   - Application 2 went out with Launch specified app ticked because nobody checked the final form.
+   - The last screenshot an agent saw was taken before that tick, and "Submitted" was taken as confirmation.
+   - Neither Astra nor the supervisor had checked Huawei's rule that individual developers may request only two permissions. Knowing it would have flagged the launch option however it got ticked.
+6. After the go, submit. Then send the email in 3.3 if you want to.
 7. Expect an answer in one to two weeks (Huawei's figure). Share every reply; the record is updated each time (section 4.5).
 
 ### 3.5 Risks and what reduces them
