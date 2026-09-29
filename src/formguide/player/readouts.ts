@@ -30,6 +30,12 @@ export function workingChannel(g: ExerciseGuide): ChannelId | null {
   return best;
 }
 
+/** The working joint's readout label, or null when nothing moves. */
+export function angleLabel(g: ExerciseGuide): string | null {
+  const ch = workingChannel(g);
+  return ch ? LABEL[ch.slice(0, -2)] ?? 'Angle' : null;
+}
+
 /** The chained clock (ms into the REPS-rep run) as the rep (0-based) and rep fraction the figure is at. */
 export function repAt(g: ExerciseGuide, figure: Figure, ms: number): { r: number; rep: number; u: number } {
   const len = repSeconds(g.tempo) * 1000, t = Math.min(REPS * len, Math.max(0, ms));
@@ -76,7 +82,7 @@ export function readouts(g: ExerciseGuide, rig: Rig): (figure: Figure, ms: numbe
     const e = eff.get(key)!, ev = typeof e === 'string' ? {} : e(u);
     return {
       rep: r + 1, phase, u, speed,
-      angle: ch ? { channel: ch, label: LABEL[ch.slice(0, -2)] ?? 'Angle', deg: p[ch] } : null,
+      angle: ch ? { channel: ch, label: angleLabel(g)!, deg: p[ch] } : null,
       effort: rows.map(x => ({ ...x, v: ev[x.id] ?? 0 })),
     };
   };

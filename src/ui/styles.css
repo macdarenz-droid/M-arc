@@ -954,3 +954,33 @@ html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-gu
 .form-guide .fg9-stats, .form-guide .fg9-note { margin: 0 0 6px; font-size: var(--fs-meta); line-height: var(--lh-meta); }
 .form-guide .fg9-note { color: var(--text-2); }
 .form-guide .fg9-row { display: flex; gap: 8px; align-items: center; }
+
+/* V1-19: the player standard (src/formguide/player/{readouts,guides,hotspots}.ts): the readout row under the caption,
+   the angle arc, tag and hand path on the correct figure (hidden in compare, like the lab), the muscle hotspots
+   (transparent, sized from the drawn scale) and the tapped muscle's outline. */
+.form-guide .fg19-trace { fill: none; stroke: var(--target); stroke-width: 1.6; stroke-dasharray: 2 4; opacity: .8; pointer-events: none; }
+.form-guide .fg19-arc { transform-box: view-box; transform-origin: 0 0; pointer-events: none; }
+.form-guide .fg19-arc-c { fill: none; stroke: var(--guide); stroke-width: 2.4; }
+.form-guide .fg19-tag { transform-box: view-box; transform-origin: 0 0; pointer-events: none; }
+.form-guide .fg19-tag rect { fill: var(--surface-1); stroke: var(--border); }
+.form-guide .fg19-tag text { fill: var(--text); font-size: 11px; font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
+.form-guide .fg19-hot { fill: transparent; stroke: none; pointer-events: all; cursor: pointer; }
+.form-guide .fg19-hot:focus-visible { outline: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.form-guide .fg19-out { display: none; fill: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; pointer-events: none; }
+.form-guide .fg19-out.on { display: inline; }
+.form-guide .fg19-cmp .fg19-trace, .form-guide .fg19-cmp .fg19-arc, .form-guide .fg19-cmp .fg19-tag, .form-guide .fg19-cmp .fg19-hot, .form-guide .fg19-cmp .fg19-out { display: none; }
+.form-guide .fg19-ro { flex: none; display: grid; gap: 6px; font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); }
+.form-guide .fg19-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.form-guide .fg19-tiles > div { background: var(--surface-2); border-radius: var(--radius-md); padding: 4px 8px; display: grid; min-width: 0; }
+.form-guide .fg19-tiles b { font-weight: var(--fw-medium); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.form-guide .fg19-v { color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.form-guide .fg19-bar { display: grid; grid-template-columns: 84px minmax(0, 1fr) 36px; gap: 8px; align-items: center; }
+.form-guide .fg19-bar b { font-weight: var(--fw-medium); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.form-guide .fg19-bar > i { display: block; height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+.form-guide .fg19-bar > i > i { display: block; height: 100%; background: var(--target); transform-origin: 0 50%; transform: scaleX(0); }
+.form-guide .fg19-helps > i > i { background: var(--help); }
+.form-guide .fg19-keepQuiet > i > i { background: var(--quiet); }
+.form-guide .fg19-bar span { text-align: right; font-variant-numeric: tabular-nums; }
+.form-guide .fg19-phases { position: relative; display: flex; gap: 2px; height: 16px; }
+.form-guide .fg19-phases span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-top: 4px solid var(--surface-3); padding-top: 0; font-size: 10px; line-height: 12px; }
+.form-guide .fg19-now { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }

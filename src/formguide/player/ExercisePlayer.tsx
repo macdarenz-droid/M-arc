@@ -17,6 +17,11 @@ import { REPS, cameraOf, chainedGroups, clockOf, markupOf, momentFrame, momentsO
 import type { Rig } from '../check/view';
 import { guideDrive, guideStops, layerFor, layerGroups, layerMarkup, setupSvgs, standInDrive } from './machineView';
 import { FrameLog, longPress, statsLine, type FrameStats } from './fps';
+import { angleLabel, effortRows, fmtDeg, fmtPct, fmtSpeed, phaseBar, readouts } from './readouts';
+import { guideMarkup, guidePlan, guideScales } from './guides';
+import { hotRadius, hotspotsFor, muscleBubble, sizeHotspots, withHotspots } from './hotspots';
+import { isActivateKey, tapMuscle, tapStage } from './controller';
+import { MUSCLE_BY_ID, type MuscleId } from '@/data/muscles';
 
 export type ExercisePlayerProps = { guide: ExerciseGuide; rig: Rig; name: string; load: { kg: number; text: string } | null };
 
@@ -43,6 +48,28 @@ export function FpsPanel({ open, stats, stress, onStress, onClose }: { open: boo
   );
 }
 
+/** V1-19: the readout row (§1): the working joint's angle, hand speed, load, effort per muscle and the phase bar. The
+ * numbers are written by the player's frame loop (paintReadouts), not by a render per frame. */
+function Readouts({ g, load, rep, set }: { g: ExerciseGuide; load: string | null; rep: number; set: (el: HTMLDivElement | null) => void }) {
+  const label = useMemo(() => angleLabel(g), [g]);
+  return (
+    <div class="fg19-ro" ref={set} aria-hidden="true">
+      <div class="fg19-tiles">
+        {label && <div><b>{label}</b><span class="fg19-v" data-k="angle">0°</span></div>}
+        <div><b>Speed</b><span class="fg19-v" data-k="speed">0.0 m/s</span></div>
+        {load && <div><b>Load</b><span class="fg19-v">{load}</span></div>}
+      </div>
+      {effortRows(g).map(r => (
+        <div class={`fg19-bar fg19-${r.role}`} key={r.id}><b>{MUSCLE_BY_ID[r.id]?.common ?? r.id}</b><i><i data-m={r.id} /></i><span data-p={r.id}>0%</span></div>
+      ))}
+      <div class="fg19-phases">
+        {phaseBar(g, 'correct', rep - 1).map(p => <span key={p.name} style={{ flex: p.frac }}>{p.name === 'lower' ? 'Lower' : p.name[0]!.toUpperCase() + p.name.slice(1)}</span>)}
+        <i class="fg19-now" />
+      </div>
+    </div>
+  );
+}
+
 const themeNow = () => document.documentElement.getAttribute('data-theme') ?? '';
 const ID: Record<Figure, string> = { correct: 'fgA', mistake: 'fgM' };
 
@@ -59,6 +86,20 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
   sRef.current = s;
   const rootRef = useRef<HTMLDivElement>(null);
   const figRef = useRef<SVGGElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  /** V1-19: every hotspot HOT_PX across at the scene's drawn scale (preserveAspectRatio meet: the smaller axis), and the
+   * tag at its camera's scale. */
+  const sizeHot = () => {
+    const sv = svgRef.current, el = figRef.current;
+    if (!sv || !el) return;
+    const b = sv.viewBox.baseVal, r = sv.getBoundingClientRect(), px = Math.min(r.width / (b.width || 1), r.height / (b.height || 1));
+    if (!(px > 0)) return;
+    sizeHotspots(el, hotRadius(px));
+    if (!plan) return;
+    const k = guideScales(px, renderVals(sRef.current).zoom === 1 ? plan.k.zoom : plan.k.full);
+    el.querySelector('.fg19-tag-k')?.setAttribute('transform', `scale(${k.tag})`);
+    el.querySelector('.fg19-arc-k')?.setAttribute('transform', `scale(${k.arc})`);
+  };
   const misRef = useRef<SVGGElement>(null);
   const anim = useRef<AnimHandle | null>(null);
   const animM = useRef<AnimHandle | null>(null);
@@ -75,16 +116,34 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
   const log = useMemo(() => new FrameLog(), []);
   const press = useMemo(() => longPress(() => { setStats(log.stats()); setPanel(true); }), []);
   const layerOn = useRef({ stress: false, compare: false });
+  // V1-19: the correct figure's readouts, guides (arc, tag, hand path) and muscle hotspots (§1). The guides ride the
+  // figure's own animation handle; the numbers are painted from its clock on each frame, never by a render.
+  const ro = useMemo(() => readouts(g, rig), [g, rig]);
+  const plan = useMemo(() => guidePlan(g, rig), [g, rig]);
+  const roEl = useRef<HTMLDivElement | null>(null);
+  const paintReadouts = (ms: number) => {
+    const el = roEl.current, fig = figRef.current;
+    if (!el) return;
+    const r = ro('correct', ms), set = (sel: string, t: string) => { const x = el.querySelector(sel); if (x && x.textContent !== t) x.textContent = t; };
+    if (r.angle) { set('[data-k="angle"]', fmtDeg(r.angle.deg)); const t = fig?.querySelector('.fg19-tag-t'); if (t) t.textContent = fmtDeg(r.angle.deg); }
+    set('[data-k="speed"]', fmtSpeed(r.speed));
+    for (const e of r.effort) {
+      (el.querySelector(`[data-m="${e.id}"]`) as HTMLElement | null)?.style.setProperty('transform', `scaleX(${Math.min(1, Math.max(0, e.v)).toFixed(3)})`);
+      set(`[data-p="${e.id}"]`, fmtPct(e.v));
+    }
+    (el.querySelector('.fg19-now') as HTMLElement | null)?.style.setProperty('transform', `scaleX(${r.u.toFixed(4)})`);
+  };
 
   const markup = (fig: Figure) => markupOf(g, rig, cssReader(rootRef.current ?? document.documentElement), { id: ID[fig], mistake: fig === 'mistake', load: load?.kg ?? null });
   const groupsOf = (fig: Figure, m: string) => (groups[fig] ??= chainedGroups(g, rig, fig, m));
   const mountFig = (fig: Figure): AnimHandle | null => {
     const el = fig === 'correct' ? figRef.current : misRef.current;
     if (!el) return null;
-    const m = markup(fig);
-    el.innerHTML = m;
+    const m = markup(fig), v19 = fig === 'correct';
+    el.innerHTML = v19 ? withHotspots(m, hotspotsFor(g, m)) + (plan ? guideMarkup(plan) : '') : m;
+    if (v19) { sizeHot(); paintReadouts(0); }
     if (sRef.current.rm) return null;
-    return mountAnimations(groupsOf(fig, m), el as unknown as AnimRoot, repS, chainedTiming(repS, REPS));
+    return mountAnimations(v19 && plan ? [...groupsOf(fig, m), ...plan.groups] : groupsOf(fig, m), el as unknown as AnimRoot, repS, chainedTiming(repS, REPS));
   };
   /** Every live figure's handle, the mistake joined to the correct figure's clock. */
   const each = (fn: (h: AnimHandle) => void) => { if (anim.current) fn(anim.current); if (animM.current) fn(animM.current); if (animL.current) fn(animL.current); };
@@ -108,6 +167,7 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
     const h = anim.current;
     if (!h) return;
     log.tick(t);
+    paintReadouts(h.currentTime());
     const c = clockOf(g, h.currentTime());
     setTick(t => (t.rep === c.rep && t.phase === c.phase ? t : { rep: c.rep, phase: c.phase }));
     if (c.done) { setStats(log.stats()); apply(finish(sRef.current)); return; }
@@ -118,11 +178,11 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
 
   const runFx = (fx: Fx, next: PlayerState) => {
     if (!fx) return;
-    if (fx === 'reset') { each(h => h.reset()); stopLoop(); setTick({ rep: 1, phase: 'lift' }); return; }
+    if (fx === 'reset') { each(h => h.reset()); stopLoop(); setTick({ rep: 1, phase: 'lift' }); paintReadouts(0); return; }
     if (next.rm) return;
     if (!anim.current) { anim.current = mountFig('correct'); if (mistakeRef.current) animM.current = mountFig('mistake'); mountLayer(); }
     if (fx === 'rate') { each(h => h.rate(next.speed)); return; }
-    if (fx === 'pause') { each(h => h.pause()); stopLoop(); log.gap(); return; }
+    if (fx === 'pause') { each(h => h.pause()); stopLoop(); log.gap(); paintReadouts(anim.current?.currentTime() ?? 0); return; }
     if (fx === 'replay' || anim.current?.currentTime() === 0) log.start(); else log.gap();
     each(h => h.rate(next.speed));
     if (fx === 'replay') { setTick({ rep: 1, phase: 'lift' }); each(h => h.replay()); } else each(h => h.play());
@@ -192,14 +252,39 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
   const setupText = (i: number) => (i ? `Wrong setup: ${g.mistake.setup?.text ?? ''}` : 'Setup');
   const stillSrc = still ? shots('zoom', 0)[0] : null;
 
-  const bubble = s.bubble?.kind === 'zoom' ? T.cue : null;
+  // V1-19: one bubble (controller.ts): the zoom tip, or a tapped muscle's line with its tint colour.
+  const mb = s.bubble?.kind === 'muscle' ? muscleBubble(g, s.bubble.id) : null;
+  const bubble = s.bubble?.kind === 'zoom' ? T.cue : mb ? mb.rest : null;
   const load_ = load ? ` · ${load.text}` : '';
+
+  // V1-19: a hotspot opens its muscle (closing a zoom tip); a tap on the bubble keeps it; anywhere else closes a muscle
+  // bubble (GU-7a's stage rule). The selected muscle's outline shows; the hotspots are sized to the drawn scale.
+  const onStage = (e: Event) => {
+    const t = e.target as Element | null, id = t?.closest?.('.fg19-hot')?.getAttribute('data-muscle') as MuscleId | null | undefined;
+    if (id) { apply(tapMuscle(sRef.current, id)); return; }
+    if (t?.closest?.('.bubble, .fg9-panel')) return;
+    apply(tapStage(sRef.current));
+  };
+  const onStageKey = (e: KeyboardEvent) => {
+    const id = (e.target as Element | null)?.closest?.('.fg19-hot')?.getAttribute('data-muscle') as MuscleId | null | undefined;
+    if (!id || !isActivateKey(e.key)) return;
+    e.preventDefault();
+    apply(tapMuscle(sRef.current, id));
+  };
+  useEffect(() => {
+    figRef.current?.querySelectorAll('.fg19-out').forEach(o => o.classList.toggle('on', o.getAttribute('data-muscle') === v.selMuscle));
+  }, [v.selMuscle, theme]);
+  useLayoutEffect(() => {
+    sizeHot();
+    window.addEventListener('resize', sizeHot);
+    return () => window.removeEventListener('resize', sizeHot);
+  }, [zoom, compare, theme, v.showStage, still]);
 
   return (
     <div class="form-guide" ref={rootRef}>
       <div class={v.rootClass}>
-        <div class="stage" onPointerDown={press.down} onPointerMove={press.move} onPointerUp={press.up} onPointerCancel={press.leave} onPointerLeave={press.leave} onContextMenu={e => e.preventDefault()}>
-          <svg class="scene fg4-scene" viewBox={cam.box.join(' ')} preserveAspectRatio="xMidYMid meet" aria-hidden="true" hidden={!(v.showStage && !still)}>
+        <div class="stage" onClick={onStage} onKeyDown={onStageKey} onPointerDown={press.down} onPointerMove={press.move} onPointerUp={press.up} onPointerCancel={press.leave} onPointerLeave={press.leave} onContextMenu={e => e.preventDefault()}>
+          <svg ref={svgRef} class={`scene fg4-scene${compare ? ' fg19-cmp' : ''}`} viewBox={cam.box.join(' ')} preserveAspectRatio="xMidYMid meet" aria-hidden="true" hidden={!(v.showStage && !still)}>
             <g ref={macRef} />
             <g ref={figRef} />
             <g ref={misRef} transform={`translate(${cam.dx} 0)`} />
@@ -241,8 +326,8 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
           <FpsPanel open={panel} stats={stats} stress={stress} onStress={() => setStress(x => !x)} onClose={() => setPanel(false)} />
           {bubble && (
             <div class="bubble" role="status">
-              <span class="dot" style={{ background: 'var(--accent)' }} />
-              <span class="bt"><span>{bubble}</span></span>
+              <span class="dot" style={{ background: mb?.dot ?? 'var(--accent)' }} />
+              <span class="bt">{mb && <><b>{mb.name}</b>{' '}</>}<span>{bubble}</span></span>
             </div>
           )}
         </div>
@@ -256,6 +341,7 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
           </span>
           {v.showTempo && <span class="tempo">{T.tempo}</span>}
         </div>
+        {v.showStage && !still && <Readouts g={g} load={load?.text ?? null} rep={tick.rep} set={el => { roEl.current = el; if (el) paintReadouts(anim.current?.currentTime() ?? 0); }} />}
         <div class="chips">
           <Chip pressed={v.zoomPressed[0]} onClick={() => apply(pickZoom(sRef.current, 1))}><ZoomIcon />Zoom</Chip>
           <Chip pressed={mistake} onClick={toggleMistake}>Mistake</Chip>

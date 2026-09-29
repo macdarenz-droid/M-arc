@@ -6,7 +6,14 @@ import { poseAt, repSeconds } from '@/formguide/sample';
 import { effortOf } from '@/formguide/check/effort';
 import { REPS, guideRig } from '@/formguide/player/guideView';
 import { fmtDeg, fmtPct, readoutAt, workingChannel } from '@/formguide/player/readouts';
+import { chainedFrames, guidePlan, kMax, overlaps, placeTag, tagBox, tagClashes } from '@/formguide/player/guides';
+import { VIEWBOXES, type ExerciseGuide } from '@/formguide/model';
+import { findExercise } from '@/core/exercises';
+import { readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const rig = guideRig(LR, 'shoulder_abduction');
 const LEN = repSeconds(LR.tempo) * 1000;
 
@@ -35,6 +42,40 @@ describe('V1-19 A1: readouts match poseAt within 1° and effort within 2%, at 10
         expect(Math.abs(x.v - e[x.id]!)).toBeLessThanOrEqual(0.02);
         expect(Math.abs(parseFloat(fmtPct(x.v)) - 100 * e[x.id]!)).toBeLessThanOrEqual(2);
       }
+    }
+  });
+});
+
+describe('V1-19 A2: the tag never meets the face keep-out, at any stop of any merged V1 file', () => {
+  const files = readdirSync(join(ROOT, 'src/formguide/exercises')).filter(f => f.endsWith('.ts'));
+
+  it('every exercise file in src/formguide/exercises', async () => {
+    expect(files.length).toBeGreaterThan(0);
+    for (const f of files) {
+      const id = f.slice(0, -3), g = (await import(`../../src/formguide/exercises/${id}.ts`))[id] as ExerciseGuide;
+      const ex = findExercise(id), r = guideRig(g, ex?.pattern), plan = guidePlan(g, r);
+      if (!plan) continue;
+      expect(plan.tags.length).toBe(chainedFrames(g, r).length);
+      expect(tagClashes(plan), id).toEqual([]);
+    }
+  });
+
+  it('a seeded tag on the face fails', () => {
+    const plan = guidePlan(LR, rig, (_p, face) => [(face.x0 + face.x1) / 2, (face.y0 + face.y1) / 2])!;
+    expect(tagClashes(plan).length).toBe(plan.tags.length);
+    // one stop only: the check names it
+    let i = 0;
+    const one = guidePlan(LR, rig, (p, face, k) => (i++ === 40 ? [face.x1, face.y1] : placeTag(p, face, 'r', 200, VIEWBOXES[LR.camera.zoom], k)))!;
+    expect(tagClashes(one)).toEqual([one.tags[40]!.offset]);
+  });
+
+  it('the placement rule pushes a tag off the face and keeps it in the zoom camera', () => {
+    const face = { x0: 168, y0: 23, x1: 232, y1: 103 }, zoom = VIEWBOXES.upperFront, K = kMax(VIEWBOXES.standingFront);
+    for (const pivot of [[180, 30], [200, 60], [230, 90], [260, 128], [150, 10]] as [number, number][]) for (const side of ['l', 'r'] as const) {
+      const at = placeTag(pivot, face, side, 200, zoom, K), b = tagBox(at, K);
+      expect(overlaps(b, face), `${pivot} ${side}`).toBe(false);
+      expect(b.x0).toBeGreaterThanOrEqual(zoom[0]); expect(b.x1).toBeLessThanOrEqual(zoom[0] + zoom[2]);
+      expect(b.y0).toBeGreaterThanOrEqual(zoom[1]); expect(b.y1).toBeLessThanOrEqual(zoom[1] + zoom[3]);
     }
   });
 });
