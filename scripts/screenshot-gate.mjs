@@ -5667,6 +5667,12 @@ for (const theme of ['silent-black', 'paper']) {
         .filter(el => { const cs = getComputedStyle(el); return cs.position !== 'static' && cs.zIndex !== 'auto'; })
         .filter(el => covers(el.getBoundingClientRect()))
         .map(el => Number(getComputedStyle(el).zIndex) || 0);
+      // The scrolled Escobar view has nothing else covering the inset point, so rivalZs above is
+      // always empty here — that alone can't tell a real backdrop z-index from a broken one (even
+      // 0 would "pass"). Anchor it to the app's own layer tokens instead: the backdrop must beat
+      // every one of them, not just whatever happens to overlap on this one screen.
+      const rootCs = getComputedStyle(document.documentElement);
+      const layerTokens = ['--z-dock', '--z-nav', '--z-rest', '--z-toast'].map(name => Number(rootCs.getPropertyValue(name).trim()));
       return {
         scrolled: window.scrollY > 0,
         isFixed: bdCs?.position === 'fixed',
@@ -5675,12 +5681,15 @@ for (const theme of ['silent-black', 'paper']) {
         bg,
         bdZ: Number(bdCs?.zIndex) || 0,
         maxRivalZ: rivalZs.length ? Math.max(...rivalZs) : -Infinity,
+        layerTokens,
       };
     });
     if (!check.scrolled) errors.push(`${tag} ${theme}: the page did not actually scroll, so this proves nothing`);
     else if (!check.isFixed || !check.coversPoint) errors.push(`${tag} ${theme}: the status-bar backdrop does not cover the inset point after scrolling (${JSON.stringify(check)})`);
     else if (check.painted !== check.bg) errors.push(`${tag} ${theme}: the status-bar backdrop is not painted var(--bg) (${JSON.stringify(check)})`);
     else if (check.maxRivalZ >= check.bdZ) errors.push(`${tag} ${theme}: another positioned element could paint above the backdrop (${JSON.stringify(check)})`);
+    else if (check.layerTokens.some(z => !Number.isFinite(z) || z === 0)) errors.push(`${tag} ${theme}: could not read the app's own layer tokens (--z-dock/--z-nav/--z-rest/--z-toast), got ${JSON.stringify(check.layerTokens)}`);
+    else if (check.bdZ <= Math.max(...check.layerTokens)) errors.push(`${tag} ${theme}: the backdrop's z-index (${check.bdZ}) does not beat the app's own layer tokens (${JSON.stringify(check.layerTokens)})`);
     await ctx.close();
   }
 }
