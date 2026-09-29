@@ -171,8 +171,9 @@ describe('A2: readiness copy names only the inputs that exist', () => {
     expect(all.some(i => /lining up/.test(i.noticed))).toBe(false);
   });
   it('an amber day from one input without a driver names that input, not "a mixed picture"', () => {
-    // A first check-in rated 3 and 3 scores 50 (amber) with no driver, and it is the only input.
-    const note = coachInsights(ctxOn(today, { checkIns: [{ day: today, sleepQuality: 3, mood: 3 }] }), 20).find(i => i.id === 'readiness-today');
+    // A first check-in rated 2 and 3 scores 63 (amber) with no driver, and it is the only input.
+    // (ADAPT-2: a 3 and 3 now reads normal, 75 green, so the amber case rates sleep 2.)
+    const note = coachInsights(ctxOn(today, { checkIns: [{ day: today, sleepQuality: 2, mood: 3 }] }), 20).find(i => i.id === 'readiness-today');
     expect(note?.title).toBe('Readiness: amber');
     expect(note?.noticed).toBe('Your check-in reads middling today.');
   });
