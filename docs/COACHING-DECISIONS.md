@@ -648,3 +648,11 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - Stress mounts the stand-in only in compare mode (the DC0 steps), behind the correct figure, on its clock: the stack follows the right arm's raise and the cable ends at the right hand. At most one machine and two figures are live, as §3 caps.
   - The frame log is the player's own rAF loop: intervals of the last play, the chain broken on pause, cleared on replay or a play from the start. Long-press is 600 ms held within 10 px. Panel and log live in component memory only.
   **Why**: the card's A1-A7 and §3 budgets; checked by `tests/formguide/machines.test.ts` and the theme test's V1-09 block. The form-guide chunk grows 25.90 → 29.02 KB gzip (main chunk unchanged, 179.47 KB); the supervisor may strip the panel before release (card risk).
+
+## Player standard: readouts, guides, hotspots (V1-19, 2026-09-29)
+- **Decision** (the plan is silent on these; resolved by the lab, GU-7a and measurement):
+  - Readouts read the model, not the drawing: the angle is `poseAt` on the working channel (the sided degree channel that moves most, right side first), hand speed is the lab's ±0.01 s difference of the hand in m/s, effort is `effortOf`. The player's own rAF loop paints them through refs; no render per frame.
+  - The arc, the tag and the hand path draw on the correct figure only and hide in compare mode (the lab's `guides(..., labels = mode !== 'compare')`). Their motion is transform and dash-offset keyframes on the figure's own animation handle.
+  - The tag and the arc are sized in screen px (11 px text, a 40 px arc), capped at the size for the narrowest stage (a 320 px phone, 286 × 220 px). The tag is placed for that largest size, so it can only shrink and stays clear of the face.
+  - Hotspots cover targets and helpers only, one per muscle, on alternating shoulders. A keep-quiet circle on the shoulders cannot keep 44 px at 360 px (0.42 px a unit, about 105 units a target). Keep-quiet muscles still show in the effort bars and the mistake. GU-7a's set was the same (target and helpers).
+  **Why**: §1 of `docs/FORM-GUIDE-PRODUCTION.md`, the lab's `guides()` and `updateReadouts()`, GU-7a's A13. Checked by `tests/formguide/playerV1.test.ts` and the gate's V1-19 block. The main chunk is unchanged (0 B). The player chunk grows by 3.76 KB gzip.
