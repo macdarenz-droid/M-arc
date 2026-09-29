@@ -22,7 +22,7 @@ import { muscleVolumeStatus } from '../volume';
 import { findExercise } from '@/core/exercises';
 import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
-import { effortMismatch, intraSessionDrift } from '../heart';
+import { DRIFT, effortMismatch, hrMax, restingHr, sessionDrift } from '../heart';
 import { readiness, readinessWithInputs, READINESS_INPUT_LABEL, LOAD_DRIVER, type ReadinessBand, type ReadinessInputKey, type ReadinessResult } from '../readiness';
 import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
 import { inLighterWeek } from '../progression';
@@ -85,6 +85,8 @@ export interface CoachContext {
   feedback: InsightFeedback[];
   /** The display unit for loads and body weight in note text (QA-R3b-2, QA-R3b-5). */
   unit?: LoadUnit;
+  /** A stored session's 5-second heart series (heartStore), for heart.drift. Absent: that rule stays quiet. */
+  heartSeries?: (sessionId: string) => Array<[number, number]>;
   /** ADAPT-4: days the user marked off; the gap and green-day rules skip them. */
   daysOff?: string[];
   /** ADAPT-4 (F-1): Profile.plannedDays, the week target when nothing is scheduled. */
@@ -556,14 +558,13 @@ export const RULES: Rule[] = [
       // BR-26: a post-session note belongs to the day of the session and the day after.
       if (!last || daysBetween(last.day, ctx.today) > 1) return [];
       if (!last) return [];
-      const sets = last.exercises.flatMap(e => e.sets);
-      const m = effortMismatch(sets);
+      const m = effortMismatch(last.exercises);
       if (!m) return [];
       return [{
         id: `heart-mismatch:${last.id}`, category: 'readiness', priority: 110, cadence: 'post', kind: 'data', gated: 'health',
         title: 'Effort rating: worth a second look',
-        noticed: `You rated a set Easy that hit ${m.examplePct}% of your session's hardest peak heart rate.`,
-        means: 'Easy sets are not usually that close to your hardest effort of the day.',
+        noticed: `You rated a set Easy that ${m.examplePct >= 100 ? 'reached' : `hit ${m.examplePct}% of`} the peak heart rate of your hardest-rated set of the same exercise.`,
+        means: 'Easy sets are not usually that close to your hardest effort on the same lift.',
         action: 'No change needed — just something to notice next time you rate that set.',
         evidence: { n: m.rated, window: 'this session', confidence: 'medium' },
       }];
@@ -576,27 +577,26 @@ export const RULES: Rule[] = [
       // BR-26: a post-session note belongs to the day of the session and the day after.
       if (!last || daysBetween(last.day, ctx.today) > 1) return [];
       if (!last) return [];
-      for (const ex of last.exercises) {
-        const byLoad = new Map<number, typeof ex.sets>();
-        for (const s of ex.sets) {
-          if (s.kg == null) continue;
-          byLoad.set(s.kg, [...(byLoad.get(s.kg) ?? []), s]);
-        }
-        for (const group of byLoad.values()) {
-          const d = intraSessionDrift(group);
-          if (d?.drifting) {
-            return [{
-              id: `heart-drift:${last.id}:${ex.exerciseId}`, category: 'readiness', priority: 130, cadence: 'post', kind: 'alert', exerciseId: ex.exerciseId, gated: 'health',
-              title: `${ex.name}: fatigue building within the session`,
-              noticed: `Peak heart rate rose about ${d.bpmRisePerSet} bpm per set at the same load, while your recovery between sets got worse.`,
-              means: 'This usually means the working muscles are fatiguing faster than the rest periods are covering.',
-              action: 'Finish this lift, then trim an accessory or two rather than pushing through.',
-              evidence: { n: group.length, window: 'this session', confidence: 'medium' },
-            }];
-          }
-        }
-      }
-      return [];
+      // Plan 6.17.4: per-set heart data only from live sets whose times are real.
+      if (last.logging?.timingTrusted === false || !ctx.heartSeries) return [];
+      const startMs = Date.parse(last.startedAt);
+      const setAtSec = last.exercises.flatMap(e => e.sets)
+        .filter(s => s.kind !== 'warmup' && (s.fidelity ?? 'live') === 'live' && !!s.at)
+        .map(s => (Date.parse(s.at!) - startMs) / 1000);
+      const d = sessionDrift({ series: ctx.heartSeries(last.id), sessionSec: last.durationSec, setAtSec, restingHrBpm: restingHr(ctx.healthDays, ctx.profile, last.day), hrMaxBpm: hrMax(ctx.profile).bpm });
+      if (!d?.drifting) return [];
+      const rose = d.driftPct > DRIFT.pctAbove;
+      // Appendix B: the advice is water and longer rests, never a load cut (D-A1 point 7).
+      return [{
+        id: `heart-drift:${last.id}`, category: 'readiness', priority: 130, cadence: 'post', kind: 'alert', gated: 'health',
+        title: 'Heart rate crept up through the session',
+        noticed: rose
+          ? `Your heart rate before your last 3 sets was about ${Math.round(d.driftPct)}% higher than before your first 3.`
+          : `Your heart rate took about ${Math.round(d.readySlopeSecPerSet!)} s longer to settle after each set.`,
+        means: 'This is usually heat, too little water or short rests catching up, not weaker muscles.',
+        action: 'Drink some water and rest a little longer between sets next time. Your loads can stay the same.',
+        evidence: { n: d.sets, window: 'this session', confidence: 'medium' },
+      }];
     },
   },
 ];
