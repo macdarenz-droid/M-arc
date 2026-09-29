@@ -10,5 +10,7 @@ export const BASE = { ...LR, mistake: { ...LR.mistake, joints } } as ExerciseGui
 /** The base as a machine file (the machine lateral raise), for the machine checks. The hands hold nothing here (the
  * equipment attaches no point), and `STACK` is a drive part that moves the weight stack and attaches no body point. */
 export const machineBase = (machine: NonNullable<ExerciseGuide['machine']>, extra: Partial<ExerciseGuide> = {}): ExerciseGuide =>
-  ({ ...BASE, id: 'lib_machine_lateral_raise', equipment: { ...BASE.equipment, kind: 'none', attach: [] }, machine, ...extra }) as ExerciseGuide;
+  ({ ...BASE, id: 'lib_machine_lateral_raise', equipment: { ...BASE.equipment, kind: 'none', attach: [] }, machine,
+    // D-V1-10: a machine file declares its force; these seed other checks, so they keep the gravity effort they had
+    muscles: { ...BASE.muscles, effort: { ...(BASE.muscles.effort as object), force: 'gravity' } }, ...extra }) as ExerciseGuide;
 export const STACK = { part: 'stack', travel: [0, 1], chain: [] } as NonNullable<ExerciseGuide['machine']>['drive'][number];
