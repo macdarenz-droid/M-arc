@@ -5,7 +5,7 @@ import type { MachineDrawing } from '@/formguide/check/machines';
 import { guideHash, runChecks } from '@/formguide/check';
 import { inputFor } from '@/formguide/check/node';
 import { rigFor, type Rig } from '@/formguide/check/view';
-import { effortOf } from '@/formguide/check/effort';
+import { effortOf, forceLine } from '@/formguide/check/effort';
 import { poseAt, repSeconds, tempoOf } from '@/formguide/sample';
 import { lib_dumbbell_lateral_raise as LR } from '@/formguide/exercises/lib_dumbbell_lateral_raise';
 
@@ -87,6 +87,12 @@ describe('V1-10 A3: a machine with no force line fails with "no contact force"',
     const { machine: _, ...bare } = FX;
     expect(effortOf(bare as ExerciseGuide, 'correct', 0, rigOf(FX))).toBe('no contact force: the file has no machine, so the force along cable has no line');
   });
+  it('a machine file that does not declare force', () => {
+    const bare = { ...FX, muscles: { ...FX.muscles, effort: { model: 'torque', chain: ['elbow_r'] } } } as ExerciseGuide;
+    expect(effortOf(bare, 'correct', 0, rigOf(FX))).toBe('no contact force: a machine file must declare force');
+    const r = runChecks({ ...inputFor(LR_PATH, bare), research: researchAt(0.5), machines: { fx_high_pulley: MACHINE } }, ['muscleTiming'])[0]!;
+    expect(r.fails).toEqual(['muscleTiming fx_v1_10_high_cable: no contact force: a machine file must declare force']);
+  });
   it('muscleTiming fails with it', () => {
     const r = runChecks({ ...inputFor(LR_PATH, along('stack')), research: researchAt(0.5), machines: { fx_high_pulley: MACHINE } }, ['muscleTiming'])[0]!;
     expect(r.fails).toContain('muscleTiming fx_v1_10_high_cable: no contact force: part stack is not in machine fx_high_pulley, so the force along stack has no line');
@@ -100,6 +106,18 @@ describe('V1-10 A1: gravity files are unchanged', () => {
     expect(h!.ok).toBe(true);
     expect(m).toEqual({ check: 'muscleTiming', ok: true, fails: [], note: 'torque model (0.12 + 0.88·t)' });
   });
+  it('the lateral raise effort equals main\'s before V1-10, bit for bit (pinned from f313b96)', () => {
+    const rig = rigFor(LR, 'front') as Rig, at = [0.1, 0.25, 0.6];
+    const pinned = {
+      correct: [{ upper_traps: 0.14180461569977965, front_delts: 0.3254138470993389, side_delts: 0.634200441541472 }, { upper_traps: 0.1990139242438308, front_delts: 0.4970417727314924, side_delts: 0.9938018095326507 }, { upper_traps: 0.17683989903508135, front_delts: 0.43051969710524407, side_delts: 0.8544222225062256 }],
+      mistake: [{ upper_traps: 0.17850806766347282, front_delts: 0.36064888878099427, side_delts: 0.7080262431601784 }, { upper_traps: 1, front_delts: 0.48184142534480917, side_delts: 0.9619534626272191 }, { upper_traps: 0.09020112642940263, front_delts: 0.17029505219931462, side_delts: 0.3091896331795163 }],
+    };
+    for (const fig of ['correct', 'mistake'] as const) {
+      const e = effortOf(LR, fig, 0, rig);
+      if (typeof e === 'string') throw new Error(e);
+      expect(at.map(u => e(u))).toEqual(pinned[fig]);
+    }
+  });
   it('an explicit force: gravity gives the same effort, bit for bit, as none', () => {
     const rig = rigFor(LR, 'front') as Rig, g = { ...LR, muscles: { ...LR.muscles, effort: { model: 'torque', chain: ['shoulder_r'], force: 'gravity' } } } as ExerciseGuide;
     for (const fig of ['correct', 'mistake'] as const) {
@@ -107,5 +125,26 @@ describe('V1-10 A1: gravity files are unchanged', () => {
       if (typeof a === 'string' || typeof b === 'string') throw new Error(`${a} ${b}`);
       for (let i = 0; i <= 100; i++) expect(b(i / 100)).toEqual(a(i / 100));
     }
+  });
+});
+
+describe('V1-10: the force line of each part', () => {
+  const close = (a: number[], b: number[]) => { expect(a[0]).toBeCloseTo(b[0]!, 12); expect(a[1]).toBeCloseTo(b[1]!, 12); };
+  it('a cable pulls from the load toward its pulley, path[0]', () => {
+    close(forceLine({ kind: 'cable', path: [[0, 0], [0, 100]] }, [30, 40]), [-0.6, -0.8]);
+  });
+  it('a load at the pulley falls back to the path direction', () => {
+    close(forceLine({ kind: 'cable', path: [[0, 0], [0, 100]] }, [0, 0]), [0, -1]);
+  });
+  it('a carriage acts along its rail', () => {
+    close(forceLine({ kind: 'carriage', path: [[0, 0], [30, 40]] }, [100, -7]), [0.6, 0.8]);
+  });
+  it('a lever acts along its tangent at the load', () => {
+    const d = forceLine({ kind: 'lever', pivot: [10, 10], bound: 'knee_r', radius: 50, deg: [0, 90] }, [40, 50]);
+    expect(Math.hypot(d[0], d[1])).toBeCloseTo(1, 12);
+    expect(d[0] * 30 + d[1] * 40).toBeCloseTo(0, 12);
+  });
+  it('no line where the load sits on the lever pivot', () => {
+    expect(forceLine({ kind: 'lever', pivot: [10, 10], bound: 'knee_r', radius: 50, deg: [0, 90] }, [10, 10])).toEqual([0, 0]);
   });
 });

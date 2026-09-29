@@ -10,7 +10,8 @@
 // arm: the perpendicular distance from the chain's first joint to the line through the load point along the force. A
 // cable pulls from the load toward its pulley (the part's path[0], where the cable leaves the wrap), a carriage along
 // its rail, a lever along its tangent at the load (perpendicular to the pivot-to-load radius). The same reach
-// normalises it, so t stays in 0..1. A named part that is not drawn is "no contact force".
+// normalises it, so t stays in 0..1. A named part that is not drawn, or a machine file with no `force`, is "no contact
+// force".
 // `effort` as curves per muscle is evaluated like the joint curves; `mistake.muscles` replaces a muscle's effort in the
 // mistake (absolute 0..1, in the mistake's own tempo), as the lat-pulldown example of §2 reads.
 import type { MuscleId } from '@/data/muscles';
@@ -64,6 +65,7 @@ export function effortOf(g: ExerciseGuide, figure: Figure, rep: number, rig: Rig
     for (let i = from; i < bones.length - 1; i++) { const a = rig.pivot(f0, bones[i]!), b = rig.pivot(f0, bones[i + 1]!); reach += Math.hypot(b[0] - a[0], b[1] - a[1]); }
     if (!(reach > 0)) return `torque model: chain [${e.chain.join(', ')}] has no length`;
     let part: MachinePart | undefined;
+    if (g.machine && !e.force) return 'no contact force: a machine file must declare force';
     if (e.force && e.force !== 'gravity') {
       const along = e.force.along;
       part = g.machine ? rig.machine?.parts[along] : undefined;
