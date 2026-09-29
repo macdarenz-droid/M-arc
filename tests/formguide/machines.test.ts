@@ -14,6 +14,7 @@ import { HANDLES, HANDLE_CARDS } from '@/formguide/parts';
 import { STACK_CLASS, cableClass, guideDrive, guideStops, layerFor, layerGroups, layerMarkup, partClass, setupSvgs, standInDrive } from '@/formguide/player/machineView';
 import { REPS, guideRig, markupOf, momentFrame } from '@/formguide/player/guideView';
 import { themeReader } from '@/formguide/rig/paint';
+import { sceneOf } from '@/formguide/player/scene';
 import { VIEWBOXES } from '@/formguide/model';
 import { apply, mmul, opMat, type Op } from '@/formguide/rig/pose';
 import type { Mat } from '@/formguide/rig/figureFront';
@@ -126,6 +127,29 @@ describe('V1-09 A1: the fixture machine plays with transforms only, its anchor o
       o.forEach((v, i) => { if (i) expect(v).toBeGreaterThan(o[i - 1]!); });
       expect(g.frames[g.frames.length - 1]!.transform).toBe(g.frames[0]!.transform);
     }
+  });
+});
+
+describe('V1-09: the scene (renders, Pictures) draws a machine file\'s machine posed at the moment, behind the figure', () => {
+  const read = themeReader('silent-black');
+  it('the machine layer comes first, each moving group posed where the keyframes put it at that stop', () => {
+    const sc = sceneOf(FXG, fxRig, read, { figure: 'correct', u: 0.25, id: 's', load: 20 });
+    expect(sc.markup.startsWith('<g class="fg-machine"')).toBe(true);
+    expect(sc.markup.indexOf('fg-machine')).toBeLessThan(sc.markup.indexOf('fg-fig'));
+    const t = /class="fg-mp fg-m-arm" style="transform:([^"]*)"/.exec(sc.markup)![1]!;
+    const { i } = { i: guideStops(FXG, 'correct')(0).reduce((b, v, k, a) => (Math.abs(v - 0.25) < Math.abs(a[b]! - 0.25) ? k : b), 0) };
+    const u = guideStops(FXG, 'correct')(0)[i]!;
+    expect(dist(apply(matOf(t), A0), anchorAt(ARM, guideDrive(FXG, fxRig, 'correct')(0, i, u).travel.arm!))).toBeLessThan(1e-3);
+    expect(sc.markup).not.toBe(sceneOf(FXG, fxRig, read, { figure: 'correct', u: 0, id: 's', load: 20 }).markup);
+  });
+  it('a free-weight file\'s scene is its figure alone (the lateral raise draws no machine)', () => {
+    const sc = sceneOf(LR, rig, read, { figure: 'correct', u: 0.25, id: 's', load: 9 });
+    expect(sc.markup).toBe(markupOf(LR, rig, read, { id: 's', mistake: false, load: 9 }));
+    expect(sc.markup).not.toContain('fg-machine');
+  });
+  it('a machine file whose machine is not drawn yet throws the card that draws it', () => {
+    const g = { ...FXG, machine: { ...FXG.machine!, id: 'chest_press' } } as ExerciseGuide;
+    expect(() => sceneOf(g, rig, read, { figure: 'correct', u: 0, id: 's', load: 0 })).toThrow(/machine chest_press is drawn by V1-18/);
   });
 });
 
@@ -283,5 +307,54 @@ describe('V1-09 A6: the frame-rate panel opens only on a long-press and stores n
       statsLine(log.stats()); FpsPanel({ open: true, stats: log.stats(), stress: true, onStress: () => {}, onClose: () => {} });
       expect(set).not.toHaveBeenCalled();
     } finally { vi.unstubAllGlobals(); }
+  });
+});
+
+describe('V1-09 A5 and A6 in the mounted player (hooks mocked, as sideWiring.test.ts mounts it)', () => {
+  async function mount(g: ExerciseGuide) {
+    const read = themeReader('silent-black'), animated: string[] = [], writes: string[] = [];
+    const el = {
+      get innerHTML() { return writes[writes.length - 1] ?? ''; }, set innerHTML(v: string) { writes.push(v); },
+      firstChild: null, cancel: () => {},
+      querySelectorAll: (sel: string) => [{ animate: () => { animated.push(sel); return { pause: () => {} }; } }],
+    };
+    vi.resetModules();
+    vi.doMock('preact/hooks', () => ({
+      useMemo: (f: () => unknown) => f(), useEffect: () => {}, useLayoutEffect: (f: () => void) => { f(); },
+      useState: (i: unknown) => [typeof i === 'function' ? (i as () => unknown)() : i, () => {}],
+      useRef: (i: unknown) => ({ current: i ?? el }),
+    }));
+    vi.doMock('@/ui/motion', () => ({ reduced: () => false, onReducedChange: () => () => {} }));
+    const set = vi.fn();
+    vi.stubGlobal('localStorage', { getItem: () => null, setItem: set, removeItem: set, clear: set, key: () => null, length: 0 });
+    vi.stubGlobal('document', { documentElement: { getAttribute: () => 'silent-black' } });
+    vi.stubGlobal('getComputedStyle', () => ({ getPropertyValue: (p: string) => read(p.slice(2) as Parameters<typeof read>[0]) }));
+    try {
+      const { ExercisePlayer } = await import('@/formguide/player/ExercisePlayer');
+      const vnode = ExercisePlayer({ guide: g, rig, name: 'Lateral raise', load: { kg: 9, text: '9 kg' } });
+      const classes: string[] = [];
+      const walk = (n: unknown): void => {
+        if (n == null || typeof n !== 'object') return;
+        if (Array.isArray(n)) { n.forEach(walk); return; }
+        const v = n as { type?: unknown; props?: { children?: unknown; class?: string; open?: boolean } };
+        if (typeof v.props?.class === 'string') classes.push(v.props.class);
+        if (typeof v.type === 'function' && v.props) walk((v.type as (p: unknown) => unknown)(v.props));
+        walk(v.props?.children);
+      };
+      walk(vnode);
+      return { writes, animated, classes, storageWrites: set.mock.calls.length };
+    } finally {
+      vi.unstubAllGlobals();
+      vi.doUnmock('preact/hooks');
+      vi.doUnmock('@/ui/motion');
+    }
+  }
+  it('the lateral raise mounts its figure and no machine layer, no machine animation, and no panel', async () => {
+    const { writes, animated, classes, storageWrites } = await mount(LR);
+    expect(writes.some(w => w.includes('fg-fig'))).toBe(true);
+    expect(writes.some(w => w.includes('fg-machine'))).toBe(false);
+    expect(animated.filter(s => /\.fg-m/.test(s))).toEqual([]);
+    expect(classes).not.toContain('fg9-panel');
+    expect(storageWrites).toBe(0);
   });
 });

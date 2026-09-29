@@ -16,6 +16,8 @@ import type { Pose } from '../rig/joints';
 import { sampleGuide, type Figure } from '../sample';
 import * as guideView from './guideView';
 import type { Box } from './guideView';
+import { layerFor, posedLayer } from './machineView';
+import type { MachineArt } from '../machines';
 
 export type Scene = { markup: string; frame: Frame; box: Box; dx: number };
 
@@ -48,8 +50,12 @@ function frameAt(g: ExerciseGuide, rig: Rig, figure: Figure, rep: number, u: num
 
 /** One static moment: the figure markup, its posed frame, and the camera box. */
 export function sceneOf(g: ExerciseGuide, rig: Rig, read: TokenReader, o: SceneOptions): Scene {
-  const markup = guideView.markupOf(g, rig, read, { id: o.id, mistake: o.figure === 'mistake', load: o.load });
-  const frame = frameAt(g, rig, o.figure, o.rep ?? 0, o.u, markup);
+  const figure = guideView.markupOf(g, rig, read, { id: o.id, mistake: o.figure === 'mistake', load: o.load });
+  const frame = frameAt(g, rig, o.figure, o.rep ?? 0, o.u, figure);
   const { box, dx } = guideView.cameraOf(g, o.zoom ?? false, o.compare ?? false);
-  return { markup, frame, box, dx };
+  // V1-09: a machine file's machine sits behind the figure, posed at the same moment (a free-weight file draws none,
+  // so its markup is the figure's alone). The mistake's rep is its only one, as its figure plays it.
+  const layer = g.machine ? (rig.machine as MachineArt | null | undefined) ?? layerFor(g, { stress: false, compare: false })!.art : null;
+  const machine = layer ? posedLayer(g, rig, layer, o.figure, o.figure === 'mistake' ? 0 : o.rep ?? 0, o.u, o.load ?? 0) : '';
+  return { markup: machine + figure, frame, box, dx };
 }

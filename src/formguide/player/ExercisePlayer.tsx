@@ -14,6 +14,7 @@ import { finish, initial, pickZoom, renderVals, setMode, setReduced, setSpeed, t
 import { chainedTiming, mountAnimations, type AnimHandle, type AnimRoot } from './waapi';
 import { REPS, cameraOf, chainedGroups, clockOf, markupOf, momentFrame, momentsOf, textsOf } from './guideView';
 import type { Rig } from '../check/view';
+import { sceneOf } from './scene';
 import { guideDrive, guideStops, layerFor, layerGroups, layerMarkup, setupSvgs, standInDrive } from './machineView';
 import { FrameLog, longPress, statsLine, type FrameStats } from './fps';
 
@@ -93,7 +94,8 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
     const el = macRef.current;
     if (!el) return;
     const L = layerFor(g, layerOn.current);
-    el.innerHTML = L ? layerMarkup(L.art, { kg: load?.kg ?? 0, settings: g.machine?.settings }) : '';
+    if (L) el.innerHTML = layerMarkup(L.art, { kg: load?.kg ?? 0, settings: g.machine?.settings });
+    else if (el.firstChild) el.innerHTML = '';                 // no layer: leave an empty group untouched
     if (!L || sRef.current.rm) return;
     const drive = L.standIn ? standInDrive(g, rig, 'correct') : guideDrive(g, rig, 'correct');
     const h = mountAnimations(layerGroups(L.art, guideStops(g, 'correct'), drive, REPS), el as unknown as AnimRoot, repS, chainedTiming(repS, REPS));
@@ -177,16 +179,19 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
   const fig: Figure = mistake ? 'mistake' : 'correct';
   // Pictures: the four moments of the figure shown, as images resolved in the current theme (cached per theme).
   const shots = (box: 'full' | 'zoom', only?: number): string[] => cache.get(`${theme}|${fig}|${box}${only ?? ''}`, () => {
-    const read = cssReader(rootRef.current ?? document.documentElement), m = markupOf(g, rig, read, { id: 'snap', mistake: fig === 'mistake', load: load?.kg ?? null });
-    const us = momentsOf(g, fig), vb = cameraOf(g, box === 'zoom', false).box;
-    return (only == null ? us : [us[only]!]).map(u => toDataUri(snapshotSvg(m, momentFrame(g, rig, fig, u, m), read, vb)));
+    const read = cssReader(rootRef.current ?? document.documentElement), us = momentsOf(g, fig);
+    // V1-09: through sceneOf, so a machine file's pictures carry its machine posed at each moment
+    return (only == null ? us : [us[only]!]).map(u => {
+      const sc = sceneOf(g, rig, read, { figure: fig, u, id: 'snap', load: load?.kg ?? null, zoom: box === 'zoom' });
+      return toDataUri(snapshotSvg(sc.markup, sc.frame, read, sc.box));
+    });
   });
   const tiles = v.showPics ? shots('full') : null;
   // V1-09: the setup moment of a machine file (right, and the mistake's wrong setting), before rep 1 and in Pictures.
   const art = g.machine ? layerFor(g, { stress: false, compare: false })!.art : null;
   const setup = art && (v.showPics || v.showIdle) ? cache.get(`${theme}|setup`, () => {
     const read = cssReader(rootRef.current ?? document.documentElement), m = markupOf(g, rig, read, { id: 'snap', mistake: false, load: load?.kg ?? null });
-    return setupSvgs(g, art, { markup: m, frame: momentFrame(g, rig, 'correct', 0, m) }, read, VIEWBOXES[g.camera.full], load?.kg ?? 0).map(x => toDataUri(x.svg));
+    return setupSvgs(g, art, { markup: m, frame: momentFrame(g, rig, 'correct', 0, m) }, read, cameraOf(g, false, false).box, load?.kg ?? 0).map(x => toDataUri(x.svg));
   }) : null;
   const setupText = (i: number) => (i ? `Wrong setup: ${g.mistake.setup?.text ?? ''}` : 'Setup');
   const stillSrc = still ? shots('zoom', 0)[0] : null;

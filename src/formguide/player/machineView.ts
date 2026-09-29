@@ -132,3 +132,12 @@ export function setupSvgs(g: ExerciseGuide, art: MachineArt, figure: { markup: s
   const pic = (wrong?: { setting: keyof Settings; value: number }) => snapshotSvg(layerMarkup(art, { kg, settings, wrong }) + figure.markup, figure.frame, read, vb);
   return [{ svg: pic(), wrong: false }, ...(su ? [{ svg: pic({ setting: su.setting, value: su.wrong }), wrong: true }] : [])];
 }
+
+/** The layer posed at one stop of a guide's rep (a static picture: renders, Pictures, the setup moment): each moving
+ * group's transform written inline for the stop nearest u, as the keyframes would draw it there. */
+export function posedLayer(g: ExerciseGuide, rig: Rig, art: MachineArt, figure: Figure, rep: number, u: number, kg: number): string {
+  const stops = guideStops(g, figure)(rep), i = stops.reduce((b, v, k) => (Math.abs(v - u) < Math.abs(stops[b]! - u) ? k : b), 0);
+  const xf = new Map(opsAt(art, guideDrive(g, rig, figure)(rep, i, stops[i]!)).map(([cls, ops]) => [cls, css(ops)]));
+  return layerMarkup(art, { kg, settings: g.machine?.settings })
+    .replace(/<g class="fg-mp ([\w-]+)"( style="[^"]*")?>/g, (all, cls: string) => (xf.has(cls) ? `<g class="fg-mp ${cls}" style="transform:${xf.get(cls)}">` : all));
+}
