@@ -268,7 +268,9 @@ describe('assisted lifts in Escobar (QA-R3a-2)', () => {
 
 describe('warm-ups in the live view (QA-R6-3, QA-R6-11)', () => {
   it('autoregulation reads the first working set, and warm-ups are not planned sets', () => {
-    const s = sixMonthsState();
+    // ADAPT-2: the fixture's usual check-in now reads green, so today's is set below the user's usual to keep it amber.
+    const s0 = sixMonthsState();
+    const s = { ...s0, checkIns: s0.checkIns.map((c, i) => (i === 0 ? { ...c, sleepQuality: 2 as const, mood: 3 as const } : c)) };
     const bench = 'lib_barbell_bench_press';
     const warm = [{ id: 'w1', kg: 40, reps: 8, kind: 'warmup' as const, effort: 'easy' as const, at: new Date(NOW - 300_000).toISOString(), fidelity: 'live' as const }, { id: 'w2', kg: 55, reps: 5, kind: 'warmup' as const }];
     const live = (first: Record<string, unknown>) => ({ ...s, active: { id: 'a', splitId: s.splits[0]!.id, startedAt: new Date(NOW - 600_000).toISOString(), pausedMs: 0, gymId: s.units.activeGymId, entries: [{ id: 'e', exerciseId: bench, name: 'Bench', done: false, skipped: false, sets: [...warm, { id: 's1', ...first }, { id: 's2' }, { id: 's3' }] }] } });
