@@ -27,6 +27,9 @@ export interface ReadinessBaselines {
   restingHr7d: number | null;
   restingHr28d: number | null;
   restingHr28dSd: number | null;
+  /** ADAPT-2 (B-3): days with a resting HR in the last 28, and the spread of the ones before the last 7 (the user's usual day-to-day noise). */
+  restingHr28dCount: number;
+  restingHrBaselineSd: number | null;
   sleep14dMedian: number | null;
   lnRmssd7dMean: number | null;
   lnRmssd7dSd: number | null;
@@ -39,11 +42,14 @@ export function readinessBaselines(healthDays: DailyHealth[], today: string): Re
   const rhr28 = healthDays.filter(d => withinDays(d.day, today, 28) && d.restingHr != null).map(d => d.restingHr!);
   const sleep14 = healthDays.filter(d => withinDays(d.day, today, 14) && d.sleepMinutes != null).map(d => d.sleepMinutes!);
   const lnRmssd7 = healthDays.filter(d => withinDays(d.day, today, 7) && d.lnRmssd != null).map(d => d.lnRmssd!);
+  const rhrBefore = healthDays.filter(d => withinDays(d.day, today, 28) && !withinDays(d.day, today, 7) && d.restingHr != null).map(d => d.restingHr!);
   const lnMean = lnRmssd7.length ? avg(lnRmssd7) : null;
   return {
     restingHr7d: rhr7.length ? avg(rhr7) : null,
     restingHr28d: rhr28.length ? avg(rhr28) : null,
     restingHr28dSd: rhr28.length >= 2 ? stddev(rhr28) : null,
+    restingHr28dCount: rhr28.length,
+    restingHrBaselineSd: rhrBefore.length >= 2 ? stddev(rhrBefore) : null,
     sleep14dMedian: median(sleep14),
     lnRmssd7dMean: lnMean,
     lnRmssd7dSd: lnRmssd7.length >= 2 ? stddev(lnRmssd7) : null,
@@ -66,6 +72,15 @@ export const READINESS_GREEN_AT = 67;
 export const READINESS_RED_AT = 33;
 /** Under this many days of check-ins and sleep, the score reads as calibrating. */
 export const READINESS_CALIBRATING_DAYS = 14;
+/**
+ * ADAPT-2 (B-1): where the user's usual check-in lands on the 0-1 check-in part. 0.75 reads as a
+ * normal day, so an average check-in no longer pulls the score under the green line on its own.
+ */
+export const CHECKIN_CENTRE = 0.75;
+/** ADAPT-2 (B-3): personal resting-HR scoring needs this many days in the last 28; below it, the fixed 10 bpm scale. */
+export const RHR_PERSONAL_MIN_DAYS = 14;
+/** ADAPT-2 (B-3): the smallest day-to-day resting-HR spread counted, in bpm, so a very steady watch still reads a small rise sanely. */
+export const RHR_MIN_SD = 1.5;
 
 export type LoadAdvice = 'normal' | 'no_increase' | 'reduce';
 export type ReadinessBand = 'green' | 'amber' | 'red';
@@ -144,7 +159,7 @@ export function readinessWithInputs(input: ReadinessInput): { result: ReadinessR
   const drivers: string[] = [];
 
   // Check-in (0.35): soreness of today's target muscles, sleep quality, mood — each a z-score
-  // against the user's own last-14-days distribution of that same field (6.4 names the three
+  // against the user's own last-30-days distribution of that same field (6.4 names the three
   // components; combining them as an equal-weight average is this build's reading, undocumented
   // by the plan beyond naming them — see COACHING-DECISIONS.md).
   let checkInScore: number | null = null;
@@ -163,12 +178,14 @@ export function readinessWithInputs(input: ReadinessInput): { result: ReadinessR
     // Before there's enough history for a z-score (n<3), fall back to the raw 1-5 rating against
     // its own midpoint (3) — still "calibrating", per 6.4, but a first-ever check-in should count
     // for something rather than vanishing entirely for lack of a personal baseline.
-    const rawFallback = (raw: number | undefined, invert: boolean) => raw == null ? null : clamp(invert ? 0.5 - (raw - 3) / 4 : 0.5 + (raw - 3) / 4, 0, 1);
+    // ADAPT-2 (B-1): both map the user's usual answer (or a 3) to CHECKIN_CENTRE, a normal day.
+    const C = CHECKIN_CENTRE;
+    const rawFallback = (raw: number | undefined, invert: boolean) => raw == null ? null : clamp(invert ? C - (raw - 3) / 4 : C + (raw - 3) / 4, 0, 1);
     // Soreness is inverted (higher = worse); sleep quality and mood are not.
     const parts = [
-      sorenessZ != null ? clamp(0.5 - sorenessZ / 3, 0, 1) : rawFallback(todaySoreness ?? undefined, true),
-      sleepQZ != null ? clamp(0.5 + sleepQZ / 3, 0, 1) : rawFallback(checkIn.sleepQuality, false),
-      moodZ != null ? clamp(0.5 + moodZ / 3, 0, 1) : rawFallback(checkIn.mood, false),
+      sorenessZ != null ? clamp(C - sorenessZ / 3, 0, 1) : rawFallback(todaySoreness ?? undefined, true),
+      sleepQZ != null ? clamp(C + sleepQZ / 3, 0, 1) : rawFallback(checkIn.sleepQuality, false),
+      moodZ != null ? clamp(C + moodZ / 3, 0, 1) : rawFallback(checkIn.mood, false),
     ].filter((v): v is number => v != null);
     if (parts.length) {
       checkInScore = avg(parts);
@@ -206,12 +223,16 @@ export function readinessWithInputs(input: ReadinessInput): { result: ReadinessR
     }
   }
 
-  // Resting-HR deviation (0.10): s = clamp(1 - delta/10, 0, 1).
+  // Resting-HR deviation (0.10). ADAPT-2 (B-3): with 14+ days of resting HR, the 7-day rise over
+  // the 28-day mean as a z-score against the user's own day-to-day spread (the days before the
+  // last 7, at least 1.5 bpm): s = clamp(1 - z/3, 0, 1), so the driver line (0.5) is z 1.5.
+  // Before that, the fixed scale s = clamp(1 - delta/10, 0, 1), driver at +5 bpm.
   let rhrScore: number | null = null;
   if (baselines.restingHr7d != null && baselines.restingHr28d != null) {
     const delta = baselines.restingHr7d - baselines.restingHr28d;
-    rhrScore = clamp(1 - delta / 10, 0, 1);
-    if (delta >= 5) drivers.push('resting heart rate is up over your usual');
+    const personal = baselines.restingHr28dCount >= RHR_PERSONAL_MIN_DAYS && baselines.restingHrBaselineSd != null;
+    rhrScore = personal ? clamp(1 - delta / Math.max(baselines.restingHrBaselineSd!, RHR_MIN_SD) / 3, 0, 1) : clamp(1 - delta / 10, 0, 1);
+    if (rhrScore <= 0.5) drivers.push('resting heart rate is up over your usual');
   }
 
   // HRV z-score (0.10): only with clean RR data and >=14 values. Dormant on the GT6 (Appendix E).
