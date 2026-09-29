@@ -47,7 +47,8 @@ describe('progression', () => {
     const a = session('2026-07-01', [{ id: ex, sets: sets(60, 12) }]);
     const s = suggestNext([a], ex, 'lean', today);
     expect(s.mode).toBe('reentry');
-    expect(s.kg).toBe(60);
+    // ADAPT-3 (A-4): 79 days is past 8 weeks, so the return is 10% lighter (was 60, the harm A-4 names).
+    expect(s.kg).toBe(54);
   });
   it('a clearly declining lift gets an easier week at the same load', () => {
     const days = ['2026-08-20', '2026-08-24', '2026-08-27', '2026-08-31', '2026-09-03', '2026-09-07', '2026-09-10', '2026-09-14', '2026-09-17'];
