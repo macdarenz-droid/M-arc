@@ -9,7 +9,7 @@ import { VIEWBOXES, type AttachmentId, type ExerciseGuide, type PartId, type Res
 import { CHANNELS, type ChannelId } from '../rig/joints';
 import { aaosTruth } from '../rig/ranges';
 import { FLOOR } from '../rig/figureFront';
-import { FIGURE_TOKENS, bodyPal, mix, themeReader } from '../rig/paint';
+import { FIGURE_TOKENS, bodyPal, mix, themeReader, type TokenReader } from '../rig/paint';
 import type { Frame } from '../rig/pose';
 import type { Pt } from '../rig/ik';
 import { STEPS_PER_PHASE, drawnAt, poseAt, repSeconds, sampleGuide, stateAt, stopsFor, tempoOf, windowsFor, type Figure, type Window } from '../sample';
@@ -19,13 +19,23 @@ import { effortOf, TORQUE } from './effort';
 import { HZ, LIM, phaseStats, stopJerk } from './smooth';
 import { bbox, colourLiterals, compile, countPaths, forbiddenEffects } from './svg';
 import { FIGURE_PARTS, PARTS, rigFor, viewOf, type Rig } from './view';
+import { contactsHeld as heldBy, travelRange as travelOf, type Pass } from './contacts';
+import { researchMismatches } from './research';
+import { WIDEST_LABEL, around, drawnFor, fastBox, heldIn, marginsOf, mirrored, union } from './framing';
+import { MIN_TEXT_PX, RATIO, RENDER_PX, markContrast, paintedShapes, parseColour, ratio, textContrast, type RGBA } from './contrast';
+import { centreOfMass, feetOf, groupOf } from './balance';
+import { drawnTints, undrawnTargets } from './drawn';
+import { tintOf } from '../player/guideView';
 
 export const CHECKS = [
   'smoothness', 'stops', 'jointRanges', 'mistakeSane', 'mistakeDiffers', 'setupDiffers', 'handsOnHandle', 'bodyOnPad',
   'feetPlanted', 'targetVisible', 'muscleTiming', 'secondaryMotion', 'pathBudget', 'sizeBudget', 'themes',
   'everyPoseRenders', 'noFilters', 'machinePivot', 'idMatch', 'hash',
 ] as const;
-export type CheckId = (typeof CHECKS)[number];
+/** V1-07's add-only checks (docs/FORM-GUIDE-PRODUCTION.md §10.5): run by `fg:check` after the 20, and by name. */
+export const CHECKS_V1 = ['contactsHeld', 'matchesResearch', 'framing', 'contrast', 'balance', 'targetDrawn', 'travelRange'] as const;
+export const ALL_CHECKS = [...CHECKS, ...CHECKS_V1] as const;
+export type CheckId = (typeof ALL_CHECKS)[number];
 export type CheckResult = { check: CheckId; ok: boolean; fails: string[]; note?: string };
 
 export type CheckInput = {
@@ -521,10 +531,149 @@ const hash: Fn = (c, fail) => {
   return a;
 };
 
+// ---- V1-07: the add-only checks (docs/FORM-GUIDE-PRODUCTION.md §10.5) ----------------------------------------------
+/** V1-07's limits (LIMITS above is unchanged): the frame margin in units, the WCAG ratios, the smallest text in px. */
+export const LIMITS_V1 = { frame: 1, gap: LIMITS.gap, ...RATIO, textPx: MIN_TEXT_PX, renderPx: RENDER_PX } as const;
+const passesOf = (c: Ctx): Pass[] => [...c.reps.map(rep => ({ fig: 'correct' as Figure, rep })), { fig: 'mistake' as Figure, rep: 0 }]
+  .map(p => ({ ...p, T: repSeconds(tempoOf(c.g, p.fig, p.rep)), L: repLabel(p.fig, p.rep) }));
+const where = (u: number, p: Pass) => at(u, p.T, p.L);
+/** The figure with the widest load label its held part can show (framing.ts WIDEST_LABEL), else the file's own rig. */
+const labelled = (c: Ctx, rig: Rig): Rig => {
+  if (c.g.equipment.kind !== 'dumbbell') return rig;
+  const r = rigFor({ ...c.g, equipment: { ...c.g.equipment, kg: WIDEST_LABEL } } as ExerciseGuide, c.view);
+  return typeof r === 'string' ? rig : r;
+};
+/** A held part the file's fixture draws in place of the figure's own (a seeded bad file), else null. */
+const heldOverride = (c: Ctx): string | null => (FIGURE_PARTS.includes(c.g.equipment.kind) ? c.in.parts?.[c.g.equipment.kind] ?? null : null);
+
+const contactsHeld: Fn = (c, fail) => {
+  const g = c.g;
+  if (!g.contacts?.length && !g.balance && !g.machine?.drive.some(d => 'follow' in d)) return 'no contacts or balance';
+  if (typeof c.rig === 'string') return void fail(`contacts not measured: ${c.rig}`);
+  const r = heldBy(g, c.rig, typeof c.machine === 'object' ? c.machine : null, passesOf(c), LIMITS.jointSamples, LIMITS.gap, where);
+  r.fails.forEach(fail);
+  return r.note;
+};
+
+const matchesResearch: Fn = (c, fail) => {
+  if (!c.in.research) return void fail('no research.json to match');
+  researchMismatches(c.g, c.in.research).forEach(fail);
+  return `${c.g.cues.length} cues, ${c.g.mistake.tells.length} tells`;
+};
+
+const framing: Fn = (c, fail) => {
+  if (typeof c.rig === 'string') return void fail(`not framed: ${c.rig}`);
+  const g = c.g, rig = c.rig, lab = labelled(c, rig), full = VIEWBOXES[g.camera.full], zoom = VIEWBOXES[g.camera.zoom], read = themeReader('silent-black');
+  // the least margin of each figure, facing and camera, reported where it is smallest
+  const worst = new Map<string, { v: number; side: string; u: number; p: Pass; box: string }>();
+  const keep = (k: string, v: number, side: string, u: number, p: Pass, box: string) => { const w = worst.get(k); if (!w || v < w.v) worst.set(k, { v, side, u, p, box }); };
+  for (const p of passesOf(c)) {
+    const d = drawnFor(g, m => lab.markup(read, m), p.fig === 'mistake', heldOverride(c), g.camera.subject);
+    for (const u of grid(LIMITS.jointSamples)) {
+      const f = frameAt(c, rig, u, p.fig, p.rep), b = fastBox(d.body, f);
+      for (const [facing, box] of [['', b], [' (other facing)', mirrored(b)]] as const) {
+        const [side, v] = Object.entries(marginsOf(box, full)).sort((x, y) => x[1] - y[1])[0]!;
+        keep(`${p.L}${facing}`, v, side, u, p, `${g.camera.full} [${full.join(' ')}]`);
+      }
+      let z = around(rig.pivot(f, g.camera.subject));
+      if (d.zoom.shapes.length) z = union(z, fastBox(d.zoom, f));
+      const [side, v] = Object.entries(marginsOf(z, zoom)).sort((x, y) => x[1] - y[1])[0]!;
+      keep(`${p.L} zoom (${g.camera.subject} and its target tint)`, v, side, u, p, `${g.camera.zoom} [${zoom.join(' ')}]`);
+    }
+  }
+  const least = { full: Infinity, zoom: Infinity };
+  for (const [k, w] of worst) {
+    least[k.includes('zoom') ? 'zoom' : 'full'] = Math.min(least[k.includes('zoom') ? 'zoom' : 'full'], w.v);
+    if (!(w.v >= LIMITS_V1.frame)) fail(`${k}: ${w.side} margin ${f2(w.v)} units < ${LIMITS_V1.frame} in ${w.box} at ${at(w.u, w.p.T, w.p.L)}`);
+  }
+  return `least margin ${f2(least.full)} units full, ${f2(least.zoom)} zoom`;
+};
+
+const contrast: Fn = (c, fail) => {
+  if (typeof c.rig === 'string') return void fail(`not measured: ${c.rig}`);
+  const g = c.g, lab = labelled(c, c.rig), full = VIEWBOXES[g.camera.full], override = heldOverride(c), px = RENDER_PX / full[2];
+  const extra: [string, string][] = [];
+  if (override) extra.push([`part ${g.equipment.kind}`, override]);
+  const fig = (read: TokenReader, m: boolean) => (override ? heldIn(lab.markup(read, m), override) : lab.markup(read, m));
+  const p = partMarkup(c);
+  if (p) extra.push([`part ${g.equipment.kind}`, p]);
+  if (g.machine && typeof c.machine === 'object' && c.machine) extra.push([`machine ${g.machine.id}`, machineMarkup(c.machine)]);
+  const worst = { text: Infinity, mark: Infinity, figure: Infinity, px: Infinity }, seen = new Set<string>();
+  const once = (k: string, s: string) => { if (!seen.has(k)) { seen.add(k); fail(s); } };
+  for (const id of THEME_IDS) {
+    const read = themeReader(id), t = THEMES[id].tokens;
+    const pages: [string, RGBA][] = [['stage', parseColour(t.surface1)!], ['tile', parseColour(t.surface2)!]];
+    const drawings: [string, string, boolean][] = [[' figure', fig(read, false), true], [' mistake figure', fig(read, true), true], ...extra.map(([w, s]) => [` ${w}`, s, false] as [string, string, boolean])];
+    for (const [what, svg, fig] of drawings) {
+      const shapes = paintedShapes(svg, read);
+      shapes.forEach((s, i) => {
+        if (s.text) {
+          const h = s.text.size * px;
+          worst.px = Math.min(worst.px, h);
+          if (h < MIN_TEXT_PX) once(`px${what}${s.text.body}`, `${id}${what}: text "${s.text.body}" is ${f2(h)} px tall at ${RENDER_PX} px < ${MIN_TEXT_PX} px`);
+          for (const [pg, page] of pages) {
+            const r = textContrast(shapes, i, page);
+            worst.text = Math.min(worst.text, r);
+            if (!(r >= RATIO.text)) once(`t${id}${what}${s.text.body}${pg}`, `${id}${what}: text "${s.text.body}" ${f2(r)}:1 < ${RATIO.text}:1 on the ${pg}`);
+          }
+        } else if (fig && /\bfg-t-/.test(s.cls) && s.fill.length) {
+          const r = markContrast(shapes, i, tintOf(1), pages[0]![1]);
+          worst.mark = Math.min(worst.mark, r);
+          if (!(r >= RATIO.mark)) once(`m${id}${what}${s.cls}`, `${id}${what}: mark ${s.cls.replace(/^.*\bfg-t-/, 'fg-t-')} ${f2(r)}:1 < ${RATIO.mark}:1 over the body at full effort`);
+        }
+      });
+    }
+    // the figure against the page: the body and the clothes, each by its fill or its outline, whichever reads more
+    for (const m of [false, true]) {
+      const b = bodyPal(read, m), regions: [string, string, string][] = [['body', b.base, b.line], ['clothes', read('pants'), read('ink')]];
+      for (const [pg, page] of pages) for (const [r, fill, line] of regions) {
+        const v = Math.max(ratio(parseColour(fill)!, page), ratio(parseColour(line)!, page));
+        worst.figure = Math.min(worst.figure, v);
+        if (!(v >= RATIO.figure)) once(`f${id}${m}${r}${pg}`, `${id}${m ? ' mistake' : ''} figure ${r} ${f2(v)}:1 < ${RATIO.figure}:1 against the ${pg} (fill ${fill}, outline ${line}, page ${t[pg === 'stage' ? 'surface1' : 'surface2']})`);
+      }
+    }
+  }
+  const s = (v: number) => (Number.isFinite(v) ? f2(v) : 'none');
+  return `least text ${s(worst.text)}:1, mark ${s(worst.mark)}:1, figure ${s(worst.figure)}:1, smallest text ${s(worst.px)} px`;
+};
+
+const balance: Fn = (c, fail) => {
+  if (c.g.pose !== 'standing') return `${c.g.pose}: not standing`;
+  if (typeof c.rig === 'string') return void fail(`not measured: ${c.rig}`);
+  const rig = c.rig, drawn = compile(rig.markup(themeReader('silent-black'), false, false)), head = groupOf(drawn, /^head$/), feet = feetOf(drawn, FLOOR);
+  if (!head.shapes.length || !feet.shapes.length) return void fail(`the figure draws ${head.shapes.length} head and ${feet.shapes.length} foot shapes`);
+  let least = Infinity, off = 0;
+  for (const p of passesOf(c)) {
+    let failed = false;
+    for (const u of grid(LIMITS.jointSamples)) {
+      const f = frameAt(c, rig, u, p.fig, p.rep), cm = centreOfMass(rig, f, head), b = bbox(feet, f), m = Math.min(cm[0] - b.x0, b.x1 - cm[0]);
+      least = Math.min(least, m); off = Math.max(off, Math.abs(cm[0] - (b.x0 + b.x1) / 2));
+      if (!(m >= 0) && !failed) { failed = true; fail(`${p.L}: centre of mass x ${f2(cm[0])} is ${f2(-m)} units outside the foot base ${f2(b.x0)}..${f2(b.x1)} at ${at(u, p.T, p.L)}`); }
+    }
+  }
+  return `centre of mass at most ${f2(off)} units off the base middle, ${f2(least)} units inside`;
+};
+
+const targetDrawn: Fn = (c, fail) => {
+  if (typeof c.rig === 'string') return void fail(`no drawing: ${c.rig}`);
+  for (const m of [false, true]) {
+    const svg = c.rig.markup(themeReader('silent-black'), m), miss = undrawnTargets(svg, c.g.muscles.target);
+    if (miss.length) fail(`${m ? 'mistake' : 'correct'} ${c.view} figure draws no fg-t- tint for ${miss.join(', ')} (${miss.length} of ${c.g.muscles.target.length} targets; it tints ${drawnTints(svg).join(', ')})`);
+  }
+  return `${c.g.muscles.target.length} targets`;
+};
+
+const travelRange: Fn = (c, fail) => {
+  const r = travelOf(c.g, rigOf(c), passesOf(c), LIMITS.jointSamples, where);
+  r.fails.forEach(fail);
+  return r.note;
+};
+
 const FNS: Record<CheckId, Fn> = {
   smoothness, stops, jointRanges, mistakeSane, mistakeDiffers, setupDiffers, handsOnHandle, bodyOnPad, feetPlanted,
   targetVisible, muscleTiming, secondaryMotion, pathBudget, sizeBudget, themes, everyPoseRenders, noFilters, machinePivot,
   idMatch, hash,
+  contactsHeld, matchesResearch, framing, contrast, balance, targetDrawn, travelRange,
 };
 
 /** Runs every §5 check (or the listed ones) on one exercise file. A check that throws fails with the error. */
@@ -551,7 +700,12 @@ export function report(id: string, rs: CheckResult[]): string {
     for (const f of r.fails.slice(0, MAX_LINES)) lines.push(`  ${f}`);
     if (r.fails.length > MAX_LINES) lines.push(`  … and ${r.fails.length - MAX_LINES} more`);
   }
-  const bad = rs.filter(r => !r.ok).length;
-  lines.push(bad ? `${bad} of ${rs.length} checks failed` : `all ${rs.length} checks passed`);
+  // one summary per set: the 20 §5 checks, then V1-07's when they ran
+  for (const [set, label] of [[CHECKS, ''], [CHECKS_V1, 'V1-07 ']] as const) {
+    const ran = rs.filter(r => (set as readonly string[]).includes(r.check));
+    if (!ran.length) continue;
+    const bad = ran.filter(r => !r.ok).length;
+    lines.push(bad ? `${bad} of ${ran.length} ${label}checks failed` : `all ${ran.length} ${label}checks passed`);
+  }
   return lines.join('\n');
 }
