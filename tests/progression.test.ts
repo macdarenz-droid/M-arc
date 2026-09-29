@@ -557,6 +557,23 @@ describe('LT-2: increases and step-downs choose a rung and re-solve the reps', (
     expect(n.sets.every(x => x.kg === 30 && x.reps === 8)).toBe(true);
   });
 
+  it('the anchor is the median working set, not the best one: growth 25 kg × 15/17/20 twice → 30 kg for about 9 to 10', () => {
+    const mixed = [{ kg: 25, reps: 15, effort: 'ideal' as const }, { kg: 25, reps: 17, effort: 'ideal' as const }, { kg: 25, reps: 20, effort: 'ideal' as const }];
+    const h = [session('2026-09-12', [{ id: db, sets: mixed }]), session('2026-09-15', [{ id: db, sets: mixed }])];
+    const n = suggestNext(h, db, 'growth', today, 3, [], { equipment: rack });
+    // Median 17: r*(30, 1) = 25 × (1 + 19/30) − 31 = 9.83 → 9 to 10, widened to [8, 11] (anchor over 10 reps). The best set (20) would give 12 to 13.
+    expect(n).toMatchObject({ mode: 'increase', kg: 30, repWindow: [8, 11] });
+    expect(n.reason).toBe('Top of the range two sessions running without max effort. Add one step. No smaller step here: use 30 kg for about 9 to 10, close to max.');
+  });
+
+  it('a drop set at the working load is not part of the anchor when straight sets exist', () => {
+    const withDrop = [{ kg: 25, reps: 15, effort: 'ideal' as const }, { kg: 25, reps: 16, effort: 'ideal' as const }, { kg: 25, reps: 30, effort: 'ideal' as const, kind: 'drop' as const }];
+    const h = [session('2026-09-12', [{ id: db, sets: withDrop }]), session('2026-09-15', [{ id: db, sets: withDrop }])];
+    const n = suggestNext(h, db, 'growth', today, 3, [], { equipment: rack });
+    // Straight sets 15 and 16 → anchor 15 (lower median): 30 kg for about 8. Counting the drop set would make it 16 → about 9.
+    expect(n.reason).toMatch(/use 30 kg for about 8, close to max\.$/);
+  });
+
   it('A3: at the top of the ladder the load holds with one more set, never the same rung as an increase', () => {
     const n = suggestNext(twice(db, 35, 12), db, 'lean', today, 3, [], { equipment: rack });
     expect(n).toMatchObject({ mode: 'hold', kg: 35, reps: [12, 12] });
