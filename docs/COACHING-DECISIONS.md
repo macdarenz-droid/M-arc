@@ -867,3 +867,13 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **Check** (`contrast`): the figure is posed at the four key moments with every tint group at `tintOf(1)`. For each tint, the outer line must reach 3:1 against every body tone under the tint along its edge. Those tones are read 1.5 units inside the outline, from gradients evaluated at the point, with every overlay left out, and only where no opaque shape drawn later covers them. The inner line must reach 3:1 against the tint fill over those tones. It fails a tint with no boundary (0 or 1 lines), a line under 3:1, and a line that shows at rest. The old fill-against-body rule is replaced by this one.
   - **Measured**: the least outer / inner ratio over all tints, both figures and the four moments is 3.12 / 3.10, and never below 3.10, on the lateral raise front and the bench side fixture in all five themes. Paths: front figure 214 (was 202), side 170, both ≤260. `fg:check` for the lateral raise takes about 3.1 s.
   - **Risk**: side poses not covered by the two V1-06 fixtures (standing, seated, hanging) may overlap a tint with a part that is not its ground. `contrast` measures every shipped file at its own poses, so such a file fails and names the tint.
+  - **Seeded bad files** (`tests/formguide/fixtures/badV1/`, one or more per check, each failing only its own):
+    - contactsHeld: the V1-04 press with its contacts on rails that lie on the handles' paths. The follow rule fails.
+    - matchesResearch: a fourth cue, 75 characters long.
+    - framing (A2): the 12 kg heads.
+    - contrast (A3): the PR #58 "20 KG" label.
+    - contrast.noring, contrast.weakring, contrast.restring: the three boundary cases.
+    - balance: a 13° mistake sway.
+    - targetDrawn (A4): lats on the front view.
+    - travelRange: the V1-04 press itself. Its mistake carries the handles to travel 1.086, past the rails' top stop. V1-04 never measured the mistake's travel, and this is the first check that does. It is a test fixture, not a shipped file.
+  - **Side fixtures' zoom**: V1-06's bench and superman fixtures fail `framing` on their zoom camera (`upperFront` for a lying pose, so the subject sits outside it). They are fixtures, not shipped files. Each lying or prone file needs its own zoom.

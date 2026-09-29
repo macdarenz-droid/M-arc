@@ -177,7 +177,7 @@ describe('A1 each V1-07 check fails its own seeded bad file (badV1/, the folder 
     framing: /mistake: left margin -2\.58 units < 1 in standingFront/,
     contrast: /silent-black part dumbbell: text "20 KG" 1\.05:1 < 4\.5:1 on the stage/,
     'contrast.noring': /mark fg-t-forearms_r has no two-tone boundary \(0 of 2 lines\)/,
-    'contrast.weakring': /mark fg-t-forearms_r inner line [\d.]+:1 < 3:1 against the tint at full effort/,
+    'contrast.weakring': /mark fg-t-forearms_r outer line [\d.]+:1 < 3:1 against the body at full effort[^]*mark fg-t-forearms_r inner line [\d.]+:1 < 3:1 against the tint at full effort/,
     'contrast.restring': /mark fg-t-forearms_r outer line shows at rest \(opacity 1\), not with the effort/,
     balance: /mistake: centre of mass x [\d.]+ is 18\.54 units outside the foot base/,
     targetDrawn: /correct front figure draws no fg-t- tint for lats \(1 of 2 targets/,
