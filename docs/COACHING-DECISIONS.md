@@ -693,6 +693,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - The tag and the arc are sized in screen px (11 px text, a 40 px arc), capped at the size for the narrowest stage (a 320 px phone, 286 × 220 px). The tag is placed for that largest size, so it can only shrink and stays clear of the face.
   - Hotspots cover targets and helpers only, one per muscle, on alternating shoulders. A keep-quiet circle on the shoulders cannot keep 44 px at 360 px (0.42 px a unit, about 105 units a target). Keep-quiet muscles still show in the effort bars and the mistake. GU-7a's set was the same (target and helpers).
   **Why**: §1 of `docs/FORM-GUIDE-PRODUCTION.md`, the lab's `guides()` and `updateReadouts()`, GU-7a's A13. Checked by `tests/formguide/playerV1.test.ts` and the gate's V1-19 block. The main chunk is unchanged (0 B). The player chunk grows by 3.76 KB gzip.
+
 ## Form guide Version 1 plan (V1-00, 2026-09-29)
 
 - **Decided (D-FG7, supervisor-approved plan of the 2026-09-29 planning workflow; recorded by V1-00)**: the decisions the Version 1 cards build on. The plan itself (approach, grafts, card defaults, lanes, merge order, the 25 cards and the owner's device checks) is `docs/FORM-GUIDE-PRODUCTION.md` §10. Each item gives its reason and its fallback.

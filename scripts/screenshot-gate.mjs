@@ -5973,6 +5973,8 @@ for (const { theme, inset } of bug22Runs) {
   const openGuide = async (page) => { await howButton(page, 0).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
   const seek = (page, ms) => page.evaluate(ms => { for (const a of window.__fgAnims) if (a.playState !== 'idle') { a.pause(); a.currentTime = ms; } return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }, ms);
   const RUN = 12000;
+  // a seek, then the player's own frame paint (readouts and the tag's number), so a screenshot shows the seeked time
+  const seekPaint = async (page, ms) => { await seek(page, ms); await page.evaluate(() => { document.querySelector('dialog[open] .form-guide').dispatchEvent(new Event('fg19-paint')); return new Promise(r => requestAnimationFrame(r)); }); };
   const play = (page) => page.locator('dialog[open] .form-guide .controls .btn-icon');
 
   // P7-P8 (GU-7a A13) and A3: each hotspot's real hit area (the pixels where elementFromPoint gives that muscle's
@@ -6060,8 +6062,12 @@ for (const { theme, inset } of bug22Runs) {
     const fit = await page.evaluate(() => { const p = document.querySelector('dialog[open] .form-guide .player').getBoundingClientRect(); const d = document.querySelector('dialog[open] .sheet-panel').getBoundingClientRect(); return { l: p.left, r: p.right, dl: d.left, dr: d.right, sw: document.documentElement.scrollWidth }; });
     if (fit.l < fit.dl || fit.r > fit.dr || fit.sw > 390) errors.push(`${tag} P21 ${theme}: the player does not fit the sheet at 390 px (${JSON.stringify(fit)})`);
     await fitProbe(page, `${theme} 390 px`);
-    await seek(page, 0); await page.screenshot({ path: `${OUT}/${theme}-v119-guide-t0.png` });
-    await seek(page, 1200); await page.screenshot({ path: `${OUT}/${theme}-v119-guide-top.png` });
+    await seekPaint(page, 0); await page.screenshot({ path: `${OUT}/${theme}-v119-guide-t0.png` });
+    await seekPaint(page, 1200);
+    // the screenshot's numbers are the seeked time's: the top of rep 1 reads 8x° in the row and on the tag
+    const top = await page.evaluate(() => ({ angle: document.querySelector('dialog[open] [data-k="angle"]')?.textContent, tag: document.querySelector('dialog[open] .fg19-tag-t')?.textContent }));
+    if (!/^8\d°$/.test(top.angle ?? '') || top.tag !== top.angle) errors.push(`${tag} A1 ${theme}: after a seek to the top the screenshot shows ${JSON.stringify(top)}, want 8x° on both`);
+    await page.screenshot({ path: `${OUT}/${theme}-v119-guide-top.png` });
     await seek(page, 0);
 
     if (theme === 'silent-black' || theme === 'paper') {
@@ -6086,7 +6092,7 @@ for (const { theme, inset } of bug22Runs) {
       // the trace stops above the zoom tip bubble (supervisor re-guide)
       const clip = await page.evaluate(() => { const sv = document.querySelector('dialog[open] .fg4-scene'), r = sv.querySelector('.fg19-clip-r'), m = sv.getScreenCTM(); const p = sv.createSVGPoint(); p.x = 0; p.y = +r.getAttribute('y') + +r.getAttribute('height'); return { bottom: p.matrixTransform(m).y, bubble: document.querySelector('dialog[open] .bubble')?.getBoundingClientRect().top ?? null }; });
       if (clip.bubble == null || clip.bottom > clip.bubble + 0.5) errors.push(`${tag} trace ${theme}: the hand path runs under the zoom bubble (${JSON.stringify(clip)})`);
-      await seek(page, 1200); await page.screenshot({ path: `${OUT}/${theme}-v119-zoom.png` });
+      await seekPaint(page, 1200); await page.screenshot({ path: `${OUT}/${theme}-v119-zoom.png` });
       if (theme === 'silent-black') {
         const seeded = await page.evaluate(() => {
           const k = document.querySelector('dialog[open] .fg19-tag-k'), was = k.getAttribute('transform');
@@ -6167,7 +6173,7 @@ for (const { theme, inset } of bug22Runs) {
       await hotProbe(page, '390 px');
       if (await page.locator('dialog[open] .cap[aria-live="polite"]').count() !== 1) errors.push(`${tag} P34: the caption line is not an aria-live="polite" region`);
       // P35-P38: tap the target during the lift: its line, the dot in its tint colour, the outline on that muscle only.
-      await seek(page, 600);
+      await seekPaint(page, 600);
       const tapHot = async (m) => { const b = await page.locator(`dialog[open] .fg4-scene .fg19-hot[data-muscle="${m}"]`).boundingBox(); await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2); await page.waitForTimeout(150); };
       await tapHot('side_delts');
       const bub = await page.evaluate(() => { const b = document.querySelector('dialog[open] .bubble'); if (!b) return null; const fg = document.querySelector('dialog[open] .form-guide'); const probe = document.createElement('i'); probe.style.color = 'var(--target)'; fg.appendChild(probe); const want = getComputedStyle(probe).color; probe.remove(); return { text: b.textContent, name: b.querySelector('.bt b')?.textContent, dot: getComputedStyle(b.querySelector('.dot')).backgroundColor, want, sel: [...document.querySelectorAll('dialog[open] .fg19-out.on')].map(e => e.dataset.muscle) }; });
@@ -6220,7 +6226,7 @@ for (const { theme, inset } of bug22Runs) {
       if (w === 360) await hotProbe(page, '360 px');
       const bad = await tagProbe(page);
       if (bad.length) errors.push(`${tag} A2 ${w} px: the tag meets the head at phases ${bad.join(',')}`);
-      await seek(page, 1200); await page.screenshot({ path: `${OUT}/silent-black-v119-guide-${w}.png` });
+      await seekPaint(page, 1200); await page.screenshot({ path: `${OUT}/silent-black-v119-guide-${w}.png` });
     }
     await ctx.close();
   }

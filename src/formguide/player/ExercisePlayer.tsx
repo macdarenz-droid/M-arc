@@ -280,6 +280,13 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
     if (b) { const p = sv.createSVGPoint(); p.x = 0; p.y = b.getBoundingClientRect().top; h = p.matrixTransform(m.inverse()).y + 9999; }
     r.setAttribute('height', String(Math.max(0, h)));
   };
+  // The gate seeks the animations directly (no user can); it then asks for the loop's own paint, so its screenshots show
+  // the angle and the tag of the seeked time. Nothing in the app sends this event.
+  useEffect(() => {
+    const el = rootRef.current, paint = () => paintReadouts(anim.current?.currentTime() ?? 0);
+    el?.addEventListener('fg19-paint', paint);
+    return () => el?.removeEventListener('fg19-paint', paint);
+  }, []);
   useLayoutEffect(clipTrace, [bubble, zoom, compare, theme, v.showStage, still]);
   useEffect(() => {
     figRef.current?.querySelectorAll('.fg19-out').forEach(o => o.classList.toggle('on', o.getAttribute('data-muscle') === v.selMuscle));

@@ -65,6 +65,22 @@ describe('V1-19 A1 (re-guide): hand speed shows the rep, not tremor or sway', ()
     expect(n).toBe(9 * 6);
   });
 
+  it('a file with a large hold sway (±3° inside the hold) still reads under 0.05 m/s: sway is not hand speed', () => {
+    // the lateral raise's own hold sway (a 0.2° drift) is too small to bite, so a scaled copy sways hard in the hold
+    const hold = windowsFor(tempoOf(LR, 'correct', 0), LR.order, LR.kind).find(w => w.name === 'hold')!, d = (hold.u1 - hold.u0) / 4;
+    const SWAY: ExerciseGuide = { ...LR, joints: { ...LR.joints, sway: { keys: [[0, 0], [hold.u0, 0], [hold.u0 + d, 3], [hold.u0 + 2 * d, -3], [hold.u0 + 3 * d, 3], [hold.u1, 0], [1, 0]] } } };
+    const read = readouts(SWAY, rig);
+    // the sway really moves the drawn hand in the hold: read on the raw pose, it is far above the bar
+    const raw = (u: number) => rig.point(rig.frame(poseAt(SWAY, u)), 'hand_r');
+    const a = raw(hold.u0 + d * 1.4), b = raw(hold.u0 + d * 1.6), dt = 0.2 * d * repSeconds(LR.tempo);
+    expect(Math.hypot(b[0] - a[0], b[1] - a[1]) / 303 / dt).toBeGreaterThan(0.2);
+    for (let k = 1; k < 10; k++) {
+      const u = hold.u0 + ((hold.u1 - hold.u0) * k) / 10, s = read('correct', u * LEN);
+      expect(s.phase).toBe('hold');
+      expect(s.speed, `u ${u.toFixed(3)}`).toBeLessThan(0.05);
+    }
+  });
+
   it('the lift still reads a moving hand (well above the hold)', () => {
     const peak = Math.max(...Array.from({ length: 20 }, (_, i) => readoutAt(LR, rig, 'correct', ((i + 0.5) / 20) * 0.25 * LEN).speed));
     expect(peak).toBeGreaterThan(0.5);
