@@ -99,19 +99,7 @@ describe('heart.effort-mismatch', () => {
   });
 });
 
-describe('heart.drift', () => {
-  const withHrr = (peakBpm: number, hrr60: number) => ({ kg: 60, reps: 8, effort: 'ideal' as const, heart: { peakBpm, endBpm: peakBpm, hrr60 } });
-  it('fires when peak HR rises and HRR60 shrinks across same-load sets', () => {
-    const sessions = [session('2026-09-18', [{ id: bench, sets: [withHrr(150, 20), withHrr(160, 15), withHrr(172, 8)] }])];
-    const out = coachInsights({ ...baseCtx, sessions }, 20);
-    expect(out.some(i => i.id.startsWith('heart-drift'))).toBe(true);
-  });
-  it('stays quiet without shrinking recovery', () => {
-    const sessions = [session('2026-09-18', [{ id: bench, sets: [withHrr(150, 20), withHrr(160, 22), withHrr(172, 21)] }])];
-    const out = coachInsights({ ...baseCtx, sessions }, 20);
-    expect(out.some(i => i.id.startsWith('heart-drift'))).toBe(false);
-  });
-});
+// heart.drift (Appendix B, BUG-21): tests/heart-bug21.test.ts.
 
 describe('readiness.today', () => {
   const day = (offset: number) => { const d = new Date('2026-09-18T00:00:00Z'); d.setUTCDate(d.getUTCDate() - offset); return d.toISOString().slice(0, 10); };

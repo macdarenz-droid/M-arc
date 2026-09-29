@@ -7,16 +7,15 @@ import { newId } from '@/core/models';
 import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { hasEntry } from '@/brain/exposure';
-import { classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
-import { calibrateAfterSession, replayRecoveryModel } from '@/brain/recovery';
-import { exerciseHistory } from '@/brain/history';
+import { BURST_WINDOW_MS, LIVE_GAP_SEC, classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
+import { calibrateAfterSession, lastSummaryAlone, replayRecoveryModel } from '@/brain/recovery';
 import { dayKey, todayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
 import { backgroundHealthSync } from '@/slices/settings/health';
 import { connectWatch } from '@/native/watch';
 import { resyncReminders } from '@/slices/settings/reminders';
-import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, latestLiveBpm } from './heart';
+import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, preSetBpmFor } from './heart';
 
 export const REST_MIN = 15, REST_MAX = 600;
 
@@ -91,8 +90,65 @@ export function startSession(split: Split): void {
 }
 
 export function elapsedSec(a: ActiveSession, now = Date.now()): number {
-  const paused = a.pausedMs + (a.pausedAt ? now - a.pausedAt : 0);
-  return Math.max(0, Math.round((now - new Date(a.startedAt).getTime() - paused) / 1000));
+  return Math.max(0, Math.round((now - new Date(a.startedAt).getTime() - pausedTotalMs(a, now)) / 1000));
+}
+
+/** Every millisecond this session has spent paused up to `now`, the running pause included. */
+const pausedTotalMs = (a: ActiveSession, now: number): number => a.pausedMs + (a.pausedAt ? Math.max(0, now - a.pausedAt) : 0);
+
+/**
+ * BUG-19 (DATES-F5): the session's paused total at each set's commit, by set id, so a later gap
+ * can take out only the pause that fell inside it. Kept in memory, not saved: after an app restart
+ * a gap in a session that has paused is unknown, and plan scenario 6 then marks it delayed.
+ */
+const pausedAtCommit = new Map<string, number>();
+
+/** Paused ms inside the gap since a commit, or null when it cannot be known (see pausedAtCommit). */
+function pausedSince(a: ActiveSession, setId: string | undefined, sinceMs: number, now: number): number | null {
+  const total = pausedTotalMs(a, now);
+  if (total === 0) return 0;
+  const before = setId != null ? pausedAtCommit.get(setId) : undefined;
+  if (before == null) return null;
+  return Math.max(0, Math.min(now - sinceMs, total - before));
+}
+
+/**
+ * BUG-19 (DATES-F5): a set's own working time. A timed set says it; a rep set is 3 s a rep, the
+ * self-selected pace (1.5 s up, 1.5 s down) in Hermes et al. 2020, PeerJ 8:e8697.
+ */
+export const SEC_PER_REP = 3;
+export const setWorkSec = (set: Pick<LoggedSet, 'reps' | 'durationSec'>): number => set.durationSec ?? (set.reps ?? 0) * SEC_PER_REP;
+
+/**
+ * BUG-19 (DATES-F1): Finish more than this long after the last set was a forgotten Finish: the
+ * plan's longest plausible gap between two live commits (LIVE_GAP_SEC, 6.17.2 :815).
+ */
+export const FORGOT_FINISH_SEC = LIVE_GAP_SEC[1];
+/** ...and the session then ends this long after the last set: re-racking, a stretch, the walk out. */
+export const FINISH_MARGIN_SEC = 5 * 60;
+
+export interface FinishTiming { endedAtMs: number; durationSec: number; trimmed: boolean }
+
+/**
+ * BUG-19 (DATES-F1, DATES-F2): when the session ended and how long it trained, without pauses.
+ * Finishing soon after the last set ends it now. Finishing long after ends it at the last set plus
+ * FINISH_MARGIN_SEC, so a forgotten Finish never saves the hours in between. The finish sheet and
+ * finishSession both read this, so the sheet shows what is saved.
+ */
+export function finishTiming(a: ActiveSession, now = Date.now()): FinishTiming {
+  const full = elapsedSec(a, now);
+  let last: { id?: string; ms: number } | undefined;
+  for (const e of a.entries) for (const x of e.sets) {
+    const ms = x.at ? Date.parse(x.at) : NaN;
+    if (Number.isFinite(ms) && ms <= now && (!last || ms > last.ms)) last = { id: x.id, ms };
+  }
+  if (!last || now - last.ms <= FORGOT_FINISH_SEC * 1000) return { endedAtMs: now, durationSec: full, trimmed: false };
+  const endedAtMs = last.ms + FINISH_MARGIN_SEC * 1000;
+  // Paused before the last set: known from its commit, else at least what the gap cannot hold.
+  const known = last.id != null ? pausedAtCommit.get(last.id) : undefined;
+  const pausedBefore = pausedTotalMs(a, now) === 0 ? 0 : known ?? Math.max(0, pausedTotalMs(a, now) - (now - last.ms));
+  const activeAtLast = Math.max(0, Math.round((last.ms - Date.parse(a.startedAt) - pausedBefore) / 1000));
+  return { endedAtMs, durationSec: Math.min(full, activeAtLast + FINISH_MARGIN_SEC), trimmed: true };
 }
 
 export function pauseSession(): void {
@@ -132,9 +188,9 @@ export function setSet(entry: number, index: number, patch: Partial<LoggedSet>):
   });
 }
 
-/** Every already-committed set's timestamp, oldest first, used to judge the next commit's timing. */
-function committedTimestamps(a: ActiveSession): number[] {
-  return a.entries.flatMap(e => e.sets.map(s => s.at)).filter((x): x is string => !!x).map(t => new Date(t).getTime()).sort((x, y) => x - y);
+/** Every already-committed set's time and id, oldest first, used to judge the next commit's timing. */
+function committedTimestamps(a: ActiveSession): Array<{ id?: string; t: number }> {
+  return a.entries.flatMap(e => e.sets).filter(s => !!s.at).map(s => ({ id: s.id, t: new Date(s.at!).getTime() })).sort((x, y) => x.t - y.t);
 }
 
 /**
@@ -160,15 +216,26 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   if (isCommitted(set)) return true;
   const action = opts.actionAt ? Date.parse(opts.actionAt) : NaN;
   const now = Number.isFinite(action) ? Math.min(action, Date.now()) : Date.now();
-  const prior = committedTimestamps(a).filter(t => t <= now);
-  const last = prior[prior.length - 1];
-  const gapSec = last != null ? Math.round((now - last) / 1000) : null;
-  const burstCount = prior.filter(t => now - t <= 15_000).length + 1;
-  const fidelity = classifySetFidelity(gapSec, burstCount);
+  const prior = committedTimestamps(a).filter(p => p.t <= now);
+  const lastCommit = prior[prior.length - 1];
+  const last = lastCommit?.t;
+  // BUG-19 (DATES-F5): a Pause the person tapped is not rest, and not a late log either (plan
+  // scenario 6). A gap whose pause is unknown is delayed and gets no rest.
+  const paused = lastCommit ? pausedSince(a, lastCommit.id, lastCommit.t, now) : 0;
+  const gapSec = last != null && paused != null ? Math.round((now - last - paused) / 1000) : null;
+  const burstCount = prior.filter(p => now - p.t <= BURST_WINDOW_MS).length + 1;
+  const fidelity = last != null && paused == null ? 'delayed' : classifySetFidelity(gapSec, burstCount);
   const startedAtMs = new Date(a.startedAt).getTime();
   const heart = fidelity === 'live' ? heartForSet(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)) : undefined;
-  setSetById(setId, { at: new Date(now).toISOString(), restSec: gapSec != null ? Math.min(600, Math.max(0, gapSec)) : undefined, fidelity, heart, status: 'committed' });
-  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') startRest(state.value.preferences.restDefaultSec, set.effort, latestLiveBpm(), now);
+  // BUG-19 (DATES-F5): rest ends when this set starts, so its own working time comes off the gap.
+  const restSec = gapSec != null ? Math.min(REST_MAX, Math.max(0, gapSec - setWorkSec(set))) : undefined;
+  pausedAtCommit.set(setId, pausedTotalMs(a, now));
+  setSetById(setId, { at: new Date(now).toISOString(), restSec, fidelity, heart, status: 'committed' });
+  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') {
+    startRest(state.value.preferences.restDefaultSec, set.effort, preSetBpmFor(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)), now);
+    const entry = a.entries.find(e => e.sets.some(x => x.id === setId));
+    if (entry) restStartedBy = { setId, exerciseId: entry.exerciseId };
+  }
   void haptic.confirm();
   return true;
 }
@@ -295,6 +362,7 @@ export function substituteEntry(entry: number, ex: Exercise): void {
 export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {
   const total = Math.max(REST_MIN, Math.min(REST_MAX, sec));
   const endsAt = from + total * 1000;
+  restStartedBy = null;
   // Paused: hold the full rest until resume (UI-19); resume schedules it.
   if (active()?.pausedAt) {
     patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, effort, preSetBpm, pausedRemainingSec: total } }));
@@ -302,6 +370,36 @@ export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?:
   }
   patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, effort, preSetBpm } }));
   if (endsAt > Date.now()) void scheduleRestDone(endsAt);
+}
+
+/**
+ * BUG-21 (D-A1 point 4, review r2): the set whose commit started the running rest, kept in memory
+ * only (never in RestState or storage). After an app restart it is gone, and the timer is the floor.
+ */
+let restStartedBy: { setId: string; exerciseId: string } | null = null;
+
+/**
+ * BUG-21 (D-A1 point 4): the user's timer is the floor for this rest unless the set that started it
+ * is known (restStartedBy), still there, still a committed live working set of the same exercise,
+ * and that exercise is an accessory. Deleting the set, marking it a warm-up, removing its exercise
+ * or substituting it, a restart, or an unknown exercise all keep the timer as the floor.
+ */
+export function restTimerIsFloor(a: ActiveSession, custom: Exercise[]): boolean {
+  const rec = restStartedBy;
+  if (!a.rest || !rec) return true;
+  const entry = a.entries.find(e => e.sets.some(x => x.id === rec.setId));
+  const set = entry?.sets.find(x => x.id === rec.setId);
+  if (!entry || !set || entry.exerciseId !== rec.exerciseId) return true;
+  if (!isCommitted(set) || set.kind === 'warmup' || (set.fidelity ?? 'live') !== 'live') return true;
+  return findExercise(entry.exerciseId, custom)?.role !== 'accessory';
+}
+
+/**
+ * BUG-21 (D-A1 point 4, App A.1): heart rate may end an accessory's rest early, never a main
+ * lift's. When the timer is the floor (restTimerIsFloor), the rest ends when it runs out.
+ */
+export function restDone(timeDone: boolean, heartReady: boolean, timerIsFloor: boolean): boolean {
+  return timeDone || (heartReady && !timerIsFloor);
 }
 
 export function adjustRest(deltaSec: number): void {
@@ -321,6 +419,7 @@ export function adjustRest(deltaSec: number): void {
 
 export function stopRest(): void {
   patchActive(a => ({ ...a, rest: undefined }));
+  restStartedBy = null;
   void cancelRestDone();
 }
 
@@ -412,19 +511,25 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
   const a = active();
   if (!a) return null;
   const split = state.value.splits.find(s => s.id === a.splitId);
-  const now = new Date();
+  const nowMs = Date.now();
+  const timing = finishTiming(a, nowMs);
   const exercises = a.entries
     .filter(e => !e.skipped)
     .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}) }))
     .filter(e => e.sets.length);
-  const workingSets = exercises.flatMap(e => e.sets);
+  // BUG-19 (DATES-F3): only working sets that were committed carry timing evidence. A pre-filled
+  // warm-up or a set that was typed but never committed has no time of its own.
+  const workingSets = exercises.flatMap(e => e.sets).filter(s => s.kind !== 'warmup' && !!s.at);
   const logging = liveSessionLogging({
     setFidelities: workingSets.map(s => s.fidelity ?? 'live'),
+    commitMs: workingSets.map(s => Date.parse(s.at!)),
     startedAt: a.startedAt,
-    endedAt: now.toISOString(),
-    loggedDurationSec: elapsedSec(a, now.getTime()),
+    endedAt: new Date(timing.endedAtMs).toISOString(),
+    loggedAt: new Date(nowMs).toISOString(),
+    loggedDurationSec: timing.durationSec,
     workingSetCount: workingSets.length,
   });
+  restStartedBy = null;
   const session: Session = finishHeartCapture({
     id: a.id ?? newId('s'),
     splitId: a.splitId,
@@ -432,7 +537,8 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     day: dayKey(logging.trainedAt),
     startedAt: logging.trainedAt,
     endedAt: logging.trainedEndAt,
-    durationSec: Math.max(0, Math.round((new Date(logging.trainedEndAt).getTime() - new Date(logging.trainedAt).getTime()) / 1000)),
+    // BUG-19 (DATES-F2): the training time the finish sheet showed, pauses left out.
+    durationSec: timing.durationSec,
     exercises,
     logging,
     gymId: a.gymId ?? state.value.units.activeGymId,
@@ -449,9 +555,10 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
       ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: templateFromSession(a, split, s.escobar.todayOverride) }))
       : s.splits,
     // QA-R2b-5: the prediction at finish sees the whole history, like the number the app showed.
-    recoveryModel: exercises.length ? calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => { const h = exerciseHistory(s.sessions, id, s.customExercises); return h[h.length - 1]; }) : s.recoveryModel,
+    recoveryModel: exercises.length ? calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => lastSummaryAlone(s.sessions, id, s.customExercises)) : s.recoveryModel,
   }));
   flushSave();
+  pausedAtCommit.clear();
   // QA8-3: a reminder scheduled before this session started may still be queued for today.
   void resyncReminders();
   void cancelRestDone();
@@ -512,7 +619,9 @@ export function logPastSession(input: { splitId: string; trainedAtLocal: string;
 
 export function discardSession(): void {
   update(s => ({ ...s, active: null }));
+  pausedAtCommit.clear();
   flushSave();
   void cancelRestDone();
   discardHeartCapture();
+  restStartedBy = null;
 }

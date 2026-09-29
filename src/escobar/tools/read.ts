@@ -25,7 +25,7 @@ import { postSessionInsights } from '@/brain/coach/post';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { daysSinceLastSession, plannedThisWeek, trainingStreak, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
 import { bodyWeightResolver } from '@/brain/bodyweight';
-import { restingHr, hrMax, zones, effortMismatch, intraSessionDrift } from '@/brain/heart';
+import { restingHr, hrMax, zones, effortMismatch, sessionDrift } from '@/brain/heart';
 import { substitutesFor } from '@/brain/substitute';
 import { pickCue, equipmentGroup } from '@/brain/coach/cues';
 import { flagsForSet } from '@/brain/fidelity';
@@ -380,9 +380,12 @@ export function getHeartSession(input: { sessionId?: string }, ctx: ToolCtx) {
   if (!x.heart) return { sessionId: x.id, heart: null, note: 'No heart data was recorded for this session.' };
   const rest = restingHr(s.healthDays, s.profile, x.day);
   const max = hrMax(s.profile, null, ctx.now);
-  const allSets = x.exercises.flatMap(e => e.sets);
-  const drift = intraSessionDrift(allSets);
-  const mismatch = effortMismatch(allSets);
+  // BUG-21: the same drift and effort-mismatch the coach notes use (Appendix B, D-A1).
+  const startMs = Date.parse(x.startedAt);
+  const setAtSec = x.logging?.timingTrusted === false ? [] : x.exercises.flatMap(e => e.sets)
+    .filter(st => st.kind !== 'warmup' && (st.fidelity ?? 'live') === 'live' && !!st.at).map(st => (Date.parse(st.at!) - startMs) / 1000);
+  const drift = sessionDrift({ series: ctx.heartSeries?.(x.id) ?? [], sessionSec: x.durationSec, setAtSec, restingHrBpm: rest, hrMaxBpm: max.bpm });
+  const mismatch = effortMismatch(x.exercises);
   return capJson({
     sessionId: x.id, day: x.day, split: x.splitName,
     avgBpm: x.heart.avgBpm, maxBpm: x.heart.maxBpm, minBpm: x.heart.minBpm, coverage: r2(x.heart.coverage),
