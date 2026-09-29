@@ -3,7 +3,8 @@
  * reps it is good for. Pure: the rung is chosen from the menu, the reps are re-solved for that rung at the
  * same estimated strength and effort, and the goal sets the jump cap, the effort and the fallback.
  */
-import type { EquipmentProfile, LoadUnit } from '@/core/models';
+import type { Effort, EquipmentProfile, LoadUnit } from '@/core/models';
+import { RIR_BY_EFFORT } from './e1rm';
 import { kgToDisplay } from '@/core/units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 
@@ -169,4 +170,109 @@ function stepDown(input: RungInput, rungs: number[], lo: number, hi: number, at:
   if (kg >= input.topKg - KG_EPS) return { kind: 'down', kg: input.topKg, repWindow: [lo, lo], text: `Nothing lighter here: ${at(input.topKg)} for ${lo}.`, repsLabel: String(lo) };
   const w = window(input, kg, lo, hi);
   return { kind: 'down', kg, repWindow: w.repWindow, text: `${at(kg)} for ${w.label}.`, repsLabel: w.label, setReps: w.setReps };
+}
+
+/** LT-3 (§4): what the rest of the sets become after set 1. */
+export type LiveKind = 'keep' | 'above' | 'reps' | 'drop' | 'stay' | 'up';
+export interface LiveRetarget {
+  kind: LiveKind;
+  /** The load for sets 2..n, in kg. */
+  kg: number;
+  /** The reps for sets 2..n. */
+  reps: number;
+  /** The autoregulation action line; null when only the reps change or no prompt is allowed here. */
+  text: string | null;
+  /** Above the plan: the planned rung to go back to. */
+  back?: { kg: number; reps: number };
+}
+export interface LiveOptions {
+  /** Prior sessions of this exercise: 3 or more steps 2.5 % of the lifted load, else a flat 2.5 kg (plan 6.13). */
+  historyCount?: number;
+  /** A lighter week, an amber or red day or a cut factor (BUG-15): never a heavier load, easy sets keep the plan. */
+  holdLoad?: boolean;
+  /** Plan 6.13: prompts only where allowed (not isolation, not timed). Without them no line and no load the user did not lift (D-LT3). */
+  prompts?: boolean;
+}
+
+/**
+ * LT-3 (§4 "Live adaptation"): the placeholders for sets 2..n from set 1 as lifted, and the one line that explains them.
+ * Pure. Set 1's own load, reps and effort are the anchor (unrated = RIR 2); `target` is set 1's planned load and reps.
+ */
+export function liveRetarget(
+  sets: Array<{ kg?: number; reps?: number; effort?: Effort }>,
+  target: { kg: number; reps: number },
+  goal: GoalId,
+  role: 'main' | 'accessory',
+  menu: RungMenu | null,
+  opts: LiveOptions = {},
+): LiveRetarget | null {
+  const s1 = sets[0];
+  const kg = s1?.kg ?? 0, R = s1?.reps ?? 0;
+  if (!(kg > 0) || !(R > 0) || !(target.kg > 0) || !(target.reps > 0)) return null;
+  const g = GOAL_BY_ID[goal];
+  const [lo, hi] = role === 'main' ? g.mainReps : g.accessoryReps;
+  const unit = menu?.unit ?? 'kg';
+  const v = (x: number) => kgToDisplay(x, unit);
+  const at = (x: number) => `${v(x)} ${unit}`;
+  const rirObs = RIR_BY_EFFORT[s1!.effort ?? 'ideal'];
+  const prompts = opts.prompts !== false;
+  const above = kg > target.kg + KG_EPS;
+  const atPlan = !above && kg >= target.kg - KG_EPS;
+  // §4: ideal keeps the reps, max drops one, easy adds one, inside the goal's top; a held day keeps the plan's reps.
+  const repsRule = (): number => {
+    if (s1!.effort === 'max') return Math.max(1, R - 1);
+    if (s1!.effort === 'easy') return opts.holdLoad ? (atPlan ? target.reps : Math.min(hi, R)) : Math.min(hi, R + 1);
+    return Math.max(1, Math.min(hi, R));
+  };
+  const reps = (): LiveRetarget => {
+    const n = repsRule();
+    // An easy set at the plan's load gets a reps line, never a load line: reps first, then load (§4, D-LT3).
+    const easyAtPlan = prompts && atPlan && s1!.effort === 'easy' && R >= target.reps;
+    const text = !easyAtPlan ? null : opts.holdLoad ? `Keep ${at(kg)} for the next set.` : `Keep ${at(kg)} and do ${n} reps for the next set: reps first, then load.`;
+    return { kind: 'reps', kg, reps: n, text };
+  };
+
+  if (above) {
+    // The reps left at the lifted load, at the goal's shown effort. Never "add load" above the plan.
+    const f = Math.floor(R + rirObs - rirMid(goal) + REP_EPS);
+    if (f >= lo) {
+      const n = Math.min(hi, f);
+      return { kind: 'keep', kg, reps: n, text: prompts ? `Keep ${at(kg)} for the rest: ${n} reps a set.` : null };
+    }
+    const back = { kg: target.kg, reps: target.reps };
+    if (f >= 1) {
+      return { kind: 'above', kg, reps: f, back, text: prompts ? `${at(kg)} is above today's plan: about ${f} clean reps. Back to ${v(target.kg)} for ${target.reps}, or stay at ${v(kg)} for ${f}.` : null };
+    }
+    // D-LT3: nothing clean is left at the lifted load, so the only way on is the planned rung.
+    if (!prompts) return reps();
+    return { kind: 'above', kg: target.kg, reps: target.reps, back, text: `Back to ${v(target.kg)} for ${target.reps}.` };
+  }
+
+  const step = (opts.historyCount ?? 0) >= 3 ? kg * 0.025 : 2.5;
+  const rungs = menu?.rungsKg ?? [];
+  // Plan 6.13, max and reps under target − 1: step down from the lifted load, never to the same rung (COACHRULES-F5).
+  if (s1!.effort === 'max' && R < target.reps - 1) {
+    if (!prompts) return reps();
+    const down = rungs.length
+      ? [...rungs].reverse().find(x => x <= kg - step + KG_EPS && x < kg - KG_EPS) ?? [...rungs].reverse().find(x => x < kg - KG_EPS)
+      : ((x: number) => (x > 0 ? x : undefined))(Math.min(Math.floor((kg - step + 0.01) / 2.5) * 2.5, Math.floor((kg - 0.01) / 2.5) * 2.5));
+    if (down == null) {
+      return { kind: 'stay', kg, reps: Math.max(1, R - 1), text: `Stay at ${at(kg)}, rest a little longer, and stop each set a rep short of max.` };
+    }
+    const n = Math.max(1, Math.min(hi, Math.floor(repsAt(kg, R, rirObs, down, rirMid(goal)) + REP_EPS)));
+    return { kind: 'drop', kg: down, reps: n, text: `Drop to ${at(down)} and keep the rest at ideal effort.` };
+  }
+  // Below the plan and easy at the planned reps: step up from the lifted load, never past the planned rung.
+  // At the plan's load an easy set adds reps instead: reps first, load next session (§4).
+  if (!atPlan && s1!.effort === 'easy' && R >= target.reps && prompts && !opts.holdLoad) {
+    const upRaw = rungs.length
+      ? rungs.find(x => x >= kg + step - KG_EPS && x > kg + KG_EPS) ?? rungs.find(x => x > kg + KG_EPS)
+      : Math.max(Math.ceil((kg + step - 0.01) / 2.5) * 2.5, Math.ceil((kg + 0.01) / 2.5) * 2.5);
+    if (upRaw != null) {
+      const up = Math.min(upRaw, target.kg);
+      const n = Math.max(1, Math.min(hi, Math.floor(repsAt(kg, R, rirObs, up, rirMid(goal)) + REP_EPS)));
+      return { kind: 'up', kg: up, reps: n, text: `Try ${at(up)} for the next set.` };
+    }
+  }
+  return reps();
 }

@@ -7,7 +7,7 @@ import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload, bodyWeightAt } from '@/app/selectors';
 import { checkInDraft, saveCheckIn } from '@/slices/readiness/checkIn';
-import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
+import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput, type WeightChange } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
 import { FormGuideSheet } from '@/slices/formguide/lazy';
@@ -25,6 +25,11 @@ import { liveRecordStatus } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
+// LT-3: the live retarget owns the placeholders for sets 2..n; set 1's target is kept at its commit.
+import { liveRetarget } from '@/brain/retarget';
+import { loadableValues } from '@/brain/units';
+import { KG_PER_LB } from '@/core/units';
+import { setEntryTarget } from './session';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
 import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, restDone, restTimerIsFloor, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, finishTiming, FINISH_MARGIN_SEC, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
@@ -42,8 +47,8 @@ import { restAlertsDenied } from '@/native/notifications';
 import { WatchSheet } from '@/slices/settings/Watch';
 import { recentLiveBpms } from './heart';
 import { usePalaceFocus } from '@/escobar/palace/focus';
-import { activeGymId, addGym, profileFor, setActiveGym, setEquipmentUnit, setExerciseUnit, setGymDefaultUnit, renameGym } from './units';
-import { formatLoadable, formatPerSide, inferGym, loadableNear, plateBreakdown } from '@/brain/units';
+import { activeGymId, addGym, mergeAskAnswer, profileFor, saveProfile, setActiveGym, setEquipmentUnit, setExerciseUnit, setGymDefaultUnit, renameGym } from './units';
+import { formatLoadable, formatPerSide, inferGym, loadableNear, loadMenu, loggedLoads, plateBreakdown, type LoadMenu } from '@/brain/units';
 import { setUnitSuspect, suspectAlternative } from '@/brain/fidelity';
 import { equipmentGroup } from '@/brain/coach/cues';
 import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
@@ -76,6 +81,28 @@ const startingSplit = signal<Split | null>(null);
 export function requestStart(split: Split): void { startingSplit.value = split; }
 /** "Skip" on the check-in sheet, so it doesn't reappear for the rest of this app session. */
 const checkInDismissed = signal(false);
+/** LT-4 (§2): "exercise|gym" pairs the ask-weight chip was dismissed for, or answered, this run —
+ * so it never asks twice in one session. An answered pair also elevates the menu to `known`
+ * (loadMenu's precedence, `src/brain/units.ts`), which alone keeps it from asking again. */
+const askDismissed = signal<Set<string>>(new Set());
+const askKey = (gymId: string, exerciseId: string): string => `${gymId}|${exerciseId}`;
+
+/** LT-4 (§2): the chip fires only when the menu is unknown and the snapped jump broke the goal's
+ * cap — the `earn` mode, or the `hold` lever whose text names the jump (never the "nothing heavier
+ * here" lever, which is not a broken cap: `src/brain/retarget.ts`'s `chooseRung`) — and only for a
+ * profile §2's merge rule actually covers (a ladder or a stack). A barbell/Smith-machine profile
+ * (`plates`/`barKg`, no `ladder`, no `step`) is never asked about (review r1: an invariant, not an
+ * assumption — the default plate set is fine-grained, but nothing else stopped it from firing). */
+export function shouldAskWeight(next: Pick<Suggestion, 'mode' | 'menuConfidence' | 'reason'>, profile: Pick<EquipmentProfile, 'ladder' | 'step'>): boolean {
+  if (next.menuConfidence !== 'assumed') return false;
+  if (!profile.ladder?.length && !(profile.step != null && profile.step > 0)) return false;
+  return next.mode === 'earn' || (next.mode === 'hold' && next.reason.includes('is too big a jump'));
+}
+
+/** LT-4 (§2): up to two menu rungs above `topKg` (canonical kg), in the menu's own unit, for the ask chip. */
+export function askCandidates(menu: Pick<LoadMenu, 'rungsKg' | 'unit'>, topKg: number): number[] {
+  return menu.rungsKg.filter(v => v > topKg + 0.011).slice(0, 2).map(v => kgToDisplay(v, menu.unit));
+}
 /** A9: the open card's next set to do, "62.5 kg × 8" (the exact A1 label), for the rest banner. */
 export const nextUpHint = signal<string | null>(null);
 
@@ -525,6 +552,32 @@ function LiveClock({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
   return <h1 class="num">{formatClock(elapsedSec(a, nowMs.value))}</h1>;
 }
 
+/** LT-4 (§2): "Which weight comes after {current} here?" — chips from the menu plus "Other", and a way
+ * to say not now. Nothing is saved until a chip or "Other" answer is confirmed. */
+function AskWeightChip({ current, unit, candidates, onAnswer, onDismiss }: { current: number; unit: LoadUnit; candidates: number[]; onAnswer: (value: number) => void; onDismiss: () => void }) {
+  const [other, setOther] = useState(false);
+  const [draft, setDraft] = useState<WeightChange | undefined>(undefined);
+  // review r1: "after" the current load — at or below it is never a valid answer, so Save stays off.
+  const tooLow = other && draft?.entered != null && !(draft.entered.value > current);
+  return (
+    <div class="stack-sm" data-testid="ask-weight-chip">
+      <p class="hint">Which weight comes after {current} {unit} here?</p>
+      <div class="wrap">
+        {!other && candidates.map(c => <Chip key={c} onClick={() => onAnswer(c)}>{c} {unit}</Chip>)}
+        {!other && <Chip onClick={() => setOther(true)}>Other</Chip>}
+        {other && (
+          <>
+            <WeightInput kg={draft?.kg} entered={draft?.entered} entryUnit={unit} placeholder={unit} ariaLabel={`Next weight in ${unit}`} onChange={setDraft} />
+            <Button variant="primary" disabled={!draft?.entered || !(draft.entered.value > current)} onClick={() => { if (draft?.entered && draft.entered.value > current) onAnswer(draft.entered.value); }}>Save</Button>
+          </>
+        )}
+        <Chip onClick={onDismiss}>Not now</Chip>
+      </div>
+      {tooLow && <p class="hint" style={{ color: 'var(--warning)' }}>Must be heavier than {current} {unit}.</p>}
+    </div>
+  );
+}
+
 function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; entry: NonNullable<ReturnType<typeof active>>['entries'][number]; open: boolean; onToggle: () => void; onDone: () => void }) {
   const s = state.value;
   const u = unit.value;
@@ -537,9 +590,27 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const loaded = mode === 'weighted' || mode === 'conditioning';
   const eu = loaded ? profile.unit : u;
   const gymId = s.active?.gymId;
+  const effectiveGymId = gymId ?? activeGymId();
   const memoDeps = [s.sessions, s.customExercises, s.units, s.goal, gymId, entry, today.value, todayReadiness.value, activeDeload.value, s.deload, recoveryPct];
+  // LT-4: the gym's load menu (LT-1), so an increase sees the loads really learned here and the
+  // suggestion carries `menuConfidence` for the ask chip below.
+  const equipMenu = useMemo(() => loadMenu(entry.exerciseId, effectiveGymId, s.units, ex, loggedLoads(s.sessions, entry.exerciseId, s.customExercises)), memoDeps);
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
-  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}), ...(entry.plannedId && entry.plannedId !== entry.exerciseId ? { replacedExerciseId: entry.plannedId } : {}) }), memoDeps);
+  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, menu: equipMenu, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}), ...(entry.plannedId && entry.plannedId !== entry.exerciseId ? { replacedExerciseId: entry.plannedId } : {}) }), memoDeps);
+  // LT-4 (§2): the one-time ask, only on an assumed menu whose snapped jump broke the goal's cap.
+  const askThisKey = askKey(effectiveGymId, entry.exerciseId);
+  const askVisible = mode === 'weighted' && shouldAskWeight(next, equipMenu.profile) && !askDismissed.value.has(askThisKey);
+  const askCurrent = next.value ?? kgToDisplay(next.kg ?? 0, equipMenu.unit);
+  const askAnswer = (value: number) => {
+    if (!(value > askCurrent)) return; // review r1: "after" the current load, never at or below it.
+    // equipMenu.profile, not `profile`: on an assumed menu `profileFor` can still pick up a known
+    // profile from another gym (resolveProfile's rank 2), whose ladder belongs to that gym, not this
+    // one. `equipMenu.profile` is always the LT-1 precedence's own resolved-or-default profile.
+    saveProfile('exercise', entry.exerciseId, mergeAskAnswer(equipMenu.profile, askCurrent, value), effectiveGymId);
+    askDismissed.value = new Set(askDismissed.value).add(askThisKey);
+    showToast('Saved the next weight for this gym');
+  };
+  const askDismiss = () => { askDismissed.value = new Set(askDismissed.value).add(askThisKey); };
   const [menu, setMenu] = useState(false);
   const [noteDraft, setNoteDraft] = useState<string | null>(null);
   const [stickyDraft, setStickyDraft] = useState<string | null>(null);
@@ -606,9 +677,17 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const firstTarget = next.sets[0];
   const aside = useMemo(() => setAsideRows(next, entry.sets), [next, entry.sets]);
   const asideCount = aside.filter(Boolean).length;
+  // LT-3 (§4, D-LT3): every loaded, non-timed lift; a load the user did not lift, and every line, only where 6.13 allows a prompt.
+  const planned1 = entry.target ?? (firstTarget?.kg != null && firstTarget?.reps != null ? { kg: firstTarget.kg, reps: firstTarget.reps } : null);
+  const retarget = useMemo(() => (mode === 'weighted' && firstSet && isCommitted(firstSet) && planned1
+    ? liveRetarget([firstSet], planned1, s.goal, ex?.role === 'main' ? 'main' : 'accessory', { profile, unit: profile.unit, rungsKg: loadableValues(profile).map(v => Math.round(v * (profile.unit === 'lb' ? KG_PER_LB : 1) * 1000) / 1000) }, { historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length, holdLoad: !!next.holdLoad, prompts: ex?.role === 'main' })
+    : null), [...memoDeps, planned1?.kg, planned1?.reps]);
+  useEffect(() => { if (planned1 && !entry.target && firstSet && isCommitted(firstSet) && mode === 'weighted') setEntryTarget(entry.id, planned1); }, [entry.id, entry.target, firstSet?.at, planned1?.kg, planned1?.reps]);
   const autoreg = useMemo(() => (ex?.role === 'main' && mode === 'weighted' && firstSet && firstTarget?.kg != null && firstTarget?.reps != null
-    ? autoregulationSuggestion({ exerciseId: entry.exerciseId, exerciseName: entry.name, firstSet, targetKg: firstTarget.kg, targetReps: firstTarget.reps, historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length, equipment: profile, holdLoad: !!next.holdLoad })
-    : null), memoDeps);
+    ? autoregulationSuggestion({ exerciseId: entry.exerciseId, exerciseName: entry.name, firstSet, targetKg: planned1?.kg ?? firstTarget.kg, targetReps: planned1?.reps ?? firstTarget.reps, historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length, equipment: profile, holdLoad: !!next.holdLoad, retarget })
+    : null), [...memoDeps, retarget]);
+  /** LT-3: a working set after set 1 that is not logged yet takes the live retarget's load and reps. */
+  const liveTarget = <T extends { kg: number | null; reps: number | null }>(t: T | undefined, wj: number, set: LoggedSet): T | undefined => (t && retarget && wj >= 1 && !isCommitted(set) ? { ...t, kg: retarget.kg, reps: retarget.reps } : t);
   // D10 / BR-09: warm-ups ramp to today's first working set, not to the e1RM.
   const workingKg = ex?.role === 'main' && mode === 'weighted' ? next.sets[0]?.kg ?? next.kg ?? 0 : 0;
   const warmup = useMemo(() => warmupOffer(workingKg, profile), [...memoDeps, workingKg]);
@@ -661,13 +740,13 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
       if (set.kind === 'warmup') { warmups++; continue; }
       if (isCommitted(set) || aside[j]) continue;
       const wj = j - warmups;
-      const target = next.sets[Math.min(wj, next.sets.length - 1)];
+      const target = liveTarget(next.sets[Math.min(wj, next.sets.length - 1)], wj, set);
       core = nextUpCore(targetKgPh(target, perSet[j]!.prev, eu, mode), eu, targetRepsPh(target, perSet[j]!.prev));
       break;
     }
     nextUpHint.value = core;
     return () => { nextUpHint.value = null; };
-  }, [open, isTimed, mode, eu, entry.sets, next.sets, perSet, aside]);
+  }, [open, isTimed, mode, eu, entry.sets, next.sets, perSet, aside, retarget]);
 
   return (
     <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet skipped' : ''}`} onClick={e => { const c = e.currentTarget, t = String(Date.now()); if ((e.target as Element).closest('.effort button')) { c.dataset.hold = t; setTimeout(() => { if (c.dataset.hold === t) delete c.dataset.hold; }, 2000); } }}>
@@ -685,6 +764,9 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         {(open || closing) && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
           {autoreg && <p class="hint" style={{ color: 'var(--accent-text)' }}>{autoreg.action}</p>}
+          {askVisible && (
+            <AskWeightChip current={askCurrent} unit={equipMenu.unit} candidates={askCandidates(equipMenu, next.kg ?? 0)} onAnswer={askAnswer} onDismiss={askDismiss} />
+          )}
           {ex && recoveryPct != null && recoveryPct < 60 && (
             <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <button type="button" class="link-btn" onClick={() => setSubOpen(true)}>See substitutes</button> or ease off today.</p>
           )}
@@ -722,7 +804,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             const { prev, pr, prUnconfirmed } = perSet[j]!;
             // Warm-ups sit in front: working targets line up with the working sets.
             const wj = j - entry.sets.slice(0, j).filter(x => x.kind === 'warmup').length;
-            const target = set.kind === 'warmup' || aside[j] ? undefined : next.sets[Math.min(wj, next.sets.length - 1)];
+            const target = set.kind === 'warmup' || aside[j] ? undefined : liveTarget(next.sets[Math.min(wj, next.sets.length - 1)], wj, set);
             // A1: the first not-yet-logged, non-warmup working set on this card can be tapped to
             // fill and log itself with exactly the values its own placeholders show.
             const core = !isTimed && mode !== 'conditioning' && !aside[j] ? nextUpCore(targetKgPh(target, prev, eu, mode), eu, targetRepsPh(target, prev)) : null;
@@ -1074,7 +1156,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const top = (Object.entries(emphasis) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
   const priorSessions = s.sessions.filter(x => x.id !== session.id);
-  const debrief = sets > 0 ? postSessionInsights({ session, priorSessions, custom: s.customExercises, isStrengthGoal: s.goal === 'strength', unit: s.preferences.weightUnit }) : [];
+  const debrief = sets > 0 ? postSessionInsights({ session, priorSessions, custom: s.customExercises, isStrengthGoal: s.goal === 'strength', unit: s.preferences.weightUnit, goal: s.goal }) : [];
   /** F3.5: a "did you know" cue on the finish screen, for whichever main lift the session actually trained. */
   const learnExercise = findExercise((session.exercises.find(e => findExercise(e.exerciseId, s.customExercises)?.role === 'main') ?? session.exercises[0])?.exerciseId ?? '', s.customExercises);
   const learnCue = learnExercise ? pickCue(learnExercise, 'learn', `${session.day}|${learnExercise.id}`) : null;
