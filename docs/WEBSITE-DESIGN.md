@@ -237,6 +237,7 @@ Numerals: `font-variant-numeric: tabular-nums` (and `font-feature-settings: "tnu
 | Hero copy column | 560px |
 | Story steps | 460px |
 | Section copy (`.copy`) | the 5-column track (about 452px at 1440) |
+| Story steps, section copy and icon rows at 641 to 900px | 640px (one column there; without the cap the lines ran to about 110 characters) |
 | Lead paragraphs | 36em |
 | Your data and Install intros | 640px |
 | /privacy/ and /install/ prose | 640px (about 70 characters at 17px) |
@@ -288,7 +289,7 @@ Screen layers: three `img.layer` at `position: absolute; inset: 0; object-fit: c
 
 | Property | Value |
 |---|---|
-| Grid | `.pg { grid-template-columns: 6fr 6fr; column-gap: 24px }`; hero copy row 1 col 1 (`min-height: 72svh`, content centred, padding 48px 0 64px, max-width 560px); `.col-pin` col 2 rows 1 to 3; `.story-bg` and `.story` row 2 col 1 |
+| Grid | `.pg { grid-template-columns: 6fr 6fr; column-gap: 24px }`; hero copy row 1 col 1 (`min-height: 64svh`, content centred, padding 48px 0 64px, max-width 560px; 72svh left about 170px of empty column under the caption at 1440x900); `.col-pin` col 2 rows 1 to 3; `.story-bg` and `.story` row 2 col 1 |
 | Pin | `.pin { position: sticky; top: max(calc(50vh - 382px), 8px); contain: layout; padding: 48px 64px }`. 382px is half the pin's box: a 320px phone is (320 - 20) × 2.1641 + 20 = 669px tall, plus 96px padding is 765px, half of which is 382px (the render's 394px was 12px off; section 15), so the phone centres in tall viewports and sits 8px under the top edge in short ones |
 | Phone | 320px wide |
 | Light | `.light { position: absolute; inset: -20%; filter: blur(60px); will-change: filter }` with two radial gradients: `50% 40% at 32% 30%` in `--light-a` and `45% 36% at 72% 66%` in `--light-b`, each fading to transparent at 70% |
@@ -296,7 +297,7 @@ Screen layers: three `img.layer` at `position: absolute; inset: 0; object-fit: c
 | Steps | `min-height: 100vh`, content centred, `padding: 32px 0`, max-width 460px; the first step `min-height: 0; padding-top: 8px` so the strip and h2 do not push it a full screen down |
 | Sticky range end | `.story { padding-bottom: max(calc(50vh - 40px), 64px) }`, so the phone leaves the viewport with the last step instead of stopping while the Train band arrives |
 | Story band | `.story-bg` spans both columns on row 2, bleeds to the viewport edges (`margin-inline: calc(50% - 50vw)`), background `--s1`, `clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%)`: the first of the two diagonal cuts. `.story` gets `padding-top: calc(var(--cut) + 48px)` |
-| Dimming | `.step:not([aria-current]) { opacity: .6 }` with a `--dur-base` transition; the active step's eyebrow turns `--accent-text` |
+| Dimming | `.step:not([aria-current]) { opacity: .8 }` with a `--dur-base` transition; the active step's eyebrow turns `--accent-text`. Not .6: that put the dimmed body copy at 3.39:1 on `--s1`; .8 keeps it at 4.87:1 (9.1) |
 
 **Phones and tablets (900px and under).** One column. The phone sits under the hero copy at 240px, then pins under the nav and shrinks so the steps can scroll beneath it.
 
@@ -350,7 +351,7 @@ On /install/, /privacy/ and 404 only steps 1 and 2 run (the page heading block u
 |---|---|---|---|
 | Story rings (Triceps 45, Chest 58) | Step 3 lights | `stroke-dasharray` from `0 100` to `--v 100` over `--dur-fill --ease-fill`, the second `--gap-rise` later | Drawn at final values |
 | Body rings (90, 97) | Tiles 40% in view | Same fill | Final values |
-| Rest banner | 40% in view | 1:30, 1:29, 1:28 at `--dur-tick` each, then `.done`: shows "Rest done. Next set." with a `scale` swell to 1.02 and back over `--dur-bounce --ease-spring-bounce` | Reads "Rest done. Next set." from the start |
+| Rest banner | 40% in view | 1:30, 1:29, 1:28 at `--dur-tick` each, then `.done`: the grid stays, the clock reads "Go", the -15 and +15 chips leave, Skip becomes "OK" and the line under reads "Rest done. Next set." (the app's own settled state), with a `scale` swell of the banner to 1.02 and back over `--dur-bounce --ease-spring-bounce` | At the done state from the start |
 | Proposal card undo bar | 40% in view | The bar's fill scales X from 1 to 0 over `--dur-undo` linear; on `transitionend` the track turns `--positive` and the label swaps from "Undo · 8 s" to "Applied" | Drained, green, "Applied" |
 | Keycap sheen | The card (or its `.st` parent) gets `.in` | `::before` sweeps `translateX(-100%)` to `100%` over `--dur-wipe`, delayed `--dur-wipe`, once | No sweep |
 | Copy button | Click | Label reads Copied for `--dur-copied`, then Copy | Same (a label change, not motion) |
@@ -410,7 +411,7 @@ Card content order: icon (24px, `--accent-text`, 16px below), `h3.h3-card`, para
 
 ### 6.8 Rest banner demo
 
-`.rest` (aria-hidden; its meaning is in the row above it): `background: --s3; border: 1px solid --border; border-top: 2px solid --border-strong; border-radius: --r3; padding: 16px 20px; max-width: 420px`. Live state: a grid `auto 1fr` with `.rest-time` "1:30" (rest-time type), `.rest-c` three chips (`min-height: 36px; padding: 0 12px; border: 1px solid --border; background: --s2; border-radius: --r1; font: 500 14px/1`) reading "-15", "+15", "Skip", and `.rest-n` "Next · 50 kg × 6" at 14px `--text2` spanning both columns. Done state: `.rest-done` "Rest done. Next set." in h3 type, `padding: 8px 0`. Strings are the app's own (Train.tsx); numbers come from the Train screenshot (50 kg × 6).
+`.rest` (aria-hidden; its meaning is in the row above it): `background: --s3; border: 1px solid --border; border-top: 2px solid --border-strong; border-radius: --r3; padding: 16px 20px; max-width: 420px`. Live state: a grid `auto 1fr` with `.rest-time` "1:30" (rest-time type), `.rest-c` three chips (`min-height: 36px; padding: 0 12px; border: 1px solid --border; background: --s2; border-radius: --r1; font: 500 14px/1`) reading "-15", "+15", "Skip", and `.rest-n` "Next · 50 kg × 6" at 14px `--text2` spanning both columns. Done state (`.rest.done`): the same grid; the clock cell reads "Go", the -15 and +15 chips are gone, the third chip reads "OK", and the line under reads "Rest done. Next set." in the same 14px `--text2`. This is the app's settled banner (Train.tsx `clockText`, `hintText`, the OK button), not a one-line replacement: a reader who arrives after the count still sees the control. Strings are the app's own (Train.tsx); numbers come from the Train screenshot (50 kg × 6).
 
 ### 6.9 Proposal card with undo bar demo
 
@@ -438,7 +439,7 @@ Inline SVG `viewBox 0 0 40 40`, 40px, `aria-hidden` (the adjacent text carries t
 
 ### 6.15 Theme row
 
-`.themes` under the install cards: `margin-top: 64px; padding-top: 32px; border-top: 1px solid --border`; one centred 15px `--text2` line, then `ul.trow` (flex, wrap, centred, gaps 24px 40px) of five `li` each with an inline lockup (24px mark with `--lk` set to the theme accent, wordmark 16px) and the theme name at 13px `--text2` beneath. The lockups are the same inline SVG mark as the nav (not the five lockup.svg files, which would cost five requests for one row). Copy: "Five themes. Silent Black, Paper, Ember, Emerald and Midnight. Switching one crossfades the whole app."
+`.themes` under the install cards: `margin-top: 64px; padding-top: 32px; border-top: 1px solid --border`; one centred 15px `--text2` line, then `ul.trow` (flex, wrap, centred, gaps 24px 40px) of five `li` each with a swatch (`.swatch`, 148x76px, `--r2`, background the theme's own `bg`, 1px border in its `border`) holding the inline lockup (24px mark with `--lk` set to the theme accent, wordmark 16px, in the theme's `text` colour, on an `--r1` chip of its `surface1`) and the theme name at 13px `--text2` beneath. The swatch colours are tokens (`--t-<theme>-bg`, `-s`, `-bd`, `-text` in tokens.css, from themes.ts) set inline on each `li`; at 16px the five marks differed only by the slash colour, and Silent Black #5e6ad2 was indistinguishable from Midnight #635bff. The lockups are the same inline SVG mark as the nav (not the five lockup.svg files, which would cost five requests for one row). Copy: "Five themes. Silent Black, Paper, Ember, Emerald and Midnight. Switching one crossfades the whole app."
 
 ### 6.16 Footer
 
@@ -446,7 +447,7 @@ Section 2.3. `.foot { background: --s1; padding: 96px 0 48px }`; row 1 flex with
 
 ### 6.17 Table (install and privacy pages)
 
-`table.facts`: full width, `border-collapse: collapse`; `th` label type (12px uppercase `--text2`), left-aligned, `padding: 12px 16px 12px 0`, 1px `--border` bottom; `td` 15px `--text`, `padding: 14px 16px 14px 0`, 1px `--border` bottom, numbers tabular; first column `white-space: nowrap` at 641 and up. At 640 and under each row becomes a block: `th, td { display: block; padding-right: 0 }`, the header row hidden with `.sr-only`, and each `td` carries its column name in `data-label` shown as a 12px label above it. `<caption class="sr-only">` on every table.
+`table.facts`: full width, `border-collapse: collapse`; `th` label type (12px uppercase `--text2`), left-aligned, `padding: 12px 16px 12px 0`, 1px `--border` bottom; `td` 15px `--text`, `padding: 14px 16px 14px 0`, 1px `--border` bottom, numbers tabular; first column `white-space: nowrap` at 641 and up on /install/; on /privacy/ it wraps at every width and the three columns are `width: 33% / 28% / 39%` (about 1.2 : 1 : 1.4) at 641 and up, so "Where it lives" and "How you remove it" get the room and the Data column no longer takes half the row. At 640 and under each row becomes a block: `th, td { display: block; padding-right: 0 }`, the header row hidden with `.sr-only`, and each `td` carries its column name in `data-label` shown as a 12px label above it. `<caption class="sr-only">` on every table.
 
 ## 7. Pages, section by section
 
@@ -458,13 +459,13 @@ Copy below is final. `__VERSION__` renders as the package.json version (37.1.0 t
 
 | | |
 |---|---|
-| Eyebrow (eyebrow-hero) | Version __VERSION__ for Android and the browser |
+| Eyebrow (eyebrow-hero) | With `SITE_APP_URL` empty: "Version __VERSION__ for Android". With it set: "Version __VERSION__ for Android and the browser" (the `<!-- if APP_URL -->` block; the first line must be true on the day it is read) |
 | h1 | A training log that knows how recovered you are. |
 | Lead | Every set you rate feeds a recovery clock for each of 24 muscles, a readiness score for the day and a target for your next session. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach. |
 | Buttons | Primary "Download for Android" to `__BASE__install/#apk`. Secondary "Read the source" to the repository. |
 | Caption | A signed APK that works offline, with no account. |
 | Phone | `shots/midnight-today.png`, eager. Alt: "The Today screen on a Push day, readiness Amber at 66, with triceps at 45% and three days from ready" |
-| Layout 1440 | Copy in the left 6fr column, max-width 560px, centred in 72svh; the phone (320px) in the right column, pinned, on the lit plane at the hero pair |
+| Layout 1440 | Copy in the left 6fr column, max-width 560px, centred in 64svh; the phone (320px) in the right column, pinned, on the lit plane at the hero pair |
 | Layout 900 | Same two columns (the break to one column is at 900 and under, so 900 itself is still two columns; at 899 the single column applies) |
 | Layout 400 | Copy first (`padding: 32px 0 40px`), then the phone at 240px on its plane, then the story band's cut |
 | Motion | The load sequence in 5.5; the phone is the pinned element of 5.2 |
@@ -539,7 +540,7 @@ Copy below is final. `__VERSION__` renders as the package.json version (37.1.0 t
 | Eyebrow | History |
 | h2 | A history you can edit. |
 | Copy | "Swipe the calendar between months, tap a day to see its sessions, open any of them to fix a set or a load. Recovery is rebuilt from history after the edit. Swipe a session to delete it and get an Undo that restores it with its heart data." / "Stats shows weekly volume, a sparkline per exercise once you have logged it twice, and records by kind: heaviest load, strength estimate, more reps at a load, most reps, longest hold, furthest carry. Share a week or a session as a card." |
-| Figures (`.duo`) | `shots/midnight-history.png`, 300px phone. Caption: "History for September 2026, trained days filled in, today outlined, and the last sessions listed under Recent: Push on Sunday the 27th, Pull on Saturday the 26th". Alt: "History, the month calendar". Then `shots/midnight-stats.png`, offset 48px. Caption: "History in Stats view: the machine chest press line falls from 95.7 on August 30 to 68.3 on September 27, last top load 50 kg, trend marked Slipping". Alt: "History, Stats view" |
+| Figures (`.duo`) | `shots/midnight-history.png`, 300px phone. Caption: "History for September 2026, trained days filled in, today outlined, and the last sessions listed under Recent: Push on Monday the 28th, Pull on Sunday the 27th". Alt: "History, the month calendar". Then `shots/midnight-stats.png`, offset 48px. Caption: "History in Stats view, the exercise progress card: the machine chest press line falls from 95.7 on August 31 to 68.3 on September 28, last top load 50 kg, 9 reps at top, trend marked Slipping". Alt: "History, Stats view" |
 | Layout 1440 | Figures 7 columns left; copy 5 right |
 | Layout 900 | Same |
 | Layout 400 | Figures stacked at 240px, then copy |
@@ -570,7 +571,7 @@ The History and Stats captions name dates and values that are true for the curre
 | Eyebrow | Install |
 | h2 | Get M/ARC. |
 | Card 1 "Android APK" (icon: arrow down to a line) | Mono line "Version __VERSION__". "Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released." Primary button "Download the APK" to `https://github.com/macdarenz-droid/M-arc/releases/latest`. Text link "Verify the signature" to `__BASE__install/#verify`. |
-| Card 2 "Add to Home Screen" (icon: square with a plus) | "Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline." Then, with `SITE_APP_URL` empty: "The web app has no public address yet. Until it does, install the APK." With it set: a secondary button "Open in the browser" to `SITE_APP_URL` instead of that sentence. |
+| Card 2 "Add to Home Screen" (icon: square with a plus) | With `SITE_APP_URL` empty: "The web app has no public address yet. When it does, this page will carry it. Chrome, Edge and Samsung Internet on Android then offer Add to Home Screen, and M/ARC installs as an app and works offline." then "Until then, install the APK." With it set: "Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline." and a secondary button "Open in the browser" to `SITE_APP_URL`. The same `<!-- if APP_URL -->` block as /install/#web: no imperative until the address exists. |
 | Card 3 "Read the source" (icon: angle brackets) | "The code is public on GitHub with the architecture notes. Every push runs typecheck, 1,487 unit tests in 116 files, run in three time zones, a production build and a visual gate across the five themes before an APK is signed." Secondary button "Source on GitHub" to the repository. |
 | Themes row | 6.15 |
 | Layout 1440 | Intro 640px; three cards `repeat(3, 1fr)`, `align-items: start`; the lit plane behind the cards at `opacity: .4` (`inset: auto 10% 15%; height: 60%`) |
@@ -679,7 +680,7 @@ The same script exposes the values to `website/copy-gate.mjs` and `website/og.mj
 
 - `website/shots.mjs` captures Today, Train, Body, History, Escobar and Settings in all five themes from a production build (`vite preview`) with the gate's legacy fixture; `website/shots-extra.mjs` adds Stats, Levels, the check-in and a live session. Both write 780x1688 PNGs (390x844 at 2x) to `website/renders/shots/<theme>-<screen>.png`.
 - Both run once per release, after the app is built, before `site:build`. The site build copies the nine Midnight files it uses (`today`, `live`, `body`, `train`, `levels`, `checkin`, `escobar`, `history`, `stats`) to `website/public/shots/` unchanged; `midnight-settings.png` is not used. The originals are never edited.
-- Known state: the Today screenshot shows a week with nothing logged ("This week 0 workouts, 0 sets, 0 records") because the fixture's newest session is the day before the capture. The fix is a fixture with a session in the capture week, in `shots.mjs`, and is out of scope for this document (docs/COACHING-DECISIONS.md "Website renders"). Until then the captions describe what the pictures show and no caption mentions the week row.
+- The fixture's training schedule follows the capture date (push today, pull two days on, legs four days on), so Today is a Push day whenever the shots are taken; its newest session is the day before, so the week row reads one workout unless the capture runs on a Monday (the app's week starts on Monday; both scripts warn in that case). The app's floating "Ask Escobar" pill slides away on a downward scroll (src/ui/hideOnScroll.ts), so every shot scrolls 16px first and the pill covers nothing; the screen loses only 16px of top padding. Both scripts fail if their preview server cannot bind its port, so a stale server on the port can never answer the readiness probe with the wrong app.
 - After a regeneration the History and Stats captions (7.1) and any value named in a caption are re-read from the new pictures before the site is published; the copy gate lists the values it expects (W22) so a stale caption fails the gate.
 
 ### 8.4 Alt text and captions
@@ -695,7 +696,7 @@ The same script exposes the values to `website/copy-gate.mjs` and `website/og.mj
 
 ### 9.1 Contrast
 
-Computed with the WCAG 2.x relative-luminance formula on the flat values (script kept in the gate as `website/gate/contrast.mjs`; `color-mix` values are computed in sRGB). Text pairs must reach 4.5:1 (3:1 for text at 24px and above, or 18.66px bold and above); non-text indicators 3:1.
+Computed with the WCAG 2.x relative-luminance formula on the flat values (the check lives in `website/gate.mjs`; `color-mix` values are computed in sRGB). The gate composites every ancestor background up to the root and applies each element's and ancestor's `opacity` to the text and the layers beneath it, so dimmed blocks are measured as seen. Text pairs must reach 4.5:1 (3:1 for text at 24px and above, or 18.66px bold and above); non-text indicators 3:1.
 
 | Foreground | Background | Ratio | Use | Result |
 |---|---|---|---|---|
@@ -707,6 +708,9 @@ Computed with the WCAG 2.x relative-luminance formula on the flat values (script
 | `--text2` | `--s1` | 6.73 | Card text, nav links when solid | Pass |
 | `--text2` | `--s2` | 6.01 | | Pass |
 | `--text2` | `--s3` | 5.18 | Rest banner "Next" line | Pass |
+| `--text2` at opacity .8 (#859bb3) | `--s1` | 4.87 | Body copy and eyebrow of a dimmed story step | Pass |
+| `--text` at opacity .8 (#c8d0d9) | `--s1` | 8.98 | Heading of a dimmed story step | Pass |
+| `--text2` at opacity .6 (#687f99) | `--s1` | 3.39 | The earlier dimming; replaced by .8 | Fail, so replaced |
 | `--text2` | `--nav-bg` flat #0a2641 | 7.41 | Nav links over the solid header | Pass |
 | `--text2` | `--accent-soft` over `--bg` (#1a2f62) | 6.22 | Current nav link | Pass |
 | `--accent-text` #9692fe | `--bg` | 5.80 | Eyebrows, icons | Pass |
@@ -809,7 +813,7 @@ The gate (`npm run site:gate`) checks each item on `website/dist` at 1440x900 an
 | W4 | `document.fonts` reports Instrument Sans, Inter and JetBrains Mono loaded, each served from the site's origin; no request to `fonts.googleapis.com` or `fonts.gstatic.com` | Gate |
 | W5 | Every `img` resolves (`complete && naturalWidth > 0` after scrolling the page), has `width`, `height` and `alt`, and only the hero layer is eager | Gate |
 | W6 | With reduced motion on: every step's heading and paragraph is visible (opacity 1, in the flow), no element containing text has computed opacity 0 or a non-identity transform, the three `.step-shot` figures are visible, the pinned phone is static, the rest banner reads "Rest done. Next set.", the undo label reads "Applied" | Gate |
-| W7 | With motion on at 1440 and 400: scrolling each step into its band sets `data-step` 1, 2, 3 in turn, the matching layer is the one at opacity 1, and `--light-a` on `.pin` changes value between steps 1, 2 and 3 | Gate |
+| W7 | With motion on at 1440 and 400: scrolling the page in 100px notches (a mouse wheel, not half-viewport jumps, which can land two steps in the band at once) sets `data-step` 1, 2, 3 in turn, the matching layer is the one at opacity 1, and `--light-a` on `.pin` changes value between steps 1, 2 and 3 | Gate |
 | W8 | `/`, `/install/`, `/privacy/` and `/404.html` render with exactly one `h1` each and the titles in section 10 | Gate |
 | W9 | Every internal link resolves to a file in `dist` (anchors to an existing `id`); every external link is one of the four GitHub URLs in this document and carries `rel="noopener"` | Gate: link crawl |
 | W10 | On `/install/`, clicking Copy on the fingerprint writes exactly the 95-character fingerprint to the clipboard, clicking Copy on the command writes exactly `apksigner verify --print-certs MARC-v<version>.*-signed.apk`, each button reads "Copied" then returns to "Copy" | Gate: clipboard permission granted, `navigator.clipboard.readText()` |

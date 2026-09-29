@@ -96,16 +96,15 @@
 .rows li p { font-size: 15px; color: var(--text2); margin-top: var(--sp-1); }
 .ic { width: 24px; height: 24px; color: var(--accent-text); fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-/* 6.8 rest banner replica */
-.rest { margin-top: var(--sp-7); background: var(--s3); border: 1px solid var(--border); border-top: 2px solid var(--border-strong); border-radius: var(--r3); padding: var(--sp-4) var(--sp-5); max-width: 420px; }
-.rest-live { display: grid; grid-template-columns: auto 1fr; gap: var(--sp-1) var(--sp-4); align-items: center; }
+/* 6.8 rest banner replica: the grid stays through both states, as in the app (Train.tsx) */
+.rest { margin-top: var(--sp-7); display: grid; grid-template-columns: auto 1fr; gap: var(--sp-1) var(--sp-4); align-items: center; background: var(--s3); border: 1px solid var(--border); border-top: 2px solid var(--border-strong); border-radius: var(--r3); padding: var(--sp-4) var(--sp-5); max-width: 420px; }
 .rest-time { font: 600 40px/1 var(--fd); letter-spacing: -.02em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
 .rest-c { display: flex; gap: var(--sp-2); }
-.rest-c span { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border-radius: var(--r1); border: 1px solid var(--border); background: var(--s2); font: 500 14px/1 var(--fb); }
+.rest-c > span { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border-radius: var(--r1); border: 1px solid var(--border); background: var(--s2); font: 500 14px/1 var(--fb); }
 .rest-n { grid-column: 1 / -1; font-size: 14px; color: var(--text2); font-variant-numeric: tabular-nums; }
-.rest-done { display: none; font: 600 22px/1.25 var(--fd); letter-spacing: -.012em; padding: var(--sp-2) 0; }
-.rest.done .rest-live { display: none; }
-.rest.done .rest-done { display: block; }
+/* done: the clock reads Go, the -15 and +15 chips leave, Skip becomes OK and the line under reads Rest done. Next set. */
+.rest-go, .rest-ok, .rest-done, .rest.done .rest-clock, .rest.done .rest-adj, .rest.done .rest-skip, .rest.done .rest-next { display: none; }
+.rest.done .rest-go, .rest.done .rest-ok, .rest.done .rest-done { display: inline; }
 
 /* 6.9 proposal card with undo bar */
 .prop { margin-top: var(--sp-6); max-width: 390px; }
@@ -172,6 +171,9 @@
 .trow .lockup { min-height: 0; }
 .trow .mark { width: 24px; height: 24px; }
 .trow .word { font-size: 16px; }
+/* each lockup sits on its theme's own bg and surface (--sb, --ss, --sbd, --stx set inline from the tokens), so the row shows five themes, not five marks */
+.trow .swatch { display: grid; place-items: center; width: 148px; height: 76px; border-radius: var(--r2); background: var(--sb); border: 1px solid var(--sbd); }
+.trow .swatch .lockup { color: var(--stx); padding: 8px 12px; border-radius: var(--r1); background: var(--ss); border: 1px solid var(--sbd); }
 
 /* 6.16 footer */
 .foot { background: var(--s1); padding: var(--sp-11) 0 var(--sp-9); }

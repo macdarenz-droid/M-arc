@@ -63,7 +63,7 @@ const play = {
   rings(el) { qa('.ring', el).forEach((r) => r.classList.add('fill')); },
   rest(el) {
     if (motion() === false) return;
-    const t = q('.rest-time', el);
+    const t = q('.rest-clock', el); /* the clock text only: .rest-time also holds the Go span the done state shows */
     const v = ['1:29', '1:28'];
     let i = 0;
     const tick = ms('--dur-tick');

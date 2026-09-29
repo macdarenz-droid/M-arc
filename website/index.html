@@ -66,7 +66,7 @@
 <div class="pinblock" id="pinblock" data-step="0">
   <div class="wrap pg">
     <section class="hero-copy hero" id="hero" data-i="0" aria-labelledby="hero-h" tabindex="-1">
-      <p class="eyebrow eb-hero">Version __VERSION__ for Android and the browser</p>
+      <p class="eyebrow eb-hero"><!-- if APP_URL -->Version __VERSION__ for Android and the browser<!-- else -->Version __VERSION__ for Android<!-- endif --></p>
       <h1 id="hero-h">A training log that knows how recovered you are.</h1>
       <p class="lead">Every set you rate feeds a recovery clock for each of 24 muscles, a readiness score for the day and a target for your next session. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach.</p>
       <div class="ctas">
@@ -157,12 +157,9 @@
         <li class="sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><div><h3 class="title">Why this target</h3><p>Open the disclosure under any exercise to see the rule that fired, such as top of range twice, step up, or effort missing, repeat and rate.</p></div></li>
       </ul>
       <div class="rest" data-play="rest" aria-hidden="true">
-        <div class="rest-live">
-          <div class="rest-time">1:30</div>
-          <div class="rest-c"><span>-15</span><span>+15</span><span>Skip</span></div>
-          <div class="rest-n">Next · 50 kg × 6</div>
-        </div>
-        <div class="rest-done">Rest done. Next set.</div>
+        <div class="rest-time"><span class="rest-clock">1:30</span><span class="rest-go">Go</span></div>
+        <div class="rest-c"><span class="rest-adj">-15</span><span class="rest-adj">+15</span><span><span class="rest-skip">Skip</span><span class="rest-ok">OK</span></span></div>
+        <div class="rest-n"><span class="rest-next">Next · 50 kg × 6</span><span class="rest-done">Rest done. Next set.</span></div>
       </div>
     </div>
     <figure class="c7 fig first r">
@@ -232,11 +229,11 @@
     <div class="c7 duo st">
       <figure class="fig">
         <div class="phone s"><div class="screen"><img class="wipe" src="__BASE__shots/midnight-history.png" width="780" height="1688" loading="lazy" decoding="async" alt="History, the month calendar"></div></div>
-        <figcaption class="cap">History for September 2026, trained days filled in, today outlined, and the last sessions listed under Recent: Push on Sunday the 27th, Pull on Saturday the 26th</figcaption>
+        <figcaption class="cap">History for September 2026, trained days filled in, today outlined, and the last sessions listed under Recent: Push on Monday the 28th, Pull on Sunday the 27th</figcaption>
       </figure>
       <figure class="fig">
         <div class="phone s"><div class="screen"><img class="wipe" src="__BASE__shots/midnight-stats.png" width="780" height="1688" loading="lazy" decoding="async" alt="History, Stats view"></div></div>
-        <figcaption class="cap">History in Stats view: the machine chest press line falls from 95.7 on August 30 to 68.3 on September 27, last top load 50 kg, trend marked Slipping</figcaption>
+        <figcaption class="cap">History in Stats view, the exercise progress card: the machine chest press line falls from 95.7 on August 31 to 68.3 on September 28, last top load 50 kg, 9 reps at top, trend marked Slipping</figcaption>
       </figure>
     </div>
     <div class="c5 copy r">
@@ -287,11 +284,12 @@
       <div class="card key sh">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>
         <h3 class="h3-card">Add to Home Screen</h3>
-        <p>Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline.</p>
         <!-- if APP_URL -->
+        <p>Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline.</p>
         <a class="btn btn-s" href="__APP_URL__" target="_blank" rel="noopener">Open in the browser</a>
         <!-- else -->
-        <p>The web app has no public address yet. Until it does, install the APK.</p>
+        <p>The web app has no public address yet. When it does, this page will carry it. Chrome, Edge and Samsung Internet on Android then offer Add to Home Screen, and M/ARC installs as an app and works offline.</p>
+        <p>Until then, install the APK.</p>
         <!-- endif -->
       </div>
       <div class="card key sh">
@@ -304,11 +302,11 @@
     <div class="themes r">
       <p>Five themes. Silent Black, Paper, Ember, Emerald and Midnight. Switching one crossfades the whole app.</p>
       <ul class="trow">
-        <li><span class="lockup" style="--lk:var(--t-silent)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Silent Black</li>
-        <li><span class="lockup" style="--lk:var(--t-paper)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Paper</li>
-        <li><span class="lockup" style="--lk:var(--t-ember)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Ember</li>
-        <li><span class="lockup" style="--lk:var(--t-emerald)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Emerald</li>
-        <li><span class="lockup" style="--lk:var(--t-midnight)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Midnight</li>
+        <li><span class="swatch" style="--sb:var(--t-silent-bg);--ss:var(--t-silent-s);--sbd:var(--t-silent-bd);--stx:var(--t-silent-text);--lk:var(--t-silent)"><span class="lockup"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span></span>Silent Black</li>
+        <li><span class="swatch" style="--sb:var(--t-paper-bg);--ss:var(--t-paper-s);--sbd:var(--t-paper-bd);--stx:var(--t-paper-text);--lk:var(--t-paper)"><span class="lockup"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span></span>Paper</li>
+        <li><span class="swatch" style="--sb:var(--t-ember-bg);--ss:var(--t-ember-s);--sbd:var(--t-ember-bd);--stx:var(--t-ember-text);--lk:var(--t-ember)"><span class="lockup"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span></span>Ember</li>
+        <li><span class="swatch" style="--sb:var(--t-emerald-bg);--ss:var(--t-emerald-s);--sbd:var(--t-emerald-bd);--stx:var(--t-emerald-text);--lk:var(--t-emerald)"><span class="lockup"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span></span>Emerald</li>
+        <li><span class="swatch" style="--sb:var(--t-midnight-bg);--ss:var(--t-midnight-s);--sbd:var(--t-midnight-bd);--stx:var(--t-midnight-text);--lk:var(--t-midnight)"><span class="lockup"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span></span>Midnight</li>
       </ul>
     </div>
   </div>

@@ -40,7 +40,12 @@
 .wrap.r > .facts { margin-top: var(--sp-7); }
 /* nine short sections on /privacy/ read as one article at 64px, not 128px, between bands */
 .privacy .band { padding-block: var(--sp-10); }
-/* between 641 and 1024 the first column wraps, so the table never pushes past the page */
-@media (min-width: 641px) and (max-width: 1024px) { .privacy .facts td:first-child { white-space: normal; } }
+/* on /privacy/ the first column wraps at every width and the three columns share the row about 1.2 : 1 : 1.4, so the two longer columns get the room */
+.privacy .facts td:first-child { white-space: normal; }
+@media (min-width: 641px) {
+  .privacy .facts th:nth-child(1) { width: 33%; }
+  .privacy .facts th:nth-child(2) { width: 28%; }
+  .privacy .facts th:nth-child(3) { width: 39%; }
+}
 /* a hairline where a lifted band meets the footer, which is the same surface */
 .lift + .foot { border-top: 1px solid var(--border); }

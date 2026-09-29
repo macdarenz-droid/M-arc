@@ -45,6 +45,12 @@
   --t-ember: #ff6363;
   --t-emerald: #3ecf8e;
   --t-midnight: #635bff;
+  /* the theme row's swatches (6.15): each theme's own bg, surface1, border and text from themes.ts */
+  --t-silent-bg: #08090a; --t-silent-s: #0f1011; --t-silent-bd: rgba(255, 255, 255, .10); --t-silent-text: #f7f8f8;
+  --t-paper-bg: #ffffff; --t-paper-s: #f7f6f3; --t-paper-bd: rgba(55, 53, 47, .14); --t-paper-text: #37352f;
+  --t-ember-bg: #07080a; --t-ember-s: #0e1013; --t-ember-bd: rgba(255, 255, 255, .09); --t-ember-text: #ffffff;
+  --t-emerald-bg: #0f0f0f; --t-emerald-s: #171717; --t-emerald-bd: #2e2e2e; --t-emerald-text: #ededed;
+  --t-midnight-bg: #0a2540; --t-midnight-s: #0f2d4d; --t-midnight-bd: rgba(246, 249, 252, .12); --t-midnight-text: #f6f9fc;
 
   /* the lit plane, one pair per story step (3.1) */
   --la-violet: rgba(99, 91, 255, .85);

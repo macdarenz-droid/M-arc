@@ -9,7 +9,7 @@
   /* the pinned story */
   .m .step { transition: opacity var(--dur-base) var(--ease-standard); }
   .m .step .eyebrow { transition: color var(--dur-base) var(--ease-standard); }
-  .m .step:not([aria-current]) { opacity: .6; }
+  .m .step:not([aria-current]) { opacity: .8; } /* .8 keeps dimmed body copy at 4.87:1 on --s1 (9.1) */
   .m .layer { transition: opacity var(--dur-enter) var(--ease-standard), transform var(--dur-enter) var(--ease-enter); }
   .m .light { transition: --light-a var(--dur-light) var(--ease-standard), --light-b var(--dur-light) var(--ease-standard); }
 
@@ -55,7 +55,7 @@
 
   /* component demos, once each (5.6) */
   .m .in .key::before, .m .key.in::before { animation: sweep var(--dur-wipe) var(--ease-standard) var(--dur-wipe) 1 both; }
-  .m .rest.done .rest-done { animation: swell var(--dur-bounce) var(--ease-spring-bounce) both; }
+  .m .rest.done { animation: swell var(--dur-bounce) var(--ease-spring-bounce) both; }
   .m .prop.run .undo-bar b { transform: scaleX(0); transition: transform var(--dur-undo) linear; }
   .m .prop .undo-bar { transition: background-color var(--dur-base) var(--ease-standard); }
 

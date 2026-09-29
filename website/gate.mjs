@@ -71,7 +71,9 @@ const hiddenText = (page, inView) => page.evaluate((inView) => {
   return out.slice(0, 6);
 }, inView);
 
-/** WCAG 2.x contrast of each PAIRS element's text against its nearest opaque background, composited in sRGB. */
+/** WCAG 2.x contrast of each PAIRS element's text against its background, composited in sRGB. Every ancestor's background is
+ *  layered up to the root and each element's `opacity` (its own and its ancestors') thins the text and every layer beneath it,
+ *  so a dimmed block (the inactive story steps) is measured as the reader sees it. */
 const contrast = (page, sels) => page.evaluate((sels) => {
   const parse = (c) => { const m = (c.match(/[\d.]+/g) || [0, 0, 0, 0]).map(Number); return { r: m[0], g: m[1], b: m[2], a: m.length > 3 ? m[3] : 1 }; };
   const over = (f, b) => ({ r: f.r * f.a + b.r * (1 - f.a), g: f.g * f.a + b.g * (1 - f.a), b: f.b * f.a + b.b * (1 - f.a), a: 1 });
@@ -79,23 +81,31 @@ const contrast = (page, sels) => page.evaluate((sels) => {
   const lum = (c) => 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
   const bgOf = (el) => {
     const layers = [];
-    for (let a = el; a; a = a.parentElement) { const c = parse(getComputedStyle(a).backgroundColor); if (c.a > 0) layers.push(c); if (c.a === 1) break; }
+    let fa = 1;
+    for (let a = el; a; a = a.parentElement) {
+      const cs = getComputedStyle(a);
+      const c = parse(cs.backgroundColor);
+      if (c.a > 0) layers.push(c);
+      const o = parseFloat(cs.opacity);
+      if (o < 1) { fa *= o; layers.forEach((l) => { l.a *= o; }); }
+    }
     let bg = { r: 255, g: 255, b: 255, a: 1 };
     for (let i = layers.length - 1; i >= 0; i--) bg = over(layers[i], bg);
-    return bg;
+    return { bg, fa };
   };
   const out = [];
   for (const sel of sels) {
     const el = [...document.querySelectorAll(sel)].find((e) => e.checkVisibility() && e.textContent.trim());
     if (!el) continue;
     const cs = getComputedStyle(el);
-    const bg = bgOf(el);
-    const fg = over(parse(cs.color), bg);
+    const { bg, fa } = bgOf(el);
+    const col = parse(cs.color);
+    const fg = over({ ...col, a: col.a * fa }, bg);
     const [l1, l2] = [lum(fg), lum(bg)];
     const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
     const size = parseFloat(cs.fontSize);
     const need = size >= 24 || (size >= 18.66 && parseInt(cs.fontWeight, 10) >= 700) ? 3 : 4.5;
-    out.push({ sel, ratio: Math.round(ratio * 100) / 100, need, size: Math.round(size), fg: cs.color, bg: `rgb(${Math.round(bg.r)}, ${Math.round(bg.g)}, ${Math.round(bg.b)})` });
+    out.push({ sel, ratio: Math.round(ratio * 100) / 100, need, size: Math.round(size), fg: fa < 1 ? `${cs.color} at opacity ${Math.round(fa * 100) / 100}` : cs.color, bg: `rgb(${Math.round(bg.r)}, ${Math.round(bg.g)}, ${Math.round(bg.b)})` });
   }
   return out;
 }, sels);
@@ -146,22 +156,29 @@ async function run(name, path, [w, h], reduced) {
     if (!v.cmd || !v.cmd.includes('MARC-v') || !v.cmd.includes('-signed.apk')) F(`verify command #cmd ${v.cmd === null ? 'is missing' : `reads "${v.cmd}"`} (expected MARC-v… -signed.apk)`);
   }
 
-  // Scroll to the bottom in half-viewport steps, recording the story's data-step on the way.
+  // Scroll to the bottom the way a wheel does, 100px a notch, recording the story's data-step on the way. Half-viewport jumps
+  // could land two steps in the band at once (the first step is under 200px tall), and then only the later one is recorded.
   const steps = new Set();
   const height = () => page.evaluate(() => document.documentElement.scrollHeight);
-  for (let y = 0; y < await height(); y += Math.round(h / 2)) {
+  for (let y = 0; y < await height(); y += 100) {
     await page.evaluate((y) => scrollTo(0, y), y);
-    await page.waitForTimeout(150);
+    await page.waitForTimeout(60);
     steps.add(await page.evaluate(() => document.getElementById('pinblock')?.dataset.step ?? null));
   }
   await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
-  await page.waitForFunction(() => [...document.images].every((i) => i.complete), null, { timeout: 15000 }).catch(() => F('images did not finish loading within 15 s'));
+  // Lazy images without a layout box (the story's stacked fallback figures are display:none while JS runs) never start
+  // loading in Chromium, so the load wait covers only images that have a box; the hidden ones are fetched below.
+  await page.waitForFunction(() => [...document.images].every((i) => i.getClientRects().length === 0 || i.complete), null, { timeout: 15000 }).catch(() => F('images did not finish loading within 15 s'));
   await page.waitForTimeout(300);
   await settle(page);
   if (name === 'home' && !reduced) ['1', '2', '3'].forEach((s) => { if (!steps.has(s)) F(`pinned story never set data-step="${s}" while scrolling (seen: ${[...steps].join(', ')})`); });
 
-  (await page.evaluate(() => [...document.images].filter((i) => !(i.naturalWidth > 0) || !i.alt.trim()).map((i) => `${i.getAttribute('src')} (${i.naturalWidth > 0 ? 'empty alt' : 'not loaded'})`)))
+  (await page.evaluate(() => [...document.images].filter((i) => i.getClientRects().length > 0 && !(i.naturalWidth > 0) || !i.alt.trim()).map((i) => `${i.getAttribute('src')} (${i.naturalWidth > 0 ? 'empty alt' : 'not loaded'})`)))
     .forEach((m) => F(`img: ${m}`));
+  for (const src of await page.evaluate(() => [...new Set([...document.images].filter((i) => i.getClientRects().length === 0).map((i) => i.currentSrc || i.src))])) {
+    const r = await fetch(src).catch(() => null);
+    if (!r || !r.ok) F(`img without a layout box does not resolve: ${src}`);
+  }
   (await hiddenText(page, false)).forEach((t) => F(`text at opacity 0 after scrolling to the bottom: ${t}`));
   if (await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)) F('horizontal scroll after scrolling');
 
