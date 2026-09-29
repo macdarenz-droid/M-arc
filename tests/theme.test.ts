@@ -129,6 +129,27 @@ describe('form-guide parts come from tokens (FG-5)', () => {
   });
 });
 
+// FG-6: the side figure paints from theme tokens only, both facings and the mistake figure: no colour function or named
+// colour in its markup, every var() it uses is a theme token or one of the figure's own root variables, and the body
+// base follows each theme's --accent.
+describe('form-guide side figure comes from tokens (FG-6)', () => {
+  it('every theme, both facings, correct and mistake', async () => {
+    const { colourLiterals } = await import('./formguide/colourLint');
+    const { figureSide } = await import('@/formguide/rig/figureSide');
+    const { themeReader, bodyPal } = await import('@/formguide/rig/paint');
+    for (const t of THEME_IDS) {
+      const defined = new Set([...themeToCss(THEMES[t]).matchAll(/(--[\w-]+):/g)].map(m => m[1]!).concat(['--l', '--d', '--oc', '--sp', '--rim', '--ph']));
+      for (const mirror of [false, true]) for (const mistake of [false, true]) {
+        const svg = figureSide(themeReader(t), { id: 'fs', mirror, mistake });
+        expect(colourLiterals(svg, { hex: false }), t).toEqual([]);
+        expect([...new Set([...svg.matchAll(/var\((--[\w-]+)\)/g)].map(m => m[1]!))].filter(v => !defined.has(v)), t).toEqual([]);
+      }
+      expect(figureSide(themeReader(t), { id: 'fs' })).toContain(bodyPal(themeReader(t), false).base);
+      expect(bodyPal(themeReader(t), false).base).toBe(String(THEMES[t].tokens.accent).toLowerCase());
+    }
+  });
+});
+
 // UI-1: the exercise-title sweep paints only var(--text) and the accent, never a dim tone (A4); it
 // lives inside its keyframes, so at rest and under reduced motion the title is plain var(--text)
 // (A3); only the open card's title runs it, finite on open (A1, A6); I3's static border stays and no
@@ -177,5 +198,23 @@ describe('exercise-title sweep (UI-1)', () => {
       expect(hsl(accent).s, `${id} accent ${accent}`).toBeGreaterThan(0.5);
       expect(accent.toLowerCase(), id).not.toBe(text.toLowerCase());
     }
+  });
+});
+
+// UI-2 (A4): the "How to do it" button paints only theme tokens (accent-soft fill, accent-text
+// ink) and meets the 44px tap target in every theme.
+describe('"How to do it" button styling (UI-2)', () => {
+  const css = readFileSync('src/ui/styles.css', 'utf8');
+  const ruleAt = css.indexOf('.btn-how-to {');
+  const rule = ruleAt === -1 ? '' : css.slice(ruleAt, css.indexOf('}', ruleAt) + 1);
+  it('is a real rule, sized to the 44px tap target, with no colour literal', () => {
+    expect(rule).not.toBe('');
+    expect(rule).toMatch(/min-height:\s*44px/);
+    expect(rule).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i);
+  });
+  it('paints from the accent tokens, defined in every theme', () => {
+    const vars = [...rule.matchAll(/var\((--[\w-]+)\)/g)].map(m => m[1]);
+    expect(vars).toEqual(expect.arrayContaining(['--accent-soft', '--accent-text']));
+    for (const id of THEME_IDS) for (const v of ['--accent-soft', '--accent-text']) expect(themeToCss(THEMES[id]), `${id} ${v}`).toMatch(new RegExp(`${v}:[^;]+`));
   });
 });

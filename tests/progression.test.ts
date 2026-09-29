@@ -538,3 +538,73 @@ describe('lighter week: chained weeks and the set factor (BUG-15 review)', () =>
     expect([n(5), n(6)]).toEqual([3, 4]);
   });
 });
+
+describe('LT-2: increases and step-downs choose a rung and re-solve the reps', () => {
+  const db = 'lib_dumbbell_bench_press';
+  const rack = { unit: 'kg' as const, ladder: [25, 30, 32.5, 35], source: 'user' as const, updatedAt: '' };
+  const twice = (id: string, kg: number, reps: number) => [session('2026-09-12', [{ id, sets: sets(kg, reps) }]), session('2026-09-15', [{ id, sets: sets(kg, reps) }])];
+
+  it('A2 lean: 25 kg × 12 twice on 25/30/32.5/35 → keep 25 kg and earn 13 reps (mode earn)', () => {
+    const n = suggestNext(twice(db, 25, 12), db, 'lean', today, 3, [], { equipment: rack });
+    expect(n).toMatchObject({ mode: 'earn', kg: 25, value: 25, reps: [13, 13], repWindow: [13, 13], target: '25 kg · 13 reps' });
+    expect(n.reason).toBe('No smaller step here. Keep 25 kg and work up to 13 reps; then 30 kg for 6 is ready.');
+    expect(n.sets.every(x => x.kg === 25 && x.reps === 13)).toBe(true);
+  });
+
+  it('A2 growth: 25 kg × 15 twice → 30 kg for about 8, close to max', () => {
+    const n = suggestNext(twice(db, 25, 15), db, 'growth', today, 3, [], { equipment: rack });
+    expect(n).toMatchObject({ mode: 'increase', kg: 30, value: 30, repWindow: [7, 9], reps: [7, 9], target: '30 kg · 7–9 reps' });
+    expect(n.reason).toMatch(/No smaller step here: use 30 kg for about 8, close to max\.$/);
+    expect(n.sets.every(x => x.kg === 30 && x.reps === 8)).toBe(true);
+  });
+
+  it('the anchor is the median working set, not the best one: growth 25 kg × 15/17/20 twice → 30 kg for about 9 to 10', () => {
+    const mixed = [{ kg: 25, reps: 15, effort: 'ideal' as const }, { kg: 25, reps: 17, effort: 'ideal' as const }, { kg: 25, reps: 20, effort: 'ideal' as const }];
+    const h = [session('2026-09-12', [{ id: db, sets: mixed }]), session('2026-09-15', [{ id: db, sets: mixed }])];
+    const n = suggestNext(h, db, 'growth', today, 3, [], { equipment: rack });
+    // Median 17: r*(30, 1) = 25 × (1 + 19/30) − 31 = 9.83 → 9 to 10, widened to [8, 11] (anchor over 10 reps). The best set (20) would give 12 to 13.
+    expect(n).toMatchObject({ mode: 'increase', kg: 30, repWindow: [8, 11] });
+    expect(n.reason).toBe('Top of the range two sessions running without max effort. Add one step. No smaller step here: use 30 kg for about 9 to 10, close to max.');
+  });
+
+  it('a drop set at the working load is not part of the anchor when straight sets exist', () => {
+    const withDrop = [{ kg: 25, reps: 15, effort: 'ideal' as const }, { kg: 25, reps: 16, effort: 'ideal' as const }, { kg: 25, reps: 30, effort: 'ideal' as const, kind: 'drop' as const }];
+    const h = [session('2026-09-12', [{ id: db, sets: withDrop }]), session('2026-09-15', [{ id: db, sets: withDrop }])];
+    const n = suggestNext(h, db, 'growth', today, 3, [], { equipment: rack });
+    // Straight sets 15 and 16 → anchor 15 (lower median): 30 kg for about 8. Counting the drop set would make it 16 → about 9.
+    expect(n.reason).toMatch(/use 30 kg for about 8, close to max\.$/);
+  });
+
+  it('A3: at the top of the ladder the load holds with one more set, never the same rung as an increase', () => {
+    const n = suggestNext(twice(db, 35, 12), db, 'lean', today, 3, [], { equipment: rack });
+    expect(n).toMatchObject({ mode: 'hold', kg: 35, reps: [12, 12] });
+    expect(n.reason).toBe('Nothing heavier here: add a set, or a harder variation.');
+    expect(n.sets).toHaveLength(4);
+  });
+
+  it('the menu\'s confidence rides on the suggestion when the caller passes LT-1\'s menu', () => {
+    const menu = { profile: rack, rungsKg: rack.ladder, unit: 'kg' as const, confidence: 'assumed' as const, source: 'default' as const };
+    expect(suggestNext(twice(db, 25, 12), db, 'lean', today, 3, [], { equipment: rack, menu }).menuConfidence).toBe('assumed');
+  });
+
+  it('A6: step-down from 120 kg on a 5 kg stack is 110 (115 is only 4.2 %)', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const id = 'lib_machine_chest_press';
+    const h = [session('2026-09-09', [{ id, sets: sets(120, 8, 'max') }]), session('2026-09-12', [{ id, sets: sets(120, 5, 'max') }]), session('2026-09-15', [{ id, sets: sets(120, 3, 'max') }])];
+    const n = suggestNext(h, id, 'strength', today, 3, [], { equipment: defaultProfile('Machine', 'kg') });
+    expect(n).toMatchObject({ mode: 'reduce', kg: 110 });
+  });
+
+  it('A6: step-down from 60 kg with 1.25 kg plates is 55 (57.5 is only 4.2 %)', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-09', [{ id: ex, sets: sets(60, 8, 'max') }]), session('2026-09-12', [{ id: ex, sets: sets(60, 5, 'max') }]), session('2026-09-15', [{ id: ex, sets: sets(60, 3, 'max') }])];
+    const n = suggestNext(h, ex, 'strength', today, 3, [], { equipment: defaultProfile('Barbell', 'kg') });
+    expect(n).toMatchObject({ mode: 'reduce', kg: 55, repWindow: [4, 4] });
+  });
+
+  it('A6: the step-down never goes under the load planned before the failed increase', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-09', [{ id: ex, sets: sets(60, 12) }]), session('2026-09-12', [{ id: ex, sets: sets(62.5, 5, 'max') }]), session('2026-09-15', [{ id: ex, sets: sets(62.5, 5, 'max') }])];
+    expect(suggestNext(h, ex, 'lean', today, 3, [], { equipment: defaultProfile('Barbell', 'kg') }).kg).toBe(60);
+  });
+});
