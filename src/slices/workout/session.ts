@@ -15,7 +15,7 @@ import { haptic } from '@/native/haptics';
 import { backgroundHealthSync } from '@/slices/settings/health';
 import { connectWatch } from '@/native/watch';
 import { resyncReminders } from '@/slices/settings/reminders';
-import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, latestLiveBpm } from './heart';
+import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, preSetBpmFor } from './heart';
 
 export const REST_MIN = 15, REST_MAX = 600;
 
@@ -231,7 +231,11 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   const restSec = gapSec != null ? Math.min(REST_MAX, Math.max(0, gapSec - setWorkSec(set))) : undefined;
   pausedAtCommit.set(setId, pausedTotalMs(a, now));
   setSetById(setId, { at: new Date(now).toISOString(), restSec, fidelity, heart, status: 'committed' });
-  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') startRest(state.value.preferences.restDefaultSec, set.effort, latestLiveBpm(), now);
+  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') {
+    startRest(state.value.preferences.restDefaultSec, set.effort, preSetBpmFor(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)), now);
+    const entry = a.entries.find(e => e.sets.some(x => x.id === setId));
+    if (entry) restStartedBy = { setId, exerciseId: entry.exerciseId };
+  }
   void haptic.confirm();
   return true;
 }
@@ -358,6 +362,7 @@ export function substituteEntry(entry: number, ex: Exercise): void {
 export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {
   const total = Math.max(REST_MIN, Math.min(REST_MAX, sec));
   const endsAt = from + total * 1000;
+  restStartedBy = null;
   // Paused: hold the full rest until resume (UI-19); resume schedules it.
   if (active()?.pausedAt) {
     patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, effort, preSetBpm, pausedRemainingSec: total } }));
@@ -365,6 +370,36 @@ export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?:
   }
   patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, effort, preSetBpm } }));
   if (endsAt > Date.now()) void scheduleRestDone(endsAt);
+}
+
+/**
+ * BUG-21 (D-A1 point 4, review r2): the set whose commit started the running rest, kept in memory
+ * only (never in RestState or storage). After an app restart it is gone, and the timer is the floor.
+ */
+let restStartedBy: { setId: string; exerciseId: string } | null = null;
+
+/**
+ * BUG-21 (D-A1 point 4): the user's timer is the floor for this rest unless the set that started it
+ * is known (restStartedBy), still there, still a committed live working set of the same exercise,
+ * and that exercise is an accessory. Deleting the set, marking it a warm-up, removing its exercise
+ * or substituting it, a restart, or an unknown exercise all keep the timer as the floor.
+ */
+export function restTimerIsFloor(a: ActiveSession, custom: Exercise[]): boolean {
+  const rec = restStartedBy;
+  if (!a.rest || !rec) return true;
+  const entry = a.entries.find(e => e.sets.some(x => x.id === rec.setId));
+  const set = entry?.sets.find(x => x.id === rec.setId);
+  if (!entry || !set || entry.exerciseId !== rec.exerciseId) return true;
+  if (!isCommitted(set) || set.kind === 'warmup' || (set.fidelity ?? 'live') !== 'live') return true;
+  return findExercise(entry.exerciseId, custom)?.role !== 'accessory';
+}
+
+/**
+ * BUG-21 (D-A1 point 4, App A.1): heart rate may end an accessory's rest early, never a main
+ * lift's. When the timer is the floor (restTimerIsFloor), the rest ends when it runs out.
+ */
+export function restDone(timeDone: boolean, heartReady: boolean, timerIsFloor: boolean): boolean {
+  return timeDone || (heartReady && !timerIsFloor);
 }
 
 export function adjustRest(deltaSec: number): void {
@@ -384,6 +419,7 @@ export function adjustRest(deltaSec: number): void {
 
 export function stopRest(): void {
   patchActive(a => ({ ...a, rest: undefined }));
+  restStartedBy = null;
   void cancelRestDone();
 }
 
@@ -493,6 +529,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     loggedDurationSec: timing.durationSec,
     workingSetCount: workingSets.length,
   });
+  restStartedBy = null;
   const session: Session = finishHeartCapture({
     id: a.id ?? newId('s'),
     splitId: a.splitId,
@@ -586,4 +623,5 @@ export function discardSession(): void {
   flushSave();
   void cancelRestDone();
   discardHeartCapture();
+  restStartedBy = null;
 }
