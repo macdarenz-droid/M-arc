@@ -137,6 +137,8 @@ function fromRetarget(input: AutoregulationInput, rt: LiveRetarget | null): Insi
       return { ...head, title: `${exerciseName}: ease off`, noticed: `Missed target at max effort: ${firstSet.reps} of ${targetReps}.`, means: 'There is no lighter load than this one, so the reps and the rest are what can change today.' };
     case 'drop':
       return { ...head, title: `${exerciseName}: ease off`, noticed: `Missed target at max effort: ${firstSet.reps} of ${targetReps}.`, means: 'A big miss at max effort means the load is too heavy for today.' };
+    case 'reps':
+      return { ...head, title: `${exerciseName}: ${input.holdLoad ? 'keep this load' : 'add a rep'}`, noticed: `That felt easy at ${firstSet.kg} kg for ${firstSet.reps}.`, means: input.holdLoad ? 'Today holds the load, so easy sets are the point.' : 'Easy at the planned load: more reps now, more load next time.' };
     default:
       return null;
   }

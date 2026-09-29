@@ -224,7 +224,13 @@ export function liveRetarget(
     if (s1!.effort === 'easy') return opts.holdLoad ? (atPlan ? target.reps : Math.min(hi, R)) : Math.min(hi, R + 1);
     return Math.max(1, Math.min(hi, R));
   };
-  const reps = (): LiveRetarget => ({ kind: 'reps', kg, reps: repsRule(), text: null });
+  const reps = (): LiveRetarget => {
+    const n = repsRule();
+    // An easy set at the plan's load gets a reps line, never a load line: reps first, then load (§4, D-LT3).
+    const easyAtPlan = prompts && atPlan && s1!.effort === 'easy' && R >= target.reps;
+    const text = !easyAtPlan ? null : opts.holdLoad ? `Keep ${at(kg)} for the next set.` : `Keep ${at(kg)} and do ${n} reps for the next set: reps first, then load.`;
+    return { kind: 'reps', kg, reps: n, text };
+  };
 
   if (above) {
     // The reps left at the lifted load, at the goal's shown effort. Never "add load" above the plan.

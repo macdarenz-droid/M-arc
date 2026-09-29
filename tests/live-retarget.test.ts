@@ -52,14 +52,20 @@ describe('LT3-A2: different reps at the target load', () => {
     expect(at(8, 'max').reps).toBe(7);
   });
   it('easy adds one, clamped to hi, and no load line: reps first, load next session', () => {
-    expect([at(8, 'easy').kind, at(8, 'easy').kg, at(8, 'easy').reps, at(8, 'easy').text]).toEqual(['reps', 27.5, 9, null]);
+    expect([at(8, 'easy').kind, at(8, 'easy').kg, at(8, 'easy').reps]).toEqual(['reps', 27.5, 9]);
+    expect(at(8, 'easy').text).toBe('Keep 27.5 kg and do 9 reps for the next set: reps first, then load.');
     expect(at(12, 'easy').reps).toBe(12);
     const rt = at(8, 'easy');
-    expect(autoregulationSuggestion({ exerciseId: 'x', exerciseName: 'X', firstSet: live({ kg: 27.5, reps: 8, effort: 'easy' }), targetKg: 27.5, targetReps: 8, historyCount: 5, retarget: rt })).toBeNull();
+    const a = autoregulationSuggestion({ exerciseId: 'x', exerciseName: 'X', firstSet: live({ kg: 27.5, reps: 8, effort: 'easy' }), targetKg: 27.5, targetReps: 8, historyCount: 5, retarget: rt })!;
+    expect(a.action).not.toMatch(/Try/);
+    expect(a.title).not.toMatch(/add load/);
+    // Ideal and a one-rep miss at max change the reps alone, with no line.
+    expect(at(7, 'ideal').text).toBeNull();
+    expect(at(7, 'max').text).toBeNull();
   });
   it('a held day keeps the plan on an easy set', () => {
     const r = liveRetarget(one(27.5, 10, 'easy'), plan, 'lean', 'main', menu, { holdLoad: true })!;
-    expect([r.kg, r.reps]).toEqual([27.5, 8]);
+    expect([r.kg, r.reps, r.text]).toEqual([27.5, 8, 'Keep 27.5 kg for the next set.']);
   });
 });
 
