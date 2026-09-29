@@ -13,6 +13,9 @@ import type { MuscleId } from '@/data/muscles';
 import type { JointId } from './joints';
 import { bodyPal, band, lg, mix, packSl, sl, D_, L_, OC, SP, type Token, type TokenReader } from './paint';
 import { MIRROR, type Mat } from './figureFront';
+import { dumbbellFar, dumbbellNear } from '../parts/dumbbell';
+import { barbell } from '../parts/barbell';
+import { ironGrad } from '../parts/kit';
 
 /** Pivots in the side view, figure facing right (x forward, y down). Arm pieces are drawn in their own frames. */
 export const S_PELVIS: [number, number] = [200, 262], S_HIP: [number, number] = [200, 272], S_KNEE: [number, number] = [204, 440];
@@ -177,6 +180,19 @@ const foot = (far: boolean) => `
   <path d="${FOOT}" fill="${far ? 'var(--pants-sh)' : 'var(--pants)'}" stroke="var(--ink)" stroke-width="2"/>
   ${far ? '' : sl([186, 561, 226, 562.6, 262, 561], 1.8, 'var(--ph)', .5, .9) + sl([214, 541, 232, 547, 250, 552], 1.4, 'var(--ph)', .4, .7)}`;
 
+/** V1-06: a part held in the hands, drawn in the wrist groups at the grip centre (S_GRIP) so it moves with the hand. The
+ * dumbbell is FG-5's end-on drawing in each hand (handle pointing at the viewer, the supinated curl grip; far head behind
+ * the fist, near head in front), with no load label: the label would turn with the forearm, and the camera label
+ * carries the load. The barbell is FG-5's end-on bar at the near hand only (the far hand's end is behind it). A bar on the
+ * back is not a hand part: its caller places it (FG-6's squat still). */
+export type Held = { kind: 'dumbbell' | 'barbell'; kg?: number };
+function heldPart(p: string, h: Held | undefined, far: boolean): { behind: string; front: string } {
+  const at = (inner: string) => (inner ? `<g transform="translate(${S_GRIP[0]} ${S_GRIP[1]})">${inner}</g>` : '');
+  if (h?.kind === 'dumbbell') return { behind: at(dumbbellFar(`${p}-i`)), front: at(dumbbellNear(`${p}-i`)) };
+  if (h?.kind === 'barbell' && !far) return { behind: '', front: at(barbell({ g: `${p}-i`, kg: h.kg ?? 0, view: 'side' }).svg) };
+  return { behind: '', front: '' };
+}
+
 export type SideOptions = {
   /** Prefix for the gradient ids; unique per live figure on the page. */
   id: string;
@@ -186,6 +202,8 @@ export type SideOptions = {
   mistake?: boolean;
   /** Each drawn muscle's colour role in the exercise (default target). */
   roles?: Partial<Record<SideMuscle, Role>>;
+  /** The part in the hands (V1-06), none by default. */
+  held?: Held;
 };
 
 /** The side figure as SVG markup (a <g>, in the front figure's units; a standing figure fits the viewBox -88 -6 576 600). */
@@ -206,7 +224,8 @@ export function figureSide(read: TokenReader, o: SideOptions): string {
   const pnFar: [number, string][] = [[0, res('pants')], [1, res('pants-sh')]];
   const arm = (s: Near) => {
     const isFar = s === far, Q = isFar ? null : P;
-    return joint(`shoulder_${s}`, upperArm(p, isFar, Q) + joint(`elbow_${s}`, foreArm(p, isFar, Q, joint(`wrist_${s}`, fist(p, isFar)))));
+    const h = heldPart(p, o.held, isFar);
+    return joint(`shoulder_${s}`, upperArm(p, isFar, Q) + joint(`elbow_${s}`, foreArm(p, isFar, Q, joint(`wrist_${s}`, h.behind + fist(p, isFar) + h.front))));
   };
   const leg = (s: Near) => {
     const isFar = s === far, Q = isFar ? null : P;
@@ -269,7 +288,7 @@ export function figureSide(read: TokenReader, o: SideOptions): string {
     ${lg(p + '-d', -18, -14, 22, 40, [[0, b.hi], [.35, b.lit], [.75, b.base], [1, b.mid]], true)}${lg(p + '-dF', -18, -14, 22, 40, skinFar, true)}
     ${lg(p + '-p', 176, 0, 232, 0, pn, true)}${lg(p + '-pF', 176, 0, 232, 0, pnFar, true)}${lg(p + '-ph', 160, 256, 228, 300, pn, true)}
     <radialGradient id="${p}-hg" cx=".36" cy=".3" r=".85" fx=".3" fy=".22"><stop offset="0" stop-color="${b.hi}"/><stop offset=".45" stop-color="${b.base}"/><stop offset=".82" stop-color="${b.sh2}"/><stop offset="1" stop-color="${b.dk}"/></radialGradient>
-    ${band(read, p + '-bT', 'target', 'y')}${band(read, p + '-bH', 'help', 'y')}${band(read, p + '-bQ', mistake ? 'mistake' : 'quiet', 'y')}</defs>
+    ${o.held ? ironGrad(read, p + '-i') : ''}${band(read, p + '-bT', 'target', 'y')}${band(read, p + '-bH', 'help', 'y')}${band(read, p + '-bQ', mistake ? 'mistake' : 'quiet', 'y')}</defs>
   ${o.mirror ? `<g transform="${matAttr(MIRROR)}">${fig}</g>` : fig}
 </g>`);
 }

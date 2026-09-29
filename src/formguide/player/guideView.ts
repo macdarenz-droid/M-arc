@@ -11,7 +11,7 @@ import { figureSide } from '../rig/figureSide';
 import { VIEWBOXES, type ExerciseGuide, type RepTempo } from '../model';
 import { repSeconds, sampleGuide, tempoOf, windowsFor, type Figure, type PhaseName, type Window } from '../sample';
 import { effortOf } from '../check/effort';
-import { rigFor, viewOf, type Rig } from '../check/view';
+import { heldOf, rigFor, viewOf, type Rig } from '../check/view';
 
 /** Reps per play (GU-7a R1-3: three, then hold the start pose). */
 export const REPS = 3;
@@ -147,7 +147,7 @@ export function cameraOf(g: ExerciseGuide, zoom: boolean, compare: boolean): { b
  * figure on the page; `load` is the number the dumbbell label shows (the last logged set, in the display unit).
  */
 export function markupOf(g: ExerciseGuide, rig: Rig, read: TokenReader, o: { id: string; mistake: boolean; load: number | null }): string {
-  if (rig.view === 'side') return figureSide(read, { id: o.id, mistake: o.mistake, mirror: !!g.mirror });
+  if (rig.view === 'side') return figureSide(read, { id: o.id, mistake: o.mistake, mirror: !!g.mirror, held: heldOf(g) });
   if (rig.view !== 'front') throw new Error(`form guide ${g.id}: no ${rig.view} figure yet`);
   const db = g.equipment.kind === 'dumbbell' ? { kg: o.load ?? undefined } : undefined;
   return figureFront(read, { id: o.id, mistake: o.mistake, dumbbell: db });

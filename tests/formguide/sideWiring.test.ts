@@ -1,20 +1,21 @@
 // V1-06: the side view wired into the checks and the player (docs/FORM-GUIDE-PRODUCTION.md §10.5 V1-06). A1 FG-6's side
 // fixtures through the real rigFor, A2 a side file mounts and says "Side view", A3 solveSideLeg, A4 the camera table,
-// A5 the lateral raise unchanged, F1 a back file fails with the stub's reason. No module is mocked for A1: the player
+// A5 the lateral raise unchanged, A6 the side hand parts, F1 a back file fails with the stub's reason. No module is mocked for A1: the player
 // mount (A2) mocks preact's hooks with vi.doMock inside its own test, after the checks have run.
 import { describe, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import { THEME_IDS } from '@/theme/themes';
 import type { Pose } from '@/formguide/rig/joints';
 import { FLOOR, figureFront } from '@/formguide/rig/figureFront';
-import { figureSide } from '@/formguide/rig/figureSide';
+import { figureSide, type Held } from '@/formguide/rig/figureSide';
 import { BACK_REASON } from '@/formguide/rig/figureBack';
 import { themeReader } from '@/formguide/rig/paint';
 import { frontFrame, sideFrame, sideHandAt, sidePivot, sidePoint, solveSideLeg, type Frame, type SidePoseId } from '@/formguide/rig/pose';
-import { bbox, compile, type Box, type Compiled } from '@/formguide/check/svg';
+import { bbox, colourLiterals, compile, countPaths, type Box, type Compiled } from '@/formguide/check/svg';
+import { shapeCount } from '@/formguide/parts/kit';
 import { CHECKS, runChecks, report } from '@/formguide/check';
 import { guideOf, inputFor } from '@/formguide/check/node';
-import { rigFor, viewOf } from '@/formguide/check/view';
+import { heldOf, rigFor, viewOf } from '@/formguide/check/view';
 import { VIEWBOXES, type ExerciseGuide, type ViewBoxId } from '@/formguide/model';
 import { cameraOf, chainedGroups, guideRig, markupOf, momentFrame, momentsOf } from '@/formguide/player/guideView';
 import { lib_dumbbell_lateral_raise as LR } from '@/formguide/exercises/lib_dumbbell_lateral_raise';
@@ -221,5 +222,71 @@ describe('A2 a side file mounts in the player and shows "Side view"', () => {
       vi.doUnmock('preact/hooks');
       vi.doUnmock('@/ui/motion');
     }
+  });
+});
+
+describe('A6 the side hand draws the dumbbell and the end-on barbell', () => {
+  const HELD: Held[] = [{ kind: 'dumbbell' }, { kind: 'barbell', kg: 0 }, { kind: 'barbell', kg: 60 }, { kind: 'barbell', kg: 500 }];
+  it('each part is at most 25 shapes (paths included) in every theme, both figures, both facings', () => {
+    for (const id of THEME_IDS) for (const mistake of [false, true]) for (const mirror of [false, true]) {
+      const r = themeReader(id), bare = figureSide(r, { id: 'a6', mistake, mirror });
+      for (const held of HELD) {
+        const svg = figureSide(r, { id: 'a6', mistake, mirror, held }), n = shapeCount(svg) - shapeCount(bare);
+        expect(n, `${id} ${JSON.stringify(held)}`).toBeGreaterThan(0);
+        expect(n, `${id} ${JSON.stringify(held)}`).toBeLessThanOrEqual(25);
+        expect(countPaths(svg) - countPaths(bare)).toBeLessThanOrEqual(25);
+        if (id === 'silent-black' && !mistake && !mirror) console.info(`[V1-06 A6] ${JSON.stringify(held)}: ${n} shapes`);
+      }
+    }
+  });
+  it('token-only: no colour literal in the part markup, its gradient defined, every var() a theme or figure token', () => {
+    for (const id of THEME_IDS) for (const held of HELD) {
+      const r = themeReader(id), svg = figureSide(r, { id: 'a6', held }), bare = figureSide(r, { id: 'a6' });
+      const extra = svg.replace(/<defs>[\s\S]*?<\/defs>/, '');
+      expect(colourLiterals(extra).length - colourLiterals(bare.replace(/<defs>[\s\S]*?<\/defs>/, '')).length, `${id}`).toBe(0);
+      expect(svg).toContain('id="a6-i"');
+      const ids = new Set([...svg.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]!));
+      expect([...svg.matchAll(/url\(#([^)]+)\)/g)].map(m => m[1]!).filter(x => !ids.has(x))).toEqual([]);
+    }
+  });
+  it('the dumbbell is in both hands, the bar at the near hand only; each sits on the grip and moves with it', () => {
+    const count = (svg: string, re: RegExp) => (svg.match(re) ?? []).length;
+    for (const mirror of [false, true]) {
+      const near = mirror ? 'wrist_l' : 'wrist_r', far = mirror ? 'wrist_r' : 'wrist_l';
+      const db = compile(figureSide(SB, { id: 'a6', mirror, held: { kind: 'dumbbell' } })), bar = compile(figureSide(SB, { id: 'a6', mirror, held: { kind: 'barbell', kg: 60 } }));
+      const bare = compile(figureSide(SB, { id: 'a6', mirror }));
+      for (const w of [near, far]) expect(under(db, [w]).shapes.length, `dumbbell ${w}`).toBeGreaterThan(under(bare, [w]).shapes.length);
+      expect(under(bar, [near]).shapes.length).toBeGreaterThan(under(bare, [near]).shapes.length);
+      expect(under(bar, [far]).shapes.length).toBe(under(bare, [far]).shapes.length);
+      expect(count(figureSide(SB, { id: 'a6', mirror, held: { kind: 'barbell', kg: 60 } }), /fg-part-barbell/g)).toBe(1);
+      // the part is centred on the grip point the solver and the checks use, at rest and in a curl
+      for (const p of [{}, sym({ elbow_flex: 130, shoulder_flex: 20 })]) {
+        const f = sideFrame('standing', p, { mirror }), grip = sideHandAt(f, mirror ? 'l' : 'r', mirror);
+        const onlyBar: Compiled = { nodes: bar.nodes, shapes: bar.shapes.filter(sh => !bare.shapes.some(b => b.node === sh.node && JSON.stringify(b.segs) === JSON.stringify(sh.segs))) };
+        const b = bbox(onlyBar, f);
+        expect(Math.abs((b.x0 + b.x1) / 2 - grip[0]) + Math.abs((b.y0 + b.y1) / 2 - grip[1]), `mirror=${mirror}`).toBeLessThan(0.01);   // disc outlines are cubic, so their box centre is within 0.002
+      }
+    }
+  });
+  it('the rig and the player draw the file\'s part: a dumbbell or a hand-held bar, not a bar on the back or no part', async () => {
+    const { g } = await fixture('lib_barbell_bench_press');
+    expect(heldOf(g)).toEqual({ kind: 'barbell', kg: undefined });
+    expect(heldOf({ ...g, equipment: { ...g.equipment, attach: ['shoulder_l', 'shoulder_r'] } })).toBeUndefined();
+    expect(heldOf({ ...g, equipment: { kind: 'dumbbell', attach: ['hand_l', 'hand_r'], loadFrom: 'lastSet', kg: 12 } })).toEqual({ kind: 'dumbbell', kg: 12 });
+    expect(heldOf({ ...g, equipment: { kind: 'none', attach: [], loadFrom: 'bodyweight' } })).toBeUndefined();
+    const rig = rigFor(g, 'side');
+    if (typeof rig === 'string') throw new Error(rig);
+    expect(rig.markup(SB, false, true)).toContain('fg-part-barbell');
+    expect(rig.markup(SB, false, false)).not.toContain('fg-part-barbell');
+    expect(markupOf(g, rig, SB, { id: 'p', mistake: false, load: 60 })).toContain('fg-part-barbell');
+  });
+  it('a standing dumbbell side file passes themes, pathBudget and noFilters with the part in hand', () => {
+    const curl: ExerciseGuide = { ...LR, view: 'side', viewWhy: 'V1-06 A6: a side dumbbell file', joints: { elbow_flex: [5, 125] }, mistake: { ...LR.mistake, joints: { elbow_flex: [0, 10] }, tells: LR.mistake.tells.map(t => ({ ...t, joint: 'elbow_flex' })) } } as ExerciseGuide;
+    const rs = runChecks(inputFor('src/formguide/exercises/lib_dumbbell_lateral_raise.ts', curl), ['themes', 'pathBudget', 'noFilters']);
+    console.info(report('side dumbbell stand-in', rs));
+    expect(rs.filter(r => !r.ok).flatMap(r => r.fails)).toEqual([]);
+    const rig = rigFor(curl, 'side');
+    if (typeof rig === 'string') throw new Error(rig);
+    expect(shapeCount(rig.markup(SB, false, true)) - shapeCount(rig.markup(SB, false, false))).toBeGreaterThan(0);
   });
 });

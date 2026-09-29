@@ -4,6 +4,7 @@
 import type { AttachmentId, ExerciseGuide, PartId } from '../model';
 import type { ChannelId, JointId, Pose, View } from '../rig/joints';
 import { FLOOR, FRONT_RIG, LEG_X, figureFront } from '../rig/figureFront';
+import { figureSide, type Held } from '../rig/figureSide';
 import { apply, frontFrame, handAt, sideGuideRig, worldMat, type Frame, type PoseId } from '../rig/pose';
 import { backGuideRig } from '../rig/figureBack';
 import type { TokenReader } from '../rig/paint';
@@ -28,6 +29,14 @@ export const FIGURE_PARTS: readonly PartId[] = ['dumbbell'];
  * using a part not here fails pathBudget. */
 export const PARTS: Partial<Record<PartId, string>> = { none: '', ...PART_BUDGET_MARKUP };
 
+/** The part the side figure draws in its hands (V1-06): a dumbbell or a barbell held in the hands, none otherwise (a
+ * bar on the back is placed by its caller). The barbell's plates follow the file's load, as the checks see it. */
+export function heldOf(g: ExerciseGuide): Held | undefined {
+  const k = g.equipment.kind;
+  if ((k !== 'dumbbell' && k !== 'barbell') || !g.equipment.attach.some(a => a.startsWith('hand_'))) return undefined;
+  return { kind: k, kg: g.equipment.kg };
+}
+
 /** The view a file is drawn in: its override, else its pattern's (null when the id has no library row). */
 export function viewOf(g: ExerciseGuide, pattern: string | undefined): View | null {
   return g.view ?? (pattern ? viewFor(pattern) : null);
@@ -36,7 +45,10 @@ export function viewOf(g: ExerciseGuide, pattern: string | undefined): View | nu
 const FRONT_POSES: readonly string[] = ['standing', 'seated'] satisfies PoseId[];
 /** The rig for a file, or the reason there is none yet. */
 export function rigFor(g: ExerciseGuide, view: View | null): Rig | string {
-  if (view === 'side') return sideGuideRig(g);
+  if (view === 'side') {
+    const r = sideGuideRig(g), held = heldOf(g);
+    return typeof r === 'string' ? r : { ...r, markup: (read, mistake, part = true) => figureSide(read, { id: 'fgc', mistake, mirror: !!g.mirror, held: part ? held : undefined }) };
+  }
   if (view === 'back') return backGuideRig(g);
   if (view !== 'front') return `no view: ${g.id} has no library pattern and the file sets no view`;
   if (!FRONT_POSES.includes(g.pose)) return `no ${g.pose} pose in the front view yet`;
