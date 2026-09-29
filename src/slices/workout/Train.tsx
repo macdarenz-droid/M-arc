@@ -701,7 +701,11 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           {ex && recoveryPct != null && recoveryPct < 60 && (
             <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <button type="button" class="link-btn" onClick={() => setSubOpen(true)}>See substitutes</button> or ease off today.</p>
           )}
-          <button type="button" class="why-toggle" aria-expanded={why} onClick={() => setWhy(w => !w)}>Why this target <IconChevronDown size={16} class={`chev ${why ? 'up' : ''}`} /></button>
+          <div class="why-row">
+            <button type="button" class="why-toggle" aria-expanded={why} onClick={() => setWhy(w => !w)}>Why this target <IconChevronDown size={16} class={`chev ${why ? 'up' : ''}`} /></button>
+            {/* UI-2: moved out of the "..." sheet so there is one place for it (A3); hasGuide, never a hard-coded id, since PR #72 changes which exercises have a guide. */}
+            {ex && hasGuide(ex.id) && <button type="button" class="btn-how-to" onClick={() => setGuideOpen(true)}><IconPlay size={18} /> How to do it</button>}
+          </div>
           <div class={`ex-body ${why ? 'open' : ''} ${whySettled ? 'settled' : ''}`} ref={whyBodyRef} onTransitionEnd={e => { if (e.target === whyBodyRef.current && why) setWhySettled(true); }}>
             <div class="ex-body-inner">
             {(why || whyClosing) && (
@@ -810,7 +814,6 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             <Field label="Setup note (shown every time)"><input maxLength={200} value={stickyDraft ?? sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onInput={e => setStickyDraft((e.target as HTMLInputElement).value)} onChange={e => { setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value); setStickyDraft(null); }} /></Field>
             <Field label="Note for today"><input maxLength={500} value={noteDraft ?? entry.note ?? ''} onInput={e => setNoteDraft((e.target as HTMLInputElement).value)} onChange={e => { commitNoteDraft((e.target as HTMLInputElement).value); setNoteDraft(null); }} /></Field>
             <Button onClick={() => { closeMenu(); skipEntry(index, !entry.skipped); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
-            {ex && hasGuide(ex.id) && <Button variant="quiet" onClick={() => { closeMenu(); setGuideOpen(true); }}>How to do it</Button>}
             {ex && <Button variant="quiet" onClick={() => { closeMenu(); setSubOpen(true); }}>Substitute exercise</Button>}
             <Button variant="danger" onClick={() => {
               // QA10-1: closeMenu() just above commits any pending "Note for today" draft to the
