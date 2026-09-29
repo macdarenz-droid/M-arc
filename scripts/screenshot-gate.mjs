@@ -5945,6 +5945,26 @@ for (const { theme, inset } of bug22Runs) {
   await ctx.close();
 }
 
+// BUG-23: abductors (label "Outer hips") are drawn on the back-view SVG (gluteus medius left/right
+// in src/svg/bodyMuscles.ts), so the Body tab's back map must show them, never the front one.
+{
+  const tag = 'BUG-23 abductors back view';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(250);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+  await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300);
+  const sides = await page.evaluate(() => {
+    const wraps = [...document.querySelectorAll('.map-wrap > div')];
+    const hasOuterHips = (wrap) => [...(wrap?.querySelectorAll('svg path title') ?? [])].some(t => t.textContent?.startsWith('Outer hips'));
+    return { front: hasOuterHips(wraps[0]), back: hasOuterHips(wraps[1]) };
+  });
+  if (sides.front || !sides.back) errors.push(`${tag}: Outer hips (abductors) should appear only on the back map, got ${JSON.stringify(sides)}`);
+  await ctx.close();
+}
+
 // UI-2: the "How to do it" button lives on the open card's Why-this-target row. A4 accent styling,
 // a 44px tap target, in Silent Black and Paper at 360px; A5 never on a collapsed card, and does not
 // push the set rows off screen at 360px.
