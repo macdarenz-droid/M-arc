@@ -861,6 +861,10 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **Evidence**: before the fix, 4/50 under 6x throttle (`h: 43.99993896484375` each time); after the fix, 0/60 under the same 6x throttle, same viewport, same DSF. The unthrottled gate path (DSF 1/2/3, 30-60 runs each) never reproduced it locally even before the fix — CI's failure needed enough load to let the measurement land in the ~5%-progress window, which is why "flake" looked plausible but the mechanism is deterministic and load-dependent, not random.
   **Why**: task BUG-26 — root-cause CI run 36550949553 (job `visual-gate-tz`, GU-7a A7 360 px); no test, guard or the 44 px bar was loosened.
 
+## FG-OFF also removes the UI-2 button-styling block in tests/theme.test.ts (D-FGOFF1, FG-OFF builder, 2026-09-29)
+
+- **Decided**: the `"How to do it" button styling (UI-2)` describe block in `tests/theme.test.ts` is removed with the button. It only checks the `.btn-how-to` rule, which FG-OFF deletes, so it cannot stay green without keeping dead CSS. The FG-OFF check-in listed the UI-2 gate block and `tests/workout/how-to-do-it.test.ts` but missed this block; it falls under the same owner decision (remove the form guide, its tests and its own checks). Every other block in the file is byte-identical.
+  **Why**: owner decision 2026-09-29 (form guide paused; backup `claude/backup-fg-2026-09-29-main`); supervisor "go" on PR #98.
 ## Empty finish behaves like a discard, not a save (D-B28, BUG-28 builder, 2026-09-29)
 
 - **Decided**: finishing with 0 logged sets (`finishSession`, `src/slices/workout/session.ts`) now calls the existing `discardSession()` and returns `null`, instead of building and returning a `FinishSummary` for a session it never adds to `sessions`. This was the actual bug: `sessions: exercises.length ? […] : s.sessions` already skipped the save, but `escobar.todayOverride` was cleared unconditionally, and `Train.tsx` showed the "Session saved" screen off the returned (but unsaved) `session` object regardless of `exercises.length`, so the user saw "0 exercises · 0 sets" for a session that was in fact discarded from history.
