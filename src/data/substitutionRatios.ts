@@ -24,7 +24,7 @@ export const SUBSTITUTION_RATIOS: SubstitutionRatio[] = [
     toGroup: 'Dumbbells',
     ratio: 0.415,
     source:
-      'Saeterbakken, van den Tillaar & Fimland (2011), J Sports Sci 29(5):533-541, n=12: two-dumbbell bench press 1RM (combined) was 17% below barbell bench press 1RM (P≤.001). Halved here for a per-hand load; the paper does not itself report a per-hand split.',
+      'Saeterbakken, van den Tillaar & Fimland (2011), J Sports Sci 29(5):533-538, n=12: two-dumbbell bench press 1RM (combined) was 17% below barbell bench press 1RM (P≤.001). Halved here for a per-hand load; the paper does not itself report a per-hand split.',
     url: 'https://doi.org/10.1080/02640414.2010.543916',
   },
   {
