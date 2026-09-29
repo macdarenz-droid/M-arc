@@ -6,10 +6,10 @@
 //  (ii) joint driver: one channel is the minimum-jerk curve and the other is solved to keep the point on the path.
 // A geometry is buildable only if (ii) gives (c) ≤ 3 and a gap < 0.5 units. Each geometry is a straight path from the
 // "end" pose (near lockout) back to a start point at `d0` of the end distance from the root joint (shoulder or hip);
-// the envelope rows vary d0 and the lockout bend. Side-arm and leg rows arrive with FG-6's side rig.
+// the envelope rows vary d0 and the lockout bend. The side arm and leg are FG-6's.
 import { describe, expect, it } from 'vitest';
 import type { ChannelId, Pose } from '@/formguide/rig/joints';
-import { apply, frontFrame, handAt, worldMat } from '@/formguide/rig/pose';
+import { apply, frontFrame, handAt, inv, sideFrame, sidePivot, sidePoint, sideWorldMat, worldMat } from '@/formguide/rig/pose';
 import { envelope, stopsFor, windowsFor } from '@/formguide/sample';
 import { LIM, stopJerk } from '@/formguide/check/smooth';
 
@@ -21,6 +21,19 @@ const pose = (L: Limb, x: number[]): Pose => ({ [L.chans[0]]: x[0], [L.chans[1]]
 const FRONT: Limb = {
   name: 'front arm', chans: ['shoulder_abd_r', 'elbow_lead_r'],
   point: p => handAt(frontFrame('seated', p), 'r'), root: p => apply(worldMat('shoulder_r', frontFrame('seated', p)), [0, 0]),
+};
+
+/** FG-6's side arm, seated (the shoulder rises with flexion), the fist's centre on the path. */
+const SIDE_ARM: Limb = {
+  name: 'side arm', chans: ['shoulder_flex_r', 'elbow_flex_r'],
+  point: p => sidePoint(sideFrame('seated', p), 'hand_r'), root: p => sidePivot(sideFrame('seated', p), 'shoulder_r'),
+};
+/** FG-6's side leg, read in the pelvis's frame (the seat holds the pelvis; the seated pose would place it by the feet),
+ * the sole on the sled. */
+const inPelvis = (p: Pose, q: (f: ReturnType<typeof sideFrame>) => P): P => { const f = sideFrame('seated', p); return apply(inv(sideWorldMat('pelvis', f)), q(f)); };
+const LEG: Limb = {
+  name: 'side leg', chans: ['hip_flex_r', 'knee_flex_r'],
+  point: p => inPelvis(p, f => sidePoint(f, 'foot_r')), root: p => inPelvis(p, f => sidePivot(f, 'hip_r')),
 };
 
 /** Both channels to a point: Newton on the rig's own forward kinematics. */
@@ -104,9 +117,15 @@ function measure(g: Geo): Result {
 }
 
 const f2 = (v: number) => +v.toFixed(2);
-/** The recorded A0 numbers (front arm, main at 5e416d8): (i), (ii) with the named driver, and (ii) driven by the other
- * channel. The shoulder drives both front geometries: the elbow, the larger excursion, fails (c) when it drives. */
+/** The recorded A0 numbers (front arm on main at 5e416d8, side arm and leg on FG-6 7009772, re-run on main cfad57d):
+ * (i), (ii) with the named driver, and (ii) driven by the other channel. The elbow drives the horizontal and incline
+ * press, the shoulder the overhead press and the pulldown (the elbow, the larger excursion, fails (c) when it drives the
+ * front one), the knee the sled (D-FG7 (b) amendment). */
 const ROWS: (Geo & { rec: [number, number, number] })[] = [
+  { name: 'horizontal press', L: SIDE_ARM, end: [90, 15], dirDeg: 0, d0: 0.45, driver: 1, rec: [17.6, 2.58, 4.65] },
+  { name: 'incline press 35°', L: SIDE_ARM, end: [125, 15], dirDeg: 35, d0: 0.45, driver: 1, rec: [16, 2.58, 4.5] },
+  { name: 'overhead press', L: SIDE_ARM, end: [170, 15], dirDeg: 90, d0: 0.45, driver: 0, rec: [15.62, 2.5, 2.86] },
+  { name: '45° sled', L: LEG, end: [90, 15], dirDeg: 0, d0: 0.45, driver: 1, rec: [16.52, 2.38, 102.67] },
   { name: 'overhead press', L: FRONT, end: [165, -15], dirDeg: 90, d0: 0.45, driver: 0, rec: [17.16, 2.68, 3.29] },
   { name: 'front pulldown', L: FRONT, end: [160, -15], dirDeg: 90, d0: 0.45, driver: 0, rec: [17.55, 2.92, 3.87] },
 ];
@@ -127,7 +146,7 @@ describe('V1-04 A0: the drive rule measured on the real rig', () => {
       expect(r.gap).toBeLessThan(0.5);
     }
   });
-  it.each(ROWS)('$name, $L.name: outside the envelope (locked to 10° from a start at 0.35 of the reach) (c) fails', g => {
+  it.each(ROWS.filter(g => g.L === FRONT))('$name, $L.name: outside the envelope (locked to 10° from a start at 0.35 of the reach) (c) fails', g => {
     expect(measure({ ...g, d0: 0.35, end: [g.end[0]!, Math.sign(g.end[1]!) * 10] }).joint).toBeGreaterThan(LIM.c);
   });
 });
