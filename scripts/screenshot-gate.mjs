@@ -6194,17 +6194,26 @@ for (const theme of ['silent-black', 'paper']) {
 }
 
 // FG-V1 (V1-08, docs/FORM-GUIDE-PRODUCTION.md §10.5): a generic gate block for every GUIDE_IDS id that has an exercise
-// file (today only the lateral raise; the chest press waits on V1-09's machines, D-FG-V1). For each such id it opens
-// the Train sheet's guide (ExercisePlayer.tsx, mounted by FormGuidePlayer.tsx whenever `../exercises/<id>.ts` exists)
-// and: probe 1 seeks the *played* WAAPI transforms at 1/120 s (not the sampled stops fg:check already proves) and
-// runs smooth-check (a) edge speed, (b) velocity step and (d) the 4°/tick cap (check/smooth.ts:8 LIM), plus a
-// rep-seam continuity check; not (c) — WAAPI's straight interpolation between stops spikes 120 Hz acceleration
-// (doc:291), so (c) stays proven on the sampled stops by fg:check. Probe 2 confirms every `muscles.target` overlay's
-// tint peaks well above the seeded 0 % floor (ported from the demo's target-visible-at-peak probe, commit fbaa35d).
-// Screenshots: play, compare (Mistake chip) and Pictures at 360 and 390 px in Silent Black and Paper; a setup pair
-// once an id's `mistake.setup` exists (none yet — V1-09).
+// file (today only the lateral raise; the chest press waits on V1-09's machines). For each such id it opens the Train
+// sheet's guide (ExercisePlayer.tsx, mounted by FormGuidePlayer.tsx whenever `../exercises/<id>.ts` exists) and:
+// probe 1 seeks the *played* WAAPI transforms at 1/120 s (not the sampled stops fg:check already proves) and runs
+// smooth-check (a) edge speed, (b) velocity step and (d) the 4°/tick cap (check/smooth.ts:8 LIM), plus a rep-seam
+// continuity check; not (c) — WAAPI's straight interpolation between stops spikes 120 Hz acceleration (doc:291), so
+// (c) stays proven on the sampled stops by fg:check. Probe 2 (D-R5, ported from the demo's fbaa35d, re-guided on PR
+// #95): every `muscles.target` muscle's visible accent area at its hardest point (the sampled instant its tint peaks)
+// must be >=97% of its area at setup (t=0) — measured on the live page (isPointInFill + elementFromPoint, so a
+// covered target fails; raw opacity is extra evidence only, kept alongside). Probe 3: the mistake figure's WAAPI
+// start-time never drifts more than one 1/120 s frame from the correct figure's (the 280 ms bug,
+// COACHING-DECISIONS.md:649). Probe 4: WCAG contrast (>=4.5:1, I14's own maths) on the guide's own text. Probe 5:
+// the form-guide chunks' total gzip budget and 0 B of form-guide code in the main chunk. Probe 6: a frame-interval
+// proxy in compare mode under 4x CPU throttle, recorded only (no pass mark; DC0 sets one later). Screenshots: play,
+// compare and Pictures at 360 and 390 px in Silent Black and Paper; a setup pair once an id's `mistake.setup` exists
+// (none yet — V1-09). A2-A4 each open their own mutated context and prove the relevant probe fails on a real defect;
+// the mutation's own findings are local and never leak into the gate's real errors — only the probe missing a real
+// defect is a gate error.
 {
   const tag = 'FG-V1';
+  const t0 = Date.now();
   const exists = (p) => { try { readFileSync(p); return true; } catch { return false; } };
   const registrySrc = readFileSync(join(ROOT, 'src/formguide/registry.ts'), 'utf8');
   const idsMatch = registrySrc.match(/GUIDE_IDS[\s\S]*?Set\(\[([\s\S]*?)\]\)/);
@@ -6219,13 +6228,9 @@ for (const theme of ['silent-black', 'paper']) {
     return { targets, hasSetup: /\bsetup:\s*\{/.test(src) };
   };
 
-  const seed = ([id, theme]) => {
-    const orig = Element.prototype.animate;
-    window.__fgAnims = [];
-    Element.prototype.animate = function (...a) { const an = orig.apply(this, a); if (this.closest?.('.form-guide')) window.__fgAnims.push(an); return an; };
-    localStorage.setItem('marc.theme', theme);
+  const stateFor = (id) => {
     const now = new Date().toISOString(), day = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
-    localStorage.setItem('marc.state.v1', JSON.stringify({
+    return {
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
       goal: 'lean', splits: [{ id: 'sp1', name: 'Guide', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: id, sets: 3 }] }],
       schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
@@ -6236,14 +6241,30 @@ for (const theme of ['silent-black', 'paper']) {
       preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
       body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
       onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
-    }));
+    };
   };
-  const open = async (id, width, theme) => {
+  /** The `Element.prototype.animate` hook FG-4 uses (window.__fgAnims), plus an optional `mutate(el, frames, timing)`
+   * so the A2/A4 seeded tests can jitter exactly one call's frames without touching any other file. */
+  const seed = ([id, theme, mutateSrc]) => {
+    const mutate = mutateSrc ? new Function('el', 'frames', 'timing', mutateSrc) : null;
+    const orig = Element.prototype.animate;
+    window.__fgAnims = [];
+    Element.prototype.animate = function (frames, timing) {
+      const use = mutate ? (mutate(this, frames, timing) ?? frames) : frames;
+      const an = orig.call(this, use, timing);
+      if (this.closest?.('.form-guide')) window.__fgAnims.push(an);
+      return an;
+    };
+    localStorage.setItem('marc.theme', theme);
+    localStorage.setItem('marc.state.v1', JSON.stringify(window.__FGV1_STATE__));
+  };
+  const open = async (id, width, theme, mutateSrc) => {
     const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2 });
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${tag} ${id} ${theme} ${width}: ${e.message}`));
     page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} ${id} ${theme} ${width} console: ${m.text()}`); });
-    await page.addInitScript(seed, [id, theme]);
+    await page.addInitScript((state) => { window.__FGV1_STATE__ = state; }, stateFor(id));
+    await page.addInitScript(seed, [id, theme, mutateSrc ?? null]);
     await page.goto(`http://localhost:${PORT}/`);
     await page.waitForSelector('.nav'); await launchGone(page);
     await page.waitForTimeout(300);
@@ -6257,8 +6278,8 @@ for (const theme of ['silent-black', 'paper']) {
     return { ctx, page, ok };
   };
 
-  /** Probe 1 + 2 data: every `.fg-j` joint's drawn rotation angle and every `[class*="fg-t-"]` tint's opacity,
-   * sampled at 1/120 s across the whole chained timeline, straight off the paused WAAPI animations (no play needed:
+  /** Probe 1/2 data: every `.fg-j` joint's drawn rotation angle and every `[class*="fg-t-"]` tint's opacity, sampled
+   * at 1/120 s across the whole chained timeline, straight off the paused WAAPI animations (no play needed:
    * mountAnimations pauses each on mount, waapi.ts:47). */
   const sample = (page) => page.evaluate(() => {
     const anims = window.__fgAnims;
@@ -6283,14 +6304,15 @@ for (const theme of ['silent-black', 'paper']) {
   });
 
   /** smooth-check (a)/(b)/(d) on the *drawn* angle, plus a rep-seam continuity check; not (c) (see block comment).
-   * LIM cites check/smooth.ts:8; REPS cites guideView.ts:16 ("GU-7a R1-3: three, then hold"). */
-  const LIM = { a: 0.01, b: 0.08, d: 4 }, REPS = 3;
-  const probe1 = (id, { dt, jointSeries }, dur) => {
+   * LIM cites check/smooth.ts:8; REPS cites guideView.ts:16 ("GU-7a R1-3: three, then hold"). `sink` defaults to the
+   * gate's real `errors`; the A2 self-test passes a local array instead. */
+  const LIM = { a: 0.01, b: 0.08, d: 4 }, REPS = 3, FRAME_MS = 1000 / 120;
+  const probe1 = (id, { dt, jointSeries }, dur, sink = errors) => {
     const repLen = dur / REPS;
     for (const [name, series] of Object.entries(jointSeries)) {
       for (let i = 1; i < series.length; i++) {
         const step = Math.abs(series[i] - series[i - 1]);
-        if (step > LIM.d) errors.push(`${tag} ${id} probe1 (d): ${name} moved ${step.toFixed(2)}° in one 1/120 s tick at ${(i * dt).toFixed(1)} ms (limit ${LIM.d}°)`);
+        if (step > LIM.d) sink.push(`${tag} ${id} probe1 (d): ${name} moved ${step.toFixed(2)}° in one 1/120 s tick at ${(i * dt).toFixed(1)} ms (limit ${LIM.d}°)`);
       }
       for (let r = 0; r < REPS; r++) {
         const i0 = Math.round((r * repLen) / dt), i1 = Math.min(series.length - 1, Math.round(((r + 1) * repLen) / dt));
@@ -6299,34 +6321,110 @@ for (const theme of ['silent-black', 'paper']) {
         const peak = Math.max(0, ...vel.map(Math.abs));
         if (peak < 1e-6) continue;
         const e0 = Math.abs(vel[0] ?? 0), e1 = Math.abs(vel[vel.length - 1] ?? 0), edge = Math.max(e0, e1) / peak;
-        if (edge > LIM.a) errors.push(`${tag} ${id} probe1 (a): ${name} rep ${r + 1} edge speed ${(edge * 100).toFixed(1)}% of the phase's top speed (limit ${LIM.a * 100}%)`);
+        if (edge > LIM.a) sink.push(`${tag} ${id} probe1 (a): ${name} rep ${r + 1} edge speed ${(edge * 100).toFixed(1)}% of the phase's top speed (limit ${LIM.a * 100}%)`);
         let jump = 0, jumpAt = i0;
         for (let i = 1; i < vel.length; i++) { const j = Math.abs(vel[i] - vel[i - 1]) / peak; if (j > jump) { jump = j; jumpAt = i0 + i; } }
-        if (jump > LIM.b) errors.push(`${tag} ${id} probe1 (b): ${name} rep ${r + 1} velocity step ${(jump * 100).toFixed(1)}% of peak at ${(jumpAt * dt).toFixed(1)} ms (limit ${LIM.b * 100}%)`);
+        if (jump > LIM.b) sink.push(`${tag} ${id} probe1 (b): ${name} rep ${r + 1} velocity step ${(jump * 100).toFixed(1)}% of peak at ${(jumpAt * dt).toFixed(1)} ms (limit ${LIM.b * 100}%)`);
       }
       for (let r = 1; r < REPS; r++) {
         const i = Math.round((r * repLen) / dt);
         const jump = Math.abs(series[i] - series[i - 1]);
-        if (jump > 0.5) errors.push(`${tag} ${id} probe1 seam: ${name} jumps ${jump.toFixed(2)}° across the rep ${r}/${r + 1} seam at ${(i * dt).toFixed(1)} ms`);
+        if (jump > 0.5) sink.push(`${tag} ${id} probe1 seam: ${name} jumps ${jump.toFixed(2)}° across the rep ${r}/${r + 1} seam at ${(i * dt).toFixed(1)} ms`);
       }
     }
-    console.log(`${tag} ${id} probe1: ${Object.keys(jointSeries).length} joints over ${dur} ms at 1/120 s, (a)/(b)/(d) and seam checks ran (not (c), see block comment)`);
+    console.log(`${tag} ${id} probe1: ${Object.keys(jointSeries).length} joints over ${dur} ms at 1/120 s, (a)/(b)/(d) and seam checks ran (not (c), see block comment); ${sink.length} violations`);
   };
 
-  /** Every named target muscle's tint must peak well clear of 0 (the seeded-hidden floor); tintOf (guideView.ts:19)
-   * is 0.6 * effort, and TORQUE.target (check/effort.ts:17) never drops the target curve below 0.12, so any real
-   * target comfortably clears 0.15. */
-  const probe2 = (id, targets, { tintSeries }) => {
-    if (!targets.length) { errors.push(`${tag} ${id} probe2: no muscles.target in the exercise file`); return; }
+  /** D-R5 (ported from the demo's fbaa35d; re-guided on PR #95): "visible area" at ms — points genuinely inside the
+   * tint's own geometry (isPointInFill, unaffected by paint) where the live page's own hit-test (elementFromPoint)
+   * says the tint itself is the topmost thing drawn there, and the tint is actually painting (opacity over a
+   * hairline epsilon: CSS opacity does not by itself stop SVG hit-testing, so a covered *or* a hidden tint both
+   * read as "not visible" here). Every other accent overlay (other muscles, and this muscle's own band, which
+   * shares its path and would otherwise always win the hit-test) is neutralised first via pointer-events, not
+   * opacity, for the same reason. */
+  const measureArea = (page, targetKey, ms) => page.evaluate(({ targetKey, ms }) => {
+    const scene = document.querySelector('dialog[open] .fg4-scene');
+    const target = scene?.querySelector(`.${targetKey}`);
+    if (!target) return null;
+    const others = [...scene.querySelectorAll('[class*="fg-t-"], [class*="fg-b-"]')].filter(el => el !== target);
+    const saved = others.map(el => [el, el.style.pointerEvents]);
+    for (const el of others) el.style.pointerEvents = 'none';
+    for (const a of window.__fgAnims) a.currentTime = ms;
+    const bb = target.getBBox(), ctm = target.getScreenCTM();
+    const opacity = parseFloat(getComputedStyle(target).opacity), EPS = 0.02, GRID = 22;
+    let total = 0, visible = 0;
+    for (let iy = 0; iy < GRID; iy++) for (let ix = 0; ix < GRID; ix++) {
+      const pt = new DOMPoint(bb.x + ((ix + 0.5) / GRID) * bb.width, bb.y + ((iy + 0.5) / GRID) * bb.height);
+      if (!target.isPointInFill(pt)) continue;
+      total++;
+      if (opacity <= EPS) continue;
+      const sp = pt.matrixTransform(ctm);
+      if (document.elementFromPoint(sp.x, sp.y) === target) visible++;
+    }
+    for (const [el, pe] of saved) el.style.pointerEvents = pe;
+    for (const a of window.__fgAnims) a.currentTime = 0;
+    return { total, visible, opacity };
+  }, { targetKey, ms });
+
+  const probe2 = async (id, targets, page, tintData, sink = errors) => {
+    if (!targets.length) { sink.push(`${tag} ${id} probe2: no muscles.target in the exercise file`); return; }
     for (const t of targets) {
-      const keys = Object.keys(tintSeries).filter(k => k.startsWith(`fg-t-${t}_`));
-      if (!keys.length) { errors.push(`${tag} ${id} probe2: target ${t} has no tint overlay in the drawn figure`); continue; }
+      const keys = Object.keys(tintData.tintSeries).filter(k => k.startsWith(`fg-t-${t}_`));
+      if (!keys.length) { sink.push(`${tag} ${id} probe2: target ${t} has no tint overlay in the drawn figure`); continue; }
+      const summed = tintData.times.map((_, i) => keys.reduce((s, k) => s + tintData.tintSeries[k][i], 0));
+      const holdMs = tintData.times[summed.indexOf(Math.max(...summed))];
       for (const k of keys) {
-        const peak = Math.max(0, ...tintSeries[k]);
-        console.log(`${tag} ${id} probe2: ${k} peak opacity ${peak.toFixed(3)}`);
-        if (peak < 0.15) errors.push(`${tag} ${id} probe2: ${k} peaks at opacity ${peak.toFixed(3)}, under the 0.15 visibility floor`);
+        const setup = await measureArea(page, k, 0), hold = await measureArea(page, k, holdMs);
+        if (!setup || !hold) { sink.push(`${tag} ${id} probe2: ${k} could not be measured`); continue; }
+        console.log(`${tag} ${id} probe2: ${k} setup ${setup.visible}/${setup.total} px (opacity ${setup.opacity.toFixed(3)}), hold ${hold.visible}/${hold.total} px at ${holdMs.toFixed(1)} ms (opacity ${hold.opacity.toFixed(3)})`);
+        if (setup.visible === 0) { sink.push(`${tag} ${id} probe2: ${k} has no visible area even at setup (opacity ${setup.opacity.toFixed(3)}) — the tint may be hidden`); continue; }
+        const ratio = hold.visible / setup.visible;
+        console.log(`${tag} ${id} probe2: ${k} hold/setup visible-area ratio ${(ratio * 100).toFixed(1)}% (limit 97%)`);
+        if (ratio < 0.97) sink.push(`${tag} ${id} probe2: ${k} visible area at the hardest point is ${(ratio * 100).toFixed(1)}% of its area at setup (limit 97%)`);
       }
     }
+  };
+
+  /** The mistake figure's WAAPI start-time must never drift more than one 1/120 s frame from the correct figure's
+   * (the 280 ms bug, COACHING-DECISIONS.md:649). */
+  const readSync = (page) => page.evaluate(() => {
+    const figs = [...document.querySelectorAll('dialog[open] .fg4-scene .fg-fig')];
+    if (figs.length !== 2) return { correct: null, mistake: [] };
+    const groupOf = (fig) => window.__fgAnims.filter(a => fig.contains(a.effect.target));
+    const starts = (fig) => groupOf(fig).map(a => a.startTime).filter((t) => t != null);
+    return { correct: starts(figs[0])[0] ?? null, mistake: starts(figs[1]) };
+  });
+  const probe3 = (id, sync, sink = errors) => {
+    if (sync.correct == null || !sync.mistake.length) { sink.push(`${tag} ${id} probe3: could not read animation start-times (correct ${sync.correct}, mistake ${JSON.stringify(sync.mistake)})`); return; }
+    const maxDiff = Math.max(...sync.mistake.map((st) => Math.abs(st - sync.correct)));
+    console.log(`${tag} ${id} probe3: mistake figure start-time drift ${maxDiff.toFixed(2)} ms (limit ${FRAME_MS.toFixed(2)} ms, 1 frame at 1/120 s)`);
+    if (maxDiff > FRAME_MS) sink.push(`${tag} ${id} probe3: the mistake figure drifts ${maxDiff.toFixed(2)} ms from the correct figure's clock (limit ${FRAME_MS.toFixed(2)} ms)`);
+  };
+
+  /** WCAG contrast (>=4.5:1), the same maths the I14 gate block uses (screenshot-gate.mjs, "I14: WCAG contrast"). */
+  const checkContrast = async (page, sel, label, sink = errors) => {
+    const c = await page.evaluate((s) => {
+      const el = document.querySelector(s);
+      if (!el) return null;
+      const parseRgba = (str) => {
+        let m = str.match(/rgba?\(([^)]+)\)/);
+        if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+        m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+        if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+        return null;
+      };
+      const fg = parseRgba(getComputedStyle(el).color);
+      if (!fg) return null;
+      let node = el, under = { r: 255, g: 255, b: 255 };
+      while (node) { const bg = parseRgba(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+      const lin = (c2) => { const s2 = c2 / 255; return s2 <= 0.03928 ? s2 / 12.92 : Math.pow((s2 + 0.055) / 1.055, 2.4); };
+      const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+      const l1 = rl(fg) + 0.05, l2 = rl(under) + 0.05;
+      return l1 > l2 ? l1 / l2 : l2 / l1;
+    }, sel);
+    if (c == null) { sink.push(`${tag} probe4: could not measure contrast for ${label} (selector ${sel})`); return; }
+    console.log(`${tag} probe4: ${label} contrast ${c.toFixed(2)}`);
+    if (c < 4.5) sink.push(`${tag} probe4: ${label} contrast ${c.toFixed(2)} < 4.5`);
   };
 
   for (const id of guideIds) {
@@ -6339,23 +6437,153 @@ for (const theme of ['silent-black', 'paper']) {
         if (!ok) { await ctx.close(); continue; }
         const title = await page.locator('dialog[open] h2').textContent();
         if (title !== `How to do it: ${name}`) errors.push(`${tag} ${id} ${theme} ${width}: sheet title "${title}"`);
+        if (width === 390) await checkContrast(page, 'dialog[open] .cam-label', `${theme} camera label`);
         await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-play.png` });
-        await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
-        await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-compare.png` });
-        await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+        let sync = null;
+        if (width === 390 && theme === 'silent-black') {
+          // The mistake figure only takes the correct figure's WAAPI startTime (waapi.ts follow(), the 280 ms bug's
+          // fix) when it mounts *while the correct figure is already playing* (ExercisePlayer.tsx:123); mounted
+          // while paused it just seeks to match currentTime once, and startTime stays null throughout, so probe 3
+          // needs the real playing path exercised here, not the paused default state the screenshots otherwise use.
+          await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click(); await page.waitForTimeout(200);
+          await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+          sync = await readSync(page);
+          await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-compare.png` });
+          await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(200);
+          await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Pause', exact: true }).click(); await page.waitForTimeout(200);
+        } else {
+          await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+          await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-compare.png` });
+          await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+        }
         await page.locator('dialog[open] .seg button', { hasText: 'Pictures' }).click(); await page.waitForTimeout(200);
         await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-pictures.png` });
+        if (width === 390) await checkContrast(page, 'dialog[open] .pics .tile p', `${theme} picture caption`);
         if (meta.hasSetup) {
           // V1-09 wires the machine setup view; once it exists this takes the right/wrong setup pair here.
           errors.push(`${tag} ${id}: mistake.setup is set but no setup view exists yet to screenshot (V1-09)`);
         }
-        if (width === 390 && theme === 'silent-black') data = await sample(page);
+        if (width === 390 && theme === 'silent-black') {
+          data = await sample(page);
+          probe3(id, sync);
+        }
         await ctx.close();
       }
     }
-    if (data) { probe1(id, data, data.dur); probe2(id, meta.targets, data); }
-    else errors.push(`${tag} ${id}: never reached the 390/silent-black run, probes 1-2 did not run`);
+    if (data) {
+      probe1(id, data, data.dur);
+      const { ctx, page, ok } = await open(id, 390, 'silent-black');
+      if (ok) await probe2(id, meta.targets, page, data);
+      await ctx.close();
+    } else errors.push(`${tag} ${id}: never reached the 390/silent-black run, probes 1-3 did not run`);
   }
+
+  // Probe 5: the form-guide chunks' total gzip budget, and 0 B of form-guide code in the main chunk.
+  {
+    const { gzipSync } = await import('node:zlib');
+    const assets = join(ROOT, 'www/assets');
+    const files = readdirSync(assets);
+    const player = files.find((f) => /^FormGuidePlayer-.*\.js$/.test(f));
+    let total = 0;
+    if (!player) errors.push(`${tag} probe5: missing the FormGuidePlayer chunk`);
+    else { const gz = gzipSync(readFileSync(join(assets, player))).length; total += gz; console.log(`${tag} probe5: ${player} ${gz} B gzip`); }
+    for (const id of guideIds) {
+      const chunk = files.find((f) => new RegExp(`^${id}-.*\\.js$`).test(f));
+      if (!chunk) { errors.push(`${tag} probe5: missing the chunk for ${id}`); continue; }
+      const gz = gzipSync(readFileSync(join(assets, chunk))).length;
+      total += gz;
+      console.log(`${tag} probe5: ${chunk} ${gz} B gzip`);
+    }
+    console.log(`${tag} probe5: form-guide chunks total ${total} B gzip (cap ${150 * 1024})`);
+    if (total > 150 * 1024) errors.push(`${tag} probe5: form-guide chunks total ${total} B gzip, over the 150 KB cap`);
+    for (const f of files.filter((f) => /^index-.*\.js$/.test(f))) {
+      const text = readFileSync(join(assets, f), 'utf8');
+      for (const p of ['fg-fig', 'transform-box:view-box', 'data:image/svg+xml;charset=utf-8,']) if (text.includes(p)) errors.push(`${tag} probe5: ${f} (main chunk) holds form-guide code ("${p}")`);
+    }
+  }
+
+  // Probe 6: a frame-interval proxy in compare mode under 4x CPU throttle. Recorded only — no pass mark (the card's
+  // risk note: "Probe 6 has no pass mark until DC0 exists").
+  if (guideIds.length) {
+    const id = guideIds[0];
+    const { ctx, page, ok } = await open(id, 390, 'silent-black');
+    if (ok) {
+      const cdp = await ctx.newCDPSession(page);
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+      await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click();
+      const frames = await page.evaluate(() => new Promise((resolve) => {
+        const times = []; let n = 0;
+        const step = (ts) => { times.push(ts); if (++n < 90) requestAnimationFrame(step); else resolve(times); };
+        requestAnimationFrame(step);
+      }));
+      const intervals = frames.slice(1).map((t, i) => t - frames[i]).sort((a, b) => a - b);
+      const median = intervals[Math.floor(intervals.length / 2)], p95 = intervals[Math.min(intervals.length - 1, Math.floor(intervals.length * 0.95))];
+      console.log(`${tag} probe6 (record only, no pass mark): ${id} compare mode under 4x CPU throttle — median frame interval ${median.toFixed(2)} ms, p95 ${p95.toFixed(2)} ms over ${intervals.length} frames`);
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+    }
+    await ctx.close();
+  }
+
+  // A2-A4: each opens its own mutated context and proves the relevant probe would fail on a real defect. The
+  // mutation's findings are local (`mut`) and never leak into the gate's real `errors` — only the probe missing a
+  // real defect is a gate error.
+  if (guideIds.length) {
+    const id = guideIds[0];
+
+    // A2: a broken timeline — one keyframe on the shoulder joint pushed 40deg off its neighbours mid-run — must
+    // fail probe 1 (a)/(b)/(d).
+    {
+      const mut = [];
+      const mutateSrc = "if ([...el.classList].includes('j-shoulder_r') && Array.isArray(frames) && frames.length > 2) { const mid = Math.floor(frames.length / 2); return frames.map((f, i) => i === mid ? { ...f, transform: `${f.transform ?? ''} rotate(40deg)` } : f); }";
+      const { ctx, page, ok } = await open(id, 390, 'silent-black', mutateSrc);
+      if (ok) { const d = await sample(page); probe1(id, d, d.dur, mut); }
+      await ctx.close();
+      if (!mut.length) errors.push(`${tag} A2: the seeded broken timeline did not fail probe 1 (regression in probe 1 itself)`);
+      else console.log(`${tag} A2 seeded failure (expected, not a real bug): ${mut.length} probe-1 violation(s), e.g. "${mut[0]}"`);
+    }
+
+    // A3: the side_delts tint forced to opacity 0 for the whole run (an `!important` stylesheet rule outranks the
+    // WAAPI-animated inline opacity) — must fail probe 2 via the "no visible area even at setup" guard.
+    {
+      const mut = [];
+      const meta = exerciseMeta(id);
+      const { ctx, page, ok } = await open(id, 390, 'silent-black');
+      if (ok) {
+        const hideSel = meta.targets.map((m) => `.fg-t-${m}_l, .fg-t-${m}_r, .fg-b-${m}_l, .fg-b-${m}_r`).join(', ');
+        await page.addStyleTag({ content: `${hideSel} { opacity: 0 !important; }` });
+        const d = await sample(page);
+        await probe2(id, meta.targets, page, d, mut);
+      }
+      await ctx.close();
+      if (!mut.length) errors.push(`${tag} A3: hiding the side_delts tint did not fail probe 2 (regression in probe 2 itself)`);
+      else console.log(`${tag} A3 seeded failure (expected, not a real bug): ${mut.length} probe-2 violation(s), e.g. "${mut[0]}"`);
+    }
+
+    // A4: the mistake figure's clock forced 280 ms behind the correct figure's, right after it mounts (the historic
+    // bug, COACHING-DECISIONS.md:649) — must fail probe 3.
+    {
+      const mut = [];
+      const { ctx, page, ok } = await open(id, 390, 'silent-black');
+      if (ok) {
+        // Mount while playing, exactly like the real probe 3 run above, so waapi.ts follow() actually runs.
+        await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click(); await page.waitForTimeout(200);
+        await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+        await page.evaluate(() => {
+          const figs = [...document.querySelectorAll('dialog[open] .fg4-scene .fg-fig')];
+          const mistakeAnims = window.__fgAnims.filter((a) => figs[1]?.contains(a.effect.target));
+          for (const a of mistakeAnims) a.currentTime = a.currentTime - 280;
+        });
+        const sync = await readSync(page);
+        probe3(id, sync, mut);
+      }
+      await ctx.close();
+      if (!mut.length) errors.push(`${tag} A4: a 280 ms mistake offset did not fail probe 3 (regression in probe 3 itself)`);
+      else console.log(`${tag} A4 seeded failure (expected, not a real bug): ${mut.length} probe-3 violation(s), e.g. "${mut[0]}"`);
+    }
+  }
+
+  console.log(`${tag}: wall time ${((Date.now() - t0) / 1000).toFixed(1)} s for ${guideIds.length} id(s) (A6)`);
 }
 
 await browser.close();
