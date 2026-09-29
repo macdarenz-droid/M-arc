@@ -77,6 +77,7 @@ function range3(a: number, b: number, c: number, d: number, lo: number, hi: numb
  * it back), and a shape's curves are solved only when the box of its control points (which holds the curve) reaches
  * past the box so far. Held equal to bbox by checksV1.test.ts.
  */
+const localBoxes = new WeakMap<Compiled, number[][]>();
 export function fastBox(c: Compiled, f: Frame): Box {
   const mats: Mat[] = [];
   c.nodes.forEach((n, i) => {
@@ -87,8 +88,15 @@ export function fastBox(c: Compiled, f: Frame): Box {
     mats[i] = M;
   });
   const b: Box = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
-  for (const s of c.shapes) {
-    const M = mats[s.node]!, pts = s.segs.map(seg => seg.map(q => apply(M, q)));
+  let lb = localBoxes.get(c);
+  if (!lb) localBoxes.set(c, (lb = c.shapes.map(s => { const q = s.segs.flat(); return [Math.min(...q.map(p => p[0])), Math.min(...q.map(p => p[1])), Math.max(...q.map(p => p[0])), Math.max(...q.map(p => p[1]))]; })));
+  for (let si = 0; si < c.shapes.length; si++) {
+    const s = c.shapes[si]!, M = mats[s.node]!, [lx0, ly0, lx1, ly1] = lb[si]!;
+    // the shape's control points lie in its local box, whose four corners bound them under M: inside the box so far, skip
+    let inside = true;
+    for (const q of [[lx0, ly0], [lx1, ly0], [lx0, ly1], [lx1, ly1]] as Pt[]) { const p = apply(M, q); if (!(p[0] >= b.x0 && p[0] <= b.x1 && p[1] >= b.y0 && p[1] <= b.y1)) { inside = false; break; } }
+    if (inside) continue;
+    const pts = s.segs.map(seg => seg.map(q => apply(M, q)));
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
     for (const seg of pts) for (const p of seg) { if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0]; if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1]; }
     if (x0 >= b.x0 && x1 <= b.x1 && y0 >= b.y0 && y1 <= b.y1) continue;
