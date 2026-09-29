@@ -16,7 +16,7 @@ M/ARC is a workout tracker. It has no accounts, no ads and no analytics. Your da
 
 This data sits in the app's private storage on your phone. The web version keeps it in your browser's storage for the site, and is served by Netlify, a web host, which sees your IP address when the page loads.
 
-**Android backup.** If backup is turned on in your phone's settings, Android's Auto Backup can copy this app's data (including workouts, health history and coach conversations) to a private, hidden folder in your Google account, about once a day while the phone is idle and on Wi-Fi. On Android 9 and newer it is encrypted with your screen lock. Google runs this backup; you can turn it off in your phone's settings (usually Settings > System > Backup).
+**Android backup.** If backup is turned on in your phone's settings, Android's Auto Backup can copy this app's data (including workouts, health history and coach conversations) to a private, hidden folder in your Google account, about once a day while the phone is idle and on Wi-Fi, or copy it to a new phone when you transfer your data to it. On Android 9 and newer it is encrypted with your screen lock. Google runs this backup; you can turn it off in your phone's settings (usually Settings > System > Backup).
 
 ## The online coach (Escobar), off by default
 When you turn on "Online coach" and send a message, the app sends to the coach server:
@@ -46,7 +46,7 @@ The server stores reports in Cloudflare's database for 90 days, then deletes the
 Everything the app sends goes over an encrypted connection (HTTPS). Health data is never sold, never used for ads, and never given to anyone except, when you share it, to answer your own coach request. The app has no ads or tracking.
 
 ## Deleting your data
-"Reset everything" in Settings (Your data) erases everything on the phone, including coach conversations and photos, and gives you a new install id. Uninstalling the app also removes it. Error reports on the server are not linked to your name and are deleted after 90 days. To ask about them, email [OWNER: contact email].
+"Reset workout data" in Settings (Your data), then "Reset everything", erases everything on the phone, including coach conversations and photos, and gives you a new install id. Uninstalling the app also removes it. Error reports on the server are not linked to your name and are deleted after 90 days. To ask about them, email [OWNER: contact email].
 
 ## Children
 M/ARC is not meant for children under [OWNER: minimum age]. [OWNER: confirm age and wording for the countries you publish in.]
