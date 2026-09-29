@@ -103,6 +103,13 @@ describe('V4 (E-1): the plateau lever reads the usual trained week, not last wee
     expect(l).toBeDefined();
     expect(l!.means).not.toMatch(/low side/);
   });
+  it('V4: two missed weeks in the last four are skipped, not counted as 0', () => {
+    // Last four weeks: missed, 12, missed, 12 chest sets. Skipped: median 12 (fallback line 10, not low).
+    // Counted as 0: median of [0, 0, 12, 12] = 6, under the Developing band's 8 → "low" (the bug).
+    const l = lever(coachCtx(flatWeeks(['2026-08-03', '2026-08-10', '2026-08-17', '2026-08-24', '2026-08-31', '2026-09-14'], () => sets(80, 8, 'ideal', 6))));
+    expect(l).toBeDefined();
+    expect(l!.means).not.toMatch(/low side/);
+  });
   it('V4 (failure path): a usual week under the band → the volume lever still fires, with the range', () => {
     const l = lever(coachCtx(flatWeeks(eightWeeks, () => sets(80, 8, 'ideal', 2))));
     expect(l!.means).toMatch(/about 4 hard sets in a usual week; your range is 8–14/);
