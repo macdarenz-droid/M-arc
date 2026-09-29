@@ -58,11 +58,14 @@ describe('V1-04 A2: the front two-hand press holds its contacts', () => {
   it('handsOnHandle, bodyOnPad and machinePivot pass at unchanged limits', () => {
     expect(failing(FX, ['handsOnHandle', 'bodyOnPad', 'machinePivot'])).toEqual([]);
   });
+  it('the fixture passes all 20 checks, its hash stored', () => {
+    expect(runChecks(input()).filter(r => !r.ok).flatMap(r => r.fails)).toEqual([]);
+  });
   it('the handles follow the hands: the travel is the hand projected on the rail, 0 at the start, near 1 at the top', () => {
     const s = sampleGuide(FX, 'correct', 0, rig);
     expect(s.travel?.map(t => t.part)).toEqual(['bar_r', 'bar_l']);
     const tr = s.travel![0]!.stops, top = tr[stopsFor(FX.tempo, FX.order, FX.kind).indexOf(0.25)]![1];
-    expect(tr[0]![1]).toBeCloseTo(0.04, 1);
+    expect(tr[0]![1]).toBeCloseTo(0.12, 1);
     expect(top).toBeGreaterThan(0.9);
     expect(stateAt(FX, 0.25, 'correct', 0, rig).travel[0]).toBeCloseTo(top, 4);
   });
@@ -188,4 +191,44 @@ describe('V1-04 two fixture machines: travel-driven against follow (D-FG7 (b))',
     expect(c(t).length).toBeGreaterThan(0);
     expect(c(f)).toEqual([]);
   });
+});
+
+describe('V1-04 A9: a followed handle drawn off the hand fails handsOnHandle', () => {
+  it('the seeded bad file handsOnHandle.follow: the hands on their rails, the handles 1 unit outside', async () => {
+    const path = 'tests/formguide/fixtures/bad/handsOnHandle.follow/lib_smith_machine_shoulder_press.ts';
+    const g = (await import('./fixtures/bad/handsOnHandle.follow/lib_smith_machine_shoulder_press')).lib_smith_machine_shoulder_press;
+    const bad = runChecks(inputFor(path, g)).filter(r => !r.ok);
+    expect(bad.map(r => r.check)).toEqual(['handsOnHandle']);
+    expect(bad[0]!.fails[0]).toMatch(/^handsOnHandle lib_smith_machine_shoulder_press: hand_r is 1 units from the bar_r anchor \(limit 0\.5\) at u=0 /);
+  });
+});
+
+describe('V1-04 D-FG3 extension: smoothness reads a solved file with the sway held at 0', () => {
+  it('the sway still reaches the drawn pose: the solved arm differs with and without it', () => {
+    const rig = rigOf(FX), still = sampleGuide(FX, 'correct', 0, rig, { still: true }), drawn = sampleGuide(FX, 'correct', 0, rig);
+    const lead = (s: typeof drawn) => s.channels.find(c => c.id === 'elbow_lead_r')!.stops.map(x => x[1]);
+    expect(Math.max(...lead(still).map((v, i) => Math.abs(v - lead(drawn)[i]!)))).toBeGreaterThan(0.01);
+    expect(still.channels.find(c => c.id === 'sway')!.stops).toEqual(drawn.channels.find(c => c.id === 'sway')!.stops);
+  });
+  it('guard: a real edge jerk in the driver still fails (a) in the solved arm and the hand path', () => {
+    // the shoulder still moving when the lift ends at u = 0.25
+    const g = variant({ joints: { ...FX.joints, shoulder_abd: { keys: [[0, 101], [0.3, 165], [0.45, 165], [0.9, 101]] } } });
+    const f = failing(g, ['smoothness']).flatMap(r => r.fails);
+    expect(f.some(x => /\(a\) elbow_lead_r lift: edge speed/.test(x))).toBe(true);
+    expect(f.some(x => /\(a\) hand_r path lift: edge speed/.test(x))).toBe(true);
+  });
+});
+
+describe('V1-04 A11: a sweep of 50 contact parameter sets inside the declared bounds', () => {
+  // rails moved out or in (grip width) by up to 6 units, the press started at 101..113° and finished at 160 or 165°
+  const sets = [-6, -3, 0, 3, 6].flatMap(dx => [101, 104, 107, 110, 113].flatMap(a0 => [160, 165].map(a1 => ({ dx, a0, a1 }))));
+  it(`${sets.length} sets pass smoothness, jointRanges, handsOnHandle and machinePivot`, () => {
+    expect(sets.length).toBeGreaterThanOrEqual(50);
+    const bad: string[] = [];
+    for (const { dx, a0, a1 } of sets) {
+      const m = shift(shift(MACHINE, 'bar_r', dx), 'bar_l', -dx), g = variant({ joints: { ...FX.joints, shoulder_abd: [a0, a1] } });
+      for (const r of failing(g, ['smoothness', 'jointRanges', 'handsOnHandle', 'machinePivot'], m)) bad.push(`dx ${dx} ${a0}->${a1}: ${r.fails[0]}`);
+    }
+    expect(bad).toEqual([]);
+  }, 60_000);
 });

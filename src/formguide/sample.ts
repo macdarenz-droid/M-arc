@@ -217,19 +217,23 @@ function evaluator(g: ExerciseGuide, figure: Figure, rep: number, deltas = true)
 type Plan = {
   enforced: System; released: System; base: (u: number) => Record<ChannelId, number>; pre: ((u: number) => Record<ChannelId, number>) | null;
   travel: (f: Frame, u: number) => number[]; stops: number[]; label: string;
+  /** solved with the sway held at 0 (the body's frame, D-FG3 as extended by V1-04); the sway channel keeps its value */
+  still: boolean;
   /** the continuation over the stops: each stop's solution and Jacobian (released, then enforced) */
   table: { rel: Seed; enf: Seed }[];
+  /** the solved pose and every drive's travel at each stop */
+  poses: Record<ChannelId, number>[]; travels: number[][];
 };
 const plans = new WeakMap<ExerciseGuide, WeakMap<SolveRig, Map<string, Plan>>>();
 
 /** The solve of one rep, cached per file, rig, figure and rep: every stop solved in order, each from the last. */
-function planOf(g: ExerciseGuide, figure: Figure, rep: number, rig: SolveRig | undefined): Plan {
+function planOf(g: ExerciseGuide, figure: Figure, rep: number, rig: SolveRig | undefined, still = false): Plan {
   if (!rig) throw new Error(`${g.id} declares contacts, a balance or a followed part: it is sampled on a rig (poseAt, sampleGuide and effortOf take one)`);
   let byRig = plans.get(g);
   if (!byRig) plans.set(g, (byRig = new WeakMap()));
   let byKey = byRig.get(rig);
   if (!byKey) byRig.set(rig, (byKey = new Map()));
-  const key = `${figure}:${figure === 'mistake' ? 0 : rep}`, hit = byKey.get(key);
+  const key = `${figure}:${figure === 'mistake' ? 0 : rep}${still ? ':still' : ''}`, hit = byKey.get(key);
   if (hit) return hit;
   validateSolve(g);
   const tempo = tempoOf(g, figure, rep), ws = windowsFor(tempo, g.order, g.kind), base = windowsFor(g.tempo, g.order, g.kind);
@@ -252,35 +256,48 @@ function planOf(g: ExerciseGuide, figure: Figure, rep: number, rig: SolveRig | u
       if (!p) throw new Error(`${g.id}: followed part ${d.part} is not in machine ${g.machine!.id}`);
       return travelOf(p, rig.point(f, d.follow));
     }),
-    stops: stopsFor(tempo, g.order, g.kind), label: figure === 'mistake' ? 'mistake' : `rep ${rep}`, table: [],
+    still, stops: stopsFor(tempo, g.order, g.kind), label: figure === 'mistake' ? 'mistake' : `rep ${rep}`, table: [], poses: [], travels: [],
   };
-  let last: { rel: Seed; enf: Seed } | null = null;
-  for (const u of plan.stops) { last = solveStop(plan, rig, u, last).s; plan.table.push(last); }
+  const other = [...byKey.values()][0]?.table[0];
+  // each stop starts from the last three, extrapolated (the motion is smooth between stops)
+  const ext = (a: Seed, b: Seed | undefined, c: Seed | undefined): Seed => ({ x: c && b ? a.x.map((v, i) => 3 * v - 3 * b.x[i]! + c.x[i]!) : b ? a.x.map((v, i) => 2 * v - b.x[i]!) : a.x, J: a.J });
+  for (let i = 0; i < plan.stops.length; i++) {
+    const u = plan.stops[i]!, a = plan.table[i - 1], b = plan.table[i - 2], c = plan.table[i - 3];
+    let r: ReturnType<typeof solveStop> | null = null;
+    if (!a && other) try { r = solveStop(plan, rig, u, other); } catch { r = null; }   // another rep's start, if it holds
+    r ??= solveStop(plan, rig, u, a ? { rel: ext(a.rel, b?.rel, c?.rel), enf: ext(a.enf, b?.enf, c?.enf) } : null);
+    // the enforced solve's last frame is drawn at the final pose; without one, draw it
+    plan.table.push(r.s); plan.poses.push(r.pose); plan.travels.push(plan.travel(plan.enforced.cons.length ? r.s.enf.f! : rig.frame(r.pose), u));
+  }
   byKey.set(key, plan);
   return plan;
 }
 
 /** One solve: the released points on the pose before deltas (their deltas then added), then the enforced ones. */
 function solveStop(plan: Plan, rig: SolveRig, u: number, from: { rel: Seed; enf: Seed } | null) {
-  const pose = plan.base(u);
+  const pose = plan.base(u), sway = pose.sway;
+  if (plan.still) pose.sway = 0;
   let rel: Seed = { x: [], J: null };
   if (plan.pre) {
     const pre = plan.pre(u);
+    if (plan.still) pre.sway = 0;
     rel = from ? solveSystem(rig, plan.released, pre, u, from.rel, plan.label) : firstSeed(rig, plan.released, pre, u, plan.label);
     plan.released.chans.forEach((c, i) => { pose[c] = rel.x[i]! + (pose[c] - pre[c]); });
   }
   let enf: Seed = { x: [], J: null };
   if (plan.enforced.cons.length) enf = from ? solveSystem(rig, plan.enforced, pose, u, from.enf, plan.label) : firstSeed(rig, plan.enforced, pose, u, plan.label);
   plan.enforced.chans.forEach((c, i) => { pose[c] = enf.x[i]!; });
+  pose.sway = sway;
   return { s: { rel, enf }, pose };
 }
 
 /** The solved pose at any u, started from the nearest solved stop (so a stop gives back its own solution). */
-function solvedAt(g: ExerciseGuide, u: number, figure: Figure, rep: number, rig: SolveRig | undefined) {
-  const plan = planOf(g, figure, rep, rig!), st = plan.stops;
+function solvedAt(g: ExerciseGuide, u: number, figure: Figure, rep: number, rig: SolveRig | undefined, still = false) {
+  const plan = planOf(g, figure, rep, rig!, still), st = plan.stops;
   let lo = 0, hi = st.length - 1;
   while (hi - lo > 1) { const m = (lo + hi) >> 1; if (st[m]! <= u) lo = m; else hi = m; }
   const i = Math.abs(st[hi]! - u) < Math.abs(u - st[lo]!) ? hi : lo;
+  if (st[i] === u) return { pose: { ...plan.poses[i]! }, travel: [...plan.travels[i]!] };
   const { pose } = solveStop(plan, rig!, u, plan.table[i]!);
   return { pose, travel: plan.travel(rig!.frame(pose), u) };
 }
@@ -299,15 +316,16 @@ export type Sampled = { tempo: Tempo; windows: Window[]; stops: number[]; channe
 const r4 = (v: number) => { const x = Math.round(v * 1e4) / 1e4; return x === 0 ? 0 : x; };
 
 /** Every channel at every stop of one rep (the correct figure's rep `rep`, or the mistake), values to 1e-4. A solved
- * file (see poseAt) needs `rig`. */
-export function sampleGuide(g: ExerciseGuide, figure: Figure = 'correct', rep = 0, rig?: SolveRig): Sampled {
+ * file (see poseAt) needs `rig`; `still` solves it with the sway held at 0 (smoothness reads it so, D-FG3), and other
+ * files ignore it. */
+export function sampleGuide(g: ExerciseGuide, figure: Figure = 'correct', rep = 0, rig?: SolveRig, o: { still?: boolean } = {}): Sampled {
   const tempo = tempoOf(g, figure, rep), windows = windowsFor(tempo, g.order, g.kind), stops = stopsFor(tempo, g.order, g.kind);
   if (!needsRig(g)) {
     const at = evaluator(g, figure, rep), poses = stops.map(at);
     const channels = CHANNELS.map(id => ({ id, kind: channelKind(id), stops: stops.map((u, i) => [r4(u), r4(poses[i]![id])] as [number, number]) }));
     return { tempo, windows, stops, channels };
   }
-  const states = stops.map(u => solvedAt(g, u, figure, rep, rig));
+  const states = stops.map(u => solvedAt(g, u, figure, rep, rig, o.still));
   const channels = CHANNELS.map(id => ({ id, kind: channelKind(id), stops: stops.map((u, i) => [r4(u), r4(states[i]!.pose[id])] as [number, number]) }));
   const drives = g.machine?.drive ?? [], travel = drives.map((d, k) => ({ d, k })).filter(({ d }) => 'follow' in d)
     .map(({ d, k }) => ({ part: d.part, stops: stops.map((u, i) => [r4(u), r4(states[i]!.travel[k]!)] as [number, number]) }));

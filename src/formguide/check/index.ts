@@ -88,7 +88,9 @@ type Fn = (c: Ctx, fail: (s: string) => void) => string | void;
 const smoothness: Fn = (c, fail) => {
   const g = c.g, pts = grip(g);
   for (const rep of c.reps) {
-    const s = sampleGuide(g, 'correct', rep, rigOf(c)), T = repSeconds(s.tempo), N = Math.round(T * HZ), dt = T / N, L = repLabel('correct', rep);
+    // a solved file is read from its solve with the sway held at 0: its arm channels would otherwise carry the sway's
+    // drift across every phase edge, the drift D-FG3 reads the grip without (V1-04, D-FG3 extension)
+    const s = sampleGuide(g, 'correct', rep, rigOf(c), { still: true }), T = repSeconds(s.tempo), N = Math.round(T * HZ), dt = T / N, L = repLabel('correct', rep);
     const drawn = new Map(s.channels.map(ch => [ch.id, grid(N).map(u => drawnAt(ch.stops, u))]));
     const moving = s.windows.filter(w => w.move && w.u1 - w.u0 > 1e-9);
     // (c) reads the written values at the stops' exact times: the written offsets are rounded to 1e-4 of the rep, which

@@ -4,7 +4,9 @@
 import type { AttachmentId, ExerciseGuide, PartId } from '../model';
 import type { ChannelId, JointId, Pose, View } from '../rig/joints';
 import { FLOOR, FRONT_RIG, LEG_X, figureFront } from '../rig/figureFront';
-import { apply, frontFrame, handAt, worldMat, type Frame, type PoseId } from '../rig/pose';
+import { apply, frontFrame, localMat, mmul, type Frame, type PoseId } from '../rig/pose';
+import { PARENT } from '../rig/joints';
+import type { Mat } from '../rig/figureFront';
 import type { TokenReader } from '../rig/paint';
 import type { Pt } from '../rig/ik';
 import { viewFor } from '../rig/patterns';
@@ -38,6 +40,17 @@ export function viewOf(g: ExerciseGuide, pattern: string | undefined): View | nu
   return g.view ?? (pattern ? viewFor(pattern) : null);
 }
 
+/** pose.ts worldMat with each frame's joint matrices kept, so the points of one frame share their parent chain (the
+ * V1-04 solver reads both hands of every frame it draws); the same products in the same order, so the same numbers. */
+const worlds = new WeakMap<Frame, Map<JointId, Mat>>();
+function worldMat(j: JointId, f: Frame): Mat {
+  let m = worlds.get(f);
+  if (!m) worlds.set(f, (m = new Map()));
+  let w = m.get(j);
+  if (!w) { const p = PARENT[j]; w = p ? mmul(worldMat(p, f), localMat(j, f[j])) : localMat(j, f[j]); m.set(j, w); }
+  return w;
+}
+
 const FRONT_POSES: readonly string[] = ['standing', 'seated'] satisfies PoseId[];
 /** The rig for a file, or the reason there is none yet. */
 export function rigFor(g: ExerciseGuide, view: View | null): Rig | string {
@@ -46,6 +59,7 @@ export function rigFor(g: ExerciseGuide, view: View | null): Rig | string {
   const id = g.pose as PoseId;
   const pivot = (f: Frame, j: JointId) => apply(worldMat(j, f), FRONT_RIG[j].origin);
   const sole = (f: Frame, s: 'l' | 'r'): Pt => apply(worldMat(`ankle_${s}`, f), [LEG_X, FLOOR]);
+  const handAt = (f: Frame, s: 'l' | 'r'): Pt => apply(worldMat(`wrist_${s}`, f), [0, 0]);
   const point = (f: Frame, a: AttachmentId): Pt => {
     const s = a.slice(-1) as 'l' | 'r';
     if (a === 'back') return pivot(f, 'chest');
