@@ -2,10 +2,10 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
-import { THEMES, THEME_IDS, themeToCss } from '@/theme/themes';
+import { THEMES, THEME_IDS, themeToCss, type ThemeId } from '@/theme/themes';
 import { JOINTS } from '@/formguide/rig/joints';
 import { figureFront } from '@/formguide/rig/figureFront';
-import { themeReader, bodyPal, mix, FIGURE_TOKENS } from '@/formguide/rig/paint';
+import { themeReader, bodyPal, contrastOf, mix, FIGURE_TOKENS, REACH } from '@/formguide/rig/paint';
 import { applyPose, bindFigure, css, frontFrame, handAt, type Frame, type StyleTarget } from '@/formguide/rig/pose';
 import { at, walk } from './svgWalk';
 import { colourLiterals } from './colourLint';
@@ -51,8 +51,15 @@ describe('A1 the front figure renders in every theme from tokens only', () => {
     }
   });
   it('the body follows --accent (each theme paints differently) and the mistake follows --mistake', () => {
-    const bases = THEME_IDS.map(id => bodyPal(themeReader(id), false).base);
-    expect(bases).toEqual(THEME_IDS.map(id => THEMES[id].tokens.accent.toLowerCase()));
+    // V1-07 (D-V1-07b): the base is --accent wherever --accent reaches 3.1:1 on both pages; only a theme where it does
+    // not (Midnight) lifts it, toward white, just until it does
+    const bases = THEME_IDS.map(id => bodyPal(themeReader(id), false).base), rgb = (h: string) => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)) as [number, number, number];
+    const reaches = (id: ThemeId, c: string) => (['surface1', 'surface2'] as const).every(pg => contrastOf(rgb(c), rgb(THEMES[id].tokens[pg])) >= REACH);
+    expect(THEME_IDS.filter(id => !reaches(id, THEMES[id].tokens.accent.toLowerCase()))).toEqual(['midnight']);
+    expect(bases).toEqual(THEME_IDS.map(id => (id === 'midnight' ? bases[THEME_IDS.indexOf(id)] : THEMES[id].tokens.accent.toLowerCase())));
+    expect(reaches('midnight', bases[THEME_IDS.indexOf('midnight')]!)).toBe(true);
+    const lifted = [0.05, 0.1, 0.15, 0.2].map(t => mix(themeReader('midnight'), 'accent', 'white', t));
+    expect(bases[THEME_IDS.indexOf('midnight')]).toBe(lifted.find(c => reaches('midnight', c)));
     expect(bodyPal(themeReader('paper'), true).base).toBe(mix(themeReader('paper'), { from: 'accent', toward: 'mistake', t: 0.62 }, 'white', 0));
     expect(build('paper', true)).not.toBe(build('paper'));
   });

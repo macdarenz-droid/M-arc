@@ -1,14 +1,14 @@
 // V1-07 `contrast` (docs/FORM-GUIDE-PRODUCTION.md §10.5; WCAG 2.2 SC 1.4.3 and 1.4.11): in every theme, drawn text
 // reaches 4.5:1 against what is painted under it, the marks (the muscle tints at full effort) 3:1 against the body under
 // them, and the figure 3:1 against the page; drawn text is at least MIN_TEXT_PX tall at 360 px. Colours are read from
-// the markup itself (hex, rgb(a), var() through the figure's own custom properties and the theme's figure tokens, and
+// the markup itself (hex, rgb and rgba functions, var() through the figure's own custom properties and the theme's figure tokens, and
 // every stop of a url() gradient, each one tried), composited as the browser does (opacity and alpha over what is
 // under). What is under a point is the topmost earlier shape whose outline holds it, at the markup's rest pose; the page
 // is the stage (`--surface-1`, styles.css .form-guide .stage) and the Pictures tile (`--surface-2`, .tile).
 import type { Token, TokenReader } from '../rig/paint';
 import { FIGURE_TOKENS } from '../rig/paint';
 import type { Mat } from '../rig/figureFront';
-import { apply, mmul } from '../rig/pose';
+import { apply, mmul, opMat, type Frame } from '../rig/pose';
 import type { Pt } from '../rig/ik';
 import { parseTransform, pathSegs, type Seg } from './svg';
 import { TEXT_ASCENT, TEXT_DESCENT, TEXT_EM } from './framing';
@@ -20,6 +20,7 @@ export const RENDER_PX = 360;
 
 // ---- colour ---------------------------------------------------------------------------------------------------------
 export type RGBA = [number, number, number, number];
+const BLACK: RGBA = [0, 0, 0, 1];
 export function parseColour(s: string): RGBA | null {
   const t = s.trim().toLowerCase();
   let m = /^#([0-9a-f]{3,8})$/.exec(t);
@@ -44,13 +45,15 @@ export const over = (top: RGBA, o: number, under: RGBA): RGBA => { const a = top
 export type Painted = {
   tag: string; cls: string;
   /** the fill's colours: one, or every stop of a gradient; empty for none */
-  fill: RGBA[];
-  /** the stroke's colours (as fill), and the raw stroke and fill values (a guide is found by its token) */
-  stroke: RGBA[]; raw: { fill: string; stroke: string };
+  fills: RGBA[];
+  /** the stroke's colours, and the raw paint and stroke values (a guide is found by its token) */
+  strokes: RGBA[]; raw: { paint: string; line: string };
   /** the element's opacity times its groups' and its fill-opacity */
   alpha: number;
   /** outline in figure space at the rest pose, as polygons (cubics flattened) */
   rings: Pt[][];
+  /** a gradient fill's colour at a point (figure space), as the browser paints it; absent for flat fills */
+  at?: (q: Pt) => RGBA | null;
   /** text only: font size in figure units after its transforms, its box corners and middle, and its characters */
   text?: { size: number; pts: Pt[]; body: string };
 };
@@ -61,12 +64,31 @@ const flat = (seg: Seg): Pt[] => (seg.length === 4 ? Array.from({ length: 8 }, (
 const nums = (s: string) => (s.match(/-?(?:\d+\.?\d*|\.\d+)(?:e-?\d+)?/gi) ?? []).map(Number);
 const scaleOf = (M: Mat) => Math.sqrt(Math.abs(M[0] * M[3] - M[1] * M[2]));
 
-/** Every painted shape of the markup in paint order, with its resolved fill. `read` resolves the theme's figure tokens. */
-export function paintedShapes(svg: string, read: TokenReader): Painted[] {
+// Parsing caches: the same markup is read at several poses, and the same outlines recur across themes.
+const cache = <K, V>(max: number, make: (k: K) => V) => { const m = new Map<K, V>(); return (k: K): V => { let v = m.get(k); if (v === undefined) { if (m.size >= max) m.delete(m.keys().next().value as K); m.set(k, (v = make(k))); } return v; }; };
+const tagsOf = cache(4, (svg: string) => [...svg.matchAll(/<(\/?)([a-zA-Z]+)((?:\s+[\w:-]+="[^"]*")*)\s*(\/?)>/g)]);
+const segsOf = cache(2048, (d: string) => pathSegs(d));
+/** A path's outline, flattened, in its own frame (its sub-paths split at each M). */
+const ringLocal = cache(2048, (d: string) => { const out: Pt[][] = []; let ring: Pt[] = []; for (const s of segsOf(d)) { if (s.length === 1 && ring.length) { out.push(ring); ring = []; } ring.push(...flat(s)); } if (ring.length) out.push(ring); return out; });
+
+/** Every painted shape of the markup in paint order, with its resolved fill. `read` resolves the theme's figure tokens.
+ * `frame` poses it as the player does (each joint's and part's ops about its transform-origin, as svg.ts bbox; a tint's
+ * opacity), else the markup is read at rest. */
+export function paintedShapes(svg: string, read: TokenReader, frame: Frame = {}): Painted[] {
   const grads = new Map<string, string[]>();
-  for (const m of svg.matchAll(/<(linear|radial)Gradient\b[^>]*\sid="([^"]+)"[^>]*>([\s\S]*?)<\/\1Gradient>/g))
-    grads.set(m[2]!, [...m[3]!.matchAll(/stop-color="([^"]+)"/g)].map(s => s[1]!));
-  type Fr = { tag: string; M: Mat; vars: Record<string, string>; fill?: string; op: number };
+  type Grad = { radial: boolean; user: boolean; v: number[]; stops: { o: number; c: string; a: number }[] };
+  const geo = new Map<string, Grad>();
+  for (const m of svg.matchAll(/<(linear|radial)Gradient\b([^>]*)\sid="([^"]+)"([^>]*)>([\s\S]*?)<\/\1Gradient>/g)) {
+    const a = `${m[2]} ${m[4]}`, radial = m[1] === 'radial', num = (k: string, d: number) => +(attr(` ${a}`, k) ?? d);
+    grads.set(m[3]!, [...m[5]!.matchAll(/stop-color="([^"]+)"/g)].map(s => s[1]!));
+    geo.set(m[3]!, {
+      radial, user: /gradientUnits="userSpaceOnUse"/.test(a),
+      v: radial ? [num('cx', 0.5), num('cy', 0.5), num('r', 0.5)] : [num('x1', 0), num('y1', 0), num('x2', 1), num('y2', 0)],
+      stops: [...m[5]!.matchAll(/<stop\b([^>]*)>/g)].map(x => ({ o: +(attr(x[1]!, 'offset') ?? 0), c: attr(x[1]!, 'stop-color') ?? '', a: +(attr(x[1]!, 'stop-opacity') ?? 1) })),
+    });
+  }
+  const inv = (M: Mat): Mat => { const d = M[0] * M[3] - M[1] * M[2]; return [M[3] / d, -M[1] / d, -M[2] / d, M[0] / d, (M[2] * M[5] - M[3] * M[4]) / d, (M[1] * M[4] - M[0] * M[5]) / d]; };
+  type Fr = { tag: string; M: Mat; vars: Record<string, string>; paint?: string; op: number };
   const stack: Fr[] = [{ tag: '#root', M: [1, 0, 0, 1, 0, 0], vars: {}, op: 1 }], out: Painted[] = [];
   let inDefs = 0;
   const tokenOf = (name: string, vars: Record<string, string>): string | null => {
@@ -83,29 +105,50 @@ export function paintedShapes(svg: string, read: TokenReader): Painted[] {
     if (va) { const x = tokenOf(va[1]!, vars); return x ? resolve(x, vars, depth + 1) : []; }
     return [s];
   };
-  for (const m of svg.matchAll(/<(\/?)([a-zA-Z]+)((?:\s+[\w:-]+="[^"]*")*)\s*(\/?)>/g)) {
+  for (const m of tagsOf(svg)) {
     const [, close, tag, a, self] = m as unknown as [string, string, string, string, string];
     if (close) { const top = stack.pop()!; if (top.tag === 'defs') inDefs--; continue; }
     if (tag === 'defs' && !self) inDefs++;
     const up = stack[stack.length - 1]!, t = attr(a, 'transform');
-    const fr: Fr = { tag, M: t ? mmul(up.M, parseTransform(t)) : up.M, vars: { ...up.vars, ...styleVars(a) }, fill: attr(a, 'fill') ?? up.fill, op: up.op * +(attr(a, 'opacity') ?? 1) };
+    let M = t ? mmul(up.M, parseTransform(t)) : up.M, op = +(attr(a, 'opacity') ?? 1);
+    const cls = attr(a, 'class') ?? '';
+    if (/\bfg-[jp]\b/.test(cls)) {
+      const key = cls.split(' ').map(c => (c.startsWith('j-') ? c.slice(2) : c.startsWith('fg-') && c !== 'fg-j' && c !== 'fg-p' ? c.slice(3) : '')).find(Boolean), xf = key ? frame[key] : undefined;
+      if (xf?.ops) { const o = /transform-origin:([-\d.]+)px ([-\d.]+)px/.exec(attr(a, 'style') ?? ''), ox = o ? +o[1]! : 0, oy = o ? +o[2]! : 0; M = mmul(M, [1, 0, 0, 1, ox, oy]); for (const x of xf.ops) M = mmul(M, opMat(x)); M = mmul(M, [1, 0, 0, 1, -ox, -oy]); }
+      else if (xf && xf.opacity !== undefined) op = xf.opacity;
+    }
+    const fr: Fr = { tag, M, vars: { ...up.vars, ...styleVars(a) }, paint: attr(a, 'fill') ?? up.paint, op: up.op * op };
     if (!inDefs && tag !== 'g' && tag !== 'svg') {
       const n = (k: string) => +(attr(a, k) ?? 0), fillOp = +(attr(a, 'fill-opacity') ?? 1);
       let segs: Seg[] = [];
-      if (tag === 'path') segs = pathSegs(attr(a, 'd') ?? '');
+      if (tag === 'path') segs = segsOf(attr(a, 'd') ?? '');
       else if (tag === 'rect') { const x = n('x'), y = n('y'), w = n('width'), h = n('height'); segs = [[[x, y]], [[x + w, y]], [[x + w, y + h]], [[x, y + h]]]; }
       else if (tag === 'circle' || tag === 'ellipse') { const rx = tag === 'circle' ? n('r') : n('rx'), ry = tag === 'circle' ? n('r') : n('ry'); segs = Array.from({ length: 24 }, (_, i) => [[n('cx') + rx * Math.cos((i * Math.PI) / 12), n('cy') + ry * Math.sin((i * Math.PI) / 12)]] as Seg); }
       else if (tag === 'polygon' || tag === 'polyline') { const v = nums(attr(a, 'points') ?? ''); for (let i = 0; i + 1 < v.length; i += 2) segs.push([[v[i]!, v[i + 1]!]]); }
-      const fillSrc = fr.fill ?? (tag === 'line' || tag === 'polyline' ? 'none' : '#000000');
-      const fill = resolve(fillSrc, fr.vars).map(parseColour).filter((c): c is RGBA => !!c);
+      // SVG's default paint is black (lines and polylines paint none)
+      const fillSrc = fr.paint ?? (tag === 'line' || tag === 'polyline' ? 'none' : '');
+      const fills = fillSrc ? resolve(fillSrc, fr.vars).map(parseColour).filter((c): c is RGBA => !!c) : [BLACK];
       const strokeSrc = attr(a, 'stroke') ?? 'none', stroke = resolve(strokeSrc, fr.vars).map(parseColour).filter((c): c is RGBA => !!c);
-      const p: Painted = { tag, cls: attr(a, 'class') ?? '', fill, stroke, raw: { fill: fillSrc, stroke: strokeSrc }, alpha: fr.op * fillOp, rings: [] };
+      const p: Painted = { tag, cls: attr(a, 'class') ?? '', fills, strokes: stroke, raw: { paint: fillSrc, line: strokeSrc }, alpha: fr.op * fillOp, rings: [] };
       // a path's sub-paths start at each M: split the flattened outline there
-      if (tag === 'path') {
-        let ring: Pt[] = [];
-        for (const s of segs) { if (s.length === 1 && ring.length) { p.rings.push(ring); ring = []; } ring.push(...flat(s).map(q => apply(fr.M, q))); }
-        if (ring.length) p.rings.push(ring);
-      } else if (segs.length) p.rings.push(segs.map(s => apply(fr.M, s[0]!)));
+      if (tag === 'path') p.rings = ringLocal(attr(a, 'd') ?? '').map(r => r.map(q => apply(fr.M, q))); else if (segs.length) p.rings.push(segs.map(s => apply(fr.M, s[0]!)));
+      const gid = /^url\(#([^)]+)\)$/.exec(fillSrc.trim())?.[1], gr = gid ? geo.get(gid) : undefined;
+      if (gr && segs.length) {
+        // SVG gradient geometry: pad spread, objectBoundingBox (the shape's own box, from its outline points) or user space
+        const loc = segs.flatMap(sg => sg), bx = [Math.min(...loc.map(q => q[0])), Math.min(...loc.map(q => q[1])), Math.max(...loc.map(q => q[0])), Math.max(...loc.map(q => q[1]))];
+        const Mi = inv(fr.M), vars = fr.vars, stops = gr.stops.map(st => ({ ...st, rgb: resolve(st.c, vars).map(parseColour).find(Boolean) ?? null }));
+        p.at = q => {
+          let [x, y] = apply(Mi, q);
+          if (!gr.user) { x = (x - bx[0]!) / (bx[2]! - bx[0]! || 1); y = (y - bx[1]!) / (bx[3]! - bx[1]! || 1); }
+          const v = gr.v, t0 = gr.radial ? Math.hypot(x - v[0]!, y - v[1]!) / v[2]! : (() => { const dx = v[2]! - v[0]!, dy = v[3]! - v[1]!; return ((x - v[0]!) * dx + (y - v[1]!) * dy) / (dx * dx + dy * dy || 1); })();
+          const t = Math.min(1, Math.max(0, t0));
+          let i = stops.findIndex(st => st.o >= t);
+          if (i < 0) i = stops.length - 1;
+          const b = stops[i]!, a = stops[Math.max(0, i - 1)]!, w = b.o > a.o ? (t - a.o) / (b.o - a.o) : 1;
+          if (!a.rgb || !b.rgb) return null;
+          return [0, 1, 2].map(k => a.rgb![k]! + (b.rgb![k]! - a.rgb![k]!) * w).concat([(a.rgb[3] * a.a) + (b.rgb[3] * b.a - a.rgb[3] * a.a) * w]) as RGBA;
+        };
+      }
       if (tag === 'text') {
         const fs = +(attr(a, 'font-size') ?? 16), end = svg.indexOf('</text>', m.index!), body = svg.slice(m.index! + m[0].length, end).trim();
         const w = body.length * TEXT_EM * fs, x = n('x'), y = n('y'), anc = attr(a, 'text-anchor') ?? 'start', x0 = anc === 'middle' ? x - w / 2 : anc === 'end' ? x - w : x;
@@ -122,7 +165,11 @@ export function paintedShapes(svg: string, read: TokenReader): Painted[] {
 }
 
 /** Even-odd: is the point inside the shape's outline. */
+const boxes = new WeakMap<Painted, number[]>();
 export function inside(p: Painted, q: Pt): boolean {
+  let b = boxes.get(p);
+  if (!b) { const pts = p.rings.flat(); b = pts.length ? [Math.min(...pts.map(x => x[0])), Math.min(...pts.map(x => x[1])), Math.max(...pts.map(x => x[0])), Math.max(...pts.map(x => x[1]))] : [1, 1, 0, 0]; boxes.set(p, b); }
+  if (q[0] < b[0]! || q[0] > b[2]! || q[1] < b[1]! || q[1] > b[3]!) return false;
   let n = false;
   for (const ring of p.rings) for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
     const a = ring[i]!, b = ring[j]!;
@@ -132,13 +179,14 @@ export function inside(p: Painted, q: Pt): boolean {
 }
 
 /** Every colour the point can show under shape `before` (paint order): the shapes below composited over the page. */
-export function under(shapes: Painted[], before: number, q: Pt, page: RGBA): RGBA[] {
+export function under(shapes: Painted[], before: number, q: Pt, page: RGBA, skip?: (s: Painted) => boolean): RGBA[] {
   for (let j = before - 1; j >= 0; j--) {
     const s = shapes[j]!;
-    if (s.text || !s.fill.length || !(s.alpha > 0) || !inside(s, q)) continue;
-    const below = s.alpha >= 1 && s.fill.every(c => c[3] >= 1) ? [page] : under(shapes, j, q, page);
+    if (s.text || !s.fills.length || !(s.alpha > 0) || skip?.(s) || !inside(s, q)) continue;
+    const here = s.at?.(q), paints = here ? [here] : s.fills;
+    const below = s.alpha >= 1 && paints.every(c => c[3] >= 1) ? [page] : under(shapes, j, q, page, skip);
     const out: RGBA[] = [];
-    for (const c of s.fill) for (const b of below) out.push(over(c, s.alpha, b));
+    for (const c of paints) for (const b of below) out.push(over(c, s.alpha, b));
     return dedupe(out);
   }
   return [page];
@@ -149,24 +197,55 @@ const dedupe = (cs: RGBA[]) => [...new Map(cs.map(c => [c.map(v => v.toFixed(2))
 export function textContrast(shapes: Painted[], i: number, page: RGBA): number {
   const s = shapes[i]!;
   let worst = Infinity;
-  for (const q of s.text!.pts) for (const b of under(shapes, i, q, page)) for (const c of s.fill) worst = Math.min(worst, ratio(over(c, s.alpha, b), b));
+  for (const q of s.text!.pts) for (const b of under(shapes, i, q, page)) for (const c of s.fills) worst = Math.min(worst, ratio(over(c, s.alpha, b), b));
   return worst;
 }
 
 /** A guide mark (angle arc, tag, path trace): painted with `--guide` or classed `fg-guide`. Guides sit on the stage. */
-export const isGuide = (s: Painted) => /\bfg-guide\b/.test(s.cls) || /var\(--guide\)/.test(s.raw.fill + s.raw.stroke);
+export const isGuide = (s: Painted) => /\bfg-guide\b/.test(s.cls) || /var\(--guide\)/.test(s.raw.paint + s.raw.line);
 /** The lowest ratio of a guide's colours (fill and stroke, at its opacity) against the page. */
 export function guideContrast(s: Painted, page: RGBA): number {
   let worst = Infinity;
-  for (const c of [...s.fill, ...s.stroke]) worst = Math.min(worst, ratio(over(c, s.alpha, page), page));
+  for (const c of [...s.fills, ...s.strokes]) worst = Math.min(worst, ratio(over(c, s.alpha, page), page));
   return worst;
 }
 
-/** The lowest ratio of a mark (drawn at opacity `o`) against what is under its middle. */
-export function markContrast(shapes: Painted[], i: number, o: number, page: RGBA): number {
-  const s = shapes[i]!, pts = s.rings.flat(), mid: Pt = [pts.reduce((a, p) => a + p[0], 0) / pts.length, pts.reduce((a, p) => a + p[1], 0) / pts.length];
-  const q = inside(s, mid) ? mid : pts.find(p => inside(s, p)) ?? mid;
-  let worst = Infinity;
-  for (const b of under(shapes, i, q, page)) for (const c of s.fill) worst = Math.min(worst, ratio(over(c, o, b), b));
-  return worst;
+/** The other muscles' overlays (tint fills, their lines, shimmer bands): a boundary is read against the body alone. */
+const overlayPart = (s: Painted) => /^fg-(?:tf|tro|tri)-|\bfg-b-/.test(s.cls);
+/** How far inside a tint's outline the body under it is read: clear of the outline's own edge, where the point test
+ * would pick up whatever lies beyond the body (the page, an outline stroke), and within the outer line's half-width. */
+export const INSET = 1.5;
+/** Points just inside a shape's outline (INSET units along the inward normal), spread along it. */
+export function insetAlong(s: Painted, n = 48): Pt[] {
+  const out: Pt[] = [];
+  for (const ring of s.rings) {
+    const step = Math.max(1, Math.floor(ring.length / Math.max(1, Math.round((n * ring.length) / s.rings.flat().length))));
+    for (let i = 0; i < ring.length; i += step) {
+      const a = ring[(i - 1 + ring.length) % ring.length]!, b = ring[(i + 1) % ring.length]!, p = ring[i]!, L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (!L) continue;
+      const nx = -(b[1] - a[1]) / L, ny = (b[0] - a[0]) / L;
+      const q = [[p[0] + INSET * nx, p[1] + INSET * ny], [p[0] - INSET * nx, p[1] - INSET * ny]].find(c => inside(s, c as Pt)) as Pt | undefined;
+      if (q) out.push(q);
+    }
+  }
+  return out;
+}
+
+/**
+ * A tint mark's two-tone boundary (V1-07, D-V1-07c; WCAG 2.2 1.4.11 lets a graphical object be identified by its
+ * boundary): the lowest ratio of the outer line against every body tone under the tint along its edge (read INSET
+ * units inside the outline where no opaque shape drawn later covers it, every overlay left out), and of the inner line against the tint fill over those
+ * tones. Each
+ * line at its own opacity; the shapes are painted at full effort.
+ */
+export function boundaryContrast(shapes: Painted[], tint: number, outer: number, inner: number, page: RGBA): { outer: number; inner: number } {
+  const f = shapes[tint]!, o = shapes[outer]!, n = shapes[inner]!;
+  let wo = Infinity, wi = Infinity;
+  // only where the boundary shows: a point an opaque shape drawn later covers (the neck over the trap) is not seen
+  const covered = (q: Pt) => shapes.some((x, k) => k > Math.max(outer, inner) && !x.text && !overlayPart(x) && x.alpha >= 1 && x.fills.length > 0 && x.fills.every(c => c[3] >= 1) && inside(x, q));
+  for (const q of insetAlong(f)) if (!covered(q)) for (const u of under(shapes, tint, q, page, overlayPart)) {
+    for (const c of o.strokes) wo = Math.min(wo, ratio(over(c, o.alpha, u), u));
+    for (const t of f.fills) { const tf = over(t, f.alpha, u); for (const c of n.strokes) wi = Math.min(wi, ratio(over(c, n.alpha, tf), tf)); }
+  }
+  return { outer: wo, inner: wi };
 }

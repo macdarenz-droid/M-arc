@@ -117,12 +117,13 @@ describe('A3 every muscle of the side list has an overlay', () => {
     } finally { OVERLAY_D.calves = keep; }
     expect(missing(build(), 'r')).toEqual([]);
   });
+  // V1-07 (D-V1-07c): the tint is the fill (`fg-tf-`) inside its effort group (`fg-t-`), with its two-tone boundary
   it('roles paint the tint: target, help, and quiet (mistake colour on the mistake figure)', () => {
     const svg = build({ roles: { chest: 'target', triceps: 'help', lower_back: 'quiet' } });
-    expect(svg).toMatch(/fg-t-chest_r" d="[^"]+" fill="var\(--target\)"/);
-    expect(svg).toMatch(/fg-t-triceps_r" d="[^"]+" fill="var\(--help\)"/);
-    expect(svg).toMatch(/fg-t-lower_back_r" d="[^"]+" fill="var\(--quiet\)"/);
-    expect(build({ mistake: true, roles: { lower_back: 'quiet' } })).toMatch(/fg-t-lower_back_r" d="[^"]+" fill="var\(--mistake\)"/);
+    expect(svg).toMatch(/<g class="fg-p fg-t-chest_r" opacity="0"><path class="fg-tf-chest_r" d="[^"]+" fill="var\(--target\)"/);
+    expect(svg).toMatch(/<g class="fg-p fg-t-triceps_r" opacity="0"><path class="fg-tf-triceps_r" d="[^"]+" fill="var\(--help\)"/);
+    expect(svg).toMatch(/<g class="fg-p fg-t-lower_back_r" opacity="0"><path class="fg-tf-lower_back_r" d="[^"]+" fill="var\(--quiet\)"/);
+    expect(build({ mistake: true, roles: { lower_back: 'quiet' } })).toMatch(/<g class="fg-p fg-t-lower_back_r" opacity="0"><path class="fg-tf-lower_back_r" d="[^"]+" fill="var\(--mistake\)"/);
   });
 });
 

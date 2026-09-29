@@ -22,7 +22,7 @@ import { FIGURE_PARTS, PARTS, rigFor, viewOf, type Rig } from './view';
 import { contactsHeld as heldBy, travelRange as travelOf, type Pass } from './contacts';
 import { researchMismatches } from './research';
 import { WIDEST_LABEL, around, drawnFor, fastBox, heldIn, marginsOf, mirrored, union } from './framing';
-import { MIN_TEXT_PX, RATIO, RENDER_PX, guideContrast, isGuide, markContrast, paintedShapes, parseColour, ratio, textContrast, type RGBA } from './contrast';
+import { MIN_TEXT_PX, RATIO, RENDER_PX, boundaryContrast, guideContrast, isGuide, paintedShapes, parseColour, ratio, textContrast, type RGBA } from './contrast';
 import { centreOfMass, feetOf, groupOf } from './balance';
 import { drawnTints, undrawnTargets } from './drawn';
 import { tintOf } from '../player/guideView';
@@ -591,7 +591,7 @@ const framing: Fn = (c, fail) => {
 
 const contrast: Fn = (c, fail) => {
   if (typeof c.rig === 'string') return void fail(`not measured: ${c.rig}`);
-  const g = c.g, lab = labelled(c, c.rig), full = VIEWBOXES[g.camera.full], override = heldOverride(c), px = RENDER_PX / full[2];
+  const g = c.g, rig = c.rig, lab = labelled(c, rig), full = VIEWBOXES[g.camera.full], override = heldOverride(c), px = RENDER_PX / full[2];
   const extra: [string, string][] = [];
   if (override) extra.push([`part ${g.equipment.kind}`, override]);
   const fig = (read: TokenReader, m: boolean) => (override ? heldIn(lab.markup(read, m), override) : lab.markup(read, m));
@@ -603,9 +603,14 @@ const contrast: Fn = (c, fail) => {
   for (const id of THEME_IDS) {
     const read = themeReader(id), t = THEMES[id].tokens;
     const pages: [string, RGBA][] = [['stage', parseColour(t.surface1)!], ['tile', parseColour(t.surface2)!]];
-    const drawings: [string, string, boolean][] = [[' figure', fig(read, false), true], [' mistake figure', fig(read, true), true], ...extra.map(([w, s]) => [` ${w}`, s, false] as [string, string, boolean])];
-    for (const [what, svg, fig] of drawings) {
-      const shapes = paintedShapes(svg, read);
+    const drawings: [string, string, boolean, Figure?][] = [[' figure', fig(read, false), true, 'correct'], [' mistake figure', fig(read, true), true, 'mistake'], ...extra.map(([w, s]) => [` ${w}`, s, false] as [string, string, boolean])];
+    for (const [what, svg, fig, figure] of drawings) {
+      // posed at the four key moments (a figure; a part or machine at rest), each at rest as drawn and at full effort:
+      // every tint group at the player's full-effort opacity (guideView tintOf)
+      const tints = [...svg.matchAll(/<g class="fg-p fg-(t-[\w]+)"/g)].map(m => m[1]!);
+      const poses: Frame[] = fig && figure ? moments(windowsOf(g, figure, 0)).map(u => frameAt(c, rig, u, figure, 0)) : [{}];
+      for (const pose of poses) {
+      const rest = paintedShapes(svg, read, pose), shapes = paintedShapes(svg, read, { ...pose, ...Object.fromEntries(tints.map(k => [k, { opacity: tintOf(1) }])) });
       shapes.forEach((s, i) => {
         if (s.text) {
           const h = s.text.size * px;
@@ -622,12 +627,20 @@ const contrast: Fn = (c, fail) => {
             worst.mark = Math.min(worst.mark, r);
             if (!(r >= RATIO.mark)) once(`g${id}${what}${i}${pg}`, `${id}${what}: guide ${s.tag}${s.cls ? ` .${s.cls.split(' ').join('.')}` : ''} ${f2(r)}:1 < ${RATIO.mark}:1 on the ${pg}`);
           }
-        } else if (fig && /\bfg-t-/.test(s.cls) && s.fill.length) {
-          const r = markContrast(shapes, i, tintOf(1), pages[0]![1]);
-          worst.mark = Math.min(worst.mark, r);
-          if (!(r >= RATIO.mark)) once(`m${id}${what}${s.cls}`, `${id}${what}: mark ${s.cls.replace(/^.*\bfg-t-/, 'fg-t-')} ${f2(r)}:1 < ${RATIO.mark}:1 over the body at full effort`);
+        } else if (fig && /\bfg-t-/.test(s.cls)) {
+          // a tint drawn as a bare shape, not a group with its boundary
+          once(`nb${id}${what}${s.cls}`, `${id}${what}: mark ${s.cls.replace(/^.*\b(fg-t-\S+).*$/, '$1')} has no two-tone boundary (0 of 2 lines)`);
+        } else if (fig && /^fg-tf-/.test(s.cls)) {
+          const key = s.cls.slice(6), o = shapes.findIndex(x => x.cls === `fg-tro-${key}`), n = shapes.findIndex(x => x.cls === `fg-tri-${key}`);
+          if (o < 0 || n < 0) return once(`nb${id}${what}${key}`, `${id}${what}: mark fg-t-${key} has no two-tone boundary (${+(o >= 0) + +(n >= 0)} of 2 lines)`);
+          const r = boundaryContrast(shapes, i, o, n, pages[0]![1]), m = Math.min(r.outer, r.inner);
+          worst.mark = Math.min(worst.mark, m);
+          if (!(r.outer >= RATIO.mark)) once(`mo${id}${what}${key}`, `${id}${what}: mark fg-t-${key} outer line ${f2(r.outer)}:1 < ${RATIO.mark}:1 against the body at full effort`);
+          if (!(r.inner >= RATIO.mark)) once(`mi${id}${what}${key}`, `${id}${what}: mark fg-t-${key} inner line ${f2(r.inner)}:1 < ${RATIO.mark}:1 against the tint at full effort`);
+          for (const k of [o, n]) if (rest[k]!.alpha > 0) once(`mr${id}${what}${key}${k}`, `${id}${what}: mark fg-t-${key} ${k === o ? 'outer' : 'inner'} line shows at rest (opacity ${f2(rest[k]!.alpha)}), not with the effort`);
         }
       });
+      }
     }
     // the figure against the page: the body and the clothes, each by its fill or the outline the figure draws round it
     // (the body's --l line, the clothes' bodyPal cloth), whichever reads more
@@ -653,7 +666,7 @@ const balance: Fn = (c, fail) => {
   for (const p of passesOf(c)) {
     let failed = false;
     for (const u of grid(LIMITS.jointSamples)) {
-      const f = frameAt(c, rig, u, p.fig, p.rep), cm = centreOfMass(rig, f, head), b = bbox(feet, f), m = Math.min(cm[0] - b.x0, b.x1 - cm[0]);
+      const f = frameAt(c, rig, u, p.fig, p.rep), cm = centreOfMass(rig, f, head), b = fastBox(feet, f), m = Math.min(cm[0] - b.x0, b.x1 - cm[0]);
       least = Math.min(least, m); off = Math.max(off, Math.abs(cm[0] - (b.x0 + b.x1) / 2));
       if (!(m >= 0) && !failed) { failed = true; fail(`${p.L}: centre of mass x ${f2(cm[0])} is ${f2(-m)} units outside the foot base ${f2(b.x0)}..${f2(b.x1)} at ${at(u, p.T, p.L)}`); }
     }

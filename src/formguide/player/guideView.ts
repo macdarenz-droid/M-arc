@@ -15,9 +15,11 @@ import { heldOf, rigFor, viewOf, type Rig } from '../check/view';
 
 /** Reps per play (GU-7a R1-3: three, then hold the start pose). */
 export const REPS = 3;
-/** Effort (0..1) to tint and band opacity (D-FG4): the tint reads at every load and never hides the shading; the
- * shimmer band shows only in the upper half of the effort, so it marks where the load peaks. */
-export const tintOf = (e: number): number => 0.6 * Math.min(1, Math.max(0, e));
+/** Effort (0..1) to tint and band opacity. D-FG4: the tint reads at every load and never hides the shading; the shimmer
+ * band shows only in the upper half of the effort, so it marks where the load peaks. V1-07 (D-V1-07c): this is now the
+ * opacity of the tint's group (its fill carries D-FG4's 0.6, paint.ts TINT_FILL, so the fill is unchanged), which
+ * fades the tint's two-tone boundary in with it: full at full effort, none at rest. */
+export const tintOf = (e: number): number => Math.min(1, Math.max(0, e));
 export const bandOf = (e: number): number => Math.min(1, Math.max(0, (e - 0.5) / 0.5));
 
 /** The drawn rig for a guide, or why there is none (the back view until V1-22, a pose a view does not draw yet). */

@@ -10,6 +10,7 @@ import type { JointId } from '../rig/joints';
 import type { Pt } from '../rig/ik';
 import type { Frame } from '../rig/pose';
 import { bbox, type Compiled } from './svg';
+import { fastBox } from './framing';
 import type { Rig } from './view';
 
 /** de Leva 1996, male: segment mass (share of body mass) and CM from the proximal end (share of segment length). */
@@ -28,7 +29,7 @@ export function centreOfMass(rig: Rig, f: Frame, head: Compiled): Pt {
   const P = (j: JointId) => rig.pivot(f, j), L = DE_LEVA;
   const hipMid = lerp(P('hip_l'), P('hip_r'), 0.5);
   const seg: [number, Pt][] = [
-    [L.head.mass, (() => { const b = bbox(head, f); return [(b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2] as Pt; })()],
+    [L.head.mass, (() => { const b = fastBox(head, f); return [(b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2] as Pt; })()],
     [L.trunk.mass, lerp(P('neck'), hipMid, L.trunk.cm)],
   ];
   for (const s of ['l', 'r'] as const) {

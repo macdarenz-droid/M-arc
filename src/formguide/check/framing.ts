@@ -34,7 +34,7 @@ export function textAsBoxes(svg: string): string {
 
 /** Only the target tints of the listed muscles on one side keep their outline (the rest keep the tree, no shapes). */
 export function tintsOnly(svg: string, muscles: readonly string[], side: 'l' | 'r'): string {
-  const keep = new RegExp(`class="[^"]*\\bfg-t-(?:${muscles.join('|') || '(?!)'})_${side}\\b`);
+  const keep = new RegExp(`class="[^"]*\\bfg-t[f]?-(?:${muscles.join('|') || '(?!)'})_${side}\\b`);
   return svg
     .replace(/<(\/?)(polygon|polyline|rect|circle|ellipse|line|text)\b/g, '<$1g')
     .replace(/<path\b((?:\s+[\w:-]+="[^"]*")*)\s*(\/?)>/g, (m, a: string, self: string) => (keep.test(m) ? m : `<g${a.replace(/\sd="[^"]*"/, '')}${self ? ' /' : ''}>`));

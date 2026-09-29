@@ -264,19 +264,24 @@ describe('A4 the lateral raise with the library dumbbell', () => {
     expect(rs.filter(r => !r.ok).flatMap(r => r.fails)).toEqual([]);
     expect(guideHash(LR)).toBe('c1ac61634cd68bd4');
   });
-  // sha256 (16 hex) of figureFront(read, { id: 'fg0', mistake, dumbbell: { kg } }) before FG-5, when the figure drew
-  // the dumbbell itself: the library dumbbell draws the same bytes at the lab's 7 kg and with no load.
-  const BEFORE: Record<string, string> = {
-    'silent-black 7 false': '67389874953d94d8', 'silent-black 7 true': '577e342e06219254', 'silent-black - false': 'e58cbe89462a39c2', 'silent-black - true': 'b21767b82d02c89d',
-    'paper 7 false': '37c3821d98292523', 'paper 7 true': '98824e5d7a5f904a', 'paper - false': 'e274c70d7ce2d679', 'paper - true': '7bc38c2d2a8d5a4d',
-    'ember 7 false': '6bed627f32c9c764', 'ember 7 true': '63a29b5faf955009', 'ember - false': 'ead68ecca2f2f396', 'ember - true': 'e75a19af81650ebb',
-    'emerald 7 false': '73e3b50c2e56c528', 'emerald 7 true': 'c4571bee3699b5c2', 'emerald - false': '3ea271d5de7c93ee', 'emerald - true': '45acb2ebcc588f26',
-    'midnight 7 false': '16faf364a7d5956b', 'midnight 7 true': '7878a27954524e44', 'midnight - false': '2ec53bfd6823dcfa', 'midnight - true': '6210ba51bfa9ea69',
+  // sha256 (16 hex) of figureFront(read, { id: 'fg0', mistake, dumbbell: { kg } }). Before FG-5 the figure drew the
+  // dumbbell itself, and FG-5's library dumbbell drew the same bytes (these were the pins until V1-07):
+  //   silent-black 7 false 67389874953d94d8, true 577e342e06219254; - false e58cbe89462a39c2, true b21767b82d02c89d
+  //   paper 7 false 37c3821d98292523, true 98824e5d7a5f904a; - false e274c70d7ce2d679, true 7bc38c2d2a8d5a4d
+  //   ember 7 false 6bed627f32c9c764, true 63a29b5faf955009; - false ead68ecca2f2f396, true e75a19af81650ebb
+  //   emerald 7 false 73e3b50c2e56c528, true c4571bee3699b5c2; - false 3ea271d5de7c93ee, true 45acb2ebcc588f26
+  //   midnight 7 false 16faf364a7d5956b, true 7878a27954524e44; - false 2ec53bfd6823dcfa, true 6210ba51bfa9ea69
+  // V1-07 (D-V1-07b/c) draws no load label, outlines the clothes, lifts Midnight's body and gives each tint its
+  // two-tone boundary, so the pins are the V1-07 drawing's; with no label, a load and no load draw the same bytes.
+  const PINNED: Record<string, string> = {
+    'silent-black false': 'da868dd2f3a51e4c', 'silent-black true': '4a33d4eb1fa9a8ac', 'paper false': '6a8470447d8b7a89', 'paper true': '2099c9d003425fd5',
+    'ember false': '8d261aa32b233e9c', 'ember true': '73403bcb5fd6d0cb', 'emerald false': '792569b19c251586', 'emerald true': '46a86e537d6b9b52',
+    'midnight false': '2d3fa3ed999e7eaa', 'midnight true': '97f10f7034c5c315',
   };
-  it('the figure\'s markup is byte for byte the lab\'s in all five themes', () => {
+  it('the figure\'s markup is byte for byte V1-07\'s in all five themes, the same at 7 kg and with no load', () => {
     for (const t of THEME_IDS) for (const kg of [7, undefined]) for (const mistake of [false, true]) {
       const svg = figureFront(themeReader(t), { id: 'fg0', mistake, dumbbell: { kg } });
-      expect(createHash('sha256').update(svg).digest('hex').slice(0, 16), `${t} ${kg ?? '-'} ${mistake}`).toBe(BEFORE[`${t} ${kg ?? '-'} ${mistake}`]);
+      expect(createHash('sha256').update(svg).digest('hex').slice(0, 16), `${t} ${kg ?? '-'} ${mistake}`).toBe(PINNED[`${t} ${mistake}`]);
     }
   });
   it('in the figure the heads keep the lab\'s size at any load, so the lateral raise stays in its frame (FG-4 passes the logged kg)', () => {
@@ -293,6 +298,9 @@ describe('A4 the lateral raise with the library dumbbell', () => {
   });
   it('the dumbbell on its own is the figure\'s far and near heads about the grip', () => {
     expect(dumbbell({ g, kg: 7 }).svg).toBe(`<g class="fg-part fg-part-dumbbell">${dumbbellFar(g, 7)}${dumbbellNear(g, 7)}</g>`);
-    expect(figureFront(themeReader('paper'), { id: 'fg0', dumbbell: { kg: 20 } })).toContain(dumbbellNear('fg0-i', 20));
+    // V1-07 (D-V1-07b): in the figure the near head carries no load label (the player's readout shows the load)
+    const fig = figureFront(themeReader('paper'), { id: 'fg0', dumbbell: { kg: 20 } });
+    expect(fig).toContain(dumbbellNear('fg0-i'));
+    expect(fig).not.toContain('</text>');
   });
 });

@@ -69,7 +69,30 @@ function reach(c: Rgb, against: Rgb[]): Rgb {
 }
 /** The body tones; V1-07 adds `cloth`, the clothes' outline, reaching 3:1 against both pages (--ink where it already
  * does). All flat strings, so every colour the figure paints is one of these values (the themes check reads them so). */
-export type BodyPal = Record<'hi' | 'lit' | 'base' | 'mid' | 'sh' | 'sh2' | 'dk' | 'occ' | 'line' | 'def' | 'spec' | 'rim' | 'cloth', string>;
+/** Where a muscle tint lies (V1-07, D-V1-07c): on the deltoid's lit gradient (hi..mid), on the skin (lit..sh) or on
+ * the clothes (pants-hi..pants-sh). */
+export type Ground = 'D' | 'K' | 'C';
+export type Role = 'target' | 'help' | 'quiet';
+type RingKey = `ring${Ground}${'Target' | 'Help' | 'Quiet'}${'O' | 'I'}`;
+export type BodyPal = Record<'hi' | 'lit' | 'base' | 'mid' | 'sh' | 'sh2' | 'dk' | 'occ' | 'line' | 'def' | 'spec' | 'rim' | 'cloth' | RingKey, string>;
+/** The tint's fill opacity at full effort (D-FG4's 0.6, now the fill's own; the tint's group carries the effort). */
+export const TINT_FILL = 0.6;
+/** Stroke widths of a tint's boundary: the outer line shows OUTER_W/2 - INNER_W/2 units each side of the inner one. */
+export const RING_W = { outer: 4.4, inner: 1.8 } as const;
+/**
+ * A muscle tint (V1-07, D-V1-07c): one group keyed `fg-t-<key>`, hidden at rest, whose opacity the player sets from the
+ * effort (guideView tintOf), holding the tint fill (`fg-tf-`) at TINT_FILL and its two-tone boundary, the outer line
+ * (`fg-tro-`) under the inner one (`fg-tri-`), so the boundary follows the effort with the tint.
+ */
+export const tintMark = (key: string, d: string, tone: string, [outer, inner]: [string, string], attrs = ''): string =>
+  `<g class="fg-p fg-t-${key}" opacity="0"${attrs}><path class="fg-tf-${key}" d="${d}" fill="${tone}" fill-opacity="${TINT_FILL}"/>`
+  + `<path class="fg-tro-${key}" d="${d}" fill="none" stroke="${outer}" stroke-width="${RING_W.outer}" stroke-linejoin="round"/>`
+  + `<path class="fg-tri-${key}" d="${d}" fill="none" stroke="${inner}" stroke-width="${RING_W.inner}" stroke-linejoin="round"/></g>`;
+/** A tint's two-tone boundary colours (outer, inner) on its ground. */
+export const ringOf = (b: BodyPal, g: Ground, role: Role): [string, string] => {
+  const r = role[0]!.toUpperCase() + role.slice(1) as 'Target';
+  return [b[`ring${g}${r}O`], b[`ring${g}${r}I`]];
+};
 /**
  * The lab's bodyPal: the body tones, all from --accent (or --accent toward --mistake for the mistake). V1-07 (D-V1-07b):
  * the base is first lifted away from the pages until it reaches 3:1 on both (no change where it already does), and the
@@ -84,7 +107,23 @@ export function bodyPal(read: TokenReader, mistake: boolean): BodyPal {
   const pal = { hi: m('white', 0.3), lit: m('white', 0.14), base: m('white', 0), mid: m('black', 0.14), sh: m('black', 0.3), sh2: m('black', 0.22),
     dk: m('black', 0.42), occ: m('black', 0.5), line: m('black', 0.8), def: m('black', 0.55), spec: m('white', 0.78), rim: m('white', 0.6) };
   const ink = rgbOf(read, 'ink');
-  return { ...pal, cloth: out(pages.every(pg => contrastOf(ink, pg) >= REACH) ? ink : reach(rgbOf(read, 'pants'), pages)) };
+  // V1-07 (D-V1-07c): each tint's two-tone boundary. The outer line reaches REACH against every tone of the ground it
+  // lies on; the inner line against the tint (its token at TINT_FILL over each of those tones). Both start from the
+  // tint's own token, so they keep its hue as far as the contrast allows.
+  const sh = blend(b1, PURE.black, 0.3), T = (t: number) => blend(b1, PURE[t < 0 ? 'black' : 'white'], Math.abs(t));
+  const ground: Record<Ground, Rgb[]> = {
+    D: [0.3, 0.14, 0, -0.14].map(T),
+    // the skin gradients, and the trap's 30 % shadow over them
+    K: [0.14, 0, -0.14, -0.3].map(T).flatMap(c => [c, blend(c, sh, 0.3)]),
+    C: (['pants-hi', 'pants', 'pants-sh'] as const).map(t => rgbOf(read, t)),
+  };
+  const rings = {} as Record<RingKey, string>, quiet: Token = mistake ? 'mistake' : 'quiet';
+  for (const g of ['D', 'K', 'C'] as const) for (const [r, tok] of [['Target', 'target'], ['Help', 'help'], ['Quiet', quiet]] as const) {
+    const c = rgbOf(read, tok), under = ground[g], tinted = under.map(u => blend(u, c, TINT_FILL));
+    rings[`ring${g}${r}O`] = out(reach(c, under));
+    rings[`ring${g}${r}I`] = out(reach(c, tinted));
+  }
+  return { ...pal, ...rings, cloth: out(pages.every(pg => contrastOf(ink, pg) >= REACH) ? ink : reach(rgbOf(read, 'pants'), pages)) };
 }
 
 /** Cel gradient: three hard bands (lab `cel`). */

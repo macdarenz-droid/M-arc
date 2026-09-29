@@ -11,7 +11,7 @@
 // carries the spine and chest turn (pose.ts), so it moves as a child of the chest.
 import type { MuscleId } from '@/data/muscles';
 import type { JointId } from './joints';
-import { bodyPal, band, lg, mix, packSl, sl, D_, L_, OC, SP, type Token, type TokenReader } from './paint';
+import { bodyPal, band, lg, mix, packSl, ringOf, sl, tintMark, D_, L_, OC, SP, type Ground, type Token, type TokenReader } from './paint';
 import { MIRROR, type Mat } from './figureFront';
 import { dumbbellFar, dumbbellNear } from '../parts/dumbbell';
 import { barbell } from '../parts/barbell';
@@ -112,7 +112,7 @@ export const OVERLAY_D: Record<SideMuscle, string> = {
   side_delts: 'M-6 -13 C-1 -15 2 -15 4 -14.6 C5.6 12 3.6 36 1 52.4 C-2 46 -5 38 -7.4 30 C-6.4 14 -5.4 0 -6 -13 Z',
   front_delts: 'M4 -14.6 C12 -14.4 17.6 -10.6 19.4 -6 C23.4 4 21.4 20 16 34 C12 42 6 48 1 52.4 C3.6 36 5.6 12 4 -14.6 Z',
   rear_delts: 'M-17.4 -2 C-15 -8.6 -11 -11.6 -6 -13 C-5.4 0 -6.4 14 -7.4 30 C-11 26 -14.4 20 -16 14 C-18.4 8 -19 3 -17.4 -2 Z',
-  upper_traps: 'M186 104 C194 110 204 118 212 126 C200 129 188 128 175 125 C179 118 183 111 186 104 Z',
+  upper_traps: 'M189 109.4 C196 113.6 204 118 212 126 C200 129 189 128 177.4 125 C181.6 119.6 185.4 114 189 109.4 Z',
   mid_back: 'M171 132 C179 130 187 134 191 141 C187 155 181 165 172 170 C167.4 159 167 145 171 132 Z',
   lats: 'M176 150 C188 146 204 150 210 160 C206 180 196 206 184 229 C178 213 172 191 170 171 C170 161 172 155 176 150 Z',
   chest: PEC,
@@ -123,18 +123,23 @@ export const OVERLAY_D: Record<SideMuscle, string> = {
   abs: 'M221 184 C229.4 190 231.4 206 231.4 222 C232.4 238 229.4 252 225.8 265 L217 264.4 C219 240 219 210 218 186 Z',
   core: 'M206 190 C218 190 229 196 230.4 220 C231.4 242 228.6 256 225.4 265 L198 263 C200 240 201 212 206 190 Z',
   obliques: 'M196 186 C208 184 220 190 224 202 C226 222 224 244 220 262 L188 262 C186 244 187 214 196 186 Z',
-  lower_back: 'M170.4 196 C176.4 196 184 204 186 214 C186.4 230 184.4 246 180.4 259 C177 251 177.4 241 179 231 C175 222 170.8 210 170.4 196 Z',
+  lower_back: 'M172 197 C176.4 196.6 184 204 186 214 C186.4 230 184.4 244 181.4 255.4 C179.8 249.6 179.6 240 180.4 231 C176.4 222 172.4 210 172 197 Z',
   hip_flexors: 'M226.4 268 C228.4 278 226.4 290 221 298 C213 294 208.4 284 210.4 272 Z',
   glutes: 'M178 266 C166 274 161 288 165 300 C169 310 180 314 190 310 C193 296 191 278 178 266 Z',
   quads: 'M212 280 C228 296 230.4 350 224.4 400 C221.4 420 218.4 432 214 441 C206 420 204 380 205 340 C206 310 208 292 212 280 Z',
   hamstrings: 'M180 300 C183 340 186 380 190.4 432 C194.4 420 196.4 390 196.4 360 C194.4 330 188.4 310 180 300 Z',
   calves: 'M189.6 446 C180.6 460 177.6 480 181.6 500 C184.6 512 187.6 520 189.6 526 C194.6 510 196.6 480 194.6 460 C193.6 452 191.6 448 189.6 446 Z',
 };
-/** One overlay pair: the tint (`fg-t-`) and the shimmer band (`fg-b-`), both hidden until the player sets opacity. */
-type Paint = { tint: (m: SideMuscle) => string; band: (m: SideMuscle) => string; side: Near };
+/** One overlay pair: the tint (`fg-t-`) and the shimmer band (`fg-b-`), both hidden until the player sets opacity. V1-07
+ * (D-V1-07c): each part draws its overlays on its base fill, before its brush strokes, so a tint's boundary reads
+ * against the muscle's gradient and the strokes show over the tint. */
+type Paint = { tint: (m: SideMuscle) => string; ring: (m: SideMuscle) => [string, string]; band: (m: SideMuscle) => string; side: Near };
+/** The ground each side muscle's tint lies on (V1-07): the deltoid's lit gradient, the skin, or the clothes. */
+const GROUND: Partial<Record<SideMuscle, Ground>> = { side_delts: 'D', front_delts: 'D', rear_delts: 'D', glutes: 'C', hip_flexors: 'C', quads: 'C', hamstrings: 'C', calves: 'C' };
+export const groundOf = (m: SideMuscle): Ground => GROUND[m] ?? 'K';
 const overlay = (P: Paint, m: SideMuscle) => {
   const d = OVERLAY_D[m];
-  return d ? `<path class="fg-p fg-t-${m}_${P.side}" d="${d}" fill="${P.tint(m)}" opacity="0"/><path class="fg-p fg-b-${m}_${P.side}" d="${d}" fill="${P.band(m)}" opacity="0"/>` : '';
+  return d ? `${tintMark(`${m}_${P.side}`, d, P.tint(m), P.ring(m))}<path class="fg-p fg-b-${m}_${P.side}" d="${d}" fill="${P.band(m)}" opacity="0"/>` : '';
 };
 
 function upperArm(p: string, far: boolean, P: Paint | null): string {
@@ -145,7 +150,7 @@ function upperArm(p: string, far: boolean, P: Paint | null): string {
     + overlay(P, 'side_delts')
     + overlay(P, 'rear_delts') : '';
   return `<g transform="scale(${ARM_SX} 1)">${rimP(UA)}<path d="${UA}" fill="${a}"/>
-    ${far ? '' : `${sl([8, 32, 15, 50, 13, 80], 3.6, OC, .5, .35)}${sl([-14, 40, -16, 58, -13, 82], 2.2, SP, .45, .55)}`}${ov}
+    ${ov}${far ? '' : `${sl([8, 32, 15, 50, 13, 80], 3.6, OC, .5, .35)}${sl([-14, 40, -16, 58, -13, 82], 2.2, SP, .45, .55)}`}
     ${inkP('M18 28 C22 44 21 64 15 84 C12.6 92 8 97 0 98 M-15 88 C-19 72 -22 50 -20.6 30', L_)}
     ${rimP('M-17.4 -2 C-13 -14.4 10 -17 19.4 -6 C23.4 4 21.4 20 16 34')}<path d="${DELT}" fill="${d}"/>${delts}
     ${far ? '' : `${sl([4, -13, 6, 12, 3, 34, 1, 50], 1.4, D_, .45)}${sl([-6, -12, -5, 8, -6, 26], 1.2, D_, .5, .7)}${sl([-12, -9, -4, -14, 6, -14.4], 2, SP, .5, .75)}`}
@@ -154,8 +159,8 @@ function upperArm(p: string, far: boolean, P: Paint | null): string {
 function foreArm(p: string, far: boolean, P: Paint | null, hand: string, cl: string): string {
   const a = `url(#${p}-${far ? 'aF' : 'af'})`;
   return `<g transform="scale(${ARM_SX} 1)">${rimP('M-13 -6 C-15.4 8 -14.4 28 -10.4 48 C-9.2 62 -8.4 72 -8 84 M8 84 C8.4 72 10 60 12 46 C16 28 17 10 13 -4')}<path d="${FA}" fill="${a}"/>
-    ${far ? '' : `${sl([9, -2, 13, 14, 11, 34, 7, 56], 1.8, SP, .45, .6)}${sl([-10, 4, -12, 22, -9, 44], 1.2, D_, .5, .6)}`}
     ${P ? overlay(P, 'forearms') : ''}
+    ${far ? '' : `${sl([9, -2, 13, 14, 11, 34, 7, 56], 1.8, SP, .45, .6)}${sl([-10, 4, -12, 22, -9, 44], 1.2, D_, .5, .6)}`}
     ${inkP('M-13 -6 C-15.4 8 -14.4 28 -10.4 48 C-9.2 62 -8.4 72 -8 84 M8 84 C8.4 72 10 60 12 46 C16 28 17 10 13 -4', L_)}
     <path d="M-8.6 72 C-3 74 3 74 8.6 72 L9.4 86 C3 88 -3 88 -9.4 86 Z" fill="var(--pants-sh)" stroke="${cl}" stroke-width="1.6"/></g>
     ${hand}`;
@@ -167,14 +172,14 @@ function fist(p: string, far: boolean): string {
 
 const thigh = (p: string, far: boolean, P: Paint | null, cl: string) => `
   ${rimP(THIGH_EDGE, 4.6, 'butt')}<path d="${THIGH}" fill="url(#${p}-${far ? 'pF' : 'p'})"/>
-  ${far ? '' : `${sl([222, 290, 228, 340, 220, 400], 4, 'var(--pants-sh)', .5, .55)}${sl([190, 300, 188, 350, 194, 410], 2.6, 'var(--ph)', .45, .7)}${sl([200, 420, 210, 428, 220, 424], 1.4, 'var(--ph)', .5, .7)}`}
   ${P ? overlay(P, 'quads')
     + overlay(P, 'hamstrings') : ''}
+  ${far ? '' : `${sl([222, 290, 228, 340, 220, 400], 4, 'var(--pants-sh)', .5, .55)}${sl([190, 300, 188, 350, 194, 410], 2.6, 'var(--ph)', .45, .7)}${sl([200, 420, 210, 428, 220, 424], 1.4, 'var(--ph)', .5, .7)}`}
   ${inkP(THIGH_EDGE, cl)}`;
 const shin = (p: string, far: boolean, P: Paint | null, cl: string) => `
   ${rimP(SHIN_EDGE, 4.6, 'butt')}<path d="${SHIN}" fill="url(#${p}-${far ? 'pF' : 'p'})"/>
-  ${far ? '' : `${sl([196, 444, 208, 450, 218, 446], 1.6, 'var(--ph)', .5, .8)}${sl([184, 462, 182, 484, 186, 506], 3, 'var(--ph)', .45, .55)}${sl([214, 450, 216, 490, 211, 530], 2.4, 'var(--pants-sh)', .5, .6)}`}
   ${P ? overlay(P, 'calves') : ''}
+  ${far ? '' : `${sl([196, 444, 208, 450, 218, 446], 1.6, 'var(--ph)', .5, .8)}${sl([184, 462, 182, 484, 186, 506], 3, 'var(--ph)', .45, .55)}${sl([214, 450, 216, 490, 211, 530], 2.4, 'var(--pants-sh)', .5, .6)}`}
   ${inkP(SHIN_EDGE, cl)}`;
 const foot = (far: boolean, cl: string) => `
   <path d="${FOOT}" fill="${far ? 'var(--pants-sh)' : 'var(--pants)'}" stroke="${cl}" stroke-width="2"/>
@@ -217,6 +222,7 @@ export function figureSide(read: TokenReader, o: SideOptions): string {
     side: near,
     tint: m => ({ target: 'var(--target)', help: 'var(--help)', quiet: mistake ? 'var(--mistake)' : 'var(--quiet)' })[role(m)],
     band: m => `url(#${p}-b${role(m)[0]!.toUpperCase()})`,
+    ring: m => ringOf(b, groundOf(m), role(m)),
   };
   const skin: [number, string][] = [[0, b.lit], [.35, b.base], [.75, b.mid], [1, b.sh]];
   const skinFar: [number, string][] = [[0, b.mid], [.5, b.sh], [1, b.sh2]];

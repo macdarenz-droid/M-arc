@@ -5,7 +5,7 @@
 // Every joint is <g class="fg-j j-<name>"> with its pivot as transform-origin in its parent's user space; a static
 // placement <g transform> sits outside it where the part is drawn in its own frame (arms, the left half).
 import type { JointId } from './joints';
-import { bodyPal, band, cel, lg, mix, packSl, sl, D_, L_, OC, SP, type BodyPal, type Token, type TokenReader } from './paint';
+import { bodyPal, band, cel, lg, mix, packSl, sl, D_, L_, OC, SP, ringOf, tintMark, type BodyPal, type Token, type TokenReader } from './paint';
 import { dumbbellFar, dumbbellNear } from '../parts/dumbbell';
 
 export const P2 = 303;                                      // units per metre
@@ -145,8 +145,8 @@ function ARM(p: string, s: 'R' | 'L', db: Dumbbell, b: BodyPal): string {
     ${sl([-14, 27, -7, 40, 0, 51, 6, 60], 5, OC, .6, .32)}${sl([6, 60, 11, 54, 16, 47, 22.5, 39], 4, OC, .35, .26)}
     ${rimP('M6 -12 C11 -12 16 -11 20 -8 C24 -4 25.5 3 25 12 C24.6 21 23.8 27 23 31')}
     <path d="${DA}" fill="${a}"/><path d="${DF}" fill="url(#${p}-dA)"/><path d="${DS}" fill="url(#${p}-dL)"/><path d="${DP}" fill="url(#${p}-dP)"/>
-    <path class="fg-p fg-t-front_delts_${side}" d="${DF}" fill="var(--help)" opacity="0"/>
-    <path class="fg-p fg-t-side_delts_${side}" d="${DS}" fill="var(--target)" opacity="0"/>
+    ${tintMark(`front_delts_${side}`, DF, 'var(--help)', ringOf(b, 'D', 'help'))}
+    ${tintMark(`side_delts_${side}`, DS, 'var(--target)', ringOf(b, 'K', 'target'))}
     <path class="fg-p fg-b-side_delts_${side}" d="${DS}" fill="url(#${p}-shS)" opacity="0"/>
     ${sl([6, -11, 8, 8, 9, 32, 6.5, 54], 1.5, D_, .4)}${sl([20, -7, 23, 6, 23, 26, 17, 40], 1.2, D_, .45)}
     ${sl([-11, -1, -5, -8, 3, -9.5], 2, SP, .5, .75)}${sl([11, -8.5, 16, -6.5, 20, -1], 1.6, SP, .5, .6)}${sl([14, 4, 15.5, 12, 15.5, 20, 14, 28], 1.3, SP, .5, .35)}
@@ -174,8 +174,11 @@ export function figureFront(read: TokenReader, o: FrontOptions): string {
   const TORSO = 'M200 99 C210 99 218 97 224 99 C234 102 244 108 252 114 C257 116 263 118 268 123 C270 128 271 138 270 146 C268 160 264 172 258 186 C254 200 248 214 245 228 C243 238 245 248 247 258 L248 270 L152 270 L153 258 C155 248 157 238 155 228 C152 214 146 200 142 186 C136 172 132 160 130 146 C129 138 130 128 132 123 C137 118 143 116 148 114 C156 108 166 102 176 99 C182 97 190 99 200 99 Z';
   const SIDE = 'M252 114 C257 116 263 118 268 123 C270 128 271 138 270 146 C268 160 264 172 258 186 C254 200 248 214 245 228 C243 238 245 248 247 258';
   const HEAD = 'M200 27 C219 27 228 41 228 58 C228 71 224 81 218 88 C212 95 206 99 200 99 C194 99 188 95 182 88 C176 81 172 71 172 58 C172 41 181 27 200 27 Z';
-  const trap = (s: 'R' | 'L') => { const side = s === 'R' ? 'r' : 'l'; return `<path d="${TRAP_PATH}" fill="url(#${p}-m${s})"/><path d="M230 120.5 C238 124.6 248 126.3 258 125 L258 117.5 C250 118.6 240 119.4 230 120.5 Z" fill="${b.sh}" opacity=".3"/>${sl([214, 102, 224, 116, 242, 125, 256, 125.5], 1.3, D_, .5, .7)}${sl([221, 98, 234, 104, 248, 111], 1.5, SP, .45, .5)}
-        <path class="fg-p fg-t-upper_traps_${side}" d="${TRAP_PATH}" fill="${mistake ? 'var(--mistake)' : 'var(--quiet)'}" opacity="0"/><path class="fg-p fg-b-upper_traps_${side}" d="${TRAP_PATH}" fill="url(#${p}-shT)" opacity="0"/>
+  // V1-07 (D-V1-07c): the trap's brush strokes are drawn over its tint (the delts' already are), so the tint lies on the
+  // muscle's gradient alone and its boundary reads against that; at rest the tint is hidden and the drawing is the lab's.
+  const trap = (s: 'R' | 'L') => { const side = s === 'R' ? 'r' : 'l'; return `<path d="${TRAP_PATH}" fill="url(#${p}-m${s})"/><path d="M230 120.5 C238 124.6 248 126.3 258 125 L258 117.5 C250 118.6 240 119.4 230 120.5 Z" fill="${b.sh}" opacity=".3"/>
+        ${tintMark(`upper_traps_${side}`, TRAP_PATH, mistake ? 'var(--mistake)' : 'var(--quiet)', ringOf(b, 'K', 'quiet'))}<path class="fg-p fg-b-upper_traps_${side}" d="${TRAP_PATH}" fill="url(#${p}-shT)" opacity="0"/>
+        ${sl([214, 102, 224, 116, 242, 125, 256, 125.5], 1.3, D_, .5, .7)}${sl([221, 98, 234, 104, 248, 111], 1.5, SP, .45, .5)}
         <path d="M217 93 C228 99 238 104 246 108 C253 112 258 117 258 124" fill="none" stroke="var(--rim)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M210 88 C218 94 234 101 246 108 C253 112 258 117 258 125" fill="none" stroke="var(--l)" stroke-width="2.4" stroke-linecap="round"/>`; };
   // Pants gradients: the lab's objectBoundingBox gradients over the whole leg, fixed to that box in user space

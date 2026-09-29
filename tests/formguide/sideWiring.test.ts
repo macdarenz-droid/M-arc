@@ -175,14 +175,22 @@ describe('A4 every camera holds its pose\'s figure at least 1 unit inside, at re
 });
 
 describe('A5 the lateral raise is byte-identical', () => {
-  it('markup (every theme, both figures), chained keyframes, moment frames and cameras hash as on the base commit ed221a0', () => {
-    const rig = guideRig(LR, 'shoulder_abduction'), out: unknown[] = [];
+  // V1-07 (D-V1-07b/c) changed the look, not the motion: the moving half (every transform keyframe, the moment frames'
+  // transforms, the cameras) hashes as on origin/main eb1ed6d, recomputed there with this same split; the look half (the
+  // markup, and the tint and band opacity keyframes and moment values) is pinned to the V1-07 drawing.
+  it('markup (every theme, both figures), chained keyframes, moment frames and cameras: motion as on eb1ed6d, look as V1-07 drew it', () => {
+    const rig = guideRig(LR, 'shoulder_abduction'), moves: unknown[] = [], looks: unknown[] = [];
+    const overlay = (k: string) => /^(fg-)?[tb]-/.test(k);
     for (const id of THEME_IDS) for (const mistake of [false, true]) {
       const fig = mistake ? 'mistake' : 'correct', m = markupOf(LR, rig, themeReader(id), { id: 't', mistake, load: 9 });
-      out.push(m, chainedGroups(LR, rig, fig, m), momentsOf(LR, fig).map(u => momentFrame(LR, rig, fig, u, m)));
+      const groups = chainedGroups(LR, rig, fig, m), frames = momentsOf(LR, fig).map(u => momentFrame(LR, rig, fig, u, m));
+      moves.push(groups.filter(g => !overlay(g.className)), frames.map(f => Object.fromEntries(Object.entries(f).filter(([k]) => !overlay(k)))));
+      looks.push(m, groups.filter(g => overlay(g.className)), frames.map(f => Object.fromEntries(Object.entries(f).filter(([k]) => overlay(k)))));
     }
-    for (const z of [false, true]) for (const c of [false, true]) out.push(cameraOf(LR, z, c));
-    expect(createHash('sha256').update(JSON.stringify(out)).digest('hex')).toBe('b29fed33a75525c1d5c047a0be675fa746b65728bad51b1896e1d90886e97ae7');
+    for (const z of [false, true]) for (const c of [false, true]) moves.push(cameraOf(LR, z, c));
+    const h = (x: unknown) => createHash('sha256').update(JSON.stringify(x)).digest('hex');
+    expect(h(moves)).toBe('3c11056c6957e2751314ebf27c7a5c7e6f83520e3c143ff7875178727882722b');
+    expect(h(looks)).toBe('cfd3fc8ead4cdd833dadf72e5019b06e0ec30f00d439a53aa6549848d1f74fba');
   });
 });
 

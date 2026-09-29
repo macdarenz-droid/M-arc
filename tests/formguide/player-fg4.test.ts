@@ -77,7 +77,9 @@ describe('FG-4 A1: the three reps as chained keyframe sets', () => {
   });
 
   it('effort drives the tints: the side-delt band peaks at the top, the traps tint rises in the mistake', () => {
-    expect(tintOf(1)).toBe(0.6); expect(tintOf(-1)).toBe(0); expect(bandOf(0.5)).toBe(0); expect(bandOf(1)).toBe(1);
+    // V1-07 (D-V1-07c): tintOf is the tint group's opacity, reaching 1 at full effort; the fill keeps D-FG4's 0.6
+    expect(tintOf(1)).toBe(1); expect(tintOf(0.5)).toBe(0.5); expect(tintOf(-1)).toBe(0); expect(bandOf(0.5)).toBe(0); expect(bandOf(1)).toBe(1);
+    expect(mk(false)).toMatch(/<g class="fg-p fg-t-side_delts_r" opacity="0"><path class="fg-tf-side_delts_r" d="[^"]+" fill="var\(--target\)" fill-opacity="0.6"\/>/);
     const band = byClass.get('fg-b-side_delts_r')!, top = band.reduce((b, f) => (f.opacity! > b.opacity! ? f : b));
     expect(top.opacity!).toBeGreaterThan(0.8);
     const w = windowsFor(tempoOf(LR, 'correct', 0), LR.order, LR.kind), lift = w.find(x => x.name === 'lift')!;
@@ -119,12 +121,46 @@ describe('FG-4 A1: the three reps as chained keyframe sets', () => {
     expect(cameraOf(LR, true, true)).toEqual({ box: [60, 10, 560, 300], dx: 280 });
   });
 
-  it('two live figures never share gradient ids; the load is the dumbbell label', () => {
+  it('two live figures never share gradient ids; the load is the readout\'s, the figure draws no text (V1-07)', () => {
     const a = markupOf(LR, rig, SB, { id: 'fgA', mistake: false, load: 9 }), b = markupOf(LR, rig, SB, { id: 'fgM', mistake: true, load: 9 });
     const ids = (s: string) => [...s.matchAll(/ id="([^"]+)"/g)].map(x => x[1]);
     expect(ids(a).filter(i => ids(b).includes(i))).toEqual([]);
-    expect(a).toContain('>9</text>');
-    expect(markupOf(LR, rig, SB, { id: 'x', mistake: false, load: null })).not.toContain('</text>');
+    // V1-07 (D-V1-07b): no load label on the dumbbell; ExercisePlayer's camera label shows `· <load>` (tested below)
+    expect(a).not.toContain('</text>');
+    expect(a).toBe(markupOf(LR, rig, SB, { id: 'fgA', mistake: false, load: null }));
+  });
+});
+
+describe('V1-07 (D-V1-07b): the load is the readout\'s text, never drawn on the figure', () => {
+  it('ExercisePlayer puts "· <load>" in the camera label, and the figure markup it mounts holds no <text>', async () => {
+    const el = { innerHTML: '', firstChild: null, cancel: () => {}, querySelectorAll: () => [{ animate: () => ({ pause: () => {} }) }] };
+    vi.resetModules();
+    vi.doMock('preact/hooks', () => ({
+      useMemo: (f: () => unknown) => f(), useEffect: () => {}, useLayoutEffect: (f: () => void) => { f(); },
+      useState: (i: unknown) => [typeof i === 'function' ? (i as () => unknown)() : i, () => {}], useRef: (i: unknown) => ({ current: i ?? el }),
+    }));
+    vi.doMock('@/ui/motion', () => ({ reduced: () => false, onReducedChange: () => () => {} }));
+    vi.stubGlobal('document', { documentElement: { getAttribute: () => 'silent-black' } });
+    vi.stubGlobal('getComputedStyle', () => ({ getPropertyValue: (p: string) => SB(p.slice(2) as Parameters<typeof SB>[0]) }));
+    try {
+      const { ExercisePlayer } = await import('@/formguide/player/ExercisePlayer');
+      const vnode = ExercisePlayer({ guide: LR, rig, name: 'Lateral raise', load: { kg: 9, text: '9 kg' } });
+      const labels: string[] = [];
+      const walk = (n: unknown): void => {
+        if (n == null || typeof n !== 'object') return;
+        if (Array.isArray(n)) { n.forEach(walk); return; }
+        const v = n as { props?: { children?: unknown; class?: string } };
+        if (v.props?.class === 'cam-label') labels.push([v.props.children].flat(3).filter(x => typeof x === 'string' || typeof x === 'number').join(''));
+        walk(v.props?.children);
+      };
+      walk(vnode);
+      expect(labels).toEqual(['Front view · 9 kg']);
+      const stage = mk(false, 9);
+      expect(stage).not.toMatch(/<text\b/);
+      expect(el.innerHTML).not.toMatch(/<text\b/);
+    } finally {
+      vi.unstubAllGlobals(); vi.doUnmock('preact/hooks'); vi.doUnmock('@/ui/motion');
+    }
   });
 });
 
