@@ -8,7 +8,10 @@ import { kgToDisplay } from '@/core/units';
 import { exerciseHistory, modeOf, type ExerciseSessionSummary } from '../history';
 import { formatRecordValue, recordsFor } from '../prs';
 import { findExercise } from '@/core/exercises';
-import { isWorkingSet } from '../exposure';
+import { firstWorkingSet, isWorkingSet } from '../exposure';
+import { RIR_BY_EFFORT } from '../e1rm';
+import { rirMid } from '../retarget';
+import type { GoalId } from '@/data/goals';
 import type { Insight } from './rules';
 
 /** Records set in this session, tiered by kind, only from sets logged live (timing-independent content is fine at any fidelity). */
@@ -122,6 +125,37 @@ export function durationDriftInsight(session: Session, priorSameSplit: Session[]
   };
 }
 
+/**
+ * LT-3 (§4): set 1 against the target stored at its commit, one line per lift that went off plan. The plan is read
+ * at the goal's shown effort (RIR 2 without a goal), the set at its own; the ratio form never shows a max (D-A4 c).
+ * Records are untouched (prs.ts).
+ */
+export function planVerdictInsights(session: Session, goal?: GoalId, unit: LoadUnit = 'kg'): Insight[] {
+  const out: Insight[] = [];
+  const rir = goal ? rirMid(goal) : 2;
+  for (const ex of session.exercises) {
+    const t = ex.target;
+    const s1 = firstWorkingSet(ex.sets.filter(isWorkingSet));
+    if (!t || !s1 || !(s1.kg! > 0) || !(s1.reps! > 0)) continue;
+    if (Math.abs(s1.kg! - t.kg) < 0.011 && s1.reps === t.reps) continue;
+    const did = s1.kg! * (1 + (s1.reps! + RIR_BY_EFFORT[s1.effort ?? 'ideal']) / 30);
+    const plan = t.kg * (1 + (t.reps + rir) / 30);
+    const pct = Math.round((did / plan - 1) * 100);
+    const v = (kg: number) => kgToDisplay(kg, unit);
+    const head = `Planned ${v(t.kg)} × ${t.reps}, did ${v(s1.kg!)} × ${s1.reps}`;
+    const line = pct >= 1 ? `${head}: estimated strength up about ${pct} %.` : pct <= -1 ? `${head}: below plan, the next target holds.` : `${head}: on plan in estimated strength.`;
+    out.push({
+      id: `post:verdict:${session.id}:${ex.exerciseId}`, category: 'progress', priority: 190, cadence: 'post', kind: 'data', exerciseId: ex.exerciseId,
+      title: `${ex.name}: plan vs done`,
+      noticed: line,
+      means: pct <= -1 ? 'One set under the plan does not move the target.' : 'The next target is set from the plan and what you lifted.',
+      action: 'Nothing to do. The next session shows the new target.',
+      evidence: { n: 1, window: 'this session', confidence: 'medium' },
+    });
+  }
+  return out;
+}
+
 export interface PostSessionInput {
   session: Session;
   priorSessions: Session[];
@@ -129,6 +163,8 @@ export interface PostSessionInput {
   isStrengthGoal: boolean;
   /** The display unit for record text (BR-28). */
   unit?: LoadUnit;
+  /** LT-3: the goal, for the plan-vs-done line's effort. */
+  goal?: GoalId;
 }
 
 export function postSessionInsights(input: PostSessionInput, limit = 4): Insight[] {
@@ -139,6 +175,7 @@ export function postSessionInsights(input: PostSessionInput, limit = 4): Insight
   const timingTrusted = session.logging?.timingTrusted ?? true;
   const out: Insight[] = [
     ...recordsInsight(session, priorSessions, custom, input.unit ?? 'kg'),
+    ...planVerdictInsights(session, input.goal, input.unit ?? 'kg'),
     effortMixInsight(session),
     timingTrusted ? restAndDensityInsight(session, isStrengthGoal, custom) : null,
     timingTrusted ? durationDriftInsight(session, priorSameSplit) : null,

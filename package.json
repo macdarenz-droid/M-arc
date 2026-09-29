@@ -19,6 +19,7 @@
     "convert-backup": "node scripts/build-convert.mjs && node node_modules/.cache/convert-backup.mjs",
     "logo": "esbuild src/theme/themes.ts --bundle --format=esm --outfile=node_modules/.cache/logo-themes.mjs --log-level=warning && esbuild src/svg/logo.ts --bundle --format=esm --outfile=node_modules/.cache/logo-svg.mjs --log-level=warning && node scripts/render-logo.mjs",
     "fg:check": "esbuild src/formguide/check/cli.ts --bundle --format=esm --platform=node --outfile=node_modules/.cache/fg-check.mjs --log-level=warning && node scripts/fg-check.mjs",
+    "fg:render": "node scripts/fg-render.mjs",
     "escobar:tools": "node scripts/escobar-tools.mjs",
     "test:tz": "TZ=America/New_York vitest run && TZ=Asia/Manila vitest run"
   },

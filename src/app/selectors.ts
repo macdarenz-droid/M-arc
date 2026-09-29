@@ -6,7 +6,7 @@ import { weekdayOf, daysBetween, trainedTodaySessions, nextScheduled } from '@/c
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
 import { deloadOffer, hiddenBackOnBoard, hiddenInsightIds, rankInsights, runInsightRules, type CoachContext } from '@/brain/coach/rules';
-import { plannedThisWeek, trainingStreak, weekSummary } from '@/brain/weekly';
+import { plannedSessions, trainingStreak, weekSummary } from '@/brain/weekly';
 import { shouldShowOnboarding } from '@/brain/onboarding';
 import { watchStatus } from '@/native/watch';
 import { bodyWeightResolver } from '@/brain/bodyweight';
@@ -51,14 +51,14 @@ export const todayReadiness = computed(() => readiness({
   custom: customExercises.value,
   sessions: sessions.value,
 }));
-export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedThisWeek(state.value.schedule, state.value.daysOff, today.value)));
+export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedSessions({ schedule: state.value.schedule, daysOff: state.value.daysOff, plannedDays: state.value.profile.plannedDays }, today.value)));
 export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value, state.value.daysOff));
 const coachContext = computed((): CoachContext => ({
   sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises,
   today: today.value, now: minuteNow.value, profileHistory: state.value.profileHistory, profile: state.value.profile,
   healthDays: state.value.healthDays, checkIns: state.value.checkIns, freshMarks: state.value.freshMarks,
   recoveryModel: state.value.recoveryModel, deload: state.value.deload, feedback: state.value.insightFeedback,
-  unit: state.value.preferences.weightUnit, heartSeries: getSeries,
+  unit: state.value.preferences.weightUnit, heartSeries: getSeries, daysOff: state.value.daysOff, plannedDays: state.value.profile.plannedDays,
 }));
 /** COACH-FB: the rules run once; the board and the hidden-notes list both rank from this one list. */
 const rawInsights = computed(() => runInsightRules(coachContext.value));
