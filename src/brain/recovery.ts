@@ -431,6 +431,18 @@ export function calibrateTauScale(currentScale: number, predictedPct: number, pe
  * muscle this session trains without evidence drifts TAU_SCALE_DECAY of the way back to 1.0.
  */
 /**
+ * BUG-18 x BUG-17 (A6): the exercise's last session before this one, summarised on its own, the
+ * way `replayRecoveryModel` sees it. A summary built against the whole history would hold a typo
+ * set the one-session rebuild cannot see, so finish and a rebuild would learn different models.
+ * Calibration therefore sees held sets (only the 500 kg line applies), as D-B18 records.
+ */
+export function lastSummaryAlone(priorSessions: Session[], exerciseId: string, custom: Exercise[]): ExerciseSessionSummary | undefined {
+  const last = exerciseHistory(priorSessions, exerciseId, custom).at(-1);
+  const sess = last && priorSessions.find(s => s.id === last.sessionId);
+  return sess ? exerciseHistory([sess], exerciseId, custom)[0] : undefined;
+}
+
+/**
  * `prevSummary`, when given, returns the exercise's last summary before this session; `predict`,
  * when given, returns the predicted recovery at the session start from doses already built
  * (replayRecoveryModel), so a full rebuild stays linear. Both must give what the defaults would.
@@ -452,7 +464,7 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
     const curHist = exerciseHistory([newSession], ex.exerciseId, custom);
     const cur = curHist[curHist.length - 1];
     if (!cur?.hasMax || cur.bestE1rm <= 0) continue;
-    const prev = prevSummary ? prevSummary(ex.exerciseId) : (() => { const h = exerciseHistory(priorSessions, ex.exerciseId, custom); return h[h.length - 1]; })();
+    const prev = prevSummary ? prevSummary(ex.exerciseId) : lastSummaryAlone(priorSessions, ex.exerciseId, custom);
     if (!prev?.hasMax || prev.bestE1rm <= 0) continue;
     // Past the 7-day window the predicted pct is the 100 % floor whatever happened: nothing to learn.
     if (daysBetween(prev.day, newSession.day) >= FLOOR_DAYS) continue;

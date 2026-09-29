@@ -59,7 +59,7 @@ describe('commit-once sets (UI-01)', () => {
     commitSet(1, 0);
     const s = a().entries[1]!.sets[0]!;
     expect(Date.parse(s.at!)).toBe(Date.now());
-    expect(s.restSec).toBe(210);
+    expect(s.restSec).toBe(210 - 10 * 3); // BUG-19: the set's own 10 reps (3 s each) are not rest
     expect(a().rest).toBeTruthy();
   });
   // QA-R2b-1 changed this contract: an emptied set is a draft but keeps its commit, so a
@@ -170,7 +170,7 @@ describe('stable ids (R2.8)', () => {
     commitSetById(a().entries[0]!.sets[1]!.id!, { actionAt });
     const s = a().entries[0]!.sets[1]!;
     expect(s.at).toBe(actionAt);
-    expect(s.restSec).toBe(120);
+    expect(s.restSec).toBe(120 - 8 * 3); // BUG-19: the set's own 8 reps (3 s each) are not rest
     expect(s.fidelity).toBe('live');
     expect(a().rest!.endsAt).toBe(Date.parse(actionAt) + state.value.preferences.restDefaultSec * 1000);
   });

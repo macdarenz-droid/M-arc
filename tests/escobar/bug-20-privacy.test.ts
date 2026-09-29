@@ -28,20 +28,28 @@ function scripted(steps: StreamEvent[][]): Transport & { bodies: Array<{ message
   };
 }
 
+/** BUG-21: set k is committed at SET_AT_SEC[k]; before it the heart rate rests at 90 + 4k bpm, then climbs to 150 in the set. */
+const SET_AT_SEC = [120, 360, 600, 840, 1080, 1320];
+const SERIES: Array<[number, number]> = Array.from({ length: 3900 / 5 }, (_, i): [number, number] => {
+  const t = i * 5;
+  const k = SET_AT_SEC.findIndex(at => t <= at);
+  return [t, k < 0 ? 100 : SET_AT_SEC[k]! - t <= 30 ? 150 : 90 + 4 * k];
+});
+
 /** Six months of data plus everything the gated insights need: a fresh weigh-in, daily weigh-ins and heart data on yesterday's sets. */
 function state(sharing: { health: boolean; body: boolean }, birthYear = 1988): AppState {
   const s = sixMonthsState();
   const day = (offset: number) => { const d = new Date(NOW - offset * 86_400_000); return d.toISOString().slice(0, 10); };
   const last = s.sessions.at(-1)!;
-  // Six rated sets with a peak: three at 60 kg with rising peaks and shrinking HRR (drift), the last of them
-  // rated Easy at the session's peak (effort mismatch), plus three lighter ones.
+  // Six rated live sets with a peak, 4 min apart: the third is rated Easy above the same exercise's
+  // hardest-rated (ideal) set (effort mismatch); the heart series below gives them a rising pre-set HR (drift, BUG-21).
   const ex = last.exercises[0]!;
   const peaks = [150, 160, 170];
   const base = ex.sets[0]!;
   ex.sets = [
     ...peaks.map((p, k): LoggedSet => ({ ...base, kg: 60, effort: k === 2 ? 'easy' : 'ideal', heart: { peakBpm: p, endBpm: p - 5, hrr60: 30 - k * 5 } })),
     ...peaks.map((): LoggedSet => ({ ...base, kg: 50, effort: 'ideal', heart: { peakBpm: 140, endBpm: 130 } })),
-  ];
+  ].map((x, k) => ({ ...x, fidelity: 'live', at: new Date(Date.parse(last.startedAt) + SET_AT_SEC[k]! * 1000).toISOString() }));
   s.profileHistory = [{ at: new Date(NOW - 3_600_000).toISOString(), field: 'bodyWeightKg', from: 82.4, to: 91.3, source: 'user' }];
   s.profile.bodyWeightKg = 91.3;
   s.profile.birthYear = birthYear;
@@ -57,7 +65,7 @@ function run(s: AppState) {
   const transport = scripted([tool('t1', 'get_insights', {}), tool('t2', 'get_session', { sessionId }), answer('Noted.')]);
   const deps: LoopDeps = {
     transport, getState: () => s, now: () => NOW, appVersion: '37.0.0', manifest: () => buildManifest('37.0.0'),
-    applyEffect: () => {}, recordUsage: () => {}, persist: () => {}, sleep: async () => {},
+    applyEffect: () => {}, recordUsage: () => {}, persist: () => {}, sleep: async () => {}, heartSeries: () => SERIES,
   };
   return { transport, loop: new EscobarLoop({ ...newConversation('37.0.0', 'chat', new Date(NOW)), id: 'c1' }, deps) };
 }
@@ -74,7 +82,7 @@ async function outbound(s: AppState): Promise<{ brief: string; insights: string;
 }
 
 const WEIGHT = /Weight updated|Trend weight|91\.3|profile-changed:weight|weekly:weight-trend/;
-const HEART = /heart-mismatch|heart-drift|hardest peak heart rate|bpm per set|avgBpm|maxBpm/;
+const HEART = /heart-mismatch|heart-drift|hardest-rated set|before your last 3 sets|avgBpm|maxBpm/;
 
 describe('BUG-20 Escobar privacy: gated insights and the minor flag', () => {
   it('A3: with both on, the weight and heart insights go out unchanged', async () => {
@@ -83,8 +91,8 @@ describe('BUG-20 Escobar privacy: gated insights and the minor flag', () => {
     expect(o.brief).toContain('weight 91.3');
     expect(o.insights).toContain('"title":"Weight updated to 91.3 kg"');
     expect(o.insights).toContain('"id":"weekly:weight-trend"');
-    expect(o.insights).toContain("hardest peak heart rate");
-    expect(o.insights).toContain('bpm per set');
+    expect(o.insights).toContain('hardest-rated set');
+    expect(o.insights).toContain('before your last 3 sets');
     expect(o.session).toContain('"notes"');
   });
 
@@ -95,7 +103,7 @@ describe('BUG-20 Escobar privacy: gated insights and the minor flag', () => {
     expect(o.session).not.toMatch(WEIGHT);
     expect(o.all).not.toMatch(WEIGHT);
     // The heart insights are untouched.
-    expect(o.insights).toContain('hardest peak heart rate');
+    expect(o.insights).toContain('hardest-rated set');
   });
 
   it('A2: with health sharing off, no heart number or heart insight leaves the phone', async () => {

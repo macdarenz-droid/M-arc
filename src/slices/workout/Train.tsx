@@ -13,7 +13,7 @@ import { ShareSheet } from '@/slices/share/lazy';
 import { FormGuideSheet } from '@/slices/formguide/lazy';
 import { hasGuide } from '@/formguide/registry';
 import { hasWorkingSets } from '@/brain/exposure';
-import { dayKey, formatClock } from '@/core/dates';
+import { dayKey, formatClock, formatTimeOfDay } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
 import { enteredLoad, formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
 import { findExercise } from '@/core/exercises';
@@ -21,12 +21,12 @@ import { bodyweightHint, loadColumnLabel, loadAriaLabel, modeLoadText } from '@/
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
-import { isLiveRecord } from '@/brain/prs';
+import { liveRecordStatus } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, restDone, restTimerIsFloor, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, finishTiming, FINISH_MARGIN_SEC, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -446,6 +446,7 @@ function LiveSession() {
               {(() => { const nEx = a.entries.filter(e => e.sets.some(isWorkingSet)).length; return <div class="stat"><b class="num">{nEx}</b><span>exercise{nEx === 1 ? '' : 's'}</span></div>; })()}
               {(() => { const nSets = a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0); return <div class="stat"><b class="num">{nSets}</b><span>set{nSets === 1 ? '' : 's'}</span></div>; })()}
             </div>
+            <TrimmedEndNote a={a} />
             <EffortRepair a={a} />
             <Field label="Session note (optional)"><textarea rows={2} maxLength={1000} value={sessionNote} placeholder="How it went, what to change" data-palace="train.session-note" onInput={e => setSessionNote((e.target as HTMLTextAreaElement).value)} /></Field>
             <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate, { note: sessionNote }); setSessionNote(''); setFinishing(false); if (!r) return; if (r.session.logging.flags.includes('compressed')) pendingTimeQuestion.value = r; else lastFinish.value = r; }} changed={changedFromPlan(a, split)} />
@@ -508,8 +509,16 @@ function FinishChoice({ changed, onFinish }: { changed: boolean; onFinish: (save
 
 /** The only part of the live screen that reads the 1 s clock (UI-10), so the cards do not re-render every second. */
 /** QA-R2d-3: the Finish sheet's duration keeps ticking while the sheet is open. */
+/** BUG-19: it shows the time that is saved, so a Finish long after the last set shows the trimmed time. */
 function Elapsed({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
-  return <>{formatClock(elapsedSec(a, nowMs.value))}</>;
+  return <>{formatClock(finishTiming(a, nowMs.value).durationSec)}</>;
+}
+
+/** BUG-19 (DATES-F1): says when a forgotten Finish ends the session, with no extra step. */
+function TrimmedEndNote({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
+  const t = finishTiming(a, nowMs.value);
+  if (!t.trimmed) return null;
+  return <p class="small muted" data-finish-trimmed>Saved as ending at {formatTimeOfDay(new Date(t.endedAtMs).toISOString())}, {FINISH_MARGIN_SEC / 60} min after your last set. The time since is not counted.</p>;
 }
 
 function LiveClock({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
@@ -604,7 +613,12 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const workingKg = ex?.role === 'main' && mode === 'weighted' ? next.sets[0]?.kg ?? next.kg ?? 0 : 0;
   const warmup = useMemo(() => warmupOffer(workingKg, profile), [...memoDeps, workingKg]);
   const [warmupOpen, setWarmupOpen] = useState(false);
-  const perSet = useMemo(() => entry.sets.map((set, j) => ({ prev: ((w: number | null) => (w == null ? null : previousSet(s.sessions, entry.exerciseId, w, s.customExercises)))(workingIndex(entry.sets, j)), pr: !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises) })), memoDeps);
+  // BUG-18: a record from a set the plausibility check flags keeps its pill, marked unconfirmed, until
+  // today's sets repeat its load; only a confirmed record buzzes.
+  const perSet = useMemo(() => entry.sets.map((set, j) => {
+    const status = isTimed ? 'none' : liveRecordStatus(s.sessions, entry.exerciseId, set, s.customExercises, entry.sets.filter(isCommitted));
+    return { prev: ((w: number | null) => (w == null ? null : previousSet(s.sessions, entry.exerciseId, w, s.customExercises)))(workingIndex(entry.sets, j)), pr: status !== 'none', prUnconfirmed: status === 'unconfirmed' };
+  }), memoDeps);
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
   const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode, next.sets[0]?.note), `${today.value}|${entry.exerciseId}`);
@@ -632,7 +646,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     for (const id of freshIds) seenPrRef.current.add(id);
     setPopIds(prev => new Set([...prev, ...freshIds]));
     const t = setTimeout(() => setPopIds(prev => { const next = new Set(prev); for (const id of freshIds) next.delete(id); return next; }), durFor('bounce'));
-    if (s.active && celebrateOnce(`${s.active.startedAt}|${entry.exerciseId}`)) setTimeout(() => void haptic.success(), 120);
+    const confirmedFresh = entry.sets.some((set, j) => set.id && freshIds.includes(set.id) && !perSet[j]?.prUnconfirmed);
+    if (s.active && confirmedFresh && celebrateOnce(`${s.active.startedAt}|${entry.exerciseId}`)) setTimeout(() => void haptic.success(), 120);
     return () => clearTimeout(t);
   }, [entry.sets, perSet]);
 
@@ -700,7 +715,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           {bwHint && <p class="hint">{bwHint}</p>}
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{loadColumnLabel(mode, eu)}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {(() => { let nextUpFound = false; return entry.sets.map((set, j) => {
-            const { prev, pr } = perSet[j]!;
+            const { prev, pr, prUnconfirmed } = perSet[j]!;
             // Warm-ups sit in front: working targets line up with the working sets.
             const wj = j - entry.sets.slice(0, j).filter(x => x.kind === 'warmup').length;
             const target = set.kind === 'warmup' || aside[j] ? undefined : next.sets[Math.min(wj, next.sets.length - 1)];
@@ -745,7 +760,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <span class="hint">{lastHint}</span>
                     <span class="row" style={{ gap: 6 }}>
                       {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
-                      {pr && isCommitted(set) && <span class={`pr-badge ${set.id && popIds.has(set.id) ? 'pop' : ''}`}><IconTrophy size={16} /> PR</span>}
+                      {pr && isCommitted(set) && <span title={prUnconfirmed ? 'This load is well above your usual. It counts as a record once you lift it again.' : undefined} class={`pr-badge ${set.id && popIds.has(set.id) ? 'pop' : ''}`}><IconTrophy size={16} /> {prUnconfirmed ? 'PR unconfirmed' : 'PR'}</span>}
                     </span>
                   </div>
                 )}
@@ -1160,7 +1175,7 @@ export function RestBanner() {
     remaining = Math.min(rest.totalSec, restRemainingSec(a, now) ?? 0);
     const timeDone = remaining <= 0;
     // Heart-guided rest (F1.2): only while the stream is LIVE; a DELAYED/STALE stream falls back to the timer.
-    heartMode = s.preferences.rest.mode === 'heart' && !a.pausedAt && rest.preSetBpm != null && watchStatus.value.freshness === 'LIVE';
+    heartMode = s.preferences.rest.mode === 'heart' && !a.pausedAt && watchStatus.value.freshness === 'LIVE';
     let heartReady = false;
     let currentBpm: number | undefined;
     let targetBpm: number | undefined;
@@ -1168,13 +1183,16 @@ export function RestBanner() {
       const restingBpm = restingHr(s.healthDays, s.profile, today.value);
       if (restingBpm != null) {
         const elapsedSec = Math.max(0, rest.totalSec - remaining);
-        const r = restTarget({ recentBpms: recentLiveBpms(3), preSetBpm: rest.preSetBpm!, restingHrBpm: restingBpm, hrMaxBpm: hrMax(s.profile).bpm, effort: rest.effort, elapsedSec });
+        const r = restTarget({ recentBpms: recentLiveBpms(3), preSetBpm: rest.preSetBpm, restingHrBpm: restingBpm, hrMaxBpm: hrMax(s.profile).bpm, effort: rest.effort, elapsedSec });
         heartReady = r.ready;
         targetBpm = r.readyBpm;
         currentBpm = latestMeasurement.value?.bpm;
       }
     }
-    done = timeDone || heartReady;
+    // BUG-21: heart rate ends an accessory's rest early; otherwise the rest runs to the timer.
+    const timerIsFloor = restTimerIsFloor(a, s.customExercises);
+    done = restDone(timeDone, heartReady, timerIsFloor);
+    if (heartMode && timerIsFloor && heartReady) heartMode = false;
     const showBpm = heartMode && !done && currentBpm != null && targetBpm != null;
     frame = {
       done,
