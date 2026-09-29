@@ -1,0 +1,33 @@
+{
+  "id": "lib_dumbbell_biceps_curl",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1.5, "hold": 0.5, "lower": 2, "rest": 0.5 },
+  "ranges": {
+    "elbow_flex": { "min": 5, "max": 128, "source": "ACE Bicep Curl (the ACE page shows the barbell version, \"wrists, elbows and shoulders in a straight line\" at the start, i.e. near-extended; the elbow-position and torso cues generalize to the dumbbell curl, illustrative 5-degree start): \"Lift the barbell toward the shoulders while bending the elbows.\" PMC6047503 (EMG of curl variants) measured the dumbbell curl's excursion at 123.1 +/- 12.3 degrees, so the end is the 5-degree start plus that excursion, about 128 degrees" },
+    "shoulder_flex": { "min": -5, "max": 5, "source": "ACE Bicep Curl (barbell page, cue generalized): \"keeping them next to the middle of the body\"; ACE Seated Biceps Curl (dumbbell): \"without arching your back or moving your elbows forward\"" },
+    "torso_lean": { "min": -3, "max": 3, "source": "ACE Bicep Curl (barbell page, cue generalized): \"Keep chest still, using just the arms for the movement\"" }
+  },
+  "muscles": {
+    "target": ["biceps"],
+    "helps": ["forearms"],
+    "keepQuiet": ["front_delts"],
+    "peakAt": 0.39,
+    "peakSource": "PMC6047503 (EMG of curl variants): \"the eccentric phase showed lower EMG activity with respect to the concentric phase for both muscles investigated,\" so biceps effort is highest through the lift, easing on the way down"
+  },
+  "mistake": {
+    "name": "Swing and drift",
+    "tells": [
+      { "text": "The torso rocks back to sling the weight up.", "joint": "torso_lean" },
+      { "text": "The elbows swing forward off the ribs.", "joint": "shoulder_flex" }
+    ],
+    "source": "BuiltWithScience biomechanics test (Coach Kassem): \"allowing the elbows to excessively sway forward during bicep curls led to less biceps activation and more front delts activation\"; ACE Bicep Curl (barbell page, cue generalized): \"Keep chest still, using just the arms\""
+  },
+  "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6047503/",
+    "https://builtwithscience.com/fitness-tips/fix-bicep-curls-mistakes/",
+    "Contact fact (D-FG7 (j), both arms together): ACE Seated Biceps Curl describes a \"closed, supinated grip (palms facing forward)\" held for the dumbbell curl; no wrist_pron range is kept, since the side view does not draw that channel (D-FG7 (l))"
+  ]
+}
