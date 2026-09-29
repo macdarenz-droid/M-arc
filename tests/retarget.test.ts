@@ -54,7 +54,7 @@ describe('LT-2 A1: the worked rows of §3', () => {
     expect(c).toMatchObject({ kind: 'earn', kg: 16, repWindow: [15, 15] });
     expect(c.text).toBe('No smaller step here. Keep 16 kg and work up to 15 reps; then 20 kg for 6 is ready.');
   });
-  it('row 5 with a 20.5 kg next bell: earn 16 > hi + 3 → lever with the table\'s wording', () => {
+  it('row 5 with a 20.5 kg next bell: §3 step 6 earn = ceil(15.4) = 16 > hi + 3 → lever with the table\'s wording', () => {
     const c = chooseRung({ topKg: 16, R: 12, rirObs: 2, rawKg: 17.5, menu: ladder([16, 20.5, 24]), goal: 'lean', role: 'main' });
     expect(c).toMatchObject({ kind: 'lever', kg: 16, extraSet: true });
     expect(c.text).toBe('20.5 kg is too big a jump for now (about 2 reps). Keep 16 kg and add a set, or try a harder variation.');

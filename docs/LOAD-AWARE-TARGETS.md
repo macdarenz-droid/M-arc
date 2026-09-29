@@ -49,9 +49,9 @@ Worked numbers (`r*` at `rirMid`; check at `rirCheck`):
 | Same, growth main 6–15 at 25 × 15 | 25 × 15, RIR 1 | 30 (+20 %) | 8.2 (8.2) | Jump = cap, 8 ≥ 6 → accept: "No smaller step here: use 30 kg for about 8, close to max." (R > 10: "about", ±1) |
 | Barbell 60 kg × 8 ideal, strength_muscle 4–8, 1.25 kg plates | 60 × 8, RIR 2 | 62.5 (+4.2 %) | 6.4 (7.4) | "62.5 kg for 6 to 7." Without 1.25s: 65 (+8.3 %) → 4.9 (5.9): "65 kg for 4 to 5." |
 | Stack 40 kg × 15 ideal, lean accessory 8–15, step 5 | 40 × 15, RIR 2 | 45 (+12.5 %) | 9.8 (10.8) | "45 kg for about 9 to 10." |
-| Kettlebell 16 kg × 12 ideal, lean main, 16/20/24 | 16 × 12, RIR 2 | 20 (+25 %) | 3.2 (4.2) | Earn = 16 > hi + 3 = 15 → lever: "20 kg is too big a jump for now (about 3 reps). Keep 16 kg and add a set, or try the single-arm version." |
-| DB 50 lb × 12 ideal, lean main, 5 lb steps | 22.68 kg × 12, RIR 2 | 24.95 kg = 55 lb (+10 %) | 8.0 (9.0) | "55 lb for 8." All maths in kg, shown via `kgToDisplay` (0.1 lb). |
-| DB 30 kg × 5 ideal, strength main 1–5, 5 kg jumps | 30 × 5, RIR 2 | 35 (+16.7 %) | −0.3 (0.7) | Over cap and under 3 → lever: add-ons if the menu has them, else "35 kg is too big a jump. Keep 30 kg and add a set, or move this lift to the barbell." |
+| Kettlebell 16 kg × 12 ideal, lean main, 16/20/24 | 16 × 12, RIR 2 | 20 (+25 %) | 3.2 (4.2) | Over cap; earn = ceil(30 × (20 × 1.2333 / 16 − 1) − 2) = 15 = hi + 3 → earn: "No smaller step here. Keep 16 kg and work up to 15 reps; then 20 kg for 6 is ready." With a 20.5 kg next bell, earn = 16 > 15 → lever: "20.5 kg is too big a jump for now (about 2 reps). Keep 16 kg and add a set, or try a harder variation." (D-LT2) |
+| DB 50 lb × 12 ideal, lean main, 5 lb steps | 22.68 kg × 12, RIR 2 | 24.95 kg = 55 lb (+10 %) | 8.0 (9.0) | "55 lb for about 8." (anchor over 10 reps, step 1; D-LT2). All maths in kg, shown via `kgToDisplay` (0.1 lb). |
+| DB 30 kg × 5 ideal, strength main 1–5, 5 kg jumps | 30 × 5, RIR 2 | 35 (+16.7 %) | −0.3 (0.7) | Over cap and under 3; earn toward the 3-rep floor = ceil(30 × (35 × 1.1333 / 30 − 1) − 2) = 8 > hi + 1 = 6 → lever (add-ons are already rungs on the menu; D-LT2): "35 kg is too big a jump. Keep 30 kg and add a set, or move this lift to the barbell." |
 | Increase at the top of the ladder (35 × 12, menu ends at 35) | 35 × 12 | none | — | Lever, never "earn 35": "Nothing heavier here: add a set, or a harder variation." |
 
 ## 4. Live adaptation
