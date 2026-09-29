@@ -271,12 +271,12 @@ describe('A4 the lateral raise with the library dumbbell', () => {
   //   ember 7 false 6bed627f32c9c764, true 63a29b5faf955009; - false ead68ecca2f2f396, true e75a19af81650ebb
   //   emerald 7 false 73e3b50c2e56c528, true c4571bee3699b5c2; - false 3ea271d5de7c93ee, true 45acb2ebcc588f26
   //   midnight 7 false 16faf364a7d5956b, true 7878a27954524e44; - false 2ec53bfd6823dcfa, true 6210ba51bfa9ea69
-  // V1-07 (D-V1-07b/c) draws no load label, outlines the clothes, lifts Midnight's body and gives each tint its
+  // V1-07 (D-V1-07b/c) draws no load label, outlines the clothes, lifts Midnight's body outline and gives each tint its
   // two-tone boundary, so the pins are the V1-07 drawing's; with no label, a load and no load draw the same bytes.
   const PINNED: Record<string, string> = {
     'silent-black false': 'da868dd2f3a51e4c', 'silent-black true': '4a33d4eb1fa9a8ac', 'paper false': '6a8470447d8b7a89', 'paper true': '2099c9d003425fd5',
     'ember false': '8d261aa32b233e9c', 'ember true': '73403bcb5fd6d0cb', 'emerald false': '792569b19c251586', 'emerald true': '46a86e537d6b9b52',
-    'midnight false': '2d3fa3ed999e7eaa', 'midnight true': '97f10f7034c5c315',
+    'midnight false': 'acdf73d585198f95', 'midnight true': '97f10f7034c5c315',
   };
   it('the figure\'s markup is byte for byte V1-07\'s in all five themes, the same at 7 kg and with no load', () => {
     for (const t of THEME_IDS) for (const kg of [7, undefined]) for (const mistake of [false, true]) {

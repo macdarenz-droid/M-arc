@@ -95,22 +95,23 @@ export const ringOf = (b: BodyPal, g: Ground, role: Role): [string, string] => {
 };
 /**
  * The lab's bodyPal: the body tones, all from --accent (or --accent toward --mistake for the mistake). V1-07 (D-V1-07b):
- * the base is first lifted away from the pages until it reaches 3:1 on both (no change where it already does), and the
- * clothes' outline is --ink, or where --ink does not reach 3:1 on both pages, --pants mixed toward white or black just
+ * where the base does not reach 3.1:1 on both pages (Midnight), the body's outline (`line`, the figure's --l) is the base
+ * lifted toward white or black just far enough to, instead of the base darkened; everywhere else nothing changes. The
+ * clothes' outline is --ink, or where --ink does not reach 3.1:1 on both pages, --pants mixed toward white or black just
  * far enough to.
  */
 export function bodyPal(read: TokenReader, mistake: boolean): BodyPal {
   const tone: Tone = mistake ? { from: 'accent', toward: 'mistake', t: MISTAKE_TINT } : 'accent';
   const pages = (['surface-1', 'surface-2'] as const).map(t => rgbOf(read, t)), b0 = toneRgb(read, tone);
-  const b1 = pages.every(pg => contrastOf(b0, pg) >= REACH) ? b0 : reach(b0, pages);
-  const m = (c: 'white' | 'black', t: number) => out(blend(b1, PURE[c], t));
+  const edge = pages.every(pg => contrastOf(b0, pg) >= REACH) ? null : out(reach(b0, pages));
+  const m = (c: 'white' | 'black', t: number) => out(blend(b0, PURE[c], t));
   const pal = { hi: m('white', 0.3), lit: m('white', 0.14), base: m('white', 0), mid: m('black', 0.14), sh: m('black', 0.3), sh2: m('black', 0.22),
-    dk: m('black', 0.42), occ: m('black', 0.5), line: m('black', 0.8), def: m('black', 0.55), spec: m('white', 0.78), rim: m('white', 0.6) };
+    dk: m('black', 0.42), occ: m('black', 0.5), line: edge ?? m('black', 0.8), def: m('black', 0.55), spec: m('white', 0.78), rim: m('white', 0.6) };
   const ink = rgbOf(read, 'ink');
   // V1-07 (D-V1-07c): each tint's two-tone boundary. The outer line reaches REACH against every tone of the ground it
   // lies on; the inner line against the tint (its token at TINT_FILL over each of those tones). Both start from the
   // tint's own token, so they keep its hue as far as the contrast allows.
-  const sh = blend(b1, PURE.black, 0.3), T = (t: number) => blend(b1, PURE[t < 0 ? 'black' : 'white'], Math.abs(t));
+  const sh = blend(b0, PURE.black, 0.3), T = (t: number) => blend(b0, PURE[t < 0 ? 'black' : 'white'], Math.abs(t));
   const ground: Record<Ground, Rgb[]> = {
     D: [0.3, 0.14, 0, -0.14].map(T),
     // the skin gradients, and the trap's 30 % shadow over them

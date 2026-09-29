@@ -190,7 +190,7 @@ describe('A5 the lateral raise is byte-identical', () => {
     for (const z of [false, true]) for (const c of [false, true]) moves.push(cameraOf(LR, z, c));
     const h = (x: unknown) => createHash('sha256').update(JSON.stringify(x)).digest('hex');
     expect(h(moves)).toBe('3c11056c6957e2751314ebf27c7a5c7e6f83520e3c143ff7875178727882722b');
-    expect(h(looks)).toBe('cfd3fc8ead4cdd833dadf72e5019b06e0ec30f00d439a53aa6549848d1f74fba');
+    expect(h(looks)).toBe('5e1aaa432efb180b0ba0b51e23655708f8efe92bdc755eab2d06cdafeffb92ef');
   });
 });
 
