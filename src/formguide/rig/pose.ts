@@ -221,8 +221,10 @@ export function sideFrame(id: SidePoseId, pose: Pose, o: SideFrameOptions = {}, 
     P = mmul(about([S_SOLE[0], FLOOR], ROT(id === 'standing' ? v('sway') : 0)), mmul(move, P0));
   } else {
     const sup = id === 'lying_supine', P0 = mmul(TR(sup ? -LYING_SHIFT.lying_supine : LYING_SHIFT.lying_prone, 0), about(S_PELVIS, ROT(sup ? -90 : 90)));
-    // the contact is read with the trunk straight, so it stays put while the trunk moves (a back extension lifts the chest)
-    const pts = sup ? [apply(P0, S_SACRUM), apply(P0, S_BACK)] : [apply(P0, S_HIP_FRONT), apply(P0, S_FRONT)];
+    // supine: the sacrum and the upper back (through the trunk's actual bend) are the supports, so a crunch lifts the
+    // back and a bridge lifts the hips; prone: the hip front and the chest read with the trunk straight, so a back
+    // extension lifts the chest and leaves the hips down
+    const pts = sup ? [apply(P0, S_SACRUM), apply(mmul(P0, trunk), S_BACK)] : [apply(P0, S_HIP_FRONT), apply(P0, S_FRONT)];
     P = mmul(TR(0, (o.surface ?? FLOOR) - Math.max(...pts.map(q => q[1]))), P0);
   }
   f.pelvis = { ops: asOps(S_PELVIS, P) };

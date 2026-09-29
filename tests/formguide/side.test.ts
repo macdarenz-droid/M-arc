@@ -7,7 +7,7 @@ import { gzipSync } from 'node:zlib';
 import { THEMES, THEME_IDS, themeToCss } from '@/theme/themes';
 import { CHANNELS, JOINTS, type ChannelId, type Pose } from '@/formguide/rig/joints';
 import { FLOOR } from '@/formguide/rig/figureFront';
-import { DELT, HIPS, SIDE_MUSCLES, THIGH, TORSO, UA, figureSide } from '@/formguide/rig/figureSide';
+import { DELT, HIPS, OVERLAY_D, SIDE_MUSCLES, THIGH, TORSO, UA, figureSide } from '@/formguide/rig/figureSide';
 import { figureFront } from '@/formguide/rig/figureFront';
 import { bodyPal, mix, themeReader, FIGURE_TOKENS } from '@/formguide/rig/paint';
 import { SIDE_POSE_IDS, sideFrame, sideWorldMat, sideGuideRig, sideHandAt, sidePivot, sidePoint, solveSideArm, applyPose, bindFigure, css, type Frame, type StyleTarget } from '@/formguide/rig/pose';
@@ -26,6 +26,7 @@ vi.mock('@/formguide/check/view', async orig => {
 const read = themeReader('silent-black');
 const build = (o: Partial<Parameters<typeof figureSide>[1]> = {}, theme = read) => figureSide(theme, { id: 'fs', ...o });
 const cssOf = (f: Frame) => (k: string) => (f[k]?.ops ? css(f[k]!.ops!) : undefined);
+const both = (b: string, v: number): Pose => ({ [`${b}_l`]: v, [`${b}_r`]: v }) as Pose;
 const swap = (p: Pose): Pose => Object.fromEntries(Object.entries(p).map(([k, v]) => [k.replace(/_([lr])$/, (_m, s: string) => (s === 'l' ? '_r' : '_l')), v]));
 /** An asymmetric pose, so a missed side swap shows. */
 const ASYM: Pose = { shoulder_flex_r: 70, elbow_flex_r: 40, shoulder_flex_l: -20, elbow_flex_l: 100, hip_flex_r: 30, knee_flex_r: 45, ankle_flex_r: 10, hip_flex_l: -10, knee_flex_l: 5, torso_lean: -12, breath: 0.8 };
@@ -100,17 +101,21 @@ describe('A2 bench press and squat stills sit inside the standing camera', () =>
 });
 
 describe('A3 every muscle of the side list has an overlay', () => {
+  /** The side muscles whose tint or band is missing (or not hidden) on the near side of the markup. */
+  const missing = (svg: string, near: 'l' | 'r') => OVERLAYS.side.filter(m => ['t', 'b'].some(k => !new RegExp(`class="fg-p fg-${k}-${m}_${near}"[^>]*opacity="0"`).test(svg)));
   it('the drawn list is §3\'s side list, and every one has a tint and a band on the near side, both facings', () => {
     expect([...SIDE_MUSCLES].sort()).toEqual([...OVERLAYS.side].sort());
-    for (const [mirror, near] of [[false, 'r'], [true, 'l']] as const) {
-      const svg = build({ mirror });
-      for (const m of OVERLAYS.side) for (const k of ['t', 'b']) expect(svg, `${k}-${m}_${near}`).toMatch(new RegExp(`class="fg-p fg-${k}-${m}_${near}"[^>]*opacity="0"`));
-    }
+    for (const [mirror, near] of [[false, 'r'], [true, 'l']] as const) expect(missing(build({ mirror }), near)).toEqual([]);
   });
-  it('the check bites: removing one overlay is caught', () => {
-    const svg = build().replace(/<path class="fg-p fg-t-calves_r"[^>]*\/>/, '');
-    const missing = OVERLAYS.side.filter(m => !svg.includes(`fg-t-${m}_r"`));
-    expect(missing).toEqual(['calves']);
+  it('the check bites: a muscle dropped from the drawing code is caught', () => {
+    // breaks the figure itself (the overlay table the parts draw from), not its output string
+    const keep = OVERLAY_D.calves;
+    try {
+      (OVERLAY_D as Partial<typeof OVERLAY_D>).calves = undefined;
+      expect(missing(build(), 'r')).toEqual(['calves']);
+      expect(missing(build({ mirror: true }), 'l')).toEqual(['calves']);
+    } finally { OVERLAY_D.calves = keep; }
+    expect(missing(build(), 'r')).toEqual([]);
   });
   it('roles paint the tint: target, help, and quiet (mistake colour on the mistake figure)', () => {
     const svg = build({ roles: { chest: 'target', triceps: 'help', lower_back: 'quiet' } });
@@ -181,6 +186,18 @@ describe('poses and the arm solve', () => {
     const bench = sideFrame('lying_supine', {}, { surface: 400 });
     expect(Math.max(sidePoint(bench, 'hip')[1], sidePoint(bench, 'back')[1])).toBeCloseTo(400, 6);
     expect(sidePoint(sideFrame('seated', {}), 'foot_r')[1]).toBeCloseTo(FLOOR, 6);
+  });
+  it('supine: the upper back is a support, so a bridge (hips up, trunk extended) keeps the shoulders down and lifts the hips', () => {
+    for (const mirror of [false, true]) {
+      const flat = sideFrame('lying_supine', {}, { mirror }), bridge = sideFrame('lying_supine', { torso_lean: 20, ...both('hip_flex', -20), ...both('knee_flex', 90) }, { mirror });
+      expect(sidePoint(bridge, 'back', mirror)[1], 'the upper back rests on the floor').toBeCloseTo(FLOOR, 6);
+      expect(sidePoint(bridge, 'hip', mirror)[1], 'the hips lift off it').toBeLessThan(FLOOR - 20);
+      expect(Math.max(sidePoint(flat, 'hip', mirror)[1], sidePoint(flat, 'back', mirror)[1])).toBeCloseTo(FLOOR, 6);
+      // a crunch (trunk flexed up) lifts the upper back instead and keeps the sacrum down
+      const crunch = sideFrame('lying_supine', { torso_lean: -25 }, { mirror });
+      expect(sidePoint(crunch, 'hip', mirror)[1]).toBeCloseTo(FLOOR, 6);
+      expect(sidePoint(crunch, 'back', mirror)[1]).toBeLessThan(FLOOR - 20);
+    }
   });
   it.each([[80, 60], [30, 120], [-30, 10]])('solveSideArm finds shoulder %s°, elbow %s° again from the hand', (sf, ef) => {
     for (const mirror of [false, true]) {
