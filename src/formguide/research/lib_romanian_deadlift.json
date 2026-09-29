@@ -4,9 +4,9 @@
   "order": "lower_first",
   "tempo": { "lift": 1.2, "hold": 0.3, "lower": 2, "rest": 0.5 },
   "ranges": {
-    "hip_flex": { "min": 0, "max": 75, "source": "ACE Romanian Deadlift: push the hips back and lower the weight until tension is felt along the hamstrings, bar tracking to about the mid-shin; no exact angle is given, so 75 degrees is an illustrative end for that depth (thin source, flagged for an owner device check)" },
+    "hip_flex": { "min": 0, "max": 75, "source": "ACE Romanian Deadlift: \"Push the hips back while lowering the weight towards the floor until feeling some tension along the back of the legs.\" No page names an exact angle or bar/shin position for that depth, so 75 degrees is illustrative with no source named for the number itself (thin, flagged for an owner device check)" },
     "knee_flex": { "min": 10, "max": 20, "source": "ACE Romanian Deadlift: \"keep a slight bend in both knees\" (no exact angle given); ThatFitFriend (Mistake 3, \"Squatting Your Hinge\"): the knee bend should stay small enough to keep \"higher hips and less knee bend\" through the hinge. 10 to 20 degrees is illustrative, inside the AAOS knee row" },
-    "torso_lean": { "min": -3, "max": 3, "source": "ACE Romanian Deadlift: keep a straight back; the trunk stays rigid on the pelvis through the hip hinge (the lean itself comes from hip_flex, not the spine)" }
+    "torso_lean": { "min": -3, "max": 3, "source": "ACE Romanian Deadlift: \"keep a slight bend in both knees and a straight back.\" The rigid-trunk reading (the lean comes from hip_flex, not the spine) is this file's own, not a separate ACE statement" }
   },
   "muscles": {
     "target": ["hamstrings"],
