@@ -2,7 +2,7 @@
  * The live workout. One active session at a time, stored in state so it
  * survives app restarts. All mutations go through `update` so they persist.
  */
-import type { ActiveSession, AppState, Exercise, LoggedSet, RecoveryModel, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
+import type { ActiveSession, AppState, Exercise, LoggedSet, PlannedTarget, RecoveryModel, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
 import { newId } from '@/core/models';
 import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
@@ -238,6 +238,12 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   }
   void haptic.confirm();
   return true;
+}
+
+/** LT-3 (D-A4 a): keeps set 1's target as shown at its commit, once per entry, so the verdict and the next session never recompute it. */
+export function setEntryTarget(entryId: string | undefined, target: PlannedTarget): void {
+  if (!entryId || !(target.kg > 0) || !(target.reps > 0)) return;
+  patchActive(a => (a.entries.some(e => e.id === entryId && !e.target) ? { ...a, entries: a.entries.map(e => (e.id === entryId ? { ...e, target: { kg: target.kg, reps: target.reps } } : e)) } : a));
 }
 
 export function commitSet(entry: number, index: number): boolean {
@@ -515,7 +521,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
   const timing = finishTiming(a, nowMs);
   const exercises = a.entries
     .filter(e => !e.skipped)
-    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}) }))
+    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}), ...(e.target ? { target: e.target } : {}) }))
     .filter(e => e.sets.length);
   // BUG-19 (DATES-F3): only working sets that were committed carry timing evidence. A pre-filled
   // warm-up or a set that was typed but never committed has no time of its own.

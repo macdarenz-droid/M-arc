@@ -61,7 +61,7 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
       startedAt: start ?? `${day}T12:00:00.000Z`,
       endedAt: typeof ses.endedAt === 'string' && Number.isFinite(Date.parse(ses.endedAt)) ? ses.endedAt : (start ?? `${day}T12:00:00.000Z`),
       id: typeof ses.id === 'string' ? ses.id : newId('s'),
-      exercises: objects<Session['exercises'][number]>(ses.exercises, c).map(e => ({ ...e, sets: objects<Session['exercises'][number]['sets'][number]>(e.sets, c) })),
+      exercises: objects<Session['exercises'][number]>(ses.exercises, c).map(e => withTarget({ ...e, sets: objects<Session['exercises'][number]['sets'][number]>(e.sets, c) })),
     }];
   });
   c.dropped += sessionsIn.length - sessions.length;
@@ -121,8 +121,18 @@ function withActiveIds(a: AppState['active']): AppState['active'] {
   return {
     ...a,
     id: a.id ?? newId('s'),
-    entries: a.entries.map(e => ({ ...e, id: e.id ?? newId('e'), sets: uncopiedSets(Array.isArray(e.sets) ? e.sets : []).map(set => (set.id ? set : { ...set, id: newId('set') })) })),
+    entries: a.entries.map(e => withTarget({ ...e, id: e.id ?? newId('e'), sets: uncopiedSets(Array.isArray(e.sets) ? e.sets : []).map(set => (set.id ? set : { ...set, id: newId('set') })) })),
   };
+}
+
+/** LT-3 (D-A4 a): a planned target is kept only as a positive, finite kg and a positive whole number of reps. */
+export function withTarget<T extends { target?: unknown }>(e: T): T {
+  if (e.target === undefined) return e;
+  const t = e.target as { kg?: unknown; reps?: unknown } | null;
+  const ok = !!t && typeof t === 'object' && typeof t.kg === 'number' && Number.isFinite(t.kg) && t.kg > 0 && typeof t.reps === 'number' && Number.isInteger(t.reps) && t.reps > 0;
+  if (ok) return { ...e, target: { kg: t!.kg as number, reps: t!.reps as number } };
+  const { target: _drop, ...rest } = e;
+  return rest as T;
 }
 
 export const MAX_DAYS_OFF = 400;
