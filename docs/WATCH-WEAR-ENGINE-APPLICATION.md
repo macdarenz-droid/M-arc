@@ -12,7 +12,7 @@ Written 2026-09-29 by the Claude supervisor from primary sources. Since 2026-09-
   - individual developers may apply only for Basic device information and Message notification;
   - the launch permission is for a watch app that opens an app on the phone, never for the phone app.
 - **Correction to this record:** earlier versions said Launch specified app was unticked. That came from a screenshot taken before submission, not from what was sent. The supervisor's first message to the owner on 2026-09-29 was right about the launch permission and wrong about sensor permissions, which were never selected.
-- **Application 3 is ready for the owner** (section 3): form answers, a new description (1010 of 1024 characters) and two upload files, Huawei's own .xlsx templates filled in. **Only Basic device information is ticked.**
+- **Application 3 was submitted on 2026-09-29** (section 4.4): only Basic device information ticked, a new description (1010 of 1024 characters) and two upload files, Huawei's own .xlsx templates filled in. Huawei says a result takes one to two weeks.
 - **Owner confirmed on 2026-09-29:**
   - the old `05:A0…` fingerprint is deleted in AppGallery Connect;
   - nothing was submitted after 2026-09-24.
@@ -199,8 +199,15 @@ The cause is now known, so there is no need to wait for Huawei before resubmitti
   >
   > Follow the instructions in Applying for the Wear Engine Service and submit the corresponding application materials. Go to HUAWEI Developers > Develop > HMS Core > Smart Device > Wear Engine > View documents. If you are unable to find a Huawei contact, please send an email to hihealth@huawei.com.
 
-### 4.4 Application 3 (prepared 2026-09-29, not yet submitted)
-Everything to submit is in section 3.2, and the PDF contents are in 5.4. What changed from application 2:
+### 4.4 Application 3 (submitted 2026-09-29)
+- **Submitted** on 2026-09-29 at about 09:40 UTC. The owner's screenshot shows "The application has been submitted, you will be notified of the approval result by email, SMS message, or internal message."
+- **The form, checked by the agent before Submit** (owner's screenshot two minutes earlier):
+  - Harmony Lightweight Smart Wearable Device; "Yes, I develop or plan to develop…";
+  - **only Basic device information ticked**; Message notification and Launch specified app unticked;
+  - both uploads "Upload succeeded". The form accepts only .xlsx, so these are the two .xlsx files from section 5.4.
+- **Description:** that screenshot still showed the old 1015-character text. The owner was told to paste the section 3.2 text and submit only if the counter read 1010 / 1024. The replaced text was **not seen in a screenshot**; if Huawei quotes the description, check it against 3.2.
+
+What changed from application 2 (details in section 3.2; upload contents in 5.4):
 - Launch specified app unticked; only Basic device information requested.
 - A new description that answers the box's actual question, the watch app's main functions.
 - Uploads are Huawei's own .xlsx templates filled in (the form no longer accepts PDF), with the section 5.3 wording fixes.
