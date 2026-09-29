@@ -107,6 +107,9 @@ svg { display: block; }
 ::selection { background: var(--accent-soft); }
 
 .app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 16px calc(140px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); }
+/* BUG-27: the status-bar area itself, painted solid so scrolled page content never shows through
+   behind the clock. Fixed and out of flow (height only, no padding/margin), so it never shifts layout. */
+.status-bar-backdrop { position: fixed; top: 0; left: 0; right: 0; height: var(--safe-area-inset-top, env(safe-area-inset-top, 0px)); background: var(--bg); z-index: 35; pointer-events: none; }
 /* I9: a quick crossfade, not a slide — the nav wiring (App.tsx) now does its own scrollTo per tab. */
 .view { animation: view-in var(--dur-fast) var(--ease-standard); }
 @keyframes view-in { from { opacity: 0; } }

@@ -86,6 +86,8 @@ export function App() {
   useEffect(() => { void keepAwake(live && wantAwake); return () => { void keepAwake(false); }; }, [live, wantAwake]);
   return (
     <div class="app">
+      {/* BUG-27: a fixed backdrop over the status bar, so scrolled content never shows through it. */}
+      <div class="status-bar-backdrop" aria-hidden="true" />
       {saveError.value && <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>{saveError.value}</div>}
       {bootRecovered.value && !recoveredSeen.value && (
         <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>

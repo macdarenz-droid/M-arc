@@ -6199,6 +6199,61 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// BUG-27: scrolling a page under the Android status bar must never show page text through it (seen
+// on the Escobar tab, scrolled to "Escobar's notes"). The status-bar area itself must stay painted
+// in --bg at every scroll position, in every theme. Silent Black and Paper, a 32px top inset.
+{
+  const tag = 'BUG-27 status bar backdrop';
+  for (const theme of ['silent-black', 'paper']) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 700 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+    await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+    // Simulated status-bar inset (the same --safe-area-inset-top the app reads via env(), Capacitor's
+    // SystemBars overlay writes this at runtime; env() itself can't be faked in headless Chromium).
+    await page.evaluate(() => document.documentElement.style.setProperty('--safe-area-inset-top', '32px'));
+    await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(300);
+    await page.mouse.wheel(0, 3000); // scroll page content up, under the inset
+    await page.waitForTimeout(200);
+    // Note: elementFromPoint can't be used here — the backdrop is deliberately `pointer-events:
+    // none` (so it never steals a tap), which also makes hit-testing skip straight through it.
+    // So this checks the CSS painting-order guarantee directly: the backdrop covers the point, is
+    // painted var(--bg), and no other positioned, z-indexed element covering the same point could
+    // paint above it (a stacking context only outranks a lower z-index within the same context;
+    // static in-flow content, which is everything else here, always paints below either way).
+    const check = await page.evaluate(() => {
+      const rgb = v => { const d = document.createElement('i'); d.style.color = v; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; };
+      const bg = rgb(getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
+      const point = { x: 195, y: 16 }; // mid-width, mid-inset
+      const covers = r => !!r && point.x >= r.left && point.x <= r.right && point.y >= r.top && point.y <= r.bottom;
+      const bd = document.querySelector('.status-bar-backdrop');
+      const bdCs = bd && getComputedStyle(bd);
+      const rivalZs = [...document.querySelectorAll('body *')]
+        .filter(el => el !== bd)
+        .filter(el => { const cs = getComputedStyle(el); return cs.position !== 'static' && cs.zIndex !== 'auto'; })
+        .filter(el => covers(el.getBoundingClientRect()))
+        .map(el => Number(getComputedStyle(el).zIndex) || 0);
+      return {
+        scrolled: window.scrollY > 0,
+        isFixed: bdCs?.position === 'fixed',
+        coversPoint: covers(bd?.getBoundingClientRect()),
+        painted: bdCs?.backgroundColor,
+        bg,
+        bdZ: Number(bdCs?.zIndex) || 0,
+        maxRivalZ: rivalZs.length ? Math.max(...rivalZs) : -Infinity,
+      };
+    });
+    if (!check.scrolled) errors.push(`${tag} ${theme}: the page did not actually scroll, so this proves nothing`);
+    else if (!check.isFixed || !check.coversPoint) errors.push(`${tag} ${theme}: the status-bar backdrop does not cover the inset point after scrolling (${JSON.stringify(check)})`);
+    else if (check.painted !== check.bg) errors.push(`${tag} ${theme}: the status-bar backdrop is not painted var(--bg) (${JSON.stringify(check)})`);
+    else if (check.maxRivalZ >= check.bdZ) errors.push(`${tag} ${theme}: another positioned element could paint above the backdrop (${JSON.stringify(check)})`);
+    await ctx.close();
+  }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
