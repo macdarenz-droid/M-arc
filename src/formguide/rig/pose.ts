@@ -348,6 +348,14 @@ export function sideGuideRig(g: ExerciseGuide): Rig | string {
     frame: p => sideFrame(id, p as Pose, { mirror, surface }),
     point: (f, a) => sidePoint(f, a, mirror),
     pivot: (f, j) => sidePivot(f, j, mirror),
+    // V1-06, the side chain (the V1-04 solver's seed for a two-channel contact): a hand by solveSideArm, a foot by
+    // solveSideLeg; none when the leg cannot reach (the solver then scans its grid)
+    chain: (p, a, target) => {
+      const s = a.slice(-1) as 'l' | 'r', o = { mirror, surface };
+      if (/^hand_[lr]$/.test(a)) { const x = solveSideArm(id, p as Pose, s, target, o); return { [`shoulder_flex_${s}`]: x.shoulder_flex, [`elbow_flex_${s}`]: x.elbow_flex }; }
+      if (!/^foot_[lr]$/.test(a)) return null;
+      try { const x = solveSideLeg(id, p as Pose, s, target, o); return { [`hip_flex_${s}`]: x.hip_flex, [`knee_flex_${s}`]: x.knee_flex }; } catch { return null; }
+    },
     markup: (read, mistake) => figureSide(read, { id: 'fgc', mistake, mirror }),
   };
 }

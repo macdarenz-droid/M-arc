@@ -1,0 +1,31 @@
+{
+  "id": "lib_romanian_deadlift",
+  "kind": "rep",
+  "order": "lower_first",
+  "tempo": { "lift": 1.2, "hold": 0.3, "lower": 2, "rest": 0.5 },
+  "ranges": {
+    "hip_flex": { "min": 0, "max": 75, "source": "ACE Romanian Deadlift: \"Push the hips back while lowering the weight towards the floor until feeling some tension along the back of the legs.\" No page names an exact angle or bar/shin position for that depth, so 75 degrees is illustrative with no source named for the number itself (thin, flagged for an owner device check)" },
+    "knee_flex": { "min": 10, "max": 20, "source": "ACE Romanian Deadlift: \"keep a slight bend in both knees\" (no exact angle given); ThatFitFriend (Mistake 3, \"Squatting Your Hinge\"): the knee bend should stay small enough to keep \"higher hips and less knee bend\" through the hinge. 10 to 20 degrees is illustrative, inside the AAOS knee row" },
+    "torso_lean": { "min": -3, "max": 3, "source": "ACE Romanian Deadlift: \"keep a slight bend in both knees and a straight back.\" The rigid-trunk reading (the lean comes from hip_flex, not the spine) is this file's own, not a separate ACE statement" }
+  },
+  "muscles": {
+    "target": ["hamstrings"],
+    "helps": ["glutes", "lower_back"],
+    "keepQuiet": ["quads"],
+    "peakAt": 0.52,
+    "peakSource": "ACE Romanian Deadlift: the hips push back and the weight lowers \"until feeling some tension along the back of the legs,\" so hamstring effort is highest at that stretched bottom, just before the drive back to standing"
+  },
+  "mistake": {
+    "name": "Squat the hinge",
+    "tells": [
+      { "text": "The knees bend forward like a squat instead of holding their angle.", "joint": "knee_flex" },
+      { "text": "The hips barely go back, turning the hinge into a squat.", "joint": "hip_flex" }
+    ],
+    "source": "ThatFitFriend (Mistake 3, \"Squatting Your Hinge\"): \"When we bend too much at the knees during RDLs, we shorten the hamstrings and change the axis of rotation\"; the fix is to keep \"higher hips and less knee bend\" while hinging back — the same fault shows on both the knee and the hip"
+  },
+  "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/317/romanian-deadlift/",
+    "https://thatfitfriend.com/romanian-deadlift-mistakes-fixes/",
+    "Contact fact (bar over mid-foot / kept against the legs): ACE Romanian Deadlift — \"keeping the bar very close to the body while standing\""
+  ]
+}

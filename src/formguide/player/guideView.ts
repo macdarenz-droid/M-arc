@@ -69,7 +69,7 @@ export function chainedGroups(g: ExerciseGuide, rig: Rig, figure: Figure, markup
     return v;
   };
   for (let r = 0; r < REPS; r++) {
-    const s = sampleGuide(g, figure, figure === 'mistake' ? 0 : r), fr = frameFn(g, rig, figure, figure === 'mistake' ? 0 : r, markup);
+    const s = sampleGuide(g, figure, figure === 'mistake' ? 0 : r, rig), fr = frameFn(g, rig, figure, figure === 'mistake' ? 0 : r, markup);
     s.stops.forEach((u, i) => {
       if (r > 0 && i === 0) return;                         // rep r starts where rep r - 1 ended (the start pose)
       const pose: Pose = {};
@@ -93,7 +93,7 @@ export function chainedGroups(g: ExerciseGuide, rig: Rig, figure: Figure, markup
 
 /** The frame of the figure at one key moment (the correct figure's first rep, or the mistake). */
 export function momentFrame(g: ExerciseGuide, rig: Rig, figure: Figure, u: number, markup: string): Frame {
-  const s = sampleGuide(g, figure, 0);
+  const s = sampleGuide(g, figure, 0, rig);
   const i = s.stops.reduce((b, v, k) => (Math.abs(v - u) < Math.abs(s.stops[b]! - u) ? k : b), 0);
   const pose: Pose = {};
   for (const ch of s.channels) pose[ch.id] = ch.stops[i]![1];

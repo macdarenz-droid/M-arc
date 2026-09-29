@@ -99,7 +99,7 @@ export const MUSCLES: Muscle[] = [
   { id: 'adductors', label: 'Inner thighs', group: 'legs', bucket: 'lower', view: 'front', recoveryFactor: 1.2,
     common: 'Adductors', anatomical: 'hip adductors',
     action: 'Pulls the legs in toward each other.' },
-  { id: 'abductors', label: 'Outer hips', group: 'legs', bucket: 'lower', view: 'front', recoveryFactor: 1.0,
+  { id: 'abductors', label: 'Outer hips', group: 'legs', bucket: 'lower', view: 'back', recoveryFactor: 1.0,
     common: 'Abductors', anatomical: 'gluteus medius and minimus',
     action: 'Moves the legs out to the sides and keeps the hips level.' },
   { id: 'calves', label: 'Calves', group: 'legs', bucket: 'lower', view: 'back', recoveryFactor: 0.8,

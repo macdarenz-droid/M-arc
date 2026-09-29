@@ -12,7 +12,7 @@ import { FLOOR } from '../rig/figureFront';
 import { FIGURE_TOKENS, bodyPal, mix, themeReader } from '../rig/paint';
 import type { Frame } from '../rig/pose';
 import type { Pt } from '../rig/ik';
-import { STEPS_PER_PHASE, curveAt, drawnAt, poseAt, repSeconds, sampleGuide, stopsFor, tempoOf, windowsFor, type Figure, type Window } from '../sample';
+import { STEPS_PER_PHASE, drawnAt, poseAt, repSeconds, sampleGuide, stateAt, stopsFor, tempoOf, windowsFor, type Figure, type Window } from '../sample';
 import { MACHINES, anchorAt, offPath, setupMarkup, type MachineDrawing } from './machines';
 import { hasOverlay, type LibraryRow } from './overlays';
 import { effortOf, TORQUE } from './effort';
@@ -68,7 +68,9 @@ const sides = (g: ExerciseGuide, joint: string): ChannelId[] =>
   (CHANNELS as readonly string[]).includes(joint) ? [joint as ChannelId] : [`${joint}_l`, `${joint}_r`].filter(c => (CHANNELS as readonly string[]).includes(c)) as ChannelId[];
 const researchRange = (r: Research, c: ChannelId) => r.ranges[c] ?? r.ranges[c.replace(/_[lr]$/, '')];
 const windowsOf = (g: ExerciseGuide, fig: Figure, rep: number) => windowsFor(tempoOf(g, fig, rep), g.order, g.kind);
-const frameAt = (c: Ctx, rig: Rig, u: number, fig: Figure, rep: number): Frame => rig.frame(poseAt(c.g, u, fig, rep));
+/** The rig a solved file samples on (V1-04): undefined when there is no figure, so a solved file throws naming it. */
+const rigOf = (c: Ctx): Rig | undefined => (typeof c.rig === 'string' ? undefined : c.rig);
+const frameAt = (c: Ctx, rig: Rig, u: number, fig: Figure, rep: number): Frame => rig.frame(poseAt(c.g, u, fig, rep, rig));
 /** The four key moments (§1): start, mid first move, end of first move (top), mid second move; a hold at quarters. */
 export function moments(ws: Window[]): number[] {
   const m1 = ws.find(w => w.move === 1), m2 = ws.find(w => w.move === 2);
@@ -86,7 +88,9 @@ type Fn = (c: Ctx, fail: (s: string) => void) => string | void;
 const smoothness: Fn = (c, fail) => {
   const g = c.g, pts = grip(g);
   for (const rep of c.reps) {
-    const s = sampleGuide(g, 'correct', rep), T = repSeconds(s.tempo), N = Math.round(T * HZ), dt = T / N, L = repLabel('correct', rep);
+    // a solved file is read from its solve with the sway held at 0: its arm channels would otherwise carry the sway's
+    // drift across every phase edge, the drift D-FG3 reads the grip without (V1-04, D-FG3 extension)
+    const s = sampleGuide(g, 'correct', rep, rigOf(c), { still: true }), T = repSeconds(s.tempo), N = Math.round(T * HZ), dt = T / N, L = repLabel('correct', rep);
     const drawn = new Map(s.channels.map(ch => [ch.id, grid(N).map(u => drawnAt(ch.stops, u))]));
     const moving = s.windows.filter(w => w.move && w.u1 - w.u0 > 1e-9);
     // (c) reads the written values at the stops' exact times: the written offsets are rounded to 1e-4 of the rep, which
@@ -166,7 +170,7 @@ const jointRanges: Fn = (c, fail) => {
   for (const rep of c.reps) {
     const T = repSeconds(tempoOf(g, 'correct', rep)), L = repLabel('correct', rep), seen = new Set<string>();
     for (const u of grid(LIMITS.jointSamples)) {
-      const p = poseAt(g, u, 'correct', rep);
+      const p = poseAt(g, u, 'correct', rep, rigOf(c));
       for (const ch of CHANNELS) {
         const v = p[ch], cr = researchRange(r, ch), a = aaosTruth(ch, v);
         // written as !(inside) so a NaN fails
@@ -184,7 +188,7 @@ const mistakeSane: Fn = (c, fail) => {
   const cb = typeof c.rig === 'string' ? null : compile(c.rig.markup(themeReader('silent-black'), true));
   const vb = VIEWBOXES[g.camera.full];
   if (!cb) fail(`clipping not measured: ${c.rig as string}`);
-  const mis = U.map(u => poseAt(g, u, 'mistake')), cor = U.map(u => poseAt(g, u, 'correct', 0));
+  const mis = U.map(u => poseAt(g, u, 'mistake', 0, rigOf(c))), cor = U.map(u => poseAt(g, u, 'correct', 0, rigOf(c)));
   U.forEach((u, i) => {
     const p = mis[i]!;
     for (const ch of CHANNELS) {
@@ -222,7 +226,7 @@ function peakSpeed(c: Ctx, rig: Rig, fig: Figure): { v: number; a: AttachmentId;
 const mistakeDiffers: Fn = (c, fail) => {
   const g = c.g;
   if (g.kind === 'hold') {
-    const d = Math.max(0, ...grid(LIMITS.jointSamples).flatMap(u => { const m = poseAt(g, u, 'mistake'), k = poseAt(g, u, 'correct', 0); return CHANNELS.map(ch => Math.abs(m[ch] - k[ch])); }));
+    const d = Math.max(0, ...grid(LIMITS.jointSamples).flatMap(u => { const m = poseAt(g, u, 'mistake', 0, rigOf(c)), k = poseAt(g, u, 'correct', 0, rigOf(c)); return CHANNELS.map(ch => Math.abs(m[ch] - k[ch])); }));
     if (d < LIMITS.tellDeg) fail(`hold: largest sag delta ${f2(d)} < ${LIMITS.tellDeg}°`);
     return 'hold: sag delta';
   }
@@ -259,12 +263,13 @@ const setupDiffers: Fn = (c, fail) => {
   if (r === w) fail(`${su.setting}: wrong ${su.wrong} and right ${right} draw the same setup moment`);
 };
 
-/** Samples of the correct reps with the drive travel: calls back per sample with the frame and the travel of each drive. */
+/** Samples of the correct reps with the drive travel: calls back per sample with the frame and the travel of each drive
+ * (a followed part's is its point projected on its path, V1-04). */
 function eachSample(c: Ctx, rig: Rig, cb: (f: Frame, u: number, T: number, L: string, travel: number[]) => void) {
   const g = c.g;
   for (const rep of c.reps) {
-    const ws = windowsOf(g, 'correct', rep), T = repSeconds(tempoOf(g, 'correct', rep)), L = repLabel('correct', rep);
-    for (const u of grid(LIMITS.jointSamples)) cb(frameAt(c, rig, u, 'correct', rep), u, T, L, (g.machine?.drive ?? []).map(d => curveAt(d.travel, ws, u)));
+    const T = repSeconds(tempoOf(g, 'correct', rep)), L = repLabel('correct', rep);
+    for (const u of grid(LIMITS.jointSamples)) { const st = stateAt(g, u, 'correct', rep, rig); cb(rig.frame(st.pose), u, T, L, st.travel); }
   }
 }
 
@@ -382,13 +387,13 @@ const muscleTiming: Fn = (c, fail) => {
 };
 
 const secondaryMotion: Fn = (c, fail) => {
-  const g = c.g, s = sampleGuide(g, 'correct', 0), br = s.channels.find(ch => ch.id === 'breath')!.stops.map(x => x[1]);
+  const g = c.g, s = sampleGuide(g, 'correct', 0, rigOf(c)), br = s.channels.find(ch => ch.id === 'breath')!.stops.map(x => x[1]);
   if (!(Math.max(...br) - Math.min(...br) > 0)) fail(`breath amplitude ${f4(Math.max(...br) - Math.min(...br))}, must be > 0`);
   let sway = { v: 0, u: 0, L: 'rep 0', T: 1 }, top = 0;
   for (const rep of c.reps) {
     const T = repSeconds(tempoOf(g, 'correct', rep));
     for (const u of grid(LIMITS.jointSamples)) {
-      const p = poseAt(g, u, 'correct', rep);
+      const p = poseAt(g, u, 'correct', rep, rigOf(c));
       if (Math.abs(p.sway) > sway.v) sway = { v: Math.abs(p.sway), u, L: repLabel('correct', rep), T };
       top = Math.max(top, p.shoulder_abd_l, p.shoulder_abd_r, p.shoulder_flex_l, p.shoulder_flex_r);
     }
@@ -501,16 +506,17 @@ const idMatch: Fn = (c, fail) => {
   if (!c.in.library.some(e => e.id === c.g.id)) fail(`${c.g.id} is not in exercises.json`);
 };
 
-/** FG-2's snapshot: sha256 of the per-channel hashes of every correct rep and the mistake, first 16 hex digits. */
-export function guideHash(g: ExerciseGuide): string {
+/** FG-2's snapshot: sha256 of the per-channel hashes of every correct rep and the mistake, first 16 hex digits. A
+ * followed part's travel (V1-04) is hashed beside the channels, only when the file has one. */
+export function guideHash(g: ExerciseGuide, rig?: Rig): string {
   const h = (x: unknown) => createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16);
-  const all = repsOf(g).map(r => sampleGuide(g, 'correct', r)).concat(sampleGuide(g, 'mistake'));
-  return h(all.map(s => Object.fromEntries(s.channels.map(ch => [ch.id, h(ch.stops)]))));
+  const all = repsOf(g).map(r => sampleGuide(g, 'correct', r, rig)).concat(sampleGuide(g, 'mistake', 0, rig));
+  return h(all.map(s => ({ ...Object.fromEntries(s.channels.map(ch => [ch.id, h(ch.stops)])), ...(s.travel ? { travel: h(s.travel) } : {}) })));
 }
 const hash: Fn = (c, fail) => {
-  const a = guideHash(c.g), b = guideHash(c.g), want = c.in.hashes[c.g.id];
+  const a = guideHash(c.g, rigOf(c)), b = guideHash(c.g, rigOf(c)), want = c.in.hashes[c.g.id];
   if (a !== b) fail(`sampling is not deterministic: ${a} then ${b}`);
-  if (!want) fail(`no stored snapshot for ${c.g.id}: record "${a}" in src/formguide/check/hashes.json`);
+  if (!want) fail(`no stored snapshot for ${c.g.id}: record "${a}" in src/formguide/check/hashes/${c.g.id}.txt`);
   else if (a !== want) fail(`stops hash ${a} ≠ stored ${want}`);
   return a;
 };
@@ -525,10 +531,10 @@ const FNS: Record<CheckId, Fn> = {
 export function runChecks(input: CheckInput, only: readonly CheckId[] = CHECKS): CheckResult[] {
   const g = input.guide, view = viewOf(g, input.library.find(e => e.id === g.id)?.pattern);
   const mid = g.machine?.id, drawing = mid ? { ...MACHINES, ...input.machines }[mid] : undefined;
-  const c: Ctx = {
-    g, in: input, view, rig: rigFor(g, view), reps: repsOf(g),
-    machine: !mid ? null : drawing ? (drawing.view === view ? drawing : `machine ${mid} is drawn ${drawing.view}, the file is ${view}`) : `machine ${mid} has no drawing (machines library, FG-7)`,
-  };
+  const machine = !mid ? null : drawing ? (drawing.view === view ? drawing : `machine ${mid} is drawn ${drawing.view}, the file is ${view}`) : `machine ${mid} has no drawing (machines library, FG-7)`;
+  const r = rigFor(g, view);
+  // the solver reads the file's machine from its rig (V1-04): the input's drawing (a seeded file's) over the library's
+  const c: Ctx = { g, in: input, view, rig: typeof r === 'string' ? r : { ...r, machine: typeof machine === 'object' ? machine : null }, reps: repsOf(g), machine };
   return only.map(check => {
     const fails: string[] = [];
     let note: string | void = undefined;

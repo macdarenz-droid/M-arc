@@ -290,3 +290,27 @@ describe('A6 the side hand draws the dumbbell and the end-on barbell', () => {
     expect(shapeCount(rig.markup(SB, false, true)) - shapeCount(rig.markup(SB, false, false))).toBeGreaterThan(0);
   });
 });
+
+describe('A3 the side chain: the side rig seeds the V1-04 solver with solveSideArm and solveSideLeg', () => {
+  it('hand and foot targets come back as the two channels that reach them; an unreachable foot or another point gives null', async () => {
+    for (const id of FIX) {
+      const { g } = await fixture(id), rig = rigFor(g, 'side');
+      if (typeof rig === 'string') throw new Error(rig);
+      expect(rig.machine).toBeNull();
+      const base = rig.frame({} as Parameters<typeof rig.frame>[0]);
+      for (const s of ['l', 'r'] as const) {
+        // reachable targets: where another pose puts the hand and the foot
+        const moved = rig.frame({ [`shoulder_flex_${s}`]: 60, [`elbow_flex_${s}`]: 50, [`hip_flex_${s}`]: 40, [`knee_flex_${s}`]: 60 } as Parameters<typeof rig.frame>[0]);
+        const foot = rig.point(base, `foot_${s}`);
+        for (const [a, t] of [[`hand_${s}`, rig.point(moved, `hand_${s}`)], [`foot_${s}`, rig.point(moved, `foot_${s}`)]] as const) {
+          const x = rig.chain!({} as Parameters<typeof rig.frame>[0], a, t as [number, number]);
+          expect(x, `${id} ${a}`).not.toBeNull();
+          const at = rig.point(rig.frame(x as Parameters<typeof rig.frame>[0]), a);
+          expect(Math.hypot(at[0] - t[0], at[1] - t[1]), `${id} ${a}`).toBeLessThan(1e-6);
+        }
+        expect(rig.chain!({} as Parameters<typeof rig.frame>[0], `foot_${s}`, [foot[0] + 900, foot[1]])).toBeNull();
+      }
+      expect(rig.chain!({} as Parameters<typeof rig.frame>[0], 'hip', [0, 0])).toBeNull();
+    }
+  });
+});

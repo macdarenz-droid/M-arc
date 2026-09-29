@@ -40,12 +40,12 @@ export function effortOf(g: ExerciseGuide, figure: Figure, rep: number, rig: Rig
     if (!j || (!arm && !leg)) return `torque model has no load point for chain [${e.chain.join(', ')}]`;
     const s = (arm ?? leg)![2] as 'l' | 'r';
     const bones: JointId[] = arm ? [`shoulder_${s}`, `elbow_${s}`, `wrist_${s}`] : [`hip_${s}`, `knee_${s}`, `ankle_${s}`];
-    const from = bones.indexOf(j), f0 = rig.frame(poseAt(g, 0, 'correct', 0));
+    const from = bones.indexOf(j), f0 = rig.frame(poseAt(g, 0, 'correct', 0, rig));
     let reach = 0;
     for (let i = from; i < bones.length - 1; i++) { const a = rig.pivot(f0, bones[i]!), b = rig.pivot(f0, bones[i + 1]!); reach += Math.hypot(b[0] - a[0], b[1] - a[1]); }
     if (!(reach > 0)) return `torque model: chain [${e.chain.join(', ')}] has no length`;
     model = u => {
-      const p = poseAt(g, u, figure, rep), f = rig.frame(p);
+      const p = poseAt(g, u, figure, rep, rig), f = rig.frame(p);
       const load = arm ? rig.point(f, `hand_${s}`) : rig.pivot(f, `ankle_${s}`), at = rig.pivot(f, j);
       const t = clamp01(Math.abs(load[0] - at[0]) / reach), out: Partial<Record<MuscleId, number>> = {};
       for (const [m, r] of role) {
