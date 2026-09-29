@@ -53,8 +53,8 @@ for (const theme of ['silent-black', 'paper', 'ember', 'emerald', 'midnight']) {
   await page.waitForTimeout(600);
   for (const name of [/^Later$/, /^Not now$/, /^Skip$/]) { const b = page.getByRole('button', { name }); if (await b.isVisible().catch(() => false)) { await b.click(); await page.waitForTimeout(400); break; } }
   await page.waitForTimeout(3400);
-  // The floating Ask Escobar pill slides away on a downward scroll (src/ui/hideOnScroll.ts, 8px of travel), so every shot scrolls 16px first: the pill is clear and the screen loses only 16px of top padding.
-  const shot = async (n, y = 16) => { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(400); await page.screenshot({ path: `${OUT}/${theme}-${n}.png` }); };
+  // The floating Ask Escobar pill slides away on a downward scroll (src/ui/hideOnScroll.ts, 8px of travel), so every shot scrolls exactly 8px first: the pill is clear and the screen keeps its eyebrow labels whole (16px cut their cap line).
+  const shot = async (n, y = 8) => { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(400); await page.screenshot({ path: `${OUT}/${theme}-${n}.png` }); };
   await shot('today');
   for (const [label, n] of [[/^(Train|Live)$/, 'train'], ['Body', 'body'], ['History', 'history'], ['Escobar', 'escobar']]) {
     await page.locator('nav.nav button', { hasText: label }).click(); await page.waitForTimeout(700); await shot(n);

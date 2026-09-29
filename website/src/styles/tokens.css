@@ -95,8 +95,8 @@
   --stagger: 40ms;
   --dur-light: 400ms; /* site */
   --dur-reveal: 400ms; /* site */
-  --dur-rise: 600ms; /* site */
-  --gap-rise: 120ms; /* site */
+  --dur-rise: 480ms; /* site */
+  --gap-rise: 80ms; /* site */
   --dur-draw: 900ms; /* site */
   --dur-pop: 200ms; /* site */
   --dur-wipe: 800ms; /* site */

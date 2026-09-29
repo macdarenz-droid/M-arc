@@ -69,7 +69,8 @@
 
 /* 6.4 hairline panel */
 .panel { position: relative; width: 390px; max-width: 100%; aspect-ratio: 390 / 344; background: var(--s1); border: 1px solid var(--border); border-radius: var(--r3); overflow: hidden; }
-.panel img { position: absolute; left: 0; top: -67.44%; width: 100%; height: auto; }
+/* -63.4% of the 342px padding box = 217px = image row 436 of 1688: 11px above the "Today's brief" heading, ending just above the "This week" card */
+.panel img { position: absolute; left: 0; top: -63.4%; width: 100%; height: auto; }
 .panel.ck { aspect-ratio: 390 / 629; }
 .panel.ck img { top: -34.1%; }
 
@@ -173,7 +174,7 @@
 .trow .word { font-size: 16px; }
 /* each lockup sits on its theme's own bg and surface (--sb, --ss, --sbd, --stx set inline from the tokens), so the row shows five themes, not five marks */
 .trow .swatch { display: grid; place-items: center; width: 148px; height: 76px; border-radius: var(--r2); background: var(--sb); border: 1px solid var(--sbd); }
-.trow .swatch .lockup { color: var(--stx); padding: 8px 12px; border-radius: var(--r1); background: var(--ss); border: 1px solid var(--sbd); }
+.trow .swatch .lockup { --lk: inherit; color: var(--stx); padding: 8px 12px; border-radius: var(--r1); background: var(--ss); border: 1px solid var(--sbd); }
 
 /* 6.16 footer */
 .foot { background: var(--s1); padding: var(--sp-11) 0 var(--sp-9); }

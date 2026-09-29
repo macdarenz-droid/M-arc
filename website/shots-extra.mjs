@@ -54,13 +54,13 @@ for (const theme of ['silent-black', 'paper', 'ember', 'emerald', 'midnight']) {
   await page.waitForTimeout(600);
   for (const name of [/^Later$/, /^Not now$/, /^Skip$/]) { const b = page.getByRole('button', { name }); if (await b.isVisible().catch(() => false)) { await b.click(); await page.waitForTimeout(400); break; } }
   await page.waitForTimeout(3400);
-  // The floating Ask Escobar pill slides away on a downward scroll (src/ui/hideOnScroll.ts, 8px of travel), so every shot scrolls 16px first: the pill is clear and the screen loses only 16px of top padding.
-  const shot = async (n, y = 16) => { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(400); await page.screenshot({ path: `${OUT}/${theme}-${n}.png` }); };
+  // The floating Ask Escobar pill slides away on a downward scroll (src/ui/hideOnScroll.ts, 8px of travel), so every shot scrolls exactly 8px first: the pill is clear and the screen keeps its eyebrow labels whole (16px cut their cap line).
+  const shot = async (n, y = 8) => { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(400); await page.screenshot({ path: `${OUT}/${theme}-${n}.png` }); };
   try {
     await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(500);
     await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(600);
     // Stats starts at the week's muscle sets and volume; the shot the site uses is the exercise card (sparkline, trend and records), so it scrolls that section's heading to 24px under the top
-    const yStats = await page.evaluate(() => { const h = [...document.querySelectorAll('h2, h3')].find((e) => e.textContent.trim() === 'Exercise progress'); return h ? Math.round(scrollY + h.getBoundingClientRect().top - 24) : 16; });
+    const yStats = await page.evaluate(() => { const h = [...document.querySelectorAll('h2, h3')].find((e) => e.textContent.trim() === 'Exercise progress'); return h ? Math.round(scrollY + h.getBoundingClientRect().top - 24) : 8; });
     await shot('stats', yStats);
     await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(500);
     await page.getByRole('tab', { name: 'Levels' }).click(); await page.waitForTimeout(600); await shot('levels');

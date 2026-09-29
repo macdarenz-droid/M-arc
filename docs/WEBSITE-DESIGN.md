@@ -262,8 +262,8 @@ The app's motion tokens, copied exactly (app-facts `dna.motion`), plus the site-
 | `--dur-light` (site) | 400ms | The lit plane's colour pair; the phone shrink fallback on phones |
 | `--dur-reveal` (site) | 400ms | Section reveals |
 | `--stagger` | 40ms | Between staggered children (up to five) |
-| `--dur-rise` (site) | 600ms | Hero copy entrance per element |
-| `--gap-rise` (site) | 120ms | Between hero elements; between the two ring fills |
+| `--dur-rise` (site) | 480ms | Hero copy entrance per element |
+| `--gap-rise` (site) | 80ms | Between hero elements; between the two ring fills (the whole hero has landed by 800ms) |
 | `--dur-draw` (site) | 900ms | The mark's line draw; the phone's arrival |
 | `--dur-pop` (site) | 200ms | The mark's dot |
 | `--dur-wipe` (site) | 800ms | Screenshot wipe-in; the keycap sheen sweep and its delay |
@@ -289,7 +289,7 @@ Screen layers: three `img.layer` at `position: absolute; inset: 0; object-fit: c
 
 | Property | Value |
 |---|---|
-| Grid | `.pg { grid-template-columns: 6fr 6fr; column-gap: 24px }`; hero copy row 1 col 1 (`min-height: 64svh`, content centred, padding 48px 0 64px, max-width 560px; 72svh left about 170px of empty column under the caption at 1440x900); `.col-pin` col 2 rows 1 to 3; `.story-bg` and `.story` row 2 col 1 |
+| Grid | `.pg { grid-template-columns: 6fr 6fr; column-gap: 24px }`; hero copy row 1 col 1 (`min-height: max(64svh, <the pin's 765px box>)`, content centred, padding 48px 0, max-width 560px, so the copy and the phone share a vertical middle at 1440x900); `.col-pin` col 2 rows 1 to 3; `.story-bg` and `.story` row 2 col 1 |
 | Pin | `.pin { position: sticky; top: max(calc(50vh - 382px), 8px); contain: layout; padding: 48px 64px }`. 382px is half the pin's box: a 320px phone is (320 - 20) × 2.1641 + 20 = 669px tall, plus 96px padding is 765px, half of which is 382px (the render's 394px was 12px off; section 15), so the phone centres in tall viewports and sits 8px under the top edge in short ones |
 | Phone | 320px wide |
 | Light | `.light { position: absolute; inset: -20%; filter: blur(60px); will-change: filter }` with two radial gradients: `50% 40% at 32% 30%` in `--light-a` and `45% 36% at 72% 66%` in `--light-b`, each fading to transparent at 70% |
@@ -371,7 +371,7 @@ Every interactive control has a 44px minimum target, a visible focus ring (`outl
 
 ### 6.1 Nav
 
-Anatomy in 2.2. Sizes: 64px tall (57 at 640 and under); lockup mark 28px, wordmark 18px; nav links `min-height: 44px; padding: 0 12px; border-radius: --r1`; current link `background: --accent-soft; color: --text`. States: transparent, solid (`.on`), menu open (`details[open]`, list `position: absolute; left: 0; right: 0; top: 100%; padding: 8px var(--gutter) 16px; background: --bg; border-bottom: 1px solid --border`). Accessibility: `<header>` landmark, `<nav aria-label="Sections">`, the `details` summary is a native disclosure (keyboard works without script). Copy: link labels are the app's tab names plus Privacy; the buttons read "Read the source" and "Install".
+Anatomy in 2.2. Sizes: 64px tall (57 at 640 and under); lockup mark 28px, wordmark 18px; nav links `min-height: 44px; padding: 0 12px; border-radius: --r1`; current link `background: --accent-soft; color: --text`. States: transparent, solid (`.on`), menu open (`details[open]`, list `position: absolute; left: 0; right: 0; top: 100%; padding: 8px var(--gutter) 16px; background: --bg; border-bottom: 1px solid --border`). Accessibility: `<header>` landmark, `<nav aria-label="Sections">`, the `details` summary is a native disclosure (keyboard works without script). Copy: link labels are the app's tab names plus Privacy; the buttons read "Read the source" and "Install" ("Download the APK" to `#apk` on /install/).
 
 ### 6.2 Buttons
 
@@ -389,7 +389,7 @@ Sizes: `min-height: 44px; padding: 0 18px; border-radius: --r2; gap: 8px`; small
 
 ### 6.4 Hairline panel
 
-`.panel`: `background: --s1; border: 1px solid --border; border-radius: --r3; overflow: hidden; position: relative`. Two sizes: the Escobar crop `width: 390px; aspect-ratio: 390/344` with `img { position: absolute; left: 0; top: -67.44%; width: 100% }` (the crop starts at the "Today's brief" heading and ends after the "What Escobar knows" row; the tab's top card never appears, W31); the check-in `width: 390px; aspect-ratio: 390/629; img { top: -34.1% }`. At 640 and under the panel is 220px wide inside `.duo`. Panels are used where the app shows a sheet or a crop, never for a whole screen (a whole screen goes in a phone frame).
+`.panel`: `background: --s1; border: 1px solid --border; border-radius: --r3; overflow: hidden; position: relative`. Two sizes: the Escobar crop `width: 390px; aspect-ratio: 390/344` with `img { position: absolute; left: 0; top: -63.4%; width: 100% }` (the crop starts 11px above the "Today's brief" heading, whole, and ends after the "What Escobar knows" row; the tab's top card never appears, W31); the check-in `width: 390px; aspect-ratio: 390/629; img { top: -34.1% }`. At 640 and under the panel is 220px wide inside `.duo`. Panels are used where the app shows a sheet or a crop, never for a whole screen (a whole screen goes in a phone frame).
 
 ### 6.5 Cards
 
@@ -465,7 +465,7 @@ Copy below is final. `__VERSION__` renders as the package.json version (37.1.0 t
 | Buttons | Primary "Download for Android" to `__BASE__install/#apk`. Secondary "Read the source" to the repository. |
 | Caption | A signed APK that works offline, with no account. |
 | Phone | `shots/midnight-today.png`, eager. Alt: "The Today screen on a Push day, readiness Amber at 66, with triceps at 45% and three days from ready" |
-| Layout 1440 | Copy in the left 6fr column, max-width 560px, centred in 64svh; the phone (320px) in the right column, pinned, on the lit plane at the hero pair |
+| Layout 1440 | Copy in the left 6fr column, max-width 560px, centred on the pin's box (at least 64svh); the phone (320px) in the right column, pinned, on the lit plane at the hero pair |
 | Layout 900 | Same two columns (the break to one column is at 900 and under, so 900 itself is still two columns; at 899 the single column applies) |
 | Layout 400 | Copy first (`padding: 32px 0 40px`), then the phone at 240px on its plane, then the story band's cut |
 | Motion | The load sequence in 5.5; the phone is the pinned element of 5.2 |
@@ -480,7 +480,7 @@ Copy below is final. `__VERSION__` renders as the package.json version (37.1.0 t
 | h2 | Every set you rate changes the next session. |
 | Step 1 | Eyebrow "Step 1". h3 "One tap for effort." Body: "After each set, tap E, I or M. Easy means 3 or more reps left, Ideal 1 to 3, Max nothing left. A missing rating never counts as easy or max. It lowers confidence instead." Screen: `shots/midnight-live.png`. Caption and alt: "A live Push session on the machine chest press: two sets logged, the second at 52.5 kg for 6 rated I, and 1:30 of rest counting down" |
 | Step 2 | Eyebrow "Step 2". h3 "Each muscle recovers on its own clock." Body: "Every working set leaves an impulse sized by role, effort, reps and load. It decays, stacks over 7 days and adjusts to how your next session actually went, within limits. Ready for hard work at 90%. Fully recovered at 97%." Screen: `shots/midnight-body.png`. Caption and alt: "The muscle map in Recovery view, front and back: chest and front shoulders marked Nearly, rear shoulders Recovering, legs and back Ready" |
-| Step 3 | Eyebrow "Step 3". h3 "Targets that respect a bad night." Body: "Your check-in, sleep, resting heart rate and load make a 0 to 100 score. Green from 67. Red at 33 or below. Amber holds the load. Red cuts sets. The advice is one sentence you can act on: keep loads steady today and skip any increases." Then the bands list (6.13) and two story rings "Triceps 45%" and "Chest 58%". Screen: `shots/midnight-today.png` again. Caption and alt for the stacked fallback: "The Today screen on the same Push day, readiness Amber at 66 and the advice to keep loads steady" |
+| Step 3 | Eyebrow "Step 3". h3 "Targets that respect a bad night." Body: "Your check-in, sleep, resting heart rate and load make a 0 to 100 score. Green from 67. Red at 33 or below. Amber holds the load. Red cuts sets. The advice is one sentence you can act on: keep loads steady today and skip any increases." Then the bands list (6.13; at 640px and under it shows only in the stacked fallback, since the body already carries the thresholds and the reading band under the pinned phone is about 300px) and two story rings "Triceps 45%" and "Chest 58%". Screen: `shots/midnight-today.png` again. Caption and alt for the stacked fallback: "The Today screen on the same Push day, readiness Amber at 66 and the advice to keep loads steady" |
 | Layout 1440 | Left column: strip, eyebrow, h2, then the three steps at 100vh each (the first shorter); the phone pinned in the right column; the band is `--s1` behind both, starting with the first diagonal cut |
 | Layout 900 | Two columns still; steps at 460px max |
 | Layout 400 | Strip 2x2; the phone pinned under the nav, shrinking to 44svh; steps at 40vh minimum scroll under it; each step lights when its heading clears the phone |
