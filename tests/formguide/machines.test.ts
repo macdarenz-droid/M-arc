@@ -15,14 +15,21 @@ import { STACK_CLASS, cableClass, guideDrive, guideStops, layerFor, layerGroups,
 import { REPS, guideRig, markupOf, momentFrame } from '@/formguide/player/guideView';
 import { themeReader } from '@/formguide/rig/paint';
 import { VIEWBOXES } from '@/formguide/model';
-import { apply, mmul, opMat, solveFrontArm, type Op } from '@/formguide/rig/pose';
+import { apply, mmul, opMat, type Op } from '@/formguide/rig/pose';
 import type { Mat } from '@/formguide/rig/figureFront';
 import type { Pt } from '@/formguide/rig/ik';
-import { poseAt } from '@/formguide/sample';
+import { poseAt, sampleGuide } from '@/formguide/sample';
+import { rigFor, type Rig } from '@/formguide/check/view';
+import type { ChannelId } from '@/formguide/rig/joints';
+import { lib_smith_machine_shoulder_press as SM } from './fixtures/solve/lib_smith_machine_shoulder_press';
+import SMFX from './fixtures/solve/fixture.json';
 import { lib_dumbbell_lateral_raise as LR } from '@/formguide/exercises/lib_dumbbell_lateral_raise';
 import { FrameLog, LONG_PRESS_MS, longPress, quantile, statsLine } from '@/formguide/player/fps';
 import { FpsPanel } from '@/formguide/player/ExercisePlayer';
 
+// V1-04's follow fixture: a front press whose handles slide on rails and follow the hands the solver keeps on them.
+const FXP: MachineArt = { ...(SMFX.machines.fx_press as unknown as MachineArt), moving: {
+  bar_r: '<path d="M273 176h16v8h-16Z" fill="var(--iron-hi)" stroke="var(--ink)"/>', bar_l: '<path d="M111 176h16v8h-16Z" fill="var(--iron-hi)" stroke="var(--ink)"/>' } };
 const LR_PATH = 'src/formguide/exercises/lib_dumbbell_lateral_raise.ts';
 const rig = guideRig(LR, 'shoulder_abduction');
 const I: Mat = [1, 0, 0, 1, 0, 0];
@@ -35,8 +42,8 @@ function matOf(t: string): Mat {
   return ops.reduce((m, o) => mmul(m, opMat(o)), I);
 }
 /** The rep and the exact stop a chained keyframe offset was made from. */
-function stopOf(g: ExerciseGuide, offset: number): { r: number; u: number } {
-  for (let r = 0; r < REPS; r++) for (const u of guideStops(g, 'correct')(r)) if (Math.round(((r + u) / REPS) * 1e4) / 1e4 === offset) return { r, u };
+function stopOf(g: ExerciseGuide, offset: number): { r: number; u: number; i: number } {
+  for (let r = 0; r < REPS; r++) for (const [i, u] of guideStops(g, 'correct')(r).entries()) if (Math.round(((r + u) / REPS) * 1e4) / 1e4 === offset) return { r, u, i };
   throw new Error(`no stop at offset ${offset}`);
 }
 const dist = (a: Pt, b: Pt) => Math.hypot(a[0] - b[0], a[1] - b[1]);
@@ -58,6 +65,7 @@ const FXG = {
   machine: { id: 'fx_lever', settings: { seat: 2 }, drive: [{ part: 'arm', travel: [0, 1], chain: ['shoulder_r', 'elbow_r', 'wrist_r'] }] },
   mistake: { ...LR.mistake, setup: { setting: 'seat', wrong: 5, text: 'Seat too high: the handle sits above the hand.' } },
 } as ExerciseGuide;
+const fxRig = { ...rig, machine: FX };
 const check = (g: ExerciseGuide, only: CheckId[], machines: Record<string, MachineArt> = { fx_lever: FX }) =>
   runChecks({ ...inputFor(LR_PATH, g), machines }, only);
 
@@ -82,28 +90,33 @@ describe('V1-09 primitives: transforms only, each anchor where the part puts it'
 
 describe('V1-09 A1: the fixture machine plays with transforms only, its anchor on the solved hand', () => {
   const m = layerMarkup(FX, { kg: 20, settings: FXG.machine!.settings });
-  const groups = layerGroups(FX, guideStops(FXG, 'correct'), guideDrive(FXG, 'correct'), REPS);
+  const groups = layerGroups(FX, guideStops(FXG, 'correct'), guideDrive(FXG, fxRig, 'correct'), REPS);
   it('noFilters: no filter, blur, shadow or mask in the layer, and every keyframe animates transform only', () => {
     expect(forbiddenEffects(m)).toEqual([]);
     for (const g of groups) for (const f of g.frames) expect(Object.keys(f).sort()).toEqual(['offset', 'transform']);
     expect(groups.map(g => g.className).sort()).toEqual([STACK_CLASS, partClass('arm')].sort());
     for (const g of groups) expect(m).toContain(`class="fg-mp ${g.className}"`);
   });
-  it('at every kept keyframe the handle is within 0.5 of the hand solved to it (and on the lever\'s arc)', () => {
-    // Until V1-04 solves contacts in the sampler, the arm is solved here with the front chain's own solver.
-    const frames = groups.find(g => g.className === partClass('arm'))!.frames, drive = guideDrive(FXG, 'correct');
-    let worst = 0;
+  it('each keyframe puts the lever handle on its arc at the drive\'s travel', () => {
+    const frames = groups.find(g => g.className === partClass('arm'))!.frames, drive = guideDrive(FXG, fxRig, 'correct');
     for (const f of frames) {
-      const { r, u } = stopOf(FXG, f.offset);
-      const q = apply(matOf(f.transform!), A0), want = anchorAt(ARM, drive(r, 0, u).travel.arm!);
-      expect(dist(q, want)).toBeLessThan(1e-3);
-      // iterated to its fixed point: the shoulder's rise follows the solved abduction (the loop V1-04 A10 adds)
-      let pose = poseAt(FXG, u, 'correct', r);
-      for (let k = 0; k < 20; k++) { const x = solveFrontArm('standing', pose, 'r', want); pose = { ...pose, shoulder_abd_r: x.shoulder_abd, elbow_lead_r: x.elbow_lead }; }
-      const hand = rig.point(rig.frame(pose), 'hand_r');
-      worst = Math.max(worst, dist(q, hand));
+      const { r, u, i } = stopOf(FXG, f.offset);
+      expect(dist(apply(matOf(f.transform!), A0), anchorAt(ARM, drive(r, i, u).travel.arm!))).toBeLessThan(1e-3);
     }
-    expect(frames.length).toBeGreaterThan(20);
+  });
+  it('on a follow machine (V1-04\'s fixture), every kept keyframe puts each handle within 0.5 of the sampler\'s solved hand', () => {
+    const smRig = { ...(rigFor(SM, 'front') as Rig), machine: FXP }, gs = layerGroups(FXP, guideStops(SM, 'correct'), guideDrive(SM, smRig, 'correct'), REPS);
+    let worst = 0, n = 0;
+    for (const [part, at] of [['bar_r', 'hand_r'], ['bar_l', 'hand_l']] as const) {
+      const p = FXP.parts[part]!, a0 = anchorAt(p, 0);
+      for (const f of gs.find(g => g.className === partClass(part))!.frames) {
+        const { r, i } = stopOf(SM, f.offset), s = sampleGuide(SM, 'correct', r, smRig);
+        const pose = Object.fromEntries(s.channels.map(ch => [ch.id, ch.stops[i]![1]])) as Record<ChannelId, number>;
+        worst = Math.max(worst, dist(apply(matOf(f.transform!), a0), smRig.point(smRig.frame(pose), at))); n++;
+      }
+    }
+    expect(n).toBeGreaterThan(40);
+    console.info(`V1-09 A1: ${n} keyframes, worst handle-to-solved-hand gap ${worst.toExponential(2)} units`);
     expect(worst).toBeLessThan(0.5);
   });
   it('the layer runs on the figure\'s clock: offsets 0..1 rising, the last frame the start pose', () => {
@@ -131,7 +144,7 @@ describe('V1-09 A2: the stack rises with the load, 0 plates at 0 kg', () => {
   it('it rises by travel × gain (up is -y), and sits still at travel 0', () => {
     expect(stackOps(st, 0)).toEqual([['t', 0, 0]]);
     expect(stackOps(st, 0.5)).toEqual([['t', 0, -30]]);
-    const frames = layerGroups(FX, guideStops(FXG, 'correct'), guideDrive(FXG, 'correct'), REPS).find(g => g.className === STACK_CLASS)!.frames;
+    const frames = layerGroups(FX, guideStops(FXG, 'correct'), guideDrive(FXG, fxRig, 'correct'), REPS).find(g => g.className === STACK_CLASS)!.frames;
     const ys = frames.map(f => matOf(f.transform!)[5]);
     expect(Math.min(...ys)).toBeCloseTo(-st.gain, 1);          // the top of the lift
     expect(Math.max(...ys)).toBe(0);

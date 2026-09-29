@@ -30,7 +30,7 @@ import { substitutesFor } from '@/brain/substitute';
 import { pickCue, equipmentGroup } from '@/brain/coach/cues';
 import { flagsForSet } from '@/brain/fidelity';
 import { autoregulationSuggestion } from '@/brain/coach/live';
-import { loadableNear, loadableValues, resolveProfile } from '@/brain/units';
+import { loadableNear, loadableValues, loadMenu, loggedLoads, resolveProfile } from '@/brain/units';
 import { findInApp } from '../palace/registry';
 import { firstWorkingSet, isWorkingSet } from '@/brain/exposure';
 import { one } from '../context/brief';
@@ -213,17 +213,26 @@ export function getExerciseHistory(input: { exerciseId?: string; weeks?: number 
   }, 6000);
 }
 
+/** LT-4: the gym's load menu (LT-1), so a rung choice sees the loads really learned there and the
+ * tool JSON can say how sure the coach is of it (`get_next_target`'s `repWindow`/`menuConfidence`, `get_equipment`'s `confidence`). */
+function menuFor(ctx: ToolCtx, id: string, gymId: string) {
+  return loadMenu(id, gymId, ctx.state.units, exerciseOf(ctx, id), loggedLoads(ctx.state.sessions, id, ctx.state.customExercises));
+}
+
 export function getNextTarget(input: { exerciseId?: string; plannedSets?: number }, ctx: ToolCtx) {
   const id = exerciseArg(ctx, input.exerciseId);
   const s = ctx.state;
   const planned = int(input.plannedSets, 1, 6, 3, 'plannedSets');
+  const gymId = s.active?.gymId ?? s.units.activeGymId;
   const pctx = progressionCtxFor(ctx, id);
   const profile = pctx.equipment;
-  const sug = suggestNext(s.sessions, id, s.goal, ctx.today, planned, s.customExercises, pctx);
+  const menu = menuFor(ctx, id, gymId);
+  const sug = suggestNext(s.sessions, id, s.goal, ctx.today, planned, s.customExercises, { ...pctx, menu });
   const ex = exerciseOf(ctx, id)!;
   return capJson({
     exercise: ex.name, exerciseId: id,
     target: sug.target, mode: sug.mode, kg: sug.kg, ...(sug.unit ? { unit: sug.unit, value: sug.value } : {}), reps: sug.reps, reason: sug.reason, confidence: sug.confidence,
+    ...(sug.repWindow ? { repWindow: sug.repWindow } : {}), ...(sug.menuConfidence ? { menuConfidence: sug.menuConfidence } : {}),
     sets: sug.sets.map(x => ({ kg: x.kg, reps: x.reps, durationSec: x.durationSec, note: x.note })),
     warmup: ex.role === 'main' && (sug.sets[0]?.kg ?? 0) > 0 ? warmupSets(sug.sets[0]!.kg!, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
     recovery: ex.primary.map(m => ({ muscle: m, pct: recoveryAt(ctx).find(x => x.muscle === m)?.pct ?? 100 })),
@@ -464,7 +473,8 @@ export function getEquipment(input: { exerciseId?: string; gymId?: string }, ctx
   const ex = exerciseOf(ctx, id)!;
   const pctx = progressionCtxFor(ctx, id, gymId);
   const p = pctx.equipment;
-  const sug = suggestNext(ctx.state.sessions, id, ctx.state.goal, ctx.today, 3, ctx.state.customExercises, pctx);
+  const menu = menuFor(ctx, id, gymId);
+  const sug = suggestNext(ctx.state.sessions, id, ctx.state.goal, ctx.today, 3, ctx.state.customExercises, { ...pctx, menu });
   const values = loadableValues(p);
   let near: number[] = [];
   if (sug.kg != null) {
@@ -473,7 +483,7 @@ export function getEquipment(input: { exerciseId?: string; gymId?: string }, ctx
     near = values.slice(Math.max(0, i - 2), i + 3);
   }
   return capJson({
-    ...base, exercise: ex.name, exerciseId: id, equipmentGroup: equipmentGroup(ex.equipment),
+    ...base, exercise: ex.name, exerciseId: id, equipmentGroup: equipmentGroup(ex.equipment), confidence: menu.confidence,
     profile: { unit: p.unit, step: p.step ?? null, ladder: p.ladder ?? null, addOns: p.addOns ?? null, barKg: p.barKg ?? null, plates: p.plates ?? null, source: p.source },
     currentTarget: sug.kg != null ? { kg: sug.kg, unit: p.unit, value: sug.value ?? null } : null,
     loadableNear: near.map(v => ({ value: v, unit: p.unit })),

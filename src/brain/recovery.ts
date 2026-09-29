@@ -8,11 +8,11 @@
  * load, which slows every muscle a little without ever being the reason a
  * specific muscle looks unrecovered.
  */
-import type { CheckIn, DailyHealth, Exercise, FreshMark, Profile, RecoveryModel, Session } from '@/core/models';
+import type { CheckIn, DailyHealth, Exercise, FreshMark, LoggedSet, Profile, RecoveryModel, Session } from '@/core/models';
 import { MUSCLE_BY_ID, MUSCLE_IDS, type MuscleId } from '@/data/muscles';
 import { findExercise, setDamage } from '@/core/exercises';
 import { ROLE_WEIGHT, effortLabel, isWorkingSet, rolesFor } from './exposure';
-import { exerciseHistory, type ExerciseSessionSummary } from './history';
+import { exerciseHistory, heldIn, loadIsChecked, plausibilityRef, summarizeSets, type ExerciseSessionSummary } from './history';
 import { daysBetween, dayKey } from '@/core/dates';
 import {
   EFFORT_IMPULSE, EFFORT_STRETCH, repFactor, HARD_SET_DIMINISH_AFTER, HARD_SET_DIMINISH_FACTOR,
@@ -110,6 +110,11 @@ export function sessionRpeLoad(session: Session): number {
   return load;
 }
 
+/** ADAPT-2 (B-9): the usual trained week is the median of the last 4 trained weeks among the 8 before this one, from 3 trained weeks. */
+const USUAL_WEEK_LOOKBACK = 8;
+const USUAL_WEEK_SAMPLE = 4;
+const USUAL_WEEK_MIN_TRAINED = 3;
+
 /**
  * 7-day over 28-day session load (ATL/CTL), one definition for recovery and readiness (BR-19).
  * Null until training has spanned most of the window: 3+ sessions in the 28 days, the oldest at
@@ -123,8 +128,23 @@ export function acuteChronicRatio(sessions: Session[], refDay: string): number |
   const covered = Math.min(28, 1 + Math.max(...sessions.map(s => ago(s.day))));
   const ctl = chronic.reduce((a, s) => a + sessionRpeLoad(s), 0) / covered;
   if (!(ctl > 0)) return null;
-  const atl = chronic.filter(s => ago(s.day) < 7).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
-  return atl / ctl;
+  const acuteLoad = chronic.filter(s => ago(s.day) < 7).reduce((a, s) => a + sessionRpeLoad(s), 0);
+  const ratio = (acuteLoad / 7) / ctl;
+  // ADAPT-2 (B-9): empty weeks in the chronic window make an ordinary return week read as a spike.
+  // With 3+ trained weeks among the 8 before this one, the ratio is also read against the user's
+  // usual trained week (median of the last 4 trained weeks) and the smaller of the two counts, so
+  // a real jump above the usual week still shows and nothing reads higher than before.
+  const byWeek = new Array<number>(USUAL_WEEK_LOOKBACK + 1).fill(0);
+  for (const s of sessions) {
+    const w = Math.floor(ago(s.day) / 7);
+    if (w >= 1 && w <= USUAL_WEEK_LOOKBACK) byWeek[w]! += sessionRpeLoad(s);
+  }
+  const weekLoads = byWeek.slice(1).filter(load => load > 0);
+  if (weekLoads.length < USUAL_WEEK_MIN_TRAINED) return ratio;
+  const recent = weekLoads.slice(0, USUAL_WEEK_SAMPLE).sort((a, b) => a - b);
+  const mid = recent.length / 2;
+  const usual = recent.length % 2 ? recent[Math.floor(mid)]! : (recent[mid - 1]! + recent[mid]!) / 2;
+  return Math.min(ratio, acuteLoad / usual);
 }
 
 /** Whole-body slowdown from multi-day sleep debt, resting-HR deviation and acute training load. Never from one bad night. Capped. */
@@ -412,9 +432,8 @@ export function calibrateTauScale(currentScale: number, predictedPct: number, pe
  */
 /**
  * BUG-18 x BUG-17 (A6): the exercise's last session before this one, summarised on its own, the
- * way `replayRecoveryModel` sees it. A summary built against the whole history would hold a typo
- * set the one-session rebuild cannot see, so finish and a rebuild would learn different models.
- * Calibration therefore sees held sets (only the 500 kg line applies), as D-B18 records.
+ * way `replayRecoveryModel` sees it. BUG-24: only a cheap first check (was a set rated max, is it
+ * inside the window); the numbers calibration learns from come from `judgedPair`.
  */
 export function lastSummaryAlone(priorSessions: Session[], exerciseId: string, custom: Exercise[]): ExerciseSessionSummary | undefined {
   const last = exerciseHistory(priorSessions, exerciseId, custom).at(-1);
@@ -423,11 +442,65 @@ export function lastSummaryAlone(priorSessions: Session[], exerciseId: string, c
 }
 
 /**
+ * BUG-24: this session's summary and the exercise's previous one, with held sets judged in
+ * `history`, every session up to and including `sessionId`, as finish sees them. So a typo BUG-18
+ * holds at that moment never moves tauScale, and a rebuild that judges each step against its own
+ * prefix learns what finish learned.
+ */
+export function judgedPair(history: Session[], sessionId: string, exerciseId: string, custom: Exercise[]): { cur?: ExerciseSessionSummary; prev?: ExerciseSessionSummary } {
+  const hist = exerciseHistory(history, exerciseId, custom);
+  return { cur: hist.find(h => h.sessionId === sessionId), prev: hist.filter(h => h.sessionId !== sessionId).at(-1) };
+}
+
+/**
+ * BUG-24: `judgedPair` at each step of a rebuild, without judging the whole prefix again each time
+ * (that is O(n^2) per step). Per exercise, each session's summary is kept as the last step judged
+ * it. A new step can change a summary only by confirming one of its held sets (a later set repeats
+ * the load) or by moving its reference (an earlier session's best load or e1RM changed), so only
+ * those are judged again; the result is what `exerciseHistory` over the prefix gives.
+ */
+export function stepJudge(sorted: Session[], custom: Exercise[]): (i: number, exerciseId: string) => ReturnType<typeof judgedPair> {
+  interface Row { id: string; day: string; sets: LoggedSet[]; sum?: ExerciseSessionSummary; refKg: number; refE1rm: number }
+  const byExercise = new Map<string, { rows: Row[]; next: number; isMain: boolean; checkLoad: boolean }>();
+  return (i, exerciseId) => {
+    let st = byExercise.get(exerciseId);
+    if (!st) byExercise.set(exerciseId, (st = { rows: [], next: 0, isMain: findExercise(exerciseId, custom)?.role === 'main', checkLoad: loadIsChecked(exerciseId, custom) }));
+    for (; st.next <= i; st.next++) {
+      const sess = sorted[st.next]!;
+      // Its working sets as exerciseHistory gathers them; summarising them again gives the same numbers.
+      const alone = exerciseHistory([sess], exerciseId, custom)[0];
+      if (!alone) continue;
+      // exerciseHistory orders by day, a tie keeping the input (start) order.
+      const at = st.rows.findIndex(r => r.day > sess.day);
+      st.rows.splice(at < 0 ? st.rows.length : at, 0, { id: sess.id, day: sess.day, sets: alone.sets, refKg: 0, refE1rm: 0 });
+    }
+    let bestKg = 0, bestE1rm = 0;
+    st.rows.forEach((r, j) => {
+      if (!r.sum || r.sum.held.length || r.refKg !== bestKg || r.refE1rm !== bestE1rm) {
+        // plausibilityRef reads only the best top load and e1RM before this session.
+        const ref = plausibilityRef([{ topKg: bestKg, bestE1rm } as ExerciseSessionSummary], st!.isMain);
+        const later = st!.rows.slice(j + 1).flatMap(x => x.sets);
+        r.sum = summarizeSets(r.id, r.day, r.sets, heldIn(r.sets, later, ref, st!.checkLoad));
+        r.refKg = bestKg;
+        r.refE1rm = bestE1rm;
+      }
+      bestKg = Math.max(bestKg, r.sum.topKg);
+      bestE1rm = Math.max(bestE1rm, r.sum.bestE1rm);
+    });
+    const id = sorted[i]!.id;
+    return { cur: st.rows.find(r => r.id === id)?.sum, prev: st.rows.filter(r => r.id !== id).at(-1)?.sum };
+  };
+}
+
+const ratedMax = (h: ExerciseSessionSummary | undefined): boolean => !!h?.sets.some(s => s.effort === 'max');
+
+/**
  * `prevSummary`, when given, returns the exercise's last summary before this session; `predict`,
  * when given, returns the predicted recovery at the session start from doses already built
- * (replayRecoveryModel), so a full rebuild stays linear. Both must give what the defaults would.
+ * (replayRecoveryModel), so a full rebuild stays linear; `judge`, when given, returns `judgedPair`
+ * for the exercise. All must give what the defaults would.
  */
-export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel, prevSummary?: (exerciseId: string) => ExerciseSessionSummary | undefined, predict?: (atMs: number) => MuscleRecovery[]): RecoveryModel {
+export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel, prevSummary?: (exerciseId: string) => ExerciseSessionSummary | undefined, predict?: (atMs: number) => MuscleRecovery[], judge?: (exerciseId: string) => ReturnType<typeof judgedPair>): RecoveryModel {
   const startedAtMs = new Date(newSession.logging?.trainedAt ?? newSession.startedAt).getTime();
   // Only computed when some exercise has a max-effort comparison to learn from (most sessions have none).
   let predictedMemo: MuscleRecovery[] | null = null;
@@ -436,18 +509,21 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
   const observations = { ...recoveryModel.observations };
   const touched = new Set<MuscleId>();
   const trained = new Set<MuscleId>();
+  let withNew: Session[] | null = null;
 
   for (const ex of newSession.exercises) {
     const meta = findExercise(ex.exerciseId, custom);
     if (!meta) continue;
     if (ex.sets.some(isWorkingSet)) meta.primary.forEach(m => trained.add(m));
-    const curHist = exerciseHistory([newSession], ex.exerciseId, custom);
-    const cur = curHist[curHist.length - 1];
-    if (!cur?.hasMax || cur.bestE1rm <= 0) continue;
-    const prev = prevSummary ? prevSummary(ex.exerciseId) : lastSummaryAlone(priorSessions, ex.exerciseId, custom);
-    if (!prev?.hasMax || prev.bestE1rm <= 0) continue;
+    // A cheap first check on every set, held ones included (BUG-24: held-out sets only rate lower).
+    if (!ratedMax(exerciseHistory([newSession], ex.exerciseId, custom).at(-1))) continue;
+    const prevAlone = prevSummary ? prevSummary(ex.exerciseId) : lastSummaryAlone(priorSessions, ex.exerciseId, custom);
+    if (!prevAlone || !ratedMax(prevAlone)) continue;
     // Past the 7-day window the predicted pct is the 100 % floor whatever happened: nothing to learn.
-    if (daysBetween(prev.day, newSession.day) >= FLOOR_DAYS) continue;
+    if (daysBetween(prevAlone.day, newSession.day) >= FLOOR_DAYS) continue;
+    // BUG-24: the numbers leave out the sets BUG-18 holds at this finish.
+    const { cur, prev } = judge ? judge(ex.exerciseId) : judgedPair((withNew ??= [...priorSessions, newSession]), newSession.id, ex.exerciseId, custom);
+    if (!cur?.hasMax || cur.bestE1rm <= 0 || !prev?.hasMax || prev.bestE1rm <= 0) continue;
     const deltaPct = ((cur.bestE1rm - prev.bestE1rm) / prev.bestE1rm) * 100;
     for (const muscle of meta.primary) {
       if (touched.has(muscle)) continue;
@@ -485,6 +561,7 @@ export function replayRecoveryModel(sorted: Session[], custom: Exercise[], profi
   const indexOf = new Map(sorted.map((sess, i) => [sess.id, i]));
   const lastSummary = new Map<string, ExerciseSessionSummary>();
   const keyOf = (exerciseId: string) => findExercise(exerciseId, custom)?.id ?? exerciseId;
+  const judgeAt = stepJudge(sorted, custom);
   let model = empty;
   sorted.forEach((sess, i) => {
     if (calibrates(sess)) {
@@ -496,8 +573,11 @@ export function replayRecoveryModel(sorted: Session[], custom: Exercise[], profi
         })) as MuscleDoses;
         return recoveryAt(scaled, { sessions: [], custom, now: atMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel: model, pctOnly: true });
       };
-      // Both callbacks are given, so the prior list itself is never read: no O(n) copy per step.
-      model = calibrateAfterSession([], sess, custom, profile, healthDays, model, id => lastSummary.get(keyOf(id)), predict);
+      // BUG-24: held sets judged against this step's prefix, the history finish had. Only asked
+      // when an exercise passes the cheap check (rated max twice inside the window).
+      const judge = (id: string) => judgeAt(i, id);
+      // All callbacks are given, so the prior list itself is never read: no O(n) copy per step.
+      model = calibrateAfterSession([], sess, custom, profile, healthDays, model, id => lastSummary.get(keyOf(id)), predict, judge);
     }
     for (const e of sess.exercises) {
       const h = exerciseHistory([sess], e.exerciseId, custom);

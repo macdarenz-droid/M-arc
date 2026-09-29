@@ -8,7 +8,7 @@ import type { TokenReader } from '../rig/paint';
 import { snapshotSvg } from '../snapshot';
 import type { Pt } from '../rig/ik';
 import type { ExerciseGuide, Settings } from '../model';
-import { curveAt, sampleGuide, tempoOf, windowsFor, type Figure } from '../sample';
+import { sampleGuide, stateAt, stopsFor, tempoOf, type Figure } from '../sample';
 import { anchorAt, setupMarkup } from '../check/machines';
 import type { Rig } from '../check/view';
 import type { ChannelId } from '../rig/joints';
@@ -78,18 +78,27 @@ export function layerGroups(m: MachineArt, stops: (rep: number) => number[], at:
   }));
 }
 
-/** A machine file's drive: each part's travel from the file's `machine.drive` curves, the rule the checks read
- * (check/index.ts eachSample). The mistake plays its one rep every time, as its figure does. */
-export function guideDrive(g: ExerciseGuide, figure: Figure): DriveAt {
-  const drives = g.machine?.drive ?? [];
-  return (rep, _i, u) => {
-    const r = figure === 'mistake' ? 0 : rep, ws = windowsFor(tempoOf(g, figure, r), g.order, g.kind);
-    return { travel: Object.fromEntries(drives.map(d => [d.part, curveAt(d.travel, ws, u)])) };
+/** A machine file's drive: each part's travel at each stop, as the sampler gives it (V1-04): a followed part's is its
+ * body point, solved onto the part's path, projected there; a keyed part's is its curve; the mistake's `travel`
+ * replaces either. The mistake plays its one rep every time, as its figure does. */
+export function guideDrive(g: ExerciseGuide, rig: Rig, figure: Figure): DriveAt {
+  const drives = g.machine?.drive ?? [], cache = new Map<number, ReturnType<typeof sampleGuide>>();
+  return (rep, i, u) => {
+    const r = figure === 'mistake' ? 0 : rep;
+    let s = cache.get(r);
+    if (!s) cache.set(r, (s = sampleGuide(g, figure, r, rig)));
+    const travel: Record<string, number> = {};
+    for (const t of s.travel ?? []) travel[t.part] = t.stops[i]![1];
+    if (drives.some(d => travel[d.part] === undefined)) {
+      const keyed = stateAt(g, u, figure, r, rig).travel;
+      drives.forEach((d, k) => { travel[d.part] ??= keyed[k]!; });
+    }
+    return { travel };
   };
 }
 
 /** The figure's stops per rep, as chainedGroups plays them. */
-export const guideStops = (g: ExerciseGuide, figure: Figure) => (rep: number) => sampleGuide(g, figure, figure === 'mistake' ? 0 : rep).stops;
+export const guideStops = (g: ExerciseGuide, figure: Figure) => (rep: number) => stopsFor(tempoOf(g, figure, figure === 'mistake' ? 0 : rep), g.order, g.kind);
 
 /** The stand-in's drive (V1-09, DC0): the stack follows the right arm's raise, the cable end the right hand. */
 export function standInDrive(g: ExerciseGuide, rig: Rig, figure: Figure): DriveAt {
@@ -97,7 +106,7 @@ export function standInDrive(g: ExerciseGuide, rig: Rig, figure: Figure): DriveA
   return (rep, i) => {
     const r = figure === 'mistake' ? 0 : rep;
     let s = cache.get(r);
-    if (!s) cache.set(r, (s = sampleGuide(g, figure, r)));
+    if (!s) cache.set(r, (s = sampleGuide(g, figure, r, rig)));
     const pose = {} as Record<ChannelId, number>;
     for (const ch of s.channels) pose[ch.id] = ch.stops[i]![1];
     const hand = rig.point(rig.frame(pose), 'hand_r');

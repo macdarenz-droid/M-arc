@@ -2,17 +2,22 @@
  * What to do next session for one exercise. Every answer has a plain-words
  * reason. The rules, in order:
  *  1. Nothing logged yet            → start light.
- *  2. More than 28 days away        → return at the last load, no increase.
- *  3. Effort missing on most sets   → repeat and log effort before changing.
- *  4. Two sessions in a row under the range at max effort → take one step down.
+ *  2. 14+ days away                 → return at the last load, no increase;
+ *     beyond 8 weeks, 10% lighter (ADAPT-3, A-4).
+ *  3. Two sessions in a row under the range at max effort, or with the last set
+ *     unrated (ADAPT-3, A-9) → take one step down.
+ *  4. Effort missing on most sets and the reps don't tell (ADAPT-3, A-1)
+ *                                    → repeat and log effort before changing.
  *  5. Top of the range, no max effort, twice in a row → add one step.
  *  6. Top of the range once          → confirm it once more.
  *  7. Trend clearly down             → keep the load, easier week, then rebuild.
  *  8. Otherwise                      → add a rep.
  */
 import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
-import { loadableNear, loadableTopKg, type Loadable } from './units';
-import { kgToDisplay } from '@/core/units';
+import { loadableNear, loadableTopKg, loadableValues, type Loadable, type LoadMenu } from './units';
+import { chooseRung, type RungChoice, type RungInput, type RungMenu } from './retarget';
+import { RIR_BY_EFFORT } from './e1rm';
+import { KG_PER_LB, kgToDisplay } from '@/core/units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { CARRY_OR_SLED_IDS, findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
@@ -21,7 +26,7 @@ import { inLighterWeek, lighterWeekDay } from './deload';
 
 export { inLighterWeek };
 
-export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'distance' | 'plateau' | 'deload';
+export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'distance' | 'plateau' | 'deload' | 'earn';
 
 export interface Suggestion {
   mode: Mode;
@@ -42,12 +47,22 @@ export interface Suggestion {
   cutSets?: true;
   /** BUG-15 (COACHRULES-F7): a lighter week, an amber or red day or a cut factor; live advice never adds load. */
   holdLoad?: true;
+  /** LT-2: the reps re-solved for the chosen rung; for mode `earn` it may sit above the goal's range. */
+  repWindow?: [number, number];
+  /** LT-2: how sure the coach is of the gym's load menu (LT-1's loadMenu), when the caller passed one. */
+  menuConfidence?: LoadMenu['confidence'];
+  /** ADAPT-3 (A-4): a return after a long break cut the load, so the equipment snap goes down, never back up. */
+  returnCut?: true;
 }
 
 const BACK_REASON = 'The lighter week is over. This is your level from before it.';
 
-/** More than this many days away: repeat the last load once. */
-export const REENTRY_DAYS = 28;
+/** More than this many days away (14 or more): repeat the last load once, no increase (ADAPT-3, A-4). */
+export const REENTRY_DAYS = 13;
+/** ADAPT-3 (A-4): more than this many days away (8 weeks) returns lighter. */
+export const RETURN_CUT_DAYS = 56;
+/** ADAPT-3 (A-4): the return cut beyond 8 weeks, a design value inside the 70-100% bound (COACHING-DECISIONS.md). */
+export const RETURN_CUT = 0.1;
 /** Primary-muscle recovery under this % holds the load. */
 export const RECOVERY_HOLD_PCT = 60;
 /** A load step never adds more than this share of the current load (from 10 kg up). */
@@ -69,6 +84,29 @@ export function repRange(exercise: Exercise | undefined, goal: GoalId): [number,
 /** True when the max-effort e1RM dropped 5% or more from the prior session at max effort too. */
 function e1rmDownAtMax(cur: ExerciseSessionSummary, prior: ExerciseSessionSummary): boolean {
   return cur.hasMax && prior.hasMax && prior.bestE1rm > 0 && cur.bestE1rm > 0 && cur.bestE1rm <= prior.bestE1rm * 0.95;
+}
+
+/** ADAPT-3: the straight working sets in logged order, held ones left out. */
+function straightSets(r: ExerciseSessionSummary): LoggedSet[] {
+  return r.sets.filter(x => !r.held.includes(x) && (x.kg ?? 0) === r.workKg && (x.reps ?? 0) > 0);
+}
+
+/** ADAPT-3 (A-1): at most one rep lost from the first straight set to the last. */
+function flatReps(r: ExerciseSessionSummary): boolean {
+  const w = straightSets(r);
+  return w.length > 0 && (w[0]!.reps ?? 0) - (w[w.length - 1]!.reps ?? 0) <= 1;
+}
+
+/**
+ * ADAPT-3 (A-1, E-8): every straight set at or above the range top with flat reps and no max
+ * effort, on the last two sessions at one load. The reps alone then earn one step, so missing
+ * effort ratings need not hold the load, and the coach's "rate your sets" note leaves the lift out.
+ */
+export function repsEarnIncrease(hist: ExerciseSessionSummary[], range: [number, number]): boolean {
+  const last = hist[hist.length - 1];
+  const prev = hist[hist.length - 2];
+  const top = (r: ExerciseSessionSummary) => r.workMinReps >= range[1] && !r.hasMax && flatReps(r);
+  return !!last && !!prev && last.workKg > 0 && prev.workKg === last.workKg && top(last) && top(prev);
 }
 
 function fmtRange(r: [number, number]): string {
@@ -99,6 +137,60 @@ export interface ProgressionContext {
   equipment?: EquipmentProfile;
   /** Today's load change from an applied Escobar adjustment (§10.4), applied like a deload's loadFactor. */
   loadFactor?: number;
+  /** LT-2: the gym's load menu (LT-1's loadMenu). Without it, increases and step-downs choose from `equipment`'s loads. */
+  menu?: LoadMenu;
+}
+
+/**
+ * LT-2: what suggestRaw knew when it chose an increase or a step-down, for the rung choice once the menu is known.
+ * Kept beside the suggestion, not on it, so no caller ever sees it.
+ */
+type RungSeed = Pick<RungInput, 'topKg' | 'R' | 'rirObs' | 'rawKg' | 'role' | 'direction' | 'priorPlannedKg'>;
+const SEEDS = new WeakMap<Suggestion, RungSeed>();
+
+/** LT-2 (§3): the anchor is the median working set at the working load, not the single best one; unrated = RIR 2. */
+function anchorOf(last: ExerciseSessionSummary): { R: number; rirObs: number } {
+  const at = last.sets.filter(x => x.kg === last.workKg && !last.held.includes(x));
+  const pool = (at.some(x => x.kind !== 'drop') ? at.filter(x => x.kind !== 'drop') : at).slice().sort((a, b) => (a.reps ?? 0) - (b.reps ?? 0));
+  const mid = pool[Math.floor((pool.length - 1) / 2)];
+  return { R: mid?.reps ?? last.workReps, rirObs: RIR_BY_EFFORT[mid?.effort ?? 'ideal'] };
+}
+
+/** The menu from a bare equipment profile: its own loads, nothing learned. */
+function menuFromProfile(profile: EquipmentProfile): RungMenu {
+  const f = profile.unit === 'lb' ? KG_PER_LB : 1;
+  return { profile, unit: profile.unit, rungsKg: loadableValues(profile).map(v => Math.round(v * f * 1000) / 1000) };
+}
+
+const fmtWindow = (w: [number, number]): string => (w[0] === w[1] ? `${w[0]} reps` : fmtRange(w));
+
+/**
+ * LT-2: restates an increase or a step-down on the rung chooseRung picks, with the reps re-solved for it.
+ * A rung keeps the mode; an earn keeps the load with mode `earn`; a lever keeps the load and plans one more set.
+ */
+function applyRung(s: Suggestion, seed: RungSeed, menu: RungMenu, goal: GoalId, confidence: LoadMenu['confidence'] | undefined, logged: LoggedLoad[]): Suggestion {
+  const c: RungChoice = chooseRung({ ...seed, menu, goal });
+  const unit = menu.unit;
+  const valueOf = (kg: number) => loggedAt(kg, logged)?.value ?? kgToDisplay(kg, unit);
+  const count = s.sets.length;
+  const conf = confidence ? { menuConfidence: confidence } : {};
+  const base = { ...s, unit, repWindow: c.repWindow, ...conf };
+  if (c.kind === 'earn' || c.kind === 'lever') {
+    const kg = seed.topKg;
+    const n = c.repWindow[0];
+    const earn = c.kind === 'earn';
+    return {
+      ...base, mode: earn ? 'earn' : 'hold', kg, value: valueOf(kg), reps: [n, n], target: `${valueOf(kg)} ${unit} · ${n} reps`, reason: c.text,
+      sets: setPlan(count + (c.extraSet ? 1 : 0), kg, n, null, earn ? 'Earn the next weight' : 'Add a set'),
+    };
+  }
+  const moved = Math.abs(c.kg - (s.kg ?? c.kg)) > 0.011;
+  return {
+    ...base, kg: c.kg, value: valueOf(c.kg), reps: c.repWindow, target: `${valueOf(c.kg)} ${unit} · ${fmtWindow(c.repWindow)}`,
+    reason: c.text ? `${s.reason} ${c.text}` : s.reason,
+    sets: setPlan(count, c.kg, c.setReps ?? c.repWindow[0], null, s.sets[0]?.note ?? ''),
+    ...(moved && s.kg != null ? { snappedFromKg: s.kg } : {}),
+  };
 }
 
 const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', reduce: 'down', deload: 'down' };
@@ -110,13 +202,14 @@ interface LoggedLoad { kg: number; value: number; unit: LoadUnit }
  * BUG-11: the loads the user really lifted on this exercise, in the profile's unit. A 7 kg
  * dumbbell the user logged exists in their gym even when the built-in ladder (2, 4, 6, 8, 10,
  * 12.5 …) has no 7, so a hold at 7 must not be snapped to 6. Only loads entered in the
- * profile's own unit count: a kg entry says nothing about an lb rack.
+ * profile's own unit count: a kg entry says nothing about an lb rack. BUG-24: a set BUG-18 holds
+ * as implausible was not really lifted (yet), so its load is not one the gym has.
  */
 function loggedLoads(sessions: Session[], exerciseId: string, custom: Exercise[], unit: LoadUnit): LoggedLoad[] {
   const out: LoggedLoad[] = [];
   for (const h of exerciseHistory(sessions, exerciseId, custom)) {
     for (const x of h.sets) {
-      if (!(x.kg != null && x.kg > 0)) continue;
+      if (!(x.kg != null && x.kg > 0) || h.held.includes(x)) continue;
       const u = x.entered?.unit ?? 'kg';
       if (u !== unit) continue;
       out.push({ kg: x.kg, value: x.entered?.value ?? kgToDisplay(x.kg, unit), unit });
@@ -206,13 +299,18 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
   if (ctx?.equipment && (mode === 'weighted' || (mode === 'conditioning' && s.kg != null))) {
     // QA3-11b: force the snap down only for a genuine reduction (a lighter week, or an Escobar
     // cut factor below 1) - never up, and never at all in a normal week.
-    const force = ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor < 1) ? 'down' : undefined;
+    const force = ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor < 1) || s.returnCut ? 'down' : undefined;
     // QA3-3c: a lighter week or any Escobar load factor scales the kg with half(), losing the
     // precision an above-the-rack lb restatement needs to land on a clean number.
     const scaled = !!ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor !== 1);
     // BUG-11: a lift or a loaded carry keeps the loads already logged for it.
-    const logged = loggedLoads(sessions, exerciseId, custom, ctx.equipment.unit);
-    s = snapToEquipment(s, ctx.equipment, mode === 'conditioning', force, scaled, logged);
+    const logged = loggedLoads(sessions, exerciseId, custom, ctx.menu?.unit ?? ctx.equipment.unit);
+    // LT-2: an increase or a step-down on a lift picks its rung from the menu, unless today's load is scaled.
+    const seed = SEEDS.get(s);
+    const menu = ctx.menu ?? menuFromProfile(ctx.equipment);
+    s = seed && mode === 'weighted' && !force && !scaled && menu.rungsKg.length
+      ? applyRung(s, seed, menu, goal, ctx.menu?.confidence, logged)
+      : snapToEquipment(s, ctx.equipment, mode === 'conditioning', force, scaled, logged);
   }
   return s;
 }
@@ -286,7 +384,11 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   }
 
   if (gap > REENTRY_DAYS) {
-    return { mode: 'reentry', target: mode === 'weighted' || carryLoad ? `${last.workKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.workKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.workKg || null, range[0], null, 'Return session') };
+    // ADAPT-3 (A-4): beyond 8 weeks the return load is cut, bounded to 70-100% of the last working load.
+    const cut = gap > RETURN_CUT_DAYS && last.workKg > 0 && (mode === 'weighted' || carryLoad);
+    const kg = cut ? Math.max(half(last.workKg * 0.7), half(last.workKg * (1 - RETURN_CUT))) : last.workKg || null;
+    const reason = cut ? `It has been ${gap} days. Start ${Math.round(RETURN_CUT * 100)}% lighter and build back up.` : `It has been ${gap} days. Repeat your last load once before adding anything.`;
+    return { mode: 'reentry', target: mode === 'weighted' || carryLoad ? `${kg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg, reps: range, reason, confidence: 'low', sets: setPlan(setCount, kg, range[0], null, 'Return session'), ...(cut ? { returnCut: true as const } : {}) };
   }
 
   if (ctx?.deload) {
@@ -334,24 +436,38 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     return { mode: 'hold', target: `${topKg} kg · ${reps} reps`, kg: topKg, reps: [reps, reps], reason: `${BACK_REASON} Match it before adding more.`, confidence: conf, sets: holdSets('Back to your level', reps) };
   }
 
-  if (coverage < 0.5 && hist.length >= 2) {
-    return { mode: 'confirm_effort', target: holdTarget, kg: topKg, reps: range, reason: 'Most recent sets have no effort rating. Keep the load and rate each set so the coach can judge the next step.', confidence: 'low', sets: holdSets('Log effort') };
-  }
-
   const prev = hist[hist.length - 2];
   const prev2 = hist[hist.length - 3];
   // A range starting at 1-2 reps can never see "reps under the range" at max effort, so a
   // falling e1RM over two consecutive max-effort sessions is the step-down signal instead.
-  const belowAtMax = (r: ExerciseSessionSummary) => r.hasMax && r.workReps < range[0];
+  // ADAPT-3 (A-9): under the range with the last set unrated counts too; an "easy" set never does.
+  const lastSet = (r: ExerciseSessionSummary) => straightSets(r).at(-1);
+  const belowRange = (r: ExerciseSessionSummary) => r.workReps < range[0]
+    && (r.hasMax || (!lastSet(r)?.effort && !straightSets(r).some(x => x.effort === 'easy')));
   const stepDown = range[0] <= 2
     ? !!prev && !!prev2 && e1rmDownAtMax(last, prev) && e1rmDownAtMax(prev, prev2)
-    : !!prev && belowAtMax(last) && belowAtMax(prev);
+    : !!prev && belowRange(last) && belowRange(prev);
+  // ADAPT-3 (A-9): runs before the effort gate, so a user who rates few sets still gets a lighter target.
   if (stepDown) {
     const down = Math.max(0, half(topKg - loadStep(topKg)));
     const reason = range[0] <= 2
       ? 'Your estimated one-rep max has dropped at max effort for two sessions running. Take one step down and rebuild.'
-      : 'Two sessions in a row under the rep range at max effort. Take one step down and rebuild reps.';
-    return { mode: 'reduce', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(setCount, down, range[0], null, 'Ease one step') };
+      : last.hasMax && prev?.hasMax
+        ? 'Two sessions in a row under the rep range at max effort. Take one step down and rebuild reps.'
+        : 'Two sessions in a row under the rep range. Take one step down and rebuild reps.';
+    const out: Suggestion = { mode: 'reduce', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(setCount, down, range[0], null, 'Ease one step') };
+    // LT-2 (§3 step 7): with a menu, the step is sized from performance and never under the load before the failed increase.
+    let i = hist.length - 1;
+    while (i >= 0 && hist[i]!.workKg === topKg) i--;
+    const before = i >= 0 ? hist[i]!.workKg : 0;
+    SEEDS.set(out, { topKg, ...anchorOf(last), rawKg: down, role: meta?.role ?? 'accessory', direction: 'down', ...(before > 0 && before < topKg ? { priorPlannedKg: before } : {}) });
+    return out;
+  }
+
+  // ADAPT-3 (A-1): few ratings hold the load unless the reps alone earn the step.
+  const lowCoverage = coverage < 0.5 && hist.length >= 2;
+  if (lowCoverage && !repsEarnIncrease(hist, range)) {
+    return { mode: 'confirm_effort', target: holdTarget, kg: topKg, reps: range, reason: 'Most recent sets have no effort rating. Keep the load and rate each set so the coach can judge the next step.', confidence: 'low', sets: holdSets('Log effort') };
   }
 
   // BUG-14: the one plateau rule (BR-04), over the eight weeks up to today.
@@ -360,7 +476,8 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     return { mode: 'plateau', target: `${topKg} kg · ${range[0]}–${range[0] + 2} reps`, kg: topKg, reps: [range[0], range[0] + 2], reason: 'Progress has slipped over recent sessions. Keep this load, stop short of max effort for a week, then build back up.', confidence: plateau.confidence, sets: holdSets('Lighter week', range[0]) };
   }
   // BUG-18 (PROGRESSION-F23): every working set at the top of the range, not just the best one.
-  const cleanTop = (r: ExerciseSessionSummary) => r.workMinReps >= range[1] && !r.hasMax && r.effortCoverage > 0;
+  // ADAPT-3 (A-1): an unrated session counts when its reps held flat.
+  const cleanTop = (r: ExerciseSessionSummary) => r.workMinReps >= range[1] && !r.hasMax && (r.effortCoverage > 0 || flatReps(r));
   if (cleanTop(last)) {
     const twoForTwo = !!prev && cleanTop(prev) && prev.workKg === topKg;
     const fastTrack = last.allEasy && hist.length >= 4;
@@ -369,7 +486,9 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
       const step = loadStep(topKg);
       const capped = topKg >= 10 ? Math.min(step, topKg * MAX_INCREASE_SHARE) : step;
       const up = half(topKg + Math.max(0.5, capped));
-      return { mode: 'increase', target: `${up} kg · ${fmtRange(range)}`, kg: up, reps: range, reason: twoForTwo ? 'Top of the range two sessions running without max effort. Add one step.' : 'All sets felt easy at the top of the range. Add one step.', confidence: conf, sets: setPlan(setCount, up, range[0], null, 'Small load increase') };
+      const out: Suggestion = { mode: 'increase', target: `${up} kg · ${fmtRange(range)}`, kg: up, reps: range, reason: twoForTwo ? 'Top of the range two sessions running without max effort. Add one step.' : 'All sets felt easy at the top of the range. Add one step.', confidence: conf, sets: setPlan(setCount, up, range[0], null, 'Small load increase') };
+      SEEDS.set(out, { topKg, ...anchorOf(last), rawKg: up, role: meta?.role ?? 'accessory' });
+      return out;
     }
     if ((twoForTwo || fastTrack) && plateau.status !== 'declining' && readinessBlocksIncrease) {
       return { mode: 'confirm', target: holdTarget, kg: topKg, reps: [range[1], range[1]], reason: ctx?.readiness?.reason ?? (ctx?.recoveryPct != null && ctx.recoveryPct < RECOVERY_HOLD_PCT

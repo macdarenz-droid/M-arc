@@ -96,7 +96,7 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
     const L = layerFor(g, layerOn.current);
     el.innerHTML = L ? layerMarkup(L.art, { kg: load?.kg ?? 0, settings: g.machine?.settings }) : '';
     if (!L || sRef.current.rm) return;
-    const drive = L.standIn ? standInDrive(g, rig, 'correct') : guideDrive(g, 'correct');
+    const drive = L.standIn ? standInDrive(g, rig, 'correct') : guideDrive(g, rig, 'correct');
     const h = mountAnimations(layerGroups(L.art, guideStops(g, 'correct'), drive, REPS), el as unknown as AnimRoot, repS, chainedTiming(repS, REPS));
     animL.current = h;
     const c = anim.current;

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as R from '@/escobar/tools/read';
 import { FIXTURES, ctxOf, sixMonthsState, twoWeeksState, emptyState, NOW, TODAY } from './fixtures';
 import { addDays as addDaysLocal } from '@/core/dates';
+import { session, sets } from '../helpers';
 
 const bytes = (v: unknown) => JSON.stringify(v).length;
 const CASES: Array<[string, (ctx: ReturnType<typeof ctxOf>) => unknown, number]> = [
@@ -154,6 +155,27 @@ describe('read tool details', () => {
     expect(e.loadableNear.length).toBeGreaterThan(0);
     expect(() => R.getEquipment({ gymId: 'nope' }, six)).toThrow(/unknown gymId/);
   });
+  // LT-4: get_equipment's confidence and get_next_target's repWindow/menuConfidence (LT-1's loadMenu, LT-2's chooseRung).
+  it('LT-4 equipment names how sure the coach is of the gym\'s load menu', () => {
+    const e = R.getEquipment({ exerciseId: 'lib_dumbbell_shoulder_press' }, six) as unknown as { confidence: string };
+    expect(['known', 'learned', 'assumed']).toContain(e.confidence);
+    // No profile and no history anywhere: the built-in default, unconfirmed.
+    expect((R.getEquipment({ exerciseId: 'lib_dumbbell_shoulder_press' }, ctxOf(emptyState())) as unknown as { confidence: string }).confidence).toBe('assumed');
+  });
+  it('LT-4 a start suggestion (no history) never re-solves a rung: no repWindow, no menuConfidence', () => {
+    const t = R.getNextTarget({ exerciseId: 'lib_dumbbell_shoulder_press' }, ctxOf(emptyState())) as unknown as { repWindow?: [number, number]; menuConfidence?: string };
+    expect(t.repWindow).toBeUndefined();
+    expect(t.menuConfidence).toBeUndefined();
+  });
+  it('LT-4 an increase on an assumed menu carries the re-solved repWindow and menuConfidence', () => {
+    const ex = 'lib_dumbbell_lateral_raise';
+    const a = session('2026-09-12', [{ id: ex, sets: sets(4, 15) }]);
+    const b = session('2026-09-15', [{ id: ex, sets: sets(4, 15) }]);
+    const t = R.getNextTarget({ exerciseId: ex }, ctxOf({ ...emptyState(), sessions: [a, b] })) as unknown as { mode: string; repWindow?: [number, number]; menuConfidence?: string };
+    expect(t.menuConfidence).toBe('assumed');
+    expect(t.repWindow).toBeDefined();
+    expect(t.repWindow![1]).toBeGreaterThanOrEqual(t.repWindow![0]);
+  });
   it('find_in_app returns palace entries', () => {
     expect(R.findInAppTool({ query: 'export a backup' }).results[0]!.id).toBe('settings.data');
     expect(() => R.findInAppTool({ query: '' })).toThrow();
@@ -246,7 +268,9 @@ describe('assisted lifts in Escobar (QA-R3a-2)', () => {
 
 describe('warm-ups in the live view (QA-R6-3, QA-R6-11)', () => {
   it('autoregulation reads the first working set, and warm-ups are not planned sets', () => {
-    const s = sixMonthsState();
+    // ADAPT-2: the fixture's usual check-in now reads green, so today's is set below the user's usual to keep it amber.
+    const s0 = sixMonthsState();
+    const s = { ...s0, checkIns: s0.checkIns.map((c, i) => (i === 0 ? { ...c, sleepQuality: 2 as const, mood: 3 as const } : c)) };
     const bench = 'lib_barbell_bench_press';
     const warm = [{ id: 'w1', kg: 40, reps: 8, kind: 'warmup' as const, effort: 'easy' as const, at: new Date(NOW - 300_000).toISOString(), fidelity: 'live' as const }, { id: 'w2', kg: 55, reps: 5, kind: 'warmup' as const }];
     const live = (first: Record<string, unknown>) => ({ ...s, active: { id: 'a', splitId: s.splits[0]!.id, startedAt: new Date(NOW - 600_000).toISOString(), pausedMs: 0, gymId: s.units.activeGymId, entries: [{ id: 'e', exerciseId: bench, name: 'Bench', done: false, skipped: false, sets: [...warm, { id: 's1', ...first }, { id: 's2' }, { id: 's3' }] }] } });

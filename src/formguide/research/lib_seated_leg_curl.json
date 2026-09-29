@@ -1,0 +1,30 @@
+{
+  "id": "lib_seated_leg_curl",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.5, "lower": 2.5, "rest": 0.5 },
+  "ranges": {
+    "knee_flex": { "min": 0, "max": 100, "source": "Fitness Volt Seated Leg Curl: \"Do not lock out your knees during the exercise\" (0 degrees, not locked); no source gives an exact top angle, so the curled end is illustrative at 100 degrees, inside the AAOS knee row" },
+    "hip_flex": { "min": 85, "max": 95, "source": "Fitness Volt Seated Leg Curl: \"Keep your hips and thighs firmly against the seat throughout the motion. Lifting them can strain your lower back,\" a narrow band around the seated 90-degree hip angle" }
+  },
+  "muscles": {
+    "target": ["hamstrings"],
+    "helps": ["calves"],
+    "keepQuiet": ["lower_back"],
+    "peakAt": 0.28,
+    "peakSource": "Gravitus Seated Leg Curl recommends a 2:1 lower:lift tempo ratio and controlled, deliberate movement throughout; the curled bottom, where the exercise asks for the most control, is where hamstring effort is highest"
+  },
+  "mistake": {
+    "name": "Hips up, momentum down",
+    "tells": [
+      { "text": "The hips lift off the seat to help curl the weight.", "joint": "hip_flex" },
+      { "text": "Jerky, uncontrolled momentum replaces a steady curl.", "joint": "knee_flex" }
+    ],
+    "source": "Gravitus Seated Leg Curl: \"Rising off the seat reduces hamstring isolation and turns the exercise into a less effective compound movement\"; \"Using jerky movements or momentum from the upper body reduces hamstring engagement\""
+  },
+  "sources": [
+    "https://fitnessvolt.com/seated-leg-curl/",
+    "https://gravitus.com/guides/exercises/seated-leg-curl/",
+    "Contact fact (ankle strap / leg pad): the pad sits above the ankles, below the calf, on the machine's lever arm — a generic description of the part, not a numeric `machine.settings` value this research can cite"
+  ]
+}

@@ -21,10 +21,11 @@ export const MACHINE_CARDS = {
 } as const;
 export type MachineSlot = keyof typeof MACHINE_CARDS;
 
-export const MACHINES: Record<MachineSlot, MachineArt | null> = {
+/** Read by any id (an id with no slot reads undefined); the `satisfies` keeps exactly one entry per slot. */
+export const MACHINES: Readonly<Record<string, MachineArt | null>> = {
   leg_press_45, dual_pulley, row_station, leg_extension, leg_curl_seated, calf_seated, pulldown_station, chest_press,
   shoulder_press, pec_deck,
-};
+} satisfies Record<MachineSlot, MachineArt | null>;
 
 const isSlot = (id: string): id is MachineSlot => Object.prototype.hasOwnProperty.call(MACHINE_CARDS, id);
 
