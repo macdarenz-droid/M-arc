@@ -5,7 +5,9 @@
 // and moment (A2): both paths run through the same guideView functions, never a second implementation of them.
 // frameFn + sampleGuide reuse momentFrame's own "nearest sampled stop" rule for a rep other than 0 (momentFrame
 // itself only ever reads rep 0, the correct figure's first rep or the mistake's only rep), which the filmstrip
-// needs to show reps 1 and 2 (the slowed-down reps, `movement.slowdown`). Pure: no DOM.
+// needs to show reps 1 and 2 (the slowed-down reps, `movement.slowdown`). `rig` is always passed to sampleGuide
+// (V1-04, D-FG7 (b)): a file with contacts, a balance or a followed part is solved on it and throws without one;
+// any other file ignores it, so passing it is always safe. Pure: no DOM.
 import type { ExerciseGuide } from '../model';
 import type { Rig } from '../check/view';
 import type { TokenReader } from '../rig/paint';
@@ -37,7 +39,7 @@ export type SceneOptions = {
  * applied through frameFn (both guideView's), so every rep reads the same drawn numbers as the player. */
 function frameAt(g: ExerciseGuide, rig: Rig, figure: Figure, rep: number, u: number, markup: string): Frame {
   if (rep === 0) return guideView.momentFrame(g, rig, figure, u, markup);
-  const s = sampleGuide(g, figure, rep);
+  const s = sampleGuide(g, figure, rep, rig);
   const i = s.stops.reduce((b, v, k) => (Math.abs(v - u) < Math.abs(s.stops[b]! - u) ? k : b), 0);
   const pose: Pose = {};
   for (const ch of s.channels) pose[ch.id] = ch.stops[i]![1];

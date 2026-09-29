@@ -52,11 +52,15 @@ export const FILM_FRAMES = 12;
  * as check/index.ts's private `repsOf`. */
 const repsOf = (g: ExerciseGuide): number[] => Array.from({ length: Math.max(1, g.movement.slowdown?.length ?? 1) }, (_, i) => i);
 const grid = (n: number): number[] => Array.from({ length: n }, (_, i) => i / (n - 1));
-/** The grip or foot points a file names, else every hand and foot (check/index.ts's private `grip`). */
-const gripOf = (g: ExerciseGuide): AttachmentId[] => {
+/** The grip or foot points a file names, else every hand and foot (check/index.ts's private `grip`) — exactly what
+ * `--debug`'s grip markers mark, so a test can check the marker's own point (`rig.point(frame, a)`) without
+ * duplicating the overlay's drawing code. */
+export const gripOf = (g: ExerciseGuide): AttachmentId[] => {
   const pts = g.equipment.attach.filter(a => /^(hand|foot)_/.test(a));
   return pts.length ? pts : ['hand_l', 'hand_r', 'foot_l', 'foot_r'];
 };
+/** Figure units per rendered px at `width` (A6, D-FG7 (i)): every px measurement uses this one conversion. */
+export const pxScale = (box: Box, width: number): number => width / box[2];
 
 /** One or more posed, fully resolved figures placed side by side (part i shifted by its own `dx`), in one document. */
 function stripSvg(parts: { markup: string; frame: Frame; dx: number }[], read: TokenReader, box: Box): string {
@@ -144,7 +148,7 @@ export function tremorPx(g: ExerciseGuide, rig: Rig, box: Box, width: number): n
   const hold = windowsFor(g.tempo, g.order, g.kind).find(w => w.name === 'hold');
   if (!hold || hold.u1 <= hold.u0) return 0;
   const attach = gripOf(g).find(a => a.startsWith('hand_')) ?? gripOf(g)[0]!;
-  const pts = grid(40).map(t => hold.u0 + t * (hold.u1 - hold.u0)).map(u => rig.point(rig.frame(poseAt(g, u, 'correct', 0)), attach));
-  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), scale = width / box[2];
-  return Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) * scale;
+  const pts = grid(40).map(t => hold.u0 + t * (hold.u1 - hold.u0)).map(u => rig.point(rig.frame(poseAt(g, u, 'correct', 0, rig)), attach));
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  return Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) * pxScale(box, width);
 }

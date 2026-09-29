@@ -1,7 +1,7 @@
 // V1-05: `npm run fg:render` and player/scene.ts's sceneOf (docs/FORM-GUIDE-PRODUCTION.md §10.5 V1-05).
 // The pure job-building (check/render.ts, player/scene.ts) is asserted on every `npm test`. A1's Chromium-level PNG
 // proof needs a real browser, so it runs only when MARC_CHROMIUM names one (as `npm run gate` already requires) —
-// skipped, never loosened, without it. A6 (the debug marker on the solved hand) is pending V1-04's solver.
+// skipped, never loosened, without it. A6 uses V1-04's solver on its own test fixture (a real machine + contacts).
 import { describe, expect, it, vi } from 'vitest';
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -9,11 +9,15 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { THEME_IDS } from '@/theme/themes';
 import { lib_dumbbell_lateral_raise } from '@/formguide/exercises/lib_dumbbell_lateral_raise';
-import { rigFor, viewOf } from '@/formguide/check/view';
-import { patternOf, svgsFor, SHEET_GUIDE, SHEET_VIEWS } from '@/formguide/check/render';
+import { rigFor, viewOf, type Rig } from '@/formguide/check/view';
+import { inputFor } from '@/formguide/check/node';
+import type { MachinePart } from '@/formguide/check/machines';
+import { pathOff } from '@/formguide/solve';
+import { patternOf, svgsFor, gripOf, pxScale, SHEET_GUIDE, SHEET_VIEWS } from '@/formguide/check/render';
 import * as guideView from '@/formguide/player/guideView';
 import { sceneOf } from '@/formguide/player/scene';
 import { themeReader } from '@/formguide/rig/paint';
+import { lib_smith_machine_shoulder_press as FX } from './fixtures/solve/lib_smith_machine_shoulder_press';
 
 const g = lib_dumbbell_lateral_raise;
 const rig0 = rigFor(g, viewOf(g, patternOf(g.id)));
@@ -109,8 +113,44 @@ describe('A3 an id with no rig exits 1 with the rig’s reason', () => {
   }, 30_000);
 });
 
-describe('A6 the debug marker on the solved hand (pending V1-04)', () => {
-  it.skip('within 1 px of the solved hand target — needs V1-04’s machine-driven arm solver', () => {});
+describe('A6 the debug marker sits on the solved hand within 1 px', () => {
+  const FX_PATH = 'tests/formguide/fixtures/solve/lib_smith_machine_shoulder_press.ts';
+  const FX_MACHINE = inputFor(FX_PATH, FX).machines!.fx_press!;
+  const fxRig: Rig = { ...(rigFor(FX, 'front') as Rig), machine: FX_MACHINE };
+  const WIDTH = 360;
+  const SCALE = pxScale(guideView.cameraOf(FX, false, false).box, WIDTH);
+  /** Every `r="4.5"` circle (debugOverlay's grip markers, unfilled, drawn after the r="2.5" joint dots), in
+   * `gripOf`'s own order — the fixture's `equipment.attach` is `['hand_l', 'hand_r']`. */
+  const gripMarkers = (svg: string): [number, number][] =>
+    [...svg.matchAll(/<circle cx="([-\d.]+)" cy="([-\d.]+)" r="4\.5"/g)].map(m => [+m[1]!, +m[2]!]);
+  const topMarkers = (): [number, number][] => {
+    const jobs = svgsFor(FX, fxRig, 'silent-black', { debug: true });
+    const top = jobs.find(j => j.name === 'moment-2')!;   // the press's top, order lift_first (like the lateral raise)
+    const markers = gripMarkers(top.svg);
+    expect(markers, 'expected one grip marker per gripOf(FX) attachment (hand_l, hand_r)').toHaveLength(2);
+    return markers;
+  };
+
+  it('hand_l and hand_r’s debug markers lie on their rail within 1 px at 360px (V1-04’s solved elbow_lead)', () => {
+    const markers = topMarkers();
+    const gaps = (['bar_l', 'bar_r'] as const).map((part, i) => Math.abs(pathOff(FX_MACHINE.parts[part]!, markers[i]!)) * SCALE);
+    for (const gapPx of gaps) expect(gapPx).toBeLessThanOrEqual(1);
+  });
+
+  it('the same check correctly fails a 2 px offset (proves the 1 px bound actually discriminates)', () => {
+    const markers = topMarkers();
+    // the solve is untouched (still against FX_MACHINE); only the comparison rail used for measurement is shifted 2 px
+    // worth of figure units, sideways, so the same marker now measures ~2 px off it — the check that just passed at
+    // <= 1 px above must not pass here.
+    const shiftUnits = 2 / SCALE;
+    const shifted = (part: 'bar_l' | 'bar_r'): MachinePart => {
+      const p = FX_MACHINE.parts[part]!;
+      if (p.kind === 'lever') throw new Error('slide only');
+      return { ...p, path: p.path.map(([x, y]) => [x + shiftUnits, y]) as [[number, number], [number, number]] };
+    };
+    const gaps = (['bar_l', 'bar_r'] as const).map((part, i) => Math.abs(pathOff(shifted(part), markers[i]!)) * SCALE);
+    for (const gapPx of gaps) expect(gapPx).toBeGreaterThan(1);
+  });
 });
 
 // A1 (Chromium), A4: needs a real local Chromium (as `npm run gate` does); skipped, not loosened, without one.
