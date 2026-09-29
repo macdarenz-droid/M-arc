@@ -5967,8 +5967,10 @@ for (const { theme, inset } of bug22Runs) {
     if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
   };
   const options = async (page, i) => { await page.getByRole('button', { name: 'Options', exact: true }).nth(i).click(); await page.waitForTimeout(300); };
-  const howRow = (page) => page.locator('dialog[open]').getByRole('button', { name: 'How to do it', exact: true });
-  const openGuide = async (page) => { await options(page, 0); await howRow(page).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
+  // UI-2: the "How to do it" button lives on the open exercise card (entry 0 is open by default), not the "..." sheet.
+  const openCard = async (page, i) => { await page.locator('.card.exercise .ex-head').nth(i).click(); await page.waitForTimeout(300); };
+  const howButton = (page, i) => page.locator('.card.exercise').nth(i).locator('.btn-how-to');
+  const openGuide = async (page) => { await howButton(page, 0).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
   const seek = (page, ms) => page.evaluate(ms => { for (const a of window.__fgAnims) if (a.playState !== 'idle') { a.pause(); a.currentTime = ms; } return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }, ms);
   const RUN = 12000;
   const play = (page) => page.locator('dialog[open] .form-guide .controls .btn-icon');
@@ -6041,15 +6043,16 @@ for (const { theme, inset } of bug22Runs) {
     // P16 (GU-7a A11): never on Today.
     if (await page.locator('.form-guide').count()) errors.push(`${tag} P16 ${theme}: a .form-guide element is on Today`);
     await startSession(page);
-    // P17-P18 (GU-7a A8): the row shows for the lateral raise (entry 0), not for the bench press (entry 1, no guide).
-    await options(page, 1);
-    if (await howRow(page).count()) errors.push(`${tag} P17 ${theme}: "How to do it" shows for Barbell Bench Press`);
-    await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(300);
+    // P17-P18 (GU-7a UI-2 A2, A3): no button on the bench press card (entry 1, no guide) even when open; the "..." sheet
+    // no longer lists it; the lateral raise card's button opens the guide.
+    await openCard(page, 1);
+    if (await howButton(page, 1).count()) errors.push(`${tag} P17 ${theme}: "How to do it" shows for Barbell Bench Press`);
+    await openCard(page, 0);
     await options(page, 0);
     const labels = await page.locator('dialog[open] .stack-sm > button').allTextContents();
-    const at = labels.indexOf('How to do it');
-    if (at < 0 || labels[at + 1] !== 'Substitute exercise') errors.push(`${tag} P18 ${theme}: expected "How to do it" right before "Substitute exercise", got ${JSON.stringify(labels)}`);
-    await howRow(page).click();
+    if (labels.includes('How to do it')) errors.push(`${tag} P18 ${theme}: "How to do it" still in the "..." sheet: ${JSON.stringify(labels)}`);
+    await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(300);
+    await howButton(page, 0).click();
     if (!(await visible(page.locator('dialog[open] .form-guide .player')))) { errors.push(`${tag} P19 ${theme}: the guide sheet did not open`); await ctx.close(); continue; }
     const title = await page.locator('dialog[open] h2').textContent();
     if (title !== 'How to do it: Dumbbell Lateral Raise') errors.push(`${tag} P20 ${theme}: sheet title "${title}"`);
@@ -6244,7 +6247,7 @@ for (const { theme, inset } of bug22Runs) {
     const { ctx, page } = await open('silent-black', { reducedMotion: 'reduce', serviceWorkers: 'block' });
     await page.route(/FormGuidePlayer-.*\.js$/, r => r.abort());
     await startSession(page);
-    await options(page, 0); await howRow(page).click();
+    await howButton(page, 0).click();
     if (!(await visible(page.locator('dialog[open] .hint', { hasText: 'Demo could not load.' })))) errors.push(`${tag} P51: no "Demo could not load." line after a failed chunk`);
     else {
       const f = await page.evaluate(() => ({ title: document.querySelector('dialog[open] h2')?.textContent, reload: [...document.querySelectorAll('dialog[open] button')].some(b => b.textContent === 'Reload') }));
