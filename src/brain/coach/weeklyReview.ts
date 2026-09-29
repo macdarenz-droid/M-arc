@@ -17,6 +17,7 @@ import { isFlatTotal, plateauSeries, plateauStatus, sinceLastBreak, trend } from
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import { withoutGated, type Insight, type Sharing } from './rules';
 import { fullWeekSessions, type WeekPlan } from '../weekly';
+import { muscleVolumeStatus } from '../volume';
 
 /** Hard sets per muscle for the calendar week containing `today`: the shared count without easy sets (BR-16). */
 export function hardSetsThisWeek(sessions: Session[], today: string, custom: Exercise[] = []): Partial<Record<MuscleId, number>> {
@@ -201,15 +202,21 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   const hardSets = hardSetsThisWeek(sessions, start, custom);
   const trained = MUSCLE_IDS.filter(m => (hardSets[m] ?? 0) > 0).sort((a, b) => (hardSets[b] ?? 0) - (hardSets[a] ?? 0));
   if (trained.length && weekSessions.length >= fullWeekSessions(plan, start)) {
-    const low = trained.filter(m => volumeBand(hardSets[m]!) === 'low');
-    if (low.length) {
-      const m = low[0]!;
+    // ADAPT-5 (C-4): one band everywhere. The reviewed week is judged by muscleVolumeStatus, as Body
+    // and the coach judge it (level band, seeded by training age; 'under' only after two full weeks).
+    const status = new Map(muscleVolumeStatus(sessions, addDays(start, 7), custom, plan, input.profile.trainingSince).map(r => [r.muscle, r]));
+    const flagged = trained.filter(m => status.get(m)?.status === 'under');
+    const over = trained.filter(m => status.get(m)?.status === 'over');
+    const m = flagged[0] ?? over[0];
+    if (m) {
+      const row = status.get(m)!;
+      const under = row.status === 'under';
       out.push({
         id: `weekly:volume:${m}`, category: 'consistency', priority: 220, cadence: 'weekly', kind: 'plan',
-        title: `${muscleLabel(m)} is under its usual range`,
-        noticed: `${trained.map(x => `${muscleLabel(x)} ${Math.round(hardSets[x]!)}`).join(', ')} hard sets ${week}.`,
-        means: `${muscleLabel(m)} sits under the range that tends to drive growth for most lifters.`,
-        action: `Add one more hard set for ${muscleLabel(m).toLowerCase()} on your next session that trains it.`,
+        title: `${muscleLabel(m)} is ${under ? 'under' : 'over'} its usual range`,
+        noticed: `${trained.map(x => `${muscleLabel(x)} ${Math.round(hardSets[x]!)}`).join(', ')} hard sets ${week}; ${muscleLabel(m).toLowerCase()} range ${row.band[0]}–${row.band[1]}.`,
+        means: under ? `${muscleLabel(m)} has sat under your range for two full weeks, which can slow progress on it.` : 'Above your usual range: more sets now bring smaller gains and cost more recovery.',
+        action: under ? `Add one more hard set for ${muscleLabel(m).toLowerCase()} on your next session that trains it.` : `Trim a set or two for ${muscleLabel(m).toLowerCase()} next week.`,
         muscle: m,
         evidence: { n: weekSessions.length, window: week, confidence: weekSessions.length >= 4 ? 'medium' : 'low' },
       });

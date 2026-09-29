@@ -171,7 +171,7 @@ export function getSession(input: { sessionId?: string }, ctx: ToolCtx) {
   if (!x) throw new ToolError('unknown sessionId; use get_sessions');
   const prior = s.sessions.filter(y => y.startedAt < x.startedAt);
   // BUG-20: a note built from unshared body or health data stays on the phone.
-  const notes = withoutGated(postSessionInsights({ session: x, priorSessions: prior, custom: s.customExercises, isStrengthGoal: s.goal === 'strength', unit: s.preferences.weightUnit }), s.escobar.sharing).map(i => ({ title: i.title, noticed: i.noticed, action: i.action }));
+  const notes = withoutGated(postSessionInsights({ session: x, priorSessions: prior, custom: s.customExercises, goal: s.goal, restSettingSec: s.preferences.autoRest ? s.preferences.restDefaultSec : undefined, unit: s.preferences.weightUnit }), s.escobar.sharing).map(i => ({ title: i.title, noticed: i.noticed, action: i.action }));
   const heart = s.escobar.sharing.health && x.heart ? { avgBpm: x.heart.avgBpm, maxBpm: x.heart.maxBpm, activeKcal: x.heart.energy?.activeKcal ?? null } : undefined;
   return capJson({
     sessionId: x.id, day: x.day, split: x.splitName, durationMin: Math.round(x.durationSec / 60), fidelity: x.logging?.mode,
@@ -278,7 +278,7 @@ export function getVolume(input: { weeks?: number; muscles?: string[] }, ctx: To
   const weeks = int(input.weeks, 1, 12, 4, 'weeks');
   const muscles = musclesArg(input.muscles);
   const s = ctx.state;
-  const status = muscleVolumeStatus(s.sessions, ctx.today, s.customExercises).filter(m => (muscles ? muscles.includes(m.muscle) : m.status !== 'unknown'));
+  const status = muscleVolumeStatus(s.sessions, ctx.today, s.customExercises, { schedule: s.schedule, daysOff: s.daysOff, plannedDays: s.profile.plannedDays }, s.profile.trainingSince).filter(m => (muscles ? muscles.includes(m.muscle) : m.status !== 'unknown'));
   const history = weeklyVolumeHistory(s.sessions, ctx.today, weeks, s.customExercises);
   // F13b: with body-weight sharing on, effectiveKg matches Stats' weekly volume (docs/F13-BODYWEIGHT-LOAD.md §10).
   const bw = s.escobar.sharing.body ? bodyWeightResolver(s) : undefined;

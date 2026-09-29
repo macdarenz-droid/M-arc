@@ -10,6 +10,7 @@ import { formatRecordValue, recordsFor } from '../prs';
 import { findExercise } from '@/core/exercises';
 import { isWorkingSet } from '../exposure';
 import type { Insight } from './rules';
+import { DEFAULT_GOAL, GOAL_BY_ID, type GoalId } from '@/data/goals';
 
 /** Records set in this session, tiered by kind, only from sets logged live (timing-independent content is fine at any fidelity). */
 export function recordsInsight(session: Session, priorSessions: Session[], custom: Exercise[] = [], unit: LoadUnit = 'kg'): Insight[] {
@@ -36,41 +37,65 @@ export function recordsInsight(session: Session, priorSessions: Session[], custo
   return out;
 }
 
-/** Shares of easy/ideal/max for the session, flagged if heavily skewed either way. */
-export function effortMixInsight(session: Session): Insight | null {
-  const sets = session.exercises.flatMap(e => e.sets).filter(isWorkingSet);
-  const rated = sets.filter(s => s.effort);
+/** Effort shares of a session's rated working sets; null under 4 rated sets. */
+function effortMix(session: Session): { n: number; easy: number; ideal: number; max: number } | null {
+  const rated = session.exercises.flatMap(e => e.sets).filter(isWorkingSet).filter(s => s.effort);
   if (rated.length < 4) return null;
   const share = (e: 'easy' | 'ideal' | 'max') => rated.filter(s => s.effort === e).length / rated.length;
-  const easy = share('easy'), ideal = share('ideal'), max = share('max');
+  return { n: rated.length, easy: share('easy'), ideal: share('ideal'), max: share('max') };
+}
+
+/** Over 60 % easy sets reads as mostly easy (COACHING-PLAN 6.13 "Effort mix"). */
+export const EASY_SHARE_FLAG = 0.6;
+type MixFlag = 'max' | 'easy' | null;
+const mixFlag = (m: { easy: number; max: number }, cap: number): MixFlag => (m.max > cap ? 'max' : m.easy > EASY_SHARE_FLAG ? 'easy' : null);
+
+/**
+ * Shares of easy/ideal/max for the session, flagged if heavily skewed either way.
+ * ADAPT-5 (E-3): the max-effort line is the goal's `failureShareCap`. When `opts.previous` is given
+ * (the debrief always gives it; null for none), a flag fires only when the previous session of the
+ * split had the same flag: one noisy session is not a pattern (plan 6.13: two sessions of a split).
+ */
+export function effortMixInsight(session: Session, opts?: { goal?: GoalId; previous?: Session | null }): Insight | null {
+  const m = effortMix(session);
+  if (!m) return null;
+  const g = GOAL_BY_ID[opts?.goal ?? DEFAULT_GOAL];
+  const { easy, ideal, max } = m;
   const pct = (v: number) => Math.round(v * 100);
-  if (max <= 0.5 && easy <= 0.6) {
+  const flag = mixFlag(m, g.failureShareCap);
+  if (!flag) {
     return {
       id: `post:effort-mix:${session.id}`, category: 'progress', priority: 150, cadence: 'post', kind: 'data',
       title: `Effort mix: ${pct(easy)}% easy, ${pct(ideal)}% ideal, ${pct(max)}% max`,
       noticed: `Effort mix: ${pct(easy)}% easy, ${pct(ideal)}% ideal, ${pct(max)}% max.`,
       means: 'A healthy spread for most goals: stopping a couple of reps short of failure grows muscle nearly as well, with less fatigue.',
       action: 'No change needed.',
-      evidence: { n: rated.length, window: 'this session', confidence: 'high' },
+      evidence: { n: m.n, window: 'this session', confidence: 'high' },
     };
   }
-  if (max > 0.5) {
+  let window = 'this session';
+  if (opts && 'previous' in opts) {
+    const prev = opts.previous ? effortMix(opts.previous) : null;
+    if (!prev || mixFlag(prev, g.failureShareCap) !== flag) return null;
+    window = `this session and your last ${session.splitName}`;
+  }
+  if (flag === 'max') {
     return {
       id: `post:effort-mix:${session.id}`, category: 'progress', priority: 200, cadence: 'post', kind: 'tip',
       title: `Effort mix: ${pct(max)}% max effort`,
-      noticed: `${pct(max)}% of rated sets were max effort.`,
+      noticed: `${pct(max)}% of rated sets were max effort${window === 'this session' ? '' : `, as last ${session.splitName}`}; your goal keeps it under ${pct(g.failureShareCap)}%.`,
       means: 'Frequent failure adds fatigue without much extra growth or strength.',
       action: 'Save max effort for the last set of an exercise.',
-      evidence: { n: rated.length, window: 'this session', confidence: 'high' },
+      evidence: { n: m.n, window, confidence: 'high' },
     };
   }
   return {
     id: `post:effort-mix:${session.id}`, category: 'progress', priority: 150, cadence: 'post', kind: 'tip',
     title: `Effort mix: ${pct(easy)}% easy`,
-    noticed: `${pct(easy)}% of rated sets were easy.`,
+    noticed: `${pct(easy)}% of rated sets were easy${window === 'this session' ? '' : `, as last ${session.splitName}`}.`,
     means: 'Mostly-easy sets leave growth on the table over time.',
-    action: 'Push a couple of sets closer to ideal effort next time.',
-    evidence: { n: rated.length, window: 'this session', confidence: 'high' },
+    action: `Push a couple of sets closer to ideal effort next time: ${g.rir[0]}–${g.rir[1]} reps in reserve for your goal.`,
+    evidence: { n: m.n, window, confidence: 'high' },
   };
 }
 
@@ -80,7 +105,12 @@ export function effortMixInsight(session: Session): Insight | null {
  * when an exercise's last set has 25% fewer reps than its first. The rest median leaves out each
  * exercise's first set (its "rest" is the changeover from the last exercise).
  */
-export function restAndDensityInsight(session: Session, isStrengthGoal: boolean, custom: Exercise[] = []): Insight | null {
+/**
+ * ADAPT-5 (E-4): the rest line is the goal's `restDefaultSec` (a boolean is the old strength flag:
+ * true = 'strength'). `restSettingSec` is the user's timer when auto-rest is on; below the line, the
+ * action names it.
+ */
+export function restAndDensityInsight(session: Session, goal: GoalId | boolean, custom: Exercise[] = [], restSettingSec?: number): Insight | null {
   const mains = session.exercises
     .filter(e => findExercise(e.exerciseId, custom)?.role === 'main')
     .map(e => e.sets.filter(isWorkingSet))
@@ -89,7 +119,7 @@ export function restAndDensityInsight(session: Session, isStrengthGoal: boolean,
   if (rests.length < 3) return null;
   const medianRest = rests[Math.floor(rests.length / 2)]!;
   const fell = mains.map(sets => ({ first: sets[0]!.reps ?? 0, last: sets[sets.length - 1]!.reps ?? 0 })).filter(x => x.first > 0 && (x.first - x.last) / x.first >= 0.25);
-  const threshold = isStrengthGoal ? 120 : 90;
+  const threshold = GOAL_BY_ID[typeof goal === 'boolean' ? (goal ? 'strength' : DEFAULT_GOAL) : goal].restDefaultSec;
   if (medianRest >= threshold || !fell.length) return null;
   const firstReps = fell[0]!.first, lastReps = fell[0]!.last;
   const compoundSets = mains.flat();
@@ -97,8 +127,8 @@ export function restAndDensityInsight(session: Session, isStrengthGoal: boolean,
     id: `post:rest:${session.id}`, category: 'progress', priority: 180, cadence: 'post', kind: 'tip',
     title: `Median rest ${medianRest}s`,
     noticed: `Median rest before sets was ${medianRest}s, and reps on a main lift fell from ${firstReps} on the first set to ${lastReps} on the last.`,
-    means: `On heavy sets, ${isStrengthGoal ? '2 to 3 minutes' : '90 seconds or more'} keeps reps up.`,
-    action: 'Take a little longer before the next heavy set.',
+    means: `On heavy sets, ${threshold} seconds or more keeps reps up.`,
+    action: restSettingSec != null && restSettingSec < threshold ? `Your rest timer is set to ${restSettingSec}s; try ${threshold}s before heavy sets.` : 'Take a little longer before the next heavy set.',
     evidence: { n: compoundSets.length, window: 'this session', confidence: 'medium' },
   };
 }
@@ -126,21 +156,28 @@ export interface PostSessionInput {
   session: Session;
   priorSessions: Session[];
   custom: Exercise[];
-  isStrengthGoal: boolean;
+  /** ADAPT-5: the current goal (rest line, effort cap). */
+  goal?: GoalId;
+  /** Old flag, read only when `goal` is left out: true = 'strength', false = DEFAULT_GOAL. */
+  isStrengthGoal?: boolean;
+  /** ADAPT-5 (E-4): the rest timer setting, given only when auto-rest is on. */
+  restSettingSec?: number;
   /** The display unit for record text (BR-28). */
   unit?: LoadUnit;
 }
 
 export function postSessionInsights(input: PostSessionInput, limit = 4): Insight[] {
-  const { session, priorSessions, custom, isStrengthGoal } = input;
+  const { session, priorSessions, custom } = input;
+  const goal: GoalId = input.goal ?? (input.isStrengthGoal ? 'strength' : DEFAULT_GOAL);
   const priorSameSplit = priorSessions.filter(s => s.splitId === session.splitId);
+  const previous = priorSameSplit.filter(s => s.startedAt < session.startedAt).sort((a, b) => a.startedAt.localeCompare(b.startedAt)).at(-1) ?? null;
   // Rest, density and duration drift need a session whose timing can be trusted (6.17.4); content-only
   // rows (records, effort mix) accept every logging fidelity.
   const timingTrusted = session.logging?.timingTrusted ?? true;
   const out: Insight[] = [
     ...recordsInsight(session, priorSessions, custom, input.unit ?? 'kg'),
-    effortMixInsight(session),
-    timingTrusted ? restAndDensityInsight(session, isStrengthGoal, custom) : null,
+    effortMixInsight(session, { goal, previous }),
+    timingTrusted ? restAndDensityInsight(session, goal, custom, input.restSettingSec) : null,
     timingTrusted ? durationDriftInsight(session, priorSameSplit) : null,
   ].filter((i): i is Insight => !!i);
   return out.sort((a, b) => b.priority - a.priority).slice(0, limit);
