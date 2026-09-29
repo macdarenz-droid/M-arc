@@ -33,6 +33,9 @@ Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor k
 
 **Agents may, without asking:** build, test and push on their own `claude/*` branch, and open draft PRs.
 
+- Run in auto mode (owner, 2026-09-28): the supervisor starts every builder and reviewer session in auto mode, so no work waits on the owner's approval taps. Auto mode's safety checks still apply, and a refusal is never worked around.
+- Plan hard cards before building (owner, 2026-09-29). For complex work (animation production, simulation, anything with several possible designs), the supervisor first runs a phased plan: understand the problem, draft competing designs, have independent judges score them, then write the build cards. Builders on those cards write a short design note and post it on the PR as a progress check-in before bulk building; the supervisor reads it the next tick and re-guides or stops early. Small fixes stay simple, with no extra agents.
+
 **Only the owner:**
 - deploys the Escobar Worker (merging anything under `escobar-worker/**` into `main` deploys it, so those changes go in a separate PR that the owner merges);
 - decides anything about the signing key, keystores or Huawei secrets;

@@ -318,7 +318,8 @@ export function sessionDrift(input: DriftInput): DriftResult | null {
   if (restingHrBpm != null) {
     for (const s of known) {
       const readyBpm = restReadyBpm(s.pre, restingHrBpm, hrMaxBpm);
-      const end = Math.min(s.t + DRIFT.readyCapSec, at[s.i + 1] ?? sessionSec);
+      // The series runs on wall-clock seconds; sessionSec (training time, pauses out, BUG-19) is only the 20-min gate.
+      const end = Math.min(s.t + DRIFT.readyCapSec, at[s.i + 1] ?? Infinity);
       const after = series.filter(([t]) => t > s.t && t <= end);
       const j = after.findIndex((_, k) => k + 2 < after.length && after.slice(k, k + 3).every(([, bpm]) => bpm <= readyBpm));
       if (j >= 0) ready.push([s.i, after[j + 2]![0] - s.t]);

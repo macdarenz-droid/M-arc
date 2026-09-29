@@ -68,7 +68,10 @@ export function heartForSet(setStartSec: number, setEndSec: number): SetHeart | 
 /** Computes the session's heart summary and stores its series. Returns the session unchanged when nothing was captured. */
 export function finishHeartCapture(session: Session): Session {
   if (!rawSamples.length) return session;
-  const series = downsampleToBuckets(rawSamples);
+  // BUG-19: a forgotten Finish ends the session at its last set plus a margin, so the samples
+  // recorded after that end (the watch still on the wrist for hours) are not this session's.
+  const endSec = (Date.parse(session.endedAt) - Date.parse(session.startedAt)) / 1000;
+  const series = downsampleToBuckets(Number.isFinite(endSec) ? rawSamples.filter(x => x.tSec <= endSec) : rawSamples);
   storeSeries(session.id, series);
   if (!series.length) return session;
   const s = state.value;

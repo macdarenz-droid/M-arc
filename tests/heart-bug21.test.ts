@@ -278,6 +278,14 @@ describe('A3: drift follows Appendix B (D-A1 point 7)', () => {
     const steady = series(() => 90, 1500, (_k, since) => (since <= 30 ? 130 : 95));
     expect(sessionDrift({ ...base, series: steady })?.drifting).toBe(false);
   });
+  it('BUG-19: training time shorter than the wall clock (pauses, a trimmed Finish) still reads the last rest', () => {
+    // timeToReady flat until the last rest, which takes 150 s longer: only the last one makes it drift.
+    const lastSlow = series(() => 90, 1600, (k, since) => (since <= (k < 5 ? 30 : 180) ? 130 : 95));
+    const d = sessionDrift({ ...base, series: lastSlow, sessionSec: 1250 });
+    expect(d?.driftPct).toBe(0);
+    expect(d?.readySlopeSecPerSet).toBeGreaterThan(10);
+    expect(d?.drifting).toBe(true);
+  });
   it('without a resting HR only the drift% half is judged', () => {
     const slow = series(() => 90, 1500, (k, since) => (since <= 20 + 15 * k ? 130 : 95));
     const d = sessionDrift({ ...base, series: slow, restingHrBpm: null });
