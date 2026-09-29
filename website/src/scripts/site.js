@@ -11,7 +11,12 @@ const setM = () => h.classList.toggle('m', mq.matches === false);
 setM();
 mq.addEventListener('change', setM);
 export const motion = () => h.classList.contains('m');
-export const ms = (name) => parseFloat(getComputedStyle(h).getPropertyValue(name)) || 0;
+/* a duration token in milliseconds; the CSS minifier rewrites 1500ms as 1.5s, so read the unit */
+export const ms = (name) => {
+  const v = getComputedStyle(h).getPropertyValue(name).trim();
+  const n = parseFloat(v) || 0;
+  return /s$/.test(v) && !/ms$/.test(v) ? n * 1000 : n;
+};
 
 /* the mark draws on load and again on hover of the lockup */
 const lk = q('#lockup');

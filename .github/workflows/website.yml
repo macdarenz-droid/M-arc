@@ -1,0 +1,96 @@
+name: Website
+
+# The M/ARC website (website/): build, gate and, by hand only, deploy to GitHub Pages (docs/WEBSITE-DESIGN.md section 12).
+# Nothing here touches signing, keystores or secrets: the site build reads EXPECTED_SHA256 from build-apk.yml as text.
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'website/**'
+      - '.github/workflows/website.yml'
+  pull_request:
+    paths:
+      - 'website/**'
+      - '.github/workflows/website.yml'
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type 'deploy' to publish website/dist to GitHub Pages"
+        required: true
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium (og.mjs render and the site gate)
+        run: npx playwright install --with-deps chromium
+      - name: Build the site
+        run: npm run site:build
+      - name: Site gate (four pages, two widths, reduced motion off and on)
+        run: npm run site:gate
+      - name: Upload gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-gate-out
+          path: website/gate-out/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload built site
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-dist
+          path: website/dist/
+          retention-days: 7
+
+  deploy:
+    # Manual only: the owner runs the workflow and types 'deploy'. Builds again with the Pages values and publishes after the gate passed.
+    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'deploy'
+    needs: gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      # The three values the site needs from outside (website/site.config.mjs). A project page lives under /<repo>/;
+      # change these once a custom domain exists.
+      SITE_BASE: /${{ github.event.repository.name }}/
+      SITE_URL: https://${{ github.repository_owner }}.github.io
+      SITE_APP_URL: ''
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium (og.mjs render)
+        run: npx playwright install --with-deps chromium
+      - name: Build the site for Pages
+        run: npm run site:build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/dist/
+      - id: deployment
+        uses: actions/deploy-pages@v4

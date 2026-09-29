@@ -67,6 +67,103 @@
     <div class="prose rise">
       <p class="eyebrow">Your data</p>
       <h1 id="page-h">How M/ARC handles your data.</h1>
+      <p class="lead">Everything you log stays on the phone. Nothing leaves it unless you turn on Escobar, the optional online coach, and then only what you allow. This page says exactly what that means.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band lift" id="stored" aria-labelledby="stored-h" tabindex="-1">
+  <div class="wrap r">
+    <div class="prose">
+      <h2 id="stored-h">What is stored, and where</h2>
+      <p>There is no server copy. Each kind of data has one place on your phone.</p>
+    </div>
+    <table class="facts">
+      <caption class="sr-only">Each kind of data, where it lives on the phone and how you remove it</caption>
+      <thead><tr><th scope="col">Data</th><th scope="col">Where it lives</th><th scope="col">How you remove it</th></tr></thead>
+      <tbody>
+      <tr><td data-label="Data">Sessions, splits, settings and recovery</td><td data-label="Where it lives">The app's own storage on the phone</td><td data-label="How you remove it">Settings, Your data: Reset workout data or Reset everything</td></tr>
+      <tr><td data-label="Data">Conversations with Escobar</td><td data-label="Where it lives">On the phone</td><td data-label="How you remove it">Settings, Escobar: Reset conversations, then Delete conversations</td></tr>
+      <tr><td data-label="Data">Photos you attach in a conversation with Escobar</td><td data-label="Where it lives">A local photo store on the phone</td><td data-label="How you remove it">Deleted with the conversations</td></tr>
+      <tr><td data-label="Data">What Escobar remembers (injuries, equipment, preferences)</td><td data-label="Where it lives">On the phone, listed under What Escobar knows</td><td data-label="How you remove it">Edit or delete any entry there; it stays until you clear it</td></tr>
+      <tr><td data-label="Data">Heart-rate data from a watch</td><td data-label="Where it lives">A local store on the phone</td><td data-label="How you remove it">Deleted with the session it belongs to</td></tr>
+      <tr><td data-label="Data">Sleep, steps, active calories and heart rate from Android Health Connect</td><td data-label="Where it lives">Read into the phone's storage in the background</td><td data-label="How you remove it">Disconnect it in Health Connect on the phone; Reset everything clears the copies</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="band" id="leaves" aria-labelledby="leaves-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="leaves-h">What leaves the phone, and when</h2>
+      <p>Nothing, until you turn Escobar on. With Escobar on, this is the whole list.</p>
+      <ol class="chain" aria-label="What leaves the phone with Escobar on">
+        <li><p>The numbers Escobar's tools ask for travel through the project's own server to the model that answers. Every number in the answer is checked against your log before it stands.</p></li>
+        <li><p>Health data (sleep, resting heart rate, session heart rate) leaves only while Share health data is on.</p></li>
+        <li><p>Body data (weight and measurements) leaves only while Share body data is on.</p></li>
+        <li><p>A photo you attach to a message is sent with that message.</p></li>
+        <li><p>Turn a switch off and that data is redacted from replayed history.</p></li>
+      </ol>
+      <p>Quotas are counted per device and network address. There is no account to count against.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band lift" id="switches" aria-labelledby="switches-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="switches-h">The two switches</h2>
+      <div class="switches">
+        <div class="sw"><i class="pill" aria-hidden="true"><b></b></i>Share health data</div>
+        <p>Share health data: sleep, resting heart rate, session heart rate. Share body data: weight and measurements. Both are off until you turn them on, and both live in Settings under Escobar.</p>
+        <div class="sw"><i class="pill" aria-hidden="true"><b></b></i>Share body data</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="account" aria-labelledby="account-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="account-h">No account</h2>
+      <p>Nothing in the app asks you to register or sign in. There is no password to reset and no server that knows who you are.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band lift" id="backups" aria-labelledby="backups-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="backups-h">Backups and CSV</h2>
+      <p>Export backup writes a JSON file you keep wherever you like. Restore backup shows a preview first, then applies, and gives you an Undo. Export CSV hands you every filled-in set, for the last 90 days or all time. A weekly backup reminder is there if you want it.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="rescue" aria-labelledby="rescue-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="rescue-h">The rescue file</h2>
+      <p>If saved data ever fails to read when the app starts, it is kept aside, not thrown away. Settings shows it under Unreadable data kept aside, with Save rescue file so you can keep a copy.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band lift" id="offline" aria-labelledby="offline-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="offline-h">Offline</h2>
+      <p>The service worker installs every built file, so the app opens without a network. The coach notes, weekly review and lighter-week suggestion run on the phone. Only a conversation with Escobar needs a connection.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="site" aria-labelledby="site-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="site-h">This website</h2>
+      <p>This site sets no cookies, stores nothing in your browser and loads no analytics. Every font, image and script comes from this site's own address; the only outbound links go to GitHub. The Copy buttons write to your clipboard only when you tap them. The host that serves these files keeps its own access logs, as every web host does; the site adds nothing to them.</p>
     </div>
   </div>
 </section>

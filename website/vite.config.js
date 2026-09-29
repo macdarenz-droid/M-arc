@@ -32,6 +32,7 @@ function tokensPre() {
         const out = html.replace(/<!-- if (APP_URL|SITE_URL) -->([\s\S]*?)(?:<!-- else -->([\s\S]*?))?<!-- endif -->/g, (_, name, yes, no = '') => (flags[name] ? yes : no));
         return out
           .replace(/__VERSION__/g, VERSION)
+          .replace(/__FINGERPRINT_WBR__/g, FINGERPRINT.replace(/:/g, ':<wbr>')) // the /install/ block: a wrap may fall only between pairs (6.11)
           .replace(/__FINGERPRINT__/g, FINGERPRINT)
           .replace(/__APP_URL__/g, SITE_APP_URL)
           .replace(/__BUILD_DATE__/g, BUILD_DATE)
@@ -47,7 +48,7 @@ function tokensPost() {
       order: 'post',
       handler(html, ctx) {
         const out = html.replace(/__SITE_URL____BASE__/g, SITE_URL + SITE_BASE).replace(/__SITE_URL__/g, SITE_URL);
-        const left = out.match(/__(VERSION|FINGERPRINT|SITE_URL|APP_URL|BUILD_DATE|BASE)__/);
+        const left = out.match(/__(VERSION|FINGERPRINT_WBR|FINGERPRINT|SITE_URL|APP_URL|BUILD_DATE|BASE)__/);
         if (left) throw new Error(`website: ${ctx.path} still contains the token ${left[0]}`);
         return out;
       },

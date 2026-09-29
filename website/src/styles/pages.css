@@ -29,3 +29,18 @@
 .nf { min-height: 60svh; display: flex; align-items: center; }
 .nf p { color: var(--text2); }
 .nf .ctas { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-7); }
+
+/* install and privacy prose blocks (7.2, 7.3): spacing between the label, code and copy rows; the inline file name */
+.prose .ver { color: var(--text); margin-top: var(--sp-2); }
+.prose p .mono { color: var(--text); }
+.prose .copyrow { margin-top: var(--sp-2); }
+.prose .copyrow + p { margin-top: var(--sp-6); }
+.prose .chain + p { margin-top: var(--sp-6); }
+.prose .switches { margin-top: var(--sp-6); }
+.wrap.r > .facts { margin-top: var(--sp-7); }
+/* nine short sections on /privacy/ read as one article at 64px, not 128px, between bands */
+.privacy .band { padding-block: var(--sp-10); }
+/* between 641 and 1024 the first column wraps, so the table never pushes past the page */
+@media (min-width: 641px) and (max-width: 1024px) { .privacy .facts td:first-child { white-space: normal; } }
+/* a hairline where a lifted band meets the footer, which is the same surface */
+.lift + .foot { border-top: 1px solid var(--border); }

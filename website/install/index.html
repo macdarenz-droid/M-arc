@@ -67,6 +67,78 @@
     <div class="prose rise">
       <p class="eyebrow">Install</p>
       <h1 id="page-h">Install M/ARC.</h1>
+      <p class="lead">A signed APK for Android, the web app once it has an address, and the source for anyone who wants to read it.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band lift" id="apk" aria-labelledby="apk-h" tabindex="-1">
+  <div class="wrap apk-grid r">
+    <div class="intro prose">
+      <h2 id="apk-h">Android APK</h2>
+      <p class="mono ver">Version __VERSION__</p>
+      <p>The release file is named <span class="mono nb">MARC-v__VERSION__.&lt;run&gt;-signed.apk</span>, where <span class="mono">&lt;run&gt;</span> is the CI run number.</p>
+      <div class="ctas">
+        <a class="btn btn-p" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
+        <a class="link" href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases and changelog</a>
+      </div>
+    </div>
+    <ol class="chain" aria-label="Three steps to install">
+      <li><p>Download the APK from the latest release.</p></li>
+      <li><p>Open the file. The first time, Android asks you to allow installs from your browser or file manager. Allow it for this install.</p></li>
+      <li><p>Tap Install. An update installs over the old version and keeps your data. Android allows that only because every M/ARC build carries the same signing key.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="band" id="verify" aria-labelledby="verify-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="verify-h">Verify the signature</h2>
+      <p>Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released. You can check it yourself.</p>
+      <p class="label" id="fp-l">Signing key SHA-256. Does not change between versions.</p>
+      <div class="copyrow"><code class="fp" id="fp">__FINGERPRINT_WBR__</code><button class="btn btn-s" type="button" data-copy="#fp" aria-label="Copy the signing key fingerprint" aria-live="polite">Copy</button></div>
+      <p class="label" id="cmd-l">Verify command</p>
+      <div class="copyrow"><code class="cmd" id="cmd">apksigner verify <span class="nb">--print-certs</span> <span class="nb">MARC-v__VERSION__.*-signed.apk</span></code><button class="btn btn-s" type="button" data-copy="#cmd" aria-label="Copy the verify command" aria-live="polite">Copy</button></div>
+      <p>apksigner ships with the Android SDK build tools. If the fingerprint it prints matches the one above, the file was signed by the M/ARC key and has not been altered.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band lift" id="obtainium" aria-labelledby="obtainium-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="obtainium-h">Obtainium</h2>
+      <p>Obtainium can install M/ARC from the GitHub releases page and keep it updated. Add this address as a source:</p>
+      <div class="copyrow"><code class="cmd" id="repo">https://github.com/macdarenz-droid/M-arc</code><button class="btn btn-s" type="button" data-copy="#repo" aria-label="Copy the repository address" aria-live="polite">Copy</button></div>
+      <p>Android refuses an update whose signing key differs from the installed app's, so a swapped file cannot install over M/ARC.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="web" aria-labelledby="web-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="web-h">In the browser</h2>
+      <!-- if APP_URL -->
+      <p>Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline.</p>
+      <div class="ctas"><a class="btn btn-p" href="__APP_URL__" target="_blank" rel="noopener">Open in the browser</a></div>
+      <!-- else -->
+      <p>The web app has no public address yet. When it does, this page will carry it. Chrome, Edge and Samsung Internet on Android then offer Add to Home Screen, and M/ARC installs as an app and works offline.</p>
+      <!-- endif -->
+    </div>
+  </div>
+</section>
+
+<section class="band lift" id="checks" aria-labelledby="checks-h" tabindex="-1">
+  <div class="wrap">
+    <div class="prose r">
+      <h2 id="checks-h">What runs before a release</h2>
+      <p>Every push runs typecheck, 1,487 unit tests in 116 files, run in three time zones, a production build and a visual gate across the five themes before an APK is signed. A release is built on demand from a commit with a green gate.</p>
+      <div class="ctas">
+        <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Source on GitHub</a>
+        <a class="link" href="https://github.com/macdarenz-droid/M-arc/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Architecture notes</a>
+      </div>
     </div>
   </div>
 </section>
