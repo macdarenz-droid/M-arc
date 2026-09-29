@@ -5509,7 +5509,13 @@ for (const { theme, inset } of bug22Runs) {
     await seek(page, 0);
   };
   // A7 / R1-12: the player fits the sheet; Play stays a 44 px circle; no control overlaps another, leaves the player or clips its label.
+  // BUG-26: openGuide only waits for the player to become visible, not for the sheet's translateY
+  // entrance (sheet-in, --dur-sheet) to finish. A probe taken mid-transform can catch Play's box a
+  // sub-pixel short of 44 (measured: h 43.99993896484375, N=4/50 at 6x CPU throttle) purely from
+  // rendering the in-flight transform, not from any layout rule letting it shrink. Settle first.
   const fitProbe = async (page, where) => {
+    await settle(page);
+    await page.evaluate(() => document.fonts.ready).catch(() => {});
     const f = await page.evaluate(() => {
       const box = e => { const r = e.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom, w: r.width, h: r.height }; };
       const player = box(document.querySelector('dialog[open] .form-guide .player'));
@@ -5942,6 +5948,129 @@ for (const { theme, inset } of bug22Runs) {
   const tl = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet[open] .mtl-tl-col')].map(c => [c.querySelector('.mtl-tl-key')?.textContent, c.querySelector('.mtl-tl-val')?.textContent]));
   const ready = tl.find(([k]) => k === 'Ready')?.[1];
   if (ready !== '5+ days') errors.push(`${tag}: the muscle panel's Ready label reads ${JSON.stringify(ready)} (timeline ${JSON.stringify(tl)}), expected "5+ days"`);
+  await ctx.close();
+}
+
+// LT-3 (docs/LOAD-AWARE-TARGETS.md §4): the live retarget. Plan 27.5 kg × 8 on the bench (last time 27.5 × 7), set 1
+// logged live at 32 kg × 5 at Max: rows 2 and 3 show 32 × 3 as their placeholders, and the autoregulation line reads
+// "32 kg is above today's plan: about 3 clean reps. Back to 27.5 for 8, or stay at 32 for 3." Never a "Try" line.
+{
+  const tag = 'LT-3 live retarget';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const bench = 'lib_barbell_bench_press';
+    const pre = { id: 's-lt3', splitId: 'sp1', splitName: 'Push', day: day(3), startedAt: `${day(3)}T17:00:00.000Z`, endedAt: `${day(3)}T18:00:00.000Z`, durationSec: 3600, logging: { mode: 'live', flags: [] },
+      exercises: [{ exerciseId: bench, name: 'Barbell Bench Press', sets: [1, 2, 3].map(i => ({ id: `lt3p${i}`, kg: 27.5, reps: 7, effort: 'ideal' })) }] };
+    const set1 = { id: 'lt3r1', kg: 32, reps: 5, effort: 'max', at: now, fidelity: 'live', status: 'committed' };
+    localStorage.setItem('marc.theme', 'silent-black');
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Push', color: '#888', exercises: [{ exerciseId: bench, sets: 3 }], focus: [], createdAt: now }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [pre], customExercises: [],
+      active: { id: 'actlt3', splitId: 'sp1', startedAt: now, pausedMs: 0, entries: [{ id: 'enlt3', exerciseId: bench, name: 'Barbell Bench Press', sets: [set1, { id: 'lt3r2' }, { id: 'lt3r3' }], done: false, skipped: false }] },
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [], insightFeedback: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.locator('nav.nav button', { hasText: 'Live' }).click(); await page.waitForTimeout(300);
+  const card = page.locator('.card.exercise').first();
+  if (!(await card.locator('.set-grid input').first().isVisible().catch(() => false))) { await card.locator('.ex-head').click(); await page.waitForTimeout(300); }
+  const rows = await card.evaluate(c => [...c.querySelectorAll('.set-grid')].filter(g => g.querySelector('input')).map(g => [...g.querySelectorAll('input')].map(i => i.getAttribute('placeholder') ?? '')));
+  if (JSON.stringify(rows.slice(1).map(r => r.slice(0, 2))) !== '[["32","3"],["32","3"]]') errors.push(`${tag}: expected rows 2 and 3 to show 32 × 3, got ${JSON.stringify(rows)}`);
+  const line = "32 kg is above today's plan: about 3 clean reps. Back to 27.5 for 8, or stay at 32 for 3.";
+  if (!(await visible(card.getByText(line, { exact: false }), 2000))) errors.push(`${tag}: expected the line ${JSON.stringify(line)}`);
+  if (await card.getByText(/Try \d/).count()) errors.push(`${tag}: a "Try" load line showed above the plan`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-lt-3-live-retarget.png` });
+  await ctx.close();
+}
+
+// ADAPT-4 G1 (F-1): Profile shows "not set" for planned days per week when the user never set it (it
+// showed 3), and the number once it is set (tapping + from "not set" saves 4). Silent Black and Paper, 390 px.
+for (const theme of ['silent-black', 'paper']) {
+  const tag = `ADAPT-4 planned days (${theme})`;
+  const now = new Date().toISOString();
+  const json = JSON.stringify({
+    version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 }, goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions: [], active: null, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([j, t]) => { if (!sessionStorage.getItem('adapt4-seeded')) { localStorage.setItem('marc.state.v1', j); sessionStorage.setItem('adapt4-seeded', '1'); } localStorage.setItem('marc.theme', t); }, [json, theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(250);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+  await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Open', exact: true }).click(); await page.waitForTimeout(300);
+  const field = page.locator('dialog[open] [data-palace="profile.training"] label', { hasText: 'Planned days per week' });
+  const unset = page.locator('dialog[open] [data-testid="planned-days-unset"]');
+  await unset.scrollIntoViewIfNeeded().catch(() => {});
+  const read = async () => (await field.locator('.row').first().textContent().catch(() => null))?.replace(/[−+]/g, '').trim() ?? null;
+  const before = await read();
+  if (before !== 'not set') errors.push(`${tag}: planned days reads ${JSON.stringify(before)} when unset, expected "not set"`);
+  const box = await unset.boundingBox().catch(() => null);
+  if (!box || box.x < 0 || box.x + box.width > 390) errors.push(`${tag}: "not set" is off screen at 390 px (${JSON.stringify(box)})`);
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-adapt-4-planned-days-unset.png` });
+  await field.getByRole('button', { name: '+', exact: true }).click(); await page.waitForTimeout(200);
+  const after = await read();
+  if (after !== '4') errors.push(`${tag}: after + from unset it reads ${JSON.stringify(after)}, expected "4"`);
+  // The store saves 250 ms after a change (store.ts saveTimer): wait for the write, up to 3 s.
+  const saved = await page.waitForFunction(() => JSON.parse(localStorage.getItem('marc.state.v1') ?? '{}').profile?.plannedDays === 4, null, { timeout: 3000 }).then(() => 4)
+    .catch(() => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') ?? '{}').profile?.plannedDays ?? null));
+  if (saved !== 4) errors.push(`${tag}: saved plannedDays is ${JSON.stringify(saved)}, expected 4`);
+  await ctx.close();
+}
+
+// ADAPT-4 G2 (C-5, Coach.tsx scope extension 2026-09-29): a lifter with planned days 2 and no schedule who
+// trained twice last week sees the weekly-review card on Monday, and it says "last week" (on main it
+// needed 5 logged days). Silent Black and Paper, 390 px, clock pinned to a Monday noon.
+for (const theme of ['silent-black', 'paper']) {
+  const tag = `ADAPT-4 weekly review card (${theme})`;
+  const pinned = new Date(2026, 8, 28, 12, 0, 0, 0); // Monday 2026-09-28, local
+  const at = (y, m, d, h) => new Date(y, m, d, h, 0, 0, 0);
+  const sess = (d) => {
+    const s0 = at(2026, 8, d, 17).toISOString(), s1 = at(2026, 8, d, 18).toISOString();
+    return { id: `a4-${d}`, splitId: 'sp1', splitName: 'Push', day: `2026-09-${String(d).padStart(2, '0')}`, startedAt: s0, endedAt: s1, durationSec: 3600, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: Array.from({ length: 3 }, () => ({ kg: 60, reps: 8, effort: 'ideal' })) }],
+      logging: { mode: 'live', trainedAt: s0, trainedEndAt: s1, loggedAt: s1, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } };
+  };
+  const now = pinned.toISOString();
+  const json = JSON.stringify({
+    version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990, plannedDays: 2 }, goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions: [sess(22), sess(24)], active: null, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([j, t]) => { localStorage.setItem('marc.state.v1', j); localStorage.setItem('marc.theme', t); }, [json, theme]);
+  await page.clock.install({ time: pinned.getTime() });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(250);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(300);
+  const card = page.locator('.card-accent', { hasText: 'Weekly review' }).first();
+  const text = await card.textContent({ timeout: 2000 }).catch(() => null);
+  if (!text || !/about last week\.|Steady last week/.test(text)) errors.push(`${tag}: weekly-review card reads ${JSON.stringify(text)}, expected it shown and about "last week"`);
+  const box = await card.boundingBox().catch(() => null);
+  if (text && (!box || box.x < 0 || box.x + box.width > 390)) errors.push(`${tag}: card off screen at 390 px (${JSON.stringify(box)})`);
+  if (text) { await card.scrollIntoViewIfNeeded().catch(() => {}); await settle(page); await page.screenshot({ path: `${OUT}/${theme}-adapt-4-weekly-review-card.png` }); }
   await ctx.close();
 }
 

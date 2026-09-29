@@ -111,7 +111,12 @@ export interface LoggedExercise {
   sets: LoggedSet[];
   /** F1: a note for this exercise in this session. */
   note?: string;
+  /** LT-3 (D-A4 a): set 1's target as shown when set 1 was committed; absent on older sessions. */
+  target?: PlannedTarget;
 }
+
+/** LT-3 (D-A4 a): a planned load in kg and reps. */
+export interface PlannedTarget { kg: number; reps: number }
 
 /** How a session was logged, and how much its timing can be trusted. See brain/fidelity.ts. */
 export interface SessionLogging {
@@ -210,7 +215,7 @@ export interface ActiveSession {
   pausedMs: number;
   pausedAt?: number;
   /** Working copy of the exercises for this session. */
-  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean; /** Today's applied load change from Escobar (ES-02). */ loadFactor?: number; /** F1: today's note for this exercise. */ note?: string; /** QA3-8b: the exerciseId this slot was planned as before a substitution changed it, so saving can find it by lineage instead of by array position. */ plannedId?: string }>;
+  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean; /** Today's applied load change from Escobar (ES-02). */ loadFactor?: number; /** F1: today's note for this exercise. */ note?: string; /** QA3-8b: the exerciseId this slot was planned as before a substitution changed it, so saving can find it by lineage instead of by array position. */ plannedId?: string; /** LT-3 (D-A4 a): set 1's target at commit, carried into the saved exercise. */ target?: PlannedTarget }>;
   rest?: RestState;
   /** The gym this session is at (§25), stamped at start. */
   gymId?: string;

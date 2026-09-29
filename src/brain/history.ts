@@ -1,7 +1,8 @@
 /** Per-exercise history, derived once from sessions and reused by every engine. */
-import type { Effort, Exercise, LoggedSet, ResistanceMode, Session } from '@/core/models';
+import type { Effort, Exercise, LoggedSet, PlannedTarget, ResistanceMode, Session } from '@/core/models';
 import { findExercise } from '@/core/exercises';
-import { effectiveOneRm } from './e1rm';
+import { effectiveOneRm, RIR_BY_EFFORT } from './e1rm';
+import { repsAt } from './retarget';
 import { daysBetween } from '@/core/dates';
 import { isWorkingSet, EFFORT_MULT } from './exposure';
 import { confirmsFlagged, isImplausibleSet } from './fidelity';
@@ -41,6 +42,8 @@ export interface ExerciseSessionSummary {
   avgEffort: number;
   hasMax: boolean;
   allEasy: boolean;
+  /** LT-3 (D-A4 a): set 1's planned target in that session, when it was stored at commit. */
+  target?: PlannedTarget;
 }
 
 /** The straight working load of `sets` (BUG-18): most sets, then the heavier load; drop sets only when nothing else is loaded. */
@@ -115,19 +118,22 @@ export function exerciseHistory(sessions: Session[], exerciseId: string, custom:
 function computeExerciseHistory(sessions: Session[], exerciseId: string, custom: Exercise[]): ExerciseSessionSummary[] {
   const meta = findExercise(exerciseId, custom);
   const ids = new Set([exerciseId, meta?.id].filter(Boolean) as string[]);
-  const rows: Array<{ s: Session; sets: LoggedSet[] }> = [];
+  const rows: Array<{ s: Session; sets: LoggedSet[]; target?: PlannedTarget }> = [];
   for (const s of sessions) {
-    const sets = s.exercises.filter(e => ids.has(e.exerciseId) || (meta && findExercise(e.name, custom)?.id === meta.id)).flatMap(e => e.sets);
+    const mine = s.exercises.filter(e => ids.has(e.exerciseId) || (meta && findExercise(e.name, custom)?.id === meta.id));
+    const sets = mine.flatMap(e => e.sets);
     if (!sets.some(isWorkingSet)) continue;
-    rows.push({ s, sets });
+    const target = mine.find(e => e.target)?.target;
+    rows.push({ s, sets, ...(target ? { target } : {}) });
   }
   rows.sort((a, b) => a.s.day.localeCompare(b.s.day));
   const checkLoad = loadIsChecked(exerciseId, custom);
   const out: ExerciseSessionSummary[] = [];
-  rows.forEach(({ s, sets }, i) => {
+  rows.forEach(({ s, sets, target }, i) => {
     const ref = plausibilityRef(out, meta?.role === 'main');
     const later = rows.slice(i + 1).flatMap(r => r.sets.filter(isWorkingSet));
-    out.push(summarizeSets(s.id, s.day, sets, heldIn(sets, later, ref, checkLoad)));
+    const sum = summarizeSets(s.id, s.day, sets, heldIn(sets, later, ref, checkLoad));
+    out.push(target ? { ...sum, target } : sum);
   });
   return out;
 }
@@ -172,4 +178,51 @@ export function modeOf(exerciseId: string, custom: Exercise[] = []): ResistanceM
 export function daysSinceLast(history: ExerciseSessionSummary[], today: string): number | null {
   const last = history[history.length - 1];
   return last ? daysBetween(last.day, today) : null;
+}
+
+/** LT-3: the next target restated on the planned line, with the reason the coach gives. */
+export interface Restated { kg: number; repWindow: [number, number]; reason: string }
+
+const OFF_EPS = 0.011;
+const REP_EPS = 0.01;
+const off = (h: ExerciseSessionSummary): boolean => !!h.target && h.workKg > 0 && Math.abs(h.workKg - h.target.kg) > OFF_EPS;
+/** The median working set at the working load (unrated = RIR 2), as LT-2's anchor. */
+function anchor(h: ExerciseSessionSummary): { R: number; rirObs: number } {
+  const at = h.sets.filter(x => x.kg === h.workKg && !h.held.includes(x));
+  const pool = (at.some(x => x.kind !== 'drop') ? at.filter(x => x.kind !== 'drop') : at).slice().sort((a, b) => (a.reps ?? 0) - (b.reps ?? 0));
+  const mid = pool[Math.floor((pool.length - 1) / 2)];
+  return { R: mid?.reps ?? h.workReps, rirObs: RIR_BY_EFFORT[mid?.effort ?? 'ideal'] };
+}
+
+/**
+ * LT-3 (§4 "Next session", option a, D-A4): the last session was lifted off its planned load, so its load is not the
+ * base. The target is restated on the rung nearest the planned load whose re-solved reps fall inside `[lo, hi]`
+ * (32 × 5 at max against a 27.5 plan → 27.5 kg for 8 to 9). A load chosen in the last two sessions becomes the base
+ * (null here) only when its own re-solved reps fall inside the window; otherwise the plan holds and the reason says so.
+ * Null when there is nothing to restate: no stored target (older sessions), or the load matched the plan.
+ */
+export function restateOffPlan(hist: ExerciseSessionSummary[], range: [number, number], rir: number, rungsKg: number[] = []): Restated | null {
+  const last = hist[hist.length - 1];
+  if (!last || !off(last)) return null;
+  const t = last.target!;
+  const [lo, hi] = range;
+  const { R, rirObs } = anchor(last);
+  const at = (kg: number) => repsAt(last.workKg, R, rirObs, kg, rir);
+  const prev = hist[hist.length - 2];
+  const twice = !!prev && off(prev) && Math.abs(prev.workKg - last.workKg) <= OFF_EPS;
+  const own = Math.floor(at(last.workKg) + REP_EPS);
+  if (twice && own >= lo && own <= hi) return null;
+  const inside = (kg: number) => { const f = Math.floor(at(kg) + REP_EPS); return f >= lo && f <= hi; };
+  const kg = [t.kg, ...rungsKg.filter(x => x > 0)].sort((a, b) => Math.abs(a - t.kg) - Math.abs(b - t.kg) || a - b).find(inside);
+  if (kg == null) return null;
+  const r = at(kg);
+  const f = Math.floor(r + REP_EPS);
+  // As LT-2's window: within a quarter rep above a whole number, one number.
+  const b = Math.max(f, Math.min(hi, r - f < 0.25 ? f : Math.ceil(r - REP_EPS)));
+  const repWindow: [number, number] = [Math.max(lo, f), b];
+  const label = repWindow[0] === repWindow[1] ? `${repWindow[0]}` : `${repWindow[0]} to ${repWindow[1]}`;
+  const reason = twice
+    ? `${last.workKg} kg twice now, but it is good for about ${Math.max(0, own)} reps, outside your ${lo}–${hi} range. The plan stays: ${kg} kg for ${label}.`
+    : `Last time was ${last.workKg} kg against a ${t.kg} kg plan. Back on the plan: ${kg} kg for ${label}.`;
+  return { kg, repWindow, reason };
 }

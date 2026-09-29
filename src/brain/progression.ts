@@ -15,12 +15,13 @@
  */
 import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { loadableNear, loadableTopKg, loadableValues, type Loadable, type LoadMenu } from './units';
-import { chooseRung, type RungChoice, type RungInput, type RungMenu } from './retarget';
+import { chooseRung, rirMid, type RungChoice, type RungInput, type RungMenu } from './retarget';
 import { RIR_BY_EFFORT } from './e1rm';
 import { KG_PER_LB, kgToDisplay } from '@/core/units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { CARRY_OR_SLED_IDS, findExercise, startingLoadKg } from '@/core/exercises';
-import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
+import { daysSinceLast, exerciseHistory, modeOf, restateOffPlan, type ExerciseSessionSummary } from './history';
+import { carryOverStart } from './substitute';
 import { plateauStatus } from './trend';
 import { inLighterWeek, lighterWeekDay } from './deload';
 
@@ -139,6 +140,8 @@ export interface ProgressionContext {
   loadFactor?: number;
   /** LT-2: the gym's load menu (LT-1's loadMenu). Without it, increases and step-downs choose from `equipment`'s loads. */
   menu?: LoadMenu;
+  /** LT-6 (§5): the exerciseId this slot was substituted from (`ActiveSession.entries[].plannedId`), when it differs from `exerciseId`. */
+  replacedExerciseId?: string;
 }
 
 /**
@@ -336,6 +339,16 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   const firstBack = !ctx?.deload && !!week && today > week.endDay && outside.length > 0 && outside.length < all.length && !all.some(h => h.day > week.endDay);
 
   if (!last) {
+    // LT-6 (docs/LOAD-AWARE-TARGETS.md §5): a substitute with no history of its own carries over an
+    // estimate from the lift it replaced, through a sourced pattern ratio, onto its own menu.
+    if (mode === 'weighted' && meta && ctx?.replacedExerciseId && ctx.replacedExerciseId !== exerciseId) {
+      const replacedMeta = findExercise(ctx.replacedExerciseId, custom);
+      const replacedHist = exerciseHistory(sessions, ctx.replacedExerciseId, custom).filter(h => h.held.length < h.sets.length);
+      const replacedLast = replacedHist[replacedHist.length - 1];
+      const carryMenu = ctx.menu ?? (ctx.equipment ? { profile: ctx.equipment, rungsKg: menuFromProfile(ctx.equipment).rungsKg } : undefined);
+      const co = replacedMeta && replacedLast && carryMenu ? carryOverStart(replacedMeta, meta, replacedLast.workKg, carryMenu) : null;
+      if (co) return { mode: 'start', target: `${co.kg} kg · ${co.reps} reps`, kg: co.kg, reps: [co.reps, co.reps], reason: `${co.text}.`, confidence: co.confidence, sets: setPlan(setCount, co.kg, co.reps, null, 'Start here') };
+    }
     const start = startingLoadKg(meta?.equipment ?? '');
     if (mode === 'duration') return { mode: 'start', target: 'Hold 20–30s', kg: null, reps: null, reason: 'First time. Hold for a comfortable 20 to 30 seconds and note how it felt.', confidence: 'low', sets: setPlan(setCount, null, null, 30, 'Start here') };
     if (mode === 'bodyweight' || start.kg == null) return { mode: 'start', target: `Start light · ${fmtRange(range)}`, kg: null, reps: range, reason: start.note, confidence: 'low', sets: setPlan(setCount, null, range[0], null, 'Start here') };
@@ -434,6 +447,15 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   if (firstBack) {
     const reps = Math.min(range[1], Math.max(range[0], last.workReps));
     return { mode: 'hold', target: `${topKg} kg · ${reps} reps`, kg: topKg, reps: [reps, reps], reason: `${BACK_REASON} Match it before adding more.`, confidence: conf, sets: holdSets('Back to your level', reps) };
+  }
+
+  // LT-3 (§4 a, D-A4): a session lifted off its planned load is restated on the plan's line, not taken as the base.
+  const restated = restateOffPlan(hist, range, rirMid(goal), ctx?.menu?.rungsKg ?? (ctx?.equipment ? menuFromProfile(ctx.equipment).rungsKg : []));
+  // Fix round 1: a restatement up to the plan is an increase, so a hold day (amber, or the muscle under 60 %) skips it.
+  const holdDay = ctx?.readiness?.loadAdvice === 'no_increase' || (ctx?.recoveryPct != null && ctx.recoveryPct < RECOVERY_HOLD_PCT);
+  if (restated && !(holdDay && restated.kg > last.workKg)) {
+    const w = restated.repWindow;
+    return { mode: 'hold', target: `${restated.kg} kg · ${fmtWindow(w)}`, kg: restated.kg, reps: w, repWindow: w, reason: restated.reason, confidence: conf, sets: setPlan(setCount, restated.kg, w[0], null, 'Back on plan') };
   }
 
   const prev = hist[hist.length - 2];

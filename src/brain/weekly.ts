@@ -60,7 +60,7 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
   const workouts = inWeek.length;
   // BR-22: the planned count is the target; 3 only when there is no schedule at all (null).
   // QA-R6-4/10: a week whose planned days were all taken off has a target of 0, not 3.
-  const target = plannedPerWeek ?? 3;
+  const target = plannedPerWeek ?? DEFAULT_WEEK_SESSIONS;
   const grade = target === 0 && workouts === 0 ? { title: 'Rest week', note: 'Every planned day this week is a day off.' }
     : workouts >= target ? { title: 'Strong week', note: 'You hit your planned sessions. Keep the standard.' }
     : workouts >= 2 ? { title: 'Building momentum', note: 'One or two more sessions makes this a full week.' }
@@ -91,6 +91,34 @@ export function plannedThisWeek(schedule: Record<Weekday, string | null>, daysOf
   let n = 0;
   for (let i = 0; i < 7; i++) { const d = addDays(start, i); if (schedule[weekdayOf(d)] && !off.has(d)) n++; }
   return n;
+}
+
+/** ADAPT-4: what the user planned; every field optional, so callers without a plan keep the default. */
+export interface WeekPlan {
+  schedule?: Record<Weekday, string | null>;
+  daysOff?: string[];
+  /** Profile.plannedDays: used when no weekday is scheduled (F-1). */
+  plannedDays?: number;
+}
+
+/** A full week when nothing is planned (COACHING-PLAN volume row). */
+export const DEFAULT_WEEK_SESSIONS = 3;
+
+/**
+ * ADAPT-4 (C-8): sessions planned for the week containing `day`: the schedule minus days off,
+ * else Profile.plannedDays, else null (nothing set).
+ */
+export function plannedSessions(plan: WeekPlan | undefined, day: string): number | null {
+  const scheduled = plan?.schedule ? plannedThisWeek(plan.schedule, plan.daysOff ?? [], day) : null;
+  return scheduled ?? plan?.plannedDays ?? null;
+}
+
+/**
+ * ADAPT-4 (C-3, C-5): sessions that make the week containing `day` a full week: the planned count,
+ * 3 when nothing is set, never below 2 (a 1-day plan would make every week "full").
+ */
+export function fullWeekSessions(plan: WeekPlan | undefined, day: string): number {
+  return Math.max(2, plannedSessions(plan, day) ?? DEFAULT_WEEK_SESSIONS);
 }
 
 export function trainingStreak(sessions: Session[], schedule: Record<Weekday, string | null>, today: string, daysOff: string[] = []): number {

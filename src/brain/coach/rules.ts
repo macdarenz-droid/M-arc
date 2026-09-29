@@ -16,7 +16,7 @@ import { exerciseHistory, isActive, modeOf } from '../history';
 import { PLATEAU_MIN_SPAN_DAYS, plateauStatus, plateauWindow } from '../trend';
 import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
-import { weekSummary, daysSinceLastSession } from '../weekly';
+import { weekSummary, daysSinceLastSession, type WeekPlan } from '../weekly';
 import { isWorkingSet, weeklyMuscleSets } from '../exposure';
 import { muscleVolumeStatus } from '../volume';
 import { findExercise } from '@/core/exercises';
@@ -89,6 +89,34 @@ export interface CoachContext {
   unit?: LoadUnit;
   /** A stored session's 5-second heart series (heartStore), for heart.drift. Absent: that rule stays quiet. */
   heartSeries?: (sessionId: string) => Array<[number, number]>;
+  /** ADAPT-4: days the user marked off; the gap and green-day rules skip them. */
+  daysOff?: string[];
+  /** ADAPT-4 (F-1): Profile.plannedDays, the week target when nothing is scheduled. */
+  plannedDays?: number;
+}
+
+/** ADAPT-4: the user's own week, for the volume rule (C-3). */
+const planOf = (ctx: CoachContext): WeekPlan => ({ schedule: ctx.schedule, daysOff: ctx.daysOff ?? [], plannedDays: ctx.plannedDays });
+
+/**
+ * ADAPT-4 (E-6): the user's usual days between sessions: the median gap between training days in the
+ * eight weeks before `today`, null with fewer than three gaps.
+ */
+function usualGapDays(sessions: Session[], today: string): number | null {
+  const from = addDays(today, -56);
+  const days = [...new Set(sessions.filter(s => s.day >= from && s.day <= today).map(s => s.day))].sort();
+  const gaps = days.slice(1).map((d, i) => daysBetween(days[i]!, d));
+  if (gaps.length < 3) return null;
+  return [...gaps].sort((a, b) => a - b)[Math.floor(gaps.length / 2)]!;
+}
+
+/** ADAPT-4 (E-9): the first scheduled day of this week not taken off; Monday with no schedule. */
+function firstTrainingDayOfWeek(ctx: CoachContext): string {
+  const start = weekStart(ctx.today);
+  if (!Object.values(ctx.schedule).some(Boolean)) return start;
+  const off = new Set(ctx.daysOff ?? []);
+  for (let i = 0; i < 7; i++) { const d = addDays(start, i); if (ctx.schedule[weekdayOf(d)] && !off.has(d)) return d; }
+  return start;
 }
 
 interface Derived {
@@ -311,7 +339,7 @@ export const RULES: Rule[] = [
     run: ctx => {
       const trainedMuscles = new Set(ctx.splits.flatMap(s => s.exercises.flatMap(se => findExercise(se.exerciseId, ctx.custom)?.primary ?? [])));
       const out: Insight[] = [];
-      for (const row of muscleVolumeStatus(ctx.sessions, ctx.today, ctx.custom)) {
+      for (const row of muscleVolumeStatus(ctx.sessions, ctx.today, ctx.custom, planOf(ctx))) {
         if ((row.status !== 'under' && row.status !== 'over') || !trainedMuscles.has(row.muscle)) continue;
         const label = muscleLabel(row.muscle);
         const under = row.status === 'under';
@@ -335,6 +363,13 @@ export const RULES: Rule[] = [
     run: ctx => {
       const gap = daysSinceLastSession(ctx.sessions, ctx.today);
       if (gap == null || gap < 7) return [];
+      // ADAPT-4 (E-6): days marked off do not count, and the line waits for twice the user's usual gap.
+      const last = addDays(ctx.today, -gap);
+      const offDays = new Set(ctx.daysOff ?? []);
+      let counted = 0;
+      for (let i = 1; i <= gap; i++) if (!offDays.has(addDays(last, i))) counted++;
+      const usual = usualGapDays(ctx.sessions, ctx.today);
+      if (counted < Math.max(7, usual == null ? 0 : 2 * usual)) return [];
       return [{
         id: 'gap', category: 'consistency', priority: 250,
         title: gap >= 28 ? 'Welcome back' : `${gap} days since your last session`,
@@ -514,7 +549,7 @@ export const RULES: Rule[] = [
           evidence: { n: 1, window: 'today', confidence: 'low' },
         }];
       }
-      if (weekdayOf(ctx.today) !== 'mon') return [];
+      if (ctx.today !== firstTrainingDayOfWeek(ctx)) return [];
       // Only inputs that read well are "lining up"; one past its driver line is left out.
       const good = inputs.filter(k => !d.readinessLow.includes(k));
       if (!good.length) return [];
