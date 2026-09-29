@@ -129,6 +129,27 @@ describe('form-guide parts come from tokens (FG-5)', () => {
   });
 });
 
+// FG-6: the side figure paints from theme tokens only, both facings and the mistake figure: no colour function or named
+// colour in its markup, every var() it uses is a theme token or one of the figure's own root variables, and the body
+// base follows each theme's --accent.
+describe('form-guide side figure comes from tokens (FG-6)', () => {
+  it('every theme, both facings, correct and mistake', async () => {
+    const { colourLiterals } = await import('./formguide/colourLint');
+    const { figureSide } = await import('@/formguide/rig/figureSide');
+    const { themeReader, bodyPal } = await import('@/formguide/rig/paint');
+    for (const t of THEME_IDS) {
+      const defined = new Set([...themeToCss(THEMES[t]).matchAll(/(--[\w-]+):/g)].map(m => m[1]!).concat(['--l', '--d', '--oc', '--sp', '--rim', '--ph']));
+      for (const mirror of [false, true]) for (const mistake of [false, true]) {
+        const svg = figureSide(themeReader(t), { id: 'fs', mirror, mistake });
+        expect(colourLiterals(svg, { hex: false }), t).toEqual([]);
+        expect([...new Set([...svg.matchAll(/var\((--[\w-]+)\)/g)].map(m => m[1]!))].filter(v => !defined.has(v)), t).toEqual([]);
+      }
+      expect(figureSide(themeReader(t), { id: 'fs' })).toContain(bodyPal(themeReader(t), false).base);
+      expect(bodyPal(themeReader(t), false).base).toBe(String(THEMES[t].tokens.accent).toLowerCase());
+    }
+  });
+});
+
 // UI-1: the exercise-title sweep paints only var(--text) and the accent, never a dim tone (A4); it
 // lives inside its keyframes, so at rest and under reduced motion the title is plain var(--text)
 // (A3); only the open card's title runs it, finite on open (A1, A6); I3's static border stays and no
