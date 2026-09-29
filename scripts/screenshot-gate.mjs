@@ -4956,6 +4956,67 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// BUG-19 (DATES-F1): Finish long after the last set ends the session 5 min after that set, and the
+// finish sheet says so and shows that duration. Finishing right after the last set adds nothing.
+{
+  const tag = 'BUG-19 finish end time';
+  for (const { label, lastAgoMin, expectNote, expectDur } of [
+    { label: 'forgotten', lastAgoMin: 190, expectNote: true, expectDur: '15:00' },
+    { label: 'on time', lastAgoMin: 1, expectNote: false, expectDur: null },
+  ]) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} (${label}): ${e.message}`));
+    await page.addInitScript(lastAgo => {
+      const nowMs = Date.now(); const now = new Date(nowMs).toISOString();
+      const ago = min => new Date(nowMs - min * 60_000).toISOString();
+      // Started 10 min before the last set; three live sets at 0, 5 and 10 min of training.
+      const set = (id, min) => ({ id, kg: 80, reps: 8, at: ago(min), fidelity: 'live', status: 'committed' });
+      localStorage.setItem('marc.theme', 'silent-black');
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] }],
+        schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions: [],
+        active: { id: 's_bug19', splitId: 'sp1', startedAt: ago(lastAgo + 10), pausedMs: 0, gymId: 'gym_default',
+          entries: [{ id: 'e1', exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', done: false, skipped: false, sets: [set('b1', lastAgo + 10), set('b2', lastAgo + 5), set('b3', lastAgo)] }] },
+        customExercises: [],
+        preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, lastAgoMin);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav');
+    await launchGone(page);
+    // With a session in progress the Train tab reads "Live".
+    await page.locator('nav.nav button', { hasText: 'Live' }).click(); await page.waitForTimeout(250);
+    const finish = page.getByRole('button', { name: 'Finish', exact: true });
+    // Nothing (the Escobar dock included, BUG-22) may sit on top of the button's centre.
+    const onTop = loc => loc.evaluate(el => { const r = el.getBoundingClientRect(); const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!hit && el.contains(hit); }).catch(() => false);
+    if (!(await onTop(finish))) errors.push(`${tag} (${label}): something covers the live session's Finish button`);
+    await finish.click({ timeout: 5000 }).catch(() => errors.push(`${tag} (${label}): no Finish button on the live session`));
+    await page.waitForTimeout(300);
+    const note = page.locator('[data-finish-trimmed]');
+    const shown = await visible(note);
+    if (shown !== expectNote) errors.push(`${tag} (${label}): expected the ended-at note ${expectNote ? 'shown' : 'hidden'}, it was ${shown ? 'shown' : 'hidden'}`);
+    const dur = (await page.locator('[data-finish-duration]').textContent().catch(() => null))?.trim();
+    if (expectDur && dur !== expectDur) errors.push(`${tag} (${label}): expected the finish sheet to show ${expectDur}, got ${dur}`);
+    if (!expectDur && (!dur || dur.split(':').length > 2)) errors.push(`${tag} (${label}): expected the running duration under an hour, got ${dur}`);
+    if (expectNote) { await settle(page); await page.screenshot({ path: `${OUT}/bug-19-finish-trimmed.png` }); }
+    const save = page.getByRole('button', { name: /Finish and save|Just today/ }).first();
+    await save.scrollIntoViewIfNeeded().catch(() => {});
+    if (!(await onTop(save))) errors.push(`${tag} (${label}): something covers "Finish and save"`);
+    await save.click().catch(() => errors.push(`${tag} (${label}): no Finish and save`));
+    await page.waitForTimeout(400);
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.find(x => x.id === 's_bug19'));
+    if (!saved) errors.push(`${tag} (${label}): the session was not saved`);
+    else if (expectNote && saved.durationSec !== 15 * 60) errors.push(`${tag} (${label}): expected 900 s saved, got ${saved.durationSec}`);
+    else if (!expectNote && Math.abs(Date.parse(saved.endedAt) - Date.now()) > 60_000) errors.push(`${tag} (${label}): expected the session to end at Finish, got ${saved.endedAt}`);
+    await ctx.close();
+  }
+}
+
 // 7.5: anonymous error reports. The Settings row starts off, the one-time ask appears once (after
 // a finished workout, never during a live one) as a plain banner (never a blocking modal — it
 // must not steal a tap meant for anything else), Yes/No are remembered across a reload, and no

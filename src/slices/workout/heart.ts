@@ -8,7 +8,7 @@ import { effect } from '@preact/signals';
 import { latestMeasurement, watchStatus } from '@/native/watch';
 import { state } from '@/core/store';
 import { today } from '@/app/selectors';
-import { downsampleToBuckets, setHeartFromWindow, sessionHeartSummary, hrMax, restingHr, bestObservedHrMax } from '@/brain/heart';
+import { downsampleToBuckets, preSetBpmFromWindow, setHeartFromWindow, sessionHeartSummary, hrMax, restingHr, bestObservedHrMax } from '@/brain/heart';
 import { sessionEnergy } from '@/brain/energy';
 import { storeSeries, exportHeart } from '@/core/heartStore';
 import type { Session, SetHeart } from '@/core/models';
@@ -44,18 +44,18 @@ export function startHeartCapture(): void {
   });
 }
 
-/** The most recent contact=true bpm reading, for F1.2's rest target ("preSetBpm"). */
-export function latestLiveBpm(): number | undefined {
-  for (let i = rawSamples.length - 1; i >= 0; i--) {
-    const s = rawSamples[i]!;
-    if (s.contact !== false) return s.bpm;
-  }
-  return undefined;
-}
-
 /** The last n contact=true bpm readings, oldest first, for restTarget()'s "3 consecutive settled samples". */
 export function recentLiveBpms(n = 3): number[] {
   return rawSamples.filter(s => s.contact !== false).slice(-n).map(s => s.bpm);
+}
+
+/**
+ * RECOVERY-F18: the heart rate before the set that was just committed (the trough of the rest
+ * before it), for heart-guided rest. Not the bpm at the commit, which is the end-of-set peak.
+ * Undefined without enough signal in that window: the rest target then uses its reserve term alone.
+ */
+export function preSetBpmFor(fromSec: number, toSec: number): number | undefined {
+  return preSetBpmFromWindow(downsampleToBuckets(rawSamples), fromSec, toSec) ?? undefined;
 }
 
 /** setStartSec/setEndSec: seconds since the session started (see resetHeartCapture). */
@@ -68,7 +68,10 @@ export function heartForSet(setStartSec: number, setEndSec: number): SetHeart | 
 /** Computes the session's heart summary and stores its series. Returns the session unchanged when nothing was captured. */
 export function finishHeartCapture(session: Session): Session {
   if (!rawSamples.length) return session;
-  const series = downsampleToBuckets(rawSamples);
+  // BUG-19: a forgotten Finish ends the session at its last set plus a margin, so the samples
+  // recorded after that end (the watch still on the wrist for hours) are not this session's.
+  const endSec = (Date.parse(session.endedAt) - Date.parse(session.startedAt)) / 1000;
+  const series = downsampleToBuckets(Number.isFinite(endSec) ? rawSamples.filter(x => x.tSec <= endSec) : rawSamples);
   storeSeries(session.id, series);
   if (!series.length) return session;
   const s = state.value;
