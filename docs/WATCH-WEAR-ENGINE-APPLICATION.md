@@ -77,22 +77,35 @@ Open the rejected application (as the owner did on 2026-09-29) and change it lik
 
 > The M/ARC watch app is a gym workout companion for HUAWEI WATCH GT 6 (lite wearable, in development) that works with the M/ARC Android phone app, which stores the workout. Main functions: 1) Show the current exercise, set number, target weight and reps, and the rest countdown sent by the phone. 2) Let the user complete a set (weight, reps, effort), add 30 s of rest, skip rest, pause, resume or finish. Each action goes to the phone as one small P2P message with an ID. 3) Show Pending until the phone replies Saved. The user opens the M/ARC watch app from the watch's app list. Messages flow only while both apps are open, with M/ARC in the foreground and Huawei Health in the background. If the phone app is not active, the watch keeps the last workout state, runs the rest timer locally and shows Phone not connected; waiting actions resend when M/ARC is open again. Workout records are stored only on the phone; there is no account or workout server. The phone app requests only Basic device information.
 
-### 3.3 Email to hihealth@huawei.com (optional; send after submitting)
-The cause is now known, so there is no need to wait for Huawei before resubmitting. The email makes it easy for the reviewer to ask about anything else. **Don't send the earlier draft:** it said the launch permission was not selected, which was wrong.
+### 3.3 Email to hihealth@huawei.com (optional; after submitting)
+The cause is known, so this email does not ask Huawei to diagnose anything. It tells them the mistake is fixed and invites questions. **Don't send the earlier draft:** it said the launch permission was not selected, which was wrong.
 
-> **Subject:** Wear Engine application for M/ARC (app ID 119100049): launch permission removed and resubmitted
+**Attachments: none.**
+- The two .xlsx files are already in the application, which is what reviewers assess.
+- A second copy by email could leave two versions in circulation.
+- If Huawei asks for anything, reply with it then.
+
+> **Subject:** Wear Engine permission application – M/ARC (App ID 119100049) – resubmitted on 29 September 2026
 >
-> Hello HUAWEI Wear Engine Developer Team,
+> Dear HUAWEI Wear Engine Developer Team,
 >
-> Thank you for reviewing the Wear Engine application for M/ARC (app ID 119100049, package com.mrcdrnzz.dailytracker). It was rejected on 29 September 2026 because "the permission to launch specified apps is not required for mobile apps".
+> I am writing about the Wear Engine permission application for my app M/ARC (App ID: 119100049; package name: com.mrcdrnzz.dailytracker).
 >
-> You are right: that option was selected by mistake. I have resubmitted the application with only Basic device information selected. I am an individual developer. The Android phone app uses the permission for P2P messages with our own lite wearable app on the HUAWEI WATCH GT 6, and the user opens the watch app on the watch.
+> On 29 September 2026 my previous application was rejected for the following reason: "The permission to launch specified apps is not required for mobile apps." Thank you for the clear feedback. That permission had been selected in error.
 >
-> The updated Data Permission and Usage Description and User Authorization Path Description follow your current individual-developer templates. If anything else is missing, please let me know and I will correct it straight away.
+> I have corrected this and resubmitted the application on 29 September 2026. The new application:
+>
+> - requests only the Basic device information permission, for P2P messaging between the M/ARC Android phone app and my own lite wearable app on the HUAWEI WATCH GT 6;
+> - no longer selects "Launch specified app"; the user opens the watch app on the watch;
+> - includes the Data Permission and Usage Description and the User Authorization Path Description on your current individual-developer templates, with UX diagrams of the watch app and screenshots of the phone app.
+>
+> I am an individual developer. If any further information or change is needed for approval, please let me know and I will provide it promptly.
+>
+> Thank you for your time and support.
 >
 > Kind regards,
 > [your name]
-> M/ARC (individual developer)
+> Individual developer, M/ARC
 
 **If there is no answer:**
 - Huawei's forum staff send questions about a specific application to the online support ticket (HUAWEI Developers → Support → Submit a ticket, Wear Engine category). Use it if nothing arrives within two weeks of submitting.
