@@ -5945,6 +5945,48 @@ for (const { theme, inset } of bug22Runs) {
   await ctx.close();
 }
 
+// LT-3 (docs/LOAD-AWARE-TARGETS.md §4): the live retarget. Plan 27.5 kg × 8 on the bench (last time 27.5 × 7), set 1
+// logged live at 32 kg × 5 at Max: rows 2 and 3 show 32 × 3 as their placeholders, and the autoregulation line reads
+// "32 kg is above today's plan: about 3 clean reps. Back to 27.5 for 8, or stay at 32 for 3." Never a "Try" line.
+{
+  const tag = 'LT-3 live retarget';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const bench = 'lib_barbell_bench_press';
+    const pre = { id: 's-lt3', splitId: 'sp1', splitName: 'Push', day: day(3), startedAt: `${day(3)}T17:00:00.000Z`, endedAt: `${day(3)}T18:00:00.000Z`, durationSec: 3600, logging: { mode: 'live', flags: [] },
+      exercises: [{ exerciseId: bench, name: 'Barbell Bench Press', sets: [1, 2, 3].map(i => ({ id: `lt3p${i}`, kg: 27.5, reps: 7, effort: 'ideal' })) }] };
+    const set1 = { id: 'lt3r1', kg: 32, reps: 5, effort: 'max', at: now, fidelity: 'live', status: 'committed' };
+    localStorage.setItem('marc.theme', 'silent-black');
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Push', color: '#888', exercises: [{ exerciseId: bench, sets: 3 }], focus: [], createdAt: now }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [pre], customExercises: [],
+      active: { id: 'actlt3', splitId: 'sp1', startedAt: now, pausedMs: 0, entries: [{ id: 'enlt3', exerciseId: bench, name: 'Barbell Bench Press', sets: [set1, { id: 'lt3r2' }, { id: 'lt3r3' }], done: false, skipped: false }] },
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [], insightFeedback: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.locator('nav.nav button', { hasText: 'Live' }).click(); await page.waitForTimeout(300);
+  const card = page.locator('.card.exercise').first();
+  if (!(await card.locator('.set-grid input').first().isVisible().catch(() => false))) { await card.locator('.ex-head').click(); await page.waitForTimeout(300); }
+  const rows = await card.evaluate(c => [...c.querySelectorAll('.set-grid')].filter(g => g.querySelector('input')).map(g => [...g.querySelectorAll('input')].map(i => i.getAttribute('placeholder') ?? '')));
+  if (JSON.stringify(rows.slice(1).map(r => r.slice(0, 2))) !== '[["32","3"],["32","3"]]') errors.push(`${tag}: expected rows 2 and 3 to show 32 × 3, got ${JSON.stringify(rows)}`);
+  const line = "32 kg is above today's plan: about 3 clean reps. Back to 27.5 for 8, or stay at 32 for 3.";
+  if (!(await visible(card.getByText(line, { exact: false }), 2000))) errors.push(`${tag}: expected the line ${JSON.stringify(line)}`);
+  if (await card.getByText(/Try \d/).count()) errors.push(`${tag}: a "Try" load line showed above the plan`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-lt-3-live-retarget.png` });
+  await ctx.close();
+}
+
 // ADAPT-4 G1 (F-1): Profile shows "not set" for planned days per week when the user never set it (it
 // showed 3), and the number once it is set (tapping + from "not set" saves 4). Silent Black and Paper, 390 px.
 for (const theme of ['silent-black', 'paper']) {
