@@ -1,0 +1,32 @@
+{
+  "id": "lib_rear_delt_fly",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.5, "lower": 2, "rest": 0.5 },
+  "ranges": {
+    "shoulder_abd": { "min": 20, "max": 90, "source": "SetForSet Reverse Pec Deck Fly: set the seat so the hands are at shoulder height on the handles, then bring the handles out to the sides until the arms are out at shoulder level (90 degrees); 20 degrees is the starting cross-body reach for the handles" },
+    "elbow_flex": { "min": 10, "max": 20, "source": "SetForSet Reverse Pec Deck Fly: grasp the handles with a neutral grip and keep a slight, fixed bend in the elbows for the whole rep" },
+    "shrug_cm": { "min": 0, "max": 0.5, "source": "Garage Gym Reviews / bodybuilding-wizard Reverse Pec Deck guides: keep the shoulders down and away from the ears so the rear delts, not the traps, do the pulling" }
+  },
+  "muscles": {
+    "target": ["rear_delts"],
+    "helps": ["mid_back"],
+    "keepQuiet": ["upper_traps"],
+    "peakAt": 0.3,
+    "peakSource": "SetForSet Reverse Pec Deck Fly: pause for a second at peak contraction (arms out to the sides) to feel the rear deltoids, so effort is highest through that hold"
+  },
+  "mistake": {
+    "name": "Shrug and swing",
+    "tells": [
+      { "text": "The shoulders creep up toward the ears as the seat sits too low.", "joint": "shrug_cm" },
+      { "text": "The arms jerk past shoulder height on momentum instead of a controlled squeeze.", "joint": "shoulder_abd" }
+    ],
+    "source": "bodybuilding-wizard / Garage Gym Reviews Reverse Pec Deck guides: a seat set too low turns the path into a high pull and encourages shrugging, shifting tension to the traps; using momentum to jerk the handles takes tension off the rear delts and hands it to the traps and rhomboids"
+  },
+  "sources": [
+    "https://www.setforset.com/blogs/news/reverse-pec-deck-fly",
+    "https://www.garagegymreviews.com/reverse-pec-deck",
+    "https://bodybuilding-wizard.com/reverse-pec-deck-fly/",
+    "Contact fact (D-FG7 (d), back view): the pattern table already gives horizontal_abduction the back view (rig/patterns.ts); chest stays against the pad throughout (Garage Gym Reviews), and the seat is set so the hands meet the handles at shoulder height (SetForSet) — a qualitative setting, not a numeric one this research can cite, so it is not written into `machine.settings`"
+  ]
+}

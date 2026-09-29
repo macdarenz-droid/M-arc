@@ -1,0 +1,31 @@
+{
+  "id": "lib_seated_leg_curl",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.5, "lower": 2.5, "rest": 0.5 },
+  "ranges": {
+    "knee_flex": { "min": 0, "max": 100, "source": "Seated leg curl guides (Fitness Volt, Sweat, NASM): start with the legs straight without locking the knees (0 degrees); curl until the knees bend to about 90 to 110 degrees or as far as the machine allows with good form (illustrative midpoint 100 degrees)" },
+    "hip_flex": { "min": 85, "max": 95, "source": "Seated leg curl mistake guides (Gravitus, Wenzel Coaching): keep the hips pinned to the seat and the pelvis neutral through the whole set, a narrow band around the seated 90-degree hip angle" }
+  },
+  "muscles": {
+    "target": ["hamstrings"],
+    "helps": ["calves"],
+    "keepQuiet": ["lower_back"],
+    "peakAt": 0.28,
+    "peakSource": "Seated leg curl guides: pause for a moment at the bottom of the curl, feeling the contraction through the hamstrings, so effort is highest through that hold"
+  },
+  "mistake": {
+    "name": "Hips up, momentum down",
+    "tells": [
+      { "text": "The hips lift off the seat to help curl the weight.", "joint": "hip_flex" },
+      { "text": "The pad kicks down and flies back instead of a controlled curl.", "joint": "knee_flex" }
+    ],
+    "source": "Seated leg curl mistake guides (Gravitus, Wenzel Coaching): a hip thrust to move the pad shifts tension off the hamstrings and onto the lower back; kicking the weight down and letting it fly back removes the controlled tension the hamstring needs"
+  },
+  "sources": [
+    "https://fitnessvolt.com/seated-leg-curl/",
+    "https://gravitus.com/guides/exercises/seated-leg-curl/",
+    "https://www.wenzelcoaching.com/blog/strength-exercise-instruction-leg-curl/",
+    "Contact fact (ankle strap / leg pad): the pad sits between the calf and ankle, adjusted to rest just above the knees on the thighs (Fitness Volt); a real-world description, not a numeric `machine.settings` value this research can cite"
+  ]
+}

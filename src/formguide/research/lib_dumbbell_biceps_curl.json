@@ -4,7 +4,7 @@
   "order": "lift_first",
   "tempo": { "lift": 1.5, "hold": 0.5, "lower": 2, "rest": 0.5 },
   "ranges": {
-    "elbow_flex": { "min": 5, "max": 123, "source": "ACE Bicep Curl: start with elbows extended, curl the bar/dumbbells toward the shoulders; PMC6047503 (EMG study of curl variants): dumbbell curl elbow range of motion measured at 123.1 +/- 12.3 degrees" },
+    "elbow_flex": { "min": 5, "max": 128, "source": "ACE Bicep Curl: start with elbows extended, curl the bar/dumbbells toward the shoulders (start taken as 5 degrees, a slight bend); PMC6047503 (EMG study of curl variants) measured the dumbbell curl's excursion at 123.1 +/- 12.3 degrees, so the end is the 5-degree start plus that excursion, about 128 degrees" },
     "shoulder_flex": { "min": -5, "max": 5, "source": "ACE Bicep Curl: keep the elbows next to the middle of the body; ACE Seated Biceps Curl: bend the elbow without moving it forward" },
     "torso_lean": { "min": -3, "max": 3, "source": "ACE Bicep Curl: keep the chest still, using just the arms for the movement" }
   },

@@ -1,0 +1,30 @@
+{
+  "id": "lib_machine_chest_press",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.3, "lower": 1.5, "rest": 0.5 },
+  "ranges": {
+    "elbow_flex": { "min": 15, "max": 90, "source": "ACE Seated Chest Press: press until the elbows are fully extended but not locked (15 degrees); during the return, the elbows flex back toward the starting bent position at the chest (illustrative 90 degrees, matching a loaded machine start)" },
+    "torso_lean": { "min": -3, "max": 3, "source": "ACE Seated Chest Press: the shoulder blades stay in contact with the backrest and should not round or move forward off it" }
+  },
+  "muscles": {
+    "target": ["chest"],
+    "helps": ["front_delts", "triceps"],
+    "keepQuiet": ["upper_traps"],
+    "peakAt": 0.28,
+    "peakSource": "Chest press mistake guides (Breaking Muscle, Gravitus): \"press up through the upper chest, not with the shoulders,\" and keep the shoulders down and back, so chest effort is highest approaching full extension, not from a shoulder shrug"
+  },
+  "mistake": {
+    "name": "Round and lock",
+    "tells": [
+      { "text": "The shoulder blades round forward off the backrest to finish the press.", "joint": "torso_lean" },
+      { "text": "The elbows slam all the way to a hard lockout instead of stopping just short.", "joint": "elbow_flex" }
+    ],
+    "source": "ACE Seated Chest Press: a very frequent mistake is pressing until the shoulder blades round forward and move off the backrest; chest press mistake guides (Breaking Muscle, Gravitus): avoid locking the elbows out completely, which loses constant tension"
+  },
+  "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
+    "https://breakingmuscle.com/chest-press-machine/",
+    "https://gravitus.com/guides/exercises/chest-press-machine/"
+  ]
+}

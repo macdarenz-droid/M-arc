@@ -1,0 +1,30 @@
+{
+  "id": "lib_shoulder_press",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.3, "lower": 1.5, "rest": 0.5 },
+  "ranges": {
+    "elbow_flex": { "min": 15, "max": 90, "source": "ACE Seated Shoulder Press: press up until the elbows are fully extended but not locked (15 degrees); lower until the elbows are about level with the shoulders (illustrative 90 degrees), giving the delts a full stretch without over-stressing the joint" },
+    "torso_lean": { "min": -3, "max": 3, "source": "ACE Seated Shoulder Press: keep the head aligned with the spine and avoid arching the low back" }
+  },
+  "muscles": {
+    "target": ["front_delts", "side_delts"],
+    "helps": ["triceps", "upper_chest"],
+    "keepQuiet": ["lower_back"],
+    "peakAt": 0.28,
+    "peakSource": "ACE Seated Shoulder Press: continue the press until fully extended but not locked, so delt effort is highest approaching that near-top position"
+  },
+  "mistake": {
+    "name": "Arch and lock",
+    "tells": [
+      { "text": "The low back arches to help drive the press up.", "joint": "torso_lean" },
+      { "text": "The elbows slam to a hard lockout at the top.", "joint": "elbow_flex" }
+    ],
+    "source": "ACE Seated Shoulder Press: avoid arching the low back during the press; press until fully extended but not locked, since locking out loses control and joint protection"
+  },
+  "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/186/seated-shoulder-press/",
+    "https://apexpersonalfitness.com/shoulder-press-machine-gym/",
+    "Contact fact (seat height, unverified_on_machine): ACE / Apex Personal Fitness — set the seat so the elbows begin just below shoulder level and the handles line up with the shoulders; a real-world description, not this app's numeric `seat` setting, so it is not written into `machine.settings` here"
+  ]
+}

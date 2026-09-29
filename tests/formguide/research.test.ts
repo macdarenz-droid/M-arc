@@ -67,16 +67,30 @@ export function validate(r: Research, view: View): string[] {
   return issues;
 }
 
-// CHECK-IN V1-02: only the curl lands before the supervisor's go (docs/FORM-GUIDE-PRODUCTION.md §10.3). The other 6
-// join this list as their files are added.
 const V1_02_IDS = [
-  'lib_dumbbell_biceps_curl',
+  'lib_dumbbell_biceps_curl', 'lib_romanian_deadlift', 'lib_hanging_leg_raise', 'lib_seated_cable_row',
+  'lib_single_arm_triceps_pushdown', 'lib_lat_pulldown', 'lib_rear_delt_fly',
 ] as const;
 
 describe('V1-02 research.json passes the validator', () => {
   const files = readdirSync(RESEARCH).filter(f => f.endsWith('.json'));
   it.each(V1_02_IDS)('%s has a research.json', id => expect(files).toContain(`${id}.json`));
   it.each(V1_02_IDS)('%s', id => {
+    const r = JSON.parse(readFileSync(`${RESEARCH}/${id}.json`, 'utf8')) as Research;
+    expect(r.id).toBe(id);
+    expect(validate(r, viewOf(id))).toEqual([]);
+  });
+});
+
+const V1_03_IDS = [
+  'lib_machine_chest_press', 'lib_incline_machine_press', 'lib_shoulder_press', 'lib_leg_press',
+  'lib_seated_leg_curl', 'lib_leg_extension', 'lib_seated_calf_raise',
+] as const;
+
+describe('V1-03 research.json passes the validator', () => {
+  const files = readdirSync(RESEARCH).filter(f => f.endsWith('.json'));
+  it.each(V1_03_IDS)('%s has a research.json', id => expect(files).toContain(`${id}.json`));
+  it.each(V1_03_IDS)('%s', id => {
     const r = JSON.parse(readFileSync(`${RESEARCH}/${id}.json`, 'utf8')) as Research;
     expect(r.id).toBe(id);
     expect(validate(r, viewOf(id))).toEqual([]);

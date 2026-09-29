@@ -1,0 +1,32 @@
+{
+  "id": "lib_romanian_deadlift",
+  "kind": "rep",
+  "order": "lower_first",
+  "tempo": { "lift": 1.2, "hold": 0.3, "lower": 2, "rest": 0.5 },
+  "ranges": {
+    "hip_flex": { "min": 0, "max": 75, "source": "ACE Romanian Deadlift: push the hips back and lower the weight until tension is felt along the hamstrings, bar tracking to about the mid-shin; no exact angle is given, so 75 degrees is an illustrative end for that depth (thin source, flagged for an owner device check)" },
+    "knee_flex": { "min": 10, "max": 20, "source": "ThatFitFriend RDL technique: keep a slight, fixed knee bend of about 10 to 20 degrees for the whole rep" },
+    "torso_lean": { "min": -3, "max": 3, "source": "ACE Romanian Deadlift: keep a straight back; the trunk stays rigid on the pelvis through the hip hinge (the lean itself comes from hip_flex, not the spine)" }
+  },
+  "muscles": {
+    "target": ["hamstrings"],
+    "helps": ["glutes", "lower_back"],
+    "keepQuiet": ["quads"],
+    "peakAt": 0.52,
+    "peakSource": "EMG comparison of conventional and Romanian deadlifts (ScienceDirect S1728869X18301291): hamstring activation is highest at the stretched bottom position, just before the concentric drive back up"
+  },
+  "mistake": {
+    "name": "Squat it up",
+    "tells": [
+      { "text": "The knees bend forward like a squat instead of holding their angle.", "joint": "knee_flex" },
+      { "text": "The hips barely go back, so the bar drifts out in front of the legs.", "joint": "hip_flex" }
+    ],
+    "source": "ThatFitFriend (5 RDL Mistakes and Fixes) and SimpliFaster: bending the knees turns the hinge into a squat and shifts load off the hamstrings; hips not going back far enough is the same fault seen as the bar drifting away from the body, which loads the lower back instead"
+  },
+  "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/317/romanian-deadlift/",
+    "https://thatfitfriend.com/romanian-deadlift-mistakes-fixes/",
+    "https://www.sciencedirect.com/science/article/pii/S1728869X18301291",
+    "Contact fact (bar over mid-foot / kept against the legs): ACE Romanian Deadlift — \"keep the bar against the body the entire time; the farther the bar hovers away from the body, the greater the stress on the lower back\""
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "lib_seated_calf_raise",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 1, "lower": 3, "rest": 0.5 },
+  "ranges": {
+    "ankle_flex": { "min": -35, "max": 15, "source": "Seated calf raise guides (Gravitus, BODi): lower until the heels drop 2 to 3 inches below the platform for a full stretch (illustrative 15 degrees of dorsiflexion); push up onto the toes as high as possible (illustrative -35 degrees of plantar flexion). No exact angle is given, so both ends are illustrative, inside the AAOS ankle row" },
+    "knee_flex": { "min": 85, "max": 95, "source": "Seated calf raise guides (Gravitus, BODi): the knees sit under the padded lever the whole set; use only the ankle joint and avoid lifting with the knees or hips, a narrow band around the seated 90-degree knee angle" }
+  },
+  "muscles": {
+    "target": ["calves"],
+    "helps": [],
+    "keepQuiet": [],
+    "peakAt": 0.27,
+    "peakSource": "Seated calf raise guides: hold the fully contracted position briefly (1 to 2 seconds) at the top to maximize muscle engagement, so effort is highest through that hold"
+  },
+  "mistake": {
+    "name": "Bounce and shortchange it",
+    "tells": [
+      { "text": "The heels bounce off the bottom stretch instead of pausing there.", "joint": "ankle_flex" },
+      { "text": "The rise stops halfway instead of reaching full plantar flexion.", "joint": "ankle_flex" }
+    ],
+    "source": "Seated calf raise mistake guides (Hevy, Livestrong): bouncing at the bottom uses elastic rebound instead of muscle contraction; a partial range of motion that rises only halfway activates only part of the calf's muscle fibers"
+  },
+  "sources": [
+    "https://gravitus.com/guides/exercises/seated-calf-raise/",
+    "https://www.bodi.com/blog/seated-calf-raises",
+    "https://www.hevyapp.com/exercises/seated-calf-raises/",
+    "https://www.livestrong.com/article/13728281-calf-raise-mistakes/",
+    "Contact fact (knee pad / footplate): balls of the feet on the footplate with heels hanging off the edge, hip-width apart, toes forward; the padded lever rests just above the knees (Gravitus)"
+  ]
+}

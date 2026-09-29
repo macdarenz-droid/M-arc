@@ -1,0 +1,31 @@
+{
+  "id": "lib_leg_extension",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.3, "lower": 2, "rest": 0.5 },
+  "ranges": {
+    "knee_flex": { "min": 5, "max": 90, "source": "Leg extension guides (RitFit, e3rehab): start with the knees at about a 90-degree angle; extend the quads until the legs are nearly straight but not locked out (illustrative 5 degrees); e3rehab notes terminal knee extension creates the highest patellofemoral pressure, so stopping a few degrees short of full (0-degree) extension is the practical, joint-friendly stop" },
+    "hip_flex": { "min": 85, "max": 95, "source": "Leg extension mistake guides (ampainsoc, Art of Manliness): actively pull the hip down into the seat and keep the butt and back in contact with the pads for the whole set, a narrow band around the seated 90-degree hip angle" }
+  },
+  "muscles": {
+    "target": ["quads"],
+    "helps": [],
+    "keepQuiet": ["lower_back"],
+    "peakAt": 0.3,
+    "peakSource": "RitFit / e3rehab leg extension guides: terminal knee extension is where quad effort and knee-joint load both peak, which is why form guides say to stop just short of full lockout there"
+  },
+  "mistake": {
+    "name": "Hips up, momentum up",
+    "tells": [
+      { "text": "The hips lift off the seat as the weight gets heavy.", "joint": "hip_flex" },
+      { "text": "The leg bar is kicked up with a jerk and dropped back instead of a controlled extension.", "joint": "knee_flex" }
+    ],
+    "source": "Leg extension mistake guides (bodybuilding-wizard, ampainsoc, Art of Manliness): lifting the hips off the seat shifts tension away from the quads; bouncing or swinging the leg bar up with momentum and letting it drop removes the controlled tension the quads need"
+  },
+  "sources": [
+    "https://www.ritfitsports.com/blogs/article/proper-leg-extension-form",
+    "https://e3rehab.com/how-to-perform-leg-extensions/",
+    "https://bodybuilding-wizard.com/machine-leg-extension/",
+    "Contact fact (shin pad / ankle strap): the shin pad rests at the ankles, feet facing forward (RitFit); a real-world description, not a numeric `machine.settings` value this research can cite"
+  ]
+}
