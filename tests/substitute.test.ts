@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { substitutesFor } from '@/brain/substitute';
+import { substitutesFor, carryOverStart } from '@/brain/substitute';
 import { findExercise } from '@/core/exercises';
+import { defaultProfile, loadableValues, type LoadMenu } from '@/brain/units';
+import { SUBSTITUTION_RATIOS, substitutionRatio } from '@/data/substitutionRatios';
 
 describe('substitutesFor (F3.7)', () => {
   it('only offers exercises sharing a primary muscle', () => {
@@ -18,5 +20,61 @@ describe('substitutesFor (F3.7)', () => {
     expect(declineBench).toBeDefined();
     expect(pecFly).toBeDefined();
     expect(subs.indexOf(declineBench!)).toBeLessThan(subs.indexOf(pecFly!));
+  });
+});
+
+// LT-5 (docs/LOAD-AWARE-TARGETS.md §5): substitution carry-over estimate.
+describe('SUBSTITUTION_RATIOS (LT-5 A1)', () => {
+  it('every ratio cites a real, non-empty source and url', () => {
+    expect(SUBSTITUTION_RATIOS.length).toBeGreaterThan(0);
+    for (const r of SUBSTITUTION_RATIOS) {
+      expect(r.source.length).toBeGreaterThan(30);
+      expect(r.url).toMatch(/^https:\/\/doi\.org\//);
+      expect(r.ratio).toBeGreaterThan(0);
+      expect(r.ratio).toBeLessThan(1);
+    }
+  });
+  it('is the inverse in the opposite direction, and null with no sourced pair or same group', () => {
+    const fwd = substitutionRatio('horizontal_push', 'Barbell', 'Dumbbells')!;
+    const back = substitutionRatio('horizontal_push', 'Dumbbells', 'Barbell')!;
+    expect(back.ratio).toBeCloseTo(1 / fwd.ratio, 9);
+    expect(substitutionRatio('squat', 'Barbell', 'Dumbbells')).toBeNull();
+    expect(substitutionRatio('horizontal_push', 'Barbell', 'Barbell')).toBeNull();
+  });
+});
+
+describe('carryOverStart (LT-5)', () => {
+  const dbMenu: LoadMenu = { profile: defaultProfile('Dumbbells', 'kg'), rungsKg: loadableValues(defaultProfile('Dumbbells', 'kg')), unit: 'kg', confidence: 'assumed', source: 'default' };
+  const barbellMenu: LoadMenu = { profile: defaultProfile('Barbell', 'kg'), rungsKg: loadableValues(defaultProfile('Barbell', 'kg')), unit: 'kg', confidence: 'assumed', source: 'default' };
+  const barbellBench = { pattern: 'horizontal_push', equipment: 'Barbell' };
+  const dumbbellBench = { pattern: 'horizontal_push', equipment: 'Dumbbells' };
+  const barbellOhp = { pattern: 'vertical_push', equipment: 'Barbell' };
+  const dumbbellOhp = { pattern: 'vertical_push', equipment: 'Dumbbells' };
+  const barbellSquat = { pattern: 'squat', equipment: 'Barbell' };
+  const dumbbellSquat = { pattern: 'squat', equipment: 'Dumbbells' };
+
+  it('A2: lands on a real rung of the substitute\'s menu, confidence low, "Start around X for N"', () => {
+    const out = carryOverStart(barbellBench, dumbbellBench, 60, dbMenu);
+    expect(out).toEqual({ kg: 22.5, reps: 3, confidence: 'low', text: 'Start around 22.5 kg for 3' });
+    expect(dbMenu.rungsKg).toContain(out!.kg);
+  });
+  it('A2: a second sourced pattern (vertical_push) also lands on a rung', () => {
+    const out = carryOverStart(barbellOhp, dumbbellOhp, 50, dbMenu);
+    expect(out).toEqual({ kg: 22.5, reps: 1, confidence: 'low', text: 'Start around 22.5 kg for 1' });
+  });
+  it('the inverse direction (dumbbell replaced by barbell) also resolves', () => {
+    const out = carryOverStart(dumbbellBench, barbellBench, 22.5, barbellMenu);
+    expect(out).not.toBeNull();
+    expect(barbellMenu.rungsKg).toContain(out!.kg);
+  });
+  it('A3: no ratio for this pattern behaves as today (null, caller falls back to startingLoadKg)', () => {
+    expect(carryOverStart(barbellSquat, dumbbellSquat, 100, dbMenu)).toBeNull();
+  });
+  it('A3: a pattern change (not a real substitute pair) is never given a carry-over estimate', () => {
+    expect(carryOverStart(barbellBench, { pattern: 'squat', equipment: 'Dumbbells' }, 60, dbMenu)).toBeNull();
+  });
+  it('null with no strength estimate or an empty menu', () => {
+    expect(carryOverStart(barbellBench, dumbbellBench, 0, dbMenu)).toBeNull();
+    expect(carryOverStart(barbellBench, dumbbellBench, 60, { ...dbMenu, rungsKg: [] })).toBeNull();
   });
 });
