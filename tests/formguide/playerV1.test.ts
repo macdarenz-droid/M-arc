@@ -94,6 +94,15 @@ describe('V1-19 A2: the tag never meets the face keep-out, at any stop of any me
     expect(tagClashes(one)).toEqual([one.tags[40]!.offset]);
   });
 
+  it('the push comes first: with room beside the face, the tag moves sideways and keeps its height', () => {
+    const face = { x0: 168, y0: 23, x1: 232, y1: 103 }, K = kMax(VIEWBOXES.standingFront), wide = VIEWBOXES.standingFront;
+    for (const side of ['l', 'r'] as const) {
+      const at = placeTag([200, 20], face, side, 200, wide, K), b = tagBox(at, K);
+      expect(at[1]).toBe(64);
+      expect(side === 'r' ? b.x0 >= face.x1 : b.x1 <= face.x0).toBe(true);
+    }
+  });
+
   it('the placement rule pushes a tag off the face and keeps it in the zoom camera', () => {
     const face = { x0: 168, y0: 23, x1: 232, y1: 103 }, zoom = VIEWBOXES.upperFront, K = kMax(VIEWBOXES.standingFront);
     for (const pivot of [[180, 30], [200, 60], [230, 90], [260, 128], [150, 10]] as [number, number][]) for (const side of ['l', 'r'] as const) {
