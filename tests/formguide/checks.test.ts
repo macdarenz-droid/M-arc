@@ -119,8 +119,9 @@ describe('the rules inside each check', () => {
     expect(only({ ...BASE, mistake: { ...BASE.mistake, setup: { setting: 'seat', wrong: 0.2, text: 'x' } } }, 'setupDiffers').fails.join()).toMatch(/no machine/);
   });
   it('a view or pose the rig does not draw yet fails the figure checks, naming what is missing', () => {
-    const side = only({ ...BASE, view: 'side', viewWhy: 'test' }, 'everyPoseRenders').fails.join();
-    expect(side).toMatch(/no side view figure yet/);
+    // V1-06 wired the side view, so the back view (V1-22) is the one not drawn yet
+    const back = only({ ...BASE, view: 'back', viewWhy: 'test' }, 'everyPoseRenders').fails.join();
+    expect(back).toMatch(/back view not drawn yet \(V1-22\)/);
     expect(only({ ...BASE, pose: 'lying_supine' }, 'themes').fails.join()).toMatch(/no lying_supine pose/);
     // FG-5 drew the free-weight parts, so a part still missing from the library (the sled) stands in for barbell here.
     expect(only({ ...BASE, equipment: { ...BASE.equipment, kind: 'sled' } }, 'pathBudget').fails.join()).toMatch(/part sled has no drawing yet/);
