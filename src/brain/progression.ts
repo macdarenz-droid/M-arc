@@ -15,12 +15,12 @@
  */
 import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { loadableNear, loadableTopKg, loadableValues, type Loadable, type LoadMenu } from './units';
-import { chooseRung, type RungChoice, type RungInput, type RungMenu } from './retarget';
+import { chooseRung, rirMid, type RungChoice, type RungInput, type RungMenu } from './retarget';
 import { RIR_BY_EFFORT } from './e1rm';
 import { KG_PER_LB, kgToDisplay } from '@/core/units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { CARRY_OR_SLED_IDS, findExercise, startingLoadKg } from '@/core/exercises';
-import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
+import { daysSinceLast, exerciseHistory, modeOf, restateOffPlan, type ExerciseSessionSummary } from './history';
 import { plateauStatus } from './trend';
 import { inLighterWeek, lighterWeekDay } from './deload';
 
@@ -434,6 +434,15 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   if (firstBack) {
     const reps = Math.min(range[1], Math.max(range[0], last.workReps));
     return { mode: 'hold', target: `${topKg} kg · ${reps} reps`, kg: topKg, reps: [reps, reps], reason: `${BACK_REASON} Match it before adding more.`, confidence: conf, sets: holdSets('Back to your level', reps) };
+  }
+
+  // LT-3 (§4 a, D-A4): a session lifted off its planned load is restated on the plan's line, not taken as the base.
+  const restated = restateOffPlan(hist, range, rirMid(goal), ctx?.menu?.rungsKg ?? (ctx?.equipment ? menuFromProfile(ctx.equipment).rungsKg : []));
+  // Fix round 1: a restatement up to the plan is an increase, so a hold day (amber, or the muscle under 60 %) skips it.
+  const holdDay = ctx?.readiness?.loadAdvice === 'no_increase' || (ctx?.recoveryPct != null && ctx.recoveryPct < RECOVERY_HOLD_PCT);
+  if (restated && !(holdDay && restated.kg > last.workKg)) {
+    const w = restated.repWindow;
+    return { mode: 'hold', target: `${restated.kg} kg · ${fmtWindow(w)}`, kg: restated.kg, reps: w, repWindow: w, reason: restated.reason, confidence: conf, sets: setPlan(setCount, restated.kg, w[0], null, 'Back on plan') };
   }
 
   const prev = hist[hist.length - 2];
