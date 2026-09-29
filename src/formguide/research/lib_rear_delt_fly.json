@@ -1,0 +1,32 @@
+{
+  "id": "lib_rear_delt_fly",
+  "kind": "rep",
+  "order": "lift_first",
+  "tempo": { "lift": 1, "hold": 0.5, "lower": 2, "rest": 0.5 },
+  "ranges": {
+    "shoulder_abd": { "min": 20, "max": 90, "source": "AmpAinSoc Reverse Pec Deck: \"Adjust the seat so the handles align with your shoulders when seated\" and the pause comes \"when arms are fully extended back\"; no exact top angle is given, so 90 degrees (arms level with the shoulders) is illustrative; 20 degrees is the illustrative starting cross-body reach" },
+    "elbow_flex": { "min": 10, "max": 15, "source": "AmpAinSoc Reverse Pec Deck: \"Slight bend in elbows (10-15 degrees), maintained throughout\"" },
+    "shrug_cm": { "min": 0, "max": 0.5, "source": "FitnessVolt Reverse Pec Deck: a seat set too low \"can turn the path into a high pull and encourage shrugging,\" so the seat height itself (not a separate cue) is what keeps the shoulders down" }
+  },
+  "muscles": {
+    "target": ["rear_delts"],
+    "helps": ["mid_back"],
+    "keepQuiet": ["upper_traps"],
+    "peakAt": 0.3,
+    "peakSource": "AmpAinSoc Reverse Pec Deck: \"1-second pause when arms are fully extended back. Squeeze the rear delts,\" so effort is highest through that hold"
+  },
+  "mistake": {
+    "name": "Shrug and swing",
+    "tells": [
+      { "text": "The shoulders creep up toward the ears as the seat sits too low.", "joint": "shrug_cm" },
+      { "text": "The arms jerk past shoulder height on momentum instead of a controlled squeeze.", "joint": "shoulder_abd" }
+    ],
+    "source": "FitnessVolt Reverse Pec Deck: \"Setting the seat too low: This can turn the path into a high pull and encourage shrugging\"; \"Using too much weight: Momentum, shortened range, and elbow movement usually appear before the target muscles receive better training\""
+  },
+  "sources": [
+    "https://fitnessvolt.com/reverse-pec-deck-alternatives/",
+    "https://ampainsoc.org/reverse-pec-deck/",
+    "https://www.garagegymreviews.com/reverse-pec-deck",
+    "Contact fact (D-FG7 (d), back view): the pattern table already gives horizontal_abduction the back view (rig/patterns.ts); the chest stays against the pad throughout, per Garage Gym Reviews (\"Sit down with your chest pressed against the seatback\") — a qualitative setup fact, not a numeric one this research can cite, so it is not written into `machine.settings`"
+  ]
+}
