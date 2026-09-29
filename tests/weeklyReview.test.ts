@@ -101,7 +101,10 @@ describe('weekHasEnoughData', () => {
 describe('weeklyReviewInsights', () => {
   it('produces at least one insight for a week with low chest volume', () => {
     // Two light chest sessions plus a third (legs) session so the week has 3+ sessions but chest stays under band.
+    // ADAPT-5 (V3, C-4): the review uses Body's band, where 'under' needs two full weeks, so the week before repeats it.
     const sessions = [
+      ...['2026-09-07', '2026-09-09'].map(d => session(d, [{ id: bench, sets: sets(60, 8, 'ideal', 1) }])),
+      session('2026-09-11', [{ id: 'lib_leg_press', sets: sets(100, 8, 'ideal', 3) }]),
       session('2026-09-14', [{ id: bench, sets: sets(60, 8, 'ideal', 1) }]),
       session('2026-09-16', [{ id: bench, sets: sets(60, 8, 'ideal', 1) }]),
       session('2026-09-18', [{ id: 'lib_leg_press', sets: sets(100, 8, 'ideal', 3) }]),

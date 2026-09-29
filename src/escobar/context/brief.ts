@@ -7,7 +7,7 @@
 import type { MemoryItem } from '@/core/models';
 import { daysBetween, weekdayOf, trainedTodaySessions } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
-import { GOAL_BY_ID } from '@/data/goals';
+import { DEFAULT_GOAL, GOAL_BY_ID } from '@/data/goals';
 import { trainingAgeMonths, ageOf, possiblyMinor } from '@/brain/recovery';
 import { coachInsights } from '@/brain/coach/rules';
 import { plannedThisWeek, weekSummary, daysSinceLastSession } from '@/brain/weekly';
@@ -22,7 +22,7 @@ export const BRIEF_CAP = 3000;
 export const FULL_BRIEF_EVERY = 5;
 export const MEMORY_IN_BRIEF = 12;
 const ALWAYS = ['now', 'screen', 'mode', 'pending', 'decisions', 'signals'];
-const ORDER = ['now', 'screen', 'today', 'recovery', 'week', 'top_insights', 'profile', 'gym', 'memory', 'sharing', 'tone', 'minor', 'signals', 'mode', 'pending', 'decisions'];
+const ORDER = ['now', 'screen', 'today', 'recovery', 'week', 'top_insights', 'profile', 'goal', 'gym', 'memory', 'sharing', 'tone', 'minor', 'signals', 'mode', 'pending', 'decisions'];
 
 export interface BriefInput {
   ctx: ToolCtx;
@@ -112,6 +112,8 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   if (age != null) prof.push(`age ${num(age, 'age', 'years')}`);
   if (e.sharing.body && s.profile.bodyWeightKg) prof.push(`weight ${num(s.profile.bodyWeightKg, 'body weight', 'kg')} kg`);
   L.profile = prof.join(', ');
+  // ADAPT-5 (F-2): derived from profileHistory (already stored): the default goal nobody picked.
+  if (s.goal === DEFAULT_GOAL && !s.profileHistory.some(c => c.field === 'goal' && (c.source === 'user' || c.source === 'onboarding'))) L.goal = 'default, not chosen';
 
   const gym = s.units.gyms.find(x => x.id === s.units.activeGymId);
   const entryUnits = (split?.exercises ?? []).map(x => {

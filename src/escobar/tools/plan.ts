@@ -5,5 +5,5 @@ import type { ToolCtx } from './context';
 
 export function evaluatePlanTool(input: { draft?: unknown }, ctx: ToolCtx): PlanEvaluation {
   const s = ctx.state;
-  return evaluatePlan(planDraftArg(input.draft, ctx), { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today });
+  return evaluatePlan(planDraftArg(input.draft, ctx), { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today, trainingSince: s.profile.trainingSince });
 }
