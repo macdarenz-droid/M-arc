@@ -84,6 +84,7 @@ export function coachCtx(ctx: ToolCtx): CoachContext {
     recoveryModel: s.recoveryModel, deload: s.deload, feedback: s.insightFeedback, unit: s.preferences.weightUnit,
     heartSeries: ctx.heartSeries,
     daysOff: s.daysOff, plannedDays: s.profile.plannedDays,
+    goal: s.goal,
   });
 }
 

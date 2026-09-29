@@ -132,7 +132,8 @@ describe('insight feedback (F3.6)', () => {
 describe('programming.volume (F3.2)', () => {
   const push = { id: 'split_push', name: 'Push', color: '#fff', exercises: [{ exerciseId: bench, sets: 3 }], focus: [], createdAt: '2026-01-01' };
   it('flags a trained muscle that has run well over its band', () => {
-    const s = [session('2026-09-18', [{ id: bench, sets: sets(60, 8, 'ideal', 12) }])];
+    // ADAPT-5 (C-2): baseCtx's profile trains since 2015, so the band is Established (chest 10–18), not New.
+    const s = [session('2026-09-18', [{ id: bench, sets: sets(60, 8, 'ideal', 20) }])];
     const out = coachInsights({ ...baseCtx, sessions: s, splits: [push] }, 20);
     expect(out.some(i => i.id === 'volume:chest')).toBe(true);
   });

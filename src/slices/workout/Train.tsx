@@ -596,7 +596,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   // suggestion carries `menuConfidence` for the ask chip below.
   const equipMenu = useMemo(() => loadMenu(entry.exerciseId, effectiveGymId, s.units, ex, loggedLoads(s.sessions, entry.exerciseId, s.customExercises)), memoDeps);
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
-  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, menu: equipMenu, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
+  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, menu: equipMenu, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}), ...(entry.plannedId && entry.plannedId !== entry.exerciseId ? { replacedExerciseId: entry.plannedId } : {}) }), memoDeps);
   // LT-4 (§2): the one-time ask, only on an assumed menu whose snapped jump broke the goal's cap.
   const askThisKey = askKey(effectiveGymId, entry.exerciseId);
   const askVisible = mode === 'weighted' && shouldAskWeight(next, equipMenu.profile) && !askDismissed.value.has(askThisKey);
@@ -1156,7 +1156,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const top = (Object.entries(emphasis) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
   const priorSessions = s.sessions.filter(x => x.id !== session.id);
-  const debrief = sets > 0 ? postSessionInsights({ session, priorSessions, custom: s.customExercises, isStrengthGoal: s.goal === 'strength', unit: s.preferences.weightUnit, goal: s.goal }) : [];
+  const debrief = sets > 0 ? postSessionInsights({ session, priorSessions, custom: s.customExercises, goal: s.goal, restSettingSec: s.preferences.autoRest ? s.preferences.restDefaultSec : undefined, unit: s.preferences.weightUnit }) : [];
   /** F3.5: a "did you know" cue on the finish screen, for whichever main lift the session actually trained. */
   const learnExercise = findExercise((session.exercises.find(e => findExercise(e.exerciseId, s.customExercises)?.role === 'main') ?? session.exercises[0])?.exerciseId ?? '', s.customExercises);
   const learnCue = learnExercise ? pickCue(learnExercise, 'learn', `${session.day}|${learnExercise.id}`) : null;

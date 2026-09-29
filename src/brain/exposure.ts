@@ -5,7 +5,7 @@
 import type { Effort, Exercise, LoggedExercise, LoggedSet, Session } from '@/core/models';
 import { MUSCLE_IDS, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
-import { weekStart, addDays } from '@/core/dates';
+import { weekStart, addDays, daysBetween } from '@/core/dates';
 
 export const ROLE_WEIGHT = { primary: 1, secondary: 0.55, stabilizer: 0.25 } as const;
 export const EFFORT_MULT: Record<Effort, number> = { easy: 0.9, ideal: 1, max: 1.1 };
@@ -138,7 +138,22 @@ export const LEVELS: Array<{ min: number; name: string }> = [
   { min: 90, name: 'Established' }, { min: 180, name: 'Advanced' }, { min: 320, name: 'Elite' }, { min: 520, name: 'Master' },
 ];
 
-export function trainingLevels(sessions: Session[], custom: Exercise[] = []): Record<MuscleId, { score: number; level: string; levelIndex: number }> {
+/**
+ * ADAPT-5 (C-2): the level a stated training age vouches for, as a LEVELS index: 12-36 months →
+ * Developing, 36+ → Established (the cap), else 0 (no seed). Only `Profile.trainingSince` counts,
+ * never the first logged session. `seed` is that month ('YYYY-MM') and today.
+ */
+export interface LevelSeed { trainingSince?: string; today: string }
+export const LEVEL_SEED = [{ months: 36, levelIndex: 3 }, { months: 12, levelIndex: 2 }] as const;
+export function levelSeedIndex(seed?: LevelSeed): number {
+  if (!seed?.trainingSince || !/^\d{4}-\d{2}$/.test(seed.trainingSince)) return 0;
+  const months = daysBetween(`${seed.trainingSince}-01`, seed.today) / 30.44;
+  return LEVEL_SEED.find(x => months >= x.months)?.levelIndex ?? 0;
+}
+
+/** Per muscle: the lifetime score's level, raised to the seed's level when the person stated a training age (ADAPT-5). */
+export function trainingLevels(sessions: Session[], custom: Exercise[] = [], seed?: LevelSeed): Record<MuscleId, { score: number; level: string; levelIndex: number }> {
+  const floor = levelSeedIndex(seed);
   const score: MuscleScore = {};
   for (const s of sessions) {
     const emphasis = sessionEmphasis(s.exercises, custom).scores;
@@ -149,6 +164,7 @@ export function trainingLevels(sessions: Session[], custom: Exercise[] = []): Re
     const v = score[m] ?? 0;
     let idx = 0;
     LEVELS.forEach((l, i) => { if (v >= l.min) idx = i; });
+    idx = Math.max(idx, floor);
     out[m] = { score: Math.round(v * 10) / 10, level: LEVELS[idx]!.name, levelIndex: idx };
   }
   return out;

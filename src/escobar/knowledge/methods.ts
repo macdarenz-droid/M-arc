@@ -84,7 +84,7 @@ const METHODS: Record<MethodId, Builder> = {
     };
   },
   volume_bands: ctx => {
-    const levels = trainingLevels(ctx.state.sessions, ctx.state.customExercises);
+    const levels = trainingLevels(ctx.state.sessions, ctx.state.customExercises, { trainingSince: ctx.state.profile.trainingSince, today: ctx.today });
     const personal: Record<string, string> = {};
     for (const m of MUSCLE_IDS) if (levels[m].levelIndex > 0) { const b = volumeBands(levels[m].levelIndex, m); personal[muscleLabel(m)] = `${levels[m].level}: ${b[0]}–${b[1]} sets/week`; }
     return {
