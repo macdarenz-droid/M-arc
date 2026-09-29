@@ -3,8 +3,8 @@
 // GU-7a (PR #40, rig/stops.ts and moves/types.ts). Pure, no DOM.
 import { BODY, CHANNELS, SIDED, type ChannelId, type Kind, type Order, type Side } from './rig/joints';
 import type { AttachmentId, Curve, ExerciseGuide, RepTempo, Tempo } from './model';
-import type { Frame } from './rig/pose';
-import { compile, firstSeed, needsRig, solveSystem, travelOf, validateSolve, type Seed, type SolveRig, type System } from './solve';
+import type { Pt } from './rig/ik';
+import { compile, pointsOf, firstSeed, needsRig, solveSystem, travelOf, validateSolve, type Seed, type SolveRig, type System } from './solve';
 
 export type PhaseName = 'lift' | 'hold' | 'lower' | 'rest';
 /** One phase of the rep in rep fractions. `move` is 1 or 2 for the first and second moving phase in `order`, else 0;
@@ -216,7 +216,7 @@ function evaluator(g: ExerciseGuide, figure: Figure, rep: number, deltas = true)
 // ---- V1-04: the solved path (files with contacts, a balance or a followed part) ----------------------------------------
 type Plan = {
   enforced: System; released: System; base: (u: number) => Record<ChannelId, number>; pre: ((u: number) => Record<ChannelId, number>) | null;
-  travel: (f: Frame, u: number) => number[]; stops: number[]; label: string;
+  travel: (pt: (a: AttachmentId) => Pt, u: number) => number[]; stops: number[]; label: string;
   /** solved with the sway held at 0 (the body's frame, D-FG3 as extended by V1-04); the sway channel keeps its value */
   still: boolean;
   /** the continuation over the stops: each stop's solution and Jacobian (released, then enforced) */
@@ -250,11 +250,11 @@ function planOf(g: ExerciseGuide, figure: Figure, rep: number, rig: SolveRig | u
   const parts = rig.machine?.parts ?? {};
   const plan: Plan = {
     enforced, released: rel, base: evaluator(g, figure, rep), pre: rel.cons.length ? evaluator(g, figure, rep, false) : null,
-    travel: (f, u) => drives.map(d => {
+    travel: (pt, u) => drives.map(d => {
       if (over[d.part] !== undefined || 'travel' in d) return keyed(d.part, u);
       const p = parts[d.part];
       if (!p) throw new Error(`${g.id}: followed part ${d.part} is not in machine ${g.machine!.id}`);
-      return travelOf(p, rig.point(f, d.follow));
+      return travelOf(p, pt(d.follow));
     }),
     still, stops: stopsFor(tempo, g.order, g.kind), label: figure === 'mistake' ? 'mistake' : `rep ${rep}`, table: [], poses: [], travels: [],
   };
@@ -266,8 +266,7 @@ function planOf(g: ExerciseGuide, figure: Figure, rep: number, rig: SolveRig | u
     let r: ReturnType<typeof solveStop> | null = null;
     if (!a && other) try { r = solveStop(plan, rig, u, other); } catch { r = null; }   // another rep's start, if it holds
     r ??= solveStop(plan, rig, u, a ? { rel: ext(a.rel, b?.rel, c?.rel), enf: ext(a.enf, b?.enf, c?.enf) } : null);
-    // the enforced solve's last frame is drawn at the final pose; without one, draw it
-    plan.table.push(r.s); plan.poses.push(r.pose); plan.travels.push(plan.travel(plan.enforced.cons.length ? r.s.enf.f! : rig.frame(r.pose), u));
+    plan.table.push(r.s); plan.poses.push(r.pose); plan.travels.push(plan.travel((plan.enforced.cons.length && r.s.enf.pts) || pointsOf(rig, r.pose), u));   // the solve's own points of the final pose
   }
   byKey.set(key, plan);
   return plan;
@@ -299,7 +298,7 @@ function solvedAt(g: ExerciseGuide, u: number, figure: Figure, rep: number, rig:
   const i = Math.abs(st[hi]! - u) < Math.abs(u - st[lo]!) ? hi : lo;
   if (st[i] === u) return { pose: { ...plan.poses[i]! }, travel: [...plan.travels[i]!] };
   const { pose } = solveStop(plan, rig!, u, plan.table[i]!);
-  return { pose, travel: plan.travel(rig!.frame(pose), u) };
+  return { pose, travel: plan.travel(pointsOf(rig!, pose), u) };
 }
 
 /** The pose and every drive's travel (0..1, in `machine.drive` order) at u: a followed part's is its point projected on

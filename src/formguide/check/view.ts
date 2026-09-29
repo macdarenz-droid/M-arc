@@ -4,8 +4,8 @@
 import type { AttachmentId, ExerciseGuide, PartId } from '../model';
 import type { ChannelId, JointId, Pose, View } from '../rig/joints';
 import { FLOOR, FRONT_RIG, LEG_X, figureFront } from '../rig/figureFront';
-import { apply, frontFrame, localMat, mmul, type Frame, type PoseId } from '../rig/pose';
-import { PARENT } from '../rig/joints';
+import { apply, frontFrame, localMat, mmul, resolve, riseOf, type Frame, type PoseId } from '../rig/pose';
+import { CHANNELS, PARENT } from '../rig/joints';
 import type { Mat } from '../rig/figureFront';
 import type { TokenReader } from '../rig/paint';
 import type { Pt } from '../rig/ik';
@@ -27,7 +27,33 @@ export type Rig = {
   chain?: (p: Record<ChannelId, number>, a: AttachmentId, target: Pt) => Partial<Record<ChannelId, number>> | null;
   /** V1-04: the drawing of the file's machine, whose parts and pads its contacts name (null: none drawn yet). */
   machine?: MachineDrawing | null;
+  /** V1-04: `point(frame(p), a)` without drawing the whole frame, where the view has a shortcut (else null). */
+  reach?: (p: Record<ChannelId, number>, a: AttachmentId) => Pt | null;
 };
+
+/** The front arm's own channels: nothing above the shoulder reads them, so the chest's frame does not change with them. */
+const ARM_CHANNELS = new Set<string>(['shoulder_abd', 'elbow_lead', 'wrist_pron', 'shrug_cm', 'scap_depress_cm'].flatMap(b => [`${b}_l`, `${b}_r`]));
+const TRUNK_CHANNELS = CHANNELS.filter(c => !ARM_CHANNELS.has(c));
+/**
+ * V1-04 (D-FG7 (b)): the front hand without drawing the frame. The solver moves only arm channels while it holds a hand,
+ * so the chest's figure matrix is taken from one drawn frame (kept while the trunk's channels stay the same) and the arm
+ * is multiplied on in pose.ts's order, with frontFrame's shoulder, elbow and wrist ops (frontFrame, pose.ts:77-79). Held
+ * equal to `point(frame(p))` to 1e-9 by solve.test.ts.
+ */
+const WRIST = { l: localMat('wrist_l', { ops: [['r', 0]] }), r: localMat('wrist_r', { ops: [['r', 0]] }) };
+function frontReach(id: PoseId) {
+  let key: (number | undefined)[] | null = null, chest: Mat | null = null;
+  return (p: Record<ChannelId, number>, a: AttachmentId): Pt | null => {
+    if (a !== 'hand_l' && a !== 'hand_r') return null;
+    const v = resolve(id, p as Pose);
+    let same = !!key;
+    for (let i = 0; same && i < TRUNK_CHANNELS.length; i++) same = p[TRUNK_CHANNELS[i]!] === key![i];
+    if (!same || !chest) { key = TRUNK_CHANNELS.map(c => p[c]); chest = worldMat('chest', frontFrame(id, p as Pose)); }
+    const s = a.slice(-1) as 'l' | 'r', abd = v(`shoulder_abd_${s}`), r = riseOf(abd, v(`shrug_cm_${s}`), v(`scap_depress_cm_${s}`));
+    const sh = localMat(`shoulder_${s}`, { ops: [['t', 0, -r], ['r', -abd]] }), el = localMat(`elbow_${s}`, { ops: [['r', v(`elbow_lead_${s}`)]] });
+    return apply(mmul(mmul(mmul(chest, sh), el), WRIST[s]), [0, 0]);
+  };
+}
 
 /** Parts the figure draws in its own hand groups (FG-1: the lab's dumbbell); other parts come from the parts library. */
 export const FIGURE_PARTS: readonly PartId[] = ['dumbbell'];
@@ -76,7 +102,7 @@ export function rigFor(g: ExerciseGuide, view: View | null): Rig | string {
     return { [`shoulder_abd_${s}`]: x.shoulder_abd, [`elbow_lead_${s}`]: x.elbow_lead } as Partial<Record<ChannelId, number>>;
   };
   return {
-    view, point, pivot, chain, machine: g.machine ? MACHINES[g.machine.id] ?? null : null,
+    view, point, pivot, chain, machine: g.machine ? MACHINES[g.machine.id] ?? null : null, reach: frontReach(id),
     frame: p => frontFrame(id, p as Pose),
     markup: (read, mistake, part = true) => figureFront(read, { id: 'fgc', mistake, dumbbell: part ? db : undefined }),
   };

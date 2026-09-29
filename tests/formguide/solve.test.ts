@@ -4,6 +4,7 @@ import type { ExerciseGuide } from '@/formguide/model';
 import { frontFrame, handAt, solveFrontArm } from '@/formguide/rig/pose';
 import { residual, solveFrontChain } from '@/formguide/solve/frontChain';
 import { pathOff } from '@/formguide/solve';
+import type { Pose } from '@/formguide/solve';
 import { poseAt, sampleGuide, stateAt, stopsFor, tempoOf, type Figure } from '@/formguide/sample';
 import { guideHash, runChecks, type CheckId } from '@/formguide/check';
 import { inputFor } from '@/formguide/check/node';
@@ -231,4 +232,30 @@ describe('V1-04 A11: a sweep of 50 contact parameter sets inside the declared bo
     }
     expect(bad).toEqual([]);
   }, 60_000);
+});
+
+describe('V1-04 reach: the front rig\'s shortcut to a hand equals the drawn frame', () => {
+  it('to 1e-9 over a 500-pose sweep, both arms, seated and standing, a mirrored file too', () => {
+    // a seeded LCG, so the sweep is the same every run; every channel moves, so a trunk change the shortcut misses fails
+    let x = 12345;
+    const rnd = () => ((x = (Math.imul(x, 1103515245) + 12345) >>> 0) / 4294967296);
+    const RANGE: Record<string, [number, number]> = { shoulder_abd: [0, 180], elbow_lead: [-170, 170], wrist_pron: [-80, 80], shrug_cm: [0, 6], scap_depress_cm: [0, 3], torso_lean: [-20, 20], sway: [-2, 2], hip_flex: [0, 110], knee_flex: [0, 120], hip_abd: [-20, 40] };
+    let worst = 0, n = 0;
+    for (const g of [FX, variant({ pose: 'standing' }), variant({ mirror: true })]) {
+      const rig = rigFor(g, 'front') as Rig;
+      for (let i = 0; i < 500; i++) {
+        const p = {} as Record<string, number>;
+        for (const [b, [lo, hi]] of Object.entries(RANGE)) for (const s of ['_l', '_r', '']) if (s || ['torso_lean', 'sway'].includes(b)) p[b + s] = lo + (hi - lo) * rnd();
+        // every fifth pose keeps the trunk and moves the arms only, as a solve does, so the kept chest is exercised
+        const pose = (i % 5 && i ? { ...p, torso_lean: 3, sway: 0.4, hip_flex_l: 90, hip_flex_r: 90, knee_flex_l: 90, knee_flex_r: 90 } : p) as Pose;
+        const f = rig.frame(pose);
+        for (const a of ['hand_l', 'hand_r'] as const) { const q = rig.reach!(pose, a)!, w = rig.point(f, a); worst = Math.max(worst, Math.hypot(q[0] - w[0], q[1] - w[1])); n++; }
+      }
+    }
+    console.info(`[V1-04 reach] ${n} hands, worst ${worst.toExponential(2)} units`);
+    expect(worst).toBeLessThanOrEqual(1e-9);
+  });
+  it('has no shortcut for a point off the arm', () => {
+    expect((rigFor(FX, 'front') as Rig).reach!({} as Pose, 'foot_r')).toBeNull();
+  });
 });
