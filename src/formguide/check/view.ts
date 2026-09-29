@@ -5,7 +5,7 @@ import type { AttachmentId, ExerciseGuide, PartId } from '../model';
 import type { ChannelId, JointId, Pose, View } from '../rig/joints';
 import { FLOOR, FRONT_RIG, LEG_X, figureFront } from '../rig/figureFront';
 import { figureSide, type Held } from '../rig/figureSide';
-import { apply, frontFrame, localMat, mmul, resolve, riseOf, sideGuideRig, type Frame, type PoseId } from '../rig/pose';
+import { apply, frontFrame, localMat, mmul, resolve, riseOf, sideGuideRig, supportOf, type Frame, type PoseId, type Support } from '../rig/pose';
 import { backGuideRig } from '../rig/figureBack';
 import { CHANNELS, PARENT } from '../rig/joints';
 import type { Mat } from '../rig/figureFront';
@@ -38,10 +38,11 @@ export type Rig = {
 const ARM_CHANNELS = new Set<string>(['shoulder_abd', 'elbow_lead', 'wrist_pron', 'shrug_cm', 'scap_depress_cm'].flatMap(b => [`${b}_l`, `${b}_r`]));
 // breath and layer draw their own groups, outside the chest's parent chain (joints.ts PARENT)
 const TRUNK_CHANNELS = CHANNELS.filter(c => !ARM_CHANNELS.has(c) && c !== 'sway' && c !== 'breath' && c !== 'layer');
-/** frontFrame's sway turns the body about the floor point under the pelvis (pose.ts:61): the chest with the sway is the
- * chest without it, turned about that point. */
+/** frontFrame's sway turns the body about the floor point under the pelvis (pose.ts frontFrame): the chest with the sway
+ * is the chest without it, turned about that point. V1-11: on a seat about the hips (the spine's origin, placed), and
+ * on a pad the chest does not sway. */
 const SWAY_AT: Pt = [FRONT_RIG.pelvis.origin[0], FLOOR];
-const swayed = (a: number, M: Mat): Mat => { const c = Math.cos(a * D), s = Math.sin(a * D), [x, y] = SWAY_AT; return mmul([c, s, -s, c, x - c * x + s * y, y - s * x - c * y], M); };
+const swayed = (a: number, M: Mat, [x, y]: Pt = SWAY_AT): Mat => { const c = Math.cos(a * D), s = Math.sin(a * D); return mmul([c, s, -s, c, x - c * x + s * y, y - s * x - c * y], M); };
 /**
  * V1-04 (D-FG7 (b)): the front hand without drawing the frame. The solver moves only arm channels while it holds a hand,
  * so the chest's figure matrix is taken from one drawn frame (kept while the trunk's channels stay the same) and the arm
@@ -54,8 +55,8 @@ const turn = (a: number, q: Pt): Pt => { const c = Math.cos(a * D), s = Math.sin
 /** The arm joints turn about their own placement (origin [0, 0], figureFront FRONT_RIG), so each one's matrix is its
  * placement times its ops; the wrist's op is a 0° turn, so the hand is the wrist placement's image of [0, 0]. */
 const HAND = { l: apply(FRONT_RIG.wrist_l.at, [0, 0]), r: apply(FRONT_RIG.wrist_r.at, [0, 0]) };
-function frontReach(id: PoseId) {
-  let key: (number | undefined)[] | null = null, sway = NaN;
+function frontReach(id: PoseId, support: Support) {
+  let key: (number | undefined)[] | null = null, sway = NaN, at: Pt = SWAY_AT;
   const still: Record<'l' | 'r', Mat | null> = { l: null, r: null }, toChest: Record<'l' | 'r', Mat | null> = { l: null, r: null };
   return (p: Record<ChannelId, number>, a: AttachmentId): Pt | null => {
     if (a !== 'hand_l' && a !== 'hand_r') return null;
@@ -63,11 +64,12 @@ function frontReach(id: PoseId) {
     for (let i = 0; same && i < TRUNK_CHANNELS.length; i++) same = p[TRUNK_CHANNELS[i]!] === key![i];
     if (!same) {
       key = TRUNK_CHANNELS.map(c => p[c]); sway = NaN;
-      const chest = worldMat('chest', frontFrame(id, { ...p, sway: 0 } as Pose));
+      const f0 = frontFrame(id, { ...p, sway: 0 } as Pose, {}, support), chest = worldMat('chest', f0);
       still.l = mmul(chest, FRONT_RIG.shoulder_l.at); still.r = mmul(chest, FRONT_RIG.shoulder_r.at);
+      if (support === 'seat') at = apply(worldMat('pelvis', f0), FRONT_RIG.spine.origin);
     }
-    const w = p.sway ?? 0;
-    if (w !== sway) { sway = w; toChest.l = swayed(w, still.l!); toChest.r = swayed(w, still.r!); }
+    const w = support === 'floor' || support === 'seat' ? p.sway ?? 0 : 0;
+    if (w !== sway) { sway = w; toChest.l = swayed(w, still.l!, at); toChest.r = swayed(w, still.r!, at); }
     // frontFrame's arm ops (pose.ts:77-79), applied to the point from the wrist inward: elbow turn, elbow placement,
     // shoulder turn, shoulder rise, then the shoulder placement in the chest's figure frame
     const v = resolve(id, p as Pose), s = a.slice(-1) as 'l' | 'r', abd = v(`shoulder_abd_${s}`), r = riseOf(abd, v(`shrug_cm_${s}`), v(`scap_depress_cm_${s}`));
@@ -107,16 +109,17 @@ function worldMat(j: JointId, f: Frame): Mat {
 }
 
 const FRONT_POSES: readonly string[] = ['standing', 'seated'] satisfies PoseId[];
-/** The rig for a file, or the reason there is none yet. */
-export function rigFor(g: ExerciseGuide, view: View | null): Rig | string {
+/** The rig for a file, or the reason there is none yet. V1-11: `machine` is the file's machine drawing (default the
+ * library's), whose pads make the support the sway turns about (pose.ts supportOf). */
+export function rigFor(g: ExerciseGuide, view: View | null, machine: MachineDrawing | null = g.machine ? MACHINES[g.machine.id] ?? null : null): Rig | string {
   if (view === 'side') {
-    const r = sideGuideRig(g), held = heldOf(g);
-    return typeof r === 'string' ? r : { ...r, machine: g.machine ? MACHINES[g.machine.id] ?? null : null, markup: (read, mistake, part = true) => figureSide(read, { id: 'fgc', mistake, mirror: !!g.mirror, held: part ? held : undefined }) };
+    const r = sideGuideRig(g, machine), held = heldOf(g);
+    return typeof r === 'string' ? r : { ...r, machine, markup: (read, mistake, part = true) => figureSide(read, { id: 'fgc', mistake, mirror: !!g.mirror, held: part ? held : undefined }) };
   }
   if (view === 'back') return backGuideRig(g);
   if (view !== 'front') return `no view: ${g.id} has no library pattern and the file sets no view`;
   if (!FRONT_POSES.includes(g.pose)) return `no ${g.pose} pose in the front view yet`;
-  const id = g.pose as PoseId;
+  const id = g.pose as PoseId, support = supportOf(g.pose, machine?.pads);
   const pivot = (f: Frame, j: JointId) => apply(worldMat(j, f), FRONT_RIG[j].origin);
   const sole = (f: Frame, s: 'l' | 'r'): Pt => apply(worldMat(`ankle_${s}`, f), [LEG_X, FLOOR]);
   const handAt = (f: Frame, s: 'l' | 'r'): Pt => apply(worldMat(`wrist_${s}`, f), [0, 0]);
@@ -136,8 +139,34 @@ export function rigFor(g: ExerciseGuide, view: View | null): Rig | string {
     return { [`shoulder_abd_${s}`]: x.shoulder_abd, [`elbow_lead_${s}`]: x.elbow_lead } as Partial<Record<ChannelId, number>>;
   };
   return {
-    view, point, pivot, chain, machine: g.machine ? MACHINES[g.machine.id] ?? null : null, reach: frontReach(id),
-    frame: p => frontFrame(id, p as Pose),
+    view, point, pivot, chain, machine, reach: frontReach(id, support),
+    frame: p => frontFrame(id, p as Pose, {}, support),
     markup: (read, mistake, part = true) => figureFront(read, { id: 'fgc', mistake, dumbbell: part ? db : undefined }),
   };
+}
+
+// ---- V1-11: is the sway drawn about the support (the add-only `swayDrawn` check, D-FG7 (c)) ---------------------------
+/** The point the sway turns about under D-FG7 (c), read off a frame: the soles (front: between the two; side: the near
+ * one, FG-6's pivot), the hips (the spine's pivot), the neck (a pad or lying: the head and neck only), the near grip. */
+export function supportPoint(rig: Rig, f: Frame, support: Support, near: 'l' | 'r'): Pt {
+  if (support === 'floor') {
+    if (rig.view === 'side') return rig.point(f, `foot_${near}`);
+    const [a, b] = [rig.point(f, 'foot_l'), rig.point(f, 'foot_r')];
+    return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  }
+  if (support === 'seat') return rig.pivot(f, 'spine');
+  if (support === 'grip') return rig.point(f, `hand_${near}`);
+  return rig.pivot(f, 'neck');
+}
+export type SwayDrawn = { support: Support; moved: number; need: number; radius: number };
+/**
+ * How far `deg` of sway moves the drawn head (the head joint's pivot) on the pose `p`, against what `deg` about the
+ * file's support gives: the chord 2·r·sin(deg / 2), r the head's distance from the support point.
+ */
+export function swayDrawn(g: ExerciseGuide, rig: Rig, p: Record<ChannelId, number>, deg: number): SwayDrawn {
+  const support = supportOf(g.pose, rig.machine?.pads), near = g.mirror ? 'l' : 'r';
+  const f0 = rig.frame({ ...p, sway: 0 }), f1 = rig.frame({ ...p, sway: deg });
+  const h0 = rig.pivot(f0, 'head'), h1 = rig.pivot(f1, 'head'), s = supportPoint(rig, f0, support, near);
+  const radius = Math.hypot(h0[0] - s[0], h0[1] - s[1]);
+  return { support, moved: Math.hypot(h1[0] - h0[0], h1[1] - h0[1]), need: 2 * radius * Math.sin((deg * D) / 2), radius };
 }
