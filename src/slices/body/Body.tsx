@@ -32,11 +32,11 @@ export function Body() {
   const selected = openPanel.value?.id === 'muscle' ? (openPanel.value.params?.muscle as MuscleId | undefined) ?? null : null;
   usePalaceFocus('body.map', { view });
   const rec = recovery.value;
-  const levels = useMemo(() => trainingLevels(s.sessions, s.customExercises), [s.sessions]);
+  const levels = useMemo(() => trainingLevels(s.sessions, s.customExercises, { trainingSince: s.profile.trainingSince, today: today.value }), [s.sessions, s.profile.trainingSince, today.value]);
   const weekSets = useMemo(() => weeklyMuscleSets(s.sessions, today.value, 1, s.customExercises)[0]?.sets ?? {}, [s.sessions, today.value]);
   const maxWeek = Math.max(1, ...Object.values(weekSets).map(v => v ?? 0));
   /** F3.2: this week's effective sets vs. the level-based band, faint-range on each bar. */
-  const volumeStatus = useMemo(() => muscleVolumeStatus(s.sessions, today.value, s.customExercises).filter(r => r.status !== 'unknown').sort((a, b) => b.thisWeekSets - a.thisWeekSets), [s.sessions, today.value, s.customExercises]);
+  const volumeStatus = useMemo(() => muscleVolumeStatus(s.sessions, today.value, s.customExercises, { schedule: s.schedule, daysOff: s.daysOff, plannedDays: s.profile.plannedDays }, s.profile.trainingSince).filter(r => r.status !== 'unknown').sort((a, b) => b.thisWeekSets - a.thisWeekSets), [s.sessions, today.value, s.customExercises, s.schedule, s.daysOff, s.profile]);
 
   const values: Partial<Record<MuscleId, number>> = view === 'recovery'
     ? Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]))
@@ -353,7 +353,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
   const r = recovery.value.find(x => x.muscle === muscle);
   const info = MUSCLE_BY_ID[muscle];
   if (!info || !r) { queueMicrotask(onClose); return null; }
-  const levels = trainingLevels(s.sessions, s.customExercises)[muscle];
+  const levels = trainingLevels(s.sessions, s.customExercises, { trainingSince: s.profile.trainingSince, today: today.value })[muscle];
   const direct = [...s.customExercises, ...LIBRARY].filter(e => e.primary.includes(muscle));
   const logged = direct.map(e => ({ e, h: exerciseHistory(s.sessions, e.id, s.customExercises) })).filter(x => x.h.length).sort((a, b) => b.h[b.h.length - 1]!.day.localeCompare(a.h[a.h.length - 1]!.day));
   const loggedIds = new Set(logged.map(x => x.e.id));

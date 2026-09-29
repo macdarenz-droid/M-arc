@@ -59,6 +59,7 @@ const coachContext = computed((): CoachContext => ({
   healthDays: state.value.healthDays, checkIns: state.value.checkIns, freshMarks: state.value.freshMarks,
   recoveryModel: state.value.recoveryModel, deload: state.value.deload, feedback: state.value.insightFeedback,
   unit: state.value.preferences.weightUnit, heartSeries: getSeries, daysOff: state.value.daysOff, plannedDays: state.value.profile.plannedDays,
+  goal: state.value.goal,
 }));
 /** COACH-FB: the rules run once; the board and the hidden-notes list both rank from this one list. */
 const rawInsights = computed(() => runInsightRules(coachContext.value));

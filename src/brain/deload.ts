@@ -70,9 +70,10 @@ const RED_REASON = 'Readiness has read red on three or more of the last five day
 
 /**
  * `trainingAgeMonths` is the person's training age (profile.trainingSince, else the first session);
- * when left out, it is counted from the first logged session.
+ * when left out, it is counted from the first logged session. `trainingSince` (Profile) seeds the
+ * level for the over-band check (ADAPT-5, A-10).
  */
-export function deloadTrigger(sessions: Session[], today: string, custom: Exercise[] = [], readinessHistory: Array<ReadinessBand | null> = [], trainingAgeMonths?: number | null, lighterWeek?: Deload | null): DeloadSuggestion {
+export function deloadTrigger(sessions: Session[], today: string, custom: Exercise[] = [], readinessHistory: Array<ReadinessBand | null> = [], trainingAgeMonths?: number | null, lighterWeek?: Deload | null, trainingSince?: string): DeloadSuggestion {
   // D-A1 (6): 4 weeks of logged training before any lighter week.
   const firstDay = sessions.reduce<string | null>((a, s) => (a == null || s.day < a ? s.day : a), null);
   const historyDays = firstDay ? daysBetween(firstDay, today) : 0;
@@ -111,7 +112,7 @@ export function deloadTrigger(sessions: Session[], today: string, custom: Exerci
     return { suggest: true, reason: 'Effort has been drifting harder on two or more lifts while weekly volume keeps climbing.' };
   }
 
-  const levels = trainingLevels(sessions, custom);
+  const levels = trainingLevels(sessions, custom, { trainingSince, today });
   const weekly = weeklyMuscleSets(sessions, today, DELOAD_TRIGGER.overBandWeeks + 1, custom).slice(1);
   const overBandTwoWeeks = MUSCLE_IDS.some(m => {
     const [, hi] = volumeBands(levels[m].levelIndex, m);

@@ -150,7 +150,7 @@ function validateProgram(i: Record<string, unknown>, ctx: ToolCtx): Built {
   const s = ctx.state;
   if (replace && s.active) throw new ToolError('a session is running; finish it before replacing the programme');
   if ((replace ? 0 : s.splits.length) + draft.splits.length > MAX_SPLITS) throw new ToolError(`that makes more than ${MAX_SPLITS} splits; set replaceExisting or use fewer`);
-  const ev = evaluatePlan(draft, { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today });
+  const ev = evaluatePlan(draft, { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today, trainingSince: s.profile.trainingSince });
   if (hasBlockingIssues(ev)) throw new ToolError(`evaluate_plan finds blocking issues; revise and try again: ${ev.issues.filter(x => x.severity === 'block').map(x => x.text).join(' ')}`);
   const preview: DiffRow[] = [
     ...draft.splits.map(sp => ({ label: sp.name, after: sp.exercises.map(e => exLabel(ctx, e)).join(', ') })),

@@ -47,7 +47,7 @@ const MAJOR: MuscleId[] = ['chest', 'lats', 'quads', 'hamstrings', 'glutes', 'si
 
 const r1 = (v: number): number => Math.round(v * 10) / 10;
 
-export function evaluatePlan(draft: PlanDraft, ctx: { goal: GoalId; custom: Exercise[]; sessions: Session[]; today: string }): PlanEvaluation {
+export function evaluatePlan(draft: PlanDraft, ctx: { goal: GoalId; custom: Exercise[]; sessions: Session[]; today: string; trainingSince?: string }): PlanEvaluation {
   const issues: PlanEvaluation['issues'] = [];
   const goal = GOAL_BY_ID[ctx.goal] ?? GOAL_BY_ID.lean;
   const splitByRef = new Map(draft.splits.map(s => [s.ref, s]));
@@ -90,7 +90,7 @@ export function evaluatePlan(draft: PlanDraft, ctx: { goal: GoalId; custom: Exer
   }
 
   const trainedDirectly = new Set<MuscleId>([...meta.values()].flatMap(m => m.primary));
-  const levels = trainingLevels(ctx.sessions, ctx.custom);
+  const levels = trainingLevels(ctx.sessions, ctx.custom, { trainingSince: ctx.trainingSince, today: ctx.today });
   const weeklySets: PlanEvaluation['weeklySets'] = {};
   for (const [muscle, raw] of Object.entries(weekly) as Array<[MuscleId, number]>) {
     const sets = r1(raw);
