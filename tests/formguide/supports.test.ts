@@ -138,6 +138,7 @@ describe('A4: the reclined support, the back on its pad at backrest angles 20-60
       const s = swayDrawn(g, rig, poseAt(g, 0, 'correct', 0, rig), LIMITS.sway[0]);
       expect(s.support).toBe('backPad');
       expect(s.moved).toBeGreaterThanOrEqual(s.need * (1 - 1e-9));
+      expect(s.moved).toBeLessThanOrEqual(s.need * (1 + 1e-9));   // turned about the neck, not some other point
     }
   });
 });
