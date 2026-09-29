@@ -1,0 +1,11 @@
+{ "research": { "id": "lib_barbell_bench_press", "kind": "rep", "order": "lower_first",
+  "tempo": { "lift": 1, "hold": 0.5, "lower": 2, "rest": 0.5 },
+  "ranges": {
+    "shoulder_flex": { "min": 15, "max": 95, "source": "FG-6 fixture (illustrative)" },
+    "elbow_flex": { "min": 0, "max": 95, "source": "FG-6 fixture (illustrative)" },
+    "hip_flex": { "min": -25, "max": 0, "source": "FG-6 fixture (illustrative)" },
+    "knee_flex": { "min": 60, "max": 100, "source": "FG-6 fixture (illustrative)" },
+    "ankle_flex": { "min": -10, "max": 20, "source": "FG-6 fixture (illustrative)" } },
+  "muscles": { "target": ["chest"], "helps": ["front_delts", "triceps"], "keepQuiet": ["lower_back"], "peakAt": 0.5625, "peakSource": "FG-6 fixture: the bar on the chest (the hold)" },
+  "mistake": { "name": "Bounce with the hips up", "tells": [{ "text": "The hips lift off the bench.", "joint": "hip_flex" }, { "text": "The lower back over-arches.", "joint": "torso_lean" }], "source": "FG-6 fixture" },
+  "sources": ["FG-6 fixture"] } , "hash": "aefad871839eb185" }
