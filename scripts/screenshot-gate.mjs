@@ -6200,23 +6200,28 @@ for (const theme of ['silent-black', 'paper']) {
 }
 
 // FG-V1 (V1-08, docs/FORM-GUIDE-PRODUCTION.md §10.5): a generic gate block for every GUIDE_IDS id that has an exercise
-// file (today only the lateral raise; the chest press waits on V1-09's machines). For each such id it opens the Train
-// sheet's guide (ExercisePlayer.tsx, mounted by FormGuidePlayer.tsx whenever `../exercises/<id>.ts` exists) and:
-// probe 1 seeks the *played* WAAPI transforms at 1/120 s (not the sampled stops fg:check already proves) and runs
-// smooth-check (a) edge speed, (b) velocity step and (d) the 4°/tick cap (check/smooth.ts:8 LIM), plus a rep-seam
-// continuity check; not (c) — WAAPI's straight interpolation between stops spikes 120 Hz acceleration (doc:291), so
-// (c) stays proven on the sampled stops by fg:check. Probe 2 (D-R5, ported from the demo's fbaa35d, re-guided on PR
-// #95): every `muscles.target` muscle's visible accent area at its hardest point (the sampled instant its tint peaks)
-// must be >=97% of its area at setup (t=0) — measured on the live page (isPointInFill + elementFromPoint, so a
-// covered target fails; raw opacity is extra evidence only, kept alongside). Probe 3: the mistake figure's WAAPI
-// start-time never drifts more than one 1/120 s frame from the correct figure's (the 280 ms bug,
-// COACHING-DECISIONS.md:649). Probe 4: WCAG contrast (>=4.5:1, I14's own maths) on the guide's own text. Probe 5:
-// the form-guide chunks' total gzip budget and 0 B of form-guide code in the main chunk. Probe 6: a frame-interval
-// proxy in compare mode under 4x CPU throttle, recorded only (no pass mark; DC0 sets one later). Screenshots: play,
-// compare and Pictures at 360 and 390 px in Silent Black and Paper; a setup pair once an id's `mistake.setup` exists
-// (none yet — V1-09). A2-A4 each open their own mutated context and prove the relevant probe fails on a real defect;
-// the mutation's own findings are local and never leak into the gate's real errors — only the probe missing a real
-// defect is a gate error.
+// file (today only the lateral raise; the chest press waits on V1-09's machines). Fix round 1 on PR #95: probe 1 now
+// samples in a dedicated Animation-view context (the Pictures tab hides `.fg4-scene`, so a sample taken after it
+// showed a flat line and "0 violations" proved nothing), ports smooth-check's real per-phase windows and the >=10°
+// travel filter, and guards against ever running on a flat/broken sample again. Probe 2 is now a real rendered-pixel
+// count (D-R5, fbaa35d rig-final/muscle-check.cjs), not a DOM hit-test — a decoy with pointer-events:none,
+// fill-opacity:0 or a transparent ancestor all defeat a DOM read but still paint (or fail to paint) for real, so a
+// real screenshot catches every one of them. `guideIds` must include the lateral raise, or the block itself is
+// broken. For each id: probe 1 seeks the *played* WAAPI transforms at 1/120 s and runs smooth-check (a) edge speed,
+// (b) velocity step and (d) the 4°/tick cap (check/smooth.ts:8 LIM) over sample.ts's own phase windows
+// (windowsFor/tempoOf, ported below), plus a rep-seam continuity check; not (c) — WAAPI's straight interpolation
+// between stops spikes 120 Hz acceleration (doc:291), so (c) stays proven on the sampled stops by fg:check. Probe 2
+// (D-R5): every `muscles.target` muscle's rendered pixel area at its hardest point (the sampled instant its tint
+// peaks) must be >=97% of its area at setup (t=0), measured on an actual screenshot so a covered *or* hidden target
+// both fail; the old opacity reading stays as logged extra evidence only. Probe 3: the mistake figure's WAAPI
+// start-time vs the correct figure's, within one 1/120 s frame (the 280 ms bug, COACHING-DECISIONS.md:649), mounted
+// while the correct figure is actually playing (waapi.ts follow() only runs on that path). Probe 4: WCAG contrast
+// (>=4.5:1, I14's own maths) on the guide's own text. Probe 5: the form-guide chunks' total gzip budget. Probe 6: a
+// frame-interval proxy in compare mode under 4x CPU throttle, recorded only (no pass mark). Screenshots: play,
+// compare and Pictures at 360 and 390 px in Silent Black and Paper; a setup pair once an id's `mistake.setup`
+// exists (none yet — V1-09). A2-A4 (plus a fifth, "covered only at the hold", next to A3) each open their own
+// mutated context and prove the relevant probe would fail on a real defect; the mutation's own findings are local
+// and never leak into the gate's real errors — only the probe missing a real defect is a gate error.
 {
   const tag = 'FG-V1';
   const t0 = Date.now();
@@ -6224,14 +6229,49 @@ for (const theme of ['silent-black', 'paper']) {
   const registrySrc = readFileSync(join(ROOT, 'src/formguide/registry.ts'), 'utf8');
   const idsMatch = registrySrc.match(/GUIDE_IDS[\s\S]*?Set\(\[([\s\S]*?)\]\)/);
   const guideIds = (idsMatch ? [...idsMatch[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : []).filter(id => exists(join(ROOT, `src/formguide/exercises/${id}.ts`)));
+  // A1's own subject: an empty (or short) list means the regex or the file moved, and every probe below would
+  // silently skip — that must fail loudly, not pass quietly.
+  if (!guideIds.includes('lib_dumbbell_lateral_raise')) errors.push(`${tag}: guideIds is ${JSON.stringify(guideIds)}, expected it to include lib_dumbbell_lateral_raise (registry.ts parse or the exercise file moved)`);
   const library = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8'));
-  /** target-muscle ids and whether the file names a machine setup, read from the file's own data literal (no import:
-   * this script is plain Node, the exercise files are TS). Safe because exercise files hold data only (model.ts:34). */
+  /** target-muscle ids, tempo/order/kind/slowdown (for the real phase windows) and whether the file names a machine
+   * setup, read from the file's own data literal (no import: this script is plain Node, the exercise files are TS).
+   * Safe because exercise files hold data only (model.ts:34). */
   const exerciseMeta = (id) => {
     const src = readFileSync(join(ROOT, `src/formguide/exercises/${id}.ts`), 'utf8');
     const mm = src.match(/muscles:\s*\{[^}]*?target:\s*\[([^\]]*)\]/);
     const targets = mm ? [...mm[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : [];
-    return { targets, hasSetup: /\bsetup:\s*\{/.test(src) };
+    const kindM = src.match(/\bkind:\s*'([^']+)'/), orderM = src.match(/\border:\s*'([^']+)'/);
+    const tempoM = src.match(/\btempo:\s*\{([^}]*)\}/);
+    const tempo = {};
+    if (tempoM) for (const m of tempoM[1].matchAll(/(\w+):\s*(-?[\d.]+)/g)) tempo[m[1]] = Number(m[2]);
+    const sdM = src.match(/movement:\s*\{[^}]*?slowdown:\s*\[([^\]]*)\]/);
+    const slowdown = sdM ? sdM[1].split(',').map(Number).filter((n) => !Number.isNaN(n)) : [];
+    return { targets, hasSetup: /\bsetup:\s*\{/.test(src), kind: kindM?.[1] ?? 'rep', order: orderM?.[1] ?? 'lift_first', tempo, slowdown };
+  };
+
+  /** Ported from src/formguide/sample.ts (repSeconds:18, tempoOf:148-152, windowsFor:21-34) — the file's own phase
+   * windows and the per-rep slowdown, so probe 1's (a)/(b) run on the same moving-phase boundaries fg:check does. */
+  const repSecondsOf = (t) => ('lift' in t ? t.lift + t.hold + t.lower + t.rest : t.hold);
+  const tempoOfRep = (tempo, slowdown, rep) => {
+    if (!('lift' in tempo) || !slowdown.length) return tempo;
+    const lift = +(tempo.lift * slowdown[rep % slowdown.length]).toFixed(2);
+    return { ...tempo, lift, rest: Math.max(0, +(repSecondsOf(tempo) - lift - tempo.hold - tempo.lower).toFixed(2)) };
+  };
+  const windowsForRep = (tempo, order, kind) => {
+    if (!('lift' in tempo)) return [{ name: 'hold', u0: 0, u1: 1, move: 0 }];
+    const seq = order === 'lift_first' ? ['lift', 'hold', 'lower', 'rest'] : ['lower', 'hold', 'lift', 'rest'];
+    const halves = kind === 'alternating' ? 2 : 1, T = repSecondsOf(tempo) * halves;
+    const out = []; let s = 0;
+    for (let h = 0; h < halves; h++) {
+      let m = 0;
+      for (const name of seq) {
+        const d = tempo[name], moving = name === 'lift' || name === 'lower';
+        if (moving) m++;
+        out.push({ name, u0: s / T, u1: (s + d) / T, move: moving ? m : 0 });
+        s += d;
+      }
+    }
+    return out;
   };
 
   const stateFor = (id) => {
@@ -6286,7 +6326,8 @@ for (const theme of ['silent-black', 'paper']) {
 
   /** Probe 1/2 data: every `.fg-j` joint's drawn rotation angle and every `[class*="fg-t-"]` tint's opacity, sampled
    * at 1/120 s across the whole chained timeline, straight off the paused WAAPI animations (no play needed:
-   * mountAnimations pauses each on mount, waapi.ts:47). */
+   * mountAnimations pauses each on mount, waapi.ts:47). Must be called on a freshly opened, untouched Animation-view
+   * page — the Pictures tab hides `.fg4-scene` (display:none), which reads every transform back as identity. */
   const sample = (page) => page.evaluate(() => {
     const anims = window.__fgAnims;
     const dur = Math.max(0, ...anims.map(a => a.effect.getTiming().duration));
@@ -6309,11 +6350,19 @@ for (const theme of ['silent-black', 'paper']) {
     return { dur, dt, times, jointSeries, tintSeries };
   });
 
-  /** smooth-check (a)/(b)/(d) on the *drawn* angle, plus a rep-seam continuity check; not (c) (see block comment).
-   * LIM cites check/smooth.ts:8; REPS cites guideView.ts:16 ("GU-7a R1-3: three, then hold"). `sink` defaults to the
-   * gate's real `errors`; the A2 self-test passes a local array instead. */
-  const LIM = { a: 0.01, b: 0.08, d: 4 }, REPS = 3, FRAME_MS = 1000 / 120;
-  const probe1 = (id, { dt, jointSeries }, dur, sink = errors) => {
+  /** smooth-check (a)/(b)/(d) on the *drawn* angle, over sample.ts's own phase windows (>=10° travel filter, the
+   * (a)/(b) LIM.travel gate check/index.ts:106 also applies), plus a rep-seam continuity check; not (c) (see block
+   * comment). LIM cites check/smooth.ts:8; REPS cites guideView.ts:16 ("GU-7a R1-3: three, then hold"). `sink`
+   * defaults to the gate's real `errors`; the A2 self-test passes a local array instead. Refuses to run at all (and
+   * fails loudly) on a sample where nothing moved — the exact failure mode that let a flat, broken sample "pass". */
+  const LIM = { a: 0.01, b: 0.08, d: 4, travel: 10 }, REPS = 3, FRAME_MS = 1000 / 120;
+  const probe1 = (id, meta, { dt, jointSeries }, dur, sink = errors) => {
+    const before = sink.length;
+    const names = Object.keys(jointSeries);
+    const travels = names.map((n) => { const s = jointSeries[n]; return s.length ? Math.max(...s) - Math.min(...s) : 0; });
+    if (!travels.some((t) => t >= LIM.travel)) { sink.push(`${tag} ${id} probe1: no joint moved at least ${LIM.travel}° across the whole sample (max travel ${Math.max(0, ...travels).toFixed(2)}°) — the sample is flat, not the animation (wrong view, or nothing ever played)`); return; }
+    const expected = Math.floor(dur / dt);
+    if (names.some((n) => jointSeries[n].length < expected)) sink.push(`${tag} ${id} probe1: only ${Math.min(...names.map((n) => jointSeries[n].length))} samples for a ${dur} ms timeline at 1/120 s (expected >= ${expected})`);
     const repLen = dur / REPS;
     for (const [name, series] of Object.entries(jointSeries)) {
       for (let i = 1; i < series.length; i++) {
@@ -6321,16 +6370,22 @@ for (const theme of ['silent-black', 'paper']) {
         if (step > LIM.d) sink.push(`${tag} ${id} probe1 (d): ${name} moved ${step.toFixed(2)}° in one 1/120 s tick at ${(i * dt).toFixed(1)} ms (limit ${LIM.d}°)`);
       }
       for (let r = 0; r < REPS; r++) {
-        const i0 = Math.round((r * repLen) / dt), i1 = Math.min(series.length - 1, Math.round(((r + 1) * repLen) / dt));
-        const seg = series.slice(i0, i1 + 1);
-        const vel = []; for (let i = 1; i < seg.length; i++) vel.push((seg[i] - seg[i - 1]) / dt);
-        const peak = Math.max(0, ...vel.map(Math.abs));
-        if (peak < 1e-6) continue;
-        const e0 = Math.abs(vel[0] ?? 0), e1 = Math.abs(vel[vel.length - 1] ?? 0), edge = Math.max(e0, e1) / peak;
-        if (edge > LIM.a) sink.push(`${tag} ${id} probe1 (a): ${name} rep ${r + 1} edge speed ${(edge * 100).toFixed(1)}% of the phase's top speed (limit ${LIM.a * 100}%)`);
-        let jump = 0, jumpAt = i0;
-        for (let i = 1; i < vel.length; i++) { const j = Math.abs(vel[i] - vel[i - 1]) / peak; if (j > jump) { jump = j; jumpAt = i0 + i; } }
-        if (jump > LIM.b) sink.push(`${tag} ${id} probe1 (b): ${name} rep ${r + 1} velocity step ${(jump * 100).toFixed(1)}% of peak at ${(jumpAt * dt).toFixed(1)} ms (limit ${LIM.b * 100}%)`);
+        const tempo = tempoOfRep(meta.tempo, meta.slowdown, r);
+        const windows = windowsForRep(tempo, meta.order, meta.kind).filter((w) => w.move);
+        for (const w of windows) {
+          const i0 = Math.round((r * repLen + w.u0 * repLen) / dt), i1 = Math.min(series.length - 1, Math.round((r * repLen + w.u1 * repLen) / dt));
+          const seg = series.slice(i0, i1 + 1);
+          const travel = seg.length ? Math.max(...seg) - Math.min(...seg) : 0;
+          if (travel < LIM.travel) continue;
+          const vel = []; for (let i = 1; i < seg.length; i++) vel.push((seg[i] - seg[i - 1]) / dt);
+          const peak = Math.max(0, ...vel.map(Math.abs));
+          if (peak < 1e-9) continue;
+          const e0 = Math.abs(vel[0] ?? 0), e1 = Math.abs(vel[vel.length - 1] ?? 0), edge = Math.max(e0, e1) / peak;
+          if (edge > LIM.a) sink.push(`${tag} ${id} probe1 (a): ${name} rep ${r + 1} ${w.name} edge speed ${(edge * 100).toFixed(1)}% of the phase's top speed (limit ${LIM.a * 100}%)`);
+          let jump = 0, jumpAt = i0;
+          for (let i = 1; i < vel.length; i++) { const j = Math.abs(vel[i] - vel[i - 1]) / peak; if (j > jump) { jump = j; jumpAt = i0 + i; } }
+          if (jump > LIM.b) sink.push(`${tag} ${id} probe1 (b): ${name} rep ${r + 1} ${w.name} velocity step ${(jump * 100).toFixed(1)}% of peak at ${(jumpAt * dt).toFixed(1)} ms (limit ${LIM.b * 100}%)`);
+        }
       }
       for (let r = 1; r < REPS; r++) {
         const i = Math.round((r * repLen) / dt);
@@ -6338,54 +6393,82 @@ for (const theme of ['silent-black', 'paper']) {
         if (jump > 0.5) sink.push(`${tag} ${id} probe1 seam: ${name} jumps ${jump.toFixed(2)}° across the rep ${r}/${r + 1} seam at ${(i * dt).toFixed(1)} ms`);
       }
     }
-    console.log(`${tag} ${id} probe1: ${Object.keys(jointSeries).length} joints over ${dur} ms at 1/120 s, (a)/(b)/(d) and seam checks ran (not (c), see block comment); ${sink.length} violations`);
+    console.log(`${tag} ${id} probe1: ${names.length} joints over ${dur} ms at 1/120 s, real phase windows + ${LIM.travel}° travel filter (not (c), see block comment); ${sink.length - before} violation(s)`);
   };
 
-  /** D-R5 (ported from the demo's fbaa35d; re-guided on PR #95): "visible area" at ms — points genuinely inside the
-   * tint's own geometry (isPointInFill, unaffected by paint) where the live page's own hit-test (elementFromPoint)
-   * says the tint itself is the topmost thing drawn there, and the tint is actually painting (opacity over a
-   * hairline epsilon: CSS opacity does not by itself stop SVG hit-testing, so a covered *or* a hidden tint both
-   * read as "not visible" here). Every other accent overlay (other muscles, and this muscle's own band, which
-   * shares its path and would otherwise always win the hit-test) is neutralised first via pointer-events, not
-   * opacity, for the same reason. */
-  const measureArea = (page, targetKey, ms) => page.evaluate(({ targetKey, ms }) => {
-    const scene = document.querySelector('dialog[open] .fg4-scene');
-    const target = scene?.querySelector(`.${targetKey}`);
-    if (!target) return null;
-    const others = [...scene.querySelectorAll('[class*="fg-t-"], [class*="fg-b-"]')].filter(el => el !== target);
-    const saved = others.map(el => [el, el.style.pointerEvents]);
-    for (const el of others) el.style.pointerEvents = 'none';
-    for (const a of window.__fgAnims) a.currentTime = ms;
-    const bb = target.getBBox(), ctm = target.getScreenCTM();
-    const opacity = parseFloat(getComputedStyle(target).opacity), EPS = 0.02, GRID = 22;
-    let total = 0, visible = 0;
-    for (let iy = 0; iy < GRID; iy++) for (let ix = 0; ix < GRID; ix++) {
-      const pt = new DOMPoint(bb.x + ((ix + 0.5) / GRID) * bb.width, bb.y + ((iy + 0.5) / GRID) * bb.height);
-      if (!target.isPointInFill(pt)) continue;
-      total++;
-      if (opacity <= EPS) continue;
-      const sp = pt.matrixTransform(ctm);
-      if (document.elementFromPoint(sp.x, sp.y) === target) visible++;
-    }
-    for (const [el, pe] of saved) el.style.pointerEvents = pe;
-    for (const a of window.__fgAnims) a.currentTime = 0;
-    return { total, visible, opacity };
-  }, { targetKey, ms });
+  /** D-R5 (fbaa35d rig-final/muscle-check.cjs, ported per the PR #95 review): a genuine rendered-pixel count, not a
+   * DOM read — a decoy with pointer-events:none, fill-opacity:0 or a transparent ancestor all defeat a DOM-level
+   * check but still paint (or fail to paint) for real, so a real screenshot catches every one of them. Every other
+   * accent overlay is hidden with `visibility` (which genuinely stops paint, unlike opacity or pointer-events) so
+   * only the target muscle's own region can contribute. Two real screenshots of the identical clip at the identical
+   * instant — with the target present, then with the target *also* hidden — isolate exactly the target's own causal
+   * contribution to each pixel (whatever it painted, at whatever opacity): a pixel that differs between the two was
+   * the target painting something there; a pixel that does not (because the target never painted anything, or an
+   * opaque decoy sits on top of it in both captures either way) was not. No colour reference to get wrong, and
+   * nothing to force: an A3-style `opacity: 0 !important` on the target makes both captures identical (matched=0)
+   * exactly like a genuinely hidden tint should, and a decoy that hides the target from hit-testing only (like
+   * `pointer-events: none`) still paints over it in both captures the same way, so it still reads as "not visible"
+   * — the DOM hit-test this replaces could not tell either of those apart from a plain, healthy tint. */
+  const measureArea = async (page, targetKey, ms) => {
+    const setup = await page.evaluate(({ targetKey, ms }) => {
+      const scene = document.querySelector('dialog[open] .fg4-scene');
+      const target = scene?.querySelector(`.${targetKey}`);
+      if (!target) return null;
+      for (const a of window.__fgAnims) a.currentTime = ms;
+      const others = [...scene.querySelectorAll('[class*="fg-t-"], [class*="fg-b-"]')].filter((el) => el !== target);
+      window.__fgv1Saved = others.map((el) => [el, el.style.getPropertyValue('visibility'), el.style.getPropertyPriority('visibility')]);
+      for (const el of others) el.style.setProperty('visibility', 'hidden', 'important');
+      const bb = target.getBoundingClientRect();
+      return { bb: { x: bb.x, y: bb.y, width: bb.width, height: bb.height } };
+    }, { targetKey, ms });
+    if (!setup || setup.bb.width < 1 || setup.bb.height < 1) return null;
+    const pad = 3;
+    const clip = { x: Math.max(0, Math.round(setup.bb.x - pad)), y: Math.max(0, Math.round(setup.bb.y - pad)), width: Math.max(1, Math.round(setup.bb.width + pad * 2)), height: Math.max(1, Math.round(setup.bb.height + pad * 2)) };
+    const withTarget = await page.screenshot({ clip });
+    await page.evaluate((k) => { const t = document.querySelector(`dialog[open] .fg4-scene .${k}`); if (t) { t.dataset.fgv1Vis = t.style.getPropertyValue('visibility'); t.style.setProperty('visibility', 'hidden', 'important'); } }, targetKey);
+    const withoutTarget = await page.screenshot({ clip });
+    await page.evaluate((k) => { const t = document.querySelector(`dialog[open] .fg4-scene .${k}`); if (t) { const v = t.dataset.fgv1Vis; if (v) t.style.setProperty('visibility', v); else t.style.removeProperty('visibility'); delete t.dataset.fgv1Vis; } }, targetKey);
+    const counts = await page.evaluate(({ b64a, b64b }) => {
+      const load = (b64) => new Promise((res) => { const img = new Image(); img.onload = () => res(img); img.src = `data:image/png;base64,${b64}`; });
+      return Promise.all([load(b64a), load(b64b)]).then(([imgA, imgB]) => {
+        const c = document.createElement('canvas'); c.width = imgA.naturalWidth; c.height = imgA.naturalHeight;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(imgA, 0, 0); const dA = ctx.getImageData(0, 0, c.width, c.height).data;
+        ctx.drawImage(imgB, 0, 0); const dB = ctx.getImageData(0, 0, c.width, c.height).data;
+        // Two sequential real screenshots of an *unchanged* clip still differ by a small amount (Chromium's own
+        // compositing/AA jitter between separate captures, measured on this app at up to ~117 combined-channel
+        // diff on nothing at all touched) — a per-pixel threshold clear of that (20) keeps genuine paint, however
+        // faint, while a *relative* floor on the matched count (10% of the clip) tells that baseline noise apart
+        // from a hidden target: on the real lateral raise the noise alone matched ~3% of the clip, a real (if
+        // faint, 0.172-opacity) tint matched ~24%.
+        let total = 0, matched = 0;
+        for (let i = 0; i < dA.length; i += 4) {
+          total++;
+          const diff = Math.abs(dA[i] - dB[i]) + Math.abs(dA[i + 1] - dB[i + 1]) + Math.abs(dA[i + 2] - dB[i + 2]);
+          if (diff > 20) matched++;
+        }
+        return { total, matched };
+      });
+    }, { b64a: withTarget.toString('base64'), b64b: withoutTarget.toString('base64') });
+    await page.evaluate(() => { for (const [el, v, p] of window.__fgv1Saved ?? []) { if (v) el.style.setProperty('visibility', v, p); else el.style.removeProperty('visibility'); } for (const a of window.__fgAnims) a.currentTime = 0; });
+    return counts;
+  };
 
   const probe2 = async (id, targets, page, tintData, sink = errors) => {
     if (!targets.length) { sink.push(`${tag} ${id} probe2: no muscles.target in the exercise file`); return; }
     for (const t of targets) {
-      const keys = Object.keys(tintData.tintSeries).filter(k => k.startsWith(`fg-t-${t}_`));
+      const keys = Object.keys(tintData.tintSeries).filter((k) => k.startsWith(`fg-t-${t}_`));
       if (!keys.length) { sink.push(`${tag} ${id} probe2: target ${t} has no tint overlay in the drawn figure`); continue; }
       const summed = tintData.times.map((_, i) => keys.reduce((s, k) => s + tintData.tintSeries[k][i], 0));
       const holdMs = tintData.times[summed.indexOf(Math.max(...summed))];
       for (const k of keys) {
         const setup = await measureArea(page, k, 0), hold = await measureArea(page, k, holdMs);
         if (!setup || !hold) { sink.push(`${tag} ${id} probe2: ${k} could not be measured`); continue; }
-        console.log(`${tag} ${id} probe2: ${k} setup ${setup.visible}/${setup.total} px (opacity ${setup.opacity.toFixed(3)}), hold ${hold.visible}/${hold.total} px at ${holdMs.toFixed(1)} ms (opacity ${hold.opacity.toFixed(3)})`);
-        if (setup.visible === 0) { sink.push(`${tag} ${id} probe2: ${k} has no visible area even at setup (opacity ${setup.opacity.toFixed(3)}) — the tint may be hidden`); continue; }
-        const ratio = hold.visible / setup.visible;
-        console.log(`${tag} ${id} probe2: ${k} hold/setup visible-area ratio ${(ratio * 100).toFixed(1)}% (limit 97%)`);
+        console.log(`${tag} ${id} probe2: ${k} setup ${setup.matched}/${setup.total} px, hold ${hold.matched}/${hold.total} px at ${holdMs.toFixed(1)} ms`);
+        const noiseFloor = setup.total * 0.1;
+        if (setup.matched < noiseFloor) { sink.push(`${tag} ${id} probe2: ${k} has no visible area even at setup (${setup.matched}/${setup.total} px, at or below the ${noiseFloor.toFixed(0)} px screenshot-noise floor) — the tint may be hidden`); continue; }
+        const ratio = hold.matched / setup.matched;
+        console.log(`${tag} ${id} probe2: ${k} hold/setup pixel-area ratio ${(ratio * 100).toFixed(1)}% (limit 97%)`);
         if (ratio < 0.97) sink.push(`${tag} ${id} probe2: ${k} visible area at the hardest point is ${(ratio * 100).toFixed(1)}% of its area at setup (limit 97%)`);
       }
     }
@@ -6396,8 +6479,8 @@ for (const theme of ['silent-black', 'paper']) {
   const readSync = (page) => page.evaluate(() => {
     const figs = [...document.querySelectorAll('dialog[open] .fg4-scene .fg-fig')];
     if (figs.length !== 2) return { correct: null, mistake: [] };
-    const groupOf = (fig) => window.__fgAnims.filter(a => fig.contains(a.effect.target));
-    const starts = (fig) => groupOf(fig).map(a => a.startTime).filter((t) => t != null);
+    const groupOf = (fig) => window.__fgAnims.filter((a) => fig.contains(a.effect.target));
+    const starts = (fig) => groupOf(fig).map((a) => a.startTime).filter((t) => t != null);
     return { correct: starts(figs[0])[0] ?? null, mistake: starts(figs[1]) };
   });
   const probe3 = (id, sync, sink = errors) => {
@@ -6436,7 +6519,8 @@ for (const theme of ['silent-black', 'paper']) {
   for (const id of guideIds) {
     const name = library.find((e) => e.id === id)?.name ?? id;
     const meta = exerciseMeta(id);
-    let data = null;
+
+    // Screenshots: play, compare (Mistake chip) and Pictures at 360/390 px in Silent Black and Paper.
     for (const width of [360, 390]) {
       for (const theme of ['silent-black', 'paper']) {
         const { ctx, page, ok } = await open(id, width, theme);
@@ -6445,23 +6529,9 @@ for (const theme of ['silent-black', 'paper']) {
         if (title !== `How to do it: ${name}`) errors.push(`${tag} ${id} ${theme} ${width}: sheet title "${title}"`);
         if (width === 390) await checkContrast(page, 'dialog[open] .cam-label', `${theme} camera label`);
         await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-play.png` });
-        let sync = null;
-        if (width === 390 && theme === 'silent-black') {
-          // The mistake figure only takes the correct figure's WAAPI startTime (waapi.ts follow(), the 280 ms bug's
-          // fix) when it mounts *while the correct figure is already playing* (ExercisePlayer.tsx:123); mounted
-          // while paused it just seeks to match currentTime once, and startTime stays null throughout, so probe 3
-          // needs the real playing path exercised here, not the paused default state the screenshots otherwise use.
-          await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click(); await page.waitForTimeout(200);
-          await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
-          sync = await readSync(page);
-          await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-compare.png` });
-          await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(200);
-          await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Pause', exact: true }).click(); await page.waitForTimeout(200);
-        } else {
-          await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
-          await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-compare.png` });
-          await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
-        }
+        await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+        await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-compare.png` });
+        await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
         await page.locator('dialog[open] .seg button', { hasText: 'Pictures' }).click(); await page.waitForTimeout(200);
         await page.screenshot({ path: `${OUT}/${theme}-fgv1-${id}-${width}-pictures.png` });
         if (width === 390) await checkContrast(page, 'dialog[open] .pics .tile p', `${theme} picture caption`);
@@ -6469,19 +6539,35 @@ for (const theme of ['silent-black', 'paper']) {
           // V1-09 wires the machine setup view; once it exists this takes the right/wrong setup pair here.
           errors.push(`${tag} ${id}: mistake.setup is set but no setup view exists yet to screenshot (V1-09)`);
         }
-        if (width === 390 && theme === 'silent-black') {
-          data = await sample(page);
-          probe3(id, sync);
-        }
         await ctx.close();
       }
     }
-    if (data) {
-      probe1(id, data, data.dur);
+
+    // Probe 1: its own untouched Animation-view context (never Pictures, never Play — sample() seeks the paused
+    // WAAPI clock directly, waapi.ts:47).
+    {
       const { ctx, page, ok } = await open(id, 390, 'silent-black');
-      if (ok) await probe2(id, meta.targets, page, data);
+      if (ok) { const d = await sample(page); probe1(id, meta, d, d.dur); }
       await ctx.close();
-    } else errors.push(`${tag} ${id}: never reached the 390/silent-black run, probes 1-3 did not run`);
+    }
+
+    // Probe 2: its own context too (measureArea takes real screenshots and must not race probe 1's sampling).
+    {
+      const { ctx, page, ok } = await open(id, 390, 'silent-black');
+      if (ok) { const d = await sample(page); await probe2(id, meta.targets, page, d); }
+      await ctx.close();
+    }
+
+    // Probe 3: mount the mistake figure while the correct one is actually playing, its own context.
+    {
+      const { ctx, page, ok } = await open(id, 390, 'silent-black');
+      if (ok) {
+        await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click(); await page.waitForTimeout(200);
+        await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+        probe3(id, await readSync(page));
+      }
+      await ctx.close();
+    }
   }
 
   // Probe 5: the form-guide chunks' total gzip budget, and 0 B of form-guide code in the main chunk.
@@ -6509,41 +6595,45 @@ for (const theme of ['silent-black', 'paper']) {
   }
 
   // Probe 6: a frame-interval proxy in compare mode under 4x CPU throttle. Recorded only — no pass mark (the card's
-  // risk note: "Probe 6 has no pass mark until DC0 exists").
+  // risk note: "Probe 6 has no pass mark until DC0 exists"). The throttle reset runs in a finally so a mid-probe
+  // failure never leaves the browser instance throttled for whatever gate block runs next.
   if (guideIds.length) {
     const id = guideIds[0];
     const { ctx, page, ok } = await open(id, 390, 'silent-black');
     if (ok) {
       const cdp = await ctx.newCDPSession(page);
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-      await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
-      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click();
-      const frames = await page.evaluate(() => new Promise((resolve) => {
-        const times = []; let n = 0;
-        const step = (ts) => { times.push(ts); if (++n < 90) requestAnimationFrame(step); else resolve(times); };
-        requestAnimationFrame(step);
-      }));
-      const intervals = frames.slice(1).map((t, i) => t - frames[i]).sort((a, b) => a - b);
-      const median = intervals[Math.floor(intervals.length / 2)], p95 = intervals[Math.min(intervals.length - 1, Math.floor(intervals.length * 0.95))];
-      console.log(`${tag} probe6 (record only, no pass mark): ${id} compare mode under 4x CPU throttle — median frame interval ${median.toFixed(2)} ms, p95 ${p95.toFixed(2)} ms over ${intervals.length} frames`);
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+      try {
+        await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+        await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
+        await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click();
+        const frames = await page.evaluate(() => new Promise((resolve) => {
+          const times = []; let n = 0;
+          const step = (ts) => { times.push(ts); if (++n < 90) requestAnimationFrame(step); else resolve(times); };
+          requestAnimationFrame(step);
+        }));
+        const intervals = frames.slice(1).map((t, i) => t - frames[i]).sort((a, b) => a - b);
+        const median = intervals[Math.floor(intervals.length / 2)], p95 = intervals[Math.min(intervals.length - 1, Math.floor(intervals.length * 0.95))];
+        console.log(`${tag} probe6 (record only, no pass mark): ${id} compare mode under 4x CPU throttle — median frame interval ${median.toFixed(2)} ms, p95 ${p95.toFixed(2)} ms over ${intervals.length} frames`);
+      } finally {
+        await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+      }
     }
     await ctx.close();
   }
 
-  // A2-A4: each opens its own mutated context and proves the relevant probe would fail on a real defect. The
-  // mutation's findings are local (`mut`) and never leak into the gate's real `errors` — only the probe missing a
-  // real defect is a gate error.
+  // A2-A4 (plus a fifth next to A3): each opens its own mutated context and proves the relevant probe would fail on
+  // a real defect. The mutation's findings are local (`mut`) and never leak into the gate's real `errors` — only
+  // the probe missing a real defect is a gate error.
   if (guideIds.length) {
-    const id = guideIds[0];
+    const id = guideIds[0], meta0 = exerciseMeta(id);
 
     // A2: a broken timeline — one keyframe on the shoulder joint pushed 40deg off its neighbours mid-run — must
-    // fail probe 1 (a)/(b)/(d).
+    // fail probe 1 (a)/(b)/(d), and the same context's own real (unmutated) joints must show 0.
     {
       const mut = [];
       const mutateSrc = "if ([...el.classList].includes('j-shoulder_r') && Array.isArray(frames) && frames.length > 2) { const mid = Math.floor(frames.length / 2); return frames.map((f, i) => i === mid ? { ...f, transform: `${f.transform ?? ''} rotate(40deg)` } : f); }";
       const { ctx, page, ok } = await open(id, 390, 'silent-black', mutateSrc);
-      if (ok) { const d = await sample(page); probe1(id, d, d.dur, mut); }
+      if (ok) { const d = await sample(page); probe1(id, meta0, d, d.dur, mut); }
       await ctx.close();
       if (!mut.length) errors.push(`${tag} A2: the seeded broken timeline did not fail probe 1 (regression in probe 1 itself)`);
       else console.log(`${tag} A2 seeded failure (expected, not a real bug): ${mut.length} probe-1 violation(s), e.g. "${mut[0]}"`);
@@ -6553,26 +6643,61 @@ for (const theme of ['silent-black', 'paper']) {
     // WAAPI-animated inline opacity) — must fail probe 2 via the "no visible area even at setup" guard.
     {
       const mut = [];
-      const meta = exerciseMeta(id);
       const { ctx, page, ok } = await open(id, 390, 'silent-black');
       if (ok) {
-        const hideSel = meta.targets.map((m) => `.fg-t-${m}_l, .fg-t-${m}_r, .fg-b-${m}_l, .fg-b-${m}_r`).join(', ');
+        const hideSel = meta0.targets.map((m) => `.fg-t-${m}_l, .fg-t-${m}_r, .fg-b-${m}_l, .fg-b-${m}_r`).join(', ');
         await page.addStyleTag({ content: `${hideSel} { opacity: 0 !important; }` });
         const d = await sample(page);
-        await probe2(id, meta.targets, page, d, mut);
+        await probe2(id, meta0.targets, page, d, mut);
       }
       await ctx.close();
       if (!mut.length) errors.push(`${tag} A3: hiding the side_delts tint did not fail probe 2 (regression in probe 2 itself)`);
       else console.log(`${tag} A3 seeded failure (expected, not a real bug): ${mut.length} probe-2 violation(s), e.g. "${mut[0]}"`);
     }
 
-    // A4: the mistake figure's clock forced 280 ms behind the correct figure's, right after it mounts (the historic
-    // bug, COACHING-DECISIONS.md:649) — must fail probe 3.
+    // A3b (review round 1): a real opaque decoy covers the target only at the hold instant, via a paused WAAPI
+    // animation on the *same* seeked clock probe 2 uses — so it is reliably present when measureArea seeks to
+    // holdMs and reliably absent at setup (t=0), rather than racing measureArea's own currentTime writes. Must fail
+    // probe 2's ratio branch specifically (A3 above only ever reaches the "no visible area at setup" guard).
     {
       const mut = [];
       const { ctx, page, ok } = await open(id, 390, 'silent-black');
       if (ok) {
-        // Mount while playing, exactly like the real probe 3 run above, so waapi.ts follow() actually runs.
+        const target = `fg-t-${meta0.targets[0]}_r`;
+        const d = await sample(page);
+        const summed = d.times.map((_, i) => d.tintSeries[target][i]);
+        const holdMs = d.times[summed.indexOf(Math.max(...summed))];
+        // the tint's own on-screen box at the hold instant specifically (the arm has moved from setup) — the decoy
+        // must cover where the target actually is *when it is measured*, not its resting position.
+        const bb = await page.evaluate(({ k, ms }) => { for (const a of window.__fgAnims) a.currentTime = ms; const el = document.querySelector(`dialog[open] .fg4-scene .${k}`); const b = el?.getBoundingClientRect(); for (const a of window.__fgAnims) a.currentTime = 0; return b ? { x: b.x, y: b.y, width: b.width, height: b.height } : null; }, { k: target, ms: holdMs });
+        if (bb) {
+          await page.evaluate(({ bb, ms, dur }) => {
+            const decoy = document.createElement('div');
+            decoy.id = 'fgv1-decoy';
+            decoy.style.cssText = `position:fixed; left:${bb.x - 10}px; top:${bb.y - 10}px; width:${bb.width + 20}px; height:${bb.height + 20}px; background:#808080; opacity:0; z-index:99999;`;
+            document.querySelector('dialog[open] .form-guide').appendChild(decoy);
+            const pad = 50 / dur; // a brief pulse of visibility, +-50ms around the hold instant, elsewhere invisible
+            const u = Math.min(1, ms / dur);
+            const frames = [{ offset: 0, opacity: 0 }, { offset: Math.max(0, u - pad), opacity: 0 }, { offset: u, opacity: 1 }, { offset: Math.min(1, u + pad), opacity: 0 }, { offset: 1, opacity: 0 }];
+            // paused immediately (WAAPI auto-plays on .animate()): unpaused, it keeps advancing in real time between
+            // the two sequential screenshots measureArea takes, which is enough to sweep its whole ~100ms pulse.
+            const da = decoy.animate(frames, { duration: dur, iterations: 1, fill: 'both' });
+            da.pause();
+          }, { bb, ms: holdMs, dur: d.dur });
+        }
+        await probe2(id, meta0.targets.slice(0, 1), page, d, mut);
+      }
+      await ctx.close();
+      if (!mut.length) errors.push(`${tag} A3b: a decoy covering the target only at the hold did not fail probe 2 (regression in probe 2's ratio branch)`);
+      else console.log(`${tag} A3b seeded failure (expected, not a real bug): ${mut.length} probe-2 violation(s), e.g. "${mut[0]}"`);
+    }
+
+    // A4: the mistake figure's clock forced 280 ms behind the correct figure's, right after it mounts while
+    // playing (the historic bug, COACHING-DECISIONS.md:649) — must fail probe 3.
+    {
+      const mut = [];
+      const { ctx, page, ok } = await open(id, 390, 'silent-black');
+      if (ok) {
         await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click(); await page.waitForTimeout(200);
         await page.locator('dialog[open] .chips button', { hasText: 'Mistake' }).click(); await page.waitForTimeout(250);
         await page.evaluate(() => {
@@ -6580,8 +6705,7 @@ for (const theme of ['silent-black', 'paper']) {
           const mistakeAnims = window.__fgAnims.filter((a) => figs[1]?.contains(a.effect.target));
           for (const a of mistakeAnims) a.currentTime = a.currentTime - 280;
         });
-        const sync = await readSync(page);
-        probe3(id, sync, mut);
+        probe3(id, await readSync(page), mut);
       }
       await ctx.close();
       if (!mut.length) errors.push(`${tag} A4: a 280 ms mistake offset did not fail probe 3 (regression in probe 3 itself)`);
