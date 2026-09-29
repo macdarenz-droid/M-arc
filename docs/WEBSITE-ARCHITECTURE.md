@@ -128,7 +128,7 @@ Open items, all outside the site's own scope:
 
 | Item | Who | What it takes |
 |---|---|---|
-| A domain and hosting | owner | Enable GitHub Pages for the repository (or connect Netlify to `website/dist`), set `SITE_URL` in the workflow env, run the Website workflow with `confirm: deploy`. The sharing image and canonical URLs appear as soon as `SITE_URL` is set. |
+| A custom domain | owner | The site is live on GitHub Pages at https://macdarenz-droid.github.io/M-arc/ (first deploy 29 September 2026, Website run 36547057691, from `claude/app-website-design-671lk8`; all four pages and 23 linked files answer 200, unknown paths get the site's own 404, canonical and sharing tags carry the Pages address). For a custom domain: add it under Settings, Pages, then change `SITE_BASE` to `/` and `SITE_URL` to the domain in the deploy job. The `github-pages` environment allows `main` and `claude/*`; remove the `claude/*` rule once the site is merged to `main`, so only `main` can publish. |
 | The web app's own address | owner, then a separate task | Host the PWA build (`www/`) under the site, which needs an app build with a matching base path; the Install pages already switch their wording when `SITE_APP_URL` is set. |
 | The em-dash inside the Today screenshot ("Keep loads steady today — skip any increases.") | a separate app task | It is the app's own advice string (src/slices/today), so the screenshot shows it; changing it is an app copy change with its tests. |
 
