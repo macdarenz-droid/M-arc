@@ -29,7 +29,7 @@ export interface CarryOverStart {
  * Null with no sourced ratio for this pair, or nothing to place it on - the caller keeps today's
  * `startingLoadKg` behaviour (A3).
  */
-export function carryOverStart(replaced: Pick<Exercise, 'pattern' | 'equipment'>, substitute: Pick<Exercise, 'pattern' | 'equipment'>, replacedEstimateKg: number, menu: LoadMenu): CarryOverStart | null {
+export function carryOverStart(replaced: Pick<Exercise, 'pattern' | 'equipment'>, substitute: Pick<Exercise, 'pattern' | 'equipment'>, replacedEstimateKg: number, menu: Pick<LoadMenu, 'profile' | 'rungsKg'>): CarryOverStart | null {
   if (!(replacedEstimateKg > 0) || !menu.rungsKg.length) return null;
   if (replaced.pattern !== substitute.pattern) return null;
   const ratio = substitutionRatio(replaced.pattern, equipmentGroup(replaced.equipment), equipmentGroup(substitute.equipment));
@@ -45,6 +45,6 @@ export function carryOverStart(replaced: Pick<Exercise, 'pattern' | 'equipment'>
  * estimate, so the first session is achievable. The one call LT-2 can swap for its own rung choice
  * once it lands, without touching carryOverStart's shape.
  */
-function chooseStartRung(estimateKg: number, menu: LoadMenu) {
+function chooseStartRung(estimateKg: number, menu: Pick<LoadMenu, 'profile'>) {
   return loadableNear(estimateKg, menu.profile, 'down');
 }

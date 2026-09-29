@@ -29,6 +29,17 @@ export type Tempo = RepTempo | HoldTempo;
 export const VIEWBOXES = {
   standingFront: [-88, -6, 576, 600],   // the lab's -80 -6 560 600 widened 8 units a side for the mistake's sway (D-FG3)
   upperFront: [60, 10, 280, 300],
+  // V1-06: the full cameras keep standingFront's 600-unit height, so the stage (358:276, height-bound up to 778 units
+  // wide) draws the figure at one size, and are centred on x = 200, so a mirrored file (reflected about x = 200) keeps
+  // its camera; hangingSide alone is taller (the bar at 2.3 m, COACHING-DECISIONS.md:489). The zooms are upperFront's
+  // size; guideView cameraOf reflects them for a mirrored file. Poses held: tests/formguide/sideWiring.test.ts A4.
+  standingSide: [-88, -6, 576, 600],
+  seatedSide: [-150, -6, 700, 600],
+  lyingSide: [-189, -6, 778, 600],
+  hangingSide: [-112, -150, 624, 666],
+  ankleSide: [244, 367, 280, 300],
+  gripFront: [60, 162, 280, 300],
+  backFull: [-88, -6, 576, 600],
 } as const satisfies Record<string, readonly [number, number, number, number]>;
 export type ViewBoxId = keyof typeof VIEWBOXES;
 

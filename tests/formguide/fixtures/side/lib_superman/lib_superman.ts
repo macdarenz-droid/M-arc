@@ -4,7 +4,7 @@ import type { ExerciseGuide } from '@/formguide/model';
 
 export const lib_superman: ExerciseGuide = {
   id: 'lib_superman', kind: 'rep', order: 'lift_first',
-  camera: { full: 'standingFront', zoom: 'upperFront', subject: 'hip_r' }, pose: 'lying_prone',
+  camera: { full: 'lyingSide', zoom: 'upperFront', subject: 'hip_r' }, pose: 'lying_prone',
   equipment: { kind: 'none', attach: [] , loadFrom: 'bodyweight' },
   tempo: { lift: 1, hold: 0.5, lower: 2, rest: 0.5 }, symmetric: true,
   joints: { shoulder_flex: 0, hip_flex: [0, -15], torso_lean: [0, 15] },

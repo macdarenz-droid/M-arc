@@ -7,7 +7,6 @@ import { Button, Chip } from '@/ui/primitives';
 import { IconPause, IconPlay } from '@/ui/icons';
 import { onReducedChange, reduced } from '@/ui/motion';
 import type { ExerciseGuide } from '../model';
-import { VIEWBOXES } from '../model';
 import { cssReader } from '../rig/paint';
 import type { Figure } from '../sample';
 import { SnapshotCache, snapshotSvg, toDataUri } from '../snapshot';
@@ -132,7 +131,7 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
   // Pictures: the four moments of the figure shown, as images resolved in the current theme (cached per theme).
   const shots = (box: 'full' | 'zoom', only?: number): string[] => cache.get(`${theme}|${fig}|${box}${only ?? ''}`, () => {
     const read = cssReader(rootRef.current ?? document.documentElement), m = markupOf(g, rig, read, { id: 'snap', mistake: fig === 'mistake', load: load?.kg ?? null });
-    const us = momentsOf(g, fig), vb = VIEWBOXES[box === 'zoom' ? g.camera.zoom : g.camera.full];
+    const us = momentsOf(g, fig), vb = cameraOf(g, box === 'zoom', false).box;
     return (only == null ? us : [us[only]!]).map(u => toDataUri(snapshotSvg(m, momentFrame(g, rig, fig, u, m), read, vb)));
   });
   const tiles = v.showPics ? shots('full') : null;
@@ -156,7 +155,7 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
               {v.showSlow && <span class="pill pill-accent">Slow motion</span>}
             </div>
           )}
-          {v.showCamLabel && v.showStage && <div class="cam-label">Front view{load_}</div>}
+          {v.showCamLabel && v.showStage && <div class="cam-label">{rig.view[0]!.toUpperCase() + rig.view.slice(1)} view{load_}</div>}
           {compare && !bubble && (
             <div class="fg4-key"><span>Right way</span><span class="fg4-key-m">Mistake</span></div>
           )}
