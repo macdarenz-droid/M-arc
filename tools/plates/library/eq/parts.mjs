@@ -25,3 +25,11 @@ export function frontBar(a, b, t, pxPerM, extra = {}) {
   const L = Math.abs(b[1] - a[1]);
   return { type: 'backPad', at: [mid[0], mid[1], mid[2]], angle: 0, len: Math.max(0, L - 4 / pxPerM), below: Math.max(0, L - 4 / pxPerM) / 2, width: t, post: false, ...extra };
 }
+
+/**
+ * Engine keys each equipment item by `eq<entry>.<type>.<index within that primitive's output>`, so two items of the
+ * same type returned by ONE function entry collide (the start layer and the Mistake then lose one of them).
+ * perItem(fn, n) turns a composer function that returns up to n items into n entries, one item each:
+ *   equipment: [...perItem((lm, ctx) => rope({...}), ROPE_ITEMS)]
+ */
+export const perItem = (fn, n) => Array.from({ length: n }, (_, k) => (lm, ctx) => [].concat(fn(lm, ctx) ?? [])[k] ?? null);

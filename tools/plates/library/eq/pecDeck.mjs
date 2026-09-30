@@ -4,6 +4,7 @@
 // vertical axis, so in the front view the corner and handle travel sideways (their depth is not drawn).
 // Assumed sizes (typical commercial pec deck; the spec names its source): arm tubes 5 cm, handles 14 cm long,
 // pivot boss 4 cm, seat pad 36 cm wide, back pad 30 x 70 cm, column 8 cm.
+// Returns PEC_DECK_ITEMS items; wrap it with perItem() (parts.mjs) so same-type items get their own keys.
 // Moving parts (arm, corner, handle) are backPad/chestPress items with `poly` (PQ-H9).
 import { frontBar } from './parts.mjs';
 
@@ -27,3 +28,5 @@ export function pecDeck({ pivot, grips, seat, back, top, pxPerM, grip = 0.14, tu
   }
   return out;
 }
+
+export const PEC_DECK_ITEMS = 10;
