@@ -1225,3 +1225,16 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **D-BUG34-4 Decided**: under reduce, the dot also gets `offset-path: none`.
   **Why**: an offset path moves the dot even at distance 0, so cx=30 cy=50 would land at (38,90). The gate caught this in a mutation run.
   **Source**: the BUG-34 gate probe, reduce cases.
+## ESC-W-CITE: citation form and repair wording in prompt rule 3 (ESC-W-CITE builder, 2026-09-30)
+
+- **Decided**: rule 3 of `WORKER_POLICY` keeps "inline in the brief as [f3]" (that is how the brief really writes fact ids) and now adds "In your answer always write them as ⟦f3⟧, never in square brackets." The worked example `102.5 kg ⟦f12⟧ (several: ⟦f12,f14⟧)` is unchanged.
+  **Why**: the rule told the model the brief's `[f3]` form and showed the `⟦f12⟧` form only in an example, so the model could copy the brief's square brackets into its answer. The app's citation reader (`parseDirectives` in `src/escobar/verify.ts`) only recognises the `⟦…⟧` form, so a bracketed id is not read as a citation and stays in the visible text (`Message.tsx` removes only `⟦…⟧` parts), and `extractNumbers` picks its digit up as a number. One added sentence says which form is for the answer, and the brief form is still explained so the model can read the brief.
+  **Source**: card ESC-W-CITE, W1.
+- **Decided**: rule 3 now ends "If the app sends a verification check, recompute the numbers it lists with tools or remove them, then write your whole answer again as your reply to the person, without mentioning the check." It replaces "then restate the answer."
+  **Why**: "restate the answer" invited a reply about the check itself ("I rechecked the numbers, here is the answer…") or a reply to the app. The person never sees the check, so the reply must read as one complete answer to their own message. "Whole" also stops a short reply that covers only the corrected number.
+  **Source**: card ESC-W-CITE, W2.
+- **Decided**: `escobar-worker/test/policy.test.ts` pins both sentences as exact strings in their own block (and the worked example), and `then restate the answer` must be absent. The rule-9 LR-23 pin and every other pin are unchanged; the `anthropic.test.ts` size (under 14,000 characters) and no-capital-words checks still pass with the added words (the new sentences use lower-case "always" and "never").
+  **Source**: card ESC-W-CITE, W3.
+- **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
+  **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
+  **Source**: card ESC-W-CITE, reserved_paths.
