@@ -4,7 +4,7 @@ Effective date: 2026-09-30. Last updated: 2026-09-30.
 
 M/ARC is made by Marc Darenz L. Masarate. Contact: macdarenz@gmail.com. This policy is published at https://macdarenz-droid.github.io/M-arc/privacy/.
 
-M/ARC is a workout tracker. It has no accounts, no ads and no analytics. Your data stays on your phone unless you turn on one of the two optional features below: the online coach and error reports. Both are off until you turn them on.
+M/ARC is a workout tracker. It has no accounts, no ads and no analytics. Your data stays on your phone unless you turn on one of the two optional features below: the online coach and error reports. Both are off until you turn them on. With the coach on, you can also report one of its replies; nothing is sent unless you tap Report and pick a reason.
 
 Escobar, the online coach, may become a paid feature in the future. If that happens, this policy will be updated with the payment details before it launches; nothing about payment exists in the app today.
 
@@ -32,9 +32,9 @@ Your health data (heart rate, sleep, steps, calories) and body data (weight, bod
 While the app is open, it may also check whether the coach server is reachable. That check sends no data, but the server sees your IP address.
 
 **Who receives it:**
-- **Cloudflare** runs the coach server (a Cloudflare Worker run by Marc Darenz L. Masarate). It passes your request on and keeps no conversation. To limit use, it counts requests per device id and per internet (IP) address for the day; these counters are deleted after 3 days. Its logs record technical details such as the model, token counts, timing, data-centre location and error codes, not your messages.
+- **Cloudflare** runs the coach server (a Cloudflare Worker run by Marc Darenz L. Masarate). It passes your request on and keeps no conversation, except a reply you report (see Reporting a coach reply). To limit use, it counts requests per device id and per internet (IP) address for the day; these counters are deleted after 3 days. Its logs record technical details such as the model, token counts, timing, data-centre location and error codes, not your messages.
 - **Anthropic** (the maker of the Claude AI) receives the request from the Worker, in the United States, and writes the coach's answer. The request comes from the server, not your phone, so Anthropic does not see your IP address. Anthropic may keep parts of a request in a short-lived cache (up to one hour) so follow-up messages are faster. Under its policy for API customers, Anthropic deletes API requests and answers within 30 days, keeps them longer only if needed to enforce its usage policy or the law, and does not use them to train its models by default. See https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data and https://privacy.claude.com/en/articles/7996868-is-my-data-used-for-model-training.
-- **A server you choose.** If you set your own coach server in Settings (Escobar, Server), coach requests go to that server instead, under its operator's terms. Error reports always go to the built-in Cloudflare server.
+- **A server you choose.** If you set your own coach server in Settings (Escobar, Server), coach requests go to that server instead, under its operator's terms. Error reports and reply reports always go to the built-in Cloudflare server.
 
 ## Error reports, off by default
 The app asks you once, after your first logged workout, and there is a switch in Settings: "Send anonymous error reports". Nothing is sent while it is off, and switching it off deletes reports still waiting on the phone.
@@ -45,17 +45,24 @@ The message is cleaned before it leaves the phone and again on the server: every
 
 The server stores reports in Cloudflare's database for 90 days, then deletes them. To stop abuse it allows 30 requests an hour per install id and per IP address; your IP address is never stored, only a scrambled code of it, deleted within a day. A request can hold at most 20 reports and 8 KB.
 
+## Reporting a coach reply
+Under each finished coach reply there is a Report button. Nothing is sent unless you tap it and pick a reason. A report holds only three items: the text of that reply as shown (its answer, the short notes it writes while it works, chart captions, the titles of changes it proposes, earlier drafts and suggested follow-up questions; at most 4,000 characters), the reason you picked (Offensive, Harmful or Wrong), and the app version. It holds no device id, install id, name or account, and none of your own messages or the rest of the conversation. A reply can repeat things about you, such as your split names or numbers; those are then part of the report.
+
+Reports always go to the built-in Cloudflare server, even if you set your own coach server. The server stores them in Cloudflare's database for 90 days after the first report of that reply, then deletes them. If the same reply is reported again for the same reason, it keeps one copy and counts the reports. Reports are used only to review the coach's replies and make the coach safer; they are not sent to Anthropic, sold or used for ads. To stop abuse the server allows 10 reports an hour per internet (IP) address; your IP address is never stored, only a scrambled code of it, deleted within a day.
+
 ## How your data is protected
 Everything the app sends goes over an encrypted connection (HTTPS). Health data is never sold, never used for ads, and never given to anyone except, when you share it, to answer your own coach request. The app has no ads or tracking.
 
 ## Deleting your data
-"Reset workout data" in Settings (Your data), then "Reset everything", erases all your data and history on this phone, including coach conversations and photos, and gives you a new install id. Display settings for this device (theme, motion, keep screen on, share-card style) stay. One exception: if the app ever set aside saved data it could not read, that copy stays until you delete it in Settings under "Unreadable data kept aside" ("Hold to delete"). Uninstalling the app also removes it. Error reports on the server are not linked to your name and are deleted after 90 days. To ask about them, email macdarenz@gmail.com.
+"Reset workout data" in Settings (Your data), then "Reset everything", erases all your data and history on this phone, including coach conversations and photos, and gives you a new install id. Display settings for this device (theme, motion, keep screen on, share-card style) stay. One exception: if the app ever set aside saved data it could not read, that copy stays until you delete it in Settings under "Unreadable data kept aside" ("Hold to delete"). Uninstalling the app also removes it. Error reports on the server are not linked to your name and are deleted after 90 days. Reported replies are not linked to you either, so they can't be found or deleted per person; they are deleted 90 days after the first report. To ask about them, email macdarenz@gmail.com.
 
 ## Children
 M/ARC is intended for adults (18+). It is not meant for children, and its coach gives strength-training advice and reads heart-rate health data that is not suitable for a minor to act on unsupervised. The app does not check age; if you enter an age of 18 or under, the coach is told so and stays conservative.
 
 ## Changes
 If this policy changes, the new version will be posted here with a new date.
+
+2026-09-30: added "Reporting a coach reply".
 
 ## Applicable law
 M/ARC is available in all countries, and especially in the Philippines and Australia, where the developer is based. For users in Australia, this policy is written to meet the Australian Privacy Act 1988 (Cth). For users in the Philippines, it is written to meet the Data Privacy Act of 2012 (Republic Act No. 10173).

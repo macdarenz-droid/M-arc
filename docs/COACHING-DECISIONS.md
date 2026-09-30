@@ -569,3 +569,7 @@ Decisions taken while writing docs/WEBSITE-DESIGN.md where the render, the direc
 - **D-DOC3 (2026-09-30), age**: the Privacy Policy keeps the 18+ rule and discloses that the app does not verify age: if the entered age is 18 or under, the coach is told (`minor` in the brief, `possiblyMinor` in `src/brain/recovery.ts`) and stays conservative. There is no product gate at onboarding.
   **Why**: birth year allows ages down to 10 (`src/slices/profile/Onboarding.tsx`), so a bare "18+" would misdescribe the app; gating onboarding is a product change outside DOC-3 (supervisor ruling on PR #110).
   **Source**: DOC-3 review, high 5; `docs/PRIVACY-POLICY.md` "Children".
+
+- **D-DOC-REPORT (2026-09-30), screenshot width**: DOC-REPORT's D1 evidence is `website/gate-out/privacy-400-*.png` (400px wide), not a 390px capture.
+  **Why**: `npm run site:gate` is the only mobile screenshot path for the website's own /privacy/ page, and its mobile viewport is 400×844 (`website/gate.mjs` `SIZES`); the 390×844 viewport belongs to `website/shots.mjs`, which captures the Android app's own screens, not the website. No website script renders /privacy/ at 390px.
+  **Source**: website/gate.mjs, website/shots.mjs.
