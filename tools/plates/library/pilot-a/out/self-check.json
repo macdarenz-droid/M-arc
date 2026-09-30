@@ -1,0 +1,280 @@
+{
+ "pageSha": "03fa6e0a5d6f629bba9313f7fe7059539af89e414ac3e0be988bafd9613afbea",
+ "pageBytes": 1832080,
+ "sheetSha": "927e08c353015a2d9c915e6addc5fadcd0087ba27d4662e34e366964ef2ea88a",
+ "sheetBytes": 3923897,
+ "warnings": "",
+ "plates": [
+  {
+   "id": "single_leg_romanian_deadlift",
+   "tier": "A",
+   "ok": true,
+   "flags": [
+    "F7"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.214,
+    "longestLeader": 72.8,
+    "boxed": 1
+   },
+   "issues": []
+  },
+  {
+   "id": "barbell_shrug",
+   "tier": "A",
+   "ok": true,
+   "flags": [
+    "F1",
+    "F7"
+   ],
+   "measures": {
+    "pxPerM": 249.99,
+    "coverage": 0.146,
+    "longestLeader": 34.8,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "box_jump",
+   "tier": "A",
+   "ok": true,
+   "flags": [
+    "Note"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.2,
+    "longestLeader": 27,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "dumbbell_fly",
+   "tier": "A",
+   "ok": true,
+   "flags": [
+    "F6"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.124,
+    "longestLeader": 63.9,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "dumbbell_bench_press",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.118,
+    "longestLeader": 65.1,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "incline_dumbbell_press",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.125,
+    "longestLeader": 27.6,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "dumbbell_shoulder_press",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.121,
+    "longestLeader": 24.7,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "barbell_overhead_press",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 134.58,
+    "coverage": 0.183,
+    "longestLeader": 77,
+    "boxed": 3
+   },
+   "issues": []
+  },
+  {
+   "id": "barbell_row",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.101,
+    "longestLeader": 46.2,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "romanian_deadlift",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.151,
+    "longestLeader": 69.8,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "upright_row",
+   "tier": "B",
+   "ok": true,
+   "flags": [
+    "F2"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.258,
+    "longestLeader": 50.7,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "reverse_lunge",
+   "tier": "B",
+   "ok": true,
+   "flags": [
+    "Note"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.181,
+    "longestLeader": 36.9,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "pec_fly",
+   "tier": "B",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.19,
+    "longestLeader": 62.8,
+    "boxed": 2
+   },
+   "issues": []
+  },
+  {
+   "id": "dumbbell_biceps_curl",
+   "tier": "C",
+   "ok": true,
+   "flags": [
+    "F2"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.082,
+    "longestLeader": 46.4,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "rope_triceps_pushdown",
+   "tier": "C",
+   "ok": true,
+   "flags": [
+    "Note"
+   ],
+   "measures": {
+    "pxPerM": 133.79,
+    "coverage": 0.183,
+    "longestLeader": 66.5,
+    "boxed": 3
+   },
+   "issues": []
+  },
+  {
+   "id": "bent_over_dumbbell_rear_delt_fly",
+   "tier": "C",
+   "ok": true,
+   "flags": [
+    "F2",
+    "F6"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.095,
+    "longestLeader": 67,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "plank",
+   "tier": "C",
+   "ok": true,
+   "flags": [
+    "Note"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.111,
+    "longestLeader": 15.5,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "mountain_climbers",
+   "tier": "C",
+   "ok": true,
+   "flags": [
+    "Note"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.113,
+    "longestLeader": 42.8,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "triceps_pushdown",
+   "tier": "C",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 133.79,
+    "coverage": 0.186,
+    "longestLeader": 66.4,
+    "boxed": 2
+   },
+   "issues": []
+  }
+ ]
+}

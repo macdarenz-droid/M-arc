@@ -3,14 +3,14 @@
 //   node tools/plates/library/pilot-a/build.mjs            writes out/ (see OUT below) and prints the summary
 // The plates page is built by the library page builder (golden A's chrome, ../build-page.mjs). The sheet adds, per
 // plate, its Mistake, a Paper thumbnail, the closest approved plate and every flag, and prints the plates page sha.
-// A check extracts every card from both pages (golden.mjs extractPlates) and requires the fragments to be equal.
+// A check requires every card (<article>…</article>) on the sheet to be byte-identical to the same card on the plates page.
 import { createRequire } from 'node:module';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { buildPlatesPage } from '../build-page.mjs';
 import { reportPlates } from '../report.mjs';
-import { ROOT, FIXTURE, extractPlates, fragmentsOf, sha256 } from '../../golden.mjs';
+import { ROOT, FIXTURE, sha256 } from '../../golden.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const LIB = join(here, '..');
@@ -36,6 +36,7 @@ export function flagsOf(entry, measures, spec) {
   if (spec.view !== entry.view) f.push({ id: 'F6', text: `Drawn in ${spec.view} view; the census says ${entry.view}` });
   if (spec.pilot?.drawableFault) f.push({ id: 'F7', text: `Mistake is not the card's top fault (drawable-fault rule): ${spec.pilot.drawableFault}` });
   for (const n of entry.notes ?? []) f.push({ id: 'Note', text: n });
+  if (!spec.tempo) f.push({ id: 'Note', text: 'No tempo strip: the verified card gives no seconds (never invented)' });
   return f;
 }
 
@@ -151,12 +152,11 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
   writeFileSync(sheetFile, sheet);
 
   // 6. the sheet's cards are the pinned bytes
-  const a = extractPlates(plates.toString()), b = extractPlates(sheet);
-  if (a.length !== LIST.length || b.length !== LIST.length) throw new Error(`cards: plates page ${a.length}, sheet ${b.length}, list ${LIST.length}`);
-  for (const pa of a) {
-    const pb = b.find(x => x.chromeId === pa.chromeId);
-    if (JSON.stringify(fragmentsOf(pa)) !== JSON.stringify(fragmentsOf(pb))) throw new Error(`${pa.chromeId}: sheet card differs from the plates page`);
-  }
+  const cards = html => new Map([...html.matchAll(/<article class="sheet-card" id="card-([a-z0-9-]+)"[\s\S]*?<\/article>/g)].map(m => [m[1], m[0]]));
+  const a = cards(plates.toString()), b = cards(sheet);
+  if (a.size !== LIST.length || b.size !== LIST.length) throw new Error(`cards: plates page ${a.size}, sheet ${b.size}, list ${LIST.length}`);
+  for (const [id, bytes] of a) if (b.get(id) !== bytes) throw new Error(`${id}: sheet card differs from the plates page`);
+
   const summary = {
     pageSha, pageBytes: plates.length, sheetSha: sha256(sheet), sheetBytes: Buffer.byteLength(sheet), warnings: warnings.trim(),
     plates: order.map(p => ({ id: p.id, tier: p.tier, ok: rep[p.id].ok, flags: flags[p.id].map(f => f.id), measures: rep[p.id].measures,
