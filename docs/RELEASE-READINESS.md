@@ -95,6 +95,8 @@ The owner approved this on 2026-09-26. It runs after item 9 and the fix loop for
 
 Owner decision, 2026-09-30 (REL-3): Google Play signs the app with your existing permanent key (SHA-256 `05:66:9A:…:F1:F5`), so Huawei and Play see the same app. CI signs what it uploads to Play with a separate, new upload key. If the upload key is ever lost, Google can reset it; the permanent key never leaves your control except in a copy encrypted for Google.
 
+Because Play and your sideloaded APKs now share the same key, the REL-2 version-code risk above applies: a Play build installs over a sideloaded release APK only if its versionCode is higher, and the reverse is also true.
+
 Two one-off jobs do the key work. You start each from your phone. GitHub only shows **Run workflow** for a job once its file is on `main`, so both work after the REL-3 PR has merged.
 
 **How to start a job:** open the repo on GitHub → **Actions** → pick the job in the list → **Run workflow** → choose the branch under "Use workflow from" → green **Run workflow**. When the run shows a green tick, open it: the key facts are in the summary, and the files are under **Artifacts** at the bottom.
