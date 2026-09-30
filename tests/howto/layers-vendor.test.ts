@@ -40,11 +40,9 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
     expect(paths).not.toContain('exercises/dumbbell_lateral_raise.mjs');
   });
 
-  it('rebuilding the vendored layer page gives the pinned pageSha256 (f39137…9e1384)', async () => {
-    const mirror = copyLayers();
-    const html = await m.buildLayerPage(mirror);
-    expect(m.sha256(html)).toBe(m.PAGE_SHA256);
-  }, 20000);
+  // The live rebuild (spawns node artifact/build-page.mjs, ~8-14s) runs once in the HT-4 gate block
+  // (scripts/screenshot-gate.mjs), not here (review fix, blocker 4: npm test stays fast). See the gate block for
+  // "rebuilding the vendored layer page gives the pinned pageSha256".
 
   it('fails and names the file on a 1-byte change to engine/plate.mjs', () => {
     const d = copyLayers();

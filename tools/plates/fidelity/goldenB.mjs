@@ -7,11 +7,12 @@
 // (a card comparing an empty capture against another empty capture would read "0 px difference" for the wrong
 // reason, the exact bug a fresh reviewer caught in V1-08, see builder gotchas).
 import { createRequire } from 'node:module';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { spawn } from 'node:child_process';
+import { mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { buildLayerPage, cleanupMirror, makeMirror } from '../layers.mjs';
+import { buildLayerPage, cleanupMirror, makeMirror, sha256 } from '../layers.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..', '..', '..');
@@ -140,11 +141,57 @@ export async function assertAllSetupStepsShown(page, id) {
 export async function expandSources(page, id) {
   await page.evaluate(sel => { document.querySelector(sel).open = true; }, `#card-${id} .srcs`);
 }
+const collapseSources = (page, id) => page.evaluate(sel => { document.querySelector(sel).open = false; }, `#card-${id} .srcs`);
+
+const setReduced = (page, on) => page.evaluate(v => { document.documentElement.dataset.motion = v ? 'reduce' : ''; }, on);
+
+/**
+ * Plays the feel-map shimmer for real (clearing reduced motion first, since feelmap.mjs's own click handler is a
+ * no-op under reduced motion), then pauses its animation at a fixed `currentTime` so the capture is deterministic
+ * regardless of wall-clock timing (finding 3, review PR #107: the shimmer's own ~5.5 s run time is a timing
+ * question for the gate's animation probes, not this state). Restores reduced motion on `close`.
+ */
+export async function playFeelPaused(page, id, atMs = 1200) {
+  await setReduced(page, false);
+  const sel = `#card-${id} [data-feel-map]`;
+  await page.evaluate(s => document.querySelector(s).scrollIntoView({ block: 'center' }), sel);
+  await page.waitForTimeout(400);
+  await clickSel(page, sel);
+  const ok = await page.evaluate(([sel, atMs]) => {
+    const bands = [...document.querySelectorAll(`${sel} .feel-band`)];
+    if (!bands.length) return false;
+    let paused = 0;
+    for (const band of bands) for (const a of band.getAnimations()) { a.pause(); a.currentTime = atMs; paused++; }
+    return paused > 0;
+  }, [sel, atMs]);
+  if (!ok) throw new Error(`${id}: feel-band animation not found to pause deterministically`);
+}
+export async function closeFeelPaused(page, id) {
+  await setReduced(page, true);
+  await page.evaluate(sel => { const m = document.querySelector(sel); m.classList.remove('is-playing'); }, `#card-${id} [data-feel-map]`);
+}
+
+/**
+ * Under reduced motion (the default state, C11), attempting to play must draw no band at all: feelmap.mjs's own
+ * click handler is a no-op under `reduce()`. Throws if a band is visible after trying.
+ */
+export async function assertReducedMotionNoShimmer(page, id) {
+  await setReduced(page, true);
+  const sel = `#card-${id} [data-feel-map]`;
+  await clickSel(page, sel);
+  const shown = await page.evaluate(s => {
+    const band = document.querySelector(`${s} .feel-band`);
+    return !!band && getComputedStyle(band).display !== 'none';
+  }, sel);
+  if (shown) throw new Error(`${id}: a feel-band is visible under reduced motion (C11)`);
+}
 
 /**
  * Every state the layer cards compare, for one exercise: hand zoom per key, posture zoom per chip, handling
- * mistake, feel map (rest, playing, each row open, reduced motion is driven by the caller's theme choice), setup
- * collapsed/expanded, sources collapsed/expanded, risks. Returns [{ name, selector }].
+ * mistake, feel map (rest, playing at a fixed frame, each row open), setup (every step already shown), sources
+ * collapsed/expanded, risks. `group`+`isBaseline` mark states sharing a selector with a rest state, so selfCheck
+ * can assert the open state's capture actually differs from rest (finding 3: a state that never opens anything
+ * captures the same pixels as rest and would otherwise pass unnoticed). Returns [{ name, selector, ... }].
  */
 export async function statesFor(page, id) {
   const card = `#card-${id}`;
@@ -152,34 +199,244 @@ export async function statesFor(page, id) {
   const rows = await page.evaluate(c => [...document.querySelectorAll(`${c} .fr`)].map(r => r.dataset.row), card);
   const states = [
     { name: `${id}: chips`, selector: `${card} .zx-chips-wrap` },
-    { name: `${id}: grip + handling mistakes`, selector: `${card} .grip` },
-    { name: `${id}: feel at rest`, selector: `${card} .feel` },
-    { name: `${id}: setup`, selector: `${card} .setup` },
+    { name: `${id}: grip`, selector: `${card} .grip` },
+    { name: `${id}: plate at rest`, selector: `#${id}-plate`, group: 'plate', isBaseline: true },
+    { name: `${id}: plate mistake`, selector: `#${id}-plate`, group: 'plate', open: () => openMistake(page, id), close: () => clickSel(page, `#${id}-mistake`) },
+    { name: `${id}: feel at rest`, selector: `${card} .feel`, group: 'feel', isBaseline: true },
+    { name: `${id}: feel playing (paused mid-sweep)`, selector: `${card} .feel`, group: 'feel', open: () => playFeelPaused(page, id), close: () => closeFeelPaused(page, id) },
+    { name: `${id}: setup (every step shown)`, selector: `${card} .setup`, open: () => assertAllSetupStepsShown(page, id) },
     { name: `${id}: risks`, selector: `${card} .risks` },
-    { name: `${id}: sources`, selector: `${card} .srcs` },
+    { name: `${id}: sources`, selector: `${card} .srcs`, group: 'sources', isBaseline: true },
+    { name: `${id}: sources expanded`, selector: `${card} .srcs`, group: 'sources', open: () => expandSources(page, id), close: () => collapseSources(page, id) },
   ];
   for (const z of zoomKeys) states.push({ name: `${id}: zoom ${z}`, selector: `#${id}-zoom-${z}`, open: () => openZoom(page, id, z), close: () => closeZoom(page, id, z) });
-  for (const r of rows) states.push({ name: `${id}: feel row ${r}`, selector: `${card} .feel` });
+  for (const r of rows) states.push({ name: `${id}: feel row ${r}`, selector: `${card} .feel`, group: 'feel', open: () => openFeelRow(page, id, r) });
   return states;
 }
 
 /**
  * Self-check (HT4-A6): captures every state of `id` twice back to back and asserts 0 px difference between the two
  * captures (proves `capture` is deterministic and never silently returns an empty/blank buffer for two different
- * states). Forces reduced motion first, so a still-running shimmer (C12: up to ~5.5 s) can never make two otherwise
- * identical captures differ by animation phase alone - that is a timing question for the gate's own animation
- * probes, not this driver's determinism. Returns the list of state names that failed (empty = clean).
+ * states), and - for every non-baseline state sharing a `group` with a baseline (grip/feel/sources) - asserts its
+ * capture actually differs from that group's rest capture (proves the state really opened something; a state that
+ * silently no-ops would otherwise pass the 0 px self-check for the wrong reason, the V1-08 bug in builder gotchas).
+ * Runs under reduced motion by default (deterministic); `playFeelPaused`/`assertReducedMotionNoShimmer` manage their
+ * own motion setting. Also asserts C11 holds (a shimmer attempt under reduced motion draws nothing).
+ * Returns the list of problem strings (empty = clean).
  */
 export async function selfCheck(page, id) {
-  await page.evaluate(() => { document.documentElement.dataset.motion = 'reduce'; });
+  await setReduced(page, true);
   const bad = [];
   const states = await statesFor(page, id);
+  const baselineCaptures = {};
   for (const s of states) {
     if (s.open) await s.open();
     const a = await capture(page, s.selector, s.name);
     const b = await capture(page, s.selector, s.name);
-    if (!a.equals(b)) bad.push(s.name);
+    if (!a.equals(b)) bad.push(`${s.name}: two back-to-back captures differ (not deterministic)`);
+    if (s.group) {
+      if (s.isBaseline) baselineCaptures[s.group] = a;
+      else if (baselineCaptures[s.group] && a.equals(baselineCaptures[s.group])) bad.push(`${s.name}: capture is identical to "${s.group}" at rest (the state did not really open)`);
+    }
     if (s.close) await s.close();
+  }
+  try { await assertReducedMotionNoShimmer(page, id); } catch (e) { bad.push(e.message); }
+  return bad;
+}
+
+// ---------------------------------------------------------------------------------------------
+// HT4-A5 (review fix, blocker 1): golden B's crop specs never freely vary `poses` - every crop's poses.start/end
+// either deep-equals one of golden-A's own three reference poses (start, end, end merged with mistake.pose) or is
+// one of a short, explicit, owner-approved exception, pinned by literal deep-equal. Never a blanket "poses can
+// vary" allowance (the flaw a fresh reviewer found in the first cut of this file, PR #107).
+//
+// Derived empirically from a real `node artifact/build-page.mjs` run (module-hook shim on engine/plate.mjs,
+// tests/howto/goldenB-derivation.test.ts's captureRenderPlateCalls, moved here so both the fast unit test and the
+// HT-4 gate block reuse the same capture code): of 48 total renderPlate calls, 11 use a poses.start/end that is not
+// one of golden-A's three reference poses. 2 are Right crops (howto/render-*.mjs's cropSpec builds `z.right` from a
+// {base, pose} merge-override, not a bare pose name) - both shoulder-position corrections the owner approved as
+// design (PR #107 supervisor ruling). The other 9 are Wrong crops with `z.wrong.solid` set, where cropSpec draws
+// the wrong form directly in poses.start/end (not via the separate `mistake` sub-pose field) - a legitimate design
+// choice, not drift, and still pinned literally so a future unrelated one is caught.
+export const ENUMERATED_POSES = {
+  "barbell_back_squat|bar-on-back-w": {"root":{"at":[0,0.918,0.022575272439632726],"tilt":8},"trunk":0,"neck":0,"plant":{"l":{"at":[0.19,0,0],"toe":[0.3420201433256687,0,0.9396926207859084],"pole":[0.24192189559966773,0,0.9702957262759965]},"r":{"at":[-0.19,0,0],"toe":[-0.3420201433256687,0,0.9396926207859084],"pole":[-0.24192189559966773,0,0.9702957262759965]}},"reach":{"l":{"at":[0.36,1.531676188242726,0.02],"pole":[0.45,-0.75,-0.6]},"r":{"at":[-0.36,1.531676188242726,0.02],"pole":[-0.45,-0.75,-0.6]}}},
+  "barbell_back_squat|depth-w": {"root":{"at":[0,0.62,-0.2171966658748457],"tilt":28},"trunk":7,"neck":-7,"plant":{"l":{"at":[0.19,0,0],"toe":[0.3420201433256687,0,0.9396926207859084]},"r":{"at":[-0.19,0,0],"toe":[-0.3420201433256687,0,0.9396926207859084]}},"reach":{"l":{"at":[0.36,1.1397036108416705,0],"pole":[0.35,-1,0]},"r":{"at":[-0.36,1.1397036108416705,0],"pole":[-0.35,-1,0]}}},
+  "pull_up|shoulders-right": {"root":{"at":[0,1.147,-0.02],"tilt":0},"trunk":0,"neck":0,"scap":{"elev":-3,"pro":-1},"hip":4,"knee":6,"ankle":-22,"reach":{"l":{"at":[0.31,2.25,0],"pole":[0.5,0,0.3]},"r":{"at":[-0.31,2.25,0],"pole":[-0.5,0,0.3]}}},
+  "pull_up|shoulders-wrong": {"root":{"at":[0,1.047,-0.02],"tilt":0},"trunk":0,"neck":10,"scap":{"elev":8,"pro":1},"hip":4,"knee":6,"ankle":-22,"reach":{"l":{"at":[0.31,2.25,0],"pole":[0.5,0,0.3]},"r":{"at":[-0.31,2.25,0],"pole":[-0.5,0,0.3]}}},
+  "hanging_leg_raise|pelvis-wrong": {"trunk":-10,"neck":5,"hip":102,"knee":5,"ankle":-25,"root":{"at":[0,1.1102,-0.1457],"tilt":12},"reach":{"l":{"at":[0.24,2.25,0],"pole":[0.5,0,-1]},"r":{"at":[-0.24,2.25,0],"pole":[-0.5,0,-1]}}},
+  "hanging_leg_raise|shoulders-right": {"trunk":0,"neck":0,"hip":0,"knee":0,"ankle":-25,"root":{"at":[0,1.1411,0.0033],"tilt":0},"reach":{"l":{"at":[0.24,2.25,0],"pole":[0.5,0,-1]},"r":{"at":[-0.24,2.25,0],"pole":[-0.5,0,-1]}},"scap":{"elev":-3,"pro":-1}},
+  "hanging_leg_raise|shoulders-wrong": {"trunk":0,"neck":10,"hip":0,"knee":0,"ankle":-25,"root":{"at":[0,1.031,-0.005],"tilt":0},"reach":{"l":{"at":[0.24,2.25,0],"pole":[0.5,0,-1]},"r":{"at":[-0.24,2.25,0],"pole":[-0.5,0,-1]}},"scap":{"elev":8,"pro":1}},
+  "lat_pulldown|path-wrong": {"root":{"at":[0,0.5077264828473386,0.04999126630958272],"tilt":4},"trunk":4,"neck":32,"scap":{"elev":1,"pro":-1},"plant":{"l":{"at":[0.1,0,0.5]},"r":{"at":[-0.1,0,0.5]}},"reach":{"l":{"at":[0.34,1.0916185876939761,0.033042747581876614],"pole":[0.6,-1,-0.1]},"r":{"at":[-0.34,1.0916185876939761,0.033042747581876614],"pole":[-0.6,-1,-0.1]}}},
+  "seated_cable_row|finish-wrong": {"root":{"at":[0,0.5410000000000001,-0.0002499999999999933],"tilt":0},"trunk":0,"neck":0,"scap":{"elev":3,"pro":0},"plant":{"l":{"at":[0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]},"r":{"at":[-0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]}},"reach":{"l":{"at":[0.075,0.905,0.21],"pole":[0.35,0.45,-1]},"r":{"at":[-0.075,0.905,0.21],"pole":[-0.35,0.45,-1]}}},
+  "leg_press|foot-w": {"root":{"at":[0,0.5,0],"tilt":-60},"trunk":0,"neck":5,"reach":{"l":{"at":[0.25,0.53,0.1],"pole":[1,0.25,0]},"r":{"at":[-0.25,0.53,0.1],"pole":[-1,0.25,0]}},"plant":{"l":{"at":[0.17,0.9512141873993747,0.4955921852195438],"normal":[0,-0.24192189559966773,-0.9702957262759965],"toe":[0.25881904510252074,0.9372337011478935,-0.23367860690452677],"ref":"ball"},"r":{"at":[-0.17,0.9512141873993747,0.4955921852195438],"normal":[0,-0.24192189559966773,-0.9702957262759965],"toe":[-0.25881904510252074,0.9372337011478935,-0.23367860690452677],"ref":"ball"}}},
+  "machine_chest_press|seat-height-w": {"root":{"at":[0,0.434466781271559,0.03565234545147697],"tilt":-5},"trunk":0,"neck":0,"scap":{"elev":-0.5,"pro":-2},"plant":{"l":{"at":[0.1,0,0.47]},"r":{"at":[-0.1,0,0.47]}},"reach":{"r":{"at":[-0.28,0.89,0.2],"pole":[-0.9,-0.1,-0.3]},"l":{"at":[0.28,0.89,0.2],"pole":[0.9,-0.1,-0.3]}}},
+};
+
+const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const mergeDeep = (a, b) => {
+  if (b === undefined) return a;
+  if (a && b && typeof a === 'object' && typeof b === 'object' && !Array.isArray(a) && !Array.isArray(b)) {
+    const o = { ...a };
+    for (const k of Object.keys(b)) o[k] = mergeDeep(a[k], b[k]);
+    return o;
+  }
+  return b;
+};
+
+/**
+ * Classifies one crop pose (a `spec.poses.start` or `spec.poses.end` value) against golden-A's own reference poses
+ * for that exercise (`poses.start`, `poses.end`, `poses.end` merged with `mistake.pose` - the same mergeDeep
+ * howto/render-*.mjs itself uses to build a crop's wrong pose). Returns 'golden' or 'enumerated', or a drift-problem
+ * string naming the (exercise, crop) pair - never widened to a blanket allowance.
+ */
+export function classifyPose(exId, optsId, pose, goldenA) {
+  const refs = [goldenA.poses?.start, goldenA.poses?.end];
+  if (goldenA.mistake?.pose) refs.push(mergeDeep(goldenA.poses?.end, goldenA.mistake.pose));
+  if (refs.some(r => r !== undefined && deepEqual(pose, r))) return 'golden';
+  const key = `${exId}|${optsId}`;
+  if (Object.prototype.hasOwnProperty.call(ENUMERATED_POSES, key) && deepEqual(pose, ENUMERATED_POSES[key])) return 'enumerated';
+  return `${key}: pose matches neither a golden-A reference pose nor its enumerated exception (${JSON.stringify(pose).slice(0, 200)})`;
+}
+
+/**
+ * Every captured renderPlate call's `spec.poses.start`/`spec.poses.end` (when the call overrides `poses` at all -
+ * the base '-n'/'-m' calls reuse golden-A's own `poses` object untouched, and classify as 'golden' trivially by the
+ * same check) must classify as 'golden' or 'enumerated'. Returns the problems (empty = clean).
+ */
+export function validateCalls(calls, goldenASpecs) {
+  const bad = [];
+  for (const c of calls) {
+    const exId = c.spec.id;
+    const goldenA = goldenASpecs[exId];
+    if (!goldenA) { bad.push(`call with unknown spec.id "${exId}"`); continue; }
+    const poses = c.spec.poses;
+    if (!poses) continue;
+    const optsId = c.opts?.id ?? '';
+    for (const which of ['start', 'end']) {
+      if (!(which in poses)) continue;
+      const verdict = classifyPose(exId, optsId, poses[which], goldenA);
+      if (verdict !== 'golden' && verdict !== 'enumerated') bad.push(verdict);
+    }
+  }
+  return bad;
+}
+
+/**
+ * Shims `engine/plate.mjs` in a mirror to record every real renderPlate call (spec + opts, functions stripped),
+ * then runs `node artifact/build-page.mjs` for real. Moved here (from tests/howto/goldenB-derivation.test.ts, HT-4
+ * review finding, blocker 4) so the ~8-14s live build is spawned once, reused by both a slow/gate-only proof and
+ * `tools/screenshot-gate.mjs`'s HT-4 block - never by the fast `npm test` path.
+ */
+export async function captureRenderPlateCalls(mirror) {
+  const real = join(mirror, 'engine', 'plate.real.mjs');
+  renameSync(join(mirror, 'engine', 'plate.mjs'), real);
+  const shim = `export * from './plate.real.mjs';
+import { renderPlate as __real } from './plate.real.mjs';
+import { writeFileSync } from 'node:fs';
+globalThis.__RP_CALLS = [];
+export function renderPlate(spec, opts) {
+  globalThis.__RP_CALLS.push({ opts: opts ? { ...opts } : opts, spec: JSON.parse(JSON.stringify(spec, (k, v) => typeof v === 'function' ? undefined : v)) });
+  return __real(spec, opts);
+}
+process.on('exit', () => writeFileSync(new URL('../rp-calls.json', import.meta.url), JSON.stringify(globalThis.__RP_CALLS)));
+`;
+  writeFileSync(join(mirror, 'engine', 'plate.mjs'), shim);
+  await new Promise((resolve, reject) => {
+    const c = spawn(process.execPath, ['build-page.mjs'], { cwd: join(mirror, 'artifact'), stdio: ['ignore', 'ignore', 'pipe'] });
+    let err = '';
+    c.stderr.on('data', d => { err += d; });
+    c.on('error', reject);
+    c.on('close', code => (code === 0 ? resolve() : reject(new Error(`build-page.mjs exited ${code}: ${err.slice(0, 2000)}`))));
+  });
+  return JSON.parse(readFileSync(join(mirror, 'rp-calls.json'), 'utf8'));
+}
+
+export const GOLDEN_JSON = join(ROOT, 'tests/howto/golden/GOLDEN.json');
+export const VENDOR = join(ROOT, 'tools/plates/vendor');
+
+/**
+ * Golden-A's own default export for each of the 7 non-ref-src exercises, from a proper vendor mirror (font
+ * present). Fast (no Playwright, no build-page.mjs spawn - just importing 7 small exercise modules), so both the
+ * fast unit test and the HT-4 gate block use it directly.
+ */
+export async function loadGoldenASpecs() {
+  const golden = JSON.parse(readFileSync(GOLDEN_JSON, 'utf8'));
+  const plateEntries = golden.entries.filter(e => e.kind === 'plate');
+  const g = await import(pathToFileURL(join(VENDOR, '..', 'golden.mjs')).href);
+  const vendorMirror = g.makeMirror();
+  try {
+    const out = {};
+    for (const p of plateEntries) {
+      if (p.src === 'ref-src') continue;
+      const mod = await import(pathToFileURL(join(vendorMirror, p.src)).href);
+      out[p.slug.replace(/-/g, '_')] = JSON.parse(JSON.stringify(mod.default, (k, v) => (typeof v === 'function' ? undefined : v)));
+    }
+    return out;
+  } finally {
+    rmSync(vendorMirror, { recursive: true, force: true });
+  }
+}
+
+/**
+ * The only fields a crop-time renderPlate call may legitimately change from golden-A: camera framing (`camera`,
+ * `seatDrop`, `datum`, `viewLabel`), what that framing repositions or hides (`equipment`, `ghosts`, `startParts`,
+ * `marks`), the spec's own embedded mistake sub-pose, and pure labels (`id`, `name`, `view`, `facing`). `poses` is
+ * checked separately (classifyPose/validateCalls above) - never folded into this blanket allowance (review fix,
+ * blocker 1). `tempo`, `alt`, `checks` and `callouts` are the protected content fields, held to zero tolerance
+ * (byte-identical, or checks/callouts shrunk to empty - never partially edited).
+ */
+export const CROP_WINDOW_FIELDS = new Set([
+  'camera', 'seatDrop', 'datum', 'viewLabel', 'equipment', 'ghosts', 'startParts', 'marks',
+  'mistake', 'id', 'name', 'view', 'facing',
+]);
+export const PROTECTED_FIELDS = ['tempo', 'alt', 'checks', 'callouts'];
+
+export function protectedFieldProblems(exId, call, goldenA) {
+  const bad = [];
+  for (const k of PROTECTED_FIELDS) {
+    const goldenVal = JSON.stringify(goldenA[k]);
+    const callVal = JSON.stringify(call.spec[k]);
+    if (goldenVal === callVal) continue;
+    const shrunkToEmpty = Array.isArray(call.spec[k]) && call.spec[k].length === 0;
+    if (!shrunkToEmpty) bad.push(`${exId} ${JSON.stringify(call.opts)}: ${k} differs from golden-A and is not empty`);
+  }
+  for (const k of Object.keys(call.spec)) {
+    if (PROTECTED_FIELDS.includes(k) || CROP_WINDOW_FIELDS.has(k) || k === 'poses') continue;
+    if (JSON.stringify(call.spec[k]) !== JSON.stringify(goldenA[k])) bad.push(`${exId} ${JSON.stringify(call.opts)}: unenumerated field "${k}" differs from golden-A (never widen the crop-key list to pass; the drift is real)`);
+  }
+  return bad;
+}
+
+const unesc = s => String(s).replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
+/** normalSvg/normalOverlay/mistakeSvg/mistakeOverlay/alt/mistakeAlt, sliced from the built page, sha256-matched
+ *  against GOLDEN.json's plate entries. This is what ships, so it needs no tolerance at all. */
+export function fragmentProblems(html, plateEntries) {
+  const bad = [];
+  const NORM = /<figure class="plate" data-mode="normal">([\s\S]*?)<figcaption class="sr-only">([^<]*)<\/figcaption><\/figure>/;
+  const MIS = /<figure class="plate" data-mode="mistake" hidden>([\s\S]*?)<figcaption class="sr-only">([^<]*)<\/figcaption><\/figure>/;
+  const splitSvg = s => {
+    const m = s.match(/^(<svg class="plate-svg"[^>]*>[\s\S]*?<\/svg>)([\s\S]*)$/);
+    if (!m) throw new Error('no svg boundary found');
+    return [m[1], m[2]];
+  };
+  for (const p of plateEntries) {
+    const cardStart = html.indexOf(`id="card-${p.chromeId}"`);
+    if (cardStart < 0) { bad.push(`${p.chromeId}: card not found in the built page`); continue; }
+    const body = html.slice(cardStart);
+    const nm = body.match(NORM), mm = body.match(MIS);
+    if (!nm || !mm) { bad.push(`${p.chromeId}: normal/mistake figure not found`); continue; }
+    const [nSvg, nOv] = splitSvg(nm[1]);
+    const [mSvg, mOv] = splitSvg(mm[1]);
+    const checks = [
+      ['normalSvg', sha256(nSvg), p.fragments.normalSvg],
+      ['normalOverlay', sha256(nOv), p.fragments.normalOverlay],
+      ['mistakeSvg', sha256(mSvg), p.fragments.mistakeSvg],
+      ['mistakeOverlay', sha256(mOv), p.fragments.mistakeOverlay],
+      ['alt', sha256(unesc(nm[2])), p.fragments.alt],
+      ['mistakeAlt', sha256(unesc(mm[2])), p.fragments.mistakeAlt],
+    ];
+    for (const [name, got, want] of checks) if (got !== want) bad.push(`${p.chromeId}: ${name} sha256 ${got} != golden-A ${want}`);
   }
   return bad;
 }
