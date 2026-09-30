@@ -1295,3 +1295,42 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
+
+## HT-9 C19: gate block built and mutation-proven (HT-9 builder, 2026-09-30)
+
+- **Built**: gate block "HT-9 C19" in `scripts/screenshot-gate.mjs`, per `docs/howto/LR23-PLAN.md` section 8 and
+  amendment D-LR23-8 item 5, once unblocked (HT-4b's `tests/howto/checks/c19.ts` exists; ESC-NC's
+  `tests/guards/no-contacts.ts` is on main). Opens the real app's How-to sheet (Train entry), every approved
+  exercise, all 5 themes, expanding every `<details>` and clicking every `[aria-expanded="false"]` button first;
+  checks 0 `<a>`, 0 `[target]`, 0 `.srcs`/`.src-cite`/`.src-ev`/`.src-key`/`.ev`, no element whose own text is an
+  evidence-label word, `innerText` plus every `aria-label`/`title`/`alt` against `CONTACT_RE`/`SOURCE_RE`/
+  `SOURCE_CS_RE` (reused from `tests/guards/no-contacts.ts` via the same textual parse ESC-NC's own EV5 block
+  already established as `ESC_NC_RE`, not re-typed), and exactly one `.ht-disclaimer` after the last `.redflag`.
+- **Verified live, not just read**: built the app, ran a real Chromium against a real `vite preview` server
+  (scratch-only driver script, deleted after; never committed). Baseline: 5 themes × 8 exercises = 40 sheets, 0
+  problems, twice (before and after the mutation passes, to rule out order-dependent state).
+- **Mutation proofs** (each edited, rebuilt, re-verified red, reverted, rebuilt, re-verified clean):
+  - **M12** (disclaimer deleted from `Risks.tsx`): 8/8 sheets flagged `0 .ht-disclaimer element(s)`.
+  - **M11** (disclaimer moved above the Risks section): 8/8 sheets flagged `disclaimer not after last .redflag`.
+  - **M10** (a self-contained stub section registered in `sections/index.ts` - `details.srcs` + `<a href="https://
+    ..." target="_blank">` + `<span class="ev ev-data">Measured</span>`, per D-LR23-8 item 5, never re-importing
+    the deleted `Sources.tsx`): every one of the 5 checks fired independently on all 8 sheets - the `<a>` count,
+    the `[target]` count, the banned-class count, the "Measured" own-text label-word hit, and the `SOURCE_RE` hit
+    on the visible word "Sources". The stub file and its registration were deleted afterward; `git diff` against
+    the last pushed commit confirmed the working tree matched exactly before rebuilding clean.
+  - M1-M9 are HT-4b's own unit-level fixtures (`tests/howto/checks/c19.ts`/`content.test.ts`), not mine.
+- **Not fixed (reported, not mine)**: `tests/howto/content.test.ts`'s `HT4b-A4/A5` describe block and
+  `tests/howto/no-contacts-parity.test.ts` are red/skipped on this branch, both from HT-4b's own pending golden-B
+  re-vendor (`tools/plates/layers/artifact/copy-lint.mjs` doesn't yet export `CONTACT_RE`/`sourceNamePatterns`/etc,
+  confirmed present on `claude/howto-options` `6b86baa` already). The resulting 34 "skipped" tests are vitest's own
+  cascade from that one `beforeAll` throw, not a `.skip()` anywhere (`grep -rn '\.skip(' tests/howto/` empty).
+  None of HT-9's own tests are skipped. Reported to the supervisor on PR #113 per their direct question.
+  **Why**: `tools/plates/layers/**` is reserved to HT-4/HT-4b; the fix is their re-vendor step, not a code change
+  here.
+- **Also fixed** (plan-mandated, mechanical): `tests/howto/content-gen.test.ts` (HT-5's file) still called
+  `checkC17(dirs, allowedUrls)` after HT-4b's C17 rewrite (D-LR23-7) dropped the `allowedUrls` parameter. Amendment
+  D-LR23-7's own "Update the callers" list names this exact file and line range. Dropped the argument and the now
+  -dead `allowedUrls` line; `npx tsc --noEmit` is clean repo-wide again.
+  **Why**: card risk_and_recovery's "never drop a mockup field" precedent extends to "never leave a
+  plan-mandated caller update undone because the file belongs to a sibling card" - this is mechanical, not a
+  design choice, and blocked the whole branch's typecheck otherwise.
