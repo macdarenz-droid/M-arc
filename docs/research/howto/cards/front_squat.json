@@ -1,0 +1,212 @@
+{
+  "id": "front_squat",
+  "libId": "lib_front_squat",
+  "name": "Front Squat",
+  "family": "SQUAT (free, barbell front rack)",
+  "tier": "A",
+  "tierNote": "Safety tier A from content.md appendix B (spinal loading; high skill). census.json difficulty tier 1.",
+  "archetype": { "hand": "on-body", "contact": ["standing-feet"] },
+  "parent": "barbell_back_squat",
+  "parentNote": "Supervisor's LB4A brief names barbell_back_squat as the template parent. Same hand archetype (on-body) and primary contact (standing-feet), so the content.md 2.3 family rule holds. content.md appendix A had front_squat as a stand-alone parent; the brief overrides it.",
+  "inherit": [
+    { "field": "setup[2] (load the plates evenly, collars on)", "why": "true for this child because it is the same straight barbell loaded the same way; nothing about plate loading depends on where the bar rests." },
+    { "field": "setup[6]-setup[7] (stand straight up to unrack, two or three short steps back)", "why": "true for this child because the bar also leaves the rack hooks resting on the trunk, so the same stand-up-then-step-back unrack applies; only the bar's position on the body differs (c2)." },
+    { "field": "posture[3] (feet flat, knees follow the toes)", "why": "true for this child because Catalyst's front squat technique gives the same rule: whole-foot balance and knees in line with the feet (c10)." }
+  ],
+  "claims": [
+    { "id": "c1", "text": "The front squat emphasises an upright posture, a rigid trunk and quad strength.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat"],
+      "quotes": [{ "source": "cat-frontsquat", "text": "The front squat is a more specific leg and trunk strength exercise to support the clean and jerk by emphasizing maximally upright posture, trunk rigidity and quad strength.", "where": "introduction" }] },
+    { "id": "c2", "text": "The bar sits in the channel between the throat and the top of the shoulders, touching the throat lightly without pressing on it.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat", "cat-rack"],
+      "quotes": [
+        { "source": "cat-frontsquat", "text": "Place the bar in the channel between the throat and the highest points of the shoulders.", "where": "technique" },
+        { "source": "cat-rack", "text": "The bar should be in light contact with your throat but not placing pressure against it, and the slight elevation of the shoulders will keep pressure off of your collarbones and carotid arteries.", "where": "technique" } ] },
+    { "id": "c3", "text": "In a correct rack the shoulders hold the bar; the hands and arms only add security and should not do the main work.",
+      "tags": ["CONSENSUS"], "sources": ["cat-rack"],
+      "quotes": [{ "source": "cat-rack", "text": "If the shoulder and bar positions are correct, the bar will remain secure without being held by the hands. The hands and arms provide added security, but should not be doing the primary work of holding the bar in place.", "where": "technique" }] },
+    { "id": "c4", "text": "Keep the hands wrapped round the bar as far as possible with a loose grip, elbows high, bar supported on the trunk.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat"],
+      "quotes": [{ "source": "cat-frontsquat", "text": "Keep the hands wrapped around the bar as much as you can while keeping the elbows raised high and the bar securely supported on the trunk, but the grip loose.", "where": "technique" }] },
+    { "id": "c5", "text": "If a full grip is not possible, try other grip widths; a fingertip rack with the bar on the shoulders beats a full grip with the bar off them.",
+      "tags": ["CONSENSUS"], "sources": ["cat-rack"],
+      "quotes": [
+        { "source": "cat-rack", "text": "experiment with different grip widths", "where": "technique" },
+        { "source": "cat-rack", "text": "The priority is the bar’s direct support by the trunk, so a fingertip rack position is preferable to a full grip with the bar not fully supported by the shoulders.", "where": "technique" } ] },
+    { "id": "c6", "text": "The bar can be held with a clean grip or with the arms crossed.",
+      "tags": ["CONSENSUS"], "sources": ["hk-frontsquat"],
+      "quotes": [{ "source": "hk-frontsquat", "text": "Stand in an erect position, holding the bar in either a clean grip or with the arms crossed.", "where": "Starting position" }] },
+    { "id": "c7", "text": "Keep the elbows high, or the bar may slip; the lift trains a tall chest and stops the habit of leaning forward.",
+      "tags": ["CONSENSUS"], "sources": ["hk-frontsquat"],
+      "quotes": [{ "source": "hk-frontsquat", "text": "Keep the elbows high during this exercise. If not, the bar may slip out of position. The purpose of this exercise is to keep the chest tall and break or prevent the habit of leaning forward.", "where": "Coaching points" }] },
+    { "id": "c8", "text": "Heels about hip width or a little wider, toes turned out 15-30 degrees.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat"],
+      "quotes": [{ "source": "cat-frontsquat", "text": "Place the heels at approximately hip width or slightly wider and turn the toes out 15-30 degrees from the center line.", "where": "technique" }] },
+    { "id": "c9", "text": "Brace the trunk hard with the lower back in its neutral curve and the upper back as flat as possible.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat"],
+      "quotes": [{ "source": "cat-frontsquat", "text": "Pressurize and brace the trunk forcefully with the lower back in its neutral curvature and the upper back flattened as much as possible.", "where": "technique" }] },
+    { "id": "c10", "text": "Bend knees and hips together and squat straight down, balanced over the whole foot, knees in line with the feet.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat"],
+      "quotes": [
+        { "source": "cat-frontsquat", "text": "Bend at the knees and hips together to squat as directly down as possible, maintaining even balance over the whole foot.", "where": "technique" },
+        { "source": "cat-frontsquat", "text": "Keep the knees approximately in line with the feet.", "where": "technique" } ] },
+    { "id": "c11", "text": "Depth: as deep as whole-foot balance and a neutral spine allow; one textbook excerpt stands up once the hip crease passes below the top of the knee.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat", "hk-frontsquat"],
+      "quotes": [
+        { "source": "cat-frontsquat", "text": "Full depth is the knee joint closed as much as possible while maintaining whole foot balance and a neutral spine.", "where": "technique" },
+        { "source": "hk-frontsquat", "text": "Once the crease of the hips goes below the crest of the knee, return to the starting position.", "where": "Execution" } ] },
+    { "id": "c12", "text": "Stay tight through the bottom and drive up keeping the torso upright and the whole foot down.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat"],
+      "quotes": [{ "source": "cat-frontsquat", "text": "Maintain tension throughout the legs and trunk all the way through the bottom, and accelerate back up while maintaining an upright posture and whole foot balance.", "where": "technique" }] },
+    { "id": "c13", "text": "If you get dizzy, let a little air out as you stand, without losing the brace.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat"],
+      "quotes": [{ "source": "cat-frontsquat", "text": "Release a small amount of air as you stand without compromising trunk rigidity if you need to avoid dizziness.", "where": "technique" }] },
+    { "id": "c14", "text": "Way out: set the safety bars; to bail, let go and let the bar drop forward onto them while stepping back.",
+      "tags": ["CONSENSUS"], "sources": ["rep-fail"],
+      "quotes": [
+        { "source": "rep-fail", "text": "Set the Safeties: Similar to the back squat, set the safety bars at an appropriate height.", "where": "How to Bail a Front Squat" },
+        { "source": "rep-fail", "text": "If you need to bail, quickly release the bar from your shoulders and let it drop forward onto the safety bars. Step back simultaneously to avoid any contact with the falling bar.", "where": "How to Bail a Front Squat" } ] },
+    { "id": "c15", "text": "Load progression: add load progressively within your limits; safeties are for emergencies, not a training method.",
+      "tags": ["CONSENSUS"], "sources": ["rep-fail"],
+      "quotes": [
+        { "source": "rep-fail", "text": "Proper training techniques, progressive loading, and knowing your limits are key to avoiding situations where you need to bail.", "where": "The Risks of Bailing a Squat" },
+        { "source": "rep-fail", "text": "Safeties are for emergencies; they're not supposed to be a method of training.", "where": "The Importance of Spotters and Safeties" } ] },
+    { "id": "c16", "text": "In 15 trained people the front squat recruited muscle as well as the back squat, with lower knee compressive forces and extensor moments.",
+      "tags": ["DATA"], "sources": ["gullett-2009"],
+      "quotes": [{ "source": "gullett-2009", "text": "The front squat was as effective as the back squat in terms of overall muscle recruitment, with significantly less compressive forces and extensor moments.", "where": "abstract" }] },
+    { "id": "c17", "text": "At maximal loads (n=12) the inner quad (vastus medialis) was more active in the front squat on the way up, and the back squat leaned the trunk further forward.",
+      "tags": ["DATA"], "sources": ["yavuz-2015"],
+      "quotes": [
+        { "source": "yavuz-2015", "text": "the electromyographic activity of vastus medialis was found to be greater in the front squat compared to the back squat during the ascending phase", "where": "abstract" },
+        { "source": "yavuz-2015", "text": "Compared to the front squat version, back squat exhibited significantly greater trunk lean, with no differences occurring in the knee joint kinematics throughout the movement.", "where": "abstract" } ] },
+    { "id": "c18", "text": "Muscle targets named for the front squat: quadriceps, glutes (medius and maximus), tensor fasciae latae and hamstrings.",
+      "tags": ["CONSENSUS"], "sources": ["hk-frontsquat"],
+      "quotes": [{ "source": "hk-frontsquat", "text": "Muscle target: Quadriceps, gluteus medius, gluteus maximus, tensor fasciae latae, and hamstrings.", "where": "Muscle target" }] },
+    { "id": "c19", "text": "Holding the breath under heavy load raises intra-abdominal pressure, which may help trunk rigidity, and raises blood pressure; the health risk is unconfirmed.",
+      "tags": ["DATA"], "sources": ["hackett-2013"],
+      "quotes": [
+        { "source": "hackett-2013", "text": "The VM was associated with an increase in blood pressure during resistance exercise", "where": "abstract" },
+        { "source": "hackett-2013", "text": "the VM effectively increases IAP, which may assist with spine stability and trunk rigidity during resistance exercise. The health risks associated with the VM during resistance exercise remain unconfirmed.", "where": "abstract" } ] },
+    { "id": "c20", "text": "Shrugging the shoulders up and forward makes a shelf for the bar.",
+      "tags": ["CONSENSUS"], "sources": ["hk-frontsquat", "cat-rack"],
+      "quotes": [
+        { "source": "hk-frontsquat", "text": "It may also be beneficial to shrug the shoulders during the exercise; this creates more of a shelf for the bar to sit in.", "where": "Coaching points" },
+        { "source": "cat-rack", "text": "extend your upper back, and push your shoulders forward as far as you can and slightly up.", "where": "technique" } ] },
+    { "id": "c21", "text": "Some front squat training should be controlled through the deepest range, including pauses.",
+      "tags": ["CONSENSUS"], "sources": ["cat-frontsquat"],
+      "quotes": [{ "source": "cat-frontsquat", "text": "at least some front squat training should be done with control through the deepest range of motion, including pauses.", "where": "technique" }] },
+    { "id": "c22", "text": "NHS back pain: call 999 for pain, tingling, weakness or numbness in both legs, or bladder or bowel changes; see a GP if it does not improve after a few weeks.",
+      "tags": ["CONSENSUS"], "sources": ["nhs-back"],
+      "quotes": [
+        { "source": "nhs-back", "text": "Immediate action required: Call 999 or go to A&E if:", "where": "Immediate action box, heading" },
+        { "source": "nhs-back", "text": "pain, tingling, weakness or numbness in both legs", "where": "Immediate action box" },
+        { "source": "nhs-back", "text": "changes in your bladder or bowels, such as difficulty peeing, or peeing or pooing yourself", "where": "Immediate action box" },
+        { "source": "nhs-back", "text": "it does not improve after treating it at home for a few weeks", "where": "Non-urgent advice box" } ] },
+    { "id": "c23", "text": "NHS knee pain: get advice from 111 if the knee is very painful, or locks, gives way or painfully clicks.",
+      "tags": ["CONSENSUS"], "sources": ["nhs-knee"],
+      "quotes": [
+        { "source": "nhs-knee", "text": "Urgent advice: Get advice from 111 now if:", "where": "Urgent advice box, heading" },
+        { "source": "nhs-knee", "text": "your knee is very painful", "where": "Urgent advice box" },
+        { "source": "nhs-knee", "text": "your knee locks, gives way or painfully clicks – painless clicking is normal", "where": "Urgent advice box" } ] }
+  ],
+  "sources": [
+    { "id": "cat-frontsquat", "url": "https://www.catalystathletics.com/exercise/78/Front-Squat/", "title": "Front Squat (Exercise Library)", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "cat-rack", "url": "https://www.catalystathletics.com/video/1402/Clean-Rack-Position/", "title": "Clean Rack Position", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "hk-frontsquat", "url": "https://us.humankinetics.com/blogs/excerpt/learn-this-foundational-exercise-front-squat", "title": "Learn this foundational exercise: front squat (excerpt from Powerlifting, 2nd ed., Austin and Mann)", "kind": "textbook", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "rep-fail", "url": "https://repfitness.com/blogs/training/how-to-safely-fail-a-heavy-squat-in-the-gym", "title": "How to Safely Fail a Heavy Squat in the Gym", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "gullett-2009", "url": "https://pubmed.ncbi.nlm.nih.gov/19002072/", "title": "A biomechanical comparison of back and front squats in healthy trained individuals", "kind": "peer-reviewed", "year": 2009, "pmid": "19002072", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "yavuz-2015", "url": "https://pubmed.ncbi.nlm.nih.gov/25630691/", "title": "Kinematic and EMG activities during front and back squat variations in maximum loads", "kind": "peer-reviewed", "year": 2015, "pmid": "25630691", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "hackett-2013", "url": "https://pubmed.ncbi.nlm.nih.gov/23222073/", "title": "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise", "kind": "peer-reviewed", "year": 2013, "pmid": "23222073", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "nhs-back", "url": "https://www.nhs.uk/conditions/back-pain/", "title": "Back pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "nhs-knee", "url": "https://www.nhs.uk/conditions/knee-pain/", "title": "Knee pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The top fault (elbows dropping, chest falling forward, c7) and the upright torso (c1, c17) are sagittal; bar height on the shoulders reads from the side.",
+    "equipment": "Barbell in the front rack on the shoulders, rack upright with safety bars just below the bottom position (c14); floor line.",
+    "start": "Standing tall, bar in the channel between throat and shoulders (c2), elbows high with upper arms near level (c4, c7), heels hip width or a little wider, toes out (c8).",
+    "end": "Bottom: knees and hips bent together, torso upright, whole foot down (c10, c12), hip crease at or below the top of the knee (c11), elbows still high (c7).",
+    "checkpoints": [
+      { "label": "Elbows high", "what": "Elbows stay raised so the shoulders hold the bar.", "claim": "c7" },
+      { "label": "Chest tall", "what": "Torso stays upright down and up.", "claim": "c12" },
+      { "label": "Whole foot", "what": "Balance over the whole foot, knees in line with the feet.", "claim": "c10" }
+    ],
+    "mistake": {
+      "what": "Elbows drop and the chest falls forward, so the bar rolls off the shoulders.",
+      "why": "Human Kinetics: without high elbows the bar may slip out of position, and the lift exists to break the habit of leaning forward (c7).",
+      "claim": "c7",
+      "drawable": true,
+      "rankNote": "No source ranks front squat faults. This is the one fault both technique sources name in the side plane; knees caving is front-view and not named in the sources read."
+    },
+    "tells": [
+      { "text": "Bar rests on your shoulders, hands loose", "claim": "c3" },
+      { "text": "Elbows stay up out of the bottom", "claim": "c7" }
+    ],
+    "tempo": { "up": null, "down": null, "pause": null, "text": "Controlled descent, drive up; some sets with control and pauses at the bottom. No source gives seconds.", "claim": "c21" },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Clean grip: full grip on the bar kept loose (c4); crossed-arm grip is an option (c6).",
+    "width": "No fixed width; try different widths until a full grip fits (c5).",
+    "thumb": "Wrapped as far as the rack allows; a fingertip rack is acceptable when the bar stays on the shoulders (c5).",
+    "handContact": "Bar rests on the shoulders, not in the hands; the hands only add security (c3).",
+    "wrist": "Front-rack exemption from the on-body 0-15 degree range, reason: the shoulders carry the bar and the hands only add security, and a fingertip rack is acceptable when a full grip does not fit (c3, c5). No source read gives a wrist angle.",
+    "claims": ["c3", "c4", "c5", "c6"]
+  },
+  "setup": [
+    { "step": "Set the safety bars in the rack at the right height before loading.", "claim": "c14" },
+    { "step": "Bar in the channel between throat and shoulders, touching the throat lightly; shoulders shrugged up and forward.", "claim": "c2" },
+    { "step": "Loose full grip, elbows high.", "claim": "c4" },
+    { "step": "Heels hip width or a little wider, toes out 15-30 degrees.", "claim": "c8" },
+    { "step": "Brace hard before each rep.", "claim": "c9" }
+  ],
+  "posture": [
+    { "point": "Bar in the channel, no pressure on the throat.", "claim": "c2" },
+    { "point": "Elbows high throughout.", "claim": "c7" },
+    { "point": "Knees and hips bend together, straight down.", "claim": "c10" },
+    { "point": "Whole-foot balance, knees in line with the feet.", "claim": "c10" },
+    { "point": "Depth as far as a neutral spine and whole-foot balance allow.", "claim": "c11" },
+    { "point": "Torso upright on the way up.", "claim": "c12" }
+  ],
+  "handlingMistakes": [
+    { "mistake": "Holding the bar up with the hands instead of resting it on the shoulders.", "fix": "Push the shoulders forward and up to make a shelf; loosen the grip or go to a fingertip rack.", "claim": "c3" },
+    { "mistake": "Bar pressing on the throat.", "fix": "Shrug the shoulders slightly up so the bar only touches the throat lightly.", "claim": "c2" },
+    { "mistake": "Bailing with no safeties set.", "fix": "Set the safeties first; to bail, let go so the bar drops forward, and step back.", "claim": "c14" }
+  ],
+  "feel": {
+    "primary": [ { "muscleId": "quads", "claim": "c17" } ],
+    "secondary": [ { "muscleId": "glutes", "claim": "c18" } ],
+    "watch": [ { "muscleId": "lower_back", "claim": "c17" } ],
+    "rows": [
+      { "where": "Wrists or fingers", "means": "The hands are holding the bar up.", "fix": "Shoulders forward and up, loose or fingertip grip.", "claim": "c3", "redFlag": "wrist" },
+      { "where": "Lower back more than thighs", "means": "Elbows dropped and the chest fell forward.", "fix": "Elbows up, go lighter.", "claim": "c7", "redFlag": "back" },
+      { "where": "Pressure on the throat", "means": "Bar too far back or shoulders not up.", "fix": "Shrug the shoulders to lift the bar off the throat.", "claim": "c2", "redFlag": null },
+      { "where": "Sharp knee pain, or the knee gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "c23", "redFlag": "knee" }
+    ]
+  },
+  "risks": [
+    { "risk": "A failed rep with no safeties set (shared risk line: safeties).", "claim": "c14" },
+    { "risk": "Breath-holding under heavy load raises blood pressure (shared breath line).", "claim": "c19" },
+    { "risk": "Bar pressing on the throat.", "claim": "c2" }
+  ],
+  "redFlags": ["wrist", "back", "knee"],
+  "redFlagNote": "back is the proposed new shared box (content.md 5.3); nhs-back supplies its triggers (c22). The wrist box text is the existing shared NHS box; this card only links it.",
+  "zooms": [
+    { "key": "front-rack", "kind": "hand", "right": "Bar on the shoulders in the throat channel, loose full grip, elbows high.", "wrong": "Bar held up in the hands, elbows down, bar off the shoulders.", "claim": "c3" },
+    { "key": "cross-arm", "kind": "hand", "right": "Arms crossed over the bar, elbows high.", "wrong": "Crossed arms with elbows dropped.", "claim": "c6" },
+    { "key": "upright-torso", "kind": "posture", "right": "Chest tall, elbows high at the bottom.", "wrong": "Chest falling forward, elbows dropping.", "claim": "c7" }
+  ],
+  "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, glutes secondary. Yavuz 2015 (c17) supports quads as the main mover; Human Kinetics names glutes and hamstrings (c18). Hamstrings not added: the only EMG source found shows the hamstring muscle more active in the back squat, so no data supports it as a front squat mover. No change." },
+  "loadProgression": { "text": "Add load progressively within your limits; safeties are for emergencies.", "claims": ["c15"] },
+  "wayOut": { "text": "Safeties set at the right height; to bail, let go and let the bar drop forward onto them while stepping back.", "claims": ["c14"] },
+  "breathing": { "text": "Brace before each rep; release a little air on the way up if dizzy. Shared breath-holding line applies.", "claims": ["c9", "c13", "c19"] },
+  "barPath": { "text": "The bar sits in front of the throat, touching lightly, never pressing (clear of the neck).", "claims": ["c2"] },
+  "anchorSource": "cat-frontsquat",
+  "anchorNote": "Catalyst Athletics front squat page read in full; Catalyst clean rack position and Human Kinetics front squat excerpt also read in full.",
+  "unsourced": [
+    "Rack hook height for the front squat (parent's line is back-squat specific, so it is not inherited).",
+    "A wrist angle for the front rack.",
+    "Tempo in seconds.",
+    "Knees caving (front view): not named in the sources read."
+  ]
+}

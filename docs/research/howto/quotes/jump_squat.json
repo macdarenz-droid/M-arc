@@ -1,0 +1,165 @@
+{
+  "id": "jump_squat",
+  "checked": "2026-09-30",
+  "fetcher": "source fetcher (sonnet), LB4A",
+  "sources": [
+    {
+      "id": "ace-squatjumps",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/116/squat-jumps/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "cat-squatjump",
+      "url": "https://www.catalystathletics.com/exercise/555/Squat-Vertical-Jump/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "devita-1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1548984/",
+      "access": "abstract",
+      "notes": "pmid, title and year match PubMed esummary; quotes taken from abstract"
+    },
+    {
+      "id": "wernli-2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26813751/",
+      "access": "abstract",
+      "notes": "pmid, title and year match PubMed esummary; quotes taken from abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "j1",
+      "source": "ace-squatjumps",
+      "text": "Stand with your feet feet hip-width apart, arms by your sides, depressing and retracting your scapulae (pull shoulders down and back) without arching your low back, and \"brace\" (engage your abdominal / core muscles) to stiffen your spine.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j2",
+      "source": "ace-squatjumps",
+      "text": "Begin your downward phase by first shifting your hips backwards then slowly moving downwards to create a hinge-like movement at your knees. Continue to lower yourself until your feel your heels about to lift off the floor.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j3",
+      "source": "ace-squatjumps",
+      "text": "With ONLY a very brief pause at the bottom of your downward phase, explode upwards through your lower extremity, achieving triple extension (pushing and extending your ankles, knees and hips simultaneously).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j4",
+      "source": "ace-squatjumps",
+      "text": "Attempt to land softly and quietly on the mid-foot, rolling backwards quickly towards the heels. Always push your hips backwards and drop them downwards to absorb the impacting forces associated with jumping.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j5",
+      "source": "ace-squatjumps",
+      "text": "Avoid locking out your knees or quads on your landing as this may lead to potential knee injuries",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j6",
+      "source": "ace-squatjumps",
+      "text": "The most important components of the landing phase are correct foot position and avoiding excessive forward movement in your lower extremity which places additional stresses upon your knees.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j7",
+      "source": "ace-squatjumps",
+      "text": "It is suggested, you first learn how to squat and land before attempting to jump. Once you have mastered the hip-hinge mechanism, begin with small jumps, but emphasize your landing mechanics. Only progress to more explosive jumps once you have mastered your landing mechanics.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j8",
+      "source": "ace-squatjumps",
+      "text": "Land with your trunk inclined slightly forward, head aligned with your spine and back rigid or flat.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j9",
+      "source": "cat-squatjump",
+      "text": "Squat with control of proper posture and balance into the bottom, then immediately rebound up and drive into a maximal vertical jump.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j9",
+      "source": "cat-squatjump",
+      "text": "Absorb the landing in a strong stance by bending the knees and hips.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j9",
+      "source": "cat-squatjump",
+      "text": "Squat vertical jumps should generally be done for 3-5 reps per set, with 3-10 sets.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j10",
+      "source": "cat-squatjump",
+      "text": "Focus and demand on the legs can be increased by removing the swinging of the arms—hold the hands loosely at the chest.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j11",
+      "source": "devita-1992",
+      "text": "The stiff landing had larger GRFs",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j11",
+      "source": "devita-1992",
+      "text": "The hip and knee muscles absorbed more energy in the soft landing",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j12",
+      "source": "wernli-2016",
+      "text": "As landing sound decreases, so does vGRF during a drop-landing task. These reductions were achieved by increasing ankle and knee joint excursions.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j13",
+      "source": "ace-squatjumps",
+      "text": "Butt/Hips, Legs - Thighs",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j14",
+      "source": "nhs-knee",
+      "text": "your knee is very painful",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j14",
+      "source": "nhs-knee",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}
