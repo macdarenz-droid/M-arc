@@ -1,5 +1,5 @@
 {
- "note": "Pilot A (library plan 6.1, card LIB-8). tier: content.md appendix B lists (A 47, B 27, C the rest); closest: census.json closestApproved; view: census view; class: the new pose class, rule or rig the plate anchors (plan 2.1, 2.2). extras: other renders shown beside the plate on the sheet (go/no-go alternates as spec ids, previews as image files in evidence/).",
+ "note": "Pilot A (library plan 6.1, card LIB-8). tier: content.md appendix B lists (A 47, B 27, C the rest); closest: census.json closestApproved; view: census view; class: the new pose class, rule or rig the plate anchors (plan 2.1, 2.2). extras: other renders shown beside the plate on the sheet (go/no-go alternates as spec ids, previews as image files in evidence/). held: plates kept off the sheet by a supervisor ruling, listed in one line each.",
  "plates": [
   {
    "id": "dumbbell_bench_press",
@@ -132,7 +132,8 @@
      "spec": "bent_over_dumbbell_rear_delt_fly__alt",
      "caption": "Front view (census view): no-go"
     }
-   ]
+   ],
+   "held": "needs a front-view bent-over torso (follow-up card)"
   },
   {
    "id": "reverse_lunge",
