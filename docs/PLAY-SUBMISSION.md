@@ -80,7 +80,7 @@ Permissions declared in `native/patch_manifest.py:25-30`:
 - `android.permission.health.READ_RESTING_HEART_RATE`
 
 All five are **read-only**; the app never writes to Health Connect (`docs/PRIVACY-POLICY.md`
-"What stays on your phone"). Purpose for each, as actually used in the app:
+"On-device data"). Purpose for each, as actually used in the app:
 - **Steps, sleep, active calories, resting heart rate:** feed the on-device readiness score and
   recovery model shown on the Today/Coach screens, and, if the user shares health data, inform
   the AI coach's advice (`src/escobar/context/brief.ts:79-94`).
