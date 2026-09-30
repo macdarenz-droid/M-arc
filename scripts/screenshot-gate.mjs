@@ -267,8 +267,13 @@ for (const theme of themes) {
     const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Export backup' }).click()]);
     const { readFile } = await import('node:fs/promises');
     const backupText = await readFile(await download.path(), 'utf8');
+    // BUG-29: a seen poster comparison, planted directly (Save above may or may not have hit one),
+    // must be gone after Reset everything — it is app-use content, not a device display setting.
+    await page.evaluate(() => localStorage.setItem('marc.share.seen', JSON.stringify(['gate-plant'])));
     await page.getByRole('button', { name: 'Reset workout data' }).click();
     await page.getByRole('button', { name: 'Reset everything' }).click(); await page.waitForTimeout(300);
+    const shareSeenAfterReset = await page.evaluate(() => localStorage.getItem('marc.share.seen'));
+    if (shareSeenAfterReset !== null) errors.push(`${theme}: Reset everything left marc.share.seen behind (${shareSeenAfterReset})`);
     const afterReset = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
     const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', { name: 'Restore backup' }).click()]);
     await chooser.setFiles({ name: 'marc-backup.json', mimeType: 'application/json', buffer: Buffer.from(backupText) });
@@ -280,8 +285,10 @@ for (const theme of themes) {
     await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   }
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
-  console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);
-  if (state.sessions.length < 25 || !state.legacy || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
+  // BUG-29: silent-black ran Reset everything above, which now also clears the legacy import key.
+  const legacyExpected = theme !== 'silent-black';
+  console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy key present:', state.legacy);
+  if (state.sessions.length < 25 || state.legacy !== legacyExpected || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
   await ctx.close();
 }
 
