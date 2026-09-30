@@ -521,6 +521,12 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
           mkdirSync(process.env.HT3_DUMP, { recursive: true });
           const f = `${process.env.HT3_DUMP}/${theme}-${id}-${label.replace(/[^\w@-]/g, '_')}-${width}`;
           writeFileSync(`${f}-app.png`, a); writeFileSync(`${f}-golden.png`, g);
+          if (stats.dumped <= 2) {   // the compositing layers of both pages, for the diagnosis
+            const layers = async pg => { const cdp = await pg.context().newCDPSession(pg); await cdp.send('LayerTree.enable');
+              const ls = await new Promise(r => { cdp.on('LayerTree.layerTreeDidChange', e => { if (e.layers) r(e.layers); }); pg.evaluate(() => { document.body.style.outlineColor = document.body.style.outlineColor === 'red' ? 'blue' : 'red'; }); setTimeout(() => r([]), 2000); });
+              const out = []; for (const l of ls) { let why = []; try { why = (await cdp.send('LayerTree.compositingReasons', { layerId: l.layerId })).compositingReasonIds; } catch { /* gone */ } out.push(`${l.offsetX},${l.offsetY} ${l.width}x${l.height} ${why.join('+')}`); } await cdp.detach(); return out; };
+            writeFileSync(`${f}-layers.json`, JSON.stringify({ app: await layers(app.page), golden: await layers(gold.page), ra, rg, ao }, null, 1));
+          }
         }
         if (!meetsRule(d)) P(`${id} ${label} @${width}${tall ? 'x1400' : ''} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}); trace/mistake aria-pressed app ${await app.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)} golden ${await gold.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)}`);
       }
