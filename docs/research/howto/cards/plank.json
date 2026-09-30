@@ -1,0 +1,460 @@
+{
+  "id": "plank",
+  "libId": "lib_plank",
+  "name": "Plank",
+  "family": "PLANK (hold)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md 5.1: not in the A or B lists); census.json difficulty tier 2.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "floor-body"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Start lying face down, elbows close to the sides and directly under the shoulders, palms down, hands facing forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "Lie prone (on your stomach) on an exercise mat or floor with your elbows close to your sides and directly under your shoulders, palms down and hands facing forward.",
+          "where": "Step 1: Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Before lifting, tense the thighs to straighten the legs, pull the toes toward the shins and brace the trunk.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "Contract your quadriceps to extend your legs and dorsiflex your ankles (pull toes towards your shins). Contract your core and abdominal muscles to stiffen your torso.",
+          "where": "Step 1: Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Lift the whole body slowly, keeping trunk and legs stiff.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "Slowly lift your entire torso off the floor or mat, maintaining a stiff torso and legs.",
+          "where": "Step 2: Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "In the hold, avoid a sagging low back, hips hiked up, or bent knees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "Avoid any arching (sagging) in your low back, hiking (upwards) in your hips or bending in the knees.",
+          "where": "Step 2: Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the shoulders directly over the elbows and don't shrug.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "Avoid shrugging your shoulder and keep your shoulders positioned directly over your elbows with your palms facing down.",
+          "where": "Step 2: Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep breathing through the hold, held for a set time of 5 seconds or more.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "Continue to breath while holding this position for a specified time (5+ seconds).",
+          "where": "Step 2: Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Lower back down with the trunk stiff and knees straight, then relax.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "While maintaining a stiff torso and extended knees, gently lower your body back towards the mat or floor before relaxing.",
+          "where": "Step 3: Downward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Low-back pain during the plank means stop.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "If you experience any pain in the low back with this movement, stop the exercise immediately and consult with your doctor.",
+          "where": "caution note"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "In 30-second holds, a long-lever plank with a backward pelvic tilt raised abdominal muscle activity versus the standard plank; the long lever added more than the tilt, and the tilt alone raised external-oblique activity.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "schoenfeld-2014"
+      ],
+      "quotes": [
+        {
+          "source": "schoenfeld-2014",
+          "text": "Nineteen participants performed all four variations of the plank for 30 seconds in a randomized order",
+          "where": "abstract, methods"
+        },
+        {
+          "source": "schoenfeld-2014",
+          "text": "while the posterior tilt plank elicited greater activity in the external oblique (p = 0.028)",
+          "where": "abstract, results"
+        },
+        {
+          "source": "schoenfeld-2014",
+          "text": "In conclusion, the long-lever posterior-tilt plank significantly increases muscle activation compared to the traditional prone plank. The long-lever component tends to contribute more to these differences than the posterior-tilt component.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Plank EMG studies record the rectus abdominis and the obliques (with the erector spinae) as working muscles.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "cortell-2017",
+        "schoenfeld-2014"
+      ],
+      "quotes": [
+        {
+          "source": "schoenfeld-2014",
+          "text": "the long-lever posterior-tilt plank displayed a significantly increased activation of the upper rectus abdominis (p < 0.001), lower abdominal stabilizers (p < 0.001), and external oblique (p < 0.001).",
+          "where": "abstract, results"
+        },
+        {
+          "source": "cortell-2017",
+          "text": "Surface EMG of the rectus abdominis (RA), external oblique (EO), internal oblique (IO), and erector spinae (ES) was collected in 15 participants",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "A backward pelvic tilt with the shoulder blades drawn together gave more overall core activity than the two forward-tilt versions (not more than backward tilt with the shoulder blades apart), and was rated the hardest of the four.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "cortell-2017"
+      ],
+      "quotes": [
+        {
+          "source": "cortell-2017",
+          "text": "The ADRET resulted in higher overall EMG activity compared with ABANT (p = 0.04) and ADANT (p = 0.04).",
+          "where": "abstract, results"
+        },
+        {
+          "source": "cortell-2017",
+          "text": "Finally, ADRET provoked a higher RPE compared with ABANT (p = 0.000), ABRET (p = 0.001), and ADANT (p = 0.015).",
+          "where": "abstract, results"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-plank",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/",
+      "title": "Front Plank (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "schoenfeld-2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25325773/",
+      "title": "An electromyographic comparison of a modified version of the plank with a long lever and posterior tilt versus the traditional plank exercise",
+      "kind": "peer-reviewed",
+      "year": 2014,
+      "pmid": "25325773",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "cortell-2017",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27787465/",
+      "title": "Influence of Scapular Position on the Core Musculature Activation in the Prone Plank Exercise",
+      "kind": "peer-reviewed",
+      "year": 2017,
+      "pmid": "27787465",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The faults ACE names (sagging low back, hiked hips, bent knees, shoulders not over elbows; c4, c5) are all a line from the side.",
+    "equipment": "Floor line (mat optional, c1).",
+    "frames": "Hold convention (architecture section 1): entry pose (lying face down, c1) then the held pose; Trace follows the path into the hold.",
+    "start": "Entry: face down, forearms on the floor, elbows under the shoulders, palms down (c1); legs straight, toes pulled up (c2).",
+    "end": "Held pose: body lifted onto forearms and toes, straight line from shoulders through hips to heels, knees straight (c3, c4), shoulders over elbows (c5).",
+    "checkpoints": [
+      {
+        "label": "Elbows under shoulders",
+        "what": "Shoulders stacked over the elbows, no shrug.",
+        "claim": "c5"
+      },
+      {
+        "label": "Hips level",
+        "what": "No sagging low back and no hiked hips.",
+        "claim": "c4"
+      },
+      {
+        "label": "Knees straight",
+        "what": "Legs straight and stiff through the hold.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Low back sags: hips drop below the shoulder-heel line.",
+      "why": "ACE names sagging first among the faults to avoid (c4) and says low-back pain means stop (c8).",
+      "claim": "c4",
+      "drawable": true,
+      "rankNote": "No source ranks plank faults by frequency; ACE lists sagging first. Hiked hips (c4) is the opposite fault and can be the layer's second picture."
+    },
+    "tells": [
+      {
+        "text": "Shoulders stay over your elbows",
+        "claim": "c5"
+      },
+      {
+        "text": "You can keep breathing",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "set": null,
+      "hold": "5+ s",
+      "rest": null,
+      "text": "Set / Hold / Rest: hold for a set time of 5 seconds or more while breathing (ACE); 30 s holds were used in the EMG study (c9). No source sets the rest.",
+      "claim": "c6"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "",
+    "width": "",
+    "thumb": "",
+    "handContact": "Forearms and palms flat on the floor, hands facing forward.",
+    "wrist": "",
+    "claims": [
+      "c1"
+    ],
+    "note": "Hand archetype none (forearm plank): no hand zoom."
+  },
+  "setup": [
+    {
+      "step": "Lie face down, elbows under your shoulders, palms down.",
+      "claim": "c1"
+    },
+    {
+      "step": "Straighten your legs, pull your toes up, brace your trunk.",
+      "claim": "c2"
+    },
+    {
+      "step": "Lift slowly, trunk and legs stiff.",
+      "claim": "c3"
+    },
+    {
+      "step": "Hold for the set time and keep breathing.",
+      "claim": "c6"
+    },
+    {
+      "step": "Lower back down with the body still stiff.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Shoulders over elbows, no shrug.",
+      "claim": "c5"
+    },
+    {
+      "point": "Low back does not sag; hips not hiked.",
+      "claim": "c4"
+    },
+    {
+      "point": "Knees straight.",
+      "claim": "c4"
+    },
+    {
+      "point": "Harder version: tuck the pelvis and draw the shoulder blades together.",
+      "claim": "c11"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Low back sags.",
+      "fix": "Brace harder; if you can't hold it, end the hold.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Shrugging, shoulders drifting away from the elbows.",
+      "fix": "Shoulders back over the elbows.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Holding the breath.",
+      "fix": "Keep breathing through the hold.",
+      "claim": "c6"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "core",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "abs",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "obliques",
+        "claim": "c10"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c8"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front and sides of the belly",
+        "means": "The target muscles are working.",
+        "fix": "",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the low back",
+        "means": "Not a training feeling.",
+        "fix": "Stop the exercise.",
+        "claim": "c8",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "A sagging low back loads the lower back.",
+      "claim": "c4"
+    },
+    {
+      "risk": "Low-back pain during the hold: stop.",
+      "claim": "c8"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "hip-line",
+      "kind": "posture",
+      "right": "Hips in line with shoulders and heels.",
+      "wrong": "Low back sagging, hips dropped.",
+      "claim": "c4"
+    },
+    {
+      "key": "shoulder-stack",
+      "kind": "posture",
+      "right": "Shoulders straight over the elbows.",
+      "wrong": "Shoulders shrugged or ahead of the elbows.",
+      "claim": "c5"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "obliques"
+    ],
+    "remove": [],
+    "why": "Add obliques as secondary: both EMG studies measure oblique activity during the prone plank (c10). Library keeps core primary, abs secondary, glutes and front_delts as stabilizers (no source found for or against those two)."
+  },
+  "anchorSource": "ace-plank",
+  "anchorNote": "ACE Front Plank page read in full.",
+  "unsourced": [
+    "Glute squeeze cue.",
+    "Head and neck position.",
+    "Rest time between holds.",
+    "Hold-time progression beyond '5+ seconds'."
+  ]
+}

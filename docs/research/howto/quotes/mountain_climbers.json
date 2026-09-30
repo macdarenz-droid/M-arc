@@ -1,0 +1,146 @@
+{
+  "id": "mountain_climbers",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "hinge-mc",
+      "text": "Mountain climbers are like a moving plank: You start in a raised push-up position and hop your feet forward, one at a time, toward your chest.",
+      "status": "verbatim",
+      "closest": "Mountain climbers are like a moving plank: You start in a raised push-up position and hop your feet forward, one at a time, toward your chest."
+    },
+    {
+      "claim": "c2",
+      "source": "hinge-mc",
+      "text": "Start on your hands and knees with your arms straight and hands placed directly under your shoulders.",
+      "status": "verbatim",
+      "closest": "Start on your hands and knees with your arms straight and hands placed directly under your shoulders."
+    },
+    {
+      "claim": "c3",
+      "source": "hinge-mc",
+      "text": "Extend your legs back behind you, supporting your body on your hands and toes. Your body should form a straight line from the back of your head to your heels (like a regular, raised push-up position or plank).",
+      "status": "verbatim",
+      "closest": "Extend your legs back behind you, supporting your body on your hands and toes. Your body should form a straight line from the back of your head to your heels (like a regular, raised push-up position or plank)."
+    },
+    {
+      "claim": "c4",
+      "source": "hinge-mc",
+      "text": "From here, hop one foot toward your chest, and then quickly switch legs, as if you're running. Try not to let your hips hike up as you move.",
+      "status": "verbatim",
+      "closest": "From here, hop one foot toward your chest, and then quickly switch legs, as if you're running. Try not to let your hips hike up as you move."
+    },
+    {
+      "claim": "c5",
+      "source": "hinge-mc",
+      "text": "Maintain that plank position as you continue to alternate legs.",
+      "status": "verbatim",
+      "closest": "Maintain that plank position as you continue to alternate legs."
+    },
+    {
+      "claim": "c6",
+      "source": "hinge-mc",
+      "text": "Weight shifting backward. Shifting your weight backward can reduce some of the pressure on your arms and core, but it can also make it tougher to maintain balance and stability.",
+      "status": "verbatim",
+      "closest": "Weight shifting backward. Shifting your weight backward can reduce some of the pressure on your arms and core, but it can also make it tougher to maintain balance and stability."
+    },
+    {
+      "claim": "c6",
+      "source": "hinge-mc",
+      "text": "A helpful adjustment here is to keep your shoulders directly over your wrists and imagine pressing slightly forward.",
+      "status": "verbatim",
+      "closest": "A helpful adjustment here is to keep your shoulders directly over your wrists and imagine pressing slightly forward."
+    },
+    {
+      "claim": "c7",
+      "source": "hinge-mc",
+      "text": "Bouncing on your toes. Some people find themselves bouncing on their toes as they drive their knees forward. This can add extra impact, especially for beginners, which might make it harder to keep the movement controlled.",
+      "status": "verbatim",
+      "closest": "Bouncing on your toes. Some people find themselves bouncing on their toes as they drive their knees forward. This can add extra impact, especially for beginners, which might make it harder to keep the movement controlled."
+    },
+    {
+      "claim": "c8",
+      "source": "hinge-mc",
+      "text": "Some rounding in your back is natural, especially as you start to fatigue. If you feel your back rounding excessively, try focusing on drawing your shoulders down and back, which supports a neutral spine position.",
+      "status": "verbatim",
+      "closest": "Some rounding in your back is natural, especially as you start to fatigue. If you feel your back rounding excessively, try focusing on drawing your shoulders down and back, which supports a neutral spine position."
+    },
+    {
+      "claim": "c9",
+      "source": "hinge-mc",
+      "text": "Step, instead of jump. Rather than jumping to switch legs, step one foot forward, then step it back, and repeat with the other leg.",
+      "status": "verbatim",
+      "closest": "Step, instead of jump. Rather than jumping to switch legs, step one foot forward, then step it back, and repeat with the other leg."
+    },
+    {
+      "claim": "c9",
+      "source": "hinge-mc",
+      "text": "Place your hands on an elevated surface, like a sturdy bench or step. This reduces the load on your arms and core, making the exercise less intense than starting from the floor.",
+      "status": "verbatim",
+      "closest": "Place your hands on an elevated surface, like a sturdy bench or step. This reduces the load on your arms and core, making the exercise less intense than starting from the floor."
+    },
+    {
+      "claim": "c9",
+      "source": "hinge-mc",
+      "text": "Instead of bringing your knee all the way to your chest, only bring it halfway or as far as is comfortable.",
+      "status": "verbatim",
+      "closest": "Instead of bringing your knee all the way to your chest, only bring it halfway or as far as is comfortable."
+    },
+    {
+      "claim": "c10",
+      "source": "hinge-mc",
+      "text": "Pick up the pace. Do the movement at a faster pace to increase the cardio intensity. This will also challenge your core and legs to move quickly and efficiently.",
+      "status": "verbatim",
+      "closest": "Pick up the pace. Do the movement at a faster pace to increase the cardio intensity. This will also challenge your core and legs to move quickly and efficiently."
+    },
+    {
+      "claim": "c11",
+      "source": "hinge-mc",
+      "text": "As you do each rep, you might feel your core, shoulder, and arm muscles working, as well as your butt, thighs, and hips.",
+      "status": "verbatim",
+      "closest": "As you do each rep, you might feel your core, shoulder, and arm muscles working, as well as your butt, thighs, and hips."
+    },
+    {
+      "claim": "c11",
+      "source": "hinge-mc",
+      "text": "Hip flexors. These muscles help you flex at the hip (thus the name) when you walk and do other activities that require lifting your legs.",
+      "status": "verbatim",
+      "closest": "Hip flexors. These muscles help you flex at the hip (thus the name) when you walk and do other activities that require lifting your legs."
+    },
+    {
+      "claim": "c11",
+      "source": "hinge-mc",
+      "text": "Rectus abdominis. This sheet of muscle — often called the \"six-pack\" muscle — spans the front of your abdomen",
+      "status": "verbatim",
+      "closest": "Rectus abdominis. This sheet of muscle — often called the \"six-pack\" muscle — spans the front of your abdomen"
+    },
+    {
+      "claim": "c12",
+      "source": "nance-2017",
+      "text": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses.",
+      "status": "verbatim",
+      "closest": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses."
+    },
+    {
+      "claim": "c12",
+      "source": "nance-2017",
+      "text": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist.",
+      "status": "verbatim",
+      "closest": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist."
+    },
+    {
+      "claim": "c7",
+      "source": "hinge-mc",
+      "text": "To adjust, focus on moving with smooth, intentional steps, almost as if you’re gliding your knees forward rather than bouncing.",
+      "status": "verbatim",
+      "closest": "To adjust, focus on moving with smooth, intentional steps, almost as if you’re gliding your knees forward rather than bouncing."
+    },
+    {
+      "claim": "c8",
+      "source": "hinge-mc",
+      "text": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement.",
+      "status": "verbatim",
+      "closest": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement."
+    }
+  ]
+}

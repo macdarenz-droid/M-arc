@@ -1,0 +1,269 @@
+{
+ "id": "dumbbell_biceps_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-seated-curl",
+   "text": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles) and let your arms hang to your sides, close to your body, with your palms facing forward.",
+   "status": "verbatim",
+   "closest": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles) and let your arms hang to your sides, close to your body, with your palms facing forward.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-dbcurl",
+   "text": "Hold a pair of dumbbells in an underhand (supinated) grip, arms hanging by your sides.",
+   "status": "verbatim",
+   "closest": "Hold a pair of dumbbells in an underhand (supinated) grip, arms hanging by your sides.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-dbcurl",
+   "text": "Stand with your feet shoulder-width apart, maintaining a slight bend in your knees.",
+   "status": "verbatim",
+   "closest": "Stand with your feet shoulder-width apart, maintaining a slight bend in your knees.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-dbcurl",
+   "text": "Keep your elbows close to your body throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Keep your elbows close to your body throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-dbcurl",
+   "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+   "status": "verbatim",
+   "closest": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-dbcurl",
+   "text": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up.",
+   "status": "verbatim",
+   "closest": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-dbcurl",
+   "text": "If you start to swing, you should probably remove some weight instead and focus on performing the movement with control.",
+   "status": "verbatim",
+   "closest": "If you start to swing, you should probably remove some weight instead and focus on performing the movement with control.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "marcolin-2018",
+   "text": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.",
+   "status": "verbatim",
+   "closest": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-seated-curl",
+   "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+   "status": "verbatim",
+   "closest": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-dbcurl",
+   "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "status": "verbatim",
+   "closest": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-seated-curl",
+   "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+   "status": "verbatim",
+   "closest": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-dbcurl",
+   "text": "Stand with your chest up and shoulders slightly retracted and depressed.",
+   "status": "verbatim",
+   "closest": "Stand with your chest up and shoulders slightly retracted and depressed.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-seated-curl",
+   "text": "avoid shrugging your shoulders during the lift keeping your scapulae (shoulders) depressed and retracted.",
+   "status": "verbatim",
+   "closest": "avoid shrugging your shoulders during the lift keeping your scapulae (shoulders) depressed and retracted.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "marcolin-2018",
+   "text": "The metronome was set so that each repetition duration was 3 s.",
+   "status": "verbatim",
+   "closest": "The metronome was set so that each repetition duration was 3 s.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-seated-curl",
+   "text": "Inhale and gently lower the dumbbells back towards your starting position.",
+   "status": "verbatim",
+   "closest": "Inhale and gently lower the dumbbells back towards your starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-seated-curl",
+   "text": "Exhale and slowly bend each elbow in unison",
+   "status": "verbatim",
+   "closest": "Exhale and slowly bend each elbow in unison",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "oliveira-2009",
+   "text": "Although all protocols elicited a considerable level of activation of the biceps brachii muscle (at least 50% of maximum RMS), the contribution of this muscle for elbow flexion/extension varied among exercises.",
+   "status": "verbatim",
+   "closest": "Although all protocols elicited a considerable level of activation of the biceps brachii muscle (at least 50% of maximum RMS), the contribution of this muscle for elbow flexion/extension varied among exercises.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "marcolin-2018",
+   "text": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor",
+   "status": "verbatim",
+   "closest": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "sl-dbcurl",
+   "text": "The dumbbell curl primarily targets your biceps and brachialis (which lie beneath the biceps), but the forearm flexors are also involved as a secondary muscle group.",
+   "status": "verbatim",
+   "closest": "The dumbbell curl primarily targets your biceps and brachialis (which lie beneath the biceps), but the forearm flexors are also involved as a secondary muscle group.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "oliveira-2009",
+   "text": "The Incline Dumbbell Curl and the Dumbbell Biceps Curl resulted in a considerable neuromuscular effort throughout the whole elbow range of motion.",
+   "status": "verbatim",
+   "closest": "The Incline Dumbbell Curl and the Dumbbell Biceps Curl resulted in a considerable neuromuscular effort throughout the whole elbow range of motion.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "sl-dbcurl",
+   "text": "Don’t let your upper arms travel back during the curl. Keep them at your sides, or move them slightly forward.",
+   "status": "verbatim",
+   "closest": "Don’t let your upper arms travel back during the curl. Keep them at your sides, or move them slightly forward.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "sl-dbcurl",
+   "text": "Make sure to keep your elbows close to the body the entire time. Your body shouldn’t move, just the arms.",
+   "status": "verbatim",
+   "closest": "Make sure to keep your elbows close to the body the entire time. Your body shouldn’t move, just the arms.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "kerr-2010",
+   "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "status": "verbatim",
+   "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-dbcurl",
+   "text": "Don’t let your upper arms travel back during the curl. Keep them at your sides, or move them slightly forward.",
+   "status": "verbatim",
+   "closest": "Don’t let your upper arms travel back during the curl. Keep them at your sides, or move them slightly forward.",
+   "note": "fixer: added 2026-09-30 after verification finding"
+  },
+  {
+   "claim": "c3",
+   "source": "ace-seated-curl",
+   "text": "Curl the dumbbells higher by allowing the elbows to move forward as the dumbbell reaches your chest",
+   "status": "verbatim",
+   "closest": "Curl the dumbbells higher by allowing the elbows to move forward as the dumbbell reaches your chest",
+   "note": "fixer: added 2026-09-30 after verification finding"
+  },
+  {
+   "claim": "c7",
+   "source": "ace-seated-curl",
+   "text": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "status": "verbatim",
+   "closest": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "note": "fixer: added 2026-09-30 after verification finding"
+  }
+ ],
+ "sources": [
+  {
+   "id": "sl-dbcurl",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "ace-seated-curl",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "marcolin-2018",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "oliveira-2009",
+   "access": "abstract",
+   "checked": "2026-09-30",
+   "fixes": "PMC full text has abstract only in XML; access=abstract"
+  },
+  {
+   "id": "acsm-2009",
+   "access": "abstract",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "kerr-2010",
+   "access": "abstract",
+   "checked": "2026-09-30",
+   "fixes": ""
+  }
+ ]
+}

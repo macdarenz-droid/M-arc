@@ -1,0 +1,111 @@
+{
+  "id": "plank",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-plank",
+      "text": "Lie prone (on your stomach) on an exercise mat or floor with your elbows close to your sides and directly under your shoulders, palms down and hands facing forward.",
+      "status": "verbatim",
+      "closest": "Lie prone (on your stomach) on an exercise mat or floor with your elbows close to your sides and directly under your shoulders, palms down and hands facing forward."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-plank",
+      "text": "Contract your quadriceps to extend your legs and dorsiflex your ankles (pull toes towards your shins). Contract your core and abdominal muscles to stiffen your torso.",
+      "status": "verbatim",
+      "closest": "Contract your quadriceps to extend your legs and dorsiflex your ankles (pull toes towards your shins). Contract your core and abdominal muscles to stiffen your torso."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-plank",
+      "text": "Slowly lift your entire torso off the floor or mat, maintaining a stiff torso and legs.",
+      "status": "verbatim",
+      "closest": "Slowly lift your entire torso off the floor or mat, maintaining a stiff torso and legs."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-plank",
+      "text": "Avoid any arching (sagging) in your low back, hiking (upwards) in your hips or bending in the knees.",
+      "status": "verbatim",
+      "closest": "Avoid any arching (sagging) in your low back, hiking (upwards) in your hips or bending in the knees."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-plank",
+      "text": "Avoid shrugging your shoulder and keep your shoulders positioned directly over your elbows with your palms facing down.",
+      "status": "verbatim",
+      "closest": "Avoid shrugging your shoulder and keep your shoulders positioned directly over your elbows with your palms facing down."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-plank",
+      "text": "Continue to breath while holding this position for a specified time (5+ seconds).",
+      "status": "verbatim",
+      "closest": "Continue to breath while holding this position for a specified time (5+ seconds)."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-plank",
+      "text": "While maintaining a stiff torso and extended knees, gently lower your body back towards the mat or floor before relaxing.",
+      "status": "verbatim",
+      "closest": "While maintaining a stiff torso and extended knees, gently lower your body back towards the mat or floor before relaxing."
+    },
+    {
+      "claim": "c8",
+      "source": "ace-plank",
+      "text": "If you experience any pain in the low back with this movement, stop the exercise immediately and consult with your doctor.",
+      "status": "verbatim",
+      "closest": "If you experience any pain in the low back with this movement, stop the exercise immediately and consult with your doctor."
+    },
+    {
+      "claim": "c9",
+      "source": "schoenfeld-2014",
+      "text": "Nineteen participants performed all four variations of the plank for 30 seconds in a randomized order",
+      "status": "verbatim",
+      "closest": "Nineteen participants performed all four variations of the plank for 30 seconds in a randomized order"
+    },
+    {
+      "claim": "c9",
+      "source": "schoenfeld-2014",
+      "text": "while the posterior tilt plank elicited greater activity in the external oblique (p = 0.028)",
+      "status": "verbatim",
+      "closest": "while the posterior tilt plank elicited greater activity in the external oblique (p = 0.028)"
+    },
+    {
+      "claim": "c9",
+      "source": "schoenfeld-2014",
+      "text": "In conclusion, the long-lever posterior-tilt plank significantly increases muscle activation compared to the traditional prone plank. The long-lever component tends to contribute more to these differences than the posterior-tilt component.",
+      "status": "verbatim",
+      "closest": "In conclusion, the long-lever posterior-tilt plank significantly increases muscle activation compared to the traditional prone plank. The long-lever component tends to contribute more to these differences than the posterior-tilt component."
+    },
+    {
+      "claim": "c10",
+      "source": "schoenfeld-2014",
+      "text": "the long-lever posterior-tilt plank displayed a significantly increased activation of the upper rectus abdominis (p < 0.001), lower abdominal stabilizers (p < 0.001), and external oblique (p < 0.001).",
+      "status": "verbatim",
+      "closest": "the long-lever posterior-tilt plank displayed a significantly increased activation of the upper rectus abdominis (p < 0.001), lower abdominal stabilizers (p < 0.001), and external oblique (p < 0.001)."
+    },
+    {
+      "claim": "c10",
+      "source": "cortell-2017",
+      "text": "Surface EMG of the rectus abdominis (RA), external oblique (EO), internal oblique (IO), and erector spinae (ES) was collected in 15 participants",
+      "status": "verbatim",
+      "closest": "Surface EMG of the rectus abdominis (RA), external oblique (EO), internal oblique (IO), and erector spinae (ES) was collected in 15 participants"
+    },
+    {
+      "claim": "c11",
+      "source": "cortell-2017",
+      "text": "The ADRET resulted in higher overall EMG activity compared with ABANT (p = 0.04) and ADANT (p = 0.04).",
+      "status": "verbatim",
+      "closest": "The ADRET resulted in higher overall EMG activity compared with ABANT (p = 0.04) and ADANT (p = 0.04)."
+    },
+    {
+      "claim": "c11",
+      "source": "cortell-2017",
+      "text": "Finally, ADRET provoked a higher RPE compared with ABANT (p = 0.000), ABRET (p = 0.001), and ADANT (p = 0.015).",
+      "status": "verbatim",
+      "closest": "Finally, ADRET provoked a higher RPE compared with ABANT (p = 0.000), ABRET (p = 0.001), and ADANT (p = 0.015)."
+    }
+  ]
+}

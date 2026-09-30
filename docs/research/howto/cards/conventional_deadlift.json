@@ -1,0 +1,886 @@
+{
+  "id": "conventional_deadlift",
+  "libId": "lib_conventional_deadlift",
+  "name": "Conventional Deadlift",
+  "family": "HINGE",
+  "tier": "A",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "romanian_deadlift",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because it holds the same straight barbell with the hold archetype; the wrapped-thumb rule (baechle-grip) is re-cited here as c21."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because the bar sits across the middle of the palm, fingers wrapped, exactly as in the RDL (same hold archetype, GA appendix B)."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the arms hang straight under load as in the RDL (c4), so the wrist stays neutral in line with the forearm (hold archetype range)."
+    },
+    {
+      "field": "archetype.contact",
+      "why": "true for this child because both feet stand flat on the floor (standing-feet), as in the RDL."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Stand close to the bar so it sits about over the middle of the foot; shins close to or touching the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Step up close to the bar so that it is about over the middle of your foot.",
+          "where": "How to Deadlift with Proper Form (app steps)"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "Finally, keep your shins as close to the bar as possible while still doing number one and two above. For many of you, this will mean having your shins touching the bar.",
+          "where": "Hip Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Feet about hip to shoulder width, toes pointing forward or slightly out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-deadlift",
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "ace-deadlift",
+          "text": "Stand behind the barbell with the feet about shoulder-width apart, the toes slightly rotated out, and the shins almost touching the bar.",
+          "where": "exercise description"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "More common and the best fit for most people, however, is to simply place the feet directly under your hip joints, with your toes pointing straight forward or only slightly out.",
+          "where": "Foot Position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Grip the bar about shoulder width, arms outside the knees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Bend over and grip the bar with hands about shoulder-width apart.",
+          "where": "How to Deadlift with Proper Form"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "In the conventional deadlift, you grip the bar with your arms outside your knees, and you typically keep your feet about hip-width apart.",
+          "where": "Conventional or Sumo?"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Keep the arms straight like ropes and vertical as seen from the side; bent arms force more lean and may raise biceps strain risk.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "If you deadlift with your arms bent or excessively wide, you will have to lean over more, and thus end up in a weaker starting position.",
+          "where": "Arms"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "straight arms with relaxed biceps will likely minimize your risk of a bicep strain or even rupture while lifting heavy loads.",
+          "where": "Arms"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "You’re going to keep your arms vertical as seen from the side (or very close to vertical) during the entire lift.",
+          "where": "Hip Position"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Breathe in and brace the core before lifting by extending hips and knees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Inhale, brace your core, and lift the bar by extending your hips and knees.",
+          "where": "How to Deadlift with Proper Form"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Pull the bar close to the body until standing straight with hips and knees locked.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Pull the bar close to your body until you are standing straight up, with hips and knees locked out.",
+          "where": "How to Deadlift with Proper Form"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Keep the back flat (neutral) through the whole lift.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-deadlift",
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "ace-deadlift",
+          "text": "Keeping the back flat, push the hips forward to move to standing position.",
+          "where": "exercise description"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "Strive for neutral. Strive to lift with a neutral back in all of your training and in competition.",
+          "where": "So - Should You Deadlift With a Neutral or Flexed Spine?"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Lifters, especially newer ones, tend to round the back more as the weight goes up, including when breaking the bar off the floor; if the spine cannot stay neutral, lower the weight or do fewer reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Why is it that as lifters (especially newer ones) pile on more and more weight, they tend to round their back more and more?",
+          "where": "Back Position: Performance"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "Generally avoid lifting with a flexed back in your training – if you cannot maintain a neutral spine, lower the weight or perform less reps per set.",
+          "where": "So - Should You Deadlift With a Neutral or Flexed Spine?"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "Perhaps you are not strong enough to break the bar off the floor without rounding your back and thus decreasing the moment arms of your prime movers by bringing the bar closer to their respective joints.",
+          "where": "Lift-Off"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "One start fault is the hips shooting up before the bar moves, which dumps the work onto the back and hips; the remedy is to be patient off the floor so the legs start the pull.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "One such example is when the butt shoots upward before the bar has barely begun to move. What has happened is that the lifter has effectively dumped over most if not all work from the quadriceps to the back and hip extensors.",
+          "where": "Lift-Off"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "But it might also be the case that the lifter just doesn’t know how the start of a deadlift might feel, and is simply not patient enough for the quads and the hip extensors to hit their coordination and make the (maybe: more efficient) pull.",
+          "where": "Lift-Off"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Finish standing tall: knees, hips and back extended, shoulders back, legs straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift",
+        "ace-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "All you have to do is: extend your knees, hips and back, and keep your shoulder back for the lift to be considered completed.",
+          "where": "The Lock-Out"
+        },
+        {
+          "source": "ace-deadlift",
+          "text": "Finish standing in a tall position with the shoulders pulled back and the legs straight.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "To lower, push the hips back first with the knees bending more slowly, then bend the knees once the bar passes them.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Initiate the eccentric by pushing your butt back and leaning your torso forward. The knees bend, but not as fast as your hip. Lower the bar along your legs like this until you’ve cleared the knees.",
+          "where": "Setting the Bar Down"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Tempo: lift at a moderate speed (1-2 s) and lower under control over about 2 s.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "really slow down the bar, and lower it under, say, at least two seconds.",
+          "where": "Greater Gains from a Controlled Eccentric?"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Done properly, the glutes and back of the thighs should feel the work, not the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "ace-deadlift",
+          "text": "When this movement is done properly, the glutes and the back of the thighs should feel the work, NOT the back.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Deadlift muscles: glutes and lower back primary; quads, hamstrings, adductors, trapezius and forearm flexors secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Primary muscles worked: Glutes Lower Back Secondary muscles worked: Quads Hamstrings Adductors Trapezius Forearm Flexors",
+          "where": "Major Muscles Worked in the Deadlift, list"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In EMG studies of deadlifts, the lower-back (erector spinae) and quadriceps muscles showed more activity than the glutes and hamstrings.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "martinfuentes2020"
+      ],
+      "quotes": [
+        {
+          "source": "martinfuentes2020",
+          "text": "Erector spinae and quadriceps muscles reported greater activation than gluteus maximus and biceps femoris muscles during Deadlift exercise and its variants.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "The conventional deadlift works the front thigh (rectus femoris) and glutes more than the Romanian deadlift.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "lee2018"
+      ],
+      "quotes": [
+        {
+          "source": "lee2018",
+          "text": "Significantly greater normalized EMG values were found from the rectus femoris and gluteus maximus (58.57 ± 13.73 and 51.52 ± 6.08 %peak) of the conventional deadlift than those of the Romanian deadlift (25.26 ± 14.21 and 46.88 ± 7.39 %peak).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Start at an easy weight with control of technique; add 2.5-5 kg only after all planned reps are done (2-10% steps).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Begin your training program at an easy weight, where you are in control of the technique.",
+          "where": "Beginner Deadlift Training Program"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "If you manage to do all 3 sets x 5 reps, increase the weight by 5–10 pounds (2.5–5 kg) for the next workout.",
+          "where": "Beginner Deadlift Workout"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "A narrative review found abrupt jumps in training load appear linked with more injuries, though the link is probabilistic.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "cherni2026"
+      ],
+      "quotes": [
+        {
+          "source": "cherni2026",
+          "text": "Abrupt increases in training load appear to be consistently associated with elevated injury incidence, although relationships remain probabilistic and context-dependent.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Lifting with a rounded (flexed) back increases load on the spine's passive structures such as discs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "On the one hand, lifting with a flexed back increases the load on passive structures in your spine, such as your vertebraes or intervertebral discs.",
+          "where": "Injury Risk"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Wrap the thumbs around the bar; double overhand suits beginners, while mixed grip or straps remove the grip limit on heavy pulls.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "baechle-grip",
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "This grip technique is usually fine for beginners learning the deadlift form, but quickly becomes a greatly limiting factor for how much you can lift.",
+          "where": "Double Overhand Grip"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "The mixed grip is the most common grip technique in powerlifting.",
+          "where": "Mixed Grip"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "Lifting straps will remove any grip related limitations for your pulls",
+          "where": "Lifting straps"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "Build tension gradually before the bar leaves the floor rather than jerking it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Our general recommendation is to be a bit more patient in the last moments before the pull, and take your time gradually building up tension before the bar breaks the floor.",
+          "where": "Building Tension"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "Set the bar on the floor, ideally with full-size 45 cm plates.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Set a bar on the floor, preferably loaded with full-sized weight plates (45 cm / 17.72 in).",
+          "where": "Preparation"
+        }
+      ]
+    },
+    {
+      "id": "c24",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Bar over mid-foot, shins to bar, hip height, flat back and a vertical bar path close to the legs are all front-to-back positions (c1, c6, c7); only the side view shows them.",
+    "equipment": "Straight barbell with full-size 45 cm plates resting on the floor line, so the bar sits 22.5 cm up (c23).",
+    "start": "Bar over mid-foot with shins touching or nearly touching it (c1); feet about hip width (c2); arms straight, vertical from the side, just outside the knees (c3, c4); back flat (c7).",
+    "end": "Standing tall, hips and knees locked, shoulders back, bar hanging against the thighs (c6, c10).",
+    "checkpoints": [
+      {
+        "label": "Bar over midfoot",
+        "what": "Start with the bar above the middle of the foot, shins close.",
+        "claim": "c1"
+      },
+      {
+        "label": "Flat back",
+        "what": "The back stays neutral from floor to lockout.",
+        "claim": "c7"
+      },
+      {
+        "label": "Bar close",
+        "what": "The bar travels up close to the legs.",
+        "claim": "c6"
+      }
+    ],
+    "mistake": {
+      "what": "Lower back rounds as the bar leaves the floor.",
+      "why": "Lifters, especially newer ones, round more as the load rises (c8); a flexed back loads the spine's passive structures (c19).",
+      "claim": "c8",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Glutes and hamstrings do the work",
+        "claim": "c13"
+      },
+      {
+        "text": "Bar stays close to your legs",
+        "claim": "c6"
+      },
+      {
+        "text": "Back stays flat throughout",
+        "claim": "c7"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Double overhand for learning; mixed grip or straps only when grip limits heavy sets.",
+    "width": "About shoulder width, arms just outside the knees.",
+    "thumb": "Wrapped around the bar (inherited).",
+    "handContact": "Bar across the middle of the palm, fingers wrapped (inherited).",
+    "wrist": "Neutral, in line with the forearm (inherited).",
+    "claims": [
+      "c3",
+      "c21"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Load the bar on the floor with full-size plates.",
+      "claim": "c23"
+    },
+    {
+      "step": "Step up so the bar is over the middle of your feet, feet about hip width.",
+      "claim": "c1"
+    },
+    {
+      "step": "Grip about shoulder width, arms straight outside the knees.",
+      "claim": "c3"
+    },
+    {
+      "step": "Breathe in and brace before each rep.",
+      "claim": "c5"
+    },
+    {
+      "step": "Build tension slowly before the bar leaves the floor.",
+      "claim": "c22"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Shins close to or touching the bar at the start.",
+      "claim": "c1"
+    },
+    {
+      "point": "Arms straight like ropes.",
+      "claim": "c4"
+    },
+    {
+      "point": "Back flat from floor to lockout.",
+      "claim": "c7"
+    },
+    {
+      "point": "Bar travels close to the body.",
+      "claim": "c6"
+    },
+    {
+      "point": "Finish tall: hips and knees locked, shoulders back.",
+      "claim": "c10"
+    },
+    {
+      "point": "Lower hips-back first, then bend the knees past them.",
+      "claim": "c11"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Back rounding as the weight gets heavier.",
+      "fix": "Lower the weight or do fewer reps per set.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Hips shooting up before the bar moves.",
+      "fix": "Be patient off the floor so the legs start the pull.",
+      "claim": "c9"
+    },
+    {
+      "mistake": "Bent arms at the start.",
+      "fix": "Straighten the arms before pulling.",
+      "claim": "c4"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "glutes",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "hamstrings",
+        "claim": "c13"
+      },
+      {
+        "muscleId": "lower_back",
+        "claim": "c15"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "quads",
+        "claim": "c15"
+      },
+      {
+        "muscleId": "adductors",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "upper_traps",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "forearms",
+        "claim": "c14"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c13"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Glutes and back of the thighs",
+        "means": "Usually means the hips are doing the lifting.",
+        "fix": null,
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back taking over",
+        "means": "Usually means the back is rounding or the load is too heavy.",
+        "fix": "Lower the weight or do fewer reps.",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the thighs off the floor",
+        "means": "Usually normal: the quads help break the bar from the floor.",
+        "fix": null,
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Back pain with pain or numbness in both legs",
+        "means": "Not a normal training feeling.",
+        "fix": "Stop.",
+        "claim": "c24",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "A rounded back under heavy load increases load on the spine's discs and joints.",
+      "claim": "c19"
+    },
+    {
+      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "claim": "c20"
+    },
+    {
+      "risk": "Big jumps in load appear linked with more injuries (c18); add weight in small steps (c17).",
+      "claim": "c18"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "dl-grip",
+      "kind": "hand",
+      "right": "Overhand, thumbs wrapped, hands about shoulder width just outside the knees.",
+      "wrong": "Hands too wide, arms bent.",
+      "claim": "c3"
+    },
+    {
+      "key": "dl-start",
+      "kind": "posture",
+      "right": "Bar over mid-foot, shins near the bar, arms straight, back flat.",
+      "wrong": "Rounded lower back, bar out over the toes.",
+      "claim": "c1"
+    },
+    {
+      "key": "dl-liftoff",
+      "kind": "posture",
+      "right": "Legs start the pull; the hips wait for the bar to move.",
+      "wrong": "Hips shoot up before the bar moves.",
+      "claim": "c9"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "adductors",
+      "forearms"
+    ],
+    "remove": [],
+    "why": "Library primary hamstrings, glutes, lower_back and secondary quads, lats, upper_traps are kept (c13, c14, c15). Add adductors and forearms (forearm flexors) as secondary: StrengthLog lists both (c14). Lats kept: no source here removes them."
+  },
+  "anchorSource": "sl-deadlift",
+  "sources": [
+    {
+      "id": "sl-deadlift",
+      "url": "https://www.strengthlog.com/deadlift/",
+      "title": "How to Deadlift: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-deadlift",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/6/deadlift/",
+      "title": "Deadlift | Exercise Library | ACE",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "martinfuentes2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32107499/",
+      "title": "Electromyographic activity in deadlift exercise and its variants. A systematic review.",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": 32107499,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lee2018",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30662500/",
+      "title": "An electromyographic and kinetic comparison of conventional and Romanian deadlifts.",
+      "kind": "peer-reviewed",
+      "year": 2018,
+      "pmid": 30662500,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "cherni2026",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42043083/",
+      "title": "Beyond the Neutral Spine: A Narrative Review and Modern Framework for Low Back Injury Prevention in Deadlifting.",
+      "kind": "peer-reviewed",
+      "year": 2026,
+      "pmid": 42043083,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location (excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics))",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ]
+}

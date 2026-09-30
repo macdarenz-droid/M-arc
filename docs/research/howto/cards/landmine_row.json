@@ -1,0 +1,764 @@
+{
+  "id": "landmine_row",
+  "libId": "lib_landmine_row",
+  "name": "Landmine Row",
+  "family": "HROW",
+  "tier": "A",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "barbell_row",
+  "inherit": [
+    {
+      "field": "grip.type",
+      "why": "true for this child because the landmine row also uses an overhand grip (c4)."
+    },
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the Baechle and Earle rule covers all grips (c17)."
+    },
+    {
+      "field": "posture[back neutral]",
+      "why": "true for this child because the landmine source gives the same neutral, not-rounded back rule (c9)."
+    },
+    {
+      "field": "risks[breath]",
+      "why": "true for this child because it is also a heavy two-hand free-weight row; same MacDougall 1985 line (c14)."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because it loads the lower back in the same bent-over position (c3, c15); same NHS back box (c16, c19)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Anchor one end of a barbell in a landmine attachment (or a corner) and load the free end with plates.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Anchor one end of a barbell securely in a landmine attachment",
+          "where": "How to Do a Landmine Row Properly: Set Up Your Equipment"
+        },
+        {
+          "source": "rep-landmine-row",
+          "text": "Load the free end of the bar with your desired weight.",
+          "where": "How to Do a Landmine Row Properly: Set Up Your Equipment"
+        },
+        {
+          "source": "rep-landmine-row",
+          "text": "A landmine row involves anchoring one end of a barbell in a landmine attachment or corner, gripping the free end, and performing a rowing motion.",
+          "where": "What is a Landmine Row?"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Straddle the loaded end of the bar, facing it, feet between hip and shoulder width, with the shoulders ahead of the weight once hinged.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row",
+        "cissik-landmine"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Stand facing the barbell with your feet shoulder-width apart.",
+          "where": "How to Do a Landmine Row Properly: Get Into Position"
+        },
+        {
+          "source": "cissik-landmine",
+          "text": "Straddle the end of the barbell with the weight. Your feet should be between hip-width and shoulder-width apart.",
+          "where": "Landmine T-Bar Row, step 2"
+        },
+        {
+          "source": "cissik-landmine",
+          "text": "Your shoulders should be ahead of the weight.",
+          "where": "Landmine T-Bar Row, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Bend at the hips and knees with the back straight until the torso is roughly parallel to the floor (REP); coach sources differ, as Cissik asks for at least a 45-degree torso angle to the ground, so the drawn pose follows REP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row",
+        "cissik-landmine"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Bend at the hips and knees, keeping your back straight, and hinge forward until your torso is roughly parallel to the floor.",
+          "where": "How to Do a Landmine Row Properly: Get Into Position"
+        },
+        {
+          "source": "cissik-landmine",
+          "text": "From here, push the hips back and unlock your knees until you have at least a 45 degree angle between your upper body and the ground.",
+          "where": "step 5"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Grip the bar with both hands overhand just below the plates (just under the inside collar), one hand above the other.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row",
+        "cissik-landmine"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Grip the barbell just below the weight plates with both hands, using an overhand grip.",
+          "where": "How to Do a Landmine Row Properly: Get Into Position"
+        },
+        {
+          "source": "cissik-landmine",
+          "text": "Squat down and grip the barbell just under the inside collar. One hand will be above the other.",
+          "where": "Landmine T-Bar Row, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Brace the trunk before the row to stop the lower back rounding.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Before initiating the row, brace your core to maintain stability and prevent rounding your lower back.",
+          "where": "How to Do a Landmine Row Properly: Engage Your Core"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Pull the bar toward the chest by driving the elbows back, squeezing the shoulder blades together at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Pull the barbell toward your chest by driving your elbows back. Focus on squeezing your shoulder blades together at the top of the movement.",
+          "where": "How to Do a Landmine Row Properly: Execute the Row"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Don’t jerk the bar or use momentum; keep the motion controlled.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Avoid jerking the bar or using momentum—keep the motion controlled and deliberate.",
+          "where": "How to Do a Landmine Row Properly: Execute the Row"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Lower slowly until the arms are fully straight, keeping tension in the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Slowly lower the barbell back to the starting position, fully extending your arms while keeping tension in your back muscles.",
+          "where": "How to Do a Landmine Row Properly: Lower the Bar"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Keep the spine neutral: back straight, not rounded.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Maintain a Neutral Spine: Keep your back straight and avoid rounding to protect your lower back.",
+          "where": "Key Tips for Proper Landmine Row Technique"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The landmine row mainly works the upper back (lats, traps, rhomboids), with the rear delts, biceps and core as secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "rep-landmine-row",
+          "text": "Landmine rows primarily target the upper back, including the lats, traps, and rhomboids. Secondary muscles engaged include the rear delts, biceps, and core.",
+          "where": "Landmine Row Muscles Worked"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "On the landmine version of the T-bar row, a rounded back is one of the most common mistakes; it strains the spinal erectors and raises lower-back injury risk. The same bar, pivot and hinge are used here, so this likely applies (inferred from the handle version).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Lifters round their backs is one of the most common mistakes I see when training.",
+          "where": "Common T-Bar Row Mistakes: Rounding Your Back"
+        },
+        {
+          "source": "ggr-t-bar",
+          "text": "this loss of proper form can place a tremendous strain on your spinal erectors and ramp up your chances of suffering a lower-back injury. Keep your core engaged and use an appropriate load for your strength levels.",
+          "where": "Common T-Bar Row Mistakes: Rounding Your Back"
+        },
+        {
+          "source": "ggr-t-bar",
+          "text": "In the steps below, I cover the landmine row version that involves a barbell and weight plates.",
+          "where": "How to do it, note"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, the lowering slow.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "rep-landmine-row",
+          "text": "Slowly lower the barbell back to the starting position",
+          "where": "How to Do a Landmine Row Properly: Lower the Bar"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two; choose a weight that keeps good form.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        },
+        {
+          "source": "rep-landmine-row",
+          "text": "Perform 8–12 repetitions for 3–4 sets, adjusting weight as needed to maintain proper form.",
+          "where": "How to Do a Landmine Row Properly: Repeat"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In a lab comparison of three rows (inverted, standing bent-over, one-arm cable), the standing bent-over row gave the largest lumbar spine load; the landmine row is also a standing bent-over row, so this likely applies (inferred, not measured on the landmine row; the anchor coach page claims the opposite, without data).",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "fenwick2009",
+        "rep-landmine-row"
+      ],
+      "quotes": [
+        {
+          "source": "fenwick2009",
+          "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+          "where": "abstract"
+        },
+        {
+          "source": "rep-landmine-row",
+          "text": "By providing a more controlled range of motion, the landmine row reduces stress on your lower back, making it a safer option for those with mobility or injury concerns.",
+          "where": "introduction"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Wrap the thumbs around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Grip is strongest with the wrist in its natural extended (bent-back) position, about 35 degrees, and weakens when the wrist moves away from it, even to 15 degrees of extension (measured on a grip test, not on the landmine row; applied here as a wrist cue).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "rep-landmine-row",
+      "url": "https://repfitness.com/blogs/training/how-to-do-a-landmine-row-technique-variations-and-benefits",
+      "title": "How to do a Landmine Row: Technique, Variations, and Benefits (REP Fitness; Aimee Heckel)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ggr-t-bar",
+      "url": "https://www.garagegymreviews.com/t-bar-row",
+      "title": "T-Bar Row: How To, Benefits, Muscles Worked (Garage Gym Reviews; Stephen Sheehan, CPT)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "fenwick2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19620925/",
+      "title": "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19620925,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "cissik-landmine",
+      "url": "https://www.cissik.com/blog/?p=7015",
+      "title": "Landmine Bent Over Rows (Improving Athletic Performance blog, John Cissik)",
+      "kind": "coach",
+      "year": 2022,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength.",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": 1538102,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The parallel torso, the hinge and the bar end rising to the chest are front-to-back (c3, c6); the census draws it side.",
+    "equipment": "Landmine rig: barbell pinned at a floor pivot behind the lifter, running forward between the feet; plates on the free end in front, the lifter straddling the loaded end with the shoulders ahead of the weight (layout inferred from c1, c2); hands one above the other on the bar just behind the plates (c4). Needs the landmine composer (census gap).",
+    "start": "Straddling the loaded end, feet between hip and shoulder width (c2), hips and knees bent, back straight, torso roughly parallel to the floor (c3), arms straight to the bar just behind the plates (c4, c8).",
+    "end": "Same torso angle; elbows driven back, bar end at the chest, shoulder blades squeezed together (c6).",
+    "checkpoints": [
+      {
+        "label": "Torso parallel",
+        "what": "Back straight, torso roughly level with the floor.",
+        "claim": "c3"
+      },
+      {
+        "label": "Brace first",
+        "what": "Trunk braced before each pull so the lower back doesn’t round.",
+        "claim": "c5"
+      },
+      {
+        "label": "Elbows back",
+        "what": "Elbows drive back, bar to the chest.",
+        "claim": "c6"
+      }
+    ],
+    "mistake": {
+      "what": "Rounded lower back over the bar.",
+      "why": "The anchor’s bracing and spine cues exist to stop it (c5, c9); on the landmine T-bar it is named one of the most common mistakes (c11), and the lift loads the lower back (c15).",
+      "claim": "c11",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Bar end reaches your chest",
+        "claim": "c6"
+      },
+      {
+        "text": "Back stays straight and level",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand, both hands on the bar just below the plates.",
+    "width": "Close: one hand above the other on the bar just behind the plates.",
+    "thumb": "Wrapped around the bar.",
+    "handContact": "Bar across the base of the fingers and top of the palm (pull archetype).",
+    "wrist": "Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.",
+    "claims": [
+      "c4",
+      "c17",
+      "c18"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Anchor one end of a barbell in a landmine; load the free end.",
+      "claim": "c1"
+    },
+    {
+      "step": "Straddle the loaded end of the bar, feet between hip and shoulder width.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hinge until the torso is roughly level with the floor, back straight.",
+      "claim": "c3"
+    },
+    {
+      "step": "Both hands overhand just below the plates, one above the other, thumbs around the bar.",
+      "claim": "c4"
+    },
+    {
+      "step": "Start with a weight that keeps good form; add 2-10% once you beat your target reps by one or two.",
+      "claim": "c13"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back straight, not rounded.",
+      "claim": "c9"
+    },
+    {
+      "point": "Brace before each pull.",
+      "claim": "c5"
+    },
+    {
+      "point": "Torso stays roughly parallel to the floor.",
+      "claim": "c3"
+    },
+    {
+      "point": "Shoulder blades squeeze together at the top.",
+      "claim": "c6"
+    },
+    {
+      "point": "Controlled, no jerking.",
+      "claim": "c7"
+    },
+    {
+      "point": "Arms fully straight at the bottom.",
+      "claim": "c8"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Rounding the lower back.",
+      "fix": "Brace before each rep and use a lighter load.",
+      "claim": "c11"
+    },
+    {
+      "mistake": "Jerking the bar up with momentum.",
+      "fix": "Slow, controlled pulls.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Stopping short at the bottom.",
+      "fix": "Lower until the arms are straight.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "lats",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "biceps",
+        "claim": "c10"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c15"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Between and around the shoulder blades",
+        "means": "Usually means the upper back is doing the rowing.",
+        "fix": null,
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back rounding or straining",
+        "means": "Usually means the brace was lost or the load is too heavy.",
+        "fix": "Brace first and use a lighter load.",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Back pain that gets worse during the set",
+        "means": "The NHS advises stopping exercise when back pain gets worse.",
+        "fix": "Stop the set; see a GP for advice.",
+        "claim": "c19",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "A rounded back strains the lower back and raises the chance of injury.",
+      "claim": "c11"
+    },
+    {
+      "risk": "A lab test found the standing bent-over row loads the lower spine most of three rows tested; likely similar here, though the landmine row was not tested.",
+      "claim": "c15"
+    },
+    {
+      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "landmine-grip",
+      "kind": "hand",
+      "right": "Thumbs wrapped around the bar.",
+      "wrong": "Thumbs alongside the bar, not wrapped.",
+      "claim": "c17"
+    },
+    {
+      "key": "landmine-back",
+      "kind": "posture",
+      "right": "Back straight, torso level, braced.",
+      "wrong": "Lower back rounded over the bar.",
+      "claim": "c11"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "rear_delts"
+    ],
+    "remove": [],
+    "why": "Library primary mid_back and secondary lats, biceps fit (c10: lats, traps, rhomboids primary). Add rear_delts as secondary: c10 lists the rear delts as a secondary muscle. Lower back is shown as a watch feel (c15, inferred) and not proposed for the library list."
+  },
+  "anchorSource": "rep-landmine-row"
+}

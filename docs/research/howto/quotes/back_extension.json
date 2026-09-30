@@ -1,0 +1,322 @@
+{
+  "id": "back_extension",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sl-back-extension",
+      "text": "First, adjust the machine: The top pad should be positioned against the top of your thighs.",
+      "status": "verbatim",
+      "closest": "First, adjust the machine: The top pad should be positioned against the top of your thighs.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "physitrack-back-extension",
+      "text": "Adjust the position of the back extension so that the pads press against the front of your quads, just below your hip bones.",
+      "status": "verbatim",
+      "closest": "Adjust the position of the back extension so that the pads press against the front of your quads, just below your hip bones.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "fitnessvolt-back-extension",
+      "text": "Hyperextensions are a hip hinge movement, but if you adjust the pad too high, you’ll be doing more of a crunch. And rounding your back too much, especially under heavy weight loads, is not recommended.",
+      "status": "verbatim",
+      "closest": "Hyperextensions are a hip hinge movement, but if you adjust the pad too high, you'll be doing more of a crunch. And rounding your back too much, especially under heavy weight loads, is not recommended.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "fitnessvolt-back-extension",
+      "text": "the hip pad should be below the top of the pelvis bone, giving your hips adequate movement.",
+      "status": "verbatim",
+      "closest": "the hip pad should be below the top of the pelvis bone, giving your hips adequate movement.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "sl-back-extension",
+      "text": "To ensure that your hips can bend and your glutes can work properly, make sure to keep the top pad against the top of your thighs.",
+      "status": "verbatim",
+      "closest": "To ensure that your hips can bend and your glutes can work properly, make sure to keep the top pad against the top of your thighs.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "sl-back-extension",
+      "text": "Step onto the machine and position yourself with your feet shoulder-width apart and your upper thighs against the top pad.",
+      "status": "verbatim",
+      "closest": "Step onto the machine and position yourself with your feet shoulder-width apart and your upper thighs against the top pad.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "physitrack-back-extension",
+      "text": "Bend your knees slightly and secure your feet, keeping them in line with your knees.",
+      "status": "verbatim",
+      "closest": "Bend your knees slightly and secure your feet, keeping them in line with your knees.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "sl-back-extension",
+      "text": "Your upper body should be hanging off the edge of the machine, with your arms crossed over your chest or your hands behind your head.",
+      "status": "verbatim",
+      "closest": "Your upper body should be hanging off the edge of the machine, with your arms crossed over your chest or your hands behind your head.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "sl-back-extension",
+      "text": "Hold your hands behind your head to make the exercise harder, or place them on your hips to make it easier.",
+      "status": "verbatim",
+      "closest": "Hold your hands behind your head to make the exercise harder, or place them on your hips to make it easier.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "physitrack-back-extension",
+      "text": "Exhale and move up until your shoulders, spine, and hips are in line.",
+      "status": "verbatim",
+      "closest": "Exhale and move up until your shoulders, spine, and hips are in line.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "physitrack-back-extension",
+      "text": "Squeeze your glutes tight and do not over arch your lower spine.",
+      "status": "verbatim",
+      "closest": "Squeeze your glutes tight and do not over arch your lower spine.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "sl-back-extension",
+      "text": "engage your lower back muscles to lift your upper body until your body forms a straight line.",
+      "status": "verbatim",
+      "closest": "engage your lower back muscles to lift your upper body until your body forms a straight line.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "fitnessvolt-back-extension",
+      "text": "Use your core to stiffen your spine, keep your back completely straight, and focus on hinging at the hips to initiate the movement.",
+      "status": "verbatim",
+      "closest": "Use your core to stiffen your spine, keep your back completely straight, and focus on hinging at the hips to initiate the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "fitnessvolt-back-extension",
+      "text": "Stop when your torso is slightly below parallel to the floor.",
+      "status": "verbatim",
+      "closest": "Stop when your torso is slightly below parallel to the floor.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "sl-back-extension",
+      "text": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position.",
+      "status": "verbatim",
+      "closest": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "sl-back-extension",
+      "text": "Make sure to keep your movements slow and controlled, and don’t use momentum to swing your body up or down.",
+      "status": "verbatim",
+      "closest": "Make sure to keep your movements slow and controlled, and don't use momentum to swing your body up or down.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "fitnessvolt-back-extension",
+      "text": "Not only are you increasing the risk of injury, but there’s no way the target muscles are benefitting as much as they could be.",
+      "status": "verbatim",
+      "closest": "Not only are you increasing the risk of injury, but there's no way the target muscles are benefitting as much as they could be.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "sl-back-extension",
+      "text": "Take a deep breath in, and as you exhale, engage your lower back muscles to lift your upper body until your body forms a straight line.",
+      "status": "verbatim",
+      "closest": "Take a deep breath in, and as you exhale, engage your lower back muscles to lift your upper body until your body forms a straight line.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "fitnessvolt-back-extension",
+      "text": "Start with your body weight only, get good at the movement, and then add weight once you can perform 15 solid reps!",
+      "status": "verbatim",
+      "closest": "Start with your body weight only, get good at the movement, and then add weight once you can perform 15 solid reps!",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "sl-back-extension",
+      "text": "If you can do more than twelve reps using just your own bodyweight, consider adding weight, for example by holding a weight plate against your chest.",
+      "status": "verbatim",
+      "closest": "If you can do more than twelve reps using just your own bodyweight, consider adding weight, for example by holding a weight plate against your chest.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "sl-back-extension",
+      "text": "So, do back extensions hurt your back? If you do too much, too soon, they can. If you start light and gradually increase your training, on the other hand, they will build muscle and make your back stronger.",
+      "status": "verbatim",
+      "closest": "So, do back extensions hurt your back? If you do too much, too soon, they can. If you start light and gradually increase your training, on the other hand, they will build muscle and make your back stronger.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sl-back-extension",
+      "text": "More specifically, it should be a feeling of pump or tiredness in your muscles, not an aching feeling deep in your lower back.",
+      "status": "verbatim",
+      "closest": "More specifically, it should be a feeling of pump or tiredness in your muscles, not an aching feeling deep in your lower back.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sl-back-extension",
+      "text": "If you get back aches after doing back extensions, consider taking a week or two off from training back extensions. When you pick it up again, lower your training volume and weights, revise your form",
+      "status": "verbatim",
+      "closest": "If you get back aches after doing back extensions, consider taking a week or two off from training back extensions. When you pick it up again, lower your training volume and weights, revise your form",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "sl-back-extension",
+      "text": "The back extension is a classic exercise for strengthening your lower back, glutes, and hamstrings.",
+      "status": "verbatim",
+      "closest": "The back extension is a classic exercise for strengthening your lower back, glutes, and hamstrings.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "andersen2021",
+      "text": "For the biceps femoris the Roman chair elicited higher activation compared to both the Romanian deadlift and the seated machine back extension (71-174%).",
+      "status": "verbatim",
+      "closest": "For the biceps femoris the Roman chair elicited higher activation compared to both the Romanian deadlift and the seated machine back extension (71-174%).",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "andersen2021",
+      "text": "The results showed that the Romanian deadlift and the Roman chair back extension activated the gluteus maximus more than the seated machine back extension (94-140%, p < 0.01).",
+      "status": "verbatim",
+      "closest": "The results showed that the Romanian deadlift and the Roman chair back extension activated the gluteus maximus more than the seated machine back extension (94-140%, p < 0.01).",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "andersen2021",
+      "text": "There were no differences in activation of the erector spinae between the three exercises (p = 1.00).",
+      "status": "verbatim",
+      "closest": "There were no differences in activation of the erector spinae between the three exercises (p = 1.00).",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "lariviere2011",
+      "text": "In both groups, EMG revealed clear evidence of muscle fatigue for the gluteus maximus, less clear evidence of fatigue for the lower back muscles, and motor unit recruitment (without fatigue) for the upper back muscles and biceps femoris.",
+      "status": "verbatim",
+      "closest": "In both groups, EMG revealed clear evidence of muscle fatigue for the gluteus maximus, less clear evidence of fatigue for the lower back muscles, and motor unit recruitment (without fatigue) for the upper back muscles and biceps femoris.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "mayer1999",
+      "text": "EMG activity increased progressively among hand positions and as the VARC angle became more horizontal.",
+      "status": "verbatim",
+      "closest": "EMG activity increased progressively among hand positions and as the VARC angle became more horizontal.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "Call 999 or go to A&E if:",
+      "status": "verbatim",
+      "closest": "Call 999 or go to A&E if:",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "pain, tingling, weakness or numbness in both legs",
+      "status": "verbatim",
+      "closest": "pain, tingling, weakness or numbness in both legs",
+      "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "a loss of feeling around your genitals or anus",
+      "status": "verbatim",
+      "closest": "a loss of feeling around your genitals or anus",
+      "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "See a GP if:",
+      "status": "verbatim",
+      "closest": "See a GP if:",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "it does not improve after treating it at home for a few weeks",
+      "status": "verbatim",
+      "closest": "it does not improve after treating it at home for a few weeks",
+      "note": "list formatting (list rendered as running text)"
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-back-extension",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none (card title is a label; page title is 'How to Do Back Extensions: Muscles Worked & Proper Form')"
+    },
+    {
+      "id": "physitrack-back-extension",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "fitnessvolt-back-extension",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "andersen2021",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "lariviere2011",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "mayer1999",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "nhs-back-pain",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none"
+    }
+  ]
+}
