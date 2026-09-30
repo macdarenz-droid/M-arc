@@ -1,0 +1,582 @@
+{
+  "id": "shoulder_press",
+  "libId": "lib_shoulder_press",
+  "name": "Shoulder Press",
+  "family": "Overhead press, machine (difference card of machine_chest_press, mode D per LIB-HT 6.2)",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "seat-back"
+    ]
+  },
+  "parent": "machine_chest_press",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because ACE gives the same full grip with the thumbs clasped around the handles for the machine shoulder press (c2) as for the machine chest press, and the thumb does the same job of keeping the handle out of the fingers."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because the press still runs along the forearm into the heel of the palm (push archetype, loadAxis along-forearm); only the direction changes from forward to up."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because ACE asks for the same neutral wrist, in line with the forearm, at the start and all the way up (c2, c5)."
+    },
+    {
+      "field": "setup['Pick the weight. Start lighter than you think; if you have to bend your wrist back to hold it, it is too heavy.']",
+      "why": "true for this child because the wrist-fold fault it guards against comes from the same handle, grip and push line."
+    },
+    {
+      "field": "zooms['hand']",
+      "why": "true for this child because the hand on the handle and the bent-back-wrist fault look the same; the forearm is simply vertical instead of horizontal."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit with the back firmly against the backrest and set the seat so the handles are level with, or just higher than, the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-shoulder-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shoulder-press",
+          "text": "Sit with your back firmly supported against the backrest. Adjust the seat height so that the handles are level with your shoulders or just higher than your shoulders.",
+          "where": "step 1, starting position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hold the handles firmly with a full grip, thumbs wrapped, wrists in line with the forearms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-shoulder-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shoulder-press",
+          "text": "Grasp the handles firmly with a full grip (thumbs clasped around the handles) and maintain a neutral wrist position (i.e., wrists in line with your forearms).",
+          "where": "step 1, starting position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The elbows sit slightly in front of the body (the 4 and 8 o'clock position), not straight out to the sides.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-shoulder-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shoulder-press",
+          "text": "Position your elbows in the 4 and 8 o'clock position (i.e., slightly forward than the 3 and 9 o'clock positions where the elbows are aligned with the midline of your trunk).",
+          "where": "step 1, starting position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Feet planted; brace the stomach and keep the natural low-back curve without pressing the low back into the pad and without arching; shoulders held back and down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-shoulder-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shoulder-press",
+          "text": "Position your feet firmly on the floor or on the foot rests to stabilize your body.",
+          "where": "step 1, starting position"
+        },
+        {
+          "source": "ace-shoulder-press",
+          "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, but do not press your low back into the backrest. Maintain the natural arch in your low back and avoid arching your back throughout the exercise.",
+          "where": "step 1, starting position"
+        },
+        {
+          "source": "ace-shoulder-press",
+          "text": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+          "where": "step 1, starting position"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Breathe out and press slowly up, head in line with the spine and without arching the low back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-shoulder-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shoulder-press",
+          "text": "Gently exhale and slowly perform an upward pressing movement, extending your elbows overhead while maintaining a neutral wrist position, head aligned with your spine and avoidng arching your low back.",
+          "where": "step 2"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Press until the elbows are straight but not locked, pause, then lower slowly, using the back muscles to draw the handles down rather than letting them drop, because the shoulder is relatively unstable overhead.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-shoulder-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shoulder-press",
+          "text": "Continue pressing until your elbows are fully extended, but not locked.",
+          "where": "step 3"
+        },
+        {
+          "source": "ace-shoulder-press",
+          "text": "In the overhead position, the shoulder is relatively unstable. To protect your shoulder it is important to engage your lats (back muscles) to initiate the downward movement as oppsed to simply yielding to gravity.",
+          "where": "note"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Pointing the elbows forward on the close handles shifts load from the shoulders to the triceps; ACE calls it more comfortable for people who feel discomfort in the standard press.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-close-shoulder-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-close-shoulder-press",
+          "text": "This position shifts more of the load into the triceps and away from the shoulders.",
+          "where": "step 1, starting position"
+        },
+        {
+          "source": "ace-close-shoulder-press",
+          "text": "This position is more comfortable and less stressful on the shoulders and more appropriate for individuals who experience some discomfort when performing traditional shoulder presses as it shifts more load into the triceps.",
+          "where": "note"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "In the seated barbell press, the widest range (elbows fully straight at the top) raised activity in the shoulder muscles, triceps and trapezius compared with stopping at 90 degrees.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "paoli2010"
+      ],
+      "quotes": [
+        {
+          "source": "paoli2010",
+          "text": "The results showed that the use of the widest ROM increased the EMG activity of all the muscles selected with respect to the closest one",
+          "where": "abstract"
+        },
+        {
+          "source": "paoli2010",
+          "text": "Electromyographic surface electrodes were placed on the clavicular head of pectoralis major, anterior deltoid, medial deltoid (MD), posterior deltoid (PD), upper trapezius, middle trapezius (MT), long head of triceps, and teres minor (TM).",
+          "where": "abstract, methods"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "On a machine shoulder press, focusing on the deltoids raised deltoid activity and focusing on the triceps raised triceps activity, while upper trapezius activity did not change.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kim2026"
+      ],
+      "quotes": [
+        {
+          "source": "kim2026",
+          "text": "Post hoc analysis showed that DT activity was higher in the DT-focused condition, whereas TB activity was higher in the TB-focused condition (p < 0.001). UT activity did not differ across conditions (p > 0.05).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "In barbell military presses the front delt was very active, while the upper (clavicular) chest was mostly inactive in almost all versions. Barbell data, applied to the machine by similarity; it conflicts with c8, which recorded the upper chest working.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "bull2010"
+      ],
+      "quotes": [
+        {
+          "source": "bull2010",
+          "text": "The results showed high inactivity for PMC in almost all the modalities while DA developed very high levels of action potentials in all the modalities assessed.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Blood pressure rises to extreme values during heavy overhead presses taken to failure, partly from holding the breath (Valsalva).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum. Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "A moderate speed of about 1-2 seconds each way is the general recommendation, and load goes up by 2-10% once the target reps are beaten by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-shoulder-press",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/186/seated-shoulder-press/",
+      "title": "Seated Shoulder Press (ACE exercise library; machine)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-close-shoulder-press",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/187/seated-machine-close-grip-shoulder-press/",
+      "title": "Seated Machine Close-Grip Shoulder Press (ACE exercise library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "paoli2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508462/",
+      "title": "Influence of different ranges of motion on selective recruitment of shoulder muscles in the sitting military press: an electromyographic study",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": 20508462,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kim2026",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42194886/",
+      "title": "Effects of Mind-Muscle Connection on Muscle Activity During Machine-Based Shoulder Press in Untrained Individuals",
+      "kind": "peer-reviewed",
+      "year": 2026,
+      "pmid": 42194886,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "bull2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20718330/",
+      "title": "Electromyographic validation of the muscles deltoid (anterior portion) and pectoralis major (clavicular portion) in military press exercises with open grip",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": 20718330,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The press is vertical in the sagittal plane and the plate fault, the low back arching off the pad (c4, c5), reads only from the side. The 4-and-8 o'clock elbow position (c3) is a top-view detail and goes to text.",
+    "equipment": "Seated shoulder press machine: upright back pad, seat, pivot-arm handles that start at or just above shoulder height (c1) and travel up (census: same lever primitive, overhead arm path).",
+    "start": "Seated upright, back on the pad with the natural low-back curve (c1, c4); feet planted (c4); handles level with or just above the shoulders (c1); elbows bent under the hands and slightly in front of the trunk (c3); wrists straight (c2).",
+    "end": "Arms overhead, elbows straight but not locked (c6); head in line with the spine (c5); low-back curve unchanged, no arch (c4, c5); shoulders still down (c4).",
+    "checkpoints": [
+      {
+        "label": "Handles at shoulders",
+        "what": "The seat puts the handles level with or just above the shoulders at the start.",
+        "claim": "c1"
+      },
+      {
+        "label": "No back arch",
+        "what": "The low back keeps its natural curve against the pad and does not arch as you press.",
+        "claim": "c4"
+      },
+      {
+        "label": "Soft elbows overhead",
+        "what": "The press ends with the elbows straight but not locked.",
+        "claim": "c6"
+      }
+    ],
+    "mistake": {
+      "what": "Arching the low back off the pad to push the handles up.",
+      "why": "ACE warns against it three times, at the start, during the press and in the setup; it moves the effort from the shoulders into the low back.",
+      "claim": "c5",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Low-back curve unchanged at the top",
+        "claim": "c4"
+      },
+      {
+        "text": "Handles drawn down, not dropped",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Full grip on the machine's handles (c2). Wide handles with the elbows at 4 and 8 o'clock are drawn (c3); the close neutral handles are the shoulder-friendlier option (c7).",
+    "width": "Set by the machine's handle pair; elbows slightly in front of the trunk (c3).",
+    "thumb": "Inherited from the parent (wrapped, c2).",
+    "handContact": "Inherited from the parent.",
+    "wrist": "Inherited from the parent (neutral, c2).",
+    "claims": [
+      "c2",
+      "c3",
+      "c7"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the seat so the handles are level with or just above your shoulders.",
+      "claim": "c1"
+    },
+    {
+      "step": "Sit back against the pad, feet planted.",
+      "claim": "c4"
+    },
+    {
+      "step": "Take the handles with a full grip, thumbs round, wrists straight.",
+      "claim": "c2"
+    },
+    {
+      "step": "Brace, keep the natural low-back curve, shoulders back and down.",
+      "claim": "c4"
+    },
+    {
+      "step": "If the standard press bothers your shoulders, use the close handles with the elbows pointing forward.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Elbows slightly in front of the body, not straight out to the sides.",
+      "claim": "c3"
+    },
+    {
+      "point": "Breathe out as you press; don't hold your breath through the set.",
+      "claim": "c5"
+    },
+    {
+      "point": "Head in line with the spine.",
+      "claim": "c5"
+    },
+    {
+      "point": "No arching of the low back.",
+      "claim": "c4"
+    },
+    {
+      "point": "Elbows straight but not locked at the top.",
+      "claim": "c6"
+    },
+    {
+      "point": "Draw the handles down slowly with the back muscles.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Arching the low back off the pad to finish the press.",
+      "fix": "Brace and keep the natural curve. If you can only finish by arching, the weight is too heavy: lower it.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Letting the handles drop on the way down.",
+      "fix": "Draw them down slowly with your back muscles.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Snapping the elbows locked overhead.",
+      "fix": "Stop just before the elbows lock, pause, then lower.",
+      "claim": "c6"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "side_delts",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "upper_chest",
+        "claim": "c8"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c4"
+      },
+      {
+        "muscleId": "lower_back",
+        "claim": "c5"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front or top of the shoulder, sharp or pinching",
+        "means": "The shoulder is unstable overhead; the handles may be dropping or the elbows flared.",
+        "fix": "Lower the weight, draw the handles down slowly, and try the close handles with elbows forward.",
+        "claim": "c6",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Lower back",
+        "means": "You are arching off the pad to push the weight up.",
+        "fix": "Brace, keep the natural curve, lower the weight.",
+        "claim": "c5",
+        "redFlag": "back"
+      },
+      {
+        "where": "Neck and top of the shoulders",
+        "means": "The shoulders are shrugging up.",
+        "fix": "Set the shoulders back and down before the first rep and keep them there.",
+        "claim": "c4",
+        "redFlag": null
+      },
+      {
+        "where": "Elbows",
+        "means": "You are snapping the elbows locked at the top.",
+        "fix": "Stop just short of lockout.",
+        "claim": "c6",
+        "redFlag": "elbow"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "The shoulder is relatively unstable overhead; lower under control, never let the handles drop.",
+      "claim": "c6"
+    },
+    {
+      "risk": "Arching the low back to finish reps moves load into the lower back.",
+      "claim": "c5"
+    },
+    {
+      "risk": "Holding the breath through hard overhead presses sends blood pressure very high.",
+      "claim": "c11"
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "back",
+    "elbow"
+  ],
+  "zooms": [
+    {
+      "key": "low back",
+      "kind": "posture",
+      "right": "Natural low-back curve against the pad, arms overhead, elbows soft.",
+      "wrong": "Low back arched away from the pad, ribs flared, head pushed forward.",
+      "claim": "c5"
+    },
+    {
+      "key": "seat height",
+      "kind": "posture",
+      "right": "Handles level with or just above the shoulders at the start.",
+      "wrong": "Seat so low the handles start well above the head, or so high they start below the shoulders.",
+      "claim": "c1"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json lists front_delts and side_delts primary, triceps and upper_chest secondary. c8, c9 and c10 support the delts and triceps. For upper_chest the evidence conflicts (c8 recorded it, c10 found it mostly inactive, both barbell), so the library entry is left as is and the conflict flagged for the critic."
+  },
+  "anchorSource": "ace-shoulder-press",
+  "tierA": {
+    "wayOut": "NOT SOURCED. No source read for this card says how to fail a rep safely on a shoulder press machine. Left out of the sheet until one is found (content.md 5.2).",
+    "thumb": "Wrapped, full grip (c2); no thumbless option offered.",
+    "loadWording": "Every fix where load causes the fault says to lower the weight (c5); no fix says to push through pain.",
+    "warningLink": "Shoulder row links the shoulder box (c6).",
+    "risks": "Three risk lines, including the shared breath line (c11).",
+    "loadProgression": "2-10% once the target reps are beaten by one or two (c12)."
+  },
+  "notes": "Mode D per the plan: derived from the machine chest press plate. content.md appendix A lists shoulder_press as a parent on its own; the supervisor's brief makes it a difference card of machine_chest_press, and the shared parts (same push hand and lever primitive) justify the inherit lines above. ACE's text has typos ('avoidng', 'oppsed'), kept verbatim in quotes. The EMG claims come from barbell seated presses (Paoli 2010, Bull 2010), tagged MECH or WEAK, and one machine study (Kim 2026). No source was found for a safe way to fail a rep (tier-A way out)."
+}

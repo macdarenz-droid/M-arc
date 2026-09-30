@@ -1,0 +1,466 @@
+{
+  "id": "incline_machine_press",
+  "libId": "lib_incline_machine_press",
+  "name": "Incline Machine Press",
+  "family": "Horizontal press, machine (difference card of machine_chest_press)",
+  "tier": "C",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "seat-back"
+    ]
+  },
+  "parent": "machine_chest_press",
+  "inherit": [
+    {
+      "field": "grip.type",
+      "why": "true for this child because it uses the same kind of pivot-arm handles held with a full, closed grip, and the incline guideline asks for the same neutral wrist (c1); only the direction of the push changes."
+    },
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the thumb's job is the same (stop the handle rolling into the fingers) and ACE's machine presses all ask for the thumbs round the handles; the incline press loads the handle along the forearm the same way (c1)."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because the load still runs along the forearm into the heel of the palm (push archetype, loadAxis along-forearm); tilting the push path upward does not move it across the hand."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the incline guideline asks for wrists in line with the forearms throughout (c1), the parent's target."
+    },
+    {
+      "field": "setup['Pick the weight. Start lighter than you think; if you have to bend your wrist back to hold it, it is too heavy.']",
+      "why": "true for this child because the wrist-fold fault it prevents comes from the same handle and grip."
+    },
+    {
+      "field": "setup['If the machine has a foot bar, use it to bring the handles out to the start and to take them back at the end, instead of pulling a heavy handle in with bent wrists.']",
+      "why": "true for this child because incline lever machines can carry the same foot bar; the step applies only where one exists, as in the parent."
+    },
+    {
+      "field": "posture['Straight wrist, forearm behind the handle']",
+      "why": "true for this child because the same neutral-wrist rule is given for the incline press (c1)."
+    },
+    {
+      "field": "posture['Feet flat, hips back']",
+      "why": "true for this child because the incline guideline also has the feet planted and the back supported against the backrest (c1, c4)."
+    },
+    {
+      "field": "zooms['hand']",
+      "why": "true for this child because the hand, handle and force line are the same; the owner's bent-back-wrist fault looks identical."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit with the back supported, set the handles level with the shoulders if adjustable, and hold them with the hands level with the upper chest or shoulders, wrists in line with the forearms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Sit with your back firmly supported against the backrest. If adjustable, align the handles level with your shoulder. Grasp the handles and position your hands level with your upper chest or shoulders, maintaining a neutral wrist position (i.e., wrists in line with your forearms).",
+          "where": "starting position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The press goes up and forward until the hands are about level with the forehead or top of the head, with the back and shoulder blades kept on the backrest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Gently exhale and perform a pressing movement, extending your arms forward to a level with your forehead or top of your head. Continue to maintain a neutral wrist position, and contact with your back and shoulder blades against the backrest.",
+          "where": "step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Press until the elbows are straight but not locked, pause, then lower slowly until the handles lightly touch or come close to the upper chest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner, moving the handles back towards your upper chest, stopping when they lightly touch, or are close to, your upper chest.",
+          "where": "step 3"
+        },
+        {
+          "source": "ace-incline-press",
+          "text": "Continue pressing until your elbows are fully extended, but not locked.",
+          "where": "step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Brace the stomach and keep the natural low-back curve without pressing the low back into the pad or arching; shoulders held back and down all set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, but do not press your low back into the backrest. Maintain the natural arch in your low back and avoid arching your back throughout the exercise.",
+          "where": "starting position"
+        },
+        {
+          "source": "ace-incline-press",
+          "text": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+          "where": "starting position"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The shoulder blades must not round forward off the pad; on the flat machine press ACE says people very often press until they do. The frequency is stated for the flat press and applied here by similarity.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-incline-press",
+        "ace-chest-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Do not allow your back to bend, avoid the rounding of your shoulder blades and maintain stability of your head during the movement.",
+          "where": "step 2"
+        },
+        {
+          "source": "ace-chest-press",
+          "text": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest.",
+          "where": "note"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "On a barbell bench press, the upper chest was most active at a 30 degree incline, the middle and lower chest at flat, the front delts most at 60 degrees, and the triceps the same at every angle. Bench press data, applied to the incline machine by similarity.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "rodriguezridao2020"
+      ],
+      "quotes": [
+        {
+          "source": "rodriguezridao2020",
+          "text": "The results showed that the maximal EMG activity for PMUP occurred at a bench inclination of 30°. PMMP and PMLP showed higher EMG activity at a 0° bench inclination. AD had the highest EMG activity at 60°. TB showed similar EMG activities at all bench inclinations.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Steeper than 45 degrees, the bench press shifted work toward the front delts and away from the chest. Bench press data, applied here by similarity.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "rodriguezridao2020"
+      ],
+      "quotes": [
+        {
+          "source": "rodriguezridao2020",
+          "text": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "A moderate speed of about 1-2 seconds each way is the general recommendation, and load goes up by 2-10% once the target reps are beaten by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-incline-press",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+      "title": "Seated Incline Cable Press (ACE exercise library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-chest-press",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
+      "title": "Seated Chest Press (ACE exercise library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "rodriguezridao2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33049982/",
+      "title": "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": 33049982,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Same as the parent: the push line, the handle height at the chest and the shoulder blades on the pad (the plate fault, c5) all read from the side.",
+    "equipment": "Pivot-arm press machine with the arm path angled upward, reclined back pad and seat (census: same lever primitive as the parent, inclined arm path).",
+    "start": "Back and shoulder blades on the pad (c2, c4); feet planted (c1); handles and hands level with the upper chest or shoulders (c1); elbows bent below and behind the handles; wrists straight (c1).",
+    "end": "Arms extended up and forward, hands about level with the forehead (c2); elbows straight but not locked (c3); shoulder blades still on the pad (c2, c5).",
+    "checkpoints": [
+      {
+        "label": "Upper-chest start",
+        "what": "At the start the hands sit level with the upper chest or shoulders.",
+        "claim": "c1"
+      },
+      {
+        "label": "Blades on pad",
+        "what": "Back and shoulder blades stay on the pad through the whole press.",
+        "claim": "c5"
+      },
+      {
+        "label": "Soft elbows",
+        "what": "The press ends with the elbows straight but not locked, hands about forehead height.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Shoulder blades roll forward off the pad at the top of the press.",
+      "why": "ACE names it as very frequent on the machine chest press and tells you to avoid it on the incline press; the shoulder loses its base.",
+      "claim": "c5",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Blades still on the pad at the top",
+        "claim": "c5"
+      },
+      {
+        "text": "Hands finish near forehead height",
+        "claim": "c2"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c8"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Inherited from the parent.",
+    "width": "Set by the machine; the parent's width rule (hands just outside the shoulders, forearm behind the handle) is not inherited because the incline guideline does not give one.",
+    "thumb": "Inherited from the parent.",
+    "handContact": "Inherited from the parent.",
+    "wrist": "Inherited from the parent.",
+    "claims": [
+      "c1"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the seat or handles so the hands start level with the upper chest or shoulders.",
+      "claim": "c1"
+    },
+    {
+      "step": "Sit back with the back supported and feet planted.",
+      "claim": "c1"
+    },
+    {
+      "step": "Brace, keep the natural low-back curve, shoulders back and down.",
+      "claim": "c4"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Hands start at the upper chest.",
+      "claim": "c1"
+    },
+    {
+      "point": "Press up and forward to about forehead height.",
+      "claim": "c2"
+    },
+    {
+      "point": "Back and shoulder blades on the pad all set.",
+      "claim": "c5"
+    },
+    {
+      "point": "Elbows straight but not locked at the top.",
+      "claim": "c3"
+    },
+    {
+      "point": "Slow way down until the handles are close to the upper chest.",
+      "claim": "c3"
+    },
+    {
+      "point": "No arching of the lower back.",
+      "claim": "c4"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Rolling the shoulder blades forward off the pad to finish the press.",
+      "fix": "Stop the press with the blades still on the pad. If you can only finish by rolling forward, the weight is too heavy.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Arching the lower back off the pad.",
+      "fix": "Brace the stomach and keep only the natural low-back curve; lower the weight if you have to arch.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Snapping the elbows locked at the top.",
+      "fix": "Stop just before the elbows lock, pause, lower slowly.",
+      "claim": "c3"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "upper_chest",
+        "claim": "c6"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c6"
+      },
+      {
+        "muscleId": "triceps",
+        "claim": "c6"
+      },
+      {
+        "muscleId": "chest",
+        "claim": "c6"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c7"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the shoulders",
+        "means": "The shoulder blades are rolling off the pad at the top.",
+        "fix": "Keep the blades on the pad and stop the press there.",
+        "claim": "c5",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Lower back",
+        "means": "You are arching off the pad to finish reps.",
+        "fix": "Brace, normal low-back curve, lighter weight.",
+        "claim": "c4",
+        "redFlag": null
+      },
+      {
+        "where": "Elbows",
+        "means": "You are snapping the elbows locked.",
+        "fix": "Stop just short of lockout.",
+        "claim": "c3",
+        "redFlag": "elbow"
+      },
+      {
+        "where": "Wrist",
+        "means": "The wrist is bending back instead of staying in line with the forearm.",
+        "fix": "Straighten the wrist and lower the weight until it stays straight.",
+        "claim": "c1",
+        "redFlag": "wrist"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Rolling the shoulder blades off the pad takes away the shoulder's stable base.",
+      "claim": "c5"
+    },
+    {
+      "risk": "Arching the lower back to finish heavy reps.",
+      "claim": "c4"
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "elbow",
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "shoulder blades",
+      "kind": "posture",
+      "right": "Blades flat on the pad, arms long, elbows soft, hands at forehead height.",
+      "wrong": "Upper back rounded off the pad, elbows locked.",
+      "claim": "c5"
+    },
+    {
+      "key": "start height",
+      "kind": "posture",
+      "right": "Handles level with the upper chest at the start.",
+      "wrong": "Handles at mid-chest or lower, which turns the press flat.",
+      "claim": "c1"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json lists upper_chest primary and front_delts, triceps, chest secondary; c6 supports this (bench-press data, MECH). No change."
+  },
+  "anchorSource": "ace-incline-press",
+  "notes": "The anchor is ACE's seated incline press on a cable machine, the closest exercise-specific guideline found; its setup and path lines apply to a lever incline machine, but its closing note about cable freedom does not, and is not used. No EMG study of an incline chest press machine was found; the feel spec rests on bench-press inclination data (Rodriguez-Ridao 2020), tagged MECH. The machine's own incline is fixed, so the >45 degree finding (c7) informs the watch muscle only, not a setup step. The wrist feel row is re-sourced here (c1), not inherited."
+}

@@ -1,0 +1,133 @@
+{
+  "id": "shoulder_press",
+  "checked": "2026-09-30",
+  "sourceFixes": [],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-shoulder-press",
+      "quote": "Sit with your back firmly supported against the backrest. Adjust the seat height so that the handles are level with your shoulders or just higher than your shoulders.",
+      "status": "verbatim",
+      "closest": "Sit with your back firmly supported against the backrest. Adjust the seat height so that the handles are level with your shoulders or just higher than your shoulders."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-shoulder-press",
+      "quote": "Grasp the handles firmly with a full grip (thumbs clasped around the handles) and maintain a neutral wrist position (i.e., wrists in line with your forearms).",
+      "status": "verbatim",
+      "closest": "Grasp the handles firmly with a full grip (thumbs clasped around the handles) and maintain a neutral wrist position (i.e., wrists in line with your forearms)."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-shoulder-press",
+      "quote": "Position your elbows in the 4 and 8 o'clock position (i.e., slightly forward than the 3 and 9 o'clock positions where the elbows are aligned with the midline of your trunk).",
+      "status": "verbatim",
+      "closest": "Position your elbows in the 4 and 8 o'clock position (i.e., slightly forward than the 3 and 9 o'clock positions where the elbows are aligned with the midline of your trunk)."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-shoulder-press",
+      "quote": "Position your feet firmly on the floor or on the foot rests to stabilize your body.",
+      "status": "verbatim",
+      "closest": "Position your feet firmly on the floor or on the foot rests to stabilize your body."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-shoulder-press",
+      "quote": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, but do not press your low back into the backrest. Maintain the natural arch in your low back and avoid arching your back throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, but do not press your low back into the backrest. Maintain the natural arch in your low back and avoid arching your back throughout the exercise."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-shoulder-press",
+      "quote": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-shoulder-press",
+      "quote": "Gently exhale and slowly perform an upward pressing movement, extending your elbows overhead while maintaining a neutral wrist position, head aligned with your spine and avoidng arching your low back.",
+      "status": "verbatim",
+      "closest": "Gently exhale and slowly perform an upward pressing movement, extending your elbows overhead while maintaining a neutral wrist position, head aligned with your spine and avoidng arching your low back."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-shoulder-press",
+      "quote": "Continue pressing until your elbows are fully extended, but not locked.",
+      "status": "verbatim",
+      "closest": "Continue pressing until your elbows are fully extended, but not locked."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-shoulder-press",
+      "quote": "In the overhead position, the shoulder is relatively unstable. To protect your shoulder it is important to engage your lats (back muscles) to initiate the downward movement as oppsed to simply yielding to gravity.",
+      "status": "verbatim",
+      "closest": "In the overhead position, the shoulder is relatively unstable. To protect your shoulder it is important to engage your lats (back muscles) to initiate the downward movement as oppsed to simply yielding to gravity."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-close-shoulder-press",
+      "quote": "This position shifts more of the load into the triceps and away from the shoulders.",
+      "status": "verbatim",
+      "closest": "This position shifts more of the load into the triceps and away from the shoulders."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-close-shoulder-press",
+      "quote": "This position is more comfortable and less stressful on the shoulders and more appropriate for individuals who experience some discomfort when performing traditional shoulder presses as it shifts more load into the triceps.",
+      "status": "verbatim",
+      "closest": "This position is more comfortable and less stressful on the shoulders and more appropriate for individuals who experience some discomfort when performing traditional shoulder presses as it shifts more load into the triceps."
+    },
+    {
+      "claim": "c8",
+      "source": "paoli2010",
+      "quote": "The results showed that the use of the widest ROM increased the EMG activity of all the muscles selected with respect to the closest one",
+      "status": "verbatim",
+      "closest": "The results showed that the use of the widest ROM increased the EMG activity of all the muscles selected with respect to the closest one"
+    },
+    {
+      "claim": "c8",
+      "source": "paoli2010",
+      "quote": "Electromyographic surface electrodes were placed on the clavicular head of pectoralis major, anterior deltoid, medial deltoid (MD), posterior deltoid (PD), upper trapezius, middle trapezius (MT), long head of triceps, and teres minor (TM).",
+      "status": "verbatim",
+      "closest": "Electromyographic surface electrodes were placed on the clavicular head of pectoralis major, anterior deltoid, medial deltoid (MD), posterior deltoid (PD), upper trapezius, middle trapezius (MT), long head of triceps, and teres minor (TM)."
+    },
+    {
+      "claim": "c9",
+      "source": "kim2026",
+      "quote": "Post hoc analysis showed that DT activity was higher in the DT-focused condition, whereas TB activity was higher in the TB-focused condition (p < 0.001). UT activity did not differ across conditions (p > 0.05).",
+      "status": "verbatim",
+      "closest": "Post hoc analysis showed that DT activity was higher in the DT-focused condition, whereas TB activity was higher in the TB-focused condition (p < 0.001). UT activity did not differ across conditions (p > 0.05)."
+    },
+    {
+      "claim": "c10",
+      "source": "bull2010",
+      "quote": "The results showed high inactivity for PMC in almost all the modalities while DA developed very high levels of action potentials in all the modalities assessed.",
+      "status": "verbatim",
+      "closest": "The results showed high inactivity for PMC in almost all the modalities while DA developed very high levels of action potentials in all the modalities assessed."
+    },
+    {
+      "claim": "c11",
+      "source": "macdougall1985",
+      "quote": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum. Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+      "status": "verbatim",
+      "closest": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum. Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    }
+  ]
+}

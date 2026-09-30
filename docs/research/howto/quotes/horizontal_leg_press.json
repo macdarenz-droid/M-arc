@@ -1,0 +1,133 @@
+{
+  "id": "horizontal_leg_press",
+  "checked": "2026-09-30",
+  "sourceFixes": [],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-seated-leg-press",
+      "quote": "Sit in the machine, positioning your back and sacrum (tailbone) flat against the machine's backrest. Place your feet on the resistance plate, toes pointing forward and adjust your seat and foot position so that the bend in your knees is at approximately 90 degrees with your heels flat.",
+      "status": "verbatim",
+      "closest": "Sit in the machine, positioning your back and sacrum (tailbone) flat against the machine's backrest. Place your feet on the resistance plate, toes pointing forward and adjust your seat and foot position so that the bend in your knees is at approximately 90 degrees with your heels flat."
+    },
+    {
+      "claim": "c1",
+      "source": "webmd-seated-leg-press",
+      "quote": "Your toes should point forward, and your seat should be adjusted along with the foot position in a way that bends the knees at about 90 degrees.",
+      "status": "verbatim",
+      "closest": "Your toes should point forward, and your seat should be adjusted along with the foot position in a way that bends the knees at about 90 degrees."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-seated-leg-press",
+      "quote": "Lightly grasp any available handles to stabilize your upper extremity.",
+      "status": "verbatim",
+      "closest": "Lightly grasp any available handles to stabilize your upper extremity."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-seated-leg-press",
+      "quote": "Contract (“brace”) your abdominal muscles to stabilize your spine, be careful to avoid movement in your low back throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Contract (“brace”) your abdominal muscles to stabilize your spine, be careful to avoid movement in your low back throughout the exercise."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-seated-leg-press",
+      "quote": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings.",
+      "status": "verbatim",
+      "closest": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-seated-leg-press",
+      "quote": "Do not hyperextend (lock-out) your knees and avoid lifting your butt off the seat pad or rounding out your low back.",
+      "status": "verbatim",
+      "closest": "Do not hyperextend (lock-out) your knees and avoid lifting your butt off the seat pad or rounding out your low back."
+    },
+    {
+      "claim": "c4",
+      "source": "webmd-seated-leg-press",
+      "quote": "When you are performing a leg press, you should stop just short of a full knee extension while pushing on the platform.",
+      "status": "verbatim",
+      "closest": "When you are performing a leg press, you should stop just short of a full knee extension while pushing on the platform."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-seated-leg-press",
+      "quote": "Do not allow your upper thighs to compress your ribcage.",
+      "status": "verbatim",
+      "closest": "Do not allow your upper thighs to compress your ribcage."
+    },
+    {
+      "claim": "c5",
+      "source": "webmd-seated-leg-press",
+      "quote": "When returning to the start position, do not let your thigh lower to below the 90-degree level at the knee. If the thighs dip too low, you could hurt the knees.",
+      "status": "verbatim",
+      "closest": "When returning to the start position, do not let your thigh lower to below the 90-degree level at the knee. If the thighs dip too low, you could hurt the knees."
+    },
+    {
+      "claim": "c6",
+      "source": "webmd-seated-leg-press",
+      "quote": "It is vital to allow your kneecaps to go through the path of the feet during your exercise. If you bring the knees too close together it can also injure the knee.",
+      "status": "verbatim",
+      "closest": "It is vital to allow your kneecaps to go through the path of the feet during your exercise. If you bring the knees too close together it can also injure the knee."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-seated-leg-press",
+      "quote": "Improper technique can lead to injury. Control the extension phase by keeping your heels in contact with the plate and avoid locking out your knees.",
+      "status": "verbatim",
+      "closest": "Improper technique can lead to injury. Control the extension phase by keeping your heels in contact with the plate and avoid locking out your knees."
+    },
+    {
+      "claim": "c8",
+      "source": "barnds2019",
+      "quote": "The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise.",
+      "status": "verbatim",
+      "closest": "The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise."
+    },
+    {
+      "claim": "c9",
+      "source": "tassi1998",
+      "quote": "The rectus femoris showed a similar activity both in the upper and lower platforms.",
+      "status": "verbatim",
+      "closest": "The rectus femoris showed a similar activity both in the upper and lower platforms."
+    },
+    {
+      "claim": "c9",
+      "source": "tassi1999",
+      "quote": "The gastrocnemius muscle showed strong potentials at the end of knee extension and beginning of knee flexion.",
+      "status": "verbatim",
+      "closest": "The gastrocnemius muscle showed strong potentials at the end of knee extension and beginning of knee flexion."
+    },
+    {
+      "claim": "c10",
+      "source": "escamilla2001",
+      "quote": "Because all forces increased with knee flexion, training within the functional 0-50 degrees range may be efficacious for those whose goal is to minimize knee forces.",
+      "status": "verbatim",
+      "closest": "Because all forces increased with knee flexion, training within the functional 0-50 degrees range may be efficacious for those whose goal is to minimize knee forces."
+    },
+    {
+      "claim": "c11",
+      "source": "macdougall1985",
+      "quote": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+      "status": "verbatim",
+      "closest": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    }
+  ]
+}

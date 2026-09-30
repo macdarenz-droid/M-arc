@@ -1,0 +1,126 @@
+{
+  "id": "chest_supported_row",
+  "checked": "2026-09-30",
+  "sourceFixes": [],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-row-machine",
+      "quote": "Adjust the seat height to a level that positions the machine handles approximately level, or near level, with your shoulders. Position your feet firmly on the floor or foot pads to stabilize your body.",
+      "status": "verbatim",
+      "closest": "Adjust the seat height to a level that positions the machine handles approximately level, or near level, with your shoulders. Position your feet firmly on the floor or foot pads to stabilize your body."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-row-machine",
+      "quote": "Sit upright and extend your arms to grasp the handles without rounding your shoulders forward. Adjust the position the chest pad to contact your chest lightly.",
+      "status": "verbatim",
+      "closest": "Sit upright and extend your arms to grasp the handles without rounding your shoulders forward. Adjust the position the chest pad to contact your chest lightly."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-row-machine",
+      "quote": "Depress and retract your scapulae (pull shoulders back and down), maintain a neutral wrist position (i.e., wrist in line with your forearms) and attempt to hold these positions throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Depress and retract your scapulae (pull shoulders back and down), maintain a neutral wrist position (i.e., wrist in line with your forearms) and attempt to hold these positions throughout the exercise."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-row-machine",
+      "quote": "Flex (bend) your elbows and pull them towards your chest keeping your elbows close to the sides of your body. Continue to maintain a neutral wrist position, and contact with your chest against the chest pad.",
+      "status": "verbatim",
+      "closest": "Flex (bend) your elbows and pull them towards your chest keeping your elbows close to the sides of your body. Continue to maintain a neutral wrist position, and contact with your chest against the chest pad."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-row-machine",
+      "quote": "Continue pulling until your elbows pass the sides of your body. Pause momentarily then slowly return to your starting position, allowing your arms to move forward and elbows to extend (straighten) in a slow, controlled manner",
+      "status": "verbatim",
+      "closest": "Continue pulling until your elbows pass the sides of your body. Pause momentarily then slowly return to your starting position, allowing your arms to move forward and elbows to extend (straighten) in a slow, controlled manner"
+    },
+    {
+      "claim": "c6",
+      "source": "ace-row-machine",
+      "quote": "Avoid leaning back and arching your low back and attempt to minimize any movement of your head during the movement.",
+      "status": "verbatim",
+      "closest": "Avoid leaning back and arching your low back and attempt to minimize any movement of your head during the movement."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-row-machine",
+      "quote": "Additionally, reduce unnecessary stresses into your low back by avoiding any backwards lean during the pull movements.",
+      "status": "verbatim",
+      "closest": "Additionally, reduce unnecessary stresses into your low back by avoiding any backwards lean during the pull movements."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-row-machine",
+      "quote": "Maintain your upright trunk position and avoid forward rounding of your scapulae (shoulder blades).",
+      "status": "verbatim",
+      "closest": "Maintain your upright trunk position and avoid forward rounding of your scapulae (shoulder blades)."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-row-machine",
+      "quote": "Allowing your shoulders to round forward as your arms extend will allow you to pull with more force. However, learn how to perform a pulling motion without scapulae (shoulder blade) movement first before introducing shoulder movement.",
+      "status": "verbatim",
+      "closest": "Allowing your shoulders to round forward as your arms extend will allow you to pull with more force. However, learn how to perform a pulling motion without scapulae (shoulder blade) movement first before introducing shoulder movement."
+    },
+    {
+      "claim": "c8",
+      "source": "ace-high-row",
+      "quote": "Flex (bend) your elbows and pull them towards your chest, but try to flair your elbows out from your sides, keeping them as level with your shoulders as possible.",
+      "status": "verbatim",
+      "closest": "Flex (bend) your elbows and pull them towards your chest, but try to flair your elbows out from your sides, keeping them as level with your shoulders as possible."
+    },
+    {
+      "claim": "c9",
+      "source": "lehman2004",
+      "quote": "Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row. Actively retracting the scapula did not influence middle trapezius/rhomboid activity.",
+      "status": "verbatim",
+      "closest": "Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row. Actively retracting the scapula did not influence middle trapezius/rhomboid activity."
+    },
+    {
+      "claim": "c10",
+      "source": "fischer2025",
+      "quote": "SEMG measurements were taken for the trapezius transversus (TT), rear deltoid (RD), latissimus dorsi (LD) and biceps brachii (BB).",
+      "status": "verbatim",
+      "closest": "SEMG measurements were taken for the trapezius transversus (TT), rear deltoid (RD), latissimus dorsi (LD) and biceps brachii (BB)."
+    },
+    {
+      "claim": "c10",
+      "source": "fischer2025",
+      "quote": "suggesting that ROM adjustments with standardized time under tension have limited impact on overall muscle activation.",
+      "status": "verbatim",
+      "closest": "suggesting that ROM adjustments with standardized time under tension have limited impact on overall muscle activation."
+    },
+    {
+      "claim": "c11",
+      "source": "fenwick2009",
+      "quote": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+      "status": "verbatim",
+      "closest": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load."
+    },
+    {
+      "claim": "c11",
+      "source": "saeterbakken2015",
+      "quote": "In bilateral free-weight row, EMG activity in erector spinae was greater than bilateral machine- (+34%, P=0.004) and unilateral free-weight rows (+12%, P=0.016).",
+      "status": "verbatim",
+      "closest": "In bilateral free-weight row, EMG activity in erector spinae was greater than bilateral machine- (+34%, P=0.004) and unilateral free-weight rows (+12%, P=0.016)."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    }
+  ]
+}
