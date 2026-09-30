@@ -13,16 +13,22 @@
 // - an escaped quote, which the first cut's pattern (unescaped quotes only) missed. An optional backslash is now
 // allowed before each quote, with the backreference still requiring the closing delimiter to match the opening one
 // exactly (both escaped, or both not) - never a mismatched pair, and never a bare backslash-quote anywhere else.
+//
+// D-HT4-C17 whole-attribute anchor (round-3 review fix, low 2, 2026-09-30): the pattern had no left boundary, so
+// `data-xmlns="http://www.w3.org/2000/svg"` (or any `...xmlns=`) was blanked out and passed - the ruling says
+// "matched as whole attributes". A negative lookbehind now requires `xmlns=`/`xmlns:xlink=` to not be preceded by
+// a word character, `:` or `-` (so it can follow whitespace, a quote, `<`, `;` - an attribute/token boundary, but
+// never sit inside a longer identifier).
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const BANNED = [/\bfetch\s*\(/, /\bXMLHttpRequest\b/, /\bnew Worker\s*\(/];
 const URL_RE = /https?:\/\/[^\s'"`)]+/g;
 /** Exactly these whole attributes, either quote style, optionally backslash-escaped (matching escape on both
- *  sides) - never a bare occurrence of the same URL elsewhere. */
+ *  sides), anchored so they can never match inside a longer attribute name - never a bare occurrence elsewhere. */
 const ALLOWED_XMLNS_ATTRS = [
-  /xmlns=(\\?)(["'])http:\/\/www\.w3\.org\/2000\/svg\1\2/g,
-  /xmlns:xlink=(\\?)(["'])http:\/\/www\.w3\.org\/1999\/xlink\1\2/g,
+  /(?<![\w:-])xmlns=(\\?)(["'])http:\/\/www\.w3\.org\/2000\/svg\1\2/g,
+  /(?<![\w:-])xmlns:xlink=(\\?)(["'])http:\/\/www\.w3\.org\/1999\/xlink\1\2/g,
 ];
 
 function walk(dir: string): string[] {

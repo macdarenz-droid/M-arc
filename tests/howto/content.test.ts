@@ -322,7 +322,7 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     const bad = checkC17([new URL('.', import.meta.url).pathname + 'fixtures/bad']);
     const knownC17Bad = [
       'c17-network.ts', 'c17-xmlns-other-url.ts', 'c17-xmlns-outside-attr.ts', 'c17-xmlns-other-host.ts',
-      'c17-xmlns-escaped-other-host.ts',
+      'c17-xmlns-escaped-other-host.ts', 'c17-xmlns-not-whole-attr.ts',
     ];
     expect(bad.every(m => knownC17Bad.some(f => m.includes(f)))).toBe(true);
     expect(bad.some(m => m.includes('c17-network.ts') && m.includes('fetch'))).toBe(true);
@@ -338,6 +338,23 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     expect(bad.some(m => m.includes('c17-xmlns-outside-attr.ts') && m.includes('w3.org/2000/svg'))).toBe(true);
     // c17-xmlns-other-host.ts: xmlns pointing at a different host still fails.
     expect(bad.some(m => m.includes('c17-xmlns-other-host.ts') && m.includes('example.com/not-the-real-namespace'))).toBe(true);
+  });
+
+  it('round-3 review fix (low 2): the xmlns allowance is anchored as a whole attribute - data-xmlns= still fails, and the escaped form still passes/fails correctly', () => {
+    const bad = checkC17([new URL('.', import.meta.url).pathname + 'fixtures/bad']);
+    // c17-xmlns-not-whole-attr.ts: data-xmlns="..." is not the whole xmlns attribute - still fails.
+    expect(bad.some(m => m.includes('c17-xmlns-not-whole-attr.ts') && m.includes('w3.org/2000/svg'))).toBe(true);
+    // The escaped form of the real namespace passes; the escaped form on a different host still fails.
+    const good = mkdtempSync(join(tmpdir(), 'c17-good-anchor-'));
+    try {
+      writeFileSync(join(good, 'ok.ts'), 'export const a = \'{"svg":"<svg xmlns=\\"http://www.w3.org/2000/svg\\"></svg>"}\';');
+      expect(checkC17([good])).toEqual([]);
+      writeFileSync(join(good, 'bad.ts'), 'export const b = \'{"svg":"<svg xmlns=\\"https://example.com/x\\"></svg>"}\';');
+      const escapedOtherHost = checkC17([good]);
+      expect(escapedOtherHost.some(m => m.includes('example.com/x'))).toBe(true);
+    } finally {
+      rmSync(good, { recursive: true, force: true });
+    }
   });
 
   it('D-HT4-C17 escaped-quote follow-up (HT-7): the escaped-quote xmlns form (src/howto/generated/*.ts\'s own JSON-string encoding) is allowed exactly, and still fails when it points at a different host', () => {
