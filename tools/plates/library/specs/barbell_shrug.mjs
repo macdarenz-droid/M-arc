@@ -1,36 +1,47 @@
-// Barbell shrug, side view, figure facing screen right. Small-motion zoom class (upper-body crop).
-// View: SIDE. The lift is a few centimetres of shoulder-girdle elevation straight up toward the ears with the arms
-// straight and the bar sliding up the front of the thighs: all sagittal (height of the shoulders, bar against the
-// thighs, no arm bend, no body lean).
-// Form (textbook; the research card is not in yet, so every number is a named constant for the card):
-//  NSCA, Exercise Technique Manual for Resistance Training (3rd ed., 2016), shrug: stand erect, feet hip width, knees
-//   slightly flexed; pronated closed grip slightly wider than shoulder width; bar resting against the front of the
-//   thighs, elbows fully extended; elevate the shoulders as high as possible toward the ears, keep the elbows straight,
-//   do not roll the shoulders; lower under control. (Book, not re-read online for this plate.)
-// Geometry decisions (confirmed by the report `angles`, `checks` and `contacts`):
-//  Standing: feet hip width (mid-soles 20 cm apart), mid-sole 7.7 cm in front of the ankle (legs near vertical), knees
-//   5 deg soft (root height solved from KNEE_SOFT), pelvis, trunk and neck 0 in both poses (no lean, no head poke).
+// Barbell shrug, side view, figure facing screen right. Small-motion zoom plate (enlarged upper-body view, flag F1).
+// View: SIDE (card plate.view; the census draws it side). Straight arms, a tall back and a straight-up shoulder path
+// read best side-on (c2, c4).
+// Sources: research card barbell_shrug (card v2, anchor ace-shrug, verified at claude/libht-research e2a70bc):
+//  c1  palms-down grip, hands about shoulder width (grip);
+//  c2  knees slightly bent, hips straight, back tall; shoulders straight up toward the ears as high as possible
+//      (checkpoint "Back tall", start and end poses);
+//  c3  only raise and lower the shoulders, do not roll them (checkpoint "Straight up");
+//  c4  bar in front of the body on straight arms (checkpoint "Straight arms", the Mistake: bending the arms to pull);
+//  c7  tempo about 1-2 s up and 1-2 s down, the lowering slow.
+// Geometry decisions (confirmed by the report `angles`, `checks`, `contacts` and `measure`):
+//  Standing (c2): feet hip width (mid-soles 20 cm apart), mid-sole 7.7 cm in front of the ankle (legs near vertical),
+//   knees 5 deg soft (root height solved from KNEE_SOFT), pelvis, trunk and neck 0 in both poses (hips straight, back
+//   tall, no head poke).
 //  Shrug: scap.elev SHRUG = 5 cm (glenohumeral centre straight up; the engine's side torso raises the trapezius
-//   contour by about half of that). Not from a measured source: a conservative estimate for a full shrug. 7 cm was
-//   tried first: the engine's shoulder cap (5 cm above the joint centre) then reached chin height and read as
-//   exaggerated. CARD must set it.
-//  Grip: hands 50 cm apart (GRIP_X, slightly wider than the shoulder joints, outside the thighs). Arms straight:
-//   IK reach at full arm length less 0.1 mm (elbow 2 deg), elbow pole back.
-//  Bar against the thighs: bar centre on the front surface of the drawn thigh (engine body shape, sampled at the bar's
-//   height) plus the 14 mm shaft radius plus 3 mm, solved per pose, so the bar rests on the thighs at the start and
-//   slides up them at the top (by construction; the hand `contacts` prove the grips are on it). In both poses the bar is ~2 cm in front of mid-foot.
-//  Camera: an upper-body crop, pxPerM = 1.71 x the reference (250 px/m), head top 30 px under the plate edge, the legs
-//   cut just under the knees by the plate edge. Why a crop: the whole-body fit can only reach ~1.15x (the figure is
-//   1.75 m tall), where a 5 cm shrug is 8 px; at 250 px/m it is 12.5 px and the trapezius contour change reads.
-//   The standing figure, the bar held on the thighs and the straight arms stay in view, so it still reads as the
-//   shrug. No floor (cropped).
+//   contour by about half of that). UNSOURCED: the card says only "as high as possible" (c2) and gives no number;
+//   5 cm is a conservative estimate. 7 cm was tried first: the engine's shoulder cap (5 cm above the joint centre)
+//   then reached chin height and read as exaggerated. Check `shoulder rise` proves the drawn value.
+//  Grip (c1): hands 50 cm apart (GRIP_X, about shoulder width, outside the thighs). Arms straight (c4): IK reach at
+//   full arm length less 0.1 mm (elbow 2 deg), elbow pole back; measure at the elbow, value 'straight' (the card
+//   gives no angle, so no expect).
+//  Bar in front of the thighs (c4): bar centre on the front surface of the drawn thigh (engine body shape, sampled at
+//   the bar's height) plus the 14 mm shaft radius plus 3 mm, solved per pose, so the bar rests on the thighs at the
+//   start and slides up them at the top (the hand `contacts` prove the grips are on it). ~2 cm in front of mid-foot.
+//  Camera (lead's zoom convention): `fit` with `maxScale` 1.71 (250 px/m); the fit's bottom margin is negative so the
+//   plate edge cuts the legs just under the knees and the head top sits 30 px under the plate edge. Why: the
+//   whole-body fit can only reach ~1.15x (the figure is 1.75 m tall), where a 5 cm shrug is 8 px; at 250 px/m it is
+//   12.5 px and the trapezius contour change reads. The knees (c2) stay in view. No floor (cropped below the knees).
+//   pxPerM is outside the 8's range: flag F1, an owner-named exemption, never a margin. The alt says it is enlarged.
 //  Drawn: end (top) pose solid; start: the near arm dashed where it shows (engine start layer), the start bar dot
-//   dashed (START_DOT, the squat's workaround), and
-//   the start neck/trapezius/shoulder contour, which lies inside the shrugged figure, as dashed hidden lines (the
-//   approved pull_up method, only where it differs from the end outline). No ghosts (a 5 cm move: ghosts would smear
-//   the outline). Trace: shoulderTop.r (the top of the shoulder rising). Datum: a horizontal line at the start
-//   shoulder-top height, so the rise is measured against it.
-// CARD: shrug height (SHRUG), grip width (GRIP_X), stance (FOOT_X), knee bend (KNEE_SOFT).
+//   dashed (START_DOT, the squat's workaround), and the start neck/trapezius/shoulder contour, which lies inside the
+//   shrugged figure, as dashed hidden lines (the approved pull_up method, only where it differs from the end
+//   outline). No ghosts (a 5 cm move: ghosts would smear the outline; the 8 use 2-3). Trace: shoulderTop.r (the top
+//   of the shoulder rising straight up, c3). Datum: a horizontal line at the start shoulder-top height, so the rise is
+//   read against it.
+//  Mistake: the card's top fault, rolling the shoulders (c3), is a rotation the engine cannot draw (card
+//   drawable: false, flag F7). Drawn: the card's drawable fault, bent arms pulling the bar up (c4): the elbows bend
+//   and the bar rides M_PULL = 15 cm higher up the thighs (still on the thigh surface, hands on it by IK). M_PULL is
+//   illustrative: the card gives no number. Guides: an arrow on the bar (end -> faulty height) and a dashed line
+//   along the bent arm (shoulder -> elbow -> wrist), because the engine masks the faulty forearm where it crosses the
+//   torso and only the elbow poking out behind the back would show (an arc-arrow at the elbow was tried: clutter).
+//   The construction lines (start contour, start bar dot) are left off the Mistake plate.
+// CARD: GRIP_X (c1, about shoulder width), tempo (c7). Unsourced numbers: SHRUG (card: "as high as possible"),
+//  KNEE_SOFT (card: "slightly bent", no angle), FOOT_X (card gives no stance), M_PULL (illustrative fault size).
 import { WINTER, REF, landmarksOf, bodyShapes, fk, resolve, normPose } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -40,8 +51,6 @@ const GRIP_X = 0.25;                                   // hand centre lateral of
 const SHRUG = 5;                                       // cm shoulder-girdle elevation at the top (CARD)
 const BAR_R = 0.014, BAR_GAP = 0.003;                  // 28 mm shaft; bar surface 3 mm off the drawn thigh line
 const ARM = (WINTER.upperArm + WINTER.forearm + REF.gripOff) * H - 0.0001;  // arms straight (elbow 2 deg)
-const SCALE = 250;                                     // px/m, 1.71 x the reference (small-motion zoom)
-const HEAD_TOP_PX = 30;                                // head top under the plate edge
 
 const FOOT_Z = REF.mid * H;
 const LEG = (() => { const a = WINTER.thigh * H, b = WINTER.shank * H, k = KNEE_SOFT * R; return Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k)); })();
@@ -105,8 +114,15 @@ function hiddenShoulders() {
 }
 const START_SHOULDERS = hiddenShoulders();
 
-const HEAD_TOP = landmarksOf(end, H).head[1];
-const CAMERA = { pxPerM: SCALE, x0: 170, y0: HEAD_TOP_PX + HEAD_TOP * SCALE };
+// Mistake (card plate.mistake, c4): elbows bend to pull the bar M_PULL higher up the thighs (bar kept on the thigh).
+const M_PULL = 0.15;                                   // m, illustrative: the card gives no number
+const mistakePose = (() => {
+  const p = { ...end }, y = end.reach.r.at[1] + M_PULL, z = thighFront(p, y) + BAR_R + BAR_GAP, pole = s => [s * 0.3, 0, -1];
+  return { reach: { l: { at: [GRIP_X, y, z], pole: pole(1) }, r: { at: [-GRIP_X, y, z], pole: pole(-1) } } };
+})();
+
+const CAMERA = { fit: { left: 16, right: 16, top: 30, bottom: -112 }, maxScale: 250 / 146.29 };
+const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 
 export default {
   id: 'barbell_shrug', name: 'Barbell Shrug', view: 'side', facing: 'right',
@@ -114,24 +130,48 @@ export default {
   poses: { start, end },
   equipment: [
     (lm, ctx) => {
-      const b = ctx.pose === 'start' ? barOf(start) : barOf(end);
+      const b = [0, lm.grips[1], lm.grips[2]], moved = ctx.pose === 'end' || ctx.pose === 'mistake';
       return [
-        ...(ctx.pose === 'end' ? [{ type: 'barbell', at: b, plates: [0.045], part: 'plate', z: 'back' }] : []),
-        { type: 'pulley', at: [0, lm.grips[1], lm.grips[2]], r: 0.025, part: 'bar', z: 'front' },
-        ...(ctx.pose === 'end' ? [...START_SHOULDERS, { type: 'line', cls: 'eq-cable m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
+        ...(moved ? [{ type: 'barbell', at: b, plates: [0.045], part: 'plate', z: 'back' }] : []),
+        { type: 'pulley', at: b, r: 0.025, part: 'bar', z: 'front' },
+        ...(ctx.pose === 'end' && !ctx.mistake ? [...START_SHOULDERS, { type: 'line', cls: 'eq-cable m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
       ];
     },
   ],
   checks: [
-    { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
-    { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
-    // shoulders rise by SHRUG: the end shoulder joint is SHRUG cm above the start one
+    { landmark: 'heel.r', plane: floor, pose: 'all', tol: 0.5 },
+    { landmark: 'ball.r', plane: floor, pose: 'all', tol: 0.5 },
+    // shoulder rise: the end shoulder joint is SHRUG cm above the start one
     { landmark: 'shoulder.r', plane: { point: [0, landmarksOf(start, H)['shoulder.r'][1] + SHRUG / 100, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0.2 },
   ],
   startParts: ['arm.r'],
   ghosts: { count: 0 },
   trace: { point: 'shoulderTop.r', trim: [3, 3] },
   datum: [{ y: 'start:shoulderTop.r', from: 60, to: 'start:shoulderTop.r' }],
-  callouts: [],
-  alt: 'Barbell shrug, side view, close-up of the upper body. Standing tall with straight arms, the bar resting against the front of the thighs; the shoulders lift straight up toward the ears by a few centimetres and the bar slides up the thighs.',
+  measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'straight' },
+  callouts: [
+    // c4
+    { key: 'arms', text: 'Straight arms', anchor: { along: ['elbow.r', 'wrist.r'], t: 0.5, off: [8, 0] }, cue: 'Keep your elbows straight and let your arms just hang.' },
+    // c3
+    { key: 'up', text: 'Straight up', anchor: 'shoulderTop.r', cue: 'Move your shoulders only up and down, with no rolling.' },
+    // c2
+    { key: 'back', text: 'Back tall', anchor: 'backUpper', cue: 'Keep your knees soft, your hips straight and your back tall.' },
+  ],
+  tempo: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],   // c7
+  mistake: {
+    pose: mistakePose,
+    guides: [
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [14, 0] }, to: { at: 'grip.r', pose: 'mistake', off: [14, 0] } },
+      // the bent arm's line (shoulder -> elbow -> wrist): the engine masks the faulty forearm where it crosses the torso
+      { kind: 'dashed', pts: [{ at: 'shoulder.r', pose: 'mistake' }, { at: 'elbow.r', pose: 'mistake' }, { at: 'wrist.r', pose: 'mistake' }] },
+    ],
+    tells: [
+      // c4 (plate.mistake.what, handlingMistakes "Bending the arms to pull")
+      { key: 'elbows', text: 'Elbows bend', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'The elbows bend to pull the bar up.' },
+      // c4 (plate.mistake.what)
+      { key: 'arms', text: 'Arms pull', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'The arms lift the bar instead of the shoulders.' },
+    ],
+  },
+  pilot: { drawableFault: 'Top fault (rolling the shoulders, c3) is a rotation the engine cannot draw; drawn: bent arms pulling the bar (c4).' },
+  alt: 'Barbell shrug, side view, enlarged close-up of the upper body. Standing tall with soft knees and straight hips, the bar hangs on straight arms in front of the thighs. Only the shoulders lift straight up toward the ears and lower again; the arms stay straight.',
 };

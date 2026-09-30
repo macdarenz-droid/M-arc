@@ -24,7 +24,14 @@
 //   front surface = shaft radius + clothing), elbows driven back past the back line (IK pole toward the back of the
 //   thorax, 35% out to the side: a moderate flare; with the bar on the lower chest the elbow flexes ~137 deg and the
 //   elbow sits just above the back line in the side view), shoulder blades squeezed back 4 cm.
-// CARD: TRUNK_INCL, KNEE, grip width, end bar contact height (BAR_T), stance width.
+// Research card (docs/research/howto/cards/barbell_row.json, card v2, verified at claude/libht-research e2a70bc):
+//  callouts = plate.checkpoints (Flat back c4, Soft knees c3, Bar to belly c5); Mistake = plate.mistake (torso
+//  swings up to heave the bar, c7; tells from c7 and handlingMistakes[0]); tempo = plate.tempo (up 1 s, down 2 s,
+//  no pause, c13: two phases, no invented rest). The knee arc is worded, not numbered: the card says "slightly
+//  bent" (c3) and gives no angle. End bar spot matches c6 (abdomen or low chest).
+// CARD numbers: the card gives none for the trunk angle, the knee angle, the grip width (c2: "slightly wider than
+//  shoulder width", 52 cm fits) or the stance (c8: about shoulder width). TRUNK_INCL 60 and KNEE 20 stay unsourced
+//  (flagged).
 import { landmarksOf, RADII } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -91,6 +98,15 @@ const END_BAR = [0, 1, 2].map(i => i === 0 ? 0 : W.neck * LE0.neck[i] + W.backUp
 const dorsal = (() => { const d = [0, 1, 2].map(i => LE0.backUpper[i] - LE0.chest[i]), L = Math.hypot(...d); return d.map(v => v / L); })();
 const end = { ...end0, reach: hands(END_BAR, [-ELBOW_OUT, dorsal[1], dorsal[2]]) };
 
+// Mistake (card plate.mistake, c7): the torso swings up to heave the bar. Hips and lower back extend together
+// (pelvis and lumbar both open), the feet stay planted, and the bar is still pulled to the same thorax spot, so the
+// fault reads as a trunk that rises with the bar. M_TILT / M_SPINE are illustrative (the card gives no number).
+const M_TILT = 30, M_SPINE = 0, M_HIP = [0.02, 0.05];    // hips drive up and forward (m)
+const mist0 = { ...body(ROOT_Y, ROOT_Z, PRO_END), root: { at: [0, ROOT_Y + M_HIP[0], ROOT_Z + M_HIP[1]], tilt: M_TILT }, trunk: M_SPINE }, LM0 = landmarksOf(mist0, H);
+const MIST_BAR = [0, 1, 2].map(i => i === 0 ? 0 : W.neck * LM0.neck[i] + W.backUpper * LM0.backUpper[i] + W.sternum * LM0.sternum[i]);
+const mdorsal = (() => { const d = [0, 1, 2].map(i => LM0.backUpper[i] - LM0.chest[i]), L = Math.hypot(...d); return d.map(v => v / L); })();
+const mistakePose = { root: mist0.root, trunk: M_SPINE, reach: hands(MIST_BAR, [-ELBOW_OUT, mdorsal[1], mdorsal[2]]) };
+
 const barAt = lm => [0, lm.grips[1], lm.grips[2]];
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, START_BAR[1] + 0.025 * Math.sin(k * Math.PI / 8), START_BAR[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
@@ -120,6 +136,23 @@ export default {
   ghosts: { count: 3, parts: ['arm.r', 'bardot'] },
   trace: { point: 'grip.r', trim: [10, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 60 }],           // mid-foot plumb line: the bar starts over it
-  callouts: [],
-  alt: 'Barbell row, side view. Hinged at the hips with a flat back about 30 degrees above horizontal and soft knees, the lifter pulls the bar from straight arms, over the middle of the foot, to the lower chest, driving the elbows back.',
+  measure: { vertex: 'knee.r', from: 'hip.r', to: 'ankle.r', radius: 20, title: 'Knee', value: 'slightly bent' },
+  callouts: [
+    { key: 'back', text: 'Flat back', anchor: 'backUpper', cue: 'Keep the back flat, not rounded or arched, from start to finish.' },
+    { key: 'knees', text: 'Soft knees', anchor: 'knee.r', cue: 'Keep the knees slightly bent and the hips hinged, not standing tall.' },
+    { key: 'bar', text: 'Bar to<br>belly', anchor: 'grip.r', cue: 'Pull the bar to the belly button or low chest, not the neck.' },
+  ],
+  tempo: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
+  mistake: {
+    pose: mistakePose,
+    guides: [
+      { kind: 'arc-arrow', center: 'hip.r', r: 100, a0: -26, a1: -50 },
+      { kind: 'arrow', from: { at: 'hip.r', pose: 'end', off: [-22, 0] }, to: { at: 'hip.r', pose: 'mistake', off: [-22, 0] } },
+    ],
+    tells: [
+      { key: 'swing', text: 'Torso<br>swings up', anchor: 'backUpper', cue: 'The torso swings up to heave the bar.' },
+      { key: 'hips', text: 'Hips throw', anchor: 'buttock', cue: 'The hips and lower back throw the weight up.' },
+    ],
+  },
+  alt: 'Barbell row, side view. Hinged at the hips with a flat back and slightly bent knees, the lifter pulls the bar from straight arms, over the middle of the foot, to the belly button or low chest, driving the elbows back.',
 };

@@ -32,7 +32,14 @@
 //   circular sweep instead of a chord.
 //  Dumbbells: neutral grip (palms facing), handle pointing along the trunk toward the head (world +z): the side
 //   view shows the dumbbell in profile, the front view (alt) the hex heads end-on.
-// CARD: INCL (trunk angle), KNEE, top arm height (level with the shoulders), ELBOW bend, dumbbell mass share.
+// Research card (docs/research/howto/cards/bent_over_dumbbell_rear_delt_fly.json, card v2, verified at
+//  claude/libht-research e2a70bc): callouts = plate.checkpoints (Flat back c2, Soft elbows c2, Level arms c3); tempo = plate.tempo
+//  (up 1 s, down 2 s, no pause, c10). The card's plate.view is FRONT (flag F6 for this side view). Re-checked with
+//  the card's layers: the front view still draws the hinged trunk as a band with no head, and its drawable Mistake
+//  (shrug, c3) moves the shoulders about 2 px there (render of __alt): no-go stands.
+//  Its "out to the sides" is carried by the Level arms cue.
+// CARD numbers: the card gives none for the trunk angle, the knee bend, the elbow bend or the top arm height
+//  ("about level with the body", c3). INCL 80, KNEE 20, ELBOW 20 and the 90 deg top stay unsourced (flagged).
 import { landmarksOf } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -89,6 +96,16 @@ const start = pose(ROOT_Y, ROOT_Z, 0);
 const via = [pose(ROOT_Y, ROOT_Z, 30), pose(ROOT_Y, ROOT_Z, 60)];
 const end = pose(ROOT_Y, ROOT_Z, 90);
 
+// Mistake. The card's top fault is swinging the torso to throw the weights up (c4, c5, handlingMistakes[0]); the
+// card marks it not drawable only because its plate view is the front, and names shrugging (c3) for that view.
+// This plate is the side view (F6), where the swing is the clearest thing it can show, and a shrug in a hinged
+// side view moves the shoulder under 1 cm on screen (tried: it does not read). So the side view draws the card's
+// top fault: the trunk swings up from the hips as the dumbbells reach the top, feet planted, hands still out at
+// shoulder level. The alt (front) file keeps the card's shrug. M_INCL is illustrative (the card gives no number).
+const M_INCL = 55;
+const mist0 = { ...body(ROOT_Y, ROOT_Z, PRO_END), root: { at: [0, ROOT_Y, ROOT_Z], tilt: M_INCL - SPINE } };
+const mistakePose = { root: mist0.root, reach: hands(landmarksOf(mist0, H), 90) };
+
 const G0 = landmarksOf(start, H)['grip.r'], HZ = 0.135, HY = 0.119 * 0.866 / 2;
 const HH = 0.065, HR = 0.008;                          // handle half-length, half-thickness (m)
 const START_DB = [[-HZ, -HY], [-HH, -HY], [-HH, -HR], [HH, -HR], [HH, -HY], [HZ, -HY], [HZ, HY], [HH, HY], [HH, HR], [-HH, HR], [-HH, HY], [-HZ, HY], [-HZ, -HY]].map(([dz, dy]) => [G0[0], G0[1] + dy, G0[2] + dz]);
@@ -118,6 +135,25 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [10, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 60 }],           // mid-foot plumb line: the body balances over it
-  callouts: [],
-  alt: 'Bent-over dumbbell rear delt fly, side view. Hinged forward with a flat back nearly parallel to the floor and soft knees, balanced over the middle of the foot, the lifter raises two dumbbells from hanging under the chest out to the sides until the arms are level with the shoulders, elbows slightly bent.',
+  // The elbow bend points at the camera in this view (drawn arc 0 deg), so the one arc is the hip hinge the card
+  // describes (c2: tilt at the hips, spine straight). No card number: a worded value, as machine_chest_press.
+  measure: { vertex: 'hip.r', from: 'knee.r', to: 'shoulder.r', radius: 24, title: 'Hip', value: 'hinged, spine straight' },
+  callouts: [
+    { key: 'back', text: 'Flat back', anchor: 'backUpper', cue: 'Hinge at the hips with a straight spine and a braced core.' },              // c2
+    { key: 'elbows', text: 'Soft elbows', anchor: 'elbow.r', prefer: 'above', cue: 'Keep the same slight elbow bend from bottom to top.' },                    // c2
+    { key: 'level', text: 'Level arms', anchor: 'grip.r', prefer: 'below', cue: 'Raise the arms out to the sides to about body level, no higher.' },          // c3
+  ],
+  tempo: [{ phase: 'Raise', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],                                                        // c10
+  mistake: {
+    pose: mistakePose,
+    guides: [
+      { kind: 'arc-arrow', center: 'hip.r', r: 100, a0: -12, a1: -36 },
+    ],
+    tells: [
+      { key: 'swing', text: 'Torso<br>swings up', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'The torso swings up to throw the dumbbells.' },          // c4, c5
+      { key: 'hips', text: 'Hips drive', anchor: 'buttock', cue: 'The hips and lower back add momentum to the lift.' },                                 // c4
+    ],
+  },
+  pilot: { note: 'View: side (card and census: front, F6). Front render (__alt) is no-go: headless torso band, and its shrug Mistake does not show.' },
+  alt: 'Bent-over dumbbell rear delt fly, side view. Hinged forward at the hips with a straight spine, the lifter raises two dumbbells from hanging under the chest out to the sides until the arms are about level with the body, elbows slightly bent.',
 };
