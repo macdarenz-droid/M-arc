@@ -557,7 +557,7 @@
     "rows": [
       {
         "where": "Lower back",
-        "means": "The faults the coach source warns about here are arching the lower back and swinging the torso.",
+        "means": "The faults to watch here are arching the lower back and swinging the torso.",
         "fix": "Brace and move only the arms.",
         "claim": [
           "c9",
@@ -568,7 +568,7 @@
       },
       {
         "where": "Mostly the triceps",
-        "means": "The fault the coach source warns about here is bending the elbows, which turns it into a pushdown.",
+        "means": "The fault to watch here is bending the elbows, which turns it into a pushdown.",
         "fix": "Keep the same slight elbow bend top to bottom.",
         "claim": [
           "c6",
@@ -578,7 +578,7 @@
       },
       {
         "where": "Arms, little back",
-        "means": "The coach source says going too heavy brings jerking, torso swing and momentum.",
+        "means": "Going too heavy brings jerking, torso swing and momentum.",
         "fix": "Drop the weight until you can pause at the bottom.",
         "claim": "c7",
         "redFlag": null

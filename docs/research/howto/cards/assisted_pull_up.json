@@ -675,7 +675,7 @@
       {
         "where": "Shoulder",
         "means": "Usually means the shoulder does not like the arms-overhead position.",
-        "fix": "Stop the set. If it keeps happening or lasts, stop and get it checked.",
+        "fix": "Stop the set. If it keeps happening or lasts, don't train through it.",
         "claim": [
           "c10",
           "c13"
@@ -685,7 +685,7 @@
       {
         "where": "Inside or outside of the elbow",
         "means": "Usually means too much pulling volume, too soon.",
-        "fix": "Build up the sets slowly. If it lasts, get it checked.",
+        "fix": "Build up the sets slowly. If it lasts, don't train through it.",
         "claim": [
           "c13",
           "c15"

@@ -480,7 +480,7 @@
     "rows": [
       {
         "where": "Lower back",
-        "means": "The fault ACE warns about here is leaning back and arching the low back.",
+        "means": "The fault to watch here is leaning back and arching the low back.",
         "fix": "Chest on the pad; no backwards lean.",
         "claim": [
           "c6",
@@ -490,7 +490,7 @@
       },
       {
         "where": "Front of the shoulders at the end of each rep",
-        "means": "The return fault ACE warns about here is the shoulder blades rounding forward.",
+        "means": "The return fault to watch here is the shoulder blades rounding forward.",
         "fix": "Return slowly and keep the shoulders back.",
         "claim": "c7",
         "redFlag": null

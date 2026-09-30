@@ -700,8 +700,8 @@
       },
       {
         "where": "Back pain that gets worse during the set",
-        "means": "The NHS advises stopping exercise when back pain gets worse.",
-        "fix": "Stop the set; see a GP for advice.",
+        "means": "Back pain that gets worse is a sign to stop exercising.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c22",
         "redFlag": "back"
       }

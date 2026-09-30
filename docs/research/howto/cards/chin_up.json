@@ -801,7 +801,7 @@
       {
         "where": "Shoulder",
         "means": "Usually means the shoulder does not like this arms-overhead, palms-toward-you position.",
-        "fix": "Stop the set. If it keeps happening or lasts, stop chin-ups and get it checked.",
+        "fix": "Stop the set. If it keeps happening or lasts, stop chin-ups and don't train through it.",
         "claim": [
           "c14",
           "c13",
@@ -812,7 +812,7 @@
       {
         "where": "Elbow",
         "means": "Usually means too much pulling volume, too soon.",
-        "fix": "Build up the sets slowly. If it lasts, get it checked.",
+        "fix": "Build up the sets slowly. If it lasts, don't train through it.",
         "claim": "c16",
         "redFlag": "elbow"
       }

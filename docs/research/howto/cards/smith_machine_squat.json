@@ -717,7 +717,7 @@
       {
         "where": "Sharp pain in the knee",
         "means": "Not a normal training feeling.",
-        "fix": "Stop the workout and get it checked.",
+        "fix": "Stop the workout at once.",
         "claim": "c19",
         "redFlag": "knee"
       },

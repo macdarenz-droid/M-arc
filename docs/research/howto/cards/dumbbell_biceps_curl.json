@@ -139,7 +139,7 @@
     ] },
   "risks": [
     { "risk": "Bent wrists under load can cause wrist discomfort.", "claim": "c6" },
-    { "risk": "Dropped free weights are the most common cause of weight-training injuries seen in emergency departments.", "claim": "c16" }
+    { "risk": "Dropped weights, mostly free weights, are the most common way weight trainers get badly hurt.", "claim": "c16" }
   ],
   "redFlags": [ "wrist" ],
   "zooms": [

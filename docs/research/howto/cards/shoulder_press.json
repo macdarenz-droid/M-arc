@@ -542,7 +542,7 @@
     "rows": [
       {
         "where": "Front or top of the shoulder, sharp or pinching",
-        "means": "ACE says the shoulder is relatively unstable in the overhead position.",
+        "means": "The shoulder is relatively unstable in the overhead position.",
         "fix": "Stop the set. Next session, you can try the close handles with the elbows pointing forward.",
         "claim": [
           "c6",
@@ -552,7 +552,7 @@
       },
       {
         "where": "Lower back",
-        "means": "The lower-back fault ACE warns about here is arching off the pad.",
+        "means": "The lower-back fault to watch here is arching off the pad.",
         "fix": "Brace, keep the natural curve, lower the weight.",
         "claim": [
           "c5",
@@ -562,7 +562,7 @@
       },
       {
         "where": "Elbows",
-        "means": "ACE's elbow rule here is to stop short of locking.",
+        "means": "The elbow rule here is to stop short of locking.",
         "fix": "Stop just short of lockout.",
         "claim": "c6",
         "redFlag": "elbow"
@@ -582,7 +582,7 @@
       ]
     },
     {
-      "risk": "Very heavy lifts to failure, overhead presses included, sent blood pressure extremely high in a small study, partly from breath holding.",
+      "risk": "Very heavy lifts to failure, overhead presses included, sent blood pressure extremely high in a small group of lifters, partly from breath holding.",
       "claim": "c11"
     }
   ],

@@ -573,7 +573,7 @@
     "rows": [
       {
         "where": "Knees",
-        "means": "The knee fault the sources warn about here is locking or overextending the knees.",
+        "means": "The knee fault to watch here is locking or overextending the knees.",
         "fix": "Don't lock the knees.",
         "claim": "c6",
         "redFlag": "knee"
@@ -590,7 +590,7 @@
       "claim": "c6"
     },
     {
-      "risk": "Very heavy lifts to failure sent blood pressure extremely high in a small study, partly from breath holding; the calf raise was not tested, so this is applied by reasoning.",
+      "risk": "Very heavy lifts to failure sent blood pressure extremely high in a small group of lifters, partly from breath holding; the calf raise was not tested, so this is applied by reasoning.",
       "claim": "c12"
     }
   ],

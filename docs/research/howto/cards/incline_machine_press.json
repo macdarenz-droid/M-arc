@@ -414,28 +414,28 @@
     "rows": [
       {
         "where": "Front of the shoulders",
-        "means": "The shoulder fault ACE warns about here is the shoulder blades rolling off the pad at the top.",
+        "means": "The shoulder fault to watch here is the shoulder blades rolling off the pad at the top.",
         "fix": "Keep the blades on the pad and stop the press there.",
         "claim": "c5",
         "redFlag": "shoulder"
       },
       {
         "where": "Lower back",
-        "means": "The lower-back fault ACE warns about here is arching off the pad.",
+        "means": "The lower-back fault to watch here is arching off the pad.",
         "fix": "Brace, keep the normal low-back curve.",
         "claim": "c4",
         "redFlag": null
       },
       {
         "where": "Elbows",
-        "means": "ACE's elbow rule is to stop short of locking.",
+        "means": "The elbow rule is to stop short of locking.",
         "fix": "Stop just short of lockout.",
         "claim": "c3",
         "redFlag": "elbow"
       },
       {
         "where": "Wrist",
-        "means": "The wrist rule ACE gives here is keeping the wrist in line with the forearm.",
+        "means": "The wrist rule here is keeping the wrist in line with the forearm.",
         "fix": "Keep the wrist in line with the forearm.",
         "claim": "c1",
         "redFlag": "wrist"

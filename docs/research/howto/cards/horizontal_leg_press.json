@@ -564,7 +564,7 @@
     "rows": [
       {
         "where": "Knee",
-        "means": "The knee faults the sources warn about here are locking at the top and going below about 90 degrees; knee forces rise the further the knee bends.",
+        "means": "The knee faults to watch here are locking at the top and going below about 90 degrees; knee forces rise the further the knee bends.",
         "fix": "Keep a small bend at the top and don't go below about 90 degrees.",
         "claim": [
           "c4",
@@ -575,7 +575,7 @@
       },
       {
         "where": "Lower back",
-        "means": "The fault ACE warns about here is the hips lifting or the low back rounding.",
+        "means": "The fault to watch here is the hips lifting or the low back rounding.",
         "fix": "Keep your tailbone on the pad and the low back still.",
         "claim": [
           "c4",
@@ -600,7 +600,7 @@
       "claim": "c8"
     },
     {
-      "risk": "Very heavy double-leg presses to failure sent blood pressure extremely high in a small study, partly from breath holding.",
+      "risk": "Very heavy double-leg presses to failure sent blood pressure extremely high in a small group of lifters, partly from breath holding.",
       "claim": "c11"
     },
     {

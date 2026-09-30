@@ -619,8 +619,8 @@
       },
       {
         "where": "Forearms give out before your abs",
-        "means": "The EMG study measured the knee-up done in arm straps.",
-        "fix": "Use arm straps (ab slings), the version measured in the EMG study.",
+        "means": "The knee-up with arm straps showed some of the highest ab muscle activity.",
+        "fix": "Use arm straps (ab slings), the version with some of the highest ab activity.",
         "claim": "c10",
         "redFlag": null
       },

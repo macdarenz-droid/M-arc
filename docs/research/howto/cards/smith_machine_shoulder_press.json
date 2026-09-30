@@ -696,7 +696,7 @@
       },
       {
         "where": "Lower back",
-        "means": "Possibly the back arching off the pad (inferred from c4 and c9; no source states the cause).",
+        "means": "Possibly the back arching off the pad.",
         "fix": "Press your upper back into the pad and brace.",
         "claim": "c4, c9",
         "redFlag": null
