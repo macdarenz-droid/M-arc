@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=7109c87d306712ab5818ad9ba8ef92a700dd8ae03667ad362d7f04ada037633a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=7ea429f481215c56b6f621655722db5646a80a9a187f1bee009bc49a41f09d3c
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_leg_press",
   name: "Leg Press (45°)",
-  hashes: { inputsSha256: "7109c87d306712ab5818ad9ba8ef92a700dd8ae03667ad362d7f04ada037633a", golden: "c441fcc806598fc3335d845b98674cae21e27bc15cf9619b2d2a4c864390198f" },
+  hashes: { inputsSha256: "7ea429f481215c56b6f621655722db5646a80a9a187f1bee009bc49a41f09d3c", golden: "c441fcc806598fc3335d845b98674cae21e27bc15cf9619b2d2a4c864390198f" },
   plate: {
     view: "side",
     normal: {
@@ -24,5 +24,488 @@ export default {
     tempo: "<div class=\"tempo\" role=\"img\" aria-label=\"Tempo: lower 2 seconds, pause 0.5 seconds, press 1 second, rest 0.5 seconds\"><div class=\"tempo-seg move\" style=\"flex:2 1 0\"><i></i><div class=\"tempo-label\"><b>Lower</b><span>2 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Pause</b><span>0.5 s</span></div></div><div class=\"tempo-seg move\" style=\"flex:1 1 0\"><i></i><div class=\"tempo-label\"><b>Press</b><span>1 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Rest</b><span>0.5 s</span></div></div></div>",
     alt: "Leg press on a 45 degree sled, side view. Reclined against the back pad, feet mid-plate, the sled lowers along the rails until the knees reach about 90 degrees, with the hips staying on the pad, then presses back to almost straight legs.",
     mistakeAlt: "Leg Press (45°): the common mistake, drawn dashed in the mistake colour over the correct end position.",
+  },
+  rev: 1,
+  handling: {
+    "archetype": "balance",
+    "handle": "pad-handle",
+    "loadAxis": "across",
+    "width": {
+      "text": "Set by the machine: one handle beside each hip. Arms relaxed with soft elbows, shoulders down and back on the pad.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nasm-leg-press",
+          "ace-leg-press"
+        ],
+        "note": "Set by the machine."
+      }
+    },
+    "thumb": {
+      "mode": "wrapped",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press"
+        ],
+        "note": "Wrapped thumb: coaching consensus (you turn the catch levers with it). No study compares thumb positions here."
+      }
+    },
+    "contact": "finger-base",
+    "wrist": {
+      "ext": [
+        0,
+        20
+      ],
+      "dev": [
+        -10,
+        10
+      ],
+      "limitText": "Keep your wrist level, not curled forward or bent far back.",
+      "claim": {
+        "tags": [
+          "WEAK",
+          "MECH"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press"
+        ],
+        "note": "Level wrist, 0-20 deg: drawing check, not an injury threshold. Pushing on the knees folds the wrist back under part of the sled load: mechanics plus coaching observation; not counted in any study."
+      }
+    },
+    "pose": {
+      "view": "radial",
+      "forearm": 0,
+      "wrist": {
+        "ext": 8,
+        "dev": 0
+      },
+      "contactAt": 0.9,
+      "fingers": {
+        "curl": 1
+      },
+      "thumb": "wrapped",
+      "squeeze": "light",
+      "handle": {
+        "profile": "pad-handle",
+        "axis": "across",
+        "strut": [
+          -0.35,
+          1
+        ]
+      },
+      "load": {
+        "kind": "pull"
+      }
+    },
+    "faults": [
+      {
+        "key": "push-on-knees",
+        "label": "Pushing on knee",
+        "pose": {
+          "forearm": 0,
+          "wrist": {
+            "ext": 80,
+            "dev": 0
+          },
+          "contactAt": 0.45,
+          "fingers": {
+            "curl": 1
+          },
+          "thumb": "beside",
+          "squeeze": "firm",
+          "handle": {
+            "profile": "machine-grip",
+            "axis": "across",
+            "diameterMm": 104
+          },
+          "load": {
+            "kind": "push"
+          }
+        },
+        "markers": [
+          "lever-arc"
+        ],
+        "alt": "Palm pressed on the front of the knee to push a hard rep up. The wrist folds back about 80 degrees. The push runs behind the wrist, bending it further."
+      }
+    ],
+    "gripLine": "Your hands just keep you in the seat. Hold lightly, never push on your knees.",
+    "cue": "Light hands, never on your knees."
+  },
+  contacts: [
+    "foot-platform",
+    "seat-back"
+  ],
+  setup: [
+    {
+      "kind": "safety",
+      "text": "Depth catch? Set it just below your lowest point.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nasm-leg-press",
+          "bells-of-steel"
+        ],
+        "note": "Catch steps from NASM and a manufacturer guide; machines differ, so \"on most machines\" and the machine sticker."
+      }
+    },
+    {
+      "kind": "get-in",
+      "text": "Sit right back, lower back flat on the pad.",
+      "zoom": "back-on-pad",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press",
+          "yessis",
+          "castonguay2022"
+        ],
+        "note": "No study measured lumbar bending at the bottom of a leg press. Consensus plus mechanics; the pad takes real pressure (Castonguay-Siu 2022)."
+      }
+    },
+    {
+      "kind": "safety",
+      "text": "On most machines, push the sled up and turn the handles out.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nasm-leg-press",
+          "bells-of-steel"
+        ],
+        "note": "Catch steps from NASM and a manufacturer guide; machines differ, so \"on most machines\" and the machine sticker."
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Lower to about 90 degrees. Breathe out as you push. Dizzy? Stop.",
+      "zoom": "back-on-pad",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press",
+          "macdougall1985"
+        ]
+      }
+    },
+    {
+      "kind": "finish",
+      "text": "Turn the handles in and rest the sled before feet come off.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nasm-leg-press",
+          "bells-of-steel"
+        ],
+        "note": "Catch steps from NASM and a manufacturer guide; machines differ, so \"on most machines\" and the machine sticker."
+      }
+    }
+  ],
+  posture: [
+    {
+      "key": "back",
+      "label": "Tailbone on pad",
+      "detail": "Your lower back stays on the pad with no gap, even at the bottom. Hips sit in the corner of the seat.",
+      "anchor": {
+        "pose": "end",
+        "at": "sacrum"
+      },
+      "zoom": "back-on-pad",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press",
+          "yessis",
+          "castonguay2022"
+        ],
+        "note": "No study measured lumbar bending at the bottom of a leg press. Consensus plus mechanics; the pad takes real pressure (Castonguay-Siu 2022)."
+      }
+    },
+    {
+      "key": "feet",
+      "label": "Whole foot flat",
+      "detail": "Heels down, foot in the middle of the plate, toes straight or out a little. Push from heel through ball.",
+      "anchor": {
+        "pose": "end",
+        "at": "heel.r"
+      },
+      "zoom": "foot",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press",
+          "escamilla2001lp",
+          "martinfuentes2022"
+        ],
+        "note": "Heels flat, knees over toes: consensus. Width and toe angle barely change the muscles (Martin-Fuentes 2022, Escamilla 2001)."
+      }
+    },
+    {
+      "key": "knees",
+      "label": "Knees over toes",
+      "detail": "Seen from the front, each knee stays over your second or third toe. It never falls inward.",
+      "anchor": {
+        "pose": "end",
+        "at": "knee.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nasm-leg-press"
+        ],
+        "note": "Knee valgus as a leg-press injury cause is NASM consensus, not leg-press data."
+      }
+    },
+    {
+      "key": "depth",
+      "label": "About 90 degrees",
+      "detail": "At the bottom, knees at about 90 degrees, tailbone still on the pad. Thighs stay clear of your ribs.",
+      "anchor": {
+        "pose": "end",
+        "at": "knee.r"
+      },
+      "zoom": "back-on-pad",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press",
+          "yessis",
+          "larsen2025"
+        ],
+        "note": "90 deg stop: consensus. Larsen 2025: moderate range grows the quads as well as deep range."
+      }
+    },
+    {
+      "key": "soft",
+      "label": "Soft knees",
+      "detail": "At the top your legs are almost straight, with a small bend at the knee.",
+      "anchor": {
+        "pose": "start",
+        "at": "knee.r"
+      },
+      "claim": {
+        "tags": [
+          "WEAK",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "barnds2019",
+          "nasm-leg-press",
+          "ace-leg-press"
+        ],
+        "note": "One case report plus consensus."
+      }
+    },
+    {
+      "key": "hands",
+      "label": "Hands light",
+      "detail": "Arms relaxed, shoulders and head on the pad, hands wrapped lightly round the side handles.",
+      "anchor": {
+        "pose": "end",
+        "at": "grip.r"
+      },
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "WEAK"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press"
+        ],
+        "note": "Nothing measures grip, thumb or wrist on the leg press handles. \"Lightly grasp\" and \"avoid moving the upper body\" (ACE), hands on the handles (NASM)."
+      }
+    }
+  ],
+  zooms: [
+    {
+      "key": "back-on-pad",
+      "chip": "Back pad",
+      "heading": "Back on pad: right and wrong",
+      "kind": "posture",
+      "feelRow": "lower-back"
+    },
+    {
+      "key": "foot",
+      "chip": "Feet",
+      "heading": "Feet: right and wrong",
+      "kind": "posture",
+      "feelRow": "knee"
+    },
+    {
+      "key": "hand",
+      "chip": "Hand",
+      "heading": "Hand: right and wrong",
+      "kind": "hand",
+      "feelRow": "wrists"
+    }
+  ],
+  copy: {
+    "setupLine": "Sit right back, tailbone on the pad. Feet mid-platform, whole foot flat, heels down.",
+    "mistakeLine": "Keep a small bend at the top. On the way down, stop before your tailbone lifts.",
+    "gripLine": "Your hands just keep you in the seat. Hold lightly, never push on your knees."
+  },
+  mistakes: [
+    {
+      "key": "deep",
+      "title": "Going too deep",
+      "zoom": "back-on-pad",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press",
+          "yessis"
+        ]
+      },
+      "fix": "Stop before your tailbone lifts, around 90 degrees for most people."
+    },
+    {
+      "key": "lock",
+      "title": "Snapping knees straight",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "WEAK"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "barnds2019"
+        ]
+      },
+      "fix": "Push until almost straight, keep a small bend, then go again."
+    },
+    {
+      "key": "knees",
+      "title": "Knees caving, hands on knees",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press"
+        ]
+      },
+      "fix": "Knees over toes. If you need your hands, take a plate off."
+    }
+  ],
+  risks: [
+    {
+      "key": "back",
+      "text": "Going too deep bends your lower back under the whole sled.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "yessis"
+        ]
+      }
+    },
+    {
+      "key": "lock",
+      "text": "A knee snapped straight under load can bend the wrong way. Rare, but reported.",
+      "claim": {
+        "tags": [
+          "WEAK"
+        ],
+        "sources": [
+          "barnds2019"
+        ],
+        "note": "One case report (A8 open item)."
+      }
+    },
+    {
+      "key": "knees",
+      "text": "Caving knees twist under load. Hands on knees bend your wrists back.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-leg-press",
+          "nasm-leg-press"
+        ]
+      }
+    }
+  ],
+  riskFlags: [
+    "wrist",
+    "knee"
+  ],
+  redFlag: {
+    "name": "Wrist pain",
+    "now": "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.",
+    "doctor": "Tingling, keeps coming back, or no better after two weeks' rest? See a doctor.",
+    "claim": {
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-wrist-pain"
+      ]
+    }
+  },
+  sources: [
+    "ace-leg-press",
+    "nasm-leg-press",
+    "bells-of-steel",
+    "yessis",
+    "escamilla2001lp",
+    "dasilva2008",
+    "martinfuentes2022",
+    "martinfuentes2020",
+    "marchetti2023",
+    "kinoshita2026",
+    "stien2021",
+    "larsen2025",
+    "castonguay2022",
+    "barnds2019",
+    "macdougall1985",
+    "nhs-wrist-pain",
+    "nhs-knee-pain"
+  ],
+  research: {
+    "card": "grip/research/leg_press.json",
+    "rev": 1
   },
 } satisfies BuiltHowTo;
