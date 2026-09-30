@@ -1,10 +1,10 @@
 // Seated Dumbbell Shoulder Press (upright adjustable bench, pronated grip), side view, facing right. SEATPRESS parent.
 // View: SIDE (card): back contact with the pad, the low-back arch and the elbows slightly forward all read in the
 // sagittal plane, and so does the one thing the overhead finish must show: the arm vertical over the shoulder.
-// Sources: research card docs/research/howto/cards/dumbbell_shoulder_press.json (branch claude/libht-research-presses,
-// source-checked, critic pending), claims c1 (back against the backrest; head, shoulders, buttocks touch it; feet
+// Sources: research card docs/research/howto/cards/dumbbell_shoulder_press.json (branch claude/libht-research e2a70bc,
+// verified), claims c1 (back against the backrest; head, shoulders, buttocks touch it; feet
 // flat), c2 (start: dumbbells at shoulder level, shoulder-width or slightly wider, wrists neutral), c3 (blades down and
-// back), c4 (press to straight elbows overhead, no low-back arch), c5 (elbows slightly in front of the body), c10 (in
+// back), c4 (press to straight elbows overhead, no low-back arch), c5 (elbows pointed in front of the body), c10 (in
 // front of the head, never behind the neck).
 // Geometry decisions:
 //  - Bench: library composer `inclineBench` on its upright setting. The card's sources give no angle: BACK = 10 deg
@@ -27,7 +27,7 @@
 //  - Engine limits: the start layer never draws equipment, and the end torso fill hides the start near arm (it lies
 //    over the chest). Both are redrawn as dashed phantom outlines in the end layer (machine_chest_press's workaround).
 //  - Scale: reference 146.29 px/m.
-// Plate labels (provisional, card not yet critic-verified): callouts = plate.checkpoints c1 (Back on pad), c5 (Elbows
+// Plate labels (verified card): callouts = plate.checkpoints c1 (Back on pad), c5 (Elbows
 //   forward), c4 (Full lockout); measure = elbow at the top, expect 180 ("fully straight", c4); Mistake = plate.mistake
 //   c4 (low back arches off the pad: pelvis tips forward 10 deg, lumbar extends, 4.6 cm gap at backMid); tempo =
 //   plate.tempo c12 (up 1, down 2, no pause: Press then Lower). The card still gives no bench angle (BACK stays 10).
@@ -151,7 +151,7 @@ export default {
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'fully straight', expect: 180 },
   callouts: [
     { key: 'back', text: 'Back<br>on pad', anchor: 'backUpper', cue: 'Keep your head, shoulders and buttocks on the bench.' },
-    { key: 'elbows', text: 'Elbows<br>forward', anchor: 'start:elbow.r', cue: 'Point your elbows slightly in front of you, not straight out.' },
+    { key: 'elbows', text: 'Elbows<br>forward', anchor: 'start:elbow.r', cue: 'Point your elbows in front of you, not straight out to the sides.' },
     { key: 'lockout', text: 'Full<br>lockout', anchor: 'wrist.r', cue: 'Press until your elbows are fully straight.' },
   ],
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
@@ -165,6 +165,6 @@ export default {
       { key: 'hips', text: 'Hips tip<br>forward', anchor: { at: 'navel', pose: 'mistake' }, cue: 'Your hips tip forward and your belly pushes out.' },
     ],
   },
-  pilot: { note: 'Callouts and Mistake provisional: card not yet critic-verified. Bench angle 10° not in the card sources' },
+  pilot: { note: 'Bench angle 10° not in the verified card sources' },
   alt: 'Seated dumbbell shoulder press, side view. Sitting upright, head, back and hips on the pad, feet flat, the lifter presses the dumbbells from shoulder level, elbows slightly forward, to straight arms directly over the shoulders.',
 };

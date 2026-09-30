@@ -9,8 +9,8 @@
 //  - SIDE: GO with a caveat. Body, bench, five-point contact and the stop height against the chest line are drawn at
 //    approved quality; the width of the arc and the elbow bend are frontal and foreshortened (the near arm points at
 //    the viewer at the bottom), so those two checkpoints must be carried by the callouts, not the drawing.
-// Sources: research card docs/research/howto/cards/dumbbell_fly.json (branch claude/libht-research-presses,
-// source-checked, critic pending), claims c1 (flat bench, feet flat), c2 (blades down and back, five-point contact),
+// Sources: research card docs/research/howto/cards/dumbbell_fly.json (branch claude/libht-research e2a70bc,
+// verified), claims c1 (flat bench, feet flat), c2 (blades down and back, five-point contact),
 // c3 (start: dumbbells pressed up to shoulder width, palms facing, slight elbow bend, neutral wrists), c4 (lower in a
 // wide arc until the dumbbells are level with the shoulders or chest, dumbbells parallel), c5 (the same slight elbow
 // bend down and up).
@@ -30,8 +30,8 @@
 //    end-on hex in the front view, side-on in the side view.
 //  - Engine limit: the start layer never draws equipment, so the start dumbbells are dashed phantom outlines in the end
 //    layer (hex in front view, bar + heads in side view), as dumbbell_bench_press.
-// Plate labels (side view; provisional, card not yet critic-verified): callouts = plate.checkpoints c5 (Soft elbows),
-//   c4 (Stop at chest level), c2 (Five points); Mistake = plate.mistake c4 (dumbbells below chest/shoulder level, grip
+// Plate labels (side view; verified card): callouts = plate.checkpoints c5 (Soft elbows),
+//   c4 (Stop at chest level), c4 (Dumbbells parallel, palms facing, anchored on the side-on start dumbbell); Mistake = plate.mistake c4 (dumbbells below chest/shoulder level, grip
 //   10 cm under the shoulder joint); tempo = plate.tempo c10 (2 s down, 2 s up). No measure arc: the only angle the
 //   card names (the slight elbow bend) is foreshortened in side view, so an arc would draw a false number; the stop
 //   line datum proves c4. The front alt keeps no labels (no-go evidence).
@@ -118,7 +118,7 @@ export function makeFly(view, id) {
       callouts: [
         { key: 'elbows', text: 'Soft<br>elbows', anchor: 'start:elbow.r', cue: 'Keep a slight elbow bend that stays the same all the way.' },
         { key: 'stop', text: 'Stop at<br>chest', anchor: 'grip.r', cue: 'Lower until the dumbbells are level with your chest, no deeper.' },
-        { key: 'five', text: 'Five<br>points', anchor: 'buttock', cue: 'Keep your head, shoulders, hips and feet in contact.' },
+        { key: 'parallel', text: 'Dumbbells<br>parallel', anchor: 'start:grip.r', cue: 'Keep both dumbbells parallel, palms facing, through the whole arc.' },
       ],
       tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 2, move: true }],
       mistake: {
@@ -132,7 +132,7 @@ export function makeFly(view, id) {
           { key: 'elbow', text: 'Elbows<br>too low', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows drop below the bench line and strain the shoulder front.' },
         ],
       },
-      pilot: { note: 'F6: side view, census/card say front. Front is no-go (lying torso and head vanish in the engine front view); side cannot show the arc width or elbow bend. Callouts and Mistake provisional: card not yet critic-verified' },
+      pilot: { note: 'F6: side view, census/card say front. Front is no-go (lying torso and head vanish in the engine front view); side cannot show the arc width or elbow bend.' },
     }),
     alt: `Dumbbell fly, ${front ? 'front view from the foot end' : 'side view'}. Lying on a flat bench, head, shoulders and hips on the pad, feet flat, the lifter lowers the dumbbells in a wide arc, elbows slightly bent and fixed, until level with the chest, then raises them back.`,
   };

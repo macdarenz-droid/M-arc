@@ -1,10 +1,10 @@
 // Incline Dumbbell Press (adjustable bench at 45 deg, pronated grip), side view, facing right. BENCH child (incline).
 // View: SIDE (card): the bench angle, the elbow under the wrist and the back staying on the pad all read in the
 // sagittal plane.
-// Sources: research card docs/research/howto/cards/incline_dumbbell_press.json (branch claude/libht-research-presses,
-// source-checked, critic pending), claims c1 (bench about 45 deg; ACE 45-60, Human Kinetics about 45), c4 (blades down
-// and back; head, shoulders, buttocks and feet in contact), c5 (start: arms straight, dumbbells over the eyes or
-// slightly higher), c6 (lower to the upper chest, slightly wide toward the armpits, touch gently), c7 (elbows under
+// Sources: research card docs/research/howto/cards/incline_dumbbell_press.json (branch claude/libht-research e2a70bc,
+// verified), claims c1/c2 (bench about 45 deg, not steeper), c4 (blades down and back; head, shoulders,
+// buttocks and feet in contact), c17 + c7 + c5 (start: arms straight and vertical, dumbbells directly above the shoulder
+// joints, above eye height, in front of the face, never over it), c6 (lower to the upper chest, slightly wide toward the armpits, touch gently), c7 (elbows under
 // the wrists), c8 (hips stay on the seat, no low-back arch).
 // Geometry decisions:
 //  - Bench: library composer `inclineBench` (typical commercial adjustable bench): back pad BACK = 45 deg from
@@ -18,8 +18,8 @@
 //    face (tol 1 cm), head clearance, soles on the floor.
 //  - Feet flat, mid-sole FOOT_Z in front of the hip joint: shins about vertical (c4).
 //  - Blades down and back (SCAP) (c4).
-//  - Start (top, c5): arms straight (TOP_ELBOW 4 deg), grips vertically over the eyes (EYE on the side head outline):
-//    at 45 deg that is also about over the shoulder joints, so the weight is balanced.
+//  - Start (top, c17, c7, c5): arms straight (TOP_ELBOW 4 deg) and vertical, grips directly above the shoulder joints
+//    (22.7 cm off the midline): above eye height and in front of the face (see topInfo).
 //  - End (bottom, c6, c7): elbow placed in the torso's frame, BOTTOM_ABD = 45 deg out from the torso seen square to
 //    the pad and BOTTOM_DIP = 20 deg behind the chest plane (elbows just below the pad line); grip straight above the
 //    elbow in the side view (forearm vertical, c7), 42 cm off the midline (forearm leans in 3.8 deg in the front plane).
@@ -31,10 +31,10 @@
 //  - Engine limit: the start layer never draws equipment, so the start dumbbell is a dashed phantom hex in the end
 //    layer (as dumbbell_bench_press / machine_chest_press).
 //  - Scale: reference 146.29 px/m.
-// Plate labels (provisional, card not yet critic-verified): callouts = plate.checkpoints c1 (Bench at 45°), c7 (Elbows
+// Plate labels (verified card): callouts = plate.checkpoints c2 (Bench at 45°), c7 (Elbows
 //   under wrists), c6 (To upper chest); measure = back-pad angle from vertical, expect 45 (c1); Mistake = plate.mistake
 //   c7 (forearm tilted, elbow out of line); tempo = plate.tempo c14 (up 1, down 2, no pause: Lower then Press).
-// CARD: bench angle (BACK), seat tilt (SEAT_TILT), seat height (SEAT_TOP), top grip over the eyes (EYE, TOP_ELBOW),
+// CARD: bench angle (BACK), seat tilt (SEAT_TILT), seat height (SEAT_TOP), top grip over the shoulder joint (TOP_X, TOP_ELBOW),
 //   bottom flare/depth/width (BOTTOM_ABD, BOTTOM_DIP, BOTTOM_X), feet (FOOT_Z), scapular set (SCAP).
 import { landmarksOf, fk, resolve, normPose, rootOnSeat, WINTER, REF } from '../engine.mjs';
 import { inclineBench, inclineFaces } from '../eq/inclineBench.mjs';
@@ -50,7 +50,7 @@ const TRUNK = 0;                                      // spine neutral against t
 const FOOT_Z = 0.50;                                  // mid-sole in front of the hip joint (m)
 const SCAP = { elev: -1, pro: -3 };                   // blades back and down (cm) (c4)
 const TOP_ELBOW = 4;                                  // top: elbow flexion (deg), arms straight (c5)
-const TOP_X = 0.20;                                   // top: grip centre off the midline (m)
+const TOP_X = 0.227;                                  // top: grip centre off the midline (m): over the shoulder joints (c17)
 const BOTTOM_ABD = 45;                                // bottom: upper arm out from the torso, seen square to the pad (deg)
 const BOTTOM_DIP = 20;                                // bottom: upper arm behind the chest plane (deg): elbows below the pad line
 const UPPER_CHEST = 0.77;                             // upper-chest level (thorax height, H), for the report (c6)
@@ -89,11 +89,11 @@ const lm0 = landmarksOf(base, H), sk0 = skOf(base);
 const S = { l: lm0['shoulder.l'], r: lm0['shoulder.r'] };
 const L1 = WINTER.upperArm * H, L2 = WINTER.forearm * H + REF.gripOff * H;
 
-// Top (c5): arms straight, grips vertically over the eyes.
+// Top (c17, c7, c5): arms straight and vertical, grips directly above the shoulder joints.
 const EYE_W = sk0.head(EYE);
 const topReach = side => { const s = side === 'l' ? 1 : -1, sh = S[side];
   const d = Math.sqrt(L1 * L1 + L2 * L2 + 2 * L1 * L2 * Math.cos(TOP_ELBOW * R));
-  const dx = s * TOP_X - sh[0], dz = EYE_W[2] - sh[2], dy = Math.sqrt(d * d - dx * dx - dz * dz);
+  const dx = s * TOP_X - sh[0], dz = 0, dy = Math.sqrt(d * d - dx * dx - dz * dz);
   return { at: [sh[0] + dx, sh[1] + dy, sh[2] + dz], pole: [s, -0.3, 0.2] }; };
 // Bottom (c6, c7): the elbow is placed in the torso's frame, BOTTOM_ABD out from the torso seen square to the pad
 // ("slightly wide toward the armpits") and BOTTOM_DIP behind the chest plane (elbows below the pad line); the grip is
@@ -113,6 +113,9 @@ export const bottomInfo = () => { const b = botReach('r'), d = b.E.map((v, i) =>
     gripVsUpperChestCm: { forward: +((b.at[2] - CH[2]) * 100).toFixed(1), up: +((b.at[1] - CH[1]) * 100).toFixed(1) } }; };
 
 const start = { ...base, reach: { l: topReach('l'), r: topReach('r') } };
+/** Top grip against the face: + = in front of (toward the feet of) the eye / chin, cm; height above the eye, cm. */
+export const topInfo = () => { const g = topReach('r').at, chin = lm0.chin;
+  return { gripForwardOfEyeCm: +((g[2] - EYE_W[2]) * 100).toFixed(1), gripForwardOfChinCm: +((g[2] - chin[2]) * 100).toFixed(1), gripAboveEyeCm: +((g[1] - EYE_W[1]) * 100).toFixed(1) }; };
 const end = { ...base, reach: { l: (({ E, ...r }) => r)(botReach('l')), r: (({ E, ...r }) => r)(botReach('r')) } };
 
 const ring = (c, r, n) => { const pts = []; for (let i = 0; i <= n; i++) { const a = 360 * i / n * R; pts.push([0, c[1] - r * Math.sin(a), c[2] + r * Math.cos(a)]); } return pts; };
@@ -176,6 +179,5 @@ export default {
       { key: 'drift', text: 'Weight<br>drifts', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbow is no longer under your wrist at the bottom.' },
     ],
   },
-  pilot: { note: 'Callouts and Mistake provisional: card not yet critic-verified' },
-  alt: 'Incline dumbbell press, side view. On a bench set to 45 degrees, head, back and hips on the pads, feet flat, the lifter lowers the dumbbells from straight arms over the eyes to the upper chest, forearms vertical, then presses back up.',
+  alt: 'Incline dumbbell press, side view. On a bench set to 45 degrees, head, back and hips on the pads, feet flat, the lifter lowers the dumbbells from straight arms above the shoulders to the upper chest, forearms vertical, then presses back up.',
 };

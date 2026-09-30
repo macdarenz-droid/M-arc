@@ -2,9 +2,9 @@
 // View: SIDE. What a coach judges is sagittal: five-point contact (head, upper back, buttocks on the bench, both feet
 // flat on the floor), the dumbbells lowered to the side of the chest (not the neck, not the belly) and pressed back
 // up over the shoulders. The fly-like width is frontal and does not need to be seen to judge this press.
-// Sources: research card docs/research/howto/cards/dumbbell_bench_press.json (branch claude/libht-research-presses,
-// source-checked, critic pending), claims c1 (flat bench, feet on the floor), c2 (blades down and back; head, shoulders,
-// buttocks, feet in contact), c4 (start: arms straight, dumbbells level with or just below the eyes), c5 (lower to
+// Sources: research card docs/research/howto/cards/dumbbell_bench_press.json (branch claude/libht-research
+// e2a70bc, verified), claims c1 (flat bench, feet on the floor), c2 (blades down and back; head, shoulders,
+// buttocks, feet in contact), c10 + c4 (start: arms straight and vertical, dumbbells directly over the shoulder joints, never past eye level), c5 (lower to
 // mid-chest, a little wide toward the armpits, touch gently), c7 (each dumbbell roughly over its elbow).
 // Geometry decisions:
 //  - Supine class (anchor): rootOnSeat does not fit a lying pose, so `supine()` solves it: pelvis tilt -90 (lying
@@ -16,8 +16,8 @@
 //    head end 18 cm past the skull.
 //  - Feet: flat, mid-sole 51 cm in front of the hip joint: shins vertical, knee flexion 79 deg (c1).
 //  - Shoulder blades down and back (scap pro -3 cm, elev -1 cm) (c2).
-//  - Start (top, c4): arms straight (elbow 4 deg), grips over the chin line, i.e. "just below the eyes": the arms lean
-//    12 deg toward the head from vertical. Grips 20 cm off the midline (over the shoulder joints).
+//  - Start (top, c10, c4): arms straight (elbow 4 deg) and vertical, grips directly over the shoulder joints (22.7 cm
+//    off the midline), so the dumbbells stay below eye level. (Verified card; the draft's lean toward the eyes is gone.)
 //  - End (bottom, c5, c7): upper arm 60 deg out from the torso seen from above ("a little wide toward the armpits") and
 //    22 deg below the shoulder's horizontal (elbows just under the bench line); side-view forearm vertical, so the
 //    dumbbell is straight over the elbow. That puts the grip 3 cm below the nipple line (mid-chest) and the hex 5 cm
@@ -31,11 +31,11 @@
 //    so the start dumbbell is a dashed phantom hex in the end layer (same workaround as machine_chest_press).
 //  - Scale: reference 146.29 px/m (same body size as every plate); x0 centres bench + feet. A lying body leaves the
 //    top ~45% of the plate empty at this scale: kept for a consistent body size; that space takes the callouts.
-// Plate labels (provisional, card not yet critic-verified): callouts = plate.checkpoints c2 (Five points), c5 (Down to
+// Plate labels (verified card): callouts = plate.checkpoints c2 (Five points), c5 (Down to
 //   mid-chest), c7 (Weight over elbow); Mistake = plate.mistake c6 (low back arches, hips lift), tells from c6/c2;
 //   tempo = plate.tempo c15 (up 1 s, down 2 s, no pause; the plate starts at the top, so Lower then Press). No measure
 //   arc: the card gives no angle; the elbow plumb datum proves c7 instead.
-// CARD: bench pad height (BENCH_TOP), foot position (FOOT_Z), top grip line (TOP_Z = chin, c4), top elbow (TOP_ELBOW),
+// CARD: bench pad height (BENCH_TOP), foot position (FOOT_Z), top grip over the shoulder joint (TOP_Z, TOP_X, c10), top elbow (TOP_ELBOW),
 //   bottom flare (BOTTOM_ABD), depth (BOTTOM_DIP) and hand width (BOTTOM_X) against c5/c7, scapular set (SCAP, c2).
 import { landmarksOf, fk, resolve, normPose, WINTER, REF } from '../engine.mjs';
 
@@ -46,7 +46,7 @@ const BENCH_LEN = 1.2, BENCH_Z = -0.40;               // pad from z -1.00 (head 
 const FOOT_Z = 0.51;                                  // mid-sole, in front of the hip joint (m)
 const SCAP = { elev: -1, pro: -3 };                   // blades back and down (cm)
 const TOP_ELBOW = 4;                                  // top: elbow flexion (deg), arms straight (c4)
-const TOP_X = 0.20;                                   // top: grip centre off the midline (m), over the shoulder joints
+const TOP_X = 0.227;                                  // top: grip centre off the midline (m): over the shoulder joints (c10)
 const BOTTOM_ABD = 60;                                // bottom: upper arm angle from the torso, seen from above (deg)
 const BOTTOM_DIP = 22;                                // bottom: upper arm below the shoulder's horizontal (deg): elbows just under the bench line
 const BOTTOM_X = 0.42;                                // bottom: grip centre off the midline (m): inner heads at the side of the chest
@@ -76,8 +76,8 @@ const S = { l: lm0['shoulder.l'], r: lm0['shoulder.r'] };
 const sk0 = fk(resolve(normPose(base, BODY), BODY).q, BODY);
 const L1 = WINTER.upperArm * H, L2 = WINTER.forearm * H + REF.gripOff * H;
 
-// Top (c4): arms straight, grip over the chin line ("level with or just below the eyes"), elbow TOP_ELBOW.
-const TOP_Z = lm0.chin[2];
+// Top (c10, c4): arms straight and vertical, grips directly over the shoulder joints (below eye level), elbow TOP_ELBOW.
+const TOP_Z = S.r[2];                                        // arms vertical: grips straight over the shoulder joints (c10)
 const topReach = side => { const s = side === 'l' ? 1 : -1, sh = S[side];
   const d = Math.sqrt(L1 * L1 + L2 * L2 + 2 * L1 * L2 * Math.cos(TOP_ELBOW * R));
   const dx = s * TOP_X - sh[0], dz = TOP_Z - sh[2], dy = Math.sqrt(d * d - dx * dx - dz * dz);
@@ -152,6 +152,5 @@ export default {
       { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'navel', pose: 'mistake' }, cue: 'Your low back arches and the belly pushes up.' },
     ],
   },
-  pilot: { note: 'Callouts and Mistake provisional: card not yet critic-verified' },
   alt: 'Dumbbell bench press, side view. Lying on a flat bench, head, shoulders and hips on the pad, feet flat, the lifter lowers the dumbbells from straight arms to mid-chest, each forearm vertical under its dumbbell, then presses back up.',
 };
