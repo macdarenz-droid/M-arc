@@ -68,3 +68,36 @@ The owner approved this on 2026-09-26. It runs after item 9 and the fix loop for
 5. Run the real-phone test script, and optionally a 5–10 person closed beta for 1–2 weeks. **The store upload waits for this check.**
 6. Store account and listing: approve screenshots, set the age rating and support email.
 7. Approve the one coach quality-set run against the live Worker (a few cents on the AI key).
+
+## Google Play
+
+Owner decision, 2026-09-30 (REL-3): Google Play signs the app with your existing permanent key (SHA-256 `05:66:9A:…:F1:F5`), so Huawei and Play see the same app. CI signs what it uploads to Play with a separate, new upload key. If the upload key is ever lost, Google can reset it; the permanent key never leaves your control except in a copy encrypted for Google.
+
+Two one-off jobs do the key work. You start each from your phone. GitHub only shows **Run workflow** for a job once its file is on `main`, so both work after the REL-3 PR has merged.
+
+**How to start a job:** open the repo on GitHub → **Actions** → pick the job in the list → **Run workflow** → choose the branch under "Use workflow from" → green **Run workflow**. When the run shows a green tick, open it: the key facts are in the summary, and the files are under **Artifacts** at the bottom.
+
+### 1. Create the upload key (job "Play - create upload key (one-off)")
+- Run it once, on `main`. It stops if the upload key already exists, so it can never replace it.
+- It stores the key as the secrets `MARC_UPLOAD_KEYSTORE_B64` and `MARC_UPLOAD_STORE_PASSWORD`, using the existing `SECRETS_WRITE_TOKEN` and `KEY_EXPORT_PASSPHRASE` secrets.
+- Download both artifacts:
+  - `marc-upload-key-backup-ENCRYPTED`: your backup, locked with your `KEY_EXPORT_PASSPHRASE`. Keep it offline in 2 places, like the permanent key's backup.
+  - `marc-upload-certificate`: the public certificate, `upload_certificate.pem`. Play asks for it as the upload key certificate. It is not secret.
+- The upload key's SHA-256 is in the run summary.
+
+### 2. Get Google's encryption public key onto GitHub
+1. Play Console → your app → **Test and release** → **App integrity** → **App signing**. For an app that already has a key: **Change app signing key**. Then pick the option to export and upload a key from a Java keystore, "Provide a copy of your app signing key" or similar. The exact labels may differ.
+2. In that dialog, download **the encryption public key**. It is a small `.pem` file and it is public. Leave the dialog open, or come back to it later.
+3. If your phone names it something else, rename it to `encryption_public_key.pem`.
+4. GitHub → the repo → go into the folder `.github/play` (on `main`) → **Add file** → **Upload files** → choose the `.pem` → commit it.
+   If the folder doesn't exist yet, open **Add file** on `main`, upload the file, and before committing type `.github/play/` in front of its name.
+
+### 3. Hand the permanent key to Google (job "Play - export app signing key for Google (one-off)")
+- Run it on the branch that has the `.pem` from step 2. If the file is missing, the job stops and says so.
+- It first checks that the stored key is really `05:66:9A:…:F1:F5`. It stops if not, and nothing is exported.
+- Download the artifact `marc-app-signing-key-for-google-ENCRYPTED`. It is kept for 1 day only.
+- Your phone saves it as a zip that contains another zip. On Android, open **Files** → **Downloads** → tap the download → **Extract**. You get `marc-app-signing-key-for-google.zip`. Do not unzip that one.
+- In the Play Console dialog from step 2, upload `marc-app-signing-key-for-google.zip`. If it asks for the upload key certificate, upload `upload_certificate.pem` from step 1. Save.
+- The zip is encrypted to Google, so only Google Play can open it. Delete it from your phone after the upload.
+
+When Play shows the app signing key as `05:66:9A:…:F1:F5`, ask an agent to delete both one-off job files.
