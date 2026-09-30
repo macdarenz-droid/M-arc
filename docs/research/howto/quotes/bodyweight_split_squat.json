@@ -1,0 +1,105 @@
+{
+  "id": "bodyweight_split_squat",
+  "checked": "2026-09-30",
+  "fetcher": "source-fetcher (sonnet)",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "cat-splitsquat",
+      "status": "verbatim",
+      "text": "Bend both knees to move down until the back knee lightly contacts the floor.",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "cat-splitsquat",
+      "status": "verbatim",
+      "text": "Keep the trunk upright and allow yourself to shift very slightly toward the front leg naturally, but keep the front shin approximately vertical in the bottom.",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "cat-splitsquat",
+      "status": "verbatim",
+      "text": "Reverse the motion until the front knee is approximately straight.",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "cat-splitsquat",
+      "status": "verbatim",
+      "text": "The farther forward the front foot, the more the exercise will rely on the posterior chain and stretch the rear hip flexors; the farther back the front foot, the more the exercise will rely on the quads.",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "cat-splitsquat",
+      "status": "verbatim",
+      "text": "help balance weakness in one leg or hip, build better glute strength and hip stability",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "cat-splitsquat",
+      "status": "verbatim",
+      "text": "Sets of 5-10 reps are usually appropriate with weight that allows a smooth movement and no crashing into the bottom position.",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "escamilla-2025",
+      "status": "verbatim",
+      "text": "lunging up and down with feet stationary",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "escamilla-2025",
+      "status": "verbatim",
+      "text": "gluteus maximus and gluteus medius EMG activities were significantly greater in lunges with a stride compared to lunges without a stride.",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "cat-splitsquat",
+      "status": "verbatim",
+      "text": "The split squat can be loaded with any implement, from a barbell, to single or double dumbbells or kettlebells held in any position, to a sandbag.",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "Get advice from 111 now if:",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee is very painful",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "closest": null
+    }
+  ],
+  "sources": [
+    {
+      "id": "cat-splitsquat",
+      "access": "full"
+    },
+    {
+      "id": "escamilla-2025",
+      "access": "abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "access": "full"
+    }
+  ]
+}

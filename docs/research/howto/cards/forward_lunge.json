@@ -1,0 +1,646 @@
+{
+  "id": "forward_lunge",
+  "libId": "lib_forward_lunge",
+  "name": "Forward Lunge",
+  "family": "SPLIT",
+  "tier": "B",
+  "tierNote": "Safety tier B from content.md appendix B (loaded lunges and split squats); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "reverse_lunge",
+  "inherit": [
+    {
+      "field": "plate.view",
+      "why": "true for this child because it is also a front-to-back split stance in the sagittal plane, so shin angle, trunk and back-knee depth all read from the side."
+    },
+    {
+      "field": "redFlags.knee",
+      "why": "true for this child because the front knee bends under body weight or load exactly as in the reverse lunge; the NHS knee box is re-cited in this card."
+    },
+    {
+      "field": "grip",
+      "why": "true for this child because its own technique source lists dumbbells held at the sides, the parent's drawn hold; the claim is re-cited in this card."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Forward lunge: feet about hip width, step forward, lower the back knee almost to the floor without touching, then push the front foot into the floor and pull back to standing, alternating legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bb"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bb",
+          "text": "Place both feet so that they are about hip-width apart, and step forward with the right leg. Lower the left knee almost to the floor without touching the ground.",
+          "where": "instructions"
+        },
+        {
+          "source": "ace-fwdlunge-bb",
+          "text": "From the bottom of the movement push the right foot into the floor and pull back with the left leg to stand up. Alternate the legs for the desired number of repetitions.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Step long enough that the front shin is about vertical at the bottom, then push back off the front leg to the start.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-lunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-lunge",
+          "text": "Step long enough that in this bottom position, the front shin is approximately vertical. Push back off the front leg into the starting position.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "On landing, drop the hips toward the floor rather than driving them forward; this controls how far the shin moves forward over the foot.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bw"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "As you lunge forward, focus more on dropping your hips towards the floor rather than driving your hips forward. This will help control the amount of forward movement of your shinbone (forward tibial translation) over your foot.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The stepping foot lands heel first and the weight moves onto it slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bw"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "The raised (swing) leg should initiate contact with a heel strike first, slowly transferring your body weight into the leading (forward) foot placed firmly on the floor.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "With dumbbells: hold one in each hand, palms facing in and arms straight at the sides, and keep the back straight as you step.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lunge-db"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lunge-db",
+          "text": "Stand with the feet hip-width apart and grip one dumbbell in each hand with the palms facing each other and the arms straight down by the side. Keep the back straight and step forward with the right leg.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Loading a lunge too heavily costs the controlled descent, the upright trunk and the balance between the feet; if any of these is lost, reduce the weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-lunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-lunge",
+          "text": "Many athletes try to load lunges too heavily and lose the position in which the exercise will be most effective.",
+          "where": "Notes"
+        },
+        {
+          "source": "cat-lunge",
+          "text": "If you can’t maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight.",
+          "where": "Notes"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Lunge programming: loaded sets of 3-10 reps per leg at a weight that keeps a full-length step and smooth movement with no crash into the bottom; light or unloaded lunges can be done for 15-20 reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-lunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-lunge",
+          "text": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position.",
+          "where": "Programming"
+        },
+        {
+          "source": "cat-lunge",
+          "text": "Light or unloaded lunges can be done with 15-20 reps as well if using them for work capacity or rehab.",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The forward lunge loaded the kneecap joint (patellofemoral) more than the backward lunge in 20 women without knee pain.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "goulette-2021"
+      ],
+      "quotes": [
+        {
+          "source": "goulette-2021",
+          "text": "The FL produced greater PFJ loading variables compared to the BL.",
+          "where": "abstract, conclusion"
+        },
+        {
+          "source": "goulette-2021",
+          "text": "Quadriceps force, PFJ reaction force, and knee flexion angle were larger in the FL movement and Up phases.",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "In the loaded forward lunge the quads and glutes were highly active and the hamstrings, calf (gastrocnemius) and inner thigh (adductor longus) moderately active.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "escamilla-2025"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla-2025",
+          "text": "During the externally loaded forward lunge, high to very high muscle activity occurs in the quadriceps, gluteus maximus, and gluteus medius",
+          "where": "abstract, conclusions"
+        },
+        {
+          "source": "escamilla-2025",
+          "text": "while moderate muscle activity occurs in the hamstrings, gastrocnemius, and adductor longus.",
+          "where": "abstract, conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Muscle activity was generally greater with a long step than a short step, and greater when stepping out and back than with the feet fixed.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "escamilla-2025"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla-2025",
+          "text": "Lower-extremity muscle activity is generally greater in forward lunges with a long step compared to a short step, and greater in lunges with a stride compared to without a stride.",
+          "where": "abstract, conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Leaning the trunk forward in a forward lunge increased hip extensor work and glute max and outer hamstring activity; leaning back changed nothing.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "farrokhi-2008"
+      ],
+      "quotes": [
+        {
+          "source": "farrokhi-2008",
+          "text": "Performing a lunge with the trunk forward increased the hip extensor impulse and the recruitment of the hip extensors. In contrast, performing a forward lunge with the trunk extended did not alter joint impulse or activation of the lower extremity musculature.",
+          "where": "abstract, conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "In an EMG study of static, step-forward and walking lunges (30 % body-weight load), a forward-inclined trunk about doubled lower-back (erector spinae) activity compared with a straight trunk. Step-forward lunges were one of the three tested.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "bezerra-2021"
+      ],
+      "quotes": [
+        {
+          "source": "bezerra-2021",
+          "text": "Results indicate that positioning the trunk in a forward-inclined position induces greater lower lumbar erector spinae activation",
+          "where": "abstract, results"
+        },
+        {
+          "source": "bezerra-2021",
+          "text": "(straight = 20 ± 15, inclined = 40 ± 29)",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Step length shifts the emphasis: longer steps work the glutes and hamstrings more, shorter steps with the knee ahead of the toes work the quads more.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-lunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-lunge",
+          "text": "longer steps will emphasize the glutes and hamstrings more, and shorter steps with the knee moving in front of the toes will emphasize the quads more.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "NHS knee-pain advice: get urgent advice (111) if the knee is very painful, or locks or gives way.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-knee"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-knee",
+          "text": "Get advice from 111 now if:",
+          "where": "Urgent advice box, heading"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee is very painful",
+          "where": "Urgent advice box, item 1"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+          "where": "Urgent advice box, item 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-fwdlunge-bb",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/8/forward-lunge/",
+      "title": "Forward Lunge (ACE Exercise Library, barbell)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    },
+    {
+      "id": "cat-lunge",
+      "url": "https://www.catalystathletics.com/exercise/354/Lunge/",
+      "title": "Lunge (Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    },
+    {
+      "id": "ace-fwdlunge-bw",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/94/forward-lunge/",
+      "title": "Forward Lunge (ACE Exercise Library, no equipment)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    },
+    {
+      "id": "ace-lunge-db",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/363/lunge/",
+      "title": "Lunge (ACE Exercise Library, dumbbells)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    },
+    {
+      "id": "goulette-2021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33310585/",
+      "title": "Patellofemoral joint loading during the forward and backward lunge",
+      "kind": "peer-reviewed",
+      "year": 2021,
+      "pmid": "33310585",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "escamilla-2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39982282/",
+      "title": "Effects of Step Length and Stride Variation During Forward Lunges on Lower-Extremity Muscle Activity",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": "39982282",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "farrokhi-2008",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18591759/",
+      "title": "Trunk position influences the kinematics, kinetics, and muscle activity of the lead lower extremity during the forward lunge exercise",
+      "kind": "peer-reviewed",
+      "year": 2008,
+      "pmid": "18591759",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "bezerra-2021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34055138/",
+      "title": "Influence of Trunk Position during Three Lunge Exercises on Muscular Activation in Trained Women",
+      "kind": "peer-reviewed",
+      "year": 2021,
+      "pmid": "34055138",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "title": "Knee pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Forward step in the sagittal plane; hip drop and shin travel (c3), shin angle (c2) and back (c5) read from the side.",
+    "equipment": "Two dumbbells hanging at the sides (c5), floor line.",
+    "start": "Standing, feet about hip width apart, dumbbells at the sides, back straight (c5).",
+    "end": "Front foot stepped forward, back knee almost to the floor (c1), front shin about vertical (c2), hips dropped rather than pushed forward (c3).",
+    "checkpoints": [
+      {
+        "label": "Hips drop down",
+        "what": "Hips lower toward the floor rather than driving forward.",
+        "claim": "c3"
+      },
+      {
+        "label": "Front shin vertical",
+        "what": "Step long enough that the front shin is about vertical.",
+        "claim": "c2"
+      },
+      {
+        "label": "Back straight",
+        "what": "Back stays straight through the step.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Hips and front knee drive forward on landing, front shin tips far forward over the foot.",
+      "why": "ACE's forward-lunge cue exists to control this forward shin travel (c3); the forward lunge already loads the kneecap joint more than the reverse lunge (c8).",
+      "claim": "c3",
+      "drawable": true,
+      "rankNote": "No source ranks forward-lunge faults by frequency. Catalyst notes a shorter step with the knee ahead of the toes as a deliberate quad variation (c13), so the drawn fault is the uncontrolled drive on landing, not any knee-past-toe position."
+    },
+    "tells": [
+      {
+        "text": "Back knee nearly touches the floor",
+        "claim": "c1"
+      },
+      {
+        "text": "Front shin stays about vertical",
+        "claim": "c2"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Land heel first and shift the weight slowly (c4); lower smoothly with no crash (c7). No source gives seconds.",
+      "claim": "c4"
+    },
+    "variantLine": "exercises.json lists Dumbbells / Barbell. The plate draws dumbbells at the sides (c5). ACE gives both a barbell (c1) and a dumbbell (c5) version with the same step; Catalyst (c2) is load-agnostic."
+  },
+  "grip": {
+    "type": "One dumbbell in each hand, palms facing in, arms straight at the sides (c5).",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c5"
+    ],
+    "note": "Thumb and wrist come from the shared hold archetype."
+  },
+  "setup": [
+    {
+      "step": "Stand with feet hip width apart, a dumbbell in each hand at your sides, palms facing in.",
+      "claim": "c5"
+    },
+    {
+      "step": "Step forward and land heel first, moving the weight onto the front foot slowly.",
+      "claim": "c4"
+    },
+    {
+      "step": "Drop the hips until the back knee is almost on the floor.",
+      "claim": "c1"
+    },
+    {
+      "step": "Push the front foot into the floor and step back to the start.",
+      "claim": "c2"
+    },
+    {
+      "step": "Alternate legs.",
+      "claim": "c1"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Front shin about vertical at the bottom.",
+      "claim": "c2"
+    },
+    {
+      "point": "Hips lower down, not forward.",
+      "claim": "c3"
+    },
+    {
+      "point": "Back straight.",
+      "claim": "c5"
+    },
+    {
+      "point": "A longer step works the glutes and hamstrings more; a shorter one the quads.",
+      "claim": "c13"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Driving the hips and knee forward on landing.",
+      "fix": "Land heel first and drop the hips straight down.",
+      "claim": "c3"
+    },
+    {
+      "mistake": "Chest pitching forward at the bottom under a heavy load.",
+      "fix": "Go lighter until you can stay upright and controlled.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Dropping fast into the bottom.",
+      "fix": "Lower slowly; use a weight that lets you move smoothly.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "calves",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "adductors",
+        "claim": "c9"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c12"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the thigh and the glutes",
+        "means": "The target muscles are working.",
+        "fix": "",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually means the chest is leaning forward.",
+        "fix": "Stay upright; go lighter if you can't.",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the knee",
+        "means": "Stepping forward loads the kneecap joint more than stepping back.",
+        "fix": "",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "means": "Not a training feeling.",
+        "fix": "Stop the set.",
+        "claim": "c14",
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "More kneecap-joint load than the reverse lunge.",
+      "claim": "c8"
+    },
+    {
+      "risk": "Too heavy a load costs the upright trunk, the controlled descent and balance.",
+      "claim": "c6"
+    },
+    {
+      "risk": "Crashing into the bottom position instead of lowering under control.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "front-shin",
+      "kind": "posture",
+      "right": "Hips dropped, front shin about vertical.",
+      "wrong": "Hips driven forward, front shin tipped far forward.",
+      "claim": "c3"
+    },
+    {
+      "key": "back",
+      "kind": "posture",
+      "right": "Back straight over the hips.",
+      "wrong": "Chest pitched forward over the front thigh.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "calves",
+        "role": "secondary",
+        "claim": "c9",
+        "why": "Moderate gastrocnemius activity in the loaded forward lunge."
+      },
+      {
+        "muscleId": "adductors",
+        "role": "secondary",
+        "claim": "c9",
+        "why": "Moderate adductor longus activity in the loaded forward lunge."
+      }
+    ],
+    "remove": [],
+    "why": "Library: quads and glutes primary, hamstrings secondary, core stabilizer. One EMG study of the loaded forward lunge (c9) supports all of these and adds moderate calf and adductor activity."
+  },
+  "loadProgression": {
+    "text": "Start light or unloaded; add weight only while the step stays full and the descent smooth.",
+    "claims": [
+      "c7",
+      "c6"
+    ]
+  },
+  "anchorSource": "ace-fwdlunge-bw",
+  "anchorNote": "ACE Forward Lunge (no equipment) page read in full; ACE Forward Lunge (barbell), ACE Lunge (dumbbells) and Catalyst Lunge pages also read in full.",
+  "decisionNote": "Parent is reverse_lunge because LIBRARY-HOWTO-ARCHITECTURE 6.2 marks this id T (SPLIT template) and the batch brief names reverse_lunge as the template parent. content.md appendix A lists it differently; the plate template decides the parent here. Only plate view and the knee red-flag box are inherited; every claim, feel line and mistake is re-researched below. Sources differ on the trunk: ACE (no equipment) asks for a slight forward bend at the hips with a flat back, Catalyst for an upright trunk. The card uses \"back straight\" (both ACE pages) as the checkpoint and draws only the pitched-forward extreme as wrong.",
+  "unsourced": [
+    "Tempo in seconds.",
+    "Knee tracking over the toes (front view).",
+    "Breathing."
+  ]
+}

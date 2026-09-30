@@ -1,0 +1,119 @@
+{
+  "id": "bodyweight_lunge",
+  "checked": "2026-09-30",
+  "fetcher": "source-fetcher (sonnet)",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-fwdlunge-bw",
+      "status": "verbatim",
+      "text": "Starting Position: Stand with your feet together.",
+      "closest": null
+    },
+    {
+      "claim": "c1",
+      "source": "ace-fwdlunge-bw",
+      "status": "verbatim",
+      "text": "Depress and retract your scapulae (pull your shoulders down and back) without arching your low back, and \"brace\" (engage your abdominal/core muscles) to stiffen your spine.",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "ace-fwdlunge-bw",
+      "status": "verbatim",
+      "text": "slowly lift one foot off the floor, stabilizing your body on the stance (supporting) leg. Avoid any sideways tilting or swaying in your upper body",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "ace-fwdlunge-bw",
+      "status": "verbatim",
+      "text": "The raised (swing) leg should initiate contact with a heel strike first, slowly transferring your body weight into the leading (forward) foot placed firmly on the floor.",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-fwdlunge-bw",
+      "status": "verbatim",
+      "text": "As you lunge forward, focus more on dropping your hips towards the floor rather than driving your hips forward. This will help control the amount of forward movement of your shinbone (forward tibial translation) over your foot.",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "ace-fwdlunge-bw",
+      "status": "verbatim",
+      "text": "Continue lowering your body to a comfortable position or until your front thigh becomes parallel with the floor and your tibia (shinbone) is in a slight forward lean.",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-fwdlunge-bw",
+      "status": "verbatim",
+      "text": "While lunging, simultaneously, bend forward at your hips, maintaining a flat back.",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "ace-fwdlunge-bw",
+      "status": "verbatim",
+      "text": "Firmly push off with your front leg, activating both your quads and glutes (thighs and butt muscles) to return to your upright, starting position.",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "ace-fwdlunge-bw",
+      "status": "verbatim",
+      "text": "We suggest you first learn how to perform single leg-stands on the ground before performing this forward lunge.",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "Light or unloaded lunges can be done with 15-20 reps as well if using them for work capacity or rehab.",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "longer steps will emphasize the glutes and hamstrings more, and shorter steps with the knee moving in front of the toes will emphasize the quads more.",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "Get advice from 111 now if:",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee is very painful",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "closest": null
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-fwdlunge-bw",
+      "access": "full"
+    },
+    {
+      "id": "cat-lunge",
+      "access": "full"
+    },
+    {
+      "id": "nhs-knee",
+      "access": "full"
+    }
+  ]
+}

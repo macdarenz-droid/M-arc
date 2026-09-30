@@ -1,0 +1,180 @@
+{
+  "id": "bulgarian_split_squat",
+  "checked": "2026-09-30",
+  "fetcher": "source-fetcher (sonnet)",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "The Bulgarian split squat is simply a 1-legged squat with the rear foot elevated on a bench, split squat roller, or similar.",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "Place the front foot about 3 foot-lengths in front of the rear foot support, and place the top of your rear foot on the support so that the shin can move freely.",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "ace-bss",
+      "status": "verbatim",
+      "text": "the left foot placed back behind the body on a bench or box that is about knee-height.",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "At a controlled speed, bend at the knee to lower yourself until the rear knee lightly contacts the floor without resting on it, then stand again by pushing through the whole foot.",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-bss",
+      "status": "verbatim",
+      "text": "Before the left knee hits the floor, press the right foot into the ground, pull back on the right knee, and push the top of the left foot into the box to return to standing.",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "Maintain the position of the front knee over the foot—don’t let it move inward or outward.",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-bss",
+      "status": "verbatim",
+      "text": "Keep the back straight while lowering the left knee towards the floor.",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "farther forward will challenge the posterior chain more, and closer will challenge the quad more. Also, the more the balance is moved toward the front foot, the less the rear leg hip flexor will contribute.",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "Perform the total number of reps on one leg before switching to the other leg.",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "Sets of 8-15 reps are most often appropriate with weight that allows a smooth movement and no crashing into the bottom position.",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "Sets of 3-6 reps can be used to elicit more of a strength effect if the athlete has adequate control of the position.",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "The Bulgarian split squat can be loaded with any implement, from a barbell behind the neck or in the clean rack positions, single or double dumbbells or kettlebells held at the sides",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "cat-bss",
+      "status": "verbatim",
+      "text": "help balance weakness in one leg or hip, build better glute strength and hip stability, strengthen and mobilize the hip flexors (in the rear leg)",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "mccurdy-2021",
+      "status": "verbatim",
+      "text": "higher scores (p < 0.001) were found in the bottom position during the RFESS.",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "mccurdy-2021",
+      "status": "verbatim",
+      "text": "For the entire repetition, the RFESS produce significantly greater vastus lateralis activation (59.4 vs 43.6%).",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "arakawa-2023",
+      "status": "verbatim",
+      "text": "The hip extension moment was 44% greater in the RFESS than in the DLBS at the bottom position",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "arakawa-2023",
+      "status": "verbatim",
+      "text": "even if the absolute load is smaller and the trunk is more upright in RFESS.",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "aygun-2025",
+      "status": "verbatim",
+      "text": "trunk flexion increased activation in the GMax, BF, and RF muscles (p < 0.05).",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "Get advice from 111 now if:",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee is very painful",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "closest": null
+    }
+  ],
+  "sources": [
+    {
+      "id": "cat-bss",
+      "access": "full"
+    },
+    {
+      "id": "ace-bss",
+      "access": "full"
+    },
+    {
+      "id": "mccurdy-2021",
+      "access": "abstract"
+    },
+    {
+      "id": "arakawa-2023",
+      "access": "abstract"
+    },
+    {
+      "id": "aygun-2025",
+      "access": "abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "access": "full"
+    }
+  ]
+}
