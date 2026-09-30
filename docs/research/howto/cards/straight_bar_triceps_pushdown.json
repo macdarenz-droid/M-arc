@@ -1,0 +1,686 @@
+{
+  "id": "straight_bar_triceps_pushdown",
+  "libId": "lib_straight_bar_triceps_pushdown",
+  "name": "Straight-Bar Triceps Pushdown",
+  "family": "PUSHDOWN (straight bar)",
+  "tier": "C",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "triceps_pushdown",
+  "inherit": [
+    {
+      "field": "plate.view",
+      "why": "true for this child because the parent card is itself drawn with a straight bar (parent c1), so the side view and its reason carry over unchanged (c5, c6)."
+    },
+    {
+      "field": "plate.equipment",
+      "why": "true for this child because the parent plate already draws a straight bar on the top pulley (c1)."
+    },
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because ACE’s full-grip rule covers any pushdown handle (c2)."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because ACE’s neutral-wrist rule is written for the handle it describes, which includes a bar (c9)."
+    },
+    {
+      "field": "zooms",
+      "why": "true for this child because the parent’s two zooms (wrist over the bar, elbow drift) are both straight-bar pictures (c9, c6)."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because the same elbow and lower-back rows apply to the bar (c17, c11)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the cable pulley at its highest position with a straight bar attached, and grip the bar firmly in both hands.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pressdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pressdown",
+          "text": "Place the cable pulley at the highest position, use a straight bar attachment, and grip the bar firmly in both hands.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Grip the bar overhand (palms down), hands about shoulder-width, with a full grip: thumbs wrapped round the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown",
+        "hussain-2020",
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "Stand facing a cable machine and grab a bar with an overhand grip.",
+          "where": "How to, step 1"
+        },
+        {
+          "source": "hussain-2020",
+          "text": "held the straight-bar with both hands in the pronated position at shoulder width.",
+          "where": "Methods"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "Attach the handle or rope and grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+          "where": "Starting position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Stand with the feet hip-width (ACE) to shoulder-width (StrengthLog) apart, or staggered, with the core braced and the back straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown",
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Position your feet hip-width apart or in a staggered-stance (walking) position.",
+          "where": "Starting position"
+        },
+        {
+          "source": "sl-pushdown",
+          "text": "Stand with your feet shoulder-width apart, keep your core braced, and make sure to keep your back straight.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "If you lean slightly forward, tilt from the hips, not by arching the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The elbows stay close to the sides for the whole set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown",
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Continue pressing the weight with your elbows right next to your side while maintaining a neutral position with your wrists until your elbows become fully extended",
+          "where": "Step 3"
+        },
+        {
+          "source": "sl-pushdown",
+          "text": "Remember to keep your elbows close to your sides, and locked in.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Elbows moving forward is the fault to watch: it brings in the lats and takes work off the triceps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "It is important to monitor the forward movement of your elbows as this recruits from your lats (back muscles) and reduces the emphasis on the triceps.",
+          "where": "Note after the steps"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Start (top) position: bar at about upper-chest level with the elbows bent and close to the sides; on the way up, stop before the elbows drift forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown",
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "Start with the bar at the upper-chest level and your elbows bent and close to your sides.",
+          "where": "How to, step 2"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "moving the handle / rope upwards until your elbows begin to drift forward from the mid-line of your trunk (around upper chest level).",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "End (bottom) position: push the bar straight down until the arms are fully straight, without letting the elbows lock out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown",
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "Push the bar straight down until your arms are fully extended.",
+          "where": "How to, step 3"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The wrists stay neutral, in line with the forearms, throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "arms postioned firmly by sides and wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained throughout the exercise.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "A straight bar meets the body at the bottom, unlike a rope whose ends can pass the thighs; a slight forward lean from the hips lets the bar clear the body at full extension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown",
+        "hussain-2020"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "Using a rope instead of a bar in tricep pushdowns could allow for a longer range of motion since you can separate the ends of the rope and continue the motion without the bar hitting your body.",
+          "where": "Alternatives & variations, rope"
+        },
+        {
+          "source": "hussain-2020",
+          "text": "torso slightly leaned forward to ensure that the bar did not touch the body during full extension.",
+          "where": "Methods"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Leaning too far forward or arching the back strains the lower back and moves work off the triceps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "Some people tend to lean too far forward or arch their back, which can put unnecessary strain on the lower back and shift the focus away from the triceps.",
+          "where": "Common mistakes, arching your back"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Tempo (up = working phase, the press down; down = return): press in about 1 s, pause briefly at the bottom, return slowly in about 2 s. ACSM advises moderate speed (1-2 s each way).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown",
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+          "where": "Step 3"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Breathe out as you press the bar down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Only the elbow joint moves; the body stays still and does not add momentum or body weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown",
+        "hussain-2020"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "The only movement that should happen is in your elbow joint, so keep your body still and try not to create excessive momentum.",
+          "where": "Proper form & technique"
+        },
+        {
+          "source": "hussain-2020",
+          "text": "did not use his body weight to move the bar.",
+          "where": "Methods"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The triceps is the muscle worked; all three heads were measured working in the straight-bar pushdown.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "hussain-2020"
+      ],
+      "quotes": [
+        {
+          "source": "hussain-2020",
+          "text": "The triceps push-down exercise is an isotonic exercise that involves the full ROM of elbow extensors against a load.",
+          "where": "Introduction"
+        },
+        {
+          "source": "hussain-2020",
+          "text": "surface electromyography (sEMG) signals were recorded from the lateral, long and medial heads of the TB.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Too much weight leads to momentum and can lead to injury; pick a weight you can move with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "This often leads to using momentum to complete the exercise, instead of relying on the strength of the triceps. This not only reduces the effectiveness of the exercise but can also lead to injury.",
+          "where": "Common mistakes, using too much weight"
+        },
+        {
+          "source": "sl-pushdown",
+          "text": "Make sure to pick a weight where you can do the movement with control.",
+          "where": "Common mistakes, using too much weight"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Heavy, low-rep pushdowns feel uncomfortable in the elbows for many people; lighter weights for more reps can ease this.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "For the triceps pushdown, using heavy weights and low reps feels uncomfortable in the elbows for many people, and using lighter weights and doing more reps can alleviate this.",
+          "where": "Sets and reps"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Keep the shoulders pulled down and back through the set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+          "where": "Step 1"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-pressdown",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/333/tricep-pressdown/",
+      "title": "How To Do a Tricep Pressdown (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-pushdown",
+      "url": "https://www.strengthlog.com/tricep-pushdown-with-bar/",
+      "title": "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "hussain-2020",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7047337/",
+      "title": "Muscle Fatigue in the Three Heads of Triceps Brachii During Intensity and Speed Variations of Triceps Push-Down Exercise",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": 32153422,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-pushdown",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+      "title": "Triceps Pushdowns (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Same as the parent: the elbow bends front-to-back and the key fault, elbows drifting forward (c6), and trunk lean (c4, c11) read side-on. Census view is side.",
+    "equipment": "Cable column with the pulley at its top position and a straight bar on the cable (c1). Floor line.",
+    "start": "Standing facing the stack, feet hip- to shoulder-width or staggered (c3); torso tall, any lean from the hips (c4); bar at upper-chest level, elbows bent and close to the sides (c7); wrists neutral (c9); shoulders down and back (c19).",
+    "end": "Arms straight, bar pushed straight down in front of the thighs with the body leaned just enough from the hips for the bar to clear it (c8, c10); elbows still at the sides and not locked (c5, c8); torso unchanged (c14).",
+    "checkpoints": [
+      {
+        "label": "Elbows pinned",
+        "what": "Upper arms stay close to the sides; only the forearms move.",
+        "claim": "c5"
+      },
+      {
+        "label": "Hip lean only",
+        "what": "Torso tall or tilted slightly from the hips, back not arched.",
+        "claim": "c4"
+      },
+      {
+        "label": "Neutral wrists",
+        "what": "Hands in line with the forearms from top to bottom.",
+        "claim": "c9"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows drifting forward as the bar comes up (and swinging forward to start the press).",
+      "why": "ACE names it as the fault to monitor: it brings in the lats and takes load off the triceps.",
+      "claim": "c6",
+      "drawable": true,
+      "rankNote": "No source ranks pushdown faults by frequency; ACE singles this one out, as on the parent card."
+    },
+    "tells": [
+      {
+        "text": "Only your forearms move",
+        "claim": "c14"
+      },
+      {
+        "text": "Elbows stay by your sides",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (palms down) on a straight bar, full grip.",
+    "width": "About shoulder-width.",
+    "thumb": "Wrapped round the bar.",
+    "handContact": "",
+    "wrist": "Neutral, in line with the forearm, for the whole set.",
+    "claims": [
+      "c2",
+      "c9"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the pulley at the top position and attach a straight bar.",
+      "claim": "c1"
+    },
+    {
+      "step": "Grip the bar overhand, hands shoulder-width, thumbs wrapped.",
+      "claim": "c2"
+    },
+    {
+      "step": "Stand facing the machine, feet hip- to shoulder-width or staggered, core braced.",
+      "claim": "c3"
+    },
+    {
+      "step": "Bar at upper-chest level, elbows bent and close to your sides.",
+      "claim": "c7"
+    },
+    {
+      "step": "Pick a weight you can move with control.",
+      "claim": "c16"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Elbows stay close to your sides.",
+      "claim": "c5"
+    },
+    {
+      "point": "Torso tall; any lean comes from the hips, not an arched back.",
+      "claim": "c4"
+    },
+    {
+      "point": "Wrists neutral throughout.",
+      "claim": "c9"
+    },
+    {
+      "point": "Shoulders down and back.",
+      "claim": "c19"
+    },
+    {
+      "point": "Push the bar straight down to straight arms without locking the elbows.",
+      "claim": "c8"
+    },
+    {
+      "point": "Lean just enough from the hips for the bar to clear your thighs.",
+      "claim": "c10"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Elbows drifting forward.",
+      "fix": "Keep the elbows at your sides; stop the return at upper-chest level.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Leaning over the bar or arching the back.",
+      "fix": "Stand taller; tilt only from the hips; go lighter.",
+      "claim": "c11"
+    },
+    {
+      "mistake": "Weight too heavy, moved with momentum.",
+      "fix": "Go lighter and move with control.",
+      "claim": "c16"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c15"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Back of the upper arm",
+        "means": "The triceps are doing the work.",
+        "fix": "",
+        "claim": "c15",
+        "redFlag": null
+      },
+      {
+        "where": "Sides of the back (lats)",
+        "means": "Usually means the elbows are drifting forward.",
+        "fix": "Keep the elbows at your sides.",
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually means you are leaning too far or arching.",
+        "fix": "Stand taller and go lighter.",
+        "claim": "c11",
+        "redFlag": "back"
+      },
+      {
+        "where": "Elbows",
+        "means": "Heavy, low-rep sets often feel this way.",
+        "fix": "Use a lighter weight for more reps. Sharp or lasting elbow pain: stop the set.",
+        "claim": "c17",
+        "redFlag": "elbow",
+        "fixNote": "The 'sharp or lasting elbow pain: stop the set' part follows the shared elbow warning box this row links; the claim covers only the discomfort and the lighter-weight advice."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Leaning or arching strains the lower back.",
+      "claim": "c11"
+    },
+    {
+      "risk": "Heavy loads feel uncomfortable in the elbows for many people.",
+      "claim": "c17"
+    },
+    {
+      "risk": "Too much weight moved with momentum can lead to injury.",
+      "claim": "c16"
+    }
+  ],
+  "redFlags": [
+    "elbow",
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "pushdown-wrist",
+      "kind": "hand",
+      "right": "Overhand full grip, thumbs wrapped, hands in line with the forearms.",
+      "wrong": "Wrists bent back over the bar.",
+      "claim": "c9"
+    },
+    {
+      "key": "pushdown-elbow",
+      "kind": "posture",
+      "right": "Elbows against the sides at the top of the return.",
+      "wrong": "Elbows drifted forward, upper arms swung up.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "triceps primary is sourced (c15). exercises.json lists forearms as secondary; StrengthLog's bar-pushdown page lists only the triceps and no other source read names the forearms, so it is kept unchanged and flagged unsourced (same finding as the parent card)."
+  },
+  "anchorSource": "sl-pushdown"
+}

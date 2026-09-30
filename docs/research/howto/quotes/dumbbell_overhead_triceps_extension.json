@@ -1,0 +1,215 @@
+{
+ "id": "dumbbell_overhead_triceps_extension",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-oh-ext",
+   "text": "Stand in a split-stance position holding a dumbbell with both hands and wrap both hands around the dumbbell handle.",
+   "status": "verbatim",
+   "closest": "Stand in a split-stance position holding a dumbbell with both hands and wrap both hands around the dumbbell handle.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "healthline-ote",
+   "text": "Hold the weight overhead by grasping the inside dumbbell plate surface with both hands, or by grasping both handles of the kettlebell.",
+   "status": "verbatim",
+   "closest": "Hold the weight overhead by grasping the inside dumbbell plate surface with both hands, or by grasping both handles of the kettlebell.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-oh-ext",
+   "text": "Stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining this position throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining this position throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-oh-ext",
+   "text": "Your head and neck should be aligned with your spine.",
+   "status": "verbatim",
+   "closest": "Your head and neck should be aligned with your spine.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-oh-ext",
+   "text": "Exhale and slowly press the dumbbell overhead, extending your elbows until your arms are vertical to the floor, elbows pointing forward, but not completely locked.",
+   "status": "verbatim",
+   "closest": "Exhale and slowly press the dumbbell overhead, extending your elbows until your arms are vertical to the floor, elbows pointing forward, but not completely locked.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-oh-ext",
+   "text": "The dumbbell should be positioned directly over your head with your palms facing upwards and the dumbbell hanging vertically or angled slightly.",
+   "status": "verbatim",
+   "closest": "The dumbbell should be positioned directly over your head with your palms facing upwards and the dumbbell hanging vertically or angled slightly.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-oh-ext",
+   "text": "Inhale and allow the weight to slowly bend your elbows, lowering the dumbbell behind your head in a controlled manner without moving your upper arms.",
+   "status": "verbatim",
+   "closest": "Inhale and allow the weight to slowly bend your elbows, lowering the dumbbell behind your head in a controlled manner without moving your upper arms.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-oh-ext",
+   "text": "Continue lowering the dumbbell until your elbows reach a 90 degree bend or until your upper arms begin to move backwards. Be sure to avoid making contact with the back of your head.",
+   "status": "verbatim",
+   "closest": "Continue lowering the dumbbell until your elbows reach a 90 degree bend or until your upper arms begin to move backwards. Be sure to avoid making contact with the back of your head.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-oh-ext",
+   "text": "Attempt to keep your upper arms vertical to the floor throughout the exercise and your elbows shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Attempt to keep your upper arms vertical to the floor throughout the exercise and your elbows shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-oh-ext",
+   "text": "Maintain your balance and avoid changing the position of your head, torso, upper arms, wrists and feet.",
+   "status": "verbatim",
+   "closest": "Maintain your balance and avoid changing the position of your head, torso, upper arms, wrists and feet.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "healthline-ote",
+   "text": "Depending on what type of resistance you use (dumbbell, kettlebell, band, etc.), sometimes the most difficult part is getting the weight into position. Use a weight that allows you to get to the starting position safely.",
+   "status": "verbatim",
+   "closest": "Depending on what type of resistance you use (dumbbell, kettlebell, band, etc.), sometimes the most difficult part is getting the weight into position. Use a weight that allows you to get to the starting position safely.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "healthline-ote",
+   "text": "If the weight is too heavy or you’re fatigued, you may be tempted to arch your back, which can increase the strain on your back and shoulder joints.",
+   "status": "verbatim",
+   "closest": "If the weight is too heavy or you’re fatigued, you may be tempted to arch your back, which can increase the strain on your back and shoulder joints.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "healthline-ote",
+   "text": "Keep the speed of movement relatively slow, and avoid momentum to focus on your form.",
+   "status": "verbatim",
+   "closest": "Keep the speed of movement relatively slow, and avoid momentum to focus on your form.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "motra-db-oh",
+   "text": "Sit on a bench with back support or stand with feet shoulder-width apart, core engaged.",
+   "status": "verbatim",
+   "closest": "Sit on a bench with back support or stand with feet shoulder-width apart, core engaged.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-db-oh",
+   "text": "Flaring elbows outward",
+   "status": "verbatim",
+   "closest": "Flaring elbows outward",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-db-oh",
+   "text": "Using momentum to swing weight",
+   "status": "verbatim",
+   "closest": "Using momentum to swing weight",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-db-oh",
+   "text": "Locking elbows at top",
+   "status": "verbatim",
+   "closest": "Locking elbows at top",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "motra-db-oh",
+   "text": "Spotting not typically required; assist by supporting elbows if needed for heavy sets.",
+   "status": "verbatim",
+   "closest": "Spotting not typically required; assist by supporting elbows if needed for heavy sets.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "alves-2018",
+   "text": "Eccentric phase elicited less muscular activity than concentric in both exercises.",
+   "status": "verbatim",
+   "closest": "Eccentric phase elicited less muscular activity than concentric in both exercises.",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c14",
+   "source": "alves-2018",
+   "text": "Concentric contraction presented the same pattern during OD (long and lateral heads) and LD (lateral head). Initial and middle intervals elicited higher muscle activity than final interval.",
+   "status": "verbatim",
+   "closest": "Concentric contraction presented the same pattern during OD (long and lateral heads) and LD (lateral head). Initial and middle intervals elicited higher muscle activity than final interval.",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c15",
+   "source": "kerr-2010",
+   "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "status": "verbatim",
+   "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c16",
+   "source": "gaviria-2020",
+   "text": "Triceps tendon ruptures (TTRs) are rare and often occur as a result of falling on an outstretched hand, forceful eccentric contraction, direct trauma to the elbow, or lifting against resistance.",
+   "status": "verbatim",
+   "closest": "Triceps tendon ruptures (TTRs) are rare and often occur as a result of falling on an outstretched hand, forceful eccentric contraction, direct trauma to the elbow, or lifting against resistance.",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c17",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c18",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c18",
+   "source": "ace-oh-ext",
+   "text": "Inhale and allow the weight to slowly bend your elbows, lowering the dumbbell behind your head in a controlled manner without moving your upper arms.",
+   "status": "verbatim",
+   "closest": "Inhale and allow the weight to slowly bend your elbows, lowering the dumbbell behind your head in a controlled manner without moving your upper arms.",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "ace-oh-ext",
+   "text": "Exhale and slowly press the dumbbell overhead, extending your elbows until your arms are vertical to the floor, elbows pointing forward, but not completely locked.",
+   "status": "verbatim",
+   "closest": "Exhale and slowly press the dumbbell overhead, extending your elbows until your arms are vertical to the floor, elbows pointing forward, but not completely locked.",
+   "note": ""
+  }
+ ]
+}

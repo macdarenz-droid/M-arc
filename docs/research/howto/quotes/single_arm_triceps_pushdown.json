@@ -1,0 +1,167 @@
+{
+ "id": "single_arm_triceps_pushdown",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-pushdown",
+   "text": "Stand facing the cable machine and position the cable attachment at a height above your head.",
+   "status": "verbatim",
+   "closest": "Stand facing the cable machine and position the cable attachment at a height above your head.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-pushdown",
+   "text": "Attach the handle or rope and grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+   "status": "verbatim",
+   "closest": "Attach the handle or rope and grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-pushdown",
+   "text": "This exercise can also be performed unilaterally (one arm at a time )",
+   "status": "verbatim",
+   "closest": "This exercise can also be performed unilaterally (one arm at a time )",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "centr-single",
+   "text": "Keep your shoulders and hips square and don't rotate your torso.",
+   "status": "verbatim",
+   "closest": "Keep your shoulders and hips square and don't rotate your torso.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "centr-single",
+   "text": "Don't slouch as this can lead to compensating with the wrong muscles.",
+   "status": "verbatim",
+   "closest": "Don't slouch as this can lead to compensating with the wrong muscles.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-pushdown",
+   "text": "Continue pressing the weight with your elbows right next to your side while maintaining a neutral position with your wrists until your elbows become fully extended",
+   "status": "verbatim",
+   "closest": "Continue pressing the weight with your elbows right next to your side while maintaining a neutral position with your wrists until your elbows become fully extended",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-pushdown",
+   "text": "It is important to monitor the forward movement of your elbows as this recruits from your lats (back muscles) and reduces the emphasis on the triceps.",
+   "status": "verbatim",
+   "closest": "It is important to monitor the forward movement of your elbows as this recruits from your lats (back muscles) and reduces the emphasis on the triceps.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-pushdown",
+   "text": "moving the handle / rope upwards until your elbows begin to drift forward from the mid-line of your trunk (around upper chest level).",
+   "status": "verbatim",
+   "closest": "moving the handle / rope upwards until your elbows begin to drift forward from the mid-line of your trunk (around upper chest level).",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-pushdown",
+   "text": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
+   "status": "verbatim",
+   "closest": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-pushdown",
+   "text": "arms postioned firmly by sides and wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained throughout the exercise.",
+   "status": "verbatim",
+   "closest": "arms postioned firmly by sides and wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-pushdown",
+   "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+   "status": "verbatim",
+   "closest": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c11",
+   "source": "ace-pushdown",
+   "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "status": "verbatim",
+   "closest": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "sl-pushdown",
+   "text": "For the triceps pushdown, using heavy weights and low reps feels uncomfortable in the elbows for many people, and using lighter weights and doing more reps can alleviate this.",
+   "status": "verbatim",
+   "closest": "For the triceps pushdown, using heavy weights and low reps feels uncomfortable in the elbows for many people, and using lighter weights and doing more reps can alleviate this.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "sl-pushdown",
+   "text": "This often leads to using momentum to complete the exercise, instead of relying on the strength of the triceps. This not only reduces the effectiveness of the exercise but can also lead to injury.",
+   "status": "verbatim",
+   "closest": "This often leads to using momentum to complete the exercise, instead of relying on the strength of the triceps. This not only reduces the effectiveness of the exercise but can also lead to injury.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "sl-pushdown",
+   "text": "Make sure to pick a weight where you can do the movement with control.",
+   "status": "verbatim",
+   "closest": "Make sure to pick a weight where you can do the movement with control.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c15",
+   "source": "centr-single",
+   "text": "Target: Triceps",
+   "status": "verbatim",
+   "closest": "Target: Triceps",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "ace-pushdown",
+   "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine with a natural arch in your low back, keeping your torso aligned vertically with the floor and maintaining this position throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Stiffen (“brace”) your abdominal muscles to stabilize your spine with a natural arch in your low back, keeping your torso aligned vertically with the floor and maintaining this position throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "ace-pushdown",
+   "text": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+   "note": ""
+  }
+ ]
+}

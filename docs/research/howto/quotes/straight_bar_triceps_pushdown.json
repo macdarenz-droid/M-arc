@@ -1,0 +1,247 @@
+{
+ "id": "straight_bar_triceps_pushdown",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-pressdown",
+   "text": "Place the cable pulley at the highest position, use a straight bar attachment, and grip the bar firmly in both hands.",
+   "status": "verbatim",
+   "closest": "Place the cable pulley at the highest position, use a straight bar attachment, and grip the bar firmly in both hands.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-pushdown",
+   "text": "Stand facing a cable machine and grab a bar with an overhand grip.",
+   "status": "verbatim",
+   "closest": "Stand facing a cable machine and grab a bar with an overhand grip.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "hussain-2020",
+   "text": "held the straight-bar with both hands in the pronated position at shoulder width.",
+   "status": "verbatim",
+   "closest": "held the straight-bar with both hands in the pronated position at shoulder width.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-pushdown",
+   "text": "Attach the handle or rope and grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+   "status": "verbatim",
+   "closest": "Attach the handle or rope and grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-pushdown",
+   "text": "Position your feet hip-width apart or in a staggered-stance (walking) position.",
+   "status": "verbatim",
+   "closest": "Position your feet hip-width apart or in a staggered-stance (walking) position.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-pushdown",
+   "text": "Stand with your feet shoulder-width apart, keep your core braced, and make sure to keep your back straight.",
+   "status": "verbatim",
+   "closest": "Stand with your feet shoulder-width apart, keep your core braced, and make sure to keep your back straight.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-pushdown",
+   "text": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
+   "status": "verbatim",
+   "closest": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-pushdown",
+   "text": "Continue pressing the weight with your elbows right next to your side while maintaining a neutral position with your wrists until your elbows become fully extended",
+   "status": "verbatim",
+   "closest": "Continue pressing the weight with your elbows right next to your side while maintaining a neutral position with your wrists until your elbows become fully extended",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-pushdown",
+   "text": "Remember to keep your elbows close to your sides, and locked in.",
+   "status": "verbatim",
+   "closest": "Remember to keep your elbows close to your sides, and locked in.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-pushdown",
+   "text": "It is important to monitor the forward movement of your elbows as this recruits from your lats (back muscles) and reduces the emphasis on the triceps.",
+   "status": "verbatim",
+   "closest": "It is important to monitor the forward movement of your elbows as this recruits from your lats (back muscles) and reduces the emphasis on the triceps.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-pushdown",
+   "text": "Start with the bar at the upper-chest level and your elbows bent and close to your sides.",
+   "status": "verbatim",
+   "closest": "Start with the bar at the upper-chest level and your elbows bent and close to your sides.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-pushdown",
+   "text": "moving the handle / rope upwards until your elbows begin to drift forward from the mid-line of your trunk (around upper chest level).",
+   "status": "verbatim",
+   "closest": "moving the handle / rope upwards until your elbows begin to drift forward from the mid-line of your trunk (around upper chest level).",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-pushdown",
+   "text": "Push the bar straight down until your arms are fully extended.",
+   "status": "verbatim",
+   "closest": "Push the bar straight down until your arms are fully extended.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-pushdown",
+   "text": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
+   "status": "verbatim",
+   "closest": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-pushdown",
+   "text": "arms postioned firmly by sides and wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained throughout the exercise.",
+   "status": "verbatim",
+   "closest": "arms postioned firmly by sides and wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-pushdown",
+   "text": "Using a rope instead of a bar in tricep pushdowns could allow for a longer range of motion since you can separate the ends of the rope and continue the motion without the bar hitting your body.",
+   "status": "verbatim",
+   "closest": "Using a rope instead of a bar in tricep pushdowns could allow for a longer range of motion since you can separate the ends of the rope and continue the motion without the bar hitting your body.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "hussain-2020",
+   "text": "torso slightly leaned forward to ensure that the bar did not touch the body during full extension.",
+   "status": "verbatim",
+   "closest": "torso slightly leaned forward to ensure that the bar did not touch the body during full extension.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "sl-pushdown",
+   "text": "Some people tend to lean too far forward or arch their back, which can put unnecessary strain on the lower back and shift the focus away from the triceps.",
+   "status": "verbatim",
+   "closest": "Some people tend to lean too far forward or arch their back, which can put unnecessary strain on the lower back and shift the focus away from the triceps.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "ace-pushdown",
+   "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+   "status": "verbatim",
+   "closest": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c13",
+   "source": "ace-pushdown",
+   "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "status": "verbatim",
+   "closest": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "sl-pushdown",
+   "text": "The only movement that should happen is in your elbow joint, so keep your body still and try not to create excessive momentum.",
+   "status": "verbatim",
+   "closest": "The only movement that should happen is in your elbow joint, so keep your body still and try not to create excessive momentum.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "hussain-2020",
+   "text": "did not use his body weight to move the bar.",
+   "status": "verbatim",
+   "closest": "did not use his body weight to move the bar.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "hussain-2020",
+   "text": "The triceps push-down exercise is an isotonic exercise that involves the full ROM of elbow extensors against a load.",
+   "status": "verbatim",
+   "closest": "The triceps push-down exercise is an isotonic exercise that involves the full ROM of elbow extensors against a load.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "hussain-2020",
+   "text": "surface electromyography (sEMG) signals were recorded from the lateral, long and medial heads of the TB.",
+   "status": "verbatim",
+   "closest": "surface electromyography (sEMG) signals were recorded from the lateral, long and medial heads of the TB.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "sl-pushdown",
+   "text": "This often leads to using momentum to complete the exercise, instead of relying on the strength of the triceps. This not only reduces the effectiveness of the exercise but can also lead to injury.",
+   "status": "verbatim",
+   "closest": "This often leads to using momentum to complete the exercise, instead of relying on the strength of the triceps. This not only reduces the effectiveness of the exercise but can also lead to injury.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "sl-pushdown",
+   "text": "Make sure to pick a weight where you can do the movement with control.",
+   "status": "verbatim",
+   "closest": "Make sure to pick a weight where you can do the movement with control.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "sl-pushdown",
+   "text": "For the triceps pushdown, using heavy weights and low reps feels uncomfortable in the elbows for many people, and using lighter weights and doing more reps can alleviate this.",
+   "status": "verbatim",
+   "closest": "For the triceps pushdown, using heavy weights and low reps feels uncomfortable in the elbows for many people, and using lighter weights and doing more reps can alleviate this.",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c19",
+   "source": "ace-pushdown",
+   "text": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+   "note": ""
+  }
+ ]
+}

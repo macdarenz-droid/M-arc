@@ -1,0 +1,159 @@
+{
+ "id": "barbell_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-bbcurl",
+   "text": "Grip a bar with an underhand (supinated) grip, hands about shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Grip a bar with an underhand (supinated) grip, hands about shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "ace-bbcurl",
+   "text": "Hold the barbell with both hands facing up so the wrists, elbows, and shoulders are in a straight line about shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Hold the barbell with both hands facing up so the wrists, elbows, and shoulders are in a straight line about shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-bbcurl",
+   "text": "Stand with your feet about hip-width apart and make sure that you’re standing in a stable position. Keep a good posture, and brace your core during the entire movement.",
+   "status": "verbatim",
+   "closest": "Stand with your feet about hip-width apart and make sure that you’re standing in a stable position. Keep a good posture, and brace your core during the entire movement.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-bbcurl",
+   "text": "Lift the barbell toward the shoulders while bending the elbows and keeping them next to the middle of the body.",
+   "status": "verbatim",
+   "closest": "Lift the barbell toward the shoulders while bending the elbows and keeping them next to the middle of the body.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-bbcurl",
+   "text": "Curl up the barbell, and make sure that you keep your elbows close to your body the entire time. Your body shouldn’t move, just the arms.",
+   "status": "verbatim",
+   "closest": "Curl up the barbell, and make sure that you keep your elbows close to your body the entire time. Your body shouldn’t move, just the arms.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-bbcurl",
+   "text": "Don’t let your upper arm travel back during the curl, keep it at your side or move it slightly forward.",
+   "status": "verbatim",
+   "closest": "Don’t let your upper arm travel back during the curl, keep it at your side or move it slightly forward.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-bbcurl",
+   "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+   "status": "verbatim",
+   "closest": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-bbcurl",
+   "text": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up. Another sign of using too much weight is if you’re not using the full range of motion and start doing half reps instead.",
+   "status": "verbatim",
+   "closest": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up. Another sign of using too much weight is if you’re not using the full range of motion and start doing half reps instead.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-bbcurl",
+   "text": "If you start to swing to move the barbell with help from the momentum of the body, you should probably remove some weight instead and focus on performing the movement with control.",
+   "status": "verbatim",
+   "closest": "If you start to swing to move the barbell with help from the momentum of the body, you should probably remove some weight instead and focus on performing the movement with control.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "marcolin-2018",
+   "text": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.",
+   "status": "verbatim",
+   "closest": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-bbcurl",
+   "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "status": "verbatim",
+   "closest": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-bbcurl",
+   "text": "Slowly lower the weight to return to the starting position. Keep chest still, using just the arms for the movement.",
+   "status": "verbatim",
+   "closest": "Slowly lower the weight to return to the starting position. Keep chest still, using just the arms for the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-bbcurl",
+   "text": "To accomplish this, avoid letting your elbows travel backward during the lift, and also keep tension in the muscles in the bottom position.",
+   "status": "verbatim",
+   "closest": "To accomplish this, avoid letting your elbows travel backward during the lift, and also keep tension in the muscles in the bottom position.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "sl-dbcurl",
+   "text": "Barbell curls often allow for heavier weights to be lifted, but they offer less range of motion and flexibility in your wrists.",
+   "status": "verbatim",
+   "closest": "Barbell curls often allow for heavier weights to be lifted, but they offer less range of motion and flexibility in your wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "sl-bbcurl",
+   "text": "The barbell curl primarily targets your biceps and brachialis (which lie beneath the biceps), but the forearm flexors are also involved as a secondary muscle group.",
+   "status": "verbatim",
+   "closest": "The barbell curl primarily targets your biceps and brachialis (which lie beneath the biceps), but the forearm flexors are also involved as a secondary muscle group.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "marcolin-2018",
+   "text": "the DC variant was found to be less effective, while the BC variant could be placed in an intermediate position but with an activation closer to the EZ than to the DC variant for the two muscles investigated.",
+   "status": "verbatim",
+   "closest": "the DC variant was found to be less effective, while the BC variant could be placed in an intermediate position but with an activation closer to the EZ than to the DC variant for the two muscles investigated.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "marcolin-2018",
+   "text": "The metronome was set so that each repetition duration was 3 s.",
+   "status": "verbatim",
+   "closest": "The metronome was set so that each repetition duration was 3 s.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c14",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": "matched in PubMed abstract"
+  }
+ ]
+}
