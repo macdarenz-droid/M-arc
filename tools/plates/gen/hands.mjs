@@ -4,8 +4,8 @@
 //
 // Golden B draws one hand close-up per exercise (8, all distinct: each exercise's own render script draws its pages),
 // so the key is the gallery chrome id. Each chunk carries:
-//   - `panel`: the close-up's `<div class="zx" …>` block, cut byte for byte from the golden-B page built from the
-//     vendored, hash-locked layers (tools/plates/layers.mjs), after the page is checked against its approved sha256;
+//   - `panel`: the close-up's `<div class="zx" …>` block, cut byte for byte from the committed golden-B page
+//     (tests/howto/golden/howto-layers.html), after the page is checked against its approved sha256;
 //   - an import of `css/zoom-<chromeId>.css`: that exercise's scoped close-up rules (`.hx-<chromeId> …`, the page's
 //     HOWTO_ZOOM_CSS part for it) through HT-2's rewriteCss. Vite splits it off with the chunk and loads it on first
 //     open, after hand.css. The posture close-ups (HT-7) use the same rules and import the same file.
@@ -14,13 +14,14 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
-import { LAYERS, PAGE_SHA256, buildLayerPage, cleanupMirror, makeMirror, readManifest } from '../layers.mjs';
+import { LAYERS, PAGE_SHA256, readManifest } from '../layers.mjs';
 import { galleryCss, rewriteCss } from '../css.mjs';
 
 export const PLATES_JSON = 'tools/plates/plates.json';
+export const FIXTURE = 'tests/howto/golden/howto-layers.html';
 export const inputs = () => [
   ...Object.keys(readManifest().files).map(p => `tools/plates/layers/${p}`),
-  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', PLATES_JSON,
+  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', PLATES_JSON, FIXTURE,
 ];
 
 /** The ht token a banned literal moves to, named from the literal (`font-size: 10.5px` -> --ht-fs-10-5px), so the
@@ -70,13 +71,16 @@ export function preTokenize(css) {
     .replace(/cubic-bezier\([^)]*\)/g, lit => put('ease', lit));
   return [css, used];
 }
-/** rewriteCss, plus this plugin's own tokens, merged into its one ht-tokens block (sorted, as rewriteCss sorts). */
-export function rewrite(css) {
+/** rewriteCss, plus this plugin's own tokens, merged into its one ht-tokens block (sorted, as rewriteCss sorts).
+ *  `inPanel`: the CSS styles golden-B close-up markup, whose crops keep `class="plate"` byte for byte, so HT-2's class
+ *  map (`.plate` -> `.ht-plate`, for the app's plate block) is undone there. */
+export function rewrite(css, { inPanel = false } = {}) {
   const [pre, used] = preTokenize(css);
   const out = rewriteCss(pre), line = /^\.ht \{ (.*) \}$/m, m = out.match(line);
   if (!m) throw new Error('hands: rewriteCss wrote no ht-tokens line');
   const all = new Map([...m[1].split(';').map(x => x.trim()).filter(Boolean).map(x => x.split(/:\s*/)), ...used]);
-  return out.replace(line, `.ht { ${[...all].sort(([a], [b]) => a.localeCompare(b)).map(([t, v]) => `${t}: ${v};`).join(' ')} }`);
+  const res = out.replace(line, `.ht { ${[...all].sort(([a], [b]) => a.localeCompare(b)).map(([t, v]) => `${t}: ${v};`).join(' ')} }`);
+  return inPanel ? res.replace(/\.ht-(plate(?:-fit)?)(?![\w-])/g, '.$1') : res;
 }
 
 /** Selectors (whole rule heads) of the page's HOWTO_CSS that this card ships: the hand-loaded Mistake line, the
@@ -117,35 +121,51 @@ export function chromeRules(css, selectors = CHROME_SELECTORS) {
   return out.join('\n');
 }
 
+/** D-HT6-budget (supervisor, 2026-09-30): each built `hand-<id>-*.js` chunk (www/assets, gzip default level) may be at
+ *  most its size measured at the ruling + 10 %, rounded up. No detail is cut to fit (golden B is the reference). The
+ *  measured sizes are pinned in hands.test; gate block HT-6 holds the built chunks to `handCeiling`. */
+export const HAND_MEASURED = Object.freeze({
+  'lateral-raise': { raw: 26570, gz: 8134 }, 'barbell-back-squat': { raw: 34361, gz: 10629 }, 'pull-up': { raw: 84470, gz: 23896 },
+  'hanging-leg-raise': { raw: 44454, gz: 11445 }, 'lat-pulldown': { raw: 68272, gz: 19574 }, 'seated-cable-row': { raw: 23824, gz: 7673 },
+  'leg-press': { raw: 22227, gz: 7430 }, 'machine-chest-press': { raw: 24375, gz: 7426 },
+});
+export const handCeiling = id => { const m = HAND_MEASURED[id]; if (!m) throw new Error(`hands: no budget for ${id}`); return { raw: Math.ceil((m.raw * 11) / 10), gz: Math.ceil((m.gz * 11) / 10) }; };   // integer maths (84470 * 1.1 is 92917.00000000001)
+
+/** The app's own rule (not golden B's): the sheet panel's content box is 2 px narrower than golden B's card (16 px
+ *  padding against 15, plan 2.5 critic fix 1), so this card's sections bleed 1 px each side, as `.ht-golden` does, and
+ *  get golden B's 358 px width. */
+export const APP_CSS = '.ht-look, .ht-grip { margin-inline: -1px; }';
+
 const lit = s => JSON.stringify(s);
+
+/** The page's style without its at-rule blocks (@media, @keyframes, @font-face, @supports). Throws if one of them holds
+ *  a close-up rule, which scopedRules would then miss. */
+export function flatStyle(style) {
+  const at = /@[\w-]+[^{;]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g;
+  for (const m of style.matchAll(at)) if (/\.hx-[a-z-]+ /.test(m[0])) throw new Error('hands: a close-up rule inside an at-rule');
+  return style.replace(at, '');
+}
 
 export async function outputs() {
   const rows = JSON.parse(readFileSync(join(ROOT, PLATES_JSON), 'utf8'));
-  const mirror = makeMirror();
-  try {
-    const page = await buildLayerPage(mirror);
-    if (sha256(page) !== PAGE_SHA256) throw new Error(`hands: golden-B page sha256 ${sha256(page)} != approved ${PAGE_SHA256}`);
-    const html = page.toString('utf8'), style = galleryCss(html);
-    const L = await import(pathToFileURL(join(mirror, 'artifact', 'howto-layers.mjs')).href);
-    const H = await import(pathToFileURL(join(mirror, 'engine', 'hand.mjs')).href);
-    const { css: zoomCssRaw } = await L.buildHowtoLayers();
-    const zoomCss = Array.isArray(zoomCssRaw) ? zoomCssRaw.join('\n') : String(zoomCssRaw);
-    if (!style.includes(zoomCss)) throw new Error('hands: the close-up CSS is not in the golden-B page verbatim');
-    if (!style.includes(H.HAND_CSS)) throw new Error('hands: HAND_CSS is not in the golden-B page verbatim');
-    const chrome = howtoCss(readFileSync(join(LAYERS, 'artifact', 'build-page.mjs'), 'utf8'), style);
-    const out = [];
-    for (const row of Object.values(rows)) {
-      const id = row.chromeId;
-      const panel = handPanel(html, id), css = rewrite(`${scopedRules(zoomCss, id)}\n${chromeRules(chrome, HX_TAIL)}`);
-      out.push({ path: `src/slices/howto/css/zoom-${id}.css`, text: css });
-      out.push({ path: `src/howto/generated/hand-${id}.ts`, text:
-        `// The ${id} hand close-up (golden B), loaded on its first open (plan 2.5), with its close-up CSS.\n`
-        + `import '../../slices/howto/css/zoom-${id}.css';\n`
-        + `export const panel = ${lit(panel)};\n` });
-    }
-    out.push({ path: 'src/slices/howto/css/hand.css', text: rewrite(`${H.HAND_CSS}\n${chromeRules(chrome)}`) });
-    return out;
-  } finally {
-    cleanupMirror(mirror);
+  // The committed golden-B page (HT-4's fixture), refused unless it is the approved page. HT-4's gate block rebuilds
+  // it from the vendored layers (L1-B), so reading it here keeps `generate` fast (no page build per run).
+  const page = readFileSync(join(ROOT, FIXTURE));
+  if (sha256(page) !== PAGE_SHA256) throw new Error(`hands: golden-B page sha256 ${sha256(page)} != approved ${PAGE_SHA256}`);
+  const html = page.toString('utf8'), style = galleryCss(html), zoomCss = flatStyle(style);
+  const H = await import(pathToFileURL(join(LAYERS, 'engine', 'hand.mjs')).href);
+  if (!style.includes(H.HAND_CSS)) throw new Error('hands: HAND_CSS is not in the golden-B page verbatim');
+  const chrome = howtoCss(readFileSync(join(LAYERS, 'artifact', 'build-page.mjs'), 'utf8'), style);
+  const out = [];
+  for (const row of Object.values(rows)) {
+    const id = row.chromeId;
+    const panel = handPanel(html, id), css = rewrite(`${scopedRules(zoomCss, id)}\n${chromeRules(chrome, HX_TAIL)}`, { inPanel: true });
+    out.push({ path: `src/slices/howto/css/zoom-${id}.css`, text: css });
+    out.push({ path: `src/howto/generated/hand-${id}.ts`, text:
+      `// The ${id} hand close-up (golden B), loaded on its first open (plan 2.5), with its close-up CSS.\n`
+      + `import '../../slices/howto/css/zoom-${id}.css';\n`
+      + `export const panel = ${lit(panel)};\n` });
   }
+  out.push({ path: 'src/slices/howto/css/hand.css', text: rewrite(`${H.HAND_CSS}\n${chromeRules(chrome)}\n${APP_CSS}`) });
+  return out;
 }

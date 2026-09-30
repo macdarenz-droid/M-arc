@@ -6,6 +6,7 @@ import type { HowToContent } from '@/howto/content-types';
 import { ZoomHostBinding, type ZoomSetup } from '../zoom/ZoomHost';
 import { hasZoomKind } from '../zoom/registry';
 import { esc, I } from './HandlingMistakes';
+import '../css/hand.css';
 
 export type ChipContent = Pick<HowToContent, 'id' | 'handling' | 'zooms' | 'chips'>;
 /** The hand archetypes whose load goes through the hands: Hand is their first chip (GA 2.1). */

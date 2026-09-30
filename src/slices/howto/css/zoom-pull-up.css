@@ -1,4 +1,4 @@
-/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/hands.mjs). inputsSha256=294878adbbe3afc7243369da25657ed61d396afcc4c467eb6ccf8dd3b94822d4 */
+/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/hands.mjs). inputsSha256=4dfdc00df44c310a2dc8b59c89124d17c23bc5cc550a811bdd56a77358e56ae9 */
 /* ht-tokens:start */
 .ht { --ht-fs-9px: 9px; --ht-r-0: 0; --ht-r-10px: 10px; --ht-r-var-radius-md-10px: var(--radius-md, 10px); }
 /* ht-tokens:end */
@@ -42,7 +42,7 @@
 .ht .hx-pull-up .z-sub.m { color: var(--mistake); }
 .ht .hx-pull-up .z-head.ok svg { color: var(--accent); }
 .ht .hx-pull-up .z-head.m svg { color: var(--mistake); }
-.ht .hx-pull-up .ht-plate.z-wrap { width: 171px; height: 171px; aspect-ratio: auto; border: 0; border-radius: var(--ht-r-0); background: none; overflow: visible; }
+.ht .hx-pull-up .plate.z-wrap { width: 171px; height: 171px; aspect-ratio: auto; border: 0; border-radius: var(--ht-r-0); background: none; overflow: visible; }
 .ht .hx-pull-up .z-crop { display: block; width: 171px; height: 171px; }
 .ht .hx-pull-up .z-crop .z-frame { fill: none; stroke: var(--border); stroke-width: 1; }
 .ht .hx-pull-up .z-crop .z-plate path, .ht .hx-pull-up .z-crop .z-plate use, .ht .hx-pull-up .z-crop .z-plate circle, .ht .hx-pull-up .z-crop .z-plate rect { vector-effect: non-scaling-stroke; }
