@@ -450,6 +450,21 @@ describe('BUG-31 brief-form fact tags in the loop', () => {
     expect(r.revised).toBe(true);
   });
 
+  it('A5: the gate’s mock scenario repairs only its invented number, then ends on a clean brief-form answer', async () => {
+    const { mockTransport, BRIEF_TAGS_QUESTION } = await import('@/escobar/mock/transport');
+    const state = sixMonthsState();
+    const loop = new EscobarLoop({ ...newConversation('37.0.0', 'chat', new Date(NOW)), id: 'c1' }, { transport: mockTransport(() => state, 0), getState: () => state, now: () => NOW, appVersion: '37.0.0', manifest: () => buildManifest('37.0.0'), sleep: async () => {} });
+    const r = await loop.send({ text: BRIEF_TAGS_QUESTION });
+    expect(r.outcome).toBe('done');
+    expect(r.revised).toBe(true);
+    expect(r.unverified).toBeUndefined();
+    expect(loop.conversation.messages.filter(m => m.role === 'system').map(m => m.content as string).at(-1)).toMatch(/^These numbers are not from your tools, cards or the brief: 999\.5\. /);
+    expect(assistants(loop.conversation)[0]!.meta.rendered.preamble).toEqual([expect.stringMatching(/^Checking your week: \d+ ⟦f\d+⟧ sets so far\.$/)]);
+    const m = /^Your latest strength estimate is [\d.]+ kg ⟦f(\d+)⟧, and you've done \d+ ⟦f\d+⟧ sets this week\.$/.exec(r.answer!.text);
+    expect(m, r.answer!.text).toBeTruthy();
+    expect(Number(m![1])).toBeGreaterThan(10); // past f10, where a tag's digits stop passing as a small count
+  });
+
   it('A3: the repair system message asks for the whole answer again, with no mention of the check', async () => {
     const { loop, transport } = setup([answer('Your bench went up to 987 kg last week.'), answer('Your bench went up last week.')]);
     await loop.send({ text: 'How is my bench?' });

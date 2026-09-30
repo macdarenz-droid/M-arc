@@ -2044,6 +2044,78 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// BUG-31 (A5): the model copies the brief's "38 [f41]" form. The mock's brief-tags scenario
+// (BRIEF_TAGS_QUESTION in src/escobar/mock/transport.ts) cites that way in the preamble, the chart
+// caption, a first draft (its one invented number draws a repair round) and the final answer, which
+// streams in 7-character pieces so tags arrive split. No "[fN" may show in the answer, the earlier
+// draft, the preamble or the caption, nor anywhere in the sheet at any moment (a MutationObserver
+// reads every DOM change), and the final answer carries no "Unverified number". The probe fails when
+// the scenario did not run: each surface must be there, in the shape the mock writes it.
+{
+  const theme = themes[0];
+  const tag = `BUG-31 brief tags ${theme}`;
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.evaluate(() => document.querySelector('.toast button')?.click());
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]');
+  await page.waitForTimeout(250);
+  await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
+  await page.waitForTimeout(200);
+  await page.evaluate(() => {
+    const sheet = document.querySelector('dialog.esc-sheet[open]');
+    const seen = { tags: [], mutations: 0 };
+    window.__bug31 = seen;
+    new MutationObserver(() => {
+      seen.mutations++;
+      const hit = /\[\s*f\d+[^\]\s]*\]?/.exec(sheet?.textContent ?? '');
+      if (hit && seen.tags.length < 5) seen.tags.push(hit[0]);
+    }).observe(sheet, { subtree: true, childList: true, characterData: true });
+  });
+  await page.locator('.esc-textarea').fill('Gate check: brief tags');
+  await page.locator('.esc-send').click();
+  await page.waitForFunction(() => window.__escobar.status() === 'idle' && [...document.querySelectorAll('.esc-thread .esc-answer')].some(e => e.textContent.includes('sets this week')), null, { timeout: 20000 }).catch(() => errors.push(`${tag}: the brief-tags conversation did not finish`));
+  await page.waitForTimeout(200);
+  const r = await page.evaluate(() => {
+    const sheet = document.querySelector('dialog.esc-sheet[open]');
+    // As shown: these surfaces collapse runs of spaces (white-space: normal).
+    const texts = sel => [...(sheet?.querySelectorAll(sel) ?? [])].map(e => (e.textContent ?? '').replace(/\s+/g, ' ').trim());
+    return {
+      answer: texts('.esc-thread .esc-answer'), revised: texts('.esc-revised'), preamble: texts('.esc-preamble'), caption: texts('.esc-comp .eyebrow'),
+      unverified: sheet?.querySelectorAll('.esc-unverified').length ?? -1, unverifiedText: (sheet?.textContent ?? '').includes('Unverified number'),
+      tags: window.__bug31.tags, mutations: window.__bug31.mutations,
+    };
+  });
+  const N = '\\d+(?:\\.\\d+)?';
+  const want = {
+    preamble: new RegExp(`^Checking your week: ${N} sets so far\\.$`),
+    caption: new RegExp(`^Sets this week: ${N}$`),
+    revised: new RegExp(`^Earlier draft \\(revised\\)\\s*Your latest strength estimate is ${N} kg, so 999\\.5 kg is next\\.$`),
+    answer: new RegExp(`^Your latest strength estimate is ${N} kg, and you've done ${N} sets this week\\.$`),
+  };
+  for (const [name, re] of Object.entries(want)) {
+    if (!r[name].some(t => re.test(t))) errors.push(`${tag}: expected the ${name} to read ${re}, got ${JSON.stringify(r[name])}`);
+    for (const t of r[name]) if (/\[\s*f\d+/.test(t) || t.includes('⟦')) errors.push(`${tag}: a fact tag shows in the ${name}: ${JSON.stringify(t)}`);
+  }
+  if (r.unverified !== 0 || r.unverifiedText) errors.push(`${tag}: "Unverified number" shows (${r.unverified} marked sentence(s)) though every number comes from the brief or a tool`);
+  if (r.mutations < 20) errors.push(`${tag}: only ${r.mutations} DOM changes seen while the conversation streamed`);
+  if (r.tags.length) errors.push(`${tag}: a fact tag showed in the sheet while it ran: ${r.tags.join(' | ')}`);
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-bug31-brief-tags.png` });
+  await ctx.close();
+}
+
 // Live heart line (owner's pick): a fake LIVE watch reading through the dev hook, the line and the
 // number on Train in all five themes, coloured by each theme's accent.
 for (const theme of themes) {

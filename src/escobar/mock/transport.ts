@@ -19,16 +19,64 @@ function latestExercise(s: AppState): string {
 
 interface Msg { role: string; content: unknown }
 
+/** BUG-31: the gate's question for the brief-form citation scenario below. */
+export const BRIEF_TAGS_QUESTION = 'Gate check: brief tags';
+
+type ToolStep = (preamble: string, uses: Array<{ id: string; name: string; input: unknown }>) => StreamEvent[];
+
+/** The latest e1RM fact of a history tool result: its id and its value as the facts map writes it. */
+function e1rmFact(messages: Msg[]): { id: string; value: string } | null {
+  let out: { id: string; value: string } | null = null;
+  for (const m of messages) {
+    if (m.role !== 'user' || !Array.isArray(m.content)) continue;
+    for (const blk of m.content as Array<{ type: string; content?: string }>) {
+      if (blk.type !== 'tool_result' || !blk.content) continue;
+      try {
+        const facts = (JSON.parse(blk.content) as { facts?: Record<string, string> }).facts ?? {};
+        const hit = Object.entries(facts).reverse().find(([, v]) => / e1rm = /.test(v));
+        if (hit) out = { id: hit[0], value: hit[1].split(' = ')[1]!.split(' ')[0]! };
+      } catch { /* not JSON */ }
+    }
+  }
+  return out;
+}
+
+/**
+ * BUG-31: the model copies the brief's "38 [f41]" form. This scenario cites that way on every surface
+ * the gate reads: a preamble and a chart caption citing the brief's sets fact, a first draft whose
+ * invented number draws a repair round (shown as the earlier draft), then an answer in the brief form
+ * that must pass the number check. The answer streams in small pieces, so tags arrive split.
+ */
+function briefTagSteps(step: number, messages: Msg[], ex: string, toolStep: ToolStep): StreamEvent[] {
+  const briefs = messages.filter(m => m.role === 'system' && typeof m.content === 'string').map(m => m.content as string);
+  const week = briefs.map(t => /^week: .*?(\d+(?:\.\d+)?) \[(f\d+)\] sets\b/m.exec(t)).filter(Boolean).at(-1);
+  const sets = week ? `${week[1]} [${week[2]}]` : null;
+  if (step === 0) {
+    return toolStep(sets ? `Checking your week: ${sets} sets so far.` : 'Checking your week.', [
+      { id: `m_${Date.now()}_b1`, name: 'get_exercise_history', input: { exerciseId: ex, weeks: 12 } },
+      { id: `m_${Date.now()}_b2`, name: 'show', input: { component: 'lift_trend', params: { exerciseId: ex, weeks: 12, metric: 'e1rm' }, caption: sets ? `Sets this week: ${sets}` : 'Sets this week' } },
+    ]);
+  }
+  const e = e1rmFact(messages);
+  const best = e ? `Your latest strength estimate is ${e.value} kg [${e.id}]` : 'Your sessions look steady';
+  const text = step === 1 ? `${best}, so 999.5 kg [${e?.id ?? 'f1'}] is next.` : `${best}, and you've done ${sets ?? 'some'} sets this week.`;
+  const events: StreamEvent[] = [];
+  for (let i = 0; i < text.length; i += 7) events.push({ t: 'text', d: text.slice(i, i + 7) });
+  events.push({ t: 'final', content: [{ type: 'thinking', thinking: '', signature: 'mock' }, { type: 'text', text }], stop_reason: 'end_turn', usage: { input_tokens: 1500, output_tokens: 90, cache_read_input_tokens: 9000 }, model: 'claude-opus-5' });
+  return events;
+}
+
 export function mockTransport(getState: () => AppState, delayMs = 25): Transport {
   return {
     async *turn(body, signal) {
       const b = body as { messages: Msg[]; mode: string };
       // Steps since the last real user message decide what comes next.
       let step = 0;
+      let asked = '';
       for (let i = b.messages.length - 1; i >= 0; i--) {
         const m = b.messages[i]!;
         if (m.role === 'assistant') step++;
-        if (m.role === 'user' && Array.isArray(m.content) && !m.content.some(x => (x as { type: string }).type === 'tool_result') && !JSON.stringify(m.content).includes('[app] verification check')) break;
+        if (m.role === 'user' && Array.isArray(m.content) && !m.content.some(x => (x as { type: string }).type === 'tool_result') && !JSON.stringify(m.content).includes('[app] verification check')) { asked = JSON.stringify(m.content); break; }
       }
       const s = getState();
       const ex = latestExercise(s);
@@ -38,7 +86,9 @@ export function mockTransport(getState: () => AppState, delayMs = 25): Transport
         ...uses.flatMap((u): StreamEvent[] => [{ t: 'tool', id: u.id, name: u.name }, { t: 'tool_input', id: u.id, input: u.input }]),
         { t: 'final', content: [{ type: 'thinking', thinking: '', signature: 'mock' }, ...(preamble ? [{ type: 'text', text: preamble }] : []), ...uses.map(u => ({ type: 'tool_use', ...u }))], stop_reason: 'tool_use', usage: { input_tokens: 1200, output_tokens: 60, cache_read_input_tokens: 9000 }, model: 'claude-opus-5' },
       ];
-      if (step === 0) {
+      if (asked.includes(BRIEF_TAGS_QUESTION)) {
+        events.push(...briefTagSteps(step, b.messages, ex, toolStep));
+      } else if (step === 0) {
         events.push(...toolStep('Let me look at your recent lifting.', [
           { id: `m_${Date.now()}_1`, name: 'get_exercise_history', input: { exerciseId: ex, weeks: 12 } },
           { id: `m_${Date.now()}_2`, name: 'show', input: { component: 'lift_trend', params: { exerciseId: ex, weeks: 12, metric: 'e1rm' }, caption: 'Strength estimate, last 12 weeks' } },
