@@ -1,0 +1,828 @@
+{
+  "id": "sumo_deadlift",
+  "libId": "lib_sumo_deadlift",
+  "name": "Sumo Deadlift",
+  "family": "HINGE",
+  "tier": "A",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "conventional_deadlift",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because it grips the same straight barbell with the hold archetype; only the hand position moves inside the knees (c3)."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because the bar sits across the middle of the palm with fingers wrapped, as in the conventional deadlift."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the arms hang straight down from the shoulders as in the conventional deadlift, so the wrist stays neutral."
+    },
+    {
+      "field": "archetype.contact",
+      "why": "true for this child because both feet stand flat on the floor (standing-feet); only the stance width changes (c1, c2)."
+    },
+    {
+      "field": "setup[0] (bar on the floor with full-size plates, parent c23)",
+      "why": "true for this child because the sumo lift also starts from a bar resting on the floor (c1)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Wide stance with the bar over mid-foot; stand wide enough that the shins look vertical from the front.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "sl-sumo",
+          "text": "Step up close to the bar with wide foot placement. A good starting point is to have the bar over the middle of your foot and stand so wide that your shins are vertical, as seen from the front.",
+          "where": "How to Do Sumo Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Toes point outward; competitive sumo lifters stood about twice as wide (70 vs 32 cm) with feet turned out more (about 42 vs 14 degrees) than conventional lifters.",
+      "tags": [
+        "CONSENSUS",
+        "DATA"
+      ],
+      "sources": [
+        "barbend-sumo",
+        "escamilla2000"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-sumo",
+          "text": "Assume a very wide stance with your toes pointed outward.",
+          "where": "How To Do the Sumo Deadlift: Set Up"
+        },
+        {
+          "source": "escamilla2000",
+          "text": "employed a wider stance (70 +/- 11 cm vs 32 +/- 8 cm), turned their feet out more (42 +/- 8 vs 14 +/- 6 degrees).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Grip the bar with the arms inside the knees; hands are closer together than in the conventional deadlift.",
+      "tags": [
+        "CONSENSUS",
+        "DATA"
+      ],
+      "sources": [
+        "sl-deadlift",
+        "escamilla2000"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "In the sumo deadlift, you grip the bar with your arms inside your knees, and your stance can be so wide that your toes almost touch the weight plates.",
+          "where": "Conventional or Sumo?"
+        },
+        {
+          "source": "escamilla2000",
+          "text": "gripped the bar with their hands closer together (47 +/- 4 cm vs 55 +/- 10 cm).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The trunk stays more upright than in the conventional deadlift (about 5-10 degrees more vertical).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "escamilla2000",
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla2000",
+          "text": "The sumo group had 5-10 degrees greater vertical trunk and thigh positions",
+          "where": "abstract"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "The conventional deadlift leads to a greater forward lean of your torso, while the sumo deadlifts let you keep your torso a bit closer to vertical.",
+          "where": "Biomechanical Differences Between Conventional and Sumo Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "In competition lifters, sumo style cut the lower-back (L4/L5) moment by about 10% and shear by 8% versus conventional.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "cholewicki1991"
+      ],
+      "quotes": [
+        {
+          "source": "cholewicki1991",
+          "text": "The sumo deadlift style resulted in a 10% reduction in the joint moment and 8% reduction in the load shear force at the L4/L5 level when compared with the conventional lifting style.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The lower-back saving can be offset because sumo usually lets you lift more weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-sumo",
+          "text": "That said, it also allows you to lift heavier — a boon which may offset the reduction in spinal pressure.",
+          "where": "Benefits: Less Lower Back Strain"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Sumo works the quads (vastus medialis and lateralis) more; the conventional style works the hamstrings (biceps femoris) more.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "escamilla2002",
+        "hanen2025"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla2002",
+          "text": "Overall EMG activity from the vastus medialis, vastus lateralis, and tibialis anterior were significantly greater in the sumo deadlift, whereas overall EMG activity from the medial gastrocnemius was significantly greater in the conventional deadlift.",
+          "where": "abstract"
+        },
+        {
+          "source": "hanen2025",
+          "text": "the biceps femoris exhibited greater activation in CDL across both phases.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Hip adductor and glute activity are high in the deep (more knee-bent) part of the lift; the wide, turned-out stance targets the glutes strongly.",
+      "tags": [
+        "DATA",
+        "CONSENSUS"
+      ],
+      "sources": [
+        "escamilla2002",
+        "barbend-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla2002",
+          "text": "Quadriceps, tibialis anterior, hip adductor, gluteus maximus, L3 and T12 paraspinal, and middle trapezius activity were significantly greater in higher knee flexion intervals compared with lower knee flexion intervals",
+          "where": "abstract"
+        },
+        {
+          "source": "barbend-sumo",
+          "text": "The glutes are targeted to a high degree by the sumo deadlift, as the feet are set wider and turned outwards.",
+          "where": "Muscles Worked: Glutes"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Sumo muscles: glutes and lower back primary; quads, hamstrings, adductors, trapezius and forearm flexors secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "sl-sumo",
+          "text": "Primary muscles worked: Glutes Lower Back Secondary muscles worked: Quads Hamstrings Adductors Trapezius Forearm Flexors",
+          "where": "Muscles Worked in Sumo Deadlifts, list"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Brace: build full-body tension, then take a full breath into the belly and hold it as you lift.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-sumo",
+        "sl-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-sumo",
+          "text": "Once you have found your tension, take a full breath into your belly.",
+          "where": "How To Do the Sumo Deadlift: Brace"
+        },
+        {
+          "source": "sl-sumo",
+          "text": "Hold your breath, brace your core slightly, and lift the bar.",
+          "where": "How to Do Sumo Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Break the bar off the floor by pushing with the legs; do not lift the hips early.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-sumo",
+          "text": "The beginning of the sumo deadlift is all about your quads — don’t pick up your hips prematurely in an attempt to move the weight.",
+          "where": "How To Do the Sumo Deadlift: Drive"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "A common sumo mistake is shooting the hips up to lift with the back; stay patient and keep driving with the legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-sumo",
+          "text": "To compensate, many athletes shoot their hips up in an attempt to lift with their backs.",
+          "where": "Common Sumo Deadlift Mistakes: Hips Rising Early"
+        },
+        {
+          "source": "barbend-sumo",
+          "text": "If you find the bar fighting you in the beginning, be patient with it and continue to drive with your legs.",
+          "where": "Common Sumo Deadlift Mistakes: Hips Rising Early"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Keep the chest up and the bar against the shins so it does not drift forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-sumo",
+          "text": "Keep your chest up and, as you pull, make sure the bar is against your shins to avoid letting it shift too far forward.",
+          "where": "Coach's Tip"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Knees and hips straighten together to finish standing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-sumo",
+          "text": "Your knees and hips should extend simultaneously to lock the bar as you reach a standing position.",
+          "where": "How To Do the Sumo Deadlift: Lock Out"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Keep the back straight (neutral) through the whole lift and pull the bar close to the body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "sl-sumo",
+          "text": "Pull the bar close to your body, with a straight back, until you are standing straight.",
+          "where": "How to Do Sumo Deadlifts"
+        },
+        {
+          "source": "sl-sumo",
+          "text": "you should strive to keep your spine straight (neutral) during the entire lift.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Lower the bar to the floor with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "sl-sumo",
+          "text": "Lower the bar back to the ground with control.",
+          "where": "How to Do Sumo Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Sumo needs hip mobility and a careful setup; rushing the setup is a common mistake.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-sumo",
+          "text": "if you can’t externally rotate your thighs, your hips won’t be in an optimal position to pull.",
+          "where": "Common Sumo Deadlift Mistakes: Not Stretching"
+        },
+        {
+          "source": "barbend-sumo",
+          "text": "Take your time when setting up to ensure your technique is just right.",
+          "where": "Common Sumo Deadlift Mistakes: Rushing the Setup"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Practise technique with light weight and low reps; add load in small (2-10%) steps once reps are exceeded.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-sumo",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-sumo",
+          "text": "To Practice Technique: 4-6 sets of 2-4 reps with a light weight.",
+          "where": "Sumo Deadlift Sets and Reps"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Tempo: lift at a moderate speed (1-2 s) and lower under control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "sl-sumo"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "sl-sumo",
+          "text": "Lower the bar back to the ground with control.",
+          "where": "How to Do Sumo Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The top drawable fault (hips rising first, c12), bar against the shins (c13) and the more upright trunk (c4) are front-to-back positions. Stance width shows only from the front (census note), so it goes in text, not the plate.",
+    "equipment": "Straight barbell with full-size plates on the floor line, as in the parent (bar 22.5 cm up).",
+    "start": "Wide stance, feet turned out, bar over mid-foot and against the shins (c1, c2, c13); hands inside the knees, arms straight (c3); trunk more upright than conventional (c4), chest up, back flat (c13, c15).",
+    "end": "Standing tall with knees and hips locked together, bar hanging against the thighs (c14, c15).",
+    "checkpoints": [
+      {
+        "label": "Bar on shins",
+        "what": "The bar stays against the shins so it does not drift forward.",
+        "claim": "c13"
+      },
+      {
+        "label": "Chest up",
+        "what": "Chest up and back straight; the trunk is more upright than conventional.",
+        "claim": "c13"
+      },
+      {
+        "label": "Legs drive first",
+        "what": "Push the floor with the legs to break the bar; hips do not rise first.",
+        "claim": "c11"
+      }
+    ],
+    "mistake": {
+      "what": "Hips shoot up before the bar leaves the floor, tipping the chest forward.",
+      "why": "Named a common sumo mistake: lifters shoot the hips up to lift with the back (c12).",
+      "claim": "c12",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Legs push before hips rise",
+        "claim": "c11"
+      },
+      {
+        "text": "Bar stays against your shins",
+        "claim": "c13"
+      },
+      {
+        "text": "Chest stays up",
+        "claim": "c13"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c21"
+    },
+    "variantLine": "Side view is drawn. The wide stance, turned-out feet and hands inside the knees (c1-c3) need the front view; they appear in text and setup, not on the plate."
+  },
+  "grip": {
+    "type": "Overhand, hands inside the knees.",
+    "width": "Narrower than conventional: hands closer together, arms inside the knees.",
+    "thumb": "Wrapped around the bar (inherited).",
+    "handContact": "Bar across the middle of the palm, fingers wrapped (inherited).",
+    "wrist": "Neutral (inherited).",
+    "claims": [
+      "c3"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Take a wide stance, toes out, bar over mid-foot, shins vertical seen from the front.",
+      "claim": "c1"
+    },
+    {
+      "step": "Grip the bar with arms inside the knees.",
+      "claim": "c3"
+    },
+    {
+      "step": "Chest up, bar against the shins.",
+      "claim": "c13"
+    },
+    {
+      "step": "Build tension, then take a full breath into the belly.",
+      "claim": "c10"
+    },
+    {
+      "step": "Take your time with the setup.",
+      "claim": "c17"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Trunk more upright than in the conventional deadlift.",
+      "claim": "c4"
+    },
+    {
+      "point": "Back straight from floor to lockout.",
+      "claim": "c15"
+    },
+    {
+      "point": "Legs start the lift; hips do not rise first.",
+      "claim": "c11"
+    },
+    {
+      "point": "Bar close, against the shins.",
+      "claim": "c13"
+    },
+    {
+      "point": "Knees and hips lock out together.",
+      "claim": "c14"
+    },
+    {
+      "point": "Lower the bar with control.",
+      "claim": "c16"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Hips shooting up so the back does the lift.",
+      "fix": "Be patient and keep driving with the legs; if it won't move that way, lower the weight.",
+      "claim": "c12"
+    },
+    {
+      "mistake": "Rushing the setup.",
+      "fix": "Set feet, grip and brace before each pull.",
+      "claim": "c17"
+    },
+    {
+      "mistake": "Bar drifting away from the shins.",
+      "fix": "Chest up and keep the bar against the shins.",
+      "claim": "c13"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "glutes",
+        "claim": "c8"
+      },
+      {
+        "muscleId": "quads",
+        "claim": "c7"
+      },
+      {
+        "muscleId": "adductors",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "lower_back",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "upper_traps",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "forearms",
+        "claim": "c9"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c12"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the thighs as the bar leaves the floor",
+        "means": "Usually means the legs are driving the start, as sumo needs.",
+        "fix": null,
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Glutes and inner thighs",
+        "means": "Usually normal: the wide stance works them hard, most in the low part.",
+        "fix": null,
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back taking over at the start",
+        "means": "Usually means the hips shot up first.",
+        "fix": "Drive with the legs; lower the weight if needed.",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Back pain with pain or numbness in both legs",
+        "means": "Not a normal training feeling.",
+        "fix": "Stop.",
+        "claim": "c20",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Sumo loads the lower back a little less, but heavier weight can cancel that out.",
+      "claim": "c6"
+    },
+    {
+      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "claim": "c19"
+    },
+    {
+      "risk": "Hips rising first shifts the lift onto the back.",
+      "claim": "c12"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "sumo-grip",
+      "kind": "hand",
+      "right": "Overhand, thumbs wrapped, hands inside the knees.",
+      "wrong": "Hands outside the knees as in a conventional pull.",
+      "claim": "c3"
+    },
+    {
+      "key": "sumo-start",
+      "kind": "posture",
+      "right": "Chest up, trunk fairly upright, bar against the shins, back flat.",
+      "wrong": "Hips high, chest down, bar away from the shins.",
+      "claim": "c13"
+    },
+    {
+      "key": "sumo-liftoff",
+      "kind": "posture",
+      "right": "Legs push first; hips and chest rise together.",
+      "wrong": "Hips shoot up while the bar stays on the floor.",
+      "claim": "c12"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "upper_traps",
+      "forearms"
+    ],
+    "remove": [],
+    "why": "Library primary glutes, adductors and secondary hamstrings, lower_back are kept (c8, c9). Quads: EMG shows sumo works them more than conventional (c7), so the feel spec lists them primary; the library keeps them secondary, and moving them is a role change for the supervisor, not an add. Add upper_traps (trapezius) and forearms (forearm flexors) as secondary: StrengthLog lists both (c9)."
+  },
+  "anchorSource": "barbend-sumo",
+  "sources": [
+    {
+      "id": "sl-sumo",
+      "url": "https://www.strengthlog.com/sumo-deadlift/",
+      "title": "How to Do Sumo Deadlift: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "barbend-sumo",
+      "url": "https://barbend.com/sumo-deadlift/",
+      "title": "How to Do the Sumo Deadlift, According to a CPT (BarBend)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "escamilla2000",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/10912892/",
+      "title": "A three-dimensional biomechanical analysis of sumo and conventional style deadlifts.",
+      "kind": "peer-reviewed",
+      "year": 2000,
+      "pmid": 10912892,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-deadlift",
+      "url": "https://www.strengthlog.com/deadlift/",
+      "title": "How to Deadlift: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "cholewicki1991",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1758295/",
+      "title": "Lumbar spine loads during the lifting of extremely heavy weights.",
+      "kind": "peer-reviewed",
+      "year": 1991,
+      "pmid": 1758295,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "escamilla2002",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11932579/",
+      "title": "An electromyographic analysis of sumo and conventional style deadlifts.",
+      "kind": "peer-reviewed",
+      "year": 2002,
+      "pmid": 11932579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "hanen2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40497251/",
+      "title": "Biomechanical analysis of conventional and sumo deadlift.",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": 40497251,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ]
+}

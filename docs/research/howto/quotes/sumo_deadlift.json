@@ -1,0 +1,356 @@
+{
+  "id": "sumo_deadlift",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sl-sumo",
+      "text": "Step up close to the bar with wide foot placement. A good starting point is to have the bar over the middle of your foot and stand so wide that your shins are vertical, as seen from the front.",
+      "status": "verbatim",
+      "closest": "Step up close to the bar with wide foot placement. A good starting point is to have the bar over the middle of your foot and stand so wide that your shins are vertical, as seen from the front.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "barbend-sumo",
+      "text": "Assume a very wide stance with your toes pointed outward.",
+      "status": "verbatim",
+      "closest": "Assume a very wide stance with your toes pointed outward.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "escamilla2000",
+      "text": "employed a wider stance (70 +/- 11 cm vs 32 +/- 8 cm), turned their feet out more (42 +/- 8 vs 14 +/- 6 degrees).",
+      "status": "verbatim",
+      "closest": "employed a wider stance (70 +/- 11 cm vs 32 +/- 8 cm), turned their feet out more (42 +/- 8 vs 14 +/- 6 degrees).",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "sl-deadlift",
+      "text": "In the sumo deadlift, you grip the bar with your arms inside your knees, and your stance can be so wide that your toes almost touch the weight plates.",
+      "status": "verbatim",
+      "closest": "In the sumo deadlift, you grip the bar with your arms inside your knees, and your stance can be so wide that your toes almost touch the weight plates.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "escamilla2000",
+      "text": "gripped the bar with their hands closer together (47 +/- 4 cm vs 55 +/- 10 cm).",
+      "status": "verbatim",
+      "closest": "gripped the bar with their hands closer together (47 +/- 4 cm vs 55 +/- 10 cm).",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "escamilla2000",
+      "text": "The sumo group had 5-10 degrees greater vertical trunk and thigh positions",
+      "status": "verbatim",
+      "closest": "The sumo group had 5-10 degrees greater vertical trunk and thigh positions",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "sl-deadlift",
+      "text": "The conventional deadlift leads to a greater forward lean of your torso, while the sumo deadlifts let you keep your torso a bit closer to vertical.",
+      "status": "verbatim",
+      "closest": "The conventional deadlift leads to a greater forward lean of your torso, while the sumo deadlifts let you keep your torso a bit closer to vertical.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "cholewicki1991",
+      "text": "The sumo deadlift style resulted in a 10% reduction in the joint moment and 8% reduction in the load shear force at the L4/L5 level when compared with the conventional lifting style.",
+      "status": "verbatim",
+      "closest": "The sumo deadlift style resulted in a 10% reduction in the joint moment and 8% reduction in the load shear force at the L4/L5 level when compared with the conventional lifting style.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "barbend-sumo",
+      "text": "That said, it also allows you to lift heavier — a boon which may offset the reduction in spinal pressure.",
+      "status": "verbatim",
+      "closest": "That said, it also allows you to lift heavier - a boon which may offset the reduction in spinal pressure.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "escamilla2002",
+      "text": "Overall EMG activity from the vastus medialis, vastus lateralis, and tibialis anterior were significantly greater in the sumo deadlift, whereas overall EMG activity from the medial gastrocnemius was significantly greater in the conventional deadlift.",
+      "status": "verbatim",
+      "closest": "Overall EMG activity from the vastus medialis, vastus lateralis, and tibialis anterior were significantly greater in the sumo deadlift, whereas overall EMG activity from the medial gastrocnemius was significantly greater in the conventional deadlift.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "hanen2025",
+      "text": "the biceps femoris exhibited greater activation in CDL across both phases.",
+      "status": "verbatim",
+      "closest": "the biceps femoris exhibited greater activation in CDL across both phases.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "escamilla2002",
+      "text": "Quadriceps, tibialis anterior, hip adductor, gluteus maximus, L3 and T12 paraspinal, and middle trapezius activity were significantly greater in higher knee flexion intervals compared with lower knee flexion intervals",
+      "status": "verbatim",
+      "closest": "Quadriceps, tibialis anterior, hip adductor, gluteus maximus, L3 and T12 paraspinal, and middle trapezius activity were significantly greater in higher knee flexion intervals compared with lower knee flexion intervals",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "barbend-sumo",
+      "text": "The glutes are targeted to a high degree by the sumo deadlift, as the feet are set wider and turned outwards.",
+      "status": "verbatim",
+      "closest": "The glutes are targeted to a high degree by the sumo deadlift, as the feet are set wider and turned outwards.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "sl-sumo",
+      "text": "Primary muscles worked: Glutes Lower Back Secondary muscles worked: Quads Hamstrings Adductors Trapezius Forearm Flexors",
+      "status": "verbatim",
+      "closest": "Primary muscles worked: Glutes Lower Back Secondary muscles worked: Quads Hamstrings Adductors Trapezius Forearm Flexors",
+      "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c10",
+      "source": "barbend-sumo",
+      "text": "Once you have found your tension, take a full breath into your belly.",
+      "status": "verbatim",
+      "closest": "Once you have found your tension, take a full breath into your belly.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "sl-sumo",
+      "text": "Hold your breath, brace your core slightly, and lift the bar.",
+      "status": "verbatim",
+      "closest": "Hold your breath, brace your core slightly, and lift the bar.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "barbend-sumo",
+      "text": "The beginning of the sumo deadlift is all about your quads — don’t pick up your hips prematurely in an attempt to move the weight.",
+      "status": "verbatim",
+      "closest": "The beginning of the sumo deadlift is all about your quads - don't pick up your hips prematurely in an attempt to move the weight.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "barbend-sumo",
+      "text": "To compensate, many athletes shoot their hips up in an attempt to lift with their backs.",
+      "status": "verbatim",
+      "closest": "To compensate, many athletes shoot their hips up in an attempt to lift with their backs.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "barbend-sumo",
+      "text": "If you find the bar fighting you in the beginning, be patient with it and continue to drive with your legs.",
+      "status": "verbatim",
+      "closest": "If you find the bar fighting you in the beginning, be patient with it and continue to drive with your legs.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "barbend-sumo",
+      "text": "Keep your chest up and, as you pull, make sure the bar is against your shins to avoid letting it shift too far forward.",
+      "status": "verbatim",
+      "closest": "Keep your chest up and, as you pull, make sure the bar is against your shins to avoid letting it shift too far forward.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "barbend-sumo",
+      "text": "Your knees and hips should extend simultaneously to lock the bar as you reach a standing position.",
+      "status": "verbatim",
+      "closest": "Your knees and hips should extend simultaneously to lock the bar as you reach a standing position.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "sl-sumo",
+      "text": "Pull the bar close to your body, with a straight back, until you are standing straight.",
+      "status": "verbatim",
+      "closest": "Pull the bar close to your body, with a straight back, until you are standing straight.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "sl-sumo",
+      "text": "you should strive to keep your spine straight (neutral) during the entire lift.",
+      "status": "verbatim",
+      "closest": "you should strive to keep your spine straight (neutral) during the entire lift.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "sl-sumo",
+      "text": "Lower the bar back to the ground with control.",
+      "status": "verbatim",
+      "closest": "Lower the bar back to the ground with control.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "barbend-sumo",
+      "text": "if you can’t externally rotate your thighs, your hips won’t be in an optimal position to pull.",
+      "status": "verbatim",
+      "closest": "if you can't externally rotate your thighs, your hips won't be in an optimal position to pull.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "barbend-sumo",
+      "text": "Take your time when setting up to ensure your technique is just right.",
+      "status": "verbatim",
+      "closest": "Take your time when setting up to ensure your technique is just right.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "barbend-sumo",
+      "text": "To Practice Technique: 4-6 sets of 2-4 reps with a light weight.",
+      "status": "verbatim",
+      "closest": "To Practice Technique: 4-6 sets of 2-4 reps with a light weight.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "sl-sumo",
+      "text": "Lower the bar back to the ground with control.",
+      "status": "verbatim",
+      "closest": "Lower the bar back to the ground with control.",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "Call 999 or go to A&E if:",
+      "status": "verbatim",
+      "closest": "Call 999 or go to A&E if:",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "pain, tingling, weakness or numbness in both legs",
+      "status": "verbatim",
+      "closest": "pain, tingling, weakness or numbness in both legs",
+      "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "a loss of feeling around your genitals or anus",
+      "status": "verbatim",
+      "closest": "a loss of feeling around your genitals or anus",
+      "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "See a GP if:",
+      "status": "verbatim",
+      "closest": "See a GP if:",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "it does not improve after treating it at home for a few weeks",
+      "status": "verbatim",
+      "closest": "it does not improve after treating it at home for a few weeks",
+      "note": "list formatting (list rendered as running text)"
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-sumo",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none (card title is a label; page title is 'How to Do Sumo Deadlift: Muscles Worked & Proper Form')"
+    },
+    {
+      "id": "barbend-sumo",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none (card title is a label; page title is 'How to Do the Sumo Deadlift, According to a CPT')"
+    },
+    {
+      "id": "escamilla2000",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "sl-deadlift",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none (card title is a label; page title is 'How to Deadlift: Muscles Worked & Proper Form')"
+    },
+    {
+      "id": "cholewicki1991",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "escamilla2002",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "hanen2025",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "acsm2009",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "macdougall1985",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "nhs-back-pain",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none"
+    }
+  ]
+}
