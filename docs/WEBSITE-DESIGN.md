@@ -606,9 +606,9 @@ Since DOC-3 (2026-09-30) this page is the app's Privacy Policy, the URL given to
 
 | Block | Source |
 |---|---|
-| Heading | Eyebrow "Your data". h1 = the policy's `# ` title ("M/ARC Privacy Policy"), then `p#effective` = its "Effective date:" line, a lead, and two links: In plain words, The full policy. |
-| In plain words (`#plain`) | Hand-written in `website/privacy/index.html`: what is stored where (facts table, 6.17), what leaves the phone (chain list), the two switches (6.10), backups, CSV and the rescue file, offline, this website. It says that the full policy applies if the two ever differ. Every claim was checked against the app code on `main` (DOC-3 PR). |
-| The full policy (`#about` onward) | Rendered at every site build from `docs/PRIVACY-POLICY.md`, the one source (`website/policy.mjs`, called from `website/vite.config.js`). The paragraphs before the first `## ` become "About this policy" (`#about`); each `## ` becomes a band with an id from its heading; a line that is only `**Label:**` becomes an `h3` (so `#who-receives-it`). |
+| Heading | Eyebrow "Your data". h1 = the policy's `# ` title ("M/ARC Privacy Policy"), then `p#effective` = its "Effective date:" line, a lead, and two links: Summary, Full policy. |
+| Summary (`#summary`) | Hand-written in `website/privacy/index.html`: what is stored where (facts table, 6.17), what leaves the phone (chain list), the two switches (6.10), backups, CSV and the rescue file, offline, this website. It says that the full policy applies if the two ever differ. Every claim was checked against the app code on `main` (DOC-3 PR). Headings name the content and the copy never labels itself as simplified (owner, 2026-10-01, DOC-5). |
+| Full policy (`#about` onward) | Rendered at every site build from `docs/PRIVACY-POLICY.md`, the one source (`website/policy.mjs`, called from `website/vite.config.js`). The paragraphs before the first `## ` become "About this policy" (`#about`); each `## ` becomes a band with an id from its heading; a line that is only `**Label:**` becomes an `h3` (so `#who-receives-it`). |
 
 Required sections: `REQUIRED` in `website/policy.mjs` lists what Google Play's policy rules ask for (title, effective date, developer and contact e-mail, the named third parties Cloudflare and Anthropic, retention and deletion, children and 18+, applicable law, how changes are announced). The build throws if the rendered page misses one, and the site gate checks the served page again. Editing `docs/PRIVACY-POLICY.md` runs the website workflow's gate.
 

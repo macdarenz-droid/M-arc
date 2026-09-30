@@ -1,8 +1,8 @@
 # M/ARC Privacy Policy
 
-Effective date: 2026-09-30. Last updated: 2026-09-30.
+Effective date: 2026-09-30. Last updated: 2026-10-01.
 
-M/ARC is made by Marc Darenz L. Masarate. Contact: macdarenz@gmail.com. This policy is published at https://macdarenz-droid.github.io/M-arc/privacy/.
+M/ARC is made by Marc Darenz. Contact: macdarenz@gmail.com. This policy is published at https://macdarenz-droid.github.io/M-arc/privacy/.
 
 M/ARC is a workout tracker. It has no accounts, no ads and no analytics. Your data stays on your phone unless you turn on one of the two optional features below: the online coach and error reports. Both are off until you turn them on.
 
@@ -32,7 +32,7 @@ Your health data (heart rate, sleep, steps, calories) and body data (weight, bod
 While the app is open, it may also check whether the coach server is reachable. That check sends no data, but the server sees your IP address.
 
 **Who receives it:**
-- **Cloudflare** runs the coach server (a Cloudflare Worker run by Marc Darenz L. Masarate). It passes your request on and keeps no conversation. To limit use, it counts requests per device id and per internet (IP) address for the day; these counters are deleted after 3 days. Its logs record technical details such as the model, token counts, timing, data-centre location and error codes, not your messages.
+- **Cloudflare** runs the coach server (a Cloudflare Worker run by Marc Darenz). It passes your request on and keeps no conversation. To limit use, it counts requests per device id and per IP address for the day; these counters are deleted after 3 days. Its logs record technical details such as the model, token counts, timing, data-centre location and error codes, not your messages.
 - **Anthropic** (the maker of the Claude AI) receives the request from the Worker, in the United States, and writes the coach's answer. The request comes from the server, not your phone, so Anthropic does not see your IP address. Anthropic may keep parts of a request in a short-lived cache (up to one hour) so follow-up messages are faster. Under its policy for API customers, Anthropic deletes API requests and answers within 30 days, keeps them longer only if needed to enforce its usage policy or the law, and does not use them to train its models by default. See https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data and https://privacy.claude.com/en/articles/7996868-is-my-data-used-for-model-training.
 - **A server you choose.** If you set your own coach server in Settings (Escobar, Server), coach requests go to that server instead, under its operator's terms. Error reports always go to the built-in Cloudflare server.
 
@@ -43,7 +43,7 @@ When it is on and something breaks, the app sends a report to the same Cloudflar
 
 The message is cleaned before it leaves the phone and again on the server: every digit becomes "#", anything in quotes is removed, and it is cut to 300 characters. Code locations are kept only for the app's own files, at most 15. Workouts, health or watch data, body data, coach conversations, memory and settings are never in a report.
 
-The server stores reports in Cloudflare's database for 90 days, then deletes them. To stop abuse it allows 30 requests an hour per install id and per IP address; your IP address is never stored, only a scrambled code of it, deleted within a day. A request can hold at most 20 reports and 8 KB.
+The server stores reports in Cloudflare's database for 90 days, then deletes them. To stop abuse it allows 30 requests an hour per install id and per IP address; your IP address is never stored, only a one-way hash of it, deleted within a day. A request can hold at most 20 reports and 8 KB.
 
 ## How your data is protected
 Everything the app sends goes over an encrypted connection (HTTPS). Health data is never sold, never used for ads, and never given to anyone except, when you share it, to answer your own coach request. The app has no ads or tracking.
