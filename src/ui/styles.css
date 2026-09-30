@@ -845,3 +845,8 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 /* .esc-ask (styles.css) is sized 32x32 for its icon-only default; the labelled "Ask Escobar"
  * variant needs its own width and the same height/padding as the btn-sm next to it. */
 .mtl-actions .esc-ask { width: auto; min-height: 34px; padding: 0 var(--sp-3); }
+
+/* ESC-REPORT */
+.esc-report{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.esc-report-btn{position:relative;display:inline-flex;align-items:center;min-height:32px;color:var(--text-2)}
+.esc-report-btn::before{content:"";position:absolute;inset:-6px 0}

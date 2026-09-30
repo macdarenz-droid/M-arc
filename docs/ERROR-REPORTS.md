@@ -44,3 +44,36 @@ Workouts, sets, weights, reps, notes, exercise or split names, body weight, heal
 ## Owner to-do
 1. Deploy the Worker update when it is ready.
 2. Add one line to the privacy policy: "The app can send anonymous crash and error reports if you allow it. They contain no workout, health or personal data."
+
+## Content reports (ESC-REPORT, 2026-09-30)
+Google Play asks that people can report offensive AI output from inside the app. Every finished coach reply has a Report button.
+
+- **What is sent:** exactly `{v: 1, reason, text, app}`, after the person taps Report and picks a reason. The tap is the consent; the error-report switch does not apply.
+  - `reason` is `offensive`, `harmful` or `wrong`.
+  - `text` is the reply as shown: the answer, preamble lines, chart captions, proposal titles, revised drafts and the suggestion chips. Control characters (except tab and newline) are removed, and it is cut to 4,000 UTF-16 units.
+  - `app` is the app version.
+  - No install id, device id, conversation id or other header is sent.
+- **Where it goes:** always the built-in server, `POST https://marc-coach.mmarcdarenz.workers.dev/reports`, even when a custom coach server is set.
+- **Results the person sees:** "Reported. Thank you." (204), "Too many reports from this network. Try again in an hour." (429), or "Couldn’t send. Check your connection and try again." (anything else, offline, or no answer in 15 seconds). Picking a reason again retries. There is no queue.
+- **Nothing is saved on the phone.** "Reported" is kept in memory and resets when the app restarts; the server de-duplicates.
+- **Limits:** a 24 KB body cap, 10 reports an hour per network, then 200 an hour in total.
+- **Retention:** the D1 table `content_reports` in `marc-errors`. The same text and reason become one row with a count. Rows are deleted 90 days after the first report.
+- **Reports are unverified text.** Anyone can send one, so read them as hints.
+
+### Reading reports (owner, on a phone)
+1. In Chrome, open **https://dash.cloudflare.com/?to=/:account/workers/d1**. Sign in if asked.
+2. Tap **marc-errors**, then **Console**.
+3. Paste one of the two queries below and tap **Execute**.
+
+**Latest 20 reported replies** (the most recently first-reported come first):
+```sql
+SELECT id, datetime(stored_at / 1000, 'unixepoch') AS first_reported_utc, reason, n AS times, app, text FROM content_reports ORDER BY stored_at DESC, id DESC LIMIT 20;
+```
+
+**Reports in the last 7 days, by reason:**
+```sql
+SELECT reason, COUNT(*) AS replies, SUM(n) AS reports FROM content_reports WHERE stored_at >= (CAST(strftime('%s', 'now') AS INTEGER) - 7 * 86400) * 1000 GROUP BY reason ORDER BY reports DESC;
+```
+
+- "no such table: content_reports" means no report has arrived since the deploy and the nightly clean-up (03:17 UTC) has not run yet.
+- An empty result means there are no reports.
