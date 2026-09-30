@@ -1,0 +1,117 @@
+# Play Console submission drafts (DOC-2)
+
+Draft answers for the Play Console forms, traced to code. The owner enters these into the
+actual console UI; this file is the reference, not a substitute for reading the current
+questionnaire (Google can add or reword questions). Where the code can't answer a question,
+this says "unknown" rather than guessing.
+
+Source of truth for the plain-language claims: `docs/PRIVACY-POLICY.md`. Every claim below
+also gives its own file:line.
+
+**Privacy policy URL (Play Console, App content > Privacy policy):**
+https://macdarenz-droid.github.io/M-arc/privacy/ . That page is the M/ARC website's /privacy/ page, rendered from
+`docs/PRIVACY-POLICY.md` at every site build (DOC-3, the `website/` folder on `claude/app-website-design-671lk8`,
+deployed by hand with `.github/workflows/website.yml`). There is no second copy of the policy anywhere.
+
+## Store listing: required lines (LR-23, 2026-09-30)
+
+Google Play's health policy (https://support.google.com/googleplay/android-developer/answer/16679511) requires this line **in the store description**. It never goes in the app:
+
+> M/ARC is not a medical device and does not diagnose, treat, cure, or prevent any medical condition.
+
+The same policy also asks apps to remind users to consult a healthcare professional. That reminder lives in the app, in Settings (card PLAY-1), not in the listing.
+
+The developer contact email goes in the Play Console's contact field, not in the app (owner decision LR-23: no contacts in the app UI).
+
+**AI-generated content:** Play requires an in-app way to report or flag offensive AI replies (https://support.google.com/googleplay/android-developer/answer/13985936). Card ESC-REPORT adds it, once the owner approves the data it sends. When it lands, add that data to the Data safety answers below. Until then, this is a release blocker.
+
+## Data safety form
+
+**Does your app collect or share any of the required user data types?** Yes.
+
+| Data type | Collected? | Shared off-device? | Where | Encrypted in transit? | Purpose |
+|---|---|---|---|---|---|
+| Health and fitness (heart rate, resting heart rate, sleep, steps, active calories) | Yes, via Android Health Connect, read-only | Only if the user turns on "Share health data" (off by default) | To the coach Worker, then Anthropic, only while Escobar is on and answering | Yes, HTTPS (Cloudflare Workers serve HTTPS only) | App functionality (the AI coach) |
+| Health and fitness (readiness score, muscle recovery) | Computed on-device from the above | Sent whenever Escobar is on, even with "Share health data" off (the score, not the underlying numbers) | Same as above | Yes | App functionality |
+| Fitness (workouts, sets, weights, reps, splits, schedule) | Yes, on-device | Only the specific workout history Escobar's tools ask for, while Escobar is on | Same as above | Yes | App functionality |
+| Personal info (age, sex, height, weight, training experience, goal) | Yes, on-device | Sent in the coach's per-turn summary whenever Escobar is on; weight only if "Share body data" is also on | Same as above | Yes | App functionality |
+| Photos | Yes, if the user attaches one to a coach message | Sent once, with that message, while Escobar is on | Same as above | Yes | App functionality |
+| App activity (in-app messages) | Yes, coach conversation text | Sent whenever Escobar is on | Same as above | Yes | App functionality |
+| Device or other IDs | A random per-device id, not linked to identity | Sent with every coach request | Coach Worker | Yes | App functionality, abuse prevention (daily quota) |
+| Diagnostics (crash logs) | Only if the user turns on "Send anonymous error reports" (off by default) | Yes, when on | Same Cloudflare Worker, different endpoint | Yes | Analytics (crash/error fixing) |
+
+Code references:
+- On-device data model: `src/core/models.ts` (workouts, profile, `DailyHealth`).
+- Health Connect is read-only, native plugin: `src/native/health.ts:1-4`, `native/HealthConnectNativePlugin.java:51-55,82-86`.
+- Sharing toggles (off by default): `src/escobar/ui/SettingsSection.tsx:39-40`, `src/escobar/ui/EscobarSheet.tsx:81-82`.
+- Toggle enforcement (a tool call is refused while its toggle is off): `src/escobar/tools/executor.ts:86-87`.
+- Readiness/recovery sent regardless of the health toggle: `src/escobar/context/brief.ts:79-94` (per D-DOC1, `docs/COACHING-DECISIONS.md:742`), `src/escobar/tools/read.ts:173,322` (unshared data never leaves the phone for insights).
+- Coach request transport: `src/escobar/transport.ts`, `src/escobar/session.ts`.
+- Anthropic upstream (server-side only, never sees the phone's IP): `escobar-worker/src/anthropic.ts`.
+- Random device id, not account-linked: `src/escobar/state.ts` (device id), `escobar-worker/src/quotaDO.ts` (per-device/per-IP counters, deleted after 3 days).
+- Error reports: allowlist and cleaning `src/errors/scrub.ts:1-9`, random install id `src/errors/installId.ts:16-25`, send path `src/errors/sender.ts:44-60`, server-side storage/retention `escobar-worker/src/errorsStore.ts` (90-day purge, `escobar-worker/wrangler.toml` daily cron), consent switch default off — see `docs/ERROR-REPORTS.md:30-31`.
+- Encryption in transit: Cloudflare Workers only serve HTTPS; there is no HTTP fallback configured anywhere in `escobar-worker/wrangler.toml` or `escobar-worker/src/handler.ts`.
+
+**Is all of the collected data encrypted in transit?** Yes — every request goes over HTTPS
+(Cloudflare Workers don't serve plain HTTP).
+
+**Do you provide a way for users to request that their data be deleted?** Yes, in-app:
+"Reset workout data" → "Reset everything" (`src/slices/settings/Settings.tsx:69,239`) erases
+on-device data and issues a new install id (`src/errors/installId.ts:26-27`, reset call site in
+`src/core/store.ts:354-357`). There is no account, so there's nothing server-side tied to a
+person to delete on request; error reports are already anonymous and self-delete after 90 days.
+Contact for questions: macdarenz@gmail.com.
+
+**Is data collection required or optional?** All network sharing (Escobar, error reports) is
+optional and off by default. Nothing is required to use the app's core workout-tracking features.
+
+**Does your app comply with the Health Connect permissions declaration / Google's Health apps
+policy?** See the section below.
+
+## Health apps declaration (Health Connect)
+
+Permissions declared in `native/patch_manifest.py:25-30`:
+- `android.permission.health.READ_STEPS`
+- `android.permission.health.READ_SLEEP`
+- `android.permission.health.READ_HEART_RATE`
+- `android.permission.health.READ_ACTIVE_CALORIES_BURNED`
+- `android.permission.health.READ_RESTING_HEART_RATE`
+
+All five are **read-only**; the app never writes to Health Connect (`docs/PRIVACY-POLICY.md`
+"What stays on your phone"). Purpose for each, as actually used in the app:
+- **Steps, sleep, active calories, resting heart rate:** feed the on-device readiness score and
+  recovery model shown on the Today/Coach screens, and, if the user shares health data, inform
+  the AI coach's advice (`src/escobar/context/brief.ts:79-94`).
+- **Heart rate:** live/session heart rate for the workout finish-card summary (zones, average,
+  max) and the same readiness/coach uses above.
+
+The app also requests Bluetooth permissions to read live heart rate from a paired watch or chest
+strap (`native/patch_manifest.py:40-46`); on Android 11 and older this requires location
+permission for BLE scanning only — the app does not read or use device location
+(`docs/PRIVACY-POLICY.md` "What stays on your phone").
+
+## Content rating questionnaire
+
+- Violence: none.
+- Sexual content: none.
+- Profanity: none scripted by the app; user-entered free text (coach messages, exercise notes)
+  is never shown to other users — unknown whether Google's questionnaire treats private,
+  non-shared user text as "user-generated content" for rating purposes; answer conservatively as
+  no shared/public user-generated content, since nothing the user types is visible to anyone but
+  themselves and, if Escobar is on, the AI coach.
+- Controlled substances, gambling, user interaction with other users: none — there is no
+  multiplayer, chat-with-other-users, or social feature anywhere in the app.
+- Shares personal or health info with third parties: yes, only if the user opts in to Escobar
+  (see the data safety form above) — relevant to the questionnaire's data-collection branch.
+- Expected rating: Everyone / PEGI 3 equivalent, subject to the target-audience answer below.
+
+## Target audience and content
+
+**Target age group:** 18+ only (`docs/PRIVACY-POLICY.md` "Children";
+D-DOC2 in `docs/COACHING-DECISIONS.md`). Do not select an audience that includes children in the
+Play Console's target audience section, and do not complete the "Ads" section as child-directed.
+
+## Ads
+
+**Does your app contain ads?** No. No ad SDK or ad dependency exists in `package.json`
+(`dependencies`/`devDependencies`), and no ad-serving code exists in `src/`.
