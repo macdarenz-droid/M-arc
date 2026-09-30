@@ -1,0 +1,132 @@
+{
+  "id": "dumbbell_shoulder_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-seated-ohp",
+      "quote": "sit with your back against a back rest so that your head, shoulders and butt make contact with the bench. Place your feet firmly on the floor. Stiffen your torso by contracting your core and abdominal muscles (\"bracing\").",
+      "status": "verbatim",
+      "closest": "sit with your back against a back rest so that your head, shoulders and butt make contact with the bench. Place your feet firmly on the floor. Stiffen your torso by contracting your core and abdominal muscles (\"bracing\")."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-seated-ohp",
+      "quote": "slowly lift the dumbbells to your shoulder level with a closed, pronated grip (palms facing forward and thumbs wrapped around the handles), with the dumbbells at shoulder-width or slightly wider and wrists in a neutral position",
+      "status": "verbatim",
+      "closest": "slowly lift the dumbbells to your shoulder level with a closed, pronated grip (palms facing forward and thumbs wrapped around the handles), with the dumbbells at shoulder-width or slightly wider and wrists in a neutral position"
+    },
+    {
+      "claim": "c3",
+      "source": "ace-seated-ohp",
+      "quote": "Retract and depress your scapulae (pull down and back) and hold this scapulae position throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Retract and depress your scapulae (pull down and back) and hold this scapulae position throughout the exercise."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-seated-ohp",
+      "quote": "Exhale and press the dumbbells overhead in unison until your elbows are fully extended without any arching in your low back.",
+      "status": "verbatim",
+      "closest": "Exhale and press the dumbbells overhead in unison until your elbows are fully extended without any arching in your low back."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-seated-ohp",
+      "quote": "For more comfort through the range-of-motion keep your elbows pointed in front of you.",
+      "status": "verbatim",
+      "closest": "For more comfort through the range-of-motion keep your elbows pointed in front of you."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-seated-ohp",
+      "quote": "Inhale and slowly lower the dumbbells in a controlled manner by flexing (bending) your elbows while maintaining a rigid torso, neutral wrists and contact with the bench and floor.",
+      "status": "verbatim",
+      "closest": "Inhale and slowly lower the dumbbells in a controlled manner by flexing (bending) your elbows while maintaining a rigid torso, neutral wrists and contact with the bench and floor."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-seated-ohp",
+      "quote": "Avoid simply yielding to gravity and consciously try to contract your lats and pull the dumbbells down towards you.",
+      "status": "verbatim",
+      "closest": "Avoid simply yielding to gravity and consciously try to contract your lats and pull the dumbbells down towards you."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-seated-ohp",
+      "quote": "The spotter should stand behind you in a split-stance position, positioning their hands close to your wrists (not touching) to support you as needed.",
+      "status": "verbatim",
+      "closest": "The spotter should stand behind you in a split-stance position, positioning their hands close to your wrists (not touching) to support you as needed."
+    },
+    {
+      "claim": "c8",
+      "source": "saeterbakken2013",
+      "quote": "1-RM strength for standing dumbbells was ~7% lower than standing barbell (p = 0.002) and ~10% lower than seated dumbbells (p < 0.001).",
+      "status": "verbatim",
+      "closest": "1-RM strength for standing dumbbells was ~7% lower than standing barbell (p = 0.002) and ~10% lower than seated dumbbells (p < 0.001)."
+    },
+    {
+      "claim": "c8",
+      "source": "saeterbakken2013",
+      "quote": "the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles",
+      "status": "verbatim",
+      "closest": "the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles"
+    },
+    {
+      "claim": "c9",
+      "source": "saeterbakken2013",
+      "quote": "Electromyogram activity was measured in the anterior, medial, and posterior deltoids and biceps and triceps brachii.",
+      "status": "verbatim",
+      "closest": "Electromyogram activity was measured in the anterior, medial, and posterior deltoids and biceps and triceps brachii."
+    },
+    {
+      "claim": "c10",
+      "source": "kolber2013",
+      "quote": "A significant association existed between performance of exercises that require the \"high-five\" position (behind-the-neck latissimus pull-downs and military press) and clinical characteristics of AI.",
+      "status": "verbatim",
+      "closest": "A significant association existed between performance of exercises that require the \"high-five\" position (behind-the-neck latissimus pull-downs and military press) and clinical characteristics of AI."
+    },
+    {
+      "claim": "c10",
+      "source": "esenkaya2000",
+      "quote": "should be counseled to use safer alternative techniques such as frontal military presses that do not allow movement posterior to the plane of the body",
+      "status": "verbatim",
+      "closest": "should be counseled to use safer alternative techniques such as frontal military presses that do not allow movement posterior to the plane of the body"
+    },
+    {
+      "claim": "c11",
+      "source": "acsm2009",
+      "quote": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "quote": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c14",
+      "source": "kerr2010",
+      "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+      "status": "verbatim",
+      "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    }
+  ]
+}

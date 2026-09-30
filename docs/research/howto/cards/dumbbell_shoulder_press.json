@@ -1,0 +1,534 @@
+{
+  "id": "dumbbell_shoulder_press",
+  "libId": "lib_dumbbell_shoulder_press",
+  "name": "Dumbbell Shoulder Press",
+  "family": "SEATPRESS",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "seat-back"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit with the back against a backrest so head, shoulders and buttocks touch the bench; feet firmly on the floor; brace the trunk.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-ohp",
+          "text": "sit with your back against a back rest so that your head, shoulders and butt make contact with the bench. Place your feet firmly on the floor. Stiffen your torso by contracting your core and abdominal muscles (\"bracing\").",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Start with the dumbbells at shoulder level, shoulder-width or slightly wider, closed pronated grip with thumbs wrapped, wrists neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-ohp",
+          "text": "slowly lift the dumbbells to your shoulder level with a closed, pronated grip (palms facing forward and thumbs wrapped around the handles), with the dumbbells at shoulder-width or slightly wider and wrists in a neutral position",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Shoulder blades held down and back throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-ohp",
+          "text": "Retract and depress your scapulae (pull down and back) and hold this scapulae position throughout the exercise.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Press both dumbbells overhead to straight elbows without arching the low back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-ohp",
+          "text": "Exhale and press the dumbbells overhead in unison until your elbows are fully extended without any arching in your low back.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keeping the elbows pointed slightly in front of you is more comfortable through the range.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-ohp",
+          "text": "For more comfort through the range-of-motion keep your elbows pointed in front of you.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Lower under control with a rigid torso, actively pulling down rather than letting the weight drop.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-ohp",
+          "text": "Inhale and slowly lower the dumbbells in a controlled manner by flexing (bending) your elbows while maintaining a rigid torso, neutral wrists and contact with the bench and floor.",
+          "where": "Step 3"
+        },
+        {
+          "source": "ace-seated-ohp",
+          "text": "Avoid simply yielding to gravity and consciously try to contract your lats and pull the dumbbells down towards you.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "A way out: a spotter stands behind, hands close to the wrists without touching.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-ohp",
+          "text": "The spotter should stand behind you in a split-stance position, positioning their hands close to your wrists (not touching) to support you as needed.",
+          "where": "safety note"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Seated dumbbell pressing allowed about 10% more load than standing; standing and dumbbells produced the highest deltoid activity.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "saeterbakken2013"
+      ],
+      "quotes": [
+        {
+          "source": "saeterbakken2013",
+          "text": "1-RM strength for standing dumbbells was ~7% lower than standing barbell (p = 0.002) and ~10% lower than seated dumbbells (p < 0.001).",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2013",
+          "text": "the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Anterior, medial and posterior deltoids and triceps were all measured working in dumbbell shoulder presses.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "saeterbakken2013"
+      ],
+      "quotes": [
+        {
+          "source": "saeterbakken2013",
+          "text": "Electromyogram activity was measured in the anterior, medial, and posterior deltoids and biceps and triceps brachii.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Pressing behind the neck (the 'high-five' position) is associated with anterior shoulder instability signs; press in front instead.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "kolber2013",
+        "esenkaya2000"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2013",
+          "text": "A significant association existed between performance of exercises that require the \"high-five\" position (behind-the-neck latissimus pull-downs and military press) and clinical characteristics of AI.",
+          "where": "abstract"
+        },
+        {
+          "source": "esenkaya2000",
+          "text": "should be counseled to use safer alternative techniques such as frontal military presses that do not allow movement posterior to the plane of the body",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-seated-ohp",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/45/seated-overhead-press/",
+      "title": "Seated Overhead Press, ACE Exercise Library",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "saeterbakken2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23096062/",
+      "title": "Effects of body position and loading modality on muscle activity and strength in shoulder presses",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "23096062",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22836608/",
+      "title": "Characteristics of anterior shoulder instability and hyperlaxity in the weight-training population",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "22836608",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "esenkaya2000",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20086631/",
+      "title": "Bilateral anterior shoulder dislocation in a weight lifter",
+      "kind": "peer-reviewed",
+      "year": 2000,
+      "pmid": "20086631",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; back contact with the pad, low-back arch and elbows slightly forward read in the sagittal plane (c1, c4, c5).",
+    "equipment": "Upright bench with a backrest (angle not given by the sources read; census inclineBench), dumbbell per hand, feet on the floor (c1).",
+    "start": "Seated, head/shoulders/buttocks on the pad, feet flat (c1); dumbbells at shoulder level, wrists neutral (c2); elbows slightly in front of the body (c5).",
+    "end": "Arms straight overhead, elbows fully extended, back still on the pad, no low-back arch (c4).",
+    "checkpoints": [
+      {
+        "label": "Back on pad",
+        "what": "Head, shoulders and buttocks stay on the bench.",
+        "claim": "c1"
+      },
+      {
+        "label": "Elbows forward",
+        "what": "Elbows point slightly in front of you, not straight out to the sides.",
+        "claim": "c5"
+      },
+      {
+        "label": "Full lockout",
+        "what": "Press until the elbows are fully straight.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Low back arching away from the pad as the dumbbells go up.",
+      "why": "ACE names low-back arching as the fault to avoid on the press; frequency is not measured in any source read.",
+      "claim": "c4",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Back stays flat on the pad",
+        "claim": "c1"
+      },
+      {
+        "text": "Elbows straight at the top",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed grip, palms forward (c2).",
+    "width": "Dumbbells shoulder-width or slightly wider at the start (c2).",
+    "thumb": "Wrapped (c2).",
+    "handContact": "Handle held firmly in the palm (c2).",
+    "wrist": "Neutral throughout (c2, c6).",
+    "claims": [
+      "c2",
+      "c6"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Sit with head, shoulders and buttocks on the backrest; feet flat.",
+      "claim": "c1"
+    },
+    {
+      "step": "Brace your trunk.",
+      "claim": "c1"
+    },
+    {
+      "step": "Bring the dumbbells to shoulder level, thumbs wrapped, wrists straight.",
+      "claim": "c2"
+    },
+    {
+      "step": "Shoulder blades down and back.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back on the pad, no low-back arch.",
+      "claim": "c4"
+    },
+    {
+      "point": "Elbows slightly in front.",
+      "claim": "c5"
+    },
+    {
+      "point": "Dumbbells in front of the head, never behind the neck.",
+      "claim": "c10"
+    },
+    {
+      "point": "Wrists neutral.",
+      "claim": "c2"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Arching the back to finish a rep.",
+      "fix": "Stop the set or go lighter.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Letting the dumbbells drop on the way down.",
+      "fix": "Lower slowly, pulling them down.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Lowering behind the head.",
+      "fix": "Keep the dumbbells in front of the head.",
+      "claim": "c10"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "side_delts",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c9"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Tops and fronts of the shoulders",
+        "means": "The target muscles are working.",
+        "fix": null,
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Pain deep in the front of the shoulder at the bottom",
+        "means": "Usually a warning sign; shoulder injuries are the most common lifting injuries.",
+        "fix": "Stop the set. Go lighter and keep elbows slightly forward.",
+        "claim": "c13",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Pressing behind the neck is linked to shoulder instability.",
+      "claim": "c10"
+    },
+    {
+      "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
+      "claim": "c13"
+    },
+    {
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "wrist-neutral-press",
+      "kind": "hand",
+      "right": "Thumb wrapped, wrist straight.",
+      "wrong": "Wrist bent back.",
+      "claim": "c2"
+    },
+    {
+      "key": "seat-back-contact",
+      "kind": "posture",
+      "right": "Head, shoulders and buttocks on the pad.",
+      "wrong": "Low back arched off the pad.",
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: front_delts, side_delts primary; triceps secondary. c9 measured all of them. No change."
+  },
+  "anchorSource": "ace-seated-ohp"
+}

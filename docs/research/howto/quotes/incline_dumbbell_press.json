@@ -1,0 +1,174 @@
+{
+  "id": "incline_dumbbell_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-incline-press",
+      "quote": "lie supine (on your back) on an incline bench angled between 45 and 60 degrees with your feet placed firmly on the floor or on a raised platform to allow you to maintain a neutral spine",
+      "status": "verbatim",
+      "closest": "lie supine (on your back) on an incline bench angled between 45 and 60 degrees with your feet placed firmly on the floor or on a raised platform to allow you to maintain a neutral spine"
+    },
+    {
+      "claim": "c1",
+      "source": "hk-db-bench",
+      "quote": "In this variation, the back pad of the bench is set at an upward angle (approximately 45 degrees).",
+      "status": "verbatim",
+      "closest": "In this variation, the back pad of the bench is set at an upward angle (approximately 45 degrees)."
+    },
+    {
+      "claim": "c2",
+      "source": "rodriguezridao2020",
+      "quote": "The results showed that the maximal EMG activity for PMUP occurred at a bench inclination of 30°.",
+      "status": "verbatim",
+      "closest": "The results showed that the maximal EMG activity for PMUP occurred at a bench inclination of 30°."
+    },
+    {
+      "claim": "c2",
+      "source": "rodriguezridao2020",
+      "quote": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major.",
+      "status": "verbatim",
+      "closest": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-incline-press",
+      "quote": "Grasp each dumbbell with a closed, pronated grip (palms facing forward, thumbs wrapped around the handle)",
+      "status": "verbatim",
+      "closest": "Grasp each dumbbell with a closed, pronated grip (palms facing forward, thumbs wrapped around the handle)"
+    },
+    {
+      "claim": "c3",
+      "source": "ace-incline-press",
+      "quote": "Maintain a neutral wrist position (avoid flexion / extension at the wrist joint).",
+      "status": "verbatim",
+      "closest": "Maintain a neutral wrist position (avoid flexion / extension at the wrist joint)."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-incline-press",
+      "quote": "Depress and retract your scapulae (pull shoulders down and back) to make firm contact with the bench. Your head, shoulders, butt and feet should make contact with the bench and floor/riser throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Depress and retract your scapulae (pull shoulders down and back) to make firm contact with the bench. Your head, shoulders, butt and feet should make contact with the bench and floor/riser throughout the exercise."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-incline-press",
+      "quote": "press the dumbbells in unison to a level over your eyes or slightly higher, with your elbows fully extended",
+      "status": "verbatim",
+      "closest": "press the dumbbells in unison to a level over your eyes or slightly higher, with your elbows fully extended"
+    },
+    {
+      "claim": "c6",
+      "source": "ace-incline-press",
+      "quote": "Inhale and slowly lower the dumbbells in unison and in a controlled movement towards your upper chest, but moving slightly wider towards the armpits. Gently touch the dumbbells to your chest without bouncing",
+      "status": "verbatim",
+      "closest": "Inhale and slowly lower the dumbbells in unison and in a controlled movement towards your upper chest, but moving slightly wider towards the armpits. Gently touch the dumbbells to your chest without bouncing"
+    },
+    {
+      "claim": "c6",
+      "source": "hk-db-bench",
+      "quote": "The lifter will lower the dumbbells to the top of their chest and then extend the elbows, pressing straight up.",
+      "status": "verbatim",
+      "closest": "The lifter will lower the dumbbells to the top of their chest and then extend the elbows, pressing straight up."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-incline-press",
+      "quote": "Keep the elbows under your wrists, and either close to your sides (emphasizes more triceps) or flared out from the body (emphasizes more pectorals).",
+      "status": "verbatim",
+      "closest": "Keep the elbows under your wrists, and either close to your sides (emphasizes more triceps) or flared out from the body (emphasizes more pectorals)."
+    },
+    {
+      "claim": "c8",
+      "source": "ace-incline-press",
+      "quote": "Maintain all points of contact with the bench and floor/riser and avoid any arching in the low back.",
+      "status": "verbatim",
+      "closest": "Maintain all points of contact with the bench and floor/riser and avoid any arching in the low back."
+    },
+    {
+      "claim": "c9",
+      "source": "liftosaur-incline-db",
+      "quote": "Select a pair of dumbbells and place them on your thighs as you sit on the bench.",
+      "status": "verbatim",
+      "closest": "Select a pair of dumbbells and place them on your thighs as you sit on the bench."
+    },
+    {
+      "claim": "c9",
+      "source": "liftosaur-incline-db",
+      "quote": "Sit back on the bench, and use your thighs to help lift the dumbbells to shoulder height.",
+      "status": "verbatim",
+      "closest": "Sit back on the bench, and use your thighs to help lift the dumbbells to shoulder height."
+    },
+    {
+      "claim": "c10",
+      "source": "hk-db-bench",
+      "quote": "The spotter should place a firm grip with each hand around the wrists of the lifter. Spotting at the elbows is incorrect",
+      "status": "verbatim",
+      "closest": "The spotter should place a firm grip with each hand around the wrists of the lifter. Spotting at the elbows is incorrect"
+    },
+    {
+      "claim": "c10",
+      "source": "hk-db-bench",
+      "quote": "All other positions and movement cues are similar.",
+      "status": "verbatim",
+      "closest": "All other positions and movement cues are similar."
+    },
+    {
+      "claim": "c11",
+      "source": "ace-incline-press",
+      "quote": "Exhale and gently press upwards to full elbow extension with the dumbbells positioned at your starting position.",
+      "status": "verbatim",
+      "closest": "Exhale and gently press upwards to full elbow extension with the dumbbells positioned at your starting position."
+    },
+    {
+      "claim": "c12",
+      "source": "lauver2016",
+      "quote": "The results of this study support the use of a horizontal bench to achieve muscular activation of both the upper and lower heads of the pectoralis.",
+      "status": "verbatim",
+      "closest": "The results of this study support the use of a horizontal bench to achieve muscular activation of both the upper and lower heads of the pectoralis."
+    },
+    {
+      "claim": "c12",
+      "source": "lauver2016",
+      "quote": "a bench incline angle of 30° or 45° resulted in greater muscular activation during certain time points",
+      "status": "verbatim",
+      "closest": "a bench incline angle of 30° or 45° resulted in greater muscular activation during certain time points"
+    },
+    {
+      "claim": "c13",
+      "source": "acsm2009",
+      "quote": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c15",
+      "source": "kerr2010",
+      "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+      "status": "verbatim",
+      "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c16",
+      "source": "kolber2010",
+      "quote": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c16",
+      "source": "kolber2010",
+      "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    }
+  ]
+}

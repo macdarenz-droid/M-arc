@@ -1,0 +1,612 @@
+{
+  "id": "incline_dumbbell_press",
+  "libId": "lib_incline_dumbbell_press",
+  "name": "Incline Dumbbell Press",
+  "family": "BENCH",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": "dumbbell_bench_press",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because ACE gives the same closed, thumbs-wrapped grip for the incline press (c3)."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because ACE gives the same neutral wrist for the incline press (c3)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "ACE sets the incline bench at 45-60 degrees; the Human Kinetics technique text uses about 45 degrees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press",
+        "hk-db-bench"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "lie supine (on your back) on an incline bench angled between 45 and 60 degrees with your feet placed firmly on the floor or on a raised platform to allow you to maintain a neutral spine",
+          "where": "Step 1"
+        },
+        {
+          "source": "hk-db-bench",
+          "text": "In this variation, the back pad of the bench is set at an upward angle (approximately 45 degrees).",
+          "where": "Incline Dumbbell Bench Press"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "In EMG studies of the barbell bench press, the upper chest peaked at a 30-degree incline, and inclines above 45 degrees shifted work to the front deltoid and reduced chest performance (barbell data applied to dumbbells).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "rodriguezridao2020"
+      ],
+      "quotes": [
+        {
+          "source": "rodriguezridao2020",
+          "text": "The results showed that the maximal EMG activity for PMUP occurred at a bench inclination of 30°.",
+          "where": "abstract"
+        },
+        {
+          "source": "rodriguezridao2020",
+          "text": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Grip: closed, palms forward, thumbs wrapped; wrists neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Grasp each dumbbell with a closed, pronated grip (palms facing forward, thumbs wrapped around the handle)",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-incline-press",
+          "text": "Maintain a neutral wrist position (avoid flexion / extension at the wrist joint).",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Shoulder blades down and back; head, shoulders, buttocks and feet keep contact.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Depress and retract your scapulae (pull shoulders down and back) to make firm contact with the bench. Your head, shoulders, butt and feet should make contact with the bench and floor/riser throughout the exercise.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Start with arms straight, dumbbells over the eyes or slightly higher.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "press the dumbbells in unison to a level over your eyes or slightly higher, with your elbows fully extended",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Lower slowly toward the upper chest, slightly wide toward the armpits, touching gently without bouncing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press",
+        "hk-db-bench"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Inhale and slowly lower the dumbbells in unison and in a controlled movement towards your upper chest, but moving slightly wider towards the armpits. Gently touch the dumbbells to your chest without bouncing",
+          "where": "Step 3"
+        },
+        {
+          "source": "hk-db-bench",
+          "text": "The lifter will lower the dumbbells to the top of their chest and then extend the elbows, pressing straight up.",
+          "where": "Incline Dumbbell Bench Press"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Keep the elbows under the wrists.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Keep the elbows under your wrists, and either close to your sides (emphasizes more triceps) or flared out from the body (emphasizes more pectorals).",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Avoid arching the low back; keep all contact points.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Maintain all points of contact with the bench and floor/riser and avoid any arching in the low back.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Getting in: dumbbells on the thighs as you sit, then use the thighs to help lift them to shoulder height as you lie back.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "liftosaur-incline-db"
+      ],
+      "quotes": [
+        {
+          "source": "liftosaur-incline-db",
+          "text": "Select a pair of dumbbells and place them on your thighs as you sit on the bench.",
+          "where": "Dumbbells"
+        },
+        {
+          "source": "liftosaur-incline-db",
+          "text": "Sit back on the bench, and use your thighs to help lift the dumbbells to shoulder height.",
+          "where": "Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "A way out: the spotter grips the lifter's wrists and takes the dumbbells one at a time at the end; the same spotting rules apply on the incline.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-db-bench"
+      ],
+      "quotes": [
+        {
+          "source": "hk-db-bench",
+          "text": "The spotter should place a firm grip with each hand around the wrists of the lifter. Spotting at the elbows is incorrect",
+          "where": "Spotting Guidelines"
+        },
+        {
+          "source": "hk-db-bench",
+          "text": "All other positions and movement cues are similar.",
+          "where": "Incline Dumbbell Bench Press"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Breathe in on the way down, out on the way up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-press",
+          "text": "Exhale and gently press upwards to full elbow extension with the dumbbells positioned at your starting position.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "At 30 and 45 degrees the upper chest was more active than flat during part of the press; a flat bench works both upper and lower chest.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "lauver2016"
+      ],
+      "quotes": [
+        {
+          "source": "lauver2016",
+          "text": "The results of this study support the use of a horizontal bench to achieve muscular activation of both the upper and lower heads of the pectoralis.",
+          "where": "abstract"
+        },
+        {
+          "source": "lauver2016",
+          "text": "a bench incline angle of 30° or 45° resulted in greater muscular activation during certain time points",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-incline-press",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/",
+      "title": "Incline Chest Press, ACE Exercise Library",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "hk-db-bench",
+      "url": "https://us.humankinetics.com/blogs/excerpt/how-to-perform-a-dumbbell-bench-press",
+      "title": "How to perform a dumbbell bench press (Human Kinetics excerpt)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "rodriguezridao2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33049982/",
+      "title": "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": "33049982",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "liftosaur-incline-db",
+      "url": "https://liftosaur.com/exercises/dumbbell-incline-bench-press",
+      "title": "Dumbbell Incline Bench Press (Liftosaur exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lauver2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/",
+      "title": "Influence of bench angle on upper extremity muscular activation during bench press exercise",
+      "kind": "peer-reviewed",
+      "year": 2016,
+      "pmid": "25799093",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; bench angle, elbow-under-wrist and back arch all read in the sagittal plane (c1, c7, c8).",
+    "equipment": "Adjustable bench at 45 degrees (the value inside both ACE's 45-60 range and HK's 'about 45', c1; c2 notes 30 degrees peaks upper chest in barbell data, so 45 is the upper sensible limit). Dumbbell per hand, feet flat.",
+    "start": "On the incline, head/shoulders/buttocks on the pad, feet on the floor (c4); arms straight, dumbbells over the eyes or slightly higher (c5).",
+    "end": "Dumbbells at the upper chest, slightly wide (c6), elbows under the wrists (c7).",
+    "checkpoints": [
+      {
+        "label": "Bench at 45°",
+        "what": "Back pad set to about 45 degrees, not steeper.",
+        "claim": "c1"
+      },
+      {
+        "label": "Elbows under wrists",
+        "what": "Forearms stay vertical under the dumbbells.",
+        "claim": "c7"
+      },
+      {
+        "label": "To upper chest",
+        "what": "Dumbbells come down to the top of the chest, slightly wide.",
+        "claim": "c6"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows drifting out of line with the wrists (forearms tilted) at the bottom.",
+      "why": "ACE's only incline-specific cue is elbows under wrists; frequency is not measured in any source read.",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Forearms vertical at the bottom",
+        "claim": "c7"
+      },
+      {
+        "text": "Hips stay on the seat",
+        "claim": "c8"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c14"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed grip, palms forward (c3).",
+    "width": "Dumbbells over the elbows, elbows under the wrists (c7).",
+    "thumb": "Wrapped (c3).",
+    "handContact": "Handle held firmly in the palm (c3).",
+    "wrist": "Neutral (c3).",
+    "claims": [
+      "c3",
+      "c7"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bench to about 45 degrees.",
+      "claim": "c1"
+    },
+    {
+      "step": "Sit with the dumbbells on your thighs.",
+      "claim": "c9"
+    },
+    {
+      "step": "Lie back, using your thighs to help lift the dumbbells to shoulder height.",
+      "claim": "c9"
+    },
+    {
+      "step": "Shoulder blades down and back; feet flat.",
+      "claim": "c4"
+    },
+    {
+      "step": "Press to straight arms over your eyes.",
+      "claim": "c5"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Head, shoulders, buttocks and feet keep contact.",
+      "claim": "c4"
+    },
+    {
+      "point": "No low-back arch.",
+      "claim": "c8"
+    },
+    {
+      "point": "Elbows under the wrists.",
+      "claim": "c7"
+    },
+    {
+      "point": "Wrists neutral.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Bench set steeper than 45 degrees.",
+      "fix": "Lower the back pad; steeper turns it into a shoulder press.",
+      "claim": "c2"
+    },
+    {
+      "mistake": "Bouncing off the chest.",
+      "fix": "Touch gently; go lighter if you can't.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Arching the low back.",
+      "fix": "Stop the set or go lighter.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "upper_chest",
+        "claim": "c2"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c2"
+      },
+      {
+        "muscleId": "chest",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "triceps",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Mostly front of the shoulders, little chest",
+        "means": "Usually the bench is too steep.",
+        "fix": "Lower the bench to about 45 degrees or less.",
+        "claim": "c2",
+        "redFlag": null
+      },
+      {
+        "where": "Sharp pain at the front of the shoulder",
+        "means": "Usually a warning sign; the shoulder is the most commonly injured area in lifting.",
+        "fix": "Stop the set. Go lighter next time.",
+        "claim": "c16",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; use a spotter for heavy sets.",
+      "claim": "c15"
+    },
+    {
+      "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
+      "claim": "c16"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "wrist-neutral-press",
+      "kind": "hand",
+      "right": "Thumb wrapped, wrist straight.",
+      "wrong": "Wrist bent back.",
+      "claim": "c3"
+    },
+    {
+      "key": "incline-angle",
+      "kind": "posture",
+      "right": "Back pad at about 45 degrees.",
+      "wrong": "Back pad near upright.",
+      "claim": "c2"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: upper_chest primary; front_delts, triceps, chest secondary. c2 supports upper_chest and front_delts; c12 supports chest. Triceps: Rodríguez-Ridao found similar triceps activity at all inclines (abstract), kept. No change."
+  },
+  "anchorSource": "ace-incline-press"
+}

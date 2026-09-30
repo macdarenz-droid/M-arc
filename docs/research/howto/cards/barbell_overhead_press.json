@@ -1,0 +1,678 @@
+{
+  "id": "barbell_overhead_press",
+  "libId": "lib_barbell_overhead_press",
+  "name": "Barbell Overhead Press",
+  "family": "vertical_push (handwritten, no template)",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Unrack from a rack set at about shoulder height, grip about shoulder-width, step back, and press directly overhead.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-standing-sp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-standing-sp",
+          "text": "Place a barbell in a rack at about shoulder-height. Grip the bar with the hands about shoulder-width apart",
+          "where": "exercise description"
+        },
+        {
+          "source": "ace-standing-sp",
+          "text": "Step back, keeping the back straight and tall and press the barbell directly overhead.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Grip just outside the shoulders so the forearms are vertical at the bottom; a wide bench-press grip flares the elbows.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Hold the bar just outside your shoulders. The exact grip width depends on how wide they are.",
+          "where": "Grip Width"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Your grip is optimal when your forearms are vertical to the floor at the bottom.",
+          "where": "Grip Width"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Full grip: thumbs wrapped round the bar so it cannot slip out and fall on the head.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Full Grip. Wrap your thumbs around the bar. This makes the Overhead Press safer. The bar can’t slip out of your hands and drop on your head.",
+          "where": "Full Grip"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Bar low in the palm, on the heel of the hand, so the wrists don't bend back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "The bar must rest on the heel of your palm, close to your wrists.",
+          "where": "Grip Low Palm"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Don’t grip the bar mid-palm or your wrists will bend back.",
+          "where": "Grip Low Palm"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Most people start with the elbows too far back, tilting the forearms; move the elbows forward under the bar so the forearms are vertical from the side and the bar travels straight up rather than away from the face.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Most people press with their elbows back at the bottom. This puts your forearms incline and kills strength. Move your elbows forward before you press.",
+          "where": "Under The Bar"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Press from here and the bar will move in a vertical line up instead of away from your face.",
+          "where": "Under The Bar"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The head is in the bar's way: lean slightly back from the hips (not the low back) at the bottom, then move the torso forward once the bar passes the head.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "You must create space for the bar by leaning slightly back at the bottom. Move your hips forward while keeping your lower back neutral. This keeps your head out of the way. Now press. Move your torso forward once the bar passes your head",
+          "where": "Bar Path"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Finish with the bar over the shoulders and mid-foot, elbows locked.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Hold the bar over your shoulders and mid-foot for proper balance. Lock your elbows.",
+          "where": "how-to, Lockout"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Do not lean back by arching the low back when a rep gets hard; if you can't keep it neutral the weight is too heavy, so count the rep as failed.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "If you can’t keep your lower back neutral, the weight is too heavy. Consider it a fail instead of leaning back to get your rep at all costs.",
+          "where": "Lower Back Pain"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Keep hips and knees locked; bending them turns it into a push press.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Keep your hips and knees locked from start to finish. If you can’t, the weight is too heavy.",
+          "where": "how-to"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Feet about hip-width, flat on the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Hip-width Stance. Overhead Press with your heels under your hips.",
+          "where": "Stance"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Keep your toes, forefoot, and heels on the floor when you Overhead Press.",
+          "where": "Stance"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "A way out: NSCA guidance is to do overhead lifts in a power rack with the crossbars at the right height; failed reps can also be lowered back to the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-ch15-summary",
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-ch15-summary",
+          "text": "Overhead exercises and ones with the bar on the back or shoulders must be done within a power rack with crossbars at the right height.",
+          "where": "Spotting Overhead Exercises"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "If you fail to press the weight, you can simply lower it back on your shoulders. You then rack it in your Power Rack or return it to the floor.",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Breathe in and brace at the bottom, hold on the way up, breathe out once the bar is back on the shoulders (a coach cue; not for people told to avoid breath-holding).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp",
+        "nsca-ch15-summary"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Breathing. Inhale at the bottom before you press. Hold your breath at the top. Exhale at the bottom.",
+          "where": "Breathing"
+        },
+        {
+          "source": "nsca-ch15-summary",
+          "text": "This is used by experienced and well trained resistance athletes during structural exercises.",
+          "where": "The Valsalva Maneuver"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Barbell pressing allowed more load than dumbbells standing (about 7%), with greater triceps activity; deltoids work in all shoulder press variants.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "saeterbakken2013"
+      ],
+      "quotes": [
+        {
+          "source": "saeterbakken2013",
+          "text": "1-RM strength for standing dumbbells was ~7% lower than standing barbell",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2013",
+          "text": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Pressing behind the neck is associated with anterior shoulder instability signs; press in front of the head.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "kolber2013",
+        "esenkaya2000"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2013",
+          "text": "A significant association existed between performance of exercises that require the \"high-five\" position (behind-the-neck latissimus pull-downs and military press) and clinical characteristics of AI.",
+          "where": "abstract"
+        },
+        {
+          "source": "esenkaya2000",
+          "text": "should be counseled to use safer alternative techniques such as frontal military presses that do not allow movement posterior to the plane of the body",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Barbell loads can go up in 1.25 kg steps; dumbbell jumps of 2 kg are a large percentage for the overhead press.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Barbells are easier to get stronger with because you can use smaller increments of 1.25kg/2.5lb or less by microloading.",
+          "where": "dumbbells vs barbell"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-standing-sp",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/71/standing-shoulder-press/",
+      "title": "Standing Shoulder Press (barbell), ACE Exercise Library",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "stronglifts-ohp",
+      "url": "https://stronglifts.com/overhead-press/",
+      "title": "How to Overhead Press with Proper Form: The Definitive Guide (StrongLifts)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nsca-ch15-summary",
+      "url": "https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/",
+      "title": "NSCA CSCS Chapter 15 (Exercise Technique) study summary, PTPioneer",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "saeterbakken2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23096062/",
+      "title": "Effects of body position and loading modality on muscle activity and strength in shoulder presses",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "23096062",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22836608/",
+      "title": "Characteristics of anterior shoulder instability and hyperlaxity in the weight-training population",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "22836608",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "esenkaya2000",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20086631/",
+      "title": "Bilateral anterior shoulder dislocation in a weight lifter",
+      "kind": "peer-reviewed",
+      "year": 2000,
+      "pmid": "20086631",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; bar path relative to the face, forearm angle and trunk lean are all sagittal (c5, c6, c8).",
+    "equipment": "Barbell; rack with hooks at about shoulder height and safety crossbars set (c1, c11).",
+    "start": "Standing, feet hip-width and flat (c10); bar on the front of the shoulders, forearms vertical, elbows slightly forward under the bar (c2, c5).",
+    "end": "Bar over the shoulders and mid-foot, elbows locked, hips and knees straight (c7, c9).",
+    "checkpoints": [
+      {
+        "label": "Forearms vertical",
+        "what": "Elbows under the bar at the bottom, forearms straight up and down.",
+        "claim": "c5"
+      },
+      {
+        "label": "Head out, then through",
+        "what": "Lean back slightly from the hips so the bar clears the chin, then move under the bar.",
+        "claim": "c6"
+      },
+      {
+        "label": "Over mid-foot",
+        "what": "Lockout with the bar over the shoulders and mid-foot.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows back at the start, forearms tilted, so the bar curves forward away from the face.",
+      "why": "StrongLifts says most people press this way (coach observation, not measured); it moves the bar off the vertical line.",
+      "claim": "c5",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Bar goes straight up past your face",
+        "claim": "c5"
+      },
+      {
+        "text": "Bar ends over mid-foot",
+        "claim": "c7"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c17"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Full grip, overhand (c3).",
+    "width": "Just outside the shoulders, forearms vertical at the bottom (c2).",
+    "thumb": "Wrapped round the bar (c3).",
+    "handContact": "Bar on the heel of the palm, close to the wrist (c4).",
+    "wrist": "Almost straight, not bent back (c4).",
+    "claims": [
+      "c2",
+      "c3",
+      "c4"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the rack hooks at about shoulder height and the safety crossbars just below the bar's lowest point.",
+      "claim": "c11"
+    },
+    {
+      "step": "Grip just outside the shoulders, thumbs wrapped, bar in the heel of the palm.",
+      "claim": "c2"
+    },
+    {
+      "step": "Unrack onto the front of the shoulders and step back.",
+      "claim": "c1"
+    },
+    {
+      "step": "Feet hip-width, flat on the floor.",
+      "claim": "c10"
+    },
+    {
+      "step": "Elbows forward so the forearms are vertical.",
+      "claim": "c5"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Low back neutral; lean comes from the hips, not the spine.",
+      "claim": "c8"
+    },
+    {
+      "point": "Hips and knees locked.",
+      "claim": "c9"
+    },
+    {
+      "point": "Bar in front of the head, never behind the neck.",
+      "claim": "c14"
+    },
+    {
+      "point": "Lockout over mid-foot.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Leaning back by arching the low back to grind out a rep.",
+      "fix": "The weight is too heavy: end the set.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Thumbless grip.",
+      "fix": "Wrap the thumbs.",
+      "claim": "c3"
+    },
+    {
+      "mistake": "Bending the knees to drive the bar.",
+      "fix": "Keep the legs locked; go lighter.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c13"
+      },
+      {
+        "muscleId": "side_delts",
+        "claim": "c13"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c13"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Low back",
+        "means": "Usually leaning back by arching the spine instead of from the hips.",
+        "fix": "Go lighter. Keep the low back neutral.",
+        "claim": "c8",
+        "redFlag": "back"
+      },
+      {
+        "where": "Pain at the front of the shoulder",
+        "means": "Usually a warning sign; the shoulder is the most commonly injured area in lifting.",
+        "fix": "Stop the set. Go lighter next time.",
+        "claim": "c18",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bar falling on the head with a thumbless grip or soft lockout.",
+      "claim": "c3"
+    },
+    {
+      "risk": "Low-back hyperextension from leaning back under a heavy bar.",
+      "claim": "c8"
+    },
+    {
+      "risk": "Pressing behind the neck is linked to shoulder instability.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "bar-heel-of-palm",
+      "kind": "hand",
+      "right": "Bar on the heel of the palm, wrist almost straight, thumb wrapped.",
+      "wrong": "Bar in mid-palm, wrist bent back.",
+      "claim": "c4"
+    },
+    {
+      "key": "ohp-forearm-vertical",
+      "kind": "posture",
+      "right": "Elbows under the bar, forearms vertical.",
+      "wrong": "Elbows back, forearms tilted.",
+      "claim": "c5"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: front_delts, side_delts primary; triceps, upper_chest secondary; core stabilizer. c13 supports deltoids and triceps. upper_chest: no source read measured it in the overhead press, so it is unsupported here but not removed (no evidence against it either); flagged for the critic."
+  },
+  "anchorSource": "stronglifts-ohp"
+}
