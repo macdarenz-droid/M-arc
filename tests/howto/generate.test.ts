@@ -8,16 +8,13 @@ import type { BuiltHowTo, GoldenFile, GoldenPlateEntry } from '../../src/howto/t
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
-let g: any, core: any, gen: any, plates: any, content: any, golden: GoldenFile, fixturePlates: any[];
+let g: any, core: any, gen: any, plates: any, golden: GoldenFile, fixturePlates: any[];
 const tmps: string[] = [];
 beforeAll(async () => {
   g = await import(/* @vite-ignore */ url('tools/plates/golden.mjs'));
   core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
   gen = await import(/* @vite-ignore */ url('tools/plates/generate.mjs'));
   plates = await import(/* @vite-ignore */ url('tools/plates/gen/plates.mjs'));
-  // HT-5: content.mjs is the second, sequential writer of ht-<slug>.ts and ids.ts (module layout 2.2), and the sole
-  // writer of archetypes.ts. Loaded here so the freshness checks below reflect both plugins, not plates.mjs alone.
-  content = await import(/* @vite-ignore */ url('tools/plates/gen/content.mjs'));
   golden = JSON.parse(readFileSync(g.GOLDEN_JSON, 'utf8'));
   fixturePlates = g.extractPlates(readFileSync(g.FIXTURE, 'utf8'));
 });
@@ -81,9 +78,13 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
   const onDisk = () => gen.generatedOnDisk() as string[];
   const inputsOf = async (writers: string[]) => (await Promise.all(writers.map(async w => (await import(/* @vite-ignore */ url(w))).inputs()))).flat();
 
-  it('the generated files are exactly the 8 modules, the loader index, ids.ts, archetypes.ts (HT-5) and plate.css', () => {
-    expect(onDisk()).toEqual([
-      'src/howto/archetypes.ts',
+  // Plugins are found by glob (plan 2.2), so later cards add generated files. What stays pinned: plates.mjs's own
+  // outputs are exactly these 11 files, and every file names only real plugins. `generate --check` (the gate) proves
+  // the files on disk are exactly what the plugins write, with those writers.
+  const PLATES = 'tools/plates/gen/plates.mjs';
+  const writersOf = (p: string) => core.parseHeader(readFileSync(p, 'utf8')).writers as string[];
+  it('plates.mjs writes exactly the 8 modules, the loader index, ids.ts and plate.css; no file in generated/ is hand-written', () => {
+    expect(onDisk().filter(p => writersOf(p).includes(PLATES))).toEqual([
       'src/howto/generated/ht-barbell-back-squat.ts', 'src/howto/generated/ht-dumbbell-lateral-raise.ts', 'src/howto/generated/ht-hanging-leg-raise.ts',
       'src/howto/generated/ht-lat-pulldown.ts', 'src/howto/generated/ht-leg-press.ts', 'src/howto/generated/ht-machine-chest-press.ts',
       'src/howto/generated/ht-pull-up.ts', 'src/howto/generated/ht-seated-cable-row.ts', 'src/howto/generated/index.ts', 'src/howto/ids.ts',
@@ -92,16 +93,23 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
     for (const f of readdirSync('src/howto/generated')) expect(onDisk(), `hand-written file in generated/: ${f}`).toContain(`src/howto/generated/${f}`);
   });
 
+  it('every header names real plugins: one writer per file, except ht-<slug>.ts and ids.ts, which plates.mjs writes and content.mjs (run after it) may extend', async () => {
+    const plugins: string[] = core.pluginFiles();
+    for (const p of onDisk()) {
+      const w = writersOf(p);
+      expect(w.length, p).toBeGreaterThan(0);
+      expect(w, p).toEqual([...w].sort());
+      for (const x of w) expect(plugins, `${p}: writer ${x} is not a plugin in tools/plates/gen/`).toContain(x);
+      if (w.length === 1) continue;
+      expect(p, `${p}: only ht-<slug>.ts and ids.ts may have more than one writer`).toMatch(/^src\/howto\/(generated\/ht-[a-z0-9-]+\.ts|ids\.ts)$/);
+      expect(w, `${p}: plan 2.2 allows exactly plates.mjs then content.mjs`).toEqual(['tools/plates/gen/content.mjs', PLATES]);
+      for (const x of w.filter(x => x !== PLATES)) expect((await import(/* @vite-ignore */ url(x))).after ?? [], `${p}: ${x} must run after plates.mjs`).toContain(PLATES);
+    }
+  });
+
   it('each header\'s inputsSha256 is recomputed from its writers and their inputs, with no render', async () => {
-    // HT-5: ht-<slug>.ts and ids.ts have two writers (plates.mjs, then content.mjs, sorted); archetypes.ts has one
-    // (content.mjs only); index.ts and plate.css stay plates.mjs-only.
-    const multiWriter = new Set<string>(['src/howto/ids.ts', ...[...latest()].map(([id]) => `src/howto/generated/ht-${rows()[id]!.slug}.ts`)]);
     for (const p of onDisk()) {
       const h = core.parseHeader(readFileSync(p, 'utf8'));
-      const want = p === 'src/howto/archetypes.ts' ? ['tools/plates/gen/content.mjs']
-        : multiWriter.has(p) ? ['tools/plates/gen/content.mjs', 'tools/plates/gen/plates.mjs']
-        : ['tools/plates/gen/plates.mjs'];
-      expect(h.writers, p).toEqual(want);
       expect(h.hash, p).toBe(core.inputsSha256(h.writers, await inputsOf(h.writers)));
     }
   });
@@ -123,14 +131,13 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
 
   it('touching vendor/engine/layout.mjs without regenerating makes the header stale', async () => {
     const root = mkdtempSync(join(tmpdir(), 'ht2-inputs-')); tmps.push(root);
-    // ids.ts is now written by both plates.mjs and content.mjs (HT-5), so its freshness covers both plugins' inputs.
-    const w = ['tools/plates/gen/content.mjs', 'tools/plates/gen/plates.mjs'], winputs = [...plates.inputs(), ...content.inputs()];
-    const ins: string[] = [...core.coreFiles(), ...w, ...winputs];
+    const ins: string[] = [...core.coreFiles(), 'tools/plates/gen/plates.mjs', ...plates.inputs()];
     for (const p of ins) { mkdirSync(dirname(join(root, p)), { recursive: true }); copyFileSync(p, join(root, p)); }
-    const fresh = core.parseHeader(readFileSync('src/howto/ids.ts', 'utf8')).hash;
-    expect(core.inputsSha256(w, winputs, root)).toBe(fresh);
+    // index.ts has plates.mjs as its only writer for good (plan 2.2), so later plugins never change this check.
+    const w = ['tools/plates/gen/plates.mjs'], fresh = core.parseHeader(readFileSync('src/howto/generated/index.ts', 'utf8')).hash;
+    expect(core.inputsSha256(w, plates.inputs(), root)).toBe(fresh);
     writeFileSync(join(root, 'tools/plates/vendor/engine/layout.mjs'), readFileSync('tools/plates/vendor/engine/layout.mjs', 'utf8') + ' ');
-    expect(core.inputsSha256(w, winputs, root)).not.toBe(fresh);
+    expect(core.inputsSha256(w, plates.inputs(), root)).not.toBe(fresh);
   });
 
   it('adding a plugin that writes only its own file leaves every other file\'s header unchanged (plugins do not stale each other)', async () => {
