@@ -86,7 +86,7 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
     if (!m) m = await import(/* @vite-ignore */ MOD_URL);
     const approval = m.readManifest().pageApproval;
     expect(approval, 'MANIFEST.json should hold a pageApproval').toBeDefined();
-    expect(approval.ref).toBe('16a8edc');
+    expect(approval.ref).toBe(m.PIN_COMMIT);
     const fixture = readFileSync(FIXTURE);
     expect(m.sha256(fixture)).toBe(approval.pageSha256);
     expect(m.sha256(fixture)).toBe(m.PAGE_SHA256);

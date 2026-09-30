@@ -29,6 +29,23 @@ const LATIN_NAMES = ['pectoralis', 'deltoid', 'latissimus', 'trapezius', 'rectus
 
 const NOT_BUT = /\bnot\b[^.,]{1,40}\bbut\b/i;
 
+/**
+ * Length caps (GRIP-AND-FEEL-ARCHITECTURE.md 6.2), named so a golden-B copy update (shorter limits, per the owner)
+ * is a one-line change here, not a search-and-replace through the check.
+ */
+export const LIMITS = {
+  anySentenceWords: 25,
+  feelLineWords: 40,
+  feelLineSentences: 2,
+  rowWords: 30,
+  rowSentences: 2,
+  lineWords: 45, // gripLine, setupLine, mistakeLine
+  lineSentences: 3,
+  cueWords: 8,
+  captionWords: 14,
+  mistakeTitleWords: 10,
+};
+
 function scanText(field: string, text: string): string[] {
   const bad: string[] = [];
   for (const [re, name] of BANNED_CHARS) if (re.test(text)) bad.push(`C7: ${field}: contains ${name}`);
@@ -47,7 +64,7 @@ function checkLength(field: string, text: string, maxWords: number, maxSentences
   if (words(text) > maxWords) bad.push(`C7: ${field}: ${words(text)} words, at most ${maxWords}`);
   const sents = sentences(text);
   if (sents.length > maxSentences) bad.push(`C7: ${field}: ${sents.length} sentences, at most ${maxSentences}`);
-  for (const s of sents) if (words(s) > 25) bad.push(`C7: ${field}: a sentence has ${words(s)} words, at most 25`);
+  for (const s of sents) if (words(s) > LIMITS.anySentenceWords) bad.push(`C7: ${field}: a sentence has ${words(s)} words, at most ${LIMITS.anySentenceWords}`);
   return bad;
 }
 
@@ -62,36 +79,36 @@ export function checkC7(content: HowToContent): string[] {
     scan('handling.width.text', h.width?.text);
     scan('handling.handleChoice.sore', h.handleChoice?.sore);
     if ('limitText' in h.wrist) scan('handling.wrist.limitText', h.wrist.limitText);
-    bad.push(...checkLength('handling.gripLine', h.gripLine, 45, 3));
-    bad.push(...checkLength('handling.cue', h.cue, 8, 1));
+    bad.push(...checkLength('handling.gripLine', h.gripLine, LIMITS.lineWords, LIMITS.lineSentences));
+    bad.push(...checkLength('handling.cue', h.cue, LIMITS.cueWords, 1));
   }
   content.setup.forEach((s, i) => { scan(`setup[${i}]`, s.text); });
   content.posture.forEach((p, i) => { scan(`posture[${i}] (${p.key})`, p.detail); });
   scan('feel.feelLine', content.feel.feelLine);
-  bad.push(...checkLength('feel.feelLine', content.feel.feelLine, 40, 2));
+  bad.push(...checkLength('feel.feelLine', content.feel.feelLine, LIMITS.feelLineWords, LIMITS.feelLineSentences));
   if (!content.feel.feelLine.startsWith('You should feel this')) bad.push('C7: feel.feelLine does not start with "You should feel this"');
   content.feel.rows.forEach((r, i) => {
     scan(`feel.rows[${i}] (${r.key}).where`, r.where);
     scan(`feel.rows[${i}] (${r.key}).means`, r.means);
     scan(`feel.rows[${i}] (${r.key}).fix`, r.fix);
-    bad.push(...checkLength(`feel.rows[${i}] (${r.key}).means`, r.means, 30, 2));
-    bad.push(...checkLength(`feel.rows[${i}] (${r.key}).fix`, r.fix, 30, 2));
+    bad.push(...checkLength(`feel.rows[${i}] (${r.key}).means`, r.means, LIMITS.rowWords, LIMITS.rowSentences));
+    bad.push(...checkLength(`feel.rows[${i}] (${r.key}).fix`, r.fix, LIMITS.rowWords, LIMITS.rowSentences));
   });
   content.zooms.forEach((z, i) => {
     scan(`zooms[${i}] (${z.key}).caption.right`, z.caption.right);
     scan(`zooms[${i}] (${z.key}).caption.wrong`, z.caption.wrong);
-    if (words(z.caption.right) > 14) bad.push(`C7: zooms[${i}] (${z.key}).caption.right: ${words(z.caption.right)} words, at most 14`);
-    if (words(z.caption.wrong) > 14) bad.push(`C7: zooms[${i}] (${z.key}).caption.wrong: ${words(z.caption.wrong)} words, at most 14`);
+    if (words(z.caption.right) > LIMITS.captionWords) bad.push(`C7: zooms[${i}] (${z.key}).caption.right: ${words(z.caption.right)} words, at most ${LIMITS.captionWords}`);
+    if (words(z.caption.wrong) > LIMITS.captionWords) bad.push(`C7: zooms[${i}] (${z.key}).caption.wrong: ${words(z.caption.wrong)} words, at most ${LIMITS.captionWords}`);
   });
   scan('copy.setupLine', content.copy.setupLine);
   scan('copy.mistakeLine', content.copy.mistakeLine);
-  bad.push(...checkLength('copy.setupLine', content.copy.setupLine, 45, 3));
-  bad.push(...checkLength('copy.mistakeLine', content.copy.mistakeLine, 45, 3));
+  bad.push(...checkLength('copy.setupLine', content.copy.setupLine, LIMITS.lineWords, LIMITS.lineSentences));
+  bad.push(...checkLength('copy.mistakeLine', content.copy.mistakeLine, LIMITS.lineWords, LIMITS.lineSentences));
   content.mistakes.forEach((m, i) => {
     scan(`mistakes[${i}] (${m.key}).title`, m.title);
     scan(`mistakes[${i}] (${m.key}).fix`, m.fix);
-    if (words(m.title) > 10) bad.push(`C7: mistakes[${i}] (${m.key}).title: ${words(m.title)} words, at most 10`);
-    bad.push(...checkLength(`mistakes[${i}] (${m.key}).fix`, m.fix, 30, 2));
+    if (words(m.title) > LIMITS.mistakeTitleWords) bad.push(`C7: mistakes[${i}] (${m.key}).title: ${words(m.title)} words, at most ${LIMITS.mistakeTitleWords}`);
+    bad.push(...checkLength(`mistakes[${i}] (${m.key}).fix`, m.fix, LIMITS.rowWords, LIMITS.rowSentences));
   });
 
   return bad;
