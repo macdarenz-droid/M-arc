@@ -5816,7 +5816,7 @@ for (const theme of ['silent-black', 'paper']) {
 // - A4 through the zoom slot API: the plate box hidden and inert (the figure still mounted), Mistake cleared on open
 //   and put back on close, Back closes the close-up before the sheet, focus goes to the heading and back to the chip;
 // - A6: the HT-3 plate compare (L2b, F3, L3) still passes after each hand close-up was opened and closed;
-// - A7: hand-<id> chunks within 30 KB raw / 10 KB gz, and no hand- request before the first tap;
+// - A7: hand-<id> chunks within their measured size + 10 % (D-HT6-budget), and no hand- request before the first tap;
 // - A8: the push hint on the Train card (Silent Black, Paper): exactly once on the chest press, with HOWTO_HINTS' text;
 //   none on the lat pulldown (a How-to, not push), the no-How-to control (firstWithoutHowTo) or a custom exercise.
 {
@@ -6036,7 +6036,9 @@ for (const theme of ['silent-black', 'paper']) {
     // A7: the built chunks
     const sizes = readdirSync(join(ROOT, 'www/assets')).filter(f => /^hand-.*\.js$/.test(f)).map(f => { const b = readFileSync(join(ROOT, 'www/assets', f)); return { f, raw: b.length, gz: gzipSync(b).length }; });
     if (sizes.length !== 8) P(`A7: ${sizes.length} hand-*.js chunks, expected 8`);
-    for (const s of sizes) if (s.raw > 30 * 1024 || s.gz > 10 * 1024) P(`A7: ${s.f} is ${(s.raw / 1024).toFixed(1)} KB raw / ${(s.gz / 1024).toFixed(1)} KB gz, over 30 / 10 KB`);
+    // D-HT6-budget: each chunk at most its measured size + 10 % (tools/plates/gen/hands.mjs, pinned in hands.test)
+    const { handCeiling } = await import('../tools/plates/gen/hands.mjs');
+    for (const s of sizes) { const id = H.HT_PLATES.map(p => p[0]).find(i => s.f.startsWith(`hand-${i}-`)), c = id && handCeiling(id); if (!c || s.raw > c.raw || s.gz > c.gz) P(`A7: ${s.f} is ${s.raw} B raw / ${s.gz} B gz, over its ceiling ${c ? `${c.raw} / ${c.gz}` : '(none)'}`); }
     console.log(`${tag} (${ht6.version()}): ${stats.pairs} close-up pages L3 (max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}), Right/Wrong words and icons on ${stats.words} pages, ${stats.anims} open animation lists, reduced motion in 5 themes, A6 ${stats.a6} plate pairs after open/close; hand chunks ${sizes.map(s => `${s.f.replace(/-[\w-]{8}\.js$/, '')} ${(s.raw / 1024).toFixed(1)}/${(s.gz / 1024).toFixed(1)} KB`).join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   } finally {
     await ht6.close();

@@ -70,13 +70,16 @@ export function preTokenize(css) {
     .replace(/cubic-bezier\([^)]*\)/g, lit => put('ease', lit));
   return [css, used];
 }
-/** rewriteCss, plus this plugin's own tokens, merged into its one ht-tokens block (sorted, as rewriteCss sorts). */
-export function rewrite(css) {
+/** rewriteCss, plus this plugin's own tokens, merged into its one ht-tokens block (sorted, as rewriteCss sorts).
+ *  `inPanel`: the CSS styles golden-B close-up markup, whose crops keep `class="plate"` byte for byte, so HT-2's class
+ *  map (`.plate` -> `.ht-plate`, for the app's plate block) is undone there. */
+export function rewrite(css, { inPanel = false } = {}) {
   const [pre, used] = preTokenize(css);
   const out = rewriteCss(pre), line = /^\.ht \{ (.*) \}$/m, m = out.match(line);
   if (!m) throw new Error('hands: rewriteCss wrote no ht-tokens line');
   const all = new Map([...m[1].split(';').map(x => x.trim()).filter(Boolean).map(x => x.split(/:\s*/)), ...used]);
-  return out.replace(line, `.ht { ${[...all].sort(([a], [b]) => a.localeCompare(b)).map(([t, v]) => `${t}: ${v};`).join(' ')} }`);
+  const res = out.replace(line, `.ht { ${[...all].sort(([a], [b]) => a.localeCompare(b)).map(([t, v]) => `${t}: ${v};`).join(' ')} }`);
+  return inPanel ? res.replace(/\.ht-(plate(?:-fit)?)(?![\w-])/g, '.$1') : res;
 }
 
 /** Selectors (whole rule heads) of the page's HOWTO_CSS that this card ships: the hand-loaded Mistake line, the
@@ -117,6 +120,16 @@ export function chromeRules(css, selectors = CHROME_SELECTORS) {
   return out.join('\n');
 }
 
+/** D-HT6-budget (supervisor, 2026-09-30): each built `hand-<id>-*.js` chunk (www/assets, gzip default level) may be at
+ *  most its size measured at the ruling + 10 %, rounded up. No detail is cut to fit (golden B is the reference). The
+ *  measured sizes are pinned in hands.test; gate block HT-6 holds the built chunks to `handCeiling`. */
+export const HAND_MEASURED = Object.freeze({
+  'lateral-raise': { raw: 26570, gz: 8134 }, 'barbell-back-squat': { raw: 34361, gz: 10629 }, 'pull-up': { raw: 84470, gz: 23896 },
+  'hanging-leg-raise': { raw: 44454, gz: 11445 }, 'lat-pulldown': { raw: 68272, gz: 19574 }, 'seated-cable-row': { raw: 23824, gz: 7673 },
+  'leg-press': { raw: 22227, gz: 7430 }, 'machine-chest-press': { raw: 24375, gz: 7426 },
+});
+export const handCeiling = id => { const m = HAND_MEASURED[id]; if (!m) throw new Error(`hands: no budget for ${id}`); return { raw: Math.ceil((m.raw * 11) / 10), gz: Math.ceil((m.gz * 11) / 10) }; };   // integer maths (84470 * 1.1 is 92917.00000000001)
+
 /** The app's own rule (not golden B's): the sheet panel's content box is 2 px narrower than golden B's card (16 px
  *  padding against 15, plan 2.5 critic fix 1), so this card's sections bleed 1 px each side, as `.ht-golden` does, and
  *  get golden B's 358 px width. */
@@ -141,7 +154,7 @@ export async function outputs() {
     const out = [];
     for (const row of Object.values(rows)) {
       const id = row.chromeId;
-      const panel = handPanel(html, id), css = rewrite(`${scopedRules(zoomCss, id)}\n${chromeRules(chrome, HX_TAIL)}`);
+      const panel = handPanel(html, id), css = rewrite(`${scopedRules(zoomCss, id)}\n${chromeRules(chrome, HX_TAIL)}`, { inPanel: true });
       out.push({ path: `src/slices/howto/css/zoom-${id}.css`, text: css });
       out.push({ path: `src/howto/generated/hand-${id}.ts`, text:
         `// The ${id} hand close-up (golden B), loaded on its first open (plan 2.5), with its close-up CSS.\n`

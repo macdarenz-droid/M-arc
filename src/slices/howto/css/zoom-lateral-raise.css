@@ -1,4 +1,4 @@
-/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/hands.mjs). inputsSha256=a4f9b6b1912913a9b9c24b8e679a9c308cd701304bf6574c40d4c0a66211975a */
+/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/hands.mjs). inputsSha256=495b8bb4accb66bac4defa7f191da0dae7081b87df069b4a14d976b63f8fa8d7 */
 /* ht-tokens:start */
 .ht { --ht-r-0: 0; --ht-r-var-radius-md-10px: var(--radius-md, 10px); }
 /* ht-tokens:end */
@@ -30,7 +30,7 @@
 .ht .hx-lateral-raise .z-sub.m { color: var(--mistake); }
 .ht .hx-lateral-raise .z-head.ok svg { color: var(--accent); }
 .ht .hx-lateral-raise .z-head.m svg { color: var(--mistake); }
-.ht .hx-lateral-raise .ht-plate.z-wrap { width: 171px; height: 171px; aspect-ratio: auto; border: 0; border-radius: var(--ht-r-0); background: none; overflow: visible; }
+.ht .hx-lateral-raise .plate.z-wrap { width: 171px; height: 171px; aspect-ratio: auto; border: 0; border-radius: var(--ht-r-0); background: none; overflow: visible; }
 .ht .hx-lateral-raise .z-crop { display: block; width: 171px; height: 171px; }
 .ht .hx-lateral-raise .z-crop .z-frame { fill: none; stroke: var(--border); stroke-width: 1; }
 .ht .hx-lateral-raise .z-crop .z-plate path, .ht .hx-lateral-raise .z-crop .z-plate use, .ht .hx-lateral-raise .z-crop .z-plate circle, .ht .hx-lateral-raise .z-crop .z-plate rect { vector-effect: non-scaling-stroke; }

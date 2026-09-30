@@ -39,7 +39,9 @@ export interface ZoomSetup {
 const reduced = () => document.documentElement.getAttribute('data-motion') === 'reduce';
 const rootCs = () => getComputedStyle(document.documentElement);
 // golden B's tok() reads "240ms"; the app's built CSS is minified to ".24s" (www/assets/index-*.css), so the unit counts
-const tok = (name: string, dflt: number) => { const s = rootCs().getPropertyValue(name).trim(), v = parseFloat(s); return isFinite(v) ? (/[^m]s$/.test(s) ? v * 1000 : v) : dflt; };
+/** A CSS time in ms: "240ms" -> 240, ".24s" / "0.24s" -> 240; NaN when it is not a time. */
+export const durMs = (s: string) => { const m = s.trim().match(/^(-?\d*\.?\d+)(ms|s)?$/); return m ? +m[1]! * (m[2] === 's' ? 1000 : 1) : NaN; };
+const tok = (name: string, dflt: number) => { const v = durMs(rootCs().getPropertyValue(name)); return isFinite(v) ? v : dflt; };
 const ease = (name: string) => rootCs().getPropertyValue(name).trim() || 'ease';
 
 /** Binds the host to one sheet: `api` is the golden block's zoom slot API. */
