@@ -5903,6 +5903,7 @@ for (const theme of ['silent-black', 'paper']) {
 {
   const tag = 'HT-3b';
   const t0 = Date.now();
+  const errorsBefore = errors.length;
   const { gzipSync } = await import('node:zlib');
   const H = await import('../tools/plates/fidelity/harness.mjs');
   const P = await import('../tools/plates/fidelity/perf.mjs');
@@ -5953,6 +5954,8 @@ for (const theme of ['silent-black', 'paper']) {
       }
     }
     if (leaked.length) errors.push(`${tag} A1: index-*.js leaks generated How-to content: ${leaked.join('; ')}`);
+    // Plan 2.9: logged for information only, no app-wide ceiling here (S-5).
+    console.log(`${tag} A1: main chunk ${indexJs} is ${idxBytes.length} B raw / ${gzipSync(Buffer.from(idxBytes)).length} B gz (information only, no ceiling)`);
   }
 
   // A2: chunk budgets, each at its measured value + 10% (the plan 2.9 start figures are the upper bound;
@@ -6011,12 +6014,20 @@ for (const theme of ['silent-black', 'paper']) {
       await H.closeHowTo(page);
       return dt;
     }, 5);
+    // perf.mjs's TaskDuration helper (plan §2, for HT-8/HT-10 too): the same open, timed on the page's own
+    // clock instead of Node's Date.now() around the Playwright calls. Informational only — logged beside
+    // the Date.now() median as evidence it reads a real value in the same ballpark, not a second gate.
+    const pageClockMs = await P.taskDuration(page, 'ht3b-tap-to-plate', async () => {
+      await page.locator('button.ht-entry').click();
+      await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
+    });
+    await H.closeHowTo(page);
     const longTasks = await stopLongTasks();
     await reset();
     if (median > 400) errors.push(`${tag} A3: tap-to-plate median at 4x throttle is ${median} ms (samples ${samples.join(',')}), over 400 ms`);
     const over = longTasks.filter(d => d > 100);
     if (over.length) errors.push(`${tag} A3: long task(s) over 100 ms while opening at 4x: ${over.map(d => d.toFixed(0)).join(', ')} ms`);
-    console.log(`${tag} A3: tap-to-plate median ${median} ms at 4x (samples ${samples.join(', ')} ms); long tasks ${longTasks.map(d => d.toFixed(0)).join(', ') || 'none'}`);
+    console.log(`${tag} A3: tap-to-plate median ${median} ms at 4x (samples ${samples.join(', ')} ms; TaskDuration page-clock cross-check ${pageClockMs.toFixed(1)} ms); long tasks ${longTasks.map(d => d.toFixed(0)).join(', ') || 'none'}`);
     await ctx.close();
   }
 
@@ -6179,7 +6190,10 @@ for (const theme of ['silent-black', 'paper']) {
     }
   }
 
-  console.log(`${tag}: A1 content probe, A2 chunk budgets, A3 launch/open speed, A4 offline/storage, A5 C17 verified; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  const blockErrors = errors.length - errorsBefore;
+  console.log(blockErrors === 0
+    ? `${tag}: A1 content probe, A2 chunk budgets, A3 launch/open speed, A4 offline/storage, A5 C17 verified; ${((Date.now() - t0) / 1000).toFixed(1)} s`
+    : `${tag}: FAILED, ${blockErrors} problem(s) above; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
 // HT-4: the golden-B lock (L0-B), the crop-window/pose-classification live proof (HT4-A5), and the state driver

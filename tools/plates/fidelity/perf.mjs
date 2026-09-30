@@ -1,6 +1,6 @@
 // Shared perf helpers for the How-to speed checks (card HT-3b, plan 2.9; HT-8 and HT-10 reuse them):
-// CPU throttling, long-task capture, and the median of repeated timed runs. Build and gate time only;
-// never bundled (same rule as harness.mjs).
+// CPU throttling, long-task capture, task duration and the median of repeated timed runs. Build and gate
+// time only; never bundled (same rule as harness.mjs).
 
 /** Throttles `page`'s CPU by `rate` (4 = the plan's 4x speed-check throttle) via CDP. Returns reset(),
  * which must be awaited before the context closes, or later CDP sessions on the same page inherit the
@@ -37,6 +37,25 @@ export async function medianOf(action, n = 5) {
   const mid = sorted.length >> 1;
   const median = sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
   return { median, samples };
+}
+
+/**
+ * Times `run()` on the page's own clock (User Timing marks + a measure), not Node's Date.now() around
+ * Playwright calls — the CDP round trips before and after `run()` never enter the window. `run` performs
+ * the Playwright actions under test (a click, a wait for a selector, ...) between the two marks. `name`
+ * must be unique per call in the page (its marks and measure are cleared before returning).
+ */
+export async function taskDuration(page, name, run) {
+  await page.evaluate(n => performance.mark(`${n}-start`), name);
+  await run();
+  return page.evaluate(n => {
+    performance.mark(`${n}-end`);
+    const { duration } = performance.measure(n, `${n}-start`, `${n}-end`);
+    performance.clearMarks(`${n}-start`);
+    performance.clearMarks(`${n}-end`);
+    performance.clearMeasures(n);
+    return duration;
+  }, name);
 }
 
 /**
