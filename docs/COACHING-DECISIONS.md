@@ -1053,6 +1053,31 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Correction**: the "HT-2 generator" entry says gate block HT-2's PASS phrase "is printed as its own line after the shared PASS line, so the shared line is not edited". That is wrong. `scripts/screenshot-gate.mjs` appends `, and HT-2 (…) verified` to the shared PASS line in place, which follows the convention HT-1 set. The edit is allowed, because the card grants the PASS phrase.
   **Why**: HT-2 review on PR #105 (medium finding). The older entry is left unchanged, because this file is append-only.
 
+## LIB-25 poly primitive (LIB-25 builder, 2026-09-30)
+
+- **Decided**: the new primitive is `poly({ pts, curve = false, cls = 'eq', z = 'back' })`: world points like `line`, straight edges through geom's `polygon`, or a closed Catmull-Rom curve through geom's `smooth` with `curve: true`. It throws on fewer than 3 points.
+  **Why**: the card asks for a closed filled polygon in the engine's line style. A rope strand needs a rounded outline, and `smooth` already exists in the vendored geom.mjs, so the curve costs one import and no new geometry. Both forms return `poly`, the field plate.mjs:213-215 already uses to outline moving parts in the Mistake view, so plate.mjs is left untouched.
+  **Source**: library plan 2.5; equipment.mjs:301-302; plate.mjs:213-215.
+
+- **Decided**: the golden-A source gets a new engine test, `exercises/_test_poly.mjs` (claude/howto-options de00174). golden.mjs's probe renders it next to `_test_front` and `_test_side`, and its two new reference fixtures are committed.
+  **Why**: HT1-A4 fails when a PRIMITIVES key is drawn by no committed fixture. That check must not be loosened, and the 8 approved specs must not change. An additive engine test covers `poly`, including its Mistake outline, and leaves every existing fixture byte unchanged.
+  **Source**: golden.mjs `fixtureProblems`; golden.test.ts HT1-A4.
+
+- **Decided**: golden.mjs accepts the two LIB-25 commits by name (`7859292`, `de00174`) next to `bc0f378` and `1a1e33b`. vendor.test.ts pins the exact source commit of each changed file. The pin is not a wildcard.
+  **Why**: L0 names the commit each vendored file came from. A golden update adds exactly its own commits, so any other source still fails.
+  **Source**: plan 2.8 step 4.
+
+- **Decided**: there is no new GOLDEN.json entry.
+  **Why**: plan 2.8 step 5 adds an entry when a plate changes. No plate or page byte changed here: L1 still gives `e2bea90c…` (860,766 B), and golden B still gives `f39137e1…` with the new engine.
+  **Source**: plan 2.8.
+
+- **Decided**: golden B's own copy of `engine/equipment.mjs` on claude/howto-options is not changed. Golden B was proven only in a temporary copy with its engine swapped for the new one.
+  **Why**: golden B is pinned by its own README, and HT-4 vendors it. Changing it would be a golden-B update, which this card does not ask for.
+  **Source**: docs/howto/golden-b/README.md.
+
+- **Decided**: the poly rope composer lives in `tools/plates/library/eq/rope.mjs` on this branch. It keeps the pilot's API (`rope`, `ropeGeometry`, `ROPE_ITEMS`), so `specs/rope_triceps_pushdown.mjs` runs unchanged. `eq/parts.mjs` is copied verbatim from claude/lib-8-pilot-a, so the two branches merge it cleanly. `ROPE_ITEMS` is now 5: the cable, 2 strands, the ferrule and the Mistake cable twin.
+  **Why**: the card says the arms-machines drawer adopts this rope.
+  **Source**: LIB-25 card, step 4.
 ## HT-4 golden-B lock, content types and the derivation test: choices the card left open (HT-4 builder, 2026-09-30)
 
 - **Decided**: `content-types.ts`'s `PointRef` uses the plate engine's real convention (`{ at, pose?, off? }` or `{ along, t, off? }`), not GA section 4.1's literal `{ landmark, pose?, dx?, dy? }` spelling.
@@ -1197,3 +1222,9 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
+
+## LIB-25 review fix: poly input checks (LIB-25 builder, 2026-09-30)
+
+- **Decided**: `poly()` throws when a point is not exactly 3 finite numbers, naming the point's index. It also throws when the points enclose no area. The area is measured in world space with Newell's normal: half its length must be at least 1e-8 m². This rejects points that coincide or lie on one line, but it still draws an outline that is seen edge-on in the current view.
+  **Why**: this is the review's low finding on #120. The supervisor asked for it to be fixed now. A screen-space area check would throw on a valid part seen edge-on, for example a flat plate in side view, so the check is done in world space. The source is on claude/howto-options (48153c4) and was vendored from there.
+  **Source**: REVIEW LIB-25 @ 8480052 on #120; golden procedure (plan 2.8).

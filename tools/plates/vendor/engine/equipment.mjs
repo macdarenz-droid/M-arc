@@ -5,7 +5,7 @@
 //   cls: 'eq' structure | 'eq-solid' held/contact parts | 'eq-line' frame lines | 'eq-thin' detail lines
 //        | 'eq-cable' | 'eq-pin' axle dots | 'disc'/'disc-core' (dumbbell, as the reference) | 'floorline'.
 // Assumed dimensions (defaults, all overridable) are listed in SPEC.md, section "Equipment".
-import { R, add, sub, mul, dot, norm, len, clamp, d2, circle, polygon, polyline, bar, hexPts, tangentPoint, pt, f } from './geom.mjs';
+import { R, add, sub, mul, dot, norm, len, clamp, d2, circle, polygon, polyline, smooth, bar, hexPts, tangentPoint, pt, f } from './geom.mjs';
 
 // View helpers: hv = world unit that runs left->right on screen; m = px per metre.
 function viewKit(cam) {
@@ -300,5 +300,17 @@ export function cable({ from, to, z = 'center' } = {}, cam) { const { P } = view
 export function pulley({ at, r = 0.045, z = 'back' } = {}, cam) { const { P, m } = viewKit(cam), c = P(at); return [item('eq-solid', circle(c, r * m), z), item('eq-pin', circle(c, 1), z)]; }
 export function box({ at, w = 0.1, h = 0.1, rc = 2, cls = 'eq', z = 'back' } = {}, cam) { const { O, m } = viewKit(cam); return [item(cls, bar(O(at, -w / 2), O(at, w / 2), h / 2 * m, rc), z)]; }
 export function line({ pts, cls = 'eq-line', z = 'back' } = {}, cam) { const { P } = viewKit(cam), ps = pts.map(P); return [{ cls, z, ...polyline(ps) }]; }
+// Closed filled outline through world points (>= 3), in the equipment line style: straight edges, or a closed
+// Catmull-Rom curve with curve: true. Carries its polygon, so a moving poly part is drawn in the Mistake view (LIB-25).
+export function poly({ pts, curve = false, cls = 'eq', z = 'back' } = {}, cam) {
+  if (!Array.isArray(pts) || pts.length < 3) throw new Error(`poly: needs at least 3 points, got ${Array.isArray(pts) ? pts.length : pts}`);
+  const bad = pts.findIndex(p => !Array.isArray(p) || p.length !== 3 || !p.every(Number.isFinite));
+  if (bad >= 0) throw new Error(`poly: point ${bad} is not 3 finite numbers: ${JSON.stringify(pts[bad])}`);
+  // world-space area (Newell): an outline whose points coincide or lie on one line encloses nothing (edge-on views are fine)
+  const nv = pts.reduce((a, p, i) => { const q = pts[(i + 1) % pts.length]; return [a[0] + (p[1] - q[1]) * (p[2] + q[2]), a[1] + (p[2] - q[2]) * (p[0] + q[0]), a[2] + (p[0] - q[0]) * (p[1] + q[1])]; }, [0, 0, 0]);
+  if (Math.hypot(...nv) / 2 < 1e-8) throw new Error('poly: the points enclose no area (they coincide or lie on one line)');
+  const { P } = viewKit(cam), ps = pts.map(P);
+  return [item(cls, curve ? smooth(ps, true) : polygon(ps), z)];
+}
 
-export const PRIMITIVES = { floor, dumbbell, pullupBar, stack, cableColumn, latBar, vHandle, rowFootplate, bench, seat, backPad, kneePad, legPress45, chestPress, barbell, rackUpright, cable, pulley, box, line };
+export const PRIMITIVES = { floor, dumbbell, pullupBar, stack, cableColumn, latBar, vHandle, rowFootplate, bench, seat, backPad, kneePad, legPress45, chestPress, barbell, rackUpright, cable, pulley, box, line, poly };
