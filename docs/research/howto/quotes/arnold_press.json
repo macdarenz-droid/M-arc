@@ -1,0 +1,181 @@
+{
+  "id": "arnold_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "strengthlog-arnold",
+      "quote": "Start with the dumbbells in front of your chest with your palms facing toward your body.",
+      "status": "verbatim",
+      "closest": "Start with the dumbbells in front of your chest with your palms facing toward your body."
+    },
+    {
+      "claim": "c1",
+      "source": "strengthlog-arnold",
+      "quote": "As you press the dumbbells up, rotate your palms outward so they face forward when your arms are extended overhead.",
+      "status": "verbatim",
+      "closest": "As you press the dumbbells up, rotate your palms outward so they face forward when your arms are extended overhead."
+    },
+    {
+      "claim": "c1",
+      "source": "strengthlog-arnold",
+      "quote": "Lower the dumbbells back to the starting position, rotating your palms inward again.",
+      "status": "verbatim",
+      "closest": "Lower the dumbbells back to the starting position, rotating your palms inward again."
+    },
+    {
+      "claim": "c2",
+      "source": "gymgroup-arnold",
+      "quote": "Grab a bench and ensure that it is placed on the maximum incline position.",
+      "status": "verbatim",
+      "closest": "Grab a bench and ensure that it is placed on the maximum incline position."
+    },
+    {
+      "claim": "c2",
+      "source": "fitfather-arnold",
+      "quote": "Sit on a bench, with either a slight decline from 90 degrees or completely vertical.",
+      "status": "verbatim",
+      "closest": "Sit on a bench, with either a slight decline from 90 degrees or completely vertical."
+    },
+    {
+      "claim": "c3",
+      "source": "gymgroup-arnold",
+      "quote": "DON’T raise your back away from the bench during the lift.",
+      "status": "verbatim",
+      "closest": "DON’T raise your back away from the bench during the lift."
+    },
+    {
+      "claim": "c4",
+      "source": "fitfather-arnold",
+      "quote": "At the lowest point, your upper arms should be parallel to the floor and your palms facing you.",
+      "status": "verbatim",
+      "closest": "At the lowest point, your upper arms should be parallel to the floor and your palms facing you."
+    },
+    {
+      "claim": "c4",
+      "source": "fitfather-arnold",
+      "quote": "The most important part of the exercise is to keep your upper arms parallel to the ground at the lowest point and throughout the twist.",
+      "status": "verbatim",
+      "closest": "The most important part of the exercise is to keep your upper arms parallel to the ground at the lowest point and throughout the twist."
+    },
+    {
+      "claim": "c4",
+      "source": "fitfather-arnold",
+      "quote": "This keeps the tension on your deltoids all the way through.",
+      "status": "verbatim",
+      "closest": "This keeps the tension on your deltoids all the way through."
+    },
+    {
+      "claim": "c5",
+      "source": "fitfather-arnold",
+      "quote": "Hold the dumbbells on your knees to start, then kick them up into a normal shoulder press position",
+      "status": "verbatim",
+      "closest": "Hold the dumbbells on your knees to start, then kick them up into a normal shoulder press position"
+    },
+    {
+      "claim": "c6",
+      "source": "fitfather-arnold",
+      "quote": "We recommend you go slightly lighter in weight than with a normal shoulder press.",
+      "status": "verbatim",
+      "closest": "We recommend you go slightly lighter in weight than with a normal shoulder press."
+    },
+    {
+      "claim": "c7",
+      "source": "gymgroup-arnold",
+      "quote": "If you begin to experience any pain at all, you should stop the workout or switch to another exercise.",
+      "status": "verbatim",
+      "closest": "If you begin to experience any pain at all, you should stop the workout or switch to another exercise."
+    },
+    {
+      "claim": "c8",
+      "source": "strengthlog-arnold",
+      "quote": "The Arnold Press is a variation of the dumbbell shoulder press that primarily targets the front and medial parts of the shoulder.",
+      "status": "verbatim",
+      "closest": "The Arnold Press is a variation of the dumbbell shoulder press that primarily targets the front and medial parts of the shoulder."
+    },
+    {
+      "claim": "c8",
+      "source": "fitfather-arnold",
+      "quote": "The Arnold Press works your whole shoulder muscle, with emphasis on the front deltoid coming from the twist at the lowest point.",
+      "status": "verbatim",
+      "closest": "The Arnold Press works your whole shoulder muscle, with emphasis on the front deltoid coming from the twist at the lowest point."
+    },
+    {
+      "claim": "c9",
+      "source": "saeterbakken2013",
+      "quote": "Electromyogram activity was measured in the anterior, medial, and posterior deltoids and biceps and triceps brachii.",
+      "status": "verbatim",
+      "closest": "Electromyogram activity was measured in the anterior, medial, and posterior deltoids and biceps and triceps brachii."
+    },
+    {
+      "claim": "c9",
+      "source": "saeterbakken2013",
+      "quote": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001), ~20% lower for seated versus standing barbell (p = 0.094).",
+      "status": "verbatim",
+      "closest": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001), ~20% lower for seated versus standing barbell (p = 0.094)."
+    },
+    {
+      "claim": "c10",
+      "source": "ace-seated-ohp",
+      "quote": "The spotter should stand behind you in a split-stance position, positioning their hands close to your wrists (not touching) to support you as needed.",
+      "status": "verbatim",
+      "closest": "The spotter should stand behind you in a split-stance position, positioning their hands close to your wrists (not touching) to support you as needed."
+    },
+    {
+      "claim": "c11",
+      "source": "acsm2009",
+      "quote": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "quote": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c14",
+      "source": "kerr2010",
+      "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+      "status": "verbatim",
+      "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c15",
+      "source": "ace-seated-ohp",
+      "quote": "slowly lift the dumbbells to your shoulder level with a closed, pronated grip (palms facing forward and thumbs wrapped around the handles), with the dumbbells at shoulder-width or slightly wider and wrists in a neutral position (avoid flexion and extension of the wrists).",
+      "status": "verbatim",
+      "closest": "slowly lift the dumbbells to your shoulder level with a closed, pronated grip (palms facing forward and thumbs wrapped around the handles), with the dumbbells at shoulder-width or slightly wider and wrists in a neutral position (avoid flexion and extension of the wrists)."
+    },
+    {
+      "claim": "c15",
+      "source": "ace-seated-ohp",
+      "quote": "Maintain your body contact with the bench, neutral wrist (avoid flexion and extension) and depressed, retracted scapulae positions.",
+      "status": "verbatim",
+      "closest": "Maintain your body contact with the bench, neutral wrist (avoid flexion and extension) and depressed, retracted scapulae positions."
+    },
+    {
+      "claim": "c16",
+      "source": "fitfather-arnold",
+      "quote": "Breathing out and squeezing the grip as tight as you can, press the dumbbells up overhead, bringing them slightly in front of your head.",
+      "status": "verbatim",
+      "closest": "Breathing out and squeezing the grip as tight as you can, press the dumbbells up overhead, bringing them slightly in front of your head."
+    }
+  ]
+}
