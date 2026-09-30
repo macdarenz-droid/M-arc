@@ -389,8 +389,11 @@ export async function rasterOrigin(page, fitSel, known = null) {
   const readOwners = async () => {
     await frames2(page);
     page.__ht3layers = null;
-    await page.evaluate(() => { const i = document.createElement('i'); i.id = 'ht3-layer-probe'; i.style.cssText = 'position:fixed;left:-10px;top:-10px;width:1px;height:1px;will-change:transform'; document.body.append(i); });
-    for (let t = 0; !page.__ht3layers && t < 100; t++) await new Promise(r => setTimeout(r, 20));
+    // a loaded runner can take seconds to commit a frame: up to 5 tries of 2 s, each with a fresh probe size
+    for (let k = 0; !page.__ht3layers && k < 5; k++) {
+      await page.evaluate(k => { document.getElementById('ht3-layer-probe')?.remove(); const i = document.createElement('i'); i.id = 'ht3-layer-probe'; i.style.cssText = `position:fixed;left:-10px;top:-10px;width:${1 + k}px;height:1px;will-change:transform`; document.body.append(i); }, k);
+      for (let t = 0; !page.__ht3layers && t < 100; t++) await new Promise(r => setTimeout(r, 20));
+    }
     await frames2(page);
     const layers = page.__ht3layers;
     await page.evaluate(() => document.getElementById('ht3-layer-probe')?.remove());
