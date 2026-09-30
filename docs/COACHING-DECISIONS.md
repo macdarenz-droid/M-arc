@@ -889,6 +889,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **The fetch uses `+main:refs/remotes/origin/main`**, like git's default tracking refspec. Without the `+`, a changed `origin/main` is not updated, and the merge-base check reads the old ref. A test on the scratch copy caught this.
   - **`git push --all` is also refused**, because it pushes a local `main`.
   - **No `if` filter on the hook.** The script does the matching itself, so compound commands (`cd x && git push`) and `git -C dir push` are covered. A non-push command costs about 10 ms.
+  - **Each push is checked in its own directory** (review of 01f46b2). The directory comes from the hook input's `cwd`, then any `cd X` or `git -C X`, so pushes from a git worktree are checked against that worktree's branch and files. The guard runs only for a real `git push` segment; text that only mentions "git push" does not trigger it. If python3 is missing, or the command can't be parsed, the agent gets a note (exit 0) rather than a silent pass.
   - **The "check skipped" note goes to the agent as `additionalContext`.** Stderr on exit 0 reaches only the debug log (hooks docs).
   - **`askUserQuestionTimeout` and `CLAUDE_AFK_TIMEOUT_MS` are not set** (owner decision: the question timeout is dropped).
   **Why**: every item was checked against code.claude.com/docs/en/hooks, /permissions, /settings-reference and /env-vars, and each was tested on a scratch copy (PR body).
