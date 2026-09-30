@@ -46,7 +46,7 @@ public class PermissionsRationaleActivity extends Activity {
         title.setPadding(0, 0, 0, pad / 2);
 
         TextView body = new TextView(this);
-        body.setText("M/ARC reads steps, sleep, heart rate, resting heart rate and active calories from Health Connect to show your dashboard and readiness. The data is stored on this device, and Android's device backup may include this app's data. If you turn on Escobar and its 'Share health data' switch, the numbers Escobar needs for an answer are sent to our coaching service (Anthropic's Claude API) for that answer only. You can turn sharing off in Settings, and change Health Connect permissions at any time in Android settings.\n\nThe full privacy policy shows here when the phone is online.");
+        body.setText("M/ARC reads steps, sleep, heart rate, resting heart rate and active calories from Health Connect to show your dashboard and readiness. The data is stored on this device, and Android's device backup may include this app's data. If you turn on Escobar and its 'Share health data' switch, the numbers Escobar needs for an answer are sent to our coaching service (Anthropic's Claude API) for that answer only. You can turn sharing off in Settings, and change Health Connect permissions at any time in Android settings.\n\nThe full privacy policy shows here when you are online.");
         body.setTextSize(16);
         body.setMovementMethod(LinkMovementMethod.getInstance());
 
