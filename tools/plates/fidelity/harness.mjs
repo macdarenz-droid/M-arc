@@ -383,13 +383,22 @@ export async function rasterOrigin(page, fitSel) {
     page.__ht3cdp = cdp;
   }
   const cdp = page.__ht3cdp;
-  // Chromium reports the layer tree when it changes: a 1 px off-screen probe layer is added, read, and removed again
-  page.__ht3layers = null;
-  await page.evaluate(() => { const i = document.createElement('i'); i.id = 'ht3-layer-probe'; i.style.cssText = 'position:fixed;left:-10px;top:-10px;width:1px;height:1px;will-change:transform'; document.body.append(i); });
-  for (let t = 0; !page.__ht3layers && t < 100; t++) await new Promise(r => setTimeout(r, 20));
-  await page.evaluate(() => document.getElementById('ht3-layer-probe')?.remove());
-  if (!page.__ht3layers) throw new Error('rasterOrigin: no layer tree from Chromium');
-  const owners = new Set(page.__ht3layers.map(l => l.backendNodeId).filter(Boolean));
+  // Chromium reports the layer tree when it changes: after two painted frames, a 1 px off-screen probe layer is added,
+  // the tree read one frame later, and the probe removed. Layers are decided lazily (a dialog just opened may not have
+  // its own yet), so the tree is read until two readings agree.
+  const readOwners = async () => {
+    await frames2(page);
+    page.__ht3layers = null;
+    await page.evaluate(() => { const i = document.createElement('i'); i.id = 'ht3-layer-probe'; i.style.cssText = 'position:fixed;left:-10px;top:-10px;width:1px;height:1px;will-change:transform'; document.body.append(i); });
+    for (let t = 0; !page.__ht3layers && t < 100; t++) await new Promise(r => setTimeout(r, 20));
+    await frames2(page);
+    const layers = page.__ht3layers;
+    await page.evaluate(() => document.getElementById('ht3-layer-probe')?.remove());
+    if (!layers) throw new Error('rasterOrigin: no layer tree from Chromium');
+    return new Set(layers.map(l => l.backendNodeId).filter(Boolean));
+  };
+  let owners = await readOwners();
+  for (let k = 0; k < 4; k++) { const again = await readOwners(); const same = again.size === owners.size && [...again].every(x => owners.has(x)); owners = again; if (same) break; }
   const { result } = await cdp.send('Runtime.evaluate', { expression: `(() => { const out = []; for (let e = document.querySelector(${JSON.stringify(fitSel)}); e; e = e.parentElement) out.push(e); return out; })()` });
   const { result: props } = await cdp.send('Runtime.getProperties', { objectId: result.objectId, ownProperties: true });
   const els = props.filter(p => /^\d+$/.test(p.name)).sort((a, b) => a.name - b.name);
@@ -425,14 +434,14 @@ export async function presentGolden(page, id, at, extra = 0, paused = false) {
     if (!d) {
       d = document.createElement('dialog'); d.id = 'ht3-present';
       d.style.cssText = 'box-sizing:border-box;padding:0;border:0;margin:0;max-width:none;max-height:none;background:transparent;overflow:visible;color:inherit;font:inherit;letter-spacing:inherit';
-      const p = document.createElement('div'); p.id = 'ht3-panel'; p.style.cssText = 'box-sizing:border-box;border:1px solid transparent;border-bottom:0;overflow:auto';
+      const p = document.createElement('div'); p.id = 'ht3-panel'; p.style.cssText = 'box-sizing:border-box;border:1px solid;border-bottom:0;overflow:auto';
       const w = document.createElement('div'); w.id = 'ht3-wrap'; w.style.cssText = 'box-sizing:border-box;overflow:clip;padding:0 15px';
       d.append(p); p.append(w); document.getElementById('sheets').append(d);
     }
     const p = document.getElementById('ht3-panel'), w = document.getElementById('ht3-wrap');
     if (c.parentElement !== w) { c.before(Object.assign(document.createElement('i'), { id: 'ht3-home' })); w.append(c); }
     Object.assign(d.style, { inset: `${a.top}px auto auto ${a.left}px`, width: `${a.w}px` });
-    Object.assign(p.style, { width: `${a.w}px`, height: `${a.h}px` });
+    Object.assign(p.style, { width: `${a.w}px`, height: `${a.h}px`, background: a.bg, borderColor: a.bc, borderRadius: a.br });   // painted like the app panel: an opaque layer composites like one
     Object.assign(w.style, { paddingTop: '0px', height: 'auto' });
     if (!d.open) d.showModal();
     const at = () => { const f = document.getElementById(`${id}-plate`).getBoundingClientRect(), r = p.getBoundingClientRect(); return { offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft) }; };
@@ -463,7 +472,8 @@ export async function appOffset(page) {
   const o = await rasterOrigin(page, 'dialog.sheet.ht .ht-plate-fit');
   const r = await page.evaluate(() => {
     const p = document.querySelector('dialog.sheet.ht .sheet-panel'), f = p.querySelector('.ht-plate-fit').getBoundingClientRect(), r = p.getBoundingClientRect();
-    return { top: r.top, left: r.left, w: r.width, h: r.height, sh: p.scrollHeight, ch: p.clientHeight, st: p.scrollTop, offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft), scrolls: p.scrollHeight > p.clientHeight };
+    const cs = getComputedStyle(p);
+    return { bg: cs.backgroundColor, bc: cs.borderTopColor, br: `${cs.borderTopLeftRadius} ${cs.borderTopRightRadius} 0 0`, top: r.top, left: r.left, w: r.width, h: r.height, sh: p.scrollHeight, ch: p.clientHeight, st: p.scrollTop, offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft), scrolls: p.scrollHeight > p.clientHeight };
   });
   return { ...r, layer: o.el };
 }
@@ -768,7 +778,7 @@ export async function presentControls(browser, theme = 'silent-black', id = HT_P
   const shots = [];
   for (const extra of [0, 128, 1]) {
     const { ctx, page } = await openGolden(browser, theme);
-    await presentGolden(page, id, { top: 0, left: 0, w: 390, h: 1000, sh: 999, ch: 999, st: 0, offY: 88 + extra, offX: 15, layer: null });   // a scroll box that never overflows, the plate moved down by `extra`
+    await presentGolden(page, id, { bg: 'transparent', bc: 'transparent', br: '0 0 0 0', top: 0, left: 0, w: 390, h: 1000, sh: 999, ch: 999, st: 0, offY: 88 + extra, offX: 15, layer: null });   // a scroll box that never overflows, the plate moved down by `extra`
     shots.push({ png: await capture(page, await region(page, G.golden(id), 'golden')), page, ctx });
   }
   const d128 = await diffPng(shots[0].page, shots[0].png, shots[1].png), d1 = await diffPng(shots[0].page, shots[0].png, shots[2].png);
