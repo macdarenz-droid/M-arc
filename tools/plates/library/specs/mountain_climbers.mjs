@@ -8,11 +8,13 @@
 //  from the back of the head to the heels, on hands and toes; c4 bring one foot toward the chest, then switch, without
 //  letting the hips hike up; c6 shoulders stay over the wrists.
 // Geometry decisions (confirmed by the report `angles` and `checks`):
-//  Hands: the engine hand is a fist (no flat palm, no forearm pronation). Laying it forward (wrist 90) put the fist
-//   beside the wrist like a loose ball, so the fist stands under the wrist on the floor (WRIST 0, GRIP_Y = fist
-//   radius), as a knuckle push-up hand. Cost: the shoulders sit ~8 cm higher than on a flat palm, so the body line is
-//   ~22 deg from the floor instead of ~18. Arms straight (elbow 0) and plumb: shoulder flexion = pelvis tilt, so the
-//   wrist is exactly under the shoulder (check) in both poses: c2 and c6 hold by construction.
+//  Hands: flat palms, fingers toward the head (critic R3: the knuckle-stand fist read as a detached ball under the
+//   arm). The engine has no palm, so the wrist is extended 90 (WRIST) and sits GRIP_Y over the floor, which puts the
+//   engine fist beside it on the floor, and a flat-hand side profile (PALM, one `poly`, eq-solid, z front) is drawn
+//   over the fist and the forearm end: joined to the forearm at the wrist, flat on the floor to the fingertips (hand
+//   length 0.189 m). Checks prove the wrist and the fist sit on the floor. The body line (shoulder to far heel) is
+//   ~16 deg from the floor. Arms straight (elbow 0) and plumb: shoulder flexion = pelvis tilt, so the wrist is
+//   exactly under the shoulder (check) in both poses: c2 and c6 hold by construction.
 //  Start: high plank, one straight line: trunk, hips and knees 0 relative to the pelvis, neck 0 (head in line); feet
 //   at right angles to the shins, toe tips on the floor at TOE_Z (rigid engine foot: no toe joint); root and pelvis
 //   tilt solved (Newton, finite differences) so the fist is on the floor and the toes on their spot.
@@ -23,8 +25,9 @@
 //   leg stays straight back on its toes (its outline is also the dashed start leg, which lies exactly under it).
 //  One ghost (t = 0.5, the via pose) shows the swing with the thigh still behind vertical and the foot trailing up.
 // Plate text (card mountain_climbers plate, verified: claude/libht-research e2a70bc):
-//  Callouts = the 3 plate.checkpoints (c2 hands under shoulders, c3 straight line, c4 knee to chest). Datum = the
-//   plank line, shoulder to the far heel of the end pose, run past both ends.
+//  Callouts = the 3 plate.checkpoints (c2 hands under shoulders, c3 straight line, c4 knee to chest). 'Hands' is
+//   boxed in the open space right of the arm (automatic put it under the floor beside 'Knee'), anchored on the
+//   palm top. Datum = the plank line, shoulder to the far heel of the end pose, run past both ends.
 //  Mistake = plate.mistake (c4, drawable): the hips hike as the knee drives (solved: HIKE_HIP, hands and far toes
 //   fixed). Tells: the card's plate.tells are signs of good form ("Shoulders stay over your wrists", "Hips stay level
 //   as legs switch"), so the tells restate the fault: hips hike (c4), the head-to-heel line breaks (plate.mistake.why,
@@ -39,8 +42,8 @@
 import { landmarksOf } from '../engine.mjs';
 
 const H = 1.75;
-const GRIP_Y = 0.035;                        // fist centre height: fist radius, resting on the floor (m)
-const WRIST = 0;                             // fist under the wrist (see header)
+const GRIP_Y = 0.035;                        // wrist and fist centre height: fist radius, resting on the floor (m)
+const WRIST = 90;                            // hand laid flat forward, fingers toward the head (see header)
 const TOE_Z = -1.05;                         // toe tips of the straight legs on the floor (m)
 const VIA_HIP = 45, VIA_KNEE = 95;           // mid-swing ghost (deg)
 const DRIVE_FOOT_DZ = -0.12;                 // driving foot (ball) this far behind the hip-joint centre at the end (m)
@@ -98,14 +101,22 @@ const LINE = (() => {
 })();
 
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
+// Flat palm (see header): side profile of the near hand, [forward of the wrist, height] in m, drawn as a closed
+// smooth poly in front of the near arm. It joins the forearm at the wrist, lies flat on the floor to the fingertips
+// (hand length WINTER.hand = 0.189 m at H 1.75) and covers the engine fist, which sits inside it on the floor.
+const PALM = [[-0.027, 0.084], [-0.033, 0.035], [-0.022, 0.003], [0.02, 0], [0.16, 0], [0.188, 0.006], [0.178, 0.018],
+  [0.14, 0.033], [0.10, 0.068], [0.06, 0.080], [0.027, 0.086]];
+const WR = landmarksOf(start, H)['wrist.r'];
+const HAND = { type: 'poly', pts: PALM.map(([dz, y]) => [WR[0], y, WR[2] + dz]), curve: true, cls: 'eq-solid', z: 'front' };
 
 export default {
   id: 'mountain_climbers', name: 'Mountain Climbers', view: 'side', facing: 'right',
   camera: { x0: 215, y0: 290 },
   poses: { start, via, end },
-  equipment: [{ type: 'floor', from: -1.3, to: 0.55 }],
+  equipment: [{ type: 'floor', from: -1.3, to: 0.55 }, HAND],
   checks: [
     { landmark: 'grip.r', plane: { point: [0, GRIP_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },    // hand on the floor
+    { landmark: 'wrist.r', plane: { point: [0, GRIP_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // palm flat: wrist down
     { landmark: 'wrist.r', plane: { point: SH, normal: [0, 0, 1] }, pose: 'all', tol: 0.5 },                // wrist under the shoulder
     { landmark: 'toe.l', plane: FLOOR, pose: 'all', tol: 0.5 },                                              // far leg on its toes
     { landmark: 'toe.r', plane: FLOOR, pose: 'start', tol: 0.5 },
@@ -119,7 +130,7 @@ export default {
   trace: { point: 'knee.r', trim: [10, 12] },
   datum: [{ x: 0, from: 0, to: 0, line: LINE }],
   callouts: [
-    { key: 'hands', text: 'Hands under<br>shoulders', anchor: 'wrist.r', cue: 'Arms straight, hands right under the shoulders.' },
+    { key: 'hands', text: 'Hands under<br>shoulders', anchor: { at: 'wrist.r', off: [8, -6] }, box: { left: 252, top: 222 }, cue: 'Arms straight, hands right under the shoulders.' },
     { key: 'line', text: 'Straight line', anchor: 'backUpper', cue: 'Keep one straight line from the back of the head to the heels.' },
     { key: 'knee', text: 'Knee to chest', anchor: 'knee.r', cue: 'Bring one knee toward the chest, then switch legs.' },
   ],
