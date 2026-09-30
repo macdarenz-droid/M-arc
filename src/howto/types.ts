@@ -98,3 +98,29 @@ export interface GoldenFile {
   readonly schema: 1;
   readonly entries: readonly GoldenEntry[];
 }
+
+/**
+ * One generated How-to module (HT-2): `src/howto/generated/ht-<slug>.ts` default-exports this, ending in
+ * `satisfies BuiltHowTo`, so tsc checks the generator's output. The layer fields stay `never` (absent) until the
+ * card that builds each layer defines its type (critic fix 6).
+ */
+export interface BuiltHowTo {
+  readonly schema: 1;
+  readonly id: LibId;
+  readonly name: string;
+  readonly hashes: {
+    /** The file's own inputsSha256, equal to its GENERATED header. */
+    readonly inputsSha256: string;
+    /** sha256 of JSON.stringify(the latest GOLDEN.json plate entry it was generated from). */
+    readonly golden: string;
+  };
+  readonly plate: BuiltPlate;
+  readonly zooms?: never;
+  readonly feel?: never;
+  readonly setup?: never;
+  readonly posture?: never;
+  readonly mistakes?: never;
+  readonly risks?: never;
+  readonly sources?: never;
+  readonly copy?: never;
+}

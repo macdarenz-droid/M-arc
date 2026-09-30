@@ -904,3 +904,21 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - The `it` title of A3 is reworded to say "old form guide". The `describe` title and A1 belong to HT-3, which completes D-HT1 in this file.
   - A4 (static graph from `src/main.tsx`; no src file imports `tools/`) lands here too, per the HT-2 card.
   **Why**: plan section 3 (D-HT1) and card HT-2 (HT2-A7, HT2-A8). Mutation proofs are listed in the HT-2 PR.
+
+## HT-2 generator: choices the plan left open (HT-2 builder, 2026-09-30)
+
+- **Decided**:
+  - **Generator reads the engine, not the fixture.** `gen/plates.mjs` rebuilds the gallery from `tools/plates/vendor` through HT-1's `golden.mjs` and extracts the fragments with HT-1's `extractPlates`, so there is one extractor. It refuses to write unless the page sha256 is the latest GOLDEN page entry (printing the first differing byte offset against the fixture) and every fragment matches its latest GOLDEN plate entry. The golden can therefore never be "fixed" from the generator side.
+  - **Strings are emitted as `JSON.stringify` literals.** The parsed value is the golden byte string; nothing is re-serialized. `tests/howto/generate.test.ts` compares them with `===`, and gate block HT-2 re-hashes them after vite bundling.
+  - **`view` comes from the plate's own label** (`<span class="plate-meta">Front view</span>` in the normal overlay), because HT-1's extractor has no view field and the golden is the only source.
+  - **`hashes.golden`** is the sha256 of `JSON.stringify(latest GOLDEN plate entry)`, which names exactly which approval the module was built from. `hashes.inputsSha256` equals the file's own header.
+  - **Layer fields are typed `?: never`** until each layer card defines its type. That is stricter than `unknown`: nothing can be set by accident.
+  - **Plugin contract:** `inputs()`, optional `after` and `outputs(ctx)`. A file written by more than one plugin (plan: `ht-<slug>.ts` and `ids.ts`, plates then content) hashes the union of its writers and their inputs, and `after` orders them, so HT-5 needs no core change.
+  - **The inputs of the plates plugin:** every MANIFEST file, `MANIFEST.json`, the font, `golden.mjs`, `css.mjs`, `plates.json`, `GOLDEN.json` and the fixture (read for the failure offset). These are listed in full rather than trimmed to what build-page happens to import, so no read file is missed.
+  - **css.mjs drop list.** It drops the page-only rules where the app has an equal rule or the rule styles gallery chrome. From the reset `h1, h2, h3, p, figure { margin: 0; }` it keeps only `.ht figure { margin: 0; }`, because the app's reset lacks `figure` and the plate is a `<figure>`. `#sheets .plate-callout:focus-visible` is a plate rule, so it becomes `.ht .plate-callout:focus-visible`. Keyframe names (`plate-trace/-ghost/-fade`) stay verbatim; they clash with no app keyframes.
+  - **ht-tokens names:** `--ht-trace: 2.4s`, `--ht-arrow-at: 2.3s`, `--ht-arrow-dur: 160ms`, `--ht-ghost-step: 80ms`, `--ht-radius-tick: 1px`. css.mjs throws on any banned literal it has no name for.
+  - **Theme parity is stricter than the plan:** besides the per-theme tokens, the non-theme tokens plate.css reads (sizes, timings) must equal the vendored `engine/tokens.css` in styles.css's token block.
+  - **A9 chunks are measured in gate block HT-2 with the app's own vite config**, using `src/howto/generated/index.ts` as an extra entry. Until HT-3 wires `lazy.tsx`, nothing in the app imports the loaders, so `npm run build` alone cannot emit the chunks yet.
+  - **A4 is also checked from `ids.ts` itself:** its static graph is just itself, and no src file outside `generated/` statically reaches `generated/**`. This catches the card's failure path (ids.ts importing `generated/index.ts`) before HT-3 connects ids.ts to main.
+  - **Gate PASS phrase:** printed as its own line after the shared PASS line, so the shared line is not edited.
+  **Why**: card HT-2 and plan 2.2, 2.6, 2.7; the supervisor's "go" on PR #105.

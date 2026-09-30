@@ -98,6 +98,11 @@ describe('D-HT1 A4: the How-to is reached from main only through ids.ts', () => 
     const howto = graph.filter(f => f.startsWith('src/howto/') || f.startsWith('src/slices/howto/'));
     expect(howto.filter(f => f !== 'src/howto/ids.ts' && f !== 'src/slices/howto/lazy.tsx')).toEqual([]);
   });
+  it('ids.ts, main\'s one How-to module, statically reaches nothing else; generated/** is reached only through import()', () => {
+    expect([...staticGraph('src/howto/ids.ts')]).toEqual(['src/howto/ids.ts']);
+    const statics = srcFiles.filter(f => /\.(ts|tsx)$/.test(f) && [...staticGraph(f)].some(r => r !== f && r.startsWith('src/howto/generated/')));
+    expect(statics.filter(f => !f.startsWith('src/howto/generated/'))).toEqual([]);
+  });
   it('no src file imports tools/', () => {
     const hits = srcFiles.filter(f => [...readFileSync(f, 'utf8').matchAll(/(?:from\s+|import\s*\(\s*|import\s+)['"]([^'"]+)['"]/g)]
       .some(m => /^\/?tools\//.test(m[1]!) || (m[1]!.startsWith('.') && normalize(join(dirname(f), m[1]!)).replace(/\\/g, '/').startsWith('tools/'))));
