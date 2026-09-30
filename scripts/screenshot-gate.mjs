@@ -5933,7 +5933,7 @@ for (const theme of ['silent-black', 'paper']) {
   // outside ids.ts's own exports; exercises.json's content is excluded too — an exercise name or id
   // legitimately shared with a generated file is already in main for unrelated reasons). HT-3c (B4): a
   // string counts only when it is unique to generated How-to content — one that also appears anywhere in
-  // the app's own source (src/** outside src/howto/generated/**, e.g. the generic X-icon path in
+  // the app's own non-How-to source (src/** outside src/howto/** and src/slices/howto/**, e.g. the generic X-icon path in
   // src/ui/icons.tsx) is main's own and not a leak.
   {
     const html = readFileSync(join(ROOT, 'www/index.html'), 'utf8');
@@ -5946,7 +5946,9 @@ for (const theme of ['silent-black', 'paper']) {
     const exercisesRaw = readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8');
     const genDir = join(ROOT, 'src/howto/generated');
     const appSrc = [];
-    const walkSrc = dir => { for (const e of readdirSync(dir, { withFileTypes: true })) { const f = join(dir, e.name); if (e.isDirectory()) { if (f !== genDir) walkSrc(f); } else appSrc.push(readFileSync(f, 'utf8')); } };
+    // Only non-How-to source excuses a string: src/howto/** and src/slices/howto/** ship How-to content too.
+    const howtoDirs = new Set([join(ROOT, 'src/howto'), join(ROOT, 'src/slices/howto')]);
+    const walkSrc = dir => { for (const e of readdirSync(dir, { withFileTypes: true })) { const f = join(dir, e.name); if (e.isDirectory()) { if (!howtoDirs.has(f)) walkSrc(f); } else appSrc.push(readFileSync(f, 'utf8')); } };
     walkSrc(join(ROOT, 'src'));
     const inAppSrc = str => appSrc.some(src => src.includes(str));
     const unescapeJs = s => s.replace(/\\(["'\\/bfnrt]|u[0-9a-fA-F]{4})/g, m => ({ '\\"': '"', "\\'": "'", '\\\\': '\\', '\\/': '/', '\\b': '\b', '\\f': '\f', '\\n': '\n', '\\r': '\r', '\\t': '\t' }[m] ?? String.fromCharCode(parseInt(m.slice(2), 16))));
