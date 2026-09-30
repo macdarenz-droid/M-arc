@@ -670,5 +670,9 @@
     "why": "abs primary and hip_flexors secondary stand (c10, c12); StrengthLog lists the hip flexors as a primary mover, but the card keeps them secondary because the abs are the target and the EMG ranks the abs top (c10)."
   },
   "anchorSource": "yessis-hanging-knee-leg-raise",
+  "gaps": [
+    "Tier A: no sourced way to get down from the bar safely; the parent's box-clear setup line is inherited, nothing new invented.",
+    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression: bent knees first, straight legs later (c13)."
+  ],
   "notes": "Yessis also advises holding the breath and a slight lower-back arch at the start; neither is used, because the parent card and other sources teach a still, quiet hang and no source here supports breath-holding. Not sourced: a safe way down from the bar (inherited from the parent's box line). Escamilla 2006 measured the knee-up in arm straps, not a bare-hand hang. McGill 2015 measured straight legs only."
 }

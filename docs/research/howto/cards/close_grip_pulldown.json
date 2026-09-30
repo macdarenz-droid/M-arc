@@ -443,7 +443,7 @@
       "pause": 0,
       "claim": "c10"
     },
-    "variantLine": "Drawn: V-handle, neutral close grip (c1; exercises.json alias 'neutral grip pulldown'). The census lists only the lat bar for this id; no reachable source was found for a close straight-bar version, so if the engine has no V-handle this plate waits for one (owner or engine decision) rather than drawing an unsourced bar grip. The pad, lean, elbow path and stop-point claims (c2-c9) hold for both."
+    "variantLine": "Drawn: V-handle, neutral close grip, named in the anchor source (c1; exercises.json alias 'neutral grip pulldown'). No other close-grip handle is named in a reachable source."
   },
   "grip": {
     "type": "Neutral (palms facing each other) on a V-handle.",

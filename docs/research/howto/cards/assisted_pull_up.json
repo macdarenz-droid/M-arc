@@ -477,7 +477,7 @@
     "type": "Overhand (pronated), palms away, full closed grip.",
     "width": "About shoulder width, or a little wider.",
     "thumb": "Wrapped around the bar.",
-    "handContact": "Bar across the top of the palm where the fingers start, as for the pull-up hang archetype.",
+    "handContact": "From the shared hang archetype (GA 3.1, sourced there); not re-sourced on this card.",
     "wrist": "Straight, not curled; a bent wrist costs grip.",
     "claims": [
       "c1",
@@ -640,5 +640,10 @@
     "why": "lats primary; biceps and mid_back secondary stand, by inference from unassisted pull-up EMG (c11)."
   },
   "anchorSource": "bullbar-assist-beginner",
+  "gaps": [
+    "Tier A: no sourced way to get on and off the pad safely or to leave the machine at the end of a set; left out, not invented.",
+    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply. Load progression: more reps, then less assistance, then load (c6).",
+    "No study of the assisted machine itself; muscle roles and shoulder risk come from unassisted pull-ups (tagged MECH, c10, c11)."
+  ],
   "notes": "Thin evidence: the anchor is a manufacturer blog (WEAK), read in full; the StrengthLog assisted pull-up page was read in full by the writer but was unreachable (403) for the source check, so it only co-supports claims and its rear-delt listing was dropped. No EMG or kinematic study of the assisted machine itself was found (PubMed search 'assisted pull-up' returned nothing relevant), so muscle roles are inferred from unassisted pull-ups (c11) and machine handling rests on StrengthLog plus a manufacturer blog (WEAK). Not sourced, so left out: how to get on and off the pad safely and how to leave the machine at the end of a set (the tier-A 'way out'). The census contact is brace-pad; the pad here is a kneeling pad that pushes up, not a chest pad."
 }

@@ -796,5 +796,9 @@
     "why": "exercises.json already lists lats and biceps as primary, which the chin-up EMG supports (c10, c11). mid_back stands: the lower trapezius works moderately (c11), folded into mid_back as on the pull_up card. Chest (pectoralis major, c10) is not added: it works, but people rarely feel it here."
   },
   "anchorSource": "ace-chin-ups",
+  "gaps": [
+    "Tier A: no sourced way to get down from the bar or fail a rep safely (dismount); left out, not invented.",
+    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression: covered by assistance and lowering-only reps (c17)."
+  ],
   "notes": "Not sourced, so left out: a safe way down from the bar (the tier-A 'way out'); the pull_up card's setup lines are inherited for bar height and chalk. No source compares shoulder-width and closer chin-up grips. Prinold 2016 is read from the abstract only; the reverse = chin-up mapping is interpretation (c13)."
 }
