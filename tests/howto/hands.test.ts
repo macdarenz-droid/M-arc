@@ -42,6 +42,14 @@ describe('HT6-A1: every hand-<key> panel === golden B', () => {
   it('the 8 panels are distinct (golden B shares none), so no key could serve two exercises', () => {
     expect(new Set(IDS.map(id => chunks[id]!.panel)).size).toBe(8);
   });
+  it('the chunk writes the panel as a single-quoted literal: same value, and golden B\'s xmlns attribute reads as written (C17)', () => {
+    for (const s of ['a\\b', "it's", 'x"y', 'l1\nl2\r', '\u2028\u2029', chunks[IDS[2]!]!.panel]) expect(new Function(`return ${gen.lit(s)}`)()).toBe(s);
+    for (const id of IDS) {
+      const text = readFileSync(`src/howto/generated/hand-${id}.ts`, 'utf8');
+      expect(text).toContain('xmlns="http://www.w3.org/2000/svg"');
+      expect(text).not.toContain('xmlns=\\"');
+    }
+  });
   it('failure path: a 1-byte change fails the compare', () => {
     const id = IDS[0]!, golden = gen.handPanel(FIXTURE, id), p = chunks[id]!.panel;
     const i = p.indexOf('Right');
