@@ -490,3 +490,12 @@ export const SAFETY_LINE_RE = /\b(?:call|phone|dial|ring|GP|clinic|hospital)\b/i
    - Message.tsx:3 comment ("with citations");
    - HT-9 text.css: delete the empty `@media` rule left behind.
 8. **Records.** ESC-NC appends D-LR23-1…8 to docs/COACHING-DECISIONS.md (append-only), with the owner's quote.
+
+### D-LR23-9. Advice follows the symptoms and their timing (owner, 2026-09-30 15:15 UTC)
+- Owner: "Yes no contacg or links or hotline. We only say, seek for emergency help or advice if u still feel the numbness, pain etc after few hours or days. Based on the symptomps"
+- The pattern for every safety line in the app (coach cards, coach prompt, red-flag boxes, library boxes): **symptom → how long or how bad → what to do**. Never a contact.
+  - danger now (chest pain, fainting, thoughts of self-harm, loss of feeling or bladder or bowel control): "get emergency help now";
+  - severe signs: "Get it checked today.";
+  - lasting signs: "still there after <time from the research: hours, days or weeks> or getting worse? Get it checked" or "See a doctor".
+- The existing boxes and cards already follow this: "lasting more than two days", "no better after two weeks", "No better after a few weeks". Keep the research-based times; do not replace them with one fixed time.
+- Coach prompt rule 9 now says "Match the advice to the symptoms … get it checked if the pain, numbness or other symptom is still there after a few hours or days or gets worse" (ESC-NC-W eafff05).
