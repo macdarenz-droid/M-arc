@@ -15,9 +15,9 @@
       "gitBlob": "fa7c6645385a0b10102ef51a7fae25287676a9df"
     },
     "engine/SPEC.md": {
-      "sha256": "04aa6416d4615b38d82358afabe40e27f9203b9d36289ecc565c03083df2aa3a",
-      "source": "bc0f378:docs/howto/technical-plate/engine/SPEC.md",
-      "gitBlob": "0a68ec05d007bd2d6dd832b9cea78f02c45c39b7"
+      "sha256": "1b1c8a24e19a2ecbf9b5cb833320e2674f4f5e474a5f543bad9946bbc488b6a2",
+      "source": "7859292:docs/howto/technical-plate/engine/SPEC.md",
+      "gitBlob": "11b66f42723e98a29020f6f1ac11acda13a5ff17"
     },
     "engine/body.mjs": {
       "sha256": "e274ba64e5e4775b6f50246c7ced433e7024f152cbeb500b0c012bc57a731e89",
@@ -25,9 +25,9 @@
       "gitBlob": "122d328fcd3ac33f89d31564c026fb5f5a590ed4"
     },
     "engine/equipment.mjs": {
-      "sha256": "ebc5264a8f477179e0b719e3b56ee200b0df9d12839644a12bb2353a806cfa34",
-      "source": "bc0f378:docs/howto/technical-plate/engine/equipment.mjs",
-      "gitBlob": "9eb93b72aaf06288b583991f3f8162be8f7839c3"
+      "sha256": "d1f7d82a8962e411525ab29138a1b36eb444d10b04e1e75a14e9475b15eaa638",
+      "source": "48153c4:docs/howto/technical-plate/engine/equipment.mjs",
+      "gitBlob": "3288b69ec1a277ee26da38686d3f75e62f228bfa"
     },
     "engine/gallery.mjs": {
       "sha256": "238b3df7bfe95b70e8f6f772406abb8a1b2d2234a108e14ac64185974d2a82a7",
@@ -88,6 +88,11 @@
       "sha256": "adaec2d6451926aabcfd6987d5cacbb19c9bc6f402c3a5b5669b47f5c6e0a227",
       "source": "bc0f378:docs/howto/technical-plate/exercises/_test_front.mjs",
       "gitBlob": "15c86aa8c4b6afe65b1642613025b09782788e70"
+    },
+    "exercises/_test_poly.mjs": {
+      "sha256": "b93282cd2b69dcc7dfda88580063b3a3c54554f5777b2fb5417f6c83b9edac26",
+      "source": "de00174:docs/howto/technical-plate/exercises/_test_poly.mjs",
+      "gitBlob": "054bf91b06668cde2fed231041949e3d68355824"
     },
     "exercises/_test_side.mjs": {
       "sha256": "5e9016862e4f145076d0a7ee1b0dba9c8b2d951692ff6aab79930f691cac17a9",
