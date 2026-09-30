@@ -11,7 +11,8 @@
 //    line (the body union strokes 2 px and paints its fill over the inner half; pixel-checked in both themes).
 //    z 'center' puts it over the body group (the arms, whose roots are truly behind the chest) and under the legs
 //    (truly in front of it).
-//  - The head is not drawn: from the feet it is truly hidden behind the chest (face top 0.64 m by the engine's side head outline, chest 0.685 m).
+//  - The head is truly hidden behind the chest from the feet (face top 0.64 m by the engine's side head outline, chest
+//    0.685 m), and the thighs hide the lower dome: both are drawn as light x-ray outlines ('eq-line', XRAY) over the legs.
 //  - Feet FOOT_X apart, toes slightly out (c1 sets no width): the knees then clear the pad, so the bench pad and post
 //    show between the shins and the shoulders beside the knees. The camera has no pitch (orthographic, horizontal), so
 //    the thighs hide the lower torso; a raised foot-end camera would show the chest and head (engine change, not made).
@@ -120,6 +121,18 @@ export const torsoInfo = { widthCm: +(2 * W * 100).toFixed(1), topCm: +(Math.max
 // 'eq-solid' = the body's own fill and line colour. Its 1 px stroke matches the body's visible line: the body union
 // strokes 2 px and paints its fill over the inner half, so 1 px of line shows outside every body outline.
 const TORSO = { type: 'poly', pts: DOME.map(([x, y]) => [x, y, -0.3]), cls: 'eq-solid', z: 'center', part: 'torso' };
+// Hidden body, x-ray (as the barbell's near plate in side view): the full dome and the head, end-on, as light
+// 'eq-line' outlines over the legs (z 'mid'), so the body reads behind the bent knees. The head is where it truly is:
+// resting on the pad, face up, inside the dome outline (engine head: 16 cm wide, back of head on the pad, face top
+// HEAD_TOP by the side head outline).
+const skEnd = fk(resolve(normPose(end, BODY), BODY).q, BODY);
+const headSide = bodyShapes(skEnd, { view: 'side', P: w => [w[2], w[1]], pxm: 1, near: 'r' }).find(s => s.key === 'head').poly;
+const HEAD_TOP = Math.max(...headSide.map(p => p[1])), HEAD_BOT = Math.min(...headSide.map(p => p[1])), HEAD_HW = 0.046 * H;
+const ring = (cx, cy, rx, ry) => Array.from({ length: 37 }, (_, k) => [cx + rx * Math.cos(k * 10 * R), cy + ry * Math.sin(k * 10 * R), -0.8]);
+const XRAY = [
+  { type: 'line', pts: [...DOME, DOME[0]].map(([x, y]) => [x, y, -0.3]), cls: 'eq-line', z: 'mid' },
+  { type: 'line', pts: ring(0, (HEAD_TOP + HEAD_BOT) / 2, HEAD_HW, (HEAD_TOP - HEAD_BOT) / 2), cls: 'eq-line', z: 'mid' },
+];
 
 /** The fly plate in `view` ('front' = the card, 'side' = the former view, kept as the alternate); `id` for the file. */
 export function makeFly(view, id) {
@@ -137,7 +150,7 @@ function frontFly(id) {
     equipment: [
       { type: 'floor', from: -1.05, to: 1.05 },
       { type: 'bench', at: [0, BENCH_TOP, BENCH_Z], len: BENCH_LEN },
-      TORSO,
+      TORSO, ...XRAY,
       (lm, ctx) => (ctx.pose === 'end' ? phantom : null),
       lm => [{ type: 'dumbbell', at: lm['grip.l'], axis: [0, 0, 1], z: 'front', part: 'db.l' },
         { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], z: 'front', part: 'db.r' }],
@@ -196,7 +209,7 @@ function sideFly(id) {
     trace: { point: 'grip.r', trim: [12, 12] },
     datum: [{ y: 'grip.r', from: { at: 'grip.r', off: [-34, 0] }, to: { at: 'grip.r', off: [34, 0] }, mistake: false }],   // the stop line: chest level (c4)
     callouts: [
-      { key: 'elbows', text: 'Soft<br>elbows', anchor: 'start:elbow.r', cue: 'Keep a slight elbow bend that stays the same all the way.' },
+      { key: 'elbows', text: 'Soft<br>elbows', anchor: 'elbow.r', cue: 'Keep a slight elbow bend that stays the same all the way.' },
       { key: 'stop', text: 'Stop at<br>chest', anchor: 'grip.r', cue: 'Lower until the dumbbells are level with your chest, no deeper.' },
       { key: 'parallel', text: 'Dumbbells<br>parallel', anchor: 'start:grip.r', cue: 'Keep both dumbbells parallel, palms facing, through the whole arc.' },
     ],
