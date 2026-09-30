@@ -1,6 +1,6 @@
-# M/ARC privacy policy
+# M/ARC Privacy Policy
 
-Last updated: 2026-09-30.
+Effective date: 2026-09-30. Last updated: 2026-09-30.
 
 M/ARC is made by Marc Darenz L. Masarate. Contact: macdarenz@gmail.com. This policy is published at https://macdarenz-droid.github.io/M-arc/privacy/.
 
@@ -27,7 +27,7 @@ When you turn on "Online coach" and send a message, the app sends to the coach s
 - workout history the coach asks for, such as past sessions, exercise notes and progress;
 - a random device id (not linked to your name or account), the app version, your unit (kg or lb) and coach tone.
 
-Your health data (heart rate, sleep, steps, calories) and body data (weight, body fat, measurements) are sent only if you turn on "Share health data" or "Share body data". Both are off by default. Turning one off also stops earlier answers from being sent again. **One exception:** the readiness score and muscle recovery in the summary are worked out on the phone and can be based partly on your sleep and resting heart rate from Health Connect. They are sent whenever the coach is on, even with "Share health data" off; the numbers behind them are not.
+Your health data (heart rate, sleep, steps, calories) and body data (weight, body fat, measurements) are sent only if you turn on "Share health data" or "Share body data". Both are off by default. Turning one off also stops that data from being sent again from the coach's earlier lookups; words already written in the conversation, yours or the coach's, are still sent as part of the conversation so far. **One exception:** the readiness score and muscle recovery in the summary are worked out on the phone and can be based partly on your sleep and resting heart rate from Health Connect. They are sent whenever the coach is on, even with "Share health data" off; the numbers behind them are not.
 
 While the app is open, it may also check whether the coach server is reachable. That check sends no data, but the server sees your IP address.
 
@@ -48,7 +48,7 @@ The server stores reports in Cloudflare's database for 90 days, then deletes the
 Everything the app sends goes over an encrypted connection (HTTPS). Health data is never sold, never used for ads, and never given to anyone except, when you share it, to answer your own coach request. The app has no ads or tracking.
 
 ## Deleting your data
-"Reset workout data" in Settings (Your data), then "Reset everything", erases everything on the phone, including coach conversations and photos, and gives you a new install id. Uninstalling the app also removes it. Error reports on the server are not linked to your name and are deleted after 90 days. To ask about them, email macdarenz@gmail.com.
+"Reset workout data" in Settings (Your data), then "Reset everything", erases everything on the phone, including coach conversations and photos, and gives you a new install id. One exception: if the app ever set aside saved data it could not read, that copy stays until you delete it in Settings under "Unreadable data kept aside" ("Hold to delete"). Uninstalling the app also removes it. Error reports on the server are not linked to your name and are deleted after 90 days. To ask about them, email macdarenz@gmail.com.
 
 ## Children
 M/ARC is intended for adults (18+). It is not meant for children, and its coach gives strength-training advice and reads heart-rate health data that is not suitable for a minor to act on unsupervised.

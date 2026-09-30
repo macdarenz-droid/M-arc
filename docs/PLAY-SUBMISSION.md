@@ -8,6 +8,11 @@ this says "unknown" rather than guessing.
 Source of truth for the plain-language claims: `docs/PRIVACY-POLICY.md`. Every claim below
 also gives its own file:line.
 
+**Privacy policy URL (Play Console, App content > Privacy policy):**
+https://macdarenz-droid.github.io/M-arc/privacy/ . That page is the M/ARC website's /privacy/ page, rendered from
+`docs/PRIVACY-POLICY.md` at every site build (DOC-3, the `website/` folder on `claude/app-website-design-671lk8`,
+deployed by hand with `.github/workflows/website.yml`). There is no second copy of the policy anywhere.
+
 ## Data safety form
 
 **Does your app collect or share any of the required user data types?** Yes.

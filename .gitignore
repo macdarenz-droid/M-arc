@@ -2,7 +2,6 @@ node_modules/
 android/
 dist/
 www/
-site/
 *.jks
 *.keystore
 *.apk
