@@ -1,0 +1,803 @@
+{
+  "id": "romanian_deadlift",
+  "libId": "lib_romanian_deadlift",
+  "name": "Romanian Deadlift",
+  "family": "HINGE",
+  "tier": "A",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Start standing with the bar resting on the front of the thighs, knees slightly bent and the back straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "ace-romanian-deadlift",
+          "text": "Holding a barbell with both hands so that it rests on the front of the thighs, keep a slight bend in both knees and a straight back.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Push the hips back to lower the bar until you feel tension along the back of the legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "ace-romanian-deadlift",
+          "text": "Push the hips back while lowering the weight towards the floor until feeling some tension along the back of the legs.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "To stand, push the heels into the floor and keep the bar very close to the body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "ace-romanian-deadlift",
+          "text": "To return to standing, push the heels into the floor and pull the knees backwards, keeping the bar very close to the body while standing.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The knees stay fixed at a slight bend (about 15 degrees) and only the hips bend.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "In the Romanian deadlift, you lock your knees at a slight bend (about 15°) and only bend at your hip.",
+          "where": "Romanian Deadlifts vs. Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lean forward as far as possible without rounding the back; the bar does not need to touch the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "Lean forward as far as possible without rounding your back.",
+          "where": "How to Do Romanian Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Depth: usually until the bar reaches about mid-shin; spinal position comes before depth.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-rdl",
+          "text": "Descend until you achieve moderate hamstring stretch, typically at mid-shin height or slightly above. Going too deep may compromise spinal position, while insufficient depth limits eccentric stimulus. Prioritize proper spinal alignment over maximum depth.",
+          "where": "FAQs"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Common mistakes: rounding the lower back (injury risk) and bending the knees so much it turns into a squat.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-rdl",
+          "text": "Rounding the lower back excessively, which removes spinal stability and increases injury risk",
+          "where": "Common Mistakes, item 1"
+        },
+        {
+          "source": "nasm-rdl",
+          "text": "Bending the knees too much, which converts the exercise into a squat variation",
+          "where": "Common Mistakes, item 2"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Other common mistakes: jerky movement and using weight that breaks form or spinal position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-rdl",
+          "text": "Jerky movements or excessive momentum, which reduces hamstring tension and time under tension",
+          "where": "Common Mistakes, item 3"
+        },
+        {
+          "source": "nasm-rdl",
+          "text": "Using excessive weight that compromises form or spinal position",
+          "where": "Common Mistakes, item 4"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Grip slightly wider than shoulder width, shoulders back and down, arms just outside the thighs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-rdl",
+          "text": "Hold the barbell with a slightly wider than shoulder-width grip. Draw your shoulders back and down and position your arms just outside your thighs",
+          "where": "Step 2: Brace/Position"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Feet about hip width, neutral spine and core braced before the first rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-rdl",
+          "text": "Stand with feet hip-width apart with the barbell resting across your thighs. Maintain a neutral spine and engage your core to prepare for the movement.",
+          "where": "Step 1: Setup"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Get into position by deadlifting the bar off the floor or unracking it from a rack.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "Get into the starting position by deadlifting a barbell off the floor, or by unracking it from a barbell rack.",
+          "where": "How to Do Romanian Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Breathe in and brace slightly before hinging; breathe out on the way up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "Inhale, brace your core slightly, and lean forward by hinging in your hips.",
+          "where": "How to Do Romanian Deadlifts"
+        },
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "Reverse the movement and return to the starting position. Exhale on the way up.",
+          "where": "How to Do Romanian Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "In a lab study, hamstring activity was highest in the RDL and glute-ham raise.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "mcallister2014"
+      ],
+      "quotes": [
+        {
+          "source": "mcallister2014",
+          "text": "The main findings of this investigation are that the ST is substantially more active than the BF among all exercises, and hamstring activity was maximized in the RDL and glute-ham raise.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "In the RDL, the lower-back muscles are less active than the hamstrings.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "martinfuentes2020"
+      ],
+      "quotes": [
+        {
+          "source": "martinfuentes2020",
+          "text": "However, the Romanian Deadlift is associated with lower activation for erector spinae than for biceps femoris and semitendinosus.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The RDL still works the gluteus maximus strongly (about 47% of peak, vs 52% in the conventional deadlift), with far less front-thigh work.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "lee2018"
+      ],
+      "quotes": [
+        {
+          "source": "lee2018",
+          "text": "Significantly greater normalized EMG values were found from the rectus femoris and gluteus maximus (58.57 ± 13.73 and 51.52 ± 6.08 %peak) of the conventional deadlift than those of the Romanian deadlift (25.26 ± 14.21 and 46.88 ± 7.39 %peak).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Main movers are the hamstrings, glutes and lower back; adductors, trapezius and grip are secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-rdl",
+        "sl-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-rdl",
+          "text": "The RDL emphasizes hip hinging with minimal knee flexion, focusing stimulus on the hamstrings and glutes through eccentric stretching.",
+          "where": "FAQs"
+        },
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "The primary muscles worked in the Romanian deadlift are your lower back, glutes, and hamstrings.",
+          "where": "FAQ: Do Romanian Deadlifts Build Muscle?"
+        },
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "The secondary muscles worked in the Romanian deadlift are your adductors, trapezius, and grip.",
+          "where": "FAQ: Do Romanian Deadlifts Build Muscle?"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Back pain after RDLs usually comes from doing too much too soon or from technique; keep the spine neutral, and get checked if pain is severe or lasts.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "Doing too much too soon. Ease up on the training volume, and give yourself and your back time to adapt to the exercise. Technique. It is generally recommended that you keep your spine in a neutral position (“straight”) when performing the Romanian deadlift.",
+          "where": "FAQ: Why Does My Back Hurt after Romanian Deadlifts?"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "To avoid reversing a heavy bar in mid-air, the bar can be lowered onto lifting blocks.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "If your mobility is not as great, or you want to avoid reversing a heavy weight in mid-air, you can place the bar on a pair of lifting blocks, and use them to help stop the downward motion.",
+          "where": "Romanian Deadlift Variations"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Ease into heavy low-rep RDL training gradually; add load in small steps (2-10%) once target reps are exceeded.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-romanian-deadlift",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "For strength gains, the low-to-medium rep range of about 3–8 reps is a good idea. Just make sure you ease into heavy low-rep training gradually.",
+          "where": "FAQ: Should You Go Heavy?"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, controlled, not jerky.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "nasm-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "nasm-rdl",
+          "text": "Jerky movements or excessive momentum, which reduces hamstring tension and time under tension",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "Wrap the thumbs around the bar; straps are fine when grip limits the set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "baechle-grip",
+        "sl-romanian-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        },
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "If you find that your grip strength is limiting your performance in the Romanian deadlift, using a pair of lifting straps can be a good idea.",
+          "where": "FAQ: lifting straps"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-romanian-deadlift",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/317/romanian-deadlift/",
+      "title": "ACE Exercise Library: Romanian Deadlift",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-romanian-deadlift",
+      "url": "https://www.strengthlog.com/romanian-deadlift/",
+      "title": "How to Do Romanian Deadlift: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nasm-rdl",
+      "url": "https://blog.nasm.org/romanian-deadlift-basics",
+      "title": "Romanian Deadlift Barbell (NASM)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "mcallister2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24149748/",
+      "title": "Muscle activation during various hamstring exercises.",
+      "kind": "peer-reviewed",
+      "year": 2014,
+      "pmid": 24149748,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "martinfuentes2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32107499/",
+      "title": "Electromyographic activity in deadlift exercise and its variants. A systematic review.",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": 32107499,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lee2018",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30662500/",
+      "title": "An electromyographic and kinetic comparison of conventional and Romanian deadlifts.",
+      "kind": "peer-reviewed",
+      "year": 2018,
+      "pmid": 30662500,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Hips back, fixed knee bend, flat back and the bar close to the legs are all front-to-back positions (c2, c3, c4, c5); only the side view shows them.",
+    "equipment": "Straight barbell with plates, standing on the floor line; bar taken from a rack or deadlifted from the floor (c11). Optional lifting blocks under the bar at the bottom (c18) are not drawn.",
+    "start": "Standing tall, bar resting on the front of the thighs, arms straight just outside the thighs (c1, c9), knees about 15 degrees bent (c4), back neutral (c10).",
+    "end": "Hips pushed back, trunk leaning well forward with a flat back (c2, c5), knees still about 15 degrees (c4), bar at about mid-shin and touching or close to the legs (c6, c3).",
+    "checkpoints": [
+      {
+        "label": "Hips back",
+        "what": "The hips move back to lower the bar; knees stay at a fixed slight bend.",
+        "claim": "c2"
+      },
+      {
+        "label": "Bar close",
+        "what": "The bar stays very close to the legs all the way down and up.",
+        "claim": "c3"
+      },
+      {
+        "label": "Flat back",
+        "what": "The back stays neutral; depth stops where it would round.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Lower back rounds at the bottom as the bar is reached down.",
+      "why": "Listed first among common RDL mistakes; it removes spinal stability and raises injury risk (c7).",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Stretch along the back of legs",
+        "claim": "c2"
+      },
+      {
+        "text": "Bar brushes your legs",
+        "claim": "c3"
+      },
+      {
+        "text": "Knees stay slightly bent, unchanged",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c20"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (palms toward you) on the bar.",
+    "width": "Slightly wider than shoulders, arms just outside the thighs.",
+    "thumb": "Wrapped around the bar; straps allowed if grip limits the set.",
+    "handContact": "Bar across the middle of the palm, fingers wrapped (hold archetype).",
+    "wrist": "Neutral, in line with the forearm (hold archetype range).",
+    "claims": [
+      "c9",
+      "c22"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bar in a rack at thigh height, or deadlift it from the floor.",
+      "claim": "c11"
+    },
+    {
+      "step": "Feet hip width, bar resting on the thighs.",
+      "claim": "c10"
+    },
+    {
+      "step": "Grip slightly wider than shoulders; shoulders back and down.",
+      "claim": "c9"
+    },
+    {
+      "step": "Breathe in and brace slightly before each rep.",
+      "claim": "c12"
+    },
+    {
+      "step": "Want to avoid turning heavy weight around in mid-air? Lower onto blocks.",
+      "claim": "c18"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Knees fixed at a slight bend; the movement is at the hips.",
+      "claim": "c4"
+    },
+    {
+      "point": "Spine neutral; stop before it rounds.",
+      "claim": "c5"
+    },
+    {
+      "point": "Bar very close to the body.",
+      "claim": "c3"
+    },
+    {
+      "point": "Usually down to about mid-shin; spine position beats depth.",
+      "claim": "c6"
+    },
+    {
+      "point": "Push the heels into the floor to stand.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Rounding the lower back to get the bar lower.",
+      "fix": "Stop higher, where the back stays flat; if it still rounds, lower the weight.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Bending the knees until it becomes a squat.",
+      "fix": "Lock the knees at a slight bend and push the hips back.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Using so much weight the form breaks.",
+      "fix": "Go lighter and move smoothly.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c13"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c15"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c16"
+      },
+      {
+        "muscleId": "adductors",
+        "claim": "c16"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c14"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Back of the thighs, stretching on the way down",
+        "means": "Usually means the hips are hinging correctly.",
+        "fix": null,
+        "claim": "c2",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back more than the hamstrings",
+        "means": "Usually means the back is rounding or the load is too heavy; the hamstrings normally work harder than the lower back here.",
+        "fix": "Shorten the range and lower the weight.",
+        "claim": "c14",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back sore after sessions",
+        "means": "Usually means too much too soon, or technique.",
+        "fix": "Cut the volume and keep the spine neutral.",
+        "claim": "c17",
+        "redFlag": null
+      },
+      {
+        "where": "Back pain with pain or numbness in both legs",
+        "means": "Not a normal training feeling.",
+        "fix": "Stop.",
+        "claim": "c23",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "A rounded lower back under load raises injury risk.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "claim": "c21"
+    },
+    {
+      "risk": "Doing too much too soon can leave the back sore.",
+      "claim": "c17"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "rdl-grip",
+      "kind": "hand",
+      "right": "Overhand, thumbs wrapped, wrists straight, hands just outside the thighs.",
+      "wrong": "Hands hanging off the fingertips, wrists bent.",
+      "claim": "c9"
+    },
+    {
+      "key": "rdl-bottom",
+      "kind": "posture",
+      "right": "Hips back, flat back, knees slightly bent, bar at mid-shin close to the legs.",
+      "wrong": "Rounded lower back, or knees bent deep like a squat.",
+      "claim": "c7"
+    },
+    {
+      "key": "rdl-bar-path",
+      "kind": "posture",
+      "right": "Bar slides down close to the thighs and shins.",
+      "wrong": "Bar drifting forward away from the legs.",
+      "claim": "c3"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "adductors"
+    ],
+    "remove": [],
+    "why": "Library primary hamstrings and secondary glutes, lower_back match (c13, c15, c16). Add adductors as secondary: StrengthLog names them (c16)."
+  },
+  "anchorSource": "nasm-rdl"
+}

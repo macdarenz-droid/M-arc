@@ -1,0 +1,482 @@
+{
+  "id": "bent_over_dumbbell_rear_delt_fly",
+  "libId": "lib_bent_over_dumbbell_rear_delt_fly",
+  "name": "Bent-Over Dumbbell Rear Delt Fly",
+  "family": "Rear delt and cuff",
+  "tier": "C",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hold a pair of dumbbells, lean forward, let the arms hang, then raise them out to the sides with a slight elbow bend and lower back down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-reverse-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-reverse-fly",
+          "text": "Hold a pair of dumbbells, lean forward, and let your arms hang towards the floor. With almost straight arms (just a slight bend at the elbow), slowly lift the dumbbells by raising your arms out to the sides.",
+          "where": "How to Do Reverse Dumbbell Flyes"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Feet about hip width; lean forward by tilting at the hips with a straight spine and braced core; keep the same slight elbow bend throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-reverse-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-reverse-fly",
+          "text": "Stand with your feet about hip-width apart. Lean forward by tilting your hips. Make sure that you keep your spine straight, and brace your core. You should keep your arms in the same position during the entire movement, with a slight bend in the elbow.",
+          "where": "Proper Form & Technique: Positioning"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Lift until the arms are about level with the body, no further; don't shrug, draw the shoulder blades together instead.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-reverse-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-reverse-fly",
+          "text": "Lift them up until they are just about level with your body. You don’t have to overextend the movement. Avoid shrugging your shoulders during the exercise. Instead, focus on drawing your shoulder blades together as you lift the dumbbells.",
+          "where": "Proper Form & Technique: Movement"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "It is easy to cheat with momentum from the hips or lower back; pick a light weight and move with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-reverse-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-reverse-fly",
+          "text": "This is an exercise where it is easy to cheat by using momentum from your hips or lower back, which takes away the work from the rear deltoid.",
+          "where": "Which Muscles Does the Reverse Dumbbell Fly Work?"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Too-heavy dumbbells lead to momentum and swinging, which stresses the lower back and shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-reverse-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-reverse-fly",
+          "text": "This is an exercise where it’s easy to start using a swinging motion to help lift the weights. This can place unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled.",
+          "where": "Common Mistakes: Not keeping form"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Main movers: rear delts and rotator cuff, with the trapezius secondary; the lats do little.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-reverse-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-reverse-fly",
+          "text": "The reverse dumbbell fly primarily works your rotator cuff and rear deltoids, and secondarily your trapezius",
+          "where": "Which Muscles Does the Reverse Dumbbell Fly Work?"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "On a reverse fly machine, a neutral (palms-facing) grip gave more rear-delt and infraspinatus activity than a palms-down grip (machine study; applied to dumbbells by reasoning).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "schoenfeld2013"
+      ],
+      "quotes": [
+        {
+          "source": "schoenfeld2013",
+          "text": "The results of this study show that performing exercise on the reverse fly machine with a neutral hand position significantly increases activity of the posterior deltoid and infraspinatus muscles compared with a PRO hand position.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "In a musculoskeletal model, the bent-over dumbbell lateral raise loaded the rear delt more than the bent-over dumbbell row.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "zhu2025"
+      ],
+      "quotes": [
+        {
+          "source": "zhu2025",
+          "text": "However, both exercises produced significantly higher muscle forces compared to BDR (47.911 N, p < 0.001).",
+          "where": "abstract"
+        },
+        {
+          "source": "zhu2025",
+          "text": "Bent-over dumbbell lateral raise demonstrates high efficacy for posterior deltoid recruitment.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Chest-supported version: palms facing, elbows slightly bent, raise to about shoulder level with the dumbbells in line with or slightly in front of the ears; raising them behind the head shifts work to the lats.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-incline-reverse-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-reverse-fly",
+          "text": "In the raised position, the dumbbells should be aligned with, or slightly in front of your ears.",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-incline-reverse-fly",
+          "text": "If the dumbbells are raised to an end position behind the head rather than in line with the ears, the emphasis shifts off the shoulders and onto the latissimus dorsi (back).",
+          "where": "technique note"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, slow and controlled.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "sl-reverse-fly"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "sl-reverse-fly",
+          "text": "Keep the movement slow and controlled.",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Arms hang with elbows slightly bent and palms facing each other at the start.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-incline-reverse-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-reverse-fly",
+          "text": "Allow your arms to hang towards the floor with your elbows slightly flexed and palms facing each other.",
+          "where": "Step 1"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-reverse-fly",
+      "url": "https://www.strengthlog.com/reverse-dumbbell-flyes/",
+      "title": "How to Do Reverse Dumbbell Flyes: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "schoenfeld2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23302754/",
+      "title": "Effect of hand position on EMG activity of the posterior shoulder musculature during a horizontal abduction exercise.",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": 23302754,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "zhu2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41964926/",
+      "title": "Biomechanical evaluation of posterior deltoid exercises and kinematic trajectory modeling.",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": 41964926,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-incline-reverse-fly",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/34/incline-reverse-fly/",
+      "title": "ACE Exercise Library: Incline Reverse Fly",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "The move is the arms sweeping out to the sides to about body level (c3); the side view hides that sweep. The hinged trunk is foreshortened in front view (census note), so the hinge is carried by the posture zoom.",
+    "equipment": "Two dumbbells, floor line.",
+    "start": "Hinged forward at the hips, spine straight (c2), knees soft, arms hanging under the shoulders with a slight elbow bend, palms facing (c12, c1).",
+    "end": "Same hinge; arms raised out to the sides until about level with the body (c3), elbows still slightly bent (c2), shoulders down, shoulder blades together (c3).",
+    "checkpoints": [
+      {
+        "label": "Flat back",
+        "what": "Hinged at the hips, spine straight, core braced.",
+        "claim": "c2"
+      },
+      {
+        "label": "Soft elbows",
+        "what": "The same slight elbow bend from bottom to top.",
+        "claim": "c2"
+      },
+      {
+        "label": "Level arms",
+        "what": "Raise to about body level; no higher.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Shoulders shrug up toward the ears as the dumbbells rise.",
+      "why": "The top fault, swinging the torso to throw the weights (c4, c5), needs the side view; shrugging (c3) is the common fault the front view can show.",
+      "claim": "c3",
+      "drawable": false
+    },
+    "tells": [
+      {
+        "text": "Shoulder blades squeeze at the top",
+        "claim": "c3"
+      },
+      {
+        "text": "Torso stays still",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c10"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Neutral (palms facing each other), one dumbbell per hand.",
+    "width": "Arms hang under the shoulders.",
+    "thumb": "Wrapped around the handle (hold archetype).",
+    "handContact": "Handle across the middle of the palm, light grip.",
+    "wrist": "Neutral, in line with the forearm (hold archetype).",
+    "claims": [
+      "c12",
+      "c7"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Pick light dumbbells.",
+      "claim": "c4"
+    },
+    {
+      "step": "Feet about hip width.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hinge forward at the hips, spine straight, core braced.",
+      "claim": "c2"
+    },
+    {
+      "step": "Let the arms hang, elbows slightly bent, palms facing.",
+      "claim": "c12"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Keep the torso still; no swing from hips or lower back.",
+      "claim": "c4"
+    },
+    {
+      "point": "Same elbow bend all set.",
+      "claim": "c2"
+    },
+    {
+      "point": "Stop at about body level.",
+      "claim": "c3"
+    },
+    {
+      "point": "Shoulders down; squeeze the shoulder blades.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging the torso to throw the weights up.",
+      "fix": "Go lighter and move slowly.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Shrugging the shoulders.",
+      "fix": "Keep them down and squeeze the shoulder blades together.",
+      "claim": "c3"
+    },
+    {
+      "mistake": "Raising the arms past body level or behind the head.",
+      "fix": "Stop at about body level.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": "c6"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c6"
+      },
+      {
+        "muscleId": "rotator_cuff",
+        "claim": "c6"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c5"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Back of the shoulders",
+        "means": "Usually means the rear delts are working.",
+        "fix": null,
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Top of the shoulders and neck",
+        "means": "Usually means you are shrugging.",
+        "fix": "Keep the shoulders down.",
+        "claim": "c3",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually means swinging from the hips.",
+        "fix": "Go lighter and keep the torso still.",
+        "claim": "c5",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Swinging heavy dumbbells stresses the lower back and shoulders.",
+      "claim": "c5"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "rdfly-hinge",
+      "kind": "posture",
+      "right": "Hinged at the hips, spine straight, torso still.",
+      "wrong": "Rounded back, torso bobbing up each rep.",
+      "claim": "c2"
+    },
+    {
+      "key": "rdfly-grip",
+      "kind": "hand",
+      "right": "Palms facing, wrist straight, elbow slightly bent.",
+      "wrong": "Elbow bending more as the weight rises.",
+      "claim": "c7"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library primary rear_delts and secondary mid_back match (c6). Rotator cuff (c6) is text-only, so it is named in feel.secondary, not added."
+  },
+  "anchorSource": "sl-reverse-fly"
+}

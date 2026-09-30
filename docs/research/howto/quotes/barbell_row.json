@@ -1,0 +1,188 @@
+{
+  "id": "barbell_row",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-bent-over-row",
+      "text": "Grip a barbell with palms down so that the wrists, elbows, and shoulders are in a straight line.",
+      "status": "verbatim",
+      "closest": "Grip a barbell with palms down so that the wrists, elbows, and shoulders are in a straight line."
+    },
+    {
+      "claim": "c2",
+      "source": "sl-barbell-row",
+      "text": "Grip the bar with a double overhand grip. Try a grip that is slightly wider than shoulder-width apart. Your optimal grip width will be determined by your arm length and torso thickness",
+      "status": "verbatim",
+      "closest": "Grip the bar with a double overhand grip. Try a grip that is slightly wider than shoulder-width apart. Your optimal grip width will be determined by your arm length and torso thickness"
+    },
+    {
+      "claim": "c3",
+      "source": "ace-bent-over-row",
+      "text": "Lift the bar from the rack, bend forward at the hips, and keep the back straight with a slight bend in the knees.",
+      "status": "verbatim",
+      "closest": "Lift the bar from the rack, bend forward at the hips, and keep the back straight with a slight bend in the knees."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-barbell-row",
+      "text": "Aim to keep your back in a neutral position; neither flexed forward nor arched.",
+      "status": "verbatim",
+      "closest": "Aim to keep your back in a neutral position; neither flexed forward nor arched."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-bent-over-row",
+      "text": "Lower the bar towards the floor until the elbows are completely straight, and keep the back flat as the bar is pulled towards the belly button. Then slowly lower the bar to the starting position and repeat.",
+      "status": "verbatim",
+      "closest": "Lower the bar towards the floor until the elbows are completely straight, and keep the back flat as the bar is pulled towards the belly button. Then slowly lower the bar to the starting position and repeat."
+    },
+    {
+      "claim": "c6",
+      "source": "sl-barbell-row",
+      "text": "In barbell rows, you typically row the barbell toward your abdomen or low chest. If you row the barbell higher on your chest, the exercise starts to resemble barbell rear delt rows.",
+      "status": "verbatim",
+      "closest": "In barbell rows, you typically row the barbell toward your abdomen or low chest. If you row the barbell higher on your chest, the exercise starts to resemble barbell rear delt rows."
+    },
+    {
+      "claim": "c7",
+      "source": "sl-barbell-row",
+      "text": "The most common cause of swinging in the barbell row is that you are using too much weight. Try lowering the weight and performing the row with a more strict form.",
+      "status": "verbatim",
+      "closest": "The most common cause of swinging in the barbell row is that you are using too much weight. Try lowering the weight and performing the row with a more strict form."
+    },
+    {
+      "claim": "c8",
+      "source": "sl-barbell-row",
+      "text": "Your feet should be about shoulder-width apart, with your toes pointing forward or slightly out. Try to keep your weight evenly distributed under your feet during the exercise.",
+      "status": "verbatim",
+      "closest": "Your feet should be about shoulder-width apart, with your toes pointing forward or slightly out. Try to keep your weight evenly distributed under your feet during the exercise."
+    },
+    {
+      "claim": "c9",
+      "source": "sl-barbell-row",
+      "text": "In the bottom position, let your shoulder blades slide forward to a neutral or even slightly protracted (forward) position. As you pull the bar up, pull your shoulder blades back and together.",
+      "status": "verbatim",
+      "closest": "In the bottom position, let your shoulder blades slide forward to a neutral or even slightly protracted (forward) position. As you pull the bar up, pull your shoulder blades back and together."
+    },
+    {
+      "claim": "c10",
+      "source": "fenwick2009",
+      "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+      "status": "verbatim",
+      "closest": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load."
+    },
+    {
+      "claim": "c11",
+      "source": "saeterbakken2015",
+      "text": "In bilateral free-weight row, EMG activity in erector spinae was greater than bilateral machine- (+34%, P=0.004) and unilateral free-weight rows (+12%, P=0.016).",
+      "status": "verbatim",
+      "closest": "In bilateral free-weight row, EMG activity in erector spinae was greater than bilateral machine- (+34%, P=0.004) and unilateral free-weight rows (+12%, P=0.016)."
+    },
+    {
+      "claim": "c12",
+      "source": "sl-barbell-row",
+      "text": "Barbell rows work most of your major back muscles, primarily hitting your latissimus dorsi, trapezius, and posterior deltoids.",
+      "status": "verbatim",
+      "closest": "Barbell rows work most of your major back muscles, primarily hitting your latissimus dorsi, trapezius, and posterior deltoids."
+    },
+    {
+      "claim": "c12",
+      "source": "sl-barbell-row",
+      "text": "The secondary worked muscles are your biceps, lower back, forearm flexors, and rotator cuffs.",
+      "status": "verbatim",
+      "closest": "The secondary worked muscles are your biceps, lower back, forearm flexors, and rotator cuffs."
+    },
+    {
+      "claim": "c13",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c13",
+      "source": "ace-bent-over-row",
+      "text": "Then slowly lower the bar to the starting position and repeat.",
+      "status": "verbatim",
+      "closest": "Then slowly lower the bar to the starting position and repeat."
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c15",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c16",
+      "source": "baechle-grip",
+      "text": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Perform all grips with your thumbs around the bar."
+    },
+    {
+      "claim": "c17",
+      "source": "sl-barbell-row",
+      "text": "Don’t hesitate to use lifting straps if necessary. At least, if your purpose for doing this exercise is to build your back muscles and not to train your grip strength.",
+      "status": "verbatim",
+      "closest": "Don’t hesitate to use lifting straps if necessary. At least, if your purpose for doing this exercise is to build your back muscles and not to train your grip strength."
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "Call 999 or go to A&E if:",
+      "status": "verbatim",
+      "closest": "Call 999 or go to A&E if:"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "pain, tingling, weakness or numbness in both legs",
+      "status": "verbatim",
+      "closest": "pain, tingling, weakness or numbness in both legs"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "a loss of feeling around your genitals or anus",
+      "status": "verbatim",
+      "closest": "a loss of feeling around your genitals or anus"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "See a GP if:",
+      "status": "verbatim",
+      "closest": "See a GP if:"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "it does not improve after treating it at home for a few weeks",
+      "status": "verbatim",
+      "closest": "it does not improve after treating it at home for a few weeks"
+    },
+    {
+      "claim": "c19",
+      "source": "sl-barbell-row",
+      "text": "Inhale and pull the bar towards you.",
+      "status": "verbatim",
+      "closest": "Inhale and pull the bar towards you."
+    },
+    {
+      "claim": "c20",
+      "source": "sl-barbell-row",
+      "text": "This change in grip moves some of the work away from your back muscles and to your biceps. It should also be noted that this grip probably increases the risk of a biceps tear.",
+      "status": "verbatim",
+      "closest": "This change in grip moves some of the work away from your back muscles and to your biceps. It should also be noted that this grip probably increases the risk of a biceps tear."
+    }
+  ]
+}
