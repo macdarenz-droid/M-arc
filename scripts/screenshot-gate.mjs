@@ -6115,7 +6115,17 @@ for (const theme of ['silent-black', 'paper']) {
     }, [sel, which, at]);
   };
   const unplace = (page, sel) => page.evaluate(sel => { const e = document.querySelector(sel); if (e) { e.style.willChange = ''; e.style.position = ''; e.style.top = ''; const p = e.closest('.sheet-panel'); if (p) p.style.scrollBehavior = ''; } }, sel);
-  const shot = async (page, clip) => { await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); return page.screenshot({ clip, animations: 'disabled', caret: 'hide' }); };
+  /** A capture of `clip` once two in a row are identical (up to 6 tries): a frame still settling never reaches L3. */
+  const shot = async (page, clip) => {
+    let prev = null;
+    for (let i = 0; i < 6; i++) {
+      await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+      const b = await page.screenshot({ clip, animations: 'disabled', caret: 'hide' });
+      if (prev && prev.equals(b)) return b;
+      prev = b;
+    }
+    throw new Error(`the capture at ${JSON.stringify(clip)} never settled`);
+  };
   /** Records every Element.animate() call on a close-up panel (both pages start it from their open script), with the
    *  transform origin set just before, so the opening animation is read as started, whatever the timing. */
   const recordAnims = page => page.evaluate(() => {
