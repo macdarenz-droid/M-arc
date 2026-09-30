@@ -4741,8 +4741,9 @@ for (const theme of ['silent-black', 'paper']) {
   const L = nearest(56, 40).s;
   const pix = await (await browser.newContext()).newPage();
   // Every pixel that differs from the overlay background by more than 24/255 in a channel, mapped
-  // into the mark's units: how many there are, and how many lie off the path (more than the dot's
-  // radius plus 1.5 units for edges and the settle scale) or beyond `reach` along it (a stray cap).
+  // into the mark's units: how many there are, and how many lie farther than the dot's radius plus
+  // 1.5 units (edges, the settle scale) from the part of the path travelled so far, 0 to `reach`
+  // (+1.5). Distance to that part, not to the nearest leg: near a corner the next leg can be closer.
   const strayInk = (b64, bg, ctm, cssWidth, reach) => pix.evaluate(async ([b64, bg, ctm, cssWidth, reach, P]) => {
     const img = await new Promise(res => { const i = new Image(); i.onload = () => res(i); i.src = 'data:image/png;base64,' + b64; });
     const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
@@ -4756,19 +4757,20 @@ for (const theme of ['silent-black', 'paper']) {
       if (Math.max(Math.abs(d[k] - bg[0]), Math.abs(d[k + 1] - bg[1]), Math.abs(d[k + 2] - bg[2])) <= 24) continue;
       ink++;
       const m = new DOMPoint((x + 0.5) / ratio, (y + 0.5) / ratio).matrixTransform(inv);
-      let best = { d: Infinity, s: 0 }, acc = 0;
-      for (let j = 1; j < P.length; j++) {
+      let near = Infinity, acc = 0;
+      for (let j = 1; j < P.length && acc < reach + 1.5; j++) {
         const [ax, ay] = P[j - 1], [bx, by] = P[j], dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy);
-        const u = Math.max(0, Math.min(1, ((m.x - ax) * dx + (m.y - ay) * dy) / (len * len)));
-        const dd = Math.hypot(m.x - ax - u * dx, m.y - ay - u * dy);
-        if (dd < best.d) best = { d: dd, s: acc + u * len };
+        const umax = Math.min(1, (reach + 1.5 - acc) / len);
+        const u = Math.max(0, Math.min(umax, ((m.x - ax) * dx + (m.y - ay) * dy) / (len * len)));
+        near = Math.min(near, Math.hypot(m.x - ax - u * dx, m.y - ay - u * dy));
         acc += len;
       }
-      if (best.d > 3.1 + 1.5 || best.s > reach + 3.1 + 1.5) { stray++; if (!first) first = `(${m.x.toFixed(1)}, ${m.y.toFixed(1)})`; }
+      if (near > 3.1 + 1.5) { stray++; if (!first) first = `(${m.x.toFixed(1)}, ${m.y.toFixed(1)})`; }
     }
     return { ink, stray, first };
   }, [b64, bg, ctm, cssWidth, reach, P]);
-  const sample = page => page.evaluate(() => {
+  // Read two animation frames later, so the state is never behind the capture taken just before it.
+  const sample = page => page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => done((() => {
     const launch = document.getElementById('launch');
     const path = document.getElementById('launch-path');
     const dot = document.getElementById('launch-dot');
@@ -4778,7 +4780,7 @@ for (const theme of ['silent-black', 'paper']) {
     const c = new DOMPoint(r.x + r.width / 2, r.y + r.height / 2).matrixTransform(m.inverse());
     const bg = getComputedStyle(launch).backgroundColor.match(/\d+/g).map(Number);
     return { t: performance.now() - window.__marcLaunchT0, off: parseFloat(getComputedStyle(path).strokeDashoffset), dx: c.x, dy: c.y, ctm: [m.a, m.b, m.c, m.d, m.e, m.f], bg, booted: !!window.__bug34Ready, anims: document.getAnimations().filter(a => launch.contains(a.effect && a.effect.target)).length };
-  });
+  })())))));
   const open = async (theme, rate, extra) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: extra.os || 'no-preference' });
     await ctx.route(/\/assets\/index-[^/]*\.js$/, async r => { await new Promise(res => setTimeout(res, 1500)); await r.continue(); });
