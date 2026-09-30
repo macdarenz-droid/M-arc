@@ -1,0 +1,565 @@
+{
+  "id": "machine_crunch",
+  "libId": "lib_machine_crunch",
+  "name": "Machine Crunch",
+  "family": "Trunk flexion (crunch)",
+  "tier": "B",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "seat-back"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Before starting, set the seat to a comfortable height, adjust the machine to line up with your torso, and choose the weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-crunch",
+        "mo-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-crunch",
+          "text": "Adjust the seat to a comfortable height and the weight to the appropriate level before beginning.",
+          "where": "instructions"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "Adjust machine for proper alignment with torso.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Sit with the hips pressed against the back of the seat and the shins pushed against the padded roller, abs tight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-crunch",
+          "text": "Sitting with the hips pressed against the back of the seat, push the shins against the padded roller and tighten the abs.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Hold the handles in both hands (elbows bent about 90 degrees on some machines; on others the handles are overhead and keep the pads on the shoulders).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-crunch",
+        "mo-crunch",
+        "fb-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-crunch",
+          "text": "Grasp the handles in both hands, and pull down on them to lean forward.",
+          "where": "instructions"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "grasp the handles with elbows bent at 90 degrees.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "fb-crunch",
+          "text": "grabbing ahold of the handles overhead to place a pad on your shoulders.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Crunch forward by flexing (curling) the spine until the ribs come toward the pelvis, breathing out; then return slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-crunch",
+        "fb-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "mo-crunch",
+          "text": "Brace core and exhale as you crunch forward by flexing spine.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "Flex spine until ribs approach pelvis, then return until arms are extended but without full relaxation.",
+          "where": "Range of motion"
+        },
+        {
+          "source": "fb-crunch",
+          "text": "Flex the bottom of your ribcage into your belly button",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Return slowly and keep tension: don't let the weight stack come to rest between reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-crunch",
+        "mo-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-crunch",
+          "text": "Return slowly to the starting position.",
+          "where": "instructions"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "Maintain tension without letting weight stack rest.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Avoid excessive weight to prevent back strain; people with spinal conditions should get professional advice.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "mo-crunch",
+          "text": "Avoid excessive weight to prevent back strain",
+          "where": "Safety"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "Consult professional for spinal conditions",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Breathe out on the crunch and in on the return.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "mo-crunch",
+          "text": "Exhale during the crunch and inhale on the return.",
+          "where": "Breathing"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The abdominal muscles do the bending; the machine crunch targets the rectus abdominis.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-crunch",
+        "mo-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "sl-crunch",
+          "text": "Bend forward by contracting your abs.",
+          "where": "How to"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "Seated machine isolation exercise that targets the rectus abdominis",
+          "where": "About"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Measured on a seated crunch machine (Technogym, 10 RM): rectus abdominis 84% of max and rectus femoris (a hip flexor) 65%, versus 104% and 27% for an elastic-band Swiss-ball crunch; across both, the rectus abdominis and external obliques were the most active muscles.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "sundstrup-2012"
+      ],
+      "quotes": [
+        {
+          "source": "sundstrup-2012",
+          "text": "crunches on Swiss ball with elastic resistance showed higher activity of the rectus abdominis than crunches performed on the machine (104±3.8 vs 84±3.8% nEMG respectively, P<0.0001).",
+          "where": "abstract"
+        },
+        {
+          "source": "sundstrup-2012",
+          "text": "crunches performed on Swiss ball induced lower activity of the rectus femoris than crunches in training machine (27±3.7 vs 65±3.8% nEMG respectively, P<0.0001)",
+          "where": "abstract"
+        },
+        {
+          "source": "sundstrup-2012",
+          "text": "normalized EMG was highest in the rectus abdominis (P<0.01) and the external obliques (P<0.01).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The study authors say the machine's lower abdominal and higher hip-flexor activity warrants caution for people with lower back pain.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "sundstrup-2012"
+      ],
+      "quotes": [
+        {
+          "source": "sundstrup-2012",
+          "text": "the lower rectus abdominis activity and higher rectus femoris activity observed in machine warrant caution for individuals with lumbar pain.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "By reasoning from c4 and c9, not a measured fault rate: folding forward at the hips with a flat back, instead of curling the ribs toward the pelvis, shifts work to the hip flexors, which were already highly active on the machine.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-crunch",
+        "sundstrup-2012"
+      ],
+      "quotes": [
+        {
+          "source": "mo-crunch",
+          "text": "Flex spine until ribs approach pelvis",
+          "where": "Range of motion"
+        },
+        {
+          "source": "sundstrup-2012",
+          "text": "higher rectus femoris activity observed in machine",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Tempo: moderate speed, about 1-2 s each way, with a slow return.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009",
+        "ace-seated-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "ace-seated-crunch",
+          "text": "Return slowly to the starting position.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Spinal flexion is a sagittal-plane movement and reads only from the side (census: side). The drawn fault, hinging at the hips with a flat back (c11), also needs the side view.",
+    "equipment": "Seated crunch machine (composed, census R3): seat with back pad, padded shin roller, handles on a pivoting arm by the shoulders (c2, c3). Floor line.",
+    "start": "Seated upright, hips pressed against the back of the seat, shins against the roller (c2), hands on the handles (c3), abs tight (c2).",
+    "end": "Spine curled forward so the ribs come toward the pelvis (c4); hips still back in the seat (c2).",
+    "checkpoints": [
+      {
+        "label": "Hips back",
+        "what": "Hips stay pressed against the back of the seat.",
+        "claim": "c2"
+      },
+      {
+        "label": "Curl the spine",
+        "what": "Bend by curling the ribs toward the pelvis.",
+        "claim": "c4"
+      },
+      {
+        "label": "Shins on roller",
+        "what": "Shins pushed against the padded roller.",
+        "claim": "c2"
+      }
+    ],
+    "mistake": {
+      "what": "Hinging at the hips: the torso tips forward with a flat back instead of curling.",
+      "why": "The sources cue curling the spine; the machine already showed high hip-flexor activity (c9), and a flat-back hinge shifts more work to the hip flexors. No source ranks how common it is; this is reasoning (MECH/WEAK).",
+      "claim": "c11",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Ribs curl down toward hips",
+        "claim": "c4"
+      },
+      {
+        "text": "Hips stay back in the seat",
+        "claim": "c2"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 0,
+      "claim": "c12"
+    },
+    "variantLine": "Crunch machines differ: ACE's has a shin roller and handles you pull down (c2, c3); Fitbod's has overhead handles with pads on the shoulders (c3). Drawn: shin roller and handles by the shoulders. Claims c1, c4-c13 hold for both."
+  },
+  "grip": {
+    "type": "Hold the handles in both hands.",
+    "width": "Set by the machine.",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c3"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the seat to a comfortable height and choose the weight.",
+      "claim": "c1"
+    },
+    {
+      "step": "Sit with your hips pressed against the back of the seat.",
+      "claim": "c2"
+    },
+    {
+      "step": "Push your shins against the padded roller and tighten your abs.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hold the handles in both hands.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Hips stay back in the seat.",
+      "claim": "c2"
+    },
+    {
+      "point": "Curl the ribs toward the pelvis.",
+      "claim": "c4"
+    },
+    {
+      "point": "Return slowly; don't let the stack rest.",
+      "claim": "c5"
+    },
+    {
+      "point": "Breathe out on the crunch.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Using too much weight.",
+      "fix": "Lower the weight to protect your back.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Tipping forward from the hips with a flat back.",
+      "fix": "Curl your ribs toward your pelvis.",
+      "claim": "c11"
+    },
+    {
+      "mistake": "Letting the weight stack rest between reps.",
+      "fix": "Keep tension; return without letting the stack rest.",
+      "claim": "c5"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "abs",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "obliques",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c9"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c6"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the stomach",
+        "means": "The abs are doing the work.",
+        "fix": "",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the hips",
+        "means": "Usually means the hip flexors are taking over.",
+        "fix": "Curl your ribs toward your pelvis.",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back pain",
+        "means": "Usually means the weight is too heavy.",
+        "fix": "Stop the set; lower the weight next time.",
+        "claim": "c6",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Too much weight can strain the back.",
+      "claim": "c6"
+    },
+    {
+      "risk": "High hip-flexor work on the machine calls for caution with lower back pain.",
+      "claim": "c10"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "crunch-curl",
+      "kind": "posture",
+      "right": "Spine curled, ribs coming toward the pelvis.",
+      "wrong": "Back flat, torso tipping forward from the hips.",
+      "claim": "c11"
+    },
+    {
+      "key": "crunch-hips",
+      "kind": "posture",
+      "right": "Hips pressed against the back of the seat, shins on the roller.",
+      "wrong": "Hips sliding forward off the seat back.",
+      "claim": "c2"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "obliques",
+      "hip_flexors"
+    ],
+    "remove": [],
+    "why": "abs primary is sourced (c8, c9). obliques added as secondary: external obliques were among the most active muscles (c9, measured across both crunch types). hip_flexors added as secondary: rectus femoris reached 65% of max on the machine (c9, DATA)."
+  },
+  "anchorSource": "ace-seated-crunch",
+  "sources": [
+    {
+      "id": "ace-seated-crunch",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/291/seated-crunch/",
+      "title": "Seated Crunch (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "mo-crunch",
+      "url": "https://motra.com/exercises/abCrunchMachine",
+      "title": "Machine Ab Crunch: Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "fb-crunch",
+      "url": "https://fitbod.me/exercises/ab-crunch-machine",
+      "title": "Ab Crunch Machine: Form, Muscles Worked, Target Weight & Variations (Fitbod)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-crunch",
+      "url": "https://www.strengthlog.com/machine-crunch/",
+      "title": "How to Do Machine Crunch: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sundstrup-2012",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22893857/",
+      "title": "Swiss ball abdominal crunch with added elastic resistance is an effective alternative to training machines",
+      "kind": "peer-reviewed",
+      "year": 2012,
+      "pmid": 22893857,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ]
+}

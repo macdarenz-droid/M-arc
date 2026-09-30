@@ -1,0 +1,209 @@
+{
+  "id": "rear_delt_fly",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "fv-rev-pecdeck",
+      "quote": "Adjust the handles of the pec deck machine in the reverse fly setting.",
+      "status": "verbatim",
+      "closest": "Adjust the handles of the pec deck machine in the reverse fly setting."
+    },
+    {
+      "claim": "c1",
+      "source": "mo-rear-delt",
+      "quote": "Sit facing the machine with chest pressed against the pad and handles adjusted to shoulder height.",
+      "status": "verbatim",
+      "closest": "Sit facing the machine with chest pressed against the pad and handles adjusted to shoulder height."
+    },
+    {
+      "claim": "c2",
+      "source": "sl-rev-fly",
+      "quote": "Adjust the chest support and handles so that you can grip the handles at shoulder height and get a long range of motion.",
+      "status": "verbatim",
+      "closest": "Adjust the chest support and handles so that you can grip the handles at shoulder height and get a long range of motion."
+    },
+    {
+      "claim": "c2",
+      "source": "fv-rev-pecdeck",
+      "quote": "Extend your arms straight in front of you and grab the handles with an overhand or neutral grip at shoulder height.",
+      "status": "verbatim",
+      "closest": "Extend your arms straight in front of you and grab the handles with an overhand or neutral grip at shoulder height."
+    },
+    {
+      "claim": "c3",
+      "source": "fv-rev-pecdeck",
+      "quote": "Maintain a slight bend in your elbows throughout the movement for an optimal rear delt engagement. Your arms shouldn’t be extended straight. On the other hand, don’t bend your elbows too much while performing this exercise.",
+      "status": "verbatim",
+      "closest": "Maintain a slight bend in your elbows throughout the movement for an optimal rear delt engagement. Your arms shouldn’t be extended straight. On the other hand, don’t bend your elbows too much while performing this exercise."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-rear-delt",
+      "quote": "Grasp the handles with a neutral or overhand grip, keeping elbows slightly bent.",
+      "status": "verbatim",
+      "closest": "Grasp the handles with a neutral or overhand grip, keeping elbows slightly bent."
+    },
+    {
+      "claim": "c4",
+      "source": "mo-rear-delt",
+      "quote": "Exhale and pull the handles back in a wide arc until arms align with shoulders.",
+      "status": "verbatim",
+      "closest": "Exhale and pull the handles back in a wide arc until arms align with shoulders."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-rev-fly",
+      "quote": "With just a slight bend in the arms, pull the handles backward by bringing your arms out to the sides.",
+      "status": "verbatim",
+      "closest": "With just a slight bend in the arms, pull the handles backward by bringing your arms out to the sides."
+    },
+    {
+      "claim": "c5",
+      "source": "mo-rear-delt",
+      "quote": "Pull until arms are inline with shoulders; avoid hyperextending past the torso.",
+      "status": "verbatim",
+      "closest": "Pull until arms are inline with shoulders; avoid hyperextending past the torso."
+    },
+    {
+      "claim": "c5",
+      "source": "fv-rev-pecdeck",
+      "quote": "Your elbows should be behind your torso at the top.",
+      "status": "verbatim",
+      "closest": "Your elbows should be behind your torso at the top."
+    },
+    {
+      "claim": "c5",
+      "source": "fv-rev-pecdeck",
+      "quote": "if you feel greater activation in your other upper back muscles than the rear delts, you should limit your range of motion.",
+      "status": "verbatim",
+      "closest": "if you feel greater activation in your other upper back muscles than the rear delts, you should limit your range of motion."
+    },
+    {
+      "claim": "c6",
+      "source": "mo-rear-delt",
+      "quote": "Keep your chest in contact with the pad throughout the movement.",
+      "status": "verbatim",
+      "closest": "Keep your chest in contact with the pad throughout the movement."
+    },
+    {
+      "claim": "c6",
+      "source": "fv-rev-pecdeck",
+      "quote": "If we had to point out the biggest mistake people make while doing the machine reverse fly, it would be their use of momentum.",
+      "status": "verbatim",
+      "closest": "If we had to point out the biggest mistake people make while doing the machine reverse fly, it would be their use of momentum."
+    },
+    {
+      "claim": "c6",
+      "source": "fv-rev-pecdeck",
+      "quote": "If you have to pull your chest off the pad at any point during the set, it is a sign you are cheating.",
+      "status": "verbatim",
+      "closest": "If you have to pull your chest off the pad at any point during the set, it is a sign you are cheating."
+    },
+    {
+      "claim": "c7",
+      "source": "fv-rev-pecdeck",
+      "quote": "Maintain an upright torso for the entirety of the set. A hunched back will take tension off your rear delts.",
+      "status": "verbatim",
+      "closest": "Maintain an upright torso for the entirety of the set. A hunched back will take tension off your rear delts."
+    },
+    {
+      "claim": "c7",
+      "source": "fv-rev-pecdeck",
+      "quote": "Keep your neck in a neutral position and look straight ahead.",
+      "status": "verbatim",
+      "closest": "Keep your neck in a neutral position and look straight ahead."
+    },
+    {
+      "claim": "c8",
+      "source": "mo-rear-delt",
+      "quote": "Avoid going too heavy to prevent trap dominance",
+      "status": "verbatim",
+      "closest": "Avoid going too heavy to prevent trap dominance"
+    },
+    {
+      "claim": "c8",
+      "source": "fv-rev-pecdeck",
+      "quote": "If you feel a scapular retraction, you are probably going too heavy.",
+      "status": "verbatim",
+      "closest": "If you feel a scapular retraction, you are probably going too heavy."
+    },
+    {
+      "claim": "c9",
+      "source": "mo-rear-delt",
+      "quote": "Stop if you feel sharp pain in the front shoulder",
+      "status": "verbatim",
+      "closest": "Stop if you feel sharp pain in the front shoulder"
+    },
+    {
+      "claim": "c10",
+      "source": "schoenfeld-2013",
+      "quote": "The results of this study show that performing exercise on the reverse fly machine with a neutral hand position significantly increases activity of the posterior deltoid and infraspinatus muscles compared with a PRO hand position.",
+      "status": "verbatim",
+      "closest": "The results of this study show that performing exercise on the reverse fly machine with a neutral hand position significantly increases activity of the posterior deltoid and infraspinatus muscles compared with a PRO hand position."
+    },
+    {
+      "claim": "c11",
+      "source": "schoenfeld-2013",
+      "quote": "The reverse fly machine is a popular exercise for strengthening the horizontal shoulder abductors including the posterior deltoid.",
+      "status": "verbatim",
+      "closest": "The reverse fly machine is a popular exercise for strengthening the horizontal shoulder abductors including the posterior deltoid."
+    },
+    {
+      "claim": "c11",
+      "source": "fv-rev-pecdeck",
+      "quote": "The reverse pec deck fly is an isolation exercise that primarily focuses on the posterior deltoids .",
+      "status": "verbatim",
+      "closest": "The reverse pec deck fly is an isolation exercise that primarily focuses on the posterior deltoids ."
+    },
+    {
+      "claim": "c12",
+      "source": "fv-rev-pecdeck",
+      "quote": "Because the machine reverse fly involves pulling your elbows behind your torso, you’ll experience rhomboids, teres major, infraspinatus, and middle trapezius stimulation.",
+      "status": "verbatim",
+      "closest": "Because the machine reverse fly involves pulling your elbows behind your torso, you’ll experience rhomboids, teres major, infraspinatus, and middle trapezius stimulation."
+    },
+    {
+      "claim": "c13",
+      "source": "fv-rev-pecdeck",
+      "quote": "Do not let the weight stack at the bottom. It will ensure that there is constant tension on your rear delts throughout the set.",
+      "status": "verbatim",
+      "closest": "Do not let the weight stack at the bottom. It will ensure that there is constant tension on your rear delts throughout the set."
+    },
+    {
+      "claim": "c14",
+      "source": "acsm-2009",
+      "quote": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c14",
+      "source": "fv-rev-pecdeck",
+      "quote": "Pause and contract your rear delts for a second before slowly returning to the starting position.",
+      "status": "verbatim",
+      "closest": "Pause and contract your rear delts for a second before slowly returning to the starting position."
+    },
+    {
+      "claim": "c14",
+      "source": "fv-rev-pecdeck",
+      "quote": "you’ll spend two seconds on the concentric motion, two seconds of contraction at the top, four seconds on the eccentric motion, and no rest at the bottom.",
+      "status": "verbatim",
+      "closest": "you’ll spend two seconds on the concentric motion, two seconds of contraction at the top, four seconds on the eccentric motion, and no rest at the bottom."
+    },
+    {
+      "claim": "c15",
+      "source": "mo-rear-delt",
+      "quote": "Exhale as you pull the handles back; inhale as you return to the start.",
+      "status": "verbatim",
+      "closest": "Exhale as you pull the handles back; inhale as you return to the start."
+    },
+    {
+      "claim": "c16",
+      "source": "acsm-2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    }
+  ]
+}

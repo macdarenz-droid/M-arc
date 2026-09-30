@@ -1,0 +1,181 @@
+{
+  "id": "machine_crunch",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-seated-crunch",
+      "quote": "Adjust the seat to a comfortable height and the weight to the appropriate level before beginning.",
+      "status": "verbatim",
+      "closest": "Adjust the seat to a comfortable height and the weight to the appropriate level before beginning."
+    },
+    {
+      "claim": "c1",
+      "source": "mo-crunch",
+      "quote": "Adjust machine for proper alignment with torso.",
+      "status": "verbatim",
+      "closest": "Adjust machine for proper alignment with torso."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-seated-crunch",
+      "quote": "Sitting with the hips pressed against the back of the seat, push the shins against the padded roller and tighten the abs.",
+      "status": "verbatim",
+      "closest": "Sitting with the hips pressed against the back of the seat, push the shins against the padded roller and tighten the abs."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-seated-crunch",
+      "quote": "Grasp the handles in both hands, and pull down on them to lean forward.",
+      "status": "verbatim",
+      "closest": "Grasp the handles in both hands, and pull down on them to lean forward."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-crunch",
+      "quote": "grasp the handles with elbows bent at 90 degrees.",
+      "status": "verbatim",
+      "closest": "grasp the handles with elbows bent at 90 degrees."
+    },
+    {
+      "claim": "c3",
+      "source": "fb-crunch",
+      "quote": "grabbing ahold of the handles overhead to place a pad on your shoulders.",
+      "status": "verbatim",
+      "closest": "grabbing ahold of the handles overhead to place a pad on your shoulders."
+    },
+    {
+      "claim": "c4",
+      "source": "mo-crunch",
+      "quote": "Brace core and exhale as you crunch forward by flexing spine.",
+      "status": "verbatim",
+      "closest": "Brace core and exhale as you crunch forward by flexing spine."
+    },
+    {
+      "claim": "c4",
+      "source": "mo-crunch",
+      "quote": "Flex spine until ribs approach pelvis, then return until arms are extended but without full relaxation.",
+      "status": "verbatim",
+      "closest": "Flex spine until ribs approach pelvis, then return until arms are extended but without full relaxation."
+    },
+    {
+      "claim": "c4",
+      "source": "fb-crunch",
+      "quote": "Flex the bottom of your ribcage into your belly button",
+      "status": "verbatim",
+      "closest": "Flex the bottom of your ribcage into your belly button"
+    },
+    {
+      "claim": "c5",
+      "source": "ace-seated-crunch",
+      "quote": "Return slowly to the starting position.",
+      "status": "verbatim",
+      "closest": "Return slowly to the starting position."
+    },
+    {
+      "claim": "c5",
+      "source": "mo-crunch",
+      "quote": "Maintain tension without letting weight stack rest.",
+      "status": "verbatim",
+      "closest": "Maintain tension without letting weight stack rest."
+    },
+    {
+      "claim": "c6",
+      "source": "mo-crunch",
+      "quote": "Avoid excessive weight to prevent back strain",
+      "status": "verbatim",
+      "closest": "Avoid excessive weight to prevent back strain"
+    },
+    {
+      "claim": "c6",
+      "source": "mo-crunch",
+      "quote": "Consult professional for spinal conditions",
+      "status": "verbatim",
+      "closest": "Consult professional for spinal conditions"
+    },
+    {
+      "claim": "c7",
+      "source": "mo-crunch",
+      "quote": "Exhale during the crunch and inhale on the return.",
+      "status": "verbatim",
+      "closest": "Exhale during the crunch and inhale on the return."
+    },
+    {
+      "claim": "c8",
+      "source": "sl-crunch",
+      "quote": "Bend forward by contracting your abs.",
+      "status": "verbatim",
+      "closest": "Bend forward by contracting your abs."
+    },
+    {
+      "claim": "c8",
+      "source": "mo-crunch",
+      "quote": "Seated machine isolation exercise that targets the rectus abdominis",
+      "status": "verbatim",
+      "closest": "Seated machine isolation exercise that targets the rectus abdominis"
+    },
+    {
+      "claim": "c9",
+      "source": "sundstrup-2012",
+      "quote": "crunches on Swiss ball with elastic resistance showed higher activity of the rectus abdominis than crunches performed on the machine (104±3.8 vs 84±3.8% nEMG respectively, P<0.0001).",
+      "status": "verbatim",
+      "closest": "crunches on Swiss ball with elastic resistance showed higher activity of the rectus abdominis than crunches performed on the machine (104±3.8 vs 84±3.8% nEMG respectively, P<0.0001)."
+    },
+    {
+      "claim": "c9",
+      "source": "sundstrup-2012",
+      "quote": "crunches performed on Swiss ball induced lower activity of the rectus femoris than crunches in training machine (27±3.7 vs 65±3.8% nEMG respectively, P<0.0001)",
+      "status": "verbatim",
+      "closest": "crunches performed on Swiss ball induced lower activity of the rectus femoris than crunches in training machine (27±3.7 vs 65±3.8% nEMG respectively, P<0.0001)"
+    },
+    {
+      "claim": "c9",
+      "source": "sundstrup-2012",
+      "quote": "normalized EMG was highest in the rectus abdominis (P<0.01) and the external obliques (P<0.01).",
+      "status": "verbatim",
+      "closest": "normalized EMG was highest in the rectus abdominis (P<0.01) and the external obliques (P<0.01)."
+    },
+    {
+      "claim": "c10",
+      "source": "sundstrup-2012",
+      "quote": "the lower rectus abdominis activity and higher rectus femoris activity observed in machine warrant caution for individuals with lumbar pain.",
+      "status": "verbatim",
+      "closest": "the lower rectus abdominis activity and higher rectus femoris activity observed in machine warrant caution for individuals with lumbar pain."
+    },
+    {
+      "claim": "c11",
+      "source": "mo-crunch",
+      "quote": "Flex spine until ribs approach pelvis",
+      "status": "verbatim",
+      "closest": "Flex spine until ribs approach pelvis"
+    },
+    {
+      "claim": "c11",
+      "source": "sundstrup-2012",
+      "quote": "higher rectus femoris activity observed in machine",
+      "status": "verbatim",
+      "closest": "higher rectus femoris activity observed in machine"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm-2009",
+      "quote": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c12",
+      "source": "ace-seated-crunch",
+      "quote": "Return slowly to the starting position.",
+      "status": "verbatim",
+      "closest": "Return slowly to the starting position."
+    },
+    {
+      "claim": "c13",
+      "source": "acsm-2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    }
+  ]
+}

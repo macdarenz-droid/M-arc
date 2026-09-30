@@ -1,0 +1,601 @@
+{
+  "id": "machine_lateral_raise",
+  "libId": "lib_machine_lateral_raise",
+  "name": "Machine Lateral Raise",
+  "family": "FSEAT",
+  "tier": "C",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "seat-back"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the seat so the shoulders line up with the machine's pivot points (about level with the handles).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-lat-raise",
+        "vg-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-lat-raise",
+          "text": "Adjust seat height so shoulders align with machine's pivot point.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "vg-lat-raise",
+          "text": "Adjust the seat height so that your shoulders are level with the handles.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Sit with the back against the pad and the feet flat on the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-lat-raise",
+        "vg-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-lat-raise",
+          "text": "Sit with back against pad, place arms on pads with elbows slightly bent and feet flat on floor.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "vg-lat-raise",
+          "text": "Keep your feet flat on the floor, shoulder-width apart.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Place the arms on the pads, which rest against the arm just above the elbows, and hold the handles.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-raise",
+        "laf-lat-raise",
+        "sl-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-raise",
+          "text": "the pads resting just above the elbows.",
+          "where": "instructions"
+        },
+        {
+          "source": "laf-lat-raise",
+          "text": "Position your forearms under the pads and grip the handles with each hand.",
+          "where": "Step 2"
+        },
+        {
+          "source": "sl-lat-raise",
+          "text": "Adjust the machine so that the pads are leaning against your elbows.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Raise the arms out to the sides by pressing out through the elbows, leading with the elbows.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-raise",
+        "mo-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-raise",
+          "text": "lift the pads upward by pressing out through the elbows and raising the upper arms.",
+          "where": "instructions"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Exhale and raise arms outward to sides, leading with elbows.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lift until the upper arms are horizontal, with the elbows level with the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-lat-raise",
+        "laf-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "sl-lat-raise",
+          "text": "Lift your arms out to your sides, until your upper arms are horizontal.",
+          "where": "How to"
+        },
+        {
+          "source": "laf-lat-raise",
+          "text": "Raise your arms out and away from your sides until your elbows are even with your shoulders, pause, and then reverse the motion.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Don't shrug the shoulders up; excessive shrugging lets the trapezius take over.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-lat-raise",
+          "text": "raise to parallel with floor, avoiding shoulder shrug or overextension.",
+          "where": "Range of motion"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Avoid excessive shrugging to prevent trap dominance",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "It is easy to pick a weight that is too heavy; err on the lighter side. If you can't raise the elbows to shoulder height, lower the weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-lat-raise",
+        "laf-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "sl-lat-raise",
+          "text": "This is an exercise where it is easy to pick a weight that is too heavy. Rather err on the lighter side, and strive for a strict form where you focus on getting good contact with your delts.",
+          "where": "Tip"
+        },
+        {
+          "source": "laf-lat-raise",
+          "text": "If you can not raise your arms so that your elbows are even with your shoulders lower the weight.",
+          "where": "Tip"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Avoid momentum or swinging the body to finish a rep: it makes the exercise less effective and can lead to injury.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "vg-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "vg-lat-raise",
+          "text": "Avoid using momentum or swinging your body to complete the exercise, as this reduces the effectiveness and can lead to injury.",
+          "where": "Tips"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Lower the arms slowly with control, stopping just before the weight stack rests.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "laf-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "laf-lat-raise",
+          "text": "Stop just before the weight stack rests in the original position.",
+          "where": "Step 4"
+        },
+        {
+          "source": "laf-lat-raise",
+          "text": "Keep control of the weight as you lower your arms down.",
+          "where": "Tip"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Breathe out as the arms lift and in as they lower.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-lat-raise",
+          "text": "Inhale during lowering phase; exhale as you lift and squeeze at top.",
+          "where": "Breathing"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The machine lateral raise targets the middle (side) deltoid; across studies, shoulder abduction exercises gave the highest middle deltoid activation (review of mostly free-weight and cable studies).",
+      "tags": [
+        "DATA",
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-lat-raise",
+        "rabello-2024"
+      ],
+      "quotes": [
+        {
+          "source": "mo-lat-raise",
+          "text": "Machine lateral raise isolates medial deltoids",
+          "where": "About"
+        },
+        {
+          "source": "rabello-2024",
+          "text": "for middle deltoid, abductions and horizontal abductions presented the greatest activation",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The trapezius may also work as a secondary muscle.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "vg-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "vg-lat-raise",
+          "text": "While the workout may also engage secondary muscles, such as the trapezius and deltoids, its main focus is on the shoulders.",
+          "where": "Overview"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Tempo: moderate speed, about 1-2 s each way, with a brief pause at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009",
+        "mo-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Pause briefly at top to squeeze deltoids.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "On ACE's version you sit facing the machine and keep the elbows bent at 90 degrees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-raise",
+          "text": "Sit facing the machine with the feet out in front and arms slightly bent and the pads resting just above the elbows. Keeping the arms bent at 90 degrees,",
+          "where": "instructions"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "The arms rise sideways in the frontal plane (c4, c5), which reads only from the front (census: front). The drawn fault, shrugging (c6), also shows from the front.",
+    "equipment": "Seated lateral raise machine (composed, census R3): seat, back pad, two arm pads on levers pivoting at shoulder height, handles (c1-c3). Floor line.",
+    "start": "Seated, back on the pad, feet flat (c2); arms at the sides, pads resting just above the elbows, hands on the handles (c3); shoulders level with the pivots (c1).",
+    "end": "Upper arms horizontal, elbows level with the shoulders (c5); shoulders down, not shrugged (c6); back still on the pad (c2).",
+    "checkpoints": [
+      {
+        "label": "Shoulders at pivot",
+        "what": "Seat set so the shoulders line up with the machine's pivots.",
+        "claim": "c1"
+      },
+      {
+        "label": "Lead with elbows",
+        "what": "Press out through the elbows into the pads.",
+        "claim": "c4"
+      },
+      {
+        "label": "Elbows shoulder-high",
+        "what": "Stop when the upper arms are horizontal.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Shrugging: the shoulders hike up toward the ears as the arms rise.",
+      "why": "Motra warns that excessive shrugging lets the trapezius take over. No source ranks how common it is; momentum (c8) is the other named fault but can't be drawn in a still picture.",
+      "claim": "c6",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Shoulders stay down, away from ears",
+        "claim": "c6"
+      },
+      {
+        "text": "Elbows reach shoulder height",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c13"
+    },
+    "variantLine": "Drawn: the back-to-pad machine (Motra, Virtuagym, c1, c2). ACE's version faces the machine with the elbows bent 90 degrees (c15). Claims c3-c14 hold for both."
+  },
+  "grip": {
+    "type": "Hold the handles; the pads rest on the arms just above the elbows.",
+    "width": "Set by the machine arms.",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c3",
+      "c4"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the seat so your shoulders line up with the machine's pivots.",
+      "claim": "c1"
+    },
+    {
+      "step": "Sit with your back against the pad and feet flat on the floor.",
+      "claim": "c2"
+    },
+    {
+      "step": "Put your arms on the pads, just above the elbows, and hold the handles.",
+      "claim": "c3"
+    },
+    {
+      "step": "Pick a lighter weight than you think.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back stays on the pad, feet flat.",
+      "claim": "c2"
+    },
+    {
+      "point": "Lead with the elbows.",
+      "claim": "c4"
+    },
+    {
+      "point": "Stop when the upper arms are horizontal.",
+      "claim": "c5"
+    },
+    {
+      "point": "Shoulders stay down; don't shrug.",
+      "claim": "c6"
+    },
+    {
+      "point": "Lower slowly; stop before the stack rests.",
+      "claim": "c9"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging the body to get the weight up.",
+      "fix": "Lower the weight and lift without momentum.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Shrugging the shoulders as the arms rise.",
+      "fix": "Keep your shoulders down; go lighter if needed.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Weight too heavy to get the elbows to shoulder height.",
+      "fix": "Lower the weight.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "side_delts",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c12"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c6"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Sides of the shoulders",
+        "means": "The side delts are doing the work.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Tops of the shoulders and neck",
+        "means": "Usually means you are shrugging and the traps are taking over.",
+        "fix": "Keep your shoulders down; go lighter.",
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Body rocking in the seat",
+        "means": "Usually means the weight is too heavy.",
+        "fix": "Lower the weight.",
+        "claim": "c8",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Swinging the body to finish a rep can lead to injury.",
+      "claim": "c8"
+    },
+    {
+      "risk": "It is easy to choose a weight that is too heavy.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [],
+  "zooms": [
+    {
+      "key": "latm-shrug",
+      "kind": "posture",
+      "right": "Shoulders down, neck long, elbows at shoulder height.",
+      "wrong": "Shoulders hiked up toward the ears.",
+      "claim": "c6"
+    },
+    {
+      "key": "latm-pivot",
+      "kind": "posture",
+      "right": "Shoulder lined up with the machine's pivot.",
+      "wrong": "Seat too low or high, shoulder far from the pivot.",
+      "claim": "c1"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "side_delts primary is sourced (c11). upper_traps secondary matches exercises.json but rests only on a coach page (c12, WEAK); kept, flagged weak, and also listed under watch because shrugging makes the traps take over (c6)."
+  },
+  "anchorSource": "ace-lat-raise",
+  "sources": [
+    {
+      "id": "mo-lat-raise",
+      "url": "https://motra.com/exercises/machineLateralRaise",
+      "title": "Machine Lateral Raise: Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "vg-lat-raise",
+      "url": "https://exercises.virtuagym.com/exercise/lateral-raise-machine/",
+      "title": "Lateral Raise Machine Video Exercise Guide (Virtuagym)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-lat-raise",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/295/lateral-shoulder-raise/",
+      "title": "Lateral Shoulder Raise (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "laf-lat-raise",
+      "url": "https://blog.lafitness.com/2016/03/31/how-to-use-a-lateral-raise-machine/",
+      "title": "How to use The Lateral Raise Machine (LA Fitness, Living Healthy blog)",
+      "kind": "coach",
+      "year": 2016,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-lat-raise",
+      "url": "https://www.strengthlog.com/machine-lateral-raise/",
+      "title": "How to Do Machine Lateral Raise: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "rabello-2024",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39593452/",
+      "title": "Activation of the three deltoid muscle portions during common strengthening exercises: A systematic review",
+      "kind": "peer-reviewed",
+      "year": 2024,
+      "pmid": 39593452,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ]
+}
