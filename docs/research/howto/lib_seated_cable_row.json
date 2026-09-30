@@ -1,0 +1,34 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ab808bd86f5daad04e588cbfa2059576a06603c8cc35c771530135e0aeefeea7
+{
+  "id": "lib_seated_cable_row",
+  "rev": 1,
+  "research": {
+    "card": "grip/research/seated_cable_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "deabreu2023",
+    "padovan2025grip",
+    "padovan2025scap",
+    "difonza2026",
+    "lehman2004",
+    "fujita2020",
+    "dosanjos2024",
+    "saeterbakken2015",
+    "fenwick2009",
+    "callaghan2001",
+    "cronin2007",
+    "odriscoll1992",
+    "ronai2019",
+    "ace-seated-row",
+    "nsca-low-row",
+    "unmc-cable-row",
+    "baechle-earle",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "wrist",
+    "shoulder"
+  ]
+}

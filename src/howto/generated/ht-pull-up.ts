@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=3b85310687ae043c928246d7b0bf72feb0c8b3a3e68dab9fbd1dd28a1d69189c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_pull_up",
   name: "Pull-up",
-  hashes: { inputsSha256: "3b85310687ae043c928246d7b0bf72feb0c8b3a3e68dab9fbd1dd28a1d69189c", golden: "0f6f2a49b37027a1555b18b58145a32d3052bac9f144ba5eeab80ca247160231" },
+  hashes: { inputsSha256: "d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27", golden: "0f6f2a49b37027a1555b18b58145a32d3052bac9f144ba5eeab80ca247160231" },
   plate: {
     view: "side",
     normal: {
@@ -24,5 +24,470 @@ export default {
     tempo: "<div class=\"tempo\" role=\"img\" aria-label=\"Tempo: pull 1 second, hold 0.5 seconds, lower 2 seconds, rest 0.5 seconds\"><div class=\"tempo-seg move\" style=\"flex:1 1 0\"><i></i><div class=\"tempo-label\"><b>Pull</b><span>1 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Hold</b><span>0.5 s</span></div></div><div class=\"tempo-seg move\" style=\"flex:2 1 0\"><i></i><div class=\"tempo-label\"><b>Lower</b><span>2 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Rest</b><span>0.5 s</span></div></div></div>",
     alt: "Pull-up, side view. Overhand grip just wider than the shoulders. From a straight-arm hang under a bar, the body rises until the chin clears the bar, elbows driven down.",
     mistakeAlt: "Pull-up: the common mistake, drawn dashed in the mistake colour over the correct end position.",
+  },
+  rev: 1,
+  handling: {
+    "archetype": "hang",
+    "orientation": "pronated",
+    "handle": "bar-32",
+    "loadAxis": "across",
+    "overBody": false,
+    "width": {
+      "text": "Hands just outside your shoulders, about 1.5 times shoulder width. Halfway up, seen from the front, your forearms are near vertical.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA",
+          "MECH"
+        ],
+        "sources": [
+          "catalyst-pullup",
+          "snarr2017",
+          "prinold2016",
+          "urbanczyk2020",
+          "difonza2026"
+        ],
+        "note": "Width data is thin and mixed: Urbanczyk 2020 is modelling only, Di Fonza 2026 abstract only. The default rests on shoulder safety (Prinold and Bull 2016, mechanism) and coach consensus."
+      }
+    },
+    "thumb": {
+      "mode": "wrapped",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "baechle-earle",
+          "catalyst-pullup"
+        ],
+        "note": "No study has measured thumb position on a pull-up. Thumbless, hook and gymnastics false grip are shown on the thumb page as information only (C4)."
+      }
+    },
+    "contact": "finger-base",
+    "wrist": {
+      "ext": [
+        0,
+        35
+      ],
+      "dev": [
+        -10,
+        10
+      ],
+      "limitText": "Bar sliding to your fingertips? End the set.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "odriscoll1992",
+          "rogue-false-grip"
+        ],
+        "note": "O'Driscoll 1992: self-chosen grip about 35 degrees back, 10 to 15 degrees away from it weakens grip. Both limits are coaching consensus; no study has set wrist limits in a hang."
+      }
+    },
+    "pose": {
+      "view": "radial",
+      "forearm": 181,
+      "wrist": {
+        "ext": 15,
+        "dev": 0
+      },
+      "contactAt": 1,
+      "fingers": {
+        "curl": 1
+      },
+      "thumb": "wrapped",
+      "squeeze": "firm",
+      "handle": {
+        "profile": "bar-32",
+        "axis": "across"
+      },
+      "load": {
+        "kind": "gravity"
+      }
+    },
+    "faults": [
+      {
+        "key": "fingertip-slip",
+        "label": "Slipping out",
+        "pose": {
+          "wrist": {
+            "ext": 50,
+            "dev": 0
+          },
+          "contactAt": 1.45,
+          "fingers": {
+            "curl": 1,
+            "open": 0.45
+          },
+          "thumb": "over",
+          "forearm": 170.6
+        },
+        "markers": [
+          "slip-arrow",
+          "lever-arc"
+        ],
+        "alt": "Bar slid out to the fingertips, fingers peeling open, thumb loose on top. The hand hinges far back. The grip is about to fail."
+      },
+      {
+        "key": "palm-deep",
+        "label": "Deep in palm",
+        "pose": {
+          "contactAt": 0.3,
+          "thumb": "wrapped",
+          "forearm": 182.9
+        },
+        "markers": [
+          "skin-ridge"
+        ],
+        "fingerBase": true,
+        "alt": "Bar jammed deep in the middle of the palm, below the finger base. The skin at the finger base bunches into a pinching ridge, where calluses tear."
+      }
+    ],
+    "gripLine": "Hook the bar where your fingers start, like carrying a bag. Wrap your thumb: you hang from the bar.",
+    "cue": "Hook it, then wrap your thumb."
+  },
+  contacts: [
+    "hang-support"
+  ],
+  setup: [
+    {
+      "kind": "safety",
+      "text": "Bar fixed and dry? Chalk sweaty hands.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "WEAK"
+        ],
+        "sources": [
+          "catalyst-pullup",
+          "bullbar-calluses"
+        ]
+      }
+    },
+    {
+      "kind": "load",
+      "text": "Can't do a few clean reps? Use a band or assisted machine.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH"
+        ],
+        "sources": [
+          "nasm-chinup",
+          "prinold2016"
+        ],
+        "note": "'A few clean reps' as the threshold is consensus. Prinold and Bull suggest assisted pull-ups for weaker people."
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Hands just outside your shoulders, palms away.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH"
+        ],
+        "sources": [
+          "catalyst-pullup",
+          "prinold2016"
+        ]
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Hang still, legs together.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "catalyst-pullup",
+          "nasm-chinup"
+        ]
+      }
+    },
+    {
+      "kind": "brace",
+      "text": "Arms straight, shoulders down. Then pull.",
+      "zoom": "shoulders",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "catalyst-scap",
+          "nasm-chinup"
+        ]
+      }
+    }
+  ],
+  posture: [
+    {
+      "key": "width",
+      "label": "Grip width",
+      "detail": "Overhand grip, forearms close to vertical halfway up, when the elbows reach shoulder height. Elbows point down and a little forward, in line with the forearms.",
+      "anchor": {
+        "at": "grip.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH"
+        ],
+        "sources": [
+          "catalyst-pullup",
+          "prinold2016"
+        ],
+        "note": "Front view: text checkpoint. The plate is a side view, where width does not show (5.2)."
+      }
+    },
+    {
+      "key": "hang",
+      "label": "Active hang",
+      "detail": "Arms fully straight, shoulder blades pulled slightly down. A clear gap between ears and shoulders.",
+      "anchor": {
+        "at": "shoulderTop.r",
+        "pose": "start"
+      },
+      "zoom": "shoulders",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH"
+        ],
+        "sources": [
+          "catalyst-scap",
+          "prinold2016"
+        ]
+      }
+    },
+    {
+      "key": "still",
+      "label": "Body still",
+      "detail": "Legs together and a little in front, ribs down, glutes lightly squeezed. A gentle straight line from shoulders to feet. No swinging and no deep arch in the lower back.",
+      "anchor": {
+        "at": "hip.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nasm-chinup",
+          "catalyst-pullup"
+        ],
+        "note": "Shown by the plate Mistake layer (kick and swing), not a zoom."
+      }
+    },
+    {
+      "key": "elbows",
+      "label": "Elbows down",
+      "detail": "In mid-pull the elbows travel down and slightly back toward the sides of the ribs. They point at the floor.",
+      "anchor": {
+        "at": "elbow.r",
+        "off": [
+          2,
+          5
+        ]
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "catalyst-pullup"
+        ]
+      }
+    },
+    {
+      "key": "top",
+      "label": "Chin over bar",
+      "detail": "At the top the chin clears the bar and the upper chest rises toward it. The head stays level, neck long. The chin does not crane forward to reach the bar.",
+      "anchor": {
+        "at": "chin"
+      },
+      "zoom": "top",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "catalyst-pullup",
+          "nasm-chinup"
+        ]
+      }
+    },
+    {
+      "key": "lower",
+      "label": "Full lowering",
+      "detail": "At the bottom the elbows are fully straight again, lowered under control. Shoulders set before the next pull.",
+      "anchor": {
+        "at": "elbow.r",
+        "pose": "start"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH"
+        ],
+        "sources": [
+          "catalyst-pullup",
+          "prinold2016",
+          "kolber2010"
+        ]
+      }
+    }
+  ],
+  chips: [
+    "hand",
+    "shoulders",
+    "top",
+    "feel"
+  ],
+  copy: {
+    "setupLine": "Hang still on straight arms, legs together. Pull your shoulders down, then start.",
+    "mistakeLine": "Don't bounce out of the bottom. Lower all the way, shoulders down, then pull."
+  },
+  mistakes: [
+    {
+      "key": "drop",
+      "title": "Bouncing at the bottom",
+      "zoom": "shoulders",
+      "claim": {
+        "tags": [
+          "MECH",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "prinold2016",
+          "catalyst-scap"
+        ]
+      },
+      "fix": "Lower slowly to straight arms."
+    },
+    {
+      "key": "wide",
+      "title": "Grip too wide",
+      "claim": {
+        "tags": [
+          "MECH",
+          "WEAK"
+        ],
+        "sources": [
+          "prinold2016",
+          "urbanczyk2020",
+          "difonza2026"
+        ]
+      },
+      "fix": "Hands just outside your shoulders."
+    },
+    {
+      "key": "slip",
+      "title": "Bar slipping to fingertips",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "DATA",
+          "WEAK"
+        ],
+        "sources": [
+          "odriscoll1992",
+          "bullbar-calluses"
+        ]
+      },
+      "fix": "Set the bar where your fingers start."
+    }
+  ],
+  risks: [
+    {
+      "key": "bottom",
+      "text": "Dropping into the bottom jerks your weight through the shoulder.",
+      "claim": {
+        "tags": [
+          "MECH",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "prinold2016",
+          "kolber2010"
+        ],
+        "note": "The link to bouncing is coaching consensus."
+      }
+    },
+    {
+      "key": "wide",
+      "text": "Wide grips are linked to shoulder pinching.",
+      "claim": {
+        "tags": [
+          "MECH"
+        ],
+        "sources": [
+          "prinold2016"
+        ],
+        "note": "The authors link the movement pattern to impingement risk; injuries were not measured."
+      }
+    },
+    {
+      "key": "neck",
+      "text": "Chin reaching strains your neck. Fingertip grips can slip off.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "nasm-chinup",
+          "catalyst-pullup",
+          "odriscoll1992"
+        ]
+      }
+    }
+  ],
+  riskFlags: [
+    "wrist",
+    "shoulder",
+    "elbow"
+  ],
+  redFlag: {
+    "name": "Wrist pain",
+    "now": "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.",
+    "doctor": "Tingling, keeps coming back, or no better after two weeks' rest? See a doctor.",
+    "claim": {
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-wrist-pain"
+      ]
+    }
+  },
+  sources: [
+    "youdas2010",
+    "dickie2017",
+    "snarr2017",
+    "prinold2016",
+    "urbanczyk2020",
+    "difonza2026",
+    "kolber2010",
+    "odriscoll1992",
+    "oranchuk2022",
+    "catalyst-pullup",
+    "catalyst-scap",
+    "catalyst-neutral",
+    "nasm-chinup",
+    "baechle-earle",
+    "wiki-hook-grip",
+    "wiki-muscle-up",
+    "rogue-false-grip",
+    "bullbar-calluses",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain",
+    "nhs-elbow-pain"
+  ],
+  research: {
+    "card": "grip/research/pull_up.json",
+    "rev": 1
   },
 } satisfies BuiltHowTo;
