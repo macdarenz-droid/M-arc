@@ -4,6 +4,7 @@
   "pageApproval": {
     "current": {
       "ref": "a7a0b74",
+      "supersedes": "b3a90af",
       "approvedBy": "supervisor",
       "date": "2026-09-30",
       "why": "source records only (HT5-A2); owner-approved design unchanged",
