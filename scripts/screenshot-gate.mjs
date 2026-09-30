@@ -5694,8 +5694,20 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// HT-1: fidelity harness self-check. The approved Technical Plates gallery (tests/howto/golden, served offline, its
+// Google Fonts request routed to the app's Inter woff2) is captured twice at 390x844 DPR 2, per plate block (plate top
+// to tempo bottom), in 5 themes x {normal, mistake with the first tell}: every pair must diff 0 px, and the same block
+// shifted 1 px must fail the L3 rule. The harness (tools/plates/fidelity/harness.mjs) is what HT-3 compares the app with.
+{
+  const tag = 'HT-1';
+  const { goldenSelfCheck } = await import('../tools/plates/fidelity/harness.mjs');
+  const r = await goldenSelfCheck(browser);
+  for (const p of r.problems) errors.push(`${tag}: ${p}`);
+  console.log(`${tag} harness self-check: ${r.captures} captures, ${r.comparisons} golden-vs-golden diffs at 0 px, 1 px shift control off ${r.control?.off} px (fails the rule: ${r.control?.fails}), ${(r.ms / 1000).toFixed(1)} s`);
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no form-guide chunk or markup, no "How to do it" on Train) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no form-guide chunk or markup, no "How to do it" on Train) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified.');
