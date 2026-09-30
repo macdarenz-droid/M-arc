@@ -6,11 +6,12 @@ import { MEDICAL_LINE, PRIVACY_POLICY_URL } from '@/slices/settings/Settings';
 
 const read = (p: string) => readFileSync(fileURLToPath(new URL(`../../${p}`, import.meta.url)), 'utf8');
 const java = read('native/PermissionsRationaleActivity.java');
-// The Play Console privacy policy field, docs/PLAY-SUBMISSION.md (DOC-2).
-const PLAY_CONSOLE_URL = 'https://macdarenz-droid.github.io/M-arc/privacy/';
+// The Play Console privacy policy field, as docs/PLAY-SUBMISSION.md records it (DOC-2).
+const PLAY_CONSOLE_URL = read('docs/PLAY-SUBMISSION.md').match(/\*\*Privacy policy URL \(Play Console[^\n]*\n(https:\/\/\S+?)\s/)?.[1];
 
 describe('PLAY-1', () => {
   it('A1: Settings links the Play Console privacy URL and shows the healthcare line', () => {
+    expect(PLAY_CONSOLE_URL).toBe('https://macdarenz-droid.github.io/M-arc/privacy/');
     expect(PRIVACY_POLICY_URL).toBe(PLAY_CONSOLE_URL);
     expect(MEDICAL_LINE).toBe('Not medical advice. For medical advice, diagnosis or treatment, see a healthcare professional.');
   });

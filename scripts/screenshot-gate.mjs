@@ -5705,7 +5705,9 @@ for (const theme of ['silent-black', 'paper']) {
 // must equal the Play Console privacy policy field (docs/PLAY-SUBMISSION.md) and open outside the app the way every
 // external link does (target=_blank, noopener); the reminder sits above the version line.
 {
-  const PLAY_CONSOLE_PRIVACY_URL = 'https://macdarenz-droid.github.io/M-arc/privacy/';
+  // The URL entered in the Play Console field, read from the submission doc itself so the two cannot drift.
+  const PLAY_CONSOLE_PRIVACY_URL = readFileSync(join(ROOT, 'docs/PLAY-SUBMISSION.md'), 'utf8').match(/\*\*Privacy policy URL \(Play Console[^\n]*\n(https:\/\/\S+?)\s/)?.[1];
+  if (!PLAY_CONSOLE_PRIVACY_URL) errors.push('PLAY-1: no "Privacy policy URL (Play Console…)" line in docs/PLAY-SUBMISSION.md');
   const MEDICAL = 'Not medical advice. For medical advice, diagnosis or treatment, see a healthcare professional.';
   for (const theme of themes) {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
