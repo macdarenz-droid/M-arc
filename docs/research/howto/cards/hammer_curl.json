@@ -1,0 +1,554 @@
+{
+  "id": "hammer_curl",
+  "libId": "lib_hammer_curl",
+  "name": "Hammer Curl",
+  "family": "CURL (neutral grip)",
+  "tier": "C",
+  "archetype": {
+    "hand": "curl",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "dumbbell_biceps_curl",
+  "inherit": [
+    {
+      "field": "plate.view",
+      "why": "true for this child because elbow bend and elbow drift read side-on; the neutral grip is seen from the thumb side (c4)."
+    },
+    {
+      "field": "grip.width",
+      "why": "true for this child because ACE gives the same elbow-structure note on the hammer page itself (c10)."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because the wrist row is the bent-wrist finding, stated for the neutral grip too (c5)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hold the dumbbells with a closed, neutral grip (thumbs round the handles, palms facing the body), alongside the thighs with the elbows straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body). Position the dumbbells alongside your thighs with your elbows fully extended.",
+          "where": "Starting position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Take a split stance, brace the torso, pull the shoulders down and back, and keep the head in line with the spine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "Assume a split-stance position to stabilize your body, stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining these positions throughout the exercise.",
+          "where": "Starting position"
+        },
+        {
+          "source": "ace-hammer",
+          "text": "Your head and neck should be aligned with your spine.",
+          "where": "Starting position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Curl until the dumbbells near the front of the shoulders, then lower until the elbows are fully straight, keeping the neutral grip.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "Exhale and slowly flex (bend) one or both elbows in unison until the dumbbell(s) near(s) the front of your shoulder.",
+          "where": "Upward phase"
+        },
+        {
+          "source": "ace-hammer",
+          "text": "Inhale and gently lower the dumbbells back towards your starting position until the elbow(s) is/are fully extended, keeping the dumbbell in the neutral position.",
+          "where": "Downward phase"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Keep the torso upright (no arching the lower back) and do not move the elbows forward; keep the wrist straight with the palms facing the body, and do not shrug.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "Perform the curl while keeping your torso erect (no arching your low back) or without moving your elbows forward.",
+          "where": "Upward phase"
+        },
+        {
+          "source": "ace-hammer",
+          "text": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body) and avoid shrugging your shoulders throughout the movement.",
+          "where": "Upward phase"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the grip neutral for the whole lift; it is easy to start twisting the wrists without noticing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "sl-hammer",
+          "text": "Keep your grip neutral during the movement. It’s easy to start twisting the wrists during the lift, without thinking about it.",
+          "where": "Common mistakes, changing grip"
+        },
+        {
+          "source": "sl-hammer",
+          "text": "Avoid twisting the wrists or changing your grip during the curl.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Elbows moving forward during the lift load the front delts instead of the biceps; elbows moving back let you cheat the weight up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "sl-hammer",
+          "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+          "where": "Common mistakes, elbow positioning"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Too heavy a weight shows as swinging the body for momentum, or as half reps; the fix is less weight and a controlled lift.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "sl-hammer",
+          "text": "By adding more weight than you can lift, you might start to swing your body and use its momentum to get the weight up. Another sign of using too much weight is if you’re not using the full range of motion and start doing half reps instead.",
+          "where": "Common mistakes, using too heavy weights"
+        },
+        {
+          "source": "sl-hammer",
+          "text": "If you start to swing to move the weights with help from the momentum of the body, you should probably remove some weight instead and focus on performing the movement with control.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Muscles: StrengthLog says the hammer curl mainly works the biceps and brachialis, with the forearm flexors, especially the brachioradialis, as secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "sl-hammer",
+          "text": "The hammer curl primarily targets your biceps and brachialis, but the forearm flexors and especially the brachioradialis are also involved as a secondary muscle group.",
+          "where": "Which muscles"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Measured data do not confirm the common idea that the neutral grip works the brachioradialis more: in bodybuilders doing cable curls, the palms-up grip excited both the biceps and the brachioradialis more than the neutral grip, and the neutral grip used the front shoulder more.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "coratella-2023"
+      ],
+      "quotes": [
+        {
+          "source": "coratella-2023",
+          "text": "Surprisingly, brachioradialis showed greater excitability with the supinated grip than with the neutral and pronated grip, with no difference between these two.",
+          "where": "Discussion"
+        },
+        {
+          "source": "coratella-2023",
+          "text": "Such outcomes may be in contrast with the general idea that biceps curl with a neutral handgrip should increase the role of brachioradialis.",
+          "where": "Discussion"
+        },
+        {
+          "source": "coratella-2023",
+          "text": "The anterior deltoid was more excited during the pronated and neutral than the supinated handgrip",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Because elbow structure differs between people, the dumbbells may hang slightly away from the sides; pick the hand position that keeps the wrist straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+          "where": "Note"
+        },
+        {
+          "source": "ace-hammer",
+          "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+          "where": "Note"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The brachioradialis is one of the main elbow flexors: in an EMG study it was very active in resisted elbow bending with the forearm neutral, palms down and palms up, slightly more with palms up.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "caufriez-2018"
+      ],
+      "quotes": [
+        {
+          "source": "caufriez-2018",
+          "text": "The biceps, brachialis and brachioradialis muscles were electromyographically very active throughout resisted elbow flexion, in all three investigated positions of forearm rotation.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "caufriez-2018",
+          "text": "The activity was slightly higher in supination.",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Tempo (up = lifting, down = lowering): lift slowly and lower gently; ACSM advises moderate speed (1-2 s up, 1-2 s down). Breathe out on the way up and in on the way down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-hammer",
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "Exhale and slowly flex (bend) one or both elbows in unison until the dumbbell(s) near(s) the front of your shoulder.",
+          "where": "Upward phase"
+        },
+        {
+          "source": "ace-hammer",
+          "text": "Inhale and gently lower the dumbbells back towards your starting position",
+          "where": "Downward phase"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-hammer",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/",
+      "title": "Hammer Curl (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-hammer",
+      "url": "https://www.strengthlog.com/hammer-curl/",
+      "title": "How to Do Hammer Curl: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "coratella-2023",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/",
+      "title": "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy",
+      "kind": "peer-reviewed",
+      "year": 2023,
+      "pmid": 36976950,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "caufriez-2018",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29409427/",
+      "title": "The Role of the Muscle Brachioradialis in Elbow Flexion: An Electromyographic Study",
+      "kind": "peer-reviewed",
+      "year": 2018,
+      "pmid": 29409427,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Elbow bend, elbows moving forward (c4, c6) and body swing (c7) read side-on. Twisting the wrists out of the neutral grip (c5) is a forearm rotation the engine cannot draw. Census view is side.",
+    "equipment": "One dumbbell per hand, handles vertical (neutral grip), standing on the floor line in a split stance (c1, c2).",
+    "start": "Split stance, torso braced, shoulders down and back, head in line (c2); dumbbells alongside the thighs, palms facing the body, elbows straight (c1).",
+    "end": "Elbows bent, dumbbells near the front of the shoulders (c3); elbows not forward, torso upright, wrists straight (c4); grip still neutral (c5).",
+    "checkpoints": [
+      {
+        "label": "Neutral grip",
+        "what": "Palms face the body from bottom to top; wrists do not twist.",
+        "claim": "c5"
+      },
+      {
+        "label": "Elbows still",
+        "what": "Elbows stay by the body and do not move forward.",
+        "claim": "c4"
+      },
+      {
+        "label": "Upright torso",
+        "what": "Torso tall, lower back not arched, shoulders not shrugged.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows moving forward as the dumbbells come up.",
+      "why": "ACE warns against it in the lift (c4) and StrengthLog says it shifts the load to the front delts (c6).",
+      "claim": "c6",
+      "drawable": false,
+      "rankNote": "No source ranks hammer-curl faults by frequency. The hammer-specific fault, twisting out of the neutral grip (c5), is a forearm rotation the engine cannot draw, so the drawable elbow fault is shown."
+    },
+    "tells": [
+      {
+        "text": "Palms face your body throughout",
+        "claim": "c5"
+      },
+      {
+        "text": "Elbows stay by your sides",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed, neutral (palms facing the body), one dumbbell per hand.",
+    "width": "Dumbbells alongside the thighs; they may sit slightly out from the sides if that keeps the wrist straight (c10).",
+    "thumb": "Wrapped round the handle.",
+    "handContact": "",
+    "wrist": "Straight with the palm facing the body, not twisting, for the whole lift.",
+    "claims": [
+      "c1",
+      "c4",
+      "c5",
+      "c10"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Pick dumbbells you can curl without swinging.",
+      "claim": "c7"
+    },
+    {
+      "step": "Take a split stance, brace, shoulders down and back.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hold the dumbbells with a closed neutral grip beside your thighs.",
+      "claim": "c1"
+    },
+    {
+      "step": "Curl to the front of the shoulders, lower to straight arms.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Palms keep facing your body; no wrist twist.",
+      "claim": "c5"
+    },
+    {
+      "point": "Elbows do not move forward.",
+      "claim": "c4"
+    },
+    {
+      "point": "Torso upright; no arching the lower back.",
+      "claim": "c4"
+    },
+    {
+      "point": "No shrugging.",
+      "claim": "c4"
+    },
+    {
+      "point": "Lower until the elbows are fully straight.",
+      "claim": "c3"
+    },
+    {
+      "point": "Full range, not half reps.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Twisting the wrists out of the neutral grip.",
+      "fix": "Keep the palms facing your body the whole way.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Elbows moving forward or back.",
+      "fix": "Keep the elbows at your sides.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Swinging the body to get the weight up.",
+      "fix": "Take weight off and lift with control.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "forearms",
+        "claim": "c8"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the upper arm and top of the forearm",
+        "means": "The elbow flexors are doing the work.",
+        "fix": "",
+        "claim": "c8, c11",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the shoulder",
+        "means": "Usually means the elbows are moving forward.",
+        "fix": "Keep the elbows at your sides.",
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Wrist",
+        "means": "Usually means the wrist is bending or twisting.",
+        "fix": "Keep the wrist straight, palms facing your body.",
+        "claim": "c4, c5",
+        "redFlag": "wrist"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Too heavy a weight leads to swinging the body and half reps.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Elbows moving forward put extra load on the front of the shoulders.",
+      "claim": "c6"
+    }
+  ],
+  "redFlags": [
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "hammer-hand",
+      "kind": "hand",
+      "right": "Closed neutral grip, thumb round the handle, wrist straight.",
+      "wrong": "Wrist twisted toward palms-up partway through the curl.",
+      "claim": "c5"
+    },
+    {
+      "key": "hammer-elbow",
+      "kind": "posture",
+      "right": "Elbows by the sides at the top.",
+      "wrong": "Elbows pushed forward, dumbbells lifted by the shoulders.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json lists brachialis and biceps as primary and forearms as secondary; StrengthLog says the same (c8). Brachialis is text-only. Kept unchanged, but the common claim that the neutral grip works the brachioradialis more is not supported by the measured data read (c9, cable curls in bodybuilders), so the sheet should not say it."
+  },
+  "anchorSource": "ace-hammer"
+}

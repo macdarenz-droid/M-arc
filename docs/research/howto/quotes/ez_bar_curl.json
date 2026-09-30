@@ -1,0 +1,167 @@
+{
+ "id": "ez_bar_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-ez",
+   "text": "Hold an EZ bar with an underhand grip on the angled sections, which is easier on the wrists.",
+   "status": "verbatim",
+   "closest": "Hold an EZ bar with an underhand grip on the angled sections, which is easier on the wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "coratella-2023",
+   "text": "However, it should be noticed that the handgrip position of the EZ barbell is rather semi-supinated than neutral, maybe not enough to elicit any difference.",
+   "status": "verbatim",
+   "closest": "However, it should be noticed that the handgrip position of the EZ barbell is rather semi-supinated than neutral, maybe not enough to elicit any difference.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "coratella-2023",
+   "text": "However, to better accommodate the anatomical valgus of the elbow with the EZ-barbell, the inter-hand distance must be shorter than with the straight barbell.",
+   "status": "verbatim",
+   "closest": "However, to better accommodate the anatomical valgus of the elbow with the EZ-barbell, the inter-hand distance must be shorter than with the straight barbell.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-ez",
+   "text": "Stand upright with your feet shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Stand upright with your feet shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-ez",
+   "text": "Stand with your feet about hip-width apart and make sure that you’re standing in a stable position. Keep a good posture, and brace your core during the entire movement.",
+   "status": "verbatim",
+   "closest": "Stand with your feet about hip-width apart and make sure that you’re standing in a stable position. Keep a good posture, and brace your core during the entire movement.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-ez",
+   "text": "Curl up the bar, and make sure that you keep your elbows close to your body the entire time. Don’t let your elbows drift forward. Your body shouldn’t move, just the arms.",
+   "status": "verbatim",
+   "closest": "Curl up the bar, and make sure that you keep your elbows close to your body the entire time. Don’t let your elbows drift forward. Your body shouldn’t move, just the arms.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-ez",
+   "text": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
+   "status": "verbatim",
+   "closest": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-ez",
+   "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+   "status": "verbatim",
+   "closest": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-ez",
+   "text": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up. Another sign of using too much weight is if you’re not using the full range of motion and start doing half reps instead.",
+   "status": "verbatim",
+   "closest": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up. Another sign of using too much weight is if you’re not using the full range of motion and start doing half reps instead.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-ez",
+   "text": "If you start to swing to move the barbell with help from the momentum of the body, you should probably remove some weight instead and focus on performing the movement with control.",
+   "status": "verbatim",
+   "closest": "If you start to swing to move the barbell with help from the momentum of the body, you should probably remove some weight instead and focus on performing the movement with control.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-ez",
+   "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "status": "verbatim",
+   "closest": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-ez",
+   "text": "The angled grip can also be kinder to the wrists and elbows, putting less stress on the joints.",
+   "status": "verbatim",
+   "closest": "The angled grip can also be kinder to the wrists and elbows, putting less stress on the joints.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-ez",
+   "text": "The barbell curl is performed with maximized wrist supination, which leads to better activation of the biceps long head. However, the angled bar used in EZ curls could reduce wrist and elbow strain, and therefore suit those with aching joints better.",
+   "status": "verbatim",
+   "closest": "The barbell curl is performed with maximized wrist supination, which leads to better activation of the biceps long head. However, the angled bar used in EZ curls could reduce wrist and elbow strain, and therefore suit those with aching joints better.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "marcolin-2018",
+   "text": "We detected higher activation profile of both BB (P < 0.05) and BR (P < 0.01) during the EZ compared to the DC.",
+   "status": "verbatim",
+   "closest": "We detected higher activation profile of both BB (P < 0.05) and BR (P < 0.01) during the EZ compared to the DC.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "marcolin-2018",
+   "text": "The small difference between the BC and EZ variants with regards to the EMG activity of the BB and BR, makes the choice between these two variants purely a matter of subjective comfort related to the handgrip position.",
+   "status": "verbatim",
+   "closest": "The small difference between the BC and EZ variants with regards to the EMG activity of the BB and BR, makes the choice between these two variants purely a matter of subjective comfort related to the handgrip position.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "sl-ez",
+   "text": "Just like the barbell curl, the EZ curl primarily targets your biceps and brachialis (which lie beneath the biceps), with the forearm flexors involved as a secondary muscle group.",
+   "status": "verbatim",
+   "closest": "Just like the barbell curl, the EZ curl primarily targets your biceps and brachialis (which lie beneath the biceps), with the forearm flexors involved as a secondary muscle group.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "sl-ez",
+   "text": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
+   "status": "verbatim",
+   "closest": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "marcolin-2018",
+   "text": "The metronome was set so that each repetition duration was 3 s.",
+   "status": "verbatim",
+   "closest": "The metronome was set so that each repetition duration was 3 s.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c13",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": "matched in PubMed abstract"
+  }
+ ]
+}
