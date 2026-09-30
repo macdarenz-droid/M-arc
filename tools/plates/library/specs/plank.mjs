@@ -24,7 +24,7 @@
 //   prone-on-elbows set-up. Only the hips and legs move between the two poses; the trace is the hips rising.
 //  Hands: the engine fist sits one grip offset past the wrist, so a small gap shows between the forearm and the fist
 //   when nothing covers the hand (engine look, unchanged).
-// Plate text (card plank plate, source-checked, not yet critic-verified, so provisional):
+// Plate text (card plank plate, verified: claude/libht-research e2a70bc):
 //  Callouts = the 3 plate.checkpoints (c5 elbows under shoulders, c4 hips level, c4 knees straight). Datum = the plank
 //   line, shoulder to heel of the held pose, run past both ends (the held pose lies on it; the sag drops below it).
 //  Mistake = plate.mistake (c4, drawable): the low back sags, hips below the shoulder-heel line (solved: SAG_LUMBAR).

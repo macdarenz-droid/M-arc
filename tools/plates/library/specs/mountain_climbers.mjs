@@ -22,7 +22,7 @@
 //   Pelvis tilt, root, trunk and the far leg are exactly the start's: the hips stay level (no hike, c4) and the far
 //   leg stays straight back on its toes (its outline is also the dashed start leg, which lies exactly under it).
 //  One ghost (t = 0.5, the via pose) shows the swing with the thigh still behind vertical and the foot trailing up.
-// Plate text (card mountain_climbers plate, source-checked, not yet critic-verified, so provisional):
+// Plate text (card mountain_climbers plate, verified: claude/libht-research e2a70bc):
 //  Callouts = the 3 plate.checkpoints (c2 hands under shoulders, c3 straight line, c4 knee to chest). Datum = the
 //   plank line, shoulder to the far heel of the end pose, run past both ends.
 //  Mistake = plate.mistake (c4, drawable): the hips hike as the knee drives (solved: HIKE_HIP, hands and far toes

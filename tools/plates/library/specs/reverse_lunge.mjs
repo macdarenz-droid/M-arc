@@ -25,13 +25,16 @@
 //  Trunk: pelvis tilt TRUNK_LEAN deg (upright, c3); arms hang plumb (shoulder flexion = trunk lean: the engine's
 //   shoulder angle is taken from the thorax, so flexion, not extension, brings the arm back to vertical), elbows
 //   4 deg soft; dumbbells in a neutral grip, handle front-to-back (side view shows the handle and both hex heads).
-// Plate text (card reverse_lunge plate, source-checked, not yet critic-verified, so provisional):
+// Plate text (card reverse_lunge plate, verified: claude/libht-research e2a70bc):
 //  Callouts = the 3 plate.checkpoints (c2 front shin vertical, with a plumb guide through the front ankle; c3 chest
 //   up; c3 weight even, pointing at the hips with a plumb guide to the floor midway between the feet).
 //  Mistake = plate.mistake (c6, drawable): the trunk pitches forward over the front thigh (MISTAKE_LEAN). Tells: the
-//   card's plate.tells are signs of good form ("Back knee drops straight...", "Front shin stays about vertical"), so
-//   the tells restate the fault: the trunk pitches forward (c6), the weight tips onto the front foot (balance between
-//   the feet lost, c6), shown by a plumb from the pitched chest that lands on the front foot. Flagged on PR #109.
+//   card's plate.tells are signs of good form ("Back knee lowers toward the floor", "Front shin stays about
+//   vertical"), and the engine's Mistake tells are signs of the fault, so the verified tell has no slot on the plate
+//   (it belongs to the app layer, as in the other families); the plate shows it as the trace and the rear knee
+//   hovering over the floor. The Mistake tells restate the fault: the trunk pitches forward (c6), the weight tips
+//   onto the front foot (balance between the feet lost, c6), shown by a plumb from the pitched chest that lands on
+//   the front foot.
 //  Measure: none. The card gives no angle ("roughly vertical"); the shin plumb guide shows the checkpoint instead.
 //  Tempo: left out. The card gives no seconds ("controlled, slow descent", c7); the engine strip needs seconds.
 // CARD (checked against card v2): from the card: FRONT_SHIN 6 deg ("roughly vertical", c2), TRUNK_LEAN 3 deg

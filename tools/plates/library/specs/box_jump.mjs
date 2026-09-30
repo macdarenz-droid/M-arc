@@ -13,11 +13,12 @@
 //   mid-foot (toes ~39 cm from the box, so the take-off head is not hidden behind the landing body).
 //  Take-off frame = the bottom of the countermovement (c2): feet flat, hip-joint centre TAKEOFF_HIP high (a quarter-
 //   to-half squat), thorax TAKEOFF_TRUNK deg from vertical, arms swung back ARMS_BACK deg behind the thorax line,
-//   elbows straight. Landing frame (c4, c5): both feet flat on the box top with the mid-foot LAND_Z, hips back,
-//   knees soft-bent (LAND_HIP gives ~70-80 deg), thorax LAND_TRUNK deg, arms forward for balance.
+//   elbows straight. Landing frame (c4, c5; verified plate.end): both whole feet flat on the box top, well back from
+//   the edge (checks: heel HEEL_BACK behind the front edge, toe TOE_CLEAR short of the back edge),
+//   mid-foot LAND_Z, hips back, knees soft-bent (LAND_HIP gives ~70-80 deg), thorax LAND_TRUNK deg, arms forward for balance.
 //  Balance: both frames are solved with the Winter (2009) whole-body centre of mass straight over the mid-foot, as
 //   hanging_leg_raise.mjs does over its bar, so neither frame tips over.
-// Plate text (card box_jump plate, source-checked, not yet critic-verified, so provisional):
+// Plate text (card box_jump plate, verified: claude/libht-research e2a70bc):
 //  Callouts = the 3 plate.checkpoints: c2 load and swing (on the take-off frame's hands), c3 full extension (on the
 //   rising trace: it happens between the two drawn frames), c5 soft knees (the landing checkpoint).
 //  Mistake = plate.mistake (c5, drawable): landing on the box with straight, stiff knees (MISTAKE_HIP, same feet).
@@ -34,7 +35,8 @@ import { landmarksOf } from '../engine.mjs';
 const H = 1.75;
 const BOX_H = 0.45, BOX_D = 0.60, BOX_Z0 = 0.52;          // plyo box height, depth, front edge (m)
 const FOOT_X = 0.10;                                       // mid-sole lateral offset: feet hip width (c1)
-const LAND_Z = BOX_Z0 + 0.26;                              // landing mid-foot: whole foot on the box, toes clear of the back
+const LAND_Z = BOX_Z0 + 0.30;                              // landing mid-foot: foot about centred on the box top (card v2 end)
+const HEEL_BACK = 0.15, TOE_CLEAR = 0.10;                  // heel at least this far back from the front edge, toe this far from the back
 const TAKEOFF_HIP = 0.68, TAKEOFF_TRUNK = 48, ARMS_BACK = 25;
 const LAND_HIP = BOX_H + 0.72, LAND_TRUNK = 32, ARMS_FWD = 95;
 
@@ -106,8 +108,12 @@ export default {
     { landmark: 'ball.r', plane: FLOOR, pose: 'start', tol: 0.5 },
     { landmark: 'heel.r', plane: TOP, pose: 'end', tol: 0.5 },                              // landing: feet flat on the box
     { landmark: 'ball.r', plane: TOP, pose: 'end', tol: 0.5 },
-    { landmark: 'heel.r', above: { point: [0, 0, BOX_Z0], normal: [0, 0, 1] }, pose: 'end' },            // whole foot on the top
-    { landmark: 'toe.r', above: { point: [0, 0, BOX_Z0 + BOX_D], normal: [0, 0, -1] }, pose: 'end' },
+    { landmark: 'heel.l', plane: TOP, pose: 'end', tol: 0.5 },                              // both feet flat on the box
+    { landmark: 'ball.l', plane: TOP, pose: 'end', tol: 0.5 },
+    // whole feet on the top, well back from the front edge, heels never hanging off (verified card, plate.end)
+    { landmark: 'heel.r', above: { point: [0, 0, BOX_Z0 + HEEL_BACK], normal: [0, 0, 1] }, pose: 'end' },
+    { landmark: 'heel.r', above: { point: [0, 0, BOX_Z0 + HEEL_BACK], normal: [0, 0, 1] }, pose: 'mistake' },
+    { landmark: 'toe.r', above: { point: [0, 0, BOX_Z0 + BOX_D - TOE_CLEAR], normal: [0, 0, -1] }, pose: 'end' },
     { landmark: 'heel.r', plane: TOP, pose: 'mistake', tol: 0.5 },                          // stiff landing: same feet on the box
     { landmark: 'ball.r', plane: TOP, pose: 'mistake', tol: 0.5 },
   ],
