@@ -89,4 +89,4 @@ The owner approved this on 2026-09-26. It runs after item 9 and the fix loop for
 - Agents:
   - the listing text, the data-safety drafts and the screenshots (branch `claude/play-store-cards`).
 
-**Version-code risk:** play-bundle.yml and release-apk.yml count their runs separately. On 2026-09-30, release-apk.yml had never run and debug builds use versionCode 1, so every code above 37,000,000 is higher than anything a phone has seen. Once Play App Signing is on, Play installs are signed with a different key than sideloaded APKs, so the two cannot update each other either way.
+**Version-code risk:** play-bundle.yml and release-apk.yml count their runs separately. On 2026-09-30, release-apk.yml had never run and debug builds use versionCode 1, so every code above 37,000,000 is higher than anything a phone has seen. If the owner later sideloads many release APKs, a Play build could carry a lower code than one of them. That only matters if Play's app-signing key is the same key as the sideload key; with a different key, the two cannot update each other anyway.
