@@ -1,0 +1,263 @@
+{
+ "id": "rope_triceps_pushdown",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-rope",
+   "text": "Fasten a rope handle in the upper position of a cable pulley. Grip the rope with an overhand grip, and take one step back from the pulley.",
+   "status": "verbatim",
+   "closest": "Fasten a rope handle in the upper position of a cable pulley. Grip the rope with an overhand grip, and take one step back from the pulley.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "ace-pushdown",
+   "text": "Stand facing the cable machine and position the cable attachment at a height above your head.",
+   "status": "verbatim",
+   "closest": "Stand facing the cable machine and position the cable attachment at a height above your head.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "nfpt-rope",
+   "text": "Grip the rope with your hand against the clubbed end.",
+   "status": "verbatim",
+   "closest": "Grip the rope with your hand against the clubbed end.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-pushdown",
+   "text": "grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+   "status": "verbatim",
+   "closest": "grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-pushdown",
+   "text": "It also changes your grip from overhand to neutral, but this has minimal to no effect on your triceps activation.",
+   "status": "verbatim",
+   "closest": "It also changes your grip from overhand to neutral, but this has minimal to no effect on your triceps activation.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-pushdown",
+   "text": "Using a rope instead of a bar in tricep pushdowns could allow for a longer range of motion since you can separate the ends of the rope and continue the motion without the bar hitting your body.",
+   "status": "verbatim",
+   "closest": "Using a rope instead of a bar in tricep pushdowns could allow for a longer range of motion since you can separate the ends of the rope and continue the motion without the bar hitting your body.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-rope",
+   "text": "Using a rope allows for a greater range of motion than a straight bar, as you can extend your arms past your body, giving your triceps a more thorough workout.",
+   "status": "verbatim",
+   "closest": "Using a rope allows for a greater range of motion than a straight bar, as you can extend your arms past your body, giving your triceps a more thorough workout.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "nfpt-rope",
+   "text": "Your wrists should be straight throughout the movement, press the handle down toward the floor to the extended position.",
+   "status": "verbatim",
+   "closest": "Your wrists should be straight throughout the movement, press the handle down toward the floor to the extended position.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-pushdown",
+   "text": "Continue pressing the weight with your elbows right next to your side while maintaining a neutral position with your wrists until your elbows become fully extended",
+   "status": "verbatim",
+   "closest": "Continue pressing the weight with your elbows right next to your side while maintaining a neutral position with your wrists until your elbows become fully extended",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "nfpt-rope",
+   "text": "Keep your elbows in at your sides during the entire movement. As your elbows move away from your body your shoulders will come into play, you will no longer be isolating your triceps.",
+   "status": "verbatim",
+   "closest": "Keep your elbows in at your sides during the entire movement. As your elbows move away from your body your shoulders will come into play, you will no longer be isolating your triceps.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-pushdown",
+   "text": "It is important to monitor the forward movement of your elbows as this recruits from your lats (back muscles) and reduces the emphasis on the triceps.",
+   "status": "verbatim",
+   "closest": "It is important to monitor the forward movement of your elbows as this recruits from your lats (back muscles) and reduces the emphasis on the triceps.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "nfpt-rope",
+   "text": "Take two to three seconds to raise the bar up until your forearms are just past parallel to the floor.",
+   "status": "verbatim",
+   "closest": "Take two to three seconds to raise the bar up until your forearms are just past parallel to the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "nfpt-rope",
+   "text": "Be sure that the bar does not go higher than just above parallel. If it does you will feel it more in your forearms.",
+   "status": "verbatim",
+   "closest": "Be sure that the bar does not go higher than just above parallel. If it does you will feel it more in your forearms.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "nfpt-rope",
+   "text": "When your arms are extended, your wrists, elbow and shoulder should be in a line perpendicular to the floor.",
+   "status": "verbatim",
+   "closest": "When your arms are extended, your wrists, elbow and shoulder should be in a line perpendicular to the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "nfpt-rope",
+   "text": "Do not lock out your elbows in the extended position. Failure to do so can result in injury to your elbows.",
+   "status": "verbatim",
+   "closest": "Do not lock out your elbows in the extended position. Failure to do so can result in injury to your elbows.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-pushdown",
+   "text": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
+   "status": "verbatim",
+   "closest": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-pushdown",
+   "text": "Position your feet hip-width apart or in a staggered-stance (walking) position.",
+   "status": "verbatim",
+   "closest": "Position your feet hip-width apart or in a staggered-stance (walking) position.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-rope",
+   "text": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
+   "status": "verbatim",
+   "closest": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ace-pushdown",
+   "text": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "sl-rope",
+   "text": "Some people tend to lean too far forward or arch their back, which can put unnecessary strain on the lower back and shift the focus away from the triceps.",
+   "status": "verbatim",
+   "closest": "Some people tend to lean too far forward or arch their back, which can put unnecessary strain on the lower back and shift the focus away from the triceps.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "nfpt-rope",
+   "text": "Do not raise the bar any faster than two to three seconds. You must stay in control at all times during this movement.",
+   "status": "verbatim",
+   "closest": "Do not raise the bar any faster than two to three seconds. You must stay in control at all times during this movement.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "ace-pushdown",
+   "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+   "status": "verbatim",
+   "closest": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "ace-pushdown",
+   "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "status": "verbatim",
+   "closest": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "sl-rope",
+   "text": "This often leads to using momentum to complete the exercise, instead of relying on the strength of the triceps. This not only reduces the effectiveness of the exercise but can also lead to injury.",
+   "status": "verbatim",
+   "closest": "This often leads to using momentum to complete the exercise, instead of relying on the strength of the triceps. This not only reduces the effectiveness of the exercise but can also lead to injury.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "sl-rope",
+   "text": "For the triceps pushdown, using heavy weights and low reps feels uncomfortable in the elbows for many people, and using lighter weights and doing more reps can alleviate this.",
+   "status": "verbatim",
+   "closest": "For the triceps pushdown, using heavy weights and low reps feels uncomfortable in the elbows for many people, and using lighter weights and doing more reps can alleviate this.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "nfpt-rope",
+   "text": "The primary muscles stressed in this movement are the muscles in the back of your upper arm",
+   "status": "verbatim",
+   "closest": "The primary muscles stressed in this movement are the muscles in the back of your upper arm",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "nfpt-rope",
+   "text": "The secondary muscles stressed are the muscles in your forearms and bicep.",
+   "status": "verbatim",
+   "closest": "The secondary muscles stressed are the muscles in your forearms and bicep.",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  }
+ ],
+ "sources": [
+  {
+   "id": "nfpt-rope",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "ace-pushdown",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "sl-rope",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "sl-pushdown",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "acsm-2009",
+   "access": "abstract",
+   "checked": "2026-09-30",
+   "fixes": ""
+  }
+ ]
+}
