@@ -24,17 +24,21 @@ export const BRIEF_TAGS_QUESTION = 'Gate check: brief tags';
 
 type ToolStep = (preamble: string, uses: Array<{ id: string; name: string; input: unknown }>) => StreamEvent[];
 
-/** The latest e1RM fact of a history tool result: its id and its value as the facts map writes it. */
-function e1rmFact(messages: Msg[]): { id: string; value: string } | null {
-  let out: { id: string; value: string } | null = null;
+interface SeenFact { id: string; value: string; text: string }
+
+/** The facts the app sent: the brief's inline "value [fN]" tags and each tool result's facts map. */
+function factsSent(messages: Msg[]): SeenFact[] {
+  const out: SeenFact[] = [];
   for (const m of messages) {
+    if (m.role === 'system' && typeof m.content === 'string') {
+      for (const t of m.content.matchAll(/(-?\d+(?:\.\d+)?)%? \[(f\d+)\]/g)) out.push({ id: t[2]!, value: t[1]!, text: t[0] });
+    }
     if (m.role !== 'user' || !Array.isArray(m.content)) continue;
     for (const blk of m.content as Array<{ type: string; content?: string }>) {
       if (blk.type !== 'tool_result' || !blk.content) continue;
       try {
         const facts = (JSON.parse(blk.content) as { facts?: Record<string, string> }).facts ?? {};
-        const hit = Object.entries(facts).reverse().find(([, v]) => / e1rm = /.test(v));
-        if (hit) out = { id: hit[0], value: hit[1].split(' = ')[1]!.split(' ')[0]! };
+        for (const [id, text] of Object.entries(facts)) out.push({ id, value: text.split(' = ')[1]?.split(' ')[0] ?? '', text });
       } catch { /* not JSON */ }
     }
   }
@@ -42,10 +46,23 @@ function e1rmFact(messages: Msg[]): { id: string; value: string } | null {
 }
 
 /**
+ * The highest fact id above f10 whose digits no fact value covers (as-is, rounded, or as the lb of
+ * a kg value), so a check that read "[fN]" as a number would flag it for sure.
+ */
+function uncoveredId(facts: SeenFact[]): string | null {
+  const values = facts.map(f => Math.abs(Number(f.value))).filter(Number.isFinite);
+  const covered = (n: number) => values.some(v => n === v || n === Math.round(v) || n === Math.round(v * 10) / 10 || Math.abs(n - v / 0.45359237) <= 1);
+  const ids = facts.map(f => Number(f.id.slice(1))).filter(n => n > 10 && !covered(n));
+  return ids.length ? `f${Math.max(...ids)}` : null;
+}
+
+/**
  * BUG-31: the model copies the brief's "38 [f41]" form. This scenario cites that way on every surface
  * the gate reads: a preamble and a chart caption citing the brief's sets fact, a first draft whose
  * invented number draws a repair round (shown as the earlier draft), then an answer in the brief form
- * that must pass the number check. The answer streams in small pieces, so tags arrive split.
+ * that must pass the number check. The strength estimate cites "[fE, fN]", fN an id no fact value
+ * covers, so reading a tag's digits as a number is always caught. The answer streams in small
+ * pieces, so tags arrive split.
  */
 function briefTagSteps(step: number, messages: Msg[], ex: string, toolStep: ToolStep): StreamEvent[] {
   const briefs = messages.filter(m => m.role === 'system' && typeof m.content === 'string').map(m => m.content as string);
@@ -57,8 +74,10 @@ function briefTagSteps(step: number, messages: Msg[], ex: string, toolStep: Tool
       { id: `m_${Date.now()}_b2`, name: 'show', input: { component: 'lift_trend', params: { exerciseId: ex, weeks: 12, metric: 'e1rm' }, caption: sets ? `Sets this week: ${sets}` : 'Sets this week' } },
     ]);
   }
-  const e = e1rmFact(messages);
-  const best = e ? `Your latest strength estimate is ${e.value} kg [${e.id}]` : 'Your sessions look steady';
+  const facts = factsSent(messages);
+  const e = facts.filter(f => / e1rm = /.test(f.text)).at(-1);
+  const other = uncoveredId(facts);
+  const best = e ? `Your latest strength estimate is ${e.value} kg [${e.id}${other && other !== e.id ? `, ${other}` : ''}]` : 'Your sessions look steady';
   const text = step === 1 ? `${best}, so 999.5 kg [${e?.id ?? 'f1'}] is next.` : `${best}, and you've done ${sets ?? 'some'} sets this week.`;
   const events: StreamEvent[] = [];
   for (let i = 0; i < text.length; i += 7) events.push({ t: 'text', d: text.slice(i, i + 7) });

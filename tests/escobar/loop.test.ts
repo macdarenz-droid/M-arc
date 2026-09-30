@@ -7,6 +7,7 @@ import type { Conversation, Fact, StoredMessage } from '@/escobar/types';
 import type { MemoryEffect } from '@/escobar/tools/executor';
 import { sixMonthsState, NOW } from './fixtures';
 import { buildManifest } from '@/escobar/context/manifest';
+import { checkGrounding } from '@/escobar/verify';
 
 type Step = StreamEvent[] | ((body: { messages: unknown[] }) => StreamEvent[]);
 const final = (content: unknown[], stop_reason = 'end_turn'): StreamEvent => ({ t: 'final', content, stop_reason, usage: { input_tokens: 1000, output_tokens: 50, cache_read_input_tokens: 800 }, model: 'claude-opus-5' });
@@ -460,9 +461,11 @@ describe('BUG-31 brief-form fact tags in the loop', () => {
     expect(r.unverified).toBeUndefined();
     expect(loop.conversation.messages.filter(m => m.role === 'system').map(m => m.content as string).at(-1)).toMatch(/^These numbers are not from your tools, cards or the brief: 999\.5\. /);
     expect(assistants(loop.conversation)[0]!.meta.rendered.preamble).toEqual([expect.stringMatching(/^Checking your week: \d+ ⟦f\d+⟧ sets so far\.$/)]);
-    const m = /^Your latest strength estimate is [\d.]+ kg ⟦f(\d+)⟧, and you've done \d+ ⟦f\d+⟧ sets this week\.$/.exec(r.answer!.text);
+    const m = /^Your latest strength estimate is [\d.]+ kg ⟦f(\d+),f(\d+)⟧, and you've done \d+ ⟦f\d+⟧ sets this week\.$/.exec(r.answer!.text);
     expect(m, r.answer!.text).toBeTruthy();
-    expect(Number(m![1])).toBeGreaterThan(10); // past f10, where a tag's digits stop passing as a small count
+    // The second id is past f10 and no fact value covers its digits: read as a number, it is flagged.
+    expect(Number(m![2])).toBeGreaterThan(10);
+    expect(checkGrounding({ answer: `About ${m![2]}.`, ledger: loop.conversation.ledger }).ok).toBe(false);
   });
 
   it('A3: the repair system message asks for the whole answer again, with no mention of the check', async () => {
