@@ -43,11 +43,11 @@ document in place.
 - **What you approve:** the pilot sheet (about an hour), then one sheet per batch about every 2 days (20-30 minutes
   each), plus a small second pilot sheet with batch 2. You see the exact plates that get locked. Once you say yes, CI
   proves on every change that the app still shows exactly that.
-- **Layers** (grips, close-ups, feel map, setup, risks, sources) use the design you already approved. They ship on
+- **Layers** (grips, close-ups, feel map, setup, risks) use the design you already approved. They ship on
   the checks and on research that has been checked against its sources, and you see them on the next sheet and on
   your phone. Any new kind of drawing (flat palm, rope, front rack) is shown to you first.
 - **Accuracy:** every claim quotes its source and is checked by a separate reviewer. Your safety line stays word for
-  word and evidence labels stay on. There is no paid expert, no money and no new data.
+  word; sources and evidence labels are research data only, never shown (LR-23). There is no paid expert, no money and no new data.
 - **Your phone:** after each batch merges you get the APK. The button appears only on exercises you approved.
   Exercises not yet done look exactly as they do today.
 - **Time:** it starts as soon as the current How-to tasks (up to HT-10) finish, and takes about 4½ weeks (best
@@ -216,13 +216,13 @@ back to `machine-grip`, `hand.mjs:115`).
 - Golden B is never edited.
 
 ### 2.7 Page builders (LIB-2, LIB-6): the owner's sheet and the CI golden come from the approved chrome
-- **The gap.** The vendored `artifact/build-page.mjs` is a script with the 8 written in (its `GROUPS`, `SOURCES` and
+- **The gap.** The vendored `artifact/build-page.mjs` is a script with the 8 written in (its `GROUPS` and
   output path). It cannot build a batch page, and copying its chrome by hand would let batch chrome drift from golden A.
 - **Plates page builder (LIB-2):** `tools/plates/library/build-page.mjs` takes a spec list and emits the same page
   chrome. **Proof:** with the 8's list it rebuilds golden A `e2bea90c…` byte-identically. Every batch and pilot page
   uses it, so the chrome the owner sees and CI pins is golden A's. The vendored script is not edited.
 - **Layers page builder (LIB-6):** the same pattern for golden B's layers page. With the 8's list it rebuilds
-  `5aab1aca…` byte-identically (legacy close-up scripts included where 2.6's fallback applies).
+  the LR-23 golden-B page (`e7b81413…`, no sources states) byte-identically (legacy close-up scripts included where 2.6's fallback applies).
 
 ---
 
@@ -380,7 +380,7 @@ Every shipped library id is proven in the library shards (5.4) on every full run
 - F3: markup;
 - L3: pixels in 5 themes, every callout and tell, 390, 360 and 340 px;
 - L4: Trace;
-- the layer states;
+- the layer states (no sources states, LR-23);
 - PQ-H1..H10.
 
 The verdict job proves no id or state is missing. The 8 keep their HT-1..HT-10 blocks, unchanged, in both gate jobs.
@@ -403,10 +403,14 @@ The verdict job proves no id or state is missing. The 8 keep their HT-1..HT-10 b
     is not UK-only, and the approved boxes already turn NHS "111" advice into "Get it checked today". The NHS 999
     triggers stay in the text, and the source note names the NHS page. The line needs one add-only lint rule (the
     current rule expects "today" on `now`).
+  - LR-23 and LR-27: no number, service name, website or link in any box. The draft is name "Back pain"; now
+    "Numb or weak in both legs, numb around your genitals, or bladder or bowel changes? Get emergency help now.";
+    doctor "No better in a few weeks? See a doctor." (D-LR23-1). The final triggers come from the fetcher's full NHS
+    read and the critic.
   - The owner sees the wording on pilot A.
 - **`OWNER_DISCLAIMER`** is verbatim and pinned by the lint: "General guidance, not medical advice. If something
-  hurts, stop and get it checked." `SHOW_EVIDENCE = true`.
-- **Source registry:** `docs/research/howto/sources.json`.
+  hurts, stop and get it checked." There is no `SHOW_EVIDENCE` (LR-23).
+- **Source registry:** `docs/research/howto/sources.json` (research data only, never shown, LR-23).
 - **19 shared research cards** (content 6), done in phase 0:
   - palm-flat, curl, the 5 implements, floor-body;
   - the rope rule, cupped thumb, front-rack exemption, wrist-curl exemption, prone checkpoints;
@@ -467,8 +471,8 @@ The verdict job proves no id or state is missing. The 8 keep their HT-1..HT-10 b
 
   It runs at build, where the generator throws, and in C7.
 - **The content checks:** C1-C18 on every shipped id.
-- **Per batch layer page:** the golden-B state check (every state opens, is visible and fits 390 px, 5 themes, no page
-  errors).
+- **Per batch layer page:** the golden-B state check at the LR-23 golden B (every state opens, is visible and fits 390 px,
+  5 themes, no page errors; no link, source, evidence label or contact on any card, and the disclaimer last).
 - **The rest:** C5 hand geometry, C9 feel contrast, C10 tap targets, C11 reduced motion, C12 no endless motion, C16
   accessibility, C17 no network, and the same localStorage keys before and after a sheet opens.
 - **The PR reviewer** (fresh Opus) reads the copy at 390 px in 5 themes. Each batch it gets a planted-defect copy:
@@ -754,7 +758,7 @@ new paths, and merges its dependencies' heads in before review. It still **merge
 | 1 | LIB-2 | Scale core (5.2, 5.3): the 8 as data (incl. HT-5..HT-8's layer generators), per-file `inputsSha256`, library tree, plates page builder (2.7), D/T helpers with `PARAMS`, per-batch golden files with parent-hash chain, `coverage.ts` status, hash-set `ids.ts`, generated `LibId`, `ht-index` chunk, derived fixtures, the total-size re-set (5.1), library negative control; the 8 byte-identical | HT-10, LIB-1 | opus | L | design note only |
 | 2 | LIB-3 | Plate QA gate: PQ-H1..H10, flags F1-F7, vocabulary and envelope measured on the 8, label-search helper, generator refuses a non-ok report; mutation proofs | LIB-2 | opus | M | yes (new `library/qa/`) |
 | 3 | LIB-4 | Library CI: runner on HT-3's exports, rebuild, shard and verdict scripts, one-shard-per-id test, C-TZ, changed-id draft mode (the supervisor wires `.github`, add-only) | LIB-2, LIB-3, HT-10 | opus | M | no |
-| 4 | LIB-5 | Shared layer modules: new archetype data, equipment moves, back-pain box and its lint rule, the other add-only lint rules (4.4), source registry, the 19 shared cards, C15 stamps for the 8 | LIB-2 | opus | M | cards yes; code no |
+| 4 | LIB-5 | Shared layer modules: new archetype data, equipment moves, back-pain box and its lint rule, the other add-only lint rules (4.4), research source registry (data only), the 19 shared cards, C15 stamps for the 8 | LIB-2 | opus | M | cards yes; code no |
 | 5 | LIB-6 | Close-up renderer: all 8 golden-B close-ups byte for byte, with the legacy fallback (2.6); layers page builder (2.7) | LIB-2, HT-4 | opus | L | yes, after HT-4 merges |
 | 6 | LIB-7 | Radial hand pairs: band, curl, rope, EZ, D-handle | LIB-6 | opus | M | yes |
 | 7 | LIB-8 | Pilot A: 19 anchor plates, their composers (`inclineBench`, `rope`, `pecDeck`) and specs, pinned, no button | LIB-3, LIB-4 | opus | L | yes (authoring and sheet) |
@@ -824,7 +828,7 @@ new paths, and merges its dependencies' heads in before review. It still **merge
 10. **Download size:** the APK grows to about 8-11 MB (est.). *Default: accept. HT-11b triggers above 6 MB gz of
     How-to assets.*
 
-Already settled by the owner: no paid expert review (plan O1, now closed), evidence labels shown, his safety line
+Already settled by the owner: no paid expert review (plan O1, now closed), no sources or evidence labels in the UI (LR-23), his safety line
 verbatim, and "next batch" (plan O4, answered by this plan).
 
 **What the Play Store upload needs from this plan:**
@@ -836,6 +840,8 @@ verbatim, and "next batch" (plan O4, answered by this plan).
 - No change to data collection. How-to reads and sends nothing (C17), and storage keys are unchanged, so the Play
   data-safety answers should not change. **Not verified:** whether any Play health-content declaration applies. The
   owner checks this in the Play Console at upload.
+- Play needs a "not a medical device…" line in the store description, and an in-app reminder to consult a
+  healthcare professional (P3). It does not need sources or contacts (LR-23 plan, section 2).
 - Only the owner publishes. Signing and keys are untouched.
 
 ---

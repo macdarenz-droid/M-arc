@@ -108,7 +108,8 @@ Trace and Mistake pills, tempo. The new parts slot in below the pills, in this o
 6. Tempo (unchanged)
 7. **Where you should feel it**: compact body map (front and back), feel line, legend, "If you feel it in..." rows
 8. **Set up**: numbered steps, first 3 shown, "All steps" expands
-9. **Where this comes from**: sources, collapsed
+
+No sources, evidence labels or contacts are shown (owner decision LR-23, 2026-09-30). Sources stay in the data.
 
 Entry point is unchanged: the How-to sheet opens from the exercise card (`EntryCard` in `Train.tsx`) through the
 existing `Sheet` and `sheetStack`. Nothing new on Today.
@@ -450,7 +451,7 @@ type LibId = `lib_${string}`;                 // exercises.json id; research car
 type EvidenceTag = 'DATA' | 'MECH' | 'CONSENSUS' | 'WEAK';
 type SourceId = string;                       // key in the source registry, e.g. 'nance2017'
 
-/** Attached to every rule. Never shown in user copy; shown only in "Where this comes from". */
+/** Attached to every rule. Research data only: never shown in the app (LR-23). */
 interface Claim { tags: EvidenceTag[]; sources: SourceId[]; note?: string }
 
 interface Source {
@@ -787,8 +788,7 @@ CI checks only the structure; timing is measured on a real phone.
 
 Everything ships inside the APK as lazy chunks, the same decision as the earlier form-guide architecture
 (`docs/FORM-GUIDE-ARCHITECTURE.md` section 11: Capacitor bundles `www/`; no service worker in the native build). No network call, no CDN, no fonts beyond what the
-app already ships. Source links in "Where this comes from" are plain text with a URL; they open the system browser
-only when the user taps one. The sheet keeps its "Saved offline" mark.
+app already ships. No source link or other URL is shown (LR-23). The sheet keeps its "Saved offline" mark.
 
 ---
 
@@ -847,8 +847,9 @@ cards are the only source for copy.
 | C14 | Generated files | regenerating SVG gives a diff. The engine rounds every coordinate to 2 decimals, and CI pins the Node version (`.nvmrc` or `engines`, supervisor's call), so floating-point output is the same on every machine |
 | C15 | Review stamp | the computed content hash (4.4) has no matching entry in `reviews.json`, directly or through its archetype. `reviews.json` is supervisor-owned and add-only for builders (guard) |
 | C16 | Accessibility and meaning | a zoom without `alt.right`/`alt.wrong`; a hotspot without a label; a hand zoom without its camera label; a Right or Wrong panel without both its word and its tick or cross icon |
-| C17 | No network | the How-to chunk contains `fetch(`, `XMLHttpRequest`, or an `http` URL outside the sources list |
+| C17 | No network | the How-to chunk contains `fetch(`, `XMLHttpRequest`, `Worker`, an http(s) URL other than the SVG and xlink namespace literals, an `<a>`, a `target=`, or an `href` that does not start with `#` (LR-23, D-LR23-7) |
 | C18 | Motion structure | any How-to animation whose keyframes touch a property other than `transform` or `opacity` (gate, `getAnimations()`) |
+| C19 | No sources or contacts in the How-to UI (LR-23) | any How-to string or file with source, citation or evidence wording, an evidence label, a link, a phone number, helpline or emergency-service wording, or a registry source's author or organisation name (patterns from `tests/guards/no-contacts.ts`; unit checks in HT-4b, gate block in HT-9) |
 
 C9 and the plate's existing theme checks belong in `tests/theme.test.ts` as an add-only block named with this task's
 id; the gate probes go into `scripts/screenshot-gate.mjs` the same way (AGENTS.md shared-file rule).
@@ -943,7 +944,7 @@ used or stored anywhere; the fault is drawn by the engine.
 
 | Risk | Mitigation |
 |---|---|
-| **Medical claims and liability.** A row reads like a diagnosis, someone keeps training through an injury, or two screens give different "get it checked" advice | Rows say "usually means", never name a condition. One shared `RED_FLAG` block (NHS wrist-pain guidance, https://www.nhs.uk/conditions/hand-pain/wrist-pain/, checked 2026-09-30) with an urgent line and a see-a-doctor line, only on joint rows and the hand zoom; C8 fails any row with its own red-flag wording. On `push` exercises a "Wrist sore before you start" row (appendix A1). A short "This is coaching guidance, not medical advice" line under "Where this comes from" (wording is the owner's call). No personal advice: the sheet never reacts to the user's own pain |
+| **Medical claims and liability.** A row reads like a diagnosis, someone keeps training through an injury, or two screens give different "get it checked" advice | Rows say "usually means", never name a condition. One shared `RED_FLAG` block (NHS wrist-pain guidance, https://www.nhs.uk/conditions/hand-pain/wrist-pain/, checked 2026-09-30) with an urgent line and a see-a-doctor line, only on joint rows and the hand zoom; C8 fails any row with its own red-flag wording. On `push` exercises a "Wrist sore before you start" row (appendix A1). The owner's disclaimer line ("General guidance, not medical advice. If something hurts, stop and get it checked.") once per sheet, right after "Risks and when to stop" (LR-23). No personal advice: the sheet never reacts to the user's own pain |
 | **Wrong advice.** A card is wrong, as the seat-height line in the brief and in GENERAL.md was; or a fix gives a direction that is wrong on some machines ("raise the seat" when it is already too high) | Two-person research (writer and verifier), coach review, evidence tags kept per claim, C8 blocks unsourced rules, render review compares pictures to cards. Fixes name the target ("handles at mid-chest") before the usual direction. No copy from GENERAL.md (6) |
 | **The hand zoom is never seen when it matters** (mid-set, heavy load) | "Heel of palm" is always a plate callout on `push`; the Mistake pill leads with the wrist fault; the workout hint line shows the push cue every set (2.1). A one-time automatic zoom needs the owner's OK (new saved data) |
 | **The wrong hand is drawn from an angle that hides the fault** (vertical handles from the side) | Hand camera chosen so the bend lies flat on screen, printed on the zoom; C16 requires the camera label; C5 rejects a bend fault in a non-radial view; owner match check (6.3) |
@@ -969,8 +970,8 @@ used or stored anywhere; the fault is drawn by the engine.
    an equivalent qualification) reviews the exercise cards in batches. Without it the content can still go to your
    own phone for testing, but I would not ship it to other users as "proper handling" advice.
 2. **The disclaimer line** wording, and whether you want a lawyer to look at it.
-3. **Showing evidence tags to users** ("measured" vs "coaching advice") in the sources section. Recommendation: yes,
-   small, in "Where this comes from" only.
+3. **Showing evidence tags to users** ("measured" vs "coaching advice"). Closed by the owner on 2026-09-30 (LR-23):
+   no sources or evidence labels in the UI; they stay in the data.
 4. **Order after the 8 cards.** Recommendation: all `push` exercises next (26, the injury path), then `pull` and
    `hang`.
 5. **A "seen" flag (new saved data).** Should the hand close-up open by itself the first time you open a pressing

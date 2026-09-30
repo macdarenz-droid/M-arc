@@ -3,6 +3,7 @@
 Lane C · Sonnet · M · merge slot 3 (before HT-3: independent, and it unblocks lane C)
 
 - **id:** HT-4
+- **LR-23 follow-up:** HT-4 merges as written (D-LR23-6). The owner's LR-23 decision (no sources, evidence labels or contacts in the UI) is applied by a separate card, [HT-4b](HT-4b.md): the golden-B re-vendor, the C17 rewrite and the new C19 check.
 - **outcome:**
   - The finished layer mockup (golden B) is vendored verbatim and hash-locked, and a test proves it holds only the approved golden-A plates.
   - One state driver reaches every golden-B page state, so the layer cards never write their own.

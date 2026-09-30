@@ -74,7 +74,7 @@ src/howto/
   content-types.ts                 HowToContent + parts (HT-4, from GA section 4 + the frozen golden-B *.howto.mjs)
   ids.ts                           GENERATED, the only How-to module in MAIN, <= 2,048 B: HOWTO_IDS, HOWTO_LABEL, hasHowTo() (HT-2);
                                    HOWTO_HINTS, the push grip hint per id, from golden B's handling.cue (HT-5)
-  archetypes.ts                    GENERATED from golden B's shared module: RED_FLAG, DISCLAIMER (O2, flagged), SHOW_EVIDENCE (O3) (HT-5)
+  archetypes.ts                    GENERATED from golden B's shared module: RED_FLAG, DISCLAIMER (O2, flagged); no SHOW_EVIDENCE (LR-23) (HT-5)
   generated/index.ts               GENERATED LOADERS: Record<LibId, () => import('./ht-<slug>')>
   generated/ht-<slug>.ts           GENERATED base chunk: plate strings, tells, tempo, cues, alt (HT-2); section text and descriptors (HT-5)
   generated/ht-<slug>-zoom.ts      GENERATED posture crops, extracted from the golden-B build (HT-7)
@@ -87,7 +87,7 @@ src/slices/howto/
                                    owns the zoom slot API (HT-3, section 2.5)
   sections/index.ts                ordered section registry (one line per card; keep both sides on merge)
   zoom/ZoomHost.tsx, zoom/registry.ts   zoom states S2/S3 inside HT-3's zoom slot; Android back closes the zoom first (HT-6)
-  sections/{LookCloser,Hand,HandlingMistakes,Posture,Feel,Setup,Risks,Sources}.tsx
+  sections/{LookCloser,Hand,HandlingMistakes,Posture,Feel,Setup,Risks}.tsx
   feel/useFeelMap.ts               line-for-line port of golden B's FEEL_JS (a behaviour list pins it); no SVG is built at runtime (HT-8)
   css/plate.css, css/feel.css (GENERATED), css/{sheet,hand,posture,text}.css   all selectors under .ht
 ```
@@ -121,9 +121,9 @@ Chunk names come from file names: `HowToSheet-*`, `ht-<slug>-*`, `hand-<key>-*`.
   4. Grip line and thumb rule, then "Common handling mistakes".
   5. "Where you should feel it".
   6. "Set up": 3 steps, then "All steps".
-  7. "Risks and when to stop": the exercise risks, one shared RED_FLAG, the DISCLAIMER.
-  8. "Where this comes from": collapsed; evidence tags behind SHOW_EVIDENCE.
-  Final placement inside 3-8 follows golden B. Items 1-2 are fixed by the owner rule.
+  7. "Risks and when to stop": the exercise risks, the shared red-flag blocks, then the DISCLAIMER, once and last.
+  No sources, evidence labels or contacts are shown (owner decision LR-23, 2026-09-30); they stay in the data.
+  Final placement inside 3-7 follows golden B. Items 1-2 are fixed by the owner rule.
 - **Zooms** (S2 hand, S3 posture) take the plate box's place through HT-3's **zoom slot API** (critic fix 11): `setPlateHidden(bool)` sets `hidden` and `inert` on the plate box, so TalkBack skips it; `clearMistake()`; `snapshot()` / `restore(s)` of the plate state; and a slot element in the plate box. HT-3 fixes the API in its design note and unit-tests it; HT-6 and HT-7 only call it. The golden figure stays mounted, so closing the zoom restores the plate exactly (L3 re-check).
 - **The owner rule overrides GRIP-AND-FEEL (D-HT2):**
   - the approved chest-press callouts stay ("Elbows 45°" included). The mockup's override (`machine_chest_press.howto.mjs:216-225`: "Heel of palm", "Blades on pad", "Handles mid-chest") is removed **in the mockup** before S-2, not only in the app (critic fix 2). "Heel of palm" becomes the Hand chip caption;
@@ -243,7 +243,8 @@ Every ceiling is the measured value + 10 %, lowered to fit the measurement and n
 
 ### 2.10 Offline
 - Everything is static and bundled. The service worker precaches every file in `www/assets` (sw-version.mjs:6). In the APK, all assets are local.
-- C17: no `fetch(`, `XMLHttpRequest`, `Worker` or `http` URL in any How-to source or chunk, except the plain-text source citations, which open in the system browser only on tap.
+- C17: no `fetch(`, `XMLHttpRequest`, `Worker` or http(s) URL in any How-to source or chunk. The only exemptions are the SVG and xlink namespace literals (LR-23, D-LR23-7). No `<a>`, no `target=`, and every `href` starts with `#`.
+- C19 (LR-23, HT-4b): no source, citation, evidence label, link, phone number, helpline or emergency-service wording in any How-to string or file, checked with the shared patterns in `tests/guards/no-contacts.ts`.
 - Gate:
   - with the network offline, the sheet opens after a reload;
   - a chunk from the previous build still loads (build-B);
@@ -257,6 +258,7 @@ Every ceiling is the measured value + 10 %, lowered to fit the measurement and n
   - HT-3: the A1/A5 parts of `no-form-guide`, `plate-state.test` (the pinned gallery-script behaviours and the zoom slot API).
   - HT-3b: `footprint.test` (esbuild size of `ids.ts` + `lazy.tsx`).
   - HT-4: `layers-vendor.test` (L0-B), `goldenB-derivation.test` (golden B holds only golden-A plates), `content.test` with C1-C4, C6-C8, C15 (stub), C16 (data), C17 (source), and negative fixtures.
+  - HT-4b (LR-23): the re-vendored golden B, C17 with no URL exception except the SVG and xlink namespaces, `c19.ts` with fixtures M1-M9 and the D-LR23-1 extras, and the pattern parity test against `tests/guards/no-contacts.ts`.
   - HT-5: the content checks green on the generated content of all 8; `archetypes` and `HOWTO_HINTS` generated.
   - HT-6: C5 hand geometry, hand L2-B, `hint.test`.
   - HT-7: `zooms.test` (L2-B `===`; no duplicate ids per How-to).
@@ -353,7 +355,7 @@ Every ceiling is the measured value + 10 %, lowered to fit the measurement and n
   2. Every posture crop that re-renders the plate (`howto/render-*.mjs` call `renderPlate`) starts from the golden-A spec. HT4-A5 proves it.
   3. The GA appendix-A text fixes are applied in the mockup's `*.howto.mjs`. The app takes its text only from there.
   4. One shared module holds `RED_FLAG` and `DISCLAIMER` (the architecture's wording, flagged O2). Today `RED_FLAG` lives in `leg_press.howto.mjs:90`, and the mockup has no disclaimer.
-  5. The layer page renders every new section for all 8 in 5 themes: hand zoom, posture zoom, handling mistakes, feel map (rest, playing, each row open, reduced motion), setup, risks, sources.
+  5. The layer page renders every new section for all 8 in 5 themes: hand zoom, posture zoom, handling mistakes, feel map (rest, playing, each row open, reduced motion), setup, risks (with the disclaimer).
   6. "Pause the shimmer when scrolled out of view" is added to `FEEL_JS`, as behaviour only with no pixel change. If the mockup lane does not add it, the app does not either.
 
   Then a fresh reviewer checks golden B against GA and the verified research cards, and the owner gets the contact sheet (O5).
@@ -368,13 +370,14 @@ Every ceiling is the measured value + 10 %, lowered to fit the measurement and n
 | HT-1 | Golden lock: vendored approved sources, font pin, golden fixtures, CI fidelity check | P | S-1 | Opus | M |
 | HT-2 | Generator core, the 8 plate modules, `BuiltHowTo`, `--mistake` token and A3 narrowing | P | HT-1 | Opus | L (hard, design note) |
 | HT-4 | Golden-B lock, golden-B state driver, golden-A derivation test, CI content checks | C | HT-1, S-2 | Sonnet | M |
+| HT-4b | LR-23 follow-up: golden-B re-vendor, C17 rewrite, C19 "no sources or contacts" check | C | HT-4, ESC-NC | Sonnet | M |
 | HT-3 | The sheet: Train entry, PlateView and zoom slot API, FG-OFF re-scope, plate fidelity gate | P | HT-2 | Opus | L (hard, design note) |
 | HT-3b | Speed, offline and footprint: How-to footprint probe, tripwires, build-B, chunk budgets | P | HT-3 | Sonnet | M |
-| HT-5 | Content generator for the 8 from golden B, archetypes, push hints, content verification | C | HT-2, HT-4, S-2 | Sonnet | S-M |
+| HT-5 | Content generator for the 8 from golden B, archetypes, push hints, content verification | C | HT-2, HT-4, HT-4b, S-2 | Sonnet | S-M |
 | HT-6 | Proper grips: hand close-ups, zoom host, Look closer chips, handling mistakes, push hint | L1 | HT-3, HT-5 | Opus | L (hard, design note) |
 | HT-7 | Posture close-ups (right and wrong crops, generated from golden B) | L2 | HT-6 (zoom host commit), HT-5 | Opus | M (hard, design note) |
 | HT-8 | "Where you should feel it": muscle highlight and shimmer outline | L3 | HT-3, HT-5 | Opus | M (hard, design note) |
-| HT-9 | Set up, Risks and when to stop, Where this comes from | L4 | HT-3, HT-5 | Sonnet | S-M |
+| HT-9 | Set up, Risks and when to stop | L4 | HT-3, HT-5, HT-4b | Sonnet | S-M |
 | HT-10 | Gate blocks: whole-sheet sweeps, final speed numbers, release candidate | G | HT-3b, HT-6, HT-7, HT-8, HT-9 | Opus | M |
 
 HT-3 was split (critic fix 23): the entry, the FG-OFF re-scope and the fidelity checks stay together in HT-3, because the entry must never land without the proof; speed, offline and budgets move to HT-3b.
@@ -392,11 +395,11 @@ HT-3 was split (critic fix 23): the entry, the FG-OFF re-scope and the fidelity 
   Never more than 4 builders at once; the supervisor starts HT-9 last if the cap is hit.
 - **Wave 5:** HT-10, starting when HT-6 merges; its perf harness can begin on HT-3b's head.
 
-**Merge order (the owner's checklist order):** HT-1 → HT-2 → HT-4 → HT-3 → HT-3b → HT-5 → HT-6 → HT-7 → HT-8 → HT-9 → HT-10.
+**Merge order (the owner's checklist order):** HT-1 → HT-2 → HT-4 → HT-3 → HT-3b → HT-4b → HT-5 → HT-6 → HT-7 → HT-8 → HT-9 → HT-10. HT-4b (LR-23) merges after HT-4 and before HT-5; HT-5 to HT-9 take LR-23 after it (D-LR23-6).
 - HT-4 goes before HT-3: it is independent, and merging it early unblocks lane C (critic fix 23).
 - 11 merges. Each PR must merge `main` and re-run CI after the previous merge, and the gate gains about 240 pixel pairs in each of its 2 jobs under a 40-minute timeout. Plan on **1.5 to 2 days** of merge time after reviews; "one per 25-minute cycle" is only the floor.
 - **Milestone M1a**, after HT-3: the owner has the 8 approved plates, Trace and Mistake on his phone, behind "How to do it". The sections below the tempo are empty. The M1a device-check list starts with the font-scale rule (O9). HT-3b follows one merge later with the speed proofs.
-- **Milestone M1**, after HT-10: the full first milestone for all 8 exercises: plate, Trace, Mistake, hand and posture close-ups, the feel map with shimmer, setup steps, risks and sources.
+- **Milestone M1**, after HT-10: the full first milestone for all 8 exercises: plate, Trace, Mistake, hand and posture close-ups, the feel map with shimmer, setup steps, and risks with the disclaimer.
 
 Every card's acceptance includes **G0** (2.7).
 
@@ -411,7 +414,7 @@ Every card's acceptance includes **G0** (2.7).
 |---|---|---|
 | O1 | Paid physio/coach review before the content ships widely | Build and merge to main (the owner's own APK). Publishing is owner-only anyway. `reviews.json` + C15 stamps are ready (HT-4 stub). No release to other users until O1 is answered |
 | O2 | Wording of the "not medical advice" line | **Closed 2026-09-30.** The owner chose "General guidance, not medical advice. If something hurts, stop and get it checked.". It is the one constant `DISCLAIMER` (golden B `howto/shared.mjs`, then `archetypes.ts`) |
-| O3 | Show evidence labels | Recommended yes; built behind `SHOW_EVIDENCE = true`. His answer flips one const |
+| O3 | Show evidence labels | Closed 2026-09-30: no sources or evidence labels in the UI; they stay in the data (LR-23) |
 | O4 | Next exercise batch | **Answered 2026-09-30:** the whole library, before the Play Store upload (`docs/howto/library/`) |
 | O5 | The finished layer mockup (golden B) | The supervisor pins it after a fresh review. The owner gets the contact sheet and then the APK after each layer merge. Layer merges do not wait for his reply, because he approved the design and listed exactly these layers as missing. If he wants a change, it is a deliberate golden-B update (2.8) |
 | O6 | The "already seen" note (auto-open the hand zoom once) | Not built: it is new stored data. v1 works without it |

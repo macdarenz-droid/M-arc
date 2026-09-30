@@ -13,7 +13,7 @@ Every card below says "common" for a field when this text applies.
   - `tests/howto/golden/**`, `tools/plates/vendor/**` and `tools/plates/layers/**`, except in the card that creates them or in a PR titled "golden update";
   - other tasks' blocks in `scripts/screenshot-gate.mjs` and `tests/theme.test.ts` (add-only; FG-OFF is edited only by HT-3 under D-HT1);
   - the generator core `tools/plates/{generate.mjs, lib/**}` after HT-2 (plugins are found by glob, so no card adds a registry line), and generated files written by another card's plugin;
-  - `tools/plates/fidelity/goldenB.mjs` except in HT-4 (layer cards only call its state driver);
+  - `tools/plates/fidelity/goldenB.mjs` except in HT-4 and HT-4b (layer cards only call its state driver);
   - every path not in the card's `write_scope`.
 - **G0, "approved plates unchanged against golden":** a criterion on every card from HT-2 on.
   - L0 and L2 are green.
@@ -41,6 +41,6 @@ Every card below says "common" for a field when this text applies.
 - **Reviewer:** a fresh Opus session, which checks the diff against the card and the plan. Builders never approve their own work.
 - **Golden B is the only reference for the new layers.** A layer card never ships a text, timing or behaviour that golden B does not have, and has no "declared differences" list. A needed change goes into golden B first (plan 2.8), then the card compares `===` / L3 against the new pin.
 - **Plan:** `htplan/HOWTO-BUILD-PLAN.md`, with sections 2.7 (fidelity), 2.9 (budgets) and 3 (D-HT1).
-- **Merge order:** HT-1 → HT-2 → HT-4 → HT-3 → HT-3b → HT-5 → HT-6 → HT-7 → HT-8 → HT-9 → HT-10.
+- **Merge order:** HT-1 → HT-2 → HT-4 → HT-3 → HT-3b → HT-4b → HT-5 → HT-6 → HT-7 → HT-8 → HT-9 → HT-10. HT-4b (LR-23) merges after HT-4 and before HT-5; HT-5 to HT-9 take LR-23 after it (D-LR23-6).
 
 **Controls (supervisor, 2026-09-30):** any "no How-to" control reads the shared helper from HT-3 (the first library id in `exercises.json` order with no How-to), never a literal exercise id. The library plan ships more exercises, and a literal control would turn red.

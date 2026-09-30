@@ -93,7 +93,7 @@ research, not the writing.
 | Contact archetype | 8 (GA 3.2) | default checkpoints (label, detail, claim), default crop kind, `prone: true` checkpoints | archetypes module |
 | Equipment moves (GA 3.4) | 5: get in/out, selector pin, foot bar, unrack/rerack, dumbbell kick-up | shared setup-step text, the `unrack-rerack` and `dumbbell-kickup` posture archetypes | archetypes module |
 | Red-flag boxes | 4 today (wrist, shoulder, knee, elbow; NHS, checked 2026-09-30); a new back box proposed (5.3) | name, urgent line, doctor line, NHS claim; triggers pinned by `RED_FLAG_BLOCKS` | golden B `howto/shared.mjs` |
-| Owner safety line, `SHOW_EVIDENCE` | 1 each | verbatim line; labels on | `shared.mjs` |
+| Owner safety line | 1 | verbatim line; evidence labels are data only, never shown (LR-23), and `SHOW_EVIDENCE` is gone | `shared.mjs` |
 | Shared risk lines (new) | proposed 3: bar over the face (thumb wrapped, safeties, collars; Kerr 2010, Jumbelic 2007 already in GA), breath-holding under heavy load (the squat's "breath" risk; MacDougall 1985 on the leg press card), jump landing (needs a source) | one text + claim, reused by id | archetypes module |
 | Source registry entries | about 110 today, growing | cite, URL, kind, `access`, `checked`, PMID, quotes | `docs/research/howto/sources.json` (GA 4.4) |
 | Fixed headings and chips | "Hand", "Hand: right and wrong", "Where to feel it" | page constants | sheet code |
@@ -232,7 +232,8 @@ judgement, not a measurement.
   `{scope, hash, date, fetcher, critic, safety?, reviewer, findings, open: 0}`. A sheet whose content hash has no
   stamp fails CI. The same works per archetype, as GA 4.4 already allows. The 8 get stamps from their recorded S-2
   and compact-rewrite verifications.
-- **Evidence labels** stay on (`SHOW_EVIDENCE = true`, and the lint enforces it). New sheets use one format, the
+- **Evidence labels** are research data only, never shown (owner decision LR-23, 2026-09-30); the lint fails if
+  `SHOW_EVIDENCE` comes back. New sheets still record one format, the
   `EVIDENCE_LABELS` form `{tag, text ≤ 12 words}` that 5 of the 8 use. The HT-5 generator maps both forms, so the 3
   older sheets need no golden-B change just for this.
 
@@ -332,12 +333,14 @@ for crunches (no neck pulling), and upright-row height and width. No separate ag
   - **111:** sudden severe pain or pain getting worse quickly; feeling hot, cold, shivery or unwell;
   - **GP:** no better after a few weeks; worse at night; lump, swelling or changed shape; unexplained weight loss.
 
-  **Conflict with the current box pattern.** The current pattern is "<triggers>? Get it checked today." The 999
-  triggers need "Call 999", and the lint (`/today/` on `now`) would reject that. This is an add-only lint rule for this
-  box plus a wording decision (a safety message, so the supervisor decides and the owner sees it on the contact
-  sheet). Fitting it in 30 words means choosing triggers. A draft for the critic, not approved: "Back pain. Numb or
-  weak in both legs, numb around your genitals, or bladder changes? Call 999. No better in a few weeks? See a
-  doctor." (26 words by the lint's count).
+  **Conflict with the current box pattern.** The current pattern is "<triggers>? Get it checked today." The NHS
+  emergency triggers need a stronger line, and the lint (`/today/` on `now`) would reject it. This is an add-only lint
+  rule for this box plus a wording decision (a safety message, so the supervisor decides and the owner sees it on
+  the contact sheet). Under LR-23 and LR-27 the line is region-neutral and names no number, service, website or link:
+  "Get emergency help now." (D-LR23-1). Fitting it in 30 words means choosing triggers. A draft for the critic, not
+  approved: name "Back pain"; now "Numb or weak in both legs, numb around your genitals, or bladder or bowel
+  changes? Get emergency help now."; doctor "No better in a few weeks? See a doctor." (30 words by the lint's
+  count, the cap).
 - **Neck: no box.** The NHS neck-pain page (read the same way) has no urgent or 999 triggers, only GP ones. It doesn't
   fit the two-line pattern, so neck rows link no box, as the chest press already does.
 - **Ankle or hip:** added only if a jump or lunge row needs one, from that joint's NHS page, read in full, with its
@@ -419,7 +422,7 @@ paid service.
 | Children inherit something wrong (the rope-pushdown `loadAxis` trap) | `inherit[]` lines each carry a reason and are checked by the critic; the hash chain re-flags children when a parent changes |
 | A thin-evidence exercise ships weak | the anchor-source bar; `blocked:evidence`; the owner's named list; the likely-thin ids researched first |
 | Warning wording drifts across 145 sheets | shared boxes only; C8 blocks own warning wording; `RED_FLAG_ROWS` pins each sheet's rows; at most 3 boxes |
-| The back box's "Call 999" breaks the current pattern | add-only lint rule plus a supervisor decision, shown to the owner on the contact sheet |
+| The back box's urgent line ("Get emergency help now.") breaks the current `/today/` pattern | add-only lint rule (LR-11, as amended by LR-27: no number, service name or link) plus a supervisor decision, shown to the owner on pilot A |
 | Copy drifts long or salesy | lint in the build; the medical-claim ban; one reviewer who judges voice against golden B |
 | Sources go stale or are blocked (ACE 403 on and off, ExRx and NSCA 403) | a `checked` date on every source (no nulls); a yearly re-check; only readable sources carry a claim |
 | Golden B fails HT5-A2 today (35 null source fields) | a golden-B source-field update before HT-5 (supervisor) |
@@ -435,7 +438,7 @@ paid service.
 1. The card v2 schema and the repo folder `docs/research/howto/`.
 2. C15 goes strict with agent-verification stamps.
 3. The add-only lint extensions (section 4 table).
-4. The back-pain box and its "Call 999" lint rule.
+4. The back-pain box and its urgent-line lint rule ("Get emergency help now.", no number; LR-11 as amended by LR-27).
 5. The two HT-5 fixes: null source fields, disclaimer text.
 6. The release check in C6.
 7. The `ids.ts` size decision.

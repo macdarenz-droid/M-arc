@@ -1,0 +1,73 @@
+# HT-4b: LR-23 follow-up to HT-4: golden-B re-vendor, C17 rewrite, and the C19 "no sources or contacts" check
+
+Lane C · Sonnet · M · merge slot 5b (after HT-3b, before HT-5; D-LR23-6)
+
+- **id:** HT-4b
+- **outcome:**
+  - The owner's decision LR-23 (2026-09-30: "Dont put any emergency or whatever contacts. Even the source remove it in app ui. If its not required by pkaystore dont put.") is locked into the How-to build.
+  - The vendored golden B is the new LR-23 golden-B commit: no Sources section, evidence labels or contacts, the disclaimer last. The plates are unchanged (0 px).
+  - C17 allows no URL except the SVG and xlink namespace literals.
+  - A new check, C19, keeps sources, evidence labels, links and contact or emergency wording out of every How-to string and file. Every rule is proven by a failure fixture.
+- **base:** `origin/main` after HT-4 (#107) merges. HT-4 is not reopened (D-LR23-6).
+- **depends_on:** HT-4 (merged), ESC-NC (merged: it creates `tests/guards/no-contacts.ts`, the single definition of the patterns), and the golden-B commit 677f8e3 ("Golden B: owner decision LR-23, no sources, evidence labels or contacts in the UI (docs only)") on `claude/howto-options`, page sha256 `e7b8141368e59cf993f29555efce53bc06f36131d8e283c79e11a9f2614c928a`, 2,320,561 bytes.
+- **read_first:**
+  - `docs/howto/LR23-PLAN.md` (branch `claude/lr23-plan`): section 7 "Re-pin", section 8 "NEW guard C19", "C17 rewrite" and "HT-4", and the AMENDMENTS D-LR23-1, D-LR23-2, D-LR23-6 and D-LR23-7. The amendments override the plan body.
+  - the golden-B README section "Owner decision 2026-09-30 (LR-23)" at the new commit;
+  - HT-4's merged files: `tools/plates/layers/MANIFEST.json`, `layers.mjs`, `tests/howto/layers-vendor.test.ts`, `tests/howto/checks/c17.ts` and its callers, `tools/plates/fidelity/goldenB.mjs`, `tests/howto/content.test.ts`;
+  - `tests/guards/no-contacts.ts` on main.
+  - Re-derive every line number from main; never trust one from the plan.
+- **write_scope:**
+  - `tools/plates/layers/**` (re-vendored verbatim from the new golden-B commit, plus MANIFEST) and `tests/howto/golden/howto-layers.html` (the rebuilt page), in commits titled "[golden update]";
+  - `tests/howto/layers-vendor.test.ts` (the pins);
+  - `tools/plates/fidelity/goldenB.mjs`;
+  - `tests/howto/checks/c17.ts` and its callers in `tests/howto/content.test.ts` and `tests/howto/content-gen.test.ts`;
+  - `tests/howto/checks/c19.ts` (new) and its run in `tests/howto/content.test.ts`;
+  - `tests/howto/no-contacts-parity.test.ts` (new);
+  - `tests/howto/fixtures/bad/*.ts` (add-only).
+  - `src/howto/content-types.ts`: the comment only (D-LR23-8 item 7): "shown only in 'Where this comes from'" becomes "research data only, never shown (LR-23)". `Source`, `EvidenceTag` and `sources` stay.
+- **reserved_paths:** common, plus `tests/guards/no-contacts.ts` (ESC-NC owns it; read only), `src/howto/content/**`, `src/howto/generated/**` and `tools/plates/gen/**` (HT-5), and `src/slices/**`.
+- **acceptance:**
+  - **HT4b-A1 (re-vendor; D-LR23-2):**
+    - every file in `tools/plates/layers/` matches its MANIFEST sha256 at the new golden-B commit, and rebuilding the layer page gives the pageSha256 recorded in the golden-B README;
+    - `MANIFEST.json` `pageApproval.current` = { ref: <the golden-B commit>, approvedBy: 'supervisor', date: '2026-09-30', why: 'applies owner decision LR-23 ("Dont put any emergency or whatever contacts. Even the source remove it in app ui. If its not required by pkaystore dont put."); the owner has not viewed this page yet', pageSha256, bytes }. It switches to 'owner' only after the owner views the page on pilot A;
+    - `history` = [the a7a0b74 entry, unedited, then b3a90af, then 16a8edc];
+    - `layers.mjs` `PAGE_SHA256` and `GOLDEN_B_REF`, the MANIFEST pin literal, `approvedBy` and the historyPin literal in `layers-vendor.test.ts` follow;
+    - every non-merge commit touching `tools/plates/layers/**` or `tests/howto/golden/**` carries "[golden update]".
+    - Failure path: a 1-byte edit to a vendored file fails; `approvedBy: 'owner'` fails the pin test.
+  - **HT4b-A2 (state driver):** `goldenB.mjs` drops the sources states (`expandSources`/`collapseSources` and their uses), and the "risks" state's capture includes `.ht-disclaimer`. The self-check still gives 0 px for every state.
+  - **HT4b-A3 (C17 final form; D-LR23-7):**
+    - `c17.ts` has no `allowedUrls` parameter;
+    - the only exemptions are the SVG namespace (`http://www.w3.org/2000/svg`) and the xlink namespace (`http://www.w3.org/1999/xlink`) literals, in their whole-attribute form (`xmlns="…"`, `xmlns:xlink="…"`), with an optional backslash before each quote (the escaped form inside generated `.ts` string literals);
+    - the failure text is `C17: <file>: URL "<u>" is not allowed`;
+    - the callers are updated; the latent namespace hits on HT-6/7/8 (20, 46, 20 by grep, not yet run) clear.
+    - Fixtures: a cite URL fails; an escaped SVG namespace passes; an escaped `xmlns=\"https://example.com/x\"` fails.
+  - **HT4b-A4 (C19 unit checks; plan section 8, amended):** `c19.ts` imports `CONTACT_RE`, `SOURCE_RE`, `SOURCE_CS_RE` and `SAFETY_LINE_RE` from `tests/guards/no-contacts.ts` and runs in `content.test.ts` over all 8 sheets and every bad fixture. Wherever it applies `SOURCE_RE` it also applies `SOURCE_CS_RE`.
+    - (a) `archetypes.ts` has no `SHOW_EVIDENCE` export. Every `RED_FLAG*` `name`, `now` and `doctor` and `DISCLAIMER` pass `CONTACT_RE`, `SOURCE_RE` and `SOURCE_CS_RE`; the boxes also pass `SAFETY_LINE_RE`.
+    - (b) Every copy field of every built sheet (the copy-lint `copyFields` list, every kind except `sourceNote`) passes `CONTACT_RE`, `SOURCE_RE` and `SOURCE_CS_RE`, and contains no registry source's first-author surname or organisation name (the data-driven check of D-LR23-1; golden-B `copy-lint.mjs` `sourceName` shows one way to derive them).
+    - (c) In every file under `src/howto/**` and `src/slices/howto/**`: no `<a` element and no `target=`; every `href=` or `xlink:href=` value starts with `#` (SVG `<use href="#…">` is legitimate); no class token `srcs`, `src-cite`, `src-ev`, `src-key`, `src-n`, `src-list`, `ev` or `ev-*`; no string literal equal to Measured, Mechanics, Coaching consensus or Weak for this use; no file or export named `sources` under `src/howto/generated`, and no `url` or `cite` keys there. `href`, `xlink:href` and `class` values are read in the same escaped form as C17 (D-LR23-7).
+    - (d) The pre-rendered HTML in `feel-*.ts`, with tags stripped, passes `CONTACT_RE`, `SOURCE_RE` and `SOURCE_CS_RE`.
+  - **HT4b-A5 (C19 failure fixtures; each fails, naming the rule, and is listed in the PR):**
+    - M1: `SHOW_EVIDENCE = true` in a fixture;
+    - M2: "…? Call 999." in `RED_FLAG_KNEE.now`;
+    - M3: "Go to A&E." in a back-box fixture;
+    - M4: "(Muyor 2023)" in a feel fix;
+    - M5: "+44 20 7946 0000" in a risk line;
+    - M6: "www.nhs.uk" in a setup line;
+    - M7: an `<a href="https://pubmed…" target="_blank">` in a section;
+    - M8: `<span class="ev ev-data">Measured</span>`;
+    - M9: "help@example.org";
+    - the D-LR23-1 extras: "Weiss 1995", "NSCA teaches", "text HOME to 741741" and "ring 13 11 14", each in a copy field.
+    - Pass fixture: "Get emergency help now." in a back-box fixture passes (D-LR23-1 allows those words, with no number, service or link).
+  - **HT4b-A6 (parity):** `no-contacts-parity.test.ts` checks that the `.source` and `.flags` of all four patterns in the vendored `tools/plates/layers/artifact/copy-lint.mjs` are identical to `tests/guards/no-contacts.ts`.
+    - Failure path: a one-character change to either copy fails.
+  - **HT4b-A7 (unchanged):** C8 (every claim has sources; no own red-flag wording), C7 and C16 stay as they are. `content-types.ts` keeps `Source`, `EvidenceTag` and `sources` as data.
+  - **G0.** The fidelity check against bc0f378 stays 0 px.
+- **design_reference:** the new golden-B commit; the plan's section 8.
+- **connectivity:** common. No URL is written under `src/`.
+- **verification:** common, plus a table in the PR mapping each fixture (M1-M9, the extras, the pass fixture, the C17 fixtures, parity) to its failure message.
+- **risk_and_recovery:**
+  - If a pattern hits real How-to copy, the fix is a golden-B copy update (plan 2.8), never an exemption. A true false positive that rewording cannot fix goes to the supervisor.
+  - If ESC-NC has not merged, wait: never write a second copy of the patterns in `tests/`.
+  - If the rebuilt page's sha256 differs from the golden-B README, stop and report: never re-pin to a page nobody reviewed.
+  - `approvedBy: 'owner'` is never written before the owner views the page (D-LR23-2).
+- **return:** common.

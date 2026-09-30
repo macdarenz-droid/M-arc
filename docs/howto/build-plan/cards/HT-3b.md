@@ -33,7 +33,7 @@ Lane P · Sonnet · M · merge slot 5 (after HT-3)
     - a failed chunk load shows "Could not load the guide." with Reload;
     - the localStorage keys are identical before and after opening;
     - PlateSheet's `.plate` chip computed style is unchanged with the How-to CSS loaded.
-  - **HT3b-A5:** C17 on the built How-to chunks: no `fetch(`, `XMLHttpRequest`, `Worker` or `http` URL outside source citations.
+  - **HT3b-A5:** C17 on the built How-to chunks: no `fetch(`, `XMLHttpRequest`, `Worker` or http(s) URL (only the SVG and xlink namespace literals `http://www.w3.org/2000/svg` and `http://www.w3.org/1999/xlink` are exempt, LR-23 and D-LR23-7), no `<a>`, no `target=`, every `href` starts with `#`.
   - **G0.**
 - **design_reference:** the plan, sections 2.9-2.10.
 - **connectivity:** common.
