@@ -583,7 +583,7 @@
    "equipmentNeeds": [
     {
      "need": "smith",
-     "label": "Smith machine",
+     "label": "Smith machine: rails, bar hooks and hook slots, adjustable safety stops (LR-24)",
      "status": "missing"
     },
     {
@@ -828,7 +828,7 @@
    "equipmentNeeds": [
     {
      "need": "smith",
-     "label": "Smith machine",
+     "label": "Smith machine: rails, bar hooks and hook slots, adjustable safety stops (LR-24)",
      "status": "missing"
     },
     {
@@ -1639,7 +1639,7 @@
    "equipmentNeeds": [
     {
      "need": "smith",
-     "label": "Smith machine",
+     "label": "Smith machine: rails, bar hooks and hook slots, adjustable safety stops (LR-24)",
      "status": "missing"
     },
     {
@@ -3907,7 +3907,7 @@
    "equipmentNeeds": [
     {
      "need": "smith",
-     "label": "Smith machine",
+     "label": "Smith machine: rails, bar hooks and hook slots, adjustable safety stops (LR-24)",
      "status": "missing"
     },
     {
@@ -5382,7 +5382,7 @@
    "equipmentNeeds": [
     {
      "need": "smith",
-     "label": "Smith machine",
+     "label": "Smith machine: rails, bar hooks and hook slots, adjustable safety stops (LR-24)",
      "status": "missing"
     },
     {
@@ -12245,7 +12245,7 @@
   },
   "equipmentByNeed": {
    "smith": {
-    "label": "Smith machine",
+    "label": "Smith machine: rails, bar hooks and hook slots, adjustable safety stops (LR-24)",
     "status": "missing",
     "exercises": 5,
     "ids": [
