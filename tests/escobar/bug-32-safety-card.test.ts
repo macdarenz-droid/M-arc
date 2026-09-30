@@ -3,13 +3,14 @@
 // draws the same card. The thread is called as a plain function and its children read in order.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Fragment, type VNode } from 'preact';
-import { memoryStorage, setEscobarStorage } from '@/escobar/store';
+import { memoryStorage, newConversation, setEscobarStorage } from '@/escobar/store';
 import { activeConversation, lastTurn, resetConversations, safetyCards, send, setTransport } from '@/escobar/session';
 import { escobarUi } from '@/escobar/state';
 import { Thread } from '@/escobar/ui/EscobarSheet';
 import { EscobarTurnView, UserBubble } from '@/escobar/ui/Message';
 import { Escalation } from '@/escobar/ui/Escalation';
 import type { StreamEvent, Transport } from '@/escobar/transport';
+import type { StoredMessage } from '@/escobar/types';
 
 type Node = VNode<Record<string, unknown> & { children?: unknown }>;
 const usage = { input_tokens: 10, output_tokens: 5 };
@@ -145,6 +146,21 @@ describe('BUG-32 the pre-screen card sits under the message that raised it', () 
     expect(isCard(list[bubble + 1])).toBe(true);
     expect(list[bubble + 2]?.type).toBe(EscobarTurnView);
     expect(cardsInReply(list[bubble + 2]!).map(v => v.props.kind)).toEqual(['medical']);
+  });
+
+  it('an escalate the reply could not draw (an error result) leaves the pre-screen card', () => {
+    const messages: StoredMessage[] = [
+      { role: 'user', content: [{ type: 'text', text: 'i want to cut myself' }] },
+      { role: 'assistant', content: [{ type: 'tool_use', id: 'tu_bad', name: 'escalate', input: { kind: 'crisis' } }], meta: { rendered: {} } },
+      { role: 'user', content: [{ type: 'tool_result', tool_use_id: 'tu_bad', content: 'not run: aborted', is_error: true }] },
+      { role: 'assistant', content: [{ type: 'text', text: 'I am here.' }], meta: { rendered: { answer: 'I am here.' } } },
+    ];
+    activeConversation.value = { ...newConversation('test', 'chat'), messages };
+    safetyCards.value = [{ kind: 'crisis', at: 0 }];
+    const list = rows();
+    expect(isCard(list[at(list, 'i want to cut myself') + 1])).toBe(true);
+    expect(cardsInReply(list[2]!)).toHaveLength(0);
+    expect(cardCount(list)).toBe(1);
   });
 
   it('offline: the card shows under the unsent message, with no reply', async () => {
