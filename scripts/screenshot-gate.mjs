@@ -5963,6 +5963,313 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// HT-3b: speed, offline and footprint (card HT-3b; plan 2.5, 2.9, 2.10). A1's other half (the
+// esbuild-minified ids.ts + lazy.tsx size figure) is tests/howto/footprint.test.ts — a real build is not
+// needed for that; this is the content probe on the real index-*.js. A2: chunk budgets, each at its
+// measured value + 10%. A3: no How-to chunk requested before Today/Train is idle; tap-to-plate at 4x CPU
+// throttle (median of 5, hard fail over 400 ms); no long task over 100 ms while opening at 4x. A4: offline
+// reload + sheet open, build-B chunk carry-over, a failed chunk load's toast, localStorage unchanged, the
+// app's own PlateSheet .plate chip unaffected by the How-to CSS. A5 (C17, LR-23): no fetch/XHR/Worker/http
+// URL in the built How-to chunks (the shared checker, xmlns literals excepted), no <a> tag, no target=, and
+// every href starts with #.
+{
+  const tag = 'HT-3b';
+  const t0 = Date.now();
+  const errorsBefore = errors.length;
+  const { gzipSync } = await import('node:zlib');
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const P = await import('../tools/plates/fidelity/perf.mjs');
+  const assetsDir = join(ROOT, 'www/assets');
+  const assetFiles = readdirSync(assetsDir);
+  const rows = JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'));
+  const sizeOf = f => { const b = readFileSync(join(assetsDir, f)); return { raw: b.length, gz: gzipSync(b).length }; };
+  const oneOf = re => { const m = assetFiles.filter(f => re.test(f)); if (m.length !== 1) throw new Error(`${tag}: expected one file matching ${re}, found ${m.join(', ') || 'none'}`); return m[0]; };
+  const htFlow = async page => {
+    await page.waitForSelector('.nav');
+    await page.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
+    await page.locator('nav.nav button', { hasText: 'Train' }).click();
+    await page.getByRole('button', { name: /^Start / }).first().click();
+    for (let i = 0; i < 2; i++) {
+      await page.waitForTimeout(300);
+      const skip = page.getByRole('button', { name: 'Skip', exact: true });
+      if (await skip.isVisible().catch(() => false)) { await skip.click(); continue; }
+      const start = page.getByRole('button', { name: /^Start / }).first();
+      if (await start.isVisible().catch(() => false)) await start.click();
+    }
+    await page.locator('.card.exercise').first().waitFor({ state: 'visible', timeout: 5000 });
+  };
+  const squatIdx = H.HT_ORDER.indexOf('lib_barbell_back_squat');
+  const squatSlug = rows['lib_barbell_back_squat'].slug;
+
+  // A1: content probe on the real main chunk (no plate-svg/u-stroke/feel-band, no generated-file string
+  // outside ids.ts's own exports; exercises.json's content is excluded too — an exercise name or id
+  // legitimately shared with a generated file is already in main for unrelated reasons).
+  {
+    const html = readFileSync(join(ROOT, 'www/index.html'), 'utf8');
+    const indexJs = html.match(/src="\.\/assets\/(index-[\w-]+\.js)"/)[1];
+    const idxBytes = readFileSync(join(assetsDir, indexJs), 'utf8');
+    for (const s of ['plate-svg', 'u-stroke', 'feel-band']) if (idxBytes.includes(s)) errors.push(`${tag} A1: index-*.js contains "${s}"`);
+    const idsSrc = readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8');
+    const allowed = new Set([...idsSrc.matchAll(/"([^"]+)"/g)].map(m => m[1]));
+    allowed.add('How to do it');
+    const exercisesRaw = readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8');
+    const unescapeJs = s => s.replace(/\\(["'\\/bfnrt]|u[0-9a-fA-F]{4})/g, m => ({ '\\"': '"', "\\'": "'", '\\\\': '\\', '\\/': '/', '\\b': '\b', '\\f': '\f', '\\n': '\n', '\\r': '\r', '\\t': '\t' }[m] ?? String.fromCharCode(parseInt(m.slice(2), 16))));
+    const genDir = join(ROOT, 'src/howto/generated');
+    const leaked = [];
+    for (const f of readdirSync(genDir)) {
+      const src = readFileSync(join(genDir, f), 'utf8');
+      for (const m of src.matchAll(/"((?:\\.|[^"\\])*)"/g)) {
+        if (m[1].length < 16) continue;
+        const str = unescapeJs(m[1]);
+        if (allowed.has(str) || exercisesRaw.includes(str)) continue;
+        if (idxBytes.includes(str)) { leaked.push(`${f}: "${str.slice(0, 60)}…"`); break; }
+      }
+    }
+    if (leaked.length) errors.push(`${tag} A1: index-*.js leaks generated How-to content: ${leaked.join('; ')}`);
+    // Plan 2.9: logged for information only, no app-wide ceiling here (S-5).
+    console.log(`${tag} A1: main chunk ${indexJs} is ${idxBytes.length} B raw / ${gzipSync(Buffer.from(idxBytes)).length} B gz (information only, no ceiling)`);
+  }
+
+  // A2: chunk budgets, each at its measured value + 10% (the plan 2.9 start figures are the upper bound;
+  // this card lowers HowToSheet-*, the CSS and each ht-<slug>-* to the measured figures below).
+  {
+    const CEIL = v => Math.ceil(v * 1.1);
+    const budget = (label, file, measured) => {
+      const { raw, gz } = sizeOf(file);
+      if (raw > CEIL(measured.raw)) errors.push(`${tag} A2: ${label} is ${raw} B raw, over ${CEIL(measured.raw)} (measured ${measured.raw} + 10%)`);
+      if (gz > CEIL(measured.gz)) errors.push(`${tag} A2: ${label} is ${gz} B gz, over ${CEIL(measured.gz)} (measured ${measured.gz} + 10%)`);
+      return `${label} ${raw}/${gz}`;
+    };
+    const sizes = [];
+    sizes.push(budget('HowToSheet-*.js', oneOf(/^HowToSheet-[\w-]{8}\.js$/), { raw: 6321, gz: 2698 }));
+    sizes.push(budget('HowToSheet-*.css', oneOf(/^HowToSheet-[\w-]{8}\.css$/), { raw: 8695, gz: 1971 }));
+    const CHUNK_MEASURED = {
+      'dumbbell-lateral-raise': { raw: 63001, gz: 12535 }, 'barbell-back-squat': { raw: 92839, gz: 21072 },
+      'pull-up': { raw: 124238, gz: 28610 }, 'hanging-leg-raise': { raw: 117386, gz: 27998 },
+      'lat-pulldown': { raw: 111189, gz: 23863 }, 'seated-cable-row': { raw: 117043, gz: 25459 },
+      'leg-press': { raw: 93568, gz: 18076 }, 'machine-chest-press': { raw: 99249, gz: 20137 },
+    };
+    for (const [id, row] of Object.entries(rows)) {
+      const measured = CHUNK_MEASURED[row.slug];
+      if (!measured) { errors.push(`${tag} A2: no measured baseline for ${row.slug} (${id}); add one instead of skipping the budget`); continue; }
+      sizes.push(budget(`ht-${row.slug}-*.js`, oneOf(new RegExp(`^ht-${row.slug}-[\\w-]{8}\\.js$`)), measured));
+    }
+    console.log(`${tag} A2 chunk sizes (raw/gz B, ceiling = measured + 10%): ${sizes.join(', ')}`);
+  }
+
+  // A3a: no How-to chunk requested from launch until Today/Train is idle.
+  {
+    const ctx = await browser.newContext({ viewport: H.DEVICE.viewport, deviceScaleFactor: H.DEVICE.deviceScaleFactor });
+    const page = await ctx.newPage();
+    const early = [];
+    page.on('request', r => { const u = r.url(); if (/\/assets\/(HowToSheet-|ht-|hand-)/.test(u)) early.push(u); });
+    await page.addInitScript(H.htSeed, ['silent-black', H.HT_ORDER, H.HT_CUSTOM]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await htFlow(page);
+    await H.settleApp(page);
+    if (early.length) errors.push(`${tag} A3: a How-to chunk was requested before Train was idle: ${early.join(', ')}`);
+    await ctx.close();
+  }
+
+  // A3b/c: tap-to-plate at 4x CPU throttle (median of 5, hard fail over 400 ms); no long task over 100 ms
+  // while opening at 4x (PerformanceObserver 'longtask').
+  {
+    const { ctx, page } = await H.openAppTrain(browser, PORT, 'silent-black');
+    await H.openCard(page, squatIdx);
+    const { reset } = await P.throttleCpu(page, 4);
+    const stopLongTasks = await P.observeLongTasks(page);
+    const { median, samples } = await P.medianOf(async () => {
+      const tr0 = Date.now();
+      await page.locator('button.ht-entry').click();
+      await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
+      const dt = Date.now() - tr0;
+      await H.closeHowTo(page);
+      return dt;
+    }, 5);
+    // The long-task budget covers exactly these 5 opens, so the observer stops right here — a 6th open
+    // (below) must never add to what it collected, or a slow one could fail A3 on its own account.
+    const longTasks = await stopLongTasks();
+    // perf.mjs's TaskDuration helper (plan §2, for HT-8/HT-10 too): one more open, timed on the page's own
+    // clock instead of Node's Date.now() around the Playwright calls. Informational only — logged beside
+    // the Date.now() median as evidence it reads a real value in the same ballpark, not a second gate.
+    const pageClockMs = await P.taskDuration(page, 'ht3b-tap-to-plate', async () => {
+      await page.locator('button.ht-entry').click();
+      await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
+    });
+    await H.closeHowTo(page);
+    await reset();
+    if (median > 400) errors.push(`${tag} A3: tap-to-plate median at 4x throttle is ${median} ms (samples ${samples.join(',')}), over 400 ms`);
+    const over = longTasks.filter(d => d > 100);
+    if (over.length) errors.push(`${tag} A3: long task(s) over 100 ms while opening at 4x: ${over.map(d => d.toFixed(0)).join(', ')} ms`);
+    console.log(`${tag} A3: tap-to-plate median ${median} ms at 4x (samples ${samples.join(', ')} ms; TaskDuration page-clock cross-check ${pageClockMs.toFixed(1)} ms); long tasks ${longTasks.map(d => d.toFixed(0)).join(', ') || 'none'}`);
+    await ctx.close();
+  }
+
+  // A4a/b: offline reload, then the sheet opens; build-B chunk carry-over (a new cache, the old
+  // ht-<slug>-*.js gone from the server — the already-open tab still opens that exercise's How-to, as
+  // R5.5 proves for Escobar's chunk); localStorage keys identical before and after opening.
+  {
+    const ctx = await browser.newContext({ viewport: H.DEVICE.viewport, deviceScaleFactor: H.DEVICE.deviceScaleFactor, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} A4: ${e.message}`));
+    await page.addInitScript(H.htSeed, ['silent-black', H.HT_ORDER, H.HT_CUSTOM]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav');
+    await page.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
+    const controlled = await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 15000 }).then(() => true).catch(() => false);
+    if (!controlled) errors.push(`${tag} A4: the service worker never took control`);
+
+    await ctx.setOffline(true);
+    await page.reload();
+    await page.waitForSelector('.nav', { timeout: 10000 }).catch(() => errors.push(`${tag} A4: offline reload did not render the app`));
+    await htFlow(page);
+    const keysBefore = await page.evaluate(() => Object.keys(localStorage).sort());
+    await H.openCard(page, squatIdx);
+    await page.locator('button.ht-entry').click();
+    await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 }).catch(() => errors.push(`${tag} A4: the How-to sheet did not open offline`));
+    await H.closeHowTo(page);
+    const keysAfter = await page.evaluate(() => Object.keys(localStorage).sort());
+    if (JSON.stringify(keysBefore) !== JSON.stringify(keysAfter)) errors.push(`${tag} A4: localStorage keys changed opening the sheet: ${JSON.stringify(keysBefore)} -> ${JSON.stringify(keysAfter)}`);
+    await ctx.setOffline(false);
+
+    const swPath = join(ROOT, 'www/sw.js');
+    const swA = readFileSync(swPath, 'utf8');
+    const chunk = oneOf(new RegExp(`^ht-${squatSlug}-[\\w-]{8}\\.js$`));
+    const chunkPath = join(assetsDir, chunk);
+    const chunkBytes = readFileSync(chunkPath);
+    try {
+      writeFileSync(swPath, swA.replace(/marc-\d{14}/, 'marc-88888888888888').replace(`"./assets/${chunk}",`, '').replace(`,"./assets/${chunk}"`, ''));
+      unlinkSync(chunkPath);
+      await page.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); await r?.update(); });
+      const swapped = await page.waitForFunction(() => caches.keys().then(k => k.length === 1 && k[0] === 'marc-88888888888888'), null, { timeout: 15000 }).then(() => true).catch(() => false);
+      if (!swapped) errors.push(`${tag} A4: build B's service worker did not activate`);
+      await page.locator('button.ht-entry').click();
+      await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 10000 }).catch(() => errors.push(`${tag} A4: the How-to sheet did not open after build B (chunk carry-over failed)`));
+    } finally {
+      writeFileSync(swPath, swA);
+      writeFileSync(chunkPath, chunkBytes);
+    }
+    await H.closeHowTo(page).catch(() => {});
+    await ctx.close();
+  }
+
+  // A4c: a failed chunk load shows "Could not load the guide." with Reload, for both the sheet's own
+  // chunk and the plate content chunk (design-build-time.md: the gate aborts HowToSheet-* and then
+  // ht-<slug>-*). The abort route is registered before goto(), or the service worker's own precache
+  // fetch wins the race and the chunk is already in Cache Storage by the time it is tapped.
+  for (const pattern of [`**/assets/HowToSheet-*.js`, `**/assets/ht-${squatSlug}-*.js`]) {
+    const ctx = await browser.newContext({ viewport: H.DEVICE.viewport, deviceScaleFactor: H.DEVICE.deviceScaleFactor });
+    const page = await ctx.newPage();
+    const errs = [];
+    page.on('pageerror', e => errs.push(e.message));
+    await page.addInitScript(H.htSeed, ['silent-black', H.HT_ORDER, H.HT_CUSTOM]);
+    await ctx.route(pattern, route => route.abort('failed'));
+    await page.goto(`http://localhost:${PORT}/`);
+    await htFlow(page);
+    await H.openCard(page, squatIdx);
+    await page.locator('button.ht-entry').click();
+    await page.waitForTimeout(600);
+    const toast = await page.evaluate(() => { const t = document.querySelector('.toast'); return t ? { message: t.textContent, hasReload: /Reload/.test(t.textContent) } : null; });
+    const sheetOpen = await page.locator('dialog.sheet.ht[open]').count();
+    if (!toast || !toast.message.startsWith('Could not load the guide.') || !toast.hasReload) errors.push(`${tag} A4c: ${pattern} aborted but toast was ${JSON.stringify(toast)}`);
+    if (sheetOpen) errors.push(`${tag} A4c: ${pattern} aborted but dialog.sheet.ht[open] is still present`);
+    if (errs.length) errors.push(`${tag} A4c: page error(s) after ${pattern} aborted: ${errs.join('; ')}`);
+    await ctx.close();
+  }
+
+  // A4d: the app's own PlateSheet .plate chip (Train.tsx, a barbell target's plate breakdown) is
+  // unaffected by the How-to CSS, before vs. after the sheet has loaded it. A prior session gives the
+  // squat a target heavy enough that plates actually render (the cold-start suggestion is the bar alone).
+  {
+    const ctx = await browser.newContext({ viewport: H.DEVICE.viewport, deviceScaleFactor: H.DEVICE.deviceScaleFactor });
+    const page = await ctx.newPage();
+    const day = offset => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    await page.addInitScript(([theme, ids, custom, day3, day6]) => {
+      localStorage.setItem('marc.theme', theme);
+      const now = new Date().toISOString();
+      const sess = offsetDay => ({
+        id: `ht3b-${offsetDay}`, splitId: 'sp1', splitName: 'Plates', day: offsetDay, startedAt: `${offsetDay}T17:00:00.000Z`, endedAt: `${offsetDay}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{ exerciseId: 'lib_barbell_back_squat', name: 'Barbell Back Squat', sets: [0, 1, 2].map(() => ({ kg: 100, reps: 5, effort: 'ideal' })) }],
+        logging: { mode: 'live', trainedAt: `${offsetDay}T17:00:00.000Z`, trainedEndAt: `${offsetDay}T17:30:00.000Z`, loggedAt: `${offsetDay}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+      });
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [{ id: 'sp1', name: 'Plates', color: '#6aa9ff', focus: [], createdAt: now, exercises: ids.map(exerciseId => ({ exerciseId, sets: 1 })) }],
+        schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions: [sess(day6), sess(day3)],
+        active: null, customExercises: [custom],
+        preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, ['silent-black', H.HT_ORDER, H.HT_CUSTOM, day(3), day(6)]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await htFlow(page);
+    await H.openCard(page, squatIdx);
+    const chipStyle = () => page.evaluate(() => {
+      const chip = document.querySelector('.plate');
+      if (!chip) return null;
+      const cs = getComputedStyle(chip);
+      return { bg: cs.backgroundColor, color: cs.color, fontSize: cs.fontSize, borderRadius: cs.borderRadius, padding: cs.padding, fontWeight: cs.fontWeight };
+    });
+    await page.locator('.target-link').first().click();
+    await page.waitForSelector('[data-palace="train.plate-sheet"]', { timeout: 5000 });
+    await page.waitForTimeout(150);
+    const before = await chipStyle();
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(150);
+    await H.openHowTo(page, squatIdx);
+    await H.closeHowTo(page);
+    await page.locator('.target-link').first().click();
+    await page.waitForSelector('[data-palace="train.plate-sheet"]', { timeout: 5000 });
+    await page.waitForTimeout(150);
+    const after = await chipStyle();
+    if (!before || !after) errors.push(`${tag} A4d: .plate chip not found (before=${JSON.stringify(before)}, after=${JSON.stringify(after)})`);
+    else if (JSON.stringify(before) !== JSON.stringify(after)) errors.push(`${tag} A4d: .plate chip computed style changed once the How-to CSS loaded: ${JSON.stringify(before)} -> ${JSON.stringify(after)}`);
+    await ctx.close();
+  }
+
+  // A5 (C17, LR-23/D-LR23-7): no fetch/XHR/Worker call and no bare http(s) URL in the built How-to chunks
+  // (the shared checker — HT-4's tests/howto/checks/c17.ts — allows only the SVG/xlink xmlns literals; the
+  // final drop of source citations from allowedUrls lands with HT-4b, this card just uses what main has
+  // now, and there are no citations yet to allow either way). Also no `<a>` tag, no `target=` attribute,
+  // and every `href=` starts with `#` (an in-document SVG reference, e.g. `<use href="#lr-n-st-10">`).
+  {
+    const { pathToFileURL } = await import('node:url');
+    const { mkdtempSync, copyFileSync, rmSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { build: esbuildC17 } = await import('esbuild');
+    const files = [oneOf(/^HowToSheet-[\w-]{8}\.js$/), ...Object.values(rows).map(r => oneOf(new RegExp(`^ht-${r.slug}-[\\w-]{8}\\.js$`)))];
+
+    const c17Built = await esbuildC17({ entryPoints: [join(ROOT, 'tests/howto/checks/c17.ts')], bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' });
+    const c17Dir = mkdtempSync(join(tmpdir(), 'ht3b-c17-mod-'));
+    const c17ModPath = join(c17Dir, 'c17.mjs');
+    writeFileSync(c17ModPath, c17Built.outputFiles[0].text);
+    const { checkC17 } = await import(pathToFileURL(c17ModPath).href);
+
+    const scanDir = mkdtempSync(join(tmpdir(), 'ht3b-c17-scan-'));
+    try {
+      for (const f of files) copyFileSync(join(assetsDir, f), join(scanDir, f));
+      for (const m of checkC17([scanDir])) errors.push(`${tag} A5: ${m}`);
+    } finally {
+      rmSync(c17Dir, { recursive: true, force: true });
+      rmSync(scanDir, { recursive: true, force: true });
+    }
+
+    for (const f of files) {
+      const src = readFileSync(join(assetsDir, f), 'utf8');
+      if (/<a[\s/>]/.test(src)) errors.push(`${tag} A5: ${f} has an <a> tag`);
+      if (/\btarget\s*=/.test(src)) errors.push(`${tag} A5: ${f} has a target= attribute`);
+      for (const m of src.matchAll(/\bhref=(["'])(.*?)\1/g)) if (!m[2].startsWith('#')) errors.push(`${tag} A5: ${f} has href="${m[2].slice(0, 60)}", not starting with #`);
+    }
+  }
+
+  const blockErrors = errors.length - errorsBefore;
+  console.log(blockErrors === 0
+    ? `${tag}: A1 content probe, A2 chunk budgets, A3 launch/open speed, A4 offline/storage, A5 C17 verified; ${((Date.now() - t0) / 1000).toFixed(1)} s`
+    : `${tag}: FAILED, ${blockErrors} problem(s) above; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+}
+
 // HT-4: the golden-B lock (L0-B), the crop-window/pose-classification live proof (HT4-A5), and the state driver
 // self-check (HT4-A6). Rebuilding the layer page and capturing every real renderPlate call both spawn `node
 // artifact/build-page.mjs` (~8-14s each); this is the one place they run - `npm test` only carries the fast,
@@ -6063,4 +6370,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified.');
