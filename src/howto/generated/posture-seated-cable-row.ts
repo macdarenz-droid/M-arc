@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=3e77581f8e5804912343504256c40d7f601b72286f807db07a3c352b27877d8c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=86999a1cc9f35bd31cb38409b81c1e92feff1695ab7dfd897c89f68b0800dd1e
 // The seated-cable-row posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-seated-cable-row.css';
 export const panels: Readonly<Record<string, string>> = {

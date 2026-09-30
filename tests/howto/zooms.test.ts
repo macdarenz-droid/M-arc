@@ -91,11 +91,27 @@ describe('HT7-A1: every posture panel === golden B', () => {
     writeFileSync(join(root, f), readFileSync(f, 'utf8') + ' ');
     expect(core.inputsSha256(w, gen.inputs(), root)).not.toBe(fresh);
   });
-  it('css/posture.css is the page\'s .zdot rule, rewritten, and passes the How-to style lints', () => {
+  it('css/posture.css: the page\'s .zdot rule and its .plate drawing rules for the crops, and it passes the How-to style lints', () => {
     const css = readFileSync('src/slices/howto/css/posture.css', 'utf8');
     expect(lint(css)).toEqual([]);
     expect(css).toContain('.ht .zdot { fill: var(--border-subtle); }');
     expect(FIXTURE).toContain('.zdot { fill: var(--border-subtle); }');
+    expect(css).not.toMatch(/\.ht-plate\b/);
+    // every page rule whose selector starts with .plate, for the crops only, in page order, after the reset
+    const page = [...FIXTURE.match(/<style>([\s\S]*?)<\/style>/)![1]!.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(?:^|})\s*((?:html[^{]*?\s)?\.plate(?![\w-])[^{]*)\{/g)].map(m => m[1]!.trim());
+    const shipped = [...css.matchAll(/^\s*([^{}@\n]*:where\(\.hx\) \.plate[^{]*)\{/gm)].map(m => m[1]!.trim());
+    expect(page.length).toBeGreaterThan(40);
+    expect(shipped[0]).toBe('.ht :where(.hx) .plate');
+    expect(css.indexOf('.ht :where(.hx) .plate { all: revert; }')).toBeLessThan(css.indexOf('.ht :where(.hx) .plate { position: relative;'));
+    for (const sel of page.filter(x => !x.includes(',') || x.split(',').every(y => /^(html[^.]*\s)?\.plate(?![\w-])/.test(y.trim())))) {
+      const want = sel.split(',').map(x => x.trim().replace(/^((?:html\S*\s+)?)\.plate/, (m, h) => `${h}.ht :where(.hx) .plate`)).join(', ');
+      expect(shipped, sel).toContain(want);
+    }
+  });
+  it('failure path: a page with no .plate rule throws; a .plate rule is re-scoped for the crops, never class-mapped', () => {
+    expect(() => gen.cropPlateCss('.plate-fit { x: 1 }')).toThrow(/no .plate rules/);
+    expect(gen.cropPlateCss('.plate .joint { fill: red; }')).toContain('.ht :where(.hx) .plate .joint { fill: red; }');
+    expect(gen.cropPlateCss('.plate .joint { fill: red; }')).not.toContain('ht-plate');
   });
   it.each(IDS)('%s: the panels set no inline custom property off the allow list', id => {
     for (const p of Object.values(chunks[id]!.panels)) expect(inlineVars(p).filter(v => !INLINE_ALLOW.includes(v))).toEqual([]);

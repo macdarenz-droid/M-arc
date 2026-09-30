@@ -5804,8 +5804,195 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// HT-7: the posture close-ups (card HT-7; GA 2.2-2.3 S3; plan 2.7 L3, L4). The app's sheet, opened from the real Train
+// entry, against the golden-B page (built from the vendored layers, states reached through goldenB.mjs's driver), per
+// theme side by side in one browser. For each exercise and posture chip:
+// - A3 L3: the open close-up's pixels equal golden B's (no channel off by more than 1/255, at most 0.02 % off by 1).
+//   Both panels are captured on their own compositing layer (will-change) at the same whole-pixel viewport position,
+//   with focus cleared (golden's driver clicks from script, which shows the focus ring a tap does not). A capture with
+//   no ink, and a 0.5 px shifted control that passes, both fail the block.
+// - A3 L4: the opening animation's keyframes, timing and transform origin equal golden B's (5 themes); under reduced
+//   motion neither page animates; C18: only transform and opacity move.
+// - A4: S1 and S3 are exclusive (the plate box is hidden and inert while the close-up shows, Mistake is off), and after
+//   Close the plate block is pixel-identical to before the open, from normal and from Mistake (HT-3 proves that block
+//   equals the approved plate).
+// - A5: no posture chunk is fetched before the first posture tap, then exactly this exercise's, once; the built
+//   posture-*.js chunks are each <= 24 KB gz.
+// - A6: two role=img halves with Right:/Wrong: labels in the open panel; every posture chip is >= 44 x 44.
+// - A2 (live): one #zdots in the document, and no duplicate id in the document with the close-up open.
+{
+  const tag = 'HT-7';
+  const t0 = Date.now();
+  const { gzipSync } = await import('node:zlib');
+  const { pathToFileURL } = await import('node:url');
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const GB = await import(pathToFileURL(join(ROOT, 'tools/plates/fidelity/goldenB.mjs')).href);
+  const content = {};
+  for (const [lib, row] of Object.entries(JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8')))) {
+    content[row.chromeId] = (await import(pathToFileURL(join(ROOT, `tools/plates/layers/exercises/${lib.slice(4)}.howto.mjs`)).href)).default;
+  }
+  const KEYS = Object.fromEntries(H.HT_PLATES.map(([id]) => [id, content[id].zooms.filter(z => z.kind === 'posture').map(z => z.key)]));
+  const stats = { pairs: 0, maxOff: 0, anims: 0, reduced: 0, restores: 0, controls: 0 };
+  // A5 sizes, on the built chunks the gate serves
+  const assets = readdirSync(join(ROOT, 'www/assets')), sizes = [];
+  for (const [id] of H.HT_PLATES) {
+    const f = assets.filter(a => new RegExp(`^posture-${id}-[\\w-]{8}\\.js$`).test(a));
+    if (f.length !== 1) { errors.push(`${tag} A5: ${id}: expected one posture-${id}-*.js chunk, found ${f.join(', ') || 'none'}`); continue; }
+    const gz = gzipSync(readFileSync(join(ROOT, 'www/assets', f[0])), { level: 9 }).length;
+    if (gz > 24 * 1024) errors.push(`${tag} A5: ${f[0]} is ${gz} B gz (limit 24576)`);
+    sizes.push(`${id} ${gz}`);
+  }
+  if (process.env.HT7_DUMP) mkdirSync(process.env.HT7_DUMP, { recursive: true });
+  const { dir, file } = await GB.buildScratchPage();
+  const panelSel = (id, k) => `#${id}-zoom-${k}`;
+  /** Resolves once no scroller moves for 3 frames (both pages scroll smoothly to an opened close-up). */
+  const still = page => page.evaluate(() => new Promise(res => {
+    const pos = () => [scrollY, ...[...document.querySelectorAll('.sheet-panel')].map(p => p.scrollTop)].join();
+    let last = pos(), same = 0, n = 0;
+    const f = () => { const now = pos(); same = now === last ? same + 1 : 0; last = now; if (same >= 3 || ++n > 300) res(); else requestAnimationFrame(f); };
+    requestAnimationFrame(f);
+  }));
+  /** The panel on its own layer at a whole-pixel viewport y: the app's below the sheet's sticky header (a layout offset
+   *  takes it to the pixel), golden B's at the same y by an instant window scroll. */
+  const place = async (page, sel, which, at) => {
+    await still(page);
+    return page.evaluate(([sel, which, at]) => {
+      const e = document.querySelector(sel);
+      e.style.willChange = 'transform';
+      if (which === 'app') {
+        const p = e.closest('.sheet-panel'), head = p.querySelector('.sheet-top').getBoundingClientRect().bottom;
+        e.style.position = 'relative'; e.style.top = '0px';
+        p.style.scrollBehavior = 'auto';
+        p.scrollTop += e.getBoundingClientRect().top - (head + 8);
+        const r = e.getBoundingClientRect();
+        if (at == null) at = Math.ceil(r.top);
+        e.style.top = `${at - r.top}px`;
+      } else window.scrollTo({ top: window.scrollY + e.getBoundingClientRect().top - at, behavior: 'instant' });
+      document.activeElement?.blur?.();
+      const r = e.getBoundingClientRect();
+      return { x: r.left, y: r.top, width: r.width, height: r.height, fits: r.bottom <= innerHeight };
+    }, [sel, which, at]);
+  };
+  const unplace = (page, sel) => page.evaluate(sel => { const e = document.querySelector(sel); if (e) { e.style.willChange = ''; e.style.position = ''; e.style.top = ''; const p = e.closest('.sheet-panel'); if (p) p.style.scrollBehavior = ''; } }, sel);
+  const shot = async (page, clip) => { await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); return page.screenshot({ clip, animations: 'disabled', caret: 'hide' }); };
+  /** Records every Element.animate() call on a close-up panel (both pages start it from their open script), with the
+   *  transform origin set just before, so the opening animation is read as started, whatever the timing. */
+  const recordAnims = page => page.evaluate(() => {
+    if (window.__ht7anims) return;
+    window.__ht7anims = [];
+    const orig = Element.prototype.animate;
+    Element.prototype.animate = function (kf, opts) {
+      if (this.classList?.contains('zx')) window.__ht7anims.push({ id: this.id, keyframes: kf, opts, origin: this.style.transformOrigin });
+      return orig.call(this, kf, opts);
+    };
+  });
+  const takeAnims = (page, id) => page.evaluate(id => { const a = window.__ht7anims.filter(x => x.id === id); window.__ht7anims = []; return a.map(({ id, ...x }) => x); }, id);
+  const appPlate = page => page.evaluate(() => { const b = document.querySelector('dialog.sheet.ht .ht-golden'), fit = b.querySelector('.ht-plate-fit'), t = b.querySelector('.tempo'); const f = fit.getBoundingClientRect(), r = t.getBoundingClientRect(), c = b.getBoundingClientRect(); return { x: c.left, y: f.top, width: c.width, height: r.bottom - f.top }; });
+  const run = async (theme, reduce) => {
+    const P = m => errors.push(`${tag} ${theme}${reduce ? ' reduced' : ''}: ${m}`);
+    const g = await GB.openPage(file, theme, { reduce, chromePath: process.env.MARC_CHROMIUM || GB.CHROME_PATH });
+    try {
+      const app = await H.openAppTrain(g.browser, PORT, theme, { reducedMotion: reduce ? 'reduce' : 'no-preference', onError: m => P(`app page error: ${m}`) });
+      for (const e of g.errs) P(`golden page error: ${e}`);
+      if (reduce) await g.page.evaluate(() => { document.documentElement.dataset.motion = 'reduce'; });
+      const fetched = [];
+      app.page.on('request', r => { const m = r.url().match(/\/assets\/(posture-[a-z-]+)-[\w-]{8}\.js$/); if (m) fetched.push(m[1]); });
+      for (const [index, [id]] of H.HT_PLATES.entries()) {
+        const keys = KEYS[id];
+        if (keys.length !== 2) P(`${id}: ${keys.length} posture close-ups in golden B, expected 2`);
+        await H.openHowTo(app.page, index);
+        if (fetched.length) P(`${id}: a posture chunk was fetched before any posture tap (${fetched.join(', ')})`);
+        const motion = await app.page.evaluate(() => document.documentElement.getAttribute('data-motion'));
+        if ((motion === 'reduce') !== reduce) P(`${id}: the app's data-motion is ${motion}`);
+        for (const [ki, k] of keys.entries()) {
+          const chip = `#${id}-chip-${k}`, sel = panelSel(id, k);
+          const cr = await app.page.$eval(chip, b => { const r = b.getBoundingClientRect(); return [r.width, r.height]; }).catch(() => null);
+          if (!cr) { P(`${id}: no posture chip ${chip}`); continue; }
+          if (cr[0] < 44 || cr[1] < 44) P(`A6 ${id}/${k}: chip ${cr[0].toFixed(1)}x${cr[1].toFixed(1)} under 44x44`);
+          // A4 from Mistake on the first key: S1 then S3; normal on the second
+          if (ki === 0) { await app.page.click(`#${id}-mistake`); await H.settleApp(app.page); }
+          const before = await shot(app.page, await appPlate(app.page));
+          const scroll = await app.page.$eval('dialog.sheet.ht .sheet-panel', p => p.scrollTop);
+          await Promise.all([recordAnims(app.page), recordAnims(g.page)]);
+          await takeAnims(app.page, ''); await takeAnims(g.page, '');
+          await app.page.click(chip);
+          await app.page.waitForSelector(`${sel}:not([hidden])`);
+          if (ki === 0) await GB.openMistake(g.page, id);
+          await GB.openZoom(g.page, id, k);
+          const aa = await takeAnims(app.page, sel.slice(1)), ga = await takeAnims(g.page, sel.slice(1));
+          await H.settleApp(app.page);
+          if (JSON.stringify(aa) !== JSON.stringify(ga)) P(`A3 L4 ${id}/${k}: opening animation ${JSON.stringify(aa)} != golden ${JSON.stringify(ga)}`);
+          if (reduce) { if (aa.length) P(`A3 ${id}/${k}: animates under reduced motion`); stats.reduced++; }
+          else {
+            if (aa.length !== 1) P(`A3 L4 ${id}/${k}: ${aa.length} opening animations, expected 1`);
+            stats.anims++;
+          }
+          for (const a of aa) for (const kf of a.keyframes) for (const p of Object.keys(kf)) if (!['offset', 'easing', 'composite', 'opacity', 'transform'].includes(p)) P(`C18 ${id}/${k}: animates ${p}`);
+          if (process.env.HT7_DUMP && (reduce ? !stats.reduced : !stats.pairs)) console.log(`${tag} ${theme}${reduce ? ' reduced' : ''} ${id}/${k} opening: app ${JSON.stringify(aa)} golden ${JSON.stringify(ga)}`);
+          // S1 and S3 exclusive, through the slot API
+          const s = await app.page.evaluate(([id, sel]) => {
+            const fit = document.querySelector('dialog.sheet.ht .ht-plate-fit'), mis = document.getElementById(`${id}-mistake`), p = document.querySelector(sel);
+            const ids = [...document.querySelectorAll('[id]')].map(e => e.id), dup = ids.filter((v, i) => ids.indexOf(v) !== i);
+            return { plateHidden: fit.hidden && fit.inert, mistake: mis.getAttribute('aria-pressed'), shown: !p.hidden, focus: document.activeElement === p.querySelector('.zx-h'), zdots: document.querySelectorAll('#zdots').length, dup: [...new Set(dup)].slice(0, 5),
+              halves: [...p.querySelectorAll('[role="img"]')].map(e => (e.getAttribute('aria-label') || '').split(':')[0]) };
+          }, [id, sel]);
+          if (!s.shown || !s.plateHidden || s.mistake === 'true') P(`A4 ${id}/${k}: with the close-up open, plate hidden+inert ${s.plateHidden}, Mistake ${s.mistake}, panel shown ${s.shown}`);
+          if (!s.focus) P(`A3 ${id}/${k}: focus is not on the close-up heading`);
+          if (s.zdots !== 1) P(`A2 ${id}/${k}: ${s.zdots} #zdots in the document`);
+          if (s.dup.length) P(`A2 ${id}/${k}: duplicate ids in the document: ${s.dup.join(', ')}`);
+          if (JSON.stringify(s.halves) !== '["Right","Wrong"]') P(`A6 ${id}/${k}: role=img halves ${JSON.stringify(s.halves)}`);
+          // L3
+          const ra = await place(app.page, sel, 'app'), rg = await place(g.page, sel, 'golden', ra.y);
+          if (!ra.fits || !rg.fits) P(`A3 L3 ${id}/${k}: the panel does not fit in the viewport (app ${JSON.stringify(ra)}, golden ${JSON.stringify(rg)})`);
+          delete ra.fits; delete rg.fits;
+          if (ra.y !== rg.y || ra.x !== rg.x || ra.width !== rg.width) P(`A3 L3 ${id}/${k}: panel at ${JSON.stringify(ra)} in the app, ${JSON.stringify(rg)} in golden B`);
+          const [ia, ig] = await Promise.all([shot(app.page, ra), shot(g.page, rg)]);
+          if (process.env.HT7_DUMP) { writeFileSync(join(process.env.HT7_DUMP, `${theme}${reduce ? '-r' : ''}-${id}-${k}-app.png`), ia); writeFileSync(join(process.env.HT7_DUMP, `${theme}${reduce ? '-r' : ''}-${id}-${k}-golden.png`), ig); }
+          const d = await H.diffPng(app.page, ia, ig);
+          stats.pairs++; stats.maxOff = Math.max(stats.maxOff, d.off);
+          if (!(d.ink > 0.05)) P(`A3 L3 ${id}/${k}: the capture holds almost no ink (${d.ink}), nothing was compared`);
+          if (!H.meetsRule(d)) P(`A3 L3 ${id}/${k}: ${d.sameSize ? `${d.off} px off (${d.off1} by 1, max ${d.maxDelta})` : `size ${d.width}x${d.height} != ${d.otherWidth}x${d.otherHeight}`}`);
+          if (ki === 0 && theme === 'silent-black' && !reduce) {   // control: the same capture half a pixel lower must fail
+            await place(app.page, sel, 'app', ra.y + 0.5);
+            const dc = await H.diffPng(app.page, await shot(app.page, ra), ig);
+            if (H.meetsRule(dc)) P(`A3 L3 control ${id}/${k}: a 0.5 px shift still passes (${dc.off} px off)`);
+            stats.controls++;
+          }
+          await Promise.all([unplace(app.page, sel), unplace(g.page, sel)]);
+          // close, then the plate block is what it was
+          await app.page.click(`${sel}-close`);
+          await app.page.waitForSelector(`${sel}[hidden]`, { state: 'attached' });
+          await app.page.$eval('dialog.sheet.ht .sheet-panel', (p, y) => { p.scrollTop = y; }, scroll);
+          await H.settleApp(app.page);
+          await GB.closeZoom(g.page, id, k);
+          if (ki === 0) await GB.openMistake(g.page, id);
+          const after = await shot(app.page, await appPlate(app.page));
+          const dr = await H.diffPng(app.page, before, after);
+          if (!H.identical(dr)) P(`A4 ${id}/${k}: the plate block after Close differs from before the open (${dr.off} px)`);
+          stats.restores++;
+          if (ki === 0) { await app.page.click(`#${id}-mistake`); await H.settleApp(app.page); }
+          if (JSON.stringify(fetched) !== JSON.stringify([`posture-${id}`])) P(`A5 ${id}/${k}: posture chunks fetched ${JSON.stringify(fetched)}, expected this exercise's, once`);
+        }
+        fetched.length = 0;
+        await H.closeHowTo(app.page);
+        if (await app.page.$('#zdots')) P(`A2 ${id}: #zdots stays in the document after the sheet closed`);
+      }
+      await app.ctx.close();
+    } finally {
+      await g.browser.close();
+    }
+  };
+  try {
+    await Promise.all([...GB.THEMES.map(t => run(t, false).catch(e => errors.push(`${tag} ${t}: crashed: ${e.message.split('\n')[0]}`))), run('paper', true).catch(e => errors.push(`${tag} paper reduced: crashed: ${e.message.split('\n')[0]}`))]);
+  } finally {
+    GB.cleanupScratchPage(dir);
+  }
+  if (stats.pairs < 80) errors.push(`${tag}: only ${stats.pairs} L3 pairs compared, expected 8 x 2 x 5 themes + reduced motion (>= 80)`);
+  console.log(`${tag}: ${stats.pairs} posture close-up L3 pairs (max ${stats.maxOff} px off), ${stats.anims} opening animation lists, ${stats.reduced} reduced-motion opens, ${stats.restores} plate restores, ${stats.controls} shift controls; posture chunks gz B: ${sizes.join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-7 (posture close-ups equal golden B in 5 themes: L3 pixels, opening animation, reduced motion, transform and opacity only; S1/S3 exclusive and the plate restored on Close; chunks on first open only, <= 24 KB gz; Right/Wrong images, 44 px chips, one #zdots, no duplicate ids) verified.');
