@@ -1,0 +1,170 @@
+{
+  "id": "cable_shrug",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "exercise-com-cable-shrug",
+      "text": "Grab a cable bar attachment that is fastened to a low pulley. Your hands should be shoulder width apart, or slightly wider if you wish. Your hands should be facing down.",
+      "status": "verbatim",
+      "closest": "Grab a cable bar attachment that is fastened to a low pulley. Your hands should be shoulder width apart, or slightly wider if you wish. Your hands should be facing down."
+    },
+    {
+      "claim": "c2",
+      "source": "exercise-com-cable-shrug",
+      "text": "Stand close to the pulley and extend your arms in front of you while holding the bar. This is the starting position.",
+      "status": "verbatim",
+      "closest": "Stand close to the pulley and extend your arms in front of you while holding the bar. This is the starting position."
+    },
+    {
+      "claim": "c3",
+      "source": "exercise-com-cable-shrug",
+      "text": "Elevating your shoulders, lift the bar as high as you possibly can. Exhale while performing this motion. Hold the contraction at the top for a second.",
+      "status": "verbatim",
+      "closest": "Elevating your shoulders, lift the bar as high as you possibly can. Exhale while performing this motion. Hold the contraction at the top for a second."
+    },
+    {
+      "claim": "c4",
+      "source": "exercise-com-cable-shrug",
+      "text": "Stand up straight while performing the exercise.",
+      "status": "verbatim",
+      "closest": "Stand up straight while performing the exercise."
+    },
+    {
+      "claim": "c4",
+      "source": "exercise-com-cable-shrug",
+      "text": "Keep your head up and eyes facing forward throughout.",
+      "status": "verbatim",
+      "closest": "Keep your head up and eyes facing forward throughout."
+    },
+    {
+      "claim": "c5",
+      "source": "exercise-com-cable-shrug",
+      "text": "Do not use your biceps to lift the bar. Your shoulders should be the only part of your body moving up and down during the exercise.",
+      "status": "verbatim",
+      "closest": "Do not use your biceps to lift the bar. Your shoulders should be the only part of your body moving up and down during the exercise."
+    },
+    {
+      "claim": "c6",
+      "source": "exercise-com-cable-shrug",
+      "text": "Lower the bar to its original position.",
+      "status": "verbatim",
+      "closest": "Lower the bar to its original position."
+    },
+    {
+      "claim": "c7",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c7",
+      "source": "exercise-com-cable-shrug",
+      "text": "Hold the contraction at the top for a second.",
+      "status": "verbatim",
+      "closest": "Hold the contraction at the top for a second."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-shrug",
+      "text": "lowering slowly to the original starting position.",
+      "status": "verbatim",
+      "closest": "lowering slowly to the original starting position."
+    },
+    {
+      "claim": "c8",
+      "source": "sl-barbell-shrug",
+      "text": "The shrug is an isolation exercise for the muscles that lifts and supports your shoulder girdle, like the top portion of your trapezius among others.",
+      "status": "verbatim",
+      "closest": "The shrug is an isolation exercise for the muscles that lifts and supports your shoulder girdle, like the top portion of your trapezius among others."
+    },
+    {
+      "claim": "c9",
+      "source": "ace-shrug",
+      "text": "raise the shoulders directly upwards to the ears as high as possible",
+      "status": "verbatim",
+      "closest": "raise the shoulders directly upwards to the ears as high as possible",
+      "note": "Re-read 2026-09-30 in the fetched ACE shrug page (barbell)."
+    },
+    {
+      "claim": "c9",
+      "source": "ace-shrug",
+      "text": "focus on only raising/lowering the shoulders - DO NOT roll the shoulders.",
+      "status": "verbatim",
+      "closest": "focus on only raising/lowering the shoulders - DO NOT roll the shoulders."
+    },
+    {
+      "claim": "c10",
+      "source": "baechle-grip",
+      "text": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Perform all grips with your thumbs around the bar."
+    },
+    {
+      "claim": "c11",
+      "source": "odriscoll1992",
+      "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "status": "verbatim",
+      "closest": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position."
+    },
+    {
+      "claim": "c11",
+      "source": "odriscoll1992",
+      "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c11",
+      "source": "odriscoll1992",
+      "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "status": "verbatim",
+      "closest": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c13",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c14",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c14",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique.",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique."
+    },
+    {
+      "claim": "c15",
+      "source": "ekstrom2003",
+      "text": "The unilateral shoulder shrug exercise was found to produce the greatest EMG activity in the upper trapezius.",
+      "status": "verbatim",
+      "closest": "The unilateral shoulder shrug exercise was found to produce the greatest EMG activity in the upper trapezius."
+    },
+    {
+      "claim": "c15",
+      "source": "andersen2008",
+      "text": "For the trapezius muscle, the highest level of muscle activation was found during the shrug (102+/-11% of MVC), lateral raise (97+/-6% of MVC), and upright row (85+/-5% of MVC) exercises",
+      "status": "verbatim",
+      "closest": "For the trapezius muscle, the highest level of muscle activation was found during the shrug (102+/-11% of MVC), lateral raise (97+/-6% of MVC), and upright row (85+/-5% of MVC) exercises"
+    }
+  ]
+}

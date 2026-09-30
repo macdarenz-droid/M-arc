@@ -1,0 +1,125 @@
+{
+  "id": "bent_over_dumbbell_rear_delt_fly",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sl-reverse-fly",
+      "text": "Hold a pair of dumbbells, lean forward, and let your arms hang towards the floor. With almost straight arms (just a slight bend at the elbow), slowly lift the dumbbells by raising your arms out to the sides.",
+      "status": "verbatim",
+      "closest": "Hold a pair of dumbbells, lean forward, and let your arms hang towards the floor. With almost straight arms (just a slight bend at the elbow), slowly lift the dumbbells by raising your arms out to the sides."
+    },
+    {
+      "claim": "c2",
+      "source": "sl-reverse-fly",
+      "text": "Stand with your feet about hip-width apart. Lean forward by tilting your hips. Make sure that you keep your spine straight, and brace your core. You should keep your arms in the same position during the entire movement, with a slight bend in the elbow.",
+      "status": "verbatim",
+      "closest": "Stand with your feet about hip-width apart. Lean forward by tilting your hips. Make sure that you keep your spine straight, and brace your core. You should keep your arms in the same position during the entire movement, with a slight bend in the elbow."
+    },
+    {
+      "claim": "c3",
+      "source": "sl-reverse-fly",
+      "text": "Lift them up until they are just about level with your body. You don’t have to overextend the movement. Avoid shrugging your shoulders during the exercise. Instead, focus on drawing your shoulder blades together as you lift the dumbbells.",
+      "status": "verbatim",
+      "closest": "Lift them up until they are just about level with your body. You don’t have to overextend the movement. Avoid shrugging your shoulders during the exercise. Instead, focus on drawing your shoulder blades together as you lift the dumbbells."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-reverse-fly",
+      "text": "This is an exercise where it is easy to cheat by using momentum from your hips or lower back, which takes away the work from the rear deltoid.",
+      "status": "verbatim",
+      "closest": "This is an exercise where it is easy to cheat by using momentum from your hips or lower back, which takes away the work from the rear deltoid."
+    },
+    {
+      "claim": "c5",
+      "source": "sl-reverse-fly",
+      "text": "This is an exercise where it’s easy to start using a swinging motion to help lift the weights. This can place unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled.",
+      "status": "verbatim",
+      "closest": "This is an exercise where it’s easy to start using a swinging motion to help lift the weights. This can place unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled."
+    },
+    {
+      "claim": "c6",
+      "source": "sl-reverse-fly",
+      "text": "The reverse dumbbell fly primarily works your rotator cuff and rear deltoids, and secondarily your trapezius",
+      "status": "verbatim",
+      "closest": "The reverse dumbbell fly primarily works your rotator cuff and rear deltoids, and secondarily your trapezius"
+    },
+    {
+      "claim": "c7",
+      "source": "schoenfeld2013",
+      "text": "The results of this study show that performing exercise on the reverse fly machine with a neutral hand position significantly increases activity of the posterior deltoid and infraspinatus muscles compared with a PRO hand position.",
+      "status": "verbatim",
+      "closest": "The results of this study show that performing exercise on the reverse fly machine with a neutral hand position significantly increases activity of the posterior deltoid and infraspinatus muscles compared with a PRO hand position."
+    },
+    {
+      "claim": "c8",
+      "source": "zhu2025",
+      "text": "However, both exercises produced significantly higher muscle forces compared to BDR (47.911 N, p < 0.001).",
+      "status": "verbatim",
+      "closest": "However, both exercises produced significantly higher muscle forces compared to BDR (47.911 N, p < 0.001)."
+    },
+    {
+      "claim": "c8",
+      "source": "zhu2025",
+      "text": "Bent-over dumbbell lateral raise demonstrates high efficacy for posterior deltoid recruitment.",
+      "status": "verbatim",
+      "closest": "Bent-over dumbbell lateral raise demonstrates high efficacy for posterior deltoid recruitment."
+    },
+    {
+      "claim": "c9",
+      "source": "ace-incline-reverse-fly",
+      "text": "In the raised position, the dumbbells should be aligned with, or slightly in front of your ears.",
+      "status": "verbatim",
+      "closest": "In the raised position, the dumbbells should be aligned with, or slightly in front of your ears."
+    },
+    {
+      "claim": "c9",
+      "source": "ace-incline-reverse-fly",
+      "text": "If the dumbbells are raised to an end position behind the head rather than in line with the ears, the emphasis shifts off the shoulders and onto the latissimus dorsi (back).",
+      "status": "verbatim",
+      "closest": "If the dumbbells are raised to an end position behind the head rather than in line with the ears, the emphasis shifts off the shoulders and onto the latissimus dorsi (back)."
+    },
+    {
+      "claim": "c10",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c10",
+      "source": "sl-reverse-fly",
+      "text": "Keep the movement slow and controlled.",
+      "status": "verbatim",
+      "closest": "Keep the movement slow and controlled."
+    },
+    {
+      "claim": "c11",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c12",
+      "source": "ace-incline-reverse-fly",
+      "text": "Allow your arms to hang towards the floor with your elbows slightly flexed and palms facing each other.",
+      "status": "verbatim",
+      "closest": "Allow your arms to hang towards the floor with your elbows slightly flexed and palms facing each other."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-reverse-fly",
+      "text": "Instead, make sure to pick a weight light enough to be able to perform the exercise correctly and with control.",
+      "status": "verbatim",
+      "closest": "Instead, make sure to pick a weight light enough to be able to perform the exercise correctly and with control."
+    },
+    {
+      "claim": "c6",
+      "source": "sl-reverse-fly",
+      "text": "Unlike exercises such as lat pulldowns or rows, the upper arm just barely moves closer to the origin of the lats, which means that the lats aren’t very active in this exercise.",
+      "status": "verbatim",
+      "closest": "Unlike exercises such as lat pulldowns or rows, the upper arm just barely moves closer to the origin of the lats, which means that the lats aren’t very active in this exercise."
+    }
+  ]
+}

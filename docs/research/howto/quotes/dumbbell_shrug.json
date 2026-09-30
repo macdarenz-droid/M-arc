@@ -1,0 +1,176 @@
+{
+  "id": "dumbbell_shrug",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sl-dumbbell-shrug",
+      "text": "Hold a pair of dumbbells at your sides.",
+      "status": "verbatim",
+      "closest": "Hold a pair of dumbbells at your sides."
+    },
+    {
+      "claim": "c2",
+      "source": "sl-dumbbell-shrug",
+      "text": "Lift your shoulders straight up as high as possible.",
+      "status": "verbatim",
+      "closest": "Lift your shoulders straight up as high as possible."
+    },
+    {
+      "claim": "c2",
+      "source": "sl-dumbbell-shrug",
+      "text": "Lower your shoulders again.",
+      "status": "verbatim",
+      "closest": "Lower your shoulders again."
+    },
+    {
+      "claim": "c3",
+      "source": "sl-dumbbell-shrug",
+      "text": "The movement should come from your shoulders, not your arms or wrists. Your arms should remain straight while you lift your shoulders up towards your ears.",
+      "status": "verbatim",
+      "closest": "The movement should come from your shoulders, not your arms or wrists. Your arms should remain straight while you lift your shoulders up towards your ears."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-dumbbell-shrug",
+      "text": "Stand with the dumbbells in your hands, and make sure to keep a good posture and tension in your core during the entire movement.",
+      "status": "verbatim",
+      "closest": "Stand with the dumbbells in your hands, and make sure to keep a good posture and tension in your core during the entire movement."
+    },
+    {
+      "claim": "c5",
+      "source": "sl-dumbbell-shrug",
+      "text": "The range of motion in this exercise is quite short, so do the movement slow and controlled, preferably with a short pause in the top position to get a longer time under tension.",
+      "status": "verbatim",
+      "closest": "The range of motion in this exercise is quite short, so do the movement slow and controlled, preferably with a short pause in the top position to get a longer time under tension."
+    },
+    {
+      "claim": "c6",
+      "source": "sl-dumbbell-shrug",
+      "text": "Your arms should be straight and passive; the lifting motion should come entirely from your shoulders and traps. The shoulders should go straight up and down and not move forward/backward.",
+      "status": "verbatim",
+      "closest": "Your arms should be straight and passive; the lifting motion should come entirely from your shoulders and traps. The shoulders should go straight up and down and not move forward/backward."
+    },
+    {
+      "claim": "c7",
+      "source": "sl-dumbbell-shrug",
+      "text": "This is an exercise where it’s easy to pick both a weight that’s too heavy, which can lead to difficulties with keeping a proper form, and a weight that is too light.",
+      "status": "verbatim",
+      "closest": "This is an exercise where it’s easy to pick both a weight that’s too heavy, which can lead to difficulties with keeping a proper form, and a weight that is too light."
+    },
+    {
+      "claim": "c8",
+      "source": "sl-dumbbell-shrug",
+      "text": "If you feel like the grip strength is what’s holding you back from picking a heavier weight, don’t hesitate to use lifting straps.",
+      "status": "verbatim",
+      "closest": "If you feel like the grip strength is what’s holding you back from picking a heavier weight, don’t hesitate to use lifting straps."
+    },
+    {
+      "claim": "c9",
+      "source": "sl-dumbbell-shrug",
+      "text": "The dumbbel shrug works your upper trapezius muscle. If you are not using lifting straps to hold on to the dumbbells, you will also work your grip muscles.",
+      "status": "verbatim",
+      "closest": "The dumbbel shrug works your upper trapezius muscle. If you are not using lifting straps to hold on to the dumbbells, you will also work your grip muscles."
+    },
+    {
+      "claim": "c10",
+      "source": "sl-dumbbell-shrug",
+      "text": "The dumbbell version allows for a slighter longer range of motion, while most lifters find it easier to lift heavier in the barbell version.",
+      "status": "verbatim",
+      "closest": "The dumbbell version allows for a slighter longer range of motion, while most lifters find it easier to lift heavier in the barbell version."
+    },
+    {
+      "claim": "c11",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c11",
+      "source": "sl-dumbbell-shrug",
+      "text": "preferably with a short pause in the top position",
+      "status": "verbatim",
+      "closest": "preferably with a short pause in the top position"
+    },
+    {
+      "claim": "c12",
+      "source": "ace-shrug",
+      "text": "focus on only raising/lowering the shoulders - DO NOT roll the shoulders.",
+      "status": "verbatim",
+      "closest": "focus on only raising/lowering the shoulders - DO NOT roll the shoulders."
+    },
+    {
+      "claim": "c13",
+      "source": "baechle-grip",
+      "text": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Perform all grips with your thumbs around the bar."
+    },
+    {
+      "claim": "c14",
+      "source": "odriscoll1992",
+      "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "status": "verbatim",
+      "closest": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position."
+    },
+    {
+      "claim": "c14",
+      "source": "odriscoll1992",
+      "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c14",
+      "source": "odriscoll1992",
+      "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "status": "verbatim",
+      "closest": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c15",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c16",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c17",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c17",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique.",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique."
+    },
+    {
+      "claim": "c18",
+      "source": "ekstrom2003",
+      "text": "The unilateral shoulder shrug exercise was found to produce the greatest EMG activity in the upper trapezius.",
+      "status": "verbatim",
+      "closest": "The unilateral shoulder shrug exercise was found to produce the greatest EMG activity in the upper trapezius."
+    },
+    {
+      "claim": "c18",
+      "source": "andersen2008",
+      "text": "For the trapezius muscle, the highest level of muscle activation was found during the shrug (102+/-11% of MVC), lateral raise (97+/-6% of MVC), and upright row (85+/-5% of MVC) exercises",
+      "status": "verbatim",
+      "closest": "For the trapezius muscle, the highest level of muscle activation was found during the shrug (102+/-11% of MVC), lateral raise (97+/-6% of MVC), and upright row (85+/-5% of MVC) exercises"
+    }
+  ]
+}

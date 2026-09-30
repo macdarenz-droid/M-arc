@@ -1,0 +1,265 @@
+{
+  "id": "romanian_deadlift",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-romanian-deadlift",
+      "text": "Holding a barbell with both hands so that it rests on the front of the thighs, keep a slight bend in both knees and a straight back.",
+      "status": "verbatim",
+      "closest": "Holding a barbell with both hands so that it rests on the front of the thighs, keep a slight bend in both knees and a straight back."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-romanian-deadlift",
+      "text": "Push the hips back while lowering the weight towards the floor until feeling some tension along the back of the legs.",
+      "status": "verbatim",
+      "closest": "Push the hips back while lowering the weight towards the floor until feeling some tension along the back of the legs."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-romanian-deadlift",
+      "text": "To return to standing, push the heels into the floor and pull the knees backwards, keeping the bar very close to the body while standing.",
+      "status": "verbatim",
+      "closest": "To return to standing, push the heels into the floor and pull the knees backwards, keeping the bar very close to the body while standing."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-romanian-deadlift",
+      "text": "In the Romanian deadlift, you lock your knees at a slight bend (about 15°) and only bend at your hip.",
+      "status": "verbatim",
+      "closest": "In the Romanian deadlift, you lock your knees at a slight bend (about 15°) and only bend at your hip."
+    },
+    {
+      "claim": "c5",
+      "source": "sl-romanian-deadlift",
+      "text": "Lean forward as far as possible without rounding your back.",
+      "status": "verbatim",
+      "closest": "Lean forward as far as possible without rounding your back."
+    },
+    {
+      "claim": "c6",
+      "source": "nasm-rdl",
+      "text": "Descend until you achieve moderate hamstring stretch, typically at mid-shin height or slightly above. Going too deep may compromise spinal position, while insufficient depth limits eccentric stimulus. Prioritize proper spinal alignment over maximum depth.",
+      "status": "verbatim",
+      "closest": "Descend until you achieve moderate hamstring stretch, typically at mid-shin height or slightly above. Going too deep may compromise spinal position, while insufficient depth limits eccentric stimulus. Prioritize proper spinal alignment over maximum depth."
+    },
+    {
+      "claim": "c7",
+      "source": "nasm-rdl",
+      "text": "Rounding the lower back excessively, which removes spinal stability and increases injury risk",
+      "status": "verbatim",
+      "closest": "Rounding the lower back excessively, which removes spinal stability and increases injury risk"
+    },
+    {
+      "claim": "c7",
+      "source": "nasm-rdl",
+      "text": "Bending the knees too much, which converts the exercise into a squat variation",
+      "status": "verbatim",
+      "closest": "Bending the knees too much, which converts the exercise into a squat variation"
+    },
+    {
+      "claim": "c8",
+      "source": "nasm-rdl",
+      "text": "Jerky movements or excessive momentum, which reduces hamstring tension and time under tension",
+      "status": "verbatim",
+      "closest": "Jerky movements or excessive momentum, which reduces hamstring tension and time under tension"
+    },
+    {
+      "claim": "c8",
+      "source": "nasm-rdl",
+      "text": "Using excessive weight that compromises form or spinal position",
+      "status": "verbatim",
+      "closest": "Using excessive weight that compromises form or spinal position"
+    },
+    {
+      "claim": "c9",
+      "source": "nasm-rdl",
+      "text": "Hold the barbell with a slightly wider than shoulder-width grip. Draw your shoulders back and down and position your arms just outside your thighs",
+      "status": "verbatim",
+      "closest": "Hold the barbell with a slightly wider than shoulder-width grip. Draw your shoulders back and down and position your arms just outside your thighs"
+    },
+    {
+      "claim": "c10",
+      "source": "nasm-rdl",
+      "text": "Stand with feet hip-width apart with the barbell resting across your thighs. Maintain a neutral spine and engage your core to prepare for the movement.",
+      "status": "verbatim",
+      "closest": "Stand with feet hip-width apart with the barbell resting across your thighs. Maintain a neutral spine and engage your core to prepare for the movement."
+    },
+    {
+      "claim": "c11",
+      "source": "sl-romanian-deadlift",
+      "text": "Get into the starting position by deadlifting a barbell off the floor, or by unracking it from a barbell rack.",
+      "status": "verbatim",
+      "closest": "Get into the starting position by deadlifting a barbell off the floor, or by unracking it from a barbell rack."
+    },
+    {
+      "claim": "c12",
+      "source": "sl-romanian-deadlift",
+      "text": "Inhale, brace your core slightly, and lean forward by hinging in your hips.",
+      "status": "verbatim",
+      "closest": "Inhale, brace your core slightly, and lean forward by hinging in your hips."
+    },
+    {
+      "claim": "c12",
+      "source": "sl-romanian-deadlift",
+      "text": "Reverse the movement and return to the starting position. Exhale on the way up.",
+      "status": "verbatim",
+      "closest": "Reverse the movement and return to the starting position. Exhale on the way up."
+    },
+    {
+      "claim": "c13",
+      "source": "mcallister2014",
+      "text": "The main findings of this investigation are that the ST is substantially more active than the BF among all exercises, and hamstring activity was maximized in the RDL and glute-ham raise.",
+      "status": "verbatim",
+      "closest": "The main findings of this investigation are that the ST is substantially more active than the BF among all exercises, and hamstring activity was maximized in the RDL and glute-ham raise."
+    },
+    {
+      "claim": "c14",
+      "source": "martinfuentes2020",
+      "text": "However, the Romanian Deadlift is associated with lower activation for erector spinae than for biceps femoris and semitendinosus.",
+      "status": "verbatim",
+      "closest": "However, the Romanian Deadlift is associated with lower activation for erector spinae than for biceps femoris and semitendinosus."
+    },
+    {
+      "claim": "c15",
+      "source": "lee2018",
+      "text": "Significantly greater normalized EMG values were found from the rectus femoris and gluteus maximus (58.57 ± 13.73 and 51.52 ± 6.08 %peak) of the conventional deadlift than those of the Romanian deadlift (25.26 ± 14.21 and 46.88 ± 7.39 %peak).",
+      "status": "verbatim",
+      "closest": "Significantly greater normalized EMG values were found from the rectus femoris and gluteus maximus (58.57 ± 13.73 and 51.52 ± 6.08 %peak) of the conventional deadlift than those of the Romanian deadlift (25.26 ± 14.21 and 46.88 ± 7.39 %peak)."
+    },
+    {
+      "claim": "c16",
+      "source": "nasm-rdl",
+      "text": "The RDL emphasizes hip hinging with minimal knee flexion, focusing stimulus on the hamstrings and glutes through eccentric stretching.",
+      "status": "verbatim",
+      "closest": "The RDL emphasizes hip hinging with minimal knee flexion, focusing stimulus on the hamstrings and glutes through eccentric stretching."
+    },
+    {
+      "claim": "c16",
+      "source": "sl-romanian-deadlift",
+      "text": "The primary muscles worked in the Romanian deadlift are your lower back, glutes, and hamstrings.",
+      "status": "verbatim",
+      "closest": "The primary muscles worked in the Romanian deadlift are your lower back, glutes, and hamstrings."
+    },
+    {
+      "claim": "c16",
+      "source": "sl-romanian-deadlift",
+      "text": "The secondary muscles worked in the Romanian deadlift are your adductors, trapezius, and grip.",
+      "status": "verbatim",
+      "closest": "The secondary muscles worked in the Romanian deadlift are your adductors, trapezius, and grip."
+    },
+    {
+      "claim": "c17",
+      "source": "sl-romanian-deadlift",
+      "text": "Doing too much too soon. Ease up on the training volume, and give yourself and your back time to adapt to the exercise. Technique. It is generally recommended that you keep your spine in a neutral position (“straight”) when performing the Romanian deadlift.",
+      "status": "verbatim",
+      "closest": "Doing too much too soon. Ease up on the training volume, and give yourself and your back time to adapt to the exercise. Technique. It is generally recommended that you keep your spine in a neutral position (“straight”) when performing the Romanian deadlift."
+    },
+    {
+      "claim": "c18",
+      "source": "sl-romanian-deadlift",
+      "text": "If your mobility is not as great, or you want to avoid reversing a heavy weight in mid-air, you can place the bar on a pair of lifting blocks, and use them to help stop the downward motion.",
+      "status": "verbatim",
+      "closest": "If your mobility is not as great, or you want to avoid reversing a heavy weight in mid-air, you can place the bar on a pair of lifting blocks, and use them to help stop the downward motion."
+    },
+    {
+      "claim": "c19",
+      "source": "sl-romanian-deadlift",
+      "text": "For strength gains, the low-to-medium rep range of about 3–8 reps is a good idea. Just make sure you ease into heavy low-rep training gradually.",
+      "status": "verbatim",
+      "closest": "For strength gains, the low-to-medium rep range of about 3–8 reps is a good idea. Just make sure you ease into heavy low-rep training gradually."
+    },
+    {
+      "claim": "c19",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c20",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c20",
+      "source": "nasm-rdl",
+      "text": "Jerky movements or excessive momentum, which reduces hamstring tension and time under tension",
+      "status": "verbatim",
+      "closest": "Jerky movements or excessive momentum, which reduces hamstring tension and time under tension"
+    },
+    {
+      "claim": "c21",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c22",
+      "source": "baechle-grip",
+      "text": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Perform all grips with your thumbs around the bar."
+    },
+    {
+      "claim": "c22",
+      "source": "sl-romanian-deadlift",
+      "text": "If you find that your grip strength is limiting your performance in the Romanian deadlift, using a pair of lifting straps can be a good idea.",
+      "status": "verbatim",
+      "closest": "If you find that your grip strength is limiting your performance in the Romanian deadlift, using a pair of lifting straps can be a good idea."
+    },
+    {
+      "claim": "c23",
+      "source": "nhs-back-pain",
+      "text": "Call 999 or go to A&E if:",
+      "status": "verbatim",
+      "closest": "Call 999 or go to A&E if:"
+    },
+    {
+      "claim": "c23",
+      "source": "nhs-back-pain",
+      "text": "pain, tingling, weakness or numbness in both legs",
+      "status": "verbatim",
+      "closest": "pain, tingling, weakness or numbness in both legs"
+    },
+    {
+      "claim": "c23",
+      "source": "nhs-back-pain",
+      "text": "a loss of feeling around your genitals or anus",
+      "status": "verbatim",
+      "closest": "a loss of feeling around your genitals or anus"
+    },
+    {
+      "claim": "c23",
+      "source": "nhs-back-pain",
+      "text": "See a GP if:",
+      "status": "verbatim",
+      "closest": "See a GP if:"
+    },
+    {
+      "claim": "c23",
+      "source": "nhs-back-pain",
+      "text": "it does not improve after treating it at home for a few weeks",
+      "status": "verbatim",
+      "closest": "it does not improve after treating it at home for a few weeks"
+    },
+    {
+      "claim": "c17",
+      "source": "sl-romanian-deadlift",
+      "text": "If your back pain is causing you severe discomfort or doesn’t go away after a few days or up to a week of rest, we recommend you get a diagnosis from a professional.",
+      "status": "verbatim",
+      "closest": "If your back pain is causing you severe discomfort or doesn’t go away after a few days or up to a week of rest, we recommend you get a diagnosis from a professional."
+    },
+    {
+      "claim": "c9",
+      "source": "nasm-rdl",
+      "text": "position your arms just outside your thighs with a neutral grip.",
+      "status": "verbatim",
+      "closest": "position your arms just outside your thighs with a neutral grip."
+    }
+  ]
+}

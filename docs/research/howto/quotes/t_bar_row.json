@@ -1,0 +1,241 @@
+{
+  "id": "t_bar_row",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ggr-t-bar",
+      "text": "Secure a barbell to a landmine attachment and load the free end of the bar with weight plates.",
+      "status": "verbatim",
+      "closest": "Secure a barbell to a landmine attachment and load the free end of the bar with weight plates."
+    },
+    {
+      "claim": "c1",
+      "source": "ggr-t-bar",
+      "text": "Hook a chinning triangle or close-grip dual handle about eight to 10 inches from the weight plate so it is facing upward.",
+      "status": "verbatim",
+      "closest": "Hook a chinning triangle or close-grip dual handle about eight to 10 inches from the weight plate so it is facing upward."
+    },
+    {
+      "claim": "c2",
+      "source": "ggr-t-bar",
+      "text": "Stand over the barbell with your feet about shoulder-width apart, bend your knees slightly, and hinge at the hips to lean forward.",
+      "status": "verbatim",
+      "closest": "Stand over the barbell with your feet about shoulder-width apart, bend your knees slightly, and hinge at the hips to lean forward."
+    },
+    {
+      "claim": "c3",
+      "source": "ggr-t-bar",
+      "text": "Grab the handle with both hands, engage your core, and keep your back straight so your chest is parallel to the floor.",
+      "status": "verbatim",
+      "closest": "Grab the handle with both hands, engage your core, and keep your back straight so your chest is parallel to the floor."
+    },
+    {
+      "claim": "c4",
+      "source": "ggr-t-bar",
+      "text": "Pull the barbell toward your lower chest by retracting your shoulder blades and driving your elbows back.",
+      "status": "verbatim",
+      "closest": "Pull the barbell toward your lower chest by retracting your shoulder blades and driving your elbows back."
+    },
+    {
+      "claim": "c4",
+      "source": "ggr-t-bar",
+      "text": "Contract your back muscles at the top of the movement.",
+      "status": "verbatim",
+      "closest": "Contract your back muscles at the top of the movement."
+    },
+    {
+      "claim": "c5",
+      "source": "ggr-t-bar",
+      "text": "Slowly lower the barbell back to the starting position while maintaining tension throughout your back muscles.",
+      "status": "verbatim",
+      "closest": "Slowly lower the barbell back to the starting position while maintaining tension throughout your back muscles."
+    },
+    {
+      "claim": "c6",
+      "source": "ggr-t-bar",
+      "text": "Grasp the handle with both hands turned inward",
+      "status": "verbatim",
+      "closest": "Grasp the handle with both hands turned inward"
+    },
+    {
+      "claim": "c7",
+      "source": "ggr-t-bar",
+      "text": "Lifters round their backs is one of the most common mistakes I see when training.",
+      "status": "verbatim",
+      "closest": "Lifters round their backs is one of the most common mistakes I see when training."
+    },
+    {
+      "claim": "c7",
+      "source": "ggr-t-bar",
+      "text": "this loss of proper form can place a tremendous strain on your spinal erectors and ramp up your chances of suffering a lower-back injury. Keep your core engaged and use an appropriate load for your strength levels.",
+      "status": "verbatim",
+      "closest": "this loss of proper form can place a tremendous strain on your spinal erectors and ramp up your chances of suffering a lower-back injury. Keep your core engaged and use an appropriate load for your strength levels."
+    },
+    {
+      "claim": "c8",
+      "source": "ggr-t-bar",
+      "text": "Avoid swinging from one rep to the next by holding the contraction at the top.",
+      "status": "verbatim",
+      "closest": "Avoid swinging from one rep to the next by holding the contraction at the top."
+    },
+    {
+      "claim": "c9",
+      "source": "ggr-t-bar",
+      "text": "Don’t lower the weight halfway down, and do yourself a favor by executing the full repetitions to reap the most muscle-building rewards.",
+      "status": "verbatim",
+      "closest": "Don’t lower the weight halfway down, and do yourself a favor by executing the full repetitions to reap the most muscle-building rewards."
+    },
+    {
+      "claim": "c10",
+      "source": "ggr-t-bar",
+      "text": "The T-bar row primarily engages the back muscles—the latissimus dorsi, rhomboids, and erector spinae. Meanwhile, your biceps and rear deltoids play supporting roles.",
+      "status": "verbatim",
+      "closest": "The T-bar row primarily engages the back muscles—the latissimus dorsi, rhomboids, and erector spinae. Meanwhile, your biceps and rear deltoids play supporting roles."
+    },
+    {
+      "claim": "c11",
+      "source": "barbend-t-bar",
+      "text": "However, when your chest isn’t supported, there are much higher demands on your lower back to maintain proper form.",
+      "status": "verbatim",
+      "closest": "However, when your chest isn’t supported, there are much higher demands on your lower back to maintain proper form."
+    },
+    {
+      "claim": "c12",
+      "source": "barbend-t-bar",
+      "text": "Set the foot plate so that your sternum is at the end of the support bench.",
+      "status": "verbatim",
+      "closest": "Set the foot plate so that your sternum is at the end of the support bench."
+    },
+    {
+      "claim": "c13",
+      "source": "ggr-t-bar",
+      "text": "Beginners can safely perform the T-Bar row by starting with light weights and focusing on proper form. Gradually increasing the weight as strength and technique improve will help prevent injury and lead to progress.",
+      "status": "verbatim",
+      "closest": "Beginners can safely perform the T-Bar row by starting with light weights and focusing on proper form. Gradually increasing the weight as strength and technique improve will help prevent injury and lead to progress."
+    },
+    {
+      "claim": "c13",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c15",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c15",
+      "source": "ggr-t-bar",
+      "text": "Avoid swinging from one rep to the next by holding the contraction at the top.",
+      "status": "verbatim",
+      "closest": "Avoid swinging from one rep to the next by holding the contraction at the top."
+    },
+    {
+      "claim": "c15",
+      "source": "ggr-t-bar",
+      "text": "Slowly lower the barbell back to the starting position",
+      "status": "verbatim",
+      "closest": "Slowly lower the barbell back to the starting position"
+    },
+    {
+      "claim": "c16",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c17",
+      "source": "fenwick2009",
+      "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+      "status": "verbatim",
+      "closest": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load."
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "Call 999 or go to A&E if:",
+      "status": "verbatim",
+      "closest": "Call 999 or go to A&E if:"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "pain, tingling, weakness or numbness in both legs",
+      "status": "verbatim",
+      "closest": "pain, tingling, weakness or numbness in both legs"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "a loss of feeling around your genitals or anus",
+      "status": "verbatim",
+      "closest": "a loss of feeling around your genitals or anus"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "See a GP if:",
+      "status": "verbatim",
+      "closest": "See a GP if:"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "it does not improve after treating it at home for a few weeks",
+      "status": "verbatim",
+      "closest": "it does not improve after treating it at home for a few weeks"
+    },
+    {
+      "claim": "c19",
+      "source": "baechle-grip",
+      "text": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Perform all grips with your thumbs around the bar."
+    },
+    {
+      "claim": "c20",
+      "source": "barbend-t-bar",
+      "text": "Lifting straps can aid your grip strength during heavy rows.",
+      "status": "verbatim",
+      "closest": "Lifting straps can aid your grip strength during heavy rows."
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "status": "verbatim",
+      "closest": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "status": "verbatim",
+      "closest": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c22",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice.",
+      "note": "Re-read 2026-09-30 in the fetched NHS back-pain page."
+    }
+  ]
+}

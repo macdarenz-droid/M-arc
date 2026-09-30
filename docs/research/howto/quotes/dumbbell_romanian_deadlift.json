@@ -1,0 +1,346 @@
+{
+  "id": "dumbbell_romanian_deadlift",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sweat-db-rdl",
+      "text": "Stand with your feet shoulder-width apart, holding a dumbbell in each hand with an overhand grip (palms facing towards your body) in front of your legs.",
+      "status": "verbatim",
+      "closest": "Stand with your feet shoulder-width apart, holding a dumbbell in each hand with an overhand grip (palms facing towards your body) in front of your legs.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "fitbod-db-rdl",
+      "text": "Stand upright with your feet shoulder width apart while holding a pair of dumbbells next to your hips.",
+      "status": "verbatim",
+      "closest": "Stand upright with your feet shoulder width apart while holding a pair of dumbbells next to your hips.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "sweat-db-rdl",
+      "text": "Draw your shoulder blades down and back to push your chest out slightly and draw your belly button to your spine to engage your core.",
+      "status": "verbatim",
+      "closest": "Draw your shoulder blades down and back to push your chest out slightly and draw your belly button to your spine to engage your core.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "sweat-db-rdl",
+      "text": "Bend your knees slightly hinge forward from your hips and allow the dumbbells to run along the length of your thighs and halfway down your shins.",
+      "status": "verbatim",
+      "closest": "Bend your knees slightly hinge forward from your hips and allow the dumbbells to run along the length of your thighs and halfway down your shins.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "sweat-db-rdl",
+      "text": "Ensure that the dumbbells remain in contact with your legs.",
+      "status": "verbatim",
+      "closest": "Ensure that the dumbbells remain in contact with your legs.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "sweat-db-rdl",
+      "text": "You should feel like you’re almost grazing your legs with your dumbbells.",
+      "status": "verbatim",
+      "closest": "You should feel like you're almost grazing your legs with your dumbbells.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "sweat-db-rdl",
+      "text": "As the dumbbells reach halfway down your shins, push through your heels and use your glutes and hamstrings to bring your body upright, then extend your knees and hips to return to the starting position.",
+      "status": "verbatim",
+      "closest": "As the dumbbells reach halfway down your shins, push through your heels and use your glutes and hamstrings to bring your body upright, then extend your knees and hips to return to the starting position.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "sweat-db-rdl",
+      "text": "Master a soft bend and your knees should stay behind your toes throughout each rep.",
+      "status": "verbatim",
+      "closest": "Master a soft bend and your knees should stay behind your toes throughout each rep.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "sweat-db-rdl",
+      "text": "think about pushing your hips back towards the wall behind you, rather than down towards the floor as you would with a squat.",
+      "status": "verbatim",
+      "closest": "think about pushing your hips back towards the wall behind you, rather than down towards the floor as you would with a squat.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "sweat-db-rdl",
+      "text": "You want to avoid looking straight ahead the whole time as your neck will become strained and arched when you get to the bottom of the movement.",
+      "status": "verbatim",
+      "closest": "You want to avoid looking straight ahead the whole time as your neck will become strained and arched when you get to the bottom of the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "fitbod-db-rdl",
+      "text": "Rounding your back will allow you to reach closer to the floor, but also increases your risk of injury, and reduces the effectiveness of this exercise.",
+      "status": "verbatim",
+      "closest": "Rounding your back will allow you to reach closer to the floor, but also increases your risk of injury, and reduces the effectiveness of this exercise.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "sl-db-rdl",
+      "text": "Lean forward as far as possible without rounding your back.",
+      "status": "verbatim",
+      "closest": "Lean forward as far as possible without rounding your back.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "fitbod-db-rdl",
+      "text": "limit your range of motion to as low as your hip hinge allows. Hamstring flexibility is the deciding factor in how low you should go.",
+      "status": "verbatim",
+      "closest": "limit your range of motion to as low as your hip hinge allows. Hamstring flexibility is the deciding factor in how low you should go.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "sweat-db-rdl",
+      "text": "A common deadlift mistake is to think you’re using your back strength to stand up, leading to an arched back in the second half of each rep",
+      "status": "verbatim",
+      "closest": "A common deadlift mistake is to think you're using your back strength to stand up, leading to an arched back in the second half of each rep",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "sweat-db-rdl",
+      "text": "your back should remain in a neutral position.",
+      "status": "verbatim",
+      "closest": "your back should remain in a neutral position.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "sl-db-rdl",
+      "text": "Inhale, brace your core slightly, and lean forward by hinging in your hips. Keep your knees almost completely extended.",
+      "status": "verbatim",
+      "closest": "Inhale, brace your core slightly, and lean forward by hinging in your hips. Keep your knees almost completely extended.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "sl-db-rdl",
+      "text": "Reverse the movement and return to the starting position. Exhale on the way up.",
+      "status": "verbatim",
+      "closest": "Reverse the movement and return to the starting position. Exhale on the way up.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "sl-db-rdl",
+      "text": "Note: you can stand on an elevation (for example a weight plate) if you want to extend the range of motion without hitting the floor.",
+      "status": "verbatim",
+      "closest": "Note: you can stand on an elevation (for example a weight plate) if you want to extend the range of motion without hitting the floor.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "sl-db-rdl",
+      "text": "You don’t have to touch the dumbbells to the floor, although it is OK if you do.",
+      "status": "verbatim",
+      "closest": "You don't have to touch the dumbbells to the floor, although it is OK if you do.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sweat-db-rdl",
+      "text": "As you lower your dumbbells down past your thighs towards your shins, you should feel the tension in the backs of your thighs.",
+      "status": "verbatim",
+      "closest": "As you lower your dumbbells down past your thighs towards your shins, you should feel the tension in the backs of your thighs.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sweat-db-rdl",
+      "text": "If you’re not feeling it, focus on pushing your hips back, or check that you only have a slight bend in your knees.",
+      "status": "verbatim",
+      "closest": "If you're not feeling it, focus on pushing your hips back, or check that you only have a slight bend in your knees.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sweat-db-rdl",
+      "text": "you should also feel the power coming from your glutes as you pull your hips through and squeeze your glutes at the top",
+      "status": "verbatim",
+      "closest": "you should also feel the power coming from your glutes as you pull your hips through and squeeze your glutes at the top",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "sl-db-rdl",
+      "text": "Primary muscles worked: Glutes Lower Back Hamstrings Secondary muscles worked: Adductors Trapezius Forearm Flexors",
+      "status": "verbatim",
+      "closest": "Primary muscles worked: Glutes Lower Back Hamstrings Secondary muscles worked: Adductors Trapezius Forearm Flexors",
+      "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c14",
+      "source": "fitbod-db-rdl",
+      "text": "Like other Romanian Deadlifts, this is a compound exercise that primarily targets your hamstrings and glutes.",
+      "status": "verbatim",
+      "closest": "Like other Romanian Deadlifts, this is a compound exercise that primarily targets your hamstrings and glutes.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "sweat-db-rdl",
+      "text": "Your arms really aren’t doing anything here beyond holding your weights",
+      "status": "verbatim",
+      "closest": "Your arms really aren't doing anything here beyond holding your weights",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "fitbod-db-rdl",
+      "text": "The use of dumbbells can help with some limitations in mobility, and is a great starting point for anyone working towards performing Deadlifts or Romanian Deadlifts with a barbell.",
+      "status": "verbatim",
+      "closest": "The use of dumbbells can help with some limitations in mobility, and is a great starting point for anyone working towards performing Deadlifts or Romanian Deadlifts with a barbell.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "martinfuentes2020",
+      "text": "However, the Romanian Deadlift is associated with lower activation for erector spinae than for biceps femoris and semitendinosus.",
+      "status": "verbatim",
+      "closest": "However, the Romanian Deadlift is associated with lower activation for erector spinae than for biceps femoris and semitendinosus.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "Call 999 or go to A&E if:",
+      "status": "verbatim",
+      "closest": "Call 999 or go to A&E if:",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "pain, tingling, weakness or numbness in both legs",
+      "status": "verbatim",
+      "closest": "pain, tingling, weakness or numbness in both legs",
+      "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "a loss of feeling around your genitals or anus",
+      "status": "verbatim",
+      "closest": "a loss of feeling around your genitals or anus",
+      "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "See a GP if:",
+      "status": "verbatim",
+      "closest": "See a GP if:",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "nhs-back-pain",
+      "text": "it does not improve after treating it at home for a few weeks",
+      "status": "verbatim",
+      "closest": "it does not improve after treating it at home for a few weeks",
+      "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c22",
+      "source": "sl-deadlift",
+      "text": "Generally avoid lifting with a flexed back in your training – if you cannot maintain a neutral spine, lower the weight or perform less reps per set.",
+      "status": "verbatim",
+      "closest": "Generally avoid lifting with a flexed back in your training – if you cannot maintain a neutral spine, lower the weight or perform less reps per set.",
+      "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
+    },
+    {
+      "claim": "c7",
+      "source": "sweat-db-rdl",
+      "text": "Throughout each rep, you want your body to form one nice straight line from your back to your head, so as you lower down, your eyes should start by looking straight ahead, but then move to a spot on the floor in front of you as you lower down.",
+      "status": "verbatim",
+      "closest": "Throughout each rep, you want your body to form one nice straight line from your back to your head, so as you lower down, your eyes should start by looking straight ahead, but then move to a spot on the floor in front of you as you lower down.",
+      "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
+    }
+  ],
+  "sources": [
+    {
+      "id": "sweat-db-rdl",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none (card title is a label; page title is 'How To Master Dumbbell Romanian Deadlifts')"
+    },
+    {
+      "id": "fitbod-db-rdl",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none (card title is a label; page title is 'Dumbbell Romanian Deadlift: Form, Muscles Worked, Target Weight & Variations')"
+    },
+    {
+      "id": "sl-db-rdl",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none (card title is a label; page title is 'How to Do Dumbbell Romanian Deadlift: Muscles Worked & Proper Form')"
+    },
+    {
+      "id": "martinfuentes2020",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "macdougall1985",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "acsm2009",
+      "access": "abstract",
+      "checked": "2026-09-30",
+      "changes": "none"
+    },
+    {
+      "id": "nhs-back-pain",
+      "access": "full",
+      "checked": "2026-09-30",
+      "changes": "none"
+    }
+  ]
+}

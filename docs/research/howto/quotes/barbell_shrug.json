@@ -1,0 +1,104 @@
+{
+  "id": "barbell_shrug",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-shrug",
+      "text": "Hold a barbell with a palms-down grip with the hands about shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "Hold a barbell with a palms-down grip with the hands about shoulder-width apart."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-shrug",
+      "text": "Keep the knees slightly bent, the hips straight, and the back tall, and raise the shoulders directly upwards to the ears as high as possible, lowering slowly to the original starting position.",
+      "status": "verbatim",
+      "closest": "Keep the knees slightly bent, the hips straight, and the back tall, and raise the shoulders directly upwards to the ears as high as possible, lowering slowly to the original starting position."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-shrug",
+      "text": "(Tip: grip the bar and think about pulling the hands apart from one another and focus on only raising/lowering the shoulders - DO NOT roll the shoulders.)",
+      "status": "verbatim",
+      "closest": "(Tip: grip the bar and think about pulling the hands apart from one another and focus on only raising/lowering the shoulders - DO NOT roll the shoulders.)"
+    },
+    {
+      "claim": "c4",
+      "source": "sl-barbell-shrug",
+      "text": "Hold a barbell in straight arms in front of your body. Lift your shoulders straight up as high as possible. Lower your shoulders again.",
+      "status": "verbatim",
+      "closest": "Hold a barbell in straight arms in front of your body. Lift your shoulders straight up as high as possible. Lower your shoulders again."
+    },
+    {
+      "claim": "c5",
+      "source": "sl-barbell-shrug",
+      "text": "The shrug is an isolation exercise for the muscles that lifts and supports your shoulder girdle, like the top portion of your trapezius among others.",
+      "status": "verbatim",
+      "closest": "The shrug is an isolation exercise for the muscles that lifts and supports your shoulder girdle, like the top portion of your trapezius among others."
+    },
+    {
+      "claim": "c6",
+      "source": "pizzari2014",
+      "text": "The upward rotation shrug is a more effective exercise for eliciting muscle activity of the upper and lower trapezius than the standard shrug in a normal and multi-directional instability population.",
+      "status": "verbatim",
+      "closest": "The upward rotation shrug is a more effective exercise for eliciting muscle activity of the upper and lower trapezius than the standard shrug in a normal and multi-directional instability population."
+    },
+    {
+      "claim": "c7",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-shrug",
+      "text": "lowering slowly to the original starting position.",
+      "status": "verbatim",
+      "closest": "lowering slowly to the original starting position."
+    },
+    {
+      "claim": "c8",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c9",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c10",
+      "source": "baechle-grip",
+      "text": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Perform all grips with your thumbs around the bar."
+    },
+    {
+      "claim": "c11",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c11",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique.",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique."
+    },
+    {
+      "claim": "c11",
+      "source": "kolber2010",
+      "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+      "status": "verbatim",
+      "closest": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury."
+    }
+  ]
+}

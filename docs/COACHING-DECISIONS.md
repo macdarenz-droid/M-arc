@@ -951,3 +951,13 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 
 - **Correction**: the "HT-2 generator" entry says gate block HT-2's PASS phrase "is printed as its own line after the shared PASS line, so the shared line is not edited". That is wrong. `scripts/screenshot-gate.mjs` appends `, and HT-2 (…) verified` to the shared PASS line in place, which follows the convention HT-1 set. The edit is allowed, because the card grants the PASS phrase.
   **Why**: HT-2 review on PR #105 (medium finding). The older entry is left unchanged, because this file is append-only.
+
+## LB3A research cards (rows and shrugs): family and drawing choices (research writer, 2026-09-30)
+
+- **Decided**: `pendlay_row`, `t_bar_row` and `landmine_row` are difference cards against `barbell_row`; `dumbbell_shrug` and `cable_shrug` are difference cards against `barbell_shrug`; `one_arm_dumbbell_row` is a full card (`parent: null`).
+  **Why**: the supervisor named `barbell_row` and `barbell_shrug` as this batch's template parents (architecture 6.2 lists HROW and SHRUG). content.md 2.3 requires a child to share its parent's hand archetype and primary contact. The one-arm row's primary contact is the bench (`brace-pad`), not `standing-feet`, so it cannot be a child. content.md appendix A's older grouping (`dumbbell_shrug` as the shrug parent, `t_bar_row` under `chest_supported_row`) is superseded by the supervisor's brief.
+  **Source**: supervisor brief for LB3A; content.md 2.3; census.json contact archetypes.
+- **Decided**: `t_bar_row` is drawn as the free-standing landmine T-bar with a V-handle (`standing-feet`, hinge pose), not the chest-supported machine. The machine is described in `plate.variantLine`.
+  **Why**: the census gives it the hinge pose and the landmine rig, and the HROW template covers standing hinges. The anchor source (Garage Gym Reviews) describes exactly this set-up. The census contact `brace-pad` fits only the machine version, so the card uses `standing-feet`.
+  **Source**: census.json `lib_t_bar_row` (poses, equipmentNeeds); architecture 3.1 (HROW); docs/research/howto/cards/t_bar_row.json c1-c3, c11-c12.
+- **Left out (no source found)**: a sourced "way out" (how to fail a rep safely) for the three tier-A rows, and the palm direction for the one-arm row and the dumbbell shrug. Per content.md 3.4, unsourced lines are cut, not softened.

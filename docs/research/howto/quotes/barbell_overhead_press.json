@@ -1,0 +1,237 @@
+{
+  "id": "barbell_overhead_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-standing-sp",
+      "quote": "Place a barbell in a rack at about shoulder-height. Grip the bar with the hands about shoulder-width apart",
+      "status": "verbatim",
+      "closest": "Place a barbell in a rack at about shoulder-height. Grip the bar with the hands about shoulder-width apart"
+    },
+    {
+      "claim": "c2",
+      "source": "stronglifts-ohp",
+      "quote": "Hold the bar just outside your shoulders. The exact grip width depends on how wide they are.",
+      "status": "verbatim",
+      "closest": "Hold the bar just outside your shoulders. The exact grip width depends on how wide they are."
+    },
+    {
+      "claim": "c2",
+      "source": "stronglifts-ohp",
+      "quote": "Your grip is optimal when your forearms are vertical to the floor at the bottom.",
+      "status": "verbatim",
+      "closest": "Your grip is optimal when your forearms are vertical to the floor at the bottom."
+    },
+    {
+      "claim": "c3",
+      "source": "stronglifts-ohp",
+      "quote": "Full Grip. Wrap your thumbs around the bar. This makes the Overhead Press safer. The bar can’t slip out of your hands and drop on your head.",
+      "status": "verbatim",
+      "closest": "Full Grip. Wrap your thumbs around the bar. This makes the Overhead Press safer. The bar can’t slip out of your hands and drop on your head."
+    },
+    {
+      "claim": "c4",
+      "source": "stronglifts-ohp",
+      "quote": "The bar must rest on the heel of your palm, close to your wrists.",
+      "status": "verbatim",
+      "closest": "The bar must rest on the heel of your palm, close to your wrists."
+    },
+    {
+      "claim": "c4",
+      "source": "stronglifts-ohp",
+      "quote": "Don’t grip the bar mid-palm or your wrists will bend back.",
+      "status": "verbatim",
+      "closest": "Don’t grip the bar mid-palm or your wrists will bend back."
+    },
+    {
+      "claim": "c5",
+      "source": "stronglifts-ohp",
+      "quote": "Most people press with their elbows back at the bottom. This puts your forearms incline and kills strength. Move your elbows forward before you press.",
+      "status": "verbatim",
+      "closest": "Most people press with their elbows back at the bottom. This puts your forearms incline and kills strength. Move your elbows forward before you press."
+    },
+    {
+      "claim": "c5",
+      "source": "stronglifts-ohp",
+      "quote": "Press from here and the bar will move in a vertical line up instead of away from your face.",
+      "status": "verbatim",
+      "closest": "Press from here and the bar will move in a vertical line up instead of away from your face."
+    },
+    {
+      "claim": "c6",
+      "source": "stronglifts-ohp",
+      "quote": "You must create space for the bar by leaning slightly back at the bottom. Move your hips forward while keeping your lower back neutral. This keeps your head out of the way. Now press. Move your torso forward once the bar passes your head",
+      "status": "verbatim",
+      "closest": "You must create space for the bar by leaning slightly back at the bottom. Move your hips forward while keeping your lower back neutral. This keeps your head out of the way. Now press. Move your torso forward once the bar passes your head"
+    },
+    {
+      "claim": "c7",
+      "source": "stronglifts-ohp",
+      "quote": "Hold the bar over your shoulders and mid-foot for proper balance. Lock your elbows.",
+      "status": "verbatim",
+      "closest": "Hold the bar over your shoulders and mid-foot for proper balance. Lock your elbows."
+    },
+    {
+      "claim": "c8",
+      "source": "stronglifts-ohp",
+      "quote": "If you can’t keep your lower back neutral, the weight is too heavy. Consider it a fail instead of leaning back to get your rep at all costs.",
+      "status": "verbatim",
+      "closest": "If you can’t keep your lower back neutral, the weight is too heavy. Consider it a fail instead of leaning back to get your rep at all costs."
+    },
+    {
+      "claim": "c9",
+      "source": "stronglifts-ohp",
+      "quote": "Keep your hips and knees locked from start to finish. If you can’t, the weight is too heavy.",
+      "status": "verbatim",
+      "closest": "Keep your hips and knees locked from start to finish. If you can’t, the weight is too heavy."
+    },
+    {
+      "claim": "c10",
+      "source": "stronglifts-ohp",
+      "quote": "Hip-width Stance. Overhead Press with your heels under your hips.",
+      "status": "verbatim",
+      "closest": "Hip-width Stance. Overhead Press with your heels under your hips."
+    },
+    {
+      "claim": "c10",
+      "source": "stronglifts-ohp",
+      "quote": "Keep your toes, forefoot, and heels on the floor when you Overhead Press.",
+      "status": "verbatim",
+      "closest": "Keep your toes, forefoot, and heels on the floor when you Overhead Press."
+    },
+    {
+      "claim": "c11",
+      "source": "nsca-ch15-summary",
+      "quote": "Overhead exercises and ones with the bar on the back or shoulders must be done within a power rack with crossbars at the right height.",
+      "status": "verbatim",
+      "closest": "Overhead exercises and ones with the bar on the back or shoulders must be done within a power rack with crossbars at the right height."
+    },
+    {
+      "claim": "c11",
+      "source": "stronglifts-ohp",
+      "quote": "If you fail to press the weight, you can simply lower it back on your shoulders. You then rack it in your Power Rack or return it to the floor.",
+      "status": "verbatim",
+      "closest": "If you fail to press the weight, you can simply lower it back on your shoulders. You then rack it in your Power Rack or return it to the floor."
+    },
+    {
+      "claim": "c12",
+      "source": "stronglifts-ohp",
+      "quote": "Breathing. Inhale at the bottom before you press. Hold your breath at the top. Exhale at the bottom.",
+      "status": "verbatim",
+      "closest": "Breathing. Inhale at the bottom before you press. Hold your breath at the top. Exhale at the bottom."
+    },
+    {
+      "claim": "c12",
+      "source": "nsca-ch15-summary",
+      "quote": "This is used by experienced and well trained resistance athletes during structural exercises.",
+      "status": "verbatim",
+      "closest": "This is used by experienced and well trained resistance athletes during structural exercises."
+    },
+    {
+      "claim": "c13",
+      "source": "saeterbakken2013",
+      "quote": "1-RM strength for standing dumbbells was ~7% lower than standing barbell",
+      "status": "verbatim",
+      "closest": "1-RM strength for standing dumbbells was ~7% lower than standing barbell"
+    },
+    {
+      "claim": "c13",
+      "source": "saeterbakken2013",
+      "quote": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001)",
+      "status": "verbatim",
+      "closest": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001)"
+    },
+    {
+      "claim": "c14",
+      "source": "kolber2013",
+      "quote": "A significant association existed between performance of exercises that require the \"high-five\" position (behind-the-neck latissimus pull-downs and military press) and clinical characteristics of AI.",
+      "status": "verbatim",
+      "closest": "A significant association existed between performance of exercises that require the \"high-five\" position (behind-the-neck latissimus pull-downs and military press) and clinical characteristics of AI."
+    },
+    {
+      "claim": "c14",
+      "source": "esenkaya2000",
+      "quote": "should be counseled to use safer alternative techniques such as frontal military presses that do not allow movement posterior to the plane of the body",
+      "status": "verbatim",
+      "closest": "should be counseled to use safer alternative techniques such as frontal military presses that do not allow movement posterior to the plane of the body"
+    },
+    {
+      "claim": "c15",
+      "source": "stronglifts-ohp",
+      "quote": "Barbells are easier to get stronger with because you can use smaller increments of 1.25kg/2.5lb or less by microloading.",
+      "status": "verbatim",
+      "closest": "Barbells are easier to get stronger with because you can use smaller increments of 1.25kg/2.5lb or less by microloading."
+    },
+    {
+      "claim": "c16",
+      "source": "acsm2009",
+      "quote": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c17",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c18",
+      "source": "kolber2010",
+      "quote": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c18",
+      "source": "kolber2010",
+      "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c19",
+      "source": "kerr2010",
+      "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+      "status": "verbatim",
+      "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c1",
+      "source": "ace-standing-sp",
+      "quote": "keeping the back straight and tall and press the barbell directly overhead.",
+      "status": "verbatim",
+      "closest": "keeping the back straight and tall and press the barbell directly overhead."
+    },
+    {
+      "claim": "c11",
+      "source": "nsca-ch15-summary",
+      "quote": "When exercising out of the rack with these exercises, you can get seriously injured.",
+      "status": "verbatim",
+      "closest": "When exercising out of the rack with these exercises, you can get seriously injured."
+    },
+    {
+      "claim": "c12",
+      "source": "nsca-ch15-summary",
+      "quote": "Tell athletes to exhale at the sticking point and inhale when the move is less stressful.",
+      "status": "verbatim",
+      "closest": "Tell athletes to exhale at the sticking point and inhale when the move is less stressful."
+    },
+    {
+      "claim": "c15",
+      "source": "stronglifts-ohp",
+      "quote": "Jumping from 16kg to 18kg dumbbells is a 12% increase!",
+      "status": "verbatim",
+      "closest": "Jumping from 16kg to 18kg dumbbells is a 12% increase!"
+    },
+    {
+      "claim": "c18",
+      "source": "kolber2010",
+      "quote": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+      "status": "verbatim",
+      "closest": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury."
+    }
+  ]
+}
