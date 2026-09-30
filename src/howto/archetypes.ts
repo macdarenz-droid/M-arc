@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ab808bd86f5daad04e588cbfa2059576a06603c8cc35c771530135e0aeefeea7
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=86003ed5cdf7a57c7266947b3ada8182334403bcb4e7308cb3a6fb55daefcbfc
 import type { RedFlagBlock } from './content-types';
 
 // GENERATED from tools/plates/layers/howto/shared.mjs (HT-5): the shared "Risks and when to stop" copy, one block
