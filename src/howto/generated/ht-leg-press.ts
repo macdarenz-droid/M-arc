@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=bab41740773098bbc6f98c80c4cd7fb791c3bfb5a8f302a99fde5b099690d66d
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=5e5ebf94317632e7eda358ed3ecb7c01566feec1a193a94a73625e8e7c9ea628
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_leg_press",
   name: "Leg Press (45°)",
-  hashes: { inputsSha256: "bab41740773098bbc6f98c80c4cd7fb791c3bfb5a8f302a99fde5b099690d66d", golden: "c441fcc806598fc3335d845b98674cae21e27bc15cf9619b2d2a4c864390198f" },
+  hashes: { inputsSha256: "5e5ebf94317632e7eda358ed3ecb7c01566feec1a193a94a73625e8e7c9ea628", golden: "c441fcc806598fc3335d845b98674cae21e27bc15cf9619b2d2a4c864390198f" },
   plate: {
     view: "side",
     normal: {
@@ -349,6 +349,29 @@ export default {
         ],
         "note": "Nothing measures grip, thumb or wrist on the leg press handles. \"Lightly grasp\" and \"avoid moving the upper body\" (ACE), hands on the handles (NASM)."
       }
+    }
+  ],
+  zooms: [
+    {
+      "key": "back-on-pad",
+      "chip": "Back pad",
+      "heading": "Back on pad: right and wrong",
+      "kind": "posture",
+      "feelRow": "lower-back"
+    },
+    {
+      "key": "foot",
+      "chip": "Feet",
+      "heading": "Feet: right and wrong",
+      "kind": "posture",
+      "feelRow": "knee"
+    },
+    {
+      "key": "hand",
+      "chip": "Hand",
+      "heading": "Hand: right and wrong",
+      "kind": "hand",
+      "feelRow": "wrists"
     }
   ],
   copy: {
