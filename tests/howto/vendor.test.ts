@@ -40,8 +40,9 @@ describe('HT1-A1 vendor lock (L0)', () => {
         expect(e.source).toBe(`1a1e33b:docs/howto/technical-plate/${p}`);
         expect(e.md5).toBe(g.PINS.refSrcMd5[p]);
       } else {
-        // LIB-25 [golden update]: the additive poly primitive (7859292) and its engine test (de00174), claude/howto-options.
-        const ref = ['engine/equipment.mjs', 'engine/SPEC.md'].includes(p) ? '7859292' : p === 'exercises/_test_poly.mjs' ? 'de00174' : 'bc0f378';
+        // LIB-25 [golden update]: the additive poly primitive (7859292, its input checks 48153c4) and its engine test
+        // (de00174), claude/howto-options.
+        const ref = p === 'engine/equipment.mjs' ? '48153c4' : p === 'engine/SPEC.md' ? '7859292' : p === 'exercises/_test_poly.mjs' ? 'de00174' : 'bc0f378';
         expect(e.source).toBe(`${ref}:docs/howto/technical-plate/${p === 'artifact/build-page.mjs' ? 'build-page.mjs' : p}`);
       }
     }
@@ -86,7 +87,7 @@ describe('HT1-A1 vendor lock (L0)', () => {
   // with its MANIFEST entry still fails here and shows up as a visible change to this test.
   it('HT-2: the sorted path:sha256 list of MANIFEST.json hashes to its pinned literal', () => {
     const list = Object.entries(g.readManifest().files as Record<string, { sha256: string }>).map(([p, e]) => `${p}:${e.sha256}`).sort().join('\n');
-    expect(g.sha256(list)).toBe('aaa4a97e4b8fb5f0a13858e3ca7d789b01a61f75f84616e9211670f9a743c477');
+    expect(g.sha256(list)).toBe('aa10e8c4d1d8fa808d370b9a1a09f5091825bcdd1d09b91d79fd65ee92ac7bfc');
   });
 });
 

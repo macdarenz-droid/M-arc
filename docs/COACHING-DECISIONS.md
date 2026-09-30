@@ -1181,3 +1181,9 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
+
+## LIB-25 review fix: poly input checks (LIB-25 builder, 2026-09-30)
+
+- **Decided**: `poly()` throws when a point is not exactly 3 finite numbers, naming the point's index. It also throws when the points enclose no area. The area is measured in world space with Newell's normal: half its length must be at least 1e-8 m². This rejects points that coincide or lie on one line, but it still draws an outline that is seen edge-on in the current view.
+  **Why**: this is the review's low finding on #120. The supervisor asked for it to be fixed now. A screen-space area check would throw on a valid part seen edge-on, for example a flat plate in side view, so the check is done in world space. The source is on claude/howto-options (48153c4) and was vendored from there.
+  **Source**: REVIEW LIB-25 @ 8480052 on #120; golden procedure (plan 2.8).

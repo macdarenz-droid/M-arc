@@ -25,9 +25,9 @@
       "gitBlob": "122d328fcd3ac33f89d31564c026fb5f5a590ed4"
     },
     "engine/equipment.mjs": {
-      "sha256": "99cd1bd3792ffde84f196a6ce776812132097144631c59c68d31ef95b8380c92",
-      "source": "7859292:docs/howto/technical-plate/engine/equipment.mjs",
-      "gitBlob": "33fdf06a861ad15f42a1bbbe977bdb28d5a5da03"
+      "sha256": "d1f7d82a8962e411525ab29138a1b36eb444d10b04e1e75a14e9475b15eaa638",
+      "source": "48153c4:docs/howto/technical-plate/engine/equipment.mjs",
+      "gitBlob": "3288b69ec1a277ee26da38686d3f75e62f228bfa"
     },
     "engine/gallery.mjs": {
       "sha256": "238b3df7bfe95b70e8f6f772406abb8a1b2d2234a108e14ac64185974d2a82a7",
