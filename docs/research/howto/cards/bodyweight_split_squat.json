@@ -11,17 +11,8 @@
       "standing-feet"
     ]
   },
-  "parent": "reverse_lunge",
-  "inherit": [
-    {
-      "field": "plate.view",
-      "why": "true for this child because it is also a front-to-back split stance in the sagittal plane, so shin angle, trunk and back-knee depth all read from the side."
-    },
-    {
-      "field": "redFlags.knee",
-      "why": "true for this child because the front knee bends under body weight or load exactly as in the reverse lunge; the NHS knee box is re-cited in this card."
-    }
-  ],
+  "parent": null,
+  "inherit": [],
   "claims": [
     {
       "id": "c1",
@@ -150,7 +141,7 @@
     },
     {
       "id": "c8",
-      "text": "The split squat can be done with any load, including none added.",
+      "text": "The split squat can be loaded with any implement: barbell, dumbbells, kettlebells or a sandbag.",
       "tags": [
         "CONSENSUS"
       ],
@@ -281,7 +272,7 @@
     "handContact": "",
     "wrist": "",
     "claims": [],
-    "note": "Hand archetype none (bodyweight); the parent's dumbbell hold is not inherited."
+    "note": "Hand archetype none (bodyweight)."
   },
   "setup": [
     {
@@ -318,7 +309,7 @@
   "handlingMistakes": [
     {
       "mistake": "Front knee sliding forward at the bottom.",
-      "fix": "Keep the front shin about vertical; move the front foot farther forward if needed.",
+      "fix": "Keep the front shin about vertical at the bottom.",
       "claim": "c2"
     },
     {
@@ -402,15 +393,15 @@
     "why": "Library: quads primary, glutes secondary. Catalyst (c4, c5) names quads and glutes; loaded EMG shows less glute activity with the feet fixed than when stepping (c7), which fits glutes as secondary. No change."
   },
   "loadProgression": {
-    "text": "Sets of 5-10 smooth reps; add a load (dumbbells) only when the position stays controlled.",
+    "text": "Sets of 5-10 reps at a load that allows a smooth movement with no crash into the bottom; it can be loaded with dumbbells or other implements.",
     "claims": [
       "c6",
       "c8"
     ]
   },
   "anchorSource": "cat-splitsquat",
-  "anchorNote": "Catalyst Athletics Split Squat page read in full. It describes a barbell setup for weightlifters, but its stance, depth, trunk and shin cues (c1-c4) do not depend on the load and it says any load can be used (c8).",
-  "decisionNote": "Parent is reverse_lunge because LIBRARY-HOWTO-ARCHITECTURE 6.2 marks this id T (SPLIT template) and the batch brief names reverse_lunge as the template parent. content.md appendix A lists it differently; the plate template decides the parent here. Only plate view and the knee red-flag box are inherited; every claim, feel line and mistake is re-researched below. Hand archetype is none (census), unlike the parent's hold; grip is explicitly not inherited.",
+  "anchorNote": "Catalyst Athletics Split Squat page read in full. It describes a barbell setup for weightlifters and says the split squat can be loaded with any implement (c8); it does not describe the unloaded version, so its stance, depth, trunk and shin cues (c1-c4) are applied to bodyweight on the reasoning that they do not depend on the load.",
+  "decisionNote": "Stand-alone full card (fixer, 2026-09-30). The batch brief named reverse_lunge as the template parent, but reverse_lunge's hand archetype is hold (census) and this card's is none; content.md 2.3 requires a child to share its parent's hand archetype, and content.md appendix A lists bodyweight_split_squat as a stand-alone parent. Plate view (viewWhy) and the knee red-flag box (c9) are cited in this card, so nothing depended on the parent.",
   "unsourced": [
     "A bodyweight-specific split-squat technique page (none found on ACE).",
     "Arm position.",

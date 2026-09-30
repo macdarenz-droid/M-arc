@@ -15,10 +15,10 @@
       "quotes": [{ "source": "ace-bwsquat", "text": "Begin standing with your feet slightly wider than hip-width, with the toes turned slightly outwards with your hands by your sides so the palms facing inwards. Depress and retract your scapulae (pull the shoulders down and back).", "where": "Step 1" }] },
     { "id": "b2", "text": "Brace the core to steady the spine; chest up.",
       "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
-      "quotes": [{ "source": "ace-bwsquat", "text": "Hold your chest up and out, tilt your head slightly up, shift your weight back into your heels while pushing your hips towards the wall behind you.", "where": "Step 2" }] },
+      "quotes": [{ "source": "ace-bwsquat", "text": "Stiffen your core and abdominal muscles (“bracing”) to stabilize your spine.", "where": "Step 2" }, { "source": "ace-bwsquat", "text": "Hold your chest up and out, tilt your head slightly up, shift your weight back into your heels while pushing your hips towards the wall behind you.", "where": "Step 2" }] },
     { "id": "b3", "text": "Start the descent by moving the hips back then down, so hips and knees bend together; keep the back flat.",
       "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
-      "quotes": [{ "source": "ace-bwsquat", "text": "Start the downward phase by first shifting your hips backwards then downwards to create a hinge-like movement at your hips and knees simultaneously.", "where": "Step 3" }] },
+      "quotes": [{ "source": "ace-bwsquat", "text": "Maintain tension in the core muscles (continue bracing) and attempt to keep your back flat.", "where": "Step 3" }, { "source": "ace-bwsquat", "text": "Start the downward phase by first shifting your hips backwards then downwards to create a hinge-like movement at your hips and knees simultaneously.", "where": "Step 3" }] },
     { "id": "b4", "text": "Lower until the thighs are about parallel, or stop earlier if the heels start to lift or the torso starts to round.",
       "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
       "quotes": [{ "source": "ace-bwsquat", "text": "Continue to lower yourself until your thighs are parallel or almost parallel with the floor, until your heels begin to lift off the floor, or until your torso begins to round or flex forward.", "where": "Step 4" }] },
@@ -33,7 +33,7 @@
     { "id": "b7", "text": "On the way up, breathe out and push the feet into the floor; hips and torso rise together, heels flat, knees over the second toe.",
       "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
       "quotes": [{ "source": "ace-bwsquat", "text": "exhale and extend the hips and knees by pushing your feet into the floor through your heels. The hips and torso need to rise together while keeping the heels flat on the floor and knees aligned over the second toe.", "where": "Step 6" }] },
-    { "id": "b8", "text": "Control how far the shins travel forward; in a loaded squat, blocking the knees behind the toes shifted load to the hips and lower back, so knees may go slightly past the toes.",
+    { "id": "b8", "text": "Control how far the shins travel forward; in a loaded squat, stopping the knees from passing the toes shifted load to the hips and lower back, so knees may go slightly past the toes.",
       "tags": ["MECH"], "sources": ["ace-bwsquat", "fry-2003"],
       "quotes": [
         { "source": "ace-bwsquat", "text": "try to control the amount of forward translation (movement) of the tibia (shinbone).", "where": "Step 3" },
@@ -102,11 +102,11 @@
     "rows": [
       { "where": "Front of the thighs and the buttocks", "means": "The target areas are working.", "fix": "", "claim": "b9", "redFlag": null },
       { "where": "Lower back", "means": "The torso is rounding at the bottom.", "fix": "Stop higher, where the back is still flat.", "claim": "b4", "redFlag": null },
-      { "where": "Sharp knee pain, or the knee gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "b10", "redFlag": "knee" }
+      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "b10", "redFlag": "knee" }
     ]
   },
   "risks": [
-    { "risk": "Blocking the knees far behind the toes shifts load to the hips and lower back.", "claim": "b8" }
+    { "risk": "Stopping the knees from passing the toes shifts load to the hips and lower back (barbell squat data).", "claim": "b8" }
   ],
   "redFlags": ["knee"],
   "zooms": [

@@ -224,7 +224,7 @@
     },
     {
       "id": "c11",
-      "text": "Leaning the trunk forward in a forward lunge increased hip extensor work and glute max and outer hamstring activity; leaning back changed nothing.",
+      "text": "Leaning the trunk forward in a forward lunge increased hip extensor work and glute max and outer hamstring (biceps femoris) activity; leaning back did not change joint impulse or muscle activity, only ankle and hip angles.",
       "tags": [
         "DATA"
       ],
@@ -234,8 +234,18 @@
       "quotes": [
         {
           "source": "farrokhi-2008",
+          "text": "During the LTF condition, significant increases were noted in peak hip flexion angle, hip extensor and ankle plantar flexor impulse, as well as gluteus maximus and biceps femoris EMG (P<.015) when compared to the NL condition.",
+          "where": "abstract, results (LTF = trunk forward, NL = neutral)"
+        },
+        {
+          "source": "farrokhi-2008",
           "text": "Performing a lunge with the trunk forward increased the hip extensor impulse and the recruitment of the hip extensors. In contrast, performing a forward lunge with the trunk extended did not alter joint impulse or activation of the lower extremity musculature.",
           "where": "abstract, conclusions"
+        },
+        {
+          "source": "farrokhi-2008",
+          "text": "During the LTE condition, a significant increase was noted in peak ankle dorsiflexion and a significant decrease was noted in peak hip flexion angle (P<.015) compared to the NL condition.",
+          "where": "abstract, results (LTE = trunk extended)"
         }
       ]
     },

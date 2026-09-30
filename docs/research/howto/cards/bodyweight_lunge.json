@@ -11,17 +11,8 @@
       "standing-feet"
     ]
   },
-  "parent": "reverse_lunge",
-  "inherit": [
-    {
-      "field": "plate.view",
-      "why": "true for this child because it is also a front-to-back split stance in the sagittal plane, so shin angle, trunk and back-knee depth all read from the side."
-    },
-    {
-      "field": "redFlags.knee",
-      "why": "true for this child because the front knee bends under body weight or load exactly as in the reverse lunge; the NHS knee box is re-cited in this card."
-    }
-  ],
+  "parent": null,
+  "inherit": [],
   "claims": [
     {
       "id": "c1",
@@ -302,7 +293,7 @@
     "handContact": "",
     "wrist": "",
     "claims": [],
-    "note": "Hand archetype none (bodyweight); the parent's dumbbell hold is not inherited. ACE gives no arm position, so none is claimed."
+    "note": "Hand archetype none (bodyweight). ACE gives no arm position, so none is claimed."
   },
   "setup": [
     {
@@ -348,7 +339,7 @@
     },
     {
       "mistake": "Upper body tilting or swaying sideways.",
-      "fix": "Brace the trunk and keep the standing foot still.",
+      "fix": "Keep the upper body level, without tilting or swaying.",
       "claim": "c2"
     },
     {
@@ -444,7 +435,7 @@
   },
   "anchorSource": "ace-fwdlunge-bw",
   "anchorNote": "ACE Forward Lunge (no equipment) page read in full; Catalyst Lunge page also read in full.",
-  "decisionNote": "Parent is reverse_lunge because LIBRARY-HOWTO-ARCHITECTURE 6.2 marks this id T (SPLIT template) and the batch brief names reverse_lunge as the template parent. content.md appendix A lists it differently; the plate template decides the parent here. Only plate view and the knee red-flag box are inherited; every claim, feel line and mistake is re-researched below. Hand archetype is none (census), unlike the parent's hold; content.md 2.3 wants a shared hand archetype for children, so grip is explicitly not inherited and the supervisor may promote this card to its own parent without changing any claim.",
+  "decisionNote": "Stand-alone full card (fixer, 2026-09-30). The batch brief named reverse_lunge as the template parent, but reverse_lunge's hand archetype is hold (census) and this card's is none; content.md 2.3 requires a child to share its parent's hand archetype, and content.md appendix A lists bodyweight_lunge as a stand-alone parent. Plate view (viewWhy) and the knee red-flag box (c10) are cited in this card, so nothing depended on the parent. Copy note: the sheet must not call the front shin vertical; ACE says it leans slightly forward (c4).",
   "unsourced": [
     "Arm position (hands on hips or at the sides).",
     "Tempo in seconds.",

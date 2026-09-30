@@ -15,9 +15,9 @@
     { "id": "g1", "text": "Stand with feet hip width and hold a kettlebell or dumbbell upright at chest height, both hands cupping the top of the weight.",
       "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
       "quotes": [{ "source": "nasm-goblet", "text": "Stand with feet hip-width apart and hold a kettlebell or dumbbell vertically at chest height with both hands cupping the top of the weight.", "where": "Step 1: Setup" }] },
-    { "id": "g2", "text": "Feet about shoulder width, dumbbell upright in front of the chest, elbows close to the ribs and back straight while lowering.",
-      "tags": ["CONSENSUS"], "sources": ["ace-goblet"],
-      "quotes": [{ "source": "ace-goblet", "text": "Stand with the feet about shoulder-width apart, and hold a dumbbell in a vertical position directly in front of the chest. Keep the elbows close to the rib cage and the back straight while lowering into a squat.", "where": "instructions" }] },
+    { "id": "g2", "text": "Feet about shoulder width, dumbbell upright in front of the chest, elbows close to the ribs and back straight while lowering; NASM adds: brace the core and keep an upright posture.",
+      "tags": ["CONSENSUS"], "sources": ["ace-goblet", "nasm-goblet"],
+      "quotes": [{ "source": "nasm-goblet", "text": "Engage your core and maintain upright posture.", "where": "Step 2: Brace/Position" }, { "source": "ace-goblet", "text": "Stand with the feet about shoulder-width apart, and hold a dumbbell in a vertical position directly in front of the chest. Keep the elbows close to the rib cage and the back straight while lowering into a squat.", "where": "instructions" }] },
     { "id": "g3", "text": "Brace the core and keep an upright posture.",
       "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
       "quotes": [{ "source": "nasm-goblet", "text": "Engage your core and maintain upright posture.", "where": "Step 2: Brace/Position" }] },
@@ -29,9 +29,10 @@
     { "id": "g5", "text": "Keep the weight secure at chest height for the whole rep.",
       "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
       "quotes": [{ "source": "nasm-goblet", "text": "Keep the weight secure at chest height during the entire movement.", "where": "Step 4: Return/Descent" }] },
-    { "id": "g6", "text": "Common mistakes: leaning too far forward (more lower-back strain), and the chest drooping or the weight drifting away from the body.",
-      "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
+    { "id": "g6", "text": "Common mistakes: leaning too far forward (more lower-back strain), and the chest drooping or the weight drifting away from the body; ACE keeps the elbows close to the rib cage.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet", "ace-goblet"],
       "quotes": [
+        { "source": "ace-goblet", "text": "Keep the elbows close to the rib cage and the back straight while lowering into a squat.", "where": "instructions" },
         { "source": "nasm-goblet", "text": "Leaning excessively forward, which shifts weight distribution and increases lower back strain", "where": "Common Mistakes" },
         { "source": "nasm-goblet", "text": "Drooping the chest or allowing the weight to drift away from the body", "where": "Common Mistakes" } ] },
     { "id": "g7", "text": "Other common mistakes: knees caving inward, not going deep enough, and jerky, uncontrolled reps.",
@@ -56,8 +57,8 @@
     { "id": "g11", "text": "In 32 adults at 30 % of body mass, the goblet squat drew more quad activity and vertical loading than the landmine squat.",
       "tags": ["DATA"], "sources": ["collins-2021"],
       "quotes": [{ "source": "collins-2021", "text": "the GBS can better target quadriceps activity and increase vertical loading.", "where": "abstract" }] },
-    { "id": "g12", "text": "A brief breath-hold is unavoidable with heavy loads or sets to failure; it raises blood pressure, with the health risk unconfirmed.",
-      "tags": ["DATA"], "sources": ["hackett-2013"],
+    { "id": "g12", "text": "A general review of resistance exercise (not goblet-squat data): a brief breath-hold is unavoidable with heavy loads or sets to failure; it raises blood pressure, with the health risk unconfirmed.",
+      "tags": ["MECH"], "sources": ["hackett-2013"],
       "quotes": [
         { "source": "hackett-2013", "text": "a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads (>80% of maximal voluntary contraction) or when lifting lighter loads to failure.", "where": "abstract" },
         { "source": "hackett-2013", "text": "The VM was associated with an increase in blood pressure during resistance exercise", "where": "abstract" } ] },
@@ -90,7 +91,7 @@
     "checkpoints": [
       { "label": "Weight at chest", "what": "Dumbbell stays upright against the chest the whole rep.", "claim": "g5" },
       { "label": "Chest up", "what": "Torso stays upright, no excess forward lean.", "claim": "g8" },
-      { "label": "Hips below knees", "what": "Squat to thighs parallel or deeper if mobility allows.", "claim": "g4" }
+      { "label": "Thighs parallel", "what": "Squat to thighs parallel or deeper if mobility allows.", "claim": "g4" }
     ],
     "mistake": {
       "what": "Chest droops and the weight drifts away from the body, torso leaning far forward.",
@@ -118,12 +119,12 @@
     { "step": "Pick a weight you can control with an upright chest.", "claim": "g9" },
     { "step": "Feet hip to shoulder width.", "claim": "g2" },
     { "step": "Hold the dumbbell upright at the chest, hands cupping the top.", "claim": "g1" },
-    { "step": "Elbows close to the ribs, brace, chest up.", "claim": "g3" }
+    { "step": "Elbows close to the ribs, brace, chest up.", "claim": "g2" }
   ],
   "posture": [
     { "point": "Weight at chest height throughout.", "claim": "g5" },
     { "point": "Elbows close to the ribs.", "claim": "g2" },
-    { "point": "Torso upright, back straight.", "claim": "g8" },
+    { "point": "Torso upright, back straight.", "claim": "g2" },
     { "point": "Depth to thighs parallel or hips below knees.", "claim": "g4" },
     { "point": "Knees do not cave inward.", "claim": "g7" }
   ],
@@ -139,7 +140,7 @@
     "rows": [
       { "where": "Front of the thighs", "means": "The main movers are working.", "fix": "", "claim": "g10", "redFlag": null },
       { "where": "Lower back more than thighs", "means": "Leaning too far forward, chest dropping.", "fix": "Chest up, weight on the chest; go lighter.", "claim": "g6", "redFlag": "back" },
-      { "where": "Sharp knee pain, or the knee gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "g14", "redFlag": "knee" }
+      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "g14", "redFlag": "knee" }
     ]
   },
   "risks": [

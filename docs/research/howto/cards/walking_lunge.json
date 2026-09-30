@@ -242,7 +242,7 @@
     },
     {
       "id": "c11",
-      "text": "In a slow-lowering walking lunge, a longer-than-normal step did not raise thigh or hip muscle activity while lowering; it only made coming up harder, so a normal step length was judged enough.",
+      "text": "Scoped to eccentric lunge walking (about 3 s of lowering onto a knee bent near 90 degrees; 15 adults aged 30-64): steps 20-40 % longer than normal did not raise knee or hip extensor activity while lowering and made coming up harder, so the authors judged a normal step enough for that slow form. Not a rule for the ordinary walking lunge, where the technique source asks for a full-length step (c8).",
       "tags": [
         "DATA"
       ],
@@ -250,6 +250,21 @@
         "wijethunga-2026"
       ],
       "quotes": [
+        {
+          "source": "wijethunga-2026",
+          "text": "Eccentric lunge walking (ELW), which requires body weight to be supported by the stepping leg for ~ 3 s while its knee is flexed to ~ 90º",
+          "where": "abstract, purpose"
+        },
+        {
+          "source": "wijethunga-2026",
+          "text": "gastrocnemius of 15 healthy adults (30-64 y)",
+          "where": "abstract, methods"
+        },
+        {
+          "source": "wijethunga-2026",
+          "text": "normal, 20% (+ 20%), and 40% longer than normal (+ 40%)",
+          "where": "abstract, methods"
+        },
         {
           "source": "wijethunga-2026",
           "text": "Contrary to hypothesis, longer step lengths did not increase eccentric phase knee and hip extensor activities, but made the returning concentric phase movements more difficult.",
@@ -501,12 +516,12 @@
       "claim": "c3"
     },
     {
-      "point": "Trunk upright; no sideways tilt.",
+      "point": "Trunk upright.",
       "claim": "c7"
     },
     {
-      "point": "A normal step length is enough.",
-      "claim": "c11"
+      "point": "No sideways tilt of the upper body.",
+      "claim": "c5"
     }
   ],
   "handlingMistakes": [

@@ -25,14 +25,17 @@
     { "id": "p5", "text": "The free leg hovers in front with a straight knee.",
       "tags": ["CONSENSUS"], "sources": ["physitrack-pistol"],
       "quotes": [{ "source": "physitrack-pistol", "text": "Your other leg should hover in front of you with a straight knee.", "where": "instructions" }] },
-    { "id": "p6", "text": "The pistol squat is advanced; beginners should master basic squats and lunges first.",
-      "tags": ["CONSENSUS"], "sources": ["physitrack-pistol"],
-      "quotes": [{ "source": "physitrack-pistol", "text": "No, pistol squats are an advanced exercise and should not be attempted by beginners.", "where": "FAQ" }] },
+    { "id": "p6", "text": "The pistol squat is advanced; beginners should master basic squats and lunges first, and move on to assisted pistols once air squats and one-leg balance are comfortable, or practise to a box or bench behind you.",
+      "tags": ["CONSENSUS"], "sources": ["physitrack-pistol", "rep-pistol"],
+      "quotes": [{ "source": "physitrack-pistol", "text": "No, pistol squats are an advanced exercise and should not be attempted by beginners.", "where": "FAQ" }, { "source": "physitrack-pistol", "text": "If you are a beginner, you should focus on mastering basic bodyweight exercises such as squats, lunges, and push-ups before attempting more advanced exercises such as pistol squats.", "where": "FAQ" }, { "source": "rep-pistol", "text": "If you're comfortable and confident tackling air squats, balancing on one leg, and have given your ankles some dedicated mobility work, you're ready to move on to assisted pistol squats.", "where": "How to Work Up to Your First Pistol Squat" }, { "source": "rep-pistol", "text": "practice your pistol squat with a box or bench behind you.", "where": "Single-leg box squat" }] },
     { "id": "p7", "text": "Load progression: single-leg balance and air squats first, then assisted pistols (holding a support to take weight off), squats to a box behind you lowered over time, and lowering-only reps.",
       "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
       "quotes": [
         { "source": "rep-pistol", "text": "Take some of the load off that working leg by utilizing a chair, pole, resistance bands, a doorframe", "where": "Bodyweight assisted pistol squat" },
+        { "source": "rep-pistol", "text": "If you're comfortable and confident tackling air squats, balancing on one leg, and have given your ankles some dedicated mobility work, you're ready to move on to assisted pistol squats.", "where": "How to Work Up to Your First Pistol Squat" },
         { "source": "rep-pistol", "text": "practice your pistol squat with a box or bench behind you.", "where": "Single-leg box squat" },
+        { "source": "rep-pistol", "text": "Complete your single leg squat until you're seated on that box or bench, then press back to standing.", "where": "Single-leg box squat" },
+        { "source": "rep-pistol", "text": "swapping the bench or box out for a lower target", "where": "Single-leg box squat" },
         { "source": "rep-pistol", "text": "Using proper pistol squat form, lower down on one leg, then stand up using both legs.", "where": "Eccentric-only pistol squat" } ] },
     { "id": "p8", "text": "Common mistakes: bouncing at the bottom, the knee caving in, and the heel of the standing foot lifting.",
       "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
@@ -42,14 +45,14 @@
         { "source": "rep-pistol", "text": "Heel lift: As you lower down in that squat, your planted heel may try and creep up on you.", "where": "Common Mistakes" } ] },
     { "id": "p9", "text": "The deep single-leg position puts real demand on the knee; with knee pain, back off, check form or use an easier version.",
       "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
-      "quotes": [{ "source": "rep-pistol", "text": "dial back your efforts with this move, check your form, or try some regressions or alternatives", "where": "FAQ" }] },
+      "quotes": [{ "source": "rep-pistol", "text": "Because the pistol squat is a deep, single-leg movement, there’s a good amount of stress and demand placed on your knees. If you feel pain in the ole’ bendy bits, dial back your efforts with this move, check your form, or try some regressions or alternatives", "where": "FAQ" }] },
     { "id": "p10", "text": "Quads are the main movers; glutes steady the hips and help stand; adductors of the working leg steady the knee.",
       "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
       "quotes": [
         { "source": "rep-pistol", "text": "Quadriceps: These are the main event, the major movers here, controlling your descent and powering you back to standing.", "where": "Muscles Worked" },
         { "source": "rep-pistol", "text": "Glutes: The glutes stabilize your hips and support your quads as you fire back up out of that deep pistol squat.", "where": "Muscles Worked" },
         { "source": "rep-pistol", "text": "On the working leg, your adductors", "where": "Muscles Worked" } ] },
-    { "id": "p11", "text": "Holding a light dumbbell or kettlebell out in front can act as a counterbalance; start light.",
+    { "id": "p11", "text": "Adding weight raises the strength challenge and can act as a counterbalance that helps keep you steady.",
       "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
       "quotes": [{ "source": "rep-pistol", "text": "Adding weight increases the strength challenge and can actually act as a counterbalance, helping to keep you steady.", "where": "Variations" }] },
     { "id": "p12", "text": "NHS knee pain: get advice from 111 if the knee is very painful, or locks, gives way or painfully clicks.",
@@ -115,7 +118,7 @@
     "rows": [
       { "where": "Front of the standing thigh", "means": "The main mover is working.", "fix": "", "claim": "p10", "redFlag": null },
       { "where": "Knee discomfort", "means": "The deep single-leg bend is too much for now.", "fix": "Use a box or support, or an easier version.", "claim": "p9", "redFlag": null },
-      { "where": "Sharp knee pain, or the knee gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "p12", "redFlag": "knee" }
+      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "p12", "redFlag": "knee" }
     ]
   },
   "risks": [
@@ -125,9 +128,9 @@
   "redFlags": ["knee"],
   "zooms": [
     { "key": "standing-foot", "kind": "posture", "right": "Standing foot flat at the bottom.", "wrong": "Heel lifted, weight on the toes.", "claim": "p8" },
-    { "key": "box-pistol", "kind": "posture", "right": "Single-leg squat down to a box behind you.", "wrong": "Dropping onto the box.", "claim": "p7" }
+    { "key": "box-pistol", "kind": "posture", "right": "Single-leg squat down to a box behind you.", "wrong": "Dropping onto the box instead of squatting down to it under control.", "claim": "p7", "wrongNote": "The wrong drawing is the inverse of p7 (squat down until seated on the box); no source describes it directly." }
   ],
-  "libraryDiff": { "add": ["adductors"], "remove": [], "why": "Library: quads primary, glutes and abductors secondary. REP names quads as main movers and glutes and the working-leg adductors as helpers (p10), so adductors are proposed as an addition. Abductors are not named by any source read; left in pending the critic, no removal without a source. Coach source only, no EMG." },
+  "libraryDiff": { "add": ["adductors"], "remove": ["abductors"], "why": "Library: quads primary, glutes and abductors secondary. REP names quads as main movers and glutes and the working-leg adductors as helpers (p10), so adductors are proposed as an addition. Abductors are not named by any source read (REP and Physitrack read in full), so removal is proposed for the supervisor to decide; no source supports keeping them. Coach source only, no EMG." },
   "loadProgression": { "text": "Single-leg balance and air squats, then assisted pistols, box pistols with the box lowered over time, and lowering-only reps.", "claims": ["p7"] },
   "wayOut": { "text": "A box behind you to sit onto, or a support to hold, while learning.", "claims": ["p7"] },
   "anchorSource": "rep-pistol",

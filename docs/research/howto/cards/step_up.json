@@ -423,7 +423,7 @@
   },
   "setup": [
     {
-      "step": "Stand facing the box, feet hip width apart, dumbbells at your sides, palms in.",
+      "step": "Stand with feet hip width apart, dumbbells at your sides, palms in.",
       "claim": "c5"
     },
     {
@@ -560,7 +560,7 @@
     "why": "Library: quads and glutes primary, hamstrings and calves secondary, core stabilizer. Catalyst (c3) and Simenz EMG (c11, c12) support these roles; no change."
   },
   "loadProgression": {
-    "text": "Start with 8-15 reps with little or no weight; move to 3-6 heavier reps for strength.",
+    "text": "Start with 8-15 reps with little or no weight; move to 3-6 heavier reps for strength. For hip strengthening the step-up is a good starting task: it was the least demanding on the hip of the single-leg tasks tested.",
     "claims": [
       "c14",
       "c13"

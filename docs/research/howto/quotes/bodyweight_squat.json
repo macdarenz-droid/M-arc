@@ -33,7 +33,21 @@
     {
       "claim": "b2",
       "source": "ace-bwsquat",
+      "text": "Stiffen your core and abdominal muscles (“bracing”) to stabilize your spine.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b2",
+      "source": "ace-bwsquat",
       "text": "Hold your chest up and out, tilt your head slightly up, shift your weight back into your heels while pushing your hips towards the wall behind you.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b3",
+      "source": "ace-bwsquat",
+      "text": "Maintain tension in the core muscles (continue bracing) and attempt to keep your back flat.",
       "status": "verbatim",
       "closest": null
     },

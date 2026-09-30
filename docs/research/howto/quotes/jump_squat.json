@@ -32,6 +32,18 @@
       "url": "https://www.nhs.uk/conditions/knee-pain/",
       "access": "full",
       "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "nasm-boxjump",
+      "url": "https://www.nasm.org/resource-center/exercise-library/box-jumps",
+      "access": "full",
+      "notes": "added by fixer 2026-09-30; fetched with curl, HTTP 200; quote read in FAQ section"
+    },
+    {
+      "id": "hewett-2005",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15722287/",
+      "access": "abstract",
+      "notes": "added by fixer 2026-09-30; abstract fetched via NCBI E-utilities efetch (PMID 15722287); title, year and journal (Am J Sports Med 33(4):492-501) match; quotes taken from abstract"
     }
   ],
   "quotes": [
@@ -39,6 +51,13 @@
       "claim": "j1",
       "source": "ace-squatjumps",
       "text": "Stand with your feet feet hip-width apart, arms by your sides, depressing and retracting your scapulae (pull shoulders down and back) without arching your low back, and \"brace\" (engage your abdominal / core muscles) to stiffen your spine.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j2",
+      "source": "ace-squatjumps",
+      "text": "Try to maintain a flat back by bending forward at the hips",
       "status": "verbatim",
       "closest": null
     },
@@ -88,6 +107,13 @@
       "claim": "j8",
       "source": "ace-squatjumps",
       "text": "Land with your trunk inclined slightly forward, head aligned with your spine and back rigid or flat.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j8",
+      "source": "ace-squatjumps",
+      "text": "Keep your abdominal / core muscles engaged, stiffening your torso to protect your spine.",
       "status": "verbatim",
       "closest": null
     },
@@ -158,6 +184,34 @@
       "claim": "j14",
       "source": "nhs-knee",
       "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j15",
+      "source": "nasm-boxjump",
+      "text": "Never perform to failure with plyometrics, as fatigue significantly compromises landing mechanics and increases injury risk.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j16",
+      "source": "hewett-2005",
+      "text": "Knee motion and knee loading during a landing task are predictors of anterior cruciate ligament injury risk in female athletes.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j16",
+      "source": "hewett-2005",
+      "text": "Female athletes with increased dynamic valgus and high abduction loads are at increased risk of anterior cruciate ligament injury.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "j17",
+      "source": "ace-squatjumps",
+      "text": "achieving triple extension (pushing and extending your ankles, knees and hips simultaneously)",
       "status": "verbatim",
       "closest": null
     }

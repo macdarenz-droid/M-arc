@@ -132,6 +132,27 @@
     {
       "claim": "c11",
       "source": "wijethunga-2026",
+      "text": "Eccentric lunge walking (ELW), which requires body weight to be supported by the stepping leg for ~ 3 s while its knee is flexed to ~ 90º",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "wijethunga-2026",
+      "text": "gastrocnemius of 15 healthy adults (30-64 y)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "wijethunga-2026",
+      "text": "normal, 20% (+ 20%), and 40% longer than normal (+ 40%)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "wijethunga-2026",
       "status": "verbatim",
       "text": "Contrary to hypothesis, longer step lengths did not increase eccentric phase knee and hip extensor activities, but made the returning concentric phase movements more difficult.",
       "closest": null

@@ -70,7 +70,7 @@
     },
     {
       "id": "c3",
-      "text": "Lower at a controlled speed until the rear knee lightly touches the floor without resting on it, then stand by pushing through the whole front foot.",
+      "text": "Lower at a controlled speed until the rear knee lightly touches the floor without resting on it, then stand by pushing through the whole front foot, at a weight that allows a smooth movement with no crash into the bottom.",
       "tags": [
         "CONSENSUS"
       ],
@@ -88,6 +88,11 @@
           "source": "ace-bss",
           "text": "Before the left knee hits the floor, press the right foot into the ground, pull back on the right knee, and push the top of the left foot into the box to return to standing.",
           "where": "instructions"
+        },
+        {
+          "source": "cat-bss",
+          "text": "Sets of 8-15 reps are most often appropriate with weight that allows a smooth movement and no crashing into the bottom position.",
+          "where": "Programming"
         }
       ]
     },
@@ -545,10 +550,10 @@
   ],
   "zooms": [
     {
-      "key": "rear-foot",
+      "key": "stance-length",
       "kind": "posture",
-      "right": "Top of the rear foot resting on the bench.",
-      "wrong": "Rear foot too close to the front foot (short stance).",
+      "right": "Front foot about three foot-lengths ahead of the bench.",
+      "wrong": "Front foot too close to the bench (short stance).",
       "claim": "c2",
       "wrongNote": "The wrong drawing is the inverse of c2; no source describes it directly."
     },

@@ -66,6 +66,27 @@
       "closest": null
     },
     {
+      "claim": "p6",
+      "source": "physitrack-pistol",
+      "text": "If you are a beginner, you should focus on mastering basic bodyweight exercises such as squats, lunges, and push-ups before attempting more advanced exercises such as pistol squats.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p6",
+      "source": "rep-pistol",
+      "text": "If you're comfortable and confident tackling air squats, balancing on one leg, and have given your ankles some dedicated mobility work, you're ready to move on to assisted pistol squats.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p6",
+      "source": "rep-pistol",
+      "text": "practice your pistol squat with a box or bench behind you.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
       "claim": "p7",
       "source": "rep-pistol",
       "text": "Take some of the load off that working leg by utilizing a chair, pole, resistance bands, a doorframe",
@@ -75,7 +96,28 @@
     {
       "claim": "p7",
       "source": "rep-pistol",
+      "text": "If you're comfortable and confident tackling air squats, balancing on one leg, and have given your ankles some dedicated mobility work, you're ready to move on to assisted pistol squats.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p7",
+      "source": "rep-pistol",
       "text": "practice your pistol squat with a box or bench behind you.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p7",
+      "source": "rep-pistol",
+      "text": "Complete your single leg squat until you're seated on that box or bench, then press back to standing.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p7",
+      "source": "rep-pistol",
+      "text": "swapping the bench or box out for a lower target",
       "status": "verbatim",
       "closest": null
     },
@@ -110,7 +152,7 @@
     {
       "claim": "p9",
       "source": "rep-pistol",
-      "text": "dial back your efforts with this move, check your form, or try some regressions or alternatives",
+      "text": "Because the pistol squat is a deep, single-leg movement, there’s a good amount of stress and demand placed on your knees. If you feel pain in the ole’ bendy bits, dial back your efforts with this move, check your form, or try some regressions or alternatives",
       "status": "verbatim",
       "closest": null
     },

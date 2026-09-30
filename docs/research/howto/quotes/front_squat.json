@@ -76,7 +76,35 @@
     {
       "claim": "c2",
       "source": "cat-rack",
+      "text": "extend your upper back, and push your shoulders forward as far as you can and slightly up.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "cat-rack",
       "text": "The bar should be in light contact with your throat but not placing pressure against it, and the slight elevation of the shoulders will keep pressure off of your collarbones and carotid arteries.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "hk-frontsquat",
+      "text": "It may also be beneficial to shrug the shoulders during the exercise; this creates more of a shelf for the bar to sit in.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "cat-rack",
+      "text": "The priority is the bar’s direct support by the trunk, so a fingertip rack position is preferable to a full grip with the bar not fully supported by the shoulders.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "cat-rack",
+      "text": "extend your upper back, and push your shoulders forward as far as you can and slightly up.",
       "status": "verbatim",
       "closest": null
     },
@@ -188,6 +216,13 @@
     {
       "claim": "c14",
       "source": "rep-fail",
+      "text": "Ensure your safeties or pins are set just below your lowest squat depth.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "rep-fail",
       "text": "If you need to bail, quickly release the bar from your shoulders and let it drop forward onto the safety bars. Step back simultaneously to avoid any contact with the falling bar.",
       "status": "verbatim",
       "closest": null
@@ -249,20 +284,6 @@
       "closest": null
     },
     {
-      "claim": "c20",
-      "source": "hk-frontsquat",
-      "text": "It may also be beneficial to shrug the shoulders during the exercise; this creates more of a shelf for the bar to sit in.",
-      "status": "verbatim",
-      "closest": null
-    },
-    {
-      "claim": "c20",
-      "source": "cat-rack",
-      "text": "extend your upper back, and push your shoulders forward as far as you can and slightly up.",
-      "status": "verbatim",
-      "closest": null
-    },
-    {
       "claim": "c21",
       "source": "cat-frontsquat",
       "text": "at least some front squat training should be done with control through the deepest range of motion, including pauses.",
@@ -315,6 +336,41 @@
       "claim": "c23",
       "source": "nhs-knee",
       "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c24",
+      "source": "yavuz-2015",
+      "text": "back squat exhibited significantly greater trunk lean",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c24",
+      "source": "yavuz-2015",
+      "text": "the front squat may be preferred to the back squat for knee extensor development and for preventing possible lumbar injuries during maximum loading",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c24",
+      "source": "hk-frontsquat",
+      "text": "Keep the elbows high during this exercise. If not, the bar may slip out of position. The purpose of this exercise is to keep the chest tall and break or prevent the habit of leaning forward.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c25",
+      "source": "rep-fail",
+      "text": "Whenever possible, have a spotter when performing heavy squats.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c25",
+      "source": "rep-fail",
+      "text": "Practice this movement with lighter weights to get comfortable with the process.",
       "status": "verbatim",
       "closest": null
     }
