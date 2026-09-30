@@ -882,6 +882,17 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **UI**: `Train.tsx`'s finish handler shows a toast ("Nothing logged, so nothing was saved") when `finishSession` returns `null`, then falls through to the normal Train screen (no active session) — the smallest change, reusing the app's existing `showToast` pattern rather than a new sheet/screen.
   **Why**: task BUG-28. No change to a normal finish (`exercises.length > 0` still takes the original path); `sessions`, `recoveryModel` and `todayOverride` are untouched on an empty finish.
 
+## Push hook, deny rules and resume settings (D-WF2, WF-2 builder, 2026-09-30)
+
+- **Decided**: `.claude/settings.json` gains the resume env vars (change 4), seven `permissions.deny` rules (changes 5 and 7) and a `PreToolUse` hook on `Bash` that runs `.claude/hooks/guard-before-push.sh`. The two owner-rules hooks are unchanged. `.claude/owner-rules.md` rule 1 gains "(Opus 5.5 / Sonnet 5; never Haiku or Fable)". Where the plan was silent:
+  - **The watch-file rules are anchored with `/`** (`Edit(/native/wear/**)` and so on). The docs say `/path` is relative to the settings file's project, while a bare `path` is relative to the session's current directory.
+  - **The fetch uses `+main:refs/remotes/origin/main`**, like git's default tracking refspec. Without the `+`, a changed `origin/main` is not updated, and the merge-base check reads the old ref. A test on the scratch copy caught this.
+  - **`git push --all` is also refused**, because it pushes a local `main`.
+  - **No `if` filter on the hook.** The script does the matching itself, so compound commands (`cd x && git push`) and `git -C dir push` are covered. A non-push command costs about 10 ms.
+  - **Each push is checked in its own directory** (review of 01f46b2). The directory comes from the hook input's `cwd`, then any `cd X` or `git -C X`, so pushes from a git worktree are checked against that worktree's branch and files. The guard runs only for a real `git push` segment; text that only mentions "git push" does not trigger it. If python3 is missing, or the command can't be parsed, the agent gets a note (exit 0) rather than a silent pass.
+  - **The "check skipped" note goes to the agent as `additionalContext`.** Stderr on exit 0 reaches only the debug log (hooks docs).
+  - **`askUserQuestionTimeout` and `CLAUDE_AFK_TIMEOUT_MS` are not set** (owner decision: the question timeout is dropped).
+  **Why**: every item was checked against code.claude.com/docs/en/hooks, /permissions, /settings-reference and /env-vars, and each was tested on a scratch copy (PR body).
 ## Agent rules move into role files (D-WF1, WF-1 builder, 2026-09-30)
 
 - **Decided**: the owner-approved revision (`docs/supervisor/AGENT-WORKFLOW-REVISION.md`, decisions A-D) is applied as changes 6, 1, 2, 3, 8 and 9. Where the plan was silent:
@@ -922,3 +933,16 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **A4 is also checked from `ids.ts` itself:** its static graph is just itself, and no src file outside `generated/` statically reaches `generated/**`. This catches the card's failure path (ids.ts importing `generated/index.ts`) before HT-3 connects ids.ts to main.
   - **Gate PASS phrase:** printed as its own line after the shared PASS line, so the shared line is not edited.
   **Why**: card HT-2 and plan 2.2, 2.6, 2.7; the supervisor's "go" on PR #105.
+## Golden lock details the card left open (HT-1 builder, 2026-09-30)
+
+- **Decided**: where card HT-1 and the plan are silent:
+  - **`build-page.mjs` is vendored at `tools/plates/vendor/artifact/build-page.mjs`.** Its own header says it runs as `artifact/build-page.mjs` and it imports `../engine` and `../ref-src`, so the mirror keeps that layout. The MANIFEST still names its bc0f378 source path (`docs/howto/technical-plate/build-page.mjs`) and git blob.
+  - **The MANIFEST also pins each file's git blob id**, so the source claim ("this is the bc0f378 blob") is checked from the bytes without needing bc0f378 in a shallow CI clone.
+  - **All 12 engine files are vendored**, including the mockup helpers (`gallery.mjs`, `render.mjs`, `zoom.mjs`, `measure-chars.mjs`, `sheet.mjs`), because `index.mjs` re-exports `sheet.mjs` and the card says "the engine" verbatim.
+  - **GOLDEN.json holds one `page` entry plus one `plate` entry per exercise in one hash chain** (`prev` = sha256 of `JSON.stringify` of all earlier entries). A later golden update to one plate would otherwise leave the other plates' `pageSha256` stale. `cues` hashes both figures' `firstKey` and cue list.
+  - **Each plate's `src` is proven, not inferred**: the probe renders the candidate source with the gallery's id and records it only when both the normal SVG (guides removed) and the mistake SVG equal the fixture byte for byte.
+  - **PRIMITIVES coverage is measured**: the probe wraps each `PRIMITIVES` entry in a counter while it renders each fixture (the vendored bytes are untouched). Only `_test_front` draws `dumbbell`.
+  - **Speed**: the L1 rebuild and the fixture renders run in 4 parallel Node processes (about 6 s instead of 24 s). The harness's 10 (load, theme) captures run in parallel contexts (about 17 s instead of 35 s).
+  - **The harness self-check has a built-in negative control** that runs on every gate: the same block shifted 1 px must fail the L3 rule, so a blind comparison cannot pass.
+  - **Commits that touch the golden paths carry `[golden update]`**, so they pass the planned agent-guard check (plan 2.8) if it lands before HT-1 merges.
+  **Why**: the owner rule ("Dont lower quality and output of the technical plates") needs byte-level proof that does not depend on git history or on names; the rest keeps the checks fast.
