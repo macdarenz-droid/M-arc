@@ -436,16 +436,20 @@ export async function presentGolden(page, id, at, extra = 0, paused = false) {
       d.style.cssText = 'box-sizing:border-box;padding:0;border:0;margin:0;max-width:none;max-height:none;background:transparent;overflow:visible;color:inherit;font:inherit;letter-spacing:inherit';
       const p = document.createElement('div'); p.id = 'ht3-panel'; p.style.cssText = 'box-sizing:border-box;border:1px solid;border-bottom:0;overflow:auto';
       const w = document.createElement('div'); w.id = 'ht3-wrap'; w.style.cssText = 'box-sizing:border-box;overflow:clip;padding:0 15px';
-      d.append(p); p.append(w); document.getElementById('sheets').append(d);
+      // the app panel's sticky header (.sheet-top: sticky, z-index 1, opaque): a sticky child is one of the reasons
+      // Chromium gives a scroller its own layer, so the mirror carries one of the same size and paint
+      const hd = document.createElement('div'); hd.id = 'ht3-head'; hd.style.cssText = 'box-sizing:border-box;position:sticky;top:-8px;z-index:1';
+      d.append(p); p.append(hd); p.append(w); document.getElementById('sheets').append(d);
     }
     const p = document.getElementById('ht3-panel'), w = document.getElementById('ht3-wrap');
     if (c.parentElement !== w) { c.before(Object.assign(document.createElement('i'), { id: 'ht3-home' })); w.append(c); }
     Object.assign(d.style, { inset: `${a.top}px auto auto ${a.left}px`, width: `${a.w}px` });
     Object.assign(p.style, { width: `${a.w}px`, height: `${a.h}px`, background: a.bg, borderColor: a.bc, borderRadius: a.br });   // painted like the app panel: an opaque layer composites like one
-    Object.assign(w.style, { paddingTop: '0px', height: 'auto' });
+    Object.assign(document.getElementById('ht3-head').style, { height: `${a.hh}px`, background: a.hbg });
+    Object.assign(w.style, { marginTop: '0px', height: 'auto' });
     if (!d.open) d.showModal();
     const at = () => { const f = document.getElementById(`${id}-plate`).getBoundingClientRect(), r = p.getBoundingClientRect(); return { offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft) }; };
-    w.style.paddingTop = `${a.offY + extra - at().offY}px`;
+    w.style.marginTop = `${a.offY + extra - at().offY}px`;   // may be negative: the card's own header then slides under the sticky one, as app content does
     w.style.height = `${w.offsetHeight + a.sh + extra - p.scrollHeight}px`;
     p.scrollTop = a.st;
     return { ...at(), sh: p.scrollHeight, ch: p.clientHeight, st: p.scrollTop };
@@ -472,8 +476,8 @@ export async function appOffset(page) {
   const o = await rasterOrigin(page, 'dialog.sheet.ht .ht-plate-fit');
   const r = await page.evaluate(() => {
     const p = document.querySelector('dialog.sheet.ht .sheet-panel'), f = p.querySelector('.ht-plate-fit').getBoundingClientRect(), r = p.getBoundingClientRect();
-    const cs = getComputedStyle(p);
-    return { bg: cs.backgroundColor, bc: cs.borderTopColor, br: `${cs.borderTopLeftRadius} ${cs.borderTopRightRadius} 0 0`, top: r.top, left: r.left, w: r.width, h: r.height, sh: p.scrollHeight, ch: p.clientHeight, st: p.scrollTop, offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft), scrolls: p.scrollHeight > p.clientHeight };
+    const cs = getComputedStyle(p), top = p.querySelector('.sheet-top');
+    return { hh: top.getBoundingClientRect().height, hbg: getComputedStyle(top).backgroundColor, bg: cs.backgroundColor, bc: cs.borderTopColor, br: `${cs.borderTopLeftRadius} ${cs.borderTopRightRadius} 0 0`, top: r.top, left: r.left, w: r.width, h: r.height, sh: p.scrollHeight, ch: p.clientHeight, st: p.scrollTop, offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft), scrolls: p.scrollHeight > p.clientHeight };
   });
   return { ...r, layer: o.el };
 }
@@ -778,7 +782,7 @@ export async function presentControls(browser, theme = 'silent-black', id = HT_P
   const shots = [];
   for (const extra of [0, 128, 1]) {
     const { ctx, page } = await openGolden(browser, theme);
-    await presentGolden(page, id, { bg: 'transparent', bc: 'transparent', br: '0 0 0 0', top: 0, left: 0, w: 390, h: 1000, sh: 999, ch: 999, st: 0, offY: 88 + extra, offX: 15, layer: null });   // a scroll box that never overflows, the plate moved down by `extra`
+    await presentGolden(page, id, { hh: 0, hbg: 'transparent', bg: 'transparent', bc: 'transparent', br: '0 0 0 0', top: 0, left: 0, w: 390, h: 1000, sh: 999, ch: 999, st: 0, offY: 88 + extra, offX: 15, layer: null });   // a scroll box that never overflows, the plate moved down by `extra`
     shots.push({ png: await capture(page, await region(page, G.golden(id), 'golden')), page, ctx });
   }
   const d128 = await diffPng(shots[0].page, shots[0].png, shots[1].png), d1 = await diffPng(shots[0].page, shots[0].png, shots[2].png);
