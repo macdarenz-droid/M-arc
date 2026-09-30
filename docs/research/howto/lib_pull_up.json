@@ -1,0 +1,37 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ecb6493e18057c04ccbec3f58148c4c5b80afaa3a29f31108826781facbb0ca2
+{
+  "id": "lib_pull_up",
+  "rev": 1,
+  "research": {
+    "card": "grip/research/pull_up.json",
+    "rev": 1
+  },
+  "sources": [
+    "youdas2010",
+    "dickie2017",
+    "snarr2017",
+    "prinold2016",
+    "urbanczyk2020",
+    "difonza2026",
+    "kolber2010",
+    "odriscoll1992",
+    "oranchuk2022",
+    "catalyst-pullup",
+    "catalyst-scap",
+    "catalyst-neutral",
+    "nasm-chinup",
+    "baechle-earle",
+    "wiki-hook-grip",
+    "wiki-muscle-up",
+    "rogue-false-grip",
+    "bullbar-calluses",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain",
+    "nhs-elbow-pain"
+  ],
+  "riskFlags": [
+    "wrist",
+    "shoulder",
+    "elbow"
+  ]
+}

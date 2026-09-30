@@ -1,0 +1,25 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ecb6493e18057c04ccbec3f58148c4c5b80afaa3a29f31108826781facbb0ca2
+{
+  "id": "lib_machine_chest_press",
+  "rev": 1,
+  "research": {
+    "card": "grip/research/machine_chest_press.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-chest-press",
+    "muyor2023",
+    "weiss1995",
+    "nance2017",
+    "fees1998",
+    "snyder2012",
+    "calatayud2016",
+    "barbell-logic-grip",
+    "nhs-wrist-pain",
+    "nhs-elbow-pain"
+  ],
+  "riskFlags": [
+    "wrist",
+    "elbow"
+  ]
+}
