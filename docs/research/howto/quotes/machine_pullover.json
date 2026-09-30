@@ -1,0 +1,167 @@
+{
+  "id": "machine_pullover",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "mq-pullover",
+      "quote": "Adjust the seat height so that the shoulders are slightly below the axis of rotation while sitting upright with arms at the sides.",
+      "status": "verbatim",
+      "closest": "Adjust the seat height so that the shoulders are slightly below the axis of rotation while sitting upright with arms at the sides."
+    },
+    {
+      "claim": "c2",
+      "source": "mq-pullover",
+      "quote": "Secure seat belt, position back flat against the back pad, and place feet on the foot bar.",
+      "status": "verbatim",
+      "closest": "Secure seat belt, position back flat against the back pad, and place feet on the foot bar."
+    },
+    {
+      "claim": "c3",
+      "source": "mq-pullover",
+      "quote": "Push foot bar down with the legs and place the back of the upper arm on the elbow pads. Position the hands on the movement arm, palms facing forward with hands open.",
+      "status": "verbatim",
+      "closest": "Push foot bar down with the legs and place the back of the upper arm on the elbow pads. Position the hands on the movement arm, palms facing forward with hands open."
+    },
+    {
+      "claim": "c3",
+      "source": "mq-pullover",
+      "quote": "Take feet off foot bar and position movement arm near or slightly behind the head.",
+      "status": "verbatim",
+      "closest": "Take feet off foot bar and position movement arm near or slightly behind the head."
+    },
+    {
+      "claim": "c4",
+      "source": "mq-pullover",
+      "quote": "Pull movement arm down to the mid section, pulling at the elbow pads. Hold the bar in tight to the seat belt, pause momentarily and then recover to the starting position.",
+      "status": "verbatim",
+      "closest": "Pull movement arm down to the mid section, pulling at the elbow pads. Hold the bar in tight to the seat belt, pause momentarily and then recover to the starting position."
+    },
+    {
+      "claim": "c5",
+      "source": "mq-pullover",
+      "quote": "When finished with the exercise, place feet on foot bar and remove arms from elbow pads. Use legs to return the weight stack to resting positions.",
+      "status": "verbatim",
+      "closest": "When finished with the exercise, place feet on foot bar and remove arms from elbow pads. Use legs to return the weight stack to resting positions."
+    },
+    {
+      "claim": "c6",
+      "source": "mq-pullover",
+      "quote": "Keep palms open and fingers extended, the force is at the elbows.",
+      "status": "verbatim",
+      "closest": "Keep palms open and fingers extended, the force is at the elbows."
+    },
+    {
+      "claim": "c7",
+      "source": "mq-pullover",
+      "quote": "Torso and head should remain back touching the back pad.",
+      "status": "verbatim",
+      "closest": "Torso and head should remain back touching the back pad."
+    },
+    {
+      "claim": "c8",
+      "source": "pf-pullover",
+      "quote": "Do not excessively arch your back to avoid putting too much pressure on your lower back.",
+      "status": "verbatim",
+      "closest": "Do not excessively arch your back to avoid putting too much pressure on your lower back."
+    },
+    {
+      "claim": "c9",
+      "source": "pf-pullover",
+      "quote": "Avoid excessive weights and choose a weight that allows you to feel good stimulation in your latissimus dorsi.",
+      "status": "verbatim",
+      "closest": "Avoid excessive weights and choose a weight that allows you to feel good stimulation in your latissimus dorsi."
+    },
+    {
+      "claim": "c9",
+      "source": "vg-pullover",
+      "quote": "Start with a light weight to focus on form and gradually increase as you gain strength.",
+      "status": "verbatim",
+      "closest": "Start with a light weight to focus on form and gradually increase as you gain strength."
+    },
+    {
+      "claim": "c10",
+      "source": "pf-pullover",
+      "quote": "Keep your shoulders relaxed to prevent tension from building up in your neck and shoulders.",
+      "status": "verbatim",
+      "closest": "Keep your shoulders relaxed to prevent tension from building up in your neck and shoulders."
+    },
+    {
+      "claim": "c11",
+      "source": "pf-pullover",
+      "quote": "Exhale when you lower the handle, and inhale when you return to the starting position.",
+      "status": "verbatim",
+      "closest": "Exhale when you lower the handle, and inhale when you return to the starting position."
+    },
+    {
+      "claim": "c11",
+      "source": "vg-pullover",
+      "quote": "Inhale and slowly return to the starting position, maintaining control throughout the entire motion.",
+      "status": "verbatim",
+      "closest": "Inhale and slowly return to the starting position, maintaining control throughout the entire motion."
+    },
+    {
+      "claim": "c12",
+      "source": "mq-pullover",
+      "quote": "Muscles Used Latissimus Dorsi, Posterior Deltoid",
+      "status": "verbatim",
+      "closest": "Muscles Used Latissimus Dorsi, Posterior Deltoid"
+    },
+    {
+      "claim": "c12",
+      "source": "pf-pullover",
+      "quote": "The pullover machine targets your lats.",
+      "status": "verbatim",
+      "closest": "The pullover machine targets your lats."
+    },
+    {
+      "claim": "c13",
+      "source": "difonza-2026",
+      "quote": "the pullover appeared to preferentially activate the pectoralis major rather than selectively target the LD.",
+      "status": "verbatim",
+      "closest": "the pullover appeared to preferentially activate the pectoralis major rather than selectively target the LD."
+    },
+    {
+      "claim": "c13",
+      "source": "bull-2007",
+      "quote": "The PMC activity varied from weak to moderate in both modalities, while the DA activity was moderate in the pull-over and strong in the pull-over with bent arms exercises.",
+      "status": "verbatim",
+      "closest": "The PMC activity varied from weak to moderate in both modalities, while the DA activity was moderate in the pull-over and strong in the pull-over with bent arms exercises."
+    },
+    {
+      "claim": "c13",
+      "source": "vg-pullover",
+      "quote": "The Pullover machine workout primarily targets the chest and lats, providing an effective upper body exercise.",
+      "status": "verbatim",
+      "closest": "The Pullover machine workout primarily targets the chest and lats, providing an effective upper body exercise."
+    },
+    {
+      "claim": "c14",
+      "source": "acsm-2009",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm-2009",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c14",
+      "source": "mq-pullover",
+      "quote": "pause momentarily and then recover to the starting position.",
+      "status": "verbatim",
+      "closest": "pause momentarily and then recover to the starting position."
+    },
+    {
+      "claim": "c15",
+      "source": "acsm-2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    }
+  ]
+}

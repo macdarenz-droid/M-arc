@@ -1,0 +1,153 @@
+{
+  "id": "hip_adduction",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "mo-hip-add",
+      "quote": "Sit on the hip adduction machine with back against the pad, adjust thigh pads against inner thighs above knees, feet on footrests, and grip side handles.",
+      "status": "verbatim",
+      "closest": "Sit on the hip adduction machine with back against the pad, adjust thigh pads against inner thighs above knees, feet on footrests, and grip side handles."
+    },
+    {
+      "claim": "c1",
+      "source": "sl-hip-add",
+      "quote": "Adjust the machine to the appropriate settings, sit down with your legs outside the pads, and grip the handles.",
+      "status": "verbatim",
+      "closest": "Adjust the machine to the appropriate settings, sit down with your legs outside the pads, and grip the handles."
+    },
+    {
+      "claim": "c2",
+      "source": "mo-hip-add",
+      "quote": "Start with legs spread to feel a light stretch in inner thighs; adduct until pads lightly touch without forcing.",
+      "status": "verbatim",
+      "closest": "Start with legs spread to feel a light stretch in inner thighs; adduct until pads lightly touch without forcing."
+    },
+    {
+      "claim": "c2",
+      "source": "mo-hip-add",
+      "quote": "Avoid excessive stretch in starting position",
+      "status": "verbatim",
+      "closest": "Avoid excessive stretch in starting position"
+    },
+    {
+      "claim": "c2",
+      "source": "mo-hip-add",
+      "quote": "Forcing beyond comfortable range",
+      "status": "verbatim",
+      "closest": "Forcing beyond comfortable range"
+    },
+    {
+      "claim": "c3",
+      "source": "mo-hip-add",
+      "quote": "Exhale and squeeze thighs together to bring pads inward until they nearly touch.",
+      "status": "verbatim",
+      "closest": "Exhale and squeeze thighs together to bring pads inward until they nearly touch."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-hip-add",
+      "quote": "Pause briefly at peak contraction to engage inner thighs.",
+      "status": "verbatim",
+      "closest": "Pause briefly at peak contraction to engage inner thighs."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-hip-add",
+      "quote": "Inhale and slowly return legs to starting position, maintaining tension.",
+      "status": "verbatim",
+      "closest": "Inhale and slowly return legs to starting position, maintaining tension."
+    },
+    {
+      "claim": "c4",
+      "source": "mo-hip-add",
+      "quote": "Keep spine neutral and avoid using momentum.",
+      "status": "verbatim",
+      "closest": "Keep spine neutral and avoid using momentum."
+    },
+    {
+      "claim": "c4",
+      "source": "mo-hip-add",
+      "quote": "Keep back flat against pad",
+      "status": "verbatim",
+      "closest": "Keep back flat against pad"
+    },
+    {
+      "claim": "c4",
+      "source": "mo-hip-add",
+      "quote": "Arching back off pad",
+      "status": "verbatim",
+      "closest": "Arching back off pad"
+    },
+    {
+      "claim": "c4",
+      "source": "mo-hip-add",
+      "quote": "Using momentum to swing pads",
+      "status": "verbatim",
+      "closest": "Using momentum to swing pads"
+    },
+    {
+      "claim": "c5",
+      "source": "mo-hip-add",
+      "quote": "Do not use if acute hip or groin injury present",
+      "status": "verbatim",
+      "closest": "Do not use if acute hip or groin injury present"
+    },
+    {
+      "claim": "c5",
+      "source": "mo-hip-add",
+      "quote": "Select moderate weight for form",
+      "status": "verbatim",
+      "closest": "Select moderate weight for form"
+    },
+    {
+      "claim": "c5",
+      "source": "mo-hip-add",
+      "quote": "Use weight selector pin securely.",
+      "status": "verbatim",
+      "closest": "Use weight selector pin securely."
+    },
+    {
+      "claim": "c6",
+      "source": "mo-hip-add",
+      "quote": "Inhale during the return to start; exhale as you squeeze thighs together.",
+      "status": "verbatim",
+      "closest": "Inhale during the return to start; exhale as you squeeze thighs together."
+    },
+    {
+      "claim": "c7",
+      "source": "mo-hip-add",
+      "quote": "Seated machine exercise isolating inner thigh adductors",
+      "status": "verbatim",
+      "closest": "Seated machine exercise isolating inner thigh adductors"
+    },
+    {
+      "claim": "c7",
+      "source": "mo-hip-add",
+      "quote": "Adductor Longus, Adductor Magnus",
+      "status": "verbatim",
+      "closest": "Adductor Longus, Adductor Magnus"
+    },
+    {
+      "claim": "c8",
+      "source": "brandt-2013",
+      "quote": "Although elastic resistance and exercise machine seem equally effective for recruiting muscle activity of the hip adductors,",
+      "status": "verbatim",
+      "closest": "Although elastic resistance and exercise machine seem equally effective for recruiting muscle activity of the hip adductors,"
+    },
+    {
+      "claim": "c9",
+      "source": "mo-hip-add",
+      "quote": "Tempo 2-1-2",
+      "status": "verbatim",
+      "closest": "Tempo 2-1-2"
+    },
+    {
+      "claim": "c10",
+      "source": "acsm-2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    }
+  ]
+}

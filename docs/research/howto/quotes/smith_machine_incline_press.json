@@ -1,0 +1,223 @@
+{
+  "id": "smith_machine_incline_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "motra-smith-incline",
+      "text": "Position an adjustable incline bench at 30-45 degrees inside the Smith machine, aligning the bar over your upper chest.",
+      "status": "verbatim",
+      "closest": "Position an adjustable incline bench at 30-45 degrees inside the Smith machine, aligning the bar over your upper chest."
+    },
+    {
+      "claim": "c1",
+      "source": "motra-smith-incline",
+      "text": "Avoid angles over 45 degrees to prevent shoulder dominance",
+      "status": "verbatim",
+      "closest": "Avoid angles over 45 degrees to prevent shoulder dominance"
+    },
+    {
+      "claim": "c2",
+      "source": "sl-smith-incline",
+      "text": "Sit on an inclined bench, pull your shoulder blades together and down, and hold your chest up.",
+      "status": "verbatim",
+      "closest": "Sit on an inclined bench, pull your shoulder blades together and down, and hold your chest up."
+    },
+    {
+      "claim": "c2",
+      "source": "sl-smith-incline",
+      "text": "Grip the bar slightly wider than shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "Grip the bar slightly wider than shoulder-width apart."
+    },
+    {
+      "claim": "c3",
+      "source": "sl-smith-incline",
+      "text": "Lower the bar with control until it touches your upper chest.",
+      "status": "verbatim",
+      "closest": "Lower the bar with control until it touches your upper chest."
+    },
+    {
+      "claim": "c3",
+      "source": "motra-smith-incline",
+      "text": "Inhale and lower bar controlled to upper chest, elbows at 45-75 degrees.",
+      "status": "verbatim",
+      "closest": "Inhale and lower bar controlled to upper chest, elbows at 45-75 degrees."
+    },
+    {
+      "claim": "c3",
+      "source": "motra-smith-incline",
+      "text": "Touch bar lightly to chest without bouncing.",
+      "status": "verbatim",
+      "closest": "Touch bar lightly to chest without bouncing."
+    },
+    {
+      "claim": "c4",
+      "source": "motra-smith-incline",
+      "text": "Lie back with feet flat, grip bar slightly wider than shoulders, and unrack by rotating.",
+      "status": "verbatim",
+      "closest": "Lie back with feet flat, grip bar slightly wider than shoulders, and unrack by rotating."
+    },
+    {
+      "claim": "c4",
+      "source": "motra-smith-incline",
+      "text": "Repeat for reps, then rerack by rotating.",
+      "status": "verbatim",
+      "closest": "Repeat for reps, then rerack by rotating."
+    },
+    {
+      "claim": "c5",
+      "source": "eos-smith",
+      "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+      "status": "verbatim",
+      "closest": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts."
+    },
+    {
+      "claim": "c5",
+      "source": "eos-smith",
+      "text": "Set the safety stops just below your lowest movement point to catch the bar if needed.",
+      "status": "verbatim",
+      "closest": "Set the safety stops just below your lowest movement point to catch the bar if needed."
+    },
+    {
+      "claim": "c5",
+      "source": "motra-smith-incline",
+      "text": "Always set safety stoppers just above chest",
+      "status": "verbatim",
+      "closest": "Always set safety stoppers just above chest"
+    },
+    {
+      "claim": "c6",
+      "source": "motra-smith-incline",
+      "text": "Flaring elbows wide",
+      "status": "verbatim",
+      "closest": "Flaring elbows wide"
+    },
+    {
+      "claim": "c6",
+      "source": "motra-smith-incline",
+      "text": "Bouncing bar off chest",
+      "status": "verbatim",
+      "closest": "Bouncing bar off chest"
+    },
+    {
+      "claim": "c6",
+      "source": "motra-smith-incline",
+      "text": "Locking elbows at top",
+      "status": "verbatim",
+      "closest": "Locking elbows at top"
+    },
+    {
+      "claim": "c6",
+      "source": "motra-smith-incline",
+      "text": "Arching back excessively",
+      "status": "verbatim",
+      "closest": "Arching back excessively"
+    },
+    {
+      "claim": "c7",
+      "source": "motra-smith-incline",
+      "text": "Do not train through shoulder pain",
+      "status": "verbatim",
+      "closest": "Do not train through shoulder pain"
+    },
+    {
+      "claim": "c7",
+      "source": "motra-smith-incline",
+      "text": "Warm up shoulders before heavy sets",
+      "status": "verbatim",
+      "closest": "Warm up shoulders before heavy sets"
+    },
+    {
+      "claim": "c8",
+      "source": "sl-smith-incline",
+      "text": "Due to the inclined bench, this exercise emphasizes your upper chest",
+      "status": "verbatim",
+      "closest": "Due to the inclined bench, this exercise emphasizes your upper chest"
+    },
+    {
+      "claim": "c8",
+      "source": "sl-smith-incline",
+      "text": "Primary muscles worked: Chest Front Deltoid Secondary muscles worked: Triceps",
+      "status": "verbatim",
+      "closest": "Primary muscles worked: Chest Front Deltoid Secondary muscles worked: Triceps"
+    },
+    {
+      "claim": "c8",
+      "source": "sl-smith-incline",
+      "text": "Smith incline bench press differs from incline barbell bench press primarily by its completely straight bar path, instead of a slightly arched one.",
+      "status": "verbatim",
+      "closest": "Smith incline bench press differs from incline barbell bench press primarily by its completely straight bar path, instead of a slightly arched one."
+    },
+    {
+      "claim": "c8",
+      "source": "sl-smith-incline",
+      "text": "The exercise also has lower requirements for stabilization and balance",
+      "status": "verbatim",
+      "closest": "The exercise also has lower requirements for stabilization and balance"
+    },
+    {
+      "claim": "c9",
+      "source": "eos-smith",
+      "text": "Try using just the bar or lighter plates to get comfortable with the motion.",
+      "status": "verbatim",
+      "closest": "Try using just the bar or lighter plates to get comfortable with the motion."
+    },
+    {
+      "claim": "c10",
+      "source": "acsm2009",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c10",
+      "source": "acsm2009",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c11",
+      "source": "acsm2009",
+      "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c12",
+      "source": "jumbelic2007",
+      "text": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+      "status": "verbatim",
+      "closest": "an unrecognized source of accidental asphyxia--compression of the neck by barbells"
+    },
+    {
+      "claim": "c12",
+      "source": "motra-smith-incline",
+      "text": "Lower bar until it touches upper chest near clavicles",
+      "status": "verbatim",
+      "closest": "Lower bar until it touches upper chest near clavicles"
+    },
+    {
+      "claim": "c12",
+      "source": "jumbelic2007",
+      "text": "Two cases of traumatic asphyxia due to this preventable hazard occurred in a 5-year period in central New York. There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission",
+      "status": "verbatim",
+      "closest": "Two cases of traumatic asphyxia due to this preventable hazard occurred in a 5-year period in central New York. There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission"
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    }
+  ]
+}

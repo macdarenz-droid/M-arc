@@ -1,0 +1,307 @@
+{
+  "id": "smith_machine_shoulder_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "fv-smith-ohp",
+      "text": "Now set your bench to a high incline or roughly 70-degree angle so your body will be slightly reclined during the overhead press. This is so when you’re doing the movement, the bar will be able to pass your face without hitting it.",
+      "status": "verbatim",
+      "closest": "Now set your bench to a high incline or roughly 70-degree angle so your body will be slightly reclined during the overhead press. This is so when you’re doing the movement, the bar will be able to pass your face without hitting it."
+    },
+    {
+      "claim": "c1",
+      "source": "motra-smith-ohp",
+      "text": "Position an adjustable bench at 90 degrees under the Smith machine so the bar lowers to upper chest level.",
+      "status": "verbatim",
+      "closest": "Position an adjustable bench at 90 degrees under the Smith machine so the bar lowers to upper chest level."
+    },
+    {
+      "claim": "c2",
+      "source": "fv-smith-ohp",
+      "text": "Then move the bench under the bar, sit down and do a few practice repetitions to make sure the bar has just enough room to pass your nose. However, you do not want there to be too much space.",
+      "status": "verbatim",
+      "closest": "Then move the bench under the bar, sit down and do a few practice repetitions to make sure the bar has just enough room to pass your nose. However, you do not want there to be too much space."
+    },
+    {
+      "claim": "c3",
+      "source": "fv-smith-ohp",
+      "text": "The bar should be able to just miss your nose but if it’s too far away from your body this is a terrible position for your shoulders.",
+      "status": "verbatim",
+      "closest": "The bar should be able to just miss your nose but if it’s too far away from your body this is a terrible position for your shoulders."
+    },
+    {
+      "claim": "c4",
+      "source": "motra-smith-ohp",
+      "text": "Sit with back against the pad, feet flat on the floor.",
+      "status": "verbatim",
+      "closest": "Sit with back against the pad, feet flat on the floor."
+    },
+    {
+      "claim": "c4",
+      "source": "fv-smith-ohp",
+      "text": "Plant your feet flat on the ground to form a solid base, then puff your chest out and press your upper back into the bench. Engage your core muscles to stabilize your spine which is important for supporting the weight and protecting your lower back.",
+      "status": "verbatim",
+      "closest": "Plant your feet flat on the ground to form a solid base, then puff your chest out and press your upper back into the bench. Engage your core muscles to stabilize your spine which is important for supporting the weight and protecting your lower back."
+    },
+    {
+      "claim": "c5",
+      "source": "fv-smith-ohp",
+      "text": "Typically, you want to use a wider than shoulder width grip but how wide will depend on someone’s height and arm length.",
+      "status": "verbatim",
+      "closest": "Typically, you want to use a wider than shoulder width grip but how wide will depend on someone’s height and arm length."
+    },
+    {
+      "claim": "c5",
+      "source": "motra-smith-ohp",
+      "text": "Grip the bar slightly wider than shoulders with palms forward.",
+      "status": "verbatim",
+      "closest": "Grip the bar slightly wider than shoulders with palms forward."
+    },
+    {
+      "claim": "c5",
+      "source": "fv-smith-ohp",
+      "text": "Your elbows should be in front of your shoulders but not directly in front of you.",
+      "status": "verbatim",
+      "closest": "Your elbows should be in front of your shoulders but not directly in front of you."
+    },
+    {
+      "claim": "c6",
+      "source": "fv-smith-ohp",
+      "text": "Use your deltoids and triceps to press the bar overhead but stop just short of full arm extension.",
+      "status": "verbatim",
+      "closest": "Use your deltoids and triceps to press the bar overhead but stop just short of full arm extension."
+    },
+    {
+      "claim": "c6",
+      "source": "fv-smith-ohp",
+      "text": "When you lower the weight, your upper arms should be roughly parallel to the floor or slightly below.",
+      "status": "verbatim",
+      "closest": "When you lower the weight, your upper arms should be roughly parallel to the floor or slightly below."
+    },
+    {
+      "claim": "c6",
+      "source": "sl-smith-ohp",
+      "text": "Sit on a bench, unrack a barbell and lower it to the starting position at the top of your chest.",
+      "status": "verbatim",
+      "closest": "Sit on a bench, unrack a barbell and lower it to the starting position at the top of your chest."
+    },
+    {
+      "claim": "c6",
+      "source": "motra-smith-ohp",
+      "text": "Inhale and lower the bar slowly to upper chest, elbows at 45 degrees.",
+      "status": "verbatim",
+      "closest": "Inhale and lower the bar slowly to upper chest, elbows at 45 degrees."
+    },
+    {
+      "claim": "c7",
+      "source": "eos-smith",
+      "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+      "status": "verbatim",
+      "closest": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts."
+    },
+    {
+      "claim": "c7",
+      "source": "eos-smith",
+      "text": "Set the safety stops just below your lowest movement point to catch the bar if needed.",
+      "status": "verbatim",
+      "closest": "Set the safety stops just below your lowest movement point to catch the bar if needed."
+    },
+    {
+      "claim": "c7",
+      "source": "motra-smith-ohp",
+      "text": "Set safety stops below range of motion",
+      "status": "verbatim",
+      "closest": "Set safety stops below range of motion"
+    },
+    {
+      "claim": "c7",
+      "source": "fv-smith-ohp",
+      "text": "As long as you have the built in spotters positioned correctly, the bar will stop where you want it to.",
+      "status": "verbatim",
+      "closest": "As long as you have the built in spotters positioned correctly, the bar will stop where you want it to."
+    },
+    {
+      "claim": "c8",
+      "source": "eos-smith",
+      "text": "Rotate your wrists forward to unlock the bar from the hooks.",
+      "status": "verbatim",
+      "closest": "Rotate your wrists forward to unlock the bar from the hooks."
+    },
+    {
+      "claim": "c8",
+      "source": "eos-smith",
+      "text": "Rotate your wrists back to lock the bar into place when you’re done.",
+      "status": "verbatim",
+      "closest": "Rotate your wrists back to lock the bar into place when you’re done."
+    },
+    {
+      "claim": "c9",
+      "source": "motra-smith-ohp",
+      "text": "Start with light weight",
+      "status": "verbatim",
+      "closest": "Start with light weight"
+    },
+    {
+      "claim": "c9",
+      "source": "motra-smith-ohp",
+      "text": "Avoid excessive back arch",
+      "status": "verbatim",
+      "closest": "Avoid excessive back arch"
+    },
+    {
+      "claim": "c9",
+      "source": "motra-smith-ohp",
+      "text": "Stop if shoulder pain occurs",
+      "status": "verbatim",
+      "closest": "Stop if shoulder pain occurs"
+    },
+    {
+      "claim": "c10",
+      "source": "motra-smith-ohp",
+      "text": "Flaring elbows wide",
+      "status": "verbatim",
+      "closest": "Flaring elbows wide"
+    },
+    {
+      "claim": "c10",
+      "source": "motra-smith-ohp",
+      "text": "Locking elbows at top",
+      "status": "verbatim",
+      "closest": "Locking elbows at top"
+    },
+    {
+      "claim": "c10",
+      "source": "motra-smith-ohp",
+      "text": "Letting bar drift forward",
+      "status": "verbatim",
+      "closest": "Letting bar drift forward"
+    },
+    {
+      "claim": "c10",
+      "source": "motra-smith-ohp",
+      "text": "Using momentum",
+      "status": "verbatim",
+      "closest": "Using momentum"
+    },
+    {
+      "claim": "c11",
+      "source": "motra-smith-ohp",
+      "text": "Anterior Delts, Medial Delts",
+      "status": "verbatim",
+      "closest": "Anterior Delts, Medial Delts"
+    },
+    {
+      "claim": "c11",
+      "source": "sl-smith-ohp",
+      "text": "Primary muscles worked: Front Deltoid Secondary muscles worked: Triceps Lateral Deltoid",
+      "status": "verbatim",
+      "closest": "Primary muscles worked: Front Deltoid Secondary muscles worked: Triceps Lateral Deltoid"
+    },
+    {
+      "claim": "c11",
+      "source": "sl-smith-ohp",
+      "text": "Smith machine shoulder press differs from a free barbell press primarily by its completely fixed bar path, which lessens the requirements of stabilization and balance.",
+      "status": "verbatim",
+      "closest": "Smith machine shoulder press differs from a free barbell press primarily by its completely fixed bar path, which lessens the requirements of stabilization and balance."
+    },
+    {
+      "claim": "c12",
+      "source": "saeterbakken2013",
+      "text": "For deltoid anterior: ~11% lower for seated barbell versus dumbbell (p = 0.038)",
+      "status": "verbatim",
+      "closest": "For deltoid anterior: ~11% lower for seated barbell versus dumbbell (p = 0.038)"
+    },
+    {
+      "claim": "c12",
+      "source": "saeterbakken2013",
+      "text": "For posterior deltoid: ~25% lower for seated versus standing barbell (p < 0.001)",
+      "status": "verbatim",
+      "closest": "For posterior deltoid: ~25% lower for seated versus standing barbell (p < 0.001)"
+    },
+    {
+      "claim": "c12",
+      "source": "saeterbakken2013",
+      "text": "the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles",
+      "status": "verbatim",
+      "closest": "the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles"
+    },
+    {
+      "claim": "c13",
+      "source": "stronglifts-ohp",
+      "text": "Full Grip. Wrap your thumbs around the bar. This makes the Overhead Press safer. The bar can’t slip out of your hands and drop on your head.",
+      "status": "verbatim",
+      "closest": "Full Grip. Wrap your thumbs around the bar. This makes the Overhead Press safer. The bar can’t slip out of your hands and drop on your head."
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c15",
+      "source": "acsm2009",
+      "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c16",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c16",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c17",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c17",
+      "source": "macdougall1985",
+      "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+      "status": "verbatim",
+      "closest": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum."
+    },
+    {
+      "claim": "c17",
+      "source": "macdougall1985",
+      "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver",
+      "status": "verbatim",
+      "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver"
+    },
+    {
+      "claim": "c18",
+      "source": "stronglifts-ohp",
+      "text": "The bar must rest on the heel of your palm, close to your wrists.",
+      "status": "verbatim",
+      "closest": "The bar must rest on the heel of your palm, close to your wrists."
+    },
+    {
+      "claim": "c18",
+      "source": "stronglifts-ohp",
+      "text": "Don’t grip the bar mid-palm or your wrists will bend back.",
+      "status": "verbatim",
+      "closest": "Don’t grip the bar mid-palm or your wrists will bend back."
+    }
+  ]
+}

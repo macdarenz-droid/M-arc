@@ -1,0 +1,557 @@
+{
+  "id": "high_to_low_cable_fly",
+  "libId": "lib_high_to_low_cable_fly",
+  "name": "High-to-Low Cable Fly",
+  "family": "CFLY",
+  "tier": "B",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the cable handles at about the top of the head, grasp one in each hand and stand in a staggered (walking) stance with the trunk upright.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-decfly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-decfly",
+          "text": "Position the cable handles approximately level with the top of your head and grasp each handle firmly.",
+          "where": "Step 1"
+        },
+        {
+          "source": "ace-decfly",
+          "text": "Assume a staggered-stance position (i.e., walking position, with one leg forward) to stabilize yourself and align your trunk vertically.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Brace the abdominal muscles and avoid arching the low back throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-decfly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-decfly",
+          "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid any arching of your low back throughout the exercise.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Keep a slight bend in the elbows, the wrists straight in line with the forearms and the trunk vertical for the whole movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-decfly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-decfly",
+          "text": "Maintain a slight bend in your elbows, neutral wrist position (i.e., wrists aligned in a straight line with your forearms)",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-decfly",
+          "text": "Maintain the slight bend in your elbows, neutral wrist position and vertical alignment of your trunk throughout the movement.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "On the way back the arms open upward and outward, but the hands should not travel back past the level of the armpits.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-decfly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-decfly",
+          "text": "Allow your arms to slowly open , moving upward and outward to your sides.",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-decfly",
+          "text": "do not allow your hands to move past the midline of your body (level of your armpit).",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Squeeze the chest to sweep the arms forward and down until the hands meet below chest level, pause briefly, then return slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-decfly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-decfly",
+          "text": "Exhale gently and slowly squeeze your chest muscles to pull your arms forward until your hands meet below the level of your chest.",
+          "where": "Step 3"
+        },
+        {
+          "source": "ace-decfly",
+          "text": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Think of the arms moving downward first and then inward, in a wide arc (bent-forward cable crossover tip; applied here by inference).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-top3-chest"
+      ],
+      "quotes": [
+        {
+          "source": "ace-top3-chest",
+          "text": "Think about moving the arms downward first and then inward to get a nice wide arc.",
+          "where": "Bent-forward Cable Crossover"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Leaning forward is a frequent fault, usually when the weight is too heavy; it raises the stress in the shoulder joint. The fix is a lighter weight and an upright trunk.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-decfly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-decfly",
+          "text": "Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy.",
+          "where": "Tip"
+        },
+        {
+          "source": "ace-decfly",
+          "text": "To protect your shoulders from potential injury, lower the resistance, align your trunk vertically and follow the instructions provided.",
+          "where": "Tip"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Starting with the arms behind the torso, or crossing the handles past the midline, adds little and carries a risk of shoulder injury and of hurting the hands as the handles pass close together (bent-forward cable crossover tip; applied here by inference).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-top3-chest"
+      ],
+      "quotes": [
+        {
+          "source": "ace-top3-chest",
+          "text": "some exercisers start with the shoulders in horizontal hyperextension or the arms behind the torso, and then actually cross the two handles above and below each other to come past the midline.",
+          "where": "Bent-forward cable crossover tip (Mark P. Kelly)"
+        },
+        {
+          "source": "ace-top3-chest",
+          "text": "While this extreme range of motion may feel good, it does little in terms of muscular conditioning, and there is a risk of injury in the shoulder during hyperextension and of the hand when the handles pass so close to each other.",
+          "where": "Bent-forward cable crossover tip (Mark P. Kelly)"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Don't move the torso toward the hands (bent-forward cable crossover tip; applied here by inference).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-top3-chest"
+      ],
+      "quotes": [
+        {
+          "source": "ace-top3-chest",
+          "text": "Avoid moving the torso closer to the hands,",
+          "where": "Bent-forward cable crossover tip (Mark P. Kelly)"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The chest works strongly in cable crossovers: 93% of barbell bench press chest activation in an ACE-funded EMG study (bent-forward cable crossover; applied here by inference); ACE lists the decline cable fly's target as the chest.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-top3-chest",
+        "ace-decfly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-top3-chest",
+          "text": "Both the pec deck (at 98% of muscle activation compared to barbell bench press) and the bent-forward cable crossover (93% of muscle activation) elicited nearly equivalent muscle activation as the barbell bench press.",
+          "where": "The Results"
+        },
+        {
+          "source": "ace-decfly",
+          "text": "Target Body Part: Chest",
+          "where": "page header"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Inferred from other exercises, not measured on this fly: flyes (horizontal adductions) rank highest for front deltoid activation, while a declined bench press used the front deltoid less than flat or incline pressing. So the front deltoid helps, probably less than on flat or incline flyes.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "rabello-2024",
+        "coratella-2020-bench"
+      ],
+      "quotes": [
+        {
+          "source": "rabello-2024",
+          "text": "For anterior deltoid, horizontal adductions (inclined) and horizontal adductions (horizontal) generated the greatest activation",
+          "where": "abstract"
+        },
+        {
+          "source": "coratella-2020-bench",
+          "text": "Anterior deltoid was less excited (d: 3.84/19.77) in DBP compared to all other exercises.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Tempo: move at a moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a brief pause where the hands meet.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009",
+        "ace-decfly"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "ace-decfly",
+          "text": "Pause momentarily then slowly return to your starting position",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Breathe out gently as the arms sweep together.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-decfly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-decfly",
+          "text": "Exhale gently and slowly squeeze your chest muscles",
+          "where": "Step 3"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Side view (engine default). The two things that define this exercise read from the side: the path from head-height handles down to below the chest (c1, c5), and the top fault, leaning forward, which ACE says happens frequently (c7). The inward sweep reads only from the front and is left to the text. Census suggested front; the side view is chosen because the frequent fault needs it.",
+    "equipment": "Two cable columns (or a crossover station) with single handles set at about the top of the head (c1). Floor line.",
+    "start": "Standing upright in a staggered stance (c1), abs braced (c2); arms up and out to the sides with the hands no further back than the armpits (c4), elbows slightly bent, wrists straight (c3).",
+    "end": "Hands meet in front of the body below chest level (c5), elbows still slightly bent (c3), trunk still upright (c1, c7).",
+    "checkpoints": [
+      {
+        "label": "Trunk upright",
+        "what": "The trunk stays vertical, no leaning toward the hands.",
+        "claim": "c7"
+      },
+      {
+        "label": "Soft elbows",
+        "what": "A slight, fixed bend in the elbows the whole time.",
+        "claim": "c3"
+      },
+      {
+        "label": "Below chest",
+        "what": "The hands meet below chest level.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Leaning forward: the trunk tips toward the hands to finish the rep.",
+      "why": "ACE says this happens frequently when the weight is too heavy, and it raises stress in the shoulder joint.",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Trunk stays upright",
+        "claim": "c7"
+      },
+      {
+        "text": "Hands meet below chest height",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "One single cable handle in each hand, held firmly.",
+    "width": "Set by the two cable columns.",
+    "thumb": "Not given by any source read (hold archetype default).",
+    "handContact": "Not given by any source read (hold archetype default).",
+    "wrist": "Straight, in line with the forearm, for the whole movement.",
+    "claims": [
+      "c1",
+      "c3"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set both pulleys so the handles are at about the top of your head.",
+      "claim": "c1"
+    },
+    {
+      "step": "Take a handle in each hand and stand in a staggered, walking stance, trunk upright.",
+      "claim": "c1"
+    },
+    {
+      "step": "Brace your abs and keep your low back from arching.",
+      "claim": "c2"
+    },
+    {
+      "step": "Pick a weight you can move without leaning forward.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Trunk stays vertical; don't lean toward the hands.",
+      "claim": "c7"
+    },
+    {
+      "point": "Low back doesn't arch.",
+      "claim": "c2"
+    },
+    {
+      "point": "Elbows keep the same slight bend.",
+      "claim": "c3"
+    },
+    {
+      "point": "Wrists straight, in line with the forearms.",
+      "claim": "c3"
+    },
+    {
+      "point": "Hands go no further back than the armpits.",
+      "claim": "c4"
+    },
+    {
+      "point": "Sweep down first, then in, in a wide arc.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Leaning forward to finish the rep.",
+      "fix": "Lower the weight and stand tall.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Starting with the arms behind the body or crossing the handles past each other.",
+      "fix": "Stop the hands at the armpits on the way back and let them just meet in front.",
+      "claim": "c8, c4"
+    },
+    {
+      "mistake": "Moving the torso toward the hands.",
+      "fix": "Keep the trunk still and let the arms move.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "chest",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c11"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Chest",
+        "means": "The chest is doing the work.",
+        "fix": "",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the shoulder",
+        "means": "A warning sign; leaning forward and taking the arms too far back both stress the shoulder.",
+        "fix": "Stop the set; next time go lighter, stand tall and stop the hands at the armpits.",
+        "claim": "c7, c4, c8",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Low back",
+        "means": "Usually means the low back is arching.",
+        "fix": "Brace the abs and lower the weight.",
+        "claim": "c2",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Leaning forward raises the stress in the shoulder joint.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Arms behind the body or crossing handles risks the shoulder and the hands.",
+      "claim": "c8"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "htl-trunk",
+      "kind": "posture",
+      "right": "Trunk vertical as the hands meet below the chest.",
+      "wrong": "Trunk tipped forward toward the hands.",
+      "claim": "c7"
+    },
+    {
+      "key": "htl-back-limit",
+      "kind": "posture",
+      "right": "On the way back, hands stop level with the armpits.",
+      "wrong": "Arms drawn back behind the torso.",
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "chest primary is sourced (c10: ACE EMG on the bent-forward cable crossover, applied by inference; ACE lists chest as the decline cable fly's target). front_delts secondary matches exercises.json but rests only on inference from other exercises (c11, MECH/WEAK); kept, flagged weak."
+  },
+  "anchorSource": "ace-decfly",
+  "sources": [
+    {
+      "id": "ace-decfly",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/161/standing-decline-cable-flyes/",
+      "title": "Standing Decline Cable Flyes (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-top3-chest",
+      "url": "https://www.acefitness.org/certifiednewsarticle/3003/what-are-the-top-3-most-effective-chest-exercises/",
+      "title": "What are the Top 3 Most Effective Chest Exercises? (Schanke, Porcari et al., ACE Certified News)",
+      "kind": "guideline",
+      "year": 2011,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "rabello-2024",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39593452/",
+      "title": "Activation of the three deltoid muscle portions during common strengthening exercises: A systematic review",
+      "kind": "peer-reviewed",
+      "year": 2024,
+      "pmid": 39593452,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "coratella-2020-bench",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31397215/",
+      "title": "Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": 31397215,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ]
+}

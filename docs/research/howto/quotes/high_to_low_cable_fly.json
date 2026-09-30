@@ -1,0 +1,174 @@
+{
+  "id": "high_to_low_cable_fly",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-decfly",
+      "quote": "Position the cable handles approximately level with the top of your head and grasp each handle firmly.",
+      "status": "verbatim",
+      "closest": "Position the cable handles approximately level with the top of your head and grasp each handle firmly."
+    },
+    {
+      "claim": "c1",
+      "source": "ace-decfly",
+      "quote": "Assume a staggered-stance position (i.e., walking position, with one leg forward) to stabilize yourself and align your trunk vertically.",
+      "status": "verbatim",
+      "closest": "Assume a staggered-stance position (i.e., walking position, with one leg forward) to stabilize yourself and align your trunk vertically."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-decfly",
+      "quote": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid any arching of your low back throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid any arching of your low back throughout the exercise."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-decfly",
+      "quote": "Maintain a slight bend in your elbows, neutral wrist position (i.e., wrists aligned in a straight line with your forearms)",
+      "status": "verbatim",
+      "closest": "Maintain a slight bend in your elbows, neutral wrist position (i.e., wrists aligned in a straight line with your forearms)"
+    },
+    {
+      "claim": "c3",
+      "source": "ace-decfly",
+      "quote": "Maintain the slight bend in your elbows, neutral wrist position and vertical alignment of your trunk throughout the movement.",
+      "status": "verbatim",
+      "closest": "Maintain the slight bend in your elbows, neutral wrist position and vertical alignment of your trunk throughout the movement."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-decfly",
+      "quote": "Allow your arms to slowly open , moving upward and outward to your sides.",
+      "status": "verbatim",
+      "closest": "Allow your arms to slowly open , moving upward and outward to your sides."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-decfly",
+      "quote": "do not allow your hands to move past the midline of your body (level of your armpit).",
+      "status": "verbatim",
+      "closest": "do not allow your hands to move past the midline of your body (level of your armpit)."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-decfly",
+      "quote": "Exhale gently and slowly squeeze your chest muscles to pull your arms forward until your hands meet below the level of your chest.",
+      "status": "verbatim",
+      "closest": "Exhale gently and slowly squeeze your chest muscles to pull your arms forward until your hands meet below the level of your chest."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-decfly",
+      "quote": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner.",
+      "status": "verbatim",
+      "closest": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-top3-chest",
+      "quote": "Think about moving the arms downward first and then inward to get a nice wide arc.",
+      "status": "verbatim",
+      "closest": "Think about moving the arms downward first and then inward to get a nice wide arc."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-decfly",
+      "quote": "Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy.",
+      "status": "verbatim",
+      "closest": "Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-decfly",
+      "quote": "To protect your shoulders from potential injury, lower the resistance, align your trunk vertically and follow the instructions provided.",
+      "status": "verbatim",
+      "closest": "To protect your shoulders from potential injury, lower the resistance, align your trunk vertically and follow the instructions provided."
+    },
+    {
+      "claim": "c8",
+      "source": "ace-top3-chest",
+      "quote": "some exercisers start with the shoulders in horizontal hyperextension or the arms behind the torso, and then actually cross the two handles above and below each other to come past the midline.",
+      "status": "verbatim",
+      "closest": "some exercisers start with the shoulders in horizontal hyperextension or the arms behind the torso, and then actually cross the two handles above and below each other to come past the midline."
+    },
+    {
+      "claim": "c8",
+      "source": "ace-top3-chest",
+      "quote": "While this extreme range of motion may feel good, it does little in terms of muscular conditioning, and there is a risk of injury in the shoulder during hyperextension and of the hand when the handles pass so close to each other.",
+      "status": "verbatim",
+      "closest": "While this extreme range of motion may feel good, it does little in terms of muscular conditioning, and there is a risk of injury in the shoulder during hyperextension and of the hand when the handles pass so close to each other."
+    },
+    {
+      "claim": "c9",
+      "source": "ace-top3-chest",
+      "quote": "Avoid moving the torso closer to the hands,",
+      "status": "verbatim",
+      "closest": "Avoid moving the torso closer to the hands,"
+    },
+    {
+      "claim": "c10",
+      "source": "ace-top3-chest",
+      "quote": "Both the pec deck (at 98% of muscle activation compared to barbell bench press) and the bent-forward cable crossover (93% of muscle activation) elicited nearly equivalent muscle activation as the barbell bench press.",
+      "status": "verbatim",
+      "closest": "Both the pec deck (at 98% of muscle activation compared to barbell bench press) and the bent-forward cable crossover (93% of muscle activation) elicited nearly equivalent muscle activation as the barbell bench press."
+    },
+    {
+      "claim": "c10",
+      "source": "ace-decfly",
+      "quote": "Target Body Part: Chest",
+      "status": "verbatim",
+      "closest": "Target Body Part: Chest"
+    },
+    {
+      "claim": "c11",
+      "source": "rabello-2024",
+      "quote": "For anterior deltoid, horizontal adductions (inclined) and horizontal adductions (horizontal) generated the greatest activation",
+      "status": "verbatim",
+      "closest": "For anterior deltoid, horizontal adductions (inclined) and horizontal adductions (horizontal) generated the greatest activation"
+    },
+    {
+      "claim": "c11",
+      "source": "coratella-2020-bench",
+      "quote": "Anterior deltoid was less excited (d: 3.84/19.77) in DBP compared to all other exercises.",
+      "status": "verbatim",
+      "closest": "Anterior deltoid was less excited (d: 3.84/19.77) in DBP compared to all other exercises."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm-2009",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm-2009",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c12",
+      "source": "ace-decfly",
+      "quote": "Pause momentarily then slowly return to your starting position",
+      "status": "verbatim",
+      "closest": "Pause momentarily then slowly return to your starting position"
+    },
+    {
+      "claim": "c13",
+      "source": "acsm-2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c14",
+      "source": "ace-decfly",
+      "quote": "Exhale gently and slowly squeeze your chest muscles",
+      "status": "verbatim",
+      "closest": "Exhale gently and slowly squeeze your chest muscles"
+    }
+  ]
+}

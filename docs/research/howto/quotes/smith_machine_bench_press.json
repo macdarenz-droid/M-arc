@@ -1,0 +1,216 @@
+{
+  "id": "smith_machine_bench_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sl-smith-bench",
+      "text": "Lie on the bench, pull your shoulder blades together and down, and hold your chest up.",
+      "status": "verbatim",
+      "closest": "Lie on the bench, pull your shoulder blades together and down, and hold your chest up."
+    },
+    {
+      "claim": "c1",
+      "source": "sl-smith-bench",
+      "text": "Grip the bar slightly wider than shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "Grip the bar slightly wider than shoulder-width apart."
+    },
+    {
+      "claim": "c2",
+      "source": "motra-smith-bench",
+      "text": "Position a flat bench under the Smith machine bar aligned with your mid-chest. Lie back with feet flat on the floor, grip the bar slightly wider than shoulder-width, and unrack by rotating the bar off the hooks.",
+      "status": "verbatim",
+      "closest": "Position a flat bench under the Smith machine bar aligned with your mid-chest. Lie back with feet flat on the floor, grip the bar slightly wider than shoulder-width, and unrack by rotating the bar off the hooks."
+    },
+    {
+      "claim": "c3",
+      "source": "sl-smith-bench",
+      "text": "Lower the bar with control until it touches your chest.",
+      "status": "verbatim",
+      "closest": "Lower the bar with control until it touches your chest."
+    },
+    {
+      "claim": "c3",
+      "source": "motra-smith-bench",
+      "text": "Inhale and lower the bar controlled to your mid-chest with elbows at 45 degrees.",
+      "status": "verbatim",
+      "closest": "Inhale and lower the bar controlled to your mid-chest with elbows at 45 degrees."
+    },
+    {
+      "claim": "c4",
+      "source": "eos-smith",
+      "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+      "status": "verbatim",
+      "closest": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts."
+    },
+    {
+      "claim": "c4",
+      "source": "eos-smith",
+      "text": "Set the safety stops just below your lowest movement point to catch the bar if needed.",
+      "status": "verbatim",
+      "closest": "Set the safety stops just below your lowest movement point to catch the bar if needed."
+    },
+    {
+      "claim": "c4",
+      "source": "motra-smith-bench",
+      "text": "Always set safety stops just above chest level",
+      "status": "verbatim",
+      "closest": "Always set safety stops just above chest level"
+    },
+    {
+      "claim": "c5",
+      "source": "eos-smith",
+      "text": "Rotate your wrists forward to unlock the bar from the hooks.",
+      "status": "verbatim",
+      "closest": "Rotate your wrists forward to unlock the bar from the hooks."
+    },
+    {
+      "claim": "c5",
+      "source": "eos-smith",
+      "text": "Rotate your wrists back to lock the bar into place when you’re done.",
+      "status": "verbatim",
+      "closest": "Rotate your wrists back to lock the bar into place when you’re done."
+    },
+    {
+      "claim": "c6",
+      "source": "eos-smith",
+      "text": "Try using just the bar or lighter plates to get comfortable with the motion.",
+      "status": "verbatim",
+      "closest": "Try using just the bar or lighter plates to get comfortable with the motion."
+    },
+    {
+      "claim": "c6",
+      "source": "motra-smith-bench",
+      "text": "Start with light weights to master form",
+      "status": "verbatim",
+      "closest": "Start with light weights to master form"
+    },
+    {
+      "claim": "c7",
+      "source": "motra-smith-bench",
+      "text": "Flaring elbows wide",
+      "status": "verbatim",
+      "closest": "Flaring elbows wide"
+    },
+    {
+      "claim": "c7",
+      "source": "motra-smith-bench",
+      "text": "Bouncing bar off chest",
+      "status": "verbatim",
+      "closest": "Bouncing bar off chest"
+    },
+    {
+      "claim": "c7",
+      "source": "motra-smith-bench",
+      "text": "Arching back excessively",
+      "status": "verbatim",
+      "closest": "Arching back excessively"
+    },
+    {
+      "claim": "c7",
+      "source": "motra-smith-bench",
+      "text": "Locking elbows at top",
+      "status": "verbatim",
+      "closest": "Locking elbows at top"
+    },
+    {
+      "claim": "c8",
+      "source": "sl-smith-bench",
+      "text": "Smith bench press differs from barbell bench press primarily by its completely straight bar path, instead of a slightly arched one. The exercise also has lower requirements for stabilization and balance",
+      "status": "verbatim",
+      "closest": "Smith bench press differs from barbell bench press primarily by its completely straight bar path, instead of a slightly arched one. The exercise also has lower requirements for stabilization and balance"
+    },
+    {
+      "claim": "c9",
+      "source": "schick2010",
+      "text": "compare muscle activation of the anterior deltoid, medial deltoid, and pectoralis major during a Smith machine and free weight bench press",
+      "status": "verbatim",
+      "closest": "compare muscle activation of the anterior deltoid, medial deltoid, and pectoralis major during a Smith machine and free weight bench press"
+    },
+    {
+      "claim": "c9",
+      "source": "schick2010",
+      "text": "Results indicated greater activation of the medial deltoid on the free weight bench press than on the Smith machine bench press.",
+      "status": "verbatim",
+      "closest": "Results indicated greater activation of the medial deltoid on the free weight bench press than on the Smith machine bench press."
+    },
+    {
+      "claim": "c10",
+      "source": "cotterman2005",
+      "text": "conversely, the bench 1RM was greater for FWs than the SM.",
+      "status": "verbatim",
+      "closest": "conversely, the bench 1RM was greater for FWs than the SM."
+    },
+    {
+      "claim": "c11",
+      "source": "sl-smith-bench",
+      "text": "Primary muscles worked: Chest Front Deltoid Secondary muscles worked: Triceps",
+      "status": "verbatim",
+      "closest": "Primary muscles worked: Chest Front Deltoid Secondary muscles worked: Triceps"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c13",
+      "source": "acsm2009",
+      "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c14",
+      "source": "jumbelic2007",
+      "text": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+      "status": "verbatim",
+      "closest": "an unrecognized source of accidental asphyxia--compression of the neck by barbells"
+    },
+    {
+      "claim": "c14",
+      "source": "jumbelic2007",
+      "text": "Two cases of traumatic asphyxia due to this preventable hazard occurred in a 5-year period in central New York. There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission",
+      "status": "verbatim",
+      "closest": "Two cases of traumatic asphyxia due to this preventable hazard occurred in a 5-year period in central New York. There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission"
+    },
+    {
+      "claim": "c14",
+      "source": "motra-smith-bench",
+      "text": "Position a flat bench under the Smith machine bar aligned with your mid-chest.",
+      "status": "verbatim",
+      "closest": "Position a flat bench under the Smith machine bar aligned with your mid-chest."
+    },
+    {
+      "claim": "c15",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c15",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c16",
+      "source": "motra-smith-incline",
+      "text": "Do not train through shoulder pain",
+      "status": "verbatim",
+      "closest": "Do not train through shoulder pain"
+    }
+  ]
+}

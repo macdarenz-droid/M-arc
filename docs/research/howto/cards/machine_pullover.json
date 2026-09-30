@@ -1,0 +1,586 @@
+{
+  "id": "machine_pullover",
+  "libId": "lib_machine_pullover",
+  "name": "Machine Pullover",
+  "family": "Pullover",
+  "tier": "B",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "seat-back"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the seat so the shoulders sit slightly below the machine's axis of rotation when sitting upright with the arms at the sides.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mq-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "mq-pullover",
+          "text": "Adjust the seat height so that the shoulders are slightly below the axis of rotation while sitting upright with arms at the sides.",
+          "where": "Starting Position, b) For machine"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Fasten the seat belt, sit with the back flat against the back pad and the feet on the foot bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mq-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "mq-pullover",
+          "text": "Secure seat belt, position back flat against the back pad, and place feet on the foot bar.",
+          "where": "Starting Position, b) For machine"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Getting in: push the foot bar down with the legs, place the backs of the upper arms on the elbow pads and the open hands on the movement arm, then take the feet off the bar so the arm sits near or slightly behind the head.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mq-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "mq-pullover",
+          "text": "Push foot bar down with the legs and place the back of the upper arm on the elbow pads. Position the hands on the movement arm, palms facing forward with hands open.",
+          "where": "Starting Position, b) For machine"
+        },
+        {
+          "source": "mq-pullover",
+          "text": "Take feet off foot bar and position movement arm near or slightly behind the head.",
+          "where": "Starting Position, b) For machine"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Pull the movement arm down to the midsection by driving through the elbow pads, hold it in close to the seat belt for a moment, then return.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mq-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "mq-pullover",
+          "text": "Pull movement arm down to the mid section, pulling at the elbow pads. Hold the bar in tight to the seat belt, pause momentarily and then recover to the starting position.",
+          "where": "Description, b) For machine"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Getting out: put the feet back on the foot bar, take the arms off the pads, and use the legs to lower the weight stack.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mq-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "mq-pullover",
+          "text": "When finished with the exercise, place feet on foot bar and remove arms from elbow pads. Use legs to return the weight stack to resting positions.",
+          "where": "Description, b) For machine"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep the palms open and fingers extended: the force goes through the elbows, not the hands.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mq-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "mq-pullover",
+          "text": "Keep palms open and fingers extended, the force is at the elbows.",
+          "where": "Points To Emphasize"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The torso and head stay back against the back pad.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mq-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "mq-pullover",
+          "text": "Torso and head should remain back touching the back pad.",
+          "where": "Points To Emphasize"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Don't arch the back excessively, which puts too much pressure on the lower back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pf-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "pf-pullover",
+          "text": "Do not excessively arch your back to avoid putting too much pressure on your lower back.",
+          "where": "Tips"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Avoid excessive weight; pick one where you feel the lats working. Start light and add weight as you get stronger.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pf-pullover",
+        "vg-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "pf-pullover",
+          "text": "Avoid excessive weights and choose a weight that allows you to feel good stimulation in your latissimus dorsi.",
+          "where": "Tips"
+        },
+        {
+          "source": "vg-pullover",
+          "text": "Start with a light weight to focus on form and gradually increase as you gain strength.",
+          "where": "Tips"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Keep the shoulders relaxed so tension doesn't build in the neck.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pf-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "pf-pullover",
+          "text": "Keep your shoulders relaxed to prevent tension from building up in your neck and shoulders.",
+          "where": "Tips"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Breathe out as the arm comes down, and in as it returns.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pf-pullover",
+        "vg-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "pf-pullover",
+          "text": "Exhale when you lower the handle, and inhale when you return to the starting position.",
+          "where": "Breathing"
+        },
+        {
+          "source": "vg-pullover",
+          "text": "Inhale and slowly return to the starting position, maintaining control throughout the entire motion.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Muscles: a university strength programme lists the latissimus dorsi and posterior deltoid for the machine pullover; coach sources name the lats as the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mq-pullover",
+        "pf-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "mq-pullover",
+          "text": "Muscles Used Latissimus Dorsi, Posterior Deltoid",
+          "where": "header"
+        },
+        {
+          "source": "pf-pullover",
+          "text": "The pullover machine targets your lats.",
+          "where": "overview"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Measured on pullover exercises (equipment not stated; not this machine): a review found the pullover works the chest (pectoralis major) more than it selectively targets the lats, and another study found weak-to-moderate upper-chest and moderate-to-strong front-deltoid activity. Virtuagym also names the chest.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "difonza-2026",
+        "bull-2007",
+        "vg-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "difonza-2026",
+          "text": "the pullover appeared to preferentially activate the pectoralis major rather than selectively target the LD.",
+          "where": "abstract"
+        },
+        {
+          "source": "bull-2007",
+          "text": "The PMC activity varied from weak to moderate in both modalities, while the DA activity was moderate in the pull-over and strong in the pull-over with bent arms exercises.",
+          "where": "abstract"
+        },
+        {
+          "source": "vg-pullover",
+          "text": "The Pullover machine workout primarily targets the chest and lats, providing an effective upper body exercise.",
+          "where": "overview"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Tempo: moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a brief pause at the bottom.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009",
+        "mq-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "mq-pullover",
+          "text": "pause momentarily and then recover to the starting position.",
+          "where": "Description, b) For machine"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The arms rotate in the sagittal plane from overhead down to the midsection (c3, c4), which reads only from the side (census: side). The back and head leaving the pad (c7, c8) also read from the side.",
+    "equipment": "Seated pullover machine (composed, census R3): seat, back pad, seat belt, foot bar, movement arm with elbow pads pivoting at about shoulder height; seat set so the shoulders are slightly below the pivot (c1). Floor line.",
+    "start": "Seated upright, belt on, back and head on the pad (c2, c7); backs of the upper arms on the elbow pads, open hands on the bar, movement arm near or slightly behind the head (c3, c6).",
+    "end": "Movement arm pulled down to the midsection and held close to the seat belt (c4); back and head still on the pad (c7).",
+    "checkpoints": [
+      {
+        "label": "Shoulders at pivot",
+        "what": "Seat set so the shoulders sit just below the machine's pivot.",
+        "claim": "c1"
+      },
+      {
+        "label": "Push with elbows",
+        "what": "Open hands; the elbows drive the pads down.",
+        "claim": "c6"
+      },
+      {
+        "label": "Back on pad",
+        "what": "Torso and head stay against the back pad.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Back arched off the pad: the lower back and head pull away from the back pad as the arm comes down.",
+      "why": "Both sources name it: keep the torso and head on the pad, and avoid excessive arching, which loads the lower back. No source ranks how common it is.",
+      "claim": "c8",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Head and back stay on the pad",
+        "claim": "c7"
+      },
+      {
+        "text": "Bar ends near the seat belt",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c14"
+    },
+    "variantLine": "Drawn: the elbow-pad pullover machine (Nautilus style) from the Marquette description (c1-c7). Some machines use handles only (Virtuagym, Planfit); claims c8-c15 come from those handle-machine pages and hold for both by their wording (weight choice, back arch, breathing, tempo)."
+  },
+  "grip": {
+    "type": "No grip: open hands rest on the movement arm, palms forward.",
+    "width": "Set by the machine arm.",
+    "thumb": "Not wrapped; fingers extended.",
+    "handContact": "Palms open against the bar; the force goes through the elbow pads.",
+    "wrist": "Not given by any source read (balance archetype default).",
+    "claims": [
+      "c3",
+      "c6"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the seat so your shoulders are just below the machine's pivot.",
+      "claim": "c1"
+    },
+    {
+      "step": "Fasten the belt, back flat on the pad, feet on the foot bar.",
+      "claim": "c2"
+    },
+    {
+      "step": "Push the foot bar down, put the backs of your upper arms on the elbow pads and your open hands on the bar.",
+      "claim": "c3"
+    },
+    {
+      "step": "Take your feet off the bar so the arm sits near or slightly behind your head.",
+      "claim": "c3"
+    },
+    {
+      "step": "To finish: feet back on the bar, arms off the pads, and lower the stack with your legs.",
+      "claim": "c5"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Torso and head stay on the back pad.",
+      "claim": "c7"
+    },
+    {
+      "point": "Lower back doesn't arch away from the pad.",
+      "claim": "c8"
+    },
+    {
+      "point": "Hands open; push through the elbows.",
+      "claim": "c6"
+    },
+    {
+      "point": "Shoulders relaxed, neck loose.",
+      "claim": "c10"
+    },
+    {
+      "point": "Hold the bar close to the belt for a moment at the bottom.",
+      "claim": "c4"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Arching the back off the pad to move the weight.",
+      "fix": "Lower the weight and keep your back and head on the pad.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Taking the arms off the elbow pads before the feet are on the foot bar.",
+      "fix": "Feet on the foot bar first, then arms off the pads; lower the stack with your legs.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Using so much weight you can't feel your lats.",
+      "fix": "Lower the weight.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "chest",
+        "claim": "c13"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c8"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Lats, along the sides of the back",
+        "means": "The lats are doing the work.",
+        "fix": "",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually means the back is arching off the pad.",
+        "fix": "Lower the weight; keep your back on the pad.",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Neck and tops of the shoulders",
+        "means": "Usually means the shoulders are tensing up.",
+        "fix": "Relax your shoulders down.",
+        "claim": "c10",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Arching the back puts too much pressure on the lower back.",
+      "claim": "c8"
+    },
+    {
+      "risk": "Too much weight takes the work off the lats.",
+      "claim": "c9"
+    }
+  ],
+  "redFlags": [],
+  "zooms": [
+    {
+      "key": "pullover-pivot",
+      "kind": "posture",
+      "right": "Shoulder just below the machine's pivot.",
+      "wrong": "Seat so low or high that the shoulder is far from the pivot.",
+      "claim": "c1"
+    },
+    {
+      "key": "pullover-hands",
+      "kind": "hand",
+      "right": "Open hand resting on the bar, elbow on the pad doing the pushing.",
+      "wrong": "Fist gripping the bar and pulling with the hands.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "rear_delts",
+      "chest"
+    ],
+    "remove": [
+      "triceps"
+    ],
+    "why": "lats primary is sourced (c12). rear_delts added: the Marquette exercise sheet lists the posterior deltoid (c12). chest added as secondary: pullover data (equipment not stated) and Virtuagym (c13, DATA/WEAK for this machine). triceps removed: no source found names the triceps for the machine pullover, and on the elbow-pad machine the hands stay open with the force at the elbows (c6)."
+  },
+  "anchorSource": "mq-pullover",
+  "sources": [
+    {
+      "id": "mq-pullover",
+      "url": "https://gomarquette.com/news/2006/5/8/pullover.aspx",
+      "title": "Pullover (Marquette University Athletics, strength and conditioning exercise description)",
+      "kind": "coach",
+      "year": 2006,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30",
+      "archiveUrl": "https://web.archive.org/web/20180908111024/https://gomarquette.com/news/2006/5/8/pullover.aspx"
+    },
+    {
+      "id": "pf-pullover",
+      "url": "https://planfit.ai/en/exercise/pullover-machine-back-target",
+      "title": "Pullover Machine (Back Target): How to Do, Proper Form, Tips & Alternatives (Planfit)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "vg-pullover",
+      "url": "https://exercises.virtuagym.com/exercise/pullover-machine/",
+      "title": "Pullover Machine Video Exercise Guide (Virtuagym)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "difonza-2026",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42647355/",
+      "title": "Electromyographic Analysis of Latissimus Dorsi Activation During Common Resistance Training Exercises: A Narrative Review",
+      "kind": "peer-reviewed",
+      "year": 2026,
+      "pmid": 42647355,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "bull-2007",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18051626/",
+      "title": "Electromyographic validation of the deltoideus (anterior portion) and pectoralis major (clavicular portion) muscles in pull-over exercises",
+      "kind": "peer-reviewed",
+      "year": 2007,
+      "pmid": 18051626,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ]
+}

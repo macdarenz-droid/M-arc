@@ -1,0 +1,526 @@
+{
+  "id": "hip_abduction",
+  "libId": "lib_hip_abduction",
+  "name": "Hip Abduction",
+  "family": "FSEAT",
+  "tier": "C",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "seat-back",
+      "pivot-pad"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit with the back against the pad, feet on the footrests and the pads snug against the outer thighs; set the seat so the knees line up with the machine's pivot.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "Sit on the hip abduction machine with back against the pad, feet on footrests, and pads snug against outer thighs. Adjust seat for knees to align with pivot point.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hold the handles for stability and brace the core.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd",
+        "sl-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "Grip handles for stability and engage core.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-hip-abd",
+          "text": "Adjust the machine to the appropriate settings, sit down, and grip the handles.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Push the legs outward against the pads until they are comfortably apart (StrengthLog: as far as possible), hold briefly, then return slowly while resisting the weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd",
+        "sl-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "Exhale and push legs outward against pads, squeezing outer hips.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Continue until legs are comfortably apart.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Hold briefly at peak contraction.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-hip-abd",
+          "text": "Push the pads out by moving your legs apart as far as possible.",
+          "where": "How to"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Inhale and slowly return legs to start, resisting weight.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Range: from knees together to a full, comfortable abduction, without overextending.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "From knees together to full comfortable hip abduction without overextending.",
+          "where": "Range of motion"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the upper body still and the back flat against the pad; no momentum.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "Keep upper body still throughout.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Back flat against pad",
+          "where": "Form cues"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "No momentum",
+          "where": "Form cues"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Set the machine up to fit you to avoid straining the hip, avoid weight that spoils your form, and get professional advice if the hip hurts.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "Adjust machine for proper alignment to avoid hip strain.",
+          "where": "Safety"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Avoid excessive weight that compromises form.",
+          "where": "Safety"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Consult professional if hip pain present.",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Breathe out as the legs push out and in on the controlled return.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "Exhale during outward push; inhale on controlled return.",
+          "where": "Breathing"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The hip abduction machine works the muscles that move the thighs apart: gluteus medius and parts of gluteus maximus; Motra also lists gluteus minimus and the TFL.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-hip-abd",
+        "mo-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "sl-hip-abd",
+          "text": "The hip abduction machine trains the muscles that abducts (moves apart) your thighs, like your gluteus medius and parts of gluteus maximus.",
+          "where": "About"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Seated machine isolation exercise targeting gluteus medius, minimus, and TFL",
+          "where": "About"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Measured on a hip abductor machine (11 men): gluteus medius was more active than the TFL, and the machine had the best gluteus medius-to-TFL ratio of the three exercises tested.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "paz-2022"
+      ],
+      "quotes": [
+        {
+          "source": "paz-2022",
+          "text": "GMed activation was greater than TFL in all exercises in both concentric and eccentric phases.",
+          "where": "abstract"
+        },
+        {
+          "source": "paz-2022",
+          "text": "In both concentric and eccentric phases, GMed:TFL ratio was greater in HAM compared to CLAM and SLHA.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Tempo: about 2 s out, a 1 s hold, 2 s back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "Tempo 2-1-2",
+          "where": "Tempo"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Motra names the common mistakes on the hip abduction machine: jerking the weight, arching the lower back, using the upper body to swing, an incomplete range of motion and letting the pads crash together.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "Jerking the weight",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Arching lower back",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Using upper body to swing",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Incomplete range of motion",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Letting pads crash together",
+          "where": "Common Mistakes"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "The legs move apart in the frontal plane (c3), which reads only from the front (census: front).",
+    "equipment": "Seated hip abduction machine (composed, census R3): seat, back pad, footrests, two leg pads against the outer thighs pivoting at knee level, side handles (c1, c2). Floor line.",
+    "start": "Seated, back flat on the pad (c1, c5); knees together (c4), feet on the footrests, pads against the outer thighs (c1); hands on the handles (c2).",
+    "end": "Legs pushed apart to a full, comfortable range (c3, c4); upper body still, back on the pad (c5).",
+    "checkpoints": [
+      {
+        "label": "Knees at pivot",
+        "what": "Seat set so the knees line up with the machine's pivot.",
+        "claim": "c1"
+      },
+      {
+        "label": "Full range",
+        "what": "Legs go from knees together to comfortably wide.",
+        "claim": "c4"
+      },
+      {
+        "label": "Upper body still",
+        "what": "Back flat on the pad; no rocking.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Incomplete range: the knees open only a little before the legs come back.",
+      "why": "Motra names an incomplete range of motion among the machine's common mistakes (c12) and cues a full, comfortable range from knees together (c4). Swinging and jerking the weight (c12, c5) are also named but can't be drawn in a still picture. No source ranks how common they are.",
+      "claim": "c12",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Legs open wide, then fully close",
+        "claim": "c4"
+      },
+      {
+        "text": "Back stays flat on the pad",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c10"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Hold the side handles for stability.",
+    "width": "Set by the machine.",
+    "thumb": "Not given by any source read (balance archetype default).",
+    "handContact": "Not given by any source read (balance archetype default).",
+    "wrist": "Not given by any source read (balance archetype default).",
+    "claims": [
+      "c2"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the seat so your knees line up with the machine's pivot.",
+      "claim": "c1"
+    },
+    {
+      "step": "Sit with your back against the pad and feet on the footrests.",
+      "claim": "c1"
+    },
+    {
+      "step": "Set the pads snug against your outer thighs.",
+      "claim": "c1"
+    },
+    {
+      "step": "Hold the handles and brace your core.",
+      "claim": "c2"
+    },
+    {
+      "step": "Pick a weight you can move without losing form.",
+      "claim": "c6"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back flat against the pad.",
+      "claim": "c5"
+    },
+    {
+      "point": "Upper body still; no momentum.",
+      "claim": "c5"
+    },
+    {
+      "point": "Open from knees together to comfortably wide.",
+      "claim": "c4"
+    },
+    {
+      "point": "Return slowly, resisting the weight.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Using momentum or rocking the upper body.",
+      "fix": "Keep your upper body still; lower the weight.",
+      "claim": "c5, c12"
+    },
+    {
+      "mistake": "Weight so heavy your form breaks.",
+      "fix": "Lower the weight.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Seat not set to fit you.",
+      "fix": "Line your knees up with the pivot.",
+      "claim": "c6"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "abductors",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Outer hips and side of the glutes",
+        "means": "The hip abductors are doing the work.",
+        "fix": "",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the hip",
+        "means": "A warning sign.",
+        "fix": "Stop the set; get professional advice.",
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Upper body rocking",
+        "means": "Usually means the weight is too heavy.",
+        "fix": "Lower the weight.",
+        "claim": "c5, c6",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "A machine that doesn't fit you can strain the hip.",
+      "claim": "c6"
+    },
+    {
+      "risk": "Too much weight spoils form.",
+      "claim": "c6"
+    }
+  ],
+  "redFlags": [],
+  "zooms": [
+    {
+      "key": "abd-pivot",
+      "kind": "posture",
+      "right": "Knees level with the machine's pivot, pads on the outer thighs.",
+      "wrong": "Seat set so the knees sit far from the pivot.",
+      "claim": "c1"
+    },
+    {
+      "key": "abd-range",
+      "kind": "posture",
+      "right": "Legs opened comfortably wide.",
+      "wrong": "Knees opened only a little.",
+      "claim": "c4, c12"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "abductors primary (gluteus medius, measured, c9) and glutes primary (StrengthLog: parts of gluteus maximus; Motra lists glutes, c8) both match exercises.json. The glutes claim rests on coach sources only."
+  },
+  "anchorSource": "mo-hip-abd",
+  "sources": [
+    {
+      "id": "mo-hip-abd",
+      "url": "https://motra.com/exercises/machineHipAbduction",
+      "title": "Machine Hip Abduction: Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-hip-abd",
+      "url": "https://www.strengthlog.com/hip-abduction-machine/",
+      "title": "How to Do Hip Abduction Machine: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "paz-2022",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35500965/",
+      "title": "Hip abduction machine is better than free weights to target the gluteus medius while minimizing tensor fascia latae activation",
+      "kind": "peer-reviewed",
+      "year": 2022,
+      "pmid": 35500965,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ]
+}

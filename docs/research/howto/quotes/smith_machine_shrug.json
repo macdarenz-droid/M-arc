@@ -1,0 +1,153 @@
+{
+  "id": "smith_machine_shrug",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "motra-smith-shrug",
+      "text": "Adjust the Smith machine bar to mid-thigh height. Stand with feet shoulder-width apart, grip the bar overhand slightly wider than shoulders, unrack and extend arms with slight elbow bend.",
+      "status": "verbatim",
+      "closest": "Adjust the Smith machine bar to mid-thigh height. Stand with feet shoulder-width apart, grip the bar overhand slightly wider than shoulders, unrack and extend arms with slight elbow bend."
+    },
+    {
+      "claim": "c2",
+      "source": "motra-smith-shrug",
+      "text": "Elevate shoulders straight up toward ears, keeping arms extended.",
+      "status": "verbatim",
+      "closest": "Elevate shoulders straight up toward ears, keeping arms extended."
+    },
+    {
+      "claim": "c2",
+      "source": "motra-smith-shrug",
+      "text": "Lower shoulders slowly in a controlled manner back to start.",
+      "status": "verbatim",
+      "closest": "Lower shoulders slowly in a controlled manner back to start."
+    },
+    {
+      "claim": "c2",
+      "source": "motra-smith-shrug",
+      "text": "Avoid rolling shoulders forward or backward.",
+      "status": "verbatim",
+      "closest": "Avoid rolling shoulders forward or backward."
+    },
+    {
+      "claim": "c3",
+      "source": "motra-smith-shrug",
+      "text": "Leaning head forward",
+      "status": "verbatim",
+      "closest": "Leaning head forward"
+    },
+    {
+      "claim": "c3",
+      "source": "motra-smith-shrug",
+      "text": "Rocking body for momentum",
+      "status": "verbatim",
+      "closest": "Rocking body for momentum"
+    },
+    {
+      "claim": "c3",
+      "source": "motra-smith-shrug",
+      "text": "Excessive elbow bend",
+      "status": "verbatim",
+      "closest": "Excessive elbow bend"
+    },
+    {
+      "claim": "c4",
+      "source": "motra-smith-shrug",
+      "text": "Set safety pins to prevent bar drop",
+      "status": "verbatim",
+      "closest": "Set safety pins to prevent bar drop"
+    },
+    {
+      "claim": "c4",
+      "source": "motra-smith-shrug",
+      "text": "Stop if neck or shoulder pain occurs",
+      "status": "verbatim",
+      "closest": "Stop if neck or shoulder pain occurs"
+    },
+    {
+      "claim": "c5",
+      "source": "eos-smith",
+      "text": "Use slow, steady reps to isolate and strengthen your upper traps.",
+      "status": "verbatim",
+      "closest": "Use slow, steady reps to isolate and strengthen your upper traps."
+    },
+    {
+      "claim": "c5",
+      "source": "motra-smith-shrug",
+      "text": "Upper Traps, Mid Traps",
+      "status": "verbatim",
+      "closest": "Upper Traps, Mid Traps"
+    },
+    {
+      "claim": "c6",
+      "source": "eos-smith",
+      "text": "Rotate your wrists forward to unlock the bar from the hooks.",
+      "status": "verbatim",
+      "closest": "Rotate your wrists forward to unlock the bar from the hooks."
+    },
+    {
+      "claim": "c6",
+      "source": "eos-smith",
+      "text": "Rotate your wrists back to lock the bar into place when you’re done.",
+      "status": "verbatim",
+      "closest": "Rotate your wrists back to lock the bar into place when you’re done."
+    },
+    {
+      "claim": "c6",
+      "source": "eos-smith",
+      "text": "That means you can rack the bar at any time, giving you more control and support during lifts.",
+      "status": "verbatim",
+      "closest": "That means you can rack the bar at any time, giving you more control and support during lifts."
+    },
+    {
+      "claim": "c7",
+      "source": "acsm2009",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c7",
+      "source": "acsm2009",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c8",
+      "source": "acsm2009",
+      "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c9",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c9",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c10",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c10",
+      "source": "macdougall1985",
+      "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver",
+      "status": "verbatim",
+      "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver"
+    }
+  ]
+}

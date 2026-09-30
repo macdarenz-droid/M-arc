@@ -1,0 +1,636 @@
+{
+  "id": "rear_delt_fly",
+  "libId": "lib_rear_delt_fly",
+  "name": "Rear Delt Fly",
+  "family": "FSEAT",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "seat-back"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the machine's handles to the reverse-fly position and sit facing the machine with the chest pressed against the pad.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-rev-pecdeck",
+        "mo-rear-delt"
+      ],
+      "quotes": [
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "Adjust the handles of the pec deck machine in the reverse fly setting.",
+          "where": "How to perform"
+        },
+        {
+          "source": "mo-rear-delt",
+          "text": "Sit facing the machine with chest pressed against the pad and handles adjusted to shoulder height.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Adjust the chest pad and handles so you grip the handles at shoulder height, arms reaching forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-fly",
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-fly",
+          "text": "Adjust the chest support and handles so that you can grip the handles at shoulder height and get a long range of motion.",
+          "where": "How to"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "Extend your arms straight in front of you and grab the handles with an overhand or neutral grip at shoulder height.",
+          "where": "How to perform"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Keep a slight bend in the elbows throughout: the arms shouldn't be straight, and the elbows shouldn't bend much either (Motra lists bending the elbows too much as a common mistake). A neutral or overhand grip is used.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-rev-pecdeck",
+        "mo-rear-delt"
+      ],
+      "quotes": [
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "Maintain a slight bend in your elbows throughout the movement for an optimal rear delt engagement. Your arms shouldn’t be extended straight. On the other hand, don’t bend your elbows too much while performing this exercise.",
+          "where": "Primary muscles"
+        },
+        {
+          "source": "mo-rear-delt",
+          "text": "Grasp the handles with a neutral or overhand grip, keeping elbows slightly bent.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-rear-delt",
+          "text": "Bending elbows too much",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Pull the handles back in a wide arc, bringing the arms out to the sides, then return slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-rear-delt",
+        "sl-rev-fly"
+      ],
+      "quotes": [
+        {
+          "source": "mo-rear-delt",
+          "text": "Exhale and pull the handles back in a wide arc until arms align with shoulders.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-rev-fly",
+          "text": "With just a slight bend in the arms, pull the handles backward by bringing your arms out to the sides.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "End point: Motra says stop when the arms line up with the shoulders and avoid going past the torso; Fitness Volt puts the elbows behind the torso. The card follows the more conservative line (arms in line with the shoulders), and Fitness Volt also says to shorten the range if other upper-back muscles take over.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-rear-delt",
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "mo-rear-delt",
+          "text": "Pull until arms are inline with shoulders; avoid hyperextending past the torso.",
+          "where": "Range of motion"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "Your elbows should be behind your torso at the top.",
+          "where": "How to perform"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "if you feel greater activation in your other upper back muscles than the rear delts, you should limit your range of motion.",
+          "where": "Secondary muscles"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep the chest on the pad for the whole set. Using momentum is the biggest mistake: having to pull the chest off the pad is a sign of cheating.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-rear-delt",
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "mo-rear-delt",
+          "text": "Keep your chest in contact with the pad throughout the movement.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "If we had to point out the biggest mistake people make while doing the machine reverse fly, it would be their use of momentum.",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "If you have to pull your chest off the pad at any point during the set, it is a sign you are cheating.",
+          "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Sit upright with a neutral neck, looking straight ahead; a hunched back takes tension off the rear delts.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "Maintain an upright torso for the entirety of the set. A hunched back will take tension off your rear delts.",
+          "where": "Tips"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "Keep your neck in a neutral position and look straight ahead.",
+          "where": "Tips"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Don't go too heavy: heavy loads let the traps dominate, and feeling the shoulder blades squeeze together is a sign the weight is too heavy.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-rear-delt",
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "mo-rear-delt",
+          "text": "Avoid going too heavy to prevent trap dominance",
+          "where": "Safety"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "If you feel a scapular retraction, you are probably going too heavy.",
+          "where": "Tips"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Stop if you feel sharp pain at the front of the shoulder.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-rear-delt"
+      ],
+      "quotes": [
+        {
+          "source": "mo-rear-delt",
+          "text": "Stop if you feel sharp pain in the front shoulder",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "A neutral grip (palms facing each other) gave more posterior deltoid and infraspinatus activity than an overhand grip on the reverse fly machine (19 trained men, EMG).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "schoenfeld-2013"
+      ],
+      "quotes": [
+        {
+          "source": "schoenfeld-2013",
+          "text": "The results of this study show that performing exercise on the reverse fly machine with a neutral hand position significantly increases activity of the posterior deltoid and infraspinatus muscles compared with a PRO hand position.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The reverse fly machine trains the horizontal shoulder abductors, including the posterior (rear) deltoid.",
+      "tags": [
+        "DATA",
+        "CONSENSUS"
+      ],
+      "sources": [
+        "schoenfeld-2013",
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "schoenfeld-2013",
+          "text": "The reverse fly machine is a popular exercise for strengthening the horizontal shoulder abductors including the posterior deltoid.",
+          "where": "abstract"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "The reverse pec deck fly is an isolation exercise that primarily focuses on the posterior deltoids .",
+          "where": "Primary muscles"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Pulling the elbows back also works the rhomboids, teres major, infraspinatus and middle trapezius.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "Because the machine reverse fly involves pulling your elbows behind your torso, you’ll experience rhomboids, teres major, infraspinatus, and middle trapezius stimulation.",
+          "where": "Secondary muscles"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Don't let the weight stack rest at the bottom, to keep constant tension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "Do not let the weight stack at the bottom. It will ensure that there is constant tension on your rear delts throughout the set.",
+          "where": "Tips"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Tempo: about 1-2 s each way at a moderate speed (ACSM, for heavy sets in trained lifters), with a short squeeze at the back (Fitness Volt suggests a slower 2 s up, 2 s hold, 4 s down).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009",
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "Pause and contract your rear delts for a second before slowly returning to the starting position.",
+          "where": "How to perform"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "you’ll spend two seconds on the concentric motion, two seconds of contraction at the top, four seconds on the eccentric motion, and no rest at the bottom.",
+          "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Breathe out as you pull the handles back and in as you return.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-rear-delt"
+      ],
+      "quotes": [
+        {
+          "source": "mo-rear-delt",
+          "text": "Exhale as you pull the handles back; inhale as you return to the start.",
+          "where": "Breathing"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "Census: front. At the end of the rep the arms are out to the sides in line with the shoulders (c4, c5), which reads clearly from the front. The top fault, pulling the chest off the pad (c6), needs a side view and is left to the posture zoom and text.",
+    "equipment": "Pec deck set to reverse fly (composed, census R3): seat, chest pad in front of the lifter, two pivot arms with handles at shoulder height (c1, c2). Floor line.",
+    "start": "Seated upright facing the machine, chest on the pad (c1, c7); arms reaching forward at shoulder height, elbows slightly bent, hands on the handles with a neutral grip (c2, c3, c10).",
+    "end": "Arms opened out to the sides until in line with the shoulders (c4, c5), elbows still slightly bent (c3), chest still on the pad (c6).",
+    "checkpoints": [
+      {
+        "label": "Chest on pad",
+        "what": "The chest stays against the pad for every rep.",
+        "claim": "c6"
+      },
+      {
+        "label": "Soft elbows",
+        "what": "A slight, fixed bend: not straight, not sharply bent.",
+        "claim": "c3"
+      },
+      {
+        "label": "Stop at shoulders",
+        "what": "Arms open until in line with the shoulders, not past the torso.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows bent sharply as the arms open, instead of a slight fixed bend.",
+      "why": "Motra lists bending the elbows too much among the common mistakes and Fitness Volt warns against it. The biggest named mistake, momentum with the chest pulling off the pad (c6), needs a side view, so this is the fault drawn from the front. No source ranks how common it is.",
+      "claim": "c3",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Arms open level with the shoulders",
+        "claim": "c5"
+      },
+      {
+        "text": "Chest stays on the pad",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c14"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Neutral grip (palms facing each other) preferred; overhand also used.",
+    "width": "Set by the machine handles.",
+    "thumb": "Not given by any source read (pull archetype default).",
+    "handContact": "Not given by any source read (pull archetype default).",
+    "wrist": "Not given by any source read (pull archetype default).",
+    "claims": [
+      "c3",
+      "c10"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the machine's handles to the reverse-fly position.",
+      "claim": "c1"
+    },
+    {
+      "step": "Adjust the chest pad and handles so you grip the handles at shoulder height.",
+      "claim": "c2"
+    },
+    {
+      "step": "Sit facing the machine with your chest pressed against the pad.",
+      "claim": "c1"
+    },
+    {
+      "step": "Take the handles with a neutral grip, elbows slightly bent.",
+      "claim": "c10, c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Chest stays on the pad.",
+      "claim": "c6"
+    },
+    {
+      "point": "Sit tall; don't hunch.",
+      "claim": "c7"
+    },
+    {
+      "point": "Neck neutral, eyes straight ahead.",
+      "claim": "c7"
+    },
+    {
+      "point": "Elbows keep a slight, fixed bend.",
+      "claim": "c3"
+    },
+    {
+      "point": "Stop when the arms line up with the shoulders.",
+      "claim": "c5"
+    },
+    {
+      "point": "Don't let the stack rest between reps.",
+      "claim": "c13"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Using momentum and pulling the chest off the pad.",
+      "fix": "Lower the weight and keep your chest on the pad.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Going so heavy the shoulder blades squeeze and the traps take over.",
+      "fix": "Lower the weight.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Hunching the back.",
+      "fix": "Sit upright for the whole set.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "rotator_cuff",
+        "claim": "c10"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c8"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Backs of the shoulders",
+        "means": "The rear delts are doing the work.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Between the shoulder blades, more than the shoulders",
+        "means": "Usually means other upper-back muscles are taking over.",
+        "fix": "Shorten the range; stop at shoulder line.",
+        "claim": "c5",
+        "redFlag": null
+      },
+      {
+        "where": "Sharp pain at the front of the shoulder",
+        "means": "A warning sign.",
+        "fix": "Stop the set.",
+        "claim": "c9",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Sharp pain at the front of the shoulder means stop.",
+      "claim": "c9"
+    },
+    {
+      "risk": "Going too heavy lets the traps take over.",
+      "claim": "c8"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "rdf-chestpad",
+      "kind": "posture",
+      "right": "Chest pressed on the pad as the arms open.",
+      "wrong": "Chest pulled off the pad to swing the weight back.",
+      "claim": "c6"
+    },
+    {
+      "key": "rdf-elbows",
+      "kind": "posture",
+      "right": "Slight, fixed elbow bend as the arms open.",
+      "wrong": "Elbows bent sharply as the arms open.",
+      "claim": "c3"
+    },
+    {
+      "key": "rdf-grip",
+      "kind": "hand",
+      "right": "Neutral grip, palms facing each other (more rear-delt activity); overhand also fine.",
+      "wrong": null,
+      "claim": "c10, c3"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "rotator_cuff"
+    ],
+    "remove": [],
+    "why": "rear_delts primary is sourced (c11). mid_back secondary matches exercises.json (c12: rhomboids, middle trapezius). rotator_cuff (text-only) added: infraspinatus activity was measured on this machine (c10, DATA)."
+  },
+  "anchorSource": "fv-rev-pecdeck",
+  "sources": [
+    {
+      "id": "fv-rev-pecdeck",
+      "url": "https://fitnessvolt.com/reverse-pec-deck-fly/",
+      "title": "Reverse Pec Deck Fly: Target Your Upper Back Muscles Effectively (Fitness Volt)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "mo-rear-delt",
+      "url": "https://motra.com/exercises/machineRearDeltFly",
+      "title": "Machine Rear Delt (Reverse) Fly: Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-rev-fly",
+      "url": "https://www.strengthlog.com/reverse-machine-fly/",
+      "title": "How to Do Reverse Machine Fly: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "schoenfeld-2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23302754/",
+      "title": "Effect of hand position on EMG activity of the posterior shoulder musculature during a horizontal abduction exercise",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": 23302754,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ]
+}

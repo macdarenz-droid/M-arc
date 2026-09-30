@@ -1,0 +1,265 @@
+{
+  "id": "smith_machine_squat",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "golds-smith-squat",
+      "text": "Adjust the bar so it rests just below shoulder level. Step underneath and position it across your upper traps, not on your neck.",
+      "status": "verbatim",
+      "closest": "Adjust the bar so it rests just below shoulder level. Step underneath and position it across your upper traps, not on your neck."
+    },
+    {
+      "claim": "c1",
+      "source": "golds-smith-squat",
+      "text": "Never rest the bar on your neck as it puts direct pressure on a vulnerable area and can increase your risk of injury.",
+      "status": "verbatim",
+      "closest": "Never rest the bar on your neck as it puts direct pressure on a vulnerable area and can increase your risk of injury."
+    },
+    {
+      "claim": "c2",
+      "source": "golds-smith-squat",
+      "text": "Stand with your feet about shoulder-width apart and set them a few inches in front of the bar’s path. This helps protect your knees and keeps your joints in better alignment.",
+      "status": "verbatim",
+      "closest": "Stand with your feet about shoulder-width apart and set them a few inches in front of the bar’s path. This helps protect your knees and keeps your joints in better alignment."
+    },
+    {
+      "claim": "c2",
+      "source": "motra-smith-squat",
+      "text": "Load weight plates, position feet shoulder-width and 3-6 inches forward of the bar, then unrack by twisting.",
+      "status": "verbatim",
+      "closest": "Load weight plates, position feet shoulder-width and 3-6 inches forward of the bar, then unrack by twisting."
+    },
+    {
+      "claim": "c2",
+      "source": "sl-smith-squat",
+      "text": "Step in with your feet directly below the bar, about shoulder width between your feet, and place the bar on your upper back.",
+      "status": "verbatim",
+      "closest": "Step in with your feet directly below the bar, about shoulder width between your feet, and place the bar on your upper back."
+    },
+    {
+      "claim": "c3",
+      "source": "golds-smith-squat",
+      "text": "This creates a vertical squat path that can cause the knees to extend too far forward. Move your feet slightly in front of the bar to maintain balance and reduce joint strain.",
+      "status": "verbatim",
+      "closest": "This creates a vertical squat path that can cause the knees to extend too far forward. Move your feet slightly in front of the bar to maintain balance and reduce joint strain."
+    },
+    {
+      "claim": "c3",
+      "source": "motra-smith-squat",
+      "text": "Feet too close to bar causing forward lean",
+      "status": "verbatim",
+      "closest": "Feet too close to bar causing forward lean"
+    },
+    {
+      "claim": "c4",
+      "source": "abelbeck2002",
+      "text": "Because the user's feet were positioned farther forward (anterior), the moment about the knee decreased whereas the moment about the hip increased.",
+      "status": "verbatim",
+      "closest": "Because the user's feet were positioned farther forward (anterior), the moment about the knee decreased whereas the moment about the hip increased."
+    },
+    {
+      "claim": "c4",
+      "source": "abelbeck2002",
+      "text": "Thus, foot position is a critical factor in hip and knee moments, and therefore in the muscle groups stressed, in a linear motion squat type exercise.",
+      "status": "verbatim",
+      "closest": "Thus, foot position is a critical factor in hip and knee moments, and therefore in the muscle groups stressed, in a linear motion squat type exercise."
+    },
+    {
+      "claim": "c5",
+      "source": "golds-smith-squat",
+      "text": "Grip the bar just outside your shoulders and rotate it forward to unlock. Keep your wrists neutral, elbows under the bar, and chest lifted.",
+      "status": "verbatim",
+      "closest": "Grip the bar just outside your shoulders and rotate it forward to unlock. Keep your wrists neutral, elbows under the bar, and chest lifted."
+    },
+    {
+      "claim": "c6",
+      "source": "golds-smith-squat",
+      "text": "Start by pushing your hips back and bending your knees at the same time. Keep your chest up, spine neutral, and heels grounded. Inhale on the way down. Lower until your thighs are at least parallel to the floor, or deeper if flexibility allows.",
+      "status": "verbatim",
+      "closest": "Start by pushing your hips back and bending your knees at the same time. Keep your chest up, spine neutral, and heels grounded. Inhale on the way down. Lower until your thighs are at least parallel to the floor, or deeper if flexibility allows."
+    },
+    {
+      "claim": "c7",
+      "source": "golds-smith-squat",
+      "text": "Keep your hips and chest rising together—don’t let your hips shoot up first.",
+      "status": "verbatim",
+      "closest": "Keep your hips and chest rising together—don’t let your hips shoot up first."
+    },
+    {
+      "claim": "c7",
+      "source": "golds-smith-squat",
+      "text": "Stop just short of locking out your knees to maintain tension in your legs and reduce stress on your joints.",
+      "status": "verbatim",
+      "closest": "Stop just short of locking out your knees to maintain tension in your legs and reduce stress on your joints."
+    },
+    {
+      "claim": "c8",
+      "source": "golds-smith-squat",
+      "text": "Slide or pin them just below your lowest squat depth, and always test them with a light rep before loading heavy.",
+      "status": "verbatim",
+      "closest": "Slide or pin them just below your lowest squat depth, and always test them with a light rep before loading heavy."
+    },
+    {
+      "claim": "c8",
+      "source": "golds-smith-squat",
+      "text": "Set safety catches just below your squat depth so they catch the bar if you miss a rep, especially when training solo or pushing past your limits.",
+      "status": "verbatim",
+      "closest": "Set safety catches just below your squat depth so they catch the bar if you miss a rep, especially when training solo or pushing past your limits."
+    },
+    {
+      "claim": "c8",
+      "source": "motra-smith-squat",
+      "text": "Always set safety stops before unracking",
+      "status": "verbatim",
+      "closest": "Always set safety stops before unracking"
+    },
+    {
+      "claim": "c9",
+      "source": "golds-smith-squat",
+      "text": "Rotate the bar backward to engage the safety hooks. Listen for the click and double-check that it’s secure on both sides.",
+      "status": "verbatim",
+      "closest": "Rotate the bar backward to engage the safety hooks. Listen for the click and double-check that it’s secure on both sides."
+    },
+    {
+      "claim": "c10",
+      "source": "golds-smith-squat",
+      "text": "Your knees should always track in line with your toes. If they start to cave in, reduce the weight and reset your form.",
+      "status": "verbatim",
+      "closest": "Your knees should always track in line with your toes. If they start to cave in, reduce the weight and reset your form."
+    },
+    {
+      "claim": "c11",
+      "source": "golds-smith-squat",
+      "text": "Poor back posture puts more stress on your lower back. Maintain a neutral spine by engaging your core and keeping your chest pushed forward throughout the movement.",
+      "status": "verbatim",
+      "closest": "Poor back posture puts more stress on your lower back. Maintain a neutral spine by engaging your core and keeping your chest pushed forward throughout the movement."
+    },
+    {
+      "claim": "c12",
+      "source": "golds-smith-squat",
+      "text": "Start with a manageable weight and continue refining your form until each rep feels smooth, steady, and repeatable.",
+      "status": "verbatim",
+      "closest": "Start with a manageable weight and continue refining your form until each rep feels smooth, steady, and repeatable."
+    },
+    {
+      "claim": "c12",
+      "source": "golds-smith-squat",
+      "text": "Prioritize control over load and increase weight only when you can comfortably handle the current weight.",
+      "status": "verbatim",
+      "closest": "Prioritize control over load and increase weight only when you can comfortably handle the current weight."
+    },
+    {
+      "claim": "c13",
+      "source": "acsm2009",
+      "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c15",
+      "source": "sl-smith-squat",
+      "text": "Primary muscles worked: Quads Glutes Adductors Lower Back Secondary muscles worked: Calves",
+      "status": "verbatim",
+      "closest": "Primary muscles worked: Quads Glutes Adductors Lower Back Secondary muscles worked: Calves"
+    },
+    {
+      "claim": "c15",
+      "source": "motra-smith-squat",
+      "text": "Primary Muscle Groups Quads, Glutes Secondary Muscles Hamstrings, Lower Back, Adductors, Abs",
+      "status": "verbatim",
+      "closest": "Primary Muscle Groups Quads, Glutes Secondary Muscles Hamstrings, Lower Back, Adductors, Abs"
+    },
+    {
+      "claim": "c16",
+      "source": "schwanbeck2009",
+      "text": "Electromyographic activity was significantly higher by 34, 26, and 49 in the gastrocnemius, biceps femoris, and vastus medialis, respectively, during the free weight squat compared to the Smith machine squat (p < 0.05).",
+      "status": "verbatim",
+      "closest": "Electromyographic activity was significantly higher by 34, 26, and 49 in the gastrocnemius, biceps femoris, and vastus medialis, respectively, during the free weight squat compared to the Smith machine squat (p < 0.05)."
+    },
+    {
+      "claim": "c16",
+      "source": "schwanbeck2009",
+      "text": "the EMG averaged over all muscles during the free weight squat was 43% higher when compared to the Smith machine squat (p < 0.05).",
+      "status": "verbatim",
+      "closest": "the EMG averaged over all muscles during the free weight squat was 43% higher when compared to the Smith machine squat (p < 0.05)."
+    },
+    {
+      "claim": "c17",
+      "source": "cotterman2005",
+      "text": "The squat 1RM was greater for the SM than the FWs",
+      "status": "verbatim",
+      "closest": "The squat 1RM was greater for the SM than the FWs"
+    },
+    {
+      "claim": "c18",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c18",
+      "source": "macdougall1985",
+      "text": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg",
+      "status": "verbatim",
+      "closest": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg"
+    },
+    {
+      "claim": "c18",
+      "source": "macdougall1985",
+      "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver",
+      "status": "verbatim",
+      "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver"
+    },
+    {
+      "claim": "c19",
+      "source": "golds-smith-squat",
+      "text": "If you feel a sharp pain, stop your workout immediately and seek medical attention.",
+      "status": "verbatim",
+      "closest": "If you feel a sharp pain, stop your workout immediately and seek medical attention."
+    },
+    {
+      "claim": "c20",
+      "source": "golds-smith-squat",
+      "text": "Inhale on the way down.",
+      "status": "verbatim",
+      "closest": "Inhale on the way down."
+    },
+    {
+      "claim": "c20",
+      "source": "golds-smith-squat",
+      "text": "Exhale as you press through your heels to stand tall.",
+      "status": "verbatim",
+      "closest": "Exhale as you press through your heels to stand tall."
+    },
+    {
+      "claim": "c20",
+      "source": "sl-smith-squat",
+      "text": "Inhale and brace your core slightly, and unrack the bar.",
+      "status": "verbatim",
+      "closest": "Inhale and brace your core slightly, and unrack the bar."
+    },
+    {
+      "claim": "c21",
+      "source": "eos-smith",
+      "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+      "status": "verbatim",
+      "closest": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts."
+    }
+  ]
+}

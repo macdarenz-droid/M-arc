@@ -1,0 +1,216 @@
+{
+  "id": "cable_chest_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "bos-cable-press",
+      "text": "Position the dual pulleys of a functional trainer to chest height and select an appropriate weight.",
+      "status": "verbatim",
+      "closest": "Position the dual pulleys of a functional trainer to chest height and select an appropriate weight."
+    },
+    {
+      "claim": "c1",
+      "source": "bos-cable-press",
+      "text": "Stand a foot or two in front of the cables, holding one d-handle in each hand.",
+      "status": "verbatim",
+      "closest": "Stand a foot or two in front of the cables, holding one d-handle in each hand."
+    },
+    {
+      "claim": "c1",
+      "source": "motra-cable-press",
+      "text": "Set cable pulleys at chest height on a crossover machine.",
+      "status": "verbatim",
+      "closest": "Set cable pulleys at chest height on a crossover machine."
+    },
+    {
+      "claim": "c2",
+      "source": "nfpt-cable-press",
+      "text": "Place one foot in front of the other.",
+      "status": "verbatim",
+      "closest": "Place one foot in front of the other."
+    },
+    {
+      "claim": "c2",
+      "source": "nfpt-cable-press",
+      "text": "Keep the feet planted on the floor.",
+      "status": "verbatim",
+      "closest": "Keep the feet planted on the floor."
+    },
+    {
+      "claim": "c2",
+      "source": "bos-cable-press",
+      "text": "You can stagger your stance for better stability.",
+      "status": "verbatim",
+      "closest": "You can stagger your stance for better stability."
+    },
+    {
+      "claim": "c3",
+      "source": "nfpt-cable-press",
+      "text": "Stand in front of the cable machine with the handles just outside shoulder width. We suggest a neutral (hammer) grip as this allows the shoulder to move more freely. Keep your arms just below 90 degrees and press straight ahead.",
+      "status": "verbatim",
+      "closest": "Stand in front of the cable machine with the handles just outside shoulder width. We suggest a neutral (hammer) grip as this allows the shoulder to move more freely. Keep your arms just below 90 degrees and press straight ahead."
+    },
+    {
+      "claim": "c3",
+      "source": "nfpt-cable-press",
+      "text": "Keep the elbows just below 90 degrees and make sure the wrist and elbows line up.",
+      "status": "verbatim",
+      "closest": "Keep the elbows just below 90 degrees and make sure the wrist and elbows line up."
+    },
+    {
+      "claim": "c3",
+      "source": "nfpt-cable-press",
+      "text": "Push through the palms of the hand.",
+      "status": "verbatim",
+      "closest": "Push through the palms of the hand."
+    },
+    {
+      "claim": "c4",
+      "source": "nfpt-cable-press",
+      "text": "Bring the cable handles to roughly where your nipples are. Below the nipples is too low and going near the collar bone is too high.",
+      "status": "verbatim",
+      "closest": "Bring the cable handles to roughly where your nipples are. Below the nipples is too low and going near the collar bone is too high."
+    },
+    {
+      "claim": "c5",
+      "source": "nfpt-cable-press",
+      "text": "Lower the cables towards the chest to about one inch before touching the chest. Do this in a controlled 2-3 second tempo.",
+      "status": "verbatim",
+      "closest": "Lower the cables towards the chest to about one inch before touching the chest. Do this in a controlled 2-3 second tempo."
+    },
+    {
+      "claim": "c5",
+      "source": "nfpt-cable-press",
+      "text": "Push the cables back to the starting position in a semi explosive tempo. Do not completely lock the elbow just extend it so it is almost locked.",
+      "status": "verbatim",
+      "closest": "Push the cables back to the starting position in a semi explosive tempo. Do not completely lock the elbow just extend it so it is almost locked."
+    },
+    {
+      "claim": "c6",
+      "source": "nfpt-cable-press",
+      "text": "Keep a neutral spine; brace abdominals, glutes, and lower body.",
+      "status": "verbatim",
+      "closest": "Keep a neutral spine; brace abdominals, glutes, and lower body."
+    },
+    {
+      "claim": "c6",
+      "source": "bos-cable-press",
+      "text": "Arching your back: This can cause lower back pain and remove the core stability challenge. Keep your spine neutral and brace your abs during the exercise.",
+      "status": "verbatim",
+      "closest": "Arching your back: This can cause lower back pain and remove the core stability challenge. Keep your spine neutral and brace your abs during the exercise."
+    },
+    {
+      "claim": "c7",
+      "source": "nfpt-cable-press",
+      "text": "Shrugging the shoulders.",
+      "status": "verbatim",
+      "closest": "Shrugging the shoulders."
+    },
+    {
+      "claim": "c7",
+      "source": "nfpt-cable-press",
+      "text": "Shifting and jerking your body.",
+      "status": "verbatim",
+      "closest": "Shifting and jerking your body."
+    },
+    {
+      "claim": "c7",
+      "source": "nfpt-cable-press",
+      "text": "Do not grip much wider than shoulder width, it will put stress on the shoulder.",
+      "status": "verbatim",
+      "closest": "Do not grip much wider than shoulder width, it will put stress on the shoulder."
+    },
+    {
+      "claim": "c7",
+      "source": "bos-cable-press",
+      "text": "Flaring your elbows: This can put excessive stress on your shoulder joints and reduce the activation of your chest muscles. Keep your elbows at a 45-degree angle from your body throughout the movement.",
+      "status": "verbatim",
+      "closest": "Flaring your elbows: This can put excessive stress on your shoulder joints and reduce the activation of your chest muscles. Keep your elbows at a 45-degree angle from your body throughout the movement."
+    },
+    {
+      "claim": "c7",
+      "source": "bos-cable-press",
+      "text": "Using too much weight: This can compromise your form and increase the risk of injury.",
+      "status": "verbatim",
+      "closest": "Using too much weight: This can compromise your form and increase the risk of injury."
+    },
+    {
+      "claim": "c8",
+      "source": "nfpt-cable-press",
+      "text": "Do not let your ego dictate the weight you use because your form will suffer.",
+      "status": "verbatim",
+      "closest": "Do not let your ego dictate the weight you use because your form will suffer."
+    },
+    {
+      "claim": "c9",
+      "source": "sl-cable-press",
+      "text": "Primary muscles worked: Chest Secondary muscles worked: Front Deltoid Triceps",
+      "status": "verbatim",
+      "closest": "Primary muscles worked: Chest Secondary muscles worked: Front Deltoid Triceps"
+    },
+    {
+      "claim": "c10",
+      "source": "santana2007",
+      "text": "The 1RM BP performance resulted in an average load (74.2 +/- 17.6 kg) significantly higher than 1RM single-arm SP (26.0 +/- 4.4 kg).",
+      "status": "verbatim",
+      "closest": "The 1RM BP performance resulted in an average load (74.2 +/- 17.6 kg) significantly higher than 1RM single-arm SP (26.0 +/- 4.4 kg)."
+    },
+    {
+      "claim": "c10",
+      "source": "santana2007",
+      "text": "Our EMG findings show that SCP performance is limited by the activation and neuromuscular coordination of torso muscles, not maximal muscle activation of the chest and shoulder muscles.",
+      "status": "verbatim",
+      "closest": "Our EMG findings show that SCP performance is limited by the activation and neuromuscular coordination of torso muscles, not maximal muscle activation of the chest and shoulder muscles."
+    },
+    {
+      "claim": "c10",
+      "source": "santana2007",
+      "text": "The SCP performance also relies on the strength of shoulder and chest musculature; however, it is whole-body stability and equilibrium together with joint stability that present the major limitation in force generation.",
+      "status": "verbatim",
+      "closest": "The SCP performance also relies on the strength of shoulder and chest musculature; however, it is whole-body stability and equilibrium together with joint stability that present the major limitation in force generation."
+    },
+    {
+      "claim": "c11",
+      "source": "calatayud2014",
+      "text": "Pectoralis major, anterior deltoid, and anterior serratus are highly elicited during more stable pushing conditions, whereas abdominal muscles, triceps brachii, posterior deltoid, and upper trapezius are affected in the opposite manner.",
+      "status": "verbatim",
+      "closest": "Pectoralis major, anterior deltoid, and anterior serratus are highly elicited during more stable pushing conditions, whereas abdominal muscles, triceps brachii, posterior deltoid, and upper trapezius are affected in the opposite manner."
+    },
+    {
+      "claim": "c12",
+      "source": "schutz2022",
+      "text": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises.",
+      "status": "verbatim",
+      "closest": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises."
+    },
+    {
+      "claim": "c12",
+      "source": "schutz2022",
+      "text": "as well as during two different cable pulley exercises, namely the cross-over exercise, also known as butterfly, and the pull-over exercise at moderate intensity.",
+      "status": "verbatim",
+      "closest": "as well as during two different cable pulley exercises, namely the cross-over exercise, also known as butterfly, and the pull-over exercise at moderate intensity."
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    }
+  ]
+}

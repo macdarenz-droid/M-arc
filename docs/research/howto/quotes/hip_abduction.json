@@ -1,0 +1,195 @@
+{
+  "id": "hip_abduction",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "mo-hip-abd",
+      "quote": "Sit on the hip abduction machine with back against the pad, feet on footrests, and pads snug against outer thighs. Adjust seat for knees to align with pivot point.",
+      "status": "verbatim",
+      "closest": "Sit on the hip abduction machine with back against the pad, feet on footrests, and pads snug against outer thighs. Adjust seat for knees to align with pivot point."
+    },
+    {
+      "claim": "c2",
+      "source": "mo-hip-abd",
+      "quote": "Grip handles for stability and engage core.",
+      "status": "verbatim",
+      "closest": "Grip handles for stability and engage core."
+    },
+    {
+      "claim": "c2",
+      "source": "sl-hip-abd",
+      "quote": "Adjust the machine to the appropriate settings, sit down, and grip the handles.",
+      "status": "verbatim",
+      "closest": "Adjust the machine to the appropriate settings, sit down, and grip the handles."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-hip-abd",
+      "quote": "Exhale and push legs outward against pads, squeezing outer hips.",
+      "status": "verbatim",
+      "closest": "Exhale and push legs outward against pads, squeezing outer hips."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-hip-abd",
+      "quote": "Continue until legs are comfortably apart.",
+      "status": "verbatim",
+      "closest": "Continue until legs are comfortably apart."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-hip-abd",
+      "quote": "Hold briefly at peak contraction.",
+      "status": "verbatim",
+      "closest": "Hold briefly at peak contraction."
+    },
+    {
+      "claim": "c3",
+      "source": "sl-hip-abd",
+      "quote": "Push the pads out by moving your legs apart as far as possible.",
+      "status": "verbatim",
+      "closest": "Push the pads out by moving your legs apart as far as possible."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-hip-abd",
+      "quote": "Inhale and slowly return legs to start, resisting weight.",
+      "status": "verbatim",
+      "closest": "Inhale and slowly return legs to start, resisting weight."
+    },
+    {
+      "claim": "c4",
+      "source": "mo-hip-abd",
+      "quote": "From knees together to full comfortable hip abduction without overextending.",
+      "status": "verbatim",
+      "closest": "From knees together to full comfortable hip abduction without overextending."
+    },
+    {
+      "claim": "c5",
+      "source": "mo-hip-abd",
+      "quote": "Keep upper body still throughout.",
+      "status": "verbatim",
+      "closest": "Keep upper body still throughout."
+    },
+    {
+      "claim": "c5",
+      "source": "mo-hip-abd",
+      "quote": "Back flat against pad",
+      "status": "verbatim",
+      "closest": "Back flat against pad"
+    },
+    {
+      "claim": "c5",
+      "source": "mo-hip-abd",
+      "quote": "No momentum",
+      "status": "verbatim",
+      "closest": "No momentum"
+    },
+    {
+      "claim": "c6",
+      "source": "mo-hip-abd",
+      "quote": "Adjust machine for proper alignment to avoid hip strain.",
+      "status": "verbatim",
+      "closest": "Adjust machine for proper alignment to avoid hip strain."
+    },
+    {
+      "claim": "c6",
+      "source": "mo-hip-abd",
+      "quote": "Avoid excessive weight that compromises form.",
+      "status": "verbatim",
+      "closest": "Avoid excessive weight that compromises form."
+    },
+    {
+      "claim": "c6",
+      "source": "mo-hip-abd",
+      "quote": "Consult professional if hip pain present.",
+      "status": "verbatim",
+      "closest": "Consult professional if hip pain present."
+    },
+    {
+      "claim": "c7",
+      "source": "mo-hip-abd",
+      "quote": "Exhale during outward push; inhale on controlled return.",
+      "status": "verbatim",
+      "closest": "Exhale during outward push; inhale on controlled return."
+    },
+    {
+      "claim": "c8",
+      "source": "sl-hip-abd",
+      "quote": "The hip abduction machine trains the muscles that abducts (moves apart) your thighs, like your gluteus medius and parts of gluteus maximus.",
+      "status": "verbatim",
+      "closest": "The hip abduction machine trains the muscles that abducts (moves apart) your thighs, like your gluteus medius and parts of gluteus maximus."
+    },
+    {
+      "claim": "c8",
+      "source": "mo-hip-abd",
+      "quote": "Seated machine isolation exercise targeting gluteus medius, minimus, and TFL",
+      "status": "verbatim",
+      "closest": "Seated machine isolation exercise targeting gluteus medius, minimus, and TFL"
+    },
+    {
+      "claim": "c9",
+      "source": "paz-2022",
+      "quote": "GMed activation was greater than TFL in all exercises in both concentric and eccentric phases.",
+      "status": "verbatim",
+      "closest": "GMed activation was greater than TFL in all exercises in both concentric and eccentric phases."
+    },
+    {
+      "claim": "c9",
+      "source": "paz-2022",
+      "quote": "In both concentric and eccentric phases, GMed:TFL ratio was greater in HAM compared to CLAM and SLHA.",
+      "status": "verbatim",
+      "closest": "In both concentric and eccentric phases, GMed:TFL ratio was greater in HAM compared to CLAM and SLHA."
+    },
+    {
+      "claim": "c10",
+      "source": "mo-hip-abd",
+      "quote": "Tempo 2-1-2",
+      "status": "verbatim",
+      "closest": "Tempo 2-1-2"
+    },
+    {
+      "claim": "c11",
+      "source": "acsm-2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Jerking the weight",
+      "status": "verbatim",
+      "closest": "Jerking the weight"
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Arching lower back",
+      "status": "verbatim",
+      "closest": "Arching lower back"
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Using upper body to swing",
+      "status": "verbatim",
+      "closest": "Using upper body to swing"
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Incomplete range of motion",
+      "status": "verbatim",
+      "closest": "Incomplete range of motion"
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Letting pads crash together",
+      "status": "verbatim",
+      "closest": "Letting pads crash together"
+    }
+  ]
+}
