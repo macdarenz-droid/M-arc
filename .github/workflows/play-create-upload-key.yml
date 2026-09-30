@@ -31,7 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -n "$EXISTING" ]; then echo '::error::MARC_UPLOAD_KEYSTORE_B64 already exists. Not creating another upload key.'; exit 1; fi
-          [ -n "$GH_TOKEN" ] || { echo '::error::Secret SECRETS_WRITE_TOKEN is missing.'; exit 1; }
+          [ -n "$GH_TOKEN" ] || { echo '::error::Secret SECRETS_WRITE_TOKEN is missing. Create it first (docs/RELEASE-READINESS.md, Google Play, step 1). Nothing was created.'; exit 1; }
           [ -n "$KEY_EXPORT_PASSPHRASE" ] || { echo '::error::Secret KEY_EXPORT_PASSPHRASE is missing.'; exit 1; }
           gh secret list --repo "$GITHUB_REPOSITORY" >/dev/null || { echo '::error::SECRETS_WRITE_TOKEN cannot manage secrets (needs Secrets: Read and write on this repo).'; exit 1; }
           # Also catch a secret that exists but was hidden from this run.
@@ -53,7 +53,7 @@ jobs:
           PW=$(openssl rand -base64 48 | tr -dc 'A-Za-z0-9' | head -c 32)
           echo "::add-mask::$PW"
           keytool -genkeypair -storetype PKCS12 -keystore "$RUNNER_TEMP/key/marc-upload.p12" -alias upload \
-            -keyalg RSA -keysize 4096 -validity 36500 -dname 'CN=MARC Upload, O=MARC, C=AU' \
+            -keyalg RSA -keysize 4096 -validity 36500 -dname 'CN=MARC Upload, O=MARC' \
             -storepass "$PW" -keypass "$PW" 2>/dev/null
           printf '%s' "$PW" > "$RUNNER_TEMP/key/password.txt"
           keytool -exportcert -rfc -keystore "$RUNNER_TEMP/key/marc-upload.p12" -storepass "$PW" -alias upload \

@@ -78,12 +78,20 @@ Two one-off jobs do the key work. You start each from your phone. GitHub only sh
 **How to start a job:** open the repo on GitHub → **Actions** → pick the job in the list → **Run workflow** → choose the branch under "Use workflow from" → green **Run workflow**. When the run shows a green tick, open it: the key facts are in the summary, and the files are under **Artifacts** at the bottom.
 
 ### 1. Create the upload key (job "Play - create upload key (one-off)")
+- **First, make a short-lived token** so the job can save the key as secrets. The 7-day one from the permanent-key work should already be deleted.
+  1. On GitHub: your photo → **Settings** → **Developer settings** → **Personal access tokens** → **Fine-grained tokens** → **Generate new token**.
+  2. Expiration: 7 days. Repository access: **Only select repositories** → this repo. Repository permissions: **Secrets: Read and write**. Generate, then copy the token.
+  3. Repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**. Name it `SECRETS_WRITE_TOKEN` and paste the token.
+- The job also needs `KEY_EXPORT_PASSPHRASE`, which you already have. If either secret is missing, the job stops at its first step with a clear message and creates nothing.
 - Run it once, on `main`. It stops if the upload key already exists, so it can never replace it.
-- It stores the key as the secrets `MARC_UPLOAD_KEYSTORE_B64` and `MARC_UPLOAD_STORE_PASSWORD`, using the existing `SECRETS_WRITE_TOKEN` and `KEY_EXPORT_PASSPHRASE` secrets.
+- It stores the key as the secrets `MARC_UPLOAD_KEYSTORE_B64` and `MARC_UPLOAD_STORE_PASSWORD`.
 - Download both artifacts:
   - `marc-upload-key-backup-ENCRYPTED`: your backup, locked with your `KEY_EXPORT_PASSPHRASE`. Keep it offline in 2 places, like the permanent key's backup.
-  - `marc-upload-certificate`: the public certificate, `upload_certificate.pem`. Play asks for it as the upload key certificate. It is not secret.
-- The upload key's SHA-256 is in the run summary.
+  - `marc-upload-certificate`: the public certificate, `upload_certificate.pem`. You need it in step 3. It is not secret.
+- Note the upload key's SHA-256 from the run summary.
+- **Afterwards, clean up:**
+  - delete the repo secret `SECRETS_WRITE_TOKEN` (repo → Settings → Secrets and variables → Actions);
+  - delete the token itself (Settings → Developer settings → Fine-grained tokens → the token → Delete).
 
 ### 2. Get Google's encryption public key onto GitHub
 1. Play Console → your app → **Test and release** → **App integrity** → **App signing**. For an app that already has a key: **Change app signing key**. Then pick the option to export and upload a key from a Java keystore, "Provide a copy of your app signing key" or similar. The exact labels may differ.
@@ -97,7 +105,12 @@ Two one-off jobs do the key work. You start each from your phone. GitHub only sh
 - It first checks that the stored key is really `05:66:9A:…:F1:F5`. It stops if not, and nothing is exported.
 - Download the artifact `marc-app-signing-key-for-google-ENCRYPTED`. It is kept for 1 day only.
 - Your phone saves it as a zip that contains another zip. On Android, open **Files** → **Downloads** → tap the download → **Extract**. You get `marc-app-signing-key-for-google.zip`. Do not unzip that one.
-- In the Play Console dialog from step 2, upload `marc-app-signing-key-for-google.zip`. If it asks for the upload key certificate, upload `upload_certificate.pem` from step 1. Save.
+- In the Play Console dialog from step 2, upload `marc-app-signing-key-for-google.zip`.
+- **In the same dialog, also upload `upload_certificate.pem` from step 1** in the upload key certificate field. Play may mark this field optional, but you must fill it. Without it, Play treats the permanent key as the upload key and rejects every bundle CI signs with the upload key. Save.
+- **Check:** App signing should now list two keys:
+  - the app signing key, SHA-256 `05:66:9A:…:F1:F5`;
+  - the upload key, with the SHA-256 from step 1's summary.
+  If only one key shows, tell an agent before uploading any bundle.
 - The zip is encrypted to Google, so only Google Play can open it. Delete it from your phone after the upload.
 
 When Play shows the app signing key as `05:66:9A:…:F1:F5`, ask an agent to delete both one-off job files.
