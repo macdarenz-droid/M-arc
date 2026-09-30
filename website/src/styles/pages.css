@@ -53,3 +53,18 @@
 }
 /* a hairline where a lifted band meets the footer, which is the same surface */
 .lift + .foot { border-top: 1px solid var(--border); }
+
+/* DOC-3: the privacy policy rendered from docs/PRIVACY-POLICY.md into /privacy/. Bulleted lists (the site's lists are unstyled
+   by default), subheads, and links that may break anywhere so a long address never scrolls the page sideways at 390px. */
+.privacy .effective { margin-top: var(--sp-3); color: var(--text2); font-size: 14px; font-variant-numeric: tabular-nums; }
+.policy .prose > * + * { margin-top: var(--sp-4); }
+.policy .prose h2 + * { margin-top: 0; }
+.policy .prose h3 { margin: var(--sp-6) 0 var(--sp-2); }
+.policy .plist { list-style: disc; padding-left: 1.25em; }
+.policy .plist li { color: var(--text); }
+.policy .plist li + li { margin-top: var(--sp-2); }
+.policy .plist li::marker { color: var(--text2); }
+.policy .plink, .privacy .prose .plink { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border-strong); overflow-wrap: anywhere; }
+.policy strong { color: var(--text); font-weight: 600; }
+.privacy .toc { display: flex; flex-wrap: wrap; gap: var(--sp-5); margin-top: var(--sp-5); }
+.privacy .prose h3[id] { scroll-margin-top: 80px; }

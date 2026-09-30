@@ -7,10 +7,12 @@ on:
     branches: ['**']
     paths:
       - 'website/**'
+      - 'docs/PRIVACY-POLICY.md' # DOC-3: /privacy/ is rendered from it, so a policy edit runs the gate
       - '.github/workflows/website.yml'
   pull_request:
     paths:
       - 'website/**'
+      - 'docs/PRIVACY-POLICY.md' # DOC-3: /privacy/ is rendered from it, so a policy edit runs the gate
       - '.github/workflows/website.yml'
   workflow_dispatch:
     inputs:
