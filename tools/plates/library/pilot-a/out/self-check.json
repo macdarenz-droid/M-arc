@@ -1,10 +1,25 @@
 {
- "pageSha": "03fa6e0a5d6f629bba9313f7fe7059539af89e414ac3e0be988bafd9613afbea",
- "pageBytes": 1832080,
- "sheetSha": "927e08c353015a2d9c915e6addc5fadcd0087ba27d4662e34e366964ef2ea88a",
- "sheetBytes": 3923897,
+ "pageSha": "0e35c9940ea753bbe7498d807321f91783376d05ece8182abb9dee52ba01366d",
+ "pageBytes": 1823892,
+ "sheetSha": "69da43ae5e158aab09fe6f60f76487c294b6cd1e68f9f61a351701dae3bf54bc",
+ "sheetBytes": 3922798,
  "warnings": "",
  "plates": [
+  {
+   "id": "barbell_row",
+   "tier": "A",
+   "ok": true,
+   "flags": [
+    "F2"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.096,
+    "longestLeader": 43.8,
+    "boxed": 0
+   },
+   "issues": []
+  },
   {
    "id": "single_leg_romanian_deadlift",
    "tier": "A",
@@ -15,7 +30,7 @@
    "measures": {
     "pxPerM": 146.29,
     "coverage": 0.214,
-    "longestLeader": 72.8,
+    "longestLeader": 70.1,
     "boxed": 1
    },
    "issues": []
@@ -47,21 +62,6 @@
     "pxPerM": 146.29,
     "coverage": 0.2,
     "longestLeader": 27,
-    "boxed": 0
-   },
-   "issues": []
-  },
-  {
-   "id": "dumbbell_fly",
-   "tier": "A",
-   "ok": true,
-   "flags": [
-    "F6"
-   ],
-   "measures": {
-    "pxPerM": 146.29,
-    "coverage": 0.124,
-    "longestLeader": 63.9,
     "boxed": 0
    },
    "issues": []
@@ -101,7 +101,7 @@
     "pxPerM": 146.29,
     "coverage": 0.121,
     "longestLeader": 24.7,
-    "boxed": 0
+    "boxed": 1
    },
    "issues": []
   },
@@ -119,19 +119,6 @@
    "issues": []
   },
   {
-   "id": "barbell_row",
-   "tier": "A",
-   "ok": true,
-   "flags": [],
-   "measures": {
-    "pxPerM": 146.29,
-    "coverage": 0.101,
-    "longestLeader": 46.2,
-    "boxed": 0
-   },
-   "issues": []
-  },
-  {
    "id": "romanian_deadlift",
    "tier": "A",
    "ok": true,
@@ -145,6 +132,19 @@
    "issues": []
   },
   {
+   "id": "dumbbell_fly",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.17,
+    "longestLeader": 45.1,
+    "boxed": 2
+   },
+   "issues": []
+  },
+  {
    "id": "upright_row",
    "tier": "B",
    "ok": true,
@@ -153,9 +153,9 @@
    ],
    "measures": {
     "pxPerM": 146.29,
-    "coverage": 0.258,
-    "longestLeader": 50.7,
-    "boxed": 0
+    "coverage": 0.259,
+    "longestLeader": 62.2,
+    "boxed": 1
    },
    "issues": []
   },
@@ -181,9 +181,9 @@
    "flags": [],
    "measures": {
     "pxPerM": 146.29,
-    "coverage": 0.19,
-    "longestLeader": 62.8,
-    "boxed": 2
+    "coverage": 0.207,
+    "longestLeader": 56.7,
+    "boxed": 3
    },
    "issues": []
   },
@@ -227,9 +227,9 @@
    ],
    "measures": {
     "pxPerM": 146.29,
-    "coverage": 0.095,
-    "longestLeader": 67,
-    "boxed": 0
+    "coverage": 0.096,
+    "longestLeader": 42.2,
+    "boxed": 1
    },
    "issues": []
   },
@@ -258,8 +258,8 @@
    "measures": {
     "pxPerM": 146.29,
     "coverage": 0.113,
-    "longestLeader": 42.8,
-    "boxed": 0
+    "longestLeader": 46.1,
+    "boxed": 1
    },
    "issues": []
   },
