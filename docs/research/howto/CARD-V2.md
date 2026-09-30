@@ -68,3 +68,5 @@ The rules:
 - `"claim"` on any line is one claim id (`"c2"`), a list when the line uses words from several claims (`["c2","c5"]`), or `"inherit:<n>"` when the line restates the child's `inherit[n]` field. Every word of a line comes from the claims it cites.
 - A difference card's parent must be a verified card on `claude/libht-research`, or an approved golden exercise. Parent picks follow the library architecture (6.1/6.2), which supersedes content.md appendix A (ruling LR-7).
 - Rulings on verifier open items: `RULINGS.md` in this folder.
+- A source may carry an optional `archiveUrl` (a web.archive.org copy) when the live page no longer answers; `checked` then refers to the archived copy (ruling LR-25).
+- A zoom's `wrong` may be `null` when no wrong position is sourced; the sheet then shows only the right position (LR-25).
