@@ -5,7 +5,7 @@ Lane L4 · Sonnet · S-M · merge slot 10
 - **id:** HT-9
 - **outcome:** The text sections below the feel map, drawn exactly like golden B:
   - numbered setup steps (3 shown, then "All steps");
-  - the exercise's risks, followed by the one shared red-flag line and the disclaimer;
+  - the exercise's risks, followed by the shared red-flag blocks listed in its `riskFlags` (golden B) and the disclaimer;
   - collapsed sources, with evidence tags.
 - **base:** HT-3's pushed head, then main after HT-8 merges.
 - **depends_on:** HT-3, HT-5, S-2.
@@ -26,7 +26,7 @@ Lane L4 · Sonnet · S-M · merge slot 10
     - "All steps" and "Show 2 more" are buttons with aria-expanded, read in full, ≥ 44×44;
     - sources open in the system browser only on tap, with no fetch (C17);
     - the evidence tags are shown while `SHOW_EVIDENCE` is true and hidden when it is false (a unit test on the section's pure render data).
-  - **HT9-A3:** exactly one RED_FLAG node and one DISCLAIMER node per sheet, both from `archetypes.ts`. The PR flags the DISCLAIMER wording for the owner (O2).
+  - **HT9-A3:** one red-flag node per block in the exercise's `riskFlags`, in golden B's order, and exactly one DISCLAIMER node per sheet, all from `archetypes.ts`. The DISCLAIMER is the owner's line "General guidance, not medical advice. If something hurts, stop and get it checked." (O2 closed 2026-09-30).
     - Failure path: a second copy of the red-flag text in a section fails.
   - **HT9-A4:** C7/C8 on the rendered text: a gate check that on-screen copy equals content strings (no hand-typed copy in the TSX).
   - **HT9-A5:** after scrolling and expanding everything, the HT-3 L3 plate compare still passes.

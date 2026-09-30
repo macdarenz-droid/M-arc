@@ -402,7 +402,7 @@ Every card's acceptance includes **G0** (2.7).
 
 ### 4.2 Queued after M1 (cut when M1 is merged; not part of the 11 cards)
 - **HT-11, size:** byte-preserving delta encoding of the mistake SVG against the normal one, plus crop reuse. The target is ≥ 35 % smaller per base chunk, and L2 checks the decoded string with `===`. It is required before any batch takes the plate count past about 40. Opus, M.
-- **HT-12, presses batch (after O4):** 26 push exercises. Each gets a new engine spec, a contact sheet that the owner approves, and a `GOLDEN.json` entry. Draft slugs are not in `HOWTO_IDS`, so no button shows for them. C6 coverage and C15 review stamps apply. Opus, L.
+- **HT-12 is replaced** (2026-09-30) by the library plan, `docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md`: the owner asked for How-to on every library exercise before the Play Store upload. HT-11 stays and is scheduled there.
 
 ---
 
@@ -410,9 +410,9 @@ Every card's acceptance includes **G0** (2.7).
 | # | Item | How the plan proceeds meanwhile |
 |---|---|---|
 | O1 | Paid physio/coach review before the content ships widely | Build and merge to main (the owner's own APK). Publishing is owner-only anyway. `reviews.json` + C15 stamps are ready (HT-4 stub). No release to other users until O1 is answered |
-| O2 | Wording of the "not medical advice" line | Use the architecture's recommendation, "This is coaching guidance, not medical advice.", as one constant `DISCLAIMER` in `archetypes.ts`, **flagged** in the HT-9 PR. His answer is a one-line change |
+| O2 | Wording of the "not medical advice" line | **Closed 2026-09-30.** The owner chose "General guidance, not medical advice. If something hurts, stop and get it checked.". It is the one constant `DISCLAIMER` (golden B `howto/shared.mjs`, then `archetypes.ts`) |
 | O3 | Show evidence labels | Recommended yes; built behind `SHOW_EVIDENCE = true`. His answer flips one const |
-| O4 | Next exercise batch | Recommended: the 26 presses (HT-12, queued). Nothing starts before he answers |
+| O4 | Next exercise batch | **Answered 2026-09-30:** the whole library, before the Play Store upload (`docs/howto/library/`) |
 | O5 | The finished layer mockup (golden B) | The supervisor pins it after a fresh review. The owner gets the contact sheet and then the APK after each layer merge. Layer merges do not wait for his reply, because he approved the design and listed exactly these layers as missing. If he wants a change, it is a deliberate golden-B update (2.8) |
 | O6 | The "already seen" note (auto-open the hand zoom once) | Not built: it is new stored data. v1 works without it |
 | O7 | Midnight "Tells" labels at 4.12:1 on the sheet (under AA 4.5:1 for 11 px text) | Part of the approved plate, so it is unchanged. Offer it as a possible deliberate golden update. It is never fixed silently |
@@ -441,7 +441,7 @@ Every card's acceptance includes **G0** (2.7).
 | R14 | Gate time grows (~300 pixel pairs) | Measured in the HT-3 PR, with a budget set there. If it is exceeded, HT-10 shards the matrix by theme across the two existing gate jobs (the supervisor wires the env var). States are never dropped |
 | R15 | Content wrong or unsafe before professional review | Verified research cards; C7/C8 checks; one RED_FLAG and one DISCLAIMER; O1 keeps it on the owner's APK only |
 | R16 | The WebView cost of the 284-element mistake plate | Inserted lazily; a recorded device check; changing the SVG would be a golden update, never a silent simplification |
-| R17 | The gate's negative control (bench press) gains content in the presses batch | A5 pins `lib_barbell_bench_press` as the control. HT-12 must switch it deliberately, in the same PR |
+| R17 | The gate's negative control (bench press) gains content in a library batch | Every "no How-to" control reads HT-3's shared helper (the first library id with no How-to), never a literal id (supervisor 2026-09-30) |
 | R18 | Unescaped overlay text | Repo-static content; the generator allows only `<br>` in overlay text (unit test); L2 still compares with the golden |
 | R19 | The generator (.mjs) is not typechecked | Output ends in `satisfies BuiltHowTo`; unit tests cover the generator |
 | R20 | A fontsource update moves glyphs on both sides, so L3 stays green while plates drift | L0 pins the woff2 sha256 `3100e775…4c62`; an update is a golden update |

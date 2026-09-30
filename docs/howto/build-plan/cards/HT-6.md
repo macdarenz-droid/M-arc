@@ -47,7 +47,7 @@ Lane L1 · Opus · L (hard: design note on the PR first) · merge slot 7
   - **HT6-A8 (push hint on the Train card; critic fix 8):** the card shows one `p.hint.muted` whose text is exactly `HOWTO_HINTS[ex.id]`, for exercises with an approved How-to and a push archetype.
     - `hint.test` (source scan): the hint text appears in no `.tsx` file; Train.tsx renders only `HOWTO_HINTS[ex.id]` behind `ex && !ex.custom &&`.
     - Gate, Silent Black and Paper: the chest-press card shows "Push with the heel of your hand." exactly once.
-    - Failure paths (each must show no hint): a non-push exercise with a How-to (lat pulldown); an exercise without a How-to (the bench-press control); a seeded custom exercise. Dropping `!ex.custom` fails.
+    - Failure paths (each must show no hint): a non-push exercise with a How-to (lat pulldown); an exercise without a How-to (the shared no-How-to control from HT-3's helper, never a literal id); a seeded custom exercise. Dropping `!ex.custom` fails.
   - **G0.**
 - **design_reference:** the golden-B hand states; GA 2.2 (S2) and 5.1; D-HT2 (no Heel-of-palm callout, no ring or hotspots on the plate).
 - **connectivity:** common.

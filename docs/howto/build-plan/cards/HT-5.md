@@ -24,7 +24,10 @@ Lane C · Sonnet · S-M · merge slot 6 (after HT-3b)
   - **HT5-A2 (checks):** C1-C4, C6-C8, C16 (data) and C17 pass on the generated content of all 8. Every source carries `access` and `checked` (no nulls). A failure here is a golden-B defect: report it to the supervisor for a golden-B update; never patch the app copy.
   - **HT5-A3 (plates unchanged):** after regeneration, L2 (HT2-A1) still passes for every plate string, and every header is fresh.
   - **HT5-A4 (hints; critic fix 8):** `ids.ts` exports `HOWTO_HINTS`, holding golden B's `handling.cue` for push-archetype exercises with an approved plate (the chest press today: "Push with the heel of your hand."), and nothing for others. `ids.ts` stays ≤ 2,048 B with the hints counted. The main content probe exempts exactly the `ids.ts` exports.
-  - **HT5-A5 (one red flag, one disclaimer):** `archetypes.ts` is generated from golden B's shared module: one `RED_FLAG`, and `DISCLAIMER` exactly "This is coaching guidance, not medical advice." The PR flags the wording for the owner (O2). No content row has its own red-flag wording (C8).
+  - **HT5-A5 (shared red flags, one disclaimer):** `archetypes.ts` is generated from golden B's shared module (`howto/shared.mjs` at the pinned golden B):
+    - the red-flag blocks `RED_FLAG` (wrist), `RED_FLAG_SHOULDER`, `RED_FLAG_KNEE` and `RED_FLAG_ELBOW`, byte for byte;
+    - `DISCLAIMER` exactly the owner's line "General guidance, not medical advice. If something hurts, stop and get it checked." (owner decision 2026-09-30; O2 closed).
+    No content row has its own red-flag wording (C8).
   - **HT5-A6 (sizes):** each base chunk is ≤ 150 KB raw / 36 KB gz (measured list), and the HT-3b footprint probe stays green.
   - **G0.**
 - **design_reference:** golden B; GA section 4 and appendix A.

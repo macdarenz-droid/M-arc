@@ -42,3 +42,5 @@ Every card below says "common" for a field when this text applies.
 - **Golden B is the only reference for the new layers.** A layer card never ships a text, timing or behaviour that golden B does not have, and has no "declared differences" list. A needed change goes into golden B first (plan 2.8), then the card compares `===` / L3 against the new pin.
 - **Plan:** `htplan/HOWTO-BUILD-PLAN.md`, with sections 2.7 (fidelity), 2.9 (budgets) and 3 (D-HT1).
 - **Merge order:** HT-1 → HT-2 → HT-4 → HT-3 → HT-3b → HT-5 → HT-6 → HT-7 → HT-8 → HT-9 → HT-10.
+
+**Controls (supervisor, 2026-09-30):** any "no How-to" control reads the shared helper from HT-3 (the first library id in `exercises.json` order with no How-to), never a literal exercise id. The library plan ships more exercises, and a literal control would turn red.
