@@ -1,0 +1,734 @@
+{
+  "id": "smith_machine_squat",
+  "libId": "lib_smith_machine_squat",
+  "name": "Smith Machine Squat",
+  "family": "SQUAT",
+  "tier": "A",
+  "archetype": {
+    "hand": "on-body",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the bar just below shoulder level and rest it across the upper traps, never on the neck.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Adjust the bar so it rests just below shoulder level. Step underneath and position it across your upper traps, not on your neck.",
+          "where": "Step 1"
+        },
+        {
+          "source": "golds-smith-squat",
+          "text": "Never rest the bar on your neck as it puts direct pressure on a vulnerable area and can increase your risk of injury.",
+          "where": "Step 1, Safety Note"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Feet about shoulder-width apart and a few inches (Motra: 3-6 inches) in front of the bar's path. StrengthLog instead puts the feet directly below the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat",
+        "motra-smith-squat",
+        "sl-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Stand with your feet about shoulder-width apart and set them a few inches in front of the bar’s path. This helps protect your knees and keeps your joints in better alignment.",
+          "where": "Step 2"
+        },
+        {
+          "source": "motra-smith-squat",
+          "text": "Load weight plates, position feet shoulder-width and 3-6 inches forward of the bar, then unrack by twisting.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-smith-squat",
+          "text": "Step in with your feet directly below the bar, about shoulder width between your feet, and place the bar on your upper back.",
+          "where": "How to Do Smith Machine Squats"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Feet directly under the bar is named as a common mistake: it lets the knees travel too far forward (Motra: it causes a forward lean). Moving the feet slightly in front of the bar helps balance and reduces joint strain.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat",
+        "motra-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "This creates a vertical squat path that can cause the knees to extend too far forward. Move your feet slightly in front of the bar to maintain balance and reduce joint strain.",
+          "where": "Common Mistakes: Placing Feet Directly Under the Bar"
+        },
+        {
+          "source": "motra-smith-squat",
+          "text": "Feet too close to bar causing forward lean",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "In a model of a fixed-path squat, placing the feet further forward lowered the load about the knee and raised it about the hip, so foot position decides which muscles work.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "abelbeck2002"
+      ],
+      "quotes": [
+        {
+          "source": "abelbeck2002",
+          "text": "Because the user's feet were positioned farther forward (anterior), the moment about the knee decreased whereas the moment about the hip increased.",
+          "where": "abstract"
+        },
+        {
+          "source": "abelbeck2002",
+          "text": "Thus, foot position is a critical factor in hip and knee moments, and therefore in the muscle groups stressed, in a linear motion squat type exercise.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Grip the bar just outside the shoulders and rotate it forward to unhook it; wrists neutral, elbows under the bar, chest lifted.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Grip the bar just outside your shoulders and rotate it forward to unlock. Keep your wrists neutral, elbows under the bar, and chest lifted.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Push the hips back and bend the knees together, chest up, spine neutral, heels down; lower until the thighs are at least parallel to the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Start by pushing your hips back and bending your knees at the same time. Keep your chest up, spine neutral, and heels grounded. Inhale on the way down. Lower until your thighs are at least parallel to the floor, or deeper if flexibility allows.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Drive up with hips and chest rising together, and stop just short of locking the knees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Keep your hips and chest rising together—don’t let your hips shoot up first.",
+          "where": "Step 5"
+        },
+        {
+          "source": "golds-smith-squat",
+          "text": "Stop just short of locking out your knees to maintain tension in your legs and reduce stress on your joints.",
+          "where": "Step 5"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "A way out: set the safety stops just below your squat depth before unracking, and test them with a light rep before loading heavy.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat",
+        "motra-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Slide or pin them just below your lowest squat depth, and always test them with a light rep before loading heavy.",
+          "where": "Form Tips: Set the Safety Stops"
+        },
+        {
+          "source": "golds-smith-squat",
+          "text": "Set safety catches just below your squat depth so they catch the bar if you miss a rep, especially when training solo or pushing past your limits.",
+          "where": "Safety Tips: Use Safety Catches When Available"
+        },
+        {
+          "source": "motra-smith-squat",
+          "text": "Always set safety stops before unracking",
+          "where": "Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Rerack by rotating the bar backward onto the hooks and check it is secure on both sides before letting go.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Rotate the bar backward to engage the safety hooks. Listen for the click and double-check that it’s secure on both sides.",
+          "where": "Step 6"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Knees track in line with the toes; if they cave in, reduce the weight and reset.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Your knees should always track in line with your toes. If they start to cave in, reduce the weight and reset your form.",
+          "where": "Form Tips: Watch Your Knees"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Overarching or rounding the back puts more stress on the lower back; keep a neutral spine by bracing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Poor back posture puts more stress on your lower back. Maintain a neutral spine by engaging your core and keeping your chest pushed forward throughout the movement.",
+          "where": "Common Mistakes: Overarching or Rounding the Back"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Start with a manageable weight and add load only when the current weight is handled comfortably.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Start with a manageable weight and continue refining your form until each rep feels smooth, steady, and repeatable.",
+          "where": "Form Tips: Prioritize Correct Technique"
+        },
+        {
+          "source": "golds-smith-squat",
+          "text": "Prioritize control over load and increase weight only when you can comfortably handle the current weight.",
+          "where": "Common Mistakes: Using Too Much Weight Without Proper Form"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Muscles: quads and glutes are the main movers in both guides; adductors and lower back are listed as main movers (StrengthLog) or helpers (Motra); Motra also lists the hamstrings as helpers.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-smith-squat",
+        "motra-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "sl-smith-squat",
+          "text": "Primary muscles worked: Quads Glutes Adductors Lower Back Secondary muscles worked: Calves",
+          "where": "Muscles Worked (list items)"
+        },
+        {
+          "source": "motra-smith-squat",
+          "text": "Primary Muscle Groups Quads, Glutes Secondary Muscles Hamstrings, Lower Back, Adductors, Abs",
+          "where": "About Exercise"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "In 6 people, the free-weight squat gave higher calf, hamstring and inner-quad activity than the Smith squat, and 43% more activity averaged over all muscles.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "schwanbeck2009"
+      ],
+      "quotes": [
+        {
+          "source": "schwanbeck2009",
+          "text": "Electromyographic activity was significantly higher by 34, 26, and 49 in the gastrocnemius, biceps femoris, and vastus medialis, respectively, during the free weight squat compared to the Smith machine squat (p < 0.05).",
+          "where": "abstract"
+        },
+        {
+          "source": "schwanbeck2009",
+          "text": "the EMG averaged over all muscles during the free weight squat was 43% higher when compared to the Smith machine squat (p < 0.05).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "People squatted more on the Smith machine than with free weights (one-rep max), so free-bar loads do not carry straight over.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "cotterman2005"
+      ],
+      "quotes": [
+        {
+          "source": "cotterman2005",
+          "text": "The squat 1RM was greater for the SM than the FWs",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high; the highest peaks were in the double-leg press (a heavy two-leg lift, not the squat).",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "A sudden sharp pain means stop the workout at once and get it checked.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "If you feel a sharp pain, stop your workout immediately and seek medical attention.",
+          "where": "Safety Tips: Pay Attention to Pain vs. Muscle Burn"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Breathe in on the way down and out as you press up through the heels; brace the core.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "golds-smith-squat",
+        "sl-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "golds-smith-squat",
+          "text": "Exhale as you press through your heels to stand tall.",
+          "where": "Step 5"
+        },
+        {
+          "source": "sl-smith-squat",
+          "text": "Inhale and brace your core slightly, and unrack the bar.",
+          "where": "How to Do Smith Machine Squats"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "golds-smith-squat",
+      "url": "https://www.goldsgym.com/blog/how-to-do-smith-machine-squats/",
+      "title": "How to Do Smith Machine Squats Safely and Effectively (Gold's Gym)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "motra-smith-squat",
+      "url": "https://www.motra.com/exercises/smithMachineSquat",
+      "title": "Smith Machine Squat - Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-smith-squat",
+      "url": "https://www.strengthlog.com/smith-machine-squat/",
+      "title": "How to Do Smith Machine Squat: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "abelbeck2002",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12423179/",
+      "title": "Biomechanical model and evaluation of a linear motion squat type exercise",
+      "kind": "peer-reviewed",
+      "year": 2002,
+      "pmid": "12423179",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "schwanbeck2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19855308/",
+      "title": "A comparison of free weight squat to Smith machine squat using electromyography",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": "19855308",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "cotterman2005",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15705030/",
+      "title": "Comparison of muscle force production using the Smith machine and free weights for bench press and squat exercises",
+      "kind": "peer-reviewed",
+      "year": 2005,
+      "pmid": "15705030",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": "3980383",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side (D mode from the approved back squat); the feet ahead of the bar, the depth and the stop height read in the sagittal plane (c2, c6, c8). Knees caving in (c10) needs a front view and is left to the posture checkpoints.",
+    "equipment": "Smith machine (rails, bar, hooks); bar across the upper traps (c1); safety stops just below squat depth (c8); feet a few inches ahead of the bar's path (c2); floor line.",
+    "start": "Standing tall, bar on the upper traps (c1), hands just outside the shoulders, elbows under the bar, chest lifted (c5), feet shoulder-width and a few inches ahead of the bar (c2).",
+    "end": "Hips back and knees bent together (c6) until the thighs are at least parallel to the floor (c6); chest up, spine neutral, heels down (c6); bar just above the stops (c8).",
+    "checkpoints": [
+      {
+        "label": "Feet ahead",
+        "what": "Feet a few inches in front of the bar's path, not directly under it.",
+        "claim": "c2"
+      },
+      {
+        "label": "Thighs parallel",
+        "what": "Squat until the thighs are at least parallel to the floor.",
+        "claim": "c6"
+      },
+      {
+        "label": "Stops set",
+        "what": "Safety stops just below your squat depth, set before unracking.",
+        "claim": "c8"
+      }
+    ],
+    "mistake": {
+      "what": "Feet directly under the bar, so the knees travel far forward.",
+      "why": "Gold's Gym lists it first among Smith squat mistakes and Motra names it too; a model of a fixed-path squat shows foot position shifts load between knee and hip (c4). StrengthLog teaches feet under the bar, so sources disagree. How often it happens is not measured.",
+      "claim": "c3",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Heels stay down",
+        "claim": "c6"
+      },
+      {
+        "text": "Hips and chest rise together",
+        "claim": "c7"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c14"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand on the bar across the upper traps (c5).",
+    "width": "Just outside the shoulders (c5).",
+    "thumb": "Not given by any Smith squat source read (on-body archetype default).",
+    "handContact": "Not given by any Smith squat source read (on-body archetype default).",
+    "wrist": "Neutral (c5).",
+    "claims": [
+      "c5"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bar just below shoulder level.",
+      "claim": "c1"
+    },
+    {
+      "step": "Set the safety stops just below your squat depth and test them with a light rep.",
+      "claim": "c8"
+    },
+    {
+      "step": "Step under; bar across the upper traps, not the neck.",
+      "claim": "c1"
+    },
+    {
+      "step": "Feet shoulder-width, a few inches in front of the bar.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hands just outside the shoulders; brace and rotate the bar off the hooks.",
+      "claim": "c5, c20"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Bar on the upper traps, never the neck.",
+      "claim": "c1"
+    },
+    {
+      "point": "Elbows under the bar, wrists neutral, chest lifted.",
+      "claim": "c5"
+    },
+    {
+      "point": "Spine neutral, not rounded or over-arched.",
+      "claim": "c11"
+    },
+    {
+      "point": "Knees track in line with the toes.",
+      "claim": "c10"
+    },
+    {
+      "point": "Heels stay down.",
+      "claim": "c6"
+    },
+    {
+      "point": "Stop just short of locking the knees.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Feet directly under the bar.",
+      "fix": "Move your feet a few inches in front of the bar.",
+      "claim": "c3, c2"
+    },
+    {
+      "mistake": "Knees caving in.",
+      "fix": "Reduce the weight and reset; knees in line with the toes.",
+      "claim": "c10"
+    },
+    {
+      "mistake": "Rounding or over-arching the back.",
+      "fix": "Brace your core and keep the chest forward; use a manageable weight.",
+      "claim": "c11, c12"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c15"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c15"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "adductors",
+        "claim": "c15"
+      },
+      {
+        "muscleId": "hamstrings",
+        "claim": "c15"
+      },
+      {
+        "muscleId": "lower_back",
+        "claim": "c15"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the thighs and the glutes",
+        "means": "The target muscles are working.",
+        "fix": null,
+        "claim": "c15",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back working more than the legs",
+        "means": "Usually the back is rounding or over-arching.",
+        "fix": "Brace and keep the spine neutral; use a lighter weight.",
+        "claim": "c11, c12",
+        "redFlag": "back"
+      },
+      {
+        "where": "Sharp pain in the knee",
+        "means": "Not a normal training feeling.",
+        "fix": "Stop the workout and get it checked.",
+        "claim": "c19",
+        "redFlag": "knee"
+      },
+      {
+        "where": "Pressure on the neck",
+        "means": "Usually the bar is sitting on the neck, not the upper traps.",
+        "fix": "Rack it and move the bar down onto the upper traps.",
+        "claim": "c1, c9",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Holding your breath hard on heavy two-leg lifts sends blood pressure very high.",
+      "claim": "c18"
+    },
+    {
+      "risk": "Poor back posture puts more stress on the lower back; set the stops so a missed rep lands on them.",
+      "claim": "c11, c8"
+    },
+    {
+      "risk": "Smith loads differ from free-bar loads; add weight in small steps.",
+      "claim": "c17, c13"
+    }
+  ],
+  "redFlags": [
+    "back",
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "smith-squat-hands",
+      "kind": "hand",
+      "right": "Hands just outside the shoulders, wrists neutral, elbows under the bar.",
+      "wrong": "Wrists bent back under the bar (on-body waiter-tray).",
+      "claim": "c5"
+    },
+    {
+      "key": "smith-squat-feet",
+      "kind": "posture",
+      "right": "Feet a few inches in front of the bar, heels down.",
+      "wrong": "Feet directly under the bar, knees far forward.",
+      "claim": "c2, c3"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "adductors",
+      "lower_back"
+    ],
+    "remove": [],
+    "why": "exercises.json: quads primary; glutes and hamstrings secondary. Both technique guides (c15) list glutes with quads as main movers, so glutes are proposed as primary. Adductors and lower back are listed by both guides (main or helper), so they are added as secondary. Hamstrings stay secondary (Motra helper; c16 measured them). c4 shows foot position moves load between knee and hip."
+  },
+  "anchorSource": "golds-smith-squat"
+}

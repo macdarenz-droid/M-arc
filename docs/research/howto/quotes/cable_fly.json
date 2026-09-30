@@ -1,0 +1,153 @@
+{
+  "id": "cable_fly",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-standing-fly",
+      "text": "Place two cable pulleys slightly above the shoulder height with handle attachments",
+      "status": "verbatim",
+      "closest": "Place two cable pulleys slightly above the shoulder height with handle attachments"
+    },
+    {
+      "claim": "c1",
+      "source": "puregym-cable-fly",
+      "text": "Set the cable pulley machine so that the cables are at shoulder height with a single handle attachment on each.",
+      "status": "verbatim",
+      "closest": "Set the cable pulley machine so that the cables are at shoulder height with a single handle attachment on each."
+    },
+    {
+      "claim": "c2",
+      "source": "sl-cable-fly",
+      "text": "Make sure to stand at the same distance from each cable pulley. You want to be centered between them and then take a few steps forward so that the pulleys are slightly behind you.",
+      "status": "verbatim",
+      "closest": "Make sure to stand at the same distance from each cable pulley. You want to be centered between them and then take a few steps forward so that the pulleys are slightly behind you."
+    },
+    {
+      "claim": "c3",
+      "source": "sl-cable-fly",
+      "text": "Some lifters like to stand with one foot in front of the other, while others want to stand in a parallel stance. Regardless, make sure to brace your core and have a slight tension in your legs and glutes to get a stable position.",
+      "status": "verbatim",
+      "closest": "Some lifters like to stand with one foot in front of the other, while others want to stand in a parallel stance. Regardless, make sure to brace your core and have a slight tension in your legs and glutes to get a stable position."
+    },
+    {
+      "claim": "c3",
+      "source": "puregym-cable-fly",
+      "text": "Facing away from the cable machine, grip each handle and take a step forward with one leg into a wide staggered stance.",
+      "status": "verbatim",
+      "closest": "Facing away from the cable machine, grip each handle and take a step forward with one leg into a wide staggered stance."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-cable-fly",
+      "text": "Keep your elbows slightly bent, and hold them in the same position during the entire movement. You want the movement to occur in your shoulder joints by contracting your chest muscles, and not in the elbows. Keep elbows and wrists at the same angle during the entire movement.",
+      "status": "verbatim",
+      "closest": "Keep your elbows slightly bent, and hold them in the same position during the entire movement. You want the movement to occur in your shoulder joints by contracting your chest muscles, and not in the elbows. Keep elbows and wrists at the same angle during the entire movement."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-standing-fly",
+      "text": "With the elbows slightly bent, slowly bring both hands together in front of the body. When the hands are together, pause for one second before slowly returning the arms to the starting position.",
+      "status": "verbatim",
+      "closest": "With the elbows slightly bent, slowly bring both hands together in front of the body. When the hands are together, pause for one second before slowly returning the arms to the starting position."
+    },
+    {
+      "claim": "c6",
+      "source": "sl-cable-fly",
+      "text": "If you add too much weight, you’ll have to include other muscles to do the movement or start to swing and thereby lose form.",
+      "status": "verbatim",
+      "closest": "If you add too much weight, you’ll have to include other muscles to do the movement or start to swing and thereby lose form."
+    },
+    {
+      "claim": "c6",
+      "source": "sl-cable-fly",
+      "text": "Don’t turn the chest fly into a chest press by bending your elbows more than just slightly. Also, don’t create momentum from your hips or upper body; do the movement slowly and controlled.",
+      "status": "verbatim",
+      "closest": "Don’t turn the chest fly into a chest press by bending your elbows more than just slightly. Also, don’t create momentum from your hips or upper body; do the movement slowly and controlled."
+    },
+    {
+      "claim": "c7",
+      "source": "puregym-cable-fly",
+      "text": "Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest.",
+      "status": "verbatim",
+      "closest": "Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest."
+    },
+    {
+      "claim": "c8",
+      "source": "puregym-cable-fly",
+      "text": "Press the cable handles so they are in front of your chest with your arms extended, palms facing each other",
+      "status": "verbatim",
+      "closest": "Press the cable handles so they are in front of your chest with your arms extended, palms facing each other"
+    },
+    {
+      "claim": "c9",
+      "source": "sl-cable-fly",
+      "text": "The standing cable chest fly works your chest muscles primarily and your front deltoids secondarily.",
+      "status": "verbatim",
+      "closest": "The standing cable chest fly works your chest muscles primarily and your front deltoids secondarily."
+    },
+    {
+      "claim": "c9",
+      "source": "puregym-cable-fly",
+      "text": "A low cable set up emphasises the upper chest, a high set up emphasises the lower chest, and shoulder height targets both heads of the chest.",
+      "status": "verbatim",
+      "closest": "A low cable set up emphasises the upper chest, a high set up emphasises the lower chest, and shoulder height targets both heads of the chest."
+    },
+    {
+      "claim": "c10",
+      "source": "sl-cable-fly",
+      "text": "Compared to dumbbell chest flyes , the resistance curve in cable flyes is more evenly distributed, and the load on your chest muscles is more constant throughout the range of motion.",
+      "status": "verbatim",
+      "closest": "Compared to dumbbell chest flyes , the resistance curve in cable flyes is more evenly distributed, and the load on your chest muscles is more constant throughout the range of motion."
+    },
+    {
+      "claim": "c11",
+      "source": "schutz2022",
+      "text": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises.",
+      "status": "verbatim",
+      "closest": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises."
+    },
+    {
+      "claim": "c11",
+      "source": "schutz2022",
+      "text": "The cable cross-over exercise resulted in substantially different joint angles and loading patterns compared to most other exercises, with higher fluctuations during the exercise cycle.",
+      "status": "verbatim",
+      "closest": "The cable cross-over exercise resulted in substantially different joint angles and loading patterns compared to most other exercises, with higher fluctuations during the exercise cycle."
+    },
+    {
+      "claim": "c11",
+      "source": "schutz2022",
+      "text": "Care has to be taken when performing cable cross-over exercises to ensure proper stabilisation of the joints during exercise execution and avoid joint overloading.",
+      "status": "verbatim",
+      "closest": "Care has to be taken when performing cable cross-over exercises to ensure proper stabilisation of the joints during exercise execution and avoid joint overloading."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    }
+  ]
+}

@@ -1,0 +1,559 @@
+{
+  "id": "low_to_high_cable_fly",
+  "libId": "lib_low_to_high_cable_fly",
+  "name": "Low-to-High Cable Fly",
+  "family": "CFLY",
+  "tier": "C",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the pulleys low: ACE puts the handles between knee and hip height, PureGym on the lowest setting.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-cable-fly",
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Position the cable handles level with the region between your knees and hips, and grasp each handle firmly.",
+          "where": "Step 1"
+        },
+        {
+          "source": "puregym-cable-fly",
+          "text": "Set up the cable pulley machine so that the cables are on the lowest setting with single handles attached.",
+          "where": "How To Do A Low To High Cable Fly"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Brace the abdominals to stabilise the spine and avoid arching the low back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid any arching of your low back throughout the exercise.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Stand in a staggered (walking) stance with the trunk vertical.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-cable-fly",
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Assume a staggered-stance position (i.e., walking position, with one leg forward) to stabilize yourself and align your trunk vertically.",
+          "where": "Step 2"
+        },
+        {
+          "source": "puregym-cable-fly",
+          "text": "Facing away from the cable machine, grip each handle and take a step forward with one leg into a wide staggered stance.",
+          "where": "How To Do A Low To High Cable Fly"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Let the arms open slowly down and out to the sides, with a slight elbow bend and neutral wrists, and do not let the hands go back past the level of the armpit.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Allow your arms to slowly open , moving downward and outward to your sides.",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Maintain a slight bend in your elbows, neutral wrist position (i.e., wrists aligned in a straight line with your forearms) and do not allow your hands to move past the midline of your body (level of your armpit).",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Squeeze the chest to bring the arms up and forward until the hands meet: ACE says level with the face or above the head, PureGym says in front of the chest. Pause, then return slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-cable-fly",
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Exhale gently and slowly squeeze your chest muscles to pull your arms forward until your hands meet level with your face or above your head .",
+          "where": "Step 3"
+        },
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner.",
+          "where": "Step 4"
+        },
+        {
+          "source": "puregym-cable-fly",
+          "text": "Squeeze the chest muscles to bring your arms back up and in front until the handles are in front of your chest.",
+          "where": "How To Do A Low To High Cable Fly"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep the slight elbow bend, neutral wrists and a vertical trunk through the whole movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Maintain the slight bend in your elbows, neutral wrist position and vertical alignment of your trunk throughout the movement.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Leaning forward is a frequent fault, usually when the weight is too heavy, and it raises stress in the shoulder joint; lower the weight and keep the trunk vertical.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-incline-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy. To protect your shoulders from potential injury, lower the resistance, align your trunk vertically and follow the instructions provided.",
+          "where": "Step 5"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "A low-to-high pull puts more emphasis on the upper (clavicular) chest, though all cable flyes work it to some degree.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-cable-fly",
+        "sl-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-cable-fly",
+          "text": "All cable flyes work the upper chest to some degree, but low to high cable flyes place a greater emphasis on the clavicle head.",
+          "where": "What Cable Flyes Work The Upper Chest?"
+        },
+        {
+          "source": "sl-cable-fly",
+          "text": "By using a low cable position and performing the exercise in an upwards motion, you will emphasize your upper chest",
+          "where": "Which Muscles Do the Standing Cable Chest Fly Work?"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Pulley height only slightly changes which muscles work: the standing cable fly works the chest first and the front shoulder second (stated for the cable fly in general; applied here to the low-to-high version).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "sl-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-fly",
+          "text": "The standing cable chest fly works your chest muscles primarily and your front deltoids secondarily.",
+          "where": "Which Muscles Do the Standing Cable Chest Fly Work?"
+        },
+        {
+          "source": "sl-cable-fly",
+          "text": "You can alter which muscles you target slightly, by fastening the handles at different heights in the cable machine.",
+          "where": "Which Muscles Do the Standing Cable Chest Fly Work?"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Palms face each other when the handles are together in front of the chest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-cable-fly",
+          "text": "Start by pressing the cable handles together in front of your chest, palms facing each other.",
+          "where": "How To Do A Low To High Cable Fly"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Do not turn the fly into a press by bending the elbows more than slightly, and do not swing (stated for the standing cable fly in general).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "sl-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-fly",
+          "text": "Don’t turn the chest fly into a chest press by bending your elbows more than just slightly. Also, don’t create momentum from your hips or upper body; do the movement slowly and controlled.",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "In a lab study cable pulley chest exercises gave larger shoulder moments than bench presses; the authors advise care to stabilise the joints in cable cross-overs (a mid-height cross-over, not the low-to-high version).",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "schutz2022"
+      ],
+      "quotes": [
+        {
+          "source": "schutz2022",
+          "text": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises.",
+          "where": "abstract"
+        },
+        {
+          "source": "schutz2022",
+          "text": "Care has to be taken when performing cable cross-over exercises to ensure proper stabilisation of the joints during exercise execution and avoid joint overloading.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-incline-cable-fly",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/163/standing-incline-cable-flyes/",
+      "title": "Incline Cable Flyes (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "puregym-cable-fly",
+      "url": "https://www.puregym.com/exercises/chest/chest-fly/cable-flyes/",
+      "title": "How To Do Cable Flyes (PureGym)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-cable-fly",
+      "url": "https://www.strengthlog.com/standing-cable-chest-fly/",
+      "title": "How to Do Standing Cable Chest Fly: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "schutz2022",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35202059/",
+      "title": "Chest Exercises: Movement and Loading of Shoulder, Elbow and Wrist Joints",
+      "kind": "peer-reviewed",
+      "year": 2022,
+      "pmid": "35202059",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "Census view is front (CFLY template); the diagonal arc from low at the sides to high in front and the fixed elbow bend read from the front (c4, c5). The forward lean (c7) would need a side view.",
+    "equipment": "Two cable columns, handles set low, between knee and hip height (c1); single handles; floor line.",
+    "start": "Staggered stance, trunk vertical (c3), abs braced (c2); arms open down and out to the sides, slight elbow bend, hands not past armpit level (c4).",
+    "end": "Arms swept up and in until the hands meet in front, drawn at about face level (c5), elbow bend and trunk unchanged (c6).",
+    "checkpoints": [
+      {
+        "label": "Pulleys low",
+        "what": "Handles set low, between knee and hip height.",
+        "claim": "c1"
+      },
+      {
+        "label": "Soft elbows",
+        "what": "Slight elbow bend held the whole rep.",
+        "claim": "c6"
+      },
+      {
+        "label": "Hands meet high",
+        "what": "Hands sweep up to meet in front, chest to face height.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows bending deeply, turning the fly into a press.",
+      "why": "ACE names leaning forward as the frequent fault (c7), but a lean needs a side view and this plate is front view; the drawn fault breaks the fixed elbow bend both sources require (c6, c11). How often it happens is not measured.",
+      "claim": "c11",
+      "drawable": false,
+      "rankNote": "The top named fault (forward lean, c7) is not drawable from the front; bent elbows are drawn because they break c6 and read from the front, not because they are known to be common."
+    },
+    "tells": [
+      {
+        "text": "Elbow bend stays the same",
+        "claim": "c6"
+      },
+      {
+        "text": "Body stays upright as hands rise",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c12, c5"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Single handles, palms facing each other at the front (c10).",
+    "width": "Set by the arc: arms open no further back than armpit level (c4).",
+    "thumb": "Not given by any source read (hold archetype default).",
+    "handContact": "Not given by any source read (hold archetype default).",
+    "wrist": "Neutral, in line with the forearm (c4, c6).",
+    "claims": [
+      "c4",
+      "c6",
+      "c10"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set both handles low, between knee and hip height.",
+      "claim": "c1"
+    },
+    {
+      "step": "Take a handle in each hand and step into a staggered stance, trunk upright.",
+      "claim": "c3"
+    },
+    {
+      "step": "Brace your abs; don't arch your low back.",
+      "claim": "c2"
+    },
+    {
+      "step": "Choose a weight you can lift without leaning forward.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Trunk vertical, no forward lean.",
+      "claim": "c6, c7"
+    },
+    {
+      "point": "Abs braced, low back not arched.",
+      "claim": "c2"
+    },
+    {
+      "point": "Slight elbow bend, neutral wrists, all rep.",
+      "claim": "c6"
+    },
+    {
+      "point": "Arms open no further back than armpit level.",
+      "claim": "c4"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Leaning forward, usually because the weight is too heavy.",
+      "fix": "Lower the weight and keep your trunk upright.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Bending the elbows so the fly becomes a press.",
+      "fix": "Keep the slight elbow bend the whole rep.",
+      "claim": "c11, c6"
+    },
+    {
+      "mistake": "Letting the hands go back past the armpits.",
+      "fix": "Stop opening at armpit level.",
+      "claim": "c4"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "upper_chest",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "chest",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "front_delts",
+        "claim": "c9"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Upper chest, under the collarbones",
+        "means": "The target muscle is working.",
+        "fix": null,
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the shoulders, body leaning forward",
+        "means": "Usually the weight is too heavy.",
+        "fix": "Lower the weight and stand upright.",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the shoulder",
+        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
+        "fix": "Stop the set.",
+        "claim": "c13, c7",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Leaning forward raises stress in the shoulder joint.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Cable chest work loads the shoulder more than pressing; keep the joints stable.",
+      "claim": "c14, c13"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "fly-handle",
+      "kind": "hand",
+      "right": "Wrist straight in line with the forearm.",
+      "wrong": "Wrist bent as the hands rise.",
+      "claim": "c4, c6"
+    },
+    {
+      "key": "low-high-trunk",
+      "kind": "posture",
+      "right": "Trunk upright, staggered stance, abs braced.",
+      "wrong": "Leaning forward over the front foot.",
+      "claim": "c3, c7"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: upper_chest primary; front_delts and chest secondary. PureGym and StrengthLog (c8) say the low-to-high pull emphasises the upper chest; StrengthLog says pulley height only slightly changes the muscles and lists chest first and front delts second for the cable fly (c9, applied by inference). Kept as is."
+  },
+  "anchorSource": "ace-incline-cable-fly"
+}

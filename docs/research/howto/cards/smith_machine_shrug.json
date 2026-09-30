@@ -1,0 +1,470 @@
+{
+  "id": "smith_machine_shrug",
+  "libId": "lib_smith_machine_shrug",
+  "name": "Smith Machine Shrug",
+  "family": "SHRUG",
+  "tier": "B",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "barbell_shrug",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the hands hold the same kind of straight bar, overhand (c1); the parent's wrapped-thumb rule (parent c10, Baechle and Earle grip guidance) does not depend on the rails."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because it is the same overhand hold of a straight bar hanging from the hands (c1), so the parent's hold-archetype contact (bar across the middle of the palm) applies."
+    },
+    {
+      "field": "zooms.shrug-grip",
+      "why": "true for this child because the grip is the same overhand bar grip with thumbs wrapped (c1; parent c10); only the width here is slightly wider than the shoulders."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the Smith bar at mid-thigh height; stand with feet shoulder-width apart and grip the bar overhand, slightly wider than the shoulders; unrack and let the arms hang long with a slight elbow bend.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-shrug",
+          "text": "Adjust the Smith machine bar to mid-thigh height. Stand with feet shoulder-width apart, grip the bar overhand slightly wider than shoulders, unrack and extend arms with slight elbow bend.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Lift the shoulders straight up toward the ears with the arms kept long, then lower them slowly; do not roll the shoulders forward or backward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-shrug",
+          "text": "Elevate shoulders straight up toward ears, keeping arms extended.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "motra-smith-shrug",
+          "text": "Lower shoulders slowly in a controlled manner back to start.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "motra-smith-shrug",
+          "text": "Avoid rolling shoulders forward or backward.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Named common mistakes: leaning the head forward, rocking the body for momentum and bending the elbows too much.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-shrug",
+          "text": "Leaning head forward",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-smith-shrug",
+          "text": "Rocking body for momentum",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-smith-shrug",
+          "text": "Excessive elbow bend",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Set the safety pins to prevent the bar dropping; stop if neck or shoulder pain occurs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-shrug",
+          "text": "Set safety pins to prevent bar drop",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "motra-smith-shrug",
+          "text": "Stop if neck or shoulder pain occurs",
+          "where": "Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Use slow, steady reps to work the upper traps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "eos-smith",
+        "motra-smith-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "eos-smith",
+          "text": "Use slow, steady reps to isolate and strengthen your upper traps.",
+          "where": "Smith Machine Back Exercises: Barbell Shrugs"
+        },
+        {
+          "source": "motra-smith-shrug",
+          "text": "Upper Traps, Mid Traps",
+          "where": "Muscle Breakdown: Traps 10/10"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Rotate the wrists forward to unhook the bar and back to lock it onto the hooks; the hooks let you rack the bar at any time.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "eos-smith"
+      ],
+      "quotes": [
+        {
+          "source": "eos-smith",
+          "text": "Rotate your wrists forward to unlock the bar from the hooks.",
+          "where": "How to use a Smith machine safely"
+        },
+        {
+          "source": "eos-smith",
+          "text": "Rotate your wrists back to lock the bar into place when you’re done.",
+          "where": "How to use a Smith machine safely"
+        },
+        {
+          "source": "eos-smith",
+          "text": "That means you can rack the bar at any time, giving you more control and support during lifts.",
+          "where": "What is a Smith machine?"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high (measured in 5 bodybuilders doing curls, overhead presses and leg presses, not shrugs).",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "motra-smith-shrug",
+      "url": "https://www.motra.com/exercises/smithMachineShrug",
+      "title": "Smith Machine Shrug - Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "eos-smith",
+      "url": "https://www.eosfitness.com/blog/how-to-use-smith-machine",
+      "title": "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": "3980383",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "As for the parent: long arms, a tall body and a straight-up shoulder path read best side-on (c1, c2); the census draws it side.",
+    "equipment": "Smith machine (rails, bar, hooks); bar at mid-thigh height in front of the body (c1); safety pins set (c4); floor line.",
+    "start": "Standing, feet shoulder-width (c1), arms hanging long with a slight elbow bend, bar at mid-thigh (c1), shoulders relaxed down (c2).",
+    "end": "Same body; only the shoulders lifted straight up toward the ears, arms still long (c2).",
+    "checkpoints": [
+      {
+        "label": "Arms long",
+        "what": "Elbows keep only a slight bend; the arms just hang.",
+        "claim": "c1"
+      },
+      {
+        "label": "Straight up",
+        "what": "Shoulders go up toward the ears and back down, no roll.",
+        "claim": "c2"
+      },
+      {
+        "label": "Head still",
+        "what": "Head stays level, not pushed forward.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows bending to pull the bar up instead of the shoulders lifting it.",
+      "why": "Motra names excessive elbow bend among the common Smith shrug mistakes, and it reads side-on. Rolling the shoulders is a rotation the engine cannot draw. How often each happens is not measured.",
+      "claim": "c3",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Shoulders rise toward your ears",
+        "claim": "c2"
+      },
+      {
+        "text": "Arms stay long throughout",
+        "claim": "c1"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c7"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (c1).",
+    "width": "Slightly wider than the shoulders (c1).",
+    "thumb": "Wrapped around the bar (inherited, parent c10).",
+    "handContact": "Bar across the middle of the palm, fingers wrapped (inherited, hold archetype).",
+    "wrist": "Not given by any shrug source read (hold archetype default).",
+    "claims": [
+      "c1"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bar at mid-thigh height and set the safety pins.",
+      "claim": "c1, c4"
+    },
+    {
+      "step": "Stand with feet shoulder-width apart.",
+      "claim": "c1"
+    },
+    {
+      "step": "Grip overhand, slightly wider than the shoulders, thumbs wrapped.",
+      "claim": "c1"
+    },
+    {
+      "step": "Rotate the bar off the hooks and let the arms hang long.",
+      "claim": "c6, c1"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Arms long, only a slight elbow bend.",
+      "claim": "c1"
+    },
+    {
+      "point": "Shoulders straight up and down, no roll.",
+      "claim": "c2"
+    },
+    {
+      "point": "Head not pushed forward.",
+      "claim": "c3"
+    },
+    {
+      "point": "Body still, no rocking.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Rocking the body to swing the bar up.",
+      "fix": "Use slow, steady reps; add weight only in small steps.",
+      "claim": "c3, c5, c8"
+    },
+    {
+      "mistake": "Bending the elbows to pull the bar.",
+      "fix": "Keep the arms long; lift with the shoulders.",
+      "claim": "c3, c2"
+    },
+    {
+      "mistake": "Pushing the head forward.",
+      "fix": "Keep the head level as the shoulders rise.",
+      "claim": "c3"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c5"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Top of the shoulders, between neck and shoulder",
+        "means": "Usually means the upper traps are lifting.",
+        "fix": null,
+        "claim": "c5",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the neck or shoulder",
+        "means": "Not a normal training feeling; the shoulder is a common injury site.",
+        "fix": "Stop the set.",
+        "claim": "c4, c9",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "claim": "c10"
+    },
+    {
+      "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+      "claim": "c9"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "shrug-grip",
+      "kind": "hand",
+      "right": "Overhand, thumbs wrapped around the bar.",
+      "wrong": "Thumb not wrapped around the bar.",
+      "claim": "barbell_shrug:c10"
+    },
+    {
+      "key": "smith-shrug-top",
+      "kind": "posture",
+      "right": "Shoulders up toward the ears, arms long, head level.",
+      "wrong": "Elbows bent, pulling the bar up with the arms.",
+      "claim": "c2, c3"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: upper_traps primary, no secondary. Motra (c5) rates upper and mid traps as the main movers and forearm flexors low; mid_back and forearms not added, as no second Smith-shrug source supports them."
+  },
+  "anchorSource": "motra-smith-shrug"
+}
