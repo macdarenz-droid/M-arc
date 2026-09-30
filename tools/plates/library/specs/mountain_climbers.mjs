@@ -22,8 +22,20 @@
 //   Pelvis tilt, root, trunk and the far leg are exactly the start's: the hips stay level (no hike, c4) and the far
 //   leg stays straight back on its toes (its outline is also the dashed start leg, which lies exactly under it).
 //  One ghost (t = 0.5, the via pose) shows the swing with the thigh still behind vertical and the foot trailing up.
-// CARD: DRIVE_FOOT_DZ / DRIVE_FOOT_TILT (how far the knee comes, c4; shorter for the easier version c9), FOOT_CLEAR
-//  (tap vs float, unsourced), hands under the shoulders (c2, c6), straight line (c3).
+// Plate text (card mountain_climbers plate, verified: claude/libht-research e2a70bc):
+//  Callouts = the 3 plate.checkpoints (c2 hands under shoulders, c3 straight line, c4 knee to chest). Datum = the
+//   plank line, shoulder to the far heel of the end pose, run past both ends.
+//  Mistake = plate.mistake (c4, drawable): the hips hike as the knee drives (solved: HIKE_HIP, hands and far toes
+//   fixed). Tells: the card's plate.tells are signs of good form ("Shoulders stay over your wrists", "Hips stay level
+//   as legs switch"), so the tells restate the fault: hips hike (c4), the head-to-heel line breaks (plate.mistake.why,
+//   c3, c5). Flagged on PR #109 for the critic.
+//  Measure: none. The card gives no angle, and the trace already draws the knee's sweep (a hip arc on the same motion
+//   duplicated it and crowded the leaders).
+//  Tempo: left out. The card gives no cadence ("switch legs quickly", c4); the engine strip needs seconds.
+// CARD (checked against card v2): from the card: hands under the shoulders, arms straight (c2, c6), straight line
+//  (c3), knee toward the chest with level hips (c4), smooth steps rather than bouncing (c7: the foot glides, FOOT_CLEAR).
+//  Not in the card, left flagged: DRIVE_FOOT_DZ / DRIVE_FOOT_TILT (how far the knee comes: "toward the chest", no
+//  number), FOOT_CLEAR's size, HIKE_HIP (how far the Mistake hikes).
 import { landmarksOf } from '../engine.mjs';
 
 const H = 1.75;
@@ -68,6 +80,22 @@ const end = { ...start, plant: { r: DRIVE } };
 // trace shows).
 const via = [{ ...start, hip: { r: VIA_HIP, l: 0 }, knee: { r: VIA_KNEE, l: 0 }, ankle: { r: -20, l: 0 } }];
 const SH = landmarksOf(start, H)['shoulder.r'];
+// Mistake (card plate.mistake, c4): the hips hike up as the knee drives. Hands, shoulders and the far toes stay on
+// their spots and the driving foot stays where it is; the far hip flexes HIKE_HIP deg, and root, pelvis tilt and the
+// far ankle are solved so the shoulder (so the plumb arm and the hand) and the far toe tip do not move. How high the
+// hips go is a drawing choice (the card gives no number): enough to read in 2 seconds at 390 px.
+const HIKE_HIP = 30;
+const hike = q => ({ ...plankPose(q), hip: { r: 0, l: HIKE_HIP }, ankle: { r: 0, l: q.ank } });
+const MQ = solve({ y: Q.y + 0.08, z: Q.z, tilt: Q.tilt - 20, ank: 0 }, hike,
+  lm => [lm['shoulder.r'][1] - SH[1], lm['shoulder.r'][2] - SH[2], lm['toe.l'][1], lm['toe.l'][2] - TOE_Z]);
+const MISTAKE = { ...hike(MQ), plant: { r: DRIVE } };
+// The plank line (datum): shoulder to the far heel in the end pose, run LINE_RUN m past each end so it shows beyond
+// the body (the engine draws datums under the figure).
+const LINE_RUN = 0.22;
+const LINE = (() => {
+  const lm = landmarksOf(end, H), a = lm['shoulder.r'], b = lm['heel.l'], d = b.map((v, i) => v - a[i]), n = Math.hypot(...d);
+  return [a.map((v, i) => v - d[i] / n * LINE_RUN), b.map((v, i) => v + d[i] / n * LINE_RUN)];
+})();
 
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 
@@ -84,9 +112,27 @@ export default {
     { landmark: 'toe.r', above: { point: [0, 0.02, 0], normal: [0, 1, 0] }, pose: 'end' },            // driving foot off the floor
     { landmark: 'heel.r', above: { point: [0, 0.02, 0], normal: [0, 1, 0] }, pose: 'end' },
     { landmark: 'knee.r', above: { point: [0, 0.049 + FOOT_CLEAR, 0], normal: [0, 1, 0] }, pose: 'end' },   // kneecap clear
+    { landmark: 'toe.l', plane: FLOOR, pose: 'mistake', tol: 0.5 },                                          // hike: far toes stay down
+    { landmark: 'wrist.r', plane: { point: SH, normal: [0, 0, 1] }, pose: 'mistake', tol: 0.5 },
   ],
   ghosts: { count: 1, parts: ['leg.r'] },
   trace: { point: 'knee.r', trim: [10, 12] },
-  callouts: [],
+  datum: [{ x: 0, from: 0, to: 0, line: LINE }],
+  callouts: [
+    { key: 'hands', text: 'Hands under<br>shoulders', anchor: 'wrist.r', cue: 'Arms straight, hands right under the shoulders.' },
+    { key: 'line', text: 'Straight line', anchor: 'backUpper', cue: 'Keep one straight line from the back of the head to the heels.' },
+    { key: 'knee', text: 'Knee to chest', anchor: 'knee.r', cue: 'Bring one knee toward the chest, then switch legs.' },
+  ],
+  mistake: {
+    pose: MISTAKE,
+    guides: [
+      { kind: 'arrow', from: { at: 'hip.r', pose: 'end' }, to: { at: 'hip.r', pose: 'mistake' } },
+    ],
+    tells: [
+      { key: 'hike', text: 'Hips hike', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'The hips hike up as the knee drives forward.' },
+      { key: 'line', text: 'Line breaks', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'Head to heels is no longer one straight line.' },
+    ],
+  },
+  pilot: { note: 'Tempo left out: card gives no cadence (c4).' },
   alt: 'Mountain climbers, side view. High plank on straight arms, hands under the shoulders, body in one line from head to heels. One knee drives forward under the chest while the other leg stays straight back on the toes, hips level.',
 };

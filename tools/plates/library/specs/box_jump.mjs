@@ -13,18 +13,30 @@
 //   mid-foot (toes ~39 cm from the box, so the take-off head is not hidden behind the landing body).
 //  Take-off frame = the bottom of the countermovement (c2): feet flat, hip-joint centre TAKEOFF_HIP high (a quarter-
 //   to-half squat), thorax TAKEOFF_TRUNK deg from vertical, arms swung back ARMS_BACK deg behind the thorax line,
-//   elbows straight. Landing frame (c4, c5): both feet flat on the box top with the mid-foot LAND_Z, hips back,
-//   knees soft-bent (LAND_HIP gives ~70-80 deg), thorax LAND_TRUNK deg, arms forward for balance.
+//   elbows straight. Landing frame (c4, c5; verified plate.end): both whole feet flat on the box top, well back from
+//   the edge (checks: heel HEEL_BACK behind the front edge, toe TOE_CLEAR short of the back edge),
+//   mid-foot LAND_Z, hips back, knees soft-bent (LAND_HIP gives ~70-80 deg), thorax LAND_TRUNK deg, arms forward for balance.
 //  Balance: both frames are solved with the Winter (2009) whole-body centre of mass straight over the mid-foot, as
 //   hanging_leg_raise.mjs does over its bar, so neither frame tips over.
-// CARD: BOX_H (c8), TAKEOFF_HIP / TAKEOFF_TRUNK / ARMS_BACK (c2 depth and swing), LAND_HIP / LAND_TRUNK (c5 knee bend),
-//  FOOT_X (c1 hip width), BOX_Z0 (distance to the box: unsourced).
+// Plate text (card box_jump plate, verified: claude/libht-research e2a70bc):
+//  Callouts = the 3 plate.checkpoints: c2 load and swing (on the take-off frame's hands), c3 full extension (on the
+//   rising trace: it happens between the two drawn frames), c5 soft knees (the landing checkpoint).
+//  Mistake = plate.mistake (c5, drawable): landing on the box with straight, stiff knees (MISTAKE_HIP, same feet).
+//   Tells: the card's plate.tells are cues of good form ("Both feet land together, knees bent", "You step down, never
+//   jump down"), so the tells restate the fault: knees straight, stiff landing (c5). Flagged on PR #109.
+//  Measure: none. The card gives no knee angle; an arc would only repeat the "Soft knees" callout.
+//  Tempo: left out. The card gives no seconds ("explosive take-off; step down; full rest", c11).
+// CARD (checked against card v2): from the card: BOX_H 45 cm (inside the beginner 30-45 cm, c8), knees and hips bent
+//  with the arms back at take-off (c2), both feet on the box with the knees bent (c4, c5), FOOT_X (hip width, c1).
+//  Not in the card, left flagged: TAKEOFF_HIP / TAKEOFF_TRUNK / ARMS_BACK and LAND_HIP / LAND_TRUNK (how deep: no
+//  number), BOX_Z0 (distance to the box), MISTAKE_HIP (how straight the Mistake knees are: near locked).
 import { landmarksOf } from '../engine.mjs';
 
 const H = 1.75;
 const BOX_H = 0.45, BOX_D = 0.60, BOX_Z0 = 0.52;          // plyo box height, depth, front edge (m)
 const FOOT_X = 0.10;                                       // mid-sole lateral offset: feet hip width (c1)
-const LAND_Z = BOX_Z0 + 0.26;                              // landing mid-foot: whole foot on the box, toes clear of the back
+const LAND_Z = BOX_Z0 + 0.30;                              // landing mid-foot: foot about centred on the box top (card v2 end)
+const HEEL_BACK = 0.15, TOE_CLEAR = 0.10;                  // heel at least this far back from the front edge, toe this far from the back
 const TAKEOFF_HIP = 0.68, TAKEOFF_TRUNK = 48, ARMS_BACK = 25;
 const LAND_HIP = BOX_H + 0.72, LAND_TRUNK = 32, ARMS_FWD = 95;
 
@@ -71,6 +83,16 @@ const via = Array.from({ length: 9 }, (_, i) => (i + 1) / 10).map(t => ({
   hip: 60 + 20 * t, knee: 70 + 20 * Math.sin(Math.PI * t), ankle: -10,
 }));
 
+// Mistake (card plate.mistake, c5): landing on the box with straight, stiff knees. Same feet on the box; the hips stay
+// high (MISTAKE_HIP), knees almost locked, trunk nearly upright, centre of mass over mid-foot as the other frames.
+// How straight is a drawing choice (the card gives no number): knees near locked, so it reads in 2 seconds.
+const MISTAKE_HIP = BOX_H + 0.925, MISTAKE_TRUNK = 12;
+const MISTAKE = grounded(BOX_H, LAND_Z, MISTAKE_HIP, { tilt: MISTAKE_TRUNK - 6, trunk: 6, neck: -6, shoulder: { flex: ARMS_FWD }, elbow: 15 });
+
+// Full extension (c3) happens between the two frames, so its callout points at the rising part of the trace (the
+// near hip at via t = 0.2), where the drive off the floor shows.
+const RISE = landmarksOf(via[1], H)['hip.r'];
+
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] }, TOP = { point: [0, BOX_H, 0], normal: [0, 1, 0] };
 
 export default {
@@ -86,11 +108,32 @@ export default {
     { landmark: 'ball.r', plane: FLOOR, pose: 'start', tol: 0.5 },
     { landmark: 'heel.r', plane: TOP, pose: 'end', tol: 0.5 },                              // landing: feet flat on the box
     { landmark: 'ball.r', plane: TOP, pose: 'end', tol: 0.5 },
-    { landmark: 'heel.r', above: { point: [0, 0, BOX_Z0], normal: [0, 0, 1] }, pose: 'end' },            // whole foot on the top
-    { landmark: 'toe.r', above: { point: [0, 0, BOX_Z0 + BOX_D], normal: [0, 0, -1] }, pose: 'end' },
+    { landmark: 'heel.l', plane: TOP, pose: 'end', tol: 0.5 },                              // both feet flat on the box
+    { landmark: 'ball.l', plane: TOP, pose: 'end', tol: 0.5 },
+    // whole feet on the top, well back from the front edge, heels never hanging off (verified card, plate.end)
+    { landmark: 'heel.r', above: { point: [0, 0, BOX_Z0 + HEEL_BACK], normal: [0, 0, 1] }, pose: 'end' },
+    { landmark: 'heel.r', above: { point: [0, 0, BOX_Z0 + HEEL_BACK], normal: [0, 0, 1] }, pose: 'mistake' },
+    { landmark: 'toe.r', above: { point: [0, 0, BOX_Z0 + BOX_D - TOE_CLEAR], normal: [0, 0, -1] }, pose: 'end' },
+    { landmark: 'heel.r', plane: TOP, pose: 'mistake', tol: 0.5 },                          // stiff landing: same feet on the box
+    { landmark: 'ball.r', plane: TOP, pose: 'mistake', tol: 0.5 },
   ],
   ghosts: { count: 0 },
   trace: { point: 'hip.r', trim: [10, 12] },
-  callouts: [],
+  callouts: [
+    { key: 'load', text: 'Load and<br>swing', anchor: { at: 'grip.r', pose: 'start' }, cue: 'Bend the knees and hips while the arms swing back.' },
+    { key: 'extend', text: 'Full<br>extension', anchor: { at: RISE, off: [2, 0] }, cue: 'Take off by extending hips, knees and ankles as the arms swing up.' },
+    { key: 'land', text: 'Soft knees', anchor: 'knee.r', cue: 'Land on the box with both feet, knees bent.' },
+  ],
+  mistake: {
+    pose: MISTAKE,
+    guides: [
+      { kind: 'arrow', from: { at: 'knee.r', pose: 'end' }, to: { at: 'knee.r', pose: 'mistake' } },
+    ],
+    tells: [
+      { key: 'straight', text: 'Knees straight', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The knees stay straight as the feet land on the box.' },
+      { key: 'stiff', text: 'Stiff landing', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'The legs don\'t bend to absorb the landing.' },
+    ],
+  },
+  pilot: { note: 'Tempo left out: card gives no seconds (explosive take-off, step down, full rest; c11).' },
   alt: 'Box jump, side view. Take-off frame: feet hip width, knees and hips bent, arms swung back. The hips arc up and forward onto a knee-high box. Landing frame: both feet flat on the box, knees and hips bent to absorb the landing, arms forward.',
 };
