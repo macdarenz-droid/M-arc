@@ -68,3 +68,25 @@ The owner approved this on 2026-09-26. It runs after item 9 and the fix loop for
 5. Run the real-phone test script, and optionally a 5–10 person closed beta for 1–2 weeks. **The store upload waits for this check.**
 6. Store account and listing: approve screenshots, set the age rating and support email.
 7. Approve the one coach quality-set run against the live Worker (a few cents on the AI key).
+
+## Google Play (REL-2)
+**The pipeline now proves** (`.github/workflows/play-bundle.yml`, artifact `MARC-PLAY-AAB-UNSIGNED`, on every push to `main` or on demand). Each check fails the run with its own message, and a self-test step shows every check catching a broken copy.
+- An unsigned release App Bundle (`.aab`) is built the same way as the release APK.
+- The bundle exists, and its manifest (read with bundletool `dump manifest`) is not debuggable.
+- The package is `com.mrcdrnzz.dailytracker`.
+- versionCode is `major × 1,000,000 + run number` and versionName is `<package.json version>.<run number>`, the release-apk.yml rule. Both rise on every run.
+- targetSdk is 36 or higher. From 31 August 2026, Play requires API level 36 (Android 16) for new apps and updates: https://developer.android.com/google/play/requirements/target-sdk
+- Every 32-bit native library has a 64-bit variant.
+
+**Still needed, and who does it**
+- Owner:
+  - the Play developer account;
+  - the Play App Signing choice;
+  - the upload-key signing step (a separate PR after that choice; the bundle stays unsigned until then);
+  - a closed test with 12 testers for 14 days;
+  - GitHub Pages for the privacy policy (PR #93);
+  - the store forms (content rating, target audience, data safety, app access).
+- Agents:
+  - the listing text, the data-safety drafts and the screenshots (branch `claude/play-store-cards`).
+
+**Version-code risk:** play-bundle.yml and release-apk.yml count their runs separately. On 2026-09-30, release-apk.yml had never run and debug builds use versionCode 1, so every code above 37,000,000 is higher than anything a phone has seen. Once Play App Signing is on, Play installs are signed with a different key than sideloaded APKs, so the two cannot update each other either way.
