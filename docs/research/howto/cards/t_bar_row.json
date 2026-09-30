@@ -1,0 +1,709 @@
+{
+  "id": "t_bar_row",
+  "libId": "lib_t_bar_row",
+  "name": "T-Bar Row",
+  "family": "HROW",
+  "tier": "A",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "barbell_row",
+  "inherit": [
+    {
+      "field": "posture[trunk angle stays the same]",
+      "why": "true for this child because the free-standing T-bar row is the same standing hip hinge with the back held straight while the arms pull (c2, c3)."
+    },
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the Baechle and Earle rule covers all grips, the V-handle included (c19)."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the pull archetype wrist range does not depend on the handle (GA 3.1, pull)."
+    },
+    {
+      "field": "risks[breath]",
+      "why": "true for this child because it is also a heavy two-hand free-weight row; same MacDougall 1985 line (c16)."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because it loads the lower back in the same bent-over position, more so without a chest pad (c11); same NHS back box (c18)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The free-standing T-bar row uses a barbell anchored in a landmine at one end, loaded with plates at the other, with a close-grip V-handle hooked under the bar about 8-10 inches from the plates.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Secure a barbell to a landmine attachment and load the free end of the bar with weight plates.",
+          "where": "How to do it, step 1"
+        },
+        {
+          "source": "ggr-t-bar",
+          "text": "Hook a chinning triangle or close-grip dual handle about eight to 10 inches from the weight plate so it is facing upward.",
+          "where": "How to do it, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Stand over the bar, feet about shoulder width, knees slightly bent, and hinge forward at the hips.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Stand over the barbell with your feet about shoulder-width apart, bend your knees slightly, and hinge at the hips to lean forward.",
+          "where": "How to do it, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Hold the handle with both hands, brace, and keep the back straight with the chest parallel to the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Grab the handle with both hands, engage your core, and keep your back straight so your chest is parallel to the floor.",
+          "where": "How to do it, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Pull toward the lower chest by pulling the shoulder blades back and driving the elbows back, then squeeze at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Pull the barbell toward your lower chest by retracting your shoulder blades and driving your elbows back.",
+          "where": "How to do it, step 5"
+        },
+        {
+          "source": "ggr-t-bar",
+          "text": "Contract your back muscles at the top of the movement.",
+          "where": "How to do it, step 6"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lower slowly to the start, keeping tension in the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Slowly lower the barbell back to the starting position while maintaining tension throughout your back muscles.",
+          "where": "How to do it, step 7"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The hands on the handle are turned inward (palms facing each other).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Grasp the handle with both hands turned inward",
+          "where": "How To Do T-Bar Rows At Home"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Rounding the back is one of the most common T-bar row mistakes; it strains the spinal erectors and raises the chance of a lower-back injury. Keep the trunk braced and use a load you can handle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Lifters round their backs is one of the most common mistakes I see when training.",
+          "where": "Common T-Bar Row Mistakes: Rounding Your Back"
+        },
+        {
+          "source": "ggr-t-bar",
+          "text": "this loss of proper form can place a tremendous strain on your spinal erectors and ramp up your chances of suffering a lower-back injury. Keep your core engaged and use an appropriate load for your strength levels.",
+          "where": "Common T-Bar Row Mistakes: Rounding Your Back"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Don’t swing from rep to rep; hold the squeeze at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Avoid swinging from one rep to the next by holding the contraction at the top.",
+          "where": "Common T-Bar Row Mistakes: Using Momentum"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Use the full range: don’t stop halfway down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Don’t lower the weight halfway down, and do yourself a favor by executing the full repetitions to reap the most muscle-building rewards.",
+          "where": "Common T-Bar Row Mistakes: Not Completing the Full Range of Motion"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The T-bar row mainly works the lats, rhomboids and erector spinae, with the biceps and rear delts supporting.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "The T-bar row primarily engages the back muscles—the latissimus dorsi, rhomboids, and erector spinae. Meanwhile, your biceps and rear deltoids play supporting roles.",
+          "where": "Muscles Worked by the T-Bar Row"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Without a chest pad, the lower back has to work much harder to hold the position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-t-bar",
+          "text": "However, when your chest isn’t supported, there are much higher demands on your lower back to maintain proper form.",
+          "where": "How to Do the T-Bar Row"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "On the chest-supported T-bar machine, set the foot plate so the sternum sits at the end of the pad.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-t-bar",
+          "text": "Set the foot plate so that your sternum is at the end of the support bench.",
+          "where": "Step 1 — Set Up and Take Your Grip"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Beginners start light and focus on form, adding weight gradually as strength and technique improve.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-t-bar",
+          "text": "Beginners can safely perform the T-Bar row by starting with light weights and focusing on proper form. Gradually increasing the weight as strength and technique improve will help prevent injury and lead to progress.",
+          "where": "FAQs"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, with a short hold at the top and a slow lowering.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "ggr-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "ggr-t-bar",
+          "text": "Avoid swinging from one rep to the next by holding the contraction at the top.",
+          "where": "Common T-Bar Row Mistakes: Using Momentum"
+        },
+        {
+          "source": "ggr-t-bar",
+          "text": "Slowly lower the barbell back to the starting position",
+          "where": "How to do it, step 7"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "In a lab comparison, the standing bent-over row gave the largest lumbar spine load of three rows; the free-standing T-bar row is also a standing bent-over row, so this likely applies (inferred, not measured on the T-bar).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "fenwick2009"
+      ],
+      "quotes": [
+        {
+          "source": "fenwick2009",
+          "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Wrap the thumbs around the handle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Lifting straps help on heavy rows when the grip limits the back work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-t-bar",
+          "text": "Lifting straps can aid your grip strength during heavy rows.",
+          "where": "FAQs: Is it OK to use lifting straps with T-bar rows?"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ggr-t-bar",
+      "url": "https://www.garagegymreviews.com/t-bar-row",
+      "title": "T-Bar Row: How To, Benefits, Muscles Worked (Garage Gym Reviews; Stephen Sheehan, CPT)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "barbend-t-bar",
+      "url": "https://barbend.com/t-bar-row/",
+      "title": "How to Do the T-Bar Row (BarBend; Mike Dewar, CSCS)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "fenwick2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19620925/",
+      "title": "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19620925,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The chest-parallel back, the hinge and the handle path to the lower chest are front-to-back (c2, c3, c4); the census draws it side.",
+    "equipment": "Landmine rig: a barbell pinned at a floor pivot behind the lifter, plates on the free end, a V-handle hooked under the bar 8-10 inches from the plates (c1). Needs the landmine composer (census gap).",
+    "start": "Standing over the bar, feet about shoulder width, knees slightly bent (c2), hips hinged, back straight, chest parallel to the floor (c3), arms straight down to the handle.",
+    "end": "Same back angle (c3); elbows driven back, handle at the lower chest, shoulder blades pulled back (c4).",
+    "checkpoints": [
+      {
+        "label": "Chest parallel",
+        "what": "Back straight, chest level with the floor.",
+        "claim": "c3"
+      },
+      {
+        "label": "Soft knees",
+        "what": "Knees slightly bent, hips hinged back.",
+        "claim": "c2"
+      },
+      {
+        "label": "Elbows back",
+        "what": "Elbows drive back, handle to the lower chest.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Rounded back: the spine bends forward over the bar.",
+      "why": "Named one of the most common T-bar mistakes, straining the spinal erectors and raising lower-back injury risk (c7) on an unsupported lift that already loads the lower back (c11, c17).",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Handle touches your lower chest",
+        "claim": "c4"
+      },
+      {
+        "text": "Back stays flat and level",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c15"
+    },
+    "variantLine": "Drawn: the free-standing (landmine) T-bar with a V-handle (c1). The library also allows a chest-supported T-bar machine: there the foot plate is set so the sternum is at the end of the pad (c12) and the lower back works less (c11). Claims c4-c10, c13-c16, c19-c20 hold for both; c2, c3, c7, c17 and the back box are for the free-standing version."
+  },
+  "grip": {
+    "type": "Neutral: palms facing each other on a V-handle.",
+    "width": "Close: set by the V-handle.",
+    "thumb": "Wrapped around the handle.",
+    "handContact": "Handle across the base of the fingers and top of the palm (pull archetype); straps allowed on heavy sets.",
+    "wrist": "Straight in line with the forearm (pull archetype range); not curled.",
+    "claims": [
+      "c6",
+      "c19",
+      "c20"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Barbell in a landmine, plates on the free end.",
+      "claim": "c1"
+    },
+    {
+      "step": "Hook a V-handle under the bar about 8-10 inches from the plates.",
+      "claim": "c1"
+    },
+    {
+      "step": "Stand over the bar, feet about shoulder width, knees slightly bent.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hinge until the chest is level with the floor; grab the handle, palms facing.",
+      "claim": "c3"
+    },
+    {
+      "step": "Brace, back straight, then pull.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back straight, chest parallel to the floor.",
+      "claim": "c3"
+    },
+    {
+      "point": "Knees slightly bent.",
+      "claim": "c2"
+    },
+    {
+      "point": "Shoulder blades pull back as the elbows drive back.",
+      "claim": "c4"
+    },
+    {
+      "point": "Hold the squeeze at the top; no swinging.",
+      "claim": "c8"
+    },
+    {
+      "point": "Lower all the way, slowly.",
+      "claim": "c9"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Rounding the back.",
+      "fix": "Brace and use a lighter load.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Swinging the weight up.",
+      "fix": "Hold the squeeze at the top of each rep.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Stopping halfway down.",
+      "fix": "Lower until the arms are straight.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "mid_back",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": "c10"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c11"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Middle and sides of the back",
+        "means": "Usually means the lats and upper back are doing the rowing.",
+        "fix": null,
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back, working hard",
+        "means": "Usually means it is holding the bent-over position, which is expected without a chest pad.",
+        "fix": null,
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back pain, or pain or numbness down both legs",
+        "means": "Not a normal training feeling.",
+        "fix": "Stop the set.",
+        "claim": "c18",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "A rounded back strains the lower back and raises the chance of injury.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Without a chest pad the lower back works much harder.",
+      "claim": "c11"
+    },
+    {
+      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "claim": "c16"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "tbar-grip",
+      "kind": "hand",
+      "right": "Palms facing on the V-handle, thumbs wrapped, wrists straight.",
+      "wrong": "Wrists curled, handle sliding to the fingertips.",
+      "claim": "c6"
+    },
+    {
+      "key": "tbar-back",
+      "kind": "posture",
+      "right": "Back straight, chest level with the floor, soft knees.",
+      "wrong": "Back rounded over the bar.",
+      "claim": "c7"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "lower_back"
+    ],
+    "remove": [],
+    "why": "Library primary mid_back and secondary lats, biceps, rear_delts fit (c10). The library lists no stabiliser; add lower_back as a stabiliser: the anchor names the erector spinae as a primary muscle (c10), and without a chest pad the lower back works much harder (c11)."
+  },
+  "anchorSource": "ggr-t-bar"
+}

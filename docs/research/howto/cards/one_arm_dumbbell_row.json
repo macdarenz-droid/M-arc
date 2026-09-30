@@ -1,0 +1,651 @@
+{
+  "id": "one_arm_dumbbell_row",
+  "libId": "lib_one_arm_dumbbell_row",
+  "name": "One-Arm Dumbbell Row",
+  "family": "Row",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "brace-pad"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hold the dumbbell in one hand and support your body on the bench with the opposite knee and hand.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-single-arm-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-single-arm-row",
+          "text": "Holding a dumbbell in your right hand, bend over to place your left knee and left hand on a bench to support your body weight.",
+          "where": "Step 1, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The supporting hand goes directly under the shoulder and the knee under the hip.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-single-arm-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-single-arm-row",
+          "text": "Your hand should be placed directly under your shoulder and your knees should be positioned directly under your hips.",
+          "where": "Step 1, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Brace the trunk; the back is flat and the head in line with the spine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-single-arm-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-single-arm-row",
+          "text": "Gently contract your abdominal / core muscles (\"bracing\") to stiffen your torso and stabilize your spine. Your back should be flat and head aligned with your spine.",
+          "where": "Step 1, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Place the knee and hand so the back stays parallel to the floor; keep the neck neutral by looking at the floor below, not forward or into a mirror.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-row",
+          "text": "You want to place it so that you can keep your back parallel to the ground.",
+          "where": "Proper Form & Technique: Placement"
+        },
+        {
+          "source": "sl-dumbbell-row",
+          "text": "Remember to keep your neck neutral as well by fixing your eyes on something below you instead of looking straight forward or in a mirror.",
+          "where": "Proper Form & Technique: Back and Core"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The working arm hangs straight toward the floor without the torso turning or the shoulder dropping.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-single-arm-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-single-arm-row",
+          "text": "Extend your right arm (holding the dumbbell) towards the floor without allowing your torso to rotate or shoulder to move towards the floor.",
+          "where": "Step 1, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Pull by bending the elbow and driving the upper arm back, arm close to the body, only as high as you can go without rotating the torso.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-single-arm-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-single-arm-row",
+          "text": "Exhale and slowly pull the dumbbell upwards, bending your elbow and pulling your upper arm backwards. Keep your arm close to the side of your body and continue pulling the dumbbell upwards until you are unable to lift any further without rotating your torso.",
+          "where": "Step 2, Upward Movement"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Do not rotate the body or change the spine position during the lift.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-single-arm-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-single-arm-row",
+          "text": "Avoid rotating your body or changing the position of your spine throughout the lift.",
+          "where": "Step 2, Upward Movement"
+        },
+        {
+          "source": "ace-single-arm-row",
+          "text": "Try performing this exercise alongside a mirror to monitor any change in your back or shoulder position and check for trunk rotation.",
+          "where": "Tip"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Lower the dumbbell gently to the start with the back flat, breathing in on the way down and out on the way up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-single-arm-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-single-arm-row",
+          "text": "Inhale and gently lower the dumbbell to your starting position while maintaining a flat back and retracted (pulled back) shoulder position.",
+          "where": "Step 3, Downward Movement"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Pulling toward the hip puts more work on the back; toward the shoulder puts more on the biceps and brachialis.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-row",
+          "text": "Pull the dumbbell closer to your hips to put more work on your back muscles or closer to your shoulder to put more work on your biceps and brachialis.",
+          "where": "Proper Form & Technique: The Movement"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Common mistakes: using momentum, a short range of motion (arm not fully straight at the bottom, shoulder blade not pulled back at the top) and elbows flaring out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-row",
+          "text": "Using momentum to lift the weight compromises form and reduces muscle engagement in your upper back.",
+          "where": "Common Mistakes: Excessive momentum"
+        },
+        {
+          "source": "sl-dumbbell-row",
+          "text": "Not fully extending the arms at the bottom or not fully retracting the shoulder blades at the top of the movement reduces the exercise’s effectiveness.",
+          "where": "Common Mistakes: Incomplete range of motion"
+        },
+        {
+          "source": "sl-dumbbell-row",
+          "text": "Keep your elbows close to the body and drive them back during the row.",
+          "where": "Common Mistakes: Elbows flaring out"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The dumbbell row mainly works the lats, trapezius and rear delts, with the biceps, forearm flexors and rotator cuff as secondary movers.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-row",
+          "text": "Dumbbell rows work most of your major back muscles, primarily hitting your latissimus dorsi, trapezius, and posterior deltoids.",
+          "where": "Which Muscles Do the Dumbbell Row Work?"
+        },
+        {
+          "source": "sl-dumbbell-row",
+          "text": "The secondary worked muscles are your biceps, forearm flexors, and rotator cuffs.",
+          "where": "Which Muscles Do the Dumbbell Row Work?"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Compared with the barbell row, the dumbbell row takes some load off the lower back and gives a longer range of motion.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-row",
+          "text": "Another thing to remember is that the dumbbell row takes away some of the load on your lower back, compared to the barbell row.",
+          "where": "Dumbbell Row vs Barbell Row"
+        },
+        {
+          "source": "sl-dumbbell-row",
+          "text": "The dumbbell row offers a longer range of motion than the barbell row",
+          "where": "Dumbbell Row vs Barbell Row"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Rowing one arm at a time works the side trunk muscles (external oblique) more than rowing with both arms; measured on standing and seated rows, not the bench-supported row, so inferred here.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "saeterbakken2015"
+      ],
+      "quotes": [
+        {
+          "source": "saeterbakken2015",
+          "text": "unilateral performance of exercises activated the external oblique more than bilateral performance, regardless of exercise",
+          "where": "abstract, conclusion 2"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, the pull slow and the lowering gentle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "ace-single-arm-row"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "ace-single-arm-row",
+          "text": "Exhale and slowly pull the dumbbell upwards",
+          "where": "Step 2, Upward Movement"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Lifting straps are fine when the grip limits the back work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-row",
+          "text": "Typically, your back is stronger than your grip. So don’t hesitate to use lifting straps if necessary.",
+          "where": "Proper Form & Technique: Grip"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Wrap the thumb around the handle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "The shoulder is one of the most common injury sites in resistance training (up to 36% of documented injuries), and poor technique is a named risk factor.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-single-arm-row",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/126/single-arm-row/",
+      "title": "ACE Exercise Library: Single Arm Row",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-dumbbell-row",
+      "url": "https://www.strengthlog.com/dumbbell-row/",
+      "title": "How to Do Dumbbell Row: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "saeterbakken2015",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26134664/",
+      "title": "The Effect of Performing Bi- and Unilateral Row Exercises on Core Muscle Activation.",
+      "kind": "peer-reviewed",
+      "year": 2015,
+      "pmid": 26134664,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review.",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": 20508476,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The flat, level back, the knee-and-hand support and the arm driving back to the hip read side-on (c2, c4, c6, c9); the census draws it side.",
+    "equipment": "Flat bench at knee height with one knee and the same-side hand on it; one dumbbell hanging from the other hand; floor line (c1, c2).",
+    "start": "Supporting hand under the shoulder and knee under the hip (c2), back flat and parallel to the floor, head in line (c3, c4), working arm hanging straight down (c5).",
+    "end": "Same back and support (c7); elbow bent and upper arm driven back close to the body, dumbbell near the hip (c6, c9).",
+    "checkpoints": [
+      {
+        "label": "Hand under shoulder",
+        "what": "Supporting hand under the shoulder, knee under the hip.",
+        "claim": "c2"
+      },
+      {
+        "label": "Flat back",
+        "what": "Back flat and level, head in line with the spine.",
+        "claim": "c3"
+      },
+      {
+        "label": "Elbow to hip",
+        "what": "Upper arm drives back close to the body, dumbbell toward the hip.",
+        "claim": "c9"
+      }
+    ],
+    "mistake": {
+      "what": "Short range: the arm never straightens at the bottom and the elbow stops short at the top.",
+      "why": "The top fault is twisting the torso to lift higher (c6, c7), a rotation the engine cannot draw; a short range is a listed common mistake (c10) and shows side-on.",
+      "claim": "c10",
+      "drawable": false
+    },
+    "tells": [
+      {
+        "text": "Arm fully straight at the bottom",
+        "claim": "c10"
+      },
+      {
+        "text": "Dumbbell travels toward your hip",
+        "claim": "c9"
+      },
+      {
+        "text": "Shoulders stay level, no twist",
+        "claim": "c7"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c14"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "One dumbbell in the working hand. No source read states the palm direction, so the sheet makes no palm claim.",
+    "width": "Not applicable (one hand).",
+    "thumb": "Wrapped around the handle.",
+    "handContact": "Handle across the base of the fingers and top of the palm (pull archetype); a strap is allowed when the grip gives out first.",
+    "wrist": "Straight in line with the forearm (pull archetype range); not curled.",
+    "claims": [
+      "c16",
+      "c17"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Dumbbell on the floor beside a flat bench.",
+      "claim": "c1"
+    },
+    {
+      "step": "Put one knee and the same-side hand on the bench, the other foot on the floor.",
+      "claim": "c1"
+    },
+    {
+      "step": "Hand under the shoulder, knee under the hip.",
+      "claim": "c2"
+    },
+    {
+      "step": "Back flat and level, eyes on the floor below you.",
+      "claim": "c4"
+    },
+    {
+      "step": "Brace, then let the working arm hang straight down.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back flat and parallel to the floor.",
+      "claim": "c4"
+    },
+    {
+      "point": "Head in line with the spine, eyes down.",
+      "claim": "c4"
+    },
+    {
+      "point": "Torso square: no twisting to lift higher.",
+      "claim": "c7"
+    },
+    {
+      "point": "Shoulder doesn’t drop toward the floor at the bottom.",
+      "claim": "c5"
+    },
+    {
+      "point": "Elbow close to the body.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Twisting the torso to lift the dumbbell higher.",
+      "fix": "Stop the pull where your torso would have to turn; use less weight if needed.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Jerking the dumbbell up with momentum.",
+      "fix": "Pull slowly and lower gently.",
+      "claim": "c10"
+    },
+    {
+      "mistake": "Elbow flaring out to the side.",
+      "fix": "Keep the elbow close to the body and drive it back.",
+      "claim": "c10"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "mid_back",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "biceps",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "forearms",
+        "claim": "c11"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "obliques",
+        "claim": "c13"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Side of the back and around the shoulder blade",
+        "means": "Usually means the lats and upper back are doing the rowing.",
+        "fix": null,
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Mostly the biceps",
+        "means": "Usually means the dumbbell is going toward the shoulder.",
+        "fix": "Pull toward your hip instead.",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Grip giving out before the back",
+        "means": "Usually means the grip is limiting the set.",
+        "fix": "Use a lifting strap.",
+        "claim": "c16",
+        "redFlag": null
+      },
+      {
+        "where": "Sharp pain in the shoulder joint",
+        "means": "Not a normal training feeling; the shoulder is a common injury site.",
+        "fix": "Stop the set.",
+        "claim": "c18",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Twisting to lift more weight changes the spine position the exercise is meant to hold.",
+      "claim": "c7"
+    },
+    {
+      "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+      "claim": "c18"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "oadr-support",
+      "kind": "posture",
+      "right": "Hand under the shoulder, knee under the hip, back flat.",
+      "wrong": "Hand far forward, back rounded.",
+      "claim": "c2"
+    },
+    {
+      "key": "oadr-top",
+      "kind": "posture",
+      "right": "Elbow driven back, dumbbell at the hip, torso square.",
+      "wrong": "Torso twisted open to lift higher.",
+      "claim": "c7"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "rear_delts",
+      "forearms"
+    ],
+    "remove": [],
+    "why": "Library primary lats and secondary mid_back, biceps fit (c11: lats and trapezius primary). Add rear_delts as secondary: c11 names the posterior deltoids as a primary mover. Add forearms as secondary: c11 names the forearm flexors. core stays as the text-only stabiliser; obliques shown as a watch feel only (c13, inferred)."
+  },
+  "anchorSource": "ace-single-arm-row"
+}

@@ -1,0 +1,188 @@
+{
+  "id": "one_arm_dumbbell_row",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-single-arm-row",
+      "text": "Holding a dumbbell in your right hand, bend over to place your left knee and left hand on a bench to support your body weight.",
+      "status": "verbatim",
+      "closest": "Holding a dumbbell in your right hand, bend over to place your left knee and left hand on a bench to support your body weight."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-single-arm-row",
+      "text": "Your hand should be placed directly under your shoulder and your knees should be positioned directly under your hips.",
+      "status": "verbatim",
+      "closest": "Your hand should be placed directly under your shoulder and your knees should be positioned directly under your hips."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-single-arm-row",
+      "text": "Gently contract your abdominal / core muscles (\"bracing\") to stiffen your torso and stabilize your spine. Your back should be flat and head aligned with your spine.",
+      "status": "verbatim",
+      "closest": "Gently contract your abdominal / core muscles (\"bracing\") to stiffen your torso and stabilize your spine. Your back should be flat and head aligned with your spine."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-dumbbell-row",
+      "text": "You want to place it so that you can keep your back parallel to the ground.",
+      "status": "verbatim",
+      "closest": "You want to place it so that you can keep your back parallel to the ground."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-dumbbell-row",
+      "text": "Remember to keep your neck neutral as well by fixing your eyes on something below you instead of looking straight forward or in a mirror.",
+      "status": "verbatim",
+      "closest": "Remember to keep your neck neutral as well by fixing your eyes on something below you instead of looking straight forward or in a mirror."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-single-arm-row",
+      "text": "Extend your right arm (holding the dumbbell) towards the floor without allowing your torso to rotate or shoulder to move towards the floor.",
+      "status": "verbatim",
+      "closest": "Extend your right arm (holding the dumbbell) towards the floor without allowing your torso to rotate or shoulder to move towards the floor."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-single-arm-row",
+      "text": "Exhale and slowly pull the dumbbell upwards, bending your elbow and pulling your upper arm backwards. Keep your arm close to the side of your body and continue pulling the dumbbell upwards until you are unable to lift any further without rotating your torso.",
+      "status": "verbatim",
+      "closest": "Exhale and slowly pull the dumbbell upwards, bending your elbow and pulling your upper arm backwards. Keep your arm close to the side of your body and continue pulling the dumbbell upwards until you are unable to lift any further without rotating your torso."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-single-arm-row",
+      "text": "Avoid rotating your body or changing the position of your spine throughout the lift.",
+      "status": "verbatim",
+      "closest": "Avoid rotating your body or changing the position of your spine throughout the lift."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-single-arm-row",
+      "text": "Try performing this exercise alongside a mirror to monitor any change in your back or shoulder position and check for trunk rotation.",
+      "status": "verbatim",
+      "closest": "Try performing this exercise alongside a mirror to monitor any change in your back or shoulder position and check for trunk rotation."
+    },
+    {
+      "claim": "c8",
+      "source": "ace-single-arm-row",
+      "text": "Inhale and gently lower the dumbbell to your starting position while maintaining a flat back and retracted (pulled back) shoulder position.",
+      "status": "verbatim",
+      "closest": "Inhale and gently lower the dumbbell to your starting position while maintaining a flat back and retracted (pulled back) shoulder position."
+    },
+    {
+      "claim": "c9",
+      "source": "sl-dumbbell-row",
+      "text": "Pull the dumbbell closer to your hips to put more work on your back muscles or closer to your shoulder to put more work on your biceps and brachialis.",
+      "status": "verbatim",
+      "closest": "Pull the dumbbell closer to your hips to put more work on your back muscles or closer to your shoulder to put more work on your biceps and brachialis."
+    },
+    {
+      "claim": "c10",
+      "source": "sl-dumbbell-row",
+      "text": "Using momentum to lift the weight compromises form and reduces muscle engagement in your upper back.",
+      "status": "verbatim",
+      "closest": "Using momentum to lift the weight compromises form and reduces muscle engagement in your upper back."
+    },
+    {
+      "claim": "c10",
+      "source": "sl-dumbbell-row",
+      "text": "Not fully extending the arms at the bottom or not fully retracting the shoulder blades at the top of the movement reduces the exercise’s effectiveness.",
+      "status": "verbatim",
+      "closest": "Not fully extending the arms at the bottom or not fully retracting the shoulder blades at the top of the movement reduces the exercise’s effectiveness."
+    },
+    {
+      "claim": "c10",
+      "source": "sl-dumbbell-row",
+      "text": "Keep your elbows close to the body and drive them back during the row.",
+      "status": "verbatim",
+      "closest": "Keep your elbows close to the body and drive them back during the row."
+    },
+    {
+      "claim": "c11",
+      "source": "sl-dumbbell-row",
+      "text": "Dumbbell rows work most of your major back muscles, primarily hitting your latissimus dorsi, trapezius, and posterior deltoids.",
+      "status": "verbatim",
+      "closest": "Dumbbell rows work most of your major back muscles, primarily hitting your latissimus dorsi, trapezius, and posterior deltoids."
+    },
+    {
+      "claim": "c11",
+      "source": "sl-dumbbell-row",
+      "text": "The secondary worked muscles are your biceps, forearm flexors, and rotator cuffs.",
+      "status": "verbatim",
+      "closest": "The secondary worked muscles are your biceps, forearm flexors, and rotator cuffs."
+    },
+    {
+      "claim": "c12",
+      "source": "sl-dumbbell-row",
+      "text": "Another thing to remember is that the dumbbell row takes away some of the load on your lower back, compared to the barbell row.",
+      "status": "verbatim",
+      "closest": "Another thing to remember is that the dumbbell row takes away some of the load on your lower back, compared to the barbell row."
+    },
+    {
+      "claim": "c12",
+      "source": "sl-dumbbell-row",
+      "text": "The dumbbell row offers a longer range of motion than the barbell row",
+      "status": "verbatim",
+      "closest": "The dumbbell row offers a longer range of motion than the barbell row"
+    },
+    {
+      "claim": "c13",
+      "source": "saeterbakken2015",
+      "text": "unilateral performance of exercises activated the external oblique more than bilateral performance, regardless of exercise",
+      "status": "verbatim",
+      "closest": "unilateral performance of exercises activated the external oblique more than bilateral performance, regardless of exercise"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c14",
+      "source": "ace-single-arm-row",
+      "text": "Exhale and slowly pull the dumbbell upwards",
+      "status": "verbatim",
+      "closest": "Exhale and slowly pull the dumbbell upwards"
+    },
+    {
+      "claim": "c15",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c16",
+      "source": "sl-dumbbell-row",
+      "text": "Typically, your back is stronger than your grip. So don’t hesitate to use lifting straps if necessary.",
+      "status": "verbatim",
+      "closest": "Typically, your back is stronger than your grip. So don’t hesitate to use lifting straps if necessary."
+    },
+    {
+      "claim": "c17",
+      "source": "baechle-grip",
+      "text": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Perform all grips with your thumbs around the bar."
+    },
+    {
+      "claim": "c18",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c18",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique.",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique."
+    }
+  ]
+}

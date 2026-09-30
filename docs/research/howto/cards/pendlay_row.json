@@ -1,0 +1,769 @@
+{
+  "id": "pendlay_row",
+  "libId": "lib_pendlay_row",
+  "name": "Pendlay Row",
+  "family": "HROW",
+  "tier": "A",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "barbell_row",
+  "inherit": [
+    {
+      "field": "grip.type",
+      "why": "true for this child because the Pendlay row also uses an overhand (palms-down) grip (c1)."
+    },
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because it is the same straight barbell held in the hands; the Baechle and Earle rule covers all grips (c16)."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because it is the same pull archetype on a straight bar; straps are allowed here too (c20)."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the pull archetype wrist range does not depend on where the bar starts (GA 3.1, pull)."
+    },
+    {
+      "field": "risks[breath]",
+      "why": "true for this child because it is also a heavy two-hand barbell lift; same MacDougall 1985 line (c17)."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because it loads the lower back in the same bent-over position; same NHS back box (c19)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The bar starts on the floor; take an overhand grip slightly wider than shoulder width and set the hips like a deadlift, a little higher.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-pendlay",
+        "ggr-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-pendlay",
+          "text": "With the barbell on the floor, set up with a slightly wider than shoulder-width grip. Set your hips as you would for a deadlift, but a little higher.",
+          "where": "How to Do the Pendlay Row: Set Up"
+        },
+        {
+          "source": "ggr-pendlay",
+          "text": "Traditional barbell rows and Pendlay rows are performed with an overhand grip",
+          "where": "FAQs: Should Pendlay rows be overhand or underhand?"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The upper body stays parallel to the floor, shoulders and hips level, through the whole rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-pendlay",
+          "text": "To maintain the proper positioning, keep your upper body parallel to the floor. Your shoulders and hips should be horizontally stacked at all times.",
+          "where": "Trainer Tips on Form: Keep Your Chest Parallel to the Floor"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Every rep starts from the floor and ends with the bar lowered slowly and set down at a dead stop.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-pendlay",
+        "sl-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-pendlay",
+          "text": "Slowly lower the barbell to the floor and place it down at a dead stop in the starting position.",
+          "where": "How to Do the Pendlay Row, step 5"
+        },
+        {
+          "source": "sl-pendlay",
+          "text": "you put the bar back on the floor between each repetition",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Only the bar and arms move: the upper body stays still while the bar is pulled as high as it will go, to the abs or chest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pendlay",
+          "text": "Pull the bar towards you, without otherwise moving your upper body. Pull the bar as high as you can, so that it touches your abs or chest if possible.",
+          "where": "How to Do Pendlay Rows, step 2"
+        },
+        {
+          "source": "sl-pendlay",
+          "text": "Only the bar and your arms are moving",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Brace, then pull the bar explosively to the base of the chest without shrugging the shoulders or letting the hips come forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-pendlay",
+          "text": "Brace your core and use your lats to explosively pull the barbell to the base of your chest. Make sure not to elevate your shoulders or allow your hips to come forward.",
+          "where": "How to Do the Pendlay Row: Brace and Pull"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "A common fault is raising the back angle (standing partly up) to yank the bar; it usually means the load is too heavy.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-pendlay",
+          "text": "Just as you might be tempted to partially stand straight up during the Pendlay row, you might try to yank with your arms.",
+          "where": "Common Pendlay Row Mistakes: Back Angle"
+        },
+        {
+          "source": "barbend-pendlay",
+          "text": "If you feel like you have to dramatically raise your back angle or yank the weight up, you’ve probably slapped too many plates on the bar.",
+          "where": "Common Pendlay Row Mistakes: Going Too Heavy"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Learn the form with a light weight first, then add weight gradually once the target reps are met.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-pendlay",
+          "text": "To avoid this, lock down your Pendlay row form with light weight before advancing your load.",
+          "where": "Common Pendlay Row Mistakes: Back Angle"
+        },
+        {
+          "source": "barbend-pendlay",
+          "text": "When you hit your target number, then go back and gradually add more weight.",
+          "where": "Common Pendlay Row Mistakes: Going Too Heavy"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Starting with a rounded back is a named risk; if you cannot reach the bar with a flat back, raise the bar on blocks or plates.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-pendlay",
+          "text": "Initiating the Pendlay row with a rounded back diminishes the amount of power you’re able to generate, but it’s also dangerous",
+          "where": "Common Pendlay Row Mistakes: Rounding Your Back"
+        },
+        {
+          "source": "ggr-pendlay",
+          "text": "consider using blocks, weight plates, or a weightlifting platform to elevate the bar and reduce the distance between you and the barbell.",
+          "where": "Common Pendlay Row Mistakes: Rounding Your Back"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Elbows flared wide out to the sides can put the shoulders in a compromising position; lighten the load until it stops.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-pendlay",
+          "text": "But completely “chicken-winging” your elbows out to the sides can put your shoulders in a compromising position.",
+          "where": "Common Pendlay Row Mistakes: Flaring Your Elbows"
+        },
+        {
+          "source": "barbend-pendlay",
+          "text": "If you feel yourself yanking the bar and splaying your elbows out to the sides, lighten the load until the problem diminishes.",
+          "where": "Common Pendlay Row Mistakes: Flaring Your Elbows"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Both feet stay flat, about shoulder width; heels lifting mid-lift usually means the weight is too heavy.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-pendlay",
+          "text": "Stand over a loaded barbell with your feet shoulder-width apart.",
+          "where": "How to Do the Pendlay Row, step 1"
+        },
+        {
+          "source": "ggr-pendlay",
+          "text": "If your heels are losing contact with the floor mid-lift, consider using lighter weights.",
+          "where": "Common Pendlay Row Mistakes: Heels Coming Off the Floor"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The main movers are the lats, traps and rear delts; the hamstrings and spinal erectors hold the bent-over position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-pendlay",
+        "barbend-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-pendlay",
+          "text": "Primary muscles worked: Lats, traps, rear deltoids",
+          "where": "How to Do the Pendlay Row"
+        },
+        {
+          "source": "barbend-pendlay",
+          "text": "Your hamstrings work isometrically to support you as you assume the bent over position in the Pendlay row.",
+          "where": "Muscles Worked: Hamstrings"
+        },
+        {
+          "source": "barbend-pendlay",
+          "text": "Your spinal erectors work to stabilize your spine during this bent-over row variation",
+          "where": "Muscles Worked: Spinal Erectors"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Setting the bar down each rep removes some of the static lower-back work of a normal barbell row.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pendlay",
+          "text": "This means that you will avoid some of the static work for your core and lower back that you otherwise get from doing barbell rows.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "The Pendlay row is an advanced row: it needs flexibility and a good hip hinge, and beginners should start with seated or chest-supported rows.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-pendlay",
+          "text": "However, the Pendlay row is more advanced for most beginners, as it requires flexibility and proper hip hinge mechanics",
+          "where": "Who Should Do the Pendlay Row: General Population"
+        },
+        {
+          "source": "barbend-pendlay",
+          "text": "If you’re new to lifting, start with seated row variations, such as the seated cable row or chest-supported rows.",
+          "where": "Who Should Do the Pendlay Row: General Population"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Tempo: a fast pull (about 1 s), a slow controlled lowering (about 2 s), and a brief dead stop on the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-pendlay",
+        "ggr-pendlay",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-pendlay",
+          "text": "explosively pull the barbell to the base of your chest",
+          "where": "How to Do the Pendlay Row: Brace and Pull"
+        },
+        {
+          "source": "ggr-pendlay",
+          "text": "Slowly lower the barbell to the floor and place it down at a dead stop in the starting position.",
+          "where": "How to Do the Pendlay Row, step 5"
+        },
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Wrap the thumbs around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "In a lab comparison, the standing bent-over row gave the largest lumbar spine load of three rows; the Pendlay row is a bent-over barbell row, so this likely applies (inferred, not measured on the Pendlay row).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "fenwick2009"
+      ],
+      "quotes": [
+        {
+          "source": "fenwick2009",
+          "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Lifting straps help when the grip fails before the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-pendlay",
+          "text": "Lifting straps swoop in to save the day when your grip is failing, but there’s still gas left in the tank.",
+          "where": "Useful Pendlay Row Equipment: Lifting Straps"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "barbend-pendlay",
+      "url": "https://barbend.com/pendlay-row/",
+      "title": "How to Do the Pendlay Row for Back Size and Stronger Lifts (BarBend; Mike Dewar, CSCS)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ggr-pendlay",
+      "url": "https://www.garagegymreviews.com/pendlay-row",
+      "title": "Pendlay Row: How To, Benefits, and Variations (Garage Gym Reviews; with Kate Meier, NASM-CPT, USAW-L1)",
+      "kind": "coach",
+      "year": 2023,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-pendlay",
+      "url": "https://www.strengthlog.com/pendlay-row/",
+      "title": "How to Do Pendlay Row: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "fenwick2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19620925/",
+      "title": "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19620925,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The level torso, the bar path from floor to chest and the back-angle fault all happen front-to-back (c2, c4, c6); the census draws it side, like the parent.",
+    "equipment": "Straight barbell with plates resting on the floor line under the shoulders at the start (c1, c3).",
+    "start": "Hips hinged a little higher than a deadlift (c1), torso parallel to the floor with shoulders and hips level (c2), knees slightly bent, feet about shoulder width (c10), arms straight down to the bar on the floor (c3).",
+    "end": "Same torso and hip angle (c4); elbows pulled back past the torso, bar touching the base of the chest or abs (c4, c5).",
+    "checkpoints": [
+      {
+        "label": "Back parallel",
+        "what": "Torso level with the floor, shoulders and hips at the same height.",
+        "claim": "c2"
+      },
+      {
+        "label": "Torso still",
+        "what": "Only the bar and arms move; no standing up to pull.",
+        "claim": "c4"
+      },
+      {
+        "label": "Floor each rep",
+        "what": "The bar is set down at a dead stop between reps.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Back angle rises: the lifter stands partly up to yank the bar.",
+      "why": "Named as a common fault and a sign of too much weight (c6); it turns a strict row into a heave on a lift that loads the lower back (c18).",
+      "claim": "c6",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Bar rests on the floor each rep",
+        "claim": "c3"
+      },
+      {
+        "text": "Back stays level as the bar rises",
+        "claim": "c2"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c14"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (palms down).",
+    "width": "Slightly wider than shoulder width.",
+    "thumb": "Wrapped around the bar.",
+    "handContact": "Bar across the base of the fingers and top of the palm (pull archetype); straps allowed when the grip gives out first.",
+    "wrist": "Straight in line with the forearm (pull archetype range); not curled.",
+    "claims": [
+      "c1",
+      "c16",
+      "c20"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Bar on the floor; stand over it with feet about shoulder width.",
+      "claim": "c10"
+    },
+    {
+      "step": "Hinge until the torso is level with the floor, hips a little higher than a deadlift.",
+      "claim": "c1"
+    },
+    {
+      "step": "Overhand grip slightly wider than the shoulders, thumbs around the bar.",
+      "claim": "c1"
+    },
+    {
+      "step": "Can’t reach it with a flat back? Raise the bar on blocks or plates.",
+      "claim": "c8"
+    },
+    {
+      "step": "Brace, then pull.",
+      "claim": "c5"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Torso level, shoulders and hips at the same height.",
+      "claim": "c2"
+    },
+    {
+      "point": "Upper body still; only the bar and arms move.",
+      "claim": "c4"
+    },
+    {
+      "point": "Shoulders not shrugged; hips don’t come forward.",
+      "claim": "c5"
+    },
+    {
+      "point": "Both feet flat the whole set.",
+      "claim": "c10"
+    },
+    {
+      "point": "Set the bar down at a dead stop each rep.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Standing partly up to yank the bar.",
+      "fix": "Use less weight and keep the torso level.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Starting with a rounded back.",
+      "fix": "Raise the bar on blocks or plates until you can grip it with a flat back.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Elbows flared wide to the sides.",
+      "fix": "Lighten the load; pull the bar toward the hips.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "mid_back",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "biceps",
+        "claim": "c11"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "hamstrings",
+        "claim": "c11"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Upper back and the sides of the back",
+        "means": "Usually means the lats and upper back are doing the rowing.",
+        "fix": null,
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Backs of the thighs and lower back, working",
+        "means": "Usually means they are holding the bent-over position, which is expected.",
+        "fix": null,
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back pain, or pain or numbness down both legs",
+        "means": "Not a normal training feeling.",
+        "fix": "Stop the set.",
+        "claim": "c19",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Starting a rep with a rounded back is a named danger on this lift.",
+      "claim": "c8"
+    },
+    {
+      "risk": "Bent-over barbell rows put the largest load on the lower spine of the rows tested.",
+      "claim": "c18"
+    },
+    {
+      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "claim": "c17"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "pendlay-start",
+      "kind": "posture",
+      "right": "Bar on the floor, torso level, back flat, hips a little above deadlift height.",
+      "wrong": "Back rounded to reach the bar.",
+      "claim": "c8"
+    },
+    {
+      "key": "pendlay-top",
+      "kind": "posture",
+      "right": "Bar at the base of the chest, torso still level.",
+      "wrong": "Torso risen up to yank the bar.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library primary mid_back and secondary lats, biceps, rear_delts, with lower_back as stabiliser, fit the sources (c11 names lats, traps and rear delts as primary; the card shows lats as a primary feel, as the parent does). Hamstrings hold the position isometrically (c11); shown as a watch feel only, not proposed for the library list."
+  },
+  "anchorSource": "barbend-pendlay"
+}
