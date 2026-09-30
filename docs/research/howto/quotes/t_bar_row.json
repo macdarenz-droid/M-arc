@@ -115,7 +115,7 @@
       "closest": "Beginners can safely perform the T-Bar row by starting with light weights and focusing on proper form. Gradually increasing the weight as strength and technique improve will help prevent injury and lead to progress."
     },
     {
-      "claim": "c14",
+      "claim": "c13",
       "source": "acsm2009",
       "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
@@ -204,6 +204,38 @@
       "text": "Lifting straps can aid your grip strength during heavy rows.",
       "status": "verbatim",
       "closest": "Lifting straps can aid your grip strength during heavy rows."
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "status": "verbatim",
+      "closest": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "status": "verbatim",
+      "closest": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c22",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice.",
+      "note": "Re-read 2026-09-30 in the fetched NHS back-pain page."
     }
   ]
 }

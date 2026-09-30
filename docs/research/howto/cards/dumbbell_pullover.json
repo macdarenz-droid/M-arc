@@ -49,7 +49,7 @@
     },
     {
       "id": "c3",
-      "text": "Cradle the inside of the top plate in both palms, thumbs overlapping behind the handle and fingers in front: a closed grip.",
+      "text": "Cradle the inside of the top plate in both palms, thumbs overlapping behind the handle and fingers in front: a closed grip, with the handle between the base of the thumbs and the body of the hands.",
       "tags": [
         "CONSENSUS"
       ],
@@ -66,6 +66,11 @@
           "source": "bm-pullover",
           "text": "With one palm on each side of the dumbbell, create a “closed” grasp by overlapping your thumbs behind the handle and overlapping fingers in front.",
           "where": "Form Tip"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "The handle of the dumbbell should sit between the base of your thumbs and body of the hands.",
+          "where": "step 2, Form Tip"
         }
       ]
     },
@@ -283,7 +288,7 @@
     },
     {
       "id": "c14",
-      "text": "Too much elbow bend often comes with flared elbows, which may add stress on the inside of the elbow.",
+      "text": "Too much elbow bend often comes with flared elbows, which may add stress on the inside of the elbow; keep the elbows pointing forward or up.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -296,6 +301,11 @@
           "source": "bm-pullover",
           "text": "excessive elbow bend is also associated with “flared,” or outward-pointing, elbows. This position reflects internal rotation of the shoulder and may increase stress on the inside of the elbow",
           "where": "technique faults"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "Focus on keeping your elbows pointing forward and/or up during the dumbbell pullover.",
+          "where": "technique faults, Avoid it"
         }
       ]
     },
@@ -319,7 +329,7 @@
     },
     {
       "id": "c16",
-      "text": "The lats and the lower (sternocostal) chest are the main targets; the rear deltoid and the long head of the triceps also extend the shoulder here (coach summary of EMG and anatomy studies).",
+      "text": "The lats and the lower (sternocostal) chest are the main targets; the rear deltoid (which studies suggest is a more efficient shoulder extensor here than the lats or chest) and the long head of the triceps also extend the shoulder (coach summary of EMG and anatomy studies).",
       "tags": [
         "CONSENSUS"
       ],
@@ -341,6 +351,11 @@
           "source": "bm-pullover",
           "text": "The posterior deltoid, or “rear delt,” extends the shoulder. It’s active during the pullover.",
           "where": "muscles"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "studies suggest the posterior deltoid is a more efficient shoulder extensor during the pullover than the latissimus dorsi or pectoralis major.",
+          "where": "muscles, Posterior Deltoid"
         },
         {
           "source": "bm-pullover",
@@ -677,8 +692,8 @@
       },
       {
         "where": "Pain on the inside of the elbow",
-        "means": "Usually the elbows are bent too much and flaring out.",
-        "fix": "Stop the set. Go lighter, keep the elbows pointing forward or up.",
+        "means": "Can mean the elbows are bent too much and flaring.",
+        "fix": "Stop the set. Keep the elbows pointing forward or up.",
         "claim": "c14",
         "redFlag": "elbow"
       },
@@ -686,7 +701,7 @@
         "where": "Pain in the shoulder at the bottom",
         "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
         "fix": "Stop the set. Go lighter and shorten the range.",
-        "claim": "c20",
+        "claim": "c20, c5, c12",
         "redFlag": "shoulder"
       }
     ]

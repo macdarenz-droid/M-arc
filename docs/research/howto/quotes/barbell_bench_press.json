@@ -152,6 +152,13 @@
     {
       "claim": "c12",
       "source": "sbs-bench",
+      "quote": "That will help reduce range of motion by pushing the chest up",
+      "status": "verbatim",
+      "closest": "That will help reduce range of motion by pushing the chest up"
+    },
+    {
+      "claim": "c12",
+      "source": "sbs-bench",
       "quote": "it’ll also put the shoulders in a safer position to reduce your risk of rotator cuff injuries or anterior shoulder pain.",
       "status": "verbatim",
       "closest": "it’ll also put the shoulders in a safer position to reduce your risk of rotator cuff injuries or anterior shoulder pain."

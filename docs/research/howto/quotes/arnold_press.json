@@ -59,6 +59,13 @@
       "closest": "The most important part of the exercise is to keep your upper arms parallel to the ground at the lowest point and throughout the twist."
     },
     {
+      "claim": "c4",
+      "source": "fitfather-arnold",
+      "quote": "This keeps the tension on your deltoids all the way through.",
+      "status": "verbatim",
+      "closest": "This keeps the tension on your deltoids all the way through."
+    },
+    {
       "claim": "c5",
       "source": "fitfather-arnold",
       "quote": "Hold the dumbbells on your knees to start, then kick them up into a normal shoulder press position",
@@ -101,6 +108,13 @@
       "closest": "Electromyogram activity was measured in the anterior, medial, and posterior deltoids and biceps and triceps brachii."
     },
     {
+      "claim": "c9",
+      "source": "saeterbakken2013",
+      "quote": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001), ~20% lower for seated versus standing barbell (p = 0.094).",
+      "status": "verbatim",
+      "closest": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001), ~20% lower for seated versus standing barbell (p = 0.094)."
+    },
+    {
       "claim": "c10",
       "source": "ace-seated-ohp",
       "quote": "The spotter should stand behind you in a split-stance position, positioning their hands close to your wrists (not touching) to support you as needed.",
@@ -141,6 +155,27 @@
       "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
       "status": "verbatim",
       "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c15",
+      "source": "ace-seated-ohp",
+      "quote": "slowly lift the dumbbells to your shoulder level with a closed, pronated grip (palms facing forward and thumbs wrapped around the handles), with the dumbbells at shoulder-width or slightly wider and wrists in a neutral position (avoid flexion and extension of the wrists).",
+      "status": "verbatim",
+      "closest": "slowly lift the dumbbells to your shoulder level with a closed, pronated grip (palms facing forward and thumbs wrapped around the handles), with the dumbbells at shoulder-width or slightly wider and wrists in a neutral position (avoid flexion and extension of the wrists)."
+    },
+    {
+      "claim": "c15",
+      "source": "ace-seated-ohp",
+      "quote": "Maintain your body contact with the bench, neutral wrist (avoid flexion and extension) and depressed, retracted scapulae positions.",
+      "status": "verbatim",
+      "closest": "Maintain your body contact with the bench, neutral wrist (avoid flexion and extension) and depressed, retracted scapulae positions."
+    },
+    {
+      "claim": "c16",
+      "source": "fitfather-arnold",
+      "quote": "Breathing out and squeezing the grip as tight as you can, press the dumbbells up overhead, bringing them slightly in front of your head.",
+      "status": "verbatim",
+      "closest": "Breathing out and squeezing the grip as tight as you can, press the dumbbells up overhead, bringing them slightly in front of your head."
     }
   ]
 }

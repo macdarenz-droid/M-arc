@@ -230,9 +230,10 @@
     },
     {
       "id": "c12",
-      "text": "Only raise and lower the shoulders; do not roll them.",
+      "text": "Only raise and lower the shoulders; do not roll them (ACE barbell shrug page; same shoulder movement with dumbbells).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "MECH"
       ],
       "sources": [
         "ace-shrug"
@@ -264,7 +265,7 @@
     },
     {
       "id": "c14",
-      "text": "Grip strength drops when the wrist bends away from its natural slightly-extended position (measured on grip, applied here as a wrist cue).",
+      "text": "Grip is strongest with the wrist in its natural extended (bent-back) position, about 35 degrees, and weakens when the wrist moves away from it, even to 15 degrees of extension (measured on grip, applied here as a wrist cue).",
       "tags": [
         "DATA",
         "MECH"
@@ -276,6 +277,16 @@
         {
           "source": "odriscoll1992",
           "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
           "where": "abstract"
         }
       ]
@@ -341,7 +352,8 @@
       "id": "c18",
       "text": "In EMG studies the shrug gives very high upper-trapezius activity: the one-arm shrug was the highest of ten exercises in healthy adults, and the shrug the highest of five in women with neck muscle pain (implement not stated in either abstract).",
       "tags": [
-        "DATA"
+        "DATA",
+        "WEAK"
       ],
       "sources": [
         "ekstrom2003",
@@ -467,7 +479,7 @@
       },
       {
         "label": "Straight up",
-        "what": "Shoulders go straight up and down, not forward, back or rolled.",
+        "what": "Shoulders go straight up and down, not forward or back.",
         "claim": "c6"
       },
       {
@@ -478,7 +490,7 @@
     ],
     "mistake": {
       "what": "Elbows bend to pull the dumbbells up instead of the shoulders lifting them.",
-      "why": "Rolling the shoulders (c12) is a rotation the engine cannot draw; bent, working arms are a named common mistake (c6) and show front-on as the dumbbells rise with the forearms.",
+      "why": "Rolling the shoulders (c12, from the barbell shrug page) is a rotation the engine cannot draw; bent, working arms are a named common mistake (c6) and show front-on as the dumbbells rise with the forearms.",
       "claim": "c6",
       "drawable": false
     },
@@ -505,7 +517,7 @@
     "width": "Hands at the sides.",
     "thumb": "Wrapped around the handle.",
     "handContact": "Handle across the middle of the palm, fingers wrapped (hold archetype); straps allowed when the grip limits the load.",
-    "wrist": "Neutral to slightly back; grip weakens when the wrist bends away from it.",
+    "wrist": "Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.",
     "claims": [
       "c1",
       "c8",
@@ -548,13 +560,13 @@
   "handlingMistakes": [
     {
       "mistake": "Bending the arms to pull the dumbbells up.",
-      "fix": "Keep the arms straight and passive; if you can’t, use lighter dumbbells.",
+      "fix": "Keep the arms straight and passive.",
       "claim": "c6"
     },
     {
       "mistake": "Rolling the shoulders or moving them forward and back.",
       "fix": "Straight up, straight down.",
-      "claim": "c6"
+      "claim": "c12"
     },
     {
       "mistake": "Going too heavy to keep good form.",
@@ -593,8 +605,8 @@
       },
       {
         "where": "Sharp pain in the shoulder joint",
-        "means": "Not a normal training feeling; the shoulder is a common injury site.",
-        "fix": "Stop the set.",
+        "means": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+        "fix": null,
         "claim": "c17",
         "redFlag": "shoulder"
       }
@@ -617,8 +629,8 @@
     {
       "key": "dshrug-grip",
       "kind": "hand",
-      "right": "Handle across the middle of the palm, thumb wrapped, wrist straight.",
-      "wrong": "Handle in the fingertips, wrist curled.",
+      "right": "Wrist bent back, in its natural grip position.",
+      "wrong": "Wrist curled forward.",
       "claim": "c14"
     },
     {

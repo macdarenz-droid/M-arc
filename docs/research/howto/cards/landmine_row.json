@@ -21,10 +21,6 @@
       "why": "true for this child because the Baechle and Earle rule covers all grips (c17)."
     },
     {
-      "field": "grip.wrist",
-      "why": "true for this child because the pull archetype wrist range does not depend on the bar angle (GA 3.1, pull)."
-    },
-    {
       "field": "posture[back neutral]",
       "why": "true for this child because the landmine source gives the same neutral, not-rounded back rule (c9)."
     },
@@ -34,7 +30,7 @@
     },
     {
       "field": "redFlags",
-      "why": "true for this child because it loads the lower back in the same bent-over position (c3, c15); same NHS back box (c16)."
+      "why": "true for this child because it loads the lower back in the same bent-over position (c3, c15); same NHS back box (c16, c19)."
     }
   ],
   "claims": [
@@ -67,52 +63,75 @@
     },
     {
       "id": "c2",
-      "text": "Stand facing the bar with feet shoulder width apart.",
+      "text": "Straddle the loaded end of the bar, facing it, feet between hip and shoulder width, with the shoulders ahead of the weight once hinged.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "rep-landmine-row"
+        "rep-landmine-row",
+        "cissik-landmine"
       ],
       "quotes": [
         {
           "source": "rep-landmine-row",
           "text": "Stand facing the barbell with your feet shoulder-width apart.",
           "where": "How to Do a Landmine Row Properly: Get Into Position"
+        },
+        {
+          "source": "cissik-landmine",
+          "text": "Straddle the end of the barbell with the weight. Your feet should be between hip-width and shoulder-width apart.",
+          "where": "Landmine T-Bar Row, step 2"
+        },
+        {
+          "source": "cissik-landmine",
+          "text": "Your shoulders should be ahead of the weight.",
+          "where": "Landmine T-Bar Row, step 5"
         }
       ]
     },
     {
       "id": "c3",
-      "text": "Bend at the hips and knees with the back straight until the torso is roughly parallel to the floor.",
+      "text": "Bend at the hips and knees with the back straight until the torso is roughly parallel to the floor (REP); coach sources differ, as Cissik asks for at least a 45-degree torso angle to the ground, so the drawn pose follows REP.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "rep-landmine-row"
+        "rep-landmine-row",
+        "cissik-landmine"
       ],
       "quotes": [
         {
           "source": "rep-landmine-row",
           "text": "Bend at the hips and knees, keeping your back straight, and hinge forward until your torso is roughly parallel to the floor.",
           "where": "How to Do a Landmine Row Properly: Get Into Position"
+        },
+        {
+          "source": "cissik-landmine",
+          "text": "From here, push the hips back and unlock your knees until you have at least a 45 degree angle between your upper body and the ground.",
+          "where": "step 5"
         }
       ]
     },
     {
       "id": "c4",
-      "text": "Grip the bar just below the plates with both hands, overhand.",
+      "text": "Grip the bar with both hands overhand just below the plates (just under the inside collar), one hand above the other.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "rep-landmine-row"
+        "rep-landmine-row",
+        "cissik-landmine"
       ],
       "quotes": [
         {
           "source": "rep-landmine-row",
           "text": "Grip the barbell just below the weight plates with both hands, using an overhand grip.",
           "where": "How to Do a Landmine Row Properly: Get Into Position"
+        },
+        {
+          "source": "cissik-landmine",
+          "text": "Squat down and grip the barbell just under the inside collar. One hand will be above the other.",
+          "where": "Landmine T-Bar Row, step 3"
         }
       ]
     },
@@ -311,19 +330,25 @@
     },
     {
       "id": "c15",
-      "text": "In a lab comparison, the standing bent-over row gave the largest lumbar spine load of three rows; the landmine row is a standing bent-over row, so this likely applies (inferred, not measured on the landmine row).",
+      "text": "In a lab comparison of three rows (inverted, standing bent-over, one-arm cable), the standing bent-over row gave the largest lumbar spine load; the landmine row is also a standing bent-over row, so this likely applies (inferred, not measured on the landmine row; the anchor coach page claims the opposite, without data).",
       "tags": [
-        "DATA",
-        "MECH"
+        "MECH",
+        "WEAK"
       ],
       "sources": [
-        "fenwick2009"
+        "fenwick2009",
+        "rep-landmine-row"
       ],
       "quotes": [
         {
           "source": "fenwick2009",
           "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
           "where": "abstract"
+        },
+        {
+          "source": "rep-landmine-row",
+          "text": "By providing a more controlled range of motion, the landmine row reduces stress on your lower back, making it a safer option for those with mobility or injury concerns.",
+          "where": "introduction"
         }
       ]
     },
@@ -378,6 +403,52 @@
           "source": "baechle-grip",
           "text": "Perform all grips with your thumbs around the bar.",
           "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Grip is strongest with the wrist in its natural extended (bent-back) position, about 35 degrees, and weakens when the wrist moves away from it, even to 15 degrees of extension (measured on a grip test, not on the landmine row; applied here as a wrist cue).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
         }
       ]
     }
@@ -452,13 +523,33 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "cissik-landmine",
+      "url": "https://www.cissik.com/blog/?p=7015",
+      "title": "Landmine Bent Over Rows (Improving Athletic Performance blog, John Cissik)",
+      "kind": "coach",
+      "year": 2022,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength.",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": 1538102,
+      "access": "abstract",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {
     "view": "side",
     "viewWhy": "The parallel torso, the hinge and the bar end rising to the chest are front-to-back (c3, c6); the census draws it side.",
-    "equipment": "Landmine rig: barbell pinned at a floor pivot in front of the lifter, plates on the near free end; hands on the bar just below the plates (c1, c4). Needs the landmine composer (census gap).",
-    "start": "Facing the bar, feet shoulder width (c2), hips and knees bent, back straight, torso roughly parallel to the floor (c3), arms straight to the bar end (c8).",
+    "equipment": "Landmine rig: barbell pinned at a floor pivot behind the lifter, running forward between the feet; plates on the free end in front, the lifter straddling the loaded end with the shoulders ahead of the weight (layout inferred from c1, c2); hands one above the other on the bar just behind the plates (c4). Needs the landmine composer (census gap).",
+    "start": "Straddling the loaded end, feet between hip and shoulder width (c2), hips and knees bent, back straight, torso roughly parallel to the floor (c3), arms straight to the bar just behind the plates (c4, c8).",
     "end": "Same torso angle; elbows driven back, bar end at the chest, shoulder blades squeezed together (c6).",
     "checkpoints": [
       {
@@ -503,13 +594,14 @@
   },
   "grip": {
     "type": "Overhand, both hands on the bar just below the plates.",
-    "width": "Close: both hands on the bar end.",
+    "width": "Close: one hand above the other on the bar just behind the plates.",
     "thumb": "Wrapped around the bar.",
     "handContact": "Bar across the base of the fingers and top of the palm (pull archetype).",
-    "wrist": "Straight in line with the forearm (pull archetype range); not curled.",
+    "wrist": "Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.",
     "claims": [
       "c4",
-      "c17"
+      "c17",
+      "c18"
     ]
   },
   "setup": [
@@ -518,7 +610,7 @@
       "claim": "c1"
     },
     {
-      "step": "Stand facing the bar, feet shoulder width.",
+      "step": "Straddle the loaded end of the bar, feet between hip and shoulder width.",
       "claim": "c2"
     },
     {
@@ -526,18 +618,22 @@
       "claim": "c3"
     },
     {
-      "step": "Both hands overhand just below the plates, thumbs around the bar.",
+      "step": "Both hands overhand just below the plates, one above the other, thumbs around the bar.",
       "claim": "c4"
     },
     {
-      "step": "Brace, then pull.",
-      "claim": "c5"
+      "step": "Start with a weight that keeps good form; add 2-10% once you beat your target reps by one or two.",
+      "claim": "c13"
     }
   ],
   "posture": [
     {
       "point": "Back straight, not rounded.",
       "claim": "c9"
+    },
+    {
+      "point": "Brace before each pull.",
+      "claim": "c5"
     },
     {
       "point": "Torso stays roughly parallel to the floor.",
@@ -616,10 +712,10 @@
         "redFlag": null
       },
       {
-        "where": "Lower back pain, or pain or numbness down both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop the set.",
-        "claim": "c16",
+        "where": "Back pain that gets worse during the set",
+        "means": "The NHS advises stopping exercise when back pain gets worse.",
+        "fix": "Stop the set; see a GP for advice.",
+        "claim": "c19",
         "redFlag": "back"
       }
     ]
@@ -630,7 +726,7 @@
       "claim": "c11"
     },
     {
-      "risk": "Bent-over standing rows put the largest load on the lower spine of the rows tested.",
+      "risk": "A lab test found the standing bent-over row loads the lower spine most of three rows tested; likely similar here, though the landmine row was not tested.",
       "claim": "c15"
     },
     {
@@ -645,9 +741,9 @@
     {
       "key": "landmine-grip",
       "kind": "hand",
-      "right": "Both hands overhand just below the plates, thumbs wrapped, wrists straight.",
-      "wrong": "Wrists curled, bar slipping to the fingertips.",
-      "claim": "c4"
+      "right": "Thumbs wrapped around the bar.",
+      "wrong": "Thumbs alongside the bar, not wrapped.",
+      "claim": "c17"
     },
     {
       "key": "landmine-back",

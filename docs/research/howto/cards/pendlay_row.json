@@ -25,16 +25,12 @@
       "why": "true for this child because it is the same pull archetype on a straight bar; straps are allowed here too (c20)."
     },
     {
-      "field": "grip.wrist",
-      "why": "true for this child because the pull archetype wrist range does not depend on where the bar starts (GA 3.1, pull)."
-    },
-    {
       "field": "risks[breath]",
       "why": "true for this child because it is also a heavy two-hand barbell lift; same MacDougall 1985 line (c17)."
     },
     {
       "field": "redFlags",
-      "why": "true for this child because it loads the lower back in the same bent-over position; same NHS back box (c19)."
+      "why": "true for this child because it loads the lower back in the same bent-over position; same NHS back box (c19, c22)."
     }
   ],
   "claims": [
@@ -164,12 +160,13 @@
     },
     {
       "id": "c7",
-      "text": "Learn the form with a light weight first, then add weight gradually once the target reps are met.",
+      "text": "Learn the form with a light weight first, then add weight gradually once the target reps are met, in steps of about 2-10% once the target is beaten by one or two reps.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "barbend-pendlay"
+        "barbend-pendlay",
+        "acsm2009"
       ],
       "quotes": [
         {
@@ -181,6 +178,11 @@
           "source": "barbend-pendlay",
           "text": "When you hit your target number, then go back and gradually add more weight.",
           "where": "Common Pendlay Row Mistakes: Going Too Heavy"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
         }
       ]
     },
@@ -208,7 +210,7 @@
     },
     {
       "id": "c9",
-      "text": "Elbows flared wide out to the sides can put the shoulders in a compromising position; lighten the load until it stops.",
+      "text": "Elbows flared wide out to the sides can put the shoulders in a compromising position; lighten the load until it stops, and cue the elbows into the pockets or the bar to the hips.",
       "tags": [
         "CONSENSUS"
       ],
@@ -225,12 +227,17 @@
           "source": "barbend-pendlay",
           "text": "If you feel yourself yanking the bar and splaying your elbows out to the sides, lighten the load until the problem diminishes.",
           "where": "Common Pendlay Row Mistakes: Flaring Your Elbows"
+        },
+        {
+          "source": "barbend-pendlay",
+          "text": "You can also try cueing yourself to put your elbows in your pockets or to pull the bar to your hips.",
+          "where": "Common mistakes: Flaring Your Elbows"
         }
       ]
     },
     {
       "id": "c10",
-      "text": "Both feet stay flat, about shoulder width; heels lifting mid-lift usually means the weight is too heavy.",
+      "text": "Both feet stay flat, about shoulder width, with the knees slightly bent to reach the bar; heels lifting mid-lift usually means the weight is too heavy.",
       "tags": [
         "CONSENSUS"
       ],
@@ -245,6 +252,11 @@
         },
         {
           "source": "ggr-pendlay",
+          "text": "Start with your body hinged forward, back flat, core tight, and knees slightly bent so you can grip the bar.",
+          "where": "expert quote (coach), technique section"
+        },
+        {
+          "source": "ggr-pendlay",
           "text": "If your heels are losing contact with the floor mid-lift, consider using lighter weights.",
           "where": "Common Pendlay Row Mistakes: Heels Coming Off the Floor"
         }
@@ -252,19 +264,25 @@
     },
     {
       "id": "c11",
-      "text": "The main movers are the lats, traps and rear delts; the hamstrings and spinal erectors hold the bent-over position.",
+      "text": "The main movers are the lats, traps and rear delts, with the biceps, lower back, forearm flexors and rotator cuff as secondary muscles; the hamstrings and spinal erectors hold the bent-over position.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
         "ggr-pendlay",
-        "barbend-pendlay"
+        "barbend-pendlay",
+        "sl-pendlay"
       ],
       "quotes": [
         {
           "source": "ggr-pendlay",
           "text": "Primary muscles worked: Lats, traps, rear deltoids",
           "where": "How to Do the Pendlay Row"
+        },
+        {
+          "source": "sl-pendlay",
+          "text": "Secondary muscles worked: Biceps Lower Back Forearm Flexors Rotator Cuff",
+          "where": "Muscles worked"
         },
         {
           "source": "barbend-pendlay",
@@ -342,23 +360,6 @@
         {
           "source": "acsm2009",
           "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
-          "where": "abstract"
-        }
-      ]
-    },
-    {
-      "id": "c15",
-      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
-      "tags": [
-        "CONSENSUS"
-      ],
-      "sources": [
-        "acsm2009"
-      ],
-      "quotes": [
-        {
-          "source": "acsm2009",
-          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
           "where": "abstract"
         }
       ]
@@ -468,6 +469,52 @@
           "where": "Useful Pendlay Row Equipment: Lifting Straps"
         }
       ]
+    },
+    {
+      "id": "c21",
+      "text": "Grip is strongest with the wrist in its natural extended (bent-back) position, about 35 degrees, and weakens when the wrist moves away from it, even to 15 degrees of extension (measured on a grip test, not on the Pendlay row; applied here as a wrist cue).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
     }
   ],
   "sources": [
@@ -550,6 +597,16 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength.",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": 1538102,
+      "access": "abstract",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {
@@ -557,7 +614,7 @@
     "viewWhy": "The level torso, the bar path from floor to chest and the back-angle fault all happen front-to-back (c2, c4, c6); the census draws it side, like the parent.",
     "equipment": "Straight barbell with plates resting on the floor line under the shoulders at the start (c1, c3).",
     "start": "Hips hinged a little higher than a deadlift (c1), torso parallel to the floor with shoulders and hips level (c2), knees slightly bent, feet about shoulder width (c10), arms straight down to the bar on the floor (c3).",
-    "end": "Same torso and hip angle (c4); elbows pulled back past the torso, bar touching the base of the chest or abs (c4, c5).",
+    "end": "Same torso and hip angle (c4); bar touching the base of the chest or abs (c4, c5).",
     "checkpoints": [
       {
         "label": "Back parallel",
@@ -604,24 +661,25 @@
     "width": "Slightly wider than shoulder width.",
     "thumb": "Wrapped around the bar.",
     "handContact": "Bar across the base of the fingers and top of the palm (pull archetype); straps allowed when the grip gives out first.",
-    "wrist": "Straight in line with the forearm (pull archetype range); not curled.",
+    "wrist": "Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.",
     "claims": [
       "c1",
       "c16",
-      "c20"
+      "c20",
+      "c21"
     ]
   },
   "setup": [
+    {
+      "step": "New to lifting? Start with seated or chest-supported rows first.",
+      "claim": "c13"
+    },
     {
       "step": "Bar on the floor; stand over it with feet about shoulder width.",
       "claim": "c10"
     },
     {
-      "step": "Hinge until the torso is level with the floor, hips a little higher than a deadlift.",
-      "claim": "c1"
-    },
-    {
-      "step": "Overhand grip slightly wider than the shoulders, thumbs around the bar.",
+      "step": "Hinge with the hips a little higher than a deadlift; grip overhand, slightly wider than the shoulders.",
       "claim": "c1"
     },
     {
@@ -629,8 +687,8 @@
       "claim": "c8"
     },
     {
-      "step": "Brace, then pull.",
-      "claim": "c5"
+      "step": "Learn it with a light weight; add 2-10% once you beat your target reps by one or two.",
+      "claim": "c7"
     }
   ],
   "posture": [
@@ -641,6 +699,10 @@
     {
       "point": "Upper body still; only the bar and arms move.",
       "claim": "c4"
+    },
+    {
+      "point": "Brace before each pull.",
+      "claim": "c5"
     },
     {
       "point": "Shoulders not shrugged; hips don’t come forward.",
@@ -719,10 +781,10 @@
         "redFlag": null
       },
       {
-        "where": "Lower back pain, or pain or numbness down both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop the set.",
-        "claim": "c19",
+        "where": "Back pain that gets worse during the set",
+        "means": "The NHS advises stopping exercise when back pain gets worse.",
+        "fix": "Stop the set; see a GP for advice.",
+        "claim": "c22",
         "redFlag": "back"
       }
     ]

@@ -28,7 +28,7 @@
   "claims": [
     {
       "id": "c1",
-      "text": "Start standing, feet about shoulder width, a dumbbell in each hand in front of the legs, palms facing the body.",
+      "text": "Start standing, feet about shoulder width, a dumbbell in each hand; Sweat holds them in front of the legs, palms facing the body, while Fitbod holds them next to the hips.",
       "tags": [
         "CONSENSUS"
       ],
@@ -146,7 +146,7 @@
     },
     {
       "id": "c7",
-      "text": "Let the eyes move to the floor as you lower, so the neck does not arch.",
+      "text": "Eyes start looking straight ahead, then move to a spot on the floor in front as you lower, so the neck does not arch.",
       "tags": [
         "CONSENSUS"
       ],
@@ -157,6 +157,11 @@
         {
           "source": "sweat-db-rdl",
           "text": "You want to avoid looking straight ahead the whole time as your neck will become strained and arched when you get to the bottom of the movement.",
+          "where": "Technique tips: Eyes"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "Throughout each rep, you want your body to form one nice straight line from your back to your head, so as you lower down, your eyes should start by looking straight ahead, but then move to a spot on the floor in front of you as you lower down.",
           "where": "Technique tips: Eyes"
         }
       ]
@@ -456,6 +461,23 @@
           "where": "Non-urgent advice, list"
         }
       ]
+    },
+    {
+      "id": "c22",
+      "text": "From barbell deadlift coaching (inferred for dumbbells): if you cannot keep a neutral spine, lower the weight or do fewer reps.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Generally avoid lifting with a flexed back in your training – if you cannot maintain a neutral spine, lower the weight or perform less reps per set.",
+          "where": "So - Should You Deadlift With a Neutral or Flexed Spine?"
+        }
+      ]
     }
   ],
   "plate": {
@@ -571,7 +593,7 @@
   "handlingMistakes": [
     {
       "mistake": "Rounding the back to reach lower.",
-      "fix": "Stop higher, where the back stays flat; lighten the dumbbells if it still rounds.",
+      "fix": "Stop higher, where the back stays flat (c8); lighten the dumbbells if it still rounds (c22).",
       "claim": "c8"
     },
     {
@@ -638,7 +660,7 @@
       {
         "where": "Lower back more than the hamstrings",
         "means": "Usually means the back is rounding or arching to do the work.",
-        "fix": "Shorten the range and lighten the dumbbells.",
+        "fix": "Shorten the range (c8) and lighten the dumbbells (c22).",
         "claim": "c8",
         "redFlag": null
       },
@@ -760,6 +782,16 @@
       "url": "https://www.nhs.uk/conditions/back-pain/",
       "title": "Back pain (NHS)",
       "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-deadlift",
+      "url": "https://www.strengthlog.com/deadlift/",
+      "title": "How to Deadlift: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
       "year": null,
       "pmid": null,
       "access": "full",

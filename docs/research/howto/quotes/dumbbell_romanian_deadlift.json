@@ -281,6 +281,22 @@
       "status": "verbatim",
       "closest": "it does not improve after treating it at home for a few weeks",
       "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c22",
+      "source": "sl-deadlift",
+      "text": "Generally avoid lifting with a flexed back in your training – if you cannot maintain a neutral spine, lower the weight or perform less reps per set.",
+      "status": "verbatim",
+      "closest": "Generally avoid lifting with a flexed back in your training – if you cannot maintain a neutral spine, lower the weight or perform less reps per set.",
+      "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
+    },
+    {
+      "claim": "c7",
+      "source": "sweat-db-rdl",
+      "text": "Throughout each rep, you want your body to form one nice straight line from your back to your head, so as you lower down, your eyes should start by looking straight ahead, but then move to a spot on the floor in front of you as you lower down.",
+      "status": "verbatim",
+      "closest": "Throughout each rep, you want your body to form one nice straight line from your back to your head, so as you lower down, your eyes should start by looking straight ahead, but then move to a spot on the floor in front of you as you lower down.",
+      "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
     }
   ],
   "sources": [

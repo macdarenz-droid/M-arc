@@ -99,7 +99,7 @@
     },
     {
       "id": "c4",
-      "text": "Keep the arms straight like ropes; bent arms force more lean and may raise biceps strain risk.",
+      "text": "Keep the arms straight like ropes and vertical as seen from the side; bent arms force more lean and may raise biceps strain risk.",
       "tags": [
         "CONSENSUS"
       ],
@@ -116,6 +116,11 @@
           "source": "sl-deadlift",
           "text": "straight arms with relaxed biceps will likely minimize your risk of a bicep strain or even rupture while lifting heavy loads.",
           "where": "Arms"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "You’re going to keep your arms vertical as seen from the side (or very close to vertical) during the entire lift.",
+          "where": "Hip Position"
         }
       ]
     },
@@ -178,7 +183,7 @@
     },
     {
       "id": "c8",
-      "text": "Lifters, especially newer ones, tend to round the back more as the weight goes up; if the spine cannot stay neutral, lower the weight or do fewer reps.",
+      "text": "Lifters, especially newer ones, tend to round the back more as the weight goes up, including when breaking the bar off the floor; if the spine cannot stay neutral, lower the weight or do fewer reps.",
       "tags": [
         "CONSENSUS"
       ],
@@ -195,12 +200,17 @@
           "source": "sl-deadlift",
           "text": "Generally avoid lifting with a flexed back in your training – if you cannot maintain a neutral spine, lower the weight or perform less reps per set.",
           "where": "So - Should You Deadlift With a Neutral or Flexed Spine?"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "Perhaps you are not strong enough to break the bar off the floor without rounding your back and thus decreasing the moment arms of your prime movers by bringing the bar closer to their respective joints.",
+          "where": "Lift-Off"
         }
       ]
     },
     {
       "id": "c9",
-      "text": "A common start fault is the hips shooting up before the bar moves, which dumps the work onto the back and hips.",
+      "text": "One start fault is the hips shooting up before the bar moves, which dumps the work onto the back and hips; the remedy is to be patient off the floor so the legs start the pull.",
       "tags": [
         "CONSENSUS"
       ],
@@ -211,6 +221,11 @@
         {
           "source": "sl-deadlift",
           "text": "One such example is when the butt shoots upward before the bar has barely begun to move. What has happened is that the lifter has effectively dumped over most if not all work from the quadriceps to the back and hip extensors.",
+          "where": "Lift-Off"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "But it might also be the case that the lifter just doesn’t know how the start of a deadlift might feel, and is simply not patient enough for the quads and the hip extensors to hit their coordination and make the (maybe: more efficient) pull.",
           "where": "Lift-Off"
         }
       ]
@@ -376,9 +391,8 @@
     },
     {
       "id": "c18",
-      "text": "Abrupt jumps in training load are consistently linked with more deadlift-related injury.",
+      "text": "A narrative review found abrupt jumps in training load appear linked with more injuries, though the link is probabilistic.",
       "tags": [
-        "DATA",
         "WEAK"
       ],
       "sources": [
@@ -535,7 +549,7 @@
     "view": "side",
     "viewWhy": "Bar over mid-foot, shins to bar, hip height, flat back and a vertical bar path close to the legs are all front-to-back positions (c1, c6, c7); only the side view shows them.",
     "equipment": "Straight barbell with full-size 45 cm plates resting on the floor line, so the bar sits 22.5 cm up (c23).",
-    "start": "Bar over mid-foot with shins touching or nearly touching it (c1); feet about hip width (c2); arms straight and vertical just outside the knees (c3, c4); hips between knees and shoulders, back flat (c7).",
+    "start": "Bar over mid-foot with shins touching or nearly touching it (c1); feet about hip width (c2); arms straight, vertical from the side, just outside the knees (c3, c4); back flat (c7).",
     "end": "Standing tall, hips and knees locked, shoulders back, bar hanging against the thighs (c6, c10).",
     "checkpoints": [
       {
@@ -566,8 +580,8 @@
         "claim": "c13"
       },
       {
-        "text": "Bar brushes your shins and thighs",
-        "claim": "c1"
+        "text": "Bar stays close to your legs",
+        "claim": "c6"
       },
       {
         "text": "Back stays flat throughout",
@@ -649,7 +663,7 @@
     },
     {
       "mistake": "Hips shooting up before the bar moves.",
-      "fix": "Push the floor away with the legs; keep the chest up.",
+      "fix": "Be patient off the floor so the legs start the pull.",
       "claim": "c9"
     },
     {
@@ -716,7 +730,7 @@
         "where": "Front of the thighs off the floor",
         "means": "Usually normal: the quads help break the bar from the floor.",
         "fix": null,
-        "claim": "c15",
+        "claim": "c9",
         "redFlag": null
       },
       {
@@ -738,7 +752,7 @@
       "claim": "c20"
     },
     {
-      "risk": "Big jumps in load are linked with more back injuries; add weight in small steps.",
+      "risk": "Big jumps in load appear linked with more injuries (c18); add weight in small steps (c17).",
       "claim": "c18"
     }
   ],
@@ -763,8 +777,8 @@
     {
       "key": "dl-liftoff",
       "kind": "posture",
-      "right": "Hips and shoulders rise together as the legs push.",
-      "wrong": "Hips shoot up first, chest drops.",
+      "right": "Legs start the pull; the hips wait for the bar to move.",
+      "wrong": "Hips shoot up before the bar moves.",
       "claim": "c9"
     }
   ],

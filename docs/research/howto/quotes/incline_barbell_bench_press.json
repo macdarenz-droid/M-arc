@@ -26,9 +26,16 @@
     {
       "claim": "c2",
       "source": "coratella2020",
-      "quote": "clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises.",
+      "quote": "During the concentric phase, [d effect size: 2.78/7.80] clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises.",
       "status": "verbatim",
-      "closest": "clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises."
+      "closest": "During the concentric phase, [d effect size: 2.78/7.80] clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises."
+    },
+    {
+      "claim": "c2",
+      "source": "coratella2020",
+      "quote": "Muscle excitation during the eccentric phase followed a similar pattern, with the exception of the greater (d: 3.89/11.32) excitation in the clavicular head in BP compared to all other exercises.",
+      "status": "verbatim",
+      "closest": "Muscle excitation during the eccentric phase followed a similar pattern, with the exception of the greater (d: 3.89/11.32) excitation in the clavicular head in BP compared to all other exercises."
     },
     {
       "claim": "c3",

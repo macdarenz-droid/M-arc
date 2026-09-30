@@ -181,7 +181,7 @@
     },
     {
       "id": "c8",
-      "text": "Hip adductor and glute activity are high in the deep (more knee-bent) part of the lift; the wide, turned-out stance targets the glutes strongly.",
+      "text": "In both deadlift styles, hip adductor and glute activity are higher in the more knee-bent part of the lift; the wide, turned-out sumo stance targets the glutes strongly.",
       "tags": [
         "DATA",
         "CONSENSUS"
@@ -557,8 +557,8 @@
       "claim": "c10"
     },
     {
-      "step": "Take your time with the setup.",
-      "claim": "c17"
+      "step": "Practise with light weight; add load in small steps.",
+      "claim": "c18"
     }
   ],
   "posture": [
@@ -590,7 +590,7 @@
   "handlingMistakes": [
     {
       "mistake": "Hips shooting up so the back does the lift.",
-      "fix": "Be patient and keep driving with the legs; if it won't move that way, lower the weight.",
+      "fix": "Be patient and keep driving with the legs.",
       "claim": "c12"
     },
     {
@@ -613,15 +613,15 @@
       {
         "muscleId": "quads",
         "claim": "c7"
-      },
-      {
-        "muscleId": "adductors",
-        "claim": "c8"
       }
     ],
     "secondary": [
       {
         "muscleId": "hamstrings",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "adductors",
         "claim": "c9"
       },
       {
@@ -653,7 +653,7 @@
       },
       {
         "where": "Glutes and inner thighs",
-        "means": "Usually normal: the wide stance works them hard, most in the low part.",
+        "means": "Usually normal: the wide stance works the glutes hard; glutes and inner thighs work most in the low part of the lift.",
         "fix": null,
         "claim": "c8",
         "redFlag": null
@@ -661,7 +661,7 @@
       {
         "where": "Lower back taking over at the start",
         "means": "Usually means the hips shot up first.",
-        "fix": "Drive with the legs; lower the weight if needed.",
+        "fix": "Be patient and keep driving with the legs.",
         "claim": "c12",
         "redFlag": null
       },
@@ -676,8 +676,8 @@
   },
   "risks": [
     {
-      "risk": "Sumo loads the lower back a little less, but heavier weight can cancel that out.",
-      "claim": "c6"
+      "risk": "Sumo loads the lower back a little less (c5), but heavier weight can cancel that out (c6).",
+      "claim": "c5"
     },
     {
       "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
@@ -720,7 +720,7 @@
       "forearms"
     ],
     "remove": [],
-    "why": "Library primary glutes, adductors and secondary hamstrings, lower_back are kept (c8, c9). Quads: EMG shows sumo works them more than conventional (c7), so the feel spec lists them primary; the library keeps them secondary, and moving them is a role change for the supervisor, not an add. Add upper_traps (trapezius) and forearms (forearm flexors) as secondary: StrengthLog lists both (c9)."
+    "why": "Library primary glutes, adductors and secondary hamstrings, lower_back are kept in the library (c8, c9). Adductors: StrengthLog lists them secondary (c9) and the EMG data (c8) show adductor activity rising in the knee-bent part for both styles, not more in sumo, so the feel spec lists them secondary; the library keeps them primary, a role change for the supervisor, not a remove. Quads: EMG shows sumo works them more than conventional (c7), so the feel spec lists them primary; the library keeps them secondary, and moving them is a role change for the supervisor, not an add. Add upper_traps (trapezius) and forearms (forearm flexors) as secondary: StrengthLog lists both (c9)."
   },
   "anchorSource": "barbend-sumo",
   "sources": [

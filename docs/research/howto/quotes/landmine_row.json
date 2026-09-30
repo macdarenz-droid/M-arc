@@ -31,6 +31,22 @@
       "closest": "Stand facing the barbell with your feet shoulder-width apart."
     },
     {
+      "claim": "c2",
+      "source": "cissik-landmine",
+      "text": "Straddle the end of the barbell with the weight. Your feet should be between hip-width and shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "Straddle the end of the barbell with the weight. Your feet should be between hip-width and shoulder-width apart.",
+      "note": "Read 2026-09-30 in the fetched Cissik page (Landmine T-Bar Row steps: the bar gripped directly, no handle)."
+    },
+    {
+      "claim": "c2",
+      "source": "cissik-landmine",
+      "text": "Your shoulders should be ahead of the weight.",
+      "status": "verbatim",
+      "closest": "Your shoulders should be ahead of the weight.",
+      "note": "Read 2026-09-30 in the fetched Cissik page (Landmine T-Bar Row steps: the bar gripped directly, no handle)."
+    },
+    {
       "claim": "c3",
       "source": "rep-landmine-row",
       "text": "Bend at the hips and knees, keeping your back straight, and hinge forward until your torso is roughly parallel to the floor.",
@@ -43,6 +59,14 @@
       "text": "Grip the barbell just below the weight plates with both hands, using an overhand grip.",
       "status": "verbatim",
       "closest": "Grip the barbell just below the weight plates with both hands, using an overhand grip."
+    },
+    {
+      "claim": "c4",
+      "source": "cissik-landmine",
+      "text": "Squat down and grip the barbell just under the inside collar. One hand will be above the other.",
+      "status": "verbatim",
+      "closest": "Squat down and grip the barbell just under the inside collar. One hand will be above the other.",
+      "note": "Read 2026-09-30 in the fetched Cissik page (Landmine T-Bar Row steps: the bar gripped directly, no handle)."
     },
     {
       "claim": "c5",
@@ -150,6 +174,14 @@
       "closest": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load."
     },
     {
+      "claim": "c15",
+      "source": "rep-landmine-row",
+      "text": "By providing a more controlled range of motion, the landmine row reduces stress on your lower back, making it a safer option for those with mobility or injury concerns.",
+      "status": "verbatim",
+      "closest": "By providing a more controlled range of motion, the landmine row reduces stress on your lower back, making it a safer option for those with mobility or injury concerns.",
+      "note": "Re-read 2026-09-30 in the fetched REP page."
+    },
+    {
       "claim": "c16",
       "source": "nhs-back-pain",
       "text": "Call 999 or go to A&E if:",
@@ -190,6 +222,45 @@
       "text": "Perform all grips with your thumbs around the bar.",
       "status": "verbatim",
       "closest": "Perform all grips with your thumbs around the bar."
+    },
+    {
+      "claim": "c18",
+      "source": "odriscoll1992",
+      "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c18",
+      "source": "odriscoll1992",
+      "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "status": "verbatim",
+      "closest": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c18",
+      "source": "odriscoll1992",
+      "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "status": "verbatim",
+      "closest": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c19",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice.",
+      "note": "Re-read 2026-09-30 in the fetched NHS back-pain page."
+    },
+    {
+      "claim": "c3",
+      "source": "cissik-landmine",
+      "text": "From here, push the hips back and unlock your knees until you have at least a 45 degree angle between your upper body and the ground.",
+      "status": "verbatim",
+      "closest": "From here, push the hips back and unlock your knees until you have at least a 45 degree angle between your upper body and the ground."
     }
   ]
 }

@@ -31,6 +31,13 @@
       "closest": "With one palm on each side of the dumbbell, create a “closed” grasp by overlapping your thumbs behind the handle and overlapping fingers in front."
     },
     {
+      "claim": "c3",
+      "source": "bm-pullover",
+      "quote": "The handle of the dumbbell should sit between the base of your thumbs and body of the hands.",
+      "status": "verbatim",
+      "closest": "The handle of the dumbbell should sit between the base of your thumbs and body of the hands."
+    },
+    {
       "claim": "c4",
       "source": "bm-pullover",
       "quote": "Begin with dumbbell above your upper chest with your arms vertical and elbows unlocked or slightly bent.",
@@ -164,6 +171,13 @@
       "closest": "excessive elbow bend is also associated with “flared,” or outward-pointing, elbows. This position reflects internal rotation of the shoulder and may increase stress on the inside of the elbow"
     },
     {
+      "claim": "c14",
+      "source": "bm-pullover",
+      "quote": "Focus on keeping your elbows pointing forward and/or up during the dumbbell pullover.",
+      "status": "verbatim",
+      "closest": "Focus on keeping your elbows pointing forward and/or up during the dumbbell pullover."
+    },
+    {
       "claim": "c15",
       "source": "marchetti2011",
       "quote": "the barbell pullover exercise emphasized the muscle action of the pectoralis major more than that of the latissimus dorsi",
@@ -190,6 +204,13 @@
       "quote": "The posterior deltoid, or “rear delt,” extends the shoulder. It’s active during the pullover.",
       "status": "verbatim",
       "closest": "The posterior deltoid, or “rear delt,” extends the shoulder. It’s active during the pullover."
+    },
+    {
+      "claim": "c16",
+      "source": "bm-pullover",
+      "quote": "studies suggest the posterior deltoid is a more efficient shoulder extensor during the pullover than the latissimus dorsi or pectoralis major.",
+      "status": "verbatim",
+      "closest": "studies suggest the posterior deltoid is a more efficient shoulder extensor during the pullover than the latissimus dorsi or pectoralis major."
     },
     {
       "claim": "c16",

@@ -15,14 +15,20 @@
   "claims": [
     {
       "id": "c1",
-      "text": "Hold the dumbbell in one hand and support your body on the bench with the opposite knee and hand.",
+      "text": "Start with the dumbbell on the floor beside a bench; hold it in one hand and support your body on the bench with the opposite knee and hand.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "ace-single-arm-row"
+        "ace-single-arm-row",
+        "sl-dumbbell-row"
       ],
       "quotes": [
+        {
+          "source": "sl-dumbbell-row",
+          "text": "Start by placing a dumbbell on the floor beside a bench or chair.",
+          "where": "How to Do Dumbbell Rows, step 1"
+        },
         {
           "source": "ace-single-arm-row",
           "text": "Holding a dumbbell in your right hand, bend over to place your left knee and left hand on a bench to support your body weight.",
@@ -361,6 +367,34 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c19",
+      "text": "Grip is strongest with the wrist in its natural extended (bent-back) position, about 35 degrees, and weakens when the wrist moves away from it, even to 15 degrees of extension (measured on a grip test, not on the dumbbell row; applied here as a wrist cue).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "where": "abstract"
+        }
+      ]
     }
   ],
   "sources": [
@@ -423,6 +457,16 @@
       "pmid": 20508476,
       "access": "abstract",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength.",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": 1538102,
+      "access": "abstract",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {
@@ -450,7 +494,7 @@
     ],
     "mistake": {
       "what": "Short range: the arm never straightens at the bottom and the elbow stops short at the top.",
-      "why": "The top fault is twisting the torso to lift higher (c6, c7), a rotation the engine cannot draw; a short range is a listed common mistake (c10) and shows side-on.",
+      "why": "Twisting the torso to lift higher (c6, c7) is a rotation the engine cannot draw; a short range is a listed common mistake (c10) and shows side-on.",
       "claim": "c10",
       "drawable": false
     },
@@ -469,7 +513,7 @@
       }
     ],
     "tempo": {
-      "up": 1,
+      "up": 2,
       "down": 2,
       "pause": 0,
       "claim": "c14"
@@ -481,10 +525,11 @@
     "width": "Not applicable (one hand).",
     "thumb": "Wrapped around the handle.",
     "handContact": "Handle across the base of the fingers and top of the palm (pull archetype); a strap is allowed when the grip gives out first.",
-    "wrist": "Straight in line with the forearm (pull archetype range); not curled.",
+    "wrist": "Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.",
     "claims": [
       "c16",
-      "c17"
+      "c17",
+      "c19"
     ]
   },
   "setup": [
@@ -534,7 +579,7 @@
   "handlingMistakes": [
     {
       "mistake": "Twisting the torso to lift the dumbbell higher.",
-      "fix": "Stop the pull where your torso would have to turn; use less weight if needed.",
+      "fix": "Stop the pull where your torso would have to turn.",
       "claim": "c6"
     },
     {
@@ -603,18 +648,14 @@
       },
       {
         "where": "Sharp pain in the shoulder joint",
-        "means": "Not a normal training feeling; the shoulder is a common injury site.",
-        "fix": "Stop the set.",
+        "means": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+        "fix": null,
         "claim": "c18",
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
-    {
-      "risk": "Twisting to lift more weight changes the spine position the exercise is meant to hold.",
-      "claim": "c7"
-    },
     {
       "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
       "claim": "c18"

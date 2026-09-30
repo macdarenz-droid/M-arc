@@ -28,7 +28,7 @@
   "claims": [
     {
       "id": "c1",
-      "text": "Set the bench at 30-45 degrees; steeper shifts work to the shoulders. In EMG data the upper chest peaked at 30 degrees, and above 45 degrees the front shoulder took over.",
+      "text": "Set the bench at 30-45 degrees; steeper shifts work to the shoulders. In EMG data the upper chest peaked at 30 degrees, and above 45 degrees front-shoulder activity was significantly higher and chest performance lower.",
       "tags": [
         "CONSENSUS",
         "DATA"
@@ -57,7 +57,7 @@
     },
     {
       "id": "c2",
-      "text": "The upper (clavicular) chest is more active on the incline barbell bench than on the flat bench or chest press machine.",
+      "text": "While pressing up, the upper (clavicular) chest was more active on a 45-degree incline barbell bench than on the flat bench or chest-press machine; while lowering, the flat bench was higher.",
       "tags": [
         "DATA"
       ],
@@ -67,7 +67,12 @@
       "quotes": [
         {
           "source": "coratella2020",
-          "text": "clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises.",
+          "text": "During the concentric phase, [d effect size: 2.78/7.80] clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises.",
+          "where": "abstract"
+        },
+        {
+          "source": "coratella2020",
+          "text": "Muscle excitation during the eccentric phase followed a similar pattern, with the exception of the greater (d: 3.89/11.32) excitation in the clavicular head in BP compared to all other exercises.",
           "where": "abstract"
         }
       ]
@@ -488,7 +493,7 @@
   "plate": {
     "view": "side",
     "viewWhy": "Census view is side; bench angle, the upper-chest touch point and the low-back arch all read in the sagittal plane (c1, c7, c9).",
-    "equipment": "Incline bench with its own rack, back pad at 30 degrees (inside the 30-45 range of c1, and the angle where upper-chest EMG peaked, c1); barbell; feet flat (c3). Safety catches where the rack has them (c6).",
+    "equipment": "Incline bench with its own rack, back pad at 30 degrees (inside the 30-45 range of c1, and the angle where upper-chest EMG peaked, c1); barbell; feet flat (c3). Safety catches are drawn on the rack (c6).",
     "start": "On the incline, head, shoulders and hips on the pad, feet flat (c3); bar on straight arms above the shoulders (c5).",
     "end": "Bar touching the upper chest (c7), elbows about 45-75 degrees from the torso (c7), back and hips still on the pad (c3, c9).",
     "checkpoints": [
@@ -544,8 +549,8 @@
   },
   "setup": [
     {
-      "step": "Set the back pad to about 30 degrees and the safety catches if the rack has them.",
-      "claim": "c1"
+      "step": "Set the back pad to about 30 degrees and set the safety catches.",
+      "claim": "c1, c6"
     },
     {
       "step": "Sit back with head, shoulders and hips on the pad, feet flat.",
@@ -585,8 +590,8 @@
   "handlingMistakes": [
     {
       "mistake": "Arching the low back off the pad to finish a rep.",
-      "fix": "Stop the set or go lighter.",
-      "claim": "c9"
+      "fix": "Keep your back on the pad; build up to heavier weights gradually.",
+      "claim": "c9, c12, c13"
     },
     {
       "mistake": "Elbows flared straight out.",
@@ -639,7 +644,7 @@
       {
         "where": "Pain in the shoulder or chest",
         "means": "Usually a warning sign; shoulder injuries are common in lifting.",
-        "fix": "Stop the set. Go lighter next time.",
+        "fix": "Stop the set.",
         "claim": "c12",
         "redFlag": "shoulder"
       }
@@ -668,7 +673,7 @@
       "kind": "hand",
       "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
-      "claim": "c4"
+      "claim": "barbell_bench_press:c5"
     },
     {
       "key": "back-on-incline-pad",

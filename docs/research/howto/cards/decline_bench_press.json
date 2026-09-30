@@ -119,7 +119,7 @@
     },
     {
       "id": "c5",
-      "text": "Lower the bar with control to touch the lower chest only; do not let it drift forward toward the head, and do not bounce it.",
+      "text": "Lower the bar with control to touch the lower chest only; do not let the bar drift (WorkoutLabs: 'too far forward'), and do not bounce it.",
       "tags": [
         "CONSENSUS"
       ],
@@ -233,7 +233,7 @@
     },
     {
       "id": "c10",
-      "text": "On the decline the triceps work as hard as on the flat bench, and the front shoulder works less than in the other presses.",
+      "text": "On the decline the triceps work as hard as on the flat bench; the front shoulder was measured working less than in the other presses tested, which is why it is listed as a secondary, not primary, mover.",
       "tags": [
         "DATA"
       ],
@@ -272,7 +272,7 @@
     },
     {
       "id": "c12",
-      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia; on a decline the head is the low end, so a bar drifting headward moves toward the face and neck.",
+      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia; a bar that lands high on the chest, above the lower-chest touch point, is closer to the neck (inference: the sources name neck compression by barbells in general and the lower-chest touch, not this link).",
       "tags": [
         "DATA",
         "MECH"
@@ -318,7 +318,7 @@
     },
     {
       "id": "c14",
-      "text": "Pectoralis major tendon ruptures happen most often during the lowering (eccentric) part of the bench press.",
+      "text": "Pec tendon ruptures happen while the loaded muscle lengthens (the lowering phase), most often on the bench press.",
       "tags": [
         "DATA"
       ],
@@ -462,7 +462,7 @@
       },
       {
         "label": "Lower-chest touch",
-        "what": "Bar touches the lower chest only, never drifting toward the head.",
+        "what": "Bar touches the lower chest only, never high toward the neck.",
         "claim": "c5"
       },
       {
@@ -472,8 +472,8 @@
       }
     ],
     "mistake": {
-      "what": "Bar drifting forward toward the upper chest and neck on the way down.",
-      "why": "WorkoutLabs names it; on a decline the head is lowest, so this drift brings the bar toward the face and neck (c12). How often it happens is not measured in any source read.",
+      "what": "Bar landing high on the chest, toward the neck.",
+      "why": "WorkoutLabs says the bar should touch the lower chest only and not drift; a high touch brings the bar toward the neck (c12, MECH). How often it happens is not measured in any source read.",
       "claim": "c5",
       "drawable": true
     },
@@ -508,7 +508,7 @@
   "setup": [
     {
       "step": "Set the bench in decline and set the safety racks at both sides.",
-      "claim": "c6"
+      "claim": "c2, c6"
     },
     {
       "step": "Set the bar at a height you can reach without straightening your arms.",
@@ -524,7 +524,7 @@
     },
     {
       "step": "Lift the bar out, ideally with a spotter, and hold it over your chest on locked arms.",
-      "claim": "c7"
+      "claim": "c7, c6"
     }
   ],
   "posture": [
@@ -542,14 +542,14 @@
     },
     {
       "point": "Wrists straight, bar low in the palm (inherited, parent c5).",
-      "claim": "c3"
+      "claim": "barbell_bench_press:c5"
     }
   ],
   "handlingMistakes": [
     {
-      "mistake": "Letting the bar drift toward the neck.",
+      "mistake": "Letting the bar land high on the chest, toward the neck.",
       "fix": "Lower it to the lower chest only.",
-      "claim": "c5"
+      "claim": "c5, c12"
     },
     {
       "mistake": "Benching heavy without safeties or a spotter.",
@@ -590,15 +590,15 @@
       },
       {
         "where": "Sharp pain in the chest or front of the shoulder while lowering",
-        "means": "Usually a warning sign: pec tendon tears happen mostly while lowering on the bench press.",
-        "fix": "Stop the set. Go lighter next time.",
+        "means": "Usually a warning sign.",
+        "fix": "Stop the set.",
         "claim": "c14",
         "redFlag": "shoulder"
       },
       {
         "where": "Pain deep in the front of the shoulder",
         "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set. Go lighter next time.",
+        "fix": "Stop the set.",
         "claim": "c15",
         "redFlag": "shoulder"
       }
@@ -606,15 +606,15 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck: on a decline a drifting bar heads for the neck, and a failed rep cannot be rolled off; wrap the thumbs and set safety racks.",
-      "claim": "c12"
+      "risk": "Bar over the face and neck: a bar landing high on the chest moves toward the neck, and a failed rep cannot be rolled off; wrap the thumbs and set safety racks.",
+      "claim": "c12, c13, c6, barbell_bench_press:c4"
     },
     {
-      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
-      "claim": "c13"
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c11"
     },
     {
-      "risk": "Pec tendon rupture while lowering heavy weights.",
+      "risk": "Pec tendon rupture while lowering the bar.",
       "claim": "c14"
     }
   ],
@@ -627,7 +627,7 @@
       "kind": "hand",
       "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
-      "claim": "c3"
+      "claim": "barbell_bench_press:c5"
     },
     {
       "key": "feet-hooked",

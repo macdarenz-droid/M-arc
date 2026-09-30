@@ -82,6 +82,14 @@
     {
       "claim": "c9",
       "source": "ace-shrug",
+      "text": "raise the shoulders directly upwards to the ears as high as possible",
+      "status": "verbatim",
+      "closest": "raise the shoulders directly upwards to the ears as high as possible",
+      "note": "Re-read 2026-09-30 in the fetched ACE shrug page (barbell)."
+    },
+    {
+      "claim": "c9",
+      "source": "ace-shrug",
       "text": "focus on only raising/lowering the shoulders - DO NOT roll the shoulders.",
       "status": "verbatim",
       "closest": "focus on only raising/lowering the shoulders - DO NOT roll the shoulders."
@@ -99,6 +107,22 @@
       "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
       "status": "verbatim",
       "closest": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position."
+    },
+    {
+      "claim": "c11",
+      "source": "odriscoll1992",
+      "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c11",
+      "source": "odriscoll1992",
+      "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "status": "verbatim",
+      "closest": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
     },
     {
       "claim": "c12",

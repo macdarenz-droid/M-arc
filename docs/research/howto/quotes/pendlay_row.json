@@ -87,6 +87,13 @@
       "closest": "When you hit your target number, then go back and gradually add more weight."
     },
     {
+      "claim": "c7",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
       "claim": "c8",
       "source": "ggr-pendlay",
       "text": "Initiating the Pendlay row with a rounded back diminishes the amount of power you’re able to generate, but it’s also dangerous",
@@ -115,11 +122,27 @@
       "closest": "If you feel yourself yanking the bar and splaying your elbows out to the sides, lighten the load until the problem diminishes."
     },
     {
+      "claim": "c9",
+      "source": "barbend-pendlay",
+      "text": "You can also try cueing yourself to put your elbows in your pockets or to pull the bar to your hips.",
+      "status": "verbatim",
+      "closest": "You can also try cueing yourself to put your elbows in your pockets or to pull the bar to your hips.",
+      "note": "Re-read 2026-09-30 in the fetched BarBend Pendlay page."
+    },
+    {
       "claim": "c10",
       "source": "ggr-pendlay",
       "text": "Stand over a loaded barbell with your feet shoulder-width apart.",
       "status": "verbatim",
       "closest": "Stand over a loaded barbell with your feet shoulder-width apart."
+    },
+    {
+      "claim": "c10",
+      "source": "ggr-pendlay",
+      "text": "Start with your body hinged forward, back flat, core tight, and knees slightly bent so you can grip the bar.",
+      "status": "verbatim",
+      "closest": "Start with your body hinged forward, back flat, core tight, and knees slightly bent so you can grip the bar.",
+      "note": "Re-read 2026-09-30 in the fetched Garage Gym Reviews Pendlay page."
     },
     {
       "claim": "c10",
@@ -134,6 +157,14 @@
       "text": "Primary muscles worked: Lats, traps, rear deltoids",
       "status": "verbatim",
       "closest": "Primary muscles worked: Lats, traps, rear deltoids"
+    },
+    {
+      "claim": "c11",
+      "source": "sl-pendlay",
+      "text": "Secondary muscles worked: Biceps Lower Back Forearm Flexors Rotator Cuff",
+      "status": "verbatim",
+      "closest": "Secondary muscles worked: Biceps Lower Back Forearm Flexors Rotator Cuff",
+      "note": "Re-read 2026-09-30 in the fetched StrengthLog Pendlay page (list items joined by spaces)."
     },
     {
       "claim": "c11",
@@ -190,13 +221,6 @@
       "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
       "status": "verbatim",
       "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
-    },
-    {
-      "claim": "c15",
-      "source": "acsm2009",
-      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
-      "status": "verbatim",
-      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
     },
     {
       "claim": "c16",
@@ -260,6 +284,38 @@
       "text": "Lifting straps swoop in to save the day when your grip is failing, but there’s still gas left in the tank.",
       "status": "verbatim",
       "closest": "Lifting straps swoop in to save the day when your grip is failing, but there’s still gas left in the tank."
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "status": "verbatim",
+      "closest": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "status": "verbatim",
+      "closest": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c22",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice.",
+      "note": "Re-read 2026-09-30 in the fetched NHS back-pain page."
     }
   ]
 }

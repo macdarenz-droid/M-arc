@@ -4,6 +4,14 @@
   "quotes": [
     {
       "claim": "c1",
+      "source": "sl-dumbbell-row",
+      "text": "Start by placing a dumbbell on the floor beside a bench or chair.",
+      "status": "verbatim",
+      "closest": "Start by placing a dumbbell on the floor beside a bench or chair.",
+      "note": "Re-read 2026-09-30 in the fetched StrengthLog dumbbell row page."
+    },
+    {
+      "claim": "c1",
       "source": "ace-single-arm-row",
       "text": "Holding a dumbbell in your right hand, bend over to place your left knee and left hand on a bench to support your body weight.",
       "status": "verbatim",
@@ -183,6 +191,30 @@
       "text": "extrinsic risk factors, namely, that of improper attention to exercise technique.",
       "status": "verbatim",
       "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique."
+    },
+    {
+      "claim": "c19",
+      "source": "odriscoll1992",
+      "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c19",
+      "source": "odriscoll1992",
+      "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "status": "verbatim",
+      "closest": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c19",
+      "source": "odriscoll1992",
+      "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "status": "verbatim",
+      "closest": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
     }
   ]
 }

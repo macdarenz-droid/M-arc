@@ -89,7 +89,7 @@
     },
     {
       "id": "c4",
-      "text": "Arms crossed over the chest or hands behind the head; hands behind the head is harder, hands on hips easier.",
+      "text": "Start with the upper body hanging off the edge of the machine, arms crossed over the chest or hands behind the head; hands behind the head is harder, hands on hips easier.",
       "tags": [
         "CONSENSUS"
       ],
@@ -308,7 +308,7 @@
     },
     {
       "id": "c15",
-      "text": "In trained women, the 45-degree Roman chair worked the hamstrings (biceps femoris) more than the RDL, and the glutes as much as the RDL, with similar lower-back activity.",
+      "text": "In trained women, the 45-degree Roman chair worked the hamstrings (biceps femoris) more than the RDL, and, like the RDL, the glutes more than a seated back-extension machine; lower-back activity did not differ.",
       "tags": [
         "DATA"
       ],
@@ -335,7 +335,7 @@
     },
     {
       "id": "c16",
-      "text": "In Roman chair sets taken to exhaustion, the glutes showed clear fatigue while the lower back showed less.",
+      "text": "In a Roman chair study, the glutes showed clear fatigue; the lower back showed less clear signs of fatigue.",
       "tags": [
         "DATA"
       ],
@@ -352,7 +352,7 @@
     },
     {
       "id": "c17",
-      "text": "Lower-back muscle work rises as the bench angle gets more horizontal and as the hands move further up (e.g. behind the head).",
+      "text": "Lower-back muscle work rises as the Roman chair angle gets more horizontal, and it also changes with hand position.",
       "tags": [
         "DATA"
       ],
@@ -409,8 +409,8 @@
     "view": "side",
     "viewWhy": "Pad height at the hip crease, the hinge at the hips and the straight line at the top are front-to-back positions (c1, c5, c6); only the side view shows them.",
     "equipment": "45-degree Roman chair (back extension bench, census need romanChair): hip pad at the top of the thighs just below the hip bones (c1, c2), foot plate with heel pad. Drawn bodyweight, arms crossed on the chest (c4).",
-    "start": "Top position: thighs on the pad, feet secured, knees slightly bent (c3); shoulders, spine and hips in one straight line in line with the legs (c5).",
-    "end": "Bottom: hinged at the hips, torso slightly below parallel to the floor, back straight (c6, c7).",
+    "start": "Bottom: thighs on the pad, feet secured, knees slightly bent (c3); upper body hanging off the edge of the machine, arms crossed on the chest (c4), hinged at the hips with the torso slightly below parallel to the floor, back straight (c6, c7).",
+    "end": "Top: shoulders, spine and hips in one straight line in line with the legs, glutes squeezed, no arch past straight (c5).",
     "checkpoints": [
       {
         "label": "Pad below hips",
@@ -547,7 +547,7 @@
         "where": "Glutes, hamstrings and lower back",
         "means": "Usually means the hips are doing the hinge.",
         "fix": null,
-        "claim": "c14",
+        "claim": "c2",
         "redFlag": null
       },
       {
@@ -559,7 +559,7 @@
       },
       {
         "where": "Deep ache in the lower back",
-        "means": "Usually means too much too soon or a form fault.",
+        "means": "Usually means too much too soon (c12) or a form fault to revise (c13).",
         "fix": "Take a week or two off, then come back lighter.",
         "claim": "c13",
         "redFlag": null
@@ -583,7 +583,7 @@
       "claim": "c9"
     },
     {
-      "risk": "A pad set too high rounds the back, more so under heavy weight.",
+      "risk": "A pad set too high turns the move into a crunch; rounding is especially unwise under heavy weight.",
       "claim": "c2"
     }
   ],
@@ -609,7 +609,7 @@
   "libraryDiff": {
     "add": [],
     "remove": [],
-    "why": "Library primary lower_back and secondary glutes, hamstrings match the sources (c14, c15). Glutes are listed primary in the feel spec because they fatigue clearly in Roman chair sets (c16) and match the RDL (c15); promoting them in the library is a role change for the supervisor."
+    "why": "Library primary lower_back and secondary glutes, hamstrings match the sources (c14, c15). Glutes are listed primary in the feel spec because they fatigue clearly in Roman chair sets (c16) and, like the RDL, work more than on a seated back-extension machine (c15); promoting them in the library is a role change for the supervisor."
   },
   "anchorSource": "sl-back-extension",
   "sources": [

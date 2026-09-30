@@ -329,6 +329,30 @@
       "status": "verbatim",
       "closest": "it does not improve after treating it at home for a few weeks",
       "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c9",
+      "source": "sl-deadlift",
+      "text": "But it might also be the case that the lifter just doesn’t know how the start of a deadlift might feel, and is simply not patient enough for the quads and the hip extensors to hit their coordination and make the (maybe: more efficient) pull.",
+      "status": "verbatim",
+      "closest": "But it might also be the case that the lifter just doesn’t know how the start of a deadlift might feel, and is simply not patient enough for the quads and the hip extensors to hit their coordination and make the (maybe: more efficient) pull.",
+      "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
+    },
+    {
+      "claim": "c4",
+      "source": "sl-deadlift",
+      "text": "You’re going to keep your arms vertical as seen from the side (or very close to vertical) during the entire lift.",
+      "status": "verbatim",
+      "closest": "You’re going to keep your arms vertical as seen from the side (or very close to vertical) during the entire lift.",
+      "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
+    },
+    {
+      "claim": "c8",
+      "source": "sl-deadlift",
+      "text": "Perhaps you are not strong enough to break the bar off the floor without rounding your back and thus decreasing the moment arms of your prime movers by bringing the bar closer to their respective joints.",
+      "status": "verbatim",
+      "closest": "Perhaps you are not strong enough to break the bar off the floor without rounding your back and thus decreasing the moment arms of your prime movers by bringing the bar closer to their respective joints.",
+      "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
     }
   ],
   "sources": [

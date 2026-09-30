@@ -21,16 +21,12 @@
       "why": "true for this child because the Baechle and Earle rule covers all grips, the V-handle included (c19)."
     },
     {
-      "field": "grip.wrist",
-      "why": "true for this child because the pull archetype wrist range does not depend on the handle (GA 3.1, pull)."
-    },
-    {
       "field": "risks[breath]",
       "why": "true for this child because it is also a heavy two-hand free-weight row; same MacDougall 1985 line (c16)."
     },
     {
       "field": "redFlags",
-      "why": "true for this child because it loads the lower back in the same bent-over position, more so without a chest pad (c11); same NHS back box (c18)."
+      "why": "true for this child because it loads the lower back in the same bent-over position, more so without a chest pad (c11); same NHS back box (c18, c22)."
     }
   ],
   "claims": [
@@ -255,31 +251,20 @@
     },
     {
       "id": "c13",
-      "text": "Beginners start light and focus on form, adding weight gradually as strength and technique improve.",
+      "text": "Beginners start light and focus on form, adding weight gradually as strength and technique improve, in steps of about 2-10% once the target reps are beaten by one or two.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "ggr-t-bar"
+        "ggr-t-bar",
+        "acsm2009"
       ],
       "quotes": [
         {
           "source": "ggr-t-bar",
           "text": "Beginners can safely perform the T-Bar row by starting with light weights and focusing on proper form. Gradually increasing the weight as strength and technique improve will help prevent injury and lead to progress.",
           "where": "FAQs"
-        }
-      ]
-    },
-    {
-      "id": "c14",
-      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
-      "tags": [
-        "CONSENSUS"
-      ],
-      "sources": [
-        "acsm2009"
-      ],
-      "quotes": [
+        },
         {
           "source": "acsm2009",
           "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
@@ -420,6 +405,52 @@
           "where": "FAQs: Is it OK to use lifting straps with T-bar rows?"
         }
       ]
+    },
+    {
+      "id": "c21",
+      "text": "Grip is strongest with the wrist in its natural extended (bent-back) position, about 35 degrees, and weakens when the wrist moves away from it, even to 15 degrees of extension (measured on a grip test, not on the T-bar row; applied here as a wrist cue).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
     }
   ],
   "sources": [
@@ -492,6 +523,16 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength.",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": 1538102,
+      "access": "abstract",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {
@@ -539,18 +580,19 @@
       "pause": 1,
       "claim": "c15"
     },
-    "variantLine": "Drawn: the free-standing (landmine) T-bar with a V-handle (c1). The library also allows a chest-supported T-bar machine: there the foot plate is set so the sternum is at the end of the pad (c12) and the lower back works less (c11). Claims c4-c10, c13-c16, c19-c20 hold for both; c2, c3, c7, c17 and the back box are for the free-standing version."
+    "variantLine": "Drawn: the free-standing (landmine) T-bar with a V-handle (c1). The library also allows a chest-supported T-bar machine: there the foot plate is set so the sternum is at the end of the pad (c12) and the lower back works less (c11). Claims c4-c6, c8-c10, c13, c15, c16, c19-c21 hold for both; c2, c3, c7, c17, c22 and the back box are for the free-standing version."
   },
   "grip": {
     "type": "Neutral: palms facing each other on a V-handle.",
     "width": "Close: set by the V-handle.",
     "thumb": "Wrapped around the handle.",
     "handContact": "Handle across the base of the fingers and top of the palm (pull archetype); straps allowed on heavy sets.",
-    "wrist": "Straight in line with the forearm (pull archetype range); not curled.",
+    "wrist": "Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.",
     "claims": [
       "c6",
       "c19",
-      "c20"
+      "c20",
+      "c21"
     ]
   },
   "setup": [
@@ -571,13 +613,13 @@
       "claim": "c3"
     },
     {
-      "step": "Brace, back straight, then pull.",
-      "claim": "c3"
+      "step": "Start light and focus on form; add 2-10% once you beat your target reps by one or two.",
+      "claim": "c13"
     }
   ],
   "posture": [
     {
-      "point": "Back straight, chest parallel to the floor.",
+      "point": "Brace; back straight, chest parallel to the floor.",
       "claim": "c3"
     },
     {
@@ -657,10 +699,10 @@
         "redFlag": null
       },
       {
-        "where": "Lower back pain, or pain or numbness down both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop the set.",
-        "claim": "c18",
+        "where": "Back pain that gets worse during the set",
+        "means": "The NHS advises stopping exercise when back pain gets worse.",
+        "fix": "Stop the set; see a GP for advice.",
+        "claim": "c22",
         "redFlag": "back"
       }
     ]
@@ -686,9 +728,9 @@
     {
       "key": "tbar-grip",
       "kind": "hand",
-      "right": "Palms facing on the V-handle, thumbs wrapped, wrists straight.",
-      "wrong": "Wrists curled, handle sliding to the fingertips.",
-      "claim": "c6"
+      "right": "Thumbs wrapped around the V-handle.",
+      "wrong": "Thumbs alongside the handle, not wrapped.",
+      "claim": "c19"
     },
     {
       "key": "tbar-back",

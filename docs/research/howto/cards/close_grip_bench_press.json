@@ -221,7 +221,7 @@
     },
     {
       "id": "c10",
-      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia; a bar that is lowered high, toward the neck, carries that risk.",
+      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia (at least 11 US deaths reported for 1999-2002); that a bar lowered high on the chest brings it closer to this risk is an inference, not stated in the source.",
       "tags": [
         "DATA",
         "MECH"
@@ -378,7 +378,7 @@
     "view": "side",
     "viewWhy": "Census view is side; the low touch point, elbows close to the ribs and hips on the bench read in the sagittal plane (c2, c3, c4). Hand spacing needs the front view, so it is a text point, not a callout.",
     "equipment": "Flat bench under a rack with J-hooks and safety pins (inherited, parent c6); barbell; feet on the floor (c3).",
-    "start": "Supine, shoulder blades together and down (c5), hands in line with the shoulders (c1); bar on straight arms over the chest.",
+    "start": "Supine, shoulder blades together and down (c5), hands in line with the shoulders (c1); bar on straight arms above the shoulders (inherited, parent c8).",
     "end": "Bar touching the low chest where the ribs end (c4), elbows close to the ribs (c2), hips pressed into the bench (c3).",
     "checkpoints": [
       {
@@ -398,8 +398,8 @@
       }
     ],
     "mistake": {
-      "what": "Elbows drifting away from the ribs and the bar landing high on the chest, toward the neck.",
-      "why": "It is the opposite of the two defining cues (ACE elbows-to-ribs, StrengthLog low touch) and brings the bar toward the neck (c10). No source read ranks close-grip faults by frequency.",
+      "what": "Elbows drifting away from the ribs and the bar landing high on the chest (drawn high on the chest, never touching the neck).",
+      "why": "It is the opposite of the two defining cues (ACE elbows-to-ribs, StrengthLog low touch) and brings the bar toward the neck (c10, MECH). No source read ranks close-grip faults by frequency.",
       "claim": "c2",
       "drawable": true
     },
@@ -447,6 +447,10 @@
     {
       "step": "Lift the bar out, ideally with a spotter behind your head (inherited, parent c7).",
       "claim": "barbell_bench_press:c7"
+    },
+    {
+      "step": "Add weight in small steps: 2-10%, once you can do one or two reps over your target.",
+      "claim": "c8"
     }
   ],
   "posture": [
@@ -484,7 +488,7 @@
     },
     {
       "mistake": "Hips lifting off the bench.",
-      "fix": "Press your hips into the bench; go lighter if they lift.",
+      "fix": "Press your hips into the bench.",
       "claim": "c3"
     }
   ],
@@ -515,16 +519,16 @@
         "redFlag": null
       },
       {
-        "where": "Mostly the chest and front of the shoulders",
-        "means": "Usually the grip has crept wider or the elbows are flaring.",
-        "fix": "Bring the hands in line with the shoulders and the elbows to the ribs.",
+        "where": "Mostly the front of the shoulders",
+        "means": "The grip may have crept wider.",
+        "fix": "Bring the hands in line with the shoulders.",
         "claim": "c7",
         "redFlag": null
       },
       {
         "where": "Pain deep in the front of the shoulder",
         "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set. Go lighter next time.",
+        "fix": "Stop the set.",
         "claim": "c12",
         "redFlag": "shoulder"
       }
@@ -533,7 +537,7 @@
   "risks": [
     {
       "risk": "Bar over the face and neck: touch low on the chest, wrap the thumbs and use safety pins or a spotter.",
-      "claim": "c10"
+      "claim": "c10, c4, barbell_bench_press:c4, barbell_bench_press:c6, barbell_bench_press:c7"
     },
     {
       "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
@@ -553,7 +557,7 @@
       "kind": "hand",
       "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
-      "claim": "c1"
+      "claim": "barbell_bench_press:c5"
     },
     {
       "key": "elbows-to-ribs",

@@ -276,6 +276,28 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c16",
+      "text": "A way out: have a spotter when doing skull crushers for the first time, and do not go too heavy too fast, because the weight hovers above the head.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitfather-skull"
+      ],
+      "quotes": [
+        {
+          "source": "fitfather-skull",
+          "text": "Finally, when doing skull crushers for the first time, it’s a good idea to have a spotter.",
+          "where": "closing notes"
+        },
+        {
+          "source": "fitfather-skull",
+          "text": "But, go too heavy, too fast, and the weight is hovering above your head … you could have issues!",
+          "where": "closing notes"
+        }
+      ]
     }
   ],
   "sources": [
@@ -338,6 +360,16 @@
       "pmid": "19204579",
       "access": "abstract",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "fitfather-skull",
+      "url": "https://www.fitfatherproject.com/skull-crushers/",
+      "title": "Skull Crushers Exercise Tutorial (Form, Variations, and Benefits) (The Fit Father Project, Stuart Carter)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {
@@ -391,7 +423,7 @@
     "type": "Closed grip, palms toward the feet (c1); on the EZ bar the hands sit on the angled inner grips (c8).",
     "width": "Close grip (c10), elbows kept shoulder-width apart (c6).",
     "thumb": "Wrapped round the bar (c1).",
-    "handContact": "Not stated by the sources read; the push-archetype default applies.",
+    "handContact": "Not stated by the sources read; no hand-placement rule is given.",
     "wrist": "Neutral (c3).",
     "claims": [
       "c1",
@@ -417,6 +449,10 @@
     {
       "step": "Upper arms vertical, elbows shoulder-width apart.",
       "claim": "c6"
+    },
+    {
+      "step": "When new to the lift, have a spotter and start light.",
+      "claim": "c16"
     }
   ],
   "posture": [
@@ -480,8 +516,8 @@
       },
       {
         "where": "Sharp pain at the back of the elbow while lowering",
-        "means": "Usually a warning sign: triceps tendon tears, though rare, come from forceful lowering under load.",
-        "fix": "Stop the set. Go lighter next time.",
+        "means": "Usually a warning sign.",
+        "fix": "Stop the set.",
         "claim": "c15",
         "redFlag": "elbow"
       }
@@ -489,12 +525,16 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face: a dropped bar lands on the face; wrap the thumbs and lower slowly.",
-      "claim": "c14"
+      "risk": "Bar over the face: a dropped bar lands on the face; wrap the thumbs, lower slowly, and have a spotter while you are new to the lift.",
+      "claim": "c14, c2, c1, c4, c16"
     },
     {
       "risk": "Triceps tendon rupture from forceful lowering under heavy load (rare).",
       "claim": "c15"
+    },
+    {
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c12"
     }
   ],
   "redFlags": [

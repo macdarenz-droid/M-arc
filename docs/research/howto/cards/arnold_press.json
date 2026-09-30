@@ -14,15 +14,11 @@
   "inherit": [
     {
       "field": "grip.thumb",
-      "why": "true for this child because the dumbbells are still pressed overhead and over the face in a closed grip; the palm turn changes the hand's direction, not the thumb wrap, so the parent's thumbs-wrapped rule (parent c2) applies."
+      "why": "true for this child because the dumbbells are still held in a closed grip and pressed overhead; the palm turn changes the hand's direction, not the thumb wrap. Parent c2 (ACE: thumbs wrapped around the handles) holds; ACE's line is carried here as c15 (MECH)."
     },
     {
       "field": "grip.wrist",
-      "why": "true for this child because the wrist still sits under a dumbbell pressed straight up; the parent's neutral-wrist rule (parent c2, c6) applies at every point of the turn."
-    },
-    {
-      "field": "grip.handContact",
-      "why": "true for this child because it is the same dumbbell handle held firmly in the palm (parent c2)."
+      "why": "true for this child because each wrist still sits under a dumbbell pressed straight up; parent c2 and c6 (ACE: neutral wrists pressing and lowering) hold at every point of the turn. Carried here as c15 (MECH)."
     },
     {
       "field": "setup.spotter",
@@ -120,6 +116,11 @@
           "source": "fitfather-arnold",
           "text": "The most important part of the exercise is to keep your upper arms parallel to the ground at the lowest point and throughout the twist.",
           "where": "introduction"
+        },
+        {
+          "source": "fitfather-arnold",
+          "text": "This keeps the tension on your deltoids all the way through.",
+          "where": "introduction"
         }
       ]
     },
@@ -200,7 +201,7 @@
     },
     {
       "id": "c9",
-      "text": "In dumbbell shoulder presses the deltoids and the triceps were measured working (inferred for the Arnold press from the dumbbell press; not measured on it).",
+      "text": "Triceps activity was measured in barbell and dumbbell shoulder presses and differed between them (about 39% higher standing with a barbell than with dumbbells); the abstract gives no size for triceps work on its own, so for the Arnold press this is inferred from the dumbbell press and weakly supported.",
       "tags": [
         "MECH",
         "WEAK"
@@ -212,6 +213,11 @@
         {
           "source": "saeterbakken2013",
           "text": "Electromyogram activity was measured in the anterior, medial, and posterior deltoids and biceps and triceps brachii.",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2013",
+          "text": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001), ~20% lower for seated versus standing barbell (p = 0.094).",
           "where": "abstract"
         }
       ]
@@ -304,6 +310,46 @@
           "source": "kerr2010",
           "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
           "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "On the seated dumbbell press (the parent), ACE uses a closed grip with the thumbs wrapped round the handles and keeps the wrists neutral, not bent forward or back, while pressing and lowering; inferred for the Arnold press, whose grip turns during the rep.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-seated-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-ohp",
+          "text": "slowly lift the dumbbells to your shoulder level with a closed, pronated grip (palms facing forward and thumbs wrapped around the handles), with the dumbbells at shoulder-width or slightly wider and wrists in a neutral position (avoid flexion and extension of the wrists).",
+          "where": "Starting Position"
+        },
+        {
+          "source": "ace-seated-ohp",
+          "text": "Maintain your body contact with the bench, neutral wrist (avoid flexion and extension) and depressed, retracted scapulae positions.",
+          "where": "Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Squeeze the grip as tight as you can as you press.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitfather-arnold"
+      ],
+      "quotes": [
+        {
+          "source": "fitfather-arnold",
+          "text": "Breathing out and squeezing the grip as tight as you can, press the dumbbells up overhead, bringing them slightly in front of your head.",
+          "where": "walkthrough step 3"
         }
       ]
     }
@@ -440,11 +486,13 @@
   "grip": {
     "type": "Closed grip that turns during the rep: palms toward you at the bottom, forward at the top (c1).",
     "width": "Dumbbells in front of the chest at the bottom (c1); pressed to straight arms overhead.",
-    "thumb": "Wrapped (inherited, parent c2).",
-    "handContact": "Handle held firmly in the palm (inherited, parent c2).",
-    "wrist": "Neutral through the turn (inherited, parent c2).",
+    "thumb": "Wrapped (inherited, parent c2; c15).",
+    "handContact": "Handle squeezed tight in the hand (c16).",
+    "wrist": "Neutral, not bent forward or back, through the turn (inherited, parent c2, c6; c15).",
     "claims": [
-      "c1"
+      "c1",
+      "c15",
+      "c16"
     ]
   },
   "setup": [
@@ -486,7 +534,7 @@
   "handlingMistakes": [
     {
       "mistake": "Arching the back off the bench.",
-      "fix": "Go lighter; keep your back on the pad.",
+      "fix": "Keep your back on the pad.",
       "claim": "c3"
     },
     {
@@ -528,8 +576,8 @@
       },
       {
         "where": "Pain in the shoulder during the turn or the press",
-        "means": "Usually a warning sign; shoulder injuries are common in lifting.",
-        "fix": "Stop the set. Go lighter or switch exercise.",
+        "means": "Usually a warning sign.",
+        "fix": "Stop the set, or switch exercise.",
         "claim": "c7",
         "redFlag": "shoulder"
       }
@@ -543,6 +591,10 @@
     {
       "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
       "claim": "c14"
+    },
+    {
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c11"
     }
   ],
   "redFlags": [

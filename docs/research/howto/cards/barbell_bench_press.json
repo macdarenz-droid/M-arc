@@ -266,6 +266,11 @@
         },
         {
           "source": "sbs-bench",
+          "text": "That will help reduce range of motion by pushing the chest up",
+          "where": "Scapular position"
+        },
+        {
+          "source": "sbs-bench",
           "text": "it’ll also put the shoulders in a safer position to reduce your risk of rotator cuff injuries or anterior shoulder pain.",
           "where": "Scapular position"
         }
@@ -437,7 +442,7 @@
     },
     {
       "id": "c22",
-      "text": "Pectoralis major tendon ruptures happen most often during the lowering (eccentric) part of the bench press.",
+      "text": "Pec tendon ruptures happen while the loaded muscle lengthens (the lowering phase), most often on the bench press.",
       "tags": [
         "DATA"
       ],
@@ -734,7 +739,7 @@
     },
     {
       "mistake": "Hips lifting off the bench.",
-      "fix": "Count it as a failed rep; repeat or lower the weight next time.",
+      "fix": "Count it as a failed rep; repeat the weight next time.",
       "claim": "c10"
     },
     {
@@ -766,20 +771,20 @@
         "where": "Middle of the chest, front of the shoulders, backs of the arms",
         "means": "The target muscles are working.",
         "fix": null,
-        "claim": "c19",
+        "claim": "c19, c20, c21",
         "redFlag": null
       },
       {
         "where": "Sharp pain in the chest or front of the shoulder while lowering",
-        "means": "Usually a warning sign: pec tendon tears happen mostly while lowering on the bench press.",
-        "fix": "Stop the set. Go lighter next time.",
+        "means": "Usually a warning sign.",
+        "fix": "Stop the set.",
         "claim": "c22",
         "redFlag": "shoulder"
       },
       {
         "where": "Pain deep in the front of the shoulder",
         "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set. Go lighter; keep the upper arms about 45-60 degrees from the torso (c3).",
+        "fix": "Stop the set. Keep the upper arms about 45-60 degrees from the torso (c3).",
         "claim": "c24",
         "redFlag": "shoulder"
       },
@@ -795,14 +800,14 @@
   "risks": [
     {
       "risk": "Bar over the face and neck: a dropped or stuck bar can crush the neck; wrap the thumbs and use safety pins or a spotter.",
-      "claim": "c9"
+      "claim": "c9, c23, c4, c6, c7"
     },
     {
-      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
-      "claim": "c23"
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c16"
     },
     {
-      "risk": "Pec tendon rupture while lowering heavy weights.",
+      "risk": "Pec tendon rupture while lowering the bar.",
       "claim": "c22"
     }
   ],
