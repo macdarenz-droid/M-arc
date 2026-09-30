@@ -1101,3 +1101,12 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Chip visibility.** A zoom chip shows only when its kind is registered (posture after HT-7). The feel chip shows only when a section with id `feel` is registered.
 - **Push hint text.** Golden B's chest press `handling.cue` is "Heel of palm, wrist straight.", not the card's "Push with the heel of your hand.". The gate checks the `HOWTO_HINTS` value, which is golden B's.
 - **Content access until HT-5.** `handContentOf(howTo)` reads HT-5's layer fields and renders nothing while they are absent.
+
+## HT-8 feel map: update after the supervisor's rulings (HT-8 builder, 2026-09-30)
+
+- **Decided (supervisor, #119)**: the feel chunks are named `src/howto/generated/feel-<chromeId>.ts` (for example `feel-lateral-raise.ts`), not `ht-<slug>-feel.ts`. `Feel.tsx` finds its chunk with `chromeIdOf(howTo)`, and `feel.mjs` is the only writer.
+  **Why**: HT-2's and HT-3's pinned tests read every `ht-*.ts` in `generated/` as a plate module. This replaces the naming in the entry above.
+- **Decided (supervisor, ruling on HT-6's design note)**: `feel.css` no longer ships `.hw-sec` or `.fr-show`. HT-6 owns them, together with `.st-show`, and `gen/feel.mjs` lists them in `OWNED_ELSEWHERE` (rule A). HT-8 keeps `.feel*`, `.fr*` (except `.fr-show`) and `.rf-link`.
+  **Why**: one owner per rule, so no rule ships twice.
+- **Decided (supervisor)**: the section listens for `ht:feel-row` and `ht:feel-chip` through `listen()` from HT-6's `src/slices/howto/events.ts` (at 4142a64, merged into this branch). It dispatches nothing for "Show me the …", because HT-6's delegated handler on the sheet opens the close-up from golden B's markup. This replaces the "Show me" part of the events entry above.
+- **Kept**: `brachialis` and `rotator_cuff` stay text only (never drawn, never lit), exactly as golden B's feelmap does. `feel.test` A3 checks this for every exercise.

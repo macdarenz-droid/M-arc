@@ -3,15 +3,14 @@
 // engine/feelmap.mjs is its standalone subset). No markup is built here: every state is in the pre-rendered section
 // string; this only flips the classes, attributes and inline play state that golden B's script flips.
 //
-// Golden B runs one script per card, so its feel code can call the zoom and chip code directly. In the app those are
-// separate sections, so the same calls travel as bubbling DOM events on the sheet (no imports between sections):
-//   FEEL_EVENTS.zoomOpen  {key, opener}  dispatched here for a row's "Show me the ..." (the zoom host opens it)
-//   FEEL_EVENTS.row       {row}          listened for here: a close-up's "This is usually why" (openRow(k, true, true))
-//   FEEL_EVENTS.chip                     listened for here: the "Feel it" chip (scroll, focus the heading, play)
+// Golden B runs one script per card, so its feel code can call the chip and close-up code directly. In the app those
+// are separate sections, so the calls arrive as the cross-section events of events.ts (HT-6; supervisor, PR #111):
+// `ht:feel-row` {row} (a close-up's "This is usually why": openRow(row, true, true)) and `ht:feel-chip` (the "Feel it"
+// chip: scroll, focus the heading, play). A row's "Show me the ..." needs nothing here: HT-6's delegated click
+// handler on the sheet opens the close-up from golden B's markup (supervisor ruling on HT-6's design note).
 import { useLayoutEffect } from 'preact/hooks';
 import type { RefObject } from 'preact';
-
-export const FEEL_EVENTS = Object.freeze({ zoomOpen: 'ht:zoom-open', row: 'ht:feel-row', chip: 'ht:feel-chip' });
+import { listen } from '../events';
 
 export interface FeelController {
   openRow(k: string | null, scroll: boolean, force?: boolean): string | null;
@@ -84,17 +83,13 @@ export function createFeelController(card: HTMLElement, feel: HTMLElement): Feel
   if (more) on(more, 'click', () => setMore(more.getAttribute('aria-expanded') !== 'true'));
   // the "Feel it" chip (golden B: feelChip click) and a close-up's "This is usually why" (golden B: [data-feelrow])
   let chipT: ReturnType<typeof setTimeout> | null = null;
-  on(card, FEEL_EVENTS.chip, () => {
+  offs.push(listen(card, 'ht:feel-chip', () => {
     feel.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' });
     feelH.focus({ preventScroll: true });
     played = true; chipT = setTimeout(play, reduced() ? 0 : 450);
-  });
-  offs.push(() => clearTimeout(chipT!));
-  on(card, FEEL_EVENTS.row, e => openRow((e as CustomEvent<{ row: string }>).detail.row, true, true));
-  // "Show me" from a row: the close-up opens on the plate, which comes into view
-  feel.querySelectorAll<HTMLElement>('.fr-show').forEach(b => on(b, 'click', () => {
-    b.dispatchEvent(new CustomEvent(FEEL_EVENTS.zoomOpen, { bubbles: true, detail: { key: b.dataset.zoom, opener: b } }));
   }));
+  offs.push(() => clearTimeout(chipT!));
+  offs.push(listen(card, 'ht:feel-row', d => openRow(d.row, true, true)));
   // a feel row's "When to get it checked": the sheet's one red-flag block, in Risks (plan 2.4, HT9-A3)
   feel.querySelectorAll<HTMLElement>('.rf-link').forEach(b => on(b, 'click', () => {
     const f = card.querySelector<HTMLElement>('#' + b.getAttribute('aria-controls'));

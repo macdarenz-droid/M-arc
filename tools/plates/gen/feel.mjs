@@ -1,4 +1,6 @@
-// HT-8 plugin: "Where you should feel it" -> src/howto/generated/ht-<slug>-feel.ts (x8) and src/slices/howto/css/feel.css.
+// HT-8 plugin: "Where you should feel it" -> src/howto/generated/feel-<chromeId>.ts (x8) and src/slices/howto/css/feel.css.
+// (Named feel-<chromeId>, not ht-<slug>-feel: every ht-*.ts in generated/ is a plate module to HT-2/HT-3's tests;
+// supervisor ruling, PR #119.)
 // Every state is pre-rendered at build time by the vendored golden-B engine (critic fix 4, no TypeScript port):
 // golden B's own feelSection() (artifact/howto-layers.mjs, run from a mirror copy so nothing is written into layers/)
 // renders the rest map with renderFeelMap, splices each row's watch/pain marks from renderFeelMap({ avoid, pain })
@@ -23,7 +25,7 @@ export const inputs = () => [
   'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', PLATES_JSON,
 ];
 
-export const chunkName = slug => `ht-${slug}-feel`;
+export const chunkName = chromeId => `feel-${chromeId}`;
 /** golden B's card id and id prefix for a library id (the lateral raise's card is `lateral_raise`). */
 export const cardOf = row => ({ cardId: row.chromeId.replace(/-/g, '_'), pre: row.chromeId });
 
@@ -55,10 +57,12 @@ export const RUNTIME_CLASSES = Object.freeze(['on', 'is-playing', 'is-focus']);
 export const classesOf = html => new Set([...html.matchAll(/class="([^"]*)"/g)].flatMap(m => m[1].split(/\s+/).filter(Boolean)));
 
 /** Feel rule A (selection): keep the page rules for the section's own elements. A selector survives when it has at
- *  least one class and every class in it is used in the feel markup; a rule with no surviving selector is dropped;
+ *  least one class, every class in it is used in the feel markup, and none is in OWNED_ELSEWHERE; a rule with no surviving selector is dropped;
  *  a @keyframes survives when a kept rule names it. */
+/** Section chrome another card ships (supervisor ruling on HT-6's design note): HT-6 owns these rules. */
+export const OWNED_ELSEWHERE = Object.freeze(['hw-sec', 'fr-show', 'st-show']);
 export function selectRules(css, used) {
-  const keep = sel => { const cls = [...sel.matchAll(/\.([\w-]+)/g)].map(m => m[1]); return cls.length > 0 && cls.every(c => used.has(c)); };
+  const keep = sel => { const cls = [...sel.matchAll(/\.([\w-]+)/g)].map(m => m[1]); return cls.length > 0 && cls.every(c => used.has(c) && !OWNED_ELSEWHERE.includes(c)); };
   const rule = n => { const sels = n.sel.split(',').map(s => s.trim()).filter(keep); return sels.length ? `${sels.join(', ')} { ${n.body} }` : null; };
   const out = [], frames = [];
   for (const n of parse(css)) {
@@ -177,7 +181,7 @@ export async function renderAll() {
 export async function outputs() {
   const { sections, css } = await renderAll();
   return [
-    ...sections.map(s => ({ path: `src/howto/generated/${chunkName(s.slug)}.ts`, text: moduleText(s.id, s.pre, s.section) })),
+    ...sections.map(s => ({ path: `src/howto/generated/${chunkName(s.pre)}.ts`, text: moduleText(s.id, s.pre, s.section) })),
     { path: CSS_OUT, text: css },
   ];
 }

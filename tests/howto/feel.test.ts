@@ -8,7 +8,9 @@ import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { THEMES, THEME_IDS } from '@/theme/themes';
-import { FEEL_EVENTS, createFeelController } from '@/slices/howto/feel/useFeelMap';
+import { createFeelController } from '@/slices/howto/feel/useFeelMap';
+
+const FEEL_EVENTS = { row: 'ht:feel-row', chip: 'ht:feel-chip' } as const;   // events.ts (HT-6), the supervisor's contract
 import { lint } from './css.test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -17,7 +19,7 @@ const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 let gen: any, core: any, fm: any, raw: any, rendered: { sections: { id: string; slug: string; pre: string; section: string }[]; css: string; fm: any };
 const specs = new Map<string, any>();
 const rows = JSON.parse(readFileSync('tools/plates/plates.json', 'utf8')) as Record<string, { slug: string; chromeId: string }>;
-const shipped = (slug: string) => import(/* @vite-ignore */ url(`src/howto/generated/ht-${slug}-feel.ts`)).then(m => m.default as { id: string; pre: string; section: string });
+const shipped = (chromeId: string) => import(/* @vite-ignore */ url(`src/howto/generated/feel-${chromeId}.ts`)).then(m => m.default as { id: string; pre: string; section: string });
 const specId = (id: string) => id.replace(/^lib_/, '');
 
 beforeAll(async () => {
@@ -41,14 +43,14 @@ describe('HT8-A1: every state is golden B\'s vendored output, byte for byte', ()
   it('the 8 shipped sections === the sections golden B renders now (feelSection from the mirror)', async () => {
     expect(rendered.sections).toHaveLength(8);
     for (const s of rendered.sections) {
-      const m = await shipped(s.slug);
+      const m = await shipped(s.pre);
       expect(m.id).toBe(s.id);
       expect(m.section === s.section, s.id).toBe(true);
     }
   });
   it('rest: the map is renderFeelMap(rest).html, with only golden B\'s splice (id, rest label, each row\'s marks before </svg>)', async () => {
     for (const [id, row] of Object.entries(rows)) {
-      const F = specs.get(id).feel, pre = row.chromeId, { section } = await shipped(row.slug);
+      const F = specs.get(id).feel, pre = row.chromeId, { section } = await shipped(row.chromeId);
       const rest = fm.renderFeelMap({ primary: F.primary, secondary: F.secondary, views: ['front', 'back'], id: `${pre}-feel`, shimmer: true });
       const marks: string[][] = [[], []];
       for (const r of rowStates(F)) {
@@ -70,7 +72,7 @@ describe('HT8-A1: every state is golden B\'s vendored output, byte for byte', ()
   it('each row open: its mark holds the watch and pain groups of renderFeelMap({ avoid, pain }) for that row, per view', async () => {
     let marks = 0;
     for (const [id, row] of Object.entries(rows)) {
-      const F = specs.get(id).feel, pre = row.chromeId, { section } = await shipped(row.slug);
+      const F = specs.get(id).feel, pre = row.chromeId, { section } = await shipped(row.chromeId);
       for (const r of rowStates(F)) {
         const has = section.includes(`<g class="feel-mark" data-row="${r.key}">`);
         if (!r.watch.length && !r.pain.length) { expect(has, `${id} ${r.key}`).toBe(false); continue; }
@@ -86,13 +88,13 @@ describe('HT8-A1: every state is golden B\'s vendored output, byte for byte', ()
   });
   it('the legend is renderFeelLegend({ avoid: true }) with golden B\'s two edits (watch and pain entries hidden until a row opens)', async () => {
     const lg = fm.renderFeelLegend({ avoid: true }).replace(/<span>(<svg class="feel-sw sw-watch)/, '<span class="lg-watch" hidden>$1');
-    for (const row of Object.values(rows)) expect((await shipped(row.slug)).section).toContain(lg.replace(/<\/div>$/, ''));
+    for (const row of Object.values(rows)) expect((await shipped(row.chromeId)).section).toContain(lg.replace(/<\/div>$/, ''));
   });
   it('playing and reduced motion are the same markup: no is-playing / is-focus in any shipped string (the script and CSS set them)', async () => {
-    for (const row of Object.values(rows)) expect((await shipped(row.slug)).section).not.toMatch(/is-playing|is-focus|feel-mark on/);
+    for (const row of Object.values(rows)) expect((await shipped(row.chromeId)).section).not.toMatch(/is-playing|is-focus|feel-mark on/);
   });
   it('a 1-byte change to a shipped state fails the === check (failure path)', async () => {
-    const s = rendered.sections[0]!, m = await shipped(s.slug);
+    const s = rendered.sections[0]!, m = await shipped(s.pre);
     const bad = m.section.replace('stop-opacity="0.62"', 'stop-opacity="0.63"');
     expect(bad).not.toBe(m.section);
     expect(bad === s.section).toBe(false);
@@ -112,7 +114,7 @@ describe('HT8-A1: every state is golden B\'s vendored output, byte for byte', ()
       const writers = ['tools/plates/gen/feel.mjs'], inputs = gen.inputs();
       expect(inputs).toContain(`${LAYERS}/engine/feelmap.mjs`);
       for (const s of rendered.sections) {
-        const h = core.parseHeader(readFileSync(`src/howto/generated/ht-${s.slug}-feel.ts`, 'utf8'));
+        const h = core.parseHeader(readFileSync(`src/howto/generated/feel-${s.pre}.ts`, 'utf8'));
         expect(h.writers).toEqual(writers);
         expect(core.inputsSha256(writers, inputs)).toBe(h.hash);
         expect(core.inputsSha256(writers, inputs, tmp)).not.toBe(h.hash);
@@ -127,9 +129,9 @@ describe('HT8-A1: feel.css is FEEL_CSS (+ the page rules the section uses) throu
     expect(t.slice(t.indexOf('\n') + 1)).toBe(rendered.css);
     expect(lint(t)).toEqual([]);
   });
-  it('rule A, selection: a page rule survives only for classes the feel markup uses; a keyframes only when a kept rule names it', () => {
-    const used = new Set(['fr-btn', 'feel']);
-    expect(gen.selectRules('.fr-btn svg { a: 1; } .fr-show, .st-show { b: 2; } .feel, .srcs > summary { c: 3; } h4 { d: 4; } @media (x) { .fr-btn { e: 5; } .srcs { f: 6; } } @keyframes fr-in { from { opacity: 0; } } @keyframes zz { to { opacity: 1; } } .fr-btn { animation: fr-in 1s; }', used))
+  it('rule A, selection: a page rule survives only for classes the feel markup uses and no other card owns; a keyframes only when a kept rule names it', () => {
+    const used = new Set(['fr-btn', 'feel', 'fr-show', 'hw-sec']);
+    expect(gen.selectRules('.hw-sec .fr-btn { z: 0; } .fr-btn svg { a: 1; } .fr-show, .st-show { b: 2; } .feel, .srcs > summary { c: 3; } h4 { d: 4; } @media (x) { .fr-btn { e: 5; } .srcs { f: 6; } } @keyframes fr-in { from { opacity: 0; } } @keyframes zz { to { opacity: 1; } } .fr-btn { animation: fr-in 1s; }', used))
       .toBe('.fr-btn svg { a: 1; }\n.feel { c: 3; }\n@media (x) { .fr-btn { e: 5; } }\n.fr-btn { animation: fr-in 1s; }\n@keyframes fr-in { from { opacity: 0; } }');
   });
   it('rule B, theme blocks: the five equal --feel-main lines become one --ht-feel-main; a differing theme or a missing one throws', () => {
@@ -296,7 +298,7 @@ describe('HT8-A2: golden B\'s feel behaviour list, and nothing more', () => {
   });
   it('the Feel chip event: scroll to the section, focus its heading, play after 450 ms (0 ms under reduced motion)', () => {
     const f = make();
-    f.card.fire(FEEL_EVENTS.chip);
+    f.card.fire(FEEL_EVENTS.chip, { detail: {} });
     expect([f.feel.scrolled[0], f.h4.focused]).toEqual([{ block: 'start', behavior: 'smooth' }, 1]);
     vi.advanceTimersByTime(449); expect(f.map.cls.has('is-playing')).toBe(false);
     vi.advanceTimersByTime(1); expect(f.map.cls.has('is-playing')).toBe(true);
@@ -307,10 +309,9 @@ describe('HT8-A2: golden B\'s feel behaviour list, and nothing more', () => {
     f.card.fire(FEEL_EVENTS.row, { detail: { row: 'traps' } });
     expect([f.rs[0]!.b.getAttribute('aria-expanded'), f.rs[0]!.b.focused, f.rs[0]!.r.scrolled[1]]).toEqual(['true', 2, { block: 'center', behavior: 'smooth' }]);
   });
-  it('"Show me the …" asks the zoom host to open that close-up; "When to get it checked" focuses the red-flag block', () => {
+  it('"Show me the …" is left to HT-6\'s delegated handler (no listener here); "When to get it checked" focuses the red-flag block', () => {
     const f = make();
-    f.show.fire('click');
-    expect(f.show.sent.map((e: any) => [e.type, e.init.bubbles, e.init.detail.key, e.init.detail.opener === f.show])).toEqual([[FEEL_EVENTS.zoomOpen, true, 'shoulders', true]]);
+    expect(f.show.count()).toBe(0);
     f.flag.fire('click');
     expect([f.target.scrolled[0], f.target.focused]).toEqual([{ block: 'center', behavior: 'smooth' }, 1]);
   });
@@ -320,12 +321,12 @@ describe('HT8-A2: golden B\'s feel behaviour list, and nothing more', () => {
     expect(listeners(f.map)).toEqual(['animationendx1', 'clickx1']);
     expect(listeners(f.card)).toEqual([`${FEEL_EVENTS.chip}x1`, `${FEEL_EVENTS.row}x1`]);
     expect(f.rs.map(r => listeners(r.b))).toEqual([['clickx1'], ['clickx1'], ['clickx1']]);
-    expect([listeners(f.show), listeners(f.flag), listeners(f.feel), listeners(f.h4)]).toEqual([['clickx1'], ['clickx1'], [], []]);
+    expect([listeners(f.show), listeners(f.flag), listeners(f.feel), listeners(f.h4)]).toEqual([[], ['clickx1'], [], []]);
     expect(ios.map(i => i.observed)).toEqual([1, 1]);
-    expect(ALL.reduce((n, e) => n + e.count(), 0)).toBe(9);   // nothing else, anywhere (a per-view listener fails)
+    expect(ALL.reduce((n, e) => n + e.count(), 0)).toBe(8);   // nothing else, anywhere (a per-view listener fails)
     f.c.destroy();
     expect(ALL.reduce((n, e) => n + e.count(), 0)).toBe(0);
-    expect([f.map, f.card, f.show, f.flag, ...f.rs.map(r => r.b)].map(e => e.count())).toEqual([0, 0, 0, 0, 0, 0, 0]);
+    expect([f.map, f.card, f.flag, ...f.rs.map(r => r.b)].map(e => e.count())).toEqual([0, 0, 0, 0, 0, 0]);
     expect(ios.map(i => i.disconnected)).toEqual([1, 1]);
   });
   it('every string literal of golden B\'s feel script occurs in the port', () => {
@@ -334,12 +335,12 @@ describe('HT8-A2: golden B\'s feel behaviour list, and nothing more', () => {
     const port = readFileSync('src/slices/howto/feel/useFeelMap.ts', 'utf8');
     const lits = [...js.matchAll(/'([^'\n]*)'/g)].map(m => m[1]!).filter(Boolean);
     expect(lits.length).toBeGreaterThan(25);
-    expect(lits.filter(l => !port.includes(`'${l}'`))).toEqual(['.zx-chip[data-feel]']);   // the chip is HT-6's; it arrives as FEEL_EVENTS.chip
+    expect(lits.filter(l => !port.includes(`'${l}'`))).toEqual(['.zx-chip[data-feel]']);   // HT-6's chip; it arrives as ht:feel-chip
     for (const expr of ['e!.intersectionRatio >= 0.5', 'setTimeout(play, reduced() ? 0 : 450)', "animationPlayState = e!.isIntersecting ? '' : 'paused'", 'k === openRowKey && !force ? null : k']) expect(port).toContain(expr);
   });
   it('one role=img per map with golden B\'s rest label, the views and paths aria-hidden (a per-view role fails)', async () => {
     for (const [id, row] of Object.entries(rows)) {
-      const { section } = await shipped(row.slug);
+      const { section } = await shipped(row.chromeId);
       const map = section.match(MAP_RE)![0];
       expect(map.match(/role="/g), id).toHaveLength(1);
       expect(map.match(/<svg class="feel-svg"[^>]*>/g)!.every(s => s.includes('aria-hidden="true"')), id).toBe(true);
@@ -366,7 +367,7 @@ describe('HT8-A3: text-only ids, feel-main contrast, C12', () => {
   it('core, brachialis and rotator_cuff are never drawn; the ones a spec names are in its plain-word note instead', async () => {
     let seen = 0;
     for (const [id, row] of Object.entries(rows)) {
-      const F = specs.get(id).feel, { section } = await shipped(row.slug);
+      const F = specs.get(id).feel, { section } = await shipped(row.chromeId);
       const all = [...F.primary, ...F.secondary, ...F.watch].map((m: any) => m.muscleId);
       const r = fm.renderFeelMap({ primary: F.primary, secondary: F.secondary, avoid: F.watch.map((w: any) => w.muscleId).filter((m: string) => !F.primary.some((p: any) => p.muscleId === m)) });
       for (const t of ['core', 'brachialis', 'rotator_cuff']) {
@@ -406,7 +407,7 @@ describe('HT8-A5: named in text; rows are buttons with aria-expanded', () => {
   it('every drawn main and helper muscle is named in the map\'s spoken label; a text-only one in the plain-word note', async () => {
     const unnamed: string[] = [];
     for (const [id, row] of Object.entries(rows)) {
-      const F = specs.get(id).feel, { section } = await shipped(row.slug);
+      const F = specs.get(id).feel, { section } = await shipped(row.chromeId);
       const label = section.match(/data-rest-label="([^"]*)"/)![1]!.toLowerCase();
       for (const m of [...F.primary, ...F.secondary]) {
         const r = fm.renderFeelMap({ primary: [m] });
@@ -420,7 +421,7 @@ describe('HT8-A5: named in text; rows are buttons with aria-expanded', () => {
   });
   it('each row is a <button type="button" class="fr-btn" aria-expanded="false" aria-controls=…> over a hidden body', async () => {
     for (const [id, row] of Object.entries(rows)) {
-      const F = specs.get(id).feel, { section } = await shipped(row.slug);
+      const F = specs.get(id).feel, { section } = await shipped(row.chromeId);
       for (const r of F.rows) expect(section, `${id} ${r.key}`).toMatch(new RegExp(`<button type="button" class="fr-btn" id="${row.chromeId}-row-${r.key}" aria-expanded="false" aria-controls="${row.chromeId}-row-${r.key}-body"[^>]*>[\\s\\S]*?<div class="fr-body" id="${row.chromeId}-row-${r.key}-body" hidden>`));
     }
   });
@@ -432,8 +433,8 @@ export const GOLDEN_B_UNNAMED = ['lib_lat_pulldown:brachialis', 'lib_seated_cabl
 /** HT8-A6: measured 7,887-8,118 B gz per module (2026-09-30); ceiling = max measured + 10 %. */
 export const FEEL_MODULE_GZ = 8_930;
 describe('HT8-A6: chunk size', () => {
-  it(`each ht-<slug>-feel module is <= ${FEEL_MODULE_GZ} B gz (the plan's 24 KB start, lowered to measured + 10 %)`, () => {
-    const files = readdirSync('src/howto/generated').filter(f => /^ht-.*-feel\.ts$/.test(f));
+  it(`each feel-<chromeId> module is <= ${FEEL_MODULE_GZ} B gz (the plan's 24 KB start, lowered to measured + 10 %)`, () => {
+    const files = readdirSync('src/howto/generated').filter(f => /^feel-.*\.ts$/.test(f));
     expect(files).toHaveLength(8);
     for (const f of files) expect(gzipSync(readFileSync(`src/howto/generated/${f}`)).length, f).toBeLessThanOrEqual(FEEL_MODULE_GZ);
     expect(FEEL_MODULE_GZ).toBeLessThanOrEqual(24 * 1024);

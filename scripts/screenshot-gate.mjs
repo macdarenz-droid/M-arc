@@ -5825,7 +5825,7 @@ for (const theme of ['silent-black', 'paper']) {
   if (!cm) errors.push(`${tag}: SWEEP/GAP/DELAY not found in the vendored feelmap.mjs`);
   const [SWEEP, GAP, DELAY] = cm ? [+cm[1], +cm[2], +cm[3]] : [2400, 400, 300];
   const TOTAL = SWEEP * 2 + GAP, END = DELAY + TOTAL;
-  const FEEL_CHUNK_GZ = 9_130;   // built ht-<slug>-feel chunks measured 8,032-8,293 B gz (level 9), + 10 %
+  const FEEL_CHUNK_GZ = 9_130;   // built feel-<chromeId> chunks measured 8,032-8,293 B gz (level 9), + 10 %
   const TRIP = 1.2;
   const APP = 'dialog.sheet.ht .feel', GOLD = id => `#card-${id} .feel`;
   const b8 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
@@ -5898,7 +5898,7 @@ for (const theme of ['silent-black', 'paper']) {
     const { ctx, page } = await H.openAppTrain(b8, PORT, theme, { viewport, onError: onError(`app ${theme}`) });
     const g = await H.openGolden(b8, theme, { viewport, html: GB, onError: onError(`golden B ${theme}`) });
     const feelReqs = [];
-    page.on('request', r => { if (/\/assets\/ht-[a-z-]+-feel-[\w-]+\.js$/.test(r.url())) feelReqs.push(r.url()); });
+    page.on('request', r => { if (/\/assets\/feel-[a-z-]+-[\w-]+\.js$/.test(r.url())) feelReqs.push(r.url()); });
     try {
       for (let i = 0; i < H.HT_PLATES.length; i++) {
         const [id] = H.HT_PLATES[i], S = s => `${theme} ${id} ${s}`;
@@ -5907,7 +5907,7 @@ for (const theme of ['silent-black', 'paper']) {
         await page.evaluate(() => document.querySelector('dialog.sheet.ht .ht-feel-host').scrollIntoView({ block: 'center' }));
         await page.locator(APP).waitFor({ state: 'visible', timeout: 8000 });
         const got = feelReqs.slice(before);
-        if (theme === 'silent-black' && (got.length !== 1 || !got[0].includes(`/ht-${H.HT_PLATES[i][1].replace(/^lib_/, '').replace(/_/g, '-')}-feel-`))) problems.push(`${S('chunk')}: feel chunk requests after the tap ${JSON.stringify(got)}`);
+        if (theme === 'silent-black' && (got.length !== 1 || !got[0].includes(`/feel-${id}-`))) problems.push(`${S('chunk')}: feel chunk requests after the tap ${JSON.stringify(got)}`);
         // S5: tap the map in both, compare the band animation lists (L4), then the paused frames
         await placeApp(page); await placeGolden(g.page, id, await placeApp(page));
         await click(page, `${APP} [data-feel-map]`); await click(g.page, `${GOLD(id)} [data-feel-map]`);
@@ -6019,7 +6019,7 @@ for (const theme of ['silent-black', 'paper']) {
   }
 
   try {
-    const sizes = readdirSync(join(ROOT, 'www/assets')).filter(f => /^ht-[a-z-]+-feel-[\w-]+\.js$/.test(f)).map(f => [f, gzipSync(readFileSync(join(ROOT, 'www/assets', f)), { level: 9 }).length]);
+    const sizes = readdirSync(join(ROOT, 'www/assets')).filter(f => /^feel-[a-z-]+-[\w-]+\.js$/.test(f)).map(f => [f, gzipSync(readFileSync(join(ROOT, 'www/assets', f)), { level: 9 }).length]);
     if (sizes.length !== 8) errors.push(`${tag}: ${sizes.length} feel chunks in www/assets, expected 8`);
     for (const [f, gz] of sizes) if (gz > FEEL_CHUNK_GZ) errors.push(`${tag}: ${f} is ${gz} B gz, over ${FEEL_CHUNK_GZ}`);
     const idx = readdirSync(join(ROOT, 'www/assets')).filter(f => /^index-.*\.js$/.test(f)).map(f => readFileSync(join(ROOT, 'www/assets', f), 'utf8')).join('');
