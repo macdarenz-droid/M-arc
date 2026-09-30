@@ -143,7 +143,8 @@ export default {
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [10, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 60 }, { x: 0, from: 0, to: 0, line: ['knee.l', EXT], mistake: false }],
-  measure: { vertex: 'knee.l', from: { dir: SHANK_EXT }, to: 'hip.l', radius: 38, title: 'Knee', value: 'about 15-20° bend', expect: KNEE, box: { left: 50, top: 150 } },
+  marks: ['shoulder.r', 'elbow.r', 'hip.r', 'knee.r', 'knee.l'],   // + the standing knee, so its arc sits on a joint dot (critic run 2, R4)
+  measure: { vertex: 'knee.l', from: { dir: SHANK_EXT }, to: 'hip.l', radius: 15, title: 'Knee', value: '15-20° bend', expect: KNEE, box: { left: 258, top: 226 } },
   callouts: [
     // c8
     { key: 'line', text: 'Straight<br>line', anchor: 'buttock', cue: 'Keep your head, back and free leg in one line, neck neutral.' },

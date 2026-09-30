@@ -27,7 +27,8 @@
 //   (CARD); feet hip width (mid-soles 22 cm apart), toes forward; neck in line with the thorax.
 //  Arms: elbows held ~20 deg bent (grip 1.5% closer to the shoulder than a straight arm), elbows bowing out
 //   (IK pole lateral at the start, up at the top). Start: hands hanging under the shoulders, 4 cm inside them.
-//   End: hands level with the shoulders straight out to the sides (upper arms ~90 deg from the trunk, CARD),
+//   End: side view stops the drawn sweep at TOP 75 deg (see TOP); the front alt draws the full 90 deg (hands level
+//   with the shoulders straight out to the sides),
 //   shoulder blades squeezed 3 cm. Two via poses on the arc (30 and 60 deg) so the ghosts and trace follow the
 //   circular sweep instead of a chord.
 //  Dumbbells: neutral grip (palms facing), handle pointing along the trunk toward the head (world +z): the side
@@ -39,7 +40,11 @@
 //  (shrug, c3) moves the shoulders about 2 px there (render of __alt): no-go stands.
 //  Its "out to the sides" is carried by the Level arms cue.
 // CARD numbers: the card gives none for the trunk angle, the knee bend, the elbow bend or the top arm height
-//  ("about level with the body", c3). INCL 80, KNEE 20, ELBOW 20 and the 90 deg top stay unsourced (flagged).
+//  ("about level with the body", c3). INCL 80, KNEE 20, ELBOW 20 and the 75/90 deg top stay unsourced (flagged).
+// Front view, exact engine limit (critic run 2 asked for it; SPEC 8): the engine draws a flexed trunk in front view
+//  as a foreshortened frontal outline, not a 3D silhouette, and draws the legs over it. At INCL 80 the torso is a
+//  band at shoulder height with no head; at 60 a small head appears but the figure reads as a standing T; at 45 as
+//  an upright lateral raise (lead's probe). The arm sweep and its arc Trace read well there (__alt).
 import { landmarksOf } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -93,8 +98,13 @@ const ROOT_Z = solve(z => { const lm = landmarksOf(pose(hipY(z), z, 0), H); retu
 const ROOT_Y = hipY(ROOT_Z);
 
 const start = pose(ROOT_Y, ROOT_Z, 0);
-const via = [pose(ROOT_Y, ROOT_Z, 30), pose(ROOT_Y, ROOT_Z, 60)];
-const end = pose(ROOT_Y, ROOT_Z, 90);
+// Top of the sweep (critic run 2, R1/R3): at 90 deg the near arm points straight at the camera and the dumbbell lies
+// on the back with no arm or hand visible. The side view stops the drawn sweep at TOP = 75 deg from hanging, where
+// the forearm, fist and dumbbell show below the back line; "about level with the body" (c3) is carried by the Level
+// arms cue. The front view (__alt) keeps the full 90 deg via posesAt(90).
+const TOP = 75;
+export const posesAt = top => ({ start: pose(ROOT_Y, ROOT_Z, 0), via: [pose(ROOT_Y, ROOT_Z, top / 3), pose(ROOT_Y, ROOT_Z, 2 * top / 3)], end: pose(ROOT_Y, ROOT_Z, top) });
+const { via, end } = posesAt(TOP);
 
 // Mistake. The card's top fault is swinging the torso to throw the weights up (c4, c5, handlingMistakes[0]); the
 // card marks it not drawable only because its plate view is the front, and names shrugging (c3) for that view.
@@ -104,7 +114,7 @@ const end = pose(ROOT_Y, ROOT_Z, 90);
 // shoulder level. The alt (front) file keeps the card's shrug. M_INCL is illustrative (the card gives no number).
 const M_INCL = 55;
 const mist0 = { ...body(ROOT_Y, ROOT_Z, PRO_END), root: { at: [0, ROOT_Y, ROOT_Z], tilt: M_INCL - SPINE } };
-const mistakePose = { root: mist0.root, reach: hands(landmarksOf(mist0, H), 90) };
+const mistakePose = { root: mist0.root, reach: hands(landmarksOf(mist0, H), TOP) };
 
 const G0 = landmarksOf(start, H)['grip.r'], HZ = 0.135, HY = 0.119 * 0.866 / 2;
 const HH = 0.065, HR = 0.008;                          // handle half-length, half-thickness (m)
@@ -137,7 +147,7 @@ export default {
   datum: [{ x: [0, 0, 0], from: 349, to: 60 }],           // mid-foot plumb line: the body balances over it
   // The elbow bend points at the camera in this view (drawn arc 0 deg), so the one arc is the hip hinge the card
   // describes (c2: tilt at the hips, spine straight). No card number: a worded value, as machine_chest_press.
-  measure: { vertex: 'hip.r', from: 'knee.r', to: 'shoulder.r', radius: 24, title: 'Hip', value: 'hinged, spine straight' },
+  measure: { vertex: 'hip.r', from: 'knee.r', to: 'shoulder.r', radius: 24, title: 'Hip', value: 'hinged, spine straight', box: { left: 8, top: 250 } },
   callouts: [
     { key: 'back', text: 'Flat back', anchor: 'backUpper', cue: 'Hinge at the hips with a straight spine and a braced core.' },              // c2
     { key: 'elbows', text: 'Soft elbows', anchor: 'elbow.r', prefer: 'above', cue: 'Keep the same slight elbow bend from bottom to top.' },                    // c2
