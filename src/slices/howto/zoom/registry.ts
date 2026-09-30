@@ -3,6 +3,8 @@
 // is reached only through import() (D-HT1 A4).
 // The API below is fixed once posted as "ZOOM HOST READY" on PR #112; later cards only call it or add their line.
 
+import { postureZoom } from '../sections/Posture';   // HT-7
+
 export type ZoomKind = 'hand' | 'posture';
 
 /** A close-up as golden B's page holds it: the whole `<div class="zx" …>` panel, inserted as is. */
@@ -22,6 +24,7 @@ const handChunk = (chromeId: string) => {
 
 export const ZOOM_KINDS: Partial<Record<ZoomKind, ZoomLoader>> = {
   hand: chromeId => handChunk(chromeId),
+  posture: (chromeId, key) => postureZoom(chromeId, key),   // HT-7
 };
 
 /** Whether a kind has a loader (a chip shows only for a registered kind, HT6-A3). */
