@@ -61,6 +61,14 @@ describe('HT6-A1: every hand-<key> panel === golden B', () => {
     for (const s of sels) for (const one of s.split(',')) expect(one.trim()).toMatch(new RegExp(`^\\.ht \\.(hx-${id} |hx >|hx \\.zoom)`));
     expect(css.lastIndexOf('.ht .hx .zoom')).toBeGreaterThan(css.lastIndexOf(`.ht .hx-${id} `));   // the page's tie order
   });
+  it.each(IDS)('%s: zoom-<id>.css names exactly the classes golden B\'s .hx-<id> rules name (no class is renamed)', id => {
+    const classes = (css: string) => new Set([...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{/g)].map(m => m[1]!).filter(h => h.includes(`.hx-${id} `)).flatMap(h => [...h.matchAll(/\.([\w-]+)/g)].map(m => m[1]!)));
+    const golden = classes(FIXTURE.slice(FIXTURE.indexOf('<style>'), FIXTURE.indexOf('</style>'))), app = classes(chunks[id]!.css);
+    app.delete('ht');
+    expect([...app].sort()).toEqual([...golden].sort());
+    expect(golden.has('plate') === app.has('plate')).toBe(true);
+    expect(app.has('ht-plate')).toBe(false);
+  });
   it.each(IDS)('%s: the panel sets no inline custom property off the allow list', id => {
     expect(inlineVars(chunks[id]!.panel).filter(v => !INLINE_ALLOW.includes(v))).toEqual([]);
   });
@@ -71,9 +79,16 @@ describe('HT6-A1: every hand-<key> panel === golden B', () => {
     expect(out).toContain('.ht .hx-a .b { font-size: var(--ht-fs-10-5px); border-radius: var(--ht-r-6px); transition: opacity var(--ht-t-150ms) var(--ht-ease-cubic-bezier-2-0-0-1); }');
     expect(lint(out)).toEqual([]);
   });
-  it('sizes are recorded (HT6-A7 is measured on the built chunks in gate block HT-6)', () => {
-    const rows = IDS.map(id => { const s = readFileSync(`src/howto/generated/hand-${id}.ts`); return `${id} ${s.length} ${gzipSync(s, { level: 9 }).length}`; });
-    expect(rows).toHaveLength(8);
+  it('HT6-A7 budget (D-HT6-budget): the measured sizes are pinned, and each ceiling is measured + 10 %, rounded up', () => {
+    expect(gen.HAND_MEASURED).toEqual({
+      'lateral-raise': { raw: 26570, gz: 8134 }, 'barbell-back-squat': { raw: 34361, gz: 10629 }, 'pull-up': { raw: 84470, gz: 23896 },
+      'hanging-leg-raise': { raw: 44454, gz: 11445 }, 'lat-pulldown': { raw: 68272, gz: 19574 }, 'seated-cable-row': { raw: 23824, gz: 7673 },
+      'leg-press': { raw: 22227, gz: 7430 }, 'machine-chest-press': { raw: 24375, gz: 7426 },
+    });
+    expect(Object.keys(gen.HAND_MEASURED).sort()).toEqual([...IDS].sort());
+    expect(gen.handCeiling('pull-up')).toEqual({ raw: 92917, gz: 26286 });
+    expect(gen.handCeiling('leg-press')).toEqual({ raw: 24450, gz: 8173 });
+    expect(() => gen.handCeiling('bench-press')).toThrow(/no budget/);
   });
 });
 

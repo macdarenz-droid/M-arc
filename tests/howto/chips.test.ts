@@ -5,6 +5,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { alsoRowHtml, chipKeys, chipRowHtml, HAND_FIRST, MAX_CHIPS, type ChipContent, type Registered } from '@/slices/howto/sections/LookCloser';
 import { gripHtml } from '@/slices/howto/sections/Hand';
 import { handlingMistakesHtml } from '@/slices/howto/sections/HandlingMistakes';
+import { durMs } from '@/slices/howto/zoom/ZoomHost';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const FIXTURE = readFileSync(new URL('golden/howto-layers.html', import.meta.url), 'utf8');
@@ -79,5 +80,15 @@ describe('the markup equals golden B\'s page', () => {
       const also = card.indexOf(`id="${id}-also"`);
       if (also >= 0) expect(also).toBeLessThan(chips);
     }
+  });
+});
+
+describe('the zoom host reads golden B\'s durations with their unit', () => {
+  it('"240ms", ".24s" and "0.24s" are all 240 ms (the app\'s minified CSS writes seconds)', () => {
+    expect(durMs('240ms')).toBe(240);
+    expect(durMs('.24s')).toBe(240);
+    expect(durMs(' 0.24s')).toBe(240);
+    expect(durMs('160ms')).toBe(160);
+    expect(durMs('')).toBeNaN();
   });
 });

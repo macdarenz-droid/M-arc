@@ -1,4 +1,4 @@
-/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/hands.mjs). inputsSha256=e407caa20a54d07077706d98bb2ea85dc0746cea3410e76fac18cc95d5ae9f54 */
+/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/hands.mjs). inputsSha256=495b8bb4accb66bac4defa7f191da0dae7081b87df069b4a14d976b63f8fa8d7 */
 /* ht-tokens:start */
 .ht { --ht-r-0: 0; --ht-r-10px: 10px; --ht-r-var-radius-md-10px: var(--radius-md, 10px); }
 /* ht-tokens:end */
@@ -38,7 +38,7 @@
 .ht .hx-seated-cable-row .z-sub.m { color: var(--mistake); }
 .ht .hx-seated-cable-row .z-head.ok svg { color: var(--accent); }
 .ht .hx-seated-cable-row .z-head.m svg { color: var(--mistake); }
-.ht .hx-seated-cable-row .ht-plate.z-wrap { width: 171px; height: 171px; aspect-ratio: auto; border: 0; border-radius: var(--ht-r-0); background: none; overflow: visible; }
+.ht .hx-seated-cable-row .plate.z-wrap { width: 171px; height: 171px; aspect-ratio: auto; border: 0; border-radius: var(--ht-r-0); background: none; overflow: visible; }
 .ht .hx-seated-cable-row .z-crop { display: block; width: 171px; height: 171px; }
 .ht .hx-seated-cable-row .z-crop .z-frame { fill: none; stroke: var(--border); stroke-width: 1; }
 .ht .hx-seated-cable-row .z-crop .z-plate path, .ht .hx-seated-cable-row .z-crop .z-plate use, .ht .hx-seated-cable-row .z-crop .z-plate circle, .ht .hx-seated-cable-row .z-crop .z-plate rect { vector-effect: non-scaling-stroke; }
