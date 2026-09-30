@@ -104,7 +104,7 @@ export async function reportPlates(refs, { shotsDir = null, selected = {} } = {}
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2), i = args.indexOf('--shots');
   const shotsDir = i >= 0 ? resolve(args[i + 1]) : null;
-  const refs = args.filter((a, k) => !a.startsWith('--') && k !== i + 1);
+  const refs = args.filter((a, k) => !a.startsWith('--') && (i < 0 || k !== i + 1));
   const out = await reportPlates(refs, { shotsDir });
   console.log(JSON.stringify(out, null, 1));
   process.exitCode = out.every(r => r.ok) ? 0 : 1;
