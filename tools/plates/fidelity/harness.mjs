@@ -368,30 +368,84 @@ export function l2bCompare(g, a, label, max = 12) {
 }
 
 /**
- * The golden card presented as the app presents its sheet: in a modal <dialog> (rasterised in its own layer, like the
- * app's Sheet; the dialog's 16 px side padding is the gallery group's gutter, so the card keeps its width), placed so
- * the dialog's top and the plate-fit's offset inside it equal the app's (`at` = appOffset()), or the offset differs by
- * the 128 CSS px raster tile when the card's own header is taller than the app's. Only the capture changes: the card
- * node, its markup and every style it inherits (the dialog inherits #sheets' colour and font) stay as they are.
- * `extra` shifts the plate for the controls (128: same raster phase; 1: not).
+ * The origin of the raster layer the plate-fit paints into, found from Chromium's own layer tree (CDP LayerTree):
+ * the nearest ancestor of `fitSel` that owns a compositing layer. A scroller's contents raster from its padding box
+ * minus its scroll offset; any other layer from its border box; no layer means the document (root scroller). Which
+ * element is composited depends on the Chromium build (build 1243 composites every overflow:auto scroller, so the
+ * app's sheet panel; build 1194 composites only the modal dialog), so it is measured, never assumed.
+ * Returns { x, y, el } in viewport coordinates, `el` a short name of the layer's element.
+ */
+export async function rasterOrigin(page, fitSel) {
+  if (!page.__ht3cdp) {
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('DOM.enable'); await cdp.send('LayerTree.enable');
+    cdp.on('LayerTree.layerTreeDidChange', e => { if (e.layers) page.__ht3layers = e.layers; });
+    page.__ht3cdp = cdp;
+  }
+  const cdp = page.__ht3cdp;
+  // Chromium reports the layer tree when it changes: a 1 px off-screen probe layer is added, read, and removed again
+  page.__ht3layers = null;
+  await page.evaluate(() => { const i = document.createElement('i'); i.id = 'ht3-layer-probe'; i.style.cssText = 'position:fixed;left:-10px;top:-10px;width:1px;height:1px;will-change:transform'; document.body.append(i); });
+  for (let t = 0; !page.__ht3layers && t < 100; t++) await new Promise(r => setTimeout(r, 20));
+  await page.evaluate(() => document.getElementById('ht3-layer-probe')?.remove());
+  if (!page.__ht3layers) throw new Error('rasterOrigin: no layer tree from Chromium');
+  const owners = new Set(page.__ht3layers.map(l => l.backendNodeId).filter(Boolean));
+  const { result } = await cdp.send('Runtime.evaluate', { expression: `(() => { const out = []; for (let e = document.querySelector(${JSON.stringify(fitSel)}); e; e = e.parentElement) out.push(e); return out; })()` });
+  const { result: props } = await cdp.send('Runtime.getProperties', { objectId: result.objectId, ownProperties: true });
+  const els = props.filter(p => /^\d+$/.test(p.name)).sort((a, b) => a.name - b.name);
+  let depth = -1;
+  for (const p of els) { const { node } = await cdp.send('DOM.describeNode', { objectId: p.value.objectId }); if (owners.has(node.backendNodeId)) { depth = +p.name; break; } }
+  await cdp.send('Runtime.releaseObject', { objectId: result.objectId });
+  return page.evaluate(([sel, depth]) => {
+    if (depth < 0) return { x: -scrollX, y: -scrollY, el: 'document' };
+    let e = document.querySelector(sel); for (let k = 0; k < depth; k++) e = e.parentElement;
+    const r = e.getBoundingClientRect(), cs = getComputedStyle(e), scroller = /(auto|scroll)/.test(cs.overflowY + cs.overflowX);
+    const name = `${e.tagName.toLowerCase()}${e.id ? '#' + e.id : ''}${[...e.classList].map(c => '.' + c).join('')}`;
+    return scroller ? { x: r.left + e.clientLeft - e.scrollLeft, y: r.top + e.clientTop - e.scrollTop, el: name } : { x: r.left, y: r.top, el: name };
+  }, [fitSel, depth]);
+}
+
+/**
+ * The golden card presented as the app presents its sheet, so both rasterise the same way (D-HT3): a modal <dialog>
+ * at the app dialog's place and width, holding a scroll box with the app panel's size, 1 px top and side borders,
+ * scroll height and scroll offset. Chromium decides per build which of these gets its own layer (build 1194 only the
+ * dialog; build 1243 also every overflow:auto scroller, like the app's panel), so mirroring the structure keeps the
+ * two pages on the same layer kind in every build. Inside, a wrapper with the gallery group's 15 px gutter (it clips
+ * the card's own 1 px side and bottom borders, which fall outside the capture) puts the plate-fit at the app's offset
+ * from the scroll box's origin, and its height evens out the scroll height. Only the capture changes: the card node,
+ * its markup and every style it inherits (the dialog inherits #sheets' colour and font) stay as they are.
+ * `at` = appOffset(), measured on every capture. `extra` shifts the plate down for the controls (128: the same
+ * raster phase; 1: not). The layer each page's plate rasterises in is read back and must be of the same kind.
  */
 export async function presentGolden(page, id, at, extra = 0, paused = false) {
-  await page.evaluate(([id, at, extra]) => {
+  const fitSel = `#${id}-plate`;
+  const got = await page.evaluate(([id, a, extra]) => {
     const c = document.getElementById(`card-${id}`);
     let d = document.getElementById('ht3-present');
     if (!d) {
       d = document.createElement('dialog'); d.id = 'ht3-present';
-      d.style.cssText = 'box-sizing:border-box;padding:0 16px;border:0;margin:0;inset:0 auto auto 0;width:100%;max-width:none;max-height:none;background:transparent;overflow:visible;color:inherit;font:inherit;letter-spacing:inherit';
-      document.getElementById('sheets').append(d);
+      d.style.cssText = 'box-sizing:border-box;padding:0;border:0;margin:0;max-width:none;max-height:none;background:transparent;overflow:visible;color:inherit;font:inherit;letter-spacing:inherit';
+      const p = document.createElement('div'); p.id = 'ht3-panel'; p.style.cssText = 'box-sizing:border-box;border:1px solid transparent;border-bottom:0;overflow:auto';
+      const w = document.createElement('div'); w.id = 'ht3-wrap'; w.style.cssText = 'box-sizing:border-box;overflow:clip;padding:0 15px';
+      d.append(p); p.append(w); document.getElementById('sheets').append(d);
     }
-    if (c.parentElement !== d) { c.before(Object.assign(document.createElement('i'), { id: 'ht3-home' })); d.append(c); }
+    const p = document.getElementById('ht3-panel'), w = document.getElementById('ht3-wrap');
+    if (c.parentElement !== w) { c.before(Object.assign(document.createElement('i'), { id: 'ht3-home' })); w.append(c); }
+    Object.assign(d.style, { inset: `${a.top}px auto auto ${a.left}px`, width: `${a.w}px` });
+    Object.assign(p.style, { width: `${a.w}px`, height: `${a.h}px` });
+    Object.assign(w.style, { paddingTop: '0px', height: 'auto' });
     if (!d.open) d.showModal();
-    d.style.paddingTop = '0px'; d.style.top = '0px';
-    const off = document.getElementById(`${id}-plate`).getBoundingClientRect().top - d.getBoundingClientRect().top;
-    let pad = at.off - off + extra, top = at.top;
-    if (pad < 0) { pad += 128; top -= 128; }
-    d.style.paddingTop = `${pad}px`; d.style.top = `${top}px`;
+    const at = () => { const f = document.getElementById(`${id}-plate`).getBoundingClientRect(), r = p.getBoundingClientRect(); return { offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft) }; };
+    w.style.paddingTop = `${a.offY + extra - at().offY}px`;
+    w.style.height = `${w.offsetHeight + a.sh + extra - p.scrollHeight}px`;
+    p.scrollTop = a.st;
+    return { ...at(), sh: p.scrollHeight, ch: p.clientHeight, st: p.scrollTop };
   }, [id, at, extra]);
+  if (got.offX !== at.offX || got.offY !== at.offY + extra || got.sh !== at.sh + extra || got.ch !== at.ch || got.st !== at.st)
+    throw new Error(`presentGolden: the golden sits at ${JSON.stringify(got)}, the app at ${JSON.stringify(at)} (+${extra})`);
+  const g = await rasterOrigin(page, fitSel);
+  const kind = el => (el.startsWith('dialog') ? 'dialog' : el.includes('sheet-panel') || el.includes('#ht3-panel') ? 'scroller' : el);
+  if (at.layer && kind(g.el) !== kind(at.layer)) throw new Error(`presentGolden: the golden plate rasterises in ${g.el}, the app's in ${at.layer}`);
   if (paused) await frames2(page); else await settle(page);   // paused Trace animations never end, so wait for paint only
 }
 
@@ -404,13 +458,14 @@ export async function unpresentGolden(page, paused = false) {
   if (paused) await frames2(page); else await settle(page);
 }
 
-/** The app's plate-fit offset inside its sheet dialog (its layer); the panel must not scroll (a scroller is a layer too). */
+/** The app sheet's geometry the golden presentation mirrors, and the layer its plate rasterises in. */
 export async function appOffset(page) {
+  const o = await rasterOrigin(page, 'dialog.sheet.ht .ht-plate-fit');
   const r = await page.evaluate(() => {
-    const d = document.querySelector('dialog.sheet.ht'), p = d.querySelector('.sheet-panel'), f = d.querySelector('.ht-plate-fit');
-    return { top: d.getBoundingClientRect().top, off: f.getBoundingClientRect().top - d.getBoundingClientRect().top, scrolls: p.scrollHeight > p.clientHeight };
+    const p = document.querySelector('dialog.sheet.ht .sheet-panel'), f = p.querySelector('.ht-plate-fit').getBoundingClientRect(), r = p.getBoundingClientRect();
+    return { top: r.top, left: r.left, w: r.width, h: r.height, sh: p.scrollHeight, ch: p.clientHeight, st: p.scrollTop, offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft), scrolls: p.scrollHeight > p.clientHeight };
   });
-  return r;
+  return { ...r, layer: o.el };
 }
 
 /** F3: the golden block's markup, serialised as it stands (wrapper classes mapped back, the zoom slot dropped). */
@@ -430,6 +485,9 @@ export function blockMarkup(page, which, id, withMistake = true) {
   }, [which, id, withMistake]);
 }
 
+/** The taller viewport (supervisor, PR #106): under the Train page's own height (1,363 px at 390), so the app page
+ * still scrolls and its sheet dialog keeps its own layer, as the golden page's does. */
+export const TALL_H = 1300;
 export const HT_THEMES = ['silent-black', 'paper', 'midnight', 'ember', 'emerald'];
 /** Themes with the full matrix: every callout and tell, the Trace frames, the widths (plan 2.7 L3, L4). */
 export const HT_FULL = ['silent-black', 'paper'];
@@ -494,15 +552,19 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
         for (const b of l2bCompare(gw, aw, `${id} ${label} L2b`)) P(b);
       }
       lap('markup');
-      let ao = await appOffset(app.page), tall = false;
+      // when the sheet would scroll (its panel then sits at the fractional 92dvh line, where text snaps differently)
+      // or the region does not fit, both pages are captured at the same width x TALL_H, where neither holds
       const fits = async () => { try { await region(app.page, G.app(id), 'app'); return true; } catch { return false; } };
-      if (ao.scrolls || !(await fits())) {
+      const scrolls = () => app.page.evaluate(() => { const p = document.querySelector('dialog.sheet.ht .sheet-panel'); return p.scrollHeight > p.clientHeight; });
+      let tall = false;
+      if ((await scrolls()) || !(await fits())) {
         tall = true; stats.tall.push(`${theme}/${id}/${label}@${width}`);
-        await Promise.all([app.page.setViewportSize({ width, height: 1400 }), gold.page.setViewportSize({ width, height: 1400 })]);
+        await Promise.all([app.page.setViewportSize({ width, height: TALL_H }), gold.page.setViewportSize({ width, height: TALL_H })]);
         await settleApp(app.page);
-        ao = await appOffset(app.page);
-        if (ao.scrolls) P(`${id} ${label}: the sheet still scrolls at ${width}x1400`);
+        if ((await scrolls()) || !(await fits())) P(`${id} ${label}: the sheet still scrolls or the region does not fit at ${width}x${TALL_H}`);
       }
+      const ao = await appOffset(app.page);
+      (stats.layers ??= {})[ao.layer] = (stats.layers[ao.layer] ?? 0) + 1;
       await presentGolden(gold.page, id, ao);
       lap('present');
       const [ra, rg] = await Promise.all([region(app.page, G.app(id), 'app'), region(gold.page, G.golden(id), 'golden')]);
@@ -528,7 +590,7 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
             writeFileSync(`${f}-layers.json`, JSON.stringify({ app: await layers(app.page), golden: await layers(gold.page), ra, rg, ao }, null, 1));
           }
         }
-        if (!meetsRule(d)) P(`${id} ${label} @${width}${tall ? 'x1400' : ''} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}); trace/mistake aria-pressed app ${await app.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)} golden ${await gold.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)}`);
+        if (!meetsRule(d)) P(`${id} ${label} @${width}${tall ? `x${TALL_H}` : ''} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}); trace/mistake aria-pressed app ${await app.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)} golden ${await gold.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)}`);
       }
       if (tall) { await Promise.all([app.page.setViewportSize({ width, height: 844 }), gold.page.setViewportSize({ width, height: 844 })]); await settleApp(app.page); }
     };
@@ -585,9 +647,11 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
           const [la, lg] = await Promise.all([animList(app.page, figSel.app), animList(gold.page, figSel.golden(id))]);
           stats.anims++;
           if (!la.length || JSON.stringify(la) !== JSON.stringify(lg)) P(`${id} L4: the Trace animations differ (app ${la.length}, golden ${lg.length}): ${JSON.stringify(la).slice(0, 300)} vs ${JSON.stringify(lg).slice(0, 300)}`);
-          if (full.includes(theme)) {   // Trace ends by itself: .tracing and aria-pressed go within 2.4 s + the last fade + 1 s
+          if (full.includes(theme)) {   // Trace ends by itself: once its animations have finished, .tracing goes within 1 s
             const ended = sel => document.querySelector(sel).classList.contains('tracing') === false;
-            await both((p, w) => p.waitForFunction(ended, w === 'app' ? figSel.app : figSel.golden(id), { timeout: 3700 }).catch(() => P(`${id} L4: Trace did not end by itself in the ${w} page`)));
+            // measured from the animations' own finish (not a wall-clock guess), so a loaded CI runner cannot fake a failure
+            await both(p => p.evaluate(sel => Promise.all(document.querySelector(sel).getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))), p === app.page ? figSel.app : figSel.golden(id)));
+            await both((p, w) => p.waitForFunction(ended, w === 'app' ? figSel.app : figSel.golden(id), { timeout: 1000 }).catch(() => P(`${id} L4: Trace did not end by itself in the ${w} page`)));
             const pressed = await app.page.$eval(`#${id}-trace`, b => b.getAttribute('aria-pressed'));
             if (pressed !== 'false') P(`${id} L4: Trace is still aria-pressed=${pressed} after it ended`);
           } else { await both((p, w) => freezeAt(p, w === 'app' ? figSel.app : figSel.golden(id), null)); await both((p, w) => unfreeze(p, w === 'app' ? figSel.app : figSel.golden(id), id)); }
@@ -704,7 +768,7 @@ export async function presentControls(browser, theme = 'silent-black', id = HT_P
   const shots = [];
   for (const extra of [0, 128, 1]) {
     const { ctx, page } = await openGolden(browser, theme);
-    await presentGolden(page, id, { top: 0, off: 89 }, extra);
+    await presentGolden(page, id, { top: 0, left: 0, w: 390, h: 800, sh: 800, ch: 799, st: 0, offY: 88, offX: 15, layer: null }, extra);
     shots.push({ png: await capture(page, await region(page, G.golden(id), 'golden')), page, ctx });
   }
   const d128 = await diffPng(shots[0].page, shots[0].png, shots[1].png), d1 = await diffPng(shots[0].page, shots[0].png, shots[2].png);
