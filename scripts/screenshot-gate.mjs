@@ -5789,7 +5789,8 @@ for (const theme of ['silent-black', 'paper']) {
   // full Chromium, never the headless shell (D-HT3: the shell lays the squat's chest tell out 22 px taller and misdraws it)
   const ht3 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
   try {
-    const [fid, beh, ctlS, ctlP] = await Promise.all([H.ht3Fidelity(ht3, PORT), H.ht3Behaviour(ht3, PORT, 'paper'), H.presentControls(ht3, 'silent-black'), H.presentControls(ht3, 'paper')]);
+    const failed = e => ({ problems: [`crashed: ${e.message.split('\n')[0]}`], stats: {}, d128: '?', d1: '?' });   // a thrown probe is a failure, never a gate crash
+    const [fid, beh, ctlS, ctlP] = await Promise.all([H.ht3Fidelity(ht3, PORT), H.ht3Behaviour(ht3, PORT, 'paper').catch(failed), H.presentControls(ht3, 'silent-black').catch(failed), H.presentControls(ht3, 'paper').catch(failed)]);
     const ctl = { d128: `${ctlS.d128}/${ctlP.d128}`, d1: `${ctlS.d1}/${ctlP.d1}` };
     for (const p of [...fid.problems, ...beh.problems, ...ctlS.problems, ...ctlP.problems]) errors.push(`${tag}: ${p}`);
     if (fid.stats.pairs < 300) errors.push(`${tag}: only ${fid.stats.pairs} pixel pairs compared, expected the full matrix (>= 300)`);

@@ -768,7 +768,7 @@ export async function presentControls(browser, theme = 'silent-black', id = HT_P
   const shots = [];
   for (const extra of [0, 128, 1]) {
     const { ctx, page } = await openGolden(browser, theme);
-    await presentGolden(page, id, { top: 0, left: 0, w: 390, h: 800, sh: 800, ch: 799, st: 0, offY: 88, offX: 15, layer: null }, extra);
+    await presentGolden(page, id, { top: 0, left: 0, w: 390, h: 1000, sh: 999, ch: 999, st: 0, offY: 88 + extra, offX: 15, layer: null });   // a scroll box that never overflows, the plate moved down by `extra`
     shots.push({ png: await capture(page, await region(page, G.golden(id), 'golden')), page, ctx });
   }
   const d128 = await diffPng(shots[0].page, shots[0].png, shots[1].png), d1 = await diffPng(shots[0].page, shots[0].png, shots[2].png);
