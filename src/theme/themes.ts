@@ -44,6 +44,9 @@ export interface ThemeTokens {
    * and lower it just enough to clear 4.5:1. Required (not optional) so every theme keeps the
    * same token contract (tests/theme.test.ts). */
   accentTextPct: number;
+  /** HT-2 (D-HT1): the How-to plate's mistake colour, the D-FG1 values. Read only under
+   * src/slices/howto/** (tests/workout/no-form-guide.test.ts A3-HT). */
+  mistake: string;
 }
 
 export interface Theme {
@@ -92,6 +95,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       chrome: '#08090a',
       colorScheme: 'dark',
       accentTextPct: 75,
+      mistake: '#eb5757',
     },
   },
   paper: {
@@ -128,6 +132,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       colorScheme: 'light',
       // I14: 75% measures 4.46:1 on surface-2 (.chip-accent/.esc-link's backdrop); 70% measures 4.73:1.
       accentTextPct: 70,
+      mistake: '#c0392b',
     },
   },
   ember: {
@@ -161,6 +166,8 @@ export const THEMES: Record<ThemeId, Theme> = {
       chrome: '#07080a',
       colorScheme: 'dark',
       accentTextPct: 75,
+      // D-FG1: violet, not red: this theme's negative equals its accent, so red would not show.
+      mistake: '#b36bff',
     },
   },
   emerald: {
@@ -194,6 +201,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       chrome: '#0f0f0f',
       colorScheme: 'dark',
       accentTextPct: 75,
+      mistake: '#f04438',
     },
   },
   midnight: {
@@ -230,6 +238,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       // two contexts — the autoreg line's surface-1 clears at 4.46:1); 65% measures 4.67:1 on
       // surface-2 and 5.23:1 on surface-1.
       accentTextPct: 65,
+      mistake: '#ff5c5c',
     },
   },
 };
@@ -266,6 +275,7 @@ export function themeToCss(theme: Theme): string {
     `--shadow:${t.shadow}`,
     `--map-body:${t.mapBody}`,
     `--map-line:${t.mapLine}`,
+    `--mistake:${t.mistake}`,
     `--radius-sm:${theme.radius.sm}`,
     `--radius-md:${theme.radius.md}`,
     `--radius-lg:${theme.radius.lg}`,
