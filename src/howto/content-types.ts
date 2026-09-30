@@ -224,6 +224,13 @@ export interface ZoomSpec {
   readonly chipCaption?: string;
   readonly heading: string;
   readonly kind: 'hand' | 'posture';
+  /** Mockup (hanging_leg_raise, pull_up "shoulders" zooms): a posture crop drawn from a different camera view than
+   *  the plate's own (e.g. the engine's front-view outline, used for a "seen from behind" shot a side crop cannot
+   *  show). Whenever set, `camLabel` must say so (C16) - the view differs from what a reader would otherwise assume. */
+  readonly view?: 'front' | 'back';
+  /** The camera label for a `view` override (see above). Distinct from `hand.cameraLabel`, which labels the hand
+   *  close-up's own camera, not a posture crop's. */
+  readonly camLabel?: string;
   readonly hand?: {
     readonly right?: Partial<HandPose>;
     readonly wrong: ReadonlyArray<string | HandFault>;

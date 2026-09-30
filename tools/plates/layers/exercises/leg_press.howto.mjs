@@ -26,14 +26,14 @@ export { RED_FLAG };
  * `use` is the evidence label FOR THIS USE (architecture 3). `access` is what the card's verifier read. */
 export const SOURCES = {
   'ace-leg-press': { cite: 'ACE Exercise Library, Seated Leg Press', url: 'https://www.acefitness.org/resources/everyone/exercise-library/154/seated-leg-press/',
-    kind: 'guideline', access: 'unreachable', checked: null, use: 'CONSENSUS',
-    note: 'Coaching guide. Not rechecked. Never the only source here.' },
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS',
+    note: 'Coaching guide. Never the only source here.' },
   'nasm-leg-press': { cite: 'NASM Exercise Library, Leg Press', url: 'https://www.nasm.org/resource-center/exercise-library/leg-press',
     kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS',
     note: 'Back on the pad, foot width, no lockout, 90 degrees, common faults.' },
   'bells-of-steel': { cite: 'Bells of Steel (manufacturer), How to use the leg press machine', url: 'https://bellsofsteel.us/blogs/content/how-to-use-the-leg-press-machine',
-    kind: 'manufacturer', access: 'unreachable', checked: null, use: 'CONSENSUS',
-    note: "Machine maker's guide. Not rechecked. Machines differ." },
+    kind: 'manufacturer', access: 'full', checked: '2026-09-30', use: 'CONSENSUS',
+    note: "Machine maker's guide. Machines differ." },
   yessis: { cite: 'Yessis M. The Leg Press', url: 'https://doctoryessis.com/?p=2700',
     kind: 'coach', access: 'full', checked: '2026-09-30', use: 'CONSENSUS',
     note: 'Knees to chest round the lower back. Stop near 90 degrees.' },
