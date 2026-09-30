@@ -1,6 +1,7 @@
 /**
  * Rendering a conversation (§4.2): user bubbles, and Escobar's turns with the preamble,
- * components, proposal / navigate / escalation cards, the verified answer with citations,
+ * components, proposal / navigate / escalation cards, the verified answer (citation markers
+ * stripped, LR-23),
  * and the "What Escobar looked at" drawer. Everything redraws from the stored messages.
  */
 import { useEffect, useState } from 'preact/hooks';
@@ -8,17 +9,15 @@ import { Button, Card } from '@/ui/primitives';
 import { IconChevronDown } from '@/ui/icons';
 import { goTo } from '../palace/navigate';
 import { PALACE_BY_ID } from '../palace/registry';
-import { CARD_BY_ID } from '../knowledge/cards';
 import { parseDirectives } from '../verify';
 import { onProposal, canApply, undoOpen, UNDO_WINDOW_MS } from '../apply';
 import { ShowComponent } from './components';
-import { Citation, CardCitation } from './Citation';
 import { Escalation } from './Escalation';
 import { imageData, loadImage } from '../images';
 import { state } from '@/core/store';
 import { makeCtx } from '../tools/context';
 import { statusLabel } from '../tools/executor';
-import { pastTense, splitCitations } from './present';
+import { drawerView, pastTense, splitCitations } from './present';
 import type { Conversation, Fact, ProposalRecord, RenderedTurn, StoredMessage, UserBlock } from '../types';
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -68,22 +67,18 @@ export function UserBubble({ msg }: { msg: UserTurn['msg'] }) {
   );
 }
 
-/** Answer text → paragraphs, bullets, sentences, citations; unverified sentences muted (§14.3). */
-export function AnswerText({ text, ledger, unverified, streaming }: { text: string; ledger: Fact[]; unverified?: string[]; streaming?: boolean }) {
+/** Answer text → paragraphs, bullets, sentences; markers stripped (LR-23); unverified sentences muted (§14.3). */
+export function AnswerText({ text, unverified, streaming }: { text: string; ledger: Fact[]; unverified?: string[]; streaming?: boolean }) {
   const bad = new Set((unverified ?? []).map(s => s.trim()));
   const paras = text.split(/\n{2,}/);
-  let cites = 0;
   const sentence = (raw: string, key: number) => {
-    const { text: stripped, ids } = splitCitations(raw);
+    const { text: stripped } = splitCitations(raw);
     const parts = stripped.split(/(⟦[^⟧]*⟧|\*\*[^*]+\*\*)/g).filter(Boolean);
     const body = parts.map((p, i) => {
-      if (p.startsWith('⟦k:')) { const id = p.slice(3, -1); return <CardCitation key={i} id={id} card={CARD_BY_ID[id]} />; }
       if (p.startsWith('⟦')) return null;
       if (p.startsWith('**')) return <b key={i}>{p.slice(2, -2)}</b>;
       return p;
     });
-    const facts = ids.map(id => ledger.find(f => f.id === id)).filter((f): f is Fact => !!f);
-    if (facts.length) body.push(<Citation key="cite" n={++cites} facts={facts} />);
     const plain = parseDirectives(raw).plain.trim().replace(/^[-•]\s+/, '');
     return bad.has(plain) ? <span key={key} class="esc-unverified" title="Unverified number">{body}<span class="esc-unverified-hint"> Unverified number</span> </span> : <span key={key}>{body} </span>;
   };
@@ -140,13 +135,6 @@ function NavigateCard({ target, params }: { target: string; params?: Record<stri
   );
 }
 
-function prettyOutput(content: string): string {
-  try {
-    const j = JSON.parse(content) as { data?: unknown };
-    return JSON.stringify(j && typeof j === 'object' && 'data' in j ? j.data : j, null, 1).slice(0, 4000);
-  } catch { return content.slice(0, 4000); }
-}
-
 function Drawer({ uses, results }: { uses: ToolUse[]; results: Map<string, { content: string; isError: boolean }> }) {
   const [open, setOpen] = useState(false);
   const [shown, setShown] = useState<string | null>(null);
@@ -159,7 +147,7 @@ function Drawer({ uses, results }: { uses: ToolUse[]; results: Map<string, { con
         <ul class="esc-drawer-list small">
           {uses.map(u => {
             const r = results.get(u.id);
-            const inputs = Object.entries(u.input).filter(([, v]) => v != null && typeof v !== 'object');
+            const { inputs, output } = drawerView(u.name, u.input, r?.content);
             return (
               <li key={u.id}>
                 <button type="button" class="esc-drawer-item" aria-expanded={shown === u.id} onClick={() => setShown(s => (s === u.id ? null : u.id))}>
@@ -169,7 +157,7 @@ function Drawer({ uses, results }: { uses: ToolUse[]; results: Map<string, { con
                   <div class="esc-drawer-detail">
                     {inputs.length > 0 && <div class="hint">Asked for: {inputs.map(([k, v]) => `${k.replace(/([A-Z])/g, ' $1').toLowerCase()} ${String(v).replace(/^lib_/, '').replace(/_/g, ' ')}`).join(', ')}</div>}
                     <div class="hint">Data sent to Escobar:</div>
-                    <pre class="esc-drawer-out">{r ? prettyOutput(r.content) : 'No result'}</pre>
+                    <pre class="esc-drawer-out">{output ?? 'No result'}</pre>
                   </div>
                 )}
               </li>

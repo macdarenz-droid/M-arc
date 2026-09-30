@@ -15,9 +15,9 @@
       "gitBlob": "fa7c6645385a0b10102ef51a7fae25287676a9df"
     },
     "engine/SPEC.md": {
-      "sha256": "3199f4df74e08f465f96a15830ee21d88bf0d3a899ecc41e4e5c1f8fc26797e4",
-      "source": "f214700:docs/howto/technical-plate/engine/SPEC.md",
-      "gitBlob": "e743749fdaec8e9238ab1d5bb007bb9cf90e2f12"
+      "sha256": "af4b34331d256b9002db325a3714e9c4bdbc3306330a93ded128298aa466b5cb",
+      "source": "48153c4:docs/howto/technical-plate/engine/SPEC.md",
+      "gitBlob": "d5abe2e457a51fa0c29bd523576cf1091391c12f"
     },
     "engine/body.mjs": {
       "sha256": "704b42d651bb5c30fccfcc4411679ee46858469146f02862c490fabcd721fcba",
@@ -25,9 +25,9 @@
       "gitBlob": "c4b017075b7dbc7d3f3d980e36802213497a79fa"
     },
     "engine/equipment.mjs": {
-      "sha256": "99cd1bd3792ffde84f196a6ce776812132097144631c59c68d31ef95b8380c92",
-      "source": "7859292:docs/howto/technical-plate/engine/equipment.mjs",
-      "gitBlob": "33fdf06a861ad15f42a1bbbe977bdb28d5a5da03"
+      "sha256": "d1f7d82a8962e411525ab29138a1b36eb444d10b04e1e75a14e9475b15eaa638",
+      "source": "48153c4:docs/howto/technical-plate/engine/equipment.mjs",
+      "gitBlob": "3288b69ec1a277ee26da38686d3f75e62f228bfa"
     },
     "engine/gallery.mjs": {
       "sha256": "238b3df7bfe95b70e8f6f772406abb8a1b2d2234a108e14ac64185974d2a82a7",

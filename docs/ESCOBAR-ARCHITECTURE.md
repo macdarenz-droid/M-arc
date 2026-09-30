@@ -39,7 +39,7 @@ The owner rated the old Escobar 4/10. The target is 9/10 or better, judged on th
 | 7 | Remembers | Up to 8 "stated constraints" of free text. | Semantic memory (facts, injuries, equipment, preferences, goals in the user's own words, agreements) plus episodic summaries of past conversations. All of it is visible and editable in "What Escobar knows". |
 | 8 | Is present | Two buttons. | The Hall (the Coach tab, relabelled Escobar), a dock pill on every screen, "Ask about this" on every insight and chart, a daily brief on Today, a live-workout mode, and bounded proactive moments. |
 | 9 | Feels fast | Blocking reply after 10–70 s with a spinner. | Streamed tokens, tool-activity narration ("Reading your bench history…"), first visible feedback in under 1 s and first token typically under 4 s. |
-| 10 | Is safe and honest | A concern flag plus a fixed resource. | App-owned escalation cards (pain/injury, crisis, disordered eating, medical), MI-style coaching, a scope contract, a transparency drawer ("What Escobar looked at"), and a graded scenario suite as a regression gate. |
+| 10 | Is safe and honest | A concern flag plus a fixed card. | App-owned escalation cards (pain/injury, crisis, disordered eating, medical), MI-style coaching, a scope contract, a transparency drawer ("What Escobar looked at"), and a graded scenario suite as a regression gate. |
 | 11 | Speaks the gym's units | One global kg/lb switch; typed lb values drift (35 → 35.5) | Per-exercise and per-gym units, a pill on every input, loadable targets, plate math, slip detection, and Escobar reading a rack photo (§25) |
 
 ---
@@ -113,7 +113,7 @@ A new component. Do not reuse `Sheet`: it needs detents and a persistent compose
 - **Header:** the persona mark (subtle ember pulse while thinking, static under reduced motion), "Escobar", and a status line: `online`, `thinking…`, `offline`, `resting (daily limit reached)`. A menu (`IconMore`) with New conversation, Past conversations, What Escobar knows and Coach settings.
 - **Messages:**
   - The user: right-aligned, background `var(--accent-soft)`, text `var(--text)`, radius 18 with a 6 px bottom-right corner, max width 82%. Attached photos as 72 px thumbnails. Context chips render above the text.
-  - Escobar: full-width, no bubble. A 2 px left rule in `var(--accent)` at 40% opacity marks his turn. Text `var(--text)` at 15.5/1.5. Components render as `.card` blocks inside the turn. Citations render as tiny `.chip` superscripts (`1`, `2`) that open a popover with the fact source ("History · Bench press · 3 sessions"). Follow-up chips sit under the last turn.
+  - Escobar: full-width, no bubble. A 2 px left rule in `var(--accent)` at 40% opacity marks his turn. Text `var(--text)` at 15.5/1.5. Components render as `.card` blocks inside the turn. Citation markers are stripped from display; no chip, source or evidence label is shown (owner decision LR-23, 2026-09-30). Follow-up chips sit under the last turn.
   - Activity lines (while tools run): `var(--text-3)`, 13 px, with a small spinner icon, one per tool ("Reading your bench history…", "Checking recovery…"), collapsing into a "What Escobar looked at" disclosure once the answer lands.
   - Proposal cards: `.card` with a 3 px `var(--accent)` left border, a title, a diff table (before → after rows), and the buttons `Apply` (`btn-primary`) and `Not now` (`btn-quiet`). After a decision, a one-line state ("Applied · Undo" or "Dismissed").
   - Escalation cards (§19): `.card` with a `var(--warning)` left border, fixed app-owned copy, and a link-out button where relevant.
@@ -177,7 +177,7 @@ src/escobar/
   moments.ts                # proactive trigger engine (pure; brain inputs)
   state.ts                  # signals: escobarUi, loopStatus, streamingText, online, quota
   ui/EscobarSheet.tsx  ui/Dock.tsx  ui/Hall.tsx  ui/Message.tsx  ui/Proposal.tsx
-  ui/Composer.tsx  ui/Citation.tsx  ui/Escalation.tsx  ui/MemoryScreen.tsx  ui/components/*.tsx
+  ui/Composer.tsx  ui/Escalation.tsx  ui/MemoryScreen.tsx  ui/components/*.tsx
 src/brain/plan.ts           # NEW pure: evaluatePlan(draft, ctx) (§8.3)
 src/brain/recovery.ts       # ADD export recoveryPctFor(exerciseId, custom, recovery) — move it out of Train.tsx (it is private there today)
 src/ui/Sparkline.tsx        # MOVED from History.tsx
@@ -627,8 +627,9 @@ Every tool result is flattened into facts: `Fact {id: 'f12', value: number, labe
 ### 14.2 Directives (streamed text grammar)
 
 The model may emit only these inline directives:
-- `⟦f12⟧`: a citation after a number, rendered as a superscript chip. Several are allowed: `⟦f12,f14⟧`.
+- `⟦f12⟧`: a citation after a number. Several are allowed: `⟦f12,f14⟧`.
 - `⟦k:protein_intake⟧`: a knowledge-card citation.
+- Both markers are stripped from display (`present.ts: splitCitations`) and used only by the number check (owner decision LR-23, 2026-09-30: no sources, citation chips or evidence labels in the app UI).
 - `⟦chips: Show my squat trend | Why amber? | Plan tomorrow⟧`: at most once, at the very end, ≤ 3 chips of ≤ 40 characters each.
 
 The parser (`verify.ts`) is strict. An unknown directive is removed. A directive split across stream chunks is buffered until `⟧` arrives (never render half a directive).
@@ -659,9 +660,9 @@ Write it as prose with numbered sections. Keep it under about 3,500 tokens: curr
 7. **Changing things.** Only through `propose_*` tools. Never claim something changed until a `decisions:` line in the brief reports the user applied it. Propose only what they asked for or what clearly serves their stated goal, and explain why in one line.
 8. **Memory.** When the person states a durable fact (injury, equipment, preference, a goal in their own words, an agreement), call `remember`. Don't store feelings or one-offs. Respect `forget`.
 9. **The palace.** Use the manifest to explain where things are. Use `navigate` when they want to go somewhere, and `find_in_app` when unsure. Describe screens by their names in the manifest.
-10. **Safety** (§19). Pain that is sharp, radiating or numb, or that persists past 48 h, chest pain, dizziness or fainting: `escalate(pain|medical)`, give general safe guidance, and do not diagnose or clear them to train through it. Signs of crisis: `escalate(crisis)` and respond warmly. Restrictive eating, very rapid weight-loss goals or compulsive exercise: `escalate(disordered_eating)` and do not provide deficit targets. Under 18 (from the brief's age): no maximal-effort programming advice, and encourage a coach or parent. Supplements: general evidence only, never dosing beyond the label, and point to a clinician for medications and conditions. PEDs: harm-reduction facts only, no protocols.
+10. **Safety** (§19). Pain that is sharp, radiating or numb, or that persists past 48 h, chest pain, dizziness or fainting: `escalate(pain|medical)`, give general safe guidance, and do not diagnose or clear them to train through it. Signs of crisis: `escalate(crisis)` and respond warmly. Never give phone numbers, hotlines, helplines, websites or the names of services; the app shows its own short safety card (LR-23). Restrictive eating, very rapid weight-loss goals or compulsive exercise: `escalate(disordered_eating)` and do not provide deficit targets. Under 18 (from the brief's age): no maximal-effort programming advice, and encourage a coach or parent. Supplements: general evidence only, never dosing beyond the label, and point to a clinician for medications and conditions. PEDs: harm-reduction facts only, no protocols.
 11. **Scope.** Training, recovery, sleep, nutrition basics, health-adjacent fitness questions, the app itself. Politely decline the rest in one line.
-12. **Formatting.** Plain sentences. `- ` bullets only for 3+ parallel items. `**bold**` sparingly. No headings, tables, code or emojis. No markdown links.
+12. **Formatting.** Plain sentences. `- ` bullets only for 3+ parallel items. `**bold**` sparingly. No headings, tables, code or emojis. No links or phone numbers. Don't name research studies, their authors or health organisations as sources, and don't quote evidence ratings (LR-23; the worker wording is in ESC-NC-W).
 
 `MODE_ADDENDUM` (lives in the Worker's policy module but is sent inside the per-turn brief's `mode:` line, §11.2, never in the top-level system):
 - `plan`: "Design mode. Ask at most 2 clarifying questions (days/week, session length, equipment, priorities) unless memory answers them. Draft → `evaluate_plan` → revise → `show(plan_week)` + `show(plan_evaluation)` → `propose_program`."
@@ -728,9 +729,10 @@ On the first Today render of the day with Escobar enabled and online: `mode:'bri
 
 - **Escalation cards** (`ui/Escalation.tsx`, fixed app-owned copy, never model text):
   - `pain`: "Pain that's sharp, spreading, numb, or lasting more than two days is a medical question, not a programming one. Stop the movement that causes it and see a physio or doctor." Offers to add an injury memory.
-  - `medical`: "Chest pain, fainting, or dizziness during exercise needs medical attention now. If it's happening now, call emergency services."
-  - `crisis`: "If things feel like too much, you don't have to carry it alone. findahelpline.com lists free, confidential support in your country." (The old line's copy is reusable.)
-  - `disordered_eating`: "This is worth talking through with someone who can help properly — a doctor or an eating-disorder helpline. findahelpline.com lists options by country."
+  - `medical`: "Chest pain, fainting, or dizziness during exercise needs medical attention. Stop the session and get emergency help now."
+  - `crisis`: "If things feel like too much, you don't have to carry it alone. Talk to someone you trust, or a doctor. If you feel you might harm yourself, get emergency help now."
+  - `disordered_eating`: "This is worth talking through with someone who can help properly, like a doctor."
+  - No card shows a phone number, helpline, website, link or named service (owner decision LR-23, 2026-09-30: "Dont put any emergency or whatever contacts."). `tests/escobar/no-contacts.test.ts` and the gate's ESC-NC block check every card against `tests/guards/no-contacts.ts`.
 - **App-side pre-screen:** a small keyword/regex classifier (`verify.ts: safetySignals(text)`) runs on the user's message before sending. On a crisis match, the card renders immediately, even offline, and the message still goes to the model. Signals are appended to the brief (`signals: pain_mentioned`) so the model is primed.
 - **Age:** from `profile.birthYear`, under 18 → `minor: true` in the brief.
 - **Refusal:** the fixed line plus the transparency drawer. No model text is shown.
@@ -813,8 +815,8 @@ Phase ids are EV0–EV9. Each phase lists its layers and its acceptance. "Tests"
 - Accept: a full mocked conversation of 6 steps passes; `npm run check` green.
 
 **EV5: Chat UI and presence** (UI)
-- `EscobarSheet`, `Composer` (with the photo attach; port `native/photo.ts` from the old line: `git show origin/claude/smartwatch-connector-integration-j42yb5:src/native/photo.ts`), `Message`, `Citation`, activity lines, transparency drawer, `Dock`, the Hall (Coach tab relabelled, sections per §4.1), "Ask about this" buttons, live-mode button, `IconEscobar`, Settings → Escobar section (enable with explainer, sharing toggles, tone, proactive toggle, proxy URL, usage meter, memory link, reset conversations), lazy loading.
-- gate: the gate serves the production build (`vite preview`), so the mock is enabled by `localStorage['marc.dev'] === '1'`, not by a build flag. The mock transport and its fixtures are a dynamic-import chunk. It uses an in-memory conversation store and never touches `marc.escobar.v1` or the network. It plays a recorded conversation with a `show(lift_trend)` component, a citation, chips and a proposal card. Screenshot it in 5 themes at 360 and 390 px, plus the dock on Today and the Hall. Assert the first "Thinking…" line appears within 150 ms of send.
+- `EscobarSheet`, `Composer` (with the photo attach; port `native/photo.ts` from the old line: `git show origin/claude/smartwatch-connector-integration-j42yb5:src/native/photo.ts`), `Message`, activity lines, transparency drawer, `Dock`, the Hall (Coach tab relabelled, sections per §4.1), "Ask about this" buttons, live-mode button, `IconEscobar`, Settings → Escobar section (enable with explainer, sharing toggles, tone, proactive toggle, proxy URL, usage meter, memory link, reset conversations), lazy loading.
+- gate: the gate serves the production build (`vite preview`), so the mock is enabled by `localStorage['marc.dev'] === '1'`, not by a build flag. The mock transport and its fixtures are a dynamic-import chunk. It uses an in-memory conversation store and never touches `marc.escobar.v1` or the network. It plays a recorded conversation with a `show(lift_trend)` component, a fact and a knowledge-card citation (stripped from display), an `escalate(crisis)` card, chips and a proposal card; the gate checks that no chip, marker, link or contact shows (ESC-NC). Screenshot it in 5 themes at 360 and 390 px, plus the dock on Today and the Hall. Assert the first "Thinking…" line appears within 150 ms of send.
 - gate: the relabel from Coach to Escobar breaks the existing gate clicks (`getByRole('button', { name: 'Coach' })` at `scripts/screenshot-gate.mjs` lines ~117, ~148 and ~192). Switch every nav click to `page.locator('nav.nav button', { hasText: '<Label>' })`, and use `exact: true` on other role lookups (`'History'`, `'Body'`, `'Save'`, `'Done'`) so the new "Ask Escobar…" and settings buttons can't collide.
 - Accept: gate PASS; no console errors; manual Playwright walk (send, stream, tool lines, stop, offline).
 
@@ -861,7 +863,7 @@ Nothing else is a reason to stop or to ask.
 2. **Model:** `claude-opus-5` for every mode, with adaptive thinking and effort per mode (chat medium, plan high, live/brief/moment/summarize low). This follows the Claude API guidance to default to the current Opus and tune cost with effort before switching models. The model id is env-configurable.
 3. **Refusal fallbacks on by default** (`fallbacks: 'default'`, beta `server-side-fallback-2026-07-01`), with the compatibility check in §12.3.
 4. **Client-side tool execution through a stateless single-step Worker.** Data stays local; the Worker owns policy.
-5. **`show` is a tool, not markup.** The round trip is worth it because the model receives the exact numbers drawn. Chips and citations are markup, since they need no data.
+5. **`show` is a tool, not markup.** The round trip is worth it because the model receives the exact numbers drawn. Chips and citations are markup, since they need no data (citations are not displayed, LR-23).
 6. **Numbers:** a fact ledger plus citations plus one repair round. Never silent deletion.
 7. **`strict: true` on action/memory tools and `evaluate_plan`; read/show tools non-strict with app-side validation; no numeric/string-length keywords in any schema; `eager_input_streaming` off** (tiny inputs, validation preferred).
 8. **Brief as a mid-conversation system message**, persisted once per user turn, diffed between full briefs, carrying the mode addendum and decisions (cache-friendly, append-only, non-spoofable), with the `<situation>` fallback for models without support.

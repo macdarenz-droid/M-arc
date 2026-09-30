@@ -40,10 +40,11 @@ describe('HT1-A1 vendor lock (L0)', () => {
         expect(e.source).toBe(`1a1e33b:docs/howto/technical-plate/${p}`);
         expect(e.md5).toBe(g.PINS.refSrcMd5[p]);
       } else {
-        // LIB-25 [golden update]: the additive poly primitive (7859292) and its engine test (de00174), claude/howto-options.
-        // LIB-26 [golden update]: the flat-palm hand option (body, plate, SPEC) and its engine test, f214700.
-        const ref = ['engine/body.mjs', 'engine/plate.mjs', 'engine/SPEC.md', 'exercises/_test_flat.mjs'].includes(p) ? 'f214700'
-          : p === 'engine/equipment.mjs' ? '7859292' : p === 'exercises/_test_poly.mjs' ? 'de00174' : 'bc0f378';
+        // LIB-25 [golden update]: the additive poly primitive (7859292, its input checks 48153c4) and its engine test
+        // (de00174), claude/howto-options. LIB-26 [golden update]: the flat-palm hand option (body, plate) and its engine
+        // test, f214700; SPEC.md at 48153c4 documents both.
+        const ref = ['engine/body.mjs', 'engine/plate.mjs', 'exercises/_test_flat.mjs'].includes(p) ? 'f214700'
+          : ['engine/equipment.mjs', 'engine/SPEC.md'].includes(p) ? '48153c4' : p === 'exercises/_test_poly.mjs' ? 'de00174' : 'bc0f378';
         expect(e.source).toBe(`${ref}:docs/howto/technical-plate/${p === 'artifact/build-page.mjs' ? 'build-page.mjs' : p}`);
       }
     }
@@ -88,7 +89,7 @@ describe('HT1-A1 vendor lock (L0)', () => {
   // with its MANIFEST entry still fails here and shows up as a visible change to this test.
   it('HT-2: the sorted path:sha256 list of MANIFEST.json hashes to its pinned literal', () => {
     const list = Object.entries(g.readManifest().files as Record<string, { sha256: string }>).map(([p, e]) => `${p}:${e.sha256}`).sort().join('\n');
-    expect(g.sha256(list)).toBe('628403e1d88d0f829d84857e18275675996f6370bc902aac93c8141e90d61f92');
+    expect(g.sha256(list)).toBe('abd55ac0348f1a1c297d23c68ce6d5b16b44c17ecc654931dea45b09db93f906');
   });
 });
 
