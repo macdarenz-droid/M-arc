@@ -116,6 +116,13 @@
       "closest": "Post hoc analysis showed that DT activity was higher in the DT-focused condition, whereas TB activity was higher in the TB-focused condition (p < 0.001). UT activity did not differ across conditions (p > 0.05)."
     },
     {
+      "claim": "c9",
+      "source": "kim2026",
+      "quote": "Participants performed machine-based shoulder presses at 40% of one-repetition maximum intensity under three MMC conditions.",
+      "status": "verbatim",
+      "closest": "Participants performed machine-based shoulder presses at 40% of one-repetition maximum intensity under three MMC conditions."
+    },
+    {
       "claim": "c10",
       "source": "bull2010",
       "quote": "The results showed high inactivity for PMC in almost all the modalities while DA developed very high levels of action potentials in all the modalities assessed.",

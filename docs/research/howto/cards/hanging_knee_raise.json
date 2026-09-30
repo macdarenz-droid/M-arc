@@ -619,23 +619,26 @@
       },
       {
         "where": "Forearms give out before your abs",
-        "means": "Usually means grip is the limit, not the abs.",
-        "fix": "Chalk up, or use arm straps (ab slings), the version measured in the EMG study.",
+        "means": "The EMG study measured the knee-up done in arm straps.",
+        "fix": "Use arm straps (ab slings), the version measured in the EMG study.",
         "claim": "c10",
         "redFlag": null
       },
       {
         "where": "Lower back",
-        "means": "No source names a cause. The straight-leg version measured about 3000 N of spine compression; bent knees likely load the spine less (inference).",
+        "means": "The straight-leg version measured about 3000 N of spine compression; bent knees likely load the spine less (inference).",
         "fix": "Keep the knees bent.",
         "claim": "c14",
         "redFlag": "back"
       },
       {
         "where": "Shoulder",
-        "means": "Usually means the shoulder does not like the long arms-overhead hang.",
+        "means": "Arms high overhead narrow the space under the shoulder roof (measured in pull-ups).",
         "fix": "Set the shoulders a little down from the ears before each rep (the inherited active hang).",
-        "claim": "c15",
+        "claim": [
+          "c15",
+          "inherit:5"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -701,5 +704,7 @@
     "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression: bent knees first, straight legs later (c13).",
     "Tier A: no source on this card says what to do if a lower-back ache stays; the row fix does not add one. The shared back red-flag box and the owner disclaimer carry the stop-and-check line."
   ],
-  "notes": "Yessis also advises holding the breath and a slight lower-back arch at the start; neither is used, because the parent card and other sources teach a still, quiet hang and no source here supports breath-holding. Not sourced: a safe way down from the bar (inherited from the parent's box line). Escamilla 2006 measured the knee-up in arm straps, not a bare-hand hang. McGill 2015 measured straight legs only. The StrengthLog hanging knee raise page was re-fetched on 2026-09-30 (access full, quotes verbatim). feel.rows[3].fix comes from the inherited active-hang line (inherit[5]), not from a claim on this card."
+  "notes": [
+    "Yessis also advises holding the breath and a slight lower-back arch at the start; neither is used, because the parent card and other sources teach a still, quiet hang and no source here supports breath-holding. Not sourced: a safe way down from the bar (inherited from the parent's box line). Escamilla 2006 measured the knee-up in arm straps, not a bare-hand hang. McGill 2015 measured straight legs only. The StrengthLog hanging knee raise page was re-fetched on 2026-09-30 (access full, quotes verbatim). feel.rows[3].fix comes from the inherited active-hang line (inherit[5]), not from a claim on this card."
+  ]
 }

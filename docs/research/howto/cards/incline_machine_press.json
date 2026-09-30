@@ -414,28 +414,28 @@
     "rows": [
       {
         "where": "Front of the shoulders",
-        "means": "No source read links this feeling to a cause; the shoulder fault ACE warns about here is the shoulder blades rolling off the pad at the top.",
+        "means": "The shoulder fault ACE warns about here is the shoulder blades rolling off the pad at the top.",
         "fix": "Keep the blades on the pad and stop the press there.",
         "claim": "c5",
         "redFlag": "shoulder"
       },
       {
         "where": "Lower back",
-        "means": "No source read links this feeling to a cause; the lower-back fault ACE warns about here is arching off the pad.",
+        "means": "The lower-back fault ACE warns about here is arching off the pad.",
         "fix": "Brace, keep the normal low-back curve.",
         "claim": "c4",
         "redFlag": null
       },
       {
         "where": "Elbows",
-        "means": "No source read links this feeling to a cause; ACE's elbow rule is to stop short of locking.",
+        "means": "ACE's elbow rule is to stop short of locking.",
         "fix": "Stop just short of lockout.",
         "claim": "c3",
         "redFlag": "elbow"
       },
       {
         "where": "Wrist",
-        "means": "No source read links this feeling to a cause; the wrist rule ACE gives here is keeping the wrist in line with the forearm.",
+        "means": "The wrist rule ACE gives here is keeping the wrist in line with the forearm.",
         "fix": "Keep the wrist in line with the forearm.",
         "claim": "c1",
         "redFlag": "wrist"
@@ -482,5 +482,7 @@
     "why": "exercises.json lists upper_chest primary and front_delts, triceps, chest secondary; c6 supports this (bench-press data, MECH). No change."
   },
   "anchorSource": "ace-incline-press",
-  "notes": "The anchor is ACE's seated incline press on a cable machine, the closest exercise-specific guideline found; its setup and path lines apply to a lever incline machine, but its closing note about cable freedom does not, and is not used. No EMG study of an incline chest press machine was found; the feel spec rests on bench-press inclination data (Rodriguez-Ridao 2020), tagged MECH. The machine's own incline is fixed, so the >45 degree finding (c7) informs the watch muscle only, not a setup step. The wrist feel row is re-sourced here (c1), not inherited."
+  "notes": [
+    "The anchor is ACE's seated incline press on a cable machine, the closest exercise-specific guideline found; its setup and path lines apply to a lever incline machine, but its closing note about cable freedom does not, and is not used. No EMG study of an incline chest press machine was found; the feel spec rests on bench-press inclination data (Rodriguez-Ridao 2020), tagged MECH. The machine's own incline is fixed, so the >45 degree finding (c7) informs the watch muscle only, not a setup step. The wrist feel row is re-sourced here (c1), not inherited."
+  ]
 }

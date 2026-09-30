@@ -509,7 +509,10 @@
     {
       "mistake": "Bending the elbows to push the bar down.",
       "fix": "Keep the same slight elbow bend all set.",
-      "claim": "c6"
+      "claim": [
+        "c6",
+        "c4"
+      ]
     },
     {
       "mistake": "Too much weight, so the torso swings and the bar is jerked down.",
@@ -554,7 +557,7 @@
     "rows": [
       {
         "where": "Lower back",
-        "means": "No source read links this feeling to a cause; the faults the coach source warns about here are arching the lower back and swinging the torso.",
+        "means": "The faults the coach source warns about here are arching the lower back and swinging the torso.",
         "fix": "Brace and move only the arms.",
         "claim": [
           "c9",
@@ -565,19 +568,19 @@
       },
       {
         "where": "Mostly the triceps",
-        "means": "No source read links this feeling to a cause; the fault the coach source warns about here is bending the elbows, which turns it into a pushdown.",
+        "means": "The fault the coach source warns about here is bending the elbows, which turns it into a pushdown.",
         "fix": "Keep the same slight elbow bend top to bottom.",
-        "claim": "c6",
+        "claim": [
+          "c6",
+          "c4"
+        ],
         "redFlag": null
       },
       {
         "where": "Arms, little back",
-        "means": "No source read links this feeling to a cause; the coach source says going too heavy brings jerking, torso swing and momentum.",
-        "fix": "Keep the same slight elbow bend all set.",
-        "claim": [
-          "c7",
-          "c6"
-        ],
+        "means": "The coach source says going too heavy brings jerking, torso swing and momentum.",
+        "fix": "Drop the weight until you can pause at the bottom.",
+        "claim": "c7",
         "redFlag": null
       }
     ]
@@ -620,5 +623,7 @@
     "why": "exercises.json lists lats primary and triceps secondary, which c11, c12 and c13 support. rear_delts is added to the feel spec as secondary on coach-source mechanics only (c12), too thin to change the library entry."
   },
   "anchorSource": "athlean-sap",
-  "notes": "ACE page 334 is short and mixes a straight bar and 'one end of the rope'; only its stance, arm and tempo lines are used. The Muyor 2022 pullover vs straight-arm pulldown paper (Appl Sci 12:11138) could not be opened (MDPI 403), so it is cited only through the Di Fonza 2026 review. No source was found for a tier-specific way out or for thumb position; the hand lines are the GA hold archetype defaults. Teixeira 2022 (isometric shoulder angles) was dropped: its abstract does not support a range-of-motion cue and no line used it."
+  "notes": [
+    "ACE page 334 is short and mixes a straight bar and 'one end of the rope'; only its stance, arm and tempo lines are used. The Muyor 2022 pullover vs straight-arm pulldown paper (Appl Sci 12:11138) could not be opened (MDPI 403), so it is cited only through the Di Fonza 2026 review. No source was found for a tier-specific way out or for thumb position; the hand lines are the GA hold archetype defaults. Teixeira 2022 (isometric shoulder angles) was dropped: its abstract does not support a range-of-motion cue and no line used it."
+  ]
 }

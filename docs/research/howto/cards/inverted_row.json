@@ -686,5 +686,7 @@
     "why": "mid_back stays primary (c11, c9); biceps stay secondary (c9). Lower back is a watch muscle because the back extensors work at 54-66% of max to hold the straight line (c12), even though the inverted row has the lowest lumbar load of the rows compared (c8)."
   },
   "anchorSource": "catalyst-inverted-row",
-  "notes": "Safety tier C (not in content.md tier A or B lists). No source found on securing the bar in the rack (J-hooks) or on grip slipping; left out. Youdas 2016 found a grip difference in lat activity but the direction is not in the abstract (c10); c10 is kept only to stop the sheet claiming a direction. Anchor is the Catalyst Athletics inverted row page (read in full). The StrengthLog page was re-fetched for the source check on 2026-09-30 (access full, quotes verbatim); it only co-supports claims and its underhand-grip claim was dropped. The hip-sag fault is not named by any source (see plate.mistake.why)."
+  "notes": [
+    "Safety tier C (not in content.md tier A or B lists). No source found on securing the bar in the rack (J-hooks) or on grip slipping; left out. Youdas 2016 found a grip difference in lat activity but the direction is not in the abstract (c10); c10 is kept only to stop the sheet claiming a direction. Anchor is the Catalyst Athletics inverted row page (read in full). The StrengthLog page was re-fetched for the source check on 2026-09-30 (access full, quotes verbatim); it only co-supports claims and its underhand-grip claim was dropped. The hip-sag fault is not named by any source (see plate.mistake.why)."
+  ]
 }

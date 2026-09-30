@@ -480,14 +480,17 @@
     "rows": [
       {
         "where": "Lower back",
-        "means": "No source read links this feeling to a cause; the fault ACE warns about here is leaning back and arching the low back.",
+        "means": "The fault ACE warns about here is leaning back and arching the low back.",
         "fix": "Chest on the pad; no backwards lean.",
-        "claim": "c6",
+        "claim": [
+          "c6",
+          "c4"
+        ],
         "redFlag": "back"
       },
       {
         "where": "Front of the shoulders at the end of each rep",
-        "means": "No source read links this feeling to a cause; the return fault ACE warns about here is the shoulder blades rounding forward.",
+        "means": "The return fault ACE warns about here is the shoulder blades rounding forward.",
         "fix": "Return slowly and keep the shoulders back.",
         "claim": "c7",
         "redFlag": null
@@ -529,5 +532,7 @@
     "why": "exercises.json lists mid_back primary and lats, biceps, rear_delts secondary; c9 and c10 support all four. No change."
   },
   "anchorSource": "ace-row-machine",
-  "notes": "ACE page 168 is titled 'Seated Row' but describes a row machine with an adjustable chest pad, which is this exercise. The page has a typo ('tors0 vertical'), so that sentence is not quoted. No study measured the chest-supported machine row itself; EMG claims come from an isometric seated row (Lehman 2004) and the prone bench row (Fischer 2025), tagged MECH. The hand lines are the GA pull archetype defaults."
+  "notes": [
+    "ACE page 168 is titled 'Seated Row' but describes a row machine with an adjustable chest pad, which is this exercise. The page has a typo ('tors0 vertical'), so that sentence is not quoted. No study measured the chest-supported machine row itself; EMG claims come from an isometric seated row (Lehman 2004) and the prone bench row (Fischer 2025), tagged MECH. The hand lines are the GA pull archetype defaults."
+  ]
 }

@@ -521,9 +521,8 @@
     },
     {
       "mistake": "Letting the hips lift or the low back round.",
-      "fix": "Keep the thighs off your ribs. Reset the seat so you start at about 90 degrees.",
+      "fix": "Keep the hips on the seat and the low back still. Reset the seat so you start at about 90 degrees.",
       "claim": [
-        "c5",
         "c4",
         "c2",
         "c1"
@@ -565,7 +564,7 @@
     "rows": [
       {
         "where": "Knee",
-        "means": "No source read links this feeling to a cause; the knee faults the sources warn about here are locking at the top and going below about 90 degrees; knee forces rise the further the knee bends.",
+        "means": "The knee faults the sources warn about here are locking at the top and going below about 90 degrees; knee forces rise the further the knee bends.",
         "fix": "Keep a small bend at the top and don't go below about 90 degrees.",
         "claim": [
           "c4",
@@ -576,7 +575,7 @@
       },
       {
         "where": "Lower back",
-        "means": "No source read links this feeling to a cause; the fault ACE warns about here is the hips lifting or the low back rounding.",
+        "means": "The fault ACE warns about here is the hips lifting or the low back rounding.",
         "fix": "Keep your tailbone on the pad and the low back still.",
         "claim": [
           "c4",
@@ -588,7 +587,7 @@
       },
       {
         "where": "Knee, as the knees drift in",
-        "means": "No source read links this feeling to a cause; the fault WebMD warns about here is the knees coming together.",
+        "means": "The fault WebMD warns about here is the knees coming together.",
         "fix": "Kneecaps in line with the feet.",
         "claim": "c6",
         "redFlag": "knee"
@@ -635,7 +634,8 @@
       "wrong": "Seat too close, thighs against the ribs, hips lifting off the seat.",
       "claim": [
         "c5",
-        "c4"
+        "c4",
+        "c1"
       ]
     }
   ],
@@ -647,5 +647,7 @@
     "why": "exercises.json lists quads and glutes primary, hamstrings secondary (all named by ACE, c3). calves is added as secondary: on a horizontal leg press the gastrocnemius fired strongly at the end of knee extension (c9, 10 men); the 45 degree leg_press entry already lists calves."
   },
   "anchorSource": "ace-seated-leg-press",
-  "notes": "The parent card leans on ACE 154 too; ACE titles it 'Seated Leg Press' and its wording (seat adjusted to set the knee angle, resistance plate) fits the horizontal machine at least as well as the 45 degree sled. The parent's catch-lever and plate-loading steps are not inherited: horizontal machines are often stack-loaded with a sliding seat, and no source read here describes their catches or pin. WebMD (medically reviewed) is a second full read for the horizontal machine."
+  "notes": [
+    "The parent card leans on ACE 154 too; ACE titles it 'Seated Leg Press' and its wording (seat adjusted to set the knee angle, resistance plate) fits the horizontal machine at least as well as the 45 degree sled. The parent's catch-lever and plate-loading steps are not inherited: horizontal machines are often stack-loaded with a sliding seat, and no source read here describes their catches or pin. WebMD (medically reviewed) is a second full read for the horizontal machine."
+  ]
 }

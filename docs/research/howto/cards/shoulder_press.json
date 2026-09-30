@@ -220,6 +220,11 @@
           "source": "kim2026",
           "text": "Post hoc analysis showed that DT activity was higher in the DT-focused condition, whereas TB activity was higher in the TB-focused condition (p < 0.001). UT activity did not differ across conditions (p > 0.05).",
           "where": "abstract, results"
+        },
+        {
+          "source": "kim2026",
+          "text": "Participants performed machine-based shoulder presses at 40% of one-repetition maximum intensity under three MMC conditions.",
+          "where": "abstract, methods"
         }
       ]
     },
@@ -494,7 +499,7 @@
   "handlingMistakes": [
     {
       "mistake": "Arching the low back off the pad to finish the press.",
-      "fix": "Brace and keep the natural curve. If you can only finish by arching, the weight is too heavy: lower it.",
+      "fix": "Brace and keep the natural curve. If you can't press without arching, lower the weight.",
       "claim": [
         "c5",
         "c4"
@@ -537,7 +542,7 @@
     "rows": [
       {
         "where": "Front or top of the shoulder, sharp or pinching",
-        "means": "No source read links this feeling to a cause; ACE says the shoulder is relatively unstable in the overhead position.",
+        "means": "ACE says the shoulder is relatively unstable in the overhead position.",
         "fix": "Stop the set. Next session, you can try the close handles with the elbows pointing forward.",
         "claim": [
           "c6",
@@ -547,7 +552,7 @@
       },
       {
         "where": "Lower back",
-        "means": "No source read links this feeling to a cause; the lower-back fault ACE warns about here is arching off the pad.",
+        "means": "The lower-back fault ACE warns about here is arching off the pad.",
         "fix": "Brace, keep the natural curve, lower the weight.",
         "claim": [
           "c5",
@@ -557,7 +562,7 @@
       },
       {
         "where": "Elbows",
-        "means": "No source read links this feeling to a cause; ACE's elbow rule here is to stop short of locking.",
+        "means": "ACE's elbow rule here is to stop short of locking.",
         "fix": "Stop just short of lockout.",
         "claim": "c6",
         "redFlag": "elbow"
@@ -592,7 +597,11 @@
       "kind": "posture",
       "right": "Natural low-back curve against the pad, arms overhead, elbows soft.",
       "wrong": "Low back arched away from the pad.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c4",
+        "c6"
+      ]
     },
     {
       "key": "seat height",
@@ -609,14 +618,16 @@
   },
   "anchorSource": "ace-shoulder-press",
   "tierA": {
-    "wayOut": "NOT SOURCED. No source read for this card says how to fail a rep safely on a shoulder press machine. Left out of the sheet until one is found (content.md 5.2).",
+    "wayOut": null,
     "thumb": "Wrapped, full grip (c2); no thumbless option offered.",
-    "loadWording": "Where the load causes the fault, the fix says to lower the weight (c5); the sharp or pinching shoulder row says to stop the set (c6), with the close handles only as a next-session option (c7). No fix says to push through pain.",
+    "loadWording": "Where the load causes the fault, the fix says to lower the weight (content.md 5.2 load wording); the sharp or pinching shoulder row says to stop the set (c6), with the close handles only as a next-session option (c7). No fix says to push through pain.",
     "warningLink": "Shoulder row links the shoulder box (c6).",
     "risks": "Three risk lines, including the shared breath line (c11).",
     "loadProgression": "Setup step: add 2-10% only when you beat your target reps by one or two (c12)."
   },
-  "notes": "Mode D per the plan: derived from the machine chest press plate. content.md appendix A lists shoulder_press as a parent on its own; the supervisor's brief makes it a difference card of machine_chest_press, and the shared parts (same push hand and lever primitive) justify the inherit lines above. ACE's text has typos ('avoidng', 'oppsed'), kept verbatim in quotes. The EMG claims come from military presses whose equipment the abstracts do not state (Paoli 2010, Bull 2010), tagged MECH or WEAK, and one machine study (Kim 2026). No source was found for a safe way to fail a rep (tier-A way out); see gaps.",
+  "notes": [
+    "Mode D per the plan: derived from the machine chest press plate. content.md appendix A lists shoulder_press as a parent on its own; the supervisor's brief makes it a difference card of machine_chest_press, and the shared parts (same push hand and lever primitive) justify the inherit lines above. ACE's text has typos ('avoidng', 'oppsed'), kept verbatim in quotes. The EMG claims come from military presses whose equipment the abstracts do not state (Paoli 2010, Bull 2010), tagged MECH or WEAK, and one machine study (Kim 2026). No source was found for a safe way to fail a rep (tier-A way out); see gaps."
+  ],
   "gaps": [
     "Tier A way out: no source read says how to fail a rep safely on a shoulder press machine; left out of the sheet, not invented.",
     "Tier A: safeties or J-hooks and a bar path clear of the neck do not apply as written to a pivot-arm machine; no source read describes the handle arc's clearance from the head or face.",

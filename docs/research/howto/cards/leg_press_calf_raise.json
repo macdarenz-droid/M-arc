@@ -573,8 +573,8 @@
     "rows": [
       {
         "where": "Knees",
-        "means": "No source read links this feeling to a cause; the knee fault the sources warn about here is locking or overextending the knees.",
-        "fix": "Keep a slight bend and slow down.",
+        "means": "The knee fault the sources warn about here is locking or overextending the knees.",
+        "fix": "Don't lock the knees.",
         "claim": "c6",
         "redFlag": "knee"
       }
@@ -619,5 +619,7 @@
     "why": "exercises.json lists calves primary and nothing else; c9 agrees. No change."
   },
   "anchorSource": "yessis-lpcr",
-  "notes": "The coach anchor teaches holding the breath on the push. The card openly overrides that (c14): it keeps only the coach's exhale on the return (c4) and says not to hold the breath through the set, reasoning from MacDougall 1985 (c12); it gives no separate push-phase cue. Yessis also advises a shortened range for safety, while Kassiano 2023 found that training in the initial, longer-muscle part of the range may optimize growth (medial head significant, lateral head not versus full range); the card keeps a controlled stretch to 10-20 degrees, which is Yessis's own bottom position (c4), and no deep bounce (c8). Gentil 2020 (leg press vs calf raise, PMID 33352879) was read but not used: it measured the calves during the knee-bending leg press, not the leg press calf raise. Nunes 2020 (foot angle, horizontal machine) was dropped: no line on the card used it."
+  "notes": [
+    "The coach anchor teaches holding the breath on the push. The card openly overrides that (c14): it keeps only the coach's exhale on the return (c4) and says not to hold the breath through the set, reasoning from MacDougall 1985 (c12); it gives no separate push-phase cue. Yessis also advises a shortened range for safety, while Kassiano 2023 found that training in the initial, longer-muscle part of the range may optimize growth (medial head significant, lateral head not versus full range); the card keeps a controlled stretch to 10-20 degrees, which is Yessis's own bottom position (c4), and no deep bounce (c8). Gentil 2020 (leg press vs calf raise, PMID 33352879) was read but not used: it measured the calves during the knee-bending leg press, not the leg press calf raise. Nunes 2020 (foot angle, horizontal machine) was dropped: no line on the card used it."
+  ]
 }

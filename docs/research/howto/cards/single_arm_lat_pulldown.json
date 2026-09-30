@@ -621,5 +621,7 @@
     "why": "lats primary and biceps secondary stand (c8). No EMG study of the one-arm pulldown was found, so the additions rest on coach sources only."
   },
   "anchorSource": "puregym-single-arm-lat-pulldown",
-  "notes": "No peer-reviewed study of the single-arm pulldown was found (PubMed searches for unilateral/one-arm pulldown returned nothing relevant). BarBend's guide was read in full as a second technique source. No source names the palm direction on the single handle, so the grip type is left open rather than invented. The back feel row was dropped: no source links a back or one-sided ache to leaning or twisting. c7 and c8 rest on one coach source (WEAK)."
+  "notes": [
+    "No peer-reviewed study of the single-arm pulldown was found (PubMed searches for unilateral/one-arm pulldown returned nothing relevant). BarBend's guide was read in full as a second technique source. No source names the palm direction on the single handle, so the grip type is left open rather than invented. The back feel row was dropped: no source links a back or one-sided ache to leaning or twisting. c7 and c8 rest on one coach source (WEAK)."
+  ]
 }
