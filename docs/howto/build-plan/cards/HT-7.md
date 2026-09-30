@@ -1,0 +1,44 @@
+# HT-7: Posture close-ups (right and wrong crops, generated from golden B)
+
+Lane L2 · Opus · M (hard: design note on the PR first) · merge slot 8
+
+- **id:** HT-7
+- **outcome:** Posture chips open side-by-side Right and Wrong close-ups, exactly as golden B draws them, and zoom in as golden B does. The crops are generated at build time from the vendored golden-B code and ship as strings. The approved plate is not redrawn or changed. (Critic fix 3: golden B's crops are re-renders with their own ids, labels, a nested `<svg>` and a `clip-path`, not a viewBox cut of `normal.svg`, so the app ships golden B's output rather than cutting its own.)
+- **base:** HT-6's zoom-host commit, then main after HT-6 merges.
+- **depends_on:** HT-6 (zoom host), HT-5, S-2.
+- **read_first:**
+  - GA 2.2-2.3 (S3 and the transitions) and 5.2;
+  - the vendored golden-B `layers/howto/render-*.mjs` (their crop code) and the layer page builder;
+  - HT4-A5 (the crop-key list that the derivation test allows);
+  - the plan, sections 2.2 (generated-file ownership), 2.4-2.5.
+- **write_scope:**
+  - `tools/plates/gen/zooms.mjs` (found by glob; no registry line);
+  - the generated `src/howto/generated/ht-<slug>-zoom.ts`;
+  - `src/slices/howto/sections/Posture.tsx`;
+  - `src/slices/howto/css/posture.css`;
+  - the posture kind line in `zoom/registry.ts`;
+  - one line in `sections/index.ts`;
+  - `tests/howto/zooms.test.ts`;
+  - an add-only gate block `HT-7`.
+- **reserved_paths:** common, plus the hand files, the plate files, `tools/plates/fidelity/goldenB.mjs` (call it only), and other sections. There is no runtime `crop.ts`: nothing is cut or renamed on the phone.
+- **acceptance:**
+  - **HT7-A1 (L2-B):** `gen/zooms.mjs` produces each crop (right and wrong) by running the vendored golden-B crop code, or by extracting the crop fragment from the golden-B page built from the vendored sources. Each shipped string is `===` to golden B's, ids, labels, nested `<svg>` and `clip-path` included.
+    - Failure paths: a 1-byte change to a generated crop fails; changing a vendored render file without regenerating fails freshness.
+  - **HT7-A2 (ids):** `zooms.test` proves there is no duplicate id across the normal, mistake, hand and crop figures of one How-to, and none between two How-tos that can be in the DOM together (sheet exit overlapping the next open).
+    - Failure path: a crop reusing a plate id fails. If golden B itself has a duplicate, stop and report it as a golden-B update; never rename in the app.
+  - **HT7-A3 (gate block HT-7):** S3 in all 5 themes matches the golden-B page by L3, states reached through `goldenB.mjs`.
+    - Transition: the animation lists equal golden B's (L4 style; GA gives scale 1 → 2.2 around the crop centre, 240 ms EASE.enter, exit 160 ms EASE.exit, but golden B is the reference).
+    - Reduced motion: as golden B (GA: a crossfade of 150/100 ms, no scaling).
+    - C18: transform and opacity only.
+  - **HT7-A4:** S1 and S3 are exclusive (GA 2.2), through the zoom slot API (`clearMistake`, `setPlateHidden`, `restore`). After closing a posture zoom, the HT-3 L3 plate compare still passes.
+  - **HT7-A5:** `ht-<slug>-zoom` chunks are ≤ 24 KB gz each and load on first open only.
+  - **HT7-A6:** each crop half is `role=img` with alt.right or alt.wrong, plus a printed Right/Wrong word and icon (C16), as golden B. Chips are ≥ 44×44.
+  - **G0.**
+- **design_reference:** the golden-B posture states; GA 5.2.
+- **connectivity:** common.
+- **verification:** common, plus a recorded device check of zoom smoothness on a budget phone.
+- **risk_and_recovery:**
+  - If the vendored crop code cannot run outside the page builder, extract from the built golden-B page (the same way `golden.mjs` extracts plate fragments). Never re-implement the crop.
+  - If a chunk is over budget, report it with sizes. Sharing or delta-encoding is HT-11 work; never lower resolution or drop detail.
+  - Conflicts with HT-6 in `registry.ts`: keep both lines.
+- **return:** common.

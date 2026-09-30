@@ -1,0 +1,55 @@
+# HT-8: "Where you should feel it" (muscle highlight and shimmer outline)
+
+Lane L3 · Opus · M (hard: design note on the PR first) · merge slot 9
+
+- **id:** HT-8
+- **outcome:** A front and back body map, exactly as golden B draws it: the main muscles filled and outlined, the helpers soft, the watch outline only while a row is open.
+  - The shimmer is golden B's soft diagonal band clipped to the main muscles. It runs 2 passes (5.5 s in all), then rests. It never loops.
+  - It has golden B's legend, feel line and "If you feel it in..." rows.
+  - Every state is pre-rendered at build time by the vendored `feelmap.mjs`, like the plates. There is no TypeScript port of it (critic fix 4).
+  - The app does nothing golden B does not do, and costs no more main-thread time than golden B.
+- **base:** HT-3's pushed head plus HT-5's, then main after HT-7 merges.
+- **depends_on:** HT-3, HT-5, S-2.
+- **read_first:**
+  - GA 2.2 (S4-S6), 2.6 and 5.3-5.4;
+  - the vendored golden-B `feelmap.mjs` (renderFeelMap, renderFeelLegend, FEEL_CSS, FEEL_JS, BAND_INSET, FEEL_MAIN_MIX) and `bodymap-parts.mjs`;
+  - `tools/plates/css.mjs` (reuse its rewrite for FEEL_CSS);
+  - `tools/plates/fidelity/perf.mjs` (HT-3b) and the judge measurement `htplan/_judge-perf/shim.mjs`;
+  - the plan, sections 2.5 and 2.9.
+- **write_scope:**
+  - `tools/plates/gen/feel.mjs` (found by glob; no registry line);
+  - the generated `src/howto/generated/ht-<slug>-feel.ts` and `src/slices/howto/css/feel.css`;
+  - `src/slices/howto/feel/useFeelMap.ts` (line-for-line port of FEEL_JS behaviour only; no markup built);
+  - `src/slices/howto/sections/Feel.tsx`;
+  - one line in `sections/index.ts`;
+  - `tests/howto/feel.test.ts`;
+  - an add-only gate block `HT-8`.
+- **reserved_paths:** common, plus `src/ui/MuscleMap.tsx`, `src/svg/bodyMuscles.ts`, the plate files, `tools/plates/fidelity/goldenB.mjs` (call it only), and other sections.
+- **acceptance:**
+  - **HT8-A1 (L2-B):** for every exercise and every state (rest; playing; each row open with watch outline and pain tint; reduced motion), the shipped markup string is `===` to the vendored `renderFeelMap` / `renderFeelLegend` output. `feel.css` is FEEL_CSS through the tested rewrite, with a unit test per rule.
+    - Failure paths: changing BAND_INSET in the vendored file without regenerating fails freshness; a 1-byte change to a generated state fails.
+  - **HT8-A2 (behaviour equals golden B):** `useFeelMap.ts` reproduces FEEL_JS, pinned by a behaviour list in `feel.test`: when play starts, replay on tap, a row open pauses it (S6), and whatever golden B's pinned FEEL_JS does out of view (S-2 condition 6). Nothing more:
+    - both views' bands play together, as golden B's `.feel-map.is-playing` does;
+    - one `role=img` on the whole map with golden B's label, paths aria-hidden;
+    - under reduced motion the band has `display:none`, as golden B, and `getAnimations()` on it is empty.
+    - Failure paths: a looping band (`infinite`) fails; a behaviour not in the list (for example a per-view role) fails the list test.
+  - **HT8-A3 (C2, C9, C12):**
+    - `core`, `brachialis` and `rotator_cuff` are text only;
+    - the feel main colour against `--map-body` is ≥ 3:1 in every theme, computed from themes.ts;
+    - the end time computed from SWEEP, GAP and DELAY is ≤ 5.5 s, and the C12 limit is derived from these constants, never typed by hand.
+  - **HT8-A4 (gate block HT-8):**
+    - L3 of S4, S6 and the S5 end frame against golden B in all 5 themes, states reached through `goldenB.mjs`;
+    - L4: the band's animation list equals golden B's;
+    - nothing still running at end + 1 s;
+    - **shimmer tripwire:** the app's main-thread TaskDuration over the shimmer run at 4x throttle is ≤ 1.2 × the golden-B page's, both measured in the same job with the same harness (median of 3 each). Both numbers are recorded.
+    - Failure path: a second, unsynchronised band animation fails the L4 list and the tripwire.
+  - **HT8-A5 (a11y):** every muscle is also named in text; rows are buttons with aria-expanded and are ≥ 44×44, as golden B.
+  - **HT8-A6:** the feel chunk is ≤ 24 KB gz per exercise (then measured + 10 %), loads when the section mounts, and the HT-3b footprint probe stays green. MuscleMap's own tests are unchanged.
+  - **G0.**
+- **design_reference:** the golden-B feel states; GA 5.3, as overridden by D-HT2 (its own component, not a MuscleMap mode; golden B's behaviour).
+- **connectivity:** common.
+- **verification:** common, plus a recorded p95 frame time on a budget phone while the shimmer runs (device check).
+- **risk_and_recovery:**
+  - If the tripwire fails, find what the app adds over golden B (sheet layers, extra style recalculation) and remove it. If only a change to how it looks or behaves would help, stop and report it as a golden-B update. Never simplify silently.
+  - If pre-rendered states exceed the chunk budget, report the sizes. The fallback, if the supervisor agrees, is to ship the vendored `feelmap.mjs` + `bodymap-parts.mjs` verbatim as a generated module (hash-checked against the layers MANIFEST) and call `renderFeelMap` on the phone. It is still no port.
+- **return:** common, plus both shimmer measurements (app and golden B) and the ratio.

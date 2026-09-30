@@ -1,0 +1,44 @@
+# HT-3b: Speed, offline and footprint (How-to footprint probe, tripwires, build-B, chunk budgets)
+
+Lane P · Sonnet · M · merge slot 5 (after HT-3)
+
+- **id:** HT-3b
+- **outcome:** The How-to cannot slow app start, cannot break offline, and cannot grow past its budgets unseen. Every number is measured, and every ceiling is the measured value + 10 %. Nothing visible changes.
+- **base:** HT-3's pushed head, then main after HT-3 merges.
+- **depends_on:** HT-3.
+- **read_first:**
+  - the plan, sections 2.5, 2.9 and 2.10;
+  - the gate's offline/build-B, ShareSheet load-fail and EscobarSheet offline probes (copy their patterns);
+  - `sw-version.mjs`.
+- **write_scope:**
+  - `tests/howto/footprint.test.ts`;
+  - `tools/plates/fidelity/perf.mjs` (throttle, long-task and TaskDuration helpers; HT-8 and HT-10 reuse them);
+  - an add-only gate block `HT-3b` in `scripts/screenshot-gate.mjs`.
+- **reserved_paths:** common, plus all of `src/**` (a defect found here goes back to HT-3's files as a small fix PR), and every other gate block.
+- **acceptance:**
+  - **HT3b-A1 (footprint in main; critic fixes 8, 13):**
+    - `footprint.test`: esbuild-minified `src/howto/ids.ts` + `src/slices/howto/lazy.tsx`, imports external, ≤ 3,072 B; `ids.ts` ≤ 2,048 B.
+    - Gate content probe on `index-*.js`: no `plate-svg`, `u-stroke`, `feel-band`, and no string from any generated How-to file except exactly the exports of `ids.ts`.
+    - The main chunk size is logged for information only; no app-wide ceiling here (S-5).
+    - Failure paths: a static import of a generated plate string into main fails the probe; padding `lazy.tsx` past 3,072 B fails the test.
+  - **HT3b-A2 (chunk budgets):** `HowToSheet-*`, the How-to CSS and each `ht-<slug>-*` at measured + 10 % (measured values listed; the plan 2.9 start values are the upper bound).
+  - **HT3b-A3 (start and open speed):**
+    - no `HowToSheet-`, `ht-` or `hand-` request from launch until Today/Train is idle;
+    - tap-to-plate logged at 4x CPU throttle, with a hard fail if the median of 5 is over 400 ms;
+    - no long task over 100 ms while opening at 4x (PerformanceObserver `longtask`).
+    - Failure path: a synthetic 150 ms busy-loop in open fails the long-task check.
+  - **HT3b-A4 (offline and storage):**
+    - offline reload, then the sheet opens;
+    - build-B chunk carry-over;
+    - a failed chunk load shows "Could not load the guide." with Reload;
+    - the localStorage keys are identical before and after opening;
+    - PlateSheet's `.plate` chip computed style is unchanged with the How-to CSS loaded.
+  - **HT3b-A5:** C17 on the built How-to chunks: no `fetch(`, `XMLHttpRequest`, `Worker` or `http` URL outside source citations.
+  - **G0.**
+- **design_reference:** the plan, sections 2.9-2.10.
+- **connectivity:** common.
+- **verification:** common, plus the measured numbers table in the PR.
+- **risk_and_recovery:**
+  - If a measurement is noisy, take the median of more runs and report the spread. Never widen a limit without a supervisor decision.
+  - If a check finds a defect in HT-3's code, report it; the fix is a small PR on HT-3's files, not a weaker check.
+- **return:** common, plus the measured numbers table.

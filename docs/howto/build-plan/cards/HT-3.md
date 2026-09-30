@@ -1,0 +1,86 @@
+# HT-3: The sheet in the app (Train entry, PlateView and zoom slot API, FG-OFF re-scope, plate fidelity gate)
+
+Lane P · Opus · L (hard: design note on the PR first) · merge slot 4 (after HT-4) · **milestone M1a**
+
+- **id:** HT-3
+- **outcome:** On the Train card, "How to do it" appears for the 8 approved exercises and for nothing else. It opens the approved Technical Plate, identical to the gallery in all 5 themes, with callouts, Trace, Mistake and tells, tempo, and the fit behaviour.
+  - FG-OFF is re-scoped exactly as D-HT1 says, in this PR. The entry never lands without its fidelity proof.
+  - PlateView offers a stable zoom slot API for HT-6 and HT-7.
+  - The sections below the tempo are an empty registry. Speed, offline and budgets are HT-3b.
+- **base:** HT-2's pushed head, then main after HT-4 merges.
+- **depends_on:** HT-2.
+- **read_first:**
+  - the plan, sections 2.4, 2.5, 2.7 and 3 (all rows);
+  - `design-hybrid.md` sections 5-6 and 10 (F6: the How-to body must bleed);
+  - design A sections 1.3-1.5 and 5 (L2b and the sheet order);
+  - the golden gallery's page script (`build-page.mjs`, about 60 lines) and its `.sheet-card`, `.sheet-head`, `.plate-fit` rules;
+  - `src/slices/share/lazy.tsx`, `src/ui/primitives.tsx` (`Sheet`, :222-236), `src/ui/Logo.tsx`;
+  - `Train.tsx:12, ~612-616, 770-772, 916-917`;
+  - the gate's FG-OFF block (`:5583-5634`).
+- **write_scope:**
+  - `src/slices/howto/{lazy.tsx, HowToSheet.tsx, PlateView.tsx, usePlateState.ts, sections/index.ts, css/sheet.css}`;
+  - `src/slices/workout/Train.tsx` (only the 4 spots in plan 2.4);
+  - `src/ui/primitives.tsx` (optional `eyebrow` and `class` props on `Sheet`, additive);
+  - `src/ui/styles.css` (one block marked `HT-3`, `.ht-entry` only);
+  - `tests/workout/no-form-guide.test.ts` (U1-U7 wording and widening, A1-HT.a-c, A5);
+  - `tests/howto/plate-state.test.ts`;
+  - `tools/plates/fidelity/harness.mjs` (extend HT-1's harness; not `goldenB.mjs`);
+  - `scripts/screenshot-gate.mjs`: the FG-OFF block edits G3, G6, G7 and PASS under D-HT1, plus a new block `HT-3`;
+  - `docs/COACHING-DECISIONS.md` (the rest of D-HT1, D-HT2, D-HT3, as approved by the supervisor).
+- **reserved_paths:** common, plus `src/howto/**` (read only), `src/theme/**`, and every other gate block.
+- **acceptance:**
+  - **HT3-A1 (entry):** A1-HT.a-c and A5 pass.
+    - In the gate, in Silent Black and Paper, the lateral-raise card has exactly one `button.ht-entry` named "How to do it", ≥ 44×44 CSS px.
+    - The bench-press card and a seeded custom exercise (new HT-3 block) have none.
+    - Failure paths (mutations): hard-code the label in Train.tsx; drop `!ex.custom`; add a LOADERS key without a GOLDEN entry; import `HowToSheet` statically. Each must fail.
+  - **HT3-A2 (FG-OFF re-scope):** every row of plan section 3 is implemented as written: kept rows verbatim, replaced rows by their replacements, and the reworded PASS phrase.
+    - G3: the label is in `index-*.js` and in no other asset.
+    - Failure paths: adding the label to `HowToSheet-*.js`, or naming a chunk `lib_x-…`, fails.
+  - **HT3-A3 (sheet):**
+    - it opens as a `Sheet` with eyebrow "How to do it" and the exercise name as title; the header (h2, Close X, centred) is app chrome (D-HT2), and the eyebrow and title text styles equal the golden's `.sheet-eyebrow` and `h3` (L2b; critic fix 17);
+    - Android back and drag-to-close work;
+    - focus returns to the entry;
+    - every open starts at S0;
+    - the mistake figure is not in the DOM until the first Mistake tap;
+    - the S0 element count is ≤ 700.
+  - **HT3-A4 (PlateView):** strings are inserted once (memoised). `usePlateState` reproduces the gallery script, pinned by a behaviour list in `plate-state.test.ts`:
+    - aria-pressed on callouts;
+    - `.on` on `path.leader:not(.m)` and `circle.anchor`, with r 1.5 → 2.5;
+    - `[data-guide]` display;
+    - the cue text, and in mistake mode the X icon plus sr-only "Mistake: ";
+    - `.tracing` with `--gd` from `data-t`/`data-th`, ending on `animationend`;
+    - the reduced-motion end state;
+    - fit `zoom = min(1, w/358)`, with the golden rules untouched (its 9 px bleed under 350 px included).
+  - **HT3-A5 (one golden wrapper; critic fix 1):** everything from plate top to tempo bottom (plate-fit, cue line, Trace / Mistake / Saved offline, tells, tempo) sits in one `.ht-golden { margin-inline: -1px }` wrapper in `sheet.css`. At 390, 360 and 340 px, `.ht-golden` equals the golden `.sheet-card` content width, and `.ht-plate-fit` equals the golden `.plate-fit` width (358.0 at 390, with zoom 1).
+    - Failure paths: bleeding only `.ht-plate-fit` fails (cue line and tempo measure 356); dropping the wrapper fails; overriding the golden 9 px rule fails at 340.
+  - **HT3-A6 (zoom slot API; critic fix 11):** PlateView exposes, through a context, `setPlateHidden(bool)` (sets `hidden` and `inert` on the plate box, so TalkBack skips it), `clearMistake()`, `snapshot()` / `restore(s)` of the plate state (mode, selected callout, tell), and a slot element in the plate box. The API is fixed in the design note and does not change after it is posted.
+    - `plate-state.test` covers it: snapshot, mutate, restore gives the same state; hidden plate has `hidden` and `inert`; `clearMistake` from mistake mode gives normal mode with the default callout.
+    - Gate: after hide and restore, the L3 plate compare still passes.
+  - **HT3-A7 (fidelity, gate block HT-3):** everything in plan 2.7 passes:
+    - L2b (rect ±0.01 px plus the exact property list, plus the eyebrow and title);
+    - F3 (figure innerHTML equal; canonical DOM and aria of cue, pills, tells and tempo equal);
+    - L3 (8 × 5 × {N, M}; every callout and tell in Silent Black and Paper; 360 px and 340 px in 2 themes × {N, M}; ≤ 1/255 and ≤ 0.02 %; the width asserts first; golden self-check 0 px);
+    - L4 (animation lists equal; paused frames at 0.6, 1.2 and 1.8 s in Silent Black and Paper; the t = 2.4 s end frame and the reduced-motion end state as L3 pixel checks for 8 × 5 themes; critic fix 15).
+    - Failure paths: the full mutation table in plan 2.7 must fail.
+  - **HT3-A8 (a11y):**
+    - the golden's aria is kept (checked by F3);
+    - the entry and pills are ≥ 44×44;
+    - no page errors.
+  - **HT3-A9 (gate time):** measure and record the gate seconds the HT-3 block adds per gate job, and propose a budget (D-HT3).
+  - **G0.**
+- **design_reference:** the approved gallery `bc0f378` (`technical-plates.html`, the golden block and page script); plan 2.4-2.5; GRIP-AND-FEEL 2.1-2.5, as overridden by D-HT2.
+- **connectivity:** common.
+- **verification:**
+  - common;
+  - the design note (sheet order, the state machine, the zoom slot API, the `.ht-golden` wrapper, how the harness captures both pages) posted before bulk work;
+  - the M1a device-check list for the owner, font scale first (plan O9 pass rule), then open time, Trace smoothness, TalkBack on callouts and the tempo.
+- **risk_and_recovery:**
+  - This card owns every hot file: keep each edit to the smallest wiring change and call each one out.
+  - If L3 shows noise above the rule, find the cause (a compositing layer from the sheet's entry animation, font timing). Raising the threshold needs a supervisor decision with diff images.
+  - After two failed tries of the same approach, stop and report.
+  - If the gate time exceeds its budget, report it. HT-10 shards; do not drop states.
+- **return:** common, plus:
+  - L3 noise measured per pair (expected 0);
+  - the gate seconds added;
+  - the zoom slot API as posted;
+  - the APK for the owner (milestone M1a) with the device-check list.

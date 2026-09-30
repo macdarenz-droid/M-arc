@@ -1,0 +1,61 @@
+# HT-4: Golden-B lock, golden-B state driver, golden-A derivation test, and the CI content checks
+
+Lane C · Sonnet · M · merge slot 3 (before HT-3: independent, and it unblocks lane C)
+
+- **id:** HT-4
+- **outcome:**
+  - The finished layer mockup (golden B) is vendored verbatim and hash-locked, and a test proves it holds only the approved golden-A plates.
+  - One state driver reaches every golden-B page state, so the layer cards never write their own.
+  - The authored content has a typed model.
+  - CI rejects any How-to content that breaks the architecture's content rules. Each check is proven by a negative fixture.
+- **base:** HT-1's pushed head (it needs `types.ts`), then main.
+- **depends_on:** HT-1, S-2 (the golden-B commit pinned on `claude/howto-options`).
+- **read_first:**
+  - the plan, sections 2.2, 2.3 and 2.11;
+  - GRIP-AND-FEEL-ARCHITECTURE sections 4 (data model) and 6.1-6.2 (C1-C18, copy lint);
+  - the golden-B `exercises/*.howto.mjs` and the layer page builder;
+  - `src/data/muscles.ts`, `src/svg/bodyMuscles.ts`, `src/data/exercises.json`;
+  - GA appendix B (archetype per exercise).
+- **write_scope:**
+  - `tools/plates/layers/**` (verbatim from golden B, plus MANIFEST);
+  - a `layers` entry in `tests/howto/golden/GOLDEN.json` (add-only; pageSha256 of the layer page) and the layer page fixture `tests/howto/golden/howto-layers.html`;
+  - `src/howto/content-types.ts`;
+  - `src/howto/coverage.ts` (the 153-id table: `approved`, or `pending` with its archetype from GA appendix B);
+  - `docs/research/howto/reviews.json` (an empty add-only stub);
+  - `tools/plates/fidelity/goldenB.mjs` (the golden-B page state driver; critic fix 20);
+  - `tests/howto/{layers-vendor,content,goldenB-derivation}.test.ts`;
+  - `tests/howto/checks/*.ts`;
+  - `tests/howto/fixtures/bad/*.ts`.
+- **reserved_paths:** common, plus `src/howto/content/**` (HT-5), `src/howto/generated/**`, and `src/slices/**`.
+- **acceptance:**
+  - **HT4-A1 (L0-B):** every file in `tools/plates/layers/` matches its MANIFEST sha256 against the golden-B commit. Rebuilding the layer page from the vendored files gives the pinned pageSha256.
+    - Failure path: a 1-byte edit fails.
+  - **HT4-A2 (types):** `content-types.ts` expresses GA section 4 plus every field the golden-B `*.howto.mjs` uses. A type-level test compiles one golden-B spec, mapped, with `satisfies HowToContent`. There is no `plate` field.
+  - **HT4-A3 (checks):** each check runs on every file in `src/howto/content/` (none exist yet, so each is proven by fixtures) and fails on its own bad fixture, naming the rule:
+    - C1: cross-field rules;
+    - C2: muscle ids and drawn regions. Body-part ids are checked against `FRONT_PARTS`/`BACK_PARTS`. `core`, `brachialis` and `rotator_cuff` are text-only. A muscle cannot be both primary and watch;
+    - C3: a hand zoom is required when handling is not `none`;
+    - C4: the thumb rule;
+    - C6: coverage. Every `exercises.json` id is approved or listed in `coverage.ts` with an archetype;
+    - C7: copy lint (GA 6.2; the golden plate strings are exempt, because L2 freezes them);
+    - C8: evidence. Every claim has sources, no source is only `unreachable`, and no row carries its own red-flag wording;
+    - C15: the stub computes the content hash. It turns strict when reviews start (O1);
+    - C16 (data part): alt.right and alt.wrong present, a camera label, Right and Wrong words;
+    - C17 (sources): no `fetch(`, `XMLHttpRequest`, `Worker` or `http` URL in `src/howto/**` or `src/slices/howto/**`, outside the source citations.
+  - **HT4-A4:** the checks are pure functions with no DOM and run in the node vitest environment. `npm test` time grows by ≤ 3 s; list the measured time.
+  - **HT4-A5 (golden B holds only golden-A plates; critic fix 2):** `goldenB-derivation.test` proves, for all 8:
+    - each vendored `<slug>.howto.mjs` imports its plate from the golden-A source recorded in `GOLDEN.json` (the lateral raise from `ref-src/plate.mjs`), and its exported `plate` deep-equals that golden-A spec, with no callout override;
+    - every `renderPlate` call made while building the layer page (captured by a Node module hook that wraps the vendored `engine/plate.mjs`) receives the golden-A spec, deep-equal except an enumerated list of crop keys (id, mistake flag, crop window, zoom labels) that the design note names;
+    - every full plate fragment in the golden-B page is `===` to the golden-A fragment in `GOLDEN.json`.
+    - Failure paths: re-adding the chest-press callout override fails; importing `./dumbbell_lateral_raise.mjs` fails; a crop spec with a moved joint fails.
+  - **HT4-A6 (state driver; critic fix 20):** `goldenB.mjs` opens, on the golden-B page, each state the layer cards compare: hand zoom per key, posture zoom per chip, handling-mistake rows, feel map (rest, playing frame at t, each row open, reduced motion), setup collapsed and expanded, risks, sources collapsed and expanded, in each of the 5 themes. A self-check captures each state twice and must give 0 px.
+    - Failure path: a selector that matches nothing throws with the state name; it never returns an empty capture.
+  - **G0.**
+- **design_reference:** GA sections 4 and 6; the golden-B spec files; design-hybrid section 4.
+- **connectivity:** common.
+- **verification:** common, plus a table in the PR mapping each C-id to its bad fixture and its failure message.
+- **risk_and_recovery:**
+  - If a golden-B spec uses a field that GA section 4 lacks, add it to the types and list it in the PR. Never drop a mockup field.
+  - If S-2 is late, this card waits. Only the types and the checks for GA-only fields may start early.
+  - If HT4-A5 fails on the pinned golden B, stop: golden B breaks S-2 entry condition 1 or 2. Report it to the supervisor; never widen the crop-key list to pass.
+- **return:** common.

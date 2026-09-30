@@ -1,0 +1,58 @@
+# HT-6: Proper grips (hand close-ups, zoom host, Look closer chips, handling mistakes)
+
+Lane L1 · Opus · L (hard: design note on the PR first) · merge slot 7
+
+- **id:** HT-6
+- **outcome:** Below the tempo, a "Look closer" chip row opens a hand close-up in the plate box. The close-up shows the Right hand and the Wrong hand side by side, drawn exactly like golden B. The sheet also shows the grip line and thumb rule and "Common handling mistakes". For push exercises, the Train card shows the one-line grip hint. The approved plate itself does not change.
+- **base:** HT-3's pushed head, then main after HT-5 merges.
+- **depends_on:** HT-3, HT-5, S-2.
+- **read_first:**
+  - GA sections 2.2-2.5, 3 and 5.1;
+  - golden-B `hand.mjs`, `hand-pairs.mjs`, `end-on-inset.mjs` and the layer page states S2;
+  - the plan, sections 2.4-2.5 and 2.9;
+  - `src/ui/sheetStack.ts` (`registerSheet`).
+- **write_scope:**
+  - `tools/plates/gen/hands.mjs` (found by glob; no registry line);
+  - the generated `src/howto/generated/hand-<key>.ts`;
+  - `src/slices/howto/zoom/{ZoomHost.tsx, registry.ts}`;
+  - `src/slices/howto/sections/{LookCloser,Hand,HandlingMistakes}.tsx`;
+  - `src/slices/howto/css/hand.css`;
+  - one line in `sections/index.ts`;
+  - `Train.tsx` (the push hint line only, GA 2.1: `hint muted`, text from `HOWTO_HINTS` in `ids.ts`);
+  - `tests/howto/{hands,chips,hint}.test.ts`;
+  - an add-only gate block `HT-6`.
+- **reserved_paths:** common, plus `PlateView.tsx`, `usePlateState.ts`, `HowToSheet.tsx`, `plate.css`, `tools/plates/fidelity/goldenB.mjs` (call it only), and other sections. The plate is reached only through HT-3's zoom slot API (critic fix 11).
+- **acceptance:**
+  - **HT6-A1 (L2-B):** each `hand-<key>.ts` string is `===` to the golden-B hand pair for that key. The pairs are shared by key: 3 distinct pairs today, with no duplicate per exercise.
+    - Failure path: a 1-byte change fails.
+  - **HT6-A2 (C5):** the hand geometry report from vendored `hand.mjs` is `ok` for every HandlingSpec (wrist range, contactAt, the lever sign for push).
+    - Failure path: a bad-fixture pose outside its range fails.
+  - **HT6-A3 (chips, pure-function unit test):**
+    - Hand is first for hand archetypes, except leg press;
+    - at most 4 chips;
+    - "Where to feel it" is last, shown only when the feel section is registered;
+    - chips are ≥ 44×44.
+  - **HT6-A4 (zoom host, through HT-3's zoom slot API only):**
+    - S2 renders in the slot, and `setPlateHidden(true)` hides the golden figure (still mounted, `hidden` + `inert`);
+    - closing calls `restore(snapshot)`, giving the prior plate state (S0 or S1);
+    - opening a zoom calls `clearMistake()` (GA 2.2);
+    - Android back closes the zoom before the sheet (`registerSheet('howto-zoom')`);
+    - focus returns to the chip.
+  - **HT6-A5 (gate block HT-6):** L3 of the S2 hand zoom against the golden-B page in all 5 themes (≤ 1/255, ≤ 0.02 %), golden-B states reached only through HT-4's `goldenB.mjs`. Also:
+    - the Right and Wrong words plus icons are printed in every theme (Ember especially);
+    - C16 names the region and both halves (`role=img` with alt);
+    - C11 reduced motion: the crossfade is 150/100 ms, or none.
+  - **HT6-A6:** after opening and closing each hand zoom, the HT-3 L3 plate compare still passes (the plate is unchanged after interaction).
+  - **HT6-A7:** `hand-<key>` chunks are ≤ 30 KB raw / 10 KB gz each. They load only on first open (no request before the tap).
+  - **HT6-A8 (push hint on the Train card; critic fix 8):** the card shows one `p.hint.muted` whose text is exactly `HOWTO_HINTS[ex.id]`, for exercises with an approved How-to and a push archetype.
+    - `hint.test` (source scan): the hint text appears in no `.tsx` file; Train.tsx renders only `HOWTO_HINTS[ex.id]` behind `ex && !ex.custom &&`.
+    - Gate, Silent Black and Paper: the chest-press card shows "Push with the heel of your hand." exactly once.
+    - Failure paths (each must show no hint): a non-push exercise with a How-to (lat pulldown); an exercise without a How-to (the bench-press control); a seeded custom exercise. Dropping `!ex.custom` fails.
+  - **G0.**
+- **design_reference:** the golden-B hand states; GA 2.2 (S2) and 5.1; D-HT2 (no Heel-of-palm callout, no ring or hotspots on the plate).
+- **connectivity:** common.
+- **verification:** common, plus a recorded device check: the hand close-up against a real grip photo (GA R59), and TalkBack reading the zoom.
+- **risk_and_recovery:**
+  - Stacked cards: HT-7 builds on the zoom-host commit. Push it first, and keep the registry API stable once posted.
+  - If golden B draws a state the harness cannot reach, ask the supervisor for a selector from the mockup lane. Never skip the state.
+- **return:** common.

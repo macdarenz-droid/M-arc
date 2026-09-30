@@ -1,0 +1,72 @@
+# HT-2: Generator core, the 8 plate modules, `BuiltHowTo`, the `--mistake` token and the A3 narrowing
+
+Lane P · Opus · L (hard: design note on the PR first) · merge slot 2
+
+- **id:** HT-2
+- **outcome:** At build time, the golden engine output becomes lazy TS modules. Each module holds exactly the approved strings, and CI proves this.
+  - `--mistake` returns openly with the D-FG1 values. FG-OFF's A3 is narrowed by exactly that one name.
+  - The generated plate CSS is scoped under `.ht` and lint-clean.
+  - Nothing is visible in the app yet.
+- **base:** HT-1's pushed head, then main after HT-1 merges.
+- **depends_on:** HT-1.
+- **read_first:**
+  - the plan, sections 2.2, 2.3, 2.6, 2.7, 2.9 and 3 (rows U8-U10, A4);
+  - `design-hybrid.md` sections 3, 4 and 7;
+  - design A section 1.5 (class map);
+  - `tests/workout/no-form-guide.test.ts`;
+  - `src/theme/themes.ts`;
+  - `tests/theme.test.ts` (read its block conventions);
+  - `htplan/_cmpthemes.mjs` (the theme values match).
+- **write_scope:**
+  - `tools/plates/{generate.mjs, lib/**, gen/plates.mjs, plates.json, css.mjs}`;
+  - `src/howto/types.ts` (extend with `BuiltHowTo`, whose layer fields `zooms`, `feel`, `setup`, `posture`, `mistakes`, `risks`, `sources`, `copy` are optional until their card lands; critic fix 6);
+  - `src/howto/ids.ts` (generated);
+  - `src/howto/generated/{index.ts, ht-<slug>.ts ×8}`;
+  - `src/slices/howto/css/plate.css` (generated);
+  - `src/theme/themes.ts` (the `mistake` key only);
+  - `tests/howto/{generate,ids,css,class-map,theme-parity}.test.ts`;
+  - in `tests/workout/no-form-guide.test.ts`: the U8-U10 narrowing, A3-HT.a-c and A4 only;
+  - `docs/COACHING-DECISIONS.md`: D-HT1's A3 part only (the rest lands with HT-3; critic fix 10);
+  - an add-only `tests/theme.test.ts` block `HT-2`;
+  - an add-only gate block `HT-2` (the regenerate check).
+- **reserved_paths:** common, plus `Train.tsx`, `primitives.tsx`, `styles.css`, the A1 parts of `no-form-guide`, and the FG-OFF gate block.
+- **acceptance:**
+  - **HT2-A1 (L2):** for all 8 exercises, every string field of `ht-<slug>.ts.plate` is `===` to the fragment extracted from the golden fixture, and its sha256 equals the latest `GOLDEN.json` entry. The lateral raise comes from `ref-src` through `plates.json`.
+    - Failure paths:
+      - mapping the lateral raise to `plates2/exercises/dumbbell_lateral_raise.mjs` fails;
+      - editing 1 byte of a generated file fails.
+  - **HT2-A2 (freshness C14, per file; critic fix 7):** every generated file starts with `GENERATED, do not edit` and an `inputsSha256` over **its own inputs only**: the core (`generate.mjs`, `lib/**`), the vendored files it reads, `plates.json`, and the plugins that write it. Plugins are discovered by glob `tools/plates/gen/*.mjs`; there is no registry to edit. A fast unit test recomputes every header, with no render.
+    - Failure paths: touching `vendor/engine/layout.mjs` without regenerating fails; adding a dummy `gen/zz.mjs` that writes only its own file leaves every `ht-<slug>.ts` header fresh (the test proves plugins do not stale each other).
+  - **HT2-A3 (gate block HT-2):** `generate.mjs --check` gives an empty diff, and the L1 gallery rebuild still gives `e2bea90c…`. Both run once per gate job.
+  - **HT2-A4 (output typecheck):** every generated module ends in `satisfies BuiltHowTo`, and `npm run typecheck` passes.
+  - **HT2-A5 (ids):**
+    - `ids.ts` exports `HOWTO_IDS` (= the approved `plates` slugs in GOLDEN.json), `HOWTO_LABEL = 'How to do it'` and `hasHowTo()` (HT-5 adds `HOWTO_HINTS` through its content plugin);
+    - `plates.json` records `src`, `slug`, `prefix` and `chromeId` per exercise, copied from HT-1's `GOLDEN.json` findings; the lateral raise is `src: ref-src`, `prefix: lr`, `chromeId: lateral-raise` (critic fix 18);
+    - it is ≤ 2,048 B with no runtime imports;
+    - the `LOADERS` keys equal `HOWTO_IDS`, which equal the generated files.
+    - Failure path: an extra LOADERS key fails.
+  - **HT2-A6 (CSS rewrite):** `css.mjs` maps `.plate` → `.ht-plate` and `.plate-fit` → `.ht-plate-fit`, prefixes every selector with `.ht`, drops the page-only rules, and moves lint-banned literals into `/* ht-tokens:start/end */` with identical values. One unit test per rule. The class map is injective and touches only class tokens.
+    - `css.test` also checks inline custom properties in every generated markup string against the enumerated allow list `--o`, `--i`, `--gd`, `--feel-from`, `--feel-to`, `--feel-delay` (critic fix 21), and that none of the 13 still-banned FG token names appears in any generated CSS, because `css.mjs` drops the golden's per-theme blocks (critic fix 22).
+    - `css.mjs` exports its rewrite as a function, so HT-8's `gen/feel.mjs` reuses it for `FEEL_CSS`.
+    - Failure paths: a selector without `.ht` fails `css.test`; `transition: 160ms` outside ht-tokens fails; an inline `--x` in a fragment fails; keeping one golden theme block fails.
+  - **HT2-A7 (token and A3):**
+    - `mistake` appears in all 5 themes with exactly `#eb5757`, `#c0392b`, `#b36bff`, `#f04438`, `#ff5c5c`;
+    - A3-HT.a-c pass;
+    - theme.test block HT-2: contrast ≥ 3:1 against `--map-body`, `--surface-1` and `--surface-2`, computed from themes.ts;
+    - `theme-parity.test` (critic fix 16): every token that `plate.css` reads through `var()` has the same value in `themes.ts` as in the vendored `ref-src/themes.mjs`, per theme; the failure names the token and the theme. Mutation: one Paper token changed by 1 step fails;
+    - `docs/COACHING-DECISIONS.md` holds D-HT1's A3 part, citing the owner's approval of 2026-09-30;
+    - the 13 other removed tokens are still banned.
+    - Mutations that must fail: `--target` in any src CSS; Ember `mistake: #ff6363`; `var(--mistake)` in styles.css.
+    - The narrowing lands in the same commit as the token.
+  - **HT2-A8 (A4):** the static graph from `src/main.tsx` reaches no `src/howto/**` except `ids.ts`, and no `src/slices/howto/**`. No `src` file imports `tools/**`.
+    - Failure path: a static import of `generated/index.ts` from `ids.ts` fails.
+  - **HT2-A9 (build):** `npm run build` makes 8 `ht-<slug>-*.js` chunks. None matches the FG-OFF G1 ban, and each is ≤ 150 KB raw / 36 KB gz. List the measured sizes.
+  - **G0.**
+- **design_reference:** design-hybrid sections 3-4 and 7; the plan section 2.6; the approved gallery (`bc0f378`).
+- **connectivity:** common.
+- **verification:** common, plus: post the list of generated files and their sizes in the PR; `git diff --stat` must show no change under `tools/plates/vendor/**`.
+- **risk_and_recovery:**
+  - If a fragment differs from the golden, the extraction or splice order is wrong. Fix the generator, never the golden.
+  - If the class map would need to touch SVG bytes, stop and report it. The SVG and overlay must ship verbatim.
+  - The token is a theme-contract change: call it out in the PR title.
+- **return:** common.

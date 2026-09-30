@@ -1,0 +1,49 @@
+# HT-1: Golden lock (vendored approved sources, golden fixtures, CI fidelity check)
+
+Lane P · Opus · M · merge slot 1
+
+- **id:** HT-1
+- **outcome:** The approved Technical Plates can be rebuilt from the repo byte for byte. CI proves this on every push.
+  - The approved gallery is committed as a golden fixture, with hashes for each exercise.
+  - A browser harness shows that comparing the golden with itself gives 0 differing pixels.
+  - There is no app UI yet.
+- **base:** common. Starts after S-1 (ref-src is committed on `claude/howto-options`).
+- **depends_on:** S-1.
+- **read_first:**
+  - the plan, sections 1, 2.2, 2.7 and 2.8;
+  - `design-hybrid.md` sections 0-1;
+  - `git show bc0f378:docs/howto/technical-plate/{build-page.mjs,engine/SPEC.md}`;
+  - `htplan/_regen/` (the byte-identical rebuild recipe);
+  - `scripts/screenshot-gate.mjs` (its helpers and PASS line).
+- **write_scope:**
+  - `tools/plates/vendor/**`: the engine, `tokens.css`, `SPEC.md`, the 7 specs plus `_test_front`/`_test_side`, `ref-src/{plate,themes}.mjs` and `build-page.mjs`, all verbatim, plus `MANIFEST.json`;
+  - `tools/plates/golden.mjs`;
+  - `tools/plates/fidelity/harness.mjs`;
+  - `src/howto/types.ts`: `LibId`, `PlateFigure`, `BuiltPlate`, `GoldenEntry` (push this first, so HT-2 and HT-4 can base on it);
+  - `tests/howto/golden/{technical-plates.html, GOLDEN.json, ref-fixtures/*}`;
+  - `tests/howto/{vendor,golden}.test.ts`;
+  - a new gate block `HT-1` in `scripts/screenshot-gate.mjs` (add-only) and its PASS phrase.
+- **reserved_paths:** common, plus all of `src/` except `src/howto/types.ts`.
+- **acceptance:**
+  - **HT1-A1 (L0):** every vendored file's sha256 equals its MANIFEST entry, and each entry names its source (a `bc0f378:<path>` blob, or the ref-src commit with md5 `31e7bfe3555c0c456ed4417f503dc93f` / `37495b3d37d1a6a284a380c9e517fb18`).
+    - The font is pinned too: the sha256 of `node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2` is `3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62` (md5 `260c81a4…`, fontsource 5.3.0), the file the engine measured labels with (critic fix 14).
+    - Failure paths: a 1-byte change to `vendor/engine/plate.mjs` or `ref-src/plate.mjs` fails, and the test names the file; a different woff2 at that path fails.
+  - **HT1-A2 (L1):** `golden.mjs` builds a temp mirror (vendor plus the app's `@fontsource-variable/inter` latin woff2) and runs `build-page.mjs`. The output sha256 is `e2bea90c8312132b93a2ab0bc004cee6ef43edd22e8227720be3958f6b2dcf48` (860,766 B) and equals the committed fixture.
+    - Failure path: a changed spec gives a different sha, the check fails, and it prints the first differing byte offset.
+    - Home: it runs in vitest in this card. HT-2 moves the full rebuild into its gate block, so it runs once per gate job.
+  - **HT1-A3 (per-exercise golden):** `GOLDEN.json` has one `plates` entry per exercise (8 in all). Each entry holds sha256s of the normal svg with guides spliced, the tagged overlay, the mistake svg, the mistake overlay, tells, tempo, cues, alt and mistakeAlt, all extracted from the fixture. It also holds `approvedBy: owner`, `date: 2026-09-30`, `ref: bc0f378`, and a hash chain.
+    - Failure path: editing an old entry breaks the chain and fails; a superseding entry without `decision` fails.
+  - **HT1-A4 (reference fixtures):** the vendored engine renders `_test_front`, `_test_side` and every `selected: <key>` of the 8 into `ref-fixtures/`. A test fails if any key of `PRIMITIVES` is covered by no fixture.
+    - Failure path: removing one fixture fails the coverage test.
+  - **HT1-A5 (harness self-check, gate block HT-1):** the fixture page is served offline, with its Google Fonts request routed to the app woff2, at 390×844 and DPR 2. The harness captures each of the 8 plate blocks (plate top to tempo bottom) in 5 themes × {normal, mistake (first tell)}, twice. The canvas diff must be 0 px every time.
+    - Failure path: a harness mutation that shifts the second capture by 1 px must fail.
+    - The canvas `getImageData` diff and the 1/255 / 0.02 % rule live in `harness.mjs` for HT-3 to reuse.
+  - **HT1-A6:** vendored files stay outside `src`, nothing in `src` imports `tools/**`, and the FG-OFF tests stay green unchanged.
+- **design_reference:** the plan, sections 2.7-2.8; design-hybrid section 1 (L0/L1); design A section 1.6 (per-exercise approved entries).
+- **connectivity:** common. The fixture must not need the network.
+- **verification:** common, plus: run `node tools/plates/golden.mjs --check` locally, and list the gate time the HT-1 block adds.
+- **risk_and_recovery:**
+  - `plates.json` is HT-2's. HT-1's `golden.mjs` extracts fragments by the golden's own element ids; record for each exercise its golden-A spec source (`src`, e.g. `ref-src` for the lateral raise), the `prefix` (e.g. `lr`) and the `chromeId` (e.g. `lateral-raise`) it found, in `GOLDEN.json`, so HT-2 does not infer them from the chunk slug (critic fix 18).
+  - If L1 does not reproduce `e2bea90c…`, stop. Report the first differing offset and the Node version, and do not "fix" the vendored bytes. The likely cause is a missing input (font or ref-src).
+  - If the harness is not deterministic (golden vs golden ≠ 0 px), find the cause (font loading or compositing) before anything else. Never add a threshold.
+- **return:** common, plus the measured gate seconds for block HT-1.
