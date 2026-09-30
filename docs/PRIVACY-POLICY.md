@@ -1,6 +1,6 @@
 # M/ARC privacy policy
 
-Last updated: 2026-09-29.
+Last updated: 2026-09-30.
 
 M/ARC is made by Marc Darenz L. Masarate. Contact: macdarenz@gmail.com. This policy is published at https://macdarenz-droid.github.io/M-arc/privacy/.
 
