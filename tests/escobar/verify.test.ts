@@ -117,7 +117,15 @@ describe('safety pre-screen (§19)', () => {
     ['I don\u2018t want to live', 'crisis'],
     ['I can\u2019t breathe after that set', 'medical'],
     ['I can\u02BCt breathe', 'medical'],
-  ] as const)('curly apostrophe: %s → %s', (text, signal) => expect(safetySignals(text)).toContain(signal));
+    // BUG-30 review: other apostrophe look-alikes, and spacing the patterns did not allow.
+    ['I don\uFF07t want to live', 'crisis'],
+    ['I don\u2032t want to live', 'crisis'],
+    ['I don`t want to live', 'crisis'],
+    ['I don\u00B4t want to live', 'crisis'],
+    ['I don\u2019t  want to be here', 'crisis'],
+    ['I don\u2019t\u00A0want to be here', 'crisis'],
+    ['I can\u2019t\nbreathe', 'medical'],
+  ] as const)('curly apostrophe and spacing: %s → %s', (text, signal) => expect(safetySignals(text)).toContain(signal));
   it('ordinary questions carry no signal', () => {
     expect(safetySignals('Why is my readiness amber?')).toEqual([]);
     expect(safetySignals('Build me a 4-day programme')).toEqual([]);
