@@ -267,8 +267,13 @@ for (const theme of themes) {
     const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Export backup' }).click()]);
     const { readFile } = await import('node:fs/promises');
     const backupText = await readFile(await download.path(), 'utf8');
+    // BUG-29: a seen poster comparison, planted directly (Save above may or may not have hit one),
+    // must be gone after Reset everything — it is app-use content, not a device display setting.
+    await page.evaluate(() => localStorage.setItem('marc.share.seen', JSON.stringify(['gate-plant'])));
     await page.getByRole('button', { name: 'Reset workout data' }).click();
     await page.getByRole('button', { name: 'Reset everything' }).click(); await page.waitForTimeout(300);
+    const shareSeenAfterReset = await page.evaluate(() => localStorage.getItem('marc.share.seen'));
+    if (shareSeenAfterReset !== null) errors.push(`${theme}: Reset everything left marc.share.seen behind (${shareSeenAfterReset})`);
     const afterReset = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
     const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', { name: 'Restore backup' }).click()]);
     await chooser.setFiles({ name: 'marc-backup.json', mimeType: 'application/json', buffer: Buffer.from(backupText) });
@@ -280,8 +285,10 @@ for (const theme of themes) {
     await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   }
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
-  console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);
-  if (state.sessions.length < 25 || !state.legacy || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
+  // BUG-29: silent-black ran Reset everything above, which now also clears the legacy import key.
+  const legacyExpected = theme !== 'silent-black';
+  console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy key present:', state.legacy);
+  if (state.sessions.length < 25 || state.legacy !== legacyExpected || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
   await ctx.close();
 }
 
@@ -5630,8 +5637,130 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// BUG-27: scrolling a page under the Android status bar must never show page text through it (seen
+// on the Escobar tab, scrolled to "Escobar's notes"). The status-bar area itself must stay painted
+// in --bg at every scroll position, in every theme. Silent Black and Paper, a 32px top inset.
+{
+  const tag = 'BUG-27 status bar backdrop';
+  for (const theme of ['silent-black', 'paper']) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 700 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+    await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+    // Simulated status-bar inset (the same --safe-area-inset-top the app reads via env(), Capacitor's
+    // SystemBars overlay writes this at runtime; env() itself can't be faked in headless Chromium).
+    await page.evaluate(() => document.documentElement.style.setProperty('--safe-area-inset-top', '32px'));
+    await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(300);
+    await page.mouse.wheel(0, 3000); // scroll page content up, under the inset
+    await page.waitForTimeout(200);
+    // Note: elementFromPoint can't be used here — the backdrop is deliberately `pointer-events:
+    // none` (so it never steals a tap), which also makes hit-testing skip straight through it.
+    // So this checks the CSS painting-order guarantee directly: the backdrop covers the point, is
+    // painted var(--bg), and no other positioned, z-indexed element covering the same point could
+    // paint above it (a stacking context only outranks a lower z-index within the same context;
+    // static in-flow content, which is everything else here, always paints below either way).
+    const check = await page.evaluate(() => {
+      const rgb = v => { const d = document.createElement('i'); d.style.color = v; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; };
+      const bg = rgb(getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
+      const point = { x: 195, y: 16 }; // mid-width, mid-inset
+      const covers = r => !!r && point.x >= r.left && point.x <= r.right && point.y >= r.top && point.y <= r.bottom;
+      const bd = document.querySelector('.status-bar-backdrop');
+      const bdCs = bd && getComputedStyle(bd);
+      const rivalZs = [...document.querySelectorAll('body *')]
+        .filter(el => el !== bd)
+        .filter(el => { const cs = getComputedStyle(el); return cs.position !== 'static' && cs.zIndex !== 'auto'; })
+        .filter(el => covers(el.getBoundingClientRect()))
+        .map(el => Number(getComputedStyle(el).zIndex) || 0);
+      // The scrolled Escobar view has nothing else covering the inset point, so rivalZs above is
+      // always empty here — that alone can't tell a real backdrop z-index from a broken one (even
+      // 0 would "pass"). Anchor it to the app's own layer tokens instead: the backdrop must beat
+      // every one of them, not just whatever happens to overlap on this one screen.
+      const rootCs = getComputedStyle(document.documentElement);
+      const layerTokens = ['--z-dock', '--z-nav', '--z-rest', '--z-toast'].map(name => Number(rootCs.getPropertyValue(name).trim()));
+      return {
+        scrolled: window.scrollY > 0,
+        isFixed: bdCs?.position === 'fixed',
+        coversPoint: covers(bd?.getBoundingClientRect()),
+        painted: bdCs?.backgroundColor,
+        bg,
+        bdZ: Number(bdCs?.zIndex) || 0,
+        maxRivalZ: rivalZs.length ? Math.max(...rivalZs) : -Infinity,
+        layerTokens,
+      };
+    });
+    if (!check.scrolled) errors.push(`${tag} ${theme}: the page did not actually scroll, so this proves nothing`);
+    else if (!check.isFixed || !check.coversPoint) errors.push(`${tag} ${theme}: the status-bar backdrop does not cover the inset point after scrolling (${JSON.stringify(check)})`);
+    else if (check.painted !== check.bg) errors.push(`${tag} ${theme}: the status-bar backdrop is not painted var(--bg) (${JSON.stringify(check)})`);
+    else if (check.maxRivalZ >= check.bdZ) errors.push(`${tag} ${theme}: another positioned element could paint above the backdrop (${JSON.stringify(check)})`);
+    else if (check.layerTokens.some(z => !Number.isFinite(z) || z === 0)) errors.push(`${tag} ${theme}: could not read the app's own layer tokens (--z-dock/--z-nav/--z-rest/--z-toast), got ${JSON.stringify(check.layerTokens)}`);
+    else if (check.bdZ <= Math.max(...check.layerTokens)) errors.push(`${tag} ${theme}: the backdrop's z-index (${check.bdZ}) does not beat the app's own layer tokens (${JSON.stringify(check.layerTokens)})`);
+    await ctx.close();
+  }
+}
+
+// HT-1: fidelity harness self-check. The approved Technical Plates gallery (tests/howto/golden, served offline, its
+// Google Fonts request routed to the app's Inter woff2) is captured twice at 390x844 DPR 2, per plate block (plate top
+// to tempo bottom), in 5 themes x {normal, mistake with the first tell}: every pair must diff 0 px, and the same block
+// shifted 1 px must fail the L3 rule. The harness (tools/plates/fidelity/harness.mjs) is what HT-3 compares the app with.
+{
+  const tag = 'HT-1';
+  const { goldenSelfCheck } = await import('../tools/plates/fidelity/harness.mjs');
+  const r = await goldenSelfCheck(browser);
+  for (const p of r.problems) errors.push(`${tag}: ${p}`);
+  console.log(`${tag} harness self-check: ${r.captures} captures, ${r.comparisons} golden-vs-golden diffs at 0 px, 1 px shift control off ${r.control?.off} px (fails the rule: ${r.control?.fails}), ${(r.ms / 1000).toFixed(1)} s`);
+}
+
+// HT-2: the How-to plate generator (plan 2.7 L1, card HT2-A3 and HT2-A9). Runs once per gate job.
+// L1 + regenerate: `generate.mjs --check` rebuilds the approved gallery from tools/plates/vendor (it refuses unless the
+// sha256 is the approved e2bea90c…, printing the first differing byte offset), then diffs every generated file.
+// A9: the app's own vite config bundles generated/index.ts into 8 ht-<slug>-*.js chunks, none matching FG-OFF's
+// chunk ban, each <= 150 KB raw / 36 KB gz, and each chunk's strings still hash to its GOLDEN.json entry.
+{
+  const tag = 'HT-2';
+  const { spawnSync } = await import('node:child_process');
+  const { mkdtempSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { gzipSync } = await import('node:zlib');
+  const { pathToFileURL } = await import('node:url');
+  const golden = JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/GOLDEN.json'), 'utf8'));
+  const latest = new Map(golden.entries.map(e => [e.kind === 'plate' ? e.id : e.kind, e]));
+  if (latest.get('page')?.pageSha256 !== 'e2bea90c8312132b93a2ab0bc004cee6ef43edd22e8227720be3958f6b2dcf48') errors.push(`${tag} L1: GOLDEN.json's page entry is not the approved gallery e2bea90c…`);
+  const t0 = Date.now();
+  const gen = spawnSync(process.execPath, [join(ROOT, 'tools/plates/generate.mjs'), '--check'], { cwd: ROOT, encoding: 'utf8' });
+  if (gen.status !== 0) errors.push(`${tag} L1/regenerate: generate.mjs --check failed:\n${(gen.stderr || gen.stdout).slice(0, 3000)}`);
+  else console.log(`${tag}: ${gen.stdout.trim()} (L1 rebuild included, ${Date.now() - t0} ms)`);
+  const out = mkdtempSync(join(tmpdir(), 'ht2-chunks-'));
+  try {
+    const { build } = await import('vite');
+    await build({ configFile: join(ROOT, 'vite.config.ts'), logLevel: 'silent', build: { outDir: out, emptyOutDir: true, rollupOptions: { preserveEntrySignatures: 'strict', input: { 'ht2-probe': join(ROOT, 'src/howto/generated/index.ts') } } } });
+    const files = readdirSync(join(out, 'assets'));
+    const rows = JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'));
+    const { fragmentsOf } = await import(pathToFileURL(join(ROOT, 'tools/plates/golden.mjs')).href);
+    const sizes = [];
+    for (const [id, row] of Object.entries(rows)) {
+      const chunk = files.filter(f => new RegExp(`^ht-${row.slug}-[\\w-]{8}\\.js$`).test(f));
+      if (chunk.length !== 1) { errors.push(`${tag} A9: ${id}: expected one ht-${row.slug}-*.js chunk, found ${chunk.join(', ') || 'none'}`); continue; }
+      const f = chunk[0], b = readFileSync(join(out, 'assets', f)), gz = gzipSync(b).length;
+      if (/^(FormGuidePlayer|ExercisePlayer|lib_[a-z_]+)-.*\.js$/.test(f)) errors.push(`${tag} A9: ${f} matches the FG-OFF chunk ban`);
+      if (b.length > 150 * 1024 || gz > 36 * 1024) errors.push(`${tag} A9: ${f} is ${b.length} B raw / ${gz} B gz (limit 153600 / 36864)`);
+      const m = (await import(pathToFileURL(join(out, 'assets', f)).href)).default;
+      const got = fragmentsOf({ normal: m.plate.normal, mistake: m.plate.mistake, tells: m.plate.tells, tempo: m.plate.tempo, alt: m.plate.alt, mistakeAlt: m.plate.mistakeAlt });
+      if (JSON.stringify(got) !== JSON.stringify(latest.get(id)?.fragments)) errors.push(`${tag} A9: the bundled ${f} does not hold the GOLDEN.json fragments of ${id}`);
+      sizes.push(`${f.replace(/-[\w-]{8}\.js$/, '')} ${b.length}/${gz}`);
+    }
+    const extra = files.filter(f => /^ht-/.test(f) && !Object.values(rows).some(r => f.startsWith(`ht-${r.slug}-`)));
+    if (extra.length) errors.push(`${tag} A9: unexpected How-to chunks: ${extra.join(', ')}`);
+    console.log(`${tag} A9 chunk sizes (raw/gz B): ${sizes.join(', ')}`);
+  } finally {
+    rmSync(out, { recursive: true, force: true });
+  }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no form-guide chunk or markup, no "How to do it" on Train) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no form-guide chunk or markup, no "How to do it" on Train) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified.');
