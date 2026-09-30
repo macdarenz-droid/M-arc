@@ -168,21 +168,25 @@ const MIS_FWD = 0.20;                                  // m the bar has drifted 
 const MIS_Y = 1.70;                                    // m: forehead height
 const MIS_BAR = [0, MIS_Y, MIS_FWD];
 const mistakePose = { reach: hands(MIS_BAR, [0, -1, -0.55]) };
-// The faulty forearm as a dashed capsule (forearm width, elbow to fist) and a small elbow ring, drawn as Mistake
+// The faulty arm as dashed capsules (upper arm: shoulder to elbow; forearm: elbow to fist) and an elbow ring, drawn as Mistake
 // guides (world points): the engine's own faulty-arm outline is masked where it crosses the head, and a mistake-only
 // equipment item is masked there too, while guides are not (critic R5: a single guide line read as a leader).
 const FORE_R = [0.023 * H, 0.016 * H];                // Winter-model forearm half-widths at the elbow and the wrist (m)
+const UPPER_R = [0.030 * H, 0.022 * H];               // upper-arm half-widths at the shoulder and the elbow (m)
 const LM_MIS = landmarksOf({ ...end, reach: mistakePose.reach }, H);
 const MIS_ELBOW = LM_MIS['elbow.r'];
-const MIS_FORE = (() => {
-  const e = MIS_ELBOW, g = LM_MIS['grip.r'], d = [0, g[1] - e[1], g[2] - e[2]], L = Math.hypot(d[1], d[2]);
+// closed capsule (side view, y-z plane) from a to b with end half-widths ra, rb
+function capsule(a, b, ra, rb) {
+  const d = [0, b[1] - a[1], b[2] - a[2]], L = Math.hypot(d[1], d[2]);
   const u = [0, d[1] / L, d[2] / L], n = [0, -u[2], u[1]];
-  const at = (p, r, a) => [0, p[1] + (n[1] * Math.cos(a) + u[1] * Math.sin(a)) * r, p[2] + (n[2] * Math.cos(a) + u[2] * Math.sin(a)) * r];
+  const at = (p, r, t) => [0, p[1] + (n[1] * Math.cos(t) + u[1] * Math.sin(t)) * r, p[2] + (n[2] * Math.cos(t) + u[2] * Math.sin(t)) * r];
   const pts = [];
-  for (let k = 0; k <= 6; k++) pts.push(at(g, FORE_R[1], -Math.PI / 2 + Math.PI * k / 6));   // round end at the fist
-  for (let k = 0; k <= 6; k++) pts.push(at(e, FORE_R[0], Math.PI / 2 + Math.PI * k / 6));    // round end at the elbow
+  for (let k = 0; k <= 6; k++) pts.push(at(b, rb, -Math.PI / 2 + Math.PI * k / 6));
+  for (let k = 0; k <= 6; k++) pts.push(at(a, ra, Math.PI / 2 + Math.PI * k / 6));
   return [...pts, pts[0]];
-})();
+}
+const MIS_FORE = capsule(MIS_ELBOW, LM_MIS['grip.r'], FORE_R[0], FORE_R[1]);
+const MIS_UPPER = capsule(LM_MIS['shoulder.r'], MIS_ELBOW, UPPER_R[0], UPPER_R[1]);
 const ELBOW_DOT_R = 0.012;
 const MIS_ELBOW_DOT = Array.from({ length: 13 }, (_, k) => [0, MIS_ELBOW[1] + ELBOW_DOT_R * Math.sin(k * Math.PI / 6), MIS_ELBOW[2] + ELBOW_DOT_R * Math.cos(k * Math.PI / 6)]);
 // Camera: the reference floor line (plate y 339) and the largest scale that keeps the 45 cm plate at lockout 16 px
@@ -225,7 +229,7 @@ export default {
   datum: [{ x: [0, 0, 0], from: 349, to: 20 }],
   measure: { vertex: 'shoulder.r', from: 'down', to: 'elbow.r', radius: 20, title: 'Shoulder', value: 'straight up', box: { left: 258, top: 172 } },
   callouts: [
-    { key: 'forearms', text: 'Forearms<br>vertical', anchor: { at: 'grip.r', pose: 'start', off: [-7, 0] }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
+    { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: [{ at: 'elbow.r', pose: 'start' }, { at: 'grip.r', pose: 'start' }], t: 0.45, off: [-4, 0] }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
     { key: 'head', text: 'Head<br>through', anchor: 'chin', cue: 'Lean back slightly from the hips, then move under the bar as it passes.',
       guide: [{ at: 'ear', pose: 'start' }, 'ear'], box: { left: 258, top: 96 } },
     { key: 'midfoot', text: 'Over<br>mid-foot', anchor: { at: 'grip.r', off: [6, -2] }, cue: 'Lock out with the bar over your shoulders and mid-foot.' },
@@ -235,7 +239,8 @@ export default {
     pose: mistakePose,
     guides: [
       { kind: 'arrow', from: [0, MIS_Y, 0.03], to: { at: 'grip.r', pose: 'mistake', off: [-5, 0] } },
-      { kind: 'dashed', pts: MIS_FORE },                // the faulty forearm, tilted, elbow behind the bar
+      { kind: 'dashed', pts: MIS_UPPER },               // the faulty upper arm, shoulder to an elbow behind the bar
+      { kind: 'dashed', pts: MIS_FORE },                // the faulty forearm, tilting to the faulty bar
       { kind: 'line', pts: MIS_ELBOW_DOT },              // the faulty elbow
       // plumb from the faulty bar to the floor: it lands ahead of the toes, not over mid-foot
       { kind: 'dashed', pts: [{ at: 'grip.r', pose: 'mistake', off: [0, 6] }, [0, 0, MIS_FWD]] },
