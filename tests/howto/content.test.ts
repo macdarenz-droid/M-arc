@@ -1,5 +1,8 @@
 // HT-4: HT4-A2 (content-types.ts compiles a real golden-B spec, mapped) and HT4-A3/A4 (C1-C4, C6-C8, C15-C17 pass on
 // good content and fail, naming the rule, on their own bad fixture). Pure functions, node env, no DOM.
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { HowToContent, Source } from '../../src/howto/content-types';
 import { COVERAGE } from '../../src/howto/coverage';
@@ -251,5 +254,49 @@ describe('HT4-A4: the checks are pure, no DOM, and cheap', () => {
   it('none of the checks touch a global DOM (jsdom/document/window)', () => {
     expect(typeof document).toBe('undefined');
     expect(typeof window).toBe('undefined');
+  });
+});
+
+// Review fix (blocker 2, PR #107): the card asks every real content file to pass every check, not just the one
+// copied-verbatim fixture above. src/howto/content/**/*.ts holds 0 files today (no exercise has been authored yet -
+// that is later cards' job), so this only proves the wiring now; it starts failing the moment the first real file
+// disagrees with a check, instead of that drift going unnoticed until it ships.
+describe('HT4-A2/A3: every real content file under src/howto/content passes every check (0 files today - this is the guard for the first one)', () => {
+  it('C1-C4, C7, C8, C15, C16 all return [] for every src/howto/content/**/*.ts default export', async () => {
+    const walk = (dir: string): string[] => {
+      let entries;
+      try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return []; }
+      return entries.flatMap(e => {
+        const p = join(dir, e.name);
+        return e.isDirectory() ? walk(p) : /\.ts$/.test(e.name) ? [p] : [];
+      });
+    };
+    const CONTENT_DIR = join(new URL('.', import.meta.url).pathname, '..', '..', 'src', 'howto', 'content');
+    const files = walk(CONTENT_DIR);
+    const EQUIPMENT_BY_ID = new Map((exercises as Array<{ id: string; equipment: string }>).map(e => [e.id, e.equipment]));
+    const reviewsFile = JSON.parse(
+      readFileSync(join(new URL('.', import.meta.url).pathname, '..', '..', 'docs', 'research', 'howto', 'reviews.json'), 'utf8'),
+    );
+    for (const f of files) {
+      const mod = await import(/* @vite-ignore */ pathToFileURL(f).href);
+      const content = mod.default as HowToContent;
+      const bad: string[] = [
+        ...checkC1(content, KNOWN_IDS),
+        ...checkC2(content),
+        ...checkC3(content, EQUIPMENT_BY_ID.get(content.id) ?? ''),
+        ...checkC4(content),
+        ...checkC7(content),
+        ...checkC8(content, SOURCES),
+        ...checkC15(content, {}, reviewsFile),
+        ...checkC16(content),
+      ];
+      expect(bad, `${f}: ${JSON.stringify(bad)}`).toEqual([]);
+    }
+  });
+
+  it('C17: no network call or bare URL outside the source citations, anywhere in src/howto or src/slices/howto', () => {
+    const root = join(new URL('.', import.meta.url).pathname, '..', '..');
+    const allowedUrls = new Set(Object.values(SOURCES).map(s => s.url).filter((u): u is string => typeof u === 'string'));
+    expect(checkC17([join(root, 'src', 'howto'), join(root, 'src', 'slices', 'howto')], allowedUrls)).toEqual([]);
   });
 });
