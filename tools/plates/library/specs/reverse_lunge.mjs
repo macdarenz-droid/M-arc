@@ -22,11 +22,24 @@
 //   puts toe.l on the floor.
 //  Weight even (c3): with this geometry the Winter (2009) whole-body centre of mass sits 44 cm behind the front
 //   mid-foot and 51 cm in front of the rear ball (about 54 / 46 front / rear), checked in a scratch script.
-//  Trunk: pelvis tilt TRUNK_LEAN deg (upright, c3); arms hang
-//   plumb (shoulder extension = trunk lean), elbows 4 deg soft; dumbbells in a neutral grip, handle front-to-back
-//   (side view shows the handle and both hex heads).
-// CARD: FRONT_SHIN (c2), FRONT_THIGH (depth), REAR_KNEE_Y (c4: how close the knee gets; the card gives no number),
-//  TRUNK_LEAN (c3), stride length (follows from these; c7 full-length step), REAR_HEEL (rear heel lift), FOOT_X (c1).
+//  Trunk: pelvis tilt TRUNK_LEAN deg (upright, c3); arms hang plumb (shoulder flexion = trunk lean: the engine's
+//   shoulder angle is taken from the thorax, so flexion, not extension, brings the arm back to vertical), elbows
+//   4 deg soft; dumbbells in a neutral grip, handle front-to-back (side view shows the handle and both hex heads).
+// Plate text (card reverse_lunge plate, source-checked, not yet critic-verified, so provisional):
+//  Callouts = the 3 plate.checkpoints (c2 front shin vertical, with a plumb guide through the front ankle; c3 chest
+//   up; c3 weight even, pointing at the hips with a plumb guide to the floor midway between the feet).
+//  Mistake = plate.mistake (c6, drawable): the trunk pitches forward over the front thigh (MISTAKE_LEAN). Tells: the
+//   card's plate.tells are signs of good form ("Back knee drops straight...", "Front shin stays about vertical"), so
+//   the tells restate the fault: the trunk pitches forward (c6), the weight tips onto the front foot (balance between
+//   the feet lost, c6), shown by a plumb from the pitched chest that lands on the front foot. Flagged on PR #109.
+//  Measure: none. The card gives no angle ("roughly vertical"); the shin plumb guide shows the checkpoint instead.
+//  Tempo: left out. The card gives no seconds ("controlled, slow descent", c7); the engine strip needs seconds.
+// CARD (checked against card v2): from the card: FRONT_SHIN 6 deg ("roughly vertical", c2), TRUNK_LEAN 3 deg
+//  (upright, c3), weight about even (c3, centre of mass check above), full-length step (c7), FOOT_X (hip width, c1).
+//  Not in the card, left flagged: FRONT_THIGH (depth: the card says only "toward the floor", c4), REAR_KNEE_Y (how
+//  close the knee gets), REAR_HEEL (rear heel lift), MISTAKE_LEAN (how far the Mistake pitches).
+import { landmarksOf } from '../engine.mjs';
+
 const H = 1.75, R = Math.PI / 180;
 const L_TH = 0.245 * H, L_SH = 0.246 * H, ANK = 0.039 * H, MID = 0.044 * H, BALL = 0.080 * H;
 const FOOT_X = 0.10;              // mid-sole lateral offset: feet hip width (c1), HJCs 17.5 cm apart
@@ -54,7 +67,7 @@ const ankB = [0, ankBy, kneeB[2] - Math.sqrt(L_SH ** 2 - (ankBy - REAR_KNEE_Y) *
 const REAR_BALL = [FOOT_X, REAR_LIFT, ankB[2] - ANK * sT + BALL * cT];
 
 const front = { at: [-FOOT_X, 0, 0] };
-const arms = lean => ({ shoulder: { ext: lean }, elbow: ELBOW });
+const arms = lean => ({ shoulder: { flex: lean }, elbow: ELBOW });   // flexion = lean keeps the arm plumb (checked: grip z = shoulder z)
 const pose = (hip, lean, rear) => ({ root: { at: [0, ...hip.slice(1)], tilt: lean }, trunk: 0, neck: 0, ...arms(lean), plant: { r: front, l: rear } });
 
 // Start: standing tall, feet together hip-width, hip-joint centre 3 cm in front of the ankles (plumb line), knees soft.
@@ -68,6 +81,22 @@ const via = [
   pose([0, 0.68, -0.40], TRUNK_LEAN, REAR),
 ];
 const end = pose(HIP, TRUNK_LEAN, REAR);
+// Mistake (card plate.mistake, c6): the trunk pitches forward over the front thigh at the bottom. Legs, feet and hips
+// are the end pose's; only the pelvis/trunk lean changes to MISTAKE_LEAN deg, arms still plumb. How far it pitches is
+// a drawing choice (the card gives no number): enough to read in 2 seconds at 390 px.
+const MISTAKE_LEAN = 38;
+const MISTAKE = pose(HIP, MISTAKE_LEAN, REAR);
+// Front shin plumb (c2), the shin callout's guide: a vertical through the front ankle, from the floor to SHIN_TOP m
+// above the knee, drawn when the callout is selected (a datum would sit under the dashed start figure, unseen).
+const SHIN_TOP = 0.12;
+const SHIN_PLUMB = [[0, 0, ankF[2]], [0, kneeF[1] + SHIN_TOP, ankF[2]]];
+// Weight even (c3): the whole-body centre of mass sits between the feet (header), under the hips. The callout points
+// at the back of the hips (open side); its guide is a plumb from the hips to the floor midway between the front
+// mid-foot and the rear ball.
+const MIDWAY = [0, 0, REAR_BALL[2] / 2 - MID / 2];
+// Mistake plumb (guide): straight down from the pitched chest; it lands over the front foot, not between the feet.
+const M_STERNUM = landmarksOf(MISTAKE, H).sternum;
+const M_PLUMB = [[0, M_STERNUM[1] - 0.06, M_STERNUM[2]], [0, 0, M_STERNUM[2]]];
 
 // Dumbbells in both hands, neutral grip (handle front-to-back). Far one behind the body, near one in front.
 const bells = lm => [
@@ -93,6 +122,22 @@ export default {
   ],
   ghosts: { count: 2, parts: ['leg.l', 'trunk', 'arm.r', 'db'] },
   trace: { point: 'hip.r', trim: [10, 12] },
-  callouts: [],
+  callouts: [
+    { key: 'shin', text: 'Front shin<br>vertical', anchor: { along: ['knee.r', 'ankle.r'], t: 0.45, off: [7, 0] }, guide: SHIN_PLUMB, cue: 'At the bottom, keep the front shin roughly vertical.' },
+    { key: 'chest', text: 'Chest up', anchor: 'sternum', cue: 'Keep the trunk upright as the back knee lowers.' },
+    { key: 'weight', text: 'Weight even', anchor: 'buttock', guide: ['hips', MIDWAY], cue: 'Share the weight about evenly between both feet.' },
+  ],
+  mistake: {
+    pose: MISTAKE,
+    guides: [
+      { kind: 'arc-arrow', center: 'hip.r', r: 70, a0: -86, a1: -56 },
+      { kind: 'dashed', pts: M_PLUMB },
+    ],
+    tells: [
+      { key: 'pitch', text: 'Trunk pitches<br>forward', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'The trunk pitches forward over the front thigh.' },
+      { key: 'weight', text: 'Weight tips<br>forward', anchor: { along: M_PLUMB, t: 0.3 }, cue: 'The weight tips onto the front foot instead of both.' },
+    ],
+  },
+  pilot: { note: 'Tempo left out: card gives no seconds, only a controlled, slow descent (c7).' },
   alt: 'Reverse lunge with dumbbells, side view. From standing tall, one leg steps back and the body lowers until the front thigh is parallel and the rear knee hovers just above the floor, front shin near vertical, front foot flat, rear foot on the ball, trunk upright, dumbbells hanging at the sides.',
 };
