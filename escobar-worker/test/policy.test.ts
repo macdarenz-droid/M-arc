@@ -24,3 +24,20 @@ describe('WORKER_POLICY safety wording (D-LR23-1)', () => {
     expect(WORKER_POLICY).toContain('still there after a few hours or days or gets worse');
   });
 });
+
+describe('WORKER_POLICY rule 3 citation form and repair wording (ESC-W-CITE)', () => {
+  it('teaches the brief form [f3] only as a source, and the answer form as ⟦f3⟧ (W1)', () => {
+    expect(WORKER_POLICY).toContain(
+      'The fact ids are in each tool result\'s "facts" map and inline in the brief as [f3]. In your answer always write them as ⟦f3⟧, never in square brackets.'
+    );
+    // the worked example keeps the answer form
+    expect(WORKER_POLICY).toContain('like 102.5 kg ⟦f12⟧ (several: ⟦f12,f14⟧)');
+  });
+
+  it('asks for the whole answer again, without mentioning the check, after a verification check (W2)', () => {
+    expect(WORKER_POLICY).toContain(
+      'If the app sends a verification check, recompute the numbers it lists with tools or remove them, then write your whole answer again as your reply to the person, without mentioning the check.'
+    );
+    expect(WORKER_POLICY).not.toContain('then restate the answer');
+  });
+});
