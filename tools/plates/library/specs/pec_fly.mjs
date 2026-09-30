@@ -28,8 +28,8 @@
 //  machine, whose pivots sit above the shoulders). The side view cannot show the checkpoints either (the elbow bend and
 //  the hands meeting are in the horizontal plane). The Mistake (hands stopped at the shoulders, gap line) reads well.
 //  Angles and contacts are true; the report is clean.
-// Callouts, Mistake, tempo: card plate.checkpoints (c3, c2, c5), plate.mistake (c6), plate.tempo (c12: close 2 s,
-//  brief hold 1 s, open 2 s; no Rest phase, the card gives none). No measure: the card gives no angle, and in this view
+// Callouts, Mistake, tempo: card plate.checkpoints (c3, c2, c5), plate.mistake (c6), plate.tempo (c12, verified card e2a70bc:
+//  close 2 s, hold 2 s, open 2 s; no Rest phase, the card gives none). No measure: the card gives no angle, and in this view
 //  the soft elbow of the closed arm is foreshortened, so an arc would draw a false number.
 // CARD: SEAT_TOP / HANDLE_Y (c2), ELBOW (c3), CLOSE_GAP (c5), OPEN_ANGLE (c9), TILT (c1), FEET (c1), pivot height,
 //  Mistake stop angle (MIS_ANGLE, c6 gives none).
@@ -139,7 +139,7 @@ export default {
     { key: 'height', text: 'Chest<br>height', anchor: { at: 'grip.l', pose: 'start' }, box: { left: 256, top: 216 }, cue: 'Set the seat so the arms move at chest-to-shoulder height.' },
     { key: 'meet', text: 'Hands<br>meet', anchor: 'grips', box: { left: 92, top: 238 }, cue: 'Bring the handles together in front of the chest each rep.' },
   ],
-  tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Open', s: 2, move: true }],
+  tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 2 }, { phase: 'Open', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
     guides: [{ kind: 'line', pts: GAP }, tick(GAP[0]), tick(GAP[1])],

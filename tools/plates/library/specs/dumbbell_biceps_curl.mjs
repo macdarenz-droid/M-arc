@@ -1,8 +1,8 @@
 // Dumbbell biceps curl (standing, both arms, supinated grip), side view, figure facing screen right.
 // View: SIDE. What a coach judges is sagittal: the elbow stays pinned at the side (upper arm vertical, no swing
 // forward), the forearm sweeps from hanging straight to fully curled, and the trunk stays still (no lean-back swing).
-// Form: research card docs/research/howto/cards/dumbbell_biceps_curl.json (branch claude/libht-research-arms-machines,
-//  source-checked, not yet critic-verified), plate section: start "standing tall, feet shoulder-width, knees slightly
+// Form: research card docs/research/howto/cards/dumbbell_biceps_curl.json (verified, claude/libht-research
+//  e2a70bc), plate section: start "standing tall, feet shoulder-width, knees slightly
 //  bent (c2); arms hanging straight at the sides, palms forward, elbows close to the body (c1, c3); wrists straight
 //  (c6); chest up, shoulders down (c8)"; end "elbows fully bent, dumbbells near the front of the shoulders (c3); upper
 //  arms still at the sides or slightly forward, never back (c13); wrists straight (c6); body as at the start (c14)".
@@ -119,7 +119,7 @@ export default {
   trace: { point: 'grip.r', trim: [12, 14] },
   measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'full range' },
   callouts: [
-    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', cue: 'Keep the upper arms by the body from bottom to top.' },
+    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', cue: 'Keep the upper arms by your sides, never back, at most slightly forward on top.' },
     { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep the hand in line with the forearm, not bent up or down.' },
     { key: 'still', text: 'Still<br>body', anchor: 'backUpper', cue: 'Keep the torso and knees still, so only the forearms travel.' },
   ],

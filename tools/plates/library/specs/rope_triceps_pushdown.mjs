@@ -30,8 +30,8 @@
 //  on a plumb line through the shoulder joint that proves c9; the Mistake is the card's top fault, elbows drifting
 //  forward plus the swing forward (c7); tempo press 1 s, pause 1 s, return 3 s (c13 "2-3 s, never faster": the card's
 //  plate.tempo says 3), no Rest phase. Measure: the end elbow, value "not locked" (c9).
-// Rope go/no-go: the rope does NOT read as a rope at 390 px (the dumbbell-primitive strands read as rigid mini-handles);
-//  flagged on PR #109, the fix is the LIB-25 poly primitive.
+// Rope: drawn with LIB-25's poly rope composer (tapered, sagging strands with clubbed stoppers, a ferrule), which
+//  replaced the dumbbell-primitive strands that read as rigid mini-handles at 390 px (flagged on PR #109).
 import { landmarksOf } from '../engine.mjs';
 import { rope, ropeGeometry, ROPE_ITEMS } from '../eq/rope.mjs';
 import { perItem } from '../eq/parts.mjs';
@@ -166,6 +166,6 @@ export default {
       { key: 'lean', text: 'Leaning<br>in', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'The torso tips forward over the rope to start the press.' },
     ],
   },
-  pilot: { note: 'rope reads as rigid mini-handles at 390 px, not a rope (dumbbell-primitive strands); honest fix is the LIB-25 poly primitive' },
+  pilot: { note: 'rope now LIB-25 poly: sagging strands with clubbed ends read in the ghosts; at the solid bottom it sits mostly behind the forearm' },
   alt: 'Rope triceps pushdown, side view. Standing at a high cable tower with a slight forward lean, upper arms pinned at the sides, the lifter presses a rope from forearms just past level down in an arc to straight arms, the hands finishing beside the thighs with the rope ends apart.',
 };
