@@ -23,6 +23,8 @@ The same policy also asks apps to remind users to consult a healthcare professio
 
 The developer contact email goes in the Play Console's contact field, not in the app (owner decision LR-23: no contacts in the app UI).
 
+**Developer name (owner step, DOC-5):** in Play Console, open Developer account > About you, set "Developer name" to exactly "Marc Darenz" and save, so the listing names the same developer as the policy ("M/ARC is made by Marc Darenz."). Google reviews the change before it shows on Play. On the same page, check that the developer email shown on Play is the policy's contact address, and keep each app's support email the same. Play does not require the full legal name in the policy: the policy must name either the developer shown on the listing or the app, and it names the app (https://support.google.com/googleplay/android-developer/answer/10144311). For a personal account, Play still shows the legal name from the Google Payments profile, the country and the developer email next to the app, whatever the policy says, and the full address too if the app is ever monetised (https://support.google.com/googleplay/android-developer/answer/13628312). The Developer profile page in Play Console shows exactly what is public.
+
 **AI-generated content:** Play requires an in-app way to report or flag offensive AI replies (https://support.google.com/googleplay/android-developer/answer/13985936). Card ESC-REPORT adds it, once the owner approves the data it sends. When it lands, add that data to the Data safety answers below. Until then, this is a release blocker.
 
 ## Data safety form
