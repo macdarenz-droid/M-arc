@@ -70,10 +70,10 @@ The owner approved this on 2026-09-26. It runs after item 9 and the fix loop for
 7. Approve the one coach quality-set run against the live Worker (a few cents on the AI key).
 
 ## Google Play (REL-2)
-**The pipeline now proves** (`.github/workflows/play-bundle.yml`, artifact `MARC-PLAY-AAB-UNSIGNED`, on every push to `main` or on demand). Each check fails the run with its own message, and a self-test step shows every check catching a broken copy.
+**The pipeline now proves** (`.github/workflows/play-bundle.yml`, artifact `MARC-PLAY-AAB-UNSIGNED`, on every push to `main`, on demand, and on PRs that change the pipeline). Use a Play bundle only from a commit whose M/ARC gate is green. Each check fails the run with its own message, and a self-test step shows every check catching a broken copy.
 - An unsigned release App Bundle (`.aab`) is built the same way as the release APK.
 - The bundle exists, and its manifest (read with bundletool `dump manifest`) is not debuggable.
-- The package is `com.mrcdrnzz.dailytracker`.
+- The package is `com.mrcdrnzz.dailytracker`, pinned in the checker; a changed `appId` in `capacitor.config.json` fails the job.
 - versionCode is `major × 1,000,000 + run number` and versionName is `<package.json version>.<run number>`, the release-apk.yml rule. Both rise on every run.
 - targetSdk is 36 or higher. From 31 August 2026, Play requires API level 36 (Android 16) for new apps and updates: https://developer.android.com/google/play/requirements/target-sdk
 - Every 32-bit native library has a 64-bit variant.

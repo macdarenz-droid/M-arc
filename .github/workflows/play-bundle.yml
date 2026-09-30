@@ -134,11 +134,10 @@ jobs:
           set -euo pipefail
           AAB='android/app/build/outputs/bundle/release/app-release.aab'
           [ -s "$AAB" ] || { echo "::error::Play bundle check failed: the AAB $AAB does not exist"; exit 1; }
-          APP_ID="$(node -p "require('./capacitor.config.json').appId")"
           java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle "$AAB" > "$RUNNER_TEMP/manifest.xml"
           echo '--- bundletool dump manifest (head) ---'; head -n 5 "$RUNNER_TEMP/manifest.xml"
           grep -n -E 'debuggable|targetSdkVersion' "$RUNNER_TEMP/manifest.xml" || echo '(no android:debuggable attribute: not debuggable)'
-          python3 scripts/check-play-bundle.py "$AAB" "$RUNNER_TEMP/manifest.xml" "$APP_ID" "$VERSION_CODE" "$VERSION_NAME"
+          python3 scripts/check-play-bundle.py "$AAB" "$RUNNER_TEMP/manifest.xml" capacitor.config.json "$VERSION_CODE" "$VERSION_NAME"
           mkdir -p play-output
           OUT="play-output/MARC-v${VERSION_NAME}-unsigned.aab"
           cp "$AAB" "$OUT"
@@ -160,14 +159,15 @@ jobs:
           tmp = os.environ['RUNNER_TEMP']
           m = open(f'{tmp}/manifest.xml', encoding='utf-8').read()
           vc, vn = os.environ['VERSION_CODE'], os.environ['VERSION_NAME']
-          pkg = re.search(r'package="([^"]+)"', m).group(1)
+          pkg = c.PLAY_PACKAGE
           assert c.check(aab, m, pkg, vc, vn) == [], 'real bundle must pass'
           bad32 = f'{tmp}/bad32.aab'; shutil.copy(aab, bad32)
           with zipfile.ZipFile(bad32, 'a') as z: z.writestr('base/lib/armeabi-v7a/libonly32.so', b'\0')
           cases = {
             'debuggable': (aab, re.sub(r'<application\b', '<application android:debuggable="true"', m, count=1), pkg, vc, vn),
             'targetSdk': (aab, re.sub(r'android:targetSdkVersion="\d+"', 'android:targetSdkVersion="35"', m), pkg, vc, vn),
-            'package': (aab, m, pkg + '.wrong', vc, vn),
+            'package': (aab, re.sub(r'package="[^"]+"', 'package="com.example.wrong"', m, count=1), pkg, vc, vn),
+            'appId': (aab, m, pkg + '.drift', vc, vn),
             'versionCode': (aab, m, pkg, str(int(vc) + 1), vn),
             'versionName': (aab, m, pkg, vc, vn + '.x'),
             '64-bit': (bad32, m, pkg, vc, vn),
