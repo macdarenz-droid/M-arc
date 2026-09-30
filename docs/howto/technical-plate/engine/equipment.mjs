@@ -304,6 +304,11 @@ export function line({ pts, cls = 'eq-line', z = 'back' } = {}, cam) { const { P
 // Catmull-Rom curve with curve: true. Carries its polygon, so a moving poly part is drawn in the Mistake view (LIB-25).
 export function poly({ pts, curve = false, cls = 'eq', z = 'back' } = {}, cam) {
   if (!Array.isArray(pts) || pts.length < 3) throw new Error(`poly: needs at least 3 points, got ${Array.isArray(pts) ? pts.length : pts}`);
+  const bad = pts.findIndex(p => !Array.isArray(p) || p.length !== 3 || !p.every(Number.isFinite));
+  if (bad >= 0) throw new Error(`poly: point ${bad} is not 3 finite numbers: ${JSON.stringify(pts[bad])}`);
+  // world-space area (Newell): an outline whose points coincide or lie on one line encloses nothing (edge-on views are fine)
+  const nv = pts.reduce((a, p, i) => { const q = pts[(i + 1) % pts.length]; return [a[0] + (p[1] - q[1]) * (p[2] + q[2]), a[1] + (p[2] - q[2]) * (p[0] + q[0]), a[2] + (p[0] - q[0]) * (p[1] + q[1])]; }, [0, 0, 0]);
+  if (Math.hypot(...nv) / 2 < 1e-8) throw new Error('poly: the points enclose no area (they coincide or lie on one line)');
   const { P } = viewKit(cam), ps = pts.map(P);
   return [item(cls, curve ? smooth(ps, true) : polygon(ps), z)];
 }
