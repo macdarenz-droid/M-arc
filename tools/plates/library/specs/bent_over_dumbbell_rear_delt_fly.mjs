@@ -32,8 +32,8 @@
 //   circular sweep instead of a chord.
 //  Dumbbells: neutral grip (palms facing), handle pointing along the trunk toward the head (world +z): the side
 //   view shows the dumbbell in profile, the front view (alt) the hex heads end-on.
-// Research card (docs/research/howto/cards/bent_over_dumbbell_rear_delt_fly.json, card v2, source-checked, not yet
-//  critic-verified): callouts = plate.checkpoints (Flat back c2, Soft elbows c2, Level arms c3); tempo = plate.tempo
+// Research card (docs/research/howto/cards/bent_over_dumbbell_rear_delt_fly.json, card v2, verified at
+//  claude/libht-research e2a70bc): callouts = plate.checkpoints (Flat back c2, Soft elbows c2, Level arms c3); tempo = plate.tempo
 //  (up 1 s, down 2 s, no pause, c10). The card's plate.view is FRONT (flag F6 for this side view). Re-checked with
 //  the card's layers: the front view still draws the hinged trunk as a band with no head, and its drawable Mistake
 //  (shrug, c3) moves the shoulders about 2 px there (render of __alt): no-go stands.

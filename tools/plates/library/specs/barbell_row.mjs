@@ -24,7 +24,7 @@
 //   front surface = shaft radius + clothing), elbows driven back past the back line (IK pole toward the back of the
 //   thorax, 35% out to the side: a moderate flare; with the bar on the lower chest the elbow flexes ~137 deg and the
 //   elbow sits just above the back line in the side view), shoulder blades squeezed back 4 cm.
-// Research card (docs/research/howto/cards/barbell_row.json, card v2, source-checked, not yet critic-verified):
+// Research card (docs/research/howto/cards/barbell_row.json, card v2, verified at claude/libht-research e2a70bc):
 //  callouts = plate.checkpoints (Flat back c4, Soft knees c3, Bar to belly c5); Mistake = plate.mistake (torso
 //  swings up to heave the bar, c7; tells from c7 and handlingMistakes[0]); tempo = plate.tempo (up 1 s, down 2 s,
 //  no pause, c13: two phases, no invented rest). The knee arc is worded, not numbered: the card says "slightly

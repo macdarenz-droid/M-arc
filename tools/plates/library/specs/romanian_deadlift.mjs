@@ -1,7 +1,7 @@
 // Romanian deadlift (barbell), side view, figure facing screen right.
 // View: side. Everything a coach checks (hips travelling back, soft knees, trunk angle, a neutral spine, the bar
 // sliding down the thighs over mid-foot) is sagittal.
-// Sources: research card docs/research/howto/cards/romanian_deadlift.json (card v2): claims c1-c7, c9, c10, c20
+// Sources: research card docs/research/howto/cards/romanian_deadlift.json (card v2, verified at claude/libht-research e2a70bc): claims c1-c7, c9, c10, c20
 //  (ace-romanian-deadlift, sl-romanian-deadlift, nasm-rdl, acsm2009). Callouts = the card's 3 plate.checkpoints
 //  (c2 Hips back, c3 Bar close, c5 Flat back); Mistake = plate.mistake (c7); tempo = plate.tempo (c20: 2 s down,
 //  1 s up, pause 0 so no hold phase).

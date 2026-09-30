@@ -3,7 +3,8 @@
 // standing leg are front-to-back positions (c3, c8). The card's top fault, the hip of the lifted leg rotating up
 // (c5), is a rotation the engine cannot draw (no pelvis yaw/roll), so the Mistake draws the card's drawable fault
 // (c7) and `pilot.drawableFault` raises flag F7.
-// Sources: research card docs/research/howto/cards/single_leg_romanian_deadlift.json (card v2): claims c1-c3,
+// Sources: research card docs/research/howto/cards/single_leg_romanian_deadlift.json (card v2,
+//  verified at claude/libht-research e2a70bc): claims c1-c3,
 //  c7-c10, c16 (ace-sl-rdl, sl-sl-rdl, gentilcore-slrdl, acsm2009). Callouts = the card's 3 plate.checkpoints
 //  (c8 Straight line, c10 Soft knee, c9 Mid-shin); Mistake = plate.mistake (c7); tempo = plate.tempo (c16: 2 s
 //  down, 1 s up, 1 s balanced pause at the top).

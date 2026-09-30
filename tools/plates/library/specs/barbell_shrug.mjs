@@ -1,7 +1,7 @@
 // Barbell shrug, side view, figure facing screen right. Small-motion zoom plate (enlarged upper-body view, flag F1).
 // View: SIDE (card plate.view; the census draws it side). Straight arms, a tall back and a straight-up shoulder path
 // read best side-on (c2, c4).
-// Sources: research card barbell_shrug (card v2, anchor ace-shrug):
+// Sources: research card barbell_shrug (card v2, anchor ace-shrug, verified at claude/libht-research e2a70bc):
 //  c1  palms-down grip, hands about shoulder width (grip);
 //  c2  knees slightly bent, hips straight, back tall; shoulders straight up toward the ears as high as possible
 //      (checkpoint "Back tall", start and end poses);

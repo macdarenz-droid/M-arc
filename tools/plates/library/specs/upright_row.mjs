@@ -1,10 +1,10 @@
 // Upright row (barbell), FRONT view. Census equipment "Cable / Barbell": the barbell is drawn (card variantLine).
 // View: FRONT (card plate.view). Grip width and elbow height against the shoulders are side-to-side and up-down
 // positions (c5, c6) that only the front view shows; the census draws it front (no F6).
-// Sources: research card upright_row (card v2, anchor lesmills-upright-row):
+// Sources: research card upright_row (card v2, anchor lesmills-upright-row, verified at claude/libht-research e2a70bc):
 //  c3  keep the bar close to the body and the elbows directly out to the sides (checkpoints "Elbows lead", "Bar close");
-//  c6  bar only to the lower ribs, elbows in line with shoulder level; hands about hip width (checkpoint "Shoulder
-//      height", end pose, grip);
+//  c6  bar only to the lower ribs, elbows at shoulder level (checkpoint "Shoulder height", end pose);
+//  c5, c7  grip about shoulder width or wider, never hands close together (verified card grip.width);
 //  c2  do not raise the upper arms above shoulder height (end pose);
 //  c5  pulling the bar up under the chin / elbows above the shoulders raises impingement risk (the Mistake);
 //  c7  wider grips (grip); c12 feet about shoulder width, upright (stance); c10 tempo 1-2 s up, 1-2 s down.
@@ -15,7 +15,7 @@
 //   26 cm apart (FOOT_X). The card says about shoulder width (c12); the engine's foot does not model eversion, and
 //   wider stances roll the sole off its contact, so the stance is narrower than the 45 cm shoulder width (not CARD).
 //   Knees 5 deg soft (KNEE_SOFT, root height solved from it): a natural stance, not from the card.
-//  Grip (CARD c6, c7): hands 50 cm apart (GRIP_X = 0.25, wider than the shoulder joints at +-0.227 m).
+//  Grip (CARD c5, c7): hands 50 cm apart (GRIP_X = 0.25, wider than the shoulder joints at +-0.227 m).
 //  Start: arms straight (IK reach at full arm length less 0.1 mm, elbow 2 deg), bar hanging in front of the thighs.
 //  End (CARD c6): elbows level with the shoulders. END_BAR_Y is SOLVED so the elbow joint centre is at the shoulder
 //   joint's height (check `elbow level`, measure expect 90 = upper arm horizontal in the front view); with the elbow
@@ -34,7 +34,7 @@
 //   against the hanging line at the figure's left shoulder, 90 deg = level (c6).
 //  Framing: the reference camera, as the lateral raise. Coverage 0.258 is over the F2 range (0.100-0.246): the 2.2 m
 //   bar and its plates span the plate width; zooming out would shrink the figure below the 8, so F2 is reported.
-// CARD: GRIP_X (c6, c7), END_BAR_Y (solved: elbows level, c6), tempo (c10). Unsourced: FOOT_X (narrower than the
+// CARD: GRIP_X (c5, c7), END_BAR_Y (solved: elbows level, c6), tempo (c10). Unsourced: FOOT_X (narrower than the
 //  card's shoulder width, engine limit), KNEE_SOFT, BAR_Z0, END_BAR_Z (the front view does not show depth).
 import { WINTER, REF, landmarksOf } from '../engine.mjs';
 
