@@ -319,11 +319,29 @@ export function bodyShapes(sk, cam, opts = {}) {
     push(`upper.${sd}`, grp('arm', sd), limb(S, E, px(ua), px(um), px(ub), umm));
     push(`elbowcap.${sd}`, grp('arm', sd), circle(E, px(RADII.elbowCap)));
     push(`fore.${sd}`, grp('arm', sd), limb(E, W, px(fa), px(fm), px(fb), fmm));
-    push(`fist.${sd}`, grp('arm', sd), circle(G, px(RADII.fist)));
+    if ((typeof opts.hand === 'object' ? opts.hand?.[sd] : opts.hand) === 'flat') push(`palm.${sd}`, grp('arm', sd), flatPalm(W, P(add(sk.W[sd], mul(sub(sk.G[sd], sk.W[sd]), WINTER.hand / REF.gripOff))), px));
+    else push(`fist.${sd}`, grp('arm', sd), circle(G, px(RADII.fist)));
   }
   return out;
 }
 export const GROUP_ORDER = { front: ['body', 'legs', 'arms'], side: ['far', 'trunk', 'near'] };
+// Open hand, palm flat (LIB-26; opts.hand 'flat' or { l, r }): wrist W to fingertips T (plate px), one closed outline
+// that starts on the forearm's distal circle (RADII.fore[2]), so it joins the forearm in the arm's union with no gap.
+// The palm side (toward screen-down) runs straight from the wrist to the knuckles at the forearm's distal radius, so a
+// hand laid on a surface touches it along one line; the fingers taper up to the tips. The back of the hand drops from
+// the wrist to the knuckles. Thickness in H: about 0.021 across the palm, 0.013 at the finger roots (3.7 / 2.3 cm at
+// 175 cm). Pointing at the camera (T within 3 cm of W on screen), it reads as the forearm's end-on circle.
+export function flatPalm(W, T, px) {
+  const r0 = px(RADII.fore[2]), L = Math.hypot(T[0] - W[0], T[1] - W[1]);
+  if (L < px(0.03 / 1.75)) return circle(W, r0);
+  const u = [(T[0] - W[0]) / L, (T[1] - W[1]) / L];
+  let n = [-u[1], u[0]]; if (n[1] > 0) n = [-n[0], -n[1]];              // n: the back of the hand (screen-up side)
+  const at = (t, h) => [W[0] + u[0] * L * t + n[0] * h, W[1] + u[1] * L * t + n[1] * h];
+  const back = [[0, r0], [0.25, px(0.006)], [0.55, px(0.003)], [0.8, px(0.001)], [0.96, -px(0.004)]];
+  const palm = [[0.96, -px(0.009)], [0.8, -px(0.012)], [0.55, -r0], [0.25, -r0], [0, -r0]];
+  const ps = [...back.map(([t, h]) => at(t, h)), at(1, -px(0.0065)), ...palm.map(([t, h]) => at(t, h)), at(-0.35 * r0 / L, 0)];
+  return { d: spline(ps), poly: ps };
+}
 
 // ---------- authoring helpers ----------
 /** Root (hip-joint centre midpoint) that puts the 'seat' landmark (buttock contact) on `point`, for a pelvis tilt. */
