@@ -18,7 +18,9 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..', '..', '..');
 const require = createRequire(join(ROOT, 'package.json'));
 
-export const CHROME_PATH = '/opt/pw-browsers/chromium';
+/** Same resolution as scripts/screenshot-gate.mjs's own browser launch: MARC_CHROMIUM if set, else Playwright's own
+ *  bundled browser. Never a hardcoded sandbox-only path (bug found via CI: CI runners don't have /opt/pw-browsers). */
+export const CHROME_PATH = process.env.MARC_CHROMIUM;
 export const IDS = ['lateral-raise', 'barbell-back-squat', 'pull-up', 'hanging-leg-raise', 'lat-pulldown', 'seated-cable-row', 'leg-press', 'machine-chest-press'];
 export const THEMES = ['silent-black', 'paper', 'midnight', 'ember', 'emerald'];
 /** Joint red-flag blocks each card must show (golden-B review 2026-09-30). */
@@ -48,7 +50,7 @@ export function cleanupScratchPage(dir) { rmSync(dir, { recursive: true, force: 
  */
 export async function openPage(pageFile, theme, { reduce = false, chromePath = CHROME_PATH } = {}) {
   const { chromium } = require('playwright');
-  const browser = await chromium.launch({ executablePath: chromePath });
+  const browser = await chromium.launch({ ...(chromePath ? { executablePath: chromePath } : {}) });
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, colorScheme: 'dark', reducedMotion: reduce ? 'reduce' : 'no-preference' });
   const woff2 = WOFF2();
   await ctx.route('**/*', r => {
