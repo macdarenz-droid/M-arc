@@ -15,8 +15,19 @@ export function checkC1(content: HowToContent, knownIds: ReadonlySet<string>): s
   content.posture.forEach((p, i) => checkZoomRef(`posture[${i}] (${p.key})`, p.zoom));
   content.feel.rows.forEach((r, i) => checkZoomRef(`feel.rows[${i}] (${r.key})`, r.zoom));
   content.mistakes.forEach((m, i) => checkZoomRef(`mistakes[${i}] (${m.key})`, m.zoom));
-  if (content.handling.archetype !== 'none' && content.handling.faults) {
-    for (const f of content.handling.faults) if (typeof f !== 'string') checkZoomRef(`handling.faults (${f.key})`, undefined);
+
+  // Review fix (Medium 8, PR #107): the previous check here called checkZoomRef(..., undefined) for every
+  // handling.faults object entry, which can never fail (HandFault has no `zoom` field to check - dead code, never
+  // caught a real drift). The real, previously uncaught reference is the other direction: a zoom's `hand.wrong` can
+  // name a fault by its string key (rather than embed a full HandFault object), and that key must exist in
+  // handling.faults - a shared registry entry a zoom references, not one it owns.
+  const faultKeys = new Set<string>();
+  if (content.handling.archetype !== 'none') for (const f of content.handling.faults) faultKeys.add(typeof f === 'string' ? f : f.key);
+  for (const z of content.zooms) {
+    if (z.kind !== 'hand' || !z.hand) continue;
+    for (const f of z.hand.wrong) {
+      if (typeof f === 'string' && !faultKeys.has(f)) bad.push(`C1: zooms.${z.key}.hand.wrong references fault "${f}", which is not in handling.faults`);
+    }
   }
 
   for (const z of content.zooms) if (z.feelRow !== undefined && !feelRowKeys.has(z.feelRow)) bad.push(`C1: zooms.${z.key} references feelRow "${z.feelRow}", which is not in feel.rows`);
