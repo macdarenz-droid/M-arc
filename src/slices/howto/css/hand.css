@@ -1,4 +1,4 @@
-/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/hands.mjs). inputsSha256=495b8bb4accb66bac4defa7f191da0dae7081b87df069b4a14d976b63f8fa8d7 */
+/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/hands.mjs). inputsSha256=c8cf844a4c87f973b5b136ec938fc30240f904d7cae12feb46ef37e404d19a67 */
 /* ht-tokens:start */
 .ht { --ht-r-4px: 4px; }
 /* ht-tokens:end */
@@ -79,4 +79,3 @@
 .ht .hw-sec h4:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .ht .fr-show, .ht .st-show { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--accent-text); font-size: var(--fs-small); font-weight: var(--fw-medium); }
 .ht .st-show { margin-top: 2px; }
-.ht .ht-look, .ht .ht-grip { margin-inline: -1px; }
