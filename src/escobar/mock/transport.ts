@@ -1,8 +1,10 @@
 /**
  * The gate's mock Worker (§23 EV5): loaded by dynamic import only when `marc.dev === '1'`,
  * never touches the network. It plays a fixed conversation shape (a preamble, two reads, a
- * lift_trend chart, a proposal, then an answer citing a real fact with chips) whose tool
- * calls run through the real executor, so citations and cards are genuine.
+ * lift_trend chart, a proposal with a crisis safety card, then an answer citing a real fact and
+ * a knowledge card, with chips) whose tool calls run through the real executor, so citations and
+ * cards are genuine. ESC-NC: the markers and the crisis card let the gate prove that no chip,
+ * marker, link or contact reaches the screen (owner, LR-23).
  */
 import type { AppState } from '@/core/models';
 import { GOALS } from '@/data/goals';
@@ -43,7 +45,10 @@ export function mockTransport(getState: () => AppState, delayMs = 25): Transport
         ]));
       } else if (step === 1) {
         const goal = GOALS.find(g => g.id !== s.goal)!.id;
-        events.push(...toolStep('', [{ id: `m_${Date.now()}_3`, name: 'propose_goal', input: { goal } }]));
+        events.push(...toolStep('', [
+          { id: `m_${Date.now()}_3`, name: 'propose_goal', input: { goal } },
+          { id: `m_${Date.now()}_4`, name: 'escalate', input: { kind: 'crisis', note: 'Gate check: this note never shows.' } },
+        ]));
       } else {
         // Cite the best e1RM fact from the history tool result.
         let cite = '';
@@ -58,7 +63,7 @@ export function mockTransport(getState: () => AppState, delayMs = 25): Transport
             } catch { /* not JSON */ }
           }
         }
-        const text = `${cite || 'Your recent sessions look steady.'} Keep adding a rep before adding load, and tap Apply if you want the goal change. ⟦chips: Why is my readiness amber? | Plan tomorrow | Show my records⟧`;
+        const text = `${cite || 'Your recent sessions look steady.'} Keep adding a rep before adding load, and enough protein helps you recover ⟦k:protein_intake⟧. Tap Apply if you want the goal change. ⟦chips: Why is my readiness amber? | Plan tomorrow | Show my records⟧`;
         for (let i = 0; i < text.length; i += 18) events.push({ t: 'text', d: text.slice(i, i + 18) });
         events.push({ t: 'final', content: [{ type: 'thinking', thinking: '', signature: 'mock' }, { type: 'text', text }], stop_reason: 'end_turn', usage: { input_tokens: 1500, output_tokens: 90, cache_read_input_tokens: 9000 }, model: 'claude-opus-5' });
       }
