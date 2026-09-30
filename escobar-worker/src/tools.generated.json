@@ -455,7 +455,7 @@
   },
   {
    "name": "lookup_knowledge",
-   "description": "Evidence cards on training, recovery, sleep and nutrition basics, with key numbers, an evidence rating and sources. Required before stating any general number; cite the card as ⟦k:id⟧.",
+   "description": "Evidence cards on training, recovery, sleep and nutrition basics, with key numbers. Required before stating any general number; cite the card as ⟦k:id⟧.",
    "input_schema": {
     "type": "object",
     "properties": {
