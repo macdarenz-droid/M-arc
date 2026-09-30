@@ -881,3 +881,14 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **Why reuse `discardSession` instead of a parallel branch**: an empty finish and a discard are the same outcome (`active: null`, history untouched, `todayOverride` kept, heart capture torn down via `discardHeartCapture`) — `discardSession` already does exactly this and is already covered by its own tests, so reusing it needs no new state-shape code to review.
   - **UI**: `Train.tsx`'s finish handler shows a toast ("Nothing logged, so nothing was saved") when `finishSession` returns `null`, then falls through to the normal Train screen (no active session) — the smallest change, reusing the app's existing `showToast` pattern rather than a new sheet/screen.
   **Why**: task BUG-28. No change to a normal finish (`exercises.length > 0` still takes the original path); `sessions`, `recoveryModel` and `todayOverride` are untouched on an empty finish.
+
+## Push hook, deny rules and resume settings (D-WF2, WF-2 builder, 2026-09-30)
+
+- **Decided**: `.claude/settings.json` gains the resume env vars (change 4), seven `permissions.deny` rules (changes 5 and 7) and a `PreToolUse` hook on `Bash` that runs `.claude/hooks/guard-before-push.sh`. The two owner-rules hooks are unchanged. `.claude/owner-rules.md` rule 1 gains "(Opus 5.5 / Sonnet 5; never Haiku or Fable)". Where the plan was silent:
+  - **The watch-file rules are anchored with `/`** (`Edit(/native/wear/**)` and so on). The docs say `/path` is relative to the settings file's project, while a bare `path` is relative to the session's current directory.
+  - **The fetch uses `+main:refs/remotes/origin/main`**, like git's default tracking refspec. Without the `+`, a changed `origin/main` is not updated, and the merge-base check reads the old ref. A test on the scratch copy caught this.
+  - **`git push --all` is also refused**, because it pushes a local `main`.
+  - **No `if` filter on the hook.** The script does the matching itself, so compound commands (`cd x && git push`) and `git -C dir push` are covered. A non-push command costs about 10 ms.
+  - **The "check skipped" note goes to the agent as `additionalContext`.** Stderr on exit 0 reaches only the debug log (hooks docs).
+  - **`askUserQuestionTimeout` and `CLAUDE_AFK_TIMEOUT_MS` are not set** (owner decision: the question timeout is dropped).
+  **Why**: every item was checked against code.claude.com/docs/en/hooks, /permissions, /settings-reference and /env-vars, and each was tested on a scratch copy (PR body).
