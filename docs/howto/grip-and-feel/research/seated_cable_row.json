@@ -1,0 +1,220 @@
+{
+  "id": "seated_cable_row",
+  "name": "Seated Cable Row",
+  "archetype": "Low-pulley seated horizontal pull with a close-grip V-handle (library id lib_seated_cable_row, pattern horizontal_pull; library primary mid_back, secondary lats, biceps, rear_delts). Handling archetypes from GENERAL.md: G7 (neutral pull handle: palms facing, handle across the fingers and upper palm, wrist level) plus G10 in its pull form (feet flat on a foot plate, knees soft, legs brace the body and do not push). There is no chest pad, so the lifter's own torso is the brace; keeping it still is the main safety job. Like the pulldown, this loads the wrist in a pull (the handle tries to open the fingers and curl the wrist forward), so the owner's pressing injury (wrist folded back under a push) does not happen the same way; the row's hand fault is the wrist curling toward the belly at the end of the pull.",
+  "grip": {
+    "type": "Neutral (palms facing each other) on the close-grip V-handle, also called the double-D or triangle handle. Close, neutral and elbows-in all keep the upper arms near the body, and a lower shoulder-abduction angle gave more lat activity and more peak force on the seated cable row than wider arm angles (de Abreu Vasconcelos 2023). A narrow grip gave more lat activity than a wide grip in a high-density EMG study (Padovan 2025, reported in the Di Fonza 2026 review). The review notes that grip width and arm angle were tested in separate studies, never together, so the close neutral handle is a reasonable starting point rather than a proven best setup.",
+    "width": "Fixed by the handle: hands a few centimetres apart, about a fist's width, directly in front of the middle of your body. The two grips on most V-handles are slightly angled; let your hands sit the way the handle sets them and keep the wrists straight to that angle.",
+    "thumb": "Thumb wrapped around the handle to meet your index finger (full, closed grip). Two reasons. First, it keeps the handle from sliding out to your fingertips as the set gets hard. Second, the cable is pulling the handle away from you the whole time, and at the stretched front of the rep a lost grip lets the stack slam and yanks your arms forward. The NSCA technique description for this exercise asks for a closed, neutral grip, and NSCA editors teach the thumb around the bar for all grips (Baechle and Earle). A thumb-on-top grip is sometimes used on pulls to take the forearms out; nobody has measured it on a row, and on a V-handle there is little room for it, so the card does not offer it. Hold on firmly without squeezing as hard as you can.",
+    "handContact": "Each grip of the V-handle lies across the base of your fingers, just below the knuckles, with the top edge of your palm behind it, like carrying two heavy shopping bags. Close your fingers round it and wrap your thumb. Keep it out of your fingertips: the grip fails there first and the wrist starts to curl. On a pull you don't need it jammed deep in the heel of your hand the way you do on a press. Your hands sit side by side, palms facing each other.",
+    "wrist": "Target: the back of your hand in a straight line with your forearm, or tipped back a little (about 0 to 20 degrees of extension), knuckles pointing at the weight stack from start to finish. In a grip dynamometer study, people squeezing as hard as they could chose about 35 degrees of wrist extension, and moving the wrist 10 to 15 degrees away from their chosen position in any direction cut grip strength (O'Driscoll 1992). That supports a slight backward tilt and no curling; it is grip data applied here by reasoning, not a row study. Limit: no curling. If your wrists bend forward and the handle rolls toward your belly or your fingertips at the end of the pull, your grip or forearms are doing the work; finish the rep and end the set, or lower the weight. Also keep the wrist from bending hard toward the little finger. The degree range is coaching consensus, not a measured injury limit. With a wrist that is already sore from pressing, this pull usually feels better than a press, but use a lighter weight and stop if it hurts."
+  },
+  "setup": [
+    "Clip the close-grip V-handle to the low cable. Set the weight lighter than you think for the first set, so you can check your position.",
+    "Sit on the bench facing the stack and put your feet on the foot plate, about hip width apart, whole foot flat, toes up.",
+    "Bend your knees a fair bit, lean forward from the hips and take the handle with both hands, thumbs wrapped. Bend your knees more rather than rounding your back to reach it.",
+    "Sit up tall with the handle, arms straight, and straighten your legs until your knees are only slightly bent. The weight should now hang off the stack, with the plates just clear of each other.",
+    "If the plates still touch, slide your hips back a little. If the handle pulls you forward before you've started, slide your hips forward a little. Your knees stay soft, never locked.",
+    "Before the first rep, set your torso upright, chest up, lower back in its normal curve, shoulders down away from your ears. Then pull."
+  ],
+  "posture": [
+    {
+      "checkpoint": "Feet flat on the plate, knees soft",
+      "detail": "Whole foot on the plate, feet hip width apart, knees slightly bent and staying at the same bend all set. Your legs brace you and stay still (NSCA technique description; UNMC coaching video)."
+    },
+    {
+      "checkpoint": "Torso upright and still",
+      "detail": "Torso close to vertical, chest up, lower back in its natural curve. The angle is the same at the start and finish of every rep; no rocking forward to reach or back to pull (ACE; NSCA technique description; UNMC)."
+    },
+    {
+      "checkpoint": "Handle ends at your belly",
+      "detail": "The handle finishes at the upper stomach, between the belly button and the bottom of the breastbone, with the cable level or nearly level (NSCA: touch the handle to the sternum or abdomen; UNMC: stomach)."
+    },
+    {
+      "checkpoint": "Elbows close to your sides, just past your ribs",
+      "detail": "Elbows travel back low and close to the body and stop just behind the torso. Arms close to the body favour the lats and give the most force (de Abreu Vasconcelos 2023; ACE)."
+    },
+    {
+      "checkpoint": "Shoulders down, blades together at the end",
+      "detail": "Shoulders stay away from the ears all set. At the end of the pull your shoulder blades come back toward each other, and on the way forward they slide apart under control. Let them move; a hard extra squeeze adds nothing measurable (ACE; Lehman 2004)."
+    },
+    {
+      "checkpoint": "Wrists straight, knuckles to the stack",
+      "detail": "Back of the hand in line with the forearm the whole way, handle at the base of the fingers, no curl at the end."
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Rocking the torso: leaning forward to reach, then throwing yourself back to pull.",
+      "whyItHurts": "Your lower back and body weight move the stack instead of your back muscles, and there is no chest pad to stop you. ACE says to avoid leaning back and arching the lower back. Low-back loading has been measured for other rows (the standing bent-over row gave the highest spine load of the rows tested, Fenwick 2009), but not for the seated cable row, so the lower-back risk here is coaching consensus. The swing also turns the rep into momentum, so your back gets less work.",
+      "fix": "Pick a weight you can pull with a still torso. Sit tall, keep the same angle all set, and move only your arms and shoulder blades.",
+      "cue": "Chest tall. Only your arms move."
+    },
+    {
+      "mistake": "Rounding the lower back at the front of the rep, or reaching for the handle with a round back.",
+      "whyItHurts": "At the stretched front, the stack pulls you forward and it is easy to let the lower back curl while it holds the weight. Repeated bending of the spine under load is the pattern that damaged discs in lab animal spines (Callaghan and McGill 2001, pig spines, up to 86,400 bending cycles, so it does not prove a gym risk). Coaches and NSCA technique guides keep the torso erect for this reason; for the seated cable row itself this is consensus.",
+      "fix": "Let your arms go long and your shoulder blades slide forward, but stop the torso at upright. Bend your knees more to pick up and put down the handle.",
+      "cue": "Arms go long, back stays tall."
+    },
+    {
+      "mistake": "Shrugging and flaring the elbows, pulling the handle up toward the chest or neck.",
+      "whyItHurts": "The tops of the shoulders and the neck take the load. Wider, higher elbows raised upper trapezius and rear-shoulder activity and cut peak force on the seated cable row (de Abreu Vasconcelos 2023). Researchers treat too much upper-trap work as a possible strain on the shoulder, though that link is not proven (Dos Anjos 2024, 8 men, wide-grip row). Dragging the elbows far behind the body with the shoulders rolling forward also pinches the front of the shoulder (ACE's 'elbows pass the sides' is the stopping point; the pinch itself is consensus).",
+      "fix": "Keep your shoulders down, elbows low and close to your ribs, and pull the handle to your belly. Stop once your elbows are just past your sides.",
+      "cue": "Elbows to your back pockets."
+    },
+    {
+      "mistake": "Curling the wrists and pulling with the hands.",
+      "whyItHurts": "A curled wrist weakens the grip (O'Driscoll 1992), so the forearms and biceps tire before your back does and take over the pull. Repeating that over many heavy sets is also a likely source of wrist and forearm soreness. The grip-strength part is measured; the soreness link is coaching consensus.",
+      "fix": "Handle at the base of your fingers, thumb wrapped, back of the hand in line with the forearm. Think of your hands as hooks and drive your elbows back. Lower the weight if your wrists still curl.",
+      "cue": "Hands are hooks. Pull with your elbows."
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "mid_back",
+        "plain": "Between your shoulder blades. This is where it should land most at the end of each pull, as your shoulder blades come together."
+      },
+      {
+        "muscleId": "lats",
+        "plain": "The sides of your back, from under your armpits down toward your waist. With elbows close to your body you should feel these working too."
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "rear_delts",
+        "plain": "The backs of your shoulders. They help pull the arms back."
+      },
+      {
+        "muscleId": "biceps",
+        "plain": "The front of your upper arms. They bend the elbows, so some work here is normal."
+      },
+      {
+        "muscleId": "brachialis",
+        "plain": "Under the biceps, near the elbow. It helps bend the arm, a bit more with palms facing each other."
+      },
+      {
+        "muscleId": "forearms",
+        "plain": "Your forearms hold the handle. Some grip tiredness on heavy sets is normal."
+      }
+    ],
+    "shouldNotTakeOver": [
+      {
+        "muscleId": "upper_traps",
+        "plain": "The tops of your shoulders and sides of your neck. A burn here means you're shrugging."
+      },
+      {
+        "muscleId": "lower_back",
+        "plain": "Your lower back holds you upright and may feel a bit tired. It should not ache. If it does, you're rocking or rounding."
+      },
+      {
+        "muscleId": "biceps",
+        "plain": "If your arms give out long before your back, your hands and arms are doing the pulling."
+      },
+      {
+        "muscleId": "forearms",
+        "plain": "If your grip quits first, the handle is out in your fingertips or your wrists are curling."
+      },
+      {
+        "muscleId": "front_delts",
+        "plain": "A pinch at the front of the shoulder means you're pulling your elbows too far back and letting the shoulders roll forward."
+      }
+    ],
+    "ifYouFeelItIn": [
+      {
+        "where": "Mostly your biceps and forearms",
+        "usuallyMeans": "You're pulling with your hands: squeezing hard, wrists curling, the handle sliding to your fingertips. Your arms always help on a row, so some biceps work is normal.",
+        "fix": "Set the handle at the base of your fingers, ease your grip a little and drive your elbows back. Thinking about your back helps a little in the first few reps and fades as the set gets hard (Fujita 2020), so get your hand and elbow position right first."
+      },
+      {
+        "where": "The tops of your shoulders and your neck",
+        "usuallyMeans": "You're shrugging, or your elbows are flaring out and up and the handle is going toward your chest or neck.",
+        "fix": "Pull your shoulders down first, keep your elbows low and close, and bring the handle to your belly. Wider, higher elbows shift the work into the upper traps (de Abreu Vasconcelos 2023)."
+      },
+      {
+        "where": "Your lower back",
+        "usuallyMeans": "You're rocking back and forth to move the weight, or rounding forward at the front of each rep.",
+        "fix": "Drop the weight, sit tall and keep the same torso angle every rep. Only your arms and shoulder blades move."
+      },
+      {
+        "where": "Mostly the backs of your shoulders and upper back, hardly any in the sides of your back",
+        "usuallyMeans": "Your elbows are drifting out away from your body.",
+        "fix": "Keep your elbows close to your ribs. If you want to train the upper back and rear shoulders on purpose, a wide-grip row is a separate exercise."
+      },
+      {
+        "where": "A pinch at the front of your shoulder",
+        "usuallyMeans": "You're pulling your elbows too far behind you and your shoulders are rolling forward at the end.",
+        "fix": "Stop when your elbows are just past your sides, and keep your chest up and shoulders back at the finish. If the pinch stays with light weight, stop and get it checked."
+      },
+      {
+        "where": "A pull behind your knees",
+        "usuallyMeans": "Your legs are too straight, so your hamstrings are tight and tug your pelvis and lower back into a round.",
+        "fix": "Bend your knees a bit more, or shuffle your hips closer to the foot plate."
+      },
+      {
+        "where": "Your wrist",
+        "usuallyMeans": "Your wrists are curling at the end of the pull or bending toward the little finger, or the wrist is already sore from pressing.",
+        "fix": "Keep the back of your hand in line with your forearm and the knuckles pointing at the stack. Go lighter while it's sore, and stop if it hurts."
+      }
+    ]
+  },
+  "copy": {
+    "feelLine": "You should feel this between your shoulder blades and down the sides of your back. If your arms are doing most of the work, relax your grip and pull with your elbows.",
+    "gripLine": "Hold the V-handle with your palms facing each other, the handle across the base of your fingers and your thumbs wrapped round it. Keep your wrists straight, knuckles pointing at the stack.",
+    "setupLine": "Feet flat on the plate, knees a little bent. Sit up tall with your arms straight and the weight just off the stack. Pull the handle to your belly and keep your torso still.",
+    "mistakeLine": "Don't rock back to move the weight. If you have to swing, it's too heavy. Drop it and keep your chest tall."
+  },
+  "zooms": [
+    {
+      "key": "hand",
+      "shows": "Side close-up of one hand on one grip of the V-handle, cut through the handle so the finger wrap shows, with the forearm line drawn from the elbow to the cable. The second hand sits just beyond it, palms facing.",
+      "correct": "Handle across the base of the fingers, just below the knuckles, the palm edge behind it. Fingers wrapped over, thumb wrapped round to meet the index finger. The back of the hand runs straight on from the forearm (or tipped back slightly), knuckles pointing at the stack, and the cable pulls in line with the forearm.",
+      "wrong": "Handle rolled out to the fingertips, wrist curled forward so the palm faces the belly, knuckles bunched tight from over-squeezing, a red arc at the wrist crease."
+    },
+    {
+      "key": "foot on platform",
+      "shows": "Side view of the foot, shin and knee against the foot plate.",
+      "correct": "Whole foot flat on the plate, toes up, feet hip width apart, knee slightly bent at the same angle through the set.",
+      "wrong": "Two faults side by side. Left: knee locked straight, a red tug line behind the knee. Right: only the toes on the plate with the heel hanging off, knee bouncing."
+    },
+    {
+      "key": "back line",
+      "shows": "Side view of the torso and pelvis at the front (stretched) and back (finish) of the rep, with a straight guide line along the spine and an angle mark against vertical.",
+      "correct": "Torso close to vertical in both frames, the angle unchanged, chest up, the low back in its natural curve. Only the arms and shoulder blades have moved between frames.",
+      "wrong": "Left: at the front, the lower back curled forward with the head chasing the handle. Right: at the finish, torso thrown back well past vertical with a motion arc showing the swing. A red mark on the lower back in both."
+    },
+    {
+      "key": "shoulder blades",
+      "shows": "Back view of the upper back at the finish of the pull, with the shoulder blades outlined.",
+      "correct": "Shoulders down away from the ears, shoulder blades drawn toward each other and a little down, a clear neck line, elbows low beside the ribs.",
+      "wrong": "Shoulders hunched up round the ears, elbows flared out high, upper traps shaded red."
+    },
+    {
+      "key": "finish position",
+      "shows": "Side view of the arm, handle and cable at the end of the pull.",
+      "correct": "Handle touching the upper belly, cable level, elbows low and just past the ribs, forearms in line with the cable, chest up.",
+      "wrong": "Handle dragged up to the chest with the elbows high, or elbows yanked far behind the body with the shoulder rolled forward; a red mark at the front of the shoulder."
+    }
+  ],
+  "sources": [
+    "de Abreu Vasconcelos CMW, Lopes CR, Almeida VM, Krause Neto W, Soares E. Effect of different grip position and shoulder-abduction angle on muscle strength and activation during the seated cable row. Int J Strength Cond 2023;3(1). https://doi.org/10.47206/ijsc.v3i1.190 (read at https://journal.iusca.org/index.php/Journal/article/view/190; n=21 recreationally trained men and women; pronated, supinated and neutral grips and 0 (arms at the sides), 30, 60 and 90 degree abduction; closer to 0 degrees gave more peak force and lat activity; closer to 90 degrees more upper and middle trapezius and posterior deltoid)",
+    "Padovan R et al. High-density surface electromyography excitation of prime movers in the narrow vs. wide grip seated row exercise. J Hum Kinet 2025. https://doi.org/10.5114/jhk/209550 (full text could not be opened, 503; results as reported in the Di Fonza 2026 review: n=14 trained men; narrow grip more lat activity, wide grip more upper, middle and lower trapezius, lateral deltoid, and erector spinae in the eccentric phase)",
+    "Padovan R et al. High-density surface electromyography excitation of prime movers across scapular positions in the seated row. J Funct Morphol Kinesiol 2025;11(1):6. https://pubmed.ncbi.nlm.nih.gov/41562724/ (n=14 trained men; fixed and free shoulder-blade versions gave comparable overall excitation; fixed gave more posterior deltoid concentric and more middle trapezius and lat eccentric)",
+    "Di Fonza D et al. Electromyographic analysis of latissimus dorsi activation during common resistance training exercises: a narrative review. J Funct Morphol Kinesiol 2026;11(3):315. https://pubmed.ncbi.nlm.nih.gov/42647355/ (full text via PMC: five seated-row studies, combined n about 81; narrower grip and lower shoulder abduction each linked to more lat EMG in separate studies, not tested together)",
+    "Lehman GJ, Buchan DD, Lundy A, Myers N, Nalborczyk A. Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study. Dyn Med 2004;3(1):4. https://pubmed.ncbi.nlm.nih.gov/15228624/ (isometric; seated row gave the highest middle trapezius and rhomboid activity of the four tasks and one of the highest lat-to-biceps ratios; actively retracting the shoulder blades did not change middle trapezius and rhomboid activity; exercise type did not change biceps)",
+    "Fujita RA et al. Mind-muscle connection: limited effect of verbal instructions on muscle activity in a seated row exercise. Percept Mot Skills 2020;127(5):925-938. https://pubmed.ncbi.nlm.nih.gov/32448047/ (n=20 novices, sets to failure; instruction raised lat EMG 15% and lowered posterior deltoid 14% in the first reps only; no effect by the final reps)",
+    "Dos Anjos FV et al. Assessing the feasibility of EMG biofeedback to reduce the upper trapezius muscle excitation during a seated row exercise. Appl Psychophysiol Biofeedback 2024;49(4):577-587. https://pubmed.ncbi.nlm.nih.gov/39177899/ (n=8; wide-grip seated row; upper trapezius often over-excited; biofeedback lowered it about 10%; the shoulder-injury link is the authors' rationale, not tested)",
+    "Saeterbakken A, Andersen V, Brudeseth A, Lund H, Fimland MS. The effect of performing bi- and unilateral row exercises on core muscle activation. Int J Sports Med 2015;36(11):900-5. https://pubmed.ncbi.nlm.nih.gov/26134664/ (n=15 trained men; free-weight bent-over row gave more erector spinae activity than machine row; bilateral cable and machine rows gave more erector and multifidus activity than one-arm versions; the abstract gives no direct free-weight vs cable-row comparison)",
+    "Fenwick CM, Brown SH, McGill SM. Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness. J Strength Cond Res 2009;23(2):350-8. https://pubmed.ncbi.nlm.nih.gov/19197209/ (n=7; standing bent-over row gave the largest lumbar spine load; seated cable row not tested)",
+    "Callaghan JP, McGill SM. Intervertebral disc herniation: studies on a porcine model exposed to highly repetitive flexion/extension motion with compressive force. Clin Biomech 2001;16(1):28-37. https://pubmed.ncbi.nlm.nih.gov/11114441/ (pig spine segments, very high cycle counts; mechanism only, not a gym risk figure)",
+    "Cronin JB, Jones JV, Hagstrom JT. Kinematics and kinetics of the seated row and implications for conditioning. J Strength Cond Res 2007;21(4):1265-70. https://pubmed.ncbi.nlm.nih.gov/18076253/ (n=8 rowers; peak force within the first 8% of the pull, so the start of the pull, from the stretched position, is the heaviest moment; used only to support the 'set the back before you pull' point)",
+    "O'Driscoll SW et al. The relationship between wrist position, grasp size, and grip strength. J Hand Surg Am 1992;17(1):169-77. https://pubmed.ncbi.nlm.nih.gov/1538102/ (people chose about 35 degrees of wrist extension for a maximal grip; moving 10 to 15 degrees away from it in any direction cut grip strength)",
+    "Ronai P. Do it right: the seated cable row exercise. ACSM's Health Fit J 2019;23(4):32-37. https://digitalcommons.sacredheart.edu/pthms_exscifac/36 (abstract only, full text paywalled: three-point base of support, feet on foot plates and buttocks on the bench, thought to impose lower lumbar compression and shear than the barbell row; a view, not a measurement)",
+    "ACE, Seated Row (machine version with chest pad; cues on torso, elbows and wrists carried over). https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/ (vertical torso; neutral wrist; elbows close to the sides; pull until the elbows pass the sides of the body; avoid leaning back or arching the lower back; don't let the shoulders round forward)",
+    "NSCA low-pulley seated row technique, via a study flashcard set (secondary, original NSCA text not free online). https://brainscape.com/flashcards/exercise-techniques-3136125/packs/4953113 (feet on the machine frame; closed, neutral grip; erect torso perpendicular to the floor; knees slightly flexed; touch the handle to the sternum or abdomen; keep an erect torso with the knees in the same slightly flexed position)",
+    "University of Nebraska Medical Center, Center for Healthy Living, cable row video transcript. https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt (feet hip width, knees slightly bent, chest tall, shoulders down and back; body still; elbows straight back; handle finishes at the stomach; return without leaning forward)",
+    "Baechle TR, Earle RW. Weight Training: Steps to Success (NSCA editors): 'Perform all grips with your thumbs around the bar.' https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Project research: grip/research/GENERAL.md (grip family G7, foot-plate family G10, wrist and thumb sections, S8 and S23) and grip/research/lat_pulldown.json (hand-contact and wrist wording kept consistent across pulls)."
+  ],
+  "evidenceNotes": "Reasonably supported by EMG (small samples, n=8 to 21): keeping the arms close to the body shifts work toward the lats and raises peak force, while wide, high elbows shift it into the upper and middle traps and rear shoulders (de Abreu Vasconcelos 2023; Padovan 2025 narrow vs wide, whose full text I could not open, so its numbers are taken from the Di Fonza 2026 review). The seated row gave the highest middle trapezius and rhomboid activity of the pulls Lehman 2004 tested, but that was isometric. Deliberately squeezing the shoulder blades did not raise mid-back activity in Lehman 2004 and fixed vs free blades gave similar overall activity (Padovan 2025 scapular study), so the card asks for the blades to move naturally with shoulders down, not for a hard squeeze. Mind-muscle cues help only in the first reps of a hard set (Fujita 2020). Feel map: mid_back and lats are both listed as primary; the app library lists lats as secondary. With a close neutral V-handle and elbows in, the data favour the lats at least as much as the mid back, so the supervisor may want to align the library entry; that is a data-file decision I did not make. Brachialis is listed from anatomy (neutral grip elbow flexion); no cited row study measured it. Muscle-id gaps: lower trapezius has no id and is folded into mid_back; teres major has no id and is folded into lats; erector spinae maps to lower_back; hamstrings exists as an id but is only mentioned in the 'pull behind your knees' line, not shimmered, since it is a stretch sensation, not a target. Consensus only: torso upright and still, knees slightly bent, handle to the upper belly, stopping when the elbows pass the ribs, the front-of-shoulder pinch explanation, and the hamstring-tug explanation (NSCA technique text via a secondary source, ACE machine-row page, UNMC coaching video). ACE's page is the chest-pad machine row, not the cable row; only its torso, elbow and wrist cues were carried over. Lower back: no study measures spine load on the seated cable row. Fenwick 2009 measured other rows; Saeterbakken 2015 found more lower-back muscle activity in the free-weight bent-over row than in the machine row, but its abstract gives no direct cable-row comparison; Ronai 2019 argues the three-point base lowers lumbar load but gives no measurement; the loaded-flexion disc mechanism comes from pig spines (Callaghan and McGill 2001) and does not prove a gym risk. Thumb: no study compares full and thumbless grips on a row; the wrapped thumb follows NSCA-editor guidance. Wrist: the 'no curl' rule rests on grip-strength data (O'Driscoll 1992) applied by reasoning; the 0 to 20 degree target is consensus, not an injury threshold. ExRx and physio-pedia could not be opened from this machine (see GENERAL.md), and the ACSM Ronai article full text was paywalled, so only its abstract is used. For the owner's sore wrist: a row pulls on the wrist rather than folding it back under a push, so it is usually better tolerated than pressing, but light weight and a stop-if-it-hurts rule apply, and pain that lasts needs a clinician (GENERAL.md section 6). Verifier notes (2026-09-30): brachialis is a real MuscleId in src/data/muscles.ts but has no drawn region in src/svg/bodyMuscles.ts, so it cannot shimmer on the current map; keep it as text only unless the map gains a region. All other feel ids (mid_back, lats, rear_delts, biceps, forearms, upper_traps, lower_back, front_delts, hamstrings) exist in both files. Di Fonza 2026 stresses that grip width and arm angle on the seated row were tested separately, not together."
+}

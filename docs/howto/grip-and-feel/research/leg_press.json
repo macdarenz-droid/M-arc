@@ -1,0 +1,211 @@
+{
+  "id": "leg_press",
+  "name": "Leg press (45 deg)",
+  "archetype": "G10 foot platform (the load goes through the feet) plus G-balance side handles (light full grip, no pulling or pushing). Plate-loaded 45 degree sled with side handles that also work the safety catches. Library entry: lib_leg_press.",
+  "grip": {
+    "type": "Balance grip on the two side handles next to the seat. Take whatever shape the machine has (horizontal or angled bars); on most sleds the palms face in or down. The hands hold you in the seat and work the catch levers. They do not push the load.",
+    "width": "Set by the machine: one handle beside each hip. Arms hang relaxed with a soft bend at the elbow, shoulders down and back on the pad.",
+    "thumb": "Wrapped, full grip, held lightly. You need the thumb round the handle to turn the catch levers in and out, and it keeps your hand on the handle if the sled jolts or a rep stalls. No thumbless grip here, and no white-knuckle squeeze. This is coaching consensus; no study compares thumb positions on the leg press.",
+    "handContact": "Across the fingers and the upper palm, the way you'd hold a shopping bag handle. Light pressure only. The hands never go on the knees or thighs.",
+    "wrist": "Level with the forearm, somewhere between straight and about 20 degrees back, whatever feels natural on that handle. Don't let it curl forward, and never bend it far back under load. The real danger on this machine is pushing on your knees with your hands at a sticking point: that folds the wrist back toward 90 degrees with part of the sled's weight going through it."
+  },
+  "setup": [
+    "Load the plates the same on both sides of the sled, with the catches locked and the sled resting on them.",
+    "If the back pad tilts, set it so you can sit deep in the seat and keep your lower back flat at the bottom of the rep. A more reclined pad changes the mix a little (more quad, less hamstring) but the glutes stay about the same.",
+    "If the machine has a depth selector (a pin or knob for the catch height), set it just below the lowest point you plan to reach, so a failed rep lands on the catch instead of your chest.",
+    "Sit all the way back: hips into the corner of the seat, tailbone and lower back flat on the pad, head resting on the pad.",
+    "Put your feet in the middle of the platform, about hip to shoulder width, whole foot flat, heels down, toes straight ahead or turned out a little. Pick the width that feels best. It changes very little about which muscles work.",
+    "Take the side handles lightly, thumbs wrapped round.",
+    "Press the sled up a few centimetres, turn the release handles out (on most machines) to free it, and check your knees still have a small bend.",
+    "Lower under control until your knees are at about 90 degrees, or stop earlier if your tailbone starts to lift. Breathe out as you push back up.",
+    "After the last rep, pause at the top, turn the handles back in, and let the sled settle on the catches before you take your feet off or let go."
+  ],
+  "posture": [
+    {
+      "checkpoint": "Tailbone and lower back flat on the pad",
+      "detail": "From the first rep to the last, including at the bottom. The drawing shows the lower back staying against the pad with no gap opening, and the pelvis sitting in the corner of the seat."
+    },
+    {
+      "checkpoint": "Whole foot flat, mid-platform",
+      "detail": "Heels down, the middle of the foot roughly in the middle of the plate, toes straight or slightly out. Draw a pressure line from the heel through the ball of the foot."
+    },
+    {
+      "checkpoint": "Knees follow the toes",
+      "detail": "Front view, looking at the lifter from behind the foot platform: each knee stays over the second or third toe on the way down and up, never falling inward."
+    },
+    {
+      "checkpoint": "About 90 degrees at the bottom",
+      "detail": "Side view: knee angle near 90 degrees, thighs clear of the ribs, tailbone still on the pad. This is the stop point for most people on a 45 degree sled."
+    },
+    {
+      "checkpoint": "Soft knees at the top",
+      "detail": "Legs almost straight with a small visible bend at the knee, so the muscles keep holding the weight at the top."
+    },
+    {
+      "checkpoint": "Hands light on the side handles",
+      "detail": "Arms relaxed beside the body, shoulders and head back on the pad, hands wrapped lightly round the handles."
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Going so deep that the tailbone peels off the pad and the lower back rounds",
+      "whyItHurts": "Once the knees come close to the chest, the pelvis rolls up off the seat and the lower back bends forward under the whole weight of the sled. The discs and the muscles of the lower back take load that should stay in the legs.",
+      "fix": "Stop the way down just before your tailbone lifts, which for most people is around 90 degrees at the knee. Set the depth catch to that point. Moving your feet a little higher on the platform lets you go deeper without the tuck.",
+      "cue": "Stop before your tailbone lifts."
+    },
+    {
+      "mistake": "Snapping the knees straight and locking them at the top",
+      "whyItHurts": "A knee snapped straight under heavy plates can keep going past straight and bend the wrong way. It's rare, but doctors have reported both knees dislocating during weight training and advise never locking or overextending the knees on any leg press.",
+      "fix": "Push until the legs are almost straight, keep a small bend, then start the next rep.",
+      "cue": "Keep a little bend at the top."
+    },
+    {
+      "mistake": "Feet too low with the heels lifting off the plate",
+      "whyItHurts": "With your heels up, you're pushing through the balls of your feet. The foot is less steady on the plate, the calves tend to cramp, and your knees bend further at the bottom for the same sled depth. Knee forces rise the more the knee bends.",
+      "fix": "Move your feet up so the whole foot sits flat in the middle of the plate, and push through the whole foot, heels included. If the heels still lift at the bottom, stop a bit higher.",
+      "cue": "Heels down, push through your whole foot."
+    },
+    {
+      "mistake": "Knees falling in, or hands pushing on the knees to finish a hard rep",
+      "whyItHurts": "Knees caving in twists the knee under load. Pushing on your knees with your hands bends the wrists right back with part of the sled's weight on them, the same fault that hurts wrists on presses.",
+      "fix": "Keep your knees over your toes the whole way. If you can't finish a rep without your hands, the weight is too heavy: take a plate off. Hands stay on the side handles.",
+      "cue": "Knees over toes, hands on the handles."
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "plain": "Front of your thighs, all the way down to just above the knee. This is the main muscle on the leg press."
+      },
+      {
+        "muscleId": "glutes",
+        "plain": "Your glutes, more when your feet sit higher on the platform."
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "adductors",
+        "plain": "Inner thighs, mostly near the bottom of the rep. That's normal. The big muscle there helps straighten your hips."
+      },
+      {
+        "muscleId": "hamstrings",
+        "plain": "A little in the back of the thighs, a bit more with your feet high and wide. Don't expect much there."
+      },
+      {
+        "muscleId": "calves",
+        "plain": "A little in the calves, more with your feet low on the plate. They only help hold the foot steady."
+      }
+    ],
+    "shouldNotTakeOver": [
+      {
+        "muscleId": "lower_back",
+        "plain": "Your lower back should stay quiet and flat on the pad. If you feel it working, you're going too deep."
+      },
+      {
+        "muscleId": "forearms",
+        "plain": "Your forearms and hands should barely work. A light hold on the handles is enough."
+      }
+    ],
+    "ifYouFeelItIn": [
+      {
+        "where": "Lower back",
+        "usuallyMeans": "You're going too deep and your tailbone is lifting off the pad, or the back pad is set too upright for you.",
+        "fix": "Stop higher, set the depth catch there, and try your feet a little higher on the plate. Recline the pad a notch if it adjusts."
+      },
+      {
+        "where": "Front of the knee or under the kneecap",
+        "usuallyMeans": "Feet too low with heels lifting, knees falling in, or knees snapping locked at the top.",
+        "fix": "Feet higher and flat, knees over your toes, stop just short of straight. If it still hurts with good form, drop the weight and get the knee checked."
+      },
+      {
+        "where": "Calves or arches, cramping",
+        "usuallyMeans": "You're pushing through your toes and the heels are coming up.",
+        "fix": "Heels down, push through the whole foot, and stop a bit higher if the heels still lift at the bottom."
+      },
+      {
+        "where": "Wrists or forearms",
+        "usuallyMeans": "You're squeezing the handles hard, or pushing on your knees with your hands to get a rep up.",
+        "fix": "Light grip, hands stay on the handles. If a rep needs your hands, take a plate off."
+      },
+      {
+        "where": "Only the front of the thighs, no glutes at all",
+        "usuallyMeans": "Feet low on the plate and a short range.",
+        "fix": "Move your feet up a little and use the full depth you can reach with your tailbone still down."
+      },
+      {
+        "where": "Groin or inner thigh, sharp pull at the bottom",
+        "usuallyMeans": "A very wide stance taken deep. Some inner-thigh work is normal. A sharp pull is your cue to change something.",
+        "fix": "Bring your feet in a bit and stop slightly higher."
+      },
+      {
+        "where": "Head, a pounding or dizzy feeling",
+        "usuallyMeans": "Holding your breath hard through heavy reps. Blood pressure on the double-leg press gets very high.",
+        "fix": "Breathe out as you push. Lighter weight, and stop if you feel dizzy."
+      }
+    ]
+  },
+  "copy": {
+    "feelLine": "You should feel this in the front of your thighs and your glutes. If your lower back is working, you're going too deep, so stop a little higher and keep your tailbone on the pad.",
+    "gripLine": "Hold the side handles lightly with your thumbs wrapped round. They keep you in the seat, so leave your hands there and never push on your knees.",
+    "setupLine": "Sit right back so your tailbone touches the pad. Feet in the middle of the platform, about hip width or a little wider, whole foot flat with heels down.",
+    "mistakeLine": "Keep a small bend in your knees at the top, and on the way down stop before your tailbone lifts."
+  },
+  "zooms": [
+    {
+      "key": "back on pad",
+      "shows": "Side view of the hips and lower back against the seat and back pad at the bottom of the rep.",
+      "correct": "Tailbone and lower back flat on the pad, knee at about 90 degrees, thighs clear of the ribs.",
+      "wrong": "Knees jammed toward the chest, pelvis rolled up off the seat, a red gap between the lower back and the pad, the lower back shimmering red."
+    },
+    {
+      "key": "foot on platform",
+      "shows": "Side view of the foot on the plate with the shin and knee, plus a small front view of both feet showing width and toe angle.",
+      "correct": "Whole foot flat in the middle of the plate, heel down, a pressure line running from heel to ball of the foot. Feet hip to shoulder width, toes straight or turned out a little.",
+      "wrong": "Feet low on the plate, heel lifted with a red gap under it, all the pressure on the ball of the foot, and the knee bent further forward over the toes."
+    },
+    {
+      "key": "knee at the top",
+      "shows": "Side view of the leg at the top of the rep.",
+      "correct": "Leg almost straight with a small visible bend at the knee.",
+      "wrong": "Knee locked straight or pushed past straight, with a red arc behind the knee."
+    },
+    {
+      "key": "knee tracking",
+      "shows": "Front view of both legs, looking at the lifter from behind the foot platform, mid-rep.",
+      "correct": "Each knee in line over the second or third toe.",
+      "wrong": "Knees falling in toward each other, a red line showing the knee inside the foot."
+    },
+    {
+      "key": "hand",
+      "shows": "Close-up of one hand on the side handle beside the hip, forearm and elbow in frame. Inset: the hands-on-knees fault.",
+      "correct": "Fingers and thumb wrapped lightly round the handle, the handle across the fingers and upper palm, wrist level with the forearm, arm relaxed with a soft elbow. No strain lines.",
+      "wrong": "Inset: both palms pushing on the knees, wrists bent back close to 90 degrees, a red arc at the wrist, and the force line from the knee passing behind the wrist."
+    },
+    {
+      "key": "safety catch",
+      "shows": "The release handle beside the seat and the catch under the sled, in two states with arrows.",
+      "correct": "Before the set: sled pushed up, handle turned out, catch clear. After the set: pause at the top, handle turned in, sled lowered onto the catch before the feet come off. A small note points to the machine's own instruction sticker, since release handles differ between brands.",
+      "wrong": "Feet taken off or knees bent with the handle still turned out, the sled sliding down with nothing under it."
+    }
+  ],
+  "sources": [
+    "ACE, Seated Leg Press: back and sacrum flat on the backrest, heels flat, knees about 90 degrees, lightly grasp handles, avoid moving the upper body, exhale while pushing, don't lock out, don't lift the butt or round the lower back, thighs must not compress the ribcage. https://www.acefitness.org/resources/everyone/exercise-library/154/seated-leg-press/ (Verifier got a 403 on this URL; content taken on trust from the first research pass.)",
+    "NASM, Leg Press: back and head against the backrest, hip-width feet, hands on handles and release the safety bars, no lockout, return to about 90 degrees; mistakes: knees caving, locking out, going far beyond 90 degrees, hips shifting. Also lists the hip adductors as a secondary muscle. https://www.nasm.org/resource-center/exercise-library/leg-press",
+    "Bells of Steel (manufacturer), How to use the leg press machine: depth selector, turn safety handles out to release, re-engage by pulling the handles in at the top and lowering onto the stoppers. https://bellsofsteel.us/blogs/content/how-to-use-the-leg-press-machine (Verifier could not open it: the site returned a bot check. Treat as unverified until someone checks it in a browser.)",
+    "Yessis M, The Leg Press (coach, biomechanics PhD): knees close to the chest increase lower-back rounding; 80 to 90 degrees at the knee; higher feet stress glutes and hamstrings more, lower feet the quads. https://doctoryessis.com/?p=2700",
+    "Escamilla RF et al. Effects of technique variations on knee biomechanics during the squat and leg press. Med Sci Sports Exerc 2001;33(9):1552-66. PMID 11528346. https://pubmed.ncbi.nlm.nih.gov/11528346/",
+    "Da Silva EM et al. Analysis of muscle activation during different leg press exercises at submaximum effort levels. J Strength Cond Res 2008;22(4):1059-65. PMID 18545207. https://pubmed.ncbi.nlm.nih.gov/18545207/",
+    "Martin-Fuentes I, Oliva-Lozano JM, Muyor JM. Influence of feet position and execution velocity on muscle activation and kinematic parameters during the inclined leg press exercise. Sports Health 2022;14(3):317-327. PMID 34085847. https://pubmed.ncbi.nlm.nih.gov/34085847/",
+    "Martin-Fuentes I, Oliva-Lozano JM, Muyor JM. Muscle activation and kinematic analysis during the inclined leg press exercise in young females. Int J Environ Res Public Health 2020;17(22):8698. PMID 33238589. https://pubmed.ncbi.nlm.nih.gov/33238589/",
+    "Marchetti PH et al. Backseat inclination affects the myoelectric activation during the inclined leg press exercise in recreationally trained men. J Strength Cond Res 2023;37(10):e541-e545. PMID 37184975. https://pubmed.ncbi.nlm.nih.gov/37184975/",
+    "Kinoshita M et al. Hypertrophic effects of single- versus multi-joint exercise: a direct comparison between knee extension and leg press. Med Sci Sports Exerc 2026;58(7):1566-1580. PMID 41630124. https://pubmed.ncbi.nlm.nih.gov/41630124/",
+    "Stien N, Saeterbakken AH, Andersen V. Electromyographic comparison of five lower-limb muscles between single- and multi-joint exercises among trained men. J Sports Sci Med 2021;20(1):56-61. PMID 33707987. https://pubmed.ncbi.nlm.nih.gov/33707987/",
+    "Larsen S et al. Knee flexion range of motion does not influence muscle hypertrophy of the quadriceps femoris during leg press training in resistance-trained individuals. J Sports Sci 2025;43(10):986-994. PMID 40113586. https://pubmed.ncbi.nlm.nih.gov/40113586/",
+    "Castonguay-Siu V, Taylor WR. Optimizing backrest geometry to minimize interfacial pressure concentrations in the mid-to-lumbar region during leg press resistance training. J Biomech Eng 2022;144(3):035001. PMID 34864904. https://pubmed.ncbi.nlm.nih.gov/34864904/",
+    "Barnds B et al. Simultaneous bilateral knee dislocation during weight training: a case report and review of the literature. JBJS Case Connect 2019;9(1):e5. PMID 30676343. https://pubmed.ncbi.nlm.nih.gov/30676343/",
+    "MacDougall JD et al. Arterial blood pressure response to heavy resistance exercise. J Appl Physiol 1985;58(3):785-90. PMID 3980383. https://pubmed.ncbi.nlm.nih.gov/3980383/",
+    "Project research GENERAL.md (wrist and thumb rules, handle-for-balance family, sources S1-S6, S13, S14): /tmp/claude-0/-home-user-M-arc/27922d25-fb43-5b1a-9d50-3c8a55370d3e/scratchpad/grip/research/GENERAL.md"
+  ],
+  "evidenceNotes": "Muscle ids used (all exist in src/data/muscles.ts and src/svg/bodyMuscles.ts): quads, glutes, adductors, hamstrings, calves, lower_back, forearms. Library entry lib_leg_press lists primary quads and glutes, secondary hamstrings and calves; this card adds adductors as secondary based on Kinoshita 2026. Gaps in the id set: the knee joint and kneecap tendon have no muscle id (the body map has knee shapes with muscle null), so knee pain is handled only in ifYouFeelItIn and the knee zooms, not the shimmer. There is no separate id for the vastus medialis (the inner teardrop), so it is covered by quads. The adductors id is labelled 'Inner thighs'; the muscle measured by Kinoshita is the adductor magnus, which fits that area.\n\nMeasured (DATA): Vastus medialis showed the highest EMG on the inclined leg press, followed by the other quad heads and glute med, and stance width (100 vs 150% hip width) and toe angle (0 vs 45 deg) made no EMG difference (Martin-Fuentes 2020, 2022; small samples of 10 to 20 trained adults). Escamilla 2001 also found no difference between toes straight and turned out, more hamstring activity with a wide stance and high feet, no ACL force in any variant, and knee forces rising as the knee bends further; knee forces did not differ between high and low foot placement. Da Silva 2008 (14 women): high feet gave more glute max activity, low feet more quad and calf activity. Marchetti 2023: a more reclined back (125 vs 90 deg seat-to-back angle) gave more vastus lateralis and less biceps femoris EMG, with no glute difference. Kinoshita 2026 (MRI, 12 weeks): the leg press grew the vasti, glute max (+15%) and adductor magnus (+6%) but not the rectus femoris. Stien 2021: the leg press gives only modest hamstring EMG compared with a single-joint hamstring move. Larsen 2025: quad growth was similar with deep (about 150 deg) and moderate (about 100 deg) knee range, so stopping at the depth where the tailbone stays down costs little for quad growth. MacDougall 1985: the double-leg press produced the highest blood pressures of the lifts tested (mean 320/250 mmHg near failure), partly from breath holding; that supports the breathe-out cue.\n\nConsensus only (CONSENSUS): the 90 degree bottom position, keeping the tailbone and lower back on the pad, no lockout, heels flat and knees over toes (ACE, NASM, Yessis). No study was found that measured lumbar flexion or disc load at the bottom of a leg press; the lower-back warning rests on coaching bodies and on mechanics. Castonguay-Siu 2022 shows the lower-back pad takes real pressure during leg presses but did not measure spinal bending. The knee-lockout risk is supported only by a single case report (Barnds 2019, bilateral knee dislocation, very rare) plus coaching consensus. Knee valgus as a leg-press injury cause is NASM consensus, not leg-press data. The safety-catch steps come from a manufacturer guide and NASM; machines differ, so the app should say 'on most machines' and point to the machine's own placard.\n\nWeak (WEAK): nothing measures grip, thumb or wrist on the leg press handles. The grip rules (light full grip, level wrist, never push on the knees) come from ACE's 'lightly grasp' and 'avoid any movement in the upper extremity', plus the general wrist mechanics in GENERAL.md. 'Hands pushing on knees' as a common fault is coaching observation, not counted in any study. The 'you'll feel it in X' lines are area-level only; EMG amplitude is not the same as what a person feels, so the copy uses plain areas and no numbers. ExRx and physio-pedia could not be reached from this machine, so neither is cited.\n\nVerifier pass (2026-09-30), what changed and why:\n- All 11 PubMed IDs were checked against their real titles and abstracts through the NCBI E-utilities API. NASM and Yessis pages were opened and support the claims cited to them. ACE (403) and Bells of Steel (bot check) could not be opened by the verifier.\n- Feet-low mistake: Escamilla 2001 found no difference in knee forces between high and low foot placement, so the old line 'the knee joint and the tendon under the kneecap take more of the load' overstated it. The fault is now the heel lift: pressure on the forefoot, a less steady foot, and more knee bend at the same sled depth (knee forces rise with knee bend, Escamilla 2001). The foot zoom's red mark moved from the knee to the lifted heel.\n- Lockout: the Barnds 2019 abstract does not say the case happened on a leg press; it says 'during weight training' and advises avoiding locking and hyperextension 'during any type of leg press or squatting exercise'. Copy now says exactly that. The old claim that a locked knee loads the ligaments was dropped: a straight knee loads the joint surfaces, the ligament risk comes from going past straight.\n- Quads feel line: 'most of all just above and to the inside of the kneecap' leaned on the highest normalised vastus medialis EMG (Martin-Fuentes). Normalised EMG amplitude does not tell you where a person feels the work, so the line is now area-level.\n- Glutes 'more toward the bottom of each rep': no cited study measured glute activity by depth, so it was removed. 'More with feet higher' stays (Da Silva 2008).\n- Adductors 'with a wider stance': no cited study measured adductors against stance width, so it was removed. 'Mostly near the bottom' rests on mechanics (the adductor magnus extends the hip, and the hip is most bent at the bottom) [MECH]. NASM lists the hip adductors as secondary.\n- Yessis teaches holding the breath on the way down and breathing out past the sticking point. The card keeps the simpler 'breathe out as you push' for a general audience, given MacDougall 1985 (5 experienced bodybuilders, mean peak 320/250 mmHg on the double-leg press near failure).\n- Larsen 2025 ranges confirmed: about 5 to 100 degrees versus each person's maximum, 5 to 154 (plus or minus 8) degrees, unilateral leg press, 23 trained adults, 8 weeks.\n- The wrist field no longer refers to the owner or GENERAL.md in its text (it may be shown to users); the wrist mechanics come from GENERAL.md section 1.\n- Zooms reordered by risk: back on pad first (lower-back rounding is the most common serious fault on this machine), the hand zoom kept with one clear wrong (hands pushing on the knees), and the second wrong (white-knuckle, curled wrist) dropped because it is rare here and crowds the inset."
+}

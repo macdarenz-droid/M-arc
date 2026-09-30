@@ -1,0 +1,207 @@
+{
+  "id": "barbell_back_squat",
+  "name": "Barbell Back Squat",
+  "archetype": "G4 (barbell on the back: the back carries the load, the hands only pin the bar), plus the free-standing foot and knee rules (whole foot on the floor, knees follow the toes). No pad contact. See GENERAL.md sections 1.2, 2.3 and 3.",
+  "grip": {
+    "type": "Overhand (pronated) grip, both hands even on the bar. The NSCA teaches a closed grip (thumb wrapped) for the back squat. The bar rests on your upper back and the hands do not hold it up. Their job is to pin it in place.",
+    "width": "A little wider than your shoulders (NSCA, ACE, Human Kinetics). Within that, many coaches have you go as narrow as your shoulders comfortably allow, so the forearms stay close to vertical (Barbell Logic, a low-bar article). Too wide, and your wrists tend to bend sideways and your upper back loosens. Too narrow for stiff shoulders, and your wrists fold back and your elbows and shoulders strain. Use the knurling or the rings on the bar to put both hands in the same spot every set. No study sets an ideal width; this is coaching consensus.",
+    "thumb": "Default: thumb wrapped around the bar (closed grip, the NSCA default for barbell work). Allowed option: thumb over the bar, on the same side as the fingers, if wrapping the thumb makes your wrist fold back. Barbell Logic teaches this for the low-bar squat: the bar pushes into the heel of the palm, and wrapping the thumbs can over-bend the wrist and cause wrist pain or tendinitis. The thumbless grip carries far less risk here than on a bench press, because the bar sits on your back and cannot roll out of your hands onto your face or neck. A failed rep is caught by the safety pins, so the thumb has no safety job in this lift. If your wrist is already sore, try thumb-over with the bar in the heel of your palm and keep whichever version holds the wrist straighter.",
+    "handContact": "The bar sits low in the palm, across the heel of the hand, directly in line with the forearm. The fingers close over the top to keep it there but take no weight. The wrong version is the bar up in the fingers with the hand bent back under it like a waiter's tray; then the wrists and elbows are propping the bar up. Also avoid the opposite: hands draped over the top of the bar with the wrists bent forward (Barbell Logic).",
+    "wrist": "Target: straight, in line with the forearm, with at most a small backward tilt (roughly 0 to 15 degrees) and no sideways bend toward the thumb or the little finger. Limit: if the back of your hand folds toward your forearm, or you feel the wrist taking weight, your hands are holding the bar up. Pull your elbows down, bring the bar back into the heel of your palm, and adjust the grip width. Sources disagree here: Human Kinetics teaches an 'extended wrist grip (as when accelerating on a motorcycle)' with the elbows down, while Barbell Logic warns that over-extension causes wrist pain. The card allows a small tilt and draws the line where the wrist starts carrying load. These angles are coaching consensus; no study has measured wrist load in the back squat."
+  },
+  "setup": [
+    "Set the bar in the rack hooks a little below shoulder height, about armpit level (ACE: 'just below shoulder-height'; Human Kinetics: 'slightly below shoulder-height'). You should be able to unrack it with a small knee bend and put it back without going up on your toes.",
+    "Set the safety pins or straps just below the lowest point of your squat, so a missed rep lands on them and not on you (NSCA: bar-on-back lifts go in a power rack with the crossbars at the right height). Check by squatting under an empty bar.",
+    "Load the plates evenly on both sides and put collars on.",
+    "Grip the bar with both hands the same distance from the centre, a little wider than your shoulders, bar low in the heel of each palm.",
+    "Duck under the bar and set it high on your back, on the meaty ridge of your upper traps just below the bony bump at the base of your neck. Keep your feet directly under the bar.",
+    "Squeeze your shoulder blades together and pull your elbows down so the bar sits on a tight muscle shelf. Wrists straight.",
+    "Take a big breath into your belly, brace, and stand straight up to lift the bar off the hooks.",
+    "Take two or three short steps back. Feet about hip to shoulder width apart, or a little wider if that lets you sit deeper with your heels down, toes turned out a little so your knees can follow them (Human Kinetics, ACE).",
+    "Breathe in, brace, and start the set. Breathe out near the top of each rep, once you're past the hardest part. Rack it by walking forward until the bar touches the uprights, then lower it onto the hooks.",
+    "If you get stuck at the bottom, sit down under control and let the bar settle on the safety pins, then slide out from under it. Don't try to throw it off your back. Coaching consensus."
+  ],
+  "posture": [
+    {
+      "checkpoint": "Bar on the upper traps",
+      "detail": "High-bar position: the bar sits across the top of the trapezius, just above the shoulder blades and below the bony bump at the base of the neck (NSCA: 'at the base of the neck, just above the posterior deltoids'). Centred left to right. Never on the neck bones themselves."
+    },
+    {
+      "checkpoint": "Hands just outside the shoulders, wrists straight, elbows down",
+      "detail": "From behind: hands evenly placed a little wider than the shoulders, forearms roughly vertical, elbows pointing down and slightly back, pulling the bar into the traps (Human Kinetics: 'elbows pointed down'). The wrist forms a nearly straight line from knuckles to forearm."
+    },
+    {
+      "checkpoint": "Bar over the middle of the foot",
+      "detail": "From the side: a vertical line from the bar passes through the middle of the foot at the top, the bottom and all the way between. The body shifts to keep its centre of mass over the feet for balance (Glassbrook 2017); the mid-foot line itself is coaching consensus."
+    },
+    {
+      "checkpoint": "Feet flat, knees follow the toes",
+      "detail": "From the front: feet about hip to shoulder width or a little wider, toes turned out a little, whole foot on the floor with the heels down (Human Kinetics: 'keep the heels flat on the ground'). At the bottom each knee points the same way as its foot and may travel forward past the toes (Fry 2003)."
+    },
+    {
+      "checkpoint": "Chest up, back flat, head in line",
+      "detail": "From the side: the torso leans forward but the back stays flat from the hips to the base of the neck. Eyes on a fixed point ahead, neck in line with the spine, head neither tipped back nor dropped (Human Kinetics). High-bar keeps the torso more upright than low-bar (Glassbrook 2017)."
+    },
+    {
+      "checkpoint": "Depth: hip crease at or below the top of the knee",
+      "detail": "From the side: at the bottom the crease of the hip is level with or below the top of the knee (ACE: 'hips are below the knees'), as long as the back stays flat. In a 10-week training study, full squats grew the glutes and inner thighs more than half squats (Kubo 2019), and deep squats grew the front thigh more than shallow ones in another (Bloomquist 2013)."
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Holding the bar up with the hands: bar in the fingers, wrists folded back, elbows shoved up or far back.",
+      "whyItHurts": "Part of the bar's weight goes through the wrists and elbows instead of the back. Coaches link this to sore wrists and to tendinitis on the inside of the elbow (Barbell Logic). A chiropractor-coach source says a too-wide grip also bends the wrists sideways (Schulz; page could not be re-opened in review). Coaching consensus; no study has measured it.",
+      "fix": "Put the bar back in the heel of your palm, pull your elbows down, and move your hands in or out until your wrists sit straight. Try thumb-over if wrapping the thumb bends your wrist back.",
+      "cue": "Your back holds the bar. Your hands just keep it there."
+    },
+    {
+      "mistake": "Bar sitting on the neck bones instead of the upper traps.",
+      "whyItHurts": "The bar presses on the bony bump at the base of the neck, which bruises and aches, and the bar tends to roll or slide during the set. Coaching consensus.",
+      "fix": "Squeeze your shoulder blades together before you get under the bar so the traps bunch up into a shelf, then set the bar just below the bony bump.",
+      "cue": "Squeeze your shoulder blades, then set the bar on the muscle."
+    },
+    {
+      "mistake": "Knees caving in, or heels lifting off the floor.",
+      "whyItHurts": "The knees twist inward under load and the weight rolls onto the toes, so the knees take strain the hips should share and the lift becomes unstable. Coaching consensus: Human Kinetics teaches knees in line with the thighs and feet and heels flat.",
+      "fix": "Turn your toes out a little and push your knees out over them. Keep your whole foot, heels included, pressing into the floor. Drop the weight if the knees still cave.",
+      "cue": "Knees follow your toes, heels stay down."
+    },
+    {
+      "mistake": "Hips shooting up first out of the bottom, or the lower back rounding at the bottom.",
+      "whyItHurts": "The squat turns into a bent-over good morning with the load far in front of the hips, so the hips and lower back take much more of it. In a related lab setup where the knees were blocked from moving forward, hip torque rose about tenfold and the trunk leaned further forward (Fry 2003, n=7). A held breath raises pressure inside the trunk, which may help keep the spine stiff (Hackett 2013); a lost brace lets it bend under load.",
+      "fix": "Breathe in and brace before every rep, hold it through the hardest part, then breathe out near the top. Let your chest and hips rise together. Only squat as deep as your back stays flat, and go lighter until it does. If you have high blood pressure, don't hold your breath for long; breathe out steadily on the way up.",
+      "cue": "Chest and hips come up together."
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "plain": "The front of your thighs. They straighten your knees and do most of the work."
+      },
+      {
+        "muscleId": "glutes",
+        "plain": "Your glutes, more and more as you go deeper. You should feel them working hard at the bottom and on the way up."
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "adductors",
+        "plain": "Your inner thighs, near the bottom of a deep squat. They help drive you up out of the bottom."
+      },
+      {
+        "muscleId": "lower_back",
+        "plain": "The muscles along your lower spine hold your back flat. A steady tightness there is normal."
+      },
+      {
+        "muscleId": "core",
+        "plain": "Your trunk holds the brace, like a tight belt around your middle."
+      },
+      {
+        "muscleId": "hamstrings",
+        "plain": "The back of your thighs, only a little. They steady the hips but do little of the lifting."
+      }
+    ],
+    "shouldNotTakeOver": [
+      {
+        "muscleId": "lower_back",
+        "plain": "Your lower back keeps your spine still while your legs lift. If it aches more than your thighs, your hips are rising first or your back is rounding."
+      },
+      {
+        "muscleId": "forearms",
+        "plain": "Your forearms and wrists should do almost nothing. If they ache, your hands are holding the bar up."
+      },
+      {
+        "muscleId": "upper_traps",
+        "plain": "The bar sits on your upper traps, so you'll feel pressure there. Sharp pain on the bony bump at the base of your neck means the bar is too high."
+      }
+    ],
+    "ifYouFeelItIn": [
+      {
+        "where": "Wrists, or the inside of your elbows",
+        "usuallyMeans": "Your hands are holding the bar up. The bar is up in your fingers, the wrists are folded back, or the grip is too narrow or too wide for your shoulders.",
+        "fix": "Put the bar in the heel of your palm, pull your elbows down, and move your hands until your wrists sit straight. Try your thumb over the bar if that keeps the wrist straighter. If the pain lasts more than a week or two, or you get swelling, numbness or a weak grip, get it checked."
+      },
+      {
+        "where": "Lower back more than your thighs",
+        "usuallyMeans": "Your hips rise faster than your chest out of the bottom, your brace goes soft, or you're going deeper than your back can stay flat.",
+        "fix": "Brace before every rep, let your chest and hips come up together, and stop the squat where your back is still flat. Take some weight off."
+      },
+      {
+        "where": "Front or inside of the knees",
+        "usuallyMeans": "Your knees are caving in, your heels are lifting, or you're dropping and bouncing hard at the bottom.",
+        "fix": "Push your knees out over your toes, keep your heels down, and lower yourself under control. Knees going a little past your toes is fine."
+      },
+      {
+        "where": "Back of your neck",
+        "usuallyMeans": "The bar is sitting on the bony bump at the base of your neck instead of the muscle below it.",
+        "fix": "Squeeze your shoulder blades together before you get under the bar and set it a little lower, on the meaty part of your traps."
+      },
+      {
+        "where": "Only the front of your thighs, nothing in your glutes",
+        "usuallyMeans": "You're stopping well above parallel.",
+        "fix": "Go deeper, to where your hip crease is at or just below the top of your knee, as long as your back stays flat. A slightly wider stance may also bring your glutes in a bit more."
+      }
+    ]
+  },
+  "copy": {
+    "feelLine": "You should feel this in the front of your thighs and your glutes, with your inner thighs helping near the bottom. If your lower back is doing more than your legs, go lighter and let your chest and hips rise together.",
+    "gripLine": "Hands a little wider than your shoulders, bar in the heel of your palm, wrists straight, elbows down. Your back holds the bar. Your hands just keep it there.",
+    "setupLine": "Set the bar a little below shoulder height and the safety pins just below your lowest squat. Get under it, put the bar on the meaty part of your upper traps, and stand straight up with it.",
+    "mistakeLine": "If your wrists or elbows ache after squats, your hands have been holding the bar up. Pull your elbows down and let the bar sit on your back."
+  },
+  "zooms": [
+    {
+      "key": "hand",
+      "shows": "Side close-up of one hand on the bar behind the shoulder, with a line drawn down the forearm. A small inset shows the thumb-over option.",
+      "correct": "Bar low in the palm on the heel of the hand, fingers closed lightly over it, thumb wrapped (inset: thumb resting beside the index finger). Knuckles, wrist and forearm in one nearly straight line; forearm roughly vertical, elbow pointing down. The load arrow goes into the upper back and stays off the arm.",
+      "wrong": "Bar up in the fingers, hand bent back under it like a waiter's tray, wrist folded 40 degrees or more with a red arc at the wrist, elbow shoved up behind the body. A red load arrow runs down through the wrist and elbow."
+    },
+    {
+      "key": "bar_on_back",
+      "shows": "Back view and a side cut-away of the shoulders and neck, showing where the bar rests.",
+      "correct": "Bar across the upper traps, just below the bony bump at the base of the neck, centred, shoulder blades squeezed so the traps bunch up into a shelf. Elbows down.",
+      "wrong": "Bar sitting on the neck bone with a red pressure mark, shoulder blades loose, elbows flared up, bar tilted to one side."
+    },
+    {
+      "key": "feet_and_knees",
+      "shows": "Front view of the legs at the bottom of the squat, with both feet flat on the floor.",
+      "correct": "Feet about hip to shoulder width or a little wider, toes turned out a little, heels flat. Each knee points over its second or third toe.",
+      "wrong": "Knees collapsing toward each other with red arrows, heels lifted off the floor, weight rolled onto the toes."
+    },
+    {
+      "key": "bar_over_midfoot",
+      "shows": "Side view of the full body at the top and at the bottom, with a vertical line from the bar to the floor.",
+      "correct": "The line from the bar drops through the middle of the foot at both the top and the bottom. Back flat, chest up, head in line with the spine.",
+      "wrong": "Hips shot up with the chest down (good-morning shape), the bar line in front of the toes, lower back rounded with a red highlight."
+    },
+    {
+      "key": "depth",
+      "shows": "Side view of the hip and knee at the bottom, with a dotted line across the top of the knee.",
+      "correct": "The hip crease at or just below the top of the knee, back still flat, heels down.",
+      "wrong": "Two wrong versions: stopping far above parallel (marked 'short'), and going so deep that the lower back tucks under and rounds (red highlight on the lower back)."
+    }
+  ],
+  "sources": [
+    "ACE Exercise Library, Back Squat: https://www.acefitness.org/resources/everyone/exercise-library/11/back-squat/",
+    "Broussal-Derval A. Squat technique. Human Kinetics, 2019 (rack slightly below shoulder height; hands slightly wider than shoulder width; bar on top of the trapezius across the posterior deltoids; 'extended wrist grip' with elbows pointed down; feet between hip and shoulder width, toes slightly out; knees in line with the feet; heels flat; head in line with the spine). Re-read in review: https://us.humankinetics.com/blogs/strength-conditioning-fitness/squat-technique",
+    "NSCA Essentials of Strength Training and Conditioning, exercise technique chapter, via study summary (closed grip definition; bar-on-back lifts inside a power rack with crossbars at the right height; exhale through the sticking point). Secondary source, paraphrase: https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/",
+    "NSCA back squat steps as quoted by NFPT (closed pronated grip slightly wider than shoulder width; bar at the base of the neck just above the posterior deltoids; toes slightly out so the knees track over the feet). Read via search summary only, the page itself returned 503: https://archive25.nfpt.com/?p=22119",
+    "Reynolds M. Elbow Pain While Squatting? Fix Your Squat Grip. Barbell Logic (low-bar coach source, no data: grip as narrow as possible with vertical forearms; thumbless grip with the bar in the heel of the palm; supporting the bar with the hands linked to medial elbow tendinitis). Re-read in review: https://barbell-logic.com/?p=4521",
+    "Schulz DS. Low Bar Squat Wrist Pain: Reasons and Solutions. Torokhtiy (chiropractor, coach source, no data). Page returned 429 during review, so the sideways-bend claim was not re-verified: https://store.torokhtiy.com/blogs/guides/low-bar-squat-wrist-pain",
+    "Glassbrook DJ et al. A Review of the Biomechanical Differences Between the High-Bar and Low-Bar Back-Squat. J Strength Cond Res 2017;31(9):2618-2634. https://pubmed.ncbi.nlm.nih.gov/28570490/",
+    "Wretenberg P, Feng Y, Arborelius UP. High- and low-bar squatting techniques during weight-training. Med Sci Sports Exerc 1996;28(2):218-24. https://pubmed.ncbi.nlm.nih.gov/8775157/",
+    "Caterisano A et al. The effect of back squat depth on the EMG activity of 4 superficial hip and thigh muscles. J Strength Cond Res 2002;16(3):428-32. https://pubmed.ncbi.nlm.nih.gov/12173958/",
+    "Kubo K, Ikebukuro T, Yata H. Effects of squat training with different depths on lower limb muscle volumes. Eur J Appl Physiol 2019;119(9):1933-1942. https://pubmed.ncbi.nlm.nih.gov/31230110/",
+    "Bloomquist K et al. Effect of range of motion in heavy load squatting on muscle and tendon adaptations. Eur J Appl Physiol 2013;113(8):2133-42. https://pubmed.ncbi.nlm.nih.gov/23604798/",
+    "Paoli A, Marcolin G, Petrone N. The effect of stance width on the electromyographical activity of eight superficial thigh muscles during back squat with different bar loads. J Strength Cond Res 2009;23(1):246-50. https://pubmed.ncbi.nlm.nih.gov/19130646/",
+    "Clark DR, Lambert MI, Hunter AM. Muscle activation in the loaded free barbell squat: a brief review. J Strength Cond Res 2012;26(4):1169-78. https://pubmed.ncbi.nlm.nih.gov/22373894/",
+    "Escamilla RF et al. A three-dimensional biomechanical analysis of the squat during varying stance widths. Med Sci Sports Exerc 2001;33(6):984-98. https://pubmed.ncbi.nlm.nih.gov/11404665/ (wider stance raised hip and knee moments; no EMG)",
+    "Contreras B et al. A Comparison of Gluteus Maximus, Biceps Femoris, and Vastus Lateralis Electromyographic Activity in the Back Squat and Barbell Hip Thrust Exercises. J Appl Biomech 2015. https://pubmed.ncbi.nlm.nih.gov/26214739/",
+    "Fry AC, Smith JC, Schilling BK. Effect of knee position on hip and knee torques during the barbell squat. J Strength Cond Res 2003;17(4):629-33. https://pubmed.ncbi.nlm.nih.gov/14636100/",
+    "Hackett DA, Chow CM. The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise. J Strength Cond Res 2013;27(8):2338-45. https://pubmed.ncbi.nlm.nih.gov/23222073/",
+    "Lander JE, Hundley JR, Simonton RL. The effectiveness of weight-belts during multiple repetitions of the squat exercise. Med Sci Sports Exerc 1992;24(5):603-9. https://pubmed.ncbi.nlm.nih.gov/1533266/",
+    "Kerr ZY et al. Epidemiology of weight training-related injuries presenting to US emergency departments, 1990 to 2007. Am J Sports Med 2010;38(4):765-71. https://pubmed.ncbi.nlm.nih.gov/20139328/ (context for safety pins: dropped weights were the most common injury mechanism)"
+  ],
+  "evidenceNotes": "Measured (DATA): quads and glutes as the main movers, with glute share rising with depth (Caterisano 2002, EMG, n=10). Deeper training grew glutes and adductors more than half squats, quads about the same, and hamstrings and rectus femoris did not grow in either group (Kubo 2019, MRI, n=17). Deep squats grew the front thigh more than shallow ones (Bloomquist 2013, n=17). Hamstring EMG in the squat is low, well below the hip thrust (Contreras 2015), which is why hamstrings are marked 'only a little' even though the app library lists them as secondary. Knees allowed past the toes kept hip torque low; blocking them raised hip torque and trunk lean (Fry 2003, n=7). A held breath raises trunk pressure (Hackett 2013 review) and a belt raised it by 25 to 40 percent (Lander 1992, n=5). High-bar keeps the torso more upright and leans on the quads; low-bar leans forward and leans on the hips and back (Glassbrook 2017 review), but Wretenberg 1996 found thigh EMG slightly higher in the low-bar group, so the quad difference is small and mixed. Stance width: Paoli 2009 (n=6) found only glute max rose with a wide stance, and Clark 2012 concluded stance width does not significantly change activation, so 'wider stance brings in the glutes' is written as 'may' and kept soft. Consensus only (no study): everything about the hands. Grip width, thumb over or around, bar in the heel of the palm, wrist angle limits, elbows down, and the link to wrist and inside-elbow pain come from NSCA and ACE instructions and coach sources (Barbell Logic, Schulz). The 0 to 15 degree wrist number is a coaching estimate, not a measured threshold. No study measures wrist or elbow load in the back squat. Knee tracking over toes, heels down, bar on muscle rather than bone, bar over mid-foot and rack and safety-pin heights are also consensus (NSCA, ACE, Human Kinetics). Mid-foot balance follows from the base-of-support point in Glassbrook 2017 (the review says the centre of mass stays in the base of support; it does not name the mid-foot). Stance: Escamilla 2001 found higher hip and knee moments with a wide stance, which fits the soft 'may bring the glutes in' line. Source conflict on the wrist: Human Kinetics explicitly teaches an 'extended wrist grip' for the back squat, while Barbell Logic ties wrist over-extension to wrist pain. The card keeps a small tilt allowed and draws the line at the wrist carrying load. The NSCA is the only source for the closed grip; the Human Kinetics page does not mention the thumb. Breathing: Hackett 2013 found a held breath raises blood pressure during lifting, with health risks unconfirmed; the high-blood-pressure line is standard caution (consensus), not a tested rule. Muscle ids: all ids used exist in src/data/muscles.ts and in src/svg/bodyMuscles.ts (quads, glutes, adductors, hamstrings, lower_back, core, forearms, upper_traps). Gaps: there is no MuscleId for the knee joint, the wrist, the neck or the inside of the elbow. bodyMuscles.ts does draw these as non-muscle parts (muscle: null): hand-left/right and hand-back-left/right, elbow-left/right, knee-left/right and knee-back-left/right, nape and neck-left/right. The pain markers in ifYouFeelItIn should point at those part ids, so the plate does not shimmer the forearm muscles as if they should be working; upper_traps marks the bar shelf as pressure, not work. lower_back appears in both secondary and shouldNotTakeOver; the renderer needs one rule for that (suggest: steady shimmer as secondary, warning state only when the user opens the 'lower back more than thighs' line). Adductor magnus has no own id and maps to adductors. Glute medius is drawn in bodyMuscles.ts as gluteus-medius-left/right with muscle 'abductors', not 'glutes'; this card does not shimmer it, since the squat evidence above is for glute max. This card is for the high-bar back squat, the default for a general gym user. Low-bar changes the bar spot (across the rear delts), the hand position (narrower hands, usually thumb-over) and the torso angle, and would need its own card. Could not open: the NSCA site (403), Starting Strength (403), powerliftingtechnique.com (403) and ExRx. No claim here rests on those pages. Re-checked in review: all 13 PubMed ids resolve to the cited titles (NCBI E-utilities), and the ACE, Human Kinetics and Barbell Logic pages were re-read; the Torokhtiy page returned 429."
+}

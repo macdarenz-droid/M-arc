@@ -1,0 +1,212 @@
+{
+ "id": "pull_up",
+ "name": "Pull-Up",
+ "archetype": "Bodyweight vertical pull from a fixed overhead bar (library id lib_pull_up, pattern vertical_pull). It uses handling archetypes G6 (overhand pull bar) and G9 (hang grip) from GENERAL.md. The bar hangs in the fingers and upper palm like a carried bag and the wrist stays level. Because your whole body hangs from your hands, the thumb always wraps. The shoulder blades are set down before the arms bend.",
+ "grip": {
+  "type": "Overhand (pronated), palms facing away, full closed grip. Neutral handles (palms facing each other) are a fine swap if your elbows or wrists complain; Catalyst Athletics says the neutral grip is often less stressful on the elbows. EMG shows the lats work about the same with overhand, underhand, neutral, rope, towel and suspension-strap grips (Youdas 2010, Dickie 2017, Snarr 2017), so pick the grip that feels good on your joints.",
+  "width": "Hands just outside your shoulders, about 1.5 times shoulder width (the width Snarr 2017 used; Catalyst Athletics says 'just outside shoulder width'). Seen from the front, your forearms should be close to vertical halfway up, when your elbows are about level with your shoulders. The data on width for the lats is thin and mixed: one modelling study found the lats relatively more active with a wide grip (Urbanczyk 2020, 11 men, computed forces, no EMG), and a 2026 review found pull-up grips broadly similar for the lats (Di Fonza 2026, abstract only checked). The wide grip also puts the shoulder in positions linked to impingement risk (Prinold and Bull 2016), so any small gain is not worth it.",
+  "thumb": "Wrapped under the bar to meet your index finger (full grip). On a pull-up you are the thing that falls if the grip opens, so the thumb stays around the bar by default, especially on a sweaty bar or late in a set. Thumbless (thumb on top with the fingers) is an option some coaches use to make the hand act like a hook and take the forearms out; no study has measured thumb position on a pull-up, so this is consensus only. Hook grip (thumb first, then the index and middle finger pinning it) belongs to heavy barbell pulls and hurts the thumb; it adds nothing for bodyweight pull-ups (Oranchuk 2022 found its benefit in the clean was about timing, not force). The gymnastics false grip (the wrist hooked over the bar or ring, the bar sitting on the heel of the hand) is for muscle-ups on rings. It loads a bent wrist, is not used for a normal pull-up, and should be skipped entirely with a sore wrist. Naming trap: NSCA-based study guides (S14 in GENERAL.md) also call the thumbless grip a 'false grip'. The plate should say 'thumbless' and 'gymnastics false grip' so the two are never mixed up.",
+  "handContact": "The bar lies across the top of your palm where your fingers start, over the pads just below the finger joints. The fingers close over the top and the thumb wraps under. It does not sit deep in the middle of the palm, where the skin bunches and pinches and calluses tear. It does not slide out toward the fingertips either, where the grip gives out first. Think of carrying a heavy shopping bag: the load hangs off hooked fingers and the palm closes in behind it.",
+  "wrist": "Target: level with the forearm or tipped back a little, knuckles pointing up. Don't force it straight: hanging pulls the hand back a little on its own, and grip is strongest with the wrist slightly back (people freely chose about 35 degrees; bending it 10 to 15 degrees away from that, in any direction, cut grip strength, O'Driscoll 1992). Two limits. First, if the bar slides out toward your fingertips and your hand starts hinging far back as the fingers peel open, the grip is failing: end the set. Second, don't curl the wrist forward over the bar; that is the gymnastics false grip, and it loads a bent wrist. Both limits are coaching consensus; no study has set degree limits for the wrist in a hang. Unlike a press, a pull-up does not push load back through a bent wrist; the hang pulls the wrist long. So the owner's press injury (wrist folded back under a pushing load) does not happen here in the same way. If the wrist is already sore, use neutral handles or an assisted machine and stop if it hurts. Pain that is still there after a few days of rest needs a proper check."
+ },
+ "setup": [
+  "Pick a bar you can reach with a small jump or from a step, high enough that your feet clear the floor with straight arms (bend your knees if needed).",
+  "Check the bar is fixed and dry. Chalk your hands if they sweat.",
+  "If you can't do a few clean reps yet, use the assisted pull-up machine or a band, or do slow lowering-only reps, instead of kicking your way up.",
+  "Stand under the bar and set your hands just outside your shoulders, palms facing away.",
+  "Lay the bar across the top of your palm where your fingers start, close your fingers over it, then wrap your thumb underneath.",
+  "Hang with straight arms. Bring your legs together, slightly in front of you, and let your body go still.",
+  "Pull your shoulders a little down away from your ears without bending your arms. Now start the rep."
+ ],
+ "posture": [
+  {
+   "checkpoint": "Hands just outside the shoulders",
+   "detail": "Front view: overhand grip, forearms close to vertical halfway up, when the elbows reach shoulder height. Elbows point down and a little forward, in line with the forearms."
+  },
+  {
+   "checkpoint": "Active hang at the bottom",
+   "detail": "Back view: arms fully straight, shoulder blades pulled slightly down, a clear gap between the ears and the tops of the shoulders."
+  },
+  {
+   "checkpoint": "Body still, legs together",
+   "detail": "Side view: legs together and a little in front, ribs down, glutes lightly squeezed. A gentle straight line from shoulders to feet, with no swinging arc and no deep arch in the lower back."
+  },
+  {
+   "checkpoint": "Elbows drive down to the ribs",
+   "detail": "Side and front view in mid-pull: the elbows travel down and slightly back toward the sides of the ribcage, pointing at the floor."
+  },
+  {
+   "checkpoint": "Chin over, chest to the bar, head level",
+   "detail": "Side view at the top: chin clears the bar, upper chest rises toward it, head stays level with the neck long. The chin does not crane up and forward to reach the bar."
+  },
+  {
+   "checkpoint": "Full lowering every rep",
+   "detail": "Side view at the bottom: elbows fully straight again, lowered under control, shoulders set before the next pull."
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Dropping fast into a loose hang and bouncing out of the bottom, shoulders shrugged up to the ears.",
+   "whyItHurts": "At the bottom the arms are fully overhead, the position where the space under the shoulder roof is smallest (Prinold and Bull 2016). Landing in it fast with slack shoulders jerks your whole body weight through the joint and the tissues around it. Shoulder injuries make up a large share of weight-training injuries, and poor technique is a named risk factor (Kolber 2010). The link to bouncing in particular is coaching consensus.",
+   "fix": "Lower yourself under control all the way to straight arms, then pull your shoulders a little down from your ears before the next rep. End the set when you can no longer control the lowering.",
+   "cue": "Shoulders down, then pull."
+  },
+  {
+   "mistake": "Grip too wide, with the elbows flaring straight out to the sides.",
+   "whyItHurts": "In wide pull-ups the arm is about 90 degrees out to the side and turned out, while the shoulder blade moves less. The authors link this pattern to a higher impingement risk (Prinold and Bull 2016). Any extra lat work from a wide grip is small and uncertain (Urbanczyk 2020 modelled a little more; Di Fonza 2026 found grips broadly similar).",
+   "fix": "Bring your hands in to just outside your shoulders so the forearms are near vertical in the middle of the pull.",
+   "cue": "Hands just outside your shoulders."
+  },
+  {
+   "mistake": "Kipping, kicking or reaching with the chin to get over the bar.",
+   "whyItHurts": "Swinging throws the shoulders into the top and bottom positions with momentum and arches the lower back. Craning the chin strains the neck and rolls the shoulders forward at the top. NASM lists kipping and craning the neck as faults, and Catalyst Athletics says to keep the head level and not reach with the chin. The injury link is consensus and has not been measured.",
+   "fix": "Keep the legs together and still, ribs down. Stop the rep where your chin clears the bar with your head level. If you can't get there without kicking, use an assisted machine or a band.",
+   "cue": "Still legs, chest to the bar."
+  },
+  {
+   "mistake": "Bar sliding out into the fingertips with the hand hinging back as the fingers peel open, or a thumbless grip that opens late in the set.",
+   "whyItHurts": "A grip held in the fingertips fails first, so the forearms quit before the back and the hands can slip off a sweaty bar mid-rep. Grip is strongest with the wrist level to slightly back (O'Driscoll 1992). A bar sitting deep in the palm pinches the skin, which is how calluses tear (manufacturer coaching, weak evidence).",
+   "fix": "Lay the bar across the top of your palm where your fingers start, close the fingers, wrap the thumb and keep the wrist level. Chalk if your hands sweat.",
+   "cue": "Hook it with your fingers, then wrap your thumb."
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "lats",
+    "plain": "The sides of your back, under your armpits and down toward your lower ribs. This is the muscle pulling your elbows down to your sides."
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "biceps",
+    "plain": "The front of your upper arms, working hard near the top of the rep. More so if your palms face you."
+   },
+   {
+    "muscleId": "mid_back",
+    "plain": "Between and just below your shoulder blades, especially at the start when you pull your shoulders down."
+   },
+   {
+    "muscleId": "forearms",
+    "plain": "Your grip. Some forearm burn is normal because you're holding your whole body up."
+   },
+   {
+    "muscleId": "abs",
+    "plain": "A light brace in the stomach that keeps your legs from swinging."
+   }
+  ],
+  "shouldNotTakeOver": [
+   {
+    "muscleId": "upper_traps",
+    "plain": "The tops of your shoulders and the sides of your neck. If they burn, you are shrugging up toward your ears."
+   },
+   {
+    "muscleId": "lower_back",
+    "plain": "Your lower back should not ache. If it does, you are arching and kicking."
+   }
+  ],
+  "ifYouFeelItIn": [
+   {
+    "where": "Tops of the shoulders and neck",
+    "usuallyMeans": "You're shrugging toward your ears and starting the pull with the shoulders up.",
+    "fix": "Pull your shoulders down a little before you bend your arms, and end the set when they start creeping up."
+   },
+   {
+    "where": "Mostly your biceps",
+    "usuallyMeans": "You're pulling with your hands and bending the arms before the back starts working.",
+    "fix": "Start each rep by pulling your shoulders down, then drive your elbows toward your ribs. Keep your palms facing away; an underhand grip puts more of the work into the biceps."
+   },
+   {
+    "where": "Forearms give out before your back",
+    "usuallyMeans": "The bar has slid out toward your fingertips, so your fingers are doing all the holding.",
+    "fix": "Set the bar across the top of your palm where your fingers start, keep your wrist level and chalk up. Dead hangs on other days build grip."
+   },
+   {
+    "where": "A pinch at the front of the shoulder",
+    "usuallyMeans": "Your grip is too wide, or you're reaching with the chin and rolling the shoulders forward at the top.",
+    "fix": "Bring your hands in to just outside your shoulders and stop when your chin clears the bar with your head level. If it keeps hurting, stop pull-ups and get it checked."
+   },
+   {
+    "where": "Lower back",
+    "usuallyMeans": "Your legs are swinging and your back arches to help you up.",
+    "fix": "Legs together and a little forward, ribs down, glutes squeezed. Use an assisted machine if you need momentum to finish reps."
+   },
+   {
+    "where": "Inside or outside of the elbow",
+    "usuallyMeans": "Often too much volume, a wide grip, or a grip your elbows don't like.",
+    "fix": "Try neutral handles or a shoulder-width grip and cut back the sets for a week. If it lasts, get it checked."
+   },
+   {
+    "where": "The wrist",
+    "usuallyMeans": "The bar is out in your fingertips and your hand is being bent back, you're curling the wrist over the bar, or an old wrist injury is being stretched.",
+    "fix": "Keep the bar across the top of your palm and the wrist level. With a sore wrist, use neutral handles or the assisted machine and stop if it hurts. If it still hurts after a few days off, get it checked."
+   }
+  ]
+ },
+ "copy": {
+  "feelLine": "You should feel this in the sides of your back, under your armpits. If your arms or the tops of your shoulders are doing most of it, pull your shoulders down first and then drive your elbows toward your ribs.",
+  "gripLine": "Hands just outside your shoulders, palms facing away. Lay the bar across the top of your palm where your fingers start, close your hand and wrap your thumb under the bar.",
+  "setupLine": "Hang with straight arms and your legs together and still. Pull your shoulders a little down from your ears, then start the rep.",
+  "mistakeLine": "Don't drop and bounce out of the bottom. Lower yourself all the way under control, set your shoulders again, then pull."
+ },
+ "zooms": [
+  {
+   "key": "hand",
+   "shows": "Side close-up of one hand on the bar, cut through the bar so the finger wrap is visible, with the forearm line drawn up from the elbow.",
+   "correct": "Bar across the top of the palm where the fingers start, over the pads just below the finger joints. Fingers wrapped over the top, thumb wrapped under and meeting the index finger. Wrist level with the forearm or tipped slightly back, knuckles pointing up. The forearm line runs straight up into the bar.",
+   "wrong": "Two faults side by side. Left: bar slid out to the fingertips, fingers peeling open, hand hinging back at the wrist, thumb loose on top, a red arc at the fingertips. Right: bar jammed deep in the middle of the palm with a red ridge of bunched skin at the base of the fingers."
+  },
+  {
+   "key": "thumb",
+   "shows": "Four small hand drawings from below the bar: full grip, thumbless, hook, gymnastics false grip.",
+   "correct": "Full grip marked as the default: thumb wrapped under, tip meeting the index finger. Thumbless labelled 'optional, dry bar, fresh hands'. Hook labelled 'heavy barbell pulls only'.",
+   "wrong": "Thumbless shown opening on a sweaty bar late in the set, fingers peeling off. Gymnastics false grip labelled 'rings and muscle-ups only, skip with a sore wrist', drawn with the wrist curled over the bar. The thumbless drawing is labelled 'thumbless', never 'false grip', because some textbooks use that name for it."
+  },
+  {
+   "key": "shoulder blades",
+   "shows": "Back view of the torso in the hang, arms straight, with the shoulder blades outlined.",
+   "correct": "Active hang: shoulder blades pulled slightly down, clear gap between ears and shoulders, arms straight.",
+   "wrong": "Shoulders shrugged up to the ears, head sunk between the arms, blades riding high, with a red jolt mark showing the drop into the bottom."
+  },
+  {
+   "key": "grip width",
+   "shows": "Front view of the upper body halfway up, elbows about level with the shoulders.",
+   "correct": "Hands just outside the shoulders, forearms close to vertical under the bar, elbows pointing down.",
+   "wrong": "Hands far out on the bar, wider than the elbows so the forearms lean outward, elbows flared straight out to the sides, a red mark at the front of the shoulder."
+  },
+  {
+   "key": "top position",
+   "shows": "Side view of the head, chest and bar at the top of the rep.",
+   "correct": "Chin just over the bar, head level, neck long, chest lifted toward the bar, elbows down by the ribs.",
+   "wrong": "Chin craning up and forward over the bar, shoulders rolled forward, elbows drifting in front of the body."
+  },
+  {
+   "key": "body line",
+   "shows": "Side view of the whole body hanging from the bar.",
+   "correct": "Legs together and a little in front, ribs down, a quiet line from shoulders to feet.",
+   "wrong": "Swinging arc with the legs kicking and the lower back arched, a red mark on the lower back."
+  }
+ ],
+ "sources": [
+  "Youdas JW et al. Surface EMG activation patterns and elbow joint motion during a pull-up, chin-up, or Perfect-Pullup rotational exercise. J Strength Cond Res 2010;24(12):3404-14. https://pubmed.ncbi.nlm.nih.gov/21068680/ (lats 117-130% MVIC; lower trapezius higher in pull-up; biceps and pecs higher in chin-up; the rep starts with the lower trapezius and pectoralis major)",
+  "Dickie JA et al. Electromyographic analysis of muscle activation during pull-up variations. J Electromyogr Kinesiol 2017;32:30-36. https://pubmed.ncbi.nlm.nih.gov/28011412/ (hand orientation only, no width test: muscle activity similar across supinated, pronated, neutral and rope grips; middle trapezius higher with pronated than neutral)",
+  "Snarr RL et al. Electromyographical comparison of a traditional, suspension device, and towel pull-up. J Hum Kinet 2017;58:5-13. https://pubmed.ncbi.nlm.nih.gov/28828073/ (1.5x biacromial grip; traditional, suspension-strap and towel pull-ups; lats, biceps and rear delt unchanged; towel lowered middle trapezius)",
+  "Prinold JA, Bull AM. Scapula kinematics of pull-up techniques: avoiding impingement risk with training changes. J Sci Med Sport 2016;19(8):629-35. https://pubmed.ncbi.nlm.nih.gov/26383875/ (11 people; high arm elevation reduces subacromial space; wide and reverse grips show patterns linked to impingement risk; assisted pull-ups suggested for weaker people)",
+  "Urbanczyk CA et al. Avoiding high-risk rotator cuff loading: muscle force during three pull-up techniques. Scand J Med Sci Sports 2020;30(11):2205-14. https://pubmed.ncbi.nlm.nih.gov/32715526/ (11 men, computed muscle forces, not EMG; lats relatively more active in wide grip; biceps and brachialis more active in front grip)",
+  "Di Fonza D et al. EMG analysis of latissimus dorsi activation during common resistance training exercises: a narrative review. J Funct Morphol Kinesiol 2026;11(3):315. https://pubmed.ncbi.nlm.nih.gov/42647355/ (abstract: pull-up variations show broadly similar lat activation across grip configurations; full text not reached, so width is not confirmed)",
+  "Kolber MJ et al. Shoulder injuries attributed to resistance training: a brief review. J Strength Cond Res 2010;24(6):1696-704. https://pubmed.ncbi.nlm.nih.gov/20508476/ (up to 36% of documented resistance-training injuries are at the shoulder; poor technique is a risk factor)",
+  "O'Driscoll SW et al. The relationship between wrist position, grasp size, and grip strength. J Hand Surg Am 1992;17(1):169-77. https://pubmed.ncbi.nlm.nih.gov/1538102/ (self-chosen grip at about 35 degrees extension; 10 to 15 degrees deviation in any direction lowered grip strength)",
+  "Oranchuk DJ et al. Improved power clean performance with the hook-grip is not due to altered force-time or horizontal bar-path characteristics. J Sports Sci 2022;40(2):226-35. https://pubmed.ncbi.nlm.nih.gov/34592911/ (hook grip likely irrelevant outside weightlifting)",
+  "Catalyst Athletics, Pull-up (coach source: hands just outside shoulder width, head level, minimise reaching with the chin, lower until the elbows are fully straight). https://www.catalystathletics.com/exercise/39/Pull-up/",
+  "Catalyst Athletics, Scap Pull-Up (coach source). https://catalystathletics.com/exercise/918/Scap-Pull-Up/",
+  "Catalyst Athletics, Neutral Grip Pull-Up (coach source, 'often less stressful on the elbows'). https://catalystathletics.com/exercise/864/Neutral-Grip-Pull-Up",
+  "NASM, Chin-ups vs pull-ups (H. Cherry): set the shoulder blades first; faults are kipping, partial range and craning the neck; assisted and lowering-only reps for beginners. https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked",
+  "Baechle TR, Earle RW. Weight Training: Steps to Success (NSCA editors): 'Perform all grips with your thumbs around the bar.' https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+  "Hook grip. Wikipedia (secondary, consensus only). https://en.wikipedia.org/wiki/Hook_grip",
+  "Muscle-up / false grip. Wikipedia (secondary, consensus only). https://en.wikipedia.org/wiki/Muscle-up",
+  "Rogue Fitness, False Grips (manufacturer coaching, consensus only). https://www.rogueapo.com/false-grips",
+  "Bullbar Fit, How to grip the bar without getting calluses (manufacturer blog, weak). https://bullbarfit.com/blogs/q-as/what-is-the-correct-way-to-grip-the-bar-to-avoid-calluses",
+  "Project research: grip/research/GENERAL.md (grip families G6 and G9, wrist and thumb rules, S5, S13, S14)."
+ ],
+ "evidenceNotes": "Measured, where the work goes: the lats do the most work in every EMG study found (117-130% MVIC in Youdas 2010). The biceps, lower and middle trapezius and infraspinatus also work hard, and the pectoralis major works moderately (44-57% MVIC). Hand orientation barely changes the lats (Youdas 2010, Dickie 2017, Snarr 2017, Di Fonza 2026 review).\n\nWidth: Dickie 2017 tested hand orientation only, so it is not cited for width. The only width data found is a modelling study (Urbanczyk 2020, computed forces, not EMG) that favours a wide grip slightly for the lats, set against Prinold and Bull 2016, who measured wide-grip shoulder positions linked to impingement risk in 11 people. They linked wide and reverse grips to risk by mechanism only; nobody has counted injuries by grip. The just-outside-the-shoulders default rests on shoulder safety and coach consensus (Catalyst Athletics).\n\nConsensus only: thumb position on a pull-up (no study compares full and thumbless grips), the bar at the top of the palm (manufacturer and coach sources), the active hang cue, the harm from bouncing out of the bottom, the 'a few clean reps' threshold for moving off the assisted machine, and every wrist limit. Hook grip and the gymnastics false grip are consensus from weightlifting and gymnastics; they are listed so the thumb zoom can say when not to use them. The feel lines combine EMG and coaching, and EMG readings do not map one to one onto what a person feels.\n\nWrist mechanics (reasoning, not measured): in an overhand hang the bar sits on the palm side of the wrist, so body weight tips the hand back a little. The natural failure is the bar sliding toward the fingertips with the fingers peeling open. A forward-curled wrist shows up in the deliberate gymnastics false grip, so the hand zoom draws the fingertip fault and the thumb zoom carries the false grip.\n\nMuscle ids (checked against src/data/muscles.ts and the drawn regions in src/svg/bodyMuscles.ts): lats, biceps, mid_back, forearms, abs, upper_traps and lower_back are all real and drawn. The lower trapezius, which starts the rep in Youdas 2010, has no id, so it is folded into mid_back. The infraspinatus has the id rotator_cuff and the brachialis has its own id, but bodyMuscles.ts draws no region for either, so neither shimmers. Teres major has no id and is covered by lats. The pectoralis major is not shimmered because people rarely feel it here. forearms sits only in secondary, so one region never shimmers as both target and warning; grip fatigue is handled in ifYouFeelItIn. A shoulder pinch is pain, not a muscle taking over, so it lives only in ifYouFeelItIn and front_delts does not shimmer.\n\nOwner's wrist: his injury came from pushing through a bent-back wrist. A pull-up pulls the wrist long instead of pressing into it, so the risk is lower. A sore wrist should still use neutral handles or an assisted machine, stop on pain, and get checked if pain lasts more than a few days.\n\nNaming: NSCA-style textbooks call the thumbless grip a 'false grip'. Gymnastics uses 'false grip' for the wrist-over-the-bar ring grip. The plate uses 'thumbless' and 'gymnastics false grip' only.\n\nNot reached: ExRx, the NSCA technique manual, an ACE pull-up page, and the Di Fonza 2026 full text (abstract only)."
+}

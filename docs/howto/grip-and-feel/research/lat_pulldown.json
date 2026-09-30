@@ -1,0 +1,220 @@
+{
+  "id": "lat_pulldown",
+  "name": "Lat Pulldown",
+  "archetype": "Seated cable vertical pull on a wide bar (library id lib_lat_pulldown, pattern vertical_pull; primary lats, secondary biceps and mid_back). Handling archetypes from GENERAL.md: G6 (overhand pull bar: bar in the fingers and upper palm, wrist level, hands act as hooks) plus G12 (knee/thigh pad as a brace, not a push point). Unlike the machine chest press, the wrist is pulled long under tension here, so the owner's pressing injury (wrist folded back under a pushing load) does not happen in the same way; the pulldown's usual hand fault is different: the wrist curls forward and the hand squeezes, so the forearms and biceps do the pulling. A second, separate fault comes with grip fatigue: the bar slides out toward the fingertips.",
+  "grip": {
+    "type": "Overhand (pronated), palms facing away, on the long straight or bent-end bar. Overhand gave more lat activity than underhand in two EMG studies (Signorile 2002; Lusk 2010). Later work with trained lifters found no real lat difference between grip types (Buonsenso 2025), so if your wrists or elbows complain, the neutral-grip handles are a fair swap.",
+    "width": "About one and a half times shoulder width, measured across the bony tips of your shoulders. On a bar with bent ends, that often puts your hands on the bends or just inside them. Check from the front at the bottom of the rep: with the bar at your upper chest, your forearms should be close to vertical. A very wide grip (about twice shoulder width) cost a little strength and gave similar lat activity over the whole rep compared with narrow and medium grips (Andersen 2014), and grip width barely changed lat activity in most studies (Lusk 2010; Di Fonza 2026 review). The bent ends of the bar tip down at about the angle your hands sit when your arms are in a V, so holding on the bends can keep your wrists straighter side to side; this last point is mechanical reasoning, not a measured finding.",
+    "thumb": "Default: thumb wrapped around the bar to meet your index finger (full, closed grip). It keeps the bar from rolling toward your fingertips as the set gets hard, and it means you won't lose the bar at the top and let the stack slam. Option: thumb over the top of the bar next to your fingers (thumbless) if your forearms give out before your back does; the idea is that the hand turns into a hook and the forearms and biceps relax. No study has measured thumb position on a pulldown, so this is coaching consensus only, and changing grip type did not change biceps activity much in the studies that measured it (Lusk 2010; Lehman 2004). Unlike a bench press, a pulldown bar cannot fall on you, so thumbless is only a comfort choice here. Keep your wrist straight either way.",
+    "handContact": "The bar lies across the base of your fingers, just below the knuckles, with the upper edge of your palm behind it, like carrying a heavy shopping bag. Close your fingers over the top and wrap the thumb under (or lay it on top for thumbless). The bar does not sit out at the fingertips, where the grip fails first, and it is not jammed deep in the middle of the palm, where skin bunches and pinches. Grip firmly enough to hold it, no tighter; a death grip pulls the forearms and biceps into the lift.",
+    "wrist": "Target: the back of your hand in line with your forearm, or tipped back a little, knuckles pointing up toward the cable. Never curled forward. In a grip-strength study, people squeezed hardest with the wrist bent back (they chose about 35 degrees on their own, and needed at least 25), and bending the wrist 10 to 15 degrees away from that cut grip strength; curling it forward is the weakest of those positions (O'Driscoll 1992, a hand dynamometer, applied to the pulldown by reasoning). Coaches still teach a near-straight wrist on pulls so the forearm muscles are not held at the end of their range for a whole set; that part is consensus. Limit: if your wrist starts to curl forward (palm tipping down toward your forearm), or the bar starts sliding out toward your fingertips as your grip tires, finish the rep and end the set. Side to side, keep the wrist straight; if it bends hard toward the thumb or little finger, move your hands onto or off the bar's bends. None of these are measured injury limits. With an already sore wrist, use the neutral handles, go lighter and stop if it hurts."
+  },
+  "setup": [
+    "Pick the attachment: the long bar for the standard version, the neutral-grip handles if your wrists or elbows are sore.",
+    "Sit down and set the knee (thigh) pad so it presses firmly on the tops of your thighs, just above the knees, with your feet flat on the floor. Snug enough that you can't lift off the seat when you pull, and loose enough that it doesn't dig in.",
+    "Set the weight and push the pin all the way in. Start lighter than you think; the first reps are for checking the setup.",
+    "Stand up, take the bar overhand at about one and a half times shoulder width, thumb wrapped, bar at the base of your fingers.",
+    "Sit back down under the pad, holding the bar with straight arms. Let the stack lift slightly so the weight is on the cable, not resting.",
+    "Lean back a little from the hips, no more than about 30 degrees, with your chest up and your lower back in its normal curve. Your thighs against the pad hold you there.",
+    "Before the first rep, pull your shoulders down away from your ears and slightly back. Then pull."
+  ],
+  "posture": [
+    {
+      "checkpoint": "Thighs locked under the pad",
+      "detail": "Pad firm on the tops of the thighs just above the knees, feet flat, hips stay on the seat for the whole set (ACE)."
+    },
+    {
+      "checkpoint": "Slight lean back, no more than about 30 degrees",
+      "detail": "Torso tipped back a little from the hips, chest up, lower back in its normal curve. The lean stays the same from the first rep to the last, with no extra lean as you pull (ACE: no more than 30 degrees)."
+    },
+    {
+      "checkpoint": "Shoulders down before the arms bend",
+      "detail": "At the top, arms straight, the shoulders are first drawn down from the ears and slightly back, then the elbows start to bend (ACE)."
+    },
+    {
+      "checkpoint": "Bar comes down in front of your face",
+      "detail": "The bar travels past your chin to the top of your chest, never behind the head (Sperandei 2009; Kolber 2013)."
+    },
+    {
+      "checkpoint": "Elbows down to your sides at the bottom",
+      "detail": "At the bottom the elbows point down at the floor, beside the ribs, forearms near vertical under the bar. Stop when the elbows stop moving down and start moving back, even if the bar has not touched your chest (ACE)."
+    },
+    {
+      "checkpoint": "Wrists straight, knuckles up",
+      "detail": "Back of the hand in line with the forearm, or tipped back a little, the whole way. Bar at the base of the fingers, no curl."
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Pulling the bar behind your neck.",
+      "whyItHurts": "The arm is forced into the raised-and-turned-out 'high five' position with the head pushed forward. Lifters who do behind-the-neck pulldowns and presses showed more signs of a loose, unstable front shoulder (Kolber 2013, an association, not proof of cause). It also did not work the lats better than pulling to the front (Signorile 2002; Sperandei 2009; Padovan 2024).",
+      "fix": "Always pull in front of your face to the top of your chest, with a slight lean back.",
+      "cue": "Bar to your collarbones, in front."
+    },
+    {
+      "mistake": "Curling the wrists and squeezing the bar hard.",
+      "whyItHurts": "A curled wrist weakens your grip (O'Driscoll 1992), so the forearms tire early and they and the biceps do more of the pulling. Holding the wrist curled and squeezed set after set also strains the wrist and forearm. The grip-strength link is measured; the link to pain is coaching consensus.",
+      "fix": "Put the bar at the base of your fingers, wrap the thumb, keep the back of the hand in line with the forearm and grip only as hard as you need to. If the forearms still go first, try the thumb on top of the bar or lower the weight.",
+      "cue": "Hands are hooks. Pull with your elbows."
+    },
+    {
+      "mistake": "Leaning way back and swinging the weight down.",
+      "whyItHurts": "Rocking the torso uses momentum and your lower back to move the stack, and the jerk at the top yanks the shoulders. ACE limits the lean to about 30 degrees and uses the legs under the pad to support the lower back. With much more lean the pull starts to look like a row. One study saw more rear-shoulder activity at a 30-degree lean, with no change in the lats (Buonsenso 2025); no study has measured bigger leans or lower-back load, so the swinging warning is coaching consensus.",
+      "fix": "Snug the knee pad, pick a slight lean and hold it still. Lower the weight until you can do every rep without rocking.",
+      "cue": "Lean a little, then stay still."
+    },
+    {
+      "mistake": "Pulling too far and letting the shoulders roll forward, or letting the stack yank you up at the top.",
+      "whyItHurts": "Once the elbows stop moving down and start moving back, ACE says to stop, because further pulling adds stress to the shoulder joint. The shoulders rolling forward at that point is how it usually looks (mechanical reasoning). Letting the weight snap your arms and shoulders up at the top puts a sudden jerk through the shoulder.",
+      "fix": "Stop when your elbows stop going down. On the way up, let the bar rise slowly until your arms are straight, and let your shoulders rise only a little.",
+      "cue": "Stop when your elbows stop."
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "plain": "The sides of your back, under your armpits and down toward your lower ribs. This is the muscle pulling your elbows down to your sides."
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "mid_back",
+        "plain": "Between your shoulder blades, as they draw down and together at the bottom."
+      },
+      {
+        "muscleId": "biceps",
+        "plain": "The front of your upper arms. They help bend the elbows; some work here is normal."
+      },
+      {
+        "muscleId": "rear_delts",
+        "plain": "The backs of your shoulders. They help, a bit more if you lean back further."
+      },
+      {
+        "muscleId": "brachialis",
+        "plain": "Under the biceps, near the elbow. It helps bend the arm."
+      },
+      {
+        "muscleId": "forearms",
+        "plain": "Your forearms hold the bar. Some grip fatigue is normal on heavy sets."
+      }
+    ],
+    "shouldNotTakeOver": [
+      {
+        "muscleId": "biceps",
+        "plain": "If your arms are tired long before your back, your arms are doing the pulling."
+      },
+      {
+        "muscleId": "forearms",
+        "plain": "If your grip gives out first, the bar is sitting badly in your hand or you are squeezing too hard."
+      },
+      {
+        "muscleId": "upper_traps",
+        "plain": "The tops of your shoulders and the sides of your neck. A burn here means you're shrugging."
+      },
+      {
+        "muscleId": "lower_back",
+        "plain": "Your lower back should not ache. If it does, you're swinging."
+      },
+      {
+        "muscleId": "front_delts",
+        "plain": "A pinch at the front of the shoulder means the bar is going behind your head or you are pulling too far."
+      }
+    ],
+    "ifYouFeelItIn": [
+      {
+        "where": "Mostly your biceps and forearms",
+        "usuallyMeans": "You're pulling with your hands: squeezing hard and curling your wrists. The arms always help on this exercise, so some biceps work is normal.",
+        "fix": "Loosen your grip a little, set the bar at the base of your fingers and think about driving your elbows down to your sides. If your forearms still quit first, try your thumb on top of the bar. Your arms will still help, and that's fine."
+      },
+      {
+        "where": "The tops of your shoulders and your neck",
+        "usuallyMeans": "You're shrugging your shoulders up toward your ears, often because the weight is too heavy.",
+        "fix": "At the top of each rep, pull your shoulders down first, then bend your arms. Drop the weight if you can't hold that."
+      },
+      {
+        "where": "Your lower back",
+        "usuallyMeans": "You're leaning too far back and rocking, or the knee pad is loose and you're lifting off the seat.",
+        "fix": "Snug the knee pad, keep a small lean you can hold still, and lower the weight."
+      },
+      {
+        "where": "Mostly between your shoulder blades and the backs of your shoulders, little in the sides of your back",
+        "usuallyMeans": "You're leaning back so far that the pull has turned into a row, with the elbows going back instead of down.",
+        "fix": "Sit taller, keep the lean small, and pull your elbows straight down toward your hips."
+      },
+      {
+        "where": "A pinch at the front of your shoulder",
+        "usuallyMeans": "The bar is going behind your head, or you're pulling past the point where your elbows stop and your shoulders are rolling forward.",
+        "fix": "Pull to the top of your chest in front of your face, and stop when your elbows stop moving down. If the pinch stays, stop and get it checked."
+      },
+      {
+        "where": "Your wrist",
+        "usuallyMeans": "Your wrist is curling forward or bending hard to one side on the bar, or it's already sore from pressing.",
+        "fix": "Keep the back of your hand in line with your forearm and move your hands onto or off the bar's bends until the wrist is straight. With a sore wrist, switch to the neutral handles, go lighter and stop if it hurts. Sharp pain, tingling, a weak grip or swelling that doesn't settle within a couple of weeks is worth getting checked."
+      }
+    ]
+  },
+  "copy": {
+    "feelLine": "You should feel this in the sides of your back, under your armpits. If your biceps are doing most of it, loosen your grip a bit and pull your elbows down to your sides.",
+    "gripLine": "Hands about one and a half times shoulder width, palms facing away. Lay the bar across the base of your fingers and wrap your thumb around it. Keep your wrists straight, knuckles up.",
+    "setupLine": "Set the knee pad so it presses on the tops of your thighs. Lean back a little, pull your shoulders down, then pull the bar to the top of your chest.",
+    "mistakeLine": "Keep the bar in front of your face. Pulling it behind your neck puts your shoulders in a bad spot and doesn't work your back any better."
+  },
+  "zooms": [
+    {
+      "key": "hand",
+      "shows": "Side close-up of one hand on the bar, cut through the bar so the finger wrap is visible, with the forearm line drawn up from the elbow to the bar. A small inset shows the thumb-on-top option.",
+      "correct": "Bar across the base of the fingers, just below the knuckles, palm edge behind it. Fingers wrapped over the top, thumb wrapped under to meet the index finger. The back of the hand runs in a straight line with the forearm (or tipped back slightly), knuckles pointing up. Inset: thumb laid on top beside the index finger, wrist still straight, labelled as optional.",
+      "wrong": "Wrist curled forward so the palm tips down toward the forearm and the knuckles point back at the face, fist clenched hard with the forearm tendons standing out, a red arc at the wrist crease. A small second inset shows the grip-fatigue fault: bar slid out to the fingertips, fingers half open, labelled 'end the set here'."
+    },
+    {
+      "key": "grip width",
+      "shows": "Front view of both hands on the bar at the bottom of the rep, bar at the top of the chest.",
+      "correct": "Hands about one and a half times shoulder width, on or just inside the bar's bends, forearms close to vertical under the bar, wrists straight side to side.",
+      "wrong": "Hands out at the very ends of the bar, forearms slanting outward, wrists bent sideways at the bar, a red mark at each wrist."
+    },
+    {
+      "key": "knee pad",
+      "shows": "Side view of the thighs, pad and seat.",
+      "correct": "Pad pressing firmly on the tops of the thighs just above the knees, feet flat on the floor, hips down on the seat.",
+      "wrong": "Pad set high with a gap above the thighs, hips lifting off the seat as the bar comes down, heels up."
+    },
+    {
+      "key": "shoulder blades",
+      "shows": "Back view of the upper back at the top of the rep, arms straight overhead, with the shoulder blades outlined.",
+      "correct": "Shoulders drawn down away from the ears and slightly toward each other before the elbows bend; a clear neck line above the shoulders.",
+      "wrong": "Shoulders shrugged up around the ears, shoulder blades riding high, upper traps shaded red."
+    },
+    {
+      "key": "lean and bar path",
+      "shows": "Side view of the whole body at the bottom of the rep, with a dotted line tracing the bar path and an angle mark on the torso.",
+      "correct": "Torso leaning back slightly, no more than about 30 degrees from vertical, and held still, chest up, bar travelling past the chin to the collarbones in front of the face, elbows pointing down beside the ribs.",
+      "wrong": "Two faults side by side. Left: head pushed forward and the bar pulled behind the neck, a red mark at the front of the shoulder. Right: torso thrown back past 45 degrees with a motion arc showing the swing, a red mark on the lower back."
+    },
+    {
+      "key": "bottom position",
+      "shows": "Side view of the arm and shoulder at the end of the pull.",
+      "correct": "Elbows down by the sides, forearms near vertical, shoulder blades down and back, chest up; the rep stops where the elbows stop moving down.",
+      "wrong": "Bar dragged down to the belly, elbows pushed behind the body, shoulders rolled forward, a red mark at the front of the shoulder."
+    }
+  ],
+  "sources": [
+    "Signorile JF, Zink AJ, Szwed SP. A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down. J Strength Cond Res 2002;16(4):539-46. https://pubmed.ncbi.nlm.nih.gov/12423182/ (n=10; wide grip to the front gave more lat activity than wide behind the neck, close or underhand grips)",
+    "Lusk SJ, Hale BD, Russell DM. Grip width and forearm orientation effects on muscle activity during the lat pull-down. J Strength Cond Res 2010;24(7):1895-900. https://pubmed.ncbi.nlm.nih.gov/20543740/ (n=12; overhand grip more lat activity than underhand regardless of width; grip type did not change middle trapezius or biceps)",
+    "Andersen V et al. Effects of grip width on muscle strength and activation in the lat pull-down. J Strength Cond Res 2014;28(4):1135-42. https://pubmed.ncbi.nlm.nih.gov/24662157/ (n=15; 1, 1.5 and 2 times biacromial width; similar lat activity; 6RM lower with the widest grip; medium grip suggested)",
+    "Sperandei S et al. Electromyographic analysis of three different types of lat pull-down. J Strength Cond Res 2009;23(7):2033-8. https://pubmed.ncbi.nlm.nih.gov/19855327/ (n=24; front of neck recommended, behind the neck 'should be avoided'; no lat difference between techniques; behind the neck raised rear delt and biceps activity and lowered pectoralis activity)",
+    "Padovan R et al. High-density electromyography excitation in front vs. back lat pull-down prime movers. J Hum Kinet 2024;91:47-60. https://pubmed.ncbi.nlm.nih.gov/38689585/ (n=14 trained men; front pull-down gave more lat excitation on the way down, behind the neck more on the way up; authors conclude front gives greater overall prime-mover excitation)",
+    "Snyder BJ, Leech JR. Voluntary increase in latissimus dorsi muscle activity during the lat pull-down following expert instruction. J Strength Cond Res 2009;23(8):2204-9. https://pubmed.ncbi.nlm.nih.gov/19826307/ (n=8 untrained women at 30% max; instruction raised lat EMG, biceps unchanged)",
+    "Lehman GJ et al. Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study. Dyn Med 2004;3(1):4. https://pubmed.ncbi.nlm.nih.gov/15228624/ (isometric; exercise type did not change biceps; wide-grip pulldown had one of the highest lat-to-biceps ratios)",
+    "Buonsenso A et al. Electromyographic analysis of back muscle activation during lat pulldown exercise: effects of grip variations and forearm orientation. J Funct Morphol Kinesiol 2025;10(3):345. https://pubmed.ncbi.nlm.nih.gov/40981044/ (n=40 trained men; no lat difference across seven variants; wide overhand grip with 30-degree lean raised rear-delt activity)",
+    "Di Fonza D et al. Electromyographic analysis of latissimus dorsi activation during common resistance training exercises: a narrative review. J Funct Morphol Kinesiol 2026;11(3):315. https://pubmed.ncbi.nlm.nih.gov/42647355/ (front bar path most consistently linked to higher lat EMG; grip-width effects inconsistent)",
+    "Doma K, Deakin GB, Ness KF. Kinematic and electromyographic comparisons between chin-ups and lat-pull down exercises. Sports Biomech 2013;12(3):302-13. https://pubmed.ncbi.nlm.nih.gov/24245055/ (in the pulldown, lats and biceps were the most active muscles in the pulling phase)",
+    "Kolber MJ, Corrao M, Hanney WJ. Characteristics of anterior shoulder instability and hyperlaxity in the weight-training population. J Strength Cond Res 2013;27(5):1333-9. https://pubmed.ncbi.nlm.nih.gov/22836608/ (behind-the-neck pulldowns and presses associated with clinical signs of anterior instability; association only)",
+    "Kolber MJ et al. Shoulder injuries attributed to resistance training: a brief review. J Strength Cond Res 2010;24(6):1696-704. https://pubmed.ncbi.nlm.nih.gov/20508476/ (shoulder is a common injury site in resistance training; technique a risk factor)",
+    "O'Driscoll SW et al. The relationship between wrist position, grasp size, and grip strength. J Hand Surg Am 1992;17(1):169-77. https://pubmed.ncbi.nlm.nih.gov/1538102/ (n=20; self-chosen wrist position about 35 degrees extended; at least 25 degrees needed for best grip; 10 to 15 degree deviations in any direction cut grip strength)",
+    "ACE, Seated Lat Pulldown. https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/ (thigh pad firm on the tops of the thighs; shoulders back and down; lean back no more than 30 degrees; elbows down to the sides; stop when the elbows stop moving down and start moving back, as further pulling stresses the shoulder joint; avoid extra lean during the pull)",
+    "Baechle TR, Earle RW. Weight Training: Steps to Success (NSCA editors): 'Perform all grips with your thumbs around the bar.' https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Project research: grip/research/GENERAL.md (grip family G6 and pad family G12; thumb rules; wrist and mind-muscle and when-to-stop sections) and grip/research/pull_up.json (hand-contact wording kept consistent)."
+  ],
+  "evidenceNotes": "Strong-ish (several small EMG studies agree): pull to the front, not behind the neck (Signorile 2002, Sperandei 2009, Padovan 2024, Di Fonza 2026 review); overhand is at least as good as underhand for the lats (Signorile, Lusk), though a larger 2025 study of trained men found no lat difference between grips (Buonsenso). Grip width: data say it barely matters for the lats (Lusk, Andersen, Di Fonza), and the widest grip costs a little strength (Andersen), so the card recommends about 1.5 times shoulder width rather than 'as wide as possible'. The owner's focus note says 'wide bar grip'; that is honoured as the wide-bar exercise with a moderately wide grip. Shoulder risk of behind-the-neck pulling rests on one cross-sectional association (Kolber 2013), not a trial. Thumb: no study compares full and thumbless grips on the pulldown; the full-grip default follows NSCA-editor guidance and the thumbless option is coaching consensus. Wrist: the 'no curl' rule rests on grip-strength data from a dynamometer (O'Driscoll 1992) applied by reasoning; the near-straight target and the 'end the set when the wrist curls or the bar slides to the fingertips' limit are consensus, not injury thresholds. The claim that the bar's bent ends keep the wrists straighter is mechanical reasoning only. Knee pad and lean: ACE guidance (lean no more than 30 degrees); the only EMG data on lean (Buonsenso 2025) showed more rear-delt activity at 30 degrees with no lat change; no study measures lower-back load on the pulldown, so the swinging warning is consensus. Feel: lats as the main target is well supported; Snyder and Leech 2009 show a lat-focus cue raises lat activity but does not switch the biceps off, so the copy asks for 'more back' rather than 'no arms'. Muscle-id gaps: teres major (a key helper, measured by Signorile) has no id and is folded into 'lats'; lower trapezius has no id and is folded into 'mid_back'; infraspinatus (measured by Andersen) maps to 'rotator_cuff' but was left off the map as it is a stabiliser the user is unlikely to feel; the lower chest (pectoralis major) is measurably active in pulldowns (Signorile, Sperandei) but was left off the map because shimmering the chest on a back exercise would confuse users. Brachialis is listed from anatomy (it is an elbow flexor); none of the cited pulldown studies measured it. The wrist note for the owner: this exercise loads the wrist in pull, not in a pressing fold-back, so it is usually tolerated, but with current wrist pain the neutral handles and a stop-if-it-hurts rule apply; persistent pain needs a clinician (GENERAL.md section 6). Verifier pass (2026-09-30, abstracts re-read via NCBI E-utilities, ACE page re-read): the wrist target no longer gives a 0 to 20 degree band, because O'Driscoll 1992 shows grip is strongest at 25 to 35 degrees of extension, so a narrow band would have contradicted the cited source; the card now says straight or tipped back a little, never curled, with the near-straight preference marked as consensus. The hand fault is split into two separate things: the curled, squeezing wrist (the common pulldown mistake, main drawing) and the bar sliding to the fingertips as the grip tires (an inset). The earlier text tied them together, which is mechanically wrong because curling the wrist pulls the bar deeper into the hand. Buonsenso 2025 found more rear-delt activity at a 30-degree lean with no lat change, so the card no longer says the rear delts 'take over from the lats'. ACE's reason for stopping when the elbows move back is 'additional stresses into the shoulder joint'; the 'shoulders roll forward' picture is marked as reasoning. Padovan 2024 was mixed by phase (front better on the way down, behind the neck better for the lats on the way up), so the card says behind the neck did not work the lats better. The study citation was taken out of the user-facing biceps fix line. Rendering notes: 'biceps' and 'forearms' appear in both secondary and shouldNotTakeOver on purpose (normal helpers that become a sign of a fault when they dominate), so the plate should show shouldNotTakeOver only on the 'wrong' layer; 'brachialis' has no region of its own and MuscleMap aliases it to 'biceps' (src/ui/MuscleMap.tsx), so it adds no separate shimmer."
+}

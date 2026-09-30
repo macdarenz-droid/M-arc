@@ -1,0 +1,187 @@
+{
+  "id": "machine_chest_press",
+  "name": "Machine chest press",
+  "archetype": "Seated horizontal push on a fixed-path machine with handles (lever or selectorised). Handling archetype: handle held in the palm, force pushed straight along the forearm; back supported by a pad; seat height sets where the handles meet the chest.",
+  "grip": {
+    "type": "Full (closed) grip. Vertical neutral handles (palms facing each other) are the first choice, especially with a sore wrist; horizontal handles (palms facing down) are fine too. EMG shows no meaningful difference for the chest between the two (Muyor 2023).",
+    "width": "Set by the machine. Pick the handle pair that puts your hands just outside your shoulders at the start, with each forearm lined up directly behind its handle, seen from above and from the side. In Muyor 2023 the neutral handles sat at about 1.5x shoulder (biacromial) width and the horizontal ones at about 2x.",
+    "thumb": "Wrapped around the handle, with a firm but not white-knuckle squeeze. The thumb is what stops the handle rolling up into your fingers, which is how the wrist gets levered back. On a machine a thumbless grip will not drop a bar on you, but it lets the handle drift into the fingers under a heavy load, so it is not recommended. ACE calls for a full grip with the thumbs around the handles.",
+    "handContact": "The handle sits low in the palm, pressed into the heel of the hand (the thick pad at the base of the palm, just above the wrist crease), so it sits directly in line with the forearm bones. The fingers wrap around it to hold it; they do not carry the push. Vertical handle: it runs up through the middle of the palm and the push goes into the base of the palm. Horizontal handle: it lies across the base of the palm, knuckles pointing up at the ceiling, stacked over the wrist and forearm.",
+    "wrist": "Target: straight, 0 to about 10 degrees of extension, with the knuckles, wrist and forearm in one line (carpal tunnel pressure is lowest at about 2 degrees of extension, Weiss 1995, a nerve-pressure study, not a lifting study). Limit: if the back of the hand folds toward the forearm by more than about 15 to 20 degrees, stop, lower the weight and reset. That number is coaching consensus, not a measured injury threshold."
+  },
+  "setup": [
+    "Choose the handles: vertical (neutral) if the machine has both, especially if your wrist or shoulder is sore.",
+    "Set the seat height: sit down and adjust until the handles line up with the middle of your chest, about nipple height.",
+    "Set the start depth (back pad or range lever, if the machine has one) so the handles start level with the front of your chest or just in front of it, never behind it.",
+    "Pick the weight. Start lighter than you think; if you have to bend your wrist back to hold it, it is too heavy.",
+    "Sit all the way back: hips against the back pad, feet flat on the floor about hip width apart.",
+    "Grip: handle in the heel of your palm, thumb wrapped, wrist straight, forearm right behind the handle.",
+    "Before the first rep, set your shoulders down and back so both shoulder blades press into the pad.",
+    "If the machine has a foot bar, use it to bring the handles out to the start and to take them back at the end, instead of pulling a heavy handle in with bent wrists."
+  ],
+  "posture": [
+    {
+      "checkpoint": "Handles at mid-chest",
+      "detail": "At the start the handles are level with the middle of the chest (nipple line) and level with or just in front of it, not behind it."
+    },
+    {
+      "checkpoint": "Back and shoulder blades on the pad",
+      "detail": "Upper back and both shoulder blades stay in contact with the pad on every rep, including the last few centimetres of the push. Normal small arch in the low back."
+    },
+    {
+      "checkpoint": "Straight wrist, forearm behind the handle",
+      "detail": "Side view: knuckles, wrist and forearm form one straight line, and the forearm points straight along the direction the handle moves. The handle sits in the heel of the palm."
+    },
+    {
+      "checkpoint": "Elbows level with and right behind the handles",
+      "detail": "Side view: each elbow sits at about handle height, directly behind its handle, below shoulder height, so the forearm points straight along the push. Top view: with horizontal handles the elbows sit roughly 45 to 60 degrees out from the sides; with vertical handles they sit closer to the body. They never flare straight out level with the shoulders."
+    },
+    {
+      "checkpoint": "Feet flat, hips back",
+      "detail": "Both feet flat on the floor, hips pushed back into the seat and back pad, no bridging off the seat."
+    },
+    {
+      "checkpoint": "Soft elbows at the end",
+      "detail": "At the end of the push the arms are long with a small bend left in the elbows, and the shoulder blades are still on the pad."
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Wrist bent back, handle sitting in the fingers",
+      "whyItHurts": "The push lands behind the wrist joint, so the load bends the wrist backward like a lever and the small structures on the back of the wrist get squeezed. Painful loading of a bent-back wrist is linked with problems on the back of the wrist such as hidden ganglion cysts and partial ligament tears (Nance 2017, an MRI study of people with this pain, which shows association, not cause). A straight wrist lets the load travel down the forearm bones instead.",
+      "fix": "Reset the handle low in the palm, on the heel of the hand, wrap the thumb, and line the knuckles up with the forearm. If the wrist still folds on the hard reps, lower the weight until it stays straight for the whole set.",
+      "cue": "Push with the heel of your hand."
+    },
+    {
+      "mistake": "Seat too low, handles up at the shoulders",
+      "whyItHurts": "The handles meet you high on the chest, near the collarbones, so your elbows ride up toward shoulder height as you push. That loads the front of the shoulder more and the middle and lower chest less. No study has measured seat height on this machine; this is ACE setup guidance and coaching consensus.",
+      "fix": "Raise the seat until the handles meet the middle of your chest.",
+      "cue": "Handles at nipple height."
+    },
+    {
+      "mistake": "Shoulders rolling forward off the pad and elbows snapping locked",
+      "whyItHurts": "ACE flags this as a common mistake: when the shoulder blades peel off the pad at the end of the push, the shoulder loses its stable base. Snapping the elbows into a hard lockout under a heavy load puts the stress on the elbow joint instead of the muscles (coaching consensus).",
+      "fix": "Stop the push just before your elbows lock, with your shoulder blades still touching the pad. If you can only finish by rolling forward, the weight is too heavy.",
+      "cue": "Blades stay on the pad."
+    },
+    {
+      "mistake": "Start position too deep, handles behind the chest",
+      "whyItHurts": "Letting the handles travel behind the line of the chest with the elbows flared stretches the front of the shoulder under load. Clinicians who modify presses for injured shoulders limit this depth (Fees 1998, a clinical perspective, not a trial), and ACE says the handles should start no deeper than chest level.",
+      "fix": "Set the back pad or range lever so the handles start level with the front of your chest, and stop each rep there.",
+      "cue": "Handles stop at your chest."
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "chest",
+        "plain": "Across the middle and lower chest, the big fan of muscle from the breastbone out to the armpit."
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "upper_chest",
+        "plain": "The top of the chest, just under the collarbone, works too."
+      },
+      {
+        "muscleId": "triceps",
+        "plain": "The back of the upper arm, mostly near the end of the push."
+      },
+      {
+        "muscleId": "front_delts",
+        "plain": "The front of your shoulders help push, but they should not be where you feel it most."
+      }
+    ],
+    "shouldNotTakeOver": [
+      {
+        "muscleId": "front_delts",
+        "plain": "If the front of your shoulders burn more than your chest, your setup is usually off."
+      },
+      {
+        "muscleId": "upper_traps",
+        "plain": "The tops of the shoulders and the neck should stay quiet. Shrugging means you have lost your shoulder position."
+      },
+      {
+        "muscleId": "forearms",
+        "plain": "You will feel your grip working, but your wrist and forearm should never ache. An aching wrist usually means it is bending back."
+      }
+    ],
+    "ifYouFeelItIn": [
+      {
+        "where": "Front of the shoulders",
+        "usuallyMeans": "The seat is too low, the handles start too deep, or your shoulder blades are coming off the pad at the end.",
+        "fix": "Raise the seat so the handles meet the middle of your chest, start the handles level with your chest, and keep your shoulder blades on the pad on every rep."
+      },
+      {
+        "where": "Wrist (top or back of the wrist)",
+        "usuallyMeans": "The wrist is bent back and the handle has slid into your fingers, often because the weight is too heavy.",
+        "fix": "Move the handle into the heel of your palm, wrap your thumb, straighten your wrist, and drop the weight until it stays straight. If it still hurts, stop pressing for the day. If it still hurts after a few days, or you notice swelling, numbness or tingling, get it looked at by a physio or doctor."
+      },
+      {
+        "where": "Top of the shoulders or neck",
+        "usuallyMeans": "You are shrugging your shoulders up toward your ears as you push.",
+        "fix": "Set your shoulders down and back into the pad before the first rep and keep them there."
+      },
+      {
+        "where": "Mostly the triceps, little chest",
+        "usuallyMeans": "You are cutting the reps short near lockout, so the arms do most of the work.",
+        "fix": "Bring the handles all the way back to chest level on every rep, and think about pushing with your chest. That cue helps most on lighter sets."
+      },
+      {
+        "where": "Lower back",
+        "usuallyMeans": "Your hips are sliding forward or you are arching hard off the pad to finish reps.",
+        "fix": "Sit back with your hips against the pad, feet flat, and keep only your normal small arch. Lower the weight if you have to arch to finish."
+      },
+      {
+        "where": "Elbows",
+        "usuallyMeans": "You are snapping into a hard lockout at the end of each rep.",
+        "fix": "Stop just before the elbows lock and control the way back."
+      }
+    ]
+  },
+  "copy": {
+    "feelLine": "You should feel this across the middle and lower chest. If the front of your shoulders is doing the work, raise the seat so the handles meet the middle of your chest, and keep your shoulder blades on the pad.",
+    "gripLine": "Put the handle low in your palm, right on the heel of your hand, and wrap your thumb around it. Your knuckles should line up with your forearm. If your wrist starts bending back, the weight is too heavy.",
+    "setupLine": "Set the seat so the handles sit level with the middle of your chest. Sit all the way back with your feet flat and your shoulder blades on the pad.",
+    "mistakeLine": "Never let your wrist fold back to finish a heavy rep. Drop the weight and push through the heel of your hand."
+  },
+  "zooms": [
+    {
+      "key": "hand",
+      "shows": "Side close-up of the hand on the handle, with a line drawn down the forearm to show where the force goes. Inset for horizontal handles.",
+      "correct": "Wrist straight, knuckles in line with the forearm. The handle sits low in the palm on the heel of the hand, thumb wrapped round it. The force line runs from the handle straight down the middle of the forearm.",
+      "wrong": "The owner's fault: wrist bent back about 30 to 40 degrees, the handle hanging in the finger bends, thumb loose. The force line passes behind the wrist, with a red arc marking the bend at the wrist. Same fault drawn on the horizontal-handle inset."
+    },
+    {
+      "key": "seat height",
+      "shows": "Side view of torso and handle, with a dashed line from the handle to the chest.",
+      "correct": "The handle line meets the middle of the chest (nipple line).",
+      "wrong": "Seat too low: the handle line meets the collarbone or shoulder, the elbow sits up near shoulder height, and the front delt shimmers instead of the chest."
+    },
+    {
+      "key": "shoulder blades",
+      "shows": "Side view of the upper back against the pad at the end of the push.",
+      "correct": "Shoulder blades flat on the pad, arms long with a small elbow bend.",
+      "wrong": "Upper back rounded forward with a gap between the shoulder blades and the pad, elbows locked straight."
+    },
+    {
+      "key": "start depth",
+      "shows": "Top-down view of one arm and handle at the start of the rep.",
+      "correct": "Handle level with the front of the chest, elbow directly behind the handle and angled about 45 to 60 degrees out from the side (horizontal handles; closer in for vertical handles).",
+      "wrong": "Handle behind the line of the chest with the elbow flared out level with the shoulder."
+    }
+  ],
+  "sources": [
+    "ACE Exercise Library, Seated Chest Press: https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
+    "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. Comparison of Muscle Activity between the Horizontal Bench Press and the Seated Chest Press Exercises Using Several Grips. J Hum Kinet 2023;87:23-34. doi:10.5114/jhk/161468. https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/",
+    "Calatayud J et al. Importance of mind-muscle connection during progressive resistance training. Eur J Appl Physiol 2016;116(3):527-33. https://pubmed.ncbi.nlm.nih.gov/26700744/",
+    "Weiss ND et al. Position of the wrist associated with the lowest carpal-tunnel pressure. J Bone Joint Surg Am 1995;77(11):1695-9. https://pubmed.ncbi.nlm.nih.gov/7593079/",
+    "Snyder BJ, Fry WR. Effect of verbal instruction on muscle activity during the bench press exercise. J Strength Cond Res 2012;26(9):2394-400. https://pubmed.ncbi.nlm.nih.gov/22076100/",
+    "Nance EM et al. Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study. J Wrist Surg 2017;6(4):276-279. https://pubmed.ncbi.nlm.nih.gov/29085728/",
+    "Fees M, Decker T, Snyder-Mackler L, Axe MJ. Upper extremity weight-training modifications for the injured athlete. Am J Sports Med 1998;26(5):732-42. https://pubmed.ncbi.nlm.nih.gov/9784824/",
+    "Palmer AK, Werner FW. Biomechanics of the distal radioulnar joint. Clin Orthop Relat Res 1984;(187):26-35. https://pubmed.ncbi.nlm.nih.gov/6744728/ (not used for any claim; see evidenceNotes)",
+    "Barbell Logic, Bench Press Grip Tips (coaching source): https://barbell-logic.com/bench-press-grip-tips/",
+    "Mayo Clinic, Dorsal wrist impingement: https://www.mayoclinic.org/uk/specialties/orthopaedics/dorsal-wrist-impingement (could not be opened by the verifier, 403; not used for any claim)"
+  ],
+  "evidenceNotes": "Strong: the ACE setup (handles level with mid-chest at about nipple height and no deeper than chest level, full grip with thumbs around the handles, wrists in line with the forearms, shoulder blades back and down and kept on the backrest, elbows extended but not locked, and the named mistake of pressing until the blades round forward off the backrest). Checked on the ACE page. Measured EMG: Muyor 2023 (20 active adults, 8 reps at 60 percent 1RM) on a seated chest press machine found all pec portions at roughly 25 to 30 percent MVIC with either handle, clavicular pec about 30 percent with neutral handles, front delt about 24 percent in every exercise and grip, and triceps in the low teens. Grip widths were about 1.5x biacromial (neutral) and 2x (horizontal), set by the machine. Within the machine the grips did not differ significantly; the only significant pec finding was neutral-handle clavicular pec vs the flat barbell bench. The paper also found no significant difference between the pec portions and the front delt within the machine press, so the front delts work nearly as hard as the chest by EMG. The feel line 'middle and lower chest, not the shoulders' is therefore a coaching target, not a measured outcome. Exact per-muscle numbers beyond the abstract were read approximately from the paper's figures. Handle choice rests on wrist and shoulder comfort (consensus). Cueing: in bench press, telling lifters to focus on the chest raised pec EMG at 50 percent 1RM, and at 80 percent it raised both pec and front delt (Snyder and Fry 2012); Calatayud 2016 found the focus effect at 20 to 60 percent 1RM but not at 80 percent. Both are bench press studies, so the feel cue is best framed for lighter sets. Seat height: no study measures machine chest press seat height against EMG; the advice is ACE guidance plus coaching consensus. Rodriguez-Ridao 2020 (bench incline EMG) was dropped because a lower seat on a horizontal-path machine does not change the push angle the way an incline bench does. Elbow angle 45 to 60 degrees and the 'hard lockout loads the elbow' point are coaching consensus. Wrist: the 0 to 10 degree target leans on Weiss 1995 (lowest carpal tunnel pressure at 2 +/- 9 degrees extension in 20 controls), a nerve-pressure study, not a lifting study. The 15 to 20 degree limit is coaching consensus. Nance 2017 is a retrospective MRI chart review: 84 percent of patients with dorsal wrist pain in loaded extension (push-ups, planks, yoga) had a dorsal abnormality, mostly occult dorsal ganglion cysts, then partial scapholunate tears, vs 12 percent of ulnar-pain controls. It shows association in patients, not cause, and did not study pressing handles. The claim that about 80 percent of wrist load goes through the radius is widely cited to Palmer and Werner 1984, but the abstract does not state it, so the copy does not use it. Heel-of-palm placement is coaching consensus (Barbell Logic: 'as low in the heel of the palm as possible, stacked directly over the forearm bones', written for the barbell bench) plus ACE's neutral wrist. The thumb-wrap mechanism (stops the handle rolling into the fingers) is consensus. Fees 1998 is a clinical perspective article. The Mayo Clinic page returned 403 to the verifier and is not relied on. Muscle ids verified in src/data and src/svg/bodyMuscles.ts: chest (body map chest-lower-left/right), upper_chest (chest-upper-left/right), triceps, front_delts, upper_traps, forearms all exist and are drawn. There is no separate mid-chest id, so 'chest' covers the middle and lower chest; 'forearms' stands in for the wrist. rotator_cuff exists but has no drawn region, so it is left out. Copy brief flag: its sample line says 'lower the seat a notch' when the front of the shoulders takes over. On a standard fixed-handle machine that is the wrong way round; a low seat puts the handles up near the shoulders, so the fix is to raise the seat."
+}

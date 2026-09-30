@@ -1,0 +1,221 @@
+{
+  "id": "hanging_leg_raise",
+  "name": "Hanging Leg Raise",
+  "archetype": "Bodyweight hanging hip and trunk flexion from a fixed overhead bar (library id lib_hanging_leg_raise, pattern hip_flexion). Handling archetype G9 (hang grip) from GENERAL.md: overhand full grip with the thumb wrapped, bar at the base of the fingers, wrist level, shoulders pulled a little down from the ears. The hands only hold you up; the work is the pelvis curling up toward the ribs. Two grip-free versions share the card: ab slings (the upper arms hang in loops) and the captain's chair (forearms on pads).",
+  "grip": {
+    "type": "Overhand (pronated), palms facing away, full closed grip on a fixed bar. If your grip fails before your abs, add lifting straps round the bar or switch to ab slings, which take the hands out completely. With a sore wrist, use ab slings or a captain's chair so the wrist carries no load.",
+    "width": "About shoulder width, hands straight above the shoulders so the arms hang vertical. Wider does not help this exercise and makes the shoulders work harder to stay set. Consensus only; no study compares grip widths for leg raises.",
+    "thumb": "Wrap your thumb under the bar so it meets or overlaps your index finger. If your hand opens, you fall, the sets are long holds (often 30 to 60 seconds), and the bar gets sweaty, so the thumb stays round the bar every set. Baechle and Earle (NSCA editors) teach all grips with the thumb around the bar. Thumbless gives you nothing here. No study has measured thumb position on this exercise; this is consensus.",
+    "handContact": "The bar lies across the base of your fingers, just below the knuckles. Close your fingers over the top and wrap your thumb under. Keep it out of the middle of your palm, where the skin bunches and pinches, and away from your fingertips, where the hand peels open as your forearms tire. With lifting straps, the strap runs from the wrist loop up over the top of the bar away from you, down the far side and back under toward you, the same way your fingers wrap, so your weight pulls it tighter. Your fingers still close over it.",
+    "wrist": "Target: wrist straight in line with the forearm, or tipped back a little, knuckles pointing at the ceiling. Limit: once the wrist curls forward and the bar rolls toward the fingertips, the grip is failing; end the set or put straps on. Evidence: O'Driscoll 1992 (hand dynamometer, not a bar) found grip strongest at the wrist's self-chosen position, about 35 degrees of extension, needing at least 25 degrees for full strength; moving the wrist 10 to 15 degrees off that, including toward flexion, cut grip strength. So a curled wrist costs grip, which is why it is the limit. A hang does not let you choose 35 degrees, so the target is simply straight and not curled; the angle is consensus, not a measured injury threshold. Hanging pulls the wrist long (traction). It does not push load back through a bent wrist the way a press does, so the owner's press injury does not happen here in the same way. If the wrist is already sore, use ab slings or a captain's chair and stop if it hurts."
+  },
+  "setup": [
+    "Pick a bar high enough that your feet clear the floor with your legs straight. If your grip or wrist is the problem, use ab slings on the bar or a captain's chair instead.",
+    "Use a box or step to reach the bar without jumping. Once you're hanging, make sure the box is well clear of your legs, or have someone move it, so you don't clip it on the way down.",
+    "Dry your hands or chalk them. If your grip usually quits first, put lifting straps on now.",
+    "Stand on the step and take the bar at shoulder width, palms facing away: bar across the base of your fingers, fingers closed, thumb wrapped under.",
+    "Step off and hang with straight arms. Pull your shoulders a little down from your ears without bending your elbows.",
+    "Legs together, a little in front of you. Wait until your body stops swinging before the first rep.",
+    "New to this? Start with bent knees (hanging knee raise) and move to straight legs once you can curl your hips up without swinging."
+  ],
+  "posture": [
+    {
+      "checkpoint": "Active hang",
+      "detail": "Front or back view: arms straight, hands above the shoulders, shoulder blades pulled slightly down, a clear gap between the ears and the tops of the shoulders. The shoulders do not sink up around the ears."
+    },
+    {
+      "checkpoint": "Still body under the bar",
+      "detail": "Side view at the start: shoulders, hips and feet in a quiet line under the bar, legs together and a touch in front, ribs down. No backswing arc."
+    },
+    {
+      "checkpoint": "Pelvis curls up at the top",
+      "detail": "Side view at the top: the lower back rounds gently away from vertical, tailbone tipping forward and up, belt line rising toward the ribs. Draw the pelvis tilted back (posterior tilt) against a dashed vertical."
+    },
+    {
+      "checkpoint": "Legs past hip height",
+      "detail": "Side view: thighs at or above horizontal (knees to chest on the bent-knee version). Below about 30 to 45 degrees from vertical it is mostly the hip flexors; the pelvis starts to curl above that (Yessis, expert opinion)."
+    },
+    {
+      "checkpoint": "Chest stays quiet",
+      "detail": "Side view: upper body stays under the bar while the legs rise. The torso does not lean far back to counter the legs, and the arms stay straight."
+    },
+    {
+      "checkpoint": "Slow way down",
+      "detail": "Side view on the lowering: legs come down under control and stop just in front of the body, not swinging behind it."
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging or kicking the legs up with momentum, then letting them drop and swing back behind you.",
+      "whyItHurts": "Momentum does the lifting, so your abs do less, and each swing jerks your whole body weight through your hands and shoulders. On the backswing your lower back arches. Coaches agree on lifting without swinging (Catalyst Athletics, Yessis, StrengthLog). The injury link is consensus, not measured.",
+      "fix": "Start every rep from a still hang. Lift at a speed you could stop at any point, and lower slower than you lift. If you can't do it without swinging, bend your knees.",
+      "cue": "Dead still, then lift."
+    },
+    {
+      "mistake": "Lifting only the legs: the pelvis never curls, the lower back stays arched and the hips do all the work.",
+      "whyItHurts": "Without the curl, the hip flexors lift the legs while the abs mostly hold (Catalyst Athletics; Yessis, expert opinion). The hip flexors attach to the lower spine and pull on it, and the straight-leg hanging raise already puts about 3000 N of compression on the spine (McGill 2015). That load is worth knowing about if you have back pain. In a lying leg-lift test, tilting the pelvis back raised rectus abdominis activity compared with tilting it forward (Workman 2008); that study was not on a bar, so the support for the curl is indirect.",
+      "fix": "Bend your knees if needed. As your thighs pass hip height, roll your hips up toward your chest so your lower back rounds a little. Lower until your legs are just in front of you.",
+      "cue": "Curl your hips to your ribs."
+    },
+    {
+      "mistake": "Hanging loose with the shoulders sunk up to the ears, or jumping up and dropping into the bottom of the hang.",
+      "whyItHurts": "With the arms high overhead, the space under the shoulder roof gets smaller (Prinold and Bull 2016, measured during pull-ups). Dropping into that position with slack shoulders, or swinging from it, loads the joint through its passive tissues. Up to 36% of reported weight-training injuries are at the shoulder (Kolber 2010). The link to a loose hang in particular is consensus.",
+      "fix": "Step up from a box, then pull your shoulders a little down from your ears before the first rep and keep them there for the whole set.",
+      "cue": "Shoulders down, arms long."
+    },
+    {
+      "mistake": "Grip slipping: bar rolling to the fingertips, wrist curling forward, thumb resting on top.",
+      "whyItHurts": "A curled wrist weakens your grip (O'Driscoll 1992, measured on a hand dynamometer), so your forearms quit long before your abs, and a sweaty hand can peel off the bar mid-rep. A bar jammed deep in the palm pinches the skin and tears calluses (coaching consensus, weak evidence).",
+      "fix": "Bar at the base of the fingers, thumb wrapped, wrist level, chalk. If the grip still goes first, use lifting straps or ab slings so the set ends when your abs are done.",
+      "cue": "Hook with the fingers, wrap the thumb."
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "abs",
+        "plain": "Down the front of your stomach, from the ribs to below your belly button, tightening hard as your hips curl up at the top. Most people feel it most below the belly button."
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "obliques",
+        "plain": "The sides of your waist, working to keep you from twisting and to help the curl."
+      },
+      {
+        "muscleId": "hip_flexors",
+        "plain": "The front of your hips, where the legs meet the body. They lift your legs, so some work here is normal."
+      },
+      {
+        "muscleId": "lats",
+        "plain": "Some tension down the sides of your back, holding your upper body still under the bar."
+      },
+      {
+        "muscleId": "forearms",
+        "plain": "Your grip, holding your whole body up. Some burn is normal on long sets."
+      }
+    ],
+    "shouldNotTakeOver": [
+      {
+        "muscleId": "hip_flexors",
+        "plain": "If the front of your hips is all you feel, you are lifting your legs without curling your pelvis."
+      },
+      {
+        "muscleId": "lower_back",
+        "plain": "Your lower back should not ache or pinch. If it does, it is arching instead of rounding."
+      },
+      {
+        "muscleId": "forearms",
+        "plain": "If your grip gives out before your stomach is tired, the set ends too early. Use straps or ab slings."
+      },
+      {
+        "muscleId": "upper_traps",
+        "plain": "The tops of your shoulders and your neck shouldn't ache or feel pulled. If they do, you're hanging loose with your shoulders sunk up by your ears."
+      }
+    ],
+    "ifYouFeelItIn": [
+      {
+        "where": "Front of the hips only",
+        "usuallyMeans": "Your legs go up but your pelvis stays put, so the hip flexors lift and the abs only hold.",
+        "fix": "Bend your knees and bring them to your chest, then roll your hips up toward your ribs at the top. Go higher and slower before you go straighter."
+      },
+      {
+        "where": "Front of the thighs cramping",
+        "usuallyMeans": "The straight-leg version is too long a lever for you right now, so the thigh muscle that also lifts the hip is overworking.",
+        "fix": "Do it with bent knees for now and add the straight legs back one rep at a time."
+      },
+      {
+        "where": "Lower back",
+        "usuallyMeans": "You're swinging, or your back arches while the legs lift and lower.",
+        "fix": "Start from a still hang, curl the hips at the top, and lower slower. If it still aches, use a captain's chair with your back on the pad, and stop if it hurts."
+      },
+      {
+        "where": "Forearms give out first",
+        "usuallyMeans": "Your grip is the weak link, or the bar has rolled toward your fingertips.",
+        "fix": "Bar at the base of your fingers, thumb wrapped, chalk. If it still goes first, use lifting straps or ab slings."
+      },
+      {
+        "where": "Tops of the shoulders and neck",
+        "usuallyMeans": "You're hanging loose, so your shoulders have sunk up toward your ears.",
+        "fix": "Pull your shoulders a little down before the first rep and keep them there."
+      },
+      {
+        "where": "The wrist",
+        "usuallyMeans": "The wrist is curling as the grip fails, or an old wrist injury is being stretched.",
+        "fix": "Keep the wrist level with the bar at the base of the fingers. With a sore wrist, use ab slings or a captain's chair and stop if it hurts."
+      },
+      {
+        "where": "Nothing much in the stomach",
+        "usuallyMeans": "The reps are too fast or too swingy for the abs to do the lifting.",
+        "fix": "Pause for a second at the top with your hips curled, then take two or three seconds to lower."
+      }
+    ]
+  },
+  "copy": {
+    "feelLine": "You should feel this down the front of your stomach, most of all below your belly button as your hips curl up. If it's mostly the front of your hips or thighs, bend your knees and roll your hips up toward your ribs at the top.",
+    "gripLine": "Hands about shoulder width, palms facing away. Lay the bar across the base of your fingers, close your hand and wrap your thumb under. If your grip quits before your stomach does, use straps.",
+    "setupLine": "Step up to the bar instead of jumping. Hang with straight arms, pull your shoulders a little down from your ears, and wait until your legs stop swinging.",
+    "mistakeLine": "Don't swing your legs up. If you need a kick to get them there, bend your knees and lift slowly until you can do it still."
+  },
+  "zooms": [
+    {
+      "key": "hand",
+      "shows": "Side close-up of one hand on the bar, cut through the bar so the finger wrap is visible, with the forearm line drawn up from the elbow.",
+      "correct": "Bar across the base of the fingers, just below the knuckles. Fingers wrapped over the top, thumb wrapped under meeting the index finger. Wrist level with the forearm, knuckles pointing up. The forearm line runs straight up into the bar.",
+      "wrong": "Bar rolled out toward the fingertips, wrist curled forward, thumb loose on top of the bar, a red arc at the wrist and a small slip arrow showing the fingers peeling off."
+    },
+    {
+      "key": "thumb",
+      "shows": "Two small hand drawings from below the bar: full grip and thumbless.",
+      "correct": "Full grip: thumb wrapped under, tip meeting or overlapping the index finger. Label: every set.",
+      "wrong": "Thumbless: thumb on top beside the fingers, drawn opening late in the set on a sweaty bar. Label: nothing to gain here."
+    },
+    {
+      "key": "straps",
+      "shows": "Three small panels of the grip-free options: lifting strap wound round the bar, ab slings with the upper arms in loops, captain's chair with forearms on pads.",
+      "correct": "Lifting strap: loop at the wrist, strap up over the top of the bar away from you, down the far side and under back toward you, fingers still closed over it. Ab slings: loops under the back of the upper arms just above the elbows, elbows bent, hands relaxed, shoulders down. Captain's chair: forearms flat on the pads, hands on the handles, back against the pad, wrists straight.",
+      "wrong": "Lifting strap wound the wrong way so it unwinds as you hang (red arrow). Ab slings sitting in the crook of the elbow with the shoulders shrugged up."
+    },
+    {
+      "key": "shoulder blades",
+      "shows": "Back view of the upper body in the hang, arms straight, shoulder blades outlined.",
+      "correct": "Active hang: shoulder blades pulled slightly down, a clear gap between ears and shoulders, arms straight.",
+      "wrong": "Shoulders sunk up to the ears, head sunk between the arms, blades riding high, a red jolt mark for dropping into the bottom."
+    },
+    {
+      "key": "pelvis curl",
+      "shows": "Side close-up of the trunk and hips at the top of the rep, with the pelvis drawn as a bowl and a dashed vertical reference line.",
+      "correct": "Pelvis tipped back and up (posterior tilt), lower back gently rounded, belt line moving toward the ribs, thighs above horizontal. Abs shimmer.",
+      "wrong": "Legs at hip height but pelvis still tipped forward, lower back arched, a red mark at the lower back. Hip flexors shimmer instead of the abs."
+    },
+    {
+      "key": "body line",
+      "shows": "Side view of the whole body under the bar, start and lowering.",
+      "correct": "Still hang with legs together and a touch in front; on the way down the legs stop in front of the body.",
+      "wrong": "A swing arc: legs kicked up with momentum and dropping back behind the body, lower back arched on the backswing, red motion arcs."
+    }
+  ],
+  "sources": [
+    "McGill S, Andersen J, Cannon J. Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up. J Sports Sci 2015;33(4):419-26. https://pubmed.ncbi.nlm.nih.gov/25111163/ (14 men; hanging straight leg raise >130% MVC rectus abdominis, 88% MVC external oblique, about 3000 N spine compression)",
+    "Escamilla RF et al. Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training. Phys Ther 2006;86(5):656-71. https://pubmed.ncbi.nlm.nih.gov/16649890/ (hanging knee-up with straps among the highest for upper and lower rectus abdominis, internal and external oblique and latissimus dorsi; lumbar paraspinals low)",
+    "Axler CT, McGill SM. Low back loads over a variety of abdominal exercises: searching for the safest abdominal challenge. Med Sci Sports Exerc 1997;29(6):804-11. https://pubmed.ncbi.nlm.nih.gov/9219209/ (hanging straight and bent leg raises among 12 exercises; no single exercise both maximal for the abs and minimal for spine load)",
+    "Workman JC, Docherty D, Parfrey KC, Behm DG. Influence of pelvis position on the activation of abdominal and hip flexor muscles. J Strength Cond Res 2008;22(5):1563-9. https://pubmed.ncbi.nlm.nih.gov/18714231/ (lying double leg lift: posterior pelvic tilt gave higher upper and lower rectus abdominis activity than anterior tilt; rectus femoris unchanged)",
+    "Andersson EA, Nilsson J, Ma Z, Thorstensson A. Abdominal and hip flexor muscle activation during various training exercises. Eur J Appl Physiol 1997;75(2):115-23. https://pubmed.ncbi.nlm.nih.gov/9118976/ (fine-wire iliacus: bilateral leg lifts highly activate the hip flexors; abdominals also needed in bilateral lifts)",
+    "Juker D, McGill S, Kropf P, Steffen T. Quantitative intramuscular myoelectric activity of lumbar portions of psoas and the abdominal wall during a wide variety of tasks. Med Sci Sports Exerc 1998;30(2):301-10. https://pubmed.ncbi.nlm.nih.gov/9502361/ (psoas most active in hip flexion efforts)",
+    "Jukic I et al. Ergogenic effects of lifting straps on movement velocity, grip strength, perceived exertion and grip security during the deadlift exercise. Physiol Behav 2021;229:113283. https://pubmed.ncbi.nlm.nih.gov/33306977/ (straps reduced grip fatigue and raised grip security)",
+    "Valerio DF et al. The effects of lifting straps in maximum strength, number of repetitions and muscle activation during lat pull-down. Sports Biomech 2021;20(7):858-65. https://pubmed.ncbi.nlm.nih.gov/31198105/ (no effect on reps or lat activation in a pulldown)",
+    "Martins R et al. Are lifting straps a game changer for resistance training or an overrated tool? Int J Sports Physiol Perform 2026;21(3):342-9. https://pubmed.ncbi.nlm.nih.gov/41569827/ (review: straps help grip perception and maximal strength; no consistent effect on pulling exercises)",
+    "O'Driscoll SW et al. The relationship between wrist position, grasp size, and grip strength. J Hand Surg Am 1992;17(1):169-77. https://pubmed.ncbi.nlm.nih.gov/1538102/ (dynamometer: self-chosen wrist position about 35 degrees extension and 7 degrees ulnar deviation; at least 25 degrees extension needed for full grip; 10 to 15 degrees off that position cut grip strength)",
+    "Prinold JA, Bull AM. Scapula kinematics of pull-up techniques: avoiding impingement risk with training changes. J Sci Med Sport 2016;19(8):629-35. https://pubmed.ncbi.nlm.nih.gov/26383875/ (11 people, upward phase of pull-ups: high arm elevation reduces subacromial space; the hang itself was not studied)",
+    "Kolber MJ et al. Shoulder injuries attributed to resistance training: a brief review. J Strength Cond Res 2010;24(6):1696-704. https://pubmed.ncbi.nlm.nih.gov/20508476/ (review: up to 36% of documented resistance-training injuries are at the shoulder; mostly retrospective data)",
+    "ACE-sponsored study (Francis, San Diego State University): captain's chair ranked 2nd for rectus abdominis and 1st for obliques of 13 exercises (press release, not peer reviewed). https://www.acefitness.org/about-ace/press-room/press-releases/246/american-council-on-exercise-ace-sponsored-study-reveals-best-and-worst-abdominal-exercises/",
+    "Catalyst Athletics, Hanging Leg Raise (coach source): 'Without swinging ... tightening the abs to curl the pelvis up as you would in a crunch so the motion is not simply hip flexion'; bend the knees to make it easier. https://catalystathletics.com/exercise/45/Hanging-Leg-Raise/",
+    "Catalyst Athletics, Scap Pull-Up (coach source, pulling the shoulder blades down from a hang). https://catalystathletics.com/exercise/918/Scap-Pull-Up/",
+    "Yessis M, Hanging Leg Raise (biomechanist, expert opinion): hip flexors lift first while the abs hold; the abs do not begin to shorten until the thighs reach about 30-45 degrees from vertical; body perfectly still, no swinging; mentions standing on a footstool to adjust straps (the page does not say which kind). https://doctoryessis.com/2013/01/01/hanging-leg-raise/",
+    "StrengthLog, Hanging Leg Raise (coach source: no swinging, controlled lowering, bent-knee regression). https://www.strengthlog.com/hanging-leg-raise/",
+    "Baechle TR, Earle RW. Weight Training: Steps to Success (NSCA editors): 'Perform all grips with your thumbs around the bar.' https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Leg raise. Wikipedia (secondary, consensus only: hanging version allows free pelvic rotation; posterior tilt when targeting the rectus abdominis). https://en.wikipedia.org/wiki/Leg_raise",
+    "Project research: grip/research/GENERAL.md (grip family G9, thumb and wrist rules, S5, S13, S14) and grip/research/pull_up.json (shared hang grip)."
+  ],
+  "evidenceNotes": "Measured: the hanging leg raise is one of the hardest abdominal exercises tested (McGill 2015: rectus abdominis over 130% MVC, external oblique 88% MVC, 14 men, straight legs) and the strapped hanging knee-up is among the top exercises for all abdominal regions and the lats (Escamilla 2006). It also carries real spine load (about 3000 N compression, McGill 2015), so people with back pain should know. The hip flexors lifting the legs is measured in lying leg lifts (Andersson 1997, fine-wire iliacus; Juker 1998, psoas), not on a bar. Indirect: the pelvis curl. Workman 2008 showed a posterior pelvic tilt raises rectus abdominis activity versus an anterior tilt, but in a lying isometric leg lift; no study found compares curled and uncurled pelvis on a bar. The 30-45 degree point where the abs start to shorten is one biomechanist's expert opinion (Yessis), not data. Straps: lifting straps cut grip fatigue in deadlifts (Jukic 2021) but showed no effect in lat pulldowns (Valerio 2021; Martins 2026 review); no study covers them on hanging leg raises, so recommending them when grip fails first is consensus. Ab slings appear in Escamilla 2006 (as used, not compared to a bare hang). Where the sling sits (back of the upper arm just above the elbow) is manufacturer and coaching consensus. The captain's chair ranking comes from an ACE press release, not a peer-reviewed paper. Consensus only: thumb wrapped, bar at the base of the fingers, shoulder-width grip, active hang, no swinging, stepping up instead of jumping, and all wrist degree limits. Not found: an ACE or ExRx page I could open (ExRx blocked automated access; ACE has no hanging leg raise page found), and the NSCA technique manual is not free online. Verifier pass (2026-09-30): the PubMed abstracts of McGill 2015, Escamilla 2006, Axler 1997, Workman 2008, Andersson 1997, Juker 1998, Jukic 2021, Valerio 2021, Martins 2026, O'Driscoll 1992, Prinold 2016 and Kolber 2010 were re-read, and the Catalyst, Yessis, StrengthLog, ACE and Baechle-Earle pages were opened; all match the card after fixes. O'Driscoll found grip strongest near 35 degrees of wrist extension on a dynamometer (at least 25 needed), so the earlier 'strongest slightly back, 0 to 20 degrees' wording was corrected; in a hang the practical target is a straight, uncurled wrist. EMG shows the whole rectus abdominis working hard (Escamilla: upper and lower both among the highest), so 'feel it below the belly button' is a common feel cue, not a measured lower-ab bias. The claim that people with back pain notice an arched back under this load was removed as unsupported. Yessis mentions straps without saying which kind, so the card no longer cites him for lifting straps. Every muscleId (abs, obliques, hip_flexors, lats, forearms, lower_back, upper_traps) exists in src/data/muscles.ts and has a drawn region in src/svg/bodyMuscles.ts. Muscle ids: the lower rectus abdominis has no own id, so 'low in your stomach' maps to abs. Iliopsoas maps to hip_flexors. Rectus femoris (the thigh muscle that also lifts the hip) has no own id; the 'front of the thighs cramping' row would map to quads if the app wants a shimmer there, but I left quads out of the lists because there is no EMG on rectus femoris in the hanging version specifically (Escamilla's high rectus femoris values were for other exercises). Transversus abdominis (core) is left out: not measured on this exercise. hip_flexors and forearms appear in both secondary and shouldNotTakeOver on purpose: some work there is normal, dominance is the fault. Owner's wrist: hanging pulls the wrist long rather than pushing a load back through a bent wrist, so the press injury mechanism does not repeat here, but a sore wrist should go to ab slings or a captain's chair and stop on pain."
+}

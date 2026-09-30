@@ -1,0 +1,192 @@
+{
+ "id": "dumbbell_lateral_raise",
+ "name": "Dumbbell lateral raise",
+ "archetype": "Standing (or seated) free-weight isolation raise with a hanging dumbbell. Handling archetype: the weight hangs from the hand, so the grip holds it and a straight wrist passes the pull to the forearm; nothing pushes into the heel of the palm. Movement pattern: shoulder abduction (library pattern shoulder_abduction). The load is light, so the risk sits in hand rotation, raise height and swinging rather than in raw load on the wrist.",
+ "grip": {
+  "type": "Full (closed) grip, palms facing your thighs at the start (neutral), turning to palms facing the floor as the arms rise. ACE specifies a closed, neutral grip with the thumbs around the handles.",
+  "width": "One dumbbell per hand, resting beside the outside of each thigh at the start, hands about hip width apart. The hand sits in the middle of the handle so the dumbbell hangs level and does not tip toward the thumb or the pinky.",
+  "thumb": "Wrapped around the handle, closing over the fingers. It keeps the handle from rolling out toward your fingertips, which is what lets the wrist tip. Hold it firmly but relaxed. In two small lab studies, a hard hand squeeze (30 to 50% of max on a grip gauge) made the supraspinatus and other rotator cuff muscles work harder with the arm raised, mostly when the arm was raised forward (Sporrong 1995, 1996). They did not test dumbbells or side raises, so this is a reason to avoid a death grip, not proof of harm. Some coaches teach a thumbless or loose grip to 'take the forearms out'; there is no data behind that, so wrapped is the default.",
+  "handContact": "The handle runs across the middle of the palm, from the base of the index finger toward the heel of the hand on the pinky side, with the fingers wrapped around it. Not out on the fingertips, where the weight pulls the fingers open and the wrist starts to bend. Unlike a press, nothing pushes into the heel of the palm here: the dumbbell simply hangs from a closed hand.",
+  "wrist": "Target: straight, knuckles in line with the forearm (0 degrees), no curling the wrist up or letting the hand droop, as ACE and the Coratella 2020 protocol ('wrists in line with the forearm') both specify. For reference, carpal tunnel pressure is lowest near 2 degrees of extension (Weiss 1995). Limit: if the hand tips more than about 15 degrees up or down from the forearm, the dumbbell is too heavy or you are lifting with your hands; that number is coaching consensus, not a measured injury threshold. At the top, the thumb side is level with the pinky side or a touch higher, never lower."
+ },
+ "setup": [
+  "Pick light dumbbells: a weight you can raise 12 to 20 times with no swing and no shrug. If you have to lean back or jerk the first rep, go down a size.",
+  "Stand with feet about hip width apart or a little wider, or in a short split stance for balance (ACE). Knees soft. If you tend to swing, sit on a bench instead (the EMG study that tested this exercise used a seated version).",
+  "Grip: handle across the middle of the palm, thumb wrapped, wrist straight, dumbbells beside the outside of your thighs, palms facing in.",
+  "Unlock the elbows into a small bend, about 10 to 20 degrees, and keep that bend for the whole set.",
+  "Set your shoulders down away from your ears and slightly back before the first rep (ACE), so your neck looks long.",
+  "Bring your arms a little forward of your sides, so the dumbbells travel slightly in front of your body instead of straight out to the sides or behind you. Do not roll the arms inward to do this; the thumbs stay level with the pinkies."
+ ],
+ "posture": [
+  {
+   "checkpoint": "Tall stance, no lean back",
+   "detail": "Side view: ear, shoulder, hip and ankle roughly stacked, knees soft, low back in its normal small curve. The torso does not rock back to start the dumbbells moving."
+  },
+  {
+   "checkpoint": "Shoulders down, neck long",
+   "detail": "Front view: clear space between the tops of the shoulders and the ears, at the bottom and at the top of the rep. The shoulders do not ride up toward the ears as the dumbbells rise."
+  },
+  {
+   "checkpoint": "Elbows lead, hands follow",
+   "detail": "Front view: the elbows rise first and stay level with or slightly above the hands (ACE: elbows and upper arms rise slightly ahead of forearms and dumbbells). Fixed small bend in the elbow, about 10 to 20 degrees."
+  },
+  {
+   "checkpoint": "Stop at shoulder height",
+   "detail": "At the top the upper arms are level with the shoulders, about 90 degrees from the body and parallel to the floor, and no higher."
+  },
+  {
+   "checkpoint": "Arms slightly in front of the body",
+   "detail": "Top-down view: the arms sit about 20 to 30 degrees in front of the line of the shoulders, not straight out to the side or behind the body."
+  },
+  {
+   "checkpoint": "Straight wrist, thumb level with pinky",
+   "detail": "Close-up at the top: palm facing the floor, knuckles in line with the forearm, the thumb end of the dumbbell level with the pinky end or a touch higher."
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Pouring the jug: pinky higher than the thumb at the top",
+   "whyItHurts": "Tipping the pinky up turns the upper arm inward. At 90 degrees of raise with the arm turned in, the rotator cuff tendon on top of the shoulder sits right under the front edge of the shoulder roof (Graichen 1999, an MRI study in 12 healthy volunteers; it shows anatomy, not injuries). It also does not help the side delts: in Coratella 2020 the thumbs-down version raised upper trap and rear delt activity, while the thumbs-forward (palms down) version gave side delt activity at least as high as any other version.",
+   "fix": "Keep the palms facing the floor at the top with the thumb end level with the pinky end, or turn the front of the dumbbell slightly up as your arms pass about 60 to 70 degrees (ACE).",
+   "cue": "Thumbs level with your pinkies."
+  },
+  {
+   "mistake": "Going too heavy, then swinging and shrugging",
+   "whyItHurts": "A weight you cannot raise cleanly gets started with a lean back and a shrug. The low back takes the swing, the upper traps take the lift, and the side delts do less. Lateral raises already work the upper traps hard (about 97% of max in Andersen 2008, measured in 12 women with neck pain), so shrugging piles more onto the neck. The link to injury here is coaching consensus, not trial data.",
+   "fix": "Drop to a weight you can raise 12 to 20 times with the torso still and the shoulders down. Sit on a bench if you keep swinging.",
+   "cue": "Shoulders down, body still."
+  },
+  {
+   "mistake": "Raising above shoulder height",
+   "whyItHurts": "In recreational lifters, lateral raises taken above 90 degrees were linked with signs of shoulder impingement (Kolber 2014, 77 men, a case-control study that shows association, not cause). The gap under the shoulder roof also shrinks as the arm goes higher, from about 7 mm at 30 degrees to about 4 mm at 120 degrees in healthy volunteers (Graichen 1999).",
+   "fix": "Stop when your upper arms are level with your shoulders, then lower under control.",
+   "cue": "Stop at shoulder height."
+  },
+  {
+   "mistake": "Wrist bent and handle in the fingers, lifting with the hands",
+   "whyItHurts": "When the handle sits out in the fingers, the weight pulls the wrist into a bend and you have to squeeze harder to hold it. The forearms work more, and a hard squeeze with the arm raised can add rotator cuff work (Sporrong 1995, 1996, grip-gauge studies, not dumbbells). The hands also start to rise above the elbows, which turns the move toward a front raise. Same root problem as a bent-back wrist on a press: the load is no longer going straight down the forearm. There is no study on wrist injury in lateral raises; this is mechanics plus coaching consensus.",
+   "fix": "Reset the handle across the middle of the palm, wrap the thumb, keep the knuckles in line with the forearm and let the elbows lead.",
+   "cue": "Straight wrist, elbows lead."
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "side_delts",
+    "plain": "The round cap on the outside of each shoulder, the part that makes the shoulders look wide."
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "upper_traps",
+    "plain": "A little work at the top of the shoulders near the neck, mostly in the last part of the raise. Some of this is normal."
+   },
+   {
+    "muscleId": "front_delts",
+    "plain": "A light share at the front of the shoulder, more if your arms drift forward."
+   }
+  ],
+  "shouldNotTakeOver": [
+   {
+    "muscleId": "upper_traps",
+    "plain": "If the burn is mostly in your neck and the top of your shoulders, the traps are doing the lifting."
+   },
+   {
+    "muscleId": "front_delts",
+    "plain": "If the front of the shoulder does most of the work, the move has turned into a front raise."
+   },
+   {
+    "muscleId": "forearms",
+    "plain": "Your forearms should only be holding the dumbbell, not getting pumped."
+   },
+   {
+    "muscleId": "lower_back",
+    "plain": "Your low back should not be working at all. If it is, you are swinging."
+   }
+  ],
+  "ifYouFeelItIn": [
+   {
+    "where": "Neck and the top of the shoulders (upper traps)",
+    "usuallyMeans": "You are shrugging, the weight is too heavy, or you are going above shoulder height. Some trap work is normal in this exercise.",
+    "fix": "Go lighter, set your shoulders down before each rep, and stop when your arms are level with your shoulders."
+   },
+   {
+    "where": "Front of the shoulders (front delts)",
+    "usuallyMeans": "Your arms are drifting forward into a front raise, or your hands are rising ahead of your elbows.",
+    "fix": "Open the arms out so they are only a little in front of your body, and let the elbows lead."
+   },
+   {
+    "where": "A sharp pinch at the top or front of the shoulder",
+    "usuallyMeans": "Your pinky is tipping up or you are raising too high, which can squeeze the space under the shoulder roof. Treat a pinch as a warning sign. It is not the feeling you are after.",
+    "fix": "Keep your thumb level with your pinky, stop at shoulder height, go lighter. If it still pinches, stop the exercise and get it checked by a physio."
+   },
+   {
+    "where": "Forearms or wrists",
+    "usuallyMeans": "You are squeezing too hard, the handle has slipped into your fingers, or your wrist is bent.",
+    "fix": "Put the handle across the middle of your palm, wrap your thumb, hold firmly but relaxed, and keep your knuckles in line with your forearm."
+   },
+   {
+    "where": "Low back",
+    "usuallyMeans": "You are leaning back to swing the weight up.",
+    "fix": "Go lighter and keep your body still, or do the set seated or in a split stance."
+   }
+  ]
+ },
+ "copy": {
+  "feelLine": "You should feel this on the outside of your shoulders, the round cap. If your neck and the top of your shoulders are doing most of the work, go lighter and keep your shoulders down.",
+  "gripLine": "Hold the handle across the middle of your palm with your thumb wrapped and your wrist straight. At the top, keep your thumb level with your pinky, never lower.",
+  "setupLine": "Pick a weight you can raise 12 to 20 times without swinging. Stand tall, shoulders down, elbows a little bent, arms slightly in front of you.",
+  "mistakeLine": "Stop when your arms are level with your shoulders. Going higher, or tipping your pinky up, can pinch the top of your shoulder."
+ },
+ "zooms": [
+  {
+   "key": "hand",
+   "shows": "Close-up of the hand on the dumbbell handle at the bottom and at the top of the rep.",
+   "correct": "Handle across the middle of the palm from the base of the index finger to the heel of the hand, fingers wrapped, thumb closed over them. Hand centred on the handle so the dumbbell hangs level. Knuckles in one straight line with the forearm.",
+   "wrong": "Handle hanging out in the fingertips, thumb loose or off the handle, the wrist bent so the hand droops or cocks up, the dumbbell tipping."
+  },
+  {
+   "key": "thumb vs pinky at the top",
+   "shows": "End-on view along the arm at the top of the raise, showing which end of the dumbbell is higher.",
+   "correct": "Palms facing the floor, the thumb end of the dumbbell level with the pinky end or a touch higher (Coratella's 'thumbs forward' position).",
+   "wrong": "Pinky end clearly higher than the thumb end (pouring a jug), upper arm turned in."
+  },
+  {
+   "key": "shoulders and neck",
+   "shows": "Front view of the neck and the tops of the shoulders at the top of the raise, with the upper traps marked.",
+   "correct": "Shoulders sitting down, clear space between shoulders and ears, neck long.",
+   "wrong": "Shoulders hunched up toward the ears, upper traps bunched, head pushed forward."
+  },
+  {
+   "key": "top height",
+   "shows": "Front view of the arm at the top with a line at shoulder height.",
+   "correct": "Upper arm level with the shoulder, about 90 degrees, elbow level with or slightly above the hand, small fixed bend in the elbow.",
+   "wrong": "Arm well above shoulder height, or hand higher than the elbow."
+  },
+  {
+   "key": "arm path from above",
+   "shows": "Top-down view of both arms at the top.",
+   "correct": "Arms about 20 to 30 degrees in front of the shoulder line.",
+   "wrong": "Arms drifting far forward into a front raise, or pulled behind the line of the body."
+  },
+  {
+   "key": "torso",
+   "shows": "Side view of the whole body during the raise.",
+   "correct": "Body still and upright, ear over shoulder over hip, knees soft.",
+   "wrong": "Leaning back and bouncing the knees to swing the dumbbells up."
+  }
+ ],
+ "sources": [
+  "ACE Exercise Library, Lateral Raise (closed neutral grip, elbows lead, neutral wrist, stop at shoulder level, slight upward rotation past 60-70 degrees): https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+  "Coratella G et al. (2020) An Electromyographic Analysis of Lateral Raise Variations and Frontal Raise in Competitive Bodybuilders. Int J Environ Res Public Health 17(17):6015: https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+  "Graichen H et al. (1999) Subacromial space width changes during abduction and rotation, a 3-D MR imaging study. Surg Radiol Anat 21(1):59-64: https://pubmed.ncbi.nlm.nih.gov/10370995/",
+  "Kolber MJ et al. (2014) Characteristics of shoulder impingement in the recreational weight-training population. J Strength Cond Res 28(4):1081-9: https://pubmed.ncbi.nlm.nih.gov/24077379/",
+  "Kolber MJ et al. (2010) Shoulder injuries attributed to resistance training: a brief review. J Strength Cond Res 24(6):1696-704: https://pubmed.ncbi.nlm.nih.gov/20508476/",
+  "Andersen LL et al. (2008) Muscle activation during selected strength exercises in women with chronic neck muscle pain. Phys Ther 88(6):703-11: https://pubmed.ncbi.nlm.nih.gov/18339796/",
+  "Sporrong H et al. (1995) Influences of handgrip on shoulder muscle activity. Eur J Appl Physiol 71(6):485-92: https://pubmed.ncbi.nlm.nih.gov/8983914/",
+  "Sporrong H et al. (1996) Hand grip increases shoulder muscle activity. Acta Orthop Scand 67(5):485-90: https://pubmed.ncbi.nlm.nih.gov/8948256/",
+  "Weiss ND et al. (1995) Position of the wrist associated with the lowest carpal-tunnel pressure. J Bone Joint Surg Am 77(11):1695-9: https://pubmed.ncbi.nlm.nih.gov/7593079/",
+  "Jakobsen MD et al. (2012) Evaluation of muscle activity during a standardized shoulder resistance training bout in novice individuals. J Strength Cond Res 26(9):2515-22 (12 novice women, 15RM loads, lateral raise among the exercises; most exercises drew over 60% of max muscle activity, and activity rose within each set as fatigue built; supports light, higher-rep loading still being hard work): https://pubmed.ncbi.nlm.nih.gov/22067242/"
+ ],
+ "evidenceNotes": "Muscle ids: side_delts (primary) and upper_traps (secondary) match the library entry lib_dumbbell_lateral_raise; front_delts, forearms, lower_back and rotator_cuff are real MuscleIds. rotator_cuff exists in muscles.ts but has no drawn region in bodyMuscles.ts (no part maps to it), so the shoulder-pinch warning is kept as an ifYouFeelItIn row with no muscleId and is not listed as a shimmer target. Supraspinatus has no id of its own; it sits inside rotator_cuff. Strong-ish data: Coratella 2020 EMG (thumbs-forward gives side delt activity at least as high as any version, thumbs-down raises upper trap, rear delt and triceps) but it is n=10 male competitive bodybuilders, seated, 8RM, strict 2 s up and 2 s down, frontal plane, so it may not transfer exactly to beginners, women or standing swings; note the thumbs-forward vs thumbs-down side delt difference was not reported as significant, only thumbs-forward vs thumbs-up, frontal raise and bent-elbow. Andersen 2008 (97% MVC upper traps in lateral raise) is in women with trapezius myalgia; it supports telling users some trap work is normal. Kolber 2014 is a case-control association (raises above 90 degrees linked with impingement signs), not proof of cause. Graichen 1999 is static MRI in 12 healthy volunteers; the internal-rotation risk is inferred from anatomy (closest supraspinatus contact at 90 degrees abduction with internal rotation), not from injury outcomes. Sporrong 1995/1996 are static grip-gauge studies (9 healthy subjects, 30 and 50% max grip); the supraspinatus rise was clearest with the arm raised forward (flexion 60 degrees and up), and in the 1995 study the infraspinatus actually dropped in abduction, so they only loosely support 'firm but relaxed grip' for a side raise. They found no trapezius change, so the common claim that a hard grip makes the traps take over is NOT supported and is left out. Consensus only (no direct data found): the 12 to 20 rep light-load range, the 10 to 20 degree elbow bend, arms 20 to 30 degrees forward of the body (scapular plane), the 15 degree wrist limit, exactly where the handle sits in the palm, the link between swinging and low-back strain, and the thumbless-grip question. There is no study on wrist injury in lateral raises; the wrist guidance transfers the general straight-wrist principle (Weiss 1995) and ACE's neutral-wrist cue. Could not read: the NSCA TSAC shoulder article and ExRx page (HTTP 403) and the Durall 2001 SCJ article full text, so none of their content is cited. Verifier notes (2026-09-30): all PubMed abstracts re-read through NCBI E-utilities, Coratella 2020 full text read through Europe PMC (seated, 8RM, 6 reps, 2 s up and 2 s down, elbow almost straight, wrist in line with the forearm), ACE page read directly (closed neutral grip, split stance or feet slightly wider than hip width, shoulders down and back, elbows lead, front edge of the dumbbell slightly up past 60 to 70 degrees, stop at shoulder level, neutral wrist). Jakobsen 2012 gives no lateral-raise-only numbers in its abstract, so it is cited only for 15RM loading in novices. upper_traps and front_delts appear both as secondary and in shouldNotTakeOver on purpose (some work is normal, dominance is the fault); the shimmer layer needs a rule for this: secondary shimmers dim by default, shouldNotTakeOver shows only as a warning state on tap."
+}
