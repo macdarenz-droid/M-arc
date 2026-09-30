@@ -35,7 +35,7 @@ describe('PLAY-1', () => {
   it('LR-23: the link label, the healthcare line and the Health Connect screen text carry no contact or source', () => {
     const label = read('src/slices/settings/Settings.tsx').match(/data-palace="settings\.privacy">([^<]+)<\/a>/)?.[1];
     expect(label).toBe('Privacy policy');
-    const javaText = [...java.matchAll(/\.setText\("((?:[^"\\]|\\.)*)"\)/g)].map(m => m[1]);
+    const javaText = [...java.matchAll(/\.setText\("((?:[^"\\]|\\.)*)"\)/g)].map(m => m[1] ?? '');
     expect(javaText.length).toBe(2);
     for (const t of [label!, MEDICAL_LINE, ...javaText]) {
       for (const re of [CONTACT_RE, SOURCE_RE, SOURCE_CS_RE, SAFETY_LINE_RE]) expect(t.match(re)?.[0], `${re} in "${t}"`).toBeUndefined();
