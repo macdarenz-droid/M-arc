@@ -1,5 +1,9 @@
 // How-to plate types (HT-1). Every string below is an exact slice of the approved gallery
 // (tests/howto/golden/technical-plates.html); the app inserts it as is and never re-serializes it.
+import type {
+  ContactArchetypeId, HandlingSpec, HandlingMistake, HowToContent, NoHandling, PostureCheckpoint, RedFlagBlock,
+  Risk, RiskJoint, SetupStep, SourceId,
+} from './content-types';
 
 /** The 8 library exercises with an approved Technical Plate (golden A, bc0f378). */
 export type LibId =
@@ -102,7 +106,9 @@ export interface GoldenFile {
 /**
  * One generated How-to module (HT-2): `src/howto/generated/ht-<slug>.ts` default-exports this, ending in
  * `satisfies BuiltHowTo`, so tsc checks the generator's output. The layer fields stay `never` (absent) until the
- * card that builds each layer defines its type (critic fix 6).
+ * card that builds each layer defines its type (critic fix 6). HT-5 (content.mjs, sequential writer after
+ * plates.mjs) is the card that builds handling/contacts/setup/posture/mistakes/risks/sources/copy, so those
+ * fields are broadened here to `HowToContent`'s real shapes; `zooms` and `feel` stay `never` for HT-7/HT-8.
  */
 export interface BuiltHowTo {
   readonly schema: 1;
@@ -117,10 +123,18 @@ export interface BuiltHowTo {
   readonly plate: BuiltPlate;
   readonly zooms?: never;
   readonly feel?: never;
-  readonly setup?: never;
-  readonly posture?: never;
-  readonly mistakes?: never;
-  readonly risks?: never;
-  readonly sources?: never;
-  readonly copy?: never;
+  readonly rev?: number;
+  readonly extends?: LibId;
+  readonly handling?: HandlingSpec | NoHandling;
+  readonly contacts?: readonly ContactArchetypeId[];
+  readonly setup?: readonly SetupStep[];
+  readonly posture?: readonly PostureCheckpoint[];
+  readonly chips?: readonly string[];
+  readonly copy?: HowToContent['copy'];
+  readonly mistakes?: readonly HandlingMistake[];
+  readonly risks?: readonly Risk[];
+  readonly riskFlags?: readonly RiskJoint[];
+  readonly redFlag?: RedFlagBlock;
+  readonly sources?: readonly SourceId[];
+  readonly research?: HowToContent['research'];
 }

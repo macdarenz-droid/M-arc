@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=3b85310687ae043c928246d7b0bf72feb0c8b3a3e68dab9fbd1dd28a1d69189c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_lat_pulldown",
   name: "Lat Pulldown",
-  hashes: { inputsSha256: "3b85310687ae043c928246d7b0bf72feb0c8b3a3e68dab9fbd1dd28a1d69189c", golden: "0666827521cc8d42721a01e804596a3a3670ca11ce83b074da95d728e89c5ea3" },
+  hashes: { inputsSha256: "d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27", golden: "0666827521cc8d42721a01e804596a3a3670ca11ce83b074da95d728e89c5ea3" },
   plate: {
     view: "side",
     normal: {
@@ -24,5 +24,483 @@ export default {
     tempo: "<div class=\"tempo\" role=\"img\" aria-label=\"Tempo: pull 1 second, hold 0.5 seconds, return 2 seconds, rest 0.5 seconds\"><div class=\"tempo-seg move\" style=\"flex:1 1 0\"><i></i><div class=\"tempo-label\"><b>Pull</b><span>1 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Hold</b><span>0.5 s</span></div></div><div class=\"tempo-seg move\" style=\"flex:2 1 0\"><i></i><div class=\"tempo-label\"><b>Return</b><span>2 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Rest</b><span>0.5 s</span></div></div></div>",
     alt: "Lat pulldown, side view. Seated with the thighs under the knee pad, the wide bar is pulled from straight arms overhead down in front of the face to the upper chest, with a slight lean back.",
     mistakeAlt: "Lat Pulldown: the common mistake, drawn dashed in the mistake colour over the correct end position.",
+  },
+  rev: 1,
+  handling: {
+    "archetype": "pull",
+    "orientation": "pronated",
+    "handle": "bar-28",
+    "loadAxis": "across",
+    "overBody": false,
+    "handleChoice": {
+      "sore": "Sore wrist? Use the neutral-grip handles.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "buonsenso2025"
+        ],
+        "note": "The card: with a sore wrist, use the neutral handles, go lighter, stop if it hurts (consensus). Buonsenso 2025: no lat difference between grips, so the swap costs nothing."
+      }
+    },
+    "width": {
+      "text": "About 1.5 times shoulder width, often on or just inside the bar's bends. At the bottom your forearms are close to vertical. If a wrist bends hard sideways, move your hands onto or off the bends.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "MECH"
+        ],
+        "sources": [
+          "andersen2014",
+          "lusk2010",
+          "difonza2026"
+        ],
+        "note": "Width barely changes lat activity (Lusk, Andersen, Di Fonza); the widest grip costs a little strength (Andersen). The bent ends keeping the wrist straight is mechanical reasoning only (card)."
+      }
+    },
+    "thumb": {
+      "mode": "wrapped",
+      "options": [
+        {
+          "mode": "over",
+          "when": "If your forearms give out before your back"
+        }
+      ],
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "baechle-earle"
+        ],
+        "note": "No study has measured thumb position on a pulldown. Full grip follows the NSCA editors; thumb on top is coaching consensus. A pulldown bar cannot fall on the lifter, so thumb on top is a comfort choice only (C4 allows `over` for `pull`)."
+      }
+    },
+    "contact": "finger-base",
+    "wrist": {
+      "ext": [
+        0,
+        25
+      ],
+      "dev": [
+        -10,
+        10
+      ],
+      "limitText": "Wrist curling, or bar slipping to your fingertips? Finish the rep and end the set.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "odriscoll1992"
+        ],
+        "note": "O'Driscoll 1992 (a dynamometer, applied by reasoning): grip strongest 25 to 35 degrees back, weakest curled. The near-straight target and the end-the-set limit are consensus, not injury thresholds."
+      }
+    },
+    "pose": {
+      "view": "radial",
+      "forearm": 180,
+      "wrist": {
+        "ext": 10,
+        "dev": 0
+      },
+      "contactAt": 1,
+      "fingers": {
+        "curl": 1
+      },
+      "thumb": "wrapped",
+      "squeeze": "firm",
+      "handle": {
+        "profile": "bar-28",
+        "axis": "across"
+      },
+      "load": {
+        "kind": "pull"
+      }
+    },
+    "faults": [
+      {
+        "key": "curled-squeeze",
+        "label": "Curled, squeezed",
+        "pose": {
+          "wrist": {
+            "ext": -30,
+            "dev": 0
+          },
+          "contactAt": 0.8,
+          "squeeze": "max",
+          "thumb": "wrapped"
+        },
+        "markers": [
+          "lever-arc",
+          "tendon"
+        ],
+        "alt": "Wrist curled forward, knuckles tipping back toward the face. Fist squeezed hard, forearm tendons standing out. The forearms and biceps end up doing the pulling."
+      },
+      {
+        "key": "fingertip-slip",
+        "label": "Slipping out",
+        "pose": {
+          "wrist": {
+            "ext": 40,
+            "dev": 0
+          },
+          "contactAt": 1.45,
+          "fingers": {
+            "curl": 1,
+            "open": 0.45
+          },
+          "thumb": "loose"
+        },
+        "markers": [
+          "slip-arrow"
+        ],
+        "alt": "Bar slid out to the fingertips, fingers half open, thumb loose, the hand pulled back. The grip is failing: finish the rep and end the set."
+      }
+    ],
+    "gripLine": "Hook the bar at the base of your fingers, wrist straight. Pull with your elbows so your back does more.",
+    "cue": "Hands are hooks. Elbows pull."
+  },
+  contacts: [
+    "seat-back",
+    "brace-pad"
+  ],
+  setup: [
+    {
+      "kind": "adjust",
+      "text": "Snug the knee pad so you can't lift off.",
+      "zoom": "pad",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ]
+      }
+    },
+    {
+      "kind": "safety",
+      "text": "Push the pin fully in. Start light.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ],
+        "note": "Pin and \"start lighter\": card consensus; ACE covers the setup, not the pin wording."
+      }
+    },
+    {
+      "kind": "grip",
+      "text": "Hands about 1.5 times shoulder width, palms away, thumb wrapped.",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "baechle-earle",
+          "andersen2014"
+        ]
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Lean back slightly, about 30 degrees at most.",
+      "zoom": "path",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ]
+      }
+    },
+    {
+      "kind": "brace",
+      "text": "Shoulders down, away from your ears. Then pull.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ]
+      }
+    }
+  ],
+  posture: [
+    {
+      "key": "pad",
+      "label": "Thighs under pad",
+      "detail": "Pad firm on the tops of the thighs, just above the knees, feet flat. Hips stay on the seat all set.",
+      "anchor": {
+        "at": "thighTop.r"
+      },
+      "zoom": "pad",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ]
+      }
+    },
+    {
+      "key": "lean",
+      "label": "Slight lean back",
+      "detail": "Torso tipped back a little from the hips, no more than about 30 degrees. Chest up, lower back in its normal curve. The lean stays the same every rep, with no extra lean as you pull.",
+      "anchor": {
+        "at": "backUpper"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-lat-pulldown",
+          "buonsenso2025"
+        ],
+        "note": "Shown by the plate: the measured lean (about 15 degrees) and the Mistake layer (swing back)."
+      }
+    },
+    {
+      "key": "shoulders",
+      "label": "Shoulders down",
+      "detail": "At the top, arms straight, the shoulders first draw down and slightly back. Then the elbows bend.",
+      "anchor": {
+        "at": "shoulderTop.r",
+        "pose": "start"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ],
+        "note": "Already a plate callout (\"Shoulders down\"); the card's back-view \"shoulder blades\" zoom needs a back-view plate."
+      }
+    },
+    {
+      "key": "path",
+      "label": "Bar in front",
+      "detail": "The bar travels past your chin to the top of your chest. Never behind the head.",
+      "anchor": {
+        "at": "chin"
+      },
+      "zoom": "path",
+      "claim": {
+        "tags": [
+          "DATA",
+          "WEAK"
+        ],
+        "sources": [
+          "sperandei2009",
+          "signorile2002",
+          "padovan2024",
+          "kolber2013"
+        ]
+      }
+    },
+    {
+      "key": "elbows",
+      "label": "Elbows down",
+      "detail": "At the bottom the elbows point at the floor, beside the ribs. Forearms near vertical under the bar. Stop when the elbows stop going down and start going back. The bar need not touch your chest.",
+      "anchor": {
+        "at": "elbow.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ],
+        "note": "Plate callout \"Elbows down\". The shoulders rolling forward past that point is reasoning (card)."
+      }
+    },
+    {
+      "key": "wrists",
+      "label": "Wrists straight",
+      "detail": "Back of the hand in line with the forearm, or tipped back a little. Bar at the base of the fingers, no curl.",
+      "anchor": {
+        "at": "grip.r"
+      },
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "odriscoll1992"
+        ]
+      }
+    },
+    {
+      "key": "width",
+      "label": "Grip width",
+      "detail": "Hands about 1.5 times shoulder width, on or just inside the bar's bends. At the bottom, forearms close to vertical, wrists straight side to side.",
+      "anchor": {
+        "at": "grip.r"
+      },
+      "claim": {
+        "tags": [
+          "DATA",
+          "MECH"
+        ],
+        "sources": [
+          "andersen2014",
+          "lusk2010"
+        ],
+        "note": "Front view: text checkpoint. The plate is a side view, where width does not show (5.2)."
+      }
+    }
+  ],
+  chips: [
+    "hand",
+    "pad",
+    "path",
+    "feel"
+  ],
+  copy: {
+    "setupLine": "Snug the knee pad on your thighs. Lean back a little, shoulders down, then pull to your chest.",
+    "mistakeLine": "Pull to the front, never behind your neck. That puts your shoulders in a bad spot for no gain."
+  },
+  mistakes: [
+    {
+      "key": "behind",
+      "title": "Pulling behind your neck",
+      "zoom": "path",
+      "claim": {
+        "tags": [
+          "DATA"
+        ],
+        "sources": [
+          "kolber2013",
+          "signorile2002",
+          "sperandei2009"
+        ]
+      },
+      "fix": "Pull in front of your face, to your upper chest."
+    },
+    {
+      "key": "curl",
+      "title": "Curling wrists, squeezing hard",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "odriscoll1992"
+        ]
+      },
+      "fix": "Straighten your wrist. Grip only as hard as needed."
+    },
+    {
+      "key": "swing",
+      "title": "Leaning back and swinging",
+      "zoom": "pad",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ]
+      },
+      "fix": "Hold a small lean still and go lighter."
+    }
+  ],
+  risks: [
+    {
+      "key": "behind",
+      "text": "Behind-the-neck pulling is linked to a looser front shoulder.",
+      "claim": {
+        "tags": [
+          "DATA"
+        ],
+        "sources": [
+          "kolber2013"
+        ],
+        "note": "Association, not proof of cause."
+      }
+    },
+    {
+      "key": "swing",
+      "text": "Rocking uses your lower back and jerks your shoulders.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ]
+      }
+    },
+    {
+      "key": "too-far",
+      "text": "Pulling past where your elbows stop stresses the shoulder joint.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lat-pulldown"
+        ]
+      }
+    }
+  ],
+  riskFlags: [
+    "wrist",
+    "shoulder"
+  ],
+  redFlag: {
+    "name": "Wrist pain",
+    "now": "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.",
+    "doctor": "Tingling, keeps coming back, or no better after two weeks' rest? See a doctor.",
+    "claim": {
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-wrist-pain"
+      ]
+    }
+  },
+  sources: [
+    "signorile2002",
+    "lusk2010",
+    "andersen2014",
+    "sperandei2009",
+    "padovan2024",
+    "snyder2009",
+    "lehman2004",
+    "buonsenso2025",
+    "difonza2026",
+    "doma2013",
+    "kolber2013",
+    "kolber2010",
+    "odriscoll1992",
+    "ace-lat-pulldown",
+    "baechle-earle",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain"
+  ],
+  research: {
+    "card": "grip/research/lat_pulldown.json",
+    "rev": 1
   },
 } satisfies BuiltHowTo;
