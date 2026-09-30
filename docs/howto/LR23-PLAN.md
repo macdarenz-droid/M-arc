@@ -412,25 +412,18 @@ An independent check re-read the real files after the plan was written. Heads ha
   - **Coach prompt,** policy.ts rule 9 (replacing the plan's item 11): "The app shows its own short safety card. Never give phone numbers, hotlines, helplines, websites or the names of services. If someone may be in danger now, tell them to get emergency help now; otherwise point them to stopping and getting it checked, or to talking with someone they trust or a doctor."
   - **Coach prompt,** rule 11 (replacing the plan's item 12): "No headings, tables, code, emojis, links or phone numbers. Don't name research studies, their authors or health organisations as sources, and don't quote evidence ratings; say how sure the evidence is in plain words."
   - **Library back-pain box:** name "Back pain"; now "Numb or weak in both legs, numb around your genitals, or bladder or bowel changes? Get emergency help now."; doctor "No better in a few weeks? See a doctor." LR-11's urgent line and its add-only lint rule stand, minus any number. Only "Call 999" goes (content.md draft, its risk row and its lint rule). The plan's R6 and the edits it makes to LIBRARY-HOWTO-ARCHITECTURE.md :399-406 / :466 / :817 are cancelled accordingly. RULINGS LR-27 records this.
-- **Patterns** (tests/guards/no-contacts.ts, copied byte for byte into copy-lint):
-  - CONTACT_RE: drop the bare `emergenc`. Add:
-    - `emergency (?:services?|numbers?|departments?|rooms?|lines?|contacts?)`
-    - `\blifeline\b`
-    - `\btext \w+ to\b`
-    - `\b\d{2} \d{2} \d{2}\b`
-    - `(?<![\d.,])\d{5,6}(?![\d.,]*\d)` (short codes)
-    - `\b(?:nine|one|zero)(?:[ -](?:nine|one|zero)){2}\b`
-    - Keep everything else in the plan's pattern.
-  - SOURCE_RE (case-insensitive) adds:
-    - `\[[^\]]*(?:19|20)\d{2}[^\]]*\]`
-    - `\bresearch(?:ers?)?\b`, `\btrials?\b`, `\bevidence\b`
-  - New SOURCE_CS_RE (case-SENSITIVE, because under /i "WHO" would match "who" and the author-year form would match "in 2019"):
-    - `\b[A-Z][a-z]+(?: et al\.?)?,? (?:19|20)\d{2}[a-z]?\b`
-    - `\b(?:NSCA|ACE|ISSN|WHO|NHS|ACSM)\b`
-    - `Barbell Logic|Human Kinetics`
-    - Every place that applies SOURCE_RE also applies SOURCE_CS_RE.
+- **Patterns: the FINAL literals.** They replace the plan's versions. Copy them byte for byte into `tests/guards/no-contacts.ts` (ESC-NC creates it, as the single definition) and into golden-B `copy-lint.mjs` (a parity test pins the two together):
+```js
+export const CONTACT_RE = /(?<![\d.,])(?:999|111|911|112|000|988)(?![\d.,]*\d)|(?<![\d.,])\d{5,6}(?![\d.,]*\d)|\b116 ?123\b|\+\d[\d ().-]{6,}\d|\b\d{3,5}[ .-]\d{3}[ .-]\d{3,4}\b|\b\d{2} \d{2} \d{2}\b|\b(?:nine|one|zero)(?:[ -](?:nine|one|zero)){2}\b|emergency (?:services?|numbers?|departments?|rooms?|lines?|contacts?)|ambulance|\bA&E\b|urgent (?:care|treatment)|hotline|helpline|crisis (?:line|text)|samaritans|\blifeline\b|\btext \w+ to\b|\btel:|mailto:|[\w.+-]+@[\w-]+\.[a-z]{2,}|https?:\/\/|\bwww\./i;
+export const SOURCE_RE = /\bsources?\b|\bcitations?\b|\bcited\b|\bet al\b|\bstud(?:y|ies)\b|\bmeta-analys[ie]s\b|\bpubmed\b|\bdoi\b|\bNHS\b|\bACSM\b|\bCoaching consensus\b|\bWeak for this use\b|\([A-Za-z][^()]* (?:19|20)\d{2}[a-z]?\)|\[[^\]]*(?:19|20)\d{2}[^\]]*\]|\bresearch(?:ers?)?\b|\btrials?\b|\bevidence\b/i;
+// Case-sensitive on purpose: under /i, WHO would match "who".
+export const SOURCE_CS_RE = /\b[A-Z][a-z]+(?: et al\.?)?,? (?:19|20)\d{2}[a-z]?\b|\b(?:NSCA|ACE|ISSN|WHO)\b|Barbell Logic|Human Kinetics/;
+export const SAFETY_LINE_RE = /\b(?:call|phone|dial|ring|GP|clinic|hospital)\b/i;
+```
+  - Every place that applies SOURCE_RE also applies SOURCE_CS_RE.
   - Also add a data-driven check: no visible field contains any registry source's first-author surname or organisation name.
-  - Run all patterns over every current copy field. Reword copy that hits by mistake. If a hit is a true false positive that rewording can't fix, stop and ask the supervisor. Never exempt on your own.
+  - Run all the patterns over every current copy field. Reword copy that hits by mistake. If a hit is a true false positive that rewording can't fix, stop and ask the supervisor. Never exempt on your own.
+  - The supervisor checked the new card copy above, the back box and the owner's disclaimer against these literals. All pass.
 - Mutations:
   - M3 becomes "Go to A&E."
   - Add fixtures "Weiss 1995", "NSCA teaches", "text HOME to 741741" and "ring 13 11 14". Each must fail.
