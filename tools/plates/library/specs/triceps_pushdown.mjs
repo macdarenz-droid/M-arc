@@ -24,7 +24,11 @@
 //    front of the hip joints, so the cable runs 14 deg (top) to 16 deg (bottom) off vertical toward the lifter and
 //    clears the forearm. Stack travel = cable paid out (1:1, 60 cm), 3 cm pre-lift at the start (tension on).
 // CARD: TOP_BAR_T -> START_ELBOW (c7), END_ELBOW (c8), TILT + TRUNK lean (c4), ROOT knee bend, FEET stance (c3),
-//  GRIP_X (c2), ARM_FWD (c5), bar length, pulley height (c1).
+//  GRIP_X (c2), ARM_FWD (c5), bar length, pulley height (c1), Mistake drift and lean (MIS_*, c6 gives none).
+// Callouts, Mistake, tempo (card plate section): the 3 checkpoints (c5, c4, c9) are the callouts; the Mistake is the
+//  card's top fault, elbows drifting forward as the bar comes up plus the swing forward (c6); tempo press 1 s, pause
+//  1 s, return 2 s (c12), no Rest phase (the card gives none). Measure: the end elbow, value "not locked" (c8), no
+//  number (the card gives none).
 import { landmarksOf } from '../engine.mjs';
 
 const H = 1.75;
@@ -108,6 +112,14 @@ function headTangent(b) {                              // cable from the bar to 
 const barOf = lm => [0, lm.grips[1], lm.grips[2]];
 const cableLen = b => Math.hypot(b[1] - HEAD.y, b[2] - HEAD.z);
 
+// Mistake (card plate.mistake, c6): "elbows drifting forward as the bar comes up (and swinging forward to start the
+// press)". Drawn at the top of the rep, where the card places it: the upper arms swing forward off the sides and the
+// torso tips further in over the bar. The card gives no angle for either, so MIS_* are drawn just large enough to read
+// at 390 px. The bar's cable is a line (no `poly`), so the faulty cable is a dashed guide (the lat pulldown's method).
+const MIS_LEAN = 8, MIS_SHOULDER = 60, MIS_ELBOW = 110;   // extra forward lean, upper arm forward of the torso, elbow
+const mistakePose = { root: { at: ROOT, tilt: TILT + MIS_LEAN }, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: MIS_ELBOW, wrist: 0 };
+const lmM = landmarksOf({ ...end, ...mistakePose }, H), MIS_BAR = barOf(lmM);
+
 export default {
   id: 'triceps_pushdown', name: 'Triceps Pushdown', view: 'side', facing: 'right',
   camera: { fit: true },
@@ -141,11 +153,29 @@ export default {
   checks: [
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // feet flat ON the floor
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
-    { landmark: 'elbow.r', at: E, pose: 'all', tol: 0.5 },                                           // elbow pinned (start and end)
+    ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', at: E, pose, tol: 0.5 })),                 // elbow pinned (start and end)
     { landmark: 'grip.r', above: THIGH_FRONT, pose: 'end' },                                          // bar ends in front of the thigh
   ],
   ghosts: { count: 3, parts: ['arm.r', 'bar'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  callouts: [],
+  measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'not locked', box: { left: 44, top: 216 } },
+  callouts: [
+    { key: 'elbows', text: 'Elbows<br>pinned', anchor: 'elbow.r', cue: 'Keep the upper arms against the sides so only the forearms move.' },
+    { key: 'torso', text: 'Tall<br>torso', anchor: 'backUpper', cue: 'Stay upright or tilt slightly from the hips, back not arched.' },
+    { key: 'wrists', text: 'Neutral<br>wrists', anchor: 'wrist.r', cue: 'Keep the hands in line with the forearms from top to bottom.' },
+  ],
+  tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
+  mistake: {
+    pose: mistakePose,
+    parts: ['torso', 'head', 'arm.r', 'bar'],   // far arm doubles the near one; the stack's travel is not the fault
+    guides: [
+      { kind: 'dashed', pts: [MIS_BAR, headTangent(MIS_BAR)] },
+      { kind: 'arc-arrow', center: 'shoulder.r', r: 50, a0: 84, a1: 54 },   // the upper arm swinging forward off the side
+    ],
+    tells: [
+      { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 34, top: 180 }, cue: 'The elbows drift forward off the sides as the bar comes up.' },
+      { key: 'lean', text: 'Leaning<br>in', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'The torso tips forward over the bar to start the press.' },
+    ],
+  },
   alt: 'Triceps pushdown, side view. Standing at a high cable tower with a slight forward lean, upper arms pinned at the sides, the lifter presses a straight bar from forearms about level down in an arc to straight arms in front of the thighs.',
 };
