@@ -21,6 +21,7 @@ import { Logo } from '@/ui/Logo';
 import { EscobarSettings } from '@/escobar/ui/SettingsSection';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
 import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
+import { clearShareSeen } from '@/slices/share/seen';
 import { backupReminderScheduled, cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, syncBackupReminder, testRestAlert } from '@/native/notifications';
 import { isNative } from '@/native/capacitor';
 import { onReducedChange, osReducedMotion, motionPrefIsReduce, reduced, setMotionPref } from '@/ui/motion';
@@ -72,6 +73,7 @@ function resetEverything(): void {
   clearHeart();
   void import('@/escobar/images').then(m => m.clearImages()).catch(() => {});
   try { localStorage.removeItem('marc.health.asked'); } catch { /* storage unavailable */ }
+  clearShareSeen();
   resetErrorReporting();
   afterReplace();
 }
