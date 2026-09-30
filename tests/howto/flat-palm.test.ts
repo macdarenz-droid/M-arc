@@ -85,6 +85,14 @@ describe('LIB-26 flat palm', () => {
     expect(m).toMatch(/<g class="m-pose" mask="url\(#f-mmask\)"><g class="u-stroke">.*<use href="#f-m-palm\.r"\/>/);
   });
 
+  it('the palm belongs to its arm\'s part: a Mistake filtered to arm.r outlines the right palm, arm.l does not', () => {
+    // plate.mjs partOf maps palm.<side> to arm.<side>; spec part filters (mistake.parts, ghost parts) select by it
+    const only = (parts: string[]) => plate.renderPlate({ ...spec, mistake: { ...spec.mistake, parts } }, { id: 'f', mistake: true }).svg as string;
+    expect(only(['arm.r'])).toMatch(/<path id="f-m-palm\.r" d="M[^"]+Z"\/>/);
+    expect(only(['arm.r'])).toMatch(/<path id="f-m-fore\.r" d="M[^"]+Z"\/>/);
+    expect(only(['arm.l'])).not.toMatch(/id="f-m-palm\.r"/);
+  });
+
   it('a hand pointing at the camera draws the forearm\'s end-on circle', () => {
     const px = (r: number) => r * 1.75 * PXM;
     const c = body.flatPalm([10, 10], [10.5, 10], px);
