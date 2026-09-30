@@ -5848,9 +5848,9 @@ for (const theme of ['silent-black', 'paper']) {
 // measured value + 10%. A3: no How-to chunk requested before Today/Train is idle; tap-to-plate at 4x CPU
 // throttle (median of 5, hard fail over 400 ms); no long task over 100 ms while opening at 4x. A4: offline
 // reload + sheet open, build-B chunk carry-over, a failed chunk load's toast, localStorage unchanged, the
-// app's own PlateSheet .plate chip unaffected by the How-to CSS. A5 (C17): no fetch/XHR/Worker/http URL in
-// the built How-to chunks, source citations excepted (none ship yet — BuiltHowTo's `sources` field is
-// `never` until a later card adds it).
+// app's own PlateSheet .plate chip unaffected by the How-to CSS. A5 (C17, LR-23): no fetch/XHR/Worker/http
+// URL in the built How-to chunks (the shared checker, xmlns literals excepted), no <a> tag, no target=, and
+// every href starts with #.
 {
   const tag = 'HT-3b';
   const t0 = Date.now();
@@ -6095,20 +6095,38 @@ for (const theme of ['silent-black', 'paper']) {
     await ctx.close();
   }
 
-  // A5 (C17): no fetch/XHR/Worker call and no bare network URL in the built How-to chunks. A URL is
-  // allowed only right after href=" (a source citation, opened in the system browser on tap) — none ship
-  // yet (BuiltHowTo's `sources` field is `never`), so this currently expects zero matches of any kind.
+  // A5 (C17, LR-23/D-LR23-7): no fetch/XHR/Worker call and no bare http(s) URL in the built How-to chunks
+  // (the shared checker — HT-4's tests/howto/checks/c17.ts — allows only the SVG/xlink xmlns literals; the
+  // final drop of source citations from allowedUrls lands with HT-4b, this card just uses what main has
+  // now, and there are no citations yet to allow either way). Also no `<a>` tag, no `target=` attribute,
+  // and every `href=` starts with `#` (an in-document SVG reference, e.g. `<use href="#lr-n-st-10">`).
   {
+    const { pathToFileURL } = await import('node:url');
+    const { mkdtempSync, copyFileSync, rmSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { build: esbuildC17 } = await import('esbuild');
     const files = [oneOf(/^HowToSheet-[\w-]{8}\.js$/), ...Object.values(rows).map(r => oneOf(new RegExp(`^ht-${r.slug}-[\\w-]{8}\\.js$`)))];
+
+    const c17Built = await esbuildC17({ entryPoints: [join(ROOT, 'tests/howto/checks/c17.ts')], bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' });
+    const c17Dir = mkdtempSync(join(tmpdir(), 'ht3b-c17-mod-'));
+    const c17ModPath = join(c17Dir, 'c17.mjs');
+    writeFileSync(c17ModPath, c17Built.outputFiles[0].text);
+    const { checkC17 } = await import(pathToFileURL(c17ModPath).href);
+
+    const scanDir = mkdtempSync(join(tmpdir(), 'ht3b-c17-scan-'));
+    try {
+      for (const f of files) copyFileSync(join(assetsDir, f), join(scanDir, f));
+      for (const m of checkC17([scanDir])) errors.push(`${tag} A5: ${m}`);
+    } finally {
+      rmSync(c17Dir, { recursive: true, force: true });
+      rmSync(scanDir, { recursive: true, force: true });
+    }
+
     for (const f of files) {
       const src = readFileSync(join(assetsDir, f), 'utf8');
-      if (/\bfetch\(/.test(src)) errors.push(`${tag} A5: ${f} calls fetch(`);
-      if (/\bXMLHttpRequest\b/.test(src)) errors.push(`${tag} A5: ${f} uses XMLHttpRequest`);
-      if (/\bnew Worker\(/.test(src)) errors.push(`${tag} A5: ${f} constructs a Worker`);
-      for (const m of src.matchAll(/https?:\/\/[^\s"'`)]*/g)) {
-        const before = src.slice(Math.max(0, m.index - 8), m.index);
-        if (!/href=['"]$/.test(before)) errors.push(`${tag} A5: ${f} has a network URL outside a citation href: ${m[0].slice(0, 60)}`);
-      }
+      if (/<a[\s/>]/.test(src)) errors.push(`${tag} A5: ${f} has an <a> tag`);
+      if (/\btarget\s*=/.test(src)) errors.push(`${tag} A5: ${f} has a target= attribute`);
+      for (const m of src.matchAll(/\bhref=(["'])(.*?)\1/g)) if (!m[2].startsWith('#')) errors.push(`${tag} A5: ${f} has href="${m[2].slice(0, 60)}", not starting with #`);
     }
   }
 
