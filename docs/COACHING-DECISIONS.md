@@ -1181,6 +1181,9 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
+
+## BUG-32 crisis pre-screen phrasings and card placement (BUG-32 builder, 2026-09-30)
+
 - **Decided (BUG-32, 2026-09-30)**: the crisis pre-screen (`CRISIS` in `src/escobar/verify.ts`) also catches "wanna", "do not", "be alive", "exist", "wish I was/were dead", "no point in living", "not worth living", "better off without me", "nobody/no one would miss me", "unalive myself", "cut myself" (want/going/trying/need to, wanna, gonna; been/keep/kept/started cutting; on purpose), "wanna/gonna hurt myself", and "kms" only straight after a verb of intent ("wanna kms", "about to kms").
   **Why**: these are common ways of saying the phrases the screen already caught. "kms" also means kilometres in a fitness app, so it fires only after want to, going to, about to, trying to, wanna, gonna, finna or tryna; a sweep test over distances ("5 kms", "10kms", "i want to run 5 kms", "gonna do 10 kms") proves it never fires on one.
   **Source**: BUG-32 card, criteria B1 and B2; `tests/escobar/verify.test.ts`.
