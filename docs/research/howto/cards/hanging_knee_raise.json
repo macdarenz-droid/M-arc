@@ -40,14 +40,20 @@
   "claims": [
     {
       "id": "c1",
-      "text": "The bar must be high enough to hang with straight legs.",
+      "text": "The bar must be high enough that the body hangs freely with the feet off the floor; step up on a low stool or jump to reach it.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
+        "yessis-hanging-knee-leg-raise",
         "strengthlog-hanging-knee-raise"
       ],
       "quotes": [
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "Step up on a low stool or jump to grasp a high bar so that your body hangs freely without your feet touching the floor.",
+          "where": "Instructions"
+        },
         {
           "source": "strengthlog-hanging-knee-raise",
           "text": "Jump up and grab a bar, placed high enough that you can hang from it with straight legs.",
@@ -366,7 +372,9 @@
       "title": "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training (Escamilla et al., Phys Ther)",
       "kind": "peer-reviewed",
       "year": 2006,
-      "pmid": "16649890"
+      "pmid": "16649890",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "hk-baechle-grip",
@@ -374,7 +382,9 @@
       "title": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
       "kind": "textbook",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "mcgill-2015",
@@ -382,7 +392,9 @@
       "title": "Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up (McGill, Andersen, Cannon, J Sports Sci)",
       "kind": "peer-reviewed",
       "year": 2015,
-      "pmid": "25111163"
+      "pmid": "25111163",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "odriscoll-1992",
@@ -390,7 +402,9 @@
       "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
       "kind": "peer-reviewed",
       "year": 1992,
-      "pmid": "1538102"
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "prinold-2016",
@@ -398,7 +412,9 @@
       "title": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
       "kind": "peer-reviewed",
       "year": 2016,
-      "pmid": "26383875"
+      "pmid": "26383875",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "strengthlog-hanging-knee-raise",
@@ -406,7 +422,9 @@
       "title": "How to Do Hanging Knee Raise: Muscles Worked & Proper Form (StrengthLog)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "unreachable",
+      "checked": null
     },
     {
       "id": "workman-2008",
@@ -414,7 +432,9 @@
       "title": "Influence of pelvis position on the activation of abdominal and hip flexor muscles (Workman et al., J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2008,
-      "pmid": "18714231"
+      "pmid": "18714231",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "yessis-hanging-knee-leg-raise",
@@ -422,7 +442,9 @@
       "title": "Hanging Knee Leg Raise (Dr. Michael Yessis)",
       "kind": "coach",
       "year": 2013,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {

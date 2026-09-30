@@ -367,7 +367,9 @@
       "title": "Seated Lat Pulldown (ACE Exercise Library)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "barbend-reverse-grip-lat-pulldown",
@@ -375,7 +377,9 @@
       "title": "How to Do the Reverse-Grip Lat Pulldown for Stronger Back and Biceps (BarBend)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "buonsenso-2025",
@@ -383,7 +387,9 @@
       "title": "Electromyographic Analysis of Back Muscle Activation During Lat Pulldown Exercise: Effects of Grip Variations and Forearm Orientation (Buonsenso et al., J Funct Morphol Kinesiol)",
       "kind": "peer-reviewed",
       "year": 2025,
-      "pmid": "40981044"
+      "pmid": "40981044",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "lusk-2010",
@@ -391,7 +397,9 @@
       "title": "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2010,
-      "pmid": "20543740"
+      "pmid": "20543740",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "odriscoll-1992",
@@ -399,7 +407,9 @@
       "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
       "kind": "peer-reviewed",
       "year": 1992,
-      "pmid": "1538102"
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "puregym-reverse-grip-lat-pulldown",
@@ -407,7 +417,9 @@
       "title": "Reverse Grip Lat Pulldown (PureGym exercise guide)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "signorile-2002",
@@ -415,7 +427,9 @@
       "title": "A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down (Signorile, Zink, Szwed, J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2002,
-      "pmid": "12423182"
+      "pmid": "12423182",
+      "access": "abstract",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {

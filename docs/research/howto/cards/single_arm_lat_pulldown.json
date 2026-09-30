@@ -316,7 +316,9 @@
       "title": "Seated Lat Pulldown (ACE Exercise Library)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "barbend-single-arm-lat-pulldown",
@@ -324,7 +326,9 @@
       "title": "How to Do the Single-Arm Lat Pulldown for Spectacular Back Development (BarBend)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "lusk-2010",
@@ -332,7 +336,9 @@
       "title": "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2010,
-      "pmid": "20543740"
+      "pmid": "20543740",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "odriscoll-1992",
@@ -340,7 +346,9 @@
       "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
       "kind": "peer-reviewed",
       "year": 1992,
-      "pmid": "1538102"
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "puregym-single-arm-lat-pulldown",
@@ -348,7 +356,9 @@
       "title": "Single Arm Lat Pulldown (PureGym exercise guide)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {

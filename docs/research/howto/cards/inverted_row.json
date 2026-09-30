@@ -38,14 +38,26 @@
     },
     {
       "id": "c2",
-      "text": "Grip the bar overhand, slightly wider than shoulder width.",
+      "text": "Grip the bar a little wider than shoulder width; both overhand (pronated) and underhand (supinated) grips are used and were studied.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
+        "ace-best-back",
+        "youdas-2016",
         "strengthlog-inverted-row"
       ],
       "quotes": [
+        {
+          "source": "ace-best-back",
+          "text": "The subject had a wider-than-shoulder-width grip on a bar",
+          "where": "Methods: Inverted row"
+        },
+        {
+          "source": "youdas-2016",
+          "text": "(a) pronated grip both feet weight-bearing (WB); (b) supinated grip both feet WB",
+          "where": "abstract"
+        },
         {
           "source": "strengthlog-inverted-row",
           "text": "Grip the bar with an overhand grip, slightly wider than shoulder-width apart.",
@@ -112,9 +124,15 @@
         "CONSENSUS"
       ],
       "sources": [
+        "catalyst-inverted-row",
         "strengthlog-inverted-row"
       ],
       "quotes": [
+        {
+          "source": "catalyst-inverted-row",
+          "text": "then lower under control.",
+          "where": "Description"
+        },
         {
           "source": "strengthlog-inverted-row",
           "text": "Exhale, while lowering yourself back to the starting position with control.",
@@ -227,23 +245,6 @@
     },
     {
       "id": "c11",
-      "text": "An underhand grip may bring in more of the arm flexors (coach opinion).",
-      "tags": [
-        "CONSENSUS"
-      ],
-      "sources": [
-        "strengthlog-inverted-row"
-      ],
-      "quotes": [
-        {
-          "source": "strengthlog-inverted-row",
-          "text": "A variation of this exercise is to do it with an underhand grip, which could increase the involvement of your arm flexors.",
-          "where": "Commentary"
-        }
-      ]
-    },
-    {
-      "id": "c12",
       "text": "In ACE's EMG study of eight back exercises, the inverted row was among the four best for the middle trapezius and among the best for the infraspinatus.",
       "tags": [
         "DATA"
@@ -265,7 +266,7 @@
       ]
     },
     {
-      "id": "c13",
+      "id": "c12",
       "text": "Holding the body straight works the trunk: back extensors at 54-66% and abdominals at 34-40% of max.",
       "tags": [
         "DATA"
@@ -282,7 +283,7 @@
       ]
     },
     {
-      "id": "c14",
+      "id": "c13",
       "text": "Rings let the arms and shoulders move more freely, which suits people with joint limitations.",
       "tags": [
         "CONSENSUS"
@@ -299,7 +300,7 @@
       ]
     },
     {
-      "id": "c15",
+      "id": "c14",
       "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar.",
       "tags": [
         "CONSENSUS"
@@ -316,7 +317,7 @@
       ]
     },
     {
-      "id": "c16",
+      "id": "c15",
       "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a curled or bent wrist costs grip (hand dynamometer, applied here by reasoning).",
       "tags": [
         "MECH"
@@ -340,7 +341,9 @@
       "title": "ACE-Sponsored Research: What Is the Best Back Exercise? (Edelburg, Porcari, Camic, Kovacs, Foster, with Green; ACE Certified, December 2018)",
       "kind": "guideline",
       "year": 2018,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "ace-pullup-moves",
@@ -348,7 +351,9 @@
       "title": "4 Moves to Help You Master the Pull-up (Crockford, ACE)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "catalyst-inverted-row",
@@ -356,7 +361,9 @@
       "title": "Inverted Row (Catalyst Athletics exercise library)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "catalyst-ring-row",
@@ -364,7 +371,9 @@
       "title": "Ring Row (Catalyst Athletics exercise library)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "fenwick-2009",
@@ -372,7 +381,9 @@
       "title": "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness (Fenwick, Brown, McGill, J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2009,
-      "pmid": "19620925"
+      "pmid": "19620925",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "hk-baechle-grip",
@@ -380,7 +391,9 @@
       "title": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
       "kind": "textbook",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "odriscoll-1992",
@@ -388,7 +401,9 @@
       "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
       "kind": "peer-reviewed",
       "year": 1992,
-      "pmid": "1538102"
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "strengthlog-inverted-row",
@@ -396,7 +411,9 @@
       "title": "How to Do Inverted Row: Muscles Worked & Proper Form (StrengthLog)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "unreachable",
+      "checked": null
     },
     {
       "id": "youdas-2016",
@@ -404,7 +421,9 @@
       "title": "Activation of Spinal Stabilizers and Shoulder Complex Muscles During an Inverted Row Using a Portable Pull-up Device and Body Weight Resistance (Youdas et al., J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2016,
-      "pmid": "26422610"
+      "pmid": "26422610",
+      "access": "abstract",
+      "checked": "2026-09-30"
     },
     {
       "id": "youdas-2020",
@@ -412,7 +431,9 @@
       "title": "Scapular muscle balance and spinal stabilizer recruitment during an inverted row (Youdas et al., Physiother Theory Pract)",
       "kind": "peer-reviewed",
       "year": 2020,
-      "pmid": "29944029"
+      "pmid": "29944029",
+      "access": "abstract",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {
@@ -467,7 +488,7 @@
     "variantLine": null
   },
   "grip": {
-    "type": "Overhand (pronated), full closed grip. Underhand is a variant that may bring in more arm flexors.",
+    "type": "Overhand (pronated) drawn, full closed grip; underhand is also used. Lat activity differs between the two, direction not reported in the abstract.",
     "width": "Slightly wider than shoulder width.",
     "thumb": "Wrapped around the bar.",
     "handContact": "Bar at the base of the fingers and top edge of the palm, per the pull hand archetype.",
@@ -475,9 +496,8 @@
     "claims": [
       "c2",
       "c10",
-      "c11",
-      "c15",
-      "c16"
+      "c14",
+      "c15"
     ]
   },
   "setup": [
@@ -545,7 +565,7 @@
     "primary": [
       {
         "muscleId": "mid_back",
-        "claim": "c12"
+        "claim": "c11"
       },
       {
         "muscleId": "lats",
@@ -573,7 +593,7 @@
         "where": "Between and around the shoulder blades",
         "means": "Expected: the middle back is a main target here.",
         "fix": "Nothing to fix. Squeeze the shoulder blades together at the top.",
-        "claim": "c12",
+        "claim": "c11",
         "redFlag": null
       },
       {
@@ -587,7 +607,7 @@
         "where": "Lower back and trunk",
         "means": "Usually means the trunk is working hard to hold the straight line, or the hips are sagging.",
         "fix": "Keep the body rigid. If the lower back aches, raise the bar so you are more upright.",
-        "claim": "c13",
+        "claim": "c12",
         "redFlag": "back"
       }
     ]
@@ -595,7 +615,7 @@
   "risks": [
     {
       "risk": "Stiff or sore shoulders may not like a fixed bar; rings let the arms move more freely.",
-      "claim": "c14"
+      "claim": "c13"
     }
   ],
   "redFlags": [
@@ -607,7 +627,7 @@
       "kind": "hand",
       "right": "Overhand, bar across the base of the fingers, thumb wrapped, wrist straight.",
       "wrong": "Wrist bent, bar sliding toward the fingertips.",
-      "claim": "c16"
+      "claim": "c15"
     },
     {
       "key": "body line",
@@ -644,8 +664,8 @@
         "why": "Moved to primary (c8, c9)."
       }
     ],
-    "why": "mid_back stays primary (c12, c9); biceps stay secondary (c9). Lower back is a watch muscle: the inverted row has the lowest lumbar load of the rows compared (c8)."
+    "why": "mid_back stays primary (c11, c9); biceps stay secondary (c9). Lower back is a watch muscle: the inverted row has the lowest lumbar load of the rows compared (c8)."
   },
-  "anchorSource": "strengthlog-inverted-row",
-  "notes": "Safety tier C (not in content.md tier A or B lists). No source found on securing the bar in the rack (J-hooks) or on grip slipping; left out. Youdas 2016 found a grip difference in lat activity but the direction is not in the abstract (c10); c10 is kept only to stop the sheet claiming a direction. Catalyst Athletics inverted row page read in full as a second technique source."
+  "anchorSource": "catalyst-inverted-row",
+  "notes": "Safety tier C (not in content.md tier A or B lists). No source found on securing the bar in the rack (J-hooks) or on grip slipping; left out. Youdas 2016 found a grip difference in lat activity but the direction is not in the abstract (c10); c10 is kept only to stop the sheet claiming a direction. Anchor is the Catalyst Athletics inverted row page (read in full). The StrengthLog page was read in full by the writer but was unreachable (403) for the source check, so it only co-supports claims; its underhand-grip claim was dropped."
 }

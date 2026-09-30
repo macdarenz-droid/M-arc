@@ -1,0 +1,166 @@
+{
+  "id": "single_arm_lat_pulldown",
+  "checked": "2026-09-30",
+  "sources": [
+    {
+      "id": "ace-lat-pulldown",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "barbend-single-arm-lat-pulldown",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "lusk-2010",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "odriscoll-1992",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "puregym-single-arm-lat-pulldown",
+      "access": "full",
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "puregym-single-arm-lat-pulldown",
+      "quote": "Attach a single handle attachment to the lat pulldown machine.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c1",
+      "source": "puregym-single-arm-lat-pulldown",
+      "quote": "Stand up to grip the attachment, before taking a seat, making sure your thighs are tightly secured underneath the pads.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "puregym-single-arm-lat-pulldown",
+      "quote": "Pull the attachment towards your upper chest by pulling your elbow back and down towards your back pocket. Pull the attachment towards your upper chest until it just passes chin height.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "barbend-single-arm-lat-pulldown",
+      "quote": "Brace your core and set your scapula, then drive straight downward, leading by dropping your shoulder away from your ear and then following through by pulling your elbow downward until your upper arm is flush with your torso.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "barbend-single-arm-lat-pulldown",
+      "quote": "Once you reach the end of the range of motion, pause for a beat and then reverse the movement. Maintain continuous tension with the cable as you let your elbow rise. At the top, allow the cable to pull your shoulder upward towards your ear.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "puregym-single-arm-lat-pulldown",
+      "quote": "Reverse the movement by slowly extending the arms, allowing the cable to pull the attachment back up.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "puregym-single-arm-lat-pulldown",
+      "quote": "The core must work hard in a single arm lat pulldown to prevent the torso from twisting. If you find your torso swings or twists, lower the load – this helps to keep the tension on the back.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "puregym-single-arm-lat-pulldown",
+      "quote": "There is also more involvement from the core, particularly the obliques, as they must work to keep the torso upright and prevent it from twisting.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "puregym-single-arm-lat-pulldown",
+      "quote": "The single arm lat pulldown works the lats, biceps, rhomboids, and traps.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "puregym-single-arm-lat-pulldown",
+      "quote": "While you typically have to use a lighter load than 50% of what you can pull with bilateral lat pulldowns due to instability",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "barbend-single-arm-lat-pulldown",
+      "quote": "Once you’ve reached the end of the range of motion, your elbow has nowhere to go but backwards. As a result, your shoulder might start to move forward. This compensation may cause undue stress or discomfort.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "barbend-single-arm-lat-pulldown",
+      "quote": "If you find yourself leaning into each repetition to get your arm where it needs to be, try contracting your abs harder to stabilize your spine.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "barbend-single-arm-lat-pulldown",
+      "quote": "If you have access to a lat pulldown machine, you can start in a seated position, or seated sideways, working your arm farthest from the pulley system.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "puregym-single-arm-lat-pulldown",
+      "quote": "Grip the attachment, before adopting a kneeling position on the floor.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "ace-lat-pulldown",
+      "quote": "Continue pulling until the bar nears or touches your chest, or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "ace-lat-pulldown",
+      "quote": "Avoid any further pulling as this places additiomnal stresses into the shoulder joint.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "lusk-2010",
+      "quote": "Participants maintained a cadence of 2-second concentric and 2-second eccentric phases.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "barbend-single-arm-lat-pulldown",
+      "quote": "Once you reach the end of the range of motion, pause for a beat and then reverse the movement.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}
