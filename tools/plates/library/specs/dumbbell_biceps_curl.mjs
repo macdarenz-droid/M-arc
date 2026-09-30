@@ -31,6 +31,7 @@
 //  (FOOT_X, c2), knee bend (KNEE_SOFT, c2), scapula set (SCAP, c8), Mistake lean and hip drive (MIS_*, c5 gives none).
 // Callouts, Mistake, tempo (card plate section): the 3 checkpoints (c3, c6, c14) are the callouts; the Mistake is the
 //  card's drawable top fault, swinging (c5), with tells for its two visible signs (lean back, hip and knee drive);
+//  critic run 2 (R5): the hip-drive tell ends on the hip arrow; the Mistake outlines the near leg only (one contour);
 //  tempo up 1 s, down 2 s, pause 0 (c9), so there is no Hold, and no Rest phase (the card gives none). Measure: the elbow
 //  sweep from the start forearm, value "full range" (c12), no number (the card gives none). The card's plate.tells
 //  ("how you know you are doing it right") have no slot on the plate; they belong to the app layer.
@@ -126,13 +127,14 @@ export default {
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
+    parts: ['torso', 'head', 'arm.r', 'leg.r'],   // near leg only: the far leg's outline tripled the leg contour
     guides: [
       { kind: 'arc-arrow', center: 'hip.r', r: 80, a0: -104, a1: -124 },   // the lean, behind the upper back
       { kind: 'arrow', from: { at: 'hip.r', off: [4, 0] }, to: { at: 'hip.r', pose: 'mistake', off: [14, 0] } },
     ],
     tells: [
       { key: 'lean', text: 'Leaning<br>back', anchor: 'backUpper', cue: 'The torso leans back to throw the dumbbells up.' },
-      { key: 'hips', text: 'Hips<br>drive', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The hips and knees push forward to heave the weight.' },
+      { key: 'hips', text: 'Hips<br>drive', anchor: { at: 'hip.r', pose: 'mistake', off: [16, 0] }, cue: 'The hips and knees push forward to heave the weight.' },
     ],
   },
   alt: 'Dumbbell biceps curl, side view. Standing tall with a dumbbell in each hand, palms forward. The elbows stay at the sides while the forearms curl the dumbbells from the thighs up to the front of the shoulders.',

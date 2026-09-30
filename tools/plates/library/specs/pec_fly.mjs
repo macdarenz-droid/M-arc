@@ -22,12 +22,13 @@
 //  - Machine: library `pecDeck` composer (front view): centre column, top housing 1.45 m, level arms from the pivots,
 //    drop levers to 14 cm vertical handles, seat and 30 x 70 cm back pad. Items split one per equipment entry (see
 //    there); the open levers redrawn as a dashed phantom. Ghosts: the arms only.
-// Go/no-go (front-view pivot arms), decided by the arms-machines builder: NO-GO at approved quality. The closed (solid)
-//  pose points the arms at the camera; the engine draws them as flat foreshortened stubs over the torso (body.mjs
-//  'ahead' rule, no depth cue), and the top-hung drop levers cover the whole head at the closed position (true to the
-//  machine, whose pivots sit above the shoulders). The side view cannot show the checkpoints either (the elbow bend and
-//  the hands meeting are in the horizontal plane). The Mistake (hands stopped at the shoulders, gap line) reads well.
-//  Angles and contacts are true; the report is clean.
+// Go/no-go (front-view pivot arms): first render NO-GO (levers dropped from the housing centre over the face). Critic
+//  run 2 fixes (R1/R2/R7): the composer's add-only `direct` option runs one straight lever from each pivot, which sits
+//  straight above its shoulder joint (a real pec deck's axis), down to the handle, so at the closed position the two
+//  levers form a V beside the head and meet below the chin (lever at ear height 14.5 cm off the midline, head 8.5);
+//  `uprights` puts two frame legs from the floor to the housing. Elbow pole points out and down (not back), so the
+//  soft elbow shows as an offset elbow mark. Remaining engine limit: arms pointing at the camera draw as short
+//  foreshortened capsules (body.mjs 'ahead' rule, no depth shading).
 // Callouts, Mistake, tempo: card plate.checkpoints (c3, c2, c5), plate.mistake (c6), plate.tempo (c12, verified card e2a70bc:
 //  close 2 s, hold 2 s, open 2 s; no Rest phase, the card gives none). No measure: the card gives no angle, and in this view
 //  the soft elbow of the closed arm is foreshortened, so an arc would draw a false number.
@@ -63,7 +64,7 @@ const CLOSE_ANGLE = Math.acos((S[0] + CLOSE_GAP) / RH) / R;                   //
 const gripAt = th => [S[0] - RH * Math.cos(th * R), HANDLE_Y, S[2] + RH * Math.sin(th * R)];
 const poleAt = th => {                                 // behind the direction of travel, and down
   const back = [-Math.sin(th * R), 0, -Math.cos(th * R)];  // right arm travels along +[sin, 0, cos]; back = the opposite
-  const p = [back[0] * 0.8, -0.35, back[2] * 0.8], k = Math.hypot(...p);
+  const p = [back[0] * 0.25 - 0.55, -0.8, back[2] * 0.25], k = Math.hypot(...p);   // out (-x on the right) and down
   return p.map(v => v / k);
 };
 const armsAt = th => {
@@ -81,9 +82,11 @@ const padN = (() => { const d = [0, padU[1] - padL[1], padU[2] - padL[2]], n = [
 const PAD = { len: 0.70, bottom: SEAT_TOP + 0.04 };
 const PIVOT = { r: [S[0], TOP, S[2]], l: [-S[0], TOP, S[2]] };
 const TUBE = 0.05, GRIP = 0.14, LEVER_R = 0.025, HANDLE_R = 0.016;   // pecDeck / chestPress sizes
+const UPRIGHT_X = 0.29;                                // frame legs under the housing ends, floor to top
 const deckOf = lm => pecDeck({
   pivot: PIVOT, grips: { l: lm['grip.l'], r: lm['grip.r'] }, seat: [0, SEAT_TOP, 0.02],
   back: { at: [0, PAD.bottom + PAD.len / 2, padU[2] - 0.035], len: PAD.len }, top: TOP, pxPerM: REF_CAMERA.pxPerM, grip: GRIP, tube: TUBE,
+  direct: true, uprights: UPRIGHT_X,
 });
 const DECK_N = deckOf(landmarksOf(start, H)).length;
 // closed outline round segment a-b in the front-view plane ([x, y] at depth z), radius r
@@ -97,7 +100,7 @@ const START_PHANTOM = (() => {
   const lm = landmarksOf(start, H), out = [];
   for (const sd of ['l', 'r']) {
     const p = PIVOT[sd], g = lm[`grip.${sd}`], top = [g[0], g[1] + GRIP / 2];
-    out.push(capsule([p[0], p[1]], [g[0], p[1]], TUBE / 2, g[2]), capsule([g[0], p[1]], top, LEVER_R, g[2]), capsule([g[0], g[1] - GRIP / 2], top, HANDLE_R, g[2]));
+    out.push(capsule([p[0], p[1]], top, LEVER_R, g[2]), capsule([g[0], g[1] - GRIP / 2], top, HANDLE_R, g[2]));
   }
   return out.map(pts => ({ type: 'line', pts, cls: 'eq-line m-line', z: 'mid' }));
 })();
@@ -135,9 +138,9 @@ export default {
   ghosts: { count: 3, parts: ['arm.r', 'arm.l'] },       // limbs only: machine-arm ghosts stacked 6 extra levers over the plate
   trace: { point: 'grip.r', trim: [12, 12] },
   callouts: [
-    { key: 'elbows', text: 'Soft<br>elbows', anchor: { at: 'elbow.r', pose: 'start' }, cue: 'Keep a slight, fixed bend in the elbows.' },
-    { key: 'height', text: 'Chest<br>height', anchor: { at: 'grip.l', pose: 'start' }, box: { left: 256, top: 216 }, cue: 'Set the seat so the arms move at chest-to-shoulder height.' },
-    { key: 'meet', text: 'Hands<br>meet', anchor: 'grips', box: { left: 92, top: 238 }, cue: 'Bring the handles together in front of the chest each rep.' },
+    { key: 'elbows', text: 'Soft<br>elbows', anchor: { at: 'elbow.l', pose: 'start' }, box: { left: 236, top: 214 }, cue: 'Keep a slight, fixed bend in the elbows.' },
+    { key: 'height', text: 'Chest<br>height', anchor: { at: 'grip.r', pose: 'start' }, box: { left: 20, top: 244 }, cue: 'Set the seat so the arms move at chest-to-shoulder height.' },
+    { key: 'meet', text: 'Hands<br>meet', anchor: 'grips', box: { left: 73, top: 214 }, cue: 'Bring the handles together in front of the chest each rep.' },
   ],
   tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 2 }, { phase: 'Open', s: 2, move: true }],
   mistake: {
@@ -148,6 +151,6 @@ export default {
       { key: 'apart', text: 'Handles<br>apart', anchor: { along: GAP, t: 0.5 }, cue: 'The handles finish well apart in front of the chest.' },
     ],
   },
-  pilot: { note: 'pec_fly front view: NO-GO at approved quality (closed levers hide the head, closed arms read as stubs); the Mistake reads' },
+  pilot: { note: 'pec_fly front view after critic run 2: pivots over the shoulders, straight levers clear of the head, frame to the floor; closed arms stay short foreshortened capsules (engine limit)' },
   alt: 'Pec deck fly, front view. Seated with the back on the pad and feet flat, the lifter holds vertical handles with slightly bent elbows at chest height and sweeps the arms from out to the sides until the handles nearly meet in front of the chest.',
 };
