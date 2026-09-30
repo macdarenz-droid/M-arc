@@ -153,7 +153,7 @@
   ],
   "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, glutes and calves secondary. ACE's target list covers thighs and hips (j13, WEAK); ankle extension in the take-off supports calves by inference (j17, MECH). No EMG source for the bodyweight jump squat was read. No change." },
   "loadProgression": { "text": "Squat and landing first, then small jumps, then more explosive ones as landings allow.", "claims": ["j7"] },
-  "wayOut": { "text": "Never jump to failure: end the set before fatigue spoils your landings. Only jump more explosively once your landings are mastered.", "claims": ["j15", "j7"] },
+  "tierA": { "wayOut": { "text": "Never jump to failure: end the set before fatigue spoils your landings. Only jump more explosively once your landings are mastered.", "claims": ["j15", "j7"] } },
   "anchorSource": "ace-squatjumps",
   "anchorNote": "ACE squat jumps page read in full; Catalyst Athletics squat vertical jump page also read in full.",
   "unsourced": [

@@ -20,7 +20,7 @@
     },
     {
       "field": "redFlags.knee",
-      "why": "true for this child because the front knee bends under body weight or load exactly as in the reverse lunge; the NHS knee box is re-cited in this card."
+      "why": "true for this child because the front knee bends under body weight or load as in the reverse lunge; the NHS knee box is re-cited in this card."
     },
     {
       "field": "grip",
@@ -70,7 +70,7 @@
     },
     {
       "id": "c3",
-      "text": "Lower at a controlled speed until the rear knee lightly touches the floor without resting on it, then stand by pushing through the whole front foot, at a weight that allows a smooth movement with no crash into the bottom.",
+      "text": "Lower at a controlled speed until the rear knee lightly touches the floor without resting on it, then stand by pushing through the whole front foot.",
       "tags": [
         "CONSENSUS"
       ],
@@ -88,11 +88,6 @@
           "source": "ace-bss",
           "text": "Before the left knee hits the floor, press the right foot into the ground, pull back on the right knee, and push the top of the left foot into the box to return to standing.",
           "where": "instructions"
-        },
-        {
-          "source": "cat-bss",
-          "text": "Sets of 8-15 reps are most often appropriate with weight that allows a smooth movement and no crashing into the bottom position.",
-          "where": "Programming"
         }
       ]
     },
@@ -397,7 +392,10 @@
     "mistake": {
       "what": "Dropping into the bottom and resting the rear knee on the floor.",
       "why": "Both technique sources stop the rear knee just short of resting (c3), and the programming line sets the load by the absence of a crash into the bottom (c8).",
-      "claim": "c3",
+      "claim": [
+        "c3",
+        "c8"
+      ],
       "drawable": true,
       "rankNote": "No source ranks split-squat faults by frequency. The front knee moving inward (c4) is named by the anchor but needs a front view; the drawn fault is the depth and control fault both sources name."
     },
@@ -416,7 +414,10 @@
       "down": null,
       "pause": null,
       "text": "Controlled speed down, no crash into the bottom. No source gives seconds.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c8"
+      ]
     },
     "variantLine": "exercises.json lists Dumbbells / Barbell. The plate draws dumbbells at the sides (c9). Stance, depth and back claims (c2, c3, c5) come from a load-agnostic source (Catalyst) and a dumbbell source (ACE), so they hold for both."
   },
@@ -475,7 +476,10 @@
     {
       "mistake": "Dropping fast and resting the rear knee on the floor.",
       "fix": "Lower under control and stop as the knee touches lightly; go lighter if you can't.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c8"
+      ]
     },
     {
       "mistake": "Front knee moving inward or outward.",

@@ -50,13 +50,6 @@
     },
     {
       "claim": "g2",
-      "source": "nasm-goblet",
-      "text": "Engage your core and maintain upright posture.",
-      "status": "verbatim",
-      "closest": null
-    },
-    {
-      "claim": "g2",
       "source": "ace-goblet",
       "text": "Stand with the feet about shoulder-width apart, and hold a dumbbell in a vertical position directly in front of the chest. Keep the elbows close to the rib cage and the back straight while lowering into a squat.",
       "status": "verbatim",
@@ -87,13 +80,6 @@
       "claim": "g5",
       "source": "nasm-goblet",
       "text": "Keep the weight secure at chest height during the entire movement.",
-      "status": "verbatim",
-      "closest": null
-    },
-    {
-      "claim": "g6",
-      "source": "ace-goblet",
-      "text": "Keep the elbows close to the rib cage and the back straight while lowering into a squat.",
       "status": "verbatim",
       "closest": null
     },

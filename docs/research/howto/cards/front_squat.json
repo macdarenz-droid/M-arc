@@ -10,18 +10,17 @@
   "parentNote": "Supervisor's LB4A brief names barbell_back_squat as the template parent. Same hand archetype (on-body) and primary contact (standing-feet), so the content.md 2.3 family rule holds. content.md appendix A had front_squat as a stand-alone parent; the brief overrides it.",
   "inherit": [
     { "field": "setup[2] (load the plates evenly, collars on)", "why": "true for this child because it is the same straight barbell loaded the same way; nothing about plate loading depends on where the bar rests." },
-    { "field": "setup[6]-setup[7] (stand straight up to unrack, two or three short steps back)", "why": "true for this child because the bar also leaves the rack hooks resting on the trunk, so the same stand-up-then-step-back unrack applies; only the bar's position on the body differs (c2)." },
+    { "field": "setup[6]-setup[7] (stand straight up to unrack, two or three short steps back)", "why": "true for this child because the bar also leaves the rack hooks resting on the trunk, so the same stand-up-then-step-back unrack applies; only the bar's position on the body differs (c2). Parent evidence: setup[6]-setup[7] of the approved grip-and-feel research (docs/howto/grip-and-feel/research/barbell_back_squat.json), and the approved setupLine 'stand straight up with it'; the parent source ACE Back Squat says 'Stand up to bring the bar off the rack and step backwards'. The step count (two or three) is the parent's coaching consensus. No front-squat source read (Catalyst, Human Kinetics, REP) describes the unrack, so this line rests on the parent." },
     { "field": "posture[3] (feet flat, knees follow the toes)", "why": "true for this child because Catalyst's front squat technique gives the same rule: whole-foot balance and knees in line with the feet (c10)." }
   ],
   "claims": [
     { "id": "c1", "text": "The front squat emphasises an upright posture, a rigid trunk and quad strength.",
       "tags": ["CONSENSUS"], "sources": ["cat-frontsquat"],
       "quotes": [{ "source": "cat-frontsquat", "text": "The front squat is a more specific leg and trunk strength exercise to support the clean and jerk by emphasizing maximally upright posture, trunk rigidity and quad strength.", "where": "introduction" }] },
-    { "id": "c2", "text": "The bar sits in the channel between the throat and the top of the shoulders, touching the throat lightly without pressing on it; the shoulders are pushed forward and slightly up.",
+    { "id": "c2", "text": "The bar sits in the channel between the throat and the top of the shoulders, touching the throat lightly without pressing on it; slightly raised shoulders keep pressure off the collarbones.",
       "tags": ["CONSENSUS"], "sources": ["cat-frontsquat", "cat-rack"],
       "quotes": [
         { "source": "cat-frontsquat", "text": "Place the bar in the channel between the throat and the highest points of the shoulders.", "where": "technique" },
-        { "source": "cat-rack", "text": "extend your upper back, and push your shoulders forward as far as you can and slightly up.", "where": "technique" },
         { "source": "cat-rack", "text": "The bar should be in light contact with your throat but not placing pressure against it, and the slight elevation of the shoulders will keep pressure off of your collarbones and carotid arteries.", "where": "technique" } ] },
     { "id": "c3", "text": "In a correct rack the shoulders hold the bar, pushed forward and slightly up (a shrug makes a shelf for it); the hands and arms only add security and should not do the main work, and a fingertip rack is fine if the bar stays on the shoulders.",
       "tags": ["CONSENSUS"], "sources": ["cat-rack", "hk-frontsquat"],
@@ -163,7 +162,7 @@
   },
   "setup": [
     { "step": "Set the safety bars just below your lowest squat depth before loading.", "claim": "c14" },
-    { "step": "Bar in the channel between throat and shoulders, touching the throat lightly; shoulders pushed forward and slightly up.", "claim": "c2" },
+    { "step": "Bar in the channel between throat and shoulders, touching the throat lightly; shoulders pushed forward and slightly up.", "claim": ["c2", "c3"] },
     { "step": "Loose full grip, elbows high.", "claim": "c4" },
     { "step": "Heels hip width or a little wider, toes out 15-30 degrees.", "claim": "c8" },
     { "step": "Brace hard before each rep.", "claim": "c9" }
@@ -178,7 +177,7 @@
   ],
   "handlingMistakes": [
     { "mistake": "Holding the bar up with the hands instead of resting it on the shoulders.", "fix": "Push the shoulders forward and up to make a shelf; loosen the grip or go to a fingertip rack.", "claim": "c3" },
-    { "mistake": "Bar pressing on the throat.", "fix": "Shrug the shoulders slightly up so the bar only touches the throat lightly.", "claim": "c2" },
+    { "mistake": "Bar pressing on the throat.", "fix": "Shrug the shoulders slightly up so the bar only touches the throat lightly.", "claim": ["c2", "c3"] },
     { "mistake": "Bailing with no safeties set.", "fix": "Set the safeties first; to bail, let go so the bar drops forward, and step back.", "claim": "c14" }
   ],
   "feel": {
@@ -188,7 +187,7 @@
     "rows": [
       { "where": "Wrists or fingers", "means": "The hands are holding the bar up.", "fix": "Shoulders forward and up, loose or fingertip grip.", "claim": "c3", "redFlag": "wrist" },
       { "where": "Lower back more than thighs", "means": "Usually means the torso is tipping forward.", "fix": "Elbows up, chest tall.", "claim": "c24", "redFlag": "back" },
-      { "where": "Pressure on the throat", "means": "Bar too far back or shoulders not up.", "fix": "Shrug the shoulders to lift the bar off the throat.", "claim": "c2", "redFlag": null },
+      { "where": "Pressure on the throat", "means": "Bar too far back or shoulders not up.", "fix": "Shrug the shoulders to lift the bar off the throat.", "claim": ["c2", "c3"], "redFlag": null },
       { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "c23", "redFlag": "knee" }
     ]
   },
@@ -206,7 +205,7 @@
   ],
   "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, glutes secondary. Yavuz 2015 (c17) supports quads as the main mover; Human Kinetics names glutes and hamstrings (c18). Hamstrings not added: the only EMG source found shows the hamstring muscle more active in the back squat, so no data supports it as a front squat mover. No change." },
   "loadProgression": { "text": "Add load progressively within your limits; safeties are for emergencies.", "claims": ["c15"] },
-  "wayOut": { "text": "Safeties just below your lowest depth, or a spotter when heavy; practise bailing with light weight first. To bail, let go, let the bar drop forward onto the safeties, and step back.", "claims": ["c14", "c25"] },
+  "tierA": { "wayOut": { "text": "Safeties just below your lowest depth, or a spotter when heavy; practise bailing with light weight first. To bail, let go, let the bar drop forward onto the safeties, and step back.", "claims": ["c14", "c25"] } },
   "breathing": { "text": "Brace before each rep; release a little air on the way up if dizzy. Shared breath-holding line applies.", "claims": ["c9", "c13", "c19"] },
   "barPath": { "text": "The bar sits in front of the throat, touching lightly, never pressing (clear of the neck).", "claims": ["c2"] },
   "anchorSource": "cat-frontsquat",

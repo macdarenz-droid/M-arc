@@ -25,9 +25,9 @@
     { "id": "p5", "text": "The free leg hovers in front with a straight knee.",
       "tags": ["CONSENSUS"], "sources": ["physitrack-pistol"],
       "quotes": [{ "source": "physitrack-pistol", "text": "Your other leg should hover in front of you with a straight knee.", "where": "instructions" }] },
-    { "id": "p6", "text": "The pistol squat is advanced; beginners should master basic squats and lunges first, and move on to assisted pistols once air squats and one-leg balance are comfortable, or practise to a box or bench behind you.",
-      "tags": ["CONSENSUS"], "sources": ["physitrack-pistol", "rep-pistol"],
-      "quotes": [{ "source": "physitrack-pistol", "text": "No, pistol squats are an advanced exercise and should not be attempted by beginners.", "where": "FAQ" }, { "source": "physitrack-pistol", "text": "If you are a beginner, you should focus on mastering basic bodyweight exercises such as squats, lunges, and push-ups before attempting more advanced exercises such as pistol squats.", "where": "FAQ" }, { "source": "rep-pistol", "text": "If you're comfortable and confident tackling air squats, balancing on one leg, and have given your ankles some dedicated mobility work, you're ready to move on to assisted pistol squats.", "where": "How to Work Up to Your First Pistol Squat" }, { "source": "rep-pistol", "text": "practice your pistol squat with a box or bench behind you.", "where": "Single-leg box squat" }] },
+    { "id": "p6", "text": "The pistol squat is advanced; beginners should master basic squats and lunges first.",
+      "tags": ["CONSENSUS"], "sources": ["physitrack-pistol"],
+      "quotes": [{ "source": "physitrack-pistol", "text": "No, pistol squats are an advanced exercise and should not be attempted by beginners.", "where": "FAQ" }, { "source": "physitrack-pistol", "text": "If you are a beginner, you should focus on mastering basic bodyweight exercises such as squats, lunges, and push-ups before attempting more advanced exercises such as pistol squats.", "where": "FAQ" }] },
     { "id": "p7", "text": "Load progression: single-leg balance and air squats first, then assisted pistols (holding a support to take weight off), squats to a box behind you lowered over time, and lowering-only reps.",
       "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
       "quotes": [
@@ -107,7 +107,7 @@
     { "point": "Knee does not cave inward.", "claim": "p8" }
   ],
   "handlingMistakes": [
-    { "mistake": "Trying the full pistol before the basics.", "fix": "Master air squats and single-leg balance first, then use support or a box.", "claim": "p6" },
+    { "mistake": "Trying the full pistol before the basics.", "fix": "Master air squats and single-leg balance first, then use support or a box.", "claim": ["p6", "p7"] },
     { "mistake": "Bouncing out of the bottom.", "fix": "Lower slowly and stand without a bounce; use a box if you cannot.", "claim": "p8" },
     { "mistake": "Pushing through knee pain.", "fix": "Back off, check your form, or use an easier version.", "claim": "p9" }
   ],
@@ -132,7 +132,7 @@
   ],
   "libraryDiff": { "add": ["adductors"], "remove": ["abductors"], "why": "Library: quads primary, glutes and abductors secondary. REP names quads as main movers and glutes and the working-leg adductors as helpers (p10), so adductors are proposed as an addition. Abductors are not named by any source read (REP and Physitrack read in full), so removal is proposed for the supervisor to decide; no source supports keeping them. Coach source only, no EMG." },
   "loadProgression": { "text": "Single-leg balance and air squats, then assisted pistols, box pistols with the box lowered over time, and lowering-only reps.", "claims": ["p7"] },
-  "wayOut": { "text": "A box behind you to sit onto, or a support to hold, while learning.", "claims": ["p7"] },
+  "tierA": { "wayOut": { "text": "A box behind you to sit onto, or a support to hold, while learning.", "claims": ["p7"] } },
   "anchorSource": "rep-pistol",
   "anchorNote": "REP Fitness pistol squat guide read in full; Physitrack pistol squat page also read in full.",
   "unsourced": [
