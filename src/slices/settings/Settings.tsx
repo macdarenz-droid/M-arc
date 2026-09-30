@@ -35,8 +35,6 @@ import { clearErrorReportQueue, reportCaught, resetErrorReporting } from '@/erro
 // PLAY-1: the same URL as the Play Console privacy policy field (docs/PLAY-SUBMISSION.md) and
 // native/PermissionsRationaleActivity.java. Opened like every external page: the WebView hands it to the browser.
 export const PRIVACY_POLICY_URL = 'https://macdarenz-droid.github.io/M-arc/privacy/';
-// PLAY-1 (P3): Play's reminder to consult a healthcare professional. Not a contact: no number, no link.
-export const MEDICAL_LINE = 'Not medical advice. For medical advice, diagnosis or treatment, see a healthcare professional.';
 // COPY-1 (D-COPY1-2): the owner asked for a rights line in the footer. The repo has no LICENSE, so all rights are reserved.
 export const RIGHTS_LINE = '© 2026 Marc Darenz. All rights reserved.';
 
@@ -250,7 +248,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             )}
           </Card>
         </Section>
-        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><p class="hint" style={{ textAlign: 'center' }} data-palace="settings.rights">{RIGHTS_LINE}</p><p class="hint" style={{ textAlign: 'center' }} data-palace="settings.medical">{MEDICAL_LINE}</p><span class="hint" data-palace="settings.version">Version {APP_VERSION}</span></div>
+        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><p class="hint" style={{ textAlign: 'center' }} data-palace="settings.rights">{RIGHTS_LINE}</p><span class="hint" data-palace="settings.version">Version {APP_VERSION}</span></div>
       </div>
     </Sheet>
   );

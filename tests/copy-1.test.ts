@@ -204,4 +204,18 @@ describe('COPY-1: the Settings footer rights line (D-COPY1-2)', () => {
   it('carries no contact, source or safety wording (LR-23)', () => {
     for (const re of [CONTACT_RE, SOURCE_RE, SOURCE_CS_RE, SAFETY_LINE_RE]) expect(RIGHTS_LINE.match(re)?.[0], `${re}`).toBeUndefined();
   });
+  it('has no medical reminder (D-COPY1-medical): moved to the store description, see docs/PLAY-SUBMISSION.md', () => {
+    const src = read('src/slices/settings/Settings.tsx');
+    expect(src).not.toContain('MEDICAL_LINE');
+    expect(src).not.toContain('healthcare professional');
+    expect(src).not.toContain('data-palace="settings.medical"');
+  });
+  it('the version line is the rights line\'s next sibling in the footer', () => {
+    const footer = read('src/slices/settings/Settings.tsx').match(/<Logo height=\{30\} \/>(.*?)<\/div>/)?.[1] ?? '';
+    const rightsEnd = footer.indexOf('</p>', footer.indexOf('data-palace="settings.rights"'));
+    const versionStart = footer.indexOf('<span class="hint" data-palace="settings.version"');
+    expect(rightsEnd).toBeGreaterThan(-1);
+    expect(versionStart).toBeGreaterThan(rightsEnd);
+    expect(footer.slice(rightsEnd + '</p>'.length, versionStart)).toBe('');
+  });
 });

@@ -21,9 +21,9 @@ Google Play's health policy (https://support.google.com/googleplay/android-devel
 
 The same policy then says: "Apps must also remind users to consult a healthcare professional for medical advice, diagnosis, or treatment." It names no place for this reminder, while every other placement in that section names the app description. So the reminder goes **in the store description**, right after the line above:
 
-> Consult a healthcare professional for medical advice, diagnosis, or treatment.
+> For medical advice, diagnosis or treatment, consult a healthcare professional.
 
-Play does not require it inside the app (COPY-1 research, read 2026-09-30, D-COPY1-3). The only "within the app" wording is a best practice ("should … may include") in https://support.google.com/googleplay/android-developer/answer/13996367, for apps that claim to help diagnose or manage a health condition; M/ARC makes no such claim. No Google page asks for a "not medical advice" line. The in-app Settings line from card PLAY-1 is therefore to be removed (owner, 2026-10-01). Until the supervisor settles PLAY-1's gate block, which still pins it, the app keeps showing it.
+Play does not require it inside the app (COPY-1 research, read 2026-09-30, D-COPY1-3). The only "within the app" wording is a best practice ("should … may include") in https://support.google.com/googleplay/android-developer/answer/13996367, for apps that claim to help diagnose or manage a health condition; M/ARC makes no such claim. No Google page asks for a "not medical advice" line. The in-app Settings line from card PLAY-1 is removed (owner, 2026-10-01; COPY-1, D-COPY1-medical). PLAY-1's gate block probe for it is retired; the COPY-1 gate block checks the inverse.
 
 Risk: a Play reviewer could read the reminder as expected in the app. The coach's safety cards (`src/escobar/ui/Escalation.tsx`, owner decision LR-23) stay in the app; the How-to safety line ("General guidance, not medical advice. …", owner-approved) is not rendered in the app yet.
 
