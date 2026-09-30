@@ -3,7 +3,7 @@ import { EscobarLoop, toRequestMessages, windowMessages, offlineReply, STEP_BUDG
 import type { StreamEvent, Transport } from '@/escobar/transport';
 import { newConversation, trimOldest } from '@/escobar/store';
 import { decide } from '@/escobar/apply';
-import type { Conversation, StoredMessage } from '@/escobar/types';
+import type { Conversation, Fact, StoredMessage } from '@/escobar/types';
 import type { MemoryEffect } from '@/escobar/tools/executor';
 import { sixMonthsState, NOW } from './fixtures';
 import { buildManifest } from '@/escobar/context/manifest';
@@ -404,5 +404,58 @@ describe('replay redaction with real brief text (QA2-FD-4, QA2-FD-8, QA2-FD-11, 
     const out = JSON.stringify(toRequestMessages(msgs, undefined, { health: true, body: false }));
     for (const gone of ['80.5', 'restingKcalPerDay', '1745']) expect(out).not.toContain(gone);
     expect(out).toContain('age 36');
+  });
+});
+
+describe('BUG-31 brief-form fact tags in the loop', () => {
+  // A conversation past f10: the ids the answer cites are already in the ledger, with these values.
+  const VALUES: Record<string, number> = { f33: 67, f34: 45, f36: 52, f40: 2, f41: 38, f42: 6, f43: 3 };
+  const prefilled = (): Fact[] => Array.from({ length: 45 }, (_, i) => ({ id: `f${i + 1}`, value: VALUES[`f${i + 1}`] ?? 0.25, label: `fact ${i + 1}`, source: { tool: 'brief' }, turn: 0 }));
+  const SCREENSHOT = "You've done 2 [f40] of 3 [f43] planned sessions this week, 38 [f41] sets, 6 [f42] records. Readiness is green 67 [f33], advice normal. Biceps are at 45% [f34] and triceps 52% [f36], so your last sessions were real work.";
+  const assistants = (c: Conversation) => c.messages.filter((m): m is Extract<StoredMessage, { role: 'assistant' }> => m.role === 'assistant');
+
+  it('A1: an answer in the brief form finishes with no repair round and no unverified sentence', async () => {
+    const { loop, transport } = setup([answer(SCREENSHOT)]);
+    loop.conversation = { ...loop.conversation, ledger: prefilled() };
+    const r = await loop.send({ text: 'How was my week?' });
+    expect(r.outcome).toBe('done');
+    expect(transport.bodies).toHaveLength(1);
+    expect(loop.conversation.messages.some(m => m.role === 'user' && m.meta?.repair)).toBe(false);
+    expect(r.unverified).toBeUndefined();
+    expect(r.revised).toBe(false);
+    const rendered = assistants(loop.conversation).at(-1)!.meta.rendered;
+    expect(rendered.unverified).toBeUndefined();
+    expect(rendered.answer).toContain('2 ⟦f40⟧ of 3 ⟦f43⟧ planned sessions');
+    expect(rendered.answer).not.toMatch(/\[f\d+/);
+    expect(r.answer!.citations).toEqual(['f40', 'f43', 'f41', 'f42', 'f33', 'f34', 'f36']);
+  });
+
+  it('A1: a preamble in the brief form is stored canonical; an unknown id stays as written', async () => {
+    const pre = 'Counting your 38 [f41] sets and 67 [f999].';
+    const withPreamble: StreamEvent[] = [{ t: 'text', d: pre }, { t: 'tool', id: 't1', name: 'get_overview' }, { t: 'tool_input', id: 't1', input: {} }, final([{ type: 'text', text: pre }, { type: 'tool_use', id: 't1', name: 'get_overview', input: {} }], 'tool_use')];
+    const { loop } = setup([withPreamble, answer('Steady week.')]);
+    loop.conversation = { ...loop.conversation, ledger: prefilled() };
+    await loop.send({ text: 'How was my week?' });
+    expect(assistants(loop.conversation)[0]!.meta.rendered.preamble).toEqual(['Counting your 38 ⟦f41⟧ sets and 67 [f999].']);
+  });
+
+  it('A1: an invented number next to a real id is the only number sent back', async () => {
+    const { loop } = setup([answer('You did 55 [f41] sets this week.'), answer('You did 38 [f41] sets this week.')]);
+    loop.conversation = { ...loop.conversation, ledger: prefilled() };
+    const r = await loop.send({ text: 'How many sets?' });
+    const sys = loop.conversation.messages.filter(m => m.role === 'system').map(m => m.content as string);
+    expect(sys.at(-1)).toMatch(/^These numbers are not from your tools, cards or the brief: 55\. /);
+    expect(r.outcome).toBe('done');
+    expect(r.unverified).toBeUndefined();
+    expect(r.revised).toBe(true);
+  });
+
+  it('A3: the repair system message asks for the whole answer again, with no mention of the check', async () => {
+    const { loop, transport } = setup([answer('Your bench went up to 987 kg last week.'), answer('Your bench went up last week.')]);
+    await loop.send({ text: 'How is my bench?' });
+    const want = 'These numbers are not from your tools, cards or the brief: 987. Recompute them with tools or remove them. Then write your whole answer again as your reply to the person. Do not mention this check or that anything was re-checked.';
+    expect(loop.conversation.messages.filter(m => m.role === 'system').map(m => m.content).at(-1)).toBe(want);
+    const sent = (transport.bodies[1]!.messages as Array<{ role: string; content: unknown }>).filter(m => m.role === 'system').at(-1)!;
+    expect(sent.content).toBe(want);
   });
 });

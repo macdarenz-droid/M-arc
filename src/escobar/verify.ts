@@ -56,8 +56,27 @@ export function parseDirectives(raw: string): ParsedAnswer {
 }
 
 /**
- * Streaming: holds back an unfinished `⟦…` so half a directive is never rendered.
- * `push` returns the text that is safe to show so far.
+ * BUG-31: the brief writes facts as "38 [f41]" and the model copies that form. A `[fN]` or
+ * `[fN, fM]` tag whose ids are all in this conversation's ledger becomes the canonical `⟦fN⟧` /
+ * `⟦fN,fM⟧`, so its digits are not read as a number and it is stripped like any citation. A tag
+ * naming an unknown id stays as written: its digits still count, and are still checked.
+ */
+const BRIEF_TAG = /\[\s*(f\d+(?:\s*,\s*f\d+)*)\s*\]/g;
+export function normalizeCitations(text: string, ledger: Fact[]): string {
+  const known = new Set(ledger.map(f => f.id));
+  return text.replace(BRIEF_TAG, (tag, list: string) => {
+    const ids = list.split(',').map(s => s.trim());
+    return ids.every(id => known.has(id)) ? `${OPEN}${ids.join(',')}${CLOSE}` : tag;
+  });
+}
+
+/** BUG-31: a trailing "[", "[f", "[f12", "[f12," or "[f12, f3" that may still become a fact tag. */
+const PARTIAL_TAG = /\[\s*(?:f(?:\d+(?:\s*,\s*(?:f\d*)?)*\s*)?)?$/;
+
+/**
+ * Streaming: holds back an unfinished `⟦…`, and a trailing partial `[f…` tag (BUG-31), so half a
+ * directive or tag is never rendered. A held "[" that turns out not to be a fact tag ("[1]",
+ * "[note]") is released unchanged. `push` returns the text that is safe to show so far.
  */
 export class DirectiveBuffer {
   private raw = '';
@@ -68,7 +87,9 @@ export class DirectiveBuffer {
   safe(): string {
     const open = this.raw.lastIndexOf(OPEN);
     const close = this.raw.lastIndexOf(CLOSE);
-    const visible = open > close ? this.raw.slice(0, open) : this.raw;
+    let visible = open > close ? this.raw.slice(0, open) : this.raw;
+    const partial = PARTIAL_TAG.exec(visible);
+    if (partial) visible = visible.slice(0, partial.index);
     return parseDirectives(visible).text;
   }
   get full(): string { return this.raw; }
@@ -114,14 +135,15 @@ function grounded(n: number, values: number[], lbValues: number[]): boolean {
 
 /** Card ids cited in a sentence ground the numbers of that card's facts (§14.4). */
 export function checkGrounding(inp: GroundingInput): GroundingResult {
-  const { plain } = parseDirectives(inp.answer);
+  // BUG-31: brief-form tags ("38 [f41]") of known facts are citations, not numbers.
+  const answer = normalizeCitations(inp.answer, inp.ledger);
   const factValues = inp.ledger.map(f => f.value);
   const kgFacts = inp.ledger.filter(f => f.unit === 'kg' || /\bkg\b/.test(f.label)).map(f => f.value / KG_PER_LB);
   const userNums = (inp.userTexts ?? []).flatMap(extractNumbers);
   const bad: number[] = [];
   const badSentences: string[] = [];
   // The trailing chips directive is not a sentence (its options would read as numbers).
-  const rawSentences = sentencesOf(inp.answer.replace(/⟦chips:[^⟧]*⟧\s*$/, ''));
+  const rawSentences = sentencesOf(answer.replace(/⟦chips:[^⟧]*⟧\s*$/, ''));
   for (const rawSentence of rawSentences) {
     const cardIds = [...rawSentence.matchAll(/⟦k:([a-z0-9_]+)⟧/g)].map(m => m[1]!);
     const cardValues = inp.ledger.filter(f => cardIds.some(id => f.label.startsWith(`k:${id}`))).map(f => f.value);
@@ -139,8 +161,9 @@ export function checkGrounding(inp: GroundingInput): GroundingResult {
   return { ok: bad.length === 0, ungrounded: [...new Set(bad)], sentences: badSentences };
 }
 
+/** BUG-31: "then restate the answer" drew meta lines such as "Restated with the numbers re-checked:". */
 export const repairInstruction = (nums: number[]): string =>
-  `These numbers are not from your tools, cards or the brief: ${nums.join(', ')}. Recompute them with tools or remove them, then restate the answer.`;
+  `These numbers are not from your tools, cards or the brief: ${nums.join(', ')}. Recompute them with tools or remove them. Then write your whole answer again as your reply to the person. Do not mention this check or that anything was re-checked.`;
 
 // ---------- Safety pre-screen (§19) ----------
 
