@@ -172,25 +172,56 @@ describe('HT4-A5: golden B holds only golden-A plates (fast proofs; the live-bui
     const mod = await loadGb();
     const MISTAKE_POSE_KEYS = ['pull_up|top-wrong', 'lat_pulldown|pad-wrong', 'seated_cable_row|back-wrong'];
     expect(MISTAKE_POSE_KEYS.length).toBe(3);
-    expect(Object.keys(mod.ENUMERATED_POSES).length).toBe(14);
+    expect(Object.keys(mod.ENUMERATED_POSES).length).toBe(11);
+    expect(Object.keys(mod.ENUMERATED_MISTAKE_POSES).length).toBe(3);
     for (const key of MISTAKE_POSE_KEYS) {
       const [exId, optsId] = key.split('|') as [string, string];
       const goldenA = goldenASpecs[exId];
       expect(goldenA, `goldenASpecs should have an entry for ${exId}`).toBeDefined();
-      expect(mod.classifyMistakePose(exId, optsId, mod.ENUMERATED_POSES[key], goldenA)).toBe('enumerated');
+      expect(mod.classifyMistakePose(exId, optsId, mod.ENUMERATED_MISTAKE_POSES[key], goldenA)).toBe('enumerated');
     }
   });
 
   it('round-2 review fix (blocker 2): every call\'s spec.mistake.pose classifies as golden-A or a pinned exception (the reviewer\'s exact reproduction: a moved joint in a non-solid Wrong crop)', async () => {
     const mod = await loadGb();
     const goldenA = goldenASpecs.pull_up!;
-    const movedNeck = { ...mod.ENUMERATED_POSES['pull_up|top-wrong'], neck: 45 };
+    const movedNeck = { ...mod.ENUMERATED_MISTAKE_POSES['pull_up|top-wrong'], neck: 45 };
     const bad = mod.validateCalls(
       [{ opts: { id: 'top-wrong' }, spec: { ...goldenA, id: 'pull_up', mistake: { pose: movedNeck } } }],
       goldenASpecs,
     );
     expect(bad.length).toBeGreaterThan(0);
     expect(bad.every((m: string) => m.includes('pull_up|top-wrong'))).toBe(true);
+  });
+
+  it('round-3 review fix (blocker 1): an enumerated solid Wrong crop redrawn as golden-A\'s own poses.start still fails (never falls back to the golden-A check for an enumerated key)', async () => {
+    const mod = await loadGb();
+    const goldenA = goldenASpecs.pull_up!;
+    // pull_up|shoulders-wrong is enumerated (a solid Wrong crop). Its captured pose must never be accepted just
+    // because it happens to equal golden-A's own start - only its own pin (the reviewer's mutation D).
+    const verdict = mod.classifyPose('pull_up', 'shoulders-wrong', goldenA.poses.start, goldenA);
+    expect(verdict).not.toBe('golden');
+    expect(verdict).not.toBe('enumerated');
+  });
+
+  it('round-3 review fix (blocker 1): an enumerated Right crop flattened to golden-A\'s bare start pose still fails (the reviewer\'s mutation C)', async () => {
+    const mod = await loadGb();
+    const goldenA = goldenASpecs.pull_up!;
+    // pull_up|shoulders-right is enumerated (ACTIVE_HANG). golden-A's own start is a different pose (no scap/hip
+    // override) - accepting it here would mean the enumerated pin is not really enforced.
+    const verdict = mod.classifyPose('pull_up', 'shoulders-right', goldenA.poses.start, goldenA);
+    expect(verdict).not.toBe('golden');
+    expect(verdict).not.toBe('enumerated');
+  });
+
+  it('round-3 review fix (blocker 1): an enumerated mistake pose set to golden-A\'s own mistake pose still fails', async () => {
+    const mod = await loadGb();
+    const goldenA = goldenASpecs.seated_cable_row!;
+    // seated_cable_row|back-wrong is an enumerated mistake pose, distinct from golden-A's own general mistake.
+    const goldenMistake = { ...(goldenA.poses as { end: object }).end, ...(goldenA.mistake as { pose: object }).pose };
+    const verdict = mod.classifyMistakePose('seated_cable_row', 'back-wrong', goldenMistake, goldenA);
+    expect(verdict).not.toBe('golden');
+    expect(verdict).not.toBe('enumerated');
   });
 
   it('round-2 review fix (blocker 2): protectedFieldProblems no longer treats `mistake` as a whole-field blanket allowance - a call with no mistake field at all is unaffected, but mistake.pose is never silently skipped', async () => {
