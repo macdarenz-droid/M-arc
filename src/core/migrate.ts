@@ -1,7 +1,7 @@
 /**
  * One-time, read-only import of the previous single-file app's data
  * (localStorage key "dailyTrackerPremium"). The old key is never written
- * or removed, so the old build keeps working if it is ever reinstalled.
+ * to; only Reset everything removes it (BUG-29).
  */
 import { freshState, freshUnits, newId, type AppState, type Effort, type Exercise, type LoggedExercise, type LoggedSet, type Session, type Split, type Weekday } from './models';
 import { WEEKDAYS } from './models';
