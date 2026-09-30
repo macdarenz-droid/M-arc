@@ -1,0 +1,149 @@
+{
+  "id": "jump_squat",
+  "libId": "lib_jump_squat",
+  "name": "Jump Squat",
+  "family": "SQUAT (airborne)",
+  "tier": "A",
+  "tierNote": "Safety tier A from content.md appendix B (explosive). census.json difficulty tier 2.",
+  "archetype": { "hand": "none", "contact": ["standing-feet"] },
+  "parent": "box_jump",
+  "parentNote": "Supervisor's LB4A brief names box_jump (claude/libht-research-legs-core) as the template parent. Same hand archetype (none) and primary contact (standing-feet). content.md appendix A had jump_squat parenting box_jump; box_jump was written first, so the direction is reversed.",
+  "inherit": [
+    { "field": "claims.c11 (low reps with full rest; never jump to failure)", "why": "true for this child because NASM's statement is about plyometrics as a class ('Never perform to failure with plyometrics'), and the jump squat is a plyometric; Catalyst's own squat jump programming gives the same 3-5 reps per set (j9)." },
+    { "field": "plate.frames (airborne convention: take-off and landing frames only)", "why": "true for this child because architecture section 1 lists the jump squat under the airborne convention." }
+  ],
+  "claims": [
+    { "id": "j1", "text": "Stand with feet hip width, arms by the sides, shoulders down and back, trunk braced.",
+      "tags": ["CONSENSUS"], "sources": ["ace-squatjumps"],
+      "quotes": [{ "source": "ace-squatjumps", "text": "Stand with your feet feet hip-width apart, arms by your sides, depressing and retracting your scapulae (pull shoulders down and back) without arching your low back, and \"brace\" (engage your abdominal / core muscles) to stiffen your spine.", "where": "Step 1" }] },
+    { "id": "j2", "text": "Lower by moving the hips back then down, until the heels are about to lift, keeping the back flat.",
+      "tags": ["CONSENSUS"], "sources": ["ace-squatjumps"],
+      "quotes": [{ "source": "ace-squatjumps", "text": "Begin your downward phase by first shifting your hips backwards then slowly moving downwards to create a hinge-like movement at your knees. Continue to lower yourself until your feel your heels about to lift off the floor.", "where": "Step 2" }] },
+    { "id": "j3", "text": "After only a brief pause at the bottom, jump by extending ankles, knees and hips together.",
+      "tags": ["CONSENSUS"], "sources": ["ace-squatjumps"],
+      "quotes": [{ "source": "ace-squatjumps", "text": "With ONLY a very brief pause at the bottom of your downward phase, explode upwards through your lower extremity, achieving triple extension (pushing and extending your ankles, knees and hips simultaneously).", "where": "Step 3" }] },
+    { "id": "j4", "text": "Land softly and quietly on the mid-foot, rolling back to the heels, and push the hips back and down to absorb the landing.",
+      "tags": ["CONSENSUS"], "sources": ["ace-squatjumps"],
+      "quotes": [{ "source": "ace-squatjumps", "text": "Attempt to land softly and quietly on the mid-foot, rolling backwards quickly towards the heels. Always push your hips backwards and drop them downwards to absorb the impacting forces associated with jumping.", "where": "Step 5" }] },
+    { "id": "j5", "text": "Do not land with locked knees; ACE says it may lead to knee injury.",
+      "tags": ["CONSENSUS"], "sources": ["ace-squatjumps"],
+      "quotes": [{ "source": "ace-squatjumps", "text": "Avoid locking out your knees or quads on your landing as this may lead to potential knee injuries", "where": "Step 5" }] },
+    { "id": "j6", "text": "On landing, foot position matters most, and the knees should not shoot far forward, which adds knee stress.",
+      "tags": ["CONSENSUS"], "sources": ["ace-squatjumps"],
+      "quotes": [{ "source": "ace-squatjumps", "text": "The most important components of the landing phase are correct foot position and avoiding excessive forward movement in your lower extremity which places additional stresses upon your knees.", "where": "Step 4" }] },
+    { "id": "j7", "text": "Load progression: learn to squat and land first, start with small jumps, and jump more explosively only once landings are good.",
+      "tags": ["CONSENSUS"], "sources": ["ace-squatjumps"],
+      "quotes": [{ "source": "ace-squatjumps", "text": "It is suggested, you first learn how to squat and land before attempting to jump. Once you have mastered the hip-hinge mechanism, begin with small jumps, but emphasize your landing mechanics. Only progress to more explosive jumps once you have mastered your landing mechanics.", "where": "notes" }] },
+    { "id": "j8", "text": "Land with the trunk tipped slightly forward, head in line, back flat and the core braced.",
+      "tags": ["CONSENSUS"], "sources": ["ace-squatjumps"],
+      "quotes": [{ "source": "ace-squatjumps", "text": "Land with your trunk inclined slightly forward, head aligned with your spine and back rigid or flat.", "where": "Step 6" }] },
+    { "id": "j9", "text": "Squat down with control, rebound straight into a maximal vertical jump, absorb the landing by bending knees and hips; 3-5 reps per set.",
+      "tags": ["CONSENSUS"], "sources": ["cat-squatjump"],
+      "quotes": [
+        { "source": "cat-squatjump", "text": "Squat with control of proper posture and balance into the bottom, then immediately rebound up and drive into a maximal vertical jump.", "where": "technique" },
+        { "source": "cat-squatjump", "text": "Absorb the landing in a strong stance by bending the knees and hips.", "where": "technique" },
+        { "source": "cat-squatjump", "text": "Squat vertical jumps should generally be done for 3-5 reps per set, with 3-10 sets.", "where": "Programming" } ] },
+    { "id": "j10", "text": "Holding the hands loosely at the chest (no arm swing) puts more of the work on the legs.",
+      "tags": ["CONSENSUS"], "sources": ["cat-squatjump"],
+      "quotes": [{ "source": "cat-squatjump", "text": "Focus and demand on the legs can be increased by removing the swinging of the arms—hold the hands loosely at the chest.", "where": "technique" }] },
+    { "id": "j11", "text": "In drop landings, stiff landings (less knee bend) had higher ground forces, and soft landings shared the impact across the hip and knee muscles.",
+      "tags": ["MECH"], "sources": ["devita-1992"],
+      "quotes": [
+        { "source": "devita-1992", "text": "The stiff landing had larger GRFs", "where": "abstract" },
+        { "source": "devita-1992", "text": "The hip and knee muscles absorbed more energy in the soft landing", "where": "abstract" } ] },
+    { "id": "j12", "text": "Quieter landings had lower vertical ground force, through more ankle and knee bend (single-leg drop landings, n=26).",
+      "tags": ["MECH"], "sources": ["wernli-2016"],
+      "quotes": [{ "source": "wernli-2016", "text": "As landing sound decreases, so does vGRF during a drop-landing task. These reductions were achieved by increasing ankle and knee joint excursions.", "where": "abstract, conclusion" }] },
+    { "id": "j13", "text": "ACE lists the target areas as the butt and hips and the thighs.",
+      "tags": ["CONSENSUS", "WEAK"], "sources": ["ace-squatjumps"],
+      "quotes": [{ "source": "ace-squatjumps", "text": "Butt/Hips, Legs - Thighs", "where": "Target Body Part" }] },
+    { "id": "j14", "text": "NHS knee pain: get advice from 111 if the knee is very painful, or locks, gives way or painfully clicks.",
+      "tags": ["CONSENSUS"], "sources": ["nhs-knee"],
+      "quotes": [
+        { "source": "nhs-knee", "text": "your knee is very painful", "where": "Urgent advice box" },
+        { "source": "nhs-knee", "text": "your knee locks, gives way or painfully clicks – painless clicking is normal", "where": "Urgent advice box" } ] }
+  ],
+  "sources": [
+    { "id": "ace-squatjumps", "url": "https://www.acefitness.org/resources/everyone/exercise-library/116/squat-jumps/", "title": "Squat Jumps (ACE Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "cat-squatjump", "url": "https://www.catalystathletics.com/exercise/555/Squat-Vertical-Jump/", "title": "Squat Vertical Jump (Exercise Library)", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "devita-1992", "url": "https://pubmed.ncbi.nlm.nih.gov/1548984/", "title": "Effect of landing stiffness on joint kinetics and energetics in the lower extremity", "kind": "peer-reviewed", "year": 1992, "pmid": "1548984", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "wernli-2016", "url": "https://pubmed.ncbi.nlm.nih.gov/26813751/", "title": "The Relationship Between Landing Sound, Vertical Ground Reaction Force, and Kinematics of the Lower Limb During Drop Landings in Healthy Men", "kind": "peer-reviewed", "year": 2016, "pmid": "26813751", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "nhs-knee", "url": "https://www.nhs.uk/conditions/knee-pain/", "title": "Knee pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Hips-back loading (j2), triple extension (j3) and the landing knee and hip bend (j4, j5) are sagittal.",
+    "frames": "Airborne convention (architecture section 1): take-off and landing frames only, no mid-air pose.",
+    "equipment": "None; floor line.",
+    "start": "Take-off frame: bottom of the squat, hips back, heels just about to lift, back flat (j2), about to extend ankles, knees and hips (j3).",
+    "end": "Landing frame: on the mid-foot rolling to the heels, hips pushed back and down, knees bent (j4), trunk tipped slightly forward, back flat (j8).",
+    "checkpoints": [
+      { "label": "Hips back", "what": "Load by sending the hips back, then down.", "claim": "j2" },
+      { "label": "Full extension", "what": "Ankles, knees and hips extend together to jump.", "claim": "j3" },
+      { "label": "Soft landing", "what": "Landing checkpoint: land quietly on the mid-foot, hips back and down, knees bent.", "claim": "j4" }
+    ],
+    "mistake": {
+      "what": "Landing with straight, locked knees.",
+      "why": "ACE warns locked-knee landings may lead to knee injury (j5); stiff landings raise ground forces (j11).",
+      "claim": "j5",
+      "drawable": true,
+      "rankNote": "ACE does not rank faults; this is the one it warns about by name. Knees shooting far forward on landing (j6) is also drawable but has no threshold to draw."
+    },
+    "tells": [
+      { "text": "Your landing is quiet", "claim": "j12" },
+      { "text": "Hips drop back as you land", "claim": "j4" }
+    ],
+    "tempo": { "up": null, "down": null, "pause": null, "text": "Controlled squat down, only a brief pause, explosive jump; 3-5 reps per set, never to failure (inherited c11). Airborne plate: take-off and landing frames only.", "claim": "j9" },
+    "variantLine": null
+  },
+  "grip": { "type": "", "width": "", "thumb": "", "handContact": "", "wrist": "", "claims": [], "note": "Hand archetype none. Arms by the sides (j1) or hands loosely at the chest (j10)." },
+  "setup": [
+    { "step": "Learn to squat and land before jumping; start with small jumps.", "claim": "j7" },
+    { "step": "Feet hip width, arms by the sides, brace.", "claim": "j1" },
+    { "step": "Hips back then down until the heels are about to lift.", "claim": "j2" },
+    { "step": "Brief pause, then jump with full extension.", "claim": "j3" },
+    { "step": "Land quietly on the mid-foot, hips back and down.", "claim": "j4" }
+  ],
+  "posture": [
+    { "point": "Back flat on the way down.", "claim": "j2" },
+    { "point": "Ankles, knees and hips extend together.", "claim": "j3" },
+    { "point": "Land on the mid-foot, rolling to the heels.", "claim": "j4" },
+    { "point": "Knees bent on landing, never locked.", "claim": "j5" },
+    { "point": "Trunk slightly forward, head in line on landing.", "claim": "j8" }
+  ],
+  "handlingMistakes": [
+    { "mistake": "Jumping big before landings are solid.", "fix": "Go back to small jumps until the landing is quiet and controlled.", "claim": "j7" },
+    { "mistake": "Loud, stiff landings.", "fix": "Land quietly, hips back, knees bending.", "claim": "j12" },
+    { "mistake": "Knees shooting far forward on landing.", "fix": "Push the hips back as you land.", "claim": "j6" }
+  ],
+  "feel": {
+    "primary": [ { "muscleId": "quads", "claim": "j13" } ],
+    "secondary": [ { "muscleId": "glutes", "claim": "j13" }, { "muscleId": "calves", "claim": "j3" } ],
+    "watch": [],
+    "rows": [
+      { "where": "Thighs and buttocks", "means": "The target areas are working.", "fix": "", "claim": "j13", "redFlag": null },
+      { "where": "Knees ache after landings", "means": "Landing stiff, or knees going far forward.", "fix": "Land softer with the hips back; make the jumps smaller.", "claim": "j6", "redFlag": null },
+      { "where": "Sharp knee pain, or the knee gives way", "means": "Not a training feeling.", "fix": "Stop jumping.", "claim": "j14", "redFlag": "knee" }
+    ]
+  },
+  "risks": [
+    { "risk": "Locked-knee landings (shared landing risk line).", "claim": "j5" },
+    { "risk": "Knees travelling far forward on landing add knee stress.", "claim": "j6" },
+    { "risk": "Jumping explosively before landing skill is in place.", "claim": "j7" }
+  ],
+  "redFlags": ["knee"],
+  "zooms": [
+    { "key": "landing", "kind": "posture", "right": "Mid-foot landing, hips back and down, knees bent.", "wrong": "Straight, locked knees on landing.", "claim": "j5" },
+    { "key": "take-off", "kind": "posture", "right": "Ankles, knees and hips fully extended together.", "wrong": "Jumping with the hips still bent.", "claim": "j3" }
+  ],
+  "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, glutes and calves secondary. ACE's target list covers thighs and hips (j13, WEAK); ankle extension in the take-off (j3) supports calves. No EMG source for the bodyweight jump squat was read. No change." },
+  "loadProgression": { "text": "Squat and landing first, then small jumps, then more explosive ones as landings allow.", "claims": ["j7"] },
+  "wayOut": { "text": "Stop the set when landings get loud or stiff; never to failure (inherited c11).", "claims": ["j12"] },
+  "anchorSource": "ace-squatjumps",
+  "anchorNote": "ACE squat jumps page read in full; Catalyst Athletics squat vertical jump page also read in full.",
+  "unsourced": [
+    "An EMG source for which muscles work most in the jump squat.",
+    "Knee tracking over the toes on landing (front view): no jump-squat-specific source read.",
+    "Ankle red-flag row: box_jump has it via NHS sprains; not re-read here, so not linked."
+  ]
+}

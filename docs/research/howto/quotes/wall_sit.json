@@ -1,0 +1,142 @@
+{
+  "id": "wall_sit",
+  "checked": "2026-09-30",
+  "fetcher": "source fetcher (sonnet), LB4A",
+  "sources": [
+    {
+      "id": "cat-wallsit",
+      "url": "https://www.catalystathletics.com/exercise/749/Wall-Sit/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "physitrack-wallsit",
+      "url": "https://www.physitrack.com/exercise-library/how-to-perform-the-wall-sit-exercise",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "goldring-2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23879248/",
+      "access": "abstract",
+      "notes": "pmid, title and year match PubMed esummary; quotes taken from abstract"
+    },
+    {
+      "id": "escamilla-2023",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37057713/",
+      "access": "abstract",
+      "notes": "pmid, title and year match PubMed esummary; quotes taken from abstract"
+    },
+    {
+      "id": "escamilla-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19276845/",
+      "access": "abstract",
+      "notes": "pmid, title and year match PubMed esummary; quotes taken from abstract"
+    },
+    {
+      "id": "watanabe-2022",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34618221/",
+      "access": "abstract",
+      "notes": "pmid, title and year match PubMed esummary; quotes taken from abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "w1",
+      "source": "cat-wallsit",
+      "text": "The wall sit is a simple isometric leg exercise for building strength in a specific squat position, or to minimize strength loss during injuries that prevent squatting and similar.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w2",
+      "source": "cat-wallsit",
+      "text": "Stand with your back to a wall and feet in front of it as far as needed for the desired squat position. Most commonly wall sits are done with 90-degree angles at the hip and knee, but other angles and depths can be used to work on specific positions.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w3",
+      "source": "cat-wallsit",
+      "text": "With your back supported against the wall, slide down into the chosen squat position and hold for the prescribed time, usually 30-60 seconds.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w4",
+      "source": "physitrack-wallsit",
+      "text": "Keep your back flat against the wall, your feet shoulder-width apart and your toes pointed slightly outward. Make sure your knees are directly above your ankles and hold the position for as long as you can.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w5",
+      "source": "physitrack-wallsit",
+      "text": "Ensure your back and buttocks remain in contact with the wall.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w6",
+      "source": "cat-wallsit",
+      "text": "The wall sit can be done for 2-5 sets of 30-60-second holds. If the athlete is able to hold for 60 seconds comfortably, variations to increase difficulty can be introduced, such as lifting one foot at a time, single-leg holds, or holding weight on the thighs.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w7",
+      "source": "goldring-2014",
+      "text": "The heart rate and blood pressure parameters produced significant inverse relationships with joint angle (r at least -0.80; P < 0.05), demonstrating that wall squat intensity can be adjusted by manipulating knee joint angle.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w8",
+      "source": "escamilla-2023",
+      "text": "squatting with short HTWD produced anterior knee displacement beyond the toes at higher knee angles, resulting in greater patellofemoral force and stress compared with squatting with long HTWD.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w9",
+      "source": "escamilla-2009",
+      "text": "When the goal is to minimize patellofemoral compressive force and stress, it may be prudent to use a smaller knee angle range between 0 degrees and 50 degrees compared with a larger knee angle range between 60 degrees and 90 degrees",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w10",
+      "source": "watanabe-2022",
+      "text": "These results indicate that during isometric exercise, a breath-hold enhances an exercise-induced increase in MAP",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w11",
+      "source": "physitrack-wallsit",
+      "text": "The wall sit primarily works the quadriceps, glutes, hamstrings, and calves.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w12",
+      "source": "nhs-knee",
+      "text": "your knee is very painful",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "w12",
+      "source": "nhs-knee",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}

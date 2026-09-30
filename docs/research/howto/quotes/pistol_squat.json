@@ -1,0 +1,160 @@
+{
+  "id": "pistol_squat",
+  "checked": "2026-09-30",
+  "fetcher": "source fetcher (sonnet), LB4A",
+  "sources": [
+    {
+      "id": "rep-pistol",
+      "url": "https://repfitness.com/blogs/training/how-to-do-pistol-squats",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "physitrack-pistol",
+      "url": "https://www.physitrack.com/exercise-library/how-to-perform-the-pistol-squat-exercise",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "p1",
+      "source": "rep-pistol",
+      "text": "Start standing tall. Extend your arms out in front of you to support your balance and shift your weight onto one leg while lifting the other up off the floor towards your arms.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p2",
+      "source": "rep-pistol",
+      "text": "Engage your core and squeeze your glutes before sending your hips back as you bend your knee and lower down into a single-leg squat. Keep that non-working leg lifted off the ground.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p3",
+      "source": "rep-pistol",
+      "text": "Go as low as mobility allows — ideally into a position where your hamstring and calf are touching — keeping your planted foot flat on the ground and your other leg lifted.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p4",
+      "source": "rep-pistol",
+      "text": "Now to come back up to standing, exhale as you press through your rooted foot to push back up.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p5",
+      "source": "physitrack-pistol",
+      "text": "Your other leg should hover in front of you with a straight knee.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p6",
+      "source": "physitrack-pistol",
+      "text": "No, pistol squats are an advanced exercise and should not be attempted by beginners.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p7",
+      "source": "rep-pistol",
+      "text": "Take some of the load off that working leg by utilizing a chair, pole, resistance bands, a doorframe",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p7",
+      "source": "rep-pistol",
+      "text": "practice your pistol squat with a box or bench behind you.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p7",
+      "source": "rep-pistol",
+      "text": "Using proper pistol squat form, lower down on one leg, then stand up using both legs.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p8",
+      "source": "rep-pistol",
+      "text": "Bouncing at the bottom: This movement should be slow and controlled, without any bounce at the bottom of the squat.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p8",
+      "source": "rep-pistol",
+      "text": "Knee Valgus (aka your knee collapsing inwards)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p8",
+      "source": "rep-pistol",
+      "text": "Heel lift: As you lower down in that squat, your planted heel may try and creep up on you.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p9",
+      "source": "rep-pistol",
+      "text": "dial back your efforts with this move, check your form, or try some regressions or alternatives",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p10",
+      "source": "rep-pistol",
+      "text": "Quadriceps: These are the main event, the major movers here, controlling your descent and powering you back to standing.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p10",
+      "source": "rep-pistol",
+      "text": "Glutes: The glutes stabilize your hips and support your quads as you fire back up out of that deep pistol squat.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p10",
+      "source": "rep-pistol",
+      "text": "On the working leg, your adductors",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p11",
+      "source": "rep-pistol",
+      "text": "Adding weight increases the strength challenge and can actually act as a counterbalance, helping to keep you steady.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p12",
+      "source": "nhs-knee",
+      "text": "your knee is very painful",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "p12",
+      "source": "nhs-knee",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}

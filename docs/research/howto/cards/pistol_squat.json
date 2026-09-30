@@ -1,0 +1,140 @@
+{
+  "id": "pistol_squat",
+  "libId": "lib_pistol_squat",
+  "name": "Pistol Squat",
+  "family": "SINGLE-LEG SQUAT (bodyweight)",
+  "tier": "A",
+  "tierNote": "Safety tier A from content.md appendix B (high skill). census.json difficulty tier 1.",
+  "archetype": { "hand": "none", "contact": ["standing-feet"] },
+  "parent": null,
+  "parentNote": "Full card. content.md appendix A lists pistol_squat as a stand-alone parent; census puts it in the single-leg family. Neither LB4A template parent fits (back squat: on-body hand; box jump: airborne).",
+  "inherit": [],
+  "claims": [
+    { "id": "p1", "text": "Stand tall, arms reaching forward for balance, and shift onto one leg while lifting the other forward.",
+      "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
+      "quotes": [{ "source": "rep-pistol", "text": "Start standing tall. Extend your arms out in front of you to support your balance and shift your weight onto one leg while lifting the other up off the floor towards your arms.", "where": "How to Do Pistol Squats, step 1" }] },
+    { "id": "p2", "text": "Brace, then send the hips back as the knee bends into a single-leg squat, keeping the free leg off the ground.",
+      "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
+      "quotes": [{ "source": "rep-pistol", "text": "Engage your core and squeeze your glutes before sending your hips back as you bend your knee and lower down into a single-leg squat. Keep that non-working leg lifted off the ground.", "where": "step 2" }] },
+    { "id": "p3", "text": "Go as low as mobility allows, ideally hamstring on calf, with the standing foot flat.",
+      "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
+      "quotes": [{ "source": "rep-pistol", "text": "Go as low as mobility allows — ideally into a position where your hamstring and calf are touching — keeping your planted foot flat on the ground and your other leg lifted.", "where": "step 3" }] },
+    { "id": "p4", "text": "Breathe out and press through the standing foot to stand.",
+      "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
+      "quotes": [{ "source": "rep-pistol", "text": "Now to come back up to standing, exhale as you press through your rooted foot to push back up.", "where": "step 4" }] },
+    { "id": "p5", "text": "The free leg hovers in front with a straight knee.",
+      "tags": ["CONSENSUS"], "sources": ["physitrack-pistol"],
+      "quotes": [{ "source": "physitrack-pistol", "text": "Your other leg should hover in front of you with a straight knee.", "where": "instructions" }] },
+    { "id": "p6", "text": "The pistol squat is advanced; beginners should master basic squats and lunges first.",
+      "tags": ["CONSENSUS"], "sources": ["physitrack-pistol"],
+      "quotes": [{ "source": "physitrack-pistol", "text": "No, pistol squats are an advanced exercise and should not be attempted by beginners.", "where": "FAQ" }] },
+    { "id": "p7", "text": "Load progression: single-leg balance and air squats first, then assisted pistols (holding a support to take weight off), squats to a box behind you lowered over time, and lowering-only reps.",
+      "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
+      "quotes": [
+        { "source": "rep-pistol", "text": "Take some of the load off that working leg by utilizing a chair, pole, resistance bands, a doorframe", "where": "Bodyweight assisted pistol squat" },
+        { "source": "rep-pistol", "text": "practice your pistol squat with a box or bench behind you.", "where": "Single-leg box squat" },
+        { "source": "rep-pistol", "text": "Using proper pistol squat form, lower down on one leg, then stand up using both legs.", "where": "Eccentric-only pistol squat" } ] },
+    { "id": "p8", "text": "Common mistakes: bouncing at the bottom, the knee caving in, and the heel of the standing foot lifting.",
+      "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
+      "quotes": [
+        { "source": "rep-pistol", "text": "Bouncing at the bottom: This movement should be slow and controlled, without any bounce at the bottom of the squat.", "where": "Common Mistakes" },
+        { "source": "rep-pistol", "text": "Knee Valgus (aka your knee collapsing inwards)", "where": "Common Mistakes" },
+        { "source": "rep-pistol", "text": "Heel lift: As you lower down in that squat, your planted heel may try and creep up on you.", "where": "Common Mistakes" } ] },
+    { "id": "p9", "text": "The deep single-leg position puts real demand on the knee; with knee pain, back off, check form or use an easier version.",
+      "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
+      "quotes": [{ "source": "rep-pistol", "text": "dial back your efforts with this move, check your form, or try some regressions or alternatives", "where": "FAQ" }] },
+    { "id": "p10", "text": "Quads are the main movers; glutes steady the hips and help stand; adductors of the working leg steady the knee.",
+      "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
+      "quotes": [
+        { "source": "rep-pistol", "text": "Quadriceps: These are the main event, the major movers here, controlling your descent and powering you back to standing.", "where": "Muscles Worked" },
+        { "source": "rep-pistol", "text": "Glutes: The glutes stabilize your hips and support your quads as you fire back up out of that deep pistol squat.", "where": "Muscles Worked" },
+        { "source": "rep-pistol", "text": "On the working leg, your adductors", "where": "Muscles Worked" } ] },
+    { "id": "p11", "text": "Holding a light dumbbell or kettlebell out in front can act as a counterbalance; start light.",
+      "tags": ["CONSENSUS"], "sources": ["rep-pistol"],
+      "quotes": [{ "source": "rep-pistol", "text": "Adding weight increases the strength challenge and can actually act as a counterbalance, helping to keep you steady.", "where": "Variations" }] },
+    { "id": "p12", "text": "NHS knee pain: get advice from 111 if the knee is very painful, or locks, gives way or painfully clicks.",
+      "tags": ["CONSENSUS"], "sources": ["nhs-knee"],
+      "quotes": [
+        { "source": "nhs-knee", "text": "your knee is very painful", "where": "Urgent advice box" },
+        { "source": "nhs-knee", "text": "your knee locks, gives way or painfully clicks – painless clicking is normal", "where": "Urgent advice box" } ] }
+  ],
+  "sources": [
+    { "id": "rep-pistol", "url": "https://repfitness.com/blogs/training/how-to-do-pistol-squats", "title": "The Ultimate Guide for Nailing The Pistol Squat (REP Fitness; author NASM-CPT)", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "physitrack-pistol", "url": "https://www.physitrack.com/exercise-library/how-to-perform-the-pistol-squat-exercise", "title": "Step-by-step guide to the pistol squat exercise (Physitrack)", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "nhs-knee", "url": "https://www.nhs.uk/conditions/knee-pain/", "title": "Knee pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The free leg held forward (p5), depth (p3) and heel lift (p8) read from the side; a front view would hide the free leg behind the standing leg.",
+    "equipment": "None; floor line.",
+    "start": "Standing tall on one leg, arms forward, free leg lifted forward (p1).",
+    "end": "Bottom: hips back, standing knee fully bent, hamstring near the calf (p2, p3), standing foot flat (p3), free leg straight and hovering forward (p5), arms forward (p1).",
+    "checkpoints": [
+      { "label": "Arms forward", "what": "Arms reach forward for balance.", "claim": "p1" },
+      { "label": "Free leg straight", "what": "The free leg hovers in front, knee straight.", "claim": "p5" },
+      { "label": "Heel down", "what": "The standing foot stays flat.", "claim": "p3" }
+    ],
+    "mistake": {
+      "what": "The heel of the standing foot lifts at the bottom.",
+      "why": "Listed as a common mistake (p8); the technique asks for the planted foot flat (p3).",
+      "claim": "p8",
+      "drawable": true,
+      "rankNote": "REP lists three mistakes without ranking. Knee valgus is front-view; bouncing is a motion, not a pose. Heel lift is the one that can be drawn from the side."
+    },
+    "tells": [
+      { "text": "Slow down, no bounce", "claim": "p8" },
+      { "text": "Whole standing foot stays flat", "claim": "p3" }
+    ],
+    "tempo": { "up": null, "down": null, "pause": null, "text": "Slow and controlled, no bounce at the bottom; no source gives seconds.", "claim": "p8" },
+    "variantLine": null
+  },
+  "grip": { "type": "", "width": "", "thumb": "", "handContact": "", "wrist": "", "claims": [], "note": "Hand archetype none. Arms reach forward for balance (p1)." },
+  "setup": [
+    { "step": "Build up first: single-leg balance, air squats, then assisted or box pistols.", "claim": "p7" },
+    { "step": "Stand tall, arms forward.", "claim": "p1" },
+    { "step": "Shift onto one leg and lift the other forward, knee straight.", "claim": "p5" },
+    { "step": "Brace, then send the hips back and bend the knee.", "claim": "p2" }
+  ],
+  "posture": [
+    { "point": "Arms forward for balance.", "claim": "p1" },
+    { "point": "Free leg straight, off the floor.", "claim": "p5" },
+    { "point": "Hips go back as the knee bends.", "claim": "p2" },
+    { "point": "Standing foot flat, heel down.", "claim": "p3" },
+    { "point": "As deep as mobility allows.", "claim": "p3" },
+    { "point": "Knee does not cave inward.", "claim": "p8" }
+  ],
+  "handlingMistakes": [
+    { "mistake": "Trying the full pistol before the basics.", "fix": "Master air squats and single-leg balance first, then use support or a box.", "claim": "p6" },
+    { "mistake": "Bouncing out of the bottom.", "fix": "Lower slowly and stand without a bounce; use a box if you cannot.", "claim": "p8" },
+    { "mistake": "Pushing through knee pain.", "fix": "Back off, check your form, or use an easier version.", "claim": "p9" }
+  ],
+  "feel": {
+    "primary": [ { "muscleId": "quads", "claim": "p10" } ],
+    "secondary": [ { "muscleId": "glutes", "claim": "p10" }, { "muscleId": "adductors", "claim": "p10" } ],
+    "watch": [],
+    "rows": [
+      { "where": "Front of the standing thigh", "means": "The main mover is working.", "fix": "", "claim": "p10", "redFlag": null },
+      { "where": "Knee discomfort", "means": "The deep single-leg bend is too much for now.", "fix": "Use a box or support, or an easier version.", "claim": "p9", "redFlag": null },
+      { "where": "Sharp knee pain, or the knee gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "p12", "redFlag": "knee" }
+    ]
+  },
+  "risks": [
+    { "risk": "High knee demand in the deep single-leg bend.", "claim": "p9" },
+    { "risk": "Advanced skill: attempting it before the basics.", "claim": "p6" }
+  ],
+  "redFlags": ["knee"],
+  "zooms": [
+    { "key": "standing-foot", "kind": "posture", "right": "Standing foot flat at the bottom.", "wrong": "Heel lifted, weight on the toes.", "claim": "p8" },
+    { "key": "box-pistol", "kind": "posture", "right": "Single-leg squat down to a box behind you.", "wrong": "Dropping onto the box.", "claim": "p7" }
+  ],
+  "libraryDiff": { "add": ["adductors"], "remove": [], "why": "Library: quads primary, glutes and abductors secondary. REP names quads as main movers and glutes and the working-leg adductors as helpers (p10), so adductors are proposed as an addition. Abductors are not named by any source read; left in pending the critic, no removal without a source. Coach source only, no EMG." },
+  "loadProgression": { "text": "Single-leg balance and air squats, then assisted pistols, box pistols with the box lowered over time, and lowering-only reps.", "claims": ["p7"] },
+  "wayOut": { "text": "A box behind you to sit onto, or a support to hold, while learning.", "claims": ["p7"] },
+  "anchorSource": "rep-pistol",
+  "anchorNote": "REP Fitness pistol squat guide read in full; Physitrack pistol squat page also read in full.",
+  "unsourced": [
+    "Any peer-reviewed study of the pistol squat itself (PubMed 'pistol squat' gave 4 hits, none relevant).",
+    "Tempo in seconds.",
+    "Torso angle at the bottom."
+  ]
+}
