@@ -964,6 +964,17 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Gate time** (HT3-A9): recorded on the PR with the measured seconds, and the proposed budget is set there.
   **Why**: card HT-3 (HT3-A7, HT3-A9) and the plan's rule that noise above the threshold is investigated, never absorbed.
 
+## D-HT3-sections: the sections below the plate during capture (HT-3 builder, 2026-09-30)
+
+- **Decided** (supervisor ruling on PR #106, after HT-6 found it): once any section registers below the tempo (HT-6 on), the sheet is taller than the 1300 px viewport, so gate block HT-3's tall fallback reported "the sheet still scrolls or the region does not fit" for every plate and state.
+  - **The change:** around each check (L2b, F3 and the capture), `hideSections()` in `tools/plates/fidelity/harness.mjs` sets `display: none` inline on every `dialog.sheet.ht [data-section]` and restores the old inline value after. `display: none` keeps the DOM and every stylesheet, so section CSS that leaks into the golden block (plain, `:has()` or sibling selectors) still reaches it; only the sections' layout boxes go. The captured region is plate top to tempo bottom, so no captured pixel changes.
+  - **Kept strict:** "the sheet still scrolls / the region does not fit" stays an error, and the L3 rule is unchanged.
+  - **Guards in gate block HT-3** (`ht3SectionGuards`), each with a mutation that fails it:
+    1. After each check, the same number of sections must be displayed as before. The run with a 900 px fixture section registered passes (sections hidden, the sheet fits). Mutation "restore skipped": "1 sections were displayed before the capture, 0 after (not restored)". Without the hiding, the same run gives the HT-6 failure ("the sheet still scrolls or the region does not fit at 390x1300").
+    2. A fixture section carrying `.ht p { word-spacing: 1px }` must still fail L2b while the sections are hidden. Mutation "hiding also disables the section's stylesheet": the leak is no longer caught, and the guard fails.
+    3. One S0 capture with the sections visible, on the normal 390 × 844 path: the sheet scrolls, the region is scrolled into view below the sticky header, and L3 must pass. Mutation "the section overlaps the tempo by 40 px": 56,248 px off, and the guard fails.
+  **Why**: the supervisor's ruling on PR #106 (HT-6's report); layer cards add sections without editing a merged gate block.
+
 ## HT-3 sheet: choices the plan left open (HT-3 builder, 2026-09-30)
 
 - **Decided**:
