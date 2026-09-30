@@ -1210,3 +1210,18 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 
 - **Correction**: the first LIB-26 entry says `partOf` maps `palm.<side>` to `arm.<side>` "so it is part of the arm's outline union and of the Mistake mask". That is wrong. The union comes from the palm's group, `grp('arm', sd)` in body.mjs. The `partOf` mapping matters only where a spec filters by part: `mistake.parts` and the ghost or start parts (plate.mjs:114-116, 208-210). Without it, a Mistake limited to `arm.r` would silently leave the palm out. A test now covers this: a Mistake filtered to `arm.r` outlines `palm.r`, and one filtered to `arm.l` does not. It fails when `'palm'` is removed from `partOf`.
   **Why**: this is the review's medium finding on #123. The older entry is left unchanged, because this file is append-only.
+
+## BUG-34: launch animation starts at once (BUG-34 builder, 2026-09-30)
+
+- **D-BUG34-1 Decided**: the launch line and dot now run on CSS animations instead of SMIL. The line animates `stroke-dashoffset` with keyframes 100 → 45.93 at 59.0164 % → 0 over 1220 ms, each part with its old spline. The dot moves with `offset-path` along the same path to `offset-distance: 54.07%` over 720 ms with the old spline. The settle, word reveal, colours, MIN_MS, FADE_MS and the 4 s cap are unchanged.
+  **Why**: Chromium starts the SVG (SMIL) clock only at the page's load event, and that waits for the app bundle. Until then the overlay showed a frozen frame: the dot at the mark's (0,0) and a round cap at the line's end. CSS animations start on first paint. With the bundle held 1500 ms at 4x CPU throttling, the first animated frame moved from about 2200 ms to about 130 ms after navigation start. The end frame matches the SMIL build with 0 px difference in all five themes.
+  **Source**: card BUG-34; measured on the gate's Chromium.
+- **D-BUG34-2 Decided**: frames in the first 250 ms may differ from SMIL by a few anti-aliased pixels (up to 24 pixels, at most 6/255 per channel, at 100 ms and 250 ms). From 500 ms on and at the end they are identical.
+  **Why**: SMIL and CSS solve the same cubic-bezier with slightly different precision, so the dot's position differs by a fraction of a pixel early on. Nobody can see this. The card asks for 0 px at the end frame, and that holds.
+  **Source**: paused-frame comparison of the two builds at 0, 100, 250, 500, 720, 900, 1220, 1600 and 2000 ms.
+- **D-BUG34-3 Decided**: `stroke-dasharray` changes from `100` to `100 101`.
+  **Why**: at a dashoffset of exactly 100, the dash pattern `100` leaves a zero-length dash at the line's end, which a round cap paints as a dot. A gap of 101 moves it off the path. The line draws the same way at every other dashoffset, and the end frame is still 0 px different.
+  **Source**: a render of the path at dashoffset 100 shows the cap at (56,40) with `100` and nothing with `100 101`.
+- **D-BUG34-4 Decided**: under reduce, the dot also gets `offset-path: none`.
+  **Why**: an offset path moves the dot even at distance 0, so cx=30 cy=50 would land at (38,90). The gate caught this in a mutation run.
+  **Source**: the BUG-34 gate probe, reduce cases.
