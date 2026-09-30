@@ -943,6 +943,80 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - A4 (static graph from `src/main.tsx`; no src file imports `tools/`) lands here too, per the HT-2 card.
   **Why**: plan section 3 (D-HT1) and card HT-2 (HT2-A7, HT2-A8). Mutation proofs are listed in the HT-2 PR.
 
+## D-HT1 part 2: the How-to entry and the FG-OFF gate re-scope (HT-3 builder, 2026-09-30)
+
+- **Decided** (D-HT1, supervisor, 2026-09-30; authority: the owner's approval on 2026-09-30, "Then start building. U got my approval.", and his rule "Dont lower quality and output of the technical plates, i like it right now."). This completes D-HT1 with part 1 above. "How to do it" returns only as the approved Technical Plate, and only where approved content exists.
+  - `tests/workout/no-form-guide.test.ts`:
+    - U1 is kept word for word (Train.tsx never hard-codes the label; it renders `{HOWTO_LABEL}`).
+    - U2-U4 are widened: `btn-how-to` and `FormGuideSheet|hasGuide|guideOpen` over every src file, and `.btn-how-to` over styles.css plus every `src/slices/howto/css/*.css`.
+    - U5-U7 are kept word for word.
+    - Added: A1-HT.a (the label occurs once in src, in `ids.ts`), A1-HT.b (one `ht-entry`, with the exact guard `ex && !ex.custom && hasHowTo(ex.id) &&`, the label `{HOWTO_LABEL}` and `howToOpen`; `ht-entry` elsewhere only in the styles.css `HT-3` block), A1-HT.c (Train imports How-to code only from `@/slices/howto/lazy` and `@/howto/ids`), and A5 (`hasHowTo` is true for exactly the 8 GOLDEN plates among the library ids and for no custom id; ids = LOADERS keys = generated files; no fallback).
+    - The `describe`, `it` titles and file header now say "old form guide".
+  - Gate FG-OFF:
+    - G1, G2, G4, G5 and G8 are kept word for word.
+    - G3 is replaced, stricter than the plan's wording: the label must be in the entry chunk that `www/index.html` loads (count ≥ 1) and in no other JS or CSS asset. "`index-*.js`" alone would also match the new `generated/index-*.js` chunk.
+    - G6 is replaced as plan section 3 says (Silent Black and Paper): one `button.ht-entry` named "How to do it", ≥ 44×44; the label once on the Train page; none on the first library exercise without approved content; the tap opens a dialog with `.ht-plate-fit`.
+    - G7 is widened to the open How-to sheet.
+    - G6's no-How-to control is data-driven (supervisor, PR #106): not a hard-coded bench press, but `firstWithoutHowTo()` in `tools/plates/fidelity/harness.mjs`, the first library id in `exercises.json` order with no approved content (`HOWTO_IDS` read from the generated `ids.ts`; today `lib_dumbbell_bench_press`). Gate block HT-3's control uses the same helper. A unit test in `no-form-guide` pins it against `hasHowTo`; the mutation "the helper returns `lib_pull_up`" fails both G6 (Silent Black and Paper) and that test. The whole-library plan can then ship more exercises without editing a merged gate block.
+    - The PASS phrase is reworded as the plan says.
+  **Why**: plan section 3 and card HT-3 (HT3-A1, HT3-A2). Mutation proofs are in the HT-3 PR.
+
+## D-HT2: the owner rule overrides GRIP-AND-FEEL where they clash (HT-3 builder records it, 2026-09-30)
+
+- **Decided** (supervisor, plan section 3 "Also recorded"): the owner's fidelity rule overrides GRIP-AND-FEEL R2, R3, R15/R16, the 24 KB gz budget (now 36 KB, because 4 approved plates alone are 24-29 KB gz), and the MuscleMap feel mode (the feel map is its own component and follows golden B exactly).
+  - The chips go below the tempo (this overrides GA R1).
+  - The chest-press callout override is removed in the mockup, not only in the app. The approved chest-press callouts stay.
+  - The Mistake pill keeps the approved body mistake.
+  - No hotspots and no dotted ring on the plate.
+  - The sheet header (an `h2`, the Close X, centred) is app chrome. Only the eyebrow and title text styles match the golden's `.sheet-eyebrow` and `h3`. HT-3 does this with `Sheet`'s additive `eyebrow` and `class` props and 2 rules in `sheet.css`. The title's colour is one of those text styles: the app's dialog leaves it at the UA's CanvasText, and the gallery's band sets `var(--text)`.
+  - The lateral-raise callout hit-box overlap (O10) is part of the approved plate and is exempt from C10 by name.
+  **Why**: plan 2.4 and section 3; the owner rule of 2026-09-30.
+
+## D-HT3: golden procedure, the L3 rule, the capture conditions, tripwires and gate time (HT-3 builder, 2026-09-30)
+
+- **Decided** (supervisor, plan 2.8, 2.9 and section 3): a plate changes only through the golden update procedure (plan 2.8, with the commit-range guard). The L3 pass rule is fixed at no channel off by more than 1/255 and at most 0.02 % of pixels off by exactly 1. The performance tripwires are those of plan 2.9, including shimmer ≤ 1.2 × golden B. Golden B is pinned only after the S-2 entry conditions hold. The font-scale pass rule is O9's.
+- **Capture conditions found by HT-3** (recorded on PR #106, 2026-09-30; the threshold is unchanged):
+  - **What happened**: the first app-vs-gallery capture differed in 19,283 px (max 115/255), while L2b found every computed property of all 231 elements equal.
+  - **Cause 1: LCD text.** The gallery card paints in the page's root layer, where headless Chromium uses LCD sub-pixel text. The app's `Sheet` is a modal `<dialog>` in its own composited layer (`FixedPosition`), which gets grayscale text. A phone never uses LCD text. **Condition:** gate block HT-3 runs in its own Chromium with `--disable-lcd-text`, for both pages alike.
+  - **Cause 2: raster tile phase.** Inside a composited layer, path anti-aliasing depends on where the content sits against the layer's 128 CSS px (256 device px) raster tiles. The golden alone shows it: in a dialog padded 0, 1, 50, 89, 128 and 200 px, it differs from pad 0 by 0 / 701 / 1,327 / 712 / 0 / 1,013 px. **Condition:** see *Capture mode* below. The two controls keep the parts in the dialog's layer, where the phase shows.
+  - **Cause 4: which element gets a layer depends on the Chromium build** (CI red on 869d89f, PR #106). Playwright 1.63's `chromium_headless_shell-1243` in CI composites every `overflow:auto` scroller, so the app's sheet panel (layer dump: `388x612 OverflowScrolling`), and the plate rasterises from the panel's padding box (1, 232), not the dialog (0, 231); the first presentation, a plain dialog, was then 1 px off in both directions and failed every pair (about 1,500 px, max 73-93/255). Build 1194 composites only the dialog. Reproduced locally on 1194 by making the panel overflow by 1 px: the plain dialog then differs by 1,257 px; the dialog-plus-scroll-box mirror above gives 0 px. Reproduced locally on 1194 by making the panel overflow by 1 px. A mirror of the app's panel (dialog, scroll box, sticky header) was tried on a10cf0c and replaced: each Chromium build decided its layers differently again (transparent mirror: 1/255 rounding; opaque mirror: no layer of its own), which the layer-kind check caught every time.
+  - **Capture mode** (the supervisor's fallback, PR #106, 2026-09-30; replaces the mirror): for pixel captures only, every part of the golden block (plate-fit, cue line, controls, tells, tempo) gets its own compositing layer (`will-change: transform`, inline, removed after the capture) in both pages. Each part then rasterises from its own box, whatever layer Chromium gives the sheet or the dialog around it, so both pages rasterise alike in every build. The golden card is moved, untouched, into a modal `<dialog>` (it inherits `#sheets`' colour and font) placed so its plate-fit is at exactly the app's viewport position, sub-pixel included, measured on every capture. Each capture reads back from Chromium's layer tree (CDP `LayerTree`, read after two painted frames until two readings agree) that every visible part owns its layer on both pages; otherwise it fails. The golden HTML bytes never change; L2b, F3 and the L4 animation lists read the golden card in place. Measured on 1194: the full matrix is 0 px, and the forced-scroller case (CI's layer layout) is 0 px on 2 plates × 2 themes.
+  - **Authority** (supervisor, PR #106, 2026-09-30): CI's full Chromium 1243 is the authority; local 1194 is for development. There is no Playwright bump.
+  - **Cause 5: the headless shell.** Playwright's default `chromium.launch()` is the headless shell, which CI ran. On the local shell 1194, the squat's sheet in mistake mode with the chest tell lays out 22 px taller than in full Chromium 1194 (the sheet then scrolls at 844 px), and even at the taller viewport the two pages differ by 6,732 px (max 215/255) around the tell's highlight, while full Chromium 1194 gives 0 px at 844, 1100, 1200 and 1300 px for the same state. **Condition:** gate block HT-3 launches full Chromium: `MARC_CHROMIUM` when it is set (local: `/opt/pw-browsers/chromium`, build 1194), else Playwright's `channel: 'chromium'` (CI: the full build that `npx playwright install --with-deps chromium` already installs next to the shell). The gate prints the version it ran. The other gate blocks keep their browser.
+    - Two controls run in every gate: phase p against p + 128 must be 0 px (the period), and p against p + 1 must fail the rule (the phase matters, so the check is not blind).
+  - **Cause 3: animation layers.** A running or paused opacity animation gets its own compositor layer. Its bounds depend on the page around the plate, which moved anti-aliasing by up to 6/255 on the pull-up's leaders in Trace frames. **Condition:** a Trace frame at time t is frozen in both pages the same way: every Trace animation is set to t, its value is written into the element (`commitStyles`), and the animation is cancelled. The L4 animation lists (target, keyframes, timing) are compared before freezing, and the natural end of a Trace is checked in Silent Black and Paper: once the Trace animations report `finished` (their own clock, so a loaded runner cannot fake a failure), `.tracing` and aria-pressed must be cleared within 1 s. A fixed 3.7 s wall clock from the tap failed on a loaded local run (pull-up) and was replaced.
+  - **Supervisor conditions** (PR #106, 2026-09-30): the position is measured from the app's plate-fit on every capture, never hard-coded; the width asserts run on the golden-in-dialog before any pixel compare; every L3 and L4 pixel capture uses the same presentation (no per-case exceptions); both controls run in Silent Black and Paper, and HT-1's golden self-check in its original root layer stays at 0 px. Phones render text with greyscale anti-aliasing, so the dialog capture with LCD text off is the closer match to the device; the owner's M1a device check still covers real rendering.
+  - With these conditions, all measured pairs are 0 px off (see PR #106 for the builds and runs).
+  - **Taller viewport** (supervisor, PR #106): when the app's sheet would scroll, or the region does not fit 844 px, both pages are captured at the same width × 1300 CSS px (under the Train page's own 1,363 px, so the app page still scrolls and its dialog keeps its own layer like the golden's; at 1400 the app page stops scrolling and headless shell 1194 paints the sheet into the root layer, which the layer-kind check caught). A scrolling sheet sits at the fractional 92dvh line, where HTML text snaps up to half a pixel differently in the two pages (measured: 5,909 px on the squat's chest tell in headless shell 1194). Each such capture is listed in the gate's HT-3 line. The clip is never cut.
+- **Gate time** (HT3-A9): recorded on the PR with the measured seconds, and the proposed budget is set there.
+  **Why**: card HT-3 (HT3-A7, HT3-A9) and the plan's rule that noise above the threshold is investigated, never absorbed.
+
+## D-HT3-sections: the sections below the plate during capture (HT-3 builder, 2026-09-30)
+
+- **Decided** (supervisor ruling on PR #106, after HT-6 found it): once any section registers below the tempo (HT-6 on), the sheet is taller than the 1300 px viewport, so gate block HT-3's tall fallback reported "the sheet still scrolls or the region does not fit" for every plate and state.
+  - **The change:** around each check (L2b, F3 and the capture), `hideSections()` in `tools/plates/fidelity/harness.mjs` sets `display: none` inline on every `dialog.sheet.ht [data-section]` and restores the old inline value after. `display: none` keeps the DOM and every stylesheet, so section CSS that leaks into the golden block (plain, `:has()` or sibling selectors) still reaches it; only the sections' layout boxes go. The captured region is plate top to tempo bottom, so no captured pixel changes.
+  - **Kept strict:** "the sheet still scrolls / the region does not fit" stays an error, and the L3 rule is unchanged.
+  - **Guards in gate block HT-3** (`ht3SectionGuards`), each with a mutation that fails it:
+    1. After each check, the same number of sections must be displayed as before. The run with a 900 px fixture section registered passes (sections hidden, the sheet fits). Mutation "restore skipped": "1 sections were displayed before the capture, 0 after (not restored)". Without the hiding, the same run gives the HT-6 failure ("the sheet still scrolls or the region does not fit at 390x1300").
+    2. A fixture section carrying `.ht p { word-spacing: 1px }` must still fail L2b while the sections are hidden. Mutation "hiding also disables the section's stylesheet": the leak is no longer caught, and the guard fails.
+    3. One S0 capture with the sections visible, on the normal 390 × 844 path: the sheet scrolls, the region is scrolled into view below the sticky header, and L3 must pass. Mutation "the section overlaps the tempo by 40 px": 56,248 px off, and the guard fails.
+  - **Sheet-wide section bleed** (supervisor ruling on PR #106, from HT-6's measurement in #112): the sheet panel's content box is 356 px against golden B's 358, the same 2 px `.ht-golden` bleeds for, so every section was 2 px narrower than golden B and every transform-origin 1 px off. `sheet.css` now has `.ht [data-section] { margin-inline: -1px; }` for all sections; the lanes drop their own copies.
+    - **Guard 4** (`sectionWidthProblems`): every displayed section's box is exactly golden B's section width at 390, 360 and 340 px. Golden B's `.hw-sec` sections sit in the gallery card's content box; measured on `docs/howto/golden-b/artifact/technical-plates.html` (claude/howto-options) they are 358 / 328 / 308 px, equal to golden A's card content box, which the gate reads. It runs on the fixture section at the three widths, and on every registered section after each open in the full matrix.
+    - Mutation "the rule removed": the fixture section is 356 / 326 / 306 px, and guard 4 fails at all three widths (and the matrix check at 390).
+  **Why**: the supervisor's ruling on PR #106 (HT-6's report); layer cards add sections without editing a merged gate block.
+
+## HT-3 sheet: choices the plan left open (HT-3 builder, 2026-09-30)
+
+- **Decided**:
+  - **The golden block is one string, inserted once.** PlateView builds the block exactly as the gallery's `card()` does (plate-fit to tempo, the same whitespace), from the generated golden strings, and inserts it with `dangerouslySetInnerHTML` from a memoised value. The content is our own generated, hash-locked content, never user input. The only differences are the 2 mapped wrapper classes and one empty `div.ht-zoom-slot[hidden]` after the plate box. `plate-state.test` proves byte equality with the fixture for all 8 plates.
+  - **The mistake figure** is inserted on the first Mistake tap (plan 2.5). Its `--gd`, listeners and fit run then. The gallery sets them at load, and the result is the same markup (F3).
+  - **Zoom slot API** as posted in the design note. The slot is the plate box's next sibling, because hiding the plate box must not hide the slot. `setPlateHidden(true)` ends a running Trace first, because a hidden figure's animations are cancelled, not ended. `clearMistake()` always ends in normal mode with the default callout. The API object is also a non-enumerable, read-only expando `htPlateApi` on `.ht-golden`, for gate probes only; no app code reads it.
+  - **App leaks fixed inside `.ht-golden` only** (L2b finds them): the app's `.sr-only` adds `margin: -1px` (reset to 0), and the app's dialog does not set the text colour and font the gallery's band sets (set on `.ht-golden` with the band's values).
+  - **`.ht` is the dialog's class**, so the header rules can live under `.ht` like every How-to rule (css.test requires it). `sheet.css` has an empty `ht-tokens` block for the same lint.
+  - **Two dynamic imports.** HowToSheet loads `@/howto/generated` and then the plate module, because A4 requires that generated/** is reached only through `import()`. The sheet renders only when the content is in, so it slides in full. An id without content closes with the load-failed toast; there is no fallback.
+  - **Focus** goes back to the entry through the modal dialog's own focus restore (`Sheet` closes its `<dialog>`), so no code is added for it. Gate block HT-3 checks it after Escape. A focus-restore effect in HowToSheet was tried and removed: a mutation that dropped it changed nothing, so it was dead code.
+  **Why**: card HT-3 and the design note on PR #106 (the supervisor's "go").
+
 ## HT-2 generator: choices the plan left open (HT-2 builder, 2026-09-30)
 
 - **Decided**:
@@ -979,6 +1053,49 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Correction**: the "HT-2 generator" entry says gate block HT-2's PASS phrase "is printed as its own line after the shared PASS line, so the shared line is not edited". That is wrong. `scripts/screenshot-gate.mjs` appends `, and HT-2 (…) verified` to the shared PASS line in place, which follows the convention HT-1 set. The edit is allowed, because the card grants the PASS phrase.
   **Why**: HT-2 review on PR #105 (medium finding). The older entry is left unchanged, because this file is append-only.
 
+## LIB-25 poly primitive (LIB-25 builder, 2026-09-30)
+
+- **Decided**: the new primitive is `poly({ pts, curve = false, cls = 'eq', z = 'back' })`: world points like `line`, straight edges through geom's `polygon`, or a closed Catmull-Rom curve through geom's `smooth` with `curve: true`. It throws on fewer than 3 points.
+  **Why**: the card asks for a closed filled polygon in the engine's line style. A rope strand needs a rounded outline, and `smooth` already exists in the vendored geom.mjs, so the curve costs one import and no new geometry. Both forms return `poly`, the field plate.mjs:213-215 already uses to outline moving parts in the Mistake view, so plate.mjs is left untouched.
+  **Source**: library plan 2.5; equipment.mjs:301-302; plate.mjs:213-215.
+
+- **Decided**: the golden-A source gets a new engine test, `exercises/_test_poly.mjs` (claude/howto-options de00174). golden.mjs's probe renders it next to `_test_front` and `_test_side`, and its two new reference fixtures are committed.
+  **Why**: HT1-A4 fails when a PRIMITIVES key is drawn by no committed fixture. That check must not be loosened, and the 8 approved specs must not change. An additive engine test covers `poly`, including its Mistake outline, and leaves every existing fixture byte unchanged.
+  **Source**: golden.mjs `fixtureProblems`; golden.test.ts HT1-A4.
+
+- **Decided**: golden.mjs accepts the two LIB-25 commits by name (`7859292`, `de00174`) next to `bc0f378` and `1a1e33b`. vendor.test.ts pins the exact source commit of each changed file. The pin is not a wildcard.
+  **Why**: L0 names the commit each vendored file came from. A golden update adds exactly its own commits, so any other source still fails.
+  **Source**: plan 2.8 step 4.
+
+- **Decided**: there is no new GOLDEN.json entry.
+  **Why**: plan 2.8 step 5 adds an entry when a plate changes. No plate or page byte changed here: L1 still gives `e2bea90c…` (860,766 B), and golden B still gives `f39137e1…` with the new engine.
+  **Source**: plan 2.8.
+
+- **Decided**: golden B's own copy of `engine/equipment.mjs` on claude/howto-options is not changed. Golden B was proven only in a temporary copy with its engine swapped for the new one.
+  **Why**: golden B is pinned by its own README, and HT-4 vendors it. Changing it would be a golden-B update, which this card does not ask for.
+  **Source**: docs/howto/golden-b/README.md.
+
+- **Decided**: the poly rope composer lives in `tools/plates/library/eq/rope.mjs` on this branch. It keeps the pilot's API (`rope`, `ropeGeometry`, `ROPE_ITEMS`), so `specs/rope_triceps_pushdown.mjs` runs unchanged. `eq/parts.mjs` is copied verbatim from claude/lib-8-pilot-a, so the two branches merge it cleanly. `ROPE_ITEMS` is now 5: the cable, 2 strands, the ferrule and the Mistake cable twin.
+  **Why**: the card says the arms-machines drawer adopts this rope.
+  **Source**: LIB-25 card, step 4.
+
+## LIB-26 flat palm (LIB-26 builder, 2026-09-30)
+
+- **Decided**: the option is a spec field, `hand: 'flat'` for both hands or `{ l, r }` for one. plate.mjs passes it to `bodyShapes`, next to `armsFront`. The shape is `palm.<side>`, and plate.mjs's `partOf` maps it to `arm.<side>`, so it is part of the arm's outline union and of the Mistake mask. When the option is not set, nothing in plate.mjs or body.mjs changes.
+  **Why**: the hand is a body shape, not equipment. A spec-level field is the smallest additive switch: the same pattern as `armsFront`, with no change to pose data or to the saved shape of anything.
+  **Source**: LIB-26 card; body.mjs `bodyShapes`; plate.mjs `drawPose`, `partOf`.
+
+- **Decided**: the palm is one closed outline from the wrist to the fingertips. The fingertips are `WINTER.hand` from the wrist, along the wrist→grip axis. The outline starts on the forearm's distal circle (`RADII.fore[2]`) and reaches a little behind the wrist, so the union has no gap. The palm side (screen-down) is straight at `-RADII.fore[2]` up to the knuckles, and the back of the hand drops toward the fingertips. A hand pointing at the camera falls back to the forearm's end-on circle.
+  **Why**: a flat run on the palm side is what makes the hand read as flat on the floor. Using the forearm's own distal radius means a spec only has to place the wrist `RADII.fore[2] × H` above a surface (`_test_flat` does exactly that). The join test checks three things: the wrist lies inside both the palm and the forearm, and the palm starts on the forearm's distal circle. An offset palm fails it, both in the test and as an engine mutation.
+  **Source**: the card ("palm capsule joined to the forearm … no gap at the wrist"); the 2.6 cm gap and 8.7 cm fist offset measured on #109.
+
+- **Decided**: the engine test `_test_flat` is a high plank on flat palms. Its end pose rocks the body forward over fixed hands. Its Mistake puts the hands ahead of the shoulders, so the moving palm is outlined. Each pose is solved with a short Newton loop inside the spec. The engine test cannot import the library solver, because vendored specs import only from the engine.
+  **Why**: this keeps the palm on the floor in every pose, and the checks read 0 cm. A knee-drive end pose was tried first and dropped: its interpolated ghosts pushed the foot below the floor line.
+  **Source**: render and report of `_test_flat` (the issues list is empty in the normal and Mistake views).
+
+- **Decided**: the branch is built on LIB-25 (claude/lib-25-poly-primitive) and the draft PR targets that branch.
+  **Why**: the card merges LIB-26 after LIB-25, and both edit the same MANIFEST pin and the same source list in golden.mjs. Stacking them avoids a conflict on the vendor lock. After LIB-25 merges, GitHub moves the PR's base to `main`.
+  **Source**: LIB-26 card; plan 2.8.
 ## HT-4 golden-B lock, content types and the derivation test: choices the card left open (HT-4 builder, 2026-09-30)
 
 - **Decided**: `content-types.ts`'s `PointRef` uses the plate engine's real convention (`{ at, pose?, off? }` or `{ along, t, off? }`), not GA section 4.1's literal `{ landmark, pose?, dx?, dy? }` spelling.
@@ -1082,3 +1199,14 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
+
+## LIB-25 review fix: poly input checks (LIB-25 builder, 2026-09-30)
+
+- **Decided**: `poly()` throws when a point is not exactly 3 finite numbers, naming the point's index. It also throws when the points enclose no area. The area is measured in world space with Newell's normal: half its length must be at least 1e-8 m². This rejects points that coincide or lie on one line, but it still draws an outline that is seen edge-on in the current view.
+  **Why**: this is the review's low finding on #120. The supervisor asked for it to be fixed now. A screen-space area check would throw on a valid part seen edge-on, for example a flat plate in side view, so the check is done in world space. The source is on claude/howto-options (48153c4) and was vendored from there.
+  **Source**: REVIEW LIB-25 @ 8480052 on #120; golden procedure (plan 2.8).
+
+## Correction to "LIB-26 flat palm": what the partOf mapping does (LIB-26 builder, 2026-09-30)
+
+- **Correction**: the first LIB-26 entry says `partOf` maps `palm.<side>` to `arm.<side>` "so it is part of the arm's outline union and of the Mistake mask". That is wrong. The union comes from the palm's group, `grp('arm', sd)` in body.mjs. The `partOf` mapping matters only where a spec filters by part: `mistake.parts` and the ghost or start parts (plate.mjs:114-116, 208-210). Without it, a Mistake limited to `arm.r` would silently leave the palm out. A test now covers this: a Mistake filtered to `arm.r` outlines `palm.r`, and one filtered to `arm.l` does not. It fails when `'palm'` is removed from `partOf`.
+  **Why**: this is the review's medium finding on #123. The older entry is left unchanged, because this file is append-only.
