@@ -1463,10 +1463,17 @@
      "need": "floor",
      "label": "floor line",
      "status": "exists"
+    },
+    {
+     "need": "pivotArmOverhead",
+     "label": "pivot arm whose handle arc rises in front of or beside the head, visibly clear of it (LR-2)",
+     "status": "compose"
     }
    ],
-   "equipmentStatus": "exists",
-   "equipmentGaps": [],
+   "equipmentStatus": "compose",
+   "equipmentGaps": [
+    "pivotArmOverhead"
+   ],
    "poseGaps": [],
    "readiness": "R1 existing parts, proven pose",
    "tier": 1,
@@ -3160,11 +3167,23 @@
      "need": "floor",
      "label": "floor line",
      "status": "exists"
+    },
+    {
+     "need": "mountStep",
+     "label": "step or foot rails to get on and off the knee pad (LR-1)",
+     "status": "compose"
+    },
+    {
+     "need": "stackPin",
+     "label": "assistance selector pin on the weight stack (LR-1)",
+     "status": "compose"
     }
    ],
    "equipmentStatus": "compose",
    "equipmentGaps": [
-    "assistMachine"
+    "assistMachine",
+    "mountStep",
+    "stackPin"
    ],
    "poseGaps": [
     "kneel"
@@ -12024,7 +12043,7 @@
   },
   "byEquipmentStatus": {
    "exists": {
-    "count": 81,
+    "count": 80,
     "ids": [
      "lib_machine_chest_press",
      "lib_dumbbell_bench_press",
@@ -12033,7 +12052,6 @@
      "lib_dumbbell_fly",
      "lib_push_up",
      "lib_incline_push_up",
-     "lib_shoulder_press",
      "lib_dumbbell_lateral_raise",
      "lib_dumbbell_front_raise",
      "lib_bent_over_dumbbell_rear_delt_fly",
@@ -12110,7 +12128,7 @@
     ]
    },
    "compose": {
-    "count": 32,
+    "count": 33,
     "ids": [
      "lib_incline_dumbbell_press",
      "lib_incline_barbell_bench_press",
@@ -12143,7 +12161,8 @@
      "lib_wall_sit",
      "lib_resistance_band_row",
      "lib_resistance_band_pull_apart",
-     "lib_barbell_overhead_press"
+     "lib_barbell_overhead_press",
+     "lib_shoulder_press"
     ]
    },
    "exists-param": {
@@ -13038,6 +13057,30 @@
     "ids": [
      "lib_barbell_overhead_press"
     ]
+   },
+   "mountStep": {
+    "label": "step or foot rails to get on and off the knee pad (LR-1)",
+    "status": "compose",
+    "exercises": 1,
+    "ids": [
+     "lib_assisted_pull_up"
+    ]
+   },
+   "stackPin": {
+    "label": "assistance selector pin on the weight stack (LR-1)",
+    "status": "compose",
+    "exercises": 1,
+    "ids": [
+     "lib_assisted_pull_up"
+    ]
+   },
+   "pivotArmOverhead": {
+    "label": "pivot arm whose handle arc rises in front of or beside the head, visibly clear of it (LR-2)",
+    "status": "compose",
+    "exercises": 1,
+    "ids": [
+     "lib_shoulder_press"
+    ]
    }
   },
   "exercisesNeedingMissingEquipment": [
@@ -13091,6 +13134,7 @@
    "lib_russian_twist",
    "lib_seated_calf_raise",
    "lib_seated_leg_curl",
+   "lib_shoulder_press",
    "lib_smith_machine_incline_press",
    "lib_smith_machine_shoulder_press",
    "lib_standing_calf_raise",
