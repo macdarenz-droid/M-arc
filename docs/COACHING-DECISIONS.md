@@ -1181,6 +1181,9 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
+
+## BUG-31 / BUG-33: brief-form fact tags and the repair wording (BUG-31 builder, 2026-09-30)
+
 - **Decided by BUG-31 / BUG-33 (2026-09-30)** where the card is silent:
   - A tag is made canonical only when every id in it is in the conversation's ledger. A tag with one unknown id (`[f41, f998]`) stays whole, so all its digits count, the known one included: the check never trusts part of a tag.
   - The stored message `content` keeps the model's own words, tags included; only what the app renders (`rendered.answer`, `preamble`, `unverified`) uses the canonical form. The model's history is not rewritten.
