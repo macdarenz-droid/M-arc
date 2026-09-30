@@ -18,6 +18,7 @@ import { checkC15, contentHash } from './checks/c15';
 import { checkC16 } from './checks/c16';
 import { checkC17 } from './checks/c17';
 import { mutate as c1Mutate } from './fixtures/bad/c1-bad-zoom-ref';
+import { mutate as c1DanglingFault } from './fixtures/bad/c1-dangling-fault-ref';
 import { mutate as c2PrimaryWatch } from './fixtures/bad/c2-primary-and-watch';
 import { mutate as c2NoRegion } from './fixtures/bad/c2-no-region';
 import { mutate as c2BadPart } from './fixtures/bad/c2-bad-part';
@@ -34,6 +35,8 @@ import { mutate as c8Unreachable } from './fixtures/bad/c8-unreachable';
 import { mutate as c8RedFlag } from './fixtures/bad/c8-red-flag-wording';
 import { reviews as c15Reviews } from './fixtures/bad/c15-no-matching-review';
 import { mutate as c16Mutate } from './fixtures/bad/c16-missing-alt';
+import { mutate as c16ViewNoCamLabel } from './fixtures/bad/c16-view-no-camlabel';
+import { mutate as c16MissingWrongCrop } from './fixtures/bad/c16-missing-wrong-crop';
 
 /*
  * HT4-A2: this literal is machine_chest_press.howto.mjs's default export at the final compact-copy pin (b3a90af),
@@ -176,6 +179,11 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     expect(bad.every(m => m.startsWith('C1:'))).toBe(true);
   });
 
+  it('C1 fails when a hand zoom\'s hand.wrong references a fault key not in handling.faults', () => {
+    const bad = checkC1(c1DanglingFault(GOOD_CONTENT), KNOWN_IDS);
+    expect(bad.some(m => m.includes('not-a-real-fault') && m.includes('not in handling.faults'))).toBe(true);
+  });
+
   it('C2 fails when a muscle is both primary and watch', () => {
     const bad = checkC2(c2PrimaryWatch(GOOD_CONTENT));
     expect(bad.some(m => m.includes('both primary and watch'))).toBe(true);
@@ -278,6 +286,16 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
   it('C16 fails when a zoom is missing alt.wrong', () => {
     const bad = checkC16(c16Mutate(GOOD_CONTENT));
     expect(bad.some(m => m.includes('no alt.wrong'))).toBe(true);
+  });
+
+  it('C16 fails when a posture zoom sets view but no camLabel', () => {
+    const bad = checkC16(c16ViewNoCamLabel(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('needs its own camLabel'))).toBe(true);
+  });
+
+  it('C16 fails when a posture zoom has no wrong crop defined', () => {
+    const bad = checkC16(c16MissingWrongCrop(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('no wrong crop defined'))).toBe(true);
   });
 
   it('C17 fails on the fixture that calls fetch(), and on nothing else in the same folder', () => {
