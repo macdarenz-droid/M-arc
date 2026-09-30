@@ -916,6 +916,60 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - A4 (static graph from `src/main.tsx`; no src file imports `tools/`) lands here too, per the HT-2 card.
   **Why**: plan section 3 (D-HT1) and card HT-2 (HT2-A7, HT2-A8). Mutation proofs are listed in the HT-2 PR.
 
+## D-HT1 part 2: the How-to entry and the FG-OFF gate re-scope (HT-3 builder, 2026-09-30)
+
+- **Decided** (D-HT1, supervisor, 2026-09-30; authority: the owner's approval on 2026-09-30, "Then start building. U got my approval.", and his rule "Dont lower quality and output of the technical plates, i like it right now."). This completes D-HT1 with part 1 above. "How to do it" returns only as the approved Technical Plate, and only where approved content exists.
+  - `tests/workout/no-form-guide.test.ts`:
+    - U1 is kept word for word (Train.tsx never hard-codes the label; it renders `{HOWTO_LABEL}`).
+    - U2-U4 are widened: `btn-how-to` and `FormGuideSheet|hasGuide|guideOpen` over every src file, and `.btn-how-to` over styles.css plus every `src/slices/howto/css/*.css`.
+    - U5-U7 are kept word for word.
+    - Added: A1-HT.a (the label occurs once in src, in `ids.ts`), A1-HT.b (one `ht-entry`, with the exact guard `ex && !ex.custom && hasHowTo(ex.id) &&`, the label `{HOWTO_LABEL}` and `howToOpen`; `ht-entry` elsewhere only in the styles.css `HT-3` block), A1-HT.c (Train imports How-to code only from `@/slices/howto/lazy` and `@/howto/ids`), and A5 (`hasHowTo` is true for exactly the 8 GOLDEN plates among the library ids and for no custom id; ids = LOADERS keys = generated files; no fallback).
+    - The `describe`, `it` titles and file header now say "old form guide".
+  - Gate FG-OFF:
+    - G1, G2, G4, G5 and G8 are kept word for word.
+    - G3 is replaced, stricter than the plan's wording: the label must be in the entry chunk that `www/index.html` loads (count ≥ 1) and in no other JS or CSS asset. "`index-*.js`" alone would also match the new `generated/index-*.js` chunk.
+    - G6 is replaced as plan section 3 says (Silent Black and Paper): one `button.ht-entry` named "How to do it", ≥ 44×44; the label once on the Train page; none on the bench-press card; the tap opens a dialog with `.ht-plate-fit`.
+    - G7 is widened to the open How-to sheet.
+    - The PASS phrase is reworded as the plan says.
+  **Why**: plan section 3 and card HT-3 (HT3-A1, HT3-A2). Mutation proofs are in the HT-3 PR.
+
+## D-HT2: the owner rule overrides GRIP-AND-FEEL where they clash (HT-3 builder records it, 2026-09-30)
+
+- **Decided** (supervisor, plan section 3 "Also recorded"): the owner's fidelity rule overrides GRIP-AND-FEEL R2, R3, R15/R16, the 24 KB gz budget (now 36 KB, because 4 approved plates alone are 24-29 KB gz), and the MuscleMap feel mode (the feel map is its own component and follows golden B exactly).
+  - The chips go below the tempo (this overrides GA R1).
+  - The chest-press callout override is removed in the mockup, not only in the app. The approved chest-press callouts stay.
+  - The Mistake pill keeps the approved body mistake.
+  - No hotspots and no dotted ring on the plate.
+  - The sheet header (an `h2`, the Close X, centred) is app chrome. Only the eyebrow and title text styles match the golden's `.sheet-eyebrow` and `h3`. HT-3 does this with `Sheet`'s additive `eyebrow` and `class` props and 2 rules in `sheet.css`. The title's colour is one of those text styles: the app's dialog leaves it at the UA's CanvasText, and the gallery's band sets `var(--text)`.
+  - The lateral-raise callout hit-box overlap (O10) is part of the approved plate and is exempt from C10 by name.
+  **Why**: plan 2.4 and section 3; the owner rule of 2026-09-30.
+
+## D-HT3: golden procedure, the L3 rule, the capture conditions, tripwires and gate time (HT-3 builder, 2026-09-30)
+
+- **Decided** (supervisor, plan 2.8, 2.9 and section 3): a plate changes only through the golden update procedure (plan 2.8, with the commit-range guard). The L3 pass rule is fixed at no channel off by more than 1/255 and at most 0.02 % of pixels off by exactly 1. The performance tripwires are those of plan 2.9, including shimmer ≤ 1.2 × golden B. Golden B is pinned only after the S-2 entry conditions hold. The font-scale pass rule is O9's.
+- **Capture conditions found by HT-3** (recorded on PR #106, 2026-09-30; the threshold is unchanged):
+  - **What happened**: the first app-vs-gallery capture differed in 19,283 px (max 115/255), while L2b found every computed property of all 231 elements equal.
+  - **Cause 1: LCD text.** The gallery card paints in the page's root layer, where headless Chromium uses LCD sub-pixel text. The app's `Sheet` is a modal `<dialog>` in its own composited layer (`FixedPosition`), which gets grayscale text. A phone never uses LCD text. **Condition:** gate block HT-3 runs in its own Chromium with `--disable-lcd-text`, for both pages alike.
+  - **Cause 2: raster tile phase.** Inside a composited layer, path anti-aliasing depends on where the content sits against the layer's 128 CSS px (256 device px) raster tiles. The golden alone shows it: in a dialog padded 0, 1, 50, 89, 128 and 200 px, it differs from pad 0 by 0 / 701 / 1,327 / 712 / 0 / 1,013 px. **Condition:** for pixel captures only, the harness moves the untouched golden card node into a modal `<dialog>`. The dialog inherits `#sheets`' colour and font and has the gallery group's 16 px gutter. It is placed at the app dialog's top, with the plate-fit at the app's offset inside the layer (or 128 px further when the card's own header is taller). The golden HTML bytes never change. L2b, F3 and the L4 animation lists read the golden card in place.
+    - Two controls run in every gate: phase p against p + 128 must be 0 px (the period), and p against p + 1 must fail the rule (the phase matters, so the check is not blind).
+  - **Cause 3: animation layers.** A running or paused opacity animation gets its own compositor layer. Its bounds depend on the page around the plate, which moved anti-aliasing by up to 6/255 on the pull-up's leaders in Trace frames. **Condition:** a Trace frame at time t is frozen in both pages the same way: every Trace animation is set to t, its value is written into the element (`commitStyles`), and the animation is cancelled. The L4 animation lists (target, keyframes, timing) are compared before freezing, and the natural end of a Trace (`.tracing` and aria-pressed cleared within 2.4 s + the last fade + 1 s) is checked in Silent Black and Paper.
+  - With these three conditions, all measured pairs are 0 px off (lateral raise, pull-up, lat pulldown; Silent Black, Paper, Ember, Emerald; 390, 360 and 340 px).
+  - **Taller viewport** (supervisor, PR #106): when the app's sheet would scroll, or the region does not fit 844 px, both pages are captured at the same width × 1400 CSS px. Each such capture is listed in the gate's HT-3 line. The clip is never cut.
+- **Gate time** (HT3-A9): recorded on the PR with the measured seconds, and the proposed budget is set there.
+  **Why**: card HT-3 (HT3-A7, HT3-A9) and the plan's rule that noise above the threshold is investigated, never absorbed.
+
+## HT-3 sheet: choices the plan left open (HT-3 builder, 2026-09-30)
+
+- **Decided**:
+  - **The golden block is one string, inserted once.** PlateView builds the block exactly as the gallery's `card()` does (plate-fit to tempo, the same whitespace), from the generated golden strings, and inserts it with `dangerouslySetInnerHTML` from a memoised value. The content is our own generated, hash-locked content, never user input. The only differences are the 2 mapped wrapper classes and one empty `div.ht-zoom-slot[hidden]` after the plate box. `plate-state.test` proves byte equality with the fixture for all 8 plates.
+  - **The mistake figure** is inserted on the first Mistake tap (plan 2.5). Its `--gd`, listeners and fit run then. The gallery sets them at load, and the result is the same markup (F3).
+  - **Zoom slot API** as posted in the design note. The slot is the plate box's next sibling, because hiding the plate box must not hide the slot. `setPlateHidden(true)` ends a running Trace first, because a hidden figure's animations are cancelled, not ended. `clearMistake()` always ends in normal mode with the default callout. The API object is also a non-enumerable, read-only expando `htPlateApi` on `.ht-golden`, for gate probes only; no app code reads it.
+  - **App leaks fixed inside `.ht-golden` only** (L2b finds them): the app's `.sr-only` adds `margin: -1px` (reset to 0), and the app's dialog does not set the text colour and font the gallery's band sets (set on `.ht-golden` with the band's values).
+  - **`.ht` is the dialog's class**, so the header rules can live under `.ht` like every How-to rule (css.test requires it). `sheet.css` has an empty `ht-tokens` block for the same lint.
+  - **Two dynamic imports.** HowToSheet loads `@/howto/generated` and then the plate module, because A4 requires that generated/** is reached only through `import()`. The sheet renders only when the content is in, so it slides in full. An id without content closes with the load-failed toast; there is no fallback.
+  - **Focus** goes back to the element that was focused when the sheet opened (the entry), in HowToSheet, so Train.tsx keeps only the 4 planned lines.
+  **Why**: card HT-3 and the design note on PR #106 (the supervisor's "go").
+
 ## HT-2 generator: choices the plan left open (HT-2 builder, 2026-09-30)
 
 - **Decided**:

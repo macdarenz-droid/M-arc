@@ -175,3 +175,535 @@ export async function goldenSelfCheck(browser, { html = readFileSync(GOLDEN_PAGE
   await diffPage.context().close();
   return { problems, captures: runs[0].size + runs[1].size, comparisons, control, ms: Date.now() - t0 };
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// HT-3: the app side. The gate's own build (vite preview on `port`) with a seeded split, the How-to sheet opened from
+// the real Train entry, and the comparisons against the golden page (plan 2.7: L2b, F3, L3, L4).
+
+/** The 8 approved plates in gallery order (GOLDEN chromeId -> library id), then the two controls. */
+export const HT_PLATES = [
+  ['lateral-raise', 'lib_dumbbell_lateral_raise'], ['barbell-back-squat', 'lib_barbell_back_squat'], ['pull-up', 'lib_pull_up'],
+  ['hanging-leg-raise', 'lib_hanging_leg_raise'], ['lat-pulldown', 'lib_lat_pulldown'], ['seated-cable-row', 'lib_seated_cable_row'],
+  ['leg-press', 'lib_leg_press'], ['machine-chest-press', 'lib_machine_chest_press'],
+];
+export const HT_BENCH = 'lib_barbell_bench_press';
+export const HT_CUSTOM = { id: 'custom_ht3_lateral', name: 'Cable Lateral Raise HT3', equipment: 'Cable', primary: ['side_delts'], secondary: [], stabilizers: [], aliases: [], pattern: 'isolation', defaultSets: 2, mode: 'weighted', role: 'accessory', custom: true };
+export const HT_ORDER = [...HT_PLATES.map(p => p[1]), HT_BENCH, HT_CUSTOM.id];
+
+/** Init script (runs in the page): theme plus a split holding the 8 plates, bench press and a custom exercise. */
+export function htSeed([theme, ids, custom]) {
+  localStorage.setItem('marc.theme', theme);
+  const now = new Date().toISOString();
+  if (localStorage.getItem('marc.state.v1')) return;
+  localStorage.setItem('marc.state.v1', JSON.stringify({
+    version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+    goal: 'lean', splits: [{ id: 'sp1', name: 'Plates', color: '#6aa9ff', focus: [], createdAt: now, exercises: ids.map(exerciseId => ({ exerciseId, sets: 1 })) }],
+    schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions: [], active: null, customExercises: [custom],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  }));
+}
+
+/** No animation of any kind left on the page (the sheet-in, scrim, theme and Trace ones included), two frames painted. */
+export async function settleApp(page) {
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForFunction(() => document.getAnimations().length === 0, null, { timeout: 8000 });
+  await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+}
+
+/** A fresh app context at `viewport` in `theme`, on the Train page with the seeded split started. */
+export async function openAppTrain(browser, port, theme, { viewport = DEVICE.viewport, reducedMotion = 'no-preference', onError } = {}) {
+  const ctx = await browser.newContext({ viewport, deviceScaleFactor: DEVICE.deviceScaleFactor, reducedMotion });
+  const page = await ctx.newPage();
+  if (onError) page.on('pageerror', e => onError(e.message));
+  await page.addInitScript(htSeed, [theme, HT_ORDER, HT_CUSTOM]);
+  await page.goto(`http://localhost:${port}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: 'Train' }).click();
+  await page.getByRole('button', { name: /^Start / }).first().click();
+  for (let i = 0; i < 2; i++) {
+    await page.waitForTimeout(300);
+    const skip = page.getByRole('button', { name: 'Skip', exact: true });
+    if (await skip.isVisible().catch(() => false)) { await skip.click(); continue; }
+    const start = page.getByRole('button', { name: /^Start / }).first();
+    if (await start.isVisible().catch(() => false)) await start.click();
+  }
+  await page.locator('.card.exercise').first().waitFor({ state: 'visible', timeout: 5000 });
+  return { ctx, page };
+}
+
+/** Opens exercise card `index` (seed order) if it is closed. */
+export async function openCard(page, index) {
+  const card = page.locator('.card.exercise').nth(index);
+  const head = card.locator('.ex-head');
+  if ((await head.getAttribute('aria-expanded')) !== 'true') await head.click();
+  await card.locator('.why-toggle').waitFor({ state: 'visible', timeout: 5000 });
+  await settleApp(page);
+  return card;
+}
+
+/** Taps the card's How-to entry and waits for the sheet with its golden block, fully settled. */
+export async function openHowTo(page, index) {
+  const card = await openCard(page, index);
+  await card.locator('button.ht-entry').click();
+  await page.locator('dialog.sheet.ht .ht-golden .ht-plate[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
+  await settleApp(page);
+  return card;
+}
+
+/** Closes the How-to sheet with Escape (the dialog's cancel, the same close as Back) and waits until it is gone. */
+export async function closeHowTo(page) {
+  await page.keyboard.press('Escape');
+  await page.locator('dialog.sheet.ht').waitFor({ state: 'detached', timeout: 5000 });
+  await settleApp(page);
+}
+
+/** A golden page context at `viewport` in `theme` (served offline as in HT-1). */
+export async function openGolden(browser, theme, { viewport = DEVICE.viewport, reducedMotion = 'no-preference', html = readFileSync(GOLDEN_PAGE), onError } = {}) {
+  const ctx = await browser.newContext({ viewport, deviceScaleFactor: DEVICE.deviceScaleFactor, reducedMotion });
+  const net = await routeOffline(ctx, { '/': html });
+  const page = await ctx.newPage();
+  if (onError) page.on('pageerror', e => onError(e.message));
+  await page.goto(`${ORIGIN}/`);
+  await settle(page);
+  await page.evaluate(t => document.getElementById(`theme-${t}`).click(), theme);
+  await settle(page);
+  return { ctx, page, net };
+}
+
+/** Selectors of the golden block in each page, keyed by the gallery chrome id. */
+export const G = {
+  golden: id => ({ fit: `#${id}-plate`, block: `#card-${id}`, tempo: `#card-${id} .tempo`, root: `#card-${id}` }),
+  app: id => ({ fit: `#${id}-plate`, block: 'dialog.sheet.ht .ht-golden', tempo: 'dialog.sheet.ht .ht-golden .tempo', root: 'dialog.sheet.ht .ht-golden' }),
+};
+
+/**
+ * The widths L3 asserts first, and the capture region: plate-fit top to tempo bottom, across the union of the block's
+ * content box and the plate-fit box (the plate alone bleeds 9 px under 350 px). In the app, the sheet panel is scrolled
+ * so the region sits below the sticky header; a region that does not fit is an error, never a cut.
+ */
+export async function region(page, sel, which) {
+  const r = await page.evaluate(([s, which]) => {
+    const fit = document.querySelector(s.fit), tempo = document.querySelector(s.tempo), block = document.querySelector(s.block);
+    if (!fit || !tempo || !block) return null;
+    const content = el => { const b = el.getBoundingClientRect(), cs = getComputedStyle(el); const l = parseFloat(cs.borderLeftWidth) + parseFloat(cs.paddingLeft), rr = parseFloat(cs.borderRightWidth) + parseFloat(cs.paddingRight); return { left: b.left + l, width: b.width - l - rr }; };
+    let floor = 0;
+    if (which === 'app') {
+      const panel = fit.closest('.sheet-panel'), top = panel.querySelector('.sheet-top');
+      floor = top.getBoundingClientRect().bottom;
+      const delta = fit.getBoundingClientRect().top - floor;
+      if (delta < 0 || tempo.getBoundingClientRect().bottom > innerHeight) panel.scrollTop += Math.max(delta, tempo.getBoundingClientRect().bottom - innerHeight);
+      floor = top.getBoundingClientRect().bottom;
+    } else window.scrollTo(0, fit.getBoundingClientRect().top + window.scrollY);
+    const f = fit.getBoundingClientRect(), t = tempo.getBoundingClientRect();
+    const c = which === 'app' ? (() => { const b = block.getBoundingClientRect(); return { left: b.left, width: b.width }; })() : content(block);
+    const left = Math.min(c.left, f.left), right = Math.max(c.left + c.width, f.right);
+    const fig = fit.querySelector(':scope > :not([hidden])');
+    return { x: left, y: f.top, width: right - left, height: t.bottom - f.top, fitWidth: f.width, blockWidth: c.width, zoom: fig ? getComputedStyle(fig).zoom : null, floor, vh: innerHeight };
+  }, [sel, which]);
+  if (!r) throw new Error(`region: ${sel.fit} / ${sel.tempo} not found`);
+  if (r.y < r.floor - 0.001 || r.y + r.height > r.vh + 0.001) throw new Error(`region: ${sel.fit}..${sel.tempo} (${r.height} px from y ${r.y}) does not fit between ${r.floor} and ${r.vh}`);
+  await page.evaluate(() => new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res))));
+  return r;
+}
+
+/** L2b: the computed properties compared node by node (plan 2.7), plus text-rendering ones, which only make it stricter. */
+export const L2B_PROPS = [
+  'fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-opacity',
+  'opacity', 'display', 'visibility', 'color', 'background-color', 'background-image',
+  'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color', 'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
+  'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
+  'border-top-left-radius', 'border-top-right-radius', 'border-bottom-left-radius', 'border-bottom-right-radius',
+  'font-family', 'font-size', 'font-weight', 'font-style', 'font-stretch', 'font-variant-numeric', 'font-variant-ligatures', 'font-variant-caps',
+  'font-feature-settings', 'font-variation-settings', 'font-optical-sizing', 'font-kerning', 'letter-spacing', 'word-spacing', 'line-height', 'text-transform',
+  'text-rendering', '-webkit-font-smoothing', 'white-space', 'text-align', 'transform', 'zoom', 'pointer-events', 'mask', 'clip-path',
+  'marker-start', 'marker-mid', 'marker-end', 'box-shadow', 'outline-style', 'filter', 'mix-blend-mode', 'isolation',
+];
+/** The same list on the `::before` of every element that has one (the callout highlight). */
+export const L2B_BEFORE = ['content', 'background-color', 'opacity', 'top', 'right', 'bottom', 'left', 'border-top-left-radius', 'z-index'];
+
+/**
+ * Walks the golden block of one page (the elements from plate-fit to tempo; in the app the zoom slot is skipped by
+ * name, and the golden's mistake figure is skipped while the app has not inserted its own yet) and returns, per element
+ * in document order, its tag, its rect relative to the plate-fit's top-left, and the L2b properties.
+ */
+export function l2bWalk(page, sel, which, withMistake = true) {
+  return page.evaluate(([s, which, props, before, withMistake]) => {
+    const fit = document.querySelector(s.fit), root = document.querySelector(s.root);
+    const o = fit.getBoundingClientRect();
+    const tops = which === 'app' ? [...root.children].filter(e => !e.classList.contains('ht-zoom-slot'))
+      : [...root.children].filter(e => !e.classList.contains('sheet-grab') && !e.classList.contains('sheet-head'));
+    const out = [];
+    const walk = (el, path) => {
+      if (which === 'golden' && !withMistake && el.matches('.plate[data-mode="mistake"]')) return;
+      const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+      const row = { path, tag: el.tagName.toLowerCase(), rect: r.left === 0 && r.top === 0 && r.width === 0 && r.height === 0 ? 'none' : [r.left - o.left, r.top - o.top, r.width, r.height], css: props.map(p => cs.getPropertyValue(p)) };
+      const b = getComputedStyle(el, '::before');
+      if (b.content && b.content !== 'none' && b.content !== 'normal') row.before = before.map(p => b.getPropertyValue(p));
+      out.push(row);
+      [...el.children].forEach((c, i) => walk(c, `${path}>${c.tagName.toLowerCase()}[${i}]`));
+    };
+    tops.forEach((e, i) => walk(e, `${e.tagName.toLowerCase()}[${i}]`));
+    return out;
+  }, [sel, which, L2B_PROPS, L2B_BEFORE, withMistake]);
+}
+
+/** L2b compare: the same element list, every rect within ±0.01 px, every property exactly equal. Returns problems. */
+export function l2bCompare(g, a, label, max = 12) {
+  const bad = [];
+  if (g.length !== a.length) bad.push(`${label}: ${a.length} elements in the app, ${g.length} in the golden`);
+  for (let i = 0; i < Math.min(g.length, a.length) && bad.length < max; i++) {
+    const x = g[i], y = a[i];
+    if (x.tag !== y.tag) { bad.push(`${label} ${x.path}: <${y.tag}> in the app, <${x.tag}> in the golden`); break; }
+    // an element with no box (defs, pattern children) has the all-zero viewport rect in both pages, or it is a mismatch
+    const d = x.rect === 'none' || y.rect === 'none' ? [x.rect === y.rect ? 0 : 1] : x.rect.map((v, k) => Math.abs(v - y.rect[k]));
+    if (d.some(v => v > 0.01)) bad.push(`${label} ${x.path}: rect ${JSON.stringify(y.rect)} vs golden ${JSON.stringify(x.rect)}`);
+    x.css.forEach((v, k) => { if (v !== y.css[k] && bad.length < max) bad.push(`${label} ${x.path} ${L2B_PROPS[k]}: "${y.css[k]}" vs golden "${v}"`); });
+    if (JSON.stringify(x.before) !== JSON.stringify(y.before)) bad.push(`${label} ${x.path}::before: ${JSON.stringify(y.before)} vs golden ${JSON.stringify(x.before)}`);
+  }
+  return bad;
+}
+
+/**
+ * The golden card presented as the app presents its sheet: in a modal <dialog> (rasterised in its own layer, like the
+ * app's Sheet; the dialog's 16 px side padding is the gallery group's gutter, so the card keeps its width), placed so
+ * the dialog's top and the plate-fit's offset inside it equal the app's (`at` = appOffset()), or the offset differs by
+ * the 128 CSS px raster tile when the card's own header is taller than the app's. Only the capture changes: the card
+ * node, its markup and every style it inherits (the dialog inherits #sheets' colour and font) stay as they are.
+ * `extra` shifts the plate for the controls (128: same raster phase; 1: not).
+ */
+export async function presentGolden(page, id, at, extra = 0, paused = false) {
+  await page.evaluate(([id, at, extra]) => {
+    const c = document.getElementById(`card-${id}`);
+    let d = document.getElementById('ht3-present');
+    if (!d) {
+      d = document.createElement('dialog'); d.id = 'ht3-present';
+      d.style.cssText = 'box-sizing:border-box;padding:0 16px;border:0;margin:0;inset:0 auto auto 0;width:100%;max-width:none;max-height:none;background:transparent;overflow:visible;color:inherit;font:inherit;letter-spacing:inherit';
+      document.getElementById('sheets').append(d);
+    }
+    if (c.parentElement !== d) { c.before(Object.assign(document.createElement('i'), { id: 'ht3-home' })); d.append(c); }
+    if (!d.open) d.showModal();
+    d.style.paddingTop = '0px'; d.style.top = '0px';
+    const off = document.getElementById(`${id}-plate`).getBoundingClientRect().top - d.getBoundingClientRect().top;
+    let pad = at.off - off + extra, top = at.top;
+    if (pad < 0) { pad += 128; top -= 128; }
+    d.style.paddingTop = `${pad}px`; d.style.top = `${top}px`;
+  }, [id, at, extra]);
+  if (paused) await frames2(page); else await settle(page);   // paused Trace animations never end, so wait for paint only
+}
+
+/** Puts the golden card back where it was. */
+export async function unpresentGolden(page, paused = false) {
+  await page.evaluate(() => {
+    const d = document.getElementById('ht3-present'), home = document.getElementById('ht3-home');
+    if (d && home) { home.replaceWith(d.querySelector('.sheet-card')); d.close(); }
+  });
+  if (paused) await frames2(page); else await settle(page);
+}
+
+/** The app's plate-fit offset inside its sheet dialog (its layer); the panel must not scroll (a scroller is a layer too). */
+export async function appOffset(page) {
+  const r = await page.evaluate(() => {
+    const d = document.querySelector('dialog.sheet.ht'), p = d.querySelector('.sheet-panel'), f = d.querySelector('.ht-plate-fit');
+    return { top: d.getBoundingClientRect().top, off: f.getBoundingClientRect().top - d.getBoundingClientRect().top, scrolls: p.scrollHeight > p.clientHeight };
+  });
+  return r;
+}
+
+/** F3: the golden block's markup, serialised as it stands (wrapper classes mapped back, the zoom slot dropped). */
+export function blockMarkup(page, which, id, withMistake = true) {
+  return page.evaluate(([which, id, withMistake]) => {
+    const els = which === 'app' ? [...document.querySelector('dialog.sheet.ht .ht-golden').childNodes]
+      : (() => { const card = document.getElementById(`card-${id}`), fit = document.getElementById(`${id}-plate`); const out = []; for (let n = fit; n; n = n.nextSibling) out.push(n); return out; })();
+    return els.filter(n => !(n.nodeType === 1 && n.classList.contains('ht-zoom-slot'))).map(n => {
+      if (n.nodeType !== 1) return n.textContent;
+      let h = n.outerHTML;
+      if (which === 'golden') {
+        if (n.id === `${id}-plate` && !withMistake) h = h.replace(/<figure class="plate" data-mode="mistake"[\s\S]*<\/figure>(?=<\/div>$)/, '');
+        h = h.replace(/class="plate-fit"/g, 'class="ht-plate-fit"').replace(/<figure class="plate"/g, '<figure class="ht-plate"');
+      }
+      return h;
+    }).join('').replace(/\n\s*$/, '');
+  }, [which, id, withMistake]);
+}
+
+export const HT_THEMES = ['silent-black', 'paper', 'midnight', 'ember', 'emerald'];
+/** Themes with the full matrix: every callout and tell, the Trace frames, the widths (plan 2.7 L3, L4). */
+export const HT_FULL = ['silent-black', 'paper'];
+const TEXT_PROPS = ['font-family', 'font-size', 'font-weight', 'font-style', 'letter-spacing', 'line-height', 'text-transform', 'color', 'display', 'margin-bottom'];
+
+const frames2 = page => page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+
+/** The traced figure's animations, as comparable data (target by its path inside the figure). */
+const animList = (page, figSel) => page.evaluate(sel => {
+  const fig = document.querySelector(sel);
+  const path = el => { const p = []; for (let e = el; e && e !== fig; e = e.parentElement) p.unshift([...e.parentElement.children].indexOf(e)); return p.join('.'); };
+  return fig.getAnimations({ subtree: true }).map(a => ({ target: path(a.effect.target), name: a.animationName, keyframes: a.effect.getKeyframes(), timing: a.effect.getTiming() }))
+    .sort((x, y) => (x.target + x.name).localeCompare(y.target + y.name));
+}, figSel);
+/**
+ * Freezes the traced figure at `t` ms: every Trace animation is set to t, its value written into the element's style
+ * (commitStyles) and the animation cancelled, so the frame renders without compositor animation layers. The styles
+ * are saved first for unfreeze(). `t` null: cancel only (the Trace is dropped, then unfreeze() resets it).
+ */
+const freezeAt = (page, figSel, t) => page.evaluate(([sel, t]) => {
+  const as = document.querySelector(sel).getAnimations({ subtree: true });
+  const saved = new Map();
+  for (const a of as) if (!saved.has(a.effect.target)) saved.set(a.effect.target, a.effect.target.getAttribute('style'));
+  window.__ht3Saved = saved;
+  if (t != null) for (const a of as) { a.pause(); a.currentTime = t; a.commitStyles(); }
+  for (const a of as) a.cancel();
+  return as.length;
+}, [figSel, t]);
+/** Undoes freezeAt() and ends the Trace the way the gallery's endTrace() does (class and aria-pressed). */
+const unfreeze = (page, figSel, id) => page.evaluate(([sel, id]) => {
+  for (const [el, st] of window.__ht3Saved ?? []) { if (st == null) el.removeAttribute('style'); else el.setAttribute('style', st); }
+  window.__ht3Saved = null;
+  document.querySelector(sel).classList.remove('tracing');
+  document.getElementById(`${id}-trace`).setAttribute('aria-pressed', 'false');
+}, [figSel, id]);
+const click = (page, sel) => page.evaluate(s => { const b = document.querySelector(s); if (!b) throw new Error(`no ${s}`); b.click(); }, sel);
+
+/**
+ * Gate block HT-3's fidelity run (card HT3-A5..A7, plan 2.7 L2b, F3, L3, L4): the app's How-to sheet against the
+ * approved gallery, per theme in its own pair of contexts, run side by side. Returns { problems, stats }.
+ * `mutate` (tests only) runs in every app page after the sheet opens, to prove a mutation fails.
+ */
+export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT_FULL, plates = HT_PLATES, widths = [360, 340], shards = 2, mutate = null } = {}) {
+  const t0 = Date.now(), problems = [], stats = { t: { markup: 0, present: 0, capture: 0, diff: 0 }, pairs: 0, off1Max: 0, offMax: 0, tall: [], l2b: 0, f3: 0, anims: 0 };
+  const run = async (theme, subset) => {
+    const P = m => problems.push(`${theme} ${m}`);
+    const app = await openAppTrain(browser, port, theme, { onError: m => P(`app page error: ${m}`) });
+    const gold = await openGolden(browser, theme, { onError: m => P(`golden page error: ${m}`) });
+    const figSel = { app: 'dialog.sheet.ht .ht-plate[data-mode="normal"]', golden: id => `#card-${id} .plate[data-mode="normal"]` };
+    let width = DEVICE.viewport.width, withM = false;
+    const both = async fn => { await Promise.all([fn(app.page, 'app'), fn(gold.page, 'golden')]); };
+    const check = async (id, label, { markup = true } = {}) => {
+      await settleApp(app.page);
+      let tk = Date.now(); const lap = k => { const n = Date.now(); stats.t[k] += n - tk; tk = n; };
+      if (markup) {
+        await unpresentGolden(gold.page);
+        const [ga, aa] = await Promise.all([blockMarkup(gold.page, 'golden', id, withM), blockMarkup(app.page, 'app', id)]);
+        stats.f3++;
+        if (ga !== aa) { let i = 0; while (ga[i] === aa[i]) i++; P(`${id} ${label} F3: the block markup differs at char ${i}: app …${aa.slice(i - 40, i + 80)}… golden …${ga.slice(i - 40, i + 80)}…`); }
+        const [gw, aw] = await Promise.all([l2bWalk(gold.page, G.golden(id), 'golden', withM), l2bWalk(app.page, G.app(id), 'app')]);
+        stats.l2b++;
+        for (const b of l2bCompare(gw, aw, `${id} ${label} L2b`)) P(b);
+      }
+      lap('markup');
+      let ao = await appOffset(app.page), tall = false;
+      const fits = async () => { try { await region(app.page, G.app(id), 'app'); return true; } catch { return false; } };
+      if (ao.scrolls || !(await fits())) {
+        tall = true; stats.tall.push(`${theme}/${id}/${label}@${width}`);
+        await Promise.all([app.page.setViewportSize({ width, height: 1400 }), gold.page.setViewportSize({ width, height: 1400 })]);
+        await settleApp(app.page);
+        ao = await appOffset(app.page);
+        if (ao.scrolls) P(`${id} ${label}: the sheet still scrolls at ${width}x1400`);
+      }
+      await presentGolden(gold.page, id, ao);
+      lap('present');
+      const [ra, rg] = await Promise.all([region(app.page, G.app(id), 'app'), region(gold.page, G.golden(id), 'golden')]);
+      const exp = width === 390 ? 358 : null;
+      if (ra.blockWidth !== rg.blockWidth || ra.fitWidth !== rg.fitWidth || ra.width !== rg.width || ra.height !== rg.height || ra.zoom !== rg.zoom || (exp && (ra.fitWidth !== exp || ra.zoom !== '1')))
+        P(`${id} ${label} @${width}: widths differ: app .ht-golden ${ra.blockWidth} / .ht-plate-fit ${ra.fitWidth} (zoom ${ra.zoom}), region ${ra.width}x${ra.height}; golden card content ${rg.blockWidth} / .plate-fit ${rg.fitWidth} (zoom ${rg.zoom}), region ${rg.width}x${rg.height}`);
+      else {
+        const [a, g] = await Promise.all([capture(app.page, ra), capture(gold.page, rg)]);
+        lap('capture');
+        const d = await diffPng(gold.page, a, g);
+        lap('diff');
+        stats.pairs++; stats.offMax = Math.max(stats.offMax, d.off); stats.off1Max = Math.max(stats.off1Max, d.off1);
+        if (d.ink < 0.05) P(`${id} ${label}: the capture is nearly blank (ink ${(d.ink * 100).toFixed(1)} %)`);
+        if (!meetsRule(d) && process.env.HT3_DUMP) {   // diff images for a supervisor decision (plan: never a threshold fix)
+          const { writeFileSync, mkdirSync } = await import('node:fs');
+          mkdirSync(process.env.HT3_DUMP, { recursive: true });
+          const f = `${process.env.HT3_DUMP}/${theme}-${id}-${label.replace(/[^\w@-]/g, '_')}-${width}`;
+          writeFileSync(`${f}-app.png`, a); writeFileSync(`${f}-golden.png`, g);
+        }
+        if (!meetsRule(d)) P(`${id} ${label} @${width}${tall ? 'x1400' : ''} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}); trace/mistake aria-pressed app ${await app.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)} golden ${await gold.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)}`);
+      }
+      if (tall) { await Promise.all([app.page.setViewportSize({ width, height: 844 }), gold.page.setViewportSize({ width, height: 844 })]); await settleApp(app.page); }
+    };
+    const keys = (mode) => app.page.$$eval(`dialog.sheet.ht .ht-plate[data-mode="${mode}"] .plate-callout`, bs => bs.map(b => b.dataset.key));
+    for (const w of [390, ...(full.includes(theme) ? widths : [])]) {
+      width = w;
+      if (w !== 390) {   // the app reopens every sheet at S0; the golden page is reloaded so its cards are at S0 too
+        await Promise.all([app.page.setViewportSize({ width: w, height: 844 }), gold.page.setViewportSize({ width: w, height: 844 })]);
+        await gold.page.reload(); await settle(gold.page);
+        if ((await gold.page.$eval('#sheets', e => e.dataset.theme)) !== theme) P(`golden page lost its theme on reload`);
+      }
+      for (const [id] of subset) {
+        const index = HT_PLATES.findIndex(p => p[0] === id);
+        await openHowTo(app.page, index);
+        withM = false;
+        if (mutate) await app.page.evaluate(mutate, id);
+        if (w === 390) {
+          const txt = await Promise.all([
+            app.page.$$eval('dialog.sheet.ht .sheet-head h2, dialog.sheet.ht .sheet-eyebrow', (els, props) => els.map(e => props.map(p => getComputedStyle(e).getPropertyValue(p))), TEXT_PROPS),
+            gold.page.$$eval(`#card-${id} h3, #card-${id} .sheet-eyebrow`, (els, props) => els.map(e => props.map(p => getComputedStyle(e).getPropertyValue(p))), TEXT_PROPS),
+          ]);
+          if (txt[0].length !== 2 || JSON.stringify(txt[0]) !== JSON.stringify(txt[1])) P(`${id} L2b title/eyebrow text styles: app ${JSON.stringify(txt[0])} vs golden ${JSON.stringify(txt[1])}`);
+        }
+        await check(id, 'N');
+        const deep = full.includes(theme) && w === 390;
+        if (deep) {
+          const nk = await keys('normal');
+          for (const k of nk.slice(1)) { await both(p => click(p, `#${id}-n-${k}`)); await check(id, `N:${k}`); }
+          await both(p => click(p, `#${id}-n-${nk[0]}`));
+        }
+        await both(p => click(p, `#${id}-mistake`)); withM = true;
+        await check(id, 'M');
+        if (deep) {
+          const tk = await keys('mistake');
+          for (const k of tk.slice(1)) { await both(p => click(p, `#${id}-m-${k}`)); await check(id, `M:${k}`); }
+          // HT3-A6: snapshot, hide, change, show, restore; the plate must be back exactly (then L3 again)
+          const r = await app.page.evaluate(() => {
+            const g = document.querySelector('dialog.sheet.ht .ht-golden'), api = g.htPlateApi, fit = g.querySelector('.ht-plate-fit');
+            const s = api.snapshot(); api.setPlateHidden(true);
+            const hid = fit.hidden && fit.inert && !api.slot.hidden && api.slot === g.querySelector('.ht-zoom-slot');
+            api.clearMistake(); const cleared = api.snapshot(); api.setPlateHidden(false); api.restore(s);
+            return { s, hid, cleared, back: api.snapshot(), shown: !fit.hidden && !fit.inert && api.slot.hidden, keys: Object.keys(g).includes('htPlateApi') };
+          });
+          if (!r.hid || !r.shown || r.keys || JSON.stringify(r.back) !== JSON.stringify(r.s) || r.cleared.mode !== 'normal') P(`${id} A6 zoom slot API: ${JSON.stringify(r)}`);
+          await check(id, 'M:after-hide-restore');
+        }
+        await both(p => click(p, `#${id}-mistake`)); withM = true;
+        if (w === 390) {
+          // L4: Trace. The animation lists first, then frames at 0.6 / 1.2 / 1.8 s (full themes) and the 2.4 s frame (every
+          // theme). A frame is frozen, not merely paused: a running (or paused) opacity animation gets its own compositor
+          // layer whose bounds depend on the page around the plate, which moves anti-aliasing by up to 6/255. freezeAt()
+          // writes each animated value at t into the element (commitStyles) and cancels the animation, in both pages alike.
+          await both(p => click(p, `#${id}-trace`));
+          const [la, lg] = await Promise.all([animList(app.page, figSel.app), animList(gold.page, figSel.golden(id))]);
+          stats.anims++;
+          if (!la.length || JSON.stringify(la) !== JSON.stringify(lg)) P(`${id} L4: the Trace animations differ (app ${la.length}, golden ${lg.length}): ${JSON.stringify(la).slice(0, 300)} vs ${JSON.stringify(lg).slice(0, 300)}`);
+          if (full.includes(theme)) {   // Trace ends by itself: .tracing and aria-pressed go within 2.4 s + the last fade + 1 s
+            const ended = sel => document.querySelector(sel).classList.contains('tracing') === false;
+            await both((p, w) => p.waitForFunction(ended, w === 'app' ? figSel.app : figSel.golden(id), { timeout: 3700 }).catch(() => P(`${id} L4: Trace did not end by itself in the ${w} page`)));
+            const pressed = await app.page.$eval(`#${id}-trace`, b => b.getAttribute('aria-pressed'));
+            if (pressed !== 'false') P(`${id} L4: Trace is still aria-pressed=${pressed} after it ended`);
+          } else { await both((p, w) => freezeAt(p, w === 'app' ? figSel.app : figSel.golden(id), null)); await both((p, w) => unfreeze(p, w === 'app' ? figSel.app : figSel.golden(id), id)); }
+          await settleApp(app.page); await settle(gold.page);
+          const shots = [];
+          for (const t of full.includes(theme) ? [600, 1200, 1800, 2400] : [2400]) {
+            // present first: moving the card node later would restart its cancelled CSS animations
+            await presentGolden(gold.page, id, await appOffset(app.page));
+            await both(p => click(p, `#${id}-trace`));
+            await both((p, w) => freezeAt(p, w === 'app' ? figSel.app : figSel.golden(id), t));
+            await check(id, `T@${t}`, { markup: false });
+            if (t === 600 || t === 2400) shots.push(await capture(app.page, await region(app.page, G.app(id), 'app')));
+            await both((p, w) => unfreeze(p, w === 'app' ? figSel.app : figSel.golden(id), id));
+            await unpresentGolden(gold.page);
+          }
+          if (shots.length === 2 && (await diffPng(app.page, shots[0], shots[1])).off === 0) P(`${id} L4: the 0.6 s and 2.4 s Trace frames are identical, so the frame check sees no motion`);
+          await settleApp(app.page); await settle(gold.page);
+          // reduced motion: Trace shows the end state at once
+          await both(p => p.emulateMedia({ reducedMotion: 'reduce' }));
+          await both(p => p.waitForFunction(() => document.documentElement.getAttribute('data-motion') === 'reduce', null, { timeout: 5000 }));
+          await both(p => click(p, `#${id}-trace`));
+          await check(id, 'R:end', { markup: false });
+          await both(p => p.emulateMedia({ reducedMotion: 'no-preference' }));
+          await both(p => p.waitForFunction(() => document.documentElement.getAttribute('data-motion') !== 'reduce', null, { timeout: 5000 }));
+        }
+        await unpresentGolden(gold.page);
+        await closeHowTo(app.page);
+      }
+    }
+    await app.ctx.close(); await gold.ctx.close();
+  };
+  // the full themes carry most of the matrix, so their plates are split over `shards` context pairs each
+  const jobs = themes.flatMap(t => { const n = full.includes(t) ? shards : 1; return [...Array(n)].map((_, k) => [t, plates.filter((_, i) => i % n === k)]).filter(([, ps]) => ps.length); });
+  await Promise.all(jobs.map(([t, ps]) => run(t, ps).catch(e => problems.push(`${t}: ${e.message.split('\n')[0]} ${(e.stack || '').split('\n').filter(l => l.includes('harness.mjs')).slice(0, 3).join(' | ')}`))));
+  stats.ms = Date.now() - t0;
+  return { problems, stats };
+}
+
+/**
+ * Gate block HT-3's sheet behaviour (card HT3-A1, A3, A8): the entry only where approved content exists, S0 on every
+ * open, the mistake figure only after the first Mistake tap, the element budget, Back, Escape and drag-to-close, focus
+ * back on the entry, 44 px targets, and no stored data. One theme, one context. Returns { problems, stats }.
+ */
+export async function ht3Behaviour(browser, port, theme = 'silent-black') {
+  const problems = [], stats = {};
+  const P = m => problems.push(`${theme} ${m}`);
+  const { ctx, page } = await openAppTrain(browser, port, theme, { onError: m => P(`page error: ${m}`) });
+  try {
+    const keysBefore = await page.evaluate(() => Object.keys(localStorage).sort().join(','));
+    const box = async loc => { const b = await loc.boundingBox(); return b ? [b.width, b.height] : null; };
+    // HT3-A1: the controls. Bench press (no approved content) and the custom exercise show no entry.
+    for (const [index, name] of [[HT_ORDER.indexOf(HT_BENCH), 'bench press'], [HT_ORDER.indexOf(HT_CUSTOM.id), 'custom exercise']]) {
+      const card = await openCard(page, index);
+      if (await card.locator('.ht-entry').count()) P(`A1: the ${name} card has a How-to entry`);
+    }
+    for (const [index] of HT_PLATES.entries()) {
+      const card = await openCard(page, index);
+      const entry = card.locator('button.ht-entry');
+      const n = await entry.count(), name = n === 1 ? (await entry.getAttribute('aria-label')) ?? (await entry.innerText()).trim() : null, b = n === 1 ? await box(entry) : null;
+      if (n !== 1 || name !== 'How to do it' || !b || b[0] < 44 || b[1] < 44) P(`A1: ${HT_PLATES[index][1]}: ${n} entries, name ${JSON.stringify(name)}, box ${JSON.stringify(b)}`);
+    }
+    // HT3-A3: S0, the element budget, the mistake figure only after the first tap, the 44 px pills
+    const id = HT_PLATES[0][0], dlg = 'dialog.sheet.ht';
+    const s0 = async () => page.evaluate(([dlg, id]) => {
+      const d = document.querySelector(dlg);
+      if (!d) return null;
+      return { els: d.querySelectorAll('*').length, mistakeFig: !!d.querySelector('.ht-plate[data-mode="mistake"]'), normalShown: !d.querySelector('.ht-plate[data-mode="normal"]').hidden,
+        pressed: [...d.querySelectorAll('.ht-plate[data-mode="normal"] .plate-callout[aria-pressed="true"]')].map(b => b.dataset.key), mistakeOn: document.getElementById(`${id}-mistake`).getAttribute('aria-pressed'),
+        eyebrow: d.querySelector('.sheet-head h2 .sheet-eyebrow')?.textContent, title: d.querySelector('.sheet-head h2')?.lastChild?.textContent, open: d.open };
+    }, [dlg, id]);
+    await openHowTo(page, 0);
+    let st = await s0();
+    stats.elementsS0 = st?.els;
+    const firstKey = st?.pressed?.[0];
+    if (!st || st.els > 700 || st.mistakeFig || !st.normalShown || st.pressed.length !== 1 || st.mistakeOn !== 'false' || st.eyebrow !== 'How to do it' || st.title !== 'Dumbbell Lateral Raise' || !st.open) P(`A3: the first open is not S0 within 700 elements: ${JSON.stringify(st)}`);
+    for (const pill of [`#${id}-trace`, `#${id}-mistake`]) { const b = await box(page.locator(pill)); if (!b || b[0] < 44 || b[1] < 44) P(`A8: ${pill} is ${JSON.stringify(b)}, under 44x44`); }
+    await page.locator(`#${id}-mistake`).click();
+    if (!(await page.locator(`${dlg} .ht-plate[data-mode="mistake"]`).count())) P('A3: the first Mistake tap did not insert the mistake figure');
+    await page.locator(`${dlg} .ht-plate[data-mode="mistake"] .plate-callout`).nth(1).click();
+    if (await page.locator('.form-guide').count()) P('G7: a .form-guide element is inside the open How-to sheet');
+    // Escape (the dialog's cancel) closes; focus goes back to the entry
+    await closeHowTo(page);
+    const focus = await page.evaluate(() => document.activeElement?.className);
+    if (focus !== 'ht-entry') P(`A3: after closing, focus is on "${focus}", not the entry`);
+    // reopen: S0 again (nothing remembered)
+    await openHowTo(page, 0);
+    st = await s0();
+    if (!st || st.mistakeFig || !st.normalShown || st.mistakeOn !== 'false' || JSON.stringify(st.pressed) !== JSON.stringify([firstKey])) P(`A3: a second open is not S0: ${JSON.stringify(st)}`);
+    // Back (Android back and the browser's back both pop the sheet's history entry)
+    await page.goBack();
+    await page.locator(dlg).waitFor({ state: 'detached', timeout: 5000 }).catch(() => P('A3: Back did not close the sheet'));
+    await settleApp(page);
+    // drag-to-close on the sheet's grab bar
+    await openHowTo(page, 0);
+    const g = await page.locator(`${dlg} .sheet-grab`).boundingBox();
+    await page.mouse.move(g.x + g.width / 2, g.y + 2); await page.mouse.down();
+    for (let i = 1; i <= 12; i++) { await page.mouse.move(g.x + g.width / 2, g.y + 2 + i * 40); await page.waitForTimeout(16); }
+    await page.mouse.up();
+    await page.locator(dlg).waitFor({ state: 'detached', timeout: 5000 }).catch(() => P('A3: dragging the sheet down did not close it'));
+    await settleApp(page);
+    const keysAfter = await page.evaluate(() => Object.keys(localStorage).sort().join(','));
+    if (keysAfter !== keysBefore) P(`no new saved data: localStorage keys ${keysBefore} became ${keysAfter}`);
+  } finally { await ctx.close(); }
+  return { problems, stats };
+}
+
+/**
+ * The raster-phase controls for presentGolden (recorded in D-HT3): the golden card in a dialog at phase p and at
+ * p + 128 CSS px must be 0 px apart (the tile period), and at p + 1 must fail the L3 rule (the phase matters, so
+ * aligning it is not a blind spot). Returns problems.
+ */
+export async function presentControls(browser, theme = 'silent-black', id = HT_PLATES[2][0]) {
+  const problems = [];
+  const shots = [];
+  for (const extra of [0, 128, 1]) {
+    const { ctx, page } = await openGolden(browser, theme);
+    await presentGolden(page, id, { top: 0, off: 89 }, extra);
+    shots.push({ png: await capture(page, await region(page, G.golden(id), 'golden')), page, ctx });
+  }
+  const d128 = await diffPng(shots[0].page, shots[0].png, shots[1].png), d1 = await diffPng(shots[0].page, shots[0].png, shots[2].png);
+  if (!identical(d128)) problems.push(`present control: the golden at phase p and p+128 differs (${d128.off} px), so the 128 px period is wrong`);
+  if (meetsRule(d1)) problems.push(`present control: the golden at phase p and p+1 meets the rule (${d1.off} px), so the phase check is blind`);
+  for (const s of shots) await s.ctx.close();
+  return { problems, d128: d128.off, d1: d1.off };
+}

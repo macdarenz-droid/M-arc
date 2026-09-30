@@ -5582,19 +5582,26 @@ for (const theme of ['silent-black', 'paper']) {
 
 // FG-OFF: the owner paused the form-guide animation (2026-09-29; backup branch claude/backup-fg-2026-09-29-main).
 // A2: the build holds no form-guide player or exercise-guide chunk, and no JS or CSS asset carries form-guide
-// markup (fg-/fg4- classes, .form-guide, the rig id, the button label). A1: the open lateral-raise card (a guided
-// exercise before FG-OFF) shows its "Why this target" row with no "How to do it" button, in Silent Black and Paper.
+// markup (fg-/fg4- classes, .form-guide, the rig id). A1: the open lateral-raise card (a guided exercise before
+// FG-OFF) shows its "Why this target" row with no old guide button, in Silent Black and Paper.
+// D-HT1 (owner approval 2026-09-30, HT-3): "How to do it" returns only as the approved Technical Plate. G3: the label
+// is in the entry chunk and in no other asset. G6: exactly one 44 px entry on the lateral-raise card, none on bench
+// press, and it opens the plate sheet. G7 also covers the open How-to sheet.
 {
   const tag = 'FG-OFF';
   const assets = join(ROOT, 'www/assets');
   const files = readdirSync(assets);
   const guideChunks = files.filter(f => /^(FormGuidePlayer|ExercisePlayer|lib_[a-z_]+)-.*\.js$/.test(f));
   if (guideChunks.length) errors.push(`${tag} A2: form-guide chunks in the build: ${guideChunks.join(', ')}`);
-  const probes = [/(?<![\w])fg4?-[a-z]/, /form-guide/, /marc-formguide-rig/, /FormGuidePlayer/, /How to do it/];
+  const probes = [/(?<![\w])fg4?-[a-z]/, /form-guide/, /marc-formguide-rig/, /FormGuidePlayer/];
+  const entryChunk = (readFileSync(join(ROOT, 'www/index.html'), 'utf8').match(/<script[^>]+src="\.\/assets\/([^"]+\.js)"/) ?? [])[1];
+  if (!entryChunk || !/^index-[\w-]+\.js$/.test(entryChunk)) errors.push(`${tag} G3: no index-*.js entry chunk in www/index.html (${entryChunk})`);
   for (const f of files.filter(f => /\.(js|css)$/.test(f))) {
     const text = readFileSync(join(assets, f), 'utf8');
     const hit = probes.find(p => p.test(text));
     if (hit) errors.push(`${tag} A2: ${f} holds form-guide markup (${hit})`);
+    const labels = (text.match(/How to do it/g) ?? []).length;
+    if (f === entryChunk ? labels < 1 : labels > 0) errors.push(`${tag} G3: "How to do it" occurs ${labels} times in ${f}; it belongs in the entry chunk ${entryChunk} only`);
   }
   const seed = (t) => {
     localStorage.setItem('marc.theme', t);
@@ -5624,8 +5631,21 @@ for (const theme of ['silent-black', 'paper']) {
     const card = page.locator('.card.exercise').nth(0);
     if (!(await visible(card.locator('.why-toggle')))) errors.push(`${tag} ${theme} A1: the lateral raise card is not open (no "Why this target" row)`);
     if (await card.locator('.btn-how-to').count()) errors.push(`${tag} ${theme} A1: a .btn-how-to button is on the open card`);
-    if (await page.getByText('How to do it').count()) errors.push(`${tag} ${theme} A1: "How to do it" is on the Train page`);
+    const entry = card.locator('button.ht-entry'), eb = (await entry.count()) === 1 ? await entry.boundingBox() : null;
+    const entryName = eb ? await entry.evaluate(b => (b.getAttribute('aria-label') ?? b.textContent).trim()) : null;
+    if (!eb || entryName !== 'How to do it' || eb.width < 44 || eb.height < 44) errors.push(`${tag} ${theme} G6: the lateral raise card needs exactly one button.ht-entry named "How to do it" of at least 44x44 (${await entry.count()} found, name ${JSON.stringify(entryName)}, box ${JSON.stringify(eb)})`);
+    if ((await page.getByText('How to do it').count()) !== 1) errors.push(`${tag} ${theme} G6: "How to do it" is on the Train page ${await page.getByText('How to do it').count()} times, expected once`);
     if (await page.locator('.form-guide').count()) errors.push(`${tag} ${theme} A1: a .form-guide element is on the Train page`);
+    if (eb) {
+      await entry.click();
+      if (!(await visible(page.locator('dialog .ht-plate-fit')))) errors.push(`${tag} ${theme} G6: tapping the entry opened no dialog with .ht-plate-fit`);
+      if (await page.locator('.form-guide').count()) errors.push(`${tag} ${theme} G7: a .form-guide element is inside the open How-to sheet`);
+      await page.keyboard.press('Escape'); await page.waitForTimeout(400);
+    }
+    const bench = page.locator('.card.exercise').nth(1);
+    await bench.locator('.ex-head').click(); await page.waitForTimeout(300);
+    if (!(await visible(bench.locator('.why-toggle')))) errors.push(`${tag} ${theme} G6: the bench press card did not open`);
+    if (await bench.locator('.ht-entry').count()) errors.push(`${tag} ${theme} G6: the bench press card (no approved content) has a How-to entry`);
     await ctx.close();
   }
 }
@@ -5752,8 +5772,32 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// HT-3: the How-to sheet (card HT-3; plan 2.7 L2b, F3, L3, L4; D-HT1, D-HT3). The app's sheet, opened from the real
+// Train entry, against the approved gallery (tests/howto/golden, served offline with the app's Inter woff2), per theme
+// side by side: every element's box (±0.01 px) and computed style, the block markup, and the pixels (no channel off by
+// more than 1/255, at most 0.02 % off by 1) for 8 plates x 5 themes x {normal, mistake}, every callout and tell and
+// 360/340 px in Silent Black and Paper, the Trace animation lists, frames at 0.6/1.2/1.8 s (2 themes) and 2.4 s,
+// and the reduced-motion end state (all themes). Pixel captures present the golden card in a modal dialog at the
+// app's raster phase and run with LCD text off, like a phone (D-HT3); two controls prove that choice is not blind.
+// Also: the entry only where approved content exists (bench press and a custom exercise have none), S0 on every open,
+// the S0 element budget, Back / Escape / drag-to-close, focus back on the entry, 44 px targets, no stored data.
+{
+  const tag = 'HT-3';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const ht3 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
+  try {
+    const [fid, beh, ctl] = await Promise.all([H.ht3Fidelity(ht3, PORT), H.ht3Behaviour(ht3, PORT, 'paper'), H.presentControls(ht3)]);
+    for (const p of [...fid.problems, ...beh.problems, ...ctl.problems]) errors.push(`${tag}: ${p}`);
+    if (fid.stats.pairs < 300) errors.push(`${tag}: only ${fid.stats.pairs} pixel pairs compared, expected the full matrix (>= 300)`);
+    console.log(`${tag}: ${fid.stats.pairs} pixel pairs (max ${fid.stats.offMax} px off, ${fid.stats.off1Max} off by 1), ${fid.stats.l2b} L2b walks, ${fid.stats.f3} F3 markup compares, ${fid.stats.anims} Trace animation lists, phase ms ${JSON.stringify(fid.stats.t)}, taller viewport for ${fid.stats.tall.length} captures${fid.stats.tall.length ? ` (${fid.stats.tall.join(', ')})` : ''}; S0 ${beh.stats.elementsS0} elements; controls: phase +128 ${ctl.d128} px, +1 ${ctl.d1} px; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally {
+    await ht3.close();
+  }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no form-guide chunk or markup, no "How to do it" on Train) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified.');
