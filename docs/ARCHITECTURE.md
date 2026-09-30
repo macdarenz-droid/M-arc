@@ -33,6 +33,7 @@ Rules of thumb:
 - Screens read `core/store` signals and change state only through `update()`.
 - The main bundle never imports `escobar/session`: Escobar loads on first use. The same goes for pinned cards on Today.
 - Copy is plain words. No "backend", "authority" or version numbers in the UI, apart from the version line in Settings.
+- UI copy never talks down to users or states the obvious, and the app explains nothing unless Google Play requires it or the owner explicitly asked for it (owner, 2026-10-01, D-COPY1-1). Labels that name a control or show data are not explaining and stay. The lines Play requires are listed in `docs/PLAY-SUBMISSION.md` ("In-app text Play requires"); they stay and must be true. `tests/copy-1.test.ts` pins every line COPY-1 removed.
 
 ## State and side stores
 

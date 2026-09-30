@@ -118,7 +118,7 @@ export function ProposalCard({ p, conversationId }: { p: ProposalRecord; convers
       {p.status === 'applied' && <div class="small row" style={{ gap: 8 }}><span class="muted">Applied</span>{open && <button type="button" class="esc-link" onClick={() => act('undo')}>Undo</button>}</div>}
       {p.status === 'dismissed' && <div class="small muted">Dismissed</div>}
       {p.status === 'undone' && <div class="small muted">Undone</div>}
-      {p.status === 'stale' && <div class="small muted">Out of date. Ask again for a fresh one.</div>}
+      {p.status === 'stale' && <div class="small muted">Out of date.</div>}
       {p.status === 'failed' && <div class="small muted">Couldn’t apply this.</div>}
     </Card>
   );

@@ -5987,6 +5987,61 @@ for (const theme of ['silent-black', 'paper']) {
   console.log(`${tag} HT4-A6: state driver self-check, ${gb.IDS.length} exercises x ${gb.THEMES.length} themes, ${selfCheckBad} problems, no-match throw ${captureThrew ? 'verified' : 'NOT verified'}`);
 }
 
+// COPY-1 (owner, 2026-10-01; D-COPY1-1, D-COPY1-2): the Settings footer shows the owner's rights line in the hint
+// style, directly under the logo and above the version line, in all 5 themes; and the Settings sheet no longer
+// carries the explaining lines COPY-1 removed. The probe fails if it cannot see the footer or the sheet's text at all.
+// (The medical line stays pinned by PLAY-1's block until the supervisor settles that block; see the COPY-1 PR.)
+{
+  const RIGHTS = '© 2026 Marc Darenz. All rights reserved.';
+  const GONE = [
+    'Each machine keeps its own entry unit', "Swaps today's reminder", 'Android may deliver the rest alert',
+    'Your choice stays on even if Android drops the queue', 'Always on when your phone asks for less motion',
+    'Android haptics', 'Browser vibration', 'Stays on while a workout is live', 'Everything stays on this device',
+    'only what broke and where', 'Export a backup first if unsure', 'nothing else leaves the phone', 'Nothing leaves the phone',
+    'Leave empty for the built-in server',
+  ];
+  for (const theme of themes) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    const tag = `COPY-1 ${theme}`;
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await page.addInitScript(([legacyJson, t]) => {
+      localStorage.setItem('marc.theme', t);
+      if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+    }, [JSON.stringify(legacy), theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+    await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+    const rights = page.locator('dialog[open] [data-palace="settings.rights"]');
+    await rights.scrollIntoViewIfNeeded().catch(() => {});
+    if ((await rights.count()) !== 1) errors.push(`${tag}: expected one rights line in the Settings footer, found ${await rights.count()}`);
+    else if (!(await visible(rights))) errors.push(`${tag}: the rights line is not visible`);
+    else {
+      const f = await rights.evaluate(el => {
+        const box = el.parentElement, logo = box?.querySelector('.logo'), version = document.querySelector('dialog[open] [data-palace="settings.version"]');
+        const r = el.getBoundingClientRect(), l = logo?.getBoundingClientRect(), v = version?.getBoundingClientRect();
+        return {
+          text: el.textContent?.trim(), hint: el.classList.contains('hint'), tag: el.tagName,
+          afterLogo: !!logo && logo.nextElementSibling === el, sameBox: !!version && version.parentElement === box,
+          below: !!l && l.bottom <= r.top + 0.5, above: !!v && r.bottom <= v.top + 0.5, height: r.height,
+        };
+      });
+      if (f.text !== RIGHTS) errors.push(`${tag}: the rights line reads ${JSON.stringify(f.text)}, not ${JSON.stringify(RIGHTS)}`);
+      if (!f.hint || f.tag !== 'P') errors.push(`${tag}: the rights line is not a hint paragraph (tag ${f.tag}, hint ${f.hint})`);
+      if (!f.afterLogo || !f.below) errors.push(`${tag}: the rights line does not sit directly under the logo (${JSON.stringify(f)})`);
+      if (!f.sameBox || !f.above) errors.push(`${tag}: the rights line is not above the version line in the footer (${JSON.stringify(f)})`);
+      if (!(f.height > 0)) errors.push(`${tag}: the rights line has no height`);
+    }
+    const sheetText = await page.locator('dialog[open]').first().innerText().catch(() => '');
+    if (!sheetText.includes('Your data') || !sheetText.includes('Version ')) errors.push(`${tag}: could not read the Settings sheet's text (${sheetText.length} chars)`);
+    else for (const g of GONE) if (sheetText.includes(g)) errors.push(`${tag}: Settings still shows "${g}"`);
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-copy-1-settings-footer.png` });
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith('COPY-1 '))) console.log('COPY-1: Settings footer rights line (under the logo, above the version, hint style) and no removed Settings copy, verified in 5 themes');
+}
+
 await browser.close();
 stopping = true;
 server.kill();

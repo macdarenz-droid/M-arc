@@ -25,9 +25,8 @@ function HallComposer() {
         <IconEscobar size={28} />
         <button type="button" class="esc-hall-input" onClick={() => openEscobar({ detent: 'full' })} disabled={off}>{on ? hint : 'Turn on Escobar'}</button>
       </div>
-      {off && <p class="small muted">Escobar is offline. Your notes below still update.</p>}
+      {off && <p class="small muted">Escobar is offline.</p>}
       {on && !off && <div class="esc-chips">{chips.slice(0, 3).map(c => <button type="button" key={c} class="chip chip-btn" onClick={() => openAndSend(c)}>{c}</button>)}</div>}
-      {!on && <p class="small muted">An AI coach that knows your training and this app. You choose what it sees.</p>}
     </Card>
   );
 }
@@ -61,7 +60,7 @@ function PlansAndAgreements() {
         {o && <div class="small"><b>Today adjusted</b> <span class="muted">{o.reason}</span></div>}
         {pins.map(p => <div key={p.id} class="small"><b>Pinned</b> <span class="muted">{p.title}</span></div>)}
         {agreements.map(a => <div key={a.id} class="small"><b>Agreed</b> <span class="muted">{a.text}</span></div>)}
-        {empty && <p class="small muted">Nothing agreed yet. When you and Escobar settle on a change, it shows here.</p>}
+        {empty && <p class="small muted">Nothing agreed yet.</p>}
       </Card>
     </Section>
   );

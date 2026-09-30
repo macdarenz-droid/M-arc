@@ -37,6 +37,8 @@ import { clearErrorReportQueue, reportCaught, resetErrorReporting } from '@/erro
 export const PRIVACY_POLICY_URL = 'https://macdarenz-droid.github.io/M-arc/privacy/';
 // PLAY-1 (P3): Play's reminder to consult a healthcare professional. Not a contact: no number, no link.
 export const MEDICAL_LINE = 'Not medical advice. For medical advice, diagnosis or treatment, see a healthcare professional.';
+// COPY-1 (D-COPY1-2): the owner asked for a rights line in the footer. The repo has no LICENSE, so all rights are reserved.
+export const RIGHTS_LINE = '© 2026 Marc Darenz. All rights reserved.';
 
 type Snapshot = { state: AppState; escobar: unknown; heart: unknown };
 type PendingRestore = { next: AppState; escobar?: unknown; heart?: unknown; from: string; label: string };
@@ -105,7 +107,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
     flushSave();
     const name = `marc-backup-${new Date().toISOString().slice(0, 10)}.json`;
     try {
-      showToast(await exportText(name, JSON.stringify(buildBackup(), null, 1)));
+      const msg = await exportText(name, JSON.stringify(buildBackup(), null, 1));
+      if (msg) showToast(msg);
       update(x => ({ ...x, lastBackupAt: new Date().toISOString() }));
     } catch (err) { showToast('Export failed'); reportCaught('backup', err); }
   };
@@ -114,7 +117,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
     const to = today.value;
     const from = days ? addDays(to, -(days - 1)) : undefined;
     const csv = sessionsToCsv(s.sessions, p.weightUnit, from, to);
-    try { showToast(await exportText(`marc-sessions-${days ? `${days}d` : 'all'}-${to}.csv`, csv)); } catch { showToast('Export failed'); }
+    try { const msg = await exportText(`marc-sessions-${days ? `${days}d` : 'all'}-${to}.csv`, csv); if (msg) showToast(msg); } catch { showToast('Export failed'); }
   };
   const backupOn = p.backupReminder ?? isNative();
   const backupAge = backupAgeDays(s.lastBackupAt, today.value);
@@ -145,7 +148,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const saveRescue = async () => {
     const raw = rescueRaw();
     if (raw == null) { setRescue(false); return; }
-    try { showToast(await exportText('marc-rescue-data.json', raw)); } catch { showToast('Export failed'); }
+    try { const msg = await exportText('marc-rescue-data.json', raw); if (msg) showToast(msg); } catch { showToast('Export failed'); }
   };
 
   return (
@@ -164,7 +167,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
         <Section title="Training">
           <Card>
-            <Row trailing={<div class="seg" style={{ width: 120 }}><button type="button" aria-pressed={p.weightUnit === 'kg'} onClick={() => setPref({ weightUnit: 'kg' })}>kg</button><button type="button" aria-pressed={p.weightUnit === 'lb'} onClick={() => setPref({ weightUnit: 'lb' })}>lb</button></div>}><span class="small" data-palace="settings.weight-unit">Show weights in</span><div class="hint">History, charts and records. Each machine keeps its own entry unit.</div></Row>
+            <Row trailing={<div class="seg" style={{ width: 120 }}><button type="button" aria-pressed={p.weightUnit === 'kg'} onClick={() => setPref({ weightUnit: 'kg' })}>kg</button><button type="button" aria-pressed={p.weightUnit === 'lb'} onClick={() => setPref({ weightUnit: 'lb' })}>lb</button></div>}><span class="small" data-palace="settings.weight-unit">Show weights in</span></Row>
             <Row trailing={<Button size="sm" onClick={() => setGymsOpen(true)}>Manage</Button>}><span class="small" data-palace="settings.gyms">Gyms and equipment</span><div class="hint">{s.units.gyms.length === 1 ? s.units.gyms[0]!.name : `${s.units.gyms.length} gyms`}</div></Row>
             <Row trailing={<Toggle checked={p.autoRest} onChange={v => setPref({ autoRest: v })} label="Automatic rest timer" />}><span class="small" data-palace="settings.auto-rest">Start rest after each set</span></Row>
             <Row trailing={<div class="row"><Button variant="quiet" size="sm" onClick={() => setPref({ restDefaultSec: Math.max(15, p.restDefaultSec - 15) })}>−15</Button><b class="num small">{p.restDefaultSec}s</b><Button variant="quiet" size="sm" onClick={() => setPref({ restDefaultSec: Math.min(600, p.restDefaultSec + 15) })}>+15</Button></div>}><span class="small" data-palace="settings.rest-length">Rest length</span></Row>
@@ -177,20 +180,19 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <Row trailing={<Toggle checked={p.reminders.enabled} onChange={v => { setPref({ reminders: { ...p.reminders, enabled: v } }); void resyncReminders({ prompt: true }); }} label="Training day reminders" />}><span class="small">Training day reminder</span><div class="hint">{reminderHealth.value.status}</div></Row>
             <Row trailing={<input type="time" style={{ width: 120 }} value={p.reminders.time} onChange={e => { setPref({ reminders: { ...p.reminders, time: (e.target as HTMLInputElement).value } }); void resyncReminders({ prompt: true }); }} />}><span class="small">Time</span></Row>
             <Row trailing={<select style={{ width: 120 }} value={p.reminders.style} onChange={e => { setPref({ reminders: { ...p.reminders, style: (e.target as HTMLSelectElement).value as never } }); void resyncReminders({ prompt: true }); }}><option value="silent">Silent</option><option value="vibrate">Vibrate</option><option value="alert">Alert</option></select>}><span class="small">Style</span></Row>
-            <Row trailing={<Toggle checked={!!p.reminders.readinessSummary} onChange={v => { setPref({ reminders: { ...p.reminders, readinessSummary: v } }); void resyncReminders({ prompt: true }); }} label="Readiness in the reminder" />}><span class="small" data-palace="settings.readiness-reminder">Morning readiness summary</span><div class="hint">Swaps today's reminder for your readiness, when there is one to show.</div></Row>
+            <Row trailing={<Toggle checked={!!p.reminders.readinessSummary} onChange={v => { setPref({ reminders: { ...p.reminders, readinessSummary: v } }); void resyncReminders({ prompt: true }); }} label="Readiness in the reminder" />}><span class="small" data-palace="settings.readiness-reminder">Morning readiness summary</span></Row>
             {isNative() && !exact && (
-              <Row trailing={<Button size="sm" onClick={() => { void requestExactAlarm().then(setExact); }}>Allow</Button>}><span class="small" data-palace="settings.precise-rest">Precise rest alerts</span><div class="hint">Without this, Android may deliver the rest alert a little late.</div></Row>
+              <Row trailing={<Button size="sm" onClick={() => { void requestExactAlarm().then(setExact); }}>Allow</Button>}><span class="small" data-palace="settings.precise-rest">Precise rest alerts</span></Row>
             )}
-            {isNative() && <Button size="sm" onClick={() => { void testRestAlert().then(ok => showToast(ok ? 'Lock the phone; an alert should arrive in 5 s' : 'Notifications are off for M/ARC. Turn them on in the phone settings.')); }}>Test rest alert (5 s)</Button>}
-            <p class="hint">Your choice stays on even if Android drops the queue. The app re-checks and repairs it when you come back.</p>
+            {isNative() && <Button size="sm" onClick={() => { void testRestAlert().then(ok => showToast(ok ? 'Lock the phone. Alert in 5 s.' : 'Notifications are off for M/ARC. Turn them on in the phone settings.')); }}>Test rest alert (5 s)</Button>}
           </Card>
         </Section>
 
         <Section title="Feedback" palace="settings.haptics">
           <Card>
-            <Row trailing={<Toggle checked={motionOn} disabled={osReducedMotion()} onChange={v => setMotionPref(v ? 'reduce' : null)} label="Reduce motion" />}><span class="small">Reduce motion</span><div class="hint">Always on when your phone asks for less motion.</div></Row>
-            <Row trailing={<Toggle checked={p.haptics} onChange={v => { setPref({ haptics: v }); setHapticsEnabled(v); }} label="Haptic feedback" />}><span class="small">Haptic feedback</span><div class="hint">{hapticSupport() === 'native' ? 'Android haptics' : hapticSupport() === 'web' ? 'Browser vibration' : 'No vibration on this device'}</div></Row>
-            <Row trailing={<Toggle checked={keepAwakePref.value} onChange={setKeepAwakePref} label="Keep screen on during workouts" />}><span class="small">Keep screen on during workouts</span><div class="hint">Stays on while a workout is live.</div></Row>
+            <Row trailing={<Toggle checked={motionOn} disabled={osReducedMotion()} onChange={v => setMotionPref(v ? 'reduce' : null)} label="Reduce motion" />}><span class="small">Reduce motion</span>{osReducedMotion() && <div class="hint">Set by your phone</div>}</Row>
+            <Row trailing={<Toggle checked={p.haptics} onChange={v => { setPref({ haptics: v }); setHapticsEnabled(v); }} label="Haptic feedback" />}><span class="small">Haptic feedback</span>{hapticSupport() === 'none' && <div class="hint">No vibration on this device</div>}</Row>
+            <Row trailing={<Toggle checked={keepAwakePref.value} onChange={setKeepAwakePref} label="Keep screen on during workouts" />}><span class="small">Keep screen on during workouts</span></Row>
             <Button size="sm" onClick={() => { void haptic.confirm(); showToast('Sent a test buzz'); }}>Test haptic</Button>
           </Card>
         </Section>
@@ -205,12 +207,11 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Watch and health" palace="settings.health">
           <Card class="stack-sm">
             <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth({ prompt: true }); setHealthFailed(!ok); showToast(ok ? 'Health data updated' : lastHealthError?.message ?? 'Could not read Health Connect'); }}>{s.health.connected ? 'Sync' : 'Connect'}</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'Not connected') : 'Available in the Android app'}</div></Row>
-            {healthFailed && <Row trailing={<Button size="sm" variant="quiet" onClick={() => setHealthDiag(true)}>Details</Button>}><span class="small">{healthSyncTitle(lastHealthError)}</span><div class="hint">See what was allowed and what was read</div></Row>}
+            {healthFailed && <Row trailing={<Button size="sm" variant="quiet" onClick={() => setHealthDiag(true)}>Details</Button>}><span class="small">{healthSyncTitle(lastHealthError)}</span></Row>}
             {watchSupported.value && <Row trailing={<Button size="sm" onClick={() => setWatchOpen(true)}>Open</Button>}><span class="small">Watch</span><div class="hint">{watchStatus.value.state === 'connected' ? `Connected · ${watchStatus.value.deviceName ?? ''}` : 'Not connected'}</div></Row>}
             {watchStatus.value.state === 'connected' && (
               <Row trailing={<Toggle checked={p.rest.mode === 'heart'} onChange={v => setPref({ rest: { ...p.rest, mode: v ? 'heart' : 'time' } })} label="Rest ends by heart rate" />}>
                 <span class="small">Rest ends by heart rate</span>
-                <div class="hint">Falls back to the timer if the signal drops.</div>
               </Row>
             )}
           </Card>
@@ -226,7 +227,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
             <p class="hint" data-palace="settings.last-backup">{backupAge == null ? 'No backup exported yet.' : `Last backup: ${backupAge === 0 ? 'today' : `${backupAge} day${backupAge === 1 ? '' : 's'} ago`}.`}</p>
             <div class="grid-2" data-palace="settings.csv"><Button onClick={() => void exportCsv(90)}>Export CSV (90 days)</Button><Button onClick={() => void exportCsv(null)}>Export CSV (all)</Button></div>
-            {isNative() && <Row trailing={<Toggle checked={backupOn} label="Weekly backup reminder" onChange={v => { setPref({ backupReminder: v }); void syncBackupReminder(v, { prompt: true }); }} />}><span class="small">Weekly backup reminder</span><div class="hint">{backupOn && backupReminderScheduled.value === false ? 'Not set: notifications are off for M/ARC.' : 'Sunday evening, a note to save a backup file.'}</div>{backupOn && backupReminderScheduled.value === false && <Button size="sm" onClick={() => { void syncBackupReminder(true, { prompt: true }).then(ok => { if (!ok) showToast('Notifications are off for M/ARC. Turn them on in the phone settings.'); }); }}>Allow notifications</Button>}</Row>}
+            {isNative() && <Row trailing={<Toggle checked={backupOn} label="Weekly backup reminder" onChange={v => { setPref({ backupReminder: v }); void syncBackupReminder(v, { prompt: true }); }} />}><span class="small">Weekly backup reminder</span><div class="hint">{backupOn && backupReminderScheduled.value === false ? 'Not set: notifications are off for M/ARC.' : 'Sunday evening'}</div>{backupOn && backupReminderScheduled.value === false && <Button size="sm" onClick={() => { void syncBackupReminder(true, { prompt: true }).then(ok => { if (!ok) showToast('Notifications are off for M/ARC. Turn them on in the phone settings.'); }); }}>Allow notifications</Button>}</Row>}
             {pending && (
               <Card class="card-quiet" role="alertdialog">
                 <p class="small">Replace <b>{s.sessions.length}</b> sessions on this device with <b>{pending.next.sessions.length}</b> sessions from {pending.from}?</p>
@@ -235,21 +236,20 @@ export function Settings({ onClose }: { onClose: () => void }) {
             )}
             {rescue && (
               <Row trailing={<div class="row"><Button size="sm" onClick={() => void saveRescue()}>Save rescue file</Button><HoldButton size="sm" label="Hold to delete" onConfirm={() => { deleteRescueCopy(); setRescue(false); showToast('Rescue copy deleted'); }} /></div>}>
-                <span class="small" data-palace="settings.rescue">Unreadable data kept aside</span><div class="hint">A copy of saved data the app could not read at start.</div>
+                <span class="small" data-palace="settings.rescue">Unreadable data kept aside</span>
               </Row>
             )}
-            <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
+            <p class="hint">Loaded from: {bootSource.value}.</p>
             <Row trailing={<Toggle checked={!!p.errorReports} label="Send anonymous error reports" onChange={v => { setPref({ errorReports: v, errorReportsAsked: true }); if (!v) clearErrorReportQueue(); }} />}>
               <span class="small" data-palace="settings.error-reports">Send anonymous error reports</span>
-              <div class="hint">No workouts, health data or personal details — only what broke and where. Off by default.</div>
             </Row>
             <a class="btn" href={PRIVACY_POLICY_URL} target="_blank" rel="noopener noreferrer" data-palace="settings.privacy">Privacy policy</a>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
-              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { resetEverything(); setConfirmReset(false); showToast('Workout data reset'); void haptic.confirm(); }}>Reset everything</Button></div></Card>
+              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device?</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { resetEverything(); setConfirmReset(false); showToast('Workout data reset'); void haptic.confirm(); }}>Reset everything</Button></div></Card>
             )}
           </Card>
         </Section>
-        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><p class="hint" style={{ textAlign: 'center' }} data-palace="settings.medical">{MEDICAL_LINE}</p><span class="hint" data-palace="settings.version">Version {APP_VERSION}</span></div>
+        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><p class="hint" style={{ textAlign: 'center' }} data-palace="settings.rights">{RIGHTS_LINE}</p><p class="hint" style={{ textAlign: 'center' }} data-palace="settings.medical">{MEDICAL_LINE}</p><span class="hint" data-palace="settings.version">Version {APP_VERSION}</span></div>
       </div>
     </Sheet>
   );

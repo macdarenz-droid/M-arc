@@ -19,9 +19,25 @@ Google Play's health policy (https://support.google.com/googleplay/android-devel
 
 > M/ARC is not a medical device and does not diagnose, treat, cure, or prevent any medical condition.
 
-The same policy also asks apps to remind users to consult a healthcare professional. That reminder lives in the app, in Settings (card PLAY-1), not in the listing.
+The same policy then says: "Apps must also remind users to consult a healthcare professional for medical advice, diagnosis, or treatment." It names no place for this reminder, while every other placement in that section names the app description. So the reminder goes **in the store description**, right after the line above:
+
+> Consult a healthcare professional for medical advice, diagnosis, or treatment.
+
+Play does not require it inside the app (COPY-1 research, read 2026-09-30, D-COPY1-3). The only "within the app" wording is a best practice ("should … may include") in https://support.google.com/googleplay/android-developer/answer/13996367, for apps that claim to help diagnose or manage a health condition; M/ARC makes no such claim. No Google page asks for a "not medical advice" line. The in-app Settings line from card PLAY-1 is therefore to be removed (owner, 2026-10-01). Until the supervisor settles PLAY-1's gate block, which still pins it, the app keeps showing it.
+
+Risk: a Play reviewer could read the reminder as expected in the app. The coach's safety cards (`src/escobar/ui/Escalation.tsx`, owner decision LR-23) stay in the app; the How-to safety line ("General guidance, not medical advice. …", owner-approved) is not rendered in the app yet.
 
 The developer contact email goes in the Play Console's contact field, not in the app (owner decision LR-23: no contacts in the app UI).
+
+## In-app text Play requires (COPY-1 research, 2026-09-30)
+
+Owner rule (D-COPY1-1): the app explains nothing unless Google Play requires it or the owner asked for it. These are the lines Play requires in the app; they stay, and they must be true:
+
+- A privacy policy link in the app: Settings → Your data → "Privacy policy" (https://support.google.com/googleplay/android-developer/answer/16679511, https://support.google.com/googleplay/android-developer/answer/9888076).
+- The Health Connect rationale screen with the same privacy policy (`native/PermissionsRationaleActivity.java`; https://developer.android.com/health-and-fitness/guides/health-connect/develop/get-started).
+- A prominent disclosure and an affirmative consent before the coach sends data: Escobar's first-enable Explainer and its two sharing switches, off by default (`src/escobar/ui/EscobarSheet.tsx`; answer/9888076, answer/12579724).
+- A disclosure for the Bluetooth and location permissions the watch uses: the Watch sheet's line "Watch readings stay on this phone. Session heart rate goes to Escobar only if Share health data is on." (answer/13996367).
+- A way to report offensive AI replies without leaving the app (below).
 
 **AI-generated content:** Play requires an in-app way to report or flag offensive AI replies (https://support.google.com/googleplay/android-developer/answer/13985936). Card ESC-REPORT adds it, once the owner approves the data it sends. When it lands, add that data to the Data safety answers below. Until then, this is a release blocker.
 

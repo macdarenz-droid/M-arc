@@ -24,10 +24,10 @@ export function progressValue(h: ExerciseSessionSummary, mode: ResistanceMode): 
   return h.bestE1rm || h.topKg || h.bestReps;
 }
 
-/** The hint under the card, describing what the trend actually follows for this mode. */
+/** The caption under the card: what the trend line plots for this mode (COPY-1: a caption, no explanation). */
 export function progressHint(mode: ResistanceMode): string {
-  if (mode === 'assisted') return 'Trend follows the assistance: less help is progress; with the same help, more reps.';
-  if (mode === 'bodyweight') return 'Trend follows your best reps.';
-  if (mode === 'duration') return 'Trend follows your longest hold.';
-  return 'Trend uses an estimated one-rep strength score from sets of 10 reps or fewer. It is a guide, not a test.';
+  if (mode === 'assisted') return 'Less assistance, then more reps';
+  if (mode === 'bodyweight') return 'Best reps';
+  if (mode === 'duration') return 'Longest hold';
+  return 'Estimated one-rep max';
 }
