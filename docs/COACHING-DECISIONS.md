@@ -1078,6 +1078,24 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the poly rope composer lives in `tools/plates/library/eq/rope.mjs` on this branch. It keeps the pilot's API (`rope`, `ropeGeometry`, `ROPE_ITEMS`), so `specs/rope_triceps_pushdown.mjs` runs unchanged. `eq/parts.mjs` is copied verbatim from claude/lib-8-pilot-a, so the two branches merge it cleanly. `ROPE_ITEMS` is now 5: the cable, 2 strands, the ferrule and the Mistake cable twin.
   **Why**: the card says the arms-machines drawer adopts this rope.
   **Source**: LIB-25 card, step 4.
+
+## LIB-26 flat palm (LIB-26 builder, 2026-09-30)
+
+- **Decided**: the option is a spec field, `hand: 'flat'` for both hands or `{ l, r }` for one. plate.mjs passes it to `bodyShapes`, next to `armsFront`. The shape is `palm.<side>`, and plate.mjs's `partOf` maps it to `arm.<side>`, so it is part of the arm's outline union and of the Mistake mask. When the option is not set, nothing in plate.mjs or body.mjs changes.
+  **Why**: the hand is a body shape, not equipment. A spec-level field is the smallest additive switch: the same pattern as `armsFront`, with no change to pose data or to the saved shape of anything.
+  **Source**: LIB-26 card; body.mjs `bodyShapes`; plate.mjs `drawPose`, `partOf`.
+
+- **Decided**: the palm is one closed outline from the wrist to the fingertips. The fingertips are `WINTER.hand` from the wrist, along the wrist→grip axis. The outline starts on the forearm's distal circle (`RADII.fore[2]`) and reaches a little behind the wrist, so the union has no gap. The palm side (screen-down) is straight at `-RADII.fore[2]` up to the knuckles, and the back of the hand drops toward the fingertips. A hand pointing at the camera falls back to the forearm's end-on circle.
+  **Why**: a flat run on the palm side is what makes the hand read as flat on the floor. Using the forearm's own distal radius means a spec only has to place the wrist `RADII.fore[2] × H` above a surface (`_test_flat` does exactly that). The join test checks three things: the wrist lies inside both the palm and the forearm, and the palm starts on the forearm's distal circle. An offset palm fails it, both in the test and as an engine mutation.
+  **Source**: the card ("palm capsule joined to the forearm … no gap at the wrist"); the 2.6 cm gap and 8.7 cm fist offset measured on #109.
+
+- **Decided**: the engine test `_test_flat` is a high plank on flat palms. Its end pose rocks the body forward over fixed hands. Its Mistake puts the hands ahead of the shoulders, so the moving palm is outlined. Each pose is solved with a short Newton loop inside the spec. The engine test cannot import the library solver, because vendored specs import only from the engine.
+  **Why**: this keeps the palm on the floor in every pose, and the checks read 0 cm. A knee-drive end pose was tried first and dropped: its interpolated ghosts pushed the foot below the floor line.
+  **Source**: render and report of `_test_flat` (the issues list is empty in the normal and Mistake views).
+
+- **Decided**: the branch is built on LIB-25 (claude/lib-25-poly-primitive) and the draft PR targets that branch.
+  **Why**: the card merges LIB-26 after LIB-25, and both edit the same MANIFEST pin and the same source list in golden.mjs. Stacking them avoids a conflict on the vendor lock. After LIB-25 merges, GitHub moves the PR's base to `main`.
+  **Source**: LIB-26 card; plan 2.8.
 ## HT-4 golden-B lock, content types and the derivation test: choices the card left open (HT-4 builder, 2026-09-30)
 
 - **Decided**: `content-types.ts`'s `PointRef` uses the plate engine's real convention (`{ at, pose?, off? }` or `{ along, t, off? }`), not GA section 4.1's literal `{ landmark, pose?, dx?, dy? }` spelling.
@@ -1203,3 +1221,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **D-DOC6-1. A heading is a short label.** One to three words, a noun phrase: never a sentence, a "What ..."/"How ..." question, a qualifier ("off by default", ", and where") or a leading "The", "This" or "About"; the text under it explains it. The page title stays "M/ARC Privacy Policy" (Google Play asks for the policy to be labelled as a privacy policy). Policy headings: "What stays on your phone" -> "On-device data", "The online coach (Escobar), off by default" -> "Online coach", the subhead "Who receives it" -> "Recipients", "Error reports, off by default" -> "Error reports", "How your data is protected" -> "Data protection", "Deleting your data" -> "Data deletion"; "Children", "Changes" and "Applicable law" stay. No body text changes: the facts those headings carried are already in the body ("Escobar, the online coach"; both features "are off until you turn them on"; "This data sits in the app's private storage on your phone"). The website's own headings ("About this policy" -> "Policy", the /privacy/ summary, home, install and 404) change on `claude/app-website-design-671lk8`, where the policy copy stays byte-identical to this one.
   **Why**: owner, 2026-10-01, on /privacy/: "Trim to, Policy. Not about this policy. Or trim to a proper header. Stop describing the headers in sentences. Cause supporting contents already describes the header". Recorded in AGENTS.md (UI copy), `.claude/owner-rules.md` rule 8 and `docs/ARCHITECTURE.md` (rules of thumb).
   **Source**: DOC-6 card; `docs/PRIVACY-POLICY.md`.
+## Correction to "LIB-26 flat palm": what the partOf mapping does (LIB-26 builder, 2026-09-30)
+
+- **Correction**: the first LIB-26 entry says `partOf` maps `palm.<side>` to `arm.<side>` "so it is part of the arm's outline union and of the Mistake mask". That is wrong. The union comes from the palm's group, `grp('arm', sd)` in body.mjs. The `partOf` mapping matters only where a spec filters by part: `mistake.parts` and the ghost or start parts (plate.mjs:114-116, 208-210). Without it, a Mistake limited to `arm.r` would silently leave the palm out. A test now covers this: a Mistake filtered to `arm.r` outlines `palm.r`, and one filtered to `arm.l` does not. It fails when `'palm'` is removed from `partOf`.
+  **Why**: this is the review's medium finding on #123. The older entry is left unchanged, because this file is append-only.
