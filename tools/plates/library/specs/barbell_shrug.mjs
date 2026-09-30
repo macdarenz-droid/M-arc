@@ -93,7 +93,9 @@ const start = key(0);
 const end = key(SHRUG);
 const barOf = pose => [0, pose.reach.r.at[1], pose.reach.r.at[2]];
 // Start bar dot, dashed (engine limit: the start layer never draws moving equipment; barbell_back_squat's workaround).
-const B0 = barOf(start), START_DOT = Array.from({ length: 17 }, (_, k) => [0, B0[1] + 0.025 * Math.sin(k * Math.PI / 8), B0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
+// The bar end-on is the 28 mm shaft inside the fist (as golden lat_pulldown), not the 50 mm sleeve: at this 1.7x zoom a
+// sleeve ring filled the fist, so the fist read as the bar and the hand as stopping short of it (critic run 2, R3).
+const B0 = barOf(start), START_DOT = Array.from({ length: 17 }, (_, k) => [0, B0[1] + BAR_R * Math.sin(k * Math.PI / 8), B0[2] + BAR_R * Math.cos(k * Math.PI / 8)]);
 
 // Start neck / trapezius / shoulder contour as hidden lines: the start torso outline where it lies inside the end
 // figure and more than 1.5 mm from the end torso outline (i.e. only where the two differ: the shoulders).
@@ -133,7 +135,7 @@ export default {
       const b = [0, lm.grips[1], lm.grips[2]], moved = ctx.pose === 'end' || ctx.pose === 'mistake';
       return [
         ...(moved ? [{ type: 'barbell', at: b, plates: [0.045], part: 'plate', z: 'back' }] : []),
-        { type: 'pulley', at: b, r: 0.025, part: 'bar', z: 'front' },
+        { type: 'pulley', at: b, r: BAR_R, part: 'bar', z: 'front' },
         ...(ctx.pose === 'end' && !ctx.mistake ? [...START_SHOULDERS, { type: 'line', cls: 'eq-cable m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
       ];
     },

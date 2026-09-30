@@ -20,10 +20,11 @@
 //   (CARD). Neck in line with the thorax.
 //  Grip: pronated, hands 52 cm apart (slightly wider than the 45 cm shoulder width).
 //  Start: shoulder blades 2 cm protracted (arms long); bar over mid-foot, just below the knees.
-//  End: bar touching the torso at the lower chest / upper stomach (thorax point 0.70 H, 1.9 cm off the drawn
-//   front surface = shaft radius + clothing), elbows driven back past the back line (IK pole toward the back of the
-//   thorax, 35% out to the side: a moderate flare; with the bar on the lower chest the elbow flexes ~137 deg and the
-//   elbow sits just above the back line in the side view), shoulder blades squeezed back 4 cm.
+//  End (critic run 2 fix): bar touching the belly just above the navel (c5), 1.9 cm off the drawn front surface
+//   (shaft radius + clothing), SOLVED to sit over mid-foot, so the bar path is one vertical line on the plumb datum.
+//   The elbow is driven back and up until it sits straight above the bar (forearm vertical in the side view): IK
+//   pole toward the back of the thorax with a SOLVED lateral share (report angles: shoulder elev 60 deg in the
+//   abduction plane, elbow 120 deg), shoulder blades squeezed back 4 cm.
 // Research card (docs/research/howto/cards/barbell_row.json, card v2, verified at claude/libht-research e2a70bc):
 //  callouts = plate.checkpoints (Flat back c4, Soft knees c3, Bar to belly c5); Mistake = plate.mistake (torso
 //  swings up to heave the bar, c7; tells from c7 and handlingMistakes[0]); tempo = plate.tempo (up 1 s, down 2 s,
@@ -42,8 +43,6 @@ const BAR_GAP = 0.01;                                     // hanging bar surface
 const SHAFT_R = 0.014;                                    // 28 mm shaft
 const TRUNK_INCL = 60, SPINE = 5, KNEE = 20;              // CARD
 const PRO_START = 2, PRO_END = -4;                        // shoulder blades (cm): long arms -> squeezed back
-const ELBOW_OUT = 0.35;                                  // elbow pole: lateral share (flare ~30-45 deg from the torso)
-const BAR_T = [0.70, 0.065 + (SHAFT_R + 0.005) / H];     // bar centre at the end, standing thorax frame (y, z in H)
 
 const toe = s => [s * Math.sin(TOE_OUT * R), 0, Math.cos(TOE_OUT * R)];
 const feet = { l: { at: [FOOT_X, 0, 0], toe: toe(1) }, r: { at: [-FOOT_X, 0, 0], toe: toe(-1) } };
@@ -83,27 +82,33 @@ const start0 = body(ROOT_Y, ROOT_Z, PRO_START);
 const START_BAR = barFor(landmarksOf(start0, H));
 const start = { ...start0, reach: hands(START_BAR, [-0.2, 0, -1]) };
 
-// End bar spot: affine combination of three thorax landmarks (as barbell_back_squat), so it sits on the thorax.
-const REFP = { neck: [0.855, -0.02], backUpper: [0.75, -0.072], sternum: [0.80, 0.07] };
-const W = (() => {
-  const [a, b, c] = [REFP.neck, REFP.backUpper, REFP.sternum];
-  const M = [[a[0] - c[0], b[0] - c[0]], [a[1] - c[1], b[1] - c[1]]], v = [BAR_T[0] - c[0], BAR_T[1] - c[1]];
-  const det = M[0][0] * M[1][1] - M[0][1] * M[1][0];
-  const wa = (v[0] * M[1][1] - M[0][1] * v[1]) / det, wb = (M[0][0] * v[1] - v[0] * M[1][0]) / det;
-  return { neck: wa, backUpper: wb, sternum: 1 - wa - wb };
-})();
+// End bar spot (critic run 2, R1): the bar finishes on the belly just above the navel (c5 "toward the belly button")
+// and straight over mid-foot, so the whole bar path is one vertical line on the plumb datum. barOn(lm, t) is a point
+// on the front surface line navel -> chest at fraction t, pushed out by the shaft radius + 5 mm clothing; BAR_T is
+// SOLVED so that point sits at z = 0 (mid-foot) in the end pose.
+const CLEAR = SHAFT_R + 0.005;
+const barOn = (lm, t) => {
+  const d = [lm.chest[1] - lm.navel[1], lm.chest[2] - lm.navel[2]], L = Math.hypot(...d), u = d.map(v => v / L);
+  let n = [-u[1], u[0]];
+  if (n[0] * (lm.chest[1] - lm.backUpper[1]) + n[1] * (lm.chest[2] - lm.backUpper[2]) < 0) n = n.map(v => -v);
+  return [0, lm.navel[1] + d[0] * t + n[0] * CLEAR, lm.navel[2] + d[1] * t + n[1] * CLEAR];
+};
 const end0 = body(ROOT_Y, ROOT_Z, PRO_END), LE0 = landmarksOf(end0, H);
-const END_BAR = [0, 1, 2].map(i => i === 0 ? 0 : W.neck * LE0.neck[i] + W.backUpper * LE0.backUpper[i] + W.sternum * LE0.sternum[i]);
-// Elbow pole: toward the back of the thorax (world) and ELBOW_OUT out to the side.
+const BAR_T = solve(t => barOn(LE0, t)[2], -0.5, 1);
+const END_BAR = barOn(LE0, BAR_T);
+// Elbow pole: toward the back of the thorax (world) and a lateral share SOLVED so the elbow sits straight above the
+// bar in the side view (critic run 2, R1: the forearm hangs vertical at the top, as a strict row finishes).
 const dorsal = (() => { const d = [0, 1, 2].map(i => LE0.backUpper[i] - LE0.chest[i]), L = Math.hypot(...d); return d.map(v => v / L); })();
-const end = { ...end0, reach: hands(END_BAR, [-ELBOW_OUT, dorsal[1], dorsal[2]]) };
+const endAt = out => ({ ...end0, reach: hands(END_BAR, [-out, dorsal[1], dorsal[2]]) });
+const ELBOW_OUT = solve(out => landmarksOf(endAt(out), H)['elbow.r'][2] - END_BAR[2], 0.05, 5);
+const end = endAt(ELBOW_OUT);
 
 // Mistake (card plate.mistake, c7): the torso swings up to heave the bar. Hips and lower back extend together
 // (pelvis and lumbar both open), the feet stay planted, and the bar is still pulled to the same thorax spot, so the
 // fault reads as a trunk that rises with the bar. M_TILT / M_SPINE are illustrative (the card gives no number).
 const M_TILT = 30, M_SPINE = 0, M_HIP = [0.02, 0.05];    // hips drive up and forward (m)
 const mist0 = { ...body(ROOT_Y, ROOT_Z, PRO_END), root: { at: [0, ROOT_Y + M_HIP[0], ROOT_Z + M_HIP[1]], tilt: M_TILT }, trunk: M_SPINE }, LM0 = landmarksOf(mist0, H);
-const MIST_BAR = [0, 1, 2].map(i => i === 0 ? 0 : W.neck * LM0.neck[i] + W.backUpper * LM0.backUpper[i] + W.sternum * LM0.sternum[i]);
+const MIST_BAR = barOn(LM0, BAR_T);
 const mdorsal = (() => { const d = [0, 1, 2].map(i => LM0.backUpper[i] - LM0.chest[i]), L = Math.hypot(...d); return d.map(v => v / L); })();
 const mistakePose = { root: mist0.root, trunk: M_SPINE, reach: hands(MIST_BAR, [-ELBOW_OUT, mdorsal[1], mdorsal[2]]) };
 
@@ -138,7 +143,7 @@ export default {
   datum: [{ x: [0, 0, 0], from: 349, to: 60 }],           // mid-foot plumb line: the bar starts over it
   measure: { vertex: 'knee.r', from: 'hip.r', to: 'ankle.r', radius: 20, title: 'Knee', value: 'slightly bent' },
   callouts: [
-    { key: 'back', text: 'Flat back', anchor: 'backUpper', cue: 'Keep the back flat, not rounded or arched, from start to finish.' },
+    { key: 'back', text: 'Flat back', anchor: { along: ['backMid', 'sacrum'], t: 0.5 }, cue: 'Keep the back flat, not rounded or arched, from start to finish.' },
     { key: 'knees', text: 'Soft knees', anchor: 'knee.r', cue: 'Keep the knees slightly bent and the hips hinged, not standing tall.' },
     { key: 'bar', text: 'Bar to<br>belly', anchor: 'grip.r', cue: 'Pull the bar to the belly button or low chest, not the neck.' },
   ],

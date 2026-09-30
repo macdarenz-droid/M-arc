@@ -59,9 +59,13 @@ const grips = (y, z, pole) => ({ l: { at: [GRIP_X, y, z], pole: pole(1) }, r: { 
 const upPole = s => [s * ELBOW_POLE[0], ELBOW_POLE[1], ELBOW_POLE[2]];
 const start = { ...base, reach: grips(START_BAR_Y, BAR_Z0, s => [s * 0.6, 0, -1]) };
 // End bar height: bisection so the elbow joint centre sits at the shoulder joint's height (c6).
-const elbowRise = y => { const L = landmarksOf({ ...base, reach: grips(y, END_BAR_Z, upPole) }, H); return L['elbow.r'][1] - L['shoulder.r'][1]; };
+// Wrists (critic run 2, R3): the hands curl under the bar at the top (wrist flexion WRIST_TOP), so in the front view
+// the fist foreshortens onto the end of the forearm and the hand visibly wraps the bar instead of floating beside
+// it. Not a card number: the engine's straight-wrist hand leaves a 2.5 cm gap between forearm and fist in this view.
+const WRIST_TOP = 50;
+const elbowRise = y => { const L = landmarksOf({ ...base, wrist: WRIST_TOP, reach: grips(y, END_BAR_Z, upPole) }, H); return L['elbow.r'][1] - L['shoulder.r'][1]; };
 const END_BAR_Y = (() => { let a = 1.05, b = 1.30; for (let i = 0; i < 50; i++) { const m = (a + b) / 2; if (elbowRise(m) < 0) a = m; else b = m; } return (a + b) / 2; })();
-const end = { ...base, reach: grips(END_BAR_Y, END_BAR_Z, upPole) };
+const end = { ...base, wrist: WRIST_TOP, reach: grips(END_BAR_Y, END_BAR_Z, upPole) };
 const mistakePose = { reach: grips(M_BAR_Y, M_BAR_Z, s => [s, 1, 0.3]) };   // elbows up, out and a little forward
 const barAt = lm => [0, lm.grips[1], lm.grips[2]];
 // Start bar, dashed (engine limit: the start layer compares the start equipment with itself, so moving equipment is
@@ -103,7 +107,7 @@ export default {
   ghosts: { count: 3, parts: ['arm.r'] },
   trace: { point: 'elbow.r', trim: [10, 12] },
   datum: [{ y: 'shoulder.r', from: 12, to: 'shoulder.r' }],
-  measure: { vertex: 'shoulder.l', from: 'down', to: 'elbow.l', title: 'Shoulder', value: 'level, 90°', expect: 90 },
+  measure: { vertex: 'shoulder.l', from: 'down', to: 'elbow.l', title: 'Shoulder', value: 'level, 90°', expect: 90, box: { left: 262, top: 92 } },
   callouts: [
     // c3
     { key: 'elbows', text: 'Elbows lead', anchor: 'elbow.l', cue: 'Lead with your elbows out to the sides, above your hands.' },
