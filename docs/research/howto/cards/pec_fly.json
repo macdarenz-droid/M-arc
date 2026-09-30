@@ -1,0 +1,144 @@
+{
+  "id": "pec_fly",
+  "libId": "lib_pec_fly",
+  "name": "Pec Fly",
+  "family": "FSEAT",
+  "tier": "B",
+  "archetype": { "hand": "hold", "contact": ["seat-back"] },
+  "parent": null,
+  "inherit": [],
+
+  "claims": [
+    { "id": "c1", "text": "Sit with the feet flat on the floor, shoulder-width or wider, and the back pressed firmly against the back pad.",
+      "tags": ["CONSENSUS"], "sources": ["ace-top3-chest", "vg-pecfly"],
+      "quotes": [
+        { "source": "ace-top3-chest", "text": "Place your feet flat on the floor, shoulder-width (or wider) apart, and press your back firmly against the back pad.", "where": "Pec Deck instructions" },
+        { "source": "vg-pecfly", "text": "Sit on the machine with your back pressed firmly against the backrest and your feet flat on the floor.", "where": "Step 2" } ] },
+    { "id": "c2", "text": "Set the seat so the arms work at about chest-to-shoulder height: sources say handles at chest level, or elbows at shoulder level on the elbow-pad version.",
+      "tags": ["CONSENSUS"], "sources": ["vg-pecfly", "ace-top3-chest", "hl-pecdeck"],
+      "quotes": [
+        { "source": "vg-pecfly", "text": "Adjust the seat height of the pectoral fly machine so that the handles are at chest level.", "where": "Step 1" },
+        { "source": "ace-top3-chest", "text": "Elevate and bend your elbows 75 to 90 degrees at shoulder level", "where": "Pec Deck instructions" },
+        { "source": "hl-pecdeck", "text": "Bend your arms at a 90° angle and keep your elbows at chest level.", "where": "How to use a pec deck" } ] },
+    { "id": "c3", "text": "On the handle (fly) machine, hold the handles with the elbows slightly bent; the arms are much straighter than on the elbow-pad pec deck.",
+      "tags": ["CONSENSUS"], "sources": ["vg-pecfly", "hl-pecdeck"],
+      "quotes": [
+        { "source": "vg-pecfly", "text": "Grasp the handles with an overhand grip and keep your elbows slightly bent.", "where": "Step 3" },
+        { "source": "hl-pecdeck", "text": "With a fly machine, your elbows are significantly straighter than when using a pec deck.", "where": "Pec deck vs fly machine (Nick Rizzo)" } ] },
+    { "id": "c4", "text": "On the elbow-pad pec deck, the elbows are bent 75-90 degrees and rest against the centre of the moving pads.",
+      "tags": ["CONSENSUS"], "sources": ["ace-top3-chest"],
+      "quotes": [ { "source": "ace-top3-chest", "text": "Elevate and bend your elbows 75 to 90 degrees at shoulder level, and position them directly against the center of the pad on the rotating portions, sometimes called the “wings.”", "where": "Pec Deck instructions" } ] },
+    { "id": "c5", "text": "Bring the arms together slowly until the handles or pads are just about to meet in front of the chest, then slowly return.",
+      "tags": ["CONSENSUS"], "sources": ["ace-top3-chest", "vg-pecfly"],
+      "quotes": [
+        { "source": "ace-top3-chest", "text": "Slowly push the wings all the way toward the center until they are just about to meet. Then slowly reverse the motion back to the starting position.", "where": "Pec Deck instructions" },
+        { "source": "vg-pecfly", "text": "Exhale and push the handles together in front of your chest, squeezing your chest muscles.", "where": "Step 4" } ] },
+    { "id": "c6", "text": "The common faults come from too much weight: stopping short of the full range, or lifting the upper back off the pad to finish the rep.",
+      "tags": ["CONSENSUS"], "sources": ["ace-top3-chest"],
+      "quotes": [ { "source": "ace-top3-chest", "text": "Quite often, the lifter will use too much weight and be unable to complete the full range of motion or will lift the upper back off the back pad to finish the motion.", "where": "Pec Deck tip (Mark P. Kelly)" } ] },
+    { "id": "c7", "text": "Changing the technique to move more weight is a mistake that can cause injury.",
+      "tags": ["CONSENSUS"], "sources": ["ace-top3-chest"],
+      "quotes": [ { "source": "ace-top3-chest", "text": "Many users will adopt their own technique on this machine to do more weight, which is a big mistake and can result in injury,", "where": "Pec Deck tip (Mark P. Kelly)" } ] },
+    { "id": "c8", "text": "The pec deck puts the shoulder in abduction and external rotation, a vulnerable position for the front of the joint; ACE advises caution and not using it for people with past shoulder problems.",
+      "tags": ["CONSENSUS"], "sources": ["ace-top3-chest"],
+      "quotes": [ { "source": "ace-top3-chest", "text": "This exercise places the shoulder in abduction and external rotation, which is a vulnerable position for the joint (especially the anterior structures).", "where": "Footnote to Pec Deck" } ] },
+    { "id": "c9", "text": "Inferred from ACE's cable crossover advice, not measured on the pec deck: starting with the arms behind the torso adds little and carries a shoulder injury risk.",
+      "tags": ["MECH", "WEAK"], "sources": ["ace-top3-chest"],
+      "quotes": [ { "source": "ace-top3-chest", "text": "While this extreme range of motion may feel good, it does little in terms of muscular conditioning, and there is a risk of injury in the shoulder during hyperextension", "where": "Bent-forward cable crossover tip (Mark P. Kelly)" } ] },
+    { "id": "c10", "text": "The pec deck works the chest about as much as the barbell bench press (98% of bench-press EMG in an ACE-funded study), and training on it grew both the upper and lower chest.",
+      "tags": ["DATA"], "sources": ["ace-top3-chest", "pinto-2025"],
+      "quotes": [
+        { "source": "ace-top3-chest", "text": "Both the pec deck (at 98% of muscle activation compared to barbell bench press) and the bent-forward cable crossover (93% of muscle activation) elicited nearly equivalent muscle activation as the barbell bench press.", "where": "The Results" },
+        { "source": "pinto-2025", "text": "similar increases were observed between conditions for the pectoralis major clavicular (1S = 17%; 3S = 18%) and sternocostal (1S = 21%; 3S = 21%) thicknesses", "where": "abstract" } ] },
+    { "id": "c11", "text": "Inferred from a free-weight chest fly study, not the machine: the front deltoid is also highly active in a chest fly.",
+      "tags": ["MECH", "WEAK"], "sources": ["soncin-2014"],
+      "quotes": [ { "source": "soncin-2014", "text": "The anterior deltoid showed significantly higher electromyographic activity in sequence B (86.81 ± 40.43%) than sequence A (66.15 ± 22.02%) for the chest fly", "where": "abstract" } ] },
+    { "id": "c12", "text": "Tempo (up = arms closing, down = arms opening): close in about 2 s, hold the squeeze briefly, open slowly in about 2 s.",
+      "tags": ["CONSENSUS"], "sources": ["hl-pecdeck", "acsm-2009"],
+      "quotes": [
+        { "source": "hl-pecdeck", "text": "Bring the handles or arm pads in front of your chest, hold the position for a couple of seconds, and then slowly release back to starting position.", "where": "How to use a pec deck" },
+        { "source": "acsm-2009", "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)", "where": "abstract" } ] },
+    { "id": "c13", "text": "Breathe out as the arms close and in as they open.",
+      "tags": ["CONSENSUS"], "sources": ["hl-pecdeck"],
+      "quotes": [ { "source": "hl-pecdeck", "text": "Exhale as you pull the handles toward your chest and inhale as you bring the handles back to starting position.", "where": "Safety" } ] },
+    { "id": "c14", "text": "Choose a load where the last rep is hard but the body doesn't sway or rock; if it is too hard, lower the weight.",
+      "tags": ["CONSENSUS"], "sources": ["hl-pecdeck"],
+      "quotes": [
+        { "source": "hl-pecdeck", "text": "If the workout is too intense, lower the amount of the weight to prevent injury.", "where": "Safety" },
+        { "source": "hl-pecdeck", "text": "Your last rep should be difficult to complete, but not so difficult that your body sways or rocks.", "where": "Safety" } ] },
+    { "id": "c15", "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": ["CONSENSUS"], "sources": ["acsm-2009"],
+      "quotes": [ { "source": "acsm-2009", "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.", "where": "abstract" } ] }
+  ],
+
+  "sources": [
+    { "id": "ace-top3-chest", "url": "https://www.acefitness.org/certifiednewsarticle/3003/what-are-the-top-3-most-effective-chest-exercises/", "title": "What are the Top 3 Most Effective Chest Exercises? (Schanke, Porcari et al., ACE Certified News)", "kind": "guideline", "year": 2011, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "vg-pecfly", "url": "https://exercises.virtuagym.com/exercise/pectoral-fly-machine/", "title": "Pectoral Fly Machine Video Exercise Guide (Virtuagym)", "kind": "coach", "year": 2023, "pmid": null, "access": "summary", "checked": "2026-09-30" },
+    { "id": "hl-pecdeck", "url": "https://www.healthline.com/health/pec-deck", "title": "How and Why to Use a Pec Deck Machine", "kind": "coach", "year": 2019, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "pinto-2025", "url": "https://pubmed.ncbi.nlm.nih.gov/40266636/", "title": "Pectoralis Clavicular and Sternocostal Thicknesses Increase Similarly in Response to One and Three Sets of Pec Deck Resistance Training in Untrained Young Men", "kind": "peer-reviewed", "year": 2025, "pmid": 40266636, "access": "abstract", "checked": "2026-09-30" },
+    { "id": "soncin-2014", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4327372/", "title": "Influence of exercise order on electromyographic activity during upper body resistance training", "kind": "peer-reviewed", "year": 2014, "pmid": 25713681, "access": "full", "checked": "2026-09-30" },
+    { "id": "acsm-2009", "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/", "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults", "kind": "guideline", "year": 2009, "pmid": 19204579, "access": "abstract", "checked": "2026-09-30" }
+  ],
+
+  "plate": {
+    "view": "front", "viewWhy": "The arms sweep sideways in a horizontal arc, which reads only from the front (census: front view only). The upper-back-off-pad fault (c6) needs a side view and is left to the posture zoom.",
+    "equipment": "Seated pec fly machine with a back pad and two pivot arms with handles (the pec-deck arms are composed, census R3). Seat set so the handles are at chest level (c2). Floor line.",
+    "start": "Seated, back on the pad, feet flat (c1); arms out to the sides at chest-to-shoulder height, elbows slightly bent, hands on the handles (c2, c3); arms not behind the line of the torso (c9).",
+    "end": "Handles brought together until they are just about to meet in front of the chest, elbows still slightly bent, arms at the same height (c5, c3); back still on the pad (c1).",
+    "checkpoints": [
+      { "label": "Soft elbows", "what": "A slight, fixed bend in the elbows.", "claim": "c3" },
+      { "label": "Chest height", "what": "Arms move at about chest-to-shoulder height, set by the seat.", "claim": "c2" },
+      { "label": "Hands meet", "what": "Handles come together in front of the chest each rep.", "claim": "c5" }
+    ],
+    "mistake": { "what": "Stopping short: the handles finish well apart in front of the chest (partial range).",
+                 "why": "ACE says lifters often load too much weight and can't finish the range; the other version, lifting the back off the pad, needs a side view.", "claim": "c6",
+                 "drawable": true },
+    "tells": [
+      { "text": "Handles almost touch in front", "claim": "c5" },
+      { "text": "Back stays on the pad", "claim": "c1" }
+    ],
+    "tempo": { "up": 2, "down": 2, "pause": 1, "claim": "c12" },
+    "variantLine": "Drawn: the handle fly machine with slightly bent elbows (c3), because GA 3.1.1 files pec_fly under the hold archetype (hands on handles). The elbow-pad pec deck (elbows bent 75-90 degrees on the pads, c4) is the other version. Claims c1, c2, c5-c10 and c12-c15 hold for both."
+  },
+
+  "grip":  { "type": "Overhand on the handles (handle machine); on the pad version the forearms rest on the pads.", "width": "Set by the machine arms.", "thumb": "", "handContact": "", "wrist": "", "claims": ["c3", "c4"] },
+  "setup": [
+    { "step": "Set the seat so the handles are at chest level.", "claim": "c2" },
+    { "step": "Sit back against the pad, feet flat on the floor, shoulder-width or wider.", "claim": "c1" },
+    { "step": "Take the handles with the elbows slightly bent.", "claim": "c3" },
+    { "step": "Pick a weight you can take through the full range without rocking.", "claim": "c14" }
+  ],
+  "posture": [
+    { "point": "Back stays pressed into the pad for every rep.", "claim": "c1" },
+    { "point": "Elbows keep the same slight bend.", "claim": "c3" },
+    { "point": "Arms at chest-to-shoulder height.", "claim": "c2" },
+    { "point": "Bring the handles together until they nearly meet.", "claim": "c5" },
+    { "point": "Don't start with the arms behind the body.", "claim": "c9" }
+  ],
+  "handlingMistakes": [
+    { "mistake": "Stopping short of the full range.", "fix": "Go lighter until the handles nearly meet every rep.", "claim": "c6" },
+    { "mistake": "Lifting the upper back off the pad to finish.", "fix": "Go lighter; keep the back on the pad.", "claim": "c6" },
+    { "mistake": "Changing the technique to move more weight.", "fix": "Lower the weight.", "claim": "c7" }
+  ],
+  "feel": {
+    "primary": [ { "muscleId": "chest", "claim": "c10" } ],
+    "secondary": [ { "muscleId": "front_delts", "claim": "c11" } ],
+    "watch": [],
+    "rows": [
+      { "where": "Chest", "means": "The chest is doing the work.", "fix": "", "claim": "c10", "redFlag": null },
+      { "where": "Front of the shoulder, at the start", "means": "The front of the shoulder is in its vulnerable position here.", "fix": "Don't let the arms go behind the body; go lighter.", "claim": "c8", "redFlag": "shoulder" },
+      { "where": "Body rocking on the seat", "means": "Usually means the weight is too heavy.", "fix": "Lower the weight.", "claim": "c14", "redFlag": null }
+    ] },
+  "risks": [
+    { "risk": "The pec deck puts the front of the shoulder in a vulnerable position.", "claim": "c8" },
+    { "risk": "Changing the technique to lift more weight can cause injury.", "claim": "c7" },
+    { "risk": "Arms starting behind the body may strain the shoulder (inferred from cable crossover advice).", "claim": "c9" }
+  ],
+  "redFlags": [ "shoulder" ],
+  "zooms": [
+    { "key": "fly-backpad", "kind": "posture", "right": "Upper back pressed into the pad as the handles meet.", "wrong": "Upper back peeled off the pad to finish the rep.", "claim": "c6" },
+    { "key": "fly-elbow", "kind": "posture", "right": "Slight, fixed elbow bend with the arms at chest height.", "wrong": "Elbows bent sharply, as on the elbow-pad machine.", "claim": "c3" }
+  ],
+  "libraryDiff": { "add": [], "remove": [], "why": "chest primary is sourced (c10: ACE EMG and Pinto 2025 pec deck hypertrophy). front_delts secondary matches exercises.json but rests only on a free-weight chest fly study (c11, MECH/WEAK); kept, flagged weak." },
+  "anchorSource": "ace-top3-chest"
+}

@@ -1,0 +1,229 @@
+{
+ "id": "pec_fly",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-top3-chest",
+   "text": "Place your feet flat on the floor, shoulder-width (or wider) apart, and press your back firmly against the back pad.",
+   "status": "verbatim",
+   "closest": "Place your feet flat on the floor, shoulder-width (or wider) apart, and press your back firmly against the back pad.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "vg-pecfly",
+   "text": "Sit on the machine with your back pressed firmly against the backrest and your feet flat on the floor.",
+   "status": "unreachable-source",
+   "closest": "",
+   "note": "source only reachable as WebFetch summary (403 via curl)"
+  },
+  {
+   "claim": "c2",
+   "source": "vg-pecfly",
+   "text": "Adjust the seat height of the pectoral fly machine so that the handles are at chest level.",
+   "status": "unreachable-source",
+   "closest": "",
+   "note": "source only reachable as WebFetch summary (403 via curl)"
+  },
+  {
+   "claim": "c2",
+   "source": "ace-top3-chest",
+   "text": "Elevate and bend your elbows 75 to 90 degrees at shoulder level",
+   "status": "verbatim",
+   "closest": "Elevate and bend your elbows 75 to 90 degrees at shoulder level",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "hl-pecdeck",
+   "text": "Bend your arms at a 90° angle and keep your elbows at chest level.",
+   "status": "verbatim",
+   "closest": "Bend your arms at a 90° angle and keep your elbows at chest level.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "vg-pecfly",
+   "text": "Grasp the handles with an overhand grip and keep your elbows slightly bent.",
+   "status": "unreachable-source",
+   "closest": "",
+   "note": "source only reachable as WebFetch summary (403 via curl)"
+  },
+  {
+   "claim": "c3",
+   "source": "hl-pecdeck",
+   "text": "With a fly machine, your elbows are significantly straighter than when using a pec deck.",
+   "status": "verbatim",
+   "closest": "With a fly machine, your elbows are significantly straighter than when using a pec deck.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-top3-chest",
+   "text": "Elevate and bend your elbows 75 to 90 degrees at shoulder level, and position them directly against the center of the pad on the rotating portions, sometimes called the “wings.”",
+   "status": "verbatim",
+   "closest": "Elevate and bend your elbows 75 to 90 degrees at shoulder level, and position them directly against the center of the pad on the rotating portions, sometimes called the “wings.”",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-top3-chest",
+   "text": "Slowly push the wings all the way toward the center until they are just about to meet. Then slowly reverse the motion back to the starting position.",
+   "status": "verbatim",
+   "closest": "Slowly push the wings all the way toward the center until they are just about to meet. Then slowly reverse the motion back to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "vg-pecfly",
+   "text": "Exhale and push the handles together in front of your chest, squeezing your chest muscles.",
+   "status": "unreachable-source",
+   "closest": "",
+   "note": "source only reachable as WebFetch summary (403 via curl)"
+  },
+  {
+   "claim": "c6",
+   "source": "ace-top3-chest",
+   "text": "Quite often, the lifter will use too much weight and be unable to complete the full range of motion or will lift the upper back off the back pad to finish the motion.",
+   "status": "verbatim",
+   "closest": "Quite often, the lifter will use too much weight and be unable to complete the full range of motion or will lift the upper back off the back pad to finish the motion.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-top3-chest",
+   "text": "Many users will adopt their own technique on this machine to do more weight, which is a big mistake and can result in injury,",
+   "status": "verbatim",
+   "closest": "Many users will adopt their own technique on this machine to do more weight, which is a big mistake and can result in injury,",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-top3-chest",
+   "text": "This exercise places the shoulder in abduction and external rotation, which is a vulnerable position for the joint (especially the anterior structures).",
+   "status": "verbatim",
+   "closest": "This exercise places the shoulder in abduction and external rotation, which is a vulnerable position for the joint (especially the anterior structures).",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-top3-chest",
+   "text": "While this extreme range of motion may feel good, it does little in terms of muscular conditioning, and there is a risk of injury in the shoulder during hyperextension",
+   "status": "verbatim",
+   "closest": "While this extreme range of motion may feel good, it does little in terms of muscular conditioning, and there is a risk of injury in the shoulder during hyperextension",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-top3-chest",
+   "text": "Both the pec deck (at 98% of muscle activation compared to barbell bench press) and the bent-forward cable crossover (93% of muscle activation) elicited nearly equivalent muscle activation as the barbell bench press.",
+   "status": "verbatim",
+   "closest": "Both the pec deck (at 98% of muscle activation compared to barbell bench press) and the bent-forward cable crossover (93% of muscle activation) elicited nearly equivalent muscle activation as the barbell bench press.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "pinto-2025",
+   "text": "similar increases were observed between conditions for the pectoralis major clavicular (1S = 17%; 3S = 18%) and sternocostal (1S = 21%; 3S = 21%) thicknesses",
+   "status": "verbatim",
+   "closest": "similar increases were observed between conditions for the pectoralis major clavicular (1S = 17%; 3S = 18%) and sternocostal (1S = 21%; 3S = 21%) thicknesses",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "soncin-2014",
+   "text": "The anterior deltoid showed significantly higher electromyographic activity in sequence B (86.81 ± 40.43%) than sequence A (66.15 ± 22.02%) for the chest fly",
+   "status": "verbatim",
+   "closest": "The anterior deltoid showed significantly higher electromyographic activity in sequence B (86.81 ± 40.43%) than sequence A (66.15 ± 22.02%) for the chest fly",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "hl-pecdeck",
+   "text": "Bring the handles or arm pads in front of your chest, hold the position for a couple of seconds, and then slowly release back to starting position.",
+   "status": "verbatim",
+   "closest": "Bring the handles or arm pads in front of your chest, hold the position for a couple of seconds, and then slowly release back to starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "hl-pecdeck",
+   "text": "Exhale as you pull the handles toward your chest and inhale as you bring the handles back to starting position.",
+   "status": "verbatim",
+   "closest": "Exhale as you pull the handles toward your chest and inhale as you bring the handles back to starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "hl-pecdeck",
+   "text": "If the workout is too intense, lower the amount of the weight to prevent injury.",
+   "status": "verbatim",
+   "closest": "If the workout is too intense, lower the amount of the weight to prevent injury.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "hl-pecdeck",
+   "text": "Your last rep should be difficult to complete, but not so difficult that your body sways or rocks.",
+   "status": "verbatim",
+   "closest": "Your last rep should be difficult to complete, but not so difficult that your body sways or rocks.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  }
+ ],
+ "sources": [
+  {
+   "id": "ace-top3-chest",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "vg-pecfly",
+   "access": "summary",
+   "checked": "2026-09-30",
+   "fixes": "curl 403 (Cloudflare); only WebFetch AI summary, not verbatim text"
+  },
+  {
+   "id": "hl-pecdeck",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": "title corrected from \"Pec deck (Healthline, medically reviewed by Daniel Bubnis, NASM-CPT)\""
+  },
+  {
+   "id": "pinto-2025",
+   "access": "abstract",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "soncin-2014",
+   "access": "full",
+   "checked": "2026-09-30",
+   "fixes": ""
+  },
+  {
+   "id": "acsm-2009",
+   "access": "abstract",
+   "checked": "2026-09-30",
+   "fixes": ""
+  }
+ ]
+}

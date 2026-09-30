@@ -1,0 +1,149 @@
+{
+  "id": "dumbbell_biceps_curl",
+  "libId": "lib_dumbbell_biceps_curl",
+  "name": "Dumbbell Biceps Curl",
+  "family": "CURL",
+  "tier": "C",
+  "archetype": { "hand": "curl", "contact": ["standing-feet"] },
+  "parent": null,
+  "inherit": [],
+
+  "claims": [
+    { "id": "c1", "text": "Hold the dumbbells with a closed, palms-forward (supinated) grip, thumbs wrapped round the handles, arms hanging at the sides.",
+      "tags": ["CONSENSUS"], "sources": ["ace-seated-curl", "sl-dbcurl"],
+      "quotes": [
+        { "source": "ace-seated-curl", "text": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles) and let your arms hang to your sides, close to your body, with your palms facing forward.", "where": "Step 1, starting position" },
+        { "source": "sl-dbcurl", "text": "Hold a pair of dumbbells in an underhand (supinated) grip, arms hanging by your sides.", "where": "How to, step 1" } ] },
+    { "id": "c2", "text": "Stand with the feet about shoulder-width apart and the knees slightly bent.",
+      "tags": ["CONSENSUS"], "sources": ["sl-dbcurl"],
+      "quotes": [ { "source": "sl-dbcurl", "text": "Stand with your feet shoulder-width apart, maintaining a slight bend in your knees.", "where": "Proper form" } ] },
+    { "id": "c3", "text": "The elbows stay close to the body for the whole set; they do not move forward to help the lift.",
+      "tags": ["CONSENSUS"], "sources": ["sl-dbcurl", "ace-seated-curl"],
+      "quotes": [
+        { "source": "sl-dbcurl", "text": "Keep your elbows close to your body throughout the exercise.", "where": "Proper form" },
+        { "source": "ace-seated-curl", "text": "Exhale and slowly bend each elbow in unison, bringing the dumbbells towards your chest without arching your back or moving your elbows forward.", "where": "Step 2, upward phase" } ] },
+    { "id": "c4", "text": "Elbows moving forward during the lift shift load to the front of the shoulders; elbows moving back let you cheat the weight up.",
+      "tags": ["CONSENSUS"], "sources": ["sl-dbcurl"],
+      "quotes": [ { "source": "sl-dbcurl", "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.", "where": "Common mistakes, elbow positioning" } ] },
+    { "id": "c5", "text": "Swinging the body to use momentum is the sign of a weight that is too heavy; the fix is less weight and a controlled lift.",
+      "tags": ["CONSENSUS"], "sources": ["sl-dbcurl", "marcolin-2018"],
+      "quotes": [
+        { "source": "sl-dbcurl", "text": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up.", "where": "Common mistakes, using too heavy weights" },
+        { "source": "sl-dbcurl", "text": "If you start to swing, you should probably remove some weight instead and focus on performing the movement with control.", "where": "Proper form" },
+        { "source": "marcolin-2018", "text": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.", "where": "Methods" } ] },
+    { "id": "c6", "text": "Keep the wrists straight (neither bent up nor down) through the lift; bent wrists put extra load on them and can cause discomfort.",
+      "tags": ["CONSENSUS"], "sources": ["ace-seated-curl", "sl-dbcurl"],
+      "quotes": [
+        { "source": "ace-seated-curl", "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)", "where": "Step 2, upward phase" },
+        { "source": "sl-dbcurl", "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.", "where": "Common mistakes, not locking your wrists" } ] },
+    { "id": "c7", "text": "Because elbow structure differs between people, the dumbbells may hang slightly away from the sides; pick the hand position that keeps the wrist straight.",
+      "tags": ["CONSENSUS"], "sources": ["ace-seated-curl"],
+      "quotes": [ { "source": "ace-seated-curl", "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.", "where": "Notes after step 4" } ] },
+    { "id": "c8", "text": "Stand with the chest up and the shoulders set down and slightly back; do not shrug during the lift.",
+      "tags": ["CONSENSUS"], "sources": ["sl-dbcurl", "ace-seated-curl"],
+      "quotes": [
+        { "source": "sl-dbcurl", "text": "Stand with your chest up and shoulders slightly retracted and depressed.", "where": "Proper form" },
+        { "source": "ace-seated-curl", "text": "avoid shrugging your shoulders during the lift keeping your scapulae (shoulders) depressed and retracted.", "where": "Step 2, upward phase" } ] },
+    { "id": "c9", "text": "Tempo (up = lifting phase, down = lowering phase): lift in about 1 s and lower slowly in about 2 s. A study protocol used 3 s per full repetition; ACSM advises moderate speed (1-2 s up, 1-2 s down).",
+      "tags": ["CONSENSUS"], "sources": ["marcolin-2018", "acsm-2009", "ace-seated-curl"],
+      "quotes": [
+        { "source": "marcolin-2018", "text": "The metronome was set so that each repetition duration was 3 s.", "where": "Methods" },
+        { "source": "acsm-2009", "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)", "where": "abstract" },
+        { "source": "ace-seated-curl", "text": "Inhale and gently lower the dumbbells back towards your starting position.", "where": "Step 3, downward phase" } ] },
+    { "id": "c10", "text": "Breathe out as the dumbbells rise and in as they lower.",
+      "tags": ["CONSENSUS"], "sources": ["ace-seated-curl"],
+      "quotes": [ { "source": "ace-seated-curl", "text": "Exhale and slowly bend each elbow in unison", "where": "Step 2, upward phase" } ] },
+    { "id": "c11", "text": "The biceps is the main muscle worked; the brachioradialis (a forearm muscle) also flexes the elbow and is active in dumbbell curls.",
+      "tags": ["DATA"], "sources": ["oliveira-2009", "marcolin-2018", "sl-dbcurl"],
+      "quotes": [
+        { "source": "oliveira-2009", "text": "Although all protocols elicited a considerable level of activation of the biceps brachii muscle (at least 50% of maximum RMS), the contribution of this muscle for elbow flexion/extension varied among exercises.", "where": "abstract" },
+        { "source": "marcolin-2018", "text": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor", "where": "Discussion" },
+        { "source": "sl-dbcurl", "text": "The dumbbell curl primarily targets your biceps and brachialis (which lie beneath the biceps), but the forearm flexors are also involved as a secondary muscle group.", "where": "Introduction" } ] },
+    { "id": "c12", "text": "The standing dumbbell curl loads the biceps across the whole elbow range, so a full range (arms straight at the bottom) is worthwhile.",
+      "tags": ["DATA"], "sources": ["oliveira-2009"],
+      "quotes": [ { "source": "oliveira-2009", "text": "The Incline Dumbbell Curl and the Dumbbell Biceps Curl resulted in a considerable neuromuscular effort throughout the whole elbow range of motion.", "where": "abstract, key points" } ] },
+    { "id": "c13", "text": "The upper arms must not travel back during the curl; staying at the sides or moving slightly forward at the top is acceptable.",
+      "tags": ["CONSENSUS"], "sources": ["sl-dbcurl"],
+      "quotes": [ { "source": "sl-dbcurl", "text": "Don’t let your upper arms travel back during the curl. Keep them at your sides, or move them slightly forward.", "where": "How to, step 3" } ] },
+    { "id": "c14", "text": "The body stays still and only the arms move.",
+      "tags": ["CONSENSUS"], "sources": ["sl-dbcurl"],
+      "quotes": [ { "source": "sl-dbcurl", "text": "Make sure to keep your elbows close to the body the entire time. Your body shouldn’t move, just the arms.", "where": "Proper form" } ] },
+    { "id": "c15", "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": ["CONSENSUS"], "sources": ["acsm-2009"],
+      "quotes": [ { "source": "acsm-2009", "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.", "where": "abstract" } ] },
+    { "id": "c16", "text": "Across all weight training (not curls specifically), the most common way people are hurt badly enough for an emergency department is a weight dropping on them, mostly with free weights.",
+      "tags": ["WEAK"], "sources": ["kerr-2010"],
+      "quotes": [ { "source": "kerr-2010", "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).", "where": "abstract, results" } ] }
+  ],
+
+  "sources": [
+    { "id": "sl-dbcurl", "url": "https://www.strengthlog.com/dumbbell-curl/", "title": "How to Dumbbell Curl: Muscles Worked & Proper Form", "kind": "coach", "year": 2020, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "ace-seated-curl", "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/", "title": "Seated Biceps Curl (ACE Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "marcolin-2018", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/", "title": "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl", "kind": "peer-reviewed", "year": 2018, "pmid": 30013836, "access": "full", "checked": "2026-09-30" },
+    { "id": "oliveira-2009", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3737788/", "title": "Effect of the shoulder position on the biceps brachii emg in different dumbbell curls", "kind": "peer-reviewed", "year": 2009, "pmid": 24150552, "access": "abstract", "checked": "2026-09-30" },
+    { "id": "acsm-2009", "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/", "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults", "kind": "guideline", "year": 2009, "pmid": 19204579, "access": "abstract", "checked": "2026-09-30" },
+    { "id": "kerr-2010", "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/", "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007", "kind": "peer-reviewed", "year": 2010, "pmid": 20139328, "access": "abstract", "checked": "2026-09-30" }
+  ],
+
+  "plate": {
+    "view": "side", "viewWhy": "Elbow bending happens front-to-back, so the elbow angle, elbow drift (c4, c13) and body swing (c5) all read side-on. Census view is side.",
+    "equipment": "One dumbbell per hand, standing on the floor line. No bench.",
+    "start": "Standing tall, feet shoulder-width, knees slightly bent (c2); arms hanging straight at the sides, palms forward, elbows close to the body (c1, c3); wrists straight (c6); chest up, shoulders down (c8).",
+    "end": "Elbows fully bent, dumbbells near the front of the shoulders (c3); upper arms still at the sides or slightly forward, never back (c13); wrists straight (c6); body in the same upright position as the start (c14).",
+    "checkpoints": [
+      { "label": "Elbows at sides", "what": "Upper arms stay by the body from bottom to top.", "claim": "c3" },
+      { "label": "Straight wrists", "what": "Hand in line with the forearm, not bent up or down.", "claim": "c6" },
+      { "label": "Still body", "what": "Torso and knees don't move; only the forearms travel.", "claim": "c14" }
+    ],
+    "mistake": { "what": "Swinging: leaning back and driving with the hips and knees to throw the dumbbells up.",
+                 "why": "It happens when the weight is heavier than the arms can lift, and it takes work away from the biceps.", "claim": "c5",
+                 "drawable": true },
+    "tells": [
+      { "text": "Only your forearms move", "claim": "c14" },
+      { "text": "Upper arms stay by your sides", "claim": "c3" }
+    ],
+    "tempo": { "up": 1, "down": 2, "pause": 0, "claim": "c9" },
+    "variantLine": null
+  },
+
+  "grip":  { "type": "Closed, palms forward (supinated), one dumbbell per hand.", "width": "Arms hanging at the sides, dumbbells close to the body; they may sit slightly out from the sides if that keeps the wrist straight (c7).", "thumb": "Wrapped round the handle.", "handContact": "", "wrist": "Straight, in line with the forearm, for the whole lift.", "claims": ["c1", "c6", "c7"] },
+  "setup": [
+    { "step": "Pick a weight you can curl without swinging.", "claim": "c5" },
+    { "step": "Stand with feet shoulder-width, knees slightly bent.", "claim": "c2" },
+    { "step": "Take a closed, palms-forward grip, thumbs round the handles, arms hanging at your sides.", "claim": "c1" },
+    { "step": "Chest up, shoulders down and slightly back.", "claim": "c8" }
+  ],
+  "posture": [
+    { "point": "Elbows stay close to the body.", "claim": "c3" },
+    { "point": "Upper arms never travel back; slightly forward at the top is fine.", "claim": "c13" },
+    { "point": "Body stays still; only the arms move.", "claim": "c14" },
+    { "point": "Wrists stay straight.", "claim": "c6" },
+    { "point": "No shrugging during the lift.", "claim": "c8" },
+    { "point": "Lower until the arms are straight again (full range).", "claim": "c12" }
+  ],
+  "handlingMistakes": [
+    { "mistake": "Swinging the body to get the weight up.", "fix": "Use a lighter dumbbell and lift with control.", "claim": "c5" },
+    { "mistake": "Elbows drifting back or forward during the lift.", "fix": "Keep the elbows at your sides.", "claim": "c4" },
+    { "mistake": "Wrists bending up or down.", "fix": "Keep the hand in line with the forearm; pick the dumbbell position that allows it.", "claim": "c6" }
+  ],
+  "feel": {
+    "primary": [ { "muscleId": "biceps", "claim": "c11" } ],
+    "secondary": [ { "muscleId": "forearms", "claim": "c11" } ],
+    "watch": [],
+    "rows": [
+      { "where": "Front of the upper arm, through the whole lift", "means": "The biceps are doing the work.", "fix": "", "claim": "c12", "redFlag": null },
+      { "where": "Front of the shoulder", "means": "Usually means the elbows are moving forward.", "fix": "Keep the elbows at your sides.", "claim": "c4", "redFlag": null },
+      { "where": "Wrist", "means": "Usually means the wrist is bending.", "fix": "Straighten the wrist; go lighter if you can't.", "claim": "c6", "redFlag": "wrist" }
+    ] },
+  "risks": [
+    { "risk": "Bent wrists under load can cause wrist discomfort.", "claim": "c6" },
+    { "risk": "Dropped free weights are the most common cause of weight-training injuries seen in emergency departments.", "claim": "c16" }
+  ],
+  "redFlags": [ "wrist" ],
+  "zooms": [
+    { "key": "curl-wrist", "kind": "hand", "right": "Closed palms-forward grip, thumb wrapped, hand in line with the forearm.", "wrong": "Wrist bent back or curled toward the forearm.", "claim": "c6" },
+    { "key": "curl-elbow", "kind": "posture", "right": "Upper arm by the side at the top of the curl.", "wrong": "Elbow swung back behind the body to cheat the weight up.", "claim": "c4" }
+  ],
+  "libraryDiff": { "add": [], "remove": [], "why": "biceps as primary (c11: biceps activation, Oliveira 2009) and forearms as secondary (c11: brachioradialis, Marcolin 2018; StrengthLog 'forearm flexors') both match exercises.json. StrengthLog also names brachialis, which is text-only." },
+  "anchorSource": "sl-dbcurl"
+}
