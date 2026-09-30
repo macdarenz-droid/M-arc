@@ -1,0 +1,492 @@
+{
+  "id": "barbell_shrug",
+  "libId": "lib_barbell_shrug",
+  "name": "Barbell Shrug",
+  "family": "SHRUG",
+  "tier": "A",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Palms-down grip, hands about shoulder width.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shrug",
+          "text": "Hold a barbell with a palms-down grip with the hands about shoulder-width apart.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Knees slightly bent, hips straight, back tall; raise the shoulders straight up toward the ears as high as possible and lower slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shrug",
+          "text": "Keep the knees slightly bent, the hips straight, and the back tall, and raise the shoulders directly upwards to the ears as high as possible, lowering slowly to the original starting position.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Only raise and lower the shoulders; do not roll them.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shrug",
+          "text": "(Tip: grip the bar and think about pulling the hands apart from one another and focus on only raising/lowering the shoulders - DO NOT roll the shoulders.)",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Hold the bar in front of the body with straight arms and lift the shoulders straight up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-shrug",
+          "text": "Hold a barbell in straight arms in front of your body. Lift your shoulders straight up as high as possible. Lower your shoulders again.",
+          "where": "How to Do Barbell Shrugs"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The shrug isolates the muscles that lift the shoulder girdle, such as the upper trapezius.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-shrug",
+          "text": "The shrug is an isolation exercise for the muscles that lifts and supports your shoulder girdle, like the top portion of your trapezius among others.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "A standard shrug (arms at the sides) works the upper trapezius less than a shrug with the arms 30 degrees out to the side.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "pizzari2014"
+      ],
+      "quotes": [
+        {
+          "source": "pizzari2014",
+          "text": "The upward rotation shrug is a more effective exercise for eliciting muscle activity of the upper and lower trapezius than the standard shrug in a normal and multi-directional instability population.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, the lowering slow.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "ace-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "ace-shrug",
+          "text": "lowering slowly to the original starting position.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Wrap the thumbs around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The shoulder is one of the most common injury sites in resistance training (up to 36% of documented injuries), and poor technique is a named risk factor.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Grip strength drops when the wrist is bent away from its natural slightly-extended position.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-shrug",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/72/shrug/",
+      "title": "ACE Exercise Library: Shrug",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-barbell-shrug",
+      "url": "https://www.strengthlog.com/barbell-shrug/",
+      "title": "How to Do Barbell Shrug: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "pizzari2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24342452/",
+      "title": "Modifying a shrug exercise can facilitate the upward rotator muscles of the scapula.",
+      "kind": "peer-reviewed",
+      "year": 2014,
+      "pmid": 24342452,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review.",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": 20508476,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength.",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": 1538102,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Straight arms, tall back and a straight-up shoulder path (no roll) read best side-on (c2, c4); the census draws it side, with zoom F1 for the small shoulder travel.",
+    "equipment": "Straight barbell with plates, hanging in front of the thighs from straight arms (c4); floor line.",
+    "start": "Standing tall, knees slightly bent, hips straight (c2), arms straight, bar at the thighs, shoulders relaxed down (c4).",
+    "end": "Same body; only the shoulders lifted straight up toward the ears (c2, c4); arms still straight.",
+    "checkpoints": [
+      {
+        "label": "Straight arms",
+        "what": "Elbows stay straight; the arms only hang.",
+        "claim": "c4"
+      },
+      {
+        "label": "Straight up",
+        "what": "Shoulders go up and down only, no roll.",
+        "claim": "c3"
+      },
+      {
+        "label": "Back tall",
+        "what": "Knees soft, hips straight, back tall.",
+        "claim": "c2"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows bend to pull the bar up instead of the shoulders lifting it.",
+      "why": "The top fault, rolling the shoulders (c3), is a rotation the engine cannot draw; bent arms break the straight-arm rule (c4) and are visible side-on.",
+      "claim": "c4",
+      "drawable": false
+    },
+    "tells": [
+      {
+        "text": "Shoulders rise toward your ears",
+        "claim": "c2"
+      },
+      {
+        "text": "Arms stay straight throughout",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c7"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (palms down).",
+    "width": "About shoulder width.",
+    "thumb": "Wrapped around the bar.",
+    "handContact": "Bar across the middle of the palm, fingers wrapped (hold archetype).",
+    "wrist": "Neutral to slightly back; grip weakens when the wrist bends away from it.",
+    "claims": [
+      "c1",
+      "c10",
+      "c12"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Overhand grip, hands about shoulder width, thumbs around the bar.",
+      "claim": "c1"
+    },
+    {
+      "step": "Stand tall with knees slightly bent, hips straight.",
+      "claim": "c2"
+    },
+    {
+      "step": "Let the bar hang in front of the thighs on straight arms.",
+      "claim": "c4"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back tall the whole set.",
+      "claim": "c2"
+    },
+    {
+      "point": "Arms straight; the shoulders do the lifting.",
+      "claim": "c4"
+    },
+    {
+      "point": "Up and down only, no rolling.",
+      "claim": "c3"
+    },
+    {
+      "point": "Lower slowly.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Rolling the shoulders.",
+      "fix": "Straight up, straight down.",
+      "claim": "c3"
+    },
+    {
+      "mistake": "Bending the arms to pull.",
+      "fix": "Keep elbows straight; if you can't, lower the weight.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Dropping the bar fast on the way down.",
+      "fix": "Lower slowly.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c5"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Top of the shoulders, between neck and shoulder",
+        "means": "Usually means the upper traps are lifting.",
+        "fix": null,
+        "claim": "c5",
+        "redFlag": null
+      },
+      {
+        "where": "Forearms and grip tiring first",
+        "means": "Usually means the grip is limiting the set.",
+        "fix": "Keep the wrist neutral and the thumb wrapped.",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Sharp pain in the shoulder joint",
+        "means": "Not a normal training feeling; the shoulder is a common injury site.",
+        "fix": "Stop the set.",
+        "claim": "c11",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "claim": "c9"
+    },
+    {
+      "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+      "claim": "c11"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "shrug-grip",
+      "kind": "hand",
+      "right": "Overhand, thumbs wrapped, wrists straight, hands shoulder width.",
+      "wrong": "Bar in the fingertips, wrist curled.",
+      "claim": "c1"
+    },
+    {
+      "key": "shrug-top",
+      "kind": "posture",
+      "right": "Shoulders up toward the ears, arms straight.",
+      "wrong": "Elbows bent, pulling the bar up with the arms.",
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library primary upper_traps matches (c5); no source prose read supports another muscle."
+  },
+  "anchorSource": "ace-shrug"
+}

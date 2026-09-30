@@ -1,0 +1,195 @@
+{
+  "id": "single_leg_romanian_deadlift",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-sl-rdl",
+      "text": "Balance on the left leg while holding a dumbbell in the right hand. Keep the left knee slightly bent and the back straight while leaning forward on the left hip",
+      "status": "verbatim",
+      "closest": "Balance on the left leg while holding a dumbbell in the right hand. Keep the left knee slightly bent and the back straight while leaning forward on the left hip"
+    },
+    {
+      "claim": "c2",
+      "source": "ace-sl-rdl",
+      "text": "(tip: while leaning forward straighten the right leg and point the right toes to help stay balanced.)",
+      "status": "verbatim",
+      "closest": "(tip: while leaning forward straighten the right leg and point the right toes to help stay balanced.)"
+    },
+    {
+      "claim": "c3",
+      "source": "ace-sl-rdl",
+      "text": "Keep the arm straight so the dumbbell is lowering directly in front of the left leg.",
+      "status": "verbatim",
+      "closest": "Keep the arm straight so the dumbbell is lowering directly in front of the left leg."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-sl-rdl",
+      "text": "Push the left foot into the floor, pull back on the left knee, and lower the right leg to stand up, keeping the grip on the dumbbell. Pause in a balanced position before performing the next repetition.",
+      "status": "verbatim",
+      "closest": "Push the left foot into the floor, pull back on the left knee, and lower the right leg to stand up, keeping the grip on the dumbbell. Pause in a balanced position before performing the next repetition."
+    },
+    {
+      "claim": "c5",
+      "source": "sl-sl-rdl",
+      "text": "Make sure to keep your hips still; you don’t want the side with your lifted leg to start rotating upwards.",
+      "status": "verbatim",
+      "closest": "Make sure to keep your hips still; you don’t want the side with your lifted leg to start rotating upwards."
+    },
+    {
+      "claim": "c6",
+      "source": "sl-sl-rdl",
+      "text": "If you have trouble keeping your balance, you can keep the toes of your lifted leg touching the floor to add some stability.",
+      "status": "verbatim",
+      "closest": "If you have trouble keeping your balance, you can keep the toes of your lifted leg touching the floor to add some stability."
+    },
+    {
+      "claim": "c7",
+      "source": "gentilcore-slrdl",
+      "text": "rounding the back and shoulders, not packing the neck, lowering the DB too low, to name a few",
+      "status": "verbatim",
+      "closest": "rounding the back and shoulders, not packing the neck, lowering the DB too low, to name a few"
+    },
+    {
+      "claim": "c8",
+      "source": "gentilcore-slrdl",
+      "text": "Many will view this as looking down, but in fact, you’re just keeping the neck in a neutral position.",
+      "status": "verbatim",
+      "closest": "Many will view this as looking down, but in fact, you’re just keeping the neck in a neutral position."
+    },
+    {
+      "claim": "c8",
+      "source": "gentilcore-slrdl",
+      "text": "you want to think of your entire backside as making a straight line (said differently, arch your back) from your head all the way down to your toes.",
+      "status": "verbatim",
+      "closest": "you want to think of your entire backside as making a straight line (said differently, arch your back) from your head all the way down to your toes."
+    },
+    {
+      "claim": "c9",
+      "source": "gentilcore-slrdl",
+      "text": "So, instead of actively thinking about lowering the DB, all you need to do is think “hips back,” until the DB reaches roughly mid-shin level.",
+      "status": "verbatim",
+      "closest": "So, instead of actively thinking about lowering the DB, all you need to do is think “hips back,” until the DB reaches roughly mid-shin level."
+    },
+    {
+      "claim": "c10",
+      "source": "gentilcore-slrdl",
+      "text": "It shouldn’t be locked or stiff.  Ideally, you want about 15-20 degrees of knee flexion.",
+      "status": "verbatim",
+      "closest": "It shouldn’t be locked or stiff.  Ideally, you want about 15-20 degrees of knee flexion."
+    },
+    {
+      "claim": "c11",
+      "source": "gentilcore-slrdl",
+      "text": "Likewise, as you push back, you should feel the brunt of your weight shift back into your supporting leg’s heel.",
+      "status": "verbatim",
+      "closest": "Likewise, as you push back, you should feel the brunt of your weight shift back into your supporting leg’s heel."
+    },
+    {
+      "claim": "c12",
+      "source": "gentilcore-slrdl",
+      "text": "So, if you have to limit the ROM due to poor hip stablity (for instance), that’s fine.",
+      "status": "verbatim",
+      "closest": "So, if you have to limit the ROM due to poor hip stablity (for instance), that’s fine."
+    },
+    {
+      "claim": "c13",
+      "source": "gentilcore-slrdl",
+      "text": "The fact of the matter is, even for trainees with a fair amount of experience under the bar, 1-Legged RDLs are about as advanced as they get as far as single leg movements go.",
+      "status": "verbatim",
+      "closest": "The fact of the matter is, even for trainees with a fair amount of experience under the bar, 1-Legged RDLs are about as advanced as they get as far as single leg movements go."
+    },
+    {
+      "claim": "c14",
+      "source": "mo2023",
+      "text": "The overall results demonstrated a very high level of SGM (105.4%-168.6%) and BF (69.6%-122.4%) muscle activities.",
+      "status": "verbatim",
+      "closest": "The overall results demonstrated a very high level of SGM (105.4%-168.6%) and BF (69.6%-122.4%) muscle activities."
+    },
+    {
+      "claim": "c14",
+      "source": "mo2023",
+      "text": "Strength coaches may adopt dumbbell or flywheel SLRDL exercises using the contralateral loading position to simultaneously strengthen the hip extensors and trunk stabilizers effectively.",
+      "status": "verbatim",
+      "closest": "Strength coaches may adopt dumbbell or flywheel SLRDL exercises using the contralateral loading position to simultaneously strengthen the hip extensors and trunk stabilizers effectively."
+    },
+    {
+      "claim": "c15",
+      "source": "mo2023",
+      "text": "A significant moderate increase of sEMG signals in GM, IGM, and ES (dominant side) and a large increase in SGM activity during concentric action when the loading position of flywheel SLRDL was changed from ipsilateral to the contralateral side.",
+      "status": "verbatim",
+      "closest": "A significant moderate increase of sEMG signals in GM, IGM, and ES (dominant side) and a large increase in SGM activity during concentric action when the loading position of flywheel SLRDL was changed from ipsilateral to the contralateral side."
+    },
+    {
+      "claim": "c16",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c16",
+      "source": "ace-sl-rdl",
+      "text": "Pause in a balanced position before performing the next repetition.",
+      "status": "verbatim",
+      "closest": "Pause in a balanced position before performing the next repetition."
+    },
+    {
+      "claim": "c17",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c18",
+      "source": "gentilcore-slrdl",
+      "text": "This is important because you can’t think of this movement as actively lowering the DB with your arm",
+      "status": "verbatim",
+      "closest": "This is important because you can’t think of this movement as actively lowering the DB with your arm"
+    },
+    {
+      "claim": "c19",
+      "source": "sl-sl-rdl",
+      "text": "Finish all your reps on one side first, and then repeat on the other leg.",
+      "status": "verbatim",
+      "closest": "Finish all your reps on one side first, and then repeat on the other leg."
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "Call 999 or go to A&E if:",
+      "status": "verbatim",
+      "closest": "Call 999 or go to A&E if:"
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "pain, tingling, weakness or numbness in both legs",
+      "status": "verbatim",
+      "closest": "pain, tingling, weakness or numbness in both legs"
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "a loss of feeling around your genitals or anus",
+      "status": "verbatim",
+      "closest": "a loss of feeling around your genitals or anus"
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "See a GP if:",
+      "status": "verbatim",
+      "closest": "See a GP if:"
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "it does not improve after treating it at home for a few weeks",
+      "status": "verbatim",
+      "closest": "it does not improve after treating it at home for a few weeks"
+    }
+  ]
+}

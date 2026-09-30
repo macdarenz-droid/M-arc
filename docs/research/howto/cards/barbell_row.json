@@ -1,0 +1,682 @@
+{
+  "id": "barbell_row",
+  "libId": "lib_barbell_row",
+  "name": "Barbell Row",
+  "family": "HROW",
+  "tier": "A",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Take an overhand (palms-down) grip, with hand spacing that puts wrists, elbows and shoulders in a straight line.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bent-over-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bent-over-row",
+          "text": "Grip a barbell with palms down so that the wrists, elbows, and shoulders are in a straight line.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "A double overhand grip slightly wider than shoulder width is a starting point; the best width depends on arm length and torso thickness.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "Grip the bar with a double overhand grip. Try a grip that is slightly wider than shoulder-width apart. Your optimal grip width will be determined by your arm length and torso thickness",
+          "where": "Proper Form & Technique: Grip"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Take the bar from the rack, bend forward at the hips, keep the back straight and the knees slightly bent.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bent-over-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bent-over-row",
+          "text": "Lift the bar from the rack, bend forward at the hips, and keep the back straight with a slight bend in the knees.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Keep the back neutral, neither rounded forward nor arched.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "Aim to keep your back in a neutral position; neither flexed forward nor arched.",
+          "where": "Proper Form & Technique: Back"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The bar starts from straight arms and is pulled toward the belly button while the back stays flat, then lowered slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bent-over-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bent-over-row",
+          "text": "Lower the bar towards the floor until the elbows are completely straight, and keep the back flat as the bar is pulled towards the belly button. Then slowly lower the bar to the starting position and repeat.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The bar is usually rowed to the abdomen or low chest; rowing higher shifts work to the rear delts and upper back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "In barbell rows, you typically row the barbell toward your abdomen or low chest. If you row the barbell higher on your chest, the exercise starts to resemble barbell rear delt rows.",
+          "where": "Proper Form & Technique: Line of Pull"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Swinging the bar up with the hips takes work from the upper back; the most common cause is too much weight, and the fix is a lighter weight with stricter form.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "The most common cause of swinging in the barbell row is that you are using too much weight. Try lowering the weight and performing the row with a more strict form.",
+          "where": "Proper Form & Technique: Swinging"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Feet about shoulder width, toes forward or slightly out, weight even under the feet.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "Your feet should be about shoulder-width apart, with your toes pointing forward or slightly out. Try to keep your weight evenly distributed under your feet during the exercise.",
+          "where": "Proper Form & Technique: Feet"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The shoulder blades move: forward at the bottom, back and together as the bar comes up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "In the bottom position, let your shoulder blades slide forward to a neutral or even slightly protracted (forward) position. As you pull the bar up, pull your shoulder blades back and together.",
+          "where": "Proper Form & Technique: Shoulder Blades"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "In a lab comparison of three rows, the standing bent-over row gave large, even back-muscle activation but the largest lumbar spine load.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "fenwick2009"
+      ],
+      "quotes": [
+        {
+          "source": "fenwick2009",
+          "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The free-weight row works the lower-back muscles (erector spinae) harder than a machine row.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "saeterbakken2015"
+      ],
+      "quotes": [
+        {
+          "source": "saeterbakken2015",
+          "text": "In bilateral free-weight row, EMG activity in erector spinae was greater than bilateral machine- (+34%, P=0.004) and unilateral free-weight rows (+12%, P=0.016).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The row mainly works the lats, trapezius and rear delts, with biceps, lower back and forearm flexors as secondary movers.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "Barbell rows work most of your major back muscles, primarily hitting your latissimus dorsi, trapezius, and posterior deltoids.",
+          "where": "What Muscles Do Barbell Rows Work?"
+        },
+        {
+          "source": "sl-barbell-row",
+          "text": "The secondary worked muscles are your biceps, lower back, forearm flexors, and rotator cuffs.",
+          "where": "What Muscles Do Barbell Rows Work?"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Tempo: about 1-2 s up and 1-2 s down (moderate velocity), with the lowering done slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "ace-bent-over-row"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "ace-bent-over-row",
+          "text": "Then slowly lower the bar to the starting position and repeat.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Wrap the thumbs around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Lifting straps are fine when grip limits the back work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "Don’t hesitate to use lifting straps if necessary. At least, if your purpose for doing this exercise is to build your back muscles and not to train your grip strength.",
+          "where": "Proper Form & Technique: Grip"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Breathe in before pulling the bar up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "Inhale and pull the bar towards you.",
+          "where": "How to Do Barbell Rows With Proper Form"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "An underhand grip moves work from the back to the biceps and probably raises the risk of a biceps tear.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "sl-barbell-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-barbell-row",
+          "text": "This change in grip moves some of the work away from your back muscles and to your biceps. It should also be noted that this grip probably increases the risk of a biceps tear.",
+          "where": "Barbell Row vs Yates Row"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-bent-over-row",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/12/bent-over-row/",
+      "title": "ACE Exercise Library: Bent-over Row",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-barbell-row",
+      "url": "https://www.strengthlog.com/barbell-row/",
+      "title": "How to Do Barbell Rows: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "fenwick2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19620925/",
+      "title": "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19620925,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "saeterbakken2015",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26134664/",
+      "title": "The Effect of Performing Bi- and Unilateral Row Exercises on Core Muscle Activation.",
+      "kind": "peer-reviewed",
+      "year": 2015,
+      "pmid": 26134664,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The back angle, knee bend and the bar's path to the belly all happen front-to-back (c3, c5); the side view shows all three and the census draws it side.",
+    "equipment": "Straight barbell with plates, lifter standing on the floor line; bar starts hanging under the shoulders from straight arms, taken from a rack at thigh height (c3).",
+    "start": "Hips hinged forward, back flat and neutral (c3, c4), knees slightly bent (c3), feet about shoulder width (c8), arms straight down with elbows locked out (c5).",
+    "end": "Same trunk and knee angle (c5 'keep the back flat'); elbows pulled back past the torso, bar touching the abdomen or low chest (c6), shoulder blades pulled together (c9).",
+    "checkpoints": [
+      {
+        "label": "Flat back",
+        "what": "Back neutral, not rounded or arched, from start to finish.",
+        "claim": "c4"
+      },
+      {
+        "label": "Soft knees",
+        "what": "Knees slightly bent and hips hinged, not standing tall.",
+        "claim": "c3"
+      },
+      {
+        "label": "Bar to belly",
+        "what": "Bar pulled to the belly button or low chest, not to the neck.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Torso swings up to heave the bar (hips and lower back throw the weight).",
+      "why": "Too much weight is the usual cause; it takes work off the upper back and adds lower-back stress on a lift that already loads the lumbar spine most (c7, c10).",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Bar touches your belly each rep",
+        "claim": "c6"
+      },
+      {
+        "text": "Back stays flat as bar rises",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c13"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (palms down), double overhand.",
+    "width": "Slightly wider than shoulders, so wrists, elbows and shoulders line up; adjust for arm length.",
+    "thumb": "Wrapped around the bar.",
+    "handContact": "Bar across the base of the fingers and top of the palm (pull archetype); straps allowed when the grip gives out first.",
+    "wrist": "Straight in line with the forearm (pull archetype range); not curled.",
+    "claims": [
+      "c1",
+      "c2",
+      "c16",
+      "c17"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bar in a rack at about thigh height and lift it out.",
+      "claim": "c3"
+    },
+    {
+      "step": "Feet about shoulder width, toes forward or slightly out.",
+      "claim": "c8"
+    },
+    {
+      "step": "Overhand grip, slightly wider than shoulders, thumbs around the bar.",
+      "claim": "c2"
+    },
+    {
+      "step": "Bend forward at the hips with a flat back and soft knees; arms hang straight.",
+      "claim": "c3"
+    },
+    {
+      "step": "Breathe in, then pull.",
+      "claim": "c19"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back neutral the whole set.",
+      "claim": "c4"
+    },
+    {
+      "point": "Weight even under the feet.",
+      "claim": "c8"
+    },
+    {
+      "point": "Shoulder blades forward at the bottom, together at the top.",
+      "claim": "c9"
+    },
+    {
+      "point": "Trunk angle stays the same while the bar moves.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging the bar up with the hips.",
+      "fix": "Go lighter and row strictly.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Rounding the back.",
+      "fix": "Keep the back flat; if it rounds, end the set or lower the weight.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Switching to an underhand grip for heavy sets.",
+      "fix": "Keep the overhand grip for this row.",
+      "claim": "c20"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "lats",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "biceps",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "forearms",
+        "claim": "c12"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c11"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Between and around the shoulder blades",
+        "means": "Usually means the upper back is doing the rowing.",
+        "fix": null,
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back, working hard",
+        "means": "Usually means the lower back is holding the bent-over position, which is expected.",
+        "fix": "If it turns to pain, lower the weight and keep the torso still.",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back pain, or pain or numbness down both legs",
+        "means": "Not a normal training feeling.",
+        "fix": "Stop the set.",
+        "claim": "c18",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "This row puts the largest load on the lower spine of the rows tested.",
+      "claim": "c10"
+    },
+    {
+      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "claim": "c15"
+    },
+    {
+      "risk": "Swinging heavy weight shifts stress to the lower back.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "row-grip",
+      "kind": "hand",
+      "right": "Overhand, thumbs wrapped, wrists straight, hands just outside shoulder width.",
+      "wrong": "Wrist curled forward with the bar sliding to the fingertips.",
+      "claim": "c1"
+    },
+    {
+      "key": "row-back",
+      "kind": "posture",
+      "right": "Flat back, hips hinged, soft knees.",
+      "wrong": "Rounded back, or torso rising up as the bar is heaved.",
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library primary mid_back and secondary lats, biceps, rear_delts, with lower_back and core as stabilisers, match the sources (c12, c11). StrengthLog lists lats as primary; the card keeps the library split and shows lats as a primary feel (c12)."
+  },
+  "anchorSource": "sl-barbell-row"
+}

@@ -1,0 +1,659 @@
+{
+  "id": "single_leg_romanian_deadlift",
+  "libId": "lib_single_leg_romanian_deadlift",
+  "name": "Single-Leg Romanian Deadlift",
+  "family": "HINGE",
+  "tier": "A",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "romanian_deadlift",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "The parent's wrapped-thumb rule (Baechle and Earle, thumbs around the bar) carries over to a dumbbell handle by reasoning (MECH); this card adds no separate thumb source."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "Same hold archetype and a hanging load as the parent, so the neutral wrist range applies (MECH)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Balance on one leg and hold the dumbbell in the opposite hand; the standing knee stays slightly bent and the back straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-sl-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-sl-rdl",
+          "text": "Balance on the left leg while holding a dumbbell in the right hand. Keep the left knee slightly bent and the back straight while leaning forward on the left hip",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "While leaning forward, straighten the free leg and point its toes to help balance.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-sl-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-sl-rdl",
+          "text": "(tip: while leaning forward straighten the right leg and point the right toes to help stay balanced.)",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Keep the arm straight so the dumbbell lowers directly in front of the standing leg.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-sl-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-sl-rdl",
+          "text": "Keep the arm straight so the dumbbell is lowering directly in front of the left leg.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "To stand, push the standing foot into the floor and lower the free leg; pause balanced before the next rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-sl-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-sl-rdl",
+          "text": "Push the left foot into the floor, pull back on the left knee, and lower the right leg to stand up, keeping the grip on the dumbbell. Pause in a balanced position before performing the next repetition.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the hips still; the side of the lifted leg should not rotate upwards.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-sl-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-sl-rdl",
+          "text": "Make sure to keep your hips still; you don’t want the side with your lifted leg to start rotating upwards.",
+          "where": "How to Do Single Leg Romanian Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "If balance is hard, keep the toes of the lifted leg touching the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-sl-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-sl-rdl",
+          "text": "If you have trouble keeping your balance, you can keep the toes of your lifted leg touching the floor to add some stability.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Common faults: rounding the back and shoulders, not keeping the neck neutral, and lowering the dumbbell too low.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gentilcore-slrdl"
+      ],
+      "quotes": [
+        {
+          "source": "gentilcore-slrdl",
+          "text": "rounding the back and shoulders, not packing the neck, lowering the DB too low, to name a few",
+          "where": "commentary before Key Points"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Keep the whole back side in a straight line from head to toes, with the neck neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gentilcore-slrdl"
+      ],
+      "quotes": [
+        {
+          "source": "gentilcore-slrdl",
+          "text": "Many will view this as looking down, but in fact, you’re just keeping the neck in a neutral position.",
+          "where": "Key Point 1"
+        },
+        {
+          "source": "gentilcore-slrdl",
+          "text": "you want to think of your entire backside as making a straight line (said differently, arch your back) from your head all the way down to your toes.",
+          "where": "Key Point 1"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Think 'hips back' rather than reaching the dumbbell down; stop at about mid-shin, where the hamstrings feel strong tension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gentilcore-slrdl"
+      ],
+      "quotes": [
+        {
+          "source": "gentilcore-slrdl",
+          "text": "So, instead of actively thinking about lowering the DB, all you need to do is think “hips back,” until the DB reaches roughly mid-shin level.",
+          "where": "Key Point 2"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Keep a soft standing knee, about 15-20 degrees bent, not locked.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gentilcore-slrdl"
+      ],
+      "quotes": [
+        {
+          "source": "gentilcore-slrdl",
+          "text": "It shouldn’t be locked or stiff.  Ideally, you want about 15-20 degrees of knee flexion.",
+          "where": "Key Point 3"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Drive the free leg's heel toward the ceiling; weight shifts back into the standing heel, not the toes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gentilcore-slrdl"
+      ],
+      "quotes": [
+        {
+          "source": "gentilcore-slrdl",
+          "text": "Likewise, as you push back, you should feel the brunt of your weight shift back into your supporting leg’s heel.",
+          "where": "Key Point 4"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Working in a shorter, usable range is fine while hip control builds.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gentilcore-slrdl"
+      ],
+      "quotes": [
+        {
+          "source": "gentilcore-slrdl",
+          "text": "So, if you have to limit the ROM due to poor hip stablity (for instance), that’s fine.",
+          "where": "Key Point 6"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Single-leg RDLs are among the most advanced single-leg movements, even for experienced lifters.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gentilcore-slrdl"
+      ],
+      "quotes": [
+        {
+          "source": "gentilcore-slrdl",
+          "text": "The fact of the matter is, even for trainees with a fair amount of experience under the bar, 1-Legged RDLs are about as advanced as they get as far as single leg movements go.",
+          "where": "commentary"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "In trained men, the dumbbell single-leg RDL produced very high glute and hamstring (biceps femoris) activity; holding the load on the opposite side raised glute and back activity (flywheel), with no dumbbell-vs-flywheel difference.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "mo2023"
+      ],
+      "quotes": [
+        {
+          "source": "mo2023",
+          "text": "The overall results demonstrated a very high level of SGM (105.4%-168.6%) and BF (69.6%-122.4%) muscle activities.",
+          "where": "abstract"
+        },
+        {
+          "source": "mo2023",
+          "text": "Strength coaches may adopt dumbbell or flywheel SLRDL exercises using the contralateral loading position to simultaneously strengthen the hip extensors and trunk stabilizers effectively.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The lower-back muscles (erector spinae) work in the single-leg RDL, more so when the load is held on the opposite side (flywheel data).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "mo2023"
+      ],
+      "quotes": [
+        {
+          "source": "mo2023",
+          "text": "A significant moderate increase of sEMG signals in GM, IGM, and ES (dominant side) and a large increase in SGM activity during concentric action when the loading position of flywheel SLRDL was changed from ipsilateral to the contralateral side.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, then a balanced pause at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "ace-sl-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "ace-sl-rdl",
+          "text": "Pause in a balanced position before performing the next repetition.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Grip the dumbbell hard; do not think of it as lowering the dumbbell with the arm.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gentilcore-slrdl"
+      ],
+      "quotes": [
+        {
+          "source": "gentilcore-slrdl",
+          "text": "This is important because you can’t think of this movement as actively lowering the DB with your arm",
+          "where": "Key Point 2"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Finish all reps on one side, then switch legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-sl-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-sl-rdl",
+          "text": "Finish all your reps on one side first, and then repeat on the other leg.",
+          "where": "How to Do Single Leg Romanian Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-sl-rdl",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/127/single-arm-single-leg-romanian-dead-lift/",
+      "title": "ACE Exercise Library: Single-arm, Single-leg Romanian Dead Lift",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-sl-rdl",
+      "url": "https://www.strengthlog.com/single-leg-romanian-deadlift/",
+      "title": "How to Do Single Leg Romanian Deadlift: Muscles Worked & Proper form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "gentilcore-slrdl",
+      "url": "https://tonygentilcore.com/2011/06/perfecting-the-1legged-rdl/",
+      "title": "Perfecting the 1-Legged RDL (Tony Gentilcore)",
+      "kind": "coach",
+      "year": 2011,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "mo2023",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38093908/",
+      "title": "Effects of loading positions on the activation of trunk and hip muscles during flywheel and dumbbell single-leg Romanian deadlift exercises.",
+      "kind": "peer-reviewed",
+      "year": 2023,
+      "pmid": 38093908,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The hinge, the free leg in line with the back and the dumbbell in front of the standing leg are front-to-back positions (c3, c8); the hip opening fault is a rotation (c5) and cannot be drawn in any view.",
+    "equipment": "One dumbbell in the hand opposite the standing leg (c1), floor line. Bodyweight version: same body, no dumbbell.",
+    "start": "Standing on one leg, standing knee soft at about 15-20 degrees (c10), dumbbell hanging from a straight arm (c3), free foot just off the floor.",
+    "end": "Hips pushed back, trunk and free leg forming one straight line from head to heel (c8, c2), standing knee still soft (c10), dumbbell at about mid-shin in front of the standing leg (c9, c3).",
+    "checkpoints": [
+      {
+        "label": "Straight line",
+        "what": "Head, back and free leg in one line, neck neutral.",
+        "claim": "c8"
+      },
+      {
+        "label": "Soft knee",
+        "what": "Standing knee bent about 15-20 degrees, not locked.",
+        "claim": "c10"
+      },
+      {
+        "label": "Mid-shin",
+        "what": "Dumbbell stops about mid-shin, in front of the standing leg.",
+        "claim": "c9"
+      }
+    ],
+    "mistake": {
+      "what": "Back and shoulders round as the dumbbell is reached toward the floor.",
+      "why": "The top fault, the hip of the lifted leg rotating up (c5), is a rotation the engine cannot draw; rounding while reaching too low is the most common drawable fault (c7).",
+      "claim": "c7",
+      "drawable": false
+    },
+    "tells": [
+      {
+        "text": "Weight sits in the standing heel",
+        "claim": "c11"
+      },
+      {
+        "text": "Hamstring tension near mid-shin",
+        "claim": "c9"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c16"
+    },
+    "variantLine": "Dumbbell drawn (one dumbbell, opposite hand, c1). Bodyweight version: every body-position claim (c2, c5, c6, c8, c10, c11, c12) holds; the grip and load claims (c3, c14, c18) apply to the dumbbell only."
+  },
+  "grip": {
+    "type": "One dumbbell, held in the hand opposite the standing leg, arm hanging straight.",
+    "width": "One hand; the dumbbell lowers in front of the standing leg.",
+    "thumb": "Wrapped (inherited from the parent).",
+    "handContact": "Handle across the middle of the palm, gripped hard.",
+    "wrist": "Neutral (inherited from the parent).",
+    "claims": [
+      "c1",
+      "c3",
+      "c18"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Hold one dumbbell in the hand opposite your standing leg.",
+      "claim": "c1"
+    },
+    {
+      "step": "Stand on that leg with the knee soft, about 15-20 degrees.",
+      "claim": "c10"
+    },
+    {
+      "step": "Balance shaky? Keep the free leg's toes touching the floor.",
+      "claim": "c6"
+    },
+    {
+      "step": "Do all reps on one leg, then switch.",
+      "claim": "c19"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Hips back; don't reach the dumbbell down.",
+      "claim": "c9"
+    },
+    {
+      "point": "Head to heel in one straight line, neck neutral.",
+      "claim": "c8"
+    },
+    {
+      "point": "Hips level; the lifted side does not turn up.",
+      "claim": "c5"
+    },
+    {
+      "point": "Weight back in the standing heel.",
+      "claim": "c11"
+    },
+    {
+      "point": "A shorter range is fine while control builds.",
+      "claim": "c12"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Reaching the dumbbell to the floor and rounding.",
+      "fix": "Stop around mid-shin with a flat back.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Opening the hip of the lifted leg.",
+      "fix": "Keep both hips pointing at the floor; shorten the range if needed.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Weight drifting onto the toes.",
+      "fix": "Push the hips back and sit into the standing heel.",
+      "claim": "c11"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c14"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c15"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Back of the standing thigh near the bottom",
+        "means": "Usually means the hips are hinging correctly.",
+        "fix": null,
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Buttock of the standing leg",
+        "means": "Usually means the glutes are driving you back up.",
+        "fix": null,
+        "claim": "c14",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back pain, or pain or numbness down both legs",
+        "means": "Not a normal training feeling.",
+        "fix": "Stop.",
+        "claim": "c20",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "One of the hardest single-leg movements; balance and form break easily.",
+      "claim": "c13"
+    },
+    {
+      "risk": "Rounding the back while reaching low.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "slrdl-line",
+      "kind": "posture",
+      "right": "Head, back and free leg in one straight line.",
+      "wrong": "Rounded back and shoulders, head craned up.",
+      "claim": "c8"
+    },
+    {
+      "key": "slrdl-knee",
+      "kind": "posture",
+      "right": "Standing knee soft, about 15-20 degrees.",
+      "wrong": "Standing knee locked straight.",
+      "claim": "c10"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "lower_back"
+    ],
+    "remove": [],
+    "why": "Library primary hamstrings and secondary glutes match (c14). Add lower_back as secondary: Mo 2023 measured erector spinae activity that rose with opposite-side loading (c15)."
+  },
+  "anchorSource": "gentilcore-slrdl"
+}
