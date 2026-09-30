@@ -79,6 +79,13 @@ describe('HT1-A1 vendor lock (L0)', () => {
     const other = join(ROOT, 'node_modules/@fontsource-variable/inter/files/inter-latin-ext-wght-normal.woff2');
     expect(g.verifyFont(other)).toMatch(/sha256 .* != pinned 3100e775/);
   });
+
+  // HT-2 (supervisor, HT-1 review): one literal pin over the MANIFEST, so editing a vendored file together
+  // with its MANIFEST entry still fails here and shows up as a visible change to this test.
+  it('HT-2: the sorted path:sha256 list of MANIFEST.json hashes to its pinned literal', () => {
+    const list = Object.entries(g.readManifest().files as Record<string, { sha256: string }>).map(([p, e]) => `${p}:${e.sha256}`).sort().join('\n');
+    expect(g.sha256(list)).toBe('38bc298595650b280c920892324433a99bbe8aa06b58de1d99feaafd0e83168c');
+  });
 });
 
 describe('HT1-A6 vendored files stay outside src', () => {
