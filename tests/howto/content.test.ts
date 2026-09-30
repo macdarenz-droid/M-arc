@@ -1,5 +1,8 @@
 // HT-4: HT4-A2 (content-types.ts compiles a real golden-B spec, mapped) and HT4-A3/A4 (C1-C4, C6-C8, C15-C17 pass on
 // good content and fail, naming the rule, on their own bad fixture). Pure functions, node env, no DOM.
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { HowToContent, Source } from '../../src/howto/content-types';
 import { COVERAGE } from '../../src/howto/coverage';
@@ -9,24 +12,33 @@ import { checkC2 } from './checks/c2';
 import { checkC3 } from './checks/c3';
 import { checkC4 } from './checks/c4';
 import { checkC6 } from './checks/c6';
-import { checkC7 } from './checks/c7';
+import { checkC7, LIMITS as c7LIMITS } from './checks/c7';
 import { checkC8 } from './checks/c8';
 import { checkC15, contentHash } from './checks/c15';
 import { checkC16 } from './checks/c16';
 import { checkC17 } from './checks/c17';
 import { mutate as c1Mutate } from './fixtures/bad/c1-bad-zoom-ref';
+import { mutate as c1DanglingFault } from './fixtures/bad/c1-dangling-fault-ref';
 import { mutate as c2PrimaryWatch } from './fixtures/bad/c2-primary-and-watch';
 import { mutate as c2NoRegion } from './fixtures/bad/c2-no-region';
+import { mutate as c2NoRegionInRow } from './fixtures/bad/c2-no-region-in-row';
+import { mutate as c2UnknownId } from './fixtures/bad/c2-unknown-id';
 import { mutate as c2BadPart } from './fixtures/bad/c2-bad-part';
 import { mutate as c3Mutate } from './fixtures/bad/c3-missing-hand-zoom';
 import { mutate as c4Mutate } from './fixtures/bad/c4-bad-thumb';
 import { mutate as c6Mutate } from './fixtures/bad/c6-missing-id';
 import { mutate as c7Mutate } from './fixtures/bad/c7-banned-phrase';
+import { mutate as c7LabelTooLong } from './fixtures/bad/c7-label-too-long';
+import { mutate as c7RedFlagTooLong } from './fixtures/bad/c7-red-flag-too-long';
+import { mutate as c7FixNotAVerb } from './fixtures/bad/c7-fix-not-a-verb';
+import { mutate as c7VisibleBudget } from './fixtures/bad/c7-visible-budget';
 import { mutate as c8MissingClaim } from './fixtures/bad/c8-missing-claim';
 import { mutate as c8Unreachable } from './fixtures/bad/c8-unreachable';
 import { mutate as c8RedFlag } from './fixtures/bad/c8-red-flag-wording';
 import { reviews as c15Reviews } from './fixtures/bad/c15-no-matching-review';
 import { mutate as c16Mutate } from './fixtures/bad/c16-missing-alt';
+import { mutate as c16ViewNoCamLabel } from './fixtures/bad/c16-view-no-camlabel';
+import { mutate as c16MissingWrongCrop } from './fixtures/bad/c16-missing-wrong-crop';
 
 /*
  * HT4-A2: this literal is machine_chest_press.howto.mjs's default export at the final compact-copy pin (b3a90af),
@@ -117,7 +129,10 @@ const GOOD_CONTENT = {
     mistakeLine: 'Never let your wrist fold back to finish a heavy rep. Drop the weight and push through the heel of your hand.',
     cueLine: 'Handles at mid-chest.',
   },
-  redFlag: { name: 'Wrist pain', now: "Get it checked today if you can't grip, the wrist looks a different shape, or your hand goes numb.", doctor: "See a doctor if it's no better after two weeks of rest, keeps coming back, or tingles.", claim: { tags: ['CONSENSUS'], sources: ['nhs-wrist-pain'] } },
+  // Verbatim from tools/plates/layers/howto/shared.mjs's RED_FLAG (the compact-copy pin, b3a90af) - machine_chest_press.howto.mjs
+  // re-exports it unmodified (S-2 condition 4), never its own text. An earlier, pre-compact-copy wording here (28
+  // vs. the old 38 words) silently over budget went undetected until C7's redFlagBoxWords check was wired up (High 5).
+  redFlag: { name: 'Wrist pain', now: "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.", doctor: "Tingling, keeps coming back, or no better after two weeks' rest? See a doctor.", claim: { tags: ['CONSENSUS'], sources: ['nhs-wrist-pain'] } },
   mistakes: [
     { key: 'wrist', title: 'Wrist bent back', zoom: 'hand', claim: CL_WRIST, fix: 'Handle on the heel of your palm. Still bending? Go lighter.' },
     { key: 'seat-low', title: 'Seat too low', zoom: 'seat-height', claim: CL_ACE, fix: 'Raise the seat so the handles meet mid-chest.' },
@@ -166,14 +181,36 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     expect(bad.every(m => m.startsWith('C1:'))).toBe(true);
   });
 
+  it('C1 fails when a hand zoom\'s hand.wrong references a fault key not in handling.faults', () => {
+    const bad = checkC1(c1DanglingFault(GOOD_CONTENT), KNOWN_IDS);
+    expect(bad.some(m => m.includes('not-a-real-fault') && m.includes('not in handling.faults'))).toBe(true);
+  });
+
   it('C2 fails when a muscle is both primary and watch', () => {
     const bad = checkC2(c2PrimaryWatch(GOOD_CONTENT));
     expect(bad.some(m => m.includes('both primary and watch'))).toBe(true);
   });
 
-  it('C2 fails when a shimmer role uses an id with no drawn region', () => {
+  it('C2 fails when a NO_REGION id (brachialis) is used in feel.primary', () => {
     const bad = checkC2(c2NoRegion(GOOD_CONTENT));
-    expect(bad.some(m => m.includes('no drawn region'))).toBe(true);
+    expect(bad.some(m => m.includes('feel.primary') && m.includes('no drawn region'))).toBe(true);
+  });
+
+  it('D-HT4-C2: a NO_REGION id (brachialis) passes as text-only in feel.secondary and feel.watch', () => {
+    const withSecondary = { ...GOOD_CONTENT, feel: { ...GOOD_CONTENT.feel, secondary: [...GOOD_CONTENT.feel.secondary, { muscleId: 'brachialis' as const, plain: 'Text only, no drawn region.' }] } };
+    expect(checkC2(withSecondary)).toEqual([]);
+    const withWatch = { ...GOOD_CONTENT, feel: { ...GOOD_CONTENT.feel, watch: [...GOOD_CONTENT.feel.watch, { muscleId: 'rotator_cuff' as const, plain: 'Text only, no drawn region.' }] } };
+    expect(checkC2(withWatch)).toEqual([]);
+  });
+
+  it('D-HT4-C2: a NO_REGION id still fails as a feel.rows[].at.muscles highlight (needs a real region to shimmer)', () => {
+    const bad = checkC2(c2NoRegionInRow(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('has no drawn region to highlight'))).toBe(true);
+  });
+
+  it('D-HT4-C2: an unknown muscle id fails', () => {
+    const bad = checkC2(c2UnknownId(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('not_a_real_muscle') && m.includes('is not isMuscleId'))).toBe(true);
   });
 
   it('C2 fails when a part id is not in bodyMuscles.ts', () => {
@@ -208,6 +245,36 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     expect(bad.some(m => m.includes('contains "maximise"'))).toBe(true);
   });
 
+  it('C7 fails when a label field (a zoom chip) is over labelMaxWords', () => {
+    const bad = checkC7(c7LabelTooLong(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('chip') && m.includes('at most 3'))).toBe(true);
+  });
+
+  it('C7 fails when the redFlag box is over redFlagBoxWords', () => {
+    const bad = checkC7(c7RedFlagTooLong(GOOD_CONTENT));
+    expect(bad.some(m => m.startsWith('C7: redFlag:') && m.includes('at most 30'))).toBe(true);
+  });
+
+  it('C7 fails when a feel-row fix does not start with an imperative verb', () => {
+    const bad = checkC7(c7FixNotAVerb(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('must start with a verb'))).toBe(true);
+  });
+
+  it('C7 fails when the visible-word budget (450) is exceeded', () => {
+    const bad = checkC7(c7VisibleBudget(GOOD_CONTENT));
+    expect(bad.some(m => m.startsWith('C7: visible words') && m.includes('at most 450'))).toBe(true);
+  });
+
+  it('LIMITS matches copy-lint.mjs\'s own exported constants exactly (transcribed from tools/plates/layers/artifact/copy-lint.mjs, not imported - c7.ts stays self-contained per the supervisor)', () => {
+    expect(c7LIMITS).toEqual({
+      anySentenceWords: 15, feelLineWords: 20, feelLineSentences: 2, rowWhereWords: 6, rowMeansWords: 12,
+      rowMeansSentences: 1, rowFixWords: 15, rowFixSentences: 2, leadLineWords: 22, leadLineSentences: 2,
+      setupStepWords: 12, setupMaxSteps: 5, mistakesMax: 3, mistakeLabelWords: 5, mistakeFixWords: 12,
+      feelRowsMax: 4, captionWords: 10, risksMax: 3, riskWords: 14, redFlagBoxWords: 30, sourceNoteWords: 12,
+      altWords: 30, labelMinWords: 1, labelMaxWords: 3, cueWords: 6, visibleWordsMax: 450,
+    });
+  });
+
   it('C8 fails when a rule has no Claim', () => {
     const bad = checkC8(c8MissingClaim(GOOD_CONTENT), SOURCES);
     expect(bad.some(m => m.includes('no Claim'))).toBe(true);
@@ -240,6 +307,16 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     expect(bad.some(m => m.includes('no alt.wrong'))).toBe(true);
   });
 
+  it('C16 fails when a posture zoom sets view but no camLabel', () => {
+    const bad = checkC16(c16ViewNoCamLabel(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('needs its own camLabel'))).toBe(true);
+  });
+
+  it('C16 fails when a posture zoom has no wrong crop defined', () => {
+    const bad = checkC16(c16MissingWrongCrop(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('no wrong crop defined'))).toBe(true);
+  });
+
   it('C17 fails on the fixture that calls fetch(), and on nothing else in the same folder', () => {
     const bad = checkC17([new URL('.', import.meta.url).pathname + 'fixtures/bad']);
     expect(bad.every(m => m.includes('c17-network.ts'))).toBe(true);
@@ -251,5 +328,49 @@ describe('HT4-A4: the checks are pure, no DOM, and cheap', () => {
   it('none of the checks touch a global DOM (jsdom/document/window)', () => {
     expect(typeof document).toBe('undefined');
     expect(typeof window).toBe('undefined');
+  });
+});
+
+// Review fix (blocker 2, PR #107): the card asks every real content file to pass every check, not just the one
+// copied-verbatim fixture above. src/howto/content/**/*.ts holds 0 files today (no exercise has been authored yet -
+// that is later cards' job), so this only proves the wiring now; it starts failing the moment the first real file
+// disagrees with a check, instead of that drift going unnoticed until it ships.
+describe('HT4-A2/A3: every real content file under src/howto/content passes every check (0 files today - this is the guard for the first one)', () => {
+  it('C1-C4, C7, C8, C15, C16 all return [] for every src/howto/content/**/*.ts default export', async () => {
+    const walk = (dir: string): string[] => {
+      let entries;
+      try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return []; }
+      return entries.flatMap(e => {
+        const p = join(dir, e.name);
+        return e.isDirectory() ? walk(p) : /\.ts$/.test(e.name) ? [p] : [];
+      });
+    };
+    const CONTENT_DIR = join(new URL('.', import.meta.url).pathname, '..', '..', 'src', 'howto', 'content');
+    const files = walk(CONTENT_DIR);
+    const EQUIPMENT_BY_ID = new Map((exercises as Array<{ id: string; equipment: string }>).map(e => [e.id, e.equipment]));
+    const reviewsFile = JSON.parse(
+      readFileSync(join(new URL('.', import.meta.url).pathname, '..', '..', 'docs', 'research', 'howto', 'reviews.json'), 'utf8'),
+    );
+    for (const f of files) {
+      const mod = await import(/* @vite-ignore */ pathToFileURL(f).href);
+      const content = mod.default as HowToContent;
+      const bad: string[] = [
+        ...checkC1(content, KNOWN_IDS),
+        ...checkC2(content),
+        ...checkC3(content, EQUIPMENT_BY_ID.get(content.id) ?? ''),
+        ...checkC4(content),
+        ...checkC7(content),
+        ...checkC8(content, SOURCES),
+        ...checkC15(content, {}, reviewsFile),
+        ...checkC16(content),
+      ];
+      expect(bad, `${f}: ${JSON.stringify(bad)}`).toEqual([]);
+    }
+  });
+
+  it('C17: no network call or bare URL outside the source citations, anywhere in src/howto or src/slices/howto', () => {
+    const root = join(new URL('.', import.meta.url).pathname, '..', '..');
+    const allowedUrls = new Set(Object.values(SOURCES).map(s => s.url).filter((u): u is string => typeof u === 'string'));
+    expect(checkC17([join(root, 'src', 'howto'), join(root, 'src', 'slices', 'howto')], allowedUrls)).toEqual([]);
   });
 });
