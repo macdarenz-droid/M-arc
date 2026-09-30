@@ -180,15 +180,29 @@ export async function goldenSelfCheck(browser, { html = readFileSync(GOLDEN_PAGE
 // HT-3: the app side. The gate's own build (vite preview on `port`) with a seeded split, the How-to sheet opened from
 // the real Train entry, and the comparisons against the golden page (plan 2.7: L2b, F3, L3, L4).
 
-/** The 8 approved plates in gallery order (GOLDEN chromeId -> library id), then the two controls. */
+/** The 8 approved plates in gallery order (GOLDEN chromeId -> library id); HT_ORDER adds the two controls. */
 export const HT_PLATES = [
   ['lateral-raise', 'lib_dumbbell_lateral_raise'], ['barbell-back-squat', 'lib_barbell_back_squat'], ['pull-up', 'lib_pull_up'],
   ['hanging-leg-raise', 'lib_hanging_leg_raise'], ['lat-pulldown', 'lib_lat_pulldown'], ['seated-cable-row', 'lib_seated_cable_row'],
   ['leg-press', 'lib_leg_press'], ['machine-chest-press', 'lib_machine_chest_press'],
 ];
-export const HT_BENCH = 'lib_barbell_bench_press';
+/**
+ * The gate's "no How-to" control (D-HT1): the first library id, in src/data/exercises.json order, for which hasHowTo()
+ * is false (HOWTO_IDS read from the generated src/howto/ids.ts). Data-driven, so it moves on by itself when more
+ * exercises get approved content, and the gate block never needs an edit for it.
+ */
+export function firstWithoutHowTo() {
+  const lib = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => e.id);
+  const m = readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8').match(/export const HOWTO_IDS = \[([\s\S]*?)\] as const;/);
+  if (!m) throw new Error('firstWithoutHowTo: no HOWTO_IDS in src/howto/ids.ts');
+  const approved = new Set([...m[1].matchAll(/"([^"]+)"/g)].map(x => x[1]));
+  const id = lib.find(i => !approved.has(i));
+  if (!id) throw new Error('firstWithoutHowTo: every library exercise has a How-to');
+  return id;
+}
+export const HT_NO_HOWTO = firstWithoutHowTo();
 export const HT_CUSTOM = { id: 'custom_ht3_lateral', name: 'Cable Lateral Raise HT3', equipment: 'Cable', primary: ['side_delts'], secondary: [], stabilizers: [], aliases: [], pattern: 'isolation', defaultSets: 2, mode: 'weighted', role: 'accessory', custom: true };
-export const HT_ORDER = [...HT_PLATES.map(p => p[1]), HT_BENCH, HT_CUSTOM.id];
+export const HT_ORDER = [...HT_PLATES.map(p => p[1]), HT_NO_HOWTO, HT_CUSTOM.id];
 
 /** Init script (runs in the page): theme plus a split holding the 8 plates, bench press and a custom exercise. */
 export function htSeed([theme, ids, custom]) {
@@ -744,7 +758,7 @@ export async function ht3Behaviour(browser, port, theme = 'silent-black') {
     const keysBefore = await page.evaluate(() => Object.keys(localStorage).sort().join(','));
     const box = async loc => { const b = await loc.boundingBox(); return b ? [b.width, b.height] : null; };
     // HT3-A1: the controls. Bench press (no approved content) and the custom exercise show no entry.
-    for (const [index, name] of [[HT_ORDER.indexOf(HT_BENCH), 'bench press'], [HT_ORDER.indexOf(HT_CUSTOM.id), 'custom exercise']]) {
+    for (const [index, name] of [[HT_ORDER.indexOf(HT_NO_HOWTO), `${HT_NO_HOWTO} (no approved content)`], [HT_ORDER.indexOf(HT_CUSTOM.id), 'custom exercise']]) {
       const card = await openCard(page, index);
       if (await card.locator('.ht-entry').count()) P(`A1: the ${name} card has a How-to entry`);
     }

@@ -5585,8 +5585,9 @@ for (const theme of ['silent-black', 'paper']) {
 // markup (fg-/fg4- classes, .form-guide, the rig id). A1: the open lateral-raise card (a guided exercise before
 // FG-OFF) shows its "Why this target" row with no old guide button, in Silent Black and Paper.
 // D-HT1 (owner approval 2026-09-30, HT-3): "How to do it" returns only as the approved Technical Plate. G3: the label
-// is in the entry chunk and in no other asset. G6: exactly one 44 px entry on the lateral-raise card, none on bench
-// press, and it opens the plate sheet. G7 also covers the open How-to sheet.
+// is in the entry chunk and in no other asset. G6: exactly one 44 px entry on the lateral-raise card, none on the
+// first library exercise without approved content (firstWithoutHowTo), and it opens the plate sheet. G7 also covers
+// the open How-to sheet.
 {
   const tag = 'FG-OFF';
   const assets = join(ROOT, 'www/assets');
@@ -5603,12 +5604,15 @@ for (const theme of ['silent-black', 'paper']) {
     const labels = (text.match(/How to do it/g) ?? []).length;
     if (f === entryChunk ? labels < 1 : labels > 0) errors.push(`${tag} G3: "How to do it" occurs ${labels} times in ${f}; it belongs in the entry chunk ${entryChunk} only`);
   }
-  const seed = (t) => {
+  // G6's no-How-to control: the first library exercise without approved content (D-HT1, data-driven)
+  const { firstWithoutHowTo } = await import('../tools/plates/fidelity/harness.mjs');
+  const noHowTo = firstWithoutHowTo();
+  const seed = ([t, other]) => {
     localStorage.setItem('marc.theme', t);
     const now = new Date().toISOString();
     localStorage.setItem('marc.state.v1', JSON.stringify({
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
-      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, { exerciseId: 'lib_barbell_bench_press', sets: 2 }] }],
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, { exerciseId: other, sets: 2 }] }],
       schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
       sessions: [], active: null, customExercises: [],
       preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
@@ -5620,7 +5624,7 @@ for (const theme of ['silent-black', 'paper']) {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
-    await page.addInitScript(seed, theme);
+    await page.addInitScript(seed, [theme, noHowTo]);
     await page.goto(`http://localhost:${PORT}/`);
     await page.waitForSelector('.nav'); await launchGone(page);
     await page.waitForTimeout(300);
@@ -5642,10 +5646,10 @@ for (const theme of ['silent-black', 'paper']) {
       if (await page.locator('.form-guide').count()) errors.push(`${tag} ${theme} G7: a .form-guide element is inside the open How-to sheet`);
       await page.keyboard.press('Escape'); await page.waitForTimeout(400);
     }
-    const bench = page.locator('.card.exercise').nth(1);
-    await bench.locator('.ex-head').click(); await page.waitForTimeout(300);
-    if (!(await visible(bench.locator('.why-toggle')))) errors.push(`${tag} ${theme} G6: the bench press card did not open`);
-    if (await bench.locator('.ht-entry').count()) errors.push(`${tag} ${theme} G6: the bench press card (no approved content) has a How-to entry`);
+    const other = page.locator('.card.exercise').nth(1);
+    await other.locator('.ex-head').click(); await page.waitForTimeout(300);
+    if (!(await visible(other.locator('.why-toggle')))) errors.push(`${tag} ${theme} G6: the ${noHowTo} card did not open`);
+    if (await other.locator('.ht-entry').count()) errors.push(`${tag} ${theme} G6: the ${noHowTo} card (no approved content) has a How-to entry`);
     await ctx.close();
   }
 }

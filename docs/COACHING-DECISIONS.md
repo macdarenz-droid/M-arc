@@ -928,8 +928,9 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - Gate FG-OFF:
     - G1, G2, G4, G5 and G8 are kept word for word.
     - G3 is replaced, stricter than the plan's wording: the label must be in the entry chunk that `www/index.html` loads (count ≥ 1) and in no other JS or CSS asset. "`index-*.js`" alone would also match the new `generated/index-*.js` chunk.
-    - G6 is replaced as plan section 3 says (Silent Black and Paper): one `button.ht-entry` named "How to do it", ≥ 44×44; the label once on the Train page; none on the bench-press card; the tap opens a dialog with `.ht-plate-fit`.
+    - G6 is replaced as plan section 3 says (Silent Black and Paper): one `button.ht-entry` named "How to do it", ≥ 44×44; the label once on the Train page; none on the first library exercise without approved content; the tap opens a dialog with `.ht-plate-fit`.
     - G7 is widened to the open How-to sheet.
+    - G6's no-How-to control is data-driven (supervisor, PR #106): not a hard-coded bench press, but `firstWithoutHowTo()` in `tools/plates/fidelity/harness.mjs`, the first library id in `exercises.json` order with no approved content (`HOWTO_IDS` read from the generated `ids.ts`; today `lib_dumbbell_bench_press`). Gate block HT-3's control uses the same helper. A unit test in `no-form-guide` pins it against `hasHowTo`; the mutation "the helper returns `lib_pull_up`" fails both G6 (Silent Black and Paper) and that test. The whole-library plan can then ship more exercises without editing a merged gate block.
     - The PASS phrase is reworded as the plan says.
   **Why**: plan section 3 and card HT-3 (HT3-A1, HT3-A2). Mutation proofs are in the HT-3 PR.
 

@@ -160,6 +160,17 @@ describe('D-HT1 A5: hasHowTo is true exactly for the approved plates', () => {
     const files = readdirSync('src/howto/generated').filter(f => /^ht-.*\.ts$/.test(f)).map(f => `lib_${f.slice(3, -3).replace(/-/g, '_')}`).sort();
     expect(files).toEqual(approved);
   });
+  it('the gate\'s no-How-to control is the first library id without approved content, and has none', async () => {
+    const { hasHowTo } = await import('@/howto/ids');
+    const h = await import(/* @vite-ignore */ new URL('../../tools/plates/fidelity/harness.mjs', import.meta.url).href) as { firstWithoutHowTo: () => string; HT_NO_HOWTO: string; HT_ORDER: string[] };
+    const { firstWithoutHowTo, HT_NO_HOWTO, HT_ORDER } = h;
+    const lib = (JSON.parse(readFileSync('src/data/exercises.json', 'utf8')) as { id: string }[]).map(e => e.id);
+    const id = firstWithoutHowTo();
+    expect(id).toBe(lib.find(i => !hasHowTo(i)));
+    expect(hasHowTo(id)).toBe(false);
+    expect(HT_NO_HOWTO).toBe(id);
+    expect(HT_ORDER).toContain(id);
+  });
   it('no fallback: the sheet closes with the load-failed toast for an id without content, and renders nothing until the content is in', () => {
     const sheet = readFileSync('src/slices/howto/HowToSheet.tsx', 'utf8');
     expect(sheet).toContain('if (!hasHowTo(exerciseId)) { howToLoadFailed(onClose); return; }');
