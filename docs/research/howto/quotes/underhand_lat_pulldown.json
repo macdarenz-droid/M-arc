@@ -1,0 +1,190 @@
+{
+  "id": "underhand_lat_pulldown",
+  "checked": "2026-09-30",
+  "sources": [
+    {
+      "id": "ace-lat-pulldown",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "barbend-reverse-grip-lat-pulldown",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "buonsenso-2025",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "lusk-2010",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "odriscoll-1992",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "puregym-reverse-grip-lat-pulldown",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "signorile-2002",
+      "access": "abstract",
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "puregym-reverse-grip-lat-pulldown",
+      "quote": "Stand up and grip the bar with an underhand grip (palms facing towards you) about shoulder width apart, then sit down.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "barbend-reverse-grip-lat-pulldown",
+      "quote": "Grab the bar a little bit closer than shoulder-width apart with your palms facing you. You can choose to wrap your thumb around the bar or use a thumbless grip.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "barbend-reverse-grip-lat-pulldown",
+      "quote": "That’s likely because it’s less strain on your shoulders for your forearms to be supinated (palms facing you) when they’re closer together.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "puregym-reverse-grip-lat-pulldown",
+      "quote": "Sit down on the lat pulldown machine and adjust the pads so they sit tightly against your thighs.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-lat-pulldown",
+      "quote": "Lean back slightly (no more than a 30 degree angle), using your legs to support your body (low back).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-lat-pulldown",
+      "quote": "Avoid any additional backwards lean during the pull movement.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "puregym-reverse-grip-lat-pulldown",
+      "quote": "Lower the bar towards your chest by pulling your elbows back and down towards the glutes, stopping when the bar passes just below chin height.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "puregym-reverse-grip-lat-pulldown",
+      "quote": "It’s important to avoid using momentum to pull the bar down so that the correct muscles are engaged. Think about keeping your torso stable",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "puregym-reverse-grip-lat-pulldown",
+      "quote": "Pulling the bar further down forces your forearms and deltoids to take over, shifting the load away from your lats and biceps.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "puregym-reverse-grip-lat-pulldown",
+      "quote": "Reverse the movement by slowly extending the arms, allowing the cable to pull the bar back up with control.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "barbend-reverse-grip-lat-pulldown",
+      "quote": "If you don’t have any control of the bar when it rises back to the top position, you’re likely lifting too heavy.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "ace-lat-pulldown",
+      "quote": "initiate the downward pull by first depressing (lower) your scapulae",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "ace-lat-pulldown",
+      "quote": "Continue pulling until the bar nears or touches your chest, or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "ace-lat-pulldown",
+      "quote": "Avoid any further pulling as this places additiomnal stresses into the shoulder joint.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "lusk-2010",
+      "quote": "Participants maintained a cadence of 2-second concentric and 2-second eccentric phases.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "lusk-2010",
+      "quote": "a pronated grip elicited greater LD activity than a supinated grip (p < 0.05), but had no influence of grip type on the MT and BB muscles.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "signorile-2002",
+      "quote": "During the concentric phase, NrmsEMG results for the LD included WGA > WGP, SG, CG.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "buonsenso-2025",
+      "quote": "These findings suggest that grip variations may not significantly alter latissimus dorsi recruitment",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "barbend-reverse-grip-lat-pulldown",
+      "quote": "By reversing your grip, you’re putting a lot more emphasis on your biceps.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "puregym-reverse-grip-lat-pulldown",
+      "quote": "Reverse grip lat pulldowns work the back muscles, including the lats, rhomboids, traps, as well as the rear delts and biceps.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c18",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}

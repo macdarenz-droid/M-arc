@@ -1,0 +1,671 @@
+{
+  "id": "inverted_row",
+  "libId": "lib_inverted_row",
+  "name": "Inverted Row",
+  "family": "Row (own parent; supine pose)",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "hang-support"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The bar sits in a rack at about waist height, high enough to hang under it with straight arms and the heels on the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-inverted-row",
+        "ace-best-back"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-inverted-row",
+          "text": "Place a barbell in a rack, high enough for you to be able to hang below it in straight arms, with your heels on the floor.",
+          "where": "How to Do Inverted Rows, step 1"
+        },
+        {
+          "source": "ace-best-back",
+          "text": "The subject had a wider-than-shoulder-width grip on a bar positioned on a rack at about waist height.",
+          "where": "Methods: Inverted row"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Grip the bar a little wider than shoulder width; both overhand (pronated) and underhand (supinated) grips are used and were studied.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-best-back",
+        "youdas-2016",
+        "strengthlog-inverted-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-best-back",
+          "text": "The subject had a wider-than-shoulder-width grip on a bar",
+          "where": "Methods: Inverted row"
+        },
+        {
+          "source": "youdas-2016",
+          "text": "(a) pronated grip both feet weight-bearing (WB); (b) supinated grip both feet WB",
+          "where": "abstract"
+        },
+        {
+          "source": "strengthlog-inverted-row",
+          "text": "Grip the bar with an overhand grip, slightly wider than shoulder-width apart.",
+          "where": "step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The body stays rigid and straight from head to heels while you pull the shoulder blades back together and down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-inverted-row",
+        "ace-best-back",
+        "ace-pullup-moves"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-inverted-row",
+          "text": "Keeping your body rigidly extended straight, hang from the bar or rings and pull your body up as far as possible, squeezing the shoulder blades back together and down, then lower under control.",
+          "where": "Description"
+        },
+        {
+          "source": "ace-best-back",
+          "text": "The subject hung underneath the bar with his body straight, heels on the floor and arms fully extended.",
+          "where": "Methods: Inverted row"
+        },
+        {
+          "source": "ace-pullup-moves",
+          "text": "Slowly release back to the starting position while maintaining a straight line from head to feet.",
+          "where": "Move 2 (suspension row)"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Pull until the chest touches the bar, shoulder blades retracted.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-inverted-row",
+        "ace-best-back"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-inverted-row",
+          "text": "Inhale, and pull yourself up as high as you can, or until your chest touches the bar.",
+          "where": "step 3"
+        },
+        {
+          "source": "ace-best-back",
+          "text": "He then flexed his elbows, pulling the chest toward the bar with the shoulder blades retracted.",
+          "where": "Methods: Inverted row"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lower back to straight arms with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-inverted-row",
+        "strengthlog-inverted-row"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-inverted-row",
+          "text": "then lower under control.",
+          "where": "Description"
+        },
+        {
+          "source": "strengthlog-inverted-row",
+          "text": "Exhale, while lowering yourself back to the starting position with control.",
+          "where": "step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The study protocol paused at the top and lowered slowly. No seconds are given, so the 1-1-2 count on the plate is a drawing convention.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-best-back"
+      ],
+      "quotes": [
+        {
+          "source": "ace-best-back",
+          "text": "The subject paused at the top of the motion and then slowly extended the elbows and returned to starting position.",
+          "where": "Methods: Inverted row"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Raising the bar (a more upright body) makes it easier; feet on a box makes it harder; the aim is a horizontal body at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-inverted-row",
+        "catalyst-ring-row",
+        "catalyst-inverted-row"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-inverted-row",
+          "text": "You can make the exercise heavier by placing your feet on an elevation, or easier by raising the bar to a higher rack position.",
+          "where": "Commentary"
+        },
+        {
+          "source": "catalyst-ring-row",
+          "text": "The higher the rings and more upright the body, the easier the movement.",
+          "where": "Description"
+        },
+        {
+          "source": "catalyst-inverted-row",
+          "text": "Generally we want the body horizontal at the top of the row.",
+          "where": "Description"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Compared with the bent-over row and a one-arm cable row, the inverted row gave the highest lat, upper-back and hip-extensor activity and the lowest lower-back load (7 men).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "fenwick-2009"
+      ],
+      "quotes": [
+        {
+          "source": "fenwick-2009",
+          "text": "The inverted row elicited the highest activation of the latissimus dorsi muscles, upper back, and hip extensor muscles.",
+          "where": "abstract"
+        },
+        {
+          "source": "fenwick-2009",
+          "text": "those wishing to spare the low back may choose the inverted row given the lowest spine load exercise.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "In 26 people the biceps, lats, lower trapezius and rear deltoid worked very hard (over 61% of max) in every inverted-row version; upper and middle trapezius worked hard.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "youdas-2016"
+      ],
+      "quotes": [
+        {
+          "source": "youdas-2016",
+          "text": "Four muscles (BB, LD, LT, and PD) demonstrated very high (>61% MVIC) EMG activation during all 4 exercise conditions. Three muscles (UT, MT, and LM) demonstrated high (41-60% MVIC) activation",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Lat activity differed between the underhand and overhand grip; the abstract does not say which was higher.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "youdas-2016"
+      ],
+      "quotes": [
+        {
+          "source": "youdas-2016",
+          "text": "We observed statistically significant differences in EMG activation of the LD between supinated and pronated double-leg WB (p = 0.001) condition.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "In ACE's EMG study of eight back exercises, the inverted row was among the four best for the middle trapezius and among the best for the infraspinatus.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "ace-best-back"
+      ],
+      "quotes": [
+        {
+          "source": "ace-best-back",
+          "text": "Middle trapezius (Figure 1): The four exercises that best recruited this muscle were the bent-over row, inverted row, seated row and I-Y-T raises.",
+          "where": "Results"
+        },
+        {
+          "source": "ace-best-back",
+          "text": "Infraspinatus (Figure 4): The I-Y-T raises, inverted row, bent-over row, chin-up and pull-up proved best at targeting the infraspinatus.",
+          "where": "Results"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Holding the body straight works the trunk: back extensors at 54-66% and abdominals at 34-40% of max.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "youdas-2020"
+      ],
+      "quotes": [
+        {
+          "source": "youdas-2020",
+          "text": "Spinal stabilizer EMG activation values ranged from 34% to 40% maximum voluntary isometric contraction (MVIC) for the RA and EO and from 54% to 66% MVIC for the LT and MF.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Rings let the arms and shoulders move more freely, which suits people with joint limitations.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-ring-row"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-ring-row",
+          "text": "Using rings allows the arms and shoulders to move more freely to accommodate orthopedic issues or limitations",
+          "where": "Description"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "hk-baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Grip drill"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a curled or bent wrist costs grip (hand dynamometer, applied here by reasoning).",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll-1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-best-back",
+      "url": "https://www.acefitness.org/continuing-education/certified/december-2018/7138/ace-sponsored-research-what-is-the-best-back-exercise/",
+      "title": "ACE-Sponsored Research: What Is the Best Back Exercise? (Edelburg, Porcari, Camic, Kovacs, Foster, with Green; ACE Certified, December 2018)",
+      "kind": "guideline",
+      "year": 2018,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-pullup-moves",
+      "url": "https://www.acefitness.org/resources/pros/expert-articles/5565/4-moves-to-help-you-master-the-pull-up/",
+      "title": "4 Moves to Help You Master the Pull-up (Crockford, ACE)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "catalyst-inverted-row",
+      "url": "https://catalystathletics.com/exercise/852/Inverted-Row/",
+      "title": "Inverted Row (Catalyst Athletics exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "catalyst-ring-row",
+      "url": "https://catalystathletics.com/exercise/879/Ring-Row",
+      "title": "Ring Row (Catalyst Athletics exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "fenwick-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19620925/",
+      "title": "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness (Fenwick, Brown, McGill, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": "19620925",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "hk-baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "odriscoll-1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthlog-inverted-row",
+      "url": "https://www.strengthlog.com/inverted-row/",
+      "title": "How to Do Inverted Row: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "unreachable",
+      "checked": null
+    },
+    {
+      "id": "youdas-2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26422610/",
+      "title": "Activation of Spinal Stabilizers and Shoulder Complex Muscles During an Inverted Row Using a Portable Pull-up Device and Body Weight Resistance (Youdas et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2016,
+      "pmid": "26422610",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "youdas-2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29944029/",
+      "title": "Scapular muscle balance and spinal stabilizer recruitment during an inverted row (Youdas et al., Physiother Theory Pract)",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": "29944029",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The straight body line, chest-to-bar height and the sagging-hip fault all read from the side (c3).",
+    "equipment": "Barbell set in a rack at about waist height (drawn with the pull-up bar primitive lowered), floor line. Heels on the floor (c1).",
+    "start": "Hanging under the bar face up, arms straight, overhand grip slightly wider than the shoulders (c1, c2); body straight from shoulders through hips to heels, heels on the floor (c3).",
+    "end": "Chest at the bar, elbows bent and behind the body, shoulder blades squeezed back and down (c4, c3); body still straight (c3).",
+    "checkpoints": [
+      {
+        "label": "Body straight",
+        "what": "Rigid straight line from head to heels, top and bottom.",
+        "claim": "c3"
+      },
+      {
+        "label": "Chest to bar",
+        "what": "Pull until the chest touches the bar.",
+        "claim": "c4"
+      },
+      {
+        "label": "Blades back",
+        "what": "Shoulder blades squeeze back together and down at the top.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Hips sagging toward the floor, so the body folds at the hips instead of moving as one straight line.",
+      "why": "Every technique source asks for a rigid straight body; a sag breaks that line and shortens the pull. How often it happens is not measured.",
+      "claim": "c3",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Straight line from heels to shoulders",
+        "claim": "c3"
+      },
+      {
+        "text": "Chest touches the bar",
+        "claim": "c4"
+      },
+      {
+        "text": "Slow lowering to straight arms",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c6"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (pronated) drawn, full closed grip; underhand is also used. Lat activity differs between the two, direction not reported in the abstract.",
+    "width": "Slightly wider than shoulder width.",
+    "thumb": "Wrapped around the bar.",
+    "handContact": "From the shared pull archetype (GA 3.1, sourced there); not re-sourced on this card.",
+    "wrist": "Straight, not curled; a bent wrist costs grip.",
+    "claims": [
+      "c2",
+      "c10",
+      "c14",
+      "c15"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set a bar in a rack at about waist height, high enough to hang under with straight arms and heels on the floor.",
+      "claim": "c1"
+    },
+    {
+      "step": "Take the bar overhand, slightly wider than your shoulders, thumbs wrapped.",
+      "claim": "c2"
+    },
+    {
+      "step": "Walk your feet forward until you hang with your body straight from head to heels.",
+      "claim": "c3"
+    },
+    {
+      "step": "Too hard? Raise the bar. Too easy? Put your feet on a box.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Body rigid and straight, heels to head.",
+      "claim": "c3"
+    },
+    {
+      "point": "Arms fully straight at the bottom.",
+      "claim": "c3"
+    },
+    {
+      "point": "Chest to the bar at the top.",
+      "claim": "c4"
+    },
+    {
+      "point": "Shoulder blades back and down at the top.",
+      "claim": "c3"
+    },
+    {
+      "point": "Lower slowly under control.",
+      "claim": "c5"
+    },
+    {
+      "point": "Aim for a horizontal body at the top as you get stronger.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Hips sagging so the body bends at the hips.",
+      "fix": "Keep the whole body rigid. If you can't hold the line, raise the bar.",
+      "claim": "c3"
+    },
+    {
+      "mistake": "Stopping short of the bar.",
+      "fix": "Pull until your chest touches the bar; raise the bar if you can't get there.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Dropping back down fast.",
+      "fix": "Lower yourself with control all the way to straight arms.",
+      "claim": "c5"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "lats",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": "c9"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c8"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Between and around the shoulder blades",
+        "means": "Expected: the middle back is a main target here.",
+        "fix": "Nothing to fix. Squeeze the shoulder blades together at the top.",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Front of your upper arms",
+        "means": "Expected: the biceps work very hard in this row.",
+        "fix": "Nothing to fix. Keep leading with the shoulder blades.",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back and trunk",
+        "means": "Usually means the trunk is working hard to hold the straight line, or the hips are sagging.",
+        "fix": "Keep the body rigid. If the lower back aches, raise the bar so you are more upright.",
+        "claim": "c12",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Stiff or sore shoulders may not like a fixed bar; rings let the arms move more freely.",
+      "claim": "c13"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Overhand, bar across the base of the fingers, thumb wrapped, wrist straight.",
+      "wrong": "Wrist bent, bar sliding toward the fingertips.",
+      "claim": "c15"
+    },
+    {
+      "key": "body line",
+      "kind": "posture",
+      "right": "Heels, hips and shoulders in one straight line under the bar.",
+      "wrong": "Hips sagging toward the floor.",
+      "claim": "c3"
+    },
+    {
+      "key": "top position",
+      "kind": "posture",
+      "right": "Chest touching the bar, shoulder blades squeezed back and down.",
+      "wrong": "Chest well short of the bar, shoulders rolled forward.",
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "lats",
+        "role": "primary",
+        "why": "Highest lat activity of three rows (c8) and very high lat EMG (c9)."
+      },
+      {
+        "muscleId": "rear_delts",
+        "role": "secondary",
+        "why": "Rear deltoid over 61% of max in every version (c9)."
+      }
+    ],
+    "remove": [
+      {
+        "muscleId": "lats",
+        "role": "secondary",
+        "why": "Moved to primary (c8, c9)."
+      }
+    ],
+    "why": "mid_back stays primary (c11, c9); biceps stay secondary (c9). Lower back is a watch muscle: the inverted row has the lowest lumbar load of the rows compared (c8)."
+  },
+  "anchorSource": "catalyst-inverted-row",
+  "notes": "Safety tier C (not in content.md tier A or B lists). No source found on securing the bar in the rack (J-hooks) or on grip slipping; left out. Youdas 2016 found a grip difference in lat activity but the direction is not in the abstract (c10); c10 is kept only to stop the sheet claiming a direction. Anchor is the Catalyst Athletics inverted row page (read in full). The StrengthLog page was read in full by the writer but was unreachable (403) for the source check, so it only co-supports claims; its underhand-grip claim was dropped."
+}

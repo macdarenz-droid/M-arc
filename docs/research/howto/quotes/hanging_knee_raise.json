@@ -1,0 +1,223 @@
+{
+  "id": "hanging_knee_raise",
+  "checked": "2026-09-30",
+  "sources": [
+    {
+      "id": "escamilla-2006",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "hk-baechle-grip",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "mcgill-2015",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "odriscoll-1992",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "prinold-2016",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "strengthlog-hanging-knee-raise",
+      "access": "unreachable",
+      "fixes": null
+    },
+    {
+      "id": "workman-2008",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "yessis-hanging-knee-leg-raise",
+      "access": "full",
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "Step up on a low stool or jump to grasp a high bar so that your body hangs freely without your feet touching the floor.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c1",
+      "source": "strengthlog-hanging-knee-raise",
+      "quote": "Jump up and grab a bar, placed high enough that you can hang from it with straight legs.",
+      "status": "unreachable-source",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "Grasp the bar with a pronated, palms away grip. Hang with your arms fully extended",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "hk-baechle-grip",
+      "quote": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "strengthlog-hanging-knee-raise",
+      "quote": "Without swinging and with bent legs, lift your knees as high as you can in front of you.",
+      "status": "unreachable-source",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "Do not swing the body to help raise the legs. The body should be still when you begin raising the legs.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "raise the knees up above the thigh level position with a momentary hold in the up position.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "The higher the legs are raised, the greater the abdominal muscle involvement.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "The abdominal muscles, initially the lower portion, then come into play to rotate the pelvis backward to continue raising the legs.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "workman-2008",
+      "quote": "The Janda sit-up and the posterior tilt were significantly greater (p < 0.01 and p < 0.05, respectively) than the anterior tilt for the URA and LRA muscles.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "strengthlog-hanging-knee-raise",
+      "quote": "Lower your legs again, with control.",
+      "status": "unreachable-source",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "Exhale and relax as you return the legs to the initial position under control.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "lift your legs up as strongly as possible with your hip flexor and abdominal muscles.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "raise the knees up above the thigh level position with a momentary hold in the up position.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "escamilla-2006",
+      "quote": "Upper and lower rectus abdominis, internal oblique, and latissimus dorsi muscle EMG activity were highest for the Power Wheel (pike, knee-up, and roll-out), hanging knee-up with straps, and reverse crunch inclined 30 degrees.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "escamilla-2006",
+      "quote": "External oblique muscle EMG activity was highest for the Power Wheel (pike, knee-up, and roll-out) and hanging knee-up with straps.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "escamilla-2006",
+      "quote": "Lumbar paraspinal muscle EMG activity was low and similar among exercises.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "strengthlog-hanging-knee-raise",
+      "quote": "Hanging knee raises train your abs and your hip flexors.",
+      "status": "unreachable-source",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "The major muscles involved in raising the legs (hip flexion) are the psoas and iliacus, collectively known as the iliopsoas, the rectus femoris and the pectineus.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "When first attempting this exercise begin with the bent knee variant.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "yessis-hanging-knee-leg-raise",
+      "quote": "The long leg lever with weighted feet increases the difficulty of the exercise greatly.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "strengthlog-hanging-knee-raise",
+      "quote": "The exercise can be made heavier by keeping your legs straight, which is called hanging leg raises .",
+      "status": "unreachable-source",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "mcgill-2015",
+      "quote": "On average, the hanging straight leg raise created approximately 3000 N of spine compression",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "prinold-2016",
+      "quote": "High arm elevation during pull-ups reduces sub-acromial space and increases pressure, increasing the risk of impingement injury.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}

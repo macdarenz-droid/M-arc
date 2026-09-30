@@ -1,0 +1,251 @@
+{
+  "id": "assisted_pull_up",
+  "checked": "2026-09-30",
+  "sources": [
+    {
+      "id": "bullbar-assist-beginner",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "bullbar-assist-safety",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "hk-baechle-grip",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "nasm-chin-pull",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "odriscoll-1992",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "prinold-2016",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "strengthlog-assisted-pull-up",
+      "access": "unreachable",
+      "fixes": null
+    },
+    {
+      "id": "youdas-2010",
+      "access": "abstract",
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "bullbar-assist-beginner",
+      "quote": "Step onto the platform or kneel on the pad. Grip the handles (most machines have multiple grip options—start with a shoulder-width, pronated/overhand grip). Ensure your knees or legs are securely positioned on the pad. Your body should be hanging freely, arms fully extended, core engaged.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c1",
+      "source": "strengthlog-assisted-pull-up",
+      "quote": "Grip the bar with a pronated grip (palms facing away from you), a little wider than shoulder-width apart. Put your feet/knees on the pad and let your body weight push it down until you’re hanging with your arms extended.",
+      "status": "unreachable-source",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "bullbar-assist-beginner",
+      "quote": "Your chest should be proud, shoulders engaged, and core tight. This is a position of strength, not a collapsed hunch.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "strengthlog-assisted-pull-up",
+      "quote": "Keep your chest up, and look up at the bar.",
+      "status": "unreachable-source",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "strengthlog-assisted-pull-up",
+      "quote": "Inhale and pull yourself up until your chin is over the bar or the bar touches your upper chest.",
+      "status": "unreachable-source",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "strengthlog-assisted-pull-up",
+      "quote": "Exhale and lower yourself with control until your arms are fully extended again.",
+      "status": "unreachable-source",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "bullbar-assist-beginner",
+      "quote": "Continue pulling until your chin clears the bar.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "bullbar-assist-beginner",
+      "quote": "Take 3-4 seconds to return to a dead hang.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "bullbar-assist-beginner",
+      "quote": "This machine uses counterweight to offset a portion of your bodyweight. If you select 50 lbs of assistance, you are effectively lifting (your bodyweight - 50 lbs).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "bullbar-assist-safety",
+      "quote": "A higher plate weight means less load on your muscles.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "bullbar-assist-safety",
+      "quote": "Choose the lowest assistance weight that still allows you to complete 3–5 controlled reps with good form.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "bullbar-assist-safety",
+      "quote": "If you can't complete one rep without swinging, increase the assistance slightly.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "nasm-chin-pull",
+      "quote": "Apply progressive overload deliberately, more reps, less assistance, then added load",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "bullbar-assist-beginner",
+      "quote": "Reducing the assistance weight over time is a sign of real progress.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "bullbar-assist-beginner",
+      "quote": "Initiate the movement by pulling your shoulder blades down and back",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "bullbar-assist-beginner",
+      "quote": "Then, drive with your elbows, pulling them down towards your ribs.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "nasm-chin-pull",
+      "quote": "Set the scapulae first, cueing 'pull the shoulder blades down and back' before the arms take over",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "bullbar-assist-beginner",
+      "quote": "The Partial Rep: Not going to a full dead hang or not pulling high enough.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "bullbar-assist-beginner",
+      "quote": "The Swing: Using leg drive or momentum.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "bullbar-assist-beginner",
+      "quote": "The Shrug: Initiating the pull with your shoulders up by your ears.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "nasm-chin-pull",
+      "quote": "Discourage the common faults: kipping and momentum on strict-strength work, partial range of motion (coach a full hang at the bottom to a chin-clearing top), and craning the neck.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "bullbar-assist-beginner",
+      "quote": "Take 3-4 seconds to return to a dead hang.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "bullbar-assist-beginner",
+      "quote": "Briefly pause.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "prinold-2016",
+      "quote": "High arm elevation during pull-ups reduces sub-acromial space and increases pressure, increasing the risk of impingement injury.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "youdas-2010",
+      "quote": "latissimus dorsi (117-130%), biceps brachii (78-96%), infraspinatus (71-79%), lower trapezius (45-56%), pectoralis major (44-57%)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "hk-baechle-grip",
+      "quote": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "nasm-chin-pull",
+      "quote": "progress gradually to avoid overuse issues like elbow tendon irritation",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "nasm-chin-pull",
+      "quote": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}
