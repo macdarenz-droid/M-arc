@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { MEDICAL_LINE, PRIVACY_POLICY_URL } from '@/slices/settings/Settings';
+import { CONTACT_RE, SAFETY_LINE_RE, SOURCE_CS_RE, SOURCE_RE } from '../guards/no-contacts';
 
 const read = (p: string) => readFileSync(fileURLToPath(new URL(`../../${p}`, import.meta.url)), 'utf8');
 const java = read('native/PermissionsRationaleActivity.java');
@@ -29,5 +30,15 @@ describe('PLAY-1', () => {
     expect(java).toMatch(/onPageFinished\([^)]*\)\s*\{\s*if \(failed\) return;\s*web\.setVisibility\(View\.VISIBLE\);\s*fallback\.setVisibility\(View\.GONE\);/);
     expect(java).toMatch(/web\.setVisibility\(View\.INVISIBLE\);\s*web\.getSettings/);
     expect(java).toContain('M/ARC reads steps, sleep, heart rate, resting heart rate and active calories from Health Connect');
+  });
+
+  it('LR-23: the link label, the healthcare line and the Health Connect screen text carry no contact or source', () => {
+    const label = read('src/slices/settings/Settings.tsx').match(/data-palace="settings\.privacy">([^<]+)<\/a>/)?.[1];
+    expect(label).toBe('Privacy policy');
+    const javaText = [...java.matchAll(/\.setText\("((?:[^"\\]|\\.)*)"\)/g)].map(m => m[1]);
+    expect(javaText.length).toBe(2);
+    for (const t of [label!, MEDICAL_LINE, ...javaText]) {
+      for (const re of [CONTACT_RE, SOURCE_RE, SOURCE_CS_RE, SAFETY_LINE_RE]) expect(t.match(re)?.[0], `${re} in "${t}"`).toBeUndefined();
+    }
   });
 });

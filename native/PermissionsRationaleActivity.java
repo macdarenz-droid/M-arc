@@ -115,7 +115,11 @@ public class PermissionsRationaleActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        if (web != null) web.destroy();
+        if (web != null) {
+            ViewGroup parent = (ViewGroup) web.getParent();
+            if (parent != null) parent.removeView(web);
+            web.destroy();
+        }
         super.onDestroy();
     }
 }
