@@ -1,4 +1,4 @@
-/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=b7d42e4c497a8778659ab1be8456d6bdd8457c791f2ce3b502c4b9cddc3b8668 */
+/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=687886e5a0c25d3d28efa1cb5559789e4e81ac051c620b1b475d475d83dcfb68 */
 /* ht-tokens:start */
 .ht { --ht-feel-delay-0: 0ms; --ht-feel-main: color-mix(in srgb, var(--accent) 75%, var(--text)); --ht-feel-map-h: 280px; --ht-feel-mark-dur: 200ms; --ht-feel-sweep: 5200ms;  }
 @keyframes feel-sweep { 0% { transform: translateY(var(--feel-from)); animation-timing-function: cubic-bezier(.45,0,.55,1); } 46.154% { transform: translateY(var(--feel-to)); animation-timing-function: step-end; } 46.155% { transform: translateY(var(--feel-from)); } 53.846% { transform: translateY(var(--feel-from)); animation-timing-function: cubic-bezier(.45,0,.55,1); } 100% { transform: translateY(var(--feel-to)); } }
@@ -57,4 +57,4 @@ html:not([data-motion="reduce"]) .ht .fr-body:not([hidden]) { animation: fr-in v
   .ht .fr-btn svg { transition: none; }
 }
 @keyframes fr-in { from { opacity: 0; transform: translateY(-4px); } }
-.ht .ht-feel-host { margin-inline: -1px; color: var(--text); font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }
+.ht .ht-feel-host { color: var(--text); font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }

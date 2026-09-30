@@ -117,10 +117,10 @@ export function liftKeyframes(css, name) {
   return { css: css.replace(re, ''), keyframes: m[0].trim().replace(/\s+/g, ' ') };
 }
 
-/** The app frame (not golden CSS): the section host gets HT-3's `.ht-golden` frame (sheet.css), so the section sits
- *  in golden B's 358 px card content box (the app panel pads 16 px + 1 px border, golden B's card 15 px + 1 px) and
- *  inherits the card's text styles, as every golden-B section does. */
-export const FRAME = '.ht .ht-feel-host { margin-inline: -1px; color: var(--text); font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }\n';
+/** The app frame (not golden CSS): the section host inherits golden B's card text styles, as HT-3's `.ht-golden` does
+ *  (sheet.css). The 358 px width comes from HT-3's one sheet-wide bleed, `.ht [data-section] { margin-inline: -1px }`
+ *  (supervisor: no per-section bleed). */
+export const FRAME = '.ht .ht-feel-host { color: var(--text); font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }\n';
 
 /** The whole feel.css: rules B, C, D on FEEL_CSS, rule A on the page CSS, then rewriteCss, then the ht tokens. */
 export function feelCss({ feelCss: F, pageCss, used, themeIds, total }) {

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=b7d42e4c497a8778659ab1be8456d6bdd8457c791f2ce3b502c4b9cddc3b8668
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=687886e5a0c25d3d28efa1cb5559789e4e81ac051c620b1b475d475d83dcfb68
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_barbell_back_squat",
