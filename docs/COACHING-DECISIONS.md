@@ -1080,3 +1080,16 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   everything" full-sheet check, HT-6/HT-7/HT-8) are merged in.
   **Why**: card HT-9, `git ls-remote` showing no HT-5/6/7/8 branch at start, and the owner's "never loosen or skip a
   check" / "no guessing" rules over inventing a data shape or a fake gate pass.
+
+## Correction to "HT-9 Setup/Risks/Sources": the zoom-open wiring and CSS ownership are resolved (HT-9 builder, 2026-09-30)
+
+- **Resolved**: the supervisor's cross-section contract (on HT-8's PR #111) first asked Setup's `.st-show` to
+  dispatch a bubbling `ht:zoom-open` CustomEvent; a later ruling on HT-6's design note (PR #112) replaced that:
+  `.st-show` needs only golden B's exact markup (id, `data-zoom`) — HT-6's own delegated click handler on the
+  sheet panel opens the close-up, so HT-9 dispatches nothing. `Setup.tsx` already had the correct inert markup
+  (the earlier entry above called this an open risk pending HT-6/HT-7; it is not one).
+- **Resolved (CSS ownership)**: the same PR #112 ruling gives HT-6 `.hw-sec` (the shared section frame) and
+  `.st-show`, in its own CSS file; `src/slices/howto/css/text.css` no longer carries those two rules, only the
+  setup/risks/sources rows themselves, so no rule ships twice once HT-6 merges.
+  **Why**: supervisor rulings received after the original HT-9 entry, via routines "HT-9: cross-section event
+  contract" and "HT-9: contract update from HT-6 ruling".

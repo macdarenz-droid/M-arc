@@ -2,6 +2,9 @@
 // (tools/plates/layers/artifact/howto-layers.mjs). SETUP_VISIBLE mirrors golden B's SETUP_MAX_STEPS
 // (artifact/copy-lint.mjs): today all 8 exercises have exactly 5 steps, so `more` is 0 and the button never
 // renders (docs/COACHING-DECISIONS.md, HT-9). The collapse path stays for any future longer list.
+// The "Show me the …" button needs only golden B's exact markup (id, data-zoom): HT-6's delegated click handler
+// on the sheet panel opens the close-up (supervisor ruling on HT-6's design note, PR #112, 2026-09-30 -
+// supersedes an earlier "dispatch ht:zoom-open" draft that never shipped). Nothing to wire here.
 import { useState } from 'preact/hooks';
 import type { VNode } from 'preact';
 import { chromeIdOf } from '../PlateView';

@@ -69,13 +69,12 @@ describe('HT9-A2: Setup ("Set it up")', () => {
     expect(moreOpen.props.children).toBe('Fewer steps');
   });
 
-  it('"All steps" and "Show me" targets are >= 44x44 (.fr-more/.st-show, css/text.css) and the button carries aria-expanded', () => {
+  it('"All steps" is >= 44x44 (.fr-more, css/text.css) and the button carries aria-expanded (.st-show itself is HT-6\'s CSS, PR #112)', () => {
     const steps = [step('a'), step('b'), step('c'), step('d'), step('e'), step('f')];
     const tree = renderSetup(fixture(steps), false, () => {});
     const more = byTag(tree, 'button').find(b => (b.props as { class?: string }).class?.includes('st-more'))!;
     expect(more.props).toHaveProperty('aria-expanded');
     const css = readFileSync('src/slices/howto/css/text.css', 'utf8');
-    expect(css).toMatch(/\.st-show \{[^}]*min-height: 44px/);
     expect(css).toMatch(/\.fr-more \{[^}]*min-height: 44px/);
   });
 

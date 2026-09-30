@@ -1,13 +1,12 @@
 /* HT-9: "Set it up", "Risks and when to stop" and "Where this comes from" (plan 2.4 items 6-8), the golden B
    rules for the setup, risks, red flag, sources and disclaimer classes, scoped under .ht like every How-to rule
    (css.test). The eyebrow class itself is already global (src/ui/styles.css); only the section's own margin
-   reset is repeated here. No new timing or theme token, so this block stays empty (css.test HT2-A6). */
+   reset is repeated here. No new timing or theme token, so this block stays empty (css.test HT2-A6).
+   CSS ownership (supervisor ruling on HT-6's design note, PR #112, 2026-09-30): HT-6 owns the shared section
+   frame (`.hw-sec`) and `.st-show`, in its own file, so those two rules are NOT repeated here; every class below
+   is the setup/risks/sources rows themselves. */
 /* ht-tokens:start */
 /* ht-tokens:end */
-.ht .hw-sec { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--border-subtle); }
-.ht .hw-sec > h4.eyebrow { margin: 0; }
-.ht .hw-sec h4:focus { outline: none; }
-.ht .hw-sec h4:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 /* Set it up */
 .ht .setup { display: grid; gap: var(--sp-3); }
@@ -15,7 +14,6 @@
 .ht .st-list li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text); }
 .ht .st-list li[hidden] { display: none; }
 .ht .st-n { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-pill); background: var(--surface-3, var(--surface-2)); border: 1px solid var(--border); font-size: var(--fs-meta); font-weight: var(--fw-semibold); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.ht .st-show { margin-top: 2px; justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--accent-text); font-size: var(--fs-small); font-weight: var(--fw-medium); }
 .ht .fr-more { justify-self: start; min-height: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-2); font-size: var(--fs-small); font-weight: var(--fw-medium); }
 .ht .fr-more:hover { color: var(--text); }
 
