@@ -946,3 +946,8 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **The harness self-check has a built-in negative control** that runs on every gate: the same block shifted 1 px must fail the L3 rule, so a blind comparison cannot pass.
   - **Commits that touch the golden paths carry `[golden update]`**, so they pass the planned agent-guard check (plan 2.8) if it lands before HT-1 merges.
   **Why**: the owner rule ("Dont lower quality and output of the technical plates") needs byte-level proof that does not depend on git history or on names; the rest keeps the checks fast.
+
+## Correction to "HT-2 generator": the gate PASS phrase (HT-2 builder, 2026-09-30)
+
+- **Correction**: the "HT-2 generator" entry says gate block HT-2's PASS phrase "is printed as its own line after the shared PASS line, so the shared line is not edited". That is wrong. `scripts/screenshot-gate.mjs` appends `, and HT-2 (…) verified` to the shared PASS line in place, which follows the convention HT-1 set. The edit is allowed, because the card grants the PASS phrase.
+  **Why**: HT-2 review on PR #105 (medium finding). The older entry is left unchanged, because this file is append-only.
