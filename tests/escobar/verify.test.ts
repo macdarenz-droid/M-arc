@@ -109,6 +109,23 @@ describe('safety pre-screen (§19)', () => {
     ['I killed that PR', false],
     ['harmless question: is creatine safe', false],
   ] as const)('crisis screen: %s → %s', (text, crisis) => expect(safetySignals(text).includes('crisis')).toBe(crisis));
+  // BUG-30: phone keyboards type the curly apostrophe (U+2019), and some the modifier letter (U+02BC) or U+2018.
+  it.each([
+    ['I don\u2019t want to be here anymore', 'crisis'],
+    ['i don\u2019t want to live', 'crisis'],
+    ['I don\u02BCt want to be here', 'crisis'],
+    ['I don\u2018t want to live', 'crisis'],
+    ['I can\u2019t breathe after that set', 'medical'],
+    ['I can\u02BCt breathe', 'medical'],
+    // BUG-30 review: other apostrophe look-alikes, and spacing the patterns did not allow.
+    ['I don\uFF07t want to live', 'crisis'],
+    ['I don\u2032t want to live', 'crisis'],
+    ['I don`t want to live', 'crisis'],
+    ['I don\u00B4t want to live', 'crisis'],
+    ['I don\u2019t  want to be here', 'crisis'],
+    ['I don\u2019t\u00A0want to be here', 'crisis'],
+    ['I can\u2019t\nbreathe', 'medical'],
+  ] as const)('curly apostrophe and spacing: %s → %s', (text, signal) => expect(safetySignals(text)).toContain(signal));
   it('ordinary questions carry no signal', () => {
     expect(safetySignals('Why is my readiness amber?')).toEqual([]);
     expect(safetySignals('Build me a 4-day programme')).toEqual([]);

@@ -268,6 +268,15 @@ describe('reset everything (QA-R1-7)', () => {
     expect(st.map.get('marc.state.v1.backup') ?? '').not.toContain('old1');
     expect(st.map.get('marc.state.v1') ?? '').not.toContain('old1');
   });
+
+  it('removes the legacy import key too (BUG-29)', async () => {
+    const st = memoryStorage();
+    st.map.set('dailyTrackerPremium', JSON.stringify({ workouts: {} }));
+    const S = await fresh();
+    S.initStore(st);
+    S.resetState(freshState());
+    expect(st.map.has('dailyTrackerPremium')).toBe(false);
+  });
 });
 
 describe('a live set copied by the old + Set (QA-R2d-4)', () => {

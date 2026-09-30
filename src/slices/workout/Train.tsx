@@ -10,6 +10,7 @@ import { checkInDraft, saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput, type WeightChange } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
+import { HowToSheet } from '@/slices/howto/lazy'; import { hasHowTo, HOWTO_LABEL } from '@/howto/ids';
 import { hasWorkingSets } from '@/brain/exposure';
 import { dayKey, formatClock, formatTimeOfDay } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
@@ -614,6 +615,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const [stickyDraft, setStickyDraft] = useState<string | null>(null);
   const [setMenuAt, setSetMenuAt] = useState<number | null>(null);
   const [plates, setPlates] = useState(false);
+  const [howToOpen, setHowToOpen] = useState(false);
   // I2: `closing` keeps the body mounted from open->false until its fold transition finishes, so
   // the content doesn't vanish mid-animation; `settled` lifts the clip once fully open, so focus
   // rings and the palace spotlight are not cut off at rest.
@@ -769,6 +771,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           )}
           <div class="why-row">
             <button type="button" class="why-toggle" aria-expanded={why} onClick={() => setWhy(w => !w)}>Why this target <IconChevronDown size={16} class={`chev ${why ? 'up' : ''}`} /></button>
+            {ex && !ex.custom && hasHowTo(ex.id) && <button type="button" class="ht-entry" onClick={() => setHowToOpen(true)}><IconPlay size={18} /> {HOWTO_LABEL}</button>}
           </div>
           <div class={`ex-body ${why ? 'open' : ''} ${whySettled ? 'settled' : ''}`} ref={whyBodyRef} onTransitionEnd={e => { if (e.target === whyBodyRef.current && why) setWhySettled(true); }}>
             <div class="ex-body-inner">
@@ -914,6 +917,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         </Sheet>
       )}
       {plates && next.kg != null && <PlateSheet kg={next.kg} profile={profile} name={entry.name} onClose={() => setPlates(false)} />}
+      {howToOpen && ex && <HowToSheet exerciseId={ex.id} name={ex.name} onClose={() => setHowToOpen(false)} />}
       {subOpen && ex && <SubstituteSheet exercise={ex} custom={s.customExercises} onPick={sub => { substituteEntry(index, sub); setSubOpen(false); }} onClose={() => setSubOpen(false)} />}
     </Card>
   );

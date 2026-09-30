@@ -21,6 +21,7 @@ import { Logo } from '@/ui/Logo';
 import { EscobarSettings } from '@/escobar/ui/SettingsSection';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
 import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
+import { clearShareSeen } from '@/slices/share/seen';
 import { backupReminderScheduled, cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, syncBackupReminder, testRestAlert } from '@/native/notifications';
 import { isNative } from '@/native/capacitor';
 import { onReducedChange, osReducedMotion, motionPrefIsReduce, reduced, setMotionPref } from '@/ui/motion';
@@ -30,6 +31,12 @@ import { backupAgeDays, buildBackup, parseBackup } from './backup';
 import { sessionsToCsv } from './exportCsv';
 import { today } from '@/app/selectors';
 import { clearErrorReportQueue, reportCaught, resetErrorReporting } from '@/errors';
+
+// PLAY-1: the same URL as the Play Console privacy policy field (docs/PLAY-SUBMISSION.md) and
+// native/PermissionsRationaleActivity.java. Opened like every external page: the WebView hands it to the browser.
+export const PRIVACY_POLICY_URL = 'https://macdarenz-droid.github.io/M-arc/privacy/';
+// PLAY-1 (P3): Play's reminder to consult a healthcare professional. Not a contact: no number, no link.
+export const MEDICAL_LINE = 'Not medical advice. For medical advice, diagnosis or treatment, see a healthcare professional.';
 
 type Snapshot = { state: AppState; escobar: unknown; heart: unknown };
 type PendingRestore = { next: AppState; escobar?: unknown; heart?: unknown; from: string; label: string };
@@ -72,6 +79,7 @@ function resetEverything(): void {
   clearHeart();
   void import('@/escobar/images').then(m => m.clearImages()).catch(() => {});
   try { localStorage.removeItem('marc.health.asked'); } catch { /* storage unavailable */ }
+  clearShareSeen();
   resetErrorReporting();
   afterReplace();
 }
@@ -235,12 +243,13 @@ export function Settings({ onClose }: { onClose: () => void }) {
               <span class="small" data-palace="settings.error-reports">Send anonymous error reports</span>
               <div class="hint">No workouts, health data or personal details — only what broke and where. Off by default.</div>
             </Row>
+            <a class="btn" href={PRIVACY_POLICY_URL} target="_blank" rel="noopener noreferrer" data-palace="settings.privacy">Privacy policy</a>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
               <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { resetEverything(); setConfirmReset(false); showToast('Workout data reset'); void haptic.confirm(); }}>Reset everything</Button></div></Card>
             )}
           </Card>
         </Section>
-        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><span class="hint" data-palace="settings.version">Version {APP_VERSION}</span></div>
+        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><p class="hint" style={{ textAlign: 'center' }} data-palace="settings.medical">{MEDICAL_LINE}</p><span class="hint" data-palace="settings.version">Version {APP_VERSION}</span></div>
       </div>
     </Sheet>
   );
