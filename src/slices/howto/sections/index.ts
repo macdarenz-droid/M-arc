@@ -4,7 +4,6 @@ import type { FunctionComponent } from 'preact';
 import type { BuiltHowTo } from '@/howto/types';
 import { Setup } from './Setup';
 import { Risks } from './Risks';
-import { Sources } from './Sources';
 
 export interface SectionProps {
   readonly howTo: BuiltHowTo;
@@ -19,5 +18,4 @@ export interface SectionDef {
 export const SECTIONS: readonly SectionDef[] = [
   { id: 'setup', Component: Setup },
   { id: 'risks', Component: Risks },
-  { id: 'sources', Component: Sources },
 ];

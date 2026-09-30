@@ -1205,3 +1205,20 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Medium 4 (lateral raise crops outside A5 proof 2)**: the lateral raise draws its crops through `ref-src/plate.mjs`'s own `arm()`, never `engine/plate.mjs`'s `renderPlate`, so `captureRenderPlateCalls`'s shim never sees them - proof 2 only ever covers the 7 non-ref-src exercises. Only one zoom (`top-height`) sets custom Wrong-crop parameters (`abd: 118`, `hideInside`); the other lateral-raise zooms use the standard `wrong: 'mistake'` string ref, already covered by proof 1c's byte-identity. Pinned literally in `goldenB.mjs`'s `LATERAL_RAISE_WRONG_CROPS`/`validateLateralRaiseCrops` - a plain import of the vendored `dumbbell_lateral_raise.howto.mjs`, no Playwright or live build needed, so it runs in both the fast unit test and the gate.
 - **Low 5**: `pageApproval.current` gained `supersedes: "b3a90af"`; `manifestPinList()`'s literal pin updated (`historyPin` unchanged - `history` itself didn't change).
 - **Low 6**: PR body/HANDOFF updated to the new head and the reviewer's own measured `npm test` numbers (+1.1 to +1.4 s against main).
+
+## HT-9 LR-23: the missing Source registry is not needed (HT-9 builder, 2026-09-30)
+
+- **Closed**: the "missing Source registry" gap (HT-9 follow-up entry above: `Sources.tsx` blocked on
+  `@/howto/generated/sources`, which never existed) is closed as **not needed**, per the owner decision LR-23
+  ("Dont put any emergency or whatever contacts. Even the source remove it in app ui. If its not required by
+  pkaystore dont put.") and the supervisor's rescope. The app UI shows no source list, citation link or evidence
+  label at all; `Sources.tsx` is deleted, not fixed. Research sources stay in the data
+  (`docs/research/howto/sources.json`, `howTo.sources`) for verification only.
+- **Decided**: `Risks.tsx` now returns a fragment - the Risks section, then the owner's `DISCLAIMER` paragraph,
+  unchanged text, exactly once per sheet, right where golden B's own `sourcesSection()` used to emit it (now
+  gone). Covered by `tests/howto/sections-risks.test.ts` (position and content, mutation-proven: moving the
+  disclaimer above the section, or duplicating/dropping it, fails the check).
+- **Not done here (LATER, per the routine)**: gate block "HT-9 C19" (no sources/contacts sweep, 5 themes,
+  mutations M10-M12). It depends on `tests/guards/no-contacts.ts` (card ESC-NC, main) and HT-4b's `c19.ts`,
+  neither of which exists yet on any fetched branch as of this entry. Added once both land.
+  **Why**: routine "HT-9 LR-23 rescope", citing `docs/howto/LR23-PLAN.md` section 8 and amendment D-LR23-8 item 5.

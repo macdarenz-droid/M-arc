@@ -7,7 +7,7 @@ import { readdirSync } from 'node:fs';
 import type { VNode } from 'preact';
 import { Risks } from '@/slices/howto/sections/Risks';
 import { chromeIdOf } from '@/slices/howto/PlateView';
-import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW } from '@/howto/archetypes';
+import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '@/howto/archetypes';
 import type { BuiltHowTo } from '@/howto/types';
 import type { RiskJoint } from '@/howto/content-types';
 
@@ -53,7 +53,29 @@ describe('HT9-A3: Risks ("Risks and when to stop")', () => {
         const texts = elements(div).filter(v => v.type === 'p').map(p => p.props.children);
         expect(texts).toEqual([FLAG[f].name, FLAG[f].now, FLAG[f].doctor]);
       });
+
+      // owner decision LR-23: exactly one DISCLAIMER node per sheet, right after Risks (the "Where this comes
+      // from" section it used to sit with is gone).
+      const top = elements(tree);
+      const disclaimers = top.filter(v => hasClass(v, 'ht-disclaimer'));
+      expect(disclaimers).toHaveLength(1);
+      expect(disclaimers[0]!.props.id).toBe(`${pre}-disclaimer`);
+      expect(disclaimers[0]!.props.children).toBe(DISCLAIMER);
+      const riskSection = top.find(v => v.type === 'section' && hasClass(v, 'risks'))!;
+      expect(top.indexOf(disclaimers[0]!)).toBeGreaterThan(top.indexOf(riskSection));
     }
+  });
+
+  it('mutation: a disclaimer with the wrong text fails the content check (proves the test bites)', async () => {
+    const all = await Promise.all(modules());
+    const h = all[0]!;
+    const top = elements(Risks({ howTo: h }) as AnyVNode);
+    const real = top.find(v => hasClass(v, 'ht-disclaimer'))!;
+    expect(real.props.children).toBe(DISCLAIMER);
+    // the mutation: pretend the disclaimer text got reworded, as a broken build might do
+    const mutated = { ...real.props, children: `${DISCLAIMER} `.trim() + '.' };
+    expect(mutated.children === DISCLAIMER).toBe(false);
+    expect(real.props.children === DISCLAIMER).toBe(true);
   });
 
   it('mutation: a component that always renders the wrist block, ignoring riskFlags, fails on a shoulder/elbow exercise (proves the test bites)', async () => {

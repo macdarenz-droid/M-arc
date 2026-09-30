@@ -10,8 +10,8 @@ import type { VNode } from 'preact';
 import { chromeIdOf } from '../PlateView';
 import { iconBase } from '@/ui/icons';
 import type { SectionProps } from './index';
-// Pulls in the shared HT-9 text styles (setup, risks, sources); Risks.tsx and Sources.tsx always render
-// alongside this one (sections/index.ts), so one side-effect import is enough (Vite dedupes).
+// Pulls in the shared HT-9 text styles (setup, risks); Risks.tsx always renders alongside this one
+// (sections/index.ts), so one side-effect import is enough (Vite dedupes).
 import '../css/text.css';
 
 /** golden B's `I.arrow(16)`, byte-equivalent path. */
