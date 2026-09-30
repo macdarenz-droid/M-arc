@@ -1,0 +1,736 @@
+{
+  "id": "dumbbell_pullover",
+  "libId": "lib_dumbbell_pullover",
+  "name": "Dumbbell Pullover",
+  "family": "PULLOVER",
+  "tier": "A",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Keep five points of contact: back of the head, shoulder blades and buttocks on the bench, both feet on the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "five stable points of contact are required — The back of your head, shoulder blades, and glutes must remain in contact with the bench, and both feet must be touching the floor.",
+          "where": "step-by-step instructions"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Lie with the head as far up the bench as possible so the bench does not block the arms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "Position your head as far up the bench as possible. By placing your head high on the bench, you reduce the likelihood of the bench impeding shoulder range of motion during the pullover.",
+          "where": "Form Tip"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Cradle the inside of the top plate in both palms, thumbs overlapping behind the handle and fingers in front: a closed grip.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "you will cradle the inside top half of the dumbbell in your palms with thumbs and fingers wrapped around the handle.",
+          "where": "step-by-step instructions"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "With one palm on each side of the dumbbell, create a “closed” grasp by overlapping your thumbs behind the handle and overlapping fingers in front.",
+          "where": "Form Tip"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Start with the dumbbell above the upper chest, arms vertical, elbows slightly bent.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "Begin with dumbbell above your upper chest with your arms vertical and elbows unlocked or slightly bent.",
+          "where": "step-by-step instructions"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lower the dumbbell back over the head with control, only as far as a stretch you can tolerate and control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover",
+        "strengthlog-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "Lower the dumbbell toward the floor with control. End the downward movement when you reach the greatest amount of shoulder flexion (stretch) that you can tolerate and control.",
+          "where": "step-by-step instructions"
+        },
+        {
+          "source": "strengthlog-pullover",
+          "text": "Lower the dumbbell down behind your head, while keeping your arms almost completely straight, just with a slight bend in the elbows.",
+          "where": "How to Do Dumbbell Pullovers"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep the same elbow bend all the way; bending and straightening the elbows moves the work to the triceps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "Maintain the same degree of arm bend throughout each repetition. If your elbows are bending and straightening during the exercise, you’re shifting muscular stress away from your chest and back and onto your triceps.",
+          "where": "Form Tip"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Too much elbow bend makes the lift easier by bringing the weight closer to the shoulders; it should never feel like a triceps extension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "When lifters allow excessive elbow bend, the difficulty of the pullover is reduced, because the dumbbell is now closer to your shoulders.",
+          "where": "technique faults"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "the pullover should never feel like a triceps extension (“skull crusher”).",
+          "where": "technique faults"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Hips rising off the bench is back extension, not shoulder range; anchor with the heels and brace the abdominals.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "Although allowing your hips to rise from the bench may give the impression of increased range of motion, back and hip extension does not equate to shoulder mobility.",
+          "where": "technique faults"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "Anchor yourself to the bench by digging your heels into the floor and aggressively bracing your abdominal muscles.",
+          "where": "technique faults"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Keep the head neutral and eyes on the ceiling; do not follow the weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "Keep your head locked in neutral and your gaze directed at the ceiling — don’t follow the weight with your eyes or head.",
+          "where": "step-by-step instructions"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "A way out: the dumbbell passes over the face, so this source requires a spotter who passes the weight in and takes it with both hands at the end; alone, bring the dumbbell back to the thigh and keep hold until it rests there.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "The pullover requires a spotter due to movement of the dumbbell over your face and head.",
+          "where": "step-by-step instructions"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "If you are training solo (at your own risk), bring the dumbbell to your thigh.",
+          "where": "step-by-step instructions"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "Ensure the spotter has full control of the dumbbell before you let go. If training alone, maintain a secure grip until the dumbbell rests on your thigh.",
+          "where": "Form Tip"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Grip the dumbbell securely before it goes over the face.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "Grasp the dumbbell securely before bringing it over your face or before giving your spotter the signal to release it.",
+          "where": "Form Tip"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Start light, and add weight in small steps: small jumps greatly increase the load on the shoulders at the bottom.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "Lifters new to the pullover should start light when first learning the exercise.",
+          "where": "programming"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "Since small jumps in weight dramatically increase the resistance experienced by the shoulders at the bottom of the pullover, incremental weight progression is best.",
+          "where": "programming"
+        },
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Let the dumbbell hang naturally; do not try to hold it flat or tilt it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "The dumbbell should hang naturally from your hands throughout the pullover.",
+          "where": "technique faults"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "Although you should maintain a firm grip on the dumbbell, avoid turning or tilting the dumbbell during your set.",
+          "where": "technique faults"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Too much elbow bend often comes with flared elbows, which may add stress on the inside of the elbow.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "excessive elbow bend is also associated with “flared,” or outward-pointing, elbows. This position reflects internal rotation of the shoulder and may increase stress on the inside of the elbow",
+          "where": "technique faults"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In a barbell pullover EMG study the chest worked more than the lats (barbell data, inferred for the dumbbell version).",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "marchetti2011"
+      ],
+      "quotes": [
+        {
+          "source": "marchetti2011",
+          "text": "the barbell pullover exercise emphasized the muscle action of the pectoralis major more than that of the latissimus dorsi",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "The lats and the lower (sternocostal) chest are the main targets; the rear deltoid and the long head of the triceps also extend the shoulder here (coach summary of EMG and anatomy studies).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "Latissimus dorsi is active during the Pullover.",
+          "where": "muscles"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "Therefore, the sternocostal pectoralis major is considered a primary target of the pullover.",
+          "where": "muscles"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "The posterior deltoid, or “rear delt,” extends the shoulder. It’s active during the pullover.",
+          "where": "muscles"
+        },
+        {
+          "source": "bm-pullover",
+          "text": "In addition, the long head of triceps brachii extends the shoulder.",
+          "where": "muscles"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "The pullover can bias the chest or the lats depending on how it is done; shoulder angle changes force and muscle activity.",
+      "tags": [
+        "CONSENSUS",
+        "DATA"
+      ],
+      "sources": [
+        "strengthlog-pullover",
+        "teixeira2022"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-pullover",
+          "text": "Pullover is an exercise that can be used to train both the chest and/or lat muscles, depending on how you perform the exercise.",
+          "where": "Commentary"
+        },
+        {
+          "source": "teixeira2022",
+          "text": "The study concludes that specific shoulder joint positions affect PF production and iEMG during both exercises.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Getting in: a spotter can hand you the dumbbell; otherwise it goes from the thigh to above the chest, which is awkward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "A spotter is also helpful, because they can pass you the dumbbell when you are ready to begin. Otherwise, you will need to transfer the dumbbell from atop your thigh to above your chest, which can be awkward positioning.",
+          "where": "step-by-step instructions"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bm-pullover",
+      "url": "https://breakingmuscle.com/dumbbell-pullover/",
+      "title": "How to Do the Dumbbell Pullover for Upper Body Muscle and Mobility (Breaking Muscle, Dr. Merrick Lincoln)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthlog-pullover",
+      "url": "https://www.strengthlog.com/dumbbell-pullover/",
+      "title": "How to Do Dumbbell Pullover: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "marchetti2011",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21975179/",
+      "title": "Effects of the pullover exercise on the pectoralis major and latissimus dorsi muscles as evaluated by EMG",
+      "kind": "peer-reviewed",
+      "year": 2011,
+      "pmid": "21975179",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "teixeira2022",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35992501/",
+      "title": "Differences Between Pullover and Pulldown Exercises on Maximal Isometric Force and Myoelectric Activity in Recreationally-Trained Men",
+      "kind": "peer-reviewed",
+      "year": 2022,
+      "pmid": "35992501",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; the arc over the head, the elbow bend and the hips on the bench are all sagittal (c5, c6, c8).",
+    "equipment": "Flat bench, one dumbbell held vertically in both hands (c3, c13), feet flat on the floor (c1).",
+    "start": "Supine, head high on the bench (c2), five points of contact (c1); dumbbell above the upper chest, arms vertical, elbows slightly bent (c4).",
+    "end": "Arms back over the head to a controlled stretch (c5), same elbow bend (c6), hips still on the bench (c8), eyes on the ceiling (c9).",
+    "checkpoints": [
+      {
+        "label": "Five points",
+        "what": "Head, shoulder blades and buttocks on the bench, both feet on the floor.",
+        "claim": "c1"
+      },
+      {
+        "label": "Same elbow bend",
+        "what": "The slight elbow bend does not change during the rep.",
+        "claim": "c6"
+      },
+      {
+        "label": "Hips down",
+        "what": "Hips stay on the bench as the weight goes back.",
+        "claim": "c8"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows bending a lot as the dumbbell goes back, turning it into a triceps extension.",
+      "why": "Breaking Muscle lists it first among the pullover's faults; it makes the lift easier and often comes with flared elbows (c14). How often it happens is not measured in any source read.",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Elbows keep the same bend",
+        "claim": "c6"
+      },
+      {
+        "text": "Hips stay on the bench",
+        "claim": "c8"
+      },
+      {
+        "text": "Eyes stay on the ceiling",
+        "claim": "c9"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c18"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Two-hand closed grasp: palms cradle the inside of the top plate (c3).",
+    "width": "Both hands on one dumbbell, one palm each side (c3).",
+    "thumb": "Overlapping behind the handle (c3).",
+    "handContact": "Handle between the base of the thumbs and the body of the hands (c3).",
+    "wrist": "Let the dumbbell hang naturally; do not tilt it flat with the wrists (c13).",
+    "claims": [
+      "c3",
+      "c13"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Lie with your head as far up the bench as possible, feet flat.",
+      "claim": "c2"
+    },
+    {
+      "step": "Keep five points of contact.",
+      "claim": "c1"
+    },
+    {
+      "step": "Take the dumbbell from a spotter, or bring it up from your thigh.",
+      "claim": "c21"
+    },
+    {
+      "step": "Cradle the top plate, thumbs overlapping behind the handle; grip it securely before it goes over your face.",
+      "claim": "c11"
+    },
+    {
+      "step": "Start with the dumbbell above your upper chest, arms vertical, elbows slightly bent.",
+      "claim": "c4"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Five points of contact.",
+      "claim": "c1"
+    },
+    {
+      "point": "Same slight elbow bend throughout.",
+      "claim": "c6"
+    },
+    {
+      "point": "Hips on the bench, heels down, abs braced.",
+      "claim": "c8"
+    },
+    {
+      "point": "Head neutral, eyes on the ceiling.",
+      "claim": "c9"
+    },
+    {
+      "point": "Dumbbell hangs naturally.",
+      "claim": "c13"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Bending the elbows a lot so it becomes a triceps extension.",
+      "fix": "Keep the same slight bend all the way.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Hips rising to get the weight further back.",
+      "fix": "Dig your heels in and brace; stop where your shoulders run out of range.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Letting go before the spotter has the dumbbell.",
+      "fix": "Hold on until the spotter has full control, or until it rests on your thigh.",
+      "claim": "c10"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c16"
+      },
+      {
+        "muscleId": "chest",
+        "claim": "c16"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c16"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Lats and lower chest, with a stretch along the sides at the bottom",
+        "means": "The target muscles are working through a stretch.",
+        "fix": null,
+        "claim": "c5",
+        "redFlag": null
+      },
+      {
+        "where": "Mostly the backs of the arms",
+        "means": "Usually the elbows are bending and straightening.",
+        "fix": "Keep the elbow bend the same.",
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Pain on the inside of the elbow",
+        "means": "Usually the elbows are bent too much and flaring out.",
+        "fix": "Stop the set. Go lighter, keep the elbows pointing forward or up.",
+        "claim": "c14",
+        "redFlag": "elbow"
+      },
+      {
+        "where": "Pain in the shoulder at the bottom",
+        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
+        "fix": "Stop the set. Go lighter and shorten the range.",
+        "claim": "c20",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Dumbbell over the face: grip it securely and use a spotter.",
+      "claim": "c10"
+    },
+    {
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
+      "claim": "c19"
+    },
+    {
+      "risk": "Big weight jumps load the shoulders hard at the bottom; add weight in small steps.",
+      "claim": "c12"
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "elbow"
+  ],
+  "zooms": [
+    {
+      "key": "cupped-dumbbell",
+      "kind": "hand",
+      "right": "Palms cradle the top plate, thumbs overlapping behind the handle, dumbbell hanging vertically.",
+      "wrong": "Dumbbell tilted flat, held by the wrists.",
+      "claim": "c13"
+    },
+    {
+      "key": "elbow-bend-constant",
+      "kind": "posture",
+      "right": "Arms nearly straight, same slight bend all the way.",
+      "wrong": "Elbows deeply bent, like a skull crusher.",
+      "claim": "c7"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "rear_delts"
+    ],
+    "remove": [],
+    "why": "exercises.json: lats and chest primary; triceps secondary. c16 supports all three (c15 adds that the chest can outwork the lats in barbell data, and c17 that the balance depends on how the lift is done). Proposed add: rear_delts as secondary, because c16 reports the posterior deltoid active and an efficient shoulder extensor in the pullover (coach summary citing EMG and moment-arm studies; the supervisor may keep or drop it)."
+  },
+  "anchorSource": "bm-pullover"
+}

@@ -1,0 +1,572 @@
+{
+  "id": "close_grip_bench_press",
+  "libId": "lib_close_grip_bench_press",
+  "name": "Close-Grip Bench Press",
+  "family": "BENCH-BB",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": "barbell_bench_press",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the bar still travels over the face, neck and chest (GA overBody list names close_grip_bench_press), so the parent's wrapped-thumb rule (parent c4) applies unchanged."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because it is the same straight bar pressed from the base of the palm; only the hand spacing changes (c1)."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the low-palm, straight-wrist rule (parent c5) is about where the bar sits in the hand, which a narrower grip does not change."
+    },
+    {
+      "field": "setup.safety-pins",
+      "why": "true for this child because it is the same flat bench in the same rack with the bar over the chest and neck; the parent's power-rack safety pins (parent c6) catch a failed rep the same way."
+    },
+    {
+      "field": "setup.spotter",
+      "why": "true for this child because the bar is lifted out of the same J-hooks over the face; the parent's spotter behind the head (parent c7) applies."
+    },
+    {
+      "field": "zooms.bar-low-palm",
+      "why": "true for this child because the hand, bar and wrist rule are the parent's (parent c5)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hands in line with the shoulders (about shoulder-width), elbows pointing toward the feet.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-cgbp",
+        "strengthlog-cgbp",
+        "lockie2017"
+      ],
+      "quotes": [
+        {
+          "source": "ace-cgbp",
+          "text": "Lie face up on a barbell bench, then reach up and grip the bar with the hands directly in line with the shoulders and the elbows pointed towards the feet.",
+          "where": "exercise description"
+        },
+        {
+          "source": "strengthlog-cgbp",
+          "text": "Most people find it comfortable to grip the bar somewhere around shoulder-width apart, or slightly wider.",
+          "where": "FAQ: How Narrow Should You Grip the Bar?"
+        },
+        {
+          "source": "lockie2017",
+          "text": "uses a narrower grip (~95% of biacromial distance (BAD))",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Bring the bar down by bending the elbows and keeping them close to the ribs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-cgbp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-cgbp",
+          "text": "Unrack the bar and bring it towards the chest by bending the elbows and keeping them close to the ribs.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Push the feet into the floor and the hips into the bench as the bar goes up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-cgbp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-cgbp",
+          "text": "Push the feet into the floor, and press the hips into the bench as the bar is pushed away from the chest to return to the starting position.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Touch the bar low on the chest, around where the ribs end; a closer grip usually means a lower touch point than the regular bench.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-cgbp",
+        "sbs-bench"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-cgbp",
+          "text": "Lower the bar with control until it touches your chest somewhere where the ribs end.",
+          "where": "How to Close-Grip Bench Press"
+        },
+        {
+          "source": "sbs-bench",
+          "text": "Most people touch the bar a bit lower on their chest when they bench with a close grip",
+          "where": "grip width and shoulder flexion"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Shoulder blades together and down before unracking.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-cgbp"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-cgbp",
+          "text": "Lie on the bench, pull your shoulder blades together and down, and slightly arch your back.",
+          "where": "How to Close-Grip Bench Press"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The close grip moves work to the triceps and away from the chest and front shoulder, so most people lift less than on the regular bench.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-cgbp"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-cgbp",
+          "text": "The close-grip bench press is a variant of the bench press where you transfer more of the work to the triceps, and away from the chest and front deltoid.",
+          "where": "Commentary"
+        },
+        {
+          "source": "strengthlog-cgbp",
+          "text": "This means that most people will have to use less weight in the close-grip bench press than in the regular bench press.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "In EMG data a narrow grip kept triceps activity higher than a wide grip, gave less front-shoulder activity than a medium grip, and lowered the load lifted.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "saeterbakken2021"
+      ],
+      "quotes": [
+        {
+          "source": "saeterbakken2021",
+          "text": "Biceps brachii activity increased with increasing grip width, whereas wide grip displayed lower triceps brachii activation than medium and narrow. In the anterior deltoid, greater activity was observed using a medium compared to narrow grip.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "saeterbakken2021",
+          "text": "Both groups demonstrated lower 6-RM loads using a narrow grip compared to the other grips.",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia; a bar that is lowered high, toward the neck, carries that risk.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "jumbelic2007"
+      ],
+      "quotes": [
+        {
+          "source": "jumbelic2007",
+          "text": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+          "where": "abstract"
+        },
+        {
+          "source": "jumbelic2007",
+          "text": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-cgbp",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/311/close-grip-bench-press/",
+      "title": "Close-grip Bench Press, ACE Exercise Library",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthlog-cgbp",
+      "url": "https://www.strengthlog.com/close-grip-bench-press/",
+      "title": "How to Do Close-Grip Bench Press: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sbs-bench",
+      "url": "https://www.strongerbyscience.com/how-to-bench/",
+      "title": "How to Bench Press: The Definitive Guide (Stronger by Science)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "saeterbakken2021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34198674/",
+      "title": "The Effect of Grip Width on Muscle Strength and Electromyographic Activity in Bench Press among Novice- and Resistance-Trained Men",
+      "kind": "peer-reviewed",
+      "year": 2021,
+      "pmid": "34198674",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lockie2017",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29910406/",
+      "title": "An Investigation of the Mechanics and Sticking Region of a One-Repetition Maximum Close-Grip Bench Press versus the Traditional Bench Press",
+      "kind": "peer-reviewed",
+      "year": 2017,
+      "pmid": "29910406",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "jumbelic2007",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/17456099/",
+      "title": "Traumatic asphyxia in weightlifters",
+      "kind": "peer-reviewed",
+      "year": 2007,
+      "pmid": "17456099",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; the low touch point, elbows close to the ribs and hips on the bench read in the sagittal plane (c2, c3, c4). Hand spacing needs the front view, so it is a text point, not a callout.",
+    "equipment": "Flat bench under a rack with J-hooks and safety pins (inherited, parent c6); barbell; feet on the floor (c3).",
+    "start": "Supine, shoulder blades together and down (c5), hands in line with the shoulders (c1); bar on straight arms over the chest.",
+    "end": "Bar touching the low chest where the ribs end (c4), elbows close to the ribs (c2), hips pressed into the bench (c3).",
+    "checkpoints": [
+      {
+        "label": "Elbows to ribs",
+        "what": "Elbows stay close to the ribs as the bar comes down.",
+        "claim": "c2"
+      },
+      {
+        "label": "Low-chest touch",
+        "what": "Bar touches around where the ribs end, not high toward the neck.",
+        "claim": "c4"
+      },
+      {
+        "label": "Hips pressed down",
+        "what": "Feet push the floor, hips stay on the bench.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows drifting away from the ribs and the bar landing high on the chest, toward the neck.",
+      "why": "It is the opposite of the two defining cues (ACE elbows-to-ribs, StrengthLog low touch) and brings the bar toward the neck (c10). No source read ranks close-grip faults by frequency.",
+      "claim": "c2",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Elbows brush the ribs",
+        "claim": "c2"
+      },
+      {
+        "text": "Bar touches where ribs end",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c9"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed overhand grip; thumbs wrapped (inherited, parent c4).",
+    "width": "Hands in line with the shoulders, about shoulder-width (c1).",
+    "thumb": "Wrapped (inherited, parent c4).",
+    "handContact": "Bar in the base of the palm (inherited, parent c5).",
+    "wrist": "Straight, not bent back (inherited, parent c5).",
+    "claims": [
+      "c1"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the safety pins slightly below where the bar touches your chest (inherited, parent c6).",
+      "claim": "barbell_bench_press:c6"
+    },
+    {
+      "step": "Lie down, shoulder blades together and down, feet on the floor.",
+      "claim": "c5"
+    },
+    {
+      "step": "Grip with your hands in line with your shoulders, thumbs wrapped.",
+      "claim": "c1"
+    },
+    {
+      "step": "Lift the bar out, ideally with a spotter behind your head (inherited, parent c7).",
+      "claim": "barbell_bench_press:c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Hands in line with the shoulders.",
+      "claim": "c1"
+    },
+    {
+      "point": "Elbows close to the ribs.",
+      "claim": "c2"
+    },
+    {
+      "point": "Bar to the low chest, never toward the neck.",
+      "claim": "c4"
+    },
+    {
+      "point": "Hips on the bench, feet pushing the floor.",
+      "claim": "c3"
+    },
+    {
+      "point": "Shoulder blades together and down.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Elbows flaring out and the bar landing high on the chest.",
+      "fix": "Keep the elbows close to your ribs and touch low.",
+      "claim": "c2"
+    },
+    {
+      "mistake": "Loading it like your regular bench.",
+      "fix": "Use less weight than your regular bench.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Hips lifting off the bench.",
+      "fix": "Press your hips into the bench; go lighter if they lift.",
+      "claim": "c3"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c6"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "chest",
+        "claim": "c6"
+      },
+      {
+        "muscleId": "front_delts",
+        "claim": "c7"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Backs of the upper arms, with some chest",
+        "means": "The target muscles are working.",
+        "fix": null,
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Mostly the chest and front of the shoulders",
+        "means": "Usually the grip has crept wider or the elbows are flaring.",
+        "fix": "Bring the hands in line with the shoulders and the elbows to the ribs.",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Pain deep in the front of the shoulder",
+        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
+        "fix": "Stop the set. Go lighter next time.",
+        "claim": "c12",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bar over the face and neck: touch low on the chest, wrap the thumbs and use safety pins or a spotter.",
+      "claim": "c10"
+    },
+    {
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
+      "claim": "c11"
+    },
+    {
+      "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
+      "claim": "c12"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "bar-low-palm",
+      "kind": "hand",
+      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "wrong": "Bar high toward the fingers, wrist bent back.",
+      "claim": "c1"
+    },
+    {
+      "key": "elbows-to-ribs",
+      "kind": "posture",
+      "right": "Elbows close to the ribs, bar low on the chest.",
+      "wrong": "Elbows flared, bar high toward the neck.",
+      "claim": "c2"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: triceps primary; chest and front_delts secondary. c6 and c7 support this. No change."
+  },
+  "anchorSource": "ace-cgbp"
+}

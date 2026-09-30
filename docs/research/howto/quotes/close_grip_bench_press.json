@@ -1,0 +1,139 @@
+{
+  "id": "close_grip_bench_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-cgbp",
+      "quote": "Lie face up on a barbell bench, then reach up and grip the bar with the hands directly in line with the shoulders and the elbows pointed towards the feet.",
+      "status": "verbatim",
+      "closest": "Lie face up on a barbell bench, then reach up and grip the bar with the hands directly in line with the shoulders and the elbows pointed towards the feet."
+    },
+    {
+      "claim": "c1",
+      "source": "strengthlog-cgbp",
+      "quote": "Most people find it comfortable to grip the bar somewhere around shoulder-width apart, or slightly wider.",
+      "status": "verbatim",
+      "closest": "Most people find it comfortable to grip the bar somewhere around shoulder-width apart, or slightly wider."
+    },
+    {
+      "claim": "c1",
+      "source": "lockie2017",
+      "quote": "uses a narrower grip (~95% of biacromial distance (BAD))",
+      "status": "verbatim",
+      "closest": "uses a narrower grip (~95% of biacromial distance (BAD))"
+    },
+    {
+      "claim": "c2",
+      "source": "ace-cgbp",
+      "quote": "Unrack the bar and bring it towards the chest by bending the elbows and keeping them close to the ribs.",
+      "status": "verbatim",
+      "closest": "Unrack the bar and bring it towards the chest by bending the elbows and keeping them close to the ribs."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-cgbp",
+      "quote": "Push the feet into the floor, and press the hips into the bench as the bar is pushed away from the chest to return to the starting position.",
+      "status": "verbatim",
+      "closest": "Push the feet into the floor, and press the hips into the bench as the bar is pushed away from the chest to return to the starting position."
+    },
+    {
+      "claim": "c4",
+      "source": "strengthlog-cgbp",
+      "quote": "Lower the bar with control until it touches your chest somewhere where the ribs end.",
+      "status": "verbatim",
+      "closest": "Lower the bar with control until it touches your chest somewhere where the ribs end."
+    },
+    {
+      "claim": "c4",
+      "source": "sbs-bench",
+      "quote": "Most people touch the bar a bit lower on their chest when they bench with a close grip",
+      "status": "verbatim",
+      "closest": "Most people touch the bar a bit lower on their chest when they bench with a close grip"
+    },
+    {
+      "claim": "c5",
+      "source": "strengthlog-cgbp",
+      "quote": "Lie on the bench, pull your shoulder blades together and down, and slightly arch your back.",
+      "status": "verbatim",
+      "closest": "Lie on the bench, pull your shoulder blades together and down, and slightly arch your back."
+    },
+    {
+      "claim": "c6",
+      "source": "strengthlog-cgbp",
+      "quote": "The close-grip bench press is a variant of the bench press where you transfer more of the work to the triceps, and away from the chest and front deltoid.",
+      "status": "verbatim",
+      "closest": "The close-grip bench press is a variant of the bench press where you transfer more of the work to the triceps, and away from the chest and front deltoid."
+    },
+    {
+      "claim": "c6",
+      "source": "strengthlog-cgbp",
+      "quote": "This means that most people will have to use less weight in the close-grip bench press than in the regular bench press.",
+      "status": "verbatim",
+      "closest": "This means that most people will have to use less weight in the close-grip bench press than in the regular bench press."
+    },
+    {
+      "claim": "c7",
+      "source": "saeterbakken2021",
+      "quote": "Biceps brachii activity increased with increasing grip width, whereas wide grip displayed lower triceps brachii activation than medium and narrow. In the anterior deltoid, greater activity was observed using a medium compared to narrow grip.",
+      "status": "verbatim",
+      "closest": "Biceps brachii activity increased with increasing grip width, whereas wide grip displayed lower triceps brachii activation than medium and narrow. In the anterior deltoid, greater activity was observed using a medium compared to narrow grip."
+    },
+    {
+      "claim": "c7",
+      "source": "saeterbakken2021",
+      "quote": "Both groups demonstrated lower 6-RM loads using a narrow grip compared to the other grips.",
+      "status": "verbatim",
+      "closest": "Both groups demonstrated lower 6-RM loads using a narrow grip compared to the other grips."
+    },
+    {
+      "claim": "c8",
+      "source": "acsm2009",
+      "quote": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c9",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c10",
+      "source": "jumbelic2007",
+      "quote": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+      "status": "verbatim",
+      "closest": "an unrecognized source of accidental asphyxia--compression of the neck by barbells"
+    },
+    {
+      "claim": "c10",
+      "source": "jumbelic2007",
+      "quote": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002.",
+      "status": "verbatim",
+      "closest": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002."
+    },
+    {
+      "claim": "c11",
+      "source": "kerr2010",
+      "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+      "status": "verbatim",
+      "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c12",
+      "source": "kolber2010",
+      "quote": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c12",
+      "source": "kolber2010",
+      "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    }
+  ]
+}

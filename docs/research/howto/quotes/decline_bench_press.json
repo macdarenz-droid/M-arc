@@ -1,0 +1,195 @@
+{
+  "id": "decline_bench_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "workoutlabs-decline",
+      "quote": "Secure your feet under the stirrup, bar or strap at the high end of the bench and lie flat on your back with the rack slightly behind you.",
+      "status": "verbatim",
+      "closest": "Secure your feet under the stirrup, bar or strap at the high end of the bench and lie flat on your back with the rack slightly behind you."
+    },
+    {
+      "claim": "c2",
+      "source": "strengthlog-decline",
+      "quote": "Set a bench so that it is in decline, either by adjusting the backrest or by elevating the foot.",
+      "status": "verbatim",
+      "closest": "Set a bench so that it is in decline, either by adjusting the backrest or by elevating the foot."
+    },
+    {
+      "claim": "c2",
+      "source": "lauver2016",
+      "quote": "a free-weight barbell bench press performed at 0°, 30°, 45° and -15° bench angles",
+      "status": "verbatim",
+      "closest": "a free-weight barbell bench press performed at 0°, 30°, 45° and -15° bench angles"
+    },
+    {
+      "claim": "c2",
+      "source": "coratella2020",
+      "quote": "declined (-15°) bench press (DBP)",
+      "status": "verbatim",
+      "closest": "declined (-15°) bench press (DBP)"
+    },
+    {
+      "claim": "c3",
+      "source": "workoutlabs-decline",
+      "quote": "Using an overhand grip, grip the bar with your hands slightly wider than your shoulder width apart.",
+      "status": "verbatim",
+      "closest": "Using an overhand grip, grip the bar with your hands slightly wider than your shoulder width apart."
+    },
+    {
+      "claim": "c3",
+      "source": "strengthlog-decline",
+      "quote": "Grip the bar slightly wider than shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "Grip the bar slightly wider than shoulder-width apart."
+    },
+    {
+      "claim": "c4",
+      "source": "strengthlog-decline",
+      "quote": "Lie down on the bench, pull your shoulder blades together and down, with a proud chest.",
+      "status": "verbatim",
+      "closest": "Lie down on the bench, pull your shoulder blades together and down, with a proud chest."
+    },
+    {
+      "claim": "c5",
+      "source": "strengthlog-decline",
+      "quote": "Lower the bar with control until it touches your chest.",
+      "status": "verbatim",
+      "closest": "Lower the bar with control until it touches your chest."
+    },
+    {
+      "claim": "c5",
+      "source": "workoutlabs-decline",
+      "quote": "Do not let the bar drift too far forward, it should touch down your lower chest only. Don't bounce the weight off your chest.",
+      "status": "verbatim",
+      "closest": "Do not let the bar drift too far forward, it should touch down your lower chest only. Don't bounce the weight off your chest."
+    },
+    {
+      "claim": "c6",
+      "source": "strengthlog-decline",
+      "quote": "Remember to set up safety racks on your sides while decline benching, as you cannot roll the bar down your belly if you fail.",
+      "status": "verbatim",
+      "closest": "Remember to set up safety racks on your sides while decline benching, as you cannot roll the bar down your belly if you fail."
+    },
+    {
+      "claim": "c6",
+      "source": "workoutlabs-decline",
+      "quote": "If you are new at this exercise, you should use a spotter. If no spotter is available, then be conservative with the amount of weight used.",
+      "status": "verbatim",
+      "closest": "If you are new at this exercise, you should use a spotter. If no spotter is available, then be conservative with the amount of weight used."
+    },
+    {
+      "claim": "c7",
+      "source": "workoutlabs-decline",
+      "quote": "Set a barbell in a weight rack at the low end of a decline bench, making sure it is at a height you can reach without fully extending your arms.",
+      "status": "verbatim",
+      "closest": "Set a barbell in a weight rack at the low end of a decline bench, making sure it is at a height you can reach without fully extending your arms."
+    },
+    {
+      "claim": "c7",
+      "source": "workoutlabs-decline",
+      "quote": "Push up to lift the bar from the rack and hold it directly over you with your arms locked.",
+      "status": "verbatim",
+      "closest": "Push up to lift the bar from the rack and hold it directly over you with your arms locked."
+    },
+    {
+      "claim": "c8",
+      "source": "workoutlabs-decline",
+      "quote": "When performing this exercise, use a 2:1:1 count. That is a count of two on the downward movement. Pause for a count of one. A count of one one the upward movement.",
+      "status": "verbatim",
+      "closest": "When performing this exercise, use a 2:1:1 count. That is a count of two on the downward movement. Pause for a count of one. A count of one one the upward movement."
+    },
+    {
+      "claim": "c8",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c9",
+      "source": "lauver2016",
+      "quote": "The sEMG of lower pectoralis was greater during -15° (100.4 ± 5.7% MVIC), 30° (86.6 ± 4.8% MVIC) and horizontal (100.1 ± 5.2% MVIC) bench conditions compared to the 45° (71.9 ± 4.5% MVIC)",
+      "status": "verbatim",
+      "closest": "The sEMG of lower pectoralis was greater during -15° (100.4 ± 5.7% MVIC), 30° (86.6 ± 4.8% MVIC) and horizontal (100.1 ± 5.2% MVIC) bench conditions compared to the 45° (71.9 ± 4.5% MVIC)"
+    },
+    {
+      "claim": "c9",
+      "source": "coratella2020",
+      "quote": "The sternocostal head was similarly excited in DBP vs. BP",
+      "status": "verbatim",
+      "closest": "The sternocostal head was similarly excited in DBP vs. BP"
+    },
+    {
+      "claim": "c10",
+      "source": "coratella2020",
+      "quote": "Triceps brachii excitation was overall greater (d: 2.01/6.75) in BP and DBP compared to all other exercises.",
+      "status": "verbatim",
+      "closest": "Triceps brachii excitation was overall greater (d: 2.01/6.75) in BP and DBP compared to all other exercises."
+    },
+    {
+      "claim": "c10",
+      "source": "coratella2020",
+      "quote": "Anterior deltoid was less excited (d: 3.84/19.77) in DBP compared to all other exercises.",
+      "status": "verbatim",
+      "closest": "Anterior deltoid was less excited (d: 3.84/19.77) in DBP compared to all other exercises."
+    },
+    {
+      "claim": "c11",
+      "source": "acsm2009",
+      "quote": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c12",
+      "source": "jumbelic2007",
+      "quote": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+      "status": "verbatim",
+      "closest": "an unrecognized source of accidental asphyxia--compression of the neck by barbells"
+    },
+    {
+      "claim": "c12",
+      "source": "jumbelic2007",
+      "quote": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002.",
+      "status": "verbatim",
+      "closest": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002."
+    },
+    {
+      "claim": "c12",
+      "source": "workoutlabs-decline",
+      "quote": "Do not let the bar drift too far forward, it should touch down your lower chest only.",
+      "status": "verbatim",
+      "closest": "Do not let the bar drift too far forward, it should touch down your lower chest only."
+    },
+    {
+      "claim": "c13",
+      "source": "kerr2010",
+      "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+      "status": "verbatim",
+      "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c14",
+      "source": "kowalczuk2022",
+      "quote": "The injury results from an eccentric contracture of the muscle most commonly while performing the bench press maneuver during weight training.",
+      "status": "verbatim",
+      "closest": "The injury results from an eccentric contracture of the muscle most commonly while performing the bench press maneuver during weight training."
+    },
+    {
+      "claim": "c15",
+      "source": "kolber2010",
+      "quote": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c15",
+      "source": "kolber2010",
+      "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    }
+  ]
+}

@@ -1,0 +1,265 @@
+{
+  "id": "barbell_bench_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-bb-chest-press",
+      "quote": "Lie face up on a flat bench, and grip a barbell with the hands slightly wider than shoulder-width. Press the feet into the ground and the hips into the bench while lifting the bar off the rack.",
+      "status": "verbatim",
+      "closest": "Lie face up on a flat bench, and grip a barbell with the hands slightly wider than shoulder-width. Press the feet into the ground and the hips into the bench while lifting the bar off the rack."
+    },
+    {
+      "claim": "c2",
+      "source": "hk-bench-youth",
+      "quote": "Slowly lower the barbell to the middle of your chest. In the bottom position the forearms should be perpendicular to the floor.",
+      "status": "verbatim",
+      "closest": "Slowly lower the barbell to the middle of your chest. In the bottom position the forearms should be perpendicular to the floor."
+    },
+    {
+      "claim": "c2",
+      "source": "stronglifts-bench",
+      "quote": "Lower the bar to your mid-chest while tucking your elbows in about 75°. Keep your wrists straight and your forearms vertical to the floor.",
+      "status": "verbatim",
+      "closest": "Lower the bar to your mid-chest while tucking your elbows in about 75°. Keep your wrists straight and your forearms vertical to the floor."
+    },
+    {
+      "claim": "c3",
+      "source": "hk-bench-youth",
+      "quote": "During the movement, the upper arms should be about 45 to 60 degrees from the torso and the hips should remain on the bench.",
+      "status": "verbatim",
+      "closest": "During the movement, the upper arms should be about 45 to 60 degrees from the torso and the hips should remain on the bench."
+    },
+    {
+      "claim": "c4",
+      "source": "hk-bench-youth",
+      "quote": "Grasp the barbell with a wider than shoulder-width grip, wrapping thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Grasp the barbell with a wider than shoulder-width grip, wrapping thumbs around the bar."
+    },
+    {
+      "claim": "c4",
+      "source": "stronglifts-bench",
+      "quote": "No Thumbless Grip! The bar can slip out of your hands if you grip it without thumbs. If it slips, no spotter will be fast enough to catch the bar. It will crush your face, throat or chest.",
+      "status": "verbatim",
+      "closest": "No Thumbless Grip! The bar can slip out of your hands if you grip it without thumbs. If it slips, no spotter will be fast enough to catch the bar. It will crush your face, throat or chest."
+    },
+    {
+      "claim": "c5",
+      "source": "stronglifts-bench",
+      "quote": "Hold the bar in the base of your palm, close to your wrists. Don’t hold it close to your fingers like on the Deadlift or your wrists will bend back.",
+      "status": "verbatim",
+      "closest": "Hold the bar in the base of your palm, close to your wrists. Don’t hold it close to your fingers like on the Deadlift or your wrists will bend back."
+    },
+    {
+      "claim": "c5",
+      "source": "sbs-bench",
+      "quote": "make sure your wrists aren’t cocked back excessively, as this can put unnecessary strain on the wrist. Simply gripping the bar lower in your hand can help with this.",
+      "status": "verbatim",
+      "closest": "make sure your wrists aren’t cocked back excessively, as this can put unnecessary strain on the wrist. Simply gripping the bar lower in your hand can help with this."
+    },
+    {
+      "claim": "c6",
+      "source": "stronglifts-bench",
+      "quote": "Power Racks have horizontal safety pins to catch the bar if you fail. Set these pins slightly lower than the bottom position when you Bench Press. The bar can’t touch the pins on good reps.",
+      "status": "verbatim",
+      "closest": "Power Racks have horizontal safety pins to catch the bar if you fail. Set these pins slightly lower than the bottom position when you Bench Press. The bar can’t touch the pins on good reps."
+    },
+    {
+      "claim": "c6",
+      "source": "stronglifts-bench",
+      "quote": "If you fail to bench the weight, lower the bar to your mid-chest. Then flatten your torso to lower the bar on the safety pins.",
+      "status": "verbatim",
+      "closest": "If you fail to bench the weight, lower the bar to your mid-chest. Then flatten your torso to lower the bar on the safety pins."
+    },
+    {
+      "claim": "c7",
+      "source": "hk-bench-youth",
+      "quote": "A spotter should be behind the lifter's head and should assist the lifter with getting the barbell into the starting position and returning the barbell to the rack when finished.",
+      "status": "verbatim",
+      "closest": "A spotter should be behind the lifter's head and should assist the lifter with getting the barbell into the starting position and returning the barbell to the rack when finished."
+    },
+    {
+      "claim": "c7",
+      "source": "hk-bench-youth",
+      "quote": "the importance of a spotter during the exercise because the bar is pressed over the lifter's face, neck, and chest.",
+      "status": "verbatim",
+      "closest": "the importance of a spotter during the exercise because the bar is pressed over the lifter's face, neck, and chest."
+    },
+    {
+      "claim": "c8",
+      "source": "stronglifts-bench",
+      "quote": "Bar Path. Diagonal line from your mid-chest to shoulders. Not vertical over shoulders, neck or chest.",
+      "status": "verbatim",
+      "closest": "Bar Path. Diagonal line from your mid-chest to shoulders. Not vertical over shoulders, neck or chest."
+    },
+    {
+      "claim": "c8",
+      "source": "stronglifts-bench",
+      "quote": "Don’t lower the bar guillotine-style to your neck.",
+      "status": "verbatim",
+      "closest": "Don’t lower the bar guillotine-style to your neck."
+    },
+    {
+      "claim": "c9",
+      "source": "jumbelic2007",
+      "quote": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+      "status": "verbatim",
+      "closest": "an unrecognized source of accidental asphyxia--compression of the neck by barbells"
+    },
+    {
+      "claim": "c9",
+      "source": "jumbelic2007",
+      "quote": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002.",
+      "status": "verbatim",
+      "closest": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002."
+    },
+    {
+      "claim": "c10",
+      "source": "stronglifts-bench",
+      "quote": "Raising your butt off the bench gets you three red lights in powerlifting competitions. It can hurt your lower back if you hyper-extend your spine.",
+      "status": "verbatim",
+      "closest": "Raising your butt off the bench gets you three red lights in powerlifting competitions. It can hurt your lower back if you hyper-extend your spine."
+    },
+    {
+      "claim": "c10",
+      "source": "stronglifts-bench",
+      "quote": "If your butt comes off the bench on StrongLifts 5×5, it’s a failed rep. Repeat the weight next time.",
+      "status": "verbatim",
+      "closest": "If your butt comes off the bench on StrongLifts 5×5, it’s a failed rep. Repeat the weight next time."
+    },
+    {
+      "claim": "c10",
+      "source": "hk-bench-youth",
+      "quote": "Do not bounce the barbell off the chest, and do not lift your buttocks off the bench during this exercise.",
+      "status": "verbatim",
+      "closest": "Do not bounce the barbell off the chest, and do not lift your buttocks off the bench during this exercise."
+    },
+    {
+      "claim": "c11",
+      "source": "hk-bench-youth",
+      "quote": "Do not bounce the barbell off the chest, and do not lift your buttocks off the bench during this exercise.",
+      "status": "verbatim",
+      "closest": "Do not bounce the barbell off the chest, and do not lift your buttocks off the bench during this exercise."
+    },
+    {
+      "claim": "c12",
+      "source": "sbs-bench",
+      "quote": "The key point is to get your scapulae retracted (pulled together, like you’re trying to pinch a pencil between your shoulder blades).",
+      "status": "verbatim",
+      "closest": "The key point is to get your scapulae retracted (pulled together, like you’re trying to pinch a pencil between your shoulder blades)."
+    },
+    {
+      "claim": "c12",
+      "source": "sbs-bench",
+      "quote": "it’ll also put the shoulders in a safer position to reduce your risk of rotator cuff injuries or anterior shoulder pain.",
+      "status": "verbatim",
+      "closest": "it’ll also put the shoulders in a safer position to reduce your risk of rotator cuff injuries or anterior shoulder pain."
+    },
+    {
+      "claim": "c13",
+      "source": "hk-bench-youth",
+      "quote": "To avoid hitting the upright supports, position your shoulders at least 3 inches (~8 cm) from the supports before you start.",
+      "status": "verbatim",
+      "closest": "To avoid hitting the upright supports, position your shoulders at least 3 inches (~8 cm) from the supports before you start."
+    },
+    {
+      "claim": "c13",
+      "source": "sbs-bench",
+      "quote": "In general, you should be able to comfortably clear the hooks by about an inch or two (2-5cm).",
+      "status": "verbatim",
+      "closest": "In general, you should be able to comfortably clear the hooks by about an inch or two (2-5cm)."
+    },
+    {
+      "claim": "c14",
+      "source": "hk-bench-youth",
+      "quote": "Lie on your back with your feet flat on the floor. If your feet don't reach the floor, use a stable board to accommodate size.",
+      "status": "verbatim",
+      "closest": "Lie on your back with your feet flat on the floor. If your feet don't reach the floor, use a stable board to accommodate size."
+    },
+    {
+      "claim": "c15",
+      "source": "hk-bench-youth",
+      "quote": "Learn this exercise with an unloaded barbell or light weight.",
+      "status": "verbatim",
+      "closest": "Learn this exercise with an unloaded barbell or light weight."
+    },
+    {
+      "claim": "c16",
+      "source": "acsm2009",
+      "quote": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c17",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c18",
+      "source": "sbs-bench",
+      "quote": "You don’t need to specifically time your descent, but it should take around 2-3 seconds. This will help decrease stress on your shoulders and pec tendons",
+      "status": "verbatim",
+      "closest": "You don’t need to specifically time your descent, but it should take around 2-3 seconds. This will help decrease stress on your shoulders and pec tendons"
+    },
+    {
+      "claim": "c19",
+      "source": "rodriguezridao2020",
+      "quote": "PMMP and PMLP showed higher EMG activity at a 0° bench inclination.",
+      "status": "verbatim",
+      "closest": "PMMP and PMLP showed higher EMG activity at a 0° bench inclination."
+    },
+    {
+      "claim": "c20",
+      "source": "saeterbakken2021",
+      "quote": "Biceps brachii activity increased with increasing grip width, whereas wide grip displayed lower triceps brachii activation than medium and narrow. In the anterior deltoid, greater activity was observed using a medium compared to narrow grip.",
+      "status": "verbatim",
+      "closest": "Biceps brachii activity increased with increasing grip width, whereas wide grip displayed lower triceps brachii activation than medium and narrow. In the anterior deltoid, greater activity was observed using a medium compared to narrow grip."
+    },
+    {
+      "claim": "c20",
+      "source": "saeterbakken2021",
+      "quote": "Both groups demonstrated lower 6-RM loads using a narrow grip compared to the other grips.",
+      "status": "verbatim",
+      "closest": "Both groups demonstrated lower 6-RM loads using a narrow grip compared to the other grips."
+    },
+    {
+      "claim": "c21",
+      "source": "coratella2020",
+      "quote": "Triceps brachii excitation was overall greater (d: 2.01/6.75) in BP and DBP compared to all other exercises.",
+      "status": "verbatim",
+      "closest": "Triceps brachii excitation was overall greater (d: 2.01/6.75) in BP and DBP compared to all other exercises."
+    },
+    {
+      "claim": "c22",
+      "source": "kowalczuk2022",
+      "quote": "The injury results from an eccentric contracture of the muscle most commonly while performing the bench press maneuver during weight training.",
+      "status": "verbatim",
+      "closest": "The injury results from an eccentric contracture of the muscle most commonly while performing the bench press maneuver during weight training."
+    },
+    {
+      "claim": "c23",
+      "source": "kerr2010",
+      "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+      "status": "verbatim",
+      "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c24",
+      "source": "kolber2010",
+      "quote": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c24",
+      "source": "kolber2010",
+      "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    }
+  ]
+}

@@ -1,0 +1,646 @@
+{
+  "id": "decline_bench_press",
+  "libId": "lib_decline_bench_press",
+  "name": "Decline Bench Press",
+  "family": "BENCH-BB",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": "barbell_bench_press",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the bar still travels over the face, neck and chest (GA overBody list includes the decline press), so the parent's wrapped-thumb rule (parent c4) applies unchanged."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because the same straight bar is pressed from the base of the palm with the same overhand grip (c3), so the parent's low-palm rule (parent c5) holds."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the wrist sits under the same bar in the same way (parent c5); nothing in the decline changes the wrist lever."
+    },
+    {
+      "field": "zooms.bar-low-palm",
+      "why": "true for this child because the hand, bar and wrist rule are the parent's (parent c5)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hook the feet under the pad or strap at the high end of the bench and lie back with the rack slightly behind the head.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "workoutlabs-decline"
+      ],
+      "quotes": [
+        {
+          "source": "workoutlabs-decline",
+          "text": "Secure your feet under the stirrup, bar or strap at the high end of the bench and lie flat on your back with the rack slightly behind you.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Set the bench in decline by adjusting the backrest or raising the foot end; the EMG studies used -15 degrees (a study setting, not a technique recommendation).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "strengthlog-decline",
+        "lauver2016",
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-decline",
+          "text": "Set a bench so that it is in decline, either by adjusting the backrest or by elevating the foot.",
+          "where": "How to Decline Bench Press"
+        },
+        {
+          "source": "lauver2016",
+          "text": "a free-weight barbell bench press performed at 0°, 30°, 45° and -15° bench angles",
+          "where": "abstract"
+        },
+        {
+          "source": "coratella2020",
+          "text": "declined (-15°) bench press (DBP)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Overhand grip, hands slightly wider than shoulder-width.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "workoutlabs-decline",
+        "strengthlog-decline"
+      ],
+      "quotes": [
+        {
+          "source": "workoutlabs-decline",
+          "text": "Using an overhand grip, grip the bar with your hands slightly wider than your shoulder width apart.",
+          "where": "How to"
+        },
+        {
+          "source": "strengthlog-decline",
+          "text": "Grip the bar slightly wider than shoulder-width apart.",
+          "where": "How to Decline Bench Press"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Pull the shoulder blades together and down, chest up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-decline"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-decline",
+          "text": "Lie down on the bench, pull your shoulder blades together and down, with a proud chest.",
+          "where": "How to Decline Bench Press"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lower the bar with control to touch the lower chest only; do not let it drift forward toward the head, and do not bounce it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-decline",
+        "workoutlabs-decline"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-decline",
+          "text": "Lower the bar with control until it touches your chest.",
+          "where": "How to Decline Bench Press"
+        },
+        {
+          "source": "workoutlabs-decline",
+          "text": "Do not let the bar drift too far forward, it should touch down your lower chest only. Don't bounce the weight off your chest.",
+          "where": "notes"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "A way out: set safety racks on both sides, because a failed decline rep cannot be rolled down the belly; beginners should use a spotter, or go conservative on weight without one.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-decline",
+        "workoutlabs-decline"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-decline",
+          "text": "Remember to set up safety racks on your sides while decline benching, as you cannot roll the bar down your belly if you fail.",
+          "where": "Commentary"
+        },
+        {
+          "source": "workoutlabs-decline",
+          "text": "If you are new at this exercise, you should use a spotter. If no spotter is available, then be conservative with the amount of weight used.",
+          "where": "notes"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Set the bar in the rack at a height you can reach without fully straightening the arms; lift it out and hold it over you on locked arms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "workoutlabs-decline"
+      ],
+      "quotes": [
+        {
+          "source": "workoutlabs-decline",
+          "text": "Set a barbell in a weight rack at the low end of a decline bench, making sure it is at a height you can reach without fully extending your arms.",
+          "where": "How to"
+        },
+        {
+          "source": "workoutlabs-decline",
+          "text": "Push up to lift the bar from the rack and hold it directly over you with your arms locked.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Tempo used by this guide: 2 seconds down, 1-second pause, 1 second up; within ACSM's moderate 1-2 s range.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "workoutlabs-decline",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "workoutlabs-decline",
+          "text": "When performing this exercise, use a 2:1:1 count. That is a count of two on the downward movement. Pause for a count of one. A count of one one the upward movement.",
+          "where": "notes"
+        },
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The lower chest works as hard on the decline as on the flat bench, and more than at 45 degrees incline.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "lauver2016",
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "lauver2016",
+          "text": "The sEMG of lower pectoralis was greater during -15° (100.4 ± 5.7% MVIC), 30° (86.6 ± 4.8% MVIC) and horizontal (100.1 ± 5.2% MVIC) bench conditions compared to the 45° (71.9 ± 4.5% MVIC)",
+          "where": "abstract"
+        },
+        {
+          "source": "coratella2020",
+          "text": "The sternocostal head was similarly excited in DBP vs. BP",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "On the decline the triceps work as hard as on the flat bench, and the front shoulder works less than in the other presses.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "coratella2020",
+          "text": "Triceps brachii excitation was overall greater (d: 2.01/6.75) in BP and DBP compared to all other exercises.",
+          "where": "abstract"
+        },
+        {
+          "source": "coratella2020",
+          "text": "Anterior deltoid was less excited (d: 3.84/19.77) in DBP compared to all other exercises.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia; on a decline the head is the low end, so a bar drifting headward moves toward the face and neck.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "jumbelic2007",
+        "workoutlabs-decline"
+      ],
+      "quotes": [
+        {
+          "source": "jumbelic2007",
+          "text": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+          "where": "abstract"
+        },
+        {
+          "source": "jumbelic2007",
+          "text": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002.",
+          "where": "abstract"
+        },
+        {
+          "source": "workoutlabs-decline",
+          "text": "Do not let the bar drift too far forward, it should touch down your lower chest only.",
+          "where": "notes"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Pectoralis major tendon ruptures happen most often during the lowering (eccentric) part of the bench press.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kowalczuk2022"
+      ],
+      "quotes": [
+        {
+          "source": "kowalczuk2022",
+          "text": "The injury results from an eccentric contracture of the muscle most commonly while performing the bench press maneuver during weight training.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "workoutlabs-decline",
+      "url": "https://workoutlabs.com/exercise-guide/decline-barbell-bench-press/",
+      "title": "Decline Barbell Bench Press exercise guide (WorkoutLabs)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthlog-decline",
+      "url": "https://www.strengthlog.com/decline-bench-press/",
+      "title": "How to Do Decline Bench Press: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lauver2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/",
+      "title": "Influence of bench angle on upper extremity muscular activation during bench press exercise",
+      "kind": "peer-reviewed",
+      "year": 2016,
+      "pmid": "25799093",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "coratella2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31397215/",
+      "title": "Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": "31397215",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kowalczuk2022",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35025841/",
+      "title": "Pectoralis Major Rupture: Evaluation and Management",
+      "kind": "peer-reviewed",
+      "year": 2022,
+      "pmid": "35025841",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "jumbelic2007",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/17456099/",
+      "title": "Traumatic asphyxia in weightlifters",
+      "kind": "peer-reviewed",
+      "year": 2007,
+      "pmid": "17456099",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; the decline angle, the hooked feet and the lower-chest touch point read only from the side (c1, c2, c5).",
+    "equipment": "Decline bench, head end low, about -15 degrees (the angle used in the EMG studies, c2), foot pads at the high end (c1), rack behind the head (c1) with safety racks at the sides (c6); barbell.",
+    "start": "Supine on the decline, feet hooked under the pads (c1), shoulder blades together and down (c4); bar held over the chest on locked arms (c7).",
+    "end": "Bar touching the lower chest (c5), feet still hooked (c1).",
+    "checkpoints": [
+      {
+        "label": "Feet hooked",
+        "what": "Feet locked under the pads at the high end.",
+        "claim": "c1"
+      },
+      {
+        "label": "Lower-chest touch",
+        "what": "Bar touches the lower chest only, never drifting toward the head.",
+        "claim": "c5"
+      },
+      {
+        "label": "Blades together",
+        "what": "Shoulder blades pulled together and down, chest up.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Bar drifting forward toward the upper chest and neck on the way down.",
+      "why": "WorkoutLabs names it; on a decline the head is lowest, so this drift brings the bar toward the face and neck (c12). How often it happens is not measured in any source read.",
+      "claim": "c5",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Bar touches the lower chest",
+        "claim": "c5"
+      },
+      {
+        "text": "Feet stay hooked",
+        "claim": "c1"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c8"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed overhand grip (c3); thumbs wrapped (inherited, parent c4).",
+    "width": "Slightly wider than shoulder-width (c3).",
+    "thumb": "Wrapped (inherited, parent c4).",
+    "handContact": "Bar in the base of the palm (inherited, parent c5).",
+    "wrist": "Straight, not bent back (inherited, parent c5).",
+    "claims": [
+      "c3"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bench in decline and set the safety racks at both sides.",
+      "claim": "c6"
+    },
+    {
+      "step": "Set the bar at a height you can reach without straightening your arms.",
+      "claim": "c7"
+    },
+    {
+      "step": "Hook your feet under the pads and lie back with the rack behind your head.",
+      "claim": "c1"
+    },
+    {
+      "step": "Shoulder blades together and down; grip slightly wider than your shoulders.",
+      "claim": "c4"
+    },
+    {
+      "step": "Lift the bar out, ideally with a spotter, and hold it over your chest on locked arms.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Feet hooked under the pads.",
+      "claim": "c1"
+    },
+    {
+      "point": "Shoulder blades together and down.",
+      "claim": "c4"
+    },
+    {
+      "point": "Bar to the lower chest only.",
+      "claim": "c5"
+    },
+    {
+      "point": "Wrists straight, bar low in the palm (inherited, parent c5).",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Letting the bar drift toward the neck.",
+      "fix": "Lower it to the lower chest only.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Benching heavy without safeties or a spotter.",
+      "fix": "Set the safety racks; use a spotter or go lighter.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Bouncing the bar off the chest.",
+      "fix": "Lower with control, 2 seconds down (c8).",
+      "claim": "c5"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "chest",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "front_delts",
+        "claim": "c10"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Lower chest and backs of the arms",
+        "means": "The target muscles are working.",
+        "fix": null,
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Sharp pain in the chest or front of the shoulder while lowering",
+        "means": "Usually a warning sign: pec tendon tears happen mostly while lowering on the bench press.",
+        "fix": "Stop the set. Go lighter next time.",
+        "claim": "c14",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Pain deep in the front of the shoulder",
+        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
+        "fix": "Stop the set. Go lighter next time.",
+        "claim": "c15",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bar over the face and neck: on a decline a drifting bar heads for the neck, and a failed rep cannot be rolled off; wrap the thumbs and set safety racks.",
+      "claim": "c12"
+    },
+    {
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
+      "claim": "c13"
+    },
+    {
+      "risk": "Pec tendon rupture while lowering heavy weights.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "bar-low-palm",
+      "kind": "hand",
+      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "wrong": "Bar high toward the fingers, wrist bent back.",
+      "claim": "c3"
+    },
+    {
+      "key": "feet-hooked",
+      "kind": "posture",
+      "right": "Both feet locked under the pads.",
+      "wrong": "Feet loose, not locked under the pads.",
+      "claim": "c1"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: chest primary; triceps and front_delts secondary. c9 and c10 support this; the front delts work less than on other presses (c10) but are still a secondary mover. No change."
+  },
+  "anchorSource": "workoutlabs-decline"
+}
