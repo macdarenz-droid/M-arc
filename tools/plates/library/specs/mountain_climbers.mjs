@@ -8,7 +8,8 @@
 //  from the back of the head to the heels, on hands and toes; c4 bring one foot toward the chest, then switch, without
 //  letting the hips hike up; c6 shoulders stay over the wrists.
 // Geometry decisions (confirmed by the report `angles` and `checks`):
-//  Hands: the engine hand is a fist (no flat palm, no forearm pronation). Laying it forward (wrist 90) put the fist
+//  Hands (visual critic R3): the LIB-26 flat palm (hand: 'flat'), wrist extended 90 deg so the palm lies on the floor,
+//   joined to the forearm with no gap. Before LIB-26: the engine hand is a fist (no flat palm). Laying it forward (wrist 90) put the fist
 //   beside the wrist like a loose ball, so the fist stands under the wrist on the floor (WRIST 0, GRIP_Y = fist
 //   radius), as a knuckle push-up hand. Cost: the shoulders sit ~8 cm higher than on a flat palm, so the body line is
 //   ~22 deg from the floor instead of ~18. Arms straight (elbow 0) and plumb: shoulder flexion = pelvis tilt, so the
@@ -36,11 +37,11 @@
 //  (c3), knee toward the chest with level hips (c4), smooth steps rather than bouncing (c7: the foot glides, FOOT_CLEAR).
 //  Not in the card, left flagged: DRIVE_FOOT_DZ / DRIVE_FOOT_TILT (how far the knee comes: "toward the chest", no
 //  number), FOOT_CLEAR's size, HIKE_HIP (how far the Mistake hikes).
-import { landmarksOf } from '../engine.mjs';
+import { landmarksOf, RADII } from '../engine.mjs';
 
 const H = 1.75;
-const GRIP_Y = 0.035;                        // fist centre height: fist radius, resting on the floor (m)
-const WRIST = 0;                             // fist under the wrist (see header)
+const WRIST_Y = RADII.fore[2] * 1.75;          // flat palm (LIB-26): the wrist sits the forearm's distal radius above the floor
+const WRIST = 90;                            // arms plumb, so the wrist extends 90 deg and the palm lies flat (LIB-26)
 const TOE_Z = -1.05;                         // toe tips of the straight legs on the floor (m)
 const VIA_HIP = 45, VIA_KNEE = 95;           // mid-swing ghost (deg)
 const DRIVE_FOOT_DZ = -0.12;                 // driving foot (ball) this far behind the hip-joint centre at the end (m)
@@ -66,7 +67,7 @@ function solve(p0, make, res, iters = 30) {  // Newton with finite differences (
 }
 
 const plankPose = q => ({ root: { at: [0, q.y, q.z], tilt: q.tilt }, trunk: 0, neck: 0, shoulder: { flex: q.tilt }, elbow: 0, wrist: WRIST, hip: 0, knee: 0, ankle: 0 });
-const Q = solve({ y: 0.45, z: -0.2, tilt: 75 }, plankPose, lm => [lm['grip.r'][1] - GRIP_Y, lm['toe.r'][1], lm['toe.r'][2] - TOE_Z]);
+const Q = solve({ y: 0.45, z: -0.2, tilt: 75 }, plankPose, lm => [lm['wrist.r'][1] - WRIST_Y, lm['toe.r'][1], lm['toe.r'][2] - TOE_Z]);
 const start = plankPose(Q);
 // End: the driving foot is placed by the plant IK (sole on a plane tilted DRIVE_FOOT_TILT heel-up, ref 'ball'), lifted
 // so the rigid foot's lowest forefoot point hovers FOOT_CLEAR above the floor; hip, knee and ankle come from the IK.
@@ -100,12 +101,13 @@ const LINE = (() => {
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 
 export default {
+  hand: 'flat',
   id: 'mountain_climbers', name: 'Mountain Climbers', view: 'side', facing: 'right',
   camera: { x0: 215, y0: 290 },
   poses: { start, via, end },
   equipment: [{ type: 'floor', from: -1.3, to: 0.55 }],
   checks: [
-    { landmark: 'grip.r', plane: { point: [0, GRIP_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },    // hand on the floor
+    { landmark: 'wrist.r', plane: { point: [0, WRIST_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // palm flat on the floor (LIB-26)
     { landmark: 'wrist.r', plane: { point: SH, normal: [0, 0, 1] }, pose: 'all', tol: 0.5 },                // wrist under the shoulder
     { landmark: 'toe.l', plane: FLOOR, pose: 'all', tol: 0.5 },                                              // far leg on its toes
     { landmark: 'toe.r', plane: FLOOR, pose: 'start', tol: 0.5 },
