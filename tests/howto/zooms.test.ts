@@ -102,7 +102,9 @@ describe('HT7-A1: every posture panel === golden B', () => {
     const shipped = [...css.matchAll(/^\s*([^{}@\n]*:where\(\.hx\) \.plate[^{]*)\{/gm)].map(m => m[1]!.trim());
     expect(page.length).toBeGreaterThan(40);
     expect(shipped[0]).toBe('.ht :where(.hx) .plate');
-    expect(css.indexOf('.ht :where(.hx) .plate { all: revert; }')).toBeLessThan(css.indexOf('.ht :where(.hx) .plate { position: relative;'));
+    const reset = css.indexOf('.ht :where(.hx) .plate { all: revert; }'), base = css.indexOf('.ht :where(.hx) .plate { position: relative;');
+    expect(reset).toBeGreaterThan(-1);
+    expect(base).toBeGreaterThan(reset);
     for (const sel of page.filter(x => !x.includes(',') || x.split(',').every(y => /^(html[^.]*\s)?\.plate(?![\w-])/.test(y.trim())))) {
       const want = sel.split(',').map(x => x.trim().replace(/^((?:html\S*\s+)?)\.plate/, (m, h) => `${h}.ht :where(.hx) .plate`)).join(', ');
       expect(shipped, sel).toContain(want);
