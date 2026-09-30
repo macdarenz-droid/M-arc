@@ -1,6 +1,7 @@
 // HT-4: HT4-A2 (content-types.ts compiles a real golden-B spec, mapped) and HT4-A3/A4 (C1-C4, C6-C8, C15-C17 pass on
 // good content and fail, naming the rule, on their own bad fixture). Pure functions, node env, no DOM.
-import { readdirSync, readFileSync } from 'node:fs';
+import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -317,10 +318,36 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     expect(bad.some(m => m.includes('no wrong crop defined'))).toBe(true);
   });
 
-  it('C17 fails on the fixture that calls fetch(), and on nothing else in the same folder', () => {
+  it('C17 fails on the fixture that calls fetch(), and only on the known C17 fixtures in the same folder', () => {
     const bad = checkC17([new URL('.', import.meta.url).pathname + 'fixtures/bad']);
-    expect(bad.every(m => m.includes('c17-network.ts'))).toBe(true);
-    expect(bad.some(m => m.includes('fetch'))).toBe(true);
+    const knownC17Bad = ['c17-network.ts', 'c17-xmlns-other-url.ts', 'c17-xmlns-outside-attr.ts', 'c17-xmlns-other-host.ts'];
+    expect(bad.every(m => knownC17Bad.some(f => m.includes(f)))).toBe(true);
+    expect(bad.some(m => m.includes('c17-network.ts') && m.includes('fetch'))).toBe(true);
+  });
+
+  it('D-HT4-C17: the SVG/xlink xmlns attributes are allowed exactly, never a bare occurrence of the same URL', () => {
+    const bad = checkC17([new URL('.', import.meta.url).pathname + 'fixtures/bad']);
+    // c17-xmlns-other-url.ts: the xmlns attribute itself never fails, only the unrelated URL beside it.
+    const otherUrlBad = bad.filter(m => m.includes('c17-xmlns-other-url.ts'));
+    expect(otherUrlBad.some(m => m.includes('example.com/not-a-citation'))).toBe(true);
+    expect(otherUrlBad.every(m => !m.includes('w3.org/2000/svg'))).toBe(true);
+    // c17-xmlns-outside-attr.ts: the same URL outside a well-formed xmlns attribute (here, inside href=) still fails.
+    expect(bad.some(m => m.includes('c17-xmlns-outside-attr.ts') && m.includes('w3.org/2000/svg'))).toBe(true);
+    // c17-xmlns-other-host.ts: xmlns pointing at a different host still fails.
+    expect(bad.some(m => m.includes('c17-xmlns-other-host.ts') && m.includes('example.com/not-the-real-namespace'))).toBe(true);
+  });
+
+  it('D-HT4-C17: the exact allowed xmlns/xlink attribute forms pass clean, on their own, in either quote style', () => {
+    const good = mkdtempSync(join(tmpdir(), 'c17-good-'));
+    try {
+      writeFileSync(join(good, 'ok.ts'), [
+        'export const a = \'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"></svg>\';',
+        "export const b = \"<svg xmlns='http://www.w3.org/2000/svg'></svg>\";",
+      ].join('\n'));
+      expect(checkC17([good])).toEqual([]);
+    } finally {
+      rmSync(good, { recursive: true, force: true });
+    }
   });
 });
 

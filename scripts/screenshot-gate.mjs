@@ -5854,7 +5854,13 @@ for (const theme of ['silent-black', 'paper']) {
     const builtHtml = readFileSync(join(capMirror, 'artifact', 'technical-plates.html'), 'utf8');
     const fragBad = gb.fragmentProblems(builtHtml, plateEntries);
     for (const m of fragBad) errors.push(`${tag} HT4-A5: ${m}`);
-    console.log(`${tag} HT4-A5: ${rpCalls.length} renderPlate calls captured, ${Object.keys(goldenASpecs).length} exercises with an untouched base-plate call, ${poseBad.length} bad poses, ${fragBad.length} bad fragments (of ${plateEntries.length})`);
+
+    // Medium 4 (round-2 review fix): the lateral raise's Wrong-crop parameters never go through renderPlate (ref-src
+    // arm(), not engine/plate.mjs), so rpCalls never covers them - pinned separately, no live build needed.
+    const lateralRaiseBad = await gb.validateLateralRaiseCrops(join(ROOT, 'tools/plates/layers'));
+    for (const m of lateralRaiseBad) errors.push(`${tag} HT4-A5: ${m}`);
+
+    console.log(`${tag} HT4-A5: ${rpCalls.length} renderPlate calls captured, ${Object.keys(goldenASpecs).length} exercises with an untouched base-plate call, ${poseBad.length} bad poses, ${fragBad.length} bad fragments (of ${plateEntries.length}), lateral raise crop pins ${lateralRaiseBad.length} bad`);
   } finally {
     layers.cleanupMirror(capMirror);
   }
@@ -5862,15 +5868,28 @@ for (const theme of ['silent-black', 'paper']) {
   // HT4-A6: the golden-B state driver self-check, every exercise x every theme (8 x 5 = 40 passes).
   const { dir, file } = await gb.buildScratchPage();
   let selfCheckBad = 0;
+  let captureThrew = false;
   try {
     for (const theme of gb.THEMES) {
-      const { browser: b, page, errs } = await gb.openPage(file, theme);
+      const { browser: b, page, errs } = await gb.openPage(file, theme, { chromePath: process.env.MARC_CHROMIUM });
       try {
         for (const id of gb.IDS) {
           const bad = await gb.selfCheck(page, id);
           for (const m of bad) { errors.push(`${tag} HT4-A6 ${theme}/${id}: ${m}`); selfCheckBad++; }
         }
         for (const e of errs) errors.push(`${tag} HT4-A6 ${theme}: page error: ${e}`);
+        // Round-2 review fix (High 3): committed evidence that a selector matching nothing throws, naming the
+        // state - `capture` never silently returns an empty capture (V1-08). One probe is enough (the behavior is
+        // per-selector, not per-theme); checked on the first theme only to avoid repeating it 5x for no reason.
+        if (theme === gb.THEMES[0]) {
+          try {
+            await gb.capture(page, '#nope', 'probe');
+            errors.push(`${tag} HT4-A6: capture(page, '#nope', 'probe') did not throw`);
+          } catch (e) {
+            captureThrew = true;
+            if (!String(e.message).includes('probe')) errors.push(`${tag} HT4-A6: capture's error did not name the state "probe": ${e.message}`);
+          }
+        }
       } finally {
         await b.close();
       }
@@ -5878,11 +5897,11 @@ for (const theme of ['silent-black', 'paper']) {
   } finally {
     gb.cleanupScratchPage(dir);
   }
-  console.log(`${tag} HT4-A6: state driver self-check, ${gb.IDS.length} exercises x ${gb.THEMES.length} themes, ${selfCheckBad} problems`);
+  console.log(`${tag} HT4-A6: state driver self-check, ${gb.IDS.length} exercises x ${gb.THEMES.length} themes, ${selfCheckBad} problems, no-match throw ${captureThrew ? 'verified' : 'NOT verified'}`);
 }
 
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified.');
