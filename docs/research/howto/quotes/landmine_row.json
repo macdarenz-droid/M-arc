@@ -1,0 +1,195 @@
+{
+  "id": "landmine_row",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "rep-landmine-row",
+      "text": "Anchor one end of a barbell securely in a landmine attachment",
+      "status": "verbatim",
+      "closest": "Anchor one end of a barbell securely in a landmine attachment"
+    },
+    {
+      "claim": "c1",
+      "source": "rep-landmine-row",
+      "text": "Load the free end of the bar with your desired weight.",
+      "status": "verbatim",
+      "closest": "Load the free end of the bar with your desired weight."
+    },
+    {
+      "claim": "c1",
+      "source": "rep-landmine-row",
+      "text": "A landmine row involves anchoring one end of a barbell in a landmine attachment or corner, gripping the free end, and performing a rowing motion.",
+      "status": "verbatim",
+      "closest": "A landmine row involves anchoring one end of a barbell in a landmine attachment or corner, gripping the free end, and performing a rowing motion."
+    },
+    {
+      "claim": "c2",
+      "source": "rep-landmine-row",
+      "text": "Stand facing the barbell with your feet shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "Stand facing the barbell with your feet shoulder-width apart."
+    },
+    {
+      "claim": "c3",
+      "source": "rep-landmine-row",
+      "text": "Bend at the hips and knees, keeping your back straight, and hinge forward until your torso is roughly parallel to the floor.",
+      "status": "verbatim",
+      "closest": "Bend at the hips and knees, keeping your back straight, and hinge forward until your torso is roughly parallel to the floor."
+    },
+    {
+      "claim": "c4",
+      "source": "rep-landmine-row",
+      "text": "Grip the barbell just below the weight plates with both hands, using an overhand grip.",
+      "status": "verbatim",
+      "closest": "Grip the barbell just below the weight plates with both hands, using an overhand grip."
+    },
+    {
+      "claim": "c5",
+      "source": "rep-landmine-row",
+      "text": "Before initiating the row, brace your core to maintain stability and prevent rounding your lower back.",
+      "status": "verbatim",
+      "closest": "Before initiating the row, brace your core to maintain stability and prevent rounding your lower back."
+    },
+    {
+      "claim": "c6",
+      "source": "rep-landmine-row",
+      "text": "Pull the barbell toward your chest by driving your elbows back. Focus on squeezing your shoulder blades together at the top of the movement.",
+      "status": "verbatim",
+      "closest": "Pull the barbell toward your chest by driving your elbows back. Focus on squeezing your shoulder blades together at the top of the movement."
+    },
+    {
+      "claim": "c7",
+      "source": "rep-landmine-row",
+      "text": "Avoid jerking the bar or using momentum—keep the motion controlled and deliberate.",
+      "status": "verbatim",
+      "closest": "Avoid jerking the bar or using momentum—keep the motion controlled and deliberate."
+    },
+    {
+      "claim": "c8",
+      "source": "rep-landmine-row",
+      "text": "Slowly lower the barbell back to the starting position, fully extending your arms while keeping tension in your back muscles.",
+      "status": "verbatim",
+      "closest": "Slowly lower the barbell back to the starting position, fully extending your arms while keeping tension in your back muscles."
+    },
+    {
+      "claim": "c9",
+      "source": "rep-landmine-row",
+      "text": "Maintain a Neutral Spine: Keep your back straight and avoid rounding to protect your lower back.",
+      "status": "verbatim",
+      "closest": "Maintain a Neutral Spine: Keep your back straight and avoid rounding to protect your lower back."
+    },
+    {
+      "claim": "c10",
+      "source": "rep-landmine-row",
+      "text": "Landmine rows primarily target the upper back, including the lats, traps, and rhomboids. Secondary muscles engaged include the rear delts, biceps, and core.",
+      "status": "verbatim",
+      "closest": "Landmine rows primarily target the upper back, including the lats, traps, and rhomboids. Secondary muscles engaged include the rear delts, biceps, and core."
+    },
+    {
+      "claim": "c11",
+      "source": "ggr-t-bar",
+      "text": "Lifters round their backs is one of the most common mistakes I see when training.",
+      "status": "verbatim",
+      "closest": "Lifters round their backs is one of the most common mistakes I see when training."
+    },
+    {
+      "claim": "c11",
+      "source": "ggr-t-bar",
+      "text": "this loss of proper form can place a tremendous strain on your spinal erectors and ramp up your chances of suffering a lower-back injury. Keep your core engaged and use an appropriate load for your strength levels.",
+      "status": "verbatim",
+      "closest": "this loss of proper form can place a tremendous strain on your spinal erectors and ramp up your chances of suffering a lower-back injury. Keep your core engaged and use an appropriate load for your strength levels."
+    },
+    {
+      "claim": "c11",
+      "source": "ggr-t-bar",
+      "text": "In the steps below, I cover the landmine row version that involves a barbell and weight plates.",
+      "status": "verbatim",
+      "closest": "In the steps below, I cover the landmine row version that involves a barbell and weight plates."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)."
+    },
+    {
+      "claim": "c12",
+      "source": "rep-landmine-row",
+      "text": "Slowly lower the barbell back to the starting position",
+      "status": "verbatim",
+      "closest": "Slowly lower the barbell back to the starting position"
+    },
+    {
+      "claim": "c13",
+      "source": "acsm2009",
+      "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c13",
+      "source": "rep-landmine-row",
+      "text": "Perform 8–12 repetitions for 3–4 sets, adjusting weight as needed to maintain proper form.",
+      "status": "verbatim",
+      "closest": "Perform 8–12 repetitions for 3–4 sets, adjusting weight as needed to maintain proper form."
+    },
+    {
+      "claim": "c14",
+      "source": "macdougall1985",
+      "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+      "status": "verbatim",
+      "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c15",
+      "source": "fenwick2009",
+      "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+      "status": "verbatim",
+      "closest": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load."
+    },
+    {
+      "claim": "c16",
+      "source": "nhs-back-pain",
+      "text": "Call 999 or go to A&E if:",
+      "status": "verbatim",
+      "closest": "Call 999 or go to A&E if:"
+    },
+    {
+      "claim": "c16",
+      "source": "nhs-back-pain",
+      "text": "pain, tingling, weakness or numbness in both legs",
+      "status": "verbatim",
+      "closest": "pain, tingling, weakness or numbness in both legs"
+    },
+    {
+      "claim": "c16",
+      "source": "nhs-back-pain",
+      "text": "a loss of feeling around your genitals or anus",
+      "status": "verbatim",
+      "closest": "a loss of feeling around your genitals or anus"
+    },
+    {
+      "claim": "c16",
+      "source": "nhs-back-pain",
+      "text": "See a GP if:",
+      "status": "verbatim",
+      "closest": "See a GP if:"
+    },
+    {
+      "claim": "c16",
+      "source": "nhs-back-pain",
+      "text": "it does not improve after treating it at home for a few weeks",
+      "status": "verbatim",
+      "closest": "it does not improve after treating it at home for a few weeks"
+    },
+    {
+      "claim": "c17",
+      "source": "baechle-grip",
+      "text": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Perform all grips with your thumbs around the bar."
+    }
+  ]
+}
