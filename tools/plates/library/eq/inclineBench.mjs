@@ -29,7 +29,7 @@ export function inclineBench({ hinge, back = 45, seatTilt = 0, seatLen = 0.36, b
   // pads: bars centred half a pad under their faces
   const seatA = add(hinge, inward(S.normal, pad / 2)), seatB = add(seatA, mul(S.forward, seatLen));
   const backA = add(add(hinge, inward(B.normal, pad / 2)), mul(B.up, -0.02)), backB = add(backA, mul(B.up, backLen));
-  const beamY = 0.045, bz = beamZ ?? [Math.min(hinge[2] - 0.55, backB[2] - 0.05), hinge[2] + seatLen + 0.2];
+  const beamY = 0.045, bz = beamZ ?? [Math.min(hinge[2] - 0.55, backB[2] - 0.05), hinge[2] + seatLen + 0.05];
   const seatMid = add(seatA, mul(S.forward, seatLen * 0.45)), under = add(seatMid, mul(S.normal, -pad / 2));
   const backMid = add(backA, mul(B.up, backLen * 0.45)), behind = add(backMid, mul(B.normal, -pad / 2));
   const strutFoot = [0, beamY, Math.max(bz[0] + 0.1, behind[2] - 0.05)];
