@@ -110,7 +110,7 @@ const startArmPhantom = (() => {
 // Mistake (card plate.mistake, c4): the low back arches away from the pad as the dumbbells go up. The pelvis tips
 // forward MIS_TILT on the seat (seat landmark stays on the seat), the lumbar spine extends until the upper back is back
 // on the pad (trunk solved), so the low back and the buttocks leave the pad. Arms keep the overhead grip.
-const MIS_TILT = 10;                                  // pelvis tips forward (deg)
+const MIS_TILT = 12;                                  // pelvis tips forward (deg): lumbar extends 26 deg, near its end range
 const bis = (f, lo, hi) => { for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; } return (lo + hi) / 2; };
 const tiltM = REC.pose.root.tilt + MIS_TILT, rootM = { at: rootOnSeat(REC.seatPt, tiltM, H), tilt: tiltM };
 const padDist = p => (p[1] - F.back.point[1]) * F.back.normal[1] + (p[2] - F.back.point[2]) * F.back.normal[2];
@@ -122,7 +122,7 @@ const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
 const gapTo = lmMis.backMid, gapCm = padDist(gapTo), gapFrom = gapTo.map((v, i) => v - F.back.normal[i] * gapCm);
 const PU = F.back.up, TICK = 2 / 146.29;
 const tick = p => ({ kind: 'line', pts: [p.map((v, i) => v - PU[i] * TICK), p.map((v, i) => v + PU[i] * TICK)] });
-export const mistakeInfo = () => ({ trunkDeg: +trunkM.toFixed(1), neckDeg: +neckM.toFixed(1), lowBackGapCm: +(gapCm * 100).toFixed(1), buttockGapCm: +(padDist(lmMis.buttock) * 100).toFixed(1) });
+export const mistakeInfo = () => ({ sacrumGapCm: +(padDist(lmMis.sacrum) * 100).toFixed(1), trunkDeg: +trunkM.toFixed(1), neckDeg: +neckM.toFixed(1), lowBackGapCm: +(gapCm * 100).toFixed(1), buttockGapCm: +(padDist(lmMis.buttock) * 100).toFixed(1) });
 
 export default {
   id: 'dumbbell_shoulder_press', name: 'Seated Dumbbell Shoulder Press', view: 'side', facing: 'right',
@@ -159,10 +159,11 @@ export default {
     pose: mistakePose,
     guides: [
       { kind: 'line', pts: [gapFrom, gapTo] }, tick(gapFrom), tick(gapTo),                 // pad-to-low-back gap
+      { kind: 'arrow', from: { at: 'navel', pose: 'mistake', off: [3, 0] }, to: { at: 'navel', pose: 'mistake', off: [20, -2] } },   // belly pushes forward
     ],
     tells: [
       { key: 'arch', text: 'Back<br>off pad', anchor: gapFrom, cue: 'Your low back arches away from the pad as you press.' },
-      { key: 'hips', text: 'Hips tip<br>forward', anchor: { at: 'navel', pose: 'mistake' }, cue: 'Your hips tip forward and your belly pushes out.' },
+      { key: 'hips', text: 'Hips tip<br>forward', anchor: { at: 'navel', pose: 'mistake' }, box: { left: 208, top: 170 }, cue: 'Your hips tip forward and your belly pushes out.' },
     ],
   },
   pilot: { note: 'Bench angle 10° not in the verified card sources' },

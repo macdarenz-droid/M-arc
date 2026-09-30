@@ -134,6 +134,16 @@ const mistakePose = { reach: { l: misReach('l'), r: misReach('r') } };
 const lmE = landmarksOf(end, H), lmMis = landmarksOf({ ...end, ...mistakePose }, H);
 export const mistakeInfo = () => ({ forearmFromVerticalDeg: +(Math.atan2(lmMis['grip.r'][2] - lmMis['elbow.r'][2], lmMis['grip.r'][1] - lmMis['elbow.r'][1]) / R).toFixed(1),
   elbowMovedCm: +(Math.hypot(...lmMis['elbow.r'].map((v, i) => v - lmE['elbow.r'][i])) * 100).toFixed(1) });
+// Ghost forearm for the Mistake: a capsule (the engine forearm's radii, 4.0 cm at the elbow, 2.6 cm at the wrist) from
+// the faulty elbow to the faulty grip, drawn as a closed dashed Mistake guide so it reads as a ghost limb (a plain
+// guide line read as a leader). Not a `poly` item: the engine masks the Mistake outline inside the faulty body, and
+// this forearm lies over the torso, so a poly ghost was invisible (tried, render checked).
+const capsule = (a, b, ra, rb, n = 8) => { const u = [b[1] - a[1], b[2] - a[2]], k = Math.hypot(...u), t = [u[0] / k, u[1] / k], nn = [-t[1], t[0]], pts = [];
+  const ang0 = Math.atan2(nn[0], nn[1]);   // angle of the normal in (z, y) terms
+  for (let i = 0; i <= n; i++) { const q = ang0 - Math.PI * i / n; pts.push([0, b[1] + rb * Math.cos(q), b[2] + rb * Math.sin(q)]); }
+  for (let i = 0; i <= n; i++) { const q = ang0 + Math.PI - Math.PI * i / n; pts.push([0, a[1] + ra * Math.cos(q), a[2] + ra * Math.sin(q)]); }
+  return pts; };
+const ghostForearm = (p => [...p, p[0]])(capsule(lmMis['elbow.r'], lmMis['grip.r'], 0.040, 0.026));
 const plumbTop = [0, lmE['grip.r'][1], lmE['grip.r'][2]], plumbBot = [0, lmE['elbow.r'][1] - 0.04, lmE['grip.r'][2]];
 // label and measure points on the back face of the back pad (PAD = 7 cm, the composer default)
 const PAD = 0.07, onPadBack = u => [0, HINGE[1] + UP[1] * u - NB[1] * PAD, HINGE[2] + UP[2] * u - NB[2] * PAD];
@@ -171,12 +181,13 @@ export default {
     pose: mistakePose,
     guides: [
       { kind: 'dashed', pts: [plumbBot, plumbTop] },                                   // the vertical forearm it should be
-      { kind: 'line', pts: [lmMis['elbow.r'], lmMis['grip.r']] },                       // the tilted forearm it is
+      { kind: 'dashed', pts: ghostForearm },                                             // the tilted forearm it is (ghost)
+      { kind: 'dashed', pts: ring(lmMis['grip.r'], 0.119 / 2, 6) },                   // the drifted dumbbell, whole (the engine masks it over the chest)
       { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [9, 0] }, to: { at: 'grip.r', pose: 'mistake', off: [-9, 2] } },
     ],
     tells: [
-      { key: 'tilt', text: 'Forearm<br>tilted', anchor: { at: 'grip.r', pose: 'mistake', off: [8, 4] }, cue: 'Your forearm leans and the dumbbell drifts off the line of the elbow.' },
-      { key: 'drift', text: 'Weight<br>drifts', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbow is no longer under your wrist at the bottom.' },
+      { key: 'tilt', text: 'Forearm<br>tilted', anchor: { along: [{ at: 'elbow.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }], t: 0.5 }, cue: 'Your forearm leans instead of standing straight under the dumbbell.' },
+      { key: 'drift', text: 'Weight<br>drifts', anchor: { at: 'grip.r', pose: 'mistake', off: [8, -4] }, cue: 'Your dumbbell drifts off the line of the elbow at the bottom.' },
     ],
   },
   alt: 'Incline dumbbell press, side view. On a bench set to 45 degrees, head, back and hips on the pads, feet flat, the lifter lowers the dumbbells from straight arms above the shoulders to the upper chest, forearms vertical, then presses back up.',
