@@ -45,6 +45,10 @@ describe('ESC-NC (a) the safety cards carry the owner-approved copy and no conta
   it('uses the D-LR23-1 copy for medical, crisis and disordered eating', () => {
     for (const [k, v] of Object.entries(NEW_COPY)) expect(ESCALATION_COPY[k as keyof typeof NEW_COPY], k).toBe(v);
   });
+  it('D-LR23-9: the pain card still names its time limit (symptom → how long → what to do)', () => {
+    expect(ESCALATION_COPY.pain).toContain('lasting more than two days');
+    expect(ESCALATION_COPY.pain).toContain('see a physio or doctor');
+  });
   it('every card passes CONTACT_RE, SOURCE_RE, SOURCE_CS_RE and SAFETY_LINE_RE', () => {
     for (const [k, v] of Object.entries(ESCALATION_COPY)) expect(allPatterns(v), `${k}: ${v}`).toEqual(clean);
   });
