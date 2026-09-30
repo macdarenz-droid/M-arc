@@ -1,0 +1,188 @@
+{
+  "id": "machine_lateral_raise",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "mo-lat-raise",
+      "quote": "Adjust seat height so shoulders align with machine's pivot point.",
+      "status": "verbatim",
+      "closest": "Adjust seat height so shoulders align with machine's pivot point."
+    },
+    {
+      "claim": "c1",
+      "source": "vg-lat-raise",
+      "quote": "Adjust the seat height so that your shoulders are level with the handles.",
+      "status": "verbatim",
+      "closest": "Adjust the seat height so that your shoulders are level with the handles."
+    },
+    {
+      "claim": "c2",
+      "source": "mo-lat-raise",
+      "quote": "Sit with back against pad, place arms on pads with elbows slightly bent and feet flat on floor.",
+      "status": "verbatim",
+      "closest": "Sit with back against pad, place arms on pads with elbows slightly bent and feet flat on floor."
+    },
+    {
+      "claim": "c2",
+      "source": "vg-lat-raise",
+      "quote": "Keep your feet flat on the floor, shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "Keep your feet flat on the floor, shoulder-width apart."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-lat-raise",
+      "quote": "the pads resting just above the elbows.",
+      "status": "verbatim",
+      "closest": "the pads resting just above the elbows."
+    },
+    {
+      "claim": "c3",
+      "source": "laf-lat-raise",
+      "quote": "Position your forearms under the pads and grip the handles with each hand.",
+      "status": "verbatim",
+      "closest": "Position your forearms under the pads and grip the handles with each hand."
+    },
+    {
+      "claim": "c3",
+      "source": "sl-lat-raise",
+      "quote": "Adjust the machine so that the pads are leaning against your elbows.",
+      "status": "verbatim",
+      "closest": "Adjust the machine so that the pads are leaning against your elbows."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-lat-raise",
+      "quote": "lift the pads upward by pressing out through the elbows and raising the upper arms.",
+      "status": "verbatim",
+      "closest": "lift the pads upward by pressing out through the elbows and raising the upper arms."
+    },
+    {
+      "claim": "c4",
+      "source": "mo-lat-raise",
+      "quote": "Exhale and raise arms outward to sides, leading with elbows.",
+      "status": "verbatim",
+      "closest": "Exhale and raise arms outward to sides, leading with elbows."
+    },
+    {
+      "claim": "c5",
+      "source": "sl-lat-raise",
+      "quote": "Lift your arms out to your sides, until your upper arms are horizontal.",
+      "status": "verbatim",
+      "closest": "Lift your arms out to your sides, until your upper arms are horizontal."
+    },
+    {
+      "claim": "c5",
+      "source": "laf-lat-raise",
+      "quote": "Raise your arms out and away from your sides until your elbows are even with your shoulders, pause, and then reverse the motion.",
+      "status": "verbatim",
+      "closest": "Raise your arms out and away from your sides until your elbows are even with your shoulders, pause, and then reverse the motion."
+    },
+    {
+      "claim": "c6",
+      "source": "mo-lat-raise",
+      "quote": "raise to parallel with floor, avoiding shoulder shrug or overextension.",
+      "status": "verbatim",
+      "closest": "raise to parallel with floor, avoiding shoulder shrug or overextension."
+    },
+    {
+      "claim": "c6",
+      "source": "mo-lat-raise",
+      "quote": "Avoid excessive shrugging to prevent trap dominance",
+      "status": "verbatim",
+      "closest": "Avoid excessive shrugging to prevent trap dominance"
+    },
+    {
+      "claim": "c7",
+      "source": "sl-lat-raise",
+      "quote": "This is an exercise where it is easy to pick a weight that is too heavy. Rather err on the lighter side, and strive for a strict form where you focus on getting good contact with your delts.",
+      "status": "verbatim",
+      "closest": "This is an exercise where it is easy to pick a weight that is too heavy. Rather err on the lighter side, and strive for a strict form where you focus on getting good contact with your delts."
+    },
+    {
+      "claim": "c7",
+      "source": "laf-lat-raise",
+      "quote": "If you can not raise your arms so that your elbows are even with your shoulders lower the weight.",
+      "status": "verbatim",
+      "closest": "If you can not raise your arms so that your elbows are even with your shoulders lower the weight."
+    },
+    {
+      "claim": "c8",
+      "source": "vg-lat-raise",
+      "quote": "Avoid using momentum or swinging your body to complete the exercise, as this reduces the effectiveness and can lead to injury.",
+      "status": "verbatim",
+      "closest": "Avoid using momentum or swinging your body to complete the exercise, as this reduces the effectiveness and can lead to injury."
+    },
+    {
+      "claim": "c9",
+      "source": "laf-lat-raise",
+      "quote": "Stop just before the weight stack rests in the original position.",
+      "status": "verbatim",
+      "closest": "Stop just before the weight stack rests in the original position."
+    },
+    {
+      "claim": "c9",
+      "source": "laf-lat-raise",
+      "quote": "Keep control of the weight as you lower your arms down.",
+      "status": "verbatim",
+      "closest": "Keep control of the weight as you lower your arms down."
+    },
+    {
+      "claim": "c10",
+      "source": "mo-lat-raise",
+      "quote": "Inhale during lowering phase; exhale as you lift and squeeze at top.",
+      "status": "verbatim",
+      "closest": "Inhale during lowering phase; exhale as you lift and squeeze at top."
+    },
+    {
+      "claim": "c11",
+      "source": "mo-lat-raise",
+      "quote": "Machine lateral raise isolates medial deltoids",
+      "status": "verbatim",
+      "closest": "Machine lateral raise isolates medial deltoids"
+    },
+    {
+      "claim": "c11",
+      "source": "rabello-2024",
+      "quote": "for middle deltoid, abductions and horizontal abductions presented the greatest activation",
+      "status": "verbatim",
+      "closest": "for middle deltoid, abductions and horizontal abductions presented the greatest activation"
+    },
+    {
+      "claim": "c12",
+      "source": "vg-lat-raise",
+      "quote": "While the workout may also engage secondary muscles, such as the trapezius and deltoids, its main focus is on the shoulders.",
+      "status": "verbatim",
+      "closest": "While the workout may also engage secondary muscles, such as the trapezius and deltoids, its main focus is on the shoulders."
+    },
+    {
+      "claim": "c13",
+      "source": "acsm-2009",
+      "quote": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c13",
+      "source": "mo-lat-raise",
+      "quote": "Pause briefly at top to squeeze deltoids.",
+      "status": "verbatim",
+      "closest": "Pause briefly at top to squeeze deltoids."
+    },
+    {
+      "claim": "c14",
+      "source": "acsm-2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c15",
+      "source": "ace-lat-raise",
+      "quote": "Sit facing the machine with the feet out in front and arms slightly bent and the pads resting just above the elbows. Keeping the arms bent at 90 degrees,",
+      "status": "verbatim",
+      "closest": "Sit facing the machine with the feet out in front and arms slightly bent and the pads resting just above the elbows. Keeping the arms bent at 90 degrees,"
+    }
+  ]
+}

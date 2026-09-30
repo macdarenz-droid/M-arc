@@ -1,0 +1,457 @@
+{
+  "id": "hip_adduction",
+  "libId": "lib_hip_adduction",
+  "name": "Hip Adduction",
+  "family": "FSEAT",
+  "tier": "C",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "seat-back",
+      "pivot-pad"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit with the back against the pad, the thigh pads against the inner thighs just above the knees, feet on the footrests, and hold the side handles.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-add",
+        "sl-hip-add"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-add",
+          "text": "Sit on the hip adduction machine with back against the pad, adjust thigh pads against inner thighs above knees, feet on footrests, and grip side handles.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-hip-add",
+          "text": "Adjust the machine to the appropriate settings, sit down with your legs outside the pads, and grip the handles.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Start with the legs spread only to a light stretch in the inner thighs; avoid an excessive stretch at the start.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-add"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-add",
+          "text": "Start with legs spread to feel a light stretch in inner thighs; adduct until pads lightly touch without forcing.",
+          "where": "Range of motion"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Avoid excessive stretch in starting position",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Squeeze the thighs together until the pads nearly or lightly touch, pause briefly, then return slowly while keeping tension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-add"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-add",
+          "text": "Exhale and squeeze thighs together to bring pads inward until they nearly touch.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Pause briefly at peak contraction to engage inner thighs.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Inhale and slowly return legs to starting position, maintaining tension.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Keep the spine neutral and the back flat against the pad; avoid momentum.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-add"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-add",
+          "text": "Keep spine neutral and avoid using momentum.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Keep back flat against pad",
+          "where": "Form cues"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Don't use the machine with an acute hip or groin injury; choose a moderate weight and make sure the selector pin is secure.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-add"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-add",
+          "text": "Do not use if acute hip or groin injury present",
+          "where": "Safety"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Select moderate weight for form",
+          "where": "Safety"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Use weight selector pin securely.",
+          "where": "Spotting"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Breathe out as the thighs squeeze together and in on the return.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-add"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-add",
+          "text": "Inhale during the return to start; exhale as you squeeze thighs together.",
+          "where": "Breathing"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The machine isolates the inner-thigh adductors (Motra names adductor longus and magnus).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-add"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-add",
+          "text": "Seated machine exercise isolating inner thigh adductors",
+          "where": "About"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Adductor Longus, Adductor Magnus",
+          "where": "Muscle breakdown"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Measured in 16 untrained women: the adduction machine recruited the hip adductors about as well as elastic-band adduction.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "brandt-2013"
+      ],
+      "quotes": [
+        {
+          "source": "brandt-2013",
+          "text": "Although elastic resistance and exercise machine seem equally effective for recruiting muscle activity of the hip adductors,",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Tempo: about 2 s in, a 1 s pause, 2 s out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-add",
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-add",
+          "text": "Tempo 2-1-2",
+          "where": "Tempo"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "The legs move together in the frontal plane (c3), which reads only from the front (census: front). The drawn fault, a too-wide start (c2), also shows from the front.",
+    "equipment": "Seated hip adduction machine (composed, census R3): seat, back pad, footrests, two leg pads on the inner thighs just above the knees, side handles (c1). Floor line.",
+    "start": "Seated, back flat on the pad (c4); legs apart to a light inner-thigh stretch (c2); pads on the inner thighs above the knees, feet on the footrests, hands on the handles (c1).",
+    "end": "Thighs squeezed together until the pads nearly touch (c3); back still on the pad (c4).",
+    "checkpoints": [
+      {
+        "label": "Light stretch",
+        "what": "Start only as wide as a light inner-thigh stretch.",
+        "claim": "c2"
+      },
+      {
+        "label": "Pads meet",
+        "what": "Squeeze until the pads nearly touch.",
+        "claim": "c3"
+      },
+      {
+        "label": "Back on pad",
+        "what": "Back flat against the pad, spine neutral.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Starting too wide: the legs are spread into a deep, forced stretch at the start.",
+      "why": "Motra lists avoiding an excessive stretch at the start as its safety note. No source ranks how common it is.",
+      "claim": "c2",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Only a light stretch at the start",
+        "claim": "c2"
+      },
+      {
+        "text": "Pads nearly touch at the end",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c9"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Hold the side handles.",
+    "width": "Set by the machine.",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c1"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Sit with your back against the pad and feet on the footrests.",
+      "claim": "c1"
+    },
+    {
+      "step": "Set the thigh pads on your inner thighs, just above the knees.",
+      "claim": "c1"
+    },
+    {
+      "step": "Set the start width to a light stretch, not a deep one.",
+      "claim": "c2"
+    },
+    {
+      "step": "Pick a moderate weight and check the selector pin is secure.",
+      "claim": "c5"
+    },
+    {
+      "step": "Hold the side handles.",
+      "claim": "c1"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back flat against the pad, spine neutral.",
+      "claim": "c4"
+    },
+    {
+      "point": "Start with only a light stretch.",
+      "claim": "c2"
+    },
+    {
+      "point": "Squeeze until the pads nearly touch.",
+      "claim": "c3"
+    },
+    {
+      "point": "Return slowly, keeping tension.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Starting with the legs spread into a deep stretch.",
+      "fix": "Set a narrower start: a light stretch only.",
+      "claim": "c2"
+    },
+    {
+      "mistake": "Using momentum to swing the legs together.",
+      "fix": "Squeeze and return slowly.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Weight too heavy to keep good form.",
+      "fix": "Choose a moderate weight.",
+      "claim": "c5"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "adductors",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Inner thighs",
+        "means": "The adductors are doing the work.",
+        "fix": "",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Groin pain",
+        "means": "A warning sign.",
+        "fix": "Stop; don't train it with an acute groin injury.",
+        "claim": "c5",
+        "redFlag": null
+      },
+      {
+        "where": "Sharp stretch in the groin at the start",
+        "means": "Usually means the start is set too wide.",
+        "fix": "Set a narrower start.",
+        "claim": "c2",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "An excessive stretch at the start is the machine's main safety note.",
+      "claim": "c2"
+    },
+    {
+      "risk": "Not for use with an acute hip or groin injury.",
+      "claim": "c5"
+    }
+  ],
+  "redFlags": [],
+  "zooms": [
+    {
+      "key": "add-start",
+      "kind": "posture",
+      "right": "Legs open to a light inner-thigh stretch.",
+      "wrong": "Legs forced wide into a deep stretch.",
+      "claim": "c2"
+    },
+    {
+      "key": "add-back",
+      "kind": "posture",
+      "right": "Back flat against the pad as the thighs squeeze.",
+      "wrong": "Back peeled off the pad to swing the legs together.",
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "adductors primary is sourced (c7, c8) and matches exercises.json."
+  },
+  "anchorSource": "mo-hip-add",
+  "sources": [
+    {
+      "id": "mo-hip-add",
+      "url": "https://motra.com/exercises/machineHipAdduction",
+      "title": "Machine Hip Adduction: Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-hip-add",
+      "url": "https://www.strengthlog.com/hip-adduction-machine/",
+      "title": "How to Do Hip Adduction Machine: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "brandt-2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24377067/",
+      "title": "Perceived loading and muscle activity during hip strengthening exercises: comparison of elastic resistance and machine exercises",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": 24377067,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ]
+}
