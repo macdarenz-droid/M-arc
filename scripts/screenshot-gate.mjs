@@ -5706,8 +5706,54 @@ for (const theme of ['silent-black', 'paper']) {
   console.log(`${tag} harness self-check: ${r.captures} captures, ${r.comparisons} golden-vs-golden diffs at 0 px, 1 px shift control off ${r.control?.off} px (fails the rule: ${r.control?.fails}), ${(r.ms / 1000).toFixed(1)} s`);
 }
 
+// HT-2: the How-to plate generator (plan 2.7 L1, card HT2-A3 and HT2-A9). Runs once per gate job.
+// L1 + regenerate: `generate.mjs --check` rebuilds the approved gallery from tools/plates/vendor (it refuses unless the
+// sha256 is the approved e2bea90c…, printing the first differing byte offset), then diffs every generated file.
+// A9: the app's own vite config bundles generated/index.ts into 8 ht-<slug>-*.js chunks, none matching FG-OFF's
+// chunk ban, each <= 150 KB raw / 36 KB gz, and each chunk's strings still hash to its GOLDEN.json entry.
+{
+  const tag = 'HT-2';
+  const { spawnSync } = await import('node:child_process');
+  const { mkdtempSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { gzipSync } = await import('node:zlib');
+  const { pathToFileURL } = await import('node:url');
+  const golden = JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/GOLDEN.json'), 'utf8'));
+  const latest = new Map(golden.entries.map(e => [e.kind === 'plate' ? e.id : e.kind, e]));
+  if (latest.get('page')?.pageSha256 !== 'e2bea90c8312132b93a2ab0bc004cee6ef43edd22e8227720be3958f6b2dcf48') errors.push(`${tag} L1: GOLDEN.json's page entry is not the approved gallery e2bea90c…`);
+  const t0 = Date.now();
+  const gen = spawnSync(process.execPath, [join(ROOT, 'tools/plates/generate.mjs'), '--check'], { cwd: ROOT, encoding: 'utf8' });
+  if (gen.status !== 0) errors.push(`${tag} L1/regenerate: generate.mjs --check failed:\n${(gen.stderr || gen.stdout).slice(0, 3000)}`);
+  else console.log(`${tag}: ${gen.stdout.trim()} (L1 rebuild included, ${Date.now() - t0} ms)`);
+  const out = mkdtempSync(join(tmpdir(), 'ht2-chunks-'));
+  try {
+    const { build } = await import('vite');
+    await build({ configFile: join(ROOT, 'vite.config.ts'), logLevel: 'silent', build: { outDir: out, emptyOutDir: true, rollupOptions: { preserveEntrySignatures: 'strict', input: { 'ht2-probe': join(ROOT, 'src/howto/generated/index.ts') } } } });
+    const files = readdirSync(join(out, 'assets'));
+    const rows = JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'));
+    const { fragmentsOf } = await import(pathToFileURL(join(ROOT, 'tools/plates/golden.mjs')).href);
+    const sizes = [];
+    for (const [id, row] of Object.entries(rows)) {
+      const chunk = files.filter(f => new RegExp(`^ht-${row.slug}-[\\w-]{8}\\.js$`).test(f));
+      if (chunk.length !== 1) { errors.push(`${tag} A9: ${id}: expected one ht-${row.slug}-*.js chunk, found ${chunk.join(', ') || 'none'}`); continue; }
+      const f = chunk[0], b = readFileSync(join(out, 'assets', f)), gz = gzipSync(b).length;
+      if (/^(FormGuidePlayer|ExercisePlayer|lib_[a-z_]+)-.*\.js$/.test(f)) errors.push(`${tag} A9: ${f} matches the FG-OFF chunk ban`);
+      if (b.length > 150 * 1024 || gz > 36 * 1024) errors.push(`${tag} A9: ${f} is ${b.length} B raw / ${gz} B gz (limit 153600 / 36864)`);
+      const m = (await import(pathToFileURL(join(out, 'assets', f)).href)).default;
+      const got = fragmentsOf({ normal: m.plate.normal, mistake: m.plate.mistake, tells: m.plate.tells, tempo: m.plate.tempo, alt: m.plate.alt, mistakeAlt: m.plate.mistakeAlt });
+      if (JSON.stringify(got) !== JSON.stringify(latest.get(id)?.fragments)) errors.push(`${tag} A9: the bundled ${f} does not hold the GOLDEN.json fragments of ${id}`);
+      sizes.push(`${f.replace(/-[\w-]{8}\.js$/, '')} ${b.length}/${gz}`);
+    }
+    const extra = files.filter(f => /^ht-/.test(f) && !Object.values(rows).some(r => f.startsWith(`ht-${r.slug}-`)));
+    if (extra.length) errors.push(`${tag} A9: unexpected How-to chunks: ${extra.join(', ')}`);
+    console.log(`${tag} A9 chunk sizes (raw/gz B): ${sizes.join(', ')}`);
+  } finally {
+    rmSync(out, { recursive: true, force: true });
+  }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no form-guide chunk or markup, no "How to do it" on Train) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no form-guide chunk or markup, no "How to do it" on Train) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified.');

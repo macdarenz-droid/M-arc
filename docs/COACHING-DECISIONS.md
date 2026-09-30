@@ -905,6 +905,34 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **Skill frontmatter** was checked against code.claude.com/docs/en/skills (`context: fork`, `agent`, `model`, `background: false`) and rule `paths:` against /docs/en/memory. `ci-log` names `agent: general-purpose`, so it never falls back to a Haiku helper, and pins `model: claude-sonnet-5` (the docs accept a full model name; checked with a live call).
   **Why**: the owner's hard rule that every moved line appears exactly once, word for word, and that AGENTS.md gains only the Procedures line and the model-rule line.
 
+## D-HT1 part 1: the mistake token returns for the How-to plate (HT-2 builder, 2026-09-30)
+
+- **Decided** (D-HT1, supervisor, 2026-09-30; authority: the owner's approval on 2026-09-30, "Then start building. U got my approval.", and his rule "Dont lower quality and output of the technical plates, i like it right now."): the How-to comes back as the approved Technical Plate, not as the old animated form guide. This part covers only the token guard (FG-OFF A3); the entry-button and gate parts (A1, FG-OFF gate block) land with HT-3.
+  - `mistake` is added to all 5 themes with the D-FG1 values: silent-black `#eb5757`, paper `#c0392b`, ember `#b36bff` (violet: Ember's negative equals its accent), emerald `#f04438`, midnight `#ff5c5c`. `themeToCss` emits it as `--mistake`.
+  - `tests/workout/no-form-guide.test.ts` A3 is narrowed by exactly that one name; the other 13 (`target help quiet pants pants-hi pants-sh ink iron iron-hi iron-sh eye floor guide`) stay banned over src and index.html, in `themeToCss` and as theme keys. The token and the narrowing land in the same commit.
+  - Replacements, each at least as strict for its purpose: A3-HT.a, A3-HT.b, A3-HT.c (no-form-guide), and A3-HT.d (the `HT-2` block in `tests/theme.test.ts`: `--mistake` at ≥ 3:1 against `--map-body`, `--surface-1` and `--surface-2` in every theme).
+  - **Where the plan was silent:** the plan's A3-HT.a says `--mistake` "appears only in files under `src/slices/howto/**`", but the token must be defined somewhere, and `themeToCss` writes it as the literal `` `--mistake:${t.mistake}` `` (the same way the approved ref-src `themes.mjs` does). A3-HT.a therefore asserts: outside `src/slices/howto/**`, the only file naming `--mistake` is `src/theme/themes.ts`, which names it exactly once, as that line, and never reads it with `var(`. Spelling the name in pieces to dodge the check would hide the definition from the guard, so it was rejected.
+  - The `it` title of A3 is reworded to say "old form guide". The `describe` title and A1 belong to HT-3, which completes D-HT1 in this file.
+  - A4 (static graph from `src/main.tsx`; no src file imports `tools/`) lands here too, per the HT-2 card.
+  **Why**: plan section 3 (D-HT1) and card HT-2 (HT2-A7, HT2-A8). Mutation proofs are listed in the HT-2 PR.
+
+## HT-2 generator: choices the plan left open (HT-2 builder, 2026-09-30)
+
+- **Decided**:
+  - **Generator reads the engine, not the fixture.** `gen/plates.mjs` rebuilds the gallery from `tools/plates/vendor` through HT-1's `golden.mjs` and extracts the fragments with HT-1's `extractPlates`, so there is one extractor. It refuses to write unless the page sha256 is the latest GOLDEN page entry (printing the first differing byte offset against the fixture) and every fragment matches its latest GOLDEN plate entry. The golden can therefore never be "fixed" from the generator side.
+  - **Strings are emitted as `JSON.stringify` literals.** The parsed value is the golden byte string; nothing is re-serialized. `tests/howto/generate.test.ts` compares them with `===`, and gate block HT-2 re-hashes them after vite bundling.
+  - **`view` comes from the plate's own label** (`<span class="plate-meta">Front view</span>` in the normal overlay), because HT-1's extractor has no view field and the golden is the only source.
+  - **`hashes.golden`** is the sha256 of `JSON.stringify(latest GOLDEN plate entry)`, which names exactly which approval the module was built from. `hashes.inputsSha256` equals the file's own header.
+  - **Layer fields are typed `?: never`** until each layer card defines its type. That is stricter than `unknown`: nothing can be set by accident.
+  - **Plugin contract:** `inputs()`, optional `after` and `outputs(ctx)`. A file written by more than one plugin (plan: `ht-<slug>.ts` and `ids.ts`, plates then content) hashes the union of its writers and their inputs, and `after` orders them, so HT-5 needs no core change.
+  - **The inputs of the plates plugin:** every MANIFEST file, `MANIFEST.json`, the font, `golden.mjs`, `css.mjs`, `plates.json`, `GOLDEN.json` and the fixture (read for the failure offset). These are listed in full rather than trimmed to what build-page happens to import, so no read file is missed.
+  - **css.mjs drop list.** It drops the page-only rules where the app has an equal rule or the rule styles gallery chrome. From the reset `h1, h2, h3, p, figure { margin: 0; }` it keeps only `.ht figure { margin: 0; }`, because the app's reset lacks `figure` and the plate is a `<figure>`. `#sheets .plate-callout:focus-visible` is a plate rule, so it becomes `.ht .plate-callout:focus-visible`. Keyframe names (`plate-trace/-ghost/-fade`) stay verbatim; they clash with no app keyframes.
+  - **ht-tokens names:** `--ht-trace: 2.4s`, `--ht-arrow-at: 2.3s`, `--ht-arrow-dur: 160ms`, `--ht-ghost-step: 80ms`, `--ht-radius-tick: 1px`. css.mjs throws on any banned literal it has no name for.
+  - **Theme parity is stricter than the plan:** besides the per-theme tokens, the non-theme tokens plate.css reads (sizes, timings) must equal the vendored `engine/tokens.css` in styles.css's token block.
+  - **A9 chunks are measured in gate block HT-2 with the app's own vite config**, using `src/howto/generated/index.ts` as an extra entry. Until HT-3 wires `lazy.tsx`, nothing in the app imports the loaders, so `npm run build` alone cannot emit the chunks yet.
+  - **A4 is also checked from `ids.ts` itself:** its static graph is just itself, and no src file outside `generated/` statically reaches `generated/**`. This catches the card's failure path (ids.ts importing `generated/index.ts`) before HT-3 connects ids.ts to main.
+  - **Gate PASS phrase:** printed as its own line after the shared PASS line, so the shared line is not edited.
+  **Why**: card HT-2 and plan 2.2, 2.6, 2.7; the supervisor's "go" on PR #105.
 ## Golden lock details the card left open (HT-1 builder, 2026-09-30)
 
 - **Decided**: where card HT-1 and the plan are silent:
@@ -918,3 +946,8 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **The harness self-check has a built-in negative control** that runs on every gate: the same block shifted 1 px must fail the L3 rule, so a blind comparison cannot pass.
   - **Commits that touch the golden paths carry `[golden update]`**, so they pass the planned agent-guard check (plan 2.8) if it lands before HT-1 merges.
   **Why**: the owner rule ("Dont lower quality and output of the technical plates") needs byte-level proof that does not depend on git history or on names; the rest keeps the checks fast.
+
+## Correction to "HT-2 generator": the gate PASS phrase (HT-2 builder, 2026-09-30)
+
+- **Correction**: the "HT-2 generator" entry says gate block HT-2's PASS phrase "is printed as its own line after the shared PASS line, so the shared line is not edited". That is wrong. `scripts/screenshot-gate.mjs` appends `, and HT-2 (…) verified` to the shared PASS line in place, which follows the convention HT-1 set. The edit is allowed, because the card grants the PASS phrase.
+  **Why**: HT-2 review on PR #105 (medium finding). The older entry is left unchanged, because this file is append-only.
