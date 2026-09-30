@@ -267,8 +267,13 @@ for (const theme of themes) {
     const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Export backup' }).click()]);
     const { readFile } = await import('node:fs/promises');
     const backupText = await readFile(await download.path(), 'utf8');
+    // BUG-29: a seen poster comparison, planted directly (Save above may or may not have hit one),
+    // must be gone after Reset everything — it is app-use content, not a device display setting.
+    await page.evaluate(() => localStorage.setItem('marc.share.seen', JSON.stringify(['gate-plant'])));
     await page.getByRole('button', { name: 'Reset workout data' }).click();
     await page.getByRole('button', { name: 'Reset everything' }).click(); await page.waitForTimeout(300);
+    const shareSeenAfterReset = await page.evaluate(() => localStorage.getItem('marc.share.seen'));
+    if (shareSeenAfterReset !== null) errors.push(`${theme}: Reset everything left marc.share.seen behind (${shareSeenAfterReset})`);
     const afterReset = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
     const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', { name: 'Restore backup' }).click()]);
     await chooser.setFiles({ name: 'marc-backup.json', mimeType: 'application/json', buffer: Buffer.from(backupText) });
@@ -280,8 +285,10 @@ for (const theme of themes) {
     await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   }
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
-  console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);
-  if (state.sessions.length < 25 || !state.legacy || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
+  // BUG-29: silent-black ran Reset everything above, which now also clears the legacy import key.
+  const legacyExpected = theme !== 'silent-black';
+  console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy key present:', state.legacy);
+  if (state.sessions.length < 25 || state.legacy !== legacyExpected || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
   await ctx.close();
 }
 
@@ -1890,8 +1897,13 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// ESC-NC: the LR-23 patterns, read from their single definition (tests/guards/no-contacts.ts), and the crisis copy.
+const ESC_NC_RE = Object.fromEntries([...readFileSync(join(ROOT, 'tests/guards/no-contacts.ts'), 'utf8').matchAll(/^export const (\w+) = \/(.*)\/([a-z]*);$/gm)].map(m => [m[1], new RegExp(m[2], m[3])]));
+if (Object.keys(ESC_NC_RE).length !== 4) throw new Error(`ESC-NC: expected 4 patterns in tests/guards/no-contacts.ts, read ${Object.keys(ESC_NC_RE).join(', ')}`);
+const ESC_NC_CRISIS = 'If things feel like too much, you don’t have to carry it alone. Talk to someone you trust, or a doctor. If you feel you might harm yourself, get emergency help now.';
+
 // Escobar (§23 EV5): the mock transport (marc.dev=1, in-memory store, no network) plays a recorded
-// conversation with a lift_trend chart, a citation, chips and a proposal card. Screenshot it in all
+// conversation with a lift_trend chart, cited facts and a knowledge card (markers stripped, LR-23), a crisis card, chips and a proposal card. Screenshot it in all
 // five themes at 390 and 360 px, plus the dock on Today and the Hall; "Thinking…" within 150 ms.
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -1965,7 +1977,36 @@ for (const theme of themes) {
   // O4: the same effort split renders under the sparkline, static (no tap).
   if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .effort-bars')))) errors.push(`${tag}: expected the lift_trend effort bars`);
   if ((await page.locator('.esc-comp[data-component="lift_trend"] .effort-bar-col[type="button"]').count()) > 0) errors.push(`${tag}: Escobar's effort bars should not be tappable`);
-  if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
+  // ESC-NC (owner decision LR-23, 2026-09-30; stricter EV5 spec, supervisor-approved): the mock answer cites a
+  // fact and ⟦k:protein_intake⟧ and the turn raises the crisis card, yet nothing of a source or contact shows.
+  {
+    const nc = await page.evaluate(() => {
+      const sheet = document.querySelector('dialog.esc-sheet[open]');
+      const answers = [...document.querySelectorAll('.esc-answer')].map(e => e.textContent ?? '').join(' ');
+      const card = document.querySelector('.esc-escalation[data-escalation="crisis"]');
+      return {
+        cite: document.querySelectorAll('.esc-answer .esc-cite, .esc-cite, .esc-cite-wrap').length,
+        pop: document.querySelectorAll('.esc-pop').length,
+        links: sheet ? sheet.querySelectorAll('a[href^="http"], a[href^="tel:"], a[href^="mailto:"]').length : -1,
+        marker: answers.includes('⟦'),
+        stray: / [.,]/.test(answers.replace(/\s+/g, ' ')),
+        protein: answers.includes('enough protein helps you recover.'),
+        card: card ? card.textContent ?? '' : null,
+        sheetText: sheet ? sheet.innerText : '',
+      };
+    });
+    if (nc.cite) errors.push(`${tag}: ESC-NC: ${nc.cite} citation chip(s) in the answer; LR-23 shows none`);
+    if (nc.pop) errors.push(`${tag}: ESC-NC: ${nc.pop} citation popover(s); LR-23 shows none`);
+    if (nc.links !== 0) errors.push(`${tag}: ESC-NC: ${nc.links < 0 ? 'no open Escobar sheet' : `${nc.links} outside link(s) in the Escobar sheet`}`);
+    if (nc.marker) errors.push(`${tag}: ESC-NC: a ⟦…⟧ marker shows in the answer`);
+    if (nc.stray) errors.push(`${tag}: ESC-NC: a space before "." or "," where a marker was removed`);
+    if (!nc.protein) errors.push(`${tag}: ESC-NC: expected the knowledge-card sentence, marker stripped ("enough protein helps you recover.")`);
+    if (nc.card !== ESC_NC_CRISIS) errors.push(`${tag}: ESC-NC: expected the crisis card with the LR-23 copy, got ${JSON.stringify(nc.card)}`);
+    for (const [name, re] of Object.entries(ESC_NC_RE)) {
+      const hit = name === 'SAFETY_LINE_RE' ? re.exec(nc.card ?? '') : re.exec(nc.sheetText);
+      if (hit) errors.push(`${tag}: ESC-NC: ${name} matches "${hit[0]}" in the ${name === 'SAFETY_LINE_RE' ? 'crisis card' : 'Escobar sheet'}`);
+    }
+  }
   if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
   await page.setViewportSize({ width: 360, height: 780 }); await page.waitForTimeout(200);
@@ -1981,9 +2022,6 @@ for (const theme of themes) {
     if (await undo.isVisible().catch(() => false)) errors.push(`${tag}: Undo still showing after 8 s`);
   }
   if (theme === 'silent-black') {
-    await page.locator('.esc-answer .esc-cite').first().click(); await page.waitForTimeout(100);
-    if (!(await visible(page.locator('.esc-pop')))) errors.push(`${tag}: expected the citation popover`);
-    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-citation.png` });
     await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
     if (!(await visible(page.locator('.esc-proposal').getByText('Applied')))) errors.push(`${tag}: expected "Applied" on the proposal`);
     // ES-03: Undo inside its 8 s window reverses the change.
@@ -5794,11 +5832,11 @@ for (const theme of ['silent-black', 'paper']) {
   const ht3 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
   try {
     const failed = e => ({ problems: [`crashed: ${e.message.split('\n')[0]}`], stats: {}, d128: '?', d1: '?' });   // a thrown probe is a failure, never a gate crash
-    const [fid, beh, ctlS, ctlP] = await Promise.all([H.ht3Fidelity(ht3, PORT), H.ht3Behaviour(ht3, PORT, 'paper').catch(failed), H.presentControls(ht3, 'silent-black').catch(failed), H.presentControls(ht3, 'paper').catch(failed)]);
+    const [fid, beh, ctlS, ctlP, sec] = await Promise.all([H.ht3Fidelity(ht3, PORT), H.ht3Behaviour(ht3, PORT, 'paper').catch(failed), H.presentControls(ht3, 'silent-black').catch(failed), H.presentControls(ht3, 'paper').catch(failed), H.ht3SectionGuards(ht3, PORT).catch(failed)]);
     const ctl = { d128: `${ctlS.d128}/${ctlP.d128}`, d1: `${ctlS.d1}/${ctlP.d1}` };
-    for (const p of [...fid.problems, ...beh.problems, ...ctlS.problems, ...ctlP.problems]) errors.push(`${tag}: ${p}`);
+    for (const p of [...fid.problems, ...beh.problems, ...ctlS.problems, ...ctlP.problems, ...sec.problems]) errors.push(`${tag}: ${p}`);
     if (fid.stats.pairs < 300) errors.push(`${tag}: only ${fid.stats.pairs} pixel pairs compared, expected the full matrix (>= 300)`);
-    console.log(`${tag} (${ht3.version()}): ${fid.stats.pairs} pixel pairs (max ${fid.stats.offMax} px off, ${fid.stats.off1Max} off by 1), ${fid.stats.l2b} L2b walks, ${fid.stats.f3} F3 markup compares, ${fid.stats.anims} Trace animation lists, parts on their own layers in ${fid.stats.ownLayers ?? 0} captures, phase ms ${JSON.stringify(fid.stats.t)}, taller viewport for ${fid.stats.tall.length} captures${fid.stats.tall.length ? ` (${fid.stats.tall.join(', ')})` : ''}; S0 ${beh.stats.elementsS0} elements; controls (Silent Black/Paper): phase +128 ${ctl.d128} px, +1 ${ctl.d1} px (HT-1 keeps the root-layer golden self-check at 0 px); ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+    console.log(`${tag} (${ht3.version()}): ${fid.stats.pairs} pixel pairs (max ${fid.stats.offMax} px off, ${fid.stats.off1Max} off by 1), ${fid.stats.l2b} L2b walks, ${fid.stats.f3} F3 markup compares, ${fid.stats.anims} Trace animation lists, parts on their own layers in ${fid.stats.ownLayers ?? 0} captures, phase ms ${JSON.stringify(fid.stats.t)}, taller viewport for ${fid.stats.tall.length} captures${fid.stats.tall.length ? ` (${fid.stats.tall.join(', ')})` : ''}; S0 ${beh.stats.elementsS0} elements; controls (Silent Black/Paper): phase +128 ${ctl.d128} px, +1 ${ctl.d1} px (HT-1 keeps the root-layer golden self-check at 0 px); sections guards (hidden + restored, CSS leak caught, S0 with sections visible) ${sec.problems.length ? 'FAILED' : 'passed'}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   } finally {
     await ht3.close();
   }
@@ -6077,8 +6115,104 @@ for (const theme of ['silent-black', 'paper']) {
   console.log(`${tag}: A1 content probe, A2 chunk budgets, A3 launch/open speed, A4 offline/storage, A5 C17 verified; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
+// HT-4: the golden-B lock (L0-B), the crop-window/pose-classification live proof (HT4-A5), and the state driver
+// self-check (HT4-A6). Rebuilding the layer page and capturing every real renderPlate call both spawn `node
+// artifact/build-page.mjs` (~8-14s each); this is the one place they run - `npm test` only carries the fast,
+// file-read/synthetic-data proofs (review fix, PR #107, blocker 4).
+{
+  const tag = 'HT-4';
+  const { pathToFileURL } = await import('node:url');
+  const layers = await import(pathToFileURL(join(ROOT, 'tools/plates/layers.mjs')).href);
+  const gb = await import(pathToFileURL(join(ROOT, 'tools/plates/fidelity/goldenB.mjs')).href);
+
+  // L0-B: rebuilding the vendored layer page from a clean mirror gives the pinned pageSha256.
+  const layerMirror = layers.makeMirror();
+  try {
+    const html = await layers.buildLayerPage(layerMirror);
+    const got = layers.sha256(html);
+    if (got !== layers.PAGE_SHA256) errors.push(`${tag} L0-B: rebuilding tools/plates/layers gave ${got}, pinned PAGE_SHA256 is ${layers.PAGE_SHA256}`);
+    else console.log(`${tag} L0-B: layer page rebuild reproduces the pinned pageSha256 (${layers.GOLDEN_B_REF})`);
+  } finally {
+    layers.cleanupMirror(layerMirror);
+  }
+
+  // HT4-A5: capture every real renderPlate call from a second mirror (captureRenderPlateCalls shims engine/plate.mjs
+  // in place, so it needs its own clean copy) and validate it against golden-A.
+  const capMirror = layers.makeMirror();
+  try {
+    const goldenASpecs = await gb.loadGoldenASpecs();
+    const rpCalls = await gb.captureRenderPlateCalls(capMirror);
+    if (rpCalls.length === 0) errors.push(`${tag} HT4-A5: captured 0 renderPlate calls - the capture shim did not run`);
+    for (const c of rpCalls) for (const k of Object.keys(c.opts ?? {})) if (!['id', 'mistake', 'selected'].includes(k)) errors.push(`${tag} HT4-A5: call ${JSON.stringify(c.opts)} uses an option outside {id, mistake, selected}`);
+    const protectedBad = [];
+    for (const c of rpCalls) {
+      const exId = c.spec.id;
+      const goldenA = goldenASpecs[exId];
+      if (!goldenA) { protectedBad.push(`call with unknown spec.id "${exId}"`); continue; }
+      protectedBad.push(...gb.protectedFieldProblems(exId, c, goldenA));
+    }
+    for (const m of protectedBad) errors.push(`${tag} HT4-A5: ${m}`);
+    const exact = new Set();
+    for (const c of rpCalls) { const exId = c.spec.id; if (JSON.stringify(c.spec) === JSON.stringify(goldenASpecs[exId])) exact.add(exId); }
+    const missingExact = Object.keys(goldenASpecs).filter(id => !exact.has(id));
+    if (missingExact.length) errors.push(`${tag} HT4-A5: no untouched base-plate call found for: ${missingExact.join(', ')}`);
+    const poseBad = gb.validateCalls(rpCalls, goldenASpecs);
+    for (const m of poseBad) errors.push(`${tag} HT4-A5: ${m}`);
+
+    // Item 3 of the design note: every plate fragment in the built page === golden-A's GOLDEN.json fragment.
+    const golden = JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/GOLDEN.json'), 'utf8'));
+    const plateEntries = golden.entries.filter(e => e.kind === 'plate');
+    const builtHtml = readFileSync(join(capMirror, 'artifact', 'technical-plates.html'), 'utf8');
+    const fragBad = gb.fragmentProblems(builtHtml, plateEntries);
+    for (const m of fragBad) errors.push(`${tag} HT4-A5: ${m}`);
+
+    // Medium 4 (round-2 review fix): the lateral raise's Wrong-crop parameters never go through renderPlate (ref-src
+    // arm(), not engine/plate.mjs), so rpCalls never covers them - pinned separately, no live build needed.
+    const lateralRaiseBad = await gb.validateLateralRaiseCrops(join(ROOT, 'tools/plates/layers'));
+    for (const m of lateralRaiseBad) errors.push(`${tag} HT4-A5: ${m}`);
+
+    console.log(`${tag} HT4-A5: ${rpCalls.length} renderPlate calls captured, ${Object.keys(goldenASpecs).length} exercises with an untouched base-plate call, ${poseBad.length} bad poses, ${fragBad.length} bad fragments (of ${plateEntries.length}), lateral raise crop pins ${lateralRaiseBad.length} bad`);
+  } finally {
+    layers.cleanupMirror(capMirror);
+  }
+
+  // HT4-A6: the golden-B state driver self-check, every exercise x every theme (8 x 5 = 40 passes).
+  const { dir, file } = await gb.buildScratchPage();
+  let selfCheckBad = 0;
+  let captureThrew = false;
+  try {
+    for (const theme of gb.THEMES) {
+      const { browser: b, page, errs } = await gb.openPage(file, theme, { chromePath: process.env.MARC_CHROMIUM });
+      try {
+        for (const id of gb.IDS) {
+          const bad = await gb.selfCheck(page, id);
+          for (const m of bad) { errors.push(`${tag} HT4-A6 ${theme}/${id}: ${m}`); selfCheckBad++; }
+        }
+        for (const e of errs) errors.push(`${tag} HT4-A6 ${theme}: page error: ${e}`);
+        // Round-2 review fix (High 3): committed evidence that a selector matching nothing throws, naming the
+        // state - `capture` never silently returns an empty capture (V1-08). One probe is enough (the behavior is
+        // per-selector, not per-theme); checked on the first theme only to avoid repeating it 5x for no reason.
+        if (theme === gb.THEMES[0]) {
+          try {
+            await gb.capture(page, '#nope', 'probe');
+            errors.push(`${tag} HT4-A6: capture(page, '#nope', 'probe') did not throw`);
+          } catch (e) {
+            captureThrew = true;
+            if (!String(e.message).includes('probe')) errors.push(`${tag} HT4-A6: capture's error did not name the state "probe": ${e.message}`);
+          }
+        }
+      } finally {
+        await b.close();
+      }
+    }
+  } finally {
+    gb.cleanupScratchPage(dir);
+  }
+  console.log(`${tag} HT4-A6: state driver self-check, ${gb.IDS.length} exercises x ${gb.THEMES.length} themes, ${selfCheckBad} problems, no-match throw ${captureThrew ? 'verified' : 'NOT verified'}`);
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified.');

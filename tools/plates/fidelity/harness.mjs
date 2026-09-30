@@ -438,6 +438,37 @@ export async function rasterOrigin(page, fitSel, known = null) {
   }, [fitSel, depth]);
 }
 
+/**
+ * D-HT3-sections: hides (`display: none`, inline) or restores the How-to sheet's sections around a capture.
+ * Returns the number of sections displayed: before hiding, or after restoring.
+ */
+export const SECTION_SEL = 'dialog.sheet.ht [data-section]';
+
+/**
+ * D-HT3-sections, the sheet-wide section bleed: every displayed section below the golden block must be exactly as wide
+ * as golden B's sections, which sit in the gallery card's content box (358 / 328 / 308 px at 390 / 360 / 340; measured
+ * equal to golden A's card content box, which is read here). Returns the problems.
+ */
+export async function sectionWidthProblems(appPage, goldPage, id) {
+  const want = await goldPage.evaluate(id => { const c = document.getElementById(`card-${id}`), cs = getComputedStyle(c), r = c.getBoundingClientRect();
+    return r.width - parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth) - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); }, id);
+  const got = await appPage.evaluate(sel => [...document.querySelectorAll(sel)].filter(e => getComputedStyle(e).display !== 'none').map(e => [e.dataset.section, e.getBoundingClientRect().width]), SECTION_SEL);
+  return got.filter(([, w]) => Math.abs(w - want) > 0.01).map(([name, w]) => `section ${name} is ${w} px wide, golden B's sections are ${want}`);
+}
+export function hideSections(page, hide) {
+  return page.evaluate(([sel, hide]) => {
+    const els = [...document.querySelectorAll(sel)];
+    const shown = () => els.filter(e => getComputedStyle(e).display !== 'none').length;
+    if (hide) {
+      const n = shown();
+      for (const e of els) { e.dataset.ht3Display = e.style.display; e.style.display = 'none'; }
+      return n;
+    }
+    for (const e of els) { if ('ht3Display' in e.dataset) { e.style.display = e.dataset.ht3Display; delete e.dataset.ht3Display; } }
+    return shown();
+  }, [SECTION_SEL, hide]);
+}
+
 /** The element ids (backendNodeId) that own a compositing layer, read until stable (see rasterOrigin). */
 export const layerOwners = page => rasterOrigin(page, null);
 
@@ -594,6 +625,9 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
     const check = async (id, label, { markup = true } = {}) => {
       await settleApp(app.page);
       let tk = Date.now(); const lap = k => { const n = Date.now(); stats.t[k] += n - tk; tk = n; };
+      // D-HT3-sections: the sections below the golden block (HT-6 on) are display:none for the whole check (L2b, F3
+      // and the capture) and restored after; their DOM and stylesheets stay, so a CSS leak into the block still fails
+      const secBefore = await hideSections(app.page, true);
       if (markup) {
         await unpresentGolden(gold.page);
         const [ga, aa] = await Promise.all([blockMarkup(gold.page, 'golden', id, withM), blockMarkup(app.page, 'app', id)]);
@@ -647,6 +681,8 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
         if (!meetsRule(d)) P(`${id} ${label} @${width}${tall ? `x${TALL_H}` : ''} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}); trace/mistake aria-pressed app ${await app.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)} golden ${await gold.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)}`);
       }
       await ownLayers(app.page, 'app', id, false);
+      const secAfter = await hideSections(app.page, false);
+      if (secAfter !== secBefore) P(`${id} ${label}: ${secBefore} sections were displayed before the capture, ${secAfter} after (not restored)`);
       if (tall) { await Promise.all([app.page.setViewportSize({ width, height: 844 }), gold.page.setViewportSize({ width, height: 844 })]); await settleApp(app.page); }
     };
     const keys = (mode) => app.page.$$eval(`dialog.sheet.ht .ht-golden figure[data-mode="${mode}"] .plate-callout`, bs => bs.map(b => b.dataset.key));
@@ -662,6 +698,7 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
         await openHowTo(app.page, index);
         withM = false;
         if (mutate) await app.page.evaluate(mutate, id);
+        for (const b of await sectionWidthProblems(app.page, gold.page, id)) P(`${id} @${w}: ${b}`);
         if (w === 390) {
           const txt = await Promise.all([
             app.page.$$eval('dialog.sheet.ht .sheet-head h2, dialog.sheet.ht .sheet-eyebrow', (els, props) => els.map(e => props.map(p => getComputedStyle(e).getPropertyValue(p))), TEXT_PROPS),
@@ -831,4 +868,76 @@ export async function presentControls(browser, theme = 'silent-black', id = HT_P
   if (meetsRule(d1)) problems.push(`${theme} present control: the golden at phase p and p+1 meets the rule (${d1.off} px), so the phase check is blind`);
   for (const s of shots) await s.ctx.close();
   return { problems, d128: d128.off, d1: d1.off };
+}
+
+/** Test fixtures for D-HT3-sections: a tall section below the golden block, optionally carrying a CSS leak into it. */
+export const fixtureSection = id => {   // runs in the app page (ht3Fidelity's `mutate`)
+  const sheet = document.querySelector('dialog.sheet.ht .ht-golden').parentElement;
+  const s = document.createElement('section'); s.dataset.section = 'ht3-fixture'; s.style.height = '900px';
+  sheet.append(s);
+  return id;
+};
+export const fixtureLeakSection = id => {
+  const sheet = document.querySelector('dialog.sheet.ht .ht-golden').parentElement;
+  const s = document.createElement('section'); s.dataset.section = 'ht3-leak'; s.style.height = '900px';
+  const st = document.createElement('style'); st.textContent = '.ht p { word-spacing: 1px; }';
+  s.append(st); sheet.append(s);
+  return id;
+};
+
+/**
+ * D-HT3-sections guards (supervisor ruling on PR #106), each run in gate block HT-3:
+ *  1. with a tall section registered, the captures still run (sections hidden, the sheet fits) and every section is
+ *     displayed again after each capture (a missed restore is a problem inside ht3Fidelity);
+ *  2. a section whose CSS leaks into the golden block (`.ht p { word-spacing: 1px }`) must still fail L2b while the
+ *     sections are hidden, so hiding never masks a leak;
+ *  3. one S0 capture with the sections visible, on the normal 390 x 844 path: the sheet scrolls, the region is scrolled
+ *     into view below the sticky header, and L3 must pass.
+ * Returns { problems }.
+ */
+export async function ht3SectionGuards(browser, port, { fixture = fixtureSection, overlap = false } = {}) {
+  const problems = [], lr = [HT_PLATES[0]];
+  const one = { themes: ['silent-black'], full: [], plates: lr, widths: [] };
+  const a = await ht3Fidelity(browser, port, { ...one, mutate: fixture });
+  for (const p of a.problems) problems.push(`sections guard 1 (tall section registered): ${p}`);
+  if (a.stats.pairs < 4) problems.push(`sections guard 1: only ${a.stats.pairs} pairs compared with a section registered`);
+  const b = await ht3Fidelity(browser, port, { ...one, mutate: fixtureLeakSection });
+  if (!b.problems.some(p => /L2b .*word-spacing/.test(p))) problems.push('sections guard 2: a section CSS leak into the golden block (.ht p word-spacing) was not caught by L2b while the sections were hidden');
+  // 4: the sheet-wide section bleed: the fixture section is exactly golden B's section width at 390, 360 and 340
+  for (const w of [390, 360, 340]) {
+    const app = await openAppTrain(browser, port, 'silent-black', { viewport: { width: w, height: 844 } });
+    const gold = await openGolden(browser, 'silent-black', { viewport: { width: w, height: 844 } });
+    try {
+      await openHowTo(app.page, 0);
+      await app.page.evaluate(fixture, HT_PLATES[0][0]);
+      const n = await app.page.evaluate(sel => document.querySelectorAll(sel).length, SECTION_SEL);
+      if (!n) problems.push(`sections guard 4 @${w}: no section registered to measure`);
+      for (const b of await sectionWidthProblems(app.page, gold.page, HT_PLATES[0][0])) problems.push(`sections guard 4 @${w}: ${b}`);
+    } catch (e) { problems.push(`sections guard 4 @${w}: ${e.message.split('\n')[0]}`); }
+    finally { await app.ctx.close(); await gold.ctx.close(); }
+  }
+  // 3: S0 with the sections visible, at 390 x 844, scrolled as the app scrolls
+  const [id] = HT_PLATES[0];
+  const app = await openAppTrain(browser, port, 'silent-black', { onError: m => problems.push(`sections guard 3: app page error: ${m}`) });
+  const gold = await openGolden(browser, 'silent-black');
+  try {
+    await openHowTo(app.page, 0);
+    await app.page.evaluate(fixture, id);
+    if (overlap) await app.page.evaluate(() => { document.querySelector('[data-section="ht3-fixture"]').style.cssText += ';margin-top:-40px;position:relative;background:red'; });
+    await settleApp(app.page);
+    const ra = await region(app.page, G.app(id), 'app');   // scrolls the panel so the region sits below the sticky header
+    const scrolled = await app.page.evaluate(() => { const p = document.querySelector('dialog.sheet.ht .sheet-panel'); return { scrolls: p.scrollHeight > p.clientHeight, shown: [...document.querySelectorAll('dialog.sheet.ht [data-section]')].filter(e => getComputedStyle(e).display !== 'none').length }; });
+    if (!scrolled.scrolls || !scrolled.shown) problems.push(`sections guard 3: the sheet does not scroll with a visible section (${JSON.stringify(scrolled)})`);
+    const own = await ownLayers(app.page, 'app', id, true, true);
+    const at = await appOffset(app.page);
+    own.push(...await presentGolden(gold.page, id, at));
+    for (const o of own) problems.push(`sections guard 3: ${o}`);
+    const rg = await region(gold.page, G.golden(id), 'golden');
+    const r2 = await region(app.page, G.app(id), 'app');
+    const d = await diffPng(gold.page, await capture(app.page, r2), await capture(gold.page, rg));
+    if (!meetsRule(d)) problems.push(`sections guard 3: S0 with sections visible differs: ${d.off} px off (max ${d.maxDelta}/255)`);
+    if (ra.y !== r2.y) problems.push('sections guard 3: the region moved between placement and capture');
+  } catch (e) { problems.push(`sections guard 3: ${e.message.split('\n')[0]}`); }
+  finally { await app.ctx.close(); await gold.ctx.close(); }
+  return { problems };
 }

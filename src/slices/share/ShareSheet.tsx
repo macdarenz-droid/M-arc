@@ -14,19 +14,15 @@ import { THEMES } from '@/theme/themes';
 import { pickAndCompressPhoto } from '@/native/photo';
 import { saveImage, shareImage } from '@/native/share';
 import markUrl from '@/assets/escobar-mark.png?inline';
-import { WEIGHT_THINGS } from '@/data/weights';
 import { cardData, isEmptyCard, latestSession, SHARE_PERIODS, type SharePeriod } from './cardData';
 import { CARD_PX, CARD_STYLES, cardFileName, cardSvg, paletteFor, type CardFormat } from './cards';
 import { pngCache } from './png';
 import { reduced } from '@/ui/motion';
+import { markSeen, readSeen } from './seen';
 
 const STYLE_KEY = 'marc.share.style';
 const readStyle = (): number => { try { const n = Number(localStorage.getItem(STYLE_KEY)); return Number.isInteger(n) && n >= 0 && n < CARD_STYLES.length ? n : 0; } catch { return 0; } };
 const writeStyle = (i: number) => { try { localStorage.setItem(STYLE_KEY, String(i)); } catch { /* the choice just isn't remembered */ } };
-/** Poster comparisons already shared, oldest first, so the next card says something new. */
-const SEEN_KEY = 'marc.share.seen';
-const readSeen = (): string[] => { try { const v: unknown = JSON.parse(localStorage.getItem(SEEN_KEY) ?? '[]'); return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []; } catch { return []; } };
-const markSeen = (id: string) => { try { localStorage.setItem(SEEN_KEY, JSON.stringify([...readSeen().filter(x => x !== id), id].slice(-WEIGHT_THINGS.length))); } catch { /* repeats just become possible */ } };
 
 /**
  * QA4-14/QA5-7: the carousel jumps instead of gliding when the person asked for reduced motion,
