@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=5e5ebf94317632e7eda358ed3ecb7c01566feec1a193a94a73625e8e7c9ea628
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_hanging_leg_raise",
   name: "Hanging Leg Raise",
-  hashes: { inputsSha256: "d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27", golden: "59644b737389e9c10626701e297d441385c1bfa1dd90805e3e6baa7727ec9539" },
+  hashes: { inputsSha256: "5e5ebf94317632e7eda358ed3ecb7c01566feec1a193a94a73625e8e7c9ea628", golden: "59644b737389e9c10626701e297d441385c1bfa1dd90805e3e6baa7727ec9539" },
   plate: {
     view: "side",
     normal: {
@@ -325,6 +325,29 @@ export default {
           "catalyst-hlr"
         ]
       }
+    }
+  ],
+  zooms: [
+    {
+      "key": "hand",
+      "chip": "Hand",
+      "heading": "Hand: right and wrong",
+      "kind": "hand",
+      "feelRow": "wrist"
+    },
+    {
+      "key": "pelvis",
+      "chip": "Pelvis curl",
+      "heading": "Pelvis curl: right and wrong",
+      "kind": "posture",
+      "feelRow": "hips"
+    },
+    {
+      "key": "shoulders",
+      "chip": "Shoulders",
+      "heading": "Shoulders: right and wrong",
+      "kind": "posture",
+      "feelRow": "traps"
     }
   ],
   chips: [

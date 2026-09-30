@@ -5,11 +5,14 @@
 // contract: a plugin returns the *new* full text for a path, last writer in `prev` wins; `writers`/`inputs` still
 // accumulate across both plugins, so the final header and hashes.inputsSha256 cover both).
 //
-// `zooms` and `feel` are NOT written here: golden B's `*.howto.mjs` has them, but per module layout 2.2 they are
-// HT-7's and HT-8's own generated files (`ht-<slug>-zoom.ts`, `ht-<slug>-feel.ts`), each with exactly one writer.
-// The content checks (C1-C8, C16) still need them to run (several read `content.zooms`/`content.feel` directly), so
-// `loadContent()` returns the *full* normalized HowToContent (everything golden B authors, minus `plate`) for the
-// checks to run against, while `baseFieldsText()` only ever emits the subset this file actually persists.
+// `feel` is NOT written here: golden B's `*.howto.mjs` has it, but per module layout 2.2 it is HT-8's own generated
+// file (`ht-<slug>-feel.ts`), with exactly one writer. `zooms` IS written here, but only the minimal descriptor
+// each needs for the S0 "Look closer" chip row before any lazy crop/hand chunk loads (HT-6 on PR #116; supervisor
+// ruling, same PR): `{key, chip, chipCaption?, heading, kind, feelRow?}`, `===` golden B, golden-B order. The
+// rendered crop and hand strings stay only in HT-7's and HT-6's own lazy chunks.
+// The content checks (C1-C8, C16) still need the *full* `zooms`/`feel` to run (several read them directly), so
+// `loadContent()` returns the full normalized HowToContent (everything golden B authors, minus `plate`) for the
+// checks to run against, while `baseFieldsText()` narrows `zooms` to descriptors and leaves `feel` out entirely.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -22,9 +25,17 @@ const LAYERS = 'tools/plates/layers';
 const EXERCISES_DIR = join(ROOT, LAYERS, 'exercises');
 const SHARED_REL = `${LAYERS}/howto/shared.mjs`;
 
-/** The base-file fields HT-5 writes into ht-<slug>.ts. `zooms`/`feel` stay out (HT-7/HT-8's own files); `plate`,
- *  `schema`, `id`, `name` are already written by plates.mjs. */
-const BASE_KEYS = ['rev', 'extends', 'handling', 'contacts', 'setup', 'posture', 'chips', 'copy', 'mistakes', 'risks', 'riskFlags', 'redFlag', 'sources', 'research'];
+/** The base-file fields HT-5 writes into ht-<slug>.ts. `zooms` is narrowed to descriptors (below); `feel` stays out
+ *  (HT-8's own file); `plate`, `schema`, `id`, `name` are already written by plates.mjs. */
+const BASE_KEYS = ['rev', 'extends', 'handling', 'contacts', 'setup', 'posture', 'zooms', 'chips', 'copy', 'mistakes', 'risks', 'riskFlags', 'redFlag', 'sources', 'research'];
+
+const DESCRIPTOR_KEYS = ['key', 'chip', 'chipCaption', 'heading', 'kind', 'feelRow'];
+
+/** ZoomSpec -> ZoomDescriptor: the fields the S0 chip row needs, `===` golden B, in golden-B order (supervisor
+ *  ruling on PR #116). */
+export function zoomDescriptors(zooms) {
+  return zooms.map(z => Object.fromEntries(DESCRIPTOR_KEYS.filter(k => z[k] !== undefined).map(k => [k, z[k]])));
+}
 
 const rowsOf = () => JSON.parse(readFileSync(join(ROOT, PLATES_JSON), 'utf8'));
 
@@ -73,9 +84,13 @@ export async function loadContent(id) {
 
 const ser = (value, pad) => JSON.stringify(value, null, 2).replace(/\n/g, `\n${pad}`);
 
-/** The `key: value,\n` lines for the fields this file persists, 2-space indented to match `plate`'s own indent. */
+/** The `key: value,\n` lines for the fields this file persists, 2-space indented to match `plate`'s own indent.
+ *  `zooms` is narrowed to descriptors; every other key is the content value as is. */
 export function baseFieldsText(content, pad = '  ') {
-  return BASE_KEYS.filter(k => content[k] !== undefined).map(k => `${pad}${k}: ${ser(content[k], pad)},\n`).join('');
+  return BASE_KEYS.filter(k => content[k] !== undefined).map(k => {
+    const value = k === 'zooms' ? zoomDescriptors(content.zooms) : content[k];
+    return `${pad}${k}: ${ser(value, pad)},\n`;
+  }).join('');
 }
 
 /** One Source registry entry, in content-types.ts's `Source` shape (drops golden-B's per-use `use`/`note`). */

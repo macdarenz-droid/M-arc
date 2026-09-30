@@ -24,8 +24,10 @@ const rows = JSON.parse(readFileSync('tools/plates/plates.json', 'utf8')) as Rec
 const IDS = Object.keys(rows);
 
 /** BuiltHowTo's content-only fields (module layout 2.3): what content.mjs actually persists into ht-<slug>.ts.
- *  `zooms`/`feel` are golden B too, but they are HT-7's/HT-8's own generated files, so they are excluded here. */
+ *  `zooms` is narrowed to descriptors (checked separately below, HT-6/supervisor ruling on PR #116); `feel` is
+ *  golden B too, but it is HT-8's own generated file, so it is excluded here. */
 const BASE_KEYS = ['rev', 'extends', 'handling', 'contacts', 'setup', 'posture', 'chips', 'copy', 'mistakes', 'risks', 'riskFlags', 'redFlag', 'sources', 'research'] as const;
+const DESCRIPTOR_KEYS = ['key', 'chip', 'chipCaption', 'heading', 'kind', 'feelRow'] as const;
 
 let rendered: Map<string, { text: string }>, all: { byId: Map<string, any>; sourcesById: Map<string, any> };
 
@@ -57,8 +59,16 @@ describe('HT5-A1: generated, not typed', () => {
         if (c[k] === undefined) expect(built[k], `${id}.${k}`).toBeUndefined();
         else expect(built[k], `${id}.${k}`).toEqual(c[k]);
       }
-      expect(built.zooms, `${id}.zooms must stay absent (HT-7's file)`).toBeUndefined();
       expect(built.feel, `${id}.feel must stay absent (HT-8's file)`).toBeUndefined();
+
+      // zooms: the base chunk holds only the S0 chip-row descriptor per zoom, === golden B, golden-B order; the
+      // rendered crop/hand strings stay out (HT-7's/HT-6's own lazy chunks).
+      expect(built.zooms, `${id}.zooms`).toHaveLength(c.zooms.length);
+      built.zooms.forEach((d: any, i: number) => {
+        const z = c.zooms[i];
+        expect(Object.keys(d).sort(), `${id}.zooms[${i}] keys`).toEqual(DESCRIPTOR_KEYS.filter(k => z[k] !== undefined).sort());
+        for (const k of DESCRIPTOR_KEYS) if (z[k] !== undefined) expect(d[k], `${id}.zooms[${i}].${k}`).toEqual(z[k]);
+      });
     }
   });
 
