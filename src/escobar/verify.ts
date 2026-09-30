@@ -155,7 +155,11 @@ const MEDICAL = /\b(chest pain|chest (hurts|tight)|faint(ed|ing)?|passed out|bla
 const PAIN = /\b(sharp pain|shooting pain|stabbing|numb(ness)?|tingl\w*|pins and needles|radiat\w*|pain|hurts?|injur\w*|strain(ed)?|sprain(ed)?|tweak(ed)?|pulled (a|my))\b/i;
 const EATING = /\b(starv\w*|not eating|stop(ped)? eating|purg\w*|throw(ing)? up after|binge\w*|500 calories|800 calories|lose \d{2,} ?(kg|lb|pounds|kilos) in (a|one|two|\d) (week|month)|laxatives?|skip(ping)? (all )?meals|burn off (what|everything) i ate)\b/i;
 
-export function safetySignals(text: string): SafetySignal[] {
+/** BUG-30: phone keyboards type the apostrophe as ’ (U+2019), ‘ (U+2018) or ʼ (U+02BC); the patterns above expect '. */
+const APOSTROPHES = /[\u2018\u2019\u02BC]/g;
+
+export function safetySignals(raw: string): SafetySignal[] {
+  const text = raw.replace(APOSTROPHES, "'");
   const out: SafetySignal[] = [];
   if (CRISIS.test(text)) out.push('crisis');
   if (MEDICAL.test(text)) out.push('medical');
