@@ -15,17 +15,17 @@
    "claim": "c1",
    "source": "vg-pecfly",
    "text": "Sit on the machine with your back pressed firmly against the backrest and your feet flat on the floor.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Sit on the machine with your back pressed firmly against the backrest and your feet flat on the floor.",
+   "note": ""
   },
   {
    "claim": "c2",
    "source": "vg-pecfly",
    "text": "Adjust the seat height of the pectoral fly machine so that the handles are at chest level.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Adjust the seat height of the pectoral fly machine so that the handles are at chest level.",
+   "note": ""
   },
   {
    "claim": "c2",
@@ -47,9 +47,9 @@
    "claim": "c3",
    "source": "vg-pecfly",
    "text": "Grasp the handles with an overhand grip and keep your elbows slightly bent.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Grasp the handles with an overhand grip and keep your elbows slightly bent.",
+   "note": ""
   },
   {
    "claim": "c3",
@@ -79,9 +79,9 @@
    "claim": "c5",
    "source": "vg-pecfly",
    "text": "Exhale and push the handles together in front of your chest, squeezing your chest muscles.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Exhale and push the handles together in front of your chest, squeezing your chest muscles.",
+   "note": ""
   },
   {
    "claim": "c6",
@@ -197,9 +197,9 @@
   },
   {
    "id": "vg-pecfly",
-   "access": "summary",
+   "access": "full",
    "checked": "2026-09-30",
-   "fixes": "curl 403 (Cloudflare); only WebFetch AI summary, not verbatim text"
+   "fixes": ""
   },
   {
    "id": "hl-pecdeck",

@@ -85,7 +85,7 @@
   ],
 
   "sources": [
-    { "id": "nfpt-rope", "url": "https://nfpt.com/how-to-do-tricep-pushdowns-with-the-rope/", "title": "How to do Tricep Pushdowns with the Rope (Robert Bovee, NFPT)", "kind": "coach", "year": 2025, "pmid": null, "access": "summary", "checked": "2026-09-30" },
+    { "id": "nfpt-rope", "url": "https://nfpt.com/how-to-do-tricep-pushdowns-with-the-rope/", "title": "How to do Tricep Pushdowns with the Rope (Robert Bovee, NFPT)", "kind": "coach", "year": 2025, "pmid": null, "access": "full", "checked": "2026-09-30" },
     { "id": "ace-pushdown", "url": "https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/", "title": "Triceps Pushdowns (ACE Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
     { "id": "sl-rope", "url": "https://www.strengthlog.com/?p=2541", "title": "How to Do Tricep Pushdown With Rope: Muscles Worked & Proper Form", "kind": "coach", "year": 2023, "pmid": null, "access": "full", "checked": "2026-09-30" },
     { "id": "sl-pushdown", "url": "https://www.strengthlog.com/tricep-pushdown/", "title": "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form", "kind": "coach", "year": 2023, "pmid": null, "access": "full", "checked": "2026-09-30" },

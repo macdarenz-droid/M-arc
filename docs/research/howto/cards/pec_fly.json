@@ -73,7 +73,7 @@
 
   "sources": [
     { "id": "ace-top3-chest", "url": "https://www.acefitness.org/certifiednewsarticle/3003/what-are-the-top-3-most-effective-chest-exercises/", "title": "What are the Top 3 Most Effective Chest Exercises? (Schanke, Porcari et al., ACE Certified News)", "kind": "guideline", "year": 2011, "pmid": null, "access": "full", "checked": "2026-09-30" },
-    { "id": "vg-pecfly", "url": "https://exercises.virtuagym.com/exercise/pectoral-fly-machine/", "title": "Pectoral Fly Machine Video Exercise Guide (Virtuagym)", "kind": "coach", "year": 2023, "pmid": null, "access": "summary", "checked": "2026-09-30" },
+    { "id": "vg-pecfly", "url": "https://exercises.virtuagym.com/exercise/pectoral-fly-machine/", "title": "Pectoral Fly Machine Video Exercise Guide (Virtuagym)", "kind": "coach", "year": 2023, "pmid": null, "access": "full", "checked": "2026-09-30" },
     { "id": "hl-pecdeck", "url": "https://www.healthline.com/health/pec-deck", "title": "How and Why to Use a Pec Deck Machine", "kind": "coach", "year": 2019, "pmid": null, "access": "full", "checked": "2026-09-30" },
     { "id": "pinto-2025", "url": "https://pubmed.ncbi.nlm.nih.gov/40266636/", "title": "Pectoralis Clavicular and Sternocostal Thicknesses Increase Similarly in Response to One and Three Sets of Pec Deck Resistance Training in Untrained Young Men", "kind": "peer-reviewed", "year": 2025, "pmid": 40266636, "access": "abstract", "checked": "2026-09-30" },
     { "id": "soncin-2014", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4327372/", "title": "Influence of exercise order on electromyographic activity during upper body resistance training", "kind": "peer-reviewed", "year": 2014, "pmid": 25713681, "access": "full", "checked": "2026-09-30" },

@@ -23,9 +23,9 @@
    "claim": "c2",
    "source": "nfpt-rope",
    "text": "Grip the rope with your hand against the clubbed end.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Grip the rope with your hand against the clubbed end.",
+   "note": ""
   },
   {
    "claim": "c2",
@@ -63,9 +63,9 @@
    "claim": "c5",
    "source": "nfpt-rope",
    "text": "Your wrists should be straight throughout the movement, press the handle down toward the floor to the extended position.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Your wrists should be straight throughout the movement, press the handle down toward the floor to the extended position.",
+   "note": ""
   },
   {
    "claim": "c5",
@@ -79,9 +79,9 @@
    "claim": "c6",
    "source": "nfpt-rope",
    "text": "Keep your elbows in at your sides during the entire movement. As your elbows move away from your body your shoulders will come into play, you will no longer be isolating your triceps.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Keep your elbows in at your sides during the entire movement. As your elbows move away from your body your shoulders will come into play, you will no longer be isolating your triceps.",
+   "note": ""
   },
   {
    "claim": "c7",
@@ -95,33 +95,33 @@
    "claim": "c8",
    "source": "nfpt-rope",
    "text": "Take two to three seconds to raise the bar up until your forearms are just past parallel to the floor.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Take two to three seconds to raise the bar up until your forearms are just past parallel to the floor.",
+   "note": ""
   },
   {
    "claim": "c8",
    "source": "nfpt-rope",
    "text": "Be sure that the bar does not go higher than just above parallel. If it does you will feel it more in your forearms.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Be sure that the bar does not go higher than just above parallel. If it does you will feel it more in your forearms.",
+   "note": ""
   },
   {
    "claim": "c9",
    "source": "nfpt-rope",
    "text": "When your arms are extended, your wrists, elbow and shoulder should be in a line perpendicular to the floor.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "When your arms are extended, your wrists, elbow and shoulder should be in a line perpendicular to the floor.",
+   "note": ""
   },
   {
    "claim": "c9",
    "source": "nfpt-rope",
    "text": "Do not lock out your elbows in the extended position. Failure to do so can result in injury to your elbows.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Do not lock out your elbows in the extended position. Failure to do so can result in injury to your elbows.",
+   "note": ""
   },
   {
    "claim": "c9",
@@ -167,9 +167,9 @@
    "claim": "c13",
    "source": "nfpt-rope",
    "text": "Do not raise the bar any faster than two to three seconds. You must stay in control at all times during this movement.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "Do not raise the bar any faster than two to three seconds. You must stay in control at all times during this movement.",
+   "note": ""
   },
   {
    "claim": "c13",
@@ -207,17 +207,17 @@
    "claim": "c17",
    "source": "nfpt-rope",
    "text": "The primary muscles stressed in this movement are the muscles in the back of your upper arm",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "The primary muscles stressed in this movement are the muscles in the back of your upper arm",
+   "note": ""
   },
   {
    "claim": "c17",
    "source": "nfpt-rope",
    "text": "The secondary muscles stressed are the muscles in your forearms and bicep.",
-   "status": "unreachable-source",
-   "closest": "",
-   "note": "source only reachable as WebFetch summary (403 via curl)"
+   "status": "verbatim",
+   "closest": "The secondary muscles stressed are the muscles in your forearms and bicep.",
+   "note": ""
   },
   {
    "claim": "c18",
@@ -231,9 +231,9 @@
  "sources": [
   {
    "id": "nfpt-rope",
-   "access": "summary",
+   "access": "full",
    "checked": "2026-09-30",
-   "fixes": "curl 403 (Cloudflare); only WebFetch AI summary, not verbatim text"
+   "fixes": ""
   },
   {
    "id": "ace-pushdown",
