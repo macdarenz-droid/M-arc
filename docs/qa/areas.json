@@ -2619,7 +2619,7 @@
     "unused_exports": "-"
    },
    {
-    "file": "src/escobar/ui/*.tsx (Sheet, Composer, Dock, Hall, Citation, Escalation, SettingsSection, Thinking, AskAbout, MemoryPlaceholder, components)",
+    "file": "src/escobar/ui/*.tsx (Sheet, Composer, Dock, Hall, Escalation, SettingsSection, Thinking, AskAbout, MemoryPlaceholder, components)",
     "purpose": "chat UI",
     "key_exports": "UNTESTED (gate only); Message.tsx/PlanBoard.tsx/present.ts/prompts.ts tested by escobar/ui.test.ts",
     "unused_exports": "-"
@@ -3020,9 +3020,9 @@
    },
    {
     "name": "Fact ledger + citations",
-    "entry_points": "ledger.captureFacts, Message.AnswerText, Citation",
+    "entry_points": "ledger.captureFacts, Message.AnswerText, present.splitCitations",
     "status": "working",
-    "notes": "Citation popover cannot be closed by re-tapping chip (ES-27)"
+    "notes": "Markers are stripped from display and used only by the number check; no citation chip or popover (ESC-NC, owner decision LR-23)"
    },
    {
     "name": "Numeric verification + repair round",
@@ -3494,7 +3494,7 @@
    },
    {
     "file": "src/escobar/ui/Message.tsx",
-    "purpose": "Turn grouping, answer text w/ citations + unverified marks, proposal/nav/escalation cards, drawer",
+    "purpose": "Turn grouping, answer text (markers stripped) + unverified marks, proposal/nav/escalation cards, drawer",
     "key_exports": "turnsOf, EscobarTurnView, AnswerText, UserBubble, ProposalCard",
     "unused_exports": "none"
    },
@@ -3520,12 +3520,6 @@
     "file": "src/escobar/ui/PlanBoard.tsx",
     "purpose": "Live plan whiteboard during plan-building turns",
     "key_exports": "PlanBoard, currentTurn, isPlanWork",
-    "unused_exports": "none"
-   },
-   {
-    "file": "src/escobar/ui/Citation.tsx",
-    "purpose": "Fact/card citation chips with popover",
-    "key_exports": "Citation, CardCitation, sourceLabel",
     "unused_exports": "none"
    },
    {
@@ -3572,8 +3566,8 @@
    },
    {
     "file": "src/escobar/ui/present.ts",
-    "purpose": "pastTense, splitCitations",
-    "key_exports": "pastTense, splitCitations",
+    "purpose": "pastTense, splitCitations (strips every marker), drawerView (hides sources, rating and escalate notes, LR-23)",
+    "key_exports": "pastTense, splitCitations, drawerView",
     "unused_exports": "none"
    },
    {
@@ -3694,11 +3688,6 @@
    },
    {
     "file": "src/escobar/images.ts",
-    "lines": 51,
-    "read_fully": true
-   },
-   {
-    "file": "src/escobar/ui/Citation.tsx",
     "lines": 51,
     "read_fully": true
    },
