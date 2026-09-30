@@ -130,6 +130,7 @@ Fix a label by hand with `box` when the automatic spot is not the one a designer
 | `barbell` | `at`, `plateD`, `plates` (thicknesses per side), `barLen`, `collar`, `shaftD`, `sleeveD` | IWF men's bar: 2.2 m, 28 mm shaft, 50 mm sleeves, collars 1.31 m apart; 450 mm plates. Side view: the near plate is an outline over the figure |
 | `rackUpright` | `at`, `h`, `w`, `hook` (J-hook height), `span` (front view) | 76 mm (3 in) tube, 2.3 m, 7 cm J-hook |
 | `cable`, `pulley`, `box`, `line` | generic parts | |
+| `poly` | `pts` (world points, at least 3), `curve` (closed smooth curve instead of straight edges), `cls` (default `eq`) | a closed filled outline for parts `box` and `line` cannot close, e.g. a rope or an angled sled; throws on fewer than 3 points. Moving poly parts are outlined in the Mistake view |
 
 Every item accepts `z`: `'back'` (behind the figure), `'center'` (body mid-plane: behind the near leg, in front of
 the far limbs; cables), `'mid'` (in front of the trunk and near leg, behind the near arm; handles held in both

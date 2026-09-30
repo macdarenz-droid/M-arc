@@ -11,6 +11,7 @@ Use what's necessary for high-quality output and a fast workflow, while saving t
 
 - Keep token use low. Read only what the task needs, write short, don't repeat context. Spend more only when a task is complex and truly needs it.
 - Explain and summarise for the owner in plain, simple words.
+- UI copy (owner, 2026-10-01): never put words in the app or on the website that talk down to users or state the obvious ("In plain words", "Not medical advice" on a gym app). Explain nothing unless Google Play requires it (cite the policy) or the owner explicitly asked for it. Labels that name a control or show data stay. Plain words are for messages to the owner, not a label on user-facing text.
 - During a task, post short plain-word updates only when something important changed.
 - Decide, don't ask. Research first, pick the best logical option, apply it, and record why. Ask the owner only for input or an action no AI agent can do (a payment, a login, a secret, a check on a real device).
 - No guessing, even on simple tasks. Check the code, docs or data first; if you cannot verify something, say so.
