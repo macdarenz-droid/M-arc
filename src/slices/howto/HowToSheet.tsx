@@ -27,11 +27,6 @@ export function HowToSheet({ exerciseId, name, onClose }: HowToSheetProps) {
     void import('@/howto/generated').then(m => m.LOADERS[exerciseId]()).then(m => { if (live) setHowTo(m.default); }).catch(() => { if (live) howToLoadFailed(onClose); });
     return () => { live = false; };
   }, []);
-  // Focus goes back to the entry that opened the sheet.
-  useEffect(() => {
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    return () => { if (opener?.isConnected) opener.focus({ preventScroll: true }); };
-  }, []);
   if (!howTo) return null;
   return (
     <Sheet class="ht" eyebrow={HOWTO_LABEL} title={name} onClose={onClose}>

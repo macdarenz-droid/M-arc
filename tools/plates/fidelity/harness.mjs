@@ -249,7 +249,7 @@ export async function openCard(page, index) {
 export async function openHowTo(page, index) {
   const card = await openCard(page, index);
   await card.locator('button.ht-entry').click();
-  await page.locator('dialog.sheet.ht .ht-golden .ht-plate[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
+  await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
   await settleApp(page);
   return card;
 }
@@ -478,7 +478,7 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
     const P = m => problems.push(`${theme} ${m}`);
     const app = await openAppTrain(browser, port, theme, { onError: m => P(`app page error: ${m}`) });
     const gold = await openGolden(browser, theme, { onError: m => P(`golden page error: ${m}`) });
-    const figSel = { app: 'dialog.sheet.ht .ht-plate[data-mode="normal"]', golden: id => `#card-${id} .plate[data-mode="normal"]` };
+    const figSel = { app: 'dialog.sheet.ht .ht-golden figure[data-mode="normal"]', golden: id => `#card-${id} .plate[data-mode="normal"]` };
     let width = DEVICE.viewport.width, withM = false;
     const both = async fn => { await Promise.all([fn(app.page, 'app'), fn(gold.page, 'golden')]); };
     const check = async (id, label, { markup = true } = {}) => {
@@ -526,7 +526,7 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
       }
       if (tall) { await Promise.all([app.page.setViewportSize({ width, height: 844 }), gold.page.setViewportSize({ width, height: 844 })]); await settleApp(app.page); }
     };
-    const keys = (mode) => app.page.$$eval(`dialog.sheet.ht .ht-plate[data-mode="${mode}"] .plate-callout`, bs => bs.map(b => b.dataset.key));
+    const keys = (mode) => app.page.$$eval(`dialog.sheet.ht .ht-golden figure[data-mode="${mode}"] .plate-callout`, bs => bs.map(b => b.dataset.key));
     for (const w of [390, ...(full.includes(theme) ? widths : [])]) {
       width = w;
       if (w !== 390) {   // the app reopens every sheet at S0; the golden page is reloaded so its cards are at S0 too
@@ -702,8 +702,8 @@ export async function presentControls(browser, theme = 'silent-black', id = HT_P
     shots.push({ png: await capture(page, await region(page, G.golden(id), 'golden')), page, ctx });
   }
   const d128 = await diffPng(shots[0].page, shots[0].png, shots[1].png), d1 = await diffPng(shots[0].page, shots[0].png, shots[2].png);
-  if (!identical(d128)) problems.push(`present control: the golden at phase p and p+128 differs (${d128.off} px), so the 128 px period is wrong`);
-  if (meetsRule(d1)) problems.push(`present control: the golden at phase p and p+1 meets the rule (${d1.off} px), so the phase check is blind`);
+  if (!identical(d128)) problems.push(`${theme} present control: the golden at phase p and p+128 differs (${d128.off} px), so the 128 px period is wrong`);
+  if (meetsRule(d1)) problems.push(`${theme} present control: the golden at phase p and p+1 meets the rule (${d1.off} px), so the phase check is blind`);
   for (const s of shots) await s.ctx.close();
   return { problems, d128: d128.off, d1: d1.off };
 }
