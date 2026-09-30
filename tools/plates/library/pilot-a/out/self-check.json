@@ -1,8 +1,8 @@
 {
- "pageSha": "e6afb18d833fc61b08e92578eaa03fd15ddb474c1a315b2039c5899a4b211e73",
- "pageBytes": 1734703,
- "sheetSha": "e794c970c9f9883fe64455a5af75e03f66748a1396b301d5e6b64aa6f486683e",
- "sheetBytes": 3690184,
+ "pageSha": "895e92fa3c002a7ea899a7f89dc60b7427de00004d8fd05d46e3eb6aa882923b",
+ "pageBytes": 1736415,
+ "sheetSha": "72f3ef3d45f1c577b26971f77d790b0b2bacba90109187987a5d39f69018119f",
+ "sheetBytes": 3691392,
  "warnings": "",
  "plates": [
   {
@@ -241,9 +241,9 @@
    ],
    "measures": {
     "pxPerM": 146.29,
-    "coverage": 0.113,
-    "longestLeader": 46.1,
-    "boxed": 1
+    "coverage": 0.112,
+    "longestLeader": 33.4,
+    "boxed": 0
    },
    "issues": []
   },
