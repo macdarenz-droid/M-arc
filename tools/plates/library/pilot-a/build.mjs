@@ -128,9 +128,14 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
   } finally { await browser.close(); }
 
   // 5. the sheet: the plates page with a row per card (card + aside), heading with the plates page sha
-  const sheetHeading = { ...heading, title: 'M/ARC Library Plates · Pilot A sheet', intro: `${heading.intro}</p><p>Each row: the plate as it will ship (live), its Mistake, a Paper thumbnail, the closest approved plate and every flag. Research: the verified cards at claude/libht-research e2a70bc. Plates page sha256 <span class="pg-sha">${pageSha}</span> (${plates.length.toLocaleString('en')} B); the cards on this sheet are byte-identical to that page.` };
+  // Owner decision LR-23 (2026-09-30): no Sources section and no source, study or organisation names in the sheet's
+  // visible text; sources stay in the card data. The footer line and the golden chrome's sources list are dropped here.
+  const sheetHeading = { ...heading, foot: 'Pilot sheet for the owner\'s review. Drawings are computed by our own code from the verified research cards.', title: 'M/ARC Library Plates · Pilot A sheet', intro: `${heading.intro}</p><p>Each row: the plate as it will ship (live), its Mistake, a Paper thumbnail, the closest approved plate and every flag. Research: the verified cards at claude/libht-research e2a70bc. Plates page sha256 <span class="pg-sha">${pageSha}</span> (${plates.length.toLocaleString('en')} B); the cards on this sheet are byte-identical to that page.` };
   let sheet = (await buildPlatesPage({ groups, sources, specs, heading: sheetHeading })).html.toString();
   sheet = sheet.replace('</style>', `${SHEET_CSS}</style>`);
+  const src = sheet.match(/\n  <details id="sources">[\s\S]*?<\/details>/g);
+  if (src?.length !== 1) throw new Error('sheet: the sources list was not found exactly once');
+  sheet = sheet.replace(src[0], '');
   for (const p of LIST) {
     const cid = p.id.replace(/_/g, '-'), s = shots[cid], apId = APPROVED_CHROME[p.closest] ?? p.closest.replace(/_/g, '-');
     const fl = flags[p.id], spec = specMods[p.id];
