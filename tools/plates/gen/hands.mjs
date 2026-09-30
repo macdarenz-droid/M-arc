@@ -131,7 +131,9 @@ export const HAND_MEASURED = Object.freeze({
 });
 export const handCeiling = id => { const m = HAND_MEASURED[id]; if (!m) throw new Error(`hands: no budget for ${id}`); return { raw: Math.ceil((m.raw * 11) / 10), gz: Math.ceil((m.gz * 11) / 10) }; };   // integer maths (84470 * 1.1 is 92917.00000000001)
 
-const lit = s => JSON.stringify(s);
+/** A single-quoted JS string literal of `s`: its value is `s` exactly, and the markup's double quotes stay unescaped,
+ *  so golden B's `xmlns="http://www.w3.org/2000/svg"` reads as that attribute, which C17 allows (D-HT4-C17). */
+export const lit = s => `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')}'`;
 
 /** The page's style without its at-rule blocks (@media, @keyframes, @font-face, @supports). Throws if one of them holds
  *  a close-up rule, which scopedRules would then miss. */
