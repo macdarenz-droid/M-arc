@@ -71,7 +71,7 @@ function cardsInReply(v: Node): Node[] {
     if (x.type === Escalation) found.push(x);
     walk(x.props?.children);
   };
-  walk(EscobarTurnView(v.props as Parameters<typeof EscobarTurnView>[0]));
+  walk(EscobarTurnView(v.props as unknown as Parameters<typeof EscobarTurnView>[0]));
   return found;
 }
 
