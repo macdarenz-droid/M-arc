@@ -1031,3 +1031,52 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the golden-B page approval instead lives in `tools/plates/layers/MANIFEST.json`'s own `pageApproval` field (`{ current: {ref, approvedBy, date, pageSha256, bytes, why}, history: [] }`), which nothing outside `tools/plates/layers.mjs` reads. `GOLDEN.json` and `golden.test.ts` are untouched. Conditions the supervisor set, all implemented: a literal hash over the sorted MANIFEST `path:sha256` list plus `pageApproval` (`layers-vendor.test.ts`, mirrors HT-2's own MANIFEST-pin fix), proven by a mutation where a file and its own MANIFEST entry change together and the pin still catches it; `history` stays append-only (proven by `historyPin`, a mutation showing an edited past entry changes the pin); the pin constant is named `GOLDEN_B_REF` (`tools/plates/layers.mjs`), one place.
   **Why**: the owner's rule that a golden path is touched only by the card that creates it or a "golden update" PR; GOLDEN.json turned out to be load-bearing for HT-2's committed output in a way the card's write_scope did not anticipate, so the least-blast-radius fix was to keep the approval entirely inside HT-4's own file.
 - **Decided**: the golden-B pin stays at `16a8edc` for this build. A compact-copy golden-B update (shorter, concept-first text; a build-time copy lint with named length limits, already added to `checks/c7.ts`'s `LIMITS`) is in progress on the owner's side; the real `pageApproval.current` for that pin, and moving today's `16a8edc` approval into `history`, is a follow-up once the supervisor sends the new commit and page sha256 - not added speculatively now.
+
+## HT-9 Setup/Risks/Sources: interface gaps the card was silent on (HT-9 builder, 2026-09-30)
+
+- **Decided**: built starting from HT-3's pushed head merged with HT-4's (`content-types.ts` is a hard, unlisted
+  transitive need: Risks.tsx and Sources.tsx type against it directly). HT-5, HT-6, HT-7 and HT-8 had not pushed a
+  branch yet at start (`git ls-remote` showed only HT-1 through HT-4), so the three sections were written and
+  unit-tested as far as that allows, then left for a HT-5 merge before "ready for review":
+  - `Setup.tsx` has no dependency on HT-5 (`chromeIdOf`, `howTo.setup`, `howTo.zooms`, defensively optional-chained
+    since `BuiltHowTo` still types both `never`). `renderSetup` is a pure function (no hooks) so
+    `tests/howto/sections-setup.test.ts` runs and passes standalone today, mutation-proven (dropping the `hidden`
+    attribute on a collapsed step fails 2 of 5 tests; restored).
+  - `Risks.tsx` and `Sources.tsx` import `RED_FLAG`/`RED_FLAG_SHOULDER`/`RED_FLAG_KNEE`/`RED_FLAG_ELBOW`/
+    `DISCLAIMER`/`SHOW_EVIDENCE` from `@/howto/archetypes` (HT9-A3's own wording: "all from archetypes.ts"), which
+    does not exist until HT-5 lands. `npx tsc --noEmit` on this branch fails on exactly those two files for that
+    reason, plus `BuiltHowTo.riskFlags`/`.risks`/`.sources` still typed `never` (HT-5 also owns un-`never`-ing them
+    in `types.ts`, per plan 2.2's "layers fields stay never until the card that builds each layer defines its
+    type"). Nothing else in the diff fails typecheck; `npm test` is green (1847/1847) and `npm run build` is
+    untried pending HT-5 (a build that imports a real BuiltHowTo module through `sections/index.ts` would also hit
+    the same missing archetypes.ts).
+- **Decided (Sources data shape, flagged for HT-5 reconciliation, not a golden-B question)**: golden B resolves
+  each source id through its own per-exercise-file `SOURCES`/`EVIDENCE_LABELS` maps (`docs/howto/golden-b/
+  exercises/*.howto.mjs`), which is richer than `content-types.ts`'s `HowToContent.sources: readonly SourceId[]`
+  (bare ids). `content-types.ts` does carry a full `Source` (cite/url/kind/access/checked), just not the
+  per-exercise evidence badge (`EVIDENCE_LABELS[key] = {tag, text}`). `Sources.tsx` reads `howTo.sources` as
+  `Source & {tags?: EvidenceTag[]; note?: string}` (a local `SourceWithEvidence`, composed only from types HT-4
+  already exports) to render golden B's evidence badges and citation text. This is the best-supported reading, not
+  a guess at new copy or layout; it needs checking against whatever `BuiltHowTo['sources']` HT-5 actually generates,
+  since the plan's HT-4 risk_and_recovery note ("if a golden-B spec uses a field GA lacks, add it to the types...
+  never drop a mockup field") puts the fix in the types, not invented here.
+- **Decided**: the "Show me the &lt;chip&gt;" buttons in Setup keep golden B's markup (`.st-show`, `data-zoom`)
+  but carry no click handler yet. Golden B wires them to `openZoom(key, btn)`, a page-level function that opens the
+  matching close-up in the plate's zoom slot; the app-side equivalent is owned by HT-6/HT-7 (the "Look closer" chip
+  row and the zoom content itself), not listed as HT-9 write_scope or reserved_paths, and does not exist yet either
+  (no HT-6/HT-7 branch). None of HT9-A1 to HT9-A5 test the click routing, only the static markup/collapse states
+  (goldenB.mjs's own state driver opens zooms by their own chips, not through a setup step's "Show me" link), so
+  this is deferred rather than invented, and is not a golden-B gap.
+- **Decided**: `SETUP_VISIBLE = 5`, matching golden B's `SETUP_MAX_STEPS` (`docs/howto/golden-b/artifact/
+  copy-lint.mjs`), not the plan/GA's older "first 3 shown" line (2.4 item 6 / GA 2.1 item 8), which predates the
+  2026-09-30 compact-copy pin. Checked against golden B directly: all 8 exercises have exactly 5 setup steps today,
+  so `more <= 0` and the "All N steps" button never renders on real content (matches the golden-B supervisor note
+  in `howto-layers.mjs`: "with the compact caps every row and step shows ... the collapse code stays for any list
+  longer than its cap"). The collapse behaviour itself is unit-tested with a synthetic 7-step fixture.
+- **Not done yet**: gate block HT-9 (`scripts/screenshot-gate.mjs`) and the `npm run gate` / goldenB.mjs L3 probes
+  (HT9-A1, HT9-A5). These need a real `BuiltHowTo` with real setup/risks/sources content (HT-5) to open the actual
+  sheet against; a probe added now against the still-`never` stub would be either a no-op or a fake pass, which the
+  owner rule against loosening a check forbids. Added once HT-5 (and, for HT9-A5's "after scrolling and expanding
+  everything" full-sheet check, HT-6/HT-7/HT-8) are merged in.
+  **Why**: card HT-9, `git ls-remote` showing no HT-5/6/7/8 branch at start, and the owner's "never loosen or skip a
+  check" / "no guessing" rules over inventing a data shape or a fake gate pass.

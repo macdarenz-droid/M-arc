@@ -1,7 +1,9 @@
 /* HT-9: "Set it up", "Risks and when to stop" and "Where this comes from" (plan 2.4 items 6-8), the golden B
-   rules for .hw-sec/.setup/.st-*/.risks/.rk-list/.redflag/.srcs/.src-*/.ev*/.ht-disclaimer, scoped under .ht like
-   every How-to rule (css.test). `.eyebrow` itself is already global (src/ui/styles.css); only the section's own
-   margin reset is repeated here. */
+   rules for the setup, risks, red flag, sources and disclaimer classes, scoped under .ht like every How-to rule
+   (css.test). The eyebrow class itself is already global (src/ui/styles.css); only the section's own margin
+   reset is repeated here. No new timing or theme token, so this block stays empty (css.test HT2-A6). */
+/* ht-tokens:start */
+/* ht-tokens:end */
 .ht .hw-sec { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--border-subtle); }
 .ht .hw-sec > h4.eyebrow { margin: 0; }
 .ht .hw-sec h4:focus { outline: none; }
@@ -21,7 +23,7 @@
 .ht .risks { display: grid; gap: var(--sp-3); }
 .ht .rk-list { margin: 0; padding-left: 18px; display: grid; gap: var(--sp-2); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); }
 .ht .rk-list li::marker { color: var(--text-3); }
-.ht .redflag { display: flex; gap: 8px; padding: 10px 12px; border-radius: var(--radius-md, 10px); border: 1px solid color-mix(in srgb, var(--mistake) 35%, var(--border)); color: var(--text); font-size: var(--fs-small); line-height: var(--lh-small); }
+.ht .redflag { display: flex; gap: 8px; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid color-mix(in srgb, var(--mistake) 35%, var(--border)); color: var(--text); font-size: var(--fs-small); line-height: var(--lh-small); }
 .ht .redflag:focus { outline: none; }
 .ht .redflag:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .ht .redflag svg { flex: none; margin-top: 1px; color: var(--mistake); }
