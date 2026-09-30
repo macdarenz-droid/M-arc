@@ -2,6 +2,7 @@
 // each layer card adds one line here (keep both sides when merging).
 import type { FunctionComponent } from 'preact';
 import type { BuiltHowTo } from '@/howto/types';
+import { HandSections } from './Hand';
 import { Feel } from './Feel';
 
 export interface SectionProps {
@@ -15,5 +16,6 @@ export interface SectionDef {
 }
 
 export const SECTIONS: readonly SectionDef[] = [
+  { id: 'hand', Component: HandSections },   // HT-6: Look closer, Grip, Common handling mistakes
   { id: 'feel', Component: Feel },   // HT-8
 ];
