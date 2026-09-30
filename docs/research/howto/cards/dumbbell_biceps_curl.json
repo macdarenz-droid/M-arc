@@ -139,7 +139,7 @@
     ] },
   "risks": [
     { "risk": "Bent wrists under load can cause wrist discomfort.", "claim": "c6" },
-    { "risk": "Dropped weights, mostly free weights, are the most common way weight trainers get badly hurt.", "claim": "c16" }
+    { "risk": "Across all weight training, a weight dropping on you is the most common way people get badly hurt.", "claim": "c16" }
   ],
   "redFlags": [ "wrist" ],
   "zooms": [
