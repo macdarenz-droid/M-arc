@@ -131,11 +131,6 @@ export const HAND_MEASURED = Object.freeze({
 });
 export const handCeiling = id => { const m = HAND_MEASURED[id]; if (!m) throw new Error(`hands: no budget for ${id}`); return { raw: Math.ceil((m.raw * 11) / 10), gz: Math.ceil((m.gz * 11) / 10) }; };   // integer maths (84470 * 1.1 is 92917.00000000001)
 
-/** The app's own rule (not golden B's): the sheet panel's content box is 2 px narrower than golden B's card (16 px
- *  padding against 15, plan 2.5 critic fix 1), so this card's sections bleed 1 px each side, as `.ht-golden` does, and
- *  get golden B's 358 px width. */
-export const APP_CSS = '.ht-look, .ht-grip { margin-inline: -1px; }';
-
 const lit = s => JSON.stringify(s);
 
 /** The page's style without its at-rule blocks (@media, @keyframes, @font-face, @supports). Throws if one of them holds
@@ -166,6 +161,6 @@ export async function outputs() {
       + `import '../../slices/howto/css/zoom-${id}.css';\n`
       + `export const panel = ${lit(panel)};\n` });
   }
-  out.push({ path: 'src/slices/howto/css/hand.css', text: rewrite(`${H.HAND_CSS}\n${chromeRules(chrome)}\n${APP_CSS}`) });
+  out.push({ path: 'src/slices/howto/css/hand.css', text: rewrite(`${H.HAND_CSS}\n${chromeRules(chrome)}`) });
   return out;
 }
