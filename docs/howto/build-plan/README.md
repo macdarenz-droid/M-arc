@@ -14,6 +14,6 @@ Paths in these files were written from the supervisor's scratchpad:
 Owner decisions since the plan was written (2026-09-30):
 - O1: no paid physio/coach review.
 - O2: the safety line is "General guidance, not medical advice. If something hurts, stop and get it checked."
-- O3: show the evidence labels. Closed by the owner's LR-23 decision (2026-09-30): no sources, evidence labels or contacts in the UI; they stay in the data.
+- O3 (closed by LR-23): show the evidence labels. Closed by the owner's LR-23 decision (2026-09-30): no sources, evidence labels or contacts in the UI; they stay in the data.
 - No auto-open of the hand close-up and no new saved data, unless the owner says yes later.
 - The owner's chest press had horizontal handles.

@@ -67,7 +67,7 @@ lifting. When you train again, use the vertical handles, go lighter, and stop th
 a sore wrist is coaching consensus from the chest press and pull-up cards, not measured).
 
 **Two honest limits.** First, nobody has measured wrist load on a machine chest press handle. The heel-of-palm rule
-comes from mechanics and coaching agreement, and each rule in the app keeps an evidence tag that says so.
+comes from mechanics and coaching agreement, and each rule keeps an evidence tag in its data (research only, never shown in the app, LR-23).
 Second, "where you feel it" is a coaching target, not a measurement. On the machine chest press the front shoulders
 work almost as hard as the chest by EMG (Muyor 2023, https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/), so feeling
 them a bit is normal. The app says "if the front of your shoulders is doing most of the work" as a setup goal, not
@@ -84,7 +84,7 @@ more (see section 6), so no copy may be taken from it.
 rule sets, not 153 (section 3). Every library exercise is already assigned (appendix B); five need a second look.
 
 **What only you can decide** (section 8): paying a physio and a qualified coach to review the content, the wording
-of the "not medical advice" line, whether users see the evidence tags, whether the hand close-up may pop up once by
+of the "not medical advice" line, whether users see the evidence tags (settled by LR-23: they never do), whether the hand close-up may pop up once by
 itself (that needs a small "seen" note saved on the phone), and checking the wrong-hand picture against your photo.
 
 ---

@@ -257,7 +257,7 @@ Every ceiling is the measured value + 10 %, lowered to fit the measurement and n
   - HT-2: `generate.test` (L2, per-file inputsSha256), `ids.test`, `css.test` (lints, inline allow list, the 13-token drop), `class-map.test`, `theme-parity.test`, and the A3/A4 parts of `no-form-guide`.
   - HT-3: the A1/A5 parts of `no-form-guide`, `plate-state.test` (the pinned gallery-script behaviours and the zoom slot API).
   - HT-3b: `footprint.test` (esbuild size of `ids.ts` + `lazy.tsx`).
-  - HT-4: `layers-vendor.test` (L0-B), `goldenB-derivation.test` (golden B holds only golden-A plates), `content.test` with C1-C4, C6-C8, C15 (stub), C16 (data), C17 (source), and negative fixtures.
+  - HT-4: `layers-vendor.test` (L0-B), `goldenB-derivation.test` (golden B holds only golden-A plates), `content.test` with C1-C4, C6-C8, C15 (stub), C16 (data), C17 (source; its final form is HT-4b's, D-LR23-7), and negative fixtures.
   - HT-4b (LR-23): the re-vendored golden B, C17 with no URL exception except the SVG and xlink namespaces, `c19.ts` with fixtures M1-M9 and the D-LR23-1 extras, and the pattern parity test against `tests/guards/no-contacts.ts`.
   - HT-5: the content checks green on the generated content of all 8; `archetypes` and `HOWTO_HINTS` generated.
   - HT-6: C5 hand geometry, hand L2-B, `hint.test`.

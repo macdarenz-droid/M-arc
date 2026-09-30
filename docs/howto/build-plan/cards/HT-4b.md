@@ -17,7 +17,7 @@ Lane C · Sonnet · M · merge slot 5b (after HT-3b, before HT-5; D-LR23-6)
   - `tests/guards/no-contacts.ts` on main.
   - Re-derive every line number from main; never trust one from the plan.
 - **write_scope:**
-  - `tools/plates/layers/**` (re-vendored verbatim from the new golden-B commit, plus MANIFEST) and `tests/howto/golden/howto-layers.html` (the rebuilt page), in commits titled "[golden update]";
+  - `tools/plates/layers/**` (re-vendored verbatim from the new golden-B commit, plus MANIFEST), `tests/howto/golden/howto-layers.html` (the rebuilt page) and the `layers` entry (the page sha256) in `tests/howto/golden/GOLDEN.json`, in commits titled "[golden update]";
   - `tests/howto/layers-vendor.test.ts` (the pins);
   - `tools/plates/fidelity/goldenB.mjs`;
   - `tests/howto/checks/c17.ts` and its callers in `tests/howto/content.test.ts` and `tests/howto/content-gen.test.ts`;
@@ -31,7 +31,7 @@ Lane C · Sonnet · M · merge slot 5b (after HT-3b, before HT-5; D-LR23-6)
     - every file in `tools/plates/layers/` matches its MANIFEST sha256 at the new golden-B commit, and rebuilding the layer page gives the pageSha256 recorded in the golden-B README;
     - `MANIFEST.json` `pageApproval.current` = { ref: <the golden-B commit>, approvedBy: 'supervisor', date: '2026-09-30', why: 'applies owner decision LR-23 ("Dont put any emergency or whatever contacts. Even the source remove it in app ui. If its not required by pkaystore dont put."); the owner has not viewed this page yet', pageSha256, bytes }. It switches to 'owner' only after the owner views the page on pilot A;
     - `history` = [the a7a0b74 entry, unedited, then b3a90af, then 16a8edc];
-    - `layers.mjs` `PAGE_SHA256` and `GOLDEN_B_REF`, the MANIFEST pin literal, `approvedBy` and the historyPin literal in `layers-vendor.test.ts` follow;
+    - `layers.mjs` `PAGE_SHA256` and `GOLDEN_B_REF`, the MANIFEST pin literal, `approvedBy` and the historyPin literal in `layers-vendor.test.ts`, and the `layers` sha256 in `tests/howto/golden/GOLDEN.json`, follow;
     - every non-merge commit touching `tools/plates/layers/**` or `tests/howto/golden/**` carries "[golden update]".
     - Failure path: a 1-byte edit to a vendored file fails; `approvedBy: 'owner'` fails the pin test.
   - **HT4b-A2 (state driver):** `goldenB.mjs` drops the sources states (`expandSources`/`collapseSources` and their uses), and the "risks" state's capture includes `.ht-disclaimer`. The self-check still gives 0 px for every state.
@@ -42,6 +42,7 @@ Lane C · Sonnet · M · merge slot 5b (after HT-3b, before HT-5; D-LR23-6)
     - the callers are updated; the latent namespace hits on HT-6/7/8 (20, 46, 20 by grep, not yet run) clear.
     - Fixtures: a cite URL fails; an escaped SVG namespace passes; an escaped `xmlns=\"https://example.com/x\"` fails.
   - **HT4b-A4 (C19 unit checks; plan section 8, amended):** `c19.ts` imports `CONTACT_RE`, `SOURCE_RE`, `SOURCE_CS_RE` and `SAFETY_LINE_RE` from `tests/guards/no-contacts.ts` and runs in `content.test.ts` over all 8 sheets and every bad fixture. Wherever it applies `SOURCE_RE` it also applies `SOURCE_CS_RE`.
+    - (a) and (b) must never pass on nothing. At HT-4b's slot (before HT-5), they run on the vendored golden-B `shared.mjs` and the 8 `*.howto.mjs` sheets, and they assert exactly 8 sheets, so an empty run fails. HT5-A2 then turns them on against the generated `archetypes.ts` and `ht-*.ts`.
     - (a) `archetypes.ts` has no `SHOW_EVIDENCE` export. Every `RED_FLAG*` `name`, `now` and `doctor` and `DISCLAIMER` pass `CONTACT_RE`, `SOURCE_RE` and `SOURCE_CS_RE`; the boxes also pass `SAFETY_LINE_RE`.
     - (b) Every copy field of every built sheet (the copy-lint `copyFields` list, every kind except `sourceNote`) passes `CONTACT_RE`, `SOURCE_RE` and `SOURCE_CS_RE`, and contains no registry source's first-author surname or organisation name (the data-driven check of D-LR23-1; golden-B `copy-lint.mjs` `sourceName` shows one way to derive them).
     - (c) In every file under `src/howto/**` and `src/slices/howto/**`: no `<a` element and no `target=`; every `href=` or `xlink:href=` value starts with `#` (SVG `<use href="#…">` is legitimate); no class token `srcs`, `src-cite`, `src-ev`, `src-key`, `src-n`, `src-list`, `ev` or `ev-*`; no string literal equal to Measured, Mechanics, Coaching consensus or Weak for this use; no file or export named `sources` under `src/howto/generated`, and no `url` or `cite` keys there. `href`, `xlink:href` and `class` values are read in the same escaped form as C17 (D-LR23-7).
@@ -56,7 +57,12 @@ Lane C · Sonnet · M · merge slot 5b (after HT-3b, before HT-5; D-LR23-6)
     - M7: an `<a href="https://pubmed…" target="_blank">` in a section;
     - M8: `<span class="ev ev-data">Measured</span>`;
     - M9: "help@example.org";
-    - the D-LR23-1 extras: "Weiss 1995", "NSCA teaches", "text HOME to 741741" and "ring 13 11 14", each in a copy field.
+    - the D-LR23-1 extras: "Weiss 1995", "NSCA teaches", "text HOME to 741741" and "ring 13 11 14", each in a copy field;
+    - one fixture per rule with no M-number (LR23-DOCS review):
+      - a registry source's first-author surname in a copy field (the data-driven name check);
+      - escaped C19(c) values: `class=\"srcs\"` and `xlink:href=\"https://example.com/x\"` in a generated-style `.ts` literal;
+      - a `url` key, a `cite` key, and a `sources` export under a generated-style fixture file;
+      - a `src-cite` class token.
     - Pass fixture: "Get emergency help now." in a back-box fixture passes (D-LR23-1 allows those words, with no number, service or link).
   - **HT4b-A6 (parity):** `no-contacts-parity.test.ts` checks that the `.source` and `.flags` of all four patterns in the vendored `tools/plates/layers/artifact/copy-lint.mjs` are identical to `tests/guards/no-contacts.ts`.
     - Failure path: a one-character change to either copy fails.
