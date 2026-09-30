@@ -110,6 +110,21 @@ jobs:
           PLUGINS='android/app/src/main/assets/capacitor.plugins.json'
           for plugin in LocalNotifications Filesystem Share Haptics; do grep -qi "$plugin" "$PLUGINS" || { echo "::error::$plugin plugin missing"; exit 1; }; done
 
+      - name: TEMPORARY REL-2 mutation (reverted in the next commit)
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/targetSdkVersion = [0-9]*/targetSdkVersion = 35/' android/variables.gradle
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('android/app/build.gradle'); s=p.read_text()
+          s,n=re.subn(r'(?m)^(\s*release\s*\{)', r'\1\n            debuggable true', s, count=1)
+          if n!=1: raise SystemExit('release block not found')
+          p.write_text(s)
+          PY
+          grep -n targetSdkVersion android/variables.gradle; grep -n -A2 'release {' android/app/build.gradle
+
       - name: Build unsigned release bundle
         shell: bash
         run: |
