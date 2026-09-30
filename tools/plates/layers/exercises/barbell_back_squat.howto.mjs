@@ -6,6 +6,8 @@
 // Row copy trimmed to the 30-word lint (6.2); the wrist row's own red-flag sentence is replaced by the shared RED_FLAG,
 // which now names swelling (the card's "swelling, numbness or a weak grip", checked against the NHS page).
 // GENERAL.md wording is not used.
+// 2026-09-30 owner request (shorter, concept first): all user copy rewritten to artifact/copy-lint.mjs limits; lists cut
+// to the caps (see the notes above MISTAKES, rows and setup). Claims, sources, ids and zoom keys unchanged.
 // Render check: node exercises/barbell_back_squat.howto-render.mjs  ->  out/barbell_back_squat-howto-*.png
 //
 // Additions to the architecture's types, used by the mockup only (marked "mockup" below), as in the chest press file:
@@ -28,47 +30,47 @@ export { RED_FLAG };
  * `use` is the evidence label FOR THIS USE (architecture 3). `access` is what the card's verifier read. */
 export const SOURCES = {
   'ace-back-squat': { cite: 'ACE Exercise Library, Back Squat', url: 'https://www.acefitness.org/resources/everyone/exercise-library/11/back-squat/',
-    kind: 'guideline', access: 'full', checked: null, use: 'CONSENSUS' },
+    kind: 'guideline', access: 'full', checked: null, use: 'CONSENSUS', note: 'Coaching guide. Grip, rack height and depth.' },
   'hk-squat': { cite: 'Broussal-Derval A. Squat technique. Human Kinetics, 2019', url: 'https://us.humankinetics.com/blogs/strength-conditioning-fitness/squat-technique',
-    kind: 'guideline', access: 'full', checked: null, use: 'CONSENSUS', note: 'Teaches an "extended wrist grip" with the elbows down; Barbell Logic warns against over-extension. The card allows 0-15 deg.' },
+    kind: 'guideline', access: 'full', checked: null, use: 'CONSENSUS', note: 'Teaches an extended wrist, elbows down. Barbell Logic warns against over-bending.' },
   'nsca-summary': { cite: 'NSCA Essentials of Strength Training and Conditioning, exercise technique chapter (study summary)', url: 'https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/',
-    kind: 'secondary', access: 'summary', checked: null, use: 'CONSENSUS', note: 'Secondary source, paraphrase: closed grip, power rack with crossbars at the right height, exhale through the sticking point.' },
+    kind: 'secondary', access: 'summary', checked: null, use: 'CONSENSUS', note: 'Summary: closed grip, safety bars set right, exhale past the hardest part.' },
   'nsca-nfpt': { cite: 'NSCA back squat steps as quoted by NFPT', url: 'https://archive25.nfpt.com/?p=22119',
-    kind: 'secondary', access: 'summary', checked: null, use: 'CONSENSUS', note: 'Read via search summary only; the page returned 503.' },
+    kind: 'secondary', access: 'summary', checked: null, use: 'CONSENSUS', note: 'NSCA squat steps, read from a summary only.' },
   'barbell-logic-squat-grip': { cite: 'Reynolds M. Elbow Pain While Squatting? Fix Your Squat Grip. Barbell Logic', url: 'https://barbell-logic.com/?p=4521',
     kind: 'coach', access: 'full', checked: null, use: 'CONSENSUS', note: 'Low-bar coach source, no data.' },
   schulz: { cite: 'Schulz DS. Low Bar Squat Wrist Pain: Reasons and Solutions. Torokhtiy', url: 'https://store.torokhtiy.com/blogs/guides/low-bar-squat-wrist-pain',
-    kind: 'coach', access: 'unreachable', checked: null, use: 'WEAK', note: 'Page returned 429 in review; the sideways-bend claim was not re-verified. Never the only source of a claim.' },
+    kind: 'coach', access: 'unreachable', checked: null, use: 'WEAK', note: 'Coaching blog. Not rechecked. Never the only source here.' },
   glassbrook2017: { cite: 'Glassbrook DJ et al. Biomechanical differences between the high-bar and low-bar back-squat. J Strength Cond Res 2017;31(9):2618-2634', url: 'https://pubmed.ncbi.nlm.nih.gov/28570490/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'Review. High-bar and low-bar squats compared.' },
   wretenberg1996: { cite: 'Wretenberg P, Feng Y, Arborelius UP. High- and low-bar squatting techniques during weight-training. Med Sci Sports Exerc 1996;28(2):218-24', url: 'https://pubmed.ncbi.nlm.nih.gov/8775157/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'Lifting study. High-bar and low-bar squats compared.' },
   caterisano2002: { cite: 'Caterisano A et al. The effect of back squat depth on the EMG activity of 4 superficial hip and thigh muscles. J Strength Cond Res 2002;16(3):428-32', url: 'https://pubmed.ncbi.nlm.nih.gov/12173958/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'n=10.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'Muscle study, 10 people. Squat depth compared.' },
   kubo2019: { cite: 'Kubo K, Ikebukuro T, Yata H. Effects of squat training with different depths on lower limb muscle volumes. Eur J Appl Physiol 2019;119(9):1933-1942', url: 'https://pubmed.ncbi.nlm.nih.gov/31230110/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'MRI, n=17.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'MRI scans, 17 people. Squat depth and muscle growth.' },
   bloomquist2013: { cite: 'Bloomquist K et al. Effect of range of motion in heavy load squatting on muscle and tendon adaptations. Eur J Appl Physiol 2013;113(8):2133-42', url: 'https://pubmed.ncbi.nlm.nih.gov/23604798/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'n=17.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: '17 people. Deep and shallow squat training compared.' },
   paoli2009: { cite: 'Paoli A, Marcolin G, Petrone N. Stance width and thigh muscle EMG during the back squat. J Strength Cond Res 2009;23(1):246-50', url: 'https://pubmed.ncbi.nlm.nih.gov/19130646/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'WEAK', note: 'n=6; only glute max rose with a wide stance.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'WEAK', note: '6 people. Only the glutes worked more with a wide stance.' },
   clark2012: { cite: 'Clark DR, Lambert MI, Hunter AM. Muscle activation in the loaded free barbell squat: a brief review. J Strength Cond Res 2012;26(4):1169-78', url: 'https://pubmed.ncbi.nlm.nih.gov/22373894/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'Stance width does not significantly change activation.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'Stance width made no clear difference to the muscles.' },
   escamilla2001: { cite: 'Escamilla RF et al. A three-dimensional biomechanical analysis of the squat during varying stance widths. Med Sci Sports Exerc 2001;33(6):984-98', url: 'https://pubmed.ncbi.nlm.nih.gov/11404665/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'MECH', note: 'Wider stance raised hip and knee moments; no EMG.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'MECH', note: 'Wider stance raised the load on hips and knees. No muscle readings.' },
   contreras2015: { cite: 'Contreras B et al. Gluteus maximus, biceps femoris and vastus lateralis EMG in the back squat and barbell hip thrust. J Appl Biomech 2015', url: 'https://pubmed.ncbi.nlm.nih.gov/26214739/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'Low hamstring EMG in the squat.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'Hamstrings worked only a little in the squat.' },
   fry2003: { cite: 'Fry AC, Smith JC, Schilling BK. Effect of knee position on hip and knee torques during the barbell squat. J Strength Cond Res 2003;17(4):629-33', url: 'https://pubmed.ncbi.nlm.nih.gov/14636100/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'n=7.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: '7 people. Knees past the toes kept hip load lower.' },
   hackett2013: { cite: 'Hackett DA, Chow CM. The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise. J Strength Cond Res 2013;27(8):2338-45', url: 'https://pubmed.ncbi.nlm.nih.gov/23222073/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'MECH', note: 'Review.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'MECH', note: 'Review. Holding your breath raises pressure in your trunk.' },
   lander1992: { cite: 'Lander JE, Hundley JR, Simonton RL. The effectiveness of weight-belts during multiple repetitions of the squat exercise. Med Sci Sports Exerc 1992;24(5):603-9', url: 'https://pubmed.ncbi.nlm.nih.gov/1533266/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'MECH', note: 'n=5.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'MECH', note: 'Belt study, 5 people.' },
   kerr2010: { cite: 'Kerr ZY et al. Epidemiology of weight training-related injuries presenting to US emergency departments, 1990 to 2007. Am J Sports Med 2010;38(4):765-71', url: 'https://pubmed.ncbi.nlm.nih.gov/20139328/',
-    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'Context for safety pins: dropped weights were the most common injury mechanism.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: null, use: 'DATA', note: 'For safety pins: dropped weights were the most common cause of injury.' },
   'nhs-wrist-pain': { cite: 'NHS, Wrist pain', url: 'https://www.nhs.uk/conditions/hand-pain/wrist-pain/',
-    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When wrist pain needs a check.' },
   'nhs-knee-pain': { cite: 'NHS, Knee pain', url: 'https://www.nhs.uk/symptoms/knee-pain/',   // RED_FLAG_KNEE source
-    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When knee pain needs a check.' },
 };
 // Could not open (card): NSCA site (403), Starting Strength (403), powerliftingtechnique.com (403), ExRx. No claim rests on them.
 
@@ -128,7 +130,7 @@ const WAITER_TRAY = {
   // 'load-through-wrist' is left off on purpose: the renderer already draws the load line for along-forearm loads
   // (4.6 cm on the back-of-hand side, printed), and a second red arrow through the wrist centre read as two loads.
   markers: ['lever-arc'],
-  alt: 'Bar up in the fingers, hand folded back under it like a waiter\'s tray, wrist bent about 40 degrees. The bar\'s weight passes on the back-of-hand side of the wrist and bends it further back.',
+  alt: 'Bar up in the fingers, hand bent back under it like a tray. The wrist bends about 40 degrees. The weight passes on the back-of-hand side, bending it further.',
 };
 const THUMB_OVER = { thumb: 'beside' };   // thumb over the bar, on the same side as the fingers (card: allowed option)
 // How the inset draws it (mockup). engine/hand.mjs's 'beside' mode aims the tip at the index finger's first segment but
@@ -181,38 +183,39 @@ const zooms = [
       camera: 'side',
       inset: { label: 'Option: thumb over the bar', pose: THUMB_OVER, drawPose: THUMB_OVER_DRAW, camera: 'side',   // drawPose: mockup
         crop: { u: [-42, 96], v: [-66, 40] },   // mockup: fist, wrist and the start of the forearm, hand-frame mm
-        when: 'If wrapping your thumb bends your wrist back, rest it beside your fingers.' },   // mockup
+        when: 'If a wrapped thumb bends your wrist back.' },   // mockup: printed beside the inset, under its label
       loadLine: { right: 'guide', wrong: 'force', inset: 'guide' },   // mockup (see the note above RIGHT_POSE)
       notes: { right: 'Heel of palm', wrong: 'Bar in fingers' },   // mockup
     },
     caption: {
-      right: 'Bar in the heel of your palm, thumb wrapped, wrist straight.',
-      wrong: 'Bar up in your fingers, hand bent back under it like a tray.',
+      right: 'Bar low in your palm, wrist straight.',
+      wrong: 'In your fingers, hand bent back like a tray.',
     },
     alt: {
-      right: 'Bar low in the palm on the heel of the hand, fingers closed lightly over it, thumb wrapped. Knuckles, wrist and forearm in one nearly straight line, forearm upright under the bar.',
+      right: 'Bar low on the heel of the hand, fingers closed lightly, thumb wrapped. Knuckles, wrist and forearm in a nearly straight line, forearm upright.',
       wrong: WAITER_TRAY.alt,
     },
     feelRow: 'wrist',
   },
   {
-    key: 'bar-on-back', chip: 'Bar on back', heading: 'Bar on your back: right and wrong', kind: 'posture',
+    key: 'bar-on-back', chip: 'Bar on back', heading: 'Bar on back: right and wrong', kind: 'posture',
     crop: { center: { landmark: 'neck', pose: 'start', dx: -4, dy: 8 }, sizePx: 84 },
     right: 'start',
     wrong: { still: 'bar-neck' },
     callouts: {   // mockup: one label per crop
       right: { text: 'On the muscle', guide: 'bar-shelf' },
-      wrong: { text: 'On the neck bone', guide: 'bar-bone' },
+      wrong: { text: 'On neck bone', guide: 'bar-bone' },
     },
     caption: {
-      right: 'Bar on the meaty part of your upper traps, below the bony bump.',
-      wrong: 'Bar up on the bony bump at the base of your neck.',
+      right: 'On your upper traps, below the bony bump.',
+      wrong: 'On the bony bump at your neck.',
     },
     alt: {
-      right: 'Side view of the neck and upper back, standing. The bar rests on the upper traps, just below the bony bump at the base of the neck, elbows pointing down.',
-      wrong: 'Side view of the neck and upper back. The bar sits higher, on the bony bump at the base of the neck, and the elbows are pushed up and back.',
+      right: 'Side view of the neck and upper back, standing. The bar rests on the upper traps, just below the bony bump. Elbows point down.',
+      wrong: 'Side view of the neck and upper back. The bar sits higher, on the bony bump at the base of the neck. Elbows pushed up and back.',
     },
-    feelRow: 'neck',
+    // feelRow removed 2026-09-30: its row ("Back of your neck") was cut to fit the 4-row cap. The neck fault stays in
+    // this close-up and in setup step 2.
   },
   {
     key: 'depth', chip: 'Depth', heading: 'Depth: right and wrong', kind: 'posture',
@@ -224,14 +227,16 @@ const zooms = [
       wrong: { text: 'Too short', guide: 'knee-line' },
     },
     caption: {
-      right: 'Hip crease level with or just below the top of your knee.',
-      wrong: 'Stopping well above the top of your knee.',
+      right: 'Hip crease at or below the top of your knee.',
+      wrong: 'Hip stops well above your knee.',
     },
     alt: {
-      right: 'Side view of the hip and knee at the bottom of the squat. A dotted line runs back from the top of the knee, and the hip crease sits on it, just below. Heels down.',
+      right: 'Side view of the hip and knee at the bottom. The hip crease sits just below a dotted line from the top of the knee. Heels down.',
       wrong: 'Side view at the bottom of a short squat. The hip crease stays well above the dotted line from the top of the knee.',
     },
-    feelRow: 'thighs-only',
+    // feelRow removed 2026-09-30: its row ("Only the front of your thighs") was cut to fit the 4-row cap. Not pointed at
+    // the lower-back row: that row's causes (hips rising first, a soft brace, rounding at the bottom) are not what this
+    // Wrong picture (a squat that stops too high) shows, and this crop cannot draw the back rounding.
   },
 ];
 // Text only (card zooms not drawn): "Feet and knees" (front view, see above) and "Bar over mid-foot" (already the
@@ -254,47 +259,41 @@ const feel = {
     { muscleId: 'hamstrings', plain: 'The back of your thighs, only a little. They steady the hips but do little of the lifting.' },
   ],
   textOnly: [   // mockup: named in the text, never painted (the map draws `core` on the serratus, 5.3, C2)
-    { muscleId: 'core', plain: 'Your trunk holds the brace, like a tight belt around your middle.' },
+    { muscleId: 'core', plain: 'Your trunk works like a tight belt.' },
   ],
   // Shown only while a row naming the muscle is open (S6). lower_back is a helper at rest and a watch muscle only
   // while its row is open (A3). forearms and upper_traps are named in no row's `at` (A3 marks the wrist row on the
-  // hand parts and the neck row on the nape), so they stay in the text of the watch list.
+  // hand parts), so they stay in the text of the watch list.
   watch: [
     { muscleId: 'lower_back', plain: 'Your lower back keeps your spine still while your legs lift. If it aches more than your thighs, your hips are rising first or your back is rounding.' },
     { muscleId: 'forearms', plain: 'Your forearms and wrists should do almost nothing. If they ache, your hands are holding the bar up.' },
     { muscleId: 'upper_traps', plain: 'The bar sits on your upper traps, so you\'ll feel pressure there. Sharp pain on the bony bump at the base of your neck means the bar is too high.' },
   ],
-  // A3 version (33 words). The card's 41-word line is over the 40-word cap; the inner thighs are on the map as helpers.
-  feelLine: 'You should feel this in the front of your thighs and your glutes. If your lower back is doing more than your legs, go lighter and let your chest and hips rise together.',
+  // Owner 2026-09-30 (shorter, concept first): 20 words, 2 sentences. The inner thighs stay on the map as helpers.
+  feelLine: 'You should feel this in the front of your thighs and glutes. If your lower back does more, go lighter.',
+  // 4 rows (owner cap). Kept: the three red-flag rows (wrist, knees, wrist-sore) and the lower back, the most serious
+  // fault (the plate's Mistake layer). Cut 2026-09-30: "Back of your neck" (the bar-on-back close-up and setup step 2
+  // still teach it) and "Only the front of your thighs" (the depth close-up still shows stopping short).
   rows: [
-    { key: 'wrist', where: 'Wrists, or the inside of your elbows', at: { parts: WRIST_PARTS },   // elbows: text only (see the note above WRIST_PARTS)
-      means: 'Your hands are holding the bar up. The bar is in your fingers, your wrists fold back, or your grip is too narrow or wide for your shoulders.',
-      // card fix, trimmed to the 30-word lint: the thumb-over option keeps its condition (until the wrists sit straight)
-      fix: 'Put the bar in the heel of your palm and pull your elbows down. Move your hands, or try your thumb over the bar, until your wrists sit straight.',
+    { key: 'wrist', where: 'Wrists or inner elbows', at: { parts: WRIST_PARTS },   // elbows: text only (see the note above WRIST_PARTS)
+      means: 'Your hands are holding the bar up, not your back.',
+      fix: 'Pull your elbows down. Move your hands until your wrists sit straight.',
       zoom: 'hand', redFlag: true, claim: CL.wrist },
-    { key: 'lower-back', where: 'Lower back more than your thighs', at: { muscles: ['lower_back'] },
-      means: 'Your hips rise faster than your chest out of the bottom, your brace goes soft, or you\'re going deeper than your back can stay flat.',
-      fix: 'Brace before every rep, let your chest and hips come up together, and stop the squat where your back is still flat. Take some weight off.',
+    { key: 'lower-back', where: 'Lower back more than thighs', at: { muscles: ['lower_back'] },
+      means: 'Hips rising first, a soft brace, or rounding at the bottom.',
+      fix: 'Brace, lift chest and hips together, and stop before your back rounds.',
       claim: C(['DATA', 'MECH', 'CONSENSUS'], ['fry2003', 'hackett2013', 'hk-squat'], 'The plate\'s Mistake layer shows this fault (hips rise first).') },
-    { key: 'knees', where: 'Front or inside of the knees', at: { parts: ['knee-left', 'knee-right'] },
-      means: 'Your knees are caving in, your heels are lifting, or you\'re dropping and bouncing hard at the bottom.',
-      fix: 'Push your knees out over your toes, keep your heels down, and lower yourself under control. Knees going a little past your toes is fine.',
+    { key: 'knees', where: 'Front or inside of knees', at: { parts: ['knee-left', 'knee-right'] },
+      means: 'Knees caving in, heels lifting, or bouncing at the bottom.',
+      fix: 'Push your knees out over your toes, heels down, and lower with control.',
       redFlag: 'knee', claim: { ...CL.feet, sources: [...CL.feet.sources, 'nhs-knee-pain'] } },   // referral: the shared knee block (C8)
     // behind "More"
-    { key: 'neck', where: 'Back of your neck', at: { parts: ['nape'] },
-      means: 'The bar is sitting on the bony bump at the base of your neck instead of the muscle below it.',
-      fix: 'Squeeze your shoulder blades together before you get under the bar and set it a little lower, on the meaty part of your traps.',
-      zoom: 'bar-on-back', claim: CL.barSpot },
-    { key: 'thighs-only', where: 'Only the front of your thighs, nothing in your glutes', at: {},
-      means: 'You\'re stopping well above parallel.',
-      fix: 'Go deeper, to where your hip crease is at or below the top of your knee, as long as your back stays flat. A slightly wider stance may also help.',
-      zoom: 'depth', claim: C(['DATA', 'WEAK'], ['kubo2019', 'caterisano2002', 'paoli2009', 'clark2012'], 'Depth: DATA. Stance: kept soft ("may").') },
     // Not a press, so the architecture does not require this row; it is here because the card gives a sore-wrist
     // option (thumb over the bar) and the owner is squatting on a sore wrist. Both lines are the card's: "wrapping the
     // thumbs can over-bend the wrist and cause wrist pain" (grip.thumb, Barbell Logic) and its sore-wrist sentence.
     { key: 'wrist-sore', where: 'Wrist sore before you start', at: { parts: WRIST_PARTS },
-      means: 'Wrapping your thumb can bend your wrist back, and that can add to the pain.',
-      fix: 'Try your thumb over the bar, with the bar in the heel of your palm. Keep whichever grip holds your wrist straighter.',
+      means: 'A wrapped thumb can bend your wrist back, adding pain.',
+      fix: 'Try your thumb over the bar. Keep whichever holds your wrist straighter.',
       zoom: 'hand', redFlag: true,
       claim: C(['CONSENSUS'], ['barbell-logic-squat-grip', 'nhs-wrist-pain'], 'Thumb-over for a sore wrist and the over-bend reason: card (Barbell Logic). Red-flag block: NHS.') },
   ],
@@ -310,25 +309,27 @@ const plate = plateSpec;
 /* ------------------------------------------------------------------------------------------------ the HowTo ------ */
 /* ---------------------------------------------------------------- handling mistakes, risks (plan 2.4 items 4, 7) --
  * From the verified card's handlingMistakes (grip/research/barbell_back_squat.json): the mistake, its fix and what it can hurt,
- * cut to the copy limits (title <= 10 words; fix and risk <= 30 words and 2 sentences; no citations in user copy, C7;
+ * cut to the copy limits (owner 2026-09-30: title <= 5 words, fix <= 12, risk <= 14; no citations in user copy, C7;
  * no red-flag wording, C8: the shared RED_FLAG and DISCLAIMER come from howto/shared.mjs). `zoom` = "Show me" target. */
+// Owner 2026-09-30 (shorter, concept first): at most 3 mistakes and 3 risks. The full fix lives in the matching feel row;
+// the mistake line (always visible) is a short cue in the card's words, so the page never prints one sentence twice.
+// Cut: the "neck" mistake (bar on the neck bones; the bar-on-back close-up and setup step 2 still teach it), the "knees"
+// risk (the knees mistake, the knees row and the knee red-flag box beside the risks still carry it) and the "wrists"
+// risk ("Propping the bar with your hands loads your wrists and elbows": the wrist row says the same, "Wrists or inner
+// elbows" / "Your hands are holding the bar up", on the same source; cut to keep the sheet at 450 words after the
+// mistake cues were added).
 const MISTAKES = [
-  { key: 'hands', title: 'Holding the bar up with your hands', zoom: 'hand', claim: C(['CONSENSUS'], ['barbell-logic-squat-grip']),
-    fix: 'Put the bar in the heel of your palm, pull your elbows down, and move your hands in or out until your wrists sit straight.' },
-  { key: 'neck', title: 'Bar on the bones of your neck', zoom: 'bar-on-back', claim: C(['CONSENSUS'], [], 'Coaching consensus (card).'),
-    fix: 'Squeeze your shoulder blades together before you get under the bar, then set it on the muscle just below the bony bump.' },
-  { key: 'knees', title: 'Knees caving in, or heels lifting', claim: C(['CONSENSUS'], ['hk-squat']),
-    fix: 'Turn your toes out a little and push your knees out over them, with your whole foot pressing into the floor. Go lighter if they still cave.' },
-  { key: 'hips', title: 'Hips shooting up first, or your back rounding', zoom: 'depth', claim: C(['DATA', 'CONSENSUS'], ['fry2003', 'hackett2013']),
-    fix: 'Breathe in and brace before every rep, and let your chest and hips rise together. Only go as deep as your back stays flat.' },
+  { key: 'hands', title: 'Hands holding the bar up', zoom: 'hand', claim: C(['CONSENSUS'], ['barbell-logic-squat-grip']),
+    fix: 'Elbows down, so your back holds the bar.' },
+  { key: 'knees', title: 'Knees caving or heels lifting', claim: C(['CONSENSUS'], ['hk-squat']),
+    fix: 'Knees out over toes, heels down. Still caving? Go lighter.' },
+  { key: 'hips', title: 'Hips shoot up, back rounds', zoom: 'depth', claim: C(['DATA', 'CONSENSUS'], ['fry2003', 'hackett2013']),
+    fix: 'Brace. Chest and hips rise together.' },
 ];
 const RISKS = [
-  { key: 'wrists', text: 'Holding the bar up with your hands puts part of its weight through your wrists and elbows. Coaches link this to sore wrists and elbows.',
-    claim: C(['CONSENSUS'], ['barbell-logic-squat-grip'], 'Coaching consensus; no study has measured it.') },
-  { key: 'knees', text: 'Knees caving in twist the knee under load and move strain from your hips onto your knees.', claim: C(['CONSENSUS'], ['hk-squat']) },
-  { key: 'back', text: 'When your hips shoot up or your back rounds, the load moves forward and your lower back takes much more of it.',
+  { key: 'back', text: 'Hips shooting up or a rounding back loads your lower back far more.',
     claim: C(['DATA', 'CONSENSUS'], ['fry2003'], 'Fry 2003, 7 lifters, a related lab set-up.') },
-  { key: 'breath', text: 'If you have high blood pressure, do not hold your breath for long. Breathe out steadily on the way up.',
+  { key: 'breath', text: 'High blood pressure? Don\'t hold your breath long. Breathe out as you stand.',
     claim: C(['CONSENSUS'], ['hackett2013'], 'Card fix text (mistake 4); Hackett 2013 is about bracing, not blood pressure.') },
 ];
 
@@ -343,48 +344,49 @@ export default {
     handle: 'bar-28',
     loadAxis: 'along-forearm',
     overBody: false,   // the bar sits on the back and a missed rep lands on the safety pins, not on the face or neck
-    width: { text: 'A little wider than your shoulders. Within that, go as narrow as your shoulders comfortably allow, so your forearms stay close to upright. Use the rings on the bar to put both hands in the same spot every set.', claim: CL.width },
-    thumb: { mode: 'wrapped', options: [{ mode: 'beside', when: 'If wrapping your thumb bends your wrist back, rest it over the bar beside your fingers.' }], claim: CL.thumb },
+    width: { text: 'A little wider than your shoulders. Go as narrow as is comfortable, so your forearms stay near upright. Use the rings on the bar to place your hands the same every set.', claim: CL.width },
+    thumb: { mode: 'wrapped', options: [{ mode: 'beside', when: 'If wrapping bends your wrist back, rest your thumb over the bar.' }], claim: CL.thumb },
     contact: 'heel',
-    wrist: { ext: [0, 15], dev: [-10, 10], limitText: 'If the back of your hand folds toward your forearm, or you feel the wrist taking weight, your hands are holding the bar up.', claim: CL.wrist },
+    wrist: { ext: [0, 15], dev: [-10, 10], limitText: 'Wrist folding back or taking weight? Your hands are holding the bar up.', claim: CL.wrist },
     pose: RIGHT_POSE,
     faults: [WAITER_TRAY],
-    gripLine: 'Hands a little wider than your shoulders, bar in the heel of your palm, wrists straight, elbows down. Your back holds the bar. Your hands just keep it there.',
-    cue: 'Your back holds the bar. Your hands just keep it there.',   // archetype cue (3.1)
+    // Owner 2026-09-30: concept first. Grip width moved to width.text (the app shows it); the hand close-up shows the rest.
+    gripLine: 'Your back holds the bar. Your hands just pin it, in the heel of your palm.',
+    cue: 'Your back holds the bar.',   // archetype cue (3.1), 6-word cue cap
   },
   contacts: ['standing-feet'],
+  // Owner 2026-09-30: at most 5 steps of at most 12 words. Kept: collars and the safety pins (one step), the bar on
+  // muscle, the brace, the stance and what to do when stuck. Cut: rack height and loading, the grip (the Grip section
+  // above covers it), and the breathing and re-racking step (the breath risk line keeps the breathing). setupLine keeps
+  // the rack height.
   setup: [
-    { kind: 'adjust', text: 'Set the bar in the rack hooks a little below shoulder height, about armpit level. You should be able to unrack it with a small knee bend and put it back without going up on your toes.', claim: CL.rack },
-    { kind: 'safety', text: 'Set the safety pins or straps just below the lowest point of your squat, so a missed rep lands on them and not on you. Check by squatting under an empty bar.', claim: CL.safety },
-    { kind: 'load', text: 'Load the plates evenly on both sides and put collars on.', claim: CL.consensus },
-    { kind: 'grip', text: 'Grip the bar with both hands the same distance from the centre, a little wider than your shoulders. Put the bar low in the heel of each palm.', zoom: 'hand', claim: CL.grip },
-    { kind: 'position', text: 'Duck under the bar and set it high on your back. It sits on the meaty ridge of your upper traps, just below the bony bump at the base of your neck. Keep your feet directly under the bar.', zoom: 'bar-on-back', claim: CL.barSpot },
-    { kind: 'position', text: 'Squeeze your shoulder blades together and pull your elbows down so the bar sits on a tight muscle shelf. Wrists straight.', zoom: 'bar-on-back', claim: CL.grip },
-    { kind: 'brace', text: 'Take a big breath into your belly, brace, and stand straight up to lift the bar off the hooks.', claim: CL.brace },
-    { kind: 'position', text: 'Take two or three short steps back. Set your feet about hip to shoulder width apart, or a little wider if that lets you sit deeper with your heels down. Turn your toes out a little so your knees can follow them.', claim: CL.feet },
-    { kind: 'finish', text: 'Breathe in, brace, and start the set. Breathe out near the top of each rep, once you\'re past the hardest part. Rack it by walking forward until the bar touches the uprights, then lower it onto the hooks.', claim: CL.brace },
-    { kind: 'safety', text: 'If you get stuck at the bottom, sit down under control and let the bar settle on the safety pins. Then slide out from under it. Don\'t try to throw it off your back.', claim: C(['CONSENSUS'], ['nsca-summary'], 'Coaching consensus (card).') },
+    { kind: 'safety', text: 'Collars on, pins just below your lowest squat to catch a miss.',
+      claim: C(['CONSENSUS', 'DATA'], ['nsca-summary', 'kerr2010', 'ace-back-squat'], 'Pins: CL.safety. Collars: card setup step 3 (coaching consensus).') },
+    { kind: 'position', text: 'Squeeze your shoulder blades so the bar rests on muscle.', zoom: 'bar-on-back', claim: CL.barSpot },
+    { kind: 'brace', text: 'Breathe into your belly, brace, and stand the bar up.', claim: CL.brace },
+    { kind: 'position', text: 'Step back, feet hip to shoulder width, toes out a little.', claim: CL.feet },
+    { kind: 'safety', text: 'Stuck? Lower the bar onto the pins. Don\'t throw it.', claim: C(['CONSENSUS'], ['nsca-summary'], 'Coaching consensus (card).') },
   ],
   posture: [
-    { key: 'bar', label: 'Bar on traps', detail: 'The bar sits across the top of the upper traps, above the shoulder blades and below the bony bump at the base of the neck. It is centred left to right and never on the neck bones.',
+    { key: 'bar', label: 'Bar on traps', detail: 'The bar sits on the upper traps, just below the bony bump. It is centred and never on the neck bones.',
       anchor: { landmark: 'backUpper', pose: 'start' }, zoom: 'bar-on-back', claim: CL.barSpot },
-    { key: 'hands', label: 'Wrists straight', detail: 'Seen from behind, hands evenly placed a little wider than the shoulders, forearms roughly upright, elbows pointing down and slightly back. The wrist makes a nearly straight line from knuckles to forearm.',
+    { key: 'hands', label: 'Wrists straight', detail: 'Hands even, a little wider than the shoulders, forearms roughly upright, elbows down. Knuckles to forearm in a nearly straight line.',
       anchor: { landmark: 'grip.r', pose: 'start' }, zoom: 'hand', claim: CL.grip },
-    { key: 'midfoot', label: 'Bar over mid-foot', detail: 'Seen from the side, a vertical line from the bar passes through the middle of the foot. It stays there from the top to the bottom and back up.',
+    { key: 'midfoot', label: 'Bar over mid-foot', detail: 'From the side, the bar stays over the middle of the foot, top to bottom.',
       anchor: { landmark: 'grip.r', pose: 'start' }, claim: CL.midfoot },
-    { key: 'feet', label: 'Knees follow toes', detail: 'Seen from the front, feet about hip to shoulder width or a little wider, toes turned out a little. The whole foot stays on the floor, heels down. At the bottom each knee points the same way as its foot and may travel forward past the toes.',
+    { key: 'feet', label: 'Knees follow toes', detail: 'Feet hip to shoulder width, toes out a little, heels down. Each knee points where its foot points and may pass the toes.',
       anchor: { landmark: 'knee.r', pose: 'end' }, claim: CL.feet },
-    { key: 'back', label: 'Back flat', detail: 'Seen from the side, the body leans forward but the back stays flat from the hips to the base of the neck. Eyes on a fixed point ahead, neck in line with the spine, head neither tipped back nor dropped.',
+    { key: 'back', label: 'Back flat', detail: 'The body leans forward but the back stays flat from hips to neck. Eyes ahead, neck in line.',
       anchor: { landmark: 'backMid', pose: 'end' }, claim: CL.back },
-    { key: 'depth', label: 'Hip at knee', detail: 'At the bottom, the crease of the hip is level with or below the top of the knee, as long as the back stays flat. If your lower back tucks under at the very bottom, stop a little higher.',
+    { key: 'depth', label: 'Hip at knee', detail: 'At the bottom, the hip crease is at or below the top of the knee. If your lower back tucks under, stop a little higher.',
       anchor: { landmark: 'hip.r', pose: 'end' }, zoom: 'depth', claim: CL.depth },
   ],
   feel,
   zooms,
   copy: {
-    setupLine: 'Set the bar a little below shoulder height and the safety pins just below your lowest squat. Get under it, put the bar on the meaty part of your upper traps, and stand straight up with it.',
-    mistakeLine: 'If your wrists or elbows ache after squats, your hands have been holding the bar up. Pull your elbows down and let the bar sit on your back.',
-    gripLine: 'Hands a little wider than your shoulders, bar in the heel of your palm, wrists straight, elbows down. Your back holds the bar. Your hands just keep it there.',
+    setupLine: 'Set the bar at armpit height and the pins just below your lowest squat. Bar on your upper traps, then stand up.',
+    mistakeLine: 'If wrists or elbows ache after squats, your hands held the bar up. Let your back hold it.',
+    gripLine: 'Your back holds the bar. Your hands just pin it, in the heel of your palm.',
   },
   redFlag: RED_FLAG,
   mistakes: MISTAKES,

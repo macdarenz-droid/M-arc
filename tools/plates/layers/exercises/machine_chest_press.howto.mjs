@@ -1,7 +1,8 @@
 // How-to content for the machine chest press (lib_machine_chest_press): grip, posture close-ups, where to feel it.
 // Shape: grip/GRIP-AND-FEEL-ARCHITECTURE.md 4.1-4.4 (HowTo, HandlingSpec, ZoomSpec, FeelSpec, SetupStep,
 // PostureCheckpoint). Content: the verified card grip/research/machine_chest_press.json, with the corrections the
-// architecture made in appendix A1 (feel line, rows 1-3, red-flag wording). GENERAL.md wording is not used.
+// architecture made in appendix A1 (feel line, rows 1-3, red-flag wording), then cut to the owner's "shorter, concept
+// first" limits of 2026-09-30 (artifact/copy-lint.mjs). GENERAL.md wording is not used.
 // Render check: node exercises/machine_chest_press.howto-render.mjs  ->  out/machine_chest_press-howto-*.png
 //
 // Additions to the architecture's types, used by the mockup only (marked "mockup" below):
@@ -21,25 +22,25 @@ export { RED_FLAG };
  * `access` is what the card's verifier says it read; null = the card does not say, to be filled by the verifier. */
 export const SOURCES = {
   'ace-chest-press': { cite: 'ACE Exercise Library, Seated Chest Press', url: 'https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/',
-    kind: 'guideline', access: 'full', checked: null, use: 'CONSENSUS' },
+    kind: 'guideline', access: 'full', checked: null, use: 'CONSENSUS', note: 'Coaching guide. Seat height, full grip, start at the chest.' },
   muyor2023: { cite: 'Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. Muscle activity, horizontal bench press vs seated chest press, several grips. J Hum Kinet 2023;87:23-34', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/',
-    kind: 'peer-reviewed', access: 'full', checked: null, use: 'DATA' },
+    kind: 'peer-reviewed', access: 'full', checked: null, use: 'DATA', note: 'Muscle study. Handle type made no chest difference.' },
   weiss1995: { cite: 'Weiss ND et al. Position of the wrist associated with the lowest carpal-tunnel pressure. J Bone Joint Surg Am 1995;77(11):1695-9', url: 'https://pubmed.ncbi.nlm.nih.gov/7593079/',
     kind: 'peer-reviewed', access: null, checked: null, use: 'MECH/WEAK', note: 'Nerve-pressure study, not lifting.' },
   nance2017: { cite: 'Nance EM et al. Dorsal wrist pain in the extended wrist-loading position: an MRI study. J Wrist Surg 2017;6(4):276-279', url: 'https://pubmed.ncbi.nlm.nih.gov/29085728/',
-    kind: 'peer-reviewed', access: null, checked: null, use: 'WEAK', note: 'Push-ups, planks and yoga; association in patients, not cause; no pressing handles.' },
+    kind: 'peer-reviewed', access: null, checked: null, use: 'WEAK', note: 'Push-ups, planks and yoga, not presses. A link in patients, not cause.' },
   fees1998: { cite: 'Fees M, Decker T, Snyder-Mackler L, Axe MJ. Upper extremity weight-training modifications for the injured athlete. Am J Sports Med 1998;26(5):732-42', url: 'https://pubmed.ncbi.nlm.nih.gov/9784824/',
-    kind: 'peer-reviewed', access: null, checked: null, use: 'CONSENSUS', note: 'Clinical perspective article, not a trial.' },
+    kind: 'peer-reviewed', access: null, checked: null, use: 'CONSENSUS', note: 'Expert article on training around injuries, not a trial.' },
   snyder2012: { cite: 'Snyder BJ, Fry WR. Effect of verbal instruction on muscle activity during the bench press. J Strength Cond Res 2012;26(9):2394-400', url: 'https://pubmed.ncbi.nlm.nih.gov/22076100/',
-    kind: 'peer-reviewed', access: null, checked: null, use: 'WEAK', note: 'Bench press, not the machine: supports the chest-focus cue on lighter sets only.' },
+    kind: 'peer-reviewed', access: null, checked: null, use: 'WEAK', note: 'Bench press, not the machine. Backs the chest-focus cue on lighter sets.' },
   calatayud2016: { cite: 'Calatayud J et al. Importance of mind-muscle connection during progressive resistance training. Eur J Appl Physiol 2016;116(3):527-33', url: 'https://pubmed.ncbi.nlm.nih.gov/26700744/',
-    kind: 'peer-reviewed', access: null, checked: null, use: 'WEAK', note: 'Bench press; the focus effect held with light to moderate weights, not heavy ones.' },
+    kind: 'peer-reviewed', access: null, checked: null, use: 'WEAK', note: 'Bench press. The focus effect held on light to moderate weights only.' },
   'barbell-logic-grip': { cite: 'Barbell Logic, Bench Press Grip Tips', url: 'https://barbell-logic.com/bench-press-grip-tips/',
-    kind: 'coach', access: null, checked: null, use: 'CONSENSUS', note: 'Written for the barbell bench; heel-of-palm placement.' },
+    kind: 'coach', access: null, checked: null, use: 'CONSENSUS', note: 'Written for the barbell bench. Heel-of-palm placement.' },
   'nhs-wrist-pain': { cite: 'NHS, Wrist pain', url: 'https://www.nhs.uk/conditions/hand-pain/wrist-pain/',
-    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When wrist pain needs a check.' },
   'nhs-elbow-pain': { cite: 'NHS, Elbow and arm pain', url: 'https://www.nhs.uk/symptoms/elbow-and-arm-pain/',   // RED_FLAG_ELBOW source
-    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When elbow pain needs a check.' },
 };
 // Left out on purpose (card evidence notes): Palmer and Werner 1984 (the "80 % through the radius" figure is not in
 // its abstract), Mayo Clinic dorsal wrist impingement (403 to the verifier).
@@ -74,7 +75,7 @@ const BENT_BACK = {
   key: 'fingers-bent-back', label: 'Wrist bent back',
   pose: { wrist: { ext: 35, dev: 0 }, contactAt: 1.05, fingers: { curl: 0.92 }, thumb: 'loose' },
   markers: ['lever-arc'],
-  alt: 'Horizontal handle, seen from the side: the handle has slid into the fingers, the wrist is bent far back and the thumb is loose. The push passes on the back-of-hand side of the wrist and bends it further back.',
+  alt: 'Horizontal handle, side view. The handle has slid into the fingers, thumb loose. The wrist is bent far back. The push passes behind the wrist, bending it further.',
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
@@ -105,15 +106,15 @@ const zooms = [
       // main pair; the vertical handle is only the one-line note below. One page (push).
       camera: 'side',
       panelHeight: 150,
-      note: 'Vertical handles: the same rule. Handle in the heel of your palm, wrist straight.',
+      note: 'Vertical handles: the same rule.',
       notes: { right: 'Heel of palm', wrong: 'Wrist bent back' },   // mockup: the 1-3 word notes over each half
     },
     caption: {
-      right: 'Handle in the heel of your palm, thumb wrapped, wrist straight.',
+      right: 'Heel of your palm, thumb wrapped, wrist straight.',
       wrong: 'Handle in your fingers, wrist bent back, thumb loose.',
     },
     alt: {
-      right: 'Horizontal handle, seen from the side: the handle sits low in the palm on the heel of the hand, thumb wrapped round it, wrist straight, knuckles in line with the forearm. The push runs straight down the forearm.',
+      right: 'Horizontal handle, side view. The handle sits on the heel of the hand, thumb wrapped. Wrist straight, knuckles in line with the forearm. The push runs straight down the forearm.',
       wrong: BENT_BACK.alt,
     },
     feelRow: 'wrist',
@@ -129,11 +130,11 @@ const zooms = [
     },
     caption: {
       right: 'Handles meet the middle of your chest.',
-      wrong: 'Seat too low: the handles sit up near your shoulders.',
+      wrong: 'Seat too low: handles up near your shoulders.',
     },
     alt: {
       right: 'Side view, start of the press. The handle is level with the middle of the chest, the elbow below the shoulder.',
-      wrong: 'Side view, seat too low. The handle is level with the top of the chest, up near the shoulder, and the elbow is raised almost to handle height; the middle of the chest is well below it.',
+      wrong: 'Side view, seat too low. The handle is level with the top of the chest, near the shoulder. The elbow is raised almost to handle height. Mid-chest sits well below.',
     },
     feelRow: 'front-shoulders',
   },
@@ -150,12 +151,12 @@ const zooms = [
       wrong: { text: 'Off the pad', guide: 'pad-gap' },
     },
     caption: {
-      right: 'Shoulder blades stay on the pad, elbows still slightly bent.',
-      wrong: 'Shoulders roll off the pad and the elbows lock straight.',
+      right: 'Shoulder blades on the pad, elbows slightly bent.',
+      wrong: 'Shoulders roll off the pad, elbows locked.',
     },
     alt: {
-      right: 'Side view, end of the press. Upper back and shoulder blades flat on the pad, arms long with a small bend at the elbow.',
-      wrong: 'Side view, end of the press. The upper back rounds forward with a gap of about 4 cm to the pad, and the elbows are locked straight.',
+      right: 'Side view, end of the press. Upper back and shoulder blades flat on the pad. Arms long, with a small bend at the elbow.',
+      wrong: 'Side view, end of the press. The upper back rounds forward, about 4 cm off the pad. The elbows are locked straight.',
     },
     feelRow: 'elbows',
   },
@@ -177,39 +178,29 @@ const feel = {
     { muscleId: 'upper_traps', plain: 'The tops of the shoulders and the neck should stay quiet. Shrugging means you have lost your shoulder position.' },
     { muscleId: 'forearms', plain: 'You will feel your grip working, but your wrist and forearm should never ache. An aching wrist usually means it is bending back.' },
   ],
-  feelLine: 'You should feel this across the middle and lower chest. If the front of your shoulders is doing most of the work, set the seat so the handles line up with the middle of your chest.',
+  feelLine: 'You should feel this across the middle and lower chest. If your shoulders take over, check the seat height.',
   rows: [
     // Known map limit (C2, misleading region): bodyMuscles.ts draws front_delts as a thin strip along the collarbone,
     // not on the shoulder cap, so this row's dashed outline sits on the collarbone. Fix belongs in the shared map path
     // (engine/bodymap-parts.mjs shoulder-front-left/right, from wt-arch src/svg/bodyMuscles.ts); no per-exercise workaround.
     { key: 'front-shoulders', where: 'Front of the shoulders', at: { muscles: ['front_delts'] },
-      means: 'The handles are probably too high for your chest, or your shoulders are rolling off the pad.',
-      fix: 'Set the seat so the handles line up with the middle of your chest. On most machines that means raising it.',
+      means: 'The handles sit too high, or your shoulders roll off the pad.',
+      fix: 'Check the seat height first. On most machines, raise it.',
       zoom: 'seat-height', claim: CL.seat },
-    { key: 'wrist', where: 'Wrist (top or back of the wrist)', at: { parts: HANDS },
-      means: 'Your wrist is bending back and the handle has slid into your fingers. Often the weight is too heavy.',
-      fix: 'Move the handle into the heel of your palm and wrap your thumb. Go lighter until your wrist stays straight.',
+    { key: 'wrist', where: 'Top or back of the wrist', at: { parts: HANDS },
+      means: 'The handle has slid into your fingers, so your wrist bends back.',
+      fix: 'Push from the heel of your palm. Go lighter until your wrist stays straight.',
       zoom: 'hand', redFlag: true, claim: CL.wrist },
     { key: 'wrist-sore', where: 'Wrist sore before you start', at: { parts: HANDS },
       means: 'Pressing heavy on a sore wrist can make it worse.',
       fix: 'Use the vertical handles and go lighter. Stop the set if it hurts.',
       zoom: 'hand', redFlag: true,
       claim: C(['CONSENSUS'], ['nhs-wrist-pain'], 'NHS self-care: do not lift heavy things with wrist pain. Handle choice is consensus (card).') },
-    // behind "More"
-    { key: 'neck', where: 'Top of the shoulders or neck', at: { muscles: ['upper_traps'] },
-      means: 'You are shrugging your shoulders up toward your ears as you push.',
-      fix: 'Set your shoulders down and back into the pad before the first rep and keep them there.',
-      claim: CL.ace },
-    { key: 'triceps', where: 'Mostly the triceps, little chest', at: { muscles: ['triceps'] },
-      means: 'You are cutting the reps short near lockout, so the arms do most of the work.',
-      fix: 'Bring the handles all the way back to chest level on every rep, and think about pushing with your chest. That cue helps most on lighter sets.',
-      claim: CL.cue },
-    { key: 'lower-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Your hips are sliding forward or you are arching hard off the pad to finish reps.',
-      fix: 'Sit back with your hips against the pad, feet flat, and keep only your normal small arch. Lower the weight if you have to arch to finish.',
-      claim: CL.ace },
+    // behind "More". Owner 2026-09-30 ("shorter"): at most 4 rows. Kept: the three red-flag rows and the seat row (the
+    // Seat height close-up links to it). Dropped: neck (shrug), triceps (short reps) and lower back (arching): no red
+    // flag, no close-up, and the setup steps still cover shoulders down and sitting right back.
     { key: 'elbows', where: 'Elbows', at: { parts: ['elbow-left', 'elbow-right'] },
-      means: 'You are snapping into a hard lockout at the end of each rep.',
+      means: 'You snap your elbows straight at the end of each push.',
       fix: 'Stop just before the elbows lock and control the way back.',
       zoom: 'blades', redFlag: 'elbow', claim: C(['CONSENSUS'], ['ace-chest-press', 'nhs-elbow-pain'], 'ACE: extended but not locked. "Hard lockout loads the elbow" is consensus. The referral is the shared elbow red flag (NHS), not the fix text (C8).') },
   ],
@@ -226,23 +217,23 @@ const plate = plateSpec;
 /* ------------------------------------------------------------------------------------------------ the HowTo ------ */
 /* ---------------------------------------------------------------- handling mistakes, risks (plan 2.4 items 4, 7) --
  * From the verified card's handlingMistakes (grip/research/machine_chest_press.json): the mistake, its fix and what it can hurt,
- * cut to the copy limits (title <= 10 words; fix and risk <= 30 words and 2 sentences; no citations in user copy, C7;
+ * cut to the owner's compact limits of 2026-09-30 (artifact/copy-lint.mjs; no citations in user copy, C7;
  * no red-flag wording, C8: the shared RED_FLAG and DISCLAIMER come from howto/shared.mjs). `zoom` = "Show me" target. */
 const MISTAKES = [
-  { key: 'wrist', title: 'Wrist bent back, handle in the fingers', zoom: 'hand', claim: CL.wrist,
-    fix: 'Reset the handle low in your palm, on the heel of your hand, and wrap your thumb. If your wrist still folds on hard reps, lower the weight.' },
-  { key: 'seat-low', title: 'Seat too low, handles up at your shoulders', zoom: 'seat-height', claim: CL.seat,
-    fix: 'Raise the seat until the handles meet the middle of your chest.' },
-  { key: 'round-lock', title: 'Shoulders off the pad, elbows snapping locked', zoom: 'blades', claim: CL.ace,
-    fix: 'Stop just before your elbows lock, with your shoulder blades still on the pad. If you can only finish by rolling forward, the weight is too heavy.' },
-  { key: 'deep', title: 'Handles starting behind your chest', claim: CL.depth,
-    fix: 'Set the back pad or range lever so the handles start level with the front of your chest, and stop each rep there.' },
+  { key: 'wrist', title: 'Wrist bent back', zoom: 'hand', claim: CL.wrist,
+    fix: 'Handle on the heel of your palm. Still bending? Go lighter.' },
+  { key: 'seat-low', title: 'Seat too low', zoom: 'seat-height', claim: CL.seat,
+    fix: 'Raise the seat so the handles meet mid-chest.' },
+  { key: 'round-lock', title: 'Shoulders roll off, elbows lock', zoom: 'blades', claim: CL.ace,
+    fix: 'Stop before your elbows lock. Rolling forward to finish? Go lighter.' },
 ];
+// Owner 2026-09-30: at most 3. Dropped 'deep' (handles starting behind the chest, no close-up): setup step 2 and the
+// shoulder risk line still say it, with the same claim (CL.depth).
 const RISKS = [
-  { key: 'wrist', text: 'A wrist bent back under load squeezes the small structures on the back of the wrist.',
+  { key: 'wrist', text: 'Pushing through a bent-back wrist squeezes the back of the wrist.',
     claim: C(['MECH', 'WEAK'], ['nance2017'], 'Nance 2017: an MRI study of people with this pain; association, not cause.') },
-  { key: 'shoulder', text: 'Handles behind your chest with the elbows flared stretch the front of the shoulder under load.', claim: CL.depth },
-  { key: 'elbow', text: 'A hard lockout under a heavy weight puts the stress on your elbow joints instead of your muscles.', claim: C(['CONSENSUS'], ['ace-chest-press']) },
+  { key: 'shoulder', text: 'Handles behind your chest, elbows out, stretch the front of your shoulder under load.', claim: CL.depth },
+  { key: 'elbow', text: 'Snapping your elbows straight under heavy weight loads the joints, not the muscles.', claim: C(['CONSENSUS'], ['ace-chest-press']) },
 ];
 
 export default {
@@ -257,46 +248,46 @@ export default {
     loadAxis: 'along-forearm',
     handleChoice: { sore: 'Sore wrist? Use the vertical handles.', claim: CL.handles },
     overBody: false,
-    width: { text: 'Pick the handle pair that puts your hands just outside your shoulders at the start, with each forearm lined up directly behind its handle.', claim: C(['DATA', 'CONSENSUS'], ['muyor2023']) },
+    width: { text: 'Pick handles that put your hands just outside your shoulders at the start. Line each forearm up behind its handle.', claim: C(['DATA', 'CONSENSUS'], ['muyor2023']) },
     thumb: { mode: 'wrapped', claim: CL.thumb },
     contact: 'heel',
-    wrist: { ext: [0, 10], dev: [-10, 10], limitText: 'If the back of your hand folds toward your forearm by more than about 15 to 20 degrees, stop, lower the weight and reset.', claim: CL.wrist },
+    wrist: { ext: [0, 10], dev: [-10, 10], limitText: 'Wrist bending back past about 15 to 20 degrees? Stop and go lighter.', claim: CL.wrist },
     pose: RIGHT_POSE,
     faults: [BENT_BACK],
-    gripLine: 'Put the handle low in your palm, right on the heel of your hand, and wrap your thumb around it. Your knuckles should line up with your forearm. If your wrist starts bending back, the weight is too heavy.',
-    cue: 'Push with the heel of your hand.',   // the workout hint line (2.1, outside the sheet)
+    gripLine: 'Push through the heel of your palm, so your wrist stays straight. A wrapped thumb stops the handle rolling into your fingers.',
+    cue: 'Heel of palm, wrist straight.',   // the workout hint line (2.1, outside the sheet)
   },
   contacts: ['seat-back', 'standing-feet'],
+  // Owner 2026-09-30: at most 5 steps. Dropped: handle choice (the Grip section's "Sore wrist? Use the vertical
+  // handles." keeps it), pick the weight (the grip line and wrist limit say when it is too heavy) and the foot bar (no
+  // verified source yet).
   setup: [
-    { kind: 'adjust', text: 'Choose the handles: vertical (neutral) if the machine has both, especially if your wrist or shoulder is sore.', zoom: 'hand', claim: CL.handles },
-    { kind: 'adjust', text: 'Set the seat height: sit down and adjust until the handles line up with the middle of your chest.', zoom: 'seat-height', claim: CL.seat },
-    { kind: 'adjust', text: 'Set the start depth (back pad or range lever, if the machine has one) so the handles start level with the front of your chest or just in front of it, never behind it.', claim: CL.depth },
-    { kind: 'load', text: 'Pick the weight. Start lighter than you think; if you have to bend your wrist back to hold it, it is too heavy.', claim: CL.consensus },
-    { kind: 'position', text: 'Sit all the way back: hips against the back pad, feet flat on the floor about hip width apart.', claim: CL.ace },
-    { kind: 'grip', text: 'Grip: handle in the heel of your palm, thumb wrapped, wrist straight, forearm right behind the handle.', zoom: 'hand', claim: CL.wrist },
-    { kind: 'brace', text: 'Before the first rep, set your shoulders down and back so both shoulder blades press into the pad.', zoom: 'blades', claim: CL.ace },
-    { kind: 'safety', text: 'If the machine has a foot bar, use it to bring the handles out to the start and to take them back at the end, instead of pulling a heavy handle in with bent wrists.', claim: C(['CONSENSUS'], [], 'Card setup step; source to confirm (architecture 3.4).') },
+    { kind: 'adjust', text: 'Set the seat so the handles meet mid-chest.', zoom: 'seat-height', claim: CL.seat },
+    { kind: 'adjust', text: 'Start the handles at your chest, never behind it.', claim: CL.depth },
+    { kind: 'position', text: 'Sit right back, hips on the pad, feet flat.', claim: CL.ace },
+    { kind: 'grip', text: 'Handle in the heel of your palm, wrist straight.', zoom: 'hand', claim: CL.wrist },
+    { kind: 'brace', text: 'Set your shoulder blades down and back into the pad.', zoom: 'blades', claim: CL.ace },
   ],
   // Not written yet, because no verified source: "get in", "push the pin all the way in", "get out" (3.4, C8).
   posture: [
-    { key: 'height', label: 'Handles mid-chest', detail: 'At the start the handles are level with the middle of the chest and level with or just in front of it, not behind it.',
+    { key: 'height', label: 'Handles mid-chest', detail: 'At the start the handles are at mid-chest height. They are level with the chest or just in front, never behind.',
       anchor: { landmark: 'grip.r', pose: 'start' }, zoom: 'seat-height', claim: CL.seat },
-    { key: 'blades', label: 'Blades on pad', detail: 'Upper back and both shoulder blades stay in contact with the pad on every rep, including the last few centimetres of the push. Normal small arch in the low back.',
+    { key: 'blades', label: 'Blades on pad', detail: 'Upper back and shoulder blades stay on the pad to the end of each push. Normal small arch in the low back.',
       anchor: { landmark: 'backUpper', pose: 'end' }, zoom: 'blades', claim: CL.ace },
-    { key: 'wrist', label: 'Straight wrist', detail: 'Knuckles, wrist and forearm form one straight line, and the forearm points straight along the direction the handle moves. The handle sits in the heel of the palm.',
+    { key: 'wrist', label: 'Straight wrist', detail: 'Knuckles, wrist and forearm form one straight line. The forearm points the way the handle moves. The handle sits in the heel of the palm.',
       anchor: { landmark: 'grip.r', pose: 'end' }, zoom: 'hand', claim: CL.wrist },
-    { key: 'elbows', label: 'Elbows behind handles', detail: 'Each elbow sits at about handle height, directly behind its handle, below shoulder height, so the forearm points straight along the push. Seen from above, with horizontal handles the elbows sit roughly 45 to 60 degrees out from the sides; with vertical handles they sit closer to the body. They never flare straight out level with the shoulders.',
+    { key: 'elbows', label: 'Elbows behind handles', detail: 'Each elbow sits about level with its handle and right behind it, below shoulder height. The forearm points straight along the push. From above, horizontal handles put the elbows roughly 45 to 60 degrees out. With vertical handles they sit closer to the body. They never flare straight out level with the shoulders.',
       anchor: { landmark: 'elbow.r', pose: 'start' }, claim: C(['CONSENSUS'], ['ace-chest-press', 'fees1998']) },
-    { key: 'feet', label: 'Feet flat, hips back', detail: 'Both feet flat on the floor, hips pushed back into the seat and back pad, no bridging off the seat.',
+    { key: 'feet', label: 'Sit right back', detail: 'Both feet flat on the floor. Hips pushed back into the seat and back pad, no bridging.',
       anchor: { landmark: 'ankle.r', pose: 'end' }, claim: CL.ace },
-    { key: 'soft', label: 'Soft elbows', detail: 'At the end of the push the arms are long with a small bend left in the elbows, and the shoulder blades are still on the pad.',
+    { key: 'soft', label: 'Soft elbows', detail: 'At the end, the arms are long with a small bend left in the elbows. The shoulder blades are still on the pad.',
       anchor: { landmark: 'elbow.r', pose: 'end' }, zoom: 'blades', claim: CL.ace },
     // "Start depth" (handles no deeper than the chest, seen from above): text only until the engine has a top view.
   ],
   feel,
   zooms,
   copy: {
-    setupLine: 'Set the seat so the handles sit level with the middle of your chest. Sit all the way back with your feet flat and your shoulder blades on the pad.',
+    setupLine: 'Set the seat so the handles meet mid-chest. Sit right back, feet flat, shoulder blades on the pad.',
     mistakeLine: 'Never let your wrist fold back to finish a heavy rep. Drop the weight and push through the heel of your hand.',
     cueLine: 'Handles at mid-chest.',
   },

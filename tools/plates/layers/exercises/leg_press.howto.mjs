@@ -4,6 +4,8 @@
 // appendix A8. Card copy lines (grip, feel, setup, mistake) are kept word for word. Card fields that mixed copy and
 // evidence are split: the copy stays here, the evidence goes to the Claim. Posture `detail` fields were written for the
 // artist ("The drawing shows...") and are rewritten here as user copy with the same content. GENERAL.md wording is not used.
+// 2026-09-30 owner request (shorter, concept first): all user copy rewritten to artifact/copy-lint.mjs limits; lists cut
+// to the caps (see the notes above MISTAKES, rows and setup). Claims, sources, ids and zoom keys unchanged.
 // Render check: node exercises/leg_press.howto-render.mjs  ->  out/leg_press-howto-*.png
 //
 // Additions to the architecture's types, used by the mockup only (marked "mockup"), as in the squat and chest press files:
@@ -25,43 +27,43 @@ export { RED_FLAG };
 export const SOURCES = {
   'ace-leg-press': { cite: 'ACE Exercise Library, Seated Leg Press', url: 'https://www.acefitness.org/resources/everyone/exercise-library/154/seated-leg-press/',
     kind: 'guideline', access: 'unreachable', checked: null, use: 'CONSENSUS',
-    note: 'The card verifier got a 403. Content taken from the first research pass (the plate spec quotes it). Never the only source of a claim (C8).' },
+    note: 'Coaching guide. Not rechecked. Never the only source here.' },
   'nasm-leg-press': { cite: 'NASM Exercise Library, Leg Press', url: 'https://www.nasm.org/resource-center/exercise-library/leg-press',
     kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS',
-    note: 'Back and head on the pad, hip-width feet, hands on the handles to release the safety bars, no lockout, about 90 degrees; faults: knees caving, locking out, going far past 90, hips shifting. Lists the hip adductors as secondary.' },
+    note: 'Back on the pad, foot width, no lockout, 90 degrees, common faults.' },
   'bells-of-steel': { cite: 'Bells of Steel (manufacturer), How to use the leg press machine', url: 'https://bellsofsteel.us/blogs/content/how-to-use-the-leg-press-machine',
     kind: 'manufacturer', access: 'unreachable', checked: null, use: 'CONSENSUS',
-    note: 'Bot check; unverified until someone opens it in a browser. Machines differ, so the copy says "on most machines".' },
+    note: "Machine maker's guide. Not rechecked. Machines differ." },
   yessis: { cite: 'Yessis M. The Leg Press', url: 'https://doctoryessis.com/?p=2700',
     kind: 'coach', access: 'full', checked: '2026-09-30', use: 'CONSENSUS',
-    note: 'Knees close to the chest round the lower back; 80-90 degrees at the knee; higher feet more glutes and hamstrings, lower feet more quads.' },
+    note: 'Knees to chest round the lower back. Stop near 90 degrees.' },
   escamilla2001lp: { cite: 'Escamilla RF et al. Effects of technique variations on knee biomechanics during the squat and leg press. Med Sci Sports Exerc 2001;33(9):1552-66', url: 'https://pubmed.ncbi.nlm.nih.gov/11528346/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA',
-    note: 'Knee forces rise with knee bend; no difference high vs low feet; toes straight vs out no difference; more hamstring with wide, high feet.' },
+    note: 'Knee forces rise with knee bend. Foot height did not change them.' },
   dasilva2008: { cite: 'Da Silva EM et al. Analysis of muscle activation during different leg press exercises at submaximum effort levels. J Strength Cond Res 2008;22(4):1059-65', url: 'https://pubmed.ncbi.nlm.nih.gov/18545207/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'n=14 women. High feet: more glute max; low feet: more quads and calves.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: '14 women. High feet used more glutes, low feet more quads.' },
   martinfuentes2022: { cite: 'Martin-Fuentes I, Oliva-Lozano JM, Muyor JM. Influence of feet position and execution velocity on muscle activation and kinematic parameters during the inclined leg press exercise. Sports Health 2022;14(3):317-327', url: 'https://pubmed.ncbi.nlm.nih.gov/34085847/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'Small sample. Stance width and toe angle made no EMG difference.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'Small sample. Stance width and toe angle made no difference.' },
   martinfuentes2020: { cite: 'Martin-Fuentes I, Oliva-Lozano JM, Muyor JM. Muscle activation and kinematic analysis during the inclined leg press exercise in young females. Int J Environ Res Public Health 2020;17(22):8698', url: 'https://pubmed.ncbi.nlm.nih.gov/33238589/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'Small sample. Quads highest, then glute med.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'Small sample. The quads worked most.' },
   marchetti2023: { cite: 'Marchetti PH et al. Backseat inclination affects the myoelectric activation during the inclined leg press exercise in recreationally trained men. J Strength Cond Res 2023;37(10):e541-e545', url: 'https://pubmed.ncbi.nlm.nih.gov/37184975/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'More reclined back: more vastus lateralis, less biceps femoris, glutes the same.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'Reclined pad: more outer quad, less hamstring, glutes the same.' },
   kinoshita2026: { cite: 'Kinoshita M et al. Hypertrophic effects of single- versus multi-joint exercise: a direct comparison between knee extension and leg press. Med Sci Sports Exerc 2026;58(7):1566-1580', url: 'https://pubmed.ncbi.nlm.nih.gov/41630124/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'MRI, 12 weeks: vasti, glute max and adductor magnus grew, rectus femoris did not.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'MRI, 12 weeks: glutes, inner thighs and most quad muscles grew.' },
   stien2021: { cite: 'Stien N, Saeterbakken AH, Andersen V. Electromyographic comparison of five lower-limb muscles between single- and multi-joint exercises among trained men. J Sports Sci Med 2021;20(1):56-61', url: 'https://pubmed.ncbi.nlm.nih.gov/33707987/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'Only modest hamstring EMG on the leg press.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'Hamstrings worked only a little on the leg press.' },
   larsen2025: { cite: 'Larsen S et al. Knee flexion range of motion does not influence muscle hypertrophy of the quadriceps femoris during leg press training in resistance-trained individuals. J Sports Sci 2025;43(10):986-994', url: 'https://pubmed.ncbi.nlm.nih.gov/40113586/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'Deep and moderate range grew the quads alike, so stopping where the tailbone stays down costs little.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'Deep and moderate range grew the quads about the same.' },
   castonguay2022: { cite: 'Castonguay-Siu V, Taylor WR. Optimizing backrest geometry to minimize interfacial pressure concentrations in the mid-to-lumbar region during leg press resistance training. J Biomech Eng 2022;144(3):035001', url: 'https://pubmed.ncbi.nlm.nih.gov/34864904/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'MECH', note: 'The lower-back pad takes real pressure; spinal bending was not measured.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'MECH', note: 'The back pad takes real pressure. Spine bending was not measured.' },
   barnds2019: { cite: 'Barnds B et al. Simultaneous bilateral knee dislocation during weight training: a case report and review of the literature. JBJS Case Connect 2019;9(1):e5', url: 'https://pubmed.ncbi.nlm.nih.gov/30676343/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'WEAK', note: 'One case report ("during weight training", not said to be a leg press); advises no locking or hyperextension on any leg press.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'WEAK', note: 'One case report, exercise not named. Advises never locking the knees.' },
   macdougall1985: { cite: 'MacDougall JD et al. Arterial blood pressure response to heavy resistance exercise. J Appl Physiol 1985;58(3):785-90', url: 'https://pubmed.ncbi.nlm.nih.gov/3980383/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: 'n=5. Double-leg press gave the highest blood pressures near failure, partly from breath holding.' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA', note: '5 bodybuilders. Highest blood pressure near failure, partly from holding breath.' },
   'nhs-wrist-pain': { cite: 'NHS, Wrist pain', url: 'https://www.nhs.uk/conditions/hand-pain/wrist-pain/',
-    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When wrist pain needs a check.' },
   'nhs-knee-pain': { cite: 'NHS, Knee pain', url: 'https://www.nhs.uk/symptoms/knee-pain/',   // RED_FLAG_KNEE source
-    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When knee pain needs a check.' },
 };
 // Not cited: GENERAL.md (superseded project notes; the card's wrist mechanics come from it and are tagged WEAK here),
 // ExRx and physio-pedia (could not be reached by the card's researcher).
@@ -123,7 +125,7 @@ const PUSH_ON_KNEES = {
   pose: { forearm: 0, wrist: { ext: 80, dev: 0 }, contactAt: 0.45, fingers: { curl: 1 }, thumb: 'beside', squeeze: 'firm',
     handle: { profile: 'machine-grip', axis: 'across', diameterMm: KNEE_MM }, load: { kind: 'push' } },
   markers: ['lever-arc'],
-  alt: 'Palm pressed on the front of the knee to push a hard rep up. The wrist is folded back about 80 degrees, and the push from the knee runs on the back-of-hand side of the wrist, bending it further back.',
+  alt: 'Palm pressed on the front of the knee to push a hard rep up. The wrist folds back about 80 degrees. The push runs behind the wrist, bending it further.',
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
@@ -169,20 +171,20 @@ const zooms = [
     wrong: { still: 'mistake' },
     callouts: {   // mockup: one label per crop
       right: { text: 'Tailbone on pad', guide: 'pad-contact' },
-      wrong: { text: 'Gap at lower back', guide: 'pad-gap' },
+      wrong: { text: 'Tailbone off pad', guide: 'pad-gap' },
     },
     caption: {
-      right: 'Tailbone and lower back flat on the pad, knees at about 90 degrees.',
-      wrong: 'Too deep: your pelvis rolls up and a gap opens behind your lower back.',
+      right: 'Tailbone and lower back flat on the pad.',
+      wrong: 'Too deep: your tailbone peels off the pad.',
     },
     alt: {
-      right: 'Side view of the hips at the bottom of the rep. The tailbone and lower back lie flat on the back pad and the hips sit in the corner of the seat.',
-      wrong: 'Side view of the hips at the bottom of a rep that goes too deep. The knees come toward the chest, the pelvis rolls up off the seat and a gap opens between the lower back and the pad.',
+      right: 'Side view of the hips at the bottom of the rep. Tailbone and lower back lie flat on the pad. Hips sit in the seat\'s corner.',
+      wrong: 'Side view of a rep that goes too deep. Knees come toward the chest and the pelvis rolls up. A gap opens behind the lower back.',
     },
     feelRow: 'lower-back',
   },
   {
-    key: 'foot', chip: 'Feet', heading: 'Foot on platform: right and wrong', kind: 'posture',
+    key: 'foot', chip: 'Feet', heading: 'Feet: right and wrong', kind: 'posture',
     crop: { center: { landmark: 'ankle.r', pose: 'end', dx: 5, dy: -7 }, sizePx: 72 },   // holds both feet: mid-plate (right) and 12 cm lower (wrong)
     right: 'end',
     wrong: { still: 'feet-low' },
@@ -191,14 +193,16 @@ const zooms = [
       wrong: { text: 'Heel lifts', guide: 'heel-gap' },
     },
     caption: {
-      right: 'Whole foot flat in the middle of the plate, heel down.',
-      wrong: 'Feet low on the plate, heel lifted, all the push on the ball.',
+      right: 'Whole foot flat, middle of the plate.',
+      wrong: 'Feet low, heel up, pushing through the ball.',
     },
     alt: {
-      right: 'Side view of the foot on the platform at the bottom of the rep. The whole foot is flat in the middle of the plate and the push runs from the heel to the ball of the foot.',
-      wrong: 'Side view of the foot placed low on the platform. The heel has lifted off the plate, leaving a gap, and all the pressure is on the ball of the foot.',
+      right: 'Side view of the foot on the platform at the bottom of the rep. The whole foot lies flat, mid-plate. The push runs from heel to ball.',
+      wrong: 'Side view of the foot placed low on the platform. The heel has lifted, leaving a gap. All the pressure is on the ball of the foot.',
     },
-    feelRow: 'calves',
+    // was 'calves' (row cut to fit the 4-row cap). Now the knee row, whose first cause is this fault and which already
+    // links back here (zoom: 'foot').
+    feelRow: 'knee',
   },
   {
     key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',
@@ -211,11 +215,11 @@ const zooms = [
       notes: { right: 'Light full grip', wrong: 'Pushing on knee' },   // mockup
     },
     caption: {
-      right: 'Handle across your fingers and upper palm, thumb wrapped, wrist level.',
-      wrong: 'Pushing on your knees folds your wrists far back under the load.',
+      right: 'Held like a shopping bag handle, wrist level.',
+      wrong: 'Pushing on your knee folds the wrist far back.',
     },
     alt: {
-      right: 'Hand wrapped lightly round the side handle, the handle across the fingers and the top of the palm, thumb wrapped round it, wrist level with the forearm. No push through the hand.',
+      right: 'Hand wrapped lightly round the side handle, across the fingers and top of the palm. Thumb wrapped, wrist level with the forearm. No push through the hand.',
       wrong: PUSH_ON_KNEES.alt,
     },
     feelRow: 'wrists',
@@ -240,46 +244,35 @@ const feel = {
     { muscleId: 'lower_back', plain: "Your lower back should stay quiet and flat on the pad. If you feel it working, you're going too deep." },
     { muscleId: 'forearms', plain: 'Your forearms and hands should barely work. A light hold on the handles is enough.' },
   ],
-  feelLine: "You should feel this in the front of your thighs and your glutes. If your lower back is working, you're going too deep, so stop a little higher and keep your tailbone on the pad.",
-  // First 3 shown: the most common serious fault (lower back), the knee, and the wrist (the owner's injury, red flag).
+  // Owner 2026-09-30 (shorter, concept first): 19 words, 2 sentences.
+  feelLine: 'You should feel this in the front of your thighs and glutes. If your lower back works, stop higher.',
+  // 4 rows (owner cap). Kept: the lower back (the most common serious fault) and the three red-flag rows (knee, wrists,
+  // wrist-sore). Cut 2026-09-30: "Calves or arches" (the foot close-up still shows heels lifting), "Only the front of the
+  // thighs", "Groin or inner thigh" and "Head, pounding or dizzy" (its stop trigger moved to setup step 4: "Breathe out
+  // as you push. Dizzy? Stop.", same claim sources: macdougall1985 and ace-leg-press).
   rows: [
     { key: 'lower-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: "You're going too deep and your tailbone is lifting off the pad, or the back pad is set too upright for you.",
-      fix: 'Stop higher, set the depth catch there, and try your feet a little higher on the plate. Recline the pad a notch if it adjusts.',
+      means: 'Too deep, so your tailbone lifts, or the pad is too upright.',
+      fix: 'Stop higher and set the depth catch there. Recline the pad if it adjusts.',
       zoom: 'back-on-pad', claim: C(['CONSENSUS', 'DATA'], ['yessis', 'ace-leg-press', 'nasm-leg-press', 'marchetti2023'], 'Depth and tailbone: consensus. Pad angle: Marchetti 2023.') },
     // Card fix: "Feet higher and flat, knees over your toes, stop just short of straight. If it still hurts with good
     // form, drop the weight and get the knee checked." Starts with a verb now (6.2). "Get the knee checked" is NOT in
     // the row: rows may not carry their own red-flag wording (C8). The referral comes back through the shared knee block
     // (RED_FLAG_KNEE, NHS knee pain): the row carries redFlag: 'knee' (open item `knee-red-flag` closed 2026-09-30).
-    { key: 'knee', where: 'Front of the knee or under the kneecap', at: { parts: KNEE_PARTS },
-      means: 'Feet too low with heels lifting, knees falling in, or knees snapping locked at the top.',
-      fix: 'Put your feet higher and flat, keep your knees over your toes, and stop just short of straight. If it still hurts with good form, drop the weight.',
+    // 2026-09-30: "If it still hurts, drop the weight" cut to fit 15 words; the linked knee box carries what to do next.
+    { key: 'knee', where: 'Front of knee or under kneecap', at: { parts: KNEE_PARTS },
+      means: 'Feet low with heels up, knees caving, or locking at the top.',
+      fix: 'Move your feet up, heels down, knees over toes. Stop just short of straight.',
       zoom: 'foot', redFlag: 'knee', claim: C(['DATA', 'CONSENSUS', 'WEAK'], ['escamilla2001lp', 'nasm-leg-press', 'barnds2019', 'nhs-knee-pain']) },
     { key: 'wrists', where: 'Wrists or forearms', at: { muscles: ['forearms'], parts: WRIST_PARTS },
-      means: "You're squeezing the handles hard, or pushing on your knees with your hands to get a rep up.",
-      fix: 'Hold the handles lightly and keep your hands there. If a rep needs your hands, take a plate off.',   // card: "Light grip, hands stay on the handles." (fix starts with a verb, 6.2)
+      means: 'Squeezing hard, or pushing on your knees to finish a rep.',
+      fix: 'Hold the handles lightly. If a rep needs your hands, take a plate off.',   // card: "Light grip, hands stay on the handles."
       zoom: 'hand', redFlag: true, claim: CL.wrist },
     // behind "More"
-    { key: 'calves', where: 'Calves or arches, cramping', at: { muscles: ['calves'], parts: ['foot-left', 'foot-right'] },
-      means: "You're pushing through your toes and the heels are coming up.",
-      fix: 'Keep your heels down, push through the whole foot, and stop a bit higher if the heels still lift at the bottom.',
-      zoom: 'foot', claim: CL.heels },
-    { key: 'thighs-only', where: 'Only the front of the thighs, no glutes at all', at: {},
-      means: 'Feet low on the plate and a short range.',
-      fix: 'Move your feet up a little and use the full depth you can reach with your tailbone still down.',
-      zoom: 'foot', claim: C(['DATA'], ['dasilva2008', 'yessis', 'larsen2025']) },
-    { key: 'groin', where: 'Groin or inner thigh, sharp pull at the bottom', at: { muscles: ['adductors'] },
-      means: 'A very wide stance taken deep. Some inner-thigh work is normal, and a sharp pull is your cue to change something.',   // card: 3 sentences, joined to fit the 2-sentence lint
-      fix: 'Bring your feet in a bit and stop slightly higher.',
-      claim: C(['MECH', 'CONSENSUS'], ['kinoshita2026', 'nasm-leg-press'], 'Inner-thigh work near the bottom: mechanics (adductor magnus extends the hip). The sharp-pull advice is consensus.') },
-    { key: 'head', where: 'Head, a pounding or dizzy feeling', at: { parts: ['head', 'head-back'] },
-      means: 'Holding your breath hard through heavy reps. Blood pressure on the double-leg press gets very high.',
-      fix: 'Breathe out as you push. Lighter weight, and stop if you feel dizzy.',
-      claim: CL.breath },
     // Architecture: presses carry this row. The leg press has no handle choice, so the fix is the card's grip rule.
     { key: 'wrist-sore', where: 'Wrist sore before you start', at: { parts: WRIST_PARTS },
-      means: 'Any weight on a sore wrist can make it worse. Here your hands only hold you in the seat.',
-      fix: 'Hold the handles lightly with your wrists level, and never push on your knees. Stop the set if it hurts.',
+      means: 'Weight on a sore wrist can make it worse.',
+      fix: 'Hold lightly, wrists level, never on your knees. Stop if it hurts.',
       zoom: 'hand', redFlag: true,
       claim: C(['CONSENSUS'], ['ace-leg-press', 'nasm-leg-press', 'nhs-wrist-pain'], 'Light grip: card (ACE "lightly grasp", NASM). NHS self-care: do not lift heavy things with wrist pain.') },
   ],
@@ -301,23 +294,25 @@ const plate = plateSpec;
 
 /* ---------------------------------------------------------------- handling mistakes, risks (plan 2.4 items 4, 7) --
  * From the verified card's handlingMistakes (grip/research/leg_press.json): the mistake, its fix and what it can hurt,
- * cut to the copy limits (title <= 10 words; fix and risk <= 30 words and 2 sentences; no citations in user copy, C7;
+ * cut to the copy limits (owner 2026-09-30: title <= 5 words, fix <= 12, risk <= 14; no citations in user copy, C7;
  * no red-flag wording, C8: the shared RED_FLAG and DISCLAIMER come from howto/shared.mjs). `zoom` = "Show me" target. */
+// Owner 2026-09-30 (shorter, concept first): at most 3 mistakes. Cut: "Feet too low, heels lifting" (the foot close-up,
+// its captions and the knee row still carry it).
 const MISTAKES = [
-  { key: 'deep', title: 'Going so deep your tailbone lifts', zoom: 'back-on-pad', claim: C(['CONSENSUS'], ['ace-leg-press']),
-    fix: 'Stop just before your tailbone lifts, around 90 degrees at the knee for most people, and set the depth catch there.' },
-  { key: 'lock', title: 'Snapping your knees straight at the top', claim: C(['CONSENSUS', 'WEAK'], ['ace-leg-press', 'barnds2019']),
-    fix: 'Push until your legs are almost straight, keep a small bend, then start the next rep.' },
-  { key: 'heels', title: 'Feet too low, heels lifting', zoom: 'foot', claim: C(['CONSENSUS', 'DATA'], ['ace-leg-press', 'escamilla2001lp']),
-    fix: 'Move your feet up so the whole foot sits flat in the middle of the plate, and push through your whole foot, heels included.' },
-  { key: 'knees', title: 'Knees falling in, or hands pushing on your knees', zoom: 'hand', claim: C(['CONSENSUS'], ['ace-leg-press']),
-    fix: 'Keep your knees over your toes and your hands on the side handles. If you cannot finish a rep without your hands, take a plate off.' },
+  // ACE could not be opened in review, so every claim that cites it also cites a checked page saying the same (C8):
+  // NASM lists knees caving and going far past 90 degrees as faults, Yessis says knees to the chest round the lower back.
+  { key: 'deep', title: 'Going too deep', zoom: 'back-on-pad', claim: C(['CONSENSUS'], ['ace-leg-press', 'nasm-leg-press', 'yessis']),
+    fix: 'Stop before your tailbone lifts, around 90 degrees for most people.' },
+  { key: 'lock', title: 'Snapping knees straight', claim: C(['CONSENSUS', 'WEAK'], ['ace-leg-press', 'barnds2019']),
+    fix: 'Push until almost straight, keep a small bend, then go again.' },
+  { key: 'knees', title: 'Knees caving, hands on knees', zoom: 'hand', claim: C(['CONSENSUS'], ['ace-leg-press', 'nasm-leg-press']),
+    fix: 'Knees over toes. If you need your hands, take a plate off.' },
 ];
 const RISKS = [
-  { key: 'back', text: 'Going too deep rolls your pelvis off the seat, so your lower back bends under the whole weight of the sled.', claim: C(['CONSENSUS'], ['ace-leg-press']) },
-  { key: 'lock', text: 'A knee snapped straight under a heavy load can bend the wrong way. It is rare, but doctors have reported it.',
+  { key: 'back', text: 'Going too deep bends your lower back under the whole sled.', claim: C(['CONSENSUS'], ['ace-leg-press', 'yessis']) },
+  { key: 'lock', text: 'A knee snapped straight under load can bend the wrong way. Rare, but reported.',
     claim: C(['WEAK'], ['barnds2019'], 'One case report (A8 open item).') },
-  { key: 'knees', text: 'Knees caving in twist the knee under load, and pushing on your knees bends your wrists back under part of the sled.', claim: C(['CONSENSUS'], ['ace-leg-press']) },
+  { key: 'knees', text: 'Caving knees twist under load. Hands on knees bend your wrists back.', claim: C(['CONSENSUS'], ['ace-leg-press', 'nasm-leg-press']) },
 ];
 
 export default {
@@ -330,47 +325,50 @@ export default {
     // orientation left unset: the card says "take whatever shape the machine has", palms in or down.
     handle: 'pad-handle',
     loadAxis: 'across',     // archetype default; the lever check runs only for the push-on-knees fault drawing
-    width: { text: 'Set by the machine: one handle beside each hip. Arms hang relaxed with a soft bend at the elbow, shoulders down and back on the pad.', claim: CL.width },
+    width: { text: 'Set by the machine: one handle beside each hip. Arms relaxed with soft elbows, shoulders down and back on the pad.', claim: CL.width },
     thumb: { mode: 'wrapped', claim: CL.thumb },
     contact: 'finger-base',
-    wrist: { ext: [0, 20], dev: [-10, 10], limitText: "Keep it level with your forearm. Don't let it curl forward, and never bend it far back under load.", claim: CL.wrist },
+    wrist: { ext: [0, 20], dev: [-10, 10], limitText: 'Keep your wrist level, not curled forward or bent far back.', claim: CL.wrist },
     pose: RIGHT_POSE,
     faults: [PUSH_ON_KNEES],
-    gripLine: 'Hold the side handles lightly with your thumbs wrapped round. They keep you in the seat, so leave your hands there and never push on your knees.',
-    cue: 'Hold the handles lightly. Your hands stay there.',   // archetype cue (3.1)
+    // Owner 2026-09-30: concept first (the hands only hold you in the seat). The thumb wrap is in the hand close-up.
+    gripLine: 'Your hands just keep you in the seat. Hold lightly, never push on your knees.',
+    cue: 'Light hands, never on your knees.',   // archetype cue (3.1), 6-word cue cap
   },
   contacts: ['foot-platform', 'seat-back'],
+  // Owner 2026-09-30: at most 5 steps of at most 12 words. Kept: the depth catch (a failed rep lands on it, not on your
+  // chest; first, as in the card), sit back, release, depth with the breath and the dizzy stop, re-lock.
+  // Cut: loading the plates, the back-pad tilt (the lower-back row keeps "recline the pad"), the feet (the Feet close-up
+  // and the knee row's fix carry them), and taking the handles (the Grip section).
   setup: [
-    { kind: 'load', text: 'Load the plates the same on both sides of the sled, with the catches locked and the sled resting on them.', claim: CL.load },
-    { kind: 'adjust', text: 'If the back pad tilts, set it so you can sit deep and keep your lower back flat at the bottom. A more reclined pad changes the mix a little: more front of the thigh, less hamstring, and the glutes stay about the same.', zoom: 'back-on-pad', claim: C(['CONSENSUS', 'DATA'], ['ace-leg-press', 'marchetti2023']) },
-    { kind: 'safety', text: 'If the machine has a depth selector (a pin or knob for the catch height), set it just below your lowest point. A failed rep then lands on the catch instead of your chest.', claim: CL.safety },
-    { kind: 'get-in', text: 'Sit all the way back: hips into the corner of the seat, tailbone and lower back flat on the pad, head resting on the pad.', zoom: 'back-on-pad', claim: CL.back },
-    { kind: 'position', text: 'Put your feet in the middle of the platform, about hip to shoulder width. Whole foot flat, heels down, toes straight ahead or turned out a little. Pick the width that feels best. It changes very little about which muscles work.', zoom: 'foot', claim: CL.feet },
-    { kind: 'grip', text: 'Take the side handles lightly, thumbs wrapped round.', zoom: 'hand', claim: CL.grip },
-    { kind: 'safety', text: 'Press the sled up a few centimetres and turn the release handles out to free it (on most machines). Check your knees still have a small bend.', claim: CL.safety },
-    { kind: 'position', text: 'Lower under control until your knees are at about 90 degrees, or stop earlier if your tailbone starts to lift. Breathe out as you push back up.', zoom: 'back-on-pad', claim: C(['CONSENSUS', 'DATA'], ['ace-leg-press', 'nasm-leg-press', 'macdougall1985']) },
-    { kind: 'finish', text: 'After the last rep, pause at the top and turn the handles back in. Let the sled settle on the catches before you take your feet off or let go.', claim: CL.safety },
+    { kind: 'safety', text: 'Depth catch? Set it just below your lowest point.', claim: CL.safety },
+    { kind: 'get-in', text: 'Sit right back, lower back flat on the pad.', zoom: 'back-on-pad', claim: CL.back },
+    { kind: 'safety', text: 'On most machines, push the sled up and turn the handles out.', claim: CL.safety },
+    // Dizzy stop: the cut "Head, pounding or dizzy" row's trigger (MacDougall 1985: highest blood pressure of the lifts
+    // tested on the double-leg press, partly from breath holding).
+    { kind: 'position', text: 'Lower to about 90 degrees. Breathe out as you push. Dizzy? Stop.', zoom: 'back-on-pad', claim: C(['CONSENSUS', 'DATA'], ['ace-leg-press', 'nasm-leg-press', 'macdougall1985']) },
+    { kind: 'finish', text: 'Turn the handles in and rest the sled before feet come off.', claim: CL.safety },
   ],
   posture: [
-    { key: 'back', label: 'Tailbone on pad', detail: 'Your lower back stays against the pad with no gap, from the first rep to the last and at the bottom. Your hips sit in the corner of the seat.',
+    { key: 'back', label: 'Tailbone on pad', detail: 'Your lower back stays on the pad with no gap, even at the bottom. Hips sit in the corner of the seat.',
       anchor: { landmark: 'sacrum', pose: 'end' }, zoom: 'back-on-pad', claim: CL.back },
-    { key: 'feet', label: 'Whole foot flat', detail: 'Heels down, the middle of your foot roughly in the middle of the plate, toes straight or turned out a little. Push from your heel through the ball of your foot.',
+    { key: 'feet', label: 'Whole foot flat', detail: 'Heels down, foot in the middle of the plate, toes straight or out a little. Push from heel through ball.',
       anchor: { landmark: 'heel.r', pose: 'end' }, zoom: 'foot', claim: CL.feet },
-    { key: 'knees', label: 'Knees over toes', detail: 'Seen from the front, each knee stays over your second or third toe on the way down and up. It never falls inward.',
+    { key: 'knees', label: 'Knees over toes', detail: 'Seen from the front, each knee stays over your second or third toe. It never falls inward.',
       anchor: { landmark: 'knee.r', pose: 'end' }, claim: CL.kneesIn },   // text only: needs a front view of the sled (5.2)
-    { key: 'depth', label: 'About 90 degrees', detail: 'At the bottom your knees bend to about 90 degrees, your thighs stay clear of your ribs and your tailbone stays on the pad. This is the stop point for most people.',
+    { key: 'depth', label: 'About 90 degrees', detail: 'At the bottom, knees at about 90 degrees, tailbone still on the pad. Thighs stay clear of your ribs.',
       anchor: { landmark: 'knee.r', pose: 'end' }, zoom: 'back-on-pad', claim: CL.depth },
-    { key: 'soft', label: 'Soft knees', detail: 'At the top your legs are almost straight, with a small bend you can see at the knee, so your muscles keep holding the weight.',
+    { key: 'soft', label: 'Soft knees', detail: 'At the top your legs are almost straight, with a small bend at the knee.',
       anchor: { landmark: 'knee.r', pose: 'start' }, claim: CL.lockout },   // the plate's own "Soft knees" callout
-    { key: 'hands', label: 'Hands light', detail: 'Arms relaxed beside your body, shoulders and head back on the pad, hands wrapped lightly round the side handles.',
+    { key: 'hands', label: 'Hands light', detail: 'Arms relaxed, shoulders and head on the pad, hands wrapped lightly round the side handles.',
       anchor: { landmark: 'grip.r', pose: 'end' }, zoom: 'hand', claim: CL.grip },
   ],
   feel,
   zooms,
   copy: {
-    setupLine: 'Sit right back so your tailbone touches the pad. Feet in the middle of the platform, about hip width or a little wider, whole foot flat with heels down.',
-    mistakeLine: 'Keep a small bend in your knees at the top, and on the way down stop before your tailbone lifts.',
-    gripLine: 'Hold the side handles lightly with your thumbs wrapped round. They keep you in the seat, so leave your hands there and never push on your knees.',
+    setupLine: 'Sit right back, tailbone on the pad. Feet mid-platform, whole foot flat, heels down.',
+    mistakeLine: 'Keep a small bend at the top. On the way down, stop before your tailbone lifts.',
+    gripLine: 'Your hands just keep you in the seat. Hold lightly, never push on your knees.',
   },
   redFlag: RED_FLAG,
   openItems: OPEN_ITEMS,   // mockup

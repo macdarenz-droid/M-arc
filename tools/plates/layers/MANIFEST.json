@@ -1,256 +1,270 @@
 {
   "schema": 1,
-  "note": "HT-4 golden-B lock. Every file is verbatim from the S-2 pin (16a8edc); never edit a byte (golden update procedure: docs/howto/build-plan/HOWTO-BUILD-PLAN.md 2.8).",
+  "note": "HT-4 golden-B lock. Every file is verbatim from the compact-copy pin (b3a90af); never edit a byte (golden update procedure: docs/howto/build-plan/HOWTO-BUILD-PLAN.md 2.8).",
   "pageApproval": {
     "current": {
-      "ref": "16a8edc",
+      "ref": "b3a90af",
       "approvedBy": "owner",
       "date": "2026-09-30",
-      "why": "The approved How-to layer mockup (golden B, S-2 pin), vendored verbatim into tools/plates/layers/ (HT-4). Holds only the golden-A plates (HT4-A5).",
-      "pageSha256": "472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a",
-      "bytes": 2451995
+      "why": "owner approved the layer design and asked for compact concept-first copy",
+      "pageSha256": "5aab1aca9bc231cc8868f366648d0d536b879d6c7d4d1adf220da99b66098deb",
+      "bytes": 2386760
     },
-    "history": []
+    "history": [
+      {
+        "ref": "16a8edc",
+        "approvedBy": "owner",
+        "date": "2026-09-30",
+        "why": "The approved How-to layer mockup (golden B, S-2 pin), vendored verbatim into tools/plates/layers/ (HT-4). Holds only the golden-A plates (HT4-A5). Superseded by the compact-copy update.",
+        "pageSha256": "472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a",
+        "bytes": 2451995
+      }
+    ]
   },
   "files": {
     "README.md": {
-      "sha256": "40adc0fd81f293e1c4698507d8d8f6f341db5f8227178276cba9d7a5e1736e3d",
-      "source": "16a8edc:docs/howto/golden-b/README.md",
-      "gitBlob": "6a72989a368aa9d76d50b952de0f694b1e4a91b1"
+      "sha256": "20941f662b4c5362362edcd6245613c37aec3f1ad0973829d42f1dffd7b40eaa",
+      "source": "b3a90af:docs/howto/golden-b/README.md",
+      "gitBlob": "3fafbfb122bf4be22fab79698b77a908ffdf009b"
     },
     "artifact/build-page.mjs": {
       "sha256": "56ac60590b5380ee90792c1f1e8561c95e88568dd809363b3d01759be6fa5882",
-      "source": "16a8edc:docs/howto/golden-b/artifact/build-page.mjs",
+      "source": "b3a90af:docs/howto/golden-b/artifact/build-page.mjs",
       "gitBlob": "e78a42cac6b8f0c5e04c949e01c3fd1f9d8fe67e"
+    },
+    "artifact/copy-lint.mjs": {
+      "sha256": "34ac7f20984d58eb16d1ce2a4d66eac4a732a2997204f6318a42eacdccc53de4",
+      "source": "b3a90af:docs/howto/golden-b/artifact/copy-lint.mjs",
+      "gitBlob": "5d2c0a221e00d3a0b02a5d02df3f5b431e6129ba"
     },
     "artifact/fidelity-check.mjs": {
       "sha256": "e79631622c412533d7f6e818fff2208280be3f6dc56eca060706e7f52ca89788",
-      "source": "16a8edc:docs/howto/golden-b/artifact/fidelity-check.mjs",
+      "source": "b3a90af:docs/howto/golden-b/artifact/fidelity-check.mjs",
       "gitBlob": "00cf0d721d5a161aeadd3e73468f3c8e4cf9f747"
     },
     "artifact/howto-layers.mjs": {
-      "sha256": "ac3d32f537c7647db26b1f1bdcd77ef38ed2653b07b6e7dde93f66fc36eedbb8",
-      "source": "16a8edc:docs/howto/golden-b/artifact/howto-layers.mjs",
-      "gitBlob": "01bed1b79350bf0751fcff7263281add3938971b"
+      "sha256": "40400de3f614a2717d7daa810d7c242e15ae73aee0a71edb8c06cabcd56b0089",
+      "source": "b3a90af:docs/howto/golden-b/artifact/howto-layers.mjs",
+      "gitBlob": "1ae3fcec0c2dcdbc666292964d44a919f07ebddd"
     },
     "artifact/shoot2.mjs": {
-      "sha256": "2ed7c54b1e41a5dc447757149a152dff9d644a2f14f538d52fecb1adcd66857a",
-      "source": "16a8edc:docs/howto/golden-b/artifact/shoot2.mjs",
-      "gitBlob": "2cb62e1c521565053494c562da7b761a90bcec8a"
+      "sha256": "9c8091a10df432160032709107b2cb50e5005058a040a171764c15eb21ae2d7a",
+      "source": "b3a90af:docs/howto/golden-b/artifact/shoot2.mjs",
+      "gitBlob": "6e9f70d54a8c2687e58be1247b46d4d775aaa386"
     },
     "artifact/technical-plates.html": {
-      "sha256": "472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a",
-      "source": "16a8edc:docs/howto/golden-b/artifact/technical-plates.html",
-      "gitBlob": "4909e06a67f9dbbc9c131b7b425a10068b7cf1d1"
+      "sha256": "5aab1aca9bc231cc8868f366648d0d536b879d6c7d4d1adf220da99b66098deb",
+      "source": "b3a90af:docs/howto/golden-b/artifact/technical-plates.html",
+      "gitBlob": "4ebb4a312cd6941ab2f32971f472e3accf05a48e"
     },
     "engine/body.mjs": {
       "sha256": "e274ba64e5e4775b6f50246c7ced433e7024f152cbeb500b0c012bc57a731e89",
-      "source": "16a8edc:docs/howto/golden-b/engine/body.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/body.mjs",
       "gitBlob": "122d328fcd3ac33f89d31564c026fb5f5a590ed4"
     },
     "engine/bodymap-parts.mjs": {
       "sha256": "cb7d8abc4f821a15724ea21dfd9c14ee5ad381f7d6c53ccdb24480137bfee6e0",
-      "source": "16a8edc:docs/howto/golden-b/engine/bodymap-parts.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/bodymap-parts.mjs",
       "gitBlob": "93795853c8925b0cfce4699e3c8a131862994d78"
     },
     "engine/equipment.mjs": {
       "sha256": "ebc5264a8f477179e0b719e3b56ee200b0df9d12839644a12bb2353a806cfa34",
-      "source": "16a8edc:docs/howto/golden-b/engine/equipment.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/equipment.mjs",
       "gitBlob": "9eb93b72aaf06288b583991f3f8162be8f7839c3"
     },
     "engine/feelmap.mjs": {
       "sha256": "5591b59425a2ace2ddc0e2f7b8f6dd937bd6e60760a2c51636076d8ac862e85a",
-      "source": "16a8edc:docs/howto/golden-b/engine/feelmap.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/feelmap.mjs",
       "gitBlob": "21cbd1af58c0025c59950c616daf45a6488f4af2"
     },
     "engine/geom.mjs": {
       "sha256": "c2783668faaac66f6843d1bac7cd44f193a881d792b20809590255cc79f088fb",
-      "source": "16a8edc:docs/howto/golden-b/engine/geom.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/geom.mjs",
       "gitBlob": "dcd603202499ebefe19e59aca615cfd289300b53"
     },
     "engine/hand-pairs.mjs": {
       "sha256": "7fed75c3689a3b76cede1969cc50db3d3870edb08dee86fbc84cd4ec21a5bbec",
-      "source": "16a8edc:docs/howto/golden-b/engine/hand-pairs.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/hand-pairs.mjs",
       "gitBlob": "7f8299fc3da0baccdcc583b66b56475fae49a248"
     },
     "engine/hand-test.mjs": {
       "sha256": "ce0c9998b34783ec195e90e5f79823f1c9eabd19fc5761c69302d6184b26c2e1",
-      "source": "16a8edc:docs/howto/golden-b/engine/hand-test.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/hand-test.mjs",
       "gitBlob": "1fa2723836655bc9fa133a7b10f1fce42d7fd00e"
     },
     "engine/hand.mjs": {
       "sha256": "0132b54b5cac1ecc32b218d18a397d4b9bfb78564b0b6342aec0bc3980c00299",
-      "source": "16a8edc:docs/howto/golden-b/engine/hand.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/hand.mjs",
       "gitBlob": "138b88c74b9dd468c738e4fcc85593fcaac58aa7"
     },
     "engine/index.mjs": {
       "sha256": "b82df31f61127beef60314c2fb663fbbe3c8a8d5bf2e360fb5768e179fb8b80a",
-      "source": "16a8edc:docs/howto/golden-b/engine/index.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/index.mjs",
       "gitBlob": "1ba3ea9be5da0b29ab87b5cd18f912dbf000977c"
     },
     "engine/inter-latin-wght-normal.woff2": {
       "sha256": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62",
-      "source": "16a8edc:docs/howto/golden-b/engine/inter-latin-wght-normal.woff2",
+      "source": "b3a90af:docs/howto/golden-b/engine/inter-latin-wght-normal.woff2",
       "gitBlob": "d15208de03cd1ad7c5199f0a0ce915fe841e4722"
     },
     "engine/layout.mjs": {
       "sha256": "d89d3c589047d40dc52f2bd803db9e6ee7a9b4b7f978efcd90afd5a37da0ae26",
-      "source": "16a8edc:docs/howto/golden-b/engine/layout.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/layout.mjs",
       "gitBlob": "56ad4cd0aa59ad6b95f9261be2853715b24fbeef"
     },
     "engine/plate.mjs": {
       "sha256": "98415069863dd3982a6f77ba733bd66afd32ea59edd54e3532266b6afe296d42",
-      "source": "16a8edc:docs/howto/golden-b/engine/plate.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/plate.mjs",
       "gitBlob": "620f5d927f9072b4967871892697a988e3f3e94c"
     },
     "engine/sheet.mjs": {
       "sha256": "20e49675882d90d598efa73999f1e3ee56a9b7f5d7946dfba90987ab7f2e1a0e",
-      "source": "16a8edc:docs/howto/golden-b/engine/sheet.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/sheet.mjs",
       "gitBlob": "c541612a5cb0c8a3267756e8f2d26788ab046ce6"
     },
     "engine/themes.mjs": {
       "sha256": "0b6295e8bcb6c56a016d998a3c0cf49af323fde04032d43ef3319f405ade7d99",
-      "source": "16a8edc:docs/howto/golden-b/engine/themes.mjs",
+      "source": "b3a90af:docs/howto/golden-b/engine/themes.mjs",
       "gitBlob": "a427acaa5845ba9aa57e224d7012c0549cb4201d"
     },
     "engine/tokens.css": {
       "sha256": "b1aa47369e703412d0d9a7f20bfa7691de477aaa724a722bdd203d0b636d96ad",
-      "source": "16a8edc:docs/howto/golden-b/engine/tokens.css",
+      "source": "b3a90af:docs/howto/golden-b/engine/tokens.css",
       "gitBlob": "d9fbbdc0bec124eaa9a04911050314b6705285cb"
     },
     "exercises/barbell_back_squat.howto-render.mjs": {
       "sha256": "c9818e545fa830bcd9013005e2e23e1ad3764e98d19899f32c0eea5429cc7b88",
-      "source": "16a8edc:docs/howto/golden-b/exercises/barbell_back_squat.howto-render.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/barbell_back_squat.howto-render.mjs",
       "gitBlob": "ed08d920a917bd0a05933a2173f9eb7760284e18"
     },
     "exercises/barbell_back_squat.howto.mjs": {
-      "sha256": "1f2813a0586acc7b8150abf6653578e62d4086e192d9f7bd921ff48cafb304ef",
-      "source": "16a8edc:docs/howto/golden-b/exercises/barbell_back_squat.howto.mjs",
-      "gitBlob": "ef94b7c8b427d6f84aed59fdff0d6839e378451a"
+      "sha256": "f8953ac678b3a0f74d32820bc5db513899293b80147d9d997c65244526930b65",
+      "source": "b3a90af:docs/howto/golden-b/exercises/barbell_back_squat.howto.mjs",
+      "gitBlob": "ad3cebdf938ae922233fd3eb1fd65dca9acea035"
     },
     "exercises/barbell_back_squat.mjs": {
       "sha256": "4edd909a013bf3d0209eadaf094610ba3ed6871fe47a47539b2af2c1dee6769c",
-      "source": "16a8edc:docs/howto/golden-b/exercises/barbell_back_squat.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/barbell_back_squat.mjs",
       "gitBlob": "add0f07af9770ca9a63880d850ab53fd0b699afe"
     },
     "exercises/dumbbell_lateral_raise.howto.mjs": {
-      "sha256": "1cbba282e82a116a612e774e73ed4d64cc3f496fdc88369dcd54650e93bea174",
-      "source": "16a8edc:docs/howto/golden-b/exercises/dumbbell_lateral_raise.howto.mjs",
-      "gitBlob": "2b3067f03858785d93f089781fc2a1efe12619ea"
+      "sha256": "d9da5fa99d943a5fddc74d9112a9ed55fb2e51cd3e904a651529eb67ded43128",
+      "source": "b3a90af:docs/howto/golden-b/exercises/dumbbell_lateral_raise.howto.mjs",
+      "gitBlob": "6fd14e7cc76c820bf99ee3c631cbf295f9623858"
     },
     "exercises/hanging_leg_raise.howto.mjs": {
-      "sha256": "c83d5b96d374f6ed47e4c0ae78b2513305f0345733f6e535ba227a430fc1ebda",
-      "source": "16a8edc:docs/howto/golden-b/exercises/hanging_leg_raise.howto.mjs",
-      "gitBlob": "8f542113401b97b3a165d979e7adcc7ce64b8911"
+      "sha256": "f26e6a6856809b0713167780806e0e585ed4e3e85db8b74680a5c86ce6e249e3",
+      "source": "b3a90af:docs/howto/golden-b/exercises/hanging_leg_raise.howto.mjs",
+      "gitBlob": "0432132372cbb01fa5666dd039208f61abae4abe"
     },
     "exercises/hanging_leg_raise.mjs": {
       "sha256": "77524c64ae74710ee75b224564dfd38c6a620c573245d1295aed51de8cc150e2",
-      "source": "16a8edc:docs/howto/golden-b/exercises/hanging_leg_raise.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/hanging_leg_raise.mjs",
       "gitBlob": "fccf099df7f8c330a5aedec08a54b4b0a5404826"
     },
     "exercises/lat_pulldown.howto.mjs": {
-      "sha256": "6128ba32c419b367fd052ef63e752d705d2ff9fa8c95f3b9e00c6c4561e288cd",
-      "source": "16a8edc:docs/howto/golden-b/exercises/lat_pulldown.howto.mjs",
-      "gitBlob": "187b3f4eb2a2496a2e18d7394583e12c6655d673"
+      "sha256": "372b829a5be800449af77afab8ba0e5a18ece5fdbd7f0a80e6383b76fe478e68",
+      "source": "b3a90af:docs/howto/golden-b/exercises/lat_pulldown.howto.mjs",
+      "gitBlob": "e10ae5312d821716eea533f35fcc1205ddeb56ee"
     },
     "exercises/lat_pulldown.mjs": {
       "sha256": "853d1665581a2bf985d565564b55cfa5c4e4e45a608d74a58d44fb272e50d401",
-      "source": "16a8edc:docs/howto/golden-b/exercises/lat_pulldown.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/lat_pulldown.mjs",
       "gitBlob": "9fe30824c67382719ce97152e658bae8335e8d04"
     },
     "exercises/leg_press.howto-render.mjs": {
       "sha256": "7f17ed560065dffbb202cc14a4345a3e452594fb85a8a86947302e9e6b1af8c2",
-      "source": "16a8edc:docs/howto/golden-b/exercises/leg_press.howto-render.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/leg_press.howto-render.mjs",
       "gitBlob": "ac8df8e6f10841649cadd0468d05219d108bc4d6"
     },
     "exercises/leg_press.howto.mjs": {
-      "sha256": "e4efa941073a0f0bf683ebb53213e65602f0bd9b0f018213efc5176c43898376",
-      "source": "16a8edc:docs/howto/golden-b/exercises/leg_press.howto.mjs",
-      "gitBlob": "0c04fcc2d30ba7f259322440f9b35002384bde37"
+      "sha256": "73ca8d2a9616f8e68c43b903b61d4ec07cc67abcb45b3368ba03977eca709db4",
+      "source": "b3a90af:docs/howto/golden-b/exercises/leg_press.howto.mjs",
+      "gitBlob": "226379a1b90d200db1c18602bd3a0163d62e8e52"
     },
     "exercises/leg_press.mjs": {
       "sha256": "02f0d5721b9fbbaa27ce7e9070c1cf965a493af2febcf91ba324410c389bb0b2",
-      "source": "16a8edc:docs/howto/golden-b/exercises/leg_press.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/leg_press.mjs",
       "gitBlob": "0e9e7a79b1e0b9127720781fbf205847f06906a8"
     },
     "exercises/machine_chest_press.howto-render.mjs": {
       "sha256": "c34e59819183042f76b37e2830901c2777308372ce1715c32efb2679674d8e17",
-      "source": "16a8edc:docs/howto/golden-b/exercises/machine_chest_press.howto-render.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/machine_chest_press.howto-render.mjs",
       "gitBlob": "102316cb87e32f8391d56204c94970379f3e7c2c"
     },
     "exercises/machine_chest_press.howto.mjs": {
-      "sha256": "a2c4061297508301122a5a519bc337a414acc61b3a303b44c7e1aa025725c8cc",
-      "source": "16a8edc:docs/howto/golden-b/exercises/machine_chest_press.howto.mjs",
-      "gitBlob": "f22fea5f18d2ddc7ab32350f384aceded89b66d9"
+      "sha256": "25fb2674ed91a7e244534b75e997b3fc0d9c991a9a6790a2b7a9cd93aa6994a9",
+      "source": "b3a90af:docs/howto/golden-b/exercises/machine_chest_press.howto.mjs",
+      "gitBlob": "70f40c5a587ab9e128c3b1c1769ad851b5fa2b6e"
     },
     "exercises/machine_chest_press.mjs": {
       "sha256": "540fc036c497ee024fb83c8a1f56167ed3bed1dec7114de9678fd65fb9f488ef",
-      "source": "16a8edc:docs/howto/golden-b/exercises/machine_chest_press.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/machine_chest_press.mjs",
       "gitBlob": "c0640fd212ae5a845bf48def20c2358792be53ae"
     },
     "exercises/pull_up.howto.mjs": {
-      "sha256": "6d1c95decf9fa04ab0487a483b8a6038539f83fb9d760b642179a19492e75140",
-      "source": "16a8edc:docs/howto/golden-b/exercises/pull_up.howto.mjs",
-      "gitBlob": "573e2ded2e8db127536c9c3a84d946c6878d5a63"
+      "sha256": "c907e8423e64477c8a27615929efedc4a8779d15cec70c2ce42df087baa63122",
+      "source": "b3a90af:docs/howto/golden-b/exercises/pull_up.howto.mjs",
+      "gitBlob": "274e0fc60e754da2feea39d6bd497d0c80f6ec73"
     },
     "exercises/pull_up.mjs": {
       "sha256": "d8a8c650828e4947f010729ad3a1503b6a7ed063b2dc3178a91d33a94586997c",
-      "source": "16a8edc:docs/howto/golden-b/exercises/pull_up.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/pull_up.mjs",
       "gitBlob": "49e230da249d9a4883279f627590c57d6cdd6cb7"
     },
     "exercises/seated_cable_row.howto.mjs": {
-      "sha256": "c8d85cf2740e428cfa2edb98ac100a78664bbad63f181977dbb85a26bd14520f",
-      "source": "16a8edc:docs/howto/golden-b/exercises/seated_cable_row.howto.mjs",
-      "gitBlob": "3aad32d41aeafdd0df1420388e59fc99ba57b4bb"
+      "sha256": "64139b0478ce6dac7f5afde74daa81222e143507bc09966e9b1bdf471484a25a",
+      "source": "b3a90af:docs/howto/golden-b/exercises/seated_cable_row.howto.mjs",
+      "gitBlob": "cda7a2e408ff17958458b9b73da41014ecc4ce11"
     },
     "exercises/seated_cable_row.mjs": {
       "sha256": "302fae993de1456b54efa83cf286231f9fda694fa2eba7122975dff185b88ddb",
-      "source": "16a8edc:docs/howto/golden-b/exercises/seated_cable_row.mjs",
+      "source": "b3a90af:docs/howto/golden-b/exercises/seated_cable_row.mjs",
       "gitBlob": "2e902ec4928212cc8f1d1ea9959890b1e5069785"
     },
     "howto/end-on-inset.mjs": {
       "sha256": "a698cff30fa7ff6601157eda658c8989d25a4203dfb05ff6e4f110cc128a72a9",
-      "source": "16a8edc:docs/howto/golden-b/howto/end-on-inset.mjs",
+      "source": "b3a90af:docs/howto/golden-b/howto/end-on-inset.mjs",
       "gitBlob": "5d13e4ebed9e8b73a0a4067eaa2b54b12eea2db1"
     },
     "howto/render-dumbbell_lateral_raise.mjs": {
       "sha256": "4aa55783fb7c25214c75196beadd3d5b5ab9ac58b3cc4c2b6baabe32f7433778",
-      "source": "16a8edc:docs/howto/golden-b/howto/render-dumbbell_lateral_raise.mjs",
+      "source": "b3a90af:docs/howto/golden-b/howto/render-dumbbell_lateral_raise.mjs",
       "gitBlob": "4826d1d249ca1c5b27c366e2f156e3a04f9d185c"
     },
     "howto/render-hanging_leg_raise.mjs": {
       "sha256": "a65d28a57b02029b022a51df813b216540f51bb790ca9d7b2ffeac3aaae9f511",
-      "source": "16a8edc:docs/howto/golden-b/howto/render-hanging_leg_raise.mjs",
+      "source": "b3a90af:docs/howto/golden-b/howto/render-hanging_leg_raise.mjs",
       "gitBlob": "0c16577c66bd265aa09d8cabd4a2f1d173c7d0a8"
     },
     "howto/render-lat_pulldown.mjs": {
       "sha256": "be81af0215d4d380fbf4d96ec29ad6ade53719aadac69a61a7e68f263f2da457",
-      "source": "16a8edc:docs/howto/golden-b/howto/render-lat_pulldown.mjs",
+      "source": "b3a90af:docs/howto/golden-b/howto/render-lat_pulldown.mjs",
       "gitBlob": "6e1b559e593e7c4f0cb407cb51204429533173cd"
     },
     "howto/render-pull_up.mjs": {
       "sha256": "ceb7c4c1e921ebfadf4a55b96e40ada3135270149f780f3312252971bddc608b",
-      "source": "16a8edc:docs/howto/golden-b/howto/render-pull_up.mjs",
+      "source": "b3a90af:docs/howto/golden-b/howto/render-pull_up.mjs",
       "gitBlob": "e9eb05f157f14b2f2dc2ed90ccd40f5ef5e6d2ef"
     },
     "howto/render-seated_cable_row.mjs": {
       "sha256": "89af4076d4c93ed955b34fb6221a8231bc33044cb0173227845835a7da7920d2",
-      "source": "16a8edc:docs/howto/golden-b/howto/render-seated_cable_row.mjs",
+      "source": "b3a90af:docs/howto/golden-b/howto/render-seated_cable_row.mjs",
       "gitBlob": "6ac51903e76bd988c19e40f84f65ae2355c8de32"
     },
     "howto/shared.mjs": {
-      "sha256": "a545770d14db7f90ac7e5cab3eca3de39c123cf019423d8fb2b9267328f26540",
-      "source": "16a8edc:docs/howto/golden-b/howto/shared.mjs",
-      "gitBlob": "01cd2f153edc559dba17411e5112167761b8fc54"
+      "sha256": "d14d6e0f109c37ffa4bb39134b6dd16e55055f341dc89a5c23e9f303cf23b710",
+      "source": "b3a90af:docs/howto/golden-b/howto/shared.mjs",
+      "gitBlob": "5238ef863da671f4818db1ac25a6fd8b8d67bf23"
     },
     "ref-src/plate.mjs": {
       "sha256": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
-      "source": "16a8edc:docs/howto/golden-b/ref-src/plate.mjs",
+      "source": "b3a90af:docs/howto/golden-b/ref-src/plate.mjs",
       "gitBlob": "2fff9ba374363a3785a82def2d1f61791af90480"
     },
     "ref-src/themes.mjs": {
       "sha256": "0b6295e8bcb6c56a016d998a3c0cf49af323fde04032d43ef3319f405ade7d99",
-      "source": "16a8edc:docs/howto/golden-b/ref-src/themes.mjs",
+      "source": "b3a90af:docs/howto/golden-b/ref-src/themes.mjs",
       "gitBlob": "a427acaa5845ba9aa57e224d7012c0549cb4201d"
     }
   }

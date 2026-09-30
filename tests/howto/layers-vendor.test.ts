@@ -1,5 +1,6 @@
 // HT-4 L0-B (HT4-A1): the vendored How-to layer mockup (golden B, tools/plates/layers/) is verbatim from the S-2
-// pin (16a8edc) and rebuilds byte-identical.
+// pin (b3a90af, the compact-copy update; supersedes the first pin 16a8edc, kept in pageApproval.history) and
+// rebuilds byte-identical.
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -21,24 +22,25 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
   beforeAll(async () => { m = await import(/* @vite-ignore */ MOD_URL); });
   afterAll(() => { for (const d of tmps) m.cleanupMirror(d); });
 
-  it('every vendored file matches its MANIFEST sha256 and git blob against the 16a8edc pin', () => {
+  it('every vendored file matches its MANIFEST sha256 and git blob against the golden-B pin', () => {
     expect(m.verifyLayers()).toEqual([]);
   });
 
-  it('the MANIFEST lists exactly the golden-B read closure: README, artifact, engine, exercises, howto, ref-src', () => {
+  it('the MANIFEST lists exactly the golden-B read closure: README, artifact (incl. copy-lint), engine, exercises, howto, ref-src', () => {
     const paths = Object.keys(m.readManifest().files).sort();
     expect(paths).toContain('README.md');
     expect(paths).toContain('artifact/build-page.mjs');
+    expect(paths).toContain('artifact/copy-lint.mjs');
     expect(paths).toContain('engine/plate.mjs');
     expect(paths).toContain('exercises/machine_chest_press.howto.mjs');
     expect(paths).toContain('howto/shared.mjs');
     expect(paths).toContain('ref-src/plate.mjs');
-    expect(paths.length).toBe(48);
+    expect(paths.length).toBe(49);
     // No engine re-draw for the lateral raise: golden B takes its plate from ref-src (S-2 condition 1).
     expect(paths).not.toContain('exercises/dumbbell_lateral_raise.mjs');
   });
 
-  it('rebuilding the vendored layer page gives the pinned pageSha256 (472030…149c4a)', async () => {
+  it('rebuilding the vendored layer page gives the pinned pageSha256 (5aab1a…098deb)', async () => {
     const mirror = copyLayers();
     const html = await m.buildLayerPage(mirror);
     expect(m.sha256(html)).toBe(m.PAGE_SHA256);
@@ -71,13 +73,13 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
     const manifest = m.readManifest(d);
     manifest.files['engine/plate.mjs'].source = 'bc0f378:docs/howto/golden-b/engine/plate.mjs';
     writeFileSync(join(d, 'MANIFEST.json'), JSON.stringify(manifest));
-    expect(m.verifyLayers(d, manifest).some((p: string) => p.includes('is not the 16a8edc pin'))).toBe(true);
+    expect(m.verifyLayers(d, manifest).some((p: string) => p.includes(`is not the ${m.GOLDEN_B_REF} pin`))).toBe(true);
   });
 
   // Supervisor, PR #107 (the same condition HT-2 had, #105): the per-file check alone cannot catch a file and its
   // own MANIFEST entry being edited together and staying consistent with each other.
   it('the sorted path:sha256 list of MANIFEST.json, plus pageApproval, hashes to its pinned literal', () => {
-    expect(m.sha256(m.manifestPinList())).toBe('505e5ae2a8f9341082459c3e5903a976c634766abbcde30074169ac82b773903');
+    expect(m.sha256(m.manifestPinList())).toBe('27c4629ab2554c5d38ab79b6bacff507ca231d9c7fafd5bd1cb86c2794c1f654');
   });
 
   it('fails when a vendored file and its own MANIFEST sha256 entry change together (consistently)', () => {
@@ -92,7 +94,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
     // the per-file check alone is fooled (both sides agree, source pin untouched)...
     expect(m.verifyLayers(d, manifest)).toEqual([]);
     // ...but the literal pin over the whole manifest is not
-    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('505e5ae2a8f9341082459c3e5903a976c634766abbcde30074169ac82b773903');
+    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('27c4629ab2554c5d38ab79b6bacff507ca231d9c7fafd5bd1cb86c2794c1f654');
   });
 });
 
@@ -117,16 +119,20 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
     expect(fixture.length).toBe(current.bytes);
   });
 
-  it('history is empty today (no golden-B update has landed yet), and historyPin catches an edited past entry', () => {
+  it('history holds the retired 16a8edc approval (the compact-copy update superseded it) and hashes to its pinned literal', () => {
     const { history } = m.readManifest().pageApproval;
-    expect(history).toEqual([]);
-    // Simulates a later update: today's approval retired into history. A future update's own test pins
-    // historyPin(history) as a literal, the same way this file pins manifestPinList() above; editing that entry
-    // afterwards (rather than only ever appending a new one) changes the pin.
-    const retired = { ref: 'aaaaaaa', approvedBy: 'owner', date: '2026-10-01', why: 'superseded by a later pin', pageSha256: 'x'.repeat(64), bytes: 1 };
-    const pin = m.historyPin([retired]);
-    expect(m.historyPin([{ ...retired, why: 'tampered after the fact' }])).not.toBe(pin);
-    expect(m.historyPin([retired])).toBe(pin);
+    expect(history).toEqual([{
+      ref: '16a8edc', approvedBy: 'owner', date: '2026-09-30',
+      why: 'The approved How-to layer mockup (golden B, S-2 pin), vendored verbatim into tools/plates/layers/ (HT-4). Holds only the golden-A plates (HT4-A5). Superseded by the compact-copy update.',
+      pageSha256: '472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a', bytes: 2451995,
+    }]);
+    expect(m.historyPin(history)).toBe('47674b24dfbea752e7e991f2360bee9df6d4cb2a8453bf9bcf2b733a1a38ce56');
+  });
+
+  it('fails (the pinned literal changes) if the retired 16a8edc entry is edited after the fact', () => {
+    const { history } = m.readManifest().pageApproval;
+    const tampered = [{ ...history[0], why: 'tampered after the fact' }];
+    expect(m.historyPin(tampered)).not.toBe(m.historyPin(history));
   });
 
   it('does not touch tests/howto/golden/GOLDEN.json (HT-2\'s generator input)', () => {

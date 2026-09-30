@@ -79,7 +79,7 @@ for (const theme of THEMES) {
     }, card);
     if (theme === 'silent-black') counts[`structure ${id}`] = s;
     for (const k of ['grip', 'feel', 'setup', 'risks', 'sources', 'disclaimer']) if (s[k] !== 1) bad(`${id}: ${k} x${s[k]}`);
-    if (s.mistakes !== 4) bad(`${id}: ${s.mistakes} handling mistakes`);
+    if (s.mistakes !== 3) bad(`${id}: ${s.mistakes} handling mistakes`);   // golden B compact copy (owner 2026-09-30): 3 per exercise, was 4
     if (!s.redflags || !s.riskItems) bad(`${id}: risks without items or red flag`);
     if (s.blocks !== FLAGS[id].join()) bad(`${id}: red-flag blocks ${s.blocks}, expected ${FLAGS[id]}`);
     if (s.linked !== [...FLAGS[id]].sort().join()) bad(`${id}: rows link to ${s.linked}, expected ${FLAGS[id]}`);
