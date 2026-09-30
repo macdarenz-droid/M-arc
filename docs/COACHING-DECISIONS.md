@@ -988,3 +988,9 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3)**: `claude/doc-3-privacy-on-site` does not merge `origin/main`; its PR targets the website branch `claude/app-website-design-671lk8`, which is deployed on its own and has never carried `main` (merging would pull 326 app commits into a website-only diff). The copy of `docs/PRIVACY-POLICY.md` there is kept byte-identical to this branch's, so the two merge cleanly.
   **Why**: the "head contains latest main" rule is for PRs into `main`; the website branch is deployed by hand from its own head.
   **Source**: `git rev-list` counts on 2026-09-30; AGENTS.md "Supervisor".
+- **Decided (DOC-3 review, supervisor ruling 2026-09-30)**: the policy keeps the 18+ rule and says honestly that the app does not check age: if the entered age is 18 or under, the coach is told (`minor` in the brief, `possiblyMinor` in `src/brain/recovery.ts`) and stays conservative. Onboarding is not gated at 18.
+  **Why**: birth year allows ages down to 10 (`Onboarding.tsx`), so a bare "18+" would misdescribe the app; gating onboarding is a product change outside DOC-3.
+  **Source**: DOC-3 review on PR #110 (high 5) and the supervisor's ruling comment.
+- **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
+  **Why**: fix the app, not the policy, where the gap is a bug.
+  **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
