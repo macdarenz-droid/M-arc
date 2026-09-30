@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-09-30 ~15:30 UTC · main `6730bac` (DOC-2 #93) · by supervisor session `session_01Tc7uLSdp7LGknt8xc1i9dc` on the owner's current account. Section 8 was captured at about 15:30 UTC. Re-capture it live right before each commit of this file.
+**Last updated:** 2026-09-30 ~16:35 UTC · main `719cbbd` (BUG-30 #126) · by supervisor session `session_01Tc7uLSdp7LGknt8xc1i9dc` on the owner's current account. Section 8.0 lists the changes since the 15:30 capture below it. Re-capture section 8 live right before each commit of this file.
 
 - The supervisor updates this file from time to time: at least every 3 hours while work is moving, and after every new owner rule or decision. See section 11.
 - Sections 0–7 and 9–11 change slowly. **Section 8 (Current state) goes stale within hours.** Treat it as a map, then re-check everything live.
@@ -622,6 +622,25 @@ The table is in `AGENTS.md`. Do not copy it here.
 ---
 
 ## 8. Current state (2026-09-30 ~15:30 UTC; stale fast, re-check live)
+
+### 8.0 Changes since the 15:30 capture (read first; 8.1 onward is from 15:30)
+- **main is now `719cbbd`.** Merged since:
+  - ESC-NC-W #121 `0be62e1`: the coach prompt, on the owner's yes. The Worker deployed and `/health` is ok.
+  - ESC-NC #122 `f8a54f4`: the app coach, with no contacts or sources. APK run 36743223031, signing step success; the link and change list were sent to the owner.
+  - BUG-30 #126 `719cbbd`: the safety check now reads curly apostrophes and loose spacing.
+- **HT-4 #107:** round 4 PASSED. Caught up to `de6ce61`; merge when CI is green, then HT-3.
+- **PLAY-1 #124:** in review (reviewer `session_017U7tnw1zYAX4FeMNQ5x7YJ`).
+- **ESC-REPORT:** the cards are at `claude/esc-report-plan` `docs/escobar/ESC-REPORT-CARDS.md` (`0e75aaa`).
+  - ESC-REPORT-W #129 is building. It needs the owner's yes.
+  - The app, #130, is a draft. It waits until W is live (`POST /reports {}` returns 400).
+  - DOC-REPORT #127 (main) and #128 (website) both passed review. They merge after W is live. If they merge after 09-30, update the policy date in both copies.
+- **Pilot A:**
+  - Fix round 3 (`d7aa649`) was checked by the supervisor, and the sheet was sent to the owner at 16:27: 18 plates, with the rear-delt fly held back.
+  - Owner questions waiting: are the plates at his bar, and do we add a no-number "slow and controlled" line where the research gives no seconds?
+- **Owner:**
+  - Turned on error reports.
+  - Asked to test "chest pain during my set" in the coach.
+  - Still owed: the REL-3 key steps, ARCH-1, PAY-1 and PREM-PLAN.
 
 ### 8.1 Main
 - Head: `6730bac` (DOC-2 #93, merged 15:22 UTC). It is docs-only (`COACHING-DECISIONS`, `PLAY-SUBMISSION.md`, `PRIVACY-POLICY.md`), so no APK is needed.
