@@ -1,0 +1,151 @@
+{
+ "id": "cable_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-cablecurl",
+   "text": "Fasten a bar in the lower position of a cable cross. Grip the bar with an underhand (supinated) grip, hands about shoulder-width apart, and take a step back.",
+   "status": "verbatim",
+   "closest": "Fasten a bar in the lower position of a cable cross. Grip the bar with an underhand (supinated) grip, hands about shoulder-width apart, and take a step back.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fb-cablecurl",
+   "text": "Stand upright with your feet hip width apart while grabbing the handle so that your palms are facing up.",
+   "status": "verbatim",
+   "closest": "Stand upright with your feet hip width apart while grabbing the handle so that your palms are facing up.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-cablecurl",
+   "text": "Don’t let your upper arm travel back during the curl, keep it still or move it slightly forward.",
+   "status": "verbatim",
+   "closest": "Don't let your upper arm travel back during the curl, keep it still or move it slightly forward.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c3",
+   "source": "fb-cablecurl",
+   "text": "Bend your elbows to raise the handle up towards your shoulders keeping your elbows close your torso.",
+   "status": "verbatim",
+   "closest": "Bend your elbows to raise the handle up towards your shoulders keeping your elbows close your torso.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-cablecurl",
+   "text": "Lift the bar with control, by flexing your elbows.",
+   "status": "verbatim",
+   "closest": "Lift the bar with control, by flexing your elbows.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fb-cablecurl",
+   "text": "Controllably return to the starting position.",
+   "status": "verbatim",
+   "closest": "Controllably return to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-cablecurl",
+   "text": "Because the direction of pull is slightly diagonal to the ground, it is harder for the arm flexors to relax in this exercise.",
+   "status": "verbatim",
+   "closest": "Because the direction of pull is slightly diagonal to the ground, it is harder for the arm flexors to relax in this exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "fb-cablecurl",
+   "text": "This is especially helpful for applying tension at the top of your range of motion.",
+   "status": "verbatim",
+   "closest": "This is especially helpful for applying tension at the top of your range of motion.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-cablecurl",
+   "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "marcolin-2018",
+   "text": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor",
+   "status": "verbatim",
+   "closest": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-dbcurl",
+   "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+   "status": "verbatim",
+   "closest": "If your elbows move forward while you're lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you'll also move the load from your biceps and be able to \"cheat up\" the weight.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c8",
+   "source": "sl-dbcurl",
+   "text": "If you start to swing, you should probably remove some weight instead and focus on performing the movement with control.",
+   "status": "verbatim",
+   "closest": "If you start to swing, you should probably remove some weight instead and focus on performing the movement with control.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-dbcurl",
+   "text": "Make sure to keep your elbows close to the body the entire time. Your body shouldn’t move, just the arms.",
+   "status": "verbatim",
+   "closest": "Make sure to keep your elbows close to the body the entire time. Your body shouldn't move, just the arms.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c9",
+   "source": "ace-seated-curl",
+   "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+   "status": "verbatim",
+   "closest": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-dbcurl",
+   "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "status": "verbatim",
+   "closest": "Keep your wrists straight during the movement. If they're bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c10",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "larsen-2026",
+   "text": "altering shoulder extension angle in isolation does not appear to produce meaningful differences in elbow flexor hypertrophy in untrained men over 10 weeks.",
+   "status": "verbatim",
+   "closest": "altering shoulder extension angle in isolation does not appear to produce meaningful differences in elbow flexor hypertrophy in untrained men over 10 weeks.",
+   "note": ""
+  }
+ ]
+}

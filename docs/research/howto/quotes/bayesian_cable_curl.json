@@ -1,0 +1,175 @@
+{
+ "id": "bayesian_cable_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "bb-bayesian",
+   "text": "Step 1 — Set an adjustable cable to its lowest height and fasten a single-handle attachment to the carabiner.",
+   "status": "verbatim",
+   "closest": "Step 1 — Set an adjustable cable to its lowest height and fasten a single-handle attachment to the carabiner.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-bayesian",
+   "text": "Step 2 — Grab the handle with your working arm and turn around so you’re facing away from the cable station.",
+   "status": "verbatim",
+   "closest": "Step 2 — Grab the handle with your working arm and turn around so you're facing away from the cable station.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c1",
+   "source": "sl-bayesian",
+   "text": "Hold the handle in one hand and position yourself with your back facing the machine.",
+   "status": "verbatim",
+   "closest": "Hold the handle in one hand and position yourself with your back facing the machine.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-bayesian",
+   "text": "Step forward slightly so that the cable creates light tension, and lean your torso slightly forward.",
+   "status": "verbatim",
+   "closest": "Step forward slightly so that the cable creates light tension, and lean your torso slightly forward.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-bayesian",
+   "text": "Step 3 — Take a step or two away from the cable, allowing your arm to be drawn back behind your torso at about a 45-degree angle relative to the floor.",
+   "status": "verbatim",
+   "closest": "Step 3 — Take a step or two away from the cable, allowing your arm to be drawn back behind your torso at about a 45-degree angle relative to the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-bayesian",
+   "text": "Your upper arm should be, at most, at a 45-degree angle relative to the floor. If you have restricted shoulders or find the exercise unwieldy, try standing a bit closer to the cable station.",
+   "status": "verbatim",
+   "closest": "Your upper arm should be, at most, at a 45-degree angle relative to the floor. If you have restricted shoulders or find the exercise unwieldy, try standing a bit closer to the cable station.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-bayesian",
+   "text": "Keep your elbow close to your body, starting with your arm extended behind you.",
+   "status": "verbatim",
+   "closest": "Keep your elbow close to your body, starting with your arm extended behind you.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-bayesian",
+   "text": "Bend your elbow and pull the handle forward and upward, contracting your biceps at the top. Keep your upper arm stationary throughout the movement.",
+   "status": "verbatim",
+   "closest": "Bend your elbow and pull the handle forward and upward, contracting your biceps at the top. Keep your upper arm stationary throughout the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-bayesian",
+   "text": "isolating your biceps and not letting your shoulders take over. To achieve this, your upper arm needs to remain motionless the entire time. This fixes your shoulder in place and prevents you from using your front deltoids to assist with the curl.",
+   "status": "verbatim",
+   "closest": "isolating your biceps and not letting your shoulders take over. To achieve this, your upper arm needs to remain motionless the entire time. This fixes your shoulder in place and prevents you from using your front deltoids to assist with the curl.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-bayesian",
+   "text": "Slowly lower back to the starting position and repeat.",
+   "status": "verbatim",
+   "closest": "Slowly lower back to the starting position and repeat.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-bayesian",
+   "text": "When you perform the curl, contract your core to avoid tilting from one side to the other.",
+   "status": "verbatim",
+   "closest": "When you perform the curl, contract your core to avoid tilting from one side to the other.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-bayesian",
+   "text": "Hold your free arm out to the side or place it on your hip for stability.",
+   "status": "verbatim",
+   "closest": "Hold your free arm out to the side or place it on your hip for stability.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-bayesian",
+   "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-bayesian",
+   "text": "Your biceps muscle attaches to both your elbow and shoulder joint. Drawing your arm behind your body stretches your biceps at the shoulder, while straightening your elbow stretches it at the other end.",
+   "status": "verbatim",
+   "closest": "Your biceps muscle attaches to both your elbow and shoulder joint. Drawing your arm behind your body stretches your biceps at the shoulder, while straightening your elbow stretches it at the other end.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-bayesian",
+   "text": "The small muscles surrounding your shoulder capsule need to contract together to hold your arm in place. You may also notice some tension on the anterior deltoid, even though it isn’t working during the Bayesian curl.",
+   "status": "verbatim",
+   "closest": "The small muscles surrounding your shoulder capsule need to contract together to hold your arm in place. You may also notice some tension on the anterior deltoid, even though it isn't working during the Bayesian curl.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c9",
+   "source": "bb-bayesian",
+   "text": "The cable stations could be busy, it may place stress or discomfort on your shoulders, and so on.",
+   "status": "verbatim",
+   "closest": "The cable stations could be busy, it may place stress or discomfort on your shoulders, and so on.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "parpa-2025",
+   "text": "the dumbbell biceps curl elicited significantly greater muscle activation compared to the Bayesian curl",
+   "status": "verbatim",
+   "closest": "the dumbbell biceps curl elicited significantly greater muscle activation compared to the Bayesian curl",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "attarieh-2025",
+   "text": "the shoulder joint angle does not seem to affect muscle hypertrophy and maximum strength gains after different elbow flexion exercises matched for resistance profiles.",
+   "status": "verbatim",
+   "closest": "the shoulder joint angle does not seem to affect muscle hypertrophy and maximum strength gains after different elbow flexion exercises matched for resistance profiles.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "sl-bayesian",
+   "text": "Slowly lower back to the starting position and repeat.",
+   "status": "verbatim",
+   "closest": "Slowly lower back to the starting position and repeat.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  }
+ ]
+}

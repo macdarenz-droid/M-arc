@@ -1,0 +1,581 @@
+{
+ "id": "reverse_curl",
+ "libId": "lib_reverse_curl",
+ "name": "Reverse Curl",
+ "family": "CURL",
+ "tier": "C",
+ "archetype": {
+  "hand": "curl",
+  "contact": [
+   "standing-feet"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Grip the bar overhand (palms down), hands about shoulder-width apart, in a straight line with the shoulders and elbows.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-revcurl",
+    "ace-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-revcurl",
+     "text": "Grip a bar with an overhand (pronated) grip, hands about shoulder-width apart.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "ace-revcurl",
+     "text": "Hold the barbell about shoulder-width apart with the palms facing down and hands in a straight line with shoulders and elbows.",
+     "where": "Instructions"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Stand with the feet hip- or shoulder-width apart, knees soft, chin slightly tucked, shoulders drawn back and down.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "tg-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "tg-revcurl",
+     "text": "Stand with your feet hip or shoulder-width apart and give your glutes and abs a gentle squeeze",
+     "where": "How to"
+    },
+    {
+     "source": "tg-revcurl",
+     "text": "Slightly tuck your chin and look forward, maintaining a soft knee bend",
+     "where": "How to"
+    },
+    {
+     "source": "tg-revcurl",
+     "text": "Keep your shoulders drawn back and down and set them in place, creating tension through your upper back",
+     "where": "How to"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Lift the bar toward the shoulders by bending the elbows, keeping the elbows down close to the sides.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-revcurl",
+    "sl-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "ace-revcurl",
+     "text": "Lift the bar towards the shoulders while bending at the elbows and keeping them down close to the sides of the body.",
+     "where": "Instructions"
+    },
+    {
+     "source": "sl-revcurl",
+     "text": "Lift the bar with control, by flexing your elbows.",
+     "where": "How to, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "The upper arms do not travel back during the curl; they stay at the sides or move slightly forward.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-revcurl",
+     "text": "Don’t let your upper arm travel back during the curl. Keep it at your side or move it slightly forward.",
+     "where": "How to, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Swinging to get the bar up means the weight is too heavy; it lowers the effect and could hurt the joints. Control both the lift and the lowering, and start light.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "tg-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "tg-revcurl",
+     "text": "Relying on momentum signals that you’re lifting above your ability. Not only does this reduce the effectiveness of the exercise, but it could also hurt your joints.",
+     "where": "Common mistakes"
+    },
+    {
+     "source": "tg-revcurl",
+     "text": "Move with control through the eccentric load (lowering) and concentric phase (curling). Start light and build the weight as you get stronger.",
+     "where": "Common mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Keep the wrists neutral: you should be able to draw a straight line from the hands to the elbows.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "tg-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "tg-revcurl",
+     "text": "Your wrists should remain neutral without excessive strain on the wrists.",
+     "where": "Common mistakes"
+    },
+    {
+     "source": "tg-revcurl",
+     "text": "look at your arms and ensure you can draw a straight line from your hands to your elbows.",
+     "where": "Common mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Elbows flaring outward is a form fault; reduce the weight and keep the upper arms still and the elbows close to the ribs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "tg-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "tg-revcurl",
+     "text": "If your elbows flare outward, your form needs some work. Try reducing the weight and focusing on correct movement patterns before building.",
+     "where": "Common mistakes"
+    },
+    {
+     "source": "tg-revcurl",
+     "text": "Keep your upper arms still and elbows close to your ribcage",
+     "where": "Common mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Stand tall and do not arch the back while curling.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "tg-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "tg-revcurl",
+     "text": "Bend your elbows and draw the weights toward your shoulders with control. Avoid arching your back and stand tall",
+     "where": "How to"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "An EZ bar lets the hands sit at an angle, which Tom's Guide says eases pressure on the joints compared with a straight bar.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "tg-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "tg-revcurl",
+     "text": "The design of EZ curl bars reduces pressure on your joints by allowing you to angle your hands and grips.",
+     "where": "Variations, EZ bar"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "The biceps, brachialis and brachioradialis all stay very active in elbow flexion with the palm down, palm up or neutral.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "caufriez-2018"
+   ],
+   "quotes": [
+    {
+     "source": "caufriez-2018",
+     "text": "The biceps, brachialis and brachioradialis muscles were electromyographically very active throughout resisted elbow flexion, in all three investigated positions of forearm rotation.",
+     "where": "abstract, results"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Compared with a palms-up curl, a palms-down curl gave lower biceps and brachioradialis activity and higher front-shoulder (anterior deltoid) activity in one EMG study of bodybuilders.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "coratella-2023"
+   ],
+   "quotes": [
+    {
+     "source": "coratella-2023",
+     "text": "biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60]",
+     "where": "abstract, results"
+    },
+    {
+     "source": "coratella-2023",
+     "text": "the brachioradialis showed greater excitation with the supinated compared to the pronated [+5(4)%, ES: 1.01]",
+     "where": "abstract, results"
+    },
+    {
+     "source": "coratella-2023",
+     "text": "the anterior deltoid excitation was greater with the pronated and neutral handgrip compared to the supinated condition",
+     "where": "abstract, results"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "StrengthLog lists the biceps as the primary muscle and the forearm flexors as secondary; coaching sources say the overhand grip works the forearms and brachioradialis harder.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-revcurl",
+    "tg-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-revcurl",
+     "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "tg-revcurl",
+     "text": "The pronated hand position works your forearms harder, targeting and strengthening the brachioradialis muscle.",
+     "where": "Muscles worked"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and 2 s down, inside ACSM's moderate speed of 1-2 s each way; keep tension at the bottom.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009",
+    "sl-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
+    },
+    {
+     "source": "sl-revcurl",
+     "text": "To accomplish this, you could try to avoid letting your elbows travel backwards during the lift, and also keep tension in the muscles in the bottom position.",
+     "where": "Commentary"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+     "where": "abstract"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "sl-revcurl",
+   "url": "https://www.strengthlog.com/reverse-barbell-curl/",
+   "title": "How to Do Reverse Barbell Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "ace-revcurl",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/310/reverse-bicep-curl/",
+   "title": "Arm Exercises | Reverse Bicep Curl",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "tg-revcurl",
+   "url": "https://www.tomsguide.com/wellness/fitness/reverse-curls-how-to-do-them-and-the-benefits-for-bulking-your-biceps",
+   "title": "Reverse curls: how to do them, and the benefits for bulking your biceps | Tom's Guide",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "caufriez-2018",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29409427/",
+   "title": "The Role of the Muscle Brachioradialis in Elbow Flexion: An Electromyographic Study.",
+   "kind": "peer-reviewed",
+   "year": 2018,
+   "pmid": 29409427,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "coratella-2023",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36976950/",
+   "title": "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy.",
+   "kind": "peer-reviewed",
+   "year": 2023,
+   "pmid": 36976950,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Elbow bending, upper-arm drift (c4) and body swing (c5, c8) read side-on. Census view is side.",
+  "equipment": "EZ bar held overhand, standing on the floor line (census draws the EZ bar; c9).",
+  "start": "Standing tall, feet hip- to shoulder-width, knees soft (c2); arms straight down, bar held overhand at about shoulder width (c1); elbows close to the sides (c3); wrists in line with the forearms (c6); shoulders back and down (c2).",
+  "end": "Elbows bent, bar near the shoulders, still overhand (c3); upper arms at the sides or slightly forward (c4); wrists straight (c6); back not arched (c8).",
+  "checkpoints": [
+   {
+    "label": "Palms down",
+    "what": "Overhand grip about shoulder-width, kept all the way up.",
+    "claim": "c1"
+   },
+   {
+    "label": "Straight wrists",
+    "what": "A straight line from hands to elbows.",
+    "claim": "c6"
+   },
+   {
+    "label": "Elbows at sides",
+    "what": "Upper arms don't travel back; elbows close to the ribs.",
+    "claim": "c4"
+   }
+  ],
+  "mistake": {
+   "what": "Swinging the body and leaning back to throw the bar up.",
+   "why": "It means the weight is above your ability, cuts the effect and could hurt your joints.",
+   "claim": "c5",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Hands stay in line with forearms",
+    "claim": "c6"
+   },
+   {
+    "text": "Upper arms stay by your sides",
+    "claim": "c4"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 0,
+   "claim": "c13"
+  },
+  "variantLine": "Drawn with the EZ bar; the straight-bar guidance (c1, c3, c4) applies to both, and c9 (joint comfort) is the only EZ-specific line."
+ },
+ "grip": {
+  "type": "Overhand (pronated), palms down.",
+  "width": "About shoulder-width, hands in line with shoulders and elbows.",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "Neutral: a straight line from hands to elbows.",
+  "claims": [
+   "c1",
+   "c6"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Start light; add weight as you get stronger.",
+   "claim": "c5"
+  },
+  {
+   "step": "Stand with feet hip- to shoulder-width, knees soft.",
+   "claim": "c2"
+  },
+  {
+   "step": "Grip the bar overhand, hands about shoulder-width.",
+   "claim": "c1"
+  },
+  {
+   "step": "Shoulders back and down, chin slightly tucked.",
+   "claim": "c2"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Elbows stay close to the sides.",
+   "claim": "c3"
+  },
+  {
+   "point": "Upper arms never travel back.",
+   "claim": "c4"
+  },
+  {
+   "point": "Wrists stay straight.",
+   "claim": "c6"
+  },
+  {
+   "point": "Stand tall; no arching the back.",
+   "claim": "c8"
+  },
+  {
+   "point": "Keep tension at the bottom.",
+   "claim": "c13"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Swinging to move the bar.",
+   "fix": "Go lighter and control both the lift and the lowering.",
+   "claim": "c5"
+  },
+  {
+   "mistake": "Wrists bending under the bar.",
+   "fix": "Keep a straight line from hands to elbows.",
+   "claim": "c6"
+  },
+  {
+   "mistake": "Elbows flaring outward.",
+   "fix": "Reduce the weight; keep the elbows close to your ribs.",
+   "claim": "c7"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "forearms",
+    "claim": "c12"
+   },
+   {
+    "muscleId": "biceps",
+    "claim": "c10"
+   }
+  ],
+  "secondary": [],
+  "watch": [
+   {
+    "muscleId": "front_delts",
+    "claim": "c11"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Top of the forearm",
+    "means": "The forearm muscles are working hard, as expected with this grip.",
+    "fix": "",
+    "claim": "c12",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the upper arm",
+    "means": "The elbow flexors are sharing the work.",
+    "fix": "",
+    "claim": "c10",
+    "redFlag": null
+   },
+   {
+    "where": "Wrist",
+    "means": "Usually means the wrist is bending.",
+    "fix": "Straighten the wrist; go lighter if you can't.",
+    "claim": "c6",
+    "redFlag": "wrist"
+   },
+   {
+    "where": "Elbow joint",
+    "means": "Momentum could be loading your joints.",
+    "fix": "Go lighter and slow down.",
+    "claim": "c5",
+    "redFlag": "elbow"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Swinging a weight above your ability could hurt your joints.",
+   "claim": "c5"
+  },
+  {
+   "risk": "Bent wrists add strain to the wrists.",
+   "claim": "c6"
+  }
+ ],
+ "redFlags": [
+  "wrist",
+  "elbow"
+ ],
+ "zooms": [
+  {
+   "key": "reverse-wrist",
+   "kind": "hand",
+   "right": "Overhand grip, hand in line with the forearm.",
+   "wrong": "Wrist bent, hand out of line with the forearm.",
+   "claim": "c6"
+  },
+  {
+   "key": "curl-elbow",
+   "kind": "posture",
+   "right": "Upper arm by the side at the top of the curl.",
+   "wrong": "Body leaning back to swing the bar up.",
+   "claim": "c5"
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "biceps (primary)"
+  ],
+  "remove": [
+   "biceps (secondary)"
+  ],
+  "why": "exercises.json has forearms and brachialis primary, biceps secondary. EMG shows the biceps stays very active with the palms down (c10), and StrengthLog lists the biceps as primary (c12), so biceps moves to primary. Forearms stay primary (c12, coaching emphasis on the brachioradialis). brachialis is text-only. Coratella 2023 (c11) found less brachioradialis activity palms-down than palms-up, so the 'forearms primary' emphasis rests on coaching sources, not EMG."
+ },
+ "anchorSource": "sl-revcurl"
+}
