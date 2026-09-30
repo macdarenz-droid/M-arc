@@ -142,7 +142,8 @@
       { "where": "Back of the upper arm", "means": "The triceps are doing the work.", "fix": "", "claim": "c15", "redFlag": null },
       { "where": "Sides of the back (lats)", "means": "Usually means the elbows are drifting forward.", "fix": "Pin the elbows to your sides.", "claim": "c6", "redFlag": null },
       { "where": "Lower back", "means": "Usually means you are leaning too far or arching.", "fix": "Stand taller and go lighter.", "claim": "c11", "redFlag": "back" },
-      { "where": "Elbows", "means": "Heavy, low-rep sets often feel this way.", "fix": "Use a lighter weight for more reps.", "claim": "c17", "redFlag": "elbow" }
+      { "where": "Elbows", "means": "Heavy, low-rep sets often feel this way.", "fix": "Use a lighter weight for more reps. Sharp or lasting elbow pain: stop the set.", "claim": "c17", "redFlag": "elbow",
+        "fixNote": "The 'sharp or lasting elbow pain: stop the set' part follows the shared elbow warning box this row links; the claim covers only the discomfort and the lighter-weight advice." }
     ] },
   "risks": [
     { "risk": "Leaning or arching strains the lower back.", "claim": "c11" },

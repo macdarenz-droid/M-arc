@@ -175,7 +175,7 @@
     },
     {
       "id": "c9",
-      "text": "In recreationally active adults, box height (0-80 % of their maximum) did not change take-off performance, apart from higher peak force for women at 80 %, so lower boxes lose nothing.",
+      "text": "In recreationally active adults, box height (0-80 % of their maximum) did not change take-off performance, though women's peak force was higher at 80 %.",
       "tags": [
         "DATA"
       ],
@@ -424,7 +424,7 @@
     "equipment": "Generic box (plyo box) in front of the lifter, low to moderate height (c7, c8); floor line.",
     "frames": "Airborne convention (architecture section 1): take-off and landing frames only, no mid-air pose.",
     "start": "Take-off frame: facing the box, feet about hip width (c1), knees and hips bent, arms swung back (c2).",
-    "end": "Landing frame: both feet on the box (c4), knees and hips bent to absorb the landing (c5).",
+    "end": "Landing frame: both feet on the box (c4), knees and hips bent to absorb the landing (c5). Drawing geometry, not copy: both whole feet land flat on the box top, well back from the edge, never with the heels hanging off.",
     "checkpoints": [
       {
         "label": "Load and swing",
@@ -516,7 +516,7 @@
   "handlingMistakes": [
     {
       "mistake": "Box too high.",
-      "fix": "Use a lower box; height does not improve the jump.",
+      "fix": "Use a box well below your maximum.",
       "claim": "c7"
     },
     {
@@ -613,7 +613,7 @@
     "why": "Library: quads primary, glutes and calves secondary. NASM names quads, glutes and calves as drivers (c12), so all three are present; NASM calls glutes and calves primary, but no EMG source was found to justify moving them, so no change."
   },
   "loadProgression": {
-    "text": "Progress by box height, from 12-18 inches, only as landings stay controlled; height is not needed for a better jump.",
+    "text": "Progress by box height, from 12-18 inches, only as landings stay controlled; box height did not change take-off performance.",
     "claims": [
       "c8",
       "c9"

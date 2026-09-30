@@ -78,6 +78,11 @@
           "source": "sl-reverse-fly",
           "text": "This is an exercise where it is easy to cheat by using momentum from your hips or lower back, which takes away the work from the rear deltoid.",
           "where": "Which Muscles Does the Reverse Dumbbell Fly Work?"
+        },
+        {
+          "source": "sl-reverse-fly",
+          "text": "Instead, make sure to pick a weight light enough to be able to perform the exercise correctly and with control.",
+          "where": "Which Muscles Does the Reverse Dumbbell Fly Work?"
         }
       ]
     },
@@ -111,6 +116,11 @@
         {
           "source": "sl-reverse-fly",
           "text": "The reverse dumbbell fly primarily works your rotator cuff and rear deltoids, and secondarily your trapezius",
+          "where": "Which Muscles Does the Reverse Dumbbell Fly Work?"
+        },
+        {
+          "source": "sl-reverse-fly",
+          "text": "Unlike exercises such as lat pulldowns or rows, the upper arm just barely moves closer to the origin of the lats, which means that the lats aren’t very active in this exercise.",
           "where": "Which Muscles Does the Reverse Dumbbell Fly Work?"
         }
       ]
@@ -470,7 +480,7 @@
       "kind": "hand",
       "right": "Palms facing, wrist straight, elbow slightly bent.",
       "wrong": "Elbow bending more as the weight rises.",
-      "claim": "c7"
+      "claim": "c2"
     }
   ],
   "libraryDiff": {

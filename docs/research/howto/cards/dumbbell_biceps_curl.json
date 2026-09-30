@@ -17,12 +17,13 @@
     { "id": "c2", "text": "Stand with the feet about shoulder-width apart and the knees slightly bent.",
       "tags": ["CONSENSUS"], "sources": ["sl-dbcurl"],
       "quotes": [ { "source": "sl-dbcurl", "text": "Stand with your feet shoulder-width apart, maintaining a slight bend in your knees.", "where": "Proper form" } ] },
-    { "id": "c3", "text": "The elbows stay close to the body for the whole set; they do not move forward to help the lift.",
+    { "id": "c3", "text": "The elbows stay close to the body for the whole set and never travel back; letting them move slightly forward at the top is fine.",
       "tags": ["CONSENSUS"], "sources": ["sl-dbcurl", "ace-seated-curl"],
       "quotes": [
         { "source": "sl-dbcurl", "text": "Keep your elbows close to your body throughout the exercise.", "where": "Proper form" },
-        { "source": "ace-seated-curl", "text": "Exhale and slowly bend each elbow in unison, bringing the dumbbells towards your chest without arching your back or moving your elbows forward.", "where": "Step 2, upward phase" } ] },
-    { "id": "c4", "text": "Elbows moving forward during the lift shift load to the front of the shoulders; elbows moving back let you cheat the weight up.",
+        { "source": "sl-dbcurl", "text": "Don’t let your upper arms travel back during the curl. Keep them at your sides, or move them slightly forward.", "where": "How to, step 3" },
+        { "source": "ace-seated-curl", "text": "Curl the dumbbells higher by allowing the elbows to move forward as the dumbbell reaches your chest", "where": "Variation to this exercise" } ] },
+    { "id": "c4", "text": "Elbows moving forward while lifting put extra load on the front delts, and elbows moving back let you cheat the weight up; only a slight forward move at the top is fine (c3).",
       "tags": ["CONSENSUS"], "sources": ["sl-dbcurl"],
       "quotes": [ { "source": "sl-dbcurl", "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.", "where": "Common mistakes, elbow positioning" } ] },
     { "id": "c5", "text": "Swinging the body to use momentum is the sign of a weight that is too heavy; the fix is less weight and a controlled lift.",
@@ -38,7 +39,8 @@
         { "source": "sl-dbcurl", "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.", "where": "Common mistakes, not locking your wrists" } ] },
     { "id": "c7", "text": "Because elbow structure differs between people, the dumbbells may hang slightly away from the sides; pick the hand position that keeps the wrist straight.",
       "tags": ["CONSENSUS"], "sources": ["ace-seated-curl"],
-      "quotes": [ { "source": "ace-seated-curl", "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.", "where": "Notes after step 4" } ] },
+      "quotes": [ { "source": "ace-seated-curl", "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.", "where": "Notes after step 4" },
+        { "source": "ace-seated-curl", "text": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.", "where": "Notes after step 4" } ] },
     { "id": "c8", "text": "Stand with the chest up and the shoulders set down and slightly back; do not shrug during the lift.",
       "tags": ["CONSENSUS"], "sources": ["sl-dbcurl", "ace-seated-curl"],
       "quotes": [
@@ -53,8 +55,8 @@
     { "id": "c10", "text": "Breathe out as the dumbbells rise and in as they lower.",
       "tags": ["CONSENSUS"], "sources": ["ace-seated-curl"],
       "quotes": [ { "source": "ace-seated-curl", "text": "Exhale and slowly bend each elbow in unison", "where": "Step 2, upward phase" } ] },
-    { "id": "c11", "text": "The biceps is the main muscle worked; the brachioradialis (a forearm muscle) also flexes the elbow and is active in dumbbell curls.",
-      "tags": ["DATA"], "sources": ["oliveira-2009", "marcolin-2018", "sl-dbcurl"],
+    { "id": "c11", "text": "The biceps is the main muscle worked (an EMG study found at least 50% of maximum biceps activity in dumbbell curls); the brachioradialis, a forearm muscle, also flexes the elbow, and StrengthLog lists the forearm flexors as secondary.",
+      "tags": ["CONSENSUS"], "sources": ["oliveira-2009", "marcolin-2018", "sl-dbcurl"],
       "quotes": [
         { "source": "oliveira-2009", "text": "Although all protocols elicited a considerable level of activation of the biceps brachii muscle (at least 50% of maximum RMS), the contribution of this muscle for elbow flexion/extension varied among exercises.", "where": "abstract" },
         { "source": "marcolin-2018", "text": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor", "where": "Discussion" },
@@ -91,7 +93,7 @@
     "start": "Standing tall, feet shoulder-width, knees slightly bent (c2); arms hanging straight at the sides, palms forward, elbows close to the body (c1, c3); wrists straight (c6); chest up, shoulders down (c8).",
     "end": "Elbows fully bent, dumbbells near the front of the shoulders (c3); upper arms still at the sides or slightly forward, never back (c13); wrists straight (c6); body in the same upright position as the start (c14).",
     "checkpoints": [
-      { "label": "Elbows at sides", "what": "Upper arms stay by the body from bottom to top.", "claim": "c3" },
+      { "label": "Elbows at sides", "what": "Upper arms stay by the body and never travel back; slightly forward at the top is fine.", "claim": "c3" },
       { "label": "Straight wrists", "what": "Hand in line with the forearm, not bent up or down.", "claim": "c6" },
       { "label": "Still body", "what": "Torso and knees don't move; only the forearms travel.", "claim": "c14" }
     ],
@@ -123,7 +125,7 @@
   ],
   "handlingMistakes": [
     { "mistake": "Swinging the body to get the weight up.", "fix": "Use a lighter dumbbell and lift with control.", "claim": "c5" },
-    { "mistake": "Elbows drifting back or forward during the lift.", "fix": "Keep the elbows at your sides.", "claim": "c4" },
+    { "mistake": "Elbows drifting back, or forward before the top.", "fix": "Keep the elbows at your sides; never let them travel back.", "claim": "c4" },
     { "mistake": "Wrists bending up or down.", "fix": "Keep the hand in line with the forearm; pick the dumbbell position that allows it.", "claim": "c6" }
   ],
   "feel": {

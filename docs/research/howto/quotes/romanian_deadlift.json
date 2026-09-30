@@ -246,6 +246,20 @@
       "text": "it does not improve after treating it at home for a few weeks",
       "status": "verbatim",
       "closest": "it does not improve after treating it at home for a few weeks"
+    },
+    {
+      "claim": "c17",
+      "source": "sl-romanian-deadlift",
+      "text": "If your back pain is causing you severe discomfort or doesn’t go away after a few days or up to a week of rest, we recommend you get a diagnosis from a professional.",
+      "status": "verbatim",
+      "closest": "If your back pain is causing you severe discomfort or doesn’t go away after a few days or up to a week of rest, we recommend you get a diagnosis from a professional."
+    },
+    {
+      "claim": "c9",
+      "source": "nasm-rdl",
+      "text": "position your arms just outside your thighs with a neutral grip.",
+      "status": "verbatim",
+      "closest": "position your arms just outside your thighs with a neutral grip."
     }
   ]
 }

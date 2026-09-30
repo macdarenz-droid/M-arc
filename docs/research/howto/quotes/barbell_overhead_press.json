@@ -10,13 +10,6 @@
       "closest": "Place a barbell in a rack at about shoulder-height. Grip the bar with the hands about shoulder-width apart"
     },
     {
-      "claim": "c1",
-      "source": "ace-standing-sp",
-      "quote": "Step back, keeping the back straight and tall and press the barbell directly overhead.",
-      "status": "verbatim",
-      "closest": "Step back, keeping the back straight and tall and press the barbell directly overhead."
-    },
-    {
       "claim": "c2",
       "source": "stronglifts-ohp",
       "quote": "Hold the bar just outside your shoulders. The exact grip width depends on how wide they are.",
@@ -204,6 +197,41 @@
       "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
       "status": "verbatim",
       "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c1",
+      "source": "ace-standing-sp",
+      "quote": "keeping the back straight and tall and press the barbell directly overhead.",
+      "status": "verbatim",
+      "closest": "keeping the back straight and tall and press the barbell directly overhead."
+    },
+    {
+      "claim": "c11",
+      "source": "nsca-ch15-summary",
+      "quote": "When exercising out of the rack with these exercises, you can get seriously injured.",
+      "status": "verbatim",
+      "closest": "When exercising out of the rack with these exercises, you can get seriously injured."
+    },
+    {
+      "claim": "c12",
+      "source": "nsca-ch15-summary",
+      "quote": "Tell athletes to exhale at the sticking point and inhale when the move is less stressful.",
+      "status": "verbatim",
+      "closest": "Tell athletes to exhale at the sticking point and inhale when the move is less stressful."
+    },
+    {
+      "claim": "c15",
+      "source": "stronglifts-ohp",
+      "quote": "Jumping from 16kg to 18kg dumbbells is a 12% increase!",
+      "status": "verbatim",
+      "closest": "Jumping from 16kg to 18kg dumbbells is a 12% increase!"
+    },
+    {
+      "claim": "c18",
+      "source": "kolber2010",
+      "quote": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+      "status": "verbatim",
+      "closest": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury."
     }
   ]
 }

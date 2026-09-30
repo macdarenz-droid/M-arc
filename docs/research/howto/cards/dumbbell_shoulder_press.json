@@ -83,7 +83,7 @@
     },
     {
       "id": "c5",
-      "text": "Keeping the elbows pointed slightly in front of you is more comfortable through the range.",
+      "text": "Keeping the elbows pointed in front of you is more comfortable through the range.",
       "tags": [
         "CONSENSUS"
       ],
@@ -236,7 +236,7 @@
     },
     {
       "id": "c13",
-      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "text": "The shoulder is one of the most often injured areas in resistance training (up to 36% of documented injuries), and poor attention to technique is a named risk factor.",
       "tags": [
         "DATA"
       ],
@@ -252,6 +252,11 @@
         {
           "source": "kolber2010",
           "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
           "where": "abstract"
         }
       ]
@@ -348,9 +353,9 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; back contact with the pad, low-back arch and elbows slightly forward read in the sagittal plane (c1, c4, c5).",
+    "viewWhy": "Census view is side; back contact with the pad, low-back arch and elbows pointing forward read in the sagittal plane (c1, c4, c5).",
     "equipment": "Upright bench with a backrest (angle not given by the sources read; census inclineBench), dumbbell per hand, feet on the floor (c1).",
-    "start": "Seated, head/shoulders/buttocks on the pad, feet flat (c1); dumbbells at shoulder level, wrists neutral (c2); elbows slightly in front of the body (c5).",
+    "start": "Seated, head/shoulders/buttocks on the pad, feet flat (c1); dumbbells at shoulder level, wrists neutral (c2); elbows pointed in front of the body (c5).",
     "end": "Arms straight overhead, elbows fully extended, back still on the pad, no low-back arch (c4).",
     "checkpoints": [
       {
@@ -360,7 +365,7 @@
       },
       {
         "label": "Elbows forward",
-        "what": "Elbows point slightly in front of you, not straight out to the sides.",
+        "what": "Elbows point in front of you, not straight out to the sides.",
         "claim": "c5"
       },
       {
@@ -428,7 +433,7 @@
       "claim": "c4"
     },
     {
-      "point": "Elbows slightly in front.",
+      "point": "Elbows pointed in front.",
       "claim": "c5"
     },
     {
@@ -485,8 +490,8 @@
       },
       {
         "where": "Pain deep in the front of the shoulder at the bottom",
-        "means": "Usually a warning sign; shoulder injuries are the most common lifting injuries.",
-        "fix": "Stop the set. Go lighter and keep elbows slightly forward.",
+        "means": "Usually a warning sign; shoulder injuries are among the most common lifting injuries.",
+        "fix": "Stop the set. Go lighter and keep elbows pointed forward.",
         "claim": "c13",
         "redFlag": "shoulder"
       }

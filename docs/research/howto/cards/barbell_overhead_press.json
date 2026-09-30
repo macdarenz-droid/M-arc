@@ -15,7 +15,7 @@
   "claims": [
     {
       "id": "c1",
-      "text": "Unrack from a rack set at about shoulder height, grip about shoulder-width, step back, and press directly overhead.",
+      "text": "Set the bar in a rack at about shoulder height, grip about shoulder-width, and press directly overhead with the back straight and tall. (ACE then steps back out of the rack; this card stays inside it, c11.)",
       "tags": [
         "CONSENSUS"
       ],
@@ -30,7 +30,7 @@
         },
         {
           "source": "ace-standing-sp",
-          "text": "Step back, keeping the back straight and tall and press the barbell directly overhead.",
+          "text": "keeping the back straight and tall and press the barbell directly overhead.",
           "where": "exercise description"
         }
       ]
@@ -211,7 +211,7 @@
     },
     {
       "id": "c11",
-      "text": "A way out: NSCA guidance is to do overhead lifts in a power rack with the crossbars at the right height; failed reps can also be lowered back to the shoulders.",
+      "text": "A way out: NSCA says overhead lifts are done inside a power rack with the crossbars at the right height, because pressing out of the rack can cause serious injury. A failed rep is lowered back to the shoulders, then racked. (StrongLifts calls the rack optional; the card follows NSCA.)",
       "tags": [
         "CONSENSUS"
       ],
@@ -229,29 +229,39 @@
           "source": "stronglifts-ohp",
           "text": "If you fail to press the weight, you can simply lower it back on your shoulders. You then rack it in your Power Rack or return it to the floor.",
           "where": "Safety"
+        },
+        {
+          "source": "nsca-ch15-summary",
+          "text": "When exercising out of the rack with these exercises, you can get seriously injured.",
+          "where": "Spotting Overhead Exercises"
         }
       ]
     },
     {
       "id": "c12",
-      "text": "Breathe in and brace at the bottom, hold on the way up, breathe out once the bar is back on the shoulders (a coach cue; not for people told to avoid breath-holding).",
+      "text": "Breathe out through the hardest part of the press (the sticking point) and breathe in on the easier part. Holding the breath (in at the bottom, hold on the way up, out at the bottom) is an option only for experienced, well-trained lifters.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "stronglifts-ohp",
-        "nsca-ch15-summary"
+        "nsca-ch15-summary",
+        "stronglifts-ohp"
       ],
       "quotes": [
         {
-          "source": "stronglifts-ohp",
-          "text": "Breathing. Inhale at the bottom before you press. Hold your breath at the top. Exhale at the bottom.",
-          "where": "Breathing"
+          "source": "nsca-ch15-summary",
+          "text": "Tell athletes to exhale at the sticking point and inhale when the move is less stressful.",
+          "where": "Breathing Considerations"
         },
         {
           "source": "nsca-ch15-summary",
           "text": "This is used by experienced and well trained resistance athletes during structural exercises.",
           "where": "The Valsalva Maneuver"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Breathing. Inhale at the bottom before you press. Hold your breath at the top. Exhale at the bottom.",
+          "where": "Breathing"
         }
       ]
     },
@@ -303,7 +313,7 @@
     },
     {
       "id": "c15",
-      "text": "Barbell loads can go up in 1.25 kg steps; dumbbell jumps of 2 kg are a large percentage for the overhead press.",
+      "text": "Barbell loads can go up in 1.25 kg steps; a 2 kg dumbbell jump, such as 16 to 18 kg, is a 12% increase.",
       "tags": [
         "CONSENSUS"
       ],
@@ -314,6 +324,11 @@
         {
           "source": "stronglifts-ohp",
           "text": "Barbells are easier to get stronger with because you can use smaller increments of 1.25kg/2.5lb or less by microloading.",
+          "where": "dumbbells vs barbell"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Jumping from 16kg to 18kg dumbbells is a 12% increase!",
           "where": "dumbbells vs barbell"
         }
       ]
@@ -354,7 +369,7 @@
     },
     {
       "id": "c18",
-      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "text": "The shoulder is one of the most often injured areas in resistance training (up to 36% of documented injuries), and poor attention to technique is a named risk factor.",
       "tags": [
         "DATA"
       ],
@@ -370,6 +385,11 @@
         {
           "source": "kolber2010",
           "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
           "where": "abstract"
         }
       ]
@@ -487,8 +507,8 @@
   "plate": {
     "view": "side",
     "viewWhy": "Census view is side; bar path relative to the face, forearm angle and trunk lean are all sagittal (c5, c6, c8).",
-    "equipment": "Barbell; rack with hooks at about shoulder height and safety crossbars set (c1, c11).",
-    "start": "Standing, feet hip-width and flat (c10); bar on the front of the shoulders, forearms vertical, elbows slightly forward under the bar (c2, c5).",
+    "equipment": "Barbell; power rack with hooks at about shoulder height and safety crossbars set (c1, c11); the lifter stands inside the rack. ENGINE GAP: census says rackUpright() has no safety arms, so a safety-arm primitive must be added to census equipmentGaps before this plate is drawn. Drawing geometry, not copy: the safety arms sit below the bar's rack position on the front shoulders, so a normal rep never touches them.",
+    "start": "Standing inside the rack, feet hip-width and flat (c10, c11); bar on the front of the shoulders, forearms vertical, elbows slightly forward under the bar (c2, c5).",
     "end": "Bar over the shoulders and mid-foot, elbows locked, hips and knees straight (c7, c9).",
     "checkpoints": [
       {
@@ -545,7 +565,7 @@
   },
   "setup": [
     {
-      "step": "Set the rack hooks at about shoulder height and the safety crossbars just below the bar's lowest point.",
+      "step": "Set the rack hooks at about shoulder height and the safety crossbars at the right height.",
       "claim": "c11"
     },
     {
@@ -553,8 +573,8 @@
       "claim": "c2"
     },
     {
-      "step": "Unrack onto the front of the shoulders and step back.",
-      "claim": "c1"
+      "step": "Unrack onto the front of the shoulders and stay inside the rack.",
+      "claim": "c11"
     },
     {
       "step": "Feet hip-width, flat on the floor.",
@@ -628,7 +648,7 @@
       },
       {
         "where": "Pain at the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is the most commonly injured area in lifting.",
+        "means": "Usually a warning sign; the shoulder is one of the most often injured areas in lifting.",
         "fix": "Stop the set. Go lighter next time.",
         "claim": "c18",
         "redFlag": "shoulder"

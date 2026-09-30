@@ -127,6 +127,20 @@
       "text": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist.",
       "status": "verbatim",
       "closest": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist."
+    },
+    {
+      "claim": "c7",
+      "source": "hinge-mc",
+      "text": "To adjust, focus on moving with smooth, intentional steps, almost as if you’re gliding your knees forward rather than bouncing.",
+      "status": "verbatim",
+      "closest": "To adjust, focus on moving with smooth, intentional steps, almost as if you’re gliding your knees forward rather than bouncing."
+    },
+    {
+      "claim": "c8",
+      "source": "hinge-mc",
+      "text": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement.",
+      "status": "verbatim",
+      "closest": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement."
     }
   ]
 }

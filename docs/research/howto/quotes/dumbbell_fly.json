@@ -113,6 +113,13 @@
       "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
       "status": "verbatim",
       "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c11",
+      "source": "kolber2010",
+      "quote": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+      "status": "verbatim",
+      "closest": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury."
     }
   ]
 }

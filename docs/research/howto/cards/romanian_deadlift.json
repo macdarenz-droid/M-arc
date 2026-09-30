@@ -173,6 +173,11 @@
           "source": "nasm-rdl",
           "text": "Hold the barbell with a slightly wider than shoulder-width grip. Draw your shoulders back and down and position your arms just outside your thighs",
           "where": "Step 2: Brace/Position"
+        },
+        {
+          "source": "nasm-rdl",
+          "text": "position your arms just outside your thighs with a neutral grip.",
+          "where": "Step 2: Brace/Position"
         }
       ]
     },
@@ -325,6 +330,11 @@
           "source": "sl-romanian-deadlift",
           "text": "Doing too much too soon. Ease up on the training volume, and give yourself and your back time to adapt to the exercise. Technique. It is generally recommended that you keep your spine in a neutral position (“straight”) when performing the Romanian deadlift.",
           "where": "FAQ: Why Does My Back Hurt after Romanian Deadlifts?"
+        },
+        {
+          "source": "sl-romanian-deadlift",
+          "text": "If your back pain is causing you severe discomfort or doesn’t go away after a few days or up to a week of rest, we recommend you get a diagnosis from a professional.",
+          "where": "FAQ: Why Does My Back Hurt after Romanian Deadlifts?"
         }
       ]
     },
@@ -393,9 +403,10 @@
     },
     {
       "id": "c21",
-      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high (measured in 5 bodybuilders doing curls, overhead presses and leg presses, not the RDL).",
       "tags": [
-        "DATA"
+        "DATA",
+        "WEAK"
       ],
       "sources": [
         "macdougall1985"
@@ -623,7 +634,7 @@
     "variantLine": null
   },
   "grip": {
-    "type": "Overhand (palms toward you) on the bar.",
+    "type": "Left to the hold archetype: no source read names overhand or mixed; NASM says only a 'neutral grip' with the arms just outside the thighs (c9).",
     "width": "Slightly wider than shoulders, arms just outside the thighs.",
     "thumb": "Wrapped around the bar; straps allowed if grip limits the set.",
     "handContact": "Bar across the middle of the palm, fingers wrapped (hold archetype).",
@@ -715,12 +726,7 @@
         "claim": "c16"
       }
     ],
-    "watch": [
-      {
-        "muscleId": "lower_back",
-        "claim": "c14"
-      }
-    ],
+    "watch": [],
     "rows": [
       {
         "where": "Back of the thighs, stretching on the way down",
@@ -773,7 +779,7 @@
     {
       "key": "rdl-grip",
       "kind": "hand",
-      "right": "Overhand, thumbs wrapped, wrists straight, hands just outside the thighs.",
+      "right": "Thumbs wrapped, wrists straight, hands just outside the thighs.",
       "wrong": "Hands hanging off the fingertips, wrists bent.",
       "claim": "c9"
     },

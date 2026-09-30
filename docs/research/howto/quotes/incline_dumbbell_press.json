@@ -169,6 +169,34 @@
       "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
       "status": "verbatim",
       "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c2",
+      "source": "rodriguezridao2020",
+      "quote": "TB showed similar EMG activities at all bench inclinations.",
+      "status": "verbatim",
+      "closest": "TB showed similar EMG activities at all bench inclinations."
+    },
+    {
+      "claim": "c16",
+      "source": "kolber2010",
+      "quote": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+      "status": "verbatim",
+      "closest": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury."
+    },
+    {
+      "claim": "c17",
+      "source": "hk-db-bench",
+      "quote": "Lean back into a supine position on the bench while positioning your hands and dumbbells over your shoulders.",
+      "status": "verbatim",
+      "closest": "Lean back into a supine position on the bench while positioning your hands and dumbbells over your shoulders."
+    },
+    {
+      "claim": "c17",
+      "source": "hk-db-bench",
+      "quote": "All other positions and movement cues are similar.",
+      "status": "verbatim",
+      "closest": "All other positions and movement cues are similar."
     }
   ]
 }

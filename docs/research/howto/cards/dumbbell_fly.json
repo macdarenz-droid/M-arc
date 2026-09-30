@@ -200,7 +200,7 @@
     },
     {
       "id": "c11",
-      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "text": "The shoulder is one of the most often injured areas in resistance training (up to 36% of documented injuries), and poor attention to technique is a named risk factor.",
       "tags": [
         "DATA"
       ],
@@ -216,6 +216,11 @@
         {
           "source": "kolber2010",
           "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
           "where": "abstract"
         }
       ]
@@ -318,14 +323,14 @@
         "claim": "c4"
       },
       {
-        "label": "Five points",
-        "what": "Head, shoulders, buttocks and feet keep contact.",
-        "claim": "c2"
+        "label": "Dumbbells parallel",
+        "what": "Both dumbbells stay parallel, palms facing each other, through the whole arc.",
+        "claim": "c4"
       }
     ],
     "mistake": {
       "what": "Lowering the dumbbells below shoulder and chest level at the bottom of the arc.",
-      "why": "ACE sets the bottom at shoulder or chest level; going deeper loads the front of the shoulder at end range. Frequency is not measured in any source read (the end-range reasoning is MECH, from c4 plus the shoulder injury data in c11).",
+      "why": "ACE sets the bottom of the arc at shoulder or chest level, and this goes past it. How often it happens is not measured in any source read.",
       "claim": "c4",
       "drawable": true
     },
@@ -435,7 +440,7 @@
       },
       {
         "where": "Pain at the front of the shoulder at the bottom",
-        "means": "Usually going too deep or too heavy; the shoulder is the most commonly injured area in lifting.",
+        "means": "Usually a warning sign; the shoulder is one of the most often injured areas in lifting.",
         "fix": "Stop the set. Go lighter and stop at chest level.",
         "claim": "c11",
         "redFlag": "shoulder"
@@ -448,7 +453,7 @@
       "claim": "c11"
     },
     {
-      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; the dumbbells travel over the face and chest.",
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; the dumbbells travel over the chest.",
       "claim": "c12"
     }
   ],
@@ -467,8 +472,15 @@
       "key": "fly-depth",
       "kind": "posture",
       "right": "Dumbbells level with the chest.",
-      "wrong": "Dumbbells below the bench line.",
+      "wrong": "Dumbbells well below chest level.",
       "claim": "c4"
+    },
+    {
+      "key": "fly-five-point",
+      "kind": "posture",
+      "right": "Head, shoulders, buttocks on the bench, feet flat.",
+      "wrong": "Hips lifted off the bench.",
+      "claim": "c2"
     }
   ],
   "libraryDiff": {

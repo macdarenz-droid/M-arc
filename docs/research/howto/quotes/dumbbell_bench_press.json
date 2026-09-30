@@ -197,6 +197,20 @@
       "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
       "status": "verbatim",
       "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c7",
+      "source": "sbs-bench",
+      "quote": "the lift gets way harder on your triceps if the weights are closer together than your elbows are (it basically becomes a Tate Press), and it gets way harder on your pecs (and maybe biceps) if the weights are further from each other than your elbows are",
+      "status": "verbatim",
+      "closest": "the lift gets way harder on your triceps if the weights are closer together than your elbows are (it basically becomes a Tate Press), and it gets way harder on your pecs (and maybe biceps) if the weights are further from each other than your elbows are"
+    },
+    {
+      "claim": "c18",
+      "source": "kolber2010",
+      "quote": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+      "status": "verbatim",
+      "closest": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury."
     }
   ]
 }

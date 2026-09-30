@@ -15,7 +15,7 @@
   "claims": [
     {
       "id": "c1",
-      "text": "Overhand grip, slightly narrower than shoulder width; pull the bar straight up to about chin level, then lower with control.",
+      "text": "Overhand grip; pull the bar straight up, then lower it with control. StrengthLog's own top (bar at chin level) and width (slightly narrower than shoulders) are not used: they conflict with c2, c5 and c6.",
       "tags": [
         "CONSENSUS"
       ],
@@ -25,7 +25,17 @@
       "quotes": [
         {
           "source": "sl-upright-row",
-          "text": "Grip the bar with an overhand grip, slightly narrower than shoulder-width apart. Pull the bar straight up until it is at the level of your chin. With control, lower the bar back to the starting position.",
+          "text": "Grip the bar with an overhand grip",
+          "where": "How to Do Barbell Upright Row"
+        },
+        {
+          "source": "sl-upright-row",
+          "text": "Pull the bar straight up",
+          "where": "How to Do Barbell Upright Row"
+        },
+        {
+          "source": "sl-upright-row",
+          "text": "With control, lower the bar back to the starting position.",
           "where": "How to Do Barbell Upright Row"
         }
       ]
@@ -107,12 +117,17 @@
           "source": "lesmills-upright-row",
           "text": "If your hands are too narrowly placed your shoulders will be internally rotated as you raise the bar up.",
           "where": "Upright row technique mistakes #1"
+        },
+        {
+          "source": "lesmills-upright-row",
+          "text": "The second issue is having a scapula that’s protracted (shoulders rounded forward) and downwardly rotated.",
+          "where": "Upright row technique mistakes #2"
         }
       ]
     },
     {
       "id": "c6",
-      "text": "Safer version: hands about hip width, shoulder blades drawn back, bar only to the lower ribs with elbows at shoulder level.",
+      "text": "Les Mills' safer version: 'hands wide – at about hip-width' (wide as opposed to hands too close together), shoulder blades drawn back, and the bar only to the lower ribs with the elbows at shoulder level.",
       "tags": [
         "CONSENSUS"
       ],
@@ -146,6 +161,11 @@
           "source": "mcallister2013",
           "text": "The main findings of this investigation are increased deltoid and trapezius activity with increasing grip width, and correspondingly less BB activity. Therefore, those who seek to maximize involvement of the deltoid and trapezius muscles during the URR should use a wide grip.",
           "where": "abstract"
+        },
+        {
+          "source": "mcallister2013",
+          "text": "Sixteen weight-trained men completed 2 repetitions each in the URR with 3 grip conditions: 50, 100, and 200% of the biacromial breadth (BAB).",
+          "where": "abstract (PMID 22362088, efetch 2026-09-30)"
         }
       ]
     },
@@ -262,6 +282,11 @@
           "source": "kolber2010",
           "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
           "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+          "where": "abstract"
         }
       ]
     },
@@ -349,8 +374,8 @@
     "view": "front",
     "viewWhy": "Grip width and elbow height against the shoulders are side-to-side and up-down positions (c5, c6) that only the front view shows; the census draws it front.",
     "equipment": "Straight barbell (cable is the other listed option, see variantLine), floor line.",
-    "start": "Standing upright, feet about shoulder width (c12), arms straight, bar at the thighs, overhand grip about shoulder width or a little wider (c6, c7).",
-    "end": "Elbows out to the sides and level with the shoulders, not above (c2, c6), bar close to the body at about the lower chest (c6, c3).",
+    "start": "Standing upright, feet about shoulder width (c12), arms straight, bar at the thighs, overhand grip about shoulder width or wider, never hands close together (c5, c7).",
+    "end": "Elbows out to the sides and level with the shoulders, not above (c2, c6), bar close to the body at the lower ribs (c6, c3).",
     "checkpoints": [
       {
         "label": "Elbows lead",
@@ -394,7 +419,7 @@
   },
   "grip": {
     "type": "Overhand (palms toward the body).",
-    "width": "About shoulder width or a little wider (hip width to wider); not close. Sources disagree: StrengthLog says slightly narrower than shoulders (c1), Les Mills and McAllister 2013 favour wider (c6, c7). The card takes the wider, lower-risk option.",
+    "width": "About shoulder width or wider; never hands close together (c5, c7). Not used: StrengthLog's 'slightly narrower than shoulder-width' (c1). Les Mills calls hip width 'wide' only as opposed to hands too close together (c6), and McAllister's wide grip was 200% of shoulder breadth, an EMG result, not a safety one (c7).",
     "thumb": "Wrapped around the bar.",
     "handContact": "Bar across the base of the fingers (pull archetype).",
     "wrist": "Straight; don't lift with the wrists.",
@@ -412,8 +437,8 @@
       "claim": "c12"
     },
     {
-      "step": "Overhand grip about hip width or a bit wider, thumbs around the bar.",
-      "claim": "c6"
+      "step": "Overhand grip about shoulder width or wider, thumbs around the bar.",
+      "claim": "c7"
     },
     {
       "step": "Draw the shoulder blades back before the first pull.",
@@ -445,12 +470,12 @@
   "handlingMistakes": [
     {
       "mistake": "Pulling the bar up under the chin.",
-      "fix": "Stop at the lower chest, elbows level with the shoulders.",
+      "fix": "Stop at the lower ribs, elbows level with the shoulders.",
       "claim": "c5"
     },
     {
       "mistake": "Hands too close together.",
-      "fix": "Widen the grip to about hip width or more.",
+      "fix": "Widen the grip to about shoulder width or more.",
       "claim": "c5"
     },
     {
@@ -498,7 +523,7 @@
       },
       {
         "where": "Pinch at the top of the shoulder near the top of the lift",
-        "means": "Usually means impingement from lifting too high or too narrow.",
+        "means": "Usually means the elbows are going too high or the grip is too narrow.",
         "fix": "Stop lower, widen the grip, go lighter.",
         "claim": "c5",
         "redFlag": "shoulder"
@@ -522,14 +547,14 @@
     {
       "key": "urow-grip",
       "kind": "hand",
-      "right": "Overhand about hip width or wider, thumbs wrapped, wrists straight.",
+      "right": "Overhand about shoulder width or wider, thumbs wrapped, wrists straight.",
       "wrong": "Hands touching in the middle, wrists curled up.",
       "claim": "c5"
     },
     {
       "key": "urow-top",
       "kind": "posture",
-      "right": "Elbows level with shoulders, bar at the lower chest.",
+      "right": "Elbows level with shoulders, bar at the lower ribs.",
       "wrong": "Bar under the chin, elbows above the shoulders.",
       "claim": "c6"
     }

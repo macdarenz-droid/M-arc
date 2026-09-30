@@ -77,7 +77,7 @@
     },
     {
       "id": "c4",
-      "text": "Start with arms straight and the dumbbells level with or just below the eyes.",
+      "text": "At lockout the elbows are fully extended and the dumbbells go no further toward the head than eye level (ACE: level with or just below the eyes); the card draws them over the shoulders (c10).",
       "tags": [
         "CONSENSUS"
       ],
@@ -133,7 +133,7 @@
     },
     {
       "id": "c7",
-      "text": "Each dumbbell has to stay roughly over its elbow; weights closer together or wider than the elbows turn the lift into a different, harder movement, which is why they travel in a slight arc.",
+      "text": "Each dumbbell has to stay roughly over its elbow; weights closer together than the elbows are much harder on the triceps and weights wider than the elbows much harder on the chest, which is why they travel in a slight arc.",
       "tags": [
         "MECH"
       ],
@@ -149,6 +149,11 @@
         {
           "source": "sbs-bench",
           "text": "That’s why the weights move in an arcing path – away from each other on the way down, and toward each other on the way up.",
+          "where": "dumbbell explanation"
+        },
+        {
+          "source": "sbs-bench",
+          "text": "the lift gets way harder on your triceps if the weights are closer together than your elbows are (it basically becomes a Tate Press), and it gets way harder on your pecs (and maybe biceps) if the weights are further from each other than your elbows are",
           "where": "dumbbell explanation"
         }
       ]
@@ -335,9 +340,9 @@
     },
     {
       "id": "c17",
-      "text": "Pectoralis major tendon ruptures happen most often during the lowering (eccentric) part of the bench press.",
+      "text": "Pec major tendon ruptures happen most often during the lowering (eccentric) part of the bench press in general (a narrative review, not a dumbbell measurement).",
       "tags": [
-        "DATA"
+        "CONSENSUS"
       ],
       "sources": [
         "kowalczuk2022"
@@ -352,7 +357,7 @@
     },
     {
       "id": "c18",
-      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "text": "The shoulder is one of the most often injured areas in resistance training (up to 36% of documented injuries), and poor attention to technique is a named risk factor.",
       "tags": [
         "DATA"
       ],
@@ -368,6 +373,11 @@
         {
           "source": "kolber2010",
           "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
           "where": "abstract"
         }
       ]
@@ -479,7 +489,7 @@
     "view": "side",
     "viewWhy": "Census view is side; the faults that matter here (low back arching off the bench, dumbbell depth at mid-chest, forearm over the elbow) all read in the sagittal plane (c6, c5, c7).",
     "equipment": "Flat bench, one dumbbell per hand, feet flat on the floor (c1).",
-    "start": "Supine, head/shoulders/buttocks on the bench, feet on the floor (c1, c2); arms straight, dumbbells level with or just below the eyes (c4).",
+    "start": "Supine, head/shoulders/buttocks on the bench, feet on the floor (c1, c2); arms straight and vertical, dumbbells directly over the shoulder joints (c10), never past eye level (c4).",
     "end": "Dumbbells lowered to touch mid-chest, slightly wide toward the armpits (c5), each forearm near vertical under its dumbbell (c7); contact points unchanged (c6).",
     "checkpoints": [
       {
@@ -551,8 +561,8 @@
       "claim": "c2"
     },
     {
-      "step": "Press to straight arms, dumbbells level with or just below the eyes.",
-      "claim": "c4"
+      "step": "Press to straight arms, dumbbells over your shoulders.",
+      "claim": "c10"
     }
   ],
   "posture": [
@@ -618,7 +628,7 @@
       },
       {
         "where": "Sharp pain in the chest or front of the shoulder while lowering",
-        "means": "Usually a warning sign: pec tendon tears happen mostly in the lowering phase of bench pressing, and the shoulder is the most commonly injured area in lifting.",
+        "means": "Usually a warning sign: pec tendon tears happen mostly in the lowering phase of bench pressing, and the shoulder is one of the most often injured areas in lifting.",
         "fix": "Stop the set. Go lighter next time.",
         "claim": "c17",
         "redFlag": "shoulder"

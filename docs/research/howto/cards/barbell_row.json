@@ -117,7 +117,7 @@
     },
     {
       "id": "c7",
-      "text": "Swinging the bar up with the hips takes work from the upper back; the most common cause is too much weight, and the fix is a lighter weight with stricter form.",
+      "text": "Swinging the bar up with the hips takes work from the upper back and adds it to the lower back and glutes; the most common cause is too much weight, and the fix is a lighter weight with stricter form.",
       "tags": [
         "CONSENSUS"
       ],
@@ -129,6 +129,11 @@
           "source": "sl-barbell-row",
           "text": "The most common cause of swinging in the barbell row is that you are using too much weight. Try lowering the weight and performing the row with a more strict form.",
           "where": "Proper Form & Technique: Swinging"
+        },
+        {
+          "source": "sl-barbell-row",
+          "text": "If you use more of a “swinging” technique, using momentum from your hips to pull the bar up, you increase the amount of work done by your lower back and your glute muscles but decrease the work done by your upper back.",
+          "where": "What Muscles Do Barbell Rows Work?"
         }
       ]
     },
@@ -264,9 +269,10 @@
     },
     {
       "id": "c15",
-      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high (measured in 5 bodybuilders doing curls, overhead presses and leg presses, not rows).",
       "tags": [
-        "DATA"
+        "DATA",
+        "WEAK"
       ],
       "sources": [
         "macdougall1985"
@@ -627,7 +633,7 @@
       {
         "where": "Lower back, working hard",
         "means": "Usually means the lower back is holding the bent-over position, which is expected.",
-        "fix": "If it turns to pain, lower the weight and keep the torso still.",
+        "fix": null,
         "claim": "c11",
         "redFlag": null
       },
@@ -674,9 +680,11 @@
     }
   ],
   "libraryDiff": {
-    "add": [],
+    "add": [
+      "forearms"
+    ],
     "remove": [],
-    "why": "Library primary mid_back and secondary lats, biceps, rear_delts, with lower_back and core as stabilisers, match the sources (c12, c11). StrengthLog lists lats as primary; the card keeps the library split and shows lats as a primary feel (c12)."
+    "why": "Library primary mid_back and secondary lats, biceps, rear_delts, with lower_back and core as stabilisers, match the sources (c12, c11). StrengthLog lists lats as primary; the card keeps the library split and shows lats as a primary feel (c12). Add forearms as secondary: StrengthLog names the forearm flexors as secondary movers (c12)."
   },
   "anchorSource": "sl-barbell-row"
 }

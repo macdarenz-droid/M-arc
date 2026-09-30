@@ -106,6 +106,20 @@
       "text": "Allow your arms to hang towards the floor with your elbows slightly flexed and palms facing each other.",
       "status": "verbatim",
       "closest": "Allow your arms to hang towards the floor with your elbows slightly flexed and palms facing each other."
+    },
+    {
+      "claim": "c4",
+      "source": "sl-reverse-fly",
+      "text": "Instead, make sure to pick a weight light enough to be able to perform the exercise correctly and with control.",
+      "status": "verbatim",
+      "closest": "Instead, make sure to pick a weight light enough to be able to perform the exercise correctly and with control."
+    },
+    {
+      "claim": "c6",
+      "source": "sl-reverse-fly",
+      "text": "Unlike exercises such as lat pulldowns or rows, the upper arm just barely moves closer to the origin of the lats, which means that the lats aren’t very active in this exercise.",
+      "status": "verbatim",
+      "closest": "Unlike exercises such as lat pulldowns or rows, the upper arm just barely moves closer to the origin of the lats, which means that the lats aren’t very active in this exercise."
     }
   ]
 }

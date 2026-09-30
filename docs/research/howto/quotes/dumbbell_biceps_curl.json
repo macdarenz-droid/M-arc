@@ -36,14 +36,6 @@
    "note": ""
   },
   {
-   "claim": "c3",
-   "source": "ace-seated-curl",
-   "text": "Exhale and slowly bend each elbow in unison, bringing the dumbbells towards your chest without arching your back or moving your elbows forward.",
-   "status": "verbatim",
-   "closest": "Exhale and slowly bend each elbow in unison, bringing the dumbbells towards your chest without arching your back or moving your elbows forward.",
-   "note": ""
-  },
-  {
    "claim": "c4",
    "source": "sl-dbcurl",
    "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
@@ -210,6 +202,30 @@
    "status": "verbatim",
    "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
    "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-dbcurl",
+   "text": "Don’t let your upper arms travel back during the curl. Keep them at your sides, or move them slightly forward.",
+   "status": "verbatim",
+   "closest": "Don’t let your upper arms travel back during the curl. Keep them at your sides, or move them slightly forward.",
+   "note": "fixer: added 2026-09-30 after verification finding"
+  },
+  {
+   "claim": "c3",
+   "source": "ace-seated-curl",
+   "text": "Curl the dumbbells higher by allowing the elbows to move forward as the dumbbell reaches your chest",
+   "status": "verbatim",
+   "closest": "Curl the dumbbells higher by allowing the elbows to move forward as the dumbbell reaches your chest",
+   "note": "fixer: added 2026-09-30 after verification finding"
+  },
+  {
+   "claim": "c7",
+   "source": "ace-seated-curl",
+   "text": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "status": "verbatim",
+   "closest": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "note": "fixer: added 2026-09-30 after verification finding"
   }
  ],
  "sources": [

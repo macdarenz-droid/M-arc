@@ -157,9 +157,10 @@
     },
     {
       "id": "c9",
-      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high (measured in 5 bodybuilders doing curls, overhead presses and leg presses, not shrugs).",
       "tags": [
-        "DATA"
+        "DATA",
+        "WEAK"
       ],
       "sources": [
         "macdougall1985"
@@ -209,23 +210,10 @@
           "source": "kolber2010",
           "text": "extrinsic risk factors, namely, that of improper attention to exercise technique.",
           "where": "abstract"
-        }
-      ]
-    },
-    {
-      "id": "c12",
-      "text": "Grip strength drops when the wrist is bent away from its natural slightly-extended position.",
-      "tags": [
-        "DATA",
-        "MECH"
-      ],
-      "sources": [
-        "odriscoll1992"
-      ],
-      "quotes": [
+        },
         {
-          "source": "odriscoll1992",
-          "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
           "where": "abstract"
         }
       ]
@@ -301,16 +289,6 @@
       "pmid": 20508476,
       "access": "abstract",
       "checked": "2026-09-30"
-    },
-    {
-      "id": "odriscoll1992",
-      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
-      "title": "The relationship between wrist position, grasp size, and grip strength.",
-      "kind": "peer-reviewed",
-      "year": 1992,
-      "pmid": 1538102,
-      "access": "abstract",
-      "checked": "2026-09-30"
     }
   ],
   "plate": {
@@ -338,9 +316,10 @@
     ],
     "mistake": {
       "what": "Elbows bend to pull the bar up instead of the shoulders lifting it.",
-      "why": "The top fault, rolling the shoulders (c3), is a rotation the engine cannot draw; bent arms break the straight-arm rule (c4) and are visible side-on.",
+      "why": "Rolling the shoulders is the fault ACE names (c3), but it is a rotation the engine cannot draw; bent arms break the straight-arm rule (c4) and are visible side-on.",
       "claim": "c4",
-      "drawable": false
+      "drawable": false,
+      "rankNote": "No source read ranks shrug faults by frequency. ACE names only rolling (c3); bent elbows is drawn because it breaks c4 and reads side-on, not because it is known to be common."
     },
     "tells": [
       {
@@ -365,11 +344,10 @@
     "width": "About shoulder width.",
     "thumb": "Wrapped around the bar.",
     "handContact": "Bar across the middle of the palm, fingers wrapped (hold archetype).",
-    "wrist": "Neutral to slightly back; grip weakens when the wrist bends away from it.",
+    "wrist": "Not given by any shrug source read (hold archetype default).",
     "claims": [
       "c1",
-      "c10",
-      "c12"
+      "c10"
     ]
   },
   "setup": [
@@ -439,13 +417,6 @@
         "redFlag": null
       },
       {
-        "where": "Forearms and grip tiring first",
-        "means": "Usually means the grip is limiting the set.",
-        "fix": "Keep the wrist neutral and the thumb wrapped.",
-        "claim": "c12",
-        "redFlag": null
-      },
-      {
         "where": "Sharp pain in the shoulder joint",
         "means": "Not a normal training feeling; the shoulder is a common injury site.",
         "fix": "Stop the set.",
@@ -471,9 +442,9 @@
     {
       "key": "shrug-grip",
       "kind": "hand",
-      "right": "Overhand, thumbs wrapped, wrists straight, hands shoulder width.",
-      "wrong": "Bar in the fingertips, wrist curled.",
-      "claim": "c1"
+      "right": "Overhand, thumbs wrapped around the bar, hands shoulder width.",
+      "wrong": "Thumb not wrapped around the bar.",
+      "claim": "c10"
     },
     {
       "key": "shrug-top",

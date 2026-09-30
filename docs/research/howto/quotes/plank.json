@@ -103,9 +103,9 @@
     {
       "claim": "c11",
       "source": "cortell-2017",
-      "text": "Finally, ADRET provoked a higher RPE compared with ABANT",
+      "text": "Finally, ADRET provoked a higher RPE compared with ABANT (p = 0.000), ABRET (p = 0.001), and ADANT (p = 0.015).",
       "status": "verbatim",
-      "closest": "Finally, ADRET provoked a higher RPE compared with ABANT"
+      "closest": "Finally, ADRET provoked a higher RPE compared with ABANT (p = 0.000), ABRET (p = 0.001), and ADANT (p = 0.015)."
     }
   ]
 }

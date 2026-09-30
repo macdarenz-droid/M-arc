@@ -87,13 +87,6 @@
       "closest": "The reverse lunge strengthens the legs and hips and improves hip stability with the unilateral effort"
     },
     {
-      "claim": "c9",
-      "source": "cat-revlunge",
-      "text": "It generally emphasize the quads slightly more than a forward lunge.",
-      "status": "verbatim",
-      "closest": "It generally emphasize the quads slightly more than a forward lunge."
-    },
-    {
       "claim": "c10",
       "source": "goulette-2021",
       "text": "Quadriceps force, PFJ reaction force, and knee flexion angle were larger in the FL movement and Up phases. PFJ loading rate was greater in the FL movement along with a lower forward trunk tilt.",
@@ -162,6 +155,13 @@
       "text": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position.",
       "status": "verbatim",
       "closest": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position."
+    },
+    {
+      "claim": "c8",
+      "source": "bezerra-2021",
+      "text": "Twelve women (24 ± 3 years) were selected and performed the lunge exercise with an overload of 30% of body weight",
+      "status": "verbatim",
+      "closest": "Twelve women (24 ± 3 years) were selected and performed the lunge exercise with an overload of 30% of body weight"
     }
   ]
 }

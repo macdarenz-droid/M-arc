@@ -190,6 +190,34 @@
       "text": "it does not improve after treating it at home for a few weeks",
       "status": "verbatim",
       "closest": "it does not improve after treating it at home for a few weeks"
+    },
+    {
+      "claim": "c9",
+      "source": "gentilcore-slrdl",
+      "text": "At that point, you shoulde feel some pretty significant tension in the hamstrings.",
+      "status": "verbatim",
+      "closest": "At that point, you shoulde feel some pretty significant tension in the hamstrings."
+    },
+    {
+      "claim": "c11",
+      "source": "gentilcore-slrdl",
+      "text": "grip the DB HARD, push your hips back, and think about driving your moving leg’s heel up towards the ceiling.",
+      "status": "verbatim",
+      "closest": "grip the DB HARD, push your hips back, and think about driving your moving leg’s heel up towards the ceiling."
+    },
+    {
+      "claim": "c18",
+      "source": "gentilcore-slrdl",
+      "text": "CRUSH the dumbbell with your grip.",
+      "status": "verbatim",
+      "closest": "CRUSH the dumbbell with your grip."
+    },
+    {
+      "claim": "c7",
+      "source": "gentilcore-slrdl",
+      "text": "many trainees make the mistake of trying to touch the DB all the way to the floor, resulting in a significant amount of flexion",
+      "status": "verbatim",
+      "closest": "many trainees make the mistake of trying to touch the DB all the way to the floor, resulting in a significant amount of flexion"
     }
   ]
 }

@@ -135,6 +135,11 @@
           "source": "hinge-mc",
           "text": "Bouncing on your toes. Some people find themselves bouncing on their toes as they drive their knees forward. This can add extra impact, especially for beginners, which might make it harder to keep the movement controlled.",
           "where": "Common adjustments"
+        },
+        {
+          "source": "hinge-mc",
+          "text": "To adjust, focus on moving with smooth, intentional steps, almost as if you’re gliding your knees forward rather than bouncing.",
+          "where": "Common adjustments"
         }
       ]
     },
@@ -151,6 +156,11 @@
         {
           "source": "hinge-mc",
           "text": "Some rounding in your back is natural, especially as you start to fatigue. If you feel your back rounding excessively, try focusing on drawing your shoulders down and back, which supports a neutral spine position.",
+          "where": "Common adjustments"
+        },
+        {
+          "source": "hinge-mc",
+          "text": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement.",
           "where": "Common adjustments"
         }
       ]
@@ -422,11 +432,11 @@
       },
       {
         "where": "Pain on the back of the wrist",
-        "means": "Usually means the bent-back wrist is not tolerating the load.",
-        "fix": "Put your hands on a bench or step to take load off.",
+        "means": "Not a normal training feeling.",
+        "fix": "Stop the exercise.",
         "claim": "c12",
         "redFlag": "wrist",
-        "fixNote": "The fix quote (c9) says a raised surface reduces load on the arms and core; no source says it relieves the wrist specifically."
+        "fixNote": "The shared wrist box covers what to do next. Hands on a bench or step (c9) only means less load on the arms and core; no source says it relieves the wrist, so it is not offered as a wrist fix."
       }
     ]
   },

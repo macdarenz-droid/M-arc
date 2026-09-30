@@ -186,6 +186,14 @@
    "status": "verbatim",
    "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
    "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-top3-chest",
+   "text": "Therefore, fitness professionals should avoid using the pec deck exercise with clients who have a history of shoulder dysfunction.",
+   "status": "verbatim",
+   "closest": "Therefore, fitness professionals should avoid using the pec deck exercise with clients who have a history of shoulder dysfunction.",
+   "note": "fixer: added 2026-09-30 after verification finding"
   }
  ],
  "sources": [

@@ -3,13 +3,6 @@
   "checked": "2026-09-30",
   "quotes": [
     {
-      "claim": "c1",
-      "source": "sl-upright-row",
-      "text": "Grip the bar with an overhand grip, slightly narrower than shoulder-width apart. Pull the bar straight up until it is at the level of your chin. With control, lower the bar back to the starting position.",
-      "status": "verbatim",
-      "closest": "Grip the bar with an overhand grip, slightly narrower than shoulder-width apart. Pull the bar straight up until it is at the level of your chin. With control, lower the bar back to the starting position."
-    },
-    {
       "claim": "c2",
       "source": "sl-upright-row",
       "text": "you can mitigate the risk of shoulder pain by starting with light weights and a low number of sets and by avoiding elevating your upper arms above shoulder height at the top of the movement.",
@@ -134,6 +127,49 @@
       "text": "Perform all grips with your thumbs around the bar.",
       "status": "verbatim",
       "closest": "Perform all grips with your thumbs around the bar."
+    },
+    {
+      "claim": "c1",
+      "source": "sl-upright-row",
+      "text": "Grip the bar with an overhand grip",
+      "status": "verbatim",
+      "closest": "Grip the bar with an overhand grip"
+    },
+    {
+      "claim": "c1",
+      "source": "sl-upright-row",
+      "text": "Pull the bar straight up",
+      "status": "verbatim",
+      "closest": "Pull the bar straight up"
+    },
+    {
+      "claim": "c1",
+      "source": "sl-upright-row",
+      "text": "With control, lower the bar back to the starting position.",
+      "status": "verbatim",
+      "closest": "With control, lower the bar back to the starting position."
+    },
+    {
+      "claim": "c5",
+      "source": "lesmills-upright-row",
+      "text": "The second issue is having a scapula that’s protracted (shoulders rounded forward) and downwardly rotated.",
+      "status": "verbatim",
+      "closest": "The second issue is having a scapula that’s protracted (shoulders rounded forward) and downwardly rotated."
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+      "status": "verbatim",
+      "closest": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury."
+    },
+    {
+      "claim": "c7",
+      "source": "mcallister2013",
+      "text": "Sixteen weight-trained men completed 2 repetitions each in the URR with 3 grip conditions: 50, 100, and 200% of the biacromial breadth (BAB).",
+      "status": "verbatim",
+      "closest": "Sixteen weight-trained men completed 2 repetitions each in the URR with 3 grip conditions: 50, 100, and 200% of the biacromial breadth (BAB).",
+      "checkedBy": "supervisor, NCBI efetch PMID 22362088, 2026-09-30"
     }
   ]
 }

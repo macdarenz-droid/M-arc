@@ -47,7 +47,7 @@
     },
     {
       "id": "c2",
-      "text": "In EMG studies of the barbell bench press, the upper chest peaked at a 30-degree incline, and inclines above 45 degrees shifted work to the front deltoid and reduced chest performance (barbell data applied to dumbbells).",
+      "text": "In EMG studies of the barbell bench press, the upper chest peaked at a 30-degree incline, inclines above 45 degrees shifted work to the front deltoid and reduced chest performance, and triceps activity was similar at all inclines (barbell data applied to dumbbells).",
       "tags": [
         "DATA",
         "MECH"
@@ -64,6 +64,11 @@
         {
           "source": "rodriguezridao2020",
           "text": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major.",
+          "where": "abstract"
+        },
+        {
+          "source": "rodriguezridao2020",
+          "text": "TB showed similar EMG activities at all bench inclinations.",
           "where": "abstract"
         }
       ]
@@ -109,7 +114,7 @@
     },
     {
       "id": "c5",
-      "text": "Start with arms straight, dumbbells over the eyes or slightly higher.",
+      "text": "At lockout the elbows are fully extended with the dumbbells at eye level or slightly higher (ACE). The card uses this for height only and draws the dumbbells over the shoulders (c17).",
       "tags": [
         "CONSENSUS"
       ],
@@ -244,9 +249,10 @@
     },
     {
       "id": "c12",
-      "text": "At 30 and 45 degrees the upper chest was more active than flat during part of the press; a flat bench works both upper and lower chest.",
+      "text": "At 30 and 45 degrees the upper chest was more active than flat during part of the press; a flat bench works both upper and lower chest (barbell study, applied to dumbbells).",
       "tags": [
-        "DATA"
+        "DATA",
+        "MECH"
       ],
       "sources": [
         "lauver2016"
@@ -317,7 +323,7 @@
     },
     {
       "id": "c16",
-      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "text": "The shoulder is one of the most often injured areas in resistance training (up to 36% of documented injuries), and poor attention to technique is a named risk factor.",
       "tags": [
         "DATA"
       ],
@@ -334,6 +340,33 @@
           "source": "kolber2010",
           "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
           "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Human Kinetics starts the dumbbell press with the dumbbells over the shoulders and says the incline version keeps the flat press's other positions and cues.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-db-bench"
+      ],
+      "quotes": [
+        {
+          "source": "hk-db-bench",
+          "text": "Lean back into a supine position on the bench while positioning your hands and dumbbells over your shoulders.",
+          "where": "Beginning Position"
+        },
+        {
+          "source": "hk-db-bench",
+          "text": "All other positions and movement cues are similar.",
+          "where": "Incline Dumbbell Bench Press"
         }
       ]
     }
@@ -424,13 +457,13 @@
     "view": "side",
     "viewWhy": "Census view is side; bench angle, elbow-under-wrist and back arch all read in the sagittal plane (c1, c7, c8).",
     "equipment": "Adjustable bench at 45 degrees (the value inside both ACE's 45-60 range and HK's 'about 45', c1; c2 notes 30 degrees peaks upper chest in barbell data, so 45 is the upper sensible limit). Dumbbell per hand, feet flat.",
-    "start": "On the incline, head/shoulders/buttocks on the pad, feet on the floor (c4); arms straight, dumbbells over the eyes or slightly higher (c5).",
+    "start": "On the incline, head/shoulders/buttocks on the pad, feet on the floor (c4); arms straight and vertical, dumbbells directly above the shoulder joints (c17, c7), so they sit above eye height (c5) and in front of the face, never over it.",
     "end": "Dumbbells at the upper chest, slightly wide (c6), elbows under the wrists (c7).",
     "checkpoints": [
       {
         "label": "Bench at 45°",
-        "what": "Back pad set to about 45 degrees, not steeper.",
-        "claim": "c1"
+        "what": "Back pad at about 45 degrees; steeper shifts work to the front shoulder (barbell data).",
+        "claim": "c2"
       },
       {
         "label": "Elbows under wrists",
@@ -496,8 +529,8 @@
       "claim": "c4"
     },
     {
-      "step": "Press to straight arms over your eyes.",
-      "claim": "c5"
+      "step": "Press to straight arms, dumbbells over the shoulders.",
+      "claim": "c17"
     }
   ],
   "posture": [
@@ -521,7 +554,7 @@
   "handlingMistakes": [
     {
       "mistake": "Bench set steeper than 45 degrees.",
-      "fix": "Lower the back pad; steeper turns it into a shoulder press.",
+      "fix": "Lower the back pad; steeper shifts work to the front shoulder (barbell data).",
       "claim": "c2"
     },
     {
@@ -553,7 +586,7 @@
       },
       {
         "muscleId": "triceps",
-        "claim": "c12"
+        "claim": "c2"
       }
     ],
     "watch": [],
@@ -567,7 +600,7 @@
       },
       {
         "where": "Sharp pain at the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is the most commonly injured area in lifting.",
+        "means": "Usually a warning sign; the shoulder is one of the most often injured areas in lifting.",
         "fix": "Stop the set. Go lighter next time.",
         "claim": "c16",
         "redFlag": "shoulder"
@@ -606,7 +639,7 @@
   "libraryDiff": {
     "add": [],
     "remove": [],
-    "why": "exercises.json: upper_chest primary; front_delts, triceps, chest secondary. c2 supports upper_chest and front_delts; c12 supports chest. Triceps: Rodríguez-Ridao found similar triceps activity at all inclines (abstract), kept. No change."
+    "why": "exercises.json: upper_chest primary; front_delts, triceps, chest secondary. c2 supports upper_chest and front_delts, and triceps (Rodríguez-Ridao: similar triceps activity at all inclines, barbell data); c12 supports chest. No change."
   },
   "anchorSource": "ace-incline-press"
 }

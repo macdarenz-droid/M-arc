@@ -202,7 +202,7 @@
     },
     {
       "id": "c11",
-      "text": "A backward pelvic tilt with the shoulder blades drawn together gave the highest core activity, and was also rated hardest.",
+      "text": "A backward pelvic tilt with the shoulder blades drawn together gave more overall core activity than the two forward-tilt versions (not more than backward tilt with the shoulder blades apart), and was rated the hardest of the four.",
       "tags": [
         "DATA"
       ],
@@ -217,7 +217,7 @@
         },
         {
           "source": "cortell-2017",
-          "text": "Finally, ADRET provoked a higher RPE compared with ABANT",
+          "text": "Finally, ADRET provoked a higher RPE compared with ABANT (p = 0.000), ABRET (p = 0.001), and ADANT (p = 0.015).",
           "where": "abstract, results"
         }
       ]

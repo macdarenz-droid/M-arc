@@ -126,7 +126,7 @@
     },
     {
       "id": "c7",
-      "text": "Common faults: rounding the back and shoulders, not keeping the neck neutral, and lowering the dumbbell too low.",
+      "text": "Faults to avoid include rounding the back and shoulders, not keeping the neck neutral, and lowering the dumbbell too low; many trainees try to touch the dumbbell to the floor, which rounds the back.",
       "tags": [
         "CONSENSUS"
       ],
@@ -138,6 +138,11 @@
           "source": "gentilcore-slrdl",
           "text": "rounding the back and shoulders, not packing the neck, lowering the DB too low, to name a few",
           "where": "commentary before Key Points"
+        },
+        {
+          "source": "gentilcore-slrdl",
+          "text": "many trainees make the mistake of trying to touch the DB all the way to the floor, resulting in a significant amount of flexion",
+          "where": "Key Point 2"
         }
       ]
     },
@@ -177,6 +182,11 @@
           "source": "gentilcore-slrdl",
           "text": "So, instead of actively thinking about lowering the DB, all you need to do is think “hips back,” until the DB reaches roughly mid-shin level.",
           "where": "Key Point 2"
+        },
+        {
+          "source": "gentilcore-slrdl",
+          "text": "At that point, you shoulde feel some pretty significant tension in the hamstrings.",
+          "where": "Key Point 2"
         }
       ]
     },
@@ -210,6 +220,11 @@
         {
           "source": "gentilcore-slrdl",
           "text": "Likewise, as you push back, you should feel the brunt of your weight shift back into your supporting leg’s heel.",
+          "where": "Key Point 4"
+        },
+        {
+          "source": "gentilcore-slrdl",
+          "text": "grip the DB HARD, push your hips back, and think about driving your moving leg’s heel up towards the ceiling.",
           "where": "Key Point 4"
         }
       ]
@@ -340,6 +355,11 @@
         {
           "source": "gentilcore-slrdl",
           "text": "This is important because you can’t think of this movement as actively lowering the DB with your arm",
+          "where": "Key Point 2"
+        },
+        {
+          "source": "gentilcore-slrdl",
+          "text": "CRUSH the dumbbell with your grip.",
           "where": "Key Point 2"
         }
       ]
@@ -486,9 +506,10 @@
     ],
     "mistake": {
       "what": "Back and shoulders round as the dumbbell is reached toward the floor.",
-      "why": "The top fault, the hip of the lifted leg rotating up (c5), is a rotation the engine cannot draw; rounding while reaching too low is the most common drawable fault (c7).",
+      "why": "The hip of the lifted leg rotating up (c5) is a rotation the engine cannot draw; rounding while reaching the dumbbell too low is drawable side-on, and Gentilcore says many trainees do it (c7).",
       "claim": "c7",
-      "drawable": false
+      "drawable": false,
+      "rankNote": "No source ranks single-leg RDL faults by frequency. Gentilcore lists faults 'to name a few' and says only that many trainees reach the dumbbell to the floor (c7); StrengthLog's hip-rotation cue (c5) is not ranked either."
     },
     "tells": [
       {

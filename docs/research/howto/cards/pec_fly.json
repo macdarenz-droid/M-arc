@@ -39,9 +39,10 @@
     { "id": "c7", "text": "Changing the technique to move more weight is a mistake that can cause injury.",
       "tags": ["CONSENSUS"], "sources": ["ace-top3-chest"],
       "quotes": [ { "source": "ace-top3-chest", "text": "Many users will adopt their own technique on this machine to do more weight, which is a big mistake and can result in injury,", "where": "Pec Deck tip (Mark P. Kelly)" } ] },
-    { "id": "c8", "text": "The pec deck puts the shoulder in abduction and external rotation, a vulnerable position for the front of the joint; ACE advises caution and not using it for people with past shoulder problems.",
-      "tags": ["CONSENSUS"], "sources": ["ace-top3-chest"],
-      "quotes": [ { "source": "ace-top3-chest", "text": "This exercise places the shoulder in abduction and external rotation, which is a vulnerable position for the joint (especially the anterior structures).", "where": "Footnote to Pec Deck" } ] },
+    { "id": "c8", "text": "The pec deck puts the shoulder in abduction and external rotation, a vulnerable position for the front of the joint; ACE advises caution and not using it for people with past shoulder problems. ACE's footnote is about the pec deck; applying it to the handle machine drawn here is by reasoning.",
+      "tags": ["MECH", "CONSENSUS"], "sources": ["ace-top3-chest"],
+      "quotes": [ { "source": "ace-top3-chest", "text": "This exercise places the shoulder in abduction and external rotation, which is a vulnerable position for the joint (especially the anterior structures).", "where": "Footnote to Pec Deck" },
+        { "source": "ace-top3-chest", "text": "Therefore, fitness professionals should avoid using the pec deck exercise with clients who have a history of shoulder dysfunction.", "where": "Footnote to Pec Deck" } ] },
     { "id": "c9", "text": "Inferred from ACE's cable crossover advice, not measured on the pec deck: starting with the arms behind the torso adds little and carries a shoulder injury risk.",
       "tags": ["MECH", "WEAK"], "sources": ["ace-top3-chest"],
       "quotes": [ { "source": "ace-top3-chest", "text": "While this extreme range of motion may feel good, it does little in terms of muscular conditioning, and there is a risk of injury in the shoulder during hyperextension", "where": "Bent-forward cable crossover tip (Mark P. Kelly)" } ] },
@@ -53,7 +54,7 @@
     { "id": "c11", "text": "Inferred from a free-weight chest fly study, not the machine: the front deltoid is also highly active in a chest fly.",
       "tags": ["MECH", "WEAK"], "sources": ["soncin-2014"],
       "quotes": [ { "source": "soncin-2014", "text": "The anterior deltoid showed significantly higher electromyographic activity in sequence B (86.81 ± 40.43%) than sequence A (66.15 ± 22.02%) for the chest fly", "where": "abstract" } ] },
-    { "id": "c12", "text": "Tempo (up = arms closing, down = arms opening): close in about 2 s, hold the squeeze briefly, open slowly in about 2 s.",
+    { "id": "c12", "text": "Tempo (up = arms closing, down = arms opening): close in about 2 s, hold the squeeze for a couple of seconds, open slowly in about 2 s.",
       "tags": ["CONSENSUS"], "sources": ["hl-pecdeck", "acsm-2009"],
       "quotes": [
         { "source": "hl-pecdeck", "text": "Bring the handles or arm pads in front of your chest, hold the position for a couple of seconds, and then slowly release back to starting position.", "where": "How to use a pec deck" },
@@ -97,7 +98,7 @@
       { "text": "Handles almost touch in front", "claim": "c5" },
       { "text": "Back stays on the pad", "claim": "c1" }
     ],
-    "tempo": { "up": 2, "down": 2, "pause": 1, "claim": "c12" },
+    "tempo": { "up": 2, "down": 2, "pause": 2, "claim": "c12" },
     "variantLine": "Drawn: the handle fly machine with slightly bent elbows (c3), because GA 3.1.1 files pec_fly under the hold archetype (hands on handles). The elbow-pad pec deck (elbows bent 75-90 degrees on the pads, c4) is the other version. Claims c1, c2, c5-c10 and c12-c15 hold for both."
   },
 
@@ -126,7 +127,7 @@
     "watch": [],
     "rows": [
       { "where": "Chest", "means": "The chest is doing the work.", "fix": "", "claim": "c10", "redFlag": null },
-      { "where": "Front of the shoulder, at the start", "means": "The front of the shoulder is in its vulnerable position here.", "fix": "Don't let the arms go behind the body; go lighter.", "claim": "c8", "redFlag": "shoulder" },
+      { "where": "Pain at the front of the shoulder", "means": "Usually a warning sign: the start puts the shoulder in a vulnerable position.", "fix": "Stop the set.", "claim": "c8", "redFlag": "shoulder" },
       { "where": "Body rocking on the seat", "means": "Usually means the weight is too heavy.", "fix": "Lower the weight.", "claim": "c14", "redFlag": null }
     ] },
   "risks": [
