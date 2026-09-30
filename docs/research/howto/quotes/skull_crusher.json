@@ -1,0 +1,118 @@
+{
+  "id": "skull_crusher",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-lying-tri-ext",
+      "quote": "Holding a barbell with a closed, pronated grip (palms facing your feet and thumbs wrapped around the bar), lie supine (on your back) on a flat bench with your feet firmly placed on the floor.",
+      "status": "verbatim",
+      "closest": "Holding a barbell with a closed, pronated grip (palms facing your feet and thumbs wrapped around the bar), lie supine (on your back) on a flat bench with your feet firmly placed on the floor."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-lying-tri-ext",
+      "quote": "Slowly press the barbell off your chest, fully extending your elbows until the barbell is positioned directly above your face with your palms still facing towards your feet.",
+      "status": "verbatim",
+      "closest": "Slowly press the barbell off your chest, fully extending your elbows until the barbell is positioned directly above your face with your palms still facing towards your feet."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-lying-tri-ext",
+      "quote": "Maintain a neutral wrist position (no flexion or extension at the wrist).",
+      "status": "verbatim",
+      "closest": "Maintain a neutral wrist position (no flexion or extension at the wrist)."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-lying-tri-ext",
+      "quote": "Inhale and slowly bend the elbows, lowering the bar in a controlled manner towards your forehead or slightly behind your head while maintaining your neutral wrist position.",
+      "status": "verbatim",
+      "closest": "Inhale and slowly bend the elbows, lowering the bar in a controlled manner towards your forehead or slightly behind your head while maintaining your neutral wrist position."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-lying-tri-ext",
+      "quote": "Your upper arms should remain vertical to the floor as the elbows bend. Lower the bar until it sits just above your forehead or until you notice the upper arms begin to drift backwards.",
+      "status": "verbatim",
+      "closest": "Your upper arms should remain vertical to the floor as the elbows bend. Lower the bar until it sits just above your forehead or until you notice the upper arms begin to drift backwards."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-lying-tri-ext",
+      "quote": "Attempt to keep your upper arms vertical to the floor throughout the exercise and keep your elbows shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "Attempt to keep your upper arms vertical to the floor throughout the exercise and keep your elbows shoulder-width apart."
+    },
+    {
+      "claim": "c6",
+      "source": "strengthlog-lte",
+      "quote": "Try to keep the same distance between your elbows throughout the movement.",
+      "status": "verbatim",
+      "closest": "Try to keep the same distance between your elbows throughout the movement."
+    },
+    {
+      "claim": "c7",
+      "source": "strengthshop-skull",
+      "quote": "Upper arms drifting back: the most common fault, and the one that reduces tricep involvement by shifting the load onto the shoulder.",
+      "status": "verbatim",
+      "closest": "Upper arms drifting back: the most common fault, and the one that reduces tricep involvement by shifting the load onto the shoulder."
+    },
+    {
+      "claim": "c8",
+      "source": "strengthshop-skull",
+      "quote": "The angled grip positions of the EZ bar place the wrists in a semi-supinated position — partway between fully supinated (palms up) and fully pronated (palms down). This immediately reduces the torque placed on the wrist and elbow joint compared to a straight bar",
+      "status": "verbatim",
+      "closest": "The angled grip positions of the EZ bar place the wrists in a semi-supinated position — partway between fully supinated (palms up) and fully pronated (palms down). This immediately reduces the torque placed on the wrist and elbow joint compared to a straight bar"
+    },
+    {
+      "claim": "c9",
+      "source": "strengthshop-skull",
+      "quote": "Too much weight: manifests as loss of elbow position, bar bouncing, and compensation through the shoulder. Fix: reduce load until all reps are clean, then rebuild gradually.",
+      "status": "verbatim",
+      "closest": "Too much weight: manifests as loss of elbow position, bar bouncing, and compensation through the shoulder. Fix: reduce load until all reps are clean, then rebuild gradually."
+    },
+    {
+      "claim": "c10",
+      "source": "strengthlog-lte",
+      "quote": "Lie down on a bench which your head close to the edge. Hold a EZ bar with a close grip, and lift it up to straight arms over yourself.",
+      "status": "verbatim",
+      "closest": "Lie down on a bench which your head close to the edge. Hold a EZ bar with a close grip, and lift it up to straight arms over yourself."
+    },
+    {
+      "claim": "c11",
+      "source": "strengthlog-lte",
+      "quote": "The lying triceps extension is a very effective tricep exercise that besides extending your elbow joint also trains the triceps function to bring your upper arm down towards your midline.",
+      "status": "verbatim",
+      "closest": "The lying triceps extension is a very effective tricep exercise that besides extending your elbow joint also trains the triceps function to bring your upper arm down towards your midline."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c13",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c14",
+      "source": "kerr2010",
+      "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+      "status": "verbatim",
+      "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c15",
+      "source": "gaviria2020",
+      "quote": "Triceps tendon ruptures (TTRs) are rare and often occur as a result of falling on an outstretched hand, forceful eccentric contraction, direct trauma to the elbow, or lifting against resistance. TTRs are most commonly seen in middle-aged men, football players, and weightlifters.",
+      "status": "verbatim",
+      "closest": "Triceps tendon ruptures (TTRs) are rare and often occur as a result of falling on an outstretched hand, forceful eccentric contraction, direct trauma to the elbow, or lifting against resistance. TTRs are most commonly seen in middle-aged men, football players, and weightlifters."
+    }
+  ]
+}

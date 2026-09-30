@@ -1,0 +1,573 @@
+{
+  "id": "arnold_press",
+  "libId": "lib_arnold_press",
+  "name": "Arnold Press",
+  "family": "SEATPRESS",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "seat-back"
+    ]
+  },
+  "parent": "dumbbell_shoulder_press",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the dumbbells are still pressed overhead and over the face in a closed grip; the palm turn changes the hand's direction, not the thumb wrap, so the parent's thumbs-wrapped rule (parent c2) applies."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the wrist still sits under a dumbbell pressed straight up; the parent's neutral-wrist rule (parent c2, c6) applies at every point of the turn."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because it is the same dumbbell handle held firmly in the palm (parent c2)."
+    },
+    {
+      "field": "setup.spotter",
+      "why": "true for this child because it is the same seated dumbbell press over the head; ACE's spotter behind, hands near the wrists (c10 here, from the parent's source) is written for that position."
+    },
+    {
+      "field": "zooms.seat-back-contact",
+      "why": "true for this child because the back-on-pad rule is the same and this card's own source names back arching as the fault (c3)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Start with the dumbbells in front of the chest, palms facing you; turn the palms out as you press so they face forward at the top; turn them back in as you lower.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-arnold"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-arnold",
+          "text": "Start with the dumbbells in front of your chest with your palms facing toward your body.",
+          "where": "How to Do Arnold Press"
+        },
+        {
+          "source": "strengthlog-arnold",
+          "text": "As you press the dumbbells up, rotate your palms outward so they face forward when your arms are extended overhead.",
+          "where": "How to Do Arnold Press"
+        },
+        {
+          "source": "strengthlog-arnold",
+          "text": "Lower the dumbbells back to the starting position, rotating your palms inward again.",
+          "where": "How to Do Arnold Press"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Sit on a bench set upright (vertical, or just short of it).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gymgroup-arnold",
+        "fitfather-arnold"
+      ],
+      "quotes": [
+        {
+          "source": "gymgroup-arnold",
+          "text": "Grab a bench and ensure that it is placed on the maximum incline position.",
+          "where": "step-by-step guide"
+        },
+        {
+          "source": "fitfather-arnold",
+          "text": "Sit on a bench, with either a slight decline from 90 degrees or completely vertical.",
+          "where": "walkthrough step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Do not lift the back away from the bench during the press.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gymgroup-arnold"
+      ],
+      "quotes": [
+        {
+          "source": "gymgroup-arnold",
+          "text": "DON’T raise your back away from the bench during the lift.",
+          "where": "step-by-step guide"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "At the bottom the palms face you with the upper arms level with the floor; keeping them there through the turn keeps the shoulders loaded.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitfather-arnold"
+      ],
+      "quotes": [
+        {
+          "source": "fitfather-arnold",
+          "text": "At the lowest point, your upper arms should be parallel to the floor and your palms facing you.",
+          "where": "walkthrough step 4"
+        },
+        {
+          "source": "fitfather-arnold",
+          "text": "The most important part of the exercise is to keep your upper arms parallel to the ground at the lowest point and throughout the twist.",
+          "where": "introduction"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Getting in: rest the dumbbells on the knees, then kick them up to the pressing position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitfather-arnold"
+      ],
+      "quotes": [
+        {
+          "source": "fitfather-arnold",
+          "text": "Hold the dumbbells on your knees to start, then kick them up into a normal shoulder press position",
+          "where": "walkthrough step 2"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Go slightly lighter than on a normal dumbbell shoulder press.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitfather-arnold"
+      ],
+      "quotes": [
+        {
+          "source": "fitfather-arnold",
+          "text": "We recommend you go slightly lighter in weight than with a normal shoulder press.",
+          "where": "Pro Tip #1"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Stop, or switch exercise, at any pain.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gymgroup-arnold"
+      ],
+      "quotes": [
+        {
+          "source": "gymgroup-arnold",
+          "text": "If you begin to experience any pain at all, you should stop the workout or switch to another exercise.",
+          "where": "notes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The Arnold press mainly works the front and side of the shoulder (coach sources; no EMG study of the Arnold press was found).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "strengthlog-arnold",
+        "fitfather-arnold"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-arnold",
+          "text": "The Arnold Press is a variation of the dumbbell shoulder press that primarily targets the front and medial parts of the shoulder.",
+          "where": "Commentary"
+        },
+        {
+          "source": "fitfather-arnold",
+          "text": "The Arnold Press works your whole shoulder muscle, with emphasis on the front deltoid coming from the twist at the lowest point.",
+          "where": "introduction"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "In dumbbell shoulder presses the deltoids and the triceps were measured working (inferred for the Arnold press from the dumbbell press; not measured on it).",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "saeterbakken2013"
+      ],
+      "quotes": [
+        {
+          "source": "saeterbakken2013",
+          "text": "Electromyogram activity was measured in the anterior, medial, and posterior deltoids and biceps and triceps brachii.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "A way out on seated dumbbell presses: the spotter stands behind, hands close to the wrists without touching (written for the seated dumbbell press, the parent).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-seated-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-ohp",
+          "text": "The spotter should stand behind you in a split-stance position, positioning their hands close to your wrists (not touching) to support you as needed.",
+          "where": "spotting note"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "fitfather-arnold",
+      "url": "https://www.fitfatherproject.com/arnold-press-tutorial",
+      "title": "Arnold Press: Video Tutorial and Exercise Guide (The Fit Father Project, Stuart Carter)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "gymgroup-arnold",
+      "url": "https://www.thegymgroup.com/exercises/arms-and-shoulders-exercises/how-to-do-an-arnold-press/",
+      "title": "How to Do an Arnold Press (The Gym Group)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthlog-arnold",
+      "url": "https://www.strengthlog.com/arnold-press/",
+      "title": "How to Do Arnold Press: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-seated-ohp",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/45/seated-overhead-press/",
+      "title": "Seated Overhead Press (dumbbell), ACE Exercise Library",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "saeterbakken2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23096062/",
+      "title": "Effects of body position and loading modality on muscle activity and strength in shoulder presses",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "23096062",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side. The palm turn is a forearm roll the engine cannot draw, so the plate shows what reads from the side: back on the upright pad, dumbbells in front of the chest at the start, arms straight overhead at the end (c1, c3). The turn is covered in text and a hand close-up.",
+    "equipment": "Upright bench with a backrest, vertical or just short of it (c2); a dumbbell in each hand.",
+    "start": "Seated, back on the pad (c3); dumbbells in front of the chest, palms facing you (c1), upper arms about level with the floor (c4).",
+    "end": "Arms straight overhead, palms facing forward (c1), back still on the pad (c3).",
+    "checkpoints": [
+      {
+        "label": "Back on pad",
+        "what": "The back stays against the bench for the whole press.",
+        "claim": "c3"
+      },
+      {
+        "label": "Palms in",
+        "what": "At the bottom the dumbbells sit in front of the chest, palms toward you.",
+        "claim": "c1"
+      },
+      {
+        "label": "Arms straight up",
+        "what": "At the top the arms are extended overhead, palms forward.",
+        "claim": "c1"
+      }
+    ],
+    "mistake": {
+      "what": "Back arching away from the pad as the dumbbells go up.",
+      "why": "The Gym Group names it as the one thing not to do; the parent's top fault is the same. How often it happens is not measured in any source read.",
+      "claim": "c3",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Back stays on the bench",
+        "claim": "c3"
+      },
+      {
+        "text": "Palms face you at the bottom",
+        "claim": "c1"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed grip that turns during the rep: palms toward you at the bottom, forward at the top (c1).",
+    "width": "Dumbbells in front of the chest at the bottom (c1); pressed to straight arms overhead.",
+    "thumb": "Wrapped (inherited, parent c2).",
+    "handContact": "Handle held firmly in the palm (inherited, parent c2).",
+    "wrist": "Neutral through the turn (inherited, parent c2).",
+    "claims": [
+      "c1"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bench upright.",
+      "claim": "c2"
+    },
+    {
+      "step": "Sit with the dumbbells on your knees, then kick them up.",
+      "claim": "c5"
+    },
+    {
+      "step": "Back on the pad.",
+      "claim": "c3"
+    },
+    {
+      "step": "Dumbbells in front of your chest, palms facing you.",
+      "claim": "c1"
+    },
+    {
+      "step": "If using a spotter, they stand behind you, hands near your wrists.",
+      "claim": "c10"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back on the pad.",
+      "claim": "c3"
+    },
+    {
+      "point": "Palms face you at the bottom, forward at the top.",
+      "claim": "c1"
+    },
+    {
+      "point": "Upper arms about level with the floor at the bottom.",
+      "claim": "c4"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Arching the back off the bench.",
+      "fix": "Go lighter; keep your back on the pad.",
+      "claim": "c3"
+    },
+    {
+      "mistake": "Using your normal shoulder-press weight.",
+      "fix": "Go a little lighter than your shoulder press.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Pressing through shoulder pain.",
+      "fix": "Stop, or switch to another exercise.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c8"
+      },
+      {
+        "muscleId": "side_delts",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c9"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front and sides of the shoulders",
+        "means": "The target muscles are working.",
+        "fix": null,
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the shoulder during the turn or the press",
+        "means": "Usually a warning sign; shoulder injuries are common in lifting.",
+        "fix": "Stop the set. Go lighter or switch exercise.",
+        "claim": "c7",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
+      "claim": "c13"
+    },
+    {
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "arnold-palm-turn",
+      "kind": "hand",
+      "right": "Palms toward you at the bottom, turning to face forward as you press.",
+      "wrong": "Palms already forward at the bottom (no turn: a normal shoulder press).",
+      "claim": "c1"
+    },
+    {
+      "key": "seat-back-contact",
+      "kind": "posture",
+      "right": "Back on the pad.",
+      "wrong": "Back arched away from the pad.",
+      "claim": "c3"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: front_delts and side_delts primary; triceps secondary. c8 supports both deltoids (StrengthLog lists the lateral deltoid as secondary, Fit Father says the whole shoulder); no EMG study of the Arnold press was found, so no change on coach opinion alone. Triceps rests on c9 (MECH, WEAK)."
+  },
+  "anchorSource": "fitfather-arnold"
+}

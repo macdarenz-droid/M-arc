@@ -1,0 +1,209 @@
+{
+  "id": "incline_barbell_bench_press",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "boostcamp-incline",
+      "quote": "Set the bench to an incline angle of 30 to 45 degrees. A steeper angle shifts more focus to the shoulders, while a lower angle targets the chest more effectively.",
+      "status": "verbatim",
+      "closest": "Set the bench to an incline angle of 30 to 45 degrees. A steeper angle shifts more focus to the shoulders, while a lower angle targets the chest more effectively."
+    },
+    {
+      "claim": "c1",
+      "source": "rodriguezridao2020",
+      "quote": "The results showed that the maximal EMG activity for PMUP occurred at a bench inclination of 30°.",
+      "status": "verbatim",
+      "closest": "The results showed that the maximal EMG activity for PMUP occurred at a bench inclination of 30°."
+    },
+    {
+      "claim": "c1",
+      "source": "rodriguezridao2020",
+      "quote": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major.",
+      "status": "verbatim",
+      "closest": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major."
+    },
+    {
+      "claim": "c2",
+      "source": "coratella2020",
+      "quote": "clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises.",
+      "status": "verbatim",
+      "closest": "clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises."
+    },
+    {
+      "claim": "c3",
+      "source": "boostcamp-incline",
+      "quote": "Lie back on the incline bench with your feet flat on the ground or footrests for stability. Position your head, shoulders, and hips firmly against the bench.",
+      "status": "verbatim",
+      "closest": "Lie back on the incline bench with your feet flat on the ground or footrests for stability. Position your head, shoulders, and hips firmly against the bench."
+    },
+    {
+      "claim": "c4",
+      "source": "boostcamp-incline",
+      "quote": "Grasp the barbell with a slightly wider-than-shoulder-width grip. Your palms should face forward, and your wrists should remain straight.",
+      "status": "verbatim",
+      "closest": "Grasp the barbell with a slightly wider-than-shoulder-width grip. Your palms should face forward, and your wrists should remain straight."
+    },
+    {
+      "claim": "c5",
+      "source": "strengthlog-incline",
+      "quote": "Sitting on an inclined bench, unrack a barbell and hold it on straight arms above your shoulders.",
+      "status": "verbatim",
+      "closest": "Sitting on an inclined bench, unrack a barbell and hold it on straight arms above your shoulders."
+    },
+    {
+      "claim": "c6",
+      "source": "boostcamp-incline",
+      "quote": "With the help of a spotter, unrack the barbell and hold it directly above your chest with arms fully extended.",
+      "status": "verbatim",
+      "closest": "With the help of a spotter, unrack the barbell and hold it directly above your chest with arms fully extended."
+    },
+    {
+      "claim": "c6",
+      "source": "boostcamp-incline",
+      "quote": "Use a spotter, especially for barbell lifts.",
+      "status": "verbatim",
+      "closest": "Use a spotter, especially for barbell lifts."
+    },
+    {
+      "claim": "c6",
+      "source": "boostcamp-incline-ex",
+      "quote": "use safety catches if needed.",
+      "status": "verbatim",
+      "closest": "use safety catches if needed."
+    },
+    {
+      "claim": "c7",
+      "source": "boostcamp-incline",
+      "quote": "Slowly lower the barbell toward your upper chest, maintaining control and keeping your elbows at a 45-75 degree angle relative to your torso.",
+      "status": "verbatim",
+      "closest": "Slowly lower the barbell toward your upper chest, maintaining control and keeping your elbows at a 45-75 degree angle relative to your torso."
+    },
+    {
+      "claim": "c7",
+      "source": "boostcamp-incline-ex",
+      "quote": "Unrack the bar and lower it to the upper chest.",
+      "status": "verbatim",
+      "closest": "Unrack the bar and lower it to the upper chest."
+    },
+    {
+      "claim": "c8",
+      "source": "boostcamp-incline",
+      "quote": "Setting the incline too steep, which shifts focus away from the chest.",
+      "status": "verbatim",
+      "closest": "Setting the incline too steep, which shifts focus away from the chest."
+    },
+    {
+      "claim": "c8",
+      "source": "boostcamp-incline",
+      "quote": "Allowing the elbows to flare out excessively, increasing shoulder strain.",
+      "status": "verbatim",
+      "closest": "Allowing the elbows to flare out excessively, increasing shoulder strain."
+    },
+    {
+      "claim": "c8",
+      "source": "boostcamp-incline",
+      "quote": "Using momentum or bouncing the barbell off your chest.",
+      "status": "verbatim",
+      "closest": "Using momentum or bouncing the barbell off your chest."
+    },
+    {
+      "claim": "c9",
+      "source": "boostcamp-incline",
+      "quote": "Maintain a neutral spine and avoid arching your back excessively.",
+      "status": "verbatim",
+      "closest": "Maintain a neutral spine and avoid arching your back excessively."
+    },
+    {
+      "claim": "c9",
+      "source": "boostcamp-incline-ex",
+      "quote": "Shoulder strain from flared elbows, lower back arching excessively, wrist strain from poor grip angle",
+      "status": "verbatim",
+      "closest": "Shoulder strain from flared elbows, lower back arching excessively, wrist strain from poor grip angle"
+    },
+    {
+      "claim": "c10",
+      "source": "rodriguezridao2020",
+      "quote": "TB showed similar EMG activities at all bench inclinations.",
+      "status": "verbatim",
+      "closest": "TB showed similar EMG activities at all bench inclinations."
+    },
+    {
+      "claim": "c11",
+      "source": "lauver2016",
+      "quote": "The sEMG of lower pectoralis was greater during -15° (100.4 ± 5.7% MVIC), 30° (86.6 ± 4.8% MVIC) and horizontal (100.1 ± 5.2% MVIC) bench conditions compared to the 45° (71.9 ± 4.5% MVIC)",
+      "status": "verbatim",
+      "closest": "The sEMG of lower pectoralis was greater during -15° (100.4 ± 5.7% MVIC), 30° (86.6 ± 4.8% MVIC) and horizontal (100.1 ± 5.2% MVIC) bench conditions compared to the 45° (71.9 ± 4.5% MVIC)"
+    },
+    {
+      "claim": "c12",
+      "source": "boostcamp-incline",
+      "quote": "Stop immediately if you feel pain or discomfort in your shoulders or chest.",
+      "status": "verbatim",
+      "closest": "Stop immediately if you feel pain or discomfort in your shoulders or chest."
+    },
+    {
+      "claim": "c12",
+      "source": "boostcamp-incline",
+      "quote": "Progress gradually to heavier weights to avoid injury.",
+      "status": "verbatim",
+      "closest": "Progress gradually to heavier weights to avoid injury."
+    },
+    {
+      "claim": "c13",
+      "source": "acsm2009",
+      "quote": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+      "status": "verbatim",
+      "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c15",
+      "source": "jumbelic2007",
+      "quote": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+      "status": "verbatim",
+      "closest": "an unrecognized source of accidental asphyxia--compression of the neck by barbells"
+    },
+    {
+      "claim": "c15",
+      "source": "jumbelic2007",
+      "quote": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002.",
+      "status": "verbatim",
+      "closest": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002."
+    },
+    {
+      "claim": "c15",
+      "source": "boostcamp-incline-ex",
+      "quote": "Unrack the bar and lower it to the upper chest.",
+      "status": "verbatim",
+      "closest": "Unrack the bar and lower it to the upper chest."
+    },
+    {
+      "claim": "c16",
+      "source": "kerr2010",
+      "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+      "status": "verbatim",
+      "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%)."
+    },
+    {
+      "claim": "c17",
+      "source": "kolber2010",
+      "quote": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c17",
+      "source": "kolber2010",
+      "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    }
+  ]
+}

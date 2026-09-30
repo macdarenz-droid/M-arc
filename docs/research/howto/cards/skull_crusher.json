@@ -1,0 +1,525 @@
+{
+  "id": "skull_crusher",
+  "libId": "lib_skull_crusher",
+  "name": "Skull Crusher",
+  "family": "LYING-EXT",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Closed grip with thumbs wrapped, palms toward the feet; lie on a flat bench with feet firmly on the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-tri-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-tri-ext",
+          "text": "Holding a barbell with a closed, pronated grip (palms facing your feet and thumbs wrapped around the bar), lie supine (on your back) on a flat bench with your feet firmly placed on the floor.",
+          "where": "Step 1, starting position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Press the bar off the chest to straight elbows so it sits above the face.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-tri-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-tri-ext",
+          "text": "Slowly press the barbell off your chest, fully extending your elbows until the barbell is positioned directly above your face with your palms still facing towards your feet.",
+          "where": "Step 1, starting position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Keep the wrists neutral, neither bent forward nor back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-tri-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-tri-ext",
+          "text": "Maintain a neutral wrist position (no flexion or extension at the wrist).",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Bend only the elbows and lower the bar slowly toward the forehead or slightly behind the head.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-tri-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-tri-ext",
+          "text": "Inhale and slowly bend the elbows, lowering the bar in a controlled manner towards your forehead or slightly behind your head while maintaining your neutral wrist position.",
+          "where": "Step 2, downward phase"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The upper arms stay vertical as the elbows bend; stop just above the forehead or as soon as the upper arms start to drift back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-tri-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-tri-ext",
+          "text": "Your upper arms should remain vertical to the floor as the elbows bend. Lower the bar until it sits just above your forehead or until you notice the upper arms begin to drift backwards.",
+          "where": "Step 2, downward phase"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep the elbows shoulder-width apart for the whole set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-tri-ext",
+        "strengthlog-lte"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-tri-ext",
+          "text": "Attempt to keep your upper arms vertical to the floor throughout the exercise and keep your elbows shoulder-width apart.",
+          "where": "Step 3 note"
+        },
+        {
+          "source": "strengthlog-lte",
+          "text": "Try to keep the same distance between your elbows throughout the movement.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Upper arms drifting back is described as the most common fault; it moves load from the triceps to the shoulder (retailer coaching blog).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "strengthshop-skull"
+      ],
+      "quotes": [
+        {
+          "source": "strengthshop-skull",
+          "text": "Upper arms drifting back: the most common fault, and the one that reduces tricep involvement by shifting the load onto the shoulder.",
+          "where": "Common skull crusher mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The EZ bar puts the wrists half-way between palms up and palms down, which this source says eases wrist and elbow torque versus a straight bar (mechanism stated, not measured).",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "strengthshop-skull"
+      ],
+      "quotes": [
+        {
+          "source": "strengthshop-skull",
+          "text": "The angled grip positions of the EZ bar place the wrists in a semi-supinated position — partway between fully supinated (palms up) and fully pronated (palms down). This immediately reduces the torque placed on the wrist and elbow joint compared to a straight bar",
+          "where": "EZ bar"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Too much weight shows as lost elbow position, bouncing and shoulder compensation; reduce the load until every rep is clean.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "strengthshop-skull"
+      ],
+      "quotes": [
+        {
+          "source": "strengthshop-skull",
+          "text": "Too much weight: manifests as loss of elbow position, bar bouncing, and compensation through the shoulder. Fix: reduce load until all reps are clean, then rebuild gradually.",
+          "where": "Common skull crusher mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Lie with the head close to the end of the bench; use a close grip on the EZ bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-lte"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-lte",
+          "text": "Lie down on a bench which your head close to the edge. Hold a EZ bar with a close grip, and lift it up to straight arms over yourself.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The lying triceps extension trains the triceps, both extending the elbow and bringing the upper arm down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-lte"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-lte",
+          "text": "The lying triceps extension is a very effective tricep exercise that besides extending your elbow joint also trains the triceps function to bring your upper arm down towards your midline.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Triceps tendon ruptures are rare; they often come from a forceful eccentric (lowering) contraction or lifting against resistance, and are most often seen in middle-aged men, football players and weightlifters.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "gaviria2020"
+      ],
+      "quotes": [
+        {
+          "source": "gaviria2020",
+          "text": "Triceps tendon ruptures (TTRs) are rare and often occur as a result of falling on an outstretched hand, forceful eccentric contraction, direct trauma to the elbow, or lifting against resistance. TTRs are most commonly seen in middle-aged men, football players, and weightlifters.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-lying-tri-ext",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/36/lying-barbell-triceps-extensions/",
+      "title": "Lying Barbell Triceps Extensions, ACE Exercise Library",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthlog-lte",
+      "url": "https://www.strengthlog.com/lying-triceps-extension/",
+      "title": "How to Do Lying Triceps Extension with EZ bar (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthshop-skull",
+      "url": "https://strengthshop.eu/blogs/news/the-complete-skull-crushers-guide-how-to-do-them-right-and-which-bar-to-use",
+      "title": "The complete skull crushers guide: how to do them right and which bar to use (Strength Shop blog; equipment retailer)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "gaviria2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32539261/",
+      "title": "Triceps Tendon Ruptures: Risk Factors, Treatment, and Rehabilitation",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": "32539261",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; vertical upper arms, the bar's end point at the forehead and the mistake (upper arms drifting back) all read in the sagittal plane (c4, c5, c7). Elbow width needs the front view, so it stays a text point.",
+    "equipment": "Flat bench, EZ bar (census ezBar), feet flat on the floor (c1); head near the end of the bench (c10).",
+    "start": "Supine, feet flat (c1); arms straight, upper arms vertical, bar above the face (c2, c5); wrists neutral (c3).",
+    "end": "Elbows bent, bar just above the forehead (c4, c5); upper arms still vertical (c5).",
+    "checkpoints": [
+      {
+        "label": "Upper arms vertical",
+        "what": "Only the forearms move; the upper arms stay upright.",
+        "claim": "c5"
+      },
+      {
+        "label": "Bar to forehead",
+        "what": "Bar comes down slowly to just above the forehead or slightly behind the head.",
+        "claim": "c4"
+      },
+      {
+        "label": "Wrists neutral",
+        "what": "Wrists neither bent back nor curled.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Upper arms drifting back toward the head as the bar comes down.",
+      "why": "Strength Shop calls it the most common fault (c7, retailer blog, WEAK), and ACE uses it as the stop signal for the descent (c5).",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Upper arms stay vertical",
+        "claim": "c5"
+      },
+      {
+        "text": "Bar stops just above forehead",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c13"
+    },
+    "variantLine": "exercises.json lists \"EZ Bar / Barbell\". The EZ bar is drawn (census ezBar; StrengthLog uses it, c10). The setup, arm path and wrist rules (c1-c6) come from ACE's barbell version and hold for both; the EZ bar's easier wrist angle (c8) is the only difference."
+  },
+  "grip": {
+    "type": "Closed grip, palms toward the feet (c1); on the EZ bar the hands sit on the angled inner grips (c8).",
+    "width": "Close grip (c10), elbows kept shoulder-width apart (c6).",
+    "thumb": "Wrapped round the bar (c1).",
+    "handContact": "Not stated by the sources read; the push-archetype default applies.",
+    "wrist": "Neutral (c3).",
+    "claims": [
+      "c1",
+      "c3",
+      "c6",
+      "c8",
+      "c10"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Lie on a flat bench with your head near the end, feet flat.",
+      "claim": "c10"
+    },
+    {
+      "step": "Grip the bar closed, thumbs wrapped, palms toward your feet.",
+      "claim": "c1"
+    },
+    {
+      "step": "Press the bar to straight arms above your face.",
+      "claim": "c2"
+    },
+    {
+      "step": "Upper arms vertical, elbows shoulder-width apart.",
+      "claim": "c6"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Upper arms vertical throughout.",
+      "claim": "c5"
+    },
+    {
+      "point": "Elbows shoulder-width apart.",
+      "claim": "c6"
+    },
+    {
+      "point": "Wrists neutral.",
+      "claim": "c3"
+    },
+    {
+      "point": "Feet flat on the floor.",
+      "claim": "c1"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Upper arms drifting back.",
+      "fix": "Keep them vertical; stop the descent when they start to move.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Too heavy: elbows wander and the bar bounces.",
+      "fix": "Reduce the load until every rep is clean.",
+      "claim": "c9"
+    },
+    {
+      "mistake": "Wrists aching on a straight bar.",
+      "fix": "Use an EZ bar.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Backs of the upper arms",
+        "means": "The target muscle is working.",
+        "fix": null,
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Mostly the shoulders",
+        "means": "Usually the upper arms are drifting back.",
+        "fix": "Keep the upper arms vertical.",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Sharp pain at the back of the elbow while lowering",
+        "means": "Usually a warning sign: triceps tendon tears, though rare, come from forceful lowering under load.",
+        "fix": "Stop the set. Go lighter next time.",
+        "claim": "c15",
+        "redFlag": "elbow"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bar over the face: a dropped bar lands on the face; wrap the thumbs and lower slowly.",
+      "claim": "c14"
+    },
+    {
+      "risk": "Triceps tendon rupture from forceful lowering under heavy load (rare).",
+      "claim": "c15"
+    }
+  ],
+  "redFlags": [
+    "elbow"
+  ],
+  "zooms": [
+    {
+      "key": "wrist-neutral-ez",
+      "kind": "hand",
+      "right": "Thumbs wrapped, wrists straight on the EZ grips.",
+      "wrong": "Wrists bent back under the bar.",
+      "claim": "c3"
+    },
+    {
+      "key": "upper-arm-vertical",
+      "kind": "posture",
+      "right": "Upper arms vertical, only the forearms move.",
+      "wrong": "Upper arms drifted back toward the head.",
+      "claim": "c5"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: triceps primary, no secondary. c11 supports it. No change."
+  },
+  "anchorSource": "ace-lying-tri-ext"
+}
