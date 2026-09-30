@@ -86,7 +86,7 @@
   },
   {
    "id": "c4",
-   "text": "Swinging the dumbbells uses momentum, which lowers the effect and raises the risk of injury; keep the weight lighter and controlled, or sit down to stop the swing.",
+   "text": "Swinging the dumbbells uses momentum, which lowers the effect and raises the risk of injury; keep the weight lighter and controlled, and if you're struggling, a seated variation can help prevent swinging.",
    "tags": [
     "CONSENSUS"
    ],
@@ -98,12 +98,17 @@
      "source": "fb-cbhammer",
      "text": "Using momentum, or recruiting additional muscle groups can help you lift heavier weights with this exercise. However it also reduces the effectiveness, and increases the risk of injury. Keep your weights on the lighter side, and focus on controlling the weight.",
      "where": "Common form mistakes, swinging the dumbbells"
+    },
+    {
+     "source": "fb-cbhammer",
+     "text": "If you’re struggling, consider using a seated variation. This can help you prevent swinging the dumbbells or adding additional movements to this exercise.",
+     "where": "Common form mistakes, swinging the dumbbells"
     }
    ]
   },
   {
    "id": "c5",
-   "text": "From the standard hammer curl (same grip): keep the wrist straight with the palm facing the body, and avoid shrugging the shoulders during the lift.",
+   "text": "From the standard hammer curl (same grip): use a closed, neutral grip (thumbs around the handles), keep the wrist straight with the palm facing the body, and avoid shrugging the shoulders during the lift.",
    "tags": [
     "MECH"
    ],
@@ -111,6 +116,11 @@
     "ace-hammer"
    ],
    "quotes": [
+    {
+     "source": "ace-hammer",
+     "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+     "where": "Step 1, starting position"
+    },
     {
      "source": "ace-hammer",
      "text": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body) and avoid shrugging your shoulders throughout the movement.",
@@ -204,7 +214,7 @@
   },
   {
    "id": "c10",
-   "text": "In an EMG study of standard (straight-up) curls, the neutral grip gave less biceps activity than the palms-up grip and more front-shoulder (anterior deltoid) activity.",
+   "text": "In an EMG study of cable curls (a rope for the neutral grip), while lifting, the neutral grip gave less biceps activity than the palms-up grip and more front-shoulder (anterior deltoid) activity.",
    "tags": [
     "DATA",
     "WEAK"
@@ -215,13 +225,18 @@
    "quotes": [
     {
      "source": "coratella-2023",
-     "text": "biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+     "text": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
      "where": "abstract, results"
     },
     {
      "source": "coratella-2023",
      "text": "the anterior deltoid excitation was greater with the pronated and neutral handgrip compared to the supinated condition",
      "where": "abstract, results"
+    },
+    {
+     "source": "coratella-2023",
+     "text": "The biceps curl variations were performed using a Cable Tower (Technogym, Cesena, Italy), with one end of the pulley connected to a bar (42.5 cm length, Technogym, Cesena, Italy) for the supinated and pronated handgrip, and with a rope (Technogym, Cesena, Italy) for the neutral handgrip.",
+     "where": "full text (PMC10054060), Methods, Exercises Technique"
     }
    ]
   },
@@ -298,6 +313,23 @@
      "where": "Instructions, step 3"
     }
    ]
+  },
+  {
+   "id": "c15",
+   "text": "Fitbod calls losing tension at the bottom, with the arms fully extended, very common; the fix is to limit the range and keep the arm slightly bent between reps to maintain tension in the biceps.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fb-cbhammer"
+   ],
+   "quotes": [
+    {
+     "source": "fb-cbhammer",
+     "text": "It’s very common to lose tension at the bottom of the movement when your arms are fully extended. Limit your range of motion and keep your arm slightly bent to maintain tension in your biceps between reps.",
+     "where": "Common form mistakes, limit range of motion at the bottom"
+    }
+   ]
   }
  ],
  "sources": [
@@ -333,13 +365,14 @@
   },
   {
    "id": "coratella-2023",
-   "url": "https://pubmed.ncbi.nlm.nih.gov/36976950/",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/",
    "title": "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy.",
    "kind": "peer-reviewed",
    "year": 2023,
    "pmid": 36976950,
-   "access": "abstract",
-   "checked": "2026-09-30"
+   "access": "full",
+   "checked": "2026-09-30",
+   "pmcid": "PMC10054060"
   },
   {
    "id": "acsm-2009",
@@ -366,8 +399,8 @@
   "view": "front",
   "viewWhy": "The dumbbell travels across the body toward the opposite shoulder (c2, c3), which only reads face-on. Census view is front.",
   "equipment": "One dumbbell per hand, standing on the floor line. No bench.",
-  "start": "Standing, feet about shoulder-width (c1); dumbbells in front of the thighs, palms facing the body (c1), elbows slightly bent, about shoulder-width apart (c14); shoulders down and back (c6).",
-  "end": "Working elbow bent, dumbbell raised in an arc to near the opposite shoulder (c2); elbow in the same place (c2); wrist straight, palm still facing the body (c5, c7); shoulders level, not shrugged (c5); other arm still at the start.",
+  "start": "Standing, feet about shoulder-width (c1); dumbbells in front of you, palms facing the body (c1), elbows slightly bent, about shoulder-width apart (c14); shoulders down and back (c6).",
+  "end": "Working elbow bent, dumbbell raised in an arc to near the opposite shoulder (c2); elbow in the same place (c2); wrist straight, palm still facing the body (c5, c7); shoulders level, not shrugged (c5).",
   "checkpoints": [
    {
     "label": "Palms face body",
@@ -386,10 +419,11 @@
    }
   ],
   "mistake": {
-   "what": "Working shoulder shrugging up as the dumbbell crosses the body.",
-   "why": "Swinging the dumbbells (c4) is the named top fault but reads side-on, so the front plate cannot draw it; the hammer-curl guideline says to avoid shrugging, which the front view shows.",
-   "claim": "c5",
-   "drawable": true
+   "what": "Working arm fully extended at the bottom, so the biceps lose tension between reps.",
+   "why": "Fitbod's cross-body page calls it very common; keeping the arm slightly bent maintains tension in the biceps.",
+   "claim": "c15",
+   "drawable": true,
+   "rankNote": "Fitbod names two faults: swinging (c4), a trunk movement that reads side-on, and losing tension at the bottom (c15), which it calls very common and which shows front-on as a straight working arm against the slight bend of the start (c14). The shrug (c5, from the hammer curl) stays in handlingMistakes and the cross-arc zoom."
   },
   "tells": [
    {
@@ -411,7 +445,7 @@
  },
  "grip": {
   "type": "Closed neutral grip, palms facing the body, one dumbbell per hand.",
-  "width": "Dumbbells in front of the thighs, feet about shoulder-width.",
+  "width": "Dumbbells in front of you, feet about shoulder-width.",
   "thumb": "",
   "handContact": "",
   "wrist": "Straight, no bend or twist through the lift.",
@@ -445,8 +479,8 @@
    "claim": "c2"
   },
   {
-   "point": "Elbow stays in place.",
-   "claim": "c2"
+   "point": "Elbow stays in place; arm slightly bent at the bottom.",
+   "claim": "c2, c15"
   },
   {
    "point": "Palm keeps facing the body; wrist straight.",
@@ -467,14 +501,14 @@
  ],
  "handlingMistakes": [
   {
-   "mistake": "Swinging the dumbbells with momentum.",
-   "fix": "Go lighter and control the weight; try it seated.",
-   "claim": "c4"
+   "mistake": "Arms fully extended at the bottom, losing tension.",
+   "fix": "Limit the range; keep the arm slightly bent between reps.",
+   "claim": "c15"
   },
   {
-   "mistake": "Twisting the wrist out of the neutral grip.",
-   "fix": "Keep the palm facing your body all the way.",
-   "claim": "c7"
+   "mistake": "Swinging the dumbbells with momentum.",
+   "fix": "Go lighter and control the weight; if you're struggling, use a seated variation.",
+   "claim": "c4"
   },
   {
    "mistake": "Shrugging the shoulder as the weight rises.",
@@ -514,13 +548,6 @@
     "means": "The forearm muscles are helping, as expected with this grip.",
     "fix": "",
     "claim": "c9",
-    "redFlag": null
-   },
-   {
-    "where": "Top of the shoulder or neck",
-    "means": "Usually means you are shrugging.",
-    "fix": "Keep the shoulders down; go lighter if needed.",
-    "claim": "c5",
     "redFlag": null
    },
    {

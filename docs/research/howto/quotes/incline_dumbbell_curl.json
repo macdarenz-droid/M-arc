@@ -134,10 +134,10 @@
   {
    "claim": "c11",
    "source": "ace-seated-curl",
-   "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+   "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists) and keep contact with your head, shoulder and butt against the bench.",
    "status": "verbatim",
-   "closest": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
-   "note": ""
+   "closest": "Maintain a neutral wrist position (avoid flexion and extension of your wrists) and keep contact with your head, shoulder and butt against the bench.",
+   "note": "extended by fixer 2026-09-30; read in live source"
   },
   {
    "claim": "c11",
@@ -170,6 +170,22 @@
    "status": "verbatim",
    "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
    "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ace-seated-curl",
+   "text": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles)",
+   "status": "verbatim",
+   "closest": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles)",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c8",
+   "source": "kassiano-2025",
+   "text": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
+   "status": "verbatim",
+   "closest": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
+   "note": "added by fixer 2026-09-30; read in live source"
   }
  ]
 }

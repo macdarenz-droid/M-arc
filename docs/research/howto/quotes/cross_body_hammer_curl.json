@@ -134,10 +134,10 @@
   {
    "claim": "c10",
    "source": "coratella-2023",
-   "text": "biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+   "text": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
    "status": "verbatim",
-   "closest": "biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
-   "note": ""
+   "closest": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+   "note": "Extended in verify g4 to include the phase; read in the PubMed abstract via E-utilities 2026-09-30."
   },
   {
    "claim": "c10",
@@ -186,6 +186,38 @@
    "status": "verbatim",
    "closest": "Bend your arms slightly at the elbow, and position your elbows close to shoulder-width apart.",
    "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fb-cbhammer",
+   "text": "If you’re struggling, consider using a seated variation. This can help you prevent swinging the dumbbells or adding additional movements to this exercise.",
+   "status": "verbatim",
+   "closest": "If you’re struggling, consider using a seated variation. This can help you prevent swinging the dumbbells or adding additional movements to this exercise.",
+   "note": "read by fixer in live page 2026-09-30"
+  },
+  {
+   "claim": "c5",
+   "source": "ace-hammer",
+   "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+   "status": "verbatim",
+   "closest": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+   "note": "read by fixer in live page 2026-09-30"
+  },
+  {
+   "claim": "c15",
+   "source": "fb-cbhammer",
+   "text": "It’s very common to lose tension at the bottom of the movement when your arms are fully extended. Limit your range of motion and keep your arm slightly bent to maintain tension in your biceps between reps.",
+   "status": "verbatim",
+   "closest": "It’s very common to lose tension at the bottom of the movement when your arms are fully extended. Limit your range of motion and keep your arm slightly bent to maintain tension in your biceps between reps.",
+   "note": "read by fixer in live page 2026-09-30"
+  },
+  {
+   "claim": "c10",
+   "source": "coratella-2023",
+   "text": "The biceps curl variations were performed using a Cable Tower (Technogym, Cesena, Italy), with one end of the pulley connected to a bar (42.5 cm length, Technogym, Cesena, Italy) for the supinated and pronated handgrip, and with a rope (Technogym, Cesena, Italy) for the neutral handgrip.",
+   "status": "verbatim",
+   "closest": "The biceps curl variations were performed using a Cable Tower (Technogym, Cesena, Italy), with one end of the pulley connected to a bar (42.5 cm length, Technogym, Cesena, Italy) for the supinated and pronated handgrip, and with a rope (Technogym, Cesena, Italy) for the neutral handgrip.",
+   "note": "Added in verify g4; read in PMC full text via E-utilities (db=pmc) 2026-09-30."
   }
  ]
 }

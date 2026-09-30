@@ -219,7 +219,7 @@
     },
     {
       "id": "c12",
-      "text": "In a 12-week trial on a cable machine, overhead elbow extensions grew the triceps more than the same extensions with the arm at the side, especially the long head, even though lighter loads were used overhead (about a third less).",
+      "text": "In a 12-week trial on a cable machine (21 adults, each training one arm overhead and the other arm at the side), overhead elbow extensions grew the triceps more than the same extensions with the arm at the side, especially the long head, even though lighter loads were used overhead (about a third less).",
       "tags": [
         "DATA"
       ],
@@ -227,6 +227,11 @@
         "maeo-2023"
       ],
       "quotes": [
+        {
+          "source": "maeo-2023",
+          "text": "Using a cable machine, 21 adults conducted elbow extensions (90-0°) with one arm in the overhead (Overhead-Arm) and the other arm in the neutral (Neutral-Arm) position",
+          "where": "abstract"
+        },
         {
           "source": "maeo-2023",
           "text": "Triceps brachii muscle hypertrophy was substantially greater after cable elbow extension training performed in the overhead than neutral arm position, particularly in the biarticular triceps brachii long head, even with lower absolute loads lifted",
@@ -338,9 +343,10 @@
     },
     {
       "id": "c18",
-      "text": "Triceps tendon ruptures are rare; they often follow a forceful lowering (eccentric) contraction or lifting against resistance.",
+      "text": "Triceps tendon ruptures are rare; they often follow a forceful lowering (eccentric) contraction or lifting against resistance (not specific to this exercise).",
       "tags": [
-        "DATA"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "gaviria-2020"
@@ -453,14 +459,14 @@
   "plate": {
     "view": "side",
     "viewWhy": "Elbow bend overhead, upper arms by the ears (c7), the hip lean (c5) and the lower-back arch fault (c9) all read side-on. Elbow flare (c8) is sideways and cannot be drawn from the side. Census view is side.",
-    "equipment": "Cable column with the pulley at the low position and a rope on the cable (c1); the rope drawing is missing (census R4). Floor line.",
+    "equipment": "Cable column with the pulley at the low position and a rope on the cable (c1); the rope drawing is missing (census R4). The cable runs from the low pulley up behind the trunk to the hands behind the head (c1); draw it clear of the neck and head. Floor line.",
     "start": "Back to the stack, one step forward to tension the cable (c3); feet shoulder-width or staggered (c4); slight forward lean from the hips, back straight (c5); upper arms by the ears, elbows bent, hands holding the rope behind the head (c1, c3).",
     "end": "Arms straight overhead, elbows not locked (c6); upper arms still by the ears (c7); trunk unchanged (c6).",
     "checkpoints": [
       {
         "label": "Arms by ears",
         "what": "Upper arms stay still next to the ears; only the forearms move.",
-        "claim": "c7"
+        "claim": "c7, c6"
       },
       {
         "label": "Hip lean",
@@ -494,7 +500,8 @@
       "up": 1,
       "down": 2,
       "pause": 1,
-      "claim": "c13"
+      "claim": "c13",
+      "tempoNote": "Motra gives 3-1-1 (3 s lowering, 1 s pause, 1 s up); the card keeps ACSM's 1-2 s each way (c13), so lowering is 2 s, not 3."
     },
     "variantLine": "Drawn with the low pulley (the anchor source). A high or mid pulley works the same muscles (c2) and makes it easier to get the rope overhead (c17)."
   },
@@ -502,16 +509,17 @@
     "type": "Neutral (palms facing each other), one hand on each side of the rope.",
     "width": "Set by the rope.",
     "thumb": "Not stated by the sources read for this exercise.",
-    "handContact": "Rope held behind the head; the load sits across the fist (archetype loadAxis across).",
+    "handContact": "Rope held behind the head.",
     "wrist": "Not stated by the sources read for this exercise.",
     "claims": [
-      "c3"
+      "c3",
+      "c1"
     ]
   },
   "setup": [
     {
       "step": "Fix a rope to the pulley; set it about half to three-quarters of your height if the low position makes it hard to get overhead.",
-      "claim": "c17"
+      "claim": "c1, c17"
     },
     {
       "step": "Hold the rope with a neutral grip and face away from the machine.",
@@ -519,15 +527,15 @@
     },
     {
       "step": "Step forward to tension the cable; feet shoulder-width or staggered.",
-      "claim": "c4"
+      "claim": "c3, c4"
     },
     {
       "step": "Lean slightly from the hips, back straight, upper arms by your ears.",
-      "claim": "c1"
+      "claim": "c1, c5"
     },
     {
       "step": "Pick a weight you can lift with good form for every rep; expect it to be lighter than with the arm at your side.",
-      "claim": "c12"
+      "claim": "c12, c10"
     }
   ],
   "posture": [
@@ -540,12 +548,12 @@
       "claim": "c8"
     },
     {
-      "point": "Slight lean from the hips; back straight, core braced.",
-      "claim": "c5"
+      "point": "Slight lean from the hips; back straight, not arched; core braced.",
+      "claim": "c5, c9"
     },
     {
-      "point": "Do not arch the lower back.",
-      "claim": "c9"
+      "point": "If a rep may fail, a spotter can stand behind you and support your wrists or elbows.",
+      "claim": "c16"
     },
     {
       "point": "Straighten the arms fully without locking the elbows.",
@@ -565,7 +573,7 @@
     {
       "mistake": "Arching the lower back to push the weight up.",
       "fix": "Brace the core; if you can’t keep the back neutral, go lighter.",
-      "claim": "c9"
+      "claim": "c9, c10"
     },
     {
       "mistake": "Weight too heavy, range cut short.",
@@ -591,7 +599,7 @@
         "redFlag": null
       },
       {
-        "where": "Front or top of the shoulder",
+        "where": "Shoulder",
         "means": "Usually means the elbows are flaring out.",
         "fix": "Keep the elbows the same distance apart.",
         "claim": "c8",
@@ -600,31 +608,33 @@
       {
         "where": "Lower back",
         "means": "Usually means the lower back is arching.",
-        "fix": "Keep a neutral spine; brace the core.",
-        "claim": "c9",
+        "fix": "Keep a neutral spine; if you can't, go lighter.",
+        "claim": "c9, c10",
         "redFlag": "back"
       },
       {
-        "where": "Sudden sharp pain at the back of the elbow while lowering",
-        "means": "Usually a warning sign.",
+        "where": "Back of the elbow",
+        "means": "Triceps tendon ruptures are rare, but often follow forceful lowering.",
         "fix": "Stop the set.",
         "claim": "c18",
-        "redFlag": "elbow"
+        "redFlag": "elbow",
+        "fixNote": "'Stop the set' and any pain wording follow the shared elbow warning box this row links; c18 covers only the rupture and its usual cause (not specific to this exercise)."
       }
     ]
   },
   "risks": [
     {
       "risk": "Arching the lower back strains the spine.",
-      "claim": "c9"
+      "claim": "c9",
+      "riskNote": "Elbow flare stressing the shoulder (c8) left the risks list to make room for the separate progression line; it stays in handlingMistakes, posture and the shoulder feel row."
     },
     {
-      "risk": "Elbows flaring out can stress the shoulder joint.",
-      "claim": "c8"
+      "risk": "Triceps tendon rupture (rare), often from forceful lowering or lifting against resistance.",
+      "claim": "c18"
     },
     {
-      "risk": "Triceps tendon ruptures are rare but can follow forceful lowering under load; add weight only in small steps (2-10%).",
-      "claim": "c18, c19"
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c19"
     }
   ],
   "redFlags": [
@@ -644,14 +654,14 @@
       "key": "oh-rope-back",
       "kind": "posture",
       "right": "Slight lean from the hips, back straight.",
-      "wrong": "Lower back arched, ribs pushed forward.",
+      "wrong": "Lower back arched.",
       "claim": "c9"
     }
   ],
   "libraryDiff": {
     "add": [],
     "remove": [],
-    "why": "triceps primary matches exercises.json (c20, c12). No secondary muscle is listed there and no source read names one."
+    "why": "triceps primary matches exercises.json (c20, c12). No secondary muscle is listed there. Motra's muscle breakdown rates Shoulders 4/10 (anterior delts), Forearms 3/10 (flexors) and Abs 2/10; not added, because it is a single coach source with unexplained ratings and no other source read names them."
   },
   "anchorSource": "sl-oh-cable"
 }

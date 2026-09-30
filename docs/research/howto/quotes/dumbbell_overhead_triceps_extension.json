@@ -150,6 +150,14 @@
   {
    "claim": "c14",
    "source": "alves-2018",
+   "text": "The long and lateral heads electromyographic signals were acquired from 21 resistance-trained men. One to two maximal repetitions of each exercise was performed with a 40% load of a maximal voluntary isometric contraction test.",
+   "status": "verbatim",
+   "closest": "The long and lateral heads electromyographic signals were acquired from 21 resistance-trained men. One to two maximal repetitions of each exercise was performed with a 40% load of a maximal voluntary isometric contraction test.",
+   "note": "Read by the fixer in the NCBI efetch abstract, 2026-09-30."
+  },
+  {
+   "claim": "c14",
+   "source": "alves-2018",
    "text": "Eccentric phase elicited less muscular activity than concentric in both exercises.",
    "status": "verbatim",
    "closest": "Eccentric phase elicited less muscular activity than concentric in both exercises.",

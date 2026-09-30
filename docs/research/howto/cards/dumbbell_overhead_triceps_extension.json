@@ -34,7 +34,7 @@
     },
     {
       "id": "c2",
-      "text": "Another common way to hold it is with both hands against the inside surface of the top plate.",
+      "text": "Another way: both hands on the inside surface of the plate.",
       "tags": [
         "CONSENSUS"
       ],
@@ -265,7 +265,7 @@
     },
     {
       "id": "c14",
-      "text": "In an EMG study of the overhead dumbbell extension, the triceps long and lateral heads worked, most in the first and middle parts of the lift; the lowering phase needed less activity than the lift.",
+      "text": "In an EMG study of the overhead dumbbell extension (21 resistance-trained men, one to two reps at 40% of a maximal isometric effort), the triceps long and lateral heads worked, most in the first and middle parts of the lift; the lowering phase needed less activity than the lift.",
       "tags": [
         "DATA"
       ],
@@ -273,6 +273,11 @@
         "alves-2018"
       ],
       "quotes": [
+        {
+          "source": "alves-2018",
+          "text": "The long and lateral heads electromyographic signals were acquired from 21 resistance-trained men. One to two maximal repetitions of each exercise was performed with a 40% load of a maximal voluntary isometric contraction test.",
+          "where": "abstract, Methods"
+        },
         {
           "source": "alves-2018",
           "text": "Eccentric phase elicited less muscular activity than concentric in both exercises.",
@@ -304,9 +309,10 @@
     },
     {
       "id": "c16",
-      "text": "Triceps tendon ruptures are rare; they often follow a forceful lowering (eccentric) contraction or lifting against resistance.",
+      "text": "Triceps tendon ruptures are rare; they often follow a forceful lowering (eccentric) contraction or lifting against resistance (not specific to this exercise).",
       "tags": [
-        "DATA"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "gaviria-2020"
@@ -447,7 +453,7 @@
       {
         "label": "Arms vertical",
         "what": "Upper arms stay vertical and still; only the elbows bend.",
-        "claim": "c6"
+        "claim": "c6, c7"
       },
       {
         "label": "Braced torso",
@@ -481,22 +487,23 @@
       "up": 1,
       "down": 2,
       "pause": 0,
-      "claim": "c18"
+      "claim": "c18",
+      "tempoNote": "ACE says to press and lower slowly (c18); Motra gives 3-1-1 (3 s lowering, 1 s pause, 1 s up). The card keeps ACSM's 1-2 s each way: 1 s up and 2 s down sit inside it, with the lowering the slower phase as ACE and Motra both stress."
     },
     "variantLine": "Drawn standing in a split stance (ACE, anchor). A seated version on a bench with back support is also used (c11); the technique claims hold for both."
   },
   "grip": {
-    "type": "One dumbbell held vertically in both hands, both hands wrapped around the handle (ACE). Holding the inside of the top plate is another common way (Healthline, c2); the drawing uses the ACE wrap because tier-A over-body rule C4 requires a wrapped thumb.",
+    "type": "One dumbbell held vertically in both hands, both hands wrapped around the handle (ACE).",
     "width": "Both hands together on the handle.",
     "thumb": "Wrapped around the handle.",
-    "handContact": "Hands under the top plate, around the handle; the dumbbell hangs vertically over the head at the top (c4).",
+    "handContact": "Both hands around the handle, palms facing up; the dumbbell hangs vertically over the head at the top (c1, c4).",
     "wrist": "Held still throughout (c7).",
     "claims": [
       "c1",
-      "c2",
       "c4",
       "c7"
-    ]
+    ],
+    "gripNote": "Healthline's hold on the inside of the plate (c2) is not offered: it is thumbless, and content.md 5.2 allows no thumbless option for a free weight over the body."
   },
   "setup": [
     {
@@ -505,7 +512,7 @@
     },
     {
       "step": "Stand in a split stance (or sit on a bench with back support).",
-      "claim": "c11"
+      "claim": "c11, c1"
     },
     {
       "step": "Wrap both hands around the handle.",
@@ -516,18 +523,18 @@
       "claim": "c3"
     },
     {
-      "step": "Press the dumbbell overhead: arms vertical, elbows forward, not locked.",
+      "step": "Start with arms vertical, dumbbell over your head, elbows forward, not locked.",
       "claim": "c4"
     }
   ],
   "posture": [
     {
-      "point": "Upper arms vertical and still.",
-      "claim": "c6"
+      "point": "Upper arms vertical and still, elbows shoulder-width apart; no flaring.",
+      "claim": "c6, c12"
     },
     {
-      "point": "Elbows shoulder-width apart; no flaring.",
-      "claim": "c6"
+      "point": "For heavy sets, a spotter can help by supporting your elbows.",
+      "claim": "c13"
     },
     {
       "point": "Lower slowly behind your head to about 90°, without touching it.",
@@ -535,7 +542,7 @@
     },
     {
       "point": "Torso braced; do not arch your back.",
-      "claim": "c9"
+      "claim": "c9, c3"
     },
     {
       "point": "Head, torso, wrists and feet stay still.",
@@ -595,11 +602,12 @@
         "redFlag": "shoulder"
       },
       {
-        "where": "Sudden sharp pain at the back of the elbow while lowering",
-        "means": "Usually a warning sign.",
+        "where": "Back of the elbow",
+        "means": "Triceps tendon ruptures are rare, but often follow forceful lowering.",
         "fix": "Stop the set.",
         "claim": "c16",
-        "redFlag": "elbow"
+        "redFlag": "elbow",
+        "fixNote": "'Stop the set' and any pain wording follow the shared elbow warning box this row links; c16 covers only the rupture and its usual cause (not specific to this exercise)."
       }
     ]
   },
@@ -610,12 +618,13 @@
       "riskNote": "Kerr 2010 says the most common mechanism across all weight training; the wording here stays at \"one of the most common\" because the figure is not specific to this exercise."
     },
     {
-      "risk": "Arching the back under a heavy weight strains the back and shoulders.",
-      "claim": "c9"
+      "risk": "Triceps tendon rupture (rare), often from forceful lowering or lifting against resistance.",
+      "claim": "c16",
+      "riskNote": "Back arching under a heavy weight (c9) left the risks list to make room for the separate progression line; it stays as the plate mistake, in handlingMistakes, posture and the back and shoulder feel rows."
     },
     {
-      "risk": "Triceps tendon ruptures are rare but can follow forceful lowering under load; add weight only in small steps (2-10%).",
-      "claim": "c16, c17"
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c17"
     }
   ],
   "redFlags": [
@@ -628,8 +637,9 @@
       "key": "db-oh-hands",
       "kind": "hand",
       "right": "Both hands wrapped round the handle, dumbbell hanging vertically.",
-      "wrong": "Loose hands, dumbbell tipping.",
-      "claim": "c4"
+      "wrong": "Hands not wrapped round the handle.",
+      "claim": "c1, c4",
+      "wrongNote": "The wrong drawing is the inverse of c1 (both hands wrapped around the handle); no source describes it directly."
     },
     {
       "key": "db-oh-elbows",
@@ -642,7 +652,7 @@
   "libraryDiff": {
     "add": [],
     "remove": [],
-    "why": "triceps primary matches exercises.json (c14). No secondary muscle is listed there and no source read names one."
+    "why": "triceps primary matches exercises.json (c14). No secondary muscle is listed there. Motra's muscle breakdown rates Shoulders 4/10 (anterior delts), Forearms 3/10 (flexors) and Abs 2/10; not added, because it is a single coach source with unexplained ratings and no other source read names them."
   },
   "anchorSource": "ace-oh-ext"
 }

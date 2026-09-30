@@ -115,6 +115,11 @@
    "quotes": [
     {
      "source": "tg-revcurl",
+     "text": "If you can’t achieve the curling motion or control the descent of the weight without swinging your arms, you’re not recruiting the muscles properly.",
+     "where": "Common mistakes: Swinging weights"
+    },
+    {
+     "source": "tg-revcurl",
      "text": "Relying on momentum signals that you’re lifting above your ability. Not only does this reduce the effectiveness of the exercise, but it could also hurt your joints.",
      "where": "Common mistakes"
     },
@@ -206,9 +211,10 @@
   },
   {
    "id": "c10",
-   "text": "The biceps, brachialis and brachioradialis all stay very active in elbow flexion with the palm down, palm up or neutral.",
+   "text": "In an isokinetic max-effort elbow-flexion test (15 young men), the biceps, brachialis and brachioradialis were all very active palm-down, palm-up and neutral.",
    "tags": [
-    "DATA"
+    "DATA",
+    "WEAK"
    ],
    "sources": [
     "caufriez-2018"
@@ -218,12 +224,22 @@
      "source": "caufriez-2018",
      "text": "The biceps, brachialis and brachioradialis muscles were electromyographically very active throughout resisted elbow flexion, in all three investigated positions of forearm rotation.",
      "where": "abstract, results"
+    },
+    {
+     "source": "caufriez-2018",
+     "text": "Fifteen young healthy male volunteers participated in this research.",
+     "where": "abstract, methods"
+    },
+    {
+     "source": "caufriez-2018",
+     "text": "while the subjects were performing elbow flexions/extensions with as much strength as possible, forearm in neutral position, then in full pronation, then in full supination. The elbow flexion torques were isokinetically measured at 60°/sec for an arc of 120°.",
+     "where": "abstract, methods"
     }
    ]
   },
   {
    "id": "c11",
-   "text": "Compared with a palms-up curl, a palms-down curl gave lower biceps and brachioradialis activity and higher front-shoulder (anterior deltoid) activity in one EMG study of bodybuilders.",
+   "text": "During the lifting phase, a palms-down curl gave lower biceps and brachioradialis activity and higher front-shoulder (anterior deltoid) activity than a palms-up curl, in one EMG study of bodybuilders.",
    "tags": [
     "DATA"
    ],
@@ -233,7 +249,7 @@
    "quotes": [
     {
      "source": "coratella-2023",
-     "text": "biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60]",
+     "text": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60]",
      "where": "abstract, results"
     },
     {
@@ -279,7 +295,8 @@
    ],
    "sources": [
     "acsm-2009",
-    "sl-revcurl"
+    "sl-revcurl",
+    "tg-revcurl"
    ],
    "quotes": [
     {
@@ -291,6 +308,11 @@
      "source": "sl-revcurl",
      "text": "To accomplish this, you could try to avoid letting your elbows travel backwards during the lift, and also keep tension in the muscles in the bottom position.",
      "where": "Commentary"
+    },
+    {
+     "source": "tg-revcurl",
+     "text": "Slowly lower the weights down to the starting position and repeat for reps.",
+     "where": "How to"
     }
    ]
   },
@@ -384,7 +406,7 @@
    {
     "label": "Palms down",
     "what": "Overhand grip about shoulder-width, kept all the way up.",
-    "claim": "c1"
+    "claim": "c1, c3"
    },
    {
     "label": "Straight wrists",
@@ -394,11 +416,11 @@
    {
     "label": "Elbows at sides",
     "what": "Upper arms don't travel back; elbows close to the ribs.",
-    "claim": "c4"
+    "claim": "c4, c7"
    }
   ],
   "mistake": {
-   "what": "Swinging the body and leaning back to throw the bar up.",
+   "what": "Swinging the arms, using momentum to get the bar up.",
    "why": "It means the weight is above your ability, cuts the effect and could hurt your joints.",
    "claim": "c5",
    "drawable": true
@@ -510,7 +532,7 @@
   "rows": [
    {
     "where": "Top of the forearm",
-    "means": "The forearm muscles are working hard, as expected with this grip.",
+    "means": "The forearm muscles are working.",
     "fix": "",
     "claim": "c12",
     "redFlag": null
@@ -533,7 +555,7 @@
     "where": "Elbow joint",
     "means": "Momentum could be loading your joints.",
     "fix": "Go lighter and slow down.",
-    "claim": "c5",
+    "claim": "c5, c13",
     "redFlag": "elbow"
    }
   ]
@@ -564,8 +586,8 @@
    "key": "curl-elbow",
    "kind": "posture",
    "right": "Upper arm by the side at the top of the curl.",
-   "wrong": "Body leaning back to swing the bar up.",
-   "claim": "c5"
+   "wrong": "Arms swinging, using momentum to get the bar up.",
+   "claim": "c5, c4"
   }
  ],
  "libraryDiff": {

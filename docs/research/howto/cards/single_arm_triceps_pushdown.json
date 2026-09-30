@@ -84,7 +84,7 @@
     },
     {
       "id": "c4",
-      "text": "Keep the shoulders and hips square to the machine and do not rotate the torso; keep the core active and do not slouch.",
+      "text": "Keep the shoulders and hips square and do not rotate the torso; activate the core and do not slouch.",
       "tags": [
         "CONSENSUS"
       ],
@@ -95,6 +95,11 @@
         {
           "source": "centr-single",
           "text": "Keep your shoulders and hips square and don't rotate your torso.",
+          "where": "Form tips"
+        },
+        {
+          "source": "centr-single",
+          "text": "Activate your core.",
           "where": "Form tips"
         },
         {
@@ -170,7 +175,8 @@
           "text": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
           "where": "Step 3"
         }
-      ]
+      ],
+      "conflictNote": "Centr's form tips say to feel the squeeze \"as they lock down\"; this conflicts with ACE's \"do not allow them to lock out\". The card follows ACE (guideline over coach page)."
     },
     {
       "id": "c9",
@@ -191,7 +197,7 @@
     },
     {
       "id": "c10",
-      "text": "Tempo (up = working phase, the press down; down = return): press in about 1 s, pause briefly at the bottom, return slowly in about 2 s. ACSM advises moderate speed (1-2 s each way).",
+      "text": "Tempo (up = working phase, the press down; down = return): moderate speed, 1-2 s each way (ACSM); press slowly, pause briefly at the bottom, return slowly (ACE). The plate's 1 s press and 2 s return sit inside that range; the 1 s pause is ACE's 'pause momentarily'.",
       "tags": [
         "CONSENSUS"
       ],
@@ -200,6 +206,11 @@
         "acsm-2009"
       ],
       "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+          "where": "Step 2"
+        },
         {
           "source": "ace-pushdown",
           "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
@@ -377,12 +388,12 @@
     "checkpoints": [
       {
         "label": "Elbow pinned",
-        "what": "The working upper arm stays at the side; only the forearm moves.",
+        "what": "The working upper arm stays at your side.",
         "claim": "c5"
       },
       {
         "label": "Square torso",
-        "what": "Shoulders and hips face the machine; the body does not turn.",
+        "what": "Shoulders and hips stay square; the body does not turn.",
         "claim": "c4"
       },
       {
@@ -400,11 +411,11 @@
     },
     "tells": [
       {
-        "text": "Only your forearm moves",
+        "text": "Elbow stays at your side",
         "claim": "c5"
       },
       {
-        "text": "Hips and shoulders face the machine",
+        "text": "Hips and shoulders stay square",
         "claim": "c4"
       }
     ],
@@ -430,7 +441,7 @@
   "setup": [
     {
       "step": "Set the pulley above head height and attach a single handle.",
-      "claim": "c1"
+      "claim": "c1, c2"
     },
     {
       "step": "Grip the handle firmly, thumb wrapped.",
@@ -438,11 +449,11 @@
     },
     {
       "step": "Stand facing the machine with your shoulders and hips square.",
-      "claim": "c4"
+      "claim": "c1, c4"
     },
     {
       "step": "Brace; working elbow at your side, hand at upper-chest level.",
-      "claim": "c7"
+      "claim": "c16, c7"
     },
     {
       "step": "Pick a weight you can move with control.",
@@ -479,11 +490,11 @@
     {
       "mistake": "Elbow drifting forward.",
       "fix": "Keep the elbow at your side; stop the return at upper-chest level.",
-      "claim": "c6"
+      "claim": "c6, c5, c7"
     },
     {
-      "mistake": "Turning the torso toward the working arm.",
-      "fix": "Keep shoulders and hips square to the machine.",
+      "mistake": "Turning the torso.",
+      "fix": "Keep shoulders and hips square.",
       "claim": "c4"
     },
     {
@@ -513,7 +524,7 @@
         "where": "Side of the back (lats)",
         "means": "Usually means the elbow is drifting forward.",
         "fix": "Keep the elbow at your side.",
-        "claim": "c6",
+        "claim": "c6, c5",
         "redFlag": null
       },
       {
@@ -545,7 +556,8 @@
       "kind": "hand",
       "right": "Full grip on the handle, thumb wrapped, hand in line with the forearm.",
       "wrong": "Wrist bent back over the handle.",
-      "claim": "c9"
+      "claim": "c9",
+      "wrongNote": "The wrong drawing is the inverse of c9 (wrist neutral); no source describes it directly."
     },
     {
       "key": "single-pushdown-elbow",
@@ -560,5 +572,6 @@
     "remove": [],
     "why": "triceps primary is sourced (c15). exercises.json lists forearms as secondary; no source read for this exercise names the forearms, so it is kept unchanged and flagged unsourced (as on the parent card)."
   },
-  "anchorSource": "ace-pushdown"
+  "anchorSource": "ace-pushdown",
+  "anchorNote": "ace-pushdown is ACE's general pushdown page (it says the exercise can be done one arm at a time, c3); the only one-arm-specific source read is Centr's short form-tips page. Thin but acceptable."
 }

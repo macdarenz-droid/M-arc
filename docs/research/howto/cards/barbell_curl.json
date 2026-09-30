@@ -142,7 +142,7 @@
     },
     {
       "id": "c7",
-      "text": "If you start swinging the bar with body momentum, take weight off and lift with control.",
+      "text": "If you start swinging the bar with body momentum, take weight off and lift with control; an EMG study watched for trunk movements together with knee bending as cheating.",
       "tags": [
         "CONSENSUS"
       ],
@@ -233,24 +233,18 @@
     },
     {
       "id": "c12",
-      "text": "Muscles: the barbell curl mainly works the biceps and brachialis, with the forearm flexors as secondary. In an EMG study the straight-bar curl activated the biceps and brachioradialis at least as much as the dumbbell curl, close to the EZ-bar curl.",
+      "text": "Muscles: the barbell curl mainly works the biceps and brachialis, with the forearm flexors as secondary.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "sl-bbcurl",
-        "marcolin-2018"
+        "sl-bbcurl"
       ],
       "quotes": [
         {
           "source": "sl-bbcurl",
           "text": "The barbell curl primarily targets your biceps and brachialis (which lie beneath the biceps), but the forearm flexors are also involved as a secondary muscle group.",
           "where": "Which muscles"
-        },
-        {
-          "source": "marcolin-2018",
-          "text": "the DC variant was found to be less effective, while the BC variant could be placed in an intermediate position but with an activation closer to the EZ than to the DC variant for the two muscles investigated.",
-          "where": "Discussion"
         }
       ]
     },
@@ -291,6 +285,33 @@
           "source": "acsm-2009",
           "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
           "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In an EMG study (12 people, 65% of 1-RM), the straight-bar curl activated the brachioradialis more than the dumbbell curl while lifting and the biceps more while lowering; overall it sat in an intermediate position, closer to the EZ-bar curl than to the dumbbell curl.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "marcolin-2018"
+      ],
+      "quotes": [
+        {
+          "source": "marcolin-2018",
+          "text": "Higher levels of activation was found during the concentric phase for only the BR performed with an EZ compared to DC (P < 0.001) and performing BC compared to DC (P < 0.05).",
+          "where": "abstract, Results"
+        },
+        {
+          "source": "marcolin-2018",
+          "text": "The eccentric phase showed a higher activation of the BB muscle in EZ compared to DC (P < 0.01) and in BC compared to DC (P < 0.05).",
+          "where": "abstract, Results"
+        },
+        {
+          "source": "marcolin-2018",
+          "text": "the DC variant was found to be less effective, while the BC variant could be placed in an intermediate position but with an activation closer to the EZ than to the DC variant for the two muscles investigated.",
+          "where": "Discussion"
         }
       ]
     }
@@ -351,7 +372,7 @@
     "view": "side",
     "viewWhy": "Elbow bend, upper arms travelling back or forward (c4, c5) and body swing (c7) read side-on; the bar is seen end-on. Census view is side.",
     "equipment": "Barbell held at the thighs, standing on the floor line (census: barbell hangs at the thighs).",
-    "start": "Standing, feet hip-width, core braced (c2); arms hanging straight, bar at the thighs, palms forward, hands shoulder-width (c1); wrists straight (c8).",
+    "start": "Standing, feet hip-width, core braced (c2); bar held underhand, hands shoulder-width, wrists, elbows and shoulders in a line (c1); wrists straight (c8).",
     "end": "Elbows bent, bar near the shoulders (c3); upper arms at the sides or slightly forward, never back (c4); chest and body still (c9, c3).",
     "checkpoints": [
       {
@@ -366,12 +387,12 @@
       },
       {
         "label": "Still body",
-        "what": "Chest and legs stay still; only the arms move.",
-        "claim": "c3"
+        "what": "Chest and body stay still; only the arms move.",
+        "claim": "c3, c9"
       }
     ],
     "mistake": {
-      "what": "Swinging: leaning back and using the hips and knees to throw the bar up.",
+      "what": "Swinging: moving the trunk and bending the knees to get the bar up with body momentum.",
       "why": "StrengthLog names swinging as the sign of too much weight (c6, c7); an EMG study watched trunk and knee movement as cheating (c7).",
       "claim": "c7",
       "drawable": true,
@@ -379,7 +400,7 @@
     },
     "tells": [
       {
-        "text": "Only your forearms move",
+        "text": "Only your arms move",
         "claim": "c3"
       },
       {
@@ -418,10 +439,6 @@
     },
     {
       "step": "Grip the bar underhand, hands shoulder-width.",
-      "claim": "c1"
-    },
-    {
-      "step": "Let the arms hang straight with the bar at your thighs.",
       "claim": "c1"
     }
   ],

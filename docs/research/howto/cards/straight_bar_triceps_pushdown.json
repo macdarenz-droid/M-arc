@@ -269,7 +269,7 @@
     },
     {
       "id": "c12",
-      "text": "Tempo (up = working phase, the press down; down = return): press in about 1 s, pause briefly at the bottom, return slowly in about 2 s. ACSM advises moderate speed (1-2 s each way).",
+      "text": "Tempo (up = working phase, the press down; down = return): moderate speed, 1-2 s each way (ACSM); press slowly, pause briefly at the bottom, return slowly (ACE). The plate's 1 s press and 2 s return sit inside that range; the 1 s pause is ACE's 'pause momentarily'.",
       "tags": [
         "CONSENSUS"
       ],
@@ -278,6 +278,11 @@
         "acsm-2009"
       ],
       "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+          "where": "Step 2"
+        },
         {
           "source": "ace-pushdown",
           "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
@@ -482,18 +487,18 @@
     "view": "side",
     "viewWhy": "Same as the parent: the elbow bends front-to-back and the key fault, elbows drifting forward (c6), and trunk lean (c4, c11) read side-on. Census view is side.",
     "equipment": "Cable column with the pulley at its top position and a straight bar on the cable (c1). Floor line.",
-    "start": "Standing facing the stack, feet hip- to shoulder-width or staggered (c3); torso tall, any lean from the hips (c4); bar at upper-chest level, elbows bent and close to the sides (c7); wrists neutral (c9); shoulders down and back (c19).",
-    "end": "Arms straight, bar pushed straight down in front of the thighs with the body leaned just enough from the hips for the bar to clear it (c8, c10); elbows still at the sides and not locked (c5, c8); torso unchanged (c14).",
+    "start": "Standing facing the stack, feet hip- to shoulder-width or staggered, back straight (c3); any lean slightly from the hips (c4); bar at upper-chest level, elbows bent and close to the sides (c7); wrists neutral (c9); shoulders down and back (c19).",
+    "end": "Arms straight, bar pushed straight down in front of the body, the body leaned slightly from the hips so the bar clears it (c8, c10, c4); elbows still at the sides and not locked (c5, c8); body otherwise still (c14).",
     "checkpoints": [
       {
         "label": "Elbows pinned",
         "what": "Upper arms stay close to the sides; only the forearms move.",
-        "claim": "c5"
+        "claim": "c5, c14"
       },
       {
         "label": "Hip lean only",
-        "what": "Torso tall or tilted slightly from the hips, back not arched.",
-        "claim": "c4"
+        "what": "Back straight, or tilted slightly from the hips, not arched.",
+        "claim": "c4, c3"
       },
       {
         "label": "Neutral wrists",
@@ -502,7 +507,7 @@
       }
     ],
     "mistake": {
-      "what": "Elbows drifting forward as the bar comes up (and swinging forward to start the press).",
+      "what": "Elbows drifting forward as the bar comes up.",
       "why": "ACE names it as the fault to monitor: it brings in the lats and takes load off the triceps.",
       "claim": "c6",
       "drawable": true,
@@ -565,8 +570,8 @@
       "claim": "c5"
     },
     {
-      "point": "Torso tall; any lean comes from the hips, not an arched back.",
-      "claim": "c4"
+      "point": "Back straight; any lean comes from the hips, not an arched back.",
+      "claim": "c4, c3"
     },
     {
       "point": "Wrists neutral throughout.",
@@ -581,20 +586,20 @@
       "claim": "c8"
     },
     {
-      "point": "Lean just enough from the hips for the bar to clear your thighs.",
-      "claim": "c10"
+      "point": "Lean slightly from the hips so the bar clears your body.",
+      "claim": "c10, c4"
     }
   ],
   "handlingMistakes": [
     {
       "mistake": "Elbows drifting forward.",
       "fix": "Keep the elbows at your sides; stop the return at upper-chest level.",
-      "claim": "c6"
+      "claim": "c6, c5, c7"
     },
     {
       "mistake": "Leaning over the bar or arching the back.",
-      "fix": "Stand taller; tilt only from the hips; go lighter.",
-      "claim": "c11"
+      "fix": "Keep your back straight; tilt only from the hips; go lighter.",
+      "claim": "c11, c3, c4, c16"
     },
     {
       "mistake": "Weight too heavy, moved with momentum.",
@@ -623,14 +628,14 @@
         "where": "Sides of the back (lats)",
         "means": "Usually means the elbows are drifting forward.",
         "fix": "Keep the elbows at your sides.",
-        "claim": "c6",
+        "claim": "c6, c5",
         "redFlag": null
       },
       {
         "where": "Lower back",
         "means": "Usually means you are leaning too far or arching.",
-        "fix": "Stand taller and go lighter.",
-        "claim": "c11",
+        "fix": "Keep your back straight and go lighter.",
+        "claim": "c11, c3, c16",
         "redFlag": "back"
       },
       {
@@ -667,7 +672,8 @@
       "kind": "hand",
       "right": "Overhand full grip, thumbs wrapped, hands in line with the forearms.",
       "wrong": "Wrists bent back over the bar.",
-      "claim": "c9"
+      "claim": "c9, c2",
+      "wrongNote": "The wrong drawing is the inverse of c9 (wrists neutral); no source describes wrists bent back directly."
     },
     {
       "key": "pushdown-elbow",
@@ -682,5 +688,6 @@
     "remove": [],
     "why": "triceps primary is sourced (c15). exercises.json lists forearms as secondary; StrengthLog's bar-pushdown page lists only the triceps and no other source read names the forearms, so it is kept unchanged and flagged unsourced (same finding as the parent card)."
   },
-  "anchorSource": "sl-pushdown"
+  "anchorSource": "sl-pushdown",
+  "familyNote": "Family is PUSHDOWN (straight bar) to match the parent pushdown template; census.json files it under 'Triceps extension'."
 }

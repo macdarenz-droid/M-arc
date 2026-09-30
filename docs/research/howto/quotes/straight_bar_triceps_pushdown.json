@@ -150,6 +150,14 @@
   {
    "claim": "c12",
    "source": "ace-pushdown",
+   "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "status": "verbatim",
+   "closest": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "note": "Same sentence already verified verbatim for c13; added to c12 for the slow press."
+  },
+  {
+   "claim": "c12",
+   "source": "ace-pushdown",
    "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
    "status": "verbatim",
    "closest": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",

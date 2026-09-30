@@ -15,7 +15,7 @@
  "claims": [
   {
    "id": "c1",
-   "text": "Hold the weight with an underhand (palms-up) grip and rest the forearm on the thigh or on a bench, with the hand past the edge.",
+   "text": "Hold the weight with an underhand (palms-up) grip and rest the forearm on the thigh or on a bench.",
    "tags": [
     "CONSENSUS"
    ],
@@ -38,7 +38,7 @@
   },
   {
    "id": "c2",
-   "text": "ACE's version kneels with the elbows on a bench, bent about 90 degrees, dumbbells hanging off the edge, palms up and wrists starting neutral.",
+   "text": "ACE's version kneels with the elbows on a bench, bent about 90 degrees, dumbbells hanging freely off the edge, forearms turned so the palms face up and wrists starting neutral.",
    "tags": [
     "CONSENSUS"
    ],
@@ -49,6 +49,11 @@
     {
      "source": "ace-wristcurl",
      "text": "Holding two dumbbells, kneel and rest your elbows on a bench with approximately a 90 degree bend at the elbows and the dumbbells hanging freely off the edge of the pad.",
+     "where": "Step 1, starting position"
+    },
+    {
+     "source": "ace-wristcurl",
+     "text": "Supinate your forearms (rotate the forearms so that the tops are along the bench and the palms are facing upward) keep your wrists in a neutral position (not in flexion or extension).",
      "where": "Step 1, starting position"
     }
    ]
@@ -195,13 +200,14 @@
   },
   {
    "id": "c10",
-   "text": "Tempo: a slow 2 s up and 2 s down with a brief hold at the bottom (ACE: slow both ways, hold the end position; BarBend: slow and controlled).",
+   "text": "Tempo (up = lifting, down = lowering): a slow 2 s up and 2 s down, the slow end of ACSM's moderate 1-2 s each way, with a brief hold at the bottom (ACE: hold the end position; BarBend: slow and controlled).",
    "tags": [
     "CONSENSUS"
    ],
    "sources": [
     "ace-wristcurl",
-    "bb-wristcurl"
+    "bb-wristcurl",
+    "acsm-2009"
    ],
    "quotes": [
     {
@@ -213,6 +219,11 @@
      "source": "bb-wristcurl",
      "text": "aiming for a slow and controlled tempo to bolster your time under tension.",
      "where": "Programming"
+    },
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
     }
    ]
   }
@@ -257,14 +268,24 @@
    "pmid": null,
    "access": "full",
    "checked": "2026-09-30"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-09-30"
   }
  ],
  "plate": {
   "view": "side",
   "viewWhy": "The wrist bends up and down in the side plane with the forearm lying still on its support (c1, c3), so it reads side-on; the census notes the wrist travel is small and needs a zoomed camera or the hand close-up.",
   "equipment": "Flat bench to sit on (census); one dumbbell (c1).",
-  "start": "Seated, forearm resting on the thigh with the hand past the knee (c1); palm up, closed grip, wrist neutral (c1, c2).",
-  "end": "Wrist curled up toward the forearm, grip still closed (c4, c5); forearm still on the thigh, torso not leaning (c3).",
+  "start": "Seated, forearm resting on the thigh (c1) with the hand hanging freely past the knee (hang-off-the-edge from ACE's bench version, c2); palm up, closed grip, wrist neutral (c1, c2, c5).",
+  "end": "Wrist curled up toward the forearm, grip still closed (c4, c5); forearm still on the thigh, arms not extending, torso not leaning (c1, c3).",
   "checkpoints": [
    {
     "label": "Forearm supported",
@@ -274,7 +295,7 @@
    {
     "label": "Palms up",
     "what": "Underhand grip, hand past the edge.",
-    "claim": "c1"
+    "claim": "c1, c2"
    },
    {
     "label": "Grip stays closed",
@@ -283,10 +304,11 @@
    }
   ],
   "mistake": {
-   "what": "Arms straightening or the body leaning to move the weight, so the forearm leaves its support.",
-   "why": "ACE's lowering step rules out extending the arms or leaning; the grip-release fault (c5) is shown in the hand close-up instead, as it is too small for the body plate.",
+   "what": "Arms extending or body leaning forward to move the weight.",
    "claim": "c3",
-   "drawable": true
+   "drawable": false,
+   "why": "The fault ACE names, the grip opening so the dumbbell rolls to the fingertips (c5), raises the risk of wrist injury and of dropping the weight but needs fingers the engine does not draw (fist circle), so it is shown in the hand zoom; ACE's lowering step rules out extending the arms or leaning (c3), which shows side-on.",
+   "rankNote": "No source ranks the c3 fault as common; it is drawn because the only named fault (c5) cannot be drawn on the body plate."
   },
   "tells": [
    {
@@ -325,11 +347,11 @@
   },
   {
    "step": "Sit and rest your forearm on your thigh or a bench, hand past the edge.",
-   "claim": "c1"
+   "claim": "c1, c2"
   },
   {
    "step": "Hold the dumbbell palm up in a closed grip.",
-   "claim": "c1"
+   "claim": "c1, c5"
   }
  ],
  "posture": [
@@ -359,7 +381,7 @@
   {
    "mistake": "Leaning or straightening the arms to move the weight.",
    "fix": "Keep the forearm down; use a lighter weight.",
-   "claim": "c3"
+   "claim": "c3, c1, c6"
   },
   {
    "mistake": "Going heavy with the hands over the edge.",
@@ -378,17 +400,17 @@
   "watch": [],
   "rows": [
    {
-    "where": "Palm side of the forearm",
+    "where": "Top of the forearm, the palm-up side",
     "means": "The forearm flexors are working.",
     "fix": "",
-    "claim": "c4",
+    "claim": "c4, c1",
     "redFlag": null
    },
    {
     "where": "Wrist joint",
     "means": "Usually means the load is too heavy or the grip has opened.",
     "fix": "Go lighter and keep the fist closed.",
-    "claim": "c5",
+    "claim": "c5, c6",
     "redFlag": "wrist"
    }
   ]
@@ -418,8 +440,8 @@
    "key": "wrist-curl-support",
    "kind": "posture",
    "right": "Forearm flat on the thigh, only the hand moving.",
-   "wrong": "Body leaning and forearm lifting off the thigh.",
-   "claim": "c3"
+   "wrong": "Arms extending or body leaning forward to move the weight.",
+   "claim": "c3, c1"
   }
  ],
  "libraryDiff": {

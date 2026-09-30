@@ -124,7 +124,7 @@
    "note": ""
   },
   {
-   "claim": "c12",
+   "claim": "c15",
    "source": "marcolin-2018",
    "text": "the DC variant was found to be less effective, while the BC variant could be placed in an intermediate position but with an activation closer to the EZ than to the DC variant for the two muscles investigated.",
    "status": "verbatim",
@@ -154,6 +154,22 @@
    "status": "verbatim",
    "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
    "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c15",
+   "source": "marcolin-2018",
+   "text": "Higher levels of activation was found during the concentric phase for only the BR performed with an EZ compared to DC (P < 0.001) and performing BC compared to DC (P < 0.05).",
+   "status": "verbatim",
+   "closest": "Higher levels of activation was found during the concentric phase for only the BR performed with an EZ compared to DC (P < 0.001) and performing BC compared to DC (P < 0.05).",
+   "note": "read by fixer in the PubMed abstract (efetch, PMID 30013836); the PMC page renders the italic P as '( P'"
+  },
+  {
+   "claim": "c15",
+   "source": "marcolin-2018",
+   "text": "The eccentric phase showed a higher activation of the BB muscle in EZ compared to DC (P < 0.01) and in BC compared to DC (P < 0.05).",
+   "status": "verbatim",
+   "closest": "The eccentric phase showed a higher activation of the BB muscle in EZ compared to DC (P < 0.01) and in BC compared to DC (P < 0.05).",
+   "note": "read by fixer in the PubMed abstract (efetch, PMID 30013836); the PMC page renders the italic P as '( P'"
   }
  ]
 }

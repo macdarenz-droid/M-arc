@@ -251,6 +251,23 @@
      "where": "abstract"
     }
    ]
+  },
+  {
+   "id": "c13",
+   "text": "Fitbod calls losing tension at the bottom, with the arms fully extended, very common; the fix is to limit the range and keep the arm slightly bent between reps to maintain tension in the biceps.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fb-cablecurl"
+   ],
+   "quotes": [
+    {
+     "source": "fb-cablecurl",
+     "text": "It’s very common to lose tension at the bottom of the movement when your arms are fully extended. Limit your range of motion and keep your arm slightly bent to maintain tension in your biceps between reps.",
+     "where": "Common mistakes, limit range of motion at the bottom"
+    }
+   ]
   }
  ],
  "sources": [
@@ -327,9 +344,9 @@
  ],
  "plate": {
   "view": "side",
-  "viewWhy": "Elbow bending runs front-to-back, so the elbow angle, elbow drift (c3, c7) and body swing (c8) read side-on. Census view is side.",
+  "viewWhy": "Elbow bending runs front-to-back, so the elbow angle, including the slight bend at the bottom (c13), elbow drift (c3, c7) and body swing (c8) read side-on. Census view is side.",
   "equipment": "Cable column with the pulley at the lowest position and a straight bar (c1); the lifter stands a step back from the stack on the floor line.",
-  "start": "Standing upright, feet about hip-width (c2), a step back from the low pulley (c1); arms straight down, palms up on the bar, hands about shoulder-width (c1); elbows close to the torso (c3); wrists straight (c9).",
+  "start": "Standing upright, feet about hip-width (c2), a step back from the low pulley (c1); arms down with the elbows slightly bent, not fully extended (c13), palms up on the bar, hands about shoulder-width (c1); elbows close to the torso (c3); wrists straight (c9).",
   "end": "Elbows fully bent, bar near the shoulders (c3); upper arms still or slightly forward, never back (c3); body in the same upright position (c8); wrists straight (c9).",
   "checkpoints": [
    {
@@ -344,15 +361,16 @@
    },
    {
     "label": "Still body",
-    "what": "Torso stays upright; only the forearms move.",
+    "what": "Torso stays upright; only the arms move.",
     "claim": "c8"
    }
   ],
   "mistake": {
-   "what": "Upper arms swinging back behind the body to help the bar up.",
-   "why": "StrengthLog's cable-curl steps rule it out, and on the dumbbell curl it moves load off the biceps and lets you cheat the weight up.",
-   "claim": "c7",
-   "drawable": true
+   "what": "Arms fully extended at the bottom, so the biceps lose tension between reps.",
+   "why": "Fitbod's cable-curl page calls it very common; keeping the arm slightly bent maintains tension in the biceps.",
+   "claim": "c13",
+   "drawable": true,
+   "rankNote": "The only cable-curl source that ranks a fault by frequency (Fitbod) names this one; it reads side-on as the elbow angle at the bottom. Upper arms travelling back (c3, c7) stays in handlingMistakes and the elbow zoom."
   },
   "tells": [
    {
@@ -360,7 +378,7 @@
     "claim": "c3"
    },
    {
-    "text": "Only your forearms move",
+    "text": "Only your arms move",
     "claim": "c8"
    }
   ],
@@ -421,23 +439,27 @@
   {
    "point": "Lower under control.",
    "claim": "c4"
+  },
+  {
+   "point": "Keep the arm slightly bent at the bottom to maintain tension.",
+   "claim": "c13"
   }
  ],
  "handlingMistakes": [
   {
+   "mistake": "Arms fully extended at the bottom, losing tension.",
+   "fix": "Limit the range; keep the arm slightly bent between reps.",
+   "claim": "c13"
+  },
+  {
    "mistake": "Upper arms travelling back to cheat the bar up.",
    "fix": "Keep the upper arms still by your sides.",
-   "claim": "c7"
+   "claim": "c3, c7"
   },
   {
    "mistake": "Swinging the body to move the weight.",
    "fix": "Use less weight and lift with control.",
    "claim": "c8"
-  },
-  {
-   "mistake": "Wrists bending under the bar.",
-   "fix": "Keep the hand in line with the forearm.",
-   "claim": "c9"
   }
  ],
  "feel": {

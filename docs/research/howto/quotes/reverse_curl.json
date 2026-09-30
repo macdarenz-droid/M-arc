@@ -142,10 +142,10 @@
   {
    "claim": "c11",
    "source": "coratella-2023",
-   "text": "biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60]",
+   "text": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60]",
    "status": "verbatim",
-   "closest": "biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60]",
-   "note": ""
+   "closest": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60]",
+   "note": "extended by fixer 2026-09-30 to include the phase; read in live source"
   },
   {
    "claim": "c11",
@@ -202,6 +202,38 @@
    "status": "verbatim",
    "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
    "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "caufriez-2018",
+   "text": "Fifteen young healthy male volunteers participated in this research.",
+   "status": "verbatim",
+   "closest": "Fifteen young healthy male volunteers participated in this research.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c10",
+   "source": "caufriez-2018",
+   "text": "while the subjects were performing elbow flexions/extensions with as much strength as possible, forearm in neutral position, then in full pronation, then in full supination. The elbow flexion torques were isokinetically measured at 60°/sec for an arc of 120°.",
+   "status": "verbatim",
+   "closest": "while the subjects were performing elbow flexions/extensions with as much strength as possible, forearm in neutral position, then in full pronation, then in full supination. The elbow flexion torques were isokinetically measured at 60°/sec for an arc of 120°.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c13",
+   "source": "tg-revcurl",
+   "text": "Slowly lower the weights down to the starting position and repeat for reps.",
+   "status": "verbatim",
+   "closest": "Slowly lower the weights down to the starting position and repeat for reps.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c5",
+   "source": "tg-revcurl",
+   "text": "If you can’t achieve the curling motion or control the descent of the weight without swinging your arms, you’re not recruiting the muscles properly.",
+   "status": "verbatim",
+   "closest": "If you can’t achieve the curling motion or control the descent of the weight without swinging your arms, you’re not recruiting the muscles properly.",
+   "note": "Added in verify g4; read live 2026-09-30."
   }
  ]
 }

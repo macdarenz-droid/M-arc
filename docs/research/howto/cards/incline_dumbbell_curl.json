@@ -167,7 +167,7 @@
   },
   {
    "id": "c8",
-   "text": "In an 8-week trial, the incline curl grew the upper (proximal) part of the elbow flexors more than the preacher curl did.",
+   "text": "In an 8-week trial in young women, the incline curl grew the upper (proximal) part of the elbow flexors more than the preacher curl did.",
    "tags": [
     "DATA"
    ],
@@ -179,6 +179,11 @@
      "source": "kassiano-2025",
      "text": "We observed a greater increase in the proximal elbow flexor thickness in the incline biceps curl compared to the preacher biceps curl",
      "where": "abstract, results"
+    },
+    {
+     "source": "kassiano-2025",
+     "text": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
+     "where": "abstract, methods"
     }
    ]
   },
@@ -219,7 +224,7 @@
   },
   {
    "id": "c11",
-   "text": "Inferred from the dumbbell curl (same grip): keep the wrists straight; bent wrists add load and can cause discomfort.",
+   "text": "Inferred from the seated dumbbell curl (same grip, back supported): take a closed grip, palms forward with thumbs wrapped; keep the wrists straight; keep the head, shoulders and buttocks against the bench; bent wrists add load and can cause discomfort.",
    "tags": [
     "MECH"
    ],
@@ -230,13 +235,18 @@
    "quotes": [
     {
      "source": "ace-seated-curl",
-     "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+     "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists) and keep contact with your head, shoulder and butt against the bench.",
      "where": "Step 2, upward phase"
     },
     {
      "source": "sl-dbcurl",
      "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
      "where": "Common mistakes, not locking your wrists"
+    },
+    {
+     "source": "ace-seated-curl",
+     "text": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles)",
+     "where": "exercise steps, starting position"
     }
    ]
   },
@@ -389,12 +399,12 @@
   "viewWhy": "The bench angle (c1), arms hanging behind the torso (c2) and elbow drift (c3, c4) all read side-on. Census view is side.",
   "equipment": "Adjustable bench at about 45-65 degrees from the floor (c1); one dumbbell per hand.",
   "start": "Seated, back against the incline pad (c2); arms hanging straight down, square to the floor, behind the torso line (c2, c3); palms forward, wrists straight (c11).",
-  "end": "Elbows bent, dumbbells raised as high as they go without the elbows drifting forward (c3); upper arms still behind the torso, elbows back (c4); back still on the pad (c2).",
+  "end": "Elbows bent, dumbbells raised as high as they go without the elbows drifting forward (c3); upper arms still behind the torso, elbows back (c4); back still on the pad (c2, c11).",
   "checkpoints": [
    {
     "label": "Bench 45-65°",
     "what": "High incline, not upright; too low loads the front of the shoulder.",
-    "claim": "c1"
+    "claim": "c1, c5"
    },
    {
     "label": "Arms hang down",
@@ -404,13 +414,13 @@
    {
     "label": "Elbows back",
     "what": "Elbows stay pinned back; stop before they drift forward.",
-    "claim": "c4"
+    "claim": "c4, c3"
    }
   ],
   "mistake": {
    "what": "Elbows drifting forward as the dumbbells rise.",
-   "why": "It cuts the stretch and tension on the biceps and means you are forcing too much range.",
-   "claim": "c4",
+   "why": "It cuts the stretch and tension on the biceps and may mean you are forcing too much range.",
+   "claim": "c4, c3",
    "drawable": true
   },
   "tells": [
@@ -432,9 +442,9 @@
   "variantLine": null
  },
  "grip": {
-  "type": "Closed, palms forward, one dumbbell per hand (as in the standard dumbbell curl, c3).",
+  "type": "Closed, palms forward, thumbs wrapped, one dumbbell per hand (inferred from the seated dumbbell curl, c11).",
   "width": "Arms hanging at the sides.",
-  "thumb": "",
+  "thumb": "Wrapped around the handle.",
   "handContact": "",
   "wrist": "Straight, in line with the forearm.",
   "claims": [
@@ -463,8 +473,8 @@
  ],
  "posture": [
   {
-   "point": "Back stays on the pad.",
-   "claim": "c2"
+   "point": "Head, shoulders and buttocks stay on the bench.",
+   "claim": "c2, c11"
   },
   {
    "point": "Arms stay behind the torso.",
@@ -519,7 +529,7 @@
     "where": "Front of the upper arm, through the whole lift",
     "means": "The biceps are working from a stretched start.",
     "fix": "",
-    "claim": "c7",
+    "claim": "c7, c6",
     "redFlag": null
    },
    {
@@ -544,7 +554,7 @@
    "claim": "c5"
   },
   {
-   "risk": "Dropped weights are the most common way weight trainers end up in an emergency department.",
+   "risk": "Across all weight training, not this curl specifically, dropped weights are the most common way people end up in an emergency department.",
    "claim": "c14"
   }
  ],

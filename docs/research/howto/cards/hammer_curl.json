@@ -14,7 +14,7 @@
   "inherit": [
     {
       "field": "plate.view",
-      "why": "true for this child because elbow bend and elbow drift read side-on; the neutral grip is seen from the thumb side (c4)."
+      "why": "true for this child because elbow bend and elbow drift read side-on; the neutral grip is seen from the thumb side."
     },
     {
       "field": "grip.width",
@@ -522,7 +522,7 @@
       "claim": "c7"
     },
     {
-      "risk": "Elbows moving forward put extra load on the front of the shoulders.",
+      "risk": "Elbows moving forward put extra load on the front delts.",
       "claim": "c6"
     }
   ],

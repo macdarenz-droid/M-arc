@@ -111,6 +111,11 @@
      "source": "bb-concentration",
      "text": "You can also grip your right knee or the weight bench on your right side.",
      "where": "How to, step 2"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "Prepare for your curl by bracing your core and tightening your glutes. Squeeze your (empty) right hand and hold it out away from your body to counterbalance yourself.",
+     "where": "How to (page HTML splits 'cor' + 'e' across a link; rendered text is 'core')"
     }
    ]
   },
@@ -127,8 +132,8 @@
    "quotes": [
     {
      "source": "bb-concentration",
-     "text": "keeping your upper arm stable the whole time.",
-     "where": "How to, step 3"
+     "text": "Curl the weight up, focusing on using only your biceps to do so. Hold a strong contraction for a beat at the top of your range of motion, keeping your upper arm stable the whole time.",
+     "where": "How to"
     },
     {
      "source": "sl-concentration",
@@ -358,7 +363,7 @@
   "mistake": {
    "what": "Elbow wedged into the knee crease instead of the upper arm resting on the inner thigh.",
    "why": "It is a tempting, often-taught habit that lets the leg lever the weight and takes work off the biceps.",
-   "claim": "c4",
+   "claim": "c4, c3",
    "drawable": true
   },
   "tells": [
@@ -380,7 +385,7 @@
   "variantLine": null
  },
  "grip": {
-  "type": "One dumbbell, closed grip, working hand.",
+  "type": "One dumbbell in the working hand.",
   "width": "",
   "thumb": "",
   "handContact": "",
@@ -392,7 +397,7 @@
  },
  "setup": [
   {
-   "step": "Pick a dumbbell a few pounds lighter than for your usual curls.",
+   "step": "Pick a dumbbell several pounds lighter than for your usual curls.",
    "claim": "c9"
   },
   {

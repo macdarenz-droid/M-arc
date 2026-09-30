@@ -45,9 +45,9 @@
     },
     {
       "id": "c2",
-      "text": "The EZ grip puts the forearm half-way between palms up and palms in, and the hands sit closer together than on a straight bar to fit the natural angle of the elbow.",
+      "text": "From a study discussion, not a measured result (Coratella 2023 tested a cable bar and rope, not an EZ bar): the EZ grip is semi-supinated (half-way between palms up and palms in) rather than neutral, and the hands sit closer together than on a straight bar to fit the natural angle of the elbow.",
       "tags": [
-        "DATA"
+        "MECH"
       ],
       "sources": [
         "coratella-2023"
@@ -89,7 +89,7 @@
     },
     {
       "id": "c4",
-      "text": "Keep the elbows close to the body; do not let them drift forward, and pause briefly at the top without the elbows moving forward.",
+      "text": "Bend the elbows and lift the bar towards the chest, keeping the elbows close to the body; do not let them drift forward, and pause briefly at the top without the elbows moving forward.",
       "tags": [
         "CONSENSUS"
       ],
@@ -106,6 +106,11 @@
           "source": "sl-ez",
           "text": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
           "where": "How to, step 4"
+        },
+        {
+          "source": "sl-ez",
+          "text": "Bend your elbows and lift the bar towards your chest by contracting your biceps.",
+          "where": "How to, step 3"
         }
       ]
     },
@@ -331,11 +336,11 @@
     "view": "side",
     "viewWhy": "Elbow bend and the elbows drifting forward at the top (c4, c5) read side-on; the EZ bar is drawn end-on like a barbell (census). Census view is side.",
     "equipment": "EZ bar held at the thighs (drawn end-on like a barbell), standing on the floor line.",
-    "start": "Standing upright, feet hip- to shoulder-width, core braced (c3); arms hanging straight, underhand grip on the angled sections (c1); wrists straight (c8).",
+    "start": "Standing upright, feet hip- to shoulder-width, core braced (c3); underhand grip on the angled sections (c1); wrists straight (c8).",
     "end": "Elbows bent, bar near the chest (c4); elbows still by the body, not forward (c4); body still (c4).",
     "checkpoints": [
       {
-        "label": "Elbows back",
+        "label": "Elbows at sides",
         "what": "Elbows stay close to the body and do not drift forward at the top.",
         "claim": "c4"
       },
@@ -363,7 +368,7 @@
         "claim": "c4"
       },
       {
-        "text": "Only your forearms move",
+        "text": "Only your arms move",
         "claim": "c4"
       }
     ],
@@ -398,10 +403,6 @@
     },
     {
       "step": "Grip the angled sections underhand.",
-      "claim": "c1"
-    },
-    {
-      "step": "Let the arms hang straight with the bar at your thighs.",
       "claim": "c1"
     }
   ],

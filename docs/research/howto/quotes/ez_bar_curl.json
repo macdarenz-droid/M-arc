@@ -162,6 +162,14 @@
    "status": "verbatim",
    "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
    "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c4",
+   "source": "sl-ez",
+   "text": "Bend your elbows and lift the bar towards your chest by contracting your biceps.",
+   "status": "verbatim",
+   "closest": "Bend your elbows and lift the bar towards your chest by contracting your biceps.",
+   "note": "read by fixer in live page 2026-09-30"
   }
  ]
 }

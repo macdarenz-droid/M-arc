@@ -118,6 +118,14 @@
   {
    "claim": "c12",
    "source": "maeo-2023",
+   "text": "Using a cable machine, 21 adults conducted elbow extensions (90-0°) with one arm in the overhead (Overhead-Arm) and the other arm in the neutral (Neutral-Arm) position",
+   "status": "verbatim",
+   "closest": "Using a cable machine, 21 adults conducted elbow extensions (90-0°) with one arm in the overhead (Overhead-Arm) and the other arm in the neutral (Neutral-Arm) position",
+   "note": "Read by the fixer in the NCBI efetch abstract, 2026-09-30."
+  },
+  {
+   "claim": "c12",
+   "source": "maeo-2023",
    "text": "Triceps brachii muscle hypertrophy was substantially greater after cable elbow extension training performed in the overhead than neutral arm position, particularly in the biarticular triceps brachii long head, even with lower absolute loads lifted",
    "status": "verbatim",
    "closest": "Triceps brachii muscle hypertrophy was substantially greater after cable elbow extension training performed in the overhead than neutral arm position, particularly in the biarticular triceps brachii long head, even with lower absolute loads lifted",

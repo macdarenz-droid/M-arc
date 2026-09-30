@@ -130,6 +130,22 @@
    "status": "verbatim",
    "closest": "aiming for a slow and controlled tempo to bolster your time under tension.",
    "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-wristcurl",
+   "text": "Supinate your forearms (rotate the forearms so that the tops are along the bench and the palms are facing upward) keep your wrists in a neutral position (not in flexion or extension).",
+   "status": "verbatim",
+   "closest": "Supinate your forearms (rotate the forearms so that the tops are along the bench and the palms are facing upward) keep your wrists in a neutral position (not in flexion or extension).",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c10",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "added by fixer 2026-09-30; read in live PubMed abstract via E-utilities"
   }
  ]
 }

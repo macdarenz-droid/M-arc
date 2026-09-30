@@ -162,7 +162,7 @@
   },
   {
    "id": "c8",
-   "text": "Keep the wrists straight; bent wrists add load to them and can cause discomfort.",
+   "text": "Keep the wrists straight and the chin tucked; bent wrists add load to them and can cause discomfort.",
    "tags": [
     "CONSENSUS"
    ],
@@ -219,7 +219,7 @@
   },
   {
    "id": "c11",
-   "text": "On the preacher bench the load is hardest near the bottom: with dumbbells, biceps activity was high only over a short range at the start of the lift, and with a barbell the most torque falls when the elbows are straight.",
+   "text": "On the preacher bench the load is hardest near the bottom: in one dumbbell study the preacher curl reached up to 80% of maximum biceps activity at the beginning of the lift and was high only over a short range (incline and standing curls reached up to 95% in the final phase), and with a barbell the most torque falls when the elbows are straight.",
    "tags": [
     "DATA"
    ],
@@ -237,12 +237,17 @@
      "source": "nunes-2020",
      "text": "one performed with a barbell (BAR; in which greater torque was applied when the elbows were extended and biceps stretched)",
      "where": "abstract"
+    },
+    {
+     "source": "oliveira-2009",
+     "text": "The submaximal elbow flexion (concentric) elicited neuro muscular activity up to 95% of the maximum RMS value during the final phase of IDC and DBC and 80% for DPC at the beginning of the movement.",
+     "where": "abstract, results"
     }
    ]
   },
   {
    "id": "c12",
-   "text": "In an 8-week trial, the preacher curl grew the lower (distal) part of the elbow flexors more than the incline curl did.",
+   "text": "In an 8-week trial in young women, the preacher curl grew the lower (distal) part of the elbow flexors more than the incline curl did.",
    "tags": [
     "DATA"
    ],
@@ -254,6 +259,11 @@
      "source": "kassiano-2025",
      "text": "We observed a greater increase in the distal elbow flexor thickness in the preacher biceps curl compared to the incline biceps curl",
      "where": "abstract, results"
+    },
+    {
+     "source": "kassiano-2025",
+     "text": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
+     "where": "abstract, methods"
     }
    ]
   },
@@ -437,7 +447,7 @@
    "pause": 0,
    "claim": "c14"
   },
-  "variantLine": "Drawn with the EZ curl bar (BarBend's version, c1); the pad height, arms-on-pad and wrist lines (c2, c4, c8) also hold on a preacher machine."
+  "variantLine": "Drawn with the EZ curl bar (BarBend's version, c1); every line on this card, including the load profile (c11), is for the free-weight bar only."
  },
  "grip": {
   "type": "Underhand grip on an EZ curl bar.",
@@ -457,7 +467,7 @@
   },
   {
    "step": "Pad top under your armpits with arms straight; not so high you hunch.",
-   "claim": "c2"
+   "claim": "c2, c3"
   },
   {
    "step": "Feet flat on the floor.",
@@ -546,14 +556,14 @@
     "where": "Front of the shoulder",
     "means": "Usually means the seat height is off or the arms are leaving the pad.",
     "fix": "Reset the seat; go lighter.",
-    "claim": "c3",
+    "claim": "c3, c5",
     "redFlag": "shoulder"
    },
    {
-    "where": "Inside of the elbow at the bottom",
-    "means": "Straight-arm bottom may not suit you today.",
-    "fix": "Turn around a little earlier; lower slowly.",
-    "claim": "c7",
+    "where": "Bottom of the lift, arms fully straight",
+    "means": "Full straightening feels uncomfortable for you.",
+    "fix": "Reverse the movement a little earlier; lower slowly.",
+    "claim": "c7, c6",
     "redFlag": "elbow"
    },
    {
@@ -575,7 +585,7 @@
    "claim": "c3"
   },
   {
-   "risk": "Across many activities, most distal biceps tendon ruptures in one video study happened palm-up with the elbow nearly straight, so control the bottom.",
+   "risk": "Across many activities, most distal biceps tendon ruptures in one video study happened palm-up with the elbow nearly straight.",
    "claim": "c13"
   }
  ],
@@ -590,7 +600,7 @@
    "kind": "posture",
    "right": "Pad top under the armpits, upper arms flat on the pad.",
    "wrong": "Upper arms lifted off the pad, torso heaving back.",
-   "claim": "c5"
+   "claim": "c5, c2"
   },
   {
    "key": "curl-wrist",

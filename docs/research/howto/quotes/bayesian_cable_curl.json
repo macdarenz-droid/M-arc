@@ -170,6 +170,30 @@
    "status": "verbatim",
    "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
    "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-bayesian",
+   "text": "Step 4 — Suspend your upper arm motionless and bend at the elbow, curling the weight with your biceps.",
+   "status": "verbatim",
+   "closest": "Step 4 — Suspend your upper arm motionless and bend at the elbow, curling the weight with your biceps.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c5",
+   "source": "bb-bayesian",
+   "text": "Steer clear of these common errors if you want to make the most out of the movement. Moving Your Upper Arm",
+   "status": "verbatim",
+   "closest": "Steer clear of these common errors if you want to make the most out of the movement. Moving Your Upper Arm",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c7",
+   "source": "bb-bayesian",
+   "text": "The Bayesian curl is typically performed as a unilateral exercise, one arm at a time.",
+   "status": "verbatim",
+   "closest": "The Bayesian curl is typically performed as a unilateral exercise, one arm at a time.",
+   "note": "added by fixer 2026-09-30; read in live source"
   }
  ]
 }

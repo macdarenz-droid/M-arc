@@ -101,12 +101,17 @@
      "source": "sl-bayesian",
      "text": "Bend your elbow and pull the handle forward and upward, contracting your biceps at the top. Keep your upper arm stationary throughout the movement.",
      "where": "How to, step 4"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "Step 4 — Suspend your upper arm motionless and bend at the elbow, curling the weight with your biceps.",
+     "where": "How to, step 4"
     }
    ]
   },
   {
    "id": "c5",
-   "text": "The main fault is letting the shoulder take over: the upper arm must stay motionless, which stops the front delts from helping with the curl.",
+   "text": "BarBend's first listed common mistake is moving the upper arm, letting the shoulders take over: the upper arm must stay motionless, which stops the front delts from helping with the curl.",
    "tags": [
     "CONSENSUS"
    ],
@@ -118,6 +123,11 @@
      "source": "bb-bayesian",
      "text": "isolating your biceps and not letting your shoulders take over. To achieve this, your upper arm needs to remain motionless the entire time. This fixes your shoulder in place and prevents you from using your front deltoids to assist with the curl.",
      "where": "Common mistakes"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "Steer clear of these common errors if you want to make the most out of the movement. Moving Your Upper Arm",
+     "where": "Common mistakes, first heading"
     }
    ]
   },
@@ -157,6 +167,11 @@
      "source": "bb-bayesian",
      "text": "Hold your free arm out to the side or place it on your hip for stability.",
      "where": "How to, step 4"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "The Bayesian curl is typically performed as a unilateral exercise, one arm at a time.",
+     "where": "Muscles worked, core"
     }
    ]
   },
@@ -336,7 +351,7 @@
   "view": "side",
   "viewWhy": "The arm behind the torso (c2), the still upper arm (c4, c5) and the elbow bend all happen front-to-back, so they read side-on. Census view is side.",
   "equipment": "Cable column, pulley at the lowest height, single handle (c1); the lifter faces away from the stack, one step forward, split stance (census pose 'split'; step forward from c2).",
-  "start": "Facing away from the low pulley (c1), a step forward with light cable tension, torso leaning slightly forward (c2); working arm straight and drawn behind the torso, elbow close to the body (c2, c4), not past the source's 'at most 45 degrees' (c3; the source states the angle 'relative to the floor', so the drawn angle needs the critic's check); free hand on the hip (c7).",
+  "start": "Facing away from the low pulley (c1), a step forward with light cable tension, torso leaning slightly forward (c2); working arm straight and drawn behind the torso, elbow close to the body (c2, c4); upper arm drawn back no more than about 45° behind vertical, which is the same line as 45° to the floor (c2, c3); free hand on the hip (c7).",
   "end": "Elbow bent, handle brought forward and up toward the shoulder (c4); upper arm in the same place as the start (c4, c5); torso unchanged (c7).",
   "checkpoints": [
    {
@@ -357,13 +372,13 @@
   ],
   "mistake": {
    "what": "Upper arm swinging forward so the shoulder helps lift the handle.",
-   "why": "BarBend names letting the shoulders take over as the key fault; it brings the front delts into the curl.",
+   "why": "BarBend's first listed common mistake: letting the shoulders take over brings the front delts into the curl.",
    "claim": "c5",
    "drawable": true
   },
   "tells": [
    {
-    "text": "Upper arm stays still behind you",
+    "text": "Upper arm stays motionless",
     "claim": "c5"
    },
    {
@@ -377,7 +392,8 @@
    "pause": 0,
    "claim": "c12"
   },
-  "variantLine": null
+  "variantLine": null,
+  "note": "Angle: BarBend gives the upper arm 'about a 45-degree angle relative to the floor' (c2) and 'at most' 45 degrees (c3), and warns against standing far away. A hanging arm is 90° to the floor, so read literally 'at most 45° to the floor' would allow more stretch, which contradicts the warning; the conservative drawing puts the upper arm about 45° behind vertical (equal to 45° to the floor) and never further back."
  },
  "grip": {
   "type": "One hand on a single cable handle.",
@@ -471,7 +487,7 @@
   ],
   "rows": [
    {
-    "where": "Front of the upper arm, from the first rep",
+    "where": "Front of the upper arm",
     "means": "The biceps are working from a lengthened start.",
     "fix": "",
     "claim": "c8",
@@ -481,14 +497,14 @@
     "where": "Front of the shoulder, a stretch",
     "means": "Some tension here can come with the arm held back.",
     "fix": "Stand closer if it is more than a stretch.",
-    "claim": "c9",
+    "claim": "c9, c3",
     "redFlag": null
    },
    {
     "where": "Front of the shoulder, pain",
     "means": "The position may not suit your shoulder today.",
     "fix": "Stand closer to the cable, or choose another curl.",
-    "claim": "c9",
+    "claim": "c9, c3",
     "redFlag": "shoulder"
    }
   ]
@@ -508,14 +524,14 @@
    "kind": "posture",
    "right": "Upper arm held still, drawn back behind the torso.",
    "wrong": "Upper arm swinging forward as the handle rises.",
-   "claim": "c5"
+   "claim": "c5, c2"
   },
   {
    "key": "bayes-reach",
    "kind": "posture",
    "right": "A step from the cable, light tension, modest stretch.",
    "wrong": "Standing far away with the arm pulled far behind.",
-   "claim": "c3"
+   "claim": "c3, c2"
   }
  ],
  "libraryDiff": {

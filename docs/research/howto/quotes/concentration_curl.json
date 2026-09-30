@@ -70,10 +70,10 @@
   {
    "claim": "c6",
    "source": "bb-concentration",
-   "text": "keeping your upper arm stable the whole time.",
+   "text": "Curl the weight up, focusing on using only your biceps to do so. Hold a strong contraction for a beat at the top of your range of motion, keeping your upper arm stable the whole time.",
    "status": "verbatim",
-   "closest": "keeping your upper arm stable the whole time.",
-   "note": ""
+   "closest": "Curl the weight up, focusing on using only your biceps to do so. Hold a strong contraction for a beat at the top of your range of motion, keeping your upper arm stable the whole time.",
+   "note": "extended by fixer 2026-09-30 to the full sentence; rendered text (HTML puts a link end before the comma); read in live source"
   },
   {
    "claim": "c6",
@@ -186,6 +186,14 @@
    "status": "verbatim",
    "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
    "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-concentration",
+   "text": "Prepare for your curl by bracing your core and tightening your glutes. Squeeze your (empty) right hand and hold it out away from your body to counterbalance yourself.",
+   "status": "verbatim",
+   "closest": "Prepare for your curl by bracing your core and tightening your glutes. Squeeze your (empty) right hand and hold it out away from your body to counterbalance yourself.",
+   "note": "added by fixer 2026-09-30; read in live source"
   }
  ]
 }

@@ -194,6 +194,22 @@
    "status": "verbatim",
    "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
    "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "oliveira-2009",
+   "text": "The submaximal elbow flexion (concentric) elicited neuro muscular activity up to 95% of the maximum RMS value during the final phase of IDC and DBC and 80% for DPC at the beginning of the movement.",
+   "status": "verbatim",
+   "closest": "The submaximal elbow flexion (concentric) elicited neuro muscular activity up to 95% of the maximum RMS value during the final phase of IDC and DBC and 80% for DPC at the beginning of the movement.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c12",
+   "source": "kassiano-2025",
+   "text": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
+   "status": "verbatim",
+   "closest": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
+   "note": "added by fixer 2026-09-30; read in live source"
   }
  ]
 }

@@ -38,6 +38,14 @@
   {
    "claim": "c4",
    "source": "centr-single",
+   "text": "Activate your core.",
+   "status": "verbatim",
+   "closest": "Activate your core.",
+   "note": "Read by the fixer in the Centr page text (Form tips), 2026-09-30."
+  },
+  {
+   "claim": "c4",
+   "source": "centr-single",
    "text": "Don't slouch as this can lead to compensating with the wrong muscles.",
    "status": "verbatim",
    "closest": "Don't slouch as this can lead to compensating with the wrong muscles.",
@@ -82,6 +90,14 @@
    "status": "verbatim",
    "closest": "arms postioned firmly by sides and wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained throughout the exercise.",
    "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-pushdown",
+   "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "status": "verbatim",
+   "closest": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+   "note": "Same sentence already verified verbatim for c11; added to c10 for the slow press."
   },
   {
    "claim": "c10",
