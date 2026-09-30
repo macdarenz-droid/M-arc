@@ -6169,6 +6169,7 @@ for (const theme of ['silent-black', 'paper']) {
           if (cr[0] < 44 || cr[1] < 44) P(`A6 ${id}/${k}: chip ${cr[0].toFixed(1)}x${cr[1].toFixed(1)} under 44x44`);
           // A4 from Mistake on the first key: S1 then S3; normal on the second
           if (ki === 0) { await app.page.click(`#${id}-mistake`); await H.settleApp(app.page); }
+          await app.page.mouse.move(0, 0);
           const before = await shot(app.page, await appPlate(app.page));
           const scroll = await app.page.$eval('dialog.sheet.ht .sheet-panel', p => p.scrollTop);
           await Promise.all([recordAnims(app.page), recordAnims(g.page)]);
@@ -6200,6 +6201,7 @@ for (const theme of ['silent-black', 'paper']) {
           if (s.dup.length) P(`A2 ${id}/${k}: duplicate ids in the document: ${s.dup.join(', ')}`);
           if (JSON.stringify(s.halves) !== '["Right","Wrong"]') P(`A6 ${id}/${k}: role=img halves ${JSON.stringify(s.halves)}`);
           // L3
+          await app.page.mouse.move(0, 0);   // a real tap leaves the pointer over the sheet (:hover); golden's driver clicks from script
           const ra = await place(app.page, sel, 'app'), rg = await place(g.page, sel, 'golden', ra.y);
           if (!ra.fits || !rg.fits) P(`A3 L3 ${id}/${k}: the panel does not fit in the viewport (app ${JSON.stringify(ra)}, golden ${JSON.stringify(rg)})`);
           delete ra.fits; delete rg.fits;
@@ -6224,6 +6226,7 @@ for (const theme of ['silent-black', 'paper']) {
           await H.settleApp(app.page);
           await GB.closeZoom(g.page, id, k);
           if (ki === 0) await GB.openMistake(g.page, id);
+          await app.page.mouse.move(0, 0);
           const after = await shot(app.page, await appPlate(app.page));
           const dr = await H.diffPng(app.page, before, after);
           if (!H.identical(dr)) P(`A4 ${id}/${k}: the plate block after Close differs from before the open (${dr.off} px)`);
