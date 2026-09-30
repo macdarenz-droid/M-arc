@@ -166,11 +166,12 @@ describe('HT8-A1: feel.css is FEEL_CSS (+ the page rules the section uses) throu
 
 // ---- fake DOM: just what the feel controller touches ----
 type Fn = (e?: any) => void;
+const ALL: El[] = [];
 class El {
   attrs = new Map<string, string>(); cls = new Set<string>(); listeners: Record<string, Fn[]> = {}; dataset: Record<string, string> = {};
   style: Record<string, string> = {}; hidden = false; textContent = ''; q: Record<string, El[]> = {}; focused = 0; scrolled: any[] = []; sent: any[] = [];
   parentFr: El | null = null;
-  constructor(cls = '') { cls.split(' ').filter(Boolean).forEach(c => this.cls.add(c)); }
+  constructor(cls = '') { cls.split(' ').filter(Boolean).forEach(c => this.cls.add(c)); ALL.push(this); }
   classList = { add: (c: string) => this.cls.add(c), remove: (c: string) => this.cls.delete(c), contains: (c: string) => this.cls.has(c), toggle: (c: string, on: boolean) => { if (on) this.cls.add(c); else this.cls.delete(c); } };
   setAttribute(k: string, v: string) { this.attrs.set(k, v); }
   getAttribute(k: string) { return this.attrs.get(k) ?? null; }
@@ -190,7 +191,7 @@ class El {
 const ios: { cb: (e: any[]) => void; opts: any; observed: number; disconnected: number }[] = [];
 let motion: string | null = null;
 beforeEach(() => {
-  motion = null; ios.length = 0;
+  motion = null; ios.length = 0; ALL.length = 0;
   vi.useFakeTimers();
   vi.stubGlobal('document', { documentElement: { getAttribute: (k: string) => (k === 'data-motion' ? motion : null) } });
   const IO = class { rec: any; constructor(cb: any, opts: any) { this.rec = { cb, opts, observed: 0, disconnected: 0 }; ios.push(this.rec); } observe() { this.rec.observed++; } disconnect() { this.rec.disconnected++; } };
@@ -206,7 +207,8 @@ function fakeFeel() {
   const bands = [new El('feel-band'), new El('feel-band')];
   const marks = [new El('feel-mark'), new El('feel-mark'), new El('feel-mark')];
   marks[0]!.dataset = { row: 'traps' }; marks[1]!.dataset = { row: 'traps' }; marks[2]!.dataset = { row: 'elbow' };
-  map.q = { '.feel-band': bands, '.feel-mark': marks };
+  const views = [new El('feel-view'), new El('feel-view')], svgs = [new El('feel-svg'), new El('feel-svg')];
+  map.q = { '.feel-band': bands, '.feel-mark': marks, '.feel-view': views, figure: views, svg: svgs, '.feel-svg': svgs, path: [] };
   const mkRow = (key: string, attrs: string[]) => {
     const r = new El('fr'), b = new El('fr-btn'), body = new El('fr-body');
     r.dataset = { row: key }; b.dataset = { label: `LABEL ${key}` }; body.hidden = true; b.parentFr = r;
@@ -320,7 +322,9 @@ describe('HT8-A2: golden B\'s feel behaviour list, and nothing more', () => {
     expect(f.rs.map(r => listeners(r.b))).toEqual([['clickx1'], ['clickx1'], ['clickx1']]);
     expect([listeners(f.show), listeners(f.flag), listeners(f.feel), listeners(f.h4)]).toEqual([['clickx1'], ['clickx1'], [], []]);
     expect(ios.map(i => i.observed)).toEqual([1, 1]);
+    expect(ALL.reduce((n, e) => n + e.count(), 0)).toBe(9);   // nothing else, anywhere (a per-view listener fails)
     f.c.destroy();
+    expect(ALL.reduce((n, e) => n + e.count(), 0)).toBe(0);
     expect([f.map, f.card, f.show, f.flag, ...f.rs.map(r => r.b)].map(e => e.count())).toEqual([0, 0, 0, 0, 0, 0, 0]);
     expect(ios.map(i => i.disconnected)).toEqual([1, 1]);
   });
@@ -352,8 +356,7 @@ const lum = (c: number[]) => { const l = c.map(v => { v /= 255; return v <= 0.04
 const ratio = (a: number[], b: number[]) => { const [x, y] = [lum(a), lum(b)]; return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
 
 /** C12 constants, read from the vendored engine (never typed here). */
-export function c12() {
-  const src = readFileSync(`${LAYERS}/engine/feelmap.mjs`, 'utf8');
+export function c12(src = readFileSync(`${LAYERS}/engine/feelmap.mjs`, 'utf8')) {
   const m = src.match(/const SWEEP = (\d+), GAP = (\d+), DELAY = (\d+), TOTAL = SWEEP \* 2 \+ GAP;/)!;
   const [SWEEP, GAP, DELAY] = [+m[1]!, +m[2]!, +m[3]!];
   return { SWEEP, GAP, DELAY, TOTAL: SWEEP * 2 + GAP, END: DELAY + SWEEP * 2 + GAP };
@@ -391,6 +394,11 @@ describe('HT8-A3: text-only ids, feel-main contrast, C12', () => {
     expect(css).toContain(`${(SWEEP / TOTAL * 100).toFixed(3)}% { transform: translateY(var(--feel-to)); animation-timing-function: step-end; }`);
     expect(css).toContain(`${((SWEEP + GAP) / TOTAL * 100).toFixed(3)}% { transform: translateY(var(--feel-from));`);
     expect(readFileSync('tools/plates/layers/artifact/build-page.mjs', 'utf8')).toContain('setTimeout(() => { io.disconnect(); if (!played) play(); }, 300)');
+  });
+  it('C12 failure path: a longer sweep in the engine source (SWEEP 2700) ends after 5.5 s', () => {
+    const src = readFileSync(`${LAYERS}/engine/feelmap.mjs`, 'utf8').replace('const SWEEP = 2400,', 'const SWEEP = 2700,');
+    expect(c12(src).END).toBe(6100);
+    expect(c12(src).END).toBeGreaterThan(5500);
   });
 });
 

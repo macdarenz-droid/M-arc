@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=15ea41a4167713fac6f087d1ee77a2534226041ce72738fea34eff228b01b743
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=ec900b532252460a14b8f22caa09ca1b83a467e0229324eb8259a932b0a85bfe
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_hanging_leg_raise",
