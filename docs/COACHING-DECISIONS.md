@@ -893,3 +893,14 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **The "check skipped" note goes to the agent as `additionalContext`.** Stderr on exit 0 reaches only the debug log (hooks docs).
   - **`askUserQuestionTimeout` and `CLAUDE_AFK_TIMEOUT_MS` are not set** (owner decision: the question timeout is dropped).
   **Why**: every item was checked against code.claude.com/docs/en/hooks, /permissions, /settings-reference and /env-vars, and each was tested on a scratch copy (PR body).
+## Agent rules move into role files (D-WF1, WF-1 builder, 2026-09-30)
+
+- **Decided**: the owner-approved revision (`docs/supervisor/AGENT-WORKFLOW-REVISION.md`, decisions A-D) is applied as changes 6, 1, 2, 3, 8 and 9. Where the plan was silent:
+  - **"Map every acceptance criterion to evidence…" stays whole in AGENTS.md.** Its second sentence is a safety line that must stay, and splitting the line would change its wording, so the whole bullet stays.
+  - **The CI-log wording change (change 1) is not made to the moved line.** Moved lines must stay word for word, so "reads the failing CI log itself" is unchanged in `supervisor/SKILL.md`, and `tick.md` step 5 carries the `/ci-log` step instead.
+  - **The card field list is not edited to add `model`.** It moves word for word to `builder/SKILL.md`; `cards.md` step 5 and one line under it add the field.
+  - **Change 3 is option (a) only (decision A).** A collision the design cannot avoid leaves the card `blocked`, with the pinned block as its reason.
+  - **Change 9 keeps the verdict format only (decision B)**, with no `/code-review`. The reviewer skill keeps one spending line ("never `/ultrareview`"), because only the owner approves spending.
+  - **`.claude/owner-rules.md` (change 7) moves to WF-2**, with the settings that enforce the model rule.
+  - **Skill frontmatter** was checked against code.claude.com/docs/en/skills (`context: fork`, `agent`, `model`, `background: false`) and rule `paths:` against /docs/en/memory. `ci-log` names `agent: general-purpose`, so it never falls back to a Haiku helper, and pins `model: claude-sonnet-5` (the docs accept a full model name; checked with a live call).
+  **Why**: the owner's hard rule that every moved line appears exactly once, word for word, and that AGENTS.md gains only the Procedures line and the model-rule line.

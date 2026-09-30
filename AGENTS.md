@@ -25,6 +25,8 @@ Use what's necessary for high-quality output and a fast workflow, while saving t
 
 Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor keeps this section current. If the Agent guard check fails, read docs/AGENT-RULES.md.
 
+**Procedures:** every builder, Claude or Codex, reads and follows `.claude/skills/builder/SKILL.md` before its first commit. Reviewers use `.claude/skills/reviewer/SKILL.md`, and the supervisor uses `.claude/skills/supervisor/SKILL.md`. Rules in `.claude/rules/` appear when you touch those files.
+
 **Roles:**
 - **Supervisor** (one Claude session): owns the task board (Relay `tasks/TASKS.md`), the merge queue and these rules.
 - **Builders** (one session per task, on a `claude/*` branch): build and test only what their task card lists.
@@ -34,7 +36,7 @@ Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor k
 **Agents may, without asking:** build, test and push on their own `claude/*` branch, and open draft PRs.
 
 - Run in auto mode (owner, 2026-09-28): the supervisor starts every builder and reviewer session in auto mode, so no work waits on the owner's approval taps. Auto mode's safety checks still apply, and a refusal is never worked around.
-- Plan hard cards before building (owner, 2026-09-29). For complex work (animation production, simulation, anything with several possible designs), the supervisor first runs a phased plan: understand the problem, draft competing designs, have independent judges score them, then write the build cards. Builders on those cards write a short design note and post it on the PR as a progress check-in before bulk building; the supervisor reads it the next tick and re-guides or stops early. Small fixes stay simple, with no extra agents.
+- Models: a strong model for hard judgement, `claude-opus-5-5` (planning, judging, reviewing, and any card that is not mechanical); a lighter one for mechanical steps, `claude-sonnet-5` (every step spelled out). Never Haiku or Fable. The built-in Explore and claude-code-guide helpers run on Haiku, so they are blocked. For a search, use a general-purpose helper that names `sonnet`. Helpers that name no model use the session's model.
 
 **Only the owner:**
 - deploys the Escobar Worker (merging anything under `escobar-worker/**` into `main` deploys it, so those changes go in a separate PR that the owner merges);
@@ -65,41 +67,16 @@ Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor k
 | `src/app/App.tsx`, `src/main.tsx` | supervisor | Smallest possible wiring change, called out in the PR. |
 
 **Builders:**
-- Work from a task card. Its fields: `id`, `outcome`, `base`, `depends_on`, `read_first`, `write_scope`, `reserved_paths`, `acceptance` (criterion IDs, including failure paths), `design_reference`, `connectivity`, `verification`, `risk_and_recovery`, `return`.
-- Open a draft PR as soon as your first commit is pushed; push after every finished task.
 - Merge `origin/main` (with a merge commit) before asking for review.
 - Map every acceptance criterion to evidence: a unit test, a gate probe or a recorded device check. A bug fix needs a test that fails before and passes after.
-- In the PR body, list the head commit, the changed paths, the evidence for each criterion, what needs a real phone, and open risks.
-- After two failed tries of the same approach with no new evidence, stop and tell the supervisor.
-- Self-check before titling a PR "[ready for review]" (owner, 2026-09-28):
-  - tick every acceptance criterion in the PR body with its evidence;
-  - prove each new test bites: break the code it covers, see the test fail, restore it, and list these mutations in the PR;
-  - merge `origin/main`, then run `npm run check`, `npm run test:tz` and the gate on that exact head;
-  - re-read your own diff against the card's `write_scope` and `reserved_paths`.
 - Never cut, narrow or skip a test or probe to fit a time limit. Tell the supervisor instead.
 
 **Supervisor:**
-- Reacts to PR and CI events, not polling.
 - Merges an app PR only when:
   - its review passed;
   - every check is green on a head that contains the latest `main`;
   - every lower-numbered item on the owner's checklist has merged (builds may run ahead in parallel lanes; merges may not).
-- After each merge, sends the owner the installable APK from that commit's green CI run, after checking that the fingerprint step passed.
-- Re-reviews when `main` changed in files the PR touches or in the shared files above.
 - Treats evidence as valid only for the exact commit or APK it ran on. The release candidate gets its full regression run again after its last change.
-- Task states: ready → running → review → integrating → done (merged and accepted). A blocked task names its reason and what unblocks it.
-- One supervisor runs the whole project unless the owner names more; it owns every lane, the task board and the merge queue.
-- Acts on failures, never just watches them: reads the failing CI log itself. When the same failure hits several PRs, it root-causes it once (one fix PR, by itself or one builder), tells the other builders not to chase it, and brings each waiting PR up to date after the fix merges.
-- Helps builders instead of letting them burn tokens: does small checks and small fixes itself (reading a log, verifying a claim, a one-line doc fix, merging `main` into a waiting branch, the re-review after a `main` merge) instead of starting a new agent.
-- Checks every agent's report itself before accepting it: re-runs the key check on the exact commit.
-- Messages another session with a one-shot Routine bound to it (`create_trigger` with `persistent_session_id` and `run_once_at` a minute or two ahead). Never `fire_trigger` with text: that starts a new, empty session.
-- Archives a session as soon as its role is done: a reviewer after its review, a builder after its PR merges or closes.
-- Sweeps the tracker on every tick (owner, 2026-09-28):
-  - every `ready` item the owner asked for is started or has a written reason why not;
-  - every merged item is set to done with its evidence the same tick.
-- Brings review-passed PRs up to date with `main` together, so their CI runs in parallel, then merges them in checklist order as each turns green.
-- Keeps Relay current (dashboard, `PROJECT_STATE.md`, `LOG.md`). Posts in `agents/All Updates` only when something important changed.
-- Speaks to the owner in plain words, and only at a phase end, a decision only the owner can make, or a blocker only the owner can clear. No play-by-play.
 
 **Commands:**
 - `npm ci`
