@@ -1,0 +1,609 @@
+{
+ "id": "preacher_curl",
+ "libId": "lib_preacher_curl",
+ "name": "Preacher Curl",
+ "family": "CURL",
+ "tier": "C",
+ "archetype": {
+  "hand": "curl",
+  "contact": [
+   "pivot-pad"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Sit at the preacher bench and set the seat height so the chest and upper arms touch the pad; take the curl bar with an underhand grip.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "bb-preacher",
+     "text": "Adjust the seat height so your upper arms and chest are in contact with the pad. Grip the curl bar with an underhand grip.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "The top of the pad sits under the armpits with the arms fully straight; the feet stay flat on the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-preacher",
+    "bb-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "sl-preacher",
+     "text": "The top of the pad should sit comfortably under your armpits when your arms are fully extended. Keep your feet flat on the ground for added stability.",
+     "where": "Proper form and technique"
+    },
+    {
+     "source": "bb-preacher",
+     "text": "Make sure your chest and upper arms are against the pad on their respective sides, with your underarms snug over it.",
+     "where": "Common mistakes, poor setup"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "A seat set too high makes you hunch over the pad and can stop a full squeeze at the top; either wrong height can shift stress from the biceps onto the shoulder.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "bb-preacher",
+     "text": "Sitting too high up will require you to hunch over the pad, potentially preventing you from reaching a peak contraction at the top of the lift.",
+     "where": "Common mistakes, poor setup"
+    },
+    {
+     "source": "bb-preacher",
+     "text": "Either extreme runs the risk of aggravating your shoulders, as you may be displacing stress from your biceps muscles onto your shoulder joints.",
+     "where": "Common mistakes, poor setup"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Press the backs of the upper arms into the pad while curling, and keep the body still, so momentum can't help.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-preacher",
+    "sl-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "bb-preacher",
+     "text": "Drive the backs of your upper arms into the bench pad while you’re contracting your biceps to avoid lifting with momentum.",
+     "where": "How to, coach's tip"
+    },
+    {
+     "source": "sl-preacher",
+     "text": "Keep your body still and your upper arms pressed against the pad.",
+     "where": "Common mistakes, using too heavy weights"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Too heavy a load breaks form, for example the upper arms leaving the pad as the body heaves the weight up, which can put the front delts at risk.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "bb-preacher",
+     "text": "Going too heavy compromises your form — for example, your upper arms leaving the pad while you use too much body English to yank up the weight. That can put your anterior delts at risk.",
+     "where": "Common mistakes, going too heavy"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Lower slowly by straightening the elbows; if you can't control the lowering, use a lighter weight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "bb-preacher",
+     "text": "Slowly straighten your elbows to lower the curl bar to the starting position.",
+     "where": "How to, step 3"
+    },
+    {
+     "source": "bb-preacher",
+     "text": "Avoid letting momentum take over. If you feel like you can’t control the descent, use lighter weight.",
+     "where": "How to, coach's tip"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Use a long range: lowering well past 90 degrees of elbow bend is part of the lift; if full straightening feels uncomfortable, turn around a little earlier.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-preacher",
+    "sl-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "bb-preacher",
+     "text": "When you don’t extend your elbows down well past 90 degrees, you’re cheating yourself out of the full range of muscle-building potential this lift has to offer.",
+     "where": "Common mistakes, partial range"
+    },
+    {
+     "source": "sl-preacher",
+     "text": "If fully extending your arms feels uncomfortable, you can avoid that position by reversing the movement earlier. But try to keep the range of motion as long as possible for maximum muscle activation.",
+     "where": "Proper form and technique"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Keep the wrists straight; bent wrists add load to them and can cause discomfort.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-preacher",
+    "bb-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "sl-preacher",
+     "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+     "where": "Common mistakes, not locking your wrists"
+    },
+    {
+     "source": "bb-preacher",
+     "text": "Tuck your chin. Fully extend your elbows. Maintain a neutral wrist position with your preferred grip.",
+     "where": "How to, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Keep the core and back lightly engaged instead of hanging over the pad.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "sl-preacher",
+     "text": "It’s important to keep your upper body activated, and not just “hang” over the pad.",
+     "where": "Proper form and technique"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "The preacher curl works the biceps and brachialis, with the forearm flexors helping.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "sl-preacher",
+     "text": "It primarily targets your biceps and brachialis, but your forearm flexors will also contribute to the movement.",
+     "where": "Which muscles"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "On the preacher bench the load is hardest near the bottom: with dumbbells, biceps activity was high only over a short range at the start of the lift, and with a barbell the most torque falls when the elbows are straight.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "oliveira-2009",
+    "nunes-2020"
+   ],
+   "quotes": [
+    {
+     "source": "oliveira-2009",
+     "text": "Dumbbell Preacher Curl elicited high muscle activation only for a short range of elbow joint angle.",
+     "where": "abstract"
+    },
+    {
+     "source": "nunes-2020",
+     "text": "one performed with a barbell (BAR; in which greater torque was applied when the elbows were extended and biceps stretched)",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "In an 8-week trial, the preacher curl grew the lower (distal) part of the elbow flexors more than the incline curl did.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "kassiano-2025"
+   ],
+   "quotes": [
+    {
+     "source": "kassiano-2025",
+     "text": "We observed a greater increase in the distal elbow flexor thickness in the preacher biceps curl compared to the incline biceps curl",
+     "where": "abstract, results"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Across many activities (not preacher curls specifically), a video study found most distal biceps tendon ruptures happened with the palm up and the elbow nearly straight; biceps curls were among the activities.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "jukes-2022"
+   ],
+   "quotes": [
+    {
+     "source": "jukes-2022",
+     "text": "Mechanisms of injury included deadlift, bicep curls, calisthenics, arm wrestling, heavy lifting, and boxing.",
+     "where": "abstract, results"
+    },
+    {
+     "source": "jukes-2022",
+     "text": "In all, 98% of ruptures occurred with the arm in supination and 89% occurred at 0° to 10° of elbow flexion.",
+     "where": "abstract, results"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and a slow 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009",
+    "bb-preacher"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
+    },
+    {
+     "source": "bb-preacher",
+     "text": "Slowly straighten your elbows to lower the curl bar to the starting position.",
+     "where": "How to, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+     "where": "abstract"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-preacher",
+   "url": "https://barbend.com/preacher-curl/",
+   "title": "Learn the Preacher Curl to Build Strong and Inspiring Biceps | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "sl-preacher",
+   "url": "https://www.strengthlog.com/barbell-preacher-curl/",
+   "title": "How to Do Barbell Preacher Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "oliveira-2009",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3737788/",
+   "title": "Effect of the shoulder position on the biceps brachii emg in different dumbbell curls.",
+   "kind": "peer-reviewed",
+   "year": 2009,
+   "pmid": 24150552,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "nunes-2020",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32823490/",
+   "title": "Placing Greater Torque at Shorter or Longer Muscle Lengths? Effects of Cable vs. Barbell Preacher Curl Training on Muscular Strength and Hypertrophy in Young Adults.",
+   "kind": "peer-reviewed",
+   "year": 2020,
+   "pmid": 32823490,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "kassiano-2025",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39809454/",
+   "title": "Distinct muscle growth and strength adaptations after preacher and incline biceps curls.",
+   "kind": "peer-reviewed",
+   "year": 2025,
+   "pmid": 39809454,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "jukes-2022",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36243942/",
+   "title": "Challenging the mechanism of distal biceps tendon rupture using a video analysis study.",
+   "kind": "peer-reviewed",
+   "year": 2022,
+   "pmid": 36243942,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "The angled pad, the arm lying on it (c2, c4) and the elbow bend all read side-on; the fault (arms lifting off the pad, c5) is a front-to-back move. Census view is side.",
+  "equipment": "Preacher bench: seat plus angled arm pad (preacherPad); EZ curl bar (c1). Seat height puts the pad top under the armpits (c2).",
+  "start": "Seated, feet flat (c2); chest and upper arms on the pad, pad top under the armpits (c1, c2); elbows straight or nearly so, bar in an underhand grip (c1, c7); wrists straight (c8); chin tucked (c8).",
+  "end": "Elbows bent, bar near the shoulders (c1 grip kept); backs of the upper arms still pressed into the pad (c4); torso still, not hunched (c3, c9); wrists straight (c8).",
+  "checkpoints": [
+   {
+    "label": "Armpits over pad",
+    "what": "Seat set so the pad top sits under the armpits; chest and upper arms on the pad.",
+    "claim": "c2"
+   },
+   {
+    "label": "Arms on pad",
+    "what": "Backs of the upper arms press into the pad all the way up.",
+    "claim": "c4"
+   },
+   {
+    "label": "Straight wrists",
+    "what": "Hand in line with the forearm.",
+    "claim": "c8"
+   }
+  ],
+  "mistake": {
+   "what": "Upper arms lifting off the pad as the body heaves the bar up.",
+   "why": "It comes from a load that is too heavy and can put the front delts at risk.",
+   "claim": "c5",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Upper arms stay on the pad",
+    "claim": "c4"
+   },
+   {
+    "text": "You control the bar down",
+    "claim": "c6"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 0,
+   "claim": "c14"
+  },
+  "variantLine": "Drawn with the EZ curl bar (BarBend's version, c1); the pad height, arms-on-pad and wrist lines (c2, c4, c8) also hold on a preacher machine."
+ },
+ "grip": {
+  "type": "Underhand grip on an EZ curl bar.",
+  "width": "",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "Straight, neutral for the chosen grip.",
+  "claims": [
+   "c1",
+   "c8"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Set the seat so your chest and upper arms touch the pad.",
+   "claim": "c1"
+  },
+  {
+   "step": "Pad top under your armpits with arms straight; not so high you hunch.",
+   "claim": "c2"
+  },
+  {
+   "step": "Feet flat on the floor.",
+   "claim": "c2"
+  },
+  {
+   "step": "Take the bar with an underhand grip.",
+   "claim": "c1"
+  },
+  {
+   "step": "Pick a weight you can lower under control.",
+   "claim": "c6"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Backs of the upper arms stay pressed into the pad.",
+   "claim": "c4"
+  },
+  {
+   "point": "Body stays still.",
+   "claim": "c4"
+  },
+  {
+   "point": "Upper body lightly engaged, not hanging on the pad.",
+   "claim": "c9"
+  },
+  {
+   "point": "Wrists stay straight.",
+   "claim": "c8"
+  },
+  {
+   "point": "Lower well past 90 degrees; stop short if full straightening hurts.",
+   "claim": "c7"
+  },
+  {
+   "point": "Lower slowly.",
+   "claim": "c6"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Upper arms leaving the pad to heave a heavy bar.",
+   "fix": "Go lighter; keep the arms pressed into the pad.",
+   "claim": "c5"
+  },
+  {
+   "mistake": "Seat too high or too low.",
+   "fix": "Reset it so the pad top sits under your armpits.",
+   "claim": "c3"
+  },
+  {
+   "mistake": "Dropping fast into the bottom.",
+   "fix": "Lower slowly; go lighter if you can't control it.",
+   "claim": "c6"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "biceps",
+    "claim": "c10"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "forearms",
+    "claim": "c10"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "front_delts",
+    "claim": "c5"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Front of the upper arm, hardest near the bottom",
+    "means": "The biceps are working where the bench loads them most.",
+    "fix": "",
+    "claim": "c11",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the shoulder",
+    "means": "Usually means the seat height is off or the arms are leaving the pad.",
+    "fix": "Reset the seat; go lighter.",
+    "claim": "c3",
+    "redFlag": "shoulder"
+   },
+   {
+    "where": "Inside of the elbow at the bottom",
+    "means": "Straight-arm bottom may not suit you today.",
+    "fix": "Turn around a little earlier; lower slowly.",
+    "claim": "c7",
+    "redFlag": "elbow"
+   },
+   {
+    "where": "Wrist",
+    "means": "Usually means the wrist is bending.",
+    "fix": "Straighten the wrist; go lighter if you can't.",
+    "claim": "c8",
+    "redFlag": "wrist"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Heaving a heavy bar with the arms off the pad can put the front of the shoulder at risk.",
+   "claim": "c5"
+  },
+  {
+   "risk": "A wrong seat height can shift stress onto the shoulder.",
+   "claim": "c3"
+  },
+  {
+   "risk": "Across many activities, most distal biceps tendon ruptures in one video study happened palm-up with the elbow nearly straight, so control the bottom.",
+   "claim": "c13"
+  }
+ ],
+ "redFlags": [
+  "shoulder",
+  "elbow",
+  "wrist"
+ ],
+ "zooms": [
+  {
+   "key": "preacher-pad",
+   "kind": "posture",
+   "right": "Pad top under the armpits, upper arms flat on the pad.",
+   "wrong": "Upper arms lifted off the pad, torso heaving back.",
+   "claim": "c5"
+  },
+  {
+   "key": "curl-wrist",
+   "kind": "hand",
+   "right": "Underhand grip, hand in line with the forearm.",
+   "wrong": "Wrist bent under the bar.",
+   "claim": "c8"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "biceps primary and forearms secondary match exercises.json and StrengthLog (c10). brachialis is text-only."
+ },
+ "anchorSource": "bb-preacher"
+}

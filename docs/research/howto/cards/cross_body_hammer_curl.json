@@ -1,0 +1,570 @@
+{
+ "id": "cross_body_hammer_curl",
+ "libId": "lib_cross_body_hammer_curl",
+ "name": "Cross-Body Hammer Curl",
+ "family": "CURL",
+ "tier": "C",
+ "archetype": {
+  "hand": "curl",
+  "contact": [
+   "standing-feet"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Hold a dumbbell in each hand, feet about shoulder-width apart, dumbbells in front of you with the palms facing the body.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fb-cbhammer"
+   ],
+   "quotes": [
+    {
+     "source": "fb-cbhammer",
+     "text": "Grasp a dumbbell in each hand, and stand with your feet close to shoulder-width apart.",
+     "where": "Instructions, step 1"
+    },
+    {
+     "source": "fb-cbhammer",
+     "text": "Position each dumbbell in front of you with your palms facing your body.",
+     "where": "Instructions, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Raise one dumbbell in an arc toward the opposite shoulder, keep the elbow locked in place, pause briefly at the top, then lower back along the same path and switch arms.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fb-cbhammer"
+   ],
+   "quotes": [
+    {
+     "source": "fb-cbhammer",
+     "text": "Raise one dumbbell in an arc toward your opposite shoulder by engaging the bicep of that arm.",
+     "where": "Instructions, step 4"
+    },
+    {
+     "source": "fb-cbhammer",
+     "text": "Lock your elbow in place for the duration of the exercise.",
+     "where": "Instructions, step 5"
+    },
+    {
+     "source": "fb-cbhammer",
+     "text": "Hold the dumbbell in position at the top of this movement for a moment.",
+     "where": "Instructions, step 6"
+    },
+    {
+     "source": "fb-cbhammer",
+     "text": "Maintain tension in your bicep as you bring the dumbbell back to its starting position by reversing the movement.",
+     "where": "Instructions, step 7"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Unlike other hammer curls, the weight travels across the body rather than straight up and down.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fb-cbhammer"
+   ],
+   "quotes": [
+    {
+     "source": "fb-cbhammer",
+     "text": "Unlike many other Hammer Curl variations, this exercises has you bring the weight across your body instead of straight up and down.",
+     "where": "Instructions, introduction"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Swinging the dumbbells uses momentum, which lowers the effect and raises the risk of injury; keep the weight lighter and controlled, or sit down to stop the swing.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fb-cbhammer"
+   ],
+   "quotes": [
+    {
+     "source": "fb-cbhammer",
+     "text": "Using momentum, or recruiting additional muscle groups can help you lift heavier weights with this exercise. However it also reduces the effectiveness, and increases the risk of injury. Keep your weights on the lighter side, and focus on controlling the weight.",
+     "where": "Common form mistakes, swinging the dumbbells"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "From the standard hammer curl (same grip): keep the wrist straight with the palm facing the body, and avoid shrugging the shoulders during the lift.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "ace-hammer"
+   ],
+   "quotes": [
+    {
+     "source": "ace-hammer",
+     "text": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body) and avoid shrugging your shoulders throughout the movement.",
+     "where": "Step 2, upward phase"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "From the standard hammer curl: keep the shoulders pulled down and back and the torso braced and upright, with no arching of the lower back.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "ace-hammer"
+   ],
+   "quotes": [
+    {
+     "source": "ace-hammer",
+     "text": "stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining these positions throughout the exercise.",
+     "where": "Step 1, starting position"
+    },
+    {
+     "source": "ace-hammer",
+     "text": "Perform the curl while keeping your torso erect (no arching your low back)",
+     "where": "Step 2, upward phase"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "From the standard hammer curl: keep the neutral grip through the whole lift; it is easy to start twisting the wrists without noticing.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "sl-hammer"
+   ],
+   "quotes": [
+    {
+     "source": "sl-hammer",
+     "text": "Keep your grip neutral during the movement. It’s easy to start twisting the wrists during the lift, without thinking about it.",
+     "where": "Common mistakes, changing grip"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Breathe out as the dumbbell rises and in as it lowers (standard hammer curl).",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "ace-hammer"
+   ],
+   "quotes": [
+    {
+     "source": "ace-hammer",
+     "text": "Exhale and slowly flex (bend) one or both elbows in unison",
+     "where": "Step 2, upward phase"
+    },
+    {
+     "source": "ace-hammer",
+     "text": "Inhale and gently lower the dumbbells back towards your starting position",
+     "where": "Step 3, downward phase"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "The neutral-grip hammer curl works the biceps and brachialis, with the forearm flexors, especially the brachioradialis, as secondary; Fitbod lists the biceps as the target of the cross-body version.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-hammer",
+    "fb-cbhammer"
+   ],
+   "quotes": [
+    {
+     "source": "sl-hammer",
+     "text": "The hammer curl primarily targets your biceps and brachialis, but the forearm flexors and especially the brachioradialis are also involved as a secondary muscle group.",
+     "where": "Which muscles"
+    },
+    {
+     "source": "fb-cbhammer",
+     "text": "Like other variations this is an isolation exercise that targets the biceps.",
+     "where": "Instructions, introduction"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "In an EMG study of standard (straight-up) curls, the neutral grip gave less biceps activity than the palms-up grip and more front-shoulder (anterior deltoid) activity.",
+   "tags": [
+    "DATA",
+    "WEAK"
+   ],
+   "sources": [
+    "coratella-2023"
+   ],
+   "quotes": [
+    {
+     "source": "coratella-2023",
+     "text": "biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+     "where": "abstract, results"
+    },
+    {
+     "source": "coratella-2023",
+     "text": "the anterior deltoid excitation was greater with the pronated and neutral handgrip compared to the supinated condition",
+     "where": "abstract, results"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up, a brief hold at the top, about 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009",
+    "fb-cbhammer"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
+    },
+    {
+     "source": "fb-cbhammer",
+     "text": "Hold the dumbbell in position at the top of this movement for a moment.",
+     "where": "Instructions, step 6"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Across all weight training (not this curl specifically), the most common way people are hurt badly enough for an emergency department is a weight dropping on them, mostly with free weights.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "kerr-2010"
+   ],
+   "quotes": [
+    {
+     "source": "kerr-2010",
+     "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+     "where": "abstract, results"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Start with the arms slightly bent at the elbows and the elbows about shoulder-width apart.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fb-cbhammer"
+   ],
+   "quotes": [
+    {
+     "source": "fb-cbhammer",
+     "text": "Bend your arms slightly at the elbow, and position your elbows close to shoulder-width apart.",
+     "where": "Instructions, step 3"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "fb-cbhammer",
+   "url": "https://fitbod.me/exercises/cross-body-hammer-curls",
+   "title": "Cross Body Hammer Curls: Form, Muscles Worked, Target Weight & Variations",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "ace-hammer",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/",
+   "title": "Hammer Curl Exercise Guide for Stronger Arms | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "sl-hammer",
+   "url": "https://www.strengthlog.com/hammer-curl/",
+   "title": "How to Do Hammer Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "coratella-2023",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36976950/",
+   "title": "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy.",
+   "kind": "peer-reviewed",
+   "year": 2023,
+   "pmid": 36976950,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "kerr-2010",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+   "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007.",
+   "kind": "peer-reviewed",
+   "year": 2010,
+   "pmid": 20139328,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  }
+ ],
+ "plate": {
+  "view": "front",
+  "viewWhy": "The dumbbell travels across the body toward the opposite shoulder (c2, c3), which only reads face-on. Census view is front.",
+  "equipment": "One dumbbell per hand, standing on the floor line. No bench.",
+  "start": "Standing, feet about shoulder-width (c1); dumbbells in front of the thighs, palms facing the body (c1), elbows slightly bent, about shoulder-width apart (c14); shoulders down and back (c6).",
+  "end": "Working elbow bent, dumbbell raised in an arc to near the opposite shoulder (c2); elbow in the same place (c2); wrist straight, palm still facing the body (c5, c7); shoulders level, not shrugged (c5); other arm still at the start.",
+  "checkpoints": [
+   {
+    "label": "Palms face body",
+    "what": "Neutral grip, kept for the whole lift; no wrist twist.",
+    "claim": "c7"
+   },
+   {
+    "label": "Arc across",
+    "what": "Dumbbell travels toward the opposite shoulder, not straight up.",
+    "claim": "c2"
+   },
+   {
+    "label": "Shoulders down",
+    "what": "No shrugging as the dumbbell rises.",
+    "claim": "c5"
+   }
+  ],
+  "mistake": {
+   "what": "Working shoulder shrugging up as the dumbbell crosses the body.",
+   "why": "Swinging the dumbbells (c4) is the named top fault but reads side-on, so the front plate cannot draw it; the hammer-curl guideline says to avoid shrugging, which the front view shows.",
+   "claim": "c5",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Dumbbell ends near the other shoulder",
+    "claim": "c2"
+   },
+   {
+    "text": "Shoulders stay level and down",
+    "claim": "c5"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 1,
+   "claim": "c11"
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Closed neutral grip, palms facing the body, one dumbbell per hand.",
+  "width": "Dumbbells in front of the thighs, feet about shoulder-width.",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "Straight, no bend or twist through the lift.",
+  "claims": [
+   "c1",
+   "c5",
+   "c7"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Pick a weight you can lift without swinging.",
+   "claim": "c4"
+  },
+  {
+   "step": "Stand with feet about shoulder-width apart.",
+   "claim": "c1"
+  },
+  {
+   "step": "Hold the dumbbells in front of you, palms facing your body.",
+   "claim": "c1"
+  },
+  {
+   "step": "Brace your trunk, shoulders down and back.",
+   "claim": "c6"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Curl toward the opposite shoulder in an arc.",
+   "claim": "c2"
+  },
+  {
+   "point": "Elbow stays in place.",
+   "claim": "c2"
+  },
+  {
+   "point": "Palm keeps facing the body; wrist straight.",
+   "claim": "c7"
+  },
+  {
+   "point": "No shrugging.",
+   "claim": "c5"
+  },
+  {
+   "point": "Torso upright; no arching the lower back.",
+   "claim": "c6"
+  },
+  {
+   "point": "Lower along the same path, then switch arms.",
+   "claim": "c2"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Swinging the dumbbells with momentum.",
+   "fix": "Go lighter and control the weight; try it seated.",
+   "claim": "c4"
+  },
+  {
+   "mistake": "Twisting the wrist out of the neutral grip.",
+   "fix": "Keep the palm facing your body all the way.",
+   "claim": "c7"
+  },
+  {
+   "mistake": "Shrugging the shoulder as the weight rises.",
+   "fix": "Keep the shoulders down and back.",
+   "claim": "c5"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "biceps",
+    "claim": "c9"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "forearms",
+    "claim": "c9"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "front_delts",
+    "claim": "c10"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Front of the upper arm",
+    "means": "The elbow flexors are doing the work.",
+    "fix": "",
+    "claim": "c9",
+    "redFlag": null
+   },
+   {
+    "where": "Forearm",
+    "means": "The forearm muscles are helping, as expected with this grip.",
+    "fix": "",
+    "claim": "c9",
+    "redFlag": null
+   },
+   {
+    "where": "Top of the shoulder or neck",
+    "means": "Usually means you are shrugging.",
+    "fix": "Keep the shoulders down; go lighter if needed.",
+    "claim": "c5",
+    "redFlag": null
+   },
+   {
+    "where": "Wrist",
+    "means": "Usually means the wrist is bending or twisting.",
+    "fix": "Keep the palm facing your body; go lighter if you can't.",
+    "claim": "c7",
+    "redFlag": "wrist"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Swinging the dumbbells raises the risk of injury.",
+   "claim": "c4"
+  },
+  {
+   "risk": "Dropped weights are the most common way weight trainers end up in an emergency department.",
+   "claim": "c13"
+  }
+ ],
+ "redFlags": [
+  "wrist"
+ ],
+ "zooms": [
+  {
+   "key": "hammer-wrist",
+   "kind": "hand",
+   "right": "Palm facing the body, wrist straight.",
+   "wrong": "Wrist twisted or bent as the weight rises.",
+   "claim": "c7"
+  },
+  {
+   "key": "cross-arc",
+   "kind": "posture",
+   "right": "Dumbbell arcs toward the opposite shoulder, shoulders level.",
+   "wrong": "Working shoulder shrugged up toward the ear.",
+   "claim": "c5"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "exercises.json lists brachialis and biceps primary, forearms secondary; StrengthLog's hammer curl says the same (c9). brachialis is text-only."
+ },
+ "anchorSource": "fb-cbhammer"
+}

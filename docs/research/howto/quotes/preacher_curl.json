@@ -1,0 +1,199 @@
+{
+ "id": "preacher_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "bb-preacher",
+   "text": "Adjust the seat height so your upper arms and chest are in contact with the pad. Grip the curl bar with an underhand grip.",
+   "status": "verbatim",
+   "closest": "Adjust the seat height so your upper arms and chest are in contact with the pad. Grip the curl bar with an underhand grip.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-preacher",
+   "text": "The top of the pad should sit comfortably under your armpits when your arms are fully extended. Keep your feet flat on the ground for added stability.",
+   "status": "verbatim",
+   "closest": "The top of the pad should sit comfortably under your armpits when your arms are fully extended. Keep your feet flat on the ground for added stability.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-preacher",
+   "text": "Make sure your chest and upper arms are against the pad on their respective sides, with your underarms snug over it.",
+   "status": "verbatim",
+   "closest": "Make sure your chest and upper arms are against the pad on their respective sides, with your underarms snug over it.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-preacher",
+   "text": "Sitting too high up will require you to hunch over the pad, potentially preventing you from reaching a peak contraction at the top of the lift.",
+   "status": "verbatim",
+   "closest": "Sitting too high up will require you to hunch over the pad, potentially preventing you from reaching a peak contraction at the top of the lift.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-preacher",
+   "text": "Either extreme runs the risk of aggravating your shoulders, as you may be displacing stress from your biceps muscles onto your shoulder joints.",
+   "status": "verbatim",
+   "closest": "Either extreme runs the risk of aggravating your shoulders, as you may be displacing stress from your biceps muscles onto your shoulder joints.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-preacher",
+   "text": "Drive the backs of your upper arms into the bench pad while you’re contracting your biceps to avoid lifting with momentum.",
+   "status": "verbatim",
+   "closest": "Drive the backs of your upper arms into the bench pad while you're contracting your biceps to avoid lifting with momentum.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c4",
+   "source": "sl-preacher",
+   "text": "Keep your body still and your upper arms pressed against the pad.",
+   "status": "verbatim",
+   "closest": "Keep your body still and your upper arms pressed against the pad.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-preacher",
+   "text": "Going too heavy compromises your form — for example, your upper arms leaving the pad while you use too much body English to yank up the weight. That can put your anterior delts at risk.",
+   "status": "verbatim",
+   "closest": "Going too heavy compromises your form — for example, your upper arms leaving the pad while you use too much body English to yank up the weight. That can put your anterior delts at risk.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-preacher",
+   "text": "Slowly straighten your elbows to lower the curl bar to the starting position.",
+   "status": "verbatim",
+   "closest": "Slowly straighten your elbows to lower the curl bar to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-preacher",
+   "text": "Avoid letting momentum take over. If you feel like you can’t control the descent, use lighter weight.",
+   "status": "verbatim",
+   "closest": "Avoid letting momentum take over. If you feel like you can't control the descent, use lighter weight.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c7",
+   "source": "bb-preacher",
+   "text": "When you don’t extend your elbows down well past 90 degrees, you’re cheating yourself out of the full range of muscle-building potential this lift has to offer.",
+   "status": "verbatim",
+   "closest": "When you don't extend your elbows down well past 90 degrees, you're cheating yourself out of the full range of muscle-building potential this lift has to offer.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c7",
+   "source": "sl-preacher",
+   "text": "If fully extending your arms feels uncomfortable, you can avoid that position by reversing the movement earlier. But try to keep the range of motion as long as possible for maximum muscle activation.",
+   "status": "verbatim",
+   "closest": "If fully extending your arms feels uncomfortable, you can avoid that position by reversing the movement earlier. But try to keep the range of motion as long as possible for maximum muscle activation.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-preacher",
+   "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "status": "verbatim",
+   "closest": "Keep your wrists straight during the movement. If they're bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c8",
+   "source": "bb-preacher",
+   "text": "Tuck your chin. Fully extend your elbows. Maintain a neutral wrist position with your preferred grip.",
+   "status": "verbatim",
+   "closest": "Tuck your chin. Fully extend your elbows. Maintain a neutral wrist position with your preferred grip.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-preacher",
+   "text": "It’s important to keep your upper body activated, and not just “hang” over the pad.",
+   "status": "verbatim",
+   "closest": "It's important to keep your upper body activated, and not just \"hang\" over the pad.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c10",
+   "source": "sl-preacher",
+   "text": "It primarily targets your biceps and brachialis, but your forearm flexors will also contribute to the movement.",
+   "status": "verbatim",
+   "closest": "It primarily targets your biceps and brachialis, but your forearm flexors will also contribute to the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "oliveira-2009",
+   "text": "Dumbbell Preacher Curl elicited high muscle activation only for a short range of elbow joint angle.",
+   "status": "verbatim",
+   "closest": "Dumbbell Preacher Curl elicited high muscle activation only for a short range of elbow joint angle.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "nunes-2020",
+   "text": "one performed with a barbell (BAR; in which greater torque was applied when the elbows were extended and biceps stretched)",
+   "status": "verbatim",
+   "closest": "one performed with a barbell (BAR; in which greater torque was applied when the elbows were extended and biceps stretched)",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "kassiano-2025",
+   "text": "We observed a greater increase in the distal elbow flexor thickness in the preacher biceps curl compared to the incline biceps curl",
+   "status": "verbatim",
+   "closest": "We observed a greater increase in the distal elbow flexor thickness in the preacher biceps curl compared to the incline biceps curl",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "jukes-2022",
+   "text": "Mechanisms of injury included deadlift, bicep curls, calisthenics, arm wrestling, heavy lifting, and boxing.",
+   "status": "verbatim",
+   "closest": "Mechanisms of injury included deadlift, bicep curls, calisthenics, arm wrestling, heavy lifting, and boxing.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "jukes-2022",
+   "text": "In all, 98% of ruptures occurred with the arm in supination and 89% occurred at 0° to 10° of elbow flexion.",
+   "status": "verbatim",
+   "closest": "In all, 98% of ruptures occurred with the arm in supination and 89% occurred at 0° to 10° of elbow flexion.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-preacher",
+   "text": "Slowly straighten your elbows to lower the curl bar to the starting position.",
+   "status": "verbatim",
+   "closest": "Slowly straighten your elbows to lower the curl bar to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  }
+ ]
+}

@@ -1,0 +1,135 @@
+{
+ "id": "wrist_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-dbwristcurl",
+   "text": "Grab a dumbbell with an underhand grip and rest your forearm against your thigh, or alternatively against a bench.",
+   "status": "verbatim",
+   "closest": "Grab a dumbbell with an underhand grip and rest your forearm against your thigh, or alternatively against a bench.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-bbwristcurl",
+   "text": "Grab a barbell with an underhand grip and rest your forearms against your thighs, or alternatively against a bench.",
+   "status": "verbatim",
+   "closest": "Grab a barbell with an underhand grip and rest your forearms against your thighs, or alternatively against a bench.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-wristcurl",
+   "text": "Holding two dumbbells, kneel and rest your elbows on a bench with approximately a 90 degree bend at the elbows and the dumbbells hanging freely off the edge of the pad.",
+   "status": "verbatim",
+   "closest": "Holding two dumbbells, kneel and rest your elbows on a bench with approximately a 90 degree bend at the elbows and the dumbbells hanging freely off the edge of the pad.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-wristcurl",
+   "text": "Inhale and slowly allow the wrists to move into extension (allow dumbbells to move towards the floor) without releasing your grip, extending your arms or leaning forward / backward. Hold this end position briefly.",
+   "status": "verbatim",
+   "closest": "Inhale and slowly allow the wrists to move into extension (allow dumbbells to move towards the floor) without releasing your grip, extending your arms or leaning forward / backward. Hold this end position briefly.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-wristcurl",
+   "text": "Exhale and slowly contract your forearm flexor muscles (along the top of the forearm) rolling your wrists towards you in order to return the dumbbells back to the starting position.",
+   "status": "verbatim",
+   "closest": "Exhale and slowly contract your forearm flexor muscles (along the top of the forearm) rolling your wrists towards you in order to return the dumbbells back to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-wristcurl",
+   "text": "Individuals sometimes release their grip during the lowering phase, allowing the dumbbells to roll towards their finger tips. While this may increase the load on the forearm muscles, it also increases the risk of wrist injury and dropping the dumbbells.",
+   "status": "verbatim",
+   "closest": "Individuals sometimes release their grip during the lowering phase, allowing the dumbbells to roll towards their finger tips. While this may increase the load on the forearm muscles, it also increases the risk of wrist injury and dropping the dumbbells.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-wristcurl",
+   "text": "To increase strength think about squeezing the weights as hard as possible during both phases of the movement.",
+   "status": "verbatim",
+   "closest": "To increase strength think about squeezing the weights as hard as possible during both phases of the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-dbwristcurl",
+   "text": "Lower your hand towards the floor, and let the dumbbell roll out in your fingers.",
+   "status": "verbatim",
+   "closest": "Lower your hand towards the floor, and let the dumbbell roll out in your fingers.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-wristcurl",
+   "text": "As with kneeling wrist curls, the fact that your hands hang over a solid edge places them in a somewhat precarious position. Lighter weights are advised here and in a rep range of 15 to 20",
+   "status": "verbatim",
+   "closest": "As with kneeling wrist curls, the fact that your hands hang over a solid edge places them in a somewhat precarious position. Lighter weights are advised here and in a rep range of 15 to 20",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-wristcurl",
+   "text": "you should opt for higher repetitions with lighter weights, aiming for a slow and controlled tempo to bolster your time under tension.",
+   "status": "verbatim",
+   "closest": "you should opt for higher repetitions with lighter weights, aiming for a slow and controlled tempo to bolster your time under tension.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-wristcurl",
+   "text": "aim for amping up your rep count or reducing rest times rather than working with a heavier weight in most cases.",
+   "status": "verbatim",
+   "closest": "aim for amping up your rep count or reducing rest times rather than working with a heavier weight in most cases.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-dbwristcurl",
+   "text": "Dumbbell wrist curls train the muscles in the forearm that flexes (bends) the wrist and closes your hand.",
+   "status": "verbatim",
+   "closest": "Dumbbell wrist curls train the muscles in the forearm that flexes (bends) the wrist and closes your hand.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-dbwristcurl",
+   "text": "Primary muscles worked: Forearm Flexors",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Forearm Flexors",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-wristcurl",
+   "text": "By resting your forearms on a weight bench, your biceps will be thoroughly unable to take over the exercise.",
+   "status": "verbatim",
+   "closest": "By resting your forearms on a weight bench, your biceps will be thoroughly unable to take over the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-wristcurl",
+   "text": "Hold this end position briefly.",
+   "status": "verbatim",
+   "closest": "Hold this end position briefly.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-wristcurl",
+   "text": "aiming for a slow and controlled tempo to bolster your time under tension.",
+   "status": "verbatim",
+   "closest": "aiming for a slow and controlled tempo to bolster your time under tension.",
+   "note": ""
+  }
+ ]
+}
