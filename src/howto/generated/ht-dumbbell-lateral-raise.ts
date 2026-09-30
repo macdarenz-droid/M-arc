@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=3b85310687ae043c928246d7b0bf72feb0c8b3a3e68dab9fbd1dd28a1d69189c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_dumbbell_lateral_raise",
   name: "Dumbbell Lateral Raise",
-  hashes: { inputsSha256: "3b85310687ae043c928246d7b0bf72feb0c8b3a3e68dab9fbd1dd28a1d69189c", golden: "8bb81d44ec6f7b3514c3eff5ce6940d79cb0cae175aae00968a89e4b463a856b" },
+  hashes: { inputsSha256: "d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27", golden: "8bb81d44ec6f7b3514c3eff5ce6940d79cb0cae175aae00968a89e4b463a856b" },
   plate: {
     view: "front",
     normal: {
@@ -24,5 +24,455 @@ export default {
     tempo: "<div class=\"tempo\" role=\"img\" aria-label=\"Tempo: lift 1 second, hold 0.5 seconds, lower 2 seconds, rest 0.5 seconds\"><div class=\"tempo-seg move\" style=\"flex:1 1 0\"><i></i><div class=\"tempo-label\"><b>Lift</b><span>1 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Hold</b><span>0.5 s</span></div></div><div class=\"tempo-seg move\" style=\"flex:2 1 0\"><i></i><div class=\"tempo-label\"><b>Lower</b><span>2 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Rest</b><span>0.5 s</span></div></div></div>",
     alt: "Dumbbell lateral raise, front view. Start: standing tall, arms at the sides, drawn dashed. Four in-between positions show the arms rising out to the sides with a slight elbow bend, elbows a little ahead of the hands. End: arms level with the shoulders, drawn solid. Shoulder abduction up to 90 degrees.",
     mistakeAlt: "Dumbbell Lateral Raise: the common mistake, drawn dashed in the mistake colour over the correct end position.",
+  },
+  rev: 1,
+  handling: {
+    "archetype": "hold",
+    "orientation": "neutral",
+    "handle": "dumbbell",
+    "loadAxis": "across",
+    "overBody": false,
+    "width": {
+      "text": "One dumbbell per hand, beside the outside of each thigh, hands about hip width apart. Hold the middle of the handle so the dumbbell hangs level.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lateral-raise"
+        ]
+      }
+    },
+    "thumb": {
+      "mode": "wrapped",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "WEAK"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "sporrong1995",
+          "sporrong1996"
+        ],
+        "note": "ACE: closed grip, thumbs round the handles. Sporrong: grip-gauge studies, not dumbbells; a reason to avoid a death grip, not proof of harm. No data for the thumbless grip."
+      }
+    },
+    "contact": "mid-palm",
+    "wrist": {
+      "ext": [
+        -10,
+        10
+      ],
+      "dev": [
+        -10,
+        10
+      ],
+      "limitText": "Wrist bending past about 15 degrees? Too heavy, or you're lifting with your hands.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "coratella2020",
+          "weiss1995"
+        ],
+        "note": "Straight wrist: ACE and the Coratella 2020 protocol. The 15 degree limit is coaching consensus, not a measured injury threshold. Weiss 1995 is nerve pressure, MECH/WEAK for this use."
+      }
+    },
+    "pose": {
+      "view": "radial",
+      "forearm": 90,
+      "wrist": {
+        "ext": 0,
+        "dev": 0
+      },
+      "contactAt": 0.6,
+      "fingers": {
+        "curl": 1
+      },
+      "thumb": "wrapped",
+      "squeeze": "firm",
+      "handle": {
+        "profile": "dumbbell",
+        "axis": "across"
+      },
+      "load": {
+        "kind": "gravity"
+      }
+    },
+    "faults": [
+      {
+        "key": "fingertip-hang",
+        "label": "In the fingers",
+        "pose": {
+          "wrist": {
+            "ext": -28,
+            "dev": 0
+          },
+          "contactAt": 1.45,
+          "fingers": {
+            "curl": 1,
+            "open": 0.35
+          },
+          "thumb": "loose"
+        },
+        "markers": [
+          "lever-arc",
+          "slip-arrow"
+        ],
+        "alt": "Same view. The handle hangs in the fingertips, fingers opening, thumb off. Far past the wrist, the weight pulls the hand about 28 degrees down."
+      },
+      {
+        "key": "little-finger-up",
+        "label": "Little finger up",
+        "pose": {
+          "view": "end-on",
+          "handle": {
+            "profile": "dumbbell",
+            "axis": "along"
+          },
+          "rollDeg": 22
+        },
+        "markers": [
+          "lever-arc"
+        ],
+        "alt": "At the top, the dumbbell tips like a pouring jug. Its little-finger end sits clearly above the thumb end. The upper arm turns in."
+      }
+    ],
+    "gripLine": "Hold the handle mid-palm, so your wrist stays straight. At the top, keep your little finger no higher than your thumb.",
+    "cue": "Wrist in line with forearm."
+  },
+  contacts: [
+    "standing-feet"
+  ],
+  setup: [
+    {
+      "kind": "load",
+      "text": "Pick dumbbells you can raise 12 to 20 times without swinging.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "WEAK"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "jakobsen2012"
+        ],
+        "note": "12 to 20 reps is consensus; Jakobsen 2012 only shows 15RM loads are still hard work in novices."
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Feet hip width, knees soft. Swinging? Sit on a bench.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "coratella2020"
+        ],
+        "note": "Stance: ACE. Seated: the Coratella 2020 protocol (reference dropped from user copy, A2)."
+      }
+    },
+    {
+      "kind": "grip",
+      "text": "Dumbbells by your thighs, palms in, grip mid-palm.",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lateral-raise"
+        ]
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Keep your elbows soft, arms a little in front.",
+      "zoom": "top-height",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lateral-raise"
+        ],
+        "note": "The 10 to 20 degree bend and 20 to 30 degrees in front of the body (scapular plane) are consensus; no top-down drawing yet (5.2)."
+      }
+    },
+    {
+      "kind": "brace",
+      "text": "Shoulders down and slightly back, neck long.",
+      "zoom": "shoulders",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lateral-raise"
+        ]
+      }
+    }
+  ],
+  posture: [
+    {
+      "key": "tall",
+      "label": "Stand tall",
+      "detail": "Ear, shoulder, hip and ankle roughly stacked, knees soft. Low back in its normal small curve. The torso does not rock back to start the dumbbells moving.",
+      "anchor": {
+        "at": "sternum"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lateral-raise"
+        ]
+      }
+    },
+    {
+      "key": "shoulders",
+      "label": "Shoulders down",
+      "detail": "Clear space between the shoulders and the ears, at the bottom and the top. The shoulders do not ride up toward the ears as the dumbbells rise.",
+      "anchor": {
+        "at": "trap.l"
+      },
+      "zoom": "shoulders",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "andersen2008"
+        ]
+      }
+    },
+    {
+      "key": "elbows",
+      "label": "Elbows lead",
+      "detail": "The elbows rise first and stay level with or slightly above the hands. Fixed small bend in the elbow, about 10 to 20 degrees.",
+      "anchor": {
+        "at": "elbow.l",
+        "off": [
+          0,
+          -5.4
+        ]
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lateral-raise"
+        ]
+      }
+    },
+    {
+      "key": "stop",
+      "label": "Shoulder height",
+      "detail": "At the top, the upper arms are level with the shoulders and no higher. That is about 90 degrees from the body, parallel to the floor.",
+      "anchor": {
+        "at": "elbow.r"
+      },
+      "zoom": "top-height",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA",
+          "MECH"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "kolber2014",
+          "graichen1999"
+        ]
+      }
+    },
+    {
+      "key": "forward",
+      "label": "Slightly forward",
+      "detail": "From above, the arms sit about 20 to 30 degrees in front of the shoulders. They are not straight out to the side or behind the body.",
+      "anchor": {
+        "at": "grip.l"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-lateral-raise"
+        ],
+        "note": "Top-down view: text checkpoint until the engine has a top view (5.2)."
+      }
+    },
+    {
+      "key": "wrist-top",
+      "label": "Thumb level",
+      "detail": "At the top, the palm faces the floor, knuckles in line with the forearm. The thumb end sits level with the little-finger end, or a touch higher.",
+      "anchor": {
+        "at": "grip.r"
+      },
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "coratella2020"
+        ]
+      }
+    }
+  ],
+  chips: [
+    "hand",
+    "top-height",
+    "shoulders",
+    "feel"
+  ],
+  copy: {
+    "setupLine": "Pick a weight you can raise 12 to 20 times without swinging. Shoulders down, elbows soft, arms slightly forward.",
+    "mistakeLine": "Stop at shoulder height. Going higher, or tipping your little finger up, can pinch the top of your shoulder."
+  },
+  mistakes: [
+    {
+      "key": "tip",
+      "title": "Little finger up",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "coratella2020"
+        ]
+      },
+      "fix": "At the top, palms down, thumbs level with little fingers."
+    },
+    {
+      "key": "swing",
+      "title": "Swinging and shrugging",
+      "zoom": "shoulders",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "andersen2008"
+        ]
+      },
+      "fix": "Go lighter, body still, shoulders down."
+    },
+    {
+      "key": "high",
+      "title": "Too high",
+      "zoom": "top-height",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-lateral-raise",
+          "kolber2014"
+        ]
+      },
+      "fix": "Stop at shoulder height, then lower with control."
+    }
+  ],
+  risks: [
+    {
+      "key": "pinch",
+      "text": "Above shoulder height or little finger up can pinch a shoulder tendon.",
+      "claim": {
+        "tags": [
+          "MECH",
+          "DATA"
+        ],
+        "sources": [
+          "graichen1999",
+          "kolber2014"
+        ],
+        "note": "Graichen 1999: anatomy in healthy volunteers. Kolber 2014: association, not cause."
+      }
+    },
+    {
+      "key": "neck",
+      "text": "Shrugging and swinging shift the work to your neck and lower back.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "andersen2008",
+          "ace-lateral-raise"
+        ],
+        "note": "The injury link is coaching consensus."
+      }
+    },
+    {
+      "key": "grip",
+      "text": "A handle in your fingers bends your wrist and adds forearm and shoulder work.",
+      "claim": {
+        "tags": [
+          "WEAK",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "sporrong1995",
+          "sporrong1996"
+        ],
+        "note": "Grip-gauge studies, not dumbbells."
+      }
+    }
+  ],
+  riskFlags: [
+    "wrist",
+    "shoulder"
+  ],
+  redFlag: {
+    "name": "Wrist pain",
+    "now": "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.",
+    "doctor": "Tingling, keeps coming back, or no better after two weeks' rest? See a doctor.",
+    "claim": {
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-wrist-pain"
+      ]
+    }
+  },
+  sources: [
+    "ace-lateral-raise",
+    "coratella2020",
+    "graichen1999",
+    "kolber2014",
+    "kolber2010",
+    "andersen2008",
+    "sporrong1995",
+    "sporrong1996",
+    "weiss1995",
+    "jakobsen2012",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain"
+  ],
+  research: {
+    "card": "grip/research/dumbbell_lateral_raise.json",
+    "rev": 1
   },
 } satisfies BuiltHowTo;
