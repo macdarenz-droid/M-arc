@@ -375,7 +375,7 @@ export function l2bCompare(g, a, label, max = 12) {
  * app's sheet panel; build 1194 composites only the modal dialog), so it is measured, never assumed.
  * Returns { x, y, el } in viewport coordinates, `el` a short name of the layer's element.
  */
-export async function rasterOrigin(page, fitSel) {
+export async function rasterOrigin(page, fitSel, known = null) {
   if (!page.__ht3cdp) {
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('DOM.enable'); await cdp.send('LayerTree.enable');
@@ -397,8 +397,9 @@ export async function rasterOrigin(page, fitSel) {
     if (!layers) throw new Error('rasterOrigin: no layer tree from Chromium');
     return new Set(layers.map(l => l.backendNodeId).filter(Boolean));
   };
-  let owners = await readOwners();
-  for (let k = 0; k < 4; k++) { const again = await readOwners(); const same = again.size === owners.size && [...again].every(x => owners.has(x)); owners = again; if (same) break; }
+  let owners = known ?? await readOwners();
+  for (let k = 0; !known && k < 4; k++) { const again = await readOwners(); const same = again.size === owners.size && [...again].every(x => owners.has(x)); owners = again; if (same) break; }
+  if (fitSel == null) return owners;   // layerOwners()
   const { result } = await cdp.send('Runtime.evaluate', { expression: `(() => { const out = []; for (let e = document.querySelector(${JSON.stringify(fitSel)}); e; e = e.parentElement) out.push(e); return out; })()` });
   const { result: props } = await cdp.send('Runtime.getProperties', { objectId: result.objectId, ownProperties: true });
   const els = props.filter(p => /^\d+$/.test(p.name)).sort((a, b) => a.name - b.name);
@@ -406,80 +407,94 @@ export async function rasterOrigin(page, fitSel) {
   for (const p of els) { const { node } = await cdp.send('DOM.describeNode', { objectId: p.value.objectId }); if (owners.has(node.backendNodeId)) { depth = +p.name; break; } }
   await cdp.send('Runtime.releaseObject', { objectId: result.objectId });
   return page.evaluate(([sel, depth]) => {
-    if (depth < 0) return { x: -scrollX, y: -scrollY, el: 'document' };
+    if (depth < 0) return { x: -scrollX, y: -scrollY, el: 'document', self: false };
     let e = document.querySelector(sel); for (let k = 0; k < depth; k++) e = e.parentElement;
     const r = e.getBoundingClientRect(), cs = getComputedStyle(e), scroller = /(auto|scroll)/.test(cs.overflowY + cs.overflowX);
     const name = `${e.tagName.toLowerCase()}${e.id ? '#' + e.id : ''}${[...e.classList].map(c => '.' + c).join('')}`;
-    return scroller ? { x: r.left + e.clientLeft - e.scrollLeft, y: r.top + e.clientTop - e.scrollTop, el: name } : { x: r.left, y: r.top, el: name };
+    return { ...(scroller ? { x: r.left + e.clientLeft - e.scrollLeft, y: r.top + e.clientTop - e.scrollTop } : { x: r.left, y: r.top }), el: name, self: depth === 0 };
   }, [fitSel, depth]);
 }
 
+/** The element ids (backendNodeId) that own a compositing layer, read until stable (see rasterOrigin). */
+export const layerOwners = page => rasterOrigin(page, null);
+
+/** The golden block's parts in each page, plate-fit to tempo (the app's zoom slot excluded), as selectors. */
+const PARTS = ['.cue-line', '.plate-controls', '.tells', '.tempo'];
+const partSels = (which, id) => (which === 'app'
+  ? ['dialog.sheet.ht .ht-plate-fit', ...PARTS.map(p => `dialog.sheet.ht .ht-golden > ${p}`)]
+  : [`#${id}-plate`, ...PARTS.map(p => `#card-${id} > ${p}`)]);
+
 /**
- * The golden card presented as the app presents its sheet, so both rasterise the same way (D-HT3): a modal <dialog>
- * at the app dialog's place and width, holding a scroll box with the app panel's size, 1 px top and side borders,
- * scroll height and scroll offset. Chromium decides per build which of these gets its own layer (build 1194 only the
- * dialog; build 1243 also every overflow:auto scroller, like the app's panel), so mirroring the structure keeps the
- * two pages on the same layer kind in every build. Inside, a wrapper with the gallery group's 15 px gutter (it clips
- * the card's own 1 px side and bottom borders, which fall outside the capture) puts the plate-fit at the app's offset
- * from the scroll box's origin, and its height evens out the scroll height. Only the capture changes: the card node,
- * its markup and every style it inherits (the dialog inherits #sheets' colour and font) stay as they are.
- * `at` = appOffset(), measured on every capture. `extra` shifts the plate down for the controls (128: the same
- * raster phase; 1: not). The layer each page's plate rasterises in is read back and must be of the same kind.
+ * Capture mode (D-HT3, the supervisor's fallback of 2026-09-30): every part of the golden block gets its own
+ * compositing layer (`will-change: transform`, inline, removed after the capture), in both pages, at the same
+ * sub-pixel position. Each part then rasterises from its own box, whatever layer Chromium gives the sheet around it
+ * (build 1194: the dialog; build 1243: the scrolling panel), so the two pages rasterise alike in every build.
+ * With `check`, each visible part must own its layer (read back from Chromium's layer tree); returns the problems.
  */
-export async function presentGolden(page, id, at, extra = 0, paused = false) {
+export async function ownLayers(page, which, id, on, check = false) {
+  const sels = partSels(which, id);
+  await page.evaluate(([sels, on]) => { for (const s of sels) { const e = document.querySelector(s); if (e) e.style.willChange = on ? 'transform' : ''; } }, [sels, on]);
+  if (!on || !check) return [];
+  const bad = [], owners = await layerOwners(page);
+  for (const s of sels) {
+    const shown = await page.evaluate(s => { const e = document.querySelector(s); return !!e && getComputedStyle(e).display !== 'none'; }, s);
+    if (!shown) continue;
+    const o = await rasterOrigin(page, s, owners);
+    if (!o.self) bad.push(`${which} ${s} rasterises in ${o.el}, not its own layer`);
+  }
+  return bad;
+}
+
+/**
+ * The golden card presented in a modal <dialog> (the dialog inherits #sheets' colour and font; its side padding is the
+ * gallery group's 16 px gutter, moved by the sub-pixel difference), placed so the plate-fit sits at exactly the app's
+ * viewport position (`at` = appOffset(), measured on every capture), with every block part on its own layer (ownLayers).
+ * Only the capture changes: the card node, its markup and every style it inherits stay as they are. `extra` moves the
+ * plate down; `own: false` (the controls) keeps the parts in the dialog's layer, where the raster phase shows.
+ * Returns the layer problems (each part must own its layer).
+ */
+export async function presentGolden(page, id, at, extra = 0, paused = false, own = true) {
   const fitSel = `#${id}-plate`;
-  const got = await page.evaluate(([id, a, extra]) => {
+  const got = await page.evaluate(([id, at, extra]) => {
     const c = document.getElementById(`card-${id}`);
     let d = document.getElementById('ht3-present');
     if (!d) {
       d = document.createElement('dialog'); d.id = 'ht3-present';
-      d.style.cssText = 'box-sizing:border-box;padding:0;border:0;margin:0;max-width:none;max-height:none;background:transparent;overflow:visible;color:inherit;font:inherit;letter-spacing:inherit';
-      const p = document.createElement('div'); p.id = 'ht3-panel'; p.style.cssText = 'box-sizing:border-box;border:1px solid;border-bottom:0;overflow:auto';
-      const w = document.createElement('div'); w.id = 'ht3-wrap'; w.style.cssText = 'box-sizing:border-box;overflow:clip;padding:0 15px';
-      // the app panel's sticky header (.sheet-top: sticky, z-index 1, opaque): a sticky child is one of the reasons
-      // Chromium gives a scroller its own layer, so the mirror carries one of the same size and paint
-      const hd = document.createElement('div'); hd.id = 'ht3-head'; hd.style.cssText = 'box-sizing:border-box;position:sticky;top:-8px;z-index:1';
-      d.append(p); p.append(hd); p.append(w); document.getElementById('sheets').append(d);
+      d.style.cssText = 'box-sizing:border-box;padding:0 16px;border:0;margin:0;inset:0 auto auto 0;width:100%;max-width:none;max-height:none;background:transparent;overflow:visible;color:inherit;font:inherit;letter-spacing:inherit';
+      document.getElementById('sheets').append(d);
     }
-    const p = document.getElementById('ht3-panel'), w = document.getElementById('ht3-wrap');
-    if (c.parentElement !== w) { c.before(Object.assign(document.createElement('i'), { id: 'ht3-home' })); w.append(c); }
-    Object.assign(d.style, { inset: `${a.top}px auto auto ${a.left}px`, width: `${a.w}px` });
-    Object.assign(p.style, { width: `${a.w}px`, height: `${a.h}px`, background: a.bg, borderColor: a.bc, borderRadius: a.br });   // painted like the app panel: an opaque layer composites like one
-    Object.assign(document.getElementById('ht3-head').style, { height: `${a.hh}px`, background: a.hbg });
-    Object.assign(w.style, { marginTop: '0px', height: 'auto' });
+    if (c.parentElement !== d) { c.before(Object.assign(document.createElement('i'), { id: 'ht3-home' })); d.append(c); }
     if (!d.open) d.showModal();
-    const at = () => { const f = document.getElementById(`${id}-plate`).getBoundingClientRect(), r = p.getBoundingClientRect(); return { offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft) }; };
-    w.style.marginTop = `${a.offY + extra - at().offY}px`;   // may be negative: the card's own header then slides under the sticky one, as app content does
-    w.style.height = `${w.offsetHeight + a.sh + extra - p.scrollHeight}px`;
-    p.scrollTop = a.st;
-    return { ...at(), sh: p.scrollHeight, ch: p.clientHeight, st: p.scrollTop };
+    Object.assign(d.style, { top: '0px', paddingTop: '0px', paddingLeft: '16px', paddingRight: '16px' });
+    const f0 = document.getElementById(`${id}-plate`).getBoundingClientRect();
+    const dx = at.x - f0.left;
+    // `extra` moves the plate inside the dialog (its layer), not the dialog: that is what shows the raster phase
+    Object.assign(d.style, { top: `${at.y - f0.top}px`, paddingTop: `${extra}px`, paddingLeft: `${16 + dx}px`, paddingRight: `${16 - dx}px` });
+    const f = document.getElementById(`${id}-plate`).getBoundingClientRect();
+    return { x: f.left, y: f.top };
   }, [id, at, extra]);
-  if (got.offX !== at.offX || got.offY !== at.offY + extra || got.sh !== at.sh + extra || got.ch !== at.ch || got.st !== at.st)
-    throw new Error(`presentGolden: the golden sits at ${JSON.stringify(got)}, the app at ${JSON.stringify(at)} (+${extra})`);
-  const g = await rasterOrigin(page, fitSel);
-  const kind = el => (el.startsWith('dialog') ? 'dialog' : el.includes('sheet-panel') || el.includes('#ht3-panel') ? 'scroller' : el);
-  if (at.layer && kind(g.el) !== kind(at.layer)) throw new Error(`presentGolden: the golden plate rasterises in ${g.el}, the app's in ${at.layer}`);
+  if (got.x !== at.x || got.y !== at.y + extra) throw new Error(`presentGolden: the golden plate is at ${got.x},${got.y}, the app's at ${at.x},${at.y} (+${extra})`);
+  const bad = own ? await ownLayers(page, 'golden', id, true, true) : [];
   if (paused) await frames2(page); else await settle(page);   // paused Trace animations never end, so wait for paint only
+  return bad;
 }
 
-/** Puts the golden card back where it was. */
+/** Puts the golden card back where it was (and its parts back in the card's layer). */
 export async function unpresentGolden(page, paused = false) {
   await page.evaluate(() => {
+    for (const e of document.querySelectorAll('#ht3-present [style*="will-change"]')) e.style.willChange = '';
     const d = document.getElementById('ht3-present'), home = document.getElementById('ht3-home');
     if (d && home) { home.replaceWith(d.querySelector('.sheet-card')); d.close(); }
   });
   if (paused) await frames2(page); else await settle(page);
 }
 
-/** The app sheet's geometry the golden presentation mirrors, and the layer its plate rasterises in. */
+/** The app plate-fit's viewport position (with its parts on their own layers), and whether the sheet scrolls. */
 export async function appOffset(page) {
-  const o = await rasterOrigin(page, 'dialog.sheet.ht .ht-plate-fit');
-  const r = await page.evaluate(() => {
-    const p = document.querySelector('dialog.sheet.ht .sheet-panel'), f = p.querySelector('.ht-plate-fit').getBoundingClientRect(), r = p.getBoundingClientRect();
-    const cs = getComputedStyle(p), top = p.querySelector('.sheet-top');
-    return { hh: top.getBoundingClientRect().height, hbg: getComputedStyle(top).backgroundColor, bg: cs.backgroundColor, bc: cs.borderTopColor, br: `${cs.borderTopLeftRadius} ${cs.borderTopRightRadius} 0 0`, top: r.top, left: r.left, w: r.width, h: r.height, sh: p.scrollHeight, ch: p.clientHeight, st: p.scrollTop, offY: f.top - (r.top + p.clientTop) + p.scrollTop, offX: f.left - (r.left + p.clientLeft), scrolls: p.scrollHeight > p.clientHeight };
+  return page.evaluate(() => {
+    const p = document.querySelector('dialog.sheet.ht .sheet-panel'), f = p.querySelector('.ht-plate-fit').getBoundingClientRect();
+    return { x: f.left, y: f.top, scrolls: p.scrollHeight > p.clientHeight };
   });
-  return { ...r, layer: o.el };
 }
 
 /** F3: the golden block's markup, serialised as it stands (wrapper classes mapped back, the zoom slot dropped). */
@@ -577,9 +592,11 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
         await settleApp(app.page);
         if ((await scrolls()) || !(await fits())) P(`${id} ${label}: the sheet still scrolls or the region does not fit at ${width}x${TALL_H}`);
       }
+      const own = await ownLayers(app.page, 'app', id, true, true);
       const ao = await appOffset(app.page);
-      (stats.layers ??= {})[ao.layer] = (stats.layers[ao.layer] ?? 0) + 1;
-      await presentGolden(gold.page, id, ao);
+      own.push(...await presentGolden(gold.page, id, ao));
+      stats.ownLayers = (stats.ownLayers ?? 0) + (own.length ? 0 : 1);
+      for (const b of own) P(`${id} ${label}: ${b}`);
       lap('present');
       const [ra, rg] = await Promise.all([region(app.page, G.app(id), 'app'), region(gold.page, G.golden(id), 'golden')]);
       const exp = width === 390 ? 358 : null;
@@ -606,6 +623,7 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
         }
         if (!meetsRule(d)) P(`${id} ${label} @${width}${tall ? `x${TALL_H}` : ''} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}); trace/mistake aria-pressed app ${await app.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)} golden ${await gold.page.evaluate(i => [`${i}-trace`, `${i}-mistake`].map(x => document.getElementById(x)?.getAttribute('aria-pressed')).join('/'), id)}`);
       }
+      await ownLayers(app.page, 'app', id, false);
       if (tall) { await Promise.all([app.page.setViewportSize({ width, height: 844 }), gold.page.setViewportSize({ width, height: 844 })]); await settleApp(app.page); }
     };
     const keys = (mode) => app.page.$$eval(`dialog.sheet.ht .ht-golden figure[data-mode="${mode}"] .plate-callout`, bs => bs.map(b => b.dataset.key));
@@ -782,7 +800,7 @@ export async function presentControls(browser, theme = 'silent-black', id = HT_P
   const shots = [];
   for (const extra of [0, 128, 1]) {
     const { ctx, page } = await openGolden(browser, theme);
-    await presentGolden(page, id, { hh: 0, hbg: 'transparent', bg: 'transparent', bc: 'transparent', br: '0 0 0 0', top: 0, left: 0, w: 390, h: 1000, sh: 999, ch: 999, st: 0, offY: 88 + extra, offX: 15, layer: null });   // a scroll box that never overflows, the plate moved down by `extra`
+    await presentGolden(page, id, { x: 16, y: 100 }, extra, false, false);   // the parts stay in the dialog's layer: the raster phase must show
     shots.push({ png: await capture(page, await region(page, G.golden(id), 'golden')), page, ctx });
   }
   const d128 = await diffPng(shots[0].page, shots[0].png, shots[1].png), d1 = await diffPng(shots[0].page, shots[0].png, shots[2].png);

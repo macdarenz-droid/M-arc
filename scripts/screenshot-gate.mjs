@@ -5777,8 +5777,8 @@ for (const theme of ['silent-black', 'paper']) {
 // side by side: every element's box (±0.01 px) and computed style, the block markup, and the pixels (no channel off by
 // more than 1/255, at most 0.02 % off by 1) for 8 plates x 5 themes x {normal, mistake}, every callout and tell and
 // 360/340 px in Silent Black and Paper, the Trace animation lists, frames at 0.6/1.2/1.8 s (2 themes) and 2.4 s,
-// and the reduced-motion end state (all themes). Pixel captures present the golden card in a modal dialog at the
-// app's raster phase and run with LCD text off, like a phone (D-HT3); two controls prove that choice is not blind.
+// and the reduced-motion end state (all themes). Pixel captures give every block part its own layer in both pages,
+// at the same sub-pixel position, and run with LCD text off, like a phone (D-HT3); two controls prove the phase matters.
 // Also: the entry only where approved content exists (bench press and a custom exercise have none), S0 on every open,
 // the S0 element budget, Back / Escape / drag-to-close, focus back on the entry, 44 px targets, no stored data.
 {
@@ -5794,7 +5794,7 @@ for (const theme of ['silent-black', 'paper']) {
     const ctl = { d128: `${ctlS.d128}/${ctlP.d128}`, d1: `${ctlS.d1}/${ctlP.d1}` };
     for (const p of [...fid.problems, ...beh.problems, ...ctlS.problems, ...ctlP.problems]) errors.push(`${tag}: ${p}`);
     if (fid.stats.pairs < 300) errors.push(`${tag}: only ${fid.stats.pairs} pixel pairs compared, expected the full matrix (>= 300)`);
-    console.log(`${tag} (${ht3.version()}): ${fid.stats.pairs} pixel pairs (max ${fid.stats.offMax} px off, ${fid.stats.off1Max} off by 1), ${fid.stats.l2b} L2b walks, ${fid.stats.f3} F3 markup compares, ${fid.stats.anims} Trace animation lists, raster layers ${JSON.stringify(fid.stats.layers)}, phase ms ${JSON.stringify(fid.stats.t)}, taller viewport for ${fid.stats.tall.length} captures${fid.stats.tall.length ? ` (${fid.stats.tall.join(', ')})` : ''}; S0 ${beh.stats.elementsS0} elements; controls (Silent Black/Paper): phase +128 ${ctl.d128} px, +1 ${ctl.d1} px (HT-1 keeps the root-layer golden self-check at 0 px); ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+    console.log(`${tag} (${ht3.version()}): ${fid.stats.pairs} pixel pairs (max ${fid.stats.offMax} px off, ${fid.stats.off1Max} off by 1), ${fid.stats.l2b} L2b walks, ${fid.stats.f3} F3 markup compares, ${fid.stats.anims} Trace animation lists, parts on their own layers in ${fid.stats.ownLayers ?? 0} captures, phase ms ${JSON.stringify(fid.stats.t)}, taller viewport for ${fid.stats.tall.length} captures${fid.stats.tall.length ? ` (${fid.stats.tall.join(', ')})` : ''}; S0 ${beh.stats.elementsS0} elements; controls (Silent Black/Paper): phase +128 ${ctl.d128} px, +1 ${ctl.d1} px (HT-1 keeps the root-layer golden self-check at 0 px); ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   } finally {
     await ht3.close();
   }
