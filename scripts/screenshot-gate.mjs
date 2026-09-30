@@ -6014,7 +6014,10 @@ for (const theme of ['silent-black', 'paper']) {
       await H.closeHowTo(page);
       return dt;
     }, 5);
-    // perf.mjs's TaskDuration helper (plan §2, for HT-8/HT-10 too): the same open, timed on the page's own
+    // The long-task budget covers exactly these 5 opens, so the observer stops right here — a 6th open
+    // (below) must never add to what it collected, or a slow one could fail A3 on its own account.
+    const longTasks = await stopLongTasks();
+    // perf.mjs's TaskDuration helper (plan §2, for HT-8/HT-10 too): one more open, timed on the page's own
     // clock instead of Node's Date.now() around the Playwright calls. Informational only — logged beside
     // the Date.now() median as evidence it reads a real value in the same ballpark, not a second gate.
     const pageClockMs = await P.taskDuration(page, 'ht3b-tap-to-plate', async () => {
@@ -6022,7 +6025,6 @@ for (const theme of ['silent-black', 'paper']) {
       await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
     });
     await H.closeHowTo(page);
-    const longTasks = await stopLongTasks();
     await reset();
     if (median > 400) errors.push(`${tag} A3: tap-to-plate median at 4x throttle is ${median} ms (samples ${samples.join(',')}), over 400 ms`);
     const over = longTasks.filter(d => d > 100);
