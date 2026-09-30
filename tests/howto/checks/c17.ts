@@ -7,15 +7,22 @@
 // fetched - an XML namespace is an identifier, not a network call - so C17 allows exactly these two whole attribute
 // forms and nothing else: the same URL anywhere else (an href, a CSS url(...), inside fetch(), or an xmlns pointing
 // at a different host) still fails, same as any other bare URL.
+//
+// D-HT4-C17 escaped-quote form (HT-7's follow-up note, 2026-09-30): HT-6/HT-7's `src/howto/generated/*.ts` hold
+// golden B's markup inside a JSON string literal, so the attribute appears as `xmlns=\"http://www.w3.org/2000/svg\"`
+// - an escaped quote, which the first cut's pattern (unescaped quotes only) missed. An optional backslash is now
+// allowed before each quote, with the backreference still requiring the closing delimiter to match the opening one
+// exactly (both escaped, or both not) - never a mismatched pair, and never a bare backslash-quote anywhere else.
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const BANNED = [/\bfetch\s*\(/, /\bXMLHttpRequest\b/, /\bnew Worker\s*\(/];
 const URL_RE = /https?:\/\/[^\s'"`)]+/g;
-/** Exactly these whole attributes, either quote style - never a bare occurrence of the same URL elsewhere. */
+/** Exactly these whole attributes, either quote style, optionally backslash-escaped (matching escape on both
+ *  sides) - never a bare occurrence of the same URL elsewhere. */
 const ALLOWED_XMLNS_ATTRS = [
-  /xmlns=(["'])http:\/\/www\.w3\.org\/2000\/svg\1/g,
-  /xmlns:xlink=(["'])http:\/\/www\.w3\.org\/1999\/xlink\1/g,
+  /xmlns=(\\?)(["'])http:\/\/www\.w3\.org\/2000\/svg\1\2/g,
+  /xmlns:xlink=(\\?)(["'])http:\/\/www\.w3\.org\/1999\/xlink\1\2/g,
 ];
 
 function walk(dir: string): string[] {

@@ -320,7 +320,10 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
 
   it('C17 fails on the fixture that calls fetch(), and only on the known C17 fixtures in the same folder', () => {
     const bad = checkC17([new URL('.', import.meta.url).pathname + 'fixtures/bad']);
-    const knownC17Bad = ['c17-network.ts', 'c17-xmlns-other-url.ts', 'c17-xmlns-outside-attr.ts', 'c17-xmlns-other-host.ts'];
+    const knownC17Bad = [
+      'c17-network.ts', 'c17-xmlns-other-url.ts', 'c17-xmlns-outside-attr.ts', 'c17-xmlns-other-host.ts',
+      'c17-xmlns-escaped-other-host.ts',
+    ];
     expect(bad.every(m => knownC17Bad.some(f => m.includes(f)))).toBe(true);
     expect(bad.some(m => m.includes('c17-network.ts') && m.includes('fetch'))).toBe(true);
   });
@@ -335,6 +338,20 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     expect(bad.some(m => m.includes('c17-xmlns-outside-attr.ts') && m.includes('w3.org/2000/svg'))).toBe(true);
     // c17-xmlns-other-host.ts: xmlns pointing at a different host still fails.
     expect(bad.some(m => m.includes('c17-xmlns-other-host.ts') && m.includes('example.com/not-the-real-namespace'))).toBe(true);
+  });
+
+  it('D-HT4-C17 escaped-quote follow-up (HT-7): the escaped-quote xmlns form (src/howto/generated/*.ts\'s own JSON-string encoding) is allowed exactly, and still fails when it points at a different host', () => {
+    const bad = checkC17([new URL('.', import.meta.url).pathname + 'fixtures/bad']);
+    // c17-xmlns-escaped-other-host.ts: the escaped-quote form pointing at a different host still fails (4th mutation).
+    expect(bad.some(m => m.includes('c17-xmlns-escaped-other-host.ts') && m.includes('example.com/not-the-real-namespace'))).toBe(true);
+    // The escaped-quote form of the real SVG/xlink namespaces, on their own, passes clean.
+    const good = mkdtempSync(join(tmpdir(), 'c17-good-escaped-'));
+    try {
+      writeFileSync(join(good, 'ok.ts'), 'export const a = \'{"svg":"<svg xmlns=\\"http://www.w3.org/2000/svg\\" xmlns:xlink=\\"http://www.w3.org/1999/xlink\\"></svg>"}\';');
+      expect(checkC17([good])).toEqual([]);
+    } finally {
+      rmSync(good, { recursive: true, force: true });
+    }
   });
 
   it('D-HT4-C17: the exact allowed xmlns/xlink attribute forms pass clean, on their own, in either quote style', () => {
