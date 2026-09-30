@@ -2,6 +2,8 @@
 
 The guard (`.github/scripts/agent-guard.sh`) runs on every push. The general working rules, the file ownership table and the delivery process are in `AGENTS.md`. This page explains the guard's messages and how to fix them.
 
+The step-by-step procedures for each role are in `.claude/skills/builder/SKILL.md`, `.claude/skills/reviewer/SKILL.md` and `.claude/skills/supervisor/SKILL.md`, and the rules for particular files are in `.claude/rules/`.
+
 | Who | Branch | Owns |
 |---|---|---|
 | Supervisor (Claude, acting for the owner) | its own docs branch | the task board, the merge queue, CI files and these rules |
