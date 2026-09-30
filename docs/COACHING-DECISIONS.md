@@ -1149,3 +1149,42 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Confirmed closed**: merging HT-4's head (`8bf6b44`: golden-B re-vendored at `a7a0b74`, D-HT4-C2) into `claude/ht-5-content-generator` and regenerating clears both `source-gate` findings reported on PR #116 with no further code change - `docs/research/howto/sources.json` now has zero null `access`/`checked` entries, and `checkC2` no longer flags `brachialis` in `feel.secondary`. `content-gen.test.ts` is 9/9 green (was 7/9); the full suite is 1841/1841.
 - **Decided**: `src/howto/types.ts`'s `BuiltHowTo.zooms` changes from `never` to `readonly ZoomDescriptor[]`, a new exported type = `Pick<ZoomSpec, 'key' | 'chip' | 'chipCaption' | 'heading' | 'kind' | 'feelRow'>`. `content.mjs`'s `baseFieldsText` narrows `content.zooms` (the full golden-B `ZoomSpec[]`, still used for the checks) to this descriptor shape before emitting it into `ht-<slug>.ts`, `===` golden B field for field, in golden-B order. Rendered crop and hand strings stay only in HT-7's `ht-<slug>-zoom.ts` and HT-6's hand chunks.
   **Why**: HT-6 reported on PR #116 that the S0 "Look closer" chip row (`chip`, `chipCaption`, `heading`, `kind`, `feelRow` per zoom, plus the "Show me `<chip>`" labels) has nothing to read before any lazy zoom/hand chunk loads, since those only load on first open/tap. The supervisor ruled the same thread: zoom descriptors belong in the base chunk (plan 2.2 already says `ht-<slug>.ts` holds "section text and descriptors"), minimal shape, `BuiltHowTo.zooms` typed accordingly, one line in `types.ts`. `content-gen.test.ts` now asserts each descriptor's keys and values `===` golden B's corresponding `zooms[i]` fields, for all 8.
+
+## HT-9 follow-up: HT-5 merged, Setup/Risks finished and tested, one new gap found (HT-9 builder, 2026-09-30)
+
+- **Confirmed closed**: merging HT-5's head (`a6dcbc4`, plus HT-3's and HT-4's moved heads) into
+  `claude/ht-9-setup-risks-sources` and re-typechecking clears every finding the earlier HT-9 entries flagged as
+  blocked on HT-5: `@/howto/archetypes` resolves, and `BuiltHowTo.setup/risks/riskFlags/zooms` are real types, not
+  `never`. `Setup.tsx` and `Risks.tsx` now typecheck clean repo-wide (`npx tsc --noEmit`, zero errors outside the
+  one gap below) and are unit-tested against the real generated modules for all 8 exercises (not synthetic
+  fixtures alone): `tests/howto/sections-risks.test.ts` (2/2, mutation-proven: a component that always shows only
+  the wrist block renders 1 `.redflag` div instead of pull-up's real 3), `tests/howto/sections-setup.test.ts`
+  (still 5/5, retyped against the now-real `SetupStep`/`ZoomDescriptor` shapes). Full suite 1870/1870.
+- **Decided (a merge conflict, not a design choice)**: HT-3's and HT-4's moved heads both touched
+  `scripts/screenshot-gate.mjs` (add-only per `.claude/rules/shared-files.md`) - HT-3's block and HT-4's block as
+  two separate `{ tag = 'HT-…' }` scopes, and the shared PASS-line string, edited by both. Kept both blocks as
+  siblings; for the PASS line, kept HT-3's `FG-OFF` wording (HT-3 owns that text under D-HT1, and HT-4's copy of it
+  was a stale fork of an earlier version) and appended HT-4's own `", and HT-4 (...) verified."` clause rather than
+  picking one side and dropping the other's content.
+- **Found (new; not the same as the earlier "Sources data shape" note, which is now resolved to a specific gap)**:
+  `BuiltHowTo.sources` is confirmed `readonly SourceId[]` (bare ids) end to end - `content-types.ts` (HT-4),
+  `types.ts`'s broadened `BuiltHowTo` (HT-5), and the real generated `ht-<slug>.ts` files all agree. HT-5's
+  `content.mjs` already builds the full `id -> Source` registry (`cite`/`url`/`kind`/`access`/`checked`) - the
+  `registry`/`sortedRegistry` in `outputs()` - but writes it only to `docs/research/howto/sources.json`, which
+  `tsconfig.json`'s `include` does not cover (`["src", "tests", "scripts/**/*.ts", "vite.config.ts"]`), confirmed
+  by trying it: an import from `docs/` fails typecheck. So nothing under `src/` can resolve a source id to a
+  citation today. `Sources.tsx` imports `SOURCES` from `@/howto/generated/sources` (a small file that does not
+  exist yet - the one remaining `tsc` error on this branch, deliberately, same pattern as the earlier
+  archetypes.ts/BuiltHowTo wait): mirroring the module layout's own `generated/*` convention, and mechanical for
+  whoever owns `content.mjs` to add (the registry is already computed; it needs one more `out.push` alongside the
+  existing `docs/research/howto/sources.json` line, exporting the same object as a `.ts` module).
+  The evidence badge half of the same section is **not** part of this gap: HT-5's `loadContent` doc comment
+  confirms golden B's per-source `use`/`note` (EVIDENCE_LABELS) is folded into each citing field's own `Claim` by
+  golden B itself, so `Sources.tsx`'s `evidenceFor()` derives it by scanning the claim-bearing fields `BuiltHowTo`
+  already carries (`setup`, `posture`, `mistakes`, `risks`, `handling`) and unions the tags of every claim citing
+  that source - the real data flow HT-5 already documented, not a second guess.
+  **Why**: card risk_and_recovery ("if a golden-B spec uses a field GA lacks, add it to the types... never drop a
+  mockup field") is the same class of gap, one level further down the pipeline (a real registry exists, just not
+  where the app can reach it); `tools/plates/gen/content.mjs` and `src/howto/generated/**` are both reserved to
+  HT-9 (HT-5's write_scope / common reserved_paths), so the fix isn't mine to make, only to report with the exact
+  location and the minimal change.

@@ -2,22 +2,25 @@
 // sourcesSection() (tools/plates/layers/artifact/howto-layers.mjs). The owner's DISCLAIMER sits right after the
 // collapsed list, exactly where golden B emits it (not inside "Risks"; O2 closed 2026-09-30).
 //
-// Data-shape note (docs/COACHING-DECISIONS.md, HT-9): golden B resolves each source id through its own per-file
-// `SOURCES`/`EVIDENCE_LABELS` maps, which content-types.ts (HT-4) does not carry forward as a named type; only
-// `Source` (bibliographic) and `EvidenceTag` exist there. Until HT-5's archetypes.ts/generated output settles the
-// real shape, this section reads `howTo.sources` as `Source` plus the two golden-B evidence fields (`tags`, `note`)
-// it needs to render the badges, reconciled against HT-5's actual generated type when that card lands.
+// Reported gap (docs/COACHING-DECISIONS.md, HT-9, "the missing Source registry"): `BuiltHowTo.sources` is
+// `readonly SourceId[]` (content-types.ts/HT-4, confirmed against HT-5's actual merged output) - bare ids, no
+// bibliographic record. HT-5's `content.mjs` already builds the full `id -> Source` registry (cite/url/kind/
+// access/checked) and writes it to `docs/research/howto/sources.json` for verification, but never to anything
+// under `src/` the app can import (tsconfig's `include` does not cover `docs/`, confirmed). `SOURCES` below is
+// that missing piece, at the path a fix should add it (mirrors the module layout's own `generated/*` convention);
+// it does not exist yet, so this file will not compile or run until that lands - not invented here.
+//
+// The per-source evidence badge (golden B's EVIDENCE_LABELS `{tag, text}`) is NOT part of that gap: HT-5's
+// `loadContent` doc comment confirms golden B folds a source's per-use `use`/`note` into that same claim's own
+// `Claim.tags`/note wherever the source is actually cited, so `evidenceFor()` below derives it by scanning the
+// claim-bearing fields `BuiltHowTo` already carries (setup, posture, mistakes, risks, handling) rather than
+// reading a second registry - the real, intended data flow, not a guess.
 import { chromeIdOf } from '../PlateView';
 import { IconChevronDown } from '@/ui/icons';
 import { DISCLAIMER, SHOW_EVIDENCE } from '@/howto/archetypes';
-import type { EvidenceTag, Source } from '@/howto/content-types';
+import { SOURCES } from '@/howto/generated/sources';
+import type { Claim, EvidenceTag, SourceId } from '@/howto/content-types';
 import type { SectionProps } from './index';
-
-export interface SourceWithEvidence extends Source {
-  /** What this source backs for this exercise (golden B's per-exercise EVIDENCE_LABELS override; may be absent). */
-  readonly tags?: readonly EvidenceTag[];
-  readonly note?: string;
-}
 
 const TAG_WORD: Readonly<Record<EvidenceTag, string>> = {
   DATA: 'Measured',
@@ -26,15 +29,40 @@ const TAG_WORD: Readonly<Record<EvidenceTag, string>> = {
   WEAK: 'Weak for this use',
 };
 
+/** Every claim `howTo` carries today (HT-6/HT-7's zoom/feel claims land once those fields stop being `never`). */
+function allClaims(howTo: SectionProps['howTo']): readonly Claim[] {
+  const claims: Claim[] = [];
+  for (const s of howTo.setup ?? []) claims.push(s.claim);
+  for (const p of howTo.posture ?? []) claims.push(p.claim);
+  for (const m of howTo.mistakes ?? []) claims.push(m.claim);
+  for (const r of howTo.risks ?? []) claims.push(r.claim);
+  const h = howTo.handling;
+  if (h && h.archetype !== 'none') {
+    claims.push(h.wrist.claim, h.thumb.claim);
+    if (h.handleChoice) claims.push(h.handleChoice.claim);
+    if (h.width) claims.push(h.width.claim);
+  }
+  return claims;
+}
+
+/** The union of tags every claim citing `id` in this exercise carries (golden B's EVIDENCE_LABELS, folded into
+ *  each claim by HT-5's generator - see the file header). */
+function evidenceFor(id: SourceId, claims: readonly Claim[]): readonly EvidenceTag[] {
+  const tags = new Set<EvidenceTag>();
+  for (const c of claims) if (c.sources.includes(id)) for (const t of c.tags) tags.add(t);
+  return [...tags];
+}
+
 export function Sources({ howTo }: SectionProps) {
   const pre = chromeIdOf(howTo);
-  const sources = (howTo.sources ?? []) as readonly SourceWithEvidence[];
+  const ids = howTo.sources ?? [];
+  const claims = allClaims(howTo);
   return (
     <>
       <details class="hw-sec srcs" id={`${pre}-sources`}>
         <summary id={`${pre}-sources-toggle`}>
           <span>Sources</span>
-          <span class="src-n">{sources.length}</span>
+          <span class="src-n">{ids.length}</span>
           <IconChevronDown size={18} />
         </summary>
         {SHOW_EVIDENCE && (
@@ -45,19 +73,23 @@ export function Sources({ howTo }: SectionProps) {
           </p>
         )}
         <ul class="src-list">
-          {sources.map(s => (
-            <li key={s.id}>
-              <p class="src-cite">
-                {s.url ? <a href={s.url} target="_blank" rel="noopener noreferrer">{s.cite}</a> : s.cite}
-              </p>
-              {SHOW_EVIDENCE && (s.tags?.length || s.note) && (
-                <p class="src-ev">
-                  {s.tags?.map(t => <span key={t} class={`ev ev-${t.toLowerCase()}`}>{TAG_WORD[t]}</span>)}
-                  {s.note && <span>{s.note}</span>}
+          {ids.map(id => {
+            const s = SOURCES[id];
+            if (!s) throw new Error(`${howTo.id}: source ${id} not in the registry`);
+            const tags = evidenceFor(id, claims);
+            return (
+              <li key={id}>
+                <p class="src-cite">
+                  {s.url ? <a href={s.url} target="_blank" rel="noopener noreferrer">{s.cite}</a> : s.cite}
                 </p>
-              )}
-            </li>
-          ))}
+                {SHOW_EVIDENCE && tags.length > 0 && (
+                  <p class="src-ev">
+                    {tags.map(t => <span key={t} class={`ev ev-${t.toLowerCase()}`}>{TAG_WORD[t]}</span>)}
+                  </p>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </details>
       <p class="ht-disclaimer" id={`${pre}-disclaimer`}>{DISCLAIMER}</p>

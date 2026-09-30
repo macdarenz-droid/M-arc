@@ -30,11 +30,15 @@ function fixture(setup: readonly SetupStep[]): BuiltHowTo {
 
 const step = (text: string, zoom?: string): SetupStep => ({ text, kind: 'get-in', zoom, claim: { tags: ['CONSENSUS'], sources: [] } });
 
-/** Depth-first walk collecting every element vnode (skips text/booleans/null), like error-boundary.test's `texts()`. */
-function elements(n: unknown): VNode[] {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type AnyVNode = VNode<Record<string, any>>;
+/** Depth-first walk collecting every element vnode (skips text/booleans/null), like error-boundary.test's `texts()`.
+ *  Props are read loosely (`Record<string, any>`), same as that test's own `VNode<{children?: unknown}>` cast: this
+ *  walks arbitrary golden-B-shaped markup (hidden, aria-expanded, data-*, class), not one fixed component's props. */
+function elements(n: unknown): AnyVNode[] {
   if (n == null || typeof n === 'boolean' || typeof n === 'string' || typeof n === 'number') return [];
   if (Array.isArray(n)) return n.flatMap(elements);
-  const v = n as VNode<{ children?: unknown }>;
+  const v = n as AnyVNode;
   if (!v.type) return elements(v.props?.children);
   return [v, ...elements(v.props?.children)];
 }
@@ -47,7 +51,7 @@ describe('HT9-A2: Setup ("Set it up")', () => {
     const tree = renderSetup(h, false, () => {});
     expect(byTag(tree, 'li')).toHaveLength(5);
     expect(byTag(tree, 'li').every(li => !li.props.hidden)).toBe(true);
-    expect(byTag(tree, 'button').filter(b => (b.props as { class?: string }).class?.includes('st-more'))).toHaveLength(0);
+    expect(byTag(tree, 'button').filter(b => b.props.class?.includes('st-more'))).toHaveLength(0);
   });
 
   it('collapses steps past SETUP_VISIBLE and reveals them, read in full, once "All N steps" is toggled open', () => {
@@ -57,14 +61,14 @@ describe('HT9-A2: Setup ("Set it up")', () => {
     expect(closedLis).toHaveLength(7);
     expect(closedLis.slice(0, 5).every(li => !li.props.hidden)).toBe(true);
     expect(closedLis.slice(5).every(li => li.props.hidden === true)).toBe(true);
-    const more = byTag(closed, 'button').find(b => (b.props as { class?: string }).class?.includes('st-more'))!;
+    const more = byTag(closed, 'button').find(b => b.props.class?.includes('st-more'))!;
     expect(more.props['aria-expanded']).toBe(false);
     expect(more.props.children).toBe('All 7 steps');
 
     const open = renderSetup(fixture(steps), true, () => {});
     const openLis = byTag(open, 'li');
     expect(openLis.every(li => !li.props.hidden)).toBe(true);
-    const moreOpen = byTag(open, 'button').find(b => (b.props as { class?: string }).class?.includes('st-more'))!;
+    const moreOpen = byTag(open, 'button').find(b => b.props.class?.includes('st-more'))!;
     expect(moreOpen.props['aria-expanded']).toBe(true);
     expect(moreOpen.props.children).toBe('Fewer steps');
   });
@@ -72,7 +76,7 @@ describe('HT9-A2: Setup ("Set it up")', () => {
   it('"All steps" is >= 44x44 (.fr-more, css/text.css) and the button carries aria-expanded (.st-show itself is HT-6\'s CSS, PR #112)', () => {
     const steps = [step('a'), step('b'), step('c'), step('d'), step('e'), step('f')];
     const tree = renderSetup(fixture(steps), false, () => {});
-    const more = byTag(tree, 'button').find(b => (b.props as { class?: string }).class?.includes('st-more'))!;
+    const more = byTag(tree, 'button').find(b => b.props.class?.includes('st-more'))!;
     expect(more.props).toHaveProperty('aria-expanded');
     const css = readFileSync('src/slices/howto/css/text.css', 'utf8');
     expect(css).toMatch(/\.fr-more \{[^}]*min-height: 44px/);
@@ -82,7 +86,7 @@ describe('HT9-A2: Setup ("Set it up")', () => {
     const withZoom = fixture([step('a', 'grip'), step('b')]);
     (withZoom as unknown as { zooms: unknown }).zooms = [{ key: 'grip', chip: 'Hand' }];
     const tree = renderSetup(withZoom, false, () => {});
-    const shows = byTag(tree, 'button').filter(b => (b.props as { class?: string }).class?.includes('st-show'));
+    const shows = byTag(tree, 'button').filter(b => b.props.class?.includes('st-show'));
     expect(shows).toHaveLength(1);
     const kids = ([] as unknown[]).concat(shows[0]!.props.children as unknown);
     expect(kids[0]).toBe('Show me the hand');
