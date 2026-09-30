@@ -15,14 +15,14 @@
       "gitBlob": "fa7c6645385a0b10102ef51a7fae25287676a9df"
     },
     "engine/SPEC.md": {
-      "sha256": "1b1c8a24e19a2ecbf9b5cb833320e2674f4f5e474a5f543bad9946bbc488b6a2",
-      "source": "7859292:docs/howto/technical-plate/engine/SPEC.md",
-      "gitBlob": "11b66f42723e98a29020f6f1ac11acda13a5ff17"
+      "sha256": "3199f4df74e08f465f96a15830ee21d88bf0d3a899ecc41e4e5c1f8fc26797e4",
+      "source": "f214700:docs/howto/technical-plate/engine/SPEC.md",
+      "gitBlob": "e743749fdaec8e9238ab1d5bb007bb9cf90e2f12"
     },
     "engine/body.mjs": {
-      "sha256": "e274ba64e5e4775b6f50246c7ced433e7024f152cbeb500b0c012bc57a731e89",
-      "source": "bc0f378:docs/howto/technical-plate/engine/body.mjs",
-      "gitBlob": "122d328fcd3ac33f89d31564c026fb5f5a590ed4"
+      "sha256": "704b42d651bb5c30fccfcc4411679ee46858469146f02862c490fabcd721fcba",
+      "source": "f214700:docs/howto/technical-plate/engine/body.mjs",
+      "gitBlob": "c4b017075b7dbc7d3f3d980e36802213497a79fa"
     },
     "engine/equipment.mjs": {
       "sha256": "99cd1bd3792ffde84f196a6ce776812132097144631c59c68d31ef95b8380c92",
@@ -55,9 +55,9 @@
       "gitBlob": "769d3d8b2617be918a054ede241b69f42a51770f"
     },
     "engine/plate.mjs": {
-      "sha256": "98415069863dd3982a6f77ba733bd66afd32ea59edd54e3532266b6afe296d42",
-      "source": "bc0f378:docs/howto/technical-plate/engine/plate.mjs",
-      "gitBlob": "620f5d927f9072b4967871892697a988e3f3e94c"
+      "sha256": "984cd4783b4a5bc6c14ec1c32cba0678e72348d38397227ef01536f3eed1131a",
+      "source": "f214700:docs/howto/technical-plate/engine/plate.mjs",
+      "gitBlob": "6113e70e4e22230647c3fce71fcd3be82f2864f3"
     },
     "engine/render.mjs": {
       "sha256": "eee26ec10e398a16afedc45b0ff763a088f4fb8efc5b90a161f57ca5a85ace47",
@@ -88,6 +88,11 @@
       "sha256": "adaec2d6451926aabcfd6987d5cacbb19c9bc6f402c3a5b5669b47f5c6e0a227",
       "source": "bc0f378:docs/howto/technical-plate/exercises/_test_front.mjs",
       "gitBlob": "15c86aa8c4b6afe65b1642613025b09782788e70"
+    },
+    "exercises/_test_flat.mjs": {
+      "sha256": "b3914ac00eefd6a5653d53080a285add831737b966cb68cb84b7d2028d145744",
+      "source": "f214700:docs/howto/technical-plate/exercises/_test_flat.mjs",
+      "gitBlob": "eb478e46a9de42d2843427dc217f11a198ade62a"
     },
     "exercises/_test_poly.mjs": {
       "sha256": "b93282cd2b69dcc7dfda88580063b3a3c54554f5777b2fb5417f6c83b9edac26",

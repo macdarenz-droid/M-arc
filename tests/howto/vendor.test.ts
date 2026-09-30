@@ -29,11 +29,11 @@ describe('HT1-A1 vendor lock (L0)', () => {
     expect(g.verifyVendor()).toEqual([]);
   });
 
-  it('the MANIFEST lists the engine, tokens.css, SPEC.md, the 7 specs, the 3 test specs, ref-src and build-page, and nothing else', () => {
+  it('the MANIFEST lists the engine, tokens.css, SPEC.md, the 7 specs, the 4 test specs, ref-src and build-page, and nothing else', () => {
     const m = g.readManifest();
     const paths = Object.keys(m.files).sort();
     const engine = ['body', 'equipment', 'gallery', 'geom', 'index', 'layout', 'measure-chars', 'plate', 'render', 'sheet', 'themes', 'zoom'].map(f => `engine/${f}.mjs`);
-    const specs = ['_test_front', '_test_poly', '_test_side', 'barbell_back_squat', 'hanging_leg_raise', 'lat_pulldown', 'leg_press', 'machine_chest_press', 'pull_up', 'seated_cable_row'].map(f => `exercises/${f}.mjs`);
+    const specs = ['_test_flat', '_test_front', '_test_poly', '_test_side', 'barbell_back_squat', 'hanging_leg_raise', 'lat_pulldown', 'leg_press', 'machine_chest_press', 'pull_up', 'seated_cable_row'].map(f => `exercises/${f}.mjs`);
     expect(paths).toEqual([...engine, 'engine/SPEC.md', 'engine/tokens.css', ...specs, 'ref-src/plate.mjs', 'ref-src/themes.mjs', 'artifact/build-page.mjs'].sort());
     for (const [p, e] of Object.entries(m.files) as [string, { source: string; md5?: string }][]) {
       if (p.startsWith('ref-src/')) {
@@ -41,7 +41,9 @@ describe('HT1-A1 vendor lock (L0)', () => {
         expect(e.md5).toBe(g.PINS.refSrcMd5[p]);
       } else {
         // LIB-25 [golden update]: the additive poly primitive (7859292) and its engine test (de00174), claude/howto-options.
-        const ref = ['engine/equipment.mjs', 'engine/SPEC.md'].includes(p) ? '7859292' : p === 'exercises/_test_poly.mjs' ? 'de00174' : 'bc0f378';
+        // LIB-26 [golden update]: the flat-palm hand option (body, plate, SPEC) and its engine test, f214700.
+        const ref = ['engine/body.mjs', 'engine/plate.mjs', 'engine/SPEC.md', 'exercises/_test_flat.mjs'].includes(p) ? 'f214700'
+          : p === 'engine/equipment.mjs' ? '7859292' : p === 'exercises/_test_poly.mjs' ? 'de00174' : 'bc0f378';
         expect(e.source).toBe(`${ref}:docs/howto/technical-plate/${p === 'artifact/build-page.mjs' ? 'build-page.mjs' : p}`);
       }
     }
@@ -86,7 +88,7 @@ describe('HT1-A1 vendor lock (L0)', () => {
   // with its MANIFEST entry still fails here and shows up as a visible change to this test.
   it('HT-2: the sorted path:sha256 list of MANIFEST.json hashes to its pinned literal', () => {
     const list = Object.entries(g.readManifest().files as Record<string, { sha256: string }>).map(([p, e]) => `${p}:${e.sha256}`).sort().join('\n');
-    expect(g.sha256(list)).toBe('aaa4a97e4b8fb5f0a13858e3ca7d789b01a61f75f84616e9211670f9a743c477');
+    expect(g.sha256(list)).toBe('628403e1d88d0f829d84857e18275675996f6370bc902aac93c8141e90d61f92');
   });
 });
 

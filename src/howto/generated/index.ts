@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=f18f9a9293e6d93af71a481a222ba4b986b8fc6ada4ee2c08fbca2d05c36e26b
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=5144ed2dfd81b1d1d80b1746b76dd40548b7d4ada7dc186fe2b2fa062d64f7e2
 import type { BuiltHowTo, LibId } from '../types';
 
 export const LOADERS: Record<LibId, () => Promise<{ default: BuiltHowTo }>> = {
