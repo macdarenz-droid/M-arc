@@ -1,0 +1,475 @@
+{
+  "id": "resistance_band_row",
+  "libId": "lib_resistance_band_row",
+  "name": "Resistance Band Row",
+  "family": "HROW (difference card of seated_cable_row)",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "floor-body"
+    ]
+  },
+  "parent": "seated_cable_row",
+  "inherit": [
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the band, like the cable, pulls the hands straight away from the body toward the feet, so the same rule applies: back of the hand in line with the forearm, no curling at the end of the pull."
+    },
+    {
+      "field": "posture['Torso upright and still']",
+      "why": "true for this child because both sources for the band row ask for a tall, neutral back with only the arms moving (c3), the same rule the parent applies on the bench."
+    },
+    {
+      "field": "posture['Elbows close to your sides, just past your ribs']",
+      "why": "true for this child because the band row pulls the elbows back close to the sides of the body (c4), the same path as the parent's close-grip row."
+    },
+    {
+      "field": "posture['Shoulders down, blades together at the end']",
+      "why": "true for this child because the band sources ask to draw the shoulder blades down and back and squeeze them together (c3, c4), the parent's rule."
+    },
+    {
+      "field": "zooms['back line']",
+      "why": "true for this child because the fault it shows (lower back rounding while holding the pull) is the band row's plate fault too (c3); only the seat changes from bench to floor, which the plate draws."
+    },
+    {
+      "field": "zooms['shoulder blades']",
+      "why": "true for this child because the start and finish of the shoulder blades are the same on band and cable (c4)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit on a mat with both legs out in front, feet flexed, and wrap the band around the soles of the feet, holding one end in each hand.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-bandrow",
+        "physitrack-longsitrow"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-bandrow",
+          "text": "While seated on a yoga mat, extend both legs out in front of you with your feet flexed. Wrap the recovery band around the bottom of your feet so that you are holding one end of the band in each hand.",
+          "where": "step 1"
+        },
+        {
+          "source": "physitrack-longsitrow",
+          "text": "Sit on a mat with a resistance band around your feet.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Check the band is in good condition and firmly anchored around the feet before starting; pressing the feet against something sturdy helps keep it in place.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-bandrow"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-bandrow",
+          "text": "Ensure that the recovery band is in good condition and securely anchored around your feet to avoid injury. You could also press your feet against a sturdy object to help keep the band in place.",
+          "where": "step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Sit up tall with the back straight and neutral, shoulder blades drawn down and back, arms straight in front holding the band with palms facing in.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-bandrow",
+        "physitrack-longsitrow"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-bandrow",
+          "text": "Sit up tall and draw your shoulder blades down and back to push your chest out. Extend your arms in front of you so that you are holding the ends of the band with a neutral grip (palms facing inwards).",
+          "where": "step 2"
+        },
+        {
+          "source": "physitrack-longsitrow",
+          "text": "Keep your back in a straight, neutral position.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Bend the elbows and pull them straight back, close to the sides, until you feel a small squeeze between the shoulder blades.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-bandrow",
+        "physitrack-longsitrow"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-bandrow",
+          "text": "Using the muscles in both your arms and back, bend your elbows backwards to increase the tension in the band, ensuring that your elbows remain in close contact with the sides of your body. You should feel a small squeeze between your shoulder blades.",
+          "where": "step 3"
+        },
+        {
+          "source": "physitrack-longsitrow",
+          "text": "Hold onto either end and pull your elbows straight back towards you, squeezing your shoulder blades together.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Breathe out on the pull, breathe in and straighten the arms under control on the way back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-bandrow",
+        "physitrack-longsitrow"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-bandrow",
+          "text": "Inhale. Extend your elbows to return to the starting position.",
+          "where": "step 4"
+        },
+        {
+          "source": "physitrack-longsitrow",
+          "text": "Control the movement back to the start position.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Band tension rises in a straight line with stretch once past a small initial threshold, so the pull gets harder toward the end of each rep and the start length of band sets the load.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "thomas2005"
+      ],
+      "quotes": [
+        {
+          "source": "thomas2005",
+          "text": "The tension/elongation relation is linear beyond a threshold in the early part of elongation.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "thomas2005",
+          "text": "The prediction of maximum tension values for any given elongation is possible by simple variation of resting length.",
+          "where": "abstract, conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "In fit young women, 8 weeks of training with elastic tubing gave the same gain in isometric rowing strength as weight machines and free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "colado2010"
+      ],
+      "quotes": [
+        {
+          "source": "colado2010",
+          "text": "These results indicate that resistance training using elastic tubing or weight machines/free weights have equivalent improvements in isometric force in short-term programs applied in fit young women.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "In a seated row the mid back (middle trapezius and rhomboids) was the most active of four pulls tested, with one of the highest lat-to-biceps ratios. Seated cable row, applied to the band row by similarity.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "lehman2004"
+      ],
+      "quotes": [
+        {
+          "source": "lehman2004",
+          "text": "The highest latissimus dorsi to biceps ratio of activation occurred during the wide grip pulldown and the seated row. Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Rows with a chest-down or seated torso also work the rear delts and biceps along with the lats and mid trapezius. Prone barbell row, applied here by similarity.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "fischer2025"
+      ],
+      "quotes": [
+        {
+          "source": "fischer2025",
+          "text": "SEMG measurements were taken for the trapezius transversus (TT), rear deltoid (RD), latissimus dorsi (LD) and biceps brachii (BB).",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sweat-bandrow",
+      "url": "https://www.sweat.com/exercises/seated-resistance-band-row",
+      "title": "Seated Resistance Band Row (Sweat exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "physitrack-longsitrow",
+      "url": "https://us.physitrack.com/home-exercise-video/resisted-long-sit-row",
+      "title": "Resisted long-sit row (Physitrack home exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "thomas2005",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/16355080/",
+      "title": "Quantification of tension in Thera-Band and Cando tubing at different strains and starting lengths",
+      "kind": "peer-reviewed",
+      "year": 2005,
+      "pmid": 16355080,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "colado2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20703977/",
+      "title": "A comparison of elastic tubing and isotonic resistance exercises",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": 20703977,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lehman2004",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15228624/",
+      "title": "Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: An experimental study",
+      "kind": "peer-reviewed",
+      "year": 2004,
+      "pmid": 15228624,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "fischer2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40513198/",
+      "title": "Impact of different ranges of motion in the prone barbell row on muscle excitation",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": 40513198,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Same reason as the parent: the elbow-back pull and the back line that carries the fault (c3) read from the side; the floor sit is drawn as the census floorsit pose.",
+    "equipment": "A resistance band looped around the soles of both feet (c1); no machine. Floor line.",
+    "start": "Sitting on the floor, legs straight out, feet flexed with the band around the soles (c1); trunk tall and neutral (c3); arms straight forward at about the height of the feet, palms facing in (c3); band just taut.",
+    "end": "Trunk unchanged (c3); elbows bent and drawn back close to the ribs (c4); shoulder blades squeezed together (c4); band stretched.",
+    "checkpoints": [
+      {
+        "label": "Sit tall",
+        "what": "Back straight and neutral, chest up, the same from start to finish.",
+        "claim": "c3"
+      },
+      {
+        "label": "Elbows to sides",
+        "what": "Elbows travel back close to the body.",
+        "claim": "c4"
+      },
+      {
+        "label": "Band round soles",
+        "what": "The band sits securely around the soles of the feet, feet flexed.",
+        "claim": "c2"
+      }
+    ],
+    "mistake": {
+      "what": "Slumping: the lower back rounds and the trunk tips forward while holding the band.",
+      "why": "Both band sources ask for a tall, straight, neutral back; sitting on the floor with straight legs makes rounding easy (no study counts how often it happens).",
+      "claim": "c3",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Small squeeze between your shoulder blades",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 0,
+      "claim": "c5"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Neutral, palms facing in, one band end in each hand (c3). Changed from the parent's V-handle.",
+    "width": "About shoulder width, set by where the band leaves the feet (c1).",
+    "thumb": "Wrapped round the band end: pull archetype default (GA 3.1). Not inherited from the parent, because a band end is not a rigid handle; no exercise-specific source.",
+    "handContact": "No exercise-specific source for how a flat band end sits in the hand; left to the pull archetype default and flagged for the critic.",
+    "wrist": "Inherited from the parent (see inherit).",
+    "claims": [
+      "c1",
+      "c3"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Check the band for wear before you start.",
+      "claim": "c2"
+    },
+    {
+      "step": "Sit on a mat, legs straight out, feet flexed.",
+      "claim": "c1"
+    },
+    {
+      "step": "Loop the band around the soles of both feet and hold one end in each hand, palms facing in.",
+      "claim": "c1"
+    },
+    {
+      "step": "Shorten or lengthen the band in your hands to change how hard it is.",
+      "claim": "c6"
+    },
+    {
+      "step": "Sit tall, shoulders down and back, arms straight in front.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back straight and neutral all set.",
+      "claim": "c3"
+    },
+    {
+      "point": "Elbows pull straight back, close to the sides.",
+      "claim": "c4"
+    },
+    {
+      "point": "Small squeeze between the shoulder blades at the end.",
+      "claim": "c4"
+    },
+    {
+      "point": "Arms straighten under control on the way back.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Slumping, with the lower back rounded, while holding the band.",
+      "fix": "Sit tall first; if you can't keep the back straight, use a lighter band or hold it longer.",
+      "claim": "c3"
+    },
+    {
+      "mistake": "Using a worn band or one that sits loosely on the feet.",
+      "fix": "Check the band before each session and anchor it firmly around the soles, or press the feet against something sturdy.",
+      "claim": "c2"
+    },
+    {
+      "mistake": "Letting the band snap the arms back.",
+      "fix": "Control the way back to the start.",
+      "claim": "c5"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c4"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "lats",
+        "claim": "c8"
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "biceps",
+        "claim": "c9"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c3"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Lower back",
+        "means": "You are slumping and holding the pull with a rounded back.",
+        "fix": "Sit tall, lighter band.",
+        "claim": "c3",
+        "redFlag": "back"
+      },
+      {
+        "where": "Mostly the arms",
+        "means": "The elbows are not travelling back far enough to bring the shoulder blades together.",
+        "fix": "Pull the elbows back close to your sides until the blades squeeze.",
+        "claim": "c4",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "A worn or badly anchored band can slip or break and snap back.",
+      "claim": "c2"
+    },
+    {
+      "risk": "Holding the pull with a rounded lower back.",
+      "claim": "c3"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "band on feet",
+      "kind": "posture",
+      "right": "Band flat across both soles, feet flexed.",
+      "wrong": "Band on the toes, about to slip off.",
+      "claim": "c2"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "biceps"
+    ],
+    "remove": [],
+    "why": "exercises.json lists mid_back primary and lats, rear_delts secondary (kept: c4, c8, c9). biceps is added as secondary: the elbows bend against the band (c4, 'muscles in both your arms and back') and rows measured biceps working (c9); tagged MECH."
+  },
+  "anchorSource": "sweat-bandrow",
+  "notes": "Census lists the contact as standing-feet, but the exercises.json alias ('seated band row') and census pose (floorsit) put this on the floor, so the contact here is floor-body; the parent's primary contact is foot-platform. content.md 2.3 says a child must share its parent's hand archetype (pull: shared) and primary contact; this does not hold, so the critic should decide whether the band row becomes its own parent. The inherit lines above hold either way. No band-row EMG study was found; all EMG claims are applied from cable or prone rows and tagged MECH."
+}

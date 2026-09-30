@@ -1,0 +1,224 @@
+{
+  "id": "straight_arm_pulldown",
+  "checked": "2026-09-30",
+  "sourceFixes": [
+    {
+      "source": "difonza2026",
+      "field": "title",
+      "old": "Electromyographic analysis of latissimus dorsi activation during common resistance training exercises: a narrative review",
+      "new": "Electromyographic Analysis of Latissimus Dorsi Activation During Common Resistance Training Exercises: A Narrative Review"
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "athlean-sap",
+      "quote": "Start by setting the cable machine to the highest pulley position.",
+      "status": "verbatim",
+      "closest": "Start by setting the cable machine to the highest pulley position."
+    },
+    {
+      "claim": "c1",
+      "source": "athlean-sap",
+      "quote": "Take hold of the bar with an overhand grip, hands about shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "Take hold of the bar with an overhand grip, hands about shoulder-width apart."
+    },
+    {
+      "claim": "c1",
+      "source": "catalyst-sap",
+      "quote": "Stand facing a cable stack machine and hold a straight handle overhead with a grip outside shoulder width.",
+      "status": "verbatim",
+      "closest": "Stand facing a cable stack machine and hold a straight handle overhead with a grip outside shoulder width."
+    },
+    {
+      "claim": "c2",
+      "source": "athlean-sap",
+      "quote": "Step back just enough so the cable has tension before you even start the movement. Plant your feet shoulder-width apart, soften your knees, and hinge slightly forward at the hips.",
+      "status": "verbatim",
+      "closest": "Step back just enough so the cable has tension before you even start the movement. Plant your feet shoulder-width apart, soften your knees, and hinge slightly forward at the hips."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-sap",
+      "quote": "Stand with the feet hip-width apart, the hips straight, the back tall, and the knees slightly bent.",
+      "status": "verbatim",
+      "closest": "Stand with the feet hip-width apart, the hips straight, the back tall, and the knees slightly bent."
+    },
+    {
+      "claim": "c3",
+      "source": "athlean-sap",
+      "quote": "If you stand perfectly vertical, you cut the range of motion short and lose the stretch at the top.",
+      "status": "verbatim",
+      "closest": "If you stand perfectly vertical, you cut the range of motion short and lose the stretch at the top."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-sap",
+      "quote": "Stand with the feet hip-width apart, the hips straight, the back tall, and the knees slightly bent.",
+      "status": "verbatim",
+      "closest": "Stand with the feet hip-width apart, the hips straight, the back tall, and the knees slightly bent."
+    },
+    {
+      "claim": "c4",
+      "source": "athlean-sap",
+      "quote": "Keep your chest up and shoulders pulled back. Your elbows should have a slight bend, but the arms stay nearly straight throughout.",
+      "status": "verbatim",
+      "closest": "Keep your chest up and shoulders pulled back. Your elbows should have a slight bend, but the arms stay nearly straight throughout."
+    },
+    {
+      "claim": "c4",
+      "source": "catalyst-sap",
+      "quote": "Keeping the trunk braced and the arms straight, bring the bar down into contact with the front of the body, then return to the top under control.",
+      "status": "verbatim",
+      "closest": "Keeping the trunk braced and the arms straight, bring the bar down into contact with the front of the body, then return to the top under control."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-sap",
+      "quote": "Keep the arms straight while bringing the hands down to the front of the waist.",
+      "status": "verbatim",
+      "closest": "Keep the arms straight while bringing the hands down to the front of the waist."
+    },
+    {
+      "claim": "c5",
+      "source": "athlean-sap",
+      "quote": "Stop when your hands reach the front of your thighs, keeping your chest tall and core braced.",
+      "status": "verbatim",
+      "closest": "Stop when your hands reach the front of your thighs, keeping your chest tall and core braced."
+    },
+    {
+      "claim": "c5",
+      "source": "catalyst-sap",
+      "quote": "Keeping the trunk braced and the arms straight, bring the bar down into contact with the front of the body, then return to the top under control.",
+      "status": "verbatim",
+      "closest": "Keeping the trunk braced and the arms straight, bring the bar down into contact with the front of the body, then return to the top under control."
+    },
+    {
+      "claim": "c6",
+      "source": "athlean-sap",
+      "quote": "This is the most common way lifters ruin the Straight Arm Pulldown.",
+      "status": "verbatim",
+      "closest": "This is the most common way lifters ruin the Straight Arm Pulldown."
+    },
+    {
+      "claim": "c6",
+      "source": "athlean-sap",
+      "quote": "Once you bend the elbows, you’re no longer pulling with the lats, you’re turning it into a Bent Arm Pulldown or a Triceps Pushdown.",
+      "status": "verbatim",
+      "closest": "Once you bend the elbows, you’re no longer pulling with the lats, you’re turning it into a Bent Arm Pulldown or a Triceps Pushdown."
+    },
+    {
+      "claim": "c7",
+      "source": "athlean-sap",
+      "quote": "Going too heavy leads to jerking the bar, swinging your torso, and relying on momentum instead of muscle.",
+      "status": "verbatim",
+      "closest": "Going too heavy leads to jerking the bar, swinging your torso, and relying on momentum instead of muscle."
+    },
+    {
+      "claim": "c7",
+      "source": "athlean-sap",
+      "quote": "Drop the ego, lighten the load, and move the bar smoothly from top to bottom. If you can’t pause at the bottom for a one-second squeeze, the weight is too heavy.",
+      "status": "verbatim",
+      "closest": "Drop the ego, lighten the load, and move the bar smoothly from top to bottom. If you can’t pause at the bottom for a one-second squeeze, the weight is too heavy."
+    },
+    {
+      "claim": "c8",
+      "source": "athlean-sap",
+      "quote": "Don’t let the stack yank your arms back up. Instead, guide the weight slowly, letting your lats lengthen and stretch under control at the top.",
+      "status": "verbatim",
+      "closest": "Don’t let the stack yank your arms back up. Instead, guide the weight slowly, letting your lats lengthen and stretch under control at the top."
+    },
+    {
+      "claim": "c8",
+      "source": "ace-sap",
+      "quote": "Slowly lift the hands back to the starting position to lower the weight.",
+      "status": "verbatim",
+      "closest": "Slowly lift the hands back to the starting position to lower the weight."
+    },
+    {
+      "claim": "c9",
+      "source": "athlean-sap",
+      "quote": "Rounding the upper back shortens the lats and reduces their involvement, while over-arching the lower back shifts stress onto the lumbar spine instead of the lats.",
+      "status": "verbatim",
+      "closest": "Rounding the upper back shortens the lats and reduces their involvement, while over-arching the lower back shifts stress onto the lumbar spine instead of the lats."
+    },
+    {
+      "claim": "c9",
+      "source": "athlean-sap",
+      "quote": "If you feel this exercise in your lower back more than your lats, your setup is off. Brace like you’re about to take a punch in the stomach then move only your arms.",
+      "status": "verbatim",
+      "closest": "If you feel this exercise in your lower back more than your lats, your setup is off. Brace like you’re about to take a punch in the stomach then move only your arms."
+    },
+    {
+      "claim": "c10",
+      "source": "athlean-sap",
+      "quote": "The cable is trying to yank your torso forward, and without proper bracing, you’ll arch your lower back and shift tension away from the lats.",
+      "status": "verbatim",
+      "closest": "The cable is trying to yank your torso forward, and without proper bracing, you’ll arch your lower back and shift tension away from the lats."
+    },
+    {
+      "claim": "c11",
+      "source": "catalyst-sap",
+      "quote": "The straight-arm pulldown strengthens the lats without involving the biceps, delts and upper back like most row, pulldown and other upper body pulling exercises.",
+      "status": "verbatim",
+      "closest": "The straight-arm pulldown strengthens the lats without involving the biceps, delts and upper back like most row, pulldown and other upper body pulling exercises."
+    },
+    {
+      "claim": "c11",
+      "source": "athlean-sap",
+      "quote": "The latissimus dorsi are the prime movers here.",
+      "status": "verbatim",
+      "closest": "The latissimus dorsi are the prime movers here."
+    },
+    {
+      "claim": "c12",
+      "source": "athlean-sap",
+      "quote": "Because it crosses the shoulder joint, it also helps with shoulder extension and this is the same action the lats perform.",
+      "status": "verbatim",
+      "closest": "Because it crosses the shoulder joint, it also helps with shoulder extension and this is the same action the lats perform."
+    },
+    {
+      "claim": "c12",
+      "source": "athlean-sap",
+      "quote": "They also assist slightly in shoulder extension, though their contribution is small compared to the lats.",
+      "status": "verbatim",
+      "closest": "They also assist slightly in shoulder extension, though their contribution is small compared to the lats."
+    },
+    {
+      "claim": "c13",
+      "source": "difonza2026",
+      "quote": "When comparing the barbell pullover with the straight-arm pulldown across different grip widths in a sample of 20 healthy, physically active adults, the pullover generally produced higher overall EMG amplitude for most muscles studied, with the notable exception of the latissimus dorsi and triceps brachii",
+      "status": "verbatim",
+      "closest": "When comparing the barbell pullover with the straight-arm pulldown across different grip widths in a sample of 20 healthy, physically active adults, the pullover generally produced higher overall EMG amplitude for most muscles studied, with the notable exception of the latissimus dorsi and triceps brachii"
+    },
+    {
+      "claim": "c13",
+      "source": "difonza2026",
+      "quote": "The straight-arm pulldown, by contrast, may offer a more targeted stimulus to the dorsal musculature depending on grip configuration.",
+      "status": "verbatim",
+      "closest": "The straight-arm pulldown, by contrast, may offer a more targeted stimulus to the dorsal musculature depending on grip configuration."
+    },
+    {
+      "claim": "c14",
+      "source": "teixeira2022",
+      "quote": "The study concludes that specific shoulder joint positions affect PF production and iEMG during both exercises.",
+      "status": "verbatim",
+      "closest": "The study concludes that specific shoulder joint positions affect PF production and iEMG during both exercises."
+    },
+    {
+      "claim": "c15",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c15",
+      "source": "acsm2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    }
+  ]
+}

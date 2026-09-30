@@ -1,0 +1,91 @@
+{
+  "id": "incline_machine_press",
+  "checked": "2026-09-30",
+  "sourceFixes": [],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-incline-press",
+      "quote": "Sit with your back firmly supported against the backrest. If adjustable, align the handles level with your shoulder. Grasp the handles and position your hands level with your upper chest or shoulders, maintaining a neutral wrist position (i.e., wrists in line with your forearms).",
+      "status": "verbatim",
+      "closest": "Sit with your back firmly supported against the backrest. If adjustable, align the handles level with your shoulder. Grasp the handles and position your hands level with your upper chest or shoulders, maintaining a neutral wrist position (i.e., wrists in line with your forearms)."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-incline-press",
+      "quote": "Gently exhale and perform a pressing movement, extending your arms forward to a level with your forehead or top of your head. Continue to maintain a neutral wrist position, and contact with your back and shoulder blades against the backrest.",
+      "status": "verbatim",
+      "closest": "Gently exhale and perform a pressing movement, extending your arms forward to a level with your forehead or top of your head. Continue to maintain a neutral wrist position, and contact with your back and shoulder blades against the backrest."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-incline-press",
+      "quote": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner, moving the handles back towards your upper chest, stopping when they lightly touch, or are close to, your upper chest.",
+      "status": "verbatim",
+      "closest": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner, moving the handles back towards your upper chest, stopping when they lightly touch, or are close to, your upper chest."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-incline-press",
+      "quote": "Continue pressing until your elbows are fully extended, but not locked.",
+      "status": "verbatim",
+      "closest": "Continue pressing until your elbows are fully extended, but not locked."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-incline-press",
+      "quote": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, but do not press your low back into the backrest. Maintain the natural arch in your low back and avoid arching your back throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, but do not press your low back into the backrest. Maintain the natural arch in your low back and avoid arching your back throughout the exercise."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-incline-press",
+      "quote": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-incline-press",
+      "quote": "Do not allow your back to bend, avoid the rounding of your shoulder blades and maintain stability of your head during the movement.",
+      "status": "verbatim",
+      "closest": "Do not allow your back to bend, avoid the rounding of your shoulder blades and maintain stability of your head during the movement."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-chest-press",
+      "quote": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest.",
+      "status": "verbatim",
+      "closest": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest."
+    },
+    {
+      "claim": "c6",
+      "source": "rodriguezridao2020",
+      "quote": "The results showed that the maximal EMG activity for PMUP occurred at a bench inclination of 30°. PMMP and PMLP showed higher EMG activity at a 0° bench inclination. AD had the highest EMG activity at 60°. TB showed similar EMG activities at all bench inclinations.",
+      "status": "verbatim",
+      "closest": "The results showed that the maximal EMG activity for PMUP occurred at a bench inclination of 30°. PMMP and PMLP showed higher EMG activity at a 0° bench inclination. AD had the highest EMG activity at 60°. TB showed similar EMG activities at all bench inclinations."
+    },
+    {
+      "claim": "c7",
+      "source": "rodriguezridao2020",
+      "quote": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major.",
+      "status": "verbatim",
+      "closest": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major."
+    },
+    {
+      "claim": "c8",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c8",
+      "source": "acsm2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    }
+  ]
+}
