@@ -1,6 +1,6 @@
 // ESC-REPORT (owner, 2026-09-30: "Sure. Go for it. If its required by playstore"): every finished
-// coach reply can be reported. R1-R5 here; R6 (copy) and R7 (the docs' SQL) arrive with the
-// main merge that brings ESC-NC's guard and ESC-REPORT-W's Worker test.
+// coach reply can be reported. R1-R6 here; R7 (the docs' SQL) arrives with the main merge that
+// brings ESC-REPORT-W's Worker test.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { VNode } from 'preact';
@@ -16,6 +16,7 @@ import type { ReportEvent, ReportState } from '@/escobar/report';
 import { ReportAnswer, ReportControl, ReportView, REPORT_COPY } from '@/escobar/ui/Report';
 import { EscobarTurnView, turnsOf } from '@/escobar/ui/Message';
 import type { Conversation, ProposalRecord, StoredMessage } from '@/escobar/types';
+import { CONTACT_RE, SOURCE_RE, SOURCE_CS_RE, SAFETY_LINE_RE } from '../guards/no-contacts';
 
 type Node = VNode<Record<string, unknown> & { children?: unknown }>;
 function walk(node: unknown, visit: (v: Node) => void): void {
@@ -307,5 +308,21 @@ describe('ESC-REPORT R5: the UI logic', () => {
     expect(await d).toBe('sent');
     expect(f).toHaveBeenCalledTimes(2);
     expect(reported.value.has(k)).toBe(true);
+  });
+});
+
+describe('ESC-REPORT R6: every visible string passes the four LR-23 patterns', () => {
+  it('in every ReportView state, including the aria-label', () => {
+    const seen = new Set<string>();
+    for (const st of ['idle', 'open', 'sending', 'sent', 'failed', 'limited'] as const) {
+      walk(ReportView({ state: st, labelId: 'esc-report-q-x-1' }), v => {
+        if (typeof v.props?.['aria-label'] === 'string') seen.add(v.props['aria-label'] as string);
+        const kids = v.props?.children;
+        for (const k of Array.isArray(kids) ? kids : [kids]) if (typeof k === 'string' && k.trim()) seen.add(k);
+      });
+    }
+    for (const s of Object.values(REPORT_COPY)) expect(seen, s).toContain(s);
+    expect([...seen].sort()).toEqual([...new Set([...Object.values(REPORT_COPY), 'Offensive', 'Harmful', 'Wrong'])].sort());
+    for (const s of seen) expect({ s, contact: CONTACT_RE.test(s), source: SOURCE_RE.test(s), sourceCs: SOURCE_CS_RE.test(s), safetyLine: SAFETY_LINE_RE.test(s) }).toEqual({ s, contact: false, source: false, sourceCs: false, safetyLine: false });
   });
 });
