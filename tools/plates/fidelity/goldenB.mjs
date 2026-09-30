@@ -116,15 +116,26 @@ export async function playFeel(page, id) {
   await clickSel(page, `#card-${id} [data-feel-map]`);
   await page.waitForTimeout(1400);
 }
+/**
+ * Opens one feel row. Compact-copy update (b3a90af): every feel row now shows (the visible count equals
+ * FEEL_ROWS_MAX), so no ".fr-more" button exists on any of the 8 sheets - asserted here rather than silently
+ * skipped, so a future content change that brings the button back is caught, not quietly worked around.
+ */
 export async function openFeelRow(page, id, row) {
   const more = await page.$(`#card-${id} .fr-more`);
-  if (more) await clickSel(page, `#card-${id} .fr-more`);
+  if (more) throw new Error(`${id}: ".fr-more" exists - every feel row should already show (compact-copy update)`);
   await clickSel(page, `#${id}-row-${row}`);
   await page.waitForTimeout(40);
 }
-export async function expandSetup(page, id) {
+/**
+ * Asserts every setup step already shows. Compact-copy update (b3a90af): the visible count equals SETUP_MAX_STEPS,
+ * so no ".st-more" button exists - the collapse code stays for a longer list, which the lint now forbids.
+ */
+export async function assertAllSetupStepsShown(page, id) {
   const more = await page.$(`#card-${id} .st-more`);
-  if (more) await clickSel(page, `#card-${id} .st-more`);
+  if (more) throw new Error(`${id}: ".st-more" exists - every setup step should already show (compact-copy update)`);
+  const hidden = await page.evaluate(c => document.querySelectorAll(`${c} .st-list li[hidden]`).length, `#card-${id}`);
+  if (hidden) throw new Error(`${id}: ${hidden} setup step(s) still hidden`);
 }
 export async function expandSources(page, id) {
   await page.evaluate(sel => { document.querySelector(sel).open = true; }, `#card-${id} .srcs`);
