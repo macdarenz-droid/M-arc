@@ -1,6 +1,6 @@
-// HT-4 L0-B (HT4-A1): the vendored How-to layer mockup (golden B, tools/plates/layers/) is verbatim from the S-2
-// pin (b3a90af, the compact-copy update; supersedes the first pin 16a8edc, kept in pageApproval.history) and
-// rebuilds byte-identical.
+// HT-4 L0-B (HT4-A1): the vendored How-to layer mockup (golden B, tools/plates/layers/) is verbatim from the
+// source-records pin (a7a0b74; supersedes b3a90af, the compact-copy update, and the first pin 16a8edc, both kept in
+// pageApproval.history) and rebuilds byte-identical.
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -40,7 +40,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
     expect(paths).not.toContain('exercises/dumbbell_lateral_raise.mjs');
   });
 
-  it('rebuilding the vendored layer page gives the pinned pageSha256 (5aab1a…098deb)', async () => {
+  it('rebuilding the vendored layer page gives the pinned pageSha256 (f39137…9e1384)', async () => {
     const mirror = copyLayers();
     const html = await m.buildLayerPage(mirror);
     expect(m.sha256(html)).toBe(m.PAGE_SHA256);
@@ -79,7 +79,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
   // Supervisor, PR #107 (the same condition HT-2 had, #105): the per-file check alone cannot catch a file and its
   // own MANIFEST entry being edited together and staying consistent with each other.
   it('the sorted path:sha256 list of MANIFEST.json, plus pageApproval, hashes to its pinned literal', () => {
-    expect(m.sha256(m.manifestPinList())).toBe('27c4629ab2554c5d38ab79b6bacff507ca231d9c7fafd5bd1cb86c2794c1f654');
+    expect(m.sha256(m.manifestPinList())).toBe('154c8f64222b8e9e1e9f425808bacdd33284dce645c795fa808d791ffc5dd0e2');
   });
 
   it('fails when a vendored file and its own MANIFEST sha256 entry change together (consistently)', () => {
@@ -94,7 +94,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
     // the per-file check alone is fooled (both sides agree, source pin untouched)...
     expect(m.verifyLayers(d, manifest)).toEqual([]);
     // ...but the literal pin over the whole manifest is not
-    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('27c4629ab2554c5d38ab79b6bacff507ca231d9c7fafd5bd1cb86c2794c1f654');
+    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('154c8f64222b8e9e1e9f425808bacdd33284dce645c795fa808d791ffc5dd0e2');
   });
 });
 
@@ -111,7 +111,7 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
     const { current, history } = m.readManifest().pageApproval;
     expect(current, 'MANIFEST.json should hold a pageApproval.current').toBeDefined();
     expect(current.ref).toBe(m.GOLDEN_B_REF);
-    expect(current.approvedBy).toBe('owner');
+    expect(current.approvedBy).toBe('supervisor');
     expect(Array.isArray(history)).toBe(true);
     const fixture = readFileSync(FIXTURE);
     expect(m.sha256(fixture)).toBe(current.pageSha256);
@@ -119,19 +119,26 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
     expect(fixture.length).toBe(current.bytes);
   });
 
-  it('history holds the retired 16a8edc approval (the compact-copy update superseded it) and hashes to its pinned literal', () => {
+  it('history holds both retired approvals (b3a90af, then 16a8edc) in order, and hashes to its pinned literal', () => {
     const { history } = m.readManifest().pageApproval;
-    expect(history).toEqual([{
-      ref: '16a8edc', approvedBy: 'owner', date: '2026-09-30',
-      why: 'The approved How-to layer mockup (golden B, S-2 pin), vendored verbatim into tools/plates/layers/ (HT-4). Holds only the golden-A plates (HT4-A5). Superseded by the compact-copy update.',
-      pageSha256: '472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a', bytes: 2451995,
-    }]);
-    expect(m.historyPin(history)).toBe('47674b24dfbea752e7e991f2360bee9df6d4cb2a8453bf9bcf2b733a1a38ce56');
+    expect(history).toEqual([
+      {
+        ref: 'b3a90af', approvedBy: 'owner', date: '2026-09-30',
+        why: 'owner approved the layer design and asked for compact concept-first copy',
+        pageSha256: '5aab1aca9bc231cc8868f366648d0d536b879d6c7d4d1adf220da99b66098deb', bytes: 2386760,
+      },
+      {
+        ref: '16a8edc', approvedBy: 'owner', date: '2026-09-30',
+        why: 'The approved How-to layer mockup (golden B, S-2 pin), vendored verbatim into tools/plates/layers/ (HT-4). Holds only the golden-A plates (HT4-A5). Superseded by the compact-copy update.',
+        pageSha256: '472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a', bytes: 2451995,
+      },
+    ]);
+    expect(m.historyPin(history)).toBe('b35fd630789c807520a09287af770f33f8abdb544029eff8f102ebef65f6cccc');
   });
 
-  it('fails (the pinned literal changes) if the retired 16a8edc entry is edited after the fact', () => {
+  it('fails (the pinned literal changes) if an already-retired entry is edited after the fact', () => {
     const { history } = m.readManifest().pageApproval;
-    const tampered = [{ ...history[0], why: 'tampered after the fact' }];
+    const tampered = [{ ...history[0], why: 'tampered after the fact' }, history[1]];
     expect(m.historyPin(tampered)).not.toBe(m.historyPin(history));
   });
 
