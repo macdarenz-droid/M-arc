@@ -1580,10 +1580,17 @@
      "need": "floor",
      "label": "floor line",
      "status": "exists"
+    },
+    {
+     "need": "safetyArms",
+     "label": "rack safety arms (pins) set below the bar's shoulder rest height",
+     "status": "compose"
     }
    ],
-   "equipmentStatus": "exists",
-   "equipmentGaps": [],
+   "equipmentStatus": "compose",
+   "equipmentGaps": [
+    "safetyArms"
+   ],
    "poseGaps": [],
    "readiness": "R1 existing parts, proven pose",
    "tier": 1,
@@ -12017,7 +12024,7 @@
   },
   "byEquipmentStatus": {
    "exists": {
-    "count": 82,
+    "count": 81,
     "ids": [
      "lib_machine_chest_press",
      "lib_dumbbell_bench_press",
@@ -12027,7 +12034,6 @@
      "lib_push_up",
      "lib_incline_push_up",
      "lib_shoulder_press",
-     "lib_barbell_overhead_press",
      "lib_dumbbell_lateral_raise",
      "lib_dumbbell_front_raise",
      "lib_bent_over_dumbbell_rear_delt_fly",
@@ -12104,7 +12110,7 @@
     ]
    },
    "compose": {
-    "count": 31,
+    "count": 32,
     "ids": [
      "lib_incline_dumbbell_press",
      "lib_incline_barbell_bench_press",
@@ -12136,7 +12142,8 @@
      "lib_wall_ball",
      "lib_wall_sit",
      "lib_resistance_band_row",
-     "lib_resistance_band_pull_apart"
+     "lib_resistance_band_pull_apart",
+     "lib_barbell_overhead_press"
     ]
    },
    "exists-param": {
@@ -13023,6 +13030,14 @@
     ],
     "engineFact": "legPress45()",
     "route": null
+   },
+   "safetyArms": {
+    "label": "rack safety arms (pins) set below the bar's shoulder rest height",
+    "status": "compose",
+    "exercises": 1,
+    "ids": [
+     "lib_barbell_overhead_press"
+    ]
    }
   },
   "exercisesNeedingMissingEquipment": [
@@ -13051,6 +13066,7 @@
    "lib_ab_wheel_rollout",
    "lib_arnold_press",
    "lib_assisted_pull_up",
+   "lib_barbell_overhead_press",
    "lib_cable_kickback",
    "lib_chest_supported_row",
    "lib_decline_bench_press",
