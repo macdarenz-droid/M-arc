@@ -77,9 +77,9 @@
     },
     {
       "id": "c3",
-      "text": "ACE anchors the legs by setting the thigh pad firmly on top of the thighs.",
+      "text": "ACE anchors the legs by setting the thigh pad firmly on top of the thighs. Written for the bar pulldown; the seat and pad are the same here.",
       "tags": [
-        "CONSENSUS"
+        "MECH"
       ],
       "sources": [
         "ace-lat-pulldown"
@@ -94,9 +94,9 @@
     },
     {
       "id": "c4",
-      "text": "Lean back only slightly, no more than about 30 degrees, and add no extra lean during the pull.",
+      "text": "Lean back only slightly, no more than about 30 degrees, and add no extra lean during the pull. Written for the bar pulldown; applied to the V-handle because the seated position is the same.",
       "tags": [
-        "CONSENSUS"
+        "MECH"
       ],
       "sources": [
         "ace-lat-pulldown"
@@ -133,7 +133,7 @@
     },
     {
       "id": "c6",
-      "text": "Pulling the handle too low lets the forearms and front shoulders take over and exposes the shoulders to injury (coach source).",
+      "text": "Pulling the handle too low lets the forearms and shoulders (deltoids) take over and exposes the shoulders to injury (coach source).",
       "tags": [
         "CONSENSUS"
       ],
@@ -152,7 +152,7 @@
       "id": "c7",
       "text": "Stop pulling once the elbows stop moving down and start moving back; ACE says further pulling adds stress to the shoulder joint. Written for the bar pulldown; applied to the V-handle because the elbow path is the same.",
       "tags": [
-        "CONSENSUS"
+        "MECH"
       ],
       "sources": [
         "ace-lat-pulldown"
@@ -189,9 +189,9 @@
     },
     {
       "id": "c9",
-      "text": "Start the pull by drawing the shoulder blades down, then pull.",
+      "text": "Start the pull by drawing the shoulder blades down, then pull. Written for the bar pulldown; applied to the V-handle by reasoning.",
       "tags": [
-        "CONSENSUS"
+        "MECH"
       ],
       "sources": [
         "ace-lat-pulldown"
@@ -223,9 +223,9 @@
     },
     {
       "id": "c11",
-      "text": "In a 10-man EMG study the close grip gave less lat activity than a wide overhand grip to the front, while the posterior deltoid was active with the close grip (higher than behind-the-neck on the way down).",
+      "text": "In a 10-man EMG study of four pulldown grips, the close grip (the abstract does not say which handle) gave less lat activity than a wide overhand grip to the front while pulling down. Posterior deltoid results are only relative: pulling down, close, wide-front and underhand grips were all above behind-the-neck; on the way up, the close grip was above both wide grips.",
       "tags": [
-        "DATA"
+        "WEAK"
       ],
       "sources": [
         "signorile-2002"
@@ -234,12 +234,17 @@
         {
           "source": "signorile-2002",
           "text": "During the concentric phase, NrmsEMG results for the LD included WGA > WGP, SG, CG.",
-          "where": "Results"
+          "where": "abstract (concentric phase, the pull down)"
+        },
+        {
+          "source": "signorile-2002",
+          "text": "For the PD: CG, WGA, SG > WGP.",
+          "where": "abstract (concentric phase, the pull down)"
         },
         {
           "source": "signorile-2002",
           "text": "For the PD: CG > WGA, WGP.",
-          "where": "Results (eccentric)"
+          "where": "abstract (eccentric phase, the way up)"
         }
       ]
     },
@@ -262,9 +267,9 @@
     },
     {
       "id": "c13",
-      "text": "In 40 trained men, lat activity did not differ significantly across seven pulldown grips, widths and lean angles.",
+      "text": "In 40 trained men, lat activity did not differ significantly across seven pulldown grips, widths and lean angles; the abstract does not say whether a close or V-handle grip was among them, so it applies here by reasoning.",
       "tags": [
-        "DATA"
+        "MECH"
       ],
       "sources": [
         "buonsenso-2025"
@@ -296,7 +301,7 @@
     },
     {
       "id": "c15",
-      "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a curled or bent wrist costs grip (hand dynamometer, applied here by reasoning).",
+      "text": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
       "tags": [
         "MECH"
       ],
@@ -304,6 +309,16 @@
         "odriscoll-1992"
       ],
       "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll-1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
         {
           "source": "odriscoll-1992",
           "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
@@ -390,8 +405,8 @@
       "kind": "coach",
       "year": null,
       "pmid": null,
-      "access": "unreachable",
-      "checked": null
+      "access": "full",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {
@@ -418,9 +433,12 @@
       }
     ],
     "mistake": {
-      "what": "Pulling the handle too low: the elbows drive back behind the body and the shoulders roll forward.",
-      "why": "The coach source names it and says it moves the load to the forearms and front shoulders and exposes the shoulders to injury; ACE says to stop when the elbows start moving back. Frequency is not measured.",
-      "claim": "c6",
+      "what": "Pulling the handle too low: it goes past the chin and the elbows start moving back behind the body.",
+      "why": "The coach source names it and says it moves the load to the forearms and shoulders (deltoids) and exposes the shoulders to injury; ACE says to stop when the elbows start moving back. Frequency is not measured.",
+      "claim": [
+        "c6",
+        "c7"
+      ],
       "drawable": true
     },
     "tells": [
@@ -434,7 +452,7 @@
       },
       {
         "text": "Torso still, no rocking",
-        "claim": "c8"
+        "claim": "c4"
       }
     ],
     "tempo": {
@@ -450,10 +468,9 @@
     "width": "Close: set by the V-handle.",
     "thumb": "Inherited from lat_pulldown: wrapped by default.",
     "handContact": "Inherited from lat_pulldown: handle across the base of the fingers.",
-    "wrist": "Straight, not curled; a bent wrist costs grip.",
+    "wrist": "Not curled forward (c15).",
     "claims": [
       "c1",
-      "c13",
       "c15"
     ]
   },
@@ -494,7 +511,10 @@
     },
     {
       "point": "Handle stops just below the chin; stop when the elbows start moving back.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c5"
+      ]
     },
     {
       "point": "Controlled on the way up, no momentum.",
@@ -503,14 +523,21 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Pulling the handle down to the belly, so the elbows go behind you and the shoulders roll forward.",
+      "mistake": "Pulling the handle down too low, so the elbows start moving back behind you.",
       "fix": "Stop when the handle is just below your chin and your elbows stop moving down.",
-      "claim": "c6"
+      "claim": [
+        "c6",
+        "c7",
+        "c5"
+      ]
     },
     {
       "mistake": "Rocking the torso back to yank the weight down.",
-      "fix": "Hold a slight lean and keep it still. Lower the weight until you can.",
-      "claim": "c4"
+      "fix": "Hold a slight lean and keep it still.",
+      "claim": [
+        "c4",
+        "c8"
+      ]
     },
     {
       "mistake": "Letting the stack pull you up fast.",
@@ -547,24 +574,24 @@
     ],
     "rows": [
       {
-        "where": "Front of the shoulders",
-        "means": "Usually means you are pulling too low and the shoulders are rolling forward.",
-        "fix": "Stop just below the chin, when the elbows stop moving down. If it still hurts, stop and get it checked.",
-        "claim": "c7",
+        "where": "Shoulders",
+        "means": "Usually means you are pulling too low.",
+        "fix": "Stop just below the chin, when the elbows stop moving down.",
+        "claim": [
+          "c6",
+          "c7",
+          "c5"
+        ],
         "redFlag": "shoulder"
       },
       {
         "where": "Forearms more than your back",
-        "means": "Usually means the handle is going too low, or you are squeezing it hard.",
-        "fix": "Stop just below the chin and hold the handle only as hard as you need.",
-        "claim": "c6",
-        "redFlag": null
-      },
-      {
-        "where": "Lower back",
-        "means": "Usually means you are rocking back to move the weight.",
-        "fix": "Keep the lean slight and still, and lower the weight.",
-        "claim": "c4",
+        "means": "Usually means the handle is going too low.",
+        "fix": "Stop just below the chin.",
+        "claim": [
+          "c6",
+          "c5"
+        ],
         "redFlag": null
       }
     ]
@@ -582,16 +609,22 @@
     {
       "key": "hand",
       "kind": "hand",
-      "right": "Neutral grip on the V-handle, handles across the base of the fingers, wrists straight.",
-      "wrong": "Wrists curled forward, squeezing hard.",
-      "claim": "c15"
+      "right": "Neutral grip on the V-handle, handles across the base of the fingers, wrists not curled.",
+      "wrong": "Wrists curled forward.",
+      "claim": [
+        "c15",
+        "c1"
+      ]
     },
     {
       "key": "bottom position",
       "kind": "posture",
       "right": "Handle just below the chin, upper arms tucked, elbows pointing down.",
-      "wrong": "Handle at the belly, elbows behind the body, shoulders rolled forward.",
-      "claim": "c6"
+      "wrong": "Handle pulled past the chin, elbows moving back behind the body.",
+      "claim": [
+        "c6",
+        "c7"
+      ]
     }
   ],
   "libraryDiff": {
@@ -599,12 +632,12 @@
       {
         "muscleId": "rear_delts",
         "role": "secondary",
-        "why": "Posterior deltoid was active with the close grip in Signorile 2002 (c11)."
+        "why": "Added with a caveat (WEAK): posterior deltoid activity with the close grip was only higher relative to other grips (pulling down, above behind-the-neck only; on the way up, above both wide grips), and the abstract does not say a V-handle was used (c11)."
       }
     ],
     "remove": [],
     "why": "lats primary and biceps and mid_back secondary stand (c12, c14). Note the close grip does not beat a wide overhand grip for the lats (c11); grip mostly doesn't matter for the lats (c12, c13)."
   },
   "anchorSource": "puregym-close-grip-lat-pulldown",
-  "notes": "PureGym's claims that the close grip gives 'greater range of motion' and more trap and rhomboid work are not used: no measured source was found, and Signorile 2002 found less lat activity than the wide front grip. It is not stated in Signorile's abstract whether its close grip used a V-handle."
+  "notes": "PureGym's claims that the close grip gives 'greater range of motion' and more trap and rhomboid work are not used: no measured source was found, and Signorile 2002 found less lat activity than the wide front grip. It is not stated in Signorile's abstract whether its close grip used a V-handle. The StrengthLog neutral close-grip page was re-fetched on 2026-09-30 (access full, quote verbatim). ACE lines are written for the bar pulldown and tagged MECH here. The lower-back feel row was dropped: no source links a lower-back feeling to rocking."
 }

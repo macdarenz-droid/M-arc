@@ -17,7 +17,7 @@
       "why": "true for this child because the hang on the bar is identical; only the legs bend. Consensus on the parent too; no study compares widths."
     },
     {
-      "field": "grip.handContact (bar across the base of the fingers) and grip.wrist (straight or tipped back, never curled)",
+      "field": "grip.handContact (bar across the base of the fingers) and grip.wrist (not curled forward)",
       "why": "true for this child because the same overhand hang loads the hand the same way (c2, c16)."
     },
     {
@@ -137,7 +137,7 @@
     },
     {
       "id": "c6",
-      "text": "Expert opinion: the hip flexors lift the legs first; the abs then rotate the pelvis backward to lift them higher, so higher knees mean more abdominal work.",
+      "text": "Expert opinion: the hip flexors lift the legs first; the abs then rotate the pelvis backward to lift them higher, so higher knees mean more abdominal work. That the lower back rounds a little at the top is this card's inference from the backward pelvic rotation; no source describes the spine shape.",
       "tags": [
         "MECH",
         "WEAK"
@@ -349,7 +349,7 @@
     },
     {
       "id": "c16",
-      "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a curled wrist costs grip (hand dynamometer, applied to a hang by reasoning).",
+      "text": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
       "tags": [
         "MECH"
       ],
@@ -357,6 +357,16 @@
         "odriscoll-1992"
       ],
       "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll-1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
         {
           "source": "odriscoll-1992",
           "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
@@ -423,8 +433,8 @@
       "kind": "coach",
       "year": null,
       "pmid": null,
-      "access": "unreachable",
-      "checked": null
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "workman-2008",
@@ -471,8 +481,8 @@
       }
     ],
     "mistake": {
-      "what": "Swinging: the legs kick up with momentum and swing back behind the body between reps.",
-      "why": "Both technique sources forbid swinging; momentum lifts the legs instead of the abs. Frequency is not measured.",
+      "what": "Swinging: the body swings to help kick the legs up.",
+      "why": "Both technique sources forbid swinging the body to raise the legs. Frequency is not measured.",
       "claim": "c4",
       "drawable": true
     },
@@ -486,8 +496,11 @@
         "claim": "c5"
       },
       {
-        "text": "Legs lower slowly, no swing",
-        "claim": "c8"
+        "text": "Legs lower with control, no swing",
+        "claim": [
+          "c8",
+          "c4"
+        ]
       }
     ],
     "tempo": {
@@ -503,7 +516,7 @@
     "width": "Inherited: about shoulder width.",
     "thumb": "Wrapped around the bar (inherited; c3).",
     "handContact": "Inherited: bar across the base of the fingers.",
-    "wrist": "Straight, not curled; a curled wrist costs grip.",
+    "wrist": "Not curled forward (c16).",
     "claims": [
       "c2",
       "c3",
@@ -539,31 +552,37 @@
     },
     {
       "point": "Pelvis curls back at the top.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c6"
+      ]
     },
     {
       "point": "Brief hold at the top.",
       "claim": "c9"
     },
     {
-      "point": "Legs lowered under control, stopping in front of the body.",
+      "point": "Legs lowered under control.",
       "claim": "c8"
     }
   ],
   "handlingMistakes": [
     {
-      "mistake": "Swinging the legs up with momentum and letting them swing back.",
-      "fix": "Start each rep from a still hang and lower slowly. If you can't stop the swing, rest and restart the rep from still.",
-      "claim": "c4"
+      "mistake": "Swinging the body to help lift the legs.",
+      "fix": "Start each rep from a still hang and lower the legs with control.",
+      "claim": [
+        "c4",
+        "c8"
+      ]
     },
     {
-      "mistake": "Stopping with the knees at or below hip height, so the hips do all the work.",
+      "mistake": "Stopping with the knees at or below hip height, so the abs do less of the work.",
       "fix": "Keep lifting past hip height and roll your hips up toward your ribs.",
       "claim": "c6"
     },
     {
       "mistake": "Dropping the legs fast after each rep.",
-      "fix": "Lower the legs with control, taking longer to lower than to lift.",
+      "fix": "Lower the legs with control.",
       "claim": "c8"
     }
   ],
@@ -572,13 +591,13 @@
       {
         "muscleId": "abs",
         "claim": "c10"
-      },
-      {
-        "muscleId": "hip_flexors",
-        "claim": "c12"
       }
     ],
     "secondary": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c12"
+      },
       {
         "muscleId": "obliques",
         "claim": "c10"
@@ -607,15 +626,15 @@
       },
       {
         "where": "Lower back",
-        "means": "Usually means you are swinging, or the load on the spine is too much for your back today.",
-        "fix": "Start still and keep the knees bent. If the ache stays or you have back pain, stop and get it checked.",
+        "means": "No source names a cause. The straight-leg version measured about 3000 N of spine compression; bent knees likely load the spine less (inference).",
+        "fix": "Keep the knees bent.",
         "claim": "c14",
         "redFlag": "back"
       },
       {
-        "where": "A pinch at the front of the shoulder",
-        "means": "Usually means a loose hang with the shoulders sunk up to the ears.",
-        "fix": "Set the shoulders a little down before each rep. If it keeps hurting, stop and get it checked.",
+        "where": "Shoulder",
+        "means": "Usually means the shoulder does not like the long arms-overhead hang.",
+        "fix": "Set the shoulders a little down from the ears before each rep (the inherited active hang).",
         "claim": "c15",
         "redFlag": "shoulder"
       }
@@ -623,7 +642,7 @@
   },
   "risks": [
     {
-      "risk": "Spine compression: the straight-leg version measured about 3000 N; relevant with back pain.",
+      "risk": "Spine compression: the straight-leg version measured about 3000 N.",
       "claim": "c14"
     },
     {
@@ -639,22 +658,29 @@
     {
       "key": "hand",
       "kind": "hand",
-      "right": "Overhand, bar across the base of the fingers, thumb wrapped, wrist straight.",
-      "wrong": "Wrist curled, bar rolling to the fingertips.",
-      "claim": "c16"
+      "right": "Overhand, bar across the base of the fingers, thumb wrapped, wrist not curled.",
+      "wrong": "Wrist curled forward.",
+      "claim": [
+        "c16",
+        "c2",
+        "c3"
+      ]
     },
     {
       "key": "top position",
       "kind": "posture",
       "right": "Knees above hip height, pelvis curled up, lower back gently rounded.",
-      "wrong": "Knees stopped at hip height, lower back still arched.",
-      "claim": "c6"
+      "wrong": "Knees stopped at hip height, pelvis not curled up.",
+      "claim": [
+        "c6",
+        "c5"
+      ]
     },
     {
       "key": "body line",
       "kind": "posture",
       "right": "Body still under the bar at the start of each rep.",
-      "wrong": "Legs swinging back behind the body between reps.",
+      "wrong": "Body swinging to kick the legs up.",
       "claim": "c4"
     }
   ],
@@ -667,12 +693,13 @@
       }
     ],
     "remove": [],
-    "why": "abs primary and hip_flexors secondary stand (c10, c12); StrengthLog lists the hip flexors as a primary mover, but the card keeps them secondary because the abs are the target and the EMG ranks the abs top (c10)."
+    "why": "abs primary and hip_flexors secondary stand, and the feel lists match (c10, c12); StrengthLog lists the hip flexors as a primary mover, but the card keeps them secondary because the abs are the target and the EMG ranks the abs top (c10)."
   },
   "anchorSource": "yessis-hanging-knee-leg-raise",
   "gaps": [
     "Tier A: no sourced way to get down from the bar safely; the parent's box-clear setup line is inherited, nothing new invented.",
-    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression: bent knees first, straight legs later (c13)."
+    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression: bent knees first, straight legs later (c13).",
+    "Tier A: no source on this card says what to do if a lower-back ache stays; the row fix does not add one. The shared back red-flag box and the owner disclaimer carry the stop-and-check line."
   ],
-  "notes": "Yessis also advises holding the breath and a slight lower-back arch at the start; neither is used, because the parent card and other sources teach a still, quiet hang and no source here supports breath-holding. Not sourced: a safe way down from the bar (inherited from the parent's box line). Escamilla 2006 measured the knee-up in arm straps, not a bare-hand hang. McGill 2015 measured straight legs only."
+  "notes": "Yessis also advises holding the breath and a slight lower-back arch at the start; neither is used, because the parent card and other sources teach a still, quiet hang and no source here supports breath-holding. Not sourced: a safe way down from the bar (inherited from the parent's box line). Escamilla 2006 measured the knee-up in arm straps, not a bare-hand hang. McGill 2015 measured straight legs only. The StrengthLog hanging knee raise page was re-fetched on 2026-09-30 (access full, quotes verbatim). feel.rows[3].fix comes from the inherited active-hang line (inherit[5]), not from a claim on this card."
 }

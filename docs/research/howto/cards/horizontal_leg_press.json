@@ -95,7 +95,7 @@
       "quotes": [
         {
           "source": "ace-seated-leg-press",
-          "text": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings.",
+          "text": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings. Keep your heels flat against the resistance plate and avoid any movement in the upper extremity.",
           "where": "step 2"
         }
       ]
@@ -241,9 +241,10 @@
     },
     {
       "id": "c11",
-      "text": "The double-leg press produced the highest blood pressures of the lifts tested, partly from breath holding, so breathing out on the push matters.",
+      "text": "In five experienced bodybuilders lifting to failure at 80-100% of their maximum (single-arm curls, overhead presses, single- and double-leg presses), blood pressure rose to extremely high values during each lift, highest in the double-leg press; part of the rise was caused by breath holding (a Valsalva manoeuvre). That breathing out through the effort keeps pressure lower is reasoning; the study did not test it.",
       "tags": [
-        "DATA"
+        "DATA",
+        "MECH"
       ],
       "sources": [
         "macdougall1985"
@@ -251,16 +252,37 @@
       "quotes": [
         {
           "source": "macdougall1985",
+          "text": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
           "text": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
           "where": "abstract"
         }
       ]
     },
     {
       "id": "c12",
-      "text": "A moderate speed of about 1-2 seconds each way is the general recommendation, and load goes up by 2-10% once the target reps are beaten by one or two.",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm2009"
@@ -268,13 +290,36 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
           "source": "acsm2009",
           "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
           "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "ACE and WebMD both pause briefly at the top before the slow, controlled return.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-leg-press",
+        "webmd-seated-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-leg-press",
+          "text": "Pause momentarily, then slowly return to your starting position",
+          "where": "step 4"
+        },
+        {
+          "source": "webmd-seated-leg-press",
+          "text": "Take a pause, and slowly return your body to the starting position.",
+          "where": "how to do it"
         }
       ]
     }
@@ -386,8 +431,12 @@
     ],
     "mistake": {
       "what": "Snapping the knees straight and locking them at the end of the push.",
-      "why": "ACE and WebMD both repeat the warning, and a rare case report ties locked, overextended knees to knee dislocation in weight training.",
-      "claim": "c7",
+      "why": "ACE and WebMD both repeat the warning, and a case report of both knees dislocating during weight training advises never locking them.",
+      "claim": [
+        "c7",
+        "c4",
+        "c8"
+      ],
       "drawable": true
     },
     "tells": [
@@ -404,7 +453,10 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c12"
+      "claim": [
+        "c12",
+        "c13"
+      ]
     },
     "variantLine": null
   },
@@ -437,7 +489,10 @@
     },
     {
       "step": "Breathe out as you push; don't hold your breath through the set.",
-      "claim": "c11"
+      "claim": [
+        "c3",
+        "c11"
+      ]
     }
   ],
   "posture": [
@@ -465,13 +520,18 @@
       "claim": "c7"
     },
     {
-      "mistake": "Letting the hips lift and the low back round as the plate comes back.",
-      "fix": "Stop the return where your back stays flat, and keep the thighs off your ribs. Reset the seat so you start at about 90 degrees.",
-      "claim": "c5"
+      "mistake": "Letting the hips lift or the low back round.",
+      "fix": "Keep the thighs off your ribs. Reset the seat so you start at about 90 degrees.",
+      "claim": [
+        "c5",
+        "c4",
+        "c2",
+        "c1"
+      ]
     },
     {
       "mistake": "Letting the knees fall in toward each other.",
-      "fix": "Keep the kneecaps in line with the feet. Lower the weight if they keep drifting in.",
+      "fix": "Keep the kneecaps in line with the feet.",
       "claim": "c6"
     }
   ],
@@ -504,23 +564,32 @@
     ],
     "rows": [
       {
-        "where": "Front of the knee",
-        "means": "The knees are locking at the top, or bending too deep on the way back.",
-        "fix": "Keep a small bend at the top and start and stop around 90 degrees.",
-        "claim": "c5",
+        "where": "Knee",
+        "means": "No source read links this feeling to a cause; the knee faults the sources warn about here are locking at the top and going below about 90 degrees; knee forces rise the further the knee bends.",
+        "fix": "Keep a small bend at the top and don't go below about 90 degrees.",
+        "claim": [
+          "c4",
+          "c5",
+          "c10"
+        ],
         "redFlag": "knee"
       },
       {
         "where": "Lower back",
-        "means": "The hips are lifting or the low back is rounding as the plate comes back.",
-        "fix": "Shorten the return and keep your tailbone on the pad.",
-        "claim": "c4",
+        "means": "No source read links this feeling to a cause; the fault ACE warns about here is the hips lifting or the low back rounding.",
+        "fix": "Keep your tailbone on the pad and the low back still.",
+        "claim": [
+          "c4",
+          "c5",
+          "c1",
+          "c2"
+        ],
         "redFlag": "back"
       },
       {
-        "where": "Inside of the knee",
-        "means": "The knees are falling in.",
-        "fix": "Kneecaps in line with the feet; lower the weight.",
+        "where": "Knee, as the knees drift in",
+        "means": "No source read links this feeling to a cause; the fault WebMD warns about here is the knees coming together.",
+        "fix": "Kneecaps in line with the feet.",
         "claim": "c6",
         "redFlag": "knee"
       }
@@ -532,12 +601,15 @@
       "claim": "c8"
     },
     {
-      "risk": "Holding the breath through heavy double-leg presses sends blood pressure very high.",
+      "risk": "Very heavy double-leg presses to failure sent blood pressure extremely high in a small study, partly from breath holding.",
       "claim": "c11"
     },
     {
-      "risk": "Rounding the low back off the pad at the end of the return.",
-      "claim": "c4"
+      "risk": "Rounding the low back off the pad.",
+      "claim": [
+        "c4",
+        "c2"
+      ]
     }
   ],
   "redFlags": [
@@ -550,14 +622,21 @@
       "kind": "posture",
       "right": "Legs nearly straight with a small bend, heels on the plate.",
       "wrong": "Knee snapped straight or bowed past straight.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c4",
+        "c8"
+      ]
     },
     {
       "key": "seat set",
       "kind": "posture",
       "right": "Knees at about 90 degrees at the start, thighs clear of the ribs.",
       "wrong": "Seat too close, thighs against the ribs, hips lifting off the seat.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c4"
+      ]
     }
   ],
   "libraryDiff": {

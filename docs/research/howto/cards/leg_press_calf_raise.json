@@ -179,7 +179,7 @@
     },
     {
       "id": "c8",
-      "text": "Do not drop the platform fast or bounce at the bottom; it raises the chance of muscle injury and of the feet slipping. Pushing the ankle to its extremes also makes slipping more likely.",
+      "text": "Do not drop the platform fast or bounce at the bottom; it raises the chance of muscle injury and of the feet slipping. The coach pauses briefly at the bottom before the next rep. Fully extending the ankle up and down also makes slipping more likely.",
       "tags": [
         "CONSENSUS"
       ],
@@ -191,6 +191,11 @@
           "source": "yessis-lpcr",
           "text": "Do not lower the resistance platform too quickly or bounce in the bottom position. Doing so increases the chance of muscle injury and enhances the possibility of the feet slipping off the platform.",
           "where": "pointers"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Exhale as you return (under control) until the feet are in a position of slight dorsi flexion (ball of the foot about 10 — 20° toward the shin from the neutral position). Pause momentarily and then repeat.",
+          "where": "technique"
         },
         {
           "source": "yessis-lpcr",
@@ -218,32 +223,11 @@
       ]
     },
     {
-      "id": "c10",
-      "text": "In 9 weeks of calf raises on a horizontal leg press, toes out grew the inner calf head more and toes in grew the outer head more. Measured on a horizontal, not incline, machine.",
-      "tags": [
-        "DATA"
-      ],
-      "sources": [
-        "nunes2020"
-      ],
-      "quotes": [
-        {
-          "source": "nunes2020",
-          "text": "The calf-raise exercise was performed unilaterally, in a pin-loaded seated horizontal leg-press machine",
-          "where": "abstract, methods"
-        },
-        {
-          "source": "nunes2020",
-          "text": "Positioning FPO potentiated the increases in MT of the medial gastrocnemius head, whereas FPI provided greater gains for the lateral gastrocnemius head.",
-          "where": "abstract, results"
-        }
-      ]
-    },
-    {
       "id": "c11",
-      "text": "Calf raises on a horizontal leg press worked in the stretched (heels-down) half of the range grew the calf more than full or top-half reps in 8 weeks. Supports a controlled stretch at the bottom; horizontal machine.",
+      "text": "In 42 young women doing calf raises on a horizontal leg press for 8 weeks, reps in the initial part of the range (longer muscle lengths) grew the medial calf head more than full or final-part reps; the lateral head grew more than with final-part reps but not significantly more than with full reps. The authors say this may optimize calf growth. Measured on a horizontal machine; applied to the incline machine by reasoning.",
       "tags": [
-        "DATA"
+        "DATA",
+        "MECH"
       ],
       "sources": [
         "kassiano2023"
@@ -251,8 +235,18 @@
       "quotes": [
         {
           "source": "kassiano2023",
-          "text": "The calf raise exercise was performed in a pin-loaded, horizontal, leg-press machine, in 3 sets of 15-20 repetition maximum.",
+          "text": "Forty-two young women performed a calf training program for 8 weeks, 3 days·week -1 , with differences in the calf raise ROM configuration. The calf raise exercise was performed in a pin-loaded, horizontal, leg-press machine, in 3 sets of 15-20 repetition maximum.",
           "where": "abstract, methods"
+        },
+        {
+          "source": "kassiano2023",
+          "text": "INITIAL ROM elicited greater medial gastrocnemius increases than FULL ROM and FINAL ROM",
+          "where": "abstract, results"
+        },
+        {
+          "source": "kassiano2023",
+          "text": "INITIAL ROM elicited greater lateral gastrocnemius increases than FINAL ROM (INITIAL ROM = +14.9% vs. FINAL ROM = +6.2%; p < 0.024) but did not significantly differ from FULL ROM (FULL ROM = +7.3%; p = 0.060).",
+          "where": "abstract, results"
         },
         {
           "source": "kassiano2023",
@@ -263,31 +257,45 @@
     },
     {
       "id": "c12",
-      "text": "Blood pressure reaches extreme values in heavy lifts to failure even with a small muscle mass, partly from breath holding. The coach source teaches a breath hold on the push; the card follows the parent's breathe-out line instead.",
+      "text": "In five experienced bodybuilders lifting to failure at 80-100% of their maximum (single-arm curls, overhead presses, single- and double-leg presses), blood pressure rose to extremely high values during each lift, highest in the double-leg press; part of the rise was caused by breath holding (a Valsalva manoeuvre). That breathing out through the effort keeps pressure lower is reasoning; the study did not test it. The calf raise was not among the lifts tested; applied to it by reasoning.",
       "tags": [
         "DATA",
         "MECH"
       ],
       "sources": [
-        "macdougall1985",
-        "yessis-lpcr"
+        "macdougall1985"
       ],
       "quotes": [
         {
           "source": "macdougall1985",
-          "text": "Pressures are extreme even when exercise is performed with a relatively small muscle mass.",
+          "text": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
           "where": "abstract"
         },
         {
-          "source": "yessis-lpcr",
-          "text": "When you are ready, inhale and hold your breath as you extend the feet",
-          "where": "technique"
+          "source": "macdougall1985",
+          "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
+          "where": "abstract"
         }
       ]
     },
     {
       "id": "c13",
-      "text": "Load goes up by 2-10% once the target reps are beaten by one or two; the coach also advises some lighter sets through a fuller range rather than always going very heavy.",
+      "text": "Load goes up by 2-10% once the target reps are beaten by one or two; the coach also advises not using too much weight in every set, and doing one or two lighter sets through a fuller range.",
       "tags": [
         "CONSENSUS"
       ],
@@ -305,6 +313,57 @@
           "source": "yessis-lpcr",
           "text": "Although the calf muscles are very strong and can produce a tremendous amount of force, do not use too much weight in every set.",
           "where": "pointers"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Using very heavy weight is needed for maximum intensity but you should also do one or two sets with lighter weight for a fuller range of motion",
+          "where": "pointers"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The anchor coach source teaches inhaling and holding the breath as the feet extend, then exhaling on the return. This card openly overrides the breath hold because of c12: it keeps only the coach's exhale on the return (c4) and gives no push-phase breathing cue beyond not holding the breath through the set, which is reasoning from c12.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "When you are ready, inhale and hold your breath as you extend the feet",
+          "where": "technique"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Be sure to hold your breath to stabilize the body and to maximize your attention on the ankle joint action.",
+          "where": "pointers"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "No source gives seconds per phase for this lift. The plate's 2 seconds up and 2 down is a drawing convention that fits ACSM's moderate speed (1-2 s each way, advised for intermediate to advanced lifters working toward heavy loads) and the coach's slow to moderate speed; the top hold is the coach's one to two seconds.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "acsm2009",
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Extend the feet at a slow to moderate rate of speed through approximately a 30 — 45° range of motion. Then hold the fully extended position for one to two seconds to maximize the contraction.",
+          "where": "technique"
         }
       ]
     }
@@ -327,16 +386,6 @@
       "kind": "peer-reviewed",
       "year": 2019,
       "pmid": 30676343,
-      "access": "abstract",
-      "checked": "2026-09-30"
-    },
-    {
-      "id": "nunes2020",
-      "url": "https://pubmed.ncbi.nlm.nih.gov/32735428/",
-      "title": "Different Foot Positioning During Calf Training to Induce Portion-Specific Gastrocnemius Muscle Hypertrophy",
-      "kind": "peer-reviewed",
-      "year": 2020,
-      "pmid": 32735428,
       "access": "abstract",
       "checked": "2026-09-30"
     },
@@ -397,7 +446,10 @@
     "mistake": {
       "what": "Knees snap straight and lock while pushing the platform, often from going too fast.",
       "why": "Fast reps tend to straighten the legs fully and push the platform off the feet; locking the knees is called potentially very dangerous.",
-      "claim": "c5",
+      "claim": [
+        "c5",
+        "c6"
+      ],
       "drawable": true
     },
     "tells": [
@@ -414,9 +466,9 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c4"
+      "claim": "c15"
     },
-    "variantLine": "The plate draws the 45 degree incline leg press (exercises.json equipment 'Leg Press'). The two training studies (c10, c11) used a horizontal leg press; their foot-angle and stretch findings are applied to the incline machine as calf-muscle facts, not machine facts."
+    "variantLine": "The plate draws the 45 degree incline leg press (exercises.json equipment 'Leg Press'). The training study (c11) used a horizontal leg press; its stretch finding is applied to the incline machine as a calf-muscle fact, not a machine fact."
   },
   "grip": {
     "type": "Inherited from the parent.",
@@ -439,7 +491,10 @@
     },
     {
       "step": "Press the sled out until your legs are straight but not locked, then release the catches with the side handles.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c2"
+      ]
     },
     {
       "step": "Keep a slight bend in the knees for the whole set.",
@@ -447,7 +502,10 @@
     },
     {
       "step": "Choose a weight you can move slowly; add 2-10% only when you beat your target reps.",
-      "claim": "c13"
+      "claim": [
+        "c13",
+        "c5"
+      ]
     }
   ],
   "posture": [
@@ -465,7 +523,10 @@
     },
     {
       "point": "Lower under control to a slight stretch, no bounce.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c11"
+      ]
     },
     {
       "point": "Feet stay in firm contact with the platform.",
@@ -473,7 +534,11 @@
     },
     {
       "point": "Breathe out as the platform comes back; don't hold your breath through the set.",
-      "claim": "c12"
+      "claim": [
+        "c4",
+        "c12",
+        "c14"
+      ]
     }
   ],
   "handlingMistakes": [
@@ -484,8 +549,11 @@
     },
     {
       "mistake": "Feet slipping on the platform.",
-      "fix": "Grippy shoes, a non-slip platform, balls of the feet firmly on the edge, and no extreme ankle positions.",
-      "claim": "c7"
+      "fix": "Grippy shoes, a non-slip platform, balls of the feet firmly on the edge, and don't fully extend the ankle up and down.",
+      "claim": [
+        "c7",
+        "c8"
+      ]
     },
     {
       "mistake": "Dropping the platform fast and bouncing at the bottom.",
@@ -505,17 +573,10 @@
     "rows": [
       {
         "where": "Knees",
-        "means": "The knees are locking or straightening past straight.",
+        "means": "No source read links this feeling to a cause; the knee fault the sources warn about here is locking or overextending the knees.",
         "fix": "Keep a slight bend and slow down.",
         "claim": "c6",
         "redFlag": "knee"
-      },
-      {
-        "where": "Calves, only at the very top",
-        "means": "You are working only the top half of the range.",
-        "fix": "Let the heels lower under control to a slight stretch each rep.",
-        "claim": "c11",
-        "redFlag": null
       }
     ]
   },
@@ -529,7 +590,7 @@
       "claim": "c6"
     },
     {
-      "risk": "Holding the breath through heavy sets sends blood pressure very high.",
+      "risk": "Very heavy lifts to failure sent blood pressure extremely high in a small study, partly from breath holding; the calf raise was not tested, so this is applied by reasoning.",
       "claim": "c12"
     }
   ],
@@ -558,5 +619,5 @@
     "why": "exercises.json lists calves primary and nothing else; c9 agrees. No change."
   },
   "anchorSource": "yessis-lpcr",
-  "notes": "The coach anchor teaches holding the breath on the push. The card does not carry that: it follows the parent's breathe-out line, given MacDougall 1985 (c12). Yessis also advises a shortened range for safety, while Kassiano 2023 found more growth in the stretched half; the card keeps a controlled stretch to 10-20 degrees, which is Yessis's own bottom position (c4), and no deep bounce (c8). Gentil 2020 (leg press vs calf raise, PMID 33352879) was read but not used: it measured the calves during the knee-bending leg press, not the leg press calf raise."
+  "notes": "The coach anchor teaches holding the breath on the push. The card openly overrides that (c14): it keeps only the coach's exhale on the return (c4) and says not to hold the breath through the set, reasoning from MacDougall 1985 (c12); it gives no separate push-phase cue. Yessis also advises a shortened range for safety, while Kassiano 2023 found that training in the initial, longer-muscle part of the range may optimize growth (medial head significant, lateral head not versus full range); the card keeps a controlled stretch to 10-20 degrees, which is Yessis's own bottom position (c4), and no deep bounce (c8). Gentil 2020 (leg press vs calf raise, PMID 33352879) was read but not used: it measured the calves during the knee-bending leg press, not the leg press calf raise. Nunes 2020 (foot angle, horizontal machine) was dropped: no line on the card used it."
 }

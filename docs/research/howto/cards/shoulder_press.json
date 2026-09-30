@@ -131,7 +131,7 @@
     },
     {
       "id": "c6",
-      "text": "Press until the elbows are straight but not locked, pause, then lower slowly, using the back muscles to draw the handles down rather than letting them drop, because the shoulder is relatively unstable overhead.",
+      "text": "Press until the elbows are straight but not locked, pause briefly, then lower slowly, using the back muscles (lats) to draw the handles down rather than letting them drop, because the shoulder is relatively unstable overhead.",
       "tags": [
         "CONSENSUS"
       ],
@@ -142,6 +142,11 @@
         {
           "source": "ace-shoulder-press",
           "text": "Continue pressing until your elbows are fully extended, but not locked.",
+          "where": "step 3"
+        },
+        {
+          "source": "ace-shoulder-press",
+          "text": "Pause momentarily then gently contract your lats (back muscles) to pull the handles back down towards your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
           "where": "step 3"
         },
         {
@@ -175,7 +180,7 @@
     },
     {
       "id": "c8",
-      "text": "In the seated barbell press, the widest range (elbows fully straight at the top) raised activity in the shoulder muscles, triceps and trapezius compared with stopping at 90 degrees.",
+      "text": "In the sitting military press (equipment not stated in the abstract), the widest range (elbows fully straight at the top) raised activity in all the muscles recorded, including the shoulder muscles, triceps, trapezius and clavicular chest, compared with stopping at 90 degrees.",
       "tags": [
         "DATA",
         "MECH"
@@ -198,7 +203,7 @@
     },
     {
       "id": "c9",
-      "text": "On a machine shoulder press, focusing on the deltoids raised deltoid activity and focusing on the triceps raised triceps activity, while upper trapezius activity did not change.",
+      "text": "In 31 healthy young adults with no resistance-training experience, on a machine shoulder press, focusing on the deltoids raised deltoid activity and focusing on the triceps raised triceps activity, while upper trapezius activity did not change.",
       "tags": [
         "DATA"
       ],
@@ -208,6 +213,11 @@
       "quotes": [
         {
           "source": "kim2026",
+          "text": "Thirty-one healthy young adults with no athletic or resistance training experience participated in this single-session study.",
+          "where": "abstract, methods"
+        },
+        {
+          "source": "kim2026",
           "text": "Post hoc analysis showed that DT activity was higher in the DT-focused condition, whereas TB activity was higher in the TB-focused condition (p < 0.001). UT activity did not differ across conditions (p > 0.05).",
           "where": "abstract, results"
         }
@@ -215,7 +225,7 @@
     },
     {
       "id": "c10",
-      "text": "In barbell military presses the front delt was very active, while the upper (clavicular) chest was mostly inactive in almost all versions. Barbell data, applied to the machine by similarity; it conflicts with c8, which recorded the upper chest working.",
+      "text": "In military presses with an open grip (equipment not stated in the abstract), the front delt was very active, while the upper (clavicular) chest was mostly inactive in almost all versions. Applied to the machine by similarity; it conflicts with c8, which recorded the upper chest working.",
       "tags": [
         "DATA",
         "WEAK"
@@ -233,9 +243,10 @@
     },
     {
       "id": "c11",
-      "text": "Blood pressure rises to extreme values during heavy overhead presses taken to failure, partly from holding the breath (Valsalva).",
+      "text": "In five experienced bodybuilders lifting to failure at 80-100% of their maximum (single-arm curls, overhead presses, single- and double-leg presses), blood pressure rose to extremely high values during each lift, highest in the double-leg press; part of the rise was caused by breath holding (a Valsalva manoeuvre). That breathing out through the effort keeps pressure lower is reasoning; the study did not test it.",
       "tags": [
-        "DATA"
+        "DATA",
+        "MECH"
       ],
       "sources": [
         "macdougall1985"
@@ -243,16 +254,37 @@
       "quotes": [
         {
           "source": "macdougall1985",
-          "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum. Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+          "text": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
           "where": "abstract"
         }
       ]
     },
     {
       "id": "c12",
-      "text": "A moderate speed of about 1-2 seconds each way is the general recommendation, and load goes up by 2-10% once the target reps are beaten by one or two.",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm2009"
@@ -260,7 +292,7 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -368,8 +400,11 @@
     ],
     "mistake": {
       "what": "Arching the low back off the pad to push the handles up.",
-      "why": "ACE warns against it three times, at the start, during the press and in the setup; it moves the effort from the shoulders into the low back.",
-      "claim": "c5",
+      "why": "ACE warns against it in the setup and again during the press.",
+      "claim": [
+        "c5",
+        "c4"
+      ],
       "drawable": true
     },
     "tells": [
@@ -386,12 +421,15 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c12"
+      "claim": [
+        "c12",
+        "c6"
+      ]
     },
-    "variantLine": null
+    "variantLine": "The plate draws the standard handles with the elbows slightly in front of the trunk (c3). The sources do not say which way the palms face on either handle pair; the engine's pivot-arm primitive draws a neutral grip, so a wide-handle option is an equipment gap for the supervisor. The close-handle option (c7) keeps every other rule: same seat, grip, brace, press, lockout and lowering (c1, c2, c4, c5, c6)."
   },
   "grip": {
-    "type": "Full grip on the machine's handles (c2). Wide handles with the elbows at 4 and 8 o'clock are drawn (c3); the close neutral handles are the shoulder-friendlier option (c7).",
+    "type": "Full grip on the machine's handles (c2). The standard handles with the elbows at 4 and 8 o'clock are drawn (c3); the close handles with the elbows pointing forward are the shoulder-friendlier option (c7). Palm direction is not given by the sources.",
     "width": "Set by the machine's handle pair; elbows slightly in front of the trunk (c3).",
     "thumb": "Inherited from the parent (wrapped, c2).",
     "handContact": "Inherited from the parent.",
@@ -408,7 +446,7 @@
       "claim": "c1"
     },
     {
-      "step": "Sit back against the pad, feet planted.",
+      "step": "Sit back against the pad, feet planted; brace, keep the natural low-back curve, shoulders back and down.",
       "claim": "c4"
     },
     {
@@ -416,12 +454,12 @@
       "claim": "c2"
     },
     {
-      "step": "Brace, keep the natural low-back curve, shoulders back and down.",
-      "claim": "c4"
-    },
-    {
       "step": "If the standard press bothers your shoulders, use the close handles with the elbows pointing forward.",
       "claim": "c7"
+    },
+    {
+      "step": "Add 2-10% load only when you can do one or two reps more than your target.",
+      "claim": "c12"
     }
   ],
   "posture": [
@@ -431,7 +469,10 @@
     },
     {
       "point": "Breathe out as you press; don't hold your breath through the set.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c11"
+      ]
     },
     {
       "point": "Head in line with the spine.",
@@ -454,7 +495,10 @@
     {
       "mistake": "Arching the low back off the pad to finish the press.",
       "fix": "Brace and keep the natural curve. If you can only finish by arching, the weight is too heavy: lower it.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c4"
+      ]
     },
     {
       "mistake": "Letting the handles drop on the way down.",
@@ -482,17 +526,9 @@
       {
         "muscleId": "triceps",
         "claim": "c9"
-      },
-      {
-        "muscleId": "upper_chest",
-        "claim": "c8"
       }
     ],
     "watch": [
-      {
-        "muscleId": "upper_traps",
-        "claim": "c4"
-      },
       {
         "muscleId": "lower_back",
         "claim": "c5"
@@ -501,28 +537,27 @@
     "rows": [
       {
         "where": "Front or top of the shoulder, sharp or pinching",
-        "means": "The shoulder is unstable overhead; the handles may be dropping or the elbows flared.",
-        "fix": "Lower the weight, draw the handles down slowly, and try the close handles with elbows forward.",
-        "claim": "c6",
+        "means": "No source read links this feeling to a cause; ACE says the shoulder is relatively unstable in the overhead position.",
+        "fix": "Stop the set. Next session, you can try the close handles with the elbows pointing forward.",
+        "claim": [
+          "c6",
+          "c7"
+        ],
         "redFlag": "shoulder"
       },
       {
         "where": "Lower back",
-        "means": "You are arching off the pad to push the weight up.",
+        "means": "No source read links this feeling to a cause; the lower-back fault ACE warns about here is arching off the pad.",
         "fix": "Brace, keep the natural curve, lower the weight.",
-        "claim": "c5",
+        "claim": [
+          "c5",
+          "c4"
+        ],
         "redFlag": "back"
       },
       {
-        "where": "Neck and top of the shoulders",
-        "means": "The shoulders are shrugging up.",
-        "fix": "Set the shoulders back and down before the first rep and keep them there.",
-        "claim": "c4",
-        "redFlag": null
-      },
-      {
         "where": "Elbows",
-        "means": "You are snapping the elbows locked at the top.",
+        "means": "No source read links this feeling to a cause; ACE's elbow rule here is to stop short of locking.",
         "fix": "Stop just short of lockout.",
         "claim": "c6",
         "redFlag": "elbow"
@@ -535,11 +570,14 @@
       "claim": "c6"
     },
     {
-      "risk": "Arching the low back to finish reps moves load into the lower back.",
-      "claim": "c5"
+      "risk": "Arching the low back off the pad to finish reps.",
+      "claim": [
+        "c4",
+        "c5"
+      ]
     },
     {
-      "risk": "Holding the breath through hard overhead presses sends blood pressure very high.",
+      "risk": "Very heavy lifts to failure, overhead presses included, sent blood pressure extremely high in a small study, partly from breath holding.",
       "claim": "c11"
     }
   ],
@@ -553,30 +591,36 @@
       "key": "low back",
       "kind": "posture",
       "right": "Natural low-back curve against the pad, arms overhead, elbows soft.",
-      "wrong": "Low back arched away from the pad, ribs flared, head pushed forward.",
+      "wrong": "Low back arched away from the pad.",
       "claim": "c5"
     },
     {
       "key": "seat height",
       "kind": "posture",
       "right": "Handles level with or just above the shoulders at the start.",
-      "wrong": "Seat so low the handles start well above the head, or so high they start below the shoulders.",
+      "wrong": "Handles start below shoulder level.",
       "claim": "c1"
     }
   ],
   "libraryDiff": {
     "add": [],
     "remove": [],
-    "why": "exercises.json lists front_delts and side_delts primary, triceps and upper_chest secondary. c8, c9 and c10 support the delts and triceps. For upper_chest the evidence conflicts (c8 recorded it, c10 found it mostly inactive, both barbell), so the library entry is left as is and the conflict flagged for the critic."
+    "why": "exercises.json lists front_delts and side_delts primary, triceps and upper_chest secondary. c8, c9 and c10 support the delts and triceps. For upper_chest the evidence conflicts: c8 recorded more clavicular-chest activity with the full range, while c10 found it mostly inactive in almost all versions (both seated or military presses, equipment not stated in the abstracts). The card's feel spec therefore leaves upper_chest out, and the library entry is left as is, with the conflict flagged."
   },
   "anchorSource": "ace-shoulder-press",
   "tierA": {
     "wayOut": "NOT SOURCED. No source read for this card says how to fail a rep safely on a shoulder press machine. Left out of the sheet until one is found (content.md 5.2).",
     "thumb": "Wrapped, full grip (c2); no thumbless option offered.",
-    "loadWording": "Every fix where load causes the fault says to lower the weight (c5); no fix says to push through pain.",
+    "loadWording": "Where the load causes the fault, the fix says to lower the weight (c5); the sharp or pinching shoulder row says to stop the set (c6), with the close handles only as a next-session option (c7). No fix says to push through pain.",
     "warningLink": "Shoulder row links the shoulder box (c6).",
     "risks": "Three risk lines, including the shared breath line (c11).",
-    "loadProgression": "2-10% once the target reps are beaten by one or two (c12)."
+    "loadProgression": "Setup step: add 2-10% only when you beat your target reps by one or two (c12)."
   },
-  "notes": "Mode D per the plan: derived from the machine chest press plate. content.md appendix A lists shoulder_press as a parent on its own; the supervisor's brief makes it a difference card of machine_chest_press, and the shared parts (same push hand and lever primitive) justify the inherit lines above. ACE's text has typos ('avoidng', 'oppsed'), kept verbatim in quotes. The EMG claims come from barbell seated presses (Paoli 2010, Bull 2010), tagged MECH or WEAK, and one machine study (Kim 2026). No source was found for a safe way to fail a rep (tier-A way out)."
+  "notes": "Mode D per the plan: derived from the machine chest press plate. content.md appendix A lists shoulder_press as a parent on its own; the supervisor's brief makes it a difference card of machine_chest_press, and the shared parts (same push hand and lever primitive) justify the inherit lines above. ACE's text has typos ('avoidng', 'oppsed'), kept verbatim in quotes. The EMG claims come from military presses whose equipment the abstracts do not state (Paoli 2010, Bull 2010), tagged MECH or WEAK, and one machine study (Kim 2026). No source was found for a safe way to fail a rep (tier-A way out); see gaps.",
+  "gaps": [
+    "Tier A way out: no source read says how to fail a rep safely on a shoulder press machine; left out of the sheet, not invented.",
+    "Tier A: safeties or J-hooks and a bar path clear of the neck do not apply as written to a pivot-arm machine; no source read describes the handle arc's clearance from the head or face.",
+    "Palm direction on the handles is not given by any source read (see plate.variantLine).",
+    "No source on this card says what to do if a sharp shoulder pinch keeps coming back; the row fix does not add one. The shared shoulder red-flag box and the owner disclaimer carry the stop-and-check line."
+  ]
 }

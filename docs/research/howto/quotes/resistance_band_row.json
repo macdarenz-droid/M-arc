@@ -55,6 +55,13 @@
     {
       "claim": "c5",
       "source": "sweat-bandrow",
+      "quote": "Inhale. Exhale. Using the muscles in both your arms and back, bend your elbows backwards to increase the tension in the band",
+      "status": "verbatim",
+      "closest": "Inhale. Exhale. Using the muscles in both your arms and back, bend your elbows backwards to increase the tension in the band"
+    },
+    {
+      "claim": "c5",
+      "source": "sweat-bandrow",
       "quote": "Inhale. Extend your elbows to return to the starting position.",
       "status": "verbatim",
       "closest": "Inhale. Extend your elbows to return to the starting position."
@@ -65,6 +72,13 @@
       "quote": "Control the movement back to the start position.",
       "status": "verbatim",
       "closest": "Control the movement back to the start position."
+    },
+    {
+      "claim": "c6",
+      "source": "thomas2005",
+      "quote": "In an in vitro-series the tubing tension in relation to elongation of 6 colors of Thera-Band and Cando tubings was directly measured.",
+      "status": "verbatim",
+      "closest": "In an in vitro-series the tubing tension in relation to elongation of 6 colors of Thera-Band and Cando tubings was directly measured."
     },
     {
       "claim": "c6",
@@ -81,13 +95,6 @@
       "closest": "The prediction of maximum tension values for any given elongation is possible by simple variation of resting length."
     },
     {
-      "claim": "c7",
-      "source": "colado2010",
-      "quote": "These results indicate that resistance training using elastic tubing or weight machines/free weights have equivalent improvements in isometric force in short-term programs applied in fit young women.",
-      "status": "verbatim",
-      "closest": "These results indicate that resistance training using elastic tubing or weight machines/free weights have equivalent improvements in isometric force in short-term programs applied in fit young women."
-    },
-    {
       "claim": "c8",
       "source": "lehman2004",
       "quote": "The highest latissimus dorsi to biceps ratio of activation occurred during the wide grip pulldown and the seated row. Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row.",
@@ -100,6 +107,20 @@
       "quote": "SEMG measurements were taken for the trapezius transversus (TT), rear deltoid (RD), latissimus dorsi (LD) and biceps brachii (BB).",
       "status": "verbatim",
       "closest": "SEMG measurements were taken for the trapezius transversus (TT), rear deltoid (RD), latissimus dorsi (LD) and biceps brachii (BB)."
+    },
+    {
+      "claim": "c10",
+      "source": "acsm2009",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c10",
+      "source": "physitrack-longsitrow",
+      "quote": "Control the movement back to the start position.",
+      "status": "verbatim",
+      "closest": "Control the movement back to the start position."
     }
   ]
 }

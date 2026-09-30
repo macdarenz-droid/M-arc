@@ -161,7 +161,7 @@
     },
     {
       "id": "c9",
-      "text": "In a seated row the middle trapezius and rhomboids (mid back) showed the highest activity of the four pulls tested, and deliberately squeezing the shoulder blades did not raise it further. Isometric cable row, applied here by similarity.",
+      "text": "In a seated row the middle trapezius and rhomboids (mid back) showed the highest activity of the four pulls tested, and deliberately squeezing the shoulder blades did not raise it further. Isometric seated row, applied here by similarity.",
       "tags": [
         "DATA",
         "MECH"
@@ -202,7 +202,7 @@
     },
     {
       "id": "c11",
-      "text": "Rows without body support load the lower back more: the standing bent-over row gave the largest lumbar spine load of three rows, and a free-weight bent-over row gave more lower-back muscle activity than a machine row. The machine in that study is not described in the abstract.",
+      "text": "Of three rows studied (inverted row, standing bent-over row, standing one-arm cable row), the standing bent-over row gave the largest lumbar spine load; and a bilateral free-weight row gave 34% more erector-spinae (lower-back muscle) activity than a bilateral machine row. Neither study tested a chest-supported machine, and the machine row is not described in the abstract.",
       "tags": [
         "DATA",
         "WEAK"
@@ -212,6 +212,11 @@
         "saeterbakken2015"
       ],
       "quotes": [
+        {
+          "source": "fenwick2009",
+          "text": "The 3 rowing exercises investigated are the inverted row, standing bent-over row, and the standing 1-armed cable row.",
+          "where": "abstract, methods"
+        },
         {
           "source": "fenwick2009",
           "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
@@ -226,9 +231,10 @@
     },
     {
       "id": "c12",
-      "text": "A moderate speed of about 1-2 seconds each way is the general recommendation, and load goes up by 2-10% once the target reps are beaten by one or two.",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm2009"
@@ -236,7 +242,7 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -344,7 +350,7 @@
     ],
     "mistake": {
       "what": "Leaning back off the chest pad and arching the lower back to finish the pull.",
-      "why": "The guideline names it as the thing to avoid; it adds needless lower-back stress and removes the support that is the point of the machine.",
+      "why": "The guideline names it as the thing to avoid, and says avoiding any backwards lean reduces unnecessary stress on the low back.",
       "claim": "c6",
       "drawable": true
     },
@@ -362,7 +368,10 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c12"
+      "claim": [
+        "c12",
+        "c5"
+      ]
     },
     "variantLine": null
   },
@@ -396,8 +405,8 @@
       "claim": "c3"
     },
     {
-      "step": "Start with a weight you can pull without leaning back.",
-      "claim": "c6"
+      "step": "Add 2-10% load only when you can do one or two reps more than your target.",
+      "claim": "c12"
     }
   ],
   "posture": [
@@ -429,18 +438,16 @@
   "handlingMistakes": [
     {
       "mistake": "Leaning back off the pad and arching the lower back.",
-      "fix": "Keep the chest on the pad and move only the arms and shoulder blades. Lower the weight if you have to lean.",
-      "claim": "c6"
+      "fix": "Keep the chest on the pad; no backwards lean.",
+      "claim": [
+        "c6",
+        "c4"
+      ]
     },
     {
-      "mistake": "Letting the shoulders round forward and the arms get yanked out at the end of each rep.",
+      "mistake": "Letting the shoulders round forward at the end of each rep.",
       "fix": "Return slowly and stop when the arms are straight, shoulders still back.",
       "claim": "c7"
-    },
-    {
-      "mistake": "Shrugging the shoulders up during the pull.",
-      "fix": "Set the shoulders back and down before the first rep and hold them there.",
-      "claim": "c3"
     }
   ],
   "feel": {
@@ -468,30 +475,19 @@
       {
         "muscleId": "lower_back",
         "claim": "c6"
-      },
-      {
-        "muscleId": "upper_traps",
-        "claim": "c3"
       }
     ],
     "rows": [
       {
         "where": "Lower back",
-        "means": "You are leaning back off the pad to finish the pull.",
-        "fix": "Chest on the pad, lighter weight.",
+        "means": "No source read links this feeling to a cause; the fault ACE warns about here is leaning back and arching the low back.",
+        "fix": "Chest on the pad; no backwards lean.",
         "claim": "c6",
         "redFlag": "back"
       },
       {
-        "where": "Top of the shoulders or neck",
-        "means": "The shoulders are shrugging up.",
-        "fix": "Shoulders back and down before you pull.",
-        "claim": "c3",
-        "redFlag": null
-      },
-      {
         "where": "Front of the shoulders at the end of each rep",
-        "means": "The shoulders are rounding forward as the arms straighten.",
+        "means": "No source read links this feeling to a cause; the return fault ACE warns about here is the shoulder blades rounding forward.",
         "fix": "Return slowly and keep the shoulders back.",
         "claim": "c7",
         "redFlag": null
@@ -500,11 +496,11 @@
   },
   "risks": [
     {
-      "risk": "Leaning back and arching adds lower-back stress that the chest pad is meant to remove.",
+      "risk": "Leaning back and arching adds unnecessary lower-back stress.",
       "claim": "c6"
     },
     {
-      "risk": "Unsupported rows load the lower back far more; the pad only helps if the chest stays on it.",
+      "risk": "In other rows, the standing bent-over row gave the largest lumbar spine load of three rows, and a free-weight row gave 34% more lower-back muscle activity than a machine row.",
       "claim": "c11"
     }
   ],
@@ -523,7 +519,7 @@
       "key": "elbow finish",
       "kind": "posture",
       "right": "Elbows close to the ribs, just behind the body.",
-      "wrong": "Elbows short of the body, shoulders shrugged up.",
+      "wrong": "Elbows stopping in front of the body.",
       "claim": "c5"
     }
   ],
@@ -533,5 +529,5 @@
     "why": "exercises.json lists mid_back primary and lats, biceps, rear_delts secondary; c9 and c10 support all four. No change."
   },
   "anchorSource": "ace-row-machine",
-  "notes": "ACE page 168 is titled 'Seated Row' but describes a row machine with an adjustable chest pad, which is this exercise. The page has a typo ('tors0 vertical'), so that sentence is not quoted. No study measured the chest-supported machine row itself; EMG claims come from the seated cable row (Lehman 2004) and the prone bench row (Fischer 2025), tagged MECH. The hand lines are the GA pull archetype defaults."
+  "notes": "ACE page 168 is titled 'Seated Row' but describes a row machine with an adjustable chest pad, which is this exercise. The page has a typo ('tors0 vertical'), so that sentence is not quoted. No study measured the chest-supported machine row itself; EMG claims come from an isometric seated row (Lehman 2004) and the prone bench row (Fischer 2025), tagged MECH. The hand lines are the GA pull archetype defaults."
 }

@@ -52,9 +52,10 @@
   "claims": [
     {
       "id": "c1",
-      "text": "Sit with the back supported, set the handles level with the shoulders if adjustable, and hold them with the hands level with the upper chest or shoulders, wrists in line with the forearms.",
+      "text": "Sit with the back supported, set the handles level with the shoulders if adjustable, and hold them with the hands level with the upper chest or shoulders, wrists in line with the forearms, feet firmly on the floor. ACE writes this for a seated incline press on cables or a selectorized machine; applied to the lever incline machine by reasoning.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "MECH"
       ],
       "sources": [
         "ace-incline-press"
@@ -64,14 +65,20 @@
           "source": "ace-incline-press",
           "text": "Sit with your back firmly supported against the backrest. If adjustable, align the handles level with your shoulder. Grasp the handles and position your hands level with your upper chest or shoulders, maintaining a neutral wrist position (i.e., wrists in line with your forearms).",
           "where": "starting position"
+        },
+        {
+          "source": "ace-incline-press",
+          "text": "Position your feet firmly on the floor to stabilize your body.",
+          "where": "starting position"
         }
       ]
     },
     {
       "id": "c2",
-      "text": "The press goes up and forward until the hands are about level with the forehead or top of the head, with the back and shoulder blades kept on the backrest.",
+      "text": "The press goes up and forward until the hands are about level with the forehead or top of the head, with the back and shoulder blades kept on the backrest. ACE writes this for a seated incline press on cables or a selectorized machine; applied to the lever incline machine by reasoning.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "MECH"
       ],
       "sources": [
         "ace-incline-press"
@@ -86,9 +93,10 @@
     },
     {
       "id": "c3",
-      "text": "Press until the elbows are straight but not locked, pause, then lower slowly until the handles lightly touch or come close to the upper chest.",
+      "text": "Press until the elbows are straight but not locked, pause, then lower slowly until the handles lightly touch or come close to the upper chest. ACE writes this for a seated incline press on cables or a selectorized machine; applied to the lever incline machine by reasoning.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "MECH"
       ],
       "sources": [
         "ace-incline-press"
@@ -108,9 +116,10 @@
     },
     {
       "id": "c4",
-      "text": "Brace the stomach and keep the natural low-back curve without pressing the low back into the pad or arching; shoulders held back and down all set.",
+      "text": "Brace the stomach and keep the natural low-back curve without pressing the low back into the pad or arching; shoulders held back and down all set. ACE writes this for a seated incline press on cables or a selectorized machine; applied to the lever incline machine by reasoning.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "MECH"
       ],
       "sources": [
         "ace-incline-press"
@@ -130,7 +139,7 @@
     },
     {
       "id": "c5",
-      "text": "The shoulder blades must not round forward off the pad; on the flat machine press ACE says people very often press until they do. The frequency is stated for the flat press and applied here by similarity.",
+      "text": "The shoulder blades must not round forward off the pad; on the flat machine press ACE says people very often press until they do, and that this makes the muscles that hold the shoulder blades to the ribcage less stable. The frequency and the instability are stated for the flat press and applied here by similarity.",
       "tags": [
         "CONSENSUS",
         "MECH"
@@ -147,7 +156,7 @@
         },
         {
           "source": "ace-chest-press",
-          "text": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest.",
+          "text": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest. This promotes instability within the muscles that hold the shoulder blades to the ribcage.",
           "where": "note"
         }
       ]
@@ -190,9 +199,10 @@
     },
     {
       "id": "c8",
-      "text": "A moderate speed of about 1-2 seconds each way is the general recommendation, and load goes up by 2-10% once the target reps are beaten by one or two.",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm2009"
@@ -200,7 +210,7 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -257,7 +267,7 @@
     "view": "side",
     "viewWhy": "Same as the parent: the push line, the handle height at the chest and the shoulder blades on the pad (the plate fault, c5) all read from the side.",
     "equipment": "Pivot-arm press machine with the arm path angled upward, reclined back pad and seat (census: same lever primitive as the parent, inclined arm path).",
-    "start": "Back and shoulder blades on the pad (c2, c4); feet planted (c1); handles and hands level with the upper chest or shoulders (c1); elbows bent below and behind the handles; wrists straight (c1).",
+    "start": "Back and shoulder blades on the pad (c2, c4); feet planted (c1); handles and hands level with the upper chest or shoulders (c1); wrists straight (c1).",
     "end": "Arms extended up and forward, hands about level with the forehead (c2); elbows straight but not locked (c3); shoulder blades still on the pad (c2, c5).",
     "checkpoints": [
       {
@@ -278,7 +288,7 @@
     ],
     "mistake": {
       "what": "Shoulder blades roll forward off the pad at the top of the press.",
-      "why": "ACE names it as very frequent on the machine chest press and tells you to avoid it on the incline press; the shoulder loses its base.",
+      "why": "ACE names it as very frequent on the machine chest press and tells you to avoid it on the incline press; on the flat press ACE says it makes the muscles that hold the shoulder blades to the ribcage less stable.",
       "claim": "c5",
       "drawable": true
     },
@@ -296,7 +306,10 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c3"
+      ]
     },
     "variantLine": null
   },
@@ -322,6 +335,10 @@
     {
       "step": "Brace, keep the natural low-back curve, shoulders back and down.",
       "claim": "c4"
+    },
+    {
+      "step": "Add 2-10% load only when you can do one or two reps more than your target.",
+      "claim": "c8"
     }
   ],
   "posture": [
@@ -353,12 +370,12 @@
   "handlingMistakes": [
     {
       "mistake": "Rolling the shoulder blades forward off the pad to finish the press.",
-      "fix": "Stop the press with the blades still on the pad. If you can only finish by rolling forward, the weight is too heavy.",
+      "fix": "Stop the press with the blades still on the pad.",
       "claim": "c5"
     },
     {
       "mistake": "Arching the lower back off the pad.",
-      "fix": "Brace the stomach and keep only the natural low-back curve; lower the weight if you have to arch.",
+      "fix": "Brace the stomach and keep only the natural low-back curve.",
       "claim": "c4"
     },
     {
@@ -397,29 +414,29 @@
     "rows": [
       {
         "where": "Front of the shoulders",
-        "means": "The shoulder blades are rolling off the pad at the top.",
+        "means": "No source read links this feeling to a cause; the shoulder fault ACE warns about here is the shoulder blades rolling off the pad at the top.",
         "fix": "Keep the blades on the pad and stop the press there.",
         "claim": "c5",
         "redFlag": "shoulder"
       },
       {
         "where": "Lower back",
-        "means": "You are arching off the pad to finish reps.",
-        "fix": "Brace, normal low-back curve, lighter weight.",
+        "means": "No source read links this feeling to a cause; the lower-back fault ACE warns about here is arching off the pad.",
+        "fix": "Brace, keep the normal low-back curve.",
         "claim": "c4",
         "redFlag": null
       },
       {
         "where": "Elbows",
-        "means": "You are snapping the elbows locked.",
+        "means": "No source read links this feeling to a cause; ACE's elbow rule is to stop short of locking.",
         "fix": "Stop just short of lockout.",
         "claim": "c3",
         "redFlag": "elbow"
       },
       {
         "where": "Wrist",
-        "means": "The wrist is bending back instead of staying in line with the forearm.",
-        "fix": "Straighten the wrist and lower the weight until it stays straight.",
+        "means": "No source read links this feeling to a cause; the wrist rule ACE gives here is keeping the wrist in line with the forearm.",
+        "fix": "Keep the wrist in line with the forearm.",
         "claim": "c1",
         "redFlag": "wrist"
       }
@@ -427,11 +444,11 @@
   },
   "risks": [
     {
-      "risk": "Rolling the shoulder blades off the pad takes away the shoulder's stable base.",
+      "risk": "Rolling the shoulder blades off the pad makes the muscles that hold them to the ribcage less stable (stated for the flat machine press).",
       "claim": "c5"
     },
     {
-      "risk": "Arching the lower back to finish heavy reps.",
+      "risk": "Arching the lower back.",
       "claim": "c4"
     }
   ],
@@ -446,13 +463,16 @@
       "kind": "posture",
       "right": "Blades flat on the pad, arms long, elbows soft, hands at forehead height.",
       "wrong": "Upper back rounded off the pad, elbows locked.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c3"
+      ]
     },
     {
       "key": "start height",
       "kind": "posture",
       "right": "Handles level with the upper chest at the start.",
-      "wrong": "Handles at mid-chest or lower, which turns the press flat.",
+      "wrong": "Handles at mid-chest or lower at the start.",
       "claim": "c1"
     }
   ],

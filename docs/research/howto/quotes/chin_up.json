@@ -18,6 +18,11 @@
       "fixes": null
     },
     {
+      "id": "bullbar-assist-beginner",
+      "access": "full",
+      "fixes": null
+    },
+    {
       "id": "hk-baechle-grip",
       "access": "full",
       "fixes": null
@@ -44,7 +49,7 @@
     },
     {
       "id": "strengthlog-chin-up",
-      "access": "unreachable",
+      "access": "full",
       "fixes": null
     },
     {
@@ -65,7 +70,7 @@
       "claim": "c2",
       "source": "strengthlog-chin-up",
       "quote": "Grip the bar with a supinated grip (palms facing you), about shoulder-width apart.",
-      "status": "unreachable-source",
+      "status": "verbatim",
       "closest": null
     },
     {
@@ -246,6 +251,20 @@
     {
       "claim": "c20",
       "source": "odriscoll-1992",
+      "quote": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "odriscoll-1992",
+      "quote": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "odriscoll-1992",
       "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
       "status": "verbatim",
       "closest": null
@@ -261,6 +280,27 @@
       "claim": "c22",
       "source": "ace-chin-ups",
       "quote": "Align your head vertically with your trunk under your hands",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c23",
+      "source": "nasm-chin-pull",
+      "quote": "Apply progressive overload deliberately, more reps, less assistance, then added load",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c23",
+      "source": "nasm-chin-pull",
+      "quote": "once reps come easily, added load via a belt or dumbbell for continued overload",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c24",
+      "source": "bullbar-assist-beginner",
+      "quote": "The Shrug: Initiating the pull with your shoulders up by your ears.",
       "status": "verbatim",
       "closest": null
     }

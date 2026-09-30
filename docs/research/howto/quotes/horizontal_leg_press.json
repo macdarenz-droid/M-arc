@@ -34,9 +34,9 @@
     {
       "claim": "c3",
       "source": "ace-seated-leg-press",
-      "quote": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings.",
+      "quote": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings. Keep your heels flat against the resistance plate and avoid any movement in the upper extremity.",
       "status": "verbatim",
-      "closest": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings."
+      "closest": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings. Keep your heels flat against the resistance plate and avoid any movement in the upper extremity."
     },
     {
       "claim": "c4",
@@ -111,16 +111,44 @@
     {
       "claim": "c11",
       "source": "macdougall1985",
+      "quote": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
+      "status": "verbatim",
+      "closest": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders."
+    },
+    {
+      "claim": "c11",
+      "source": "macdougall1985",
+      "quote": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+      "status": "verbatim",
+      "closest": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum."
+    },
+    {
+      "claim": "c11",
+      "source": "macdougall1985",
+      "quote": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+      "status": "verbatim",
+      "closest": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift"
+    },
+    {
+      "claim": "c11",
+      "source": "macdougall1985",
       "quote": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
       "status": "verbatim",
       "closest": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg."
     },
     {
+      "claim": "c11",
+      "source": "macdougall1985",
+      "quote": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
+      "status": "verbatim",
+      "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver."
+    },
+    {
       "claim": "c12",
       "source": "acsm2009",
-      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
       "claim": "c12",
@@ -128,6 +156,20 @@
       "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
       "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c13",
+      "source": "ace-seated-leg-press",
+      "quote": "Pause momentarily, then slowly return to your starting position",
+      "status": "verbatim",
+      "closest": "Pause momentarily, then slowly return to your starting position"
+    },
+    {
+      "claim": "c13",
+      "source": "webmd-seated-leg-press",
+      "quote": "Take a pause, and slowly return your body to the starting position.",
+      "status": "verbatim",
+      "closest": "Take a pause, and slowly return your body to the starting position."
     }
   ]
 }

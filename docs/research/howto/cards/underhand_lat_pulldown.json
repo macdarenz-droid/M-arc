@@ -106,9 +106,9 @@
     },
     {
       "id": "c5",
-      "text": "Lean back only slightly, no more than about 30 degrees, and add no extra lean during the pull.",
+      "text": "Lean back only slightly, no more than about 30 degrees, and add no extra lean during the pull. Written for the overhand bar pulldown; applied here because the seated position is the same.",
       "tags": [
-        "CONSENSUS"
+        "MECH"
       ],
       "sources": [
         "ace-lat-pulldown"
@@ -162,7 +162,7 @@
     },
     {
       "id": "c8",
-      "text": "Pulling the bar further down lets the forearms and front shoulders take over (coach source).",
+      "text": "Pulling the bar further down lets the forearms and shoulders (deltoids) take over (coach source).",
       "tags": [
         "CONSENSUS"
       ],
@@ -202,9 +202,9 @@
     },
     {
       "id": "c10",
-      "text": "Start the pull by drawing the shoulder blades down, then pull.",
+      "text": "Start the pull by drawing the shoulder blades down, then pull. Written for the overhand bar pulldown; applied here by reasoning.",
       "tags": [
-        "CONSENSUS"
+        "MECH"
       ],
       "sources": [
         "ace-lat-pulldown"
@@ -221,7 +221,7 @@
       "id": "c11",
       "text": "Stop pulling once the elbows stop moving down and start moving back; ACE says further pulling adds stress to the shoulder joint. Written for the overhand bar; applied here because the elbow path is the same.",
       "tags": [
-        "CONSENSUS"
+        "MECH"
       ],
       "sources": [
         "ace-lat-pulldown"
@@ -275,7 +275,7 @@
     },
     {
       "id": "c14",
-      "text": "In a 10-man EMG study the underhand (supinated) grip gave less lat activity than a wide overhand grip to the front.",
+      "text": "In a 10-man EMG study the underhand (supinated) grip gave less lat activity than a wide overhand grip to the front while pulling down. Posterior deltoid results are only relative: pulling down, the underhand, close and wide-front grips were all above behind-the-neck.",
       "tags": [
         "DATA"
       ],
@@ -286,7 +286,12 @@
         {
           "source": "signorile-2002",
           "text": "During the concentric phase, NrmsEMG results for the LD included WGA > WGP, SG, CG.",
-          "where": "Results"
+          "where": "abstract (concentric phase, the pull down)"
+        },
+        {
+          "source": "signorile-2002",
+          "text": "For the PD: CG, WGA, SG > WGP.",
+          "where": "abstract (concentric phase, the pull down)"
         }
       ]
     },
@@ -344,7 +349,7 @@
     },
     {
       "id": "c18",
-      "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a curled or bent wrist costs grip (hand dynamometer, applied here by reasoning).",
+      "text": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
       "tags": [
         "MECH"
       ],
@@ -352,6 +357,16 @@
         "odriscoll-1992"
       ],
       "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll-1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
         {
           "source": "odriscoll-1992",
           "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
@@ -456,9 +471,12 @@
       }
     ],
     "mistake": {
-      "what": "Using momentum: the torso rocks back to drive the bar down, then swings forward as it rises.",
+      "what": "Using momentum: the torso rocks back to drive the bar down.",
       "why": "The coach source names momentum first and asks for a stable torso; ACE limits the lean to about 30 degrees with no extra lean during the pull. Frequency is not measured.",
-      "claim": "c7",
+      "claim": [
+        "c7",
+        "c5"
+      ],
       "drawable": true
     },
     "tells": [
@@ -488,12 +506,11 @@
     "width": "About shoulder width, or a little closer; closer is likely easier on the shoulders.",
     "thumb": "Wrapped by default (inherited); thumbless is a coach-allowed option.",
     "handContact": "Inherited from lat_pulldown: bar across the base of the fingers.",
-    "wrist": "Straight, not curled; a bent wrist costs grip.",
+    "wrist": "Not curled forward (c18).",
     "claims": [
       "c1",
       "c2",
       "c3",
-      "c14",
       "c18"
     ]
   },
@@ -544,13 +561,16 @@
   "handlingMistakes": [
     {
       "mistake": "Rocking the torso to swing the bar down.",
-      "fix": "Keep the torso still. If you can't, lower the weight.",
+      "fix": "Keep the torso still.",
       "claim": "c7"
     },
     {
-      "mistake": "Pulling the bar down to the belly.",
+      "mistake": "Pulling the bar down too far.",
       "fix": "Stop when the bar passes just below your chin.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c6"
+      ]
     },
     {
       "mistake": "Letting the bar fly back up.",
@@ -568,7 +588,10 @@
     "secondary": [
       {
         "muscleId": "biceps",
-        "claim": "c16"
+        "claim": [
+          "c16",
+          "c17"
+        ]
       },
       {
         "muscleId": "mid_back",
@@ -588,31 +611,34 @@
     "rows": [
       {
         "where": "Front of the upper arms",
-        "means": "Common with this grip; coaches say it works the biceps more, though EMG found no biceps difference between grips.",
-        "fix": "Nothing to fix. Keep leading with the elbows.",
-        "claim": "c13",
+        "means": "Coaches say this grip works the biceps more, though EMG found no biceps difference between grips.",
+        "fix": "Nothing to fix.",
+        "claim": [
+          "c13",
+          "c16"
+        ],
         "redFlag": null
       },
       {
         "where": "Forearms more than your back",
         "means": "Usually means you are pulling the bar too low.",
         "fix": "Stop just below the chin.",
-        "claim": "c8",
+        "claim": [
+          "c8",
+          "c6"
+        ],
         "redFlag": null
       },
       {
-        "where": "Front of the shoulders",
+        "where": "Shoulders",
         "means": "Usually means the grip is too wide for palms facing you, or you pull past the stop point.",
-        "fix": "Bring the hands in to about shoulder width and stop when the elbows stop moving down. If it still hurts, stop and get it checked.",
-        "claim": "c3",
+        "fix": "Bring the hands in to about shoulder width and stop when the elbows stop moving down.",
+        "claim": [
+          "c3",
+          "c11",
+          "c1"
+        ],
         "redFlag": "shoulder"
-      },
-      {
-        "where": "Lower back",
-        "means": "Usually means you are rocking the weight down.",
-        "fix": "Keep the lean slight and still, and lower the weight.",
-        "claim": "c5",
-        "redFlag": null
       }
     ]
   },
@@ -629,9 +655,12 @@
     {
       "key": "hand",
       "kind": "hand",
-      "right": "Palms facing you, bar across the base of the fingers, wrists straight.",
-      "wrong": "Wrists bent back under the bar, grip opening.",
-      "claim": "c18"
+      "right": "Palms facing you, bar across the base of the fingers, wrists not curled.",
+      "wrong": "Wrists curled forward.",
+      "claim": [
+        "c18",
+        "c1"
+      ]
     },
     {
       "key": "torso",
@@ -646,12 +675,12 @@
       {
         "muscleId": "rear_delts",
         "role": "secondary",
-        "why": "Listed by the coach source (c17); no EMG for this grip beyond Signorile's posterior-deltoid data."
+        "why": "Listed by the coach source (c17). The only EMG is relative: pulling down, the underhand grip's posterior deltoid activity was above the behind-the-neck grip's (c14)."
       }
     ],
     "remove": [],
     "why": "lats primary and biceps and mid_back secondary stand. The underhand grip is not better for the lats (c13, c14) and grip may not matter much (c15)."
   },
   "anchorSource": "puregym-reverse-grip-lat-pulldown",
-  "notes": "PureGym's claims that the underhand grip lets most people lift more and may suit people prone to shoulder pain are not used: no measured source was found for either, and the chin_up card records shoulder-risk kinematics for a palms-toward-you hang. BarBend's full reverse-grip guide was also read in full."
+  "notes": "PureGym's claims that the underhand grip lets most people lift more and may suit people prone to shoulder pain are not used: no measured source was found for either, and the chin_up card records shoulder-risk kinematics for a palms-toward-you hang. BarBend's full reverse-grip guide was also read in full. ACE lines are written for the overhand bar pulldown and tagged MECH here. The lower-back feel row was dropped: no source links a lower-back feeling to rocking."
 }

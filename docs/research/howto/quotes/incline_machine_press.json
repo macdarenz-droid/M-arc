@@ -11,6 +11,13 @@
       "closest": "Sit with your back firmly supported against the backrest. If adjustable, align the handles level with your shoulder. Grasp the handles and position your hands level with your upper chest or shoulders, maintaining a neutral wrist position (i.e., wrists in line with your forearms)."
     },
     {
+      "claim": "c1",
+      "source": "ace-incline-press",
+      "quote": "Position your feet firmly on the floor to stabilize your body.",
+      "status": "verbatim",
+      "closest": "Position your feet firmly on the floor to stabilize your body."
+    },
+    {
       "claim": "c2",
       "source": "ace-incline-press",
       "quote": "Gently exhale and perform a pressing movement, extending your arms forward to a level with your forehead or top of your head. Continue to maintain a neutral wrist position, and contact with your back and shoulder blades against the backrest.",
@@ -55,9 +62,9 @@
     {
       "claim": "c5",
       "source": "ace-chest-press",
-      "quote": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest.",
+      "quote": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest. This promotes instability within the muscles that hold the shoulder blades to the ribcage.",
       "status": "verbatim",
-      "closest": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest."
+      "closest": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest. This promotes instability within the muscles that hold the shoulder blades to the ribcage."
     },
     {
       "claim": "c6",
@@ -76,9 +83,9 @@
     {
       "claim": "c8",
       "source": "acsm2009",
-      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
       "claim": "c8",

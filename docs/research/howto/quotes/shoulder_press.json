@@ -62,6 +62,13 @@
     {
       "claim": "c6",
       "source": "ace-shoulder-press",
+      "quote": "Pause momentarily then gently contract your lats (back muscles) to pull the handles back down towards your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+      "status": "verbatim",
+      "closest": "Pause momentarily then gently contract your lats (back muscles) to pull the handles back down towards your starting position, allowing your elbows to flex (bend) in a slow, controlled manner"
+    },
+    {
+      "claim": "c6",
+      "source": "ace-shoulder-press",
       "quote": "In the overhead position, the shoulder is relatively unstable. To protect your shoulder it is important to engage your lats (back muscles) to initiate the downward movement as oppsed to simply yielding to gravity.",
       "status": "verbatim",
       "closest": "In the overhead position, the shoulder is relatively unstable. To protect your shoulder it is important to engage your lats (back muscles) to initiate the downward movement as oppsed to simply yielding to gravity."
@@ -97,6 +104,13 @@
     {
       "claim": "c9",
       "source": "kim2026",
+      "quote": "Thirty-one healthy young adults with no athletic or resistance training experience participated in this single-session study.",
+      "status": "verbatim",
+      "closest": "Thirty-one healthy young adults with no athletic or resistance training experience participated in this single-session study."
+    },
+    {
+      "claim": "c9",
+      "source": "kim2026",
       "quote": "Post hoc analysis showed that DT activity was higher in the DT-focused condition, whereas TB activity was higher in the TB-focused condition (p < 0.001). UT activity did not differ across conditions (p > 0.05).",
       "status": "verbatim",
       "closest": "Post hoc analysis showed that DT activity was higher in the DT-focused condition, whereas TB activity was higher in the TB-focused condition (p < 0.001). UT activity did not differ across conditions (p > 0.05)."
@@ -111,16 +125,44 @@
     {
       "claim": "c11",
       "source": "macdougall1985",
-      "quote": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum. Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+      "quote": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
       "status": "verbatim",
-      "closest": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum. Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift"
+      "closest": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders."
+    },
+    {
+      "claim": "c11",
+      "source": "macdougall1985",
+      "quote": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+      "status": "verbatim",
+      "closest": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum."
+    },
+    {
+      "claim": "c11",
+      "source": "macdougall1985",
+      "quote": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+      "status": "verbatim",
+      "closest": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift"
+    },
+    {
+      "claim": "c11",
+      "source": "macdougall1985",
+      "quote": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+      "status": "verbatim",
+      "closest": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg."
+    },
+    {
+      "claim": "c11",
+      "source": "macdougall1985",
+      "quote": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
+      "status": "verbatim",
+      "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver."
     },
     {
       "claim": "c12",
       "source": "acsm2009",
-      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
       "claim": "c12",

@@ -29,7 +29,7 @@
       "why": "true for this child because grip security on the same bar does not depend on palm direction."
     },
     {
-      "field": "zooms.thumb (full grip default; thumbless, hook and gymnastics false grip labelled)",
+      "field": "zooms.thumb (full grip is the only option shown; thumbless, hook and gymnastics false grip appear only as labelled wrong or trap)",
       "why": "true for this child because the thumb choices and their naming trap are the same on a supinated hang; the drawing turns the palm toward the face."
     }
   ],
@@ -403,7 +403,7 @@
     },
     {
       "id": "c20",
-      "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a bent or curled wrist costs grip. Measured on a hand dynamometer, applied here to a hang by reasoning.",
+      "text": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
       "tags": [
         "MECH"
       ],
@@ -411,6 +411,16 @@
         "odriscoll-1992"
       ],
       "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll-1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
         {
           "source": "odriscoll-1992",
           "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
@@ -449,6 +459,46 @@
           "source": "ace-chin-ups",
           "text": "Align your head vertically with your trunk under your hands",
           "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "NASM's progression is more reps, then less assistance, then added load; once reps come easily, load is added with a belt or dumbbell.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chin-pull",
+          "text": "Apply progressive overload deliberately, more reps, less assistance, then added load",
+          "where": "Programming"
+        },
+        {
+          "source": "nasm-chin-pull",
+          "text": "once reps come easily, added load via a belt or dumbbell for continued overload",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c24",
+      "text": "Starting the pull with the shoulders up by the ears (the shrug) is a named fault on the assisted pull-up machine; applied to the chin-up by inference, since no chin-up source names it.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "bullbar-assist-beginner"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "The Shrug: Initiating the pull with your shoulders up by your ears.",
+          "where": "Common mistakes"
         }
       ]
     }
@@ -541,8 +591,8 @@
       "kind": "coach",
       "year": null,
       "pmid": null,
-      "access": "unreachable",
-      "checked": null
+      "access": "full",
+      "checked": "2026-09-30"
     },
     {
       "id": "youdas-2010",
@@ -553,6 +603,16 @@
       "pmid": "21068680",
       "access": "abstract",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "bullbar-assist-beginner",
+      "url": "https://bullbarfit.com/blogs/q-as/how-to-use-a-pull-up-assist-machine-correctly-for-beginners-at-the-gym",
+      "title": "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
     }
   ],
   "plate": {
@@ -560,7 +620,7 @@
     "viewWhy": "c5",
     "equipment": "Fixed overhead pull-up bar and floor line, as the pull_up plate. Feet clear the floor with straight arms.",
     "start": "Free hang: elbows fully straight, arms overhead with the head between them (c18); palms toward the face, full grip (c1); shoulder blades set down and back (c4); legs crossed and still, body vertical under the bar (c9, c6); head in line with the trunk (c22).",
-    "end": "Chin level with the bar (c7); elbows driven down toward the floor and still in front of the body, beside the ribs (c5); body still vertical, no leg kick (c6).",
+    "end": "Chin level with the bar (c7); elbows driven down toward the floor and still in front of the body (c5); body still vertical, no leg kick (c6).",
     "checkpoints": [
       {
         "label": "Shoulders set",
@@ -580,7 +640,7 @@
     ],
     "mistake": {
       "what": "Swinging or kipping: the legs kick forward and the body arcs to throw the chin over the bar.",
-      "why": "ACE and NASM both name swinging and kipping as the fault to avoid; momentum replaces the pull and throws the shoulders into the overhead position that narrows the space under the shoulder roof (c14). How often it happens is not measured.",
+      "why": "ACE and NASM both name swinging and kipping as the fault to avoid. How often it happens is not measured.",
       "claim": "c6",
       "drawable": true
     },
@@ -611,7 +671,7 @@
     "width": "About shoulder-width apart, or slightly closer.",
     "thumb": "Wrapped around the bar to meet the index finger (inherited from pull_up; ACE also asks for it).",
     "handContact": "Inherited from pull_up: bar across the top of the palm where the fingers start.",
-    "wrist": "Straight, in line with the forearm. A curled wrist or a bar sliding to the fingertips costs grip.",
+    "wrist": "Straight, in line with the forearm (c3); not curled forward (c20).",
     "claims": [
       "c1",
       "c2",
@@ -671,18 +731,26 @@
   "handlingMistakes": [
     {
       "mistake": "Swinging, kicking or kipping to get the chin over the bar.",
-      "fix": "Cross your legs, brace, keep the body vertical. If you can't finish a rep without swinging, use a band or the assisted machine, or do slow lowering-only reps.",
-      "claim": "c17"
+      "fix": "Cross your legs, brace, keep the body vertical. If you can't finish a rep without swinging, use a band or the assisted machine, or do slow lowering-only reps; then build up with more reps, less assistance, then added load.",
+      "claim": [
+        "c17",
+        "c9",
+        "c6",
+        "c23"
+      ]
     },
     {
       "mistake": "Half reps: stopping short of the bar, or not straightening the arms at the bottom.",
-      "fix": "Go from a free hang with straight arms to chin level with the bar, every rep. End the set when you can't.",
+      "fix": "Go from a free hang with straight arms to chin level with the bar, every rep.",
       "claim": "c7"
     },
     {
-      "mistake": "Starting the pull from a loose hang with the shoulders up by the ears.",
+      "mistake": "Starting the pull with the shoulders up by the ears.",
       "fix": "Pull your shoulders down and back first, then bend your arms.",
-      "claim": "c4"
+      "claim": [
+        "c24",
+        "c4"
+      ]
     }
   ],
   "feel": {
@@ -709,35 +777,42 @@
     "watch": [
       {
         "muscleId": "upper_traps",
-        "claim": "c4"
+        "claim": "c24"
       }
     ],
     "rows": [
       {
         "where": "Front of your upper arms",
         "means": "Expected: palms toward you make the biceps work harder than on a pull-up.",
-        "fix": "Nothing to fix. Keep leading with the elbows so the back works too.",
+        "fix": "Nothing to fix.",
         "claim": "c10",
         "redFlag": null
       },
       {
         "where": "Tops of the shoulders and neck",
-        "means": "Usually means you are pulling from a loose hang with the shoulders up.",
+        "means": "Usually means you are starting the pull with your shoulders up by your ears.",
         "fix": "Set your shoulders down and back before each rep.",
-        "claim": "c4",
+        "claim": [
+          "c24",
+          "c4"
+        ],
         "redFlag": null
       },
       {
-        "where": "A pinch at the front of the shoulder",
+        "where": "Shoulder",
         "means": "Usually means the shoulder does not like this arms-overhead, palms-toward-you position.",
         "fix": "Stop the set. If it keeps happening or lasts, stop chin-ups and get it checked.",
-        "claim": "c14",
+        "claim": [
+          "c14",
+          "c13",
+          "c16"
+        ],
         "redFlag": "shoulder"
       },
       {
-        "where": "Inside of the elbow",
+        "where": "Elbow",
         "means": "Usually means too much pulling volume, too soon.",
-        "fix": "Cut back the sets and build up slowly. If it lasts, get it checked.",
+        "fix": "Build up the sets slowly. If it lasts, get it checked.",
         "claim": "c16",
         "redFlag": "elbow"
       }
@@ -746,10 +821,13 @@
   "risks": [
     {
       "risk": "Shoulder: arms high overhead narrow the space under the shoulder roof, and the palms-toward-you style shows more upper-arm rotation.",
-      "claim": "c13"
+      "claim": [
+        "c13",
+        "c14"
+      ]
     },
     {
-      "risk": "Spine: chin-ups load the spine more than other pulls despite the hang; relevant with back pain.",
+      "risk": "Spine: chin-ups and pull-ups gave the highest spine load of the pulls tested, despite the hang.",
       "claim": "c15"
     },
     {
@@ -766,15 +844,22 @@
       "key": "hand",
       "kind": "hand",
       "right": "Palm facing the face, bar across the top of the palm, thumb wrapped under, wrist straight in line with the forearm.",
-      "wrong": "Bar slid out to the fingertips with the wrist bent, grip opening.",
-      "claim": "c20"
+      "wrong": "Wrist curled forward.",
+      "claim": [
+        "c3",
+        "c1",
+        "c20"
+      ]
     },
     {
-      "key": "elbows",
+      "key": "shoulders",
       "kind": "posture",
-      "right": "Mid-pull side view: elbows pointing down, in front of the body.",
+      "right": "Shoulder blades pulled down and back before the arms bend.",
       "wrong": "Shoulders shrugged to the ears at the start of the pull.",
-      "claim": "c5"
+      "claim": [
+        "c4",
+        "c24"
+      ]
     },
     {
       "key": "body line",
@@ -793,12 +878,12 @@
       }
     ],
     "remove": [],
-    "why": "exercises.json already lists lats and biceps as primary, which the chin-up EMG supports (c10, c11). mid_back stands: the lower trapezius works moderately (c11), folded into mid_back as on the pull_up card. Chest (pectoralis major, c10) is not added: it works, but people rarely feel it here."
+    "why": "exercises.json already lists lats and biceps as primary, which the chin-up EMG supports (c10, c11). mid_back stands: the lower trapezius works moderately (c11), folded into mid_back as on the pull_up card. Chest (pectoralis major, c10) is not added: a design choice to keep the feel list to the back and arm targets; the EMG shows it works (c10)."
   },
   "anchorSource": "ace-chin-ups",
   "gaps": [
     "Tier A: no sourced way to get down from the bar or fail a rep safely (dismount); left out, not invented.",
-    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression: covered by assistance and lowering-only reps (c17)."
+    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression is on handlingMistakes[0] (c17, c23); how much load to add, and when, is not sourced."
   ],
-  "notes": "Not sourced, so left out: a safe way down from the bar (the tier-A 'way out'); the pull_up card's setup lines are inherited for bar height and chalk. No source compares shoulder-width and closer chin-up grips. Prinold 2016 is read from the abstract only; the reverse = chin-up mapping is interpretation (c13)."
+  "notes": "Not sourced, so left out: a safe way down from the bar (the tier-A 'way out'); the pull_up card's setup lines are inherited for bar height and chalk. No source compares shoulder-width and closer chin-up grips. Prinold 2016 is read from the abstract only; the reverse = chin-up mapping is interpretation (c13). The StrengthLog chin-up page was re-fetched on 2026-09-30 (access full, quotes verbatim). The shrug fault is borrowed from the assisted-machine source (c24, WEAK). Wrist: the straight, in-line wrist comes from ACE (c3). O'Driscoll (c20) found the strongest dynamometer grip near 35 degrees of extension, so it does not support 'straight'; it is cited only for 'not curled forward' (zoom wrong, grip.wrist)."
 }

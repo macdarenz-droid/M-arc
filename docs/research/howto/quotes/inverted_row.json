@@ -8,11 +8,6 @@
       "fixes": null
     },
     {
-      "id": "ace-pullup-moves",
-      "access": "full",
-      "fixes": null
-    },
-    {
       "id": "catalyst-inverted-row",
       "access": "full",
       "fixes": null
@@ -39,7 +34,7 @@
     },
     {
       "id": "strengthlog-inverted-row",
-      "access": "unreachable",
+      "access": "full",
       "fixes": null
     },
     {
@@ -58,7 +53,7 @@
       "claim": "c1",
       "source": "strengthlog-inverted-row",
       "quote": "Place a barbell in a rack, high enough for you to be able to hang below it in straight arms, with your heels on the floor.",
-      "status": "unreachable-source",
+      "status": "verbatim",
       "closest": null
     },
     {
@@ -86,7 +81,7 @@
       "claim": "c2",
       "source": "strengthlog-inverted-row",
       "quote": "Grip the bar with an overhand grip, slightly wider than shoulder-width apart.",
-      "status": "unreachable-source",
+      "status": "verbatim",
       "closest": null
     },
     {
@@ -104,17 +99,10 @@
       "closest": null
     },
     {
-      "claim": "c3",
-      "source": "ace-pullup-moves",
-      "quote": "Slowly release back to the starting position while maintaining a straight line from head to feet.",
-      "status": "verbatim",
-      "closest": null
-    },
-    {
       "claim": "c4",
       "source": "strengthlog-inverted-row",
       "quote": "Inhale, and pull yourself up as high as you can, or until your chest touches the bar.",
-      "status": "unreachable-source",
+      "status": "verbatim",
       "closest": null
     },
     {
@@ -135,7 +123,7 @@
       "claim": "c5",
       "source": "strengthlog-inverted-row",
       "quote": "Exhale, while lowering yourself back to the starting position with control.",
-      "status": "unreachable-source",
+      "status": "verbatim",
       "closest": null
     },
     {
@@ -149,7 +137,7 @@
       "claim": "c7",
       "source": "strengthlog-inverted-row",
       "quote": "You can make the exercise heavier by placing your feet on an elevation, or easier by raising the bar to a higher rack position.",
-      "status": "unreachable-source",
+      "status": "verbatim",
       "closest": null
     },
     {
@@ -226,6 +214,20 @@
       "claim": "c14",
       "source": "hk-baechle-grip",
       "quote": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "odriscoll-1992",
+      "quote": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
       "status": "verbatim",
       "closest": null
     },

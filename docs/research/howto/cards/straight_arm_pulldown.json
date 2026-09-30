@@ -90,7 +90,7 @@
     },
     {
       "id": "c4",
-      "text": "The arms stay nearly straight, with only a slight elbow bend, from top to bottom; the movement happens at the shoulder.",
+      "text": "The arms stay nearly straight, with only a slight elbow bend, from top to bottom.",
       "tags": [
         "CONSENSUS"
       ],
@@ -295,7 +295,7 @@
     },
     {
       "id": "c13",
-      "text": "EMG comparisons with the barbell pullover (20 adults) found the pullover did not raise lat or triceps activity over the straight-arm pulldown, and a review judged the pulldown the more targeted back option. Measured, but one small study reported through a review.",
+      "text": "EMG comparisons with the barbell pullover (20 adults) found the pullover did not raise lat or triceps activity over the straight-arm pulldown, and a review said the pulldown may offer a more targeted back stimulus, depending on grip configuration. Measured, but one small study reported through a review.",
       "tags": [
         "DATA",
         "WEAK"
@@ -317,28 +317,11 @@
       ]
     },
     {
-      "id": "c14",
-      "text": "In isometric tests of the pullover and pulldown, shoulder angle changed force and muscle activity in both exercises, which supports using the full overhead-to-thigh range.",
-      "tags": [
-        "DATA",
-        "WEAK"
-      ],
-      "sources": [
-        "teixeira2022"
-      ],
-      "quotes": [
-        {
-          "source": "teixeira2022",
-          "text": "The study concludes that specific shoulder joint positions affect PF production and iEMG during both exercises.",
-          "where": "abstract"
-        }
-      ]
-    },
-    {
       "id": "c15",
-      "text": "A moderate lifting speed of about 1-2 seconds up and 1-2 seconds down is the general recommendation, and load goes up by 2-10% once the target reps are beaten by one or two.",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm2009"
@@ -346,7 +329,7 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -399,16 +382,6 @@
       "checked": "2026-09-30"
     },
     {
-      "id": "teixeira2022",
-      "url": "https://pubmed.ncbi.nlm.nih.gov/35992501/",
-      "title": "Differences Between Pullover and Pulldown Exercises on Maximal Isometric Force and Myoelectric Activity in Recreationally-Trained Men",
-      "kind": "peer-reviewed",
-      "year": 2022,
-      "pmid": 35992501,
-      "access": "abstract",
-      "checked": "2026-09-30"
-    },
-    {
       "id": "acsm2009",
       "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
       "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
@@ -421,20 +394,26 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The movement is shoulder extension in one plane (c4, c5): the arm arc and the elbow angle, which carries the main fault (c6), both read from the side.",
+    "viewWhy": "The movement is shoulder extension in one plane (c4, c5, c12): the arm arc and the elbow angle, which carries the main fault (c6), both read from the side.",
     "equipment": "Cable column with the pulley at its highest point and a straight bar (c1). The lifter stands a step back from the stack so the cable is taut at the top (c2).",
-    "start": "Standing, feet hip to shoulder width, knees soft (c2); trunk tall with at most a slight forward hip lean (c3); arms up and forward toward the pulley, elbows almost straight with a slight bend (c4); bar at about head height or above, cable taut (c2).",
+    "start": "Standing, feet hip to shoulder width, knees soft (c2); trunk tall with at most a slight forward hip lean (c3); arms up toward the high pulley, bar held overhead, elbows almost straight with a slight bend (c1, c4); cable taut (c2).",
     "end": "Same trunk angle as the start (c3, c7); arms swept down in an arc, elbows still almost straight (c4); bar at the front of the thighs (c5); chest tall (c5).",
     "checkpoints": [
       {
         "label": "Arms stay straight",
         "what": "The elbow keeps the same slight bend from top to bottom; only the shoulder moves.",
-        "claim": "c4"
+        "claim": [
+          "c4",
+          "c12"
+        ]
       },
       {
         "label": "Trunk still",
-        "what": "The trunk keeps one angle all set: no swing to start the rep and no arching at the bottom.",
-        "claim": "c9"
+        "what": "The trunk keeps one angle all set: no swing to start the rep and no arching of the lower back.",
+        "claim": [
+          "c9",
+          "c7"
+        ]
       },
       {
         "label": "Bar to thighs",
@@ -462,7 +441,10 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c15"
+      "claim": [
+        "c15",
+        "c7"
+      ]
     },
     "variantLine": null
   },
@@ -509,7 +491,10 @@
     },
     {
       "point": "Trunk braced and still; no swing, no lower-back arch.",
-      "claim": "c9"
+      "claim": [
+        "c9",
+        "c7"
+      ]
     },
     {
       "point": "Chest tall at the bottom.",
@@ -523,7 +508,7 @@
   "handlingMistakes": [
     {
       "mistake": "Bending the elbows to push the bar down.",
-      "fix": "Keep the same slight elbow bend all set; think of pushing straight arms down. Lighten the load if the elbows keep bending.",
+      "fix": "Keep the same slight elbow bend all set.",
       "claim": "c6"
     },
     {
@@ -532,16 +517,22 @@
       "claim": "c7"
     },
     {
-      "mistake": "Arching the lower back at the bottom.",
-      "fix": "Brace the stomach, keep the ribs down and move only the arms.",
-      "claim": "c9"
+      "mistake": "Arching the lower back.",
+      "fix": "Brace the stomach and move only the arms.",
+      "claim": [
+        "c9",
+        "c10"
+      ]
     }
   ],
   "feel": {
     "primary": [
       {
         "muscleId": "lats",
-        "claim": "c11"
+        "claim": [
+          "c11",
+          "c13"
+        ]
       }
     ],
     "secondary": [
@@ -563,23 +554,30 @@
     "rows": [
       {
         "where": "Lower back",
-        "means": "The back is arching or the torso is swinging to move the weight.",
-        "fix": "Brace, keep the ribs down, move only the arms, and lower the weight.",
-        "claim": "c9",
+        "means": "No source read links this feeling to a cause; the faults the coach source warns about here are arching the lower back and swinging the torso.",
+        "fix": "Brace and move only the arms.",
+        "claim": [
+          "c9",
+          "c10",
+          "c7"
+        ],
         "redFlag": "back"
       },
       {
         "where": "Mostly the triceps",
-        "means": "The elbows are bending, so it has become a pushdown.",
-        "fix": "Lock in the slight elbow bend and push straight arms down.",
+        "means": "No source read links this feeling to a cause; the fault the coach source warns about here is bending the elbows, which turns it into a pushdown.",
+        "fix": "Keep the same slight elbow bend top to bottom.",
         "claim": "c6",
         "redFlag": null
       },
       {
         "where": "Arms, little back",
-        "means": "The weight is too heavy and momentum is doing the work.",
-        "fix": "Drop the weight until you can pause at the bottom.",
-        "claim": "c7",
+        "means": "No source read links this feeling to a cause; the coach source says going too heavy brings jerking, torso swing and momentum.",
+        "fix": "Keep the same slight elbow bend all set.",
+        "claim": [
+          "c7",
+          "c6"
+        ],
         "redFlag": null
       }
     ]
@@ -608,16 +606,19 @@
     {
       "key": "trunk",
       "kind": "posture",
-      "right": "Ribs down, trunk still, chest tall at the bottom.",
-      "wrong": "Lower back arched and hips pushed forward as the bar reaches the thighs.",
-      "claim": "c9"
+      "right": "Trunk braced and still, chest tall at the bottom.",
+      "wrong": "Lower back arched.",
+      "claim": [
+        "c9",
+        "c5"
+      ]
     }
   ],
   "libraryDiff": {
     "add": [],
     "remove": [],
-    "why": "exercises.json lists lats primary and triceps secondary, which c11 and c12 support. rear_delts is added to the feel spec as secondary on coach-source mechanics only (c12), too thin to change the library entry."
+    "why": "exercises.json lists lats primary and triceps secondary, which c11, c12 and c13 support. rear_delts is added to the feel spec as secondary on coach-source mechanics only (c12), too thin to change the library entry."
   },
   "anchorSource": "athlean-sap",
-  "notes": "ACE page 334 is short and mixes a straight bar and 'one end of the rope'; only its stance, arm and tempo lines are used. The Muyor 2022 pullover vs straight-arm pulldown paper (Appl Sci 12:11138) could not be opened (MDPI 403), so it is cited only through the Di Fonza 2026 review. No source was found for a tier-specific way out or for thumb position; the hand lines are the GA hold archetype defaults."
+  "notes": "ACE page 334 is short and mixes a straight bar and 'one end of the rope'; only its stance, arm and tempo lines are used. The Muyor 2022 pullover vs straight-arm pulldown paper (Appl Sci 12:11138) could not be opened (MDPI 403), so it is cited only through the Di Fonza 2026 review. No source was found for a tier-specific way out or for thumb position; the hand lines are the GA hold archetype defaults. Teixeira 2022 (isometric shoulder angles) was dropped: its abstract does not support a range-of-motion cue and no line used it."
 }

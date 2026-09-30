@@ -39,7 +39,7 @@
     },
     {
       "id": "strengthlog-neutral-close-grip-lat-pulldown",
-      "access": "unreachable",
+      "access": "full",
       "fixes": null
     }
   ],
@@ -55,7 +55,7 @@
       "claim": "c1",
       "source": "strengthlog-neutral-close-grip-lat-pulldown",
       "quote": "Attatch a grip to the lat pulldown that lets you have a neutral close-grip.",
-      "status": "unreachable-source",
+      "status": "verbatim",
       "closest": null
     },
     {
@@ -145,6 +145,13 @@
     {
       "claim": "c11",
       "source": "signorile-2002",
+      "quote": "For the PD: CG, WGA, SG > WGP.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "signorile-2002",
       "quote": "For the PD: CG > WGA, WGP.",
       "status": "verbatim",
       "closest": null
@@ -167,6 +174,20 @@
       "claim": "c14",
       "source": "puregym-close-grip-lat-pulldown",
       "quote": "Like conventional lat pulldowns , the close grip lat pulldown works the back, including the latissimus dorsi, rhomboids, and traps, and the biceps.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "odriscoll-1992",
+      "quote": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
       "status": "verbatim",
       "closest": null
     },

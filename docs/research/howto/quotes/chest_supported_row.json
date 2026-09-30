@@ -97,6 +97,13 @@
     {
       "claim": "c11",
       "source": "fenwick2009",
+      "quote": "The 3 rowing exercises investigated are the inverted row, standing bent-over row, and the standing 1-armed cable row.",
+      "status": "verbatim",
+      "closest": "The 3 rowing exercises investigated are the inverted row, standing bent-over row, and the standing 1-armed cable row."
+    },
+    {
+      "claim": "c11",
+      "source": "fenwick2009",
       "quote": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
       "status": "verbatim",
       "closest": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load."
@@ -111,9 +118,9 @@
     {
       "claim": "c12",
       "source": "acsm2009",
-      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
       "claim": "c12",
