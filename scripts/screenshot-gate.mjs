@@ -280,8 +280,10 @@ for (const theme of themes) {
     await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   }
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
+  // BUG-29: silent-black ran Reset everything above, which now also clears the legacy import key.
+  const legacyExpected = theme !== 'silent-black';
   console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);
-  if (state.sessions.length < 25 || !state.legacy || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
+  if (state.sessions.length < 25 || state.legacy !== legacyExpected || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
   await ctx.close();
 }
 
