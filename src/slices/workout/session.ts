@@ -526,6 +526,9 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     .filter(e => !e.skipped)
     .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}), ...(e.target ? { target: e.target } : {}) }))
     .filter(e => e.sets.length);
+  // BUG-28: nothing logged, so there is nothing to save. End the session exactly like a discard
+  // (history untouched, today's Escobar override kept) instead of saving an empty session.
+  if (!exercises.length) { discardSession(); return null; }
   // BUG-19 (DATES-F3): only working sets that were committed carry timing evidence. A pre-filled
   // warm-up or a set that was typed but never committed has no time of its own.
   const workingSets = exercises.flatMap(e => e.sets).filter(s => s.kind !== 'warmup' && !!s.at);
