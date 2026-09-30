@@ -881,3 +881,15 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **Why reuse `discardSession` instead of a parallel branch**: an empty finish and a discard are the same outcome (`active: null`, history untouched, `todayOverride` kept, heart capture torn down via `discardHeartCapture`) — `discardSession` already does exactly this and is already covered by its own tests, so reusing it needs no new state-shape code to review.
   - **UI**: `Train.tsx`'s finish handler shows a toast ("Nothing logged, so nothing was saved") when `finishSession` returns `null`, then falls through to the normal Train screen (no active session) — the smallest change, reusing the app's existing `showToast` pattern rather than a new sheet/screen.
   **Why**: task BUG-28. No change to a normal finish (`exercises.length > 0` still takes the original path); `sessions`, `recoveryModel` and `todayOverride` are untouched on an empty finish.
+
+## Agent rules move into role files (D-WF1, WF-1 builder, 2026-09-30)
+
+- **Decided**: the owner-approved revision (`docs/supervisor/AGENT-WORKFLOW-REVISION.md`, decisions A-D) is applied as changes 6, 1, 2, 3, 8 and 9. Where the plan was silent:
+  - **"Map every acceptance criterion to evidence…" stays whole in AGENTS.md.** Its second sentence is a safety line that must stay, and splitting the line would change its wording, so the whole bullet stays.
+  - **The CI-log wording change (change 1) is not made to the moved line.** Moved lines must stay word for word, so "reads the failing CI log itself" is unchanged in `supervisor/SKILL.md`, and `tick.md` step 5 carries the `/ci-log` step instead.
+  - **The card field list is not edited to add `model`.** It moves word for word to `builder/SKILL.md`; `cards.md` step 5 and one line under it add the field.
+  - **Change 3 is option (a) only (decision A).** A collision the design cannot avoid leaves the card `blocked`, with the pinned block as its reason.
+  - **Change 9 keeps the verdict format only (decision B)**, with no `/code-review`. The reviewer skill keeps one spending line ("never `/ultrareview`"), because only the owner approves spending.
+  - **`.claude/owner-rules.md` (change 7) moves to WF-2**, with the settings that enforce the model rule.
+  - **Skill frontmatter** was checked against code.claude.com/docs/en/skills (`context: fork`, `agent`, `model`, `background: false`) and rule `paths:` against /docs/en/memory. `ci-log` names `agent: general-purpose`, so it never falls back to a Haiku helper.
+  **Why**: the owner's hard rule that every moved line appears exactly once, word for word, and that AGENTS.md gains only the Procedures line and the model-rule line.
