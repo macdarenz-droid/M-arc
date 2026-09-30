@@ -1,0 +1,629 @@
+{
+  "id": "straight_arm_pulldown",
+  "libId": "lib_straight_arm_pulldown",
+  "name": "Straight-Arm Pulldown",
+  "family": "Vertical pull (own parent; shoulder extension, arms straight)",
+  "tier": "C",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The cable is set at the highest pulley position and a straight bar is held overhand, hands about shoulder width or a little wider.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "athlean-sap",
+        "catalyst-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "Start by setting the cable machine to the highest pulley position.",
+          "where": "how to do it"
+        },
+        {
+          "source": "athlean-sap",
+          "text": "Take hold of the bar with an overhand grip, hands about shoulder-width apart.",
+          "where": "how to do it"
+        },
+        {
+          "source": "catalyst-sap",
+          "text": "Stand facing a cable stack machine and hold a straight handle overhead with a grip outside shoulder width.",
+          "where": "description"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Stand facing the stack, a step back so the cable is already under tension, feet about hip to shoulder width, knees soft.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "athlean-sap",
+        "ace-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "Step back just enough so the cable has tension before you even start the movement. Plant your feet shoulder-width apart, soften your knees, and hinge slightly forward at the hips.",
+          "where": "how to do it"
+        },
+        {
+          "source": "ace-sap",
+          "text": "Stand with the feet hip-width apart, the hips straight, the back tall, and the knees slightly bent.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Sources disagree on the hips: one coach source asks for a slight forward hip hinge so the lats start stretched, while ACE describes the hips straight. Both keep the back tall and the trunk still.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "athlean-sap",
+        "ace-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "If you stand perfectly vertical, you cut the range of motion short and lose the stretch at the top.",
+          "where": "common mistakes"
+        },
+        {
+          "source": "ace-sap",
+          "text": "Stand with the feet hip-width apart, the hips straight, the back tall, and the knees slightly bent.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The arms stay nearly straight, with only a slight elbow bend, from top to bottom.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "athlean-sap",
+        "catalyst-sap",
+        "ace-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "Keep your chest up and shoulders pulled back. Your elbows should have a slight bend, but the arms stay nearly straight throughout.",
+          "where": "how to do it"
+        },
+        {
+          "source": "catalyst-sap",
+          "text": "Keeping the trunk braced and the arms straight, bring the bar down into contact with the front of the body, then return to the top under control.",
+          "where": "description"
+        },
+        {
+          "source": "ace-sap",
+          "text": "Keep the arms straight while bringing the hands down to the front of the waist.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The bar travels down in an arc and stops when the hands reach the front of the thighs or body, chest still tall and trunk braced.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "athlean-sap",
+        "catalyst-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "Stop when your hands reach the front of your thighs, keeping your chest tall and core braced.",
+          "where": "how to do it"
+        },
+        {
+          "source": "catalyst-sap",
+          "text": "Keeping the trunk braced and the arms straight, bring the bar down into contact with the front of the body, then return to the top under control.",
+          "where": "description"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Bending the elbows is named the most common fault: it turns the lift into a bent-arm pulldown or a triceps pushdown instead of a lat exercise.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "athlean-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "This is the most common way lifters ruin the Straight Arm Pulldown.",
+          "where": "common mistakes, bending the elbows"
+        },
+        {
+          "source": "athlean-sap",
+          "text": "Once you bend the elbows, you’re no longer pulling with the lats, you’re turning it into a Bent Arm Pulldown or a Triceps Pushdown.",
+          "where": "common mistakes, bending the elbows"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The weight should be light enough to move smoothly and hold a one-second squeeze at the bottom; going too heavy brings jerking, torso swing and momentum.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "athlean-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "Going too heavy leads to jerking the bar, swinging your torso, and relying on momentum instead of muscle.",
+          "where": "common mistakes, too heavy"
+        },
+        {
+          "source": "athlean-sap",
+          "text": "Drop the ego, lighten the load, and move the bar smoothly from top to bottom. If you can’t pause at the bottom for a one-second squeeze, the weight is too heavy.",
+          "where": "common mistakes, too heavy"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The way back up is slow and controlled, letting the lats lengthen at the top instead of letting the stack pull the arms up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "athlean-sap",
+        "ace-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "Don’t let the stack yank your arms back up. Instead, guide the weight slowly, letting your lats lengthen and stretch under control at the top.",
+          "where": "how to do it"
+        },
+        {
+          "source": "ace-sap",
+          "text": "Slowly lift the hands back to the starting position to lower the weight.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The spine stays neutral: over-arching the lower back moves stress onto the lumbar spine, and feeling it in the lower back more than the lats means the setup is off.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "athlean-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "Rounding the upper back shortens the lats and reduces their involvement, while over-arching the lower back shifts stress onto the lumbar spine instead of the lats.",
+          "where": "common mistakes, spine"
+        },
+        {
+          "source": "athlean-sap",
+          "text": "If you feel this exercise in your lower back more than your lats, your setup is off. Brace like you’re about to take a punch in the stomach then move only your arms.",
+          "where": "common mistakes, spine"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The pulling cable tries to draw the torso forward, so the abdominal muscles brace to stop the lower back arching.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "athlean-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "The cable is trying to yank your torso forward, and without proper bracing, you’ll arch your lower back and shift tension away from the lats.",
+          "where": "muscles worked, core"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The lats are the main target; the exercise trains them with little biceps, delt and upper-back work compared with rows and bent-arm pulldowns.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-sap",
+        "athlean-sap"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-sap",
+          "text": "The straight-arm pulldown strengthens the lats without involving the biceps, delts and upper back like most row, pulldown and other upper body pulling exercises.",
+          "where": "purpose"
+        },
+        {
+          "source": "athlean-sap",
+          "text": "The latissimus dorsi are the prime movers here.",
+          "where": "muscles worked"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The long head of the triceps crosses the shoulder and helps extend it, so the back of the upper arm assists; the rear delts assist only slightly.",
+      "tags": [
+        "MECH",
+        "CONSENSUS"
+      ],
+      "sources": [
+        "athlean-sap"
+      ],
+      "quotes": [
+        {
+          "source": "athlean-sap",
+          "text": "Because it crosses the shoulder joint, it also helps with shoulder extension and this is the same action the lats perform.",
+          "where": "muscles worked, triceps"
+        },
+        {
+          "source": "athlean-sap",
+          "text": "They also assist slightly in shoulder extension, though their contribution is small compared to the lats.",
+          "where": "muscles worked, rear delts"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "EMG comparisons with the barbell pullover (20 adults) found the pullover did not raise lat or triceps activity over the straight-arm pulldown, and a review said the pulldown may offer a more targeted back stimulus, depending on grip configuration. Measured, but one small study reported through a review.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "difonza2026"
+      ],
+      "quotes": [
+        {
+          "source": "difonza2026",
+          "text": "When comparing the barbell pullover with the straight-arm pulldown across different grip widths in a sample of 20 healthy, physically active adults, the pullover generally produced higher overall EMG amplitude for most muscles studied, with the notable exception of the latissimus dorsi and triceps brachii",
+          "where": "3.2 Pull-Over"
+        },
+        {
+          "source": "difonza2026",
+          "text": "The straight-arm pulldown, by contrast, may offer a more targeted stimulus to the dorsal musculature depending on grip configuration.",
+          "where": "3.2 Pull-Over"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "athlean-sap",
+      "url": "https://learn.athleanx.com/articles/back-for-men/how-to-do-a-straight-arm-pulldown",
+      "title": "How To Do The Straight Arm Pulldown",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "catalyst-sap",
+      "url": "https://www.catalystathletics.com/exercise/907/Straight-Arm-Pulldown/",
+      "title": "Straight-Arm Pulldown (Catalyst Athletics exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-sap",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/334/straight-arm-pressdown/",
+      "title": "Straight Arm Pressdown (ACE exercise library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "difonza2026",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42647355/",
+      "title": "Electromyographic Analysis of Latissimus Dorsi Activation During Common Resistance Training Exercises: A Narrative Review",
+      "kind": "peer-reviewed",
+      "year": 2026,
+      "pmid": 42647355,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The movement is shoulder extension in one plane (c4, c5, c12): the arm arc and the elbow angle, which carries the main fault (c6), both read from the side.",
+    "equipment": "Cable column with the pulley at its highest point and a straight bar (c1). The lifter stands a step back from the stack so the cable is taut at the top (c2).",
+    "start": "Standing, feet hip to shoulder width, knees soft (c2); trunk tall with at most a slight forward hip lean (c3); arms up toward the high pulley, bar held overhead, elbows almost straight with a slight bend (c1, c4); cable taut (c2).",
+    "end": "Same trunk angle as the start (c3, c7); arms swept down in an arc, elbows still almost straight (c4); bar at the front of the thighs (c5); chest tall (c5).",
+    "checkpoints": [
+      {
+        "label": "Arms stay straight",
+        "what": "The elbow keeps the same slight bend from top to bottom; only the shoulder moves.",
+        "claim": [
+          "c4",
+          "c12"
+        ]
+      },
+      {
+        "label": "Trunk still",
+        "what": "The trunk keeps one angle all set: no swing to start the rep and no arching of the lower back.",
+        "claim": [
+          "c9",
+          "c7"
+        ]
+      },
+      {
+        "label": "Bar to thighs",
+        "what": "The bar finishes at the front of the thighs, chest tall.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows bend as the bar comes down, turning it into a bent-arm pulldown or pushdown.",
+      "why": "Named the most common fault; the triceps and arms take over from the lats.",
+      "claim": "c6",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Elbow angle the same top to bottom",
+        "claim": "c4"
+      },
+      {
+        "text": "One-second squeeze at the bottom",
+        "claim": "c7"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": [
+        "c15",
+        "c7"
+      ]
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand on a straight bar (c1). Rope and neutral-grip versions exist but are not drawn.",
+    "width": "About shoulder width or a little wider (c1).",
+    "thumb": "Wrapped: the hold archetype default (GA 3.1). No exercise-specific source compares thumb positions here.",
+    "handContact": "Hold archetype default (GA 3.1): bar across the middle of the palm, fingers wrapped. No exercise-specific source.",
+    "wrist": "Hold archetype default (GA 3.1): neutral, in line with the forearm. No exercise-specific source.",
+    "claims": [
+      "c1"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the pulley at its highest point and attach a straight bar.",
+      "claim": "c1"
+    },
+    {
+      "step": "Take the bar overhand, hands about shoulder width or a little wider.",
+      "claim": "c1"
+    },
+    {
+      "step": "Step back until the cable is taut with your arms up; feet hip to shoulder width, knees soft.",
+      "claim": "c2"
+    },
+    {
+      "step": "Chest up, trunk braced, at most a slight lean forward from the hips.",
+      "claim": "c3"
+    },
+    {
+      "step": "Pick a weight you can move smoothly with a one-second squeeze at the bottom.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Elbows keep a slight bend that does not change during the rep.",
+      "claim": "c4"
+    },
+    {
+      "point": "The bar sweeps down in an arc to the front of the thighs.",
+      "claim": "c5"
+    },
+    {
+      "point": "Trunk braced and still; no swing, no lower-back arch.",
+      "claim": [
+        "c9",
+        "c7"
+      ]
+    },
+    {
+      "point": "Chest tall at the bottom.",
+      "claim": "c5"
+    },
+    {
+      "point": "Slow way back up, letting the arms rise under control.",
+      "claim": "c8"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Bending the elbows to push the bar down.",
+      "fix": "Keep the same slight elbow bend all set.",
+      "claim": [
+        "c6",
+        "c4"
+      ]
+    },
+    {
+      "mistake": "Too much weight, so the torso swings and the bar is jerked down.",
+      "fix": "Lower the weight until you can move smoothly and pause for a second at the bottom.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Arching the lower back.",
+      "fix": "Brace the stomach and move only the arms.",
+      "claim": [
+        "c9",
+        "c10"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": [
+          "c11",
+          "c13"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": "c12"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c9"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Lower back",
+        "means": "The faults the coach source warns about here are arching the lower back and swinging the torso.",
+        "fix": "Brace and move only the arms.",
+        "claim": [
+          "c9",
+          "c10",
+          "c7"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Mostly the triceps",
+        "means": "The fault the coach source warns about here is bending the elbows, which turns it into a pushdown.",
+        "fix": "Keep the same slight elbow bend top to bottom.",
+        "claim": [
+          "c6",
+          "c4"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Arms, little back",
+        "means": "The coach source says going too heavy brings jerking, torso swing and momentum.",
+        "fix": "Drop the weight until you can pause at the bottom.",
+        "claim": "c7",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Arching the lower back under the pull of the cable moves stress onto the lumbar spine.",
+      "claim": "c9"
+    },
+    {
+      "risk": "Jerking a load that is too heavy swings the torso and relies on momentum.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "elbow",
+      "kind": "posture",
+      "right": "Arm almost straight, same slight bend at the top and at the bottom.",
+      "wrong": "Elbow bent to about a right angle at the bottom, like a pushdown.",
+      "claim": "c6"
+    },
+    {
+      "key": "trunk",
+      "kind": "posture",
+      "right": "Trunk braced and still, chest tall at the bottom.",
+      "wrong": "Lower back arched.",
+      "claim": [
+        "c9",
+        "c5"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json lists lats primary and triceps secondary, which c11, c12 and c13 support. rear_delts is added to the feel spec as secondary on coach-source mechanics only (c12), too thin to change the library entry."
+  },
+  "anchorSource": "athlean-sap",
+  "notes": [
+    "ACE page 334 is short and mixes a straight bar and 'one end of the rope'; only its stance, arm and tempo lines are used. The Muyor 2022 pullover vs straight-arm pulldown paper (Appl Sci 12:11138) could not be opened (MDPI 403), so it is cited only through the Di Fonza 2026 review. No source was found for a tier-specific way out or for thumb position; the hand lines are the GA hold archetype defaults. Teixeira 2022 (isometric shoulder angles) was dropped: its abstract does not support a range-of-motion cue and no line used it."
+  ]
+}

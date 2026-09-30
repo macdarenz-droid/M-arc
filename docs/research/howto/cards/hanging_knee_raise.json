@@ -1,0 +1,710 @@
+{
+  "id": "hanging_knee_raise",
+  "libId": "lib_hanging_knee_raise",
+  "name": "Hanging Knee Raise",
+  "family": "Hip flexion and leg raise (hanging_leg_raise family, mode D)",
+  "tier": "A",
+  "archetype": {
+    "hand": "hang",
+    "contact": [
+      "hang-support"
+    ]
+  },
+  "parent": "hanging_leg_raise",
+  "inherit": [
+    {
+      "field": "grip.width (about shoulder width, arms hanging vertical)",
+      "why": "true for this child because the hang on the bar is identical; only the legs bend. Consensus on the parent too; no study compares widths."
+    },
+    {
+      "field": "grip.handContact (bar across the base of the fingers) and grip.wrist (not curled forward)",
+      "why": "true for this child because the same overhand hang loads the hand the same way (c2, c16)."
+    },
+    {
+      "field": "grip.thumb (wrapped every set)",
+      "why": "true for this child because the lifter still falls if the hand opens (c3)."
+    },
+    {
+      "field": "setup: step or box to reach the bar, box moved clear of the legs",
+      "why": "true for this child because the bar and the hang are the same; the bent knees swing through the same space in front of the body."
+    },
+    {
+      "field": "setup: dry or chalked hands; straps or ab slings if grip quits first",
+      "why": "true for this child because grip demand is the same hang; the strapped knee-up is the version Escamilla measured (c10)."
+    },
+    {
+      "field": "posture: active hang (shoulders a little down from the ears, arms straight)",
+      "why": "true for this child because the upper body does the same job as on the parent; the leg action is what changes."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The bar must be high enough that the body hangs freely with the feet off the floor; step up on a low stool or jump to reach it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-hanging-knee-leg-raise",
+        "strengthlog-hanging-knee-raise"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "Step up on a low stool or jump to grasp a high bar so that your body hangs freely without your feet touching the floor.",
+          "where": "Instructions"
+        },
+        {
+          "source": "strengthlog-hanging-knee-raise",
+          "text": "Jump up and grab a bar, placed high enough that you can hang from it with straight legs.",
+          "where": "How to Do Hanging Knee Raises, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Take the bar overhand (palms away) and hang with the arms fully straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-hanging-knee-leg-raise"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "Grasp the bar with a pronated, palms away grip. Hang with your arms fully extended",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "hk-baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Grip drill"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Each rep starts from a still hang; the knees are lifted without swinging the body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-hanging-knee-raise",
+        "yessis-hanging-knee-leg-raise"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-hanging-knee-raise",
+          "text": "Without swinging and with bent legs, lift your knees as high as you can in front of you.",
+          "where": "How to Do Hanging Knee Raises, step 2"
+        },
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "Do not swing the body to help raise the legs. The body should be still when you begin raising the legs.",
+          "where": "Tips"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The knees go above thigh-level (hip height), with a brief hold at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-hanging-knee-leg-raise"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "raise the knees up above the thigh level position with a momentary hold in the up position.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Expert opinion: the hip flexors lift the legs first; the abs then rotate the pelvis backward to lift them higher, so higher knees mean more abdominal work. That the lower back rounds a little at the top is this card's inference from the backward pelvic rotation; no source describes the spine shape.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "yessis-hanging-knee-leg-raise"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "The higher the legs are raised, the greater the abdominal muscle involvement.",
+          "where": "Tips"
+        },
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "The abdominal muscles, initially the lower portion, then come into play to rotate the pelvis backward to continue raising the legs.",
+          "where": "Muscles involved"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "In a lying isometric leg lift, a backward pelvic tilt gave more upper and lower rectus abdominis activity than a forward tilt. Not measured on a bar, so indirect support for the pelvis curl.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "workman-2008"
+      ],
+      "quotes": [
+        {
+          "source": "workman-2008",
+          "text": "The Janda sit-up and the posterior tilt were significantly greater (p < 0.01 and p < 0.05, respectively) than the anterior tilt for the URA and LRA muscles.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The legs are lowered with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-hanging-knee-raise",
+        "yessis-hanging-knee-leg-raise"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-hanging-knee-raise",
+          "text": "Lower your legs again, with control.",
+          "where": "How to Do Hanging Knee Raises, step 3"
+        },
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "Exhale and relax as you return the legs to the initial position under control.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Yessis describes a strong lift, a momentary hold and a controlled return; no seconds are given, so the 1-1-2 count on the plate is a drawing convention.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "yessis-hanging-knee-leg-raise"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "lift your legs up as strongly as possible with your hip flexor and abdominal muscles.",
+          "where": "Tips"
+        },
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "raise the knees up above the thigh level position with a momentary hold in the up position.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Measured with EMG, the hanging knee-up (done in arm straps) was among the top exercises for the rectus abdominis, both obliques and the lats.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "escamilla-2006"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla-2006",
+          "text": "Upper and lower rectus abdominis, internal oblique, and latissimus dorsi muscle EMG activity were highest for the Power Wheel (pike, knee-up, and roll-out), hanging knee-up with straps, and reverse crunch inclined 30 degrees.",
+          "where": "Results"
+        },
+        {
+          "source": "escamilla-2006",
+          "text": "External oblique muscle EMG activity was highest for the Power Wheel (pike, knee-up, and roll-out) and hanging knee-up with straps.",
+          "where": "Results"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Lower-back (lumbar paraspinal) activity was low in all the abdominal exercises tested, the hanging knee-up included.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "escamilla-2006"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla-2006",
+          "text": "Lumbar paraspinal muscle EMG activity was low and similar among exercises.",
+          "where": "Results"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The exercise trains the abs and the hip flexors; the hip flexors do the leg lifting.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-hanging-knee-raise",
+        "yessis-hanging-knee-leg-raise"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-hanging-knee-raise",
+          "text": "Hanging knee raises train your abs and your hip flexors.",
+          "where": "Commentary"
+        },
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "The major muscles involved in raising the legs (hip flexion) are the psoas and iliacus, collectively known as the iliopsoas, the rectus femoris and the pectineus.",
+          "where": "Muscles involved"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "The bent-knee version is the starting point; straightening the legs (the hanging leg raise) makes it much harder because the lever gets longer.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-hanging-knee-leg-raise",
+        "strengthlog-hanging-knee-raise"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "When first attempting this exercise begin with the bent knee variant.",
+          "where": "Tips"
+        },
+        {
+          "source": "yessis-hanging-knee-leg-raise",
+          "text": "The long leg lever with weighted feet increases the difficulty of the exercise greatly.",
+          "where": "Tips"
+        },
+        {
+          "source": "strengthlog-hanging-knee-raise",
+          "text": "The exercise can be made heavier by keeping your legs straight, which is called hanging leg raises .",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The straight-leg hanging raise put about 3000 N of compression on the spine. Bent knees were not measured; the load is likely lower with the shorter lever, but that is inference.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "mcgill-2015"
+      ],
+      "quotes": [
+        {
+          "source": "mcgill-2015",
+          "text": "On average, the hanging straight leg raise created approximately 3000 N of spine compression",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "With the arms high overhead, the space under the shoulder roof gets smaller (measured in pull-ups; applied to a hang by reasoning).",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "prinold-2016"
+      ],
+      "quotes": [
+        {
+          "source": "prinold-2016",
+          "text": "High arm elevation during pull-ups reduces sub-acromial space and increases pressure, increasing the risk of impingement injury.",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll-1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll-1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "escamilla-2006",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/16649890/",
+      "title": "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training (Escamilla et al., Phys Ther)",
+      "kind": "peer-reviewed",
+      "year": 2006,
+      "pmid": "16649890",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "hk-baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "mcgill-2015",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25111163/",
+      "title": "Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up (McGill, Andersen, Cannon, J Sports Sci)",
+      "kind": "peer-reviewed",
+      "year": 2015,
+      "pmid": "25111163",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "odriscoll-1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "prinold-2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26383875/",
+      "title": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
+      "kind": "peer-reviewed",
+      "year": 2016,
+      "pmid": "26383875",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthlog-hanging-knee-raise",
+      "url": "https://www.strengthlog.com/hanging-knee-raise/",
+      "title": "How to Do Hanging Knee Raise: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "workman-2008",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18714231/",
+      "title": "Influence of pelvis position on the activation of abdominal and hip flexor muscles (Workman et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2008,
+      "pmid": "18714231",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "yessis-hanging-knee-leg-raise",
+      "url": "https://doctoryessis.com/2013/01/01/hanging-knee-leg-raise/",
+      "title": "Hanging Knee Leg Raise (Dr. Michael Yessis)",
+      "kind": "coach",
+      "year": 2013,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "c6",
+    "equipment": "Fixed overhead bar and floor line, as the hanging_leg_raise plate. Feet clear the floor with straight legs (c1).",
+    "start": "Still hang: arms fully straight, overhand grip (c2); legs hanging straight down, body quiet under the bar (c4).",
+    "end": "Knees bent and raised above hip height (thighs past horizontal), held briefly (c5); pelvis curled back so the lower back rounds a little (c6); upper body still under the bar (c4).",
+    "checkpoints": [
+      {
+        "label": "Still start",
+        "what": "Every rep begins from a still hang, no swing.",
+        "claim": "c4"
+      },
+      {
+        "label": "Knees above hips",
+        "what": "Lift the knees past hip height and hold a moment.",
+        "claim": "c5"
+      },
+      {
+        "label": "Pelvis curls up",
+        "what": "At the top the hips roll up toward the ribs, lower back rounding a little.",
+        "claim": "c6"
+      }
+    ],
+    "mistake": {
+      "what": "Swinging: the body swings to help kick the legs up.",
+      "why": "Both technique sources forbid swinging the body to raise the legs. Frequency is not measured.",
+      "claim": "c4",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Body still before each lift",
+        "claim": "c4"
+      },
+      {
+        "text": "Knees rise above hip height",
+        "claim": "c5"
+      },
+      {
+        "text": "Legs lower with control, no swing",
+        "claim": [
+          "c8",
+          "c4"
+        ]
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c9"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (palms away), full closed grip.",
+    "width": "Inherited: about shoulder width.",
+    "thumb": "Wrapped around the bar (inherited; c3).",
+    "handContact": "Inherited: bar across the base of the fingers.",
+    "wrist": "Not curled forward (c16).",
+    "claims": [
+      "c2",
+      "c3",
+      "c16"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Use a bar high enough that you hang with straight legs.",
+      "claim": "c1"
+    },
+    {
+      "step": "Take the bar overhand, palms away, thumbs wrapped.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hang with your arms fully straight and let your body go still.",
+      "claim": "c4"
+    },
+    {
+      "step": "New to it? Keep this bent-knee version until it is easy before straightening the legs.",
+      "claim": "c13"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Still hang, arms straight, before every rep.",
+      "claim": "c4"
+    },
+    {
+      "point": "Knees lift above hip height.",
+      "claim": "c5"
+    },
+    {
+      "point": "Pelvis curls back at the top.",
+      "claim": [
+        "c7",
+        "c6"
+      ]
+    },
+    {
+      "point": "Brief hold at the top.",
+      "claim": "c9"
+    },
+    {
+      "point": "Legs lowered under control.",
+      "claim": "c8"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging the body to help lift the legs.",
+      "fix": "Start each rep from a still hang and lower the legs with control.",
+      "claim": [
+        "c4",
+        "c8"
+      ]
+    },
+    {
+      "mistake": "Stopping with the knees at or below hip height, so the abs do less of the work.",
+      "fix": "Keep lifting past hip height and roll your hips up toward your ribs.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Dropping the legs fast after each rep.",
+      "fix": "Lower the legs with control.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "abs",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "obliques",
+        "claim": "c10"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c11"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Mostly the front of the hips",
+        "means": "Usually means the knees stop near hip height, so the hip flexors do the lifting.",
+        "fix": "Lift the knees higher and curl the pelvis up at the top.",
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Forearms give out before your abs",
+        "means": "The EMG study measured the knee-up done in arm straps.",
+        "fix": "Use arm straps (ab slings), the version measured in the EMG study.",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "The straight-leg version measured about 3000 N of spine compression; bent knees likely load the spine less (inference).",
+        "fix": "Keep the knees bent.",
+        "claim": "c14",
+        "redFlag": "back"
+      },
+      {
+        "where": "Shoulder",
+        "means": "Arms high overhead narrow the space under the shoulder roof (measured in pull-ups).",
+        "fix": "Set the shoulders a little down from the ears before each rep (the inherited active hang).",
+        "claim": [
+          "c15",
+          "inherit:5"
+        ],
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Spine compression: the straight-leg version measured about 3000 N.",
+      "claim": "c14"
+    },
+    {
+      "risk": "Shoulder: a long hang with the arms overhead narrows the space under the shoulder roof.",
+      "claim": "c15"
+    }
+  ],
+  "redFlags": [
+    "back",
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Overhand, bar across the base of the fingers, thumb wrapped, wrist not curled.",
+      "wrong": "Wrist curled forward.",
+      "claim": [
+        "c16",
+        "c2",
+        "c3"
+      ]
+    },
+    {
+      "key": "top position",
+      "kind": "posture",
+      "right": "Knees above hip height, pelvis curled up, lower back gently rounded.",
+      "wrong": "Knees stopped at hip height, pelvis not curled up.",
+      "claim": [
+        "c6",
+        "c5"
+      ]
+    },
+    {
+      "key": "body line",
+      "kind": "posture",
+      "right": "Body still under the bar at the start of each rep.",
+      "wrong": "Body swinging to kick the legs up.",
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "obliques",
+        "role": "secondary",
+        "why": "Internal and external oblique activity was among the highest in the strapped hanging knee-up (c10)."
+      }
+    ],
+    "remove": [],
+    "why": "abs primary and hip_flexors secondary stand, and the feel lists match (c10, c12); StrengthLog lists the hip flexors as a primary mover, but the card keeps them secondary because the abs are the target and the EMG ranks the abs top (c10)."
+  },
+  "anchorSource": "yessis-hanging-knee-leg-raise",
+  "gaps": [
+    "Tier A: no sourced way to get down from the bar safely; the parent's box-clear setup line is inherited, nothing new invented.",
+    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression: bent knees first, straight legs later (c13).",
+    "Tier A: no source on this card says what to do if a lower-back ache stays; the row fix does not add one. The shared back red-flag box and the owner disclaimer carry the stop-and-check line."
+  ],
+  "notes": [
+    "Yessis also advises holding the breath and a slight lower-back arch at the start; neither is used, because the parent card and other sources teach a still, quiet hang and no source here supports breath-holding. Not sourced: a safe way down from the bar (inherited from the parent's box line). Escamilla 2006 measured the knee-up in arm straps, not a bare-hand hang. McGill 2015 measured straight legs only. The StrengthLog hanging knee raise page was re-fetched on 2026-09-30 (access full, quotes verbatim). feel.rows[3].fix comes from the inherited active-hang line (inherit[5]), not from a claim on this card."
+  ]
+}

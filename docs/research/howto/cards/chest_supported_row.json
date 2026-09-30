@@ -1,0 +1,538 @@
+{
+  "id": "chest_supported_row",
+  "libId": "lib_chest_supported_row",
+  "name": "Chest-Supported Row",
+  "family": "HROW-machine (parent of t_bar_row)",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "brace-pad"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The seat is set so the handles sit about level with the shoulders, and the feet are planted on the floor or foot pads.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-row-machine"
+      ],
+      "quotes": [
+        {
+          "source": "ace-row-machine",
+          "text": "Adjust the seat height to a level that positions the machine handles approximately level, or near level, with your shoulders. Position your feet firmly on the floor or foot pads to stabilize your body.",
+          "where": "starting position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Sit upright, reach the handles with the arms straight without rounding the shoulders forward, and set the chest pad so it touches the chest lightly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-row-machine"
+      ],
+      "quotes": [
+        {
+          "source": "ace-row-machine",
+          "text": "Sit upright and extend your arms to grasp the handles without rounding your shoulders forward. Adjust the position the chest pad to contact your chest lightly.",
+          "where": "starting position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Before pulling, the shoulders are drawn back and down and the wrists are kept in line with the forearms, and both are held all set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-row-machine"
+      ],
+      "quotes": [
+        {
+          "source": "ace-row-machine",
+          "text": "Depress and retract your scapulae (pull shoulders back and down), maintain a neutral wrist position (i.e., wrist in line with your forearms) and attempt to hold these positions throughout the exercise.",
+          "where": "starting position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The elbows bend and travel back close to the sides of the body while the chest stays in contact with the pad.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-row-machine"
+      ],
+      "quotes": [
+        {
+          "source": "ace-row-machine",
+          "text": "Flex (bend) your elbows and pull them towards your chest keeping your elbows close to the sides of your body. Continue to maintain a neutral wrist position, and contact with your chest against the chest pad.",
+          "where": "step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The pull ends when the elbows pass the sides of the body, with a short pause, then the arms return slowly until straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-row-machine"
+      ],
+      "quotes": [
+        {
+          "source": "ace-row-machine",
+          "text": "Continue pulling until your elbows pass the sides of your body. Pause momentarily then slowly return to your starting position, allowing your arms to move forward and elbows to extend (straighten) in a slow, controlled manner",
+          "where": "step 3"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Leaning back and arching the lower back during the pull is to be avoided; it adds needless stress to the lower back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-row-machine"
+      ],
+      "quotes": [
+        {
+          "source": "ace-row-machine",
+          "text": "Avoid leaning back and arching your low back and attempt to minimize any movement of your head during the movement.",
+          "where": "step 2"
+        },
+        {
+          "source": "ace-row-machine",
+          "text": "Additionally, reduce unnecessary stresses into your low back by avoiding any backwards lean during the pull movements.",
+          "where": "note"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "On the way back the trunk stays upright and the shoulder blades should not round forward; letting them round adds force but is an advanced step to learn after the basic pull.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-row-machine"
+      ],
+      "quotes": [
+        {
+          "source": "ace-row-machine",
+          "text": "Maintain your upright trunk position and avoid forward rounding of your scapulae (shoulder blades).",
+          "where": "step 3"
+        },
+        {
+          "source": "ace-row-machine",
+          "text": "Allowing your shoulders to round forward as your arms extend will allow you to pull with more force. However, learn how to perform a pulling motion without scapulae (shoulder blade) movement first before introducing shoulder movement.",
+          "where": "note"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "A wide-elbow version exists on the same kind of machine: the elbows flare out near shoulder height and the pull stops when they reach or just pass the shoulders. It is not the drawn version.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-high-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-high-row",
+          "text": "Flex (bend) your elbows and pull them towards your chest, but try to flair your elbows out from your sides, keeping them as level with your shoulders as possible.",
+          "where": "step 2"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "In a seated row the middle trapezius and rhomboids (mid back) showed the highest activity of the four pulls tested, and deliberately squeezing the shoulder blades did not raise it further. Isometric seated row, applied here by similarity.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "lehman2004"
+      ],
+      "quotes": [
+        {
+          "source": "lehman2004",
+          "text": "Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row. Actively retracting the scapula did not influence middle trapezius/rhomboid activity.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "In a chest-down (prone) barbell row, the mid trapezius, rear delts, lats and biceps were all measured working, and changing the range of motion changed activity only a little. Prone bench row, applied here by similarity.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "fischer2025"
+      ],
+      "quotes": [
+        {
+          "source": "fischer2025",
+          "text": "SEMG measurements were taken for the trapezius transversus (TT), rear deltoid (RD), latissimus dorsi (LD) and biceps brachii (BB).",
+          "where": "abstract"
+        },
+        {
+          "source": "fischer2025",
+          "text": "suggesting that ROM adjustments with standardized time under tension have limited impact on overall muscle activation.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Of three rows studied (inverted row, standing bent-over row, standing one-arm cable row), the standing bent-over row gave the largest lumbar spine load; and a bilateral free-weight row gave 34% more erector-spinae (lower-back muscle) activity than a bilateral machine row. Neither study tested a chest-supported machine, and the machine row is not described in the abstract.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "fenwick2009",
+        "saeterbakken2015"
+      ],
+      "quotes": [
+        {
+          "source": "fenwick2009",
+          "text": "The 3 rowing exercises investigated are the inverted row, standing bent-over row, and the standing 1-armed cable row.",
+          "where": "abstract, methods"
+        },
+        {
+          "source": "fenwick2009",
+          "text": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2015",
+          "text": "In bilateral free-weight row, EMG activity in erector spinae was greater than bilateral machine- (+34%, P=0.004) and unilateral free-weight rows (+12%, P=0.016).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-row-machine",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/",
+      "title": "Seated Row (ACE exercise library; row machine with chest pad)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-high-row",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/169/seated-high-back-rows/",
+      "title": "Seated High Back Rows (ACE exercise library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lehman2004",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15228624/",
+      "title": "Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: An experimental study",
+      "kind": "peer-reviewed",
+      "year": 2004,
+      "pmid": 15228624,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "fischer2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40513198/",
+      "title": "Impact of different ranges of motion in the prone barbell row on muscle excitation",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": 40513198,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "fenwick2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19620925/",
+      "title": "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19620925,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "saeterbakken2015",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26134664/",
+      "title": "The Effect of Performing Bi- and Unilateral Row Exercises on Core Muscle Activation",
+      "kind": "peer-reviewed",
+      "year": 2015,
+      "pmid": 26134664,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The row is an elbow-back pull in one plane, and the chest-to-pad contact and trunk lean that carry the main fault (c6) read only from the side.",
+    "equipment": "Chest-supported row machine: seat, upright chest pad, lever handles at about shoulder height (c1), feet on the floor or foot pads (c1). Composed as chestRowMachine.",
+    "start": "Seated upright, trunk vertical, chest lightly on the pad (c2); arms straight forward to the handles at about shoulder height (c1, c2); shoulders back and down, not rounded forward (c2, c3); wrists straight (c3).",
+    "end": "Trunk still vertical, chest still on the pad (c4); elbows bent and drawn back close to the ribs, just past the sides of the body (c4, c5); shoulders still down (c3).",
+    "checkpoints": [
+      {
+        "label": "Chest on pad",
+        "what": "The chest stays in light contact with the pad from the first rep to the last.",
+        "claim": "c4"
+      },
+      {
+        "label": "Elbows past sides",
+        "what": "Each rep ends with the elbows close to the ribs and just behind the body.",
+        "claim": "c5"
+      },
+      {
+        "label": "Shoulders down",
+        "what": "Shoulders drawn back and down before the pull and kept there.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Leaning back off the chest pad and arching the lower back to finish the pull.",
+      "why": "The guideline names it as the thing to avoid, and says avoiding any backwards lean reduces unnecessary stress on the low back.",
+      "claim": "c6",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Chest never leaves the pad",
+        "claim": "c4"
+      },
+      {
+        "text": "Short pause, elbows just behind you",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": [
+        "c12",
+        "c5"
+      ]
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Whatever handles the machine has, vertical or horizontal; the drawn version pulls with the elbows close to the body (c4). Wide-elbow grip is a variant (c8).",
+    "width": "Set by the machine.",
+    "thumb": "Wrapped: the pull archetype default (GA 3.1). No exercise-specific source.",
+    "handContact": "Pull archetype default (GA 3.1): base of the fingers and top of the palm. No exercise-specific source.",
+    "wrist": "Neutral, in line with the forearm, held all set (c3).",
+    "claims": [
+      "c3",
+      "c4",
+      "c8"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the seat so the handles sit about level with your shoulders.",
+      "claim": "c1"
+    },
+    {
+      "step": "Plant your feet on the floor or the foot pads.",
+      "claim": "c1"
+    },
+    {
+      "step": "Set the chest pad so it touches your chest lightly when you reach the handles with straight arms.",
+      "claim": "c2"
+    },
+    {
+      "step": "Sit tall, shoulders back and down, wrists straight.",
+      "claim": "c3"
+    },
+    {
+      "step": "Add 2-10% load only when you can do one or two reps more than your target.",
+      "claim": "c12"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Trunk upright and still.",
+      "claim": "c7"
+    },
+    {
+      "point": "Chest in light contact with the pad the whole set.",
+      "claim": "c4"
+    },
+    {
+      "point": "Elbows travel back close to the sides.",
+      "claim": "c4"
+    },
+    {
+      "point": "Pull ends with the elbows just past the sides, short pause.",
+      "claim": "c5"
+    },
+    {
+      "point": "Slow return until the arms are straight, shoulder blades not rounding forward.",
+      "claim": "c7"
+    },
+    {
+      "point": "Head still.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Leaning back off the pad and arching the lower back.",
+      "fix": "Keep the chest on the pad; no backwards lean.",
+      "claim": [
+        "c6",
+        "c4"
+      ]
+    },
+    {
+      "mistake": "Letting the shoulders round forward at the end of each rep.",
+      "fix": "Return slowly and stop when the arms are straight, shoulders still back.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "lats",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "biceps",
+        "claim": "c10"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c6"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Lower back",
+        "means": "The fault ACE warns about here is leaning back and arching the low back.",
+        "fix": "Chest on the pad; no backwards lean.",
+        "claim": [
+          "c6",
+          "c4"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Front of the shoulders at the end of each rep",
+        "means": "The return fault ACE warns about here is the shoulder blades rounding forward.",
+        "fix": "Return slowly and keep the shoulders back.",
+        "claim": "c7",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Leaning back and arching adds unnecessary lower-back stress.",
+      "claim": "c6"
+    },
+    {
+      "risk": "In other rows, the standing bent-over row gave the largest lumbar spine load of three rows, and a free-weight row gave 34% more lower-back muscle activity than a machine row.",
+      "claim": "c11"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "chest pad",
+      "kind": "posture",
+      "right": "Chest lightly on the pad, trunk vertical, at the end of the pull.",
+      "wrong": "Chest a hand's width off the pad, trunk leaning back, lower back arched.",
+      "claim": "c6"
+    },
+    {
+      "key": "elbow finish",
+      "kind": "posture",
+      "right": "Elbows close to the ribs, just behind the body.",
+      "wrong": "Elbows stopping in front of the body.",
+      "claim": "c5"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json lists mid_back primary and lats, biceps, rear_delts secondary; c9 and c10 support all four. No change."
+  },
+  "anchorSource": "ace-row-machine",
+  "notes": [
+    "ACE page 168 is titled 'Seated Row' but describes a row machine with an adjustable chest pad, which is this exercise. The page has a typo ('tors0 vertical'), so that sentence is not quoted. No study measured the chest-supported machine row itself; EMG claims come from an isometric seated row (Lehman 2004) and the prone bench row (Fischer 2025), tagged MECH. The hand lines are the GA pull archetype defaults."
+  ]
+}

@@ -1,0 +1,645 @@
+{
+  "id": "close_grip_pulldown",
+  "libId": "lib_close_grip_pulldown",
+  "name": "Close-Grip Pulldown",
+  "family": "Vertical pull (lat_pulldown family, mode D)",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "seat-back",
+      "brace-pad"
+    ]
+  },
+  "parent": "lat_pulldown",
+  "inherit": [
+    {
+      "field": "grip.handContact (handle across the base of the fingers and top edge of the palm, like carrying a bag)",
+      "why": "true for this child because the cable pulls across the fingers exactly as on the lat_pulldown bar; only the handle or palm direction changes."
+    },
+    {
+      "field": "grip.thumb (wrapped by default; thumb over the handle allowed as a comfort option)",
+      "why": "true for this child because, as on the parent, the handle cannot fall on the lifter, so thumb position is a comfort choice with the wrapped grip as default."
+    },
+    {
+      "field": "setup: weight set and pin pushed all the way in; start lighter than you think",
+      "why": "true for this child because it is the same selector-stack machine."
+    },
+    {
+      "field": "setup: stand, take the handle, sit down under the pad with straight arms and the stack just lifted",
+      "why": "true for this child because the seat, pad and cable are the parent's; only the attachment changes."
+    },
+    {
+      "field": "zooms: seat height / thigh pad crop",
+      "why": "true for this child because the pad setting is identical (c2, c3)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The close-grip pulldown uses a V-handle for a close, neutral (palms facing each other) grip.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-close-grip-lat-pulldown",
+        "strengthlog-neutral-close-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-close-grip-lat-pulldown",
+          "text": "The close grip lat pulldown is a lat pulldown variation which is performed with a close grip by using a v handle attachment.",
+          "where": "Intro"
+        },
+        {
+          "source": "strengthlog-neutral-close-grip-lat-pulldown",
+          "text": "Attatch a grip to the lat pulldown that lets you have a neutral close-grip.",
+          "where": "How to, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Set the thigh pads so they sit tight on the thighs when seated.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-close-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-close-grip-lat-pulldown",
+          "text": "adjusting the pads so they sit tightly against your thighs when you are seated.",
+          "where": "How to, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "ACE anchors the legs by setting the thigh pad firmly on top of the thighs. Written for the bar pulldown; the seat and pad are the same here.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Sit in the machine, anchoring your lower extremity by adjusting the thigh pad to fit firmly against the top of your thighs.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Lean back only slightly, no more than about 30 degrees, and add no extra lean during the pull. Written for the bar pulldown; applied to the V-handle because the seated position is the same.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Lean back slightly (no more than a 30 degree angle), using your legs to support your body (low back).",
+          "where": "Step 1"
+        },
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Avoid any additional backwards lean during the pull movement.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Pull the elbows down toward the hips until the upper arms are tucked at the sides and the handle is just below the chin.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-close-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-close-grip-lat-pulldown",
+          "text": "think about pulling your elbows down towards your hips until your upper arms are tucked either side of your torso and the v handle reaches just below the chin.",
+          "where": "Technique"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Pulling the handle too low lets the forearms and shoulders (deltoids) take over and exposes the shoulders to injury (coach source).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-close-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-close-grip-lat-pulldown",
+          "text": "Pulling the grip down too low will force your forearms and deltoids to take over, shifting the load away from your lats and biceps and making the shoulders exposed to injury.",
+          "where": "Technique"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Stop pulling once the elbows stop moving down and start moving back; ACE says further pulling adds stress to the shoulder joint. Written for the bar pulldown; applied to the V-handle because the elbow path is the same.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Continue pulling until the bar nears or touches your chest, or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards.",
+          "where": "Step 3"
+        },
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Avoid any further pulling as this places additiomnal stresses into the shoulder joint.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Move the weight with control, not momentum, on the way down and on the way back up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-close-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-close-grip-lat-pulldown",
+          "text": "Move the weight with control rather than using momentum to ensure the correct muscles are worked.",
+          "where": "Technique"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Start the pull by drawing the shoulder blades down, then pull. Written for the bar pulldown; applied to the V-handle by reasoning.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "initiate the downward pull by first depressing (lower) your scapulae",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Lusk 2010 tested pulldowns at a 2-second pull and a 2-second return; the plate uses that cadence. It is a study protocol, not a tested recommendation.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "lusk-2010"
+      ],
+      "quotes": [
+        {
+          "source": "lusk-2010",
+          "text": "Participants maintained a cadence of 2-second concentric and 2-second eccentric phases.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "In a 10-man EMG study of four pulldown grips, the close grip (the abstract does not say which handle) gave less lat activity than a wide overhand grip to the front while pulling down. Posterior deltoid results are only relative: pulling down, close, wide-front and underhand grips were all above behind-the-neck; on the way up, the close grip was above both wide grips.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "signorile-2002"
+      ],
+      "quotes": [
+        {
+          "source": "signorile-2002",
+          "text": "During the concentric phase, NrmsEMG results for the LD included WGA > WGP, SG, CG.",
+          "where": "abstract (concentric phase, the pull down)"
+        },
+        {
+          "source": "signorile-2002",
+          "text": "For the PD: CG, WGA, SG > WGP.",
+          "where": "abstract (concentric phase, the pull down)"
+        },
+        {
+          "source": "signorile-2002",
+          "text": "For the PD: CG > WGA, WGP.",
+          "where": "abstract (eccentric phase, the way up)"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "With an overhand bar, a narrow grip (1x shoulder width) gave similar lat activity to medium and wide grips and more strength than the wide grip; applied to the V-handle by reasoning.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "andersen-2014"
+      ],
+      "quotes": [
+        {
+          "source": "andersen-2014",
+          "text": "The 6RM strengths with narrow (80.3 ± 7.2 kg) and medium grip (80 ± 7.1 kg) were higher than wide grip (77.3 ± 6.3 kg; p = 0.02). There was similar EMG activation between grip widths for latissimus, trapezius, or infraspinatus",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "In 40 trained men, lat activity did not differ significantly across seven pulldown grips, widths and lean angles; the abstract does not say whether a close or V-handle grip was among them, so it applies here by reasoning.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "buonsenso-2025"
+      ],
+      "quotes": [
+        {
+          "source": "buonsenso-2025",
+          "text": "These findings suggest that grip variations may not significantly alter latissimus dorsi recruitment",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "It works the lats, the middle-back muscles (rhomboids, traps) and the biceps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-close-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-close-grip-lat-pulldown",
+          "text": "Like conventional lat pulldowns , the close grip lat pulldown works the back, including the latissimus dorsi, rhomboids, and traps, and the biceps.",
+          "where": "Muscles"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll-1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll-1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-lat-pulldown",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+      "title": "Seated Lat Pulldown (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "andersen-2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24662157/",
+      "title": "Effects of grip width on muscle strength and activation in the lat pull-down (Andersen et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2014,
+      "pmid": "24662157",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "buonsenso-2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40981044/",
+      "title": "Electromyographic Analysis of Back Muscle Activation During Lat Pulldown Exercise: Effects of Grip Variations and Forearm Orientation (Buonsenso et al., J Funct Morphol Kinesiol)",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": "40981044",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lusk-2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+      "title": "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20543740",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "odriscoll-1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "puregym-close-grip-lat-pulldown",
+      "url": "https://www.puregym.com/exercises/back/lat-exercises/close-grip-lat-pulldown/",
+      "title": "Close Grip Lat Pulldown (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "signorile-2002",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12423182/",
+      "title": "A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down (Signorile, Zink, Szwed, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2002,
+      "pmid": "12423182",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthlog-neutral-close-grip-lat-pulldown",
+      "url": "https://www.strengthlog.com/neutral-close-grip-lat-pulldown/",
+      "title": "How to Do Neutral Close-Grip Lat Pulldown: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "c5",
+    "equipment": "Lat pulldown station as the parent plate: seat, thigh pad, cable and stack. Attachment: V-handle (close, neutral grip) (c1).",
+    "start": "Seated, thighs pinned under the pad (c2, c3); arms straight overhead holding the V-handle (c1); slight lean back, no more than about 30 degrees (c4); shoulder blades drawn down to begin (c9).",
+    "end": "Handle just below the chin, upper arms tucked at the sides, elbows pointing down toward the hips (c5); lean unchanged (c4).",
+    "checkpoints": [
+      {
+        "label": "Thighs pinned",
+        "what": "Thigh pad tight on top of the thighs.",
+        "claim": "c2"
+      },
+      {
+        "label": "Elbows to hips",
+        "what": "Elbows travel down toward the hips, upper arms tucked at the sides.",
+        "claim": "c5"
+      },
+      {
+        "label": "Handle below chin",
+        "what": "Stop when the handle is just below the chin.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Pulling the handle too low: it goes past the chin and the elbows start moving back behind the body.",
+      "why": "The coach source names it and says it moves the load to the forearms and shoulders (deltoids) and exposes the shoulders to injury; ACE says to stop when the elbows start moving back. Frequency is not measured.",
+      "claim": [
+        "c6",
+        "c7"
+      ],
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Upper arms tucked at your sides",
+        "claim": "c5"
+      },
+      {
+        "text": "Handle stops just below the chin",
+        "claim": "c5"
+      },
+      {
+        "text": "Torso still, no rocking",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 0,
+      "claim": "c10"
+    },
+    "variantLine": "Drawn: V-handle, neutral close grip, named in the anchor source (c1; exercises.json alias 'neutral grip pulldown'). No other close-grip handle is named in a reachable source."
+  },
+  "grip": {
+    "type": "Neutral (palms facing each other) on a V-handle.",
+    "width": "Close: set by the V-handle.",
+    "thumb": "Inherited from lat_pulldown: wrapped by default.",
+    "handContact": "Inherited from lat_pulldown: handle across the base of the fingers.",
+    "wrist": "Not curled forward (c15).",
+    "claims": [
+      "c1",
+      "c15"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Clip a V-handle to the cable.",
+      "claim": "c1"
+    },
+    {
+      "step": "Set the thigh pads so they sit tight on your thighs when you sit.",
+      "claim": "c2"
+    },
+    {
+      "step": "Lean back slightly, no more than about 30 degrees.",
+      "claim": "c4"
+    },
+    {
+      "step": "Draw your shoulder blades down to start the pull.",
+      "claim": "c9"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Thighs pinned under the pad all set.",
+      "claim": "c3"
+    },
+    {
+      "point": "Slight lean back that does not change during the pull.",
+      "claim": "c4"
+    },
+    {
+      "point": "Shoulder blades down first, then the arms bend.",
+      "claim": "c9"
+    },
+    {
+      "point": "Elbows down toward the hips, upper arms tucked.",
+      "claim": "c5"
+    },
+    {
+      "point": "Handle stops just below the chin; stop when the elbows start moving back.",
+      "claim": [
+        "c7",
+        "c5"
+      ]
+    },
+    {
+      "point": "Controlled on the way up, no momentum.",
+      "claim": "c8"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Pulling the handle down too low, so the elbows start moving back behind you.",
+      "fix": "Stop when the handle is just below your chin and your elbows stop moving down.",
+      "claim": [
+        "c6",
+        "c7",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Rocking the torso back to yank the weight down.",
+      "fix": "Hold a slight lean and keep it still.",
+      "claim": [
+        "c4",
+        "c8"
+      ]
+    },
+    {
+      "mistake": "Letting the stack pull you up fast.",
+      "fix": "Control the handle all the way back up to straight arms.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "mid_back",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": "c11"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "forearms",
+        "claim": "c6"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Shoulders",
+        "means": "Usually means you are pulling too low.",
+        "fix": "Stop just below the chin, when the elbows stop moving down.",
+        "claim": [
+          "c6",
+          "c7",
+          "c5"
+        ],
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Forearms more than your back",
+        "means": "Usually means the handle is going too low.",
+        "fix": "Stop just below the chin.",
+        "claim": [
+          "c6",
+          "c5"
+        ],
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder stress from pulling past the point where the elbows stop moving down.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Neutral grip on the V-handle, handles across the base of the fingers, wrists not curled.",
+      "wrong": "Wrists curled forward.",
+      "claim": [
+        "c15",
+        "c1"
+      ]
+    },
+    {
+      "key": "bottom position",
+      "kind": "posture",
+      "right": "Handle just below the chin, upper arms tucked, elbows pointing down.",
+      "wrong": "Handle pulled past the chin, elbows moving back behind the body.",
+      "claim": [
+        "c6",
+        "c7"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "rear_delts",
+        "role": "secondary",
+        "why": "Added with a caveat (WEAK): posterior deltoid activity with the close grip was only higher relative to other grips (pulling down, above behind-the-neck only; on the way up, above both wide grips), and the abstract does not say a V-handle was used (c11)."
+      }
+    ],
+    "remove": [],
+    "why": "lats primary and biceps and mid_back secondary stand (c12, c14). Note the close grip does not beat a wide overhand grip for the lats (c11); grip mostly doesn't matter for the lats (c12, c13)."
+  },
+  "anchorSource": "puregym-close-grip-lat-pulldown",
+  "notes": [
+    "PureGym's claims that the close grip gives 'greater range of motion' and more trap and rhomboid work are not used: no measured source was found, and Signorile 2002 found less lat activity than the wide front grip. It is not stated in Signorile's abstract whether its close grip used a V-handle. The StrengthLog neutral close-grip page was re-fetched on 2026-09-30 (access full, quote verbatim). ACE lines are written for the bar pulldown and tagged MECH here. The lower-back feel row was dropped: no source links a lower-back feeling to rocking."
+  ]
+}

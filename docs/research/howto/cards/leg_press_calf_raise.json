@@ -1,0 +1,625 @@
+{
+  "id": "leg_press_calf_raise",
+  "libId": "lib_leg_press_calf_raise",
+  "name": "Leg Press Calf Raise",
+  "family": "Calf raise on the leg press (difference card of leg_press)",
+  "tier": "B",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "foot-platform"
+    ]
+  },
+  "parent": "leg_press",
+  "inherit": [
+    {
+      "field": "grip",
+      "why": "true for this child because the hands do the same job on the same machine: hold the side handles to steady the upper body and work the release (c3); they never push the load."
+    },
+    {
+      "field": "setup['Press the sled up a few centimetres, turn the release handles out (on most machines) to free it, and check your knees still have a small bend.']",
+      "why": "true for this child because it is done on the same incline leg press and the handles release the same holding mechanism (c3); here the sled is pressed out to almost straight legs before the calf work starts (c2)."
+    },
+    {
+      "field": "setup['After the last rep, pause at the top, turn the handles back in, and let the sled settle on the catches before you take your feet off or let go.']",
+      "why": "true for this child because it is the same sled and catch, and taking the feet off a loaded sled is the moment the platform could come down on the shins (c7)."
+    },
+    {
+      "field": "posture['Hands light on the side handles']",
+      "why": "true for this child because the hands only steady the upper body (c3)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit in the incline leg press with the balls of the feet on the bottom edge of the platform so the heels are free to move, toes straight ahead or turned slightly out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "Assume a seated position on an incline leg press machine and place the balls of the feet on the bottom edge of the resistance platform so that the heels of the feet are free to move.",
+          "where": "technique"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Keep the toes pointed directly in front or slightly to the outsides.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The legs stay straight or very slightly bent and are never locked; only the ankles move.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "The legs should be straight or very slightly bent and never locked.",
+          "where": "technique"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "To ensure maximum safety, keep the knees slightly bent at all times.",
+          "where": "pointers"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The side handles are held to steady the upper body and to release the holding mechanism.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "Grip the side handles to stabilize the upper body and to release the holding mechanism.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Push the platform up with the ankles at a slow to moderate speed through about 30-45 degrees, hold the top for one to two seconds, then return under control to a slight stretch with the ball of the foot about 10-20 degrees toward the shin.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "Extend the feet at a slow to moderate rate of speed through approximately a 30 — 45° range of motion. Then hold the fully extended position for one to two seconds to maximize the contraction.",
+          "where": "technique"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Exhale as you return (under control) until the feet are in a position of slight dorsi flexion (ball of the foot about 10 — 20° toward the shin from the neutral position).",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Going fast tends to make people straighten the legs fully and push the platform off the feet, which opens the way to injury.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "For safety and to ensure an adequate range of motion, do this exercise slowly or at a moderate rate of speed. If you do the exercise quickly there is a tendency to fully straighten the legs and to push the resistance platform off the feet.",
+          "where": "pointers"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Locking or overextending the knees is described as potentially very dangerous; a case report of both knees dislocating in weight training advises against locking the knees in any leg press.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "yessis-lpcr",
+        "barnds2019"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "Do not lock or hyperextend the knees as this can be potentially very dangerous.",
+          "where": "pointers"
+        },
+        {
+          "source": "barnds2019",
+          "text": "The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The feet can slip off the platform: wear shoes with good grip, check the platform is not slippery, and keep the feet in firm contact. The coach reports injuries where the platform came down across the shins.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "To prevent the feet from slipping be sure that you have on shoes with good traction and that the surface of the resistance platform is not slippery. Your feet should maintain in firm contact at all times.",
+          "where": "technique"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "I have seen several injuries in which the skin was “shaved” off the bone when the resistance platform came down across the shins.",
+          "where": "pointers"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Do not drop the platform fast or bounce at the bottom; it raises the chance of muscle injury and of the feet slipping. The coach pauses briefly at the bottom before the next rep. Fully extending the ankle up and down also makes slipping more likely.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "Do not lower the resistance platform too quickly or bounce in the bottom position. Doing so increases the chance of muscle injury and enhances the possibility of the feet slipping off the platform.",
+          "where": "pointers"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Exhale as you return (under control) until the feet are in a position of slight dorsi flexion (ball of the foot about 10 — 20° toward the shin from the neutral position). Pause momentarily and then repeat.",
+          "where": "technique"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "If you fully extend the ankle in the up and down movements the possibility of slipping off the resistance platform is increased greatly.",
+          "where": "pointers"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The calf muscles do the work: the gastrocnemius works most with the knee straight, and the soleus works whatever the knee angle.",
+      "tags": [
+        "MECH",
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "The gastrocnemius is most powerful when the leg is straight while the soleus is equally powerful regardless of knee position.",
+          "where": "muscles involved"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "In 42 young women doing calf raises on a horizontal leg press for 8 weeks, reps in the initial part of the range (longer muscle lengths) grew the medial calf head more than full or final-part reps; the lateral head grew more than with final-part reps but not significantly more than with full reps. The authors say this may optimize calf growth. Measured on a horizontal machine; applied to the incline machine by reasoning.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "kassiano2023"
+      ],
+      "quotes": [
+        {
+          "source": "kassiano2023",
+          "text": "Forty-two young women performed a calf training program for 8 weeks, 3 days·week -1 , with differences in the calf raise ROM configuration. The calf raise exercise was performed in a pin-loaded, horizontal, leg-press machine, in 3 sets of 15-20 repetition maximum.",
+          "where": "abstract, methods"
+        },
+        {
+          "source": "kassiano2023",
+          "text": "INITIAL ROM elicited greater medial gastrocnemius increases than FULL ROM and FINAL ROM",
+          "where": "abstract, results"
+        },
+        {
+          "source": "kassiano2023",
+          "text": "INITIAL ROM elicited greater lateral gastrocnemius increases than FINAL ROM (INITIAL ROM = +14.9% vs. FINAL ROM = +6.2%; p < 0.024) but did not significantly differ from FULL ROM (FULL ROM = +7.3%; p = 0.060).",
+          "where": "abstract, results"
+        },
+        {
+          "source": "kassiano2023",
+          "text": "The current results suggest that calf training performed at longer muscle lengths may optimize gastrocnemius muscle hypertrophy in young women.",
+          "where": "abstract, conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "In five experienced bodybuilders lifting to failure at 80-100% of their maximum (single-arm curls, overhead presses, single- and double-leg presses), blood pressure rose to extremely high values during each lift, highest in the double-leg press; part of the rise was caused by breath holding (a Valsalva manoeuvre). That breathing out through the effort keeps pressure lower is reasoning; the study did not test it. The calf raise was not among the lifts tested; applied to it by reasoning.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Load goes up by 2-10% once the target reps are beaten by one or two; the coach also advises not using too much weight in every set, and doing one or two lighter sets through a fuller range.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Although the calf muscles are very strong and can produce a tremendous amount of force, do not use too much weight in every set.",
+          "where": "pointers"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Using very heavy weight is needed for maximum intensity but you should also do one or two sets with lighter weight for a fuller range of motion",
+          "where": "pointers"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The anchor coach source teaches inhaling and holding the breath as the feet extend, then exhaling on the return. This card openly overrides the breath hold because of c12: it keeps only the coach's exhale on the return (c4) and gives no push-phase breathing cue beyond not holding the breath through the set, which is reasoning from c12.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-lpcr",
+          "text": "When you are ready, inhale and hold your breath as you extend the feet",
+          "where": "technique"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Be sure to hold your breath to stabilize the body and to maximize your attention on the ankle joint action.",
+          "where": "pointers"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "No source gives seconds per phase for this lift. The plate's 2 seconds up and 2 down is a drawing convention that fits ACSM's moderate speed (1-2 s each way, advised for intermediate to advanced lifters working toward heavy loads) and the coach's slow to moderate speed; the top hold is the coach's one to two seconds.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "acsm2009",
+        "yessis-lpcr"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "yessis-lpcr",
+          "text": "Extend the feet at a slow to moderate rate of speed through approximately a 30 — 45° range of motion. Then hold the fully extended position for one to two seconds to maximize the contraction.",
+          "where": "technique"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "yessis-lpcr",
+      "url": "https://doctoryessis.com/?p=2881",
+      "title": "Leg Press Calf Raise (Dr. Yessis SportLab)",
+      "kind": "coach",
+      "year": 2013,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "barnds2019",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30676343/",
+      "title": "Simultaneous Bilateral Knee Dislocation During Weight Training: A Case Report and Review of the Literature",
+      "kind": "peer-reviewed",
+      "year": 2019,
+      "pmid": 30676343,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kassiano2023",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37015016/",
+      "title": "Greater Gastrocnemius Muscle Hypertrophy After Partial Range of Motion Training Performed at Long Muscle Lengths",
+      "kind": "peer-reviewed",
+      "year": 2023,
+      "pmid": 37015016,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The only moving joint is the ankle, in the sagittal plane; the heel drop, the foot on the platform edge and the knee lock (the plate fault, c6) all read from the side.",
+    "equipment": "45 degree incline leg press (the parent's rig), sled pushed out with the legs nearly straight (c2); balls of the feet on the bottom edge of the platform, heels hanging free (c1).",
+    "start": "Reclined on the pad as in the parent; knees straight or very slightly bent, not locked (c2); balls of the feet on the platform's bottom edge (c1); ankles in slight dorsiflexion, ball of the foot about 10-20 degrees toward the shin (c4); hands on the side handles (c3).",
+    "end": "Knees unchanged (c2); ankles extended through about 30-45 degrees, platform pushed up by the feet (c4); balls of the feet still in firm contact (c7).",
+    "checkpoints": [
+      {
+        "label": "Balls of feet",
+        "what": "Only the balls of the feet on the bottom edge of the platform, heels free.",
+        "claim": "c1"
+      },
+      {
+        "label": "Knees soft",
+        "what": "Legs straight or very slightly bent, never locked, and they do not move.",
+        "claim": "c2"
+      },
+      {
+        "label": "Controlled stretch",
+        "what": "Heels lower under control to a slight stretch; no bounce.",
+        "claim": "c8"
+      }
+    ],
+    "mistake": {
+      "what": "Knees snap straight and lock while pushing the platform, often from going too fast.",
+      "why": "Fast reps tend to straighten the legs fully and push the platform off the feet; locking the knees is called potentially very dangerous.",
+      "claim": [
+        "c5",
+        "c6"
+      ],
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Only your ankles move",
+        "claim": "c2"
+      },
+      {
+        "text": "One-second hold at the top",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c15"
+    },
+    "variantLine": "The plate draws the 45 degree incline leg press (exercises.json equipment 'Leg Press'). The training study (c11) used a horizontal leg press; its stretch finding is applied to the incline machine as a calf-muscle fact, not a machine fact."
+  },
+  "grip": {
+    "type": "Inherited from the parent.",
+    "width": "Inherited from the parent.",
+    "thumb": "Inherited from the parent.",
+    "handContact": "Inherited from the parent.",
+    "wrist": "Inherited from the parent.",
+    "claims": [
+      "c3"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Wear shoes with good grip and check the platform is not slippery.",
+      "claim": "c7"
+    },
+    {
+      "step": "Put the balls of your feet on the bottom edge of the platform, heels free, toes straight ahead or slightly out.",
+      "claim": "c1"
+    },
+    {
+      "step": "Press the sled out until your legs are straight but not locked, then release the catches with the side handles.",
+      "claim": [
+        "c3",
+        "c2"
+      ]
+    },
+    {
+      "step": "Keep a slight bend in the knees for the whole set.",
+      "claim": "c2"
+    },
+    {
+      "step": "Choose a weight you can move slowly; add 2-10% only when you beat your target reps.",
+      "claim": [
+        "c13",
+        "c5"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Only the ankles move; knees stay slightly bent.",
+      "claim": "c2"
+    },
+    {
+      "point": "Push up through about 30-45 degrees at a slow to moderate speed.",
+      "claim": "c4"
+    },
+    {
+      "point": "Hold the top for one to two seconds.",
+      "claim": "c4"
+    },
+    {
+      "point": "Lower under control to a slight stretch, no bounce.",
+      "claim": [
+        "c8",
+        "c11"
+      ]
+    },
+    {
+      "point": "Feet stay in firm contact with the platform.",
+      "claim": "c7"
+    },
+    {
+      "point": "Breathe out as the platform comes back; don't hold your breath through the set.",
+      "claim": [
+        "c4",
+        "c12",
+        "c14"
+      ]
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Locking the knees, often by rushing the reps.",
+      "fix": "Slow down and keep a slight knee bend the whole set.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Feet slipping on the platform.",
+      "fix": "Grippy shoes, a non-slip platform, balls of the feet firmly on the edge, and don't fully extend the ankle up and down.",
+      "claim": [
+        "c7",
+        "c8"
+      ]
+    },
+    {
+      "mistake": "Dropping the platform fast and bouncing at the bottom.",
+      "fix": "Lower slowly to a slight stretch and pause before pushing again.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "calves",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Knees",
+        "means": "The knee fault the sources warn about here is locking or overextending the knees.",
+        "fix": "Don't lock the knees.",
+        "claim": "c6",
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Feet slipping off the platform can bring the platform down on the shins.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Locking or overextending the knees under a loaded sled.",
+      "claim": "c6"
+    },
+    {
+      "risk": "Very heavy lifts to failure sent blood pressure extremely high in a small study, partly from breath holding; the calf raise was not tested, so this is applied by reasoning.",
+      "claim": "c12"
+    }
+  ],
+  "redFlags": [
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "foot on edge",
+      "kind": "posture",
+      "right": "Balls of the feet on the bottom edge, heels free, shoe gripping the plate.",
+      "wrong": "Only the toes on the edge, foot about to slide off.",
+      "claim": "c7"
+    },
+    {
+      "key": "knee",
+      "kind": "posture",
+      "right": "Knee straight but slightly soft, unchanged top and bottom.",
+      "wrong": "Knee snapped straight or bowed past straight.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json lists calves primary and nothing else; c9 agrees. No change."
+  },
+  "anchorSource": "yessis-lpcr",
+  "notes": [
+    "The coach anchor teaches holding the breath on the push. The card openly overrides that (c14): it keeps only the coach's exhale on the return (c4) and says not to hold the breath through the set, reasoning from MacDougall 1985 (c12); it gives no separate push-phase cue. Yessis also advises a shortened range for safety, while Kassiano 2023 found that training in the initial, longer-muscle part of the range may optimize growth (medial head significant, lateral head not versus full range); the card keeps a controlled stretch to 10-20 degrees, which is Yessis's own bottom position (c4), and no deep bounce (c8). Gentil 2020 (leg press vs calf raise, PMID 33352879) was read but not used: it measured the calves during the knee-bending leg press, not the leg press calf raise. Nunes 2020 (foot angle, horizontal machine) was dropped: no line on the card used it."
+  ]
+}

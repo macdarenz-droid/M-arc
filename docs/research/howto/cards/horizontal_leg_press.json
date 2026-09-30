@@ -1,0 +1,653 @@
+{
+  "id": "horizontal_leg_press",
+  "libId": "lib_horizontal_leg_press",
+  "name": "Horizontal Leg Press",
+  "family": "Leg press and squat machines (difference card of leg_press)",
+  "tier": "B",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "foot-platform"
+    ]
+  },
+  "parent": "leg_press",
+  "inherit": [
+    {
+      "field": "grip",
+      "why": "true for this child because ACE's seated leg press asks for the same light hold on any available handles and no movement of the upper body (c2), which is the parent's balance-grip rule; the hands never carry load on either machine."
+    },
+    {
+      "field": "posture['Tailbone and lower back flat on the pad']",
+      "why": "true for this child because ACE asks for the back and sacrum flat on the backrest and warns against lifting the butt or rounding the low back (c1, c4)."
+    },
+    {
+      "field": "posture['Whole foot flat, mid-platform']",
+      "why": "true for this child because heels stay flat and pressed into the plate throughout (c1, c3)."
+    },
+    {
+      "field": "posture['Knees follow the toes']",
+      "why": "true for this child because the kneecaps should track the line of the feet and the knees must not come together (c6)."
+    },
+    {
+      "field": "posture['Soft knees at the top']",
+      "why": "true for this child because the knees stop at a relaxed extended position, never locked (c3, c4)."
+    },
+    {
+      "field": "posture['Hands light on the side handles']",
+      "why": "true for this child because ACE asks for the same light grasp of any available handles (c2)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit with the back and tailbone flat against the backrest, feet on the plate with toes forward, and adjust the seat and foot position so the knees start at about 90 degrees with the heels flat.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-leg-press",
+        "webmd-seated-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-leg-press",
+          "text": "Sit in the machine, positioning your back and sacrum (tailbone) flat against the machine's backrest. Place your feet on the resistance plate, toes pointing forward and adjust your seat and foot position so that the bend in your knees is at approximately 90 degrees with your heels flat.",
+          "where": "step 1"
+        },
+        {
+          "source": "webmd-seated-leg-press",
+          "text": "Your toes should point forward, and your seat should be adjusted along with the foot position in a way that bends the knees at about 90 degrees.",
+          "where": "how to do it"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hold any handles lightly to steady the upper body, brace the stomach and keep the low back still.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-leg-press",
+          "text": "Lightly grasp any available handles to stabilize your upper extremity.",
+          "where": "step 1"
+        },
+        {
+          "source": "ace-seated-leg-press",
+          "text": "Contract (“brace”) your abdominal muscles to stabilize your spine, be careful to avoid movement in your low back throughout the exercise.",
+          "where": "step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Breathe out and push the plate away slowly, using the glutes, quads and hamstrings, heels flat on the plate.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-leg-press",
+          "text": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings. Keep your heels flat against the resistance plate and avoid any movement in the upper extremity.",
+          "where": "step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Push until the knees are relaxed and nearly straight; do not lock them, and do not lift the hips off the seat or round the low back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-leg-press",
+        "webmd-seated-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-leg-press",
+          "text": "Do not hyperextend (lock-out) your knees and avoid lifting your butt off the seat pad or rounding out your low back.",
+          "where": "step 3"
+        },
+        {
+          "source": "webmd-seated-leg-press",
+          "text": "When you are performing a leg press, you should stop just short of a full knee extension while pushing on the platform.",
+          "where": "tips"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "On the way back, control the plate and do not let the thighs press into the ribs; one source says not to go below about 90 degrees at the knee.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-leg-press",
+        "webmd-seated-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-leg-press",
+          "text": "Do not allow your upper thighs to compress your ribcage.",
+          "where": "step 4"
+        },
+        {
+          "source": "webmd-seated-leg-press",
+          "text": "When returning to the start position, do not let your thigh lower to below the 90-degree level at the knee. If the thighs dip too low, you could hurt the knees.",
+          "where": "tips"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The kneecaps should follow the line of the feet; letting the knees come together can injure the knee.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "webmd-seated-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "webmd-seated-leg-press",
+          "text": "It is vital to allow your kneecaps to go through the path of the feet during your exercise. If you bring the knees too close together it can also injure the knee.",
+          "where": "tips"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "ACE's main warning is to control the push by keeping the heels on the plate and never locking the knees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-leg-press",
+          "text": "Improper technique can lead to injury. Control the extension phase by keeping your heels in contact with the plate and avoid locking out your knees.",
+          "where": "note"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "A case report of both knees dislocating during weight training advises never locking or overextending the knees in any leg press or squat. Very rare; one case.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "barnds2019"
+      ],
+      "quotes": [
+        {
+          "source": "barnds2019",
+          "text": "The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "On a horizontal leg press, the rectus femoris (front of the thigh) worked about the same with the feet high or low on the plate, and the gastrocnemius (calf) fired strongly at the end of knee extension.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "tassi1998",
+        "tassi1999"
+      ],
+      "quotes": [
+        {
+          "source": "tassi1998",
+          "text": "The rectus femoris showed a similar activity both in the upper and lower platforms.",
+          "where": "abstract"
+        },
+        {
+          "source": "tassi1999",
+          "text": "The gastrocnemius muscle showed strong potentials at the end of knee extension and beginning of knee flexion.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Knee forces in the leg press and squat rose as the knee bent further. Machine angle not stated in the abstract.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "escamilla2001"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla2001",
+          "text": "Because all forces increased with knee flexion, training within the functional 0-50 degrees range may be efficacious for those whose goal is to minimize knee forces.",
+          "where": "abstract, conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "In five experienced bodybuilders lifting to failure at 80-100% of their maximum (single-arm curls, overhead presses, single- and double-leg presses), blood pressure rose to extremely high values during each lift, highest in the double-leg press; part of the rise was caused by breath holding (a Valsalva manoeuvre). That breathing out through the effort keeps pressure lower is reasoning; the study did not test it.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "ACE and WebMD both pause briefly at the top before the slow, controlled return.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seated-leg-press",
+        "webmd-seated-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-leg-press",
+          "text": "Pause momentarily, then slowly return to your starting position",
+          "where": "step 4"
+        },
+        {
+          "source": "webmd-seated-leg-press",
+          "text": "Take a pause, and slowly return your body to the starting position.",
+          "where": "how to do it"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-seated-leg-press",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/154/seated-leg-press/",
+      "title": "Seated Leg Press (ACE exercise library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "webmd-seated-leg-press",
+      "url": "https://www.webmd.com/fitness-exercise/how-to-do-seated-leg-presses",
+      "title": "How to Do Seated Leg Presses (WebMD, medically reviewed)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "barnds2019",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30676343/",
+      "title": "Simultaneous Bilateral Knee Dislocation During Weight Training: A Case Report and Review of the Literature",
+      "kind": "peer-reviewed",
+      "year": 2019,
+      "pmid": 30676343,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "tassi1998",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9651694/",
+      "title": "Electromyographic evaluation of the rectus femoris muscle during exercises performed on the leg press",
+      "kind": "peer-reviewed",
+      "year": 1998,
+      "pmid": 9651694,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "tassi1999",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/10499208/",
+      "title": "Electromyographic behaviour of the gastrocnemius muscle during knee extension and flexion performed on the leg press",
+      "kind": "peer-reviewed",
+      "year": 1999,
+      "pmid": 10499208,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "escamilla2001",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11528346/",
+      "title": "Effects of technique variations on knee biomechanics during the squat and leg press",
+      "kind": "peer-reviewed",
+      "year": 2001,
+      "pmid": 11528346,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "As for the parent: hip and knee angles, the back on the pad and the knee lockout (the plate fault, c7) read from the side. Knee tracking (c6) needs a front view and goes to text.",
+    "equipment": "Horizontal leg press: upright seat and back pad, vertical foot plate on a level rail (census: legPress45 with rail angle 0).",
+    "start": "Seated, back and tailbone flat on the pad (c1); feet flat on the plate, toes forward (c1); knees at about 90 degrees, thighs clear of the ribs (c1, c5); hands light on the handles (c2).",
+    "end": "Legs pushed out until the knees are relaxed and nearly straight, not locked (c4); heels still pressed into the plate (c7); hips and low back still on the pad (c4).",
+    "checkpoints": [
+      {
+        "label": "Back on pad",
+        "what": "Back and tailbone flat on the pad the whole set; hips never lift.",
+        "claim": "c4"
+      },
+      {
+        "label": "Knees about 90°",
+        "what": "The seat is set so the knees start at about 90 degrees with the heels flat.",
+        "claim": "c1"
+      },
+      {
+        "label": "Soft knees",
+        "what": "Each push ends with the knees relaxed, a small bend left, never locked.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Snapping the knees straight and locking them at the end of the push.",
+      "why": "ACE and WebMD both repeat the warning, and a case report of both knees dislocating during weight training advises never locking them.",
+      "claim": [
+        "c7",
+        "c4",
+        "c8"
+      ],
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Heels stay pressed into the plate",
+        "claim": "c7"
+      },
+      {
+        "text": "Small knee bend at the top",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": [
+        "c12",
+        "c13"
+      ]
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Inherited from the parent.",
+    "width": "Inherited from the parent.",
+    "thumb": "Inherited from the parent.",
+    "handContact": "Inherited from the parent.",
+    "wrist": "Inherited from the parent.",
+    "claims": [
+      "c2"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Sit back with your back and tailbone flat against the pad.",
+      "claim": "c1"
+    },
+    {
+      "step": "Feet flat on the plate, toes forward.",
+      "claim": "c1"
+    },
+    {
+      "step": "Adjust the seat so your knees start at about 90 degrees with your heels flat.",
+      "claim": "c1"
+    },
+    {
+      "step": "Hold the handles lightly and brace your stomach.",
+      "claim": "c2"
+    },
+    {
+      "step": "Breathe out as you push; don't hold your breath through the set.",
+      "claim": [
+        "c3",
+        "c11"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Heels pressed into the plate from start to finish.",
+      "claim": "c7"
+    },
+    {
+      "point": "Knees follow the line of the feet.",
+      "claim": "c6"
+    },
+    {
+      "point": "Knees stop relaxed, never locked.",
+      "claim": "c4"
+    },
+    {
+      "point": "Controlled return; thighs never press into the ribs.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Locking the knees at the end of the push.",
+      "fix": "Stop just short of straight, keep a small bend, then start the next rep.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Letting the hips lift or the low back round.",
+      "fix": "Keep the hips on the seat and the low back still. Reset the seat so you start at about 90 degrees.",
+      "claim": [
+        "c4",
+        "c2",
+        "c1"
+      ]
+    },
+    {
+      "mistake": "Letting the knees fall in toward each other.",
+      "fix": "Keep the kneecaps in line with the feet.",
+      "claim": "c6"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c3"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c3"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c3"
+      },
+      {
+        "muscleId": "calves",
+        "claim": "c9"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c4"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Knee",
+        "means": "The knee faults the sources warn about here are locking at the top and going below about 90 degrees; knee forces rise the further the knee bends.",
+        "fix": "Keep a small bend at the top and don't go below about 90 degrees.",
+        "claim": [
+          "c4",
+          "c5",
+          "c10"
+        ],
+        "redFlag": "knee"
+      },
+      {
+        "where": "Lower back",
+        "means": "The fault ACE warns about here is the hips lifting or the low back rounding.",
+        "fix": "Keep your tailbone on the pad and the low back still.",
+        "claim": [
+          "c4",
+          "c5",
+          "c1",
+          "c2"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Knee, as the knees drift in",
+        "means": "The fault WebMD warns about here is the knees coming together.",
+        "fix": "Kneecaps in line with the feet.",
+        "claim": "c6",
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Locking or overextending the knees under load; very rarely linked to knee dislocation.",
+      "claim": "c8"
+    },
+    {
+      "risk": "Very heavy double-leg presses to failure sent blood pressure extremely high in a small study, partly from breath holding.",
+      "claim": "c11"
+    },
+    {
+      "risk": "Rounding the low back off the pad.",
+      "claim": [
+        "c4",
+        "c2"
+      ]
+    }
+  ],
+  "redFlags": [
+    "knee",
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "knee at the top",
+      "kind": "posture",
+      "right": "Legs nearly straight with a small bend, heels on the plate.",
+      "wrong": "Knee snapped straight or bowed past straight.",
+      "claim": [
+        "c7",
+        "c4",
+        "c8"
+      ]
+    },
+    {
+      "key": "seat set",
+      "kind": "posture",
+      "right": "Knees at about 90 degrees at the start, thighs clear of the ribs.",
+      "wrong": "Seat too close, thighs against the ribs, hips lifting off the seat.",
+      "claim": [
+        "c5",
+        "c4",
+        "c1"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "calves"
+    ],
+    "remove": [],
+    "why": "exercises.json lists quads and glutes primary, hamstrings secondary (all named by ACE, c3). calves is added as secondary: on a horizontal leg press the gastrocnemius fired strongly at the end of knee extension (c9, 10 men); the 45 degree leg_press entry already lists calves."
+  },
+  "anchorSource": "ace-seated-leg-press",
+  "notes": [
+    "The parent card leans on ACE 154 too; ACE titles it 'Seated Leg Press' and its wording (seat adjusted to set the knee angle, resistance plate) fits the horizontal machine at least as well as the 45 degree sled. The parent's catch-lever and plate-loading steps are not inherited: horizontal machines are often stack-loaded with a sliding seat, and no source read here describes their catches or pin. WebMD (medically reviewed) is a second full read for the horizontal machine."
+  ]
+}

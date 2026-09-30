@@ -1,0 +1,126 @@
+{
+  "id": "resistance_band_row",
+  "checked": "2026-09-30",
+  "sourceFixes": [],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sweat-bandrow",
+      "quote": "While seated on a yoga mat, extend both legs out in front of you with your feet flexed. Wrap the recovery band around the bottom of your feet so that you are holding one end of the band in each hand.",
+      "status": "verbatim",
+      "closest": "While seated on a yoga mat, extend both legs out in front of you with your feet flexed. Wrap the recovery band around the bottom of your feet so that you are holding one end of the band in each hand."
+    },
+    {
+      "claim": "c1",
+      "source": "physitrack-longsitrow",
+      "quote": "Sit on a mat with a resistance band around your feet.",
+      "status": "verbatim",
+      "closest": "Sit on a mat with a resistance band around your feet."
+    },
+    {
+      "claim": "c2",
+      "source": "sweat-bandrow",
+      "quote": "Ensure that the recovery band is in good condition and securely anchored around your feet to avoid injury. You could also press your feet against a sturdy object to help keep the band in place.",
+      "status": "verbatim",
+      "closest": "Ensure that the recovery band is in good condition and securely anchored around your feet to avoid injury. You could also press your feet against a sturdy object to help keep the band in place."
+    },
+    {
+      "claim": "c3",
+      "source": "sweat-bandrow",
+      "quote": "Sit up tall and draw your shoulder blades down and back to push your chest out. Extend your arms in front of you so that you are holding the ends of the band with a neutral grip (palms facing inwards).",
+      "status": "verbatim",
+      "closest": "Sit up tall and draw your shoulder blades down and back to push your chest out. Extend your arms in front of you so that you are holding the ends of the band with a neutral grip (palms facing inwards)."
+    },
+    {
+      "claim": "c3",
+      "source": "physitrack-longsitrow",
+      "quote": "Keep your back in a straight, neutral position.",
+      "status": "verbatim",
+      "closest": "Keep your back in a straight, neutral position."
+    },
+    {
+      "claim": "c4",
+      "source": "sweat-bandrow",
+      "quote": "Using the muscles in both your arms and back, bend your elbows backwards to increase the tension in the band, ensuring that your elbows remain in close contact with the sides of your body. You should feel a small squeeze between your shoulder blades.",
+      "status": "verbatim",
+      "closest": "Using the muscles in both your arms and back, bend your elbows backwards to increase the tension in the band, ensuring that your elbows remain in close contact with the sides of your body. You should feel a small squeeze between your shoulder blades."
+    },
+    {
+      "claim": "c4",
+      "source": "physitrack-longsitrow",
+      "quote": "Hold onto either end and pull your elbows straight back towards you, squeezing your shoulder blades together.",
+      "status": "verbatim",
+      "closest": "Hold onto either end and pull your elbows straight back towards you, squeezing your shoulder blades together."
+    },
+    {
+      "claim": "c5",
+      "source": "sweat-bandrow",
+      "quote": "Inhale. Exhale. Using the muscles in both your arms and back, bend your elbows backwards to increase the tension in the band",
+      "status": "verbatim",
+      "closest": "Inhale. Exhale. Using the muscles in both your arms and back, bend your elbows backwards to increase the tension in the band"
+    },
+    {
+      "claim": "c5",
+      "source": "sweat-bandrow",
+      "quote": "Inhale. Extend your elbows to return to the starting position.",
+      "status": "verbatim",
+      "closest": "Inhale. Extend your elbows to return to the starting position."
+    },
+    {
+      "claim": "c5",
+      "source": "physitrack-longsitrow",
+      "quote": "Control the movement back to the start position.",
+      "status": "verbatim",
+      "closest": "Control the movement back to the start position."
+    },
+    {
+      "claim": "c6",
+      "source": "thomas2005",
+      "quote": "In an in vitro-series the tubing tension in relation to elongation of 6 colors of Thera-Band and Cando tubings was directly measured.",
+      "status": "verbatim",
+      "closest": "In an in vitro-series the tubing tension in relation to elongation of 6 colors of Thera-Band and Cando tubings was directly measured."
+    },
+    {
+      "claim": "c6",
+      "source": "thomas2005",
+      "quote": "The tension/elongation relation is linear beyond a threshold in the early part of elongation.",
+      "status": "verbatim",
+      "closest": "The tension/elongation relation is linear beyond a threshold in the early part of elongation."
+    },
+    {
+      "claim": "c6",
+      "source": "thomas2005",
+      "quote": "The prediction of maximum tension values for any given elongation is possible by simple variation of resting length.",
+      "status": "verbatim",
+      "closest": "The prediction of maximum tension values for any given elongation is possible by simple variation of resting length."
+    },
+    {
+      "claim": "c8",
+      "source": "lehman2004",
+      "quote": "The highest latissimus dorsi to biceps ratio of activation occurred during the wide grip pulldown and the seated row. Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row.",
+      "status": "verbatim",
+      "closest": "The highest latissimus dorsi to biceps ratio of activation occurred during the wide grip pulldown and the seated row. Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row."
+    },
+    {
+      "claim": "c9",
+      "source": "fischer2025",
+      "quote": "SEMG measurements were taken for the trapezius transversus (TT), rear deltoid (RD), latissimus dorsi (LD) and biceps brachii (BB).",
+      "status": "verbatim",
+      "closest": "SEMG measurements were taken for the trapezius transversus (TT), rear deltoid (RD), latissimus dorsi (LD) and biceps brachii (BB)."
+    },
+    {
+      "claim": "c10",
+      "source": "acsm2009",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c10",
+      "source": "physitrack-longsitrow",
+      "quote": "Control the movement back to the start position.",
+      "status": "verbatim",
+      "closest": "Control the movement back to the start position."
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+{
+  "id": "close_grip_pulldown",
+  "checked": "2026-09-30",
+  "sources": [
+    {
+      "id": "ace-lat-pulldown",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "andersen-2014",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "buonsenso-2025",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "lusk-2010",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "odriscoll-1992",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "puregym-close-grip-lat-pulldown",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "signorile-2002",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "strengthlog-neutral-close-grip-lat-pulldown",
+      "access": "full",
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "puregym-close-grip-lat-pulldown",
+      "quote": "The close grip lat pulldown is a lat pulldown variation which is performed with a close grip by using a v handle attachment.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c1",
+      "source": "strengthlog-neutral-close-grip-lat-pulldown",
+      "quote": "Attatch a grip to the lat pulldown that lets you have a neutral close-grip.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "puregym-close-grip-lat-pulldown",
+      "quote": "adjusting the pads so they sit tightly against your thighs when you are seated.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-lat-pulldown",
+      "quote": "Sit in the machine, anchoring your lower extremity by adjusting the thigh pad to fit firmly against the top of your thighs.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "ace-lat-pulldown",
+      "quote": "Lean back slightly (no more than a 30 degree angle), using your legs to support your body (low back).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "ace-lat-pulldown",
+      "quote": "Avoid any additional backwards lean during the pull movement.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "puregym-close-grip-lat-pulldown",
+      "quote": "think about pulling your elbows down towards your hips until your upper arms are tucked either side of your torso and the v handle reaches just below the chin.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "puregym-close-grip-lat-pulldown",
+      "quote": "Pulling the grip down too low will force your forearms and deltoids to take over, shifting the load away from your lats and biceps and making the shoulders exposed to injury.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "ace-lat-pulldown",
+      "quote": "Continue pulling until the bar nears or touches your chest, or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "ace-lat-pulldown",
+      "quote": "Avoid any further pulling as this places additiomnal stresses into the shoulder joint.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "puregym-close-grip-lat-pulldown",
+      "quote": "Move the weight with control rather than using momentum to ensure the correct muscles are worked.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "ace-lat-pulldown",
+      "quote": "initiate the downward pull by first depressing (lower) your scapulae",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "lusk-2010",
+      "quote": "Participants maintained a cadence of 2-second concentric and 2-second eccentric phases.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "signorile-2002",
+      "quote": "During the concentric phase, NrmsEMG results for the LD included WGA > WGP, SG, CG.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "signorile-2002",
+      "quote": "For the PD: CG, WGA, SG > WGP.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "signorile-2002",
+      "quote": "For the PD: CG > WGA, WGP.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "andersen-2014",
+      "quote": "The 6RM strengths with narrow (80.3 ± 7.2 kg) and medium grip (80 ± 7.1 kg) were higher than wide grip (77.3 ± 6.3 kg; p = 0.02). There was similar EMG activation between grip widths for latissimus, trapezius, or infraspinatus",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "buonsenso-2025",
+      "quote": "These findings suggest that grip variations may not significantly alter latissimus dorsi recruitment",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "puregym-close-grip-lat-pulldown",
+      "quote": "Like conventional lat pulldowns , the close grip lat pulldown works the back, including the latissimus dorsi, rhomboids, and traps, and the biceps.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "odriscoll-1992",
+      "quote": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}
