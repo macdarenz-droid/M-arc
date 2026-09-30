@@ -1,0 +1,143 @@
+{
+  "id": "wall_sit",
+  "libId": "lib_wall_sit",
+  "name": "Wall Sit",
+  "family": "SQUAT (bodyweight, isometric hold)",
+  "tier": "C",
+  "tierNote": "Not in content.md appendix B tier A or B lists, so tier C. census.json difficulty tier 2.",
+  "archetype": { "hand": "none", "contact": ["standing-feet"] },
+  "archetypeNote": "The back rests on a wall; no GA contact archetype names a wall, so it is drawn as equipment (census: wall composer).",
+  "parent": "bodyweight_squat",
+  "parentNote": "content.md appendix A: bodyweight_squat parents wall_sit. Same hand archetype (none) and primary contact (standing-feet).",
+  "inherit": [
+    { "field": "posture[1] (knees over the second toe, ankles not rolling)", "why": "true for this child because the wall sit holds a squat position on the same feet; knee-over-foot alignment is the standing-feet rule, and Physitrack's wall sit form adds toes slightly out with knees over the ankles (w4)." },
+    { "field": "b10 / redFlags knee (NHS knee box)", "why": "true for this child because the NHS triggers are about the knee itself, not the exercise, and the wall sit loads the same knee (w8)." }
+  ],
+  "claims": [
+    { "id": "w1", "text": "The wall sit is a simple isometric leg exercise that builds strength in a chosen squat position.",
+      "tags": ["CONSENSUS"], "sources": ["cat-wallsit"],
+      "quotes": [{ "source": "cat-wallsit", "text": "The wall sit is a simple isometric leg exercise for building strength in a specific squat position, or to minimize strength loss during injuries that prevent squatting and similar.", "where": "introduction" }] },
+    { "id": "w2", "text": "Back to the wall, feet out in front as far as the position needs; most often hips and knees at 90 degrees.",
+      "tags": ["CONSENSUS"], "sources": ["cat-wallsit"],
+      "quotes": [{ "source": "cat-wallsit", "text": "Stand with your back to a wall and feet in front of it as far as needed for the desired squat position. Most commonly wall sits are done with 90-degree angles at the hip and knee, but other angles and depths can be used to work on specific positions.", "where": "technique" }] },
+    { "id": "w3", "text": "Slide down the wall into the position and hold, usually 30-60 seconds.",
+      "tags": ["CONSENSUS"], "sources": ["cat-wallsit"],
+      "quotes": [{ "source": "cat-wallsit", "text": "With your back supported against the wall, slide down into the chosen squat position and hold for the prescribed time, usually 30-60 seconds.", "where": "technique" }] },
+    { "id": "w4", "text": "Back flat on the wall, feet shoulder width, toes slightly out, knees directly above the ankles.",
+      "tags": ["CONSENSUS"], "sources": ["physitrack-wallsit"],
+      "quotes": [
+        { "source": "physitrack-wallsit", "text": "Keep your back flat against the wall, your feet shoulder-width apart and your toes pointed slightly outward. Make sure your knees are directly above your ankles and hold the position for as long as you can.", "where": "FAQ: correct form" } ] },
+    { "id": "w5", "text": "Back and buttocks stay in contact with the wall.",
+      "tags": ["CONSENSUS"], "sources": ["physitrack-wallsit"],
+      "quotes": [{ "source": "physitrack-wallsit", "text": "Ensure your back and buttocks remain in contact with the wall.", "where": "instructions" }] },
+    { "id": "w6", "text": "Programme 2-5 sets of 30-60 second holds; once 60 seconds is comfortable, make it harder (one foot lifted, single leg, or weight on the thighs).",
+      "tags": ["CONSENSUS"], "sources": ["cat-wallsit"],
+      "quotes": [{ "source": "cat-wallsit", "text": "The wall sit can be done for 2-5 sets of 30-60-second holds. If the athlete is able to hold for 60 seconds comfortably, variations to increase difficulty can be introduced, such as lifting one foot at a time, single-leg holds, or holding weight on the thighs.", "where": "Programming" }] },
+    { "id": "w7", "text": "Heart rate and blood pressure rise as the knee bends further (tested 135 to 90 degrees, n=23), so the depth sets how hard the hold is.",
+      "tags": ["DATA"], "sources": ["goldring-2014"],
+      "quotes": [{ "source": "goldring-2014", "text": "The heart rate and blood pressure parameters produced significant inverse relationships with joint angle (r at least -0.80; P < 0.05), demonstrating that wall squat intensity can be adjusted by manipulating knee joint angle.", "where": "abstract" }] },
+    { "id": "w8", "text": "In dynamic bodyweight wall and ball squats (n=16), a short heel-to-wall distance moved the knees past the toes and raised kneecap force and stress at 90-100 degrees on the way up; a 12RM wall squat study found the same at 90 degrees. Applied to the static hold by inference.",
+      "tags": ["MECH"], "sources": ["escamilla-2023", "escamilla-2009"],
+      "quotes": [
+        { "source": "escamilla-2023", "text": "Sixteen participants performed a dynamic ball squat and wall squat with long HTWD and short HTWD.", "where": "abstract, methods" },
+        { "source": "escamilla-2023", "text": "patellofemoral joint force and stress were greater with a short HTWD than a long HTWD at 100° ( P = 0.007) and 90° ( P = 0.008) knee angles during squat ascent", "where": "abstract, results" },
+        { "source": "escamilla-2023", "text": "squatting with short HTWD produced anterior knee displacement beyond the toes at higher knee angles, resulting in greater patellofemoral force and stress compared with squatting with long HTWD.", "where": "abstract, conclusions" },
+        { "source": "escamilla-2009", "text": "Patellofemoral force and stress were significantly greater at 90 degrees knee angle in the wall squat short compared with wall squat long", "where": "abstract, results" } ] },
+    { "id": "w9", "text": "Kneecap-joint load in wall squats is higher between 60 and 90 degrees of knee bend than between 0 and 50, so a shallower position loads the kneecap less (dynamic 12RM wall squats).",
+      "tags": ["MECH"], "sources": ["escamilla-2009"],
+      "quotes": [{ "source": "escamilla-2009", "text": "When the goal is to minimize patellofemoral compressive force and stress, it may be prudent to use a smaller knee angle range between 0 degrees and 50 degrees compared with a larger knee angle range between 60 degrees and 90 degrees", "where": "abstract, conclusions" }] },
+    { "id": "w10", "text": "Holding the breath during an isometric effort raises blood pressure further than breathing through it (handgrip study, applied here by inference).",
+      "tags": ["MECH"], "sources": ["watanabe-2022"],
+      "quotes": [{ "source": "watanabe-2022", "text": "These results indicate that during isometric exercise, a breath-hold enhances an exercise-induced increase in MAP", "where": "abstract, conclusion" }] },
+    { "id": "w11", "text": "One coach page names the quadriceps, glutes, hamstrings and calves as the muscles the wall sit works, without ranking them.",
+      "tags": ["CONSENSUS", "WEAK"], "sources": ["physitrack-wallsit"],
+      "quotes": [{ "source": "physitrack-wallsit", "text": "The wall sit primarily works the quadriceps, glutes, hamstrings, and calves.", "where": "FAQ" }] },
+    { "id": "w12", "text": "NHS knee pain: get advice from 111 if the knee is very painful, or locks, gives way or painfully clicks.",
+      "tags": ["CONSENSUS"], "sources": ["nhs-knee"],
+      "quotes": [
+        { "source": "nhs-knee", "text": "your knee is very painful", "where": "Urgent advice box" },
+        { "source": "nhs-knee", "text": "your knee locks, gives way or painfully clicks – painless clicking is normal", "where": "Urgent advice box" } ] }
+  ],
+  "sources": [
+    { "id": "cat-wallsit", "url": "https://www.catalystathletics.com/exercise/749/Wall-Sit/", "title": "Wall Sit (Exercise Library)", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "physitrack-wallsit", "url": "https://www.physitrack.com/exercise-library/how-to-perform-the-wall-sit-exercise", "title": "Step-by-step guide to the wall sit exercise (Physitrack)", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "goldring-2014", "url": "https://pubmed.ncbi.nlm.nih.gov/23879248/", "title": "The effects of isometric wall squat exercise on heart rate and blood pressure in a normotensive population", "kind": "peer-reviewed", "year": 2014, "pmid": "23879248", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "escamilla-2023", "url": "https://pubmed.ncbi.nlm.nih.gov/37057713/", "title": "Patellofemoral Joint Loading during the Performance of the Wall Squat and Ball Squat with Heel-to-Wall-Distance Variations", "kind": "peer-reviewed", "year": 2023, "pmid": "37057713", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "escamilla-2009", "url": "https://pubmed.ncbi.nlm.nih.gov/19276845/", "title": "Patellofemoral joint force and stress during the wall squat and one-leg squat", "kind": "peer-reviewed", "year": 2009, "pmid": "19276845", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "watanabe-2022", "url": "https://pubmed.ncbi.nlm.nih.gov/34618221/", "title": "Effect of breath-hold on the responses of arterial blood pressure and cerebral blood velocity to isometric exercise", "kind": "peer-reviewed", "year": 2022, "pmid": "34618221", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "nhs-knee", "url": "https://www.nhs.uk/conditions/knee-pain/", "title": "Knee pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Hip and knee angles (w2), knees over ankles (w4) and heel-to-wall distance (w8) read only from the side.",
+    "frames": "Hold convention (architecture section 1): entry pose (standing, back on the wall) then the held pose.",
+    "equipment": "Wall behind the lifter; floor line.",
+    "start": "Entry: standing with back and buttocks on the wall, feet out in front (w2, w5).",
+    "end": "Held pose: slid down to hips and knees at about 90 degrees (w2), knees directly above the ankles (w4), back flat on the wall (w4).",
+    "checkpoints": [
+      { "label": "Back on wall", "what": "Back and buttocks stay on the wall.", "claim": "w5" },
+      { "label": "Knees over ankles", "what": "Shins vertical, knees directly above the ankles.", "claim": "w4" },
+      { "label": "90 degrees", "what": "Hips and knees at about 90 degrees; shallower is easier.", "claim": "w2" }
+    ],
+    "mistake": {
+      "what": "Feet too close to the wall, knees pushed forward past the toes.",
+      "why": "Measured in dynamic wall squats and applied to the hold: a short heel-to-wall distance moved the knees past the toes and raised kneecap-joint force and stress (w8); the form sources ask for knees over the ankles (w4).",
+      "claim": "w8",
+      "drawable": true,
+      "rankNote": "No source ranks wall sit faults. This is the one fault with measured consequences, and it reads from the side."
+    },
+    "tells": [
+      { "text": "Shins straight up and down", "claim": "w4" },
+      { "text": "Back flat against the wall", "claim": "w5" }
+    ],
+    "tempo": { "up": null, "down": null, "pause": null, "text": "Set / Hold 30-60 s / Rest; 2-5 sets. Rest length is not sourced.", "claim": "w6" },
+    "variantLine": null
+  },
+  "grip": { "type": "", "width": "", "thumb": "", "handContact": "", "wrist": "", "claims": [], "note": "Hand archetype none; no source gives a hand position." },
+  "setup": [
+    { "step": "Back to the wall, feet out in front, shoulder width, toes slightly out.", "claim": "w4" },
+    { "step": "Slide down until hips and knees are about 90 degrees.", "claim": "w2" },
+    { "step": "Check the knees are right above the ankles; move the feet if not.", "claim": "w8" },
+    { "step": "Hold 30-60 seconds.", "claim": "w3" }
+  ],
+  "posture": [
+    { "point": "Back and buttocks on the wall.", "claim": "w5" },
+    { "point": "Knees directly above the ankles.", "claim": "w4" },
+    { "point": "Hips and knees about 90 degrees.", "claim": "w2" }
+  ],
+  "handlingMistakes": [
+    { "mistake": "Feet too close to the wall.", "fix": "Walk the feet out until the knees are over the ankles.", "claim": "w8" },
+    { "mistake": "Holding the breath through the hold.", "fix": "Keep breathing steadily.", "claim": "w10" },
+    { "mistake": "Knee discomfort at 90 degrees.", "fix": "Hold higher on the wall, with less knee bend.", "claim": "w9" }
+  ],
+  "feel": {
+    "primary": [ { "muscleId": "quads", "claim": "w11" } ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      { "where": "Front of the thighs, burning", "means": "The quads are doing the hold.", "fix": "", "claim": "w11", "redFlag": null },
+      { "where": "Front of the knee, around the kneecap", "means": "Feet too close to the wall, or the hold is too deep.", "fix": "Feet further out; hold higher.", "claim": "w8", "redFlag": null },
+      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the hold.", "claim": "w12", "redFlag": "knee" }
+    ]
+  },
+  "risks": [
+    { "risk": "Blood pressure rises during the hold, more the deeper you go.", "claim": "w7" },
+    { "risk": "Holding the breath raises blood pressure further during the hold.", "claim": "w10" },
+    { "risk": "Feet too close to the wall load the kneecap more.", "claim": "w8" }
+  ],
+  "redFlags": ["knee"],
+  "zooms": [
+    { "key": "knee-over-ankle", "kind": "posture", "right": "Shin vertical, knee directly above the ankle.", "wrong": "Feet close to the wall, knee past the toes.", "claim": "w8" },
+    { "key": "back-on-wall", "kind": "posture", "right": "Back and buttocks flat on the wall.", "wrong": "Buttocks away from the wall.", "claim": "w5" }
+  ],
+  "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, no secondary. Physitrack names quads, glutes, hamstrings and calves without ranking them (w11), but it is a coach page with no data. No EMG source for the wall sit was read, so the secondaries are not added." },
+  "loadProgression": { "text": "Build to 60 seconds, then lift one foot, go single-leg, or rest weight on the thighs; depth also sets intensity.", "claims": ["w6", "w7"] },
+  "breathing": { "text": "Breathe steadily; holding the breath raises blood pressure further during isometric work.", "claims": ["w10"] },
+  "anchorSource": "cat-wallsit",
+  "anchorNote": "Catalyst Athletics wall sit page read in full; Physitrack wall sit page also read in full.",
+  "unsourced": [
+    "Rest length between holds.",
+    "Hand position.",
+    "Any EMG data on which muscles work in the wall sit."
+  ]
+}

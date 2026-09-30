@@ -1,0 +1,213 @@
+{
+  "id": "goblet_squat",
+  "checked": "2026-09-30",
+  "fetcher": "source fetcher (sonnet), LB4A",
+  "sources": [
+    {
+      "id": "nasm-goblet",
+      "url": "https://www.nasm.org/resource-center/exercise-library/goblet-squat",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "ace-goblet",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/362/goblet-squat/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "collins-2021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34341315/",
+      "access": "abstract",
+      "notes": "pmid, title and year match PubMed esummary; quotes taken from abstract"
+    },
+    {
+      "id": "hackett-2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23222073/",
+      "access": "abstract",
+      "notes": "pmid, title and year match PubMed esummary; quotes taken from abstract"
+    },
+    {
+      "id": "nhs-back",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "g1",
+      "source": "nasm-goblet",
+      "text": "Stand with feet hip-width apart and hold a kettlebell or dumbbell vertically at chest height with both hands cupping the top of the weight.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g2",
+      "source": "ace-goblet",
+      "text": "Stand with the feet about shoulder-width apart, and hold a dumbbell in a vertical position directly in front of the chest. Keep the elbows close to the rib cage and the back straight while lowering into a squat.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g3",
+      "source": "nasm-goblet",
+      "text": "Engage your core and maintain upright posture.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g4",
+      "source": "nasm-goblet",
+      "text": "Descend into a squat by bending your knees and hips, keeping your chest upright and the weight at chest height. Descend until your thighs are approximately parallel to the floor or deeper if mobility allows.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g4",
+      "source": "ace-goblet",
+      "text": "Continue lowering until the hips are below the knees, then push both feet into the floor and to return back to the original standing position.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g5",
+      "source": "nasm-goblet",
+      "text": "Keep the weight secure at chest height during the entire movement.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g6",
+      "source": "nasm-goblet",
+      "text": "Leaning excessively forward, which shifts weight distribution and increases lower back strain",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g6",
+      "source": "nasm-goblet",
+      "text": "Drooping the chest or allowing the weight to drift away from the body",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g7",
+      "source": "nasm-goblet",
+      "text": "Allowing knees to cave inward (valgus), which indicates poor motor control",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g7",
+      "source": "nasm-goblet",
+      "text": "Not descending to adequate depth, which limits lower body stimulus",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g7",
+      "source": "nasm-goblet",
+      "text": "Jerky or uncontrolled movements, which increase injury risk",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g8",
+      "source": "nasm-goblet",
+      "text": "The anterior load in goblet squats requires upright torso positioning to maintain balance and control.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g9",
+      "source": "nasm-goblet",
+      "text": "Select weight allowing controlled movement with proper form and upright posture.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g9",
+      "source": "nasm-goblet",
+      "text": "Perform 3 sets of 10-15 repetitions, adjusting based on weight and individual capacity.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g10",
+      "source": "nasm-goblet",
+      "text": "Quadriceps – primary mover for knee extension during squat ascent",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g10",
+      "source": "nasm-goblet",
+      "text": "Glutes – assist in hip extension and provide power for standing",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g11",
+      "source": "collins-2021",
+      "text": "the GBS can better target quadriceps activity and increase vertical loading.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g12",
+      "source": "hackett-2013",
+      "text": "a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads (>80% of maximal voluntary contraction) or when lifting lighter loads to failure.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g12",
+      "source": "hackett-2013",
+      "text": "The VM was associated with an increase in blood pressure during resistance exercise",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g13",
+      "source": "nhs-back",
+      "text": "pain, tingling, weakness or numbness in both legs",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g13",
+      "source": "nhs-back",
+      "text": "changes in your bladder or bowels, such as difficulty peeing, or peeing or pooing yourself",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g13",
+      "source": "nhs-back",
+      "text": "it does not improve after treating it at home for a few weeks",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g14",
+      "source": "nhs-knee",
+      "text": "your knee is very painful",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "g14",
+      "source": "nhs-knee",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "id": "bodyweight_squat",
+  "libId": "lib_bodyweight_squat",
+  "name": "Bodyweight Squat",
+  "family": "SQUAT (bodyweight)",
+  "tier": "C",
+  "tierNote": "Not in content.md appendix B tier A or B lists, so tier C. census.json difficulty tier 1.",
+  "archetype": { "hand": "none", "contact": ["standing-feet"] },
+  "parent": null,
+  "parentNote": "Full card. barbell_back_squat cannot parent it: its hand archetype is on-body and this one is none, and content.md 2.3 requires a child to share its parent's hand archetype. content.md appendix A has bodyweight_squat as the parent of wall_sit.",
+  "inherit": [],
+  "claims": [
+    { "id": "b1", "text": "Stand with feet slightly wider than hip width, toes turned slightly out, hands by the sides; shoulders down and back.",
+      "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
+      "quotes": [{ "source": "ace-bwsquat", "text": "Begin standing with your feet slightly wider than hip-width, with the toes turned slightly outwards with your hands by your sides so the palms facing inwards. Depress and retract your scapulae (pull the shoulders down and back).", "where": "Step 1" }] },
+    { "id": "b2", "text": "Brace the core to steady the spine; chest up.",
+      "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
+      "quotes": [{ "source": "ace-bwsquat", "text": "Stiffen your core and abdominal muscles (“bracing”) to stabilize your spine.", "where": "Step 2" }, { "source": "ace-bwsquat", "text": "Hold your chest up and out, tilt your head slightly up, shift your weight back into your heels while pushing your hips towards the wall behind you.", "where": "Step 2" }] },
+    { "id": "b3", "text": "Start the descent by moving the hips back then down, so hips and knees bend together; keep the back flat.",
+      "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
+      "quotes": [{ "source": "ace-bwsquat", "text": "Maintain tension in the core muscles (continue bracing) and attempt to keep your back flat.", "where": "Step 3" }, { "source": "ace-bwsquat", "text": "Start the downward phase by first shifting your hips backwards then downwards to create a hinge-like movement at your hips and knees simultaneously.", "where": "Step 3" }] },
+    { "id": "b4", "text": "Lower until the thighs are about parallel, or stop earlier if the heels start to lift or the torso starts to round.",
+      "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
+      "quotes": [{ "source": "ace-bwsquat", "text": "Continue to lower yourself until your thighs are parallel or almost parallel with the floor, until your heels begin to lift off the floor, or until your torso begins to round or flex forward.", "where": "Step 4" }] },
+    { "id": "b5", "text": "Feet stay put, ankles do not roll in or out, and the knees stay over the second toe.",
+      "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
+      "quotes": [{ "source": "ace-bwsquat", "text": "Monitor your feet, ankles and knees, ensuring that the feet don't move, the ankles do not collapse in or out and the knees remain aligned over the second toe.", "where": "Step 4" }] },
+    { "id": "b6", "text": "At the bottom, seen from the side, the shin and torso are parallel and the lower back looks flat; weight is spread between the balls and heels of the feet.",
+      "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
+      "quotes": [
+        { "source": "ace-bwsquat", "text": "From the side, the position of the tibia (shinbone) and torso should be parallel with each other and the low back should appear flat or showing the beginning of some rounding.", "where": "Step 5" },
+        { "source": "ace-bwsquat", "text": "body weight should be evenly distributed between the balls and heels of the feet.", "where": "Step 5" } ] },
+    { "id": "b7", "text": "On the way up, breathe out and push the feet into the floor; hips and torso rise together, heels flat, knees over the second toe.",
+      "tags": ["CONSENSUS"], "sources": ["ace-bwsquat"],
+      "quotes": [{ "source": "ace-bwsquat", "text": "exhale and extend the hips and knees by pushing your feet into the floor through your heels. The hips and torso need to rise together while keeping the heels flat on the floor and knees aligned over the second toe.", "where": "Step 6" }] },
+    { "id": "b8", "text": "Control how far the shins travel forward; in a loaded squat, stopping the knees from passing the toes shifted load to the hips and lower back, so knees may go slightly past the toes.",
+      "tags": ["MECH"], "sources": ["ace-bwsquat", "fry-2003"],
+      "quotes": [
+        { "source": "ace-bwsquat", "text": "try to control the amount of forward translation (movement) of the tibia (shinbone).", "where": "Step 3" },
+        { "source": "fry-2003", "text": "Although restricting forward movement of the knees may minimize stress on the knees, it is likely that forces are inappropriately transferred to the hips and low-back region. Thus, appropriate joint loading during this exercise may require the knees to move slightly past the toes.", "where": "abstract, practical applications (barbell squat, n=7)" } ] },
+    { "id": "b9", "text": "ACE lists the target body parts as abs, butt and hips, calves and shins, and thighs.",
+      "tags": ["CONSENSUS", "WEAK"], "sources": ["ace-bwsquat"],
+      "quotes": [{ "source": "ace-bwsquat", "text": "Abs, Butt/Hips, Legs - Calves and Shins, Legs - Thighs", "where": "Target Body Part" }] },
+    { "id": "b10", "text": "NHS knee pain: get advice from 111 if the knee is very painful, or locks, gives way or painfully clicks.",
+      "tags": ["CONSENSUS"], "sources": ["nhs-knee"],
+      "quotes": [
+        { "source": "nhs-knee", "text": "your knee is very painful", "where": "Urgent advice box" },
+        { "source": "nhs-knee", "text": "your knee locks, gives way or painfully clicks – painless clicking is normal", "where": "Urgent advice box" } ] }
+  ],
+  "sources": [
+    { "id": "ace-bwsquat", "url": "https://www.acefitness.org/resources/everyone/exercise-library/135/bodyweight-squat/", "title": "Bodyweight Squat (ACE Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "fry-2003", "url": "https://pubmed.ncbi.nlm.nih.gov/14636100/", "title": "Effect of knee position on hip and knee torques during the barbell squat", "kind": "peer-reviewed", "year": 2003, "pmid": "14636100", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "nhs-knee", "url": "https://www.nhs.uk/conditions/knee-pain/", "title": "Knee pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "ACE defines the bottom position from the side (shin parallel to torso, b6); heel lift (b4) and hips-first descent (b3) are sagittal.",
+    "equipment": "None; floor line.",
+    "start": "Standing, feet slightly wider than hip width, toes slightly out, hands by the sides (b1).",
+    "end": "Bottom: thighs about parallel (b4), shin and torso parallel, lower back flat, heels down (b6).",
+    "checkpoints": [
+      { "label": "Hips back", "what": "Hips move back, then down, hips and knees bending together.", "claim": "b3" },
+      { "label": "Shin parallel torso", "what": "At the bottom the shin and torso lines run parallel.", "claim": "b6" },
+      { "label": "Heels down", "what": "Heels stay flat down and up.", "claim": "b7" }
+    ],
+    "mistake": {
+      "what": "Heels lift at the bottom, weight rolling onto the toes.",
+      "why": "ACE makes heel lift the point to stop the descent and asks for flat heels on the way up (b4, b7).",
+      "claim": "b4",
+      "drawable": true,
+      "rankNote": "ACE names stop points (heel lift, torso rounding) but does not rank faults. Knee alignment (b5) is front-view. Heel lift is the fault ACE names first that reads from the side."
+    },
+    "tells": [
+      { "text": "Weight across the whole foot", "claim": "b6" },
+      { "text": "Hips and chest rise together", "claim": "b7" }
+    ],
+    "tempo": { "up": null, "down": null, "pause": null, "text": "Controlled descent, breathe out on the way up; no source gives seconds.", "claim": "b7" },
+    "variantLine": null
+  },
+  "grip": { "type": "", "width": "", "thumb": "", "handContact": "", "wrist": "", "claims": [], "note": "Hand archetype none. Hands by the sides at the start (b1)." },
+  "setup": [
+    { "step": "Feet slightly wider than hip width, toes slightly out.", "claim": "b1" },
+    { "step": "Shoulders down and back, brace, chest up.", "claim": "b2" }
+  ],
+  "posture": [
+    { "point": "Hips back then down.", "claim": "b3" },
+    { "point": "Knees over the second toe, ankles not rolling.", "claim": "b5" },
+    { "point": "Shins travel forward under control; slightly past the toes is fine.", "claim": "b8" },
+    { "point": "Thighs about parallel at the bottom, back flat.", "claim": "b4" },
+    { "point": "Shin and torso parallel at the bottom.", "claim": "b6" },
+    { "point": "Hips and torso rise together, heels flat.", "claim": "b7" }
+  ],
+  "handlingMistakes": [
+    { "mistake": "Heels lifting at the bottom.", "fix": "Stop the descent where the heels start to lift.", "claim": "b4" },
+    { "mistake": "Back rounding at the bottom.", "fix": "Stop the descent where the torso starts to round.", "claim": "b4" },
+    { "mistake": "Knees drifting in or out of line with the feet.", "fix": "Keep the knees over the second toe.", "claim": "b5" }
+  ],
+  "feel": {
+    "primary": [ { "muscleId": "quads", "claim": "b9" } ],
+    "secondary": [ { "muscleId": "glutes", "claim": "b9" } ],
+    "watch": [],
+    "rows": [
+      { "where": "Front of the thighs and the buttocks", "means": "The target areas are working.", "fix": "", "claim": "b9", "redFlag": null },
+      { "where": "Lower back", "means": "The torso is rounding at the bottom.", "fix": "Stop higher, where the back is still flat.", "claim": "b4", "redFlag": null },
+      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "b10", "redFlag": "knee" }
+    ]
+  },
+  "risks": [
+    { "risk": "Stopping the knees from passing the toes shifts load to the hips and lower back (barbell squat data).", "claim": "b8" }
+  ],
+  "redFlags": ["knee"],
+  "zooms": [
+    { "key": "feet-and-knees", "kind": "posture", "right": "Knees over the second toe, feet flat.", "wrong": "Knees collapsing inward, ankles rolling.", "claim": "b5" },
+    { "key": "bottom", "kind": "posture", "right": "Shin and torso parallel, back flat, heels down.", "wrong": "Heels lifted, back rounded.", "claim": "b6" }
+  ],
+  "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, glutes secondary. ACE's target list (thighs, butt/hips) fits both (b9) but ranks nothing, so this is WEAK support. No EMG source for the unloaded squat was read. No change." },
+  "anchorSource": "ace-bwsquat",
+  "anchorNote": "ACE bodyweight squat page read in full.",
+  "unsourced": [
+    "Which thigh muscle does the most work in the unloaded squat (no EMG source read).",
+    "Tempo in seconds.",
+    "Arm position during the descent (ACE only gives the start)."
+  ]
+}

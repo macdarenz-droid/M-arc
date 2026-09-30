@@ -1,0 +1,171 @@
+{
+  "id": "goblet_squat",
+  "libId": "lib_goblet_squat",
+  "name": "Goblet Squat",
+  "family": "SQUAT (free, weight held at the chest)",
+  "tier": "A",
+  "tierNote": "Safety tier A from content.md appendix B (spinal loading). census.json difficulty tier 1.",
+  "archetype": { "hand": "on-body", "contact": ["standing-feet"] },
+  "parent": "barbell_back_squat",
+  "parentNote": "Supervisor's LB4A brief names barbell_back_squat as the template parent. Same hand archetype (on-body, GA appendix B) and primary contact (standing-feet). The grip itself differs (a weight cupped at the chest, not a bar on the back), so no grip line is inherited.",
+  "inherit": [
+    { "field": "posture[3] (feet flat, knees follow the toes)", "why": "true for this child because it is the same two-foot squat: NASM's goblet squat page says 'Position your weight toward your heels' and 'Drive through your heels to stand upright' (heels down) and lists knees caving inward as a common mistake (g7). No goblet source read states the toe direction, so 'knees follow the toes' rests on the parent's posture[3] (approved grip-and-feel research)." }
+  ],
+  "claims": [
+    { "id": "g1", "text": "Stand with feet hip width and hold a kettlebell or dumbbell upright at chest height, both hands cupping the top of the weight.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
+      "quotes": [{ "source": "nasm-goblet", "text": "Stand with feet hip-width apart and hold a kettlebell or dumbbell vertically at chest height with both hands cupping the top of the weight.", "where": "Step 1: Setup" }] },
+    { "id": "g2", "text": "Feet about shoulder width, dumbbell upright in front of the chest, elbows close to the ribs and back straight while lowering.",
+      "tags": ["CONSENSUS"], "sources": ["ace-goblet"],
+      "quotes": [{ "source": "ace-goblet", "text": "Stand with the feet about shoulder-width apart, and hold a dumbbell in a vertical position directly in front of the chest. Keep the elbows close to the rib cage and the back straight while lowering into a squat.", "where": "instructions" }] },
+    { "id": "g3", "text": "Brace the core and keep an upright posture.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
+      "quotes": [{ "source": "nasm-goblet", "text": "Engage your core and maintain upright posture.", "where": "Step 2: Brace/Position" }] },
+    { "id": "g4", "text": "Squat down with the chest up and the weight at chest height, to about thighs parallel or deeper if mobility allows; ACE goes until the hips are below the knees.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet", "ace-goblet"],
+      "quotes": [
+        { "source": "nasm-goblet", "text": "Descend into a squat by bending your knees and hips, keeping your chest upright and the weight at chest height. Descend until your thighs are approximately parallel to the floor or deeper if mobility allows.", "where": "Step 3: Execute/Drive" },
+        { "source": "ace-goblet", "text": "Continue lowering until the hips are below the knees, then push both feet into the floor and to return back to the original standing position.", "where": "instructions" } ] },
+    { "id": "g5", "text": "Keep the weight secure at chest height for the whole rep.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
+      "quotes": [{ "source": "nasm-goblet", "text": "Keep the weight secure at chest height during the entire movement.", "where": "Step 4: Return/Descent" }] },
+    { "id": "g6", "text": "Common mistakes: leaning too far forward (more lower-back strain), and the chest drooping or the weight drifting away from the body.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
+      "quotes": [
+        { "source": "nasm-goblet", "text": "Leaning excessively forward, which shifts weight distribution and increases lower back strain", "where": "Common Mistakes" },
+        { "source": "nasm-goblet", "text": "Drooping the chest or allowing the weight to drift away from the body", "where": "Common Mistakes" } ] },
+    { "id": "g7", "text": "Other common mistakes: knees caving inward, not going deep enough, and jerky, uncontrolled reps.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
+      "quotes": [
+        { "source": "nasm-goblet", "text": "Allowing knees to cave inward (valgus), which indicates poor motor control", "where": "Common Mistakes" },
+        { "source": "nasm-goblet", "text": "Not descending to adequate depth, which limits lower body stimulus", "where": "Common Mistakes" },
+        { "source": "nasm-goblet", "text": "Jerky or uncontrolled movements, which increase injury risk", "where": "Common Mistakes" } ] },
+    { "id": "g8", "text": "The load in front makes the torso stay upright for balance.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
+      "quotes": [{ "source": "nasm-goblet", "text": "The anterior load in goblet squats requires upright torso positioning to maintain balance and control.", "where": "FAQ" }] },
+    { "id": "g9", "text": "Load progression: choose a weight you can control with good form and upright posture; 3 sets of 10-15 reps.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
+      "quotes": [
+        { "source": "nasm-goblet", "text": "Select weight allowing controlled movement with proper form and upright posture.", "where": "FAQ" },
+        { "source": "nasm-goblet", "text": "Perform 3 sets of 10-15 repetitions, adjusting based on weight and individual capacity.", "where": "FAQ" } ] },
+    { "id": "g10", "text": "Quads are the prime movers for standing up; glutes assist hip extension.",
+      "tags": ["CONSENSUS"], "sources": ["nasm-goblet"],
+      "quotes": [
+        { "source": "nasm-goblet", "text": "Quadriceps – primary mover for knee extension during squat ascent", "where": "Muscles Worked" },
+        { "source": "nasm-goblet", "text": "Glutes – assist in hip extension and provide power for standing", "where": "Muscles Worked" } ] },
+    { "id": "g11", "text": "In 32 adults at 30 % of body mass, the goblet squat drew more quad activity and vertical loading than the landmine squat.",
+      "tags": ["DATA"], "sources": ["collins-2021"],
+      "quotes": [{ "source": "collins-2021", "text": "the GBS can better target quadriceps activity and increase vertical loading.", "where": "abstract" }] },
+    { "id": "g12", "text": "A general review of resistance exercise (not goblet-squat data): a brief breath-hold is unavoidable with heavy loads or sets to failure; it raises blood pressure, with the health risk unconfirmed.",
+      "tags": ["MECH"], "sources": ["hackett-2013"],
+      "quotes": [
+        { "source": "hackett-2013", "text": "a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads (>80% of maximal voluntary contraction) or when lifting lighter loads to failure.", "where": "abstract" },
+        { "source": "hackett-2013", "text": "The VM was associated with an increase in blood pressure during resistance exercise", "where": "abstract" } ] },
+    { "id": "g13", "text": "NHS back pain: call 999 for pain, tingling, weakness or numbness in both legs, or bladder or bowel changes; see a GP if it does not improve after a few weeks.",
+      "tags": ["CONSENSUS"], "sources": ["nhs-back"],
+      "quotes": [
+        { "source": "nhs-back", "text": "pain, tingling, weakness or numbness in both legs", "where": "Immediate action box" },
+        { "source": "nhs-back", "text": "changes in your bladder or bowels, such as difficulty peeing, or peeing or pooing yourself", "where": "Immediate action box" },
+        { "source": "nhs-back", "text": "it does not improve after treating it at home for a few weeks", "where": "Non-urgent advice box" } ] },
+    { "id": "g14", "text": "NHS knee pain: get advice from 111 if the knee is very painful, or locks, gives way or painfully clicks.",
+      "tags": ["CONSENSUS"], "sources": ["nhs-knee"],
+      "quotes": [
+        { "source": "nhs-knee", "text": "your knee is very painful", "where": "Urgent advice box" },
+        { "source": "nhs-knee", "text": "your knee locks, gives way or painfully clicks – painless clicking is normal", "where": "Urgent advice box" } ] }
+  ],
+  "sources": [
+    { "id": "nasm-goblet", "url": "https://www.nasm.org/resource-center/exercise-library/goblet-squat", "title": "Goblet Squat (NASM Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "ace-goblet", "url": "https://www.acefitness.org/resources/everyone/exercise-library/362/goblet-squat/", "title": "Goblet Squat (ACE Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "collins-2021", "url": "https://pubmed.ncbi.nlm.nih.gov/34341315/", "title": "Differences in Muscle Activity and Kinetics Between the Goblet Squat and Landmine Squat in Men and Women", "kind": "peer-reviewed", "year": 2021, "pmid": "34341315", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "hackett-2013", "url": "https://pubmed.ncbi.nlm.nih.gov/23222073/", "title": "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise", "kind": "peer-reviewed", "year": 2013, "pmid": "23222073", "access": "abstract", "checked": "2026-09-30" },
+    { "id": "nhs-back", "url": "https://www.nhs.uk/conditions/back-pain/", "title": "Back pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "nhs-knee", "url": "https://www.nhs.uk/conditions/knee-pain/", "title": "Knee pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The top drawable fault (chest drooping, weight drifting off the chest, excess forward lean, g6) and depth (g4) read from the side.",
+    "equipment": "One dumbbell held upright against the chest, hands cupping the top end; floor line.",
+    "start": "Standing, feet hip to shoulder width (g1, g2), dumbbell upright at the chest, elbows close to the ribs (g2).",
+    "end": "Bottom: knees and hips bent, chest upright, weight still at chest height (g4, g5), hips at or below the knees (g4).",
+    "checkpoints": [
+      { "label": "Weight at chest", "what": "Dumbbell stays upright against the chest the whole rep.", "claim": "g5" },
+      { "label": "Chest up", "what": "Torso stays upright, no excess forward lean.", "claim": "g8" },
+      { "label": "Thighs parallel", "what": "Squat to thighs parallel or deeper if mobility allows.", "claim": "g4" }
+    ],
+    "mistake": {
+      "what": "Chest droops and the weight drifts away from the body, torso leaning far forward.",
+      "why": "NASM lists both as common mistakes; excess lean increases lower-back strain (g6).",
+      "claim": "g6",
+      "drawable": true,
+      "rankNote": "NASM lists five common mistakes without ranking them. Knee valgus (g7) is front-view; lack of depth is drawable but carries no stated risk. Chest drop with forward lean is the one with a stated risk that reads from the side."
+    },
+    "tells": [
+      { "text": "Elbows stay close to your ribs", "claim": "g2" },
+      { "text": "Weight never leaves your chest", "claim": "g5" }
+    ],
+    "tempo": { "up": null, "down": null, "pause": null, "text": "Smooth and controlled, no jerky reps; no source gives seconds.", "claim": "g7" },
+    "variantLine": "exercises.json lists Dumbbell / Kettlebell. The plate draws the dumbbell held upright (census note). NASM's setup covers both implements (g1), so setup, posture and mistakes hold for both; ACE's elbow line (g2) is written for the dumbbell."
+  },
+  "grip": {
+    "type": "Both hands cup the top end of an upright dumbbell (or the kettlebell) at the chest (g1).",
+    "width": "Hands together under the top plate (g1).",
+    "thumb": "No source addresses the thumb.",
+    "handContact": "Palms cup the top of the weight; the weight rests against the chest (g1, g5).",
+    "wrist": "No source gives a wrist angle.",
+    "claims": ["g1", "g2", "g5"]
+  },
+  "setup": [
+    { "step": "Pick a weight you can control with an upright chest.", "claim": "g9" },
+    { "step": "Feet hip to shoulder width.", "claim": ["g1", "g2"] },
+    { "step": "Hold the dumbbell upright at the chest, hands cupping the top.", "claim": "g1" },
+    { "step": "Elbows close to the ribs, brace, chest up.", "claim": ["g2", "g3"] }
+  ],
+  "posture": [
+    { "point": "Weight at chest height throughout.", "claim": "g5" },
+    { "point": "Elbows close to the ribs.", "claim": "g2" },
+    { "point": "Torso upright, back straight.", "claim": ["g2", "g3"] },
+    { "point": "Depth to thighs parallel or hips below knees.", "claim": "g4" },
+    { "point": "Knees do not cave inward.", "claim": "g7" }
+  ],
+  "handlingMistakes": [
+    { "mistake": "The weight drifts away from the chest.", "fix": "Keep elbows close to the ribs and the weight against the chest; use a lighter weight if it keeps drifting.", "claim": ["g6", "g2", "g9"] },
+    { "mistake": "A weight too heavy to keep the chest upright.", "fix": "Go lighter.", "claim": "g9" },
+    { "mistake": "Jerky, bouncing reps.", "fix": "Lower and stand under control.", "claim": "g7" }
+  ],
+  "feel": {
+    "primary": [ { "muscleId": "quads", "claim": "g10" } ],
+    "secondary": [ { "muscleId": "glutes", "claim": "g10" } ],
+    "watch": [ { "muscleId": "lower_back", "claim": "g6" } ],
+    "rows": [
+      { "where": "Front of the thighs", "means": "The main movers are working.", "fix": "", "claim": "g10", "redFlag": null },
+      { "where": "Lower back more than thighs", "means": "Leaning too far forward, chest dropping.", "fix": "Chest up, weight on the chest; go lighter.", "claim": ["g6", "g9"], "redFlag": "back" },
+      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "g14", "redFlag": "knee" }
+    ]
+  },
+  "risks": [
+    { "risk": "Leaning forward under the weight strains the lower back.", "claim": "g6" },
+    { "risk": "Jerky, uncontrolled reps raise injury risk.", "claim": "g7" },
+    { "risk": "Holding the breath on heavy sets raises blood pressure (shared breath line).", "claim": "g12" }
+  ],
+  "redFlags": ["back", "knee"],
+  "redFlagNote": "back is the proposed new shared box (content.md 5.3); g13 supplies its NHS triggers.",
+  "zooms": [
+    { "key": "goblet-hold", "kind": "hand", "right": "Both palms cupping the top of the upright dumbbell, weight against the chest, elbows by the ribs.", "wrong": "Weight held away from the chest, elbows flared.", "claim": ["g1", "g2", "g6"] },
+    { "key": "chest-up", "kind": "posture", "right": "Upright torso at the bottom, weight at the chest.", "wrong": "Chest dropped, torso folded forward.", "claim": "g6" }
+  ],
+  "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, glutes secondary. NASM names quads the prime mover and glutes as assisting (g10); Collins 2021 measured strong quad activity (g11). No change." },
+  "loadProgression": { "text": "Choose a weight you can control with an upright chest; 3 sets of 10-15, adjust to capacity.", "claims": ["g9"] },
+  "tierA": { "wayOut": null },
+  "breathing": { "text": "Shared breath-holding line for heavy sets.", "claims": ["g12"] },
+  "barPath": null,
+  "anchorSource": "nasm-goblet",
+  "anchorNote": "NASM goblet squat page read in full; ACE goblet squat page read in full.",
+  "gaps": [
+    "Tier-A way out: setting the dumbbell or kettlebell down after a failed rep. No source found, so no way-out line is shown until one is (LR-3, tracker LIB-WAYOUT)."
+  ],
+  "unsourced": [
+    "Thumb position and wrist angle for the cupped hold.",
+    "Tempo in seconds.",
+    "Stance: NASM says hip width, ACE says about shoulder width; both are quoted, no single number."
+  ]
+}

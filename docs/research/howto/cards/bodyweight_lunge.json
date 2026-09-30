@@ -1,0 +1,444 @@
+{
+  "id": "bodyweight_lunge",
+  "libId": "lib_bodyweight_lunge",
+  "name": "Bodyweight Lunge",
+  "family": "SPLIT",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md appendix B: not in A or B lists; bodyweight only); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Start standing with the feet together, shoulders down and back without arching the lower back, and the trunk braced.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bw"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "Starting Position: Stand with your feet together.",
+          "where": "Step 1"
+        },
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "Depress and retract your scapulae (pull your shoulders down and back) without arching your low back, and \"brace\" (engage your abdominal/core muscles) to stiffen your spine.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Lift one foot, balance on the other, then step forward landing heel first and move the weight onto it slowly, without the upper body tilting sideways.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bw"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "slowly lift one foot off the floor, stabilizing your body on the stance (supporting) leg. Avoid any sideways tilting or swaying in your upper body",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "The raised (swing) leg should initiate contact with a heel strike first, slowly transferring your body weight into the leading (forward) foot placed firmly on the floor.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "On landing, drop the hips toward the floor rather than driving them forward; this controls how far the shin moves forward over the foot.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bw"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "As you lunge forward, focus more on dropping your hips towards the floor rather than driving your hips forward. This will help control the amount of forward movement of your shinbone (forward tibial translation) over your foot.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Lower to a comfortable depth or until the front thigh is parallel to the floor, with the front shin leaning slightly forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bw"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "Continue lowering your body to a comfortable position or until your front thigh becomes parallel with the floor and your tibia (shinbone) is in a slight forward lean.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "While lunging, bend slightly forward at the hips with a flat back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bw"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "While lunging, simultaneously, bend forward at your hips, maintaining a flat back.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Push off firmly with the front leg, using the quads and glutes, to return to standing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bw"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "Firmly push off with your front leg, activating both your quads and glutes (thighs and butt muscles) to return to your upright, starting position.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Learn to stand on one leg before doing this lunge.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-fwdlunge-bw"
+      ],
+      "quotes": [
+        {
+          "source": "ace-fwdlunge-bw",
+          "text": "We suggest you first learn how to perform single leg-stands on the ground before performing this forward lunge.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Unloaded lunges can be done for 15-20 reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-lunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-lunge",
+          "text": "Light or unloaded lunges can be done with 15-20 reps as well if using them for work capacity or rehab.",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Step length shifts the emphasis: longer steps work the glutes and hamstrings more, shorter steps with the knee ahead of the toes work the quads more.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-lunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-lunge",
+          "text": "longer steps will emphasize the glutes and hamstrings more, and shorter steps with the knee moving in front of the toes will emphasize the quads more.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "NHS knee-pain advice: get urgent advice (111) if the knee is very painful, or locks or gives way.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-knee"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-knee",
+          "text": "Get advice from 111 now if:",
+          "where": "Urgent advice box, heading"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee is very painful",
+          "where": "Urgent advice box, item 1"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+          "where": "Urgent advice box, item 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-fwdlunge-bw",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/94/forward-lunge/",
+      "title": "Forward Lunge (ACE Exercise Library, no equipment)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    },
+    {
+      "id": "cat-lunge",
+      "url": "https://www.catalystathletics.com/exercise/354/Lunge/",
+      "title": "Lunge (Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "title": "Knee pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Forward step in the sagittal plane; hip drop (c3), thigh depth and shin lean (c4) and flat back (c5) read from the side. Sideways tilt (c2) needs a front view.",
+    "equipment": "Floor line only; no weights.",
+    "start": "Standing, feet together, shoulders down and back, trunk braced (c1).",
+    "end": "Front foot stepped forward, front thigh about parallel to the floor, front shin leaning slightly forward (c4), hips bent slightly with a flat back (c5).",
+    "checkpoints": [
+      {
+        "label": "Hips drop down",
+        "what": "Hips lower toward the floor rather than driving forward.",
+        "claim": "c3"
+      },
+      {
+        "label": "Thigh parallel",
+        "what": "Lower until the front thigh is about parallel, or to a comfortable depth.",
+        "claim": "c4"
+      },
+      {
+        "label": "Flat back",
+        "what": "Slight bend at the hips with a flat back.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Hips and front knee drive forward on landing, front shin tips far forward over the foot.",
+      "why": "ACE's cue to drop the hips exists to control this forward shin travel (c3).",
+      "claim": "c3",
+      "drawable": true,
+      "rankNote": "No source ranks bodyweight-lunge faults by frequency. Sideways tilt of the upper body (c2) needs a front view."
+    },
+    "tells": [
+      {
+        "text": "Front thigh about parallel to floor",
+        "claim": "c4"
+      },
+      {
+        "text": "Push back up with the front leg",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Slow weight transfer onto the front foot. No source gives seconds.",
+      "claim": "c2"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "none",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [],
+    "note": "Hand archetype none (bodyweight). ACE gives no arm position, so none is claimed."
+  },
+  "setup": [
+    {
+      "step": "Stand with feet together, shoulders down and back, trunk braced.",
+      "claim": "c1"
+    },
+    {
+      "step": "Step forward and land heel first, moving the weight over slowly.",
+      "claim": "c2"
+    },
+    {
+      "step": "Drop the hips until the front thigh is about parallel, or to a comfortable depth.",
+      "claim": "c4"
+    },
+    {
+      "step": "Push off firmly with the front leg to stand back up.",
+      "claim": "c6"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Hips lower down, not forward.",
+      "claim": "c3"
+    },
+    {
+      "point": "Front shin leans only slightly forward.",
+      "claim": "c4"
+    },
+    {
+      "point": "Flat back with a slight bend at the hips.",
+      "claim": "c5"
+    },
+    {
+      "point": "No sideways tilt of the upper body.",
+      "claim": "c2"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Driving the hips and knee forward on landing.",
+      "fix": "Land heel first and drop the hips straight down.",
+      "claim": "c3"
+    },
+    {
+      "mistake": "Upper body tilting or swaying sideways.",
+      "fix": "Keep the upper body level, without tilting or swaying.",
+      "claim": "c2"
+    },
+    {
+      "mistake": "Wobbling on one leg before the step.",
+      "fix": "Practise standing on one leg first.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c6"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c6"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the thigh and the glutes",
+        "means": "The target muscles are working.",
+        "fix": "",
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Back of the thigh and glutes more than the front",
+        "means": "Usually means a long step.",
+        "fix": "Shorten the step for more thigh work.",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "means": "Not a training feeling.",
+        "fix": "Stop the set.",
+        "claim": "c10",
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Losing balance on the step; learn single-leg standing first.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Uncontrolled forward shin travel when the hips drive forward.",
+      "claim": "c3"
+    }
+  ],
+  "redFlags": [
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "front-shin",
+      "kind": "posture",
+      "right": "Hips dropped, front shin leaning only slightly.",
+      "wrong": "Hips driven forward, front shin tipped far forward.",
+      "claim": "c3"
+    },
+    {
+      "key": "back",
+      "kind": "posture",
+      "right": "Slight hip bend with a flat back.",
+      "wrong": "Rounded back.",
+      "claim": "c5",
+      "wrongNote": "The wrong drawing is the inverse of c5; no source describes it directly."
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "glutes",
+        "role": "primary (from secondary)",
+        "claim": "c6",
+        "why": "ACE names quads and glutes together as the muscles that drive the return."
+      }
+    ],
+    "remove": [],
+    "why": "Library: quads primary, glutes secondary, no stabilizers. ACE (c6) names both quads and glutes as working; no bodyweight-specific EMG was found, so this is a CONSENSUS-level proposal for the owner."
+  },
+  "loadProgression": {
+    "text": "Unloaded lunges can be done for 15-20 reps.",
+    "claims": [
+      "c8"
+    ]
+  },
+  "anchorSource": "ace-fwdlunge-bw",
+  "anchorNote": "ACE Forward Lunge (no equipment) page read in full; Catalyst Lunge page also read in full.",
+  "decisionNote": "Stand-alone full card (fixer, 2026-09-30). The batch brief named reverse_lunge as the template parent, but reverse_lunge's hand archetype is hold (census) and this card's is none; content.md 2.3 requires a child to share its parent's hand archetype, and content.md appendix A lists bodyweight_lunge as a stand-alone parent. Plate view (viewWhy) and the knee red-flag box (c10) are cited in this card, so nothing depended on the parent. Copy note: the sheet must not call the front shin vertical; ACE says it leans slightly forward (c4).",
+  "unsourced": [
+    "Arm position (hands on hips or at the sides).",
+    "Tempo in seconds.",
+    "Breathing."
+  ]
+}

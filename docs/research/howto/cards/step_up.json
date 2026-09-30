@@ -1,0 +1,578 @@
+{
+  "id": "step_up",
+  "libId": "lib_step_up",
+  "name": "Step-Up",
+  "family": "STEPUP",
+  "tier": "B",
+  "tierNote": "Safety tier B from content.md appendix B (loaded lunges and split squats); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ],
+    "contactNote": "Lead foot on a box (c1, c6); census lists standing-feet with the box primitive."
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Put one foot on a box or bench, the other on the floor, and stand up using the top leg, pushing through the whole foot with minimal help from the bottom foot and no forward lean for momentum.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "cat-stepup",
+          "text": "Place one foot on a box or bench with the other on the floor.",
+          "where": "technique"
+        },
+        {
+          "source": "cat-stepup",
+          "text": "Using the raised leg with minimal assistance from the other foot or momentum from leaning the body forward, push through the whole foot to lift yourself up to a standing position on the box.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Control the way back down instead of dropping.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "cat-stepup",
+          "text": "To maximize effectiveness, control the motion back down as much as possible instead of just dropping.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Foot position shifts the emphasis: foot closer and knee farther forward works the quads more; foot farther forward with a vertical shin works the glutes and hamstrings more.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "cat-stepup",
+          "text": "the foot closer and knee farther forward will emphasize the quads more; the foot farther forward and shin vertical will emphasize the glutes and hamstrings.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The step-up starts with the lifting (concentric) part, unlike most leg exercises.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "cat-stepup",
+          "text": "is unique in leg exercises by starting with the concentric motion.",
+          "where": "description"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Start standing with the feet parallel about hip width apart, holding dumbbells with the palms facing in.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-stepup",
+          "text": "Stand with your feet parallel about hip width apart while holding dumbbells in your hands with palms facing inwards.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Place the whole foot firmly on the box, keep the torso upright and line the knee up over the second toe.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-stepup",
+          "text": "Slowly step to place your right foot on a platform, placing your foot firmly on the deck while keeping your torso upright and aligning your knee over your second toe.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The torso and front shin move slightly forward past vertical as you rise, but not excessively.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-stepup",
+          "text": "During this transition, your torso and your right tibia (shinbone) will move slightly forward past vertical, but try to avoid excessive forward movement.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Going down, the trailing foot steps back to the floor first, with a slight forward lean allowed.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-stepup",
+          "text": "step backwards to place the trailing (left) foot on the floor in its starting position. Allow your body to lean slightly forward during the step-down movement.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The foot and ankle should not collapse in or out, and the knee stays lined up over the second toe.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-stepup",
+          "text": "Avoid movement of your foot and ankle (collapsing in or out), and always attempt to keep your knee aligned over your second toe.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "ACE's beginner version lets the trailing leg push off and brings that foot up beside the leading foot.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-stepup",
+          "text": "Push off with the trailing (left) leg to raise your body onto the platform placing that foot alongside your leading (right) foot.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Among four loaded step-up variations on an 18-inch (45.7 cm) box, the standard step-up gave the highest glute max and hamstring activity.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "simenz-2012"
+      ],
+      "quotes": [
+        {
+          "source": "simenz-2012",
+          "text": "the step-up elicited greatest eccentric activation for the GMe and greatest activation for the GMx, BF, and ST in both concentric and eccentric phases.",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The loaded step-up works hip and knee extension and ankle plantar flexion (the calf action).",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "simenz-2012"
+      ],
+      "quotes": [
+        {
+          "source": "simenz-2012",
+          "text": "The loaded step-up exercise allows strength and conditioning practitioners to incorporate a unilateral resistance for athletes while performing extension at the hip, knee, and plantar flexion at the ankle.",
+          "where": "abstract, background"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Compared with step-downs and single-leg squats, the step-up placed the least demand on the hip and was suggested as a starting task.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "hatfield-2017"
+      ],
+      "quotes": [
+        {
+          "source": "hatfield-2017",
+          "text": "Step-up was least demanding on the hip and would be a good starting task for hip strengthening protocols.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Load progression: 8-15 reps with little or no weight as an accessory, 3-6 reps with heavier loading for strength; legs can be repeated or alternated.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "cat-stepup",
+          "text": "As a strength exercise with heavier loading, reps from 3-6 can be used; for an accessory or rehab exercise with limited or no weight, reps from 8-15 can be used.",
+          "where": "Programming"
+        },
+        {
+          "source": "cat-stepup",
+          "text": "legs can be repeated or alternated",
+          "where": "Variations"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The step-up can be loaded with one or two dumbbells or kettlebells hanging in the arms, or with a barbell.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-stepup"
+      ],
+      "quotes": [
+        {
+          "source": "cat-stepup",
+          "text": "The step-up can be loaded in a number of ways: barbell on the back, clean rack or Zercher position, one or two dumbbells or kettlebells on the shoulder(s) or hanging in the arm(s)",
+          "where": "Variations"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "NHS knee-pain advice: get urgent advice (111) if the knee is very painful, or locks or gives way.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-knee"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-knee",
+          "text": "Get advice from 111 now if:",
+          "where": "Urgent advice box, heading"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee is very painful",
+          "where": "Urgent advice box, item 1"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+          "where": "Urgent advice box, item 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cat-stepup",
+      "url": "https://www.catalystathletics.com/exercise/560/Step-up/",
+      "title": "Step-up (Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    },
+    {
+      "id": "ace-stepup",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/28/step-up/",
+      "title": "Step-Up (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    },
+    {
+      "id": "simenz-2012",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22237139/",
+      "title": "Electromyographical analysis of lower extremity muscle activation during variations of the loaded step-up exercise",
+      "kind": "peer-reviewed",
+      "year": 2012,
+      "pmid": "22237139",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "hatfield-2017",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27984498/",
+      "title": "The Biomechanical Demands on the Hip During Progressive Stepping Tasks",
+      "kind": "peer-reviewed",
+      "year": 2017,
+      "pmid": "27984498",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "title": "Knee pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The rise is a sagittal-plane action; trunk lean (c1, c7), whole foot on the box (c6) and the controlled lowering (c2) read from the side. Knee over the second toe (c9) needs a front view.",
+    "equipment": "A box (Simenz used 45.7 cm, c11; no source sets a recommended height), two dumbbells hanging at the sides (c5, c15), floor line.",
+    "start": "One whole foot on the box, the other on the floor (c1, c6), torso upright (c6), dumbbells at the sides (c5).",
+    "end": "Standing tall on the box on the lead leg (c1), torso upright (c6).",
+    "checkpoints": [
+      {
+        "label": "Whole foot down",
+        "what": "The whole lead foot is firmly on the box.",
+        "claim": "c6"
+      },
+      {
+        "label": "Torso upright",
+        "what": "Torso stays upright; only a slight lean as you rise.",
+        "claim": "c7"
+      },
+      {
+        "label": "Top leg drives",
+        "what": "Stand up with the top leg, little help from the bottom foot.",
+        "claim": "c1"
+      }
+    ],
+    "mistake": {
+      "what": "Throwing the trunk forward to get up (momentum from a forward lean).",
+      "why": "Catalyst names leaning the body forward for momentum as what to avoid (c1); ACE allows only a slight lean and warns against excessive forward movement (c7).",
+      "claim": "c1",
+      "drawable": true,
+      "rankNote": "No source ranks step-up faults by frequency. Knee or ankle collapsing inward (c9) needs a front view."
+    },
+    "tells": [
+      {
+        "text": "Rise without lurching forward",
+        "claim": "c1"
+      },
+      {
+        "text": "Lower slowly, no drop",
+        "claim": "c2"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Rise with the top leg; control the way down instead of dropping. No source gives seconds.",
+      "claim": "c2"
+    },
+    "variantLine": "exercises.json lists Dumbbells / Bodyweight. The plate draws dumbbells at the sides (c5, c15). The step, torso and lowering claims (c1, c2, c6, c7) do not depend on the load, so they hold for both; the bodyweight version drops the hand layer."
+  },
+  "grip": {
+    "type": "Dumbbells at the sides, palms facing in (c5).",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c5",
+      "c15"
+    ],
+    "note": "Thumb and wrist come from the shared hold archetype."
+  },
+  "setup": [
+    {
+      "step": "Stand with feet hip width apart, dumbbells at your sides, palms in.",
+      "claim": "c5"
+    },
+    {
+      "step": "Place your whole foot firmly on the box, knee lined up over the second toe.",
+      "claim": "c6"
+    },
+    {
+      "step": "Stand up using the top leg; keep help from the bottom foot to a minimum.",
+      "claim": "c1"
+    },
+    {
+      "step": "Step the trailing foot back down first, controlling the way down.",
+      "claim": "c8"
+    },
+    {
+      "step": "Repeat on the same leg or alternate.",
+      "claim": "c14"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Whole lead foot on the box.",
+      "claim": "c6"
+    },
+    {
+      "point": "Torso upright; only a slight forward lean.",
+      "claim": "c7"
+    },
+    {
+      "point": "Knee over the second toe; foot and ankle don't roll in or out.",
+      "claim": "c9"
+    },
+    {
+      "point": "Foot closer for more quads, farther with a vertical shin for more glutes and hamstrings.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Lurching the trunk forward to get up.",
+      "fix": "Stand up with the top leg; go lighter if you can't.",
+      "claim": "c1"
+    },
+    {
+      "mistake": "Dropping down off the box.",
+      "fix": "Lower yourself under control.",
+      "claim": "c2"
+    },
+    {
+      "mistake": "Knee or ankle collapsing inward.",
+      "fix": "Keep the knee over the second toe.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c3"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "calves",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the thigh and the glute of the top leg",
+        "means": "The target muscles are working.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Mostly the bottom leg",
+        "means": "Usually means the bottom foot is pushing you up.",
+        "fix": "Let the top leg do the work.",
+        "claim": "c1",
+        "redFlag": null
+      },
+      {
+        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "means": "Not a training feeling.",
+        "fix": "Stop the set.",
+        "claim": "c16",
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Dropping off the box instead of lowering under control.",
+      "claim": "c2"
+    },
+    {
+      "risk": "Knee or ankle collapsing inward.",
+      "claim": "c9"
+    }
+  ],
+  "redFlags": [
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "trunk",
+      "kind": "posture",
+      "right": "Torso upright as the top leg drives.",
+      "wrong": "Trunk thrown forward to get up.",
+      "claim": "c1"
+    },
+    {
+      "key": "lead-foot",
+      "kind": "posture",
+      "right": "Whole foot flat on the box.",
+      "wrong": "Only the front of the foot on the box.",
+      "claim": "c6",
+      "wrongNote": "The wrong drawing is the inverse of c6; no source describes it directly."
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: quads and glutes primary, hamstrings and calves secondary, core stabilizer. Catalyst (c3) and Simenz EMG (c11, c12) support these roles; no change."
+  },
+  "loadProgression": {
+    "text": "Start with 8-15 reps with little or no weight; move to 3-6 heavier reps for strength. For hip strengthening the step-up is a good starting task: it was the least demanding on the hip of the single-leg tasks tested.",
+    "claims": [
+      "c14",
+      "c13"
+    ]
+  },
+  "anchorSource": "cat-stepup",
+  "anchorNote": "Catalyst Athletics Step-up page read in full; ACE Step-Up page also read in full.",
+  "decisionNote": "Full card, parent null: LIBRARY-HOWTO-ARCHITECTURE 6.2 does not mark step_up T, and content.md appendix A lists it as its own parent. family \"STEPUP\" is a new label for this own-parent card. Sources differ on the bottom foot: Catalyst wants minimal help from it (c1), ACE's beginner version pushes off it (c10). The card uses Catalyst for the checkpoint and keeps c10 for the sheet author as the easier option.",
+  "unsourced": [
+    "A recommended box height.",
+    "Box stability or non-slip surface.",
+    "Tempo in seconds.",
+    "Breathing."
+  ]
+}

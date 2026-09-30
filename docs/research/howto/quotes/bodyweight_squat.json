@@ -1,0 +1,132 @@
+{
+  "id": "bodyweight_squat",
+  "checked": "2026-09-30",
+  "fetcher": "source fetcher (sonnet), LB4A",
+  "sources": [
+    {
+      "id": "ace-bwsquat",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/135/bodyweight-squat/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "fry-2003",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/14636100/",
+      "access": "abstract",
+      "notes": "pmid, title and year match PubMed esummary; quotes taken from abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200; no metadata to check"
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "b1",
+      "source": "ace-bwsquat",
+      "text": "Begin standing with your feet slightly wider than hip-width, with the toes turned slightly outwards with your hands by your sides so the palms facing inwards. Depress and retract your scapulae (pull the shoulders down and back).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b2",
+      "source": "ace-bwsquat",
+      "text": "Stiffen your core and abdominal muscles (“bracing”) to stabilize your spine.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b2",
+      "source": "ace-bwsquat",
+      "text": "Hold your chest up and out, tilt your head slightly up, shift your weight back into your heels while pushing your hips towards the wall behind you.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b3",
+      "source": "ace-bwsquat",
+      "text": "Maintain tension in the core muscles (continue bracing) and attempt to keep your back flat.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b3",
+      "source": "ace-bwsquat",
+      "text": "Start the downward phase by first shifting your hips backwards then downwards to create a hinge-like movement at your hips and knees simultaneously.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b4",
+      "source": "ace-bwsquat",
+      "text": "Continue to lower yourself until your thighs are parallel or almost parallel with the floor, until your heels begin to lift off the floor, or until your torso begins to round or flex forward.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b5",
+      "source": "ace-bwsquat",
+      "text": "Monitor your feet, ankles and knees, ensuring that the feet don't move, the ankles do not collapse in or out and the knees remain aligned over the second toe.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b6",
+      "source": "ace-bwsquat",
+      "text": "From the side, the position of the tibia (shinbone) and torso should be parallel with each other and the low back should appear flat or showing the beginning of some rounding.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b6",
+      "source": "ace-bwsquat",
+      "text": "body weight should be evenly distributed between the balls and heels of the feet.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b7",
+      "source": "ace-bwsquat",
+      "text": "exhale and extend the hips and knees by pushing your feet into the floor through your heels. The hips and torso need to rise together while keeping the heels flat on the floor and knees aligned over the second toe.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b8",
+      "source": "ace-bwsquat",
+      "text": "try to control the amount of forward translation (movement) of the tibia (shinbone).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b8",
+      "source": "fry-2003",
+      "text": "Although restricting forward movement of the knees may minimize stress on the knees, it is likely that forces are inappropriately transferred to the hips and low-back region. Thus, appropriate joint loading during this exercise may require the knees to move slightly past the toes.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b9",
+      "source": "ace-bwsquat",
+      "text": "Abs, Butt/Hips, Legs - Calves and Shins, Legs - Thighs",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b10",
+      "source": "nhs-knee",
+      "text": "your knee is very painful",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "b10",
+      "source": "nhs-knee",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}
