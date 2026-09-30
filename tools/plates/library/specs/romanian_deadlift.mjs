@@ -11,7 +11,8 @@
 //  Grip: pronated, hands 48 cm apart (slightly wider than the 45 cm shoulders, arms just outside the thighs, c9),
 //   arms hanging straight (reach length 99.8% of the straight arm: elbows ~4 deg soft, pointing back).
 //  Knees (CARD c4): 15 deg in every key pose (start, via, end): the knees stay fixed, only the hips bend. Proved by
-//   measure.expect 15 (knee arc from the extended shin to the thigh, as the squat) and the report angles.
+//   measure.expect 165 (round 3, R4: the knee arc drawn at the knee between thigh and shin, as barbell_row) and
+//   the report angles.
 //  Hinge method (as barbell_back_squat key()): trunk inclination = pelvis tilt + lumbar flexion (spine near
 //   neutral, c5, c10). For each key pose the root is SOLVED, not placed by eye: its height gives the knee angle
 //   exactly, its fore-aft position makes the bar (hanging at arm's length from the shoulders) sit exactly over
@@ -31,8 +32,9 @@
 //  Mistake (c7, plate.mistake + handlingMistakes "rounding the lower back to get the bar lower"): feet, knees and
 //   hips as in the correct bottom; the pelvis tucks M_TUCK (25 deg, illustrative: the card gives no number) and the
 //   lumbar spine flexes until the hanging bar's 45 cm plates reach the floor (solved: 39 deg lumbar flexion). The
-//   bar hangs plumb from the shoulders, so it also leaves the legs. Guides: an arc-arrow over the lower back (the
-//   upper body curling down) and an arrow from the correct bar to the faulty one.
+//   bar hangs plumb from the shoulders, so it also leaves the legs. Guides (round 3, R5): a dashed curve along the rounded
+//   lower back (sacrum to mid-back, 10 px hump: the pose alone draws ~3 px), a red arrow onto its top where the
+//   LOWER BACK ROUNDS tell ends, and an arrow from the correct bar to the faulty one.
 // CARD: KNEE (c4, 15 deg), bottom bar height (c6, mid-shin), stance (c10) and grip (c9) widths; tempo (c20).
 // Unsourced (not on the card, geometry choices above): the 5 deg lumbar flexion, 5 deg toe-out, the 5 mm bar gap.
 import { landmarksOf, RADII } from '../engine.mjs';
@@ -109,11 +111,22 @@ const M_SPINE = bisect(sp => hangFrom(landmarksOf(mistOf(sp), H))[1] - PLATE_R -
 const MIST_BAR = hangFrom(landmarksOf(mistOf(M_SPINE), H));
 const mistakePose = { root: mistOf(M_SPINE).root, trunk: M_SPINE,
   reach: { l: { at: [GRIP_X, MIST_BAR[1], MIST_BAR[2]], pole: [0.2, 0, -1] }, r: { at: [-GRIP_X, MIST_BAR[1], MIST_BAR[2]], pole: [-0.2, 0, -1] } } };
+// R5 (round 3): the engine bends the spine at one lumbar point and blends the outline over ~10 cm, so the drawn hump
+// of the rounded back is only ~3 px. A dashed curve along the lower back (mistake guides are drawn on top, not
+// masked) shows the rounding: from the sacrum to the mid-back of the faulty pose, bulging HUMP (7 cm, 10 px) out
+// of the straight line between them at its middle. The red arrow points at the top of that hump.
+const HUMP = 0.07;
+const LM_M = landmarksOf({ ...end, ...mistakePose }, H);
+const HUMP_PTS = (() => {
+  const A = LM_M.sacrum, B = LM_M.backMid, M = A.map((v, i) => (v + B[i]) / 2), d = [0, B[1] - A[1], B[2] - A[2]], L = Math.hypot(...d);
+  let n = [0, -d[2] / L, d[1] / L];
+  if ((LM_M.chest[1] - M[1]) * n[1] + (LM_M.chest[2] - M[2]) * n[2] > 0) n = n.map(v => -v);   // away from the chest
+  const C = M.map((v, i) => v + n[i] * 2 * HUMP);                                                // quadratic control point
+  const pts = Array.from({ length: 13 }, (_, k) => { const t = k / 12; return A.map((v, i) => (1 - t) ** 2 * v + 2 * t * (1 - t) * C[i] + t * t * B[i]); });
+  return { pts, apex: pts[6], n };
+})();
+const HUMP_OUT = k => HUMP_PTS.apex.map((v, i) => v + HUMP_PTS.n[i] * k);
 
-// Knee flexion arc (as the squat): from the shin extended past the knee to the thigh, with the extended shin drawn.
-const SHANK_EXT = [LE['knee.r'][2] - LE['ankle.r'][2], LE['knee.r'][1] - LE['ankle.r'][1]];
-const SHANK_LEN = Math.hypot(...SHANK_EXT);
-const EXT = [LE['knee.r'][0], LE['knee.r'][1] + 0.25 * SHANK_EXT[1] / SHANK_LEN, LE['knee.r'][2] + 0.25 * SHANK_EXT[0] / SHANK_LEN];
 
 // Bar: the side-view barbell draws the near 45 cm plate as an outline over the figure and the 50 mm sleeve as a
 // solid dot, on top (z front) so the bar reads over the fist. Start bar dot, dashed (engine workaround as in the
@@ -149,8 +162,10 @@ export default {
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r'] },
   trace: { point: 'grip.r', trim: [10, 12] },
   // Mid-foot plumb line (as the squat): the bar travels down it. Extended shin: the reference ray of the knee arc.
-  datum: [{ x: [0, 0, 0], from: 349, to: 60 }, { x: 0, from: 0, to: 0, line: ['knee.r', EXT], mistake: false }],
-  measure: { vertex: 'knee.r', from: { dir: SHANK_EXT }, to: 'hip.r', radius: 28, title: 'Knee', value: 'about 15° bend', expect: KNEE },
+  datum: [{ x: [0, 0, 0], from: 349, to: 60 }],
+  // R4 (round 3): the knee angle drawn AT the knee (as barbell_row): the arc between thigh and shin, round the back of
+  // the knee. The earlier flexion arc (shin extension to thigh) was only 15 deg wide at 28 px and floated on the thigh.
+  measure: { vertex: 'knee.r', from: 'hip.r', to: 'ankle.r', radius: 18, title: 'Knee', value: 'about 15° bend', expect: 180 - KNEE },
   callouts: [
     // c2
     { key: 'hips', text: 'Hips back', anchor: 'buttock', cue: 'Move your hips back to lower the bar and keep the slight knee bend fixed.' },
@@ -163,13 +178,14 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      // the back curling: arc around the hip, from the flat back line down to the rounded one
-      { kind: 'arc-arrow', center: { at: 'lumbar', pose: 'mistake' }, r: 52, a0: -105, a1: -25 },
+      // the rounded lower back (R5): dashed hump along the back, red arrow onto its top
+      { kind: 'dashed', pts: HUMP_PTS.pts },
+      { kind: 'arrow', from: HUMP_OUT(0.12), to: HUMP_OUT(0.015) },
       { kind: 'arrow', from: { at: 'grip.r', pose: 'end' }, to: { at: 'grip.r', pose: 'mistake' } },
     ],
     tells: [
       // c7 (plate.mistake)
-      { key: 'round', text: 'Lower back<br>rounds', anchor: 'backMid', cue: 'The lower back rounds at the bottom of the rep.' },
+      { key: 'round', text: 'Lower back<br>rounds', anchor: HUMP_PTS.pts[4], cue: 'The lower back rounds at the bottom of the rep.' },
       // c7 (handlingMistakes: rounding to get the bar lower), c5
       { key: 'reach', text: 'Bar<br>too low', anchor: 'grip.r', cue: 'The bar is reached down to the floor by rounding the back.' },
     ],

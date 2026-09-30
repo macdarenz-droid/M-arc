@@ -13,7 +13,9 @@
 //   dumbbell in the near right hand (opposite the stance leg, c1) are drawn bold. Stance mid-sole at world z = 0,
 //   x = 9 cm (under the left hip joint), toes forward.
 //  Stance knee (CARD c10, 15-20 deg): 17.5 deg (the middle of the range) in every key pose, proved by
-//   measure.expect 17.5 (arc from the extended stance shin to the thigh, as the squat) and the report angles.
+//   the report angles (hip.l/knee.l). Round 3, R4: the knee arc floated on the thigh (a 17.5 deg
+//   wedge) and an arc at the knee needed a 100 px leader across the ghosts, so the value is merged into the SOFT
+//   KNEE callout ("Soft knee 15-20°") and there is no measure.
 //  Hinge method (as barbell_back_squat key()): thorax inclination = pelvis tilt + lumbar flexion (spine near
 //   neutral). Straight line (CARD c8): the free leg is IN LINE with the thorax: free hip flexion = -lumbar flexion
 //   (report angles: hip.r -5 = -trunk 5), free knee 0 (c2: straighten the free leg), neck 0 (neutral, c8); ankle
@@ -110,10 +112,6 @@ const M_SPINE = solve(sp => { const S = landmarksOf(mistBody(sp), H)['shoulder.r
 const ML = landmarksOf(mistBody(M_SPINE), H);
 const mistakePose = { trunk: M_SPINE, scap: { pro: M_PRO }, reach: { ...hang(ML), r: { at: M_DB, pole: [-0.2, 0, -1] } } };
 
-// Stance knee flexion arc (as the squat): from the shin extended past the knee to the thigh.
-const SHANK_EXT = [LE['knee.l'][2] - LE['ankle.l'][2], LE['knee.l'][1] - LE['ankle.l'][1]];
-const SHANK_LEN = Math.hypot(...SHANK_EXT);
-const EXT = [LE['knee.l'][0], LE['knee.l'][1] + 0.25 * SHANK_EXT[1] / SHANK_LEN, LE['knee.l'][2] + 0.25 * SHANK_EXT[0] / SHANK_LEN];
 
 // Dumbbell in the near right hand, handle across the body (pronated, x axis): the side view shows the hex end-on.
 // Start dumbbell dashed (engine workaround as in the squat: the start layer never draws moving equipment).
@@ -142,14 +140,13 @@ export default {
   startParts: ['trunk', 'leg.r', 'arm.r'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  datum: [{ x: [0, 0, 0], from: 349, to: 60 }, { x: 0, from: 0, to: 0, line: ['knee.l', EXT], mistake: false }],
+  datum: [{ x: [0, 0, 0], from: 349, to: 60 }],
   marks: ['shoulder.r', 'elbow.r', 'hip.r', 'knee.r', 'knee.l'],   // + the standing knee, so its arc sits on a joint dot (critic run 2, R4)
-  measure: { vertex: 'knee.l', from: { dir: SHANK_EXT }, to: 'hip.l', radius: 15, title: 'Knee', value: '15-20° bend', expect: KNEE, box: { left: 258, top: 226 } },
   callouts: [
     // c8
     { key: 'line', text: 'Straight<br>line', anchor: 'buttock', cue: 'Keep your head, back and free leg in one line, neck neutral.' },
     // c10
-    { key: 'knee', text: 'Soft knee', anchor: { at: 'knee.l', off: [8, 0] }, cue: 'Keep your standing knee bent about 15-20 degrees, not locked.' },
+    { key: 'knee', text: 'Soft knee<br>15-20°', anchor: { at: 'knee.l', off: [8, 0] }, cue: 'Keep your standing knee bent about 15-20 degrees, not locked.' },
     // c9
     { key: 'shin', text: 'Mid-shin', anchor: 'grip.r', cue: 'Stop the dumbbell at about mid-shin, in front of your standing leg.' },
   ],

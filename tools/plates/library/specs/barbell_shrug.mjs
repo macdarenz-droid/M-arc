@@ -1,4 +1,4 @@
-// Barbell shrug, side view, figure facing screen right. Small-motion zoom plate (enlarged upper-body view, flag F1).
+// Barbell shrug, side view, figure facing screen right. Whole figure at the reference scale (round 3).
 // View: SIDE (card plate.view; the census draws it side). Straight arms, a tall back and a straight-up shoulder path
 // read best side-on (c2, c4).
 // Sources: research card barbell_shrug (card v2, anchor ace-shrug, verified at claude/libht-research e2a70bc):
@@ -22,17 +22,21 @@
 //  Bar in front of the thighs (c4): bar centre on the front surface of the drawn thigh (engine body shape, sampled at
 //   the bar's height) plus the 14 mm shaft radius plus 3 mm, solved per pose, so the bar rests on the thighs at the
 //   start and slides up them at the top (the hand `contacts` prove the grips are on it). ~2 cm in front of mid-foot.
-//  Camera (lead's zoom convention): `fit` with `maxScale` 1.71 (250 px/m); the fit's bottom margin is negative so the
-//   plate edge cuts the legs just under the knees and the head top sits 30 px under the plate edge. Why: the
-//   whole-body fit can only reach ~1.15x (the figure is 1.75 m tall), where a 5 cm shrug is 8 px; at 250 px/m it is
-//   12.5 px and the trapezius contour change reads. The knees (c2) stay in view. No floor (cropped below the knees).
-//   pxPerM is outside the 8's range: flag F1, an owner-named exemption, never a margin. The alt says it is enlarged.
+//  Camera (round 3, R7): reference scale 146.29 px/m (x0 176, y0 339), the approved plates' scale, so head, feet
+//   and floor line all fit; flag F1 (the earlier 250 px/m zoom that cut the legs at the knees) is dropped. The 5 cm
+//   shrug is 7 px here, so it is read against two datum levels (shoulder top at the start and at the top), the
+//   untrimmed shoulder trace and the "Straight up" callout.
+//  Hand (R3): a filled capsule from the wrist to the grip (poly, eq-solid) closes the engine's fist gap around the
+//   28 mm shaft end-on; the shaft is drawn on top.
 //  Drawn: end (top) pose solid; start: the near arm dashed where it shows (engine start layer), the start bar dot
 //   dashed (START_DOT, the squat's workaround), and the start neck/trapezius/shoulder contour, which lies inside the
 //   shrugged figure, as dashed hidden lines (the approved pull_up method, only where it differs from the end
 //   outline). No ghosts (a 5 cm move: ghosts would smear the outline; the 8 use 2-3). Trace: shoulderTop.r (the top
 //   of the shoulder rising straight up, c3). Datum: a horizontal line at the start shoulder-top height, so the rise is
 //   read against it.
+//  Mistake (R5): the faulty bar is a complete dashed ring (hand) with the shaft inside, raised in front of the
+//   thighs, as guides (the mask hides faulty outlines inside the body); the dashed forearm ends on it and the red
+//   arrow runs from the correct bar up to it.
 //  Mistake: the card's top fault, rolling the shoulders (c3), is a rotation the engine cannot draw (card
 //   drawable: false, flag F7). Drawn: the card's drawable fault, bent arms pulling the bar up (c4): the elbows bend
 //   and the bar rides M_PULL = 15 cm higher up the thighs (still on the thigh surface, hands on it by IK). M_PULL is
@@ -123,7 +127,22 @@ const mistakePose = (() => {
   return { reach: { l: { at: [GRIP_X, y, z], pole: pole(1) }, r: { at: [-GRIP_X, y, z], pole: pole(-1) } } };
 })();
 
-const CAMERA = { fit: { left: 16, right: 16, top: 30, bottom: -112 }, maxScale: 250 / 146.29 };
+const HAND_R = 0.035, WRIST_R = 0.018;                // hand capsule radii at the bar and at the wrist (m)
+const M_G = mistakePose.reach.r.at;
+const M_RING = r => Array.from({ length: 25 }, (_, k) => [M_G[0], M_G[1] + r * Math.sin(k * Math.PI / 12), M_G[2] + r * Math.cos(k * Math.PI / 12)]);
+// where the ghost forearm meets the ring: the ring edge on the wrist side
+const M_W = landmarksOf({ ...end, ...mistakePose }, H)['wrist.r'];
+const M_EDGE = (() => { const d = [0, M_W[1] - M_G[1], M_W[2] - M_G[2]], L = Math.hypot(...d); return [M_G[0], M_G[1] + d[1] / L * HAND_R, M_G[2] + d[2] / L * HAND_R]; })();
+const CAMERA = { x0: 176, y0: 339 };                   // reference scale (146.29 px/m): whole figure, feet on the floor line
+// Closed hand (R3): the engine draws the fist as a circle on the grip centre, 8.7 cm past the wrist, so a gap opens
+// between the forearm tip and the fist. A filled capsule from the wrist to the grip (fist radius 3.5 cm at the bar,
+// forearm tip 1.8 cm at the wrist) closes the hand around the 28 mm shaft; the shaft is drawn on top of it.
+function handPoly(lm) {
+  const W = lm['wrist.r'], G = lm['grip.r'], d = [G[1] - W[1], G[2] - W[2]], L = Math.hypot(...d), u = [d[0] / L, d[1] / L], n = [-u[1], u[0]], pts = [];
+  for (let a = -90; a <= 90; a += 30) pts.push([G[0], G[1] + HAND_R * (Math.cos(a * R) * u[0] + Math.sin(a * R) * n[0]), G[2] + HAND_R * (Math.cos(a * R) * u[1] + Math.sin(a * R) * n[1])]);
+  for (let a = 90; a <= 270; a += 45) pts.push([G[0], W[1] + WRIST_R * (Math.cos(a * R) * u[0] + Math.sin(a * R) * n[0]), W[2] + WRIST_R * (Math.cos(a * R) * u[1] + Math.sin(a * R) * n[1])]);
+  return { type: 'poly', pts, curve: true, cls: 'eq-solid', z: 'front', part: 'hand' };
+}
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 
 export default {
@@ -131,10 +150,12 @@ export default {
   camera: CAMERA,
   poses: { start, end },
   equipment: [
+    { type: 'floor', from: -0.45, to: 0.55 },
     (lm, ctx) => {
       const b = [0, lm.grips[1], lm.grips[2]], moved = ctx.pose === 'end' || ctx.pose === 'mistake';
       return [
         ...(moved ? [{ type: 'barbell', at: b, plates: [0.045], part: 'plate', z: 'back' }] : []),
+        ...(ctx.pose === 'start' ? [] : [handPoly(lm)]),
         { type: 'pulley', at: b, r: BAR_R, part: 'bar', z: 'front' },
         ...(ctx.pose === 'end' && !ctx.mistake ? [...START_SHOULDERS, { type: 'line', cls: 'eq-cable m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
       ];
@@ -148,8 +169,9 @@ export default {
   ],
   startParts: ['arm.r'],
   ghosts: { count: 0 },
-  trace: { point: 'shoulderTop.r', trim: [3, 3] },
-  datum: [{ y: 'start:shoulderTop.r', from: 60, to: 'start:shoulderTop.r' }],
+  trace: { point: 'shoulderTop.r', trim: [0, 0] },
+  // Two levels bracket the 5 cm rise: shoulder top at the start and at the top (R7: small at full-figure scale).
+  datum: [{ y: 'start:shoulderTop.r', from: 60, to: 'start:shoulderTop.r' }, { y: 'shoulderTop.r', from: 60, to: 'shoulderTop.r', mistake: false }],
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'straight' },
   callouts: [
     // c4
@@ -163,9 +185,14 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [14, 0] }, to: { at: 'grip.r', pose: 'mistake', off: [14, 0] } },
+      // R5: the faulty bar raised in front of the thighs, as a complete dashed ring (the hand around the bar) with the
+      // shaft inside, drawn as guides because the Mistake mask hides faulty outlines inside the body; the red arrow
+      // runs from the correct bar up to that ring.
+      { kind: 'dashed', pts: M_RING(HAND_R) },
+      { kind: 'line', pts: M_RING(BAR_R) },
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [0, -7] }, to: { at: 'grip.r', pose: 'mistake', off: [0, 7] } },
       // the bent arm's line (shoulder -> elbow -> wrist): the engine masks the faulty forearm where it crosses the torso
-      { kind: 'dashed', pts: [{ at: 'shoulder.r', pose: 'mistake' }, { at: 'elbow.r', pose: 'mistake' }, { at: 'wrist.r', pose: 'mistake' }] },
+      { kind: 'dashed', pts: [{ at: 'shoulder.r', pose: 'mistake' }, { at: 'elbow.r', pose: 'mistake' }, { at: 'wrist.r', pose: 'mistake' }, M_EDGE] },
     ],
     tells: [
       // c4 (plate.mistake.what, handlingMistakes "Bending the arms to pull")
@@ -175,5 +202,5 @@ export default {
     ],
   },
   pilot: { drawableFault: 'Top fault (rolling the shoulders, c3) is a rotation the engine cannot draw; drawn: bent arms pulling the bar (c4).' },
-  alt: 'Barbell shrug, side view, enlarged close-up of the upper body. Standing tall with soft knees and straight hips, the bar hangs on straight arms in front of the thighs. Only the shoulders lift straight up toward the ears and lower again; the arms stay straight.',
+  alt: 'Barbell shrug, side view. Standing tall with soft knees and straight hips, the bar hangs on straight arms in front of the thighs. Only the shoulders lift straight up toward the ears and lower again; the arms stay straight.',
 };
