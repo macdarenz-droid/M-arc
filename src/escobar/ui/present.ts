@@ -18,7 +18,9 @@ export function pastTense(label: string): string {
 /** A fact citation, canonical (`⟦f12⟧`, `⟦f3,f4⟧`) or in the brief's form (`[f12]`, `[f3, f4]`, BUG-31). */
 const FACT_CITE = /⟦\s*(f\d+(?:\s*,\s*f\d+)*)\s*⟧|\[\s*(f\d+(?:\s*,\s*f\d+)*)\s*\]/g;
 /** Any marker (an unclosed one at the end included) or brief-form fact tag, with the spaces before it. */
-const ANY_MARKER = /[ \t]*(?:⟦[^⟧]*(?:⟧|$)|\[\s*f\d+(?:\s*,\s*f\d+)*\s*\])/g;
+const ANY_MARKER = /[ \t]*(?:⟦[^⟧]*(?:⟧|$)|\[\s*f\d+(?:\s*,\s*f\d+)*\s*\])/gi;
+/** A tag cut off at the end, e.g. a pin title cut to 60 characters: "… trend [f4". */
+const TRAILING_HALF_TAG = /[ \t]*\[\s*(?:f\d*\s*(?:,\s*(?:f\d*\s*)?)*)?$/i; // one way to match only, like PARTIAL_TAG
 
 /**
  * Pulls every fact citation (`⟦f12⟧`, `⟦f3,f4⟧`, and the brief's `[f12]` / `[f3, f4]`, BUG-31) out of
@@ -43,7 +45,7 @@ export function splitCitations(sentence: string): { text: string; ids: string[] 
  * at render time, so conversations stored with tags display clean too.
  */
 export function stripCitationTags(text: string): string {
-  return text.replace(ANY_MARKER, '').trim();
+  return text.replace(ANY_MARKER, '').replace(TRAILING_HALF_TAG, '').trim();
 }
 
 const isRecord = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);

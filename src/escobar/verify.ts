@@ -71,7 +71,8 @@ export function normalizeCitations(text: string, ledger: Fact[]): string {
 }
 
 /** BUG-31: a trailing "[", "[f", "[f12", "[f12," or "[f12, f3" that may still become a fact tag. */
-const PARTIAL_TAG = /\[\s*(?:f(?:\d+(?:\s*,\s*(?:f\d*)?)*\s*)?)?$/;
+// BUG-31 review: one way to match only (the nested \s* before and after a comma backtracked exponentially).
+const PARTIAL_TAG = /\[\s*(?:f\d*\s*(?:,\s*(?:f\d*\s*)?)*)?$/;
 
 /**
  * Streaming: holds back an unfinished `⟦…`, and a trailing partial `[f…` tag (BUG-31), so half a

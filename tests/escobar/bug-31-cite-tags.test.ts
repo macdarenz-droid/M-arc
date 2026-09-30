@@ -16,6 +16,7 @@ vi.mock('preact/hooks', () => ({ useState: (init: unknown) => [init, () => {}], 
 const { AnswerText, EscobarTurnView, ProposalCard } = await import('@/escobar/ui/Message');
 const { ShowComponent } = await import('@/escobar/ui/components');
 const { PinnedCards } = await import('@/escobar/ui/PinnedCards');
+const { PlansAndAgreements } = await import('@/escobar/ui/Hall');
 
 type Node = VNode<Record<string, unknown> & { children?: unknown }>;
 function walk(node: unknown, visit: (v: Node) => void): void {
@@ -157,5 +158,33 @@ describe('BUG-31 A2 pinned card titles', () => {
     expect(t).toContain('Pin to Today: Bench 102.5 kg');
     expect(t).toContain('Bench 102.5 kg');
     expect(t).not.toMatch(TAG);
+  });
+});
+
+describe('BUG-31 review fixes', () => {
+  it('the streaming hold-back runs in linear time on a long run of empty commas', () => {
+    const b = new DirectiveBuffer();
+    const t = performance.now();
+    b.push('Sure [f1' + ' , '.repeat(16) + ' x');
+    expect(performance.now() - t).toBeLessThan(50);
+  });
+  it('the hold-back still holds partial tags and releases non-tags', () => {
+    const held = (s: string) => !new DirectiveBuffer().push(s).includes(s.slice(s.lastIndexOf('[')));
+    for (const s of ['a [', 'a [f', 'a [f12', 'a [f12,', 'a [f12, f3', 'a [f12 , f3 ,']) expect(held(s), s).toBe(true);
+    for (const s of ['a [1]', 'a [note]', 'a [f1 x']) expect(held(s), s).toBe(false);
+  });
+  it('Coach > Plans and agreements shows a pinned title without its tag', () => {
+    replaceState({ ...state.value, escobar: { ...state.value.escobar, pins: [{ id: 'pin2', component: 'lift_trend', params: { exerciseId: 'lib_barbell_bench_press', weeks: 12 }, title: 'Bench 38 [f41]', pinnedAt: new Date(NOW).toISOString() }] } });
+    const t = shownText(PlansAndAgreements());
+    expect(t).toContain('Bench 38');
+    expect(t).not.toMatch(TAG);
+  });
+  it('a cut-off tag at the end and an upper-case tag are stripped from the screen', () => {
+    expect(stripCitationTags('Bench trend [f4')).toBe('Bench trend');
+    expect(stripCitationTags('Bench trend [f12, f')).toBe('Bench trend');
+    expect(stripCitationTags('Bench 38 [F41] sets')).toBe('Bench 38 sets');
+    const t = performance.now();
+    stripCitationTags('x [f1' + ' , '.repeat(5000) + ' y');
+    expect(performance.now() - t).toBeLessThan(50);
   });
 });
