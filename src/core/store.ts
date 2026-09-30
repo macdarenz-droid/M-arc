@@ -1,7 +1,7 @@
 import { signal, batch } from '@preact/signals';
 import { navyBodyFat } from './bodyfat';
 import { freshState, newId, type AppState, type LoggedSet, type Session, type Split, type Weekday } from './models';
-import { convertLegacy, readLegacy } from './migrate';
+import { convertLegacy, LEGACY_KEY, readLegacy } from './migrate';
 import { legacySessionLogging } from './sessionLogging';
 import { normalizeEscobar, normalizeUnits } from './escobarState';
 import { backfillLegacyLbEntries, backfillLegacyLbSets } from './units';
@@ -361,10 +361,13 @@ export function replaceState(next: AppState): void {
   persistNow();
 }
 
-/** QA-R1-7: Reset everything. The daily restore point goes too, so the wiped history cannot come back from it. */
+/**
+ * QA-R1-7: Reset everything. The daily restore point goes too, so the wiped history cannot come
+ * back from it. BUG-29: the legacy import key goes too, so a reinstall cannot re-import it.
+ */
 export function resetState(next: AppState): void {
   lastGoodRaw = null;
-  try { storageRef?.removeItem(BACKUP_KEY); storageRef?.removeItem(BACKUP_DAY_KEY); } catch { /* nothing to delete */ }
+  try { storageRef?.removeItem(BACKUP_KEY); storageRef?.removeItem(BACKUP_DAY_KEY); storageRef?.removeItem(LEGACY_KEY); } catch { /* nothing to delete */ }
   replaceState(next);
 }
 
