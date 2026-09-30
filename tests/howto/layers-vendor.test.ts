@@ -74,6 +74,31 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
   });
 });
 
+describe('HT4-A1: the layer page approval and its committed fixture', () => {
+  // Not a tests/howto/golden/GOLDEN.json entry: that file is a declared input of HT-2's generator
+  // (tools/plates/gen/plates.mjs hashes it into every generated file's inputsSha256), so any edit to its `entries`
+  // array - even a purely additive one - stales HT-2's already-committed generated output and breaks
+  // `generate --check` (found by running the gate; see PR #107). The approval instead lives in HT-4's own
+  // MANIFEST.json, which nothing outside tools/plates/layers.mjs reads.
+  const FIXTURE = new URL('golden/howto-layers.html', import.meta.url);
+
+  it('the fixture is committed and its sha256 matches MANIFEST.json\'s pageApproval and PAGE_SHA256', async () => {
+    if (!m) m = await import(/* @vite-ignore */ MOD_URL);
+    const approval = m.readManifest().pageApproval;
+    expect(approval, 'MANIFEST.json should hold a pageApproval').toBeDefined();
+    expect(approval.ref).toBe('16a8edc');
+    const fixture = readFileSync(FIXTURE);
+    expect(m.sha256(fixture)).toBe(approval.pageSha256);
+    expect(m.sha256(fixture)).toBe(m.PAGE_SHA256);
+    expect(fixture.length).toBe(approval.bytes);
+  });
+
+  it('does not touch tests/howto/golden/GOLDEN.json (HT-2\'s generator input)', () => {
+    const golden = JSON.parse(readFileSync(new URL('golden/GOLDEN.json', import.meta.url), 'utf8'));
+    expect(golden.entries.some((e: { kind: string }) => e.kind === 'layers')).toBe(false);
+  });
+});
+
 describe('HT4-A1 vendored layers stay outside src', () => {
   it('the layers folder is under tools/plates, not src', async () => {
     if (!m) m = await import(/* @vite-ignore */ MOD_URL);
