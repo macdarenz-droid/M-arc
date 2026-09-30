@@ -893,3 +893,17 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **`.claude/owner-rules.md` (change 7) moves to WF-2**, with the settings that enforce the model rule.
   - **Skill frontmatter** was checked against code.claude.com/docs/en/skills (`context: fork`, `agent`, `model`, `background: false`) and rule `paths:` against /docs/en/memory. `ci-log` names `agent: general-purpose`, so it never falls back to a Haiku helper, and pins `model: claude-sonnet-5` (the docs accept a full model name; checked with a live call).
   **Why**: the owner's hard rule that every moved line appears exactly once, word for word, and that AGENTS.md gains only the Procedures line and the model-rule line.
+
+## Golden lock details the card left open (HT-1 builder, 2026-09-30)
+
+- **Decided**: where card HT-1 and the plan are silent:
+  - **`build-page.mjs` is vendored at `tools/plates/vendor/artifact/build-page.mjs`.** Its own header says it runs as `artifact/build-page.mjs` and it imports `../engine` and `../ref-src`, so the mirror keeps that layout. The MANIFEST still names its bc0f378 source path (`docs/howto/technical-plate/build-page.mjs`) and git blob.
+  - **The MANIFEST also pins each file's git blob id**, so the source claim ("this is the bc0f378 blob") is checked from the bytes without needing bc0f378 in a shallow CI clone.
+  - **All 12 engine files are vendored**, including the mockup helpers (`gallery.mjs`, `render.mjs`, `zoom.mjs`, `measure-chars.mjs`, `sheet.mjs`), because `index.mjs` re-exports `sheet.mjs` and the card says "the engine" verbatim.
+  - **GOLDEN.json holds one `page` entry plus one `plate` entry per exercise in one hash chain** (`prev` = sha256 of `JSON.stringify` of all earlier entries). A later golden update to one plate would otherwise leave the other plates' `pageSha256` stale. `cues` hashes both figures' `firstKey` and cue list.
+  - **Each plate's `src` is proven, not inferred**: the probe renders the candidate source with the gallery's id and records it only when both the normal SVG (guides removed) and the mistake SVG equal the fixture byte for byte.
+  - **PRIMITIVES coverage is measured**: the probe wraps each `PRIMITIVES` entry in a counter while it renders each fixture (the vendored bytes are untouched). Only `_test_front` draws `dumbbell`.
+  - **Speed**: the L1 rebuild and the fixture renders run in 4 parallel Node processes (about 6 s instead of 24 s). The harness's 10 (load, theme) captures run in parallel contexts (about 17 s instead of 35 s).
+  - **The harness self-check has a built-in negative control** that runs on every gate: the same block shifted 1 px must fail the L3 rule, so a blind comparison cannot pass.
+  - **Commits that touch the golden paths carry `[golden update]`**, so they pass the planned agent-guard check (plan 2.8) if it lands before HT-1 merges.
+  **Why**: the owner rule ("Dont lower quality and output of the technical plates") needs byte-level proof that does not depend on git history or on names; the rest keeps the checks fast.
