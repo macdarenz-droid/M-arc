@@ -8,7 +8,7 @@ This follows docs/howto/library/inputs/content.md section 3.2. There is one JSON
   "libId": "lib_dumbbell_bench_press",
   "name": "Dumbbell Bench Press",
   "family": "BENCH",                       // template family or pattern, as in the library plan (6.1/6.2)
-  "tier": "A",                             // from census.json
+  "tier": "A",                             // A/B/C from content.md appendix B (tiers.py); census.json "tier" is a different field
   "archetype": { "hand": "press-dumbbell", "contact": ["palm-heel"] },   // GA section 3 and appendix B names
   "parent": null,                          // or the parent card id (difference card)
   "inherit": [],                           // children only: [{ "field": "grip.thumb", "why": "true for this child because ..." }]
@@ -49,7 +49,10 @@ This follows docs/howto/library/inputs/content.md section 3.2. There is one JSON
   "redFlags": [ "wrist" ],                               // shared blocks: wrist | shoulder | knee | elbow | back (new)
   "zooms": [ { "key": "", "kind": "hand | posture", "right": "", "wrong": "", "claim": "" } ],   // 2-4
   "libraryDiff": { "add": [], "remove": [], "why": "" },  // muscles vs src/data/exercises.json, with a reason each
-  "anchorSource": "id of at least one exercise-specific technique source read in full"
+  "anchorSource": "id of at least one exercise-specific technique source read in full",
+  "gaps": [],                              // optional: points the card should carry but no source supports (listed, never filled by invention)
+  "tierA": { "wayOut": null },             // optional, tier A: sourced safety points; an unsourced way-out lives in "gaps" only
+  "notes": []                              // optional: verifier or writer notes that are not facts
 }
 ```
 
@@ -62,3 +65,6 @@ The rules:
   - safeties or J-hooks where they apply;
   - a bar path clear of the neck;
   - load progression.
+- `"claim"` on any line is one claim id (`"c2"`), a list when the line uses words from several claims (`["c2","c5"]`), or `"inherit:<n>"` when the line restates the child's `inherit[n]` field. Every word of a line comes from the claims it cites.
+- A difference card's parent must be a verified card on `claude/libht-research`, or an approved golden exercise. Parent picks follow the library architecture (6.1/6.2), which supersedes content.md appendix A (ruling LR-7).
+- Rulings on verifier open items: `RULINGS.md` in this folder.
