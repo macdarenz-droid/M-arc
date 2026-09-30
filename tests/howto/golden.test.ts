@@ -133,10 +133,10 @@ describe('HT1-A3 per-exercise golden entries', () => {
 });
 
 describe('HT1-A4 reference fixtures', () => {
-  it('_test_front, _test_side and every selected key of the 8 are committed, byte-equal to the vendored engine\'s render', () => {
+  it('_test_front, _test_side, _test_poly and every selected key of the 8 are committed, byte-equal to the vendored engine\'s render', () => {
     const committed = g.readCommittedFixtures();
     expect(Object.keys(committed).sort()).toEqual(Object.keys(run.probe.fixtures).sort());
-    for (const t of ['_test_front.n', '_test_side.n']) expect(committed[t]).toBeDefined();
+    for (const t of ['_test_front.n', '_test_side.n', '_test_poly.n', '_test_poly.m']) expect(committed[t]).toBeDefined();
     for (const p of run.plates) {
       for (const c of p.normal.cues) expect(committed[`${p.chromeId}.n.${c.key}`]).toBeDefined();
       for (const c of p.mistake.cues) expect(committed[`${p.chromeId}.m.${c.key}`]).toBeDefined();
@@ -145,7 +145,7 @@ describe('HT1-A4 reference fixtures', () => {
   });
 
   it('every PRIMITIVES key is drawn by at least one fixture', () => {
-    expect(run.probe.primitives).toHaveLength(20);
+    expect(run.probe.primitives).toHaveLength(21);   // LIB-25 added poly
     expect(g.uncoveredPrimitives(run.probe, g.readCommittedFixtures())).toEqual([]);
   });
 
