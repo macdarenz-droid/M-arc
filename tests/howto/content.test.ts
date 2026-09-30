@@ -21,6 +21,8 @@ import { mutate as c1Mutate } from './fixtures/bad/c1-bad-zoom-ref';
 import { mutate as c1DanglingFault } from './fixtures/bad/c1-dangling-fault-ref';
 import { mutate as c2PrimaryWatch } from './fixtures/bad/c2-primary-and-watch';
 import { mutate as c2NoRegion } from './fixtures/bad/c2-no-region';
+import { mutate as c2NoRegionInRow } from './fixtures/bad/c2-no-region-in-row';
+import { mutate as c2UnknownId } from './fixtures/bad/c2-unknown-id';
 import { mutate as c2BadPart } from './fixtures/bad/c2-bad-part';
 import { mutate as c3Mutate } from './fixtures/bad/c3-missing-hand-zoom';
 import { mutate as c4Mutate } from './fixtures/bad/c4-bad-thumb';
@@ -189,9 +191,26 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     expect(bad.some(m => m.includes('both primary and watch'))).toBe(true);
   });
 
-  it('C2 fails when a shimmer role uses an id with no drawn region', () => {
+  it('C2 fails when a NO_REGION id (brachialis) is used in feel.primary', () => {
     const bad = checkC2(c2NoRegion(GOOD_CONTENT));
-    expect(bad.some(m => m.includes('no drawn region'))).toBe(true);
+    expect(bad.some(m => m.includes('feel.primary') && m.includes('no drawn region'))).toBe(true);
+  });
+
+  it('D-HT4-C2: a NO_REGION id (brachialis) passes as text-only in feel.secondary and feel.watch', () => {
+    const withSecondary = { ...GOOD_CONTENT, feel: { ...GOOD_CONTENT.feel, secondary: [...GOOD_CONTENT.feel.secondary, { muscleId: 'brachialis' as const, plain: 'Text only, no drawn region.' }] } };
+    expect(checkC2(withSecondary)).toEqual([]);
+    const withWatch = { ...GOOD_CONTENT, feel: { ...GOOD_CONTENT.feel, watch: [...GOOD_CONTENT.feel.watch, { muscleId: 'rotator_cuff' as const, plain: 'Text only, no drawn region.' }] } };
+    expect(checkC2(withWatch)).toEqual([]);
+  });
+
+  it('D-HT4-C2: a NO_REGION id still fails as a feel.rows[].at.muscles highlight (needs a real region to shimmer)', () => {
+    const bad = checkC2(c2NoRegionInRow(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('has no drawn region to highlight'))).toBe(true);
+  });
+
+  it('D-HT4-C2: an unknown muscle id fails', () => {
+    const bad = checkC2(c2UnknownId(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('not_a_real_muscle') && m.includes('is not isMuscleId'))).toBe(true);
   });
 
   it('C2 fails when a part id is not in bodyMuscles.ts', () => {
