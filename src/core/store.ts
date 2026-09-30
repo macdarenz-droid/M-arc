@@ -363,7 +363,8 @@ export function replaceState(next: AppState): void {
 
 /**
  * QA-R1-7: Reset everything. The daily restore point goes too, so the wiped history cannot come
- * back from it. BUG-29: the legacy import key goes too, so a reinstall cannot re-import it.
+ * back from it. BUG-29: the legacy import key goes too, so it cannot fall back in and bring the
+ * wiped old history back if the main and backup copies are ever both unreadable (loadState, below).
  */
 export function resetState(next: AppState): void {
   lastGoodRaw = null;
