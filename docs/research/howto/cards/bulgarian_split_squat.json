@@ -1,0 +1,583 @@
+{
+  "id": "bulgarian_split_squat",
+  "libId": "lib_bulgarian_split_squat",
+  "name": "Bulgarian Split Squat",
+  "family": "SPLIT",
+  "tier": "B",
+  "tierNote": "Safety tier B from content.md appendix B (loaded lunges and split squats); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ],
+    "contactNote": "Rear foot rests laces-down on a bench (c2); census lists standing-feet as the only contact archetype."
+  },
+  "parent": "reverse_lunge",
+  "inherit": [
+    {
+      "field": "plate.view",
+      "why": "true for this child because it is also a front-to-back split stance in the sagittal plane, so shin angle, trunk and back-knee depth all read from the side."
+    },
+    {
+      "field": "redFlags.knee",
+      "why": "true for this child because the front knee bends under body weight or load exactly as in the reverse lunge; the NHS knee box is re-cited in this card."
+    },
+    {
+      "field": "grip",
+      "why": "true for this child because its own technique source lists dumbbells held at the sides, the parent's drawn hold; the claim is re-cited in this card."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The Bulgarian split squat is a one-leg squat with the rear foot raised on a bench or similar support.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-bss"
+      ],
+      "quotes": [
+        {
+          "source": "cat-bss",
+          "text": "The Bulgarian split squat is simply a 1-legged squat with the rear foot elevated on a bench, split squat roller, or similar.",
+          "where": "description"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The front foot goes about three foot-lengths ahead of the support, and the top of the rear foot rests on a bench or box about knee height.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-bss",
+        "ace-bss"
+      ],
+      "quotes": [
+        {
+          "source": "cat-bss",
+          "text": "Place the front foot about 3 foot-lengths in front of the rear foot support, and place the top of your rear foot on the support so that the shin can move freely.",
+          "where": "technique"
+        },
+        {
+          "source": "ace-bss",
+          "text": "the left foot placed back behind the body on a bench or box that is about knee-height.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Lower at a controlled speed until the rear knee lightly touches the floor without resting on it, then stand by pushing through the whole front foot.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-bss",
+        "ace-bss"
+      ],
+      "quotes": [
+        {
+          "source": "cat-bss",
+          "text": "At a controlled speed, bend at the knee to lower yourself until the rear knee lightly contacts the floor without resting on it, then stand again by pushing through the whole foot.",
+          "where": "technique"
+        },
+        {
+          "source": "ace-bss",
+          "text": "Before the left knee hits the floor, press the right foot into the ground, pull back on the right knee, and push the top of the left foot into the box to return to standing.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The front knee stays over the foot and does not move inward or outward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-bss"
+      ],
+      "quotes": [
+        {
+          "source": "cat-bss",
+          "text": "Maintain the position of the front knee over the foot—don’t let it move inward or outward.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The back stays straight while the rear knee lowers.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bss"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bss",
+          "text": "Keep the back straight while lowering the left knee towards the floor.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Front-foot distance changes the emphasis: farther forward works the back of the hip and thigh more, closer works the quads more; more weight on the front foot means less rear-hip-flexor work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-bss"
+      ],
+      "quotes": [
+        {
+          "source": "cat-bss",
+          "text": "farther forward will challenge the posterior chain more, and closer will challenge the quad more. Also, the more the balance is moved toward the front foot, the less the rear leg hip flexor will contribute.",
+          "where": "description"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "All reps are done on one leg before switching to the other.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-bss"
+      ],
+      "quotes": [
+        {
+          "source": "cat-bss",
+          "text": "Perform the total number of reps on one leg before switching to the other leg.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Sets of 8-15 reps at a weight that allows smooth movement with no crash into the bottom; 3-6 reps for strength only with good control of the position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-bss"
+      ],
+      "quotes": [
+        {
+          "source": "cat-bss",
+          "text": "Sets of 8-15 reps are most often appropriate with weight that allows a smooth movement and no crashing into the bottom position.",
+          "where": "Programming"
+        },
+        {
+          "source": "cat-bss",
+          "text": "Sets of 3-6 reps can be used to elicit more of a strength effect if the athlete has adequate control of the position.",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The Bulgarian split squat can be loaded with dumbbells or kettlebells held at the sides, or with a barbell.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-bss"
+      ],
+      "quotes": [
+        {
+          "source": "cat-bss",
+          "text": "The Bulgarian split squat can be loaded with any implement, from a barbell behind the neck or in the clean rack positions, single or double dumbbells or kettlebells held at the sides",
+          "where": "Variations"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "It builds glute strength and hip stability and strengthens and stretches the hip flexors of the rear leg.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-bss"
+      ],
+      "quotes": [
+        {
+          "source": "cat-bss",
+          "text": "help balance weakness in one leg or hip, build better glute strength and hip stability, strengthen and mobilize the hip flexors (in the rear leg)",
+          "where": "Purpose"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "In 20 trained women at 80 % 1RM, the rear-foot-elevated split squat drew its highest glute and hamstring activity at the bottom, and more outer-quad (vastus lateralis) activity over the whole rep than the hip thrust.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "mccurdy-2021"
+      ],
+      "quotes": [
+        {
+          "source": "mccurdy-2021",
+          "text": "higher scores (p < 0.001) were found in the bottom position during the RFESS.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "mccurdy-2021",
+          "text": "For the entire repetition, the RFESS produce significantly greater vastus lateralis activation (59.4 vs 43.6%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "At equal relative loads (10RM), the hip extension moment was 44 % greater at the bottom of the rear-foot-elevated split squat than in the back squat, with a more upright trunk.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "arakawa-2023"
+      ],
+      "quotes": [
+        {
+          "source": "arakawa-2023",
+          "text": "The hip extension moment was 44% greater in the RFESS than in the DLBS at the bottom position",
+          "where": "abstract, results"
+        },
+        {
+          "source": "arakawa-2023",
+          "text": "even if the absolute load is smaller and the trunk is more upright in RFESS.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Leaning the trunk forward in the Bulgarian split squat raised glute max, outer hamstring and rectus femoris activity in 21 trained women.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "aygun-2025"
+      ],
+      "quotes": [
+        {
+          "source": "aygun-2025",
+          "text": "trunk flexion increased activation in the GMax, BF, and RF muscles (p < 0.05).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "NHS knee-pain advice: get urgent advice (111) if the knee is very painful, or locks or gives way.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-knee"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-knee",
+          "text": "Get advice from 111 now if:",
+          "where": "Urgent advice box, heading"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee is very painful",
+          "where": "Urgent advice box, item 1"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+          "where": "Urgent advice box, item 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cat-bss",
+      "url": "https://www.catalystathletics.com/exercise/173/Bulgarian-Split-Squat/",
+      "title": "Bulgarian Split Squat (Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-bss",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/366/bulgarian-split-squat/",
+      "title": "Bulgarian Split Squat (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    },
+    {
+      "id": "mccurdy-2021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33900255/",
+      "title": "Hip and Knee Extensor Activation During the Hip Thrust and Rear-Foot-Elevated Split Squat in Trained Females",
+      "kind": "peer-reviewed",
+      "year": 2021,
+      "pmid": "33900255",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "arakawa-2023",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36542838/",
+      "title": "Greater Hip Moments in Rear-Foot-Elevated Split Squats Than in Conventional Back Squats With the Same Relative Intensity of Loads",
+      "kind": "peer-reviewed",
+      "year": 2023,
+      "pmid": "36542838",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "aygun-2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40867012/",
+      "title": "Targeted muscle activation in Bulgarian split squat variations: effects of trunk position and suspension-based execution",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": "40867012",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "title": "Knee pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Front-to-back split stance; bench height and rear-foot contact (c2), rear-knee depth (c3) and back position (c5) all read from the side. The knee-in fault (c4) is a front-view fault.",
+    "equipment": "Flat bench about knee height behind the lifter (c2); two dumbbells hanging at the sides (c9); floor line.",
+    "start": "Standing on the front leg, front foot about three foot-lengths ahead of the bench, top of the rear foot on the bench (c2), dumbbells at the sides (c9), back straight (c5).",
+    "end": "Front knee bent, rear knee just above or lightly touching the floor (c3), back straight (c5), front knee over the front foot (c4).",
+    "checkpoints": [
+      {
+        "label": "Foot on bench",
+        "what": "Top of the rear foot rests on a bench about knee height.",
+        "claim": "c2"
+      },
+      {
+        "label": "Long stance",
+        "what": "Front foot about three foot-lengths ahead of the bench.",
+        "claim": "c2"
+      },
+      {
+        "label": "Back straight",
+        "what": "Back stays straight as the rear knee lowers.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Dropping into the bottom and resting the rear knee on the floor.",
+      "why": "Both technique sources stop the rear knee just short of resting (c3), and the programming line sets the load by the absence of a crash into the bottom (c8).",
+      "claim": "c3",
+      "drawable": true,
+      "rankNote": "No source ranks split-squat faults by frequency. The front knee moving inward (c4) is named by the anchor but needs a front view; the drawn fault is the depth and control fault both sources name."
+    },
+    "tells": [
+      {
+        "text": "Rear knee just kisses the floor",
+        "claim": "c3"
+      },
+      {
+        "text": "Push up through the whole front foot",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Controlled speed down, no crash into the bottom. No source gives seconds.",
+      "claim": "c3"
+    },
+    "variantLine": "exercises.json lists Dumbbells / Barbell. The plate draws dumbbells at the sides (c9). Stance, depth and back claims (c2, c3, c5) come from a load-agnostic source (Catalyst) and a dumbbell source (ACE), so they hold for both."
+  },
+  "grip": {
+    "type": "Dumbbells held at the sides (c9).",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c9"
+    ],
+    "note": "ACE draws a single dumbbell held vertically at the chest; the plate uses the Catalyst hold at the sides. Thumb and wrist come from the shared hold archetype."
+  },
+  "setup": [
+    {
+      "step": "Set a bench or box about knee height behind you.",
+      "claim": "c2"
+    },
+    {
+      "step": "Put the top of your rear foot on it and the front foot about three foot-lengths ahead.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hold the dumbbells at your sides.",
+      "claim": "c9"
+    },
+    {
+      "step": "Lower under control until the rear knee lightly touches the floor, then push up through the whole front foot.",
+      "claim": "c3"
+    },
+    {
+      "step": "Do all reps on one leg, then switch.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Top of the rear foot on the bench.",
+      "claim": "c2"
+    },
+    {
+      "point": "Front knee stays over the front foot, not in or out.",
+      "claim": "c4"
+    },
+    {
+      "point": "Back straight.",
+      "claim": "c5"
+    },
+    {
+      "point": "Front foot farther forward for more hip work, closer for more quads.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Dropping fast and resting the rear knee on the floor.",
+      "fix": "Lower under control and stop as the knee touches lightly; go lighter if you can't.",
+      "claim": "c3"
+    },
+    {
+      "mistake": "Front knee moving inward or outward.",
+      "fix": "Keep the front knee over the front foot.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Crashing into the bottom under a heavy weight.",
+      "fix": "Use a weight you can move smoothly.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c11"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c10"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front thigh and glute of the front leg",
+        "means": "The target muscles are working, most at the bottom.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the rear hip",
+        "means": "A stretch in the rear leg's hip flexors; expected.",
+        "fix": "",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "means": "Not a training feeling.",
+        "fix": "Stop the set.",
+        "claim": "c14",
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Too heavy a load costs a smooth descent and ends in a crash into the bottom.",
+      "claim": "c8"
+    },
+    {
+      "risk": "Front knee drifting inward or outward.",
+      "claim": "c4"
+    }
+  ],
+  "redFlags": [
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "rear-foot",
+      "kind": "posture",
+      "right": "Top of the rear foot resting on the bench.",
+      "wrong": "Rear foot too close to the front foot (short stance).",
+      "claim": "c2",
+      "wrongNote": "The wrong drawing is the inverse of c2; no source describes it directly."
+    },
+    {
+      "key": "rear-knee",
+      "kind": "posture",
+      "right": "Rear knee just above or lightly touching the floor.",
+      "wrong": "Rear knee resting on the floor.",
+      "claim": "c3"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: quads and glutes primary, hamstrings secondary, core stabilizer. EMG (c11) and kinetics (c12) support quads and glutes as primary and show hamstring activity at the bottom (c11). The rear-leg hip-flexor stretch (c10) is a watch line, not a worked muscle, so no library change."
+  },
+  "loadProgression": {
+    "text": "Start with 8-15 smooth reps; go down to 3-6 heavier reps only with full control of the position.",
+    "claims": [
+      "c8"
+    ]
+  },
+  "anchorSource": "cat-bss",
+  "anchorNote": "Catalyst Athletics Bulgarian split squat page read in full; ACE Bulgarian split squat page also read in full.",
+  "decisionNote": "Parent is reverse_lunge because LIBRARY-HOWTO-ARCHITECTURE 6.2 marks this id T (SPLIT template) and the batch brief names reverse_lunge as the template parent. content.md appendix A lists it differently; the plate template decides the parent here. Only plate view and the knee red-flag box are inherited; every claim, feel line and mistake is re-researched below.",
+  "unsourced": [
+    "Exact bench height beyond \"about knee height\" (ACE).",
+    "Tempo in seconds.",
+    "Breathing.",
+    "Getting the rear foot on and off the bench while holding dumbbells."
+  ]
+}

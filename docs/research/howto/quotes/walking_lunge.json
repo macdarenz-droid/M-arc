@@ -1,0 +1,222 @@
+{
+  "id": "walking_lunge",
+  "checked": "2026-09-30",
+  "fetcher": "source-fetcher (sonnet)",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "It can also be done as a walking lunge—rather than stepping back with the front foot after each rep, step the back foot forward to meet the front foot.",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "Starting in your squat stance, step one leg forward and bend both knees until the back knee very lightly touches the floor.",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "Step long enough that in this bottom position, the front shin is approximately vertical.",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-walk-twist",
+      "status": "verbatim",
+      "text": "As you lunge forward, focus more on lowering your hips towards the floor rather than driving your hips forward, (think about aiming your left knee towards the heel of your right foot).",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-walk-twist",
+      "status": "verbatim",
+      "text": "This will help control the amount of forward movement of your shinbone (forward tibial translation) over your foot.",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "ace-walk-twist",
+      "status": "verbatim",
+      "text": "firmly push the right foot in to the ground and pull yourself back to a standing position",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "ace-walk-twist",
+      "status": "verbatim",
+      "text": "pick the left leg off of the ground and slowly swing it forward to initiate the next lunge.",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-walk-twist",
+      "status": "verbatim",
+      "text": "The right (swing) leg should initiate contact with a heel strike first, slowly transferring your body weight into the right (leading / forward) foot placed firmly on the floor.",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-walk-twist",
+      "status": "verbatim",
+      "text": "avoid any sideways tilting or swaying in your upper body",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "ace-walk-twist",
+      "status": "verbatim",
+      "text": "Starting Position: Stand with your feet about hip width apart.",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "Many athletes try to load lunges too heavily and lose the position in which the exercise will be most effective.",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "If you can’t maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight.",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position.",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "Light or unloaded lunges can be done with 15-20 reps as well if using them for work capacity or rehab.",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "bezerra-2021",
+      "status": "verbatim",
+      "text": "Results indicate that positioning the trunk in a forward-inclined position induces greater lower lumbar erector spinae activation",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "bezerra-2021",
+      "status": "verbatim",
+      "text": "(straight = 20 ± 15, inclined = 40 ± 29)",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "bezerra-2021",
+      "status": "verbatim",
+      "text": "(static = 24 ± 16, forward = 26 ± 22, walking = 40 ± 33)",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "bezerra-2021",
+      "status": "verbatim",
+      "text": "(static = 31 ± 12, forward = 54 ± 20, walking = 58 ± 30)",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "wijethunga-2026",
+      "status": "verbatim",
+      "text": "Contrary to hypothesis, longer step lengths did not increase eccentric phase knee and hip extensor activities, but made the returning concentric phase movements more difficult.",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "wijethunga-2026",
+      "status": "verbatim",
+      "text": "Thus, a normal step length appears sufficient for ELW.",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "The lunge can be loaded in many ways, such as with a barbell in the clean rack position or overhead, dumbbells or kettlebells at the sides",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "cat-lunge",
+      "status": "verbatim",
+      "text": "longer steps will emphasize the glutes and hamstrings more, and shorter steps with the knee moving in front of the toes will emphasize the quads more.",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "escamilla-2025",
+      "status": "verbatim",
+      "text": "During the externally loaded forward lunge, high to very high muscle activity occurs in the quadriceps, gluteus maximus, and gluteus medius",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "escamilla-2025",
+      "status": "verbatim",
+      "text": "while moderate muscle activity occurs in the hamstrings, gastrocnemius, and adductor longus.",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "Get advice from 111 now if:",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee is very painful",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "closest": null
+    }
+  ],
+  "sources": [
+    {
+      "id": "cat-lunge",
+      "access": "full"
+    },
+    {
+      "id": "ace-walk-twist",
+      "access": "full"
+    },
+    {
+      "id": "bezerra-2021",
+      "access": "abstract"
+    },
+    {
+      "id": "wijethunga-2026",
+      "access": "abstract"
+    },
+    {
+      "id": "escamilla-2025",
+      "access": "abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "access": "full"
+    }
+  ]
+}

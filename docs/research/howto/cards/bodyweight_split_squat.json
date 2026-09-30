@@ -1,0 +1,420 @@
+{
+  "id": "bodyweight_split_squat",
+  "libId": "lib_bodyweight_split_squat",
+  "name": "Bodyweight Split Squat",
+  "family": "SPLIT",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md appendix B: not in A or B lists; bodyweight only); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "reverse_lunge",
+  "inherit": [
+    {
+      "field": "plate.view",
+      "why": "true for this child because it is also a front-to-back split stance in the sagittal plane, so shin angle, trunk and back-knee depth all read from the side."
+    },
+    {
+      "field": "redFlags.knee",
+      "why": "true for this child because the front knee bends under body weight or load exactly as in the reverse lunge; the NHS knee box is re-cited in this card."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "From a split stance, bend both knees to lower until the back knee lightly touches the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-splitsquat"
+      ],
+      "quotes": [
+        {
+          "source": "cat-splitsquat",
+          "text": "Bend both knees to move down until the back knee lightly contacts the floor.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Keep the trunk upright; a very slight natural shift toward the front leg is fine, but the front shin stays about vertical at the bottom.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-splitsquat"
+      ],
+      "quotes": [
+        {
+          "source": "cat-splitsquat",
+          "text": "Keep the trunk upright and allow yourself to shift very slightly toward the front leg naturally, but keep the front shin approximately vertical in the bottom.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Come up until the front knee is about straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-splitsquat"
+      ],
+      "quotes": [
+        {
+          "source": "cat-splitsquat",
+          "text": "Reverse the motion until the front knee is approximately straight.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Split length changes the emphasis: front foot farther forward works the back of the hip and thigh more and stretches the rear hip flexors; closer works the quads more.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-splitsquat"
+      ],
+      "quotes": [
+        {
+          "source": "cat-splitsquat",
+          "text": "The farther forward the front foot, the more the exercise will rely on the posterior chain and stretch the rear hip flexors; the farther back the front foot, the more the exercise will rely on the quads.",
+          "where": "Notes"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The split squat helps balance a weaker leg or hip and builds glute strength and hip stability.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-splitsquat"
+      ],
+      "quotes": [
+        {
+          "source": "cat-splitsquat",
+          "text": "help balance weakness in one leg or hip, build better glute strength and hip stability",
+          "where": "Purpose"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Sets of 5-10 reps at a load that allows smooth movement with no crash into the bottom (Catalyst gives this for the loaded split squat).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-splitsquat"
+      ],
+      "quotes": [
+        {
+          "source": "cat-splitsquat",
+          "text": "Sets of 5-10 reps are usually appropriate with weight that allows a smooth movement and no crashing into the bottom position.",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "In a loaded study, lunging up and down with the feet fixed (a split squat) produced less glute activity than stepping out and back.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "escamilla-2025"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla-2025",
+          "text": "lunging up and down with feet stationary",
+          "where": "abstract, methods"
+        },
+        {
+          "source": "escamilla-2025",
+          "text": "gluteus maximus and gluteus medius EMG activities were significantly greater in lunges with a stride compared to lunges without a stride.",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The split squat can be done with any load, including none added.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-splitsquat"
+      ],
+      "quotes": [
+        {
+          "source": "cat-splitsquat",
+          "text": "The split squat can be loaded with any implement, from a barbell, to single or double dumbbells or kettlebells held in any position, to a sandbag.",
+          "where": "Variations"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "NHS knee-pain advice: get urgent advice (111) if the knee is very painful, or locks or gives way.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-knee"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-knee",
+          "text": "Get advice from 111 now if:",
+          "where": "Urgent advice box, heading"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee is very painful",
+          "where": "Urgent advice box, item 1"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+          "where": "Urgent advice box, item 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cat-splitsquat",
+      "url": "https://www.catalystathletics.com/exercise/174/Split-Squat/",
+      "title": "Split Squat (Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "escamilla-2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39982282/",
+      "title": "Effects of Step Length and Stride Variation During Forward Lunges on Lower-Extremity Muscle Activity",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": "39982282",
+      "checked": "2026-09-30",
+      "access": "abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "title": "Knee pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "checked": "2026-09-30",
+      "access": "full"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Static split stance in the sagittal plane; back-knee depth (c1), upright trunk and vertical front shin (c2) read from the side.",
+    "equipment": "Floor line only; no weights.",
+    "start": "Standing in a split stance, front knee about straight (c3), trunk upright (c2).",
+    "end": "Both knees bent, back knee lightly touching the floor (c1), front shin about vertical, trunk upright (c2).",
+    "checkpoints": [
+      {
+        "label": "Trunk upright",
+        "what": "Trunk stays upright.",
+        "claim": "c2"
+      },
+      {
+        "label": "Front shin vertical",
+        "what": "Front shin about vertical at the bottom.",
+        "claim": "c2"
+      },
+      {
+        "label": "Back knee down",
+        "what": "Back knee lowers until it lightly touches the floor.",
+        "claim": "c1"
+      }
+    ],
+    "mistake": {
+      "what": "Front knee slides forward at the bottom, front shin tips well past vertical.",
+      "why": "The anchor allows only a very slight shift toward the front leg and keeps the front shin about vertical (c2).",
+      "claim": "c2",
+      "drawable": true,
+      "rankNote": "No source ranks split-squat faults by frequency; this is the one position the anchor limits explicitly. The wrong pose is the inverse of c2."
+    },
+    "tells": [
+      {
+        "text": "Back knee lightly touches the floor",
+        "claim": "c1"
+      },
+      {
+        "text": "Front shin stays about vertical",
+        "claim": "c2"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Smooth, no crash into the bottom. No source gives seconds.",
+      "claim": "c6"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "none",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [],
+    "note": "Hand archetype none (bodyweight); the parent's dumbbell hold is not inherited."
+  },
+  "setup": [
+    {
+      "step": "Stand in a split stance, one foot forward, one back.",
+      "claim": "c1"
+    },
+    {
+      "step": "Bend both knees until the back knee lightly touches the floor.",
+      "claim": "c1"
+    },
+    {
+      "step": "Keep the trunk upright and the front shin about vertical.",
+      "claim": "c2"
+    },
+    {
+      "step": "Stand back up until the front knee is about straight.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Trunk upright.",
+      "claim": "c2"
+    },
+    {
+      "point": "Front shin about vertical at the bottom.",
+      "claim": "c2"
+    },
+    {
+      "point": "Front foot farther forward for more hip work, closer for more quads.",
+      "claim": "c4"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Front knee sliding forward at the bottom.",
+      "fix": "Keep the front shin about vertical; move the front foot farther forward if needed.",
+      "claim": "c2"
+    },
+    {
+      "mistake": "Dropping fast into the bottom.",
+      "fix": "Lower smoothly until the back knee just touches.",
+      "claim": "c6"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c4"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "glutes",
+        "claim": "c5"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c4"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the front thigh",
+        "means": "The target muscles are working.",
+        "fix": "",
+        "claim": "c4",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the back hip",
+        "means": "A stretch in the rear hip flexors; expected, stronger with a longer split.",
+        "fix": "",
+        "claim": "c4",
+        "redFlag": null
+      },
+      {
+        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "means": "Not a training feeling.",
+        "fix": "Stop the set.",
+        "claim": "c9",
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Crashing into the bottom instead of lowering smoothly.",
+      "claim": "c6"
+    }
+  ],
+  "redFlags": [
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "front-shin",
+      "kind": "posture",
+      "right": "Front shin about vertical.",
+      "wrong": "Front knee slid forward, shin tipped far forward.",
+      "claim": "c2"
+    },
+    {
+      "key": "trunk",
+      "kind": "posture",
+      "right": "Trunk upright over the hips.",
+      "wrong": "Chest pitched forward.",
+      "claim": "c2",
+      "wrongNote": "The wrong drawing is the inverse of c2; no source describes it directly."
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: quads primary, glutes secondary. Catalyst (c4, c5) names quads and glutes; loaded EMG shows less glute activity with the feet fixed than when stepping (c7), which fits glutes as secondary. No change."
+  },
+  "loadProgression": {
+    "text": "Sets of 5-10 smooth reps; add a load (dumbbells) only when the position stays controlled.",
+    "claims": [
+      "c6",
+      "c8"
+    ]
+  },
+  "anchorSource": "cat-splitsquat",
+  "anchorNote": "Catalyst Athletics Split Squat page read in full. It describes a barbell setup for weightlifters, but its stance, depth, trunk and shin cues (c1-c4) do not depend on the load and it says any load can be used (c8).",
+  "decisionNote": "Parent is reverse_lunge because LIBRARY-HOWTO-ARCHITECTURE 6.2 marks this id T (SPLIT template) and the batch brief names reverse_lunge as the template parent. content.md appendix A lists it differently; the plate template decides the parent here. Only plate view and the knee red-flag box are inherited; every claim, feel line and mistake is re-researched below. Hand archetype is none (census), unlike the parent's hold; grip is explicitly not inherited.",
+  "unsourced": [
+    "A bodyweight-specific split-squat technique page (none found on ACE).",
+    "Arm position.",
+    "Rep range for bodyweight only (Catalyst gives 5-10 for the loaded version).",
+    "Tempo in seconds."
+  ]
+}
