@@ -1,5 +1,5 @@
 OWNER RULES: check these before EVERY reply, even a casual one. Full text: AGENTS.md.
-1. Use what's NECESSARY for high-quality output and a fast workflow, while saving tokens. Run agents in parallel when that makes the work faster or better. Never add agents that duplicate or re-check each other without need. Use a strong model for hard judgement and a lighter one for mechanical steps. Do small things yourself.
+1. Use what's NECESSARY for high-quality output and a fast workflow, while saving tokens. Run agents in parallel when that makes the work faster or better. Never add agents that duplicate or re-check each other without need. Use a strong model for hard judgement and a lighter one for mechanical steps (Opus 5.5 / Sonnet 5; never Haiku or Fable). Do small things yourself.
 2. Keep token use low: read only what's needed, write short, don't repeat context.
 3. Plain, simple words for the owner. Short updates only when something important changed.
 4. Decide, don't ask. Research first. Ask only for what no AI can do.
