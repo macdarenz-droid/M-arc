@@ -1897,8 +1897,13 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// ESC-NC: the LR-23 patterns, read from their single definition (tests/guards/no-contacts.ts), and the crisis copy.
+const ESC_NC_RE = Object.fromEntries([...readFileSync(join(ROOT, 'tests/guards/no-contacts.ts'), 'utf8').matchAll(/^export const (\w+) = \/(.*)\/([a-z]*);$/gm)].map(m => [m[1], new RegExp(m[2], m[3])]));
+if (Object.keys(ESC_NC_RE).length !== 4) throw new Error(`ESC-NC: expected 4 patterns in tests/guards/no-contacts.ts, read ${Object.keys(ESC_NC_RE).join(', ')}`);
+const ESC_NC_CRISIS = 'If things feel like too much, you don’t have to carry it alone. Talk to someone you trust, or a doctor. If you feel you might harm yourself, get emergency help now.';
+
 // Escobar (§23 EV5): the mock transport (marc.dev=1, in-memory store, no network) plays a recorded
-// conversation with a lift_trend chart, a citation, chips and a proposal card. Screenshot it in all
+// conversation with a lift_trend chart, cited facts and a knowledge card (markers stripped, LR-23), a crisis card, chips and a proposal card. Screenshot it in all
 // five themes at 390 and 360 px, plus the dock on Today and the Hall; "Thinking…" within 150 ms.
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -1972,7 +1977,36 @@ for (const theme of themes) {
   // O4: the same effort split renders under the sparkline, static (no tap).
   if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .effort-bars')))) errors.push(`${tag}: expected the lift_trend effort bars`);
   if ((await page.locator('.esc-comp[data-component="lift_trend"] .effort-bar-col[type="button"]').count()) > 0) errors.push(`${tag}: Escobar's effort bars should not be tappable`);
-  if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
+  // ESC-NC (owner decision LR-23, 2026-09-30; stricter EV5 spec, supervisor-approved): the mock answer cites a
+  // fact and ⟦k:protein_intake⟧ and the turn raises the crisis card, yet nothing of a source or contact shows.
+  {
+    const nc = await page.evaluate(() => {
+      const sheet = document.querySelector('dialog.esc-sheet[open]');
+      const answers = [...document.querySelectorAll('.esc-answer')].map(e => e.textContent ?? '').join(' ');
+      const card = document.querySelector('.esc-escalation[data-escalation="crisis"]');
+      return {
+        cite: document.querySelectorAll('.esc-answer .esc-cite, .esc-cite, .esc-cite-wrap').length,
+        pop: document.querySelectorAll('.esc-pop').length,
+        links: sheet ? sheet.querySelectorAll('a[href^="http"], a[href^="tel:"], a[href^="mailto:"]').length : -1,
+        marker: answers.includes('⟦'),
+        stray: / [.,]/.test(answers.replace(/\s+/g, ' ')),
+        protein: answers.includes('enough protein helps you recover.'),
+        card: card ? card.textContent ?? '' : null,
+        sheetText: sheet ? sheet.innerText : '',
+      };
+    });
+    if (nc.cite) errors.push(`${tag}: ESC-NC: ${nc.cite} citation chip(s) in the answer; LR-23 shows none`);
+    if (nc.pop) errors.push(`${tag}: ESC-NC: ${nc.pop} citation popover(s); LR-23 shows none`);
+    if (nc.links !== 0) errors.push(`${tag}: ESC-NC: ${nc.links < 0 ? 'no open Escobar sheet' : `${nc.links} outside link(s) in the Escobar sheet`}`);
+    if (nc.marker) errors.push(`${tag}: ESC-NC: a ⟦…⟧ marker shows in the answer`);
+    if (nc.stray) errors.push(`${tag}: ESC-NC: a space before "." or "," where a marker was removed`);
+    if (!nc.protein) errors.push(`${tag}: ESC-NC: expected the knowledge-card sentence, marker stripped ("enough protein helps you recover.")`);
+    if (nc.card !== ESC_NC_CRISIS) errors.push(`${tag}: ESC-NC: expected the crisis card with the LR-23 copy, got ${JSON.stringify(nc.card)}`);
+    for (const [name, re] of Object.entries(ESC_NC_RE)) {
+      const hit = name === 'SAFETY_LINE_RE' ? re.exec(nc.card ?? '') : re.exec(nc.sheetText);
+      if (hit) errors.push(`${tag}: ESC-NC: ${name} matches "${hit[0]}" in the ${name === 'SAFETY_LINE_RE' ? 'crisis card' : 'Escobar sheet'}`);
+    }
+  }
   if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
   await page.setViewportSize({ width: 360, height: 780 }); await page.waitForTimeout(200);
@@ -1988,9 +2022,6 @@ for (const theme of themes) {
     if (await undo.isVisible().catch(() => false)) errors.push(`${tag}: Undo still showing after 8 s`);
   }
   if (theme === 'silent-black') {
-    await page.locator('.esc-answer .esc-cite').first().click(); await page.waitForTimeout(100);
-    if (!(await visible(page.locator('.esc-pop')))) errors.push(`${tag}: expected the citation popover`);
-    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-citation.png` });
     await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
     if (!(await visible(page.locator('.esc-proposal').getByText('Applied')))) errors.push(`${tag}: expected "Applied" on the proposal`);
     // ES-03: Undo inside its 8 s window reverses the change.

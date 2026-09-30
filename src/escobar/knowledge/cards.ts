@@ -34,8 +34,9 @@ export function searchCards(query: string, limit = 4): KnowledgeCard[] {
   return scored.slice(0, limit).map(x => x.c);
 }
 
-export function lookupKnowledge(input: { query?: string; ids?: string[] }): { cards: Array<Omit<KnowledgeCard, 'tags'>> } {
+/** Sources stay in knowledge.json as data; they never reach the model or the drawer (owner, LR-23). */
+export function lookupKnowledge(input: { query?: string; ids?: string[] }): { cards: Array<Omit<KnowledgeCard, 'tags' | 'sources'>> } {
   const byId = (input.ids ?? []).map(id => CARD_BY_ID[id]).filter((c): c is KnowledgeCard => !!c);
   const found = byId.length ? byId : searchCards(input.query ?? '', 4);
-  return { cards: found.slice(0, 4).map(({ tags: _t, ...c }) => c) };
+  return { cards: found.slice(0, 4).map(({ tags: _t, sources: _s, ...c }) => c) };
 }
