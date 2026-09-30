@@ -9,12 +9,14 @@
 //   and puts back the callout golden never cleared;
 // - a close-up's markup (and its CSS, split off with it) loads on its first open (plan 2.5), so the first open waits for them;
 // - Android back closes the close-up before the sheet (`registerSheet('howto-zoom')`), and Escape does too;
-// - clicks are delegated on the sheet panel for the exact set golden B binds, so later sections' "Show me" work.
+// - clicks are delegated on the sheet panel for this card's controls; other sections ask through events.ts
+//   (`ht:zoom-open`), and the close-ups' "This is usually why" and the feel chip tell Feel the same way.
 import { useLayoutEffect } from 'preact/hooks';
 import { registerSheet, unregisterSheet } from '@/ui/sheetStack';
 import type { PlateApi, PlateSnapshot } from '../usePlateState';
 import { usePlateApi } from '../PlateView';
-import { ZOOM_KINDS, feelHooks, type ZoomKind } from './registry';
+import { emit, listen } from '../events';
+import { ZOOM_KINDS, type ZoomKind } from './registry';
 
 export const ZOOM_SHEET_ID = 'howto-zoom';
 
@@ -138,16 +140,12 @@ export function createZoomHost(api: PlateApi, setup: ZoomSetup): ZoomHost {
   // The controls golden B binds, delegated on the sheet panel.
   on(root, 'click', e => {
     const t = e.target as Element;
-    if (t.closest('.zx-chip[data-feel]')) { feelHooks.chip?.(); return; }
+    const feel = t.closest<HTMLElement>('.zx-chip[data-feel]');
+    if (feel) { emit(feel, 'ht:feel-chip', {}); return; }
     const chip = t.closest<HTMLElement>('.zx-chip[data-zoom], .ht-also-btn');
     if (chip) { void open(chip.dataset.zoom!, chip); return; }
-    const show = t.closest<HTMLElement>('.fr-show, .st-show');
-    if (show && show.dataset.zoom) {
-      const k = show.dataset.zoom;
-      if (openKey !== k) void open(k, show);
-      else { const p = panelOf(k)!; p.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' }); p.querySelector<HTMLElement>('.zx-h')!.focus({ preventScroll: true }); }
-      return;
-    }
+    const hm = t.closest<HTMLElement>('.hm-show');   // this card's "Show me" (the handling mistakes); others emit their own
+    if (hm) { emit(hm, 'ht:zoom-open', { key: hm.dataset.zoom!, opener: hm }); return; }
     const p = t.closest<HTMLElement>('.zx');
     if (!p || !slot.contains(p)) return;
     if (t.closest('.zx-close')) { close(false); return; }
@@ -160,8 +158,13 @@ export function createZoomHost(api: PlateApi, setup: ZoomSetup): ZoomHost {
       return;
     }
     const fr = t.closest<HTMLElement>('[data-feelrow]');
-    if (fr) feelHooks.openRow?.(fr.dataset.feelrow!);
+    if (fr) emit(fr, 'ht:feel-row', { row: fr.dataset.feelrow! });
   });
+  // "Show me" from any section (events.ts): golden B opens the close-up, or brings the open one into view.
+  off.push(listen(dialog ?? root, 'ht:zoom-open', ({ key: k, opener: from }) => {
+    if (openKey !== k) void open(k, from);
+    else { const p = panelOf(k)!; p.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' }); p.querySelector<HTMLElement>('.zx-h')!.focus({ preventScroll: true }); }
+  }));
   // Golden setMode(): the Mistake view's "Also check your wrist" line shows only while Mistake is on.
   const also = root.querySelector<HTMLElement>('.ht-also');
   if (also && btnMis && typeof MutationObserver !== 'undefined') {

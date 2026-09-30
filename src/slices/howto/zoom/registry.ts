@@ -26,6 +26,3 @@ export const ZOOM_KINDS: Partial<Record<ZoomKind, ZoomLoader>> = {
 
 /** Whether a kind has a loader (a chip shows only for a registered kind, HT6-A3). */
 export const hasZoomKind = (kind: string): kind is ZoomKind => Object.prototype.hasOwnProperty.call(ZOOM_KINDS, kind) && !!ZOOM_KINDS[kind as ZoomKind];
-
-/** Set by the feel section (HT-8): the "Where to feel it" chip, and a close-up's "This is usually why" link. */
-export const feelHooks: { chip?: () => void; openRow?: (row: string) => void } = {};
