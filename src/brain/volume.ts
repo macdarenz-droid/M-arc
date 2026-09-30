@@ -4,9 +4,10 @@ import { MUSCLE_IDS, type MuscleId } from '@/data/muscles';
 import { VOLUME_BANDS, VOLUME_OFFSET } from '@/data/volume';
 import { weeklyMuscleSets, trainingLevels } from './exposure';
 import { addDays } from '@/core/dates';
+import { DEFAULT_WEEK_SESSIONS, fullWeekSessions, type WeekPlan } from './weekly';
 
-/** A week with at least this many sessions is a full training week (COACHING-PLAN volume row). */
-export const FULL_WEEK_SESSIONS = 3;
+/** A week with at least this many sessions is a full training week when nothing is planned (COACHING-PLAN volume row). */
+export const FULL_WEEK_SESSIONS = DEFAULT_WEEK_SESSIONS;
 
 export function volumeBands(levelIndex: number, muscle: MuscleId): [number, number] {
   const [lo, hi] = VOLUME_BANDS[Math.max(0, Math.min(levelIndex, VOLUME_BANDS.length - 1))]!;
@@ -35,16 +36,18 @@ export interface MuscleVolumeStatus {
 
 /**
  * Volume per muscle vs. the level's band, judged on completed weeks (BR-07): 'under' only after
- * two completed full weeks (3+ sessions) below the band, 'over' when this or last week is above it, 'unknown' with
+ * two completed full weeks below the band, 'over' when this or last week is above it, 'unknown' with
  * no work in four weeks. A Monday no longer reads every muscle as under.
+ * ADAPT-4 (C-3): a full week is the user's planned sessions for that week (`plan`), 3 when nothing is set, floor 2.
+ * ADAPT-5 (C-2): `trainingSince` (Profile) seeds the level, so a stated training age sets the band.
  */
-export function muscleVolumeStatus(sessions: Session[], today: string, custom: Exercise[] = []): MuscleVolumeStatus[] {
+export function muscleVolumeStatus(sessions: Session[], today: string, custom: Exercise[] = [], plan?: WeekPlan, trainingSince?: string): MuscleVolumeStatus[] {
   const weekly = weeklyMuscleSets(sessions, today, 4, custom);
-  const levels = trainingLevels(sessions, custom);
+  const levels = trainingLevels(sessions, custom, { trainingSince, today });
   // QA-R3a-1/5: a past week only counts toward 'under' when it was a full training week
-  // (3+ sessions). A first week, or the first week back, has empty weeks behind it.
+  // (the planned sessions, ADAPT-4). A first week, or the first week back, has empty weeks behind it.
   const sessionsIn = (week: string) => sessions.filter(x => x.day >= week && x.day < addDays(week, 7)).length;
-  const full = [1, 2].map(i => (weekly[i] ? sessionsIn(weekly[i]!.week) >= FULL_WEEK_SESSIONS : false));
+  const full = [1, 2].map(i => (weekly[i] ? sessionsIn(weekly[i]!.week) >= fullWeekSessions(plan, weekly[i]!.week) : false));
   return MUSCLE_IDS.map(muscle => {
     const w = [0, 1, 2, 3].map(i => weekly[i]?.sets[muscle] ?? 0);
     const [thisWeekSets, lastWeekSets, twoWeeksAgo] = [w[0]!, w[1]!, w[2]!];

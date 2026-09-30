@@ -1,6 +1,6 @@
 /**
  * Weekly review (6.13 "weekly review" cadence): generated on the first app
- * open of a new week, once at least 5 days were logged in the window.
+ * open of a new week, once the week reached the user's planned sessions (ADAPT-4).
  * Each function below is one catalogue row; weeklyReviewInsights() assembles
  * the ones with enough evidence into Insight v2 objects.
  */
@@ -16,6 +16,8 @@ import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '
 import { isFlatTotal, plateauSeries, plateauStatus, sinceLastBreak, trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import { withoutGated, type Insight, type Sharing } from './rules';
+import { fullWeekSessions, type WeekPlan } from '../weekly';
+import { muscleVolumeStatus } from '../volume';
 
 /** Hard sets per muscle for the calendar week containing `today`: the shared count without easy sets (BR-16). */
 export function hardSetsThisWeek(sessions: Session[], today: string, custom: Exercise[] = []): Partial<Record<MuscleId, number>> {
@@ -167,57 +169,74 @@ export interface WeeklyReviewInput {
   deload?: Deload | null;
 }
 
-/** Days logged in a calendar week before the weekly review appears. */
-export const WEEKLY_REVIEW_DAYS = 5;
+/**
+ * ADAPT-4 (C-5): the week the review covers, as its Monday: this week once it reached the planned
+ * sessions, else the week just ended when that one did, else null (no review yet).
+ * Planned = the schedule minus days off, else Profile.plannedDays, else 3; never below 2.
+ */
+export function reviewWeek(sessions: Session[], today: string, plan?: WeekPlan): string | null {
+  const count = (start: string) => sessions.filter(s => s.day >= start && s.day < addDays(start, 7)).length;
+  const thisWeek = weekStart(today);
+  const lastWeek = addDays(thisWeek, -7);
+  if (count(thisWeek) >= fullWeekSessions(plan, thisWeek)) return thisWeek;
+  if (count(lastWeek) >= fullWeekSessions(plan, lastWeek)) return lastWeek;
+  return null;
+}
 
-/** True once >=5 distinct days were logged within the calendar week containing `today`. */
-export function weekHasEnoughData(sessions: Session[], today: string): boolean {
-  const start = weekStart(today);
-  const end = addDays(start, 7);
-  const days = new Set(sessions.filter(s => s.day >= start && s.day < end).map(s => s.day));
-  return days.size >= WEEKLY_REVIEW_DAYS || sessions.filter(s => s.day >= start && s.day < end).length >= WEEKLY_REVIEW_DAYS;
+/** True once this week or the week just ended reached the planned sessions (ADAPT-4, was 5 logged days). */
+export function weekHasEnoughData(sessions: Session[], today: string, plan?: WeekPlan): boolean {
+  return reviewWeek(sessions, today, plan) != null;
 }
 
 export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insight[] {
   const { sessions, today, custom, schedule, goal, weightLog, trainingAgeMonths, exerciseIds } = input;
   const out: Insight[] = [];
-  const start = weekStart(today);
+  // ADAPT-4: the week-bound rows read the reviewed week (this week, or the week just ended).
+  const plan: WeekPlan = { schedule: schedule as WeekPlan['schedule'], daysOff: input.daysOff ?? [], plannedDays: input.profile.plannedDays };
+  const start = reviewWeek(sessions, today, plan) ?? weekStart(today);
+  const week = start === weekStart(today) ? 'this week' : 'last week';
   const weekSessions = sessions.filter(s => s.day >= start && s.day < addDays(start, 7));
   const g = GOAL_BY_ID[goal];
 
   // Sets per muscle vs band
-  const hardSets = hardSetsThisWeek(sessions, today, custom);
+  const hardSets = hardSetsThisWeek(sessions, start, custom);
   const trained = MUSCLE_IDS.filter(m => (hardSets[m] ?? 0) > 0).sort((a, b) => (hardSets[b] ?? 0) - (hardSets[a] ?? 0));
-  if (trained.length && weekSessions.length >= 3) {
-    const low = trained.filter(m => volumeBand(hardSets[m]!) === 'low');
-    if (low.length) {
-      const m = low[0]!;
+  if (trained.length && weekSessions.length >= fullWeekSessions(plan, start)) {
+    // ADAPT-5 (C-4): one band everywhere. The reviewed week is judged by muscleVolumeStatus, as Body
+    // and the coach judge it (level band, seeded by training age; 'under' only after two full weeks).
+    const status = new Map(muscleVolumeStatus(sessions, addDays(start, 7), custom, plan, input.profile.trainingSince).map(r => [r.muscle, r]));
+    const flagged = trained.filter(m => status.get(m)?.status === 'under');
+    const over = trained.filter(m => status.get(m)?.status === 'over');
+    const m = flagged[0] ?? over[0];
+    if (m) {
+      const row = status.get(m)!;
+      const under = row.status === 'under';
       out.push({
         id: `weekly:volume:${m}`, category: 'consistency', priority: 220, cadence: 'weekly', kind: 'plan',
-        title: `${muscleLabel(m)} is under its usual range`,
-        noticed: `${trained.map(x => `${muscleLabel(x)} ${Math.round(hardSets[x]!)}`).join(', ')} hard sets this week.`,
-        means: `${muscleLabel(m)} sits under the range that tends to drive growth for most lifters.`,
-        action: `Add one more hard set for ${muscleLabel(m).toLowerCase()} on your next session that trains it.`,
+        title: `${muscleLabel(m)} is ${under ? 'under' : 'over'} its usual range`,
+        noticed: `${trained.map(x => `${muscleLabel(x)} ${Math.round(hardSets[x]!)}`).join(', ')} hard sets ${week}; ${muscleLabel(m).toLowerCase()} range ${row.band[0]}–${row.band[1]}.`,
+        means: under ? `${muscleLabel(m)} has sat under your range for two full weeks, which can slow progress on it.` : 'Above your usual range: more sets now bring smaller gains and cost more recovery.',
+        action: under ? `Add one more hard set for ${muscleLabel(m).toLowerCase()} on your next session that trains it.` : `Trim a set or two for ${muscleLabel(m).toLowerCase()} next week.`,
         muscle: m,
-        evidence: { n: weekSessions.length, window: 'this week', confidence: weekSessions.length >= 4 ? 'medium' : 'low' },
+        evidence: { n: weekSessions.length, window: week, confidence: weekSessions.length >= 4 ? 'medium' : 'low' },
       });
     }
   }
 
   // Frequency per muscle (strength goal: goal lift with high weekly sets but freq 1)
   for (const m of trained) {
-    const freq = frequencyThisWeek(sessions, today, m, custom);
+    const freq = frequencyThisWeek(sessions, start, m, custom);
     const sets = hardSets[m] ?? 0;
     const threshold = g.id === 'strength' ? 8 : 12;
     if (freq === 1 && sets >= threshold) {
       out.push({
         id: `weekly:frequency:${m}`, category: 'consistency', priority: 180, cadence: 'weekly', kind: 'tip',
         title: `${muscleLabel(m)} all landed on one day`,
-        noticed: `All ${Math.round(sets)} ${muscleLabel(m).toLowerCase()} sets this week were in a single session.`,
+        noticed: `All ${Math.round(sets)} ${muscleLabel(m).toLowerCase()} sets ${week} were in a single session.`,
         means: 'Splitting the same volume across two sessions usually keeps set quality higher late in the session.',
         action: `Move some ${muscleLabel(m).toLowerCase()} work to a second day next week.`,
         muscle: m,
-        evidence: { n: 1, window: 'this week', confidence: 'low' },
+        evidence: { n: 1, window: week, confidence: 'low' },
       });
       break;
     }
@@ -230,10 +249,10 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
     out.push({
       id: 'weekly:failure-share', category: 'progress', priority: 170, cadence: 'weekly', kind: 'tip',
       title: `About ${Math.round(fShare * 100)}% of sets were max effort`,
-      noticed: `${Math.round(fShare * 100)}% of your working sets this week were rated max.`,
+      noticed: `${Math.round(fShare * 100)}% of your working sets ${week} were rated max.`,
       means: 'Training to failure adds at most a little extra growth and no extra strength, for a lot more fatigue.',
       action: 'Save max effort for the last set of an exercise, not every set.',
-      evidence: { n: workingCount, window: 'this week', confidence: 'medium' },
+      evidence: { n: workingCount, window: week, confidence: 'medium' },
     });
   }
 
@@ -323,25 +342,25 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   }
 
   // Rep-range mix vs goal
-  const mix = repMixShares(sessions, today, custom);
+  const mix = repMixShares(sessions, start, custom);
   if (mix.n >= 8) {
     if (g.id === 'strength' && mix.low < 0.15) {
       out.push({
         id: 'weekly:rep-mix', category: 'progress', priority: 150, cadence: 'weekly', kind: 'tip',
-        title: 'Few heavy sets this week',
+        title: `Few heavy sets ${week}`,
         noticed: `Only ${Math.round(mix.low * 100)}% of main-lift sets were 1 to 5 reps.`,
         means: 'Heavy sets are what drives 1RM most directly for a strength goal.',
         action: 'Add one 3 to 5 rep top set on each main lift.',
-        evidence: { n: mix.n, window: 'this week', confidence: 'medium' },
+        evidence: { n: mix.n, window: week, confidence: 'medium' },
       });
     } else if (g.id !== 'strength' && g.id !== 'strength_muscle' && mix.high > 0.7 && mix.easyHighShare / Math.max(mix.high, 0.001) > 0.5) {
       out.push({
         id: 'weekly:rep-mix', category: 'progress', priority: 150, cadence: 'weekly', kind: 'tip',
-        title: 'Mostly high-rep, easy sets this week',
+        title: `Mostly high-rep, easy sets ${week}`,
         noticed: `${Math.round(mix.high * 100)}% of main-lift sets were 13+ reps, and most of those were rated easy.`,
         means: 'High reps work fine for growth, but sets need to be closer to effort to count fully.',
         action: 'Push the last set or two of each main lift closer to ideal or max effort.',
-        evidence: { n: mix.n, window: 'this week', confidence: 'medium' },
+        evidence: { n: mix.n, window: week, confidence: 'medium' },
       });
     }
   }

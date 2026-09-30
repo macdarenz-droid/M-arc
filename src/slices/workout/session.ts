@@ -2,7 +2,7 @@
  * The live workout. One active session at a time, stored in state so it
  * survives app restarts. All mutations go through `update` so they persist.
  */
-import type { ActiveSession, AppState, Exercise, LoggedSet, RecoveryModel, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
+import type { ActiveSession, AppState, Exercise, LoggedSet, PlannedTarget, RecoveryModel, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
 import { newId } from '@/core/models';
 import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
@@ -240,6 +240,14 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   return true;
 }
 
+const withoutTarget = <T extends { target?: unknown }>({ target: _t, ...rest }: T): Omit<T, 'target'> => rest;
+
+/** LT-3 (D-A4 a): keeps set 1's target as shown at its commit, once per entry, so the verdict and the next session never recompute it. */
+export function setEntryTarget(entryId: string | undefined, target: PlannedTarget): void {
+  if (!entryId || !(target.kg > 0) || !(target.reps > 0)) return;
+  patchActive(a => (a.entries.some(e => e.id === entryId && !e.target) ? { ...a, entries: a.entries.map(e => (e.id === entryId ? { ...e, target: { kg: target.kg, reps: target.reps } } : e)) } : a));
+}
+
 export function commitSet(entry: number, index: number): boolean {
   const set = active()?.entries[entry]?.sets[index];
   if (!set) return false;
@@ -356,7 +364,8 @@ export function insertEntry(sessionId: string, at: number, entry: ActiveSession[
 export function substituteEntry(entry: number, ex: Exercise): void {
   // QA3-8b: keeps the slot's original planned exerciseId (through any earlier substitution too),
   // so templateFromSession can find it by lineage even after a reorder or another substitution.
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(e.sets.length), plannedId: e.plannedId ?? e.exerciseId })) }));
+  // LT-3: the stored target belongs to the replaced lift, so it goes with it.
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...withoutTarget(e), id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(e.sets.length), plannedId: e.plannedId ?? e.exerciseId })) }));
 }
 
 export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {
@@ -515,8 +524,11 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
   const timing = finishTiming(a, nowMs);
   const exercises = a.entries
     .filter(e => !e.skipped)
-    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}) }))
+    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}), ...(e.target ? { target: e.target } : {}) }))
     .filter(e => e.sets.length);
+  // BUG-28: nothing logged, so there is nothing to save. End the session exactly like a discard
+  // (history untouched, today's Escobar override kept) instead of saving an empty session.
+  if (!exercises.length) { discardSession(); return null; }
   // BUG-19 (DATES-F3): only working sets that were committed carry timing evidence. A pre-filled
   // warm-up or a set that was typed but never committed has no time of its own.
   const workingSets = exercises.flatMap(e => e.sets).filter(s => s.kind !== 'warmup' && !!s.at);

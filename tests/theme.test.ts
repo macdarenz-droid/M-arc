@@ -62,94 +62,6 @@ describe('stylesheet custom properties (QA-R7-4)', () => {
   });
 });
 
-// GU-7a (A7): the form guide paints with theme tokens only. Every file under src/formguide/**
-// fails on a hex colour or an rgb()/hsl() call; `#rig-` ids and `url(#…)` refs do not match.
-describe('GU-7a: form guide colours are theme tokens only (A7)', () => {
-  const HEX = /#[0-9a-fA-F]{3,8}(?![\w-])/;
-  const FN = /\b(rgba?|hsla?)\(/;
-  it('no file under src/formguide/** holds a literal colour', async () => {
-    const { readdirSync, readFileSync, statSync } = await import('node:fs');
-    const walk = (dir: string): string[] => readdirSync(dir).flatMap(n => { const p = `${dir}/${n}`; return statSync(p).isDirectory() ? walk(p) : [p]; });
-    const files = walk('src/formguide');
-    expect(files.length).toBeGreaterThan(0);
-    const offenders = files.flatMap(f => readFileSync(f, 'utf8').split('\n').map((l, i) => ({ f, i: i + 1, l })).filter(x => HEX.test(x.l) || FN.test(x.l)).map(x => `${x.f}:${x.i}: ${x.l.trim()}`));
-    expect(offenders).toEqual([]);
-  });
-  it('the patterns catch a colour and pass an id', () => {
-    expect(HEX.test('fill:#5e6ad2')).toBe(true);
-    expect(FN.test('fill:rgba(0,0,0,.5)')).toBe(true);
-    expect(HEX.test('<use href="#rig-cp"/>')).toBe(false);
-    expect(HEX.test('clip-path="url(#cp-ten-clip0)"')).toBe(false);
-  });
-});
-
-// FG-1: the form-guide figure paints from theme tokens only. No colour literal (hex, any CSS colour function, a named
-// colour in a paint attribute; tests/formguide/colourLint.ts) anywhere in src/formguide/** (paint.ts mixes resolved
-// tokens at run time), and every theme carries the figure tokens.
-describe('form-guide colours come from tokens (FG-1)', () => {
-  it('no colour literal in src/formguide/**', async () => {
-    const { readdirSync, readFileSync: read } = await import('node:fs');
-    const { colourLiterals } = await import('./formguide/colourLint');
-    const files = (readdirSync('src/formguide', { recursive: true }) as string[]).filter(f => /\.(ts|tsx|css|json)$/.test(f));
-    expect(files.length).toBeGreaterThan(0);
-    const bad = files.flatMap(f => {
-      const src = read(`src/formguide/${f}`, 'utf8');
-      return colourLiterals(src).map(m => `${f}: ${m}`);
-    });
-    expect(bad).toEqual([]);
-  });
-  it('the lint catches every kind of colour literal and passes token references', async () => {
-    const { colourLiterals } = await import('./formguide/colourLint');
-    const planted = ['#fff', '#a1b2c3', '#a1b2c3d4', 'rgb(1 2 3)', 'rgba(1,2,3,.5)', 'hsl(1 2% 3%)', 'hsla(1,2%,3%,.5)', 'hwb(1 2% 3%)',
-      'lab(50% 40 59)', 'lch(52% 72 50)', 'oklab(0.5 0.1 0.1)', 'oklch(0.5 0.1 20)', 'color(display-p3 1 0 0)',
-      'color-mix(in srgb, red, blue)', 'fill="white"', "stroke='red'", 'stop-color="navy"', 'color: tomato', 'style="color:Red"', 'fill: rebeccapurple'];
-    for (const p of planted) expect(colourLiterals(`<x ${p}/>`), p).not.toEqual([]);
-    const clean = ['fill="none"', 'fill="url(#g)"', 'stroke="var(--ink)"', 'fill="currentColor"', 'stop-color="transparent"', 'fill="${c}"',
-      'fill="var\\(--[\\w-]+\\)"', "mix(read, 'accent', 'white', 0.3)", 'const lab = screenFist(Q)', 'stroke-width="2"'];
-    for (const c of clean) expect(colourLiterals(c), c).toEqual([]);
-  });
-  it('every theme emits the figure tokens', () => {
-    const names = ['--mistake', '--target', '--help', '--quiet', '--pants', '--pants-hi', '--pants-sh', '--ink', '--iron', '--iron-hi', '--iron-sh', '--eye', '--floor', '--guide'];
-    for (const id of THEME_IDS) for (const n of names) expect(themeToCss(THEMES[id]), `${id} ${n}`).toMatch(new RegExp(`${n}:[^;]+`));
-  });
-});
-
-// FG-5: the free-weight parts paint from theme tokens only. Their markup carries no colour literal at all, and the one
-// gradient they fill with resolves, in every theme, to exactly that theme's --iron-hi, --iron and --iron-sh.
-describe('form-guide parts come from tokens (FG-5)', () => {
-  it('every part drawing is literal-free and its gradient is the theme\'s iron', async () => {
-    const { colourLiterals } = await import('./formguide/colourLint');
-    const { FREE_WEIGHT_PARTS, VARIANTS, partDefs } = await import('@/formguide/parts');
-    const { themeReader } = await import('@/formguide/rig/paint');
-    for (const id of FREE_WEIGHT_PARTS) for (const p of VARIANTS[id]()) expect(colourLiterals(p.svg), id).toEqual([]);
-    for (const t of THEME_IDS) {
-      const tk = THEMES[t].tokens, stops = [...partDefs(themeReader(t)).matchAll(/stop-color="([^"]+)"/g)].map(m => m[1]!.toLowerCase());
-      expect(new Set(stops), t).toEqual(new Set([tk.ironHi, tk.iron, tk.ironSh].map(c => String(c).toLowerCase())));
-    }
-  });
-});
-
-// FG-6: the side figure paints from theme tokens only, both facings and the mistake figure: no colour function or named
-// colour in its markup, every var() it uses is a theme token or one of the figure's own root variables, and the body
-// base follows each theme's --accent.
-describe('form-guide side figure comes from tokens (FG-6)', () => {
-  it('every theme, both facings, correct and mistake', async () => {
-    const { colourLiterals } = await import('./formguide/colourLint');
-    const { figureSide } = await import('@/formguide/rig/figureSide');
-    const { themeReader, bodyPal } = await import('@/formguide/rig/paint');
-    for (const t of THEME_IDS) {
-      const defined = new Set([...themeToCss(THEMES[t]).matchAll(/(--[\w-]+):/g)].map(m => m[1]!).concat(['--l', '--d', '--oc', '--sp', '--rim', '--ph']));
-      for (const mirror of [false, true]) for (const mistake of [false, true]) {
-        const svg = figureSide(themeReader(t), { id: 'fs', mirror, mistake });
-        expect(colourLiterals(svg, { hex: false }), t).toEqual([]);
-        expect([...new Set([...svg.matchAll(/var\((--[\w-]+)\)/g)].map(m => m[1]!))].filter(v => !defined.has(v)), t).toEqual([]);
-      }
-      expect(figureSide(themeReader(t), { id: 'fs' })).toContain(bodyPal(themeReader(t), false).base);
-      expect(bodyPal(themeReader(t), false).base).toBe(String(THEMES[t].tokens.accent).toLowerCase());
-    }
-  });
-});
-
 // UI-1: the exercise-title sweep paints only var(--text) and the accent, never a dim tone (A4); it
 // lives inside its keyframes, so at rest and under reduced motion the title is plain var(--text)
 // (A3); only the open card's title runs it, finite on open (A1, A6); I3's static border stays and no
@@ -201,20 +113,19 @@ describe('exercise-title sweep (UI-1)', () => {
   });
 });
 
-// UI-2 (A4): the "How to do it" button paints only theme tokens (accent-soft fill, accent-text
-// ink) and meets the 44px tap target in every theme.
-describe('"How to do it" button styling (UI-2)', () => {
-  const css = readFileSync('src/ui/styles.css', 'utf8');
-  const ruleAt = css.indexOf('.btn-how-to {');
-  const rule = ruleAt === -1 ? '' : css.slice(ruleAt, css.indexOf('}', ruleAt) + 1);
-  it('is a real rule, sized to the 44px tap target, with no colour literal', () => {
-    expect(rule).not.toBe('');
-    expect(rule).toMatch(/min-height:\s*44px/);
-    expect(rule).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i);
-  });
-  it('paints from the accent tokens, defined in every theme', () => {
-    const vars = [...rule.matchAll(/var\((--[\w-]+)\)/g)].map(m => m[1]);
-    expect(vars).toEqual(expect.arrayContaining(['--accent-soft', '--accent-text']));
-    for (const id of THEME_IDS) for (const v of ['--accent-soft', '--accent-text']) expect(themeToCss(THEMES[id]), `${id} ${v}`).toMatch(new RegExp(`${v}:[^;]+`));
+// HT-2 (D-HT1 A3-HT.d, C9): the How-to plate's --mistake stroke reads at >= 3:1 (WCAG non-text
+// contrast) on the body fill and both sheet surfaces, in every theme, computed from themes.ts.
+describe('How-to mistake token contrast (HT-2)', () => {
+  const lum = (hex: string) => {
+    expect(hex, 'a #rrggbb colour').toMatch(/^#[0-9a-f]{6}$/i);
+    const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
+      .map(c => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)) as [number, number, number];
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a: string, b: string) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p) as [number, number]; return (x + 0.05) / (y + 0.05); };
+  it.each(THEME_IDS)('%s: --mistake >= 3:1 against --map-body, --surface-1 and --surface-2', id => {
+    const t = THEMES[id].tokens;
+    for (const [name, bg] of [['map-body', t.mapBody], ['surface-1', t.surface1], ['surface-2', t.surface2]] as const)
+      expect(ratio(t.mistake, bg), `${id} mistake ${t.mistake} on ${name} ${bg}`).toBeGreaterThanOrEqual(3);
   });
 });

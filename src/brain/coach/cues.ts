@@ -77,6 +77,8 @@ export function reasonKeyFor(mode: string, confidence: string, exerciseMode?: st
   if (mode === 'reduce') return 'reduce';
   if (mode === 'reentry') return 'reentry';
   if (mode === 'reps') return 'build_reps';
+  // LT-3: an earn keeps the load and works the reps up to the next rung.
+  if (mode === 'earn') return 'build_reps';
   return null;
 }
 

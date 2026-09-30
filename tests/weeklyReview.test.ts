@@ -89,18 +89,22 @@ describe('repMixShares', () => {
 });
 
 describe('weekHasEnoughData', () => {
-  it('needs 5+ days logged in the calendar week', () => {
+  // ADAPT-4: the approved COACHING-PLAN §7 P2-C change replaced "5+ logged days" with the planned sessions (3 when nothing is set).
+  it('needs the planned sessions (3 when nothing is set) in this week or the week just ended', () => {
     const days = ['2026-09-14', '2026-09-15', '2026-09-16', '2026-09-17', '2026-09-18'];
     const s = days.map(d => session(d, [{ id: bench, sets: sets(60, 8) }]));
     expect(weekHasEnoughData(s, '2026-09-18')).toBe(true);
-    expect(weekHasEnoughData(s.slice(0, 3), '2026-09-18')).toBe(false);
+    expect(weekHasEnoughData(s.slice(0, 2), '2026-09-18')).toBe(false);
   });
 });
 
 describe('weeklyReviewInsights', () => {
   it('produces at least one insight for a week with low chest volume', () => {
     // Two light chest sessions plus a third (legs) session so the week has 3+ sessions but chest stays under band.
+    // ADAPT-5 (V3, C-4): the review uses Body's band, where 'under' needs two full weeks, so the week before repeats it.
     const sessions = [
+      ...['2026-09-07', '2026-09-09'].map(d => session(d, [{ id: bench, sets: sets(60, 8, 'ideal', 1) }])),
+      session('2026-09-11', [{ id: 'lib_leg_press', sets: sets(100, 8, 'ideal', 3) }]),
       session('2026-09-14', [{ id: bench, sets: sets(60, 8, 'ideal', 1) }]),
       session('2026-09-16', [{ id: bench, sets: sets(60, 8, 'ideal', 1) }]),
       session('2026-09-18', [{ id: 'lib_leg_press', sets: sets(100, 8, 'ideal', 3) }]),

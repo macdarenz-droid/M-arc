@@ -112,7 +112,7 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'volume_bars': {
       const muscles = Array.isArray(params.muscles) ? (params.muscles as string[]).filter(m => MUSCLE_IDS.includes(m as MuscleId)) as MuscleId[] : undefined;
       intIn(params.weeks, 1, 12, 1, 'weeks');
-      const rows = muscleVolumeStatus(s.sessions, ctx.today, s.customExercises).filter(r => (muscles?.length ? muscles.includes(r.muscle) : r.status !== 'unknown')).sort((a, b) => b.thisWeekSets - a.thisWeekSets).slice(0, 12);
+      const rows = muscleVolumeStatus(s.sessions, ctx.today, s.customExercises, { schedule: s.schedule, daysOff: s.daysOff, plannedDays: s.profile.plannedDays }, s.profile.trainingSince).filter(r => (muscles?.length ? muscles.includes(r.muscle) : r.status !== 'unknown')).sort((a, b) => b.thisWeekSets - a.thisWeekSets).slice(0, 12);
       return { bars: rows.map(r => ({ muscle: r.muscle, label: muscleLabel(r.muscle), sets: r.thisWeekSets, lastWeekSets: r.lastWeekSets, band: r.band, status: r.status })), empty: rows.length ? undefined : 'No sets logged this week yet.' };
     }
     case 'readiness_gauge': {
@@ -162,14 +162,14 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'plan_week': {
       if (params.draft != null) {
         const d = planDraftArg(params.draft, ctx);
-        const ev = evaluatePlan(d, { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today });
+        const ev = evaluatePlan(d, { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today, trainingSince: s.profile.trainingSince });
         return { source: 'draft', days: WEEKDAYS.map(day => { const sp = d.splits.find(x => x.ref === d.schedule[day]); return { day, split: sp?.name ?? null, sets: sp ? sp.exercises.reduce((a, e) => a + e.sets, 0) : 0, muscles: sp ? [...new Set(sp.exercises.flatMap(e => exerciseOf(ctx, e.exerciseId)?.primary ?? []))].slice(0, 4) : [] }; }), sessionMinutes: ev.sessionMinutes };
       }
       return { source: 'current', days: WEEKDAYS.map(day => { const sp = s.splits.find(x => x.id === s.schedule[day]); return { day, split: sp?.name ?? null, sets: sp ? sp.exercises.reduce((a, e) => a + e.sets, 0) : 0, muscles: sp ? [...new Set(sp.exercises.flatMap(e => exerciseOf(ctx, e.exerciseId)?.primary ?? []))].slice(0, 4) : [] }; }) };
     }
     case 'plan_evaluation': {
       const d = planDraftArg(params.draft, ctx);
-      const ev = evaluatePlan(d, { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today });
+      const ev = evaluatePlan(d, { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today, trainingSince: s.profile.trainingSince });
       const rows = (Object.entries(ev.weeklySets) as Array<[MuscleId, { sets: number; band: [number, number]; status: string }]>).sort((a, b) => b[1].sets - a[1].sets).slice(0, 12);
       return { muscles: rows.map(([m, v]) => ({ muscle: m, label: muscleLabel(m), sets: v.sets, band: v.band, status: v.status })), balance: ev.balance, conflicts: ev.recoveryConflicts, issues: ev.issues.slice(0, 8), sessionMinutes: ev.sessionMinutes };
     }

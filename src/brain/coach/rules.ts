@@ -9,18 +9,18 @@ import type { LoadUnit } from '@/core/models';
 import { kgToDisplay } from '@/core/units';
 import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
-import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
+import { DEFAULT_GOAL, GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { formatHours, weekdayOf, daysBetween, addDays, weekStart, trainedTodaySessions, nextScheduled, WEEKDAY_LABEL } from '@/core/dates';
 import { muscleDoses, recoveryAt, recoveryStatus, trainingAgeMonths, type MuscleRecovery } from '../recovery';
 import { exerciseHistory, isActive, modeOf } from '../history';
 import { PLATEAU_MIN_SPAN_DAYS, plateauStatus, plateauWindow } from '../trend';
 import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
-import { weekSummary, daysSinceLastSession } from '../weekly';
-import { isWorkingSet, weeklyMuscleSets } from '../exposure';
-import { muscleVolumeStatus } from '../volume';
+import { weekSummary, daysSinceLastSession, type WeekPlan } from '../weekly';
+import { effectiveSetsByMuscle, effortLabel, isWorkingSet, trainingLevels, weeklyMuscleSets } from '../exposure';
+import { muscleVolumeStatus, volumeBands } from '../volume';
 import { findExercise } from '@/core/exercises';
-import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
+import { e1rmTrend, failureShare, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { DRIFT, effortMismatch, hrMax, restingHr, sessionDrift } from '../heart';
 import { readiness, readinessWithInputs, READINESS_INPUT_LABEL, LOAD_DRIVER, type ReadinessBand, type ReadinessInputKey, type ReadinessResult } from '../readiness';
@@ -77,7 +77,8 @@ export interface CoachContext {
   now: number;
   profileHistory: ProfileChange[];
   profile: Profile;
-  /** ADAPT-3 (E-8): the training goal, for each lift's rep range. Unset reads every goal's range (ADAPT-5 wires it). */
+  /** ADAPT-3 (E-8): the training goal, for each lift's rep range; unset reads every goal's range. ADAPT-5 wires it
+   * (AppState.goal) and its plateau lever reads DEFAULT_GOAL when unset (E-2). */
   goal?: GoalId;
   healthDays: DailyHealth[];
   checkIns: CheckIn[];
@@ -89,6 +90,62 @@ export interface CoachContext {
   unit?: LoadUnit;
   /** A stored session's 5-second heart series (heartStore), for heart.drift. Absent: that rule stays quiet. */
   heartSeries?: (sessionId: string) => Array<[number, number]>;
+  /** ADAPT-4: days the user marked off; the gap and green-day rules skip them. */
+  daysOff?: string[];
+  /** ADAPT-4 (F-1): Profile.plannedDays, the week target when nothing is scheduled. */
+  plannedDays?: number;
+}
+
+/**
+ * ADAPT-5 (E-1): the plateau lever's usual week. The median over the last `weeks` completed weeks that
+ * had a session (a missed week is not "low volume"), judged against the muscle's band with at least
+ * `minTrainedWeeks` of them, else against `fallbackSets`. The threshold stays inside `bounds`.
+ */
+export const PLATEAU_VOLUME = { weeks: 4, minTrainedWeeks: 3, fallbackSets: 10, bounds: [4, 20] } as const;
+
+function medianOf(xs: number[]): number {
+  if (!xs.length) return 0;
+  const s = [...xs].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid]! : (s[mid - 1]! + s[mid]!) / 2;
+}
+
+/** ADAPT-5 (E-1): a main lift's usual weekly hard sets, for its primary muscle and for the lift itself. */
+function usualWeekVolume(ctx: CoachContext, muscle: MuscleId, exerciseId: string): { muscleSets: number; liftSets: number; trainedWeeks: number } {
+  const start = weekStart(ctx.today);
+  const muscleSets: number[] = [], liftSets: number[] = [];
+  for (let i = 1; i <= PLATEAU_VOLUME.weeks; i++) {
+    const from = addDays(start, -7 * i), to = addDays(from, 7);
+    const week = ctx.sessions.filter(s => s.day >= from && s.day < to);
+    if (!week.length) continue;
+    muscleSets.push(effectiveSetsByMuscle(week, from, to, ctx.custom, { countEasy: false })[muscle] ?? 0);
+    liftSets.push(week.flatMap(s => s.exercises.filter(e => e.exerciseId === exerciseId).flatMap(e => e.sets)).filter(x => isWorkingSet(x) && effortLabel(x) !== 'easy').length);
+  }
+  return { muscleSets: medianOf(muscleSets), liftSets: medianOf(liftSets), trainedWeeks: muscleSets.length };
+}
+
+/** ADAPT-4: the user's own week, for the volume rule (C-3). */
+const planOf = (ctx: CoachContext): WeekPlan => ({ schedule: ctx.schedule, daysOff: ctx.daysOff ?? [], plannedDays: ctx.plannedDays });
+
+/**
+ * ADAPT-4 (E-6): the user's usual days between sessions: the median gap between training days in the
+ * eight weeks before `today`, null with fewer than three gaps.
+ */
+function usualGapDays(sessions: Session[], today: string): number | null {
+  const from = addDays(today, -56);
+  const days = [...new Set(sessions.filter(s => s.day >= from && s.day <= today).map(s => s.day))].sort();
+  const gaps = days.slice(1).map((d, i) => daysBetween(days[i]!, d));
+  if (gaps.length < 3) return null;
+  return [...gaps].sort((a, b) => a - b)[Math.floor(gaps.length / 2)]!;
+}
+
+/** ADAPT-4 (E-9): the first scheduled day of this week not taken off; Monday with no schedule. */
+function firstTrainingDayOfWeek(ctx: CoachContext): string {
+  const start = weekStart(ctx.today);
+  if (!Object.values(ctx.schedule).some(Boolean)) return start;
+  const off = new Set(ctx.daysOff ?? []);
+  for (let i = 0; i < 7; i++) { const d = addDays(start, i); if (ctx.schedule[weekdayOf(d)] && !off.has(d)) return d; }
+  return start;
 }
 
 interface Derived {
@@ -311,7 +368,7 @@ export const RULES: Rule[] = [
     run: ctx => {
       const trainedMuscles = new Set(ctx.splits.flatMap(s => s.exercises.flatMap(se => findExercise(se.exerciseId, ctx.custom)?.primary ?? [])));
       const out: Insight[] = [];
-      for (const row of muscleVolumeStatus(ctx.sessions, ctx.today, ctx.custom)) {
+      for (const row of muscleVolumeStatus(ctx.sessions, ctx.today, ctx.custom, planOf(ctx), ctx.profile.trainingSince)) {
         if ((row.status !== 'under' && row.status !== 'over') || !trainedMuscles.has(row.muscle)) continue;
         const label = muscleLabel(row.muscle);
         const under = row.status === 'under';
@@ -335,6 +392,13 @@ export const RULES: Rule[] = [
     run: ctx => {
       const gap = daysSinceLastSession(ctx.sessions, ctx.today);
       if (gap == null || gap < 7) return [];
+      // ADAPT-4 (E-6): days marked off do not count, and the line waits for twice the user's usual gap.
+      const last = addDays(ctx.today, -gap);
+      const offDays = new Set(ctx.daysOff ?? []);
+      let counted = 0;
+      for (let i = 1; i <= gap; i++) if (!offDays.has(addDays(last, i))) counted++;
+      const usual = usualGapDays(ctx.sessions, ctx.today);
+      if (counted < Math.max(7, usual == null ? 0 : 2 * usual)) return [];
       return [{
         id: 'gap', category: 'consistency', priority: 250,
         title: gap >= 28 ? 'Welcome back' : `${gap} days since your last session`,
@@ -432,14 +496,27 @@ export const RULES: Rule[] = [
         if (recentSessions.length < 6) return [];
 
         const primaryMuscle = meta.primary[0];
-        // The last completed week (BR-07): this week is still being trained.
-        const weekSets = primaryMuscle ? (hardSetsThisWeek(ctx.sessions, addDays(weekStart(ctx.today), -1), ctx.custom)[primaryMuscle] ?? 0) : 0;
+        const goal = GOAL_BY_ID[ctx.goal ?? DEFAULT_GOAL];
+        // ADAPT-5 (E-1): completed weeks only (BR-07), the usual trained week, not last week alone.
+        const usual = primaryMuscle ? usualWeekVolume(ctx, primaryMuscle, id) : { muscleSets: 0, liftSets: 0, trainedWeeks: 0 };
+        const weekSets = usual.muscleSets;
+        let band: [number, number] | null = null;
+        let volumeLow: boolean, liftLow = false;
+        if (primaryMuscle && usual.trainedWeeks >= PLATEAU_VOLUME.minTrainedWeeks) {
+          band = volumeBands(trainingLevels(ctx.sessions, ctx.custom, { trainingSince: ctx.profile.trainingSince, today: ctx.today })[primaryMuscle].levelIndex, primaryMuscle);
+          const [lo, hi] = PLATEAU_VOLUME.bounds;
+          // The goal's direct sets per main lift (strength: 3–10) count too.
+          liftLow = goal.mainLiftWeeklySets ? usual.liftSets < goal.mainLiftWeeklySets[0] : false;
+          volumeLow = weekSets < Math.min(hi, Math.max(lo, band[0])) || liftLow;
+        } else volumeLow = weekSets < PLATEAU_VOLUME.fallbackSets;
         const fShare = failureShare(recentSessions);
         const stale = isStale(hist, ctx.today);
 
         let lever: { means: string; action: string } | null = null;
-        if (weekSets < 10) lever = { means: `Weekly volume for ${muscleLabel(primaryMuscle!).toLowerCase()} is on the low side (about ${Math.round(weekSets)} hard sets).`, action: 'Add 3 to 4 sets at ideal effort across two sessions.' };
-        else if (fShare > 0.5 && recentSessions.length >= 6) lever = { means: 'Effort has been mostly max for a while, which adds fatigue without much extra progress.', action: 'Pull most sets back to ideal effort and save max for the last set.' };
+        if (volumeLow && liftLow && goal.mainLiftWeeklySets) lever = { means: `${name} gets about ${Math.round(usual.liftSets)} hard sets in a usual week; your goal aims for ${goal.mainLiftWeeklySets[0]}–${goal.mainLiftWeeklySets[1]}.`, action: 'Add 3 to 4 sets at ideal effort across two sessions.' };
+        else if (volumeLow) lever = { means: `Weekly volume for ${muscleLabel(primaryMuscle!).toLowerCase()} is on the low side (about ${Math.round(weekSets)} hard sets in a usual week${band ? `; your range is ${band[0]}–${band[1]}` : ''}).`, action: 'Add 3 to 4 sets at ideal effort across two sessions.' };
+        // ADAPT-5 (E-2): the goal's own failure-share cap, not a fixed 0.5.
+        else if (fShare > goal.failureShareCap && recentSessions.length >= 6) lever = { means: `About ${Math.round(fShare * 100)}% of recent sets were max effort, above the ${Math.round(goal.failureShareCap * 100)}% your goal allows; that adds fatigue without much extra progress.`, action: 'Pull most sets back to ideal effort and save max for the last set.' };
         else if (stale) lever = { means: 'The load and rep range have not changed in a while, so the stimulus has nowhere to come from.', action: 'Change the rep range for two weeks, or swap in a similar exercise for a block.' };
         if (!lever) return [];
 
@@ -514,7 +591,7 @@ export const RULES: Rule[] = [
           evidence: { n: 1, window: 'today', confidence: 'low' },
         }];
       }
-      if (weekdayOf(ctx.today) !== 'mon') return [];
+      if (ctx.today !== firstTrainingDayOfWeek(ctx)) return [];
       // Only inputs that read well are "lining up"; one past its driver line is left out.
       const good = inputs.filter(k => !d.readinessLow.includes(k));
       if (!good.length) return [];
@@ -682,7 +759,7 @@ function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | nu
 /** F3.3: whether the coach should offer a lighter week right now. Never suggests one while a deload is already active. */
 export function deloadOffer(ctx: CoachContext): DeloadSuggestion {
   if (ctx.deload && ctx.deload.endDay >= ctx.today) return { suggest: false, reason: '' };
-  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays), trainingAgeMonths(ctx.profile, ctx.sessions, ctx.now), ctx.deload);
+  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays), trainingAgeMonths(ctx.profile, ctx.sessions, ctx.now), ctx.deload, ctx.profile.trainingSince);
 }
 
 /** BUG-15: the sessions that count as progress evidence, without the saved lighter week's. */

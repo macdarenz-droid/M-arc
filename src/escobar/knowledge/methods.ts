@@ -18,7 +18,7 @@ import { WARMUP_PCTS, WARMUP_REPS } from '@/brain/coach/pre';
 import { MAX_INCREASE_SHARE, RECOVERY_HOLD_PCT, REENTRY_DAYS } from '@/brain/progression';
 import { E1RM_MIN_SESSIONS, PLATEAU_FLAT_TOTAL, PLATEAU_HIGH_SESSIONS, PLATEAU_MIN_SESSIONS, PLATEAU_MIN_SPAN_DAYS, PLATEAU_WINDOW, PLATEAU_WINDOW_DAYS } from '@/brain/trend';
 import { BALANCE } from '@/brain/balance';
-import { WEEKLY_REVIEW_DAYS } from '@/brain/coach/weeklyReview';
+import { fullWeekSessions } from '@/brain/weekly';
 import { BIAS_CAP_REPS, BIAS_MIN_OBSERVATIONS, effortBiasByLabel, rirObservations } from '@/brain/effortBias';
 import { exerciseHistory } from '@/brain/history';
 import { trainingAgeMonths, ageOf } from '@/brain/recovery';
@@ -84,7 +84,7 @@ const METHODS: Record<MethodId, Builder> = {
     };
   },
   volume_bands: ctx => {
-    const levels = trainingLevels(ctx.state.sessions, ctx.state.customExercises);
+    const levels = trainingLevels(ctx.state.sessions, ctx.state.customExercises, { trainingSince: ctx.state.profile.trainingSince, today: ctx.today });
     const personal: Record<string, string> = {};
     for (const m of MUSCLE_IDS) if (levels[m].levelIndex > 0) { const b = volumeBands(levels[m].levelIndex, m); personal[muscleLabel(m)] = `${levels[m].level}: ${b[0]}–${b[1]} sets/week`; }
     return {
@@ -180,9 +180,9 @@ const METHODS: Record<MethodId, Builder> = {
     personal: {},
   }),
   weekly_review: ctx => ({
-    summary: `Shown after ${WEEKLY_REVIEW_DAYS} or more training days in a calendar week: hard sets per muscle against productive ranges, frequency, failure share, rep mix for your goal, strength trend against what is typical for your training age, stale lifts, adherence to your schedule, and your weight trend against your goal’s rate.`,
+    summary: `Shown once this week, or the week just ended, reaches your planned sessions (your schedule minus days off, else your planned days per week, else 3; at least 2): hard sets per muscle against productive ranges, frequency, failure share, rep mix for your goal, strength trend against what is typical for your training age, stale lifts, adherence to your schedule, and your weight trend against your goal’s rate.`,
     inputs: ['this week’s sessions', 'goal', 'training age', 'schedule', 'weigh-ins'],
-    constants: { daysNeeded: WEEKLY_REVIEW_DAYS, levels: LEVELS.length },
+    constants: { sessionsNeeded: fullWeekSessions({ schedule: ctx.state.schedule, daysOff: ctx.state.daysOff, plannedDays: ctx.state.profile.plannedDays }, ctx.today), levels: LEVELS.length },
     personal: { goal: GOAL_BY_ID[ctx.state.goal].name, age: ageOf(ctx.state.profile, ctx.now) ?? 'unknown' },
   }),
 };
