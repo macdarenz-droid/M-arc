@@ -40,6 +40,19 @@ describe('LIB-25 poly primitive', () => {
     expect(() => eq.poly({}, cam)).toThrow('got undefined');
   });
 
+  it('throws on a point that is not 3 finite numbers, naming the point', () => {
+    expect(() => eq.poly({ pts: [[0, 1, 0], [0, NaN, 1], [0, 2, 0.5]] }, cam)).toThrow('poly: point 1 is not 3 finite numbers: [0,null,1]');
+    expect(() => eq.poly({ pts: [[0, 1, 0], [0, 1, 1], [0, 2, Infinity]] }, cam)).toThrow('poly: point 2 is not 3 finite numbers');
+    expect(() => eq.poly({ pts: [[0, 1, 0], [0, 1], [0, 2, 0.5]] }, cam)).toThrow('poly: point 1 is not 3 finite numbers: [0,1]');
+  });
+
+  it('throws on points that enclose no area (identical or on one line), but draws an outline seen edge-on', () => {
+    expect(() => eq.poly({ pts: [[0, 1, 0], [0, 1, 0], [0, 1, 0]] }, cam)).toThrow('poly: the points enclose no area (they coincide or lie on one line)');
+    expect(() => eq.poly({ pts: [[0, 1, 0], [0, 1.5, 0.5], [0, 2, 1]] }, cam)).toThrow('enclose no area');
+    const edgeOn = eq.poly({ pts: [[0, 1, 0], [0.3, 1, 0], [0.3, 1.2, 0]] }, cam)[0];   // in the x-y plane: a line in side view
+    expect(edgeOn.poly).toHaveLength(3);
+  });
+
   it('a moving poly part is outlined in the Mistake view; an open line in its place is not', () => {
     const around = (type: string) => ({ ...spec, equipment: [...spec.equipment, (lm: Record<string, number[]>) => {
       const [x, y, z] = lm.shoulders as [number, number, number];
