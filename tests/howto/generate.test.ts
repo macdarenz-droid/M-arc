@@ -93,7 +93,7 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
     for (const f of readdirSync('src/howto/generated')) expect(onDisk(), `hand-written file in generated/: ${f}`).toContain(`src/howto/generated/${f}`);
   });
 
-  it('every header names real plugins: one writer per file, except ht-<slug>.ts and ids.ts, which plates.mjs writes first and a plugin run after it may extend', async () => {
+  it('every header names real plugins: one writer per file, except ht-<slug>.ts and ids.ts, which plates.mjs writes and content.mjs (run after it) may extend', async () => {
     const plugins: string[] = core.pluginFiles();
     for (const p of onDisk()) {
       const w = writersOf(p);
@@ -102,7 +102,7 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
       for (const x of w) expect(plugins, `${p}: writer ${x} is not a plugin in tools/plates/gen/`).toContain(x);
       if (w.length === 1) continue;
       expect(p, `${p}: only ht-<slug>.ts and ids.ts may have more than one writer`).toMatch(/^src\/howto\/(generated\/ht-[a-z0-9-]+\.ts|ids\.ts)$/);
-      expect(w, p).toContain(PLATES);
+      expect(w, `${p}: plan 2.2 allows exactly plates.mjs then content.mjs`).toEqual(['tools/plates/gen/content.mjs', PLATES]);
       for (const x of w.filter(x => x !== PLATES)) expect((await import(/* @vite-ignore */ url(x))).after ?? [], `${p}: ${x} must run after plates.mjs`).toContain(PLATES);
     }
   });
