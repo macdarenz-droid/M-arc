@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=5e5ebf94317632e7eda358ed3ecb7c01566feec1a193a94a73625e8e7c9ea628
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_pull_up",
   name: "Pull-up",
-  hashes: { inputsSha256: "d9d88131831cfd625d901182136537e8dfbefd28ec803577890c1353c86faa27", golden: "0f6f2a49b37027a1555b18b58145a32d3052bac9f144ba5eeab80ca247160231" },
+  hashes: { inputsSha256: "5e5ebf94317632e7eda358ed3ecb7c01566feec1a193a94a73625e8e7c9ea628", golden: "0f6f2a49b37027a1555b18b58145a32d3052bac9f144ba5eeab80ca247160231" },
   plate: {
     view: "side",
     normal: {
@@ -338,6 +338,29 @@ export default {
           "kolber2010"
         ]
       }
+    }
+  ],
+  zooms: [
+    {
+      "key": "hand",
+      "chip": "Hand",
+      "heading": "Hand: right and wrong",
+      "kind": "hand",
+      "feelRow": "wrist"
+    },
+    {
+      "key": "shoulders",
+      "chip": "Shoulders",
+      "heading": "Shoulders: right and wrong",
+      "kind": "posture",
+      "feelRow": "traps"
+    },
+    {
+      "key": "top",
+      "chip": "Top",
+      "heading": "Top position: right and wrong",
+      "kind": "posture",
+      "feelRow": "pinch"
     }
   ],
   chips: [

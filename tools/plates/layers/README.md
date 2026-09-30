@@ -6,7 +6,7 @@ Golden A (the approved plates) is `bc0f378:docs/howto/technical-plate/technical-
 
 ## Contents
 - `artifact/build-page.mjs` and `artifact/howto-layers.mjs`: the layer page builder. `artifact/.gen/` is written at build time and is not pinned.
-- `artifact/technical-plates.html`: the built page, sha256 `5aab1aca9bc231cc8868f366648d0d536b879d6c7d4d1adf220da99b66098deb` (2,386,760 bytes). The first pin (16a8edc, sha256 `47203008…`) is superseded by the compact-copy update below.
+- `artifact/technical-plates.html`: the built page, sha256 `f39137e190e3ff5921bbe658571228b6b2a53e6d27fcc95e0d5d2afaec9e1384` (2,386,418 bytes). Earlier pins: 16a8edc (`47203008…`), then b3a90af (`5aab1aca…`, compact copy). The first pin (16a8edc, sha256 `47203008…`) is superseded by the compact-copy update below.
 - `artifact/copy-lint.mjs`: the copy lint. The build runs it first and throws on any violation. Every limit is an exported constant.
 - `artifact/fidelity-check.mjs`: proves the plates inside golden B equal golden A. Result: 104 byte fragments and 80 pixel regions (8 exercises × 5 themes × normal and Mistake), with 0 px difference.
 - `artifact/shoot2.mjs`: the state check. It opens every layer state in all 5 themes.
@@ -93,3 +93,10 @@ The GA 6.2 bans still apply in full. The owner's safety line must match exactly,
 - **Every feel row and setup step shows.** With the caps, the old "Show 1 more" and "All 5 steps" buttons would have hidden a red-flag row in 7 of 8 exercises, plus the leg press dizziness stop and re-lock. The visible count now equals the cap (`FEEL_ROWS_MAX`, `SETUP_MAX_STEPS`), so no button appears. The collapse code stays for any longer list, which the lint forbids.
 - **Two squat close-ups lost their "This is usually why" link.** Bar on back lost it when the neck row was cut to fit the 4-row cap. Depth lost it because pointing at the lower-back row read backwards. The close-ups themselves are unchanged.
 - **Red-flag boxes use one pattern:** "<triggers>? Get it checked today." then "<triggers>? See a doctor." Each box keeps its NHS source and joint name.
+
+## Source-record update (supervisor, 2026-09-30)
+Every source now carries `access` and `checked`, as HT5-A2 requires. Only the source records changed; the user copy and the drawings did not.
+- **Filled after reading each source today.** 34 empty fields: 29 `checked` and 6 `access`. The PubMed records were read through NCBI E-utilities, because the PubMed web pages block automated readers.
+- **Dropped.** `nsca-nfpt`: its site no longer exists (HTTP 503 "This Site is No Longer Active"). Each of the 3 squat claims that cited it keeps at least one live source.
+- **Corrected.** `schulz`, `ace-leg-press` and `bells-of-steel` were marked unreachable, but all three opened today. They are now `access: full`, and "Not rechecked" is gone from their notes.
+- **Checks.** Fidelity against bc0f378: 0 px. State check: 0 problems. The copy lint passes.

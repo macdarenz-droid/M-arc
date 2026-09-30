@@ -2,8 +2,12 @@
 // (tests/howto/golden/technical-plates.html); the app inserts it as is and never re-serializes it.
 import type {
   ContactArchetypeId, HandlingSpec, HandlingMistake, HowToContent, NoHandling, PostureCheckpoint, RedFlagBlock,
-  Risk, RiskJoint, SetupStep, SourceId,
+  Risk, RiskJoint, SetupStep, SourceId, ZoomSpec,
 } from './content-types';
+
+/** The "Look closer" chip row needs each zoom's descriptor in S0, before any lazy crop/hand chunk loads (HT-6 on
+ *  PR #116; supervisor ruling, same PR): the rendered crop/hand strings stay HT-7's/HT-6's own lazy files. */
+export type ZoomDescriptor = Pick<ZoomSpec, 'key' | 'chip' | 'chipCaption' | 'heading' | 'kind' | 'feelRow'>;
 
 /** The 8 library exercises with an approved Technical Plate (golden A, bc0f378). */
 export type LibId =
@@ -121,7 +125,7 @@ export interface BuiltHowTo {
     readonly golden: string;
   };
   readonly plate: BuiltPlate;
-  readonly zooms?: never;
+  readonly zooms?: readonly ZoomDescriptor[];
   readonly feel?: never;
   readonly rev?: number;
   readonly extends?: LibId;

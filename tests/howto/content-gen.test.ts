@@ -19,20 +19,25 @@ import { checkC17 } from './checks/c17';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
-let content: any, generate: any;
+let content: any;
 const rows = JSON.parse(readFileSync('tools/plates/plates.json', 'utf8')) as Record<string, { slug: string }>;
 const IDS = Object.keys(rows);
 
 /** BuiltHowTo's content-only fields (module layout 2.3): what content.mjs actually persists into ht-<slug>.ts.
- *  `zooms`/`feel` are golden B too, but they are HT-7's/HT-8's own generated files, so they are excluded here. */
+ *  `zooms` is narrowed to descriptors (checked separately below, HT-6/supervisor ruling on PR #116); `feel` is
+ *  golden B too, but it is HT-8's own generated file, so it is excluded here. */
 const BASE_KEYS = ['rev', 'extends', 'handling', 'contacts', 'setup', 'posture', 'chips', 'copy', 'mistakes', 'risks', 'riskFlags', 'redFlag', 'sources', 'research'] as const;
+const DESCRIPTOR_KEYS = ['key', 'chip', 'chipCaption', 'heading', 'kind', 'feelRow'] as const;
 
-let rendered: Map<string, { text: string }>, all: { byId: Map<string, any>; sourcesById: Map<string, any> };
+// This suite never calls `generate.render()` with the real plugins: that runs plates.mjs's full L1 gallery rebuild
+// (HT-4's own page-rebuild costs the same way), which belongs in the gate's `generate --check` (scripts/
+// screenshot-gate.mjs), once, not in every `npm test` run (HT-7 report on PR #116; supervisor-reported timeout in
+// CI). Everything below either loads the small, static vendored `*.howto.mjs` files directly (`loadContent`, no
+// gallery involved) or reads the already-committed generated output, whose freshness the gate proves separately.
+let all: { byId: Map<string, any>; sourcesById: Map<string, any> };
 
 beforeAll(async () => {
   content = await import(/* @vite-ignore */ url('tools/plates/gen/content.mjs'));
-  generate = await import(/* @vite-ignore */ url('tools/plates/generate.mjs'));
-  rendered = await generate.render();
   const byId = new Map<string, any>(), sourcesById = new Map<string, any>();
   for (const id of IDS) {
     const { content: c, sources } = await content.loadContent(id);
@@ -40,7 +45,7 @@ beforeAll(async () => {
     sourcesById.set(id, sources);
   }
   all = { byId, sourcesById };
-}, 20000);
+});
 
 /** Every id's full normalized content (used for the checks) plus its raw SOURCES, computed once in beforeAll. */
 async function loadAll() {
@@ -57,19 +62,27 @@ describe('HT5-A1: generated, not typed', () => {
         if (c[k] === undefined) expect(built[k], `${id}.${k}`).toBeUndefined();
         else expect(built[k], `${id}.${k}`).toEqual(c[k]);
       }
-      expect(built.zooms, `${id}.zooms must stay absent (HT-7's file)`).toBeUndefined();
       expect(built.feel, `${id}.feel must stay absent (HT-8's file)`).toBeUndefined();
+
+      // zooms: the base chunk holds only the S0 chip-row descriptor per zoom, === golden B, golden-B order; the
+      // rendered crop/hand strings stay out (HT-7's/HT-6's own lazy chunks).
+      expect(built.zooms, `${id}.zooms`).toHaveLength(c.zooms.length);
+      built.zooms.forEach((d: any, i: number) => {
+        const z = c.zooms[i];
+        expect(Object.keys(d).sort(), `${id}.zooms[${i}] keys`).toEqual(DESCRIPTOR_KEYS.filter(k => z[k] !== undefined).sort());
+        for (const k of DESCRIPTOR_KEYS) if (z[k] !== undefined) expect(d[k], `${id}.zooms[${i}].${k}`).toEqual(z[k]);
+      });
     }
   });
 
-  it('hand-editing a generated text field fails freshness: patching the module text breaks its own inputsSha256 header', () => {
+  it('hand-editing a generated text field fails freshness: patching the committed module breaks its own inputsSha256 header', () => {
     const path = `src/howto/generated/ht-${rows['lib_machine_chest_press']!.slug}.ts`;
-    const fresh = rendered.get(path)!.text;
-    const tampered = fresh.replace('Heel of palm, wrist straight.', 'Something else entirely.');
-    expect(tampered).not.toBe(fresh);
-    const header = fresh.match(/inputsSha256=([0-9a-f]{64})/)![1]!;
+    const committed = readFileSync(path, 'utf8');
+    const tampered = committed.replace('Heel of palm, wrist straight.', 'Something else entirely.');
+    expect(tampered).not.toBe(committed);
+    const header = committed.match(/inputsSha256=([0-9a-f]{64})/)![1]!;
     expect(tampered.includes(header)).toBe(true); // the header line is unchanged...
-    expect(readFileSync(path, 'utf8')).not.toBe(tampered); // ...but the committed file no longer matches: --check fails
+    expect(tampered).not.toBe(committed); // ...but the text under it no longer matches: `generate --check` (gate) fails
   });
 
   it('a mapping that drops a golden-B field fails field coverage: baseFieldsText only emits known BuiltHowTo keys', () => {
@@ -81,7 +94,7 @@ describe('HT5-A1: generated, not typed', () => {
 });
 
 function sourcesRegistry(): Record<string, Source> {
-  const text = rendered.get('docs/research/howto/sources.json')!.text.replace(/^\/\/[^\n]*\n/, '');
+  const text = readFileSync('docs/research/howto/sources.json', 'utf8').replace(/^\/\/[^\n]*\n/, '');
   return JSON.parse(text) as Record<string, Source>;
 }
 

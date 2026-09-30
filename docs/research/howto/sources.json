@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ab808bd86f5daad04e588cbfa2059576a06603c8cc35c771530135e0aeefeea7
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ecb6493e18057c04ccbec3f58148c4c5b80afaa3a29f31108826781facbb0ca2
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -14,7 +14,7 @@
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/11/back-squat/",
     "kind": "guideline",
     "access": "full",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "ace-chest-press": {
     "id": "ace-chest-press",
@@ -22,7 +22,7 @@
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
     "kind": "guideline",
     "access": "full",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "ace-lat-pulldown": {
     "id": "ace-lat-pulldown",
@@ -45,8 +45,8 @@
     "cite": "ACE Exercise Library, Seated Leg Press",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/154/seated-leg-press/",
     "kind": "guideline",
-    "access": "unreachable",
-    "checked": null
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "ace-seated-row": {
     "id": "ace-seated-row",
@@ -101,8 +101,8 @@
     "cite": "Barbell Logic, Bench Press Grip Tips",
     "url": "https://barbell-logic.com/bench-press-grip-tips/",
     "kind": "coach",
-    "access": null,
-    "checked": null
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "barbell-logic-squat-grip": {
     "id": "barbell-logic-squat-grip",
@@ -110,7 +110,7 @@
     "url": "https://barbell-logic.com/?p=4521",
     "kind": "coach",
     "access": "full",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "barnds2019": {
     "id": "barnds2019",
@@ -125,8 +125,8 @@
     "cite": "Bells of Steel (manufacturer), How to use the leg press machine",
     "url": "https://bellsofsteel.us/blogs/content/how-to-use-the-leg-press-machine",
     "kind": "manufacturer",
-    "access": "unreachable",
-    "checked": null
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "bloomquist2013": {
     "id": "bloomquist2013",
@@ -134,7 +134,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/23604798/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "bullbar-calluses": {
     "id": "bullbar-calluses",
@@ -157,8 +157,8 @@
     "cite": "Calatayud J et al. Importance of mind-muscle connection during progressive resistance training. Eur J Appl Physiol 2016;116(3):527-33",
     "url": "https://pubmed.ncbi.nlm.nih.gov/26700744/",
     "kind": "peer-reviewed",
-    "access": null,
-    "checked": null
+    "access": "abstract",
+    "checked": "2026-09-30"
   },
   "callaghan2001": {
     "id": "callaghan2001",
@@ -214,7 +214,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/12173958/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "clark2012": {
     "id": "clark2012",
@@ -222,7 +222,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/22373894/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "contreras2015": {
     "id": "contreras2015",
@@ -230,7 +230,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/26214739/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "coratella2020": {
     "id": "coratella2020",
@@ -302,7 +302,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/11404665/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "escamilla2001lp": {
     "id": "escamilla2001lp",
@@ -325,8 +325,8 @@
     "cite": "Fees M, Decker T, Snyder-Mackler L, Axe MJ. Upper extremity weight-training modifications for the injured athlete. Am J Sports Med 1998;26(5):732-42",
     "url": "https://pubmed.ncbi.nlm.nih.gov/9784824/",
     "kind": "peer-reviewed",
-    "access": null,
-    "checked": null
+    "access": "abstract",
+    "checked": "2026-09-30"
   },
   "fenwick2009": {
     "id": "fenwick2009",
@@ -342,7 +342,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/14636100/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "fujita2020": {
     "id": "fujita2020",
@@ -358,7 +358,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/28570490/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "graichen1999": {
     "id": "graichen1999",
@@ -374,7 +374,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/23222073/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "hk-squat": {
     "id": "hk-squat",
@@ -382,7 +382,7 @@
     "url": "https://us.humankinetics.com/blogs/strength-conditioning-fitness/squat-technique",
     "kind": "guideline",
     "access": "full",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "jakobsen2012": {
     "id": "jakobsen2012",
@@ -414,7 +414,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "kinoshita2026": {
     "id": "kinoshita2026",
@@ -454,7 +454,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/31230110/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "lander1992": {
     "id": "lander1992",
@@ -462,7 +462,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/1533266/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "larsen2025": {
     "id": "larsen2025",
@@ -542,15 +542,15 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/",
     "kind": "peer-reviewed",
     "access": "full",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "nance2017": {
     "id": "nance2017",
     "cite": "Nance EM et al. Dorsal wrist pain in the extended wrist-loading position: an MRI study. J Wrist Surg 2017;6(4):276-279",
     "url": "https://pubmed.ncbi.nlm.nih.gov/29085728/",
     "kind": "peer-reviewed",
-    "access": null,
-    "checked": null
+    "access": "abstract",
+    "checked": "2026-09-30"
   },
   "nasm-chinup": {
     "id": "nasm-chinup",
@@ -608,21 +608,13 @@
     "access": "summary",
     "checked": "2026-09-30"
   },
-  "nsca-nfpt": {
-    "id": "nsca-nfpt",
-    "cite": "NSCA back squat steps as quoted by NFPT",
-    "url": "https://archive25.nfpt.com/?p=22119",
-    "kind": "secondary",
-    "access": "summary",
-    "checked": null
-  },
   "nsca-summary": {
     "id": "nsca-summary",
     "cite": "NSCA Essentials of Strength Training and Conditioning, exercise technique chapter (study summary)",
     "url": "https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/",
     "kind": "secondary",
     "access": "summary",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "odriscoll1992": {
     "id": "odriscoll1992",
@@ -670,7 +662,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/19130646/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "prinold2016": {
     "id": "prinold2016",
@@ -709,8 +701,8 @@
     "cite": "Schulz DS. Low Bar Squat Wrist Pain: Reasons and Solutions. Torokhtiy",
     "url": "https://store.torokhtiy.com/blogs/guides/low-bar-squat-wrist-pain",
     "kind": "coach",
-    "access": "unreachable",
-    "checked": null
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "signorile2002": {
     "id": "signorile2002",
@@ -741,8 +733,8 @@
     "cite": "Snyder BJ, Fry WR. Effect of verbal instruction on muscle activity during the bench press. J Strength Cond Res 2012;26(9):2394-400",
     "url": "https://pubmed.ncbi.nlm.nih.gov/22076100/",
     "kind": "peer-reviewed",
-    "access": null,
-    "checked": null
+    "access": "abstract",
+    "checked": "2026-09-30"
   },
   "sperandei2009": {
     "id": "sperandei2009",
@@ -854,7 +846,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/8775157/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": null
+    "checked": "2026-09-30"
   },
   "yessis": {
     "id": "yessis",
