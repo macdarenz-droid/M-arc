@@ -29,3 +29,4 @@ AGENTS.md keeps the builder safety lines (merge `origin/main` with a merge commi
 - Keep heavy reading (logs, big files) in a helper such as `/ci-log`, so only the answer enters your context.
 - The PR body also gets one line: `You will notice:` one plain sentence about what changes in the app, or "nothing visible".
 - Hard cards: the design-note check-in is described in `.claude/skills/supervisor/cards.md`.
+- If your tool does not load skills or path rules (Codex), open these by path when they apply: `.claude/skills/ci-log/SKILL.md` for a failing CI log, and `.claude/rules/shared-files.md` before you touch a shared file.

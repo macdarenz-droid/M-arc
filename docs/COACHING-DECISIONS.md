@@ -891,5 +891,5 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - **Change 3 is option (a) only (decision A).** A collision the design cannot avoid leaves the card `blocked`, with the pinned block as its reason.
   - **Change 9 keeps the verdict format only (decision B)**, with no `/code-review`. The reviewer skill keeps one spending line ("never `/ultrareview`"), because only the owner approves spending.
   - **`.claude/owner-rules.md` (change 7) moves to WF-2**, with the settings that enforce the model rule.
-  - **Skill frontmatter** was checked against code.claude.com/docs/en/skills (`context: fork`, `agent`, `model`, `background: false`) and rule `paths:` against /docs/en/memory. `ci-log` names `agent: general-purpose`, so it never falls back to a Haiku helper.
+  - **Skill frontmatter** was checked against code.claude.com/docs/en/skills (`context: fork`, `agent`, `model`, `background: false`) and rule `paths:` against /docs/en/memory. `ci-log` names `agent: general-purpose`, so it never falls back to a Haiku helper, and pins `model: claude-sonnet-5` (the docs accept a full model name; checked with a live call).
   **Why**: the owner's hard rule that every moved line appears exactly once, word for word, and that AGENTS.md gains only the Procedures line and the model-rule line.

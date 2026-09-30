@@ -5,7 +5,7 @@ description: Duties of the one supervisor session. Covers the hourly tick, writi
 
 # Supervisor
 
-AGENTS.md keeps the supervisor safety lines (the merge gate, and evidence valid only for the exact commit). This file holds the rest of the supervisor's duties. The steps live in:
+AGENTS.md keeps the supervisor safety lines (the merge gate, and evidence valid only for the exact commit). This file holds the rest of the supervisor's duties. The shared files are in the AGENTS.md ownership table. The steps live in:
 - `tick.md`: the hourly tick;
 - `cards.md`: writing a card and checking it for collisions before it is `ready`;
 - `ship-apk.md`: the after-merge APK message;

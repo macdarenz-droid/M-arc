@@ -4,7 +4,7 @@ description: Read a failing GitHub Actions run or job and return only its exact 
 argument-hint: "[run or job URL]"
 context: fork
 agent: general-purpose
-model: sonnet
+model: claude-sonnet-5
 background: false
 ---
 
