@@ -1,6 +1,6 @@
 // HT-4 L0-B (HT4-A1): the vendored How-to layer mockup (golden B, tools/plates/layers/) is verbatim from the
-// source-records pin (a7a0b74; supersedes b3a90af, the compact-copy update, and the first pin 16a8edc, both kept in
-// pageApproval.history) and rebuilds byte-identical.
+// LR-23 pin (6b86baa, HT-4b; supersedes a7a0b74, the source-records pin, then b3a90af and the first pin 16a8edc, all
+// kept in pageApproval.history) and rebuilds byte-identical.
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -77,7 +77,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
   // Supervisor, PR #107 (the same condition HT-2 had, #105): the per-file check alone cannot catch a file and its
   // own MANIFEST entry being edited together and staying consistent with each other.
   it('the sorted path:sha256 list of MANIFEST.json, plus pageApproval, hashes to its pinned literal', () => {
-    expect(m.sha256(m.manifestPinList())).toBe('2918d6b3fe90e6439f8d7ae7c52d13fc52fb09192cdd5d1fe71edd410fc88a34');
+    expect(m.sha256(m.manifestPinList())).toBe('37c5838e4f5bc4e7649c588861bd30a26d637f13186a2cdd0b78a869df0b66e9');
   });
 
   it('fails when a vendored file and its own MANIFEST sha256 entry change together (consistently)', () => {
@@ -92,7 +92,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
     // the per-file check alone is fooled (both sides agree, source pin untouched)...
     expect(m.verifyLayers(d, manifest)).toEqual([]);
     // ...but the literal pin over the whole manifest is not
-    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('2918d6b3fe90e6439f8d7ae7c52d13fc52fb09192cdd5d1fe71edd410fc88a34');
+    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('37c5838e4f5bc4e7649c588861bd30a26d637f13186a2cdd0b78a869df0b66e9');
   });
 });
 
@@ -109,7 +109,8 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
     const { current, history } = m.readManifest().pageApproval;
     expect(current, 'MANIFEST.json should hold a pageApproval.current').toBeDefined();
     expect(current.ref).toBe(m.GOLDEN_B_REF);
-    expect(current.approvedBy).toBe('supervisor');
+    // HT-4b: the owner approved the LR-23 re-pin in the HT-4b session (2026-09-30).
+    expect(current.approvedBy).toBe('owner');
     expect(Array.isArray(history)).toBe(true);
     const fixture = readFileSync(FIXTURE);
     expect(m.sha256(fixture)).toBe(current.pageSha256);
@@ -117,9 +118,14 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
     expect(fixture.length).toBe(current.bytes);
   });
 
-  it('history holds both retired approvals (b3a90af, then 16a8edc) in order, and hashes to its pinned literal', () => {
+  it('history holds the three retired approvals (a7a0b74, b3a90af, then 16a8edc) in order, and hashes to its pinned literal', () => {
     const { history } = m.readManifest().pageApproval;
     expect(history).toEqual([
+      {
+        ref: 'a7a0b74', approvedBy: 'supervisor', date: '2026-09-30',
+        why: 'source records only (HT5-A2); owner-approved design unchanged',
+        pageSha256: 'f39137e190e3ff5921bbe658571228b6b2a53e6d27fcc95e0d5d2afaec9e1384', bytes: 2386418,
+      },
       {
         ref: 'b3a90af', approvedBy: 'owner', date: '2026-09-30',
         why: 'owner approved the layer design and asked for compact concept-first copy',
@@ -131,12 +137,12 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
         pageSha256: '472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a', bytes: 2451995,
       },
     ]);
-    expect(m.historyPin(history)).toBe('b35fd630789c807520a09287af770f33f8abdb544029eff8f102ebef65f6cccc');
+    expect(m.historyPin(history)).toBe('893a812b814aa3394d929b5a7f3c8f6f76e0291d8c484d73d8deafc2c199cad4');
   });
 
   it('fails (the pinned literal changes) if an already-retired entry is edited after the fact', () => {
     const { history } = m.readManifest().pageApproval;
-    const tampered = [{ ...history[0], why: 'tampered after the fact' }, history[1]];
+    const tampered = [{ ...history[0], why: 'tampered after the fact' }, ...history.slice(1)];
     expect(m.historyPin(tampered)).not.toBe(m.historyPin(history));
   });
 

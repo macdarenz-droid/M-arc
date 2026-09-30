@@ -1,5 +1,6 @@
 // The How-to layers for the gallery cards (grip/GRIP-AND-FEEL-ARCHITECTURE.md 2.1-2.7, 5.2, 5.3):
-//   zoom chips ("Look closer"), hand and posture close-ups, "Where you should feel it", "Set it up", "Sources".
+//   zoom chips ("Look closer"), hand and posture close-ups, "Where you should feel it", "Set it up", "Risks and when
+//   to stop", then the owner's disclaimer. No sources, evidence labels or contacts in the UI (owner 2026-09-30, LR-23).
 // Imported by build-page.mjs. Content comes from exercises/<id>.howto.mjs (the verified cards). The close-up drawings
 // come from each exercise's own reviewed render script (exercises/<id>.howto-render.mjs or howto/render-<id>.mjs):
 // the script's drawing functions are loaded WITHOUT its screenshot run (the source is cut where the Playwright run
@@ -10,7 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { renderFeelMap, renderFeelLegend, FEEL_CSS } from '../engine/feelmap.mjs';
 import { HAND_CSS } from '../engine/hand.mjs';
-import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER, SHOW_EVIDENCE } from '../howto/shared.mjs';
+import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '../howto/shared.mjs';
 import * as SHARED from '../howto/shared.mjs';
 import { lintAll, formatViolations, FEEL_ROWS_MAX, SETUP_MAX_STEPS } from './copy-lint.mjs';
 // Supervisor 2026-09-30: with the compact caps every row and step shows; a red-flag row or a safety step never
@@ -236,7 +237,7 @@ function feelSection(pre, howto, M) {
     + `</section>`;
 }
 
-/* ---------------------------------------------------------------- setup and sources ------------------------------ */
+/* ---------------------------------------------------------------- setup and the disclaimer ---------------------- */
 function setupSection(pre, howto) {
   const steps = howto.setup, zoomChip = key => howto.zooms.find(z => z.key === key)?.chip;
   const more = steps.length - SETUP_VISIBLE;
@@ -247,22 +248,7 @@ function setupSection(pre, howto) {
     + (more > 0 ? `<button type="button" class="fr-more st-more" id="${pre}-setup-more" aria-expanded="false" data-n="${steps.length}" data-all>All ${steps.length} steps</button>` : '')
     + `</section>`;
 }
-const TAG_WORD = { DATA: 'Measured', MECH: 'Mechanics', CONSENSUS: 'Coaching consensus', WEAK: 'Weak for this use' };
-const tagBadges = tag => String(tag).split('/').map(t => `<span class="ev ev-${t.toLowerCase()}">${esc(TAG_WORD[t] ?? t)}</span>`).join('');
-function sourcesSection(pre, howto, M) {
-  const items = howto.sources.map(key => {
-    const s = M.SOURCES[key];
-    if (!s) throw new Error(`${howto.id}: source ${key} not in the registry`);
-    const ev = M.EVIDENCE_LABELS?.[key];
-    const tag = ev?.tag ?? s.use ?? null, text = ev?.text ?? s.note ?? '';
-    const cite = s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.cite)}</a>` : esc(s.cite);
-    return `<li><p class="src-cite">${cite}</p>${SHOW_EVIDENCE ? `<p class="src-ev">${tag ? tagBadges(tag) : ''}${text ? `<span>${esc(text)}</span>` : ''}</p>` : ''}</li>`;
-  }).join('');
-  return `<details class="hw-sec srcs" id="${pre}-sources"><summary id="${pre}-sources-toggle"><span>Sources</span><span class="src-n">${howto.sources.length}</span>${I.down(18)}</summary>`
-    + (SHOW_EVIDENCE ? `<p class="src-key">Each source is labelled for what it backs here. <b>Measured</b> = a study that measured it. <b>Mechanics</b> = how the joint works. <b>Coaching consensus</b> = what trainers agree on. <b>Weak for this use</b> = related, not direct.</p>` : '')
-    + `<ul class="src-list">${items}</ul></details>`
-    + `<p class="ht-disclaimer" id="${pre}-disclaimer">${esc(DISCLAIMER)}</p>`;
-}
+const disclaimerNode = pre => `<p class="ht-disclaimer" id="${pre}-disclaimer">${esc(DISCLAIMER)}</p>`;
 
 /* ---------------------------------------------------------------- grip and handling mistakes (plan 2.4 item 4) ----- */
 function gripSection(pre, howto) {
@@ -307,7 +293,7 @@ function alsoRow(pre, howto) {
 }
 
 /* ---------------------------------------------------------------- public ----------------------------------------- */
-/** Build every card's How-to layers. Returns { [cardId]: { howto, plate, chips, zooms, feel, setup, sources } } and CSS. */
+/** Build every card's How-to layers. Returns { [cardId]: { howto, plate, chips, zooms, feel, setup, risks } } and CSS. */
 export async function buildHowtoLayers() {
   // Copy lint first (architecture 6.2 with the owner's 2026-09-30 limits, artifact/copy-lint.mjs): every failure on
   // every sheet, in one error. It only reads the specs, so a clean run changes no output.
@@ -325,10 +311,10 @@ export async function buildHowtoLayers() {
     const cardId = id === 'dumbbell_lateral_raise' ? 'lateral_raise' : id;
     const pre = cardId.replace(/_/g, '-');
     const chips = chipRow(pre, howto), zooms = zoomPanels(pre, api, howto);
-    // sheet order below the approved block (plan 2.4, 3-8): Look closer, grip + handling mistakes, feel, setup, risks,
-    // sources (+ the disclaimer, once)
+    // sheet order below the approved block (plan 2.4, 3-7): Look closer, grip + handling mistakes, feel, setup, risks,
+    // then the disclaimer (once, last)
     const after = [alsoRow(pre, howto), chips, gripSection(pre, howto), feelSection(pre, howto, M), setupSection(pre, howto),
-      risksSection(pre, howto), sourcesSection(pre, howto, M)].join('\n  ');
+      risksSection(pre, howto), disclaimerNode(pre)].join('\n  ');
     out[cardId] = { howto, zooms, after };
     css.push(`/* close-ups: ${RENDERER[id]} */\n${rendererCss(api, `.hx-${pre}`)}`);
   }

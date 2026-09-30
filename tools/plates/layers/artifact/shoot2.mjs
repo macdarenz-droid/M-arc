@@ -3,11 +3,14 @@
 // review screenshots (verify/states/<exercise>-<state>-<theme>.png) in Silent Black and Paper.
 // Run: node artifact/shoot2.mjs [--all-shots]   (--all-shots: screenshots in all 5 themes, not just 2)
 // States (plan S-2 condition 5): hand zoom, each posture zoom, handling mistakes, feel map at rest, playing, each row
-// open, reduced motion, setup (all steps), risks, sources (open), plus the Mistake view's wrist line (push).
+// open, reduced motion, setup (all steps), risks and the disclaimer, plus the Mistake view's wrist line (push).
+// LR-23 (owner 2026-09-30): no link, source list, evidence label or contact on any card, and the disclaimer is the last
+// layer node, after the last red-flag box.
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { CONTACT_RE, SOURCE_RE, SOURCE_CS_RE } from './copy-lint.mjs';
 const here = dirname(fileURLToPath(import.meta.url)), root = join(here, '..');
 const { chromium } = createRequire('/home/user/M-arc/package.json')('playwright');
 const outDir = join(root, 'verify', 'states'); mkdirSync(outDir, { recursive: true });
@@ -71,22 +74,32 @@ for (const theme of THEMES) {
     const s = await page.evaluate(card => {
       const c = document.querySelector(card), n = q => c.querySelectorAll(q).length;
       return { chips: n('.zx-chip'), zooms: n('.zx'), grip: n('.grip'), mistakes: n('.hm'), feel: n('.feel'), rows: n('.fr'), setup: n('.setup'), steps: n('.st-list li'),
-        risks: n('.risks'), riskItems: n('.rk-list li'), redflags: n('.redflag'), sources: n('.srcs'), srcItems: n('.src-list li'), ev: n('.src-ev .ev'), disclaimer: n('.ht-disclaimer'),
+        risks: n('.risks'), riskItems: n('.rk-list li'), redflags: n('.redflag'), links: n('a[href]'), srcUi: n('.srcs,.src-cite,.src-ev,.src-key,.ev'), disclaimer: n('.ht-disclaimer'),
         disclaimerText: c.querySelector('.ht-disclaimer')?.textContent, also: n('.ht-also'), rfLinks: n('.rf-link'),
         blocks: [...c.querySelectorAll('.redflag')].map(e => e.id.replace(/^.*-redflag-/, '')).join(),
         linked: [...new Set([...c.querySelectorAll('.rf-link')].map(e => e.dataset.flag))].sort().join(),
-        order: [...c.children].map(e => e.classList[0]).filter(Boolean).join(' > ') };
+        order: [...c.children].map(e => e.classList[0]).filter(Boolean).join(' > '),
+        // LR-23: the disclaimer is the card's last node and comes after the last red-flag box
+        discLast: c.lastElementChild?.matches('.ht-disclaimer') && [...c.querySelectorAll('.redflag')].every(r => r.compareDocumentPosition(c.querySelector('.ht-disclaimer')) & Node.DOCUMENT_POSITION_FOLLOWING),
+        // every text node (hidden ones too, not style or script) and every aria-label, title and alt
+        text: (() => { const w = document.createTreeWalker(c, NodeFilter.SHOW_TEXT), out = []; for (let t; (t = w.nextNode());) if (!t.parentElement.closest('style,script')) out.push(t.data);
+          c.querySelectorAll('[aria-label],[title],[alt]').forEach(e => ['aria-label', 'title', 'alt'].forEach(k => e.hasAttribute(k) && out.push(e.getAttribute(k)))); return out.join(' \u2029 ').replace(/\s+/g, ' '); })(),
+        labelWords: [...c.querySelectorAll('*')].filter(e => ['Measured', 'Mechanics', 'Coaching consensus', 'Weak for this use'].includes([...e.childNodes].filter(t => t.nodeType === 3).map(t => t.data).join('').trim())).length };
     }, card);
     if (theme === 'silent-black') counts[`structure ${id}`] = s;
-    for (const k of ['grip', 'feel', 'setup', 'risks', 'sources', 'disclaimer']) if (s[k] !== 1) bad(`${id}: ${k} x${s[k]}`);
+    for (const k of ['grip', 'feel', 'setup', 'risks', 'disclaimer']) if (s[k] !== 1) bad(`${id}: ${k} x${s[k]}`);
     if (s.mistakes !== 3) bad(`${id}: ${s.mistakes} handling mistakes`);   // golden B compact copy (owner 2026-09-30): 3 per exercise, was 4
     if (!s.redflags || !s.riskItems) bad(`${id}: risks without items or red flag`);
     if (s.blocks !== FLAGS[id].join()) bad(`${id}: red-flag blocks ${s.blocks}, expected ${FLAGS[id]}`);
     if (s.linked !== [...FLAGS[id]].sort().join()) bad(`${id}: rows link to ${s.linked}, expected ${FLAGS[id]}`);
     if (s.disclaimerText !== 'General guidance, not medical advice. If something hurts, stop and get it checked.') bad(`${id}: disclaimer text "${s.disclaimerText}"`);
-    if (!s.ev) bad(`${id}: no evidence labels shown`);
+    if (s.links || s.srcUi) bad(`${id}: ${s.links} links and ${s.srcUi} source or evidence elements (LR-23: none)`);
+    if (!s.discLast) bad(`${id}: the disclaimer is not the last node after the last red-flag box`);
+    for (const re of [CONTACT_RE, SOURCE_RE, SOURCE_CS_RE]) if (re.test(s.text)) bad(`${id}: contact or source wording "${s.text.match(re)[0]}" (LR-23)`);
+    if (s.labelWords) bad(`${id}: ${s.labelWords} evidence label words shown`);
+    delete s.text;
     // --- closed-state sections
-    for (const [sel, what] of [['.zx-chips-wrap', 'chips'], ['.grip', 'grip + handling mistakes'], ['.feel', 'feel (rest)'], ['.setup', 'setup'], ['.risks', 'risks'], ['.srcs', 'sources'], ['.ht-disclaimer', 'disclaimer']]) {
+    for (const [sel, what] of [['.zx-chips-wrap', 'chips'], ['.grip', 'grip + handling mistakes'], ['.feel', 'feel (rest)'], ['.setup', 'setup'], ['.risks', 'risks'], ['.ht-disclaimer', 'disclaimer']]) {
       const p = await check(page, `${card} ${sel}`, `${id} ${theme} ${what}`); if (p) bad(p); else count(what);
     }
     if (shots) {
@@ -166,12 +179,10 @@ for (const theme of THEMES) {
       if (st.exp !== 'true' || !st.body || st.focus !== st.marked || !st.label) bad(`${id} ${theme} row ${r}: ${JSON.stringify(st)}`); else count('feel row open');
       if (shots && r === rows[0]) await shot(page, `${card} .feel`, `${id}-feel-row-${r}-${theme}.png`);
     }
-    // --- setup: all steps; sources: open
+    // --- setup: all steps
     const stMore = await page.$(`${card} .st-more`);
     if (stMore) { await click(page, `${card} .st-more`); const hidden = await page.evaluate(card => document.querySelectorAll(`${card} .st-list li[hidden]`).length, card); if (hidden) bad(`${id} ${theme}: setup steps still hidden`); else count('setup all steps'); }
-    await page.evaluate(card => { document.querySelector(`${card} .srcs`).open = true; }, card);
-    const p = await check(page, `${card} .src-list`, `${id} ${theme} sources open`); if (p) bad(p); else count('sources open');
-    if (shots) { await shot(page, `${card} .setup`, `${id}-setup-all-${theme}.png`); await shot(page, `${card} .srcs`, `${id}-sources-open-${theme}.png`); }
+    if (shots) await shot(page, `${card} .setup`, `${id}-setup-all-${theme}.png`);
   }
   // page-level audit once per theme
   const a = await page.evaluate(() => {
