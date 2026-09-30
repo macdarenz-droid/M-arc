@@ -18,11 +18,18 @@
 // 3. Fragment `===`: the built page's normalSvg/normalOverlay/mistakeSvg/mistakeOverlay/alt/mistakeAlt, sliced
 //    straight from each card's `<figure class="plate">` blocks, sha256-match GOLDEN.json's golden-A fragments
 //    exactly, for all 8 exercises. Also needs the live build - also in the HT-4 gate block.
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { GoldenFile, GoldenPlateEntry } from '../../src/howto/types';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let layersMod: any;
+async function loadLayers() {
+  if (!layersMod) layersMod = await import(/* @vite-ignore */ new URL('../../tools/plates/layers.mjs', import.meta.url).href);
+  return layersMod;
+}
 
 const LAYERS = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'tools', 'plates', 'layers');
 const VENDOR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'tools', 'plates', 'vendor');
@@ -87,6 +94,27 @@ describe('HT4-A5: golden B holds only golden-A plates (fast proofs; the live-bui
     expect(existsSync(join(LAYERS, 'exercises', 'dumbbell_lateral_raise.mjs'))).toBe(false);
   });
 
+  it('Medium 4 (round-2 review fix): the lateral raise\'s Wrong-crop parameters (abd, hideInside) are pinned against the vendored howto.mjs', async () => {
+    const mod = await loadGb();
+    expect(await mod.validateLateralRaiseCrops(LAYERS)).toEqual([]);
+  });
+
+  it('failure path: a changed abd value on the lateral raise\'s top-height Wrong crop fails', async () => {
+    const mod = await loadGb();
+    const layers = await loadLayers();
+    const mirror = layers.makeMirror();
+    try {
+      const file = join(mirror, 'exercises', 'dumbbell_lateral_raise.howto.mjs');
+      const text = readFileSync(file, 'utf8');
+      expect(text).toContain('wrong: { abd: 118, hideInside:');
+      writeFileSync(file, text.replace('wrong: { abd: 118, hideInside:', 'wrong: { abd: 999, hideInside:'));
+      const bad = await mod.validateLateralRaiseCrops(mirror);
+      expect(bad.some((m: string) => m.includes('top-height') && m.includes('999'))).toBe(true);
+    } finally {
+      rmSync(mirror, { recursive: true, force: true });
+    }
+  });
+
   it('failure path: reintroducing the chest-press callout override fails (a real, non-empty, differing callouts array)', async () => {
     const mod = await loadGb();
     const goldenA = goldenASpecs.machine_chest_press!;
@@ -124,14 +152,50 @@ describe('HT4-A5: golden B holds only golden-A plates (fast proofs; the live-bui
     expect(verdict).not.toBe('enumerated');
   });
 
-  it('classifyPose accepts every one of the 11 pinned poses against its own golden-A spec (the exceptions really are pinned, not vacuous)', async () => {
+  it('classifyPose accepts every one of the 11 poses.start/end pinned poses against its own golden-A spec (the exceptions really are pinned, not vacuous)', async () => {
     const mod = await loadGb();
-    for (const key of Object.keys(mod.ENUMERATED_POSES)) {
+    const POSES_START_END_KEYS = [
+      'barbell_back_squat|bar-on-back-w', 'barbell_back_squat|depth-w', 'pull_up|shoulders-right', 'pull_up|shoulders-wrong',
+      'hanging_leg_raise|pelvis-wrong', 'hanging_leg_raise|shoulders-right', 'hanging_leg_raise|shoulders-wrong',
+      'lat_pulldown|path-wrong', 'seated_cable_row|finish-wrong', 'leg_press|foot-w', 'machine_chest_press|seat-height-w',
+    ];
+    expect(POSES_START_END_KEYS.length).toBe(11);
+    for (const key of POSES_START_END_KEYS) {
       const [exId, optsId] = key.split('|') as [string, string];
       const goldenA = goldenASpecs[exId];
       expect(goldenA, `goldenASpecs should have an entry for ${exId}`).toBeDefined();
       expect(mod.classifyPose(exId, optsId, mod.ENUMERATED_POSES[key], goldenA)).toBe('enumerated');
     }
+  });
+
+  it('round-2 review fix (blocker 2): classifyMistakePose accepts every one of the 3 pinned non-solid Wrong-crop mistake poses', async () => {
+    const mod = await loadGb();
+    const MISTAKE_POSE_KEYS = ['pull_up|top-wrong', 'lat_pulldown|pad-wrong', 'seated_cable_row|back-wrong'];
+    expect(MISTAKE_POSE_KEYS.length).toBe(3);
+    expect(Object.keys(mod.ENUMERATED_POSES).length).toBe(14);
+    for (const key of MISTAKE_POSE_KEYS) {
+      const [exId, optsId] = key.split('|') as [string, string];
+      const goldenA = goldenASpecs[exId];
+      expect(goldenA, `goldenASpecs should have an entry for ${exId}`).toBeDefined();
+      expect(mod.classifyMistakePose(exId, optsId, mod.ENUMERATED_POSES[key], goldenA)).toBe('enumerated');
+    }
+  });
+
+  it('round-2 review fix (blocker 2): every call\'s spec.mistake.pose classifies as golden-A or a pinned exception (the reviewer\'s exact reproduction: a moved joint in a non-solid Wrong crop)', async () => {
+    const mod = await loadGb();
+    const goldenA = goldenASpecs.pull_up!;
+    const movedNeck = { ...mod.ENUMERATED_POSES['pull_up|top-wrong'], neck: 45 };
+    const bad = mod.validateCalls(
+      [{ opts: { id: 'top-wrong' }, spec: { ...goldenA, id: 'pull_up', mistake: { pose: movedNeck } } }],
+      goldenASpecs,
+    );
+    expect(bad.length).toBeGreaterThan(0);
+    expect(bad.every((m: string) => m.includes('pull_up|top-wrong'))).toBe(true);
+  });
+
+  it('round-2 review fix (blocker 2): protectedFieldProblems no longer treats `mistake` as a whole-field blanket allowance - a call with no mistake field at all is unaffected, but mistake.pose is never silently skipped', async () => {
+    const mod = await loadGb();
+    expect(mod.CROP_WINDOW_FIELDS.has('mistake')).toBe(false);
   });
 
   it('sanity: 8 plate entries, 7 with a vendored exercises/*.mjs plus the lateral raise from ref-src', () => {

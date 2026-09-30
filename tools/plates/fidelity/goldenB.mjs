@@ -260,6 +260,15 @@ export async function selfCheck(page, id) {
 // design (PR #107 supervisor ruling). The other 9 are Wrong crops with `z.wrong.solid` set, where cropSpec draws
 // the wrong form directly in poses.start/end (not via the separate `mistake` sub-pose field) - a legitimate design
 // choice, not drift, and still pinned literally so a future unrelated one is caught.
+//
+// Round-2 review fix (blocker 2): the 24 calls that carry a `spec.mistake.pose` (every non-solid Wrong crop's own
+// sub-pose) were not classified at all - `mistake` sat in the blanket CROP_WINDOW_FIELDS allowance, so a moved
+// joint there passed silently. 21 of the 24 deep-equal golden-A's own mistake pose (either its literal, unmerged
+// `mistake.pose`, for the untouched base '-n'/'-m' calls, or that same delta merged with `poses.end`, the form
+// howto/render-*.mjs's own `poseOf` resolves a `{base, pose}` ref to before assigning it). The other 3 are
+// enumerated below, alongside the 11 poses.start/end exceptions (14 entries total): `pull_up|top-wrong`,
+// `lat_pulldown|pad-wrong` and `seated_cable_row|back-wrong` each draw a crop-specific mistake distinct from the
+// plate's own general mistake pose - a legitimate design choice, still pinned literally.
 export const ENUMERATED_POSES = {
   "barbell_back_squat|bar-on-back-w": {"root":{"at":[0,0.918,0.022575272439632726],"tilt":8},"trunk":0,"neck":0,"plant":{"l":{"at":[0.19,0,0],"toe":[0.3420201433256687,0,0.9396926207859084],"pole":[0.24192189559966773,0,0.9702957262759965]},"r":{"at":[-0.19,0,0],"toe":[-0.3420201433256687,0,0.9396926207859084],"pole":[-0.24192189559966773,0,0.9702957262759965]}},"reach":{"l":{"at":[0.36,1.531676188242726,0.02],"pole":[0.45,-0.75,-0.6]},"r":{"at":[-0.36,1.531676188242726,0.02],"pole":[-0.45,-0.75,-0.6]}}},
   "barbell_back_squat|depth-w": {"root":{"at":[0,0.62,-0.2171966658748457],"tilt":28},"trunk":7,"neck":-7,"plant":{"l":{"at":[0.19,0,0],"toe":[0.3420201433256687,0,0.9396926207859084]},"r":{"at":[-0.19,0,0],"toe":[-0.3420201433256687,0,0.9396926207859084]}},"reach":{"l":{"at":[0.36,1.1397036108416705,0],"pole":[0.35,-1,0]},"r":{"at":[-0.36,1.1397036108416705,0],"pole":[-0.35,-1,0]}}},
@@ -272,6 +281,9 @@ export const ENUMERATED_POSES = {
   "seated_cable_row|finish-wrong": {"root":{"at":[0,0.5410000000000001,-0.0002499999999999933],"tilt":0},"trunk":0,"neck":0,"scap":{"elev":3,"pro":0},"plant":{"l":{"at":[0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]},"r":{"at":[-0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]}},"reach":{"l":{"at":[0.075,0.905,0.21],"pole":[0.35,0.45,-1]},"r":{"at":[-0.075,0.905,0.21],"pole":[-0.35,0.45,-1]}}},
   "leg_press|foot-w": {"root":{"at":[0,0.5,0],"tilt":-60},"trunk":0,"neck":5,"reach":{"l":{"at":[0.25,0.53,0.1],"pole":[1,0.25,0]},"r":{"at":[-0.25,0.53,0.1],"pole":[-1,0.25,0]}},"plant":{"l":{"at":[0.17,0.9512141873993747,0.4955921852195438],"normal":[0,-0.24192189559966773,-0.9702957262759965],"toe":[0.25881904510252074,0.9372337011478935,-0.23367860690452677],"ref":"ball"},"r":{"at":[-0.17,0.9512141873993747,0.4955921852195438],"normal":[0,-0.24192189559966773,-0.9702957262759965],"toe":[-0.25881904510252074,0.9372337011478935,-0.23367860690452677],"ref":"ball"}}},
   "machine_chest_press|seat-height-w": {"root":{"at":[0,0.434466781271559,0.03565234545147697],"tilt":-5},"trunk":0,"neck":0,"scap":{"elev":-0.5,"pro":-2},"plant":{"l":{"at":[0.1,0,0.47]},"r":{"at":[-0.1,0,0.47]}},"reach":{"r":{"at":[-0.28,0.89,0.2],"pole":[-0.9,-0.1,-0.3]},"l":{"at":[0.28,0.89,0.2],"pole":[0.9,-0.1,-0.3]}}},
+  "pull_up|top-wrong": {"root":{"at":[0,1.635,-0.03],"tilt":-2},"trunk":-4,"neck":-20,"scap":{"elev":3,"pro":7},"hip":16,"knee":10,"ankle":-22,"reach":{"l":{"at":[0.31,2.25,0],"pole":[0.3,-1,0]},"r":{"at":[-0.31,2.25,0],"pole":[-0.3,-1,0]}}},
+  "lat_pulldown|pad-wrong": {"root":{"at":[0,0.5772146132970393,0.027283355026593428],"tilt":-10},"trunk":-3,"neck":-6,"scap":{"elev":-2,"pro":-3},"plant":{"l":{"at":[0.1,0,0.5]},"r":{"at":[-0.1,0,0.5]}},"reach":{"l":{"at":[0.34,0.9623637128446966,0.07447552165860852],"pole":[0.2,-1,-0.45]},"r":{"at":[-0.34,0.9623637128446966,0.07447552165860852],"pole":[-0.2,-1,-0.45]}}},
+  "seated_cable_row|back-wrong": {"root":{"at":[0,0.5462032174224859,-0.013340524179922257],"tilt":-8},"trunk":44,"neck":-10,"scap":{"elev":0,"pro":6},"plant":{"l":{"at":[0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]},"r":{"at":[-0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]}},"reach":{"l":{"at":[0.075,0.665,0.8],"pole":[0.25,-1,0]},"r":{"at":[-0.075,0.665,0.8],"pole":[-0.25,-1,0]}}},
 };
 
 const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -301,9 +313,26 @@ export function classifyPose(exId, optsId, pose, goldenA) {
 }
 
 /**
- * Every captured renderPlate call's `spec.poses.start`/`spec.poses.end` (when the call overrides `poses` at all -
- * the base '-n'/'-m' calls reuse golden-A's own `poses` object untouched, and classify as 'golden' trivially by the
- * same check) must classify as 'golden' or 'enumerated'. Returns the problems (empty = clean).
+ * Classifies one crop's `spec.mistake.pose` (round-2 review fix, blocker 2). Golden-A's own `mistake.pose` is
+ * authored as a partial delta - the untouched base '-n'/'-m' calls carry it exactly as written, but a crop that
+ * draws that same mistake through `howto/render-*.mjs`'s `poseOf` gets it pre-merged with `poses.end` before
+ * assignment - so both the unmerged and the merged form of golden-A's own mistake pose are 'golden', not just one.
+ * Shares `ENUMERATED_POSES` with `classifyPose` (no key collisions: this fixture's names are all distinct crop
+ * keys). Returns 'golden' or 'enumerated', or a drift-problem string - never a blanket allowance.
+ */
+export function classifyMistakePose(exId, optsId, pose, goldenA) {
+  const refs = [];
+  if (goldenA.mistake?.pose) refs.push(goldenA.mistake.pose, mergeDeep(goldenA.poses?.end, goldenA.mistake.pose));
+  if (refs.some(r => deepEqual(pose, r))) return 'golden';
+  const key = `${exId}|${optsId}`;
+  if (Object.prototype.hasOwnProperty.call(ENUMERATED_POSES, key) && deepEqual(pose, ENUMERATED_POSES[key])) return 'enumerated';
+  return `${key}: mistake pose matches neither golden-A's own mistake pose nor its enumerated exception (${JSON.stringify(pose).slice(0, 200)})`;
+}
+
+/**
+ * Every captured renderPlate call's `spec.poses.start`/`spec.poses.end` and `spec.mistake.pose` (when the call
+ * carries them at all - the base '-n'/'-m' calls reuse golden-A's own values untouched, and classify as 'golden'
+ * trivially by the same checks) must classify as 'golden' or 'enumerated'. Returns the problems (empty = clean).
  */
 export function validateCalls(calls, goldenASpecs) {
   const bad = [];
@@ -311,12 +340,17 @@ export function validateCalls(calls, goldenASpecs) {
     const exId = c.spec.id;
     const goldenA = goldenASpecs[exId];
     if (!goldenA) { bad.push(`call with unknown spec.id "${exId}"`); continue; }
-    const poses = c.spec.poses;
-    if (!poses) continue;
     const optsId = c.opts?.id ?? '';
-    for (const which of ['start', 'end']) {
-      if (!(which in poses)) continue;
-      const verdict = classifyPose(exId, optsId, poses[which], goldenA);
+    const poses = c.spec.poses;
+    if (poses) {
+      for (const which of ['start', 'end']) {
+        if (!(which in poses)) continue;
+        const verdict = classifyPose(exId, optsId, poses[which], goldenA);
+        if (verdict !== 'golden' && verdict !== 'enumerated') bad.push(verdict);
+      }
+    }
+    if (c.spec.mistake?.pose) {
+      const verdict = classifyMistakePose(exId, optsId, c.spec.mistake.pose, goldenA);
       if (verdict !== 'golden' && verdict !== 'enumerated') bad.push(verdict);
     }
   }
@@ -382,14 +416,16 @@ export async function loadGoldenASpecs() {
 /**
  * The only fields a crop-time renderPlate call may legitimately change from golden-A: camera framing (`camera`,
  * `seatDrop`, `datum`, `viewLabel`), what that framing repositions or hides (`equipment`, `ghosts`, `startParts`,
- * `marks`), the spec's own embedded mistake sub-pose, and pure labels (`id`, `name`, `view`, `facing`). `poses` is
- * checked separately (classifyPose/validateCalls above) - never folded into this blanket allowance (review fix,
- * blocker 1). `tempo`, `alt`, `checks` and `callouts` are the protected content fields, held to zero tolerance
- * (byte-identical, or checks/callouts shrunk to empty - never partially edited).
+ * `marks`), and pure labels (`id`, `name`, `view`, `facing`). `poses` and `mistake.pose` are checked separately
+ * (classifyPose/classifyMistakePose/validateCalls above) - `mistake` is NOT in this blanket allowance (round-2
+ * review fix, blocker 2: it was, so a moved joint inside `mistake.pose` passed silently). `mistake`'s own non-pose
+ * keys (`parts`, `guides`, `tells` - which parts a crop highlights, its overlay guides, not a pose) still vary
+ * freely, checked below by stripping `.pose` before comparing. `tempo`, `alt`, `checks` and `callouts` are the
+ * protected content fields, held to zero tolerance (byte-identical, or checks/callouts shrunk to empty).
  */
 export const CROP_WINDOW_FIELDS = new Set([
   'camera', 'seatDrop', 'datum', 'viewLabel', 'equipment', 'ghosts', 'startParts', 'marks',
-  'mistake', 'id', 'name', 'view', 'facing',
+  'id', 'name', 'view', 'facing',
 ]);
 export const PROTECTED_FIELDS = ['tempo', 'alt', 'checks', 'callouts'];
 
@@ -403,7 +439,11 @@ export function protectedFieldProblems(exId, call, goldenA) {
     if (!shrunkToEmpty) bad.push(`${exId} ${JSON.stringify(call.opts)}: ${k} differs from golden-A and is not empty`);
   }
   for (const k of Object.keys(call.spec)) {
-    if (PROTECTED_FIELDS.includes(k) || CROP_WINDOW_FIELDS.has(k) || k === 'poses') continue;
+    // `mistake`'s non-pose keys (parts/guides/tells - which parts a crop highlights, its overlay guides) vary freely
+    // like the rest of the crop window; `.pose` is checked separately by classifyMistakePose/validateCalls, never
+    // here (round-2 review fix, blocker 2: `mistake` used to be a whole-field member of CROP_WINDOW_FIELDS, which
+    // let `.pose` drift silently too - it no longer is, but its non-pose siblings still need the same free pass).
+    if (PROTECTED_FIELDS.includes(k) || CROP_WINDOW_FIELDS.has(k) || k === 'poses' || k === 'mistake') continue;
     if (JSON.stringify(call.spec[k]) !== JSON.stringify(goldenA[k])) bad.push(`${exId} ${JSON.stringify(call.opts)}: unenumerated field "${k}" differs from golden-A (never widen the crop-key list to pass; the drift is real)`);
   }
   return bad;
@@ -439,6 +479,33 @@ export function fragmentProblems(html, plateEntries) {
       ['mistakeAlt', sha256(unesc(mm[2])), p.fragments.mistakeAlt],
     ];
     for (const [name, got, want] of checks) if (got !== want) bad.push(`${p.chromeId}: ${name} sha256 ${got} != golden-A ${want}`);
+  }
+  return bad;
+}
+
+/**
+ * Round-2 review fix (Medium 4): the lateral raise draws its crops through ref-src/plate.mjs's own `arm()`, never
+ * `engine/plate.mjs`'s `renderPlate` - `captureRenderPlateCalls`'s shim never sees them, so HT4-A5 proof 2 only
+ * ever covers the 7 non-ref-src exercises (the gate line says so: "7 exercises with an untouched base-plate call").
+ * Proof 1c pins `ref-src/plate.mjs` byte-for-byte and the `dumbbell_lateral_raise.howto.mjs` re-export, but neither
+ * touches the Wrong-crop parameters `howto/render-dumbbell_lateral_raise.mjs` reads off the zoom itself (`z.wrong`)
+ * - only one zoom, `top-height`, sets them (the other lateral-raise zooms use the standard `wrong: 'mistake'`
+ * string ref, already covered by 1c's byte-identity). Pinned literally here, checked against the vendored
+ * `exercises/dumbbell_lateral_raise.howto.mjs`'s own `zooms[].wrong` value - no Playwright, no live build (a plain
+ * import), so both the fast unit test and the gate use it directly.
+ */
+export const LATERAL_RAISE_WRONG_CROPS = {
+  'top-height': { abd: 118, hideInside: ['shcap.r', 'upper.r'] },
+};
+
+export async function validateLateralRaiseCrops(layersDir) {
+  const mod = await import(pathToFileURL(join(layersDir, 'exercises', 'dumbbell_lateral_raise.howto.mjs')).href);
+  const zooms = mod.default.zooms;
+  const bad = [];
+  for (const [key, want] of Object.entries(LATERAL_RAISE_WRONG_CROPS)) {
+    const z = zooms.find(zz => zz.key === key);
+    if (!z) { bad.push(`dumbbell_lateral_raise: zoom "${key}" not found`); continue; }
+    if (JSON.stringify(z.wrong) !== JSON.stringify(want)) bad.push(`dumbbell_lateral_raise|${key}: wrong crop params ${JSON.stringify(z.wrong)} != pinned ${JSON.stringify(want)}`);
   }
   return bad;
 }
