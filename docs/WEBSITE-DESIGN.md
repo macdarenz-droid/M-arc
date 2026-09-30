@@ -492,7 +492,7 @@ Copy below is final. `__VERSION__` renders as the package.json version (37.1.0 t
 | | |
 |---|---|
 | Eyebrow | Train |
-| h2 | Set targets |
+| h2 | Targets |
 | Copy | "Open a session and every set already says what to do, such as 62.5 kg for 8, with a one-line reason. Tap the row to log it as planned or type what actually happened." / "A target steps up after you hit the top of the range twice. It holds when readiness is Amber or a primary muscle is under 60% recovered. A lighter week or a Red day cuts sets. There is no blind 2.5 kg increase." |
 | Rows | "Heart-rate rest": With a Bluetooth heart-rate watch, rest ends when your heart rate settles, and falls back to the timer if the signal drops. / "PR chip": The set that beats your best lights up the moment you log it, and History keeps six kinds of records, from heaviest load to furthest carry. / "Plates per side": Tap a barbell target to see the plates in the plates' own unit. Up to 8 gyms, and each machine remembers kg or lb. / "Target reasons": Open the Why this target disclosure under any exercise to see the rule that fired, such as top of range twice, step up, or effort missing, repeat and rate. |
 | Demo | The rest banner (6.8) under the rows |
@@ -757,11 +757,11 @@ Section 5: `prefers-reduced-motion: reduce` (or no JavaScript) yields the static
 
 Shared head (partial): charset, viewport `width=device-width, initial-scale=1, viewport-fit=cover`, the title and description, `<link rel="canonical">` (2.5), `theme-color`, the three font preloads, `tokens.css` and `site.css` (one stylesheet each, both under 20 KB before compression), the module script with `defer`, and:
 
-- Open Graph: `og:type website`, `og:site_name M/ARC`, `og:title` (the title), `og:description` (the description), `og:image __SITE_URL____BASE__og.png` (emitted only when `SITE_URL` is set; relative image URLs are ignored by scrapers), `og:image:width 1200`, `og:image:height 630`, `og:image:alt "M/ARC lockup and the line A training log that knows how recovered you are, on deep navy"`, `og:url` (when `SITE_URL` is set).
+- Open Graph: `og:type website`, `og:site_name M/ARC`, `og:title` (the title), `og:description` (the description), `og:image __SITE_URL____BASE__og.png` (emitted only when `SITE_URL` is set; relative image URLs are ignored by scrapers), `og:image:width 1200`, `og:image:height 630`, `og:image:alt "M/ARC lockup and the heading Training log, on deep navy"`, `og:url` (when `SITE_URL` is set).
 - Twitter: `twitter:card summary_large_image`, `twitter:title`, `twitter:description`, `twitter:image` (same condition).
 - Favicons from `branding/midnight/`, copied at build to `website/public/`: `<link rel="icon" href="__BASE__mark.svg" type="image/svg+xml">`, `<link rel="icon" href="__BASE__icon-192.png" sizes="192x192" type="image/png">`, `<link rel="apple-touch-icon" href="__BASE__icon-192.png">`. No manifest: the site is not an app.
 
-**OG image.** `website/og/og.html` is a 1200x630 page using the same tokens: the Midnight plane (the hero pair of lights, blurred 60px, with the grain) behind `branding/midnight/lockup.png` at 96px tall in the top-left (80px margins) and the hero line "A training log that knows how recovered you are." in Instrument Sans 600 at 72px/1.04, -.03em, `--text`, max-width 900px, bottom-left; a caption line "Android. No account. Your data stays on the phone." in Inter 400 24px `--text2` beneath it. `website/og.mjs` renders it with Playwright (Chromium at `MARC_CHROMIUM`, device scale 1) to `website/public/og.png` before `vite build`; the file must be under 300 KB (PNG) or the script fails.
+**OG image.** `website/og/og.html` is a 1200x630 page using the same tokens: the Midnight plane (the hero pair of lights, blurred 60px, with the grain) behind `branding/midnight/lockup.png` at 96px tall in the top-left (80px margins) and the hero heading "Training log" in Instrument Sans 600 at 72px/1.04, -.03em, `--text`, max-width 900px, bottom-left; a caption line "Android. No account. Your data stays on the phone." in Inter 400 24px `--text2` beneath it. `website/og.mjs` renders it with Playwright (Chromium at `MARC_CHROMIUM`, device scale 1) to `website/public/og.png` before `vite build`; the file must be under 300 KB (PNG) or the script fails.
 
 **robots.txt** (always emitted to `website/public/robots.txt`):
 
