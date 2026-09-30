@@ -1,56 +1,62 @@
 // HT-1 golden (HT1-A2..A4): the vendored sources rebuild the approved gallery byte for byte, GOLDEN.json holds
 // one hash-chained approved entry per exercise, and the reference fixtures cover every equipment primitive.
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { readFileSync, rmSync } from 'node:fs';
+import { beforeAll, describe, expect, it } from 'vitest';
 import type { GoldenEntry, GoldenFile, GoldenPlateEntry, LibId } from '../../src/howto/types';
 
 const GOLDEN_URL = new URL('../../tools/plates/golden.mjs', import.meta.url).href;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let g: any, run: any, golden: GoldenFile;
-const tmps: string[] = [];
+
+// HT-2 moved the full L1 rebuild (build-page.mjs -> e2bea90c…, first differing byte offset on failure) into gate
+// block HT-2, so it runs once per gate job (supervisor, PR #105). Here: check()'s every other part, from the
+// committed fixture, without the rebuild.
+async function checkWithoutRebuild() {
+  const problems: string[] = [...g.verifyVendor().map((p: string) => `L0 ${p}`)];
+  const fontBad = g.verifyFont(); if (fontBad) problems.push(`L0 ${fontBad}`);
+  problems.push(...g.verifyChain(golden.entries).map((p: string) => `GOLDEN ${p}`));
+  const latest = g.latestEntries(golden.entries), page = latest.get('page'), fixture = readFileSync(g.FIXTURE);
+  if (g.sha256(fixture) !== page.pageSha256) problems.push(`L1 committed fixture sha256 ${g.sha256(fixture)} != GOLDEN page ${page.pageSha256}`);
+  const plates = g.extractPlates(fixture.toString('utf8')), mirror = g.makeMirror();
+  try {
+    const probe = await g.probe(mirror, plates, 3);
+    if (plates.length !== 8) problems.push(`L2 ${plates.length} plates in the fixture, expected 8`);
+    for (const p of plates) {
+      const e = latest.get(g.LIB_OF[p.chromeId]);
+      if (!e) { problems.push(`GOLDEN no entry for ${p.chromeId}`); continue; }
+      if (probe.plates[p.chromeId] !== e.src) problems.push(`GOLDEN ${p.chromeId}: src ${e.src}, but the vendored source that reproduces it is ${probe.plates[p.chromeId]}`);
+      if (e.prefix !== p.prefix || e.chromeId !== p.chromeId) problems.push(`GOLDEN ${p.chromeId}: prefix/chromeId ${e.prefix}/${e.chromeId} != ${p.prefix}/${p.chromeId}`);
+      for (const [k, v] of Object.entries(g.fragmentsOf(p))) if (e.fragments[k] !== v) problems.push(`L2 ${p.chromeId}.${k}: sha256 ${v} != GOLDEN ${e.fragments[k]}`);
+    }
+    problems.push(...g.fixtureProblems(probe, g.readCommittedFixtures()));
+    return { ok: problems.length === 0, problems, facts: { sources: probe.plates }, plates, probe };
+  } finally {
+    rmSync(mirror, { recursive: true, force: true });
+  }
+}
 
 beforeAll(async () => {
   g = await import(/* @vite-ignore */ GOLDEN_URL);
   golden = JSON.parse(readFileSync(g.GOLDEN_JSON, 'utf8'));
-  run = await g.check();
+  run = await checkWithoutRebuild();
 }, 120_000);
-afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
 
 const IDS: LibId[] = ['lib_dumbbell_lateral_raise', 'lib_barbell_back_squat', 'lib_pull_up', 'lib_hanging_leg_raise', 'lib_lat_pulldown', 'lib_seated_cable_row', 'lib_leg_press', 'lib_machine_chest_press'];
 const plates = () => golden.entries.filter((e): e is GoldenPlateEntry => e.kind === 'plate');
 
 describe('HT1-A2 golden rebuild (L1)', () => {
-  it('the full check passes', () => {
+  it('the check passes (L0, fixture = GOLDEN page, L2, sources, fixtures; the rebuild itself runs in gate block HT-2)', () => {
     expect(run.problems).toEqual([]);
     expect(run.ok).toBe(true);
   });
 
-  it('build-page.mjs in a temp mirror writes the approved gallery: e2bea90c…, 860,766 B, equal to the committed fixture', () => {
+  it('the committed fixture is the approved gallery: e2bea90c…, 860,766 B, and the GOLDEN page entry', () => {
     const fixture = readFileSync(g.FIXTURE);
-    expect(run.facts.pageSha256).toBe('e2bea90c8312132b93a2ab0bc004cee6ef43edd22e8227720be3958f6b2dcf48');
-    expect(run.facts.bytes).toBe(860766);
-    expect(g.sha256(fixture)).toBe(run.facts.pageSha256);
-    expect(run.facts.firstDiff).toBe(-1);
-    expect(Buffer.compare(run.built, fixture)).toBe(0);
+    expect(g.sha256(fixture)).toBe('e2bea90c8312132b93a2ab0bc004cee6ef43edd22e8227720be3958f6b2dcf48');
+    expect(fixture.length).toBe(860766);
+    expect(g.latestEntries(golden.entries).get('page')).toMatchObject({ pageSha256: g.sha256(fixture), bytes: 860766 });
+    expect(g.PINS).toMatchObject({ pageSha256: g.sha256(fixture), pageBytes: 860766 });
   });
-
-  it('a changed spec gives a different sha, fails, and prints the first differing byte offset', async () => {
-    const d = mkdtempSync(join(tmpdir(), 'ht1-spec-'));
-    tmps.push(d);
-    cpSync(g.VENDOR, d, { recursive: true });
-    const f = join(d, 'exercises/pull_up.mjs');
-    const src = readFileSync(f, 'utf8');
-    expect(src).toContain('neck: -14');
-    writeFileSync(f, src.replace('neck: -14', 'neck: -13'));   // the end pose's head, 1 deg
-    const bad = await g.check({ vendor: d });
-    expect(bad.ok).toBe(false);
-    const l1 = bad.problems.find((p: string) => p.startsWith('L1 rebuilt gallery'));
-    expect(l1).toMatch(/first differing byte at offset \d+ \(node v\d+/);
-    expect(bad.facts.firstDiff).toBeGreaterThan(0);
-    expect(bad.problems.some((p: string) => p.startsWith('L0 exercises/pull_up.mjs: sha256'))).toBe(true);
-  }, 120_000);
 
   it('firstDiff finds the first differing byte, a length difference, and equality', () => {
     expect(g.firstDiff(Buffer.from('abcd'), Buffer.from('abXd'))).toBe(2);
