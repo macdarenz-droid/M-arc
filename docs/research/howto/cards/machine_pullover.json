@@ -242,7 +242,7 @@
     },
     {
       "id": "c13",
-      "text": "Measured on free-weight pullovers, not this machine: a review found the pullover works the chest (pectoralis major) more than it selectively targets the lats, and another study found weak-to-moderate upper-chest and moderate-to-strong front-deltoid activity. Virtuagym also names the chest.",
+      "text": "Measured on pullover exercises (equipment not stated; not this machine): a review found the pullover works the chest (pectoralis major) more than it selectively targets the lats, and another study found weak-to-moderate upper-chest and moderate-to-strong front-deltoid activity. Virtuagym also names the chest.",
       "tags": [
         "DATA",
         "WEAK"
@@ -272,7 +272,7 @@
     },
     {
       "id": "c14",
-      "text": "Tempo: moderate speed, about 1-2 s each way, with a brief pause at the bottom.",
+      "text": "Tempo: moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a brief pause at the bottom.",
       "tags": [
         "CONSENSUS"
       ],
@@ -283,7 +283,12 @@
       "quotes": [
         {
           "source": "acsm-2009",
-          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -363,7 +368,7 @@
     "width": "Set by the machine arm.",
     "thumb": "Not wrapped; fingers extended.",
     "handContact": "Palms open against the bar; the force goes through the elbow pads.",
-    "wrist": "",
+    "wrist": "Not given by any source read (balance archetype default).",
     "claims": [
       "c3",
       "c6"
@@ -512,7 +517,7 @@
     "remove": [
       "triceps"
     ],
-    "why": "lats primary is sourced (c12). rear_delts added: the Marquette exercise sheet lists the posterior deltoid (c12). chest added as secondary: free-weight pullover data and Virtuagym (c13, DATA/WEAK for this machine). triceps removed: no source found names the triceps for the machine pullover, and on the elbow-pad machine the hands stay open with the force at the elbows (c6)."
+    "why": "lats primary is sourced (c12). rear_delts added: the Marquette exercise sheet lists the posterior deltoid (c12). chest added as secondary: pullover data (equipment not stated) and Virtuagym (c13, DATA/WEAK for this machine). triceps removed: no source found names the triceps for the machine pullover, and on the elbow-pad machine the hands stay open with the force at the elbows (c6)."
   },
   "anchorSource": "mq-pullover",
   "sources": [
@@ -524,7 +529,8 @@
       "year": 2006,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-09-30",
+      "archiveUrl": "https://web.archive.org/web/20180908111024/https://gomarquette.com/news/2006/5/8/pullover.aspx"
     },
     {
       "id": "pf-pullover",

@@ -31,6 +31,13 @@
       "closest": "Keep your feet flat on the floor, shoulder-width apart."
     },
     {
+      "claim": "c2",
+      "source": "mo-lat-raise",
+      "quote": "Leaning away from pad",
+      "status": "verbatim",
+      "closest": "Leaning away from pad"
+    },
+    {
       "claim": "c3",
       "source": "ace-lat-raise",
       "quote": "the pads resting just above the elbows.",
@@ -39,17 +46,24 @@
     },
     {
       "claim": "c3",
-      "source": "laf-lat-raise",
-      "quote": "Position your forearms under the pads and grip the handles with each hand.",
-      "status": "verbatim",
-      "closest": "Position your forearms under the pads and grip the handles with each hand."
-    },
-    {
-      "claim": "c3",
       "source": "sl-lat-raise",
       "quote": "Adjust the machine so that the pads are leaning against your elbows.",
       "status": "verbatim",
       "closest": "Adjust the machine so that the pads are leaning against your elbows."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-lat-raise",
+      "quote": "Grip handles if available and engage core.",
+      "status": "verbatim",
+      "closest": "Grip handles if available and engage core."
+    },
+    {
+      "claim": "c3",
+      "source": "mo-lat-raise",
+      "quote": "Neutral wrists",
+      "status": "verbatim",
+      "closest": "Neutral wrists"
     },
     {
       "claim": "c4",
@@ -78,6 +92,13 @@
       "quote": "Raise your arms out and away from your sides until your elbows are even with your shoulders, pause, and then reverse the motion.",
       "status": "verbatim",
       "closest": "Raise your arms out and away from your sides until your elbows are even with your shoulders, pause, and then reverse the motion."
+    },
+    {
+      "claim": "c5",
+      "source": "mo-lat-raise",
+      "quote": "Raising arms above shoulder level",
+      "status": "verbatim",
+      "closest": "Raising arms above shoulder level"
     },
     {
       "claim": "c6",
@@ -113,6 +134,20 @@
       "quote": "Avoid using momentum or swinging your body to complete the exercise, as this reduces the effectiveness and can lead to injury.",
       "status": "verbatim",
       "closest": "Avoid using momentum or swinging your body to complete the exercise, as this reduces the effectiveness and can lead to injury."
+    },
+    {
+      "claim": "c8",
+      "source": "mo-lat-raise",
+      "quote": "Using momentum to lift",
+      "status": "verbatim",
+      "closest": "Using momentum to lift"
+    },
+    {
+      "claim": "c8",
+      "source": "mo-lat-raise",
+      "quote": "Keep torso stable without rocking.",
+      "status": "verbatim",
+      "closest": "Keep torso stable without rocking."
     },
     {
       "claim": "c9",
@@ -159,9 +194,16 @@
     {
       "claim": "c13",
       "source": "acsm-2009",
-      "quote": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
       "status": "verbatim",
-      "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c13",
+      "source": "acsm-2009",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
       "claim": "c13",

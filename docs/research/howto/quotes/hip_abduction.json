@@ -39,6 +39,13 @@
     },
     {
       "claim": "c3",
+      "source": "mo-hip-abd",
+      "quote": "Hold briefly at peak contraction.",
+      "status": "verbatim",
+      "closest": "Hold briefly at peak contraction."
+    },
+    {
+      "claim": "c3",
       "source": "sl-hip-abd",
       "quote": "Push the pads out by moving your legs apart as far as possible.",
       "status": "verbatim",
@@ -143,18 +150,46 @@
       "closest": "Tempo 2-1-2"
     },
     {
-      "claim": "c10",
-      "source": "acsm-2009",
-      "quote": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-      "status": "verbatim",
-      "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
-    },
-    {
       "claim": "c11",
       "source": "acsm-2009",
       "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
       "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Jerking the weight",
+      "status": "verbatim",
+      "closest": "Jerking the weight"
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Arching lower back",
+      "status": "verbatim",
+      "closest": "Arching lower back"
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Using upper body to swing",
+      "status": "verbatim",
+      "closest": "Using upper body to swing"
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Incomplete range of motion",
+      "status": "verbatim",
+      "closest": "Incomplete range of motion"
+    },
+    {
+      "claim": "c12",
+      "source": "mo-hip-abd",
+      "quote": "Letting pads crash together",
+      "status": "verbatim",
+      "closest": "Letting pads crash together"
     }
   ]
 }

@@ -208,7 +208,7 @@
     },
     {
       "id": "c11",
-      "text": "In a lab study the cable cross-over gave larger shoulder moments than bench presses and different joint loading; the authors advise care to stabilise the joints and avoid overload.",
+      "text": "In a lab study, cable pulley exercises (cross-over, pull-over) gave larger shoulder moments than the bench press, and the cross-over had different joint loading; the authors advise care to stabilise the joints and avoid overload.",
       "tags": [
         "DATA"
       ],
@@ -220,6 +220,11 @@
           "source": "schutz2022",
           "text": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises.",
           "where": "abstract"
+        },
+        {
+          "source": "schutz2022",
+          "text": "as well as during two different cable pulley exercises, namely the cross-over exercise, also known as butterfly, and the pull-over exercise at moderate intensity.",
+          "where": "Introduction (PMC8877248 full text)"
         },
         {
           "source": "schutz2022",
@@ -235,7 +240,7 @@
     },
     {
       "id": "c12",
-      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "text": "ACSM recommends a moderate speed: 1-2 seconds up and 1-2 seconds down (ACSM, for heavy sets in trained lifters).",
       "tags": [
         "CONSENSUS"
       ],
@@ -245,7 +250,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         }
       ]
@@ -328,7 +338,7 @@
       "kind": "peer-reviewed",
       "year": 2022,
       "pmid": "35202059",
-      "access": "abstract",
+      "access": "full",
       "checked": "2026-09-30"
     },
     {
@@ -487,13 +497,6 @@
         "redFlag": null
       },
       {
-        "where": "Mostly the arms, elbows bending",
-        "means": "Usually the fly has turned into a press.",
-        "fix": "Keep the elbow bend fixed; go lighter.",
-        "claim": "c6",
-        "redFlag": null
-      },
-      {
         "where": "Pain in the front of the shoulder",
         "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
         "fix": "Stop the set.",
@@ -504,7 +507,7 @@
   },
   "risks": [
     {
-      "risk": "The cable cross-over loads the shoulder more than pressing; keep the joints stable and do not open past chest line.",
+      "risk": "In a lab study, cable pulley exercises (cross-over, pull-over) loaded the shoulder more than the bench press; keep the joints stable and do not open past chest line.",
       "claim": "c11, c7"
     },
     {

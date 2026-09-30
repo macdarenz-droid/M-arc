@@ -220,25 +220,19 @@
         "CONSENSUS"
       ],
       "sources": [
-        "sl-cable-press",
-        "nfpt-cable-press"
+        "sl-cable-press"
       ],
       "quotes": [
         {
           "source": "sl-cable-press",
           "text": "Primary muscles worked: Chest Secondary muscles worked: Front Deltoid Triceps",
           "where": "Muscles Worked (list items)"
-        },
-        {
-          "source": "nfpt-cable-press",
-          "text": "The primary muscles used to create the movement for the dumbbell press are: Pectoralis Major, Triceps and Anterior Deltoid.",
-          "where": "Muscle Emphasis"
         }
       ]
     },
     {
       "id": "c10",
-      "text": "Pressing from standing is limited by whole-body stability, not chest and shoulder strength: in trained men the one-arm standing cable press 1RM was far below the bench press 1RM, and trunk muscles worked hard.",
+      "text": "Pressing from standing is limited mainly by whole-body stability and trunk coordination rather than maximal chest and shoulder activation: in recreationally trained men the one-arm standing cable press 1RM was far below the bench press 1RM, and trunk muscles worked hard.",
       "tags": [
         "DATA"
       ],
@@ -255,12 +249,17 @@
           "source": "santana2007",
           "text": "Our EMG findings show that SCP performance is limited by the activation and neuromuscular coordination of torso muscles, not maximal muscle activation of the chest and shoulder muscles.",
           "where": "abstract"
+        },
+        {
+          "source": "santana2007",
+          "text": "The SCP performance also relies on the strength of shoulder and chest musculature; however, it is whole-body stability and equilibrium together with joint stability that present the major limitation in force generation.",
+          "where": "abstract"
         }
       ]
     },
     {
       "id": "c11",
-      "text": "Chest and front-shoulder activity is higher in more stable pushing; less stable pushing (such as standing) raises abdominal and trunk work.",
+      "text": "Chest and front-shoulder activity is higher in more stable pushing; less stable pushing raises abdominal and trunk work.",
       "tags": [
         "DATA"
       ],
@@ -277,9 +276,10 @@
     },
     {
       "id": "c12",
-      "text": "In a lab study, shoulder moments were larger in the cable pulley chest exercises than in the bench press.",
+      "text": "In a lab study, shoulder moments were larger in the cable pulley chest exercises than in the bench press (measured on the cable cross-over and pull-over, not a press; applied here by inference).",
       "tags": [
-        "DATA"
+        "MECH",
+        "WEAK"
       ],
       "sources": [
         "schutz2022"
@@ -289,6 +289,11 @@
           "source": "schutz2022",
           "text": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises.",
           "where": "abstract"
+        },
+        {
+          "source": "schutz2022",
+          "text": "as well as during two different cable pulley exercises, namely the cross-over exercise, also known as butterfly, and the pull-over exercise at moderate intensity.",
+          "where": "Introduction (PMC8877248 full text)"
         }
       ]
     },
@@ -400,7 +405,7 @@
       "kind": "peer-reviewed",
       "year": 2022,
       "pmid": "35202059",
-      "access": "abstract",
+      "access": "full",
       "checked": "2026-09-30"
     },
     {
@@ -603,8 +608,8 @@
   },
   "risks": [
     {
-      "risk": "Wide grips and flared elbows stress the shoulder, a common injury site in lifting; cable chest exercises load the shoulder more than the bench press.",
-      "claim": "c7, c13, c12"
+      "risk": "Wide grips and flared elbows stress the shoulder, a common injury site in lifting.",
+      "claim": "c7, c13"
     },
     {
       "risk": "Too much weight costs form and raises injury risk; add weight in small steps.",
@@ -633,7 +638,7 @@
   "libraryDiff": {
     "add": [],
     "remove": [],
-    "why": "exercises.json: chest primary; front_delts and triceps secondary, matching StrengthLog (c9). NFPT lists triceps and front deltoid as primary too; kept secondary as the chest-specific guide ranks them. Core is shown as watch only (c10, c11), not added as a trained muscle."
+    "why": "exercises.json: chest primary; front_delts and triceps secondary, matching StrengthLog (c9). Core is shown as watch only (c10, c11), not added as a trained muscle."
   },
   "anchorSource": "nfpt-cable-press"
 }

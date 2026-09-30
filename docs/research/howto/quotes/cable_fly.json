@@ -110,6 +110,13 @@
     {
       "claim": "c11",
       "source": "schutz2022",
+      "text": "as well as during two different cable pulley exercises, namely the cross-over exercise, also known as butterfly, and the pull-over exercise at moderate intensity.",
+      "status": "verbatim",
+      "closest": "as well as during two different cable pulley exercises, namely the cross-over exercise, also known as butterfly, and the pull-over exercise at moderate intensity."
+    },
+    {
+      "claim": "c11",
+      "source": "schutz2022",
       "text": "The cable cross-over exercise resulted in substantially different joint angles and loading patterns compared to most other exercises, with higher fluctuations during the exercise cycle.",
       "status": "verbatim",
       "closest": "The cable cross-over exercise resulted in substantially different joint angles and loading patterns compared to most other exercises, with higher fluctuations during the exercise cycle."
@@ -124,9 +131,16 @@
     {
       "claim": "c12",
       "source": "acsm2009",
-      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
       "claim": "c13",

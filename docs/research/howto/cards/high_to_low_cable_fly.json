@@ -54,13 +54,12 @@
     },
     {
       "id": "c3",
-      "text": "Keep a slight bend in the elbows and the wrists straight in line with the forearms for the whole movement.",
+      "text": "Keep a slight bend in the elbows, the wrists straight in line with the forearms and the trunk vertical for the whole movement.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "ace-decfly",
-        "ace-top3-chest"
+        "ace-decfly"
       ],
       "quotes": [
         {
@@ -69,9 +68,9 @@
           "where": "Step 2"
         },
         {
-          "source": "ace-top3-chest",
-          "text": "Your hands should be lower than the shoulders and your elbows should be slightly bent.",
-          "where": "Bent-forward Cable Crossover"
+          "source": "ace-decfly",
+          "text": "Maintain the slight bend in your elbows, neutral wrist position and vertical alignment of your trunk throughout the movement.",
+          "where": "Step 4"
         }
       ]
     },
@@ -121,9 +120,10 @@
     },
     {
       "id": "c6",
-      "text": "Think of the arms moving downward first and then inward, in a wide arc.",
+      "text": "Think of the arms moving downward first and then inward, in a wide arc (bent-forward cable crossover tip; applied here by inference).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "ace-top3-chest"
@@ -160,9 +160,10 @@
     },
     {
       "id": "c8",
-      "text": "Starting with the arms behind the torso, or crossing the handles past the midline, adds little and carries a risk of shoulder injury and of hurting the hands as the handles pass close together.",
+      "text": "Starting with the arms behind the torso, or crossing the handles past the midline, adds little and carries a risk of shoulder injury and of hurting the hands as the handles pass close together (bent-forward cable crossover tip; applied here by inference).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "ace-top3-chest"
@@ -182,9 +183,10 @@
     },
     {
       "id": "c9",
-      "text": "Don't move the torso toward the hands.",
+      "text": "Don't move the torso toward the hands (bent-forward cable crossover tip; applied here by inference).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "ace-top3-chest"
@@ -199,9 +201,10 @@
     },
     {
       "id": "c10",
-      "text": "The downward cable crossover works the chest strongly: 93% of barbell bench press chest activation in an ACE-funded EMG study; ACE lists the decline cable fly's target as the chest.",
+      "text": "The chest works strongly in cable crossovers: 93% of barbell bench press chest activation in an ACE-funded EMG study (bent-forward cable crossover; applied here by inference); ACE lists the decline cable fly's target as the chest.",
       "tags": [
-        "DATA"
+        "DATA",
+        "WEAK"
       ],
       "sources": [
         "ace-top3-chest",
@@ -246,7 +249,7 @@
     },
     {
       "id": "c12",
-      "text": "Tempo: move at a moderate speed, about 1-2 s each way, with a brief pause where the hands meet.",
+      "text": "Tempo: move at a moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a brief pause where the hands meet.",
       "tags": [
         "CONSENSUS"
       ],
@@ -257,7 +260,12 @@
       "quotes": [
         {
           "source": "acsm-2009",
-          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -352,8 +360,8 @@
   "grip": {
     "type": "One single cable handle in each hand, held firmly.",
     "width": "Set by the two cable columns.",
-    "thumb": "",
-    "handContact": "",
+    "thumb": "Not given by any source read (hold archetype default).",
+    "handContact": "Not given by any source read (hold archetype default).",
     "wrist": "Straight, in line with the forearm, for the whole movement.",
     "claims": [
       "c1",
@@ -413,7 +421,7 @@
     {
       "mistake": "Starting with the arms behind the body or crossing the handles past each other.",
       "fix": "Stop the hands at the armpits on the way back and let them just meet in front.",
-      "claim": "c8"
+      "claim": "c8, c4"
     },
     {
       "mistake": "Moving the torso toward the hands.",
@@ -445,9 +453,9 @@
       },
       {
         "where": "Pain in the shoulder",
-        "means": "Usually means the trunk is leaning or the arms are going too far back.",
+        "means": "A warning sign; leaning forward and taking the arms too far back both stress the shoulder.",
         "fix": "Stop the set; next time go lighter, stand tall and stop the hands at the armpits.",
-        "claim": "c7",
+        "claim": "c7, c4, c8",
         "redFlag": "shoulder"
       },
       {
@@ -491,7 +499,7 @@
   "libraryDiff": {
     "add": [],
     "remove": [],
-    "why": "chest primary is sourced (c10: ACE EMG on the downward cable crossover; ACE lists chest as the target). front_delts secondary matches exercises.json but rests only on inference from other exercises (c11, MECH/WEAK); kept, flagged weak."
+    "why": "chest primary is sourced (c10: ACE EMG on the bent-forward cable crossover, applied by inference; ACE lists chest as the decline cable fly's target). front_delts secondary matches exercises.json but rests only on inference from other exercises (c11, MECH/WEAK); kept, flagged weak."
   },
   "anchorSource": "ace-decfly",
   "sources": [

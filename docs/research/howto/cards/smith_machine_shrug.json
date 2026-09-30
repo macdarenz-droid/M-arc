@@ -171,7 +171,7 @@
     },
     {
       "id": "c7",
-      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "text": "ACSM recommends a moderate speed of 1-2 seconds up and 1-2 seconds down (ACSM, for heavy sets in trained lifters).",
       "tags": [
         "CONSENSUS"
       ],
@@ -181,7 +181,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
           "where": "abstract"
         }
       ]
@@ -227,7 +232,7 @@
     },
     {
       "id": "c10",
-      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high (measured in 5 bodybuilders doing curls, overhead presses and leg presses, not shrugs).",
+      "text": "Heavy lifting drives blood pressure very high; part of it comes from holding the breath (Valsalva) (measured in 5 bodybuilders doing curls, overhead presses and leg presses, not shrugs).",
       "tags": [
         "DATA",
         "WEAK"
@@ -239,6 +244,11 @@
         {
           "source": "macdougall1985",
           "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver",
           "where": "abstract"
         }
       ]
@@ -364,7 +374,7 @@
     },
     {
       "step": "Grip overhand, slightly wider than the shoulders, thumbs wrapped.",
-      "claim": "c1"
+      "claim": "c1, barbell_shrug:c10"
     },
     {
       "step": "Rotate the bar off the hooks and let the arms hang long.",
@@ -434,7 +444,7 @@
   },
   "risks": [
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps send blood pressure very high; part of it comes from holding your breath.",
       "claim": "c10"
     },
     {

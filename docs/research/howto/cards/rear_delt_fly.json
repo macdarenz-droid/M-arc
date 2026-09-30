@@ -61,7 +61,7 @@
     },
     {
       "id": "c3",
-      "text": "Keep a slight bend in the elbows throughout: the arms shouldn't be straight, and the elbows shouldn't bend much either.",
+      "text": "Keep a slight bend in the elbows throughout: the arms shouldn't be straight, and the elbows shouldn't bend much either (Motra lists bending the elbows too much as a common mistake). A neutral or overhand grip is used.",
       "tags": [
         "CONSENSUS"
       ],
@@ -79,6 +79,11 @@
           "source": "mo-rear-delt",
           "text": "Grasp the handles with a neutral or overhand grip, keeping elbows slightly bent.",
           "where": "How to Perform"
+        },
+        {
+          "source": "mo-rear-delt",
+          "text": "Bending elbows too much",
+          "where": "Common Mistakes"
         }
       ]
     },
@@ -300,7 +305,7 @@
     },
     {
       "id": "c14",
-      "text": "Tempo: about 1-2 s each way at a moderate speed, with a short squeeze at the back (Fitness Volt suggests a slower 2 s up, 2 s hold, 4 s down).",
+      "text": "Tempo: about 1-2 s each way at a moderate speed (ACSM, for heavy sets in trained lifters), with a short squeeze at the back (Fitness Volt suggests a slower 2 s up, 2 s hold, 4 s down).",
       "tags": [
         "CONSENSUS"
       ],
@@ -311,7 +316,12 @@
       "quotes": [
         {
           "source": "acsm-2009",
-          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -386,7 +396,7 @@
     ],
     "mistake": {
       "what": "Elbows bent sharply as the arms open, instead of a slight fixed bend.",
-      "why": "Fitness Volt warns against bending the elbows too much. The biggest named mistake, momentum with the chest pulling off the pad (c6), needs a side view, so this is the fault drawn from the front. No source ranks how common it is.",
+      "why": "Motra lists bending the elbows too much among the common mistakes and Fitness Volt warns against it. The biggest named mistake, momentum with the chest pulling off the pad (c6), needs a side view, so this is the fault drawn from the front. No source ranks how common it is.",
       "claim": "c3",
       "drawable": true
     },
@@ -411,9 +421,9 @@
   "grip": {
     "type": "Neutral grip (palms facing each other) preferred; overhand also used.",
     "width": "Set by the machine handles.",
-    "thumb": "",
-    "handContact": "",
-    "wrist": "",
+    "thumb": "Not given by any source read (pull archetype default).",
+    "handContact": "Not given by any source read (pull archetype default).",
+    "wrist": "Not given by any source read (pull archetype default).",
     "claims": [
       "c3",
       "c10"
@@ -434,7 +444,7 @@
     },
     {
       "step": "Take the handles with a neutral grip, elbows slightly bent.",
-      "claim": "c10"
+      "claim": "c10, c3"
     }
   ],
   "posture": [
@@ -533,7 +543,7 @@
       "claim": "c9"
     },
     {
-      "risk": "Going too heavy lets the traps take over and invites momentum.",
+      "risk": "Going too heavy lets the traps take over.",
       "claim": "c8"
     }
   ],
@@ -549,11 +559,18 @@
       "claim": "c6"
     },
     {
+      "key": "rdf-elbows",
+      "kind": "posture",
+      "right": "Slight, fixed elbow bend as the arms open.",
+      "wrong": "Elbows bent sharply as the arms open.",
+      "claim": "c3"
+    },
+    {
       "key": "rdf-grip",
       "kind": "hand",
-      "right": "Neutral grip, palms facing each other.",
-      "wrong": "Overhand grip, palms down, which gave less rear-delt activity.",
-      "claim": "c10"
+      "right": "Neutral grip, palms facing each other (more rear-delt activity); overhand also fine.",
+      "wrong": null,
+      "claim": "c10, c3"
     }
   ],
   "libraryDiff": {

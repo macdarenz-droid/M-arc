@@ -31,6 +31,13 @@
       "closest": "Avoid excessive stretch in starting position"
     },
     {
+      "claim": "c2",
+      "source": "mo-hip-add",
+      "quote": "Forcing beyond comfortable range",
+      "status": "verbatim",
+      "closest": "Forcing beyond comfortable range"
+    },
+    {
       "claim": "c3",
       "source": "mo-hip-add",
       "quote": "Exhale and squeeze thighs together to bring pads inward until they nearly touch.",
@@ -64,6 +71,20 @@
       "quote": "Keep back flat against pad",
       "status": "verbatim",
       "closest": "Keep back flat against pad"
+    },
+    {
+      "claim": "c4",
+      "source": "mo-hip-add",
+      "quote": "Arching back off pad",
+      "status": "verbatim",
+      "closest": "Arching back off pad"
+    },
+    {
+      "claim": "c4",
+      "source": "mo-hip-add",
+      "quote": "Using momentum to swing pads",
+      "status": "verbatim",
+      "closest": "Using momentum to swing pads"
     },
     {
       "claim": "c5",
@@ -120,13 +141,6 @@
       "quote": "Tempo 2-1-2",
       "status": "verbatim",
       "closest": "Tempo 2-1-2"
-    },
-    {
-      "claim": "c9",
-      "source": "acsm-2009",
-      "quote": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-      "status": "verbatim",
-      "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
       "claim": "c10",

@@ -76,6 +76,11 @@
           "where": "How to Perform"
         },
         {
+          "source": "mo-hip-abd",
+          "text": "Hold briefly at peak contraction.",
+          "where": "How to Perform"
+        },
+        {
           "source": "sl-hip-abd",
           "text": "Push the pads out by moving your legs apart as far as possible.",
           "where": "How to"
@@ -227,19 +232,13 @@
         "CONSENSUS"
       ],
       "sources": [
-        "mo-hip-abd",
-        "acsm-2009"
+        "mo-hip-abd"
       ],
       "quotes": [
         {
           "source": "mo-hip-abd",
           "text": "Tempo 2-1-2",
           "where": "Tempo"
-        },
-        {
-          "source": "acsm-2009",
-          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-          "where": "abstract"
         }
       ]
     },
@@ -257,6 +256,43 @@
           "source": "acsm-2009",
           "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
           "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Motra names the common mistakes on the hip abduction machine: jerking the weight, arching the lower back, using the upper body to swing, an incomplete range of motion and letting the pads crash together.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-hip-abd"
+      ],
+      "quotes": [
+        {
+          "source": "mo-hip-abd",
+          "text": "Jerking the weight",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Arching lower back",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Using upper body to swing",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Incomplete range of motion",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Letting pads crash together",
+          "where": "Common Mistakes"
         }
       ]
     }
@@ -285,9 +321,9 @@
       }
     ],
     "mistake": {
-      "what": "Short range: the knees open only a little before the legs come back.",
-      "why": "The sources cue a full, comfortable range from knees together. No source ranks faults for this machine; momentum (c5) is named but can't be drawn in a still picture.",
-      "claim": "c4",
+      "what": "Incomplete range: the knees open only a little before the legs come back.",
+      "why": "Motra names an incomplete range of motion among the machine's common mistakes (c12) and cues a full, comfortable range from knees together (c4). Swinging and jerking the weight (c12, c5) are also named but can't be drawn in a still picture. No source ranks how common they are.",
+      "claim": "c12",
       "drawable": true
     },
     "tells": [
@@ -311,9 +347,9 @@
   "grip": {
     "type": "Hold the side handles for stability.",
     "width": "Set by the machine.",
-    "thumb": "",
-    "handContact": "",
-    "wrist": "",
+    "thumb": "Not given by any source read (balance archetype default).",
+    "handContact": "Not given by any source read (balance archetype default).",
+    "wrist": "Not given by any source read (balance archetype default).",
     "claims": [
       "c2"
     ]
@@ -362,7 +398,7 @@
     {
       "mistake": "Using momentum or rocking the upper body.",
       "fix": "Keep your upper body still; lower the weight.",
-      "claim": "c5"
+      "claim": "c5, c12"
     },
     {
       "mistake": "Weight so heavy your form breaks.",
@@ -407,7 +443,7 @@
         "where": "Upper body rocking",
         "means": "Usually means the weight is too heavy.",
         "fix": "Lower the weight.",
-        "claim": "c5",
+        "claim": "c5, c6",
         "redFlag": null
       }
     ]
@@ -436,7 +472,7 @@
       "kind": "posture",
       "right": "Legs opened comfortably wide.",
       "wrong": "Knees opened only a little.",
-      "claim": "c4"
+      "claim": "c4, c12"
     }
   ],
   "libraryDiff": {

@@ -286,7 +286,7 @@
     },
     {
       "id": "c14",
-      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "text": "ACSM recommends a moderate speed of 1-2 seconds up and 1-2 seconds down (ACSM, for heavy sets in trained lifters).",
       "tags": [
         "CONSENSUS"
       ],
@@ -296,7 +296,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
           "where": "abstract"
         }
       ]
@@ -365,7 +370,7 @@
     },
     {
       "id": "c18",
-      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high; the highest peaks were in the double-leg press (a heavy two-leg lift, not the squat).",
+      "text": "Heavy lifting drives blood pressure very high; part of it comes from holding the breath (Valsalva). The highest peaks were in the double-leg press (a heavy two-leg lift, not the squat).",
       "tags": [
         "DATA",
         "WEAK"
@@ -382,6 +387,11 @@
         {
           "source": "macdougall1985",
           "text": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver",
           "where": "abstract"
         }
       ]
@@ -416,6 +426,11 @@
       "quotes": [
         {
           "source": "golds-smith-squat",
+          "text": "Inhale on the way down.",
+          "where": "Step 4"
+        },
+        {
+          "source": "golds-smith-squat",
           "text": "Exhale as you press through your heels to stand tall.",
           "where": "Step 5"
         },
@@ -423,6 +438,23 @@
           "source": "sl-smith-squat",
           "text": "Inhale and brace your core slightly, and unrack the bar.",
           "where": "How to Do Smith Machine Squats"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "A way out: the Smith machine has built-in hooks and safety stops, so the bar can be racked at any point in the rep, not only at the end.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "eos-smith"
+      ],
+      "quotes": [
+        {
+          "source": "eos-smith",
+          "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+          "where": "What is a Smith machine?"
         }
       ]
     }
@@ -506,6 +538,16 @@
       "year": 1985,
       "pmid": "3980383",
       "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "eos-smith",
+      "url": "https://www.eosfitness.com/blog/how-to-use-smith-machine",
+      "title": "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
       "checked": "2026-09-30"
     }
   ],
@@ -690,12 +732,12 @@
   },
   "risks": [
     {
-      "risk": "Holding your breath hard on heavy two-leg lifts sends blood pressure very high.",
+      "risk": "Heavy two-leg lifts send blood pressure very high; part of it comes from holding your breath.",
       "claim": "c18"
     },
     {
-      "risk": "Poor back posture puts more stress on the lower back; set the stops so a missed rep lands on them.",
-      "claim": "c11, c8"
+      "risk": "Poor back posture puts more stress on the lower back; set the stops so a missed rep lands on them, and rack the bar on the hooks at any point in the rep if needed.",
+      "claim": "c11, c8, c21"
     },
     {
       "risk": "Smith loads differ from free-bar loads; add weight in small steps.",
@@ -724,11 +766,12 @@
   ],
   "libraryDiff": {
     "add": [
+      "glutes",
       "adductors",
       "lower_back"
     ],
     "remove": [],
-    "why": "exercises.json: quads primary; glutes and hamstrings secondary. Both technique guides (c15) list glutes with quads as main movers, so glutes are proposed as primary. Adductors and lower back are listed by both guides (main or helper), so they are added as secondary. Hamstrings stay secondary (Motra helper; c16 measured them). c4 shows foot position moves load between knee and hip."
+    "why": "exercises.json: quads primary; glutes and hamstrings secondary. Both technique guides (c15) list glutes with quads as main movers, so glutes are moved from secondary to primary (listed in add as a role change, not a new muscle). Adductors and lower back are listed by both guides (main or helper), so they are added as secondary. Hamstrings stay secondary (Motra helper; c16 measured them). c4 shows foot position moves load between knee and hip."
   },
   "anchorSource": "golds-smith-squat"
 }

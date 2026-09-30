@@ -207,6 +207,11 @@
       "quotes": [
         {
           "source": "sundstrup-2012",
+          "text": "EMG activity was measured in 13 muscles during 3 repetitions with a 10 RM load during both abdominal crunches on training ball with elastic resistance and in the same movement utilizing a training machine (seated crunch, Technogym, Cesena, Italy).",
+          "where": "abstract"
+        },
+        {
+          "source": "sundstrup-2012",
           "text": "crunches on Swiss ball with elastic resistance showed higher activity of the rectus abdominis than crunches performed on the machine (104±3.8 vs 84±3.8% nEMG respectively, P<0.0001).",
           "where": "abstract"
         },
@@ -242,7 +247,7 @@
     },
     {
       "id": "c11",
-      "text": "By reasoning from c4 and c9, not a measured fault rate: folding forward at the hips with a flat back, instead of curling the ribs toward the pelvis, shifts work to the hip flexors, which were already highly active on the machine.",
+      "text": "By reasoning from c4 and c9, not a measured fault rate: hinging forward at the hips without curling the spine, instead of curling the ribs toward the pelvis, shifts work to the hip flexors, which were already highly active on the machine.",
       "tags": [
         "MECH",
         "WEAK"
@@ -266,7 +271,7 @@
     },
     {
       "id": "c12",
-      "text": "Tempo: moderate speed, about 1-2 s each way, with a slow return.",
+      "text": "Tempo: moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a slow return.",
       "tags": [
         "CONSENSUS"
       ],
@@ -277,7 +282,12 @@
       "quotes": [
         {
           "source": "acsm-2009",
-          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -303,11 +313,48 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c14",
+      "text": "Motra names the common mistakes on the ab crunch machine: pulling with the arms, using momentum, straining the neck and letting the weight rest; its form cue is to start the movement with the core.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "mo-crunch",
+          "text": "Pulling with arms",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "Using momentum",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "Straining neck",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "Letting weight rest",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "Initiate with core",
+          "where": "Coaching Tips, Form Cues"
+        }
+      ]
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Spinal flexion is a sagittal-plane movement and reads only from the side (census: side). The drawn fault, hinging at the hips with a flat back (c11), also needs the side view.",
+    "viewWhy": "Spinal flexion is a sagittal-plane movement and reads only from the side (census: side). The drawn fault, pulling the handles down with the arms (c14), also reads from the side.",
     "equipment": "Seated crunch machine (composed, census R3): seat with back pad, padded shin roller, handles on a pivoting arm by the shoulders (c2, c3). Floor line.",
     "start": "Seated upright, hips pressed against the back of the seat, shins against the roller (c2), hands on the handles (c3), abs tight (c2).",
     "end": "Spine curled forward so the ribs come toward the pelvis (c4); hips still back in the seat (c2).",
@@ -323,15 +370,15 @@
         "claim": "c4"
       },
       {
-        "label": "Shins on roller",
-        "what": "Shins pushed against the padded roller.",
-        "claim": "c2"
+        "label": "Core leads",
+        "what": "Start the crunch with the abs, not by pulling with the arms.",
+        "claim": "c14"
       }
     ],
     "mistake": {
-      "what": "Hinging at the hips: the torso tips forward with a flat back instead of curling.",
-      "why": "The sources cue curling the spine; the machine already showed high hip-flexor activity (c9), and a flat-back hinge shifts more work to the hip flexors. No source ranks how common it is; this is reasoning (MECH/WEAK).",
-      "claim": "c11",
+      "what": "Pulling with the arms: the handles are dragged down by the arms instead of the abs curling the trunk.",
+      "why": "Motra lists it first among the machine ab crunch's common mistakes, with its cue to start with the core (c14); the sources cue the abs to do the bending (c8). How often it happens is not measured.",
+      "claim": "c14",
       "drawable": true
     },
     "tells": [
@@ -350,14 +397,14 @@
       "pause": 0,
       "claim": "c12"
     },
-    "variantLine": "Crunch machines differ: ACE's has a shin roller and handles you pull down (c2, c3); Fitbod's has overhead handles with pads on the shoulders (c3). Drawn: shin roller and handles by the shoulders. Claims c1, c4-c13 hold for both."
+    "variantLine": "Crunch machines differ: ACE's has a shin roller and handles you pull down (c2, c3); Fitbod's has overhead handles with pads on the shoulders (c3). Drawn: shin roller and handles by the shoulders. Claims c1, c4-c14 hold for both."
   },
   "grip": {
     "type": "Hold the handles in both hands.",
     "width": "Set by the machine.",
-    "thumb": "",
-    "handContact": "",
-    "wrist": "",
+    "thumb": "Not given by any source read (balance archetype default).",
+    "handContact": "Not given by any source read (balance archetype default).",
+    "wrist": "Not given by any source read (balance archetype default).",
     "claims": [
       "c3"
     ]
@@ -396,23 +443,27 @@
     {
       "point": "Breathe out on the crunch.",
       "claim": "c7"
+    },
+    {
+      "point": "Don't strain your neck.",
+      "claim": "c14"
     }
   ],
   "handlingMistakes": [
+    {
+      "mistake": "Pulling with the arms.",
+      "fix": "Start the crunch with your abs.",
+      "claim": "c14"
+    },
     {
       "mistake": "Using too much weight.",
       "fix": "Lower the weight to protect your back.",
       "claim": "c6"
     },
     {
-      "mistake": "Tipping forward from the hips with a flat back.",
-      "fix": "Curl your ribs toward your pelvis.",
-      "claim": "c11"
-    },
-    {
       "mistake": "Letting the weight stack rest between reps.",
       "fix": "Keep tension; return without letting the stack rest.",
-      "claim": "c5"
+      "claim": "c5, c14"
     }
   ],
   "feel": {
@@ -459,6 +510,13 @@
         "fix": "Stop the set; lower the weight next time.",
         "claim": "c6",
         "redFlag": "back"
+      },
+      {
+        "where": "Neck",
+        "means": "Straining the neck is a named mistake.",
+        "fix": "Start the crunch with your abs.",
+        "claim": "c14",
+        "redFlag": null
       }
     ]
   },
@@ -468,8 +526,8 @@
       "claim": "c6"
     },
     {
-      "risk": "High hip-flexor work on the machine calls for caution with lower back pain.",
-      "claim": "c10"
+      "risk": "Lower back pain? This machine works the hip flexors hard, so take care.",
+      "claim": "c10, c9"
     }
   ],
   "redFlags": [
@@ -477,10 +535,17 @@
   ],
   "zooms": [
     {
+      "key": "crunch-arms",
+      "kind": "posture",
+      "right": "Elbows held bent; the abs curl the trunk.",
+      "wrong": "Arms pulling the handles down.",
+      "claim": "c3, c14"
+    },
+    {
       "key": "crunch-curl",
       "kind": "posture",
       "right": "Spine curled, ribs coming toward the pelvis.",
-      "wrong": "Back flat, torso tipping forward from the hips.",
+      "wrong": "Torso hinging at the hips without curling the spine.",
       "claim": "c11"
     },
     {

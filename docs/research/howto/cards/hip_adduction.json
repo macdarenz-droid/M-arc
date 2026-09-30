@@ -39,7 +39,7 @@
     },
     {
       "id": "c2",
-      "text": "Start with the legs spread only to a light stretch in the inner thighs; avoid an excessive stretch at the start.",
+      "text": "Start with the legs spread only to a light stretch in the inner thighs; avoid an excessive stretch at the start. Motra lists forcing beyond a comfortable range as a common mistake.",
       "tags": [
         "CONSENSUS"
       ],
@@ -56,6 +56,11 @@
           "source": "mo-hip-add",
           "text": "Avoid excessive stretch in starting position",
           "where": "Safety"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Forcing beyond comfortable range",
+          "where": "Common Mistakes"
         }
       ]
     },
@@ -88,7 +93,7 @@
     },
     {
       "id": "c4",
-      "text": "Keep the spine neutral and the back flat against the pad; avoid momentum.",
+      "text": "Keep the spine neutral and the back flat against the pad; avoid momentum. Motra lists arching the back off the pad and using momentum to swing the pads as common mistakes.",
       "tags": [
         "CONSENSUS"
       ],
@@ -105,6 +110,16 @@
           "source": "mo-hip-add",
           "text": "Keep back flat against pad",
           "where": "Form cues"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Arching back off pad",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Using momentum to swing pads",
+          "where": "Common Mistakes"
         }
       ]
     },
@@ -198,19 +213,13 @@
         "CONSENSUS"
       ],
       "sources": [
-        "mo-hip-add",
-        "acsm-2009"
+        "mo-hip-add"
       ],
       "quotes": [
         {
           "source": "mo-hip-add",
           "text": "Tempo 2-1-2",
           "where": "Tempo"
-        },
-        {
-          "source": "acsm-2009",
-          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-          "where": "abstract"
         }
       ]
     },
@@ -257,7 +266,7 @@
     ],
     "mistake": {
       "what": "Starting too wide: the legs are spread into a deep, forced stretch at the start.",
-      "why": "Motra lists avoiding an excessive stretch at the start as its safety note. No source ranks how common it is.",
+      "why": "Motra's safety notes warn against an excessive stretch at the start, and it lists forcing beyond a comfortable range as a common mistake. No source ranks how common it is.",
       "claim": "c2",
       "drawable": true
     },
@@ -282,9 +291,9 @@
   "grip": {
     "type": "Hold the side handles.",
     "width": "Set by the machine.",
-    "thumb": "",
-    "handContact": "",
-    "wrist": "",
+    "thumb": "Not given by any source read (balance archetype default).",
+    "handContact": "Not given by any source read (balance archetype default).",
+    "wrist": "Not given by any source read (balance archetype default).",
     "claims": [
       "c1"
     ]
@@ -366,7 +375,7 @@
       {
         "where": "Groin pain",
         "means": "A warning sign.",
-        "fix": "Stop; don't train it with an acute groin injury.",
+        "fix": "Stop the set.",
         "claim": "c5",
         "redFlag": null
       },
@@ -381,11 +390,11 @@
   },
   "risks": [
     {
-      "risk": "An excessive stretch at the start is the machine's main safety note.",
+      "risk": "An excessive stretch at the start is one of the machine's safety notes.",
       "claim": "c2"
     },
     {
-      "risk": "Not for use with an acute hip or groin injury.",
+      "risk": "Groin pain? Stop the set.",
       "claim": "c5"
     }
   ],

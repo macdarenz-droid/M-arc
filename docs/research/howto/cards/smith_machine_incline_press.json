@@ -13,16 +13,20 @@
   "parent": "incline_barbell_bench_press",
   "inherit": [
     {
+      "field": "grip.type",
+      "why": "true for this child because it is the same straight bar pressed on an incline; the parent incline_barbell_bench_press gives palms forward (parent c4) and its own parent barbell_bench_press gives the closed, wrapped grip (barbell_bench_press c4); only the rails differ (c8)."
+    },
+    {
       "field": "grip.thumb",
-      "why": "true for this child because the Smith bar still travels over the face and neck to the upper chest (GA overBody names the Smith and incline presses; c12 here), so the wrapped-thumb rule (incline parent inherits it from barbell_bench_press c4) applies unchanged."
+      "why": "true for this child because the bar comes down to the upper chest near the collarbones, the touch point nearest the neck (GA overBody names the Smith and incline presses; c12 here), so the wrapped-thumb rule (barbell_bench_press c4, inherited through incline_barbell_bench_press) applies unchanged."
     },
     {
       "field": "grip.handContact",
-      "why": "true for this child because the same straight bar is pressed from the base of the palm; the parent's rule (barbell_bench_press c5) does not depend on the rails."
+      "why": "true for this child because the same straight bar is pressed from the base of the palm; the grandparent barbell_bench_press rule (barbell_bench_press c5, inherited through incline_barbell_bench_press) does not depend on the rails."
     },
     {
       "field": "grip.wrist",
-      "why": "true for this child because the parent's straight-wrist rule (parent c4) comes from the same straight-bar incline press; nothing about the rails changes the wrist."
+      "why": "true for this child because the parent incline_barbell_bench_press's straight-wrist rule (parent c4) comes from the same straight-bar incline press; nothing about the rails changes the wrist."
     },
     {
       "field": "zooms.bar-low-palm",
@@ -126,7 +130,7 @@
     },
     {
       "id": "c5",
-      "text": "A way out: the Smith machine has hooks and safety stops, so the bar can be racked at any point. Set the stops at the bottom of the bar's travel: EoS says just below the lowest point of the movement, Motra says just above the chest.",
+      "text": "A way out: the Smith machine has hooks and safety stops, so the bar can be racked at any point. Set the stops just below the lowest point of the bar (where it touches your upper chest, c3) so they catch the bar if needed; Motra says just above the chest.",
       "tags": [
         "CONSENSUS"
       ],
@@ -230,6 +234,11 @@
           "source": "sl-smith-incline",
           "text": "Smith incline bench press differs from incline barbell bench press primarily by its completely straight bar path, instead of a slightly arched one.",
           "where": "Commentary"
+        },
+        {
+          "source": "sl-smith-incline",
+          "text": "The exercise also has lower requirements for stabilization and balance",
+          "where": "Commentary"
         }
       ]
     },
@@ -252,7 +261,7 @@
     },
     {
       "id": "c10",
-      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "text": "ACSM recommends a moderate speed of 1-2 seconds up and 1-2 seconds down (ACSM, for heavy sets in trained lifters).",
       "tags": [
         "CONSENSUS"
       ],
@@ -262,7 +271,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
           "where": "abstract"
         }
       ]
@@ -286,7 +300,7 @@
     },
     {
       "id": "c12",
-      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia; on the Smith incline the bar comes down to the upper chest, the touch point nearest the neck.",
+      "text": "Barbells compressing the neck have caused deaths by traumatic asphyxia in weightlifters (at least 11 reported to the US Consumer Product Safety Commission); on the Smith incline the bar comes down to the upper chest near the collarbones, the touch point nearest the neck (MECH).",
       "tags": [
         "DATA",
         "MECH"
@@ -299,6 +313,11 @@
         {
           "source": "jumbelic2007",
           "text": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+          "where": "abstract"
+        },
+        {
+          "source": "jumbelic2007",
+          "text": "Two cases of traumatic asphyxia due to this preventable hazard occurred in a 5-year period in central New York. There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission",
           "where": "abstract"
         },
         {
@@ -396,9 +415,9 @@
   "plate": {
     "view": "side",
     "viewWhy": "Census view is side; the bench angle, the upper-chest touch point, the stop height and the back arch all read in the sagittal plane (c1, c3, c5, c6).",
-    "equipment": "Smith machine (rails, bar, hooks) with an adjustable bench at 30 degrees, inside the 30-45 range, placed so the bar lines up over the upper chest (c1); safety stops at the bottom of the bar's travel (c5); feet flat (c4).",
+    "equipment": "Smith machine (rails, bar, hooks) with an adjustable bench at 30 degrees, inside the 30-45 range, placed so the bar lines up over the upper chest (c1); safety stops just below the lowest point of the bar, where it touches the upper chest (c5, c3); feet flat (c4).",
     "start": "On the incline, shoulder blades together, chest up (c2), feet flat (c4); bar unhooked on straight arms over the upper chest (c1, c4).",
-    "end": "Bar lowered with control to touch the upper chest lightly, elbows about 45-75 degrees from the body (c3); back not excessively arched (c6).",
+    "end": "Bar lowered with control to touch the upper chest lightly, elbows at about 45-75 degrees (c3); back not excessively arched (c6).",
     "checkpoints": [
       {
         "label": "Bench 30-45°",
@@ -412,12 +431,12 @@
       },
       {
         "label": "Stops set",
-        "what": "Safety stops set at the bottom of the bar's travel.",
-        "claim": "c5"
+        "what": "Safety stops set just below the lowest point of the bar (where it touches your upper chest).",
+        "claim": "c5, c3"
       }
     ],
     "mistake": {
-      "what": "Back arched excessively off the pad to press the bar.",
+      "what": "Back arched excessively to press the bar.",
       "why": "Motra lists it among the common Smith incline mistakes; how often it happens is not measured in any source read.",
       "claim": "c6",
       "drawable": true
@@ -441,7 +460,7 @@
     "variantLine": null
   },
   "grip": {
-    "type": "Overhand on the Smith bar; closed, thumbs wrapped (inherited).",
+    "type": "Palms forward (inherited, parent c4); closed, thumbs wrapped (inherited, barbell_bench_press c4).",
     "width": "Slightly wider than shoulder-width (c2).",
     "thumb": "Wrapped (inherited, barbell_bench_press c4).",
     "handContact": "Bar low in the palm (inherited, barbell_bench_press c5).",
@@ -456,8 +475,8 @@
       "claim": "c1"
     },
     {
-      "step": "Set the safety stops at the bottom of the bar's travel.",
-      "claim": "c5"
+      "step": "Set the safety stops just below the lowest point of the bar (where it touches your upper chest).",
+      "claim": "c5, c3"
     },
     {
       "step": "Sit back, feet flat, shoulder blades together and down, chest up.",
@@ -486,7 +505,7 @@
       "claim": "c3"
     },
     {
-      "point": "Elbows about 45-75 degrees from the body, not flared wide.",
+      "point": "Elbows at about 45-75 degrees, not flared wide.",
       "claim": "c3, c6"
     },
     {
@@ -555,7 +574,7 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck; the upper-chest touch point is nearest the neck: set the safety stops and wrap the thumbs.",
+      "risk": "Bar lowered to the upper chest, the touch point nearest the neck: set the safety stops and wrap the thumbs.",
       "claim": "c12, c5, barbell_bench_press:c4"
     },
     {
@@ -582,7 +601,7 @@
       "key": "smith-incline-position",
       "kind": "posture",
       "right": "Bench at 30-45 degrees, bar lined up over the upper chest.",
-      "wrong": "Back arched excessively off the pad.",
+      "wrong": "Back arched excessively.",
       "claim": "c1, c6"
     }
   ],

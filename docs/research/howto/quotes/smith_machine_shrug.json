@@ -103,9 +103,16 @@
     {
       "claim": "c7",
       "source": "acsm2009",
-      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c7",
+      "source": "acsm2009",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
     },
     {
       "claim": "c8",
@@ -134,6 +141,13 @@
       "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
       "status": "verbatim",
       "closest": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure."
+    },
+    {
+      "claim": "c10",
+      "source": "macdougall1985",
+      "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver",
+      "status": "verbatim",
+      "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver"
     }
   ]
 }

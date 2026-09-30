@@ -150,13 +150,6 @@
       "closest": "Primary muscles worked: Chest Secondary muscles worked: Front Deltoid Triceps"
     },
     {
-      "claim": "c9",
-      "source": "nfpt-cable-press",
-      "text": "The primary muscles used to create the movement for the dumbbell press are: Pectoralis Major, Triceps and Anterior Deltoid.",
-      "status": "verbatim",
-      "closest": "The primary muscles used to create the movement for the dumbbell press are: Pectoralis Major, Triceps and Anterior Deltoid."
-    },
-    {
       "claim": "c10",
       "source": "santana2007",
       "text": "The 1RM BP performance resulted in an average load (74.2 +/- 17.6 kg) significantly higher than 1RM single-arm SP (26.0 +/- 4.4 kg).",
@@ -171,6 +164,13 @@
       "closest": "Our EMG findings show that SCP performance is limited by the activation and neuromuscular coordination of torso muscles, not maximal muscle activation of the chest and shoulder muscles."
     },
     {
+      "claim": "c10",
+      "source": "santana2007",
+      "text": "The SCP performance also relies on the strength of shoulder and chest musculature; however, it is whole-body stability and equilibrium together with joint stability that present the major limitation in force generation.",
+      "status": "verbatim",
+      "closest": "The SCP performance also relies on the strength of shoulder and chest musculature; however, it is whole-body stability and equilibrium together with joint stability that present the major limitation in force generation."
+    },
+    {
       "claim": "c11",
       "source": "calatayud2014",
       "text": "Pectoralis major, anterior deltoid, and anterior serratus are highly elicited during more stable pushing conditions, whereas abdominal muscles, triceps brachii, posterior deltoid, and upper trapezius are affected in the opposite manner.",
@@ -183,6 +183,13 @@
       "text": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises.",
       "status": "verbatim",
       "closest": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises."
+    },
+    {
+      "claim": "c12",
+      "source": "schutz2022",
+      "text": "as well as during two different cable pulley exercises, namely the cross-over exercise, also known as butterfly, and the pull-over exercise at moderate intensity.",
+      "status": "verbatim",
+      "closest": "as well as during two different cable pulley exercises, namely the cross-over exercise, also known as butterfly, and the pull-over exercise at moderate intensity."
     },
     {
       "claim": "c13",

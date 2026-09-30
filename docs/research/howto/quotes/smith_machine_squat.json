@@ -159,9 +159,16 @@
     {
       "claim": "c14",
       "source": "acsm2009",
-      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
     },
     {
       "claim": "c15",
@@ -213,11 +220,25 @@
       "closest": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg"
     },
     {
+      "claim": "c18",
+      "source": "macdougall1985",
+      "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver",
+      "status": "verbatim",
+      "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver"
+    },
+    {
       "claim": "c19",
       "source": "golds-smith-squat",
       "text": "If you feel a sharp pain, stop your workout immediately and seek medical attention.",
       "status": "verbatim",
       "closest": "If you feel a sharp pain, stop your workout immediately and seek medical attention."
+    },
+    {
+      "claim": "c20",
+      "source": "golds-smith-squat",
+      "text": "Inhale on the way down.",
+      "status": "verbatim",
+      "closest": "Inhale on the way down."
     },
     {
       "claim": "c20",
@@ -232,6 +253,13 @@
       "text": "Inhale and brace your core slightly, and unrack the bar.",
       "status": "verbatim",
       "closest": "Inhale and brace your core slightly, and unrack the bar."
+    },
+    {
+      "claim": "c21",
+      "source": "eos-smith",
+      "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+      "status": "verbatim",
+      "closest": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts."
     }
   ]
 }

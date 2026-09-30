@@ -14,7 +14,7 @@
   "inherit": [
     {
       "field": "grip.thumb",
-      "why": "true for this child because the Smith bar still travels over the face, neck and chest (GA overBody names the Smith bench; c14 here), so the parent's wrapped-thumb rule (parent c4) applies unchanged."
+      "why": "true for this child because the lifter still lies under a loaded bar lowered to the mid-chest (GA overBody names the Smith bench; c14 here), so the parent's wrapped-thumb rule (parent c4) applies unchanged."
     },
     {
       "field": "grip.type",
@@ -23,6 +23,10 @@
     {
       "field": "grip.handContact",
       "why": "true for this child because the bar is the same straight bar pressed from the hand; the parent's bar-low-in-the-palm rule (parent c5) does not depend on the rails."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the hand holds the same straight bar; the parent's rule that the bar sits low in the palm so the wrists do not bend back (parent c5) does not depend on the rails."
     },
     {
       "field": "zooms.bar-low-palm",
@@ -94,7 +98,7 @@
     },
     {
       "id": "c4",
-      "text": "A way out: the Smith machine has hooks and safety stops, so the bar can be racked at any point. Set the stops at the bottom of the bar's travel so they catch the bar if needed: EoS says just below the lowest point of the movement, Motra says just above chest level.",
+      "text": "A way out: the Smith machine has hooks and safety stops, so the bar can be racked at any point. Set the stops just below the lowest point of the bar (where it touches your chest, c3) so they catch the bar if needed; Motra says just above chest level.",
       "tags": [
         "CONSENSUS"
       ],
@@ -272,7 +276,7 @@
     },
     {
       "id": "c12",
-      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "text": "ACSM recommends a moderate speed of 1-2 seconds up and 1-2 seconds down (ACSM, for heavy sets in trained lifters).",
       "tags": [
         "CONSENSUS"
       ],
@@ -282,7 +286,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
           "where": "abstract"
         }
       ]
@@ -306,7 +315,7 @@
     },
     {
       "id": "c14",
-      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia; on the Smith bench the bar still travels over the face and chest.",
+      "text": "Barbells compressing the neck have caused deaths by traumatic asphyxia in weightlifters (at least 11 reported to the US Consumer Product Safety Commission); on the Smith bench the lifter still lies under a loaded bar lowered to the mid-chest (MECH).",
       "tags": [
         "DATA",
         "MECH"
@@ -319,6 +328,11 @@
         {
           "source": "jumbelic2007",
           "text": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+          "where": "abstract"
+        },
+        {
+          "source": "jumbelic2007",
+          "text": "Two cases of traumatic asphyxia due to this preventable hazard occurred in a 5-year period in central New York. There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission",
           "where": "abstract"
         },
         {
@@ -464,9 +478,9 @@
   "plate": {
     "view": "side",
     "viewWhy": "Census view is side; bench placement under the bar, the mid-chest touch point, the stop height and the back arch all read in the sagittal plane (c2, c3, c4, c7).",
-    "equipment": "Smith machine (rails, bar, hooks; the bar runs in a straight path, c8) with a flat bench placed so the bar lines up with the mid-chest (c2); safety stops at the bottom of the bar's travel (c4); feet flat on the floor (c2).",
+    "equipment": "Smith machine (rails, bar, hooks; the bar runs in a straight path, c8) with a flat bench placed so the bar lines up with the mid-chest (c2); safety stops just below the lowest point of the bar, where it touches the chest (c4, c3); feet flat on the floor (c2).",
     "start": "Lying face up, shoulder blades together, chest up (c1), feet flat (c2); bar unhooked and held on straight arms over the mid-chest (c2, c5).",
-    "end": "Bar lowered with control until it touches the mid-chest, elbows about 45 degrees from the body (c3); back not excessively arched (c7).",
+    "end": "Bar lowered with control until it touches the mid-chest, elbows at about 45 degrees (c3); back not excessively arched (c7).",
     "checkpoints": [
       {
         "label": "Bar over mid-chest",
@@ -475,8 +489,8 @@
       },
       {
         "label": "Stops set",
-        "what": "Safety stops set at the bottom of the bar's travel before you start.",
-        "claim": "c4"
+        "what": "Safety stops set just below the lowest point of the bar (where it touches your chest) before you start.",
+        "claim": "c4, c3"
       },
       {
         "label": "Blades together",
@@ -485,7 +499,7 @@
       }
     ],
     "mistake": {
-      "what": "Back arched excessively off the bench to press the bar.",
+      "what": "Back arched excessively to press the bar.",
       "why": "Motra lists it among the common Smith bench mistakes; how often it happens is not measured in any source read.",
       "claim": "c7",
       "drawable": true
@@ -513,7 +527,7 @@
     "width": "Slightly wider than shoulder-width (c1).",
     "thumb": "Wrapped (inherited, parent c4).",
     "handContact": "Bar low in the palm (inherited, parent c5).",
-    "wrist": "Not bent back (inherited with handContact, parent c5).",
+    "wrist": "Not bent back (inherited, parent c5).",
     "claims": [
       "c1"
     ]
@@ -524,8 +538,8 @@
       "claim": "c2"
     },
     {
-      "step": "Set the safety stops at the bottom of the bar's travel.",
-      "claim": "c4"
+      "step": "Set the safety stops just below the lowest point of the bar (where it touches your chest).",
+      "claim": "c4, c3"
     },
     {
       "step": "Lie back, feet flat, shoulder blades together and down, chest up.",
@@ -554,7 +568,7 @@
       "claim": "c3"
     },
     {
-      "point": "Elbows about 45 degrees from the body, not flared wide.",
+      "point": "Elbows at about 45 degrees, not flared wide.",
       "claim": "c3, c7"
     },
     {
@@ -616,7 +630,7 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck: set the safety stops and wrap the thumbs.",
+      "risk": "A loaded bar over the chest can slip onto the face, throat or chest: set the safety stops and wrap the thumbs.",
       "claim": "c14, c4, barbell_bench_press:c4"
     },
     {
@@ -642,9 +656,9 @@
     {
       "key": "smith-bench-position",
       "kind": "posture",
-      "right": "Bench placed so the bar lands on the mid-chest; stops set low.",
-      "wrong": "Back arched excessively off the bench.",
-      "claim": "c2, c4, c7"
+      "right": "Bench placed so the bar lands on the mid-chest; stops just below where the bar touches the chest.",
+      "wrong": "Back arched excessively.",
+      "claim": "c2, c4, c3, c7"
     }
   ],
   "libraryDiff": {

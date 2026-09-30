@@ -117,6 +117,13 @@
     {
       "claim": "c9",
       "source": "sundstrup-2012",
+      "quote": "EMG activity was measured in 13 muscles during 3 repetitions with a 10 RM load during both abdominal crunches on training ball with elastic resistance and in the same movement utilizing a training machine (seated crunch, Technogym, Cesena, Italy).",
+      "status": "verbatim",
+      "closest": "EMG activity was measured in 13 muscles during 3 repetitions with a 10 RM load during both abdominal crunches on training ball with elastic resistance and in the same movement utilizing a training machine (seated crunch, Technogym, Cesena, Italy)."
+    },
+    {
+      "claim": "c9",
+      "source": "sundstrup-2012",
       "quote": "crunches on Swiss ball with elastic resistance showed higher activity of the rectus abdominis than crunches performed on the machine (104±3.8 vs 84±3.8% nEMG respectively, P<0.0001).",
       "status": "verbatim",
       "closest": "crunches on Swiss ball with elastic resistance showed higher activity of the rectus abdominis than crunches performed on the machine (104±3.8 vs 84±3.8% nEMG respectively, P<0.0001)."
@@ -159,9 +166,16 @@
     {
       "claim": "c12",
       "source": "acsm-2009",
-      "quote": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
       "status": "verbatim",
-      "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm-2009",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
       "claim": "c12",
@@ -176,6 +190,41 @@
       "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
       "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c14",
+      "source": "mo-crunch",
+      "quote": "Pulling with arms",
+      "status": "verbatim",
+      "closest": "Pulling with arms"
+    },
+    {
+      "claim": "c14",
+      "source": "mo-crunch",
+      "quote": "Using momentum",
+      "status": "verbatim",
+      "closest": "Using momentum"
+    },
+    {
+      "claim": "c14",
+      "source": "mo-crunch",
+      "quote": "Straining neck",
+      "status": "verbatim",
+      "closest": "Straining neck"
+    },
+    {
+      "claim": "c14",
+      "source": "mo-crunch",
+      "quote": "Letting weight rest",
+      "status": "verbatim",
+      "closest": "Letting weight rest"
+    },
+    {
+      "claim": "c14",
+      "source": "mo-crunch",
+      "quote": "Initiate with core",
+      "status": "verbatim",
+      "closest": "Initiate with core"
     }
   ]
 }

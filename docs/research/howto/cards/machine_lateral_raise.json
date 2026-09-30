@@ -38,7 +38,7 @@
     },
     {
       "id": "c2",
-      "text": "Sit with the back against the pad and the feet flat on the floor.",
+      "text": "Sit with the back against the pad, not leaning away from it, and the feet flat on the floor.",
       "tags": [
         "CONSENSUS"
       ],
@@ -56,19 +56,24 @@
           "source": "vg-lat-raise",
           "text": "Keep your feet flat on the floor, shoulder-width apart.",
           "where": "Instructions"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Leaning away from pad",
+          "where": "Common Mistakes"
         }
       ]
     },
     {
       "id": "c3",
-      "text": "Place the arms on the pads, which rest against the arm just above the elbows, and hold the handles.",
+      "text": "Place the arms on the pads, which rest against the arm at or just above the elbows, and hold the handles if the machine has them, wrists neutral.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
         "ace-lat-raise",
-        "laf-lat-raise",
-        "sl-lat-raise"
+        "sl-lat-raise",
+        "mo-lat-raise"
       ],
       "quotes": [
         {
@@ -77,14 +82,19 @@
           "where": "instructions"
         },
         {
-          "source": "laf-lat-raise",
-          "text": "Position your forearms under the pads and grip the handles with each hand.",
-          "where": "Step 2"
-        },
-        {
           "source": "sl-lat-raise",
           "text": "Adjust the machine so that the pads are leaning against your elbows.",
           "where": "How to"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Grip handles if available and engage core.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Neutral wrists",
+          "where": "Coaching Tips, Form Cues"
         }
       ]
     },
@@ -113,13 +123,14 @@
     },
     {
       "id": "c5",
-      "text": "Lift until the upper arms are horizontal, with the elbows level with the shoulders.",
+      "text": "Lift until the upper arms are horizontal, with the elbows level with the shoulders, and not above shoulder level.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
         "sl-lat-raise",
-        "laf-lat-raise"
+        "laf-lat-raise",
+        "mo-lat-raise"
       ],
       "quotes": [
         {
@@ -131,6 +142,11 @@
           "source": "laf-lat-raise",
           "text": "Raise your arms out and away from your sides until your elbows are even with your shoulders, pause, and then reverse the motion.",
           "where": "Step 3"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Raising arms above shoulder level",
+          "where": "Common Mistakes"
         }
       ]
     },
@@ -181,18 +197,29 @@
     },
     {
       "id": "c8",
-      "text": "Avoid momentum or swinging the body to finish a rep: it makes the exercise less effective and can lead to injury.",
+      "text": "Avoid momentum or swinging the body to finish a rep: it makes the exercise less effective and can lead to injury. Keep the torso stable without rocking.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "vg-lat-raise"
+        "vg-lat-raise",
+        "mo-lat-raise"
       ],
       "quotes": [
         {
           "source": "vg-lat-raise",
           "text": "Avoid using momentum or swinging your body to complete the exercise, as this reduces the effectiveness and can lead to injury.",
           "where": "Tips"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Using momentum to lift",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Keep torso stable without rocking.",
+          "where": "How to Perform"
         }
       ]
     },
@@ -237,10 +264,10 @@
     },
     {
       "id": "c11",
-      "text": "The machine lateral raise targets the middle (side) deltoid; across studies, shoulder abduction exercises gave the highest middle deltoid activation (review of mostly free-weight and cable studies).",
+      "text": "The machine lateral raise targets the middle (side) deltoid; across studies, shoulder abduction exercises gave the highest middle deltoid activation (exercise type, not this machine).",
       "tags": [
         "DATA",
-        "CONSENSUS"
+        "WEAK"
       ],
       "sources": [
         "mo-lat-raise",
@@ -279,7 +306,7 @@
     },
     {
       "id": "c13",
-      "text": "Tempo: moderate speed, about 1-2 s each way, with a brief pause at the top.",
+      "text": "Tempo: moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a brief pause at the top.",
       "tags": [
         "CONSENSUS"
       ],
@@ -290,7 +317,12 @@
       "quotes": [
         {
           "source": "acsm-2009",
-          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -385,9 +417,9 @@
   "grip": {
     "type": "Hold the handles; the pads rest on the arms just above the elbows.",
     "width": "Set by the machine arms.",
-    "thumb": "",
-    "handContact": "",
-    "wrist": "",
+    "thumb": "Not given by any source read (balance archetype default).",
+    "handContact": "Not given by any source read (balance archetype default).",
+    "wrist": "Neutral (c3).",
     "claims": [
       "c3",
       "c4"
@@ -488,7 +520,7 @@
         "where": "Body rocking in the seat",
         "means": "Usually means the weight is too heavy.",
         "fix": "Lower the weight.",
-        "claim": "c8",
+        "claim": "c8, c7",
         "redFlag": null
       }
     ]
@@ -525,7 +557,7 @@
     "remove": [],
     "why": "side_delts primary is sourced (c11). upper_traps secondary matches exercises.json but rests only on a coach page (c12, WEAK); kept, flagged weak, and also listed under watch because shrugging makes the traps take over (c6)."
   },
-  "anchorSource": "ace-lat-raise",
+  "anchorSource": "mo-lat-raise",
   "sources": [
     {
       "id": "mo-lat-raise",

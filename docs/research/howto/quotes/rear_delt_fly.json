@@ -45,6 +45,13 @@
       "closest": "Grasp the handles with a neutral or overhand grip, keeping elbows slightly bent."
     },
     {
+      "claim": "c3",
+      "source": "mo-rear-delt",
+      "quote": "Bending elbows too much",
+      "status": "verbatim",
+      "closest": "Bending elbows too much"
+    },
+    {
       "claim": "c4",
       "source": "mo-rear-delt",
       "quote": "Exhale and pull the handles back in a wide arc until arms align with shoulders.",
@@ -173,9 +180,16 @@
     {
       "claim": "c14",
       "source": "acsm-2009",
-      "quote": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
       "status": "verbatim",
-      "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm-2009",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
       "claim": "c14",

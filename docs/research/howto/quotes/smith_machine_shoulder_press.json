@@ -87,6 +87,13 @@
       "closest": "Sit on a bench, unrack a barbell and lower it to the starting position at the top of your chest."
     },
     {
+      "claim": "c6",
+      "source": "motra-smith-ohp",
+      "text": "Inhale and lower the bar slowly to upper chest, elbows at 45 degrees.",
+      "status": "verbatim",
+      "closest": "Inhale and lower the bar slowly to upper chest, elbows at 45 degrees."
+    },
+    {
       "claim": "c7",
       "source": "eos-smith",
       "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
@@ -213,6 +220,13 @@
       "closest": "For posterior deltoid: ~25% lower for seated versus standing barbell (p < 0.001)"
     },
     {
+      "claim": "c12",
+      "source": "saeterbakken2013",
+      "text": "the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles",
+      "status": "verbatim",
+      "closest": "the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles"
+    },
+    {
       "claim": "c13",
       "source": "stronglifts-ohp",
       "text": "Full Grip. Wrap your thumbs around the bar. This makes the Overhead Press safer. The bar can’t slip out of your hands and drop on your head.",
@@ -222,9 +236,16 @@
     {
       "claim": "c14",
       "source": "acsm2009",
-      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c14",
+      "source": "acsm2009",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
     },
     {
       "claim": "c15",
@@ -260,6 +281,27 @@
       "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
       "status": "verbatim",
       "closest": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum."
+    },
+    {
+      "claim": "c17",
+      "source": "macdougall1985",
+      "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver",
+      "status": "verbatim",
+      "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver"
+    },
+    {
+      "claim": "c18",
+      "source": "stronglifts-ohp",
+      "text": "The bar must rest on the heel of your palm, close to your wrists.",
+      "status": "verbatim",
+      "closest": "The bar must rest on the heel of your palm, close to your wrists."
+    },
+    {
+      "claim": "c18",
+      "source": "stronglifts-ohp",
+      "text": "Don’t grip the bar mid-palm or your wrists will bend back.",
+      "status": "verbatim",
+      "closest": "Don’t grip the bar mid-palm or your wrists will bend back."
     }
   ]
 }

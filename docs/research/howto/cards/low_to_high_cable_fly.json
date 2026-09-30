@@ -243,7 +243,7 @@
     },
     {
       "id": "c12",
-      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "text": "ACSM recommends a moderate speed: 1-2 seconds up and 1-2 seconds down (ACSM, for heavy sets in trained lifters).",
       "tags": [
         "CONSENSUS"
       ],
@@ -253,7 +253,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         }
       ]
@@ -282,7 +287,7 @@
     },
     {
       "id": "c14",
-      "text": "In a lab study cable pulley chest exercises gave larger shoulder moments than bench presses; the authors advise care to stabilise the joints in cable cross-overs (a mid-height cross-over, not the low-to-high version).",
+      "text": "In a lab study cable pulley chest exercises gave larger shoulder moments than the bench press; the authors advise care to stabilise the joints in cable cross-overs (cable cross-over and pull-over; pulley height not stated).",
       "tags": [
         "DATA",
         "WEAK"
@@ -295,6 +300,11 @@
           "source": "schutz2022",
           "text": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises.",
           "where": "abstract"
+        },
+        {
+          "source": "schutz2022",
+          "text": "as well as during two different cable pulley exercises, namely the cross-over exercise, also known as butterfly, and the pull-over exercise at moderate intensity.",
+          "where": "Introduction (PMC8877248 full text)"
         },
         {
           "source": "schutz2022",
@@ -362,7 +372,7 @@
       "kind": "peer-reviewed",
       "year": 2022,
       "pmid": "35202059",
-      "access": "abstract",
+      "access": "full",
       "checked": "2026-09-30"
     }
   ],
@@ -391,10 +401,9 @@
     ],
     "mistake": {
       "what": "Elbows bending deeply, turning the fly into a press.",
-      "why": "ACE names leaning forward as the frequent fault (c7), but a lean needs a side view and this plate is front view; the drawn fault breaks the fixed elbow bend both sources require (c6, c11). How often it happens is not measured.",
+      "why": "ACE names leaning forward as the frequent fault (c7), but a lean needs a side view and this plate is front view; bent elbows are drawn because they break the fixed elbow bend both sources require (c6, c11) and read from the front, not because they are known to be common. How often it happens is not measured.",
       "claim": "c11",
-      "drawable": false,
-      "rankNote": "The top named fault (forward lean, c7) is not drawable from the front; bent elbows are drawn because they break c6 and read from the front, not because they are known to be common."
+      "drawable": false
     },
     "tells": [
       {
@@ -527,7 +536,7 @@
       "claim": "c7"
     },
     {
-      "risk": "Cable chest work loads the shoulder more than pressing; keep the joints stable.",
+      "risk": "Cable chest work loaded the shoulder more than the bench press in a lab study; keep the joints stable.",
       "claim": "c14, c13"
     }
   ],

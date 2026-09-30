@@ -152,9 +152,16 @@
     {
       "claim": "c12",
       "source": "acsm2009",
-      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
     },
     {
       "claim": "c13",
@@ -169,6 +176,13 @@
       "text": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
       "status": "verbatim",
       "closest": "an unrecognized source of accidental asphyxia--compression of the neck by barbells"
+    },
+    {
+      "claim": "c14",
+      "source": "jumbelic2007",
+      "text": "Two cases of traumatic asphyxia due to this preventable hazard occurred in a 5-year period in central New York. There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission",
+      "status": "verbatim",
+      "closest": "Two cases of traumatic asphyxia due to this preventable hazard occurred in a 5-year period in central New York. There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission"
     },
     {
       "claim": "c14",
