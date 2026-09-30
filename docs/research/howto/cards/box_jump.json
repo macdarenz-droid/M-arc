@@ -619,13 +619,13 @@
       "c9"
     ]
   },
-  "wayOut": {
+  "tierA": { "wayOut": {
     "text": "Step down, never jump down; stop the set when tired.",
     "claims": [
       "c6",
       "c11"
     ]
-  },
+  } },
   "anchorSource": "nasm-boxjump",
   "anchorNote": "NASM box jumps page read in full; Catalyst Athletics box jump page also read in full.",
   "unsourced": [

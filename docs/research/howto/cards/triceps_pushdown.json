@@ -102,7 +102,7 @@
       { "label": "Tall torso", "what": "Torso upright or slightly tilted from the hips, back not arched.", "claim": "c4" },
       { "label": "Neutral wrists", "what": "Hands in line with the forearms from top to bottom.", "claim": "c9" }
     ],
-    "mistake": { "what": "Elbows drifting forward as the bar comes up (and swinging forward to start the press).",
+    "mistake": { "what": "Elbows drifting forward as the bar comes up.",
                  "why": "ACE names it as the fault to monitor: it brings in the lats and takes load off the triceps.", "claim": "c6",
                  "drawable": true },
     "tells": [
