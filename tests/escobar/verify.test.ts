@@ -108,7 +108,71 @@ describe('safety pre-screen (§19)', () => {
     ['can I end my set at 8 reps', false],
     ['I killed that PR', false],
     ['harmless question: is creatine safe', false],
+    // BUG-32: common ways of saying the same thing, each with a curly apostrophe where it has one.
+    ['dont wanna be here', true],
+    ['i do not want to be here anymore', true],
+    ["i don't want to be alive", true],
+    ['i don’t want to be alive', true],
+    ['dont want to exist anymore', true],
+    ['i wanna die', true],
+    ['i wish i was dead', true],
+    ['wish i were dead', true],
+    ["there's no point in living", true],
+    ['there’s no point in living', true],
+    ["life isn't worth living", true],
+    ['life isn’t worth living', true],
+    ['everyone would be better off without me', true],
+    ['nobody would miss me if i was gone', true],
+    ['i want to unalive myself', true],
+    ['i want to cut myself', true],
+    ['i keep cutting myself', true],
+    // BUG-32: the same family, and the time words that keep "be here" about the gym do not hide these.
+    ["i've been cutting myself again", true],
+    ['i cut myself on purpose', true],
+    ['i wanna hurt myself', true],
+    ["i'm gonna hurt myself", true],
+    ['i wanna kms', true],
+    ["i'm about to kms", true],
+    ["i don't want to be here at all", true],
+    ["i don't want to be here on this earth anymore", true],
+    ["i don't want to be here for much longer", true],
+    ["i don't want to be here tomorrow", true],
+    ["i don't want to be here late. honestly i don't want to be here", true],
+    // BUG-32: gym talk stays quiet (the negatives above still hold).
+    ['ran 5 kms today', false],
+    ['10kms on the bike', false],
+    ['i want to run 5 kms', false],
+    ["i'm gonna do 10 kms tomorrow", false],
+    ['i cut myself shaving', false],
+    ['cut my finger', false],
+    ["i'm dying for a rest day", false],
+    ['i’m dying for a rest day', false],
+    ['i want to be here more often', false],
+    ["i don't want to be here late", false],
+    ['i don’t want to be here late', false],
+    ['i dont want to be here at 6am', false],
+    ["i don't want to be here on sundays", false],
+    ["i don't want to be here for 2 hours", false],
+    ["i don't want to be here too long", false],
+    ["i don't want to be here all day", false],
+    ['i want to cut myself some slack', false],
+    ['i keep cutting myself on the knurling', false],
+    ['i need to cut myself down to 80 kg', false],
+    ['i want to cut myself to 12% body fat', false],
+    ['i wish i was deadlifting today', false],
+    ['this workout unalived me', false],
   ] as const)('crisis screen: %s → %s', (text, crisis) => expect(safetySignals(text).includes('crisis')).toBe(crisis));
+  // BUG-32: "kms" fires only straight after a verb of intent; a distance never does, however it is written.
+  it('crisis screen: kms as a distance never fires', () => {
+    const fired: string[] = [];
+    for (const n of ['1', '5', '10', '21', '42', '2.5', '0.8'])
+      for (const unit of [' kms', 'kms', ' KMS'])
+        for (const lead of ['', 'ran ', 'i want to run ', 'gonna do ', 'going to ride ', 'about to walk ', 'trying to row ', 'wanna jog '])
+          for (const tail of ['', ' today', ' on the bike', '?'])
+            if (safetySignals(`${lead}${n}${unit}${tail}`).includes('crisis')) fired.push(`${lead}${n}${unit}${tail}`);
+    expect(fired).toEqual([]);
+    expect(safetySignals('i wanna kms').includes('crisis')).toBe(true);
+  });
   // BUG-30: phone keyboards type the curly apostrophe (U+2019), and some the modifier letter (U+02BC) or U+2018.
   it.each([
     ['I don\u2019t want to be here anymore', 'crisis'],
