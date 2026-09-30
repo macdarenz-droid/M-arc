@@ -1,0 +1,587 @@
+{
+ "id": "incline_dumbbell_curl",
+ "libId": "lib_incline_dumbbell_curl",
+ "name": "Incline Dumbbell Curl",
+ "family": "CURL",
+ "tier": "C",
+ "archetype": {
+  "hand": "curl",
+  "contact": [
+   "seat-back"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Set an adjustable bench high but not upright, about 45-65 degrees from the floor, and sit on it with a dumbbell in each hand.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline",
+    "sl-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "Adjust the bench to a high, but not fully perpendicular to the floor, angle. Think between 45 and 65 degrees relative to the floor.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "sl-incline",
+     "text": "Grab a pair of dumbbells, and sit down on an inclined bench.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Lean back against the pad and let the arms hang straight down at the sides, square to the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline",
+    "sl-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "Lean back against the pad and allow your arms to hang down at your sides, perpendicular to the floor.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "sl-incline",
+     "text": "Let your arms hang straight down by your sides.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Curl as in a standard dumbbell curl with the arms kept behind the torso: elbows stay back, and the curl stops where the elbows would start drifting forward.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "Once you’re set up, perform a standard dumbbell curl. Your arms must remain behind your torso while you’re on the bench. Think about keeping your elbows back while you curl the weights up as high as possible.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "bb-incline",
+     "text": "Curl up as far as you can without your elbows drifting forward. If they do, you may be forcing too much range of motion into the exercise.",
+     "where": "How to, coach's tip"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Letting the arm come forward while curling reduces the stretch and tension on the biceps; keep the elbows pinned back against the bench for the whole set.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "If your arm is pulled forward as you curl the weight, you’re actually reducing some of the stretch and tension placed on the tissue. Keep your elbows pinned back and tucked against the bench for the duration of the set.",
+     "where": "Common mistakes, elbows drifting"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "A bench set too low tends to move most of the tension to the front of the shoulder; if the position causes shoulder discomfort, raise the seat a bit.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "If you set the inclination of the bench too low, you’re likely going to feel the most tension in the front of your shoulder, rather than in your biceps where it belongs.",
+     "where": "Common mistakes, bench angle"
+    },
+    {
+     "source": "bb-incline",
+     "text": "If the posture of the incline curl causes you shoulder discomfort",
+     "where": "How to, coach's tip"
+    },
+    {
+     "source": "bb-incline",
+     "text": "try adjusting the seat to be a bit higher.",
+     "where": "How to, coach's tip"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "With the arm behind the torso the biceps, which crosses the shoulder, starts stretched; StrengthLog notes this also makes the lift a little harder to cheat.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline",
+    "sl-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "By allowing your arm to fall behind your torso, a motion called shoulder hyperextension, you’ll find that your biceps are instantaneously stretched.",
+     "where": "Muscles worked"
+    },
+    {
+     "source": "sl-incline",
+     "text": "Another consequence is that it is slightly harder to cheat with your technique in this exercise.",
+     "where": "Commentary"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Biceps activity stays high through the whole elbow range in the incline dumbbell curl.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "oliveira-2009"
+   ],
+   "quotes": [
+    {
+     "source": "oliveira-2009",
+     "text": "The Incline Dumbbell Curl and the Dumbbell Biceps Curl resulted in a considerable neuromuscular effort throughout the whole elbow range of motion.",
+     "where": "abstract, key points"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "In an 8-week trial in young women, the incline curl grew the upper (proximal) part of the elbow flexors more than the preacher curl did.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "kassiano-2025"
+   ],
+   "quotes": [
+    {
+     "source": "kassiano-2025",
+     "text": "We observed a greater increase in the proximal elbow flexor thickness in the incline biceps curl compared to the preacher biceps curl",
+     "where": "abstract, results"
+    },
+    {
+     "source": "kassiano-2025",
+     "text": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
+     "where": "abstract, methods"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "In an ACE-sponsored EMG study, the incline curl used the front of the shoulder (anterior deltoid) significantly less than the barbell curl.",
+   "tags": [
+    "DATA",
+    "WEAK"
+   ],
+   "sources": [
+    "ace-bicepsstudy"
+   ],
+   "quotes": [
+    {
+     "source": "ace-bicepsstudy",
+     "text": "researchers found that for the AD, the incline curl, concentration curl and the chin-up had significantly less muscle activation than the barbell curl.",
+     "where": "Results"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "StrengthLog lists the biceps as the primary muscle and the forearm flexors as secondary.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-incline"
+   ],
+   "quotes": [
+    {
+     "source": "sl-incline",
+     "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+     "where": "Muscles worked box"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Inferred from the seated dumbbell curl (same grip, back supported): take a closed grip, palms forward with thumbs wrapped; keep the wrists straight; keep the head, shoulders and buttocks against the bench; bent wrists add load and can cause discomfort.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "ace-seated-curl",
+    "sl-dbcurl"
+   ],
+   "quotes": [
+    {
+     "source": "ace-seated-curl",
+     "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists) and keep contact with your head, shoulder and butt against the bench.",
+     "where": "Step 2, upward phase"
+    },
+    {
+     "source": "sl-dbcurl",
+     "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+     "where": "Common mistakes, not locking your wrists"
+    },
+    {
+     "source": "ace-seated-curl",
+     "text": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles)",
+     "where": "exercise steps, starting position"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Across all weight training (not this curl specifically), the most common way people are hurt badly enough for an emergency department is a weight dropping on them, mostly with free weights.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "kerr-2010"
+   ],
+   "quotes": [
+    {
+     "source": "kerr-2010",
+     "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+     "where": "abstract, results"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-incline",
+   "url": "https://barbend.com/incline-dumbbell-curl/",
+   "title": "Do the Incline Dumbbell Curl to Double Down on Your Arm Gains | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "sl-incline",
+   "url": "https://www.strengthlog.com/incline-dumbbell-curl/",
+   "title": "How to Do Incline Dumbbell Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "oliveira-2009",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3737788/",
+   "title": "Effect of the shoulder position on the biceps brachii emg in different dumbbell curls.",
+   "kind": "peer-reviewed",
+   "year": 2009,
+   "pmid": 24150552,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "kassiano-2025",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39809454/",
+   "title": "Distinct muscle growth and strength adaptations after preacher and incline biceps curls.",
+   "kind": "peer-reviewed",
+   "year": 2025,
+   "pmid": 39809454,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "ace-bicepsstudy",
+   "url": "https://www.acefitness.org/continuing-education/prosource/august-2014/4933/ace-study-reveals-best-biceps-exercises/",
+   "title": "ACE Research: Best Biceps Exercises for Strength | ProSource™ | ACE",
+   "kind": "secondary",
+   "year": 2014,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "ace-seated-curl",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+   "title": "Seated Biceps Curl | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "sl-dbcurl",
+   "url": "https://www.strengthlog.com/dumbbell-curl/",
+   "title": "How to Dumbbell Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": 2020,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "kerr-2010",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+   "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007.",
+   "kind": "peer-reviewed",
+   "year": 2010,
+   "pmid": 20139328,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "The bench angle (c1), arms hanging behind the torso (c2) and elbow drift (c3, c4) all read side-on. Census view is side.",
+  "equipment": "Adjustable bench at about 45-65 degrees from the floor (c1); one dumbbell per hand.",
+  "start": "Seated, back against the incline pad (c2); arms hanging straight down, square to the floor, behind the torso line (c2, c3); palms forward, wrists straight (c11).",
+  "end": "Elbows bent, dumbbells raised as high as they go without the elbows drifting forward (c3); upper arms still behind the torso, elbows back (c4); back still on the pad (c2, c11).",
+  "checkpoints": [
+   {
+    "label": "Bench 45-65°",
+    "what": "High incline, not upright; too low loads the front of the shoulder.",
+    "claim": "c1, c5"
+   },
+   {
+    "label": "Arms hang down",
+    "what": "Arms start straight down, square to the floor.",
+    "claim": "c2"
+   },
+   {
+    "label": "Elbows back",
+    "what": "Elbows stay pinned back; stop before they drift forward.",
+    "claim": "c4, c3"
+   }
+  ],
+  "mistake": {
+   "what": "Elbows drifting forward as the dumbbells rise.",
+   "why": "It cuts the stretch and tension on the biceps and may mean you are forcing too much range.",
+   "claim": "c4, c3",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Elbows stay pinned back",
+    "claim": "c4"
+   },
+   {
+    "text": "Tension in the biceps, not the shoulder",
+    "claim": "c5"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 0,
+   "claim": "c12"
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Closed, palms forward, thumbs wrapped, one dumbbell per hand (inferred from the seated dumbbell curl, c11).",
+  "width": "Arms hanging at the sides.",
+  "thumb": "Wrapped around the handle.",
+  "handContact": "",
+  "wrist": "Straight, in line with the forearm.",
+  "claims": [
+   "c2",
+   "c3",
+   "c11"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Set the bench to about 45-65 degrees.",
+   "claim": "c1"
+  },
+  {
+   "step": "Sit with a dumbbell in each hand.",
+   "claim": "c1"
+  },
+  {
+   "step": "Lean back on the pad; let your arms hang straight down.",
+   "claim": "c2"
+  },
+  {
+   "step": "If your shoulder feels it, raise the bench a bit.",
+   "claim": "c5"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Head, shoulders and buttocks stay on the bench.",
+   "claim": "c2, c11"
+  },
+  {
+   "point": "Arms stay behind the torso.",
+   "claim": "c3"
+  },
+  {
+   "point": "Elbows pinned back; no forward drift.",
+   "claim": "c4"
+  },
+  {
+   "point": "Wrists stay straight.",
+   "claim": "c11"
+  },
+  {
+   "point": "Curl only as high as the elbows allow without moving.",
+   "claim": "c3"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Elbows drifting forward to finish the curl.",
+   "fix": "Keep the elbows back; stop the curl a little lower.",
+   "claim": "c4"
+  },
+  {
+   "mistake": "Bench set too low.",
+   "fix": "Raise it toward 45-65 degrees.",
+   "claim": "c5"
+  },
+  {
+   "mistake": "Wrists bending under the dumbbells.",
+   "fix": "Keep the hand in line with the forearm.",
+   "claim": "c11"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "biceps",
+    "claim": "c10"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "forearms",
+    "claim": "c10"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Front of the upper arm, through the whole lift",
+    "means": "The biceps are working from a stretched start.",
+    "fix": "",
+    "claim": "c7, c6",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the shoulder",
+    "means": "Usually means the bench is set too low.",
+    "fix": "Raise the bench a bit.",
+    "claim": "c5",
+    "redFlag": "shoulder"
+   },
+   {
+    "where": "Wrist",
+    "means": "Usually means the wrist is bending.",
+    "fix": "Straighten the wrist; go lighter if you can't.",
+    "claim": "c11",
+    "redFlag": "wrist"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "A bench set too low can move tension to the front of the shoulder and cause discomfort.",
+   "claim": "c5"
+  },
+  {
+   "risk": "Across all weight training, not this curl specifically, dropped weights are the most common way people end up in an emergency department.",
+   "claim": "c14"
+  }
+ ],
+ "redFlags": [
+  "shoulder",
+  "wrist"
+ ],
+ "zooms": [
+  {
+   "key": "incline-elbow",
+   "kind": "posture",
+   "right": "Upper arm behind the torso, elbow pinned back at the top.",
+   "wrong": "Elbow drifted forward past the torso line.",
+   "claim": "c4"
+  },
+  {
+   "key": "curl-wrist",
+   "kind": "hand",
+   "right": "Palms-forward grip, hand in line with the forearm.",
+   "wrong": "Wrist bent under the dumbbell.",
+   "claim": "c11"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "biceps primary and forearms secondary match exercises.json and StrengthLog (c10)."
+ },
+ "anchorSource": "bb-incline"
+}

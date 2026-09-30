@@ -1,0 +1,521 @@
+{
+ "id": "concentration_curl",
+ "libId": "lib_concentration_curl",
+ "name": "Concentration Curl",
+ "family": "CURL",
+ "tier": "C",
+ "archetype": {
+  "hand": "curl",
+  "contact": [
+   "brace-pad"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Sit on the edge of a bench with the knees far apart, dumbbell in one hand, hinge forward with a neutral spine and brace the back of the upper arm (triceps) against the same-side inner thigh.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration",
+    "sl-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "Sit on the edge of a weight bench with your knees far apart from each other. Grasp a dumbbell in your left hand. Hinge forward with your spine neutral. Brace your upper arm — your triceps — against your left inner thigh.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "sl-concentration",
+     "text": "Sit on a bench with a dumbbell in hand. Lean your elbow onto the inside of your leg.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Aim for the upper arm as close to vertical as possible; if the stomach or chest is in the way, lean further forward and brace on the inner calf or shin.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "If you need more room to accommodate your stomach and/or chest, lean further forward to brace your upper arm against your inner left calf or shin. The goal is to get your upper arm as perpendicular to the ground as possible.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Do not wedge the elbow into the knee: it lets the leg lever the weight up and takes work off the biceps. Press the triceps into the inner thigh instead.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "Try to avoid wedging your elbow into your knee. That will allow you to use your leg as leverage to lift more weight, which will take away emphasis from your biceps.",
+     "where": "How to, coach's tip"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "Instead of recruiting support from your leg angle, press your triceps into your inner thigh (or straight across your lower leg if needed).",
+     "where": "Common mistakes, wedging the elbow"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Wedging the elbow into the knee crease is a tempting and commonly taught habit.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "It’s tempting to wedge your elbow into the crease of your knee — you might even see other athletes doing it, or have been coached to do it yourself.",
+     "where": "Common mistakes, wedging the elbow"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Brace the core, press the feet into the floor, and use the free hand on the knee or bench, or held out, to stay steady.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "Press your feet down into the ground throughout the lift to stabilize your body.",
+     "where": "How to, coach's tip"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "You can also grip your right knee or the weight bench on your right side.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "Prepare for your curl by bracing your core and tightening your glutes. Squeeze your (empty) right hand and hold it out away from your body to counterbalance yourself.",
+     "where": "How to (page HTML splits 'cor' + 'e' across a link; rendered text is 'core')"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Curl with only the biceps, hold a beat at the top, and keep the upper arm steady throughout.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration",
+    "sl-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "Curl the weight up, focusing on using only your biceps to do so. Hold a strong contraction for a beat at the top of your range of motion, keeping your upper arm stable the whole time.",
+     "where": "How to"
+    },
+    {
+     "source": "sl-concentration",
+     "text": "Lift the dumbbell with control by flexing your elbow.",
+     "where": "How to, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Stop the curl when the triceps starts losing contact with the leg or the upper arm stops being vertical; forcing the dumbbell to the shoulder wastes effort.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "Stop the curl once your triceps starts losing touch with your leg, or once your upper arm stops being perpendicular to the ground",
+     "where": "Common mistakes, over-curling"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "If you’re trying to muscle the dumbbell all the way up to your shoulder, you’re likely wasting precious energy.",
+     "where": "Common mistakes, over-curling"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Lower slowly to a straight arm, resisting the weight rather than letting it drop.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "After holding for a moment at the top, lower the weight with slow control. Let your arm straighten to full extension",
+     "where": "How to, step 4"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "Avoid rushing through the lowering phase of this lift. You don’t want gravity to yank the weight down — resist it as much as possible.",
+     "where": "How to, coach's tip"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Start several pounds lighter than a usual dumbbell curl and add weight only when the form stays strict.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "you may want to start several pounds lighter than you would for your usual dumbbell curls. Only move up in weight when you’re certain you’re proceeding without unnecessary momentum and excellent form.",
+     "where": "FAQ, how much weight"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "In an ACE-sponsored EMG study of eight biceps exercises, the concentration curl produced significantly higher biceps activity than any other, and less front-shoulder (anterior deltoid) activity than the barbell curl.",
+   "tags": [
+    "DATA",
+    "WEAK"
+   ],
+   "sources": [
+    "ace-bicepsstudy"
+   ],
+   "quotes": [
+    {
+     "source": "ace-bicepsstudy",
+     "text": "When compared to the other seven exercises, the concentration curl came out on top, eliciting significantly higher muscle activation of the biceps than any other exercise tested",
+     "where": "Results"
+    },
+    {
+     "source": "ace-bicepsstudy",
+     "text": "researchers found that for the AD, the incline curl, concentration curl and the chin-up had significantly less muscle activation than the barbell curl.",
+     "where": "Results"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "The biceps is the target (both heads); the forearms assist by holding the grip and a neutral wrist.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration",
+    "sl-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "Both the long and short head of your biceps will work with the concentration curl.",
+     "where": "Muscles worked, biceps"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "They’ll help keep your grip nice and steady and help you maintain a neutral wrist position throughout the movement.",
+     "where": "Muscles worked, forearms"
+    },
+    {
+     "source": "sl-concentration",
+     "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+     "where": "Muscles worked box"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up, a beat at the top, a slow 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009",
+    "bb-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "After holding for a moment at the top, lower the weight with slow control.",
+     "where": "How to, step 4"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+     "where": "abstract"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-concentration",
+   "url": "https://barbend.com/concentration-curl/",
+   "title": "How to Do the Concentration Curl for Bigger Biceps | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "sl-concentration",
+   "url": "https://www.strengthlog.com/concentration-curl/",
+   "title": "How to Do Concentration Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "ace-bicepsstudy",
+   "url": "https://www.acefitness.org/continuing-education/prosource/august-2014/4933/ace-study-reveals-best-biceps-exercises/",
+   "title": "ACE Research: Best Biceps Exercises for Strength | ProSource™ | ACE",
+   "kind": "secondary",
+   "year": 2014,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "The forward hinge, the vertical upper arm on the inner thigh (c1, c2) and the elbow-at-knee fault (c3) read side-on. Census view is side.",
+  "equipment": "Flat bench; one dumbbell in the working hand (c1).",
+  "start": "Seated on the bench edge, knees wide, hinged forward with a neutral spine (c1); back of the working upper arm braced on the inner thigh, upper arm near vertical (c1, c2); arm straight, dumbbell low (c8); feet pressed into the floor, free hand on the other knee (c5).",
+  "end": "Elbow bent, dumbbell raised until the upper arm would start to leave vertical (c7); triceps still on the thigh (c7); upper arm and torso unchanged (c6).",
+  "checkpoints": [
+   {
+    "label": "Arm on thigh",
+    "what": "Back of the upper arm pressed into the inner thigh, not the elbow into the knee.",
+    "claim": "c3"
+   },
+   {
+    "label": "Upper arm vertical",
+    "what": "Upper arm as close to vertical as possible.",
+    "claim": "c2"
+   },
+   {
+    "label": "Slow lowering",
+    "what": "Resist the weight down to a straight arm.",
+    "claim": "c8"
+   }
+  ],
+  "mistake": {
+   "what": "Elbow wedged into the knee crease instead of the upper arm resting on the inner thigh.",
+   "why": "It is a tempting, often-taught habit that lets the leg lever the weight and takes work off the biceps.",
+   "claim": "c4, c3",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Triceps stays on your thigh",
+    "claim": "c7"
+   },
+   {
+    "text": "Upper arm stays vertical",
+    "claim": "c2"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 1,
+   "claim": "c12"
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "One dumbbell in the working hand.",
+  "width": "",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "Neutral through the lift.",
+  "claims": [
+   "c1",
+   "c11"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Pick a dumbbell several pounds lighter than for your usual curls.",
+   "claim": "c9"
+  },
+  {
+   "step": "Sit on the bench edge, knees wide.",
+   "claim": "c1"
+  },
+  {
+   "step": "Hinge forward with a neutral spine.",
+   "claim": "c1"
+  },
+  {
+   "step": "Rest the back of your upper arm on your inner thigh.",
+   "claim": "c3"
+  },
+  {
+   "step": "Feet pressed down; free hand on your other knee or the bench.",
+   "claim": "c5"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Upper arm stays as vertical as possible.",
+   "claim": "c2"
+  },
+  {
+   "point": "Triceps on the thigh, never the elbow in the knee.",
+   "claim": "c3"
+  },
+  {
+   "point": "Upper arm stays steady; only the elbow bends.",
+   "claim": "c6"
+  },
+  {
+   "point": "Stop the curl before the arm leaves the thigh.",
+   "claim": "c7"
+  },
+  {
+   "point": "Lower slowly to a straight arm.",
+   "claim": "c8"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Elbow wedged into the knee.",
+   "fix": "Press the triceps into your inner thigh instead.",
+   "claim": "c3"
+  },
+  {
+   "mistake": "Forcing the dumbbell up to the shoulder.",
+   "fix": "Stop when the upper arm starts to leave vertical.",
+   "claim": "c7"
+  },
+  {
+   "mistake": "Letting the weight drop on the way down.",
+   "fix": "Lower slowly; resist the weight.",
+   "claim": "c8"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "biceps",
+    "claim": "c11"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "forearms",
+    "claim": "c11"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Front of the upper arm",
+    "means": "The biceps are isolated and doing the work.",
+    "fix": "",
+    "claim": "c10",
+    "redFlag": null
+   },
+   {
+    "where": "Forearm",
+    "means": "The forearm is holding the grip and wrist steady.",
+    "fix": "",
+    "claim": "c11",
+    "redFlag": null
+   },
+   {
+    "where": "Leg doing the lifting",
+    "means": "Usually means the elbow is wedged into the knee.",
+    "fix": "Move the upper arm onto the inner thigh.",
+    "claim": "c3",
+    "redFlag": null
+   }
+  ]
+ },
+ "risks": [],
+ "redFlags": [],
+ "zooms": [
+  {
+   "key": "conc-brace",
+   "kind": "posture",
+   "right": "Back of the upper arm flat on the inner thigh, upper arm vertical.",
+   "wrong": "Elbow jammed into the knee crease.",
+   "claim": "c3"
+  },
+  {
+   "key": "conc-top",
+   "kind": "posture",
+   "right": "Curl ends while the triceps still touches the thigh.",
+   "wrong": "Upper arm lifted off the thigh to reach the shoulder.",
+   "claim": "c7"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "biceps primary and forearms secondary match exercises.json, StrengthLog and BarBend (c11)."
+ },
+ "anchorSource": "bb-concentration"
+}

@@ -1,0 +1,223 @@
+{
+ "id": "cross_body_hammer_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "fb-cbhammer",
+   "text": "Grasp a dumbbell in each hand, and stand with your feet close to shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Grasp a dumbbell in each hand, and stand with your feet close to shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "fb-cbhammer",
+   "text": "Position each dumbbell in front of you with your palms facing your body.",
+   "status": "verbatim",
+   "closest": "Position each dumbbell in front of you with your palms facing your body.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fb-cbhammer",
+   "text": "Raise one dumbbell in an arc toward your opposite shoulder by engaging the bicep of that arm.",
+   "status": "verbatim",
+   "closest": "Raise one dumbbell in an arc toward your opposite shoulder by engaging the bicep of that arm.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fb-cbhammer",
+   "text": "Lock your elbow in place for the duration of the exercise.",
+   "status": "verbatim",
+   "closest": "Lock your elbow in place for the duration of the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fb-cbhammer",
+   "text": "Hold the dumbbell in position at the top of this movement for a moment.",
+   "status": "verbatim",
+   "closest": "Hold the dumbbell in position at the top of this movement for a moment.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fb-cbhammer",
+   "text": "Maintain tension in your bicep as you bring the dumbbell back to its starting position by reversing the movement.",
+   "status": "verbatim",
+   "closest": "Maintain tension in your bicep as you bring the dumbbell back to its starting position by reversing the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "fb-cbhammer",
+   "text": "Unlike many other Hammer Curl variations, this exercises has you bring the weight across your body instead of straight up and down.",
+   "status": "verbatim",
+   "closest": "Unlike many other Hammer Curl variations, this exercises has you bring the weight across your body instead of straight up and down.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fb-cbhammer",
+   "text": "Using momentum, or recruiting additional muscle groups can help you lift heavier weights with this exercise. However it also reduces the effectiveness, and increases the risk of injury. Keep your weights on the lighter side, and focus on controlling the weight.",
+   "status": "verbatim",
+   "closest": "Using momentum, or recruiting additional muscle groups can help you lift heavier weights with this exercise. However it also reduces the effectiveness, and increases the risk of injury. Keep your weights on the lighter side, and focus on controlling the weight.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-hammer",
+   "text": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body) and avoid shrugging your shoulders throughout the movement.",
+   "status": "verbatim",
+   "closest": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body) and avoid shrugging your shoulders throughout the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-hammer",
+   "text": "stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining these positions throughout the exercise.",
+   "status": "verbatim",
+   "closest": "stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining these positions throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-hammer",
+   "text": "Perform the curl while keeping your torso erect (no arching your low back)",
+   "status": "verbatim",
+   "closest": "Perform the curl while keeping your torso erect (no arching your low back)",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-hammer",
+   "text": "Keep your grip neutral during the movement. It’s easy to start twisting the wrists during the lift, without thinking about it.",
+   "status": "verbatim",
+   "closest": "Keep your grip neutral during the movement. It's easy to start twisting the wrists during the lift, without thinking about it.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c8",
+   "source": "ace-hammer",
+   "text": "Exhale and slowly flex (bend) one or both elbows in unison",
+   "status": "verbatim",
+   "closest": "Exhale and slowly flex (bend) one or both elbows in unison",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-hammer",
+   "text": "Inhale and gently lower the dumbbells back towards your starting position",
+   "status": "verbatim",
+   "closest": "Inhale and gently lower the dumbbells back towards your starting position",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-hammer",
+   "text": "The hammer curl primarily targets your biceps and brachialis, but the forearm flexors and especially the brachioradialis are also involved as a secondary muscle group.",
+   "status": "verbatim",
+   "closest": "The hammer curl primarily targets your biceps and brachialis, but the forearm flexors and especially the brachioradialis are also involved as a secondary muscle group.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "fb-cbhammer",
+   "text": "Like other variations this is an isolation exercise that targets the biceps.",
+   "status": "verbatim",
+   "closest": "Like other variations this is an isolation exercise that targets the biceps.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "coratella-2023",
+   "text": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+   "status": "verbatim",
+   "closest": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+   "note": "Extended in verify g4 to include the phase; read in the PubMed abstract via E-utilities 2026-09-30."
+  },
+  {
+   "claim": "c10",
+   "source": "coratella-2023",
+   "text": "the anterior deltoid excitation was greater with the pronated and neutral handgrip compared to the supinated condition",
+   "status": "verbatim",
+   "closest": "the anterior deltoid excitation was greater with the pronated and neutral handgrip compared to the supinated condition",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "fb-cbhammer",
+   "text": "Hold the dumbbell in position at the top of this movement for a moment.",
+   "status": "verbatim",
+   "closest": "Hold the dumbbell in position at the top of this movement for a moment.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "kerr-2010",
+   "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "status": "verbatim",
+   "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "fb-cbhammer",
+   "text": "Bend your arms slightly at the elbow, and position your elbows close to shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Bend your arms slightly at the elbow, and position your elbows close to shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fb-cbhammer",
+   "text": "If you’re struggling, consider using a seated variation. This can help you prevent swinging the dumbbells or adding additional movements to this exercise.",
+   "status": "verbatim",
+   "closest": "If you’re struggling, consider using a seated variation. This can help you prevent swinging the dumbbells or adding additional movements to this exercise.",
+   "note": "read by fixer in live page 2026-09-30"
+  },
+  {
+   "claim": "c5",
+   "source": "ace-hammer",
+   "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+   "status": "verbatim",
+   "closest": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+   "note": "read by fixer in live page 2026-09-30"
+  },
+  {
+   "claim": "c15",
+   "source": "fb-cbhammer",
+   "text": "It’s very common to lose tension at the bottom of the movement when your arms are fully extended. Limit your range of motion and keep your arm slightly bent to maintain tension in your biceps between reps.",
+   "status": "verbatim",
+   "closest": "It’s very common to lose tension at the bottom of the movement when your arms are fully extended. Limit your range of motion and keep your arm slightly bent to maintain tension in your biceps between reps.",
+   "note": "read by fixer in live page 2026-09-30"
+  },
+  {
+   "claim": "c10",
+   "source": "coratella-2023",
+   "text": "The biceps curl variations were performed using a Cable Tower (Technogym, Cesena, Italy), with one end of the pulley connected to a bar (42.5 cm length, Technogym, Cesena, Italy) for the supinated and pronated handgrip, and with a rope (Technogym, Cesena, Italy) for the neutral handgrip.",
+   "status": "verbatim",
+   "closest": "The biceps curl variations were performed using a Cable Tower (Technogym, Cesena, Italy), with one end of the pulley connected to a bar (42.5 cm length, Technogym, Cesena, Italy) for the supinated and pronated handgrip, and with a rope (Technogym, Cesena, Italy) for the neutral handgrip.",
+   "note": "Added in verify g4; read in PMC full text via E-utilities (db=pmc) 2026-09-30."
+  }
+ ]
+}

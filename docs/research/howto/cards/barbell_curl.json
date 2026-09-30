@@ -1,0 +1,557 @@
+{
+  "id": "barbell_curl",
+  "libId": "lib_barbell_curl",
+  "name": "Barbell Curl",
+  "family": "CURL (barbell)",
+  "tier": "C",
+  "archetype": {
+    "hand": "curl",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "dumbbell_biceps_curl",
+  "inherit": [
+    {
+      "field": "plate.view",
+      "why": "true for this child because elbow bend, elbow drift and body swing read side-on for a bar as for dumbbells (c5, c7)."
+    },
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the curl archetype wraps the thumb; no source read offers a thumbless barbell curl."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because the same bent-wrist finding is stated on the barbell page (c8)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Grip the bar underhand (palms up), hands about shoulder-width apart, so the wrists, elbows and shoulders line up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-bbcurl",
+        "ace-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-bbcurl",
+          "text": "Grip a bar with an underhand (supinated) grip, hands about shoulder-width apart.",
+          "where": "How to, step 1"
+        },
+        {
+          "source": "ace-bbcurl",
+          "text": "Hold the barbell with both hands facing up so the wrists, elbows, and shoulders are in a straight line about shoulder-width apart.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Stand with the feet about hip-width apart in a stable position, with good posture and the core braced for the whole lift.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-bbcurl",
+          "text": "Stand with your feet about hip-width apart and make sure that you’re standing in a stable position. Keep a good posture, and brace your core during the entire movement.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Curl the bar toward the shoulders by bending the elbows, keeping them close to the body; the body stays still and only the arms move.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bbcurl",
+        "sl-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bbcurl",
+          "text": "Lift the barbell toward the shoulders while bending the elbows and keeping them next to the middle of the body.",
+          "where": "Instructions"
+        },
+        {
+          "source": "sl-bbcurl",
+          "text": "Curl up the barbell, and make sure that you keep your elbows close to your body the entire time. Your body shouldn’t move, just the arms.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The upper arms must not travel back; keep them at the sides or let them move slightly forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-bbcurl",
+          "text": "Don’t let your upper arm travel back during the curl, keep it at your side or move it slightly forward.",
+          "where": "How to, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Elbows moving forward during the lift load the front delts instead of the biceps; elbows moving back let you cheat the weight up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-bbcurl",
+          "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+          "where": "Common mistakes, elbow positioning"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Too heavy a weight shows as swinging the body for momentum, or as half reps instead of the full range; the fix is less weight and a controlled lift.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-bbcurl",
+          "text": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up. Another sign of using too much weight is if you’re not using the full range of motion and start doing half reps instead.",
+          "where": "Common mistakes, using too heavy weights"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "If you start swinging the bar with body momentum, take weight off and lift with control; an EMG study watched for trunk movements together with knee bending as cheating.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-bbcurl",
+        "marcolin-2018"
+      ],
+      "quotes": [
+        {
+          "source": "sl-bbcurl",
+          "text": "If you start to swing to move the barbell with help from the momentum of the body, you should probably remove some weight instead and focus on performing the movement with control.",
+          "where": "Proper form & technique"
+        },
+        {
+          "source": "marcolin-2018",
+          "text": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.",
+          "where": "Methods"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Keep the wrists straight during the lift; bent wrists put extra load on them and can lead to discomfort.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-bbcurl",
+          "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+          "where": "Common mistakes, not locking your wrists"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Lower the bar slowly back to the start, keeping the chest still.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bbcurl",
+          "text": "Slowly lower the weight to return to the starting position. Keep chest still, using just the arms for the movement.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Keep tension in the muscles at the bottom and do not let the elbows travel backward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-bbcurl",
+          "text": "To accomplish this, avoid letting your elbows travel backward during the lift, and also keep tension in the muscles in the bottom position.",
+          "where": "Which muscles"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Compared with dumbbells, the barbell usually allows heavier weights but gives less range of motion and less freedom at the wrists.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dbcurl",
+          "text": "Barbell curls often allow for heavier weights to be lifted, but they offer less range of motion and flexibility in your wrists.",
+          "where": "Alternatives & variations"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Muscles: the barbell curl mainly works the biceps and brachialis, with the forearm flexors as secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-bbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-bbcurl",
+          "text": "The barbell curl primarily targets your biceps and brachialis (which lie beneath the biceps), but the forearm flexors are also involved as a secondary muscle group.",
+          "where": "Which muscles"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Tempo (up = lifting, down = lowering): a study protocol used 3 s per full repetition; ACSM advises moderate speed (1-2 s up, 1-2 s down).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "marcolin-2018",
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "marcolin-2018",
+          "text": "The metronome was set so that each repetition duration was 3 s.",
+          "where": "Methods"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In an EMG study (12 people, 65% of 1-RM), the straight-bar curl activated the brachioradialis more than the dumbbell curl while lifting and the biceps more while lowering; overall it sat in an intermediate position, closer to the EZ-bar curl than to the dumbbell curl.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "marcolin-2018"
+      ],
+      "quotes": [
+        {
+          "source": "marcolin-2018",
+          "text": "Higher levels of activation was found during the concentric phase for only the BR performed with an EZ compared to DC (P < 0.001) and performing BC compared to DC (P < 0.05).",
+          "where": "abstract, Results"
+        },
+        {
+          "source": "marcolin-2018",
+          "text": "The eccentric phase showed a higher activation of the BB muscle in EZ compared to DC (P < 0.01) and in BC compared to DC (P < 0.05).",
+          "where": "abstract, Results"
+        },
+        {
+          "source": "marcolin-2018",
+          "text": "the DC variant was found to be less effective, while the BC variant could be placed in an intermediate position but with an activation closer to the EZ than to the DC variant for the two muscles investigated.",
+          "where": "Discussion"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-bbcurl",
+      "url": "https://www.strengthlog.com/barbell-curl/",
+      "title": "How to Do Barbell Curl: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-bbcurl",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+      "title": "Bicep Curl (ACE Exercise Library; barbell)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "marcolin-2018",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/",
+      "title": "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl",
+      "kind": "peer-reviewed",
+      "year": 2018,
+      "pmid": 30013836,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-dbcurl",
+      "url": "https://www.strengthlog.com/dumbbell-curl/",
+      "title": "How to Dumbbell Curl: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Elbow bend, upper arms travelling back or forward (c4, c5) and body swing (c7) read side-on; the bar is seen end-on. Census view is side.",
+    "equipment": "Barbell held at the thighs, standing on the floor line (census: barbell hangs at the thighs).",
+    "start": "Standing, feet hip-width, core braced (c2); bar held underhand, hands shoulder-width, wrists, elbows and shoulders in a line (c1); wrists straight (c8).",
+    "end": "Elbows bent, bar near the shoulders (c3); upper arms at the sides or slightly forward, never back (c4); chest and body still (c9, c3).",
+    "checkpoints": [
+      {
+        "label": "Elbows at sides",
+        "what": "Upper arms stay by the body and never travel back.",
+        "claim": "c4"
+      },
+      {
+        "label": "Straight wrists",
+        "what": "Hands in line with the forearms, not bent up or down.",
+        "claim": "c8"
+      },
+      {
+        "label": "Still body",
+        "what": "Chest and body stay still; only the arms move.",
+        "claim": "c3, c9"
+      }
+    ],
+    "mistake": {
+      "what": "Swinging: moving the trunk and bending the knees to get the bar up with body momentum.",
+      "why": "StrengthLog names swinging as the sign of too much weight (c6, c7); an EMG study watched trunk and knee movement as cheating (c7).",
+      "claim": "c7",
+      "drawable": true,
+      "rankNote": "StrengthLog lists elbow position, too much weight and bent wrists without ranking them; swinging is drawn as on the parent card, and elbows travelling back (c5) is the layer’s second picture."
+    },
+    "tells": [
+      {
+        "text": "Only your arms move",
+        "claim": "c3"
+      },
+      {
+        "text": "Upper arms stay by your sides",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c13"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Underhand (palms up), full grip on a straight bar.",
+    "width": "About shoulder-width, wrists, elbows and shoulders in a line (c1).",
+    "thumb": "Wrapped round the bar.",
+    "handContact": "",
+    "wrist": "Straight, in line with the forearm; the straight bar gives the wrists less freedom than dumbbells (c11).",
+    "claims": [
+      "c1",
+      "c8",
+      "c11"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Pick a weight you can curl without swinging.",
+      "claim": "c7"
+    },
+    {
+      "step": "Stand feet hip-width, core braced.",
+      "claim": "c2"
+    },
+    {
+      "step": "Grip the bar underhand, hands shoulder-width.",
+      "claim": "c1"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Elbows stay close to your body.",
+      "claim": "c3"
+    },
+    {
+      "point": "Upper arms never travel back.",
+      "claim": "c4"
+    },
+    {
+      "point": "Body and chest stay still.",
+      "claim": "c9"
+    },
+    {
+      "point": "Wrists stay straight.",
+      "claim": "c8"
+    },
+    {
+      "point": "Lower the bar slowly, keeping tension at the bottom.",
+      "claim": "c10"
+    },
+    {
+      "point": "Use the full range, not half reps.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging the body to get the bar up.",
+      "fix": "Take weight off and lift with control.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Elbows travelling back, or forward during the lift.",
+      "fix": "Keep the upper arms at your sides.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Wrists bending.",
+      "fix": "Keep the hands in line with the forearms.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "forearms",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the upper arm",
+        "means": "The biceps are doing the work.",
+        "fix": "",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the shoulder",
+        "means": "Usually means the elbows are moving forward.",
+        "fix": "Keep the upper arms at your sides.",
+        "claim": "c5",
+        "redFlag": null
+      },
+      {
+        "where": "Wrists",
+        "means": "Usually means the wrists are bending.",
+        "fix": "Keep the hands in line with the forearms.",
+        "claim": "c8",
+        "redFlag": "wrist"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bent wrists under load can cause discomfort and even injury.",
+      "claim": "c8"
+    }
+  ],
+  "redFlags": [
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "bb-curl-wrist",
+      "kind": "hand",
+      "right": "Underhand full grip, thumbs wrapped, hands in line with the forearms.",
+      "wrong": "Wrists bent back under the bar.",
+      "claim": "c8"
+    },
+    {
+      "key": "curl-elbow",
+      "kind": "posture",
+      "right": "Upper arms by the sides at the top of the curl.",
+      "wrong": "Elbows swung back behind the body to cheat the bar up.",
+      "claim": "c5"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "biceps primary and forearms (forearm flexors) secondary match exercises.json (c12). StrengthLog also names the brachialis, which is text-only."
+  },
+  "anchorSource": "sl-bbcurl"
+}

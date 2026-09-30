@@ -1,0 +1,199 @@
+{
+ "id": "concentration_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "bb-concentration",
+   "text": "Sit on the edge of a weight bench with your knees far apart from each other. Grasp a dumbbell in your left hand. Hinge forward with your spine neutral. Brace your upper arm — your triceps — against your left inner thigh.",
+   "status": "verbatim",
+   "closest": "Sit on the edge of a weight bench with your knees far apart from each other. Grasp a dumbbell in your left hand. Hinge forward with your spine neutral. Brace your upper arm — your triceps — against your left inner thigh.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-concentration",
+   "text": "Sit on a bench with a dumbbell in hand. Lean your elbow onto the inside of your leg.",
+   "status": "verbatim",
+   "closest": "Sit on a bench with a dumbbell in hand. Lean your elbow onto the inside of your leg.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-concentration",
+   "text": "If you need more room to accommodate your stomach and/or chest, lean further forward to brace your upper arm against your inner left calf or shin. The goal is to get your upper arm as perpendicular to the ground as possible.",
+   "status": "verbatim",
+   "closest": "If you need more room to accommodate your stomach and/or chest, lean further forward to brace your upper arm against your inner left calf or shin. The goal is to get your upper arm as perpendicular to the ground as possible.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-concentration",
+   "text": "Try to avoid wedging your elbow into your knee. That will allow you to use your leg as leverage to lift more weight, which will take away emphasis from your biceps.",
+   "status": "verbatim",
+   "closest": "Try to avoid wedging your elbow into your knee. That will allow you to use your leg as leverage to lift more weight, which will take away emphasis from your biceps.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-concentration",
+   "text": "Instead of recruiting support from your leg angle, press your triceps into your inner thigh (or straight across your lower leg if needed).",
+   "status": "verbatim",
+   "closest": "Instead of recruiting support from your leg angle, press your triceps into your inner thigh (or straight across your lower leg if needed).",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-concentration",
+   "text": "It’s tempting to wedge your elbow into the crease of your knee — you might even see other athletes doing it, or have been coached to do it yourself.",
+   "status": "verbatim",
+   "closest": "It's tempting to wedge your elbow into the crease of your knee — you might even see other athletes doing it, or have been coached to do it yourself.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c5",
+   "source": "bb-concentration",
+   "text": "Press your feet down into the ground throughout the lift to stabilize your body.",
+   "status": "verbatim",
+   "closest": "Press your feet down into the ground throughout the lift to stabilize your body.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-concentration",
+   "text": "You can also grip your right knee or the weight bench on your right side.",
+   "status": "verbatim",
+   "closest": "You can also grip your right knee or the weight bench on your right side.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-concentration",
+   "text": "Curl the weight up, focusing on using only your biceps to do so. Hold a strong contraction for a beat at the top of your range of motion, keeping your upper arm stable the whole time.",
+   "status": "verbatim",
+   "closest": "Curl the weight up, focusing on using only your biceps to do so. Hold a strong contraction for a beat at the top of your range of motion, keeping your upper arm stable the whole time.",
+   "note": "extended by fixer 2026-09-30 to the full sentence; rendered text (HTML puts a link end before the comma); read in live source"
+  },
+  {
+   "claim": "c6",
+   "source": "sl-concentration",
+   "text": "Lift the dumbbell with control by flexing your elbow.",
+   "status": "verbatim",
+   "closest": "Lift the dumbbell with control by flexing your elbow.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-concentration",
+   "text": "Stop the curl once your triceps starts losing touch with your leg, or once your upper arm stops being perpendicular to the ground",
+   "status": "verbatim",
+   "closest": "Stop the curl once your triceps starts losing touch with your leg, or once your upper arm stops being perpendicular to the ground",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-concentration",
+   "text": "If you’re trying to muscle the dumbbell all the way up to your shoulder, you’re likely wasting precious energy.",
+   "status": "verbatim",
+   "closest": "If you're trying to muscle the dumbbell all the way up to your shoulder, you're likely wasting precious energy.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c8",
+   "source": "bb-concentration",
+   "text": "After holding for a moment at the top, lower the weight with slow control. Let your arm straighten to full extension",
+   "status": "verbatim",
+   "closest": "After holding for a moment at the top, lower the weight with slow control. Let your arm straighten to full extension",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-concentration",
+   "text": "Avoid rushing through the lowering phase of this lift. You don’t want gravity to yank the weight down — resist it as much as possible.",
+   "status": "verbatim",
+   "closest": "Avoid rushing through the lowering phase of this lift. You don't want gravity to yank the weight down — resist it as much as possible.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c9",
+   "source": "bb-concentration",
+   "text": "you may want to start several pounds lighter than you would for your usual dumbbell curls. Only move up in weight when you’re certain you’re proceeding without unnecessary momentum and excellent form.",
+   "status": "verbatim",
+   "closest": "you may want to start several pounds lighter than you would for your usual dumbbell curls. Only move up in weight when you're certain you're proceeding without unnecessary momentum and excellent form.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c10",
+   "source": "ace-bicepsstudy",
+   "text": "When compared to the other seven exercises, the concentration curl came out on top, eliciting significantly higher muscle activation of the biceps than any other exercise tested",
+   "status": "verbatim",
+   "closest": "When compared to the other seven exercises, the concentration curl came out on top, eliciting significantly higher muscle activation of the biceps than any other exercise tested",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-bicepsstudy",
+   "text": "researchers found that for the AD, the incline curl, concentration curl and the chin-up had significantly less muscle activation than the barbell curl.",
+   "status": "verbatim",
+   "closest": "researchers found that for the AD, the incline curl, concentration curl and the chin-up had significantly less muscle activation than the barbell curl.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-concentration",
+   "text": "Both the long and short head of your biceps will work with the concentration curl.",
+   "status": "verbatim",
+   "closest": "Both the long and short head of your biceps will work with the concentration curl.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-concentration",
+   "text": "They’ll help keep your grip nice and steady and help you maintain a neutral wrist position throughout the movement.",
+   "status": "verbatim",
+   "closest": "They'll help keep your grip nice and steady and help you maintain a neutral wrist position throughout the movement.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c11",
+   "source": "sl-concentration",
+   "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-concentration",
+   "text": "After holding for a moment at the top, lower the weight with slow control.",
+   "status": "verbatim",
+   "closest": "After holding for a moment at the top, lower the weight with slow control.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-concentration",
+   "text": "Prepare for your curl by bracing your core and tightening your glutes. Squeeze your (empty) right hand and hold it out away from your body to counterbalance yourself.",
+   "status": "verbatim",
+   "closest": "Prepare for your curl by bracing your core and tightening your glutes. Squeeze your (empty) right hand and hold it out away from your body to counterbalance yourself.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  }
+ ]
+}

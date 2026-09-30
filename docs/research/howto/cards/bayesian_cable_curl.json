@@ -1,0 +1,543 @@
+{
+ "id": "bayesian_cable_curl",
+ "libId": "lib_bayesian_cable_curl",
+ "name": "Bayesian Cable Curl",
+ "family": "CURL",
+ "tier": "C",
+ "archetype": {
+  "hand": "curl",
+  "contact": [
+   "standing-feet"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Set an adjustable cable to its lowest height with a single handle, take the handle in the working hand and turn to face away from the machine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bayesian",
+    "sl-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bayesian",
+     "text": "Step 1 — Set an adjustable cable to its lowest height and fasten a single-handle attachment to the carabiner.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "Step 2 — Grab the handle with your working arm and turn around so you’re facing away from the cable station.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "sl-bayesian",
+     "text": "Hold the handle in one hand and position yourself with your back facing the machine.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Step forward until the cable has light tension and the arm is drawn back behind the torso; lean the torso slightly forward.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-bayesian",
+    "bb-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "sl-bayesian",
+     "text": "Step forward slightly so that the cable creates light tension, and lean your torso slightly forward.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "Step 3 — Take a step or two away from the cable, allowing your arm to be drawn back behind your torso at about a 45-degree angle relative to the floor.",
+     "where": "How to, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Do not overdo the stretch: BarBend puts the upper arm at most at about 45 degrees and says to stand closer to the cable if the shoulders are restricted.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bayesian",
+     "text": "Your upper arm should be, at most, at a 45-degree angle relative to the floor. If you have restricted shoulders or find the exercise unwieldy, try standing a bit closer to the cable station.",
+     "where": "Common mistakes, overstretching"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Keep the elbow close to the body and the upper arm still; bend the elbow to bring the handle forward and up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-bayesian",
+    "bb-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "sl-bayesian",
+     "text": "Keep your elbow close to your body, starting with your arm extended behind you.",
+     "where": "How to, step 3"
+    },
+    {
+     "source": "sl-bayesian",
+     "text": "Bend your elbow and pull the handle forward and upward, contracting your biceps at the top. Keep your upper arm stationary throughout the movement.",
+     "where": "How to, step 4"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "Step 4 — Suspend your upper arm motionless and bend at the elbow, curling the weight with your biceps.",
+     "where": "How to, step 4"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "BarBend's first listed common mistake is moving the upper arm, letting the shoulders take over: the upper arm must stay motionless, which stops the front delts from helping with the curl.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bayesian",
+     "text": "isolating your biceps and not letting your shoulders take over. To achieve this, your upper arm needs to remain motionless the entire time. This fixes your shoulder in place and prevents you from using your front deltoids to assist with the curl.",
+     "where": "Common mistakes"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "Steer clear of these common errors if you want to make the most out of the movement. Moving Your Upper Arm",
+     "where": "Common mistakes, first heading"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Lower slowly back to the start.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "sl-bayesian",
+     "text": "Slowly lower back to the starting position and repeat.",
+     "where": "How to, step 5"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "It is done one arm at a time, so brace the trunk to avoid tilting side to side; the free hand can go out to the side or on the hip.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bayesian",
+     "text": "When you perform the curl, contract your core to avoid tilting from one side to the other.",
+     "where": "Muscles worked, core"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "Hold your free arm out to the side or place it on your hip for stability.",
+     "where": "How to, step 4"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "The Bayesian curl is typically performed as a unilateral exercise, one arm at a time.",
+     "where": "Muscles worked, core"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "The biceps is the target muscle, and the forearm flexors are secondary; because the biceps crosses the shoulder, drawing the arm behind the body lengthens it.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-bayesian",
+    "bb-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "sl-bayesian",
+     "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "Your biceps muscle attaches to both your elbow and shoulder joint. Drawing your arm behind your body stretches your biceps at the shoulder, while straightening your elbow stretches it at the other end.",
+     "where": "Benefits"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Holding the arm behind the body asks the small shoulder muscles to hold it in place, and some tension may be felt at the front of the shoulder; it can cause shoulder discomfort for some people.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bayesian",
+     "text": "The small muscles surrounding your shoulder capsule need to contract together to hold your arm in place. You may also notice some tension on the anterior deltoid, even though it isn’t working during the Bayesian curl.",
+     "where": "Muscles worked, shoulders"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "The cable stations could be busy, it may place stress or discomfort on your shoulders, and so on.",
+     "where": "Alternatives"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "In one small EMG study at 80% of 1-RM, the dumbbell biceps curl produced higher biceps activity than the Bayesian curl.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "parpa-2025"
+   ],
+   "quotes": [
+    {
+     "source": "parpa-2025",
+     "text": "the dumbbell biceps curl elicited significantly greater muscle activation compared to the Bayesian curl",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Over 10 weeks, unilateral Bayesian (shoulder extended) and preacher (shoulder flexed) cable curls matched for resistance profile gave similar growth and strength gains.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "attarieh-2025"
+   ],
+   "quotes": [
+    {
+     "source": "attarieh-2025",
+     "text": "the shoulder joint angle does not seem to affect muscle hypertrophy and maximum strength gains after different elbow flexion exercises matched for resistance profiles.",
+     "where": "abstract, conclusion"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and a slow 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009",
+    "sl-bayesian"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
+    },
+    {
+     "source": "sl-bayesian",
+     "text": "Slowly lower back to the starting position and repeat.",
+     "where": "How to, step 5"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+     "where": "abstract"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-bayesian",
+   "url": "https://barbend.com/bayesian-curl/",
+   "title": "How To Do the Bayesian Curl for Bigger, Beefier Biceps | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "sl-bayesian",
+   "url": "https://www.strengthlog.com/bayesian-curl/",
+   "title": "How to Do Bayesian Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "parpa-2025",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41133617/",
+   "title": "An Exploratory Study of Biceps Brachii Electromyographic Activity During Traditional Dumbbell Versus Bayesian Cable Curls.",
+   "kind": "peer-reviewed",
+   "year": 2025,
+   "pmid": 41133617,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "attarieh-2025",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40082069/",
+   "title": "Comparison Between Shoulder Flexed and Extended Positions in Elbow Flexion Resistance Training on Regional Hypertrophy and Maximum Strength: Preacher versus Bayesian Cable Curls.",
+   "kind": "peer-reviewed",
+   "year": 2025,
+   "pmid": 40082069,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "The arm behind the torso (c2), the still upper arm (c4, c5) and the elbow bend all happen front-to-back, so they read side-on. Census view is side.",
+  "equipment": "Cable column, pulley at the lowest height, single handle (c1); the lifter faces away from the stack, one step forward, split stance (census pose 'split'; step forward from c2).",
+  "start": "Facing away from the low pulley (c1), a step forward with light cable tension, torso leaning slightly forward (c2); working arm straight and drawn behind the torso, elbow close to the body (c2, c4); upper arm drawn back no more than about 45° behind vertical, which is the same line as 45° to the floor (c2, c3); free hand on the hip (c7).",
+  "end": "Elbow bent, handle brought forward and up toward the shoulder (c4); upper arm in the same place as the start (c4, c5); torso unchanged (c7).",
+  "checkpoints": [
+   {
+    "label": "Arm behind body",
+    "what": "Working arm starts drawn back behind the torso, with light cable tension.",
+    "claim": "c2"
+   },
+   {
+    "label": "Upper arm still",
+    "what": "The upper arm does not move; only the forearm travels.",
+    "claim": "c5"
+   },
+   {
+    "label": "Elbow close",
+    "what": "Elbow stays close to the body.",
+    "claim": "c4"
+   }
+  ],
+  "mistake": {
+   "what": "Upper arm swinging forward so the shoulder helps lift the handle.",
+   "why": "BarBend's first listed common mistake: letting the shoulders take over brings the front delts into the curl.",
+   "claim": "c5",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Upper arm stays motionless",
+    "claim": "c5"
+   },
+   {
+    "text": "Only your forearm moves",
+    "claim": "c4"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 0,
+   "claim": "c12"
+  },
+  "variantLine": null,
+  "note": "Angle: BarBend gives the upper arm 'about a 45-degree angle relative to the floor' (c2) and 'at most' 45 degrees (c3), and warns against standing far away. A hanging arm is 90° to the floor, so read literally 'at most 45° to the floor' would allow more stretch, which contradicts the warning; the conservative drawing puts the upper arm about 45° behind vertical (equal to 45° to the floor) and never further back."
+ },
+ "grip": {
+  "type": "One hand on a single cable handle.",
+  "width": "One arm at a time.",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "",
+  "claims": [
+   "c1"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Set the cable to its lowest height with a single handle.",
+   "claim": "c1"
+  },
+  {
+   "step": "Take the handle in your working hand and turn your back to the machine.",
+   "claim": "c1"
+  },
+  {
+   "step": "Step forward until the cable has light tension and your arm is drawn behind you.",
+   "claim": "c2"
+  },
+  {
+   "step": "Stand closer if your shoulder feels restricted.",
+   "claim": "c3"
+  },
+  {
+   "step": "Free hand on your hip or out to the side.",
+   "claim": "c7"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Torso leans slightly forward.",
+   "claim": "c2"
+  },
+  {
+   "point": "Elbow stays close to the body.",
+   "claim": "c4"
+  },
+  {
+   "point": "Upper arm stays motionless.",
+   "claim": "c5"
+  },
+  {
+   "point": "Trunk braced; no tilting side to side.",
+   "claim": "c7"
+  },
+  {
+   "point": "Lower slowly.",
+   "claim": "c6"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Upper arm moving forward so the shoulder helps.",
+   "fix": "Keep the upper arm still; only the elbow bends.",
+   "claim": "c5"
+  },
+  {
+   "mistake": "Standing too far from the cable, forcing a big stretch.",
+   "fix": "Stand a bit closer to the cable.",
+   "claim": "c3"
+  },
+  {
+   "mistake": "Tilting the trunk side to side.",
+   "fix": "Brace your core; free hand on your hip.",
+   "claim": "c7"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "biceps",
+    "claim": "c8"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "forearms",
+    "claim": "c8"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "front_delts",
+    "claim": "c9"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Front of the upper arm",
+    "means": "The biceps are working from a lengthened start.",
+    "fix": "",
+    "claim": "c8",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the shoulder, a stretch",
+    "means": "Some tension here can come with the arm held back.",
+    "fix": "Stand closer if it is more than a stretch.",
+    "claim": "c9, c3",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the shoulder, pain",
+    "means": "The position may not suit your shoulder today.",
+    "fix": "Stand closer to the cable, or choose another curl.",
+    "claim": "c9, c3",
+    "redFlag": "shoulder"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Holding the arm behind the body can cause shoulder discomfort for some people.",
+   "claim": "c9"
+  }
+ ],
+ "redFlags": [
+  "shoulder"
+ ],
+ "zooms": [
+  {
+   "key": "bayes-arm",
+   "kind": "posture",
+   "right": "Upper arm held still, drawn back behind the torso.",
+   "wrong": "Upper arm swinging forward as the handle rises.",
+   "claim": "c5, c2"
+  },
+  {
+   "key": "bayes-reach",
+   "kind": "posture",
+   "right": "A step from the cable, light tension, modest stretch.",
+   "wrong": "Standing far away with the arm pulled far behind.",
+   "claim": "c3, c2"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "biceps primary and forearms secondary match exercises.json and StrengthLog (c8)."
+ },
+ "anchorSource": "bb-bayesian"
+}

@@ -1,0 +1,658 @@
+{
+  "id": "dumbbell_overhead_triceps_extension",
+  "libId": "lib_dumbbell_overhead_triceps_extension",
+  "name": "Dumbbell Overhead Triceps Extension",
+  "family": "OVERHEAD EXTENSION (dumbbell)",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "loadAxis": "along-forearm",
+    "contact": [
+      "standing-feet"
+    ],
+    "overBody": true
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Stand in a split stance holding one dumbbell in both hands, both hands wrapped around the handle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-oh-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-oh-ext",
+          "text": "Stand in a split-stance position holding a dumbbell with both hands and wrap both hands around the dumbbell handle.",
+          "where": "Starting position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Another way: both hands on the inside surface of the plate.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "healthline-ote"
+      ],
+      "quotes": [
+        {
+          "source": "healthline-ote",
+          "text": "Hold the weight overhead by grasping the inside dumbbell plate surface with both hands, or by grasping both handles of the kettlebell.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Brace the torso, pull the shoulders down and back, and keep the head and neck in line with the spine throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-oh-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-oh-ext",
+          "text": "Stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining this position throughout the exercise.",
+          "where": "Starting position"
+        },
+        {
+          "source": "ace-oh-ext",
+          "text": "Your head and neck should be aligned with your spine.",
+          "where": "Starting position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Top position: arms vertical, elbows pointing forward and not completely locked, the dumbbell directly over the head.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-oh-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-oh-ext",
+          "text": "Exhale and slowly press the dumbbell overhead, extending your elbows until your arms are vertical to the floor, elbows pointing forward, but not completely locked.",
+          "where": "Upward phase"
+        },
+        {
+          "source": "ace-oh-ext",
+          "text": "The dumbbell should be positioned directly over your head with your palms facing upwards and the dumbbell hanging vertically or angled slightly.",
+          "where": "Upward phase"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lower the dumbbell slowly behind the head without moving the upper arms; stop at about a 90-degree elbow bend or when the upper arms start to move back, and do not touch the back of the head.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-oh-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-oh-ext",
+          "text": "Inhale and allow the weight to slowly bend your elbows, lowering the dumbbell behind your head in a controlled manner without moving your upper arms.",
+          "where": "Downward phase"
+        },
+        {
+          "source": "ace-oh-ext",
+          "text": "Continue lowering the dumbbell until your elbows reach a 90 degree bend or until your upper arms begin to move backwards. Be sure to avoid making contact with the back of your head.",
+          "where": "Downward phase"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep the upper arms vertical and the elbows shoulder-width apart for the whole set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-oh-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-oh-ext",
+          "text": "Attempt to keep your upper arms vertical to the floor throughout the exercise and your elbows shoulder-width apart.",
+          "where": "Note"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Keep the head, torso, upper arms, wrists and feet still; only the elbows move.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-oh-ext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-oh-ext",
+          "text": "Maintain your balance and avoid changing the position of your head, torso, upper arms, wrists and feet.",
+          "where": "Upward phase"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Getting the weight into position is often the hardest part; use a weight you can get to the start position safely.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "healthline-ote"
+      ],
+      "quotes": [
+        {
+          "source": "healthline-ote",
+          "text": "Depending on what type of resistance you use (dumbbell, kettlebell, band, etc.), sometimes the most difficult part is getting the weight into position. Use a weight that allows you to get to the starting position safely.",
+          "where": "Considerations"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "If the weight is too heavy or you are tired you may arch the back, which strains the back and shoulder joints.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "healthline-ote"
+      ],
+      "quotes": [
+        {
+          "source": "healthline-ote",
+          "text": "If the weight is too heavy or you’re fatigued, you may be tempted to arch your back, which can increase the strain on your back and shoulder joints.",
+          "where": "Considerations"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Move slowly and avoid momentum.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "healthline-ote"
+      ],
+      "quotes": [
+        {
+          "source": "healthline-ote",
+          "text": "Keep the speed of movement relatively slow, and avoid momentum to focus on your form.",
+          "where": "Considerations"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "It can also be done seated on a bench with back support.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-db-oh"
+      ],
+      "quotes": [
+        {
+          "source": "motra-db-oh",
+          "text": "Sit on a bench with back support or stand with feet shoulder-width apart, core engaged.",
+          "where": "How to perform, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Listed common mistakes include flaring the elbows outward, swinging the weight with momentum, and locking the elbows at the top.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-db-oh"
+      ],
+      "quotes": [
+        {
+          "source": "motra-db-oh",
+          "text": "Flaring elbows outward",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "motra-db-oh",
+          "text": "Using momentum to swing weight",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "motra-db-oh",
+          "text": "Locking elbows at top",
+          "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "A way out: a spotter is not usually needed, but for heavy sets one can help by supporting the elbows.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-db-oh"
+      ],
+      "quotes": [
+        {
+          "source": "motra-db-oh",
+          "text": "Spotting not typically required; assist by supporting elbows if needed for heavy sets.",
+          "where": "Spotting"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "In an EMG study of the overhead dumbbell extension (21 resistance-trained men, one to two reps at 40% of a maximal isometric effort), the triceps long and lateral heads worked, most in the first and middle parts of the lift; the lowering phase needed less activity than the lift.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "alves-2018"
+      ],
+      "quotes": [
+        {
+          "source": "alves-2018",
+          "text": "The long and lateral heads electromyographic signals were acquired from 21 resistance-trained men. One to two maximal repetitions of each exercise was performed with a 40% load of a maximal voluntary isometric contraction test.",
+          "where": "abstract, Methods"
+        },
+        {
+          "source": "alves-2018",
+          "text": "Eccentric phase elicited less muscular activity than concentric in both exercises.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "alves-2018",
+          "text": "Concentric contraction presented the same pattern during OD (long and lateral heads) and LD (lateral head). Initial and middle intervals elicited higher muscle activity than final interval.",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Across all weight training (not this exercise specifically), the most common way people were hurt badly enough for an emergency department was a weight dropping on them, and 90% of injuries involved free weights.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "kerr-2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr-2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Triceps tendon ruptures are rare; they often follow a forceful lowering (eccentric) contraction or lifting against resistance (not specific to this exercise).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "gaviria-2020"
+      ],
+      "quotes": [
+        {
+          "source": "gaviria-2020",
+          "text": "Triceps tendon ruptures (TTRs) are rare and often occur as a result of falling on an outstretched hand, forceful eccentric contraction, direct trauma to the elbow, or lifting against resistance.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Tempo (up = pressing to straight arms, down = lowering): lower slowly and under control; ACSM advises moderate speed (1-2 s each way). Breathe in on the way down and out on the way up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009",
+        "ace-oh-ext"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "ace-oh-ext",
+          "text": "Inhale and allow the weight to slowly bend your elbows, lowering the dumbbell behind your head in a controlled manner without moving your upper arms.",
+          "where": "Downward phase"
+        },
+        {
+          "source": "ace-oh-ext",
+          "text": "Exhale and slowly press the dumbbell overhead, extending your elbows until your arms are vertical to the floor, elbows pointing forward, but not completely locked.",
+          "where": "Upward phase"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-oh-ext",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/74/triceps-extension/",
+      "title": "Triceps Extension (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "healthline-ote",
+      "url": "https://www.healthline.com/health/fitness/overhead-triceps-extension",
+      "title": "How to Do Proper Overhead Tricep Extensions (Healthline; written by Travis Edwards, PT, medically reviewed by Jake Tipane, CPT)",
+      "kind": "coach",
+      "year": 2021,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "motra-db-oh",
+      "url": "https://motra.com/exercises/dumbbellOverheadTricepsExtension",
+      "title": "Dumbbell Overhead Triceps Extension, Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "alves-2018",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28677940/",
+      "title": "Effect of shoulder position on triceps brachii heads activity in dumbbell elbow extension exercises",
+      "kind": "peer-reviewed",
+      "year": 2018,
+      "pmid": 28677940,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr-2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": 20139328,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "gaviria-2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32539261/",
+      "title": "Triceps Tendon Ruptures: Risk Factors, Treatment, and Rehabilitation",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": 32539261,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The elbow bends front-to-back behind the head, and vertical upper arms (c6), the 90-degree stop (c5), the dumbbell clearing the head (c5) and a back arch (c9) all read side-on. Elbow flare (c12) is sideways. Census view is side.",
+    "equipment": "One dumbbell held vertically in both hands (census: dumbbell axis parameter). Standing split stance on the floor line (c1).",
+    "start": "Top position: split stance (c1), torso braced, shoulders down and back, head in line with the spine (c3); arms vertical, elbows pointing forward and not locked, dumbbell hanging vertically over the head (c4).",
+    "end": "Bottom position: elbows bent to about 90 degrees with the dumbbell behind, not touching, the head (c5); upper arms still vertical, elbows shoulder-width (c6); torso unchanged (c7).",
+    "checkpoints": [
+      {
+        "label": "Arms vertical",
+        "what": "Upper arms stay vertical and still; only the elbows bend.",
+        "claim": "c6, c7"
+      },
+      {
+        "label": "Braced torso",
+        "what": "Core braced, shoulders down and back, head in line with the spine.",
+        "claim": "c3"
+      },
+      {
+        "label": "Stop at 90°",
+        "what": "Lower to about a right angle, clear of the back of the head.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Back arching as the dumbbell is pressed up.",
+      "why": "Healthline names it as what happens when the weight is too heavy or you are tired, straining the back and shoulders (c9).",
+      "claim": "c9",
+      "drawable": false,
+      "rankNote": "No source ranks faults by frequency. Motra lists flaring the elbows first (c12), which is sideways and cannot be drawn from the side; the drawable back arch is shown."
+    },
+    "tells": [
+      {
+        "text": "Upper arms stay still",
+        "claim": "c5"
+      },
+      {
+        "text": "Dumbbell clears your head",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c18",
+      "tempoNote": "ACE says to press and lower slowly (c18); Motra gives 3-1-1 (3 s lowering, 1 s pause, 1 s up). The card keeps ACSM's 1-2 s each way: 1 s up and 2 s down sit inside it, with the lowering the slower phase as ACE and Motra both stress."
+    },
+    "variantLine": "Drawn standing in a split stance (ACE, anchor). A seated version on a bench with back support is also used (c11); the technique claims hold for both."
+  },
+  "grip": {
+    "type": "One dumbbell held vertically in both hands, both hands wrapped around the handle (ACE).",
+    "width": "Both hands together on the handle.",
+    "thumb": "Wrapped around the handle.",
+    "handContact": "Both hands around the handle, palms facing up; the dumbbell hangs vertically over the head at the top (c1, c4).",
+    "wrist": "Held still throughout (c7).",
+    "claims": [
+      "c1",
+      "c4",
+      "c7"
+    ],
+    "gripNote": "Healthline's hold on the inside of the plate (c2) is not offered: it is thumbless, and content.md 5.2 allows no thumbless option for a free weight over the body."
+  },
+  "setup": [
+    {
+      "step": "Pick a dumbbell you can get overhead safely.",
+      "claim": "c8"
+    },
+    {
+      "step": "Stand in a split stance (or sit on a bench with back support).",
+      "claim": "c11, c1"
+    },
+    {
+      "step": "Wrap both hands around the handle.",
+      "claim": "c1"
+    },
+    {
+      "step": "Brace, shoulders down and back, head in line with your spine.",
+      "claim": "c3"
+    },
+    {
+      "step": "Start with arms vertical, dumbbell over your head, elbows forward, not locked.",
+      "claim": "c4"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Upper arms vertical and still, elbows shoulder-width apart; no flaring.",
+      "claim": "c6, c12"
+    },
+    {
+      "point": "For heavy sets, a spotter can help by supporting your elbows.",
+      "claim": "c13"
+    },
+    {
+      "point": "Lower slowly behind your head to about 90°, without touching it.",
+      "claim": "c5"
+    },
+    {
+      "point": "Torso braced; do not arch your back.",
+      "claim": "c9, c3"
+    },
+    {
+      "point": "Head, torso, wrists and feet stay still.",
+      "claim": "c7"
+    },
+    {
+      "point": "Straighten without locking the elbows.",
+      "claim": "c4"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Arching the back to press the weight up.",
+      "fix": "Brace; if the back still arches, use a lighter dumbbell.",
+      "claim": "c9"
+    },
+    {
+      "mistake": "Elbows flaring outward or upper arms moving back.",
+      "fix": "Keep the upper arms vertical, elbows shoulder-width; stop lowering when the upper arms start to move.",
+      "claim": "c6, c5, c12"
+    },
+    {
+      "mistake": "Swinging the weight with momentum.",
+      "fix": "Slow down and avoid momentum.",
+      "claim": "c10"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c14"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Back of the upper arm",
+        "means": "The triceps are doing the work.",
+        "fix": "",
+        "claim": "c14",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually means the back is arching.",
+        "fix": "Brace and use a lighter dumbbell.",
+        "claim": "c9",
+        "redFlag": "back"
+      },
+      {
+        "where": "Shoulders",
+        "means": "Usually means the back is arching or the weight is too heavy.",
+        "fix": "Use a lighter dumbbell.",
+        "claim": "c9",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Back of the elbow",
+        "means": "Triceps tendon ruptures are rare, but often follow forceful lowering.",
+        "fix": "Stop the set.",
+        "claim": "c16",
+        "redFlag": "elbow",
+        "fixNote": "'Stop the set' and any pain wording follow the shared elbow warning box this row links; c16 covers only the rupture and its usual cause (not specific to this exercise)."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Dumbbell over the head: dropped weights are one of the most common causes of weight-training injuries; wrap both hands round the handle, lower slowly, keep it clear of your head, and pick a weight you can get overhead safely.",
+      "claim": "c15, c1, c5, c8",
+      "riskNote": "Kerr 2010 says the most common mechanism across all weight training; the wording here stays at \"one of the most common\" because the figure is not specific to this exercise."
+    },
+    {
+      "risk": "Triceps tendon rupture (rare), often from forceful lowering or lifting against resistance.",
+      "claim": "c16",
+      "riskNote": "Back arching under a heavy weight (c9) left the risks list to make room for the separate progression line; it stays as the plate mistake, in handlingMistakes, posture and the back and shoulder feel rows."
+    },
+    {
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c17"
+    }
+  ],
+  "redFlags": [
+    "elbow",
+    "back",
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "db-oh-hands",
+      "kind": "hand",
+      "right": "Both hands wrapped round the handle, dumbbell hanging vertically.",
+      "wrong": "Hands not wrapped round the handle.",
+      "claim": "c1, c4",
+      "wrongNote": "The wrong drawing is the inverse of c1 (both hands wrapped around the handle); no source describes it directly."
+    },
+    {
+      "key": "db-oh-elbows",
+      "kind": "posture",
+      "right": "Upper arms vertical, elbows shoulder-width, dumbbell clear of the head at 90°.",
+      "wrong": "Upper arms dropped back, dumbbell touching the head.",
+      "claim": "c5"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "triceps primary matches exercises.json (c14). No secondary muscle is listed there. Motra's muscle breakdown rates Shoulders 4/10 (anterior delts), Forearms 3/10 (flexors) and Abs 2/10; not added, because it is a single coach source with unexplained ratings and no other source read names them."
+  },
+  "anchorSource": "ace-oh-ext"
+}

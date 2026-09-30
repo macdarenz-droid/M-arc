@@ -1,0 +1,191 @@
+{
+ "id": "incline_dumbbell_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "bb-incline",
+   "text": "Adjust the bench to a high, but not fully perpendicular to the floor, angle. Think between 45 and 65 degrees relative to the floor.",
+   "status": "verbatim",
+   "closest": "Adjust the bench to a high, but not fully perpendicular to the floor, angle. Think between 45 and 65 degrees relative to the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-incline",
+   "text": "Grab a pair of dumbbells, and sit down on an inclined bench.",
+   "status": "verbatim",
+   "closest": "Grab a pair of dumbbells, and sit down on an inclined bench.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-incline",
+   "text": "Lean back against the pad and allow your arms to hang down at your sides, perpendicular to the floor.",
+   "status": "verbatim",
+   "closest": "Lean back against the pad and allow your arms to hang down at your sides, perpendicular to the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-incline",
+   "text": "Let your arms hang straight down by your sides.",
+   "status": "verbatim",
+   "closest": "Let your arms hang straight down by your sides.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-incline",
+   "text": "Once you’re set up, perform a standard dumbbell curl. Your arms must remain behind your torso while you’re on the bench. Think about keeping your elbows back while you curl the weights up as high as possible.",
+   "status": "verbatim",
+   "closest": "Once you're set up, perform a standard dumbbell curl. Your arms must remain behind your torso while you're on the bench. Think about keeping your elbows back while you curl the weights up as high as possible.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c3",
+   "source": "bb-incline",
+   "text": "Curl up as far as you can without your elbows drifting forward. If they do, you may be forcing too much range of motion into the exercise.",
+   "status": "verbatim",
+   "closest": "Curl up as far as you can without your elbows drifting forward. If they do, you may be forcing too much range of motion into the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-incline",
+   "text": "If your arm is pulled forward as you curl the weight, you’re actually reducing some of the stretch and tension placed on the tissue. Keep your elbows pinned back and tucked against the bench for the duration of the set.",
+   "status": "verbatim",
+   "closest": "If your arm is pulled forward as you curl the weight, you're actually reducing some of the stretch and tension placed on the tissue. Keep your elbows pinned back and tucked against the bench for the duration of the set.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c5",
+   "source": "bb-incline",
+   "text": "If you set the inclination of the bench too low, you’re likely going to feel the most tension in the front of your shoulder, rather than in your biceps where it belongs.",
+   "status": "verbatim",
+   "closest": "If you set the inclination of the bench too low, you're likely going to feel the most tension in the front of your shoulder, rather than in your biceps where it belongs.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c5",
+   "source": "bb-incline",
+   "text": "If the posture of the incline curl causes you shoulder discomfort",
+   "status": "verbatim",
+   "closest": "If the posture of the incline curl causes you shoulder discomfort",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-incline",
+   "text": "try adjusting the seat to be a bit higher.",
+   "status": "verbatim",
+   "closest": "try adjusting the seat to be a bit higher.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-incline",
+   "text": "By allowing your arm to fall behind your torso, a motion called shoulder hyperextension, you’ll find that your biceps are instantaneously stretched.",
+   "status": "verbatim",
+   "closest": "By allowing your arm to fall behind your torso, a motion called shoulder hyperextension, you'll find that your biceps are instantaneously stretched.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c6",
+   "source": "sl-incline",
+   "text": "Another consequence is that it is slightly harder to cheat with your technique in this exercise.",
+   "status": "verbatim",
+   "closest": "Another consequence is that it is slightly harder to cheat with your technique in this exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "oliveira-2009",
+   "text": "The Incline Dumbbell Curl and the Dumbbell Biceps Curl resulted in a considerable neuromuscular effort throughout the whole elbow range of motion.",
+   "status": "verbatim",
+   "closest": "The Incline Dumbbell Curl and the Dumbbell Biceps Curl resulted in a considerable neuromuscular effort throughout the whole elbow range of motion.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "kassiano-2025",
+   "text": "We observed a greater increase in the proximal elbow flexor thickness in the incline biceps curl compared to the preacher biceps curl",
+   "status": "verbatim",
+   "closest": "We observed a greater increase in the proximal elbow flexor thickness in the incline biceps curl compared to the preacher biceps curl",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-bicepsstudy",
+   "text": "researchers found that for the AD, the incline curl, concentration curl and the chin-up had significantly less muscle activation than the barbell curl.",
+   "status": "verbatim",
+   "closest": "researchers found that for the AD, the incline curl, concentration curl and the chin-up had significantly less muscle activation than the barbell curl.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-incline",
+   "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ace-seated-curl",
+   "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists) and keep contact with your head, shoulder and butt against the bench.",
+   "status": "verbatim",
+   "closest": "Maintain a neutral wrist position (avoid flexion and extension of your wrists) and keep contact with your head, shoulder and butt against the bench.",
+   "note": "extended by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c11",
+   "source": "sl-dbcurl",
+   "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "status": "verbatim",
+   "closest": "Keep your wrists straight during the movement. If they're bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c12",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "kerr-2010",
+   "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "status": "verbatim",
+   "closest": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ace-seated-curl",
+   "text": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles)",
+   "status": "verbatim",
+   "closest": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles)",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c8",
+   "source": "kassiano-2025",
+   "text": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
+   "status": "verbatim",
+   "closest": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  }
+ ]
+}

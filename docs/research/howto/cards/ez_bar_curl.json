@@ -1,0 +1,521 @@
+{
+  "id": "ez_bar_curl",
+  "libId": "lib_ez_bar_curl",
+  "name": "EZ-Bar Curl",
+  "family": "CURL (EZ bar)",
+  "tier": "C",
+  "archetype": {
+    "hand": "curl",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "dumbbell_biceps_curl",
+  "inherit": [
+    {
+      "field": "plate.view",
+      "why": "true for this child because elbow bend and elbow drift read side-on; census notes the EZ bar end-on is drawn like a barbell in side view."
+    },
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the curl archetype wraps the thumb; no source read offers a thumbless EZ curl."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because the same bent-wrist finding is stated on the EZ page (c8)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hold the EZ bar underhand on its angled sections, which is easier on the wrists.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "Hold an EZ bar with an underhand grip on the angled sections, which is easier on the wrists.",
+          "where": "How to, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "From a study discussion, not a measured result (Coratella 2023 tested a cable bar and rope, not an EZ bar): the EZ grip is semi-supinated (half-way between palms up and palms in) rather than neutral, and the hands sit closer together than on a straight bar to fit the natural angle of the elbow.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "coratella-2023"
+      ],
+      "quotes": [
+        {
+          "source": "coratella-2023",
+          "text": "However, it should be noticed that the handgrip position of the EZ barbell is rather semi-supinated than neutral, maybe not enough to elicit any difference.",
+          "where": "Discussion"
+        },
+        {
+          "source": "coratella-2023",
+          "text": "However, to better accommodate the anatomical valgus of the elbow with the EZ-barbell, the inter-hand distance must be shorter than with the straight barbell.",
+          "where": "Discussion"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Stand upright with the feet about hip- to shoulder-width apart, in a stable position, core braced.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "Stand upright with your feet shoulder-width apart.",
+          "where": "How to, step 1"
+        },
+        {
+          "source": "sl-ez",
+          "text": "Stand with your feet about hip-width apart and make sure that you’re standing in a stable position. Keep a good posture, and brace your core during the entire movement.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Bend the elbows and lift the bar towards the chest, keeping the elbows close to the body; do not let them drift forward, and pause briefly at the top without the elbows moving forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "Curl up the bar, and make sure that you keep your elbows close to your body the entire time. Don’t let your elbows drift forward. Your body shouldn’t move, just the arms.",
+          "where": "Proper form & technique"
+        },
+        {
+          "source": "sl-ez",
+          "text": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
+          "where": "How to, step 4"
+        },
+        {
+          "source": "sl-ez",
+          "text": "Bend your elbows and lift the bar towards your chest by contracting your biceps.",
+          "where": "How to, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Elbows moving forward during the lift load the front delts instead of the biceps; elbows moving back let you cheat the weight up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+          "where": "Common mistakes, elbow positioning"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Too heavy a weight shows as swinging the body for momentum, or as half reps instead of the full range; the fix is less weight and a controlled lift.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up. Another sign of using too much weight is if you’re not using the full range of motion and start doing half reps instead.",
+          "where": "Common mistakes, using too heavy weights"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "If you start swinging the bar with body momentum, take weight off and lift with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "If you start to swing to move the barbell with help from the momentum of the body, you should probably remove some weight instead and focus on performing the movement with control.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Keep the wrists straight during the lift; bent wrists put extra load on them and can lead to discomfort.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+          "where": "Common mistakes, not locking your wrists"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The angled grip can be kinder to the wrists and elbows than a straight bar; the straight bar turns the wrists fully palms-up, which works the biceps long head more. Choose the one that suits you.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "The angled grip can also be kinder to the wrists and elbows, putting less stress on the joints.",
+          "where": "Benefits, grip versatility"
+        },
+        {
+          "source": "sl-ez",
+          "text": "The barbell curl is performed with maximized wrist supination, which leads to better activation of the biceps long head. However, the angled bar used in EZ curls could reduce wrist and elbow strain, and therefore suit those with aching joints better.",
+          "where": "Alternatives & variations"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "In an EMG study, the EZ curl activated the biceps and brachioradialis more than the alternate dumbbell curl; the straight bar and EZ bar differed only a little, so the choice between them is comfort.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "marcolin-2018"
+      ],
+      "quotes": [
+        {
+          "source": "marcolin-2018",
+          "text": "We detected higher activation profile of both BB (P < 0.05) and BR (P < 0.01) during the EZ compared to the DC.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "marcolin-2018",
+          "text": "The small difference between the BC and EZ variants with regards to the EMG activity of the BB and BR, makes the choice between these two variants purely a matter of subjective comfort related to the handgrip position.",
+          "where": "Discussion"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Muscles: like the barbell curl, the EZ curl mainly works the biceps and brachialis, with the forearm flexors as secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "Just like the barbell curl, the EZ curl primarily targets your biceps and brachialis (which lie beneath the biceps), with the forearm flexors involved as a secondary muscle group.",
+          "where": "Which muscles"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Tempo (up = lifting, down = lowering): lift, pause briefly at the top, lower slowly; a study protocol used 3 s per full repetition and ACSM advises 1-2 s each way.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez",
+        "marcolin-2018",
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
+          "where": "How to, step 4"
+        },
+        {
+          "source": "marcolin-2018",
+          "text": "The metronome was set so that each repetition duration was 3 s.",
+          "where": "Methods"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-ez",
+      "url": "https://www.strengthlog.com/ez-curl/",
+      "title": "How to Do EZ Curls: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "coratella-2023",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/",
+      "title": "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy",
+      "kind": "peer-reviewed",
+      "year": 2023,
+      "pmid": 36976950,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "marcolin-2018",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/",
+      "title": "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl",
+      "kind": "peer-reviewed",
+      "year": 2018,
+      "pmid": 30013836,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Elbow bend and the elbows drifting forward at the top (c4, c5) read side-on; the EZ bar is drawn end-on like a barbell (census). Census view is side.",
+    "equipment": "EZ bar held at the thighs (drawn end-on like a barbell), standing on the floor line.",
+    "start": "Standing upright, feet hip- to shoulder-width, core braced (c3); underhand grip on the angled sections (c1); wrists straight (c8).",
+    "end": "Elbows bent, bar near the chest (c4); elbows still by the body, not forward (c4); body still (c4).",
+    "checkpoints": [
+      {
+        "label": "Elbows at sides",
+        "what": "Elbows stay close to the body and do not drift forward at the top.",
+        "claim": "c4"
+      },
+      {
+        "label": "Angled grip",
+        "what": "Hands on the angled sections of the bar.",
+        "claim": "c1"
+      },
+      {
+        "label": "Straight wrists",
+        "what": "Hands in line with the forearms.",
+        "claim": "c8"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows drifting forward as the bar reaches the top.",
+      "why": "StrengthLog warns against it twice on the EZ page (c4) and says it moves load onto the front delts (c5).",
+      "claim": "c4",
+      "drawable": true,
+      "rankNote": "StrengthLog lists elbow position first of three unranked mistakes; swinging (c6, c7) is also common and is the parent’s drawn fault."
+    },
+    "tells": [
+      {
+        "text": "Elbows stay by your sides",
+        "claim": "c4"
+      },
+      {
+        "text": "Only your arms move",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Underhand on the angled sections of the EZ bar (forearms half-way between palms up and palms in).",
+    "width": "Narrower than on a straight bar, set by the angled sections (c2).",
+    "thumb": "Wrapped round the bar.",
+    "handContact": "",
+    "wrist": "Straight, in line with the forearm.",
+    "claims": [
+      "c1",
+      "c2",
+      "c8"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Pick a weight you can curl without swinging.",
+      "claim": "c7"
+    },
+    {
+      "step": "Stand upright, feet hip- to shoulder-width, core braced.",
+      "claim": "c3"
+    },
+    {
+      "step": "Grip the angled sections underhand.",
+      "claim": "c1"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Elbows close to your body.",
+      "claim": "c4"
+    },
+    {
+      "point": "No elbow drift forward at the top.",
+      "claim": "c4"
+    },
+    {
+      "point": "Body stays still; only the arms move.",
+      "claim": "c4"
+    },
+    {
+      "point": "Wrists stay straight.",
+      "claim": "c8"
+    },
+    {
+      "point": "Pause at the top, lower slowly.",
+      "claim": "c12"
+    },
+    {
+      "point": "Full range, not half reps.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Elbows drifting forward, or travelling back.",
+      "fix": "Keep the elbows close to your body.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Swinging the body to get the bar up.",
+      "fix": "Take weight off and lift with control.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Wrists bending.",
+      "fix": "Keep the hands in line with the forearms.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "forearms",
+        "claim": "c11"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the upper arm",
+        "means": "The biceps are doing the work.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the shoulder",
+        "means": "Usually means the elbows are moving forward.",
+        "fix": "Keep the elbows close to your body.",
+        "claim": "c5",
+        "redFlag": null
+      },
+      {
+        "where": "Wrists",
+        "means": "Usually means the wrists are bending.",
+        "fix": "Keep the hands in line with the forearms.",
+        "claim": "c8",
+        "redFlag": "wrist"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bent wrists under load can cause discomfort and even injury.",
+      "claim": "c8"
+    }
+  ],
+  "redFlags": [
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "ez-curl-hand",
+      "kind": "hand",
+      "right": "Hands underhand on the angled sections, wrists straight.",
+      "wrong": "Wrists bent back under the bar.",
+      "claim": "c8"
+    },
+    {
+      "key": "ez-curl-elbow",
+      "kind": "posture",
+      "right": "Elbows by the sides at the top of the curl.",
+      "wrong": "Elbows drifted forward, bar lifted by the shoulders.",
+      "claim": "c5"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "biceps primary and forearms (forearm flexors) secondary match exercises.json (c11). StrengthLog also names the brachialis, which is text-only."
+  },
+  "anchorSource": "sl-ez"
+}

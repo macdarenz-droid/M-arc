@@ -1,0 +1,667 @@
+{
+  "id": "overhead_cable_triceps_extension",
+  "libId": "lib_overhead_cable_triceps_extension",
+  "name": "Overhead Cable Triceps Extension",
+  "family": "OVERHEAD EXTENSION (cable rope)",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "handle": "rope",
+    "loadAxis": "across",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Fix a rope to the low pulley, stand with your back to the machine leaning slightly forward, and hold the rope behind your head with the upper arms next to the ears.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "Fasten a rope handle in the lower position of a cable pulley. Stand with your back against the pulley, with a slight forward lean, and hold the rope behind your head and your upper arms next to your ears.",
+          "where": "How to, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The pulley can also be set high; the muscles worked do not change, only where in the movement it feels heaviest (low pulley: heaviest at the start; high pulley: near full extension).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "It doesn’t change the muscles that are being worked, but the feeling could be different between the two since the resistance depends on the angle of the cable to your forearm.",
+          "where": "Which muscles"
+        },
+        {
+          "source": "sl-oh-cable",
+          "text": "With a low pulley, the resistance will feel heavier in the start of the movement; while with a high pulley, it peaks near full extension.",
+          "where": "Which muscles"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Hold the rope with a neutral grip (palms facing each other) and step forward to create tension, hands behind the head with the elbows bent.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-oh-rope"
+      ],
+      "quotes": [
+        {
+          "source": "motra-oh-rope",
+          "text": "Stand facing away from the machine, holding the rope with a neutral grip, and step forward to create tension, positioning hands behind your head with elbows bent.",
+          "where": "How to perform, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Stand with the feet about shoulder-width, parallel or with one foot in front of the other.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "You can stand shoulder-width apart, either with your feet parrallell or with one foot in front of the other.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lean forward slightly from the hips with a straight back and a lightly braced core.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "Lean forward slightly, from your hips. Your back should remain straight, and make sure to keep a slight tension in your core throughout the entire movement.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Straighten the arms overhead until fully extended but not locked out; only the elbow joint moves.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "Extend your forearms overhead, until your arms are fully extended but not locked out at the elbows.",
+          "where": "Proper form & technique"
+        },
+        {
+          "source": "sl-oh-cable",
+          "text": "This is an isolated tricep exercise, so make sure to keep the rest of your body still, the only movement should be in the elbow joint.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The upper arms stay still next to the ears as the arms straighten.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-oh-rope"
+      ],
+      "quotes": [
+        {
+          "source": "motra-oh-rope",
+          "text": "Extend your arms overhead by straightening your elbows, keeping your upper arms stationary next to your ears.",
+          "where": "How to perform, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Letting the elbows flare out to the sides makes the exercise less effective and can stress the shoulder joint; keep the elbows the same distance apart throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "Letting the elbows flare out to the sides during the movement makes the exercise less effective, and can also be stressful for the shoulder joint. Keep your elbows at the same length apart throughout the movement.",
+          "where": "Common mistakes, flaring elbows"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Arching the lower back too much can strain the spine and raise the risk of injury; keep a neutral spine and the core engaged.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "Arching the lower back excessively can place strain on the spine and increase the risk of injury. Maintain a neutral spine and engage your core throughout the exercise to provide stability.",
+          "where": "Common mistakes, hyperextending the lower back"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Weights that are too heavy lead to poor form, a shorter range and a higher injury risk; choose a weight you can lift with good form for all the reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "Using weights that are too heavy can lead to poor form, reduced range of motion, and increased risk of injury. Choose a weight that allows you to complete the desired number of repetitions with proper form.",
+          "where": "Common mistakes, adding too much weight"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Heavy weights for low reps are often uncomfortable in this exercise; most lifters use higher reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "Most lifters prefer to work in the upper rep range while doing the overhead cable triceps extension.",
+          "where": "Sets and reps"
+        },
+        {
+          "source": "sl-oh-cable",
+          "text": "It’s an isolation exercise, and while a strong triceps could be a goal for many lifters, heavy weights and low reps in this exercise is often uncomfortable.",
+          "where": "Sets and reps"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "In a 12-week trial on a cable machine (21 adults, each training one arm overhead and the other arm at the side), overhead elbow extensions grew the triceps more than the same extensions with the arm at the side, especially the long head, even though lighter loads were used overhead (about a third less).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "maeo-2023"
+      ],
+      "quotes": [
+        {
+          "source": "maeo-2023",
+          "text": "Using a cable machine, 21 adults conducted elbow extensions (90-0°) with one arm in the overhead (Overhead-Arm) and the other arm in the neutral (Neutral-Arm) position",
+          "where": "abstract"
+        },
+        {
+          "source": "maeo-2023",
+          "text": "Triceps brachii muscle hypertrophy was substantially greater after cable elbow extension training performed in the overhead than neutral arm position, particularly in the biarticular triceps brachii long head, even with lower absolute loads lifted",
+          "where": "abstract, highlights"
+        },
+        {
+          "source": "maeo-2023",
+          "text": "while their absolute values/weights were always lower in Overhead-Arm (-34-39%, P < 0.001).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Tempo (up = extending, down = lowering): lower the rope slowly and under control and pause briefly at the bottom stretch; ACSM advises moderate speed (1-2 s each way).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-oh-rope",
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "motra-oh-rope",
+          "text": "Slowly lower the rope behind your head by bending your elbows under control.",
+          "where": "How to perform, step 4"
+        },
+        {
+          "source": "motra-oh-rope",
+          "text": "Pause briefly at the bottom to feel the stretch in the triceps.",
+          "where": "How to perform, step 5"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Breathe out as the arms straighten overhead and in as the rope lowers behind the head.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-oh-rope"
+      ],
+      "quotes": [
+        {
+          "source": "motra-oh-rope",
+          "text": "Exhale as you extend your arms overhead; inhale as you lower the rope behind your head.",
+          "where": "Breathing"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Make sure your shoulder mobility allows a safe overhead position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-oh-rope"
+      ],
+      "quotes": [
+        {
+          "source": "motra-oh-rope",
+          "text": "Ensure shoulder mobility allows for safe overhead position",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "A way out: a spotter can stand behind and support the wrists or elbows if a rep cannot be finished.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-oh-rope"
+      ],
+      "quotes": [
+        {
+          "source": "motra-oh-rope",
+          "text": "Stand behind the lifter and support their wrists or elbows if they fail to complete a rep.",
+          "where": "Spotting"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Getting the handle overhead is easier with the pulley set at about half to three-quarters of your height rather than low.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "healthline-ote"
+      ],
+      "quotes": [
+        {
+          "source": "healthline-ote",
+          "text": "For instance, adjusting the pulley height to half or three-fourths of your height (instead of being in a lower position) makes it easier to get the weight overhead to the starting position.",
+          "where": "Variations"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Triceps tendon ruptures are rare; they often follow a forceful lowering (eccentric) contraction or lifting against resistance (not specific to this exercise).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "gaviria-2020"
+      ],
+      "quotes": [
+        {
+          "source": "gaviria-2020",
+          "text": "Triceps tendon ruptures (TTRs) are rare and often occur as a result of falling on an outstretched hand, forceful eccentric contraction, direct trauma to the elbow, or lifting against resistance.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "The triceps is the muscle worked: the exercise isolates it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-oh-cable"
+      ],
+      "quotes": [
+        {
+          "source": "sl-oh-cable",
+          "text": "This exercise isolates the triceps, leading to improved muscle size, strength, and definition in the upper arm.",
+          "where": "Benefits"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-oh-cable",
+      "url": "https://www.strengthlog.com/overhead-cable-triceps-extension/",
+      "title": "How to Do Overhead Cable Triceps Extension (Lower Position): Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "motra-oh-rope",
+      "url": "https://www.motra.com/exercises/cableRopeOverheadTriExtensionLow",
+      "title": "Cable Rope Overhead Tricep Extension Low, Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "maeo-2023",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35819335/",
+      "title": "Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position",
+      "kind": "peer-reviewed",
+      "year": 2023,
+      "pmid": 35819335,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "healthline-ote",
+      "url": "https://www.healthline.com/health/fitness/overhead-triceps-extension",
+      "title": "How to Do Proper Overhead Tricep Extensions (Healthline; written by Travis Edwards, PT, medically reviewed by Jake Tipane, CPT)",
+      "kind": "coach",
+      "year": 2021,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "gaviria-2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32539261/",
+      "title": "Triceps Tendon Ruptures: Risk Factors, Treatment, and Rehabilitation",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": 32539261,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Elbow bend overhead, upper arms by the ears (c7), the hip lean (c5) and the lower-back arch fault (c9) all read side-on. Elbow flare (c8) is sideways and cannot be drawn from the side. Census view is side.",
+    "equipment": "Cable column with the pulley at the low position and a rope on the cable (c1); the rope drawing is missing (census R4). The cable runs from the low pulley up behind the trunk to the hands behind the head (c1); draw it clear of the neck and head. Floor line.",
+    "start": "Back to the stack, one step forward to tension the cable (c3); feet shoulder-width or staggered (c4); slight forward lean from the hips, back straight (c5); upper arms by the ears, elbows bent, hands holding the rope behind the head (c1, c3).",
+    "end": "Arms straight overhead, elbows not locked (c6); upper arms still by the ears (c7); trunk unchanged (c6).",
+    "checkpoints": [
+      {
+        "label": "Arms by ears",
+        "what": "Upper arms stay still next to the ears; only the forearms move.",
+        "claim": "c7, c6"
+      },
+      {
+        "label": "Hip lean",
+        "what": "Slight lean from the hips, back straight, core braced.",
+        "claim": "c5"
+      },
+      {
+        "label": "Soft lockout",
+        "what": "Arms fully straight at the top, elbows not locked.",
+        "claim": "c6"
+      }
+    ],
+    "mistake": {
+      "what": "Lower back arching as the rope is pushed overhead.",
+      "why": "StrengthLog lists it as a common mistake that strains the spine (c9).",
+      "claim": "c9",
+      "drawable": false,
+      "rankNote": "StrengthLog lists three common mistakes without ranking them; flaring elbows (c8) is listed first but moves sideways and cannot be drawn in the side view, so the drawable lower-back arch is shown."
+    },
+    "tells": [
+      {
+        "text": "Upper arms stay by your ears",
+        "claim": "c7"
+      },
+      {
+        "text": "Only your elbows move",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c13",
+      "tempoNote": "Motra gives 3-1-1 (3 s lowering, 1 s pause, 1 s up); the card keeps ACSM's 1-2 s each way (c13), so lowering is 2 s, not 3."
+    },
+    "variantLine": "Drawn with the low pulley (the anchor source). A high or mid pulley works the same muscles (c2) and makes it easier to get the rope overhead (c17)."
+  },
+  "grip": {
+    "type": "Neutral (palms facing each other), one hand on each side of the rope.",
+    "width": "Set by the rope.",
+    "thumb": "Not stated by the sources read for this exercise.",
+    "handContact": "Rope held behind the head.",
+    "wrist": "Not stated by the sources read for this exercise.",
+    "claims": [
+      "c3",
+      "c1"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Fix a rope to the pulley; set it about half to three-quarters of your height if the low position makes it hard to get overhead.",
+      "claim": "c1, c17"
+    },
+    {
+      "step": "Hold the rope with a neutral grip and face away from the machine.",
+      "claim": "c3"
+    },
+    {
+      "step": "Step forward to tension the cable; feet shoulder-width or staggered.",
+      "claim": "c3, c4"
+    },
+    {
+      "step": "Lean slightly from the hips, back straight, upper arms by your ears.",
+      "claim": "c1, c5"
+    },
+    {
+      "step": "Pick a weight you can lift with good form for every rep; expect it to be lighter than with the arm at your side.",
+      "claim": "c12, c10"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Upper arms stay still next to your ears.",
+      "claim": "c7"
+    },
+    {
+      "point": "Elbows stay the same distance apart; no flaring.",
+      "claim": "c8"
+    },
+    {
+      "point": "Slight lean from the hips; back straight, not arched; core braced.",
+      "claim": "c5, c9"
+    },
+    {
+      "point": "If a rep may fail, a spotter can stand behind you and support your wrists or elbows.",
+      "claim": "c16"
+    },
+    {
+      "point": "Straighten the arms fully without locking the elbows.",
+      "claim": "c6"
+    },
+    {
+      "point": "Lower the rope slowly behind your head.",
+      "claim": "c13"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Elbows flaring out to the sides.",
+      "fix": "Keep the elbows the same distance apart.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Arching the lower back to push the weight up.",
+      "fix": "Brace the core; if you can’t keep the back neutral, go lighter.",
+      "claim": "c9, c10"
+    },
+    {
+      "mistake": "Weight too heavy, range cut short.",
+      "fix": "Go lighter so every rep has the full range and good form.",
+      "claim": "c10"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c20"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Back of the upper arm, most at the bottom stretch",
+        "means": "The triceps are doing the work.",
+        "fix": "",
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulder",
+        "means": "Usually means the elbows are flaring out.",
+        "fix": "Keep the elbows the same distance apart.",
+        "claim": "c8",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually means the lower back is arching.",
+        "fix": "Keep a neutral spine; if you can't, go lighter.",
+        "claim": "c9, c10",
+        "redFlag": "back"
+      },
+      {
+        "where": "Back of the elbow",
+        "means": "Triceps tendon ruptures are rare, but often follow forceful lowering.",
+        "fix": "Stop the set.",
+        "claim": "c18",
+        "redFlag": "elbow",
+        "fixNote": "'Stop the set' and any pain wording follow the shared elbow warning box this row links; c18 covers only the rupture and its usual cause (not specific to this exercise)."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Arching the lower back strains the spine.",
+      "claim": "c9",
+      "riskNote": "Elbow flare stressing the shoulder (c8) left the risks list to make room for the separate progression line; it stays in handlingMistakes, posture and the shoulder feel row."
+    },
+    {
+      "risk": "Triceps tendon rupture (rare), often from forceful lowering or lifting against resistance.",
+      "claim": "c18"
+    },
+    {
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c19"
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "back",
+    "elbow"
+  ],
+  "zooms": [
+    {
+      "key": "oh-rope-hand",
+      "kind": "hand",
+      "right": "Neutral grip on the rope behind the head, palms facing each other.",
+      "wrong": "Rope held with the elbows flared wide apart.",
+      "claim": "c8"
+    },
+    {
+      "key": "oh-rope-back",
+      "kind": "posture",
+      "right": "Slight lean from the hips, back straight.",
+      "wrong": "Lower back arched.",
+      "claim": "c9"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "triceps primary matches exercises.json (c20, c12). No secondary muscle is listed there. Motra's muscle breakdown rates Shoulders 4/10 (anterior delts), Forearms 3/10 (flexors) and Abs 2/10; not added, because it is a single coach source with unexplained ratings and no other source read names them."
+  },
+  "anchorSource": "sl-oh-cable"
+}

@@ -1,0 +1,191 @@
+{
+ "id": "alternating_dumbbell_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-hammer",
+   "text": "It performing alternating arm curls, the opposite arm should remain in the starting position.",
+   "status": "verbatim",
+   "closest": "It performing alternating arm curls, the opposite arm should remain in the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nielasher-alt",
+   "text": "Curl one arm at a time to shoulder height, then lower it before curling the other arm, ensuring controlled and steady movements.",
+   "status": "verbatim",
+   "closest": "Curl one arm at a time to shoulder height, then lower it before curling the other arm, ensuring controlled and steady movements.",
+   "note": "read by fixer in the full page (curl with browser user agent, 2026-09-30); verbatim"
+  },
+  {
+   "claim": "c2",
+   "source": "sl-dbcurl",
+   "text": "Hold a pair of dumbbells in an underhand (supinated) grip, arms hanging by your sides.",
+   "status": "verbatim",
+   "closest": "Hold a pair of dumbbells in an underhand (supinated) grip, arms hanging by your sides.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-hammer",
+   "text": "Assume a split-stance position to stabilize your body, stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining these positions throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Assume a split-stance position to stabilize your body, stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining these positions throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-hammer",
+   "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+   "status": "verbatim",
+   "closest": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-hammer",
+   "text": "Perform the curl while keeping your torso erect (no arching your low back) or without moving your elbows forward.",
+   "status": "verbatim",
+   "closest": "Perform the curl while keeping your torso erect (no arching your low back) or without moving your elbows forward.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "nielasher-alt",
+   "text": "Keep your elbows close to your torso and avoid swinging them forward or backward during the curl.",
+   "status": "verbatim",
+   "closest": "Keep your elbows close to your torso and avoid swinging them forward or backward during the curl.",
+   "note": "read by fixer in the full page (curl with browser user agent, 2026-09-30); verbatim"
+  },
+  {
+   "claim": "c6",
+   "source": "nielasher-alt",
+   "text": "Lift the weights slowly and with control, avoiding any swinging or jerking movements.",
+   "status": "verbatim",
+   "closest": "Lift the weights slowly and with control, avoiding any swinging or jerking movements.",
+   "note": "read by fixer in the full page (curl with browser user agent, 2026-09-30); verbatim"
+  },
+  {
+   "claim": "c6",
+   "source": "sl-dbcurl",
+   "text": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up.",
+   "status": "verbatim",
+   "closest": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-dbcurl",
+   "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "status": "verbatim",
+   "closest": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "nielasher-alt",
+   "text": "Inhale as you lower the weight and exhale as you curl the dumbbell up to shoulder height.",
+   "status": "verbatim",
+   "closest": "Inhale as you lower the weight and exhale as you curl the dumbbell up to shoulder height.",
+   "note": "read by fixer in the full page (curl with browser user agent, 2026-09-30); verbatim"
+  },
+  {
+   "claim": "c9",
+   "source": "marcolin-2018",
+   "text": "the purpose of the present study was to investigate if the execution of barbell curls with straight bar (BC), barbell curls with undulated bar (EZ) and alternate dumbbell curls (DC) affect the EMG activity of elbow flexors.",
+   "status": "verbatim",
+   "closest": "the purpose of the present study was to investigate if the execution of barbell curls with straight bar (BC), barbell curls with undulated bar (EZ) and alternate dumbbell curls (DC) affect the EMG activity of elbow flexors.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "marcolin-2018",
+   "text": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor",
+   "status": "verbatim",
+   "closest": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "marcolin-2018",
+   "text": "The metronome was set so that each repetition duration was 3 s.",
+   "status": "verbatim",
+   "closest": "The metronome was set so that each repetition duration was 3 s.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c11",
+   "source": "nielasher-alt",
+   "text": "Begin with lighter dumbbells to get comfortable with the movement before progressing to heavier weights.",
+   "status": "verbatim",
+   "closest": "Begin with lighter dumbbells to get comfortable with the movement before progressing to heavier weights.",
+   "note": "read by fixer in the full page (curl with browser user agent, 2026-09-30); verbatim"
+  },
+  {
+   "claim": "c11",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c12",
+   "source": "ace-hammer",
+   "text": "Exhale and slowly flex (bend) one or both elbows in unison until the dumbbell(s) near(s) the front of your shoulder.",
+   "status": "verbatim",
+   "closest": "Exhale and slowly flex (bend) one or both elbows in unison until the dumbbell(s) near(s) the front of your shoulder.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "ace-hammer",
+   "text": "Inhale and gently lower the dumbbells back towards your starting position until the elbow(s) is/are fully extended",
+   "status": "verbatim",
+   "closest": "Inhale and gently lower the dumbbells back towards your starting position until the elbow(s) is/are fully extended",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "ace-hammer",
+   "text": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "status": "verbatim",
+   "closest": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "ace-hammer",
+   "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+   "status": "verbatim",
+   "closest": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "sl-dbcurl",
+   "text": "Make sure to keep your elbows close to the body the entire time. Your body shouldn’t move, just the arms.",
+   "status": "verbatim",
+   "closest": "Make sure to keep your elbows close to the body the entire time. Your body shouldn’t move, just the arms.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "marcolin-2018",
+   "text": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.",
+   "status": "verbatim",
+   "closest": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.",
+   "note": ""
+  }
+ ]
+}

@@ -1,0 +1,239 @@
+{
+ "id": "reverse_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-revcurl",
+   "text": "Grip a bar with an overhand (pronated) grip, hands about shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Grip a bar with an overhand (pronated) grip, hands about shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "ace-revcurl",
+   "text": "Hold the barbell about shoulder-width apart with the palms facing down and hands in a straight line with shoulders and elbows.",
+   "status": "verbatim",
+   "closest": "Hold the barbell about shoulder-width apart with the palms facing down and hands in a straight line with shoulders and elbows.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "tg-revcurl",
+   "text": "Stand with your feet hip or shoulder-width apart and give your glutes and abs a gentle squeeze",
+   "status": "verbatim",
+   "closest": "Stand with your feet hip or shoulder-width apart and give your glutes and abs a gentle squeeze",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "tg-revcurl",
+   "text": "Slightly tuck your chin and look forward, maintaining a soft knee bend",
+   "status": "verbatim",
+   "closest": "Slightly tuck your chin and look forward, maintaining a soft knee bend",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "tg-revcurl",
+   "text": "Keep your shoulders drawn back and down and set them in place, creating tension through your upper back",
+   "status": "verbatim",
+   "closest": "Keep your shoulders drawn back and down and set them in place, creating tension through your upper back",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-revcurl",
+   "text": "Lift the bar towards the shoulders while bending at the elbows and keeping them down close to the sides of the body.",
+   "status": "verbatim",
+   "closest": "Lift the bar towards the shoulders while bending at the elbows and keeping them down close to the sides of the body.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-revcurl",
+   "text": "Lift the bar with control, by flexing your elbows.",
+   "status": "verbatim",
+   "closest": "Lift the bar with control, by flexing your elbows.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-revcurl",
+   "text": "Don’t let your upper arm travel back during the curl. Keep it at your side or move it slightly forward.",
+   "status": "verbatim",
+   "closest": "Don't let your upper arm travel back during the curl. Keep it at your side or move it slightly forward.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c5",
+   "source": "tg-revcurl",
+   "text": "Relying on momentum signals that you’re lifting above your ability. Not only does this reduce the effectiveness of the exercise, but it could also hurt your joints.",
+   "status": "verbatim",
+   "closest": "Relying on momentum signals that you're lifting above your ability. Not only does this reduce the effectiveness of the exercise, but it could also hurt your joints.",
+   "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c5",
+   "source": "tg-revcurl",
+   "text": "Move with control through the eccentric load (lowering) and concentric phase (curling). Start light and build the weight as you get stronger.",
+   "status": "verbatim",
+   "closest": "Move with control through the eccentric load (lowering) and concentric phase (curling). Start light and build the weight as you get stronger.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "tg-revcurl",
+   "text": "Your wrists should remain neutral without excessive strain on the wrists.",
+   "status": "verbatim",
+   "closest": "Your wrists should remain neutral without excessive strain on the wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "tg-revcurl",
+   "text": "look at your arms and ensure you can draw a straight line from your hands to your elbows.",
+   "status": "verbatim",
+   "closest": "look at your arms and ensure you can draw a straight line from your hands to your elbows.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "tg-revcurl",
+   "text": "If your elbows flare outward, your form needs some work. Try reducing the weight and focusing on correct movement patterns before building.",
+   "status": "verbatim",
+   "closest": "If your elbows flare outward, your form needs some work. Try reducing the weight and focusing on correct movement patterns before building.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "tg-revcurl",
+   "text": "Keep your upper arms still and elbows close to your ribcage",
+   "status": "verbatim",
+   "closest": "Keep your upper arms still and elbows close to your ribcage",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "tg-revcurl",
+   "text": "Bend your elbows and draw the weights toward your shoulders with control. Avoid arching your back and stand tall",
+   "status": "verbatim",
+   "closest": "Bend your elbows and draw the weights toward your shoulders with control. Avoid arching your back and stand tall",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "tg-revcurl",
+   "text": "The design of EZ curl bars reduces pressure on your joints by allowing you to angle your hands and grips.",
+   "status": "verbatim",
+   "closest": "The design of EZ curl bars reduces pressure on your joints by allowing you to angle your hands and grips.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "caufriez-2018",
+   "text": "The biceps, brachialis and brachioradialis muscles were electromyographically very active throughout resisted elbow flexion, in all three investigated positions of forearm rotation.",
+   "status": "verbatim",
+   "closest": "The biceps, brachialis and brachioradialis muscles were electromyographically very active throughout resisted elbow flexion, in all three investigated positions of forearm rotation.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "coratella-2023",
+   "text": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60]",
+   "status": "verbatim",
+   "closest": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60]",
+   "note": "extended by fixer 2026-09-30 to include the phase; read in live source"
+  },
+  {
+   "claim": "c11",
+   "source": "coratella-2023",
+   "text": "the brachioradialis showed greater excitation with the supinated compared to the pronated [+5(4)%, ES: 1.01]",
+   "status": "verbatim",
+   "closest": "the brachioradialis showed greater excitation with the supinated compared to the pronated [+5(4)%, ES: 1.01]",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "coratella-2023",
+   "text": "the anterior deltoid excitation was greater with the pronated and neutral handgrip compared to the supinated condition",
+   "status": "verbatim",
+   "closest": "the anterior deltoid excitation was greater with the pronated and neutral handgrip compared to the supinated condition",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "sl-revcurl",
+   "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "tg-revcurl",
+   "text": "The pronated hand position works your forearms harder, targeting and strengthening the brachioradialis muscle.",
+   "status": "verbatim",
+   "closest": "The pronated hand position works your forearms harder, targeting and strengthening the brachioradialis muscle.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "sl-revcurl",
+   "text": "To accomplish this, you could try to avoid letting your elbows travel backwards during the lift, and also keep tension in the muscles in the bottom position.",
+   "status": "verbatim",
+   "closest": "To accomplish this, you could try to avoid letting your elbows travel backwards during the lift, and also keep tension in the muscles in the bottom position.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "caufriez-2018",
+   "text": "Fifteen young healthy male volunteers participated in this research.",
+   "status": "verbatim",
+   "closest": "Fifteen young healthy male volunteers participated in this research.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c10",
+   "source": "caufriez-2018",
+   "text": "while the subjects were performing elbow flexions/extensions with as much strength as possible, forearm in neutral position, then in full pronation, then in full supination. The elbow flexion torques were isokinetically measured at 60°/sec for an arc of 120°.",
+   "status": "verbatim",
+   "closest": "while the subjects were performing elbow flexions/extensions with as much strength as possible, forearm in neutral position, then in full pronation, then in full supination. The elbow flexion torques were isokinetically measured at 60°/sec for an arc of 120°.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c13",
+   "source": "tg-revcurl",
+   "text": "Slowly lower the weights down to the starting position and repeat for reps.",
+   "status": "verbatim",
+   "closest": "Slowly lower the weights down to the starting position and repeat for reps.",
+   "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c5",
+   "source": "tg-revcurl",
+   "text": "If you can’t achieve the curling motion or control the descent of the weight without swinging your arms, you’re not recruiting the muscles properly.",
+   "status": "verbatim",
+   "closest": "If you can’t achieve the curling motion or control the descent of the weight without swinging your arms, you’re not recruiting the muscles properly.",
+   "note": "Added in verify g4; read live 2026-09-30."
+  }
+ ]
+}

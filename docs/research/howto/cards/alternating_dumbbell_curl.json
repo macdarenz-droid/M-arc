@@ -1,0 +1,566 @@
+{
+  "id": "alternating_dumbbell_curl",
+  "libId": "lib_alternating_dumbbell_curl",
+  "name": "Alternating Dumbbell Curl",
+  "family": "CURL (alternating)",
+  "tier": "C",
+  "archetype": {
+    "hand": "curl",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "dumbbell_biceps_curl",
+  "inherit": [
+    {
+      "field": "grip.type",
+      "why": "true for this child because the alternating curl uses the same palms-forward (supinated) dumbbell grip (c2)."
+    },
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because it is the same closed dumbbell grip, thumbs round the handles, as the parent’s ACE source (parent c1); ACE’s alternating instructions also use a closed grip (c3)."
+    },
+    {
+      "field": "grip.width",
+      "why": "true for this child because the same ACE elbow-structure note appears on the page that covers alternating curls (c13)."
+    },
+    {
+      "field": "plate.view",
+      "why": "true for this child because elbow bend, elbow drift and body swing still read side-on (c4, c5)."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because the wrist row is the same bent-wrist finding (c7)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Curl one arm at a time: the other arm stays in the start position, and you lower one dumbbell before curling the other.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-hammer",
+        "nielasher-alt"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "It performing alternating arm curls, the opposite arm should remain in the starting position.",
+          "where": "Upward phase"
+        },
+        {
+          "source": "nielasher-alt",
+          "text": "Curl one arm at a time to shoulder height, then lower it before curling the other arm, ensuring controlled and steady movements.",
+          "where": "Tips, alternate arms"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hold a dumbbell in each hand with an underhand (palms-forward) grip, arms hanging by the sides.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dbcurl",
+          "text": "Hold a pair of dumbbells in an underhand (supinated) grip, arms hanging by your sides.",
+          "where": "How to, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "From ACE's hammer-curl page, which covers alternating curls but with a neutral grip; these grip-independent points carry over: use a closed grip (thumbs round the handles), a split stance, a braced torso and the shoulders pulled down and back.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "Assume a split-stance position to stabilize your body, stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining these positions throughout the exercise.",
+          "where": "Starting position"
+        },
+        {
+          "source": "ace-hammer",
+          "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+          "where": "Starting position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "From ACE's hammer-curl page, which covers alternating curls but with a neutral grip; this grip-independent point carries over: keep the torso upright (no arching the lower back) and do not move the elbows forward during the curl.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "Perform the curl while keeping your torso erect (no arching your low back) or without moving your elbows forward.",
+          "where": "Upward phase"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the elbows close to the torso and do not swing them forward or back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nielasher-alt"
+      ],
+      "quotes": [
+        {
+          "source": "nielasher-alt",
+          "text": "Keep your elbows close to your torso and avoid swinging them forward or backward during the curl.",
+          "where": "Tips, keep elbows stationary"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Lift slowly and with control, without swinging or jerking; swinging for momentum is a sign the weight is too heavy.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nielasher-alt",
+        "sl-dbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "nielasher-alt",
+          "text": "Lift the weights slowly and with control, avoiding any swinging or jerking movements.",
+          "where": "Tips, avoid using momentum"
+        },
+        {
+          "source": "sl-dbcurl",
+          "text": "By adding more weight than you can lift, you might start to swing your body and use momentum to get the weight up.",
+          "where": "Common mistakes, using too heavy weights"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Keep the wrists straight during the lift; bent wrists put extra load on them and can lead to discomfort.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dbcurl",
+          "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+          "where": "Common mistakes, not locking your wrists"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Breathe out as the dumbbell rises and in as it lowers.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nielasher-alt"
+      ],
+      "quotes": [
+        {
+          "source": "nielasher-alt",
+          "text": "Inhale as you lower the weight and exhale as you curl the dumbbell up to shoulder height.",
+          "where": "Tips, breathe properly"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The alternate dumbbell curl works the elbow flexors: the biceps (also a forearm supinator) and the brachioradialis, a forearm muscle; an EMG study used it as its dumbbell variant.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "marcolin-2018"
+      ],
+      "quotes": [
+        {
+          "source": "marcolin-2018",
+          "text": "the purpose of the present study was to investigate if the execution of barbell curls with straight bar (BC), barbell curls with undulated bar (EZ) and alternate dumbbell curls (DC) affect the EMG activity of elbow flexors.",
+          "where": "Introduction"
+        },
+        {
+          "source": "marcolin-2018",
+          "text": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor",
+          "where": "Discussion"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Tempo (up = lifting, down = lowering): a study protocol used 3 s per full repetition; ACSM advises moderate speed (1-2 s up, 1-2 s down).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "marcolin-2018",
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "marcolin-2018",
+          "text": "The metronome was set so that each repetition duration was 3 s.",
+          "where": "Methods"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Start with lighter dumbbells and add weight gradually; ACSM advises adding 2-10% once you can do one or two reps more than the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nielasher-alt",
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "nielasher-alt",
+          "text": "Begin with lighter dumbbells to get comfortable with the movement before progressing to heavier weights.",
+          "where": "Cautions, start with a light weight"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "From ACE's hammer-curl page, which covers alternating curls but with a neutral grip; the range does not depend on the grip: curl until the dumbbell nears the front of the shoulder, then lower until the elbow is fully straight.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "Exhale and slowly flex (bend) one or both elbows in unison until the dumbbell(s) near(s) the front of your shoulder.",
+          "where": "Upward phase"
+        },
+        {
+          "source": "ace-hammer",
+          "text": "Inhale and gently lower the dumbbells back towards your starting position until the elbow(s) is/are fully extended",
+          "where": "Downward phase"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "From ACE's hammer-curl page, which covers alternating curls but with a neutral grip; inferred to carry over: because elbow structure differs between people, the dumbbells may hang slightly away from the sides; pick the hand position that keeps the wrist straight.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+          "where": "Note"
+        },
+        {
+          "source": "ace-hammer",
+          "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+          "where": "Note"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The body stays still and only the arms move; an EMG study watched for trunk movements together with knee bending as cheating.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dbcurl",
+        "marcolin-2018"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dbcurl",
+          "text": "Make sure to keep your elbows close to the body the entire time. Your body shouldn’t move, just the arms.",
+          "where": "Proper form"
+        },
+        {
+          "source": "marcolin-2018",
+          "text": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.",
+          "where": "Methods"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-hammer",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/",
+      "title": "Hammer Curl (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nielasher-alt",
+      "url": "https://nielasher.com/blogs/strength-and-conditioning/alternating-dumbbell-curls",
+      "title": "Alternating Dumbbell Curls (Niel Asher Education)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-dbcurl",
+      "url": "https://www.strengthlog.com/dumbbell-curl/",
+      "title": "How to Dumbbell Curl: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "marcolin-2018",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/",
+      "title": "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl",
+      "kind": "peer-reviewed",
+      "year": 2018,
+      "pmid": 30013836,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Elbow bend, elbow drift (c4, c5) and body swing (c6) read side-on; the resting arm hangs beside the working one. Census view is side.",
+    "equipment": "One dumbbell per hand, standing on the floor line (split stance, c3). No bench.",
+    "start": "Standing tall, split stance, torso braced, shoulders down (c3); both arms hanging straight, palms forward (c2); wrists straight (c7).",
+    "end": "Working elbow fully bent with the dumbbell near the front of the shoulder (c12), upper arm still by the side (c5); resting arm hanging straight in the start position (c1); torso upright and still (c4, c14).",
+    "checkpoints": [
+      {
+        "label": "Other arm still",
+        "what": "The resting arm stays hanging in the start position.",
+        "claim": "c1"
+      },
+      {
+        "label": "Elbows at sides",
+        "what": "Working upper arm stays close to the torso, not forward or back.",
+        "claim": "c5"
+      },
+      {
+        "label": "Straight wrists",
+        "what": "Hand in line with the forearm, not bent up or down.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Swinging: moving the trunk to get the dumbbell up with momentum.",
+      "why": "Swinging for momentum is the sign of a weight that is too heavy (c6); a study watched for trunk and knee movement as cheating (c14).",
+      "claim": "c6, c14",
+      "drawable": true,
+      "rankNote": "No source ranks alternating-curl faults by frequency; this matches the parent’s drawn fault."
+    },
+    "tells": [
+      {
+        "text": "Only one arm moves",
+        "claim": "c1"
+      },
+      {
+        "text": "Body stays still",
+        "claim": "c14"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c10"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed, palms forward (supinated), one dumbbell per hand.",
+    "width": "Arms hanging at the sides; the dumbbells may sit slightly out from the sides if that keeps the wrist straight (c13).",
+    "thumb": "Wrapped round the handle.",
+    "handContact": "",
+    "wrist": "Straight, in line with the forearm, for the whole lift.",
+    "claims": [
+      "c2",
+      "c3",
+      "c7",
+      "c13"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Pick dumbbells light enough to curl without swinging.",
+      "claim": "c11, c6"
+    },
+    {
+      "step": "Stand in a split stance, torso braced, shoulders down and back.",
+      "claim": "c3"
+    },
+    {
+      "step": "Take a palms-forward grip, thumbs round the handles, arms hanging at your sides.",
+      "claim": "c2, c3"
+    },
+    {
+      "step": "Curl one arm while the other stays down; lower it before curling the other.",
+      "claim": "c1"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Resting arm stays in the start position.",
+      "claim": "c1"
+    },
+    {
+      "point": "Working elbow stays close to the torso.",
+      "claim": "c5"
+    },
+    {
+      "point": "Torso upright; no arching the lower back.",
+      "claim": "c4"
+    },
+    {
+      "point": "Wrists stay straight.",
+      "claim": "c7"
+    },
+    {
+      "point": "Curl to the front of the shoulder, lower to a straight arm.",
+      "claim": "c12"
+    },
+    {
+      "point": "Body stays still; only the arm moves.",
+      "claim": "c14"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging the body to get the dumbbell up.",
+      "fix": "Use a lighter dumbbell and lift with control.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Elbow swinging forward or back.",
+      "fix": "Keep the elbow close to your torso.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Wrist bending up or down.",
+      "fix": "Keep the hand in line with the forearm.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "forearms",
+        "claim": "c9"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the upper arm",
+        "means": "The biceps are doing the work.",
+        "fix": "",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Wrist",
+        "means": "Usually means the wrist is bending.",
+        "fix": "Straighten the wrist.",
+        "claim": "c7",
+        "redFlag": "wrist"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bent wrists under load can cause wrist discomfort.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "curl-wrist",
+      "kind": "hand",
+      "right": "Closed palms-forward grip, thumb wrapped, hand in line with the forearm.",
+      "wrong": "Wrist bent back or curled toward the forearm.",
+      "claim": "c7"
+    },
+    {
+      "key": "alt-curl-arms",
+      "kind": "posture",
+      "right": "Working arm curled, resting arm hanging straight, torso upright.",
+      "wrong": "Trunk moving as the dumbbell swings up.",
+      "claim": "c6, c14"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "biceps primary and forearms secondary (brachioradialis, a forearm elbow flexor) both match exercises.json (c9)."
+  },
+  "anchorSource": "nielasher-alt"
+}

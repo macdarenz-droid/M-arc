@@ -1,0 +1,577 @@
+{
+  "id": "single_arm_triceps_pushdown",
+  "libId": "lib_single_arm_triceps_pushdown",
+  "name": "Single-Arm Triceps Pushdown",
+  "family": "PUSHDOWN (one handle)",
+  "tier": "C",
+  "archetype": {
+    "hand": "push",
+    "handle": "single",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "triceps_pushdown",
+  "inherit": [
+    {
+      "field": "plate.view",
+      "why": "true for this child because the working arm bends front-to-back exactly as in the parent, and the fault ACE names for both the handle and the bar, elbows drifting forward (c6), reads side-on."
+    },
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because ACE’s full-grip rule names the handle explicitly (c2)."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because ACE’s neutral-wrist rule is written for the handle as well as the rope (c9)."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because the same elbow-discomfort finding is stated for pushdowns in general (c12), so the elbow box applies. The parent’s back box is dropped: no one-arm source ties this version to lower-back strain."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the cable attachment above head height, standing facing the machine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Stand facing the cable machine and position the cable attachment at a height above your head.",
+          "where": "Starting position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Attach a single handle and grip it firmly with a full grip, thumb wrapped round the handle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Attach the handle or rope and grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+          "where": "Starting position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The pushdown can be done with one arm at a time.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "This exercise can also be performed unilaterally (one arm at a time )",
+          "where": "Exercise variation"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Keep the shoulders and hips square and do not rotate the torso; activate the core and do not slouch.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "centr-single"
+      ],
+      "quotes": [
+        {
+          "source": "centr-single",
+          "text": "Keep your shoulders and hips square and don't rotate your torso.",
+          "where": "Form tips"
+        },
+        {
+          "source": "centr-single",
+          "text": "Activate your core.",
+          "where": "Form tips"
+        },
+        {
+          "source": "centr-single",
+          "text": "Don't slouch as this can lead to compensating with the wrong muscles.",
+          "where": "Form tips"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The working elbow stays right next to the side for the whole set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Continue pressing the weight with your elbows right next to your side while maintaining a neutral position with your wrists until your elbows become fully extended",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Elbow moving forward is the fault to watch: it brings in the lats and takes work off the triceps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "It is important to monitor the forward movement of your elbows as this recruits from your lats (back muscles) and reduces the emphasis on the triceps.",
+          "where": "Note after the steps"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Start (top) position: elbow at the side, hand at about upper-chest level; on the way up, stop before the elbow drifts forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "moving the handle / rope upwards until your elbows begin to drift forward from the mid-line of your trunk (around upper chest level).",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "End (bottom) position: arm fully straight, without letting the elbow lock out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
+          "where": "Step 3"
+        }
+      ],
+      "conflictNote": "Centr's form tips say to feel the squeeze \"as they lock down\"; this conflicts with ACE's \"do not allow them to lock out\". The card follows ACE (guideline over coach page)."
+    },
+    {
+      "id": "c9",
+      "text": "The wrist stays neutral, in line with the forearm, throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "arms postioned firmly by sides and wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained throughout the exercise.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Tempo (up = working phase, the press down; down = return): moderate speed, 1-2 s each way (ACSM); press slowly, pause briefly at the bottom, return slowly (ACE). The plate's 1 s press and 2 s return sit inside that range; the 1 s pause is ACE's 'pause momentarily'.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown",
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+          "where": "Step 3"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Breathe out as you press the handle down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Heavy, low-rep pushdowns feel uncomfortable in the elbows for many people; lighter weights for more reps can ease this (stated for the pushdown in general).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "For the triceps pushdown, using heavy weights and low reps feels uncomfortable in the elbows for many people, and using lighter weights and doing more reps can alleviate this.",
+          "where": "Sets and reps"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Too much weight leads to momentum and can lead to injury; pick a weight you can move with control (stated for the bar pushdown; the same cable movement with one arm).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "This often leads to using momentum to complete the exercise, instead of relying on the strength of the triceps. This not only reduces the effectiveness of the exercise but can also lead to injury.",
+          "where": "Common mistakes, using too much weight"
+        },
+        {
+          "source": "sl-pushdown",
+          "text": "Make sure to pick a weight where you can do the movement with control.",
+          "where": "Common mistakes, using too much weight"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The triceps is the target muscle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "centr-single"
+      ],
+      "quotes": [
+        {
+          "source": "centr-single",
+          "text": "Target: Triceps",
+          "where": "Header"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Keep the torso braced and vertical, and the shoulders pulled down and back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine with a natural arch in your low back, keeping your torso aligned vertically with the floor and maintaining this position throughout the exercise.",
+          "where": "Starting position"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+          "where": "Step 1"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-pushdown",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+      "title": "Triceps Pushdowns (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "centr-single",
+      "url": "https://shop.hyroxequipment.centr.com/blogs/features/cp-tutorial-cable-single-arm-pushdown",
+      "title": "Tutorial: Cable single-arm pushdown (Centr)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-pushdown",
+      "url": "https://www.strengthlog.com/tricep-pushdown-with-bar/",
+      "title": "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The working elbow bends front-to-back and elbow drift (c6) reads side-on; torso rotation (c4) is a rotation the engine cannot draw. Census view is side.",
+    "equipment": "Cable column with the pulley above head height and a single handle on the cable (c1, c2). Floor line.",
+    "start": "Standing facing the stack, torso vertical and braced (c16), shoulders and hips square (c4); working elbow at the side, hand at about upper-chest level (c7); wrist neutral (c9).",
+    "end": "Working arm straight, elbow still at the side and not locked (c5, c8); torso unchanged and not turned (c4).",
+    "checkpoints": [
+      {
+        "label": "Elbow pinned",
+        "what": "The working upper arm stays at your side.",
+        "claim": "c5"
+      },
+      {
+        "label": "Square torso",
+        "what": "Shoulders and hips stay square; the body does not turn.",
+        "claim": "c4"
+      },
+      {
+        "label": "Neutral wrist",
+        "what": "Hand in line with the forearm from top to bottom.",
+        "claim": "c9"
+      }
+    ],
+    "mistake": {
+      "what": "The working elbow drifting forward as the handle comes up.",
+      "why": "ACE names it as the fault to monitor: it brings in the lats and takes load off the triceps.",
+      "claim": "c6",
+      "drawable": true,
+      "rankNote": "No source ranks one-arm pushdown faults by frequency. Turning the torso (c4) is the one-arm-specific fault Centr warns about, but it is a rotation the engine cannot draw, so it goes to text only."
+    },
+    "tells": [
+      {
+        "text": "Elbow stays at your side",
+        "claim": "c5"
+      },
+      {
+        "text": "Hips and shoulders stay square",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c10"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "One handle, full grip. The sources read do not say which way the palm faces; the drawing should use the plain handle hold without claiming an orientation.",
+    "width": "One hand.",
+    "thumb": "Wrapped round the handle.",
+    "handContact": "",
+    "wrist": "Neutral, in line with the forearm, for the whole set.",
+    "claims": [
+      "c2",
+      "c9"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the pulley above head height and attach a single handle.",
+      "claim": "c1, c2"
+    },
+    {
+      "step": "Grip the handle firmly, thumb wrapped.",
+      "claim": "c2"
+    },
+    {
+      "step": "Stand facing the machine with your shoulders and hips square.",
+      "claim": "c1, c4"
+    },
+    {
+      "step": "Brace; working elbow at your side, hand at upper-chest level.",
+      "claim": "c16, c7"
+    },
+    {
+      "step": "Pick a weight you can move with control.",
+      "claim": "c13"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Working elbow stays next to your side.",
+      "claim": "c5"
+    },
+    {
+      "point": "Shoulders and hips stay square; no twisting.",
+      "claim": "c4"
+    },
+    {
+      "point": "Torso braced and upright.",
+      "claim": "c16"
+    },
+    {
+      "point": "Wrist neutral throughout.",
+      "claim": "c9"
+    },
+    {
+      "point": "Straighten the arm fully without locking the elbow.",
+      "claim": "c8"
+    },
+    {
+      "point": "Return only until the elbow starts to move forward.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Elbow drifting forward.",
+      "fix": "Keep the elbow at your side; stop the return at upper-chest level.",
+      "claim": "c6, c5, c7"
+    },
+    {
+      "mistake": "Turning the torso.",
+      "fix": "Keep shoulders and hips square.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Weight too heavy, moved with momentum.",
+      "fix": "Go lighter and move with control.",
+      "claim": "c13"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c15"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Back of the upper arm",
+        "means": "The triceps are doing the work.",
+        "fix": "",
+        "claim": "c15",
+        "redFlag": null
+      },
+      {
+        "where": "Side of the back (lats)",
+        "means": "Usually means the elbow is drifting forward.",
+        "fix": "Keep the elbow at your side.",
+        "claim": "c6, c5",
+        "redFlag": null
+      },
+      {
+        "where": "Elbow",
+        "means": "Heavy, low-rep sets often feel this way.",
+        "fix": "Use a lighter weight for more reps. Sharp or lasting elbow pain: stop the set.",
+        "claim": "c12",
+        "redFlag": "elbow",
+        "fixNote": "The 'sharp or lasting elbow pain: stop the set' part follows the shared elbow warning box this row links; the claim covers only the discomfort and the lighter-weight advice."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Heavy loads feel uncomfortable in the elbows for many people.",
+      "claim": "c12"
+    },
+    {
+      "risk": "Too much weight moved with momentum can lead to injury.",
+      "claim": "c13"
+    }
+  ],
+  "redFlags": [
+    "elbow"
+  ],
+  "zooms": [
+    {
+      "key": "single-pushdown-wrist",
+      "kind": "hand",
+      "right": "Full grip on the handle, thumb wrapped, hand in line with the forearm.",
+      "wrong": "Wrist bent back over the handle.",
+      "claim": "c9",
+      "wrongNote": "The wrong drawing is the inverse of c9 (wrist neutral); no source describes it directly."
+    },
+    {
+      "key": "single-pushdown-elbow",
+      "kind": "posture",
+      "right": "Working elbow against the side at the top of the return.",
+      "wrong": "Elbow drifted forward, upper arm swung up.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "triceps primary is sourced (c15). exercises.json lists forearms as secondary; no source read for this exercise names the forearms, so it is kept unchanged and flagged unsourced (as on the parent card)."
+  },
+  "anchorSource": "ace-pushdown",
+  "anchorNote": "ace-pushdown is ACE's general pushdown page (it says the exercise can be done one arm at a time, c3); the only one-arm-specific source read is Centr's short form-tips page. Thin but acceptable."
+}

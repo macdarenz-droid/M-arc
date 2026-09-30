@@ -1,0 +1,453 @@
+{
+ "id": "wrist_curl",
+ "libId": "lib_wrist_curl",
+ "name": "Wrist Curl",
+ "family": "CURL",
+ "tier": "C",
+ "archetype": {
+  "hand": "curl",
+  "contact": [
+   "brace-pad"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Hold the weight with an underhand (palms-up) grip and rest the forearm on the thigh or on a bench.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dbwristcurl",
+    "sl-bbwristcurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dbwristcurl",
+     "text": "Grab a dumbbell with an underhand grip and rest your forearm against your thigh, or alternatively against a bench.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "sl-bbwristcurl",
+     "text": "Grab a barbell with an underhand grip and rest your forearms against your thighs, or alternatively against a bench.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "ACE's version kneels with the elbows on a bench, bent about 90 degrees, dumbbells hanging freely off the edge, forearms turned so the palms face up and wrists starting neutral.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-wristcurl"
+   ],
+   "quotes": [
+    {
+     "source": "ace-wristcurl",
+     "text": "Holding two dumbbells, kneel and rest your elbows on a bench with approximately a 90 degree bend at the elbows and the dumbbells hanging freely off the edge of the pad.",
+     "where": "Step 1, starting position"
+    },
+    {
+     "source": "ace-wristcurl",
+     "text": "Supinate your forearms (rotate the forearms so that the tops are along the bench and the palms are facing upward) keep your wrists in a neutral position (not in flexion or extension).",
+     "where": "Step 1, starting position"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Lower slowly by letting the wrist bend back toward the floor while keeping the grip, without straightening the arms or leaning forward or back, and hold the bottom briefly.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-wristcurl"
+   ],
+   "quotes": [
+    {
+     "source": "ace-wristcurl",
+     "text": "Inhale and slowly allow the wrists to move into extension (allow dumbbells to move towards the floor) without releasing your grip, extending your arms or leaning forward / backward. Hold this end position briefly.",
+     "where": "Step 2, downward phase"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Breathe out and slowly curl the wrist up toward you using the forearm flexors to return to the start.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-wristcurl"
+   ],
+   "quotes": [
+    {
+     "source": "ace-wristcurl",
+     "text": "Exhale and slowly contract your forearm flexor muscles (along the top of the forearm) rolling your wrists towards you in order to return the dumbbells back to the starting position.",
+     "where": "Step 3, upward phase"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "People sometimes loosen the grip and let the dumbbell roll to the fingertips on the way down; ACE says this raises the risk of wrist injury and of dropping the weight, and advises squeezing hard in both phases. StrengthLog instead tells lifters to let the weight roll out into the fingers.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-wristcurl",
+    "sl-dbwristcurl"
+   ],
+   "quotes": [
+    {
+     "source": "ace-wristcurl",
+     "text": "Individuals sometimes release their grip during the lowering phase, allowing the dumbbells to roll towards their finger tips. While this may increase the load on the forearm muscles, it also increases the risk of wrist injury and dropping the dumbbells.",
+     "where": "Note after step 3"
+    },
+    {
+     "source": "ace-wristcurl",
+     "text": "To increase strength think about squeezing the weights as hard as possible during both phases of the movement.",
+     "where": "Note after step 3"
+    },
+    {
+     "source": "sl-dbwristcurl",
+     "text": "Lower your hand towards the floor, and let the dumbbell roll out in your fingers.",
+     "where": "How to, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "With the hands hanging over an edge the wrists are in a vulnerable position, so keep the weight light and use higher reps (about 15-20).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-wristcurl"
+   ],
+   "quotes": [
+    {
+     "source": "bb-wristcurl",
+     "text": "As with kneeling wrist curls, the fact that your hands hang over a solid edge places them in a somewhat precarious position. Lighter weights are advised here and in a rep range of 15 to 20",
+     "where": "Seated wrist curl, sets and reps"
+    },
+    {
+     "source": "bb-wristcurl",
+     "text": "you should opt for higher repetitions with lighter weights, aiming for a slow and controlled tempo to bolster your time under tension.",
+     "where": "Programming"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Progress by adding reps or cutting rest rather than adding weight in most cases.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-wristcurl"
+   ],
+   "quotes": [
+    {
+     "source": "bb-wristcurl",
+     "text": "aim for amping up your rep count or reducing rest times rather than working with a heavier weight in most cases.",
+     "where": "Programming"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "The wrist curl trains the forearm muscles that bend the wrist and close the hand (the forearm flexors).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dbwristcurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dbwristcurl",
+     "text": "Dumbbell wrist curls train the muscles in the forearm that flexes (bends) the wrist and closes your hand.",
+     "where": "Commentary"
+    },
+    {
+     "source": "sl-dbwristcurl",
+     "text": "Primary muscles worked: Forearm Flexors",
+     "where": "Muscles worked box"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Resting the forearms on a support keeps the biceps from taking over, so the forearms do the work.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-wristcurl"
+   ],
+   "quotes": [
+    {
+     "source": "bb-wristcurl",
+     "text": "By resting your forearms on a weight bench, your biceps will be thoroughly unable to take over the exercise.",
+     "where": "Kneeling wrist curl, why do it"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Tempo (up = lifting, down = lowering): a slow 2 s up and 2 s down, the slow end of ACSM's moderate 1-2 s each way, with a brief hold at the bottom (ACE: hold the end position; BarBend: slow and controlled).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-wristcurl",
+    "bb-wristcurl",
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "ace-wristcurl",
+     "text": "Hold this end position briefly.",
+     "where": "Step 2, downward phase"
+    },
+    {
+     "source": "bb-wristcurl",
+     "text": "aiming for a slow and controlled tempo to bolster your time under tension.",
+     "where": "Programming"
+    },
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ace-wristcurl",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/30/wrist-curl-flexion/",
+   "title": "Arm Exercises | Wrist Curl - Flexion",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "sl-dbwristcurl",
+   "url": "https://www.strengthlog.com/dumbbell-wrist-curl/",
+   "title": "How to Do Dumbbell Wrist Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "sl-bbwristcurl",
+   "url": "https://www.strengthlog.com/barbell-wrist-curl/",
+   "title": "How to Do Barbell Wrist Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "bb-wristcurl",
+   "url": "https://barbend.com/barbell-wrist-curl/",
+   "title": "The Nine Best Wrist Curl Variations to Supercharge Your Grip | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-09-30"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-09-30"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "The wrist bends up and down in the side plane with the forearm lying still on its support (c1, c3), so it reads side-on; the census notes the wrist travel is small and needs a zoomed camera or the hand close-up.",
+  "equipment": "Flat bench to sit on (census); one dumbbell (c1).",
+  "start": "Seated, forearm resting on the thigh (c1) with the hand hanging freely past the knee (hang-off-the-edge from ACE's bench version, c2); palm up, closed grip, wrist neutral (c1, c2, c5).",
+  "end": "Wrist curled up toward the forearm, grip still closed (c4, c5); forearm still on the thigh, arms not extending, torso not leaning (c1, c3).",
+  "checkpoints": [
+   {
+    "label": "Forearm supported",
+    "what": "Forearm rests on the thigh or bench; only the hand moves.",
+    "claim": "c1"
+   },
+   {
+    "label": "Palms up",
+    "what": "Underhand grip, hand past the edge.",
+    "claim": "c1, c2"
+   },
+   {
+    "label": "Grip stays closed",
+    "what": "Squeeze the weight both ways; don't let it roll to the fingertips.",
+    "claim": "c5"
+   }
+  ],
+  "mistake": {
+   "what": "Arms extending or body leaning forward to move the weight.",
+   "claim": "c3",
+   "drawable": false,
+   "why": "The fault ACE names, the grip opening so the dumbbell rolls to the fingertips (c5), raises the risk of wrist injury and of dropping the weight but needs fingers the engine does not draw (fist circle), so it is shown in the hand zoom; ACE's lowering step rules out extending the arms or leaning (c3), which shows side-on.",
+   "rankNote": "No source ranks the c3 fault as common; it is drawn because the only named fault (c5) cannot be drawn on the body plate."
+  },
+  "tells": [
+   {
+    "text": "Only your hand moves",
+    "claim": "c3"
+   },
+   {
+    "text": "Fist stays closed all the way",
+    "claim": "c5"
+   }
+  ],
+  "tempo": {
+   "up": 2,
+   "down": 2,
+   "pause": 1,
+   "claim": "c10"
+  },
+  "variantLine": "Drawn seated with one dumbbell, forearm on the thigh (StrengthLog, c1). The barbell version (c1) and ACE's kneeling version on a bench (c2) share the grip, lowering and grip-closed lines (c3, c4, c5)."
+ },
+ "grip": {
+  "type": "Closed underhand grip, palm up.",
+  "width": "",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "Exempt: the wrist is the moving joint; it starts neutral (c2) and bends back then up (c3, c4).",
+  "claims": [
+   "c1",
+   "c2",
+   "c5"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Pick a light weight you can move for 15-20 reps.",
+   "claim": "c6"
+  },
+  {
+   "step": "Sit and rest your forearm on your thigh or a bench, hand past the edge.",
+   "claim": "c1, c2"
+  },
+  {
+   "step": "Hold the dumbbell palm up in a closed grip.",
+   "claim": "c1, c5"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Forearm stays on its support.",
+   "claim": "c1"
+  },
+  {
+   "point": "Arms and body stay still; no leaning.",
+   "claim": "c3"
+  },
+  {
+   "point": "Grip stays closed both ways.",
+   "claim": "c5"
+  },
+  {
+   "point": "Lower slowly; hold the bottom briefly.",
+   "claim": "c3"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Letting the weight roll to the fingertips.",
+   "fix": "Squeeze the weight hard both ways.",
+   "claim": "c5"
+  },
+  {
+   "mistake": "Leaning or straightening the arms to move the weight.",
+   "fix": "Keep the forearm down; use a lighter weight.",
+   "claim": "c3, c1, c6"
+  },
+  {
+   "mistake": "Going heavy with the hands over the edge.",
+   "fix": "Stay light; add reps before weight.",
+   "claim": "c6"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "forearms",
+    "claim": "c8"
+   }
+  ],
+  "secondary": [],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Top of the forearm, the palm-up side",
+    "means": "The forearm flexors are working.",
+    "fix": "",
+    "claim": "c4, c1",
+    "redFlag": null
+   },
+   {
+    "where": "Wrist joint",
+    "means": "Usually means the load is too heavy or the grip has opened.",
+    "fix": "Go lighter and keep the fist closed.",
+    "claim": "c5, c6",
+    "redFlag": "wrist"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Loosening the grip at the bottom raises the risk of wrist injury and of dropping the weight.",
+   "claim": "c5"
+  },
+  {
+   "risk": "Hands over an edge leave the wrists vulnerable to heavy weight.",
+   "claim": "c6"
+  }
+ ],
+ "redFlags": [
+  "wrist"
+ ],
+ "zooms": [
+  {
+   "key": "wrist-curl-grip",
+   "kind": "hand",
+   "right": "Closed fist around the handle at the bottom, palm up.",
+   "wrong": "Fingers open, dumbbell rolled to the fingertips.",
+   "claim": "c5"
+  },
+  {
+   "key": "wrist-curl-support",
+   "kind": "posture",
+   "right": "Forearm flat on the thigh, only the hand moving.",
+   "wrong": "Arms extending or body leaning forward to move the weight.",
+   "claim": "c3, c1"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "forearms primary matches exercises.json and StrengthLog (c8); no secondary listed in either."
+ },
+ "anchorSource": "ace-wristcurl"
+}

@@ -1,0 +1,199 @@
+{
+ "id": "hammer_curl",
+ "checked": "2026-09-30",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-hammer",
+   "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body). Position the dumbbells alongside your thighs with your elbows fully extended.",
+   "status": "verbatim",
+   "closest": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body). Position the dumbbells alongside your thighs with your elbows fully extended.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-hammer",
+   "text": "Assume a split-stance position to stabilize your body, stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining these positions throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Assume a split-stance position to stabilize your body, stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining these positions throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-hammer",
+   "text": "Your head and neck should be aligned with your spine.",
+   "status": "verbatim",
+   "closest": "Your head and neck should be aligned with your spine.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-hammer",
+   "text": "Exhale and slowly flex (bend) one or both elbows in unison until the dumbbell(s) near(s) the front of your shoulder.",
+   "status": "verbatim",
+   "closest": "Exhale and slowly flex (bend) one or both elbows in unison until the dumbbell(s) near(s) the front of your shoulder.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-hammer",
+   "text": "Inhale and gently lower the dumbbells back towards your starting position until the elbow(s) is/are fully extended, keeping the dumbbell in the neutral position.",
+   "status": "verbatim",
+   "closest": "Inhale and gently lower the dumbbells back towards your starting position until the elbow(s) is/are fully extended, keeping the dumbbell in the neutral position.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-hammer",
+   "text": "Perform the curl while keeping your torso erect (no arching your low back) or without moving your elbows forward.",
+   "status": "verbatim",
+   "closest": "Perform the curl while keeping your torso erect (no arching your low back) or without moving your elbows forward.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-hammer",
+   "text": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body) and avoid shrugging your shoulders throughout the movement.",
+   "status": "verbatim",
+   "closest": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body) and avoid shrugging your shoulders throughout the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-hammer",
+   "text": "Keep your grip neutral during the movement. It’s easy to start twisting the wrists during the lift, without thinking about it.",
+   "status": "verbatim",
+   "closest": "Keep your grip neutral during the movement. It’s easy to start twisting the wrists during the lift, without thinking about it.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-hammer",
+   "text": "Avoid twisting the wrists or changing your grip during the curl.",
+   "status": "verbatim",
+   "closest": "Avoid twisting the wrists or changing your grip during the curl.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-hammer",
+   "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+   "status": "verbatim",
+   "closest": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-hammer",
+   "text": "By adding more weight than you can lift, you might start to swing your body and use its momentum to get the weight up. Another sign of using too much weight is if you’re not using the full range of motion and start doing half reps instead.",
+   "status": "verbatim",
+   "closest": "By adding more weight than you can lift, you might start to swing your body and use its momentum to get the weight up. Another sign of using too much weight is if you’re not using the full range of motion and start doing half reps instead.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-hammer",
+   "text": "If you start to swing to move the weights with help from the momentum of the body, you should probably remove some weight instead and focus on performing the movement with control.",
+   "status": "verbatim",
+   "closest": "If you start to swing to move the weights with help from the momentum of the body, you should probably remove some weight instead and focus on performing the movement with control.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-hammer",
+   "text": "The hammer curl primarily targets your biceps and brachialis, but the forearm flexors and especially the brachioradialis are also involved as a secondary muscle group.",
+   "status": "verbatim",
+   "closest": "The hammer curl primarily targets your biceps and brachialis, but the forearm flexors and especially the brachioradialis are also involved as a secondary muscle group.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "coratella-2023",
+   "text": "Surprisingly, brachioradialis showed greater excitability with the supinated grip than with the neutral and pronated grip, with no difference between these two.",
+   "status": "verbatim",
+   "closest": "Surprisingly, brachioradialis showed greater excitability with the supinated grip than with the neutral and pronated grip, with no difference between these two.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "coratella-2023",
+   "text": "Such outcomes may be in contrast with the general idea that biceps curl with a neutral handgrip should increase the role of brachioradialis.",
+   "status": "verbatim",
+   "closest": "Such outcomes may be in contrast with the general idea that biceps curl with a neutral handgrip should increase the role of brachioradialis.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "coratella-2023",
+   "text": "The anterior deltoid was more excited during the pronated and neutral than the supinated handgrip",
+   "status": "verbatim",
+   "closest": "The anterior deltoid was more excited during the pronated and neutral than the supinated handgrip",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-hammer",
+   "text": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "status": "verbatim",
+   "closest": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-hammer",
+   "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+   "status": "verbatim",
+   "closest": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "caufriez-2018",
+   "text": "The biceps, brachialis and brachioradialis muscles were electromyographically very active throughout resisted elbow flexion, in all three investigated positions of forearm rotation.",
+   "status": "verbatim",
+   "closest": "The biceps, brachialis and brachioradialis muscles were electromyographically very active throughout resisted elbow flexion, in all three investigated positions of forearm rotation.",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c11",
+   "source": "caufriez-2018",
+   "text": "The activity was slightly higher in supination.",
+   "status": "verbatim",
+   "closest": "The activity was slightly higher in supination.",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c12",
+   "source": "ace-hammer",
+   "text": "Exhale and slowly flex (bend) one or both elbows in unison until the dumbbell(s) near(s) the front of your shoulder.",
+   "status": "verbatim",
+   "closest": "Exhale and slowly flex (bend) one or both elbows in unison until the dumbbell(s) near(s) the front of your shoulder.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "ace-hammer",
+   "text": "Inhale and gently lower the dumbbells back towards your starting position",
+   "status": "verbatim",
+   "closest": "Inhale and gently lower the dumbbells back towards your starting position",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "matched in PubMed abstract"
+  },
+  {
+   "claim": "c13",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": "matched in PubMed abstract"
+  }
+ ]
+}
