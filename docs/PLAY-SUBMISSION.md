@@ -13,6 +13,18 @@ https://macdarenz-droid.github.io/M-arc/privacy/ . That page is the M/ARC websit
 `docs/PRIVACY-POLICY.md` at every site build (DOC-3, the `website/` folder on `claude/app-website-design-671lk8`,
 deployed by hand with `.github/workflows/website.yml`). There is no second copy of the policy anywhere.
 
+## Store listing: required lines (LR-23, 2026-09-30)
+
+Google Play's health policy (https://support.google.com/googleplay/android-developer/answer/16679511) requires this line **in the store description**. It never goes in the app:
+
+> M/ARC is not a medical device and does not diagnose, treat, cure, or prevent any medical condition.
+
+The same policy also asks apps to remind users to consult a healthcare professional. That reminder lives in the app, in Settings (card PLAY-1), not in the listing.
+
+The developer contact email goes in the Play Console's contact field, not in the app (owner decision LR-23: no contacts in the app UI).
+
+**AI-generated content:** Play requires an in-app way to report or flag offensive AI replies (https://support.google.com/googleplay/android-developer/answer/13985936). Card ESC-REPORT adds it, once the owner approves the data it sends. When it lands, add that data to the Data safety answers below. Until then, this is a release blocker.
+
 ## Data safety form
 
 **Does your app collect or share any of the required user data types?** Yes.
