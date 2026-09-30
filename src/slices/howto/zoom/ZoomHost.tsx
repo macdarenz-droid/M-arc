@@ -8,6 +8,7 @@
 //   first (they sit on the buttons; this one listens on the block), so the host closes without undoing their result
 //   and puts back the callout golden never cleared;
 // - a close-up's markup (and its CSS, split off with it) loads on its first open (plan 2.5), so the first open waits for them;
+// - durations are read with their unit (the minified app CSS writes seconds, golden B ms);
 // - Android back closes the close-up before the sheet (`registerSheet('howto-zoom')`), and Escape does too;
 // - clicks are delegated on the sheet panel for this card's controls; other sections ask through events.ts
 //   (`ht:zoom-open`), and the close-ups' "This is usually why" and the feel chip tell Feel the same way.
@@ -37,7 +38,8 @@ export interface ZoomSetup {
 
 const reduced = () => document.documentElement.getAttribute('data-motion') === 'reduce';
 const rootCs = () => getComputedStyle(document.documentElement);
-const tok = (name: string, dflt: number) => { const v = parseFloat(rootCs().getPropertyValue(name)); return isFinite(v) ? v : dflt; };
+// golden B's tok() reads "240ms"; the app's built CSS is minified to ".24s" (www/assets/index-*.css), so the unit counts
+const tok = (name: string, dflt: number) => { const s = rootCs().getPropertyValue(name).trim(), v = parseFloat(s); return isFinite(v) ? (/[^m]s$/.test(s) ? v * 1000 : v) : dflt; };
 const ease = (name: string) => rootCs().getPropertyValue(name).trim() || 'ease';
 
 /** Binds the host to one sheet: `api` is the golden block's zoom slot API. */
