@@ -13,7 +13,7 @@ const Z_LEVELS = ['back', 'center', 'mid', 'front'];
 
 const partOf = key => {
   const [k, s] = key.split('.');
-  if (['shcap', 'upper', 'elbowcap', 'fore', 'fist'].includes(k)) return `arm.${s}`;
+  if (['shcap', 'upper', 'elbowcap', 'fore', 'fist', 'palm'].includes(k)) return `arm.${s}`;
   if (['thigh', 'kneecap', 'shank', 'foot'].includes(k)) return `leg.${s}`;
   return 'trunk';
 };
@@ -35,7 +35,7 @@ function makeCamera(spec, cam) {
 // Everything drawn for one pose: body shapes + equipment items, in plate px.
 function drawPose(spec, body, q, cam, ctx) {
   const sk = fk(q, body), lm = landmarks(sk);
-  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront }).map(s => ({ ...s, part: partOf(s.key) }));
+  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand }).map(s => ({ ...s, part: partOf(s.key) }));
   const eq = [];
   (spec.equipment ?? []).forEach((e, i) => {
     let ent = typeof e === 'function' ? e(lm, { ...ctx, q }) : e;

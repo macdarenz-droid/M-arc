@@ -59,7 +59,7 @@ export function Row({ children, trailing, onClick, class: cls = '', palace }: { 
 /** How many Sheets are open, so floating things (the Escobar dock) can hide under them. Derived from the sheet stack. */
 export const openSheets = openSheetCount;
 
-export function Sheet({ title, onClose, children, palace }: { title: string; onClose: () => void; children?: ComponentChildren; palace?: string }) {
+export function Sheet({ title, onClose, children, palace, eyebrow, class: cls }: { title: string; onClose: () => void; children?: ComponentChildren; palace?: string; eyebrow?: string; class?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
   const close = useRef(onClose);
@@ -222,11 +222,11 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
   }, []);
   const requestClose = () => requestCloseRef.current();
   return (
-    <dialog ref={ref} class={`sheet ${nested ? 'nested' : ''}`} aria-labelledby={id} onCancel={e => { e.preventDefault(); requestClose(); }} onClick={e => { if (e.target === e.currentTarget) requestClose(); }}>
+    <dialog ref={ref} class={`sheet ${nested ? 'nested' : ''}${cls ? ` ${cls}` : ''}`} aria-labelledby={id} onCancel={e => { e.preventDefault(); requestClose(); }} onClick={e => { if (e.target === e.currentTarget) requestClose(); }}>
       <div class="sheet-panel" data-palace={palace} tabIndex={-1} autofocus>
         <div class="sheet-top">
           <div class="sheet-grab" />
-          <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={requestClose}><IconX /></button></div>
+          <div class="sheet-head"><h2 id={id}>{eyebrow && <span class="eyebrow sheet-eyebrow">{eyebrow}</span>}{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={requestClose}><IconX /></button></div>
         </div>
         {children}
       </div>
