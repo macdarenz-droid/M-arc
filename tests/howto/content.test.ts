@@ -12,7 +12,7 @@ import { checkC2 } from './checks/c2';
 import { checkC3 } from './checks/c3';
 import { checkC4 } from './checks/c4';
 import { checkC6 } from './checks/c6';
-import { checkC7 } from './checks/c7';
+import { checkC7, LIMITS as c7LIMITS } from './checks/c7';
 import { checkC8 } from './checks/c8';
 import { checkC15, contentHash } from './checks/c15';
 import { checkC16 } from './checks/c16';
@@ -25,6 +25,10 @@ import { mutate as c3Mutate } from './fixtures/bad/c3-missing-hand-zoom';
 import { mutate as c4Mutate } from './fixtures/bad/c4-bad-thumb';
 import { mutate as c6Mutate } from './fixtures/bad/c6-missing-id';
 import { mutate as c7Mutate } from './fixtures/bad/c7-banned-phrase';
+import { mutate as c7LabelTooLong } from './fixtures/bad/c7-label-too-long';
+import { mutate as c7RedFlagTooLong } from './fixtures/bad/c7-red-flag-too-long';
+import { mutate as c7FixNotAVerb } from './fixtures/bad/c7-fix-not-a-verb';
+import { mutate as c7VisibleBudget } from './fixtures/bad/c7-visible-budget';
 import { mutate as c8MissingClaim } from './fixtures/bad/c8-missing-claim';
 import { mutate as c8Unreachable } from './fixtures/bad/c8-unreachable';
 import { mutate as c8RedFlag } from './fixtures/bad/c8-red-flag-wording';
@@ -120,7 +124,10 @@ const GOOD_CONTENT = {
     mistakeLine: 'Never let your wrist fold back to finish a heavy rep. Drop the weight and push through the heel of your hand.',
     cueLine: 'Handles at mid-chest.',
   },
-  redFlag: { name: 'Wrist pain', now: "Get it checked today if you can't grip, the wrist looks a different shape, or your hand goes numb.", doctor: "See a doctor if it's no better after two weeks of rest, keeps coming back, or tingles.", claim: { tags: ['CONSENSUS'], sources: ['nhs-wrist-pain'] } },
+  // Verbatim from tools/plates/layers/howto/shared.mjs's RED_FLAG (the compact-copy pin, b3a90af) - machine_chest_press.howto.mjs
+  // re-exports it unmodified (S-2 condition 4), never its own text. An earlier, pre-compact-copy wording here (28
+  // vs. the old 38 words) silently over budget went undetected until C7's redFlagBoxWords check was wired up (High 5).
+  redFlag: { name: 'Wrist pain', now: "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.", doctor: "Tingling, keeps coming back, or no better after two weeks' rest? See a doctor.", claim: { tags: ['CONSENSUS'], sources: ['nhs-wrist-pain'] } },
   mistakes: [
     { key: 'wrist', title: 'Wrist bent back', zoom: 'hand', claim: CL_WRIST, fix: 'Handle on the heel of your palm. Still bending? Go lighter.' },
     { key: 'seat-low', title: 'Seat too low', zoom: 'seat-height', claim: CL_ACE, fix: 'Raise the seat so the handles meet mid-chest.' },
@@ -209,6 +216,36 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     const bad = checkC7(c7Mutate(GOOD_CONTENT));
     expect(bad.some(m => m.includes('contains "engage"'))).toBe(true);
     expect(bad.some(m => m.includes('contains "maximise"'))).toBe(true);
+  });
+
+  it('C7 fails when a label field (a zoom chip) is over labelMaxWords', () => {
+    const bad = checkC7(c7LabelTooLong(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('chip') && m.includes('at most 3'))).toBe(true);
+  });
+
+  it('C7 fails when the redFlag box is over redFlagBoxWords', () => {
+    const bad = checkC7(c7RedFlagTooLong(GOOD_CONTENT));
+    expect(bad.some(m => m.startsWith('C7: redFlag:') && m.includes('at most 30'))).toBe(true);
+  });
+
+  it('C7 fails when a feel-row fix does not start with an imperative verb', () => {
+    const bad = checkC7(c7FixNotAVerb(GOOD_CONTENT));
+    expect(bad.some(m => m.includes('must start with a verb'))).toBe(true);
+  });
+
+  it('C7 fails when the visible-word budget (450) is exceeded', () => {
+    const bad = checkC7(c7VisibleBudget(GOOD_CONTENT));
+    expect(bad.some(m => m.startsWith('C7: visible words') && m.includes('at most 450'))).toBe(true);
+  });
+
+  it('LIMITS matches copy-lint.mjs\'s own exported constants exactly (transcribed from tools/plates/layers/artifact/copy-lint.mjs, not imported - c7.ts stays self-contained per the supervisor)', () => {
+    expect(c7LIMITS).toEqual({
+      anySentenceWords: 15, feelLineWords: 20, feelLineSentences: 2, rowWhereWords: 6, rowMeansWords: 12,
+      rowMeansSentences: 1, rowFixWords: 15, rowFixSentences: 2, leadLineWords: 22, leadLineSentences: 2,
+      setupStepWords: 12, setupMaxSteps: 5, mistakesMax: 3, mistakeLabelWords: 5, mistakeFixWords: 12,
+      feelRowsMax: 4, captionWords: 10, risksMax: 3, riskWords: 14, redFlagBoxWords: 30, sourceNoteWords: 12,
+      altWords: 30, labelMinWords: 1, labelMaxWords: 3, cueWords: 6, visibleWordsMax: 450,
+    });
   });
 
   it('C8 fails when a rule has no Claim', () => {
