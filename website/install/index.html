@@ -66,7 +66,7 @@
   <div class="wrap">
     <div class="prose rise">
       <p class="eyebrow">Install</p>
-      <h1 id="page-h">Install M/ARC.</h1>
+      <h1 id="page-h">Installation</h1>
       <p class="lead">A signed APK for Android, the web app once it has an address, and the source for anyone who wants to read it.</p>
     </div>
   </div>
@@ -89,9 +89,9 @@
       </ol>
     </div>
     <section class="apk-verify prose r" id="verify" aria-labelledby="verify-h" tabindex="-1">
-      <h2 id="verify-h">Verify the signature</h2>
+      <h2 id="verify-h">Signature check</h2>
       <p>Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released. You can check it yourself.</p>
-      <p class="label" id="fp-l">Signing key SHA-256. Does not change between versions.</p>
+      <p class="label" id="fp-l">Signing key SHA-256</p>
       <div class="copyrow"><code class="fp" id="fp">__FINGERPRINT_WBR__</code><button class="btn btn-s" type="button" data-copy="#fp" aria-label="Copy the signing key fingerprint" aria-live="polite">Copy</button></div>
       <p class="label" id="cmd-l">Verify command</p>
       <div class="copyrow"><code class="cmd" id="cmd">apksigner verify <span class="nb">--print-certs</span> <span class="nb">MARC-v__VERSION__.*-signed.apk</span></code><button class="btn btn-s" type="button" data-copy="#cmd" aria-label="Copy the verify command" aria-live="polite">Copy</button></div>
@@ -114,7 +114,7 @@
 <section class="band lift" id="web" aria-labelledby="web-h" tabindex="-1">
   <div class="wrap">
     <div class="prose r">
-      <h2 id="web-h">In the browser</h2>
+      <h2 id="web-h">Web app</h2>
       <!-- if APP_URL -->
       <p>Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline.</p>
       <div class="ctas"><a class="btn btn-p" href="__APP_URL__" target="_blank" rel="noopener">Open in the browser</a></div>
@@ -128,7 +128,7 @@
 <section class="band" id="checks" aria-labelledby="checks-h" tabindex="-1">
   <div class="wrap">
     <div class="prose r">
-      <h2 id="checks-h">What runs before a release</h2>
+      <h2 id="checks-h">Release checks</h2>
       <p>Every push runs typecheck, 1,487 unit tests in 116 files, run in three time zones, a production build and a visual gate across the five themes before an APK is signed. A release is built on demand from a commit with a green gate.</p>
       <div class="ctas">
         <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Source on GitHub</a>
