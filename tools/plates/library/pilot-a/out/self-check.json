@@ -1,8 +1,8 @@
 {
- "pageSha": "0e35c9940ea753bbe7498d807321f91783376d05ece8182abb9dee52ba01366d",
- "pageBytes": 1823892,
- "sheetSha": "69da43ae5e158aab09fe6f60f76487c294b6cd1e68f9f61a351701dae3bf54bc",
- "sheetBytes": 3922798,
+ "pageSha": "e6afb18d833fc61b08e92578eaa03fd15ddb474c1a315b2039c5899a4b211e73",
+ "pageBytes": 1734703,
+ "sheetSha": "e794c970c9f9883fe64455a5af75e03f66748a1396b301d5e6b64aa6f486683e",
+ "sheetBytes": 3690184,
  "warnings": "",
  "plates": [
   {
@@ -30,8 +30,8 @@
    "measures": {
     "pxPerM": 146.29,
     "coverage": 0.214,
-    "longestLeader": 70.1,
-    "boxed": 1
+    "longestLeader": 66.3,
+    "boxed": 0
    },
    "issues": []
   },
@@ -40,13 +40,13 @@
    "tier": "A",
    "ok": true,
    "flags": [
-    "F1",
+    "F2",
     "F7"
    ],
    "measures": {
-    "pxPerM": 249.99,
-    "coverage": 0.146,
-    "longestLeader": 34.8,
+    "pxPerM": 146.29,
+    "coverage": 0.079,
+    "longestLeader": 29.2,
     "boxed": 0
    },
    "issues": []
@@ -113,7 +113,7 @@
    "measures": {
     "pxPerM": 134.58,
     "coverage": 0.183,
-    "longestLeader": 77,
+    "longestLeader": 75.8,
     "boxed": 3
    },
    "issues": []
@@ -214,22 +214,6 @@
     "coverage": 0.183,
     "longestLeader": 66.5,
     "boxed": 3
-   },
-   "issues": []
-  },
-  {
-   "id": "bent_over_dumbbell_rear_delt_fly",
-   "tier": "C",
-   "ok": true,
-   "flags": [
-    "F2",
-    "F6"
-   ],
-   "measures": {
-    "pxPerM": 146.29,
-    "coverage": 0.096,
-    "longestLeader": 42.2,
-    "boxed": 1
    },
    "issues": []
   },
