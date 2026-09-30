@@ -11,10 +11,29 @@ import { fileURLToPath } from 'node:url';
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const LAYERS = join(ROOT, 'tools/plates/layers');
 export const PAGE_SHA256 = '472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a';
-export const PIN_COMMIT = '16a8edc';
+/** The golden-B commit every vendored file and the page approval are pinned to (supervisor: the single constant). */
+export const GOLDEN_B_REF = '16a8edc';
 
 export const sha256 = x => createHash('sha256').update(x).digest('hex');
 export const readManifest = (dir = LAYERS) => JSON.parse(readFileSync(join(dir, 'MANIFEST.json'), 'utf8'));
+
+/**
+ * HT-2's own review fix, repeated here (supervisor, PR #107): one literal hash over the MANIFEST as a whole (the
+ * sorted `path:sha256` list, plus the page approval), so editing a vendored file together with its own MANIFEST
+ * entry - which the per-file check alone cannot catch - still shows up as a visible change to this string.
+ */
+export function manifestPinList(manifest = readManifest(LAYERS)) {
+  const files = Object.entries(manifest.files).map(([p, e]) => `${p}:${e.sha256}`).sort().join('\n');
+  return `${files}\n--\n${JSON.stringify(manifest.pageApproval)}`;
+}
+
+/**
+ * A later golden-B update appends to `pageApproval.history` instead of overwriting `current` in place (supervisor,
+ * PR #107). `historyPin` is the literal a future update pins in a test: if that update ever changes an entry that
+ * was already in `history` (rather than only appending its own retired `current`), the pin changes and the test
+ * written against the pin fails.
+ */
+export const historyPin = (history) => sha256(JSON.stringify(history));
 
 const walk = (dir, base = dir) => readdirSync(dir, { withFileTypes: true }).flatMap(e =>
   e.isDirectory() ? walk(join(dir, e.name), base) : [join(dir, e.name).slice(base.length + 1).split('\\').join('/')]);
@@ -26,7 +45,7 @@ export function verifyLayers(dir = LAYERS, manifest = readManifest(LAYERS)) {
   const bad = [];
   const onDisk = new Set(walk(dir).filter(p => p !== 'MANIFEST.json'));
   for (const [path, e] of Object.entries(manifest.files)) {
-    if (e.source !== `${PIN_COMMIT}:docs/howto/golden-b/${path}`) bad.push(`${path}: source ${e.source} is not the ${PIN_COMMIT} pin`);
+    if (e.source !== `${GOLDEN_B_REF}:docs/howto/golden-b/${path}`) bad.push(`${path}: source ${e.source} is not the ${GOLDEN_B_REF} pin`);
     if (!onDisk.delete(path)) { bad.push(`${path}: missing`); continue; }
     const b = readFileSync(join(dir, path));
     if (sha256(b) !== e.sha256) bad.push(`${path}: sha256 ${sha256(b)} != MANIFEST ${e.sha256}`);

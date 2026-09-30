@@ -2,13 +2,15 @@
   "schema": 1,
   "note": "HT-4 golden-B lock. Every file is verbatim from the S-2 pin (16a8edc); never edit a byte (golden update procedure: docs/howto/build-plan/HOWTO-BUILD-PLAN.md 2.8).",
   "pageApproval": {
-    "kind": "layers",
-    "ref": "16a8edc",
-    "approvedBy": "owner",
-    "date": "2026-09-30",
-    "why": "The approved How-to layer mockup (golden B, S-2 pin), vendored verbatim into tools/plates/layers/ (HT-4). Holds only the golden-A plates (HT4-A5).",
-    "pageSha256": "472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a",
-    "bytes": 2451995
+    "current": {
+      "ref": "16a8edc",
+      "approvedBy": "owner",
+      "date": "2026-09-30",
+      "why": "The approved How-to layer mockup (golden B, S-2 pin), vendored verbatim into tools/plates/layers/ (HT-4). Holds only the golden-A plates (HT4-A5).",
+      "pageSha256": "472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a",
+      "bytes": 2451995
+    },
+    "history": []
   },
   "files": {
     "README.md": {
