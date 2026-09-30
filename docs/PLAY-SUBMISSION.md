@@ -90,7 +90,7 @@ All five are **read-only**; the app never writes to Health Connect (`docs/PRIVAC
 The app also requests Bluetooth permissions to read live heart rate from a paired watch or chest
 strap (`native/patch_manifest.py:40-46`); on Android 11 and older this requires location
 permission for BLE scanning only — the app does not read or use device location
-(`docs/PRIVACY-POLICY.md` "What stays on your phone").
+(`docs/PRIVACY-POLICY.md` "On-device data").
 
 ## Content rating questionnaire
 
