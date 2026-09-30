@@ -25,7 +25,13 @@
 //  - Station: the same selectorised tower as triceps_pushdown / the approved lat pulldown (boom, head pulley 2.03 m up,
 //    column pulley, 16 x 5 kg stack), pulley at its top position (c1). Stack travel = cable change (1:1), 3 cm pre-lift.
 // CARD: START_ELBOW (c8), END_ELBOW (c9), TILT + TRUNK lean (c10), ROOT knee bend, GRIP_X0 / GRIP_X1 (c4), ARM_FWD (c9),
-//  pulley height (c1).
+//  pulley height (c1), Mistake drift and lean (MIS_*, c7 gives none).
+// Callouts, Mistake, tempo (card plate section): the 3 checkpoints (c6, c5, c9) are the callouts, with "Vertical finish"
+//  on a plumb line through the shoulder joint that proves c9; the Mistake is the card's top fault, elbows drifting
+//  forward plus the swing forward (c7); tempo press 1 s, pause 1 s, return 3 s (c13 "2-3 s, never faster": the card's
+//  plate.tempo says 3), no Rest phase. Measure: the end elbow, value "not locked" (c9).
+// Rope: drawn with LIB-25's poly rope composer (tapered, sagging strands with clubbed stoppers, a ferrule), which
+//  replaced the dumbbell-primitive strands that read as rigid mini-handles at 390 px (flagged on PR #109).
 import { landmarksOf } from '../engine.mjs';
 import { rope, ropeGeometry, ROPE_ITEMS } from '../eq/rope.mjs';
 import { perItem } from '../eq/parts.mjs';
@@ -98,6 +104,16 @@ const gripsOf = lm => ({ l: lm['grip.l'], r: lm['grip.r'] });
 const ferruleOf = lm => ropeGeometry({ pulley: headTangent(mid(lm)), grips: gripsOf(lm) }).ferrule;
 const cableLen = lm => { const f = ferruleOf(lm); return Math.hypot(f[1] - HEAD.y, f[2] - HEAD.z); };
 
+// Mistake (card plate.mistake, c7): "elbows drifting forward as the rope comes up (and swinging forward to start the
+// press)". Drawn at the top of the rep, as the card places it: the upper arms swing forward off the sides (about 40 deg
+// in the world) and the torso tips further in. The card gives no angle for either, so MIS_* are drawn just large
+// enough to read at 390 px. The rope strands carry `poly` and the composer adds the cable twin in the Mistake pose.
+const MIS_LEAN = 8, MIS_SHOULDER = 60, MIS_ELBOW = 100;   // extra lean; shoulder flexion relative to the leaning thorax
+const mistakePose = { root: { at: ROOT, tilt: TILT + MIS_LEAN }, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: MIS_ELBOW, wrist: 0 };
+// c9 construction line (correct plate only, over the arm like the lat pulldown's lean rays): the plumb line through the
+// shoulder joint at the bottom, down past the hand, so wrist, elbow and shoulder read as one vertical line
+const lmEnd = landmarksOf(end, H), PLUMB_TOP = [0, S[1] + 0.02, S[2]], PLUMB_BOT = [0, lmEnd['grip.r'][1] - 0.12, S[2]];
+
 export default {
   id: 'rope_triceps_pushdown', name: 'Rope Triceps Pushdown', view: 'side', facing: 'right',
   camera: { fit: true },
@@ -120,17 +136,36 @@ export default {
         { type: 'cable', from: [0, COLP.y, STACK_Z], to: [0, 0.06 + PLATES * PLATE_H + lift, STACK_Z], z: 'back', part: 'stack' },
       ];
     },
+    (lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? { type: 'line', cls: 'eq-line datum', pts: [PLUMB_TOP, PLUMB_BOT], z: 'front' } : null),
     ...perItem((lm, ctx) => rope({ pulley: headTangent(mid(lm)), grips: gripsOf(lm), part: 'rope', mistakeTwin: true, ctx }), ROPE_ITEMS),   // rope in the hands, cable to the pulley
   ],
   checks: [
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // feet flat ON the floor
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
-    { landmark: 'elbow.r', at: E, pose: 'all', tol: 0.5 },                                           // elbow pinned (start and end)
+    ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', at: E, pose, tol: 0.5 })),                                           // elbow pinned (start and end)
     { landmark: 'elbow.r', plane: { point: S, normal: [0, 0, 1] }, pose: 'end', tol: 1 },              // shoulder, elbow, wrist
     { landmark: 'wrist.r', plane: { point: S, normal: [0, 0, 1] }, pose: 'end', tol: 1 },              //  in one vertical line (c9)
   ],
   ghosts: { count: 3, parts: ['arm.r', 'rope'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  callouts: [],
+  measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'not locked', box: { left: 34, top: 178 } },
+  callouts: [
+    { key: 'elbows', text: 'Elbows in', anchor: 'elbow.r', box: { left: 36, top: 144 }, cue: 'Keep the upper arms at the sides from top to bottom.' },
+    { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep the hands in line with the forearms, fists not curled.' },
+    { key: 'vertical', text: 'Vertical<br>finish', anchor: PLUMB_BOT, cue: 'At the bottom, line up the wrist, elbow and shoulder vertically.' },
+  ],
+  tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 3, move: true }],
+  mistake: {
+    pose: mistakePose,
+    parts: ['torso', 'head', 'arm.r', 'rope'],   // far arm doubles the near one; the stack's travel is not the fault
+    guides: [
+      { kind: 'arc-arrow', center: 'shoulder.r', r: 50, a0: 88, a1: 58 },   // the upper arm swinging forward off the side
+    ],
+    tells: [
+      { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 34, top: 180 }, cue: 'The elbows drift forward off the sides as the rope comes up.' },
+      { key: 'lean', text: 'Leaning<br>in', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'The torso tips forward over the rope to start the press.' },
+    ],
+  },
+  pilot: { note: 'rope now LIB-25 poly: sagging strands with clubbed ends read in the ghosts; at the solid bottom it sits mostly behind the forearm' },
   alt: 'Rope triceps pushdown, side view. Standing at a high cable tower with a slight forward lean, upper arms pinned at the sides, the lifter presses a rope from forearms just past level down in an arc to straight arms, the hands finishing beside the thighs with the rope ends apart.',
 };
