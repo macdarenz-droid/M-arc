@@ -443,6 +443,18 @@ export async function rasterOrigin(page, fitSel, known = null) {
  * Returns the number of sections displayed: before hiding, or after restoring.
  */
 export const SECTION_SEL = 'dialog.sheet.ht [data-section]';
+
+/**
+ * D-HT3-sections, the sheet-wide section bleed: every displayed section below the golden block must be exactly as wide
+ * as golden B's sections, which sit in the gallery card's content box (358 / 328 / 308 px at 390 / 360 / 340; measured
+ * equal to golden A's card content box, which is read here). Returns the problems.
+ */
+export async function sectionWidthProblems(appPage, goldPage, id) {
+  const want = await goldPage.evaluate(id => { const c = document.getElementById(`card-${id}`), cs = getComputedStyle(c), r = c.getBoundingClientRect();
+    return r.width - parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth) - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); }, id);
+  const got = await appPage.evaluate(sel => [...document.querySelectorAll(sel)].filter(e => getComputedStyle(e).display !== 'none').map(e => [e.dataset.section, e.getBoundingClientRect().width]), SECTION_SEL);
+  return got.filter(([, w]) => Math.abs(w - want) > 0.01).map(([name, w]) => `section ${name} is ${w} px wide, golden B's sections are ${want}`);
+}
 export function hideSections(page, hide) {
   return page.evaluate(([sel, hide]) => {
     const els = [...document.querySelectorAll(sel)];
@@ -686,6 +698,7 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
         await openHowTo(app.page, index);
         withM = false;
         if (mutate) await app.page.evaluate(mutate, id);
+        for (const b of await sectionWidthProblems(app.page, gold.page, id)) P(`${id} @${w}: ${b}`);
         if (w === 390) {
           const txt = await Promise.all([
             app.page.$$eval('dialog.sheet.ht .sheet-head h2, dialog.sheet.ht .sheet-eyebrow', (els, props) => els.map(e => props.map(p => getComputedStyle(e).getPropertyValue(p))), TEXT_PROPS),
@@ -890,6 +903,19 @@ export async function ht3SectionGuards(browser, port, { fixture = fixtureSection
   if (a.stats.pairs < 4) problems.push(`sections guard 1: only ${a.stats.pairs} pairs compared with a section registered`);
   const b = await ht3Fidelity(browser, port, { ...one, mutate: fixtureLeakSection });
   if (!b.problems.some(p => /L2b .*word-spacing/.test(p))) problems.push('sections guard 2: a section CSS leak into the golden block (.ht p word-spacing) was not caught by L2b while the sections were hidden');
+  // 4: the sheet-wide section bleed: the fixture section is exactly golden B's section width at 390, 360 and 340
+  for (const w of [390, 360, 340]) {
+    const app = await openAppTrain(browser, port, 'silent-black', { viewport: { width: w, height: 844 } });
+    const gold = await openGolden(browser, 'silent-black', { viewport: { width: w, height: 844 } });
+    try {
+      await openHowTo(app.page, 0);
+      await app.page.evaluate(fixture, HT_PLATES[0][0]);
+      const n = await app.page.evaluate(sel => document.querySelectorAll(sel).length, SECTION_SEL);
+      if (!n) problems.push(`sections guard 4 @${w}: no section registered to measure`);
+      for (const b of await sectionWidthProblems(app.page, gold.page, HT_PLATES[0][0])) problems.push(`sections guard 4 @${w}: ${b}`);
+    } catch (e) { problems.push(`sections guard 4 @${w}: ${e.message.split('\n')[0]}`); }
+    finally { await app.ctx.close(); await gold.ctx.close(); }
+  }
   // 3: S0 with the sections visible, at 390 x 844, scrolled as the app scrolls
   const [id] = HT_PLATES[0];
   const app = await openAppTrain(browser, port, 'silent-black', { onError: m => problems.push(`sections guard 3: app page error: ${m}`) });
