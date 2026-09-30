@@ -5756,6 +5756,55 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// PLAY-1 (A1): Settings shows the "Privacy policy" link and the healthcare reminder in all 5 themes. The link's href
+// must equal the Play Console privacy policy field (docs/PLAY-SUBMISSION.md) and open outside the app the way every
+// external link does (target=_blank, noopener); the reminder sits above the version line.
+{
+  // The URL entered in the Play Console field, read from the submission doc itself so the two cannot drift.
+  const PLAY_CONSOLE_PRIVACY_URL = readFileSync(join(ROOT, 'docs/PLAY-SUBMISSION.md'), 'utf8').match(/\*\*Privacy policy URL \(Play Console[^\n]*\n(https:\/\/\S+?)\s/)?.[1];
+  if (!PLAY_CONSOLE_PRIVACY_URL) errors.push('PLAY-1: no "Privacy policy URL (Play Console…)" line in docs/PLAY-SUBMISSION.md');
+  const MEDICAL = 'Not medical advice. For medical advice, diagnosis or treatment, see a healthcare professional.';
+  for (const theme of themes) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    const tag = `PLAY-1 ${theme}`;
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await page.addInitScript(([legacyJson, t]) => {
+      localStorage.setItem('marc.theme', t);
+      if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+    }, [JSON.stringify(legacy), theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+    await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+    const link = page.getByRole('link', { name: 'Privacy policy', exact: true });
+    const medical = page.locator('[data-palace="settings.medical"]');
+    await medical.scrollIntoViewIfNeeded().catch(() => {});
+    if ((await link.count()) !== 1) errors.push(`${tag}: expected one "Privacy policy" link in Settings, found ${await link.count()}`);
+    else {
+      await link.scrollIntoViewIfNeeded().catch(() => {});
+      if (!(await visible(link))) errors.push(`${tag}: the "Privacy policy" link is not visible`);
+      const a = await link.evaluate(el => ({ href: el.getAttribute('href'), target: el.getAttribute('target'), rel: el.getAttribute('rel'), section: el.closest('[data-palace="settings.data"]') != null }));
+      if (a.href !== PLAY_CONSOLE_PRIVACY_URL) errors.push(`${tag}: the privacy link's href is ${a.href}, not the Play Console URL ${PLAY_CONSOLE_PRIVACY_URL}`);
+      if (a.target !== '_blank' || !/\bnoopener\b/.test(a.rel ?? '')) errors.push(`${tag}: the privacy link must open outside the app (target=_blank rel=noopener), got target=${a.target} rel=${a.rel}`);
+      if (!a.section) errors.push(`${tag}: the privacy link is not in "Your data"`);
+    }
+    await medical.scrollIntoViewIfNeeded().catch(() => {});
+    if (!(await visible(medical))) errors.push(`${tag}: the healthcare reminder is not visible`);
+    else {
+      const m = await page.evaluate(() => {
+        const el = document.querySelector('[data-palace="settings.medical"]'), v = document.querySelector('[data-palace="settings.version"]');
+        return { text: el?.textContent?.trim(), above: !!(el && v && el.getBoundingClientRect().bottom <= v.getBoundingClientRect().top) };
+      });
+      if (m.text !== MEDICAL) errors.push(`${tag}: the healthcare reminder reads "${m.text}"`);
+      if (!m.above) errors.push(`${tag}: the healthcare reminder is not above the version line`);
+    }
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-play-1-settings.png` });
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith('PLAY-1 '))) console.log('PLAY-1: privacy link (Play Console URL, opens outside) and healthcare reminder verified in 5 themes');
+}
+
 // HT-1: fidelity harness self-check. The approved Technical Plates gallery (tests/howto/golden, served offline, its
 // Google Fonts request routed to the app's Inter woff2) is captured twice at 390x844 DPR 2, per plate block (plate top
 // to tempo bottom), in 5 themes x {normal, mistake with the first tell}: every pair must diff 0 px, and the same block
