@@ -376,21 +376,26 @@ export function l2bCompare(g, a, label, max = 12) {
  * Returns { x, y, el } in viewport coordinates, `el` a short name of the layer's element.
  */
 export async function rasterOrigin(page, fitSel, known = null) {
-  if (!page.__ht3cdp) {
+  // one CDP session per page; a fresh one when the old one stops reporting (seen on CI 1243 after the golden page's reload)
+  const open = async () => {
+    if (page.__ht3cdp) await page.__ht3cdp.detach().catch(() => {});
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('DOM.enable'); await cdp.send('LayerTree.enable');
     cdp.on('LayerTree.layerTreeDidChange', e => { if (e.layers) page.__ht3layers = e.layers; });
     page.__ht3cdp = cdp;
-  }
-  const cdp = page.__ht3cdp;
+  };
+  if (!page.__ht3cdp) await open();
+  await page.__ht3cdp.send('DOM.enable'); await page.__ht3cdp.send('LayerTree.enable');
   // Chromium reports the layer tree when it changes: after two painted frames, a 1 px off-screen probe layer is added,
   // the tree read one frame later, and the probe removed. Layers are decided lazily (a dialog just opened may not have
   // its own yet), so the tree is read until two readings agree.
   const readOwners = async () => {
     await frames2(page);
     page.__ht3layers = null;
-    // a loaded runner can take seconds to commit a frame: up to 5 tries of 2 s, each with a fresh probe size
-    for (let k = 0; !page.__ht3layers && k < 5; k++) {
+    // a loaded runner can take seconds to commit a frame: up to 5 tries of 2 s, each with a fresh probe size, and then
+    // the same again on a fresh session
+    for (let k = 0; !page.__ht3layers && k < 10; k++) {
+      if (k === 5) await open();
       await page.evaluate(k => { document.getElementById('ht3-layer-probe')?.remove(); const i = document.createElement('i'); i.id = 'ht3-layer-probe'; i.style.cssText = `position:fixed;left:-10px;top:-10px;width:${1 + k}px;height:1px;will-change:transform`; document.body.append(i); }, k);
       for (let t = 0; !page.__ht3layers && t < 100; t++) await new Promise(r => setTimeout(r, 20));
     }
@@ -403,6 +408,7 @@ export async function rasterOrigin(page, fitSel, known = null) {
   let owners = known ?? await readOwners();
   for (let k = 0; !known && k < 4; k++) { const again = await readOwners(); const same = again.size === owners.size && [...again].every(x => owners.has(x)); owners = again; if (same) break; }
   if (fitSel == null) return owners;   // layerOwners()
+  const cdp = page.__ht3cdp;
   const { result } = await cdp.send('Runtime.evaluate', { expression: `(() => { const out = []; for (let e = document.querySelector(${JSON.stringify(fitSel)}); e; e = e.parentElement) out.push(e); return out; })()` });
   const { result: props } = await cdp.send('Runtime.getProperties', { objectId: result.objectId, ownProperties: true });
   const els = props.filter(p => /^\d+$/.test(p.name)).sort((a, b) => a.name - b.name);
@@ -567,7 +573,7 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
   const run = async (theme, subset) => {
     const P = m => problems.push(`${theme} ${m}`);
     const app = await openAppTrain(browser, port, theme, { onError: m => P(`app page error: ${m}`) });
-    const gold = await openGolden(browser, theme, { onError: m => P(`golden page error: ${m}`) });
+    let gold = await openGolden(browser, theme, { onError: m => P(`golden page error: ${m}`) });
     const figSel = { app: 'dialog.sheet.ht .ht-golden figure[data-mode="normal"]', golden: id => `#card-${id} .plate[data-mode="normal"]` };
     let width = DEVICE.viewport.width, withM = false;
     const both = async fn => { await Promise.all([fn(app.page, 'app'), fn(gold.page, 'golden')]); };
@@ -632,10 +638,10 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
     const keys = (mode) => app.page.$$eval(`dialog.sheet.ht .ht-golden figure[data-mode="${mode}"] .plate-callout`, bs => bs.map(b => b.dataset.key));
     for (const w of [390, ...(full.includes(theme) ? widths : [])]) {
       width = w;
-      if (w !== 390) {   // the app reopens every sheet at S0; the golden page is reloaded so its cards are at S0 too
-        await Promise.all([app.page.setViewportSize({ width: w, height: 844 }), gold.page.setViewportSize({ width: w, height: 844 })]);
-        await gold.page.reload(); await settle(gold.page);
-        if ((await gold.page.$eval('#sheets', e => e.dataset.theme)) !== theme) P(`golden page lost its theme on reload`);
+      if (w !== 390) {   // the app reopens every sheet at S0; the golden page is opened afresh at this width so its cards are at S0 too
+        await app.page.setViewportSize({ width: w, height: 844 });
+        await gold.ctx.close();
+        gold = await openGolden(browser, theme, { viewport: { width: w, height: 844 }, onError: m => P(`golden page error: ${m}`) });
       }
       for (const [id] of subset) {
         const index = HT_PLATES.findIndex(p => p[0] === id);
