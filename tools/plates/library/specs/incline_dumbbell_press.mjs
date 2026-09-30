@@ -31,6 +31,9 @@
 //  - Engine limit: the start layer never draws equipment, so the start dumbbell is a dashed phantom hex in the end
 //    layer (as dumbbell_bench_press / machine_chest_press).
 //  - Scale: reference 146.29 px/m.
+// Plate labels (provisional, card not yet critic-verified): callouts = plate.checkpoints c1 (Bench at 45°), c7 (Elbows
+//   under wrists), c6 (To upper chest); measure = back-pad angle from vertical, expect 45 (c1); Mistake = plate.mistake
+//   c7 (forearm tilted, elbow out of line); tempo = plate.tempo c14 (up 1, down 2, no pause: Lower then Press).
 // CARD: bench angle (BACK), seat tilt (SEAT_TILT), seat height (SEAT_TOP), top grip over the eyes (EYE, TOP_ELBOW),
 //   bottom flare/depth/width (BOTTOM_ABD, BOTTOM_DIP, BOTTOM_X), feet (FOOT_Z), scapular set (SCAP).
 import { landmarksOf, fk, resolve, normPose, rootOnSeat, WINTER, REF } from '../engine.mjs';
@@ -116,6 +119,22 @@ const ring = (c, r, n) => { const pts = []; for (let i = 0; i <= n; i++) { const
 const startDb = landmarksOf(start, H)['grip.r'];
 const startDbPhantom = [{ type: 'line', pts: ring(startDb, 0.119 / 2, 6), cls: 'eq-line m-line', z: 'front' }];
 
+// Mistake (card plate.mistake, c7): the elbows drift out of line with the wrists at the bottom. Drawn as the forearm
+// tipping forward: the elbow stays where it was (same pole) and the dumbbell drifts MIS_DRIFT toward the feet, off the
+// front of the chest, so the forearm leans about 30 deg off vertical with the elbow tucked behind the wrist. (Tried
+// first: an elbow swung out under a fixed dumbbell, and a dumbbell drifting over the face. The engine masks the
+// faulty outline wherever it lies inside the body, and both of those lie over the pad, torso or head, so they did not
+// read.)
+const MIS_DRIFT = 0.19;                                 // grip drift toward the feet (m), world +z
+const misReach = side => { const b = botReach(side); return { at: [b.at[0], b.at[1] - 0.03, b.at[2] + MIS_DRIFT], pole: b.pole }; };
+const mistakePose = { reach: { l: misReach('l'), r: misReach('r') } };
+const lmE = landmarksOf(end, H), lmMis = landmarksOf({ ...end, ...mistakePose }, H);
+export const mistakeInfo = () => ({ forearmFromVerticalDeg: +(Math.atan2(lmMis['grip.r'][2] - lmMis['elbow.r'][2], lmMis['grip.r'][1] - lmMis['elbow.r'][1]) / R).toFixed(1),
+  elbowMovedCm: +(Math.hypot(...lmMis['elbow.r'].map((v, i) => v - lmE['elbow.r'][i])) * 100).toFixed(1) });
+const plumbTop = [0, lmE['grip.r'][1], lmE['grip.r'][2]], plumbBot = [0, lmE['elbow.r'][1] - 0.04, lmE['grip.r'][2]];
+// label and measure points on the back face of the back pad (PAD = 7 cm, the composer default)
+const PAD = 0.07, onPadBack = u => [0, HINGE[1] + UP[1] * u - NB[1] * PAD, HINGE[2] + UP[2] * u - NB[2] * PAD];
+
 export default {
   id: 'incline_dumbbell_press', name: 'Incline Dumbbell Press', view: 'side', facing: 'right',
   camera: { x0: 200, y0: 339 },
@@ -138,6 +157,25 @@ export default {
   startParts: ['arm.r', 'arm.l'],
   ghosts: { count: 3, parts: ['arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [12, 12] },
-  callouts: [],
-  alt: 'Incline dumbbell press, side view. Seated on a bench set to 45 degrees, head, back and hips on the pads and feet flat on the floor, the lifter lowers the dumbbells from straight arms over the eyes to the top of the chest, forearms vertical, and presses them back up.',
+  measure: { vertex: onPadBack(0.74), from: 'up', to: { dir: [UP[2], UP[1]] }, radius: 28, title: 'Bench', value: '45°, not steeper', expect: BACK },
+  callouts: [
+    { key: 'bench', text: 'Bench<br>at 45°', anchor: onPadBack(0.14), cue: 'Set the back pad to about 45 degrees, not steeper.' },
+    { key: 'elbows', text: 'Elbows<br>under wrists', anchor: 'elbow.r', cue: 'Keep your forearms vertical under the dumbbells.' },
+    { key: 'chest', text: 'To upper<br>chest', anchor: 'grip.r', cue: 'Lower the dumbbells to the top of your chest, slightly wide.' },
+  ],
+  tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }],
+  mistake: {
+    pose: mistakePose,
+    guides: [
+      { kind: 'dashed', pts: [plumbBot, plumbTop] },                                   // the vertical forearm it should be
+      { kind: 'line', pts: [lmMis['elbow.r'], lmMis['grip.r']] },                       // the tilted forearm it is
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [9, 0] }, to: { at: 'grip.r', pose: 'mistake', off: [-9, 2] } },
+    ],
+    tells: [
+      { key: 'tilt', text: 'Forearm<br>tilted', anchor: { at: 'grip.r', pose: 'mistake', off: [8, 4] }, cue: 'Your forearm leans and the dumbbell drifts off the line of the elbow.' },
+      { key: 'drift', text: 'Weight<br>drifts', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbow is no longer under your wrist at the bottom.' },
+    ],
+  },
+  pilot: { note: 'Callouts and Mistake provisional: card not yet critic-verified' },
+  alt: 'Incline dumbbell press, side view. On a bench set to 45 degrees, head, back and hips on the pads, feet flat, the lifter lowers the dumbbells from straight arms over the eyes to the upper chest, forearms vertical, then presses back up.',
 };

@@ -31,6 +31,10 @@
 //    so the start dumbbell is a dashed phantom hex in the end layer (same workaround as machine_chest_press).
 //  - Scale: reference 146.29 px/m (same body size as every plate); x0 centres bench + feet. A lying body leaves the
 //    top ~45% of the plate empty at this scale: kept for a consistent body size; that space takes the callouts.
+// Plate labels (provisional, card not yet critic-verified): callouts = plate.checkpoints c2 (Five points), c5 (Down to
+//   mid-chest), c7 (Weight over elbow); Mistake = plate.mistake c6 (low back arches, hips lift), tells from c6/c2;
+//   tempo = plate.tempo c15 (up 1 s, down 2 s, no pause; the plate starts at the top, so Lower then Press). No measure
+//   arc: the card gives no angle; the elbow plumb datum proves c7 instead.
 // CARD: bench pad height (BENCH_TOP), foot position (FOOT_Z), top grip line (TOP_Z = chin, c4), top elbow (TOP_ELBOW),
 //   bottom flare (BOTTOM_ABD), depth (BOTTOM_DIP) and hand width (BOTTOM_X) against c5/c7, scapular set (SCAP, c2).
 import { landmarksOf, fk, resolve, normPose, WINTER, REF } from '../engine.mjs';
@@ -50,15 +54,16 @@ const OCCIPUT = [0, 0.955, -0.056];                   // back of the skull on th
 
 // ---- supine class: root, trunk and neck that put backUpper, buttock and occiput on a horizontal pad ----
 const bisect = (f, lo, hi) => { for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; } return (lo + hi) / 2; };
-/** Supine on a pad top at height `top`, hip joints at world z `z`. Returns pose fields { root, trunk, neck }. */
-export function supine(top, z = 0, { tilt = -90, height = H } = {}) {
+/** Supine on a pad top at height `top`, hip joints at world z `z`. `lift` raises the buttock off the pad (the hips-up
+ * fault) while the upper back and the skull stay on it. Returns pose fields { root, trunk, neck }. */
+export function supine(top, z = 0, { tilt = -90, lift = 0, height = H } = {}) {
   const body = { height }, at0 = { root: { at: [0, 0, z], tilt } };
   const lm = p => landmarksOf(p, height);
   const occ = p => fk(resolve(normPose(p, body), body).q, body).head(OCCIPUT);
-  const trunk = bisect(t => lm({ ...at0, trunk: t }).backUpper[1] - lm({ ...at0, trunk: t }).buttock[1], -30, 30);
-  const neck = bisect(n => occ({ ...at0, trunk, neck: n })[1] - lm(at0).buttock[1], -40, 30);
-  const y = top - lm(at0).buttock[1];
-  return { root: { at: [0, y, z], tilt }, trunk, neck };
+  const pad = lm(at0).buttock[1] - lift;                     // pad level in the root-at-0 frame
+  const trunk = bisect(t => lm({ ...at0, trunk: t }).backUpper[1] - pad, -40, 30);
+  const neck = bisect(n => occ({ ...at0, trunk, neck: n })[1] - pad, -40, 60);
+  return { root: { at: [0, top - pad, z], tilt }, trunk, neck };
 }
 export const occiputOf = (pose, height = H) => { const b = { height }; return fk(resolve(normPose(pose, b), b).q, b).head(OCCIPUT); };
 
@@ -97,6 +102,15 @@ const ring = (c, r, n, a0 = 0) => { const pts = []; for (let i = 0; i <= n; i++)
 const startDb = landmarksOf(start, H)['grip.r'];
 const startDbPhantom = [ring(startDb, 0.119 / 2, 6)].map(pts => ({ type: 'line', pts, cls: 'eq-line m-line', z: 'front' }));
 
+// Mistake (card plate.mistake, c6): the low back arches and the hips lift off the bench to press the weight. The
+// buttock rises MISTAKE_LIFT off the pad while the upper back and the skull stay on it (supine() with `lift`): the lumbar
+// spine extends 17 deg and the chin tucks. Arms keep the end grip; feet stay planted.
+const MISTAKE_LIFT = 0.07;                            // hips off the pad (m)
+const mistakePose = supine(BENCH_TOP, 0, { lift: MISTAKE_LIFT });
+const lmM = landmarksOf({ ...end, ...mistakePose }, H);
+const gapTop = lmM.buttock, gapBot = [0, BENCH_TOP, gapTop[2]], TICK = 2 / 146.29;
+const tick = p => ({ kind: 'line', pts: [[0, p[1], p[2] - TICK], [0, p[1], p[2] + TICK]] });
+
 export default {
   id: 'dumbbell_bench_press', name: 'Dumbbell Bench Press', view: 'side', facing: 'right',
   camera: { x0: 205, y0: 339 },
@@ -110,14 +124,34 @@ export default {
   ],
   checks: [
     { landmark: 'backUpper', plane: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'all', tol: 1 },   // upper back ON the pad
-    { landmark: 'buttock', plane: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'all', tol: 1 },     // buttocks ON the pad
+    { landmark: 'buttock', plane: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'start', tol: 1 },   // buttocks ON the pad
+    { landmark: 'buttock', plane: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'end', tol: 1 },
+    { landmark: 'buttock', above: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'mistake' },        // gap shown in report
     { landmark: 'head', above: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'all' },               // head never inside it
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },            // feet ON the floor
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
   ],
-  startParts: ['arm.r', 'arm.l', 'db'],
+  startParts: ['arm.r', 'arm.l'],
   ghosts: { count: 3, parts: ['arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [12, 12] },
-  callouts: [],
-  alt: 'Dumbbell bench press, side view. Lying on a flat bench with head, upper back and buttocks on the pad and feet flat on the floor, the lifter lowers the dumbbells from straight arms over the shoulders to the sides of the chest, forearms vertical, and presses them back up.',
+  datum: [{ x: 'elbow.r', from: 'elbow.r', to: { at: 'grip.r', off: [0, -16] }, mistake: false }],   // plumb through the elbow: the weight sits over it (c7)
+  callouts: [
+    { key: 'five', text: 'Five<br>points', anchor: 'buttock', cue: 'Keep your head, shoulders, hips and both feet down the whole set.' },
+    { key: 'depth', text: 'Down to<br>mid-chest', anchor: 'grip.r', cue: 'Lower the dumbbells to mid-chest, a little wide, and touch gently.' },
+    { key: 'elbow', text: 'Weight<br>over elbow', anchor: 'elbow.r', cue: 'Keep each dumbbell over its elbow, forearm close to vertical.' },
+  ],
+  tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }],
+  mistake: {
+    pose: mistakePose,
+    guides: [
+      { kind: 'arrow', from: { at: 'buttock', pose: 'end', off: [0, -2] }, to: { at: 'buttock', pose: 'mistake', off: [0, -14] } },
+      { kind: 'line', pts: [gapBot, gapTop] }, tick(gapBot), tick(gapTop),
+    ],
+    tells: [
+      { key: 'hips', text: 'Hips<br>lift off', anchor: gapBot, cue: 'Your hips lift off the bench to push the weight up.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'navel', pose: 'mistake' }, cue: 'Your low back arches and the belly pushes up.' },
+    ],
+  },
+  pilot: { note: 'Callouts and Mistake provisional: card not yet critic-verified' },
+  alt: 'Dumbbell bench press, side view. Lying on a flat bench, head, shoulders and hips on the pad, feet flat, the lifter lowers the dumbbells from straight arms to mid-chest, each forearm vertical under its dumbbell, then presses back up.',
 };

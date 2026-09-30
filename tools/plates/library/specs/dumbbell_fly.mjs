@@ -30,6 +30,11 @@
 //    end-on hex in the front view, side-on in the side view.
 //  - Engine limit: the start layer never draws equipment, so the start dumbbells are dashed phantom outlines in the end
 //    layer (hex in front view, bar + heads in side view), as dumbbell_bench_press.
+// Plate labels (side view; provisional, card not yet critic-verified): callouts = plate.checkpoints c5 (Soft elbows),
+//   c4 (Stop at chest level), c2 (Five points); Mistake = plate.mistake c4 (dumbbells below chest/shoulder level, grip
+//   10 cm under the shoulder joint); tempo = plate.tempo c10 (2 s down, 2 s up). No measure arc: the only angle the
+//   card names (the slight elbow bend) is foreshortened in side view, so an arc would draw a false number; the stop
+//   line datum proves c4. The front alt keeps no labels (no-go evidence).
 // CARD: ELBOW (slight bend), SHOULDER_W (start width), END_LEVEL (stop height), ARC_DZ (arc plane over the chest).
 import { landmarksOf, fk, resolve, normPose, WINTER, REF } from '../engine.mjs';
 import { supine } from './dumbbell_bench_press.mjs';
@@ -63,6 +68,14 @@ const poseAtPhi = phi => ({ ...base, reach: { l: gripAt('l', phi), r: gripAt('r'
 const start = poseAtPhi(PHI0), end = poseAtPhi(PHI1);
 const via = [1, 2, 3, 4, 5].map(k => k / 6).map(t => poseAtPhi(PHI0 + (PHI1 - PHI0) * t));
 export const flyInfo = { phiStartDeg: +PHI0.toFixed(1), phiEndDeg: +PHI1.toFixed(1), endGripAboveShoulderCm: +((endY - S.r[1]) * 100).toFixed(1) };
+
+// Mistake (card plate.mistake, c4): the dumbbells go below shoulder and chest level at the bottom of the arc. Same
+// arc and elbow bend, lowered until the grip is MIS_BELOW under the shoulder joint (27 cm under the correct stop).
+const MIS_BELOW = 0.10;                               // faulty grip height under the shoulder joint (m)
+const PHI_M = Math.acos(-MIS_BELOW / Dh) / R;
+const mistakePose = { reach: { l: gripAt('l', PHI_M), r: gripAt('r', PHI_M) } };
+const lmEnd = landmarksOf(end, H);
+const chestLine = [[0, lmEnd['grip.r'][1], lmEnd['grip.r'][2] - 0.16], [0, lmEnd['grip.r'][1], lmEnd['grip.r'][2] + 0.16]];
 
 // start dumbbell phantoms (dashed), in metres, per view
 const DB = { head: 0.119, headLen: 0.07, handle: 0.13 };
@@ -100,8 +113,28 @@ export function makeFly(view, id) {
     startParts: front ? ['arm.l', 'arm.r'] : ['arm.r', 'arm.l'],
     ghosts: { count: 3, parts: front ? ['arm.l', 'arm.r', 'db.l', 'db.r'] : ['arm.r', 'db.r'] },
     trace: { point: front ? 'grip.l' : 'grip.r', trim: [12, 12] },
-    callouts: [],
-    alt: `Dumbbell fly, ${front ? 'front view from the foot end' : 'side view'}. Lying on a flat bench, head, back and hips on the pad and feet flat on the floor, the lifter lowers the dumbbells from above the shoulders in a wide arc, elbows slightly bent and fixed, until they are level with the chest, then raises them back along the same arc.`,
+    ...(front ? { callouts: [] } : {
+      datum: [{ y: 'grip.r', from: { at: 'grip.r', off: [-34, 0] }, to: { at: 'grip.r', off: [34, 0] }, mistake: false }],   // the stop line: chest level (c4)
+      callouts: [
+        { key: 'elbows', text: 'Soft<br>elbows', anchor: 'start:elbow.r', cue: 'Keep a slight elbow bend that stays the same all the way.' },
+        { key: 'stop', text: 'Stop at<br>chest', anchor: 'grip.r', cue: 'Lower until the dumbbells are level with your chest, no deeper.' },
+        { key: 'five', text: 'Five<br>points', anchor: 'buttock', cue: 'Keep your head, shoulders, hips and feet in contact.' },
+      ],
+      tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 2, move: true }],
+      mistake: {
+        pose: mistakePose,
+        guides: [
+          { kind: 'dashed', pts: chestLine },                                                   // where it should stop
+          { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [22, 0] }, to: { at: 'grip.r', pose: 'mistake', off: [22, 0] } },
+        ],
+        tells: [
+          { key: 'deep', text: 'Below<br>the chest', anchor: { at: 'grip.r', pose: 'mistake', off: [14, 0] }, cue: 'Your dumbbells sink below chest and shoulder level at the bottom.' },
+          { key: 'elbow', text: 'Elbows<br>too low', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows drop below the bench line and strain the shoulder front.' },
+        ],
+      },
+      pilot: { note: 'F6: side view, census/card say front. Front is no-go (lying torso and head vanish in the engine front view); side cannot show the arc width or elbow bend. Callouts and Mistake provisional: card not yet critic-verified' },
+    }),
+    alt: `Dumbbell fly, ${front ? 'front view from the foot end' : 'side view'}. Lying on a flat bench, head, shoulders and hips on the pad, feet flat, the lifter lowers the dumbbells in a wide arc, elbows slightly bent and fixed, until level with the chest, then raises them back.`,
   };
 }
 

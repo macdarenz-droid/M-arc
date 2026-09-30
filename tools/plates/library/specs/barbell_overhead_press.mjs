@@ -37,6 +37,15 @@
 //  Rack: not drawn. The card's rack (c1, c11) is a setup item; the `rackUpright` primitive's J-hook points the way the
 //   figure faces, so a rack in front of the lifter (who stepped back out of it) would show its hook open away from
 //   the lifter. A wrong hook reads worse than none; the plate shows the lift after the walk-out.
+// Phase 2 (card plate section): callouts = the 3 plate.checkpoints (c5 forearms vertical, c6 head back then through,
+//  c7 over mid-foot); mistake = plate.mistake (c5: elbows back, forearms tilted, bar curves forward away from the face),
+//  tells = its two visible signs; tempo = plate.tempo (c17: up 1 s, down 2 s, pause 0, so no hold phase is invented).
+//  Measure: shoulder elevation at lockout (arm hanging to straight overhead, drawn 179 deg), value in words and no
+//  `expect`, since the card gives no number (c7 "bar over the shoulders"). The arc sweeps in front of the chest, clear
+//  of the start arm and head phantoms. "Head through" is boxed beside the face (auto placement gave a 75 px leader
+//  across the arm). Provisional: card not critic-verified.
+//  Coverage 0.095 (under the 8's 0.100): an upright, narrow figure whose scale is capped by the lockout plate at the
+//  plate top; a larger scale would crop the plate, so F2 is expected and left visible.
 // CARD: lean-back angle (LEAN_START, c6 "slightly"), head tilt at the start (NECK_START, not in the card; sets the
 //  face clearance), grip width (GRIP_X, c2), bar rest height (BAR_T, c2 "front of the shoulders"), stance width
 //  (FOOT_X, c10), head forward at lockout (NECK_END, c6), shrug at lockout (SCAP_TOP, not in the card: 0).
@@ -74,8 +83,8 @@ const rackOf = lm => [0, 1, 2].map(i => i === 0 ? 0 : W.neck * lm.neck[i] + W.ba
 const POLE_RACK = [0, -1, -0.3];                       // elbow IK pole: elbows under the bar, slightly forward of it (c5)
 const POLE_UP = [0, -0.2, 1];                          // pressing: elbows forward of the bar plane, then locked
 const hands = (bar, pole) => ({
-  l: { at: [GRIP_X, bar[1], 0], pole: [0.35 + pole[0], pole[1], pole[2]] },
-  r: { at: [-GRIP_X, bar[1], 0], pole: [-0.35 - pole[0], pole[1], pole[2]] },
+  l: { at: [GRIP_X, bar[1], bar[2]], pole: [0.35 + pole[0], pole[1], pole[2]] },
+  r: { at: [-GRIP_X, bar[1], bar[2]], pole: [-0.35 - pole[0], pole[1], pole[2]] },
 });
 // Upper body leaning back `lean` deg (pelvis tilt, trunk 0), root placed so the point `anchor(lm)` is over mid-foot.
 function body(lean, anchor, extra = {}) {
@@ -136,10 +145,21 @@ function hiddenArm() {
       if (vis[i]) run.push(s.pts[i]); else { if (run.length > 2) items.push(run); run = []; } }
     if (run.length > 2) items.push(run);
   }
-  return items.map(r => ({ type: 'line', pts: r.map(([x, y]) => [0, -y / 1000, x / 1000]), cls: 'eq-cable m-line', z: 'front', part: 'startarm' }));
+  return items.map(r => ({ type: 'line', pts: r.map(([x, y]) => [0, -y / 1000, x / 1000]), cls: 'eq-line m-line', z: 'front', part: 'startarm' }));
 }
 const START_ARM = hiddenArm();
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
+// Mistake (card plate.mistake, c5): elbows back at the start, forearms tilted, so the bar curves forward away from
+// the face. Drawn where the faulty arm clears the torso and head: bar at forehead height (MIS_Y), MIS_FWD in front of
+// the mid-foot line, elbow IK pole back so the elbow sits ~7 cm behind the bar (4.5 cm in front of the chin) and the
+// forearm tilts ~18 deg (scratch probe). Only the arms and bar change (merged over the end pose). The faulty bar is
+// drawn as a sleeve circle and a 45 cm plate circle (both poly items that exist only in the mistake pose, so they
+// get the dashed --mistake outline); a bold arrow runs from the correct bar line to it, and a dashed plumb from it
+// lands ahead of the toes; a solid line along the tilted forearm shows the elbow behind the bar.
+const MIS_FWD = 0.20;                                  // m the bar has drifted forward of mid-foot (card: "away from the face")
+const MIS_Y = 1.70;                                    // m: forehead height
+const MIS_BAR = [0, MIS_Y, MIS_FWD];
+const mistakePose = { reach: hands(MIS_BAR, [0, -1, -0.55]) };
 // Camera: the reference floor line (plate y 339) and the largest scale that keeps the 45 cm plate at lockout 16 px
 // under the plate top (the engine's `fit` measures every pose with the start context, so it cannot see an item drawn
 // in the end pose only). 141 px/m, 96% of the reference.
@@ -155,16 +175,19 @@ export default {
     // the 45 cm plate outline at the lockout only (four overlapping plate circles hid the head); the 50 mm sleeve dot
     // in every pose, so the start, ghosts and end bar positions read along the vertical path
     (lm, ctx) => [
+      ...(ctx.pose === 'mistake' ? [{ type: 'pulley', at: MIS_BAR, r: 0.225, part: 'misbar', z: 'front' }] : []),
       ctx.pose === 'end' ? { type: 'barbell', at: [0, lm.grips[1], lm.grips[2]], plates: [0.045], part: 'plate', z: 'back' } : null,
       { type: 'pulley', at: [0, lm.grips[1], lm.grips[2]], r: 0.025, part: 'bar', z: 'front' },
       // start bar dot, dashed, in front: the lockout arm covers the start layer (barbell_back_squat's workaround)
-      ...(ctx.pose === 'end' ? [...START_ARM, { type: 'line', cls: 'eq-cable m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
+      ...(ctx.pose === 'end' ? [...(ctx.mistake ? [] : START_ARM), { type: 'line', cls: 'eq-line m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
     ].filter(Boolean),
   ],
   checks: [
     { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
-    { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'all', tol: 0.5 },          // bar over mid-foot
+    { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'start', tol: 0.5 },        // bar over mid-foot
+    { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'end', tol: 0.5 },
+    { landmark: 'grips', plane: { point: [0, 0, MIS_FWD], normal: [0, 0, 1] }, pose: 'mistake', tol: 0.5 },  // fault: 20 cm forward
     { landmark: 'chin', above: { point: [0, 0, -BAR_R], normal: [0, 0, -1] }, pose: 'start' },            // chin behind the bar
     { landmark: 'head', above: { point: [0, BAR1[1] - BAR_R, 0], normal: [0, -1, 0] }, pose: 'end' },      // bar over the head
   ],
@@ -172,6 +195,28 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'bar'] },
   trace: { point: 'grip.r', trim: [12, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 20 }],
-  callouts: [],
-  alt: 'Standing barbell overhead press, side view. The bar starts on the front of the shoulders with the forearms vertical and the body leaning slightly back from the hips, then travels straight up over the middle of the foot to arms locked overhead, the head moving forward under the bar.',
+  measure: { vertex: 'shoulder.r', from: 'down', to: 'elbow.r', radius: 20, title: 'Shoulder', value: 'straight overhead' },
+  callouts: [
+    { key: 'forearms', text: 'Forearms<br>vertical', anchor: 'start:grip.r', cue: 'Keep your elbows under the bar so your forearms point straight up.' },
+    { key: 'head', text: 'Head<br>through', anchor: 'chin', cue: 'Lean back slightly from the hips, then move under the bar as it passes.',
+      guide: [{ at: 'ear', pose: 'start' }, 'ear'], box: { left: 232, top: 98 } },
+    { key: 'midfoot', text: 'Over<br>mid-foot', anchor: { at: 'grip.r', off: [0, -4] }, cue: 'Lock out with the bar over your shoulders and mid-foot.' },
+  ],
+  tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
+  mistake: {
+    pose: mistakePose,
+    guides: [
+      { kind: 'arrow', from: [0, MIS_Y, 0.03], to: { at: 'grip.r', pose: 'mistake', off: [-5, 0] } },
+      // the tilted forearm axis, elbow to bar (the dashed arm outline alone is faint where it crosses the head)
+      { kind: 'line', pts: [{ at: 'elbow.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }] },
+      // plumb from the faulty bar to the floor: it lands ahead of the toes, not over mid-foot
+      { kind: 'dashed', pts: [{ at: 'grip.r', pose: 'mistake', off: [0, 6] }, [0, 0, MIS_FWD]] },
+    ],
+    tells: [
+      { key: 'elbows', text: 'Elbows back', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'The elbows sit behind the bar, so your forearms tilt.' },
+      { key: 'drift', text: 'Bar drifts<br>forward', anchor: { at: 'grip.r', pose: 'mistake', off: [0, -26] }, cue: 'The bar curves forward, away from your face and mid-foot.' },
+    ],
+  },
+  pilot: { note: 'Callouts and Mistake provisional: card not yet critic-verified' },
+  alt: 'Barbell overhead press, side view. The bar starts on the front of the shoulders, forearms vertical, body leaning slightly back from the hips. It travels straight up over mid-foot to locked arms overhead, the head moving forward under the bar.',
 };

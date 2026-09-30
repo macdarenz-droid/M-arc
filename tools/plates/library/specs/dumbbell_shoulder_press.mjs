@@ -27,9 +27,13 @@
 //  - Engine limits: the start layer never draws equipment, and the end torso fill hides the start near arm (it lies
 //    over the chest). Both are redrawn as dashed phantom outlines in the end layer (machine_chest_press's workaround).
 //  - Scale: reference 146.29 px/m.
+// Plate labels (provisional, card not yet critic-verified): callouts = plate.checkpoints c1 (Back on pad), c5 (Elbows
+//   forward), c4 (Full lockout); measure = elbow at the top, expect 180 ("fully straight", c4); Mistake = plate.mistake
+//   c4 (low back arches off the pad: pelvis tips forward 10 deg, lumbar extends, 4.6 cm gap at backMid); tempo =
+//   plate.tempo c12 (up 1, down 2, no pause: Press then Lower). The card still gives no bench angle (BACK stays 10).
 // CARD: bench angle (BACK: not in the card's sources), seat tilt/height, start height/width/forwardness (START_DY,
 //   START_X, START_DZ), top elbow (END_ELBOW), top width (END_X), feet (FOOT_Z), scapular set (SCAP).
-import { landmarksOf, WINTER, REF, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
+import { landmarksOf, WINTER, REF, fk, resolve, normPose, bodyShapes, rootOnSeat } from '../engine.mjs';
 import { inclineBench } from '../eq/inclineBench.mjs';
 import { reclined } from './incline_dumbbell_press.mjs';
 
@@ -46,7 +50,7 @@ const SCAP = { elev: -1, pro: -2 };                   // blades down and back (c
 const START_DY = 0.15;                                // start: grip above the shoulder joint (m): handle at jaw-ear level
 const START_DZ = 0.10;                                // start: grip in front of the shoulder joint (m): elbows forward (c5)
 const START_X = 0.40;                                 // start: grip off the midline (m): inner heads just outside the shoulders (c2)
-const END_ELBOW = 2;                                  // top: elbow flexion (deg): straight (c4)
+const END_ELBOW = 0;                                  // top: elbow flexion (deg): fully straight (c4)
 const END_X = 0.20;                                   // top: grip off the midline (m): over the shoulders
 
 const REC = reclined({ back: BACK, seatTilt: SEAT_TILT, seatTop: SEAT_TOP, trunk: TRUNK });
@@ -103,6 +107,23 @@ const startArmPhantom = (() => {
   return runs.map(r => ({ type: 'line', pts: r.map(p => [0, -p[1], p[0]]), cls: 'eq-line m-line', z: 'front' }));
 })();
 
+// Mistake (card plate.mistake, c4): the low back arches away from the pad as the dumbbells go up. The pelvis tips
+// forward MIS_TILT on the seat (seat landmark stays on the seat), the lumbar spine extends until the upper back is back
+// on the pad (trunk solved), so the low back and the buttocks leave the pad. Arms keep the overhead grip.
+const MIS_TILT = 10;                                  // pelvis tips forward (deg)
+const bis = (f, lo, hi) => { for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; } return (lo + hi) / 2; };
+const tiltM = REC.pose.root.tilt + MIS_TILT, rootM = { at: rootOnSeat(REC.seatPt, tiltM, H), tilt: tiltM };
+const padDist = p => (p[1] - F.back.point[1]) * F.back.normal[1] + (p[2] - F.back.point[2]) * F.back.normal[2];
+const trunkM = bis(t => padDist(landmarksOf({ ...end, root: rootM, trunk: t }, H).backUpper), -40, 20);
+const occM = n => fk(resolve(normPose({ ...end, root: rootM, trunk: trunkM, neck: n }, { height: H }), { height: H }).q, { height: H }).head([0, 0.955, -0.056]);
+const neckM = bis(n => padDist(occM(n)), -40, 40);                                  // back of the skull stays on the pad
+const mistakePose = { root: rootM, trunk: trunkM, neck: neckM };
+const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
+const gapTo = lmMis.backMid, gapCm = padDist(gapTo), gapFrom = gapTo.map((v, i) => v - F.back.normal[i] * gapCm);
+const PU = F.back.up, TICK = 2 / 146.29;
+const tick = p => ({ kind: 'line', pts: [p.map((v, i) => v - PU[i] * TICK), p.map((v, i) => v + PU[i] * TICK)] });
+export const mistakeInfo = () => ({ trunkDeg: +trunkM.toFixed(1), neckDeg: +neckM.toFixed(1), lowBackGapCm: +(gapCm * 100).toFixed(1), buttockGapCm: +(padDist(lmMis.buttock) * 100).toFixed(1) });
+
 export default {
   id: 'dumbbell_shoulder_press', name: 'Seated Dumbbell Shoulder Press', view: 'side', facing: 'right',
   camera: { x0: 170, y0: 339 },
@@ -117,7 +138,9 @@ export default {
   checks: [
     { landmark: 'seat', plane: { point: F.seat.point, normal: F.seat.normal }, pose: 'all', tol: 1 },       // pelvis ON the seat
     { landmark: 'backUpper', plane: { point: F.back.point, normal: F.back.normal }, pose: 'all', tol: 1 },  // upper back ON the pad (c1)
-    { landmark: 'buttock', plane: { point: F.back.point, normal: F.back.normal }, pose: 'all', tol: 1 },    // buttocks ON the pad (c1)
+    { landmark: 'buttock', plane: { point: F.back.point, normal: F.back.normal }, pose: 'start', tol: 1 },  // buttocks ON the pad (c1)
+    { landmark: 'buttock', plane: { point: F.back.point, normal: F.back.normal }, pose: 'end', tol: 1 },
+    { landmark: 'backMid', above: { point: F.back.point, normal: F.back.normal }, pose: 'mistake' },       // gap shown in report
     { landmark: 'head', above: { point: F.back.point, normal: F.back.normal }, pose: 'all' },               // head never inside it
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },          // feet ON the floor
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
@@ -125,6 +148,23 @@ export default {
   startParts: ['arm.r', 'arm.l'],
   ghosts: { count: 3, parts: ['arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [12, 12] },
-  callouts: [],
-  alt: 'Seated dumbbell shoulder press, side view. Sitting on an upright bench with head, back and hips on the pad and feet flat on the floor, the lifter presses the dumbbells from shoulder level, elbows a little in front, to straight arms directly over the shoulders.',
+  measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'fully straight', expect: 180 },
+  callouts: [
+    { key: 'back', text: 'Back<br>on pad', anchor: 'backUpper', cue: 'Keep your head, shoulders and buttocks on the bench.' },
+    { key: 'elbows', text: 'Elbows<br>forward', anchor: 'start:elbow.r', cue: 'Point your elbows slightly in front of you, not straight out.' },
+    { key: 'lockout', text: 'Full<br>lockout', anchor: 'wrist.r', cue: 'Press until your elbows are fully straight.' },
+  ],
+  tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
+  mistake: {
+    pose: mistakePose,
+    guides: [
+      { kind: 'line', pts: [gapFrom, gapTo] }, tick(gapFrom), tick(gapTo),                 // pad-to-low-back gap
+    ],
+    tells: [
+      { key: 'arch', text: 'Back<br>off pad', anchor: gapFrom, cue: 'Your low back arches away from the pad as you press.' },
+      { key: 'hips', text: 'Hips tip<br>forward', anchor: { at: 'navel', pose: 'mistake' }, cue: 'Your hips tip forward and your belly pushes out.' },
+    ],
+  },
+  pilot: { note: 'Callouts and Mistake provisional: card not yet critic-verified. Bench angle 10° not in the card sources' },
+  alt: 'Seated dumbbell shoulder press, side view. Sitting upright, head, back and hips on the pad, feet flat, the lifter presses the dumbbells from shoulder level, elbows slightly forward, to straight arms directly over the shoulders.',
 };
