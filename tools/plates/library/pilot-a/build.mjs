@@ -35,6 +35,7 @@ export function flagsOf(entry, measures, spec) {
   if (out('boxed', measures.boxed)) f.push({ id: 'F4', text: `${measures.boxed} hand-placed labels, approved up to ${ENVELOPE.boxed[1]}` });
   if (spec.view !== entry.view) f.push({ id: 'F6', text: `Drawn in ${spec.view} view; the census says ${entry.view}` });
   if (spec.pilot?.drawableFault) f.push({ id: 'F7', text: `Mistake is not the card's top fault (drawable-fault rule): ${spec.pilot.drawableFault}` });
+  for (const n of entry.notes ?? []) f.push({ id: 'Note', text: n });
   return f;
 }
 
@@ -52,15 +53,13 @@ async function cardShots(browser, file, ids, { mistake = true, paper = true } = 
   for (const id of ids) out[id] = { dark: await shot(id, ' .plate-fit') };
   if (mistake) for (const id of ids) { await page.click(`#${id}-mistake`); out[id].mistake = await shot(id, ' .plate-fit'); await page.click(`#${id}-mistake`); }
   if (paper) { await page.click('#theme-paper'); for (const id of ids) out[id].paper = await shot(id, ' .plate-fit'); await page.click('#theme-silent-black'); }
-  // WebP (lossy, q 0.92) through the browser's own encoder: about a quarter of the PNG bytes for line art
-  for (const id of ids) for (const k of Object.keys(out[id])) {
-    const url = await page.evaluate(async b64 => { const im = new Image(); im.src = `data:image/png;base64,${b64}`; await im.decode();
-      const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext('2d').drawImage(im, 0, 0); return c.toDataURL('image/webp', 0.92); }, out[id][k].toString('base64'));
-    out[id][k] = url;
-  }
+  for (const id of ids) for (const k of Object.keys(out[id])) out[id][k] = await webp(page, out[id][k]);
   await ctx.close();
   return out;
 }
+// WebP (lossy, q 0.92) through the browser's own encoder: about a quarter of the PNG bytes for line art
+const webp = (page, png) => page.evaluate(async b64 => { const im = new Image(); im.src = `data:image/png;base64,${b64}`; await im.decode();
+  const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext('2d').drawImage(im, 0, 0); return c.toDataURL('image/webp', 0.92); }, png.toString('base64'));
 const img = (url, alt, cls) => `<img class="${cls}" alt="${esc(alt)}" src="${url}">`;
 
 const SHEET_CSS = `
@@ -120,10 +119,15 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
     shots = await cardShots(browser, platesFile, LIST.map(p => p.id.replace(/_/g, '-')));
     const need = [...new Set(LIST.map(p => APPROVED_CHROME[p.closest] ?? p.closest.replace(/_/g, '-')))];
     approved = await cardShots(browser, FIXTURE, need, { mistake: false, paper: false });
+    // extras: go/no-go alternates (their plate alone, Silent Black, from the engine report) and preview images
+    const altSpecs = LIST.flatMap(p => (p.extras ?? []).filter(x => x.spec).map(x => x.spec));
+    if (altSpecs.length) await reportPlates(altSpecs.map(specPath), { shotsDir: join(OUT, 'shots') });
+    const page = await (await browser.newContext()).newPage();
+    for (const p of LIST) for (const x of p.extras ?? []) x.url = await webp(page, readFileSync(x.spec ? join(OUT, 'shots', `${x.spec}-dark-plate.png`) : join(here, x.image)));
   } finally { await browser.close(); }
 
   // 5. the sheet: the plates page with a row per card (card + aside), heading with the plates page sha
-  const sheetHeading = { ...heading, title: 'M/ARC Library Plates · Pilot A sheet', intro: `${heading.intro}</p><p>Each row: the plate as it will ship (live), its Mistake, a Paper thumbnail, the closest approved plate and every flag. Plates page sha256 <span class="pg-sha">${pageSha}</span> (${plates.length.toLocaleString('en')} B); the cards on this sheet are byte-identical to that page.` };
+  const sheetHeading = { ...heading, title: 'M/ARC Library Plates · Pilot A sheet', intro: `${heading.intro}</p><p>Each row: the plate as it will ship (live), its Mistake, a Paper thumbnail, the closest approved plate and every flag. Research: the verified cards at claude/libht-research e2a70bc. Plates page sha256 <span class="pg-sha">${pageSha}</span> (${plates.length.toLocaleString('en')} B); the cards on this sheet are byte-identical to that page.` };
   let sheet = (await buildPlatesPage({ groups, sources, specs, heading: sheetHeading })).html.toString();
   sheet = sheet.replace('</style>', `${SHEET_CSS}</style>`);
   for (const p of LIST) {
@@ -136,6 +140,7 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
     <figure>${img(s.mistake, `${spec.name}: Mistake, Silent Black`, 'shot')}<figcaption>Mistake · ${esc((spec.mistake?.tells ?? []).map(t => t.text.replace(/<br\s*\/?>/g, ' ')).join(' · '))}</figcaption></figure>
     <figure>${img(approved[apId].dark, `Closest approved plate: ${p.closest}`, 'shot')}<figcaption>Closest approved · ${esc(p.closest.replace(/_/g, ' '))}</figcaption></figure>
     <figure>${img(s.paper, `${spec.name}: Paper theme`, 'shot')}<figcaption>Paper · normal</figcaption></figure>
+    ${(p.extras ?? []).map(x => `<figure>${img(x.url, x.caption, 'shot')}<figcaption>${esc(x.caption)}</figcaption></figure>`).join('')}
   </div>
 </aside>`;
     const re = new RegExp(`(<article class="sheet-card" id="card-${cid}"[\\s\\S]*?</article>)`);

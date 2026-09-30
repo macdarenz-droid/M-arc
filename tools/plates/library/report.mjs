@@ -31,7 +31,7 @@ const loadSpec = async (ref, mirror) => ref.startsWith('golden:')
   ? (await import(pathToFileURL(join(mirror, 'exercises', `${ref.slice(7)}.mjs`)).href)).default
   : (await import(`${pathToFileURL(resolve(ref)).href}?t=${Date.now()}`)).default;
 
-/** Report every spec; shotsDir (optional) receives <id>-dark.png, <id>-paper.png, <id>-mistake-dark.png. */
+/** Report every spec; shotsDir (optional) receives <id>-dark.png, <id>-paper.png, <id>-mistake-dark.png and each one's plate alone (<name>-plate.png). */
 export async function reportPlates(refs, { shotsDir = null, selected = {} } = {}) {
   const bad = verifyVendor();
   if (bad.length) throw new Error(`vendored engine is not the golden lock:\n${bad.join('\n')}`);
@@ -83,7 +83,7 @@ export async function reportPlates(refs, { shotsDir = null, selected = {} } = {}
         if (!m.font) issues.push('font-not-loaded');
         if (m.wide > 390) issues.push(`horizontal-scroll:${m.wide}`);
         if (!m.panelFits) issues.push('sheet-overflows');
-        if (shotsDir) await page.screenshot({ path: join(shotsDir, `${j.name}.png`) });
+        if (shotsDir) { await page.screenshot({ path: join(shotsDir, `${j.name}.png`) }); await page.locator('.plate').screenshot({ path: join(shotsDir, `${j.name}-plate.png`) }); }
         await ctx.close();
         const rep = plate.report;
         result.renders.push({ name: j.name, theme: j.theme, mistake: j.mistake, selected: j.selected, browserIssues: issues, engineIssues: rep.issues });

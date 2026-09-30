@@ -1,0 +1,492 @@
+{
+  "id": "dumbbell_fly",
+  "libId": "lib_dumbbell_fly",
+  "name": "Dumbbell Fly",
+  "family": "chest_adduction (handwritten, no template)",
+  "tier": "A",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Lie on a flat bench, feet firmly on the floor, spine neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-fly",
+          "text": "lie supine (on your back) on a flat bench with your feet placed firmly on the floor or upon a raised platform to allow you to maintain a neutral (flat to normal) spine",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Shoulder blades down and back; head, shoulders, buttocks and feet keep contact throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-fly",
+          "text": "Depress and retract your scapulae (pull shoulders down and back) to make firm contact with the bench. Your head, shoulders, butt and feet should make contact with the bench and floor/riser throughout the exercise.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Closed grip with thumbs wrapped; press to shoulder-width with straight arms, then turn the palms to face each other with a slight elbow bend and neutral wrists.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-fly",
+          "text": "Grasp each dumbbell with a closed, pronated grip (palms facing forward, thumbs wrapped around the handle), pressing the dumbbells to a position shoulder-width apart with your elbows extended.",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-lying-fly",
+          "text": "Externally rotate the arms (rotate your elbows to face outward and palms to face inward), slightly flexing the elbows, but maintaining a neutral wrist position",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Lower slowly in a wide arc until the dumbbells are level with the shoulders or chest, dumbbells parallel.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-fly",
+          "text": "Inhale and slowly lower the dumbbells in unison in a wide arc until they lie level with your shoulders or chest. Keep the dumbbells parallel with each other during the movement.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the same slight elbow bend on the way down and up; raise slowly back along the arc.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-fly",
+          "text": "Maintain your slightly flexed elbows, neutral wrist position and contact of your head, shoulder, butt and feet with the bench and floor/riser.",
+          "where": "Step 3"
+        },
+        {
+          "source": "ace-lying-fly",
+          "text": "Exhale and slowly raise the dumbbells upward in a wide arc back to your starting position, keeping the elbows slightly flexed",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "A way out: a spotter behind, hands close to the wrists without touching.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-fly",
+          "text": "A spotter should adopt a split-stance position or half-kneeling position with the hands positioned as close to the most distal (wrist) joint. Keep the hands near, but not touching the wrists unless needed.",
+          "where": "safety note"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Pectoralis major and anterior deltoid activation in the fly did not differ from the bench presses, but the fly had less relative time of activation and suits an auxiliary role.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "welsch2005"
+      ],
+      "quotes": [
+        {
+          "source": "welsch2005",
+          "text": "Motor unit activation of both muscles was not significantly different during all 3 lifts. However, dumbbell flys had significantly less relative time of activation than did barbell or dumbbell bench presses.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "In trained men the barbell bench produced higher pec, front deltoid and triceps activity than the dumbbell fly, while the biceps worked more in the fly.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "solstad2020"
+      ],
+      "quotes": [
+        {
+          "source": "solstad2020",
+          "text": "The results showed a higher muscle activation in the whole movement and the majority of the lifting phases for pectoralis major, deltoids anterior, and triceps brachii for the BBP compared to the DF",
+          "where": "abstract"
+        },
+        {
+          "source": "solstad2020",
+          "text": "the antagonist biceps brachii showed a higher muscle activation (57-86 %, p ≤ 0.05) in the DF compared to the BBP",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The shoulder is one of the most often injured areas in resistance training (up to 36% of documented injuries), and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-lying-fly",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/21/lying-chest-fly/",
+      "title": "Lying Chest Fly, ACE Exercise Library",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "welsch2005",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15903389/",
+      "title": "Electromyographic activity of the pectoralis major and anterior deltoid muscles during three upper-body lifts",
+      "kind": "peer-reviewed",
+      "year": 2005,
+      "pmid": "15903389",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "solstad2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33239937/",
+      "title": "A Comparison of Muscle Activation between Barbell Bench Press and Dumbbell Flyes in Resistance-Trained Males",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": "33239937",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "Census view is front: the arc opens sideways, so arc depth relative to the shoulders and the fixed elbow bend only read from the head or foot end (c4, c5).",
+    "equipment": "Flat bench, dumbbell per hand, feet flat (c1).",
+    "start": "Supine, five points in contact (c2); arms up, dumbbells shoulder-width apart, palms facing each other, elbows slightly bent (c3).",
+    "end": "Dumbbells lowered in a wide arc to level with the shoulders or chest, same slight elbow bend (c4, c5).",
+    "checkpoints": [
+      {
+        "label": "Soft elbows",
+        "what": "A slight elbow bend that stays the same all the way.",
+        "claim": "c5"
+      },
+      {
+        "label": "Stop at chest level",
+        "what": "Lower until the dumbbells are level with the shoulders or chest, no deeper.",
+        "claim": "c4"
+      },
+      {
+        "label": "Dumbbells parallel",
+        "what": "Both dumbbells stay parallel, palms facing each other, through the whole arc.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Lowering the dumbbells below shoulder and chest level at the bottom of the arc.",
+      "why": "ACE sets the bottom of the arc at shoulder or chest level, and this goes past it. How often it happens is not measured in any source read.",
+      "claim": "c4",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Elbow bend never changes",
+        "claim": "c5"
+      },
+      {
+        "text": "Dumbbells stop level with chest",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 0,
+      "claim": "c10"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed grip; palms turned to face each other for the arc (c3).",
+    "width": "Dumbbells shoulder-width apart at the top (c3).",
+    "thumb": "Wrapped (c3).",
+    "handContact": "Handle across the middle of the palm (hold archetype default, not from this card's sources).",
+    "wrist": "Neutral throughout (c3, c5).",
+    "claims": [
+      "c3",
+      "c5"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Lie on a flat bench, feet flat on the floor.",
+      "claim": "c1"
+    },
+    {
+      "step": "Shoulder blades down and back.",
+      "claim": "c2"
+    },
+    {
+      "step": "Press the dumbbells up to shoulder-width, thumbs wrapped.",
+      "claim": "c3"
+    },
+    {
+      "step": "Turn the palms to face each other and bend the elbows slightly.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Five points of contact.",
+      "claim": "c2"
+    },
+    {
+      "point": "Same slight elbow bend throughout.",
+      "claim": "c5"
+    },
+    {
+      "point": "Dumbbells stay parallel.",
+      "claim": "c4"
+    },
+    {
+      "point": "Wrists neutral.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Bending the elbows more as the weight comes down (turning it into a press).",
+      "fix": "Keep the same slight bend; go lighter if you can't.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Dropping fast into the bottom.",
+      "fix": "Lower slowly.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Going below chest level.",
+      "fix": "Stop level with the shoulders or chest.",
+      "claim": "c4"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "chest",
+        "claim": "c7"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c7"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Chest",
+        "means": "The target muscle is working.",
+        "fix": null,
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Pain at the front of the shoulder at the bottom",
+        "means": "Usually a warning sign; the shoulder is one of the most often injured areas in lifting.",
+        "fix": "Stop the set. Go lighter and stop at chest level.",
+        "claim": "c11",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
+      "claim": "c11"
+    },
+    {
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; the dumbbells travel over the chest.",
+      "claim": "c12"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "fly-elbow-bend",
+      "kind": "posture",
+      "right": "Slight, fixed elbow bend.",
+      "wrong": "Elbows bent deeply, pressing.",
+      "claim": "c5"
+    },
+    {
+      "key": "fly-depth",
+      "kind": "posture",
+      "right": "Dumbbells level with the chest.",
+      "wrong": "Dumbbells well below chest level.",
+      "claim": "c4"
+    },
+    {
+      "key": "fly-five-point",
+      "kind": "posture",
+      "right": "Head, shoulders, buttocks on the bench, feet flat.",
+      "wrong": "Hips lifted off the bench.",
+      "claim": "c2"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: chest primary, front_delts secondary; c7 measured both. Biceps work more in the fly than the bench (c8), but as an antagonist, so not added. No change."
+  },
+  "anchorSource": "ace-lying-fly"
+}

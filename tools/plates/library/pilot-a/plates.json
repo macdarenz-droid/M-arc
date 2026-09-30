@@ -1,5 +1,5 @@
 {
- "note": "Pilot A (library plan 6.1, card LIB-8). tier: content.md appendix B lists (A 47, B 27, C the rest); closest: census.json closestApproved; view: census view; class: the new pose class, rule or rig the plate anchors (plan 2.1, 2.2).",
+ "note": "Pilot A (library plan 6.1, card LIB-8). tier: content.md appendix B lists (A 47, B 27, C the rest); closest: census.json closestApproved; view: census view; class: the new pose class, rule or rig the plate anchors (plan 2.1, 2.2). extras: other renders shown beside the plate on the sheet (go/no-go alternates as spec ids, previews as image files in evidence/).",
  "plates": [
   {
    "id": "dumbbell_bench_press",
@@ -69,7 +69,13 @@
    "tier": "A",
    "closest": "machine_chest_press",
    "view": "front",
-   "class": "view conflict go/no-go (supine)"
+   "class": "view conflict go/no-go (supine)",
+   "extras": [
+    {
+     "spec": "dumbbell_fly__alt",
+     "caption": "Front view (census view): no-go"
+    }
+   ]
   },
   {
    "id": "dumbbell_biceps_curl",
@@ -97,7 +103,16 @@
    "tier": "C",
    "closest": "lat_pulldown",
    "view": "side",
-   "class": "rope (PUSHDOWN child)"
+   "class": "rope (PUSHDOWN child)",
+   "extras": [
+    {
+     "image": "evidence/rope-pushdown-poly-silent-black.png",
+     "caption": "Preview: rope drawn with the LIB-25 poly primitive (PR #120, 8480052)"
+    }
+   ],
+   "notes": [
+    "Rope does not read as a rope at 390 px (drawn with the dumbbell primitive); the fix is the LIB-25 poly primitive, previewed beside it"
+   ]
   },
   {
    "id": "pec_fly",
@@ -111,7 +126,13 @@
    "tier": "C",
    "closest": "lateral_raise",
    "view": "front",
-   "class": "view conflict go/no-go (hinge)"
+   "class": "view conflict go/no-go (hinge)",
+   "extras": [
+    {
+     "spec": "bent_over_dumbbell_rear_delt_fly__alt",
+     "caption": "Front view (census view): no-go"
+    }
+   ]
   },
   {
    "id": "reverse_lunge",
@@ -134,5 +155,6 @@
    "view": "side",
    "class": "cycle plate"
   }
- ]
+ ],
+ "cards": "cards/ = verified research cards copied from claude/libht-research e2a70bc"
 }
