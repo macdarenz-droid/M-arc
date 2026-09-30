@@ -14,6 +14,13 @@
 //   - thumb: the card calls thumbless "an option some coaches use"; the architecture's `hang` archetype (3.1) says
 //     "wrapped, always" and C4 fails a hang exercise that offers `over`. So thumbless is shown on the thumb page as
 //     information with its risk, never offered as an option.
+//   - 2026-09-30, owner: "shorter, concept first". Every shown line is cut to the copy-lint.mjs limits; no new facts.
+//     Dropped: mistake 'kip' (the Top zoom, the pinch row, the still-hang setup step and the neck risk keep it); rows
+//     'biceps' (the feel line keeps "elbows to your ribs"), 'forearms' (the slip mistake and the Hand zoom keep it) and
+//     'low-back' (the still-hang step); setup steps 'reach the bar' and 'grip' (the grip line says it). The Hand zoom's
+//     feelRow pointed to 'forearms'; it now points to the kept wrist row, whose first cause is this zoom's Wrong picture
+//     (same prompt as the hanging leg raise and the cable row). The wrist limit keeps only the end-the-set rule; the
+//     false grip (wrist curled over the bar) stays on the thumb page.
 // Point references use the plate engine's form ({ at, pose, off }), SPEC.md 3.
 import plate from './pull_up.mjs';
 import { handGeometry } from '../engine/hand.mjs';
@@ -52,24 +59,24 @@ export const SOURCES = {
 };
 /** "Where this comes from": one plain evidence label per source, from the card's evidence notes (shown with the cite). */
 export const EVIDENCE_LABELS = {
-  youdas2010: { tag: 'DATA', text: 'Muscle activity study. The lats do the most work in a pull-up; the biceps work harder when the palms face you.' },
-  dickie2017: { tag: 'DATA', text: 'Muscle activity study. Overhand, underhand, neutral and rope grips work the muscles about the same. Not a width study.' },
-  snarr2017: { tag: 'DATA', text: 'Muscle activity study at about 1.5 times shoulder width. Towel and strap pull-ups change little for the lats.' },
-  prinold2016: { tag: 'MECH', text: '11 people. Wide grips put the shoulder in positions linked to pinching. Movement data, not injury counts.' },
-  urbanczyk2020: { tag: 'WEAK', text: 'Computer model of 11 men, no muscle readings. A wide grip gave the lats a little more work.' },
-  difonza2026: { tag: 'WEAK', text: 'Review. Pull-up grips look broadly similar for the lats. Only the summary was read.' },
-  kolber2010: { tag: 'CONSENSUS', text: 'Review of shoulder injuries from weight training. Poor technique is a named risk.' },
-  odriscoll1992: { tag: 'DATA', text: 'Grip strength study. Grip is strongest with the wrist a little back; bending it further any way weakens it.' },
-  oranchuk2022: { tag: 'WEAK', text: 'Hook grip in the power clean. The gain was timing, not force, so it adds nothing to a pull-up.' },
+  youdas2010: { tag: 'DATA', text: 'Muscle study. Lats work most. Biceps work more with palms facing you.' },
+  dickie2017: { tag: 'DATA', text: 'Muscle study. Four hand positions worked the muscles alike. Not about width.' },
+  snarr2017: { tag: 'DATA', text: 'Grip 1.5 times shoulder width. Towel or strap: same lat work.' },
+  prinold2016: { tag: 'MECH', text: '11 people. Wide grips put shoulders in pinch-prone positions. No injury data.' },
+  urbanczyk2020: { tag: 'WEAK', text: 'Computer model, 11 men. Wide grips gave the lats a bit more.' },
+  difonza2026: { tag: 'WEAK', text: 'Review, summary only. Pull-up grips look similar for the lats.' },
+  kolber2010: { tag: 'CONSENSUS', text: 'Review of weight-training shoulder injuries. Poor technique is a named risk.' },
+  odriscoll1992: { tag: 'DATA', text: 'Grip study. Strongest with the wrist a little back, weaker other ways.' },
+  oranchuk2022: { tag: 'WEAK', text: 'Power clean study. Hook grip helped timing, not force. Not needed here.' },
   'catalyst-pullup': { tag: 'CONSENSUS', text: 'Coaching guide. Hands just outside the shoulders, head level, full lowering.' },
   'catalyst-scap': { tag: 'CONSENSUS', text: 'Coaching guide. Setting the shoulder blades before the pull.' },
   'catalyst-neutral': { tag: 'CONSENSUS', text: 'Coaching guide. Neutral handles are often easier on the elbows.' },
-  'nasm-chinup': { tag: 'CONSENSUS', text: 'Coaching guide. Kipping and craning the neck are faults; assisted and lowering-only reps for beginners.' },
+  'nasm-chinup': { tag: 'CONSENSUS', text: 'Coaching guide. No kipping or neck craning. Beginners: assisted or lowering-only reps.' },
   'baechle-earle': { tag: 'CONSENSUS', text: 'Textbook. Thumbs around the bar for every grip.' },
   'wiki-hook-grip': { tag: 'WEAK', text: 'Encyclopedia page. What the hook grip is and where it is used.' },
   'wiki-muscle-up': { tag: 'WEAK', text: 'Encyclopedia page. What the gymnastics false grip is.' },
   'rogue-false-grip': { tag: 'CONSENSUS', text: 'Equipment maker coaching. The gymnastics false grip is for rings.' },
-  'bullbar-calluses': { tag: 'WEAK', text: 'Equipment maker blog. A bar deep in the palm pinches the skin and tears calluses.' },
+  'bullbar-calluses': { tag: 'WEAK', text: 'Equipment blog. Bar deep in the palm pinches skin and tears calluses.' },
   'nhs-wrist-pain': { tag: 'CONSENSUS', text: 'When wrist pain needs a check.' },
   'nhs-shoulder-pain': { tag: 'CONSENSUS', text: 'When shoulder pain needs a check.' },
   'nhs-elbow-pain': { tag: 'CONSENSUS', text: 'When elbow pain needs a check.' },
@@ -109,7 +116,7 @@ const FAULT_FINGERTIP = {
   key: 'fingertip-slip', label: 'Slipping out',
   pose: { wrist: { ext: 50, dev: 0 }, contactAt: 1.45, fingers: { curl: 1, open: 0.45 }, thumb: 'over' },
   markers: ['slip-arrow', 'lever-arc'],
-  alt: 'Bar slid out to the fingertips, fingers peeling open, thumb loose on top, the hand hinging far back. The grip is about to fail.',
+  alt: 'Bar slid out to the fingertips, fingers peeling open, thumb loose on top. The hand hinges far back. The grip is about to fail.',
 };
 FAULT_FINGERTIP.pose.forearm = hangForearm(mergeHand(BASE_POSE, FAULT_FINGERTIP.pose));
 // Second wrong hand, page 2 (card zoom "hand", right fault): bar jammed deep in the middle of the palm; the skin at
@@ -122,7 +129,7 @@ const FAULT_PALM_DEEP = {
   pose: { contactAt: 0.3, thumb: 'wrapped' },
   markers: ['skin-ridge'],
   fingerBase: true,
-  alt: 'Bar jammed deep in the middle of the palm, well below the base of the fingers. The skin at the base of the fingers bunches into a ridge that pinches, which is how calluses tear.',
+  alt: 'Bar jammed deep in the middle of the palm, below the finger base. The skin at the finger base bunches into a pinching ridge, where calluses tear.',
 };
 FAULT_PALM_DEEP.pose.forearm = hangForearm(mergeHand(BASE_POSE, FAULT_PALM_DEEP.pose));
 // Thumb page (5.1, `hang` only): four labelled options, drawn with the same hand. Full grip is the default.
@@ -135,14 +142,14 @@ export const THUMB_PAGE = [
   // `thumbless-opening` (3.1 hang faults): fingers partly open, the bar rolling out toward the tips.
   { mode: 'over', title: 'Thumbless', note: 'Can open late in a set', risk: true, markers: ['slip-arrow'],
     pose: withHang(mergeHand(BASE_POSE, { thumb: 'over', fingers: { open: 0.3 } })),
-    alt: 'Thumbless: the thumb lies on top with the fingers. Late in a set on a sweaty bar the fingers start to peel open and the bar rolls out.' },
+    alt: 'Thumbless: the thumb lies on top with the fingers. Late in a set on a sweaty bar, the fingers peel open. The bar rolls out.' },
   { mode: 'hook', title: 'Hook', note: 'Heavy barbell pulls only', thumbOverBar: { tipAngle: -45 },
-    pose: { ...RIGHT_POSE, thumb: 'hook' }, alt: 'Hook grip: the thumb wraps round the bar first and the index and middle fingers close over it, pinning it. For heavy barbell pulls only, not pull-ups.' },
+    pose: { ...RIGHT_POSE, thumb: 'hook' }, alt: 'Hook grip: the thumb wraps round the bar first. The index and middle fingers close over it, pinning it. For heavy barbell pulls only, not pull-ups.' },
   // Gymnastics false grip: the wrist flexed about 75 degrees and hooked over the bar, which sits on the heel of the
   // hand; the forearm hangs under the bar (hangForearm). The note carries the card's "skip with a sore wrist".
   { mode: 'false-grip', title: 'Gymnastics false grip', note: 'Rings only. Skip with a sore wrist.', risk: true,
     pose: withHang(mergeHand(BASE_POSE, { wrist: { ext: -75, dev: 0 }, contactAt: 0.2, thumb: 'over' })),
-    alt: 'Gymnastics false grip: the wrist curls forward over the bar, which sits on the heel of the hand. For muscle-ups on rings only. Skip it with a sore wrist.' },
+    alt: 'Gymnastics false grip: the wrist curls forward over the bar. The bar sits on the heel of the hand. For muscle-ups on rings only. Skip it with a sore wrist.' },
 ];
 
 // ---- posture zoom poses (PoseOverride, 4.3), merged over the plate's own start or end pose ----
@@ -185,24 +192,22 @@ const CRANE = { root: { at: [0, 1.68 - 0.045, -0.03], tilt: -2 }, trunk: -4, nec
 
 /* ---------------------------------------------------------------- handling mistakes, risks (plan 2.4 items 4, 7) --
  * From the verified card's handlingMistakes (grip/research/pull_up.json): the mistake, its fix and what it can hurt,
- * cut to the copy limits (title <= 10 words; fix and risk <= 30 words and 2 sentences; no citations in user copy, C7;
+ * cut to the copy limits (copy-lint.mjs: at most 3 mistakes, title <= 5 words, fix <= 12; at most 3 risks, <= 14 words; no citations in user copy, C7;
  * no red-flag wording, C8: the shared RED_FLAG and DISCLAIMER come from howto/shared.mjs). `zoom` = "Show me" target. */
 const MISTAKES = [
-  { key: 'drop', title: 'Dropping into a loose hang and bouncing out', zoom: 'shoulders', claim: C(['MECH', 'CONSENSUS'], ['prinold2016', 'catalyst-scap']),
-    fix: 'Lower yourself under control to straight arms, then pull your shoulders a little down from your ears before the next rep.' },
-  { key: 'wide', title: 'Grip too wide, elbows flaring out', claim: C(['MECH', 'WEAK'], ['prinold2016', 'urbanczyk2020', 'difonza2026']),
-    fix: 'Bring your hands in to just outside your shoulders, so your forearms are near vertical in the middle of the pull.' },
-  { key: 'kip', title: 'Kicking, or reaching with your chin', zoom: 'top', claim: C(['CONSENSUS'], ['nasm-chinup', 'catalyst-pullup']),
-    fix: 'Keep your legs together and still, and stop where your chin clears the bar with your head level. Use a band or an assisted machine if you need to.' },
-  { key: 'slip', title: 'Bar sliding into your fingertips', zoom: 'hand', claim: C(['DATA', 'WEAK'], ['odriscoll1992', 'bullbar-calluses']),
-    fix: 'Lay the bar across the top of your palm where your fingers start, close your fingers and wrap your thumb. Chalk if your hands sweat.' },
+  { key: 'drop', title: 'Bouncing at the bottom', zoom: 'shoulders', claim: C(['MECH', 'CONSENSUS'], ['prinold2016', 'catalyst-scap']),
+    fix: 'Lower slowly to straight arms.' },   // 'shoulders down, then pull' is setup step 5 and the traps row
+  { key: 'wide', title: 'Grip too wide', claim: C(['MECH', 'WEAK'], ['prinold2016', 'urbanczyk2020', 'difonza2026']),
+    fix: 'Hands just outside your shoulders.' },
+  { key: 'slip', title: 'Bar slipping to fingertips', zoom: 'hand', claim: C(['DATA', 'WEAK'], ['odriscoll1992', 'bullbar-calluses']),
+    fix: 'Set the bar where your fingers start.' },
 ];
 const RISKS = [
-  { key: 'bottom', text: 'At the bottom your arms are fully overhead, where the space under the shoulder roof is smallest. Dropping into it fast jerks your body weight through the joint.',
+  { key: 'bottom', text: 'Dropping into the bottom jerks your weight through the shoulder.',
     claim: C(['MECH', 'CONSENSUS'], ['prinold2016', 'kolber2010'], 'The link to bouncing is coaching consensus.') },
-  { key: 'wide', text: 'A wide grip with the elbows flared out is linked with a higher risk of the shoulder pinching.',
+  { key: 'wide', text: 'Wide grips are linked to shoulder pinching.',
     claim: C(['MECH'], ['prinold2016'], 'The authors link the movement pattern to impingement risk; injuries were not measured.') },
-  { key: 'neck', text: 'Reaching with your chin strains your neck, and a grip in the fingertips can slip off a sweaty bar.',
+  { key: 'neck', text: 'Chin reaching strains your neck. Fingertip grips can slip off.',
     claim: C(['CONSENSUS', 'DATA'], ['nasm-chinup', 'catalyst-pullup', 'odriscoll1992']) },
 ];
 
@@ -217,46 +222,42 @@ export default {
     handle: 'bar-32',                  // A4; the plate draws the same 32 mm bar
     loadAxis: 'across',                // archetype default for `hang` (3.1.1): no push lever check
     overBody: false,
-    width: { text: 'Hands just outside your shoulders, about 1.5 times shoulder width. Seen from the front, your forearms should be close to vertical halfway up, when your elbows are about level with your shoulders.',
+    width: { text: 'Hands just outside your shoulders, about 1.5 times shoulder width. Halfway up, seen from the front, your forearms are near vertical.',
       claim: C(['CONSENSUS', 'DATA', 'MECH'], ['catalyst-pullup', 'snarr2017', 'prinold2016', 'urbanczyk2020', 'difonza2026'], 'Width data is thin and mixed: Urbanczyk 2020 is modelling only, Di Fonza 2026 abstract only. The default rests on shoulder safety (Prinold and Bull 2016, mechanism) and coach consensus.') },
     thumb: { mode: 'wrapped', claim: C(['CONSENSUS'], ['baechle-earle', 'catalyst-pullup'], 'No study has measured thumb position on a pull-up. Thumbless, hook and gymnastics false grip are shown on the thumb page as information only (C4).') },
     contact: 'finger-base',
-    wrist: { ext: [0, 35], dev: [-10, 10], limitText: "Level or tipped back a little is fine; don't force it straight. If the bar slides toward your fingertips and your hand hinges far back, end the set. Don't curl your wrist over the bar.",
+    wrist: { ext: [0, 35], dev: [-10, 10], limitText: 'Bar sliding to your fingertips? End the set.',
       claim: C(['DATA', 'CONSENSUS'], ['odriscoll1992', 'rogue-false-grip'], "O'Driscoll 1992: self-chosen grip about 35 degrees back, 10 to 15 degrees away from it weakens grip. Both limits are coaching consensus; no study has set wrist limits in a hang.") },
     pose: RIGHT_POSE,
     faults: [FAULT_FINGERTIP, FAULT_PALM_DEEP],
-    gripLine: 'Hands just outside your shoulders, palms facing away. Lay the bar across the top of your palm where your fingers start, close your hand and wrap your thumb under the bar.',
-    cue: 'Hook it with your fingers, then wrap your thumb.',   // `hang` archetype cue (3.1) and the card's cue
+    gripLine: 'Hook the bar where your fingers start, like carrying a bag. Wrap your thumb: you hang from the bar.',
+    cue: 'Hook it, then wrap your thumb.',   // `hang` archetype cue (3.1) and the card's cue
   },
   contacts: ['hang-support'],
   setup: [
-    { kind: 'adjust', text: 'Pick a bar you can reach with a small jump or from a step, high enough that your feet clear the floor with straight arms (bend your knees if needed).',
-      claim: C(['CONSENSUS'], ['catalyst-pullup']) },
-    { kind: 'safety', text: 'Check the bar is fixed and dry. Chalk your hands if they sweat.',
+    { kind: 'safety', text: 'Bar fixed and dry? Chalk sweaty hands.',
       claim: C(['CONSENSUS', 'WEAK'], ['catalyst-pullup', 'bullbar-calluses']) },
-    { kind: 'load', text: "If you can't do a few clean reps yet, use the assisted pull-up machine or a band, or do slow lowering-only reps, instead of kicking your way up.",
+    { kind: 'load', text: "Can't do a few clean reps? Use a band or assisted machine.",
       claim: C(['CONSENSUS', 'MECH'], ['nasm-chinup', 'prinold2016'], "'A few clean reps' as the threshold is consensus. Prinold and Bull suggest assisted pull-ups for weaker people.") },
-    { kind: 'position', text: 'Stand under the bar and set your hands just outside your shoulders, palms facing away.',
+    { kind: 'position', text: 'Hands just outside your shoulders, palms away.',
       claim: C(['CONSENSUS', 'MECH'], ['catalyst-pullup', 'prinold2016']) },
-    { kind: 'grip', text: 'Lay the bar across the top of your palm where your fingers start, close your fingers over it, then wrap your thumb underneath.', zoom: 'hand',
-      claim: C(['CONSENSUS', 'WEAK'], ['baechle-earle', 'bullbar-calluses']) },
-    { kind: 'position', text: 'Hang with straight arms. Bring your legs together, slightly in front of you, and let your body go still.',
+    { kind: 'position', text: 'Hang still, legs together.',
       claim: C(['CONSENSUS'], ['catalyst-pullup', 'nasm-chinup']) },
-    { kind: 'brace', text: 'Pull your shoulders a little down away from your ears without bending your arms. Now start the rep.', zoom: 'shoulders',
+    { kind: 'brace', text: 'Arms straight, shoulders down. Then pull.', zoom: 'shoulders',
       claim: C(['CONSENSUS'], ['catalyst-scap', 'nasm-chinup']) },
   ],
   posture: [
     { key: 'width', label: 'Grip width', detail: 'Overhand grip, forearms close to vertical halfway up, when the elbows reach shoulder height. Elbows point down and a little forward, in line with the forearms.',
       anchor: { at: 'grip.r' }, claim: C(['CONSENSUS', 'MECH'], ['catalyst-pullup', 'prinold2016'], 'Front view: text checkpoint. The plate is a side view, where width does not show (5.2).') },
-    { key: 'hang', label: 'Active hang', detail: 'Arms fully straight, shoulder blades pulled slightly down, a clear gap between the ears and the tops of the shoulders.',
+    { key: 'hang', label: 'Active hang', detail: 'Arms fully straight, shoulder blades pulled slightly down. A clear gap between ears and shoulders.',
       anchor: { at: 'shoulderTop.r', pose: 'start' }, zoom: 'shoulders', claim: C(['CONSENSUS', 'MECH'], ['catalyst-scap', 'prinold2016']) },
-    { key: 'still', label: 'Body still', detail: 'Legs together and a little in front, ribs down, glutes lightly squeezed. A gentle straight line from shoulders to feet, with no swinging arc and no deep arch in the lower back.',
+    { key: 'still', label: 'Body still', detail: 'Legs together and a little in front, ribs down, glutes lightly squeezed. A gentle straight line from shoulders to feet. No swinging and no deep arch in the lower back.',
       anchor: { at: 'hip.r' }, claim: C(['CONSENSUS'], ['nasm-chinup', 'catalyst-pullup'], 'Shown by the plate Mistake layer (kick and swing), not a zoom.') },
-    { key: 'elbows', label: 'Elbows down', detail: 'In mid-pull the elbows travel down and slightly back toward the sides of the ribcage, pointing at the floor.',
+    { key: 'elbows', label: 'Elbows down', detail: 'In mid-pull the elbows travel down and slightly back toward the sides of the ribs. They point at the floor.',
       anchor: { at: 'elbow.r', off: [2, 5] }, claim: C(['CONSENSUS'], ['catalyst-pullup']) },
-    { key: 'top', label: 'Chin over bar', detail: 'At the top the chin clears the bar, upper chest rises toward it, head stays level with the neck long. The chin does not crane up and forward to reach the bar.',
+    { key: 'top', label: 'Chin over bar', detail: 'At the top the chin clears the bar and the upper chest rises toward it. The head stays level, neck long. The chin does not crane forward to reach the bar.',
       anchor: { at: 'chin' }, zoom: 'top', claim: C(['CONSENSUS'], ['catalyst-pullup', 'nasm-chinup']) },
-    { key: 'lower', label: 'Full lowering', detail: 'At the bottom the elbows are fully straight again, lowered under control, shoulders set before the next pull.',
+    { key: 'lower', label: 'Full lowering', detail: 'At the bottom the elbows are fully straight again, lowered under control. Shoulders set before the next pull.',
       anchor: { at: 'elbow.r', pose: 'start' }, claim: C(['CONSENSUS', 'MECH'], ['catalyst-pullup', 'prinold2016', 'kolber2010']) },
   ],
   feel: {
@@ -272,35 +273,23 @@ export default {
       { muscleId: 'upper_traps', plain: 'The tops of your shoulders and the sides of your neck. If they burn, you are shrugging up toward your ears.' },
       { muscleId: 'lower_back', plain: 'Your lower back should not ache. If it does, you are arching and kicking.' },
     ],
-    feelLine: 'You should feel this in the sides of your back, under your armpits. If your arms or the tops of your shoulders are doing most of it, pull your shoulders down first and then drive your elbows toward your ribs.',
+    feelLine: 'You should feel this in the sides of your back. Drive your elbows to your ribs.',
     rows: [
-      { key: 'traps', where: 'Tops of the shoulders and neck', at: { muscles: ['upper_traps'] },
-        means: "You're shrugging toward your ears and starting the pull with the shoulders up.",
-        fix: 'Pull your shoulders down a little before you bend your arms, and end the set when they start creeping up.',
+      { key: 'traps', where: 'Tops of your shoulders', at: { muscles: ['upper_traps'] },
+        means: "You're shrugging toward your ears.",
+        fix: 'Set your shoulders down before your arms bend.',
         zoom: 'shoulders', claim: C(['CONSENSUS', 'DATA'], ['catalyst-scap', 'youdas2010']) },
-      { key: 'biceps', where: 'Mostly your biceps', at: { muscles: ['biceps'] },
-        means: "You're pulling with your hands and bending the arms before the back starts working.",
-        fix: 'Start each rep by pulling your shoulders down, then drive your elbows toward your ribs. Keep your palms facing away; an underhand grip puts more work into the biceps.',
-        claim: C(['DATA', 'CONSENSUS'], ['youdas2010', 'nasm-chinup'], 'Youdas 2010: the rep starts with the lower trapezius; biceps higher in the chin-up.') },
-      { key: 'forearms', where: 'Forearms give out before your back', at: { muscles: ['forearms'] },
-        means: 'The bar has slid out toward your fingertips, so your fingers are doing all the holding.',
-        fix: 'Set the bar across the top of your palm where your fingers start, keep your wrist level and chalk up. Dead hangs on other days build grip.',
-        zoom: 'hand', claim: C(['CONSENSUS', 'DATA'], ['baechle-earle', 'odriscoll1992']) },
-      { key: 'pinch', where: 'A pinch at the front of the shoulder', at: {},   // pain, not a muscle taking over: no map mark (card)
-        means: "Your grip is too wide, or you're reaching with the chin and rolling the shoulders forward at the top.",
-        fix: 'Bring your hands in to just outside your shoulders and stop when your chin clears the bar with your head level. If it keeps hurting, stop pull-ups.',
+      { key: 'pinch', where: 'Front of your shoulder pinches', at: {},   // pain, not a muscle taking over: no map mark (card)
+        means: 'Grip too wide, or your chin reaching for the bar.',
+        fix: 'Bring your hands in, head level. If it keeps hurting, stop pull-ups.',
         zoom: 'top', redFlag: 'shoulder', claim: C(['MECH', 'CONSENSUS'], ['prinold2016', 'catalyst-pullup', 'nhs-shoulder-pain'], 'Prinold and Bull: movement data linked to impingement risk, not injury counts. The referral is the shared shoulder red flag (NHS), not the fix text (C8).') },
-      { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-        means: 'Your legs are swinging and your back arches to help you up.',
-        fix: 'Legs together and a little forward, ribs down, glutes squeezed. Use an assisted machine if you need momentum to finish reps.',
-        claim: C(['CONSENSUS'], ['nasm-chinup'], 'Swinging and the lower back: consensus, not measured.') },
-      { key: 'elbow', where: 'Inside or outside of the elbow', at: { parts: ['elbow-left', 'elbow-right'] },
-        means: "Often too much volume, a wide grip, or a grip your elbows don't like.",
-        fix: 'Try neutral handles or a shoulder-width grip and cut back the sets for a week.',
+      { key: 'elbow', where: 'Inside or outside the elbow', at: { parts: ['elbow-left', 'elbow-right'] },
+        means: 'Too many sets, or a grip your elbows dislike.',
+        fix: 'Try neutral handles or a shoulder-width grip, and fewer sets.',
         redFlag: 'elbow', claim: C(['CONSENSUS'], ['catalyst-neutral', 'nhs-elbow-pain']) },
-      { key: 'wrist', where: 'The wrist', at: { parts: ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'] },
-        means: "The bar is out in your fingertips and your hand is being bent back, you're curling the wrist over the bar, or an old wrist injury is being stretched.",
-        fix: 'Keep the bar across the top of your palm and the wrist level. With a sore wrist, use neutral handles or the assisted machine and stop if it hurts.',
+      { key: 'wrist', where: 'Your wrist', at: { parts: ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'] },
+        means: 'Bar in your fingertips, wrist curled, or an old injury.',
+        fix: "Keep your wrist level. If it's sore, use neutral handles and stop if it hurts.",
         zoom: 'hand', redFlag: true, claim: C(['CONSENSUS', 'DATA'], ['odriscoll1992', 'rogue-false-grip', 'catalyst-neutral', 'nhs-wrist-pain']) },
     ],
     libraryDiff: { add: ['forearms', 'abs'], why: 'The card adds the forearms (grip holds the whole body) and the abs (a light brace against swinging) as helpers. exercises.json lists lats primary and biceps, mid_back secondary.' },
@@ -315,17 +304,17 @@ export default {
         camera: 'side',
         thumbPage: THUMB_PAGE.map(t => t.mode),
       },
-      caption: { right: 'Bar across the top of the palm, fingers over it, thumb wrapped under.',
-        wrong: 'Bar slid to the fingertips, fingers opening, thumb loose.' },
-      captionPage2: { right: 'Bar across the top of the palm, fingers over it, thumb wrapped under.',
-        wrong: 'Bar jammed deep in the palm, skin bunched at the finger base.' },
+      caption: { right: 'Bar where fingers start, thumb wrapped.',
+        wrong: 'Bar at the fingertips, fingers opening.' },
+      captionPage2: { right: 'Bar where fingers start, thumb wrapped.',
+        wrong: 'Bar deep in the palm, skin pinched.' },
       alt: {
-        right: 'Seen from the side, hanging. Bar across the top of the palm where the fingers start, fingers over the top, thumb wrapped under to meet the index finger, wrist tipped back a little. The body weight runs straight down the forearm.',
+        right: 'Seen from the side, hanging. Bar where the fingers start, fingers over the top, thumb wrapped under. Wrist tipped back a little. Body weight hangs straight down the forearm.',
         wrong: FAULT_FINGERTIP.alt,
         wrong2: FAULT_PALM_DEEP.alt,
       },
-      feelRow: 'forearms',
-      feelPrompt: 'Forearms give out first? This is usually why.',
+      feelRow: 'wrist',
+      feelPrompt: 'Sore wrist? This is usually why.',
     },
     {
       key: 'shoulders', chip: 'Shoulders', heading: 'Shoulders: right and wrong', kind: 'posture',
@@ -349,14 +338,14 @@ export default {
         right: { text: 'Blades<br>down', anchor: { at: 'bladeLow.l' } },
         wrong: { text: 'Blades<br>high', anchor: { at: 'bladeLow.l', pose: 'mistake' } },
       },
-      caption: { right: 'Arms straight, shoulders pulled down, clear gap to the ears.',
-        wrong: 'Shoulders shrugged up to the ears, head sunk between the arms.' },
+      caption: { right: 'Shoulders down, clear gap to the ears.',
+        wrong: 'Shoulders shrugged to the ears.' },
       alt: {
-        right: 'Seen from behind, hanging with straight arms: shoulder blades pulled down the back, a clear gap between the ears and the tops of the shoulders.',
-        wrong: 'Seen from behind, the same hang shrugged: shoulders up at the ears, the head sunk between the arms, the shoulder blades riding high on the back.',
+        right: 'Seen from behind, hanging with straight arms. Shoulder blades pulled down, a clear gap between ears and shoulders.',
+        wrong: 'Seen from behind, the same hang shrugged. Shoulders up at the ears, head sunk between the arms, shoulder blades riding high.',
       },
       feelRow: 'traps',
-      feelPrompt: 'Feel it in the tops of your shoulders? This is usually why.',
+      feelPrompt: 'Shoulder tops burning? This is usually why.',
     },
     {
       key: 'top', chip: 'Top', heading: 'Top position: right and wrong', kind: 'posture',
@@ -372,14 +361,14 @@ export default {
         // anchored on the dashed face just above the chin, ahead of the solid face
         wrong: { text: 'Chin reaching', anchor: { at: 'chin', pose: 'mistake', off: [0.5, -3] } },
       },
-      caption: { right: 'Chin over the bar, head level, chest lifted toward the bar.',
-        wrong: 'Chin craning up and forward, shoulders rolled forward.' },
+      caption: { right: 'Chin over the bar, head level.',
+        wrong: 'Chin craning forward, shoulders rolled.' },
       alt: {
-        right: 'Side view at the top: chin just over the bar, head level with the neck long, chest lifted toward the bar, elbows down by the ribs.',
-        wrong: 'The chin cranes up and forward over the bar and the shoulders roll forward, drawn dashed over the right position.',
+        right: 'Side view at the top. Chin just over the bar, head level, neck long. Chest lifted toward the bar, elbows down by the ribs.',
+        wrong: 'The chin cranes up and forward over the bar, shoulders rolled forward. Drawn dashed over the right position.',
       },
       feelRow: 'pinch',
-      feelPrompt: 'A pinch at the front of the shoulder? This is usually why.',
+      feelPrompt: 'Shoulder pinching? This is usually why.',
     },
   ],
   // Chip row = the zooms in order, then "Where to feel it" (always last, 2.1). 4 chips. The card's other zooms:
@@ -387,8 +376,8 @@ export default {
   // own Mistake layer (kick and swing); "thumb" is page 3 of the Hand zoom (5.1).
   chips: ['hand', 'shoulders', 'top', 'feel'],
   copy: {
-    setupLine: 'Hang with straight arms and your legs together and still. Pull your shoulders a little down from your ears, then start the rep.',
-    mistakeLine: "Don't drop and bounce out of the bottom. Lower yourself all the way under control, set your shoulders again, then pull.",
+    setupLine: 'Hang still on straight arms, legs together. Pull your shoulders down, then start.',
+    mistakeLine: "Don't bounce out of the bottom. Lower all the way, shoulders down, then pull.",
   },
   mistakes: MISTAKES,
   risks: RISKS,

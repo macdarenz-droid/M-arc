@@ -15,6 +15,12 @@
 //     they live in the claim and in "Where this comes from".
 //   - feel: front_delts is NOT a watch muscle (A6 "fix before spec": a pinch is pain, not a muscle taking over). It is
 //     a row with no map mark, as on the pull-up.
+//   - 2026-09-30, owner: "shorter, concept first". Every shown line is cut to the copy-lint.mjs limits; no new facts.
+//     Dropped: mistake 'too-far' (its risk line and the pinch row keep "stop when your elbows stop"); rows 'traps'
+//     (the setup shoulders-down step and the plate's "Shoulders down" callout keep it) and 'row' (the swing mistake
+//     and the lean step keep the small lean); setup steps 'pick the attachment' (handleChoice.sore says it) and 'sit
+//     back down under the pad'. No zoom pointed to a dropped item. The Bar path Wrong alt no longer says "drawn
+//     dashed": that crop is drawn solid, on its own (wrong.solid).
 // Point references use the plate engine's form ({ at, pose, off }), SPEC.md 3.
 import plate from './lat_pulldown.mjs';
 import { landmarksOf, rootOnSeat } from '../engine/index.mjs';
@@ -47,20 +53,20 @@ export const SOURCES = {
 };
 /** "Where this comes from": one plain evidence label per source, from the card's evidence notes (shown with the cite). */
 export const EVIDENCE_LABELS = {
-  signorile2002: { tag: 'DATA', text: 'Muscle activity study, 10 people. A wide grip pulled to the front worked the lats most; behind the neck did not.' },
-  lusk2010: { tag: 'DATA', text: 'Muscle activity study, 12 people. Overhand beat underhand for the lats at any width; grip type barely changed the biceps.' },
-  andersen2014: { tag: 'DATA', text: 'Muscle activity study, 15 people. Narrow, medium and wide grips worked the lats about the same; the widest was a little weaker.' },
-  sperandei2009: { tag: 'DATA', text: 'Muscle activity study, 24 people. Pull to the front of the neck; behind the neck gave no lat benefit.' },
-  padovan2024: { tag: 'DATA', text: 'Muscle activity study, 14 trained men. Pulling to the front worked the main muscles more overall.' },
-  snyder2009: { tag: 'DATA', text: '8 beginners at light weights. Thinking about the back raised lat work; the biceps still helped.' },
-  lehman2004: { tag: 'DATA', text: 'Held positions, not full reps. The wide-grip pulldown had one of the best back-to-biceps ratios.' },
-  buonsenso2025: { tag: 'DATA', text: 'Muscle activity study, 40 trained men. No lat difference between seven grips; a 30 degree lean worked the rear shoulders more.' },
-  difonza2026: { tag: 'WEAK', text: 'Review. Pulling to the front is most often linked to more lat work; grip width results are mixed.' },
-  doma2013: { tag: 'DATA', text: 'Muscle activity study. In the pulldown the lats and biceps were the busiest muscles.' },
-  kolber2013: { tag: 'WEAK', text: 'A survey of lifters. Behind-the-neck pulldowns and presses went with looser front shoulders. A link, not proof.' },
-  kolber2010: { tag: 'CONSENSUS', text: 'Review of shoulder injuries from weight training. Poor technique is a named risk.' },
-  odriscoll1992: { tag: 'MECH', text: 'Grip strength study, not a pulldown. Grip is strongest with the wrist a little back and weakest curled forward.' },
-  'ace-lat-pulldown': { tag: 'CONSENSUS', text: 'Coaching guide. Thigh pad firm, lean no more than 30 degrees, elbows down, stop when the elbows stop.' },
+  signorile2002: { tag: 'DATA', text: 'Muscle study, 10 people. Front pulls beat behind the neck for lats.' },
+  lusk2010: { tag: 'DATA', text: 'Muscle study, 12 people. Overhand beat underhand for lats. Biceps barely changed.' },
+  andersen2014: { tag: 'DATA', text: '15 people. Grip widths worked lats alike. The widest lifted less.' },
+  sperandei2009: { tag: 'DATA', text: 'Muscle study, 24 people. Behind the neck gave no lat benefit.' },
+  padovan2024: { tag: 'DATA', text: 'Muscle study, 14 trained men. Front pulls worked the main muscles more.' },
+  snyder2009: { tag: 'DATA', text: '8 beginners. Thinking about the back raised lat work. Biceps still helped.' },
+  lehman2004: { tag: 'DATA', text: 'Held positions only. Wide-grip pulldowns had among the best back-to-biceps ratios.' },
+  buonsenso2025: { tag: 'DATA', text: '40 trained men. Grip made no lat difference. Leaning raised rear-shoulder work.' },
+  difonza2026: { tag: 'WEAK', text: 'Review. Front pulls most often linked to more lat work. Width: mixed.' },
+  doma2013: { tag: 'DATA', text: 'Muscle study. Lats and biceps were the busiest muscles.' },
+  kolber2013: { tag: 'WEAK', text: 'Lifter survey. Behind-the-neck lifters had looser front shoulders. A link, not proof.' },
+  kolber2010: { tag: 'CONSENSUS', text: 'Review of weight-training shoulder injuries. Poor technique is a named risk.' },
+  odriscoll1992: { tag: 'MECH', text: 'Grip study, not a pulldown. Wrist back is strongest, curled is weakest.' },
+  'ace-lat-pulldown': { tag: 'CONSENSUS', text: 'Coaching guide. Firm pad, small lean, stop when the elbows stop.' },
   'baechle-earle': { tag: 'CONSENSUS', text: 'Textbook. Thumbs around the bar for every grip.' },
   'nhs-wrist-pain': { tag: 'CONSENSUS', text: 'When wrist pain needs a check.' },
   'nhs-shoulder-pain': { tag: 'CONSENSUS', text: 'When shoulder pain needs a check.' },
@@ -87,7 +93,7 @@ const FAULT_CURLED = {
   key: 'curled-squeeze', label: 'Curled, squeezed',
   pose: { wrist: { ext: -30, dev: 0 }, contactAt: 0.8, squeeze: 'max', thumb: 'wrapped' },
   markers: ['lever-arc', 'tendon'],
-  alt: 'Wrist curled forward so the knuckles tip back toward the face, fist squeezed hard, forearm tendons standing out. The forearms and biceps end up doing the pulling.',
+  alt: 'Wrist curled forward, knuckles tipping back toward the face. Fist squeezed hard, forearm tendons standing out. The forearms and biceps end up doing the pulling.',
 };
 // Second wrong hand, page 2 (card zoom "hand": the grip-fatigue inset; archetype fault `fingertip-slip`): the bar has
 // slid out to the fingertips, fingers half open, the hand pulled back by the bar. The card: "finish the rep and end
@@ -105,7 +111,7 @@ export const THUMB_PAGE = [
   { mode: 'wrapped', title: 'Full grip', note: 'Use this', default: true,
     pose: RIGHT_POSE, alt: 'Full grip: thumb wrapped under the bar to meet the index finger. Use this.' },
   { mode: 'over', title: 'Thumb on top', note: 'If your forearms tire first',
-    pose: { ...RIGHT_POSE, thumb: 'over' }, alt: 'Thumb on top: the thumb lies on the bar next to the index finger, wrist still straight. An option if your forearms give out before your back.' },
+    pose: { ...RIGHT_POSE, thumb: 'over' }, alt: 'Thumb on top: the thumb lies on the bar next to the index finger. Wrist still straight. An option if your forearms give out before your back.' },
 ];
 
 // ---- posture zoom poses (PoseOverride, 4.3), merged over the plate's own end pose ----
@@ -133,23 +139,21 @@ const BEHIND_NECK = { ...DUCK, reach: { l: behind('l'), r: behind('r') } };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (plan 2.4 items 4, 7) --
  * From the verified card's handlingMistakes (grip/research/lat_pulldown.json): the mistake, its fix and what it can hurt,
- * cut to the copy limits (title <= 10 words; fix and risk <= 30 words and 2 sentences; no citations in user copy, C7;
+ * cut to the copy limits (copy-lint.mjs: at most 3 mistakes, title <= 5 words, fix <= 12; at most 3 risks, <= 14 words; no citations in user copy, C7;
  * no red-flag wording, C8: the shared RED_FLAG and DISCLAIMER come from howto/shared.mjs). `zoom` = "Show me" target. */
 const MISTAKES = [
-  { key: 'behind', title: 'Pulling the bar behind your neck', zoom: 'path', claim: C(['DATA'], ['kolber2013', 'signorile2002', 'sperandei2009']),
-    fix: 'Always pull in front of your face to the top of your chest, with a slight lean back.' },
-  { key: 'curl', title: 'Curling your wrists and squeezing hard', zoom: 'hand', claim: C(['DATA', 'CONSENSUS'], ['odriscoll1992']),
-    fix: 'Bar at the base of your fingers, thumb wrapped, back of the hand in line with your forearm. Grip only as hard as you need to.' },
-  { key: 'swing', title: 'Leaning way back and swinging the weight', zoom: 'pad', claim: C(['CONSENSUS'], ['ace-lat-pulldown']),
-    fix: 'Snug the knee pad, pick a slight lean and hold it still. Lower the weight until you can do every rep without rocking.' },
-  { key: 'too-far', title: 'Pulling too far, or letting the stack yank you up', claim: C(['CONSENSUS'], ['ace-lat-pulldown']),
-    fix: 'Stop when your elbows stop going down. On the way up, let the bar rise slowly until your arms are straight.' },
+  { key: 'behind', title: 'Pulling behind your neck', zoom: 'path', claim: C(['DATA'], ['kolber2013', 'signorile2002', 'sperandei2009']),
+    fix: 'Pull in front of your face, to your upper chest.' },
+  { key: 'curl', title: 'Curling wrists, squeezing hard', zoom: 'hand', claim: C(['DATA', 'CONSENSUS'], ['odriscoll1992']),
+    fix: 'Straighten your wrist. Grip only as hard as needed.' },
+  { key: 'swing', title: 'Leaning back and swinging', zoom: 'pad', claim: C(['CONSENSUS'], ['ace-lat-pulldown']),
+    fix: 'Hold a small lean still and go lighter.' },
 ];
 const RISKS = [
-  { key: 'behind', text: 'Pulling behind your neck forces the shoulder into a raised, turned-out position. Lifters who do it show more signs of a loose front shoulder.',
+  { key: 'behind', text: 'Behind-the-neck pulling is linked to a looser front shoulder.',
     claim: C(['DATA'], ['kolber2013'], 'Association, not proof of cause.') },
-  { key: 'swing', text: 'Rocking uses your lower back to move the stack, and the jerk at the top yanks your shoulders.', claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
-  { key: 'too-far', text: 'Pulling on after your elbows stop going down adds stress to the shoulder joint.', claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
+  { key: 'swing', text: 'Rocking uses your lower back and jerks your shoulders.', claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
+  { key: 'too-far', text: 'Pulling past where your elbows stop stresses the shoulder joint.', claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
 ];
 
 export default {
@@ -165,49 +169,45 @@ export default {
     overBody: false,
     handleChoice: { sore: 'Sore wrist? Use the neutral-grip handles.',
       claim: C(['CONSENSUS', 'DATA'], ['buonsenso2025'], 'The card: with a sore wrist, use the neutral handles, go lighter, stop if it hurts (consensus). Buonsenso 2025: no lat difference between grips, so the swap costs nothing.') },
-    width: { text: "About one and a half times shoulder width, often on or just inside the bar's bends. At the bottom, with the bar at your upper chest, your forearms should be close to vertical. If a wrist bends hard to one side, move your hands onto or off the bends.",
+    width: { text: "About 1.5 times shoulder width, often on or just inside the bar's bends. At the bottom your forearms are close to vertical. If a wrist bends hard sideways, move your hands onto or off the bends.",
       claim: C(['DATA', 'MECH'], ['andersen2014', 'lusk2010', 'difonza2026'], "Width barely changes lat activity (Lusk, Andersen, Di Fonza); the widest grip costs a little strength (Andersen). The bent ends keeping the wrist straight is mechanical reasoning only (card).") },
     thumb: { mode: 'wrapped', options: [{ mode: 'over', when: 'If your forearms give out before your back' }],
       claim: C(['CONSENSUS'], ['baechle-earle'], 'No study has measured thumb position on a pulldown. Full grip follows the NSCA editors; thumb on top is coaching consensus. A pulldown bar cannot fall on the lifter, so thumb on top is a comfort choice only (C4 allows `over` for `pull`).') },
     contact: 'finger-base',
-    wrist: { ext: [0, 25], dev: [-10, 10], limitText: 'If your wrist starts to curl forward, or the bar starts sliding toward your fingertips as your grip tires, finish the rep and end the set.',
+    wrist: { ext: [0, 25], dev: [-10, 10], limitText: 'Wrist curling, or bar slipping to your fingertips? Finish the rep and end the set.',
       claim: C(['DATA', 'CONSENSUS'], ['odriscoll1992'], "O'Driscoll 1992 (a dynamometer, applied by reasoning): grip strongest 25 to 35 degrees back, weakest curled. The near-straight target and the end-the-set limit are consensus, not injury thresholds.") },
     pose: RIGHT_POSE,
     faults: [FAULT_CURLED, FAULT_SLIP],
-    gripLine: 'Hands about one and a half times shoulder width, palms facing away. Lay the bar across the base of your fingers and wrap your thumb around it. Keep your wrists straight, knuckles up.',
-    cue: 'Your hands are hooks. Pull with your elbows.',   // `pull` archetype cue (3.1); the card's cue is the same idea
+    gripLine: 'Hook the bar at the base of your fingers, wrist straight. Pull with your elbows so your back does more.',
+    cue: 'Hands are hooks. Elbows pull.',   // `pull` archetype cue (3.1); the card's cue is the same idea
   },
   contacts: ['seat-back', 'brace-pad'],
   setup: [
-    { kind: 'adjust', text: 'Pick the attachment: the long bar for the standard version, the neutral-grip handles if your wrists or elbows are sore.',
-      claim: C(['CONSENSUS', 'DATA'], ['buonsenso2025', 'lusk2010']) },
-    { kind: 'adjust', text: "Sit down and set the knee (thigh) pad so it presses firmly on the tops of your thighs, just above the knees, with your feet flat on the floor. Snug enough that you can't lift off the seat when you pull, and loose enough that it doesn't dig in.", zoom: 'pad',
+    { kind: 'adjust', text: "Snug the knee pad so you can't lift off.", zoom: 'pad',
       claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
-    { kind: 'safety', text: 'Set the weight and push the pin all the way in. Start lighter than you think; the first reps are for checking the setup.',
+    { kind: 'safety', text: 'Push the pin fully in. Start light.',
       claim: C(['CONSENSUS'], ['ace-lat-pulldown'], 'Pin and "start lighter": card consensus; ACE covers the setup, not the pin wording.') },
-    { kind: 'grip', text: 'Stand up, take the bar overhand at about one and a half times shoulder width, thumb wrapped, bar at the base of your fingers.', zoom: 'hand',
+    { kind: 'grip', text: 'Hands about 1.5 times shoulder width, palms away, thumb wrapped.', zoom: 'hand',
       claim: C(['CONSENSUS', 'DATA'], ['baechle-earle', 'andersen2014']) },
-    { kind: 'get-in', text: 'Sit back down under the pad, holding the bar with straight arms. Let the stack lift slightly so the weight is on the cable, not resting.',
+    { kind: 'position', text: 'Lean back slightly, about 30 degrees at most.', zoom: 'path',
       claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
-    { kind: 'position', text: 'Lean back a little from the hips, no more than about 30 degrees, with your chest up and your lower back in its normal curve. Your thighs against the pad hold you there.', zoom: 'path',
-      claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
-    { kind: 'brace', text: 'Before the first rep, pull your shoulders down away from your ears and slightly back. Then pull.',
+    { kind: 'brace', text: 'Shoulders down, away from your ears. Then pull.',
       claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
   ],
   posture: [
-    { key: 'pad', label: 'Thighs under pad', detail: 'Pad firm on the tops of the thighs just above the knees, feet flat, hips stay on the seat for the whole set.',
+    { key: 'pad', label: 'Thighs under pad', detail: 'Pad firm on the tops of the thighs, just above the knees, feet flat. Hips stay on the seat all set.',
       anchor: { at: 'thighTop.r' }, zoom: 'pad', claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
-    { key: 'lean', label: 'Slight lean back', detail: 'Torso tipped back a little from the hips, no more than about 30 degrees, chest up, lower back in its normal curve. The lean stays the same from the first rep to the last, with no extra lean as you pull.',
+    { key: 'lean', label: 'Slight lean back', detail: 'Torso tipped back a little from the hips, no more than about 30 degrees. Chest up, lower back in its normal curve. The lean stays the same every rep, with no extra lean as you pull.',
       anchor: { at: 'backUpper' }, claim: C(['CONSENSUS', 'DATA'], ['ace-lat-pulldown', 'buonsenso2025'], 'Shown by the plate: the measured lean (about 15 degrees) and the Mistake layer (swing back).') },
-    { key: 'shoulders', label: 'Shoulders down', detail: 'At the top, arms straight, the shoulders are first drawn down from the ears and slightly back, then the elbows start to bend.',
+    { key: 'shoulders', label: 'Shoulders down', detail: 'At the top, arms straight, the shoulders first draw down and slightly back. Then the elbows bend.',
       anchor: { at: 'shoulderTop.r', pose: 'start' }, claim: C(['CONSENSUS'], ['ace-lat-pulldown'], 'Already a plate callout ("Shoulders down"); the card\'s back-view "shoulder blades" zoom needs a back-view plate.') },
-    { key: 'path', label: 'Bar in front', detail: 'The bar travels past your chin to the top of your chest, never behind the head.',
+    { key: 'path', label: 'Bar in front', detail: 'The bar travels past your chin to the top of your chest. Never behind the head.',
       anchor: { at: 'chin' }, zoom: 'path', claim: C(['DATA', 'WEAK'], ['sperandei2009', 'signorile2002', 'padovan2024', 'kolber2013']) },
-    { key: 'elbows', label: 'Elbows down', detail: 'At the bottom the elbows point down at the floor, beside the ribs, forearms near vertical under the bar. Stop when the elbows stop moving down and start moving back, even if the bar has not touched your chest.',
+    { key: 'elbows', label: 'Elbows down', detail: 'At the bottom the elbows point at the floor, beside the ribs. Forearms near vertical under the bar. Stop when the elbows stop going down and start going back. The bar need not touch your chest.',
       anchor: { at: 'elbow.r' }, claim: C(['CONSENSUS'], ['ace-lat-pulldown'], 'Plate callout "Elbows down". The shoulders rolling forward past that point is reasoning (card).') },
-    { key: 'wrists', label: 'Wrists straight', detail: 'Back of the hand in line with the forearm, or tipped back a little, the whole way. Bar at the base of the fingers, no curl.',
+    { key: 'wrists', label: 'Wrists straight', detail: 'Back of the hand in line with the forearm, or tipped back a little. Bar at the base of the fingers, no curl.',
       anchor: { at: 'grip.r' }, zoom: 'hand', claim: C(['DATA', 'CONSENSUS'], ['odriscoll1992']) },
-    { key: 'width', label: 'Grip width', detail: "Hands about one and a half times shoulder width, on or just inside the bar's bends. At the bottom your forearms are close to vertical and your wrists straight side to side.",
+    { key: 'width', label: 'Grip width', detail: "Hands about 1.5 times shoulder width, on or just inside the bar's bends. At the bottom, forearms close to vertical, wrists straight side to side.",
       anchor: { at: 'grip.r' }, claim: C(['DATA', 'MECH'], ['andersen2014', 'lusk2010'], 'Front view: text checkpoint. The plate is a side view, where width does not show (5.2).') },
   ],
   feel: {
@@ -227,31 +227,23 @@ export default {
       { muscleId: 'upper_traps', plain: "The tops of your shoulders and the sides of your neck. A burn here means you're shrugging." },
       { muscleId: 'lower_back', plain: "Your lower back should not ache. If it does, you're swinging." },
     ],
-    feelLine: 'You should feel this in the sides of your back, under your armpits. If your biceps are doing most of it, loosen your grip a bit and pull your elbows down to your sides.',
+    feelLine: 'You should feel this in the sides of your back, under your armpits. Drive your elbows down.',
     rows: [
       { key: 'arms', where: 'Mostly your biceps and forearms', at: { muscles: ['biceps', 'forearms'] },
-        means: "You're pulling with your hands: squeezing hard and curling your wrists. The arms always help on this exercise, so some biceps work is normal.",
-        fix: 'Loosen your grip a little and drive your elbows down to your sides. If your forearms still quit first, try your thumb on top of the bar.',
+        means: "You're gripping hard with curled wrists.",
+        fix: 'Loosen your grip and drive your elbows down.',
         zoom: 'hand', claim: C(['DATA', 'CONSENSUS'], ['odriscoll1992', 'snyder2009', 'lusk2010', 'lehman2004'], 'Snyder and Leech 2009: a back-focus cue raised lat activity and left the biceps unchanged, so the copy asks for more back, not no arms.') },
-      { key: 'traps', where: 'The tops of your shoulders and your neck', at: { muscles: ['upper_traps'] },
-        means: "You're shrugging your shoulders up toward your ears, often because the weight is too heavy.",
-        fix: "At the top of each rep, pull your shoulders down first, then bend your arms. Drop the weight if you can't hold that.",
-        claim: C(['CONSENSUS'], ['ace-lat-pulldown']) },
       { key: 'low-back', where: 'Your lower back', at: { muscles: ['lower_back'] },
-        means: "You're leaning too far back and rocking, or the knee pad is loose and you're lifting off the seat.",
-        fix: 'Snug the knee pad, keep a small lean you can hold still, and lower the weight.',
+        means: "You're rocking, or the knee pad is loose.",
+        fix: 'Snug the pad, hold a small lean, go lighter.',
         zoom: 'pad', claim: C(['CONSENSUS'], ['ace-lat-pulldown'], 'No study measures lower-back load on the pulldown; the swinging warning is consensus.') },
-      { key: 'row', where: 'Mostly between your shoulder blades and the backs of your shoulders, little in the sides of your back', at: { muscles: ['mid_back', 'rear_delts'] },
-        means: "You're leaning back so far that the pull has turned into a row, with the elbows going back instead of down.",
-        fix: 'Sit taller, keep the lean small, and pull your elbows straight down toward your hips.',
-        claim: C(['DATA', 'CONSENSUS'], ['buonsenso2025', 'ace-lat-pulldown'], 'Buonsenso 2025: more rear-delt activity at a 30 degree lean, no lat change. "Turns into a row" is consensus.') },
-      { key: 'pinch', where: 'A pinch at the front of your shoulder', at: {},   // pain, not a muscle taking over: no map mark (A6 fix)
-        means: "The bar is going behind your head, or you're pulling past the point where your elbows stop and your shoulders are rolling forward.",
-        fix: 'Pull to the top of your chest in front of your face, and stop when your elbows stop moving down. If the pinch stays, stop doing pulldowns.',
+      { key: 'pinch', where: 'Front of your shoulder pinches', at: {},   // pain, not a muscle taking over: no map mark (A6 fix)
+        means: 'Bar behind your head, or pulling too far.',
+        fix: 'Pull in front and stop when your elbows stop. If it still pinches, stop pulldowns.',
         zoom: 'path', redFlag: 'shoulder', claim: C(['WEAK', 'CONSENSUS'], ['kolber2013', 'ace-lat-pulldown', 'kolber2010', 'nhs-shoulder-pain'], 'Kolber 2013 is one association study. ACE: further pulling stresses the shoulder joint. The referral is the shared shoulder red flag (NHS), not the fix text (C8).') },
       { key: 'wrist', where: 'Your wrist', at: { parts: ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'] },
-        means: "Your wrist is curling forward or bending hard to one side on the bar, or it's already sore from pressing.",
-        fix: 'Keep the back of your hand in line with your forearm. With a sore wrist, switch to the neutral handles, go lighter and stop if it hurts.',
+        means: "It's curling forward, bending sideways, or already sore from pressing.",
+        fix: "Keep your wrist straight. If it's sore, use neutral handles and stop if it hurts.",
         zoom: 'hand', redFlag: true, claim: C(['DATA', 'CONSENSUS'], ['odriscoll1992', 'nhs-wrist-pain']) },
     ],
     libraryDiff: { add: ['rear_delts', 'forearms', 'brachialis'], why: 'The card adds the rear delts (more with a lean, Buonsenso 2025), the forearms (grip) and the brachialis (anatomy, text only) as helpers. exercises.json lists lats primary and biceps, mid_back secondary.' },
@@ -267,17 +259,17 @@ export default {
         thumbPage: THUMB_PAGE.map(t => t.mode),
       },
       rightNote: 'Base of fingers',
-      caption: { right: 'Bar at the base of the fingers, thumb wrapped, wrist straight.',
+      caption: { right: 'Bar at the finger base, wrist straight.',
         wrong: 'Wrist curled forward, fist squeezed hard.' },
-      captionPage2: { right: 'Bar at the base of the fingers, thumb wrapped, wrist straight.',
-        wrong: 'Bar slid to the fingertips. Finish the rep and end the set.' },
+      captionPage2: { right: 'Bar at the finger base, wrist straight.',
+        wrong: 'Bar at the fingertips: end the set.' },
       alt: {
-        right: 'Seen from the side, arms overhead. Bar across the base of the fingers, fingers over the top, thumb wrapped under to meet the index finger. The back of the hand is in line with the forearm, knuckles up.',
+        right: 'Seen from the side, arms overhead. Bar at the base of the fingers, thumb wrapped under. Back of the hand in line with the forearm, knuckles up.',
         wrong: FAULT_CURLED.alt,
         wrong2: FAULT_SLIP.alt,
       },
       feelRow: 'arms',
-      feelPrompt: 'Biceps and forearms doing most of it? This is usually why.',
+      feelPrompt: 'Mostly biceps and forearms? This is usually why.',
     },
     {
       key: 'pad', chip: 'Knee pad', heading: 'Knee pad: right and wrong', kind: 'posture',
@@ -288,17 +280,17 @@ export default {
       // zoom-only overlay (5.2): an arrow up from the seat contact to where it is in the wrong pose (hips lifting)
       guides: [{ kind: 'drop', from: { at: 'seat', off: [14, 0] }, to: { at: 'seat', pose: 'mistake', off: [14, 0] } }],
       callout: {
-        right: { text: 'Pad firm<br>on thighs', anchor: { at: 'thighTop.r', off: [0, -1] } },
+        right: { text: 'Pad<br>on thighs', anchor: { at: 'thighTop.r', off: [0, -1] } },
         wrong: { text: 'Pad<br>too high', anchor: { at: PAD_GAP, off: [0, 1] }, prefer: 'right' },
       },
-      caption: { right: 'Pad firm on the tops of the thighs, hips down on the seat.',
-        wrong: 'Pad set high with a gap, hips lifting off the seat.' },
+      caption: { right: 'Pad firm on the thighs, hips down.',
+        wrong: 'Pad too high, hips lifting.' },
       alt: {
-        right: 'Side view of the thighs, knee pad and seat: the pad presses on the tops of the thighs just above the knees, feet flat, hips down on the seat.',
-        wrong: 'The pad set too high with a gap above the thighs, and the hips lifting off the seat as the bar comes down, drawn dashed over the right position.',
+        right: 'Side view of the thighs, knee pad and seat. The pad presses on the tops of the thighs, just above the knees. Feet flat, hips down on the seat.',
+        wrong: 'The pad set too high, with a gap above the thighs. The hips lift off the seat as the bar comes down. Drawn dashed over the right position.',
       },
       feelRow: 'low-back',
-      feelPrompt: 'Feel it in your lower back? This is usually why.',
+      feelPrompt: 'Lower back aching? This is usually why.',
     },
     {
       key: 'path', chip: 'Bar path', heading: 'Bar path: right and wrong', kind: 'posture',
@@ -312,17 +304,17 @@ export default {
         { kind: 'path', role: 'wrong', pts: [[0, BEHIND_BAR[1] + 0.23, BEHIND_BAR[2] - 0.03], [0, BEHIND_BAR[1] + 0.03, BEHIND_BAR[2] - 0.02]] },
       ],
       callout: {
-        right: { text: 'In front<br>of face', anchor: { at: 'grips', off: [0, -4] }, prefer: 'right' },   // label in front of the face, leader clear of the arm
+        right: { text: 'In front', anchor: { at: 'grips', off: [0, -4] }, prefer: 'right' },   // label in front of the face, leader clear of the arm
         wrong: { text: 'Behind<br>the neck', anchor: { at: 'grips', pose: 'mistake', off: [0, -4] }, prefer: 'left' },
       },
-      caption: { right: 'Bar past the chin to the top of the chest, slight lean back.',
-        wrong: 'Bar pulled behind the neck, head pushed forward.' },
+      caption: { right: 'Bar past the chin to the chest.',
+        wrong: 'Bar behind the neck, head pushed forward.' },
       alt: {
-        right: 'Side view of the head, shoulders and bar at the bottom: slight lean back, chest up, the bar has come down in front of the face to the top of the chest, elbows down by the ribs.',
-        wrong: 'The bar pulled down behind the neck with the head pushed forward and down, drawn dashed over the right position.',
+        right: 'Side view at the bottom: slight lean back, chest up. The bar came down in front of the face to the upper chest. Elbows down by the ribs.',
+        wrong: 'The bar pulled down behind the neck, head pushed forward and down.',   // drawn solid, on its own (wrong.solid)
       },
       feelRow: 'pinch',
-      feelPrompt: 'A pinch at the front of your shoulder? This is usually why.',
+      feelPrompt: 'Shoulder pinching? This is usually why.',
     },
   ],
   // Chip row = the zooms in order, then "Where to feel it" (always last, 2.1). 4 chips. A6 names four zoom chips
@@ -332,8 +324,8 @@ export default {
   // is the plate's "Elbows down" callout.
   chips: ['hand', 'pad', 'path', 'feel'],
   copy: {
-    setupLine: 'Set the knee pad so it presses on the tops of your thighs. Lean back a little, pull your shoulders down, then pull the bar to the top of your chest.',
-    mistakeLine: "Keep the bar in front of your face. Pulling it behind your neck puts your shoulders in a bad spot and doesn't work your back any better.",
+    setupLine: 'Snug the knee pad on your thighs. Lean back a little, shoulders down, then pull to your chest.',
+    mistakeLine: 'Pull to the front, never behind your neck. That puts your shoulders in a bad spot for no gain.',
   },
   mistakes: MISTAKES,
   risks: RISKS,

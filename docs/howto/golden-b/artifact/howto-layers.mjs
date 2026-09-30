@@ -11,6 +11,11 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { renderFeelMap, renderFeelLegend, FEEL_CSS } from '../engine/feelmap.mjs';
 import { HAND_CSS } from '../engine/hand.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER, SHOW_EVIDENCE } from '../howto/shared.mjs';
+import * as SHARED from '../howto/shared.mjs';
+import { lintAll, formatViolations, FEEL_ROWS_MAX, SETUP_MAX_STEPS } from './copy-lint.mjs';
+// Supervisor 2026-09-30: with the compact caps every row and step shows; a red-flag row or a safety step never
+// sits behind a "Show more" button. The collapse code stays for any list longer than its cap (the lint forbids that).
+const FEEL_VISIBLE = FEEL_ROWS_MAX, SETUP_VISIBLE = SETUP_MAX_STEPS;
 import { PLATE_CSS } from '../engine/index.mjs';
 import { allThemesCss } from '../engine/themes.mjs';
 
@@ -213,7 +218,7 @@ function feelSection(pre, howto, M) {
   const rowsHtml = rows.map(({ r, watch, pain, label }, i) => {
     const flag = r.redFlag ? RF[r.redFlag] : null;
     if (r.redFlag && !flag) throw new Error(`${howto.id}: row ${r.key} red flag ${r.redFlag} missing`);
-    return `<li class="fr" data-row="${esc(r.key)}"${i >= 3 ? ' data-more hidden' : ''}>`
+    return `<li class="fr" data-row="${esc(r.key)}"${i >= FEEL_VISIBLE ? ' data-more hidden' : ''}>`
       + `<button type="button" class="fr-btn" id="${pre}-row-${r.key}" aria-expanded="false" aria-controls="${pre}-row-${r.key}-body" data-label="${esc(label)}"${watch.length ? ' data-watch' : ''}${pain.length ? ' data-pain' : ''}>`
       + `<span>${esc(r.where)}</span>${I.down(18)}</button>`
       + `<div class="fr-body" id="${pre}-row-${r.key}-body" hidden><p><b>Usually means</b>${esc(r.means)}</p><p><b>Fix</b>${esc(r.fix)}</p>`
@@ -221,7 +226,7 @@ function feelSection(pre, howto, M) {
       + (flag ? `<button type="button" class="rf-link" id="${pre}-row-${r.key}-flag" data-flag="${flag}" aria-controls="${pre}-redflag-${flag}">${I.alert(16)}When to get it checked</button>` : '')
       + `</div></li>`;
   }).join('');
-  const more = F.rows.length - 3;
+  const more = F.rows.length - FEEL_VISIBLE;
   const txt = (F.textOnly ?? []).map(m => m.plain).join(' ');
   return `<section class="hw-sec feel" id="${pre}-feel" aria-labelledby="${pre}-feel-h">`
     + `<h4 class="eyebrow" id="${pre}-feel-h" tabindex="-1">Where you should feel it</h4>`
@@ -234,9 +239,9 @@ function feelSection(pre, howto, M) {
 /* ---------------------------------------------------------------- setup and sources ------------------------------ */
 function setupSection(pre, howto) {
   const steps = howto.setup, zoomChip = key => howto.zooms.find(z => z.key === key)?.chip;
-  const more = steps.length - 3;
+  const more = steps.length - SETUP_VISIBLE;
   return `<section class="hw-sec setup" id="${pre}-setup" aria-labelledby="${pre}-setup-h"><h4 class="eyebrow" id="${pre}-setup-h">Set it up</h4>`
-    + `<ol class="st-list">${steps.map((s, i) => `<li${i >= 3 ? ' data-more hidden' : ''}><span class="st-n" aria-hidden="true">${i + 1}</span><div><p>${esc(s.text)}</p>`
+    + `<ol class="st-list">${steps.map((s, i) => `<li${i >= SETUP_VISIBLE ? ' data-more hidden' : ''}><span class="st-n" aria-hidden="true">${i + 1}</span><div><p>${esc(s.text)}</p>`
       + (s.zoom && zoomChip(s.zoom) ? `<button type="button" class="st-show" id="${pre}-step-${i + 1}-show" data-zoom="${esc(s.zoom)}">Show me the ${esc(zoomChip(s.zoom).toLowerCase())}${I.arrow(16)}</button>` : '')
       + `</div></li>`).join('')}</ol>`
     + (more > 0 ? `<button type="button" class="fr-more st-more" id="${pre}-setup-more" aria-expanded="false" data-n="${steps.length}" data-all>All ${steps.length} steps</button>` : '')
@@ -254,7 +259,7 @@ function sourcesSection(pre, howto, M) {
     return `<li><p class="src-cite">${cite}</p>${SHOW_EVIDENCE ? `<p class="src-ev">${tag ? tagBadges(tag) : ''}${text ? `<span>${esc(text)}</span>` : ''}</p>` : ''}</li>`;
   }).join('');
   return `<details class="hw-sec srcs" id="${pre}-sources"><summary id="${pre}-sources-toggle"><span>Sources</span><span class="src-n">${howto.sources.length}</span>${I.down(18)}</summary>`
-    + (SHOW_EVIDENCE ? `<p class="src-key">Each source is labelled for what it backs here: <b>Measured</b> = a study that measured it; <b>Mechanics</b> = how the joint works; <b>Coaching consensus</b> = what trainers agree on; <b>Weak for this use</b> = related, not direct.</p>` : '')
+    + (SHOW_EVIDENCE ? `<p class="src-key">Each source is labelled for what it backs here. <b>Measured</b> = a study that measured it. <b>Mechanics</b> = how the joint works. <b>Coaching consensus</b> = what trainers agree on. <b>Weak for this use</b> = related, not direct.</p>` : '')
     + `<ul class="src-list">${items}</ul></details>`
     + `<p class="ht-disclaimer" id="${pre}-disclaimer">${esc(DISCLAIMER)}</p>`;
 }
@@ -304,6 +309,12 @@ function alsoRow(pre, howto) {
 /* ---------------------------------------------------------------- public ----------------------------------------- */
 /** Build every card's How-to layers. Returns { [cardId]: { howto, plate, chips, zooms, feel, setup, sources } } and CSS. */
 export async function buildHowtoLayers() {
+  // Copy lint first (architecture 6.2 with the owner's 2026-09-30 limits, artifact/copy-lint.mjs): every failure on
+  // every sheet, in one error. It only reads the specs, so a clean run changes no output.
+  const mods = [];
+  for (const id of HOWTO_IDS) mods.push(await import(pathToFileURL(join(root, 'exercises', `${id}.howto.mjs`)).href));
+  const { violations } = lintAll(mods, SHARED);
+  if (violations.length) throw new Error(`copy lint: ${violations.length} problems\n${formatViolations(violations)}`);
   const apis = {};
   for (const id of HOWTO_IDS) apis[id] = await loadRenderer(id);   // all loaded first: the leg-raise script's stomach
   // region fix (howto/render-hanging_leg_raise.mjs REGION_FIX) then applies to every map on the page, not to some
