@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync, appendFileSync, existsSync } from 'node:fs
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { SITE_BASE, SITE_URL, SITE_APP_URL } from './site.config.mjs';
+import { renderPolicy, checkPolicy } from './policy.mjs';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const repo = resolve(here, '..');
@@ -16,6 +17,9 @@ const workflow = readFileSync(resolve(repo, '.github/workflows/build-apk.yml'), 
 const fpMatch = workflow.match(/EXPECTED_SHA256:\s*'([0-9A-F:]+)'/);
 const FINGERPRINT = fpMatch ? fpMatch[1] : '';
 if (!/^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(FINGERPRINT)) throw new Error('website: EXPECTED_SHA256 in build-apk.yml is not 32 colon-separated hex pairs');
+
+// The privacy policy's one source (DOC-3): docs/PRIVACY-POLICY.md, rendered into /privacy/ at every build.
+const POLICY = renderPolicy(readFileSync(resolve(repo, 'docs/PRIVACY-POLICY.md'), 'utf8'));
 
 const BUILD_DATE = new Date().toISOString().slice(0, 10);
 const flags = { APP_URL: SITE_APP_URL !== '', SITE_URL: SITE_URL !== '' };
@@ -31,6 +35,9 @@ function tokensPre() {
       handler(html) {
         const out = html.replace(/<!-- if (APP_URL|SITE_URL) -->([\s\S]*?)(?:<!-- else -->([\s\S]*?))?<!-- endif -->/g, (_, name, yes, no = '') => (flags[name] ? yes : no));
         return out
+          .replace(/<!-- policy:title -->/g, () => POLICY.title)
+          .replace(/<!-- policy:effective -->/g, () => POLICY.effective)
+          .replace(/<!-- policy:body -->/g, () => POLICY.body)
           .replace(/__VERSION__/g, VERSION)
           .replace(/__FINGERPRINT_WBR__/g, FINGERPRINT.replace(/:/g, ':<wbr>')) // the /install/ block: a wrap may fall only between pairs (6.11)
           .replace(/__FINGERPRINT__/g, FINGERPRINT)
@@ -50,6 +57,11 @@ function tokensPost() {
         const out = html.replace(/__SITE_URL____BASE__/g, SITE_URL + SITE_BASE).replace(/__SITE_URL__/g, SITE_URL);
         const left = out.match(/__(VERSION|FINGERPRINT_WBR|FINGERPRINT|SITE_URL|APP_URL|BUILD_DATE|BASE)__/);
         if (left) throw new Error(`website: ${ctx.path} still contains the token ${left[0]}`);
+        if (/<!-- policy:/.test(out)) throw new Error(`website: ${ctx.path} still contains a policy marker`);
+        if (/\/privacy\/index\.html$/.test(ctx.path)) {
+          const missing = checkPolicy(out);
+          if (missing.length) throw new Error(`website: /privacy/ is missing required policy sections: ${missing.join('; ')}`);
+        }
         return out;
       },
     },

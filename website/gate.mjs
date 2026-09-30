@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { SITE_BASE } from './site.config.mjs';
+import { checkPolicy } from './policy.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = dirname(HERE);
@@ -161,6 +162,10 @@ async function run(name, path, [w, h], reduced) {
     if (v.fp !== FP) F(`fingerprint #fp ${v.fp === null ? 'is missing' : `reads "${v.fp}"`} (expected the 95-character EXPECTED_SHA256)`);
     if (!v.cmd || !v.cmd.includes('MARC-v') || !v.cmd.includes('-signed.apk')) F(`verify command #cmd ${v.cmd === null ? 'is missing' : `reads "${v.cmd}"`} (expected MARC-v… -signed.apk)`);
   }
+
+  // The privacy policy (DOC-3): every section Google Play requires is on the served page (contact, third parties, retention,
+  // children and 18+, applicable law, changes, effective date, the title), checked on the DOM the reader gets.
+  if (name === 'privacy') checkPolicy(await page.content()).forEach((m) => F(`privacy policy section missing: ${m}`));
 
   // Scroll to the bottom the way a wheel does, 100px a notch, recording the story's data-step on the way. Half-viewport jumps
   // could land two steps in the band at once (the first step is under 200px tall), and then only the later one is recorded.

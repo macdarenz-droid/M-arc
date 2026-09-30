@@ -600,22 +600,17 @@ Motion on this page: the load rise on the heading block; `.r` reveals on each se
 
 ### 7.3 Privacy: `/privacy/`
 
-Solid nav. Prose in a 640px measure, body copy in `--text` (this page is read, not scanned). Sections alternate `--bg` and `--s1` with 64px vertical padding, 48px at 640 and under (the same rule as 7.2). Every fact below traces to app-facts.json `privacyModel`, `trustFacts` and Settings strings; the source file for each is in section 8.1.
+Solid nav. Prose in a 640px measure, body copy in `--text` (this page is read, not scanned). Sections alternate `--bg` and `--s1` with 64px vertical padding, 48px at 640 and under (the same rule as 7.2).
 
-| Block | Copy |
+Since DOC-3 (2026-09-30) this page is the app's Privacy Policy, the URL given to Google Play. It has two parts:
+
+| Block | Source |
 |---|---|
-| Heading | Eyebrow "Your data". h1 "How M/ARC handles your data." Lead: "Everything you log stays on the phone. Nothing leaves it unless you turn on Escobar, the optional online coach, and then only what you allow. This page says exactly what that means." |
-| What is stored, and where (`#stored`) | h2 "What is stored, and where". Paragraph: "There is no server copy. Each kind of data has one place on your phone." Then a facts table (6.17), columns Data / Where it lives / How you remove it: "Sessions, splits, settings and recovery" / "The app's own storage on the phone" / "Settings, Your data: Reset workout data or Reset everything" · "Conversations with Escobar" / "On the phone" / "Settings, Escobar: Reset conversations, then Delete conversations" · "Photos you attach in a conversation with Escobar" / "A local photo store on the phone" / "Deleted with the conversations" · "What Escobar remembers (injuries, equipment, preferences)" / "On the phone, listed under What Escobar knows" / "Edit or delete any entry there; it stays until you clear it" · "Heart-rate data from a watch" / "A local store on the phone" / "Deleted with the session it belongs to" · "Sleep, steps, active calories and heart rate from Android Health Connect" / "Read into the phone's storage in the background" / "Disconnect it in Health Connect on the phone; Reset everything clears the copies" |
-| What leaves the phone, and when (`#leaves`) | h2 "What leaves the phone, and when". Paragraph: "Nothing, until you turn Escobar on. With Escobar on, this is the whole list." Chain list: 1 "The numbers Escobar's tools ask for travel through the project's own server to the model that answers. Every number in the answer is checked against your log before it stands." 2 "Health data (sleep, resting heart rate, session heart rate) leaves only while Share health data is on." 3 "Body data (weight and measurements) leaves only while Share body data is on." 4 "A photo you attach to a message is sent with that message." 5 "Turn a switch off and that data is redacted from replayed history." Paragraph: "Quotas are counted per device and network address. There is no account to count against." |
-| The two switches (`#switches`) | h2 "The two switches". The switches component (6.10) with the app's own hints as the paragraph: "Share health data: sleep, resting heart rate, session heart rate. Share body data: weight and measurements. Both are off until you turn them on, and both live in Settings under Escobar." |
-| No account (`#account`) | h2 "No account". Paragraph: "Nothing in the app asks you to register or sign in. There is no password to reset and no server that knows who you are." |
-| Backups and CSV (`#backups`) | h2 "Backups and CSV". Paragraph: "Export backup writes a JSON file you keep wherever you like. Restore backup shows a preview first, then applies, and gives you an Undo. Export CSV hands you every filled-in set, for the last 90 days or all time. A weekly backup reminder is there if you want it." |
-| The rescue file (`#rescue`) | h2 "The rescue file". Paragraph: "If saved data ever fails to read when the app starts, it is kept aside, not thrown away. Settings shows it under Unreadable data kept aside, with Save rescue file so you can keep a copy." |
-| Offline (`#offline`) | h2 "Offline". Paragraph: "The service worker installs every built file, so the app opens without a network. The coach notes, weekly review and lighter-week suggestion run on the phone. Only a conversation with Escobar needs a connection." |
-| This website (`#site`) | h2 "This website". Paragraph: "This site sets no cookies, stores nothing in your browser and loads no analytics. Every font, image and script comes from this site's own address; the only outbound links go to GitHub. The Copy buttons write to your clipboard only when you tap them. The host that serves these files keeps its own access logs, as every web host does; the site adds nothing to them." |
-| Footer | 2.3 |
+| Heading | Eyebrow "Your data". h1 = the policy's `# ` title ("M/ARC Privacy Policy"), then `p#effective` = its "Effective date:" line, a lead, and two links: In plain words, The full policy. |
+| In plain words (`#plain`) | Hand-written in `website/privacy/index.html`: what is stored where (facts table, 6.17), what leaves the phone (chain list), the two switches (6.10), backups, CSV and the rescue file, offline, this website. It says that the full policy applies if the two ever differ. Every claim was checked against the app code on `main` (DOC-3 PR). |
+| The full policy (`#about` onward) | Rendered at every site build from `docs/PRIVACY-POLICY.md`, the one source (`website/policy.mjs`, called from `website/vite.config.js`). The paragraphs before the first `## ` become "About this policy" (`#about`); each `## ` becomes a band with an id from its heading; a line that is only `**Label:**` becomes an `h3` (so `#who-receives-it`). |
 
-Criteria: W1, W2, W3, W8, W14, W16, W21.
+Required sections: `REQUIRED` in `website/policy.mjs` lists what Google Play's policy rules ask for (title, effective date, developer and contact e-mail, the named third parties Cloudflare and Anthropic, retention and deletion, children and 18+, applicable law, how changes are announced). The build throws if the rendered page misses one, and the site gate checks the served page again. Editing `docs/PRIVACY-POLICY.md` runs the website workflow's gate.
 
 ### 7.4 Not found: `/404.html`
 
@@ -654,7 +649,7 @@ Solid nav, footer, one short band on `--bg` (`min-height: 60svh`, never taller t
 | Sharing switches and hints | Share health data (sleep, resting heart rate, session heart rate); Share body data (weight and measurements) | `src/escobar/ui/SettingsSection.tsx` lines 39-40 | /privacy/#switches, home Your data |
 | Photos sent with a message | yes, up to two per message | `src/escobar/ui/EscobarSheet.tsx` line 296; `Composer.tsx` | /privacy/#leaves |
 | Quotas | per device and network address | `README.md`; `docs/ARCHITECTURE.md` Worker section | Your data, /privacy/ |
-| Health Connect reads | steps, active calories, sleep, heart rate | `docs/ARCHITECTURE.md` "Android" | /privacy/#stored |
+| Health Connect reads | steps, active calories, sleep, heart rate, resting heart rate | `docs/ARCHITECTURE.md` "Android"; `HealthConnectNativePlugin.java` (resting heart rate, DOC-3) | /privacy/#stored |
 | Train target example | 62.5 kg for 8 | app-facts Train tab ("62.5 kg x 8 - top of range twice, step up"); `src/brain/progression.ts` headline target | Train copy |
 | Load step | 2.5 kg | `src/brain/units.ts` `step` (2.5 kg, 5 lb); `docs/ARCHITECTURE.md` "Next session" (one step up, at most 10%) | Train copy ("no blind 2.5 kg increase") |
 | Whole-body line | 12% | `src/slices/body/Body.tsx` line 58 ("Whole body: recovering about {n}% slower than usual this week."); 12 is the example value app-facts shows | Body copy |
