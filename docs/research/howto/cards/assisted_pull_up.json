@@ -1,0 +1,630 @@
+{
+  "id": "assisted_pull_up",
+  "libId": "lib_assisted_pull_up",
+  "name": "Assisted Pull-Up",
+  "family": "Vertical pull (own parent; brace-pad contact splits it from pull_up)",
+  "tier": "A",
+  "archetype": {
+    "hand": "hang",
+    "contact": [
+      "brace-pad"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Take the bar overhand, a little wider than shoulder width, put the knees (or feet) on the pad and let body weight push it down until you hang with straight arms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-assisted-pull-up"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-assisted-pull-up",
+          "text": "Grip the bar with a pronated grip (palms facing away from you), a little wider than shoulder-width apart. Put your feet/knees on the pad and let your body weight push it down until you’re hanging with your arms extended.",
+          "where": "How to Do Assisted Pull-Ups, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Keep the chest up and look up at the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-assisted-pull-up"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-assisted-pull-up",
+          "text": "Keep your chest up, and look up at the bar.",
+          "where": "step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Pull until the chin is over the bar (or the bar touches the upper chest), then lower with control to fully straight arms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-assisted-pull-up"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-assisted-pull-up",
+          "text": "Inhale and pull yourself up until your chin is over the bar or the bar touches your upper chest.",
+          "where": "step 3"
+        },
+        {
+          "source": "strengthlog-assisted-pull-up",
+          "text": "Exhale and lower yourself with control until your arms are fully extended again.",
+          "where": "step 4"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The counterweight offsets part of body weight: more assistance weight means less load for you. Manufacturer guidance, weak evidence.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "bullbar-assist-beginner",
+        "bullbar-assist-safety"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "This machine uses counterweight to offset a portion of your bodyweight. If you select 50 lbs of assistance, you are effectively lifting (your bodyweight - 50 lbs).",
+          "where": "How it works"
+        },
+        {
+          "source": "bullbar-assist-safety",
+          "text": "A higher plate weight means less load on your muscles.",
+          "where": "Setting the weight"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Pick the least assistance that still allows a few controlled, full reps; if you can't do a rep without swinging, add assistance. Manufacturer guidance, weak evidence.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "bullbar-assist-safety"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-assist-safety",
+          "text": "Choose the lowest assistance weight that still allows you to complete 3–5 controlled reps with good form.",
+          "where": "Setting the weight"
+        },
+        {
+          "source": "bullbar-assist-safety",
+          "text": "If you can't complete one rep without swinging, increase the assistance slightly.",
+          "where": "Setting the weight"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Progress by adding reps, then taking assistance away, and only then adding load.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chin-pull",
+        "bullbar-assist-beginner"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chin-pull",
+          "text": "Apply progressive overload deliberately, more reps, less assistance, then added load",
+          "where": "Programming"
+        },
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "Reducing the assistance weight over time is a sign of real progress.",
+          "where": "Conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Start the pull by drawing the shoulder blades down and back, then drive the elbows down toward the ribs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bullbar-assist-beginner",
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "Initiate the movement by pulling your shoulder blades down and back",
+          "where": "The pull"
+        },
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "Then, drive with your elbows, pulling them down towards your ribs.",
+          "where": "The pull"
+        },
+        {
+          "source": "nasm-chin-pull",
+          "text": "Set the scapulae first, cueing 'pull the shoulder blades down and back' before the arms take over",
+          "where": "Technique"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The named faults are partial reps, swinging with leg drive, and shrugging the shoulders to start the pull.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "bullbar-assist-beginner",
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "The Partial Rep: Not going to a full dead hang or not pulling high enough.",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "The Swing: Using leg drive or momentum.",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "The Shrug: Initiating the pull with your shoulders up by your ears.",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "nasm-chin-pull",
+          "text": "Discourage the common faults: kipping and momentum on strict-strength work, partial range of motion (coach a full hang at the bottom to a chin-clearing top), and craning the neck.",
+          "where": "Technique"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Lower slowly, about 3 to 4 seconds back to a dead hang, with a brief pause at the top. The lift time is not given, so the 2-second up count on the plate is a drawing convention. Manufacturer guidance, weak evidence.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "bullbar-assist-beginner"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "Take 3-4 seconds to return to a dead hang.",
+          "where": "The lowering"
+        },
+        {
+          "source": "bullbar-assist-beginner",
+          "text": "Briefly pause.",
+          "where": "The top"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "With the arms high overhead, the space under the shoulder roof gets smaller, which the authors link to impingement risk (measured in unassisted pull-ups; the arm position is the same here).",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "prinold-2016"
+      ],
+      "quotes": [
+        {
+          "source": "prinold-2016",
+          "text": "High arm elevation during pull-ups reduces sub-acromial space and increases pressure, increasing the risk of impingement injury.",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "In unassisted pull-ups the lats were the most active muscle, then the biceps, with the lower trapezius working moderately. The assisted version is inferred to share the pattern at lower load (not measured).",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "youdas-2010"
+      ],
+      "quotes": [
+        {
+          "source": "youdas-2010",
+          "text": "latissimus dorsi (117-130%), biceps brachii (78-96%), infraspinatus (71-79%), lower trapezius (45-56%), pectoralis major (44-57%)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "StrengthLog lists the lats as primary, and the biceps, rear delts, forearm flexors and rotator cuff as secondary, for the assisted pull-up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-assisted-pull-up"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-assisted-pull-up",
+          "text": "Primary muscles worked: Lats Secondary muscles worked: Biceps Rear Deltoids Forearm Flexors Rotator Cuffs",
+          "where": "Muscles Worked"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "hk-baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Grip drill"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Progress gradually to avoid elbow overuse, and send persistent shoulder or elbow pain, numbness or tingling to a professional rather than training through it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chin-pull",
+          "text": "progress gradually to avoid overuse issues like elbow tendon irritation",
+          "where": "Safety"
+        },
+        {
+          "source": "nasm-chin-pull",
+          "text": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a curled or bent wrist costs grip (hand dynamometer, applied here by reasoning).",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll-1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bullbar-assist-beginner",
+      "url": "https://bullbarfit.com/blogs/q-as/how-to-use-a-pull-up-assist-machine-correctly-for-beginners-at-the-gym",
+      "title": "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "bullbar-assist-safety",
+      "url": "https://bullbarfit.com/blogs/q-as/how-do-i-correctly-use-an-assisted-pull-up-machine-at-the-gym-to-avoid-injury",
+      "title": "How to Use an Assisted Pull-Up Machine Without Hurting Yourself (Bullbar Fit, manufacturer blog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "hk-baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "nasm-chin-pull",
+      "url": "https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked",
+      "title": "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "odriscoll-1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102"
+    },
+    {
+      "id": "prinold-2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26383875/",
+      "title": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
+      "kind": "peer-reviewed",
+      "year": 2016,
+      "pmid": "26383875"
+    },
+    {
+      "id": "strengthlog-assisted-pull-up",
+      "url": "https://www.strengthlog.com/assisted-pull-up/",
+      "title": "How to Do Assisted Pull-Ups: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "youdas-2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21068680/",
+      "title": "Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise (Youdas et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "21068680"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The knee pad, the hang and the vertical elbow path all read from the side; the engine's default view (c1, c3).",
+    "equipment": "Assisted pull-up machine (assistMachine composer): overhead bar or handles, a kneeling pad on a lever linked to the weight stack. The pad sinks as the lifter hangs (c1).",
+    "start": "Kneeling on the pad, arms fully straight overhead, overhand grip a little wider than the shoulders (c1); chest up, eyes on the bar (c2); shoulder blades drawn down and back (c7).",
+    "end": "Chin over the bar (c3); elbows down toward the ribs (c7); knees still on the pad, body vertical.",
+    "checkpoints": [
+      {
+        "label": "Knees on pad",
+        "what": "Both knees on the pad, sinking it until the arms are straight.",
+        "claim": "c1"
+      },
+      {
+        "label": "Shoulders set",
+        "what": "Shoulder blades down and back before the elbows bend.",
+        "claim": "c7"
+      },
+      {
+        "label": "Chin over bar",
+        "what": "Pull until the chin clears the bar, then lower to straight arms.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Partial reps: the arms never straighten at the bottom, so each rep starts from a bent-arm half hang.",
+      "why": "Listed first among the machine's common mistakes and named by NASM; it cuts the range the machine is meant to train. Frequency is not measured.",
+      "claim": "c8",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Arms fully straight at the bottom",
+        "claim": "c3"
+      },
+      {
+        "text": "Chin clears the bar",
+        "claim": "c3"
+      },
+      {
+        "text": "Slow lowering, three to four seconds",
+        "claim": "c9"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 3,
+      "pause": 1,
+      "claim": "c9"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (pronated), palms away, full closed grip.",
+    "width": "A little wider than shoulder width.",
+    "thumb": "Wrapped around the bar.",
+    "handContact": "Bar across the top of the palm where the fingers start, as for the pull-up hang archetype.",
+    "wrist": "Straight, not curled; a bent wrist costs grip.",
+    "claims": [
+      "c1",
+      "c13",
+      "c15"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the assistance: more weight on the stack means more help. Start with the least that still lets you do a few controlled, full reps.",
+      "claim": "c4"
+    },
+    {
+      "step": "Take the bar overhand, a little wider than your shoulders, thumbs wrapped.",
+      "claim": "c13"
+    },
+    {
+      "step": "Put your knees on the pad and let it sink until you hang with straight arms.",
+      "claim": "c1"
+    },
+    {
+      "step": "Over the weeks, add reps first, then take assistance away.",
+      "claim": "c6"
+    },
+    {
+      "step": "Draw your shoulder blades down and back, then pull.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Arms fully straight at the bottom of every rep.",
+      "claim": "c3"
+    },
+    {
+      "point": "Chest up, looking at the bar.",
+      "claim": "c2"
+    },
+    {
+      "point": "Shoulder blades down and back before the arms bend.",
+      "claim": "c7"
+    },
+    {
+      "point": "Elbows drive down toward the ribs.",
+      "claim": "c7"
+    },
+    {
+      "point": "Chin over the bar at the top.",
+      "claim": "c3"
+    },
+    {
+      "point": "No swing or leg drive; the body moves straight up and down.",
+      "claim": "c8"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Stopping short: not straightening the arms at the bottom, or not getting the chin over the bar.",
+      "fix": "Full hang to chin over the bar, every rep. If you can't, add a little assistance.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Swinging or using leg drive because the assistance is set too low.",
+      "fix": "Add assistance until every rep is controlled.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Dropping fast on the way down and letting the machine do the braking.",
+      "fix": "Lower for three to four seconds back to a straight-arm hang.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "mid_back",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": "c12"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c8"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Tops of the shoulders and neck",
+        "means": "Usually means you are shrugging to start the pull.",
+        "fix": "Draw your shoulders down and back first, then bend your arms.",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "A pinch at the front of the shoulder",
+        "means": "Usually means the shoulder does not like the arms-overhead position.",
+        "fix": "Stop the set. If it keeps happening or lasts, stop and get it checked.",
+        "claim": "c10",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Inside of the elbow",
+        "means": "Usually means too much pulling volume, too soon.",
+        "fix": "Cut back the sets and build up slowly. If it lasts, get it checked.",
+        "claim": "c14",
+        "redFlag": "elbow"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder: the arms-overhead position narrows the space under the shoulder roof.",
+      "claim": "c10"
+    },
+    {
+      "risk": "Elbow overuse when pulling volume rises too fast.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "elbow"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Overhand, bar across the top of the palm, thumb wrapped, wrist straight.",
+      "wrong": "Wrist bent back, bar slipping toward the fingertips.",
+      "claim": "c15"
+    },
+    {
+      "key": "knee pad",
+      "kind": "posture",
+      "right": "Both knees on the pad, arms fully straight at the bottom.",
+      "wrong": "Arms still bent at the bottom: a half rep.",
+      "claim": "c8"
+    },
+    {
+      "key": "shoulders",
+      "kind": "posture",
+      "right": "Shoulder blades drawn down and back at the start of the pull.",
+      "wrong": "Shoulders shrugged up to the ears.",
+      "claim": "c7"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "rear_delts",
+        "role": "secondary",
+        "why": "StrengthLog lists the rear delts for this exercise (c12); coach consensus, no EMG on the assisted version."
+      }
+    ],
+    "remove": [],
+    "why": "lats primary; biceps and mid_back secondary stand, by inference from unassisted pull-up EMG (c11)."
+  },
+  "anchorSource": "strengthlog-assisted-pull-up",
+  "notes": "No EMG or kinematic study of the assisted machine itself was found (PubMed search 'assisted pull-up' returned nothing relevant), so muscle roles are inferred from unassisted pull-ups (c11) and machine handling rests on StrengthLog plus a manufacturer blog (WEAK). Not sourced, so left out: how to get on and off the pad safely and how to leave the machine at the end of a set (the tier-A 'way out'). The census contact is brace-pad; the pad here is a kneeling pad that pushes up, not a chest pad."
+}

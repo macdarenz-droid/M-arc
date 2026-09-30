@@ -1,0 +1,576 @@
+{
+  "id": "single_arm_lat_pulldown",
+  "libId": "lib_single_arm_lat_pulldown",
+  "name": "Single-Arm Lat Pulldown",
+  "family": "Vertical pull (lat_pulldown family, mode D)",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "seat-back",
+      "brace-pad"
+    ]
+  },
+  "parent": "lat_pulldown",
+  "inherit": [
+    {
+      "field": "grip.handContact (handle across the base of the fingers and top edge of the palm, like carrying a bag)",
+      "why": "true for this child because the cable pulls across the fingers exactly as on the lat_pulldown bar; only the handle or palm direction changes."
+    },
+    {
+      "field": "grip.thumb (wrapped by default; thumb over the handle allowed as a comfort option)",
+      "why": "true for this child because, as on the parent, the handle cannot fall on the lifter, so thumb position is a comfort choice with the wrapped grip as default."
+    },
+    {
+      "field": "setup: weight set and pin pushed all the way in; start lighter than you think",
+      "why": "true for this child because it is the same selector-stack machine."
+    },
+    {
+      "field": "setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull",
+      "why": "true for this child because the seat, pad and overhead pulley are the parent's; the coach sources here add that the torso must also not lean sideways or twist (c6, c11)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "On the pulldown machine: clip on a single handle, stand to take it, then sit with the thighs tight under the pads.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-single-arm-lat-pulldown",
+          "text": "Attach a single handle attachment to the lat pulldown machine.",
+          "where": "How to (machine), step 1"
+        },
+        {
+          "source": "puregym-single-arm-lat-pulldown",
+          "text": "Stand up to grip the attachment, before taking a seat, making sure your thighs are tightly secured underneath the pads.",
+          "where": "How to (machine), step 2"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Pull the elbow back and down toward the back pocket until the handle just passes chin height.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-single-arm-lat-pulldown",
+          "text": "Pull the attachment towards your upper chest by pulling your elbow back and down towards your back pocket. Pull the attachment towards your upper chest until it just passes chin height.",
+          "where": "How to (machine), step 3"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Start by dropping the shoulder away from the ear, then pull the elbow down until the upper arm is flush with the side.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-single-arm-lat-pulldown",
+          "text": "Brace your core and set your scapula, then drive straight downward, leading by dropping your shoulder away from your ear and then following through by pulling your elbow downward until your upper arm is flush with your torso.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Pause briefly at the bottom, keep tension on the way up, and let the cable lift the shoulder toward the ear at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-single-arm-lat-pulldown",
+          "text": "Once you reach the end of the range of motion, pause for a beat and then reverse the movement. Maintain continuous tension with the cable as you let your elbow rise. At the top, allow the cable to pull your shoulder upward towards your ear.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Return slowly, letting the cable take the handle back up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-single-arm-lat-pulldown",
+          "text": "Reverse the movement by slowly extending the arms, allowing the cable to pull the attachment back up.",
+          "where": "How to (machine), step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The trunk must work to stop the torso twisting; if it swings or twists, lower the load.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-single-arm-lat-pulldown",
+          "text": "The core must work hard in a single arm lat pulldown to prevent the torso from twisting. If you find your torso swings or twists, lower the load – this helps to keep the tension on the back.",
+          "where": "FAQ"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The obliques work to keep the torso upright and untwisted (coach source).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-single-arm-lat-pulldown",
+          "text": "There is also more involvement from the core, particularly the obliques, as they must work to keep the torso upright and prevent it from twisting.",
+          "where": "Intro"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "It works the lats, biceps, rhomboids and traps (coach source).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-single-arm-lat-pulldown",
+          "text": "The single arm lat pulldown works the lats, biceps, rhomboids, and traps.",
+          "where": "FAQ"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Expect to use less than half of your two-arm pulldown weight per arm.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-single-arm-lat-pulldown",
+          "text": "While you typically have to use a lighter load than 50% of what you can pull with bilateral lat pulldowns due to instability",
+          "where": "Intro"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "At the end of the pull the elbow can only go backward, and the shoulder may roll forward; the coach source says this compensation may cause stress or discomfort.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-single-arm-lat-pulldown",
+          "text": "Once you’ve reached the end of the range of motion, your elbow has nowhere to go but backwards. As a result, your shoulder might start to move forward. This compensation may cause undue stress or discomfort.",
+          "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Leaning into each rep to get the arm down is a fault; brace the abs harder instead.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-single-arm-lat-pulldown",
+          "text": "If you find yourself leaning into each repetition to get your arm where it needs to be, try contracting your abs harder to stabilize your spine.",
+          "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Setups vary: seated facing the machine, seated sideways, or kneeling at a cable column.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-single-arm-lat-pulldown",
+        "puregym-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-single-arm-lat-pulldown",
+          "text": "If you have access to a lat pulldown machine, you can start in a seated position, or seated sideways, working your arm farthest from the pulley system.",
+          "where": "Setup"
+        },
+        {
+          "source": "puregym-single-arm-lat-pulldown",
+          "text": "Grip the attachment, before adopting a kneeling position on the floor.",
+          "where": "How to (cable), step 2"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Stop pulling once the elbows stop moving down and start moving back; ACE says further pulling adds stress to the shoulder joint. Written for the two-arm bar pulldown; applied to one arm because the elbow path is the same.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Continue pulling until the bar nears or touches your chest, or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards.",
+          "where": "Step 3"
+        },
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Avoid any further pulling as this places additiomnal stresses into the shoulder joint.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The plate uses a 2-second pull and a 2-second return (the cadence Lusk 2010 tested on two-arm pulldowns) with a brief pause at the bottom; a study protocol and coach cue, not a tested recommendation.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "lusk-2010",
+        "barbend-single-arm-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "lusk-2010",
+          "text": "Participants maintained a cadence of 2-second concentric and 2-second eccentric phases.",
+          "where": "abstract"
+        },
+        {
+          "source": "barbend-single-arm-lat-pulldown",
+          "text": "Once you reach the end of the range of motion, pause for a beat and then reverse the movement.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a curled or bent wrist costs grip (hand dynamometer, applied here by reasoning).",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll-1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-lat-pulldown",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+      "title": "Seated Lat Pulldown (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "barbend-single-arm-lat-pulldown",
+      "url": "https://barbend.com/single-arm-lat-pulldown/",
+      "title": "How to Do the Single-Arm Lat Pulldown for Spectacular Back Development (BarBend)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "lusk-2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+      "title": "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20543740"
+    },
+    {
+      "id": "odriscoll-1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102"
+    },
+    {
+      "id": "puregym-single-arm-lat-pulldown",
+      "url": "https://www.puregym.com/exercises/back/lat-exercises/single-arm-lat-pulldown/",
+      "title": "Single Arm Lat Pulldown (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The elbow path down to the side and the shoulder rolling forward read from the side. The torso twist (c6) is a rotation the engine cannot draw.",
+    "equipment": "Lat pulldown station as the parent plate, with a single handle (singleHandle) on the cable (c1).",
+    "start": "Seated facing the machine, thighs tight under the pad (c1); working arm straight overhead holding the handle, shoulder lifted toward the ear by the cable (c4); torso upright (c7).",
+    "end": "Handle just past chin height, elbow down and back toward the back pocket, upper arm flush with the side (c2, c3); shoulder down, not rolled forward (c10).",
+    "checkpoints": [
+      {
+        "label": "Thighs pinned",
+        "what": "Thighs tight under the pads.",
+        "claim": "c1"
+      },
+      {
+        "label": "Shoulder down first",
+        "what": "Drop the shoulder away from the ear before the elbow bends.",
+        "claim": "c3"
+      },
+      {
+        "label": "Elbow to pocket",
+        "what": "Elbow pulls back and down toward the back pocket, handle just past the chin.",
+        "claim": "c2"
+      }
+    ],
+    "mistake": {
+      "what": "Pulling past the end: the elbow drives backward behind the body and the shoulder rolls forward.",
+      "why": "The coach source names this compensation and says it may cause stress or discomfort; ACE says to stop when the elbows start moving back. Frequency is not measured.",
+      "claim": "c10",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Upper arm flush with your side",
+        "claim": "c3"
+      },
+      {
+        "text": "Handle just past the chin",
+        "claim": "c2"
+      },
+      {
+        "text": "Torso upright, no lean",
+        "claim": "c11"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c14"
+    },
+    "variantLine": "Drawn: seated facing the pulldown machine with a single handle (c1). The kneeling cable-column setup (c12) shares the elbow path, stop point and anti-twist claims (c2, c3, c6, c10, c13); only the thigh-pad claim (c1) is machine-only."
+  },
+  "grip": {
+    "type": "Single handle; overhand or neutral are both used by coaches.",
+    "width": "One hand, set by the handle.",
+    "thumb": "Inherited from lat_pulldown: wrapped by default.",
+    "handContact": "Inherited from lat_pulldown: handle across the base of the fingers.",
+    "wrist": "Straight, not curled; a bent wrist costs grip.",
+    "claims": [
+      "c15"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Clip a single handle to the cable.",
+      "claim": "c1"
+    },
+    {
+      "step": "Stand to take the handle, then sit with your thighs tight under the pads.",
+      "claim": "c1"
+    },
+    {
+      "step": "Use less than half your two-arm pulldown weight to start.",
+      "claim": "c9"
+    },
+    {
+      "step": "Brace your trunk so it won't twist.",
+      "claim": "c6"
+    },
+    {
+      "step": "No pulldown machine? Kneel at a cable column with the handle overhead.",
+      "claim": "c12"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Thighs pinned; torso upright and square.",
+      "claim": "c7"
+    },
+    {
+      "point": "Drop the shoulder away from the ear first.",
+      "claim": "c3"
+    },
+    {
+      "point": "Elbow back and down toward the back pocket, upper arm flush with the side.",
+      "claim": "c2"
+    },
+    {
+      "point": "Stop when the handle passes the chin and the elbow stops moving down.",
+      "claim": "c13"
+    },
+    {
+      "point": "Brief pause, then a slow return; the cable lifts the shoulder at the top.",
+      "claim": "c5"
+    },
+    {
+      "point": "No leaning or twisting into the rep.",
+      "claim": "c11"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Twisting or swinging the torso to finish the rep.",
+      "fix": "Brace the trunk. If it still twists, lower the load.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Pulling past the end so the elbow goes behind you and the shoulder rolls forward.",
+      "fix": "Stop when the handle just passes your chin.",
+      "claim": "c10"
+    },
+    {
+      "mistake": "Leaning into each rep to get the arm down.",
+      "fix": "Tighten your abs to hold the spine still, and lighten the weight if needed.",
+      "claim": "c11"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c8"
+      },
+      {
+        "muscleId": "mid_back",
+        "claim": "c8"
+      },
+      {
+        "muscleId": "obliques",
+        "claim": "c7"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "The side of your waist",
+        "means": "Expected: the obliques keep your torso from twisting.",
+        "fix": "Nothing to fix. If you start to twist, lower the load.",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the shoulder",
+        "means": "Usually means you pull past the end and the shoulder rolls forward.",
+        "fix": "Stop when the handle passes your chin. If it still hurts, stop and get it checked.",
+        "claim": "c10",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Lower back or one side of the back",
+        "means": "Usually means you are leaning or twisting into the rep.",
+        "fix": "Brace, stay upright and lower the weight.",
+        "claim": "c6",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder stress from rolling the shoulder forward at the end of the pull.",
+      "claim": "c10"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Single handle across the base of the fingers, wrist straight.",
+      "wrong": "Wrist curled forward, squeezing hard.",
+      "claim": "c15"
+    },
+    {
+      "key": "bottom position",
+      "kind": "posture",
+      "right": "Upper arm flush with the side, shoulder down.",
+      "wrong": "Elbow behind the body, shoulder rolled forward.",
+      "claim": "c10"
+    },
+    {
+      "key": "top position",
+      "kind": "posture",
+      "right": "Arm long overhead, the cable lifting the shoulder toward the ear, tension kept on the handle.",
+      "wrong": "Handle let fly up with no tension, shoulder yanked up.",
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "mid_back",
+        "role": "secondary",
+        "why": "Coach source lists the rhomboids and traps (c8)."
+      },
+      {
+        "muscleId": "obliques",
+        "role": "secondary",
+        "why": "Coach source: the obliques stop the torso twisting (c7)."
+      }
+    ],
+    "remove": [],
+    "why": "lats primary and biceps secondary stand (c8). No EMG study of the one-arm pulldown was found, so the additions rest on coach sources only."
+  },
+  "anchorSource": "puregym-single-arm-lat-pulldown",
+  "notes": "No peer-reviewed study of the single-arm pulldown was found (PubMed searches for unilateral/one-arm pulldown returned nothing relevant). BarBend's guide was read in full as a second technique source."
+}

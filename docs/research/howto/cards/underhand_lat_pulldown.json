@@ -1,0 +1,643 @@
+{
+  "id": "underhand_lat_pulldown",
+  "libId": "lib_underhand_lat_pulldown",
+  "name": "Underhand Lat Pulldown",
+  "family": "Vertical pull (lat_pulldown family, mode D)",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "seat-back",
+      "brace-pad"
+    ]
+  },
+  "parent": "lat_pulldown",
+  "inherit": [
+    {
+      "field": "grip.handContact (handle across the base of the fingers and top edge of the palm, like carrying a bag)",
+      "why": "true for this child because the cable pulls across the fingers exactly as on the lat_pulldown bar; only the handle or palm direction changes."
+    },
+    {
+      "field": "grip.thumb (wrapped by default; thumb over the handle allowed as a comfort option)",
+      "why": "true for this child because, as on the parent, the handle cannot fall on the lifter, so thumb position is a comfort choice with the wrapped grip as default."
+    },
+    {
+      "field": "setup: weight set and pin pushed all the way in; start lighter than you think",
+      "why": "true for this child because it is the same selector-stack machine."
+    },
+    {
+      "field": "posture: bar comes down in front of the face, never behind the head",
+      "why": "true for this child because an underhand bar can only be pulled to the front; the parent's front-path evidence applies unchanged."
+    },
+    {
+      "field": "zooms: seat height / thigh pad crop",
+      "why": "true for this child because the pad setting is identical (c4)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Take the bar underhand (palms facing you), about shoulder-width apart, standing, then sit down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-reverse-grip-lat-pulldown",
+          "text": "Stand up and grip the bar with an underhand grip (palms facing towards you) about shoulder width apart, then sit down.",
+          "where": "How to, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "A second coach source sets the hands a little closer than shoulder width and allows a wrapped or thumbless grip.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-reverse-grip-lat-pulldown",
+          "text": "Grab the bar a little bit closer than shoulder-width apart with your palms facing you. You can choose to wrap your thumb around the bar or use a thumbless grip.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Coach opinion: with palms facing you, a closer grip is likely less strain on the shoulders than a wide one.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "barbend-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-reverse-grip-lat-pulldown",
+          "text": "That’s likely because it’s less strain on your shoulders for your forearms to be supinated (palms facing you) when they’re closer together.",
+          "where": "Variations: close grip"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Set the pads tight against the thighs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-reverse-grip-lat-pulldown",
+          "text": "Sit down on the lat pulldown machine and adjust the pads so they sit tightly against your thighs.",
+          "where": "How to, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lean back only slightly, no more than about 30 degrees, and add no extra lean during the pull.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Lean back slightly (no more than a 30 degree angle), using your legs to support your body (low back).",
+          "where": "Step 1"
+        },
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Avoid any additional backwards lean during the pull movement.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Pull the elbows back and down toward the glutes and stop when the bar passes just below chin height.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-reverse-grip-lat-pulldown",
+          "text": "Lower the bar towards your chest by pulling your elbows back and down towards the glutes, stopping when the bar passes just below chin height.",
+          "where": "How to, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Avoid momentum and keep the torso stable while the elbows pull down and back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-reverse-grip-lat-pulldown",
+          "text": "It’s important to avoid using momentum to pull the bar down so that the correct muscles are engaged. Think about keeping your torso stable",
+          "where": "Technique"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Pulling the bar further down lets the forearms and front shoulders take over (coach source).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-reverse-grip-lat-pulldown",
+          "text": "Pulling the bar further down forces your forearms and deltoids to take over, shifting the load away from your lats and biceps.",
+          "where": "Technique"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Return slowly with control; if you can't control the bar on the way up, the weight is too heavy.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-reverse-grip-lat-pulldown",
+        "barbend-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-reverse-grip-lat-pulldown",
+          "text": "Reverse the movement by slowly extending the arms, allowing the cable to pull the bar back up with control.",
+          "where": "How to, step 4"
+        },
+        {
+          "source": "barbend-reverse-grip-lat-pulldown",
+          "text": "If you don’t have any control of the bar when it rises back to the top position, you’re likely lifting too heavy.",
+          "where": "Step 3, coach's tip"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Start the pull by drawing the shoulder blades down, then pull.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "initiate the downward pull by first depressing (lower) your scapulae",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Stop pulling once the elbows stop moving down and start moving back; ACE says further pulling adds stress to the shoulder joint. Written for the overhand bar; applied here because the elbow path is the same.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Continue pulling until the bar nears or touches your chest, or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards.",
+          "where": "Step 3"
+        },
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Avoid any further pulling as this places additiomnal stresses into the shoulder joint.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Lusk 2010 tested underhand and overhand pulldowns at a 2-second pull and a 2-second return; the plate uses that cadence. It is a study protocol, not a tested recommendation.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "lusk-2010"
+      ],
+      "quotes": [
+        {
+          "source": "lusk-2010",
+          "text": "Participants maintained a cadence of 2-second concentric and 2-second eccentric phases.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Measured with EMG in 12 men, the overhand grip gave more lat activity than the underhand grip, and grip type did not change biceps or middle-trapezius activity.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "lusk-2010"
+      ],
+      "quotes": [
+        {
+          "source": "lusk-2010",
+          "text": "a pronated grip elicited greater LD activity than a supinated grip (p < 0.05), but had no influence of grip type on the MT and BB muscles.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "In a 10-man EMG study the underhand (supinated) grip gave less lat activity than a wide overhand grip to the front.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "signorile-2002"
+      ],
+      "quotes": [
+        {
+          "source": "signorile-2002",
+          "text": "During the concentric phase, NrmsEMG results for the LD included WGA > WGP, SG, CG.",
+          "where": "Results"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In 40 trained men, lat activity did not differ significantly across seven pulldown grips, widths and lean angles.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "buonsenso-2025"
+      ],
+      "quotes": [
+        {
+          "source": "buonsenso-2025",
+          "text": "These findings suggest that grip variations may not significantly alter latissimus dorsi recruitment",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Coaches say the underhand grip puts more emphasis on the biceps (not confirmed by the EMG in c13).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "barbend-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-reverse-grip-lat-pulldown",
+          "text": "By reversing your grip, you’re putting a lot more emphasis on your biceps.",
+          "where": "Intro"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Coach source: it works the lats, rhomboids, traps, rear delts and biceps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-reverse-grip-lat-pulldown",
+          "text": "Reverse grip lat pulldowns work the back muscles, including the lats, rhomboids, traps, as well as the rear delts and biceps.",
+          "where": "Muscles"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a curled or bent wrist costs grip (hand dynamometer, applied here by reasoning).",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll-1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-lat-pulldown",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+      "title": "Seated Lat Pulldown (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "barbend-reverse-grip-lat-pulldown",
+      "url": "https://barbend.com/reverse-grip-lat-pulldown/",
+      "title": "How to Do the Reverse-Grip Lat Pulldown for Stronger Back and Biceps (BarBend)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "buonsenso-2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40981044/",
+      "title": "Electromyographic Analysis of Back Muscle Activation During Lat Pulldown Exercise: Effects of Grip Variations and Forearm Orientation (Buonsenso et al., J Funct Morphol Kinesiol)",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": "40981044"
+    },
+    {
+      "id": "lusk-2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+      "title": "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20543740"
+    },
+    {
+      "id": "odriscoll-1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102"
+    },
+    {
+      "id": "puregym-reverse-grip-lat-pulldown",
+      "url": "https://www.puregym.com/exercises/back/lat-exercises/reverse-grip-lat-pulldown/",
+      "title": "Reverse Grip Lat Pulldown (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "signorile-2002",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12423182/",
+      "title": "A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down (Signorile, Zink, Szwed, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2002,
+      "pmid": "12423182"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "c7",
+    "equipment": "Lat pulldown station and long bar, as the parent plate; hands underhand about shoulder width (c1).",
+    "start": "Seated, thighs tight under the pad (c4); arms straight overhead, underhand grip about shoulder width (c1); slight lean, no more than about 30 degrees (c5); shoulder blades drawn down to begin (c10).",
+    "end": "Bar just below the chin, elbows pulled down and back toward the glutes (c6); torso lean unchanged (c5, c7).",
+    "checkpoints": [
+      {
+        "label": "Thighs pinned",
+        "what": "Pads tight on the thighs.",
+        "claim": "c4"
+      },
+      {
+        "label": "Elbows down, back",
+        "what": "Elbows pull down and back toward the glutes.",
+        "claim": "c6"
+      },
+      {
+        "label": "Bar below chin",
+        "what": "Stop when the bar passes just below chin height.",
+        "claim": "c6"
+      }
+    ],
+    "mistake": {
+      "what": "Using momentum: the torso rocks back to drive the bar down, then swings forward as it rises.",
+      "why": "The coach source names momentum first and asks for a stable torso; ACE limits the lean to about 30 degrees with no extra lean during the pull. Frequency is not measured.",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Torso still through each rep",
+        "claim": "c7"
+      },
+      {
+        "text": "Bar stops just below the chin",
+        "claim": "c6"
+      },
+      {
+        "text": "Slow, controlled return",
+        "claim": "c9"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 0,
+      "claim": "c12"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Underhand (supinated), palms facing you.",
+    "width": "About shoulder width, or a little closer; closer is likely easier on the shoulders.",
+    "thumb": "Wrapped by default (inherited); thumbless is a coach-allowed option.",
+    "handContact": "Inherited from lat_pulldown: bar across the base of the fingers.",
+    "wrist": "Straight, not curled; a bent wrist costs grip.",
+    "claims": [
+      "c1",
+      "c2",
+      "c3",
+      "c14",
+      "c18"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Sit and set the pads tight against your thighs.",
+      "claim": "c4"
+    },
+    {
+      "step": "Stand, take the bar underhand about shoulder width, then sit down.",
+      "claim": "c1"
+    },
+    {
+      "step": "Lean back slightly, no more than about 30 degrees.",
+      "claim": "c5"
+    },
+    {
+      "step": "Draw your shoulder blades down to start the pull.",
+      "claim": "c10"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Thighs pinned all set.",
+      "claim": "c4"
+    },
+    {
+      "point": "Torso stable; the lean does not change.",
+      "claim": "c7"
+    },
+    {
+      "point": "Shoulder blades down first.",
+      "claim": "c10"
+    },
+    {
+      "point": "Elbows down and back toward the glutes.",
+      "claim": "c6"
+    },
+    {
+      "point": "Stop just below the chin, when the elbows stop moving down.",
+      "claim": "c11"
+    },
+    {
+      "point": "Slow, controlled return to straight arms.",
+      "claim": "c9"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Rocking the torso to swing the bar down.",
+      "fix": "Keep the torso still. If you can't, lower the weight.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Pulling the bar down to the belly.",
+      "fix": "Stop when the bar passes just below your chin.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Letting the bar fly back up.",
+      "fix": "Control it all the way up; if you can't, the weight is too heavy.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c15"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c16"
+      },
+      {
+        "muscleId": "mid_back",
+        "claim": "c17"
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": "c17"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "forearms",
+        "claim": "c8"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the upper arms",
+        "means": "Common with this grip; coaches say it works the biceps more, though EMG found no biceps difference between grips.",
+        "fix": "Nothing to fix. Keep leading with the elbows.",
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Forearms more than your back",
+        "means": "Usually means you are pulling the bar too low.",
+        "fix": "Stop just below the chin.",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the shoulders",
+        "means": "Usually means the grip is too wide for palms facing you, or you pull past the stop point.",
+        "fix": "Bring the hands in to about shoulder width and stop when the elbows stop moving down. If it still hurts, stop and get it checked.",
+        "claim": "c3",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually means you are rocking the weight down.",
+        "fix": "Keep the lean slight and still, and lower the weight.",
+        "claim": "c5",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder stress from pulling past the point where the elbows stop moving down.",
+      "claim": "c11"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Palms facing you, bar across the base of the fingers, wrists straight.",
+      "wrong": "Wrists bent back under the bar, grip opening.",
+      "claim": "c18"
+    },
+    {
+      "key": "torso",
+      "kind": "posture",
+      "right": "Slight fixed lean, bar just below the chin.",
+      "wrong": "Torso thrown back well past 30 degrees to drive the bar down.",
+      "claim": "c5"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "rear_delts",
+        "role": "secondary",
+        "why": "Listed by the coach source (c17); no EMG for this grip beyond Signorile's posterior-deltoid data."
+      }
+    ],
+    "remove": [],
+    "why": "lats primary and biceps and mid_back secondary stand. The underhand grip is not better for the lats (c13, c14) and grip may not matter much (c15)."
+  },
+  "anchorSource": "puregym-reverse-grip-lat-pulldown",
+  "notes": "PureGym's claims that the underhand grip lets most people lift more and may suit people prone to shoulder pain are not used: no measured source was found for either, and the chin_up card records shoulder-risk kinematics for a palms-toward-you hang. BarBend's full reverse-grip guide was also read in full."
+}

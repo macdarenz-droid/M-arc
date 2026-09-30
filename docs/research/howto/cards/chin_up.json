@@ -1,0 +1,780 @@
+{
+  "id": "chin_up",
+  "libId": "lib_chin_up",
+  "name": "Chin-Up",
+  "family": "Vertical pull (pull_up family, mode D)",
+  "tier": "A",
+  "archetype": {
+    "hand": "hang",
+    "contact": [
+      "hang-support"
+    ]
+  },
+  "parent": "pull_up",
+  "inherit": [
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because the same fixed bar hangs in the fingers and top of the palm under full body weight; only the palm turns toward the face (c1)."
+    },
+    {
+      "field": "grip.thumb (wrapped, never thumbless by default)",
+      "why": "true for this child because the lifter is still what falls if the hand opens, and ACE's chin-up setup itself asks for thumbs wrapped (c1, c21)."
+    },
+    {
+      "field": "setup: bar high enough that the feet clear the floor, reached by a small jump or a step",
+      "why": "true for this child because the bar and the free hang are identical to the pull-up."
+    },
+    {
+      "field": "setup: bar fixed and dry, chalk if the hands sweat",
+      "why": "true for this child because grip security on the same bar does not depend on palm direction."
+    },
+    {
+      "field": "zooms.thumb (full grip default; thumbless, hook and gymnastics false grip labelled)",
+      "why": "true for this child because the thumb choices and their naming trap are the same on a supinated hang; the drawing turns the palm toward the face."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "ACE sets up the chin-up with the palms facing you and a full grip, thumbs wrapped around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-chin-ups"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chin-ups",
+          "text": "reach your arms overhead with your palms facing you. Reach, jump or lift your body off the floor to grasp the handles firmly with a full grip position (thumbs wrapped around the handles).",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Coaching sources put the hands about shoulder-width apart, or slightly closer, for the chin-up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-chin-up",
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-chin-up",
+          "text": "Grip the bar with a supinated grip (palms facing you), about shoulder-width apart.",
+          "where": "How to Do Chin-Ups, step 1"
+        },
+        {
+          "source": "nasm-chin-pull",
+          "text": "A chin-up uses a supinated grip (palms facing the client), typically shoulder-width or slightly closer, and involves shoulder extension.",
+          "where": "What separates the two movements"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "ACE asks for a neutral wrist: the wrist in a straight line with the forearm.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-chin-ups"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chin-ups",
+          "text": "assume a neutral wrist position (i.e., wrist aligned in a straight line with your forearms).",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Before the arms bend, the shoulder blades are pulled down and back, and that position is held for the whole set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-chin-ups",
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chin-ups",
+          "text": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+          "where": "Step 1"
+        },
+        {
+          "source": "nasm-chin-pull",
+          "text": "Set the scapulae first, cueing 'pull the shoulder blades down and back' before the arms take over, so the client leads with the back rather than yanking with the arms.",
+          "where": "Technique"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The pull drives the elbows straight down toward the floor while they stay in front of the body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-chin-ups"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chin-ups",
+          "text": "Attempt to pull in a motion that drives your elbows directly down towards the floor, keeping your elbows in front of your body.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The body stays vertical without swinging; kipping, partial range and craning the neck are the named faults.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-chin-ups",
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chin-ups",
+          "text": "Attempt to keep your body aligned vertically to the floor and avoid swinging your body during your upward pull",
+          "where": "Step 2"
+        },
+        {
+          "source": "nasm-chin-pull",
+          "text": "Discourage the common faults: kipping and momentum on strict-strength work, partial range of motion (coach a full hang at the bottom to a chin-clearing top), and craning the neck.",
+          "where": "Technique"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The rep ends when the chin is level with the bar, pauses briefly, and returns slowly to fully straight arms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-chin-ups"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chin-ups",
+          "text": "Continue pulling upward until your chin is level with the bar or your hands. Pause momentarily then slowly return to your starting position by allowing your arms to extend back overhead until your arms are fully extended.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "ACE describes a slow pull, a brief pause at the top and a slow return. It gives no seconds, so the 2-1-2 count on the plate is a drawing convention, not a sourced number.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-chin-ups"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chin-ups",
+          "text": "Slowly exhale and slowly pull your body upwards by flexing (bending) your elbows",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-chin-ups",
+          "text": "Pause momentarily then slowly return to your starting position",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "ACE has the lifter gently cross one leg over the other and brace the abs to keep the lower body still.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-chin-ups"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chin-ups",
+          "text": "Gently cross one leg over the other to stabilize your lower extremity and then stiffen (\"brace\") your abdominal muscles to stabilize your spine.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Measured with EMG, the chin-up worked the biceps and the chest muscle harder than the pull-up, and the lower trapezius less.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "youdas-2010"
+      ],
+      "quotes": [
+        {
+          "source": "youdas-2010",
+          "text": "The pectoralis major and biceps brachii had significantly higher EMG activation during the chin-up than during the pull-up, whereas the lower trapezius was significantly more active during the pull-up.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Across the pull-up, chin-up and a rotating-handle version, the lats were the most active muscle, then the biceps; the lower trapezius and chest worked moderately.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "youdas-2010"
+      ],
+      "quotes": [
+        {
+          "source": "youdas-2010",
+          "text": "latissimus dorsi (117-130%), biceps brachii (78-96%), infraspinatus (71-79%), lower trapezius (45-56%), pectoralis major (44-57%)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "In an ACE-funded EMG study of eight back exercises, the pull-up and the chin-up activated the lats most.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "ace-best-back"
+      ],
+      "quotes": [
+        {
+          "source": "ace-best-back",
+          "text": "Latissimus dorsi (Figure 3): The pull-up and chin-up had significantly greater muscle activation than the other six exercises.",
+          "where": "Results"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Prinold and Bull measured shoulder-blade motion in three pull-up styles; the palms-facing-posterior ('reverse') style showed extreme upper-arm rotation, a pattern they link to impingement risk. Reading 'palms facing posterior' with the arms overhead as the chin-up grip is this writer's interpretation.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "prinold-2016"
+      ],
+      "quotes": [
+        {
+          "source": "prinold-2016",
+          "text": "palms facing anterior, palms facing posterior and wide-grip",
+          "where": "Methods"
+        },
+        {
+          "source": "prinold-2016",
+          "text": "The reverse technique has extreme glenohumeral internal-external rotation and large deviation from the scapula plane.",
+          "where": "Results"
+        },
+        {
+          "source": "prinold-2016",
+          "text": "Wide and reverse pull-ups demonstrate kinematics patterns linked with increased impingement risk.",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "With the arms high overhead, the space under the shoulder roof gets smaller, which the authors link to impingement risk.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "prinold-2016"
+      ],
+      "quotes": [
+        {
+          "source": "prinold-2016",
+          "text": "High arm elevation during pull-ups reduces sub-acromial space and increases pressure, increasing the risk of impingement injury.",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In a modelling study the chin-up and pull-up gave the highest spine load of the pulling exercises tested, even though the body hangs.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "mcgill-2014"
+      ],
+      "quotes": [
+        {
+          "source": "mcgill-2014",
+          "text": "The chin-up and pull-up exercises created the highest spine load as they required the highest muscle activation, despite the body \"hanging\" under tractioning gravitational load.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "NASM warns to progress gradually to avoid elbow overuse, and to send persistent shoulder or elbow pain, numbness or tingling to a professional instead of training through it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chin-pull",
+          "text": "progress gradually to avoid overuse issues like elbow tendon irritation",
+          "where": "Safety"
+        },
+        {
+          "source": "nasm-chin-pull",
+          "text": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "If a full chin-up is not possible yet, band or machine assistance and slow lowering-only reps build toward it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chin-pull",
+          "text": "Band-assisted reps or an assisted pull-up machine to practice the full pattern with reduced load.",
+          "where": "Building Toward the First Rep"
+        },
+        {
+          "source": "nasm-chin-pull",
+          "text": "Eccentric (negative) reps: jump or step to the top, then lower slowly",
+          "where": "Building Toward the First Rep"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "At the bottom you hang freely with the elbows fully straight and the head between the arms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-chin-up"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-chin-up",
+          "text": "Be sure to freely hang at the bottom of the chin-up. You should be able to have your head in between your biceps with the elbows fully extended.",
+          "where": "Step 1, coach's tip"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Grip and forearm strength are needed to hold the bar for the whole set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-chin-up"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-chin-up",
+          "text": "A strong grip and forearms are needed to both keep you holding on to the bar itself as well as provide a stable connection to pull from.",
+          "where": "Forearms and Grip"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Grip strength drops when the wrist moves 10 to 15 degrees away from its self-chosen position, so a bent or curled wrist costs grip. Measured on a hand dynamometer, applied here to a hang by reasoning.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll-1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll-1992",
+          "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "hk-baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Grip drill"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "ACE keeps the head in line with the trunk, under the hands.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-chin-ups"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chin-ups",
+          "text": "Align your head vertically with your trunk under your hands",
+          "where": "Step 1"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-best-back",
+      "url": "https://www.acefitness.org/continuing-education/certified/december-2018/7138/ace-sponsored-research-what-is-the-best-back-exercise/",
+      "title": "ACE-Sponsored Research: What Is the Best Back Exercise? (Edelburg, Porcari, Camic, Kovacs, Foster, with Green; ACE Certified, December 2018)",
+      "kind": "guideline",
+      "year": 2018,
+      "pmid": null
+    },
+    {
+      "id": "ace-chin-ups",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/190/chin-ups/",
+      "title": "Chin-ups (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "barbend-chin-up",
+      "url": "https://barbend.com/chin-up/",
+      "title": "Chin-up exercise guide (BarBend)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "hk-baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "mcgill-2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25066518/",
+      "title": "Muscle activity and spine load during pulling exercises: influence of stable and labile contact surfaces and technique coaching (McGill, Cannon, Andersen, J Electromyogr Kinesiol)",
+      "kind": "peer-reviewed",
+      "year": 2014,
+      "pmid": "25066518"
+    },
+    {
+      "id": "nasm-chin-pull",
+      "url": "https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked",
+      "title": "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "odriscoll-1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102"
+    },
+    {
+      "id": "prinold-2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26383875/",
+      "title": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
+      "kind": "peer-reviewed",
+      "year": 2016,
+      "pmid": "26383875"
+    },
+    {
+      "id": "strengthlog-chin-up",
+      "url": "https://www.strengthlog.com/chin-up/",
+      "title": "How to Do Chin-Up: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "youdas-2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21068680/",
+      "title": "Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise (Youdas et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "21068680"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "c5",
+    "equipment": "Fixed overhead pull-up bar and floor line, as the pull_up plate. Feet clear the floor with straight arms.",
+    "start": "Free hang: elbows fully straight, arms overhead with the head between them (c18); palms toward the face, full grip (c1); shoulder blades set down and back (c4); legs crossed and still, body vertical under the bar (c9, c6); head in line with the trunk (c22).",
+    "end": "Chin level with the bar (c7); elbows driven down toward the floor and still in front of the body, beside the ribs (c5); body still vertical, no leg kick (c6).",
+    "checkpoints": [
+      {
+        "label": "Shoulders set",
+        "what": "Shoulder blades pulled down and back before the arms bend, held all set.",
+        "claim": "c4"
+      },
+      {
+        "label": "Elbows in front",
+        "what": "Elbows drive straight down toward the floor and stay in front of the body.",
+        "claim": "c5"
+      },
+      {
+        "label": "Chin to bar",
+        "what": "Pull until the chin is level with the bar, then lower to fully straight arms.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Swinging or kipping: the legs kick forward and the body arcs to throw the chin over the bar.",
+      "why": "ACE and NASM both name swinging and kipping as the fault to avoid; momentum replaces the pull and throws the shoulders into the overhead position that narrows the space under the shoulder roof (c14). How often it happens is not measured.",
+      "claim": "c6",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Body stays vertical, no swing",
+        "claim": "c6"
+      },
+      {
+        "text": "Arms fully straight at the bottom",
+        "claim": "c7"
+      },
+      {
+        "text": "Chin reaches bar height",
+        "claim": "c7"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c8"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Underhand (supinated), palms facing you, full closed grip.",
+    "width": "About shoulder-width apart, or slightly closer.",
+    "thumb": "Wrapped around the bar to meet the index finger (inherited from pull_up; ACE also asks for it).",
+    "handContact": "Inherited from pull_up: bar across the top of the palm where the fingers start.",
+    "wrist": "Straight, in line with the forearm. A curled wrist or a bar sliding to the fingertips costs grip.",
+    "claims": [
+      "c1",
+      "c2",
+      "c3",
+      "c20",
+      "c21"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Stand under the bar, reach up with your palms facing you and take a full grip, thumbs wrapped.",
+      "claim": "c1"
+    },
+    {
+      "step": "Set your hands about shoulder-width apart, or slightly closer.",
+      "claim": "c2"
+    },
+    {
+      "step": "Keep your wrists straight, in line with your forearms.",
+      "claim": "c3"
+    },
+    {
+      "step": "Hang, gently cross one leg over the other and brace your abs.",
+      "claim": "c9"
+    },
+    {
+      "step": "Pull your shoulders down and back before you bend your arms.",
+      "claim": "c4"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Free hang at the bottom: elbows fully straight, head between the arms.",
+      "claim": "c18"
+    },
+    {
+      "point": "Shoulder blades down and back, held for the whole set.",
+      "claim": "c4"
+    },
+    {
+      "point": "Elbows drive down toward the floor, in front of the body.",
+      "claim": "c5"
+    },
+    {
+      "point": "Body vertical and still: no swing, no kip.",
+      "claim": "c6"
+    },
+    {
+      "point": "Chin level with the bar at the top.",
+      "claim": "c7"
+    },
+    {
+      "point": "Head aligned with the trunk, under the hands.",
+      "claim": "c22"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging, kicking or kipping to get the chin over the bar.",
+      "fix": "Cross your legs, brace, keep the body vertical. If you can't finish a rep without swinging, use a band or the assisted machine, or do slow lowering-only reps.",
+      "claim": "c17"
+    },
+    {
+      "mistake": "Half reps: stopping short of the bar, or not straightening the arms at the bottom.",
+      "fix": "Go from a free hang with straight arms to chin level with the bar, every rep. End the set when you can't.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Starting the pull from a loose hang with the shoulders up by the ears.",
+      "fix": "Pull your shoulders down and back first, then bend your arms.",
+      "claim": "c4"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "biceps",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "forearms",
+        "claim": "c19"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c4"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of your upper arms",
+        "means": "Expected: palms toward you make the biceps work harder than on a pull-up.",
+        "fix": "Nothing to fix. Keep leading with the elbows so the back works too.",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Tops of the shoulders and neck",
+        "means": "Usually means you are pulling from a loose hang with the shoulders up.",
+        "fix": "Set your shoulders down and back before each rep.",
+        "claim": "c4",
+        "redFlag": null
+      },
+      {
+        "where": "A pinch at the front of the shoulder",
+        "means": "Usually means the shoulder does not like this arms-overhead, palms-toward-you position.",
+        "fix": "Stop the set. If it keeps happening or lasts, stop chin-ups and get it checked.",
+        "claim": "c14",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Inside of the elbow",
+        "means": "Usually means too much pulling volume, too soon.",
+        "fix": "Cut back the sets and build up slowly. If it lasts, get it checked.",
+        "claim": "c16",
+        "redFlag": "elbow"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder: arms high overhead narrow the space under the shoulder roof, and the palms-toward-you style shows more upper-arm rotation.",
+      "claim": "c13"
+    },
+    {
+      "risk": "Spine: chin-ups load the spine more than other pulls despite the hang; relevant with back pain.",
+      "claim": "c15"
+    },
+    {
+      "risk": "Elbow overuse when volume rises too fast.",
+      "claim": "c16"
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "elbow"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Palm facing the face, bar across the top of the palm, thumb wrapped under, wrist straight in line with the forearm.",
+      "wrong": "Bar slid out to the fingertips with the wrist bent, grip opening.",
+      "claim": "c20"
+    },
+    {
+      "key": "elbows",
+      "kind": "posture",
+      "right": "Mid-pull side view: elbows pointing down, in front of the body.",
+      "wrong": "Shoulders shrugged to the ears at the start of the pull.",
+      "claim": "c5"
+    },
+    {
+      "key": "body line",
+      "kind": "posture",
+      "right": "Legs crossed and still, body vertical under the bar.",
+      "wrong": "Legs kicking forward in an arc to throw the chin up.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "forearms",
+        "role": "secondary",
+        "why": "Holding full body weight on the bar loads the grip (coach consensus, c19)."
+      }
+    ],
+    "remove": [],
+    "why": "exercises.json already lists lats and biceps as primary, which the chin-up EMG supports (c10, c11). mid_back stands: the lower trapezius works moderately (c11), folded into mid_back as on the pull_up card. Chest (pectoralis major, c10) is not added: it works, but people rarely feel it here."
+  },
+  "anchorSource": "ace-chin-ups",
+  "notes": "Not sourced, so left out: a safe way down from the bar (the tier-A 'way out'); the pull_up card's setup lines are inherited for bar height and chalk. No source compares shoulder-width and closer chin-up grips. Prinold 2016 is read from the abstract only; the reverse = chin-up mapping is interpretation (c13)."
+}
