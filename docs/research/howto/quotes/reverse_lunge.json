@@ -1,0 +1,167 @@
+{
+  "id": "reverse_lunge",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "cat-revlunge",
+      "text": "Starting with feet hip to shoulder width, step one foot back far enough to move down into a deep lunge with the front shin approximately vertical.",
+      "status": "verbatim",
+      "closest": "Starting with feet hip to shoulder width, step one foot back far enough to move down into a deep lunge with the front shin approximately vertical."
+    },
+    {
+      "claim": "c1",
+      "source": "ace-revlunge",
+      "text": "With the feet about hip-width apart, slowly step backwards with the left leg.",
+      "status": "verbatim",
+      "closest": "With the feet about hip-width apart, slowly step backwards with the left leg."
+    },
+    {
+      "claim": "c2",
+      "source": "cat-revlunge",
+      "text": "step one foot back far enough to move down into a deep lunge with the front shin approximately vertical.",
+      "status": "verbatim",
+      "closest": "step one foot back far enough to move down into a deep lunge with the front shin approximately vertical."
+    },
+    {
+      "claim": "c3",
+      "source": "cat-revlunge",
+      "text": "Keep the trunk upright and balance approximately evenly on the two feet at the bottom of the motion.",
+      "status": "verbatim",
+      "closest": "Keep the trunk upright and balance approximately evenly on the two feet at the bottom of the motion."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-revlunge",
+      "text": "After the left foot hits the ground push back into the right hip to slowly lower the left knee towards the floor while keeping the chest raised towards the ceiling.",
+      "status": "verbatim",
+      "closest": "After the left foot hits the ground push back into the right hip to slowly lower the left knee towards the floor while keeping the chest raised towards the ceiling."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-revlunge",
+      "text": "Press the right foot into the ground and think about pulling the right knee backwards while swinging the left leg forward to return to standing.",
+      "status": "verbatim",
+      "closest": "Press the right foot into the ground and think about pulling the right knee backwards while swinging the left leg forward to return to standing."
+    },
+    {
+      "claim": "c6",
+      "source": "cat-revlunge",
+      "text": "Many athletes try to load lunges too heavily and lose the position in which the exercise will be most effective.",
+      "status": "verbatim",
+      "closest": "Many athletes try to load lunges too heavily and lose the position in which the exercise will be most effective."
+    },
+    {
+      "claim": "c6",
+      "source": "cat-revlunge",
+      "text": "If you can't maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight.",
+      "status": "verbatim",
+      "closest": "If you can't maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight."
+    },
+    {
+      "claim": "c7",
+      "source": "cat-revlunge",
+      "text": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position.",
+      "status": "verbatim",
+      "closest": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position."
+    },
+    {
+      "claim": "c8",
+      "source": "bezerra-2021",
+      "text": "Results indicate that positioning the trunk in a forward-inclined position induces greater lower lumbar erector spinae activation",
+      "status": "verbatim",
+      "closest": "Results indicate that positioning the trunk in a forward-inclined position induces greater lower lumbar erector spinae activation"
+    },
+    {
+      "claim": "c8",
+      "source": "bezerra-2021",
+      "text": "(straight = 20 ± 15, inclined = 40 ± 29)",
+      "status": "verbatim",
+      "closest": "(straight = 20 ± 15, inclined = 40 ± 29)"
+    },
+    {
+      "claim": "c9",
+      "source": "cat-revlunge",
+      "text": "The reverse lunge strengthens the legs and hips and improves hip stability with the unilateral effort",
+      "status": "verbatim",
+      "closest": "The reverse lunge strengthens the legs and hips and improves hip stability with the unilateral effort"
+    },
+    {
+      "claim": "c9",
+      "source": "cat-revlunge",
+      "text": "It generally emphasize the quads slightly more than a forward lunge.",
+      "status": "verbatim",
+      "closest": "It generally emphasize the quads slightly more than a forward lunge."
+    },
+    {
+      "claim": "c10",
+      "source": "goulette-2021",
+      "text": "Quadriceps force, PFJ reaction force, and knee flexion angle were larger in the FL movement and Up phases. PFJ loading rate was greater in the FL movement along with a lower forward trunk tilt.",
+      "status": "verbatim",
+      "closest": "Quadriceps force, PFJ reaction force, and knee flexion angle were larger in the FL movement and Up phases. PFJ loading rate was greater in the FL movement along with a lower forward trunk tilt."
+    },
+    {
+      "claim": "c10",
+      "source": "goulette-2021",
+      "text": "The FL produced greater PFJ loading variables compared to the BL.",
+      "status": "verbatim",
+      "closest": "The FL produced greater PFJ loading variables compared to the BL."
+    },
+    {
+      "claim": "c11",
+      "source": "cat-revlunge",
+      "text": "The reverse lunge can be loaded in many ways, such as with a barbell in the clean rack position or overhead, dumbbells or kettlebells at the sides",
+      "status": "verbatim",
+      "closest": "The reverse lunge can be loaded in many ways, such as with a barbell in the clean rack position or overhead, dumbbells or kettlebells at the sides"
+    },
+    {
+      "claim": "c11",
+      "source": "ace-revlunge",
+      "text": "Dip under the bar so that it rests behind the neck across the top of the back and the shoulder blades",
+      "status": "verbatim",
+      "closest": "Dip under the bar so that it rests behind the neck across the top of the back and the shoulder blades"
+    },
+    {
+      "claim": "c12",
+      "source": "cat-revlunge",
+      "text": "You can alternate legs rep to rep, or complete all reps on one leg before switching to the other.",
+      "status": "verbatim",
+      "closest": "You can alternate legs rep to rep, or complete all reps on one leg before switching to the other."
+    },
+    {
+      "claim": "c13",
+      "source": "nhs-knee",
+      "text": "Urgent advice: Get advice from 111 now if:",
+      "status": "verbatim",
+      "closest": "Urgent advice: Get advice from 111 now if:"
+    },
+    {
+      "claim": "c13",
+      "source": "nhs-knee",
+      "text": "your knee is very painful",
+      "status": "verbatim",
+      "closest": "your knee is very painful"
+    },
+    {
+      "claim": "c13",
+      "source": "nhs-knee",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "status": "verbatim",
+      "closest": "your knee locks, gives way or painfully clicks – painless clicking is normal"
+    },
+    {
+      "claim": "c14",
+      "source": "cat-revlunge",
+      "text": "Light or unloaded lunges can be done with 15-20 reps as well if using them for work capacity or rehab.",
+      "status": "verbatim",
+      "closest": "Light or unloaded lunges can be done with 15-20 reps as well if using them for work capacity or rehab."
+    },
+    {
+      "claim": "c14",
+      "source": "cat-revlunge",
+      "text": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position.",
+      "status": "verbatim",
+      "closest": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position."
+    }
+  ]
+}

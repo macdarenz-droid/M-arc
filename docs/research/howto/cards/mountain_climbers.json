@@ -1,0 +1,476 @@
+{
+  "id": "mountain_climbers",
+  "libId": "lib_mountain_climbers",
+  "name": "Mountain Climbers",
+  "family": "PLANK (cycle)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md 5.1: not in the A or B lists); census.json difficulty tier 3.",
+  "archetype": {
+    "hand": "palm-flat",
+    "contact": [
+      "floor-body"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Mountain climbers are a moving plank: from a raised push-up position the feet are brought forward one at a time toward the chest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "Mountain climbers are like a moving plank: You start in a raised push-up position and hop your feet forward, one at a time, toward your chest.",
+          "where": "intro"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hands go directly under the shoulders with the arms straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "Start on your hands and knees with your arms straight and hands placed directly under your shoulders.",
+          "where": "To do mountain climbers, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The body forms a straight line from the back of the head to the heels, on hands and toes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "Extend your legs back behind you, supporting your body on your hands and toes. Your body should form a straight line from the back of your head to your heels (like a regular, raised push-up position or plank).",
+          "where": "To do mountain climbers, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Bring one foot toward the chest, then switch legs quickly as if running, without letting the hips hike up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "From here, hop one foot toward your chest, and then quickly switch legs, as if you're running. Try not to let your hips hike up as you move.",
+          "where": "To do mountain climbers, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the plank position while the legs alternate.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "Maintain that plank position as you continue to alternate legs.",
+          "where": "To do mountain climbers, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Shifting the weight backward makes balance harder; keep the shoulders over the wrists and press slightly forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "Weight shifting backward. Shifting your weight backward can reduce some of the pressure on your arms and core, but it can also make it tougher to maintain balance and stability.",
+          "where": "Common adjustments"
+        },
+        {
+          "source": "hinge-mc",
+          "text": "A helpful adjustment here is to keep your shoulders directly over your wrists and imagine pressing slightly forward.",
+          "where": "Common adjustments"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Bouncing on the toes adds impact; glide the knees forward with smooth steps instead.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "Bouncing on your toes. Some people find themselves bouncing on their toes as they drive their knees forward. This can add extra impact, especially for beginners, which might make it harder to keep the movement controlled.",
+          "where": "Common adjustments"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Some back rounding is natural with fatigue; if it becomes excessive, draw the shoulders down and back and engage the core.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "Some rounding in your back is natural, especially as you start to fatigue. If you feel your back rounding excessively, try focusing on drawing your shoulders down and back, which supports a neutral spine position.",
+          "where": "Common adjustments"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Easier versions: step instead of hopping, put the hands on a sturdy bench or step, or shorten the knee drive.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "Step, instead of jump. Rather than jumping to switch legs, step one foot forward, then step it back, and repeat with the other leg.",
+          "where": "Modifications"
+        },
+        {
+          "source": "hinge-mc",
+          "text": "Place your hands on an elevated surface, like a sturdy bench or step. This reduces the load on your arms and core, making the exercise less intense than starting from the floor.",
+          "where": "Modifications"
+        },
+        {
+          "source": "hinge-mc",
+          "text": "Instead of bringing your knee all the way to your chest, only bring it halfway or as far as is comfortable.",
+          "where": "Modifications"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Progression: a faster pace raises the cardio and core demand.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "Pick up the pace. Do the movement at a faster pace to increase the cardio intensity. This will also challenge your core and legs to move quickly and efficiently.",
+          "where": "Modifications"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "You may feel the core, shoulders and arms, and the glutes, thighs and hips working; the hip flexors lift the legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hinge-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hinge-mc",
+          "text": "As you do each rep, you might feel your core, shoulder, and arm muscles working, as well as your butt, thighs, and hips.",
+          "where": "To do mountain climbers, after step 4"
+        },
+        {
+          "source": "hinge-mc",
+          "text": "Hip flexors. These muscles help you flex at the hip (thus the name) when you walk and do other activities that require lifting your legs.",
+          "where": "Muscles worked"
+        },
+        {
+          "source": "hinge-mc",
+          "text": "Rectus abdominis. This sheet of muscle — often called the \"six-pack\" muscle — spans the front of your abdomen",
+          "where": "Muscles worked"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Planks and push-ups load the wrist bent back; in patients with pain on the back of the wrist in this position, MRI found an abnormality in 84 %. This is a patient series, not a risk estimate for healthy exercisers.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "nance-2017"
+      ],
+      "quotes": [
+        {
+          "source": "nance-2017",
+          "text": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses.",
+          "where": "abstract, purpose"
+        },
+        {
+          "source": "nance-2017",
+          "text": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hinge-mc",
+      "url": "https://www.hingehealth.com/resources/articles/mountain-climbers/",
+      "title": "How to do mountain climbers: a Hinge Health guide",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nance-2017",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29085728/",
+      "title": "Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study",
+      "kind": "peer-reviewed",
+      "year": 2017,
+      "pmid": "29085728",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The knee drive toward the chest (c4), the straight head-to-heel line (c3) and the hands-under-shoulders stack (c2, c6) are sagittal; the hip-hike fault reads from the side.",
+    "equipment": "Floor line only.",
+    "frames": "Cycle convention (architecture section 1): one half-cycle, from the high plank to one knee driven toward the chest; Trace follows the driving knee; tempo covers one cycle.",
+    "start": "High plank on hands and toes, arms straight, hands under the shoulders (c2), straight line from the back of the head to the heels (c3).",
+    "end": "One knee driven toward the chest, the other leg still straight behind, hips not hiked (c4), shoulders still over the wrists (c6).",
+    "checkpoints": [
+      {
+        "label": "Hands under shoulders",
+        "what": "Arms straight, hands directly under the shoulders, shoulders over the wrists.",
+        "claim": "c2"
+      },
+      {
+        "label": "Straight line",
+        "what": "Head to heels in one line, as in a plank.",
+        "claim": "c3"
+      },
+      {
+        "label": "Knee to chest",
+        "what": "One foot comes forward toward the chest, then the legs switch.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Hips hike up as the knee drives forward.",
+      "why": "The anchor's own how-to step warns against it (c4); it breaks the plank line the movement depends on (c3, c5).",
+      "claim": "c4",
+      "drawable": true,
+      "rankNote": "No source ranks faults by frequency. Hinge Health's common-adjustments list also names bouncing, weight shifting backward and back rounding (c6-c8); weight shifting back is also drawable and suits the layers."
+    },
+    "tells": [
+      {
+        "text": "Shoulders stay over your wrists",
+        "claim": "c6"
+      },
+      {
+        "text": "Hips stay level as legs switch",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Cycle: switch legs quickly, as if running; beginners step instead of hopping. No source gives a cadence.",
+      "claim": "c4"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Palms flat on the floor.",
+    "width": "Hands directly under the shoulders.",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "Wrist bent back under body weight (as in planks and push-ups, c12).",
+    "claims": [
+      "c2",
+      "c12"
+    ],
+    "note": "No source found on finger spread, weight through the heel of the hand, or whether fists or push-up handles help a sore wrist."
+  },
+  "setup": [
+    {
+      "step": "Start on hands and knees, arms straight, hands under your shoulders.",
+      "claim": "c2"
+    },
+    {
+      "step": "Step your legs back onto your toes; body in one straight line.",
+      "claim": "c3"
+    },
+    {
+      "step": "Bring one foot toward your chest, then switch legs quickly.",
+      "claim": "c4"
+    },
+    {
+      "step": "Keep the plank position the whole time.",
+      "claim": "c5"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Hands under shoulders, arms straight.",
+      "claim": "c2"
+    },
+    {
+      "point": "Straight line from head to heels.",
+      "claim": "c3"
+    },
+    {
+      "point": "Hips don't hike up.",
+      "claim": "c4"
+    },
+    {
+      "point": "Shoulders stay over the wrists.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Hips hike up.",
+      "fix": "Keep the plank line; slow down or step instead of hopping.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Weight shifts back toward the feet.",
+      "fix": "Shoulders over wrists, press slightly forward.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Bouncing on the toes.",
+      "fix": "Glide the knees forward with smooth steps.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "core",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "abs",
+        "claim": "c11"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Belly, shoulders and arms",
+        "means": "The plank is working.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the hips",
+        "means": "The hip flexors lifting the legs.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Pain on the back of the wrist",
+        "means": "Usually means the bent-back wrist is not tolerating the load.",
+        "fix": "Put your hands on a bench or step to take load off.",
+        "claim": "c12",
+        "redFlag": "wrist",
+        "fixNote": "The fix quote (c9) says a raised surface reduces load on the arms and core; no source says it relieves the wrist specifically."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Pain on the back of the wrist in the loaded, bent-back position.",
+      "claim": "c12"
+    },
+    {
+      "risk": "Bouncing adds impact and costs control.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "hand-under-shoulder",
+      "kind": "hand",
+      "right": "Palm flat, hand directly under the shoulder.",
+      "wrong": "Hands ahead of the shoulders, weight shifted back.",
+      "claim": "c6"
+    },
+    {
+      "key": "hip-line",
+      "kind": "posture",
+      "right": "Hips level with the head-to-heel line.",
+      "wrong": "Hips hiked up as the knee drives.",
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: core primary; hip_flexors and abs secondary. Hinge Health lists hip flexors and rectus abdominis among the muscles worked (c11), which matches. It also lists chest, deltoids, triceps, glutes and quads, but it is a coaching list with no EMG, so no change is proposed."
+  },
+  "anchorSource": "hinge-mc",
+  "anchorNote": "Hinge Health (physical therapists) mountain climbers page read in full. No ACE, NSCA or ACSM mountain climber page was reachable, and PubMed has no technique or EMG study of the exercise (search 2026-09-30: 3 hits for mountain climber AND EMG, none relevant).",
+  "unsourced": [
+    "Cadence or seconds per cycle.",
+    "Finger spread and weight through the heel of the hand (palm-flat archetype).",
+    "Whether fists or push-up handles help a sore wrist.",
+    "Breathing.",
+    "Where the driving foot lands (toe tap vs floating)."
+  ]
+}
