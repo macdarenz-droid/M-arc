@@ -1,7 +1,7 @@
 // Barbell overhead press (standing strict press), side view, figure facing screen right.
 // View: SIDE (card: "bar path relative to the face, forearm angle and trunk lean are all sagittal", c5, c6, c8).
-// Form: research card docs/research/howto/cards/barbell_overhead_press.json (branch claude/libht-research-presses,
-//  source-checked, not yet critic-verified), plate section: start "standing, feet hip-width and flat (c10); bar on the
+// Form: research card docs/research/howto/cards/barbell_overhead_press.json (branch claude/libht-research
+//  e2a70bc, verified), plate section: start "standing inside the rack (c11), feet hip-width and flat (c10); bar on the
 //  front of the shoulders, forearms vertical, elbows slightly forward under the bar (c2, c5)"; end "bar over the
 //  shoulders and mid-foot, elbows locked, hips and knees straight (c7, c9)". Path: "lean slightly back from the hips
 //  (not the low back) at the bottom so the bar clears the chin, then move the torso forward once the bar passes the
@@ -32,24 +32,32 @@
 //   as the squat). The lockout arm and trunk cover the whole start arm, so it is redrawn as dashed hidden lines (the
 //   approved pull_up method) with the start bar dot (the squat's workaround); the leaning start trunk and head show as
 //   the engine's own dashed start pose behind the figure.
-//  Camera: reference floor line, scale set so the lockout plate top is 16 px under the plate edge: 141.1 px/m (96% of
-//   the reference; the approved pull_up and lat_pulldown also scale down for overhead reach).
-//  Rack: not drawn. The card's rack (c1, c11) is a setup item; the `rackUpright` primitive's J-hook points the way the
-//   figure faces, so a rack in front of the lifter (who stepped back out of it) would show its hook open away from
-//   the lifter. A wrong hook reads worse than none; the plate shows the lift after the walk-out.
-// Phase 2 (card plate section): callouts = the 3 plate.checkpoints (c5 forearms vertical, c6 head back then through,
+//  Camera: reference floor line, scale set so the rack top (2.4 m, above the lockout plate) is 16 px under the plate
+//   edge: 134.6 px/m (92% of the reference, inside the 8's 123.9-146.3; pull_up and lat_pulldown also scale down).
+//  Labels: the rack leaves two label columns, left of the rear upright and right of the front one; "Forearms
+//   vertical", "Head through" and the measure label are boxed there (3 boxes), leaders <= 77 px.
+//  Rack (verified card plate.equipment/start, c1, c11: press INSIDE a power rack, safety arms set below the bar's
+//   rack position so a normal rep never touches them): the `safetyArms` composer, z 'back'. Uprights at RACK_BACK /
+//   RACK_FRONT (1.2 m apart, the composer's typical rack depth), so the lifter, the whole bar path, the 45 cm plate
+//   and the Mistake bar (20 cm forward + plate radius, front edge at z 0.43) sit between them (front upright face 7 cm
+//   clear of that plate). Upright height RACK_H 2.4 m (tall commercial racks are 2.3-2.4 m): at 2.3 m the top
+//   cross-member would overlap the lockout plate in this projection and read as a collision (in 3D the plates sit
+//   outside the rack's width). Safety arms top at ARM_Y, 8 cm under the front-rack bar centre (6.6 cm under the
+//   shaft). No J-hooks: `rackUpright`'s hook points the way the figure faces, i.e. away from the lifter on the front
+//   upright; the plate shows the press after unracking, so hooks are not needed for the checkpoints.
+// Phase 2 (card plate section): callouts = the 3 verified plate.checkpoints (c5 forearms vertical, c6 head back then through,
 //  c7 over mid-foot); mistake = plate.mistake (c5: elbows back, forearms tilted, bar curves forward away from the face),
 //  tells = its two visible signs; tempo = plate.tempo (c17: up 1 s, down 2 s, pause 0, so no hold phase is invented).
 //  Measure: shoulder elevation at lockout (arm hanging to straight overhead, drawn 179 deg), value in words and no
 //  `expect`, since the card gives no number (c7 "bar over the shoulders"). The arc sweeps in front of the chest, clear
 //  of the start arm and head phantoms. "Head through" is boxed beside the face (auto placement gave a 75 px leader
-//  across the arm). Provisional: card not critic-verified.
-//  Coverage 0.095 (under the 8's 0.100): an upright, narrow figure whose scale is capped by the lockout plate at the
-//  plate top; a larger scale would crop the plate, so F2 is expected and left visible.
+//  across the arm). Card verified (claude/libht-research e2a70bc).
+//  Coverage 0.183 with the rack (inside the 8's range).
 // CARD: lean-back angle (LEAN_START, c6 "slightly"), head tilt at the start (NECK_START, not in the card; sets the
 //  face clearance), grip width (GRIP_X, c2), bar rest height (BAR_T, c2 "front of the shoulders"), stance width
 //  (FOOT_X, c10), head forward at lockout (NECK_END, c6), shrug at lockout (SCAP_TOP, not in the card: 0).
 import { WINTER, REF, REF_CAMERA, landmarksOf, bodyShapes, fk, resolve, normPose } from '../engine.mjs';
+import { safetyArms } from '../eq/safetyArms.mjs';
 
 const H = 1.75, R = Math.PI / 180;
 const FOOT_X = 0.10;                                   // mid-sole lateral offset: feet hip width (c10)
@@ -163,15 +171,18 @@ const mistakePose = { reach: hands(MIS_BAR, [0, -1, -0.55]) };
 // Camera: the reference floor line (plate y 339) and the largest scale that keeps the 45 cm plate at lockout 16 px
 // under the plate top (the engine's `fit` measures every pose with the start context, so it cannot see an item drawn
 // in the end pose only). 141 px/m, 96% of the reference.
-const PLATE_TOP = BAR1[1] + 0.225, TOP_PX = 16;
-const CAMERA = { pxPerM: Math.min(REF_CAMERA.pxPerM, (REF_CAMERA.y0 - TOP_PX) / PLATE_TOP), x0: 184, y0: REF_CAMERA.y0 };
+const RACK_FRONT = 0.50, RACK_BACK = -0.50, RACK_H = 2.40;   // power rack uprights (world z) and height (m)
+const ARM_Y = BAR0[1] - 0.08;                                 // safety arms: 8 cm under the front-rack bar (c11)
+const PLATE_TOP = Math.max(BAR1[1] + 0.225, RACK_H), TOP_PX = 16;
+const CAMERA = { pxPerM: Math.min(REF_CAMERA.pxPerM, (REF_CAMERA.y0 - TOP_PX) / PLATE_TOP), x0: 179, y0: REF_CAMERA.y0 };
 
 export default {
   id: 'barbell_overhead_press', name: 'Barbell Overhead Press', view: 'side', facing: 'right',
   camera: CAMERA,
   poses: { start, via, end },
   equipment: [
-    { type: 'floor', from: -0.6, to: 0.6 },
+    { type: 'floor', from: -0.75, to: 0.75 },
+    ...safetyArms({ front: RACK_FRONT, back: RACK_BACK, armY: ARM_Y, h: RACK_H }),
     // the 45 cm plate outline at the lockout only (four overlapping plate circles hid the head); the 50 mm sleeve dot
     // in every pose, so the start, ghosts and end bar positions read along the vertical path
     (lm, ctx) => [
@@ -195,12 +206,12 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'bar'] },
   trace: { point: 'grip.r', trim: [12, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 20 }],
-  measure: { vertex: 'shoulder.r', from: 'down', to: 'elbow.r', radius: 20, title: 'Shoulder', value: 'straight overhead' },
+  measure: { vertex: 'shoulder.r', from: 'down', to: 'elbow.r', radius: 20, title: 'Shoulder', value: 'straight up', box: { left: 258, top: 172 } },
   callouts: [
-    { key: 'forearms', text: 'Forearms<br>vertical', anchor: 'start:grip.r', cue: 'Keep your elbows under the bar so your forearms point straight up.' },
+    { key: 'forearms', text: 'Forearms<br>vertical', anchor: { at: 'grip.r', pose: 'start', off: [-7, 0] }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
     { key: 'head', text: 'Head<br>through', anchor: 'chin', cue: 'Lean back slightly from the hips, then move under the bar as it passes.',
-      guide: [{ at: 'ear', pose: 'start' }, 'ear'], box: { left: 232, top: 98 } },
-    { key: 'midfoot', text: 'Over<br>mid-foot', anchor: { at: 'grip.r', off: [0, -4] }, cue: 'Lock out with the bar over your shoulders and mid-foot.' },
+      guide: [{ at: 'ear', pose: 'start' }, 'ear'], box: { left: 258, top: 96 } },
+    { key: 'midfoot', text: 'Over<br>mid-foot', anchor: { at: 'grip.r', off: [6, -2] }, cue: 'Lock out with the bar over your shoulders and mid-foot.' },
   ],
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
@@ -217,6 +228,5 @@ export default {
       { key: 'drift', text: 'Bar drifts<br>forward', anchor: { at: 'grip.r', pose: 'mistake', off: [0, -26] }, cue: 'The bar curves forward, away from your face and mid-foot.' },
     ],
   },
-  pilot: { note: 'Callouts and Mistake provisional: card not yet critic-verified' },
   alt: 'Barbell overhead press, side view. The bar starts on the front of the shoulders, forearms vertical, body leaning slightly back from the hips. It travels straight up over mid-foot to locked arms overhead, the head moving forward under the bar.',
 };
