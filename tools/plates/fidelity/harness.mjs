@@ -516,7 +516,7 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
         lap('diff');
         stats.pairs++; stats.offMax = Math.max(stats.offMax, d.off); stats.off1Max = Math.max(stats.off1Max, d.off1);
         if (d.ink < 0.05) P(`${id} ${label}: the capture is nearly blank (ink ${(d.ink * 100).toFixed(1)} %)`);
-        if (!meetsRule(d) && process.env.HT3_DUMP) {   // diff images for a supervisor decision (plan: never a threshold fix)
+        if (!meetsRule(d) && process.env.HT3_DUMP && (stats.dumped = (stats.dumped ?? 0) + 1) <= 12) {   // diff images for a supervisor decision (plan: never a threshold fix)
           const { writeFileSync, mkdirSync } = await import('node:fs');
           mkdirSync(process.env.HT3_DUMP, { recursive: true });
           const f = `${process.env.HT3_DUMP}/${theme}-${id}-${label.replace(/[^\w@-]/g, '_')}-${width}`;
