@@ -1,0 +1,595 @@
+{
+  "id": "smith_machine_incline_press",
+  "libId": "lib_smith_machine_incline_press",
+  "name": "Smith Machine Incline Press",
+  "family": "BENCH-BB",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": "incline_barbell_bench_press",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the Smith bar still travels over the face and neck to the upper chest (GA overBody names the Smith and incline presses; c12 here), so the wrapped-thumb rule (incline parent inherits it from barbell_bench_press c4) applies unchanged."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because the same straight bar is pressed from the base of the palm; the parent's rule (barbell_bench_press c5) does not depend on the rails."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the parent's straight-wrist rule (parent c4) comes from the same straight-bar incline press; nothing about the rails changes the wrist."
+    },
+    {
+      "field": "zooms.bar-low-palm",
+      "why": "true for this child because the hand, bar and wrist rule are the same as the parent's (barbell_bench_press c5)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set an adjustable incline bench at 30-45 degrees inside the Smith machine, with the bar lined up over the upper chest; angles over 45 degrees shift the work to the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-incline",
+          "text": "Position an adjustable incline bench at 30-45 degrees inside the Smith machine, aligning the bar over your upper chest.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Avoid angles over 45 degrees to prevent shoulder dominance",
+          "where": "Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Sit on the incline, pull the shoulder blades together and down and hold the chest up; grip slightly wider than shoulder-width.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "sl-smith-incline",
+          "text": "Sit on an inclined bench, pull your shoulder blades together and down, and hold your chest up.",
+          "where": "How to Smith Machine Incline Bench Press"
+        },
+        {
+          "source": "sl-smith-incline",
+          "text": "Grip the bar slightly wider than shoulder-width apart.",
+          "where": "How to Smith Machine Incline Bench Press"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Lower the bar with control to the upper chest, elbows at about 45-75 degrees, touching lightly without bouncing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-smith-incline",
+        "motra-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "sl-smith-incline",
+          "text": "Lower the bar with control until it touches your upper chest.",
+          "where": "How to Smith Machine Incline Bench Press"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Inhale and lower bar controlled to upper chest, elbows at 45-75 degrees.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Touch bar lightly to chest without bouncing.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Lie back with feet flat; unrack and rerack by rotating the bar on the hooks.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-incline",
+          "text": "Lie back with feet flat, grip bar slightly wider than shoulders, and unrack by rotating.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Repeat for reps, then rerack by rotating.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "A way out: the Smith machine has hooks and safety stops, so the bar can be racked at any point. Set the stops at the bottom of the bar's travel: EoS says just below the lowest point of the movement, Motra says just above the chest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "eos-smith",
+        "motra-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "eos-smith",
+          "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+          "where": "What is a Smith machine?"
+        },
+        {
+          "source": "eos-smith",
+          "text": "Set the safety stops just below your lowest movement point to catch the bar if needed.",
+          "where": "How to use a Smith machine safely"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Always set safety stoppers just above chest",
+          "where": "Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Named common mistakes on the Smith incline press: flaring the elbows wide, bouncing the bar off the chest, locking the elbows at the top and arching the back excessively.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-incline",
+          "text": "Flaring elbows wide",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Bouncing bar off chest",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Locking elbows at top",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Arching back excessively",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Do not train through shoulder pain, and warm up the shoulders before heavy sets.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-incline",
+          "text": "Do not train through shoulder pain",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Warm up shoulders before heavy sets",
+          "where": "Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The incline emphasises the upper chest; chest and front shoulder are listed as main movers, triceps as a helper. The Smith bar runs straight and needs less stabilising than a free bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "sl-smith-incline",
+          "text": "Due to the inclined bench, this exercise emphasizes your upper chest",
+          "where": "Commentary"
+        },
+        {
+          "source": "sl-smith-incline",
+          "text": "Primary muscles worked: Chest Front Deltoid Secondary muscles worked: Triceps",
+          "where": "Muscles Worked (list items)"
+        },
+        {
+          "source": "sl-smith-incline",
+          "text": "Smith incline bench press differs from incline barbell bench press primarily by its completely straight bar path, instead of a slightly arched one.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Start with the empty bar or light plates to learn the motion.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "eos-smith"
+      ],
+      "quotes": [
+        {
+          "source": "eos-smith",
+          "text": "Try using just the bar or lighter plates to get comfortable with the motion.",
+          "where": "How to use a Smith machine safely"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia; on the Smith incline the bar comes down to the upper chest, the touch point nearest the neck.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "jumbelic2007",
+        "motra-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "jumbelic2007",
+          "text": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+          "where": "abstract"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "Lower bar until it touches upper chest near clavicles",
+          "where": "Range of Motion"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "motra-smith-incline",
+      "url": "https://www.motra.com/exercises/smithMachineInclineBenchPress",
+      "title": "Smith Machine Incline Bench Press - Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-smith-incline",
+      "url": "https://www.strengthlog.com/smith-machine-incline-bench-press/",
+      "title": "How to Do Smith Machine Incline Bench Press: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "eos-smith",
+      "url": "https://www.eosfitness.com/blog/how-to-use-smith-machine",
+      "title": "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "jumbelic2007",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/17456099/",
+      "title": "Traumatic asphyxia in weightlifters",
+      "kind": "peer-reviewed",
+      "year": 2007,
+      "pmid": "17456099",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; the bench angle, the upper-chest touch point, the stop height and the back arch all read in the sagittal plane (c1, c3, c5, c6).",
+    "equipment": "Smith machine (rails, bar, hooks) with an adjustable bench at 30 degrees, inside the 30-45 range, placed so the bar lines up over the upper chest (c1); safety stops at the bottom of the bar's travel (c5); feet flat (c4).",
+    "start": "On the incline, shoulder blades together, chest up (c2), feet flat (c4); bar unhooked on straight arms over the upper chest (c1, c4).",
+    "end": "Bar lowered with control to touch the upper chest lightly, elbows about 45-75 degrees from the body (c3); back not excessively arched (c6).",
+    "checkpoints": [
+      {
+        "label": "Bench 30-45°",
+        "what": "Back pad at 30-45 degrees, not steeper.",
+        "claim": "c1"
+      },
+      {
+        "label": "To upper chest",
+        "what": "Bar comes down under control to touch the upper chest lightly.",
+        "claim": "c3"
+      },
+      {
+        "label": "Stops set",
+        "what": "Safety stops set at the bottom of the bar's travel.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Back arched excessively off the pad to press the bar.",
+      "why": "Motra lists it among the common Smith incline mistakes; how often it happens is not measured in any source read.",
+      "claim": "c6",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Bar lightly touches your upper chest",
+        "claim": "c3"
+      },
+      {
+        "text": "Shoulder blades stay pulled together",
+        "claim": "c2"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c10"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand on the Smith bar; closed, thumbs wrapped (inherited).",
+    "width": "Slightly wider than shoulder-width (c2).",
+    "thumb": "Wrapped (inherited, barbell_bench_press c4).",
+    "handContact": "Bar low in the palm (inherited, barbell_bench_press c5).",
+    "wrist": "Straight (inherited, parent c4).",
+    "claims": [
+      "c2"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bench at 30-45 degrees and place it so the bar lines up over your upper chest.",
+      "claim": "c1"
+    },
+    {
+      "step": "Set the safety stops at the bottom of the bar's travel.",
+      "claim": "c5"
+    },
+    {
+      "step": "Sit back, feet flat, shoulder blades together and down, chest up.",
+      "claim": "c2, c4"
+    },
+    {
+      "step": "Grip slightly wider than shoulder-width.",
+      "claim": "c2"
+    },
+    {
+      "step": "Start with the empty bar or light plates; rotate the bar off the hooks to begin.",
+      "claim": "c9, c4"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Shoulder blades together and down, chest up.",
+      "claim": "c2"
+    },
+    {
+      "point": "Feet flat on the floor.",
+      "claim": "c4"
+    },
+    {
+      "point": "Bar to the upper chest, touching lightly.",
+      "claim": "c3"
+    },
+    {
+      "point": "Elbows about 45-75 degrees from the body, not flared wide.",
+      "claim": "c3, c6"
+    },
+    {
+      "point": "Back not arched excessively.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Arching the back excessively to press the bar.",
+      "fix": "Use lighter weights until you can press without it.",
+      "claim": "c6, c9"
+    },
+    {
+      "mistake": "Flaring the elbows wide.",
+      "fix": "Keep the elbows at about 45-75 degrees.",
+      "claim": "c6, c3"
+    },
+    {
+      "mistake": "Bouncing the bar off the chest.",
+      "fix": "Touch the bar lightly to the chest.",
+      "claim": "c6, c3"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "upper_chest",
+        "claim": "c8"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c8"
+      },
+      {
+        "muscleId": "triceps",
+        "claim": "c8"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Upper chest and front of the shoulders",
+        "means": "The target muscles are working.",
+        "fix": null,
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Mostly the front of the shoulders",
+        "means": "Usually the bench is steeper than 45 degrees.",
+        "fix": "Lower the back pad to 30-45 degrees.",
+        "claim": "c1",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the shoulder",
+        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
+        "fix": "Stop the set.",
+        "claim": "c7, c13",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bar over the face and neck; the upper-chest touch point is nearest the neck: set the safety stops and wrap the thumbs.",
+      "claim": "c12, c5, barbell_bench_press:c4"
+    },
+    {
+      "risk": "Adding weight in big jumps.",
+      "claim": "c11"
+    },
+    {
+      "risk": "The shoulder is a common injury site in lifting, linked to poor technique.",
+      "claim": "c13"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "bar-low-palm",
+      "kind": "hand",
+      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "wrong": "Bar high toward the fingers, wrist bent back.",
+      "claim": "barbell_bench_press:c5"
+    },
+    {
+      "key": "smith-incline-position",
+      "kind": "posture",
+      "right": "Bench at 30-45 degrees, bar lined up over the upper chest.",
+      "wrong": "Back arched excessively off the pad.",
+      "claim": "c1, c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: upper_chest primary; front_delts and triceps secondary. StrengthLog (c8) says the incline emphasises the upper chest and lists chest and front deltoid as primary, triceps secondary. Front delts stay secondary: no Smith-specific EMG was found, and the parent's EMG data show front-delt activity rising mainly above 45 degrees."
+  },
+  "anchorSource": "motra-smith-incline"
+}

@@ -1,0 +1,540 @@
+{
+  "id": "cable_fly",
+  "libId": "lib_cable_fly",
+  "name": "Cable Fly",
+  "family": "CFLY",
+  "tier": "B",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the two pulleys at or slightly above shoulder height with single handles.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-standing-fly",
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-standing-fly",
+          "text": "Place two cable pulleys slightly above the shoulder height with handle attachments",
+          "where": "exercise description"
+        },
+        {
+          "source": "puregym-cable-fly",
+          "text": "Set the cable pulley machine so that the cables are at shoulder height with a single handle attachment on each.",
+          "where": "How To Do A Cable Fly"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Stand centred between the pulleys and step forward so the pulleys are slightly behind you.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-fly",
+          "text": "Make sure to stand at the same distance from each cable pulley. You want to be centered between them and then take a few steps forward so that the pulleys are slightly behind you.",
+          "where": "Positioning"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Use a staggered or a parallel stance; either way brace the core with slight tension in the legs and glutes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-fly",
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-fly",
+          "text": "Some lifters like to stand with one foot in front of the other, while others want to stand in a parallel stance. Regardless, make sure to brace your core and have a slight tension in your legs and glutes to get a stable position.",
+          "where": "Positioning"
+        },
+        {
+          "source": "puregym-cable-fly",
+          "text": "Facing away from the cable machine, grip each handle and take a step forward with one leg into a wide staggered stance.",
+          "where": "How To Do A Cable Fly"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Keep the elbows slightly bent and at the same angle through the whole rep, so the movement happens at the shoulders, not the elbows.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-fly",
+          "text": "Keep your elbows slightly bent, and hold them in the same position during the entire movement. You want the movement to occur in your shoulder joints by contracting your chest muscles, and not in the elbows. Keep elbows and wrists at the same angle during the entire movement.",
+          "where": "Movement"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Bring the hands together in front of the body; pause for one second, then return slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-standing-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-standing-fly",
+          "text": "With the elbows slightly bent, slowly bring both hands together in front of the body. When the hands are together, pause for one second before slowly returning the arms to the starting position.",
+          "where": "exercise description"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Common mistakes: too much weight, which brings in other muscles or swinging, and bending the elbows more than slightly, which turns the fly into a press; do not swing from the hips or upper body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-fly",
+          "text": "If you add too much weight, you’ll have to include other muscles to do the movement or start to swing and thereby lose form.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "sl-cable-fly",
+          "text": "Don’t turn the chest fly into a chest press by bending your elbows more than just slightly. Also, don’t create momentum from your hips or upper body; do the movement slowly and controlled.",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "To limit shoulder strain, choose a weight that lets you keep a soft elbow bend, and open the arms only until the hands are in line with the chest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-cable-fly",
+          "text": "Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest.",
+          "where": "Cable Fly Tips"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Palms face each other when the handles are together in front of the chest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-cable-fly",
+          "text": "Press the cable handles so they are in front of your chest with your arms extended, palms facing each other",
+          "where": "How To Do A Cable Fly"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Muscles: chest is the main mover, front shoulder second. Pulley height shifts the emphasis: low pulleys the upper chest, high pulleys the lower chest, shoulder height both.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-fly",
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-fly",
+          "text": "The standing cable chest fly works your chest muscles primarily and your front deltoids secondarily.",
+          "where": "Which Muscles Do the Standing Cable Chest Fly Work?"
+        },
+        {
+          "source": "puregym-cable-fly",
+          "text": "A low cable set up emphasises the upper chest, a high set up emphasises the lower chest, and shoulder height targets both heads of the chest.",
+          "where": "How To Set Up For Cable Flyes?"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The cables keep the load on the chest more evenly through the range than dumbbell flyes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-fly",
+          "text": "Compared to dumbbell chest flyes , the resistance curve in cable flyes is more evenly distributed, and the load on your chest muscles is more constant throughout the range of motion.",
+          "where": "Introduction"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "In a lab study the cable cross-over gave larger shoulder moments than bench presses and different joint loading; the authors advise care to stabilise the joints and avoid overload.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "schutz2022"
+      ],
+      "quotes": [
+        {
+          "source": "schutz2022",
+          "text": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises.",
+          "where": "abstract"
+        },
+        {
+          "source": "schutz2022",
+          "text": "The cable cross-over exercise resulted in substantially different joint angles and loading patterns compared to most other exercises, with higher fluctuations during the exercise cycle.",
+          "where": "abstract"
+        },
+        {
+          "source": "schutz2022",
+          "text": "Care has to be taken when performing cable cross-over exercises to ensure proper stabilisation of the joints during exercise execution and avoid joint overloading.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-standing-fly",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/160/standing-chest-fly/",
+      "title": "Standing Chest Fly (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "puregym-cable-fly",
+      "url": "https://www.puregym.com/exercises/chest/chest-fly/cable-flyes/",
+      "title": "How To Do Cable Flyes (PureGym)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-cable-fly",
+      "url": "https://www.strengthlog.com/standing-cable-chest-fly/",
+      "title": "How to Do Standing Cable Chest Fly: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "schutz2022",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35202059/",
+      "title": "Chest Exercises: Movement and Loading of Shoulder, Elbow and Wrist Joints",
+      "kind": "peer-reviewed",
+      "year": 2022,
+      "pmid": "35202059",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "Census view is front (two columns at plus and minus x); the arc of the arms, the hands meeting in front and the fixed elbow bend read best from the front (c4, c5).",
+    "equipment": "Two cable columns, pulleys at shoulder height with single handles (c1); lifter centred between them, a step forward (c2); floor line.",
+    "start": "Standing centred, braced (c3), arms open to the sides with a slight elbow bend, hands no further back than in line with the chest (c4, c7).",
+    "end": "Hands together in front of the chest, palms facing each other (c5, c8), elbow bend unchanged (c4).",
+    "checkpoints": [
+      {
+        "label": "Soft elbows",
+        "what": "Elbows slightly bent and at the same angle all rep.",
+        "claim": "c4"
+      },
+      {
+        "label": "Hands meet",
+        "what": "Bring the hands together in front of the body and pause one second.",
+        "claim": "c5"
+      },
+      {
+        "label": "Stop at chest",
+        "what": "Open only until the hands are in line with the chest.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows bending and straightening, turning the fly into a press.",
+      "why": "StrengthLog names it among the common cable fly mistakes, with too much weight, which the plate cannot show. How often it happens is not measured.",
+      "claim": "c6",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Elbow bend never changes",
+        "claim": "c4"
+      },
+      {
+        "text": "Hands meet in front, pause",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c12, c5"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Single handles, palms facing each other at the front (c8).",
+    "width": "Set by the arc: arms open until the hands are in line with the chest (c7).",
+    "thumb": "Not given by any cable fly source read (hold archetype default).",
+    "handContact": "Not given by any cable fly source read (hold archetype default).",
+    "wrist": "Held at the same angle all rep (c4).",
+    "claims": [
+      "c4",
+      "c7",
+      "c8"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set both pulleys at or slightly above shoulder height with single handles.",
+      "claim": "c1"
+    },
+    {
+      "step": "Stand centred between them and step forward so the pulleys are slightly behind you.",
+      "claim": "c2"
+    },
+    {
+      "step": "Staggered or parallel stance; brace your core, legs and glutes.",
+      "claim": "c3"
+    },
+    {
+      "step": "Choose a weight that lets you keep a soft elbow bend.",
+      "claim": "c7"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Centred between the pulleys.",
+      "claim": "c2"
+    },
+    {
+      "point": "Core braced, body still, no swinging.",
+      "claim": "c3, c6"
+    },
+    {
+      "point": "Elbows slightly bent, same angle all rep.",
+      "claim": "c4"
+    },
+    {
+      "point": "Hands meet in front, then open only to chest line.",
+      "claim": "c5, c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Bending the elbows so the fly becomes a press.",
+      "fix": "Keep the elbow bend fixed; move at the shoulders.",
+      "claim": "c6, c4"
+    },
+    {
+      "mistake": "Too much weight, so you swing.",
+      "fix": "Use a weight you can move slowly with a soft elbow bend.",
+      "claim": "c6, c7"
+    },
+    {
+      "mistake": "Opening the arms too far back.",
+      "fix": "Stop when the hands are in line with the chest.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "chest",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c9"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Across the chest and front of the shoulders, through the whole rep",
+        "means": "The target muscles are working; cables keep the load on through the range.",
+        "fix": null,
+        "claim": "c9, c10",
+        "redFlag": null
+      },
+      {
+        "where": "Mostly the arms, elbows bending",
+        "means": "Usually the fly has turned into a press.",
+        "fix": "Keep the elbow bend fixed; go lighter.",
+        "claim": "c6",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the front of the shoulder",
+        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
+        "fix": "Stop the set.",
+        "claim": "c13, c11",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "The cable cross-over loads the shoulder more than pressing; keep the joints stable and do not open past chest line.",
+      "claim": "c11, c7"
+    },
+    {
+      "risk": "The shoulder is a common injury site in lifting; add weight in small steps.",
+      "claim": "c13, c14"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "fly-handle",
+      "kind": "hand",
+      "right": "Handle held with the wrist at the same angle all rep.",
+      "wrong": "Wrist bending as the hands come together.",
+      "claim": "c4"
+    },
+    {
+      "key": "fly-elbows",
+      "kind": "posture",
+      "right": "Soft, fixed elbow bend, hands meeting in front.",
+      "wrong": "Elbows bending deeply, pressing the handles.",
+      "claim": "c4, c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: chest primary; front_delts secondary. StrengthLog (c9) says exactly this. PureGym also names triceps and core as engaged for stability; not added, as they hold rather than move the load."
+  },
+  "anchorSource": "sl-cable-fly"
+}

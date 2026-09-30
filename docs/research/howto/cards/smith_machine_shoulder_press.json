@@ -1,0 +1,707 @@
+{
+  "id": "smith_machine_shoulder_press",
+  "libId": "lib_smith_machine_shoulder_press",
+  "name": "Smith Machine Shoulder Press",
+  "family": "SMITH-OHP",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "seat-back"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the bench to a high incline, roughly 70 degrees, so the body is slightly reclined and the bar can pass the face without hitting it. (Motra instead sets the bench at 90 degrees.)",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-smith-ohp",
+        "motra-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "fv-smith-ohp",
+          "text": "Now set your bench to a high incline or roughly 70-degree angle so your body will be slightly reclined during the overhead press. This is so when you’re doing the movement, the bar will be able to pass your face without hitting it.",
+          "where": "Step 1: Getting set up"
+        },
+        {
+          "source": "motra-smith-ohp",
+          "text": "Position an adjustable bench at 90 degrees under the Smith machine so the bar lowers to upper chest level.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Move the bench under the bar and do a few practice reps with the empty bar to check it has just enough room to pass the nose, but not too much.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "fv-smith-ohp",
+          "text": "Then move the bench under the bar, sit down and do a few practice repetitions to make sure the bar has just enough room to pass your nose. However, you do not want there to be too much space.",
+          "where": "Step 1: Getting set up"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "A bar placed too far from the body is a poor position for the shoulders; the bar should just miss the nose.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "fv-smith-ohp",
+          "text": "The bar should be able to just miss your nose but if it’s too far away from your body this is a terrible position for your shoulders.",
+          "where": "Common Mistakes: Give yourself room but not too much"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Sit with the back against the pad and feet flat; press the upper back into the bench and brace the core to protect the lower back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-ohp",
+        "fv-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-ohp",
+          "text": "Sit with back against the pad, feet flat on the floor.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "fv-smith-ohp",
+          "text": "Plant your feet flat on the ground to form a solid base, then puff your chest out and press your upper back into the bench. Engage your core muscles to stabilize your spine which is important for supporting the weight and protecting your lower back.",
+          "where": "Step 2: Perfecting your form"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Grip wider than shoulder width, palms forward; elbows in front of the shoulders but not straight out in front.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-smith-ohp",
+        "motra-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "fv-smith-ohp",
+          "text": "Typically, you want to use a wider than shoulder width grip but how wide will depend on someone’s height and arm length.",
+          "where": "Step 2: Perfecting your form"
+        },
+        {
+          "source": "motra-smith-ohp",
+          "text": "Grip the bar slightly wider than shoulders with palms forward.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "fv-smith-ohp",
+          "text": "Your elbows should be in front of your shoulders but not directly in front of you.",
+          "where": "Step 2: Perfecting your form"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Press to just short of full lockout, then lower slowly until the upper arms are about parallel to the floor or slightly below. (StrengthLog and Motra lower the bar to the top of the chest.)",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-smith-ohp",
+        "sl-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "fv-smith-ohp",
+          "text": "Use your deltoids and triceps to press the bar overhead but stop just short of full arm extension.",
+          "where": "Step 3: The press"
+        },
+        {
+          "source": "fv-smith-ohp",
+          "text": "When you lower the weight, your upper arms should be roughly parallel to the floor or slightly below.",
+          "where": "Common Mistakes: Too much range of motion"
+        },
+        {
+          "source": "sl-smith-ohp",
+          "text": "Sit on a bench, unrack a barbell and lower it to the starting position at the top of your chest.",
+          "where": "How to Do Seated Smith Machine Shoulder Press"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "A way out: the Smith machine has hooks and safety stops, so the bar can be racked at any point; set the stops just below the lowest point of the movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "eos-smith",
+        "motra-smith-ohp",
+        "fv-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "eos-smith",
+          "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+          "where": "What is a Smith machine?"
+        },
+        {
+          "source": "eos-smith",
+          "text": "Set the safety stops just below your lowest movement point to catch the bar if needed.",
+          "where": "How to use a Smith machine safely"
+        },
+        {
+          "source": "motra-smith-ohp",
+          "text": "Set safety stops below range of motion",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "fv-smith-ohp",
+          "text": "As long as you have the built in spotters positioned correctly, the bar will stop where you want it to.",
+          "where": "Built in spotter"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Rotate the wrists forward to unhook the bar and back to lock it onto the hooks.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "eos-smith"
+      ],
+      "quotes": [
+        {
+          "source": "eos-smith",
+          "text": "Rotate your wrists forward to unlock the bar from the hooks.",
+          "where": "How to use a Smith machine safely"
+        },
+        {
+          "source": "eos-smith",
+          "text": "Rotate your wrists back to lock the bar into place when you’re done.",
+          "where": "How to use a Smith machine safely"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Start with light weight; avoid an excessive back arch; stop if shoulder pain occurs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-ohp",
+          "text": "Start with light weight",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "motra-smith-ohp",
+          "text": "Avoid excessive back arch",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "motra-smith-ohp",
+          "text": "Stop if shoulder pain occurs",
+          "where": "Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Named common mistakes: flaring the elbows wide, locking the elbows at the top, letting the bar drift forward and using momentum.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-ohp",
+          "text": "Flaring elbows wide",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-smith-ohp",
+          "text": "Locking elbows at top",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-smith-ohp",
+          "text": "Letting bar drift forward",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-smith-ohp",
+          "text": "Using momentum",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Muscles: front and side shoulder are the main movers, triceps help; the fixed bar path needs less stabilising and balance than a free bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-ohp",
+        "sl-smith-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-ohp",
+          "text": "Anterior Delts, Medial Delts",
+          "where": "Muscle Breakdown: Shoulders 10/10"
+        },
+        {
+          "source": "sl-smith-ohp",
+          "text": "Primary muscles worked: Front Deltoid Secondary muscles worked: Triceps Lateral Deltoid",
+          "where": "Muscles Worked (list items)"
+        },
+        {
+          "source": "sl-smith-ohp",
+          "text": "Smith machine shoulder press differs from a free barbell press primarily by its completely fixed bar path, which lessens the requirements of stabilization and balance.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "In free-bar and dumbbell shoulder presses, the seated barbell press showed less front- and rear-shoulder activity than the dumbbell or standing versions; the most stable press had the lowest shoulder activity (free weights, not a Smith machine).",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "saeterbakken2013"
+      ],
+      "quotes": [
+        {
+          "source": "saeterbakken2013",
+          "text": "For deltoid anterior: ~11% lower for seated barbell versus dumbbell (p = 0.038)",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2013",
+          "text": "For posterior deltoid: ~25% lower for seated versus standing barbell (p < 0.001)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Thumbs wrapped round the bar so it cannot slip out and fall on the head (stated for the free-bar overhead press; applied here because the Smith bar also passes the face).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Full Grip. Wrap your thumbs around the bar. This makes the Overhead Press safer. The bar can’t slip out of your hands and drop on your head.",
+          "where": "Full Grip"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high; overhead presses were among the lifts measured (5 experienced bodybuilders).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "fv-smith-ohp",
+      "url": "https://fitnessvolt.com/24023/smith-machine-seated-overhead-press/",
+      "title": "Smith Machine Seated Overhead Press: Build Strong Shoulders! (Fitness Volt)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "motra-smith-ohp",
+      "url": "https://www.motra.com/exercises/smithMachineShoulderPress",
+      "title": "Smith Machine Shoulder Press - Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-smith-ohp",
+      "url": "https://www.strengthlog.com/seated-smith-machine-shoulder-press/",
+      "title": "How to Do Seated Smith Machine Shoulder Press: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "eos-smith",
+      "url": "https://www.eosfitness.com/blog/how-to-use-smith-machine",
+      "title": "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "saeterbakken2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23096062/",
+      "title": "Effects of body position and loading modality on muscle activity and strength in shoulder presses",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "23096062",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "stronglifts-ohp",
+      "url": "https://stronglifts.com/overhead-press/",
+      "title": "How to Overhead Press with Proper Form: Full Guide (StrongLifts)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": "3980383",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; the bench recline, the bar passing just in front of the nose and the arm depth all read in the sagittal plane (c1, c3, c6).",
+    "equipment": "Smith machine (rails, bar, hooks) with an adjustable bench at about 70 degrees (c1), placed so the bar just misses the nose (c3); safety stops just below the lowest bar position (c7); feet flat (c4).",
+    "start": "Seated, back and upper back on the pad, feet flat (c4); bar unhooked and held just short of lockout over the head (c6, c8).",
+    "end": "Bar lowered in front of the face until the upper arms are about parallel to the floor or slightly below (c6), elbows in front of the shoulders (c5), back still on the pad (c4).",
+    "checkpoints": [
+      {
+        "label": "Bar misses nose",
+        "what": "Bench placed so the bar just clears the nose, not far out in front.",
+        "claim": "c3"
+      },
+      {
+        "label": "Back on pad",
+        "what": "Upper back pressed into the pad, feet flat, core braced.",
+        "claim": "c4"
+      },
+      {
+        "label": "Stops set",
+        "what": "Safety stops just below the lowest bar position.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Bench placed too far back, so the bar runs well in front of the face and shoulders.",
+      "why": "Fitness Volt lists getting the room wrong first among Smith shoulder-press mistakes and calls a bar too far from the body a terrible position for the shoulders; Motra names the bar drifting forward. How often it happens is not measured.",
+      "claim": "c3",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Bar just clears your nose",
+        "claim": "c3"
+      },
+      {
+        "text": "Upper back stays on the pad",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c14"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand, palms forward (c5).",
+    "width": "Wider than shoulder width; how wide depends on height and arm length (c5).",
+    "thumb": "Wrapped round the bar (c13).",
+    "handContact": "Not given by any Smith shoulder-press source read (push archetype default).",
+    "wrist": "Not given by any Smith shoulder-press source read (push archetype default).",
+    "claims": [
+      "c5",
+      "c13"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bench to about 70 degrees.",
+      "claim": "c1"
+    },
+    {
+      "step": "Slide the bench under the bar and do practice reps with the empty bar until it just clears your nose.",
+      "claim": "c2, c3"
+    },
+    {
+      "step": "Set the safety stops just below the lowest point of the press.",
+      "claim": "c7"
+    },
+    {
+      "step": "Sit back, feet flat, upper back pressed into the pad, core braced.",
+      "claim": "c4"
+    },
+    {
+      "step": "Grip wider than shoulders, thumbs wrapped; rotate the bar off the hooks.",
+      "claim": "c5, c13, c8"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Upper back on the pad, feet flat.",
+      "claim": "c4"
+    },
+    {
+      "point": "Core braced, no excessive back arch.",
+      "claim": "c4, c9"
+    },
+    {
+      "point": "Elbows in front of the shoulders, not flared wide.",
+      "claim": "c5, c10"
+    },
+    {
+      "point": "Lower until the upper arms are about parallel to the floor.",
+      "claim": "c6"
+    },
+    {
+      "point": "Stop just short of locking the elbows.",
+      "claim": "c6, c10"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Bench set so the bar runs far in front of the face.",
+      "fix": "Move the bench until the bar just clears your nose.",
+      "claim": "c3, c2"
+    },
+    {
+      "mistake": "Arching the back off the pad.",
+      "fix": "Press your upper back into the pad and brace; start with a light weight.",
+      "claim": "c9, c4"
+    },
+    {
+      "mistake": "Locking the elbows at the top.",
+      "fix": "Stop just short of full arm extension.",
+      "claim": "c10, c6"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "side_delts",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c11"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front and sides of the shoulders, backs of the arms",
+        "means": "The target muscles are working.",
+        "fix": null,
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually the back is arching off the pad.",
+        "fix": "Press your upper back into the pad and brace.",
+        "claim": "c4, c9",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the shoulder",
+        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
+        "fix": "Stop the set.",
+        "claim": "c9, c16",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bar passes the face: place the bench so it just clears the nose, set the stops and wrap the thumbs.",
+      "claim": "c1, c3, c7, c13"
+    },
+    {
+      "risk": "Holding your breath hard on heavy presses sends blood pressure very high.",
+      "claim": "c17"
+    },
+    {
+      "risk": "The shoulder is a common injury site in lifting, linked to poor technique; add weight in small steps.",
+      "claim": "c16, c15"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "smith-ohp-grip",
+      "kind": "hand",
+      "right": "Overhand, wider than the shoulders, thumbs wrapped round the bar.",
+      "wrong": "Thumb not wrapped around the bar.",
+      "claim": "c5, c13"
+    },
+    {
+      "key": "smith-ohp-bench",
+      "kind": "posture",
+      "right": "Bench at about 70 degrees, bar just clears the nose.",
+      "wrong": "Bench too far back, bar running far in front of the face.",
+      "claim": "c1, c3"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: front_delts and side_delts primary; triceps secondary. Motra (c11) rates anterior and medial delts as the main movers and triceps next; StrengthLog lists the lateral deltoid as secondary. Kept as is (c12, free-bar data only, shows the seated barbell press still works the front shoulder, less than dumbbells). Motra also lists upper traps and upper chest at low ratings; not added, as no second source supports them."
+  },
+  "anchorSource": "fv-smith-ohp"
+}

@@ -1,0 +1,167 @@
+{
+  "id": "low_to_high_cable_fly",
+  "checked": "2026-09-30",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-incline-cable-fly",
+      "text": "Position the cable handles level with the region between your knees and hips, and grasp each handle firmly.",
+      "status": "verbatim",
+      "closest": "Position the cable handles level with the region between your knees and hips, and grasp each handle firmly."
+    },
+    {
+      "claim": "c1",
+      "source": "puregym-cable-fly",
+      "text": "Set up the cable pulley machine so that the cables are on the lowest setting with single handles attached.",
+      "status": "verbatim",
+      "closest": "Set up the cable pulley machine so that the cables are on the lowest setting with single handles attached."
+    },
+    {
+      "claim": "c2",
+      "source": "ace-incline-cable-fly",
+      "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid any arching of your low back throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid any arching of your low back throughout the exercise."
+    },
+    {
+      "claim": "c3",
+      "source": "ace-incline-cable-fly",
+      "text": "Assume a staggered-stance position (i.e., walking position, with one leg forward) to stabilize yourself and align your trunk vertically.",
+      "status": "verbatim",
+      "closest": "Assume a staggered-stance position (i.e., walking position, with one leg forward) to stabilize yourself and align your trunk vertically."
+    },
+    {
+      "claim": "c3",
+      "source": "puregym-cable-fly",
+      "text": "Facing away from the cable machine, grip each handle and take a step forward with one leg into a wide staggered stance.",
+      "status": "verbatim",
+      "closest": "Facing away from the cable machine, grip each handle and take a step forward with one leg into a wide staggered stance."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-incline-cable-fly",
+      "text": "Allow your arms to slowly open , moving downward and outward to your sides.",
+      "status": "verbatim",
+      "closest": "Allow your arms to slowly open , moving downward and outward to your sides."
+    },
+    {
+      "claim": "c4",
+      "source": "ace-incline-cable-fly",
+      "text": "Maintain a slight bend in your elbows, neutral wrist position (i.e., wrists aligned in a straight line with your forearms) and do not allow your hands to move past the midline of your body (level of your armpit).",
+      "status": "verbatim",
+      "closest": "Maintain a slight bend in your elbows, neutral wrist position (i.e., wrists aligned in a straight line with your forearms) and do not allow your hands to move past the midline of your body (level of your armpit)."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-incline-cable-fly",
+      "text": "Exhale gently and slowly squeeze your chest muscles to pull your arms forward until your hands meet level with your face or above your head .",
+      "status": "verbatim",
+      "closest": "Exhale gently and slowly squeeze your chest muscles to pull your arms forward until your hands meet level with your face or above your head ."
+    },
+    {
+      "claim": "c5",
+      "source": "ace-incline-cable-fly",
+      "text": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner.",
+      "status": "verbatim",
+      "closest": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner."
+    },
+    {
+      "claim": "c5",
+      "source": "puregym-cable-fly",
+      "text": "Squeeze the chest muscles to bring your arms back up and in front until the handles are in front of your chest.",
+      "status": "verbatim",
+      "closest": "Squeeze the chest muscles to bring your arms back up and in front until the handles are in front of your chest."
+    },
+    {
+      "claim": "c6",
+      "source": "ace-incline-cable-fly",
+      "text": "Maintain the slight bend in your elbows, neutral wrist position and vertical alignment of your trunk throughout the movement.",
+      "status": "verbatim",
+      "closest": "Maintain the slight bend in your elbows, neutral wrist position and vertical alignment of your trunk throughout the movement."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-incline-cable-fly",
+      "text": "Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy. To protect your shoulders from potential injury, lower the resistance, align your trunk vertically and follow the instructions provided.",
+      "status": "verbatim",
+      "closest": "Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy. To protect your shoulders from potential injury, lower the resistance, align your trunk vertically and follow the instructions provided."
+    },
+    {
+      "claim": "c8",
+      "source": "puregym-cable-fly",
+      "text": "All cable flyes work the upper chest to some degree, but low to high cable flyes place a greater emphasis on the clavicle head.",
+      "status": "verbatim",
+      "closest": "All cable flyes work the upper chest to some degree, but low to high cable flyes place a greater emphasis on the clavicle head."
+    },
+    {
+      "claim": "c8",
+      "source": "sl-cable-fly",
+      "text": "By using a low cable position and performing the exercise in an upwards motion, you will emphasize your upper chest",
+      "status": "verbatim",
+      "closest": "By using a low cable position and performing the exercise in an upwards motion, you will emphasize your upper chest"
+    },
+    {
+      "claim": "c9",
+      "source": "sl-cable-fly",
+      "text": "The standing cable chest fly works your chest muscles primarily and your front deltoids secondarily.",
+      "status": "verbatim",
+      "closest": "The standing cable chest fly works your chest muscles primarily and your front deltoids secondarily."
+    },
+    {
+      "claim": "c9",
+      "source": "sl-cable-fly",
+      "text": "You can alter which muscles you target slightly, by fastening the handles at different heights in the cable machine.",
+      "status": "verbatim",
+      "closest": "You can alter which muscles you target slightly, by fastening the handles at different heights in the cable machine."
+    },
+    {
+      "claim": "c10",
+      "source": "puregym-cable-fly",
+      "text": "Start by pressing the cable handles together in front of your chest, palms facing each other.",
+      "status": "verbatim",
+      "closest": "Start by pressing the cable handles together in front of your chest, palms facing each other."
+    },
+    {
+      "claim": "c11",
+      "source": "sl-cable-fly",
+      "text": "Don’t turn the chest fly into a chest press by bending your elbows more than just slightly. Also, don’t create momentum from your hips or upper body; do the movement slowly and controlled.",
+      "status": "verbatim",
+      "closest": "Don’t turn the chest fly into a chest press by bending your elbows more than just slightly. Also, don’t create momentum from your hips or upper body; do the movement slowly and controlled."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex."
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2010",
+      "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c14",
+      "source": "schutz2022",
+      "text": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises.",
+      "status": "verbatim",
+      "closest": "The maximum absolute moments at the shoulder joint were significantly larger for the cable pulley exercises than for the bench press exercises."
+    },
+    {
+      "claim": "c14",
+      "source": "schutz2022",
+      "text": "Care has to be taken when performing cable cross-over exercises to ensure proper stabilisation of the joints during exercise execution and avoid joint overloading.",
+      "status": "verbatim",
+      "closest": "Care has to be taken when performing cable cross-over exercises to ensure proper stabilisation of the joints during exercise execution and avoid joint overloading."
+    }
+  ]
+}
