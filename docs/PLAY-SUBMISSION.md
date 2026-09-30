@@ -23,22 +23,30 @@ The same policy also asks apps to remind users to consult a healthcare professio
 
 The developer contact email goes in the Play Console's contact field, not in the app (owner decision LR-23: no contacts in the app UI).
 
-**AI-generated content:** Play requires an in-app way to report or flag offensive AI replies (https://support.google.com/googleplay/android-developer/answer/13985936). Card ESC-REPORT adds it, once the owner approves the data it sends. When it lands, add that data to the Data safety answers below. Until then, this is a release blocker.
+**AI-generated content:** Play requires an in-app way to report or flag offensive AI replies (https://support.google.com/googleplay/android-developer/answer/13985936). Card ESC-REPORT adds a Report button under every finished coach reply; picking a reason sends the reply text, the reason and the app version to the built-in Cloudflare server, which keeps it 90 days, then deletes it. Release to Play only after ESC-REPORT-W is live (POST /reports {} answers 400) and ESC-REPORT has merged.
 
 ## Data safety form
 
 **Does your app collect or share any of the required user data types?** Yes.
 
-| Data type | Collected? | Shared off-device? | Where | Encrypted in transit? | Purpose |
-|---|---|---|---|---|---|
-| Health and fitness (heart rate, resting heart rate, sleep, steps, active calories) | Yes, via Android Health Connect, read-only | Only if the user turns on "Share health data" (off by default) | To the coach Worker, then Anthropic, only while Escobar is on and answering | Yes, HTTPS (Cloudflare Workers serve HTTPS only) | App functionality (the AI coach) |
-| Health and fitness (readiness score, muscle recovery) | Computed on-device from the above | Sent whenever Escobar is on, even with "Share health data" off (the score, not the underlying numbers) | Same as above | Yes | App functionality |
-| Fitness (workouts, sets, weights, reps, splits, schedule) | Yes, on-device | Only the specific workout history Escobar's tools ask for, while Escobar is on | Same as above | Yes | App functionality |
-| Personal info (age, sex, height, weight, training experience, goal) | Yes, on-device | Sent in the coach's per-turn summary whenever Escobar is on; weight only if "Share body data" is also on | Same as above | Yes | App functionality |
-| Photos | Yes, if the user attaches one to a coach message | Sent once, with that message, while Escobar is on | Same as above | Yes | App functionality |
-| App activity (in-app messages) | Yes, coach conversation text | Sent whenever Escobar is on | Same as above | Yes | App functionality |
-| Device or other IDs | A random per-device id, not linked to identity | Sent with every coach request | Coach Worker | Yes | App functionality, abuse prevention (daily quota) |
-| Diagnostics (crash logs) | Only if the user turns on "Send anonymous error reports" (off by default) | Yes, when on | Same Cloudflare Worker, different endpoint | Yes | Analytics (crash/error fixing) |
+| Data type | Collected? | Shared off-device? | Where | Encrypted in transit? | Ephemeral? | Required or optional? | Purpose |
+|---|---|---|---|---|---|---|---|
+| Health and fitness (heart rate, resting heart rate, sleep, steps, active calories) | Yes, via Android Health Connect, read-only | Only if the user turns on "Share health data" (off by default) | To the coach Worker, then Anthropic, only while Escobar is on and answering | Yes, HTTPS (Cloudflare Workers serve HTTPS only) | No | Optional | App functionality (the AI coach) |
+| Health and fitness (readiness score, muscle recovery) | Computed on-device from the above | Sent whenever Escobar is on, even with "Share health data" off (the score, not the underlying numbers) | Same as above | Yes | No | Optional | App functionality |
+| Fitness (workouts, sets, weights, reps, splits, schedule) | Yes, on-device | Only the specific workout history Escobar's tools ask for, while Escobar is on | Same as above | Yes | No | Optional | App functionality |
+| Personal info (age, sex, height, weight, training experience, goal) | Yes, on-device | Sent in the coach's per-turn summary whenever Escobar is on; weight only if "Share body data" is also on | Same as above | Yes | No | Optional | App functionality |
+| Photos | Yes, if the user attaches one to a coach message | Sent once, with that message, while Escobar is on | Same as above | Yes | No | Optional | App functionality |
+| Messages (Other in-app messages) | Yes: coach conversation text, and a coach reply the user reports | Coach text: sent whenever Escobar is on. A reported reply: only when the user taps Report and picks a reason | Coach Worker (conversation passed on to Anthropic; a reported reply is stored in Cloudflare D1 for 90 days and never sent to Anthropic) | Yes | No | Optional | App functionality; Fraud prevention, security, and compliance |
+| App activity (Other actions) | The reason picked when reporting a reply (Offensive, Harmful or Wrong) | Only when the user taps Report and picks a reason | Coach Worker, stored in Cloudflare D1 for 90 days | Yes | No | Optional | App functionality; Fraud prevention, security, and compliance |
+| Device or other IDs | A random per-device id, not linked to identity | Sent with every coach request | Coach Worker | Yes | No | Optional | App functionality, abuse prevention (daily quota) |
+| Diagnostics (crash logs) | Only if the user turns on "Send anonymous error reports" (off by default) | Yes, when on | Same Cloudflare Worker, different endpoint | Yes | No | Optional | Analytics (crash/error fixing) |
+
+**Play Console answers for reply reports:** for Messages → Other in-app messages and for App activity → Other actions, each gets these answers:
+- Collected: Yes.
+- Shared: No (Cloudflare processes it for the developer as a service provider).
+- Processed ephemerally: No.
+- Required or optional: Optional.
+- Purposes: App functionality, and Fraud prevention, security, and compliance.
 
 Code references:
 - On-device data model: `src/core/models.ts` (workouts, profile, `DailyHealth`).
@@ -51,6 +59,7 @@ Code references:
 - Random device id, not account-linked: `src/escobar/state.ts` (device id), `escobar-worker/src/quotaDO.ts` (per-device/per-IP counters, deleted after 3 days).
 - Error reports: allowlist and cleaning `src/errors/scrub.ts:1-9`, random install id `src/errors/installId.ts:16-25`, send path `src/errors/sender.ts:44-60`, server-side storage/retention `escobar-worker/src/errorsStore.ts` (90-day purge, `escobar-worker/wrangler.toml` daily cron), consent switch default off — see `docs/ERROR-REPORTS.md:30-31`.
 - Encryption in transit: Cloudflare Workers only serve HTTPS; there is no HTTP fallback configured anywhere in `escobar-worker/wrangler.toml` or `escobar-worker/src/handler.ts`.
+- Reply reports: `src/escobar/report.ts` (ESC-REPORT), server-side storage and 90-day purge `escobar-worker/src/errorsStore.ts` `content_reports` (ESC-REPORT-W).
 
 **Is all of the collected data encrypted in transit?** Yes — every request goes over HTTPS
 (Cloudflare Workers don't serve plain HTTP).
@@ -60,10 +69,10 @@ Code references:
 on-device data and issues a new install id (`src/errors/installId.ts:26-27`, reset call site in
 `src/core/store.ts:354-357`). There is no account, so there's nothing server-side tied to a
 person to delete on request; error reports are already anonymous and self-delete after 90 days.
+Reply reports are not linked to a person and are deleted 90 days after the first report.
 Contact for questions: macdarenz@gmail.com.
 
-**Is data collection required or optional?** All network sharing (Escobar, error reports) is
-optional and off by default. Nothing is required to use the app's core workout-tracking features.
+**Is data collection required or optional?** All network sharing (Escobar, error reports, reply reports) is optional: Escobar and error reports are off by default, and a reply report is sent only when the user taps Report and picks a reason.
 
 **Does your app comply with the Health Connect permissions declaration / Google's Health apps
 policy?** See the section below.
