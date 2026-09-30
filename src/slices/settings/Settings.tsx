@@ -242,6 +242,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <p class="hint">Loaded from: {bootSource.value}.</p>
             <Row trailing={<Toggle checked={!!p.errorReports} label="Send anonymous error reports" onChange={v => { setPref({ errorReports: v, errorReportsAsked: true }); if (!v) clearErrorReportQueue(); }} />}>
               <span class="small" data-palace="settings.error-reports">Send anonymous error reports</span>
+              <div class="hint">No workouts, health data or personal details — only what broke and where. Off by default.</div>
             </Row>
             <a class="btn" href={PRIVACY_POLICY_URL} target="_blank" rel="noopener noreferrer" data-palace="settings.privacy">Privacy policy</a>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (

@@ -30,7 +30,6 @@ const GONE: Record<string, string[]> = {
     'A copy of saved data the app could not read at start',
     'Everything stays on this device',
     'Your history from the previous version was imported automatically',
-    'only what broke and where',
     'Export a backup first if unsure',
   ],
   'src/slices/settings/Watch.tsx': [

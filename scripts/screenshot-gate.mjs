@@ -5997,7 +5997,7 @@ for (const theme of ['silent-black', 'paper']) {
     'Each machine keeps its own entry unit', "Swaps today's reminder", 'Android may deliver the rest alert',
     'Your choice stays on even if Android drops the queue', 'Always on when your phone asks for less motion',
     'Android haptics', 'Browser vibration', 'Stays on while a workout is live', 'Everything stays on this device',
-    'only what broke and where', 'Export a backup first if unsure', 'nothing else leaves the phone', 'Nothing leaves the phone',
+    'Export a backup first if unsure', 'nothing else leaves the phone', 'Nothing leaves the phone',
     'Leave empty for the built-in server',
   ];
   for (const theme of themes) {
