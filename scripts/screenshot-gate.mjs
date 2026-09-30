@@ -5938,8 +5938,80 @@ for (const theme of ['silent-black', 'paper']) {
   console.log(`${tag} HT4-A6: state driver self-check, ${gb.IDS.length} exercises x ${gb.THEMES.length} themes, ${selfCheckBad} problems, no-match throw ${captureThrew ? 'verified' : 'NOT verified'}`);
 }
 
+// HT-9: gate block "HT-9 C19" (card HT-9; plan docs/howto/LR23-PLAN.md section 8, amendment D-LR23-8 item 5,
+// claude/lr23-plan). Owner decision LR-23, 2026-09-30: "Dont put any emergency or whatever contacts. Even the
+// source remove it in app ui." On the real app's How-to sheet, every approved exercise, all 5 themes, with every
+// <details> opened and every collapse button (aria-expanded="false") clicked: no link, no source/evidence UI, no
+// contact or source wording anywhere shown, and exactly one disclaimer after the last red-flag block. HT-10
+// re-runs this on the final sheet, once HT-6/7/8's zoom chips and feel rows also exist to open.
+{
+  const tag = 'HT-9 C19';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const disclaimerM = readFileSync(join(ROOT, 'src/howto/archetypes.ts'), 'utf8').match(/export const DISCLAIMER: string = "((?:[^"\\]|\\.)*)";/);
+  if (!disclaimerM) throw new Error(`${tag}: no DISCLAIMER in src/howto/archetypes.ts`);
+  const DISCLAIMER = JSON.parse(`"${disclaimerM[1]}"`);
+  const LABEL_WORDS = ['Measured', 'Mechanics', 'Coaching consensus', 'Weak for this use'];
+  const patterns = ['CONTACT_RE', 'SOURCE_RE', 'SOURCE_CS_RE'].map(k => ({ source: ESC_NC_RE[k].source, flags: ESC_NC_RE[k].flags }));
+  let bad = 0, sheets = 0;
+  for (const theme of H.HT_THEMES) {
+    const { ctx, page } = await H.openAppTrain(browser, PORT, theme, { onError: m => { errors.push(`${tag} ${theme}: page error: ${m}`); bad++; } });
+    try {
+      for (const [index, [, id]] of H.HT_PLATES.entries()) {
+        await H.openHowTo(page, index);
+        sheets++;
+        await page.evaluate(() => { document.querySelectorAll('dialog.sheet.ht details:not([open])').forEach(d => { d.open = true; }); });
+        for (let i = 0; i < 4; i++) {
+          const opened = await page.evaluate(() => {
+            const btns = [...document.querySelectorAll('dialog.sheet.ht [aria-expanded="false"]')];
+            btns.forEach(b => b.click());
+            return btns.length;
+          });
+          if (!opened) break;
+          await H.settleApp(page);
+        }
+        const found = await page.evaluate(([pats, words, disclaimer]) => {
+          const dlg = document.querySelector('dialog.sheet.ht');
+          const problems = [];
+          const res = pats.map(p => new RegExp(p.source, p.flags));
+          const linkN = dlg.querySelectorAll('a').length;
+          if (linkN) problems.push(`${linkN} <a> element(s)`);
+          const targetN = dlg.querySelectorAll('[target]').length;
+          if (targetN) problems.push(`${targetN} [target] element(s)`);
+          const bannedN = dlg.querySelectorAll('.srcs,.src-cite,.src-ev,.src-key,.ev').length;
+          if (bannedN) problems.push(`${bannedN} banned-class element(s) (.srcs/.src-cite/.src-ev/.src-key/.ev)`);
+          for (const el of dlg.querySelectorAll('*')) {
+            const own = [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent.trim()).join(' ').trim();
+            if (own && words.includes(own)) problems.push(`element with own text "${own}" (an evidence label word)`);
+          }
+          const strings = [dlg.innerText];
+          for (const el of dlg.querySelectorAll('[aria-label],[title],[alt]')) {
+            for (const a of ['aria-label', 'title', 'alt']) { const v = el.getAttribute(a); if (v) strings.push(v); }
+          }
+          for (const s of strings) for (const re of res) { const m = s.match(re); if (m) problems.push(`"${m[0]}" matches ${re}`); }
+          const disclaimers = [...dlg.querySelectorAll('.ht-disclaimer')];
+          if (disclaimers.length !== 1) problems.push(`${disclaimers.length} .ht-disclaimer element(s), expected 1`);
+          else if (disclaimers[0].textContent !== disclaimer) problems.push(`disclaimer text "${disclaimers[0].textContent}" !== owner's text`);
+          const redflags = [...dlg.querySelectorAll('.redflag')];
+          if (redflags.length && disclaimers.length === 1) {
+            const last = redflags[redflags.length - 1];
+            const pos = last.compareDocumentPosition(disclaimers[0]);
+            if (!(pos & Node.DOCUMENT_POSITION_FOLLOWING)) problems.push('the disclaimer is not after the last .redflag');
+          }
+          return problems;
+        }, [patterns, LABEL_WORDS, DISCLAIMER]);
+        for (const p of found) { errors.push(`${tag} ${theme}/${id}: ${p}`); bad++; }
+        await H.closeHowTo(page);
+      }
+    } finally {
+      await ctx.close();
+    }
+  }
+  console.log(`${tag}: ${H.HT_THEMES.length} themes x ${H.HT_PLATES.length} exercises (${sheets} sheets), ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified.');

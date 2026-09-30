@@ -108,7 +108,6 @@ describe('HT5-A2: the content checks (C1-C4, C6-C8, C16, C17) pass on the genera
     const SOURCES = sourcesRegistry();
     const { byId } = await loadAll();
     const knownIds = new Set(exercises.map(e => e.id));
-    const allowedUrls = new Set(Object.values(SOURCES).map((s: any) => s.url));
 
     let bad: string[] = [];
     for (const [id, c] of byId) {
@@ -122,7 +121,7 @@ describe('HT5-A2: the content checks (C1-C4, C6-C8, C16, C17) pass on the genera
       bad = bad.concat(checkC16(c));
     }
     bad = bad.concat(checkC6(exercises.map(e => e.id), COVERAGE));
-    bad = bad.concat(checkC17(['tools/plates/gen/content.mjs', 'src/howto'].map(p => new URL(`../../${p}`, import.meta.url).pathname), allowedUrls));
+    bad = bad.concat(checkC17(['tools/plates/gen/content.mjs', 'src/howto'].map(p => new URL(`../../${p}`, import.meta.url).pathname)));
 
     expect(bad).toEqual([]);
   });
