@@ -1,10 +1,10 @@
 // HT-9 (HT9-A2): "Set it up" (plan 2.4 item 6). Pure-function test on `renderSetup`, walking the returned VNode
 // tree (project convention: no jsdom, same style as tests/error-boundary.test.ts). Setup.tsx has no dependency on
 // HT-5's archetypes.ts, so this test runs standalone.
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { VNode } from 'preact';
-import { renderSetup, SETUP_VISIBLE } from '@/slices/howto/sections/Setup';
+import { renderSetup, SETUP_VISIBLE, openSetupZoom } from '@/slices/howto/sections/Setup';
 import type { BuiltHowTo } from '@/howto/types';
 import type { SetupStep } from '@/howto/content-types';
 
@@ -99,5 +99,56 @@ describe('HT9-A2: Setup ("Set it up")', () => {
     const mutated = closedLis.map(li => ({ ...li.props, hidden: false }));
     expect(mutated.slice(5).every(p => p.hidden === true)).toBe(false);
     expect(closedLis.slice(5).every(li => li.props.hidden === true)).toBe(true);
+  });
+});
+
+/** A fake `.st-show` button: a real EventTarget (Node global, no jsdom) plus the bits onSetupClick/openSetupZoom
+ *  read (`dataset`, `closest`). `closest('.st-show')` returns itself, matching how a real button at or under the
+ *  click target would resolve. */
+function fakeShowButton(zoom: string | undefined): HTMLElement {
+  const el = new EventTarget() as unknown as HTMLElement;
+  Object.assign(el, { dataset: { zoom }, closest: (sel: string) => (sel === '.st-show' ? el : null) });
+  return el;
+}
+
+describe('HT9 critic fix: setup "Show me" opens its close-up (HT-10 sweep, 2026-10-01)', () => {
+  it('openSetupZoom emits ht:zoom-open {key, opener} on the button, per the cross-section contract (events.ts)', () => {
+    const btn = fakeShowButton('grip');
+    const seen: unknown[] = [];
+    btn.addEventListener('ht:zoom-open', e => seen.push((e as CustomEvent).detail));
+    openSetupZoom(btn);
+    expect(seen).toEqual([{ key: 'grip', opener: btn }]);
+  });
+
+  it('openSetupZoom is a no-op for a button with no resolvable zoom, and for null (no step matched)', () => {
+    const btn = fakeShowButton(undefined);
+    const seen: unknown[] = [];
+    btn.addEventListener('ht:zoom-open', e => seen.push((e as CustomEvent).detail));
+    openSetupZoom(btn);
+    openSetupZoom(null);
+    expect(seen).toEqual([]);
+  });
+
+  it('the section\'s onClick resolves the clicked .st-show via closest() and opens its close-up', () => {
+    const h = fixture([step('a', 'grip'), step('b')]);
+    (h as unknown as { zooms: unknown }).zooms = [{ key: 'grip', chip: 'Hand' }];
+    const tree = renderSetup(h, false, () => {}) as AnyVNode;
+    const onClick = tree.props.onClick as (e: { target: unknown }) => void;
+    const btn = fakeShowButton('grip');
+    const seen: unknown[] = [];
+    btn.addEventListener('ht:zoom-open', e => seen.push((e as CustomEvent).detail));
+    onClick({ target: btn });
+    expect(seen).toEqual([{ key: 'grip', opener: btn }]);
+  });
+
+  it('mutation: a click target outside any .st-show (closest returns null) opens nothing (proves the test bites)', () => {
+    const h = fixture([step('a', 'grip'), step('b')]);
+    (h as unknown as { zooms: unknown }).zooms = [{ key: 'grip', chip: 'Hand' }];
+    const onClick = (renderSetup(h, false, () => {}) as AnyVNode).props.onClick as (e: { target: unknown }) => void;
+    const outside = Object.assign(new EventTarget(), { closest: () => null }) as unknown as HTMLElement;
+    const spy = vi.fn();
+    (outside as unknown as EventTarget).addEventListener('ht:zoom-open', spy);
+    onClick({ target: outside });
+    expect(spy).not.toHaveBeenCalled();
   });
 });

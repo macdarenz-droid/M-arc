@@ -6958,6 +6958,65 @@ for (const theme of ['silent-black', 'paper']) {
   console.log(`${tag}: ${H.HT_THEMES.length} themes x ${H.HT_PLATES.length} exercises (${sheets} sheets), ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
+// HT-9 critic fix (HT-10 sweep on #166, 2026-10-01): Setup's "Show me the ..." buttons (.st-show) must each open
+// their close-up through HT-6's zoom host (events.ts: Setup dispatches ht:zoom-open itself; ZoomHost only handles
+// its own .hm-show directly). Taps every .st-show on every approved exercise, in Silent Black and Paper. A key
+// whose kind is registered in this build (today: hand, HT-6 - confirmed live by a matching Look-closer chip,
+// .zx-chip[data-zoom], which HT6-A3 renders only for a registered kind) must open the matching .zx panel, visible,
+// with the plate hidden; a key with no such chip (posture, before HT-7 lands) is tapped but not required to open -
+// that gap belongs to HT-7, not this fix. Closes via .zx-close before the next button. Fails before the Setup.tsx
+// fix (19 dead buttons across the 8 exercises, all kinds), passes after (every registered-kind button opens).
+{
+  const tag = 'HT-9 Show';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  let bad = 0, buttons = 0, checked = 0;
+  for (const theme of ['silent-black', 'paper']) {
+    const { ctx, page } = await H.openAppTrain(browser, PORT, theme, { onError: m => { errors.push(`${tag} ${theme}: page error: ${m}`); bad++; } });
+    try {
+      for (const [index, [, id]] of H.HT_PLATES.entries()) {
+        await H.openHowTo(page, index);
+        const keys = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet.ht .st-show')].map(b => b.dataset.zoom));
+        for (const key of keys) {
+          buttons++;
+          const registered = await page.evaluate(k => !!document.querySelector(`dialog.sheet.ht .zx-chip[data-zoom="${k}"]`), key);
+          const result = await page.evaluate(k => {
+            const dlg = document.querySelector('dialog.sheet.ht');
+            const btn = dlg.querySelector(`.st-show[data-zoom="${k}"]`);
+            if (!btn) return 'no .st-show button for this key';
+            btn.click();
+            return null;
+          }, key);
+          if (result) { errors.push(`${tag} ${theme}/${id}: ${result}`); bad++; continue; }
+          await H.settleApp(page);
+          if (registered) {
+            checked++;
+            const opened = await page.evaluate(k => {
+              const dlg = document.querySelector('dialog.sheet.ht');
+              const panel = dlg.querySelector(`.zx[data-zoom="${k}"]`);
+              if (!panel) return 'no .zx panel opened';
+              if (panel.hidden) return 'the panel is hidden';
+              const r = panel.getBoundingClientRect();
+              if (r.width <= 0 || r.height <= 0) return 'the panel has no visible size';
+              const plate = dlg.querySelector('.ht-plate-fit');
+              if (plate && !plate.hidden) return 'the plate box is not hidden with the close-up open';
+              return null;
+            }, key);
+            if (opened) { errors.push(`${tag} ${theme}/${id}: "Show me" (${key}): ${opened}`); bad++; }
+          }
+          // close whatever may have opened (a no-op if the tap opened nothing) so the next button starts clean
+          await page.evaluate(() => document.querySelector('dialog.sheet.ht .zx-close')?.click());
+          await H.settleApp(page);
+        }
+        await H.closeHowTo(page);
+      }
+    } finally {
+      await ctx.close();
+    }
+  }
+  console.log(`${tag}: 2 themes x ${H.HT_PLATES.length} exercises, ${buttons} "Show me" buttons tapped (${checked} registered-kind opens checked), ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+}
+
 // COPY-1 (owner, 2026-10-01; D-COPY1-1, D-COPY1-2, D-COPY1-medical): the Settings footer shows the owner's rights
 // line in the hint style, directly under the logo and above the version line, in all 5 themes; and the Settings
 // sheet no longer carries the explaining lines COPY-1 removed. The probe fails if it cannot see the footer or the
@@ -7180,4 +7239,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified, and COPY-1 (Settings footer rights line under the logo and above the version line, hint style, no removed Settings copy, no medical reminder) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified, and HT-9 Show (every setup "Show me" button opens its close-up through the zoom host, Silent Black and Paper) verified, and COPY-1 (Settings footer rights line under the logo and above the version line, hint style, no removed Settings copy, no medical reminder) verified.');
