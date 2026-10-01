@@ -62,8 +62,8 @@ describe('LIB-3 clean run on the approved 8', { timeout: T }, () => {
     expect(r.ok).toBe(false);
     expect(nodeKeys(r)).toEqual(expect.arrayContaining(['H6:no-card', 'H9.moving-line:eq3.line.0']));
     expect(r.flags.F5.blocks && r.flags.F7.blocks).toBe(true);
-    const owner = await I.runQa({ ...c, id: 'lib_chin_up', mode: 'H', exemptions: ['F5', 'F7'] }, { ...base.ctx, browser: cleanBrowser(['lib_chin_up']) });
-    expect([owner.flags.F5.blocks, owner.flags.F7.blocks, owner.flags.F5.approved]).toEqual([false, false, true]);
+    const named = await I.runQa({ ...c, id: 'lib_chin_up', mode: 'H', exemptions: ['F5', 'F7'] }, { ...base.ctx, browser: cleanBrowser(['lib_chin_up']) });
+    expect([named.flags.F5.blocks, named.flags.F7.blocks, named.flags.F5.approved]).toEqual([false, false, true]);
   });
   it('mode approved is refused for any id outside the 8', async () => {
     const c = base.cands.find((x: any) => x.chromeId === 'pull-up');
@@ -118,9 +118,9 @@ describe('LIB-3 generator seam: the generator refuses a report that is not ok (D
     const m = muts.CANDIDATE_MUTATIONS.find((x: any) => x.id.startsWith('M9 ')), c = m.apply(base.cands.find((x: any) => x.chromeId === 'pull-up'));
     await expect(emit(c, { ...base.ctx, browser: cleanBrowser([c.id]) })).rejects.toThrow(/plate QA refused lib_pull_up:[\s\S]*PQ-H2 normalSvg: colour literal #e11d48/);
   });
-  it('refuses a plate with a raised flag the owner has not approved', async () => {
+  it('refuses a plate with a raised flag without a named exemption', async () => {
     const m = muts.CANDIDATE_MUTATIONS.find((x: any) => x.id.startsWith('F6 ')), c = m.apply(base.cands.find((x: any) => x.chromeId === 'pull-up'));
-    await expect(emit(c, { ...base.ctx, browser: cleanBrowser([c.id]) })).rejects.toThrow(/F6 raised without an owner exemption/);
+    await expect(emit(c, { ...base.ctx, browser: cleanBrowser([c.id]) })).rejects.toThrow(/F6 raised without a named exemption \(supervisor, owner-visible on the sheet\)/);
   });
   it('refuses when the browser half did not run, and refuses a missing report', async () => {
     await expect(emit(base.cands[1], base.ctx)).rejects.toThrow(/browser checks not run/);

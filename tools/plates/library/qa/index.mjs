@@ -7,7 +7,7 @@
 //   research { plateFacts: [{ kind: 'angle', joint?, pose?, deg, measure? } | { kind: 'contact', landmark, pose? }
 //              | { kind: 'height', landmark, pose?, m }], tempo, topFault },
 //   census { view }, mistakeFault, derivation { params, schema, rebuildParent(), parentFragments } (D and T),
-//   exemptions: owner-approved flag names from the plate's golden entry (e.g. ['F1']).
+//   exemptions: flag names with a named exemption (supervisor, owner-visible on the sheet), recorded by id and key on the batch sheet (D-LIB3-flags), e.g. ['F1'].
 // ctx: { engine (engine.mjs loadEngine), vocabulary, envelope, approvedStrings (approved.mjs), browser?: Map(id ->
 //   browser.mjs result) }. A report without its browser half is never ok.
 import { readFileSync } from 'node:fs';
@@ -52,11 +52,11 @@ export async function runQa(c, ctx) {
     for (const p of raw[id]) (ex[p.key] ? (exempted.push({ ...p, why: ex[p.key] }), usedEx.add(p.key)) : problems.push(p));
     hard[id] = { pass: problems.length === 0, problems, exempted };
   }
-  const ownerOk = new Set([...(c.exemptions ?? []), ...Object.keys(ex).filter(k => FLAGS.includes(k))]);
+  const flagOk = new Set([...(c.exemptions ?? []), ...Object.keys(ex).filter(k => FLAGS.includes(k))]);
   for (const f of FLAGS) {
     const v = flags[f] ?? { raised: true, why: 'not measured' };
-    flags[f] = { ...v, approved: !!v.raised && ownerOk.has(f), blocks: !!v.raised && !ownerOk.has(f) };
-    if (v.raised && ownerOk.has(f)) usedEx.add(f);
+    flags[f] = { ...v, approved: !!v.raised && flagOk.has(f), blocks: !!v.raised && !flagOk.has(f) };
+    if (v.raised && flagOk.has(f)) usedEx.add(f);
   }
   const ok = HARD.every(id => hard[id].pass) && FLAGS.every(f => !flags[f].blocks);
   return { id: c.id, mode: c.mode, ok, hard, flags, metrics: M, unusedExemptions: Object.keys(ex).filter(k => !usedEx.has(k)) };
@@ -65,7 +65,7 @@ export async function runQa(c, ctx) {
 export class QaRefused extends Error {
   constructor(report) {
     const hard = HARD.flatMap(id => report.hard[id].problems.map(p => `${id} ${p.text}`));
-    const flags = FLAGS.filter(f => report.flags[f]?.blocks).map(f => `${f} raised without an owner exemption (${JSON.stringify(report.flags[f].value)})`);
+    const flags = FLAGS.filter(f => report.flags[f]?.blocks).map(f => `${f} raised without a named exemption (supervisor, owner-visible on the sheet) (${JSON.stringify(report.flags[f].value)})`);
     super(`plate QA refused ${report.id}:\n  ${[...hard, ...flags].join('\n  ')}`);
     this.report = report;
   }
@@ -78,4 +78,4 @@ export function gatePlate(report) {
 }
 
 /** One-line summary per report. */
-export const summary = r => `${r.id}: ${r.ok ? 'ok' : 'REFUSED'} | ${HARD.map(h => `${h.slice(3)}${r.hard[h].pass ? '' : '!'}`).join(' ')} | flags ${FLAGS.filter(f => r.flags[f].raised).map(f => f + (r.flags[f].approved ? '(owner)' : '!')).join(' ') || 'none'}`;
+export const summary = r => `${r.id}: ${r.ok ? 'ok' : 'REFUSED'} | ${HARD.map(h => `${h.slice(3)}${r.hard[h].pass ? '' : '!'}`).join(' ')} | flags ${FLAGS.filter(f => r.flags[f].raised).map(f => f + (r.flags[f].approved ? '(exempt)' : '!')).join(' ') || 'none'}`;
