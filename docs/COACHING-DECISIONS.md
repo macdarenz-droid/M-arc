@@ -1199,6 +1199,10 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
+- **Decided (HT-4b, owner, 2026-09-30)**: the golden-B re-pin to 6b86baa (LR-23: no sources, evidence labels or contacts in the UI) is recorded in `tools/plates/layers/MANIFEST.json` as `approvedBy: 'owner'`, not the card's `'supervisor'` (D-LR23-2).
+  **Why**: the owner approved the re-pin in the HT-4b session: "approve the HT-4b re-pin of the How-to reference copy to 6b86baa (the version without sources). Record it as approved by the owner."
+  **Also**: the card's `layers` sha entry in `tests/howto/golden/GOLDEN.json` is not added: main has none, HT-4's test asserts none (that file is HT-2's generator input), so the page sha stays in MANIFEST `pageApproval` and `PAGE_SHA256`.
+  **Source**: HT-4b card, PR #140.
 
 ## BUG-32 crisis pre-screen phrasings and card placement (BUG-32 builder, 2026-09-30)
 
@@ -1274,6 +1278,13 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - Done: removed `MEDICAL_LINE` and its `<p data-palace="settings.medical">` from `Settings.tsx`; PLAY-1's gate probe for it (P3) is retired with a one-line comment, every other line of that block kept byte-identical; the COPY-1 gate block and `tests/copy-1.test.ts` now assert the inverse (no medical element, no "healthcare professional" text) and that the version line is the rights line's next sibling; `tests/native/play-1-policy.test.ts` A1 now asserts `Settings` exports no `MEDICAL_LINE`; `docs/PLAY-SUBMISSION.md` carries the reminder sentence in the required description text and no longer says the app shows it.
 - Not done: `Train.tsx:319` ("Targets come from … Change the goal in Coach.") is unchanged. It is pinned by BUG-22's block (`scripts/screenshot-gate.mjs:5274`, `.view p.hint` matched on this exact text as the end-of-page marker for the targets line) — already recorded as D-COPY1-8. BUG-22 is add-only and not owned by this card, so per AGENTS.md and `.claude/rules/shared-files.md` this stays for the supervisor to settle, not edited here.
 - Risk: if Play review asks for an in-app reminder after all, the owner decides whether to re-add a minimal one.
+## D-HT3c-1: How-to chunk budgets live in one file (HT-3c builder, 2026-09-30)
+
+- **Rule:** a card that grows a How-to chunk updates its entry in `tests/howto/budgets.json` to measured + 10 % (rounded up), with `setBy` (its task ID) and `reason`; reviewers check the growth is explained.
+- **Procedure:** build, read the chunk's raw/gz size from the gate's `HT-3b A2 chunk sizes` line, set `measuredRaw`/`measuredGz` to it and `rawMax`/`gzMax` to `ceil(measured × 1.1)`. `tests/howto/budgets.test.ts` fails a ceiling above that or below the measured value, a missing `setBy`/`reason`, and a chunk the gate budgets with no entry. The gate (HT-3b block, A2) fails a chunk with no entry and prints each chunk's size, ceiling and headroom.
+- **Why:** HT-3b pinned its ceilings inside its own add-only gate block, so HT-5/6/7, which grow those chunks on purpose, could not raise them (12 failures on #119). A data file keeps each growth visible and deliberate without anyone editing another card's block. There is no `docs/howto/build-plan` on main, so this file is the HT rules doc for B5.
+- **A1 (same card):** the main-chunk leak probe now counts only strings unique to generated How-to content: a string that also appears in non-How-to src (`src/**` outside `src/howto/**` and `src/slices/howto/**`; e.g. the X-icon path `M6 6l12 12M18 6L6 18` in `src/ui/icons.tsx`) is main's own. The three class strings stay always-checked.
+- **Risk:** a generated sentence copied by hand into non-How-to app source would no longer count as a leak. Mitigation: that is a source edit a reviewer sees. How-to source (`src/howto/**`, `src/slices/howto/**`) never excuses a string, so a sentence placed there that ships in main still trips A1 (review fix on #143).
 ## ESC-W-CITE: citation form and repair wording in prompt rule 3 (ESC-W-CITE builder, 2026-09-30)
 
 - **Decided**: rule 3 of `WORKER_POLICY` keeps "inline in the brief as [f3]" (that is how the brief really writes fact ids) and now adds "In your answer always write them as ⟦f3⟧, never in square brackets." The worked example `102.5 kg ⟦f12⟧ (several: ⟦f12,f14⟧)` is unchanged.
