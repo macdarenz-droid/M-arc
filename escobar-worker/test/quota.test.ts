@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import Anthropic from '@anthropic-ai/sdk';
-import { QuotaCounter, type Limits } from '../src/quotaDO';
+import { QuotaCounter, RESERVATION_TTL_MS, type Limits } from '../src/quotaDO';
 import { handle, CUT_SHORT_TOKENS_PER_SEC } from '../src/handler';
-import { checkQuota, recordStep } from '../src/quota';
+import { admitQuota, recordStep } from '../src/quota';
 import { UpstreamRelay } from '../src/upstreamRelay';
 import type { ClientLike, Env } from '../src/anthropic';
 import { baseEnv, deps, eventsFor, finalMessage, mockClient, post, sse, turn, DEVICE } from './helpers';
@@ -20,7 +20,7 @@ function fakeState(alarmDelayMs = 0) {
         get: (k: string) => (data.has(k) ? structuredClone(data.get(k)) : undefined),
         put: (k: string, v: unknown) => { data.set(k, structuredClone(v)); },
         delete: (k: string) => data.delete(k),
-        list: () => data.entries(),
+        list: (o: { prefix?: string } = {}) => [...data.entries()].filter(([k]) => k.startsWith(o.prefix ?? '')),
       },
       getAlarm: async () => { await tick(); return alarm; },
       setAlarm: async (t: number) => { await tick(); alarm = t; },
@@ -69,11 +69,11 @@ describe('QuotaCounter Durable Object (PL-01, PL-07)', () => {
   });
   it('reports which scope is over its cap', async () => {
     const c = new QuotaCounter(fakeState() as never, {} as never);
-    expect(c.check(KEYS, LIM)).toEqual({ ok: true });
-    await c.add(KEYS, { steps: 1, out: 10, turns: 1 });
-    expect(c.check(KEYS, { ...LIM, device: { ...LIM.device, turns: 1 } })).toEqual({ ok: false, scope: 'device' });
-    expect(c.check({ device: 'dev_other000000000000000000', ip: KEYS.ip }, { ...LIM, ip: { turns: 1, steps: 1500 } })).toEqual({ ok: false, scope: 'ip' });
-    expect(c.check({ device: 'dev_other000000000000000000', ip: '198.51.100.1' }, { ...LIM, global: { steps: 1_000, out: 10 } })).toEqual({ ok: false, scope: 'global' });
+    expect(await c.admit(KEYS, LIM, 'a', 10, 0)).toEqual({ ok: true });
+    await c.reconcile('a', { steps: 1, out: 10, turns: 1 });
+    expect(await c.admit(KEYS, { ...LIM, device: { ...LIM.device, turns: 1 } }, 'b', 10, 0)).toEqual({ ok: false, scope: 'device' });
+    expect(await c.admit({ device: 'dev_other000000000000000000', ip: KEYS.ip }, { ...LIM, ip: { turns: 1, steps: 1500 } }, 'c', 10, 0)).toEqual({ ok: false, scope: 'ip' });
+    expect(await c.admit({ device: 'dev_other000000000000000000', ip: '198.51.100.1' }, { ...LIM, global: { steps: 1_000, out: 10 } }, 'd', 10, 0)).toEqual({ ok: false, scope: 'global' });
   });
 });
 
@@ -84,15 +84,15 @@ describe('quota backends', () => {
     const now = Date.parse('2026-09-22T12:00:00Z');
     await recordStep(env, KEYS, now, { turnEnded: true, outputTokens: 40, turnSteps: 1 });
     expect(ns.objects.has('2026-09-22')).toBe(true);
-    const ip = await checkQuota(env, { device: 'dev_aaaaaaaaaaaaaaaaaaaaaaaa', ip: KEYS.ip }, now);
+    const ip = await admitQuota(env, { device: 'dev_aaaaaaaaaaaaaaaaaaaaaaaa', ip: KEYS.ip }, now, 100);
     expect(ip).toMatchObject({ ok: false, message: expect.stringMatching(/coaching limit/) });
     await recordStep(env, { device: 'dev_bbbbbbbbbbbbbbbbbbbbbbbb', ip: '198.51.100.1' }, now, { turnEnded: false, outputTokens: 20, turnSteps: 1 });
-    const g = await checkQuota(env, { device: 'dev_cccccccccccccccccccccccc', ip: '198.51.100.2' }, now);
+    const g = await admitQuota(env, { device: 'dev_cccccccccccccccccccccccc', ip: '198.51.100.2' }, now, 100);
     expect(g).toMatchObject({ ok: false, message: 'Escobar is resting for today. Your notes still update.' });
-    expect(await checkQuota(env, KEYS, Date.parse('2026-09-23T00:00:01Z'))).toEqual({ ok: true });
+    expect(await admitQuota(env, KEYS, Date.parse('2026-09-23T00:00:01Z'), 100)).toMatchObject({ ok: true });
   });
   it('without any binding every check passes', async () => {
-    expect(await checkQuota(baseEnv(), KEYS, 0)).toEqual({ ok: true });
+    expect(await admitQuota(baseEnv(), KEYS, 0, 100)).toEqual({ ok: true });
   });
 });
 
@@ -303,5 +303,99 @@ describe('a stall or cancel before any output is not a used turn (QA2-FA-6)', ()
     }
     expect(statuses).toEqual([200, 200, 200]);
     expect(ns.objects.get('2026-09-22')?.state.data.get(`d:${DEVICE}`)).toBeUndefined();
+  });
+});
+
+describe('AUD-3: admission reserves before the paid call and fails closed', () => {
+  const ONE: Limits = { device: { turns: 1, steps: 1, out: 1_000_000 }, ip: { turns: 1, steps: 1 }, global: { steps: 1, out: 1_000_000 } };
+  const ONE_ENV = { MAX_TURNS_PER_DEVICE: '1', MAX_STEPS_PER_DEVICE: '1', MAX_TURNS_PER_IP: '1', MAX_STEPS_PER_IP: '1', MAX_STEPS_TOTAL: '1' };
+  const live = (data: Map<string, unknown>) => [...data.keys()].filter(k => k.startsWith('r:'));
+
+  it('ten parallel admissions with every limit at 1 let exactly one through', async () => {
+    const c = new QuotaCounter(fakeState(5) as never, {} as never);
+    const r = await Promise.all(Array.from({ length: 10 }, (_, n) => c.admit(KEYS, ONE, `id${n}`, 100, 0)));
+    expect(r.filter(x => x.ok)).toHaveLength(1);
+  });
+  it('ten parallel turns through the handler, limits at 1: one reaches the model, nine get the quota error', async () => {
+    const ns = fakeNamespace();
+    const env = baseEnv({ QUOTA_DO: ns as never, ...ONE_ENV });
+    const client = mockClient([{ events: eventsFor(TEXT), final: finalMessage(TEXT) }]);
+    const pending: Promise<unknown>[] = [];
+    const res = await Promise.all(Array.from({ length: 10 }, () => handle(post(turn()), env, deps(client, { waitUntil: p => { pending.push(p); } }))));
+    expect(res.map(r => r.status).sort()).toEqual([200, ...Array(9).fill(429)]);
+    for (const r of res) if (r.status === 200) await sse(r); else expect(((await r.json()) as { code: string }).code).toBe('quota');
+    await Promise.all(pending);
+    expect(client.calls).toHaveLength(1);
+  });
+  it('the global daily cap holds against parallel turns from different devices and IPs', async () => {
+    const ns = fakeNamespace();
+    const env = baseEnv({ QUOTA_DO: ns as never, MAX_STEPS_TOTAL: '1' });
+    const client = mockClient([{ events: eventsFor(TEXT), final: finalMessage(TEXT) }]);
+    const res = await Promise.all(Array.from({ length: 10 }, (_, n) => handle(post(turn(), { 'x-escobar-device': `dev_${n.toString(16).padStart(24, '0')}`, 'cf-connecting-ip': `198.51.100.${n}` }), env, deps(client))));
+    expect(res.filter(r => r.status === 200)).toHaveLength(1);
+    await Promise.all(res.filter(r => r.status === 200).map(sse));
+  });
+  it('reconcile swaps the hold for the real usage, once', async () => {
+    const state = fakeState();
+    const c = new QuotaCounter(state as never, {} as never);
+    await c.admit(KEYS, LIM, 'a', 32_000, 0);
+    await c.reconcile('a', { steps: 1, out: 40, turns: 0 });
+    await c.reconcile('a', { steps: 1, out: 40, turns: 0 });
+    c.release('a');
+    expect(state.data.get(`d:${DEVICE}`)).toEqual({ turns: 0, steps: 1, out: 40 });
+    expect(state.data.get('g')).toEqual({ steps: 1, out: 40 });
+    expect(live(state.data)).toEqual([]);
+  });
+  it('release frees the hold without charging it, and is idempotent', async () => {
+    const state = fakeState();
+    const c = new QuotaCounter(state as never, {} as never);
+    expect(await c.admit(KEYS, ONE, 'a', 100, 0)).toEqual({ ok: true });
+    expect(await c.admit(KEYS, ONE, 'b', 100, 0)).toEqual({ ok: false, scope: 'device' });
+    c.release('a');
+    c.release('a');
+    await c.reconcile('a', { steps: 1, out: 40, turns: 1 });
+    expect(state.data.get(`d:${DEVICE}`)).toBeUndefined();
+    expect(await c.admit(KEYS, ONE, 'c', 100, 0)).toEqual({ ok: true });
+  });
+  it('an orphaned hold expires: it is charged in full, stops holding, and a late reconcile is ignored', async () => {
+    const state = fakeState();
+    const c = new QuotaCounter(state as never, {} as never);
+    const lim = { ...LIM, device: { ...LIM.device, steps: 3 } };
+    await c.admit(KEYS, lim, 'a', 4000, 0);
+    await c.admit(KEYS, lim, 'b', 4000, 0);
+    expect(await c.admit(KEYS, lim, 'c', 4000, RESERVATION_TTL_MS - 1)).toEqual({ ok: true });
+    c.release('c');
+    expect(await c.admit(KEYS, lim, 'd', 4000, RESERVATION_TTL_MS)).toEqual({ ok: true });
+    expect(state.data.get(`d:${DEVICE}`)).toEqual({ turns: 2, steps: 2, out: 8000 });
+    expect(live(state.data)).toEqual(['r:d']);
+    await c.reconcile('a', { steps: 1, out: 1, turns: 0 });
+    expect(state.data.get(`d:${DEVICE}`)).toEqual({ turns: 2, steps: 2, out: 8000 });
+  });
+  it('a finished turn and a turn that fails before output both leave no hold', async () => {
+    const ns = fakeNamespace();
+    const env = baseEnv({ QUOTA_DO: ns as never });
+    const run = async (s: Parameters<typeof mockClient>[0][number]) => { const p: Promise<unknown>[] = []; await sse(await handle(post(turn()), env, deps(mockClient([s]), { waitUntil: x => { p.push(x); } }))); await Promise.all(p); };
+    await run({ events: eventsFor(TEXT), final: finalMessage(TEXT) });
+    await run({ events: eventsFor(TEXT), throwAt: 0, error: new Error('refused at the door') });
+    const data = ns.objects.get('2026-09-22')!.state.data;
+    expect(live(data)).toEqual([]);
+    expect(data.get(`d:${DEVICE}`)).toEqual({ turns: 1, steps: 1, out: 40 });
+  });
+  it('a Durable Object that throws refuses the paid call with the quota error', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const env = baseEnv({ QUOTA_DO: { idFromName: (n: string) => n, get: () => ({ admit: async () => { throw new Error('DO down'); }, release: async () => {} }) } as never });
+    const client = mockClient([{ events: eventsFor(TEXT), final: finalMessage(TEXT) }]);
+    const r = await handle(post(turn()), env, deps(client));
+    expect(r.status).toBe(429);
+    expect(((await r.json()) as { code: string }).code).toBe('quota');
+    expect(client.calls).toHaveLength(0);
+  });
+  it('a Durable Object that never answers is refused after the timeout, and its late hold is released', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const released: string[] = [];
+    const env = baseEnv({ QUOTA_DO: { idFromName: (n: string) => n, get: () => ({ admit: () => new Promise(() => {}), release: async (id: string) => { released.push(id); } }) } as never });
+    expect(await admitQuota(env, KEYS, 0, 100, 10)).toMatchObject({ ok: false, message: expect.stringMatching(/coaching limit/) });
+    await new Promise(r => setTimeout(r, 0));
+    expect(released).toHaveLength(1);
   });
 });
