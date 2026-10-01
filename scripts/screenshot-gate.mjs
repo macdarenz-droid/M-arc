@@ -7203,7 +7203,8 @@ for (const theme of ['silent-black', 'paper']) {
 // Frame-sampled at 390 x 844 in Silent Black and Paper, at 1x and 4x CPU, both paths: checked in today, and
 // check-in -> Skip -> brief. A 8-exercise split with history so Today's checks show.
 {
-  const BUG36_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press', 'lib_barbell_row', 'lib_lat_pulldown', 'lib_dumbbell_shoulder_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_biceps_curl', 'lib_triceps_pushdown'];
+  // COPY-2: two chest lifts keep the brief taller than the check-in (fewer soreness rows) after the explaining lines were removed
+  const BUG36_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press'];
   const bug36Seed = ([t, EX, checked]) => {
     if (localStorage.getItem('marc.state.v1')) return;
     localStorage.setItem('marc.theme', t);
@@ -7541,6 +7542,82 @@ for (const theme of ['silent-black', 'paper']) {
   await settle(page); await page.screenshot({ path: `${OUT}/aud-12-keyboard-access.png` });
   await ctx.close();
   if (!errors.some(e => e.startsWith(`${tag}:`))) console.log('AUD-12: onboarding Sex stays unset until tapped, and the GoalSheet, insight-open and Add-exercise choices are reachable and activate by keyboard');
+}
+
+// COPY-2 swap (D-COPY2-swap): without the explaining lines, a brief can be shorter than the check-in, so
+// on Skip the same sheet shrinks and its top eases down. Frame-sampled at 390 x 844 in Silent Black and
+// Paper at 1x and 4x CPU, with an 8-lift split so the brief is shorter: the top moves one way only (any
+// reversal is a bounce) and down by >= 20 px, no frame steps more than max(16 px, a quarter of the travel)
+// (a snap; a ~100 px ease peaks near 20 px a frame), one sheet throughout, and nothing moves or resizes for
+// >= 100 ms after it rests.
+{
+  const C2_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press', 'lib_barbell_row', 'lib_lat_pulldown', 'lib_dumbbell_shoulder_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_biceps_curl', 'lib_triceps_pushdown'];
+  const c2Seed = ([t, EX]) => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    const day = (o) => { const d = new Date(); d.setDate(d.getDate() - o); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (o) => ({ id: `s${o}`, splitId: 'sp1', splitName: 'COPY2 SPLIT', day: day(o), startedAt: `${day(o)}T17:00:00.000Z`, endedAt: `${day(o)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+      exercises: EX.map(id => ({ exerciseId: id, name: id, sets: [0, 1, 2].map(() => ({ kg: 40, reps: 8, effort: 'ideal' })) })),
+      logging: { mode: 'live', trainedAt: `${day(o)}T17:00:00.000Z`, trainedEndAt: `${day(o)}T18:00:00.000Z`, loggedAt: `${day(o)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'COPY2 SPLIT', color: '#6aa9ff', focus: [], createdAt: now, exercises: EX.map(id => ({ exerciseId: id, sets: 3 })) }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess(14), sess(10), sess(7), sess(3)], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 }, errorReportsAsked: true },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      units: { gyms: [{ id: 'gym_default', name: 'My gym', defaultUnit: 'kg', createdAt: now }], activeGymId: 'gym_default', byExercise: {}, byEquipment: {} },
+    }));
+  };
+  const c2Sample = (page) => page.evaluate(() => new Promise(resolve => {
+    const out = []; const t0 = performance.now(); let n = 0;
+    const f = () => {
+      const d = [...document.querySelectorAll('dialog.sheet[open]')].pop(); const p = d?.querySelector('.sheet-panel');
+      if (d && !d.__c2) d.__c2 = ++window.__c2Id || (window.__c2Id = 1);
+      out.push({ t: performance.now() - t0, dlg: d?.__c2 ?? null, title: d?.querySelector('h2')?.textContent ?? null,
+        top: p ? p.offsetTop + d.getBoundingClientRect().top + new DOMMatrix(getComputedStyle(p).transform).m42 : null, h: p ? p.getBoundingClientRect().height : null });
+      if (performance.now() - t0 < 900 && ++n < 400) requestAnimationFrame(f); else resolve(out);
+    };
+    requestAnimationFrame(f);
+  }));
+  for (const theme of ['silent-black', 'paper']) for (const cpu of [1, 4]) {
+    const tag = `COPY-2 swap ${theme} ${cpu}x CPU`;
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await page.addInitScript(c2Seed, [theme, C2_EX]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(400);
+    const start = page.getByRole('button', { name: /^Start / }).first();
+    await start.evaluate(el => el.scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+    await start.click(); await page.waitForTimeout(900);
+    if (!(await visible(page.getByRole('heading', { name: 'Quick check-in' }), 2000))) { errors.push(`${tag}: the check-in did not open first`); await ctx.close(); continue; }
+    const cdp = await ctx.newCDPSession(page); await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
+    let frames = c2Sample(page); await page.getByRole('button', { name: 'Skip' }).click(); frames = await frames;
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+    const on = frames.filter(x => x.top != null);
+    if (!on.some(x => x.title === 'COPY2 SPLIT')) errors.push(`${tag}: Skip did not lead to the brief`);
+    if (on.length < 10) { errors.push(`${tag}: only ${on.length} frames with the sheet open, expected >= 10`); await ctx.close(); continue; }
+    const travel = on[on.length - 1].top - on[0].top;
+    if (travel < 20) errors.push(`${tag}: the panel's top moved ${travel.toFixed(1)} px, expected the shorter brief to move it down >= 20 px (nothing to measure)`);
+    const snapLimit = Math.max(16, travel / 4);
+    const back = on.findIndex((x, i) => i > 0 && x.top - on[i - 1].top < -0.5);
+    if (back > 0) errors.push(`${tag}: the panel's top reversed ${(on[back].top - on[back - 1].top).toFixed(1)} px at ${on[back].t.toFixed(0)} ms (${on[back - 1].top.toFixed(1)} -> ${on[back].top.toFixed(1)}), a bounce`);
+    const snap = on.findIndex((x, i) => i > 0 && Math.abs(x.top - on[i - 1].top) > snapLimit);
+    if (snap > 0) errors.push(`${tag}: the panel's top snapped ${(on[snap].top - on[snap - 1].top).toFixed(1)} px in one frame at ${on[snap].t.toFixed(0)} ms (limit ${snapLimit.toFixed(1)} px)`);
+    const ids = new Set(on.map(x => x.dlg)); if (ids.size !== 1) errors.push(`${tag}: ${ids.size} different sheets showed during the swap, expected one`);
+    const end = on[on.length - 1];
+    const restAt = on.findIndex((x, i) => on.slice(i).every(y => Math.abs(y.top - end.top) <= 0.5));
+    const after = on.slice(restAt);
+    if (after.length < 5 || end.t - on[restAt].t < 100) errors.push(`${tag}: the swap did not settle at least 100 ms before sampling ended`);
+    if (after.some(x => Math.abs(x.h - after[0].h) > 0.5)) errors.push(`${tag}: the panel changed height after the swap ended`);
+    if (cpu === 1) await page.screenshot({ path: `${OUT}/${theme}-copy-2-swap.png` });
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith('COPY-2 swap '))) console.log('COPY-2 swap: a brief shorter than the check-in eases the same sheet down (one direction, >= 20 px, no step over max(16 px, travel / 4), still after rest), in Silent Black and Paper at 1x and 4x CPU');
 }
 
 await browser.close();
