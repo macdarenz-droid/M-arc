@@ -3,21 +3,21 @@
   "budgets": [
     {
       "chunk": "HowToSheet-*.js",
-      "rawMax": 18545,
-      "gzMax": 7011,
-      "measuredRaw": 16859,
-      "measuredGz": 6373,
-      "setBy": "HT-6",
-      "reason": "HT-6 adds the Look closer chips, the Grip section with its handling mistakes, the zoom host (open/close, pager, Trace/Mistake hand-off) and the hand close-up registry to the sheet chunk."
+      "rawMax": 23944,
+      "gzMax": 8506,
+      "measuredRaw": 21767,
+      "measuredGz": 7732,
+      "setBy": "HT-8",
+      "reason": "Grows by the HT-8 feel section (Feel.tsx, useFeelMap.ts) on top of HT-6's sections and zoom host (16,859 / 6,373 B)."
     },
     {
       "chunk": "HowToSheet-*.css",
-      "rawMax": 16861,
-      "gzMax": 3195,
-      "measuredRaw": 15328,
-      "measuredGz": 2904,
-      "setBy": "HT-6",
-      "reason": "HT-6 adds hand.css: golden B's HAND_CSS and the chip, close-up frame and grip rules (each exercise's close-up CSS loads with its own hand chunk)."
+      "rawMax": 23052,
+      "gzMax": 4228,
+      "measuredRaw": 20956,
+      "measuredGz": 3843,
+      "setBy": "HT-8",
+      "reason": "Grows by feel.css (HT-8: FEEL_CSS and the feel section rules) on top of HT-6's hand.css (15,328 / 2,904 B)."
     },
     {
       "chunk": "ht-dumbbell-lateral-raise-*.js",
