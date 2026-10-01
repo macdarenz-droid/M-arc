@@ -78,8 +78,8 @@ export function warmupRamp(workingKg: number | null | undefined, exerciseId: str
   return {
     id: `pre:warmup:${exerciseId}`, category: 'progress', priority: 120, cadence: 'pre', kind: 'tip', exerciseId,
     title: `${exerciseName}: warm-up ramp`,
-    noticed: 'A short ramp before your working sets.',
-    means: 'A gradual ramp readies the lift without adding real fatigue.',
+    noticed: '',
+    means: '',
     action: `${steps.map(w => `${show(w.kg)} x ${w.reps}`).join(', ')}, then your working sets.`,
     evidence: { n: 1, window: 'today', confidence: 'high' },
   };
@@ -90,7 +90,7 @@ export function mastersDefaults(age: number | null): Insight | null {
   if (age == null || age < 60) return null;
   return {
     id: 'pre:masters', category: 'data', priority: 110, cadence: 'pre', kind: 'data',
-    title: 'A note for your age group',
+    title: 'Lifters 60+',
     noticed: 'Guidelines for lifters 60 and over.',
     means: '2 to 3 sessions a week, 2 to 3 sets per muscle group, about 2 minutes rest, load steps of 5% or less.',
     action: 'About 1.0 to 1.2 g protein per kg a day, 1.6 if building muscle.',
@@ -116,8 +116,8 @@ export function preSessionInsights(input: PreSessionInput, limit = 3): Insight[]
         out.push({
           id: `pre:load-target:${se.exerciseId}`, category: 'progress', priority: 260, cadence: 'pre', kind: 'plan', exerciseId: se.exerciseId,
           title: `${meta.name}: today's target load`,
-          noticed: `The same target your set rows will show.`,
-          means: 'It already accounts for today\'s readiness, a lighter week and the loads your equipment has.',
+          noticed: '',
+          means: '',
           action: `Start around ${t.target}.`,
           evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: hist.length >= 6 ? 'medium' : 'low' },
         });
