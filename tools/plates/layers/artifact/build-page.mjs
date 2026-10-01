@@ -21,66 +21,6 @@ const I = {
   trace: s => ic('<path d="M5 18c2-7 7-11 14-12"/><path d="M15.5 4.5L19 6l-2 3.2"/>', s),
 };
 
-// ---- sources (from each spec file's header; the lateral raise from the M/ARC research file) ----
-const WINTER = 'Winter DA. Biomechanics and Motor Control of Human Movement, 4th ed. (Wiley, 2009), ch. 4: body segment proportions used for every figure.';
-const SOURCES = {
-  lateral_raise: [
-    'ACE Exercise Library, Lateral Raise (acefitness.org, exercise 26).',
-    'Physiopedia, Scapulohumeral Rhythm.',
-    'PubMed Central articles PMC7503819 and PMC12277279 (cited by the M/ARC research file lib_dumbbell_lateral_raise).',
-    'M/ARC research file lib_dumbbell_lateral_raise: tempo, shoulder range, elbows-lead ramp.',
-  ],
-  barbell_back_squat: [
-    'NSCA, Essentials of Strength Training and Conditioning, 4th ed. (Haff & Triplett 2016), ch. 15, back squat.',
-    'Glassbrook, Helms, Brown & Storey 2017. High-bar vs low-bar back squat. JSCR 31(9):2618-2634.',
-    'Fry, Smith & Schilling 2003. Effect of knee position on hip and knee torques during the barbell squat. JSCR 17(4):629-633.',
-    'Myer et al. 2014. The back squat: a proposed assessment of functional deficits and technical factors. Strength Cond J 36(6):4-27.',
-    'Schoenfeld 2010. Squatting kinematics and kinetics. JSCR 24(12):3497-3506.',
-    'Rippetoe. Starting Strength, 3rd ed. (2011): bar over the middle of the foot.',
-  ],
-  pull_up: [
-    'ACE Exercise Library, Pull-ups (acefitness.org, exercise 191).',
-    'Snarr et al. 2017. J Hum Kinet 58:5-13 (grip 1.5x shoulder width; rep ends with the chin at the bar).',
-    'Youdas et al. 2010. JSCR 24(12):3404-3414.',
-    'Dickie et al. 2017. J Electromyogr Kinesiol 32:30-36.',
-    'Williamson & Price 2021. Kipping vs strict pull-ups. Int J Exerc Sci 8(5) (abstract).',
-    'Prinold & Bull 2016. Scapular kinematics in pull-ups. J Sci Med Sport (PMID 26383875).',
-  ],
-  hanging_leg_raise: [
-    'Catalyst Athletics exercise library, hanging leg raise (hang still, curl the pelvis up).',
-    'ExRx, Hanging Straight Leg-Hip Raise (the abs work dynamically only when the pelvis tilts back).',
-    'M/ARC research file lib_hanging_leg_raise (SetForSet, Bodybuilding Wizard, American Sport and Fitness): hip 0 to 90 deg, mistake "swing and short-change it", tempo.',
-  ],
-  lat_pulldown: [
-    'ACE Exercise Library, Seated Lat Pulldown (acefitness.org, exercise 158): lean back no more than 30 deg, bar to the upper chest.',
-    'NSCA, Exercise Technique Manual for Resistance Training, 3rd ed. (2016), lat pulldown.',
-    'Andersen et al. 2014. JSCR 28(4):1135-1142 (grip width).',
-    'Signorile et al. 2002. JSCR 16(4):539-546; Sperandei et al. 2009. JSCR 23(7):2033-2038 (front vs behind the neck).',
-    'Durall et al. 2001. Strength Cond J 23(5):10-18.',
-    'M/ARC research file lib_lat_pulldown: lean 0-15 deg, mistake "Lean and heave", tempo.',
-  ],
-  seated_cable_row: [
-    'ACE Exercise Library, Seated Row (acefitness.org, exercise 48): elbows back close to the ribs, pause 1 s.',
-    'NSCA, Essentials of Strength Training and Conditioning, 4th ed. (2016), ch. 15, low-pulley seated row (book, not re-checked online).',
-    'Bodybuilding.com, Seated Cable Rows; REP Fitness, How to do a seated cable low row.',
-    'M/ARC research file lib_seated_cable_row (ACE, Olaben, TZFIT): torso -5 to +5 deg at the finish; rocking back is the classic error.',
-  ],
-  leg_press: [
-    'ACE Exercise Library, Seated Leg Press (acefitness.org, exercise 154): back and sacrum flat on the pad, knees about 90 deg, no lockout.',
-    'Lopes et al. 2020. Inclined leg press, muscle activation and kinematics. IJERPH 17(22):8698.',
-    'NASM Exercise Library, Leg Press (listed, page not opened).',
-    'PureGym, 45-degree leg press (toes slightly out).',
-    'ISSA, Leg Press Exercise Guide plus Common Mistakes (issaonline.com): knees collapsing inwards; lowering the sled too far lifts the buttocks and lower back off the pad.',
-    'M/ARC research file lib_leg_press (PureGym, ISSA, GymPT). Machine angles (30 deg back pad, 15 deg plate tilt) are inferred, not from a maker drawing.',
-  ],
-  machine_chest_press: [
-    'ACE Exercise Library, Seated Chest Press (acefitness.org, exercise 188): handles at mid-chest, blades on the pad, elbows not locked.',
-    'Fees, Decker, Snyder-Mackler & Axe 1998. Upper extremity weight-training modifications for the injured athlete. Am J Sports Med 26(5):732-742.',
-    'NSCA, Exercise Technique Manual for Resistance Training, 3rd ed. (2016), seated chest press (book, not re-checked online).',
-    'M/ARC research file lib_machine_chest_press: elbow 15-90 deg, mistake "Round and lock", tempo.',
-  ],
-};
-
 // ---- the reference lateral raise (ref-src/plate.mjs, unchanged); cues and tells as ref-src/build.mjs draws them ----
 const REF_TELLS = { shrug: 'The shoulders shrug toward the ears.', dip: 'The knees dip to swing it up.', thumbs: 'Thumbs turn down at the top.' };
 const refExercise = () => {
@@ -110,7 +50,7 @@ const withGuides = (svg, guides) => {
   return svg;
 };
 
-// The How-to layers (chips, close-ups, feel, setup, sources) per card, from exercises/<id>.howto.mjs.
+// The How-to layers (chips, close-ups, feel, setup, risks) per card, from exercises/<id>.howto.mjs.
 const { layers: HOWTO, css: HOWTO_ZOOM_CSS } = await buildHowtoLayers();
 
 const specExercise = async id => {
@@ -187,8 +127,6 @@ const themeButtons = THEME_IDS.map(t => `<button type="button" class="seg" id="t
 const ORDER = ['silent-black', 'paper', 'midnight', 'ember', 'emerald'];
 const themeSeg = ORDER.map(t => themeButtons.match(new RegExp(`<button[^>]*id="theme-${t}"[^>]*>[^<]*</button>`))[0]).join('');
 
-const sourcesList = GROUPS.flatMap(g => g.ids).map(id => `<li><b>${esc(EX[id].name)}</b><ul>${SOURCES[id].map(s => `<li>${esc(s)}</li>`).join('')}</ul></li>`).join('');
-
 // ---- page chrome CSS (its own --pg-* tokens so the app tokens inside the sheets never collide) ----
 const PAGE_CSS = `
 :root { --pg-bg: #f5f5f3; --pg-surface: #ffffff; --pg-text: #18191b; --pg-text-2: #5c5f66; --pg-border: #dedfdb; --pg-seg: #ebebe8; --pg-seg-on: #ffffff; --pg-focus: #3e63dd;
@@ -223,11 +161,6 @@ svg { display: block; }
   .seg { padding: 2px 4px; font-size: 13px; line-height: 16px; white-space: normal; } }
 .pg-foot { max-width: calc(var(--wrap) + 32px); margin: 0 auto; padding: 24px 16px 48px; color: var(--pg-text-2); font-size: 14px; display: grid; gap: 12px; }
 .pg-foot a { color: var(--pg-text); text-underline-offset: 2px; }
-.pg-foot details { border: 1px solid var(--pg-border); border-radius: 12px; background: var(--pg-surface); }
-.pg-foot summary { min-height: 44px; display: flex; align-items: center; padding: 0 16px; cursor: pointer; color: var(--pg-text); font-weight: 500; }
-.pg-foot details > ul { margin: 0; padding: 0 16px 16px 16px; list-style: none; display: grid; gap: 12px; }
-.pg-foot details b { color: var(--pg-text); font-weight: 600; }
-.pg-foot details ul ul { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 2px; list-style: disc; overflow-wrap: anywhere; }
 /* ---- the app band: app theme tokens scoped to #sheets ---- */
 #sheets { background: var(--bg); color: var(--text); font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); padding: 28px 16px 36px; border-block: 1px solid var(--pg-border); transition: background-color var(--dur-base) var(--ease-standard); }
 #sheets :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
@@ -237,7 +170,7 @@ svg { display: block; }
 .group-title { grid-column: 1 / -1; font-size: var(--fs-cap); line-height: var(--lh-cap); letter-spacing: var(--ls-cap); text-transform: uppercase; font-weight: var(--fw-semibold); color: var(--text-2); padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle); }
 `;
 
-// ---- How-to layers (architecture 2.1-2.7): chips, close-up frame, feel, setup, sources. Every colour a theme token. ----
+// ---- How-to layers (architecture 2.1-2.7): chips, close-up frame, feel, setup, risks. Every colour a theme token. ----
 const HOWTO_CSS = `
 .plate-stage { position: relative; }
 .plate-stage > .plate-fit[hidden], .cue-line[hidden] { display: none; }
@@ -281,7 +214,7 @@ const HOWTO_CSS = `
 .redflag:focus { outline: none; } .redflag:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .rf-link { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--text); font-size: var(--fs-small); font-weight: var(--fw-medium); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--mistake) 50%, transparent); text-underline-offset: 3px; }
 .rf-link svg { color: var(--mistake); }
-/* the owner's safety line, once per sheet, small, under the sources */
+/* the owner's safety line, once per sheet, small, last, after the risks */
 .ht-disclaimer { margin-top: var(--sp-2); font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); }
 .hw-sec { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--border-subtle); }
 .hw-sec > h4.eyebrow { margin: 0; }
@@ -321,23 +254,8 @@ html:not([data-motion="reduce"]) .fr-body:not([hidden]) { animation: fr-in var(-
 .st-list li[hidden] { display: none; }
 .st-n { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-pill); background: var(--surface-3, var(--surface-2)); border: 1px solid var(--border); font-size: var(--fs-meta); font-weight: var(--fw-semibold); color: var(--text-2); font-variant-numeric: tabular-nums; }
 .st-show { margin-top: 2px; }
-/* sources */
-.srcs > summary { list-style: none; display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; font-size: var(--fs-body); font-weight: var(--fw-medium); color: var(--text); }
-.srcs > summary::-webkit-details-marker { display: none; }
-.srcs > summary svg { margin-left: auto; color: var(--text-3); transition: transform var(--dur-base) var(--ease-standard); }
-.srcs[open] > summary svg { transform: rotate(180deg); }
-.src-n { font-size: var(--fs-meta); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.src-key { margin: 0 0 var(--sp-3); font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); }
-.src-key b { font-weight: var(--fw-semibold); color: var(--text); }
-.src-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
-.src-cite { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); overflow-wrap: anywhere; }
-.src-cite a { color: inherit; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 2px; }
-.src-cite a:hover { text-decoration-color: var(--text-2); }
-.src-ev { margin-top: 4px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 6px; font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); }
-.ev { display: inline-block; padding: 0 6px; border-radius: var(--radius-xs); border: 1px solid var(--border); font-size: var(--fs-cap); line-height: 16px; font-weight: var(--fw-semibold); letter-spacing: .02em; color: var(--text-2); white-space: nowrap; }
-.ev-data { color: var(--accent-text); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 .zdot { fill: var(--border-subtle); }
-@media (prefers-reduced-motion: reduce) { .fr-body:not([hidden]) { animation: none; } .fr-btn svg, .srcs > summary svg { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .fr-body:not([hidden]) { animation: none; } .fr-btn svg { transition: none; } }
 `;
 
 // ---- the app's sheet CSS (as ref-src/build.mjs / engine/sheet.mjs), plus the card frame and the trace timing ----
@@ -654,7 +572,7 @@ const html = `<title>M/ARC Technical Plates</title>
 <header class="pg-head">
   <span class="pg-kicker">M/ARC · How to do it</span>
   <h1>Option 2 · Technical Plate</h1>
-  <p>Still drawings computed from joint angles, in the app's own colours: no photos, no video. Tap Trace to play the path once, Mistake to see the common fault, and a label to highlight its cue. Under each plate you can now look closer at the hand and posture (right next to wrong), see where you should feel it, and follow the setup steps with their sources.</p>
+  <p>Still drawings computed from joint angles, in the app's own colours: no photos, no video. Tap Trace to play the path once, Mistake to see the common fault, and a label to highlight its cue. Under each plate you can now look closer at the hand and posture (right next to wrong), see where you should feel it, follow the setup steps, and see when to stop.</p>
   <a class="pg-jump" href="#machine-chest-press-chip-hand">Machine chest press: the wrist fix <span aria-hidden="true">&darr;</span></a>
   <div class="pg-theme">
     <span class="pg-theme-label" id="theme-label">App theme</span>
@@ -668,12 +586,8 @@ ${g.ids.map(id => card(EX[id])).join('\n')}
 </section>`).join('\n')}
 </main>
 <footer class="pg-foot">
-  <p>Mockup for the owner's review. Drawings are computed by our own code from cited joint angles (Winter 2009 body proportions); sources per exercise below.</p>
+  <p>Mockup for the owner's review. Drawings are computed by our own code from joint angles.</p>
   <p>Body map drawings: from the <a href="https://github.com/vulovix/body-muscles" target="_blank" rel="noopener noreferrer">body-muscles</a> package by Ivan Vulovic, Apache License 2.0, as used in the app's muscle map.</p>
-  <details id="sources">
-    <summary id="sources-toggle">Sources per exercise</summary>
-    <ul>${sourcesList}<li><b>Every figure</b><ul><li>${esc(WINTER)}</li></ul></li></ul>
-  </details>
 </footer>
 <script>${JS}</script>
 `;

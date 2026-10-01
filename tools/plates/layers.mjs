@@ -10,9 +10,9 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const LAYERS = join(ROOT, 'tools/plates/layers');
-export const PAGE_SHA256 = 'f39137e190e3ff5921bbe658571228b6b2a53e6d27fcc95e0d5d2afaec9e1384';
+export const PAGE_SHA256 = 'e7b8141368e59cf993f29555efce53bc06f36131d8e283c79e11a9f2614c928a';
 /** The golden-B commit every vendored file and the page approval are pinned to (supervisor: the single constant). */
-export const GOLDEN_B_REF = 'a7a0b74';
+export const GOLDEN_B_REF = '6b86baa';
 
 export const sha256 = x => createHash('sha256').update(x).digest('hex');
 export const readManifest = (dir = LAYERS) => JSON.parse(readFileSync(join(dir, 'MANIFEST.json'), 'utf8'));
