@@ -801,11 +801,12 @@ Facts below were checked live at 08:27-08:35 UTC (GitHub API, `git ls-remote`, `
 - **Merge trains** (since 04:05): every app PR merges through a train. Procedure: 6.8.
 
 ### 8.1 Main
-- **Head:** `1fcd9c8` (train 6 #170). Verified with `git ls-remote`.
+- **Head:** `1c5504f` (train 7 #175, 13:36). Verified with `git ls-remote`.
 - **Merged on 10-01 (UTC), newest first:**
 
 | Time | Merge | Carried |
 |---|---|---|
+| 13:36 | train 7 #175 `1c5504f` (`3077ba7`) | HT-7 #119, SUP CI limit #174 (D-SUP-CI-1), handover #172 |
 | 09:40 | train 6 #170 `1fcd9c8` (`c10bb91`) | BUG-36 #163, handover #171 (playbook, PROMPTS, scripts, workflows, research) |
 | 07:56 | train 5 #169 `958a3de` (train head `7bf89dd`) | AUD-20 #162 (supervisor catch-up merge `361c7fa`, delta-reviewed) |
 | 06:42 | train 4 #167 `6a3b6b0` (`c1c2929`) | AUD-12 #156, AUD-11 #159, handover #165 |
@@ -838,7 +839,7 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 | Card | PR @ head | State |
 |---|---|---|
 | HT-3c, HT-4b, HT-5, HT-6 | #143, #140, #116, #112 | merged (`42afd04`, `f1e514a`, train 1, train 3) |
-| HT-7 posture close-ups | #119 @ `14fb8b7` | **PASS 12:53** (0 / 0 / 1 Medium: a stale PR-body HANDOFF, text only / 2 Lows → follow-up D-HT7-F1b). CI green (run 36850977824). **In merge train 7.** |
+| HT-7 posture close-ups | #119 @ `14fb8b7` | **Merged in train 7 (13:36).** Follow-up D-HT7-F1b (the 5-theme label check, a COACHING note) goes to the HT-7 builder. |
 | HT-8 feel map and shimmer | #111 @ `74a4e68` | Delta **PASS** 08:02 (0 / 0 / 0 / 1 Low). Low: the `HowToSheet-*.js` entry in `tests/howto/budgets.json` was not re-measured; fix on the next push (measured 22,178 / 7,898, ceiling 24,396 / 8,688, setBy "HT-8"); no ruling posted yet. **CI: `visual-gate-tz` RED on `74a4e68`**: HT-8 shimmer tripwire, app 124 ms vs golden B 93 ms, ratio 1.33 > 1.2 (the reviewer measured 0.41 locally). CI: run 36829910426, `visual-gate-tz` job 110263907276 failure; `source-gate` and `guard` green; `android-gate` skipped; head `74a4e6861be87ac03dc2fd24a8c414c5fa6dc2e7`. Not yet ruled. Head contains main `170b828`, not trains 4-5. Brachialis Low ruled a golden-B gap (05:02) |
 | HT-9 setup and risks | #113 @ `31bbe16` | READY 07:50, all 4 checks green. **REVIEW FAIL @ `31bbe16` 08:37** (1 Blocker: HT9-A1, A4, A5 and the A3 failure path have no evidence; 1 High: the "HT-9 Show" probe taps HT-6's buttons and lets dead setup buttons pass; 2 Medium; 3 Low). Supervisor rulings 08:38 (4.3): the Sonnet builder is archived; an Opus builder continues on the same branch from `31bbe16`. The head lacks trains 4-5 |
 | HT-10 sweeps, speed, release candidate | #166 @ `63131b0` | Building, not READY. Its sweeps found the HT-8 early "Feel it" defect (fixed in `74a4e68`) and the HT-9 setup "Show me" defect (fixed in `31bbe16`). Rulings: D-HT10-A5/A5b (own `ht10-gate` job, runner `scripts/ht10-gate.mjs`, module `tools/plates/fidelity/ht10.mjs`), D-HT10-A4 (How-to asset total = measured + 10 % in `budgets.json` `totals`: 2,552,519 B raw / 564,585 B gz for now), D-HT10-C10, D-HT10-7 (C11 allows golden A's 150 ms opacity crossfade under reduced motion only). Validates on a local merge of main + #119 + #111 + #113. CI on `63131b0` running |
@@ -941,7 +942,7 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 
 ### 8.7 Next steps, in order
 1. On wake: re-arm the PR monitor (backdate `SINCE`), read the latest comment on every open PR, check which sessions are idle, read PR heads with `git ls-remote refs/pull/N/head`.
-2. **HT-7:** in merge train 7 with #174 (CI limit) and #172 (this handover). After the merge: send the APK; the HT-7 builder opens follow-up D-HT7-F1b (5-theme label check, COACHING note); one catch-up message each to HT-8 and HT-9; tell HT-10. Then HT-8 (catching up, root-causing its CI red), HT-9 (PASS @ `e57c6d8`, catch-up after HT-8), HT-10 in order. COPY-2 #168 and BUG-37 #173 go in train 8 once they pass.
+2. **After train 7 (merged 13:36):** send the APK for `1c5504f`; HT-7 builder: D-HT7-F1b; HT-8 #111: delta review of `e64cdb7` (its CI-red root cause, D-HT8-1) is running, then one catch-up with HT-7 in main and a delta review of the merge, then a train; then HT-9 (catch-up per the 12:20 rulings on #113), then HT-10. **Train 8 (#176) failed (14:21):** 20 BUG-37 swap errors. COPY-2 makes the brief shorter, so the check-in → brief swap moves the panel down 100 px, while BUG-37's swap guard assumes the BUG-36 growing swap. This is a semantic collision; neither PR fails alone. **Train 8b** carries BUG-37 alone (the owner is waiting for the bounce fix). Then COPY-2 catches up and keeps BUG-37's swap seed taller, a seed-only change with byte-identical assertions (D-COPY2-swap2, the D-COPY2-swap precedent), then gets a delta review and a train. After 8b merges, send the APK with BUG-37's device check from #173.
 3. **HT-8 tripwire:** do not re-run `visual-gate-tz` on `74a4e68` to get green (6.6: re-runs only for a known infrastructure cause; a flake is fixed, never loosened). Send the failure to the HT-8 builder now (P4), while HT-8 waits on HT-7 anyway; never raise the 1.2 limit. Its fix moves the passed head, so the same reviewer delta-reviews it (P3) before HT-8 enters a train. The budgets Low rides that push. Before sending P4, post ruling D-HT8-tripwire on #111 (P7). It names what the builder may change (how the measurement is taken under load) and what it may not (the 1.2 limit, golden B, the plates).
 4. **HT-9:** await HT-9 FIXED from the Opus builder (rulings 08:38), then a delta review by the same reviewer, session_01PJvcYHhpMAhrZ7hjWvCK5T (P3).
 5. **HT-lane trains, in order:** HT-7 → HT-8 → HT-9 → HT-10 (one train may carry several, in order; never HT-8 before HT-7). Tell HT-10 each time an HT card merges.
@@ -980,6 +981,8 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 
 | Incident | Rule |
 |---|---|
+| Train 8 (10-01 14:21): COPY-2 and BUG-37 each passed review and CI alone. Together, BUG-37's swap guard failed: COPY-2 shortened the brief, so the swap direction flipped. The local train preview had run only typecheck and vitest. | Before opening a train that carries two cards touching the same flow, run the gate blocks of both cards on the local train branch, not just typecheck and vitest. |
+| CI-only browser failures (HT-7, HT-8, 10-01). | CI's exact browser is downloadable: `https://storage.googleapis.com/chrome-for-testing-public/153.0.8010.12/linux64/chrome-headless-shell-linux64.zip` (verified reachable 14:30). Unzip it into the scratchpad and run the gate with `MARC_CHROMIUM=<dir>/chrome-headless-shell`. Reproduce on it before calling anything "CI-only". |
 | BUG-37 (10-01): BUG-36's probe added the panel's transform `m42` to its layout top and ignored the dialog's own `scrollTop`. It "saw" a 629 px slide that the scrolling dialog cancelled, while the owner's phone showed a jump. | A motion probe measures the box on screen (`getBoundingClientRect()`, which includes every ancestor's scroll and transform) and asserts that each scroll container on the way stays still. Never a computed transform. |
 | The supervisor ruled HT-7's label variance "local Chromium 141 only" from two clean CI runs (D-HT7-L3-text-8); the next CI run showed it on Chrome 153 too. | An intermittent failure is never disproved by a few green runs. Compare rates (bad/opens) over enough runs, and keep a check strict until the cause is fixed. Also: local containers run Chromium 141 (Playwright 1194), CI runs Chrome 153 (v1243); note the version when comparing. |
 | Verdicts were missed: LT-2 for 1 hour (a connector reconnect), LT-3 for 40 minutes (wakes checked only CI). | Every tick and every wake reads the latest comment on every open PR before any merge step. |
