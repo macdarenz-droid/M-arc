@@ -1,15 +1,17 @@
 /**
- * POST /errors and GET /errors/summary (docs/ERROR-REPORTS.md "Server"). Reuses the Escobar
+ * POST /errors, GET /errors/summary (docs/ERROR-REPORTS.md "Server") and POST /reports (ESC-REPORT-W). Reuses the Escobar
  * Worker's CORS rules (src/handler.ts): only the Capacitor origin and the allowed web origin,
  * never a wildcard with credentials (no Access-Control-Allow-Credentials header is ever sent).
  * Nothing from a request (body, IP, install id) is ever logged; storage errors answer 503 without detail.
  */
-import { corsHeaders } from './handler';
+import { corsHeaders, ipBucket } from './handler';
 import type { Env } from './anthropic';
-import { validateBatch, cleanReport, MAX_ERRORS_BODY_BYTES } from './errorsValidate';
-import { countRequest, ensureSchema, storeReports, summarize } from './errorsStore';
+import { validateBatch, cleanReport, validateContentReport, MAX_ERRORS_BODY_BYTES, MAX_REPORT_BODY_BYTES } from './errorsValidate';
+import { countReport, countRequest, ensureSchema, storeContentReport, storeReports, summarize } from './errorsStore';
 
 export interface ErrorsDeps { now(): number }
+
+const HOUR_MS = 3_600_000;
 
 const json = (status: number, body: unknown, cors: Record<string, string>) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', ...cors } });
@@ -77,6 +79,29 @@ export async function handleErrors(req: Request, env: Env, deps: ErrorsDeps): Pr
       const rate = await countRequest(env.ERRORS_DB, env.ERRORS_SUMMARY_TOKEN, [...new Set(reports.map(r => r.installId))], ip, now);
       if (!rate.ok) return json(429, { error: 'rate limited' }, cors);
       await storeReports(env.ERRORS_DB, reports, now);
+    } catch { return json(503, { error: 'storage unavailable' }, cors); }
+    return new Response(null, { status: 204, headers: cors });
+  }
+
+  if (url.pathname === '/reports' && req.method === 'POST') {
+    // Same rule as /errors: the secret keys the network hash, so without it nothing is accepted.
+    if (!env.ERRORS_DB || !env.ERRORS_SUMMARY_TOKEN) return json(503, { error: 'not configured' }, cors);
+    const declared = Number(req.headers.get('content-length') ?? 'NaN');
+    if (Number.isFinite(declared) && declared > MAX_REPORT_BODY_BYTES) return json(413, { error: 'body over 24 KB' }, cors);
+    const read = await readCapped(req, MAX_REPORT_BODY_BYTES);
+    if (!read) return json(413, { error: 'body over 24 KB' }, cors);
+    let raw: unknown;
+    try { raw = JSON.parse(read.text); } catch { return json(400, { error: 'body is not JSON' }, cors); }
+    const v = validateContentReport(raw);
+    if (!v.ok) return json(400, { error: v.message }, cors);
+    const now = deps.now();
+    try {
+      await ensureSchema(env.ERRORS_DB);
+      if (!(await countReport(env.ERRORS_DB, env.ERRORS_SUMMARY_TOKEN, ipBucket(req.headers.get('cf-connecting-ip') ?? 'unknown'), now))) {
+        const retry = Math.ceil((HOUR_MS - (now % HOUR_MS)) / 1000);
+        return new Response(JSON.stringify({ error: 'rate limited' }), { status: 429, headers: { 'content-type': 'application/json', 'retry-after': String(retry), ...cors } });
+      }
+      await storeContentReport(env.ERRORS_DB, v.body, now);
     } catch { return json(503, { error: 'storage unavailable' }, cors); }
     return new Response(null, { status: 204, headers: cors });
   }

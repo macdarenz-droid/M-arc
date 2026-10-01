@@ -848,7 +848,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 
 - **Decided (D-DOC2, supervisor decision, owner facts 2026-09-29)**: M/ARC's minimum age is **18+**, not a lower age with parental-consent handling.
   **Why**: (1) Anthropic's Usage Policy defines a minor as under 18 and requires extra safeguards for products serving them, and this app has no such safeguards built; (2) the app handles health data (heart rate, resting heart rate via Health Connect) and gives strength-training advice through Escobar, both inappropriate to hand to a minor unsupervised. Setting 18+ avoids both problems without building anything new, versus supporting a lower age with parental consent, which this app has no mechanism for.
-  **Source**: Anthropic's Usage Policy (minors defined as under 18); `docs/PRIVACY-POLICY.md` "The online coach" and "What stays on your phone" (health data, coaching advice); owner facts for DOC-2, 2026-09-29.
+  **Source**: Anthropic's Usage Policy (minors defined as under 18); `docs/PRIVACY-POLICY.md` "Online coach" and "On-device data" (health data, coaching advice); owner facts for DOC-2, 2026-09-29.
 
 - **Decided**: applicable law is stated as Australia's Privacy Act 1988 (Cth) plus, for Philippine users, the Philippines' Data Privacy Act of 2012 (Republic Act No. 10173) — both names and years confirmed from their official sources (`legislation.gov.au` for the Privacy Act 1988; `officialgazette.gov.ph`/`privacy.gov.ph` for RA 10173, signed 15 August 2012), not assumed from training.
   **Why**: the owner lives in Australia and the app is available in all countries, especially the Philippines and Australia (owner facts); both acts are the correct, current official names as verified by web search, not similarly-named older or draft bills.
@@ -1078,6 +1078,24 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the poly rope composer lives in `tools/plates/library/eq/rope.mjs` on this branch. It keeps the pilot's API (`rope`, `ropeGeometry`, `ROPE_ITEMS`), so `specs/rope_triceps_pushdown.mjs` runs unchanged. `eq/parts.mjs` is copied verbatim from claude/lib-8-pilot-a, so the two branches merge it cleanly. `ROPE_ITEMS` is now 5: the cable, 2 strands, the ferrule and the Mistake cable twin.
   **Why**: the card says the arms-machines drawer adopts this rope.
   **Source**: LIB-25 card, step 4.
+
+## LIB-26 flat palm (LIB-26 builder, 2026-09-30)
+
+- **Decided**: the option is a spec field, `hand: 'flat'` for both hands or `{ l, r }` for one. plate.mjs passes it to `bodyShapes`, next to `armsFront`. The shape is `palm.<side>`, and plate.mjs's `partOf` maps it to `arm.<side>`, so it is part of the arm's outline union and of the Mistake mask. When the option is not set, nothing in plate.mjs or body.mjs changes.
+  **Why**: the hand is a body shape, not equipment. A spec-level field is the smallest additive switch: the same pattern as `armsFront`, with no change to pose data or to the saved shape of anything.
+  **Source**: LIB-26 card; body.mjs `bodyShapes`; plate.mjs `drawPose`, `partOf`.
+
+- **Decided**: the palm is one closed outline from the wrist to the fingertips. The fingertips are `WINTER.hand` from the wrist, along the wrist→grip axis. The outline starts on the forearm's distal circle (`RADII.fore[2]`) and reaches a little behind the wrist, so the union has no gap. The palm side (screen-down) is straight at `-RADII.fore[2]` up to the knuckles, and the back of the hand drops toward the fingertips. A hand pointing at the camera falls back to the forearm's end-on circle.
+  **Why**: a flat run on the palm side is what makes the hand read as flat on the floor. Using the forearm's own distal radius means a spec only has to place the wrist `RADII.fore[2] × H` above a surface (`_test_flat` does exactly that). The join test checks three things: the wrist lies inside both the palm and the forearm, and the palm starts on the forearm's distal circle. An offset palm fails it, both in the test and as an engine mutation.
+  **Source**: the card ("palm capsule joined to the forearm … no gap at the wrist"); the 2.6 cm gap and 8.7 cm fist offset measured on #109.
+
+- **Decided**: the engine test `_test_flat` is a high plank on flat palms. Its end pose rocks the body forward over fixed hands. Its Mistake puts the hands ahead of the shoulders, so the moving palm is outlined. Each pose is solved with a short Newton loop inside the spec. The engine test cannot import the library solver, because vendored specs import only from the engine.
+  **Why**: this keeps the palm on the floor in every pose, and the checks read 0 cm. A knee-drive end pose was tried first and dropped: its interpolated ghosts pushed the foot below the floor line.
+  **Source**: render and report of `_test_flat` (the issues list is empty in the normal and Mistake views).
+
+- **Decided**: the branch is built on LIB-25 (claude/lib-25-poly-primitive) and the draft PR targets that branch.
+  **Why**: the card merges LIB-26 after LIB-25, and both edit the same MANIFEST pin and the same source list in golden.mjs. Stacking them avoids a conflict on the vendor lock. After LIB-25 merges, GitHub moves the PR's base to `main`.
+  **Source**: LIB-26 card; plan 2.8.
 ## HT-4 golden-B lock, content types and the derivation test: choices the card left open (HT-4 builder, 2026-09-30)
 
 - **Decided**: `content-types.ts`'s `PointRef` uses the plate engine's real convention (`{ at, pose?, off? }` or `{ along, t, off? }`), not GA section 4.1's literal `{ landmark, pose?, dx?, dy? }` spelling.
@@ -1182,8 +1200,67 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
 
+## BUG-32 crisis pre-screen phrasings and card placement (BUG-32 builder, 2026-09-30)
+
+- **Decided (BUG-32, 2026-09-30)**: the crisis pre-screen (`CRISIS` in `src/escobar/verify.ts`) also catches "wanna", "do not", "be alive", "exist", "wish I was/were dead", "no point in living", "not worth living", "better off without me", "nobody/no one would miss me", "unalive myself", "cut myself" (want/going/trying/need to, wanna, gonna; been/keep/kept/started cutting; on purpose), "wanna/gonna hurt myself", and "kms" only straight after a verb of intent ("wanna kms", "about to kms").
+  **Why**: these are common ways of saying the phrases the screen already caught. "kms" also means kilometres in a fitness app, so it fires only after want to, going to, about to, trying to, wanna, gonna, finna or tryna; a sweep test over distances ("5 kms", "10kms", "i want to run 5 kms", "gonna do 10 kms") proves it never fires on one.
+  **Source**: BUG-32 card, criteria B1 and B2; `tests/escobar/verify.test.ts`.
+- **Decided (BUG-32)**: "don't want to be here" stays quiet only when a time, a day or a duration follows ("late", "early", "at 6am", "on sundays", "for 2 hours", "too long", "all day"). It still fires on "at all", "on this earth", "for much longer" and "tomorrow", and on the bare phrase. "cut myself" stays quiet when "shaving", a place ("on the knurling"), "some slack", "down" or a number target ("to 12%") follows. "want to die" still fires on gym hyperbole, as before.
+  **Why**: a missed crisis costs more than a card on gym talk, so only clear gym logistics are held back, and "at all", "for much longer" and "tomorrow" are known ways people say they do not want to live. The card named "don't want to be here late" as gym talk that must not fire.
+  **Source**: BUG-32 card, B2; mutation proofs M1, M3 and M4 on the PR.
+- **Decided (BUG-32)**: each pre-screen card belongs to the message that raised it and shows right under that bubble: while it is on its way, after it is saved, and when it was not sent (offline or stopped). A later crisis message gets its own card under it. When the same turn's reply draws an escalate card of the same kind, the pre-screen card is hidden and the reply's card is the one that shows. An escalate that failed (an error result) is not drawn, so the pre-screen card stays. If a new message replaces an unsent one, the unsent message leaves the thread (as before) but its card keeps its place. Cards stay in memory only (`safetyCards` in `session.ts`) and clear with the conversation, as before.
+  **Why**: at the top of a long thread the card was out of view. The reply's card is the one hidden because `Message.tsx` rendering belongs to another lane (BUG-32 may only export helpers there). The reply starts right under the bubble and draws its card before its answer text, so the card stays next to the message. Dropping the card of a replaced unsent message would hide a crisis card the person has already seen, so it stays.
+  **Source**: BUG-32 card, B3; `tests/escobar/bug-32-safety-card.test.ts`.
+## BUG-31 / BUG-33: brief-form fact tags and the repair wording (BUG-31 builder, 2026-09-30)
+
+- **Decided by BUG-31 / BUG-33 (2026-09-30)** where the card is silent:
+  - A tag is made canonical only when every id in it is in the conversation's ledger. A tag with one unknown id (`[f41, f998]`) stays whole, so all its digits count, the known one included: the check never trusts part of a tag.
+  - The stored message `content` keeps the model's own words, tags included; only what the app renders (`rendered.answer`, `preamble`, `unverified`) uses the canonical form. The model's history is not rewritten.
+  - Conversations stored before the fix display without tags (render-time strip), but a stored "Unverified number" mark is not re-judged: that would mean re-running the check against a later ledger, which can only loosen it.
+  - The pin proposal card's title and its preview row go through the same strip as the pinned card's title, since both show the model's title.
+  - `stripCitationTags` removes each marker or tag together with the spaces before it and touches nothing else, so a caption's " — " keeps its spacing.
+  - The gate needs the mock to answer in the brief form (A5), so `src/escobar/mock/transport.ts` gains one scenario, run only for its own question (`BRIEF_TAGS_QUESTION`); the default mock conversation is unchanged. It cites `[fE, fN]` with fN an id no fact value covers, so a tag read as a number is always flagged; with the gate's data the e1RM id alone matched a value by chance.
+  - The gate compares text as shown (runs of spaces collapsed): `parseDirectives(...).plain` keeps two spaces where a mid-sentence citation was, which `white-space: normal` never shows.
+  - BUG-33: the plain `now` line (the diff key) also reads "1 day ago"; `now` is always sent, so the brief diff is unaffected.
+  **Why**: card BUG-31 (A1, A2, A5, A6) and BUG-33 (A4).
+  **Open**: the worker prompt (`escobar-worker/src/prompt/policy.ts` rule 3) still says "then restate the answer"; the card leaves the prompt to a separate owner-merged PR.
+
 ## LIB-25 review fix: poly input checks (LIB-25 builder, 2026-09-30)
 
 - **Decided**: `poly()` throws when a point is not exactly 3 finite numbers, naming the point's index. It also throws when the points enclose no area. The area is measured in world space with Newell's normal: half its length must be at least 1e-8 m². This rejects points that coincide or lie on one line, but it still draws an outline that is seen edge-on in the current view.
   **Why**: this is the review's low finding on #120. The supervisor asked for it to be fixed now. A screen-space area check would throw on a valid part seen edge-on, for example a flat plate in side view, so the check is done in world space. The source is on claude/howto-options (48153c4) and was vendored from there.
   **Source**: REVIEW LIB-25 @ 8480052 on #120; golden procedure (plan 2.8).
+
+## DOC-5: developer name and copy tone (DOC-5 builder, 2026-10-01)
+
+- **D-DOC5-1. The policy names the developer "Marc Darenz".** `docs/PRIVACY-POLICY.md` drops the full legal name from the "made by" line and the Cloudflare line, and "Last updated" moves to 2026-10-01 (the name line is a content change). The copy on `claude/app-website-design-671lk8` stays byte-identical.
+  **Why**: the owner asked for "Marc Darenz" unless Google Play requires the full name, and it does not. Play's User Data policy (https://support.google.com/googleplay/android-developer/answer/10144311) asks for "developer information and a privacy point of contact", and for the policy to name either the entity on the store listing or the app. The policy names the app, M/ARC, and gives a working contact email. The Play developer name "can be different from your legal name" (https://support.google.com/googleplay/android-developer/answer/13628312), so the owner sets it to "Marc Darenz" (owner step in `docs/PLAY-SUBMISSION.md`). RA 10173 s.16(b) and GDPR Art. 13(1)(a) ask for the controller's "identity and contact details", not a full legal name. For a solo developer, his real name plus a working email meets that, and Play itself shows his legal name and country next to the app.
+  **Risk**: a strict regulator could read "identity" as the full legal name. Recovery: a one-line policy edit on both branches.
+  **Source**: owner message 2026-10-01; research result in the DOC-5 card (the NPC and EUR-Lex pages could not be fetched; the law texts came from lawphil.net and gdpr-info.eu, which are not official sites).
+- **D-DOC5-2. Copy standard: the reader is a capable adult.** Copy stays clear and direct but never labels itself as simplified or talks down: no "In plain words", "plain-words summary", "simply put", "in short", "don't worry", "(this just means ...)", no over-explaining of everyday things. Headings name the content. In the policy, "per internet (IP) address" becomes "per IP address" (the term the policy already uses four times), and "a scrambled code of it" becomes "a one-way hash of it" (the Worker keeps an HMAC-SHA-256 of the IP keyed by its secret, `escobar-worker/src/errorsStore.ts`). No fact, data point or required disclosure changes. The website half (the /privacy/ headings "Summary" and "Full policy") lands on the website branch.
+  **Why**: owner, 2026-10-01: "Dont use headers like this. "In plain words" Or other stuff that makes the reader noob." Recorded in `docs/ARCHITECTURE.md` (rules of thumb) and in the handover's owner rules.
+  **Source**: DOC-5 card.
+
+## DOC-6: short-label headings (DOC-6 builder, 2026-10-01)
+
+- **D-DOC6-1. A heading is a short label.** One to three words, a noun phrase: never a sentence, a "What ..."/"How ..." question, a qualifier ("off by default", ", and where") or a leading "The", "This" or "About"; the text under it explains it. The page title stays "M/ARC Privacy Policy" (Google Play asks for the policy to be labelled as a privacy policy). Policy headings: "What stays on your phone" -> "On-device data", "The online coach (Escobar), off by default" -> "Online coach", the subhead "Who receives it" -> "Recipients", "Error reports, off by default" -> "Error reports", "How your data is protected" -> "Data protection", "Deleting your data" -> "Data deletion"; "Children", "Changes" and "Applicable law" stay. No body text changes: the facts those headings carried are already in the body ("Escobar, the online coach"; both features "are off until you turn them on"; "This data sits in the app's private storage on your phone"). The website's own headings ("About this policy" -> "Policy", the /privacy/ summary, home, install and 404) change on `claude/app-website-design-671lk8`, where the policy copy stays byte-identical to this one.
+  **Why**: owner, 2026-10-01, on /privacy/: "Trim to, Policy. Not about this policy. Or trim to a proper header. Stop describing the headers in sentences. Cause supporting contents already describes the header". Recorded in AGENTS.md (UI copy), `.claude/owner-rules.md` rule 8 and `docs/ARCHITECTURE.md` (rules of thumb).
+  **Source**: DOC-6 card; `docs/PRIVACY-POLICY.md`.
+## Correction to "LIB-26 flat palm": what the partOf mapping does (LIB-26 builder, 2026-09-30)
+
+- **Correction**: the first LIB-26 entry says `partOf` maps `palm.<side>` to `arm.<side>` "so it is part of the arm's outline union and of the Mistake mask". That is wrong. The union comes from the palm's group, `grp('arm', sd)` in body.mjs. The `partOf` mapping matters only where a spec filters by part: `mistake.parts` and the ghost or start parts (plate.mjs:114-116, 208-210). Without it, a Mistake limited to `arm.r` would silently leave the palm out. A test now covers this: a Mistake filtered to `arm.r` outlines `palm.r`, and one filtered to `arm.l` does not. It fails when `'palm'` is removed from `partOf`.
+  **Why**: this is the review's medium finding on #123. The older entry is left unchanged, because this file is append-only.
+
+## ESC-W-CITE: citation form and repair wording in prompt rule 3 (ESC-W-CITE builder, 2026-09-30)
+
+- **Decided**: rule 3 of `WORKER_POLICY` keeps "inline in the brief as [f3]" (that is how the brief really writes fact ids) and now adds "In your answer always write them as ⟦f3⟧, never in square brackets." The worked example `102.5 kg ⟦f12⟧ (several: ⟦f12,f14⟧)` is unchanged.
+  **Why**: the rule told the model the brief's `[f3]` form and showed the `⟦f12⟧` form only in an example, so the model could copy the brief's square brackets into its answer. The app's citation reader (`parseDirectives` in `src/escobar/verify.ts`) only recognises the `⟦…⟧` form, so a bracketed id is not read as a citation and stays in the visible text (`Message.tsx` removes only `⟦…⟧` parts), and `extractNumbers` picks its digit up as a number. One added sentence says which form is for the answer, and the brief form is still explained so the model can read the brief.
+  **Source**: card ESC-W-CITE, W1.
+- **Decided**: rule 3 now ends "If the app sends a verification check, recompute the numbers it lists with tools or remove them, then write your whole answer again as your reply to the person, without mentioning the check." It replaces "then restate the answer."
+  **Why**: "restate the answer" invited a reply about the check itself ("I rechecked the numbers, here is the answer…") or a reply to the app. The person never sees the check, so the reply must read as one complete answer to their own message. "Whole" also stops a short reply that covers only the corrected number.
+  **Source**: card ESC-W-CITE, W2.
+- **Decided**: `escobar-worker/test/policy.test.ts` pins both sentences as exact strings in their own block (and the worked example), and `then restate the answer` must be absent. The rule-9 LR-23 pin and every other pin are unchanged; the `anthropic.test.ts` size (under 14,000 characters) and no-capital-words checks still pass with the added words (the new sentences use lower-case "always" and "never").
+  **Source**: card ESC-W-CITE, W3.
+- **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
+  **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
+  **Source**: card ESC-W-CITE, reserved_paths.
