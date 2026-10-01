@@ -141,8 +141,9 @@ export interface SessionEnergy {
   grossKcal: number;
   /** Gross minus resting metabolism for the same minutes; comparable to a watch or Health Connect. */
   activeKcal: number;
-  low: number;
-  high: number;
+  /** AUD-20 (SCI-10): no longer written or shown; sessions saved before it still carry the old ±25 % / ±10 % band. */
+  low?: number;
+  high?: number;
   minutes: number;
   source: 'heart_rate' | 'watch_energy' | 'health_connect';
   /** The profile values used to compute this, so History can say "estimated with 75 kg at the time". */
