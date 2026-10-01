@@ -2,6 +2,7 @@
 import { state, update } from '@/core/store';
 import { todayKey } from '@/core/dates';
 import { ShowComponent } from './components';
+import { stripCitationTags } from './present';
 
 export function PinnedCards() {
   const today = todayKey();
@@ -12,7 +13,7 @@ export function PinnedCards() {
     <div class="stack-sm" data-palace="today.pins">
       {pins.map(p => (
         <ShowComponent key={p.id} component={p.component} params={p.params} caption={p.title}
-          action={<button type="button" class="btn btn-quiet btn-sm" aria-label={`Unpin ${p.title}`} onClick={() => unpin(p.id)}>Unpin</button>} />
+          action={<button type="button" class="btn btn-quiet btn-sm" aria-label={`Unpin ${stripCitationTags(p.title)}`} onClick={() => unpin(p.id)}>Unpin</button>} />
       ))}
     </div>
   );

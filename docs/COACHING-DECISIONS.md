@@ -1200,6 +1200,20 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
 
+## BUG-31 / BUG-33: brief-form fact tags and the repair wording (BUG-31 builder, 2026-09-30)
+
+- **Decided by BUG-31 / BUG-33 (2026-09-30)** where the card is silent:
+  - A tag is made canonical only when every id in it is in the conversation's ledger. A tag with one unknown id (`[f41, f998]`) stays whole, so all its digits count, the known one included: the check never trusts part of a tag.
+  - The stored message `content` keeps the model's own words, tags included; only what the app renders (`rendered.answer`, `preamble`, `unverified`) uses the canonical form. The model's history is not rewritten.
+  - Conversations stored before the fix display without tags (render-time strip), but a stored "Unverified number" mark is not re-judged: that would mean re-running the check against a later ledger, which can only loosen it.
+  - The pin proposal card's title and its preview row go through the same strip as the pinned card's title, since both show the model's title.
+  - `stripCitationTags` removes each marker or tag together with the spaces before it and touches nothing else, so a caption's " — " keeps its spacing.
+  - The gate needs the mock to answer in the brief form (A5), so `src/escobar/mock/transport.ts` gains one scenario, run only for its own question (`BRIEF_TAGS_QUESTION`); the default mock conversation is unchanged. It cites `[fE, fN]` with fN an id no fact value covers, so a tag read as a number is always flagged; with the gate's data the e1RM id alone matched a value by chance.
+  - The gate compares text as shown (runs of spaces collapsed): `parseDirectives(...).plain` keeps two spaces where a mid-sentence citation was, which `white-space: normal` never shows.
+  - BUG-33: the plain `now` line (the diff key) also reads "1 day ago"; `now` is always sent, so the brief diff is unaffected.
+  **Why**: card BUG-31 (A1, A2, A5, A6) and BUG-33 (A4).
+  **Open**: the worker prompt (`escobar-worker/src/prompt/policy.ts` rule 3) still says "then restate the answer"; the card leaves the prompt to a separate owner-merged PR.
+
 ## LIB-25 review fix: poly input checks (LIB-25 builder, 2026-09-30)
 
 - **Decided**: `poly()` throws when a point is not exactly 3 finite numbers, naming the point's index. It also throws when the points enclose no area. The area is measured in world space with Newell's normal: half its length must be at least 1e-8 m². This rejects points that coincide or lie on one line, but it still draws an outline that is seen edge-on in the current view.
