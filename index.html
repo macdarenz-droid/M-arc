@@ -28,8 +28,19 @@
     #launch svg { width: 100%; height: 100%; }
     #launch .settle { transform-box: view-box; transform-origin: 50% 45%; animation: launch-settle 1600ms cubic-bezier(.16,1,.3,1) both; }
     #launch .launch-word { animation: launch-reveal 700ms cubic-bezier(.22,1,.36,1) 1050ms both; }
-    #launch.reduce .settle, #launch.reduce .launch-word { animation: none; opacity: 1; transform: none; filter: none; }
+    /* BUG-34: the line and dot run on CSS animations, not SMIL. Chromium only starts the SVG (SMIL)
+       timeline at the load event, which waits for the bundle, so a SMIL start froze the first frame
+       (dot at the mark's 0,0, a cap dot at the line's end) until the app had loaded. CSS animations
+       start on first paint. Same timings and curves: 100 -> 45.93 over 0.72 s, then -> 0 over 0.5 s;
+       the dot glides to 54.07% of the path (the dip at 30,50) over 0.72 s. The gap of 101 (not 100)
+       keeps a zero-length dash, drawn as a round cap, off the line's end while dashoffset is 100. */
+    #launch-path { animation: launch-draw 1220ms both; }
+    #launch-dot { offset-path: path('M8 40H16L22 22L30 50L36 30L40 40H56'); offset-rotate: 0deg; animation: launch-glide 720ms cubic-bezier(.45,0,.25,1) both; }
+    #launch.reduce .settle, #launch.reduce .launch-word, #launch.reduce #launch-path { animation: none; opacity: 1; transform: none; filter: none; }
+    #launch.reduce #launch-dot { animation: none; offset-path: none; }
     @keyframes launch-settle { from { opacity: 0; transform: scale(.975); } 12% { opacity: 1; } to { opacity: 1; transform: scale(1); } }
+    @keyframes launch-draw { 0% { stroke-dashoffset: 100; animation-timing-function: cubic-bezier(.45,0,.25,1); } 59.0164% { stroke-dashoffset: 45.93; animation-timing-function: cubic-bezier(.35,0,.2,1); } 100% { stroke-dashoffset: 0; } }
+    @keyframes launch-glide { from { offset-distance: 0%; } to { offset-distance: 54.07%; } }
     @keyframes launch-reveal { from { opacity: 0; transform: translateY(5px); filter: blur(5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
   </style>
   <script>
@@ -104,12 +115,8 @@
     <svg viewBox="0 0 180 320" preserveAspectRatio="xMidYMid meet">
       <g class="settle">
         <g transform="translate(47 100) scale(1.34)">
-          <path id="launch-path" d="M8 40H16L22 22L30 50L36 30L40 40H56" pathLength="100" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="100" stroke-dashoffset="100" style="stroke: var(--launch-ink, #f7f8f8)">
-            <animate id="launch-off1" attributeName="stroke-dashoffset" begin="indefinite" values="100;45.93;0" dur="1.22s" fill="freeze" calcMode="spline" keyTimes="0;0.590164;1" keySplines=".45 0 .25 1;.35 0 .2 1"></animate>
-          </path>
-          <circle id="launch-dot" r="3.1" style="fill: var(--launch-accent, #5e6ad2)">
-            <animateMotion id="launch-motion" begin="indefinite" dur="0.72s" fill="freeze" calcMode="spline" keyPoints="0;0.5407" keyTimes="0;1" keySplines=".45 0 .25 1" path="M8 40H16L22 22L30 50L36 30L40 40H56"></animateMotion>
-          </circle>
+          <path id="launch-path" d="M8 40H16L22 22L30 50L36 30L40 40H56" pathLength="100" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="100 101" stroke-dashoffset="100" style="stroke: var(--launch-ink, #f7f8f8)"></path>
+          <circle id="launch-dot" r="3.1" style="fill: var(--launch-accent, #5e6ad2)"></circle>
         </g>
         <text class="launch-word" x="90" y="196" text-anchor="middle" style="font: 500 17px Inter, system-ui, sans-serif; letter-spacing: 1.2px; fill: var(--launch-ink, #f7f8f8)">M<tspan style="fill: var(--launch-accent, #5e6ad2)">/</tspan>ARC</text>
       </g>
@@ -144,18 +151,11 @@
 
       var path = document.getElementById('launch-path');
       var dot = document.getElementById('launch-dot');
-      var offAnim = document.getElementById('launch-off1');
-      var motionAnim = document.getElementById('launch-motion');
 
       if (reduce) {
         launch.classList.add('reduce');
         if (path) path.setAttribute('stroke-dashoffset', '0');
         if (dot) { dot.setAttribute('cx', '30'); dot.setAttribute('cy', '50'); }
-      } else {
-        try {
-          if (offAnim && offAnim.beginElement) offAnim.beginElement();
-          if (motionAnim && motionAnim.beginElement) motionAnim.beginElement();
-        } catch (e) { /* SMIL unsupported: the static dasharray/dashoffset still draws the mark */ }
       }
 
       var appReady = false;

@@ -46,6 +46,8 @@ describe('SUBSTITUTION_RATIOS (LT-5 A1)', () => {
 describe('carryOverStart (LT-5)', () => {
   const dbMenu: LoadMenu = { profile: defaultProfile('Dumbbells', 'kg'), rungsKg: loadableValues(defaultProfile('Dumbbells', 'kg')), unit: 'kg', confidence: 'assumed', source: 'default' };
   const barbellMenu: LoadMenu = { profile: defaultProfile('Barbell', 'kg'), rungsKg: loadableValues(defaultProfile('Barbell', 'kg')), unit: 'kg', confidence: 'assumed', source: 'default' };
+  // AUD-8 (SCI-08): the estimate is an e1RM, and the start is solved for 8 reps at 2 in reserve.
+  const goal = { reps: 8, rir: 2 };
   const barbellBench = { pattern: 'horizontal_push', equipment: 'Barbell' };
   const dumbbellBench = { pattern: 'horizontal_push', equipment: 'Dumbbells' };
   const barbellOhp = { pattern: 'vertical_push', equipment: 'Barbell' };
@@ -54,27 +56,27 @@ describe('carryOverStart (LT-5)', () => {
   const dumbbellSquat = { pattern: 'squat', equipment: 'Dumbbells' };
 
   it('A2: lands on a real rung of the substitute\'s menu, confidence low, "Start around X for N"', () => {
-    const out = carryOverStart(barbellBench, dumbbellBench, 60, dbMenu);
-    expect(out).toEqual({ kg: 22.5, reps: 3, confidence: 'low', text: 'Start around 22.5 kg for 3' });
+    const out = carryOverStart(barbellBench, dumbbellBench, 60, dbMenu, goal);
+    expect(out).toEqual({ kg: 17.5, reps: 10, confidence: 'low', text: 'Start around 17.5 kg for 10' });
     expect(dbMenu.rungsKg).toContain(out!.kg);
   });
   it('A2: a second sourced pattern (vertical_push) also lands on a rung', () => {
-    const out = carryOverStart(barbellOhp, dumbbellOhp, 50, dbMenu);
-    expect(out).toEqual({ kg: 22.5, reps: 1, confidence: 'low', text: 'Start around 22.5 kg for 1' });
+    const out = carryOverStart(barbellOhp, dumbbellOhp, 50, dbMenu, goal);
+    expect(out).toEqual({ kg: 17.5, reps: 8, confidence: 'low', text: 'Start around 17.5 kg for 8' });
   });
   it('the inverse direction (dumbbell replaced by barbell) also resolves', () => {
-    const out = carryOverStart(dumbbellBench, barbellBench, 22.5, barbellMenu);
+    const out = carryOverStart(dumbbellBench, barbellBench, 22.5, barbellMenu, goal);
     expect(out).not.toBeNull();
     expect(barbellMenu.rungsKg).toContain(out!.kg);
   });
   it('A3: no ratio for this pattern behaves as today (null, caller falls back to startingLoadKg)', () => {
-    expect(carryOverStart(barbellSquat, dumbbellSquat, 100, dbMenu)).toBeNull();
+    expect(carryOverStart(barbellSquat, dumbbellSquat, 100, dbMenu, goal)).toBeNull();
   });
   it('A3: a pattern change (not a real substitute pair) is never given a carry-over estimate', () => {
-    expect(carryOverStart(barbellBench, { pattern: 'squat', equipment: 'Dumbbells' }, 60, dbMenu)).toBeNull();
+    expect(carryOverStart(barbellBench, { pattern: 'squat', equipment: 'Dumbbells' }, 60, dbMenu, goal)).toBeNull();
   });
   it('null with no strength estimate or an empty menu', () => {
-    expect(carryOverStart(barbellBench, dumbbellBench, 0, dbMenu)).toBeNull();
-    expect(carryOverStart(barbellBench, dumbbellBench, 60, { ...dbMenu, rungsKg: [] })).toBeNull();
+    expect(carryOverStart(barbellBench, dumbbellBench, 0, dbMenu, goal)).toBeNull();
+    expect(carryOverStart(barbellBench, dumbbellBench, 60, { ...dbMenu, rungsKg: [] }, goal)).toBeNull();
   });
 });

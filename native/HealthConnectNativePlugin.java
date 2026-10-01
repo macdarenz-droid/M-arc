@@ -297,12 +297,31 @@ public class HealthConnectNativePlugin extends Plugin {
 
                 long sleepMinutes = 0;
                 Instant sleepEnd = null;
+                // NAT-03: every session goes to the app with its awake stages; the app picks the night.
+                JSArray sleepSessions = new JSArray();
                 for (SleepSessionRecord r : sleepRecords) {
                     long mins = Math.max(0, ChronoUnit.MINUTES.between(r.getStartTime(), r.getEndTime()));
                     if (sleepEnd == null || r.getEndTime().isAfter(sleepEnd)) {
                         sleepEnd = r.getEndTime();
                         sleepMinutes = mins;
                     }
+                    JSObject session = new JSObject();
+                    session.put("start", r.getStartTime().toString());
+                    session.put("end", r.getEndTime().toString());
+                    JSArray awake = new JSArray();
+                    for (SleepSessionRecord.Stage st : r.getStages()) {
+                        int type = st.getType();
+                        if (type == SleepSessionRecord.StageType.STAGE_TYPE_AWAKE
+                                || type == SleepSessionRecord.StageType.STAGE_TYPE_AWAKE_IN_BED
+                                || type == SleepSessionRecord.StageType.STAGE_TYPE_AWAKE_OUT_OF_BED) {
+                            JSArray span = new JSArray();
+                            span.put(st.getStartTime().toString());
+                            span.put(st.getEndTime().toString());
+                            awake.put(span);
+                        }
+                    }
+                    session.put("awake", awake);
+                    sleepSessions.put(session);
                 }
 
                 long resting = 0;
@@ -341,6 +360,9 @@ public class HealthConnectNativePlugin extends Plugin {
                 if (stepsTotal != null) out.put("stepsTime", end.toString());
                 if (energyTotal != null) out.put("activeCaloriesTime", end.toString());
                 if (sleepEnd != null) out.put("sleepEndTime", sleepEnd.toString());
+                if (restingTime != null) out.put("restingHRTime", restingTime.toString());
+                // Sent only when sleep was read, so a failed or missing sleep read keeps the day's earlier value.
+                if (!sleepRecords.isEmpty()) out.put("sleepSessions", sleepSessions);
                 call.resolve(out);
             } catch (Exception e) {
                 call.reject("Health Connect summary failed", e);

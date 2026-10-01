@@ -36,6 +36,8 @@ export function startHeartCapture(): void {
     // Only the measurement drives this effect; the session is read without subscribing (UI-21).
     const a = state.peek().active;
     if (!m || !a || m.receivedAtEpochMs === lastReceivedAt) return;
+    // NAT-02: a paused session records nothing, so paused time adds no samples, zones or energy.
+    if (a.pausedAt) return;
     // The time base is the session's own start, so a restart mid-session keeps the same clock.
     const tSec = Math.round((m.receivedAtEpochMs - Date.parse(a.startedAt)) / 1000);
     if (!Number.isFinite(tSec) || tSec < 0) return;
@@ -44,9 +46,26 @@ export function startHeartCapture(): void {
   });
 }
 
-/** The last n contact=true bpm readings, oldest first, for restTarget()'s "3 consecutive settled samples". */
+/**
+ * The last n contact=true bpm readings, oldest first, for restTarget()'s "3 consecutive settled samples".
+ * NAT-01: during a rest, only readings from that rest count, so an old low reading never ends it.
+ */
 export function recentLiveBpms(n = 3): number[] {
-  return rawSamples.filter(s => s.contact !== false).slice(-n).map(s => s.bpm);
+  const fromSec = currentRestStartSec();
+  return rawSamples.filter(s => s.contact !== false && (fromSec == null || s.tSec >= fromSec)).slice(-n).map(s => s.bpm);
+}
+
+/** Seconds into the session when the current rest began: the later of the last set's commit and the rest's own start. */
+function currentRestStartSec(): number | null {
+  const a = state.peek().active;
+  if (!a?.rest) return null;
+  const start = Date.parse(a.startedAt);
+  let from = a.rest.endsAt - a.rest.totalSec * 1000;
+  for (const e of a.entries) for (const x of e.sets) {
+    const at = x.at ? Date.parse(x.at) : NaN;
+    if (Number.isFinite(at) && at > from) from = at;
+  }
+  return Number.isFinite(start) ? (from - start) / 1000 : null;
 }
 
 /**
@@ -80,7 +99,7 @@ export function finishHeartCapture(session: Session): Session {
   const observed = bestObservedHrMax(priorAndThis.map(x => ({ id: x.id, endedAt: x.endedAt })), { ...exportHeart(), [session.id]: series });
   const maxBpm = hrMax(s.profile, observed).bpm;
   const quality = Math.min(1, series.length / Math.max(1, Math.ceil(session.durationSec / 5)));
-  const energy = sessionEnergy({ series, profile: s.profile, today: today.value, quality }) ?? undefined;
+  const energy = sessionEnergy({ series, profile: s.profile, today: today.value, quality, activeSec: session.durationSec }) ?? undefined;
   const sets = session.exercises.flatMap(e => e.sets);
   const summary = sessionHeartSummary({ series, sessionSec: session.durationSec, hrMaxBpm: maxBpm, restingHrBpm: restBpm, sets, energy });
   if (!summary) return session;

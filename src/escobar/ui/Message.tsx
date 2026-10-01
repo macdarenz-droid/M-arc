@@ -13,6 +13,7 @@ import { parseDirectives } from '../verify';
 import { onProposal, canApply, undoOpen, UNDO_WINDOW_MS } from '../apply';
 import { ShowComponent } from './components';
 import { Escalation } from './Escalation';
+import { ReportAnswer } from './Report';
 import { imageData, loadImage } from '../images';
 import { state } from '@/core/store';
 import { makeCtx } from '../tools/context';
@@ -218,6 +219,7 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
       ))}
       {answerText && <AnswerText text={answerText} ledger={conv.ledger} unverified={r?.unverified} />}
       {!live && <Drawer uses={allUses} results={results} />}
+      {!live && <ReportAnswer conv={conv} indexes={indexes} />}
       {!live && last && !!r?.chips?.length && <div class="esc-chips">{r.chips.map(c => <button type="button" key={c} class="chip chip-btn" onClick={() => onChip?.(c)}>{c}</button>)}</div>}
     </div>
   );

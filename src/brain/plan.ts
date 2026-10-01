@@ -9,7 +9,8 @@ import { WEEKDAYS } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { MUSCLE_BY_ID, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
-import { ROLE_WEIGHT, rolesFor, trainingLevels } from './exposure';
+import { SET_WEIGHT, rolesFor, trainingLevels } from './exposure';
+import { BALANCE, UPPER_PER_LOWER } from './balance';
 import { volumeBands } from './volume';
 import { repRange } from './progression';
 
@@ -72,17 +73,21 @@ export function evaluatePlan(draft: PlanDraft, ctx: { goal: GoalId; custom: Exer
   if (!trainingDays.length) issues.push({ severity: 'block', code: 'no_training_days', text: 'No day of the week has a split.' });
   for (const sp of draft.splits) if (!WEEKDAYS.some(d => draft.schedule[d] === sp.ref)) issues.push({ severity: 'info', code: 'unscheduled_split', text: `${sp.name} is not on any day.` });
 
-  // Weekly sets per muscle: primary counts 1, secondary counts ROLE_WEIGHT.secondary.
+  // Weekly sets per muscle, counted as the logged week counts them (SET_WEIGHT, AUD-9 SCI-09).
   const weekly: Partial<Record<MuscleId, number>> = {};
+  // Balance per exercise set, split evenly across the buckets of its primary muscles (BR-17, as trainingBalance).
+  const buckets = { push: 0, pull: 0, lower: 0 };
   const perDayDirect: Record<Weekday, Partial<Record<MuscleId, number>>> = Object.fromEntries(WEEKDAYS.map(d => [d, {}])) as Record<Weekday, Partial<Record<MuscleId, number>>>;
   for (const d of trainingDays) {
     const sp = splitByRef.get(draft.schedule[d]!)!;
     for (const ex of sp.exercises) {
       const m = meta.get(ex.exerciseId);
       if (!m || !(ex.sets > 0)) continue;
+      const bs = [...new Set(m.primary.map(p => MUSCLE_BY_ID[p].bucket))].filter((x): x is 'push' | 'pull' | 'lower' => x === 'push' || x === 'pull' || x === 'lower');
+      for (const b of bs) buckets[b] += ex.sets / bs.length;
       for (const r of rolesFor(m)) {
-        if (r.role === 'stabilizer') continue;
-        const w = r.role === 'primary' ? 1 : ROLE_WEIGHT.secondary;
+        const w = SET_WEIGHT[r.role];
+        if (!w) continue;
         weekly[r.muscle] = (weekly[r.muscle] ?? 0) + ex.sets * w;
         if (r.role === 'primary') perDayDirect[d][r.muscle] = (perDayDirect[d][r.muscle] ?? 0) + ex.sets;
       }
@@ -106,21 +111,17 @@ export function evaluatePlan(draft: PlanDraft, ctx: { goal: GoalId; custom: Exer
   const missing = MAJOR.filter(m => !weekly[m]);
   if (trainingDays.length && missing.length) issues.push({ severity: 'info', code: 'muscles_untrained', text: `Not trained directly: ${missing.map(m => MUSCLE_BY_ID[m].label).join(', ')}.` });
 
-  // Balance: push vs pull and upper vs lower weekly sets.
-  let push = 0, pull = 0, lower = 0;
-  for (const [m, v] of Object.entries(weekly) as Array<[MuscleId, number]>) {
-    const b = MUSCLE_BY_ID[m].bucket;
-    if (b === 'push') push += v; else if (b === 'pull') pull += v; else if (b === 'lower') lower += v;
-  }
+  // Balance: push vs pull and upper vs lower weekly sets, on trainingBalance's ratio (upper scaled by UPPER_PER_LOWER).
+  const { push, pull, lower } = buckets;
   const ratio = (a: number, b: number): number => (b > 0 ? r1(a / b) : a > 0 ? 99 : 1);
   const pushPull = ratio(push, pull);
   const upperLower = ratio(push + pull, lower);
   const flags: string[] = [];
   if (push + pull >= 8) {
-    if (pushPull >= 2) flags.push('push_heavy'); else if (pushPull <= 0.5) flags.push('pull_heavy');
+    if (pushPull >= BALANCE.ratio) flags.push('push_heavy'); else if (pushPull <= 1 / BALANCE.ratio) flags.push('pull_heavy');
   }
   if (push + pull + lower >= 12) {
-    if (upperLower >= 3) flags.push('upper_heavy'); else if (upperLower <= 0.33) flags.push('lower_heavy');
+    if (upperLower >= BALANCE.ratio * UPPER_PER_LOWER) flags.push('upper_heavy'); else if (upperLower <= UPPER_PER_LOWER / BALANCE.ratio) flags.push('lower_heavy');
   }
   const FLAG_TEXT: Record<string, string> = {
     push_heavy: `About ${pushPull}× as much pushing as pulling.`, pull_heavy: 'Far more pulling than pushing.',

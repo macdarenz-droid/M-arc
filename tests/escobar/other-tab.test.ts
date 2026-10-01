@@ -13,6 +13,8 @@ describe('another tab resets Escobar (QA-R1-9)', () => {
     vi.resetModules();
     const store = await import('@/escobar/store');
     const session = await import('@/escobar/session');
+    // AUD-2: a turn only reaches the transport while the online coach is on.
+    (await import('@/core/store')).update(s => ({ ...s, escobar: { ...s.escobar, enabled: true } }));
     const shared = store.memoryStorage();
     store.setEscobarStorage(shared);
     session.setTransport(transport);
