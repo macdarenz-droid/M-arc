@@ -7359,7 +7359,7 @@ for (const theme of ['silent-black', 'paper']) {
     if (scrolled.length) errors.push(`${tag}: a sheet dialog scrolled in ${scrolled.length} of ${on.length} frames (scrollTop ${scrolled.slice(0, 6).map(x => x.scroll.join('/')).join(', ')}${scrolled.length > 6 ? ', ...' : ''}), the slide is cancelled on screen`);
     const last = on[on.length - 1];
     // A panel shorter than minTravel (Gyms, 221 px) owes its whole height: it slides in from the bottom edge.
-    const travel = on[0].top - last.top, need = Math.min(minTravel, last.bottom - last.top - 1);
+    const travel = on[0].top - last.top, h = last.bottom - last.top, need = h >= minTravel ? minTravel : h - 1;
     if (travel < need) errors.push(`${tag}: the panel's visible top travelled only ${travel.toFixed(1)} px (${on[0].top.toFixed(1)} -> ${last.top.toFixed(1)}), expected >= ${need.toFixed(0)}`);
     for (let i = 1; i < on.length; i++) if (on[i].top > on[i - 1].top + 0.5) { errors.push(`${tag}: the panel's visible top moved down ${(on[i].top - on[i - 1].top).toFixed(1)} px at ${on[i].t.toFixed(0)} ms (${on[i - 1].top.toFixed(1)} -> ${on[i].top.toFixed(1)}), a bounce`); break; }
     if (still) { const moved = on.filter(x => Math.abs(x.top - last.top) > 0.5); if (moved.length) errors.push(`${tag}: the panel's visible top moved under reduced motion in ${moved.length} of ${on.length} frames (${moved.slice(0, 4).map(x => x.top.toFixed(1)).join(', ')} vs rest ${last.top.toFixed(1)})`); }
