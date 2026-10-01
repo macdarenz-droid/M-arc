@@ -6,3 +6,4 @@ OWNER RULES: check these before EVERY reply, even a casual one. Full text: AGENT
 5. No guessing: check code, docs or data first; say so if you can't verify.
 6. Precise and high quality: tests fail before and pass after; never loosen or skip a check.
 7. Review what was built before moving on. One document per topic.
+8. UI copy: never talk down to users or state the obvious. Explain nothing in the app or on the site unless Google Play requires it or the owner explicitly asked. Headings (owner, 2026-10-01) are short labels of one to three words, a noun phrase: never a sentence, a "What ..."/"How ..." question, a qualifier such as "off by default" or ", and where", or a leading "The", "This" or "About"; the text under a heading explains it.

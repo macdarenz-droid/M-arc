@@ -96,6 +96,7 @@ Helpers (`import { ... } from '../engine/index.mjs'`):
 | `datum` | list of `{ y: landmark or world m, from, to }` (horizontal) or `{ x, from, to }` (vertical) or `{ line: [p, q] }`; ends in px or landmarks; `mistake: false` leaves a datum off the mistake plate (e.g. the reference ray of the measured angle, which the mistake plate does not draw) |
 | `marks` | landmarks that get a joint circle (default: shoulders + elbows in front view; near shoulder, elbow, hip, knee in side view) |
 | `armsFront` | front view: always draw the arms over the torso |
+| `hand` | `'flat'` (both hands) or `{ l, r }`: an open hand, palm flat, instead of the fist. One outline from the wrist to the fingertips, joined to the forearm (no gap); its palm side (screen-down) is straight at the forearm's distal radius (`RADII.fore[2]`), so a wrist placed that far above a surface lays the palm flat on it (`exercises/_test_flat.mjs`). Unset: the fist |
 | `callouts` | up to 3 `{ key, text (1-3 words, `<br>` for 2 lines), anchor, cue (one sentence), box?: { left, top } (button px), prefer?: 'left'|'right'|'above'|'below', guide?: [points] (accent dashed line when selected) }` |
 | `tempo` | `[{ phase, s, move? }]`, phase names that suit the lift (e.g. Pull / Hold / Return / Rest) |
 | `mistake` | `{ pose (partial, merged over poses.end), parts?, guides, tells }`. The faulty pose is drawn as a dashed `--mistake` outline of only what differs from the correct end pose. `guides`: `{ kind: 'arrow', from, to }`, `{ kind: 'line' | 'dashed', pts, smooth? }`, `{ kind: 'arc-arrow', center, r, a0, a1 }` (screen degrees, 0 = right, -90 = up). `tells`: 1-3 `{ key, text, anchor, cue }` |
@@ -130,6 +131,7 @@ Fix a label by hand with `box` when the automatic spot is not the one a designer
 | `barbell` | `at`, `plateD`, `plates` (thicknesses per side), `barLen`, `collar`, `shaftD`, `sleeveD` | IWF men's bar: 2.2 m, 28 mm shaft, 50 mm sleeves, collars 1.31 m apart; 450 mm plates. Side view: the near plate is an outline over the figure |
 | `rackUpright` | `at`, `h`, `w`, `hook` (J-hook height), `span` (front view) | 76 mm (3 in) tube, 2.3 m, 7 cm J-hook |
 | `cable`, `pulley`, `box`, `line` | generic parts | |
+| `poly` | `pts` (world points, at least 3), `curve` (closed smooth curve instead of straight edges), `cls` (default `eq`) | a closed filled outline for parts `box` and `line` cannot close, e.g. a rope or an angled sled; throws on fewer than 3 points, on a point that is not 3 finite numbers, and on points enclosing no area (all coincide or lie on one line). Moving poly parts are outlined in the Mistake view |
 
 Every item accepts `z`: `'back'` (behind the figure), `'center'` (body mid-plane: behind the near leg, in front of
 the far limbs; cables), `'mid'` (in front of the trunk and near leg, behind the near arm; handles held in both
