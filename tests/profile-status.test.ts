@@ -69,7 +69,9 @@ describe('BUG-8 C: statusHint', () => {
 describe('BUG-8 D: the Coach "What the coach can see" Profile row', () => {
   it('names the missing field when incomplete', () => {
     const c = profileCompleteness({ name: '', bodyWeightKg: 70, heightCm: 164, birthYear: 1998 });
-    expect(missingProfileSummary(c)).toBe('Add sex to unlock calories');
+    expect(missingProfileSummary(c)).toBe('Missing: sex');
+    // COPY-1: two missing fields are listed as data, with no "to unlock …" explanation.
+    expect(missingProfileSummary(profileCompleteness({ name: '', bodyWeightKg: 70, heightCm: 164 }))).toBe('Missing: birth year, sex');
   });
   it('reads complete once all 4 details are set', () => {
     const c = profileCompleteness({ name: '', bodyWeightKg: 70, heightCm: 164, birthYear: 1998, sex: 'male' });

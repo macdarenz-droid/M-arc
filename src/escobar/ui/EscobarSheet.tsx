@@ -27,7 +27,7 @@ import { PlanBoard, currentTurn, isPlanWork } from './PlanBoard';
 import type { Conversation, ImageBlockRef } from '../types';
 import type { SendInput, TurnResult } from '../loop';
 
-export const EMPTY_LINE = 'I know every rep you’ve logged and every corner of this app. Ask me anything.';
+export const EMPTY_LINE = 'Ask me anything.';
 
 // I7: the exit animation lives here (it needs to measure and animate this component's own
 // panel), but it registers into state.ts rather than keeping its own module-level hook — state.ts
@@ -77,12 +77,10 @@ export function Explainer({ onDone }: { onDone?: () => void }) {
         <li>The parts of your history he asks for to answer, and your messages and photos.</li>
         <li>It goes through your M/ARC server to Anthropic, the model provider.</li>
       </ul>
-      <p class="small muted">The rest of your history stays on the phone. Every answer shows what he looked at.</p>
       <div class="list">
         <Row trailing={<Toggle checked={health} onChange={setHealth} label="Share health data" />}><span class="small">Share health data</span><div class="hint">Sleep, resting heart rate, heart rate during sessions.</div></Row>
         <Row trailing={<Toggle checked={body} onChange={setBody} label="Share body data" />}><span class="small">Share body data</span><div class="hint">Weight and body measurements.</div></Row>
       </div>
-      <p class="hint">You can change these any time in Settings → Escobar.</p>
       <Button variant="primary" block onClick={() => { S.setEscobarEnabled(true, { health, body }); onDone?.(); }}>Turn on Escobar</Button>
     </div>
   );
@@ -328,7 +326,7 @@ export function EscobarSheet() {
     void S.send({ text: text || 'What do you see in this photo?', ...(images.length ? { images } : {}), ...(ref0 ? { contextRefs: [ref0] } : {}) });
   };
 
-  const notice = online.value === false ? `Escobar is offline.${offlineReason.value ? ` ${offlineReason.value}` : ''} He can still point you around the app.` : quotaResetAt.value && quotaResetAt.value > Date.now() ? 'Escobar is resting until tomorrow (daily limit reached).' : undefined;
+  const notice = online.value === false ? `Escobar is offline.${offlineReason.value ? ` ${offlineReason.value}` : ''}` : quotaResetAt.value && quotaResetAt.value > Date.now() ? 'Escobar is resting until tomorrow (daily limit reached).' : undefined;
   const mode = ui.mode === 'live' ? ' · live' : ui.mode === 'plan' ? ' · planning' : '';
 
   return (

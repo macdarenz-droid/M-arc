@@ -89,8 +89,8 @@ export async function watchDiagnostics(): Promise<string | null> {
  */
 export function watchPermissionHint(needsLocation: boolean): string {
   return needsLocation
-    ? 'M/ARC needs the Location permission to find your watch (this Android version uses it for Bluetooth scans). Allow it in Android settings, then scan again.'
-    : 'M/ARC needs the Nearby devices permission to find your watch. Allow it in Android settings, then scan again.';
+    ? 'Allow Location in Android settings to find your watch, then scan again.'
+    : 'Allow Nearby devices in Android settings to find your watch, then scan again.';
 }
 
 export async function watchPermissionState(): Promise<{ granted: boolean; needsLocation: boolean } | null> {

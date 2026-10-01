@@ -54,7 +54,7 @@ export function Body() {
       <Card style={{ marginTop: 14 }} data-palace="body.map">
         <MuscleMap values={values} mode={mode} selected={selected} onSelect={m => setSelected(m)} />
         <div style={{ marginTop: 10 }}><MapLegend mode={mode} /></div>
-        <p class="hint" style={{ marginTop: 8 }}>Tap a muscle for details. {view === 'recovery' ? `Ready for hard work at ${READY_PCT}%, fully recovered at ${FULL_PCT}%. Recovery time depends on sets, load and effort, and adjusts to your own history in both directions, within limits.` : view === 'week' ? 'Shading follows effective sets this week.' : 'Levels are a relative measure of how much you have trained each muscle. Not a medical measurement.'}</p>
+        {view === 'recovery' && <p class="hint" style={{ marginTop: 8 }}>Ready at {READY_PCT}%, full at {FULL_PCT}%.</p>}
         {view === 'recovery' && wholeBody && <p class="hint" style={{ marginTop: 4 }}>Whole body: recovering about {Math.round((wholeBody.systemicFactor - 1) * 100)}% slower than usual this week.</p>}
       </Card>
 
@@ -64,7 +64,7 @@ export function Body() {
             <ReadyTimesCard rec={rec} setSelected={setSelected} />
           </Section>
           <Section title="Fully recovered" palace="body.full" aside={<span class="small muted">{fullyRecovered.length}</span>}>
-            <Card><div class="wrap">{fullyRecovered.map(r => <Chip key={r.muscle} tone="positive" onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)}</Chip>)}{!fullyRecovered.length && <span class="small muted">Trained muscles show here once fully recovered.</span>}</div></Card>
+            <Card><div class="wrap">{fullyRecovered.map(r => <Chip key={r.muscle} tone="positive" onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)}</Chip>)}{!fullyRecovered.length && <span class="small muted">None yet.</span>}</div></Card>
           </Section>
         </>
       )}
@@ -404,7 +404,6 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
           {r.recovering && (
             <div class="stack-sm">
               <Button variant="quiet" size="sm" onClick={markFresh}>Mark as fresh</Button>
-              <span class="hint">Use it if this muscle already feels ready.</span>
             </div>
           )}
           <AskAbout refTo={{ kind: 'muscle', id: muscle, label: info.label }} label="Ask Escobar" class="btn-sm" />
@@ -472,7 +471,7 @@ function BodyFat() {
   return (
     <Section title="Body fat estimate" palace="body.bodyfat" aside={<Button variant="quiet" size="sm" onClick={() => setOpen(true)}>{last ? 'New reading' : 'Measure'}</Button>}>
       <Card>
-        {last ? <div class="row-between"><Stat value={`${last.bodyFatPct}%`} label={`on ${formatDay(last.day)}`} />{s.body.length > 1 && <span class="small muted">{s.body.length} readings · first {s.body[0]!.bodyFatPct}%</span>}</div> : <p class="small muted">Tape-measure estimate using the US Navy method. Track the trend, not one reading.</p>}
+        {last ? <div class="row-between"><Stat value={`${last.bodyFatPct}%`} label={`on ${formatDay(last.day)}`} />{s.body.length > 1 && <span class="small muted">{s.body.length} readings · first {s.body[0]!.bodyFatPct}%</span>}</div> : <p class="small muted">US Navy tape-measure estimate.</p>}
       </Card>
       {open && (
         <Sheet title="Body fat estimate" onClose={() => setOpen(false)}>
@@ -486,7 +485,6 @@ function BodyFat() {
               {sex === 'female' && <Field label={`Hip (${len})`}><input type="text" inputMode="decimal" value={hip} onInput={e => setHip((e.target as HTMLInputElement).value)} /></Field>}
             </div>
             <Card class="card-quiet"><Stat value={result != null ? `${result}%` : '—'} label="estimated body fat" /></Card>
-            <p class="hint">Typically within 3 to 4 points of lab methods. Not a medical measurement.</p>
             <Button variant="primary" disabled={result == null} onClick={save}>Save reading</Button>
           </div>
         </Sheet>
