@@ -740,10 +740,23 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
           stats.anims++;
           if (!la.length || JSON.stringify(la) !== JSON.stringify(lg)) P(`${id} L4: the Trace animations differ (app ${la.length}, golden ${lg.length}): ${JSON.stringify(la).slice(0, 300)} vs ${JSON.stringify(lg).slice(0, 300)}`);
           if (full.includes(theme)) {   // Trace ends by itself: once its animations have finished, .tracing goes within 1 s
-            const ended = sel => document.querySelector(sel).classList.contains('tracing') === false;
-            // measured from the animations' own finish (not a wall-clock guess), so a loaded CI runner cannot fake a failure
-            await both(p => p.evaluate(sel => Promise.all(document.querySelector(sel).getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))), p === app.page ? figSel.app : figSel.golden(id)));
-            await both((p, w) => p.waitForFunction(ended, w === 'app' ? figSel.app : figSel.golden(id), { timeout: 1000 }).catch(() => P(`${id} L4: Trace did not end by itself in the ${w} page`)));
+            // measured from the animations' own finish (not a wall-clock guess), so a loaded CI runner cannot fake a failure.
+            // GATE-FLAKE-1 (D-GATEFLAKE-4): the 1 s runs on the page's own clock, in one page call. waitForFunction timed it in
+            // Node, so a browser process that answered CDP late failed both pages at once on a Trace that had already ended.
+            // The finish itself is capped at 10 s, so an animation that never ends fails here instead of hanging the gate.
+            await both(async (p, w) => {
+              const endedOnTime = await p.evaluate(sel => new Promise(resolve => {
+                const fig = document.querySelector(sel), ended = () => fig.classList.contains('tracing') === false;
+                const finished = Promise.all(fig.getAnimations({ subtree: true }).map(a => a.finished.catch(() => {})));
+                Promise.race([finished, new Promise(r => setTimeout(r, 10000))]).then(() => {
+                  if (ended()) return resolve(true);
+                  const mo = new MutationObserver(() => { if (ended()) { mo.disconnect(); resolve(true); } });
+                  mo.observe(fig, { attributes: true, attributeFilter: ['class'] });
+                  setTimeout(() => { mo.disconnect(); resolve(ended()); }, 1000);
+                });
+              }), w === 'app' ? figSel.app : figSel.golden(id));
+              if (!endedOnTime) P(`${id} L4: Trace did not end by itself in the ${w} page`);
+            });
             const pressed = await app.page.$eval(`#${id}-trace`, b => b.getAttribute('aria-pressed'));
             if (pressed !== 'false') P(`${id} L4: Trace is still aria-pressed=${pressed} after it ended`);
           } else { await both((p, w) => freezeAt(p, w === 'app' ? figSel.app : figSel.golden(id), null)); await both((p, w) => unfreeze(p, w === 'app' ? figSel.app : figSel.golden(id), id)); }
