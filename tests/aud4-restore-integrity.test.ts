@@ -76,12 +76,12 @@ describe('DATA-01: a restored backup can never crash a reader', () => {
     expect(b.state.deload).toBeNull();
   });
 
-  it('active.entries:[null] does not throw: the bad entry is dropped and counted', async () => {
+  it('active.entries:[null] does not throw: bad entries (null, no exercise) are dropped and counted', async () => {
     const { parseBackup } = await import('@/slices/settings/backup');
-    const active = { splitId: 'x', startedAt: new Date(NOW - 3_600_000).toISOString(), pausedMs: 0, entries: [null, { exerciseId: 'a', name: 'A', sets: [null, { kg: 40, reps: 8 }], done: false, skipped: false }] };
+    const active = { splitId: 'x', startedAt: new Date(NOW - 3_600_000).toISOString(), pausedMs: 0, entries: [null, {}, { exerciseId: 'a', name: 'A', sets: [null, { kg: 40, reps: 8 }], done: false, skipped: false }] };
     const b = parseBackup(file({ active }), NOW);
     if (!('kind' in b) || b.kind !== 'v37') throw new Error(JSON.stringify(b));
-    expect(b.dropped).toBe(2);
+    expect(b.dropped).toBe(3);
     expect(b.state.active?.entries.map(e => e.exerciseId)).toEqual(['a']);
     expect(b.state.active?.entries[0]!.sets.map(s => s.kg)).toEqual([40]);
   });
@@ -134,6 +134,8 @@ describe('DATA-02: a reset in another tab is not written back', () => {
     const sessionB = await import('@/escobar/session');
     storeB.setEscobarStorage(shared);
     sessionB.setTransport(transport);
+    // AUD-2: turns run only while the coach is on.
+    (await import('@/core/store')).update(s => ({ ...s, escobar: { ...s.escobar, enabled: true } }));
     await sessionB.send({ text: 'zebra-one' });
     const tabB = listeners.slice();
     // Tab A (its own modules) deletes conversations; record what it writes to the shared storage.
@@ -189,6 +191,47 @@ describe('OBS-PHOTOS: pruning a conversation deletes its photos', () => {
     await vi.waitFor(() => expect(data.has('img_old')).toBe(false));
     expect(images.imageData('img_old')).toBeNull();
     expect(data.has('img_kept')).toBe(true);
+  });
+});
+
+describe('OBS-PHOTOS: a restore and its Undo', () => {
+  const conv = (id: string, imageId?: string): Conversation => ({
+    id, createdAt: '2026-09-01T10:00:00.000Z', updatedAt: '2026-09-01T10:00:00.000Z', title: '', mode: 'chat', ledger: [], appVersion: 't', protocol: 2,
+    messages: [{ role: 'user', content: imageId ? [{ type: 'image_ref', id: imageId, mediaType: 'image/jpeg' }, { type: 'text', text: 'look' }] : [{ type: 'text', text: 'hi' }] }],
+  });
+  async function setup() {
+    const { idb, data } = fakeIndexedDb();
+    vi.stubGlobal('indexedDB', idb);
+    const store = await import('@/escobar/store');
+    const images = await import('@/escobar/images');
+    store.setEscobarStorage(mapStorage());
+    images.putImage('img_mine', { mediaType: 'image/jpeg', data: 'AAA' });
+    await vi.waitFor(() => expect(data.has('img_mine')).toBe(true));
+    const mine: ConversationStore = { version: 1, activeId: null, conversations: [conv('c_mine', 'img_mine')] };
+    store.saveStore(mine);
+    const restored: ConversationStore = { version: 1, activeId: null, conversations: [conv('c_file')] };
+    return { store, data, mine, restored };
+  }
+  const settle = async () => { for (let i = 0; i < 5; i++) await new Promise(r => setTimeout(r, 0)); };
+
+  it('Undo brings the replaced conversation back with its photo', async () => {
+    const { store, data, mine, restored } = await setup();
+    store.restoreEscobar(restored);
+    store.restoreEscobar(mine); // Undo
+    await settle();
+    expect(data.has('img_mine')).toBe(true);
+    store.saveStore(store.upsertConversation(store.loadStore(), conv('c_new'), false));
+    await settle();
+    expect(data.has('img_mine')).toBe(true);
+  });
+
+  it('a kept restore deletes the replaced conversations\' photos at the next save', async () => {
+    const { store, data, restored } = await setup();
+    store.restoreEscobar(restored);
+    await settle();
+    expect(data.has('img_mine')).toBe(true);
+    store.saveStore(store.upsertConversation(store.loadStore(), conv('c_new'), false));
+    await vi.waitFor(() => expect(data.has('img_mine')).toBe(false));
   });
 });
 

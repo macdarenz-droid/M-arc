@@ -172,6 +172,12 @@ function prunedImageIds(previousRaw: string | null, next: ConversationStore): st
 }
 
 /**
+ * Photos of conversations a restore replaced (in memory only, no saved key). A restore keeps them so
+ * its Undo can bring them back; the next ordinary save deletes those still unreferenced.
+ */
+const replacedImages = new Set<string>();
+
+/**
  * Writes the store. Returns the store as actually written (it may have been pruned), or null on failure.
  * Photos of pruned conversations and messages are deleted with them, unless `keepImages` (a restore,
  * whose Undo puts the old conversations back).
@@ -183,8 +189,17 @@ export function saveStore(store: ConversationStore, keepImages = false): Convers
     const clean = capCount({ ...store, conversations: store.conversations.map(c => ({ ...c, messages: c.messages.map(pruneImages) })) });
     const others = storageOverride ? 0 : 2 * bytes(s.getItem(STATE_KEY)) + bytes(s.getItem(HEART_KEY));
     const { store: fitted, raw } = fitToBudget(clean, others);
-    const pruned = keepImages ? [] : prunedImageIds(s.getItem(ESCOBAR_KEY), fitted);
+    const previousRaw = s.getItem(ESCOBAR_KEY);
+    const kept = imageIds(fitted);
+    let pruned: string[] = [];
+    if (keepImages) {
+      for (const id of prunedImageIds(previousRaw, fitted)) replacedImages.add(id);
+      for (const id of kept) replacedImages.delete(id);
+    } else {
+      pruned = [...new Set([...prunedImageIds(previousRaw, fitted), ...[...replacedImages].filter(id => !kept.has(id))])];
+    }
     s.setItem(ESCOBAR_KEY, raw);
+    if (!keepImages) replacedImages.clear();
     if (pruned.length) void import('./images').then(m => m.deleteImages(pruned)).catch(() => {});
     return fitted;
   } catch {
