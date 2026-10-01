@@ -3,21 +3,21 @@
   "budgets": [
     {
       "chunk": "HowToSheet-*.js",
-      "rawMax": 24396,
-      "gzMax": 8692,
-      "measuredRaw": 22178,
-      "measuredGz": 7901,
+      "rawMax": 27168,
+      "gzMax": 9375,
+      "measuredRaw": 24698,
+      "measuredGz": 8522,
       "setBy": "HT-8",
-      "reason": "Grows by the HT-8 feel section (Feel.tsx, useFeelMap.ts) on top of HT-6's sections and zoom host (16,859 / 6,373 B). Re-measured on main 1fcd9c8 with the early chip/row replay (#166)."
+      "reason": "HT-8's feel section (Feel.tsx, useFeelMap.ts, with the early chip/row replay, #166) on top of HT-6's sections and zoom host and HT-7's Posture.tsx (HT-7 alone: 19,166 / 6,924 B). Re-measured on main 1c5504f."
     },
     {
       "chunk": "HowToSheet-*.css",
-      "rawMax": 23052,
-      "gzMax": 4228,
-      "measuredRaw": 20956,
-      "measuredGz": 3843,
+      "rawMax": 28502,
+      "gzMax": 4684,
+      "measuredRaw": 25910,
+      "measuredGz": 4258,
       "setBy": "HT-8",
-      "reason": "Grows by feel.css (HT-8: FEEL_CSS and the feel section rules) on top of HT-6's hand.css (15,328 / 2,904 B)."
+      "reason": "HT-8's feel.css (FEEL_CSS and the feel section rules) on top of HT-6's hand.css and HT-7's posture.css (HT-7 alone: 20,282 / 3,317 B). Re-measured on main 1c5504f."
     },
     {
       "chunk": "ht-dumbbell-lateral-raise-*.js",
