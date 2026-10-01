@@ -19,7 +19,7 @@ const nodeKeys = (r: any) => I.HARD.flatMap((h: string) => r.hard[h].problems.ma
 /** Test double of the browser half: what browser.mjs returns for a card with no problems (F5 as measured on the 8). */
 const cleanBrowser = (ids: string[]) => new Map(ids.map(id => [id, { H1: [], H4: [], H5: [], flags: { F2: { value: 0.3, raised: false }, F5: { value: 3.57, raised: true } }, metrics: {} }]));
 
-describe('LIB-3 pins: measured on the approved 8, never set by hand', () => {
+describe('LIB-3 pins: measured on the approved 8, never set by hand', { timeout: T }, () => {
   it('vocabulary.json equals a fresh measurement of the 8 golden fragments', () => {
     expect(pin.measureVocabulary(base.cands)).toEqual(base.pins.vocabulary);
   });
@@ -41,7 +41,7 @@ describe('LIB-3 pins: measured on the approved 8, never set by hand', () => {
   });
 });
 
-describe('LIB-3 clean run on the approved 8', () => {
+describe('LIB-3 clean run on the approved 8', { timeout: T }, () => {
   it('every node problem of the 8 is one of its named exemptions', () => {
     for (const [, r] of base.reports) expect([r.id, nodeKeys(r)]).toEqual([r.id, []]);
   });
@@ -77,7 +77,7 @@ describe('LIB-3 clean run on the approved 8', () => {
   });
 });
 
-describe('LIB-3 mutations: each check turns red on its planted mutation, the clean target does not', () => {
+describe('LIB-3 mutations: each check turns red on its planted mutation, the clean target does not', { timeout: T }, () => {
   it('every hard check and every flag has at least one planted mutation', () => {
     const all = [...muts.SPEC_MUTATIONS, ...muts.CANDIDATE_MUTATIONS, ...muts.PAGE_MUTATIONS].map((m: any) => m.check ?? m.flag);
     expect([...new Set(all)].sort()).toEqual([...I.HARD, ...I.FLAGS].sort());
@@ -107,7 +107,7 @@ describe('LIB-3 mutations: each check turns red on its planted mutation, the cle
   });
 });
 
-describe('LIB-3 generator seam: the generator refuses a report that is not ok (D-LIB3-5)', () => {
+describe('LIB-3 generator seam: the generator refuses a report that is not ok (D-LIB3-5)', { timeout: T }, () => {
   // Test double of LIB-2's generator: it may emit a plate only through gatePlate(runQa(...)).
   const emit = async (c: any, ctx: any) => { I.gatePlate(await I.runQa(c, ctx)); return `src/howto/generated/ht-${c.chromeId}.ts`; };
   it('emits an ok plate', async () => {
@@ -128,7 +128,7 @@ describe('LIB-3 generator seam: the generator refuses a report that is not ok (D
   });
 });
 
-describe('LIB-3 label-search helper', () => {
+describe('LIB-3 label-search helper', { timeout: T }, () => {
   it('proposes a box for an unboxed label that renders with no engine issue, deterministically', () => {
     const s = base.cands.find((x: any) => x.chromeId === 'pull-up').spec;
     const bare = { ...s, callouts: s.callouts.map(({ box, ...r }: any) => (r.key === 'elbows' ? r : { ...r, box })) };
@@ -143,7 +143,7 @@ describe('LIB-3 label-search helper', () => {
   }, T);
 });
 
-describe('LIB-3 markup helpers', () => {
+describe('LIB-3 markup helpers', { timeout: T }, () => {
   it('measures M/L/H path lengths exactly and refuses commands it cannot measure', () => {
     expect(markup.pathLength('M0 0L3 4H10')).toBe(12);
     expect(() => markup.pathLength('M0 0A5 5 0 0 1 10 0')).toThrow(/unsupported/);
