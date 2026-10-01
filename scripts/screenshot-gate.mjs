@@ -7385,6 +7385,8 @@ for (const theme of ['silent-black', 'paper']) {
     await start.evaluate(el => el.scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
     return start;
   };
+  // The brief is the open sheet holding its own Start button (the check-in has none); title-free, so it holds whatever the title reads.
+  const bug37Brief = async (page) => (await page.locator('dialog.sheet[open]').getByRole('button', { name: /^Start SPLIT 1 UPPER BODY$/ }).count()) === 1;
   const VIEWPORTS = [{ width: 411, height: 960, dpr: 2.625 }, { width: 390, height: 844, dpr: 1 }];
   for (const vp of VIEWPORTS) for (const reduce of [false, true]) for (const theme of reduce ? ['silent-black'] : ['silent-black', 'paper']) for (const cpu of reduce ? [1] : [1, 4]) {
     const base = `BUG-37 ${vp.width}x${vp.height}@${vp.dpr} ${theme} ${cpu}x CPU${reduce ? ' reduced motion' : ''}`;
@@ -7396,8 +7398,7 @@ for (const theme of ['silent-black', 'paper']) {
       const cdp = await ctx.newCDPSession(page); const throttle = () => cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
       const start = await bug37Start(page); await throttle();
       await bug37Open(page, `${base} start sheet (checked in)`, () => start.click(), { minTravel, sheets: 1, still: reduce });
-      const title = await page.locator('dialog.sheet[open] h2').first().textContent();
-      if (!title?.startsWith('Before you start SPLIT 1')) errors.push(`${base}: expected the brief, got "${title}"`);
+      if (!(await bug37Brief(page))) errors.push(`${base}: expected the brief, got "${await page.locator('dialog.sheet[open] h2').first().textContent()}"`);
       await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
       await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
       await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(400);
@@ -7415,7 +7416,7 @@ for (const theme of ['silent-black', 'paper']) {
       await bug37Open(page, `${base} check-in`, () => start.click(), { minTravel, sheets: 1, still: reduce });
       if ((await page.locator('dialog.sheet[open] h2').first().textContent()) !== 'Quick check-in') errors.push(`${base}: expected the check-in first`);
       await bug37Open(page, `${base} check-in -> brief swap`, () => page.getByRole('button', { name: 'Skip' }).click(), { minTravel: reduce ? 0 : 20, sheets: 1, oneStep: reduce });
-      if (!(await page.locator('dialog.sheet[open] h2').first().textContent())?.startsWith('Before you start SPLIT 1')) errors.push(`${base}: Skip did not lead to the brief`);
+      if (!(await bug37Brief(page))) errors.push(`${base}: Skip did not lead to the brief`);
       await ctx.close();
     }
   }
