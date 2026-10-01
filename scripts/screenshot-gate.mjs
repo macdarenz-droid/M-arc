@@ -7179,7 +7179,7 @@ for (const theme of ['silent-black', 'paper']) {
     await page.waitForTimeout(200);
     await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click();
     await page.waitForTimeout(400);
-    if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) {
+    if (await page.getByRole('heading', { name: 'Session time' }).isVisible().catch(() => false)) {
       await page.getByRole('button', { name: 'Save', exact: true }).click();
       await page.waitForTimeout(400);
     }
