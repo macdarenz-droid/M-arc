@@ -265,7 +265,8 @@ function Splits() {
   }, [split?.id]);
 
   return (
-    <div class="view">
+    // BUG-36: under the modal start sheet the view is out of the accessibility tree, as the dialog makes it inert.
+    <div class="view" aria-hidden={startingSplit.value ? 'true' : undefined}>
       {liveBpm.value != null && <PulseLine bpm={liveBpm.value} />}
       <div class="topbar" data-palace="train.workouts">
         <div><div class="eyebrow">Train</div><h1>Workouts</h1></div>
