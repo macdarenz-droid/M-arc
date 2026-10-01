@@ -7513,6 +7513,114 @@ for (const theme of ['silent-black', 'paper']) {
   if (!errors.some(e => e.startsWith('AUD-20 '))) console.log('AUD-20: finish-screen calories read "About N kcal active." with no ± or range band, verified in 5 themes');
 }
 
+// BUG-36: Start opens the pre-session sheet in one smooth slide. Before, Train unmounted its view while the
+// sheet was up (an empty, solid page under the scrim) and the check-in gave way to the brief by dropping its
+// panel off-screen in one frame (top 247 -> 844 px) and sliding a new one in with the scrim restarting at 0.
+// Frame-sampled at 390 x 844 in Silent Black and Paper, at 1x and 4x CPU, both paths: checked in today, and
+// check-in -> Skip -> brief. A 8-exercise split with history so Today's checks show.
+{
+  const BUG36_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press', 'lib_barbell_row', 'lib_lat_pulldown', 'lib_dumbbell_shoulder_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_biceps_curl', 'lib_triceps_pushdown'];
+  const bug36Seed = ([t, EX, checked]) => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    const day = (o) => { const d = new Date(); d.setDate(d.getDate() - o); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (o) => ({ id: `s${o}`, splitId: 'sp1', splitName: 'SPLIT 1 UPPER BODY', day: day(o), startedAt: `${day(o)}T17:00:00.000Z`, endedAt: `${day(o)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+      exercises: EX.map(id => ({ exerciseId: id, name: id, sets: [0, 1, 2].map(() => ({ kg: 40, reps: 8, effort: 'ideal' })) })),
+      logging: { mode: 'live', trainedAt: `${day(o)}T17:00:00.000Z`, trainedEndAt: `${day(o)}T18:00:00.000Z`, loggedAt: `${day(o)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'SPLIT 1 UPPER BODY', color: '#6aa9ff', focus: [], createdAt: now, exercises: EX.map(id => ({ exerciseId: id, sets: 3 })) }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess(14), sess(10), sess(7), sess(3)], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 }, errorReportsAsked: true },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: checked ? [{ day: day(0), sleepQuality: 4 }] : [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      units: { gyms: [{ id: 'gym_default', name: 'My gym', defaultUnit: 'kg', createdAt: now }], activeGymId: 'gym_default', byExercise: {}, byEquipment: {} },
+    }));
+  };
+  // Every animation frame for ~900 ms: the open sheet's dialog identity, title, its panel's on-screen top
+  // (layout top plus the running transform) and height, the scrim's opacity, the page scroll, and whether the
+  // Train view (its Start button) is still rendered behind the sheet.
+  const bug36Sample = (page) => page.evaluate(() => new Promise(resolve => {
+    const out = []; const t0 = performance.now(); let n = 0;
+    const f = () => {
+      const d = [...document.querySelectorAll('dialog.sheet[open]')].pop(); const p = d?.querySelector('.sheet-panel');
+      if (d && !d.__bug36) d.__bug36 = ++window.__bug36Id || (window.__bug36Id = 1);
+      out.push({ t: performance.now() - t0, dlg: d?.__bug36 ?? null, title: d?.querySelector('h2')?.textContent ?? null,
+        top: p ? p.offsetTop + d.getBoundingClientRect().top + new DOMMatrix(getComputedStyle(p).transform).m42 : null, h: p ? p.getBoundingClientRect().height : null,
+        scrim: d ? Number(getComputedStyle(d, '::backdrop').opacity) : null, sy: scrollY, behind: document.querySelectorAll('[data-palace="train.start"]').length });
+      if (performance.now() - t0 < 900 && ++n < 400) requestAnimationFrame(f); else resolve(out);
+    };
+    requestAnimationFrame(f);
+  }));
+  // One slide: from the first frame the sheet shows to rest. Top never moves down, height fixed (<= 1 px),
+  // nothing moves after it ends, the view stays rendered, and the page does not scroll.
+  const bug36Check = (tag, frames, { swap }) => {
+    const on = frames.filter(x => x.top != null);
+    if (on.length < 10) { errors.push(`${tag}: only ${on.length} frames with the sheet open, expected >= 10`); return; }
+    const travel = on[0].top - on[on.length - 1].top;
+    if (travel < (swap ? 20 : 300)) errors.push(`${tag}: the panel travelled only ${travel.toFixed(1)} px, nothing to measure (expected >= ${swap ? 20 : 300})`);
+    for (let i = 1; i < on.length; i++) if (on[i].top > on[i - 1].top + 0.5) { errors.push(`${tag}: the panel's top moved down ${(on[i].top - on[i - 1].top).toFixed(1)} px at ${on[i].t.toFixed(0)} ms (${on[i - 1].top.toFixed(1)} -> ${on[i].top.toFixed(1)}), a bounce`); break; }
+    // On the swap the content changes once, at the tap; from the brief's first frame its height is final.
+    const hs = (swap ? on.filter(x => x.title?.startsWith('Before you start')) : on).map(x => x.h); if (!hs.length || Math.max(...hs) - Math.min(...hs) > 1) errors.push(`${tag}: the panel's height changed during the slide (${Math.min(...hs).toFixed(1)}-${Math.max(...hs).toFixed(1)} px)`);
+    // The swap's height change is eased, never a one-frame snap of the panel's top.
+    if (swap) { const step = Math.max(...on.slice(1).map((x, i) => on[i].top - x.top)); if (step > 16) errors.push(`${tag}: the panel's top snapped ${step.toFixed(1)} px in one frame on the swap`); }
+    const ids = new Set(on.map(x => x.dlg)); if (ids.size !== 1) errors.push(`${tag}: ${ids.size} different sheets showed during the slide, expected one`);
+    const restAt = on.findIndex((x, i) => on.slice(i).every(y => Math.abs(y.top - on[on.length - 1].top) <= 0.5));
+    const after = on.slice(restAt); if (after.length < 5 || on[on.length - 1].t - on[restAt].t < 100) errors.push(`${tag}: the slide did not settle at least 100 ms before sampling ended`);
+    if (after.some(x => Math.abs(x.h - after[0].h) > 0.5)) errors.push(`${tag}: the panel changed height after the slide ended`);
+    if (swap) { const minScrim = Math.min(...frames.map(x => x.scrim ?? 0)); if (minScrim < 0.99) errors.push(`${tag}: the scrim dropped to ${minScrim.toFixed(2)} when the check-in gave way to the brief`); }
+    const sy = new Set(frames.map(x => Math.round(x.sy))); if (sy.size !== 1) errors.push(`${tag}: the page scrolled while the sheet opened (${[...sy].join(' -> ')})`);
+    const gone = frames.filter(x => x.behind !== 1).length; if (gone) errors.push(`${tag}: the Train view was not rendered behind the sheet in ${gone} of ${frames.length} frames`);
+    return on[on.length - 1].top;
+  };
+  for (const theme of ['silent-black', 'paper']) for (const checked of [true, false]) for (const cpu of [1, 4]) {
+    const tag = `BUG-36 ${theme} ${checked ? 'checked-in' : 'check-in -> brief'} ${cpu}x CPU`;
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+    await page.addInitScript(bug36Seed, [theme, BUG36_EX, checked]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(400);
+    const start = page.getByRole('button', { name: /^Start / }).first();
+    // Start clear of the nav, so Playwright's click does not scroll the page and the scroll check measures only the app.
+    await start.evaluate(el => el.scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+    const cdp = await ctx.newCDPSession(page); await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
+    let frames = bug36Sample(page); await start.click(); frames = await frames;
+    const first = frames.find(x => x.title)?.title ?? '';
+    if (!(checked ? first.startsWith('Before you start SPLIT 1') : first === 'Quick check-in')) errors.push(`${tag}: expected the ${checked ? 'brief' : 'check-in'} first, got "${first}"`);
+    let restTop = bug36Check(`${tag} open`, frames, { swap: false });
+    if (!checked) {
+      frames = bug36Sample(page); await page.getByRole('button', { name: 'Skip' }).click(); frames = await frames;
+      if (!frames.some(x => x.title?.startsWith('Before you start SPLIT 1'))) errors.push(`${tag}: Skip did not lead to the brief`);
+      const on = frames.filter(x => x.top != null);
+      if (restTop != null && on.length && Math.abs(on[0].top - restTop) > 0.5) errors.push(`${tag}: the panel's top jumped from ${restTop.toFixed(1)} to ${on[0].top.toFixed(1)} px on the swap`);
+      restTop = bug36Check(`${tag} swap`, frames, { swap: true });
+    }
+    if (!(await page.locator('dialog.sheet[open] .insight').count())) errors.push(`${tag}: Today's checks showed no cards, the seeded history did not reach them`);
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+    // The page behind stays visible: a strip above the panel holds more than one flat colour under the scrim.
+    if (restTop != null && restTop > 40) {
+      const png = (await page.screenshot({ clip: { x: 0, y: 0, width: 390, height: Math.floor(restTop) - 8 } })).toString('base64');
+      const lum = await page.evaluate(async (b64) => {
+        const img = new Image(); img.src = `data:image/png;base64,${b64}`; await img.decode();
+        const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+        const px = g.getImageData(0, 0, c.width, c.height).data; let lo = 255, hi = 0, nonBlack = 0;
+        for (let i = 0; i < px.length; i += 4) { const l = 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]; lo = Math.min(lo, l); hi = Math.max(hi, l); if (l > 8) nonBlack++; }
+        return { lo, hi, nonBlack, n: px.length / 4 };
+      }, png);
+      if (lum.hi - lum.lo < 12) errors.push(`${tag}: the strip above the sheet is one flat colour (luminance ${lum.lo.toFixed(0)}-${lum.hi.toFixed(0)}), the page behind is not showing`);
+      if (theme === 'paper' && lum.nonBlack < lum.n * 0.5) errors.push(`${tag}: the strip above the sheet is mostly black in Paper (${lum.nonBlack} of ${lum.n} px non-black)`);
+    }
+    if (cpu === 1) await page.screenshot({ path: `${OUT}/${theme}-bug-36-${checked ? 'brief' : 'swap'}.png` });
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith('BUG-36 '))) console.log('BUG-36: the split start sheet slides up once (monotonic top, fixed height, nothing after rest), the check-in gives way to the brief in the same sheet without the scrim dropping, and the Train view stays visible under the scrim, in Silent Black and Paper at 1x and 4x CPU');
+}
+
 // AUD-10: live workout, finish and past logging (audit UI-01, UI-03, UI-05, UI-09, OBS-LABELS).
 // One seeded split (bench, plank, farmer's carry): the past-session form saves a hold's seconds and
 // a carry's metres; the live inputs are named; Move up works by keyboard alone and saves the order a
