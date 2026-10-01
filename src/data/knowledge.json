@@ -992,19 +992,15 @@
  {
   "id": "pain_red_flags",
   "title": "Pain red flags",
-  "statement": "Stop the movement and see a physio or doctor for pain that is sharp, spreading, numb or tingling, wakes you at night, comes with swelling, or lasts more than about 48 hours.",
-  "numbers": [
-   {
-    "label": "persisting beyond",
-    "value": 48,
-    "unit": "h"
-   }
-  ],
+  "statement": "Stop the movement and see a physio or doctor for pain that is sharp, spreading, numb or tingling, wakes you at night, or comes with swelling.",
+  "numbers": [],
   "rating": "moderate",
   "sources": [
    {
     "title": "Finucane et al. International framework for red flags for potential serious spinal pathologies",
-    "year": 2020
+    "year": 2020,
+    "pmid": "32438853",
+    "doi": "10.2519/jospt.2020.9971"
    }
   ],
   "tags": [
@@ -1365,13 +1361,15 @@
  {
   "id": "session_length",
   "title": "Session length",
-  "statement": "Quality sets drive progress, not time in the gym. Very long sessions usually mean rest that drifts or extra low-quality sets; trimming them rarely costs results.",
+  "statement": "Session length follows how many sets you do and how long you rest between them. Guidance for strength and muscle gain is given as sets, loads and rest, not as minutes per session; heavy sets get the longest rests.",
   "numbers": [],
   "rating": "emerging",
   "sources": [
    {
     "title": "ACSM Position Stand: Progression models in resistance training for healthy adults",
-    "year": 2009
+    "year": 2009,
+    "pmid": "19204579",
+    "doi": "10.1249/MSS.0b013e3181915670"
    }
   ],
   "tags": [

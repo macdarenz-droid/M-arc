@@ -15,7 +15,8 @@ import { muscleDoses, recoveryAt, recoveryStatus, trainingAgeMonths, type Muscle
 import { exerciseHistory, isActive, modeOf } from '../history';
 import { PLATEAU_MIN_SPAN_DAYS, plateauStatus, plateauWindow } from '../trend';
 import { effortDrift } from '../effort';
-import { trainingBalance } from '../balance';
+import { BALANCE, trainingBalance } from '../balance';
+import { READY_PCT } from '@/data/recovery';
 import { weekSummary, daysSinceLastSession, type WeekPlan } from '../weekly';
 import { effectiveSetsByMuscle, effortLabel, isWorkingSet, trainingLevels, weeklyMuscleSets } from '../exposure';
 import { muscleVolumeStatus, volumeBands } from '../volume';
@@ -218,7 +219,8 @@ export const RULES: Rule[] = [
           priority: 400,
           title: `${muscleLabel(r.muscle)} still recovering`,
           noticed: `Your ${muscleLabel(r.muscle).toLowerCase()} is about ${r.pct}% recovered, ${r.beyondCap ? 'more than 5 days' : `about ${formatHours(r.hoursLeft)}`} to go.`,
-          means: 'Your own history shows you perform worse when you train this muscle again too soon.',
+          // AUD-20 (SCI-11): a fact about the model, never a claim that the user's history proves harm.
+          means: 'Its ready time is fitted to your own sessions.',
           action: 'Give it more time, or train something that is fully recovered today.',
           muscle: r.muscle,
         }));
@@ -270,7 +272,8 @@ export const RULES: Rule[] = [
         category: 'recovery', priority: firm ? 380 : 340,
         title: `${split.name} today, but ${muscleLabel(worst.muscle).toLowerCase()} is only ${worst.pct}% recovered`,
         noticed: `${split.name} is scheduled today and works ${muscleLabel(worst.muscle).toLowerCase()} directly. It is about ${worst.pct}% recovered.`,
-        means: firm ? 'Training this hard right now works against the muscle you are trying to build.' : 'You can still train productively at this level; the hardest sets just will not be at their best.',
+        // AUD-20 (SCI-11): the line the coach acts on, not a cause it cannot show.
+        means: firm ? 'Below 60%, the coach suggests moving the hard sets.' : `That is short of the ${READY_PCT}% ready line.`,
         action: firm ? `Swap to another split today, or keep ${split.name} light and put the hard sets elsewhere.` : `Reorder ${split.name} so this muscle comes later, or go a little lighter on it today.`,
         muscle: worst.muscle,
       }];
@@ -306,7 +309,7 @@ export const RULES: Rule[] = [
           id: `plateau:${id}`, category: 'progress' as const, priority: 300,
           title: `${name}: progress has stalled`,
           noticed: `${name} has barely moved over the last six weeks or more.`,
-          means: 'The same load and reps for weeks means the stimulus stopped changing.',
+          means: 'That is the point where the coach suggests a change.',
           action: 'Try a different rep range for two weeks, or one lighter week, then return.',
           exerciseId: id,
         }];
@@ -322,7 +325,8 @@ export const RULES: Rule[] = [
         id: `balance:${b.pair}`, category: 'balance', priority: 200 + Math.min(20, b.severity * 3),
         title: `${b.weak} work is trailing`,
         noticed: `${b.strong} work has been ${b.ratioLabel} your ${b.weak.toLowerCase()} work over the last three weeks.${b.context ? ` ${b.context}` : ''}`,
-        means: 'Lopsided weeks add up. Balanced work keeps joints happy and progress even.',
+        // AUD-20 (OBS-KNOW): the rule's own evidence, no claim about joints.
+        means: `The gap showed in ${b.weeks} of the last ${BALANCE.weeks} weeks.`,
         action: `Add one or two ${b.weak.toLowerCase()} exercises to your next sessions.`,
       }];
     },
@@ -517,7 +521,7 @@ export const RULES: Rule[] = [
         else if (volumeLow) lever = { means: `Weekly volume for ${muscleLabel(primaryMuscle!).toLowerCase()} is on the low side (about ${Math.round(weekSets)} hard sets in a usual week${band ? `; your range is ${band[0]}–${band[1]}` : ''}).`, action: 'Add 3 to 4 sets at ideal effort across two sessions.' };
         // ADAPT-5 (E-2): the goal's own failure-share cap, not a fixed 0.5.
         else if (fShare > goal.failureShareCap && recentSessions.length >= 6) lever = { means: `About ${Math.round(fShare * 100)}% of recent sets were max effort, above the ${Math.round(goal.failureShareCap * 100)}% your goal allows; that adds fatigue without much extra progress.`, action: 'Pull most sets back to ideal effort and save max for the last set.' };
-        else if (stale) lever = { means: 'The load and rep range have not changed in a while, so the stimulus has nowhere to come from.', action: 'Change the rep range for two weeks, or swap in a similar exercise for a block.' };
+        else if (stale) lever = { means: 'The top load has stayed the same for the last six weeks.', action: 'Change the rep range for two weeks, or swap in a similar exercise for a block.' };
         if (!lever) return [];
 
         return [{
@@ -565,7 +569,7 @@ export const RULES: Rule[] = [
         return [{
           id: 'readiness-today', category: 'readiness', priority: 450, cadence: 'now', kind: 'alert',
           title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : inputs.length > 1 ? 'Several signals point the same way today.' : `${Named} reads low today.`, drivers: r.drivers,
-          means: 'Training hard today would work against you more than for you.',
+          means: `Today's score is ${r.score} of 100.`,
           // QA8-2: once today's session is already done, "keep loads where they are" no longer applies.
           // BUG-16: "drop a set" only when the advice is to reduce (a check-in or 2+ agreeing inputs).
           action: r.postSessionAdvice ?? (r.loadAdvice === 'reduce' ? 'Keep loads where they are, or drop a set on the hardest lifts.' : 'Keep today’s loads where they are.'),
