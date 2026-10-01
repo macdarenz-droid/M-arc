@@ -284,6 +284,14 @@ export function setEscobarEnabled(on: boolean, sharing?: { health: boolean; body
   if (on) { importLegacyThread(); ensureDeviceId(); offlineUntil = 0; checkOnline(); }
 }
 
+/**
+ * AUD-2: the one operation behind every way the coach goes off (the Settings switch, a restore,
+ * setEscobarEnabled(false)): the running turn stops and ends as "Stopped.". The loop also checks
+ * `enabled` before each request, so no next step or retry starts (D-AUD2-1).
+ */
+function coachOff(): void { if (loop?.busy) loop.stop(); }
+state.subscribe(s => { if (!s.escobar.enabled) coachOff(); });
+
 /** RG-03: on first enable, the old coach chat becomes "Earlier conversation" (once). */
 function importLegacyThread(): void {
   const s = state.value;

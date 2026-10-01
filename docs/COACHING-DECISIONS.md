@@ -1304,3 +1304,11 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (D-AUD3-6)**: with no quota binding at all, and on the soft KV fallback (used only when `QUOTA_DO` is not bound), behaviour is unchanged. `/health` still reports `quotas: !!(QUOTA_DO || QUOTA)` and the limits' values are unchanged.
   **Why**: a missing binding is a deploy choice that `/health` already shows, not an enforcement failure, and the KV path is documented as soft. Production binds `QUOTA_DO` (`wrangler.toml`).
   **Source**: card AUD-3 tasks 4–5.
+## AUD-2: switching the coach off stops the running turn (audit SEC-03)
+
+- **D-AUD2-1 Decided**: two layers. (1) `EscobarLoop.step` reads `getState().escobar.enabled` before every request, including the retry after the back-off; when it is off the loop aborts with the existing `aborted` outcome, so no new request starts. (2) `session.ts` subscribes to the app state and calls one operation, `coachOff()`, whenever `enabled` is false: it stops a busy loop, which aborts the request in flight. The turn ends as the existing "Stopped." line; no toast.
+  **Why**: every writer of `enabled: false` (the Settings switch, `setEscobarEnabled(false)`, a restore that replaces the state) goes through the state, so a subscription catches all of them without each caller having to remember. The Settings switch keeps its synchronous write: calling the session directly would need a static import of the lazily loaded Escobar chunk, or a dynamic import that fails offline. If the session chunk is not loaded, no loop exists to stop. The per-step check in the loop holds even without the session.
+  **Source**: card AUD-2; audit SEC-03.
+- **D-AUD2-2 Decided**: session-level tests that send turns now switch the coach on in their setup (`session.test.ts`, `session-reset.test.ts`, `online-recheck.test.ts`, `other-tab.test.ts`, `bug-32-safety-card.test.ts`). They had been sending from a fresh state where the coach is off, which the app never does (the sheet shows the explainer instead). Their assertions are unchanged.
+  **Source**: card AUD-2, task 3.
+- **D-AUD2-3 Decided**: the pending health re-check timer is left alone. It sends no user data, and it already re-arms only while the coach is on (QA2-FD-3).
