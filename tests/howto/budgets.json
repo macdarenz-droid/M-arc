@@ -3,12 +3,12 @@
   "budgets": [
     {
       "chunk": "HowToSheet-*.js",
-      "rawMax": 21817,
-      "gzMax": 8205,
-      "measuredRaw": 19833,
-      "measuredGz": 7459,
+      "rawMax": 22257,
+      "gzMax": 8354,
+      "measuredRaw": 20233,
+      "measuredGz": 7594,
       "setBy": "HT-9",
-      "reason": "Setup and Risks (plan 2.4 items 3, 7) plus HT-6's Look closer chips, Grip section, zoom host and hand-close-up registry all render in the shared HowToSheet chunk; re-measured on the real build after merging HT-6's READY head and origin/main (HT-6's self-reported figures were pre-main-merge and undercounted)."
+      "reason": "Setup and Risks (plan 2.4 items 3, 7) plus HT-6's Look closer chips, Grip section, zoom host and hand-close-up registry all render in the shared HowToSheet chunk; re-measured on the real build after merging HT-6's READY head and origin/main (HT-6's self-reported figures were pre-main-merge and undercounted). Re-measured after merging main 958a3de and the Setup/Risks after-first-paint mount (review of #113 finding 6)."
     },
     {
       "chunk": "HowToSheet-*.css",

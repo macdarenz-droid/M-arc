@@ -7256,11 +7256,13 @@ for (const theme of ['silent-black', 'paper']) {
     for (let n = w.nextNode(); n; n = w.nextNode()) texts.push(n);
     const order = [...dlg.querySelectorAll('.redflag')].map(e => e.id.replace(/^.*-redflag-/, ''));
     if (JSON.stringify(order) !== JSON.stringify(flags)) bad.push(`red-flag blocks ${JSON.stringify(order)}, riskFlags ${JSON.stringify(flags)}`);
-    for (const [k, ls] of Object.entries(lines)) for (const l of ls) {
+    // a line two blocks share (knee and elbow end on the same "See a doctor" line) is expected once per shown block
+    for (const l of new Set(Object.values(lines).flat())) {
+      const owners = flags.filter(k => lines[k].includes(l));
       const at = texts.filter(n => n.textContent === l);
-      const want = flags.includes(k) ? 1 : 0;
-      if (at.length !== want) bad.push(`the ${k} red-flag line "${l}" shows ${at.length} times, expected ${want}`);
-      else if (want && !at[0].parentElement.closest(`.risks .redflag[id$="-redflag-${k}"]`)) bad.push(`the ${k} red-flag line "${l}" is outside its block`);
+      if (at.length !== owners.length) bad.push(`the red-flag line "${l}" shows ${at.length} times, expected ${owners.length}`);
+      const homes = at.map(n => n.parentElement.closest('.risks .redflag')?.id.replace(/^.*-redflag-/, '') ?? null);
+      if (JSON.stringify(homes) !== JSON.stringify(owners.slice(0, at.length))) bad.push(`the red-flag line "${l}" sits in ${JSON.stringify(homes)}, expected ${JSON.stringify(owners)}`);
     }
     const d = texts.filter(n => n.textContent === disclaimer);
     if (d.length !== 1 || dlg.querySelectorAll('.ht-disclaimer').length !== 1) bad.push(`the disclaimer shows ${d.length} times`);
