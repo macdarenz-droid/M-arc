@@ -1264,3 +1264,19 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
   **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
   **Source**: card ESC-W-CITE, reserved_paths.
+
+## BUG-35 crisis pre-screen: seven more phrasings (BUG-35 builder, 2026-10-01)
+
+Rule for every choice below: safety outranks a false alarm, because the crisis card is gentle. A branch is narrowed only where a gym phrase from the card, or a plainly gym-only follow-on, would fire.
+
+- **D-BUG35-1 (wake up)**: "don't/do not want to/wanna wake up" fires, except when "for/before/at/by <x>", "early" ("so/this/that/too early") or "on/at <weekday or weekend>" follows. "for/at/by/before" does not hide it when "all", "any", "another", "anything", "anyone", "anybody", "nothing", "no one" or "much longer" follows, so "at all" and "for another day" still fire. "tomorrow" and "in the morning" fire.
+  **Why**: "i don't want to wake up for leg day" and "at 5am for cardio" are complaints about an alarm; the bare phrase and "tomorrow" are a classic way of saying it. This mirrors the BUG-32 rule for "be here".
+- **D-BUG35-2 (not alive)**: "wish I wasn't/weren't/was not/were not alive" always fires. No gym reading exists.
+- **D-BUG35-3 (point of living)**: "what's/whats/what is the point of/in living" or "being alive" always fires. "point of life" and "going on" are left out: "what's the point of going on with this program" is gym talk, and the model's escalate tool still covers them.
+- **D-BUG35-4 (it all to end)**: "want/wanna/wish/need (for) it all/everything to end/stop" always fires, including "everything to stop hurting", which reads as emotional pain as much as a sore muscle. "i want this set to end" stays quiet because it names the set, not "it all".
+- **D-BUG35-5 (disappear)**: "want/going/need to, wanna, gonna disappear" fires, except when "into", "in", "inside", "under", "behind", "to the gym/sauna/pool/beach/bed/couch" or "for a weekend/holiday/vacation/week/day/hour/minute" (or a number of them) follows. "in my sleep" still fires. "for a while" fires.
+  **Why**: "disappear into the sauna" and "for a week on holiday" are a wish for rest; the bare phrase and "forever" are not.
+- **D-BUG35-6 (unalive)**: "unalive" with no "myself" fires straight after a verb of intent (want/going/about/trying/need to, wanna, gonna, finna, tryna), and "thinking/thought about/of unaliving" fires. A bare "unaliving" does not, so "this burpee set is unaliving me" stays quiet, like BUG-32's "this workout unalived me".
+- **D-BUG35-7 (kill me now)**: "kill me now" fires unless a gym word (sets, reps, rounds, laps, burpees, squats, deadlifts, lunges, sprints, bench, cardio, hiit, amrap, emom, wod, leg day, legs, workout, gym, pull-ups, push-ups) or "lol"/"lmao" stands before it in the same sentence, or a gym word, "lol", "lmao", "haha", "jk" or a laughing emoji (😂 🤣 💀 😅) stands after it in the same sentence. A sentence ends at ".", "!" or "?". "session" and "class" are not gym words, so "my therapy session went badly, kill me now" fires; 😭 is not a laughing emoji. The regex now has the `u` flag so the emoji match as single characters.
+  **Why**: limiting the check to the sentence keeps "did 3 sets today. kill me now, i hate everything" firing, while "kill me now, 3 more sets" and "this burpee set, kill me now lol" stay quiet.
+  **Source**: BUG-35 card; `tests/escobar/verify.test.ts` (ES-14 rows marked BUG-35); mutation proofs M1 to M17 on the PR.
