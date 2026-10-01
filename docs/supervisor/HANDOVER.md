@@ -632,118 +632,95 @@ The table is in `AGENTS.md`. Do not copy it here.
 
 ---
 
-## 8. Current state (2026-10-01 ~03:30 UTC; stale fast, re-check live)
+## 8. Current state (2026-10-01 ~06:00 UTC; stale fast, re-check live)
 
 ### 8.0 Focus and finish line (owner, 10-01; read first)
 - **Owner, ~01:15:** "Park this audit improvement for now. Lets finish all the how to do first. And all the first audit fixes."
 - **Owner, ~01:30:** "Remind me when we finished all of the how to. And all first audit 32 items. Then after that we proceed."
 - **Finish line:** every row in 8.2's two checklists merged on main → push notification + chat message to the owner → then start the parked improvement audit (#149, cards AUD-13..19; its feature proposals stay owner decisions). "How-to" here means the HT lane to milestone M1 (HT-3c..HT-10). The 153-exercise library rollout (LIB lane) is the next How-to stage, outside this line.
-- **Parked with the improvement audit:** #149, and #158 (Gym Finder prototype docs, opened 01:58 by another session).
+- **Parked with the improvement audit:** #149, and #158 (Gym Finder prototype docs). The supervisor's Gym Finder review and architecture pages went to the owner at ~04:00; their plan starts only after the finish line, #149's gym bugs (ENG-01, UI-R06, IMP-E04, IMP-N01) and AUD-4.
 - **Owner defaults accepted** (offered with "I'll do my recommendation unless you say otherwise"; not objected to, then "finish all the first audit fixes"):
   - SCI-10: drop the calorie ± bands, show the plain estimate → AUD-20.
   - SCI-11: plain facts, not causes the app cannot prove → AUD-20.
-  - OBS-ENDPOINT: restoring a backup never changes coach on/off, sharing, server URL or device id → folded into AUD-4.
-  - UI-09 reorder: keyboard/screen-reader Move up/down, hidden until focused, no new buttons on screen → folded into AUD-10.
+  - OBS-ENDPOINT: restoring a backup never changes coach on/off, sharing, server URL or device id → AUD-4 (merged).
+  - UI-09 reorder: keyboard/screen-reader Move up/down, hidden until focused → AUD-10 (merged).
   - DEV-01 (Windows): skip; it counts as closed by his decision, and the reminder must say so.
 - **Owner approvals in sessions (10-01):** AUD-3 "Yes cost limit" (quoted on #145). HT-6's two HowToSheet budget entries, approved inside the HT-6 builder session after the auto-mode classifier refused the edit (see 9).
-- **Working method:** weekly usage warning in force (resets 2026-10-03 11:00 UTC). Builds and reviews run in cloud sessions; one Opus reviewer per PR; Sonnet only for mechanical cards. The CI queue is the bottleneck (often 15+ runs queued): builders post READY on local checks plus source-gate and visual-gate-tz, and the supervisor checks android-gate before merging. Cancel CI runs on heads that are already stale.
+- **Owner report 10-01 (~04:20):** "When i start split. The animation pop up of second screen feels like glitch bouncing." → BUG-36 (#163).
+- **Working method:** weekly usage warning in force (resets 2026-10-03 11:00 UTC). Builds and reviews run in cloud sessions; one Opus reviewer per PR. **Merge trains** (decided 04:05): branch `claude/sup-merge-train-N` = latest main + each passed PR's exact reviewed head as merge commits; only clean merges or add-only "keep both" resolutions (the usual one: two cards' gate blocks appended at the same spot in `scripts/screenshot-gate.mjs`); local typecheck + vitest first, then CI on the train PR; it merges with a merge commit and GitHub marks every included PR merged. If CI goes red, drop a PR (bisect), never edit one. Cancel CI runs on stale heads.
 
 ### 8.1 Main
-- Head: `f1e514a` (HT-4b #140).
-- Merged since the 01:00 capture, newest first: HT-4b #140 `f1e514a`, HT-3c #143 `42afd04`, AUD-3 #145 `7477b5d` (Worker deployed; /health ok; `POST /reports {}` = 400), DOC-REPORT main half #127 `3d3e4e1`.
-- Older: `git log --first-parent origin/main`.
+- Head: `170b828` (merge train 3 #164: AUD-10, HT-6).
+- Merged on 10-01 after the 03:30 capture, newest first: train 3 #164 `170b828` (AUD-10 #157, HT-6 #112); train 2 #161 `b795f16` (AUD-1 #146, AUD-4 #154); train 1 #160 `29ab29a` (HT-5 #116, AUD-5 #148, AUD-2 #147, AUD-9 #150, BUG-35 #152, BUG-34 #142, AUD-7 #151, AUD-6 #153, AUD-8 #155, ESC-REPORT app #130, handover #136); COPY-1 #137 `e9e170b`.
+- APKs sent to the owner: train 1 (run 36815479106), train 2 (run 36818143394). Train 3's APK is building.
 
-### 8.2 Finish-line checklists (as of 03:30; re-check heads live)
+### 8.2 Finish-line checklists (as of 06:00; re-check heads live)
 **How-to lane, merge order fixed (K1):**
 
 | Card | PR | State |
 |---|---|---|
-| HT-3c | #143 | merged `42afd04` |
-| HT-4b | #140 | merged `f1e514a` |
-| HT-5 content generator | #116 | review FAIL (field-coverage test missing) → fixed `59f8210` → delta review running |
-| HT-6 grips, hand close-ups, zoom host | #112 | READY `10e6d42` (owner-approved budgets) → review running |
-| HT-7 posture close-ups | #119 | paused until HT-6 merges (D-HT7-L3-text: the text-only re-open did not clear the variance; no third mechanism) |
-| HT-8 feel map and shimmer | #111 | has HT-3c, HT-4b, HT-5 merged in; waits for HT-6 READY, then READY. Its reviewer must check the C19 (d) feel-file count assertion (HT-4b review Low) |
-| HT-9 setup and risks | #113 | finishing; waits for HT-5 and HT-6 READY |
-| HT-10 sweeps, speed, release candidate | — | start its builder when HT-6 merges (plan wave 5) |
-| Golden-B text follow-up | — | from the HT-5 review: seated cable row setup[4] "It's hardest at the start." must be confirmed against cronin2007 or dropped from golden B (plan 2.8), before M1 is called done. Two research-data cite mismatches (difonza2026, weiss1995) and the HT-5 card's stale A4 cue example go with it |
+| HT-3c, HT-4b, HT-5, HT-6 | #143, #140, #116, #112 | merged |
+| HT-7 posture close-ups | #119 | told to resume at 05:53 (merge main, finish, READY) |
+| HT-8 feel map and shimmer | #111 | review FAIL @ f947395 (C19 (d) vacuous + 2 Lows) → FIXED `b2ab38c` (fixes inside its main-merge commit) → delta review running. The brachialis Low is ruled a golden-B gap (comment on #111) |
+| HT-9 setup and risks | #113 | told at 05:53 to merge main (HT-5, HT-6) and post READY |
+| HT-10 sweeps, speed, release candidate | — | builder started 05:53 (session_01SYc1pExBx2PdCN5yomW7y9); READY only after HT-9 merges |
+| Golden-B text follow-up | — | before M1 is called done, through plan 2.8: (1) seated cable row setup[4] "It's hardest at the start." confirmed against cronin2007 or dropped; (2) a feel-note naming the brachialis helper on lat pulldown and seated cable row (removes both `GOLDEN_B_UNNAMED` entries); with them the two research-data cite mismatches (difonza2026, weiss1995) and the HT-5 card's stale A4 cue example |
 
-**First audit, 32 findings (4 P1 + 28 P2):**
+**First audit, 32 findings (4 P1 + 28 P2): 24 fixed on main, UI-09 in part; DEV-01 closed by decision.**
 
 | Card | Findings | PR | State |
 |---|---|---|---|
-| AUD-1 | SCI-01, SCI-02 | #146 | builder told to post READY (b7ea03a); then review |
-| AUD-2 | SEC-03 | #147 | review PASS @ 4dfefab; catch-up, merge (before AUD-4) |
-| AUD-3 | SEC-01 (Worker) | #145 | merged `7477b5d`; deploy checked |
-| AUD-4 | DATA-01, DATA-02 (+OBS-ENDPOINT, OBS-PHOTOS, OBS-LB) | #154 | review FAIL (its test breaks once AUD-2 is in; 3 Lows) → fixing |
-| AUD-5 | REL-01, UI-10 | #148 | review PASS @ 9b9f509; catch-up, merge |
-| AUD-6 | SCI-03, SCI-06, UI-07 | #153 | review PASS @ 70da8f9 (merges clean with AUD-1) |
-| AUD-7 | SCI-07, NAT-01, NAT-02, NAT-03 | #151 | code PASS @ ae49f00 (only staleness open); catch-up, merge |
-| AUD-8 | SCI-04, SCI-05, SCI-08, UI-12 | #155 | review PASS @ a8f5c4f |
-| AUD-9 | SCI-09 (+4 observations) | #150 | review PASS @ d12d603 |
-| AUD-10 | UI-01, UI-03, UI-05, UI-06, UI-09 (Train + reorder) | #157 | building; add-on after AUD-8 merges: Train's previews use the live target inputs |
-| AUD-11 | UI-02, UI-04, UI-11 (+OBS-TONNE) | #159 | READY 691e808 → review running |
-| AUD-12 | UI-08, UI-09 (rest) | #156 | review FAIL (Coach insight expand still mouse-only) → fixing; scope widened to that one Coach.tsx card |
-| AUD-20 | SCI-10, SCI-11 (+OBS-KNOW) | — | card text: 8.7 item 6. Start after AUD-1, AUD-6, AUD-7 and AUD-9 merge |
+| AUD-1..AUD-10 | SCI-01..09, SEC-01, SEC-03, DATA-01/02, REL-01, UI-10, UI-07, UI-12, NAT-01..03, UI-01, UI-03, UI-05, UI-06, UI-09 (Train) | — | merged (trains 1-3 and AUD-3 `7477b5d`) |
+| AUD-11 | UI-02, UI-04, UI-11 (+OBS-TONNE) | #159 | delta FAIL @ 08e13b2 → FIXED; real head **`caee83fdf3fa`** (the builder's comment printed a wrong full SHA, see 9) → delta review running |
+| AUD-12 | UI-08, UI-09 (rest) | #156 | delta PASS @ `bbf0d77`, head frozen; merge train 4 built (`db1cd7d3`, clean except the add-only gate-block conflict), not yet pushed |
+| AUD-20 | SCI-10, SCI-11 (+OBS-KNOW) | #162 | building; told at 05:08 to merge main (AUD-1) before READY |
 | decision | DEV-01 | — | closed by the owner's "skip" default |
 
-**Other open lanes:** COPY-1 #137 review PASS @ 1ac5121, caught up to `f1e514a` at `9b53382`, CI running, merge next (AUD-8/10/11/12 build on its text). BUG-34 #142 review PASS @ 2b1a6dc (4 Lows; phone check wording: "no accent-coloured dot at the top left, no grey dot at the right end of the line"). BUG-35 #152 review FAIL (2 Highs: "kill me now" lookbehind, bare "in" after "disappear") → fixed `649c492` → delta review running. ESC-REPORT app #130 review PASS @ 82e0c5e; APK to the owner after it merges. LIB-8 pilot A #109 waits on LIB-2..LIB-4 and the owner's pilot sheet. #94, #92 parked; #88 watch docs; #3 never merge; #1 stale.
+**Other open lanes:** BUG-36 #163 (split start sheet bounce) READY `d593c5e` → Opus review running. COPY-2 (queued until AUD-10/11/12 merge): the `pre.ts:120` explaining line ("It already accounts for…"), the sentence-style "Before you start …" sheet heading, and an app-wide heading-rule sweep. LIB-8 pilot A #109 waits on LIB-2..LIB-4 and the owner's pilot sheet. #144 (the first audit's docs), #94, #92 parked; #88 watch docs; #3 never merge; #1 stale.
 
-**Suggested merge order** (one at a time, each caught up and green): COPY-1 → AUD-5 → AUD-2 → AUD-9 → AUD-7 → AUD-8 → BUG-34 → ESC-REPORT → AUD-6 → AUD-1 → then each as it passes; the HT lane always in K1 order (HT-5 → HT-6 → HT-7 → HT-8 → HT-9 → HT-10). Send the APK after app merges as batches allow (6.9).
+**AUD-10 follow-up (review Low, optional):** `swappedFromToday` in Train.tsx reads the swap for `today.value`, so a live session past midnight stops carrying the Escobar swap on the live card (no data loss). Goes to the improvement-audit lane.
 
-### 8.3 Running and idle sessions (M/ARC; 03:30)
+### 8.3 Running sessions (M/ARC; 06:00)
 | Session | Role |
 |---|---|
 | session_01Tc7uLSdp7LGknt8xc1i9dc | **Supervisor** (env `env_01Q4EctZ7hnAkbtoGSeRp3Kh`) |
-| session_01TojyzXtcz3DucYjhNoHpKs / session_01DsPv57Tz2B8Go5PAWUTttN | HT-5 builder / reviewer |
-| session_017W69UPzNEuk87SJye8gtM8 / session_011ZZVD6ucm2ka1wZhhc4uKo | HT-6 builder / reviewer |
-| session_01TLQREDwJgfPP2gbHAmEu9T | HT-7 builder (paused) |
-| session_01H5UEjJKi59q226yyhWp9So | HT-8 builder |
-| session_01JY7nLdZ112XUkSfYEukdvL | HT-9 builder |
-| session_01JUWNaacGQv7bNHaDfzFFDX | AUD-1 builder |
-| session_014ky9rayKUjXhgWGZAQGyZm | AUD-2 builder (passed; keep until merged) |
-| session_012kUsb86eWbY6xehettcEs1 / session_01BWYfkS1FPMXUyWSZmHRdUt | AUD-4 builder / reviewer |
-| session_01LeK6Ak5qya9vhDMxrSkHRQ | AUD-6 builder (passed) |
-| session_01HSn4XxrRsdmvD3VdAB1BUF | AUD-7 builder (passed) |
-| session_01THUpDxyVAHHCNnMF7TX4vZ | AUD-8 builder (passed) |
-| session_01LWaP8vZxUAN7kEa1yF9iFN | AUD-9 builder (passed) |
-| session_01CNGCxWpMMqxW6bVLB4vHbG | AUD-10 builder |
-| session_01WrdHzxjpx4S7tbgMSBGXgR / session_01XFUAJ7mcsZAHknH6DfAFnq | AUD-11 builder (Sonnet) / reviewer |
-| session_01K1C4L4uK1QAenWYEKFH16B / session_019BNdBJXNZHzT1isAy1WMPP | AUD-12 builder (Sonnet) / reviewer |
-| session_01Egz6B8CRkz1JvPocDPNMth | COPY-1 fixer (passed) |
-| session_01TuvoksY2tBdSTXypttmrcG | BUG-34 builder (passed) |
-| session_01MtV5yUXR3Ka1BfEHPeKC75 / session_01LppPvkyuXG6UfQpN6nBNx1 | BUG-35 builder / reviewer |
-| session_012xKQbQcRRkuUpTT7aXsm2j | ESC-REPORT app builder (passed) |
+| session_01TLQREDwJgfPP2gbHAmEu9T | HT-7 builder |
+| session_01H5UEjJKi59q226yyhWp9So / session_0171SwcEk6d1MB9aapE1622K | HT-8 builder / reviewer |
+| session_01JY7nLdZ112XUkSfYEukdvL | HT-9 builder (Sonnet) |
+| session_01SYc1pExBx2PdCN5yomW7y9 | HT-10 builder |
+| session_01WrdHzxjpx4S7tbgMSBGXgR / session_01XFUAJ7mcsZAHknH6DfAFnq | AUD-11 builder / reviewer |
+| session_01K1C4L4uK1QAenWYEKFH16B | AUD-12 builder (passed, frozen) |
+| session_01Gje5Z5e5kbLSWCEJFhKVJD | AUD-20 builder |
+| session_016V5wVkz8EnRMpRrRShv2aE / session_0194fUfDypXY9Tj2hnyFG75z | BUG-36 builder / reviewer |
 | session_01RFiJ26snbpASbeBRXtDcY3 | LIB-8 pilot A builder |
 
-Archive each reviewer after its verdict and each builder after its merge (5.9). The owner's own sessions (best-practice review, watch docs handover, website concepts, other projects) are not workers: never touch them.
+Every other worker from the 03:30 list was archived after its verdict or merge. Archive each reviewer after its verdict and each builder after its merge (5.9). The owner's own sessions are not workers: never touch them.
 
 ### 8.4 Routines and workflows
 | ID | What | When |
 |---|---|---|
-| trig_01CtcvAE1PGAtH4dkxLVQZsR | "M/ARC supervisor loop", the hourly tick into the supervisor session. Its prompt holds the focus, the finish line, the merge queue and the owner rules (updated 01:25 UTC 10-01). Update it when the order changes. | cron `58 * * * *` |
+| trig_01CtcvAE1PGAtH4dkxLVQZsR | "M/ARC supervisor loop", the hourly tick into the supervisor session (focus, finish line, merge queue, owner rules; updated 01:25 UTC 10-01). | cron `58 * * * *` |
 | trig_01XBaJHD9jyLEXPUdpMpykLo | Watch docs session: ask the owner once whether Huawei replied. | once, 2026-10-13 09:00 |
 
-All other one-shots up to 03:13 UTC have fired. No in-chat Workflows are running.
+All one-shot messages to workers up to 05:56 UTC have fired. No in-chat Workflows are running.
 
 ### 8.5 Relay tracker
-- Set to done with evidence on 10-01: AUD-3, HT-3c, HT-4b. Every other merge in 8.1 still needs its row set to done; HT-5..HT-10, AUD-1..AUD-12, AUD-20, COPY-1, BUG-34, BUG-35 may lack rows (add them as they merge).
-- LOG.md carries the 10-01 focus and finish-line entries.
+- Set to done with evidence on 10-01: AUD-1..AUD-10, HT-3c, HT-4b, HT-5, HT-6, COPY-1, BUG-34, BUG-35, ESC-REPORT. Add as they merge: HT-7..HT-10, AUD-11, AUD-12, AUD-20, BUG-36.
 
 ### 8.6 Owner to-dos (his side)
-1. Phone checks on each APK sent (BUG-34's launch frame; ESC-REPORT's Report button; AUD-7's three watch and Health Connect checks, listed in #151).
-2. Approve, inside the builder session, any `tests/howto/budgets.json` raise the classifier refuses (expected for HT-5/7/8/9/10, as for HT-6).
+1. Phone checks on the APKs sent (train 1: launch animation, Report button, crisis card, AUD-7's watch / pause / sleep checks; train 2: backup restore keeps coach settings).
+2. Approve, inside the builder session, any `tests/howto/budgets.json` raise the classifier refuses (expected for HT-7/8/9/10, as for HT-6).
 3. Still open from 01:00: the REL-3 phone steps; OWN-1 offline key backups in 2 places; the pilot sheet answers (LIB-8, also golden B approval D-LR23-2); DEV-CHECKS device list; Play Console developer name "Marc Darenz"; the parked decisions (ARCH-1, PAY-1, PREM-PLAN, K11); the closed test, then the store upload.
 4. Done, do not re-ask: "Yes cost limit"; HT-6 budgets; error reports switched on; the error-report token was never pasted.
 
 ### 8.7 Next steps, in order
-1. On wake: re-arm the PR monitor (backdate `SINCE`), read the latest comment on every open PR, check which sessions are idle and waiting on CI.
-2. Merge queue per 8.2, one at a time: catch the head up with a merge commit, wait for all four checks, check the whole diff, merge, update FINISH-LINE and Relay, archive the passed builder.
-3. Each READY / FIXED post gets one Opus reviewer (or a delta review by the same reviewer).
-4. When HT-6 merges: start HT-10's builder; tell HT-7 to resume; tell HT-8 and HT-9 to merge HT-6's head and post READY.
-5. When AUD-8 merges: tell AUD-10 to apply its add-on (Train previews use the live target inputs).
-6. When AUD-1, AUD-6, AUD-7 and AUD-9 have merged, start AUD-20 (Opus). Card: SCI-10, the calorie display shows the plain estimate with no ± band; SCI-11, recovery/readiness/coach text states plain facts, not unproven causes, and confidence labels describe data completeness only; OBS-KNOW, knowledge.json sources stay data only (never sent to the model or shown, per cards.ts and LR-23), add a PMID or DOI only when verified, never a URL in src/, and narrow the 4 broad statements the audit names. No number or threshold changes.
-7. Golden-B follow-up (8.2) through the golden update procedure before M1 is called done.
+1. On wake: re-arm the PR monitor (backdate `SINCE`), read the latest comment on every open PR, check which sessions are idle.
+2. AUD-11 verdict on the real head `caee83fdf3fa`: if PASS, add it to merge train 4 (it merges clean on `db1cd7d3`), push the train with AUD-12 (+ this handover), run CI, merge.
+3. HT-8 delta verdict: if PASS, catch it up with main (HT-6 is in) through a train after HT-7 (K1 order: HT-7 before HT-8).
+4. HT-7 and HT-9 READY → one Opus reviewer each (HT-9 likely needs one fresh). HT-10 merges after HT-9; tell it each time an HT card merges.
+5. BUG-36 verdict → train. AUD-20 READY → reviewer.
+6. After AUD-11 and AUD-12 merge: start COPY-2.
+7. Golden-B follow-ups (8.2) through the golden update procedure before M1 is called done.
 8. At the finish line: notify the owner (push + chat, naming DEV-01 as closed by his decision), then start the improvement audit lane.
 
 ### 8.8 Open conflicts (the inputs disagreed; resolve them live)
@@ -799,6 +776,9 @@ All other one-shots up to 03:13 UTC have fired. No in-chat Workflows are running
 | The auto-mode classifier read a `tests/howto/budgets.json` ceiling raise (D-HT3c-1) as a test removal and blocked HT-6. | Never work around it, by any agent. Ask the owner for one approval message in that builder's session, naming the exact entries and values. Expect the same for later HT cards. |
 | Builders ended their turn "waiting on CI" while android-gate sat queued for over an hour, so READY was never posted. | Builders post READY on local checks plus source-gate and visual-gate-tz; the supervisor checks android-gate before merging. Nudge idle "waiting on CI" sessions on every tick. |
 | The 01:00 handover said AUD-1 and AUD-2 had passed review; neither had a verdict yet. | Write a state line only from a verdict comment you have read at that head. |
+| A builder's FIXED comment printed a wrong full SHA (AUD-11: `caee83f3ea09…`; the real head was `caee83fdf3fa…`), and the supervisor passed it on to the reviewer. | Before triggering a reviewer or a train, read the head with `git ls-remote origin refs/pull/N/head`; never copy a SHA from a comment. |
+| HT-8 put its review fixes inside its main-merge commit (`b2ab38c`), so there was no fix commit to diff. | Tell the reviewer, and have it diff the fix files against the pre-merge head and check the merge resolution with `git diff <main> <head> -- <file> \| grep '^-'`. |
+| Two cards' gate blocks were both appended at the end of `scripts/screenshot-gate.mjs`, so every train with both conflicts there. | Resolve as "keep both" (one block after the other, no line removed from either side, checked with `node --check` and a `grep '^-'` of each side's diff). Anything beyond that drops the PR from the train. |
 
 More incidents: `.claude/skills/supervisor/gotchas.md` and `.claude/skills/builder/gotchas.md`.
 

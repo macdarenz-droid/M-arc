@@ -5,6 +5,8 @@ import { daysBetween } from '@/core/dates';
 
 export type Direction = 'up' | 'flat' | 'down' | 'unknown';
 export type Confidence = 'low' | 'medium' | 'high';
+/** AUD-20 (SCI-11): confidence here counts data points, so its label names how much data there is, never accuracy. */
+export const DATA_LABEL: Record<Confidence, string> = { high: 'Plenty of data', medium: 'Some data', low: 'Little data' };
 
 export interface Trend {
   direction: Direction;
