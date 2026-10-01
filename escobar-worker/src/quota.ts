@@ -24,6 +24,9 @@ const globalKey = (day: string) => `g:${day}`;
 
 const DEVICE_MESSAGE = "That's today's coaching limit. Escobar is resting and back after midnight UTC; your notes still update.";
 const GLOBAL_MESSAGE = 'Escobar is resting for today. Your notes still update.';
+const UNAVAILABLE_MESSAGE = 'The coach is unavailable right now.';
+/** Retry-After when the quota store cannot enforce (AUD-3): an outage, not a used-up day. */
+export const ENFORCEMENT_RETRY_SEC = 60;
 
 async function read<T>(kv: KVNamespace, key: string, fallback: T): Promise<T> {
   try { return ((await kv.get(key, 'json')) as T | null) ?? fallback; } catch { return fallback; }
@@ -34,17 +37,39 @@ const counter = (env: Env, now: number) => env.QUOTA_DO!.get(env.QUOTA_DO!.idFro
 /** Seconds until the next UTC midnight: when the daily counters reset. */
 export const resetInSec = (now: number): number => Math.ceil((Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), new Date(now).getUTCDate() + 1) - now) / 1000);
 
-export type QuotaResult = { ok: true } | { ok: false; message: string; retryAfter: number };
+/** `id` names the Durable Object reservation to reconcile or release; the KV fallback has none. */
+export type QuotaResult = { ok: true; id?: string } | { ok: false; message: string; retryAfter: number };
 
-export async function checkQuota(env: Env, keys: QuotaKeys, now: number): Promise<QuotaResult> {
+/** How long admission waits for the Durable Object before refusing the paid call. */
+export const ADMIT_TIMEOUT_MS = 5_000;
+
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const t = new Promise<never>((_, rej) => { timer = setTimeout(() => rej(new Error(`timed out after ${ms} ms`)), ms); });
+  return Promise.race([p, t]).finally(() => { if (timer !== undefined) clearTimeout(timer); });
+}
+
+/**
+ * AUD-3: with the Durable Object bound, admission checks and reserves one step, one turn and
+ * `reserveOut` output tokens in one atomic call. If the object throws or times out the paid call
+ * is refused (fail closed) with a `quota` error that asks for a retry in 60 s.
+ */
+export async function admitQuota(env: Env, keys: QuotaKeys, now: number, reserveOut: number, timeoutMs = ADMIT_TIMEOUT_MS): Promise<QuotaResult> {
   const lim = limits(env);
   const retryAfter = resetInSec(now);
   if (env.QUOTA_DO) {
+    const id = crypto.randomUUID();
     try {
-      const r = await counter(env, now).check(keys, lim);
-      if (r.ok) return { ok: true };
+      const r = await withTimeout(Promise.resolve(counter(env, now).admit(keys, lim, id, reserveOut, now)), timeoutMs);
+      if (r.ok) return { ok: true, id };
       return { ok: false, message: r.scope === 'global' ? GLOBAL_MESSAGE : DEVICE_MESSAGE, retryAfter };
-    } catch (e) { console.error('quota check failed:', String(e)); return { ok: true }; }
+    } catch (e) {
+      console.error('quota admission failed:', String(e));
+      // A timed-out admit may still land: release it so the hold does not wait for expiry.
+      void Promise.resolve().then(() => counter(env, now).release(id)).catch(() => {});
+      // An outage is short: ask for a retry in a minute, not after midnight.
+      return { ok: false, message: UNAVAILABLE_MESSAGE, retryAfter: ENFORCEMENT_RETRY_SEC };
+    }
   }
   if (!env.QUOTA) return { ok: true };
   const day = dayKey(now);
@@ -59,14 +84,16 @@ export async function checkQuota(env: Env, keys: QuotaKeys, now: number): Promis
 }
 
 /**
- * Records one finished model step. The Durable Object counts it now: steps +1, its output
- * tokens, and a turn when it ends one. The KV fallback writes once per turn (`turnSteps` steps
- * and the last step's output), as before. Best-effort; never throws.
+ * Records one billed model step. The Durable Object reconciles reservation `id` with it: steps +1,
+ * its output tokens, and a turn when it ends one. The KV fallback writes once per turn (`turnSteps`
+ * steps and the last step's output), as before. Never throws; if the Durable Object write fails,
+ * the reservation stays and is charged in full when it expires.
  */
-export async function recordStep(env: Env, keys: QuotaKeys, now: number, step: { turnEnded: boolean; outputTokens: number; turnSteps: number }): Promise<void> {
+export async function recordStep(env: Env, keys: QuotaKeys, now: number, step: { turnEnded: boolean; outputTokens: number; turnSteps: number }, id?: string): Promise<void> {
   try {
     if (env.QUOTA_DO) {
-      await counter(env, now).add(keys, { steps: 1, out: step.outputTokens, turns: step.turnEnded ? 1 : 0 });
+      const delta = { steps: 1, out: step.outputTokens, turns: step.turnEnded ? 1 : 0 };
+      await (id ? counter(env, now).reconcile(id, delta) : counter(env, now).add(keys, delta));
       return;
     }
     if (!env.QUOTA || !step.turnEnded) return;
@@ -80,4 +107,10 @@ export async function recordStep(env: Env, keys: QuotaKeys, now: number, step: {
       env.QUOTA.put(globalKey(day), JSON.stringify({ steps: g.steps + step.turnSteps, out: (g.out ?? 0) + step.outputTokens }), { expirationTtl: 172_800 }),
     ]);
   } catch (e) { console.error('quota write failed:', String(e)); }
+}
+
+/** Drops reservation `id` for a step that billed nothing. Never throws; a failed release expires. */
+export async function releaseQuota(env: Env, now: number, id: string | undefined): Promise<void> {
+  if (!env.QUOTA_DO || !id) return;
+  try { await counter(env, now).release(id); } catch (e) { console.error('quota release failed:', String(e)); }
 }
