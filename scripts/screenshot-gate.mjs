@@ -7063,7 +7063,7 @@ for (const theme of ['silent-black', 'paper']) {
   const LABEL_WORDS = ['Measured', 'Mechanics', 'Coaching consensus', 'Weak for this use'];
   const patterns = ['CONTACT_RE', 'SOURCE_RE', 'SOURCE_CS_RE'].map(k => ({ source: ESC_NC_RE[k].source, flags: ESC_NC_RE[k].flags }));
   let bad = 0, sheets = 0;
-  for (const theme of H.HT_THEMES) {
+  await Promise.all(H.HT_THEMES.map(async theme => {   // themes side by side, each in its own context
     const { ctx, page } = await H.openAppTrain(browser, PORT, theme, { onError: m => { errors.push(`${tag} ${theme}: page error: ${m}`); bad++; } });
     try {
       for (const [index, [, id]] of H.HT_PLATES.entries()) {
@@ -7116,7 +7116,7 @@ for (const theme of ['silent-black', 'paper']) {
     } finally {
       await ctx.close();
     }
-  }
+  }));
   console.log(`${tag}: ${H.HT_THEMES.length} themes x ${H.HT_PLATES.length} exercises (${sheets} sheets), ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
@@ -7136,7 +7136,7 @@ for (const theme of ['silent-black', 'paper']) {
   const GOLD_IDS = [...new Set([...readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'), 'utf8').matchAll(/id="([a-z-]+-step-\d+-show)"/g)].map(m => m[1]))].sort();
   if (GOLD_IDS.length !== 17) errors.push(`${tag}: golden B has ${GOLD_IDS.length} setup "Show me" buttons, expected 17`);
   let bad = 0, opened = 0, pending = 0;
-  for (const theme of ['silent-black', 'paper']) {
+  await Promise.all(['silent-black', 'paper'].map(async theme => {   // both themes side by side, each in its own context
     const { ctx, page } = await H.openAppTrain(browser, PORT, theme, { onError: m => { errors.push(`${tag} ${theme}: page error: ${m}`); bad++; } });
     const seen = [];
     try {
@@ -7149,7 +7149,9 @@ for (const theme of ['silent-black', 'paper']) {
           seen.push(btn.id);
           if (btn.hm) { errors.push(`${tag} ${theme}/${id}: ${btn.id} is a handling-mistake button inside Setup`); bad++; }
           await page.evaluate(i => document.getElementById(i).click(), btn.id);
-          const shown = await page.locator(`dialog.sheet.ht .zx[data-zoom="${btn.key}"]`).waitFor({ state: 'visible', timeout: 8000 }).then(() => true).catch(() => false);
+          // a close-up that must open gets 8 s; a posture tap before HT-7 (pending, never counted as open) gets 1 s
+          const must = HT7 || btn.key === 'hand';
+          const shown = await page.locator(`dialog.sheet.ht .zx[data-zoom="${btn.key}"]`).waitFor({ state: 'visible', timeout: must ? 8000 : 1000 }).then(() => true).catch(() => false);
           await H.settleApp(page);
           const state = await page.evaluate(k => {
             const dlg = document.querySelector('dialog.sheet.ht'), panel = dlg.querySelector(`.zx[data-zoom="${k}"]`);
@@ -7172,7 +7174,7 @@ for (const theme of ['silent-black', 'paper']) {
       await ctx.close();
     }
     if (JSON.stringify([...seen].sort()) !== JSON.stringify(GOLD_IDS)) { errors.push(`${tag} ${theme}: setup "Show me" ids ${JSON.stringify([...seen].sort())} !== golden B's ${JSON.stringify(GOLD_IDS)}`); bad++; }
-  }
+  }));
   if (!HT7 && opened < 10) { errors.push(`${tag}: only ${opened} hand close-ups opened from Setup in 2 themes, expected 10 (5 hand-kind buttons)`); bad++; }
   if (HT7 && pending) { errors.push(`${tag}: ${pending} posture buttons left pending with HT-7 in the build`); bad++; }
   console.log(`${tag}: 2 themes x ${H.HT_PLATES.length} exercises, golden B's ${GOLD_IDS.length} setup "Show me" buttons tapped by id, ${opened} opened their close-up, ${pending} pending HT-7${HT7 ? '' : ' (HT-7 not in this build)'}, ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
