@@ -1253,3 +1253,24 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
   **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
   **Source**: card ESC-W-CITE, reserved_paths.
+
+## AUD-9: weekly review and plan volume rules (AUD-9 builder, 2026-10-01)
+
+- **D-AUD9-1 Decided**: the plan evaluator counts weekly sets with `SET_WEIGHT` (primary 1, secondary 0.5, stabiliser 0), the weights `effectiveSetsByMuscle` uses for every logged week. `ROLE_WEIGHT` (secondary 0.55) stays for exposure and recovery only.
+  **Why**: SCI-09. A plan was judged on 9.9 triceps sets for 3 × 6 bench, but the same week logged counts 9.0, so a band verdict could flip at the edge. The weekly set count is already the one shared definition (BR-16); the plan now reads the same one rather than a new constant.
+  **Source**: card AUD-9, audit SCI-09.
+- **D-AUD9-2 Decided**: plan push/pull and upper/lower balance count each exercise set once, split evenly across the buckets of its primary muscles, as `trainingBalance` does (BR-17). The flags use `BALANCE.ratio` (2) and `UPPER_PER_LOWER` (1.5): push- or pull-heavy at 2:1, upper-heavy at upper/lower ≥ 3 (unchanged), lower-heavy at upper/lower ≤ 0.75 (was 0.33). The plan keeps its own minimum sets (8 upper, 12 total) because it judges one week, not three.
+  **Why**: SCI-09's second half. The plan summed per-muscle counts, so a bench set counted as chest, triceps and front-delt push work, and its lower-heavy line disagreed with the history rule's. 0.75 is the history rule's 2:1 lower lean once upper is scaled by 1.5; an even 1:1 upper/lower split is still not flagged.
+  **Source**: card AUD-9, audit SCI-09; `src/brain/balance.ts`.
+- **D-AUD9-3 Decided**: the weekly failure share, the weekly easy-high-rep share, the post-session effort mix and the plan-vs-done line read `effortLabel`, so a `kind:'failure'` set with no effort counts as max. `effortDrift` reads it too.
+  **Why**: OBS-EFFORTLABEL. Recovery and history already treat a failure set as max; restored data can carry a failure set with no effort, and it fell out of the tips.
+  **Source**: card AUD-9, audit OBS-EFFORTLABEL.
+- **D-AUD9-4 Decided**: the weekly failure-share tip fires above the goal's `failureShareCap` (lean and gain 0.5, strength and muscle 0.4, strength 0.3), and the rep-mix "few heavy sets" tip fires below the goal's `heavyShareMin` (strength 0.4, strength and muscle 0.25; goals without one get no such tip). Both tips' noticed line now names the goal's number, as the post-session effort-mix line already does.
+  **Why**: OBS-THRESH. The weekly review hard-coded 0.5 and 0.15 (strength only), while the goal policies, used by the post-session and coach rules, say otherwise. The goal policy is the existing source; no new constants.
+  **Source**: card AUD-9, audit OBS-THRESH; `src/data/goals.ts`.
+- **D-AUD9-5 Decided**: `effortDrift` returns `unknown` when the newer half's mean working load (`workKg`) differs from the older half's by more than 1 %, or their mean working reps differ by one rep or more (`SAME_WORK`). The rule's copy ("harder sets at the same load", "the same work is getting easier") is unchanged and is now true whenever it shows.
+  **Why**: OBS-DRIFT. A planned load or rep step made later sets feel harder and read as lost recovery. 1 % is below the smallest usual step (1.25 kg on 100 kg is 1.2 %), and it still lets a load stored from a unit conversion match itself. One rep is the smallest rep step; reps are included because double progression adds reps at the same load. Deload's `harderCount` and the coach's read tool get the same, stricter answer.
+  **Source**: card AUD-9, audit OBS-DRIFT.
+- **D-AUD9-6 Decided**: `weightTrendPctPerWeek` takes an optional `today`; given it, the 28-day window ends today (entries after today are ignored), so a log whose last weigh-in is older than the window gives no trend. The weekly review passes `today`. The two coach tool calls (`show.ts`, `read.ts`) are outside this card's write scope and keep the old anchor; `read.ts` already filters its log to a `since` date.
+  **Why**: OBS-WEIGHT. A months-old log still produced a current weight-trend tip. Ending the window today reuses the existing 28-day, 7-entry, 14-day-span rule instead of adding a separate freshness constant.
+  **Source**: card AUD-9, audit OBS-WEIGHT.
