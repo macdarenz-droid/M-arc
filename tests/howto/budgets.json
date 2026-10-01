@@ -3,21 +3,21 @@
   "budgets": [
     {
       "chunk": "HowToSheet-*.js",
-      "rawMax": 6954,
-      "gzMax": 2968,
-      "measuredRaw": 6321,
-      "measuredGz": 2698,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 18545,
+      "gzMax": 7011,
+      "measuredRaw": 16859,
+      "measuredGz": 6373,
+      "setBy": "HT-6",
+      "reason": "HT-6 adds the Look closer chips, the Grip section with its handling mistakes, the zoom host (open/close, pager, Trace/Mistake hand-off) and the hand close-up registry to the sheet chunk."
     },
     {
       "chunk": "HowToSheet-*.css",
-      "rawMax": 9565,
-      "gzMax": 2169,
-      "measuredRaw": 8695,
-      "measuredGz": 1971,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 16861,
+      "gzMax": 3195,
+      "measuredRaw": 15328,
+      "measuredGz": 2904,
+      "setBy": "HT-6",
+      "reason": "HT-6 adds hand.css: golden B's HAND_CSS and the chip, close-up frame and grip rules (each exercise's close-up CSS loads with its own hand chunk)."
     },
     {
       "chunk": "ht-dumbbell-lateral-raise-*.js",
