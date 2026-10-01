@@ -7,7 +7,7 @@
 // (HT-6's ZoomHost listens for it on the dialog/root). HT-6's own delegated click handler on the sheet panel
 // only ever opens its own `.hm-show`; every other card's "Show me" emits its own event (critic fix: HT-10's
 // sweep found the 19 setup buttons dead on arrival - docs/COACHING-DECISIONS.md).
-import { useState } from 'preact/hooks';
+import { useLayoutEffect, useState } from 'preact/hooks';
 import type { VNode, JSX } from 'preact';
 import { chromeIdOf } from '../PlateView';
 import { iconBase } from '@/ui/icons';
@@ -80,7 +80,20 @@ export function renderSetup(howTo: SectionProps['howTo'], open: boolean, onToggl
   );
 }
 
+/** HT-3b A3 (supervisor ruling on #113): Setup and Risks are below the plate, so they render after its first paint,
+ *  each in a task of its own (two frames, then a macrotask), never inside the timed open. */
+export function useAfterFirstPaint(): boolean {
+  const [ready, setReady] = useState(false);
+  useLayoutEffect(() => {
+    let raf = requestAnimationFrame(() => { raf = requestAnimationFrame(() => { timer = setTimeout(() => setReady(true), 0); }); });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    return () => { cancelAnimationFrame(raf); clearTimeout(timer); };
+  }, []);
+  return ready;
+}
+
 export function Setup({ howTo }: SectionProps) {
   const [open, setOpen] = useState(false);
-  return renderSetup(howTo, open, () => setOpen(o => !o));
+  const ready = useAfterFirstPaint();
+  return ready ? renderSetup(howTo, open, () => setOpen(o => !o)) : null;
 }

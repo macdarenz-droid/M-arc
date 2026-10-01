@@ -9,6 +9,7 @@ import { iconBase } from '@/ui/icons';
 import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '@/howto/archetypes';
 import type { RedFlagBlock, RiskJoint } from '@/howto/content-types';
 import type { SectionProps } from './index';
+import { useAfterFirstPaint } from './Setup';
 
 /** golden B's `I.alert(16)`, byte-equivalent path. */
 const AlertIcon = () => <svg {...iconBase(16)}><path d="M12 8v5M12 16.5v.5" /><circle cx="12" cy="12" r="9" /></svg>;
@@ -20,7 +21,8 @@ const FLAG: Readonly<Record<RiskJoint, RedFlagBlock>> = {
   elbow: RED_FLAG_ELBOW,
 };
 
-export function Risks({ howTo }: SectionProps) {
+/** Pure render: no hooks, so it is unit-testable by calling it directly (project convention: no jsdom). */
+export function renderRisks(howTo: SectionProps['howTo']) {
   const pre = chromeIdOf(howTo);
   const risks = howTo.risks ?? [];
   const flags = howTo.riskFlags ?? ['wrist'];
@@ -48,4 +50,8 @@ export function Risks({ howTo }: SectionProps) {
       <p class="ht-disclaimer" id={`${pre}-disclaimer`}>{DISCLAIMER}</p>
     </>
   );
+}
+
+export function Risks({ howTo }: SectionProps) {
+  return useAfterFirstPaint() ? renderRisks(howTo) : null;
 }

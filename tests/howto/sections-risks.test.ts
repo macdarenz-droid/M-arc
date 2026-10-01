@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { readdirSync } from 'node:fs';
 import type { VNode } from 'preact';
-import { Risks } from '@/slices/howto/sections/Risks';
+import { renderRisks } from '@/slices/howto/sections/Risks';
 import { chromeIdOf } from '@/slices/howto/PlateView';
 import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '@/howto/archetypes';
 import type { BuiltHowTo } from '@/howto/types';
@@ -39,7 +39,7 @@ describe('HT9-A3: Risks ("Risks and when to stop")', () => {
 
     for (const h of all) {
       const pre = chromeIdOf(h);
-      const tree = Risks({ howTo: h }) as AnyVNode;
+      const tree = renderRisks(h) as AnyVNode;
 
       const rkItems = byTag(tree, 'li');
       expect(rkItems.map(li => li.props.children)).toEqual((h.risks ?? []).map(r => r.text));
@@ -69,7 +69,7 @@ describe('HT9-A3: Risks ("Risks and when to stop")', () => {
   it('mutation: a disclaimer with the wrong text fails the content check (proves the test bites)', async () => {
     const all = await Promise.all(modules());
     const h = all[0]!;
-    const top = elements(Risks({ howTo: h }) as AnyVNode);
+    const top = elements(renderRisks(h) as AnyVNode);
     const real = top.find(v => hasClass(v, 'ht-disclaimer'))!;
     expect(real.props.children).toBe(DISCLAIMER);
     // the mutation: pretend the disclaimer text got reworded, as a broken build might do
@@ -82,13 +82,24 @@ describe('HT9-A3: Risks ("Risks and when to stop")', () => {
     const all = await Promise.all(modules());
     const pullUp = all.find(h => h.id === 'lib_pull_up')!;
     expect(pullUp.riskFlags).toEqual(['wrist', 'shoulder', 'elbow']);
-    const real = elements(Risks({ howTo: pullUp }) as AnyVNode).filter(v => hasClass(v, 'redflag'));
+    const real = elements(renderRisks(pullUp) as AnyVNode).filter(v => hasClass(v, 'redflag'));
     expect(real).toHaveLength(3);
 
     // the mutation: a broken component that always shows only the shared wrist block
-    const broken = elements(Risks({ howTo: { ...pullUp, riskFlags: ['wrist'] } }) as AnyVNode).filter(v => hasClass(v, 'redflag'));
+    const broken = elements(renderRisks({ ...pullUp, riskFlags: ['wrist'] }) as AnyVNode).filter(v => hasClass(v, 'redflag'));
     expect(broken).toHaveLength(1);
     expect(broken.length === pullUp.riskFlags!.length).toBe(false);
     expect(real.length === pullUp.riskFlags!.length).toBe(true);
+  });
+});
+
+// LR-23 (no evidence labels in the UI): golden B's shared module, which HT-5 generates archetypes.ts from, carries no
+// SHOW_EVIDENCE flag either (moved here from HT-5's content-gen.test.ts, review of #113 finding 5).
+describe('HT-9 LR-23: no SHOW_EVIDENCE flag', () => {
+  it('golden B\'s shared module and archetypes.ts export no SHOW_EVIDENCE', async () => {
+    const shared = await import(/* @vite-ignore */ new URL('../../tools/plates/layers/howto/shared.mjs', import.meta.url).href);
+    const archetypes = await import('../../src/howto/archetypes');
+    expect('SHOW_EVIDENCE' in shared).toBe(false);
+    expect('SHOW_EVIDENCE' in archetypes).toBe(false);
   });
 });

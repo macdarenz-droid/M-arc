@@ -211,9 +211,7 @@ describe('HT5-A5: archetypes.ts is generated from golden B\'s shared module, byt
   });
 
   it('never exports SHOW_EVIDENCE (LR-23: no evidence labels in the UI)', async () => {
-    const shared = await import(/* @vite-ignore */ url('tools/plates/layers/howto/shared.mjs'));
     const archetypes = await import('../../src/howto/archetypes');
-    expect('SHOW_EVIDENCE' in shared).toBe(false);
     expect('SHOW_EVIDENCE' in archetypes).toBe(false);
   });
 
