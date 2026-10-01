@@ -20,7 +20,7 @@ export function MemoryScreen({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title="What Escobar knows" onClose={onClose} palace="panel.memory">
       <div class="stack-sm">
-        {!items.length && <p class="small muted">Nothing yet. When you tell Escobar something worth keeping, like an injury or the equipment you have, it shows up here.</p>}
+        {!items.length && <p class="small muted">Nothing yet.</p>}
         {items.map(m => (
           <Row key={m.id} trailing={<button type="button" class="btn btn-quiet btn-sm" aria-label={`Forget: ${m.text}`} onClick={() => setMemory(list => list.filter(x => x.id !== m.id))}><IconTrash size={16} /></button>}>
             <span class="small">{m.text}</span>
