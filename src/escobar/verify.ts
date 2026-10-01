@@ -206,7 +206,7 @@ const CRISIS = new RegExp(String.raw`\b(${[
   String.raw`wish i (wasn'?t|weren'?t|was not|were not) alive`,
   String.raw`(what'?s|what is) the point (of|in) (living|being alive)`,
   String.raw`(want|wanna|wish|need) (for )?(it all|everything) to (end|stop)`,
-  String.raw`((want|going|need) to|wanna|gonna) disappear(?!\s+(into|in(?! my sleep\b)|inside|under|behind|to (the )?(gym|sauna|pool|beach|bed|couch)\b|for (a |the |\d+ )?(weekend|holiday|vacation|week|day|hour|minute)s?\b))`,
+  String.raw`((want|going|need) to|wanna|gonna) disappear(?!\s+((into|in(?! my sleep\b)|inside|under|behind)\b|to (the )?(gym|sauna|pool|beach|bed|couch)\b|for (a |the |\d+ )?(weekend|holiday|vacation|week|day|hour|minute)s?\b))`,
   String.raw`(?<!\b(${GYM_WORDS}|lol|lmao)\b[^.!?]*)kill me now(?![^.!?]*(\b(${GYM_WORDS}|lol|lmao|haha\w*|jk)\b|[\u{1F602}\u{1F923}\u{1F480}\u{1F605}]))`,
   String.raw`((want|going|about|trying) to|wanna|gonna|finna|tryna) kms`,
   String.raw`wish i (was|were) dead`,

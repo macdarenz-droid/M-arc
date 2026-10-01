@@ -206,6 +206,8 @@ describe('safety pre-screen (§19)', () => {
     ['i want to disappear', true],
     ['i just wanna disappear forever', true],
     ['i want to disappear in my sleep', true],
+    ['i want to disappear instantly', true],
+    ['i wanna disappear underneath it all', true],
     ['i want to unalive', true],
     ["i'm going to unalive", true],
     ['kill me now', true],
