@@ -27,7 +27,11 @@ const SHARED_REL = `${LAYERS}/howto/shared.mjs`;
 
 /** The base-file fields HT-5 writes into ht-<slug>.ts. `zooms` is narrowed to descriptors (below); `feel` stays out
  *  (HT-8's own file); `plate`, `schema`, `id`, `name` are already written by plates.mjs. */
-const BASE_KEYS = ['rev', 'extends', 'handling', 'contacts', 'setup', 'posture', 'zooms', 'chips', 'copy', 'mistakes', 'risks', 'riskFlags', 'redFlag', 'sources', 'research'];
+export const BASE_KEYS = ['rev', 'extends', 'handling', 'contacts', 'setup', 'posture', 'zooms', 'chips', 'copy', 'mistakes', 'risks', 'riskFlags', 'redFlag', 'sources', 'research'];
+/** Fields a golden-B default export may carry that are neither BASE_KEYS nor {schema, id, name, plate, zooms, feel}
+ *  (review finding on PR #116): page-only, never read by the generator, and named here so a new one can't go
+ *  silently unmapped. `openItems` (leg_press): what the sheet still owes the card (mockup-only render-report list). */
+export const PAGE_ONLY_KEYS = ['openItems'];
 
 const DESCRIPTOR_KEYS = ['key', 'chip', 'chipCaption', 'heading', 'kind', 'feelRow'];
 
