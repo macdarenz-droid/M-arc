@@ -70,6 +70,11 @@ function zScore(value: number, series: number[]): number | null {
 export const READINESS_WEIGHTS = { checkIn: 0.35, sleep: 0.25, recovery: 0.15, rhr: 0.10, hrv: 0.10, load: 0.05 } as const;
 export const READINESS_GREEN_AT = 67;
 export const READINESS_RED_AT = 33;
+/**
+ * AUD-1 (SCI-02): the least sleep need the sleep part assumes, in minutes: the knowledge card
+ * sleep_duration's 7 h adult minimum (AASM/SRS consensus, Watson et al. 2015).
+ */
+export const SLEEP_NEED_FLOOR_MIN = 7 * 60;
 /** Under this many days of check-ins and sleep, the score reads as calibrating. */
 export const READINESS_CALIBRATING_DAYS = 14;
 /**
@@ -193,12 +198,14 @@ export function readinessWithInputs(input: ReadinessInput): { result: ReadinessR
     }
   }
 
-  // Sleep hours (0.25): last night vs the 14-night need, and a 3-night debt. Bedtime regularity
+  // Sleep hours (0.25): last night vs the need, and a 3-night debt. AUD-1 (SCI-02): the need is
+  // the 14-night median (consistency) but never under the 7 h adult floor (sufficiency), so
+  // habitual short sleep never reads as enough. Bedtime regularity
   // (6.4's third component) has no source anywhere in this app yet, so the other two are
   // renormalised to fill the full 0.25 rather than leaving it permanently short — see decisions.
   let sleepScore: number | null = null;
   if (baselines.sleep14dMedian != null) {
-    const need = baselines.sleep14dMedian;
+    const need = Math.max(baselines.sleep14dMedian, SLEEP_NEED_FLOOR_MIN);
     const lastNight = healthDays.find(d => withinDays(d.day, today, 1) && d.sleepMinutes != null)?.sleepMinutes ?? null;
     const last3 = healthDays.filter(d => withinDays(d.day, today, 3) && d.sleepMinutes != null).map(d => d.sleepMinutes!);
     const lastNightScore = lastNight != null ? clamp(lastNight / need, 0, 1) : null;

@@ -38,6 +38,27 @@ function objects<T>(list: unknown, counter: { dropped: number }): T[] {
   return out;
 }
 
+/** Keeps the object elements of a list that pass `ok`; counts what it drops. */
+function valid<T>(list: unknown, counter: { dropped: number }, ok: (v: Record<string, unknown>) => boolean): T[] {
+  const kept = objects<Record<string, unknown>>(list, counter);
+  const out = kept.filter(ok);
+  counter.dropped += kept.length - out.length;
+  return out as T[];
+}
+
+const str = (v: unknown): v is string => typeof v === 'string';
+const finite = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+const VERDICTS = ['helpful', 'snoozed'];
+
+/** DATA-01 (AUD-4): a live session with a start and a list of entries, or none. Entries need an exercise. */
+function repairActive(a: unknown, c: { dropped: number }): AppState['active'] {
+  if (a == null) return null;
+  if (!isObj(a) || !str(a.startedAt) || !Array.isArray(a.entries)) { c.dropped++; return null; }
+  const entries = valid<Record<string, unknown>>(a.entries, c, e => str(e.exerciseId))
+    .map(e => ({ ...e, name: str(e.name) ? e.name : '', sets: objects<LoggedSet>(e.sets, c) }));
+  return { ...a, splitId: str(a.splitId) ? a.splitId : '', pausedMs: finite(a.pausedMs) ? a.pausedMs : 0, entries } as unknown as AppState['active'];
+}
+
 /**
  * Deep repair of a saved or restored state (ST-11): drops non-object list elements, gives
  * sessions an id and lists, drops splits without an id, clears schedule days that point at no
@@ -61,28 +82,42 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
       startedAt: start ?? `${day}T12:00:00.000Z`,
       endedAt: typeof ses.endedAt === 'string' && Number.isFinite(Date.parse(ses.endedAt)) ? ses.endedAt : (start ?? `${day}T12:00:00.000Z`),
       id: typeof ses.id === 'string' ? ses.id : newId('s'),
-      exercises: objects<Session['exercises'][number]>(ses.exercises, c).map(e => withTarget({ ...e, sets: objects<Session['exercises'][number]['sets'][number]>(e.sets, c) })),
+      exercises: valid<Session['exercises'][number]>(ses.exercises, c, e => str(e.exerciseId)).map(e => withTarget({ ...e, sets: objects<Session['exercises'][number]['sets'][number]>(e.sets, c) })),
     }];
   });
   c.dropped += sessionsIn.length - sessions.length;
   sessions.sort((a, b) => (a.startedAt ?? '') < (b.startedAt ?? '') ? -1 : (a.startedAt ?? '') > (b.startedAt ?? '') ? 1 : 0);
   const schedule = { ...(isObj(raw.schedule) ? raw.schedule : {}) } as Record<Weekday, string | null>;
   for (const d of Object.keys(schedule) as Weekday[]) { const v = schedule[d]; schedule[d] = typeof v === 'string' && splitIds.has(v) ? v : null; }
+  // DATA-01 (AUD-4): every list is a list, and each element has the fields its readers key on.
   const lists = {
-    body: objects<AppState['body'][number]>(raw.body, c),
-    healthDays: objects<AppState['healthDays'][number]>(raw.healthDays, c),
-    weightLog: objects<AppState['weightLog'][number]>(raw.weightLog, c),
-    checkIns: objects<AppState['checkIns'][number]>(raw.checkIns, c),
-    freshMarks: objects<AppState['freshMarks'][number]>(raw.freshMarks, c),
-    customExercises: objects<AppState['customExercises'][number]>(raw.customExercises, c),
+    body: valid<AppState['body'][number]>(raw.body, c, b => str(b.day)),
+    healthDays: valid<AppState['healthDays'][number]>(raw.healthDays, c, d => str(d.day)),
+    weightLog: valid<AppState['weightLog'][number]>(raw.weightLog, c, w => str(w.day) && finite(w.kg)),
+    checkIns: valid<AppState['checkIns'][number]>(raw.checkIns, c, ci => str(ci.day)),
+    freshMarks: valid<AppState['freshMarks'][number]>(raw.freshMarks, c, f => str(f.muscle) && str(f.at)),
+    customExercises: valid<AppState['customExercises'][number]>(raw.customExercises, c, e => str(e.id) && str(e.name)),
+    profileHistory: valid<AppState['profileHistory'][number]>(raw.profileHistory, c, h => str(h.at) && str(h.field)),
+    insightFeedback: valid<AppState['insightFeedback'][number]>(raw.insightFeedback, c, f => str(f.id) && str(f.day) && VERDICTS.includes(f.verdict as string)),
   };
+  const obj = <K extends keyof AppState>(k: K): AppState[K] | undefined => (isObj(raw[k]) ? raw[k] : undefined);
+  const onboarding = obj('onboarding');
+  const recoveryModel = obj('recoveryModel');
+  const deload = obj('deload');
   const repaired: AppState = {
     ...raw,
     goal: isGoalId(raw.goal) ? raw.goal : DEFAULT_GOAL,
-    splits: splits.map(sp => ({ ...sp, name: typeof sp.name === 'string' ? sp.name : 'Workout', exercises: objects<Split['exercises'][number]>(sp.exercises, c) })),
+    splits: splits.map(sp => ({ ...sp, name: typeof sp.name === 'string' ? sp.name : 'Workout', exercises: valid<Split['exercises'][number]>(sp.exercises, c, e => str(e.exerciseId)) })),
     sessions,
     schedule,
     ...lists,
+    profile: obj('profile') as AppState['profile'],
+    preferences: obj('preferences') as AppState['preferences'],
+    health: obj('health') as AppState['health'],
+    onboarding: (onboarding ? { ...onboarding, dismissedAt: Array.isArray(onboarding.dismissedAt) ? onboarding.dismissedAt.filter(str) : [] } : undefined) as AppState['onboarding'],
+    recoveryModel: { tauScale: isObj(recoveryModel?.tauScale) ? recoveryModel.tauScale : {}, observations: isObj(recoveryModel?.observations) ? recoveryModel.observations : {} },
+    deload: deload && str(deload.startDay) && str(deload.endDay) && finite(deload.setFactor) && finite(deload.loadFactor) ? deload : null,
+    active: repairActive(raw.active, c),
   };
   let out = fill(repaired);
   // RG-02 / QA-R1-4: an lb user's history from before per-set units displays exactly as typed. Done
@@ -275,6 +310,14 @@ function listenToOtherTabs(): void {
   if (typeof window === 'undefined' || typeof window.addEventListener !== 'function') return;
   if (storageListener) window.removeEventListener('storage', storageListener);
   storageListener = (e: StorageEvent) => {
+    // DATA-02 (AUD-4): another tab cleared storage (the crash screen's reset) or removed the state.
+    // This tab drops what it holds, so its next save writes what storage now gives, not the old data.
+    if (e.key === null || (e.key === STATE_KEY && e.newValue === null)) {
+      if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+      lastGoodRaw = null;
+      if (storageRef) state.value = loadState(storageRef).state;
+      return;
+    }
     if (e.key !== STATE_KEY || !e.newValue) return;
     let parsed: unknown;
     try { parsed = JSON.parse(e.newValue); } catch { return; }
