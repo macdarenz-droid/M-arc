@@ -1222,6 +1222,10 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
+- **Decided (HT-4b, owner, 2026-09-30)**: the golden-B re-pin to 6b86baa (LR-23: no sources, evidence labels or contacts in the UI) is recorded in `tools/plates/layers/MANIFEST.json` as `approvedBy: 'owner'`, not the card's `'supervisor'` (D-LR23-2).
+  **Why**: the owner approved the re-pin in the HT-4b session: "approve the HT-4b re-pin of the How-to reference copy to 6b86baa (the version without sources). Record it as approved by the owner."
+  **Also**: the card's `layers` sha entry in `tests/howto/golden/GOLDEN.json` is not added: main has none, HT-4's test asserts none (that file is HT-2's generator input), so the page sha stays in MANIFEST `pageApproval` and `PAGE_SHA256`.
+  **Source**: HT-4b card, PR #140.
 
 ## BUG-32 crisis pre-screen phrasings and card placement (BUG-32 builder, 2026-09-30)
 
