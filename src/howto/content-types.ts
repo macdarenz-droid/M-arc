@@ -23,7 +23,7 @@ export type ContentLibId = `lib_${string}`;
 export type EvidenceTag = 'DATA' | 'MECH' | 'CONSENSUS' | 'WEAK';
 export type SourceId = string;
 
-/** Attached to every rule. Never shown in user copy; shown only in "Where this comes from". */
+/** Attached to every rule. Never shown in user copy; research data only, never shown (LR-23). */
 export interface Claim {
   readonly tags: readonly EvidenceTag[];
   readonly sources: readonly SourceId[];

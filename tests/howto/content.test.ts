@@ -4,7 +4,7 @@ import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'n
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import type { HowToContent, Source } from '../../src/howto/content-types';
 import { COVERAGE } from '../../src/howto/coverage';
 import exercises from '../../src/data/exercises.json';
@@ -18,6 +18,15 @@ import { checkC8 } from './checks/c8';
 import { checkC15, contentHash } from './checks/c15';
 import { checkC16 } from './checks/c16';
 import { checkC17 } from './checks/c17';
+import {
+  checkC19Copy, checkC19Feel, checkC19File, checkC19Files, checkC19Shared, filesUnder, type CopyField, type SourceName,
+  RULE_CLASS, RULE_CONTACT, RULE_GEN_KEY, RULE_GEN_SOURCES, RULE_HREF, RULE_LABEL, RULE_LINK, RULE_NAME, RULE_SAFETY,
+  RULE_SHOW_EVIDENCE, RULE_SOURCE, RULE_TARGET,
+} from './checks/c19';
+import { mutate as c19M1 } from './fixtures/bad/c19-m1-show-evidence';
+import { mutate as c19M2 } from './fixtures/bad/c19-m2-knee-call-999';
+import { pass as c19BackPass, m3 as c19M3 } from './fixtures/bad/c19-back-box';
+import * as c19Copy from './fixtures/bad/c19-copy-fields';
 import { mutate as c1Mutate } from './fixtures/bad/c1-bad-zoom-ref';
 import { mutate as c1DanglingFault } from './fixtures/bad/c1-dangling-fault-ref';
 import { mutate as c2PrimaryWatch } from './fixtures/bad/c2-primary-and-watch';
@@ -323,6 +332,8 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
     const knownC17Bad = [
       'c17-network.ts', 'c17-xmlns-other-url.ts', 'c17-xmlns-outside-attr.ts', 'c17-xmlns-other-host.ts',
       'c17-xmlns-escaped-other-host.ts', 'c17-xmlns-not-whole-attr.ts',
+      // HT-4b: the new C17 fixtures, and the C19 fixtures that hold a URL (C17 rightly fails them too)
+      'c17-cite-url.ts', 'c17-xmlns-escaped-https.ts', 'c17-xmlns-prefixed-name.ts', 'c19-m7-link.ts', 'c19-gen-escaped-attrs.ts',
     ];
     expect(bad.every(m => knownC17Bad.some(f => m.includes(f)))).toBe(true);
     expect(bad.some(m => m.includes('c17-network.ts') && m.includes('fetch'))).toBe(true);
@@ -385,6 +396,39 @@ describe('HT4-A3/A4: C1-C4, C6-C8, C15-C17, each proven by a bad fixture naming 
   });
 });
 
+describe('HT4b-A3: C17 final form (D-LR23-7): no URL at all, only the SVG/xlink namespace attributes are exempt', () => {
+  const BAD = new URL('.', import.meta.url).pathname + 'fixtures/bad';
+
+  it('checkC17 takes no allowedUrls parameter', () => {
+    expect(checkC17.length).toBe(1);
+  });
+
+  it('a source citation URL fails, with the final failure text', () => {
+    const bad = checkC17([BAD]);
+    expect(bad.some(m => /^C17: .*c17-cite-url\.ts: URL "https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/7598007\/" is not allowed$/.test(m))).toBe(true);
+  });
+
+  it('an escaped xmlns=\\"https://example.com/x\\" fails, reported without the trailing backslash (round-4 review)', () => {
+    const bad = checkC17([BAD]).filter(m => m.includes('c17-xmlns-escaped-https.ts'));
+    expect(bad).toEqual([expect.stringMatching(/: URL "https:\/\/example\.com\/x" is not allowed$/)]);
+  });
+
+  it('fooxmlns= is not the whole xmlns attribute, so its SVG namespace URL fails (round-4 review)', () => {
+    const bad = checkC17([BAD]);
+    expect(bad.some(m => m.includes('c17-xmlns-prefixed-name.ts') && m.includes('w3.org/2000/svg'))).toBe(true);
+  });
+
+  it('the escaped SVG namespace attribute passes', () => {
+    const good = mkdtempSync(join(tmpdir(), 'c17-b-good-'));
+    try {
+      writeFileSync(join(good, 'ok.ts'), 'export const a = \'{"svg":"<svg xmlns=\\"http://www.w3.org/2000/svg\\"></svg>"}\';');
+      expect(checkC17([good])).toEqual([]);
+    } finally {
+      rmSync(good, { recursive: true, force: true });
+    }
+  });
+});
+
 describe('HT4-A4: the checks are pure, no DOM, and cheap', () => {
   it('none of the checks touch a global DOM (jsdom/document/window)', () => {
     expect(typeof document).toBe('undefined');
@@ -429,9 +473,171 @@ describe('HT4-A2/A3: every real content file under src/howto/content passes ever
     }
   });
 
-  it('C17: no network call or bare URL outside the source citations, anywhere in src/howto or src/slices/howto', () => {
+  it('C17: no network call and no URL (only the SVG/xlink namespace attributes), anywhere in src/howto or src/slices/howto', () => {
     const root = join(new URL('.', import.meta.url).pathname, '..', '..');
-    const allowedUrls = new Set(Object.values(SOURCES).map(s => s.url).filter((u): u is string => typeof u === 'string'));
-    expect(checkC17([join(root, 'src', 'howto'), join(root, 'src', 'slices', 'howto')], allowedUrls)).toEqual([]);
+    expect(checkC17([join(root, 'src', 'howto'), join(root, 'src', 'slices', 'howto')])).toEqual([]);
+  });
+});
+
+// HT-4b (HT4b-A4/A5): C19, no sources or contacts in the How-to UI (owner decision LR-23). Before HT-5 there is no
+// generated archetypes.ts/ht-*.ts copy yet, so (a) and (b) run on golden B itself: the vendored howto/shared.mjs and
+// the 8 *.howto.mjs sheets, with copy-lint's own copyFields list and registry names. HT5-A2 points them at the
+// generated files.
+describe('HT4b-A4/A5: C19 no sources or contacts, each rule proven by a bad fixture naming it', () => {
+  const LAYERS = new URL('../../tools/plates/layers/', import.meta.url);
+  const BAD = new URL('.', import.meta.url).pathname + 'fixtures/bad';
+  const SHEET_IDS = [
+    'barbell_back_squat', 'dumbbell_lateral_raise', 'hanging_leg_raise', 'lat_pulldown',
+    'leg_press', 'machine_chest_press', 'pull_up', 'seated_cable_row',
+  ];
+  type Sheet = c19Copy.Sheet & { SOURCES?: Record<string, { cite: string }> };
+  let shared: Record<string, unknown>;
+  let sheets: Record<string, Sheet>;
+  let lint: {
+    copyFields: (M: unknown) => CopyField[];
+    sourceNamePatterns: (modules: unknown[]) => SourceName[];
+  };
+  let names: SourceName[];
+  const chest = () => sheets.machine_chest_press!;
+  const copyOf = (M: unknown, label = 'machine_chest_press') => checkC19Copy(lint.copyFields(M), label, names);
+
+  beforeAll(async () => {
+    shared = { ...(await import(/* @vite-ignore */ new URL('howto/shared.mjs', LAYERS).href)) };
+    lint = await import(/* @vite-ignore */ new URL('artifact/copy-lint.mjs', LAYERS).href);
+    const files = readdirSync(new URL('exercises/', LAYERS)).filter(f => f.endsWith('.howto.mjs')).sort();
+    sheets = {};
+    for (const f of files) sheets[f.replace('.howto.mjs', '')] = await import(/* @vite-ignore */ new URL(`exercises/${f}`, LAYERS).href);
+    names = lint.sourceNamePatterns(Object.values(sheets));
+  });
+
+  it('(a)/(b) never pass on nothing: exactly the 8 sheets, a shared module with red-flag boxes, registry names found', () => {
+    expect(Object.keys(sheets)).toEqual(SHEET_IDS);
+    expect(Object.keys(shared).filter(k => k.startsWith('RED_FLAG')).length).toBeGreaterThanOrEqual(4);
+    expect(names.map(([n]) => n)).toEqual(expect.arrayContaining(['Muyor', 'Calatayud', 'NHS']));
+    expect(checkC19Shared({}, 'empty')).toEqual(expect.arrayContaining([expect.stringContaining('no RED_FLAG box'), expect.stringContaining('DISCLAIMER is missing')]));
+    expect(checkC19Copy([], 'empty')).toEqual(['C19: empty: no copy field to check']);
+    expect(checkC19Files([])).toEqual(['C19: no How-to file to check']);
+  });
+
+  it('(a) golden B\'s shared module passes: no SHOW_EVIDENCE, clean red-flag boxes and disclaimer', () => {
+    expect(checkC19Shared(shared, 'shared', names)).toEqual([]);
+  });
+
+  it('(b) every copy field of all 8 sheets passes (source notes excepted)', () => {
+    for (const id of SHEET_IDS) {
+      const fields = lint.copyFields(sheets[id]);
+      expect(fields.some(f => f.kind === 'sourceNote'), `${id} has research notes to skip`).toBe(true);
+      expect(checkC19Copy(fields, id, names), id).toEqual([]);
+    }
+  });
+
+  it('(c) every file under src/howto and src/slices/howto passes', () => {
+    const root = join(new URL('.', import.meta.url).pathname, '..', '..');
+    const files = filesUnder([join(root, 'src', 'howto'), join(root, 'src', 'slices', 'howto')]);
+    expect(files.some(f => f.includes(`${join('src', 'howto', 'generated')}`))).toBe(true);
+    expect(checkC19Files(files)).toEqual([]);
+  });
+
+  it('(d) every generated feel-*.ts passes (none before HT-8; the fixture below proves the rule)', () => {
+    const root = join(new URL('.', import.meta.url).pathname, '..', '..');
+    const feel = filesUnder([join(root, 'src', 'howto', 'generated')]).filter(f => /(^|[\\/])feel-[^\\/]*\.ts$/.test(f));
+    for (const f of feel) expect(checkC19Feel(f, names), f).toEqual([]);
+  });
+
+  it('M1: SHOW_EVIDENCE = true fails', () => {
+    expect(checkC19Shared(c19M1(shared), 'shared', names)).toEqual([`C19: shared: ${RULE_SHOW_EVIDENCE}`]);
+  });
+
+  it('M2: "…? Call 999." in RED_FLAG_KNEE.now fails (contact and safety line)', () => {
+    const bad = checkC19Shared(c19M2(shared as never), 'shared', names);
+    expect(bad).toContain(`C19: shared: RED_FLAG_KNEE.now: ${RULE_CONTACT}: "999"`);
+    expect(bad).toContain(`C19: shared: RED_FLAG_KNEE.now: ${RULE_SAFETY}: "Call"`);
+  });
+
+  it('M3: "Go to A&E." in a back box fails; the pass fixture "Get emergency help now." passes (D-LR23-1)', () => {
+    expect(checkC19Shared(c19M3(shared), 'shared', names)).toEqual([`C19: shared: RED_FLAG_BACK.now: ${RULE_CONTACT}: "A&E"`]);
+    expect(checkC19Shared(c19BackPass(shared), 'shared', names)).toEqual([]);
+  });
+
+  const COPY_CASES: Array<[string, (M: Sheet) => Sheet, string, string]> = [
+    ['M4 "(Muyor 2023)" in a feel fix', c19Copy.m4, RULE_SOURCE, '"(Muyor 2023)"'],
+    ['M5 "+44 20 7946 0000" in a risk line', c19Copy.m5, RULE_CONTACT, '"+44 20 7946 0000"'],
+    ['M6 "www.nhs.uk" in a setup line', c19Copy.m6, RULE_CONTACT, '"www."'],
+    ['M9 "help@example.org" in a mistake fix', c19Copy.m9, RULE_CONTACT, '"help@example.org"'],
+    ['"Weiss 1995" in a setup line', c19Copy.weiss1995, RULE_SOURCE, '"Weiss 1995"'],
+    ['"NSCA teaches" in a setup line', c19Copy.nsca, RULE_SOURCE, '"NSCA"'],
+    ['"text HOME to 741741" in a setup line', c19Copy.textHome, RULE_CONTACT, '"text HOME to"'],
+    ['"ring 13 11 14" in a setup line', c19Copy.ring131114, RULE_CONTACT, '"13 11 14"'],
+    ['a registry first-author surname ("Calatayud") in a setup line', c19Copy.registrySurname, RULE_NAME, '"Calatayud"'],
+  ];
+  for (const [name, mutate, rule, match] of COPY_CASES) {
+    it(`${name} fails, naming the rule`, () => {
+      const bad = copyOf(mutate(chest()));
+      expect(bad.length, JSON.stringify(bad)).toBeGreaterThan(0);
+      expect(bad.some(m => m.includes(`: ${rule}: ${match}`)), JSON.stringify(bad)).toBe(true);
+    });
+  }
+
+  it('the registry-surname fixture is caught only by the data-driven name check', () => {
+    expect(checkC19Copy(lint.copyFields(c19Copy.registrySurname(chest())), 'machine_chest_press')).toEqual([]);
+  });
+
+  const FILE_CASES: Array<[string, boolean, string, string]> = [
+    ['c19-m7-link.ts', false, RULE_LINK, '"<a href='],
+    ['c19-m7-link.ts', false, RULE_TARGET, '"target='],
+    ['c19-m7-link.ts', false, RULE_HREF, 'href="https://pubmed'],
+    ['c19-m8-evidence-label.ts', false, RULE_CLASS, '"ev"'],
+    ['c19-m8-evidence-label.ts', false, RULE_CLASS, '"ev-data"'],
+    ['c19-m8-evidence-label.ts', false, RULE_LABEL, '>Measured<'],
+    ['c19-src-cite-class.ts', false, RULE_CLASS, '"src-cite"'],
+    ['c19-gen-escaped-attrs.ts', true, RULE_CLASS, '"srcs"'],
+    ['c19-gen-escaped-attrs.ts', true, RULE_HREF, 'xlink:href=\\"https://example.com/x\\"'],
+    ['c19-gen-url-key.ts', true, RULE_GEN_KEY, '"url"'],
+    ['c19-gen-cite-key.ts', true, RULE_GEN_KEY, '"cite"'],
+    ['c19-gen-sources-export.ts', true, RULE_GEN_SOURCES, 'export const sources'],
+  ];
+  for (const [file, generated, rule, match] of FILE_CASES) {
+    it(`(c) ${file} fails on ${rule}`, () => {
+      const bad = checkC19File(join(BAD, file), generated);
+      expect(bad.some(m => m.includes(`: ${rule}: `) && m.includes(match)), JSON.stringify(bad)).toBe(true);
+    });
+  }
+
+  it('(c) a file named sources.ts under src/howto/generated fails', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'c19-gen-'));
+    try {
+      writeFileSync(join(dir, 'sources.ts'), 'export default [];\n');
+      expect(checkC19File(join(dir, 'sources.ts'), true)).toEqual([`C19: ${join(dir, 'sources.ts')}: ${RULE_GEN_SOURCES}: "sources.ts"`]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('(c) a local SVG <use href="#…">, escaped or not, passes; url/cite keys only fail under src/howto/generated', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'c19-ok-'));
+    try {
+      const f = join(dir, 'ok.ts');
+      writeFileSync(f, 'export const a = \'<use href="#a"/><use xlink:href=\\"#b\\"/>\'; export const d = { url: 1, cite: 2 };\n');
+      expect(checkC19File(f, false)).toEqual([]);
+      expect(checkC19File(f, true).length).toBe(2);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('(c) over the whole bad-fixture folder: every C19 file fixture fails, and nothing else but the one C17 fixture that holds an <a>', () => {
+    const files = readdirSync(BAD).map(f => join(BAD, f));
+    const bad = checkC19Files(files, f => /c19-gen-/.test(f));
+    const failing = [...new Set(bad.map(m => (m.split(': ')[1] ?? '').split(/[\\/]/).pop()))].sort();
+    expect(failing).toEqual([
+      'c17-xmlns-outside-attr.ts', 'c19-gen-cite-key.ts', 'c19-gen-escaped-attrs.ts', 'c19-gen-sources-export.ts',
+      'c19-gen-url-key.ts', 'c19-m7-link.ts', 'c19-m8-evidence-label.ts', 'c19-src-cite-class.ts',
+    ]);
+  });
+
+  it('(d) pre-rendered feel HTML fails on contact wording in its text and source wording in an aria-label', () => {
+    const bad = checkC19Feel(join(BAD, 'c19-feel-prerendered.ts'), names);
+    expect(bad.some(m => m.includes(`${RULE_CONTACT}: "999"`))).toBe(true);
+    expect(bad.some(m => m.includes(`${RULE_SOURCE}: "Muyor 2023"`))).toBe(true);
   });
 });
