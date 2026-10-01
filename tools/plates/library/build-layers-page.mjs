@@ -21,12 +21,16 @@ export const RENDERER_LABEL = 'library/render/closeups.mjs';
 /** Card id (build-page.mjs) <-> howto id (howto-layers.mjs): only the lateral raise differs, as in howto-layers.mjs. */
 export const howtoIdOf = card => (card === 'lateral_raise' ? 'dumbbell_lateral_raise' : card);
 
-/** The 8's spec list: golden B's GROUPS, every close-up drawn by the library renderer with the 8's options. */
+/** Golden B's GROUPS. */
 export const GOLDEN_B_GROUPS = [
   { id: 'free', title: 'Free weights', ids: ['lateral_raise', 'barbell_back_squat'] },
   { id: 'hanging', title: 'Hanging', ids: ['pull_up', 'hanging_leg_raise'] },
   { id: 'machines', title: 'Machines', ids: ['lat_pulldown', 'seated_cable_row', 'leg_press', 'machine_chest_press'] },
 ];
+/** The 8's close-up sources: the library renderer with the 8's options, each CSS block labelled as golden B labels it. */
+export const GOLDEN_B_OPTIONS_URL = pathToFileURL(join(HERE, 'render', 'closeups-8.mjs')).href;
+export const GOLDEN_B_CLOSEUPS = Object.fromEntries(Object.entries(LEGACY_SCRIPTS).map(([id, label]) => [id, { optionsKey: id, label }]));
+export const GOLDEN_B_SPEC = { groups: GOLDEN_B_GROUPS, closeups: GOLDEN_B_CLOSEUPS, optionsUrl: GOLDEN_B_OPTIONS_URL };
 export const GOLDEN_B_JUMP = '  <a class="pg-jump" href="#machine-chest-press-chip-hand">Machine chest press: the wrist fix <span aria-hidden="true">&darr;</span></a>\n';
 
 /** One exact-once source patch; throws, naming it, when the vendored text it expects is not there exactly once. */

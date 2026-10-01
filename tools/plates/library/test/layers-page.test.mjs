@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PAGE_SHA256, ROOT, sha256 } from '../../layers.mjs';
-import { buildLayersPage, GOLDEN_B_GROUPS, howtoIdOf, patchBuildPage, patchHowtoLayers, patchOnce, planOf } from '../build-layers-page.mjs';
+import { buildLayersPage, GOLDEN_B_CLOSEUPS, GOLDEN_B_GROUPS, GOLDEN_B_SPEC, howtoIdOf, patchBuildPage, patchHowtoLayers, patchOnce, planOf } from '../build-layers-page.mjs';
 import { closeupFragments, fragmentDiff } from '../render/fragments.mjs';
 import { LEGACY_SCRIPTS } from '../render/legacy.mjs';
 
@@ -55,4 +55,34 @@ test('the spec list is checked: no close-up source, unknown fallback, duplicates
 test('all 8 on the legacy fallback: the builder rebuilds golden B byte for byte', async () => {
   const page = await buildLayersPage({ groups: GOLDEN_B_GROUPS, closeups: ALL_LEGACY });
   assert.equal(sha256(page), PAGE_SHA256);
+});
+
+test('all 8 drawn by the library renderer: page === golden B and every close-up fragment === golden B', async () => {
+  const page = await buildLayersPage(GOLDEN_B_SPEC);
+  assert.deepEqual(fragmentDiff(closeupFragments(page.toString('utf8'), CARDS), closeupFragments(golden(), CARDS)), []);
+  assert.equal(sha256(page), PAGE_SHA256);
+});
+
+test('mixed page: the fallback ids load their frozen scripts (they have no renderer options), the rest use the renderer', async () => {
+  // pull-up (zoom shell) and leg press (zbox shell) on the fallback; their options are removed, so the renderer
+  // cannot be what draws them: if the fallback did not run, closeupApi would throw "no close-up options".
+  const optionsUrl = new URL('./fixtures/options-without-pull-up-leg-press.mjs', import.meta.url).href;
+  const closeups = { ...GOLDEN_B_CLOSEUPS, pull_up: { legacy: true }, leg_press: { legacy: true } };
+  const page = await buildLayersPage({ groups: GOLDEN_B_GROUPS, closeups, optionsUrl });
+  assert.equal(sha256(page), PAGE_SHA256);
+  await assert.rejects(buildLayersPage({ groups: GOLDEN_B_GROUPS, closeups: { ...closeups, pull_up: GOLDEN_B_CLOSEUPS.pull_up }, optionsUrl }), /pull_up: no close-up options|no close-up options/);
+});
+
+test('the body-map stomach fix is a real page step: without it (and no frozen leg-raise script) the page differs', async () => {
+  const page = await buildLayersPage({ ...GOLDEN_B_SPEC, regionFix: false });
+  assert.notEqual(sha256(page), PAGE_SHA256);
+  assert.deepEqual(fragmentDiff(closeupFragments(page.toString('utf8'), CARDS), closeupFragments(golden(), CARDS)), []);   // only the feel maps move
+});
+
+test('a batch page: its own groups, no jump link to an absent card', async () => {
+  const page = (await buildLayersPage({ ...GOLDEN_B_SPEC, groups: [{ id: 'hanging', title: 'Hanging', ids: ['pull_up', 'hanging_leg_raise'] }], jump: null })).toString('utf8');
+  assert.ok(!page.includes('pg-jump" href'));
+  assert.ok(!page.includes('id="card-lat-pulldown"'));
+  const want = closeupFragments(golden(), ['pull-up', 'hanging-leg-raise']);
+  assert.deepEqual(fragmentDiff(closeupFragments(page, ['pull-up', 'hanging-leg-raise']), want), []);
 });
