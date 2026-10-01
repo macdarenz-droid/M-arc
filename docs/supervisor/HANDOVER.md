@@ -970,10 +970,10 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 
 ## 9. Lessons and gotchas (the incident → the rule)
 
-- **A motion probe must measure the box on screen, never a computed transform** (BUG-37, 10-01). BUG-36's probe added the panel's transform `m42` to its layout top and ignored the dialog's own `scrollTop`. It "saw" a 629 px slide that the scrolling dialog cancelled, and the owner's phone showed a jump instead. Measure `getBoundingClientRect()` (it includes every ancestor's scroll and transform) and assert that each scroll container on the way stays still.
 
 | Incident | Rule |
 |---|---|
+| BUG-37 (10-01): BUG-36's probe added the panel's transform `m42` to its layout top and ignored the dialog's own `scrollTop`. It "saw" a 629 px slide that the scrolling dialog cancelled, while the owner's phone showed a jump. | A motion probe measures the box on screen (`getBoundingClientRect()`, which includes every ancestor's scroll and transform) and asserts that each scroll container on the way stays still. Never a computed transform. |
 | The supervisor ruled HT-7's label variance "local Chromium 141 only" from two clean CI runs (D-HT7-L3-text-8); the next CI run showed it on Chrome 153 too. | An intermittent failure is never disproved by a few green runs. Compare rates (bad/opens) over enough runs, and keep a check strict until the cause is fixed. Also: local containers run Chromium 141 (Playwright 1194), CI runs Chrome 153 (v1243); note the version when comparing. |
 | Verdicts were missed: LT-2 for 1 hour (a connector reconnect), LT-3 for 40 minutes (wakes checked only CI). | Every tick and every wake reads the latest comment on every open PR before any merge step. |
 | The REL-1 builder was blocked for 1.5 hours unseen. V1-07 and V1-08 never started. | Every wake checks each session for blocked or idle, and starts every card whose dependencies allow it. |
