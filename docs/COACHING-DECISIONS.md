@@ -1487,3 +1487,8 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (D-AUD3-6)**: with no quota binding at all, and on the soft KV fallback (used only when `QUOTA_DO` is not bound), behaviour is unchanged. `/health` still reports `quotas: !!(QUOTA_DO || QUOTA)` and the limits' values are unchanged.
   **Why**: a missing binding is a deploy choice that `/health` already shows, not an enforcement failure, and the KV path is documented as soft. Production binds `QUOTA_DO` (`wrangler.toml`).
   **Source**: card AUD-3 tasks 4–5.
+
+## HT-9: full gate PASS on the HT-5-merged head (HT-9 builder, 2026-10-01)
+
+- **Verified**: `MARC_CHROMIUM=/opt/pw-browsers/chromium npm run gate` — exit 0, full PASS line, on the head carrying origin/main + HT-3c (#143) + HT-4b (#140) + HT-5 (#116, a9c1ae1). `HT-9 C19`: 5 themes × 8 exercises (40 sheets), 0 problems. `HT-3b A2` chunk sizes: all 10 budgeted chunks within their HT-9-set ceilings with real headroom (e.g. `HowToSheet-*.js` 9301/3831 of 10232/4215). `HT-1`/`HT-2`/`HT-3`/`HT-4` blocks all green.
+- **Source**: HT-9 builder, step 5 of the supervisor's 2026-10-01 note on #113.
