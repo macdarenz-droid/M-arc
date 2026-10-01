@@ -71,7 +71,7 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const L: Record<string, string> = {};
   const d = new Date(ctx.now);
   const since = daysSinceLastSession(s.sessions, ctx.today, ctx.now);
-  L.now = `${weekdayOf(ctx.today)} ${ctx.today}, ${TIME_OF_DAY(d.getHours())} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}; ${since == null ? 'no sessions logged yet' : since === 0 ? 'trained today' : `last session ${num(since, 'days since last session', 'days')} ago`}`;
+  L.now = `${weekdayOf(ctx.today)} ${ctx.today}, ${TIME_OF_DAY(d.getHours())} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}; ${since == null ? 'no sessions logged yet' : since === 0 ? 'trained today' : `last session ${num(since, 'days since last session', 'days')} ${since === 1 ? 'day' : 'days'} ago`}`; // BUG-33: the unit was dropped
   const f = ctx.focus;
   L.screen = f ? `${f.id}${f.details ? ' ' + Object.entries(f.details).map(([k, v]) => `${k}=${v}`).join(' ') : ''}` : 'unknown';
 
