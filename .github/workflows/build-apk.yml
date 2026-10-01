@@ -15,7 +15,9 @@ concurrency:
 jobs:
   source-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    # D-SUP-CI-1 (10-01): 40 -> 60. The full gate took 30.7 min on main 1fcd9c8 and 38.2 min on HT-9's
+    # head; the HT lane, COPY-2 and BUG-37 add more. Every block still runs; this is a runaway limit, not a check.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -71,7 +73,7 @@ jobs:
   # build; android-gate still waits for both, so nothing ships unless both pass.
   visual-gate-tz:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60  # D-SUP-CI-1, as source-gate
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
