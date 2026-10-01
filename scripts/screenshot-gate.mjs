@@ -7229,8 +7229,8 @@ for (const theme of ['silent-black', 'paper']) {
         await H.closeHowTo(app.page);
         if (await app.page.$('#zdots')) P(`A2 ${id}: #zdots stays in the document after the sheet closed`);
       }
-      if (theme === 'emerald' && !reduce) {
-        // D-HT7-L3-text-9: 30 opens of the squat's "bar-on-back" from Mistake all shape its "Bony bump" label exactly as
+      if (!reduce) {
+        // D-HT7-L3-text-9 (all 5 themes since D-HT7-F1b): 30 opens of the squat's "bar-on-back" from Mistake all shape its "Bony bump" label exactly as
         // golden B does (before the host's F1 change, about 1 open in 7 read 0.16 % narrower under gate load)
         const id = 'barbell-back-squat', k = 'bar-on-back', sel = panelSel(id, k);
         const width = page => page.evaluate(sel => [...document.querySelectorAll(`${sel} .hz-c7-t`)].map(t => t.getComputedTextLength().toFixed(4)).join('/'), sel);
@@ -7261,7 +7261,7 @@ for (const theme of ['silent-black', 'paper']) {
   } finally {
     GB.cleanupScratchPage(dir);
   }
-  if (stats.labelOpens !== 30) errors.push(`${tag}: ${stats.labelOpens} D-HT7-L3-text-9 label opens, expected 30 (emerald)`);
+  if (stats.labelOpens !== 150) errors.push(`${tag}: ${stats.labelOpens} D-HT7-L3-text-9 label opens, expected 150 (30 in each of the 5 themes, D-HT7-F1b)`);
   if (stats.probes !== 1) errors.push(`${tag}: ${stats.probes} D-HT7-L3-text probe runs, expected 1 (silent-black, leg press foot)`);
   if (stats.pairs < 80) errors.push(`${tag}: only ${stats.pairs} L3 pairs compared, expected 8 x 2 x 5 themes + reduced motion (>= 80)`);
   console.log(`${tag}: ${stats.pairs} posture close-up L3 pairs (max ${stats.maxOff} px off), ${stats.anims} opening animation lists, ${stats.reduced} reduced-motion opens, ${stats.restores} plate restores, ${stats.controls} shift controls, ${stats.reopens} L3 text re-opens (D-HT7-L3-text), ${stats.probes} re-open probes, ${stats.labelOpens} label opens (D-HT7-L3-text-9); posture chunks gz B: ${sizes.join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
