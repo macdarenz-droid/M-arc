@@ -7200,8 +7200,9 @@ const ht10Clock = { t0: Date.now(), lines: [] };
     let a2Pairs = 0;
     if (a2Themes.length) {
       const src = H.ht10Script.toString();
+      // the script's own failures are the sweep's to report (A1); here it only has to run, so L3 still compares after it
       // eslint-disable-next-line no-new-func
-      const mutate = new Function('pre', `return (${src})(pre).then(r => { if (r.fails.length) throw new Error('HT-10 script: ' + r.fails.join('; ')); })`);
+      const mutate = new Function('pre', `return (${src})(pre).then(() => {})`);
       for (const theme of a2Themes) {
         const plates = H.HT_PLATES.filter(p => want('a2', theme).some(t => t.id === p[0]));
         const a2 = await H.ht3Fidelity(ht10, PORT, { themes: [theme], full: [], widths: [], plates, mutate }).catch(e => crashed(`A2 ${theme}`, e));
