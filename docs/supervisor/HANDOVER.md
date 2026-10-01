@@ -970,7 +970,6 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 
 ## 9. Lessons and gotchas (the incident → the rule)
 
-
 | Incident | Rule |
 |---|---|
 | BUG-37 (10-01): BUG-36's probe added the panel's transform `m42` to its layout top and ignored the dialog's own `scrollTop`. It "saw" a 629 px slide that the scrolling dialog cancelled, while the owner's phone showed a jump. | A motion probe measures the box on screen (`getBoundingClientRect()`, which includes every ancestor's scroll and transform) and asserts that each scroll container on the way stays still. Never a computed transform. |
