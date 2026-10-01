@@ -522,6 +522,9 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
     const meta = findExercise(ex.exerciseId, custom);
     if (!meta) continue;
     if (ex.sets.some(isWorkingSet)) meta.primary.forEach(m => trained.add(m));
+    // AUD-1 (SCI-01): e1RM compares lifted loads, so only modes whose kg is the load (BUG-18's
+    // loadIsChecked). Assisted kg is help and bodyweight kg is added load only: never evidence.
+    if (!loadIsChecked(ex.exerciseId, custom)) continue;
     // A cheap first check on every set, held ones included (BUG-24: held-out sets only rate lower).
     if (!ratedMax(exerciseHistory([newSession], ex.exerciseId, custom).at(-1))) continue;
     const prevAlone = prevSummary ? prevSummary(ex.exerciseId) : lastSummaryAlone(priorSessions, ex.exerciseId, custom);
