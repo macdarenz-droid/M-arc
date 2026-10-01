@@ -56,7 +56,7 @@ const adjacent = (a: [number, number], b: [number, number]): boolean => b[0] - a
  * A validated max within one session's series: 5+ consecutive 5-second points within 3 bpm
  * of each other (a plateau), reached by an ascending run into it (a ramp), value <= 220.
  * SCI-07: consecutive means no missing bucket, and the ramp is the adjacent point just before the
- * plateau, below its lowest point. Anything else (a lone spike, readings scattered across a
+ * plateau, below its highest point (as before); a plateau at the very start has no ramp. Anything else (a lone spike, readings scattered across a
  * disconnect, a plateau with no lead-in or one reached by a drop) is rejected as noise.
  */
 export function observedHrMaxFromSeries(series: Array<[number, number]>): number | null {
@@ -66,10 +66,9 @@ export function observedHrMaxFromSeries(series: Array<[number, number]>): number
     const run = series.slice(i - 1, i + 5);
     if (!run.every((p, k) => k === 0 || adjacent(run[k - 1]!, p))) continue;
     const window = run.slice(1).map(p => p[1]);
-    const plateauMin = Math.min(...window);
     const plateauMax = Math.max(...window);
-    if (plateauMax - plateauMin > 3 || plateauMax > 220) continue;
-    if (!(run[0]![1] < plateauMin)) continue;
+    if (plateauMax - Math.min(...window) > 3 || plateauMax > 220) continue;
+    if (!(run[0]![1] < plateauMax)) continue;
     const mean = Math.round(window.reduce((a, b) => a + b, 0) / window.length);
     if (best == null || mean > best) best = mean;
   }

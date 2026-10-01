@@ -20,6 +20,13 @@ describe('SCI-07: max HR needs a contiguous run of readings', () => {
     expect(observedHrMaxFromSeries([[0, 180], [5, 190], [10, 200], [15, 201], [20, 200], [25, 201], [30, 200]])).toBe(200);
   });
 
+  it('a gap-free noisy plateau keeps main\'s value (lead-in below the plateau max, not its min)', () => {
+    const at5 = (bpms: number[]) => bpms.map((b, i) => [i * 5, b] as [number, number]);
+    // Main d5ebc77 gives 182 and 184 for these; a lead-in below the plateau's min gives 183 for the second.
+    expect(observedHrMaxFromSeries(at5([160, 180, 182, 181, 180, 182, 181, 183, 182, 183, 183]))).toBe(182);
+    expect(observedHrMaxFromSeries(at5([160, 180, 181, 182, 183, 183, 184, 184, 183, 184, 183]))).toBe(184);
+  });
+
   it('a plateau with no lead-in, or with a gap inside it, is not a max', () => {
     expect(observedHrMaxFromSeries([[0, 200], [5, 201], [10, 200], [15, 201], [20, 200]])).toBeNull();
     expect(observedHrMaxFromSeries([[0, 180], [5, 200], [10, 201], [15, 200], [100, 201], [105, 200]])).toBeNull();

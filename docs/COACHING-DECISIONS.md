@@ -1267,7 +1267,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 
 ## AUD-7: heart and Health Connect inputs (AUD-7 builder, 2026-10-01)
 
-- **D-AUD7-1 Decided**: an observed max HR (SCI-07) is a run of 5 points within 3 bpm with no missing 5-second bucket, led into by the adjacent point just before it, which must sit below the plateau's lowest point. A plateau at the very start of a series no longer counts.
+- **D-AUD7-1 Decided**: an observed max HR (SCI-07) is a run of 5 points within 3 bpm with no missing 5-second bucket, led into by the adjacent point just before it, which must sit below the plateau's highest point (main's lead-in rule, kept so gap-free sessions keep the same observed max). A plateau at the very start of a series no longer counts.
   **Why**: the audit's repro (five readings 10 min apart) gave 200 bpm; a plateau with no lead-in is the "first five points need no ramp" defect it names. `tests/heart.test.ts` `bestObservedHrMax` used flat 5-point fixtures with no lead-in; each now ramps in from 20 bpm below. Its assertion (the highest plateau across sessions wins) is unchanged.
   **Source**: card AUD-7; codex-audit.md SCI-07.
 - **D-AUD7-2 Decided**: the drift "ready" run (three points at or below the ready bpm) needs three adjacent 5-second buckets. `preSetBpmFromWindow` is left as is: the card scopes heart.ts to the max detector and the drift run.
