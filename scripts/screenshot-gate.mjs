@@ -7017,6 +7017,32 @@ for (const theme of ['silent-black', 'paper']) {
   console.log(`${tag}: 2 themes x ${H.HT_PLATES.length} exercises, ${buttons} "Show me" buttons tapped (${checked} registered-kind opens checked), ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
+// HT-9 critic fix (supervisor ruling on #113, 2026-10-01): the sheet's sections must render in golden B's order
+// (tools/plates/layers/artifact/howto-layers.mjs: alsoRow+chips+gripSection, then feelSection, then setupSection,
+// then risksSection) - `hand`, `setup`, `risks` today (HT-8's `feel` slots in between `hand` and `setup` once it
+// merges). Setup used to render first, which pushed HT-6's "Look closer" chip row down and broke its pinned
+// "open from Mistake" transform-origin check. Checks every approved exercise's [data-section] DOM order, one theme
+// (the order does not vary by theme). Fails on 0381e91 (setup, hand, risks), passes after (hand, setup, risks).
+{
+  const tag = 'HT-9 Order';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const WANT = ['hand', 'setup', 'risks'];
+  let bad = 0;
+  const { ctx, page } = await H.openAppTrain(browser, PORT, 'silent-black', { onError: m => { errors.push(`${tag}: page error: ${m}`); bad++; } });
+  try {
+    for (const [index, [, id]] of H.HT_PLATES.entries()) {
+      await H.openHowTo(page, index);
+      const order = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet.ht [data-section]')].map(el => el.dataset.section));
+      if (JSON.stringify(order) !== JSON.stringify(WANT)) { errors.push(`${tag} ${id}: section order ${JSON.stringify(order)} !== golden B's ${JSON.stringify(WANT)}`); bad++; }
+      await H.closeHowTo(page);
+    }
+  } finally {
+    await ctx.close();
+  }
+  console.log(`${tag}: ${H.HT_PLATES.length} exercises, golden-B order ${JSON.stringify(WANT)}, ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+}
+
 // COPY-1 (owner, 2026-10-01; D-COPY1-1, D-COPY1-2, D-COPY1-medical): the Settings footer shows the owner's rights
 // line in the hint style, directly under the logo and above the version line, in all 5 themes; and the Settings
 // sheet no longer carries the explaining lines COPY-1 removed. The probe fails if it cannot see the footer or the
@@ -7239,4 +7265,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified, and HT-9 Show (every setup "Show me" button opens its close-up through the zoom host, Silent Black and Paper) verified, and COPY-1 (Settings footer rights line under the logo and above the version line, hint style, no removed Settings copy, no medical reminder) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified, and HT-9 Show (every setup "Show me" button opens its close-up through the zoom host, Silent Black and Paper) verified, and HT-9 Order (the sheet\'s sections render in golden B\'s order on all 8 exercises) verified, and COPY-1 (Settings footer rights line under the logo and above the version line, hint style, no removed Settings copy, no medical reminder) verified.');
