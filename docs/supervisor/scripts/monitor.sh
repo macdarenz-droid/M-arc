@@ -1,8 +1,12 @@
 #!/bin/bash
-# M/ARC PR watcher: one line per new builder/reviewer comment or title change on active PRs.
+# monitor.sh: prints one line per new builder or reviewer comment, and per PR title change, on open PRs. Comments that start with "**Supervisor" or "**Paused" are skipped.
+# Usage: [SINCE=<UTC time, e.g. 2026-10-01T08:00:00Z>] ./monitor.sh. Edit SKIP (PR numbers not tracked) before use. Polls every 60 s.
+# Prints "#<pr> comment: <first line>" or "title: <pr> <title>". It never exits on its own; the Monitor tool's timeout ends it.
+# Needs the agent proxy's GitHub auth for curl (no token is stored in this file).
+# Run it with the Monitor tool (timeout_ms 1800000), so each printed line wakes the supervisor. Re-arm every 30 min with SINCE backdated 1-3 min so no comment is missed.
 last=${SINCE:-$(date -u -d '-2 minutes' +%Y-%m-%dT%H:%M:%SZ)}
 prev=""
-SKIP="1 3 36 88 92 94 95 96 97"
+SKIP="1 3 88 92 94 144 149 158"
 while true; do
   now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   pulls=$(curl -s "https://api.github.com/repos/macdarenz-droid/M-arc/pulls?state=open&per_page=40" 2>/dev/null)
