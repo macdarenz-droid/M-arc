@@ -182,9 +182,9 @@ export type SafetySignal = 'crisis' | 'pain_mentioned' | 'medical' | 'disordered
  * BUG-35: "don't want to wake up" (not when "for leg day", "at 5am" or "early" follows), "wish I
  * wasn't alive", "what's the point of living", "want it all to end", "want to disappear" (not
  * "into the sauna"), "want to unalive", and "kill me now" unless a gym word, "lol" or a laughing
- * emoji shares its sentence. The `u` flag lets the emoji match.
+ * emoji follows it in the same sentence. The `u` flag lets the emoji match.
  */
-/** BUG-35: words that make "kill me now" gym hyperbole when they share its sentence. */
+/** BUG-35: words that make "kill me now" gym hyperbole when they follow it in the same sentence. */
 const GYM_WORDS = String.raw`sets?|reps?|rounds?|laps?|burpees?|squats?|deadlifts?|lunges?|sprints?|bench|cardio|hiit|amrap|emom|wod|leg day|legs|workout|gym|pull-?ups?|push-?ups?`;
 const CRISIS = new RegExp(String.raw`\b(${[
   String.raw`kill(ing)? myself`,
@@ -206,8 +206,8 @@ const CRISIS = new RegExp(String.raw`\b(${[
   String.raw`wish i (wasn'?t|weren'?t|was not|were not) alive`,
   String.raw`(what'?s|what is) the point (of|in) (living|being alive)`,
   String.raw`(want|wanna|wish|need) (for )?(it all|everything) to (end|stop)`,
-  String.raw`((want|going|need) to|wanna|gonna) disappear(?!\s+((into|in(?! my sleep\b)|inside|under|behind)\b|to (the )?(gym|sauna|pool|beach|bed|couch)\b|for (a |the |\d+ )?(weekend|holiday|vacation|week|day|hour|minute)s?\b))`,
-  String.raw`(?<!\b(${GYM_WORDS}|lol|lmao)\b[^.!?]*)kill me now(?![^.!?]*(\b(${GYM_WORDS}|lol|lmao|haha\w*|jk)\b|[\u{1F602}\u{1F923}\u{1F480}\u{1F605}]))`,
+  String.raw`((want|going|need) to|wanna|gonna) disappear(?!\s+((into|inside|under|behind)\b|in (the )?(sauna|steam room|pool|gym|bed)\b|to (the )?(gym|sauna|pool|beach|bed|couch)\b|for (a |the |\d+ )?(weekend|holiday|vacation|week|day|hour|minute)s?\b))`,
+  String.raw`kill me now(?![^.!?]*(\b(${GYM_WORDS}|lol|lmao|haha\w*|jk)\b|[\u{1F602}\u{1F923}\u{1F480}\u{1F605}]))`,
   String.raw`((want|going|about|trying) to|wanna|gonna|finna|tryna) kms`,
   String.raw`wish i (was|were) dead`,
   String.raw`no reason to live`,

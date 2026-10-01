@@ -215,6 +215,14 @@ describe('safety pre-screen (§19)', () => {
     ["i can't do this anymore, kill me now", true],
     ['did 3 sets today. kill me now, i hate everything', true],
     ['my therapy session went badly, kill me now', true],
+    // BUG-35 review: a gym word or "lol" before "kill me now" does not hide it; one after it still does.
+    ["i'm a failure lol kill me now", true],
+    ['i hate the gym and my life, kill me now', true],
+    ['10 burpees, kill me now', true],
+    ['i want to disappear in peace', true],
+    ['i want to disappear in a way that no one notices', true],
+    ["i've been thinking about unaliving", true],
+    ['i want to disappear in the sauna', false],
     // BUG-35: gym talk stays quiet.
     ["i don't want to wake up for leg day", false],
     ['i don’t want to wake up at 5am for cardio', false],
@@ -222,7 +230,7 @@ describe('safety pre-screen (§19)', () => {
     ['kill me now, 3 more sets', false],
     ['this burpee set, kill me now lol', false],
     ['kill me now lmao', false],
-    ['10 burpees, kill me now', false],
+    ['kill me now lol', false],
     ['kill me now 😂', false],
     ['leg day tomorrow, kill me now 😂', false],
     ['i want to disappear into the sauna', false],
@@ -231,6 +239,14 @@ describe('safety pre-screen (§19)', () => {
     ['what’s the point of lifting light', false],
     ['this burpee set is unaliving me', false],
   ] as const)('crisis screen: %s → %s', (text, crisis) => expect(safetySignals(text).includes('crisis')).toBe(crisis));
+  // BUG-35 review: the crisis scan stays linear; a long run of "kill " once took 33 ms and grew with the square of its length.
+  it('crisis screen: a long repeated message scans in under 50 ms', () => {
+    for (const times of [1000, 4000]) {
+      const start = performance.now();
+      safetySignals('kill '.repeat(times));
+      expect(performance.now() - start).toBeLessThan(50);
+    }
+  });
   // BUG-32: "kms" fires only straight after a verb of intent; a distance never does, however it is written.
   it('crisis screen: kms as a distance never fires', () => {
     const fired: string[] = [];
