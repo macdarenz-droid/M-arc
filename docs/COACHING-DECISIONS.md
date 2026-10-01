@@ -1287,3 +1287,27 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
   **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
   **Source**: card ESC-W-CITE, reserved_paths.
+
+## D-AUD12-card-keyboard: Card only becomes role=button when it has no nested interactive element (AUD-12 builder, 2026-10-01)
+
+- **Decided**: `src/ui/primitives.tsx`'s `Card` gives a `onClick` card `role="button"`, `tabIndex={0}` and Enter/Space activation, but only once a layout effect finds no `button`, `[role="button"]`, `a[href]`, `input`, `select`, `textarea` or `[tabindex]` inside it. A Card without `onClick` is unaffected either way.
+  **Why**: `AGENTS.md`'s AUD-12 card forbids a nested button inside a role=button Card, and two existing `onClick` Cards already nest real controls — `Train.tsx`'s exercise card (a `role="button"` header plus `Chip`/effort buttons inside, AUD-10's file) and `History.tsx`'s session card (Share/Edit buttons inside, AUD-11's file). Neither file is in this card's write_scope. A static "any onClick Card becomes role=button" rule would nest an interactive role inside another on both. Checking the mounted DOM instead means both are left exactly as before (still pointer-only, no regression) while every other `onClick` Card in the app — Coach.tsx's goal/schedule/weekly-review cards, Watch.tsx's device cards, Onboarding.tsx's goal cards — gains keyboard access with no edit to those files, since none of them nest a button.
+  **Source**: card AUD-12; read (not edited) `src/slices/coach/Coach.tsx`, `src/slices/settings/Watch.tsx`, `src/slices/workout/Train.tsx`, `src/slices/history/History.tsx`.
+
+## D-AUD12-row-reuse: ExercisePicker's search result reuses Row instead of a new handler (AUD-12 builder, 2026-10-01)
+
+- **Decided**: `ExercisePicker.tsx`'s click-only `<div class="list-row pressable">` search result became a `<Row>` (same classes, same layout, already keyboard-accessible with Enter/Space) instead of hand-adding `role`/`tabIndex`/`onKeyDown` to the div.
+  **Why**: `Row` already does exactly this, used all over the app; a second implementation of the same pattern would be an avoidable duplicate.
+  **Source**: card AUD-12 acceptance test ("an Add-exercise result" activates with Enter).
+
+## D-AUD12-reminder-labels: accessible names only, no visible copy change (AUD-12 builder, 2026-10-01)
+
+- **Decided**: added `aria-label="Reminder time"` and `aria-label="Reminder style"` to the two unlabelled Settings controls (`Settings.tsx`, reminder time `<input type="time">` and style `<select>`). The visible "Time"/"Style" row labels are unchanged.
+  **Why**: OBS-LABELS' Settings part (card AUD-12's scope) asks for an accessible name on these two controls only; the owner's UI copy rule keeps visible text to what a control needs, so the fix is the accessible name alone, not new visible copy.
+  **Source**: card AUD-12; codex-audit.md "Unnamed form controls" (Settings.tsx reminder time/style).
+
+## D-AUD12-onboarding-sex: Onboarding's Sex control shows no default (AUD-12 builder, 2026-10-01, UI-08)
+
+- **Decided**: `Onboarding.tsx`'s Sex field now reads `value={s.profile.sex}` instead of `value={s.profile.sex ?? 'male'}`, matching `Profile.tsx`'s own Sex control, which never had this default.
+  **Why**: `Segmented` already renders an unset value with no option selected (its BUG-8 fix); only Onboarding's display default made Male look chosen. Save never wrote `sex` unless `setSex` fired, so the bug was in what the form showed, not what it stored — fixing the display default is the whole fix.
+  **Source**: card AUD-12; codex-audit.md UI-08 (`Onboarding.tsx:77`, pre-merge line).

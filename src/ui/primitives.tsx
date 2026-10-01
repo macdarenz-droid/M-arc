@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'preact/hooks';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
 import { IconX } from './icons';
 import { markClosing, openSheetCount, registerSheet, sheetStack, unregisterSheet } from './sheetStack';
@@ -11,8 +11,29 @@ import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, isVerticalDrag, LONG_PRESS_MS, rubber
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
-export function Card({ children, class: cls = '', className = '', ...rest }: { children?: ComponentChildren } & Div) {
-  return <div class={`card ${cls} ${className}`} {...rest}>{children}</div>;
+export function Card({ children, class: cls = '', className = '', onClick, ...rest }: { children?: ComponentChildren } & Div) {
+  // AUD-12: a Card with onClick acts like a button from the keyboard too — but only when it has
+  // no interactive descendant of its own (Train.tsx's exercise card, History.tsx's session card),
+  // so a role=button Card never ends up wrapping a real button or another role=button element.
+  const ref = useRef<HTMLDivElement>(null);
+  const [keyable, setKeyable] = useState(false);
+  useLayoutEffect(() => {
+    if (!onClick) { setKeyable(false); return; }
+    setKeyable(!ref.current?.querySelector('button, [role="button"], a[href], input, select, textarea, [tabindex]'));
+  });
+  const onKeyDown = keyable
+    ? (e: KeyboardEvent) => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) {
+          e.preventDefault();
+          onClick!(e as unknown as Parameters<NonNullable<typeof onClick>>[0]);
+        }
+      }
+    : undefined;
+  return (
+    <div ref={ref} class={`card ${cls} ${className}`} onClick={onClick} onKeyDown={onKeyDown} role={keyable ? 'button' : undefined} tabIndex={keyable ? 0 : undefined} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 export function Button({ children, variant = 'default', size, block, class: cls = '', ...rest }: {

@@ -6414,6 +6414,71 @@ for (const theme of ['silent-black', 'paper']) {
   if (!errors.some(e => e.startsWith('COPY-1 '))) console.log('COPY-1: Settings footer rights line (under the logo, above the version, hint style) and no removed Settings copy, verified in 5 themes');
 }
 
+// AUD-12 (owner audit UI-08, UI-09): a fresh onboarding never shows (or saves) a sex the user has
+// not tapped, and the GoalSheet and Add-exercise choices — a Card with onClick and a plain
+// list-row — are reachable by real Tab presses and activate with Enter. tabTo walks Tab itself
+// (bounded) instead of assuming a stop count, so it still proves real keyboard reachability.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-12';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  const tabTo = async (selector, max = 25) => {
+    for (let i = 0; i < max; i++) {
+      if (await page.evaluate(sel => !!document.activeElement?.matches(sel), selector)) return true;
+      await page.keyboard.press('Tab');
+    }
+    return page.evaluate(sel => !!document.activeElement?.matches(sel), selector);
+  };
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+
+  // UI-08: saving onboarding without ever tapping Sex shows no segment lit, and saves nothing.
+  await page.getByRole('button', { name: 'Add my details' }).click(); await page.waitForTimeout(250);
+  if (await page.evaluate(() => !!document.querySelector('dialog[open] .seg[role="tablist"] button[aria-selected="true"]'))) {
+    errors.push(`${tag}: the onboarding Sex control shows a segment selected before it was ever tapped`);
+  }
+  await page.locator('label:has-text("Body weight") input').first().fill('80');
+  await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(300);
+  const savedSex = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') || '{}').profile?.sex);
+  if (savedSex !== undefined) errors.push(`${tag}: onboarding saved sex as ${JSON.stringify(savedSex)} without it being tapped`);
+
+  // UI-09: a GoalSheet choice (Coach.tsx's Card, kept keyboard-accessible through the Card fix
+  // in primitives.tsx) is reachable by Tab and Enter picks it.
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Change', exact: true }).click(); await page.waitForTimeout(300);
+  const GOAL_CARD = 'dialog[open] .card-press[role="button"]';
+  if (!(await tabTo(GOAL_CARD))) errors.push(`${tag}: could not reach a GoalSheet choice by Tab`);
+  else {
+    await page.keyboard.press('Enter'); await page.waitForTimeout(200);
+    if (!(await visible(page.locator('dialog[open]').getByText(/Apply \d+s rest/)))) errors.push(`${tag}: Enter on a focused GoalSheet choice did not pick a goal`);
+  }
+  await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+
+  // UI-09: an Add-exercise search result (ExercisePicker.tsx, now a Row instead of a click-only
+  // div) is reachable by Tab and Enter picks it.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  const tpl = page.getByRole('button', { name: 'Use Push / Pull / Legs' });
+  if (await tpl.isVisible().catch(() => false)) { await tpl.click(); await page.waitForTimeout(300); }
+  await page.locator('[data-palace="train.edit-split"]').first().click(); await page.waitForTimeout(300);
+  const dialogsBefore = await page.locator('dialog[open]').count();
+  await page.getByRole('button', { name: 'Add exercise', exact: true }).click();
+  await page.waitForSelector('dialog[open].nested'); await page.waitForTimeout(300);
+  const RESULT_ROW = 'dialog[open].nested .list-row.pressable';
+  if (!(await tabTo(RESULT_ROW))) errors.push(`${tag}: could not reach an Add-exercise result by Tab`);
+  else {
+    const picked = await page.evaluate(sel => document.activeElement?.querySelector('.grow > div')?.textContent?.trim(), RESULT_ROW);
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const dialogsAfter = await page.locator('dialog[open]').count();
+    if (dialogsAfter > dialogsBefore) errors.push(`${tag}: Enter on a focused Add-exercise result did not close the picker (${dialogsAfter} dialogs still open)`);
+    const splitText = await page.locator('dialog[open]').first().innerText().catch(() => '');
+    if (picked && !splitText.includes(picked)) errors.push(`${tag}: Enter on a focused Add-exercise result did not add "${picked}" to the split`);
+  }
+  await settle(page); await page.screenshot({ path: `${OUT}/aud-12-keyboard-access.png` });
+  await ctx.close();
+  if (!errors.some(e => e.startsWith(`${tag}:`))) console.log('AUD-12: onboarding Sex stays unset until tapped, and the GoalSheet and Add-exercise choices are reachable and activate by keyboard');
+}
+
 await browser.close();
 stopping = true;
 server.kill();
