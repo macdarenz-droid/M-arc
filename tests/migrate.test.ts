@@ -33,7 +33,8 @@ describe('legacy migration', () => {
     expect(push.splitName).toBe('Push A');
     expect(push.durationSec).toBe(3300);
     expect(push.exercises[0]!.exerciseId).toBe('lib_machine_chest_press');
-    expect(push.exercises[0]!.sets[0]).toEqual({ kg: 47, reps: 8, effort: 'ideal' });
+    // OBS-LB (AUD-4): this fixture's user is an lb user, so the load keeps the lb value it was typed as.
+    expect(push.exercises[0]!.sets[0]).toEqual({ kg: 47, reps: 8, effort: 'ideal', entered: { value: 103.5, unit: 'lb' } });
     expect(push.exercises[1]!.exerciseId.startsWith('custom_')).toBe(true);
     expect(state.customExercises[0]!.primary).toEqual(['rear_delts']);
   });
