@@ -76,7 +76,8 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
   /** A synthesized activation (TalkBack) carries no pointer, so detail is 0. A real keyboard tap
    * is handled by onKeyUp instead (preventDefault in onKeyDown stops its own click). */
   private onHoldClick = (e: MouseEvent): void => {
-    if (e.detail !== 0) this.armTap();
+    if (e.detail !== 0) return;
+    this.armTap();
   };
 
   private onHoldKeyUp = (e: KeyboardEvent): void => {

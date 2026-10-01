@@ -43,6 +43,37 @@ describe('the error card (QA-R1-8)', () => {
     expect(clear).toHaveBeenCalled();
     expect(deleteDatabase).toHaveBeenCalledWith('marc-escobar-img');
   });
+  /** Not mounted, so preact's setState() queues `_nextState` instead of applying it; mimic the
+   * mounted behavior so `b.state` reflects each update, as the rendered card would. */
+  function syncState(b: ErrorBoundary) {
+    (b as unknown as { setState: (u: Partial<typeof b.state>) => void }).setState = u => Object.assign(b.state, u);
+  }
+
+  it('UI-10: a synthesized click (detail 0, TalkBack) arms the reset, the same way HoldButton does', () => {
+    const b = new ErrorBoundary({});
+    b.state = { error: new Error('x'), holding: false, armed: false };
+    syncState(b);
+    (b as unknown as { onHoldClick: (e: MouseEvent) => void }).onHoldClick({ detail: 0 } as MouseEvent);
+    expect(b.state.armed).toBe(true);
+  });
+  it('UI-10: a second synthesized click confirms the reset', () => {
+    const b = new ErrorBoundary({});
+    b.state = { error: new Error('x'), holding: false, armed: false };
+    syncState(b);
+    const resetSpy = vi.fn();
+    (b as unknown as { confirmReset: () => void }).confirmReset = resetSpy;
+    const onHoldClick = (b as unknown as { onHoldClick: (e: MouseEvent) => void }).onHoldClick;
+    onHoldClick({ detail: 0 } as MouseEvent);
+    onHoldClick({ detail: 0 } as MouseEvent);
+    expect(resetSpy).toHaveBeenCalled();
+  });
+  it('UI-10: an ordinary pointer click (detail 1) does not arm, since pointer users hold', () => {
+    const b = new ErrorBoundary({});
+    b.state = { error: new Error('x'), holding: false, armed: false };
+    syncState(b);
+    (b as unknown as { onHoldClick: (e: MouseEvent) => void }).onHoldClick({ detail: 1 } as MouseEvent);
+    expect(b.state.armed).toBe(false);
+  });
   it('QA2-FB-1: the save on unload does not write the crashing state back after the reset', () => {
     vi.useFakeTimers();
     try {
