@@ -3,6 +3,7 @@
 // mapping drops fails field coverage), HT5-A2 (the content checks green on all 8) and HT5-A4 (HOWTO_HINTS,
 // ids.ts's budget).
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { Source } from '../../src/howto/content-types';
 import exercises from '../../src/data/exercises.json';
@@ -16,6 +17,7 @@ import { checkC7 } from './checks/c7';
 import { checkC8 } from './checks/c8';
 import { checkC16 } from './checks/c16';
 import { checkC17 } from './checks/c17';
+import { checkC19Copy, checkC19Files, checkC19Shared, filesUnder, type CopyField, type SourceName } from './checks/c19';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -125,9 +127,37 @@ describe('HT5-A2: the content checks (C1-C4, C6-C8, C16, C17) pass on the genera
       bad = bad.concat(checkC16(c));
     }
     bad = bad.concat(checkC6(exercises.map(e => e.id), COVERAGE));
-    bad = bad.concat(checkC17(['tools/plates/gen/content.mjs', 'src/howto'].map(p => new URL(`../../${p}`, import.meta.url).pathname), allowedUrls));
+    bad = bad.concat(checkC17(['tools/plates/gen/content.mjs', 'src/howto'].map(p => new URL(`../../${p}`, import.meta.url).pathname)));
 
     expect(bad).toEqual([]);
+  });
+});
+
+describe('HT5-A2/LR-23: C19, no sources or contacts, on the generated output', () => {
+  it('(a) archetypes.ts passes: no SHOW_EVIDENCE, clean red-flag boxes and disclaimer', async () => {
+    const lint = await import(/* @vite-ignore */ url('tools/plates/layers/artifact/copy-lint.mjs'));
+    const rawModules = await Promise.all(IDS.map(id => import(/* @vite-ignore */ url(`tools/plates/layers/exercises/${id.slice(4)}.howto.mjs`))));
+    const names: SourceName[] = lint.sourceNamePatterns(rawModules);
+    const archetypes = { ...(await import('../../src/howto/archetypes')) };
+    expect(checkC19Shared(archetypes, 'archetypes', names)).toEqual([]);
+  });
+
+  it('(b) every copy field of all 8 generated contents passes (source notes excepted)', async () => {
+    const lint = await import(/* @vite-ignore */ url('tools/plates/layers/artifact/copy-lint.mjs'));
+    const rawModules = await Promise.all(IDS.map(id => import(/* @vite-ignore */ url(`tools/plates/layers/exercises/${id.slice(4)}.howto.mjs`))));
+    const names: SourceName[] = lint.sourceNamePatterns(rawModules);
+    const { byId } = await loadAll();
+    for (const [id, c] of byId) {
+      const fields: CopyField[] = lint.copyFields(c);
+      expect(checkC19Copy(fields, id, names), id).toEqual([]);
+    }
+  });
+
+  it('(c) every file under src/howto passes', () => {
+    const root = join(new URL('.', import.meta.url).pathname, '..', '..');
+    const files = filesUnder([join(root, 'src', 'howto')]);
+    expect(files.some(f => f.includes(join('src', 'howto', 'generated')))).toBe(true);
+    expect(checkC19Files(files)).toEqual([]);
   });
 });
 
@@ -156,7 +186,11 @@ describe('HT5-A5: archetypes.ts is generated from golden B\'s shared module, byt
     expect(archetypes.RED_FLAG_ELBOW).toEqual(shared.RED_FLAG_ELBOW);
     expect(archetypes.DISCLAIMER).toBe(shared.DISCLAIMER);
     expect(archetypes.DISCLAIMER).toBe('General guidance, not medical advice. If something hurts, stop and get it checked.');
-    expect(archetypes.SHOW_EVIDENCE).toBe(shared.SHOW_EVIDENCE);
+  });
+
+  it('never exports SHOW_EVIDENCE (LR-23: no evidence labels in the UI)', async () => {
+    const archetypes = await import('../../src/howto/archetypes');
+    expect('SHOW_EVIDENCE' in archetypes).toBe(false);
   });
 
   it('no content row carries its own red-flag wording (C8 already proves this per row; this proves redFlag is always the shared block)', async () => {
