@@ -3,10 +3,10 @@
  * relayed as server-sent events (§12.2, §12.4–12.6). Pure over injected deps so tests can
  * drive it with a scripted SDK stream.
  */
-import { buildParams, modelFor, ignoredModelOverrides, noSystemRole, DEFAULT_MODEL, type ClientLike, type Env, type SseEvent, type ErrorCode } from './anthropic';
+import { buildParams, modelFor, MODE_CONFIG, ignoredModelOverrides, noSystemRole, DEFAULT_MODEL, type ClientLike, type Env, type SseEvent, type ErrorCode } from './anthropic';
 import { localStep, relayStep, type StepResult } from './upstream';
 import { validateTurn, stepsSinceUser, MAX_BODY_BYTES } from './validate';
-import { checkQuota, recordStep } from './quota';
+import { admitQuota, recordStep, releaseQuota } from './quota';
 import { MODES } from './prompt/modes';
 
 export const PROTOCOL = 2;
@@ -126,8 +126,10 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
   }
   const keys = { device, ip };
   const now = deps.now();
-  const q = await checkQuota(env, keys, now);
+  // AUD-3: reserve one step and the mode's max output before the paid call; reconciled or released below.
+  const q = await admitQuota(env, keys, now, MODE_CONFIG[body.mode].maxTokens);
   if (!q.ok) return fail(429, 'quota', q.message, cors, q.retryAfter);
+  let settled = false;
 
   const { readable, writable } = new TransformStream<Uint8Array, Uint8Array>();
   const writer = writable.getWriter();
@@ -185,13 +187,15 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
       const ranSec = Math.max(0, deps.now() - stepStart) / 1000;
       const cutShort = Math.min(params.max_tokens, Math.max(Math.ceil(outChars / 3), Math.ceil(ranSec * CUT_SHORT_TOKENS_PER_SEC)));
       const outputTokens = res.final?.usage?.output_tokens ?? res.outputTokens ?? cutShort;
-      const p = recordStep(env, keys, now, { turnEnded: res.final ? res.final.stop_reason !== 'tool_use' : true, outputTokens, turnSteps });
+      settled = true;
+      const p = recordStep(env, keys, now, { turnEnded: res.final ? res.final.stop_reason !== 'tool_use' : true, outputTokens, turnSteps }, q.id);
       if (deps.waitUntil) deps.waitUntil(p); else await p;
     }
-  })().catch(() => emit({ t: 'error', code: 'upstream', message: 'The coach is unavailable right now.' })).finally(() => {
+  })().catch(() => emit({ t: 'error', code: 'upstream', message: 'The coach is unavailable right now.' })).finally(async () => {
     clearInterval(heartbeat);
     closed = true;
     void writer.close().catch(() => {});
+    if (!settled) await releaseQuota(env, now, q.id);
   });
   if (deps.waitUntil) deps.waitUntil(work);
 
