@@ -1264,3 +1264,21 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
   **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
   **Source**: card ESC-W-CITE, reserved_paths.
+
+## AUD-8: targets and records across modes (AUD-8 builder, 2026-10-01)
+
+- **D-AUD8-1. Decided**: on a red-readiness day (`loadAdvice: 'reduce'`) a bodyweight, assisted, timed-hold or carry/sled target repeats its last reps, time or distance and drops one set (`cutSets`), with the same reason and set note a lift gets. A long break and a lighter week still come first, in the weighted path's order; a timed hold skips the lighter week (D-A1), so readiness still applies to it then.
+  **Why**: SCI-04. The coach says "ease off" while these modes still added a rep, 5 s or 5 m with every set kept. Only the red day changes here: amber (`no_increase`) and muscle recovery under 60 % keep these modes' rep step, because the finding and the coach's amber line ("Keep today's loads where they are") are about load, not reps.
+  **Source**: codex-audit SCI-04; card AUD-8.
+- **D-AUD8-2. Decided**: a timed hold after more than the re-entry gap repeats its best time, at low confidence, with the same "It has been N days" reason a carry gets.
+  **Why**: SCI-04 notes timed holds returned before the long-break check.
+- **D-AUD8-3. Decided**: an assisted lift's trend and plateau read the session's least-assisted working set (`leastHelpKg` in trend.ts), not its most-assisted one. A set with no assistance reads as 0 and counts as a real point (`trend(points, zeroOk)`). `history.ts` is unchanged.
+  **Why**: SCI-05. `topKg` is the easiest set, so heavier back-offs read as a decline while the hard set improved.
+- **D-AUD8-4. Decided**: a `best_reps` record for an assisted or bodyweight lift beats only prior sets done with as much or more help (assisted) or as little or less added load (bodyweight). No load logged reads as 0. The record's wording is unchanged.
+  **Why**: SCI-05. 60 kg of help × 9 after 20 kg × 8 was celebrated as a personal best.
+- **D-AUD8-5. Decided**: a substitute's first target starts from the replaced lift's e1RM (`bestE1rm`; when every set ran past 10 reps, Epley at 10 reps, which reads low so the first session errs light), maps it through the sourced ratio, solves Epley for the goal's lowest rep count at the goal's middle reps in reserve, takes the heaviest `menu.rungsKg` rung at or below that load, and gives the reps that rung allows at that reserve (1 to 20). The profile snap no longer moves that rung unless a load factor changed the load.
+  **Why**: SCI-08. The working load was read as a max, so 60 × 3 and 60 × 10 got the same start, and learned rungs were ignored. Fixtures changed because the finding proves the old numbers wrong: `tests/substitute-carry-over.test.ts` A1 (22.5 kg × 3 → 25 kg × 7) and `tests/substitute.test.ts` A2 (22.5 × 3 → 17.5 × 10; 22.5 × 1 → 17.5 × 8, now with a goal of 8 reps at 2 in reserve).
+- **D-AUD8-6. Decided**: the Coach insight's "Next session" card uses `insightTarget`, which passes the live workout's inputs: today's readiness, the muscle's recovery, the lighter week, the gym's load menu, and today's entry (or planned) set count, load factor and swap. The heading stays.
+  **Why**: UI-12. The insight showed 62.5 kg × 3 sets while the workout gave 60 kg × 2 on a red day. Train.tsx is AUD-10's file, so it keeps its own copy of the same inputs; `tests/aud-8.test.ts` pins that both agree.
+- **D-AUD8-7. Decided**: each weekly-schedule select is named by its weekday label (`aria-label`), the one copy change the card allows.
+  **Why**: OBS-LABELS, Coach.tsx part.

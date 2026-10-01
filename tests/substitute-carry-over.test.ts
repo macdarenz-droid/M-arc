@@ -20,9 +20,10 @@ describe('LT-6 carry-over start after a swap', () => {
     const s = suggestNext([a], dumbbellBench, 'lean', today, 3, [], { equipment: dbProfile, replacedExerciseId: barbellBench });
     expect(s.mode).toBe('start');
     expect(s.confidence).toBe('low');
-    expect(s.kg).toBe(22.5);
-    expect(s.reps).toEqual([3, 3]);
-    expect(s.reason).toBe('Start around 22.5 kg for 3.');
+    // AUD-8 (SCI-08): from 60 x 8's e1RM (80 kg), not from 60 kg read as a max.
+    expect(s.kg).toBe(25);
+    expect(s.reps).toEqual([7, 7]);
+    expect(s.reason).toBe('Start around 25 kg for 7.');
   });
 
   it('A2: no sourced ratio for the pair gives today\'s startingLoadKg result, unchanged', () => {
