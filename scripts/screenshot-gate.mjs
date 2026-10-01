@@ -6458,6 +6458,19 @@ for (const theme of ['silent-black', 'paper']) {
   }
   await page.keyboard.press('Escape'); await page.waitForTimeout(250);
 
+  // UI-09 (supervisor review fix on #156): an insight card's expand control is a separate real
+  // button (Coach.tsx's "Open <title>"), reachable by Tab even though the card itself stays
+  // mouse-only (it nests AskAbout and the Helpful/Not now buttons, so the Card fix skips it). The
+  // just-changed goal above leaves a "Goal changed" insight in the list to open.
+  const OPEN_INSIGHT = '[aria-label^="Open "]';
+  if (!(await tabTo(OPEN_INSIGHT))) errors.push(`${tag}: could not reach an insight's Open button by Tab`);
+  else {
+    const insightTitle = await page.evaluate(sel => document.activeElement?.getAttribute('aria-label')?.replace(/^Open /, ''), OPEN_INSIGHT);
+    await page.keyboard.press('Enter'); await page.waitForTimeout(250);
+    if (!insightTitle || !(await visible(page.locator('dialog[open] h2').getByText(insightTitle, { exact: true })))) errors.push(`${tag}: Enter on an insight's Open button did not open its sheet`);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+  }
+
   // UI-09: an Add-exercise search result (ExercisePicker.tsx, now a Row instead of a click-only
   // div) is reachable by Tab and Enter picks it.
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -6479,7 +6492,7 @@ for (const theme of ['silent-black', 'paper']) {
   }
   await settle(page); await page.screenshot({ path: `${OUT}/aud-12-keyboard-access.png` });
   await ctx.close();
-  if (!errors.some(e => e.startsWith(`${tag}:`))) console.log('AUD-12: onboarding Sex stays unset until tapped, and the GoalSheet and Add-exercise choices are reachable and activate by keyboard');
+  if (!errors.some(e => e.startsWith(`${tag}:`))) console.log('AUD-12: onboarding Sex stays unset until tapped, and the GoalSheet, insight-open and Add-exercise choices are reachable and activate by keyboard');
 }
 
 await browser.close();
