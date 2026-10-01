@@ -6465,6 +6465,8 @@ for (const theme of ['silent-black', 'paper']) {
   const OPEN_INSIGHT = '[aria-label^="Open "]';
   if (!(await tabTo(OPEN_INSIGHT))) errors.push(`${tag}: could not reach an insight's Open button by Tab`);
   else {
+    const outline = await page.evaluate(() => getComputedStyle(document.activeElement).outlineStyle);
+    if (outline === 'none') errors.push(`${tag}: the focused insight Open button shows no focus ring (outlineStyle: ${outline})`);
     const insightTitle = await page.evaluate(sel => document.activeElement?.getAttribute('aria-label')?.replace(/^Open /, ''), OPEN_INSIGHT);
     await page.keyboard.press('Enter'); await page.waitForTimeout(250);
     if (!insightTitle || !(await visible(page.locator('dialog[open] h2').getByText(insightTitle, { exact: true })))) errors.push(`${tag}: Enter on an insight's Open button did not open its sheet`);

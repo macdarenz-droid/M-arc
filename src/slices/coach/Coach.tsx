@@ -59,7 +59,7 @@ export function Coach() {
         <div class="stack-sm">
           {list.map(i => (
             <Card key={i.id} class="insight card-press" style={{ '--insight': INSIGHT_COLOR[i.category] }} onClick={() => setOpenInsight(i)}>
-              <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><span class="row" style={{ gap: 4 }}><AskAbout refTo={{ kind: 'insight', id: i.id, label: i.title }} /><button type="button" aria-label={`Open ${i.title}`} onClick={e => { e.stopPropagation(); setOpenInsight(i); }} style={{ all: 'unset', display: 'inline-flex', cursor: 'pointer' }}><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></button></span></div>
+              <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><span class="row" style={{ gap: 4 }}><AskAbout refTo={{ kind: 'insight', id: i.id, label: i.title }} /><button type="button" class="insight-open" aria-label={`Open ${i.title}`} onClick={e => { e.stopPropagation(); setOpenInsight(i); }}><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></button></span></div>
               <h3 style={{ margin: '4px 0 6px' }}>{i.title}</h3>
               <p class="small muted">{i.action}</p>
               <div class="row" style={{ marginTop: 8, gap: 8 }} onClick={e => e.stopPropagation()}>

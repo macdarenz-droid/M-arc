@@ -470,6 +470,11 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
    a small dot next to the category label carries the same information without a coloured border. */
 .insight-cat { color: var(--insight, var(--accent)); }
 .insight-cat::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--insight, var(--accent)); margin-right: 6px; vertical-align: middle; }
+/* AUD-12: the insight card's "Open" button (Coach.tsx) resets to look like the plain chevron it
+   wraps, same technique as .set-kind above — all:unset beats the zero-specificity :where()
+   focus-visible rule, so the ring is restated here at equal specificity to .insight-open. */
+.insight-open { all: unset; display: inline-flex; cursor: pointer; border-radius: var(--radius-xs); }
+.insight-open:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .chain { display: grid; gap: 10px; }
 .chain > div { display: grid; grid-template-columns: 84px 1fr; gap: 10px; font-size: var(--fs-body); }
 .chain > div > span:first-child { padding-top: 2px; }
