@@ -440,3 +440,20 @@ describe('HT8-A6: chunk size', () => {
     expect(FEEL_MODULE_GZ).toBeLessThanOrEqual(24 * 1024);
   });
 });
+
+describe('HT-8 fix (#166, "Feel it" before mount): the preload observer watches the sheet panel', () => {
+  it('whenNear observes with the sheet panel as root and one panel height of margin, and fires only after two frames', async () => {
+    const { whenNear } = await import('@/slices/howto/sections/Feel');
+    const frames: (() => void)[] = [];
+    vi.stubGlobal('requestAnimationFrame', (f: () => void) => frames.push(f));
+    vi.stubGlobal('cancelAnimationFrame', () => {});
+    const panel = { id: 'sheet-panel' }, done = vi.fn();
+    whenNear({} as Element, done, panel as unknown as Element);
+    expect(ios.map(i => i.opts)).toEqual([{ root: panel, rootMargin: '100% 0px' }]);
+    ios[0]!.cb([{ isIntersecting: true }]);
+    expect(done).not.toHaveBeenCalled();
+    frames.shift()!(); frames.shift()!();
+    expect(done).toHaveBeenCalledTimes(1);
+    expect(ios[0]!.disconnected).toBe(1);
+  });
+});

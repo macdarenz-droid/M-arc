@@ -15,6 +15,8 @@ import { listen } from '../events';
 export interface FeelController {
   openRow(k: string | null, scroll: boolean, force?: boolean): string | null;
   play(): void;
+  /** The "Feel it" chip: scroll to the section, focus its heading, play (golden B: feelChip click). */
+  chip(): void;
   destroy(): void;
 }
 
@@ -83,11 +85,12 @@ export function createFeelController(card: HTMLElement, feel: HTMLElement): Feel
   if (more) on(more, 'click', () => setMore(more.getAttribute('aria-expanded') !== 'true'));
   // the "Feel it" chip (golden B: feelChip click) and a close-up's "This is usually why" (golden B: [data-feelrow])
   let chipT: ReturnType<typeof setTimeout> | null = null;
-  offs.push(listen(card, 'ht:feel-chip', () => {
+  const chip = () => {
     feel.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' });
     feelH.focus({ preventScroll: true });
-    played = true; chipT = setTimeout(play, reduced() ? 0 : 450);
-  }));
+    played = true; clearTimeout(chipT!); chipT = setTimeout(play, reduced() ? 0 : 450);
+  };
+  offs.push(listen(card, 'ht:feel-chip', chip));
   offs.push(() => clearTimeout(chipT!));
   offs.push(listen(card, 'ht:feel-row', d => openRow(d.row, true, true)));
   // a feel row's "When to get it checked": the sheet's one red-flag block, in Risks (plan 2.4, HT9-A3)
@@ -97,15 +100,23 @@ export function createFeelController(card: HTMLElement, feel: HTMLElement): Feel
     f.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' });
     f.focus({ preventScroll: true });
   }));
-  return { openRow, play, destroy: () => offs.splice(0).forEach(f => f()) };
+  return { openRow, play, chip, destroy: () => offs.splice(0).forEach(f => f()) };
 }
 
-/** Binds the controller once the section string is in (`ready`); the event channel is the sheet body `.ht`. */
-export function useFeelMap(host: RefObject<HTMLElement>, ready: boolean): void {
+/** A chip tap or a "This is usually why" that arrived before the section was in; replayed once it is. */
+export interface FeelPending { chip?: boolean; row?: string }
+
+/** Binds the controller once the section string is in (`ready`); the event channel is the sheet body `.ht`.
+ *  `pending` holds what Feel caught before the mount; it is replayed here, the same as a tap after load. */
+export function useFeelMap(host: RefObject<HTMLElement>, ready: boolean, pending?: { current: FeelPending | null }): void {
   useLayoutEffect(() => {
     const feel = ready ? host.current?.querySelector<HTMLElement>('.feel') : null;
     if (!feel) return;
     const c = createFeelController(feel.closest<HTMLElement>('.ht') ?? host.current!, feel);
+    const p = pending?.current;
+    if (pending) pending.current = null;
+    if (p?.row) c.openRow(p.row, !p.chip, true);
+    if (p?.chip) c.chip();
     return () => c.destroy();
   }, [ready]);
 }

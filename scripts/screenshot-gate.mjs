@@ -7101,6 +7101,46 @@ for (const theme of ['silent-black', 'paper']) {
     } finally { await o.ctx.close(); }
   }
 
+  /** HT-8 fix (#166): "Feel it" tapped before the feel section is in loads it, scrolls to it, focuses it and plays it. */
+  async function earlyChip(theme) {
+    const problems = [];
+    const { ctx, page } = await H.openAppTrain(b8, PORT, theme, { onError: onError(`app early chip ${theme}`) });
+    try {
+      const card = await H.openCard(page, 1);   // barbell back squat
+      await card.locator('button.ht-entry').click();
+      // the frame after the chip is first in the DOM (its layout effects have run; the feel mount needs two more frames)
+      const at = await page.evaluate(() => new Promise(res => {
+        const tick = () => {
+          const chip = document.querySelector('dialog.sheet.ht .zx-chip[data-feel]');
+          if (!chip) { requestAnimationFrame(tick); return; }
+          requestAnimationFrame(() => {
+            const host = document.querySelector('dialog.sheet.ht [data-section="feel"]');
+            const empty = !!host && !host.querySelector('.feel');
+            chip.click();
+            res({ empty, host: !!host });
+          });
+        };
+        tick();
+      }));
+      if (!at.host || !at.empty) problems.push(`${theme}: the feel section was ${at.host ? 'already in' : 'missing'} at the tap, so the probe did not test a tap before the mount`);
+      const ok = await page.waitForFunction(() => {
+        const f = document.querySelector('dialog.sheet.ht .feel'), p = f?.closest('.sheet-panel');
+        if (!f || !p) return false;
+        const r = f.getBoundingClientRect(), pr = p.getBoundingClientRect(), map = f.querySelector('[data-feel-map]');
+        const playing = !!map?.classList.contains('is-playing') && map.getAnimations({ subtree: true }).some(a => a.animationName === 'feel-sweep' && a.playState === 'running');
+        return r.top < pr.bottom && r.bottom > pr.top && document.activeElement === f.querySelector('h4') && playing;
+      }, null, { timeout: 4000 }).then(() => true, () => false);
+      if (!ok) {
+        const st = await page.evaluate(() => {
+          const f = document.querySelector('dialog.sheet.ht .feel'), p = f?.closest('.sheet-panel'), map = f?.querySelector('[data-feel-map]');
+          return { loaded: !!f, inView: !!f && f.getBoundingClientRect().top < p.getBoundingClientRect().bottom && f.getBoundingClientRect().bottom > p.getBoundingClientRect().top, focused: !!f && document.activeElement === f.querySelector('h4'), playing: !!map?.classList.contains('is-playing') };
+        });
+        problems.push(`${theme}: 4 s after an early "Feel it" tap: ${JSON.stringify(st)} (want loaded, in view, heading focused, playing)`);
+      }
+    } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}`); } finally { await ctx.close(); }
+    return problems;
+  }
+
   try {
     const sizes = H.HT_PLATES.map(([id]) => {
       const files = readdirSync(join(ROOT, 'www/assets')).filter(f => new RegExp(`^feel-${id}-[\\w-]{8}\\.js$`).test(f));
@@ -7112,18 +7152,20 @@ for (const theme of ['silent-black', 'paper']) {
     });
     const idx = readdirSync(join(ROOT, 'www/assets')).filter(f => /^index-.*\.js$/.test(f)).map(f => readFileSync(join(ROOT, 'www/assets', f), 'utf8')).join('');
     if (idx.includes('feel-band') || idx.includes('data-feel-map')) errors.push(`${tag}: feel markup found in the main bundle`);
-    const [runs, red, trip] = await Promise.all([
+    const [runs, red, trip, early] = await Promise.all([
       Promise.all(H.HT_THEMES.map(themeRun)),
       Promise.all(H.HT_FULL.map(reducedRun)),
       (async () => { const a = await shimmerCost('app'), g = await shimmerCost('golden'); return { a, g }; })(),
+      Promise.all(H.HT_FULL.map(earlyChip)),
     ]);
     for (const r of [...runs, ...red]) for (const p of r.problems) errors.push(`${tag}: ${p}`);
+    for (const p of early.flat()) errors.push(`${tag}: early "Feel it": ${p}`);
     const pairs = runs.reduce((n, r) => n + r.stats.pairs, 0) + red.reduce((n, r) => n + r.pairs, 0);
     if (pairs < 200) errors.push(`${tag}: only ${pairs} pixel pairs compared, expected the full matrix (>= 200)`);
     const ratio = trip.a.median / trip.g.median;
     // the probe must see a shimmer to measure: golden B's own sweep costs well over 20 ms at 4x (measured ~120 ms)
     if (!(trip.g.median >= 20) || !(ratio <= TRIP)) errors.push(`${tag}: shimmer tripwire: app ${trip.a.median} ms vs golden B ${trip.g.median} ms shimmer TaskDuration at 4x (ratio ${ratio.toFixed(2)}, limit ${TRIP}); app ${JSON.stringify(trip.a)}, golden B ${JSON.stringify(trip.g)}`);
-    console.log(`${tag} (${b8.version()}): ${pairs} pixel pairs (S5/S4/S6 in ${H.HT_THEMES.length} themes, reduced rest in ${H.HT_FULL.length}), ${runs.reduce((n, r) => n + r.stats.l4, 0)} band animation lists, ${runs[0].stats.rows} rows; end ${END} ms (+1 s checked); feel chunks ${sizes.map(s => s[1]).join('/')} B gz (ceilings in tests/howto/budgets.json); shimmer TaskDuration at 4x (median tap window - median idle window, 3 each): app ${trip.a.median} ms (tap ${JSON.stringify(trip.a.runs)}, idle ${JSON.stringify(trip.a.idle)}), golden B ${trip.g.median} ms (tap ${JSON.stringify(trip.g.runs)}, idle ${JSON.stringify(trip.g.idle)}), ratio ${ratio.toFixed(2)} (<= ${TRIP}); ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+    console.log(`${tag} (${b8.version()}): ${pairs} pixel pairs (S5/S4/S6 in ${H.HT_THEMES.length} themes, reduced rest in ${H.HT_FULL.length}), ${runs.reduce((n, r) => n + r.stats.l4, 0)} band animation lists, ${runs[0].stats.rows} rows; end ${END} ms (+1 s checked); feel chunks ${sizes.map(s => s[1]).join('/')} B gz (ceilings in tests/howto/budgets.json); shimmer TaskDuration at 4x (median tap window - median idle window, 3 each): app ${trip.a.median} ms (tap ${JSON.stringify(trip.a.runs)}, idle ${JSON.stringify(trip.a.idle)}), golden B ${trip.g.median} ms (tap ${JSON.stringify(trip.g.runs)}, idle ${JSON.stringify(trip.g.idle)}), ratio ${ratio.toFixed(2)} (<= ${TRIP}); early "Feel it" (before the mount: loads, scrolls, focuses, plays) in ${H.HT_FULL.join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   } finally {
     await b8.close();
   }
@@ -7351,4 +7393,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-8 (feel map equals golden B in 5 themes: S5 paused frames, S4, every S6 row, reduced-motion rest; band animation list; nothing running at end + 1 s; shimmer TaskDuration within 1.2x golden B at 4x) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-8 (feel map equals golden B in 5 themes: S5 paused frames, S4, every S6 row, reduced-motion rest; band animation list; nothing running at end + 1 s; shimmer TaskDuration within 1.2x golden B at 4x; an early "Feel it" tap loads, scrolls to and plays the map) verified.');
