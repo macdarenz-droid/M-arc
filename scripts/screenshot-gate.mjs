@@ -6707,7 +6707,7 @@ for (const theme of ['silent-black', 'paper']) {
       goal: 'lean', splits: [{ id: 'sp1', name: 'SPLIT 1 UPPER BODY', color: '#6aa9ff', focus: [], createdAt: now, exercises: EX.map(id => ({ exerciseId: id, sets: 3 })) }],
       schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
       sessions: [sess(14), sess(10), sess(7), sess(3)], active: null, customExercises: [],
-      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 }, errorReportsAsked: true },
       body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
       onboarding: { dismissedAt: [], completedAt: now }, checkIns: checked ? [{ day: day(0), sleepQuality: 4 }] : [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
       units: { gyms: [{ id: 'gym_default', name: 'My gym', defaultUnit: 'kg', createdAt: now }], activeGymId: 'gym_default', byExercise: {}, byEquipment: {} },
@@ -6760,7 +6760,8 @@ for (const theme of ['silent-black', 'paper']) {
     await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
     await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(400);
     const start = page.getByRole('button', { name: /^Start / }).first();
-    await start.scrollIntoViewIfNeeded(); await page.waitForTimeout(200);
+    // Start clear of the nav, so Playwright's click does not scroll the page and the scroll check measures only the app.
+    await start.evaluate(el => el.scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
     const cdp = await ctx.newCDPSession(page); await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
     let frames = bug36Sample(page); await start.click(); frames = await frames;
     const first = frames.find(x => x.title)?.title ?? '';
