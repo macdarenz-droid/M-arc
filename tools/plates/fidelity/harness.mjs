@@ -612,8 +612,10 @@ const click = (page, sel) => page.evaluate(s => { const b = document.querySelect
  * Gate block HT-3's fidelity run (card HT3-A5..A7, plan 2.7 L2b, F3, L3, L4): the app's How-to sheet against the
  * approved gallery, per theme in its own pair of contexts, run side by side. Returns { problems, stats }.
  * `mutate` (tests only) runs in every app page after the sheet opens, to prove a mutation fails.
+ * `markup: false` (HT10-A2) skips L2b and F3 and keeps the L3 pixels and L4: after a full interaction the app's DOM
+ * legitimately holds the built mistake figure and script-written inline styles that the untouched golden does not.
  */
-export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT_FULL, plates = HT_PLATES, widths = [360, 340], shards = 2, mutate = null } = {}) {
+export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT_FULL, plates = HT_PLATES, widths = [360, 340], shards = 2, mutate = null, markup: markupAll = true } = {}) {
   const t0 = Date.now(), problems = [], stats = { t: { markup: 0, present: 0, capture: 0, diff: 0 }, pairs: 0, off1Max: 0, offMax: 0, tall: [], l2b: 0, f3: 0, anims: 0 };
   const run = async (theme, subset) => {
     const P = m => problems.push(`${theme} ${m}`);
@@ -622,7 +624,7 @@ export async function ht3Fidelity(browser, port, { themes = HT_THEMES, full = HT
     const figSel = { app: 'dialog.sheet.ht .ht-golden figure[data-mode="normal"]', golden: id => `#card-${id} .plate[data-mode="normal"]` };
     let width = DEVICE.viewport.width, withM = false;
     const both = async fn => { await Promise.all([fn(app.page, 'app'), fn(gold.page, 'golden')]); };
-    const check = async (id, label, { markup = true } = {}) => {
+    const check = async (id, label, { markup = markupAll } = {}) => {
       await settleApp(app.page);
       let tk = Date.now(); const lap = k => { const n = Date.now(); stats.t[k] += n - tk; tk = n; };
       // D-HT3-sections: the sections below the golden block (HT-6 on) are display:none for the whole check (L2b, F3

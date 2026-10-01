@@ -96,7 +96,7 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
       const mutate = new Function('pre', `return (${src})(pre).then(() => {})`);
       // one side-by-side run over every theme with A2 tuples; a theme's plates are the ids with an A2 tuple in it
       const plates = H.HT_PLATES.filter(p => a2Themes.some(th => want('a2', th).some(t => t.id === p[0])));
-      const a2 = await H.ht3Fidelity(ht10, PORT, { themes: a2Themes, full: [], widths: [], plates, mutate }).catch(e => crashed('A2', e));
+      const a2 = await H.ht3Fidelity(ht10, PORT, { themes: a2Themes, full: [], widths: [], plates, mutate, markup: false }).catch(e => crashed('A2', e));
       a2Pairs = a2.stats.pairs ?? 0;
       for (const p of a2.problems) { const theme = H.HT_THEMES.find(th => p.startsWith(th)) ?? 'silent-black'; fail(owner('a2', theme, p), theme, 'a2', `A2 (after the full script): ${p}`); }
       if (a2Pairs < plates.length * a2Themes.length * 2) fail('*', 'silent-black', 'a2', `A2: only ${a2Pairs} plate pairs compared, expected ${plates.length * a2Themes.length * 2}`);
@@ -179,7 +179,7 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
             ['M11 (disclaimer above Risks)', () => { const d = document.querySelector('dialog.sheet.ht .ht-disclaimer'); document.querySelector('dialog.sheet.ht .redflag').before(d); }, [/not after the last \.redflag/]],
             ['M12 (disclaimer deleted)', () => document.querySelector('dialog.sheet.ht .ht-disclaimer').remove(), [/0 \.ht-disclaimer/]],
           ] : []),
-          ['C10 (a 30 px button)', () => { const b = document.createElement('button'); b.id = 'ht10-small'; b.textContent = 'x'; b.style.cssText = 'width:30px;height:30px'; document.querySelector('dialog.sheet.ht [data-section]').append(b); }, [/#ht10-small is 30\.0 x 30\.0/]],
+          ['C10 (a 30 px button)', () => { const b = document.createElement('button'); b.id = 'ht10-small'; b.textContent = 'x'; b.style.cssText = 'width:30px;height:30px'; document.querySelector('dialog.sheet.ht [data-section]').append(b); }, [/#ht10-small is 30\.000 x 30\.000/]],
           ['C10 (an exempt tell 1 px wider than its golden pin)', () => { document.getElementById('lateral-raise-mistake').click(); const d = document.getElementById('lateral-raise-m-dip'); d.style.width = `${d.getBoundingClientRect().width + 1}px`; }, [/#lateral-raise-m-dip is 33\.078 x 44\.000 .*not its pinned golden/]],
           ['C10 (two overlapping buttons)', () => { const w = document.createElement('div'); w.style.position = 'relative'; w.innerHTML = '<button id="ht10-o1" style="width:60px;height:60px">a</button><button id="ht10-o2" style="position:absolute;left:20px;top:20px;width:60px;height:60px">b</button>'; document.querySelector('dialog.sheet.ht [data-section]').append(w); }, [/#ht10-o1 and #ht10-o2 overlap/]],
         ];
