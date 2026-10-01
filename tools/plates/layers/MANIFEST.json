@@ -4,6 +4,7 @@
   "pageApproval": {
     "current": {
       "ref": "6b86baa",
+      "supersedes": "a7a0b74",
       "approvedBy": "owner",
       "date": "2026-09-30",
       "why": "Owner approved this re-pin in the HT-4b session on 2026-09-30. It applies owner decision LR-23 (\"Dont put any emergency or whatever contacts. Even the source remove it in app ui. If its not required by pkaystore dont put.\"): no Sources section, evidence labels or contacts in the UI; plates unchanged.",
@@ -13,6 +14,7 @@
     "history": [
       {
         "ref": "a7a0b74",
+        "supersedes": "b3a90af",
         "approvedBy": "supervisor",
         "date": "2026-09-30",
         "why": "source records only (HT5-A2); owner-approved design unchanged",

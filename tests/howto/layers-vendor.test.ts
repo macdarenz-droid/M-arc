@@ -77,7 +77,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
   // Supervisor, PR #107 (the same condition HT-2 had, #105): the per-file check alone cannot catch a file and its
   // own MANIFEST entry being edited together and staying consistent with each other.
   it('the sorted path:sha256 list of MANIFEST.json, plus pageApproval, hashes to its pinned literal', () => {
-    expect(m.sha256(m.manifestPinList())).toBe('37c5838e4f5bc4e7649c588861bd30a26d637f13186a2cdd0b78a869df0b66e9');
+    expect(m.sha256(m.manifestPinList())).toBe('c9b3eb6838508fe8c3d518294debe15ec97c93ea781b55bc214aa3ccc9eb2606');
   });
 
   it('fails when a vendored file and its own MANIFEST sha256 entry change together (consistently)', () => {
@@ -92,7 +92,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
     // the per-file check alone is fooled (both sides agree, source pin untouched)...
     expect(m.verifyLayers(d, manifest)).toEqual([]);
     // ...but the literal pin over the whole manifest is not
-    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('37c5838e4f5bc4e7649c588861bd30a26d637f13186a2cdd0b78a869df0b66e9');
+    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('c9b3eb6838508fe8c3d518294debe15ec97c93ea781b55bc214aa3ccc9eb2606');
   });
 });
 
@@ -111,6 +111,8 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
     expect(current.ref).toBe(m.GOLDEN_B_REF);
     // HT-4b: the owner approved the LR-23 re-pin in the HT-4b session (2026-09-30).
     expect(current.approvedBy).toBe('owner');
+    // HT-4b review fix: each record names the one it retired, and the retired one heads history.
+    expect(current.supersedes).toBe(history[0].ref);
     expect(Array.isArray(history)).toBe(true);
     const fixture = readFileSync(FIXTURE);
     expect(m.sha256(fixture)).toBe(current.pageSha256);
@@ -122,7 +124,7 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
     const { history } = m.readManifest().pageApproval;
     expect(history).toEqual([
       {
-        ref: 'a7a0b74', approvedBy: 'supervisor', date: '2026-09-30',
+        ref: 'a7a0b74', supersedes: 'b3a90af', approvedBy: 'supervisor', date: '2026-09-30',
         why: 'source records only (HT5-A2); owner-approved design unchanged',
         pageSha256: 'f39137e190e3ff5921bbe658571228b6b2a53e6d27fcc95e0d5d2afaec9e1384', bytes: 2386418,
       },
@@ -137,7 +139,7 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
         pageSha256: '472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a', bytes: 2451995,
       },
     ]);
-    expect(m.historyPin(history)).toBe('893a812b814aa3394d929b5a7f3c8f6f76e0291d8c484d73d8deafc2c199cad4');
+    expect(m.historyPin(history)).toBe('5432626725ac8afb8554bf3b2d063698bd8e6f55aba8e63ff40286c3c0d77dae');
   });
 
   it('fails (the pinned literal changes) if an already-retired entry is edited after the fact', () => {
