@@ -6979,7 +6979,7 @@ for (const theme of ['silent-black', 'paper']) {
     content[row.chromeId] = (await import(pathToFileURL(join(ROOT, `tools/plates/layers/exercises/${lib.slice(4)}.howto.mjs`)).href)).default;
   }
   const KEYS = Object.fromEntries(H.HT_PLATES.map(([id]) => [id, content[id].zooms.filter(z => z.kind === 'posture').map(z => z.key)]));
-  const stats = { pairs: 0, maxOff: 0, anims: 0, reduced: 0, restores: 0, controls: 0, reopens: 0, probes: 0 };
+  const stats = { pairs: 0, maxOff: 0, anims: 0, reduced: 0, restores: 0, controls: 0, reopens: 0, probes: 0, labelOpens: 0 };
   // A5 sizes, on the built chunks the gate serves
   const assets = readdirSync(join(ROOT, 'www/assets')), sizes = [];
   const budgets = new Map(JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).budgets.map(b => [b.chunk, b]));
@@ -7229,6 +7229,28 @@ for (const theme of ['silent-black', 'paper']) {
         await H.closeHowTo(app.page);
         if (await app.page.$('#zdots')) P(`A2 ${id}: #zdots stays in the document after the sheet closed`);
       }
+      if (theme === 'emerald' && !reduce) {
+        // D-HT7-L3-text-9: 30 opens of the squat's "bar-on-back" from Mistake all shape its "Bony bump" label exactly as
+        // golden B does (before the host's F1 change, about 1 open in 7 read 0.16 % narrower under gate load)
+        const id = 'barbell-back-squat', k = 'bar-on-back', sel = panelSel(id, k);
+        const width = page => page.evaluate(sel => [...document.querySelectorAll(`${sel} .hz-c7-t`)].map(t => t.getComputedTextLength().toFixed(4)).join('/'), sel);
+        await GB.openMistake(g.page, id); await GB.openZoom(g.page, id, k);
+        const want = await width(g.page);
+        await GB.closeZoom(g.page, id, k); await GB.openMistake(g.page, id);
+        if (!/^\d/.test(want)) P(`A3 L3 label ${id}/${k}: golden B's "Bony bump" width reads "${want}"`);
+        await H.openHowTo(app.page, H.HT_PLATES.findIndex(([x]) => x === id));
+        const got = {};
+        for (let i = 0; i < 30; i++) {
+          await app.page.click(`#${id}-mistake`); await H.settleApp(app.page);
+          await app.page.click(`#${id}-chip-${k}`); await app.page.waitForSelector(`${sel}:not([hidden])`); await H.settleApp(app.page);
+          const w = await width(app.page); got[w] = (got[w] || 0) + 1;
+          await app.page.click(`${sel}-close`); await app.page.waitForSelector(`${sel}[hidden]`, { state: 'attached' }); await H.settleApp(app.page);
+          await app.page.click(`#${id}-mistake`); await H.settleApp(app.page);
+        }
+        await H.closeHowTo(app.page);
+        stats.labelOpens += 30;
+        if (got[want] !== 30) P(`A3 L3 label ${id}/${k}: "Bony bump" widths over 30 opens from Mistake ${JSON.stringify(got)}, golden B ${want} (D-HT7-L3-text-9)`);
+      }
       await app.ctx.close();
     } finally {
       await g.browser.close();
@@ -7239,9 +7261,10 @@ for (const theme of ['silent-black', 'paper']) {
   } finally {
     GB.cleanupScratchPage(dir);
   }
+  if (stats.labelOpens !== 30) errors.push(`${tag}: ${stats.labelOpens} D-HT7-L3-text-9 label opens, expected 30 (emerald)`);
   if (stats.probes !== 1) errors.push(`${tag}: ${stats.probes} D-HT7-L3-text probe runs, expected 1 (silent-black, leg press foot)`);
   if (stats.pairs < 80) errors.push(`${tag}: only ${stats.pairs} L3 pairs compared, expected 8 x 2 x 5 themes + reduced motion (>= 80)`);
-  console.log(`${tag}: ${stats.pairs} posture close-up L3 pairs (max ${stats.maxOff} px off), ${stats.anims} opening animation lists, ${stats.reduced} reduced-motion opens, ${stats.restores} plate restores, ${stats.controls} shift controls, ${stats.reopens} L3 text re-opens (D-HT7-L3-text), ${stats.probes} re-open probes; posture chunks gz B: ${sizes.join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  console.log(`${tag}: ${stats.pairs} posture close-up L3 pairs (max ${stats.maxOff} px off), ${stats.anims} opening animation lists, ${stats.reduced} reduced-motion opens, ${stats.restores} plate restores, ${stats.controls} shift controls, ${stats.reopens} L3 text re-opens (D-HT7-L3-text), ${stats.probes} re-open probes, ${stats.labelOpens} label opens (D-HT7-L3-text-9); posture chunks gz B: ${sizes.join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
 // HT-4: the golden-B lock (L0-B), the crop-window/pose-classification live proof (HT4-A5), and the state driver
