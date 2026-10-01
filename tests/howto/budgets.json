@@ -3,93 +3,93 @@
   "budgets": [
     {
       "chunk": "HowToSheet-*.js",
-      "rawMax": 6954,
-      "gzMax": 2968,
-      "measuredRaw": 6321,
-      "measuredGz": 2698,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 10232,
+      "gzMax": 4215,
+      "measuredRaw": 9301,
+      "measuredGz": 3831,
+      "setBy": "HT-9",
+      "reason": "Setup and Risks sections (plan 2.4 items 3 and 7) render in the shared HowToSheet chunk; measured + 10 % over HT-3b's pre-layer baseline (6321/2698 B)."
     },
     {
       "chunk": "HowToSheet-*.css",
-      "rawMax": 9565,
-      "gzMax": 2169,
-      "measuredRaw": 8695,
-      "measuredGz": 1971,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 11424,
+      "gzMax": 2470,
+      "measuredRaw": 10385,
+      "measuredGz": 2245,
+      "setBy": "HT-9",
+      "reason": "src/slices/howto/css/text.css (setup + risks rules) added to the shared chunk; measured + 10 % over HT-3b's pre-layer baseline (8695/1971 B)."
     },
     {
       "chunk": "ht-dumbbell-lateral-raise-*.js",
-      "rawMax": 69302,
-      "gzMax": 13789,
-      "measuredRaw": 63001,
-      "measuredGz": 12535,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 77365,
+      "gzMax": 16814,
+      "measuredRaw": 70331,
+      "measuredGz": 15285,
+      "setBy": "HT-9",
+      "reason": "Golden-B setup steps, risks list and red-flag content for this exercise now generated into the chunk; measured + 10 % over HT-3b's pre-layer baseline (63001/12535 B)."
     },
     {
       "chunk": "ht-barbell-back-squat-*.js",
-      "rawMax": 102123,
-      "gzMax": 23180,
-      "measuredRaw": 92839,
-      "measuredGz": 21072,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 110349,
+      "gzMax": 26407,
+      "measuredRaw": 100317,
+      "measuredGz": 24006,
+      "setBy": "HT-9",
+      "reason": "Golden-B setup steps, risks list and red-flag content for this exercise now generated into the chunk; measured + 10 % over HT-3b's pre-layer baseline (92839/21072 B)."
     },
     {
       "chunk": "ht-pull-up-*.js",
-      "rawMax": 136662,
-      "gzMax": 31472,
-      "measuredRaw": 124238,
-      "measuredGz": 28610,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 144539,
+      "gzMax": 34477,
+      "measuredRaw": 131399,
+      "measuredGz": 31342,
+      "setBy": "HT-9",
+      "reason": "Golden-B setup steps, risks list and red-flag content for this exercise now generated into the chunk; measured + 10 % over HT-3b's pre-layer baseline (124238/28610 B)."
     },
     {
       "chunk": "ht-hanging-leg-raise-*.js",
-      "rawMax": 129125,
-      "gzMax": 30798,
-      "measuredRaw": 117386,
-      "measuredGz": 27998,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 136887,
+      "gzMax": 33692,
+      "measuredRaw": 124442,
+      "measuredGz": 30629,
+      "setBy": "HT-9",
+      "reason": "Golden-B setup steps, risks list and red-flag content for this exercise now generated into the chunk; measured + 10 % over HT-3b's pre-layer baseline (117386/27998 B)."
     },
     {
       "chunk": "ht-lat-pulldown-*.js",
-      "rawMax": 122308,
-      "gzMax": 26250,
-      "measuredRaw": 111189,
-      "measuredGz": 23863,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 131048,
+      "gzMax": 29704,
+      "measuredRaw": 119134,
+      "measuredGz": 27003,
+      "setBy": "HT-9",
+      "reason": "Golden-B setup steps, risks list and red-flag content for this exercise now generated into the chunk; measured + 10 % over HT-3b's pre-layer baseline (111189/23863 B)."
     },
     {
       "chunk": "ht-seated-cable-row-*.js",
-      "rawMax": 128748,
-      "gzMax": 28005,
-      "measuredRaw": 117043,
-      "measuredGz": 25459,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 137268,
+      "gzMax": 31203,
+      "measuredRaw": 124789,
+      "measuredGz": 28366,
+      "setBy": "HT-9",
+      "reason": "Golden-B setup steps, risks list and red-flag content for this exercise now generated into the chunk; measured + 10 % over HT-3b's pre-layer baseline (117043/25459 B)."
     },
     {
       "chunk": "ht-leg-press-*.js",
-      "rawMax": 102925,
-      "gzMax": 19884,
-      "measuredRaw": 93568,
-      "measuredGz": 18076,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 111312,
+      "gzMax": 22892,
+      "measuredRaw": 101192,
+      "measuredGz": 20810,
+      "setBy": "HT-9",
+      "reason": "Golden-B setup steps, risks list and red-flag content for this exercise now generated into the chunk; measured + 10 % over HT-3b's pre-layer baseline (93568/18076 B)."
     },
     {
       "chunk": "ht-machine-chest-press-*.js",
-      "rawMax": 109174,
-      "gzMax": 22151,
-      "measuredRaw": 99249,
-      "measuredGz": 20137,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 117593,
+      "gzMax": 24847,
+      "measuredRaw": 106902,
+      "measuredGz": 22588,
+      "setBy": "HT-9",
+      "reason": "Golden-B setup steps, risks list and red-flag content for this exercise now generated into the chunk; measured + 10 % over HT-3b's pre-layer baseline (99249/20137 B)."
     }
   ]
 }
