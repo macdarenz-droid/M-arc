@@ -9,7 +9,7 @@ export interface EffortDrift {
   confidence: Confidence;
 }
 
-/** AUD-9 OBS-DRIFT: same work = the halves' mean working load within 1 % and mean working reps within one rep. */
+/** AUD-9 OBS-DRIFT: work rose or fell when the halves' mean working load moved over 1 %, or mean working reps by one rep or more. */
 export const SAME_WORK = { loadShare: 0.01, reps: 1 } as const;
 
 export function effortDrift(history: ExerciseSessionSummary[]): EffortDrift {
@@ -24,10 +24,15 @@ export function effortDrift(history: ExerciseSessionSummary[]): EffortDrift {
   const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
   const halves = (pick: (r: ExerciseSessionSummary) => number) => [avg(recent.slice(0, mid).map(pick)), avg(recent.slice(mid).map(pick))] as const;
   const [kgA, kgB] = halves(r => r.workKg), [repsA, repsB] = halves(r => r.workReps);
-  if (Math.abs(kgB - kgA) > SAME_WORK.loadShare * Math.max(kgA, kgB) || Math.abs(repsB - repsA) >= SAME_WORK.reps) return { status: 'unknown', delta: 0, confidence: 'low' };
+  // The guard follows the drift's direction: harder after more work, or easier after less, is the step
+  // itself; harder at the same or less work (or easier at the same or more) still reads as drift.
+  const loadTol = SAME_WORK.loadShare * Math.max(kgA, kgB);
+  const workUp = kgB - kgA > loadTol || repsB - repsA >= SAME_WORK.reps;
+  const workDown = kgA - kgB > loadTol || repsA - repsB >= SAME_WORK.reps;
   const mean = (xs: { v: number }[]) => xs.reduce((a, b) => a + b.v, 0) / xs.length;
   const delta = mean(newer) - mean(older);
   const confidence: Confidence = sessionsWithEffort >= 6 && obs.length >= 18 ? 'high' : sessionsWithEffort < 5 || obs.length < 10 ? 'low' : 'medium';
   const status = Math.abs(delta) < 0.025 ? 'stable' : delta > 0 ? 'harder' : 'easier';
+  if ((status === 'harder' && workUp) || (status === 'easier' && workDown) || (status === 'stable' && (workUp || workDown))) return { status: 'unknown', delta: 0, confidence: 'low' };
   return { status, delta, confidence };
 }

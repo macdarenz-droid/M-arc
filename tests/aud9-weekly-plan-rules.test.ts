@@ -85,12 +85,23 @@ describe('AUD-9 OBS-THRESH: weekly limits come from the goal policy', () => {
 
 describe('AUD-9 OBS-DRIFT: effort drift only reads the same work', () => {
   const days = ['2026-08-31', '2026-09-03', '2026-09-07', '2026-09-10', '2026-09-14', '2026-09-17'];
-  const hist = (kg: (i: number) => number, reps: (i: number) => number = () => 8) => exerciseHistory(days.map((d, i) => session(d, [{ id: bench, sets: sets(kg(i), reps(i), i < 3 ? 'ideal' : 'max', 3) }])), bench);
+  const hist = (kg: (i: number) => number, reps: (i: number) => number = () => 8, easier = false) =>
+    exerciseHistory(days.map((d, i) => session(d, [{ id: bench, sets: sets(kg(i), reps(i), (i < 3) !== easier ? 'ideal' : 'max', 3) }])), bench);
   it('harder ratings at a rising load are neither harder nor stable', () => {
     expect(effortDrift(hist(i => (i < 3 ? 60 : 70))).status).toBe('unknown');
   });
   it('harder ratings after a rep step at the same load are not drift either', () => {
     expect(effortDrift(hist(() => 60, i => (i < 3 ? 8 : 10))).status).toBe('unknown');
+  });
+  it('harder ratings while reps fall at the same load still read harder (review fix)', () => {
+    expect(effortDrift(hist(() => 60, i => (i < 3 ? 8 : 7))).status).toBe('harder');
+  });
+  it('harder ratings at a lower load still read harder (review fix)', () => {
+    expect(effortDrift(hist(i => (i < 3 ? 60 : 55))).status).toBe('harder');
+  });
+  it('easier ratings at a higher load still read easier; at a lower load they are not drift', () => {
+    expect(effortDrift(hist(i => (i < 3 ? 60 : 70), undefined, true)).status).toBe('easier');
+    expect(effortDrift(hist(i => (i < 3 ? 60 : 55), undefined, true)).status).toBe('unknown');
   });
   it('harder ratings at the same load still read harder', () => {
     expect(effortDrift(hist(() => 60)).status).toBe('harder');
