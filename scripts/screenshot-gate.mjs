@@ -5343,7 +5343,7 @@ for (const { theme, inset } of bug22Runs) {
     const dock = document.querySelector('.esc-dock').getBoundingClientRect();
     const shade = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dock-shade')) || 0;
     const log = document.querySelector('[data-palace="train.log-past"]');
-    const hint = [...document.querySelectorAll('.view p.hint')].find(p => p.textContent.includes('Change the goal in Coach'));
+    const hint = document.querySelector('.view [data-palace="train.targets"]');
     const lb = log?.getBoundingClientRect();
     const hit = lb ? document.elementFromPoint(lb.left + lb.width / 2, lb.top + lb.height / 2) : null;
     return { rows: document.querySelectorAll('[data-palace="train.split"] .list .row, [data-palace="train.split"] .list > *').length, limit: dock.top - shade, log: lb?.bottom ?? null, hint: hint?.getBoundingClientRect().bottom ?? null, tap: !!hit && log.contains(hit) };

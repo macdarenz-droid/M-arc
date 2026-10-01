@@ -1287,3 +1287,8 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
   **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
   **Source**: card ESC-W-CITE, reserved_paths.
+
+## COPY-1 delta review @ 640cb9a: supervisor rulings M1 and M2 (2026-10-01)
+
+- **M1 (option a), closing part of D-COPY1-8.** `Train.tsx:319`'s targets line no longer explains: it reads `Goal: {name}` only, carrying `data-palace="train.targets"`. BUG-22's block (`scripts/screenshot-gate.mjs`, the Train-end probe) now finds it by that `data-palace` marker instead of the text "Change the goal in Coach" — the only edit to that block, every assertion byte-identical, the "could not find …" error unchanged. Mutation: removing the attribute makes BUG-22's Train-end probe fail with that error; restored, the full gate passes. D-COPY1-8's Train.tsx line is resolved; its other pinned lines (the error-report hint, the toast, the setup-note label, History's empty title, the watch status lines) are still open.
+- **M2, approved.** Confirms D-COPY1-medical above: PLAY-1's P3 probe retirement is the supervisor-approved design (no check weakened, COPY-1 asserts the inverse).
