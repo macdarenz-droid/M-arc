@@ -848,7 +848,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 
 - **Decided (D-DOC2, supervisor decision, owner facts 2026-09-29)**: M/ARC's minimum age is **18+**, not a lower age with parental-consent handling.
   **Why**: (1) Anthropic's Usage Policy defines a minor as under 18 and requires extra safeguards for products serving them, and this app has no such safeguards built; (2) the app handles health data (heart rate, resting heart rate via Health Connect) and gives strength-training advice through Escobar, both inappropriate to hand to a minor unsupervised. Setting 18+ avoids both problems without building anything new, versus supporting a lower age with parental consent, which this app has no mechanism for.
-  **Source**: Anthropic's Usage Policy (minors defined as under 18); `docs/PRIVACY-POLICY.md` "The online coach" and "What stays on your phone" (health data, coaching advice); owner facts for DOC-2, 2026-09-29.
+  **Source**: Anthropic's Usage Policy (minors defined as under 18); `docs/PRIVACY-POLICY.md` "Online coach" and "On-device data" (health data, coaching advice); owner facts for DOC-2, 2026-09-29.
 
 - **Decided**: applicable law is stated as Australia's Privacy Act 1988 (Cth) plus, for Philippine users, the Philippines' Data Privacy Act of 2012 (Republic Act No. 10173) — both names and years confirmed from their official sources (`legislation.gov.au` for the Privacy Act 1988; `officialgazette.gov.ph`/`privacy.gov.ph` for RA 10173, signed 15 August 2012), not assumed from training.
   **Why**: the owner lives in Australia and the app is available in all countries, especially the Philippines and Australia (owner facts); both acts are the correct, current official names as verified by web search, not similarly-named older or draft bills.
@@ -1204,12 +1204,41 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   **Also**: the card's `layers` sha entry in `tests/howto/golden/GOLDEN.json` is not added: main has none, HT-4's test asserts none (that file is HT-2's generator input), so the page sha stays in MANIFEST `pageApproval` and `PAGE_SHA256`.
   **Source**: HT-4b card, PR #140.
 
+## BUG-31 / BUG-33: brief-form fact tags and the repair wording (BUG-31 builder, 2026-09-30)
+
+- **Decided by BUG-31 / BUG-33 (2026-09-30)** where the card is silent:
+  - A tag is made canonical only when every id in it is in the conversation's ledger. A tag with one unknown id (`[f41, f998]`) stays whole, so all its digits count, the known one included: the check never trusts part of a tag.
+  - The stored message `content` keeps the model's own words, tags included; only what the app renders (`rendered.answer`, `preamble`, `unverified`) uses the canonical form. The model's history is not rewritten.
+  - Conversations stored before the fix display without tags (render-time strip), but a stored "Unverified number" mark is not re-judged: that would mean re-running the check against a later ledger, which can only loosen it.
+  - The pin proposal card's title and its preview row go through the same strip as the pinned card's title, since both show the model's title.
+  - `stripCitationTags` removes each marker or tag together with the spaces before it and touches nothing else, so a caption's " — " keeps its spacing.
+  - The gate needs the mock to answer in the brief form (A5), so `src/escobar/mock/transport.ts` gains one scenario, run only for its own question (`BRIEF_TAGS_QUESTION`); the default mock conversation is unchanged. It cites `[fE, fN]` with fN an id no fact value covers, so a tag read as a number is always flagged; with the gate's data the e1RM id alone matched a value by chance.
+  - The gate compares text as shown (runs of spaces collapsed): `parseDirectives(...).plain` keeps two spaces where a mid-sentence citation was, which `white-space: normal` never shows.
+  - BUG-33: the plain `now` line (the diff key) also reads "1 day ago"; `now` is always sent, so the brief diff is unaffected.
+  **Why**: card BUG-31 (A1, A2, A5, A6) and BUG-33 (A4).
+  **Open**: the worker prompt (`escobar-worker/src/prompt/policy.ts` rule 3) still says "then restate the answer"; the card leaves the prompt to a separate owner-merged PR.
+
 ## LIB-25 review fix: poly input checks (LIB-25 builder, 2026-09-30)
 
 - **Decided**: `poly()` throws when a point is not exactly 3 finite numbers, naming the point's index. It also throws when the points enclose no area. The area is measured in world space with Newell's normal: half its length must be at least 1e-8 m². This rejects points that coincide or lie on one line, but it still draws an outline that is seen edge-on in the current view.
   **Why**: this is the review's low finding on #120. The supervisor asked for it to be fixed now. A screen-space area check would throw on a valid part seen edge-on, for example a flat plate in side view, so the check is done in world space. The source is on claude/howto-options (48153c4) and was vendored from there.
   **Source**: REVIEW LIB-25 @ 8480052 on #120; golden procedure (plan 2.8).
 
+## DOC-5: developer name and copy tone (DOC-5 builder, 2026-10-01)
+
+- **D-DOC5-1. The policy names the developer "Marc Darenz".** `docs/PRIVACY-POLICY.md` drops the full legal name from the "made by" line and the Cloudflare line, and "Last updated" moves to 2026-10-01 (the name line is a content change). The copy on `claude/app-website-design-671lk8` stays byte-identical.
+  **Why**: the owner asked for "Marc Darenz" unless Google Play requires the full name, and it does not. Play's User Data policy (https://support.google.com/googleplay/android-developer/answer/10144311) asks for "developer information and a privacy point of contact", and for the policy to name either the entity on the store listing or the app. The policy names the app, M/ARC, and gives a working contact email. The Play developer name "can be different from your legal name" (https://support.google.com/googleplay/android-developer/answer/13628312), so the owner sets it to "Marc Darenz" (owner step in `docs/PLAY-SUBMISSION.md`). RA 10173 s.16(b) and GDPR Art. 13(1)(a) ask for the controller's "identity and contact details", not a full legal name. For a solo developer, his real name plus a working email meets that, and Play itself shows his legal name and country next to the app.
+  **Risk**: a strict regulator could read "identity" as the full legal name. Recovery: a one-line policy edit on both branches.
+  **Source**: owner message 2026-10-01; research result in the DOC-5 card (the NPC and EUR-Lex pages could not be fetched; the law texts came from lawphil.net and gdpr-info.eu, which are not official sites).
+- **D-DOC5-2. Copy standard: the reader is a capable adult.** Copy stays clear and direct but never labels itself as simplified or talks down: no "In plain words", "plain-words summary", "simply put", "in short", "don't worry", "(this just means ...)", no over-explaining of everyday things. Headings name the content. In the policy, "per internet (IP) address" becomes "per IP address" (the term the policy already uses four times), and "a scrambled code of it" becomes "a one-way hash of it" (the Worker keeps an HMAC-SHA-256 of the IP keyed by its secret, `escobar-worker/src/errorsStore.ts`). No fact, data point or required disclosure changes. The website half (the /privacy/ headings "Summary" and "Full policy") lands on the website branch.
+  **Why**: owner, 2026-10-01: "Dont use headers like this. "In plain words" Or other stuff that makes the reader noob." Recorded in `docs/ARCHITECTURE.md` (rules of thumb) and in the handover's owner rules.
+  **Source**: DOC-5 card.
+
+## DOC-6: short-label headings (DOC-6 builder, 2026-10-01)
+
+- **D-DOC6-1. A heading is a short label.** One to three words, a noun phrase: never a sentence, a "What ..."/"How ..." question, a qualifier ("off by default", ", and where") or a leading "The", "This" or "About"; the text under it explains it. The page title stays "M/ARC Privacy Policy" (Google Play asks for the policy to be labelled as a privacy policy). Policy headings: "What stays on your phone" -> "On-device data", "The online coach (Escobar), off by default" -> "Online coach", the subhead "Who receives it" -> "Recipients", "Error reports, off by default" -> "Error reports", "How your data is protected" -> "Data protection", "Deleting your data" -> "Data deletion"; "Children", "Changes" and "Applicable law" stay. No body text changes: the facts those headings carried are already in the body ("Escobar, the online coach"; both features "are off until you turn them on"; "This data sits in the app's private storage on your phone"). The website's own headings ("About this policy" -> "Policy", the /privacy/ summary, home, install and 404) change on `claude/app-website-design-671lk8`, where the policy copy stays byte-identical to this one.
+  **Why**: owner, 2026-10-01, on /privacy/: "Trim to, Policy. Not about this policy. Or trim to a proper header. Stop describing the headers in sentences. Cause supporting contents already describes the header". Recorded in AGENTS.md (UI copy), `.claude/owner-rules.md` rule 8 and `docs/ARCHITECTURE.md` (rules of thumb).
+  **Source**: DOC-6 card; `docs/PRIVACY-POLICY.md`.
 ## Correction to "LIB-26 flat palm": what the partOf mapping does (LIB-26 builder, 2026-09-30)
 
 - **Correction**: the first LIB-26 entry says `partOf` maps `palm.<side>` to `arm.<side>` "so it is part of the arm's outline union and of the Mistake mask". That is wrong. The union comes from the palm's group, `grp('arm', sd)` in body.mjs. The `partOf` mapping matters only where a spec filters by part: `mistake.parts` and the ghost or start parts (plate.mjs:114-116, 208-210). Without it, a Mistake limited to `arm.r` would silently leave the palm out. A test now covers this: a Mistake filtered to `arm.r` outlines `palm.r`, and one filtered to `arm.l` does not. It fails when `'palm'` is removed from `partOf`.
