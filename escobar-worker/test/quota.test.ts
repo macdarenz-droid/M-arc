@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import Anthropic from '@anthropic-ai/sdk';
 import { QuotaCounter, RESERVATION_TTL_MS, type Limits } from '../src/quotaDO';
 import { handle, CUT_SHORT_TOKENS_PER_SEC } from '../src/handler';
-import { admitQuota, recordStep } from '../src/quota';
+import { admitQuota, recordStep, resetInSec, ENFORCEMENT_RETRY_SEC } from '../src/quota';
 import { UpstreamRelay } from '../src/upstreamRelay';
 import type { ClientLike, Env } from '../src/anthropic';
 import { baseEnv, deps, eventsFor, finalMessage, mockClient, post, sse, turn, DEVICE } from './helpers';
@@ -387,14 +387,32 @@ describe('AUD-3: admission reserves before the paid call and fails closed', () =
     const client = mockClient([{ events: eventsFor(TEXT), final: finalMessage(TEXT) }]);
     const r = await handle(post(turn()), env, deps(client));
     expect(r.status).toBe(429);
-    expect(((await r.json()) as { code: string }).code).toBe('quota');
+    expect(r.headers.get('retry-after')).toBe('60');
+    expect(await r.json()).toMatchObject({ code: 'quota', retryAfter: ENFORCEMENT_RETRY_SEC });
     expect(client.calls).toHaveLength(0);
+  });
+  it('a used-up day still asks for a retry after midnight UTC', async () => {
+    const env = baseEnv({ QUOTA_DO: fakeNamespace() as never, MAX_TURNS_PER_DEVICE: '1' });
+    const now = Date.parse('2026-09-22T12:00:00Z');
+    const first = await admitQuota(env, KEYS, now, 100);
+    expect(first).toMatchObject({ ok: true });
+    const r = await admitQuota(env, KEYS, now, 100);
+    expect(r).toEqual({ ok: false, message: expect.stringMatching(/coaching limit/), retryAfter: resetInSec(now) });
+    expect(resetInSec(now)).toBe(12 * 3600);
+  });
+  it('a release that arrives before a late admit still blocks the hold', async () => {
+    const state = fakeState();
+    const c = new QuotaCounter(state as never, {} as never);
+    c.release('late');
+    expect(await c.admit(KEYS, LIM, 'late', 100, 0)).toEqual({ ok: false, scope: 'device' });
+    expect(live(state.data)).toEqual([]);
+    expect(await c.admit(KEYS, LIM, 'next', 100, 0)).toEqual({ ok: true });
   });
   it('a Durable Object that never answers is refused after the timeout, and its late hold is released', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const released: string[] = [];
     const env = baseEnv({ QUOTA_DO: { idFromName: (n: string) => n, get: () => ({ admit: () => new Promise(() => {}), release: async (id: string) => { released.push(id); } }) } as never });
-    expect(await admitQuota(env, KEYS, 0, 100, 10)).toMatchObject({ ok: false, message: expect.stringMatching(/coaching limit/) });
+    expect(await admitQuota(env, KEYS, 0, 100, 10)).toEqual({ ok: false, message: 'The coach is unavailable right now.', retryAfter: 60 });
     await new Promise(r => setTimeout(r, 0));
     expect(released).toHaveLength(1);
   });

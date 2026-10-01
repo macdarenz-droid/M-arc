@@ -24,6 +24,9 @@ const globalKey = (day: string) => `g:${day}`;
 
 const DEVICE_MESSAGE = "That's today's coaching limit. Escobar is resting and back after midnight UTC; your notes still update.";
 const GLOBAL_MESSAGE = 'Escobar is resting for today. Your notes still update.';
+const UNAVAILABLE_MESSAGE = 'The coach is unavailable right now.';
+/** Retry-After when the quota store cannot enforce (AUD-3): an outage, not a used-up day. */
+export const ENFORCEMENT_RETRY_SEC = 60;
 
 async function read<T>(kv: KVNamespace, key: string, fallback: T): Promise<T> {
   try { return ((await kv.get(key, 'json')) as T | null) ?? fallback; } catch { return fallback; }
@@ -49,7 +52,7 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
 /**
  * AUD-3: with the Durable Object bound, admission checks and reserves one step, one turn and
  * `reserveOut` output tokens in one atomic call. If the object throws or times out the paid call
- * is refused (fail closed) with the daily-limit message.
+ * is refused (fail closed) with a `quota` error that asks for a retry in 60 s.
  */
 export async function admitQuota(env: Env, keys: QuotaKeys, now: number, reserveOut: number, timeoutMs = ADMIT_TIMEOUT_MS): Promise<QuotaResult> {
   const lim = limits(env);
@@ -64,7 +67,8 @@ export async function admitQuota(env: Env, keys: QuotaKeys, now: number, reserve
       console.error('quota admission failed:', String(e));
       // A timed-out admit may still land: release it so the hold does not wait for expiry.
       void Promise.resolve().then(() => counter(env, now).release(id)).catch(() => {});
-      return { ok: false, message: DEVICE_MESSAGE, retryAfter };
+      // An outage is short: ask for a retry in a minute, not after midnight.
+      return { ok: false, message: UNAVAILABLE_MESSAGE, retryAfter: ENFORCEMENT_RETRY_SEC };
     }
   }
   if (!env.QUOTA) return { ok: true };

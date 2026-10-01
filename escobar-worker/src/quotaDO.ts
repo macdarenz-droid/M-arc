@@ -62,12 +62,14 @@ export class QuotaCounter extends DurableObject {
     this.apply(r, delta);
   }
 
-  /** Drops reservation `id` without charging it (nothing was billed). Idempotent. */
+  /**
+   * Drops reservation `id` without charging it (nothing was billed). Idempotent. The marker is
+   * written even when no hold exists yet, so a release that beats a late admit still blocks it.
+   */
   release(id: string): void {
     const kv = this.ctx.storage.kv;
-    if (!kv.get(`r:${id}`)) return;
     kv.delete(`r:${id}`);
-    kv.put(`x:${id}`, 'released');
+    if (!kv.get(`x:${id}`)) kv.put(`x:${id}`, 'released');
   }
 
   async add(keys: QuotaKeys, delta: QuotaDelta): Promise<void> {
