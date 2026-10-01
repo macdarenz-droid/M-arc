@@ -3,12 +3,12 @@
   "budgets": [
     {
       "chunk": "HowToSheet-*.js",
-      "rawMax": 23944,
-      "gzMax": 8506,
-      "measuredRaw": 21767,
-      "measuredGz": 7732,
+      "rawMax": 24396,
+      "gzMax": 8692,
+      "measuredRaw": 22178,
+      "measuredGz": 7901,
       "setBy": "HT-8",
-      "reason": "Grows by the HT-8 feel section (Feel.tsx, useFeelMap.ts) on top of HT-6's sections and zoom host (16,859 / 6,373 B)."
+      "reason": "Grows by the HT-8 feel section (Feel.tsx, useFeelMap.ts) on top of HT-6's sections and zoom host (16,859 / 6,373 B). Re-measured on main 1fcd9c8 with the early chip/row replay (#166)."
     },
     {
       "chunk": "HowToSheet-*.css",

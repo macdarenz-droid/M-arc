@@ -7056,7 +7056,7 @@ for (const theme of ['silent-black', 'paper']) {
 // the end computed from the vendored SWEEP/GAP/DELAY. Reduced motion: the band is display:none with no animation.
 // A5: row buttons >= 44 x 44. A6: feel chunks <= measured + 10 % gz, none requested before the How-to tap, one after.
 // Tripwire: main-thread TaskDuration over the tap-to-end + 1 s window minus an idle window of the same length, at 4x
-// CPU throttle, median of 3, app <= 1.2 x golden B, both measured here with the same code.
+// CPU throttle, median of 5, app <= 1.2 x golden B, both measured here with the same code, interleaved, after the pixel runs.
 {
   const tag = 'HT-8';
   const t0 = Date.now();
@@ -7230,36 +7230,46 @@ for (const theme of ['silent-black', 'paper']) {
     return { problems, pairs };
   }
 
-  /** Tripwire: TaskDuration (CDP Performance metrics) over tap .. TOTAL + 1 s minus the same idle window, 4x, median of 3. */
-  async function shimmerCost(which, idx = 2) {
+  /** Tripwire: TaskDuration (CDP Performance metrics) over tap .. TOTAL + 1 s minus the same idle window, 4x, median of
+   *  TRIP_ROUNDS. Run alone after the pixel runs, with the app and golden B open side by side and their windows
+   *  interleaved round by round (the order alternating), so both are measured under the same machine load (D-HT8-1). */
+  const TRIP_ROUNDS = 5;
+  async function shimmerCosts(idx = 2) {
     const [id] = H.HT_PLATES[idx];
-    const o = which === 'app'
-      ? await H.openAppTrain(b8, PORT, 'silent-black', { onError: onError('app tripwire') })
-      : await H.openGolden(b8, 'silent-black', { html: GB, onError: onError('golden B tripwire') });
-    const page = o.page, sel = which === 'app' ? APP : GOLD(id);
-    try {
+    const side = async which => {
+      const o = which === 'app'
+        ? await H.openAppTrain(b8, PORT, 'silent-black', { onError: onError('app tripwire') })
+        : await H.openGolden(b8, 'silent-black', { html: GB, onError: onError('golden B tripwire') });
+      const page = o.page, sel = which === 'app' ? APP : GOLD(id);
       if (which === 'app') {
         await H.openHowTo(page, idx);
         await page.evaluate(() => document.querySelector('dialog.sheet.ht .ht-feel-host').scrollIntoView({ block: 'center' }));
         await page.locator(APP).waitFor({ state: 'visible', timeout: 8000 });
       }
       await page.evaluate(s => document.querySelector(s).querySelector('[data-feel-map]').scrollIntoView({ block: 'center' }), sel);
-      await page.waitForTimeout(END + 500);   // the first-view autoplay (golden B's and the app's) has run and ended
-      await quiet(page, sel);
-      const cdp = await page.context().newCDPSession(page);
-      await cdp.send('Performance.enable');
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-      const task = async () => (await cdp.send('Performance.getMetrics')).metrics.find(m => m.name === 'TaskDuration').value;
-      // three idle windows and three tap windows of the same length, interleaved; the shimmer's cost is the median tap
-      // window minus the median idle window, so what the page does anyway (the app's live-workout clock behind the
-      // sheet, measured 44-207 ms per window; golden B's page idles at 0-3 ms) is not counted as the shimmer's
-      const idle = [], runs = [];
-      const win = async tap => { const m0 = await task(); if (tap) await click(page, `${sel} [data-feel-map]`); await page.waitForTimeout(TOTAL + 1000); return Math.round((await task() - m0) * 1000); };
-      for (let k = 0; k < 3; k++) { idle.push(await win(false)); runs.push(await win(true)); }
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
-      const med = xs => [...xs].sort((a, b) => a - b)[1];
-      return { idle, runs, median: med(runs) - med(idle), raw: med(runs) };
-    } finally { await o.ctx.close(); }
+      return { o, page, sel, idle: [], runs: [] };
+    };
+    const sides = [await side('app'), await side('golden')];
+    try {
+      await sides[0].page.waitForTimeout(END + 500);   // the first-view autoplay (golden B's and the app's) has run and ended
+      for (const x of sides) {
+        await quiet(x.page, x.sel);
+        x.cdp = await x.page.context().newCDPSession(x.page);
+        await x.cdp.send('Performance.enable');
+        await x.cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+      }
+      const task = async x => (await x.cdp.send('Performance.getMetrics')).metrics.find(m => m.name === 'TaskDuration').value;
+      // the shimmer's cost is the median tap window minus the median idle window, so what the page does anyway (the app's
+      // live-workout clock behind the sheet, measured 29-207 ms per window; golden B's page idles at 0-3 ms) is not counted
+      const win = async (x, tap) => { const m0 = await task(x); if (tap) await click(x.page, `${x.sel} [data-feel-map]`); await x.page.waitForTimeout(TOTAL + 1000); return Math.round((await task(x) - m0) * 1000); };
+      for (let k = 0; k < TRIP_ROUNDS; k++) {
+        for (const x of k % 2 ? [sides[1], sides[0]] : sides) { x.idle.push(await win(x, false)); x.runs.push(await win(x, true)); }
+      }
+      for (const x of sides) await x.cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+      const med = xs => [...xs].sort((a, b) => a - b)[xs.length >> 1];
+      const [a, g] = sides.map(x => ({ idle: x.idle, runs: x.runs, median: med(x.runs) - med(x.idle), raw: med(x.runs) }));
+      return { a, g };
+    } finally { for (const x of sides) await x.o.ctx.close(); }
   }
 
   /** HT-8 fix (#166): "Feel it" tapped before the feel section is in loads it, scrolls to it, focuses it and plays it. */
@@ -7313,12 +7323,12 @@ for (const theme of ['silent-black', 'paper']) {
     });
     const idx = readdirSync(join(ROOT, 'www/assets')).filter(f => /^index-.*\.js$/.test(f)).map(f => readFileSync(join(ROOT, 'www/assets', f), 'utf8')).join('');
     if (idx.includes('feel-band') || idx.includes('data-feel-map')) errors.push(`${tag}: feel markup found in the main bundle`);
-    const [runs, red, trip, early] = await Promise.all([
+    const [runs, red, early] = await Promise.all([
       Promise.all(H.HT_THEMES.map(themeRun)),
       Promise.all(H.HT_FULL.map(reducedRun)),
-      (async () => { const a = await shimmerCost('app'), g = await shimmerCost('golden'); return { a, g }; })(),
       Promise.all(H.HT_FULL.map(earlyChip)),
     ]);
+    const trip = await shimmerCosts();   // alone, after the parallel runs (D-HT8-1)
     for (const r of [...runs, ...red]) for (const p of r.problems) errors.push(`${tag}: ${p}`);
     for (const p of early.flat()) errors.push(`${tag}: early "Feel it": ${p}`);
     const pairs = runs.reduce((n, r) => n + r.stats.pairs, 0) + red.reduce((n, r) => n + r.pairs, 0);
@@ -7326,7 +7336,7 @@ for (const theme of ['silent-black', 'paper']) {
     const ratio = trip.a.median / trip.g.median;
     // the probe must see a shimmer to measure: golden B's own sweep costs well over 20 ms at 4x (measured ~120 ms)
     if (!(trip.g.median >= 20) || !(ratio <= TRIP)) errors.push(`${tag}: shimmer tripwire: app ${trip.a.median} ms vs golden B ${trip.g.median} ms shimmer TaskDuration at 4x (ratio ${ratio.toFixed(2)}, limit ${TRIP}); app ${JSON.stringify(trip.a)}, golden B ${JSON.stringify(trip.g)}`);
-    console.log(`${tag} (${b8.version()}): ${pairs} pixel pairs (S5/S4/S6 in ${H.HT_THEMES.length} themes, reduced rest in ${H.HT_FULL.length}), ${runs.reduce((n, r) => n + r.stats.l4, 0)} band animation lists, ${runs[0].stats.rows} rows; end ${END} ms (+1 s checked); feel chunks ${sizes.map(s => s[1]).join('/')} B gz (ceilings in tests/howto/budgets.json); shimmer TaskDuration at 4x (median tap window - median idle window, 3 each): app ${trip.a.median} ms (tap ${JSON.stringify(trip.a.runs)}, idle ${JSON.stringify(trip.a.idle)}), golden B ${trip.g.median} ms (tap ${JSON.stringify(trip.g.runs)}, idle ${JSON.stringify(trip.g.idle)}), ratio ${ratio.toFixed(2)} (<= ${TRIP}); early "Feel it" (before the mount: loads, scrolls, focuses, plays) in ${H.HT_FULL.join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+    console.log(`${tag} (${b8.version()}): ${pairs} pixel pairs (S5/S4/S6 in ${H.HT_THEMES.length} themes, reduced rest in ${H.HT_FULL.length}), ${runs.reduce((n, r) => n + r.stats.l4, 0)} band animation lists, ${runs[0].stats.rows} rows; end ${END} ms (+1 s checked); feel chunks ${sizes.map(s => s[1]).join('/')} B gz (ceilings in tests/howto/budgets.json); shimmer TaskDuration at 4x (median tap window - median idle window, ${TRIP_ROUNDS} each, app and golden B interleaved, run alone): app ${trip.a.median} ms (tap ${JSON.stringify(trip.a.runs)}, idle ${JSON.stringify(trip.a.idle)}), golden B ${trip.g.median} ms (tap ${JSON.stringify(trip.g.runs)}, idle ${JSON.stringify(trip.g.idle)}), ratio ${ratio.toFixed(2)} (<= ${TRIP}); early "Feel it" (before the mount: loads, scrolls, focuses, plays) in ${H.HT_FULL.join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   } finally {
     await b8.close();
   }
