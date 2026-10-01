@@ -14,7 +14,7 @@ function answer(yes: boolean): void {
 export function ErrorReportsAskSheet() {
   return (
     <div class="banner" role="status" data-palace="errors.ask" style={{ marginBottom: 12 }}>
-      <p class="small">Send anonymous error reports if something breaks? No workouts, health data or personal details are ever included — only what broke and where.</p>
+      <p class="small">Send anonymous error reports if something breaks?</p>
       <div class="grid-2" style={{ marginTop: 8 }}>
         <button type="button" class="btn btn-quiet btn-sm" onClick={() => answer(false)}>No thanks</button>
         <button type="button" class="btn btn-primary btn-sm" onClick={() => answer(true)}>Yes, send reports</button>

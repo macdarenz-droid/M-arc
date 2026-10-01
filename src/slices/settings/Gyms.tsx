@@ -25,7 +25,6 @@ export function GymsSheet({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title="Gyms and equipment" onClose={onClose}>
       <div class="stack" data-palace="settings.gyms-sheet">
-        <p class="hint">Each gym remembers the unit of every rack, stack and bar you set. Flip a unit from the pill on any weight input while training.</p>
         {s.units.gyms.map(g => {
           const ex = Object.entries(s.units.byExercise[g.id] ?? {});
           const eq = Object.entries(s.units.byEquipment[g.id] ?? {}).filter((e): e is [string, EquipmentProfile] => !!e[1]);
@@ -38,7 +37,7 @@ export function GymsSheet({ onClose }: { onClose: () => void }) {
                   <button type="button" aria-pressed={g.defaultUnit === 'lb'} onClick={() => setGymDefaultUnit(g.id, 'lb')}>lb</button>
                 </div>
               </div>
-              {!ex.length && !eq.length && <p class="hint">Nothing saved yet. Everything here uses {g.defaultUnit} and standard plates and dumbbells.</p>}
+              {!ex.length && !eq.length && <p class="hint">Nothing saved yet.</p>}
               <div class="list">
                 {eq.map(([group, p]) => <Row key={group} trailing={<Button size="sm" variant="quiet" onClick={() => resetProfile('equipment', group, g.id)}>Reset</Button>}><span class="small">All {group}</span><div class="hint">{describe(p)} · {SOURCE[p.source]}</div></Row>)}
                 {ex.map(([id, p]) => <Row key={id} trailing={<Button size="sm" variant="quiet" onClick={() => resetProfile('exercise', id, g.id)}>Reset</Button>}><span class="small">{findExercise(id, s.customExercises)?.name ?? id}</span><div class="hint">{describe(p)} · {SOURCE[p.source]}</div></Row>)}

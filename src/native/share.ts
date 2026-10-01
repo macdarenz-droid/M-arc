@@ -3,14 +3,14 @@ import { Share } from '@capacitor/share';
 import { isNative } from './capacitor';
 import { pickFileRaw } from './filePicker';
 
-/** Save text on Android through the share sheet, or download it on the web. */
+/** Save text on Android through the share sheet, or download it on the web. The message is empty when the sheet itself is the feedback (COPY-1). */
 export async function exportText(fileName: string, text: string, mime = 'application/json'): Promise<string> {
   if (isNative()) {
     const path = `MARC Exports/${fileName}`;
     await Filesystem.writeFile({ path, data: text, directory: Directory.Cache, recursive: true, encoding: 'utf8' as never });
     const { uri } = await Filesystem.getUri({ path, directory: Directory.Cache });
     await Share.share({ title: fileName, url: uri, dialogTitle: 'Save or share your backup' });
-    return `Android save/share sheet opened for ${fileName}.`;
+    return '';
   }
   download(new Blob([text], { type: mime }), fileName);
   return `Downloaded ${fileName}.`;
@@ -60,7 +60,7 @@ export async function saveImage(fileName: string, blob: Blob): Promise<{ outcome
     return { outcome: 'saved', message: 'Saved to Documents/M-ARC' };
   } catch {
     const shared = await shareCachedFile(fileName, data, 'Save your card');
-    return shared ? { outcome: 'shared', message: 'Choose where to save it' } : { outcome: 'cancelled', message: '' };
+    return shared ? { outcome: 'shared', message: '' } : { outcome: 'cancelled', message: '' };
   }
 }
 
@@ -82,7 +82,7 @@ export async function shareImage(fileName: string, blob: Blob, title: string): P
     }
   }
   download(blob, fileName);
-  return { outcome: 'downloaded', message: `Sharing isn't available here, so it was downloaded` };
+  return { outcome: 'downloaded', message: 'Downloaded' };
 }
 
 /** A chosen text file's contents; null when cancelled or unreadable. */
