@@ -3,6 +3,7 @@
 import type { FunctionComponent } from 'preact';
 import type { BuiltHowTo } from '@/howto/types';
 import { Setup } from './Setup';
+import { HandSections } from './Hand';
 import { Risks } from './Risks';
 
 export interface SectionProps {
@@ -17,5 +18,6 @@ export interface SectionDef {
 
 export const SECTIONS: readonly SectionDef[] = [
   { id: 'setup', Component: Setup },
+  { id: 'hand', Component: HandSections },   // HT-6: Look closer, Grip, Common handling mistakes
   { id: 'risks', Component: Risks },
 ];
