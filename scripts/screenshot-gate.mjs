@@ -6598,7 +6598,18 @@ for (const theme of ['silent-black', 'paper']) {
           const d = await H.diffPng(app.page, ia, ig);
           stats.pairs++; stats.maxOff = Math.max(stats.maxOff, d.off);
           if (!(d.ink > 0.05)) P(`A3 L3 ${id}/${k}: the capture holds almost no ink (${d.ink}), nothing was compared`);
-          if (!H.meetsRule(d)) P(`A3 L3 ${id}/${k}: ${d.sameSize ? `${d.off} px off (${d.off1} by 1, max ${d.maxDelta})` : `size ${d.width}x${d.height} != ${d.otherWidth}x${d.otherHeight}`}`);
+          if (!H.meetsRule(d)) {
+            // evidence for the root cause (still a failure): both captures in screenshots/ht7-l3/ (CI uploads the folder
+            // on failure), and whether either page's pixels move after 1 s more
+            const ev = join(OUT, 'ht7-l3'), base = `${theme}${reduce ? '-r' : ''}-${id}-${k}`;
+            mkdirSync(ev, { recursive: true });
+            await new Promise(r => setTimeout(r, 1000));
+            const [ja, jg] = await Promise.all([shot(app.page, ra), shot(g.page, rg)]);
+            writeFileSync(join(ev, `${base}-app.png`), ia); writeFileSync(join(ev, `${base}-golden.png`), ig);
+            writeFileSync(join(ev, `${base}-app-1s.png`), ja); writeFileSync(join(ev, `${base}-golden-1s.png`), jg);
+            const [ca, cg, c2] = [await H.diffPng(app.page, ia, ja), await H.diffPng(app.page, ig, jg), await H.diffPng(app.page, ja, jg)];
+            P(`A3 L3 ${id}/${k}: ${d.sameSize ? `${d.off} px off (${d.off1} by 1, max ${d.maxDelta})` : `size ${d.width}x${d.height} != ${d.otherWidth}x${d.otherHeight}`}; 1 s later the app moved ${ca.off} px, golden B ${cg.off} px, and they are ${c2.off} px apart (captures in screenshots/ht7-l3/)`);
+          }
           if (ki === 0 && theme === 'silent-black' && !reduce) {   // control: the same capture half a pixel lower must fail
             await place(app.page, sel, 'app', ra.y + 0.5);
             const dc = await H.diffPng(app.page, await shot(app.page, ra), ig);
