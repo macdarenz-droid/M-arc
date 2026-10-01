@@ -1086,7 +1086,7 @@ function StartSheet({ split }: { split: Split }) {
     ? <CheckInBody split={split} onDone={done} />
     : <PreSessionBody split={split} onStart={() => { startSession(startingSplit.value!); startingSplit.value = null; }} />;
   return (
-    <Sheet title={checkIn ? 'Quick check-in' : `Before you start ${split.name}`} onClose={close} palace={checkIn ? 'panel.checkin' : undefined}>
+    <Sheet title={checkIn ? 'Quick check-in' : split.name} onClose={close} palace={checkIn ? 'panel.checkin' : undefined}>
       <span ref={anchor} hidden />
       {body}
     </Sheet>
@@ -1113,7 +1113,7 @@ function PreSessionBody({ split, onStart }: { split: Split; onStart: () => void 
         <Card key={i.id} class="insight" style={{ '--insight': INSIGHT_COLOR[i.category] }}>
           <div class="insight-cat">{CATEGORY_LABEL[i.category]}</div>
           <b class="small">{i.title}</b>
-          <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>
+          {i.means && <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>}
           <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
         </Card>
       ))}

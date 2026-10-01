@@ -81,6 +81,7 @@ const RENAMES: Array<[string, string, string]> = [
   ['src/escobar/ui/EscobarSheet.tsx', '>What Escobar knows<', '>Memory<'],
   ['src/slices/today/Today.tsx', '<Section title="This week"', '<Section title="Current week"'],
   ['src/slices/history/History.tsx', '<div class="eyebrow">This week</div>', '<div class="eyebrow">Current week</div>'],
+  ['src/slices/workout/Train.tsx', "`Before you start ${split.name}`", "title={checkIn ? 'Quick check-in' : split.name}"],
 ];
 
 describe('COPY-2: renamed headings', () => {
@@ -122,5 +123,14 @@ describe('COPY-2: the start sheet check cards carry no explaining line', () => {
     const m = mastersDefaults(61)!;
     expect(m.title).toBe('Lifters 60+');
     expect(m.means).toMatch(/^2 to 3 sessions a week/);
+  });
+});
+
+describe('COPY-2: the start sheet renders no empty explaining line', () => {
+  it('the brief card shows means only when there is one', () => {
+    const src = read('src/slices/workout/Train.tsx');
+    const body = src.slice(src.indexOf('function PreSessionBody'), src.indexOf('function', src.indexOf('function PreSessionBody') + 10));
+    expect(body).toContain('{i.means && <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>}');
+    expect(body).not.toMatch(/^\s*<p class="small muted" style=\{\{ marginTop: 4 \}\}>\{i\.means\}<\/p>$/m);
   });
 });

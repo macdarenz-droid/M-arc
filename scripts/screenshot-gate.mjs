@@ -7247,7 +7247,7 @@ for (const theme of ['silent-black', 'paper']) {
     if (travel < (swap ? 20 : 300)) errors.push(`${tag}: the panel travelled only ${travel.toFixed(1)} px, nothing to measure (expected >= ${swap ? 20 : 300})`);
     for (let i = 1; i < on.length; i++) if (on[i].top > on[i - 1].top + 0.5) { errors.push(`${tag}: the panel's top moved down ${(on[i].top - on[i - 1].top).toFixed(1)} px at ${on[i].t.toFixed(0)} ms (${on[i - 1].top.toFixed(1)} -> ${on[i].top.toFixed(1)}), a bounce`); break; }
     // On the swap the content changes once, at the tap; from the brief's first frame its height is final.
-    const hs = (swap ? on.filter(x => x.title?.startsWith('Before you start')) : on).map(x => x.h); if (!hs.length || Math.max(...hs) - Math.min(...hs) > 1) errors.push(`${tag}: the panel's height changed during the slide (${Math.min(...hs).toFixed(1)}-${Math.max(...hs).toFixed(1)} px)`);
+    const hs = (swap ? on.filter(x => x.title === 'SPLIT 1 UPPER BODY') : on).map(x => x.h); if (!hs.length || Math.max(...hs) - Math.min(...hs) > 1) errors.push(`${tag}: the panel's height changed during the slide (${Math.min(...hs).toFixed(1)}-${Math.max(...hs).toFixed(1)} px)`);
     // The swap's height change is eased, never a one-frame snap of the panel's top.
     if (swap) { const step = Math.max(...on.slice(1).map((x, i) => on[i].top - x.top)); if (step > 16) errors.push(`${tag}: the panel's top snapped ${step.toFixed(1)} px in one frame on the swap`); }
     const ids = new Set(on.map(x => x.dlg)); if (ids.size !== 1) errors.push(`${tag}: ${ids.size} different sheets showed during the slide, expected one`);
@@ -7275,11 +7275,11 @@ for (const theme of ['silent-black', 'paper']) {
     const cdp = await ctx.newCDPSession(page); await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
     let frames = bug36Sample(page); await start.click(); frames = await frames;
     const first = frames.find(x => x.title)?.title ?? '';
-    if (!(checked ? first.startsWith('Before you start SPLIT 1') : first === 'Quick check-in')) errors.push(`${tag}: expected the ${checked ? 'brief' : 'check-in'} first, got "${first}"`);
+    if (!(checked ? first === 'SPLIT 1 UPPER BODY' : first === 'Quick check-in')) errors.push(`${tag}: expected the ${checked ? 'brief' : 'check-in'} first, got "${first}"`);
     let restTop = bug36Check(`${tag} open`, frames, { swap: false });
     if (!checked) {
       frames = bug36Sample(page); await page.getByRole('button', { name: 'Skip' }).click(); frames = await frames;
-      if (!frames.some(x => x.title?.startsWith('Before you start SPLIT 1'))) errors.push(`${tag}: Skip did not lead to the brief`);
+      if (!frames.some(x => x.title === 'SPLIT 1 UPPER BODY')) errors.push(`${tag}: Skip did not lead to the brief`);
       const on = frames.filter(x => x.top != null);
       if (restTop != null && on.length && Math.abs(on[0].top - restTop) > 0.5) errors.push(`${tag}: the panel's top jumped from ${restTop.toFixed(1)} to ${on[0].top.toFixed(1)} px on the swap`);
       restTop = bug36Check(`${tag} swap`, frames, { swap: true });
