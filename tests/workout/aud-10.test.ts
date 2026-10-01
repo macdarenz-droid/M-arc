@@ -13,7 +13,9 @@ import { freshState, type Split } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { commitSet, finishCounts, finishSession, logPastSession, resolveSessionTiming, setSet, skipEntry, startSession } from '@/slices/workout/session';
 import { addGym, profileFor, setExerciseUnit } from '@/slices/workout/units';
-import { liveUnitActions } from '@/slices/workout/Train';
+import { entryTarget, liveUnitActions, previewTargets } from '@/slices/workout/Train';
+import { today } from '@/app/clock';
+import { session, sets } from '../helpers';
 
 const BENCH = 'lib_barbell_bench_press';
 const FLY = 'lib_cable_fly';
@@ -95,5 +97,28 @@ describe('AUD-10 UI-06: live kg/lb taps change the session gym', () => {
     liveUnitActions(BENCH, ex, 'kg').flipGroup();
     expect(Object.values(state.value.units.byEquipment[gymA] ?? {}).map(p => p?.unit)).toEqual(['lb']);
     expect(state.value.units.byEquipment[gymB] ?? {}).toEqual({});
+  });
+});
+
+describe('AUD-10 add-on (UI-12): Train previews and the live card build one target', () => {
+  it('an Escobar-swapped exercise, same day: preview target === live target, and both carry the swap over', () => {
+    const DB = 'lib_dumbbell_bench_press';
+    const day = '2026-09-22';
+    const one: Split = { id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: BENCH, sets: 3 }] };
+    replaceState({
+      ...freshState(), splits: [one],
+      sessions: [session('2026-09-18', [{ id: BENCH, sets: sets(80, 8, 'ideal', 3) }], 'sp'), session('2026-09-15', [{ id: BENCH, sets: sets(77.5, 8, 'ideal', 3) }], 'sp')],
+      escobar: { ...freshState().escobar, todayOverride: { day, splitId: 'sp', reason: 'x', changes: [{ kind: 'swap' as const, from: BENCH, to: DB }] } },
+    });
+    today.value = day;
+    const rows = previewTargets(state.value, one);
+    expect(rows.map(r => r.se.exerciseId)).toEqual([DB]);
+    const preview = rows[0]!.next;
+    startSession(one);
+    const live = entryTarget(state.value, state.value.active!.entries[0]!);
+    expect(preview).toEqual(live);
+    // The bench history carries over (LT-6, about 32.5 kg a hand), not the first-time load the
+    // dumbbell press gets alone (2 kg, "Start light").
+    expect(preview.kg).toBeGreaterThan(20);
   });
 });

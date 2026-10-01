@@ -18,7 +18,7 @@ import { enteredLoad, formatLoad, formatSetLoad, kgToDisplay } from '@/core/unit
 import { findExercise } from '@/core/exercises';
 import { bodyweightHint, loadColumnLabel, loadAriaLabel, modeLoadText } from '@/brain/bodyweight';
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
-import type { Exercise, Split } from '@/core/models';
+import type { AppState, Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
 import { liveRecordStatus } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
@@ -133,6 +133,45 @@ export function setAsideRows(next: Pick<Suggestion, 'cutSets' | 'sets'>, sets: L
     const w = workingIndex(sets, j);
     return !!next.cutSets && w != null && w >= next.sets.length && !hasEntry(set);
   });
+}
+
+/**
+ * AUD-10 (UI-12 follow-through): today's target for one exercise, built once for the split
+ * preview, the "Before you start" brief and the live card, so all three agree. Its inputs:
+ * today's readiness, the muscle's recovery, the lighter week, the session gym's equipment and load
+ * menu, the set count and load factor, and the exercise it stands in for today (the person's own
+ * substitute, or Escobar's one-day swap).
+ */
+export function todayTarget(s: AppState, input: { exerciseId: string; sets: number; loadFactor?: number; plannedId?: string; split?: Split }): Suggestion {
+  const { exerciseId } = input;
+  const gymId = s.active?.gymId ?? activeGymId();
+  const ex = findExercise(exerciseId, s.customExercises);
+  const replaced = input.plannedId ?? swappedFromToday(s, input.split, exerciseId);
+  return suggestNext(s.sessions, exerciseId, s.goal, today.value, input.sets, s.customExercises, {
+    readiness: todayReadiness.value, recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoverySelector.value),
+    deload: activeDeload.value, lastDeload: s.deload, equipment: profileFor(exerciseId, gymId),
+    menu: loadMenu(exerciseId, gymId, s.units, ex, loggedLoads(s.sessions, exerciseId, s.customExercises)),
+    ...(input.loadFactor != null ? { loadFactor: input.loadFactor } : {}),
+    ...(replaced && replaced !== exerciseId ? { replacedExerciseId: replaced } : {}),
+  });
+}
+
+/** The split preview's rows: today's plan (with Escobar's applied change) and each row's target. */
+export function previewTargets(s: AppState, split: Split): Array<{ se: ReturnType<typeof plannedExercises>[number]; next: Suggestion }> {
+  return plannedExercises(split, s.escobar.todayOverride, today.value).map(se => ({ se, next: todayTarget(s, { ...se, split }) }));
+}
+
+/** The live card's target for one entry of the running session. */
+export function entryTarget(s: AppState, entry: NonNullable<AppState['active']>['entries'][number]): Suggestion {
+  return todayTarget(s, { exerciseId: entry.exerciseId, sets: entry.sets.filter(x => x.kind !== 'warmup').length || 1, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}), ...(entry.plannedId ? { plannedId: entry.plannedId } : {}), split: s.splits.find(sp => sp.id === s.active?.splitId) });
+}
+
+/** The split exercise today's Escobar swap replaced with `exerciseId`, as plannedExercises applies it. */
+function swappedFromToday(s: AppState, split: Split | undefined, exerciseId: string): string | undefined {
+  const o = s.escobar.todayOverride;
+  if (!split || !o || o.day !== today.value || o.splitId !== split.id || split.exercises.some(e => e.exerciseId === exerciseId)) return undefined;
+  for (const c of o.changes) if (c.kind === 'swap' && c.to === exerciseId && c.from !== c.to) return c.from;
+  return undefined;
 }
 
 /**
@@ -314,9 +353,8 @@ function Splits() {
             </div>
             <div class="list" style={{ marginTop: 6 }}>
               {/* ES-02: the preview shows today's applied Escobar adjustment, as Start will. */}
-              {plannedExercises(split, s.escobar.todayOverride, today.value).map(se => {
+              {previewTargets(s, split).map(({ se, next }) => {
                 const ex = findExercise(se.exerciseId, s.customExercises);
-                const next = suggestNext(s.sessions, se.exerciseId, s.goal, today.value, se.sets, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(se.exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, lastDeload: s.deload, equipment: profileFor(se.exerciseId), ...(se.loadFactor != null ? { loadFactor: se.loadFactor } : {}) });
                 return (
                   <Row key={se.exerciseId} trailing={<span class="hint num">{next.cutSets ? Math.min(se.sets, next.sets.length) : se.sets} sets</span>}>
                     <div class="ellipsis">{ex?.name ?? se.exerciseId}</div>
@@ -610,7 +648,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   // suggestion carries `menuConfidence` for the ask chip below.
   const equipMenu = useMemo(() => loadMenu(entry.exerciseId, effectiveGymId, s.units, ex, loggedLoads(s.sessions, entry.exerciseId, s.customExercises)), memoDeps);
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
-  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, menu: equipMenu, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}), ...(entry.plannedId && entry.plannedId !== entry.exerciseId ? { replacedExerciseId: entry.plannedId } : {}) }), memoDeps);
+  const next = useMemo(() => entryTarget(s, entry), [...memoDeps, s.escobar.todayOverride, s.splits]);
   // LT-4 (§2): the one-time ask, only on an assumed menu whose snapped jump broke the goal's cap.
   const askThisKey = askKey(effectiveGymId, entry.exerciseId);
   const askVisible = mode === 'weighted' && shouldAskWeight(next, equipMenu.profile) && !askDismissed.value.has(askThisKey);
@@ -1027,7 +1065,7 @@ function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: (
   const targetFor = (exerciseId: string) => {
     const equipment = profileFor(exerciseId, s.units.activeGymId);
     const se = planned.exercises.find(x => x.exerciseId === exerciseId);
-    const n = suggestNext(s.sessions, exerciseId, s.goal, today.value, se?.sets ?? 3, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, lastDeload: s.deload, equipment, ...(se?.loadFactor != null ? { loadFactor: se.loadFactor } : {}) });
+    const n = todayTarget(s, { exerciseId, sets: se?.sets ?? 3, ...(se?.loadFactor != null ? { loadFactor: se.loadFactor } : {}), split });
     return { kg: n.sets[0]?.kg ?? n.kg, target: n.target, equipment };
   };
   const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split: planned, profile: s.profile, age, targetFor, unit: s.preferences.weightUnit });
