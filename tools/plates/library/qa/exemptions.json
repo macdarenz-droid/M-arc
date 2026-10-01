@@ -1,0 +1,66 @@
+{
+ "note": "Named exemptions of the approved 8 only (mode 'approved'). New plates inherit none. Each key is an exact problem key or a flag name; each value says why. Changed only with a decision in docs/COACHING-DECISIONS.md.",
+ "plates": {
+  "lib_dumbbell_lateral_raise": {
+   "H1.engine:not-engine": "drawn by ref-src/plate.mjs (the reference), not by the engine: no spec, no engine report",
+   "H2.ids:prefix:lr": "the reference plate's svg ids use the prefix lr (golden A), not the slug",
+   "H3.mistake-outline": "the reference Mistake view draws arrows and dashed guides (m-arrow, m-line), not an m-pose outline",
+   "H3.deviation:not-engine": "drawn by ref-src/plate.mjs (the reference), not by the engine: no spec, no engine report",
+   "H6:not-engine": "drawn by ref-src/plate.mjs (the reference), not by the engine: no spec, no engine report",
+   "H9:not-engine": "drawn by ref-src/plate.mjs (the reference), not by the engine: no spec, no engine report",
+   "H4.small:mistake:dip": "D-HT10-C10: the approved 'dip' tell is 32.1 x 44 px (golden fact)",
+   "H4.overlap:normal:shrug|elbows": "O10: the approved shrug and elbows callout hit boxes overlap (golden fact)",
+   "F5": "approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+   "F7": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards"
+  },
+  "lib_barbell_back_squat": {
+   "H6:no-card": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "F5": "approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+   "F7": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "H9.moving-line:eq1.barbell.0": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)",
+   "H9.moving-line:eq1.barbell.1": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)",
+   "H9.moving-line:eq2.line.0": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)",
+   "H4.overlap:mistake:chest|drift": "D-HT10-C10: the approved chest and drift tell hit boxes overlap by 0.3 px (golden fact)"
+  },
+  "lib_pull_up": {
+   "H6:no-card": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "F5": "approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+   "F7": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "H9.moving-line:eq3.line.0": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)"
+  },
+  "lib_hanging_leg_raise": {
+   "H6:no-card": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "F5": "approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+   "F7": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards"
+  },
+  "lib_lat_pulldown": {
+   "H6:no-card": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "F5": "approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+   "F7": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "H9.moving-line:eq14.stack.4": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)",
+   "H9.moving-line:eq14.cable.0": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)",
+   "H9.moving-line:eq15.cable.0": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)"
+  },
+  "lib_seated_cable_row": {
+   "H6:no-card": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "F5": "approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+   "F7": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "H9.moving-line:eq3.cableColumn.10": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)",
+   "H9.moving-line:eq3.cableColumn.11": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)",
+   "H9.moving-line:eq3.cableColumn.12": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)"
+  },
+  "lib_leg_press": {
+   "H6:no-card": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "F5": "approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+   "F7": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "H9.moving-line:eq7.line.0": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)"
+  },
+  "lib_machine_chest_press": {
+   "H6:no-card": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "F5": "approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+   "F7": "no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards",
+   "H9.moving-line:eq5.line.0": "approved as drawn: this part moves between the end and Mistake poses but is a line, so the Mistake view does not draw its faulty position (measured by LIB-3 on the golden spec)"
+  }
+ },
+ "decision": "D-LIB3-4 in docs/COACHING-DECISIONS.md"
+}
