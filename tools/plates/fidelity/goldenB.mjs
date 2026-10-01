@@ -265,10 +265,10 @@ export async function selfCheck(page, id) {
 // sub-pose) were not classified at all - `mistake` sat in the blanket CROP_WINDOW_FIELDS allowance, so a moved
 // joint there passed silently. 21 of the 24 deep-equal golden-A's own mistake pose (either its literal, unmerged
 // `mistake.pose`, for the untouched base '-n'/'-m' calls, or that same delta merged with `poses.end`, the form
-// howto/render-*.mjs's own `poseOf` resolves a `{base, pose}` ref to before assigning it). The other 3 are
-// enumerated below, alongside the 11 poses.start/end exceptions (14 entries total): `pull_up|top-wrong`,
-// `lat_pulldown|pad-wrong` and `seated_cable_row|back-wrong` each draw a crop-specific mistake distinct from the
-// plate's own general mistake pose - a legitimate design choice, still pinned literally.
+// howto/render-*.mjs's own `poseOf` resolves a `{base, pose}` ref to before assigning it). The other 3 -
+// `pull_up|top-wrong`, `lat_pulldown|pad-wrong`, `seated_cable_row|back-wrong` - each draw a crop-specific mistake
+// distinct from the plate's own general mistake pose, a legitimate design choice, still pinned literally: see
+// `ENUMERATED_MISTAKE_POSES` below (a separate table from this one - round-3 fix, see its own doc comment for why).
 export const ENUMERATED_POSES = {
   "barbell_back_squat|bar-on-back-w": {"root":{"at":[0,0.918,0.022575272439632726],"tilt":8},"trunk":0,"neck":0,"plant":{"l":{"at":[0.19,0,0],"toe":[0.3420201433256687,0,0.9396926207859084],"pole":[0.24192189559966773,0,0.9702957262759965]},"r":{"at":[-0.19,0,0],"toe":[-0.3420201433256687,0,0.9396926207859084],"pole":[-0.24192189559966773,0,0.9702957262759965]}},"reach":{"l":{"at":[0.36,1.531676188242726,0.02],"pole":[0.45,-0.75,-0.6]},"r":{"at":[-0.36,1.531676188242726,0.02],"pole":[-0.45,-0.75,-0.6]}}},
   "barbell_back_squat|depth-w": {"root":{"at":[0,0.62,-0.2171966658748457],"tilt":28},"trunk":7,"neck":-7,"plant":{"l":{"at":[0.19,0,0],"toe":[0.3420201433256687,0,0.9396926207859084]},"r":{"at":[-0.19,0,0],"toe":[-0.3420201433256687,0,0.9396926207859084]}},"reach":{"l":{"at":[0.36,1.1397036108416705,0],"pole":[0.35,-1,0]},"r":{"at":[-0.36,1.1397036108416705,0],"pole":[-0.35,-1,0]}}},
@@ -281,6 +281,19 @@ export const ENUMERATED_POSES = {
   "seated_cable_row|finish-wrong": {"root":{"at":[0,0.5410000000000001,-0.0002499999999999933],"tilt":0},"trunk":0,"neck":0,"scap":{"elev":3,"pro":0},"plant":{"l":{"at":[0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]},"r":{"at":[-0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]}},"reach":{"l":{"at":[0.075,0.905,0.21],"pole":[0.35,0.45,-1]},"r":{"at":[-0.075,0.905,0.21],"pole":[-0.35,0.45,-1]}}},
   "leg_press|foot-w": {"root":{"at":[0,0.5,0],"tilt":-60},"trunk":0,"neck":5,"reach":{"l":{"at":[0.25,0.53,0.1],"pole":[1,0.25,0]},"r":{"at":[-0.25,0.53,0.1],"pole":[-1,0.25,0]}},"plant":{"l":{"at":[0.17,0.9512141873993747,0.4955921852195438],"normal":[0,-0.24192189559966773,-0.9702957262759965],"toe":[0.25881904510252074,0.9372337011478935,-0.23367860690452677],"ref":"ball"},"r":{"at":[-0.17,0.9512141873993747,0.4955921852195438],"normal":[0,-0.24192189559966773,-0.9702957262759965],"toe":[-0.25881904510252074,0.9372337011478935,-0.23367860690452677],"ref":"ball"}}},
   "machine_chest_press|seat-height-w": {"root":{"at":[0,0.434466781271559,0.03565234545147697],"tilt":-5},"trunk":0,"neck":0,"scap":{"elev":-0.5,"pro":-2},"plant":{"l":{"at":[0.1,0,0.47]},"r":{"at":[-0.1,0,0.47]}},"reach":{"r":{"at":[-0.28,0.89,0.2],"pole":[-0.9,-0.1,-0.3]},"l":{"at":[0.28,0.89,0.2],"pole":[0.9,-0.1,-0.3]}}},
+};
+
+/**
+ * Round-3 review fix (blocker 1): moved out of `ENUMERATED_POSES` into its own table. The two tables share the
+ * "exId|optsId" key format, but not the same key SPACE - a non-solid Wrong crop's `poses.start`/`.end` (an ordinary
+ * golden-A match, checked by `classifyPose`) and its own `spec.mistake.pose` (the crop-specific mistake, checked by
+ * `classifyMistakePose`) are two different poses for the same crop key. Sharing one table let `classifyPose`
+ * wrongly compare an unrelated `poses.start` value against the mistake pin under the same key and reject it (found
+ * empirically: re-running validateCalls against the real 48 calls after the round-3 priority fix immediately
+ * flagged all 3 of these keys' ordinary poses.start/end as "enumerated exception" mismatches - they were never
+ * meant to be checked against this table at all).
+ */
+export const ENUMERATED_MISTAKE_POSES = {
   "pull_up|top-wrong": {"root":{"at":[0,1.635,-0.03],"tilt":-2},"trunk":-4,"neck":-20,"scap":{"elev":3,"pro":7},"hip":16,"knee":10,"ankle":-22,"reach":{"l":{"at":[0.31,2.25,0],"pole":[0.3,-1,0]},"r":{"at":[-0.31,2.25,0],"pole":[-0.3,-1,0]}}},
   "lat_pulldown|pad-wrong": {"root":{"at":[0,0.5772146132970393,0.027283355026593428],"tilt":-10},"trunk":-3,"neck":-6,"scap":{"elev":-2,"pro":-3},"plant":{"l":{"at":[0.1,0,0.5]},"r":{"at":[-0.1,0,0.5]}},"reach":{"l":{"at":[0.34,0.9623637128446966,0.07447552165860852],"pole":[0.2,-1,-0.45]},"r":{"at":[-0.34,0.9623637128446966,0.07447552165860852],"pole":[-0.2,-1,-0.45]}}},
   "seated_cable_row|back-wrong": {"root":{"at":[0,0.5462032174224859,-0.013340524179922257],"tilt":-8},"trunk":44,"neck":-10,"scap":{"elev":0,"pro":6},"plant":{"l":{"at":[0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]},"r":{"at":[-0.1,0.46,0.925],"normal":[0,0.3420201433256687,-0.9396926207859084],"toe":[0,1,0]}},"reach":{"l":{"at":[0.075,0.665,0.8],"pole":[0.25,-1,0]},"r":{"at":[-0.075,0.665,0.8],"pole":[-0.25,-1,0]}}},
@@ -302,30 +315,42 @@ const mergeDeep = (a, b) => {
  * for that exercise (`poses.start`, `poses.end`, `poses.end` merged with `mistake.pose` - the same mergeDeep
  * howto/render-*.mjs itself uses to build a crop's wrong pose). Returns 'golden' or 'enumerated', or a drift-problem
  * string naming the (exercise, crop) pair - never widened to a blanket allowance.
+ *
+ * Round-3 review fix (blocker 1): a key present in `ENUMERATED_POSES` is checked against its own pin FIRST and
+ * ONLY - it never falls back to the golden-A check. The earlier order (golden-A first, enumeration as a fallback)
+ * let an enumerated Wrong crop be silently redrawn as the correct golden-A form (or an enumerated Right crop
+ * flattened back to a bare golden-A pose name) and still pass, since the redrawn pose then matched golden-A
+ * directly - the enumerated pin was never actually exercised. A key NOT in the table still checks the golden-A
+ * refs, exactly as before.
  */
 export function classifyPose(exId, optsId, pose, goldenA) {
+  const key = `${exId}|${optsId}`;
+  if (Object.prototype.hasOwnProperty.call(ENUMERATED_POSES, key)) {
+    return deepEqual(pose, ENUMERATED_POSES[key]) ? 'enumerated' : `${key}: pose differs from its pinned enumerated exception (${JSON.stringify(pose).slice(0, 200)})`;
+  }
   const refs = [goldenA.poses?.start, goldenA.poses?.end];
   if (goldenA.mistake?.pose) refs.push(mergeDeep(goldenA.poses?.end, goldenA.mistake.pose));
   if (refs.some(r => r !== undefined && deepEqual(pose, r))) return 'golden';
-  const key = `${exId}|${optsId}`;
-  if (Object.prototype.hasOwnProperty.call(ENUMERATED_POSES, key) && deepEqual(pose, ENUMERATED_POSES[key])) return 'enumerated';
   return `${key}: pose matches neither a golden-A reference pose nor its enumerated exception (${JSON.stringify(pose).slice(0, 200)})`;
 }
 
 /**
- * Classifies one crop's `spec.mistake.pose` (round-2 review fix, blocker 2). Golden-A's own `mistake.pose` is
+ * Classifies one crop's `spec.mistake.pose` (round-2 review fix, blocker 2; round-3 fix, blocker 1 - same enumerated-
+ * first priority as `classifyPose` above, same reasoning, against its own `ENUMERATED_MISTAKE_POSES` table - not
+ * `ENUMERATED_POSES`, which pins a different pose under the same crop key). Golden-A's own `mistake.pose` is
  * authored as a partial delta - the untouched base '-n'/'-m' calls carry it exactly as written, but a crop that
  * draws that same mistake through `howto/render-*.mjs`'s `poseOf` gets it pre-merged with `poses.end` before
- * assignment - so both the unmerged and the merged form of golden-A's own mistake pose are 'golden', not just one.
- * Shares `ENUMERATED_POSES` with `classifyPose` (no key collisions: this fixture's names are all distinct crop
- * keys). Returns 'golden' or 'enumerated', or a drift-problem string - never a blanket allowance.
+ * assignment - so both the unmerged and the merged form of golden-A's own mistake pose are 'golden', not just one,
+ * for a key NOT enumerated. Returns 'golden' or 'enumerated', or a drift-problem string - never a blanket allowance.
  */
 export function classifyMistakePose(exId, optsId, pose, goldenA) {
+  const key = `${exId}|${optsId}`;
+  if (Object.prototype.hasOwnProperty.call(ENUMERATED_MISTAKE_POSES, key)) {
+    return deepEqual(pose, ENUMERATED_MISTAKE_POSES[key]) ? 'enumerated' : `${key}: mistake pose differs from its pinned enumerated exception (${JSON.stringify(pose).slice(0, 200)})`;
+  }
   const refs = [];
   if (goldenA.mistake?.pose) refs.push(goldenA.mistake.pose, mergeDeep(goldenA.poses?.end, goldenA.mistake.pose));
   if (refs.some(r => deepEqual(pose, r))) return 'golden';
-  const key = `${exId}|${optsId}`;
-  if (Object.prototype.hasOwnProperty.call(ENUMERATED_POSES, key) && deepEqual(pose, ENUMERATED_POSES[key])) return 'enumerated';
   return `${key}: mistake pose matches neither golden-A's own mistake pose nor its enumerated exception (${JSON.stringify(pose).slice(0, 200)})`;
 }
 

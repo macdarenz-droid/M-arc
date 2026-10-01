@@ -1,6 +1,7 @@
 /**
  * Rendering a conversation (§4.2): user bubbles, and Escobar's turns with the preamble,
- * components, proposal / navigate / escalation cards, the verified answer with citations,
+ * components, proposal / navigate / escalation cards, the verified answer (citation markers
+ * stripped, LR-23),
  * and the "What Escobar looked at" drawer. Everything redraws from the stored messages.
  */
 import { useEffect, useState } from 'preact/hooks';
@@ -8,22 +9,20 @@ import { Button, Card } from '@/ui/primitives';
 import { IconChevronDown } from '@/ui/icons';
 import { goTo } from '../palace/navigate';
 import { PALACE_BY_ID } from '../palace/registry';
-import { CARD_BY_ID } from '../knowledge/cards';
 import { parseDirectives } from '../verify';
 import { onProposal, canApply, undoOpen, UNDO_WINDOW_MS } from '../apply';
 import { ShowComponent } from './components';
-import { Citation, CardCitation } from './Citation';
 import { Escalation } from './Escalation';
 import { imageData, loadImage } from '../images';
 import { state } from '@/core/store';
 import { makeCtx } from '../tools/context';
 import { statusLabel } from '../tools/executor';
-import { pastTense, splitCitations } from './present';
+import { drawerView, pastTense, splitCitations, stripCitationTags } from './present';
 import type { Conversation, Fact, ProposalRecord, RenderedTurn, StoredMessage, UserBlock } from '../types';
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 type ToolUse = { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> };
-const toolUsesOf = (content: unknown[]): ToolUse[] => content.filter((b): b is ToolUse => isObj(b) && b.type === 'tool_use').map(b => ({ ...b, input: isObj(b.input) ? b.input : {} }));
+export const toolUsesOf = (content: unknown[]): ToolUse[] => content.filter((b): b is ToolUse => isObj(b) && b.type === 'tool_use').map(b => ({ ...b, input: isObj(b.input) ? b.input : {} }));
 const textOf = (content: unknown[]) => content.filter((b): b is { type: 'text'; text: string } => isObj(b) && b.type === 'text').map(b => b.text).join('');
 
 export interface UserTurn { kind: 'user'; index: number; msg: Extract<StoredMessage, { role: 'user' }> }
@@ -45,7 +44,7 @@ export function turnsOf(messages: StoredMessage[]): Turn[] {
   return out;
 }
 
-function toolResults(messages: StoredMessage[], indexes: number[]): Map<string, { content: string; isError: boolean }> {
+export function toolResults(messages: StoredMessage[], indexes: number[]): Map<string, { content: string; isError: boolean }> {
   const map = new Map<string, { content: string; isError: boolean }>();
   for (const i of indexes) {
     const m = messages[i];
@@ -68,22 +67,18 @@ export function UserBubble({ msg }: { msg: UserTurn['msg'] }) {
   );
 }
 
-/** Answer text → paragraphs, bullets, sentences, citations; unverified sentences muted (§14.3). */
-export function AnswerText({ text, ledger, unverified, streaming }: { text: string; ledger: Fact[]; unverified?: string[]; streaming?: boolean }) {
+/** Answer text → paragraphs, bullets, sentences; markers stripped (LR-23); unverified sentences muted (§14.3). */
+export function AnswerText({ text, unverified, streaming }: { text: string; ledger: Fact[]; unverified?: string[]; streaming?: boolean }) {
   const bad = new Set((unverified ?? []).map(s => s.trim()));
   const paras = text.split(/\n{2,}/);
-  let cites = 0;
   const sentence = (raw: string, key: number) => {
-    const { text: stripped, ids } = splitCitations(raw);
+    const { text: stripped } = splitCitations(raw);
     const parts = stripped.split(/(⟦[^⟧]*⟧|\*\*[^*]+\*\*)/g).filter(Boolean);
     const body = parts.map((p, i) => {
-      if (p.startsWith('⟦k:')) { const id = p.slice(3, -1); return <CardCitation key={i} id={id} card={CARD_BY_ID[id]} />; }
       if (p.startsWith('⟦')) return null;
       if (p.startsWith('**')) return <b key={i}>{p.slice(2, -2)}</b>;
       return p;
     });
-    const facts = ids.map(id => ledger.find(f => f.id === id)).filter((f): f is Fact => !!f);
-    if (facts.length) body.push(<Citation key="cite" n={++cites} facts={facts} />);
     const plain = parseDirectives(raw).plain.trim().replace(/^[-•]\s+/, '');
     return bad.has(plain) ? <span key={key} class="esc-unverified" title="Unverified number">{body}<span class="esc-unverified-hint"> Unverified number</span> </span> : <span key={key}>{body} </span>;
   };
@@ -112,8 +107,9 @@ export function ProposalCard({ p, conversationId }: { p: ProposalRecord; convers
   return (
     <Card class="esc-proposal" data-proposal={p.status}>
       <div class="eyebrow">Proposal</div>
-      <b>{p.title}</b>
-      <table class="esc-diff small"><tbody>{p.preview.map((r, i) => <tr key={i}><th scope="row">{r.label}</th><td class="muted">{r.before ?? '—'}</td><td aria-hidden="true">→</td><td>{r.after}</td></tr>)}</tbody></table>
+      {/* BUG-31: a pin_card title is the model's own text ("Pin to Today: <title>", and its preview row). */}
+      <b>{stripCitationTags(p.title)}</b>
+      <table class="esc-diff small"><tbody>{p.preview.map((r, i) => <tr key={i}><th scope="row">{stripCitationTags(r.label)}</th><td class="muted">{r.before ?? '—'}</td><td aria-hidden="true">→</td><td>{r.after}</td></tr>)}</tbody></table>
       {p.status === 'awaiting' && (
         <div class="row" style={{ gap: 8 }}>
           <Button variant="primary" size="sm" disabled={busy || !canApply(p.kind)} onClick={() => act('apply')}>Apply</Button>
@@ -140,13 +136,6 @@ function NavigateCard({ target, params }: { target: string; params?: Record<stri
   );
 }
 
-function prettyOutput(content: string): string {
-  try {
-    const j = JSON.parse(content) as { data?: unknown };
-    return JSON.stringify(j && typeof j === 'object' && 'data' in j ? j.data : j, null, 1).slice(0, 4000);
-  } catch { return content.slice(0, 4000); }
-}
-
 function Drawer({ uses, results }: { uses: ToolUse[]; results: Map<string, { content: string; isError: boolean }> }) {
   const [open, setOpen] = useState(false);
   const [shown, setShown] = useState<string | null>(null);
@@ -159,7 +148,7 @@ function Drawer({ uses, results }: { uses: ToolUse[]; results: Map<string, { con
         <ul class="esc-drawer-list small">
           {uses.map(u => {
             const r = results.get(u.id);
-            const inputs = Object.entries(u.input).filter(([, v]) => v != null && typeof v !== 'object');
+            const { inputs, output } = drawerView(u.name, u.input, r?.content);
             return (
               <li key={u.id}>
                 <button type="button" class="esc-drawer-item" aria-expanded={shown === u.id} onClick={() => setShown(s => (s === u.id ? null : u.id))}>
@@ -169,7 +158,7 @@ function Drawer({ uses, results }: { uses: ToolUse[]; results: Map<string, { con
                   <div class="esc-drawer-detail">
                     {inputs.length > 0 && <div class="hint">Asked for: {inputs.map(([k, v]) => `${k.replace(/([A-Z])/g, ' $1').toLowerCase()} ${String(v).replace(/^lib_/, '').replace(/_/g, ' ')}`).join(', ')}</div>}
                     <div class="hint">Data sent to Escobar:</div>
-                    <pre class="esc-drawer-out">{r ? prettyOutput(r.content) : 'No result'}</pre>
+                    <pre class="esc-drawer-out">{output ?? 'No result'}</pre>
                   </div>
                 )}
               </li>
@@ -194,7 +183,9 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
   const answerText = r?.answer ?? (final ? parseDirectives(textOf(final.m.content)).text : '');
   const proposals = (conv.proposals ?? []).filter(p => p.messageIndex != null && indexes.includes(p.messageIndex));
   const visibleUse = (u: ToolUse) => { const r = results.get(u.id); return !!r && !r.isError && (u.name === 'show' || u.name === 'navigate' || u.name === 'escalate'); };
-  const hasPreamble = assistant.some(a => (a.m.meta.rendered.preamble ?? []).some(p => parseDirectives(p).plain.trim()));
+  // BUG-31: preambles and earlier drafts lose brief-form fact tags too, stored ones included.
+  const preambleText = (p: string) => stripCitationTags(parseDirectives(p).plain);
+  const hasPreamble = assistant.some(a => (a.m.meta.rendered.preamble ?? []).some(p => preambleText(p)));
   // While a turn is still running its tool steps show in the live area; draw nothing here until there is something to see.
   if (live && !answerText && !proposals.length && !hasPreamble && !allUses.some(visibleUse)) return null;
   return (
@@ -205,7 +196,7 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
         const pre = m.meta.rendered.preamble ?? [];
         return (
           <div key={i} class="stack-sm">
-            {pre.map((p, k) => <p key={k} class="esc-preamble">{parseDirectives(p).plain}</p>)}
+            {pre.map((p, k) => <p key={k} class="esc-preamble">{preambleText(p)}</p>)}
             {uses.map(u => {
               const res = results.get(u.id);
               if (!res || res.isError) return null;
@@ -223,7 +214,7 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
       })}
       {proposals.map(p => <ProposalCard key={p.id} p={p} conversationId={conv.id} />)}
       {earlier.filter(a => a.m.meta.rendered.revised).map(a => (
-        <details key={a.i} class="esc-revised small"><summary>Earlier draft (revised)</summary><p class="muted">{parseDirectives(textOf(a.m.content)).plain}</p></details>
+        <details key={a.i} class="esc-revised small"><summary>Earlier draft (revised)</summary><p class="muted">{stripCitationTags(parseDirectives(textOf(a.m.content)).plain)}</p></details>
       ))}
       {answerText && <AnswerText text={answerText} ledger={conv.ledger} unverified={r?.unverified} />}
       {!live && <Drawer uses={allUses} results={results} />}

@@ -581,11 +581,7 @@ html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infi
 .esc-caret { display: inline-block; width: 7px; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: var(--accent); }
 .esc-unverified { color: var(--text-3); }
 .esc-unverified-hint { font-size: var(--fs-cap); font-weight: 600; color: var(--warning); }
-.esc-cite-wrap { position: relative; display: inline; }
-.esc-cite { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; padding: 0 4px; margin: 0 1px; border-radius: var(--radius-sm); font-size: var(--fs-cap); font-weight: 700; vertical-align: super; line-height: 1; background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); }
-.esc-cite::before { content: ''; position: absolute; inset: -14px -10px; }
-.esc-cite-card { color: var(--accent); }
-.esc-pop { position: absolute; left: 0; top: 1.6em; z-index: 3; width: min(260px, 70vw); display: grid; gap: 4px; padding: 10px 12px; background: var(--surface-3); border: 1px solid var(--border); border-top: 1px solid var(--border-strong); border-radius: var(--radius-md); box-shadow: var(--shadow-float); font-size: var(--fs-meta); line-height: 1.4; color: var(--text); }
+/* ESC-NC (owner, LR-23): the citation chip and its popover (.esc-cite*, .esc-pop*) are gone; Citation.tsx was their only user. */
 .esc-drawer-toggle { position: relative; display: inline-flex; align-items: center; gap: 4px; color: var(--text-3); min-height: 32px; }
 .esc-drawer-toggle::before { content: ""; position: absolute; inset: -6px 0; }
 .esc-drawer-toggle svg { transition: transform var(--dur-base) var(--ease-standard); }
@@ -656,9 +652,6 @@ html[data-motion="reduce"] .esc-dock { transition: none; }
 .esc-hall svg, .esc-hall .escobar-mark { color: var(--accent); flex: none; }
 .esc-hall-input { flex: 1; text-align: left; min-height: 44px; padding: 0 14px; border-radius: var(--radius-pill); background: var(--surface-2); border: 1px solid var(--border); color: var(--text-3); font-size: var(--fs-body); }
 .esc-explainer ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--text-2); }
-.esc-cite { background: transparent; border: 0; color: var(--text-3); min-width: 14px; height: 14px; padding: 0 2px; margin-left: 1px; font-size: var(--fs-cap); font-weight: 600; text-decoration: underline dotted; }
-.esc-pop-row { display: grid; gap: 1px; }
-.esc-pop-row + .esc-pop-row { border-top: 1px solid var(--border-subtle); padding-top: 4px; }
 .esc-drawer-item { color: var(--text-2); }
 .esc-drawer-detail { display: grid; gap: 4px; margin-top: 4px; }
 .esc-thinking { color: var(--text-2); }
@@ -845,6 +838,9 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 /* .esc-ask (styles.css) is sized 32x32 for its icon-only default; the labelled "Ask Escobar"
  * variant needs its own width and the same height/padding as the btn-sm next to it. */
 .mtl-actions .esc-ask { width: auto; min-height: 34px; padding: 0 var(--sp-3); }
+
+/* PLAY-1: the Settings "Privacy policy" link is drawn as a button, without the link underline. */
+a.btn[data-palace="settings.privacy"] { text-decoration: none; }
 
 /* HT-3: the How-to entry (HOWTO_LABEL) on the Train card (.why-row wraps). Pill as the sheet's own Trace pill, >= 44x44. */
 .ht-entry { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-2); font-size: var(--fs-small); font-weight: var(--fw-medium); }
