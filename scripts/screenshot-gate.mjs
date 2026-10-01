@@ -7219,10 +7219,13 @@ const ht10Clock = { t0: Date.now(), lines: [] };
       const F = m => fail('*', 'silent-black', 'golden', `golden: ${m}`);
       const g = await H.openGolden(ht10, 'silent-black');
       try {
-        for (const [a, b] of H.HT10_C10_EXEMPT) {
-          const o = await g.page.evaluate(([a, b]) => { const x = document.getElementById(a)?.getBoundingClientRect(), y = document.getElementById(b)?.getBoundingClientRect(); if (!x || !y) return null; return [Math.min(x.right, y.right) - Math.max(x.left, y.left), Math.min(x.bottom, y.bottom) - Math.max(x.top, y.top)]; }, [a, b]);
-          if (!o) F(`exempt pair ${a} / ${b} not found on the golden page`);
-          else if (!(o[0] > 0.01 && o[1] > 0.01)) F(`exempt pair ${a} / ${b} does not overlap on the golden page (${o.map(v => v.toFixed(2)).join(' x ')}); remove it from HT10_C10_EXEMPT`);
+        // D-HT10-C10: every exemption measures its pinned value on the golden page, in its view
+        for (const mode of ['normal', 'mistake']) {
+          if (mode === 'mistake') await g.page.evaluate(ex => { for (const id of new Set(ex.filter(e => e.mode === 'mistake').map(e => e.ids[0].replace(/-m-.*$/, '')))) document.getElementById(`${id}-mistake`).click(); }, H.HT10_C10_EXEMPT);
+          await g.page.waitForTimeout(300);
+          const list = H.HT10_C10_EXEMPT.filter(e => e.mode === mode);
+          const got = await g.page.evaluate(H.HT10_C10_MEASURE, list);
+          list.forEach((e, i) => { if (!H.ht10ExemptMatches(e, got[i].m)) F(`C10 exemption ${e.ids.join(' / ')} (${e.kind}) measures ${JSON.stringify(got[i].m)} on the golden page, not its pinned ${e.w} x ${e.h}`); });
         }
       } finally { await g.ctx.close(); }
       const gf = H.ht10CssProblems(readFileSync(H.GOLDEN_PAGE, 'utf8'), 'golden').frames;
@@ -7286,6 +7289,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
             ['M12 (disclaimer deleted)', () => document.querySelector('dialog.sheet.ht .ht-disclaimer').remove(), [/0 \.ht-disclaimer/]],
           ] : []),
           ['C10 (a 30 px button)', () => { const b = document.createElement('button'); b.id = 'ht10-small'; b.textContent = 'x'; b.style.cssText = 'width:30px;height:30px'; document.querySelector('dialog.sheet.ht [data-section]').append(b); }, [/#ht10-small is 30\.0 x 30\.0/]],
+          ['C10 (an exempt tell 1 px wider than its golden pin)', () => { document.getElementById('lateral-raise-mistake').click(); const d = document.getElementById('lateral-raise-m-dip'); d.style.width = `${d.getBoundingClientRect().width + 1}px`; }, [/#lateral-raise-m-dip is 33\.078 x 44\.000 .*not its pinned golden/]],
           ['C10 (two overlapping buttons)', () => { const w = document.createElement('div'); w.style.position = 'relative'; w.innerHTML = '<button id="ht10-o1" style="width:60px;height:60px">a</button><button id="ht10-o2" style="position:absolute;left:20px;top:20px;width:60px;height:60px">b</button>'; document.querySelector('dialog.sheet.ht [data-section]').append(w); }, [/#ht10-o1 and #ht10-o2 overlap/]],
         ];
         for (const [name, inject, expect] of fx) {

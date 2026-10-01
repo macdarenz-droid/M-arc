@@ -950,10 +950,26 @@ export async function ht3SectionGuards(browser, port, { fixture = fixtureSection
 // registered in this build; nothing in it names a section that might be missing.
 
 /**
- * C10 exemptions (D-HT2, owner item O10, critic fix 9): control pairs whose hit boxes overlap on the approved golden
- * plate itself. A new entry needs a golden update; the gate also proves each pair overlaps on the golden page.
+ * C10 exemptions (D-HT2 O10; D-HT10-C10): facts of the approved golden plate, each pinned to its exact golden
+ * measurement in CSS px at 390 x 844 (`mode` is the plate view it shows in). 'overlap': the two hit boxes overlap by
+ * w x h; 'small': the control is w x h. The sweep fails when the app's measurement differs from the pinned one by more
+ * than L2b's 0.01 px, and the gate fails when the golden page no longer measures it; any other undersized or
+ * overlapping control still fails. A new entry needs a golden update or a supervisor decision.
  */
-export const HT10_C10_EXEMPT = [['lateral-raise-n-shrug', 'lateral-raise-n-elbows']];
+export const HT10_C10_EXEMPT = [
+  { kind: 'overlap', ids: ['lateral-raise-n-shrug', 'lateral-raise-n-elbows'], mode: 'normal', w: 59.828125, h: 0.234375 },   // O10, critic fix 9
+  { kind: 'small', ids: ['lateral-raise-m-dip'], mode: 'mistake', w: 32.078125, h: 44 },   // D-HT10-C10
+  { kind: 'overlap', ids: ['barbell-back-squat-m-chest', 'barbell-back-squat-m-drift'], mode: 'mistake', w: 77.28125, h: 0.25 },   // D-HT10-C10
+];
+/** Measures every exemption entry on `page` (the app's open sheet or the golden page); {key, w, h} or null if absent. */
+export const HT10_C10_MEASURE = exempt => exempt.map(e => {
+  const r = e.ids.map(i => document.getElementById(i)).map(el => (el && el.checkVisibility({ visibilityProperty: true }) ? el.getBoundingClientRect() : null));
+  if (r.some(x => !x)) return { key: e.ids.join('|'), m: null };
+  if (e.kind === 'small') return { key: e.ids.join('|'), m: { w: r[0].width, h: r[0].height } };
+  return { key: e.ids.join('|'), m: { w: Math.min(r[0].right, r[1].right) - Math.max(r[0].left, r[1].left), h: Math.min(r[0].bottom, r[1].bottom) - Math.max(r[0].top, r[1].top) } };
+});
+export const ht10ExemptMatches = (e, m) => !!m && Math.abs(m.w - e.w) <= 0.01 && Math.abs(m.h - e.h) <= 0.01;
+
 /**
  * C18 exemptions (D-HT10-1): the approved plate's own Trace keyframes (golden A, plan 2.7 L4) draw the line with
  * stroke-dashoffset. Changing them would change the approved plate, so they are exempt by name and exact property
@@ -1133,15 +1149,23 @@ export function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks, redu
     .filter(e => e !== dlg && e !== panel && e.checkVisibility({ visibilityProperty: true, opacityProperty: true }) && !e.closest('[inert]'))
     .map(e => ({ e, r: e.getBoundingClientRect() })).filter(c => c.r.width > 0 && c.r.height > 0);
   panel.scrollTop = st;
-  for (const { e, r } of ctl) if (r.width < 44 - 0.01 || r.height < 44 - 0.01) problems.push(`C10: ${label(e)} is ${r.width.toFixed(1)} x ${r.height.toFixed(1)} (< 44 x 44)`);
-  const isExempt = (a, b) => exempt.some(([x, y]) => (a.id === x && b.id === y) || (a.id === y && b.id === x));
+  // an exempt entry is skipped only while it measures exactly its pinned golden value (D-HT10-C10)
+  const pinned = (e, w, h) => Math.abs(w - e.w) <= 0.01 && Math.abs(h - e.h) <= 0.01;
+  const exemptOf = (kind, ids) => exempt.find(e => e.kind === kind && e.ids.length === ids.length && ids.every(i => i && e.ids.includes(i)));
+  for (const { e, r } of ctl) {
+    if (r.width >= 44 - 0.01 && r.height >= 44 - 0.01) continue;
+    const ex = exemptOf('small', [e.id]);
+    if (ex && pinned(ex, r.width, r.height)) { seenExempt.push(e.id); continue; }
+    problems.push(`C10: ${label(e)} is ${r.width.toFixed(3)} x ${r.height.toFixed(3)} (< 44 x 44)${ex ? `, not its pinned golden ${ex.w} x ${ex.h}` : ''}`);
+  }
   for (let i = 0; i < ctl.length; i++) for (let j = i + 1; j < ctl.length; j++) {
     const a = ctl[i], b = ctl[j];
     if (a.e.contains(b.e) || b.e.contains(a.e)) continue;
     const w = Math.min(a.r.right, b.r.right) - Math.max(a.r.left, b.r.left), h = Math.min(a.r.bottom, b.r.bottom) - Math.max(a.r.top, b.r.top);
     if (w <= 0.01 || h <= 0.01) continue;
-    if (isExempt(a.e, b.e)) { seenExempt.push(`${a.e.id}|${b.e.id}`); continue; }
-    problems.push(`C10: ${label(a.e)} and ${label(b.e)} overlap by ${w.toFixed(1)} x ${h.toFixed(1)}`);
+    const ex = exemptOf('overlap', [a.e.id, b.e.id]);
+    if (ex && pinned(ex, w, h)) { seenExempt.push(ex.ids.join('|')); continue; }
+    problems.push(`C10: ${label(a.e)} and ${label(b.e)} overlap by ${w.toFixed(3)} x ${h.toFixed(3)}${ex ? `, not their pinned golden ${ex.w} x ${ex.h}` : ''}`);
   }
   // C19
   const res = pats.map(p => new RegExp(p.source, p.flags));
@@ -1235,12 +1259,13 @@ export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p =>
     await cdp.send('DOM.enable');
     await cdp.send('Accessibility.enable');
     let cur = '';
+    const seen = new Set();
     await page.exposeFunction('__ht10Probe', async label => {
       stats.probes++;
       const d = await page.evaluate(ht10DomProbe, [HT10_C10_EXEMPT, c19.pats, c19.words, c19.disclaimer, expectRisks, reduced]);
       const ax = await ht10AxNames(cdp);
       stats.controls += d.controls; stats.named += ax.named;
-      d.seenExempt.forEach(x => stats.exempt.add(x));
+      d.seenExempt.forEach(x => { stats.exempt.add(x); seen.add(x); });
       if (!d.controls) problems.push(`${tag} ${cur} [${label}]: the probe saw no control (nothing to measure)`);
       for (const m of [...d.problems, ...ax.problems]) problems.push(`${tag} ${cur} [${label}]: ${m}`);
     });
@@ -1255,6 +1280,8 @@ export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p =>
       const r = await page.evaluate(ht10Script, id);
       stats.steps += r.steps;
       for (const f of r.fails) problems.push(`${tag} ${id}: ${f}`);
+      // D-HT10-C10: each of this sheet's exemptions must have been seen at exactly its pinned golden value
+      for (const e of HT10_C10_EXEMPT.filter(x => x.ids[0].startsWith(`${id}-`))) if (!seen.has(e.kind === 'small' ? e.ids[0] : e.ids.join('|'))) problems.push(`${tag} ${id}: C10: exemption ${e.ids.join(' / ')} (${e.kind}) was never measured at its pinned golden ${e.w} x ${e.h}`);
       // C12: wait until every recorded animation's computed end (its start + the constant for its kind) + 1 s
       for (let i = 0; i < 3; i++) {
         const wait = await page.evaluate(([shimmer, trace]) => Math.max(0, ...window.__ht10Rec.list.map(x => x.startedAt + (x.feel ? shimmer : trace) + 1000)) - performance.now(), [END.shimmer, END.trace]);
