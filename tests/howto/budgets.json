@@ -21,75 +21,75 @@
     },
     {
       "chunk": "ht-dumbbell-lateral-raise-*.js",
-      "rawMax": 69302,
-      "gzMax": 13789,
-      "measuredRaw": 63001,
-      "measuredGz": 12535,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 77365,
+      "gzMax": 16814,
+      "measuredRaw": 70331,
+      "measuredGz": 15285,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
     },
     {
       "chunk": "ht-barbell-back-squat-*.js",
-      "rawMax": 102123,
-      "gzMax": 23180,
-      "measuredRaw": 92839,
-      "measuredGz": 21072,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 110349,
+      "gzMax": 26407,
+      "measuredRaw": 100317,
+      "measuredGz": 24006,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
     },
     {
       "chunk": "ht-pull-up-*.js",
-      "rawMax": 136662,
-      "gzMax": 31472,
-      "measuredRaw": 124238,
-      "measuredGz": 28610,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 144539,
+      "gzMax": 34477,
+      "measuredRaw": 131399,
+      "measuredGz": 31342,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
     },
     {
       "chunk": "ht-hanging-leg-raise-*.js",
-      "rawMax": 129125,
-      "gzMax": 30798,
-      "measuredRaw": 117386,
-      "measuredGz": 27998,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 136887,
+      "gzMax": 33692,
+      "measuredRaw": 124442,
+      "measuredGz": 30629,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
     },
     {
       "chunk": "ht-lat-pulldown-*.js",
-      "rawMax": 122308,
-      "gzMax": 26250,
-      "measuredRaw": 111189,
-      "measuredGz": 23863,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 131048,
+      "gzMax": 29704,
+      "measuredRaw": 119134,
+      "measuredGz": 27003,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
     },
     {
       "chunk": "ht-seated-cable-row-*.js",
-      "rawMax": 128748,
-      "gzMax": 28005,
-      "measuredRaw": 117043,
-      "measuredGz": 25459,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 137268,
+      "gzMax": 31203,
+      "measuredRaw": 124789,
+      "measuredGz": 28366,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
     },
     {
       "chunk": "ht-leg-press-*.js",
-      "rawMax": 102925,
-      "gzMax": 19884,
-      "measuredRaw": 93568,
-      "measuredGz": 18076,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 111312,
+      "gzMax": 22892,
+      "measuredRaw": 101192,
+      "measuredGz": 20810,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
     },
     {
       "chunk": "ht-machine-chest-press-*.js",
-      "rawMax": 109174,
-      "gzMax": 22151,
-      "measuredRaw": 99249,
-      "measuredGz": 20137,
-      "setBy": "HT-3b",
-      "reason": "Baseline measured by HT-3b (D-HT6-budget) before any layer content."
+      "rawMax": 117593,
+      "gzMax": 24847,
+      "measuredRaw": 106902,
+      "measuredGz": 22588,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
     },
     {
       "chunk": "feel-lateral-raise-*.js",
