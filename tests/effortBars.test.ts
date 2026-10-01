@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { summarizeSets } from '@/brain/history';
-import { effortSplit, effortUsesSets } from '@/ui/EffortBars';
+import { effortSplit, effortUsesSets, fmtTotal } from '@/ui/EffortBars';
 import type { LoggedSet } from '@/core/models';
 
 const set = (kg: number, reps: number, effort?: LoggedSet['effort'], kind?: LoggedSet['kind']): LoggedSet => ({ kg, reps, effort, kind });
@@ -100,5 +100,18 @@ describe('effortSplit (O4)', () => {
     const p = effortSplit(h, 'weighted', noBw)[0]!;
     const expected = raw.reduce((a, [kg, reps]) => a + kg * reps, 0);
     expect(p.easy + p.ideal + p.max + p.unrated).toBe(expected);
+  });
+});
+
+describe('fmtTotal (OBS-TONNE)', () => {
+  it('a 5-figure lb total is not shown as tonnes — "t" is a metric tonne, only right for kg', () => {
+    expect(fmtTotal(22_046, 'lb')).toBe('22,046');
+    expect(fmtTotal(22_046, 'lb')).not.toContain('t');
+  });
+  it('a 5-figure kg total still shows as tonnes', () => {
+    expect(fmtTotal(12_000, 'kg')).toBe('12t');
+  });
+  it('sets are rounded, not thousands-grouped', () => {
+    expect(fmtTotal(12_345, 'sets')).toBe('12345');
   });
 });

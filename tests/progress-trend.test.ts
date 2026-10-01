@@ -23,6 +23,13 @@ describe('the Exercise progress card trend follows the lift mode (QA2-FC-1)', ()
     expect(progressTrend(histOf('lib_barbell_bench_press', i => sets(80 + i * 2.5, 5, 'ideal', 3)), 'weighted').direction).toBe('up');
     expect(progressTrend(histOf('lib_barbell_bench_press', i => sets(20, 12 + (i >> 1), 'ideal', 3)), 'weighted').direction).toBe('up');
   });
+  it('UI-11: four carries of 20/40/60/80 m give a rising distance trend, not a flat line', () => {
+    expect(modeOf('lib_farmer_s_carry')).toBe('conditioning');
+    const id = 'lib_farmer_s_carry';
+    const h = exerciseHistory(weekly(4).map((d, i) => session(d, [{ id, sets: [{ distanceM: (i + 1) * 20, effort: 'ideal' as const }] }])), id);
+    expect(h.map(x => progressValue(x, 'conditioning'))).toEqual([20, 40, 60, 80]);
+    expect(progressTrend(h, 'conditioning').direction).toBe('up');
+  });
 });
 
 describe('the card line and hint agree with the trend (QA2-FC-1 follow-up)', () => {
@@ -39,6 +46,7 @@ describe('the card line and hint agree with the trend (QA2-FC-1 follow-up)', () 
     expect(progressHint('assisted')).toMatch(/assistance/);
     expect(progressHint('bodyweight')).toMatch(/reps/);
     expect(progressHint('duration')).toMatch(/hold/);
+    expect(progressHint('conditioning')).toMatch(/distance/);
     expect(progressHint('weighted')).toMatch(/one-rep/);
   });
 });
