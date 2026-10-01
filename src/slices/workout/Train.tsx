@@ -329,7 +329,7 @@ function Splits() {
             <Button variant="primary" block style={{ marginTop: 12 }} data-palace="train.start" disabled={!split.exercises.length} onClick={() => { startingSplit.value = split; }}><IconPlay /> Start {split.name}</Button>
             <Button variant="quiet" block data-palace="train.log-past" disabled={!split.exercises.length} onClick={() => { loggingPast.value = split; }}>Log a past session</Button>
           </Card>
-          <p class="hint" style={{ marginTop: 10 }}>Targets come from your last sessions and your goal ({GOALS.find(g => g.id === s.goal)?.name}). Change the goal in Coach.</p>
+          <p class="hint" style={{ marginTop: 10 }} data-palace="train.targets">Goal: {GOALS.find(g => g.id === s.goal)?.name}</p>
         </>
       )}
 
