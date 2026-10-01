@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseDirectives, DirectiveBuffer, checkGrounding, safetySignals, repairInstruction } from '@/escobar/verify';
+import { parseDirectives, DirectiveBuffer, checkGrounding, safetySignals, repairInstruction, normalizeCitations } from '@/escobar/verify';
 import type { Fact } from '@/escobar/types';
 
 const fact = (id: string, value: number, label: string, unit?: string): Fact => ({ id, value, label, ...(unit ? { unit } : {}), source: { tool: 't' }, turn: 0 });
@@ -61,7 +61,36 @@ describe('grounding (§14.3)', () => {
     expect(g('Since you weigh 83 kg, keep going.', ['I weigh 83 kg now']).ok).toBe(true);
   });
   it('repair instruction lists the numbers', () => {
-    expect(repairInstruction([142.5, 18])).toBe('These numbers are not from your tools, cards or the brief: 142.5, 18. Recompute them with tools or remove them, then restate the answer.');
+    // BUG-31 A3: "then restate the answer" drew meta lines; the approved wording, still an exact match.
+    expect(repairInstruction([142.5, 18])).toBe('These numbers are not from your tools, cards or the brief: 142.5, 18. Recompute them with tools or remove them. Then write your whole answer again as your reply to the person. Do not mention this check or that anything was re-checked.');
+  });
+});
+
+describe('BUG-31 A1 brief-form fact tags', () => {
+  // The owner's screenshot: every id is above f10, so each tag's digits used to read as a number.
+  const SCREENSHOT = "You've done 2 [f40] of 3 [f43] planned sessions this week, 38 [f41] sets, 6 [f42] records. Readiness is green 67 [f33], advice normal. Biceps are at 45% [f34] and triceps 52% [f36], so your last sessions were real work.";
+  const ledger = [
+    fact('f33', 67, 'readiness score today'), fact('f34', 45, 'Biceps recovery', '%'), fact('f36', 52, 'Triceps recovery', '%'),
+    fact('f40', 2, 'sessions this week'), fact('f41', 38, 'sets this week'), fact('f42', 6, 'records this week'), fact('f43', 3, 'planned sessions this week'),
+  ];
+  it('normalizeCitations makes [fN] and [fN, fM] canonical only when every id is in the ledger', () => {
+    expect(normalizeCitations('38 [f41] sets, 2 [f40, f43] and 3 [ f43 ,f42 ].', ledger)).toBe('38 ⟦f41⟧ sets, 2 ⟦f40,f43⟧ and 3 ⟦f43,f42⟧.');
+    expect(normalizeCitations('67 [f999], 38 [f41, f999], [1], [note], ⟦f41⟧', ledger)).toBe('67 [f999], 38 [f41, f999], [1], [note], ⟦f41⟧');
+  });
+  it('the screenshot paragraph is grounded', () => {
+    expect(checkGrounding({ answer: SCREENSHOT, ledger })).toEqual({ ok: true, ungrounded: [], sentences: [] });
+  });
+  it('an invented number next to a real id is still flagged, and only that number', () => {
+    const r = checkGrounding({ answer: 'You did 55 [f41] sets. Readiness is 67 [f33].', ledger });
+    expect(r.ungrounded).toEqual([55]);
+    // The verifier's plain form, as for any mid-sentence ⟦f41⟧ (the screen collapses the gap).
+    expect(r.sentences).toEqual(['You did 55  sets.']);
+  });
+  it('an unknown id is left as written, so its digits are still flagged', () => {
+    const r = checkGrounding({ answer: 'Readiness is 67 [f999]. You did 38 [f41, f998] sets.', ledger });
+    // One unknown id keeps the whole tag as written, so all its digits count.
+    expect(r.ungrounded).toEqual([999, 41, 998]);
+    expect(r.sentences).toEqual(['Readiness is 67 [f999].', 'You did 38 [f41, f998] sets.']);
   });
 });
 
