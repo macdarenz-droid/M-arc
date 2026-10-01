@@ -97,7 +97,9 @@ describe('AUD-20 SCI-11: recovery and readiness copy states facts', () => {
   it('sleep driver: the hours against the usual, never "sleep lowered readiness"', () => {
     expect(sleepDriver(310, [310, 480, 470], 450)).toBe('Sleep: 5h 10m last night (below your usual 7h 30m)');
     expect(sleepDriver(null, [300, 330], 450)).toBe('Sleep: 5h 15m a night over the last 2 nights (below your usual 7h 30m)');
-    expect(sleepDriver(null, [300], 450)).toBe('Sleep: 5h last night (below your usual 7h 30m)');
+    // COPY-2: one older night without last night's data is not "last night"; with last night present and short, it is.
+    expect(sleepDriver(null, [300], 450)).toBe('Sleep: 5h on your last logged night (below your usual 7h 30m)');
+    expect(sleepDriver(300, [300], 450)).toBe('Sleep: 5h last night (below your usual 7h 30m)');
     expect(sleepDriver(480, [480, 200, 200], 450)).toBe('Sleep: 4h 53m a night over the last 3 nights (below your usual 7h 30m)');
     // AUD-1's 7 h floor: habitual short sleep is named against the floor, not as "your usual".
     expect(sleepDriver(240, [240, 240, 240], 240)).toBe('Sleep: 4h last night (under 7h)');

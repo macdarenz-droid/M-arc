@@ -7201,7 +7201,7 @@ for (const theme of ['silent-black', 'paper']) {
 // sheet was up (an empty, solid page under the scrim) and the check-in gave way to the brief by dropping its
 // panel off-screen in one frame (top 247 -> 844 px) and sliding a new one in with the scrim restarting at 0.
 // Frame-sampled at 390 x 844 in Silent Black and Paper, at 1x and 4x CPU, both paths: checked in today, and
-// check-in -> Skip -> brief. A 8-exercise split with history so Today's checks show.
+// check-in -> Skip -> brief. A 2-exercise split with history so Today's checks show.
 {
   // COPY-2: two chest lifts keep the brief taller than the check-in (fewer soreness rows) after the explaining lines were removed
   const BUG36_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press'];
@@ -7577,7 +7577,7 @@ for (const theme of ['silent-black', 'paper']) {
       const d = [...document.querySelectorAll('dialog.sheet[open]')].pop(); const p = d?.querySelector('.sheet-panel');
       if (d && !d.__c2) d.__c2 = ++window.__c2Id || (window.__c2Id = 1);
       out.push({ t: performance.now() - t0, dlg: d?.__c2 ?? null, title: d?.querySelector('h2')?.textContent ?? null,
-        top: p ? p.offsetTop + d.getBoundingClientRect().top + new DOMMatrix(getComputedStyle(p).transform).m42 : null, h: p ? p.getBoundingClientRect().height : null });
+        top: p ? p.getBoundingClientRect().top : null, h: p ? p.getBoundingClientRect().height : null });
       if (performance.now() - t0 < 900 && ++n < 400) requestAnimationFrame(f); else resolve(out);
     };
     requestAnimationFrame(f);
