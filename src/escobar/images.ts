@@ -58,3 +58,13 @@ export function clearImages(): void {
   memory.clear();
   void openDb().then(db => { try { db?.transaction(STORE, 'readwrite').objectStore(STORE).clear(); } catch { /* best-effort */ } });
 }
+
+/** OBS-PHOTOS (AUD-4): photos whose messages were pruned leave memory and IndexedDB. */
+export function deleteImages(ids: string[]): void {
+  if (!ids.length) return;
+  for (const id of ids) memory.delete(id);
+  void openDb().then(db => {
+    if (!db) return;
+    try { const store = db.transaction(STORE, 'readwrite').objectStore(STORE); for (const id of ids) store.delete(id); } catch { /* best-effort */ }
+  });
+}
