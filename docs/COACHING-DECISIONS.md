@@ -1710,4 +1710,29 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
 
 ## LIB-3: plate QA gate (LIB-3 builder, 2026-10-01)
 
-Decisions are added here as the card is built (D-LIB3-*).
+Card LIB-3, library plan 3.2, 3.3 and 7 (`docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md` on `claude/howto-options`). Code: `tools/plates/library/qa/`. Tests: `tests/howto/library-qa.test.ts` (node half) and `node tools/plates/library/qa/selftest.mjs` (all of it, browser included).
+
+- **D-LIB3-1 (path).** The plan names `tools/plates/library/qa.mjs`; the card puts the whole gate under `tools/plates/library/qa/`, so the entry is `qa/index.mjs` (`runQa`, `gatePlate`). **Why**: the card's write_scope.
+- **D-LIB3-2 (where the browser half runs).** CI runs `npm run check` before it installs Chromium (`build-apk.yml`), so a vitest test cannot open a browser there. The node checks and their mutations run in vitest. The browser checks (H1's real text boxes, Inter loaded, no horizontal scroll; H4; H5; F2; F5) and their mutations run in `selftest.mjs`, which also re-measures the pinned browser envelope. LIB-4 wires `selftest.mjs` into the gate job. A report without its browser half is never ok, so nothing can ship on the node half alone. **Why**: no test is skipped or narrowed. The browser half runs where Chromium exists.
+- **D-LIB3-3 (H4 hit boxes below 390 px).**
+  - **Measured on the golden page:** at 390 px the plate is 1:1. Below that, the approved chrome shrinks every plate uniformly (zoom 0.9162 at 360 px and 0.9106 at 340 px, the same on all 8), so every approved callout is 40.1-40.3 px tall.
+  - **Decision:** H4 requires 44 CSS px at 390 px. At 360 and 340 px it requires 44 × the pinned chrome zoom, measured on the 8 (`envelope.json` `H4zoom`). A card whose zoom differs from the pinned zoom fails on its own key (`H4.zoom`).
+  - **Why:** read literally at 360 and 340 px, the check fails all 8 and every future plate for a property of the locked chrome, not of the plate. The plan treats chrome properties as owner items, not plate checks (O7).
+  - **Reported to the supervisor:** C10 in CSS px below 390 px is a chrome finding for the owner's golden-update list, with O7 and O10.
+- **D-LIB3-4 (the 8's named exemptions, `qa/exemptions.json`).** Each one is an exact problem key, measured on the golden. An exemption that matches nothing fails the self-test. New plates inherit none, and only the 8 may use mode `approved`.
+  - **Lateral raise:** drawn by `ref-src`, not by the engine, so it is exempt from the checks that need a spec or report (H1 engine, H3 deviation, H6, H9; F1 and F4 are not measured). It is also exempt from the `lr` id prefix, from the m-pose outline (its Mistake view uses arrows), and from O10 and D-HT10-C10 (the `dip` tell is 32.1 × 44).
+  - **Squat:** the D-HT10-C10 chest/drift overlap.
+  - **H9 (a part that moves between end and Mistake must carry `poly`):** 13 moving line parts on 6 of the 8, approved as drawn. Their faulty position is not drawn.
+  - **H6 and F7:** no machine-readable verified card exists on main for the 8 (LIB-5).
+  - **F5:** the selected Mistake tell measures 3.57:1 in Midnight on all 8, because it comes from the locked chrome CSS.
+  - **Reported to the supervisor:** F5 is kept as the plan states it. So it rises on every new plate until the owner rules on it once as a chrome property, like O7.
+- **D-LIB3-5 (seam to LIB-2).** The generator emits a library plate only through `gatePlate(await runQa(candidate, ctx))`, which throws `QaRefused` naming each failing check and each unapproved flag. A test double of the generator proves both sides. LIB-2 supplies the candidate fields listed in `qa/index.mjs` and makes the real call; no LIB-2 file is created here.
+- **D-LIB3-6 (how each value is measured).**
+  - The envelope and vocabulary come from `pin.mjs`, never typed. Minimums are floored and maximums ceiled to 0.001.
+  - H3 deviation is the largest move of a tell anchor between the end and Mistake poses; the approved minimum is 11.393 px (leg press). The Trace minimum is 22.111 px (leg press).
+  - H5 and F5 use computed colours with ancestor opacity, composited on the plate's own backdrop in a 1 × 1 canvas. This works for any colour syntax.
+  - H7 measures the chunk with HT-2's own `moduleText`. S0 counts the card's elements without the hidden Mistake figure.
+  - F2 is the union box of the start, ghost and end layers over 358².
+  - F4 counts the labels with a `box`, the measure label included.
+  - H6 plate facts are `{ kind: angle | contact | height }`, matched within ±2° or ±1 cm. LIB-5's card v2 fills them.
+- **D-LIB3-7 (mutation M2, a contact 1 cm off).** A plane check has a 1 cm tolerance, so it cannot fire at exactly 1 cm. M2 instead moves the leg press's seat-pan clearance check (`above`, tolerance 0.5 cm) 1 cm up its normal. M1 is planted exactly 1 px past the last clean position, and a test proves that position is clean.

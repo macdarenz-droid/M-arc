@@ -56,7 +56,8 @@ export async function prove(m, base, { browser = null } = {}) {
   if (kind === 'spec') out = await specProof(m, base, browser);
   else if (kind === 'candidate') out = { report: await runQa(m.apply(clean), base.ctx) };
   else out = await pageProof(m, base, browser);
-  const cleanReport = m.control ? await runQa(m.control(clean), base.ctx) : base.reports.get(m.target);
+  const cleanReport = m.control ? await runQa(m.control(clean), base.ctx)
+    : m.controlCss ? (await pageProof({ ...m, html: null, css: m.controlCss }, base, browser)).report : base.reports.get(m.target);
   const keys = hits(out.report, m), cleanKeys = hits(cleanReport, m);
   return { id: m.id, check: m.check ?? m.flag, kind, arg: out.arg ?? null, red: keys.length > 0, keys, cleanKeys, ok: keys.length > 0 && cleanKeys.length === 0 };
 }

@@ -121,5 +121,9 @@ export const PAGE_MUTATIONS = [
     html: h => h.replace('class="plate-callout" style="left:54.75%;top:39.11%"', 'class="plate-callout" style="left:88%;top:39.11%"') },
   { id: 'B7 tempo strip overflows', check: 'PQ-H4', key: 'H4.tempo:', target: 'pull-up', css: '#card-pull-up .tempo-label { min-width: 160px; }' },
   { id: 'B8 Trace contrast below the approved minimum', check: 'PQ-H5', key: 'H5.contrast:', target: 'pull-up', css: '#card-pull-up .plate .trace { stroke: var(--surface-2); }' },
-  { id: 'F5 label text below 4.5:1', flag: 'F5', target: 'pull-up', css: '#card-pull-up .plate .plate-callout { color: var(--border-subtle); }' },
+  // The approved chrome itself measures 3.57:1 (D-LIB3-4), so the control lifts the label text to --text with no
+  // selected-tell tint; the mutation then lowers it. Both runs differ from the control only in that one colour.
+  { id: 'F5 label text below 4.5:1', flag: 'F5', target: 'pull-up',
+    controlCss: '#card-pull-up .plate .plate-meta, #card-pull-up .plate .plate-callout, #card-pull-up .plate .plate-arc-label * { color: var(--text); } #card-pull-up .plate .plate-callout::before { opacity: 0; }',
+    css: '#card-pull-up .plate .plate-meta, #card-pull-up .plate .plate-callout, #card-pull-up .plate .plate-arc-label * { color: var(--border-subtle); } #card-pull-up .plate .plate-callout::before { opacity: 0; }' },
 ];
