@@ -6,6 +6,7 @@ import { Fragment, type VNode } from 'preact';
 import { memoryStorage, newConversation, setEscobarStorage } from '@/escobar/store';
 import { activeConversation, lastTurn, resetConversations, safetyCards, send, setTransport } from '@/escobar/session';
 import { escobarUi } from '@/escobar/state';
+import { update as updateApp } from '@/core/store';
 import { Thread } from '@/escobar/ui/EscobarSheet';
 import { EscobarTurnView, UserBubble } from '@/escobar/ui/Message';
 import { Escalation } from '@/escobar/ui/Escalation';
@@ -77,6 +78,8 @@ function cardsInReply(v: Node): Node[] {
 
 let s: ReturnType<typeof scripted>;
 beforeEach(() => {
+  // AUD-2: a turn only reaches the transport while the online coach is on.
+  updateApp(s => ({ ...s, escobar: { ...s.escobar, enabled: true } }));
   setEscobarStorage(memoryStorage());
   resetConversations();
   escobarUi.value = { ...escobarUi.value, mode: 'chat', draft: '' };
