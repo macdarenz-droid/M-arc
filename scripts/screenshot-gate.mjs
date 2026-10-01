@@ -6134,6 +6134,24 @@ for (const theme of ['silent-black', 'paper']) {
           const m2 = await plateState(app.page);
           if (m0.snap.mode !== 'mistake' || m1.snap.mode !== 'normal' || JSON.stringify(m2) !== JSON.stringify(m0)) P(`${T} A4 Mistake: ${JSON.stringify({ m0: m0.snap, m1: m1.snap, m2: m2.snap })}`);
           await click(app.page, `#${id}-mistake`);
+          // HT-6 review (#112): opened from Mistake, the close-up grows out of the chip where golden B's does. Golden B's
+          // openZoom leaves Mistake (hiding the "Also check your wrist" line) before it measures the chip.
+          {
+            const originFromMistake = async (pg, inApp) => {
+              await pg.click(`#${id}-mistake`);
+              await pg.click(`#${id}-chip-hand`);
+              if (inApp) await pg.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+              const o = await pg.evaluate(s => document.querySelector(s).style.transformOrigin, panelSel(id));
+              await click(pg, `${panelSel(id)}-close`);
+              if (inApp) await H.settleApp(pg); else await H.settle(pg);
+              return o;
+            };
+            const [oA, oG] = [await originFromMistake(app.page, true), await originFromMistake(gold.page, false)];
+            stats.mistakeOrigins = (stats.mistakeOrigins ?? 0) + 1;
+            // x as the chip check above: equal where the hand chip is golden B's first (the row gains HT-7's chips later)
+            const [xA, yA] = (oA || '').split(' '), [xG, yG] = (oG || '').split(' ');
+            if (!oA || !yA || yA !== yG || (firstG && xA !== xG)) P(`${T} open from Mistake: transform-origin app ${oA} vs golden ${oG}`);
+          }
         }
         if (theme === 'silent-black' && id === 'machine-chest-press') {
           // Android back closes the close-up first, then the sheet
@@ -6198,7 +6216,7 @@ for (const theme of ['silent-black', 'paper']) {
     // D-HT6-budget: each chunk at most its measured size + 10 % (tools/plates/gen/hands.mjs, pinned in hands.test)
     const { handCeiling } = await import('../tools/plates/gen/hands.mjs');
     for (const s of sizes) { const id = H.HT_PLATES.map(p => p[0]).find(i => s.f.startsWith(`hand-${i}-`)), c = id && handCeiling(id); if (!c || s.raw > c.raw || s.gz > c.gz) P(`A7: ${s.f} is ${s.raw} B raw / ${s.gz} B gz, over its ceiling ${c ? `${c.raw} / ${c.gz}` : '(none)'}`); }
-    console.log(`${tag} (${ht6.version()}): ${stats.pairs} close-up pages L3 (max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}), Right/Wrong words and icons on ${stats.words} pages, ${stats.anims} open animation lists, reduced motion in 5 themes, A6 ${stats.a6} plate pairs after open/close; hand chunks ${sizes.map(s => `${s.f.replace(/-[\w-]{8}\.js$/, '')} ${(s.raw / 1024).toFixed(1)}/${(s.gz / 1024).toFixed(1)} KB`).join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+    console.log(`${tag} (${ht6.version()}): ${stats.pairs} close-up pages L3 (max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}), Right/Wrong words and icons on ${stats.words} pages, ${stats.anims} open animation lists, reduced motion in 5 themes, A6 ${stats.a6} plate pairs after open/close, ${stats.mistakeOrigins ?? 0} opens from Mistake at golden B's origin; hand chunks ${sizes.map(s => `${s.f.replace(/-[\w-]{8}\.js$/, '')} ${(s.raw / 1024).toFixed(1)}/${(s.gz / 1024).toFixed(1)} KB`).join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   } finally {
     await ht6.close();
   }
