@@ -103,6 +103,14 @@ export function normalizeEscobar(raw: unknown): EscobarState {
   };
 }
 
+/**
+ * OBS-ENDPOINT (AUD-4): the coach's on/off state, the sharing flags, the server and the device
+ * identity belong to this phone. A restored block keeps this phone's values for them.
+ */
+export function withLocalTrust(restored: EscobarState, local: EscobarState): EscobarState {
+  return { ...restored, enabled: local.enabled, proxyUrl: local.proxyUrl, deviceId: local.deviceId, sharing: { ...local.sharing } };
+}
+
 const UNITS = ['kg', 'lb'] as const;
 const PROFILE_SOURCES = ['user', 'suspect_fix', 'escobar_scan', 'escobar_chat', 'default'] as const;
 const numList = (v: unknown, max: number): number[] | undefined => {
