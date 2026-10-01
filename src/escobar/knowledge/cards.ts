@@ -10,7 +10,8 @@ export interface KnowledgeCard {
   statement: string;
   numbers: Array<{ label: string; value: number; unit: string }>;
   rating: 'strong' | 'moderate' | 'emerging' | 'debated';
-  sources: Array<{ title: string; year: number; url?: string }>;
+  /** AUD-20: `pmid`/`doi` only when verified on PubMed or Crossref; never a URL in src/. */
+  sources: Array<{ title: string; year: number; url?: string; pmid?: string; doi?: string }>;
   tags: string[];
 }
 

@@ -21,6 +21,7 @@ import { findExercise } from '@/core/exercises';
 import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel, bodyweightShare, effectiveLoadKg, statHasReps, statLoadLabel, statReadout } from '@/brain/bodyweight';
 import { EffortBars, effortSplit, effortUsesSets } from '@/ui/EffortBars';
 import { progressHint, progressTrend, progressValue } from './progressTrend';
+import { DATA_LABEL } from '@/brain/trend';
 import { muscleLabel } from '@/data/muscles';
 import { showToast } from '@/app/toast';
 import { Sparkline } from '@/ui/Sparkline';
@@ -535,7 +536,7 @@ function Stats() {
                     <div class={hasReps ? 'grid-3' : 'grid-2'}>
                       <Stat value={lastTop!.load} label={statLoadLabel(mode, lastDistance, lastDuration, lastReps)} />
                       {hasReps && <Stat value={`${lastTop!.reps}`} label="reps at top" />}
-                      <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
+                      <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${DATA_LABEL[t.confidence].toLowerCase()}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                     </div>
                   );
                 })()}

@@ -285,7 +285,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
         id: `weekly:e1rm:${id}`, category: 'progress', priority: 200, cadence: 'weekly', kind: 'progress', exerciseId: id,
         title: `${name}: ${dir === 'up' ? 'rising' : dir === 'down' ? 'falling' : 'flat'}`,
         noticed: dir === 'flat' ? `${name} has not moved in recent sessions.` : `${name} is trending ${dir}${rate}.`,
-        means: dir === 'up' ? 'Keep doing what you are doing.' : dir === 'down' ? 'Worth a lighter week before pushing again.' : 'The stimulus has stopped changing.',
+        means: dir === 'up' ? 'Keep doing what you are doing.' : dir === 'down' ? 'Worth a lighter week before pushing again.' : 'That is the point where the coach suggests a change.',
         action: dir === 'up' ? 'No change needed.' : dir === 'down' ? 'Ease off max effort for a week, then rebuild.' : 'Add a set, add load, or change the rep range for two weeks.',
         evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: p.confidence },
       });
@@ -299,7 +299,8 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
           id: `weekly:pace:${id}`, category: 'progress', priority: 190, cadence: 'weekly', kind: 'data', exerciseId: id,
           title: `${name}: ${pace} for your training age`,
           noticed: `${name} e1RM is moving about ${Math.abs(pctPerMonth).toFixed(1)}% a month.`,
-          means: `That is ${pace} compared with lifters at a similar training age (about ${lo} to ${hi}% a month).`,
+          // AUD-20 (SCI-11): the reference range is the app's policy, not a biological standard.
+          means: `The app's reference for your training age is about ${lo} to ${hi}% a month.`,
           action: pace === 'a typical pace' ? 'Keep the current approach.' : 'No change needed either way; expect the rate to settle over time.',
           evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: 'medium' },
         });
@@ -311,7 +312,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
         id: `weekly:stale:${id}`, category: 'progress', priority: 160, cadence: 'weekly', kind: 'tip', exerciseId: id,
         title: `${name}: same load for weeks`,
         noticed: `${name} has used the same load for 6 sessions running.`,
-        means: 'Nothing about the stimulus has changed, so progress has nowhere to come from.',
+        means: 'Its estimated 1RM has stayed flat with it.',
         action: 'Add a rep, add load, or swap in a similar exercise for a block.',
         evidence: { n: 6, window: '6 sessions', confidence: 'medium' },
       });
@@ -326,7 +327,8 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
         id: 'weekly:adherence', category: 'consistency', priority: 210, cadence: 'weekly', kind: 'plan',
         title: 'Fewer planned sessions than usual',
         noticed: `${Math.round(adherence * 100)}% of planned sessions over the last 4 weeks.`,
-        means: 'A schedule that keeps getting missed is a scheduling problem, not a willpower one.',
+        // AUD-20 (SCI-11): facts and the coach's line, no claim about why sessions were missed.
+        means: 'Below 60%, the coach suggests a schedule change.',
         action: 'Worth moving the hardest day to a slot that keeps working, even if it means fewer days.',
         evidence: { n: 28, window: 'last 4 weeks', confidence: 'medium' },
       });
@@ -335,7 +337,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
         id: 'weekly:adherence-good', category: 'consistency', priority: 140, cadence: 'weekly', kind: 'praise',
         title: 'Sticking to the plan',
         noticed: `${Math.round(adherence * 100)}% of planned sessions over the last 4 weeks.`,
-        means: 'Consistency is doing most of the work here.',
+        means: 'That is 85% or more of the plan.',
         action: 'Keep going.',
         evidence: { n: 28, window: 'last 4 weeks', confidence: 'medium' },
       });

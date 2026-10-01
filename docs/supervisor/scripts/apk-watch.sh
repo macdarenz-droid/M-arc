@@ -1,6 +1,9 @@
 #!/bin/bash
-# Usage: apk-watch.sh <sha>. Waits for the build-apk workflow run on <sha> to complete, then prints its conclusion,
-# the conclusion of the signing/fingerprint step, and the artifacts (name, id). Exits after one report.
+# apk-watch.sh: waits for the build-apk workflow run on a commit (main's "M/ARC gate" run) to complete, then reports once.
+# Usage: ./apk-watch.sh <full sha>
+# Prints "APK run <id> <status> <conclusion> | steps: <the Sign / fingerprint step results> | artifacts: <name> id=<id> expired=<bool>". The artifact link is https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifacts/<id>.
+# Needs the agent proxy's GitHub auth for curl (no token is stored in this file).
+# Run with Bash run_in_background and timeout 7200000: the default 30 min kills it before the build finishes.
 SHA=$1; R=https://api.github.com/repos/macdarenz-droid/M-arc
 while true; do
   out=$(curl -s "$R/actions/runs?head_sha=$SHA&per_page=20" | python3 -c "
