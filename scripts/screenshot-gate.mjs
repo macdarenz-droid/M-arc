@@ -6240,7 +6240,10 @@ for (const theme of ['silent-black', 'paper']) {
 
   // A1: content probe on the real main chunk (no plate-svg/u-stroke/feel-band, no generated-file string
   // outside ids.ts's own exports; exercises.json's content is excluded too — an exercise name or id
-  // legitimately shared with a generated file is already in main for unrelated reasons).
+  // legitimately shared with a generated file is already in main for unrelated reasons). HT-3c (B4): a
+  // string counts only when it is unique to generated How-to content — one that also appears anywhere in
+  // the app's own non-How-to source (src/** outside src/howto/** and src/slices/howto/**, e.g. the generic X-icon path in
+  // src/ui/icons.tsx) is main's own and not a leak.
   {
     const html = readFileSync(join(ROOT, 'www/index.html'), 'utf8');
     const indexJs = html.match(/src="\.\/assets\/(index-[\w-]+\.js)"/)[1];
@@ -6250,8 +6253,14 @@ for (const theme of ['silent-black', 'paper']) {
     const allowed = new Set([...idsSrc.matchAll(/"([^"]+)"/g)].map(m => m[1]));
     allowed.add('How to do it');
     const exercisesRaw = readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8');
-    const unescapeJs = s => s.replace(/\\(["'\\/bfnrt]|u[0-9a-fA-F]{4})/g, m => ({ '\\"': '"', "\\'": "'", '\\\\': '\\', '\\/': '/', '\\b': '\b', '\\f': '\f', '\\n': '\n', '\\r': '\r', '\\t': '\t' }[m] ?? String.fromCharCode(parseInt(m.slice(2), 16))));
     const genDir = join(ROOT, 'src/howto/generated');
+    const appSrc = [];
+    // Only non-How-to source excuses a string: src/howto/** and src/slices/howto/** ship How-to content too.
+    const howtoDirs = new Set([join(ROOT, 'src/howto'), join(ROOT, 'src/slices/howto')]);
+    const walkSrc = dir => { for (const e of readdirSync(dir, { withFileTypes: true })) { const f = join(dir, e.name); if (e.isDirectory()) { if (!howtoDirs.has(f)) walkSrc(f); } else appSrc.push(readFileSync(f, 'utf8')); } };
+    walkSrc(join(ROOT, 'src'));
+    const inAppSrc = str => appSrc.some(src => src.includes(str));
+    const unescapeJs = s => s.replace(/\\(["'\\/bfnrt]|u[0-9a-fA-F]{4})/g, m => ({ '\\"': '"', "\\'": "'", '\\\\': '\\', '\\/': '/', '\\b': '\b', '\\f': '\f', '\\n': '\n', '\\r': '\r', '\\t': '\t' }[m] ?? String.fromCharCode(parseInt(m.slice(2), 16))));
     const leaked = [];
     for (const f of readdirSync(genDir)) {
       const src = readFileSync(join(genDir, f), 'utf8');
@@ -6259,7 +6268,7 @@ for (const theme of ['silent-black', 'paper']) {
         if (m[1].length < 16) continue;
         const str = unescapeJs(m[1]);
         if (allowed.has(str) || exercisesRaw.includes(str)) continue;
-        if (idxBytes.includes(str)) { leaked.push(`${f}: "${str.slice(0, 60)}…"`); break; }
+        if (idxBytes.includes(str) && !inAppSrc(str)) { leaked.push(`${f}: "${str.slice(0, 60)}…"`); break; }
       }
     }
     if (leaked.length) errors.push(`${tag} A1: index-*.js leaks generated How-to content: ${leaked.join('; ')}`);
@@ -6267,31 +6276,25 @@ for (const theme of ['silent-black', 'paper']) {
     console.log(`${tag} A1: main chunk ${indexJs} is ${idxBytes.length} B raw / ${gzipSync(Buffer.from(idxBytes)).length} B gz (information only, no ceiling)`);
   }
 
-  // A2: chunk budgets, each at its measured value + 10% (the plan 2.9 start figures are the upper bound;
-  // this card lowers HowToSheet-*, the CSS and each ht-<slug>-* to the measured figures below).
+  // A2: chunk budgets. HT-3c (B1/B2, D-HT3c-1): every ceiling lives in tests/howto/budgets.json (measured
+  // + 10 %, with setBy and reason; tests/howto/budgets.test.ts checks the file). A chunk with no entry
+  // fails; each chunk's size, ceiling and headroom is printed.
   {
-    const CEIL = v => Math.ceil(v * 1.1);
-    const budget = (label, file, measured) => {
-      const { raw, gz } = sizeOf(file);
-      if (raw > CEIL(measured.raw)) errors.push(`${tag} A2: ${label} is ${raw} B raw, over ${CEIL(measured.raw)} (measured ${measured.raw} + 10%)`);
-      if (gz > CEIL(measured.gz)) errors.push(`${tag} A2: ${label} is ${gz} B gz, over ${CEIL(measured.gz)} (measured ${measured.gz} + 10%)`);
-      return `${label} ${raw}/${gz}`;
-    };
+    const BUDGETS = new Map(JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).budgets.map(b => [b.chunk, b]));
+    const HINT = 'raise it in tests/howto/budgets.json with setBy and reason (measured + 10 %)';
     const sizes = [];
-    sizes.push(budget('HowToSheet-*.js', oneOf(/^HowToSheet-[\w-]{8}\.js$/), { raw: 6321, gz: 2698 }));
-    sizes.push(budget('HowToSheet-*.css', oneOf(/^HowToSheet-[\w-]{8}\.css$/), { raw: 8695, gz: 1971 }));
-    const CHUNK_MEASURED = {
-      'dumbbell-lateral-raise': { raw: 63001, gz: 12535 }, 'barbell-back-squat': { raw: 92839, gz: 21072 },
-      'pull-up': { raw: 124238, gz: 28610 }, 'hanging-leg-raise': { raw: 117386, gz: 27998 },
-      'lat-pulldown': { raw: 111189, gz: 23863 }, 'seated-cable-row': { raw: 117043, gz: 25459 },
-      'leg-press': { raw: 93568, gz: 18076 }, 'machine-chest-press': { raw: 99249, gz: 20137 },
+    const budget = (label, file) => {
+      const { raw, gz } = sizeOf(file);
+      const b = BUDGETS.get(label);
+      if (!b) { errors.push(`${tag} A2: ${label} is ${raw} B raw / ${gz} B gz and has no entry in tests/howto/budgets.json; add one (measured + 10 %, with setBy and reason) instead of skipping the budget`); return; }
+      if (raw > b.rawMax) errors.push(`${tag} A2: ${label} is ${raw} B raw, over its ceiling ${b.rawMax} (set by ${b.setBy}); ${HINT}`);
+      if (gz > b.gzMax) errors.push(`${tag} A2: ${label} is ${gz} B gz, over its ceiling ${b.gzMax} (set by ${b.setBy}); ${HINT}`);
+      sizes.push(`${label} ${raw}/${gz} of ${b.rawMax}/${b.gzMax} (headroom ${b.rawMax - raw}/${b.gzMax - gz})`);
     };
-    for (const [id, row] of Object.entries(rows)) {
-      const measured = CHUNK_MEASURED[row.slug];
-      if (!measured) { errors.push(`${tag} A2: no measured baseline for ${row.slug} (${id}); add one instead of skipping the budget`); continue; }
-      sizes.push(budget(`ht-${row.slug}-*.js`, oneOf(new RegExp(`^ht-${row.slug}-[\\w-]{8}\\.js$`)), measured));
-    }
-    console.log(`${tag} A2 chunk sizes (raw/gz B, ceiling = measured + 10%): ${sizes.join(', ')}`);
+    budget('HowToSheet-*.js', oneOf(/^HowToSheet-[\w-]{8}\.js$/));
+    budget('HowToSheet-*.css', oneOf(/^HowToSheet-[\w-]{8}\.css$/));
+    for (const row of Object.values(rows)) budget(`ht-${row.slug}-*.js`, oneOf(new RegExp(`^ht-${row.slug}-[\\w-]{8}\\.js$`)));
+    console.log(`${tag} A2 chunk sizes (raw/gz B of ceiling, from tests/howto/budgets.json): ${sizes.join(', ')}`);
   }
 
   // A3a: no How-to chunk requested from launch until Today/Train is idle.
