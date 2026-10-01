@@ -26,7 +26,7 @@ function consentGiven(): boolean {
 }
 
 /** Never in a test run or under an automated browser (the gate): nothing leaves those. */
-function automated(): boolean {
+export function automated(): boolean {
   try { if (import.meta.env.MODE === 'test') return true; } catch { /* no env */ }
   try { return typeof navigator !== 'undefined' && navigator.webdriver === true; } catch { return false; }
 }

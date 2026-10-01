@@ -2116,6 +2116,138 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// ESC-REPORT G1: the Report control under a finished mock reply, in all 5 themes (dev mode, mock
+// transport). Nothing may reach /reports, and nothing new is saved in localStorage.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `ESC-REPORT ${theme}`;
+  let reportRequests = 0;
+  page.on('request', r => { if (r.url().includes('/reports')) reportRequests++; });
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  const openSheet = async () => {
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+    await page.evaluate(() => document.querySelector('.toast button')?.click());
+    await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+    await page.locator('.esc-hall-input').click();
+    await page.waitForSelector('dialog.esc-sheet[open]'); await page.waitForTimeout(250);
+    const on = page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true });
+    if (await on.isVisible().catch(() => false)) { await on.click(); await page.waitForTimeout(200); }
+  };
+  const sendMock = async () => {
+    await page.locator('.esc-textarea').fill('How is my chest press going?');
+    await page.locator('.esc-send').click();
+    await page.waitForFunction(() => window.__escobar.status() === 'idle' && document.querySelector('.esc-turn .esc-report'), null, { timeout: 15000 }).catch(() => errors.push(`${tag}: the mock reply did not finish with a Report control`));
+    await page.waitForTimeout(200);
+  };
+  const focusText = () => page.evaluate(() => { const a = document.activeElement; return a ? `${a.tagName}|${a.className}|${a.textContent}` : ''; });
+  const storage = () => page.evaluate(() => JSON.stringify(Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)])));
+  const report = page.locator('.esc-report-btn');
+  const group = page.locator('.esc-report [role="group"]');
+  const reason = (name) => group.getByRole('button', { name, exact: true });
+
+  await openSheet();
+  await sendMock();
+  // 1. Exactly one Report button on the finished turn, and its text clears 4.5:1.
+  if ((await report.count()) !== 1) errors.push(`${tag}: expected exactly one Report button, found ${await report.count()}`);
+  if ((await report.first().textContent())?.trim() !== 'Report') errors.push(`${tag}: the Report button does not read "Report"`);
+  const contrast = await page.evaluate(() => {
+    const el = document.querySelector('.esc-report-btn');
+    if (!el) return null;
+    const parseRgba = str => {
+      let m = str.match(/rgba?\(([^)]+)\)/);
+      if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+      m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+      if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+      return null;
+    };
+    const fg = parseRgba(getComputedStyle(el).color);
+    if (!fg) return null;
+    let node = el, under = { r: 255, g: 255, b: 255 };
+    while (node) { const bg = parseRgba(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+    const lin = c2 => { const s2 = c2 / 255; return s2 <= 0.03928 ? s2 / 12.92 : Math.pow((s2 + 0.055) / 1.055, 2.4); };
+    const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+    const l1 = rl(fg) + 0.05, l2 = rl(under) + 0.05;
+    return l1 > l2 ? l1 / l2 : l2 / l1;
+  });
+  if (contrast == null) errors.push(`${tag}: could not measure the Report button's contrast`);
+  else if (contrast < 4.5) errors.push(`${tag}: Report button contrast ${contrast.toFixed(2)} < 4.5`);
+  // 2. What localStorage holds before any report. Two app writes are not the report's: the finished
+  // turn's usage save (wait for storage to settle) and the error queue's 'online' handler, which
+  // step 6's offline/online toggle fires (fire it once here, so A already holds its write).
+  await ctx.setOffline(true); await ctx.setOffline(false);
+  let before = await storage();
+  for (let t = 0; t < 10; t++) { await page.waitForTimeout(500); const now = await storage(); if (now === before) break; before = now; }
+  // 3. Open the reasons: Reason label, three reasons and Cancel.
+  await report.click(); await page.waitForTimeout(150);
+  if ((await report.getAttribute('aria-expanded')) !== 'true') errors.push(`${tag}: Report is not aria-expanded after a tap`);
+  for (const name of ['Offensive', 'Harmful', 'Wrong', 'Cancel']) if (!(await visible(reason(name)))) errors.push(`${tag}: expected the "${name}" button`);
+  if (!(await visible(group.getByText('Reason', { exact: true })))) errors.push(`${tag}: expected the "Reason" label`);
+  // Owner copy rule (2026-10-01): no explaining line in the control.
+  if (await group.locator('p.hint:not([role])').count()) errors.push(`${tag}: an explaining line shows under Report`);
+  if (!(await focusText()).endsWith('|Offensive')) errors.push(`${tag}: focus is not on Offensive after opening (${await focusText()})`);
+  const labelled = await page.evaluate(() => { const g = document.querySelector('.esc-report [role="group"]'); const id = g?.getAttribute('aria-labelledby'); return id ? document.querySelectorAll(`[id="${id}"]`).length : -1; });
+  if (labelled !== 1) errors.push(`${tag}: the group's aria-labelledby matches ${labelled} elements, expected 1`);
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-esc-report-open.png` });
+  // 4. Escape closes the reasons, not the sheet.
+  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  if (!(await page.locator('dialog.esc-sheet[open]').count())) { errors.push(`${tag}: Escape in the reasons closed the sheet`); await ctx.close(); continue; }
+  if (await group.count()) errors.push(`${tag}: Escape did not close the reasons`);
+  if (!(await focusText()).includes('esc-report-btn')) errors.push(`${tag}: focus is not back on Report after Escape (${await focusText()})`);
+  // 5. Cancel returns focus to Report.
+  await report.click(); await page.waitForTimeout(150);
+  await reason('Cancel').click(); await page.waitForTimeout(150);
+  if (await group.count()) errors.push(`${tag}: Cancel did not close the reasons`);
+  if (!(await focusText()).includes('esc-report-btn')) errors.push(`${tag}: focus is not back on Report after Cancel (${await focusText()})`);
+  // 6. Offline: a visible failure, and the reasons stay for the retry.
+  await ctx.setOffline(true);
+  await report.click(); await page.waitForTimeout(150);
+  await reason('Wrong').click();
+  if (!(await visible(page.locator('.esc-report [role="alert"]', { hasText: 'Couldn’t send. Check your connection and try again.' })))) errors.push(`${tag}: expected the offline failure alert`);
+  if ((await group.getByRole('button').count()) < 4) errors.push(`${tag}: the reasons are gone after a failure`);
+  if (theme === 'silent-black') { await settle(page); await page.screenshot({ path: `${OUT}/${theme}-esc-report-failed.png` }); }
+  // 7. Online again: a double tap sends once and ends on one focused "Reported. Thank you.".
+  await ctx.setOffline(false);
+  await reason('Wrong').dblclick();
+  const status = page.locator('.esc-report [role="status"]', { hasText: 'Reported. Thank you.' });
+  if (!(await visible(status))) errors.push(`${tag}: expected "Reported. Thank you."`);
+  await page.waitForTimeout(200);
+  if ((await status.count()) !== 1) errors.push(`${tag}: expected one "Reported. Thank you.", found ${await status.count()}`);
+  if (await page.locator('.esc-report [role="alert"]').count()) errors.push(`${tag}: an alert is still showing after the report was sent`);
+  if (!(await focusText()).endsWith('|Reported. Thank you.')) errors.push(`${tag}: focus is not on the sent status (${await focusText()})`);
+  if (theme === 'silent-black') { await settle(page); await page.screenshot({ path: `${OUT}/${theme}-esc-report-sent.png` }); }
+  // 8. Nothing new saved.
+  if ((await storage()) !== before) errors.push(`${tag}: localStorage changed during the report`);
+  // 9. The sent state survives leaving and coming back to the thread.
+  await page.getByRole('button', { name: 'Escobar menu' }).click(); await page.waitForTimeout(100);
+  await page.getByRole('menuitem', { name: 'Past conversations' }).click(); await page.waitForTimeout(200);
+  await page.locator('.esc-link').click(); await page.waitForTimeout(250);
+  if (!(await visible(status))) errors.push(`${tag}: "Reported. Thank you." is gone after Past conversations → Back`);
+  if (await report.count()) errors.push(`${tag}: the Report button came back after Past conversations → Back`);
+  // 11. No link, phone or mail target in the control.
+  if (await page.locator('.esc-report a[href], .esc-report [href^="tel:"], .esc-report [href^="mailto:"]').count()) errors.push(`${tag}: the Report control holds a link`);
+  if (/tel:|mailto:/.test((await page.locator('.esc-report').first().innerHTML().catch(() => '')))) errors.push(`${tag}: the Report control mentions tel: or mailto:`);
+  // 10. A fresh app run starts from Report again (memory only).
+  await openSheet();
+  await sendMock();
+  if ((await report.count()) !== 1) errors.push(`${tag}: after a reload the new reply should show Report, found ${await report.count()}`);
+  if (await page.locator('.esc-report [role="status"]').count()) errors.push(`${tag}: after a reload a reply shows as already reported`);
+  // 12. The drawer probe still reaches the drawer toggle while a Report button is on screen.
+  await page.locator('.esc-drawer-toggle').last().click(); await page.waitForTimeout(100);
+  if (!(await visible(page.locator('.esc-drawer-list')))) errors.push(`${tag}: .esc-drawer-toggle .last() did not open the drawer`);
+  // 13. Nothing reached /reports.
+  if (reportRequests !== 0) errors.push(`${tag}: ${reportRequests} request(s) to /reports`);
+  await ctx.close();
+}
+
 // Live heart line (owner's pick): a fake LIVE watch reading through the dev hook, the line and the
 // number on Train in all five themes, coloured by each theme's accent.
 for (const theme of themes) {
