@@ -1373,3 +1373,15 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (D-AUD3-6)**: with no quota binding at all, and on the soft KV fallback (used only when `QUOTA_DO` is not bound), behaviour is unchanged. `/health` still reports `quotas: !!(QUOTA_DO || QUOTA)` and the limits' values are unchanged.
   **Why**: a missing binding is a deploy choice that `/health` already shows, not an enforcement failure, and the KV path is documented as soft. Production binds `QUOTA_DO` (`wrangler.toml`).
   **Source**: card AUD-3 tasks 4–5.
+
+## HT-5 review fixes (PR #116, FAIL @ a9c1ae1 -> fixed): field coverage, a tautological test, dead code, merge (HT-5 builder, 2026-10-01)
+
+- **Decided**: `content.mjs` exports `BASE_KEYS` (was module-private) and a new `PAGE_ONLY_KEYS = ['openItems']` - the named list the review asked for. `content-gen.test.ts` adds a real field-coverage test: the union of `Object.keys(default)` across the 8 vendored `*.howto.mjs` files must be in `BASE_KEYS`, in `{schema, id, name, plate, zooms, feel}`, or in `PAGE_ONLY_KEYS`; a second test reproduces the reviewer's `warmup` mutation in memory (spreads `leg_press`'s real default export plus the unmapped key, no disk write) and shows it fails the same check.
+  **Why**: review Medium finding - the old "a mapping that drops a golden-B field..." test only proved an *unknown* key never reaches the output; nothing proved every key golden B *actually uses* has a home. `openItems` (leg_press: a mockup-only render-report list, "what the sheet still owes the card") is the one field this repo's 8 files carry today outside `BASE_KEYS`/`{schema,id,name,plate,zooms,feel}`.
+- **Decided**: the freshness test at `content-gen.test.ts` (formerly "hand-editing... fails freshness") is renamed to say what it actually checks - that the committed module contains the literal string other assertions rely on, and that replacing it changes the file's bytes. It no longer claims to prove freshness (`generate --check` in the gate is the real proof, per the HT-4 precedent this card already followed for the expensive page rebuild).
+  **Why**: review Low finding - the old test compared `tampered` with `committed` twice (the second check was a verbatim repeat of the first), so it could not fail on anything the rename and precondition check don't already cover.
+- **Decided**: deleted the unused `allowedUrls` local in the C1-C17/C19 test (`content-gen.test.ts`), dead since `checkC17` dropped the parameter (HT-4b, D-LR23-7).
+  **Why**: review Low finding.
+- **Decided**: merged `origin/main` (`7477b5d`, AUD-3) with a merge commit, keeping both sides of `docs/COACHING-DECISIONS.md` (this entry included).
+  **Why**: review Low finding - the reviewed head did not contain the latest main.
+- **Ratified** (supervisor, review comment on PR #116, 2026-10-01): the additive edits to `src/howto/content-types.ts` and `src/howto/types.ts` (see "HT-5 follow-up" and "HT-5 LR-23 follow-up" above) are accepted in this PR instead of a separate HT-4 fix PR, because they are additive (no existing field's shape changed) and already recorded here with their reasons.
