@@ -1480,3 +1480,21 @@ Rule for every choice below: safety outranks a false alarm, because the crisis c
 - **D-AUD7-7 Decided**: Health Connect also sends the resting-HR record's time. The app stores it as `DailyHealth.restingHrAt` (an existing field) and keeps the value only when that time falls on the sync day, so yesterday's record synced again this morning is not a new day. A record without a time (an older build) is kept as before. A late-synced record is not written back to its own earlier day.
   **Source**: card AUD-7 ("use the existing DailyHealth.restingHrAt"); codex-audit.md NAT-03.
 - **Left out**: readiness using sleep age or coverage (readiness.ts is not in this card), and calorie bands (SCI-10, owner decision).
+
+## AUD-20: plain estimates, no false precision (2026-10-01)
+
+- **D-AUD20-1 Decided**: session calories show one number, "About N kcal active." `sessionEnergy` and `energyFromHealthConnect` no longer write `low`/`high`; `SessionEnergy.low`/`high` become optional so sessions saved before keep loading (nothing new is saved). History already showed "~N kcal".
+  **Why**: the ±25 % / ±10 % bands were constants, not validated error bounds for lifting or for every Health Connect writer. The owner chose the plain estimate (2026-10-01).
+  **Source**: card AUD-20; codex-audit.md SCI-10.
+- **D-AUD20-2 Decided**: coach, recovery and readiness copy states the fact or the line the coach acts on, never a cause about the user it cannot show: still recovering ("Its ready time is fitted to your own sessions."), scheduled conflict ("Below 60%, the coach suggests moving the hard sets." / "That is short of the 90% ready line."), readiness red ("Today's score is N of 100."), plateau and weekly flat ("That is the point where the coach suggests a change."), the plateau lever's same-load line, weekly stale, pace (the app's reference range, not "lifters at a similar training age"), adherence low/good. No number or threshold changed.
+  **Why**: SCI-11: the scores are heuristics with no held-out validation, so "your history shows you perform worse" and "works against the muscle" claim more than they can show.
+  **Left as is**: general coaching statements worded as what usually happens ("This is usually heat, too little water or short rests…", the failure and volume notes). They describe guidance, not the user's own data.
+- **D-AUD20-3 Decided**: the sleep driver reads "Sleep: 5h 10m last night (below your usual 7h 30m)", or the 1-3 night average when last night is missing or not below the usual. "Usual" is the 14-night median. ES-12's health filter (`redactDrivers`) now matches `^Sleep:`; the check-in driver ("…sleep quality or mood") still stays when health sharing is off.
+- **D-AUD20-4 Decided**: confidence labels name how much data there is: "Plenty of data" / "Some data" / "Little data" (Body aside, tapped strip, muscle panel row now "Data"; History trend label). One map, `DATA_LABEL` in `src/brain/trend.ts`.
+  **Why**: recovery confidence counts calibration observations and trend confidence counts points; neither measures accuracy.
+- **D-AUD20-5 Decided** (OBS-KNOW): knowledge sources gain `pmid`/`doi` only where verified on PubMed E-utilities (record fetched by ID, title, journal and DOI match): ACSM 2009 progression models (PMID 19204579, DOI 10.1249/MSS.0b013e3181915670) and Finucane 2020 red flags (PMID 32438853, DOI 10.2519/jospt.2020.9971). No URLs. `lookupKnowledge` still strips `sources`, so none reaches the model or the drawer (LR-23).
+  - Session length now says only what ACSM 2009 sets out: guidance is sets, loads and rest (3-5 min for heavy sets, 1-2 min for hypertrophy work), not minutes per session.
+  - Pain red flags drop "lasts more than about 48 hours" and its number: Finucane 2020 is about serious spinal pathology and does not give a 48 h line. The stop-and-see advice stays (safety).
+  - Balance and joint protection: the claim sat in the coach's balance note, not knowledge.json. It now states the rule's own evidence ("The gap showed in N of the last 3 weeks.").
+  **Left out**: the `escalate` tool description's "lasting past 48 h" trigger (`src/escobar/tools/schema.ts`). It tells the model when to show the safety card; widening safety is not a claim about evidence, and the file is outside this card.
+  **Source**: card AUD-20; codex-audit.md "Additional lower-priority observations".

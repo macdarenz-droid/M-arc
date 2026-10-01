@@ -82,6 +82,23 @@ export const RHR_PERSONAL_MIN_DAYS = 14;
 /** ADAPT-2 (B-3): the smallest day-to-day resting-HR spread counted, in bpm, so a very steady watch still reads a small rise sanely. */
 export const RHR_MIN_SD = 1.5;
 
+/** "5h 10m", "7h". */
+function hm(min: number): string {
+  const m = Math.round(min), h = Math.floor(m / 60), r = m % 60;
+  return r ? `${h}h ${r}m` : `${h}h`;
+}
+
+/**
+ * AUD-20 (SCI-11): the sleep driver states the hours and the user's usual, never that sleep caused
+ * the score. Starts with "Sleep:" so ES-12's health filter (redactDrivers) still finds it.
+ */
+export function sleepDriver(lastNight: number | null, last3: number[], usual: number): string {
+  const vs = (min: number) => `(${min < usual ? 'below your usual' : 'your usual'} ${hm(usual)})`;
+  if (lastNight != null && lastNight < usual) return `Sleep: ${hm(lastNight)} last night ${vs(lastNight)}`;
+  const mean = avg(last3);
+  return `Sleep: ${hm(mean)} a night over the last ${last3.length === 1 ? 'night' : `${last3.length} nights`} ${vs(mean)}`;
+}
+
 export type LoadAdvice = 'normal' | 'no_increase' | 'reduce';
 export type ReadinessBand = 'green' | 'amber' | 'red';
 
@@ -208,7 +225,7 @@ export function readinessWithInputs(input: ReadinessInput): { result: ReadinessR
     if (lastNightScore != null && debtScore != null) sleepScore = w1 * lastNightScore + w2 * debtScore;
     else if (lastNightScore != null) sleepScore = lastNightScore;
     else if (debtScore != null) sleepScore = debtScore;
-    if (sleepScore != null && sleepScore < 0.5) drivers.push('sleep has been short recently');
+    if (sleepScore != null && sleepScore < 0.5) drivers.push(sleepDriver(lastNight, last3, baselines.sleep14dMedian));
   }
 
   // Recovery of today's target muscles (0.15), from 6.11.

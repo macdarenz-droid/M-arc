@@ -15,6 +15,7 @@ import { exerciseHistory, type ExerciseSessionSummary } from '@/brain/history';
 import { modeLoadText } from '@/brain/bodyweight';
 import { FULL_PCT, READY_PCT } from '@/data/recovery';
 import type { MuscleRecovery } from '@/brain/recovery';
+import { DATA_LABEL } from '@/brain/trend';
 import type { LoadUnit, ResistanceMode } from '@/core/models';
 import { addExerciseToSession } from '@/slices/workout/session';
 import { showToast } from '@/app/toast';
@@ -112,13 +113,12 @@ const rtGroupInput = (r: MuscleRecovery) => ({ readyInHours: r.readyInHours, hou
  * so the line can only break at the dash, never inside "10 pm". */
 const nwParts = (text: string): string[] => text.split(' – ');
 
-/** The Section aside: a confidence summary across every muscle the card lists (Ready now + the day groups). */
+/** The Section aside: a data summary across every muscle the card lists (Ready now + the day groups). */
 function confidenceAside(rec: MuscleRecovery[]): string | undefined {
   const listed = rec.filter(r => r.lastTrainedAt && r.pct < FULL_PCT);
   if (!listed.length) return undefined;
   const first = listed[0]!.confidence;
-  const cap = first.charAt(0).toUpperCase() + first.slice(1);
-  return listed.every(r => r.confidence === first) ? `${cap} confidence` : 'Mixed confidence';
+  return listed.every(r => r.confidence === first) ? DATA_LABEL[first] : 'Mixed data';
 }
 
 function buildRtLayout(rec: MuscleRecovery[], now: number): RtLayout {
@@ -187,14 +187,13 @@ function RtDetail({ r, now, col, full, oneColumn, onOpen }: { r: MuscleRecovery;
   const headline = r.ready ? 'Ready' : r.soreToday && !r.readyInHours ? 'Sore today' : `${READY_PCT - r.pct}% to go`;
   const readyLine = r.ready ? 'Ready now' : readyGroupFor(now, rtGroupInput(r)).detailText;
   const fullLine = r.fullInHours != null ? `Full ${formatFullAt(now, r.fullInHours)}` : null;
-  const confidenceCap = r.confidence.charAt(0).toUpperCase() + r.confidence.slice(1);
   const caretLeft = full || oneColumn || col === 0 ? '28px' : 'calc(50% + 28px)';
   return (
     <button type="button" class="rt-detail" id={`rt-detail-${r.muscle}`} onClick={onOpen}>
       <span class="rt-caret" style={{ left: caretLeft }} aria-hidden="true" />
       <span class="rt-detail-row1"><b>{muscleLabel(r.muscle)}</b><span class="muted">{headline}</span></span>
       <span class="rt-detail-row2">{readyLine}</span>
-      <span class="rt-detail-row3">{[fullLine, `${confidenceCap} confidence`].filter((x): x is string => !!x).join(' · ')}</span>
+      <span class="rt-detail-row3">{[fullLine, DATA_LABEL[r.confidence]].filter((x): x is string => !!x).join(' · ')}</span>
       <IconChevron class="rt-detail-chevron" size={16} />
     </button>
   );
@@ -375,7 +374,6 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
   // BUG-17: past the 120 h window cap there is no clock time, but it is not soreness either.
   const readyText = !r.recovering ? 'Now' : r.readyInHours ? (readyDayWindow(now, r.readyInHours) ?? 'Now') : r.beyondCap ? BEYOND_CAP_TEXT : 'When soreness eases';
   const fullText = muscleFullText(now, r);
-  const accuracy = r.confidence === 'high' ? 'Good' : r.confidence === 'medium' ? 'Getting there' : 'Rough guess for now';
   const active = s.active;
 
   return (
@@ -403,7 +401,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
             return <Row trailing={<span class="small">{logged[0]!.e.name} · {last.sets.length} {last.sets.length === 1 ? 'set' : 'sets'}</span>}><span class="small muted">Last session</span></Row>;
           })()}
           <Row trailing={<span class="small">{levels.level}</span>}><span class="small muted">Level</span></Row>
-          <Row trailing={<span class="small">{accuracy}{r.personalized ? ' · fitted to you' : ''}</span>}><span class="small muted">Accuracy</span></Row>
+          <Row trailing={<span class="small">{DATA_LABEL[r.confidence]}{r.personalized ? ' · fitted to you' : ''}</span>}><span class="small muted">Data</span></Row>
         </div>
         {r.drivers.length > 0 && <p class="hint">{r.drivers.map(d => d.text).join(' · ')}</p>}
 

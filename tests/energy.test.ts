@@ -49,10 +49,11 @@ describe('sessionEnergy', () => {
 
 describe('energyFromHealthConnect', () => {
   it('is null with a negative value', () => expect(energyFromHealthConnect(-1, 60, full, today)).toBeNull());
-  it('passes through with a tighter band', () => {
+  // AUD-20 (SCI-10): the owner removed the ±10 % band; the value passes through as a plain estimate.
+  it('passes through as a plain estimate, no band', () => {
     const r = energyFromHealthConnect(300, 60, full, today)!;
     expect(r.activeKcal).toBe(300);
-    expect(r.high - r.activeKcal).toBeLessThan(r.activeKcal * 0.25);
+    expect(r).not.toHaveProperty('high');
   });
 });
 

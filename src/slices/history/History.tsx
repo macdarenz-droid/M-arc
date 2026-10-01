@@ -21,6 +21,7 @@ import { findExercise } from '@/core/exercises';
 import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel, bodyweightShare, effectiveLoadKg } from '@/brain/bodyweight';
 import { EffortBars, effortSplit, effortUsesSets } from '@/ui/EffortBars';
 import { progressHint, progressTrend, progressValue } from './progressTrend';
+import { DATA_LABEL } from '@/brain/trend';
 import { muscleLabel } from '@/data/muscles';
 import { showToast } from '@/app/toast';
 import { Sparkline } from '@/ui/Sparkline';
@@ -503,7 +504,7 @@ function Stats() {
                 <div class="grid-3">
                   <Stat value={lastTop!.load} label="last top load" />
                   <Stat value={`${lastTop!.reps}`} label="reps at top" />
-                  <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
+                  <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${DATA_LABEL[t.confidence].toLowerCase()}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
                 <EffortBars points={effortPoints} unit={effortInSets ? 'sets' : u} selected={selectedBar} onSelect={i => setSelectedBar(sel => (sel === i ? null : i))} />
                 {selectedBar != null && hist12[selectedBar] && (

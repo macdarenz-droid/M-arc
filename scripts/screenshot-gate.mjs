@@ -6687,8 +6687,98 @@ for (const theme of ['silent-black', 'paper']) {
   if (!errors.some(e => e.startsWith('COPY-1 '))) console.log('COPY-1: Settings footer rights line (under the logo, above the version, hint style) and no removed Settings copy, verified in 5 themes');
 }
 
+// AUD-20 (SCI-10): session calories are a plain estimate, never a ± or "X to Y" band. A live
+// watch-stub session (bpm every 1 s) reaches the finish screen in all 5 themes; the probe fails
+// when no calorie line is found (nothing measured) or when any band shows.
+{
+  for (const theme of themes) {
+    const tag = `AUD-20 ${theme}`;
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+    await page.addInitScript((t) => {
+      window.CapacitorCustomPlatform = { name: 'android' };
+      const listeners = {};
+      let status = { state: 'idle', freshness: 'DISCONNECTED', message: 'Ready to connect' };
+      let bpm = 118;
+      const emitBpm = () => { bpm = bpm >= 150 ? 118 : bpm + 1; for (const cb of listeners.watchMeasurement || []) cb({ bpm, contact: true, rrMs: [], energyKj: null, receivedAtEpochMs: Date.now(), receivedAtElapsedMs: performance.now() }); };
+      const setStatus = s => { status = { ...status, ...s }; for (const cb of listeners.watchStatus || []) cb(status); };
+      window.Capacitor = {
+        isNativePlatform: () => true,
+        Plugins: {
+          WatchBridge: {
+            isSupported: async () => ({ supported: true }),
+            permissionState: async () => ({ granted: true, needsLocation: false }),
+            requestPermissions: async () => ({ granted: true }),
+            startScan: async () => { setTimeout(() => { for (const cb of listeners.watchDevice || []) cb({ address: 'AA:BB', name: 'Test Watch', advertisesHeartRate: true, paired: false, rssi: -50 }); }, 50); },
+            stopScan: async () => {},
+            connect: async () => { setStatus({ state: 'connected', freshness: 'LIVE', deviceName: 'Test Watch', message: 'Connected' }); emitBpm(); setInterval(emitBpm, 1000); },
+            disconnect: async () => { setStatus({ state: 'idle', freshness: 'DISCONNECTED', deviceName: undefined, message: 'Disconnected' }); },
+            status: async () => status,
+            addListener: async (event, cb) => { (listeners[event] ||= []).push(cb); return { remove: () => {} }; },
+          },
+        },
+      };
+      const now = new Date().toISOString();
+      localStorage.setItem('marc.theme', t);
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions: [], active: null, customExercises: [],
+        preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, theme);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'Train' }).click();
+    await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
+    await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /^Start / }).first().click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Skip' }).click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: /^Start / }).first().click();
+    await page.waitForTimeout(300);
+    await page.locator('.watch-pill').click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Scan for a watch' }).click();
+    await page.waitForTimeout(300);
+    await page.getByText('Test Watch').click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Close' }).click();
+    await page.waitForTimeout(200);
+    const inputs = page.locator('.set-grid input');
+    await inputs.nth(0).fill('50'); await inputs.nth(1).fill('10'); await inputs.nth(1).blur();
+    await page.locator('.effort button.ideal').first().click();
+    await page.waitForTimeout(2500);
+    await page.getByRole('button', { name: 'Finish' }).click();
+    await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click();
+    await page.waitForTimeout(400);
+    if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) {
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
+      await page.waitForTimeout(400);
+    }
+    const kcal = page.getByText(/kcal active/).first();
+    if (!(await visible(kcal))) errors.push(`${tag}: no calorie line on the finish screen, so nothing was measured`);
+    else {
+      const line = (await kcal.innerText()).trim();
+      const view = await page.locator('.view').first().innerText().catch(() => '');
+      if (!/^About \d+ kcal active\./.test(line)) errors.push(`${tag}: the calorie line is not a plain estimate: ${JSON.stringify(line)}`);
+      if (/±|\d+\s*(?:to|–|-)\s*\d+\s*kcal/.test(line) || view.includes('±')) errors.push(`${tag}: a calorie band is shown: ${JSON.stringify(line)}`);
+    }
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-aud20-finish-kcal.png` });
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith('AUD-20 '))) console.log('AUD-20: finish-screen calories read "About N kcal active." with no ± or range band, verified in 5 themes');
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and AUD-20 (finish-screen calories are a plain estimate with no band in 5 themes) verified.');
