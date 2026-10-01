@@ -32,7 +32,7 @@ Scripts cannot use `Date.now()`, `Math.random()` or a bare `new Date()`. Pass an
 
 | File | What it does | State |
 |---|---|---|
-| `ht7-label-variance-rootcause.js` | HT-7 (#119): the "Bony bump" SVG label in the posture close-up sometimes lays out 25.2705 wide instead of 25.3114, which fails the L3 pixel check against golden B (881 px). Four lenses (SVG text scaling, font cache, app environment, measurement harness) then a judge. Must keep L3 at 0 px, change no golden or plate, loosen no check. | Done 09:2x UTC: `ht7-label-variance-rootcause.result.md` (judge synthesis + raw lens hypotheses). Outcome: D-HT7-L3-text-7/8 (HANDOVER 4.3). |
+| `ht7-label-variance-rootcause.js` | HT-7 (#119): the "Bony bump" SVG label in the posture close-up sometimes lays out 25.2705 wide instead of 25.3114, which fails the L3 pixel check against golden B (881 px). Four lenses (SVG text scaling, font cache, app environment, measurement harness) then a judge. Must keep L3 at 0 px, change no golden or plate, loosen no check. | Done 09:2x UTC: `ht7-label-variance-rootcause.result.md` (judge synthesis + raw lens hypotheses). Outcome: D-HT7-L3-text-7, -8 (withdrawn), -9 (HANDOVER 4.3). |
 | `ht7-label-variance-rootcause.args.json` | Its input: the HT-7 head `75fd1a2` and the builder's measured evidence (rates, failed fixes a to i, per-frame trace, font facts, environment). | Rerun with a newer head if HT-7 moves. |
 | `marc-rating.js` | App rating: two read-only researchers in parallel (the code on main, the market). No args. Output: `docs/research/app-rating/`. | Done 10-01. |
 | `gym-finder-review.js` | Gym Finder (#158): three read-only agents in parallel (proposal, codebase fit, external constraints). No args. Output: `docs/research/gym-finder/gf-0.md` to `gf-2.md`. | Done 10-01. Gym Finder is **parked**: no rerun without the owner's approval. |
@@ -40,7 +40,7 @@ Scripts cannot use `Date.now()`, `Math.random()` or a bare `new Date()`. Pass an
 
 ### HT-7 result
 
-Done. Top cause (≈0.75): in Chromium 141 an SVG text's font size includes outer CSS transforms, so the zoom's mid-animation scale can bake into the label's font (frame-10 sample reproduces 25.2705 exactly). E1 then showed a per-tab font state that no app lever heals, and the CI log showed the variance never occurs on CI's Chrome 153. Ruling D-HT7-L3-text-8: no app change, CI is the evidence, local 141 limitation recorded. Full text: `ht7-label-variance-rootcause.result.md`.
+Done. Top cause (≈0.75): in Chromium 141 an SVG text's font size includes outer CSS transforms, so the zoom's mid-animation scale can bake into the label's font (frame-10 sample reproduces 25.2705 exactly). E1 then showed a per-tab font state that no app lever heals. D-HT7-L3-text-8 ("local 141 only") was withdrawn when CI's Chrome 153 showed it too; D-HT7-L3-text-9 runs E6/E4 and fix candidates F1/F2. Full text: `ht7-label-variance-rootcause.result.md`.
 
 ## Other scripts from this session
 
