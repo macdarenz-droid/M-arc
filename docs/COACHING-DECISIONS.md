@@ -1199,6 +1199,10 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (DOC-3 review, supervisor ruling)**: "Reset everything … erases everything on the phone" stays as written. The legacy web key `dailyTrackerPremium` it misses is fixed in the app by BUG-29 (with a failing-then-passing test), and the website is deployed only after BUG-29 merges.
   **Why**: fix the app, not the policy, where the gap is a bug.
   **Source**: DOC-3 review (medium 8) and the supervisor's ruling on PR #110.
+- **Decided (HT-4b, owner, 2026-09-30)**: the golden-B re-pin to 6b86baa (LR-23: no sources, evidence labels or contacts in the UI) is recorded in `tools/plates/layers/MANIFEST.json` as `approvedBy: 'owner'`, not the card's `'supervisor'` (D-LR23-2).
+  **Why**: the owner approved the re-pin in the HT-4b session: "approve the HT-4b re-pin of the How-to reference copy to 6b86baa (the version without sources). Record it as approved by the owner."
+  **Also**: the card's `layers` sha entry in `tests/howto/golden/GOLDEN.json` is not added: main has none, HT-4's test asserts none (that file is HT-2's generator input), so the page sha stays in MANIFEST `pageApproval` and `PAGE_SHA256`.
+  **Source**: HT-4b card, PR #140.
 
 ## BUG-32 crisis pre-screen phrasings and card placement (BUG-32 builder, 2026-09-30)
 
@@ -1318,6 +1322,10 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: `Onboarding.tsx`'s Sex field now reads `value={s.profile.sex}` instead of `value={s.profile.sex ?? 'male'}`, matching `Profile.tsx`'s own Sex control, which never had this default.
   **Why**: `Segmented` already renders an unset value with no option selected (its BUG-8 fix); only Onboarding's display default made Male look chosen. Save never wrote `sex` unless `setSex` fired, so the bug was in what the form showed, not what it stored — fixing the display default is the whole fix.
   **Source**: card AUD-12; codex-audit.md UI-08 (`Onboarding.tsx:77`, pre-merge line).
+## COPY-1 delta review @ 640cb9a: supervisor rulings M1 and M2 (2026-10-01)
+
+- **M1 (option a), closing part of D-COPY1-8.** `Train.tsx:319`'s targets line no longer explains: it reads `Goal: {name}` only, carrying `data-palace="train.targets"`. BUG-22's block (`scripts/screenshot-gate.mjs`, the Train-end probe) now finds it by that `data-palace` marker instead of the text "Change the goal in Coach" — the only edit to that block, every assertion byte-identical, the "could not find …" error unchanged. Mutation: removing the attribute makes BUG-22's Train-end probe fail with that error; restored, the full gate passes. D-COPY1-8's Train.tsx line is resolved; its other pinned lines (the error-report hint, the toast, the setup-note label, History's empty title, the watch status lines) are still open.
+- **M2, approved.** Confirms D-COPY1-medical above: PLAY-1's P3 probe retirement is the supervisor-approved design (no check weakened, COPY-1 asserts the inverse).
 ## AUD-3: quota admission reserves before the paid call (AUD-3 builder, 2026-09-30)
 - **Decided (D-AUD3-1)**: admission is one Durable Object call, `QuotaCounter.admit`, that reads the finished counters plus every live reservation and, when there is room, writes a reservation `r:<id>` of one step, one turn and the mode's `max_tokens` of output, all in one synchronous block before any `await`. The old `check()` is removed.
   **Why**: SEC-01 showed parallel requests all read the same finished counters, because `add()` ran only after the paid stream. A Durable Object runs one call at a time, so check-and-reserve with no `await` in between is atomic: of ten parallel admissions with every limit at 1, exactly one passes.
