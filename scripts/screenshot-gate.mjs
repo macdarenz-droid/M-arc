@@ -1897,8 +1897,13 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// ESC-NC: the LR-23 patterns, read from their single definition (tests/guards/no-contacts.ts), and the crisis copy.
+const ESC_NC_RE = Object.fromEntries([...readFileSync(join(ROOT, 'tests/guards/no-contacts.ts'), 'utf8').matchAll(/^export const (\w+) = \/(.*)\/([a-z]*);$/gm)].map(m => [m[1], new RegExp(m[2], m[3])]));
+if (Object.keys(ESC_NC_RE).length !== 4) throw new Error(`ESC-NC: expected 4 patterns in tests/guards/no-contacts.ts, read ${Object.keys(ESC_NC_RE).join(', ')}`);
+const ESC_NC_CRISIS = 'If things feel like too much, you don’t have to carry it alone. Talk to someone you trust, or a doctor. If you feel you might harm yourself, get emergency help now.';
+
 // Escobar (§23 EV5): the mock transport (marc.dev=1, in-memory store, no network) plays a recorded
-// conversation with a lift_trend chart, a citation, chips and a proposal card. Screenshot it in all
+// conversation with a lift_trend chart, cited facts and a knowledge card (markers stripped, LR-23), a crisis card, chips and a proposal card. Screenshot it in all
 // five themes at 390 and 360 px, plus the dock on Today and the Hall; "Thinking…" within 150 ms.
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -1972,7 +1977,36 @@ for (const theme of themes) {
   // O4: the same effort split renders under the sparkline, static (no tap).
   if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .effort-bars')))) errors.push(`${tag}: expected the lift_trend effort bars`);
   if ((await page.locator('.esc-comp[data-component="lift_trend"] .effort-bar-col[type="button"]').count()) > 0) errors.push(`${tag}: Escobar's effort bars should not be tappable`);
-  if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
+  // ESC-NC (owner decision LR-23, 2026-09-30; stricter EV5 spec, supervisor-approved): the mock answer cites a
+  // fact and ⟦k:protein_intake⟧ and the turn raises the crisis card, yet nothing of a source or contact shows.
+  {
+    const nc = await page.evaluate(() => {
+      const sheet = document.querySelector('dialog.esc-sheet[open]');
+      const answers = [...document.querySelectorAll('.esc-answer')].map(e => e.textContent ?? '').join(' ');
+      const card = document.querySelector('.esc-escalation[data-escalation="crisis"]');
+      return {
+        cite: document.querySelectorAll('.esc-answer .esc-cite, .esc-cite, .esc-cite-wrap').length,
+        pop: document.querySelectorAll('.esc-pop').length,
+        links: sheet ? sheet.querySelectorAll('a[href^="http"], a[href^="tel:"], a[href^="mailto:"]').length : -1,
+        marker: answers.includes('⟦'),
+        stray: / [.,]/.test(answers.replace(/\s+/g, ' ')),
+        protein: answers.includes('enough protein helps you recover.'),
+        card: card ? card.textContent ?? '' : null,
+        sheetText: sheet ? sheet.innerText : '',
+      };
+    });
+    if (nc.cite) errors.push(`${tag}: ESC-NC: ${nc.cite} citation chip(s) in the answer; LR-23 shows none`);
+    if (nc.pop) errors.push(`${tag}: ESC-NC: ${nc.pop} citation popover(s); LR-23 shows none`);
+    if (nc.links !== 0) errors.push(`${tag}: ESC-NC: ${nc.links < 0 ? 'no open Escobar sheet' : `${nc.links} outside link(s) in the Escobar sheet`}`);
+    if (nc.marker) errors.push(`${tag}: ESC-NC: a ⟦…⟧ marker shows in the answer`);
+    if (nc.stray) errors.push(`${tag}: ESC-NC: a space before "." or "," where a marker was removed`);
+    if (!nc.protein) errors.push(`${tag}: ESC-NC: expected the knowledge-card sentence, marker stripped ("enough protein helps you recover.")`);
+    if (nc.card !== ESC_NC_CRISIS) errors.push(`${tag}: ESC-NC: expected the crisis card with the LR-23 copy, got ${JSON.stringify(nc.card)}`);
+    for (const [name, re] of Object.entries(ESC_NC_RE)) {
+      const hit = name === 'SAFETY_LINE_RE' ? re.exec(nc.card ?? '') : re.exec(nc.sheetText);
+      if (hit) errors.push(`${tag}: ESC-NC: ${name} matches "${hit[0]}" in the ${name === 'SAFETY_LINE_RE' ? 'crisis card' : 'Escobar sheet'}`);
+    }
+  }
   if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
   await page.setViewportSize({ width: 360, height: 780 }); await page.waitForTimeout(200);
@@ -1988,9 +2022,6 @@ for (const theme of themes) {
     if (await undo.isVisible().catch(() => false)) errors.push(`${tag}: Undo still showing after 8 s`);
   }
   if (theme === 'silent-black') {
-    await page.locator('.esc-answer .esc-cite').first().click(); await page.waitForTimeout(100);
-    if (!(await visible(page.locator('.esc-pop')))) errors.push(`${tag}: expected the citation popover`);
-    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-citation.png` });
     await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
     if (!(await visible(page.locator('.esc-proposal').getByText('Applied')))) errors.push(`${tag}: expected "Applied" on the proposal`);
     // ES-03: Undo inside its 8 s window reverses the change.
@@ -2010,6 +2041,78 @@ for (const theme of themes) {
   }
   const touched = await page.evaluate(() => localStorage.getItem('marc.escobar.v1'));
   if (touched) errors.push(`${tag}: the mock wrote to marc.escobar.v1`);
+  await ctx.close();
+}
+
+// BUG-31 (A5): the model copies the brief's "38 [f41]" form. The mock's brief-tags scenario
+// (BRIEF_TAGS_QUESTION in src/escobar/mock/transport.ts) cites that way in the preamble, the chart
+// caption, a first draft (its one invented number draws a repair round) and the final answer, which
+// streams in 7-character pieces so tags arrive split. No "[fN" may show in the answer, the earlier
+// draft, the preamble or the caption, nor anywhere in the sheet at any moment (a MutationObserver
+// reads every DOM change), and the final answer carries no "Unverified number". The probe fails when
+// the scenario did not run: each surface must be there, in the shape the mock writes it.
+{
+  const theme = themes[0];
+  const tag = `BUG-31 brief tags ${theme}`;
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.evaluate(() => document.querySelector('.toast button')?.click());
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]');
+  await page.waitForTimeout(250);
+  await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
+  await page.waitForTimeout(200);
+  await page.evaluate(() => {
+    const sheet = document.querySelector('dialog.esc-sheet[open]');
+    const seen = { tags: [], mutations: 0 };
+    window.__bug31 = seen;
+    new MutationObserver(() => {
+      seen.mutations++;
+      const hit = /\[\s*f\d+[^\]\s]*\]?/.exec(sheet?.textContent ?? '');
+      if (hit && seen.tags.length < 5) seen.tags.push(hit[0]);
+    }).observe(sheet, { subtree: true, childList: true, characterData: true });
+  });
+  await page.locator('.esc-textarea').fill('Gate check: brief tags');
+  await page.locator('.esc-send').click();
+  await page.waitForFunction(() => window.__escobar.status() === 'idle' && [...document.querySelectorAll('.esc-thread .esc-answer')].some(e => e.textContent.includes('sets this week')), null, { timeout: 20000 }).catch(() => errors.push(`${tag}: the brief-tags conversation did not finish`));
+  await page.waitForTimeout(200);
+  const r = await page.evaluate(() => {
+    const sheet = document.querySelector('dialog.esc-sheet[open]');
+    // As shown: these surfaces collapse runs of spaces (white-space: normal).
+    const texts = sel => [...(sheet?.querySelectorAll(sel) ?? [])].map(e => (e.textContent ?? '').replace(/\s+/g, ' ').trim());
+    return {
+      answer: texts('.esc-thread .esc-answer'), revised: texts('.esc-revised'), preamble: texts('.esc-preamble'), caption: texts('.esc-comp .eyebrow'),
+      unverified: sheet?.querySelectorAll('.esc-unverified').length ?? -1, unverifiedText: (sheet?.textContent ?? '').includes('Unverified number'),
+      tags: window.__bug31.tags, mutations: window.__bug31.mutations,
+    };
+  });
+  const N = '\\d+(?:\\.\\d+)?';
+  const want = {
+    preamble: new RegExp(`^Checking your week: ${N} sets so far\\.$`),
+    caption: new RegExp(`^Sets this week: ${N}$`),
+    revised: new RegExp(`^Earlier draft \\(revised\\)\\s*Your latest strength estimate is ${N} kg, so 999\\.5 kg is next\\.$`),
+    answer: new RegExp(`^Your latest strength estimate is ${N} kg, and you've done ${N} sets this week\\.$`),
+  };
+  for (const [name, re] of Object.entries(want)) {
+    if (!r[name].some(t => re.test(t))) errors.push(`${tag}: expected the ${name} to read ${re}, got ${JSON.stringify(r[name])}`);
+    for (const t of r[name]) if (/\[\s*f\d+/.test(t) || t.includes('⟦')) errors.push(`${tag}: a fact tag shows in the ${name}: ${JSON.stringify(t)}`);
+  }
+  if (r.unverified !== 0 || r.unverifiedText) errors.push(`${tag}: "Unverified number" shows (${r.unverified} marked sentence(s)) though every number comes from the brief or a tool`);
+  if (r.mutations < 20) errors.push(`${tag}: only ${r.mutations} DOM changes seen while the conversation streamed`);
+  if (r.tags.length) errors.push(`${tag}: a fact tag showed in the sheet while it ran: ${r.tags.join(' | ')}`);
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-bug31-brief-tags.png` });
   await ctx.close();
 }
 
@@ -5589,26 +5692,37 @@ for (const theme of ['silent-black', 'paper']) {
 
 // FG-OFF: the owner paused the form-guide animation (2026-09-29; backup branch claude/backup-fg-2026-09-29-main).
 // A2: the build holds no form-guide player or exercise-guide chunk, and no JS or CSS asset carries form-guide
-// markup (fg-/fg4- classes, .form-guide, the rig id, the button label). A1: the open lateral-raise card (a guided
-// exercise before FG-OFF) shows its "Why this target" row with no "How to do it" button, in Silent Black and Paper.
+// markup (fg-/fg4- classes, .form-guide, the rig id). A1: the open lateral-raise card (a guided exercise before
+// FG-OFF) shows its "Why this target" row with no old guide button, in Silent Black and Paper.
+// D-HT1 (owner approval 2026-09-30, HT-3): "How to do it" returns only as the approved Technical Plate. G3: the label
+// is in the entry chunk and in no other asset. G6: exactly one 44 px entry on the lateral-raise card, none on the
+// first library exercise without approved content (firstWithoutHowTo), and it opens the plate sheet. G7 also covers
+// the open How-to sheet.
 {
   const tag = 'FG-OFF';
   const assets = join(ROOT, 'www/assets');
   const files = readdirSync(assets);
   const guideChunks = files.filter(f => /^(FormGuidePlayer|ExercisePlayer|lib_[a-z_]+)-.*\.js$/.test(f));
   if (guideChunks.length) errors.push(`${tag} A2: form-guide chunks in the build: ${guideChunks.join(', ')}`);
-  const probes = [/(?<![\w])fg4?-[a-z]/, /form-guide/, /marc-formguide-rig/, /FormGuidePlayer/, /How to do it/];
+  const probes = [/(?<![\w])fg4?-[a-z]/, /form-guide/, /marc-formguide-rig/, /FormGuidePlayer/];
+  const entryChunk = (readFileSync(join(ROOT, 'www/index.html'), 'utf8').match(/<script[^>]+src="\.\/assets\/([^"]+\.js)"/) ?? [])[1];
+  if (!entryChunk || !/^index-[\w-]+\.js$/.test(entryChunk)) errors.push(`${tag} G3: no index-*.js entry chunk in www/index.html (${entryChunk})`);
   for (const f of files.filter(f => /\.(js|css)$/.test(f))) {
     const text = readFileSync(join(assets, f), 'utf8');
     const hit = probes.find(p => p.test(text));
     if (hit) errors.push(`${tag} A2: ${f} holds form-guide markup (${hit})`);
+    const labels = (text.match(/How to do it/g) ?? []).length;
+    if (f === entryChunk ? labels < 1 : labels > 0) errors.push(`${tag} G3: "How to do it" occurs ${labels} times in ${f}; it belongs in the entry chunk ${entryChunk} only`);
   }
-  const seed = (t) => {
+  // G6's no-How-to control: the first library exercise without approved content (D-HT1, data-driven)
+  const { firstWithoutHowTo } = await import('../tools/plates/fidelity/harness.mjs');
+  const noHowTo = firstWithoutHowTo();
+  const seed = ([t, other]) => {
     localStorage.setItem('marc.theme', t);
     const now = new Date().toISOString();
     localStorage.setItem('marc.state.v1', JSON.stringify({
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
-      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, { exerciseId: 'lib_barbell_bench_press', sets: 2 }] }],
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, { exerciseId: other, sets: 2 }] }],
       schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
       sessions: [], active: null, customExercises: [],
       preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
@@ -5620,7 +5734,7 @@ for (const theme of ['silent-black', 'paper']) {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
-    await page.addInitScript(seed, theme);
+    await page.addInitScript(seed, [theme, noHowTo]);
     await page.goto(`http://localhost:${PORT}/`);
     await page.waitForSelector('.nav'); await launchGone(page);
     await page.waitForTimeout(300);
@@ -5631,8 +5745,21 @@ for (const theme of ['silent-black', 'paper']) {
     const card = page.locator('.card.exercise').nth(0);
     if (!(await visible(card.locator('.why-toggle')))) errors.push(`${tag} ${theme} A1: the lateral raise card is not open (no "Why this target" row)`);
     if (await card.locator('.btn-how-to').count()) errors.push(`${tag} ${theme} A1: a .btn-how-to button is on the open card`);
-    if (await page.getByText('How to do it').count()) errors.push(`${tag} ${theme} A1: "How to do it" is on the Train page`);
+    const entry = card.locator('button.ht-entry'), eb = (await entry.count()) === 1 ? await entry.boundingBox() : null;
+    const entryName = eb ? await entry.evaluate(b => (b.getAttribute('aria-label') ?? b.textContent).trim()) : null;
+    if (!eb || entryName !== 'How to do it' || eb.width < 44 || eb.height < 44) errors.push(`${tag} ${theme} G6: the lateral raise card needs exactly one button.ht-entry named "How to do it" of at least 44x44 (${await entry.count()} found, name ${JSON.stringify(entryName)}, box ${JSON.stringify(eb)})`);
+    if ((await page.getByText('How to do it').count()) !== 1) errors.push(`${tag} ${theme} G6: "How to do it" is on the Train page ${await page.getByText('How to do it').count()} times, expected once`);
     if (await page.locator('.form-guide').count()) errors.push(`${tag} ${theme} A1: a .form-guide element is on the Train page`);
+    if (eb) {
+      await entry.click();
+      if (!(await visible(page.locator('dialog .ht-plate-fit')))) errors.push(`${tag} ${theme} G6: tapping the entry opened no dialog with .ht-plate-fit`);
+      if (await page.locator('.form-guide').count()) errors.push(`${tag} ${theme} G7: a .form-guide element is inside the open How-to sheet`);
+      await page.keyboard.press('Escape'); await page.waitForTimeout(400);
+    }
+    const other = page.locator('.card.exercise').nth(1);
+    await other.locator('.ex-head').click(); await page.waitForTimeout(300);
+    if (!(await visible(other.locator('.why-toggle')))) errors.push(`${tag} ${theme} G6: the ${noHowTo} card did not open`);
+    if (await other.locator('.ht-entry').count()) errors.push(`${tag} ${theme} G6: the ${noHowTo} card (no approved content) has a How-to entry`);
     await ctx.close();
   }
 }
@@ -5701,6 +5828,55 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// PLAY-1 (A1): Settings shows the "Privacy policy" link and the healthcare reminder in all 5 themes. The link's href
+// must equal the Play Console privacy policy field (docs/PLAY-SUBMISSION.md) and open outside the app the way every
+// external link does (target=_blank, noopener); the reminder sits above the version line.
+{
+  // The URL entered in the Play Console field, read from the submission doc itself so the two cannot drift.
+  const PLAY_CONSOLE_PRIVACY_URL = readFileSync(join(ROOT, 'docs/PLAY-SUBMISSION.md'), 'utf8').match(/\*\*Privacy policy URL \(Play Console[^\n]*\n(https:\/\/\S+?)\s/)?.[1];
+  if (!PLAY_CONSOLE_PRIVACY_URL) errors.push('PLAY-1: no "Privacy policy URL (Play Console…)" line in docs/PLAY-SUBMISSION.md');
+  const MEDICAL = 'Not medical advice. For medical advice, diagnosis or treatment, see a healthcare professional.';
+  for (const theme of themes) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    const tag = `PLAY-1 ${theme}`;
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await page.addInitScript(([legacyJson, t]) => {
+      localStorage.setItem('marc.theme', t);
+      if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+    }, [JSON.stringify(legacy), theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+    await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+    const link = page.getByRole('link', { name: 'Privacy policy', exact: true });
+    const medical = page.locator('[data-palace="settings.medical"]');
+    await medical.scrollIntoViewIfNeeded().catch(() => {});
+    if ((await link.count()) !== 1) errors.push(`${tag}: expected one "Privacy policy" link in Settings, found ${await link.count()}`);
+    else {
+      await link.scrollIntoViewIfNeeded().catch(() => {});
+      if (!(await visible(link))) errors.push(`${tag}: the "Privacy policy" link is not visible`);
+      const a = await link.evaluate(el => ({ href: el.getAttribute('href'), target: el.getAttribute('target'), rel: el.getAttribute('rel'), section: el.closest('[data-palace="settings.data"]') != null }));
+      if (a.href !== PLAY_CONSOLE_PRIVACY_URL) errors.push(`${tag}: the privacy link's href is ${a.href}, not the Play Console URL ${PLAY_CONSOLE_PRIVACY_URL}`);
+      if (a.target !== '_blank' || !/\bnoopener\b/.test(a.rel ?? '')) errors.push(`${tag}: the privacy link must open outside the app (target=_blank rel=noopener), got target=${a.target} rel=${a.rel}`);
+      if (!a.section) errors.push(`${tag}: the privacy link is not in "Your data"`);
+    }
+    await medical.scrollIntoViewIfNeeded().catch(() => {});
+    if (!(await visible(medical))) errors.push(`${tag}: the healthcare reminder is not visible`);
+    else {
+      const m = await page.evaluate(() => {
+        const el = document.querySelector('[data-palace="settings.medical"]'), v = document.querySelector('[data-palace="settings.version"]');
+        return { text: el?.textContent?.trim(), above: !!(el && v && el.getBoundingClientRect().bottom <= v.getBoundingClientRect().top) };
+      });
+      if (m.text !== MEDICAL) errors.push(`${tag}: the healthcare reminder reads "${m.text}"`);
+      if (!m.above) errors.push(`${tag}: the healthcare reminder is not above the version line`);
+    }
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-play-1-settings.png` });
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith('PLAY-1 '))) console.log('PLAY-1: privacy link (Play Console URL, opens outside) and healthcare reminder verified in 5 themes');
+}
+
 // HT-1: fidelity harness self-check. The approved Technical Plates gallery (tests/howto/golden, served offline, its
 // Google Fonts request routed to the app's Inter woff2) is captured twice at 390x844 DPR 2, per plate block (plate top
 // to tempo bottom), in 5 themes x {normal, mistake with the first tell}: every pair must diff 0 px, and the same block
@@ -5757,6 +5933,341 @@ for (const theme of ['silent-black', 'paper']) {
   } finally {
     rmSync(out, { recursive: true, force: true });
   }
+}
+
+// HT-3: the How-to sheet (card HT-3; plan 2.7 L2b, F3, L3, L4; D-HT1, D-HT3). The app's sheet, opened from the real
+// Train entry, against the approved gallery (tests/howto/golden, served offline with the app's Inter woff2), per theme
+// side by side: every element's box (±0.01 px) and computed style, the block markup, and the pixels (no channel off by
+// more than 1/255, at most 0.02 % off by 1) for 8 plates x 5 themes x {normal, mistake}, every callout and tell and
+// 360/340 px in Silent Black and Paper, the Trace animation lists, frames at 0.6/1.2/1.8 s (2 themes) and 2.4 s,
+// and the reduced-motion end state (all themes). Pixel captures give every block part its own layer in both pages,
+// at the same sub-pixel position, and run with LCD text off, like a phone (D-HT3); two controls prove the phase matters.
+// Also: the entry only where approved content exists (bench press and a custom exercise have none), S0 on every open,
+// the S0 element budget, Back / Escape / drag-to-close, focus back on the entry, 44 px targets, no stored data.
+{
+  const tag = 'HT-3';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  process.env.HT3_DUMP ??= join(OUT, 'ht3-diffs');   // on an L3 failure, the first 12 app/golden pairs land in the uploaded screenshots
+  // full Chromium, never the headless shell (D-HT3: the shell lays the squat's chest tell out 22 px taller and misdraws it)
+  const ht3 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
+  try {
+    const failed = e => ({ problems: [`crashed: ${e.message.split('\n')[0]}`], stats: {}, d128: '?', d1: '?' });   // a thrown probe is a failure, never a gate crash
+    const [fid, beh, ctlS, ctlP, sec] = await Promise.all([H.ht3Fidelity(ht3, PORT), H.ht3Behaviour(ht3, PORT, 'paper').catch(failed), H.presentControls(ht3, 'silent-black').catch(failed), H.presentControls(ht3, 'paper').catch(failed), H.ht3SectionGuards(ht3, PORT).catch(failed)]);
+    const ctl = { d128: `${ctlS.d128}/${ctlP.d128}`, d1: `${ctlS.d1}/${ctlP.d1}` };
+    for (const p of [...fid.problems, ...beh.problems, ...ctlS.problems, ...ctlP.problems, ...sec.problems]) errors.push(`${tag}: ${p}`);
+    if (fid.stats.pairs < 300) errors.push(`${tag}: only ${fid.stats.pairs} pixel pairs compared, expected the full matrix (>= 300)`);
+    console.log(`${tag} (${ht3.version()}): ${fid.stats.pairs} pixel pairs (max ${fid.stats.offMax} px off, ${fid.stats.off1Max} off by 1), ${fid.stats.l2b} L2b walks, ${fid.stats.f3} F3 markup compares, ${fid.stats.anims} Trace animation lists, parts on their own layers in ${fid.stats.ownLayers ?? 0} captures, phase ms ${JSON.stringify(fid.stats.t)}, taller viewport for ${fid.stats.tall.length} captures${fid.stats.tall.length ? ` (${fid.stats.tall.join(', ')})` : ''}; S0 ${beh.stats.elementsS0} elements; controls (Silent Black/Paper): phase +128 ${ctl.d128} px, +1 ${ctl.d1} px (HT-1 keeps the root-layer golden self-check at 0 px); sections guards (hidden + restored, CSS leak caught, S0 with sections visible) ${sec.problems.length ? 'FAILED' : 'passed'}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally {
+    await ht3.close();
+  }
+}
+
+// HT-3b: speed, offline and footprint (card HT-3b; plan 2.5, 2.9, 2.10). A1's other half (the
+// esbuild-minified ids.ts + lazy.tsx size figure) is tests/howto/footprint.test.ts — a real build is not
+// needed for that; this is the content probe on the real index-*.js. A2: chunk budgets, each at its
+// measured value + 10%. A3: no How-to chunk requested before Today/Train is idle; tap-to-plate at 4x CPU
+// throttle (median of 5, hard fail over 400 ms); no long task over 100 ms while opening at 4x. A4: offline
+// reload + sheet open, build-B chunk carry-over, a failed chunk load's toast, localStorage unchanged, the
+// app's own PlateSheet .plate chip unaffected by the How-to CSS. A5 (C17, LR-23): no fetch/XHR/Worker/http
+// URL in the built How-to chunks (the shared checker, xmlns literals excepted), no <a> tag, no target=, and
+// every href starts with #.
+{
+  const tag = 'HT-3b';
+  const t0 = Date.now();
+  const errorsBefore = errors.length;
+  const { gzipSync } = await import('node:zlib');
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const P = await import('../tools/plates/fidelity/perf.mjs');
+  const assetsDir = join(ROOT, 'www/assets');
+  const assetFiles = readdirSync(assetsDir);
+  const rows = JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'));
+  const sizeOf = f => { const b = readFileSync(join(assetsDir, f)); return { raw: b.length, gz: gzipSync(b).length }; };
+  const oneOf = re => { const m = assetFiles.filter(f => re.test(f)); if (m.length !== 1) throw new Error(`${tag}: expected one file matching ${re}, found ${m.join(', ') || 'none'}`); return m[0]; };
+  const htFlow = async page => {
+    await page.waitForSelector('.nav');
+    await page.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
+    await page.locator('nav.nav button', { hasText: 'Train' }).click();
+    await page.getByRole('button', { name: /^Start / }).first().click();
+    for (let i = 0; i < 2; i++) {
+      await page.waitForTimeout(300);
+      const skip = page.getByRole('button', { name: 'Skip', exact: true });
+      if (await skip.isVisible().catch(() => false)) { await skip.click(); continue; }
+      const start = page.getByRole('button', { name: /^Start / }).first();
+      if (await start.isVisible().catch(() => false)) await start.click();
+    }
+    await page.locator('.card.exercise').first().waitFor({ state: 'visible', timeout: 5000 });
+  };
+  const squatIdx = H.HT_ORDER.indexOf('lib_barbell_back_squat');
+  const squatSlug = rows['lib_barbell_back_squat'].slug;
+
+  // A1: content probe on the real main chunk (no plate-svg/u-stroke/feel-band, no generated-file string
+  // outside ids.ts's own exports; exercises.json's content is excluded too — an exercise name or id
+  // legitimately shared with a generated file is already in main for unrelated reasons).
+  {
+    const html = readFileSync(join(ROOT, 'www/index.html'), 'utf8');
+    const indexJs = html.match(/src="\.\/assets\/(index-[\w-]+\.js)"/)[1];
+    const idxBytes = readFileSync(join(assetsDir, indexJs), 'utf8');
+    for (const s of ['plate-svg', 'u-stroke', 'feel-band']) if (idxBytes.includes(s)) errors.push(`${tag} A1: index-*.js contains "${s}"`);
+    const idsSrc = readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8');
+    const allowed = new Set([...idsSrc.matchAll(/"([^"]+)"/g)].map(m => m[1]));
+    allowed.add('How to do it');
+    const exercisesRaw = readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8');
+    const unescapeJs = s => s.replace(/\\(["'\\/bfnrt]|u[0-9a-fA-F]{4})/g, m => ({ '\\"': '"', "\\'": "'", '\\\\': '\\', '\\/': '/', '\\b': '\b', '\\f': '\f', '\\n': '\n', '\\r': '\r', '\\t': '\t' }[m] ?? String.fromCharCode(parseInt(m.slice(2), 16))));
+    const genDir = join(ROOT, 'src/howto/generated');
+    const leaked = [];
+    for (const f of readdirSync(genDir)) {
+      const src = readFileSync(join(genDir, f), 'utf8');
+      for (const m of src.matchAll(/"((?:\\.|[^"\\])*)"/g)) {
+        if (m[1].length < 16) continue;
+        const str = unescapeJs(m[1]);
+        if (allowed.has(str) || exercisesRaw.includes(str)) continue;
+        if (idxBytes.includes(str)) { leaked.push(`${f}: "${str.slice(0, 60)}…"`); break; }
+      }
+    }
+    if (leaked.length) errors.push(`${tag} A1: index-*.js leaks generated How-to content: ${leaked.join('; ')}`);
+    // Plan 2.9: logged for information only, no app-wide ceiling here (S-5).
+    console.log(`${tag} A1: main chunk ${indexJs} is ${idxBytes.length} B raw / ${gzipSync(Buffer.from(idxBytes)).length} B gz (information only, no ceiling)`);
+  }
+
+  // A2: chunk budgets, each at its measured value + 10% (the plan 2.9 start figures are the upper bound;
+  // this card lowers HowToSheet-*, the CSS and each ht-<slug>-* to the measured figures below).
+  {
+    const CEIL = v => Math.ceil(v * 1.1);
+    const budget = (label, file, measured) => {
+      const { raw, gz } = sizeOf(file);
+      if (raw > CEIL(measured.raw)) errors.push(`${tag} A2: ${label} is ${raw} B raw, over ${CEIL(measured.raw)} (measured ${measured.raw} + 10%)`);
+      if (gz > CEIL(measured.gz)) errors.push(`${tag} A2: ${label} is ${gz} B gz, over ${CEIL(measured.gz)} (measured ${measured.gz} + 10%)`);
+      return `${label} ${raw}/${gz}`;
+    };
+    const sizes = [];
+    sizes.push(budget('HowToSheet-*.js', oneOf(/^HowToSheet-[\w-]{8}\.js$/), { raw: 6321, gz: 2698 }));
+    sizes.push(budget('HowToSheet-*.css', oneOf(/^HowToSheet-[\w-]{8}\.css$/), { raw: 8695, gz: 1971 }));
+    const CHUNK_MEASURED = {
+      'dumbbell-lateral-raise': { raw: 63001, gz: 12535 }, 'barbell-back-squat': { raw: 92839, gz: 21072 },
+      'pull-up': { raw: 124238, gz: 28610 }, 'hanging-leg-raise': { raw: 117386, gz: 27998 },
+      'lat-pulldown': { raw: 111189, gz: 23863 }, 'seated-cable-row': { raw: 117043, gz: 25459 },
+      'leg-press': { raw: 93568, gz: 18076 }, 'machine-chest-press': { raw: 99249, gz: 20137 },
+    };
+    for (const [id, row] of Object.entries(rows)) {
+      const measured = CHUNK_MEASURED[row.slug];
+      if (!measured) { errors.push(`${tag} A2: no measured baseline for ${row.slug} (${id}); add one instead of skipping the budget`); continue; }
+      sizes.push(budget(`ht-${row.slug}-*.js`, oneOf(new RegExp(`^ht-${row.slug}-[\\w-]{8}\\.js$`)), measured));
+    }
+    console.log(`${tag} A2 chunk sizes (raw/gz B, ceiling = measured + 10%): ${sizes.join(', ')}`);
+  }
+
+  // A3a: no How-to chunk requested from launch until Today/Train is idle.
+  {
+    const ctx = await browser.newContext({ viewport: H.DEVICE.viewport, deviceScaleFactor: H.DEVICE.deviceScaleFactor });
+    const page = await ctx.newPage();
+    const early = [];
+    page.on('request', r => { const u = r.url(); if (/\/assets\/(HowToSheet-|ht-|hand-)/.test(u)) early.push(u); });
+    await page.addInitScript(H.htSeed, ['silent-black', H.HT_ORDER, H.HT_CUSTOM]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await htFlow(page);
+    await H.settleApp(page);
+    if (early.length) errors.push(`${tag} A3: a How-to chunk was requested before Train was idle: ${early.join(', ')}`);
+    await ctx.close();
+  }
+
+  // A3b/c: tap-to-plate at 4x CPU throttle (median of 5, hard fail over 400 ms); no long task over 100 ms
+  // while opening at 4x (PerformanceObserver 'longtask').
+  {
+    const { ctx, page } = await H.openAppTrain(browser, PORT, 'silent-black');
+    await H.openCard(page, squatIdx);
+    const { reset } = await P.throttleCpu(page, 4);
+    const stopLongTasks = await P.observeLongTasks(page);
+    const { median, samples } = await P.medianOf(async () => {
+      const tr0 = Date.now();
+      await page.locator('button.ht-entry').click();
+      await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
+      const dt = Date.now() - tr0;
+      await H.closeHowTo(page);
+      return dt;
+    }, 5);
+    // The long-task budget covers exactly these 5 opens, so the observer stops right here — a 6th open
+    // (below) must never add to what it collected, or a slow one could fail A3 on its own account.
+    const longTasks = await stopLongTasks();
+    // perf.mjs's TaskDuration helper (plan §2, for HT-8/HT-10 too): one more open, timed on the page's own
+    // clock instead of Node's Date.now() around the Playwright calls. Informational only — logged beside
+    // the Date.now() median as evidence it reads a real value in the same ballpark, not a second gate.
+    const pageClockMs = await P.taskDuration(page, 'ht3b-tap-to-plate', async () => {
+      await page.locator('button.ht-entry').click();
+      await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
+    });
+    await H.closeHowTo(page);
+    await reset();
+    if (median > 400) errors.push(`${tag} A3: tap-to-plate median at 4x throttle is ${median} ms (samples ${samples.join(',')}), over 400 ms`);
+    const over = longTasks.filter(d => d > 100);
+    if (over.length) errors.push(`${tag} A3: long task(s) over 100 ms while opening at 4x: ${over.map(d => d.toFixed(0)).join(', ')} ms`);
+    console.log(`${tag} A3: tap-to-plate median ${median} ms at 4x (samples ${samples.join(', ')} ms; TaskDuration page-clock cross-check ${pageClockMs.toFixed(1)} ms); long tasks ${longTasks.map(d => d.toFixed(0)).join(', ') || 'none'}`);
+    await ctx.close();
+  }
+
+  // A4a/b: offline reload, then the sheet opens; build-B chunk carry-over (a new cache, the old
+  // ht-<slug>-*.js gone from the server — the already-open tab still opens that exercise's How-to, as
+  // R5.5 proves for Escobar's chunk); localStorage keys identical before and after opening.
+  {
+    const ctx = await browser.newContext({ viewport: H.DEVICE.viewport, deviceScaleFactor: H.DEVICE.deviceScaleFactor, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} A4: ${e.message}`));
+    await page.addInitScript(H.htSeed, ['silent-black', H.HT_ORDER, H.HT_CUSTOM]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav');
+    await page.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
+    const controlled = await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 15000 }).then(() => true).catch(() => false);
+    if (!controlled) errors.push(`${tag} A4: the service worker never took control`);
+
+    await ctx.setOffline(true);
+    await page.reload();
+    await page.waitForSelector('.nav', { timeout: 10000 }).catch(() => errors.push(`${tag} A4: offline reload did not render the app`));
+    await htFlow(page);
+    const keysBefore = await page.evaluate(() => Object.keys(localStorage).sort());
+    await H.openCard(page, squatIdx);
+    await page.locator('button.ht-entry').click();
+    await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 }).catch(() => errors.push(`${tag} A4: the How-to sheet did not open offline`));
+    await H.closeHowTo(page);
+    const keysAfter = await page.evaluate(() => Object.keys(localStorage).sort());
+    if (JSON.stringify(keysBefore) !== JSON.stringify(keysAfter)) errors.push(`${tag} A4: localStorage keys changed opening the sheet: ${JSON.stringify(keysBefore)} -> ${JSON.stringify(keysAfter)}`);
+    await ctx.setOffline(false);
+
+    const swPath = join(ROOT, 'www/sw.js');
+    const swA = readFileSync(swPath, 'utf8');
+    const chunk = oneOf(new RegExp(`^ht-${squatSlug}-[\\w-]{8}\\.js$`));
+    const chunkPath = join(assetsDir, chunk);
+    const chunkBytes = readFileSync(chunkPath);
+    try {
+      writeFileSync(swPath, swA.replace(/marc-\d{14}/, 'marc-88888888888888').replace(`"./assets/${chunk}",`, '').replace(`,"./assets/${chunk}"`, ''));
+      unlinkSync(chunkPath);
+      await page.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); await r?.update(); });
+      const swapped = await page.waitForFunction(() => caches.keys().then(k => k.length === 1 && k[0] === 'marc-88888888888888'), null, { timeout: 15000 }).then(() => true).catch(() => false);
+      if (!swapped) errors.push(`${tag} A4: build B's service worker did not activate`);
+      await page.locator('button.ht-entry').click();
+      await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 10000 }).catch(() => errors.push(`${tag} A4: the How-to sheet did not open after build B (chunk carry-over failed)`));
+    } finally {
+      writeFileSync(swPath, swA);
+      writeFileSync(chunkPath, chunkBytes);
+    }
+    await H.closeHowTo(page).catch(() => {});
+    await ctx.close();
+  }
+
+  // A4c: a failed chunk load shows "Could not load the guide." with Reload, for both the sheet's own
+  // chunk and the plate content chunk (design-build-time.md: the gate aborts HowToSheet-* and then
+  // ht-<slug>-*). The abort route is registered before goto(), or the service worker's own precache
+  // fetch wins the race and the chunk is already in Cache Storage by the time it is tapped.
+  for (const pattern of [`**/assets/HowToSheet-*.js`, `**/assets/ht-${squatSlug}-*.js`]) {
+    const ctx = await browser.newContext({ viewport: H.DEVICE.viewport, deviceScaleFactor: H.DEVICE.deviceScaleFactor });
+    const page = await ctx.newPage();
+    const errs = [];
+    page.on('pageerror', e => errs.push(e.message));
+    await page.addInitScript(H.htSeed, ['silent-black', H.HT_ORDER, H.HT_CUSTOM]);
+    await ctx.route(pattern, route => route.abort('failed'));
+    await page.goto(`http://localhost:${PORT}/`);
+    await htFlow(page);
+    await H.openCard(page, squatIdx);
+    await page.locator('button.ht-entry').click();
+    await page.waitForTimeout(600);
+    const toast = await page.evaluate(() => { const t = document.querySelector('.toast'); return t ? { message: t.textContent, hasReload: /Reload/.test(t.textContent) } : null; });
+    const sheetOpen = await page.locator('dialog.sheet.ht[open]').count();
+    if (!toast || !toast.message.startsWith('Could not load the guide.') || !toast.hasReload) errors.push(`${tag} A4c: ${pattern} aborted but toast was ${JSON.stringify(toast)}`);
+    if (sheetOpen) errors.push(`${tag} A4c: ${pattern} aborted but dialog.sheet.ht[open] is still present`);
+    if (errs.length) errors.push(`${tag} A4c: page error(s) after ${pattern} aborted: ${errs.join('; ')}`);
+    await ctx.close();
+  }
+
+  // A4d: the app's own PlateSheet .plate chip (Train.tsx, a barbell target's plate breakdown) is
+  // unaffected by the How-to CSS, before vs. after the sheet has loaded it. A prior session gives the
+  // squat a target heavy enough that plates actually render (the cold-start suggestion is the bar alone).
+  {
+    const ctx = await browser.newContext({ viewport: H.DEVICE.viewport, deviceScaleFactor: H.DEVICE.deviceScaleFactor });
+    const page = await ctx.newPage();
+    const day = offset => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    await page.addInitScript(([theme, ids, custom, day3, day6]) => {
+      localStorage.setItem('marc.theme', theme);
+      const now = new Date().toISOString();
+      const sess = offsetDay => ({
+        id: `ht3b-${offsetDay}`, splitId: 'sp1', splitName: 'Plates', day: offsetDay, startedAt: `${offsetDay}T17:00:00.000Z`, endedAt: `${offsetDay}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{ exerciseId: 'lib_barbell_back_squat', name: 'Barbell Back Squat', sets: [0, 1, 2].map(() => ({ kg: 100, reps: 5, effort: 'ideal' })) }],
+        logging: { mode: 'live', trainedAt: `${offsetDay}T17:00:00.000Z`, trainedEndAt: `${offsetDay}T17:30:00.000Z`, loggedAt: `${offsetDay}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+      });
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [{ id: 'sp1', name: 'Plates', color: '#6aa9ff', focus: [], createdAt: now, exercises: ids.map(exerciseId => ({ exerciseId, sets: 1 })) }],
+        schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions: [sess(day6), sess(day3)],
+        active: null, customExercises: [custom],
+        preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, ['silent-black', H.HT_ORDER, H.HT_CUSTOM, day(3), day(6)]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await htFlow(page);
+    await H.openCard(page, squatIdx);
+    const chipStyle = () => page.evaluate(() => {
+      const chip = document.querySelector('.plate');
+      if (!chip) return null;
+      const cs = getComputedStyle(chip);
+      return { bg: cs.backgroundColor, color: cs.color, fontSize: cs.fontSize, borderRadius: cs.borderRadius, padding: cs.padding, fontWeight: cs.fontWeight };
+    });
+    await page.locator('.target-link').first().click();
+    await page.waitForSelector('[data-palace="train.plate-sheet"]', { timeout: 5000 });
+    await page.waitForTimeout(150);
+    const before = await chipStyle();
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(150);
+    await H.openHowTo(page, squatIdx);
+    await H.closeHowTo(page);
+    await page.locator('.target-link').first().click();
+    await page.waitForSelector('[data-palace="train.plate-sheet"]', { timeout: 5000 });
+    await page.waitForTimeout(150);
+    const after = await chipStyle();
+    if (!before || !after) errors.push(`${tag} A4d: .plate chip not found (before=${JSON.stringify(before)}, after=${JSON.stringify(after)})`);
+    else if (JSON.stringify(before) !== JSON.stringify(after)) errors.push(`${tag} A4d: .plate chip computed style changed once the How-to CSS loaded: ${JSON.stringify(before)} -> ${JSON.stringify(after)}`);
+    await ctx.close();
+  }
+
+  // A5 (C17, LR-23/D-LR23-7): no fetch/XHR/Worker call and no bare http(s) URL in the built How-to chunks
+  // (the shared checker — HT-4's tests/howto/checks/c17.ts — allows only the SVG/xlink xmlns literals; the
+  // final drop of source citations from allowedUrls lands with HT-4b, this card just uses what main has
+  // now, and there are no citations yet to allow either way). Also no `<a>` tag, no `target=` attribute,
+  // and every `href=` starts with `#` (an in-document SVG reference, e.g. `<use href="#lr-n-st-10">`).
+  {
+    const { pathToFileURL } = await import('node:url');
+    const { mkdtempSync, copyFileSync, rmSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { build: esbuildC17 } = await import('esbuild');
+    const files = [oneOf(/^HowToSheet-[\w-]{8}\.js$/), ...Object.values(rows).map(r => oneOf(new RegExp(`^ht-${r.slug}-[\\w-]{8}\\.js$`)))];
+
+    const c17Built = await esbuildC17({ entryPoints: [join(ROOT, 'tests/howto/checks/c17.ts')], bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' });
+    const c17Dir = mkdtempSync(join(tmpdir(), 'ht3b-c17-mod-'));
+    const c17ModPath = join(c17Dir, 'c17.mjs');
+    writeFileSync(c17ModPath, c17Built.outputFiles[0].text);
+    const { checkC17 } = await import(pathToFileURL(c17ModPath).href);
+
+    const scanDir = mkdtempSync(join(tmpdir(), 'ht3b-c17-scan-'));
+    try {
+      for (const f of files) copyFileSync(join(assetsDir, f), join(scanDir, f));
+      for (const m of checkC17([scanDir])) errors.push(`${tag} A5: ${m}`);
+    } finally {
+      rmSync(c17Dir, { recursive: true, force: true });
+      rmSync(scanDir, { recursive: true, force: true });
+    }
+
+    for (const f of files) {
+      const src = readFileSync(join(assetsDir, f), 'utf8');
+      if (/<a[\s/>]/.test(src)) errors.push(`${tag} A5: ${f} has an <a> tag`);
+      if (/\btarget\s*=/.test(src)) errors.push(`${tag} A5: ${f} has a target= attribute`);
+      for (const m of src.matchAll(/\bhref=(["'])(.*?)\1/g)) if (!m[2].startsWith('#')) errors.push(`${tag} A5: ${f} has href="${m[2].slice(0, 60)}", not starting with #`);
+    }
+  }
+
+  const blockErrors = errors.length - errorsBefore;
+  console.log(blockErrors === 0
+    ? `${tag}: A1 content probe, A2 chunk budgets, A3 launch/open speed, A4 offline/storage, A5 C17 verified; ${((Date.now() - t0) / 1000).toFixed(1)} s`
+    : `${tag}: FAILED, ${blockErrors} problem(s) above; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
 // HT-4: the golden-B lock (L0-B), the crop-window/pose-classification live proof (HT4-A5), and the state driver
@@ -5859,4 +6370,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no form-guide chunk or markup, no "How to do it" on Train) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified.');
