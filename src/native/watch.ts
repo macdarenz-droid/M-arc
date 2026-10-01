@@ -41,6 +41,49 @@ function plugin(): WatchPlugin | null {
 
 let started = false;
 
+/**
+ * NAT-01: the native side works out freshness only when it emits, so a watch that stops sending
+ * without disconnecting would stay LIVE. The app ages it itself, on the same 5 s / 15 s limits as
+ * LiveSession.freshness: LIVE past 5 s with nothing new reads DELAYED, past 15 s STALE.
+ */
+export const FRESH = { liveMs: 5_000, delayedMs: 15_000, tickMs: 1_000 } as const;
+let nativeStatus: WatchStatus = UNSUPPORTED;
+/** App clock (ms) of the last sign the stream was fresh: a measurement, or a status that said LIVE. */
+let freshAtMs = -1;
+
+/** Pure: the freshness to show, given what the native side last said and how long the stream has been quiet. */
+export function agedFreshness(native: Freshness, freshAt: number, nowMs: number): Freshness {
+  if (native !== 'LIVE' && native !== 'DELAYED') return native;
+  if (freshAt < 0) return native;
+  const age = nowMs - freshAt;
+  if (age > FRESH.delayedMs) return 'STALE';
+  if (age > FRESH.liveMs) return 'DELAYED';
+  return native;
+}
+
+/** The native status the shown one was last built from. */
+let publishedFrom: WatchStatus | null = null;
+
+function publishStatus(nowMs = Date.now()): void {
+  const freshness = agedFreshness(nativeStatus.freshness, freshAtMs, nowMs);
+  if (publishedFrom === nativeStatus && watchStatus.peek().freshness === freshness) return;
+  publishedFrom = nativeStatus;
+  watchStatus.value = freshness === nativeStatus.freshness ? nativeStatus : { ...nativeStatus, freshness };
+}
+
+/** Exported for tests: the native status and measurement handlers, with the app clock reading. */
+export function onNativeStatus(s: WatchStatus, nowMs = Date.now()): void {
+  nativeStatus = s;
+  if (s.freshness === 'LIVE') freshAtMs = nowMs;
+  publishStatus(nowMs);
+}
+export function onNativeMeasurement(m: WatchMeasurement, nowMs = Date.now()): void {
+  freshAtMs = nowMs;
+  latestMeasurement.value = m;
+  publishStatus(nowMs);
+}
+export function tickFreshness(nowMs = Date.now()): void { publishStatus(nowMs); }
+
 /** Attach a listener without assuming addListener returns a Promise; never throws. */
 function listen(p: WatchPlugin, eventName: string, cb: (data: unknown) => void): void {
   try {
@@ -57,10 +100,11 @@ export function startWatchListeners(): void {
   Promise.resolve().then(() => p.isSupported()).then(r => {
     watchSupported.value = r.supported;
     if (!r.supported) { watchStatus.value = UNSUPPORTED; return; }
-    return Promise.resolve(p.status()).then(s => { watchStatus.value = s; });
+    return Promise.resolve(p.status()).then(s => { onNativeStatus(s); });
   }).catch(() => undefined);
-  listen(p, 'watchStatus', data => { watchStatus.value = data as WatchStatus; });
-  listen(p, 'watchMeasurement', data => { latestMeasurement.value = data as WatchMeasurement; });
+  listen(p, 'watchStatus', data => { onNativeStatus(data as WatchStatus); });
+  listen(p, 'watchMeasurement', data => { onNativeMeasurement(data as WatchMeasurement); });
+  setInterval(() => tickFreshness(), FRESH.tickMs);
   // PL-13: one batched, throttled event with the whole list; the old per-device event stays for one release.
   listen(p, 'watchDevices', data => { scannedDevices.value = devicesFrom(data) ?? scannedDevices.value; });
   listen(p, 'watchDevice', data => {
