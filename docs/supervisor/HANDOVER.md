@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-01 ~09:00 UTC · main `958a3de` (merge train 5 #169, AUD-20) · by supervisor session `session_01Tc7uLSdp7LGknt8xc1i9dc` on the owner's current account. Rows in section 8 that this update did not re-check say so. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-01 ~10:00 UTC · main `1fcd9c8` (merge train 6 #170, BUG-36 + the 09:00 handover) · by supervisor session `session_01Tc7uLSdp7LGknt8xc1i9dc` on the owner's current account. Rows in section 8 that this update did not re-check say so. Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -186,6 +186,8 @@ Owner typos are kept as he wrote them.
 
 ### 4.1 Decisions (newest first within each group)
 
+- **Skills (owner, 10-01 09:20):** "I added few skills for u. Use whats necessary only. And still follow agents.md dont use skill for trial if available skill. Use when needed" (anthropic-skills: doc-coauthoring, internal-comms, learn, theme-factory, web-artifacts-builder). Use a skill only when a task truly needs it; AGENTS.md comes first.
+
 | Topic | Decision (verbatim where it matters) | When (UTC) | Recorded in |
 |---|---|---|---|
 | **Handover in the repo** | "Just keep updating the supervisor handoff too in repo whatever task is done. And whats left or parked, and important matters. Put source code or artifacts in repo too for ur research and architectures. So if i change acct. Another claude agent can continue. I have other pro max acct. Can use. Put how u manage workers, how u do parallels etc. Almost everything done by a supervisor" (full quote also in 3.9). Applied: this file rides in every merge train (section 11); research in `docs/research/`; tooling in `docs/supervisor/{scripts,workflows}/`; message texts in `docs/supervisor/PROMPTS.md`. | 10-01 08:28 | this file; Relay LOG |
@@ -272,6 +274,8 @@ Owner typos are kept as he wrote them.
 - HT-4's `ACTIVE_HANG` Right crops stay, as enumerated owner-approved poses.
 - **D-HT7-L3-text (10-01, on #119).** The L3 gate stays at 0 px. One re-open is allowed, only when every differing pixel lies inside an SVG `<text>` box; geometry changes are never re-opened. Built (`abcc221`), but it does not clear the squat "Bony bump" label variance. Accepting the variance is refused: AGENTS.md's "never loosen a check" holds whoever asks.
 - **D-HT7-L3-text-2..6 (10-01, on #119): every lead failed.** Tried: (a) local relayout, (b) zoom after `scrollend`, (d) rAF integer-scrollTop smooth scroll, (e) instant scroll, (g1/g2) commit the Mistake→normal mode before zoom, (h) pre-warm, (i) the golden's font face. Facts: golden B 0/300 bad vs the app 42/300 in the same runs under gate load; a bad state holds per tab (a fresh `<text>` in a bad tab is bad, a fresh tab is good). Nothing was shipped. A supervisor root-cause Workflow (4 lenses + a judge; script in `docs/supervisor/workflows/`) was running at 08:05. HT-7 is the critical path.
+- **D-HT7-L3-text-7 (10-01 09:26, on #119).** The root-cause Workflow (result: `docs/supervisor/workflows/ht7-label-variance-rootcause.result.md`) found that in Chromium 141 an SVG `<text>`'s font size includes outer CSS transforms (`CalculateScreenFontSizeScalingFactor`), so a mid-zoom layout can bake a ~18.69 px font into the label. E1 (logging only, in-page, no `place()`) showed 14/60 bad at rest with CTM exactly 1.91058, a fresh 4.9 text bad and 4.89 good, and neither `geometricPrecision` nor a `scale(1)` flip heals it: a per-tab font state.
+- **D-HT7-L3-text-8 (10-01 09:34, on #119): the variance is the local browser only. HT-7 goes to READY on CI evidence.** Containers run `/opt/pw-browsers/chromium` = Playwright 1194 / **Chromium 141**; CI runs **Chrome for Testing 153.0.8010.12 (Playwright v1243)**. On CI the HT-7 block logs "96 posture close-up L3 pairs (max 0 px off) … 0 L3 text re-opens" on `0c3cfd8` and `75fd1a2`, both gate jobs. No app change; nothing loosened (CI checks L3 at 0 px on the exact head). Known local limitation with its exact signature: the squat "Bony bump" label at 25.2705 on local 141; reviewers judge HT-7's L3 from the CI log of the exact head. Risk logged: an Android WebView below ~150 could show the 0.04 px label difference (invisible).
 - **HT-8 brachialis = golden-B gap (10-01 05:02, on #111).** The brachialis helper on lat pulldown and seated cable row is named nowhere in golden B's feel map. Not an HT-8 defect. Golden B gets a feel-note for both through the golden update (plan 2.8) before M1; that removes both `GOLDEN_B_UNNAMED` entries in `tests/howto/feel.test.ts`.
 - **HT-9 Setup placement (10-01).** The section order follows golden B: Look closer chips → grip → feel → setup → risks.
 - **HT-9 review rulings (10-01 08:38, on #113, after the 08:37 FAIL).** Builder swap: AGENTS.md gives non-mechanical cards the strong model, and A1, A4 and A5 need new fidelity gate work, so the Sonnet builder is archived and an Opus builder continues on the same branch from `31bbe16`. The builder must: build A1 (an `HT-9` gate block, L3 of Setup and Risks against golden B in 5 themes, `goldenB.mjs` states), A4 (rendered copy equals the content strings, C7/C8 on the DOM), A5 (L3 after scrolling and opening everything) and the A3 duplicate red-flag fixture, each shown failing on a mutation; make the Show probe select `dialog.sheet.ht .setup .st-show`, tap each by id and assert exactly 17 (golden B's count), all 17 opening once HT-7 merges (until then posture kinds may be "pending HT-7", but the 5 hand-kind buttons must open); treat the 139 ms HT-3b A3 long task as real and render Setup and Risks out of the timed open; merge main now and after HT-7 and HT-8 (then `WANT` = `['hand','feel','setup','risks']`). The "Set it up" and "Risks and when to stop" headings are golden-B copy: they go into the golden-B update, not HT-9.
@@ -783,11 +787,12 @@ Facts below were checked live at 08:27-08:35 UTC (GitHub API, `git ls-remote`, `
 - **Merge trains** (since 04:05): every app PR merges through a train. Procedure: 6.8.
 
 ### 8.1 Main
-- **Head:** `958a3de` (train 5 #169). Verified with `git ls-remote`.
+- **Head:** `1fcd9c8` (train 6 #170). Verified with `git ls-remote`.
 - **Merged on 10-01 (UTC), newest first:**
 
 | Time | Merge | Carried |
 |---|---|---|
+| 09:40 | train 6 #170 `1fcd9c8` (`c10bb91`) | BUG-36 #163, handover #171 (playbook, PROMPTS, scripts, workflows, research) |
 | 07:56 | train 5 #169 `958a3de` (train head `7bf89dd`) | AUD-20 #162 (supervisor catch-up merge `361c7fa`, delta-reviewed) |
 | 06:42 | train 4 #167 `6a3b6b0` (`c1c2929`) | AUD-12 #156, AUD-11 #159, handover #165 |
 | 05:52 | train 3 #164 `170b828` (`371957f`) | AUD-10 #157, HT-6 #112 |
@@ -819,7 +824,7 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 | Card | PR @ head | State |
 |---|---|---|
 | HT-3c, HT-4b, HT-5, HT-6 | #143, #140, #116, #112 | merged (`42afd04`, `f1e514a`, train 1, train 3) |
-| HT-7 posture close-ups | #119 @ `75fd1a2` | **Critical path, no known fix.** The "Bony bump" label shapes wider on some opens: app 42/300 bad vs golden B 0/300 under gate load. Leads a, b, d, e, g1, g2, h and i all failed (D-HT7-L3-text-2..6). Same font file, platform font, computed style and CTM; the bad shaping is held per tab, a fresh tab is good. Builder idle since 08:02, waiting for a ruling. Supervisor root-cause workflow `wo2y8z1e0` (4 lenses + judge) started ~08:05, result pending. CI on `75fd1a2` running |
+| HT-7 posture close-ups | #119 | **Unblocked 09:34 (D-HT7-L3-text-8).** The label variance exists only on the containers' Chromium 141; CI's Chrome 153 shows 0 px with 0 re-opens. Builder told to record the local limitation, remove diagnostics, merge main and post READY quoting the CI HT-7 line; then a fresh Opus reviewer (L3 judged from CI) |
 | HT-8 feel map and shimmer | #111 @ `74a4e68` | Delta **PASS** 08:02 (0 / 0 / 0 / 1 Low). Low: the `HowToSheet-*.js` entry in `tests/howto/budgets.json` was not re-measured; fix on the next push (measured 22,178 / 7,898, ceiling 24,396 / 8,688, setBy "HT-8"); no ruling posted yet. **CI: `visual-gate-tz` RED on `74a4e68`**: HT-8 shimmer tripwire, app 124 ms vs golden B 93 ms, ratio 1.33 > 1.2 (the reviewer measured 0.41 locally). CI: run 36829910426, `visual-gate-tz` job 110263907276 failure; `source-gate` and `guard` green; `android-gate` skipped; head `74a4e6861be87ac03dc2fd24a8c414c5fa6dc2e7`. Not yet ruled. Head contains main `170b828`, not trains 4-5. Brachialis Low ruled a golden-B gap (05:02) |
 | HT-9 setup and risks | #113 @ `31bbe16` | READY 07:50, all 4 checks green. **REVIEW FAIL @ `31bbe16` 08:37** (1 Blocker: HT9-A1, A4, A5 and the A3 failure path have no evidence; 1 High: the "HT-9 Show" probe taps HT-6's buttons and lets dead setup buttons pass; 2 Medium; 3 Low). Supervisor rulings 08:38 (4.3): the Sonnet builder is archived; an Opus builder continues on the same branch from `31bbe16`. The head lacks trains 4-5 |
 | HT-10 sweeps, speed, release candidate | #166 @ `63131b0` | Building, not READY. Its sweeps found the HT-8 early "Feel it" defect (fixed in `74a4e68`) and the HT-9 setup "Show me" defect (fixed in `31bbe16`). Rulings: D-HT10-A5/A5b (own `ht10-gate` job, runner `scripts/ht10-gate.mjs`, module `tools/plates/fidelity/ht10.mjs`), D-HT10-A4 (How-to asset total = measured + 10 % in `budgets.json` `totals`: 2,552,519 B raw / 564,585 B gz for now), D-HT10-C10, D-HT10-7 (C11 allows golden A's 150 ms opacity crossfade under reduced motion only). Validates on a local merge of main + #119 + #111 + #113. CI on `63131b0` running |
@@ -916,7 +921,7 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 
 ### 8.7 Next steps, in order
 1. On wake: re-arm the PR monitor (backdate `SINCE`), read the latest comment on every open PR, check which sessions are idle, read PR heads with `git ls-remote refs/pull/N/head`.
-2. **HT-7:** when `wo2y8z1e0` returns, post ruling D-HT7-L3-text-7 on #119 and send it to the HT-7 builder by trigger (its own check-in fires 12:00). Never lower plate quality or loosen the check.
+2. **HT-7:** on its READY, start a fresh Opus reviewer: judge L3 from the CI log of the exact head (D-HT7-L3-text-8), everything else locally. Then train it, then HT-8 (PASS @ `74a4e68`, needs a main catch-up), HT-9, HT-10 in order.
 3. **HT-8 tripwire:** do not re-run `visual-gate-tz` on `74a4e68` to get green (6.6: re-runs only for a known infrastructure cause; a flake is fixed, never loosened). Send the failure to the HT-8 builder now (P4), while HT-8 waits on HT-7 anyway; never raise the 1.2 limit. Its fix moves the passed head, so the same reviewer delta-reviews it (P3) before HT-8 enters a train. The budgets Low rides that push. Before sending P4, post ruling D-HT8-tripwire on #111 (P7). It names what the builder may change (how the measurement is taken under load) and what it may not (the 1.2 limit, golden B, the plates).
 4. **HT-9:** await HT-9 FIXED from the Opus builder (rulings 08:38), then a delta review by the same reviewer, session_01PJvcYHhpMAhrZ7hjWvCK5T (P3).
 5. **HT-lane trains, in order:** HT-7 → HT-8 → HT-9 → HT-10 (one train may carry several, in order; never HT-8 before HT-7). Tell HT-10 each time an HT card merges.
@@ -955,6 +960,7 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 
 | Incident | Rule |
 |---|---|
+| HT-7 spent ~10 fix rounds on a 0.04 px SVG label variance that only the containers' Chromium 141 (Playwright 1194) shows; CI's Chrome 153 (v1243) never did. | Before chasing a local-only gate failure, read the same block's line in the CI log of the exact head and compare browser versions (`npx playwright --version`, the CI 'Downloading Chrome for Testing' line). CI on the exact head is the evidence of record. |
 | Verdicts were missed: LT-2 for 1 hour (a connector reconnect), LT-3 for 40 minutes (wakes checked only CI). | Every tick and every wake reads the latest comment on every open PR before any merge step. |
 | The REL-1 builder was blocked for 1.5 hours unseen. V1-07 and V1-08 never started. | Every wake checks each session for blocked or idle, and starts every card whose dependencies allow it. |
 | One-shot triggers did not fire during the 09-29 14:00–15:30 outage. | Check that each pending trigger ran. Fallback: a PR comment. |
