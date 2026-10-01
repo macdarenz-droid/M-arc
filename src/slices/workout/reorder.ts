@@ -3,7 +3,7 @@
  * exercise for a moment, then drag it up or down; the others slide out of the way and it drops
  * into place on release. It only moves things: no selection state, no highlight, and it never
  * starts from inputs or buttons, so logging sets is untouched. A short move before the hold
- * ends is treated as a scroll.
+ * ends is treated as a scroll. Keyboard and screen-reader users get Move up / Move down (moveBy).
  */
 import { useRef, useState } from 'preact/hooks';
 import { haptic } from '@/native/haptics';
@@ -141,8 +141,19 @@ export function useReorder(onMove: (from: number, to: number) => void) {
   /** The item currently being held: it lifts with a shadow and a click (CSS `.lifted`). */
   const isLifted = (i: number): boolean => drag != null && i === drag.from;
 
+  /**
+   * AUD-10 (UI-09): Move up / Move down for keyboard and screen-reader users. The same move a
+   * drop makes (onMove), one place at a time; nothing happens mid-drag or past either end.
+   */
+  const moveBy = (index: number, delta: -1 | 1, count: number): boolean => {
+    const to = index + delta;
+    if (live.current || to < 0 || to >= count) return false;
+    onMove(index, to);
+    return true;
+  };
+
   /** A tap that ends a drag must not also open or close the card. */
   const clickAllowed = (): boolean => Date.now() > suppressUntil.current;
 
-  return { listRef, dragging: drag != null, onPointerDown, styleFor, isLifted, clickAllowed };
+  return { listRef, dragging: drag != null, onPointerDown, moveBy, styleFor, isLifted, clickAllowed };
 }
