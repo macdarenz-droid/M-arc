@@ -8,10 +8,13 @@
  *   never stored: its counter key is an HMAC of the IP and the hour, keyed by a Worker secret, and
  *   rows from earlier hours are deleted on the next request and by the daily cron.
  * - Retention: the daily cron deletes reports older than 90 days.
+ * - Content reports (POST /reports, ESC-REPORT-W): one row per reply text and reason, with a count.
+ *   They use the same `error_rate` table under their own keys: 10 an hour per network (IPv6 /64),
+ *   checked first, then 200 an hour in total.
  * The schema is created on first use (CREATE ... IF NOT EXISTS), once per Worker instance, so the
  * owner has no migration command to run.
  */
-import type { Report } from './errorsValidate';
+import type { ContentReport, Report } from './errorsValidate';
 
 export const HOURLY_LIMIT = 30;
 export const RETENTION_MS = 90 * 86_400_000;
@@ -23,6 +26,9 @@ export const SCHEMA = [
   `CREATE INDEX IF NOT EXISTS error_reports_sig ON error_reports (sig, stored_at)`,
   `CREATE TABLE IF NOT EXISTS error_rate (k TEXT PRIMARY KEY, hour TEXT NOT NULL, n INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS error_rate_hour ON error_rate (hour)`,
+  `CREATE TABLE IF NOT EXISTS content_reports (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_at INTEGER NOT NULL, reason TEXT NOT NULL, app TEXT NOT NULL, text TEXT NOT NULL, text_sha TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 1)`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS content_reports_text ON content_reports (text_sha, reason)`,
+  `CREATE INDEX IF NOT EXISTS content_reports_stored_at ON content_reports (stored_at)`,
 ];
 
 const ready = new WeakSet<D1Database>();
@@ -36,11 +42,12 @@ export const hourKey = (now: number): string => new Date(now).toISOString().slic
 
 const hex = (buf: ArrayBuffer): string => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 
-/** HMAC-SHA-256 of the hour and the IP, keyed by the Worker secret: a counter key that cannot be turned back into the IP. */
-export async function ipKey(secret: string, hour: string, ip: string): Promise<string> {
+/** HMAC-SHA-256 of the hour and the IP, keyed by the Worker secret: a counter key that cannot be turned back into the IP.
+ * `domain` keeps each endpoint's counters apart; error-report keys use the default and stay as before. */
+export async function ipKey(secret: string, hour: string, ip: string, domain = 'errors-ip'): Promise<string> {
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  return hex(await crypto.subtle.sign('HMAC', key, enc.encode(`errors-ip|${hour}|${ip}`)));
+  return hex(await crypto.subtle.sign('HMAC', key, enc.encode(`${domain}|${hour}|${ip}`)));
 }
 
 export type RateResult = { ok: true } | { ok: false; scope: 'installId' | 'ip' };
@@ -67,10 +74,36 @@ export async function storeReports(db: D1Database, reports: Report[], now: numbe
   ).bind(now, r.installId, r.ts, r.app, r.platform, r.os ?? null, r.device ?? null, r.route, r.kind, r.name, r.message, JSON.stringify(r.frames), r.sig, r.count)));
 }
 
+export const REPORTS_PER_NETWORK = 10;
+export const REPORTS_PER_HOUR = 200;
+
+/** Counts one content report: the network (`bucket`, from handler.ts `ipBucket`) first, and the
+ * hourly total only when the network is under its limit, so one network cannot use up the total. */
+export async function countReport(db: D1Database, secret: string, bucket: string, now: number): Promise<boolean> {
+  const hour = hourKey(now);
+  const upsert = (k: string) => db.prepare('INSERT INTO error_rate (k, hour, n) VALUES (?1, ?2, 1) ON CONFLICT (k) DO UPDATE SET n = n + 1 RETURNING n').bind(k, hour);
+  const [, net] = await db.batch<{ n: number }>([
+    db.prepare('DELETE FROM error_rate WHERE hour < ?1').bind(hour),
+    upsert(`r:p:${await ipKey(secret, hour, bucket, 'reports-ip')}`),
+  ]);
+  if ((net?.results[0]?.n ?? 0) > REPORTS_PER_NETWORK) return false;
+  const all = await upsert(`r:all:${hour}`).first<number>('n');
+  return (all ?? 0) <= REPORTS_PER_HOUR;
+}
+
+/** Stores a reported reply. The same text and reason again only raise `n`; the first date and app stay. */
+export async function storeContentReport(db: D1Database, r: ContentReport, now: number): Promise<void> {
+  const sha = hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(r.text)));
+  await db.prepare(
+    'INSERT INTO content_reports (stored_at, reason, app, text, text_sha) VALUES (?1, ?2, ?3, ?4, ?5) ON CONFLICT (text_sha, reason) DO UPDATE SET n = n + 1',
+  ).bind(now, r.reason, r.app, r.text, sha).run();
+}
+
 /** Daily cron: reports past 90 days and rate counters from earlier hours go. */
 export async function purge(db: D1Database, now: number): Promise<void> {
   await db.batch([
     db.prepare('DELETE FROM error_reports WHERE stored_at < ?1').bind(now - RETENTION_MS),
+    db.prepare('DELETE FROM content_reports WHERE stored_at < ?1').bind(now - RETENTION_MS),
     db.prepare('DELETE FROM error_rate WHERE hour < ?1').bind(hourKey(now)),
   ]);
 }

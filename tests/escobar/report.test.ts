@@ -1,6 +1,5 @@
 // ESC-REPORT (owner, 2026-09-30: "Sure. Go for it. If its required by playstore"): every finished
-// coach reply can be reported. R1-R6 here; R7 (the docs' SQL) arrives with the main merge that
-// brings ESC-REPORT-W's Worker test.
+// coach reply can be reported. R1-R7.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { VNode } from 'preact';
@@ -35,18 +34,18 @@ function textOf(node: unknown): string {
 }
 const buttons = (n: unknown) => all(n, v => v.type === 'button');
 
-const proposal = (messageIndex: number): ProposalRecord => ({ id: 'p1', kind: 'set_split', input: {}, title: 'Move to 4 days ⟦f1⟧', preview: [], fingerprint: 'fp', createdAt: '2026-09-30T00:00:00.000Z', expiresOn: '2026-10-07', status: 'awaiting', messageIndex });
+const proposal = (messageIndex: number): ProposalRecord => ({ id: 'p1', kind: 'set_split', input: {}, title: 'Move to 4 days [f3]', preview: [], fingerprint: 'fp', createdAt: '2026-09-30T00:00:00.000Z', expiresOn: '2026-10-07', status: 'awaiting', messageIndex });
 
 /** One Escobar turn with all six parts: answer, preamble, a show caption, a proposal, a revised draft, chips. */
-function turnMessages(finalText = 'Final answer ⟦f1⟧.', chips = ['Chip one', 'Chip two']): StoredMessage[] {
+function turnMessages(finalText = 'Final answer ⟦f1⟧ [f7].', chips = ['Chip one', 'Chip two']): StoredMessage[] {
   return [
     { role: 'user', content: [{ type: 'text', text: 'How is my chest press?' }] },
     { role: 'assistant', content: [
-      { type: 'tool_use', id: 'tu_show', name: 'show', input: { component: 'lift_trend', caption: 'Chest press trend ⟦f1⟧', params: {} } },
+      { type: 'tool_use', id: 'tu_show', name: 'show', input: { component: 'lift_trend', caption: 'Chest press trend [f4, f5]', params: {} } },
       { type: 'tool_use', id: 'tu_bad', name: 'show', input: { component: 'lift_trend', caption: 'Hidden caption', params: {} } },
-    ], meta: { rendered: { preamble: ['Looking at your lifts ⟦f1⟧.'] } } },
+    ], meta: { rendered: { preamble: ['Looking at your lifts [f2].'] } } },
     { role: 'user', content: [{ type: 'tool_result', tool_use_id: 'tu_show', content: '{}' }, { type: 'tool_result', tool_use_id: 'tu_bad', content: 'no', is_error: true }] },
-    { role: 'assistant', content: [{ type: 'text', text: 'First draft.' }], meta: { rendered: { revised: true } } },
+    { role: 'assistant', content: [{ type: 'text', text: 'First draft [f6].' }], meta: { rendered: { revised: true } } },
     { role: 'assistant', content: [{ type: 'text', text: finalText }], meta: { rendered: { chips } } },
   ];
 }
@@ -65,11 +64,12 @@ const saved = state.value;
 afterEach(() => { state.value = saved; vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe('ESC-REPORT R1: the report text and body', () => {
-  it('gives all six parts in the stated order, with no ⟦ markers and no failed caption', () => {
+  it('gives all six parts in the stated order, as shown: no ⟦ markers or [fN] tags (BUG-31), no failed caption', () => {
     const c = convWith(turnMessages());
     const text = reportText(c, lastTurn(c));
     expect(text).toBe(EXPECTED);
     expect(text).not.toContain('⟦');
+    expect(text).not.toMatch(/\[\s*f\d/);
     expect(text).not.toContain('Hidden caption');
   });
   it('uses the rendered answer when there is one', () => {
@@ -244,7 +244,7 @@ describe('ESC-REPORT R5: the UI logic', () => {
     };
     for (const s of states) events.forEach(([name, e], i) => expect(reduce(s, e), `${s} + ${name}`).toBe(table[s][i]));
   });
-  it('ReportView draws each state with its labels, aria and the disclosure', () => {
+  it('ReportView draws each state with its labels and aria, and no explaining line (owner copy rule, 2026-10-01)', () => {
     const id = 'esc-report-q-x-1';
     const view = (s: ReportState) => ReportView({ state: s, labelId: id });
     const reportBtn = (n: unknown) => buttons(n).filter(b => b.props.class === 'esc-report-btn small');
@@ -264,11 +264,11 @@ describe('ESC-REPORT R5: the UI logic', () => {
       expect(group[0]!.props['aria-labelledby'], s).toBe(id);
       const q = all(v, x => x.props?.id === id);
       expect(q, s).toHaveLength(1);
-      expect(textOf(q[0]), s).toBe('Why report this reply?');
+      expect(textOf(q[0]), s).toBe('Reason');
       expect(reasons(v).map(textOf), s).toEqual(['Offensive', 'Harmful', 'Wrong']);
       expect(reasons(v).every(b => !!b.props.disabled === (s === 'sending')), s).toBe(true);
       expect(buttons(v).filter(b => textOf(b) === 'Cancel'), s).toHaveLength(1);
-      expect(all(v, x => x.type === 'p' && x.props.class === 'hint' && textOf(x) === 'Sends this reply, your reason and the app version to the app’s developer. Kept 90 days.'), s).toHaveLength(1);
+      expect(all(v, x => x.type === 'p' && x.props.class === 'hint' && !x.props.role), s).toHaveLength(0);
     }
     expect(textOf(all(view('sending'), x => x.props?.role === 'status'))).toBe('Sending…');
     expect(textOf(all(view('failed'), x => x.props?.role === 'alert'))).toBe('Couldn’t send. Check your connection and try again.');
@@ -324,5 +324,18 @@ describe('ESC-REPORT R6: every visible string passes the four LR-23 patterns', (
     for (const s of Object.values(REPORT_COPY)) expect(seen, s).toContain(s);
     expect([...seen].sort()).toEqual([...new Set([...Object.values(REPORT_COPY), 'Offensive', 'Harmful', 'Wrong'])].sort());
     for (const s of seen) expect({ s, contact: CONTACT_RE.test(s), source: SOURCE_RE.test(s), sourceCs: SOURCE_CS_RE.test(s), safetyLine: SAFETY_LINE_RE.test(s) }).toEqual({ s, contact: false, source: false, sourceCs: false, safetyLine: false });
+  });
+});
+
+describe('ESC-REPORT R7: the owner SQL in the docs is the SQL the Worker tests run', () => {
+  it('both blocks under "Content reports" appear byte for byte in escobar-worker/test/reports.test.ts', () => {
+    const doc = readFileSync('docs/ERROR-REPORTS.md', 'utf8');
+    const section = doc.slice(doc.indexOf('## Content reports'));
+    const blocks = [...section.matchAll(/```sql\n([\s\S]*?)\n```/g)].map(m => m[1]!);
+    expect(blocks).toHaveLength(2);
+    const worker = readFileSync('escobar-worker/test/reports.test.ts', 'utf8');
+    for (const [name, sql] of [['OWNER_SQL_LATEST', blocks[0]!], ['OWNER_SQL_BY_REASON', blocks[1]!]] as const) {
+      expect(worker, name).toContain(`const ${name} = \`${sql}\`;`);
+    }
   });
 });

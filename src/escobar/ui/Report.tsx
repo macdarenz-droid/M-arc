@@ -12,9 +12,8 @@ import type { Conversation } from '../types';
 export const REPORT_COPY = {
   button: 'Report',
   buttonLabel: 'Report this reply',
-  question: 'Why report this reply?',
+  question: 'Reason',
   cancel: 'Cancel',
-  disclosure: 'Sends this reply, your reason and the app version to the app’s developer. Kept 90 days.',
   sending: 'Sending…',
   sent: 'Reported. Thank you.',
   failed: 'Couldn’t send. Check your connection and try again.',
@@ -45,7 +44,6 @@ export function ReportView({ state, labelId, onToggle, onPick, onCancel, onKeyDo
           <p id={labelId} class="small">{REPORT_COPY.question}</p>
           {REASONS.map((r, i) => <button ref={i === 0 ? firstRef : undefined} type="button" key={r} class="chip chip-btn" disabled={busy} onClick={() => onPick?.(r)}>{REASON_LABEL[r]}</button>)}
           <button type="button" class="btn btn-quiet btn-sm" disabled={busy} onClick={onCancel}>{REPORT_COPY.cancel}</button>
-          <p class="hint">{REPORT_COPY.disclosure}</p>
           {busy && <p class="hint" role="status">{REPORT_COPY.sending}</p>}
           {state === 'failed' && <p class="hint" role="alert">{REPORT_COPY.failed}</p>}
           {state === 'limited' && <p class="hint" role="alert">{REPORT_COPY.limited}</p>}

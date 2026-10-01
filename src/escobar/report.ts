@@ -10,6 +10,7 @@ import { APP_VERSION } from '@/core/version';
 import { ESCOBAR_PROXY_URL } from './state';
 import { parseDirectives } from './verify';
 import { fnv } from './hash';
+import { stripCitationTags } from './ui/present';
 import type { Conversation, StoredMessage } from './types';
 
 export const REASONS = ['offensive', 'harmful', 'wrong'] as const;
@@ -45,14 +46,16 @@ export function reportText(conv: Conversation, indexes: number[]): string {
   const answers = assistant.filter(m => !usesOf(m.content).length);
   const final = answers[answers.length - 1];
   const r = final?.meta.rendered;
-  const clean = (s: string) => parseDirectives(s).plain.trim();
+  // As shown: no ⟦…⟧ marker and no brief-form [fN] tag (BUG-31), in every part but the chips, which show raw.
+  const clean = (s: string) => stripCitationTags(parseDirectives(s).plain).trim();
+  const chip = (s: string) => parseDirectives(s).plain.trim();
   const parts: string[] = [
     clean(r?.answer ?? (final ? parseDirectives(textOf(final.content)).text : '')),
     ...assistant.filter(m => usesOf(m.content).length).flatMap(m => (m.meta.rendered.preamble ?? []).map(clean)),
     ...assistant.flatMap(m => usesOf(m.content)).filter(u => u.name === 'show' && typeof u.input.component === 'string' && done.has(u.id) && !failed.has(u.id) && typeof u.input.caption === 'string').map(u => clean(u.input.caption as string)),
     ...(conv.proposals ?? []).filter(p => p.messageIndex != null && indexes.includes(p.messageIndex)).map(p => clean(p.title)),
     ...answers.slice(0, -1).filter(m => m.meta.rendered.revised).map(m => clean(textOf(m.content))),
-    (r?.chips ?? []).map(clean).filter(Boolean).join('\n'),
+    (r?.chips ?? []).map(chip).filter(Boolean).join('\n'),
   ];
   let text = parts.filter(Boolean).join('\n\n').replace(CONTROL_RE, '').slice(0, MAX_TEXT);
   const last = text.charCodeAt(text.length - 1);

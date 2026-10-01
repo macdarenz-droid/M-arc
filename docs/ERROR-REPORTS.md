@@ -50,11 +50,12 @@ Google Play asks that people can report offensive AI output from inside the app.
 
 - **What is sent:** exactly `{v: 1, reason, text, app}`, after the person taps Report and picks a reason. The tap is the consent; the error-report switch does not apply.
   - `reason` is `offensive`, `harmful` or `wrong`.
-  - `text` is the reply as shown: the answer, preamble lines, chart captions, proposal titles, revised drafts and the suggestion chips. Control characters (except tab and newline) are removed, and it is cut to 4,000 UTF-16 units.
+  - `text` is the reply as shown: the answer, preamble lines, chart captions, proposal titles, revised drafts and the suggestion chips, without citation markers or `[fN]` fact tags (BUG-31). Control characters (except tab and newline) are removed, and it is cut to 4,000 UTF-16 units.
   - `app` is the app version.
   - No install id, device id, conversation id or other header is sent.
 - **Where it goes:** always the built-in server, `POST https://marc-coach.mmarcdarenz.workers.dev/reports`, even when a custom coach server is set.
 - **Results the person sees:** "Reported. Thank you." (204), "Too many reports from this network. Try again in an hour." (429), or "Couldn’t send. Check your connection and try again." (anything else, offline, or no answer in 15 seconds). Picking a reason again retries. There is no queue.
+- **In the app:** Report, then the label "Reason" with Offensive, Harmful, Wrong and Cancel. No explaining line (owner copy rule, 2026-10-01; Play's prominent-disclosure rule is for collection a person would not expect, a report the person starts is expected, and the privacy policy covers it).
 - **Nothing is saved on the phone.** "Reported" is kept in memory and resets when the app restarts; the server de-duplicates.
 - **Limits:** a 24 KB body cap, 10 reports an hour per network, then 200 an hour in total.
 - **Retention:** the D1 table `content_reports` in `marc-errors`. The same text and reason become one row with a count. Rows are deleted 90 days after the first report.
