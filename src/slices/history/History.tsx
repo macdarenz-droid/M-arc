@@ -18,7 +18,7 @@ import { exerciseHistory, modeOf } from '@/brain/history';
 import { plannedThisWeek, weekSummary } from '@/brain/weekly';
 import { volumeChartWeeks } from './volumeChart';
 import { findExercise } from '@/core/exercises';
-import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel, bodyweightShare, effectiveLoadKg } from '@/brain/bodyweight';
+import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel, bodyweightShare, effectiveLoadKg, statHasReps, statLoadLabel, statReadout } from '@/brain/bodyweight';
 import { EffortBars, effortSplit, effortUsesSets } from '@/ui/EffortBars';
 import { progressHint, progressTrend, progressValue } from './progressTrend';
 import { muscleLabel } from '@/data/muscles';
@@ -264,9 +264,13 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   );
 }
 
-function setLabel(st: LoggedSet, u: 'kg' | 'lb', mode: ResistanceMode): string {
+/** UI-04: a carry/sled set shows distance, time and load together (any missing part left out), not just its time. */
+export function setLabel(st: LoggedSet, u: 'kg' | 'lb', mode: ResistanceMode): string {
+  if (mode === 'conditioning' && (st.distanceM || st.durationSec)) {
+    const parts = [st.distanceM ? `${st.distanceM} m` : null, st.durationSec ? `${st.durationSec}s` : null].filter(Boolean);
+    return st.kg ? `${parts.join(' · ')} @ ${formatLoad(st.kg, u)}` : parts.join(' · ');
+  }
   if (st.durationSec) return `${st.durationSec}s`;
-  if (st.distanceM) return `${st.distanceM} m${st.kg ? ` @ ${formatLoad(st.kg, u)}` : ''}`;
   const load = mode === 'bodyweight' || mode === 'assisted' ? modeLoadText({ kg: st.kg }, mode, u) : st.kg ? formatLoad(st.kg, u) : 'bw';
   return `${load} × ${st.reps ?? 0}${st.effort ? ` ${st.effort[0]!.toUpperCase()}` : ''}`;
 }
@@ -495,9 +499,8 @@ function Stats() {
   const sparkIdx = sparkScrub ?? hist12.length - 1;
   const sparkSession = hist12[sparkIdx];
   const sparkStats = sparkSession ? lastTopStats(sparkSession, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
-  // UI-11: a hold has no reps, so its readout is just the time, not "<time> × 0".
   const sparkReadout = sparkSession && sparkStats
-    ? (mode === 'duration' ? `${sparkStats.load} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}` : `${sparkStats.load} × ${sparkStats.reps} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}`)
+    ? `${statReadout(sparkStats, mode, sparkSession.bestDistanceM ?? 0)} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}`
     : '';
 
   return (
@@ -524,11 +527,17 @@ function Stats() {
               <div class="stack-sm" style={{ marginTop: 12 }}>
                 <ChartReadout text={sparkReadout} />
                 <Sparkline points={hist12.map(h => progressValue(h, mode))} dates={hist12.map(h => h.day)} height={96} labels scrub onScrubIndex={setSparkScrub} />
-                <div class="grid-3">
-                  <Stat value={lastTop!.load} label="last top load" />
-                  <Stat value={`${lastTop!.reps}`} label="reps at top" />
-                  <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
-                </div>
+                {(() => {
+                  const lastDistance = hist[hist.length - 1]?.bestDistanceM ?? 0;
+                  const hasReps = statHasReps(mode, lastDistance);
+                  return (
+                    <div class={hasReps ? 'grid-3' : 'grid-2'}>
+                      <Stat value={lastTop!.load} label={statLoadLabel(mode, lastDistance)} />
+                      {hasReps && <Stat value={`${lastTop!.reps}`} label="reps at top" />}
+                      <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
+                    </div>
+                  );
+                })()}
                 <EffortBars points={effortPoints} unit={effortInSets ? 'sets' : u} selected={selectedBar} onSelect={i => setSelectedBar(sel => (sel === i ? null : i))} />
                 {selectedBar != null && hist12[selectedBar] && (
                   <p class="hint">{formatDay(hist12[selectedBar]!.day)} · {hist12[selectedBar]!.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span>)}</p>

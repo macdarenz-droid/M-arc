@@ -97,13 +97,35 @@ export function modeLoadText(set: Pick<LoggedSet, 'kg' | 'entered'>, mode: Resis
  * reps must come from here too. Weighted and other modes: formatLoad(topKg) and topReps, unchanged.
  * An effective top of 0 (help >= body weight) falls back to today's text.
  */
-export function lastTopStats(h: Pick<ExerciseSessionSummary, 'day' | 'sets' | 'topKg' | 'topReps' | 'bestDurationSec'>, ex: Exercise | undefined, bw: BodyWeightAt | undefined, unit: LoadUnit): { load: string; reps: number } {
+export function lastTopStats(h: Pick<ExerciseSessionSummary, 'day' | 'sets' | 'topKg' | 'topReps' | 'bestDurationSec' | 'bestDistanceM'>, ex: Exercise | undefined, bw: BodyWeightAt | undefined, unit: LoadUnit): { load: string; reps: number } {
   const mode = ex?.mode ?? 'weighted';
   // UI-11: a hold has no load or reps; its own stat is the longest time held that session.
   if (mode === 'duration') return { load: `${h.bestDurationSec}s`, reps: 0 };
+  // UI-11: a carry/sled logged by distance has no reps either; its stat is the farthest distance.
+  if (mode === 'conditioning' && h.bestDistanceM > 0) return { load: `${h.bestDistanceM} m`, reps: 0 };
   if (mode !== 'bodyweight' && mode !== 'assisted') return { load: formatLoad(h.topKg, unit), reps: h.topReps };
   const top = topEffective(h.sets, mode, bodyweightShare(ex), bw?.(h.day) ?? null);
   return top && top.kg > 0 ? { load: approxLoadText(top.kg, unit), reps: top.reps } : { load: modeLoadText({ kg: h.topKg }, mode, unit), reps: h.topReps };
+}
+
+/** UI-11: whether the Stats "reps at top" tile (and the sparkline readout's "× reps") applies —
+ * false for a hold (no reps at all) and for a carry/sled once it has a distance logged (its reps
+ * are meaningless, e.g. 0 for a distance-only set). */
+export function statHasReps(mode: ResistanceMode, bestDistanceM: number): boolean {
+  return mode !== 'duration' && !(mode === 'conditioning' && bestDistanceM > 0);
+}
+
+/** UI-11: the sparkline's scrub readout — a hold or distance-logged carry shows only its own
+ * number ("45s", "40 m"), everything else keeps the "<load> × <reps>" form. */
+export function statReadout(stats: { load: string; reps: number }, mode: ResistanceMode, bestDistanceM: number): string {
+  return statHasReps(mode, bestDistanceM) ? `${stats.load} × ${stats.reps}` : stats.load;
+}
+
+/** UI-11: the Stats "last top load" tile's label, picked by what that mode's value actually is. */
+export function statLoadLabel(mode: ResistanceMode, bestDistanceM: number): string {
+  if (mode === 'duration') return 'longest hold';
+  if (mode === 'conditioning' && bestDistanceM > 0) return 'farthest distance';
+  return 'last top load';
 }
 
 /** The kg column header / placeholder: "+kg" for bodyweight moves, else the unit. */
