@@ -45,9 +45,6 @@ export const RED_FLAG_ELBOW = {
   claim: { tags: ['CONSENSUS'], sources: ['nhs-elbow-pain'] },
 };
 
-/** The owner's safety line, exactly as he wrote it (owner decision 2026-09-30). Shown once per sheet, small, under the
- *  sources. */
+/** The owner's safety line, exactly as he wrote it (owner decision 2026-09-30). Shown once per sheet, small, last,
+ *  right after Risks and when to stop. */
 export const DISCLAIMER = 'General guidance, not medical advice. If something hurts, stop and get it checked.';
-
-/** Owner decision 2026-09-30: no paid expert review, so the evidence labels are shown with every source. */
-export const SHOW_EVIDENCE = true;
