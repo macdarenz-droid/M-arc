@@ -941,3 +941,569 @@ export async function ht3SectionGuards(browser, port, { fixture = fixtureSection
   finally { await app.ctx.close(); await gold.ctx.close(); }
   return { problems };
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// HT-10: the whole-sheet sweeps (card HT10-A1, A2; plan 2.9, 2.10; GA 6.1 C10, C11, C12, C18; LR-23 C19). One scripted
+// full interaction of the finished sheet (every callout, Mistake and its tells, the wrist line, Trace, every Look
+// closer chip and its pages, every "Show me", "Feel it" and every feel row, then everything that expands), probed
+// after each step, in 5 themes, and the same script under reduced motion. Each check reads the sections that are
+// registered in this build; nothing in it names a section that might be missing.
+
+/**
+ * C10 exemptions (D-HT2, owner item O10, critic fix 9): control pairs whose hit boxes overlap on the approved golden
+ * plate itself. A new entry needs a golden update; the gate also proves each pair overlaps on the golden page.
+ */
+export const HT10_C10_EXEMPT = [['lateral-raise-n-shrug', 'lateral-raise-n-elbows']];
+/**
+ * C18 exemptions (D-HT10-1): the approved plate's own Trace keyframes (golden A, plan 2.7 L4) draw the line with
+ * stroke-dashoffset. Changing them would change the approved plate, so they are exempt by name and exact property
+ * set, and the gate proves the golden page declares the same keyframes.
+ */
+export const HT10_C18_EXEMPT = { 'plate-trace': ['stroke-dashoffset'] };
+export const HT10_C18_ALLOWED = ['transform', 'opacity'];
+
+/**
+ * C12 constants (plan 2.9): the longest any How-to animation may run, from its start. The shimmer's end comes from
+ * the vendored feelmap.mjs (DELAY + 2 x SWEEP + GAP), Trace's from the ht tokens (`--ht-trace` + `--dur-enter`, the arrow).
+ */
+export function ht10EndMs() {
+  const feel = readFileSync(join(ROOT, 'tools/plates/layers/engine/feelmap.mjs'), 'utf8').match(/const SWEEP = (\d+), GAP = (\d+), DELAY = (\d+), TOTAL = SWEEP \* 2 \+ GAP;/);
+  if (!feel) throw new Error('HT-10: SWEEP/GAP/DELAY not found in tools/plates/layers/engine/feelmap.mjs');
+  const shimmer = +feel[3] + 2 * +feel[1] + +feel[2];
+  const css = readFileSync(join(ROOT, 'src/slices/howto/css/plate.css'), 'utf8');
+  const sec = name => { const m = css.match(new RegExp(`${name}:\\s*([\\d.]+)(m?s)`)); if (!m) throw new Error(`HT-10: ${name} not found in src/slices/howto/css/plate.css`); return m[2] === 's' ? +m[1] * 1000 : +m[1]; };
+  // the measure and arc label fade in after the line, for --dur-enter (the longest the app's tokens define)
+  const enter = Math.max(...[...readFileSync(join(ROOT, 'src/ui/styles.css'), 'utf8').matchAll(/--dur-enter:\s*([\d.]+)ms/g)].map(m => +m[1]));
+  if (!Number.isFinite(enter)) throw new Error('HT-10: --dur-enter not found in src/ui/styles.css');
+  const trace = Math.max(sec('--ht-trace') + enter, sec('--ht-arrow-at') + sec('--ht-arrow-dur'));
+  return { shimmer, trace, max: Math.max(shimmer, trace) };
+}
+
+/**
+ * The full interaction script. Runs in the page (serialisable: it references nothing outside itself), on an open
+ * sheet whose chrome prefix is `pre`. After every step it awaits `window.__ht10Probe(label)` when the gate has exposed
+ * one (the sweep); ht3Fidelity's `mutate` runs it without (HT10-A2). Ends with everything closed: no close-up, no
+ * feel row, Mistake off, the default callout, the sheet scrolled to the top. Returns { steps, fails }.
+ */
+export async function ht10Script(pre) {
+  const q = s => document.querySelector(s), qa = s => [...document.querySelectorAll(s)];
+  const dlg = q('dialog.sheet.ht'), panel = dlg.querySelector('.sheet-panel');
+  const fails = [];
+  let steps = 0;
+  const P = async label => { steps++; if (window.__ht10Probe) await window.__ht10Probe(label); };
+  const frame = () => new Promise(r => requestAnimationFrame(r));
+  const frames = async () => { await frame(); await frame(); };
+  const until = async (f, ms = 4000) => { const t0 = performance.now(); while (!f()) { if (performance.now() - t0 > ms) return false; await frame(); } return true; };
+  // the shimmer (5.5 s) is C12's to wait for; every other animation is waited out before a probe
+  const busy = () => dlg.getAnimations({ subtree: true }).some(a => a.playState === 'running' && !a.effect?.target?.closest?.('[data-feel-map]'));
+  const settle = async () => { await frames(); await until(() => !busy()); await frames(); };
+  const shown = el => !!el && el.isConnected && el.checkVisibility({ visibilityProperty: true }) && !el.closest('[inert]');
+  const tap = async (el, label) => { if (!shown(el)) { fails.push(`${label}: not on screen to tap`); return false; } el.click(); await settle(); await P(label); return true; };
+  const openZoom = () => dlg.querySelector('.zx:not([hidden])');
+  const closeZoom = async label => {
+    const p = openZoom();
+    if (!p) return;
+    p.querySelector('.zx-close').click();
+    if (!await until(() => p.hidden)) fails.push(`${label}: the close-up did not close`);
+    await settle(); await P(label);
+  };
+  const keys = m => [...(q(`dialog.sheet.ht .ht-golden figure[data-mode="${m}"]`)?.querySelectorAll('.plate-callout') ?? [])].map(b => b.dataset.key);
+  const cycle = ks => (ks.length ? [...ks.slice(1), ks[0]] : []);
+
+  // 1. every callout, ending on the default
+  const nk = keys('normal');
+  if (!nk.length) fails.push('no callouts on the plate');
+  for (const k of cycle(nk)) await tap(q(`#${pre}-n-${k}`), `callout ${k}`);
+  // 2. Mistake, every tell, the wrist line (push exercises), Mistake off
+  const mis = q(`#${pre}-mistake`);
+  await tap(mis, 'Mistake on');
+  for (const k of cycle(keys('mistake'))) await tap(q(`#${pre}-m-${k}`), `tell ${k}`);
+  const also = q(`#${pre}-also-hand`);
+  if (shown(also)) { await tap(also, 'wrist line'); await closeZoom('wrist line closed'); }
+  if (mis.getAttribute('aria-pressed') === 'true') await tap(mis, 'Mistake off');
+  // 3. Trace, probed while it runs and after its natural end
+  const trace = q(`#${pre}-trace`);
+  trace.click(); await frames(); await P('Trace running');
+  if (!await until(() => trace.getAttribute('aria-pressed') !== 'true' && !dlg.querySelector('.tracing'), 6000)) fails.push('Trace did not end within 6 s');
+  await settle(); await P('Trace ended');
+  // 4. every Look closer chip: its close-up, each of its pages, closed again
+  for (const chip of qa('dialog.sheet.ht .zx-chip[data-zoom]')) {
+    const k = chip.dataset.zoom;
+    chip.click();
+    const p = await until(() => shown(q(`#${pre}-zoom-${k}`))) ? q(`#${pre}-zoom-${k}`) : null;
+    if (!p) { fails.push(`chip ${k}: its close-up did not open`); continue; }
+    await settle(); await P(`close-up ${k}`);
+    const pages = p.querySelectorAll('.zx-page').length;
+    for (let i = 1; i < pages; i++) {
+      const pb = [...p.querySelectorAll(`.pager-btn[data-page="${i}"]`)].find(shown);
+      if (pb) await tap(pb, `close-up ${k} page ${i}`); else fails.push(`close-up ${k}: no pager button to page ${i}`);
+    }
+    await closeZoom(`close-up ${k} closed`);
+  }
+  // 5. every "Show me" (setup steps, handling mistakes)
+  for (const b of qa('dialog.sheet.ht .st-show')) {
+    if (!shown(b)) continue;
+    b.click();
+    if (!await until(() => openZoom())) { fails.push(`"${b.textContent.trim()}" (${b.id}): no close-up opened`); continue; }
+    await settle(); await P(`show me ${b.id}`);
+    await closeZoom(`show me ${b.id} closed`);
+  }
+  // 6. "Feel it", then every feel row opened and closed
+  const feelChip = q('dialog.sheet.ht .zx-chip[data-feel]');
+  if (feelChip) {
+    feelChip.click();
+    if (!await until(() => q('dialog.sheet.ht [data-feel-map]'))) {
+      fails.push('"Feel it": the feel map did not mount within 4 s of the tap');
+      q('dialog.sheet.ht [data-section="feel"]')?.scrollIntoView();   // so the rest of the sweep still reaches the rows
+      await until(() => q('dialog.sheet.ht [data-feel-map]'));
+    }
+    await settle(); await P('Feel it');
+  }
+  const more = q('dialog.sheet.ht .fr-more');
+  if (more && more.getAttribute('aria-expanded') !== 'true') await tap(more, 'feel rows: show more');
+  for (const b of qa('dialog.sheet.ht .fr-btn')) {
+    if (!shown(b)) continue;
+    const row = b.closest('.fr')?.dataset.row;
+    await tap(b, `feel row ${row}`);
+    if (b.getAttribute('aria-expanded') === 'true') { b.click(); await settle(); }
+  }
+  // 7. everything else that expands ("All steps", details), all at once, then collapsed again
+  const expanded = [];
+  for (let i = 0; i < 4; i++) {
+    const bs = qa('dialog.sheet.ht [aria-expanded="false"]').filter(b => shown(b) && !b.classList.contains('fr-btn'));
+    if (!bs.length) break;
+    for (const b of bs) { b.click(); expanded.push(b); }
+    await settle();
+  }
+  for (const d of qa('dialog.sheet.ht details:not([open])')) { d.open = true; expanded.push(d); }
+  await settle(); await P('everything expanded');
+  for (const e of expanded.reverse()) { if (e.tagName === 'DETAILS') e.open = false; else if (e.getAttribute('aria-expanded') === 'true') e.click(); }
+  // 8. close everything
+  await closeZoom('closed');
+  if (more && more.getAttribute('aria-expanded') === 'true') { more.click(); }
+  if (mis.getAttribute('aria-pressed') === 'true') { mis.click(); }
+  const def = q(`#${pre}-n-${nk[0]}`);
+  if (def && def.getAttribute('aria-pressed') !== 'true') def.click();
+  panel.scrollTop = 0;
+  await settle(); await P('everything closed');
+  return { steps, fails };
+}
+
+/**
+ * Starts the animation recorder on the open sheet (runs in the page): every animation seen on any frame whose target
+ * is inside the sheet, with its name, animated properties, iterations, end time and start. Read it with
+ * ht10Recorded().
+ */
+export function ht10Record() {
+  const rec = window.__ht10Rec = { list: [], seen: new WeakSet(), on: true };
+  const label = t => (t.id ? `#${t.id}` : `${t.tagName.toLowerCase()}${t.classList?.length ? `.${[...t.classList].join('.')}` : ''}`);
+  const camel = p => p.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`);
+  const tick = () => {
+    if (!rec.on) return;
+    for (const a of document.getAnimations()) {
+      const t = a.effect?.target;
+      if (rec.seen.has(a) || !t?.closest?.('dialog.sheet.ht')) continue;
+      if (a.playState === 'finished' || a.playState === 'idle') continue;
+      rec.seen.add(a);
+      const props = [...new Set(a.effect.getKeyframes().flatMap(k => Object.keys(k)))].filter(p => !['offset', 'computedOffset', 'easing', 'composite'].includes(p)).map(camel).sort();
+      const tm = a.effect.getComputedTiming();
+      rec.list.push({ name: a.animationName ?? (a.transitionProperty ? `transition ${a.transitionProperty}` : 'script'), target: label(t), feel: !!t.closest('[data-feel-map]'), props, iterations: a.effect.getTiming().iterations, endTime: tm.endTime, startedAt: performance.now() - (a.currentTime ?? 0) });
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+export const ht10Recorded = page => page.evaluate(() => { const r = window.__ht10Rec; if (r) r.on = false; return r ? r.list.map(x => ({ ...x, endTime: Number.isFinite(x.endTime) ? x.endTime : 'Infinity', iterations: Number.isFinite(x.iterations) ? x.iterations : 'Infinity' })) : []; });
+
+/**
+ * The DOM probe after each step (runs in the page). C10: every visible control in the sheet >= 44 x 44 and no two
+ * hit boxes overlapping, except the exempt pairs (measured at scrollTop 0, so the sticky header sits at its own place;
+ * the scroll is restored in the same task). C19 (LR-23, the HT-9 C19 sweep's checks): no link, target, source class,
+ * evidence label or contact/source wording, and (once the Risks section is registered) exactly one disclaimer after the
+ * last red-flag block. Reduced motion (C11): nothing running in the sheet and every feel band display:none.
+ */
+export function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks, reduced]) {
+  const dlg = document.querySelector('dialog.sheet.ht');
+  const panel = dlg.querySelector('.sheet-panel');
+  const problems = [], seenExempt = [];
+  const label = e => e.id ? `#${e.id}` : `${e.tagName.toLowerCase()}.${[...e.classList].join('.')} "${(e.getAttribute('aria-label') || e.textContent || '').trim().slice(0, 30)}"`;
+  const st = panel.scrollTop;
+  panel.scrollTop = 0;
+  const ctl = [...dlg.querySelectorAll('button, [role="button"], a[href], summary, input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+    .filter(e => e !== dlg && e !== panel && e.checkVisibility({ visibilityProperty: true, opacityProperty: true }) && !e.closest('[inert]'))
+    .map(e => ({ e, r: e.getBoundingClientRect() })).filter(c => c.r.width > 0 && c.r.height > 0);
+  panel.scrollTop = st;
+  for (const { e, r } of ctl) if (r.width < 44 - 0.01 || r.height < 44 - 0.01) problems.push(`C10: ${label(e)} is ${r.width.toFixed(1)} x ${r.height.toFixed(1)} (< 44 x 44)`);
+  const isExempt = (a, b) => exempt.some(([x, y]) => (a.id === x && b.id === y) || (a.id === y && b.id === x));
+  for (let i = 0; i < ctl.length; i++) for (let j = i + 1; j < ctl.length; j++) {
+    const a = ctl[i], b = ctl[j];
+    if (a.e.contains(b.e) || b.e.contains(a.e)) continue;
+    const w = Math.min(a.r.right, b.r.right) - Math.max(a.r.left, b.r.left), h = Math.min(a.r.bottom, b.r.bottom) - Math.max(a.r.top, b.r.top);
+    if (w <= 0.01 || h <= 0.01) continue;
+    if (isExempt(a.e, b.e)) { seenExempt.push(`${a.e.id}|${b.e.id}`); continue; }
+    problems.push(`C10: ${label(a.e)} and ${label(b.e)} overlap by ${w.toFixed(1)} x ${h.toFixed(1)}`);
+  }
+  // C19
+  const res = pats.map(p => new RegExp(p.source, p.flags));
+  const n = s => dlg.querySelectorAll(s).length;
+  if (n('a')) problems.push(`C19: ${n('a')} <a> element(s)`);
+  if (n('[target]')) problems.push(`C19: ${n('[target]')} [target] element(s)`);
+  if (n('.srcs,.src-cite,.src-ev,.src-key,.ev')) problems.push(`C19: ${n('.srcs,.src-cite,.src-ev,.src-key,.ev')} source/evidence element(s)`);
+  for (const el of dlg.querySelectorAll('*')) {
+    const own = [...el.childNodes].filter(c => c.nodeType === 3).map(c => c.textContent.trim()).join(' ').trim();
+    if (own && words.includes(own)) problems.push(`C19: element with own text "${own}" (an evidence label)`);
+  }
+  const strings = [dlg.innerText];
+  for (const el of dlg.querySelectorAll('[aria-label],[title],[alt]')) for (const a of ['aria-label', 'title', 'alt']) { const v = el.getAttribute(a); if (v) strings.push(v); }
+  for (const s of strings) for (const re of res) { const m = s.match(re); if (m) problems.push(`C19: "${m[0]}" matches ${re}`); }
+  const disc = [...dlg.querySelectorAll('.ht-disclaimer')];
+  if (expectRisks) {
+    if (disc.length !== 1) problems.push(`C19: ${disc.length} .ht-disclaimer element(s), expected 1`);
+    else {
+      if (disc[0].textContent !== disclaimer) problems.push(`C19: disclaimer text "${disc[0].textContent}" is not the owner's`);
+      const rf = [...dlg.querySelectorAll('.redflag')];
+      if (!rf.length) problems.push('C19: no .redflag block before the disclaimer');
+      else if (!(rf[rf.length - 1].compareDocumentPosition(disc[0]) & Node.DOCUMENT_POSITION_FOLLOWING)) problems.push('C19: the disclaimer is not after the last .redflag');
+    }
+  }
+  // C11
+  if (reduced) {
+    const running = dlg.getAnimations({ subtree: true }).filter(a => a.playState === 'running');
+    if (running.length) problems.push(`C11: ${running.length} animation(s) running under reduced motion: ${running.map(a => a.animationName ?? a.transitionProperty ?? 'script').join(', ')}`);
+    for (const b of dlg.querySelectorAll('.feel-band')) {
+      if (getComputedStyle(b).display !== 'none') problems.push('C11: a .feel-band is displayed under reduced motion');
+      if (b.getAnimations().length) problems.push('C11: a .feel-band has an animation under reduced motion');
+    }
+  }
+  return { problems, controls: ctl.length, seenExempt };
+}
+
+/** TalkBack (HT10-A1): every button, region and image in the sheet's accessibility tree has a name (CDP queryAXTree). */
+export async function ht10AxNames(cdp) {
+  const { root } = await cdp.send('DOM.getDocument', { depth: 0 });
+  const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector: 'dialog.sheet.ht' });
+  if (!nodeId) return { problems: ['TalkBack: no open sheet'], named: 0 };
+  const problems = [];
+  let named = 0;
+  for (const role of ['button', 'region', 'image', 'img']) {
+    const { nodes } = await cdp.send('Accessibility.queryAXTree', { nodeId, role });
+    for (const a of nodes) {
+      if (a.ignored) continue;
+      if ((a.name?.value ?? '').trim()) { named++; continue; }
+      let what = `backend node ${a.backendDOMNodeId}`;
+      try {
+        const { node } = await cdp.send('DOM.describeNode', { backendNodeId: a.backendDOMNodeId });
+        const at = Object.fromEntries((node.attributes ?? []).reduce((m, v, i, arr) => (i % 2 ? m : [...m, [v, arr[i + 1]]]), []));
+        what = `${node.localName}${at.id ? `#${at.id}` : ''}${at.class ? `.${at.class.split(/\s+/).join('.')}` : ''}`;
+      } catch { /* keep the backend id */ }
+      problems.push(`TalkBack: ${role} ${what} has no accessible name`);
+    }
+  }
+  return { problems, named };
+}
+
+/** C19 inputs, read as gate block HT-9 C19 reads them: the shared patterns and the owner's disclaimer. */
+export function ht10C19Inputs() {
+  const nc = readFileSync(join(ROOT, 'tests/guards/no-contacts.ts'), 'utf8');
+  const pats = ['CONTACT_RE', 'SOURCE_RE', 'SOURCE_CS_RE'].map(k => {
+    const m = nc.match(new RegExp(`^export const ${k} = \\/(.*)\\/([a-z]*);$`, 'm'));
+    if (!m) throw new Error(`HT-10: ${k} not found in tests/guards/no-contacts.ts`);
+    return { source: m[1], flags: m[2] };
+  });
+  const d = readFileSync(join(ROOT, 'src/howto/archetypes.ts'), 'utf8').match(/export const DISCLAIMER: string = "((?:[^"\\]|\\.)*)";/);
+  if (!d) throw new Error('HT-10: no DISCLAIMER in src/howto/archetypes.ts');
+  return { pats, words: ['Measured', 'Mechanics', 'Coaching consensus', 'Weak for this use'], disclaimer: JSON.parse(`"${d[1]}"`) };
+}
+
+/**
+ * One theme's sweep (HT10-A1): for each How-to in `ids` (chrome prefixes), open the sheet from Train, run ht10Script
+ * with the DOM probe and the TalkBack probe after every step, then C12 (nothing running at each animation's computed
+ * end + 1 s, no endless animation), C18 (every animation recorded touches only transform and opacity, the exempt
+ * Trace keyframes aside) and the return to S0. `reduced`: the same under reduced motion, where C11 also requires that
+ * no animation runs at all. `inject(pre)` (failure fixtures only) runs in the page after the sheet opens.
+ * Returns { problems, stats }.
+ */
+export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p => p[0]), reduced = false, expectRisks = true, inject = null } = {}) {
+  const problems = [], stats = { sheets: 0, steps: 0, probes: 0, controls: 0, named: 0, anims: 0, paused: 0, exempt: new Set(), ms: 0 };
+  const t0 = Date.now();
+  const tag = `${theme}${reduced ? ' (reduced motion)' : ''}`;
+  const END = ht10EndMs();
+  const c19 = ht10C19Inputs();
+  const { ctx, page } = await openAppTrain(browser, port, theme, { reducedMotion: reduced ? 'reduce' : 'no-preference', onError: m => problems.push(`${tag}: page error: ${m}`) });
+  try {
+    const cdp = await ctx.newCDPSession(page);
+    await cdp.send('DOM.enable');
+    await cdp.send('Accessibility.enable');
+    let cur = '';
+    await page.exposeFunction('__ht10Probe', async label => {
+      stats.probes++;
+      const d = await page.evaluate(ht10DomProbe, [HT10_C10_EXEMPT, c19.pats, c19.words, c19.disclaimer, expectRisks, reduced]);
+      const ax = await ht10AxNames(cdp);
+      stats.controls += d.controls; stats.named += ax.named;
+      d.seenExempt.forEach(x => stats.exempt.add(x));
+      if (!d.controls) problems.push(`${tag} ${cur} [${label}]: the probe saw no control (nothing to measure)`);
+      for (const m of [...d.problems, ...ax.problems]) problems.push(`${tag} ${cur} [${label}]: ${m}`);
+    });
+    for (const id of ids) {
+      cur = id;
+      const index = HT_PLATES.findIndex(p => p[0] === id);
+      await openHowTo(page, index);
+      stats.sheets++;
+      if (inject) await page.evaluate(inject, id);
+      const s0 = await page.evaluate(() => document.querySelector('dialog.sheet.ht .ht-golden').htPlateApi.snapshot());
+      await page.evaluate(ht10Record);
+      const r = await page.evaluate(ht10Script, id);
+      stats.steps += r.steps;
+      for (const f of r.fails) problems.push(`${tag} ${id}: ${f}`);
+      // C12: wait until every recorded animation's computed end (its start + the constant for its kind) + 1 s
+      for (let i = 0; i < 3; i++) {
+        const wait = await page.evaluate(([shimmer, trace]) => Math.max(0, ...window.__ht10Rec.list.map(x => x.startedAt + (x.feel ? shimmer : trace) + 1000)) - performance.now(), [END.shimmer, END.trace]);
+        if (wait <= 0) break;
+        await page.waitForTimeout(Math.ceil(wait));
+      }
+      const left = await page.evaluate(() => document.querySelector('dialog.sheet.ht').getAnimations({ subtree: true }).map(a => ({ name: a.animationName ?? a.transitionProperty ?? 'script', state: a.playState })));
+      for (const a of left.filter(x => x.state === 'running')) problems.push(`${tag} ${id}: C12: "${a.name}" still running at its computed end + 1 s`);
+      stats.paused += left.filter(x => x.state === 'paused').length;
+      const rec = await ht10Recorded(page);
+      stats.anims += rec.length;
+      for (const m of ht10AnimProblems(rec, END, reduced)) problems.push(`${tag} ${id}: ${m}`);
+      // HT10-A2 (first half): closing everything returns the plate to S0
+      const end = await page.evaluate(() => {
+        const d = document.querySelector('dialog.sheet.ht'), g = d.querySelector('.ht-golden');
+        return { snap: g.htPlateApi.snapshot(), zoom: !!d.querySelector('.zx:not([hidden])'), rows: d.querySelectorAll('.fr-btn[aria-expanded="true"]').length, tracing: !!d.querySelector('.tracing'), fit: !g.querySelector('.ht-plate-fit').hidden };
+      });
+      if (JSON.stringify(end.snap) !== JSON.stringify(s0) || end.zoom || end.rows || end.tracing || !end.fit) problems.push(`${tag} ${id}: A2: after closing everything the plate is not at S0: ${JSON.stringify(end)} vs ${JSON.stringify(s0)}`);
+      await closeHowTo(page);
+    }
+  } finally {
+    await ctx.close();
+  }
+  stats.ms = Date.now() - t0;
+  return { problems, stats };
+}
+
+/** Every How-to chunk kind the sheet loads (plan 2.9: none may be requested before Train is idle). */
+export const HT10_CHUNK_RE = /\/assets\/(HowToSheet-|ht-|hand-|feel-|posture-|zoom-)/;
+
+/**
+ * HT10-A3 (plan 2.9, everything mounted, 4x CPU throttle): `measure(browser, port)` returns the raw numbers, the block
+ * applies the ceilings. With everything mounted = the squat's sheet after one full ht10Script run, so every chunk of
+ * every kind (sheet, plate, hand, posture, feel, zoom CSS) is loaded and its code has run once.
+ * - early: How-to requests from launch until Train is idle (must be none);
+ * - tap: tap-to-plate, 5 samples and their median (Date.now() around the tap and the visible normal figure, as HT-3b);
+ * - longTasks: every long task while those 5 opens ran;
+ * - control: the same observer around one open with a synthetic 150 ms task, which must be caught;
+ * - s0: elements in the open sheet at S0, after everything was mounted;
+ * - shimmer: the app's shimmer cost against the golden-B page's (perf.mjs shimmerCost), when the feel map is registered.
+ */
+export async function ht10Speed(browser, port, { goldenB = null } = {}) {
+  const P = await import('./perf.mjs');
+  const problems = [], out = {};
+  const pre = HT_PLATES[1][0], index = 1;
+  // requests before idle
+  {
+    const ctx = await browser.newContext({ viewport: DEVICE.viewport, deviceScaleFactor: DEVICE.deviceScaleFactor });
+    const page = await ctx.newPage();
+    const early = [];
+    page.on('request', r => { if (HT10_CHUNK_RE.test(r.url())) early.push(r.url()); });
+    await page.addInitScript(htSeed, ['silent-black', HT_ORDER, HT_CUSTOM]);
+    const { ctx: c2, page: p2 } = { ctx, page };
+    await p2.goto(`http://localhost:${port}/`);
+    await p2.waitForSelector('.nav');
+    await p2.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
+    await p2.locator('nav.nav button', { hasText: 'Train' }).click();
+    await p2.getByRole('button', { name: /^Start / }).first().click();
+    for (let i = 0; i < 2; i++) {
+      await p2.waitForTimeout(300);
+      const skip = p2.getByRole('button', { name: 'Skip', exact: true });
+      if (await skip.isVisible().catch(() => false)) { await skip.click(); continue; }
+      const start = p2.getByRole('button', { name: /^Start / }).first();
+      if (await start.isVisible().catch(() => false)) await start.click();
+    }
+    await p2.locator('.card.exercise').first().waitFor({ state: 'visible', timeout: 5000 });
+    await settleApp(p2);
+    out.early = early;
+    await c2.close();
+  }
+  const { ctx, page } = await openAppTrain(browser, port, 'silent-black', { onError: m => problems.push(`speed: page error: ${m}`) });
+  try {
+    await openHowTo(page, index);
+    const r = await page.evaluate(ht10Script, pre);
+    for (const f of r.fails) problems.push(`speed: mounting everything: ${f}`);
+    await closeHowTo(page);
+    const open = async () => {
+      const t = Date.now();
+      await page.locator('.card.exercise').nth(index).locator('button.ht-entry').click();
+      await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 8000 });
+      return Date.now() - t;
+    };
+    const { reset } = await P.throttleCpu(page, 4);
+    try {
+      const stop = await P.observeLongTasks(page);
+      out.tap = await P.medianOf(async i => { const dt = await open(); if (i === 0) out.s0 = await page.evaluate(() => document.querySelectorAll('dialog.sheet.ht *').length); await closeHowTo(page); return dt; }, 5);
+      out.longTasks = (await stop()).map(d => Math.round(d));
+      // failure path: a synthetic 150 ms task in an open must be caught by the same observer
+      const stopC = await P.observeLongTasks(page);
+      await P.scheduleBusyTask(page, 150, 0);
+      await open();
+      await closeHowTo(page);
+      out.control = (await stopC()).map(d => Math.round(d));
+    } finally { await reset(); }
+    // the shimmer, everything mounted, against the golden-B page measured here with the same code
+    const END = ht10EndMs();
+    await openHowTo(page, index);
+    const hasFeel = await page.evaluate(() => !!document.querySelector('dialog.sheet.ht [data-section="feel"]'));
+    if (hasFeel && goldenB) {
+      const map = 'dialog.sheet.ht [data-feel-map]';
+      await page.evaluate(() => document.querySelector('dialog.sheet.ht [data-section="feel"]').scrollIntoView({ block: 'center' }));
+      await page.waitForFunction(s => !!document.querySelector(s), map, { timeout: 8000 });
+      await page.evaluate(s => document.querySelector(s).scrollIntoView({ block: 'center' }), map);
+      await page.waitForTimeout(END.shimmer + 800);   // the first-view autoplay has run and ended
+      const win = END.shimmer - Number(/DELAY = (\d+)/.exec(readFileSync(join(ROOT, 'tools/plates/layers/engine/feelmap.mjs'), 'utf8'))[1]) + 1000;
+      const app = await P.shimmerCost(page, map, win);
+      const g = await openGolden(browser, 'silent-black', { html: goldenB, onError: m => problems.push(`speed: golden B page error: ${m}`) });
+      try {
+        const gm = `#card-${pre} [data-feel-map]`;
+        await g.page.evaluate(s => document.querySelector(s).scrollIntoView({ block: 'center' }), gm);
+        await g.page.waitForTimeout(END.shimmer + 800);
+        out.shimmer = { app, golden: await P.shimmerCost(g.page, gm, win), window: win };
+      } finally { await g.ctx.close(); }
+    }
+    await closeHowTo(page);
+  } finally {
+    await ctx.close();
+  }
+  return { problems, ...out };
+}
+
+/**
+ * HT10-A4 offline after an update (build B, plan 2.10), for each chunk kind: base (ht-<slug>), hand (hand-<id>),
+ * zoom (posture-<id> and its zoom-<id>.css) and feel (feel-<id>). One tab of build A opens the squat's sheet (its base
+ * chunk only); then build B's service worker activates with a new cache and those chunks gone from the server and the
+ * precache list; the same tab must still open the squat's hand and posture close-ups and its feel map, and another
+ * exercise's sheet (a base chunk it never loaded). Files are restored afterwards. Returns { problems, kinds }.
+ */
+export async function ht10BuildB(browser, port) {
+  const { readdirSync, writeFileSync, unlinkSync } = await import('node:fs');
+  const assets = join(ROOT, 'www/assets'), swPath = join(ROOT, 'www/sw.js');
+  const files = readdirSync(assets);
+  const [sq, other] = [HT_PLATES[1][0], HT_PLATES[2]];
+  const rows = JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'));
+  const pick = re => files.filter(f => re.test(f));
+  const gone = {
+    base: pick(new RegExp(`^ht-${rows[other[1]].slug}-[\\w-]{8}\\.js$`)),
+    hand: pick(new RegExp(`^hand-${sq}-[\\w-]{8}\\.js$`)),
+    zoom: [...pick(new RegExp(`^posture-${sq}-[\\w-]{8}\\.js$`)), ...pick(new RegExp(`^zoom-${sq}-[\\w-]{8}\\.css$`))],
+    feel: pick(new RegExp(`^feel-${sq}-[\\w-]{8}\\.js$`)),
+  };
+  const problems = [], kinds = Object.entries(gone).filter(([, f]) => f.length).map(([k]) => k);
+  if (!gone.base.length || !gone.hand.length) problems.push(`build B: expected a base and a hand chunk to remove, found ${JSON.stringify(gone)}`);
+  const ctx = await browser.newContext({ viewport: DEVICE.viewport, deviceScaleFactor: DEVICE.deviceScaleFactor, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => problems.push(`build B: page error: ${e.message}`));
+  await page.addInitScript(htSeed, ['silent-black', HT_ORDER, HT_CUSTOM]);
+  const saved = new Map();
+  const swA = readFileSync(swPath, 'utf8');
+  try {
+    await page.goto(`http://localhost:${port}/`);
+    await page.waitForSelector('.nav');
+    if (!await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 15000 }).then(() => true).catch(() => false)) problems.push('build B: the service worker never took control');
+    await page.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
+    await page.locator('nav.nav button', { hasText: 'Train' }).click();
+    await page.getByRole('button', { name: /^Start / }).first().click();
+    for (let i = 0; i < 2; i++) {
+      await page.waitForTimeout(300);
+      const skip = page.getByRole('button', { name: 'Skip', exact: true });
+      if (await skip.isVisible().catch(() => false)) { await skip.click(); continue; }
+      const start = page.getByRole('button', { name: /^Start / }).first();
+      if (await start.isVisible().catch(() => false)) await start.click();
+    }
+    await openHowTo(page, 1);
+    let sw = swA.replace(/marc-\d{14}/, 'marc-77777777777777');
+    for (const f of Object.values(gone).flat()) {
+      sw = sw.replace(`"./assets/${f}",`, '').replace(`,"./assets/${f}"`, '');
+      saved.set(f, readFileSync(join(assets, f)));
+      unlinkSync(join(assets, f));
+    }
+    writeFileSync(swPath, sw);
+    await page.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); await r?.update(); });
+    if (!await page.waitForFunction(() => caches.keys().then(k => k.length === 1 && k[0] === 'marc-77777777777777'), null, { timeout: 15000 }).then(() => true).catch(() => false)) problems.push("build B: build B's service worker did not activate");
+    const opens = async (chip, panel, kind) => {
+      const ok = await page.evaluate(async ([chip, panel]) => {
+        const c = document.querySelector(chip);
+        if (!c) return `no ${chip}`;
+        c.click();
+        const t0 = performance.now();
+        while (performance.now() - t0 < 8000) { const p = document.querySelector(panel); if (p && !p.hidden && p.getBoundingClientRect().height > 0) return true; await new Promise(r => requestAnimationFrame(r)); }
+        return `${panel} did not show`;
+      }, [chip, panel]);
+      if (ok !== true) problems.push(`build B (${kind}): ${ok}`);
+      await page.evaluate(() => document.querySelector('dialog.sheet.ht .zx:not([hidden]) .zx-close')?.click());
+      await page.waitForTimeout(200);
+    };
+    if (gone.hand.length) await opens(`#${sq}-chip-hand`, `#${sq}-zoom-hand`, 'hand');
+    if (gone.zoom.length) {
+      const key = await page.evaluate(sq => [...document.querySelectorAll('dialog.sheet.ht .zx-chip[data-zoom]')].map(b => b.dataset.zoom).find(k => k !== 'hand'), sq);
+      if (!key) problems.push('build B (zoom): no posture chip on the squat');
+      else await opens(`#${sq}-chip-${key}`, `#${sq}-zoom-${key}`, 'zoom');
+    }
+    if (gone.feel.length) {
+      await page.evaluate(() => document.querySelector('dialog.sheet.ht [data-section="feel"]').scrollIntoView());
+      if (!await page.waitForFunction(() => !!document.querySelector('dialog.sheet.ht [data-feel-map]'), null, { timeout: 8000 }).then(() => true).catch(() => false)) problems.push('build B (feel): the feel map did not load');
+    }
+    await closeHowTo(page);
+    await page.locator('.card.exercise').nth(2).locator('.ex-head').click();
+    await page.locator('.card.exercise').nth(2).locator('button.ht-entry').click();
+    if (!await page.locator('dialog.sheet.ht .ht-golden figure[data-mode="normal"]').waitFor({ state: 'visible', timeout: 10000 }).then(() => true).catch(() => false)) problems.push(`build B (base): ${other[0]}'s sheet did not open`);
+  } catch (e) {
+    problems.push(`build B: crashed: ${e.message.split('\n')[0]}`);
+  } finally {
+    writeFileSync(swPath, swA);
+    for (const [f, b] of saved) writeFileSync(join(assets, f), b);
+    await ctx.close();
+  }
+  return { problems, kinds };
+}
+
+/** C11 (reduced), C12 and C18 over the recorded animations (ht10Recorded), with `END` from ht10EndMs(). */
+export function ht10AnimProblems(rec, END, reduced = false) {
+  const out = [];
+  if (reduced && rec.length) out.push(`C11: ${rec.length} animation(s) ran under reduced motion: ${[...new Set(rec.map(x => `${x.name} on ${x.target}`))].slice(0, 6).join('; ')}`);
+  for (const x of rec) {
+    const limit = x.feel ? END.shimmer : END.trace;
+    if (x.iterations === 'Infinity' || x.endTime === 'Infinity') out.push(`C12: "${x.name}" on ${x.target} never ends`);
+    else if (x.endTime > limit + 1) out.push(`C12: "${x.name}" on ${x.target} ends at ${Math.round(x.endTime)} ms, after its constant ${limit} ms`);
+    const ex = HT10_C18_EXEMPT[x.name];
+    const ok = ex ? JSON.stringify(x.props) === JSON.stringify(ex) : x.props.length > 0 && x.props.every(p => HT10_C18_ALLOWED.includes(p));
+    if (!ok) out.push(`C18: "${x.name}" on ${x.target} animates ${x.props.join(', ') || 'nothing it declares'}`);
+  }
+  return out;
+}
+
+/**
+ * C18 and C12 on the shipped CSS text (every @keyframes and transition in `css`): each keyframes block animates only
+ * transform and opacity (the exempt Trace keyframes must have exactly their declared properties), each transition names
+ * only transform, opacity or none, and nothing says `infinite`. `where` names the file in messages.
+ */
+export function ht10CssProblems(css, where) {
+  const out = [], frames = {};
+  for (const m of css.matchAll(/@keyframes\s+([\w-]+)\s*\{/g)) {
+    let i = m.index + m[0].length, depth = 1;
+    const start = i;
+    while (depth && i < css.length) { if (css[i] === '{') depth++; else if (css[i] === '}') depth--; i++; }
+    const body = css.slice(start, i - 1);
+    const props = [...new Set([...body.matchAll(/([a-z-]+)\s*:/g)].map(x => x[1]).filter(p => p !== 'animation-timing-function'))].sort();
+    frames[m[1]] = props;
+    const ex = HT10_C18_EXEMPT[m[1]];
+    const ok = ex ? JSON.stringify(props) === JSON.stringify(ex) : props.every(p => HT10_C18_ALLOWED.includes(p));
+    if (!ok) out.push(`C18: ${where}: @keyframes ${m[1]} animates ${props.join(', ')}`);
+  }
+  for (const m of css.matchAll(/transition(-property)?\s*:\s*([^;}]+)/g)) {
+    for (const part of m[2].split(',')) {
+      const prop = part.trim().split(/\s+/)[0];
+      if (!['transform', 'opacity', 'none'].includes(prop)) out.push(`C18: ${where}: transition on "${prop}" (${m[0].slice(0, 80)})`);
+    }
+  }
+  if (/\binfinite\b/.test(css)) out.push(`C12: ${where} says "infinite"`);
+  return { problems: out, frames };
+}

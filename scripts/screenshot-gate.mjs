@@ -6135,6 +6135,15 @@ for (const theme of ['silent-black', 'paper']) {
   if (!errors.some(e => e.startsWith('PLAY-1 '))) console.log('PLAY-1: privacy link (Play Console URL, opens outside) and healthcare reminder verified in 5 themes');
 }
 
+// HT-10 (HT10-A5): the gate-time clock for the HT blocks. From here on every console line is timestamped, so gate
+// block HT-10 can add up the time of each HT block: the interval between two lines belongs to the block that printed
+// the second one. It only records; nothing printed changes.
+const ht10Clock = { t0: Date.now(), lines: [] };
+{
+  const log = console.log;
+  console.log = (...a) => { ht10Clock.lines.push([Date.now(), String(a[0] ?? '').slice(0, 24)]); log(...a); };
+}
+
 // HT-1: fidelity harness self-check. The approved Technical Plates gallery (tests/howto/golden, served offline, its
 // Google Fonts request routed to the app's Inter woff2) is captured twice at 390x844 DPR 2, per plate block (plate top
 // to tempo bottom), in 5 themes x {normal, mistake with the first tell}: every pair must diff 0 px, and the same block
@@ -7104,8 +7113,233 @@ for (const theme of ['silent-black', 'paper']) {
   if (!errors.some(e => e.startsWith(`${tag}`))) console.log('AUD-10: past hold/carry fields, live field names, keyboard Move up and substitute, Skip today keeps logged sets, future start refused, verified');
 }
 
+// HT-10: the whole finished How-to sheet (card HT-10; plan 2.9, 2.10; GA 6.1 C10-C12, C17, C18; LR-23 C19). Adds
+// nothing to the per-section blocks; it runs the sheet as a whole. Its work is a list of (id, theme, state) tuples
+// (tools/plates/fidelity/shard.mjs): MARC_HT_SHARD="k/N" runs shard k of N, unset runs everything, and every tuple's
+// result goes to screenshots/ht10-proof.json.
+// - A1 sweep (5 themes): the full interaction script (every callout, Mistake and its tells, the wrist line, Trace, each
+//   Look closer chip and its pages, each "Show me", "Feel it", each feel row, everything that expands), probed after
+//   every step: C10 (controls >= 44 x 44, no overlapping hit boxes but the named golden pairs), TalkBack (every button,
+//   region and image named, from the accessibility tree), C19 (HT-9 C19's checks); then C12 (nothing running at each
+//   animation's computed end + 1 s, nothing endless) and C18 (transform and opacity only, the golden Trace keyframes
+//   by name). Reduced motion (C11): the same script, with no animation at all and every feel band display:none.
+// - A2: the script then closing everything gives S0 (plate API snapshot), and HT-3's L3 compare passes after it.
+// - A3 (4x CPU, everything mounted): tap-to-plate median of 5, long tasks, the 150 ms control, S0 elements, no How-to
+//   request before Train is idle, the shimmer against the golden-B page. A4: C17 and the total size of every How-to
+//   chunk, the main-chunk probe, the shipped CSS (C18/C12), build B for each chunk kind. Golden: every exemption is
+//   proven on the golden page. Fixtures: M10-M12 (C19), a small and a nameless button, a width and an endless
+//   animation must each fail. A5: the HT blocks' gate time against HT3-A9's 300 s.
+{
+  const tag = 'HT-10';
+  const t0 = Date.now();
+  const errorsBefore = errors.length;
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const S = await import('../tools/plates/fidelity/shard.mjs');
+  const { gzipSync } = await import('node:zlib');
+  const { existsSync } = await import('node:fs');
+  const assetsDir = join(ROOT, 'www/assets');
+  // final numbers (D-HT3, recorded by HT-10): measured on CI + margin, never above plan 2.9's 400 ms
+  const TAP_CEIL_MS = 400;
+  const SHIMMER_RATIO = 1.2, S0_MAX = 700, LONG_TASK_MS = 100, GATE_BUDGET_S = 300;
+  const TOTAL_RAW = 1.6 * 1024 * 1024, TOTAL_GZ = 420 * 1024;
+  const expectRisks = existsSync(join(ROOT, 'src/slices/howto/sections/Risks.tsx'));
+  const shard = S.shardFromEnv();
+  const ids = H.HT_PLATES.map(p => p[0]);
+  const ONCE = ['assets', 'build-b', 'fixtures', 'golden', 'speed'];
+  const tuples = S.htShard(shard.k, shard.N)([
+    ...ids.flatMap(id => H.HT_THEMES.flatMap(theme => ['sweep', 'reduced', 'a2'].map(state => ({ id, theme, state })))),
+    ...ONCE.map(state => ({ id: '*', theme: 'silent-black', state })),
+  ]);
+  const want = (state, theme) => tuples.filter(t => t.state === state && (!theme || t.theme === theme));
+  const failed = new Set();
+  const key = (id, theme, state) => `${id}|${theme}|${state}`;
+  const fail = (id, theme, state, m) => { failed.add(key(id, theme, state)); errors.push(`${tag} ${m}`); };
+  const owner = (state, theme, m) => ids.find(id => m.includes(` ${id}`)) ?? '*';
+  const facts = {};
+  const ht10 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
+  try {
+    const crashed = (where, e) => ({ problems: [`${where}: crashed: ${e.message.split('\n')[0]}`], stats: {} });
+
+    // A3 first, alone, so nothing else competes for the CPU it measures
+    if (want('speed').length) {
+      const sp = await H.ht10Speed(ht10, PORT, { goldenB: readFileSync(join(ROOT, 'tools/plates/layers/artifact/technical-plates.html')) }).catch(e => crashed('speed', e));
+      const F = m => fail('*', 'silent-black', 'speed', `A3: ${m}`);
+      for (const p of sp.problems) F(p);
+      if (sp.tap) {
+        if (sp.early.length) F(`How-to chunk(s) requested before Train was idle: ${sp.early.join(', ')}`);
+        if (sp.tap.median > TAP_CEIL_MS) F(`tap-to-plate median ${sp.tap.median} ms (samples ${sp.tap.samples.join(', ')}), over ${TAP_CEIL_MS} ms`);
+        if (sp.longTasks.some(d => d > LONG_TASK_MS)) F(`long task(s) over ${LONG_TASK_MS} ms while opening: ${sp.longTasks.join(', ')} ms`);
+        if (!sp.control.some(d => d >= 150)) F(`the synthetic 150 ms task in an open was not caught (long tasks seen: ${sp.control.join(', ') || 'none'})`);
+        if (!(sp.s0 > 0 && sp.s0 <= S0_MAX)) F(`${sp.s0} elements in the sheet at S0 with everything mounted (max ${S0_MAX})`);
+        if (sp.shimmer) {
+          const ratio = sp.shimmer.app.median / sp.shimmer.golden.median;
+          if (!(sp.shimmer.golden.median >= 20)) F(`the golden-B shimmer measured ${sp.shimmer.golden.median} ms, too little to compare against (${JSON.stringify(sp.shimmer.golden)})`);
+          else if (!(ratio <= SHIMMER_RATIO)) F(`shimmer TaskDuration app ${sp.shimmer.app.median} ms vs golden B ${sp.shimmer.golden.median} ms (ratio ${ratio.toFixed(2)}, max ${SHIMMER_RATIO})`);
+          facts.shimmer = `shimmer app ${sp.shimmer.app.median} ms (tap ${sp.shimmer.app.runs.join('/')}, idle ${sp.shimmer.app.idle.join('/')}) vs golden B ${sp.shimmer.golden.median} ms (tap ${sp.shimmer.golden.runs.join('/')}, idle ${sp.shimmer.golden.idle.join('/')}), ratio ${ratio.toFixed(2)}`;
+        } else if (existsSync(join(ROOT, 'src/slices/howto/sections/Feel.tsx'))) F('the feel section is registered but the shimmer was not measured');
+        facts.speed = `tap-to-plate median ${sp.tap.median} ms (samples ${sp.tap.samples.join(', ')}; ceiling ${TAP_CEIL_MS}), long tasks ${sp.longTasks.join(', ') || 'none'}, 150 ms control caught as ${sp.control.join(', ')} ms, S0 ${sp.s0} elements, ${sp.early.length} early requests`;
+      }
+    }
+
+    // A1 sweeps and C11, then A2: each theme's tuples in its own context, the themes side by side
+    const runTheme = async theme => {
+      const sw = want('sweep', theme).map(t => t.id), rd = want('reduced', theme).map(t => t.id);
+      const out = [];
+      if (sw.length) out.push(['sweep', await H.ht10Sweep(ht10, PORT, theme, { ids: sw, expectRisks }).catch(e => crashed(`sweep ${theme}`, e))]);
+      if (rd.length) out.push(['reduced', await H.ht10Sweep(ht10, PORT, theme, { ids: rd, reduced: true, expectRisks }).catch(e => crashed(`reduced ${theme}`, e))]);
+      return [theme, out];
+    };
+    const sweeps = await Promise.all(H.HT_THEMES.map(runTheme));
+    const tot = { steps: 0, probes: 0, controls: 0, named: 0, anims: 0, exempt: new Set() };
+    for (const [theme, out] of sweeps) for (const [state, r] of out) {
+      for (const p of r.problems) fail(owner(state, theme, p), theme, state, `A1 ${state}: ${p}`);
+      for (const k of ['steps', 'probes', 'controls', 'named', 'anims']) tot[k] += r.stats[k] ?? 0;
+      r.stats.exempt?.forEach(x => tot.exempt.add(x));
+    }
+    const a2Themes = H.HT_THEMES.filter(th => want('a2', th).length);
+    let a2Pairs = 0;
+    if (a2Themes.length) {
+      const src = H.ht10Script.toString();
+      // eslint-disable-next-line no-new-func
+      const mutate = new Function('pre', `return (${src})(pre).then(r => { if (r.fails.length) throw new Error('HT-10 script: ' + r.fails.join('; ')); })`);
+      for (const theme of a2Themes) {
+        const plates = H.HT_PLATES.filter(p => want('a2', theme).some(t => t.id === p[0]));
+        const a2 = await H.ht3Fidelity(ht10, PORT, { themes: [theme], full: [], widths: [], plates, mutate }).catch(e => crashed(`A2 ${theme}`, e));
+        a2Pairs += a2.stats.pairs ?? 0;
+        for (const p of a2.problems) fail(owner('a2', theme, p), theme, 'a2', `A2 (after the full script): ${p}`);
+        if ((a2.stats.pairs ?? 0) < plates.length * 2) fail('*', theme, 'a2', `A2 ${theme}: only ${a2.stats.pairs ?? 0} plate pairs compared, expected ${plates.length * 2}`);
+      }
+    }
+    const minSteps = want('sweep').length * 15;
+    if (tot.steps < minSteps) fail('*', 'silent-black', 'sweep', `A1: only ${tot.steps} script steps probed, expected at least ${minSteps}`);
+    facts.sweep = `${want('sweep').length} sheets swept + ${want('reduced').length} under reduced motion: ${tot.steps} steps, ${tot.probes} probes, ${tot.controls} control boxes, ${tot.named} named AX nodes, ${tot.anims} animations recorded, exempt pairs seen ${[...tot.exempt].join(', ') || 'none'}; A2 ${a2Pairs} plate pairs after the script`;
+
+    // golden: each exemption holds on the golden page itself
+    if (want('golden').length) {
+      const F = m => fail('*', 'silent-black', 'golden', `golden: ${m}`);
+      const g = await H.openGolden(ht10, 'silent-black');
+      try {
+        for (const [a, b] of H.HT10_C10_EXEMPT) {
+          const o = await g.page.evaluate(([a, b]) => { const x = document.getElementById(a)?.getBoundingClientRect(), y = document.getElementById(b)?.getBoundingClientRect(); if (!x || !y) return null; return [Math.min(x.right, y.right) - Math.max(x.left, y.left), Math.min(x.bottom, y.bottom) - Math.max(x.top, y.top)]; }, [a, b]);
+          if (!o) F(`exempt pair ${a} / ${b} not found on the golden page`);
+          else if (!(o[0] > 0.01 && o[1] > 0.01)) F(`exempt pair ${a} / ${b} does not overlap on the golden page (${o.map(v => v.toFixed(2)).join(' x ')}); remove it from HT10_C10_EXEMPT`);
+        }
+      } finally { await g.ctx.close(); }
+      const gf = H.ht10CssProblems(readFileSync(H.GOLDEN_PAGE, 'utf8'), 'golden').frames;
+      for (const [name, props] of Object.entries(H.HT10_C18_EXEMPT)) if (JSON.stringify(gf[name]) !== JSON.stringify(props)) F(`C18 exemption @keyframes ${name} (${props}) is not the golden page's (${gf[name] ?? 'absent'})`);
+    }
+
+    // A4: the built assets
+    if (want('assets').length) {
+      const F = m => fail('*', 'silent-black', 'assets', `A4: ${m}`);
+      const htFiles = readdirSync(assetsDir).filter(f => /^(HowToSheet-|ht-|hand-|feel-|posture-|zoom-)[\w-]+\.(js|css)$/.test(f));
+      const js = htFiles.filter(f => f.endsWith('.js')), css = htFiles.filter(f => f.endsWith('.css'));
+      if (js.filter(f => f.startsWith('ht-')).length !== ids.length || js.filter(f => f.startsWith('hand-')).length !== ids.length) F(`expected ${ids.length} ht- and hand- chunks, found ${js.join(', ')}`);
+      let raw = 0, gz = 0;
+      for (const f of htFiles) { const b = readFileSync(join(assetsDir, f)); raw += b.length; gz += gzipSync(b).length; }
+      if (raw > TOTAL_RAW || gz > TOTAL_GZ) F(`all How-to assets are ${raw} B raw / ${gz} B gz, over ${TOTAL_RAW} / ${TOTAL_GZ}`);
+      facts.assets = `${htFiles.length} How-to files, ${raw} B raw / ${gz} B gz of ${Math.floor(TOTAL_RAW)} / ${TOTAL_GZ}`;
+      // C17: the shared checker on every How-to JS chunk, plus no <a>, no target=, every href starting with #
+      const { pathToFileURL } = await import('node:url');
+      const { mkdtempSync, copyFileSync, rmSync } = await import('node:fs');
+      const { tmpdir } = await import('node:os');
+      const { build } = await import('esbuild');
+      const c17 = await build({ entryPoints: [join(ROOT, 'tests/howto/checks/c17.ts')], bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' });
+      const dir = mkdtempSync(join(tmpdir(), 'ht10-c17-')), scan = join(dir, 'scan');
+      try {
+        mkdirSync(scan);
+        writeFileSync(join(dir, 'c17.mjs'), c17.outputFiles[0].text);
+        const { checkC17 } = await import(pathToFileURL(join(dir, 'c17.mjs')).href);
+        for (const f of js) copyFileSync(join(assetsDir, f), join(scan, f));
+        for (const m of checkC17([scan])) F(`C17: ${m}`);
+      } finally { rmSync(dir, { recursive: true, force: true }); }
+      for (const f of htFiles) {
+        const s = readFileSync(join(assetsDir, f), 'utf8');
+        if (/<a[\s/>]/.test(s)) F(`C17: ${f} has an <a> tag`);
+        if (/\btarget\s*=/.test(s)) F(`C17: ${f} has a target= attribute`);
+        for (const m of s.matchAll(/\bhref=(["'])(.*?)\1/g)) if (!m[2].startsWith('#')) F(`C17: ${f} has href="${m[2].slice(0, 60)}"`);
+      }
+      for (const f of [...css, ...js]) for (const m of H.ht10CssProblems(readFileSync(join(assetsDir, f), 'utf8'), f).problems) F(m);
+      // the main chunk holds no section's code (HT-3b's footprint probe covers generated strings; these are the class hooks)
+      const indexJs = readFileSync(join(ROOT, 'www/index.html'), 'utf8').match(/src="\.\/assets\/(index-[\w-]+\.js)"/)[1];
+      const idx = readFileSync(join(assetsDir, indexJs), 'utf8');
+      for (const s of ['plate-svg', 'u-stroke', 'feel-band', 'data-feel-map', 'zx-chip', 'zx-page', 'st-show', 'ht-disclaimer']) if (idx.includes(s)) F(`${indexJs} contains "${s}"`);
+    }
+    if (want('build-b').length) {
+      const b = await H.ht10BuildB(ht10, PORT).catch(e => crashed('build B', e));
+      for (const p of b.problems) fail('*', 'silent-black', 'build-b', `A4 ${p}`);
+      facts.buildB = `build B carried over ${b.kinds?.join(', ') ?? 'nothing'}`;
+    }
+
+    // fixtures: each check must fail on a seeded defect (M10-M12 are HT-9's C19 fixtures)
+    if (want('fixtures').length) {
+      const F = m => fail('*', 'silent-black', 'fixtures', `fixtures: ${m}`);
+      const c19 = H.ht10C19Inputs();
+      const { ctx, page } = await H.openAppTrain(ht10, PORT, 'silent-black');
+      try {
+        const pre = ids[0];
+        const probe = () => page.evaluate(H.ht10DomProbe, [H.HT10_C10_EXEMPT, c19.pats, c19.words, c19.disclaimer, expectRisks, false]);
+        const fx = [
+          ['M10 (stub source section)', () => { const s = document.createElement('section'); s.dataset.section = 'ht10-m10'; s.innerHTML = '<details class="srcs" open><summary>Sources</summary><a href="https://example.org/x" target="_blank">Ref</a> <span class="ev ev-data">Measured</span></details>'; document.querySelector('dialog.sheet.ht [data-section]:last-of-type').after(s); }, [/<a> element/, /\[target\]/, /source\/evidence element/, /"Measured"/, /matches/]],
+          ...(expectRisks ? [
+            ['M11 (disclaimer above Risks)', () => { const d = document.querySelector('dialog.sheet.ht .ht-disclaimer'); document.querySelector('dialog.sheet.ht .redflag').before(d); }, [/not after the last \.redflag/]],
+            ['M12 (disclaimer deleted)', () => document.querySelector('dialog.sheet.ht .ht-disclaimer').remove(), [/0 \.ht-disclaimer/]],
+          ] : []),
+          ['C10 (a 30 px button)', () => { const b = document.createElement('button'); b.id = 'ht10-small'; b.textContent = 'x'; b.style.cssText = 'width:30px;height:30px'; document.querySelector('dialog.sheet.ht [data-section]').append(b); }, [/#ht10-small is 30\.0 x 30\.0/]],
+          ['C10 (two overlapping buttons)', () => { const w = document.createElement('div'); w.style.position = 'relative'; w.innerHTML = '<button id="ht10-o1" style="width:60px;height:60px">a</button><button id="ht10-o2" style="position:absolute;left:20px;top:20px;width:60px;height:60px">b</button>'; document.querySelector('dialog.sheet.ht [data-section]').append(w); }, [/#ht10-o1 and #ht10-o2 overlap/]],
+        ];
+        for (const [name, inject, expect] of fx) {
+          await H.openHowTo(page, 0);
+          await page.evaluate(inject);
+          const { problems } = await probe();
+          for (const re of expect) if (!problems.some(p => re.test(p))) F(`${name}: the probe did not report ${re} (it reported ${problems.slice(0, 4).join('; ') || 'nothing'})`);
+          await H.closeHowTo(page);
+        }
+        // TalkBack: a nameless button
+        await H.openHowTo(page, 0);
+        await page.evaluate(() => { const b = document.createElement('button'); b.className = 'ht10-noname'; b.style.cssText = 'width:44px;height:44px'; document.querySelector('dialog.sheet.ht [data-section]').append(b); });
+        const cdp = await ctx.newCDPSession(page);
+        await cdp.send('DOM.enable'); await cdp.send('Accessibility.enable');
+        const ax = await H.ht10AxNames(cdp);
+        if (!ax.problems.some(p => /button button\.ht10-noname has no accessible name/.test(p))) F(`TalkBack: a nameless button was not reported (${ax.problems.join('; ') || 'nothing'})`);
+        await H.closeHowTo(page);
+        // C18 / C12: a width animation and an endless one on the sheet
+        await H.openHowTo(page, 0);
+        await page.evaluate(H.ht10Record);
+        await page.evaluate(() => { const e = document.querySelector('dialog.sheet.ht .ht-golden'); e.animate([{ width: '300px' }, { width: '310px' }], 400); e.animate([{ opacity: 1 }, { opacity: 0.9 }], { duration: 400, iterations: Infinity }); });
+        await page.waitForTimeout(200);
+        const am = H.ht10AnimProblems(await H.ht10Recorded(page), H.ht10EndMs());
+        if (!am.some(p => /^C18: .*animates width/.test(p))) F(`C18: a width animation was not reported (${am.join('; ') || 'nothing'})`);
+        if (!am.some(p => /^C12: .*never ends/.test(p))) F(`C12: an endless animation was not reported (${am.join('; ') || 'nothing'})`);
+        await page.evaluate(() => document.querySelector('dialog.sheet.ht .ht-golden').getAnimations().forEach(a => a.cancel()));
+        await H.closeHowTo(page);
+      } catch (e) { F(`crashed: ${e.message.split('\n')[0]}`); } finally { await ctx.close(); }
+    }
+  } finally {
+    await ht10.close();
+  }
+
+  // proof manifest (library plan 5.4): one row per tuple this run proved
+  const sha = (process.env.GITHUB_SHA || '').slice(0, 40) || (await import('node:child_process')).execSync('git rev-parse HEAD', { cwd: ROOT }).toString().trim();
+  const CHECK = { sweep: 'C10 C12 C18 C19 TalkBack S0', reduced: 'C11 C10 C19 TalkBack', a2: 'S0 L3', assets: 'C17 C18 C12 size', 'build-b': 'offline build B', fixtures: 'failure fixtures', golden: 'exemptions on golden', speed: 'A3 speed' };
+  S.writeProof(join(OUT, 'ht10-proof.json'), { sha, shard, rows: tuples.map(t => ({ id: t.id, check: CHECK[t.state], state: t.state, theme: t.theme, width: 390, result: failed.has(key(t.id, t.theme, t.state)) || (t.id !== '*' && failed.has(key('*', t.theme, t.state))) ? 'fail' : 'pass' })) });
+
+  // A5: the HT blocks' gate time (the clock above HT-1), this block included
+  {
+    const per = {};
+    let prev = ht10Clock.t0;
+    for (const [t, s] of ht10Clock.lines) { const m = /^(HT-\d+[a-z]?(?: C19)?)\b/.exec(s); if (m) per[m[1]] = (per[m[1]] ?? 0) + (t - prev); prev = t; }
+    per[tag] = (per[tag] ?? 0) + (Date.now() - t0);
+    const total = Object.values(per).reduce((a, b) => a + b, 0) / 1000;
+    facts.time = `HT blocks ${total.toFixed(1)} s (${Object.entries(per).map(([k, v]) => `${k} ${(v / 1000).toFixed(1)}`).join(', ')}) against ${GATE_BUDGET_S} s`;
+    if (!shard.N && total > GATE_BUDGET_S) errors.push(`${tag} A5: the HT blocks took ${facts.time}; over budget, reported to the supervisor (other blocks are never edited to shard them)`);
+  }
+  const n = errors.length - errorsBefore;
+  console.log(`${tag}${shard.N ? ` (shard ${shard.k}/${shard.N})` : ''}: ${tuples.length} tuples; ${Object.values(facts).join('; ')}; ${n ? `FAILED, ${n} problem(s) above` : 'all verified'}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-10 (the whole How-to sheet in 5 themes: every interaction probed for 44 px targets, overlaps, TalkBack names and C19; reduced motion; nothing endless or running after its end; transform and opacity only; S0 and L3 after it all; final speed numbers; C17 and size of every How-to chunk; build B per chunk kind; failure fixtures) verified.');
