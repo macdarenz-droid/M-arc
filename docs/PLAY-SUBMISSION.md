@@ -39,6 +39,8 @@ Owner rule (D-COPY1-1): the app explains nothing unless Google Play requires it 
 - A disclosure for the Bluetooth and location permissions the watch uses: the Watch sheet's line "Watch readings stay on this phone. Session heart rate goes to Escobar only if Share health data is on." (answer/13996367).
 - A way to report offensive AI replies without leaving the app (below).
 
+**Developer name (owner step, DOC-5):** in Play Console, open Developer account > About you, set "Developer name" to exactly "Marc Darenz" and save, so the listing names the same developer as the policy ("M/ARC is made by Marc Darenz."). Google reviews the change before it shows on Play. On the same page, check that the developer email shown on Play is the policy's contact address, and keep each app's support email the same. Play does not require the full legal name in the policy: the policy must name either the developer shown on the listing or the app, and it names the app (https://support.google.com/googleplay/android-developer/answer/10144311). For a personal account, Play still shows the legal name from the Google Payments profile, the country and the developer email next to the app, whatever the policy says, and the full address too if the app is ever monetised (https://support.google.com/googleplay/android-developer/answer/13628312). The Developer profile page in Play Console shows exactly what is public.
+
 **AI-generated content:** Play requires an in-app way to report or flag offensive AI replies (https://support.google.com/googleplay/android-developer/answer/13985936). Card ESC-REPORT adds it, once the owner approves the data it sends. When it lands, add that data to the Data safety answers below. Until then, this is a release blocker.
 
 ## Data safety form
@@ -94,7 +96,7 @@ Permissions declared in `native/patch_manifest.py:25-30`:
 - `android.permission.health.READ_RESTING_HEART_RATE`
 
 All five are **read-only**; the app never writes to Health Connect (`docs/PRIVACY-POLICY.md`
-"What stays on your phone"). Purpose for each, as actually used in the app:
+"On-device data"). Purpose for each, as actually used in the app:
 - **Steps, sleep, active calories, resting heart rate:** feed the on-device readiness score and
   recovery model shown on the Today/Coach screens, and, if the user shares health data, inform
   the AI coach's advice (`src/escobar/context/brief.ts:79-94`).
@@ -104,7 +106,7 @@ All five are **read-only**; the app never writes to Health Connect (`docs/PRIVAC
 The app also requests Bluetooth permissions to read live heart rate from a paired watch or chest
 strap (`native/patch_manifest.py:40-46`); on Android 11 and older this requires location
 permission for BLE scanning only — the app does not read or use device location
-(`docs/PRIVACY-POLICY.md` "What stays on your phone").
+(`docs/PRIVACY-POLICY.md` "On-device data").
 
 ## Content rating questionnaire
 

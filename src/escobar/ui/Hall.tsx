@@ -12,6 +12,7 @@ import { online } from '../state';
 import { starterChips } from './prompts';
 import { openAndSend, openEscobar } from './open';
 import { useTypewriter } from './typewriter';
+import { stripCitationTags } from './present';
 
 function HallComposer() {
   const s = state.value;
@@ -46,7 +47,7 @@ function TodaysBrief() {
   );
 }
 
-function PlansAndAgreements() {
+export function PlansAndAgreements() {
   const s = state.value;
   const d = activeDeload.value;
   const o = s.escobar.todayOverride?.day === today.value ? s.escobar.todayOverride : null;
@@ -58,7 +59,7 @@ function PlansAndAgreements() {
       <Card class="card-quiet stack-sm">
         {d && <div class="small"><b>Lighter week</b> <span class="muted">until {d.endDay}</span></div>}
         {o && <div class="small"><b>Today adjusted</b> <span class="muted">{o.reason}</span></div>}
-        {pins.map(p => <div key={p.id} class="small"><b>Pinned</b> <span class="muted">{p.title}</span></div>)}
+        {pins.map(p => <div key={p.id} class="small"><b>Pinned</b> <span class="muted">{stripCitationTags(p.title)}</span></div>)}
         {agreements.map(a => <div key={a.id} class="small"><b>Agreed</b> <span class="muted">{a.text}</span></div>)}
         {empty && <p class="small muted">Nothing agreed yet.</p>}
       </Card>

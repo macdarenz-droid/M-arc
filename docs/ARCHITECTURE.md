@@ -32,8 +32,9 @@ Rules of thumb:
 - `brain/` never imports from `ui/`, `slices/`, `native/` or `escobar/`. Every function takes plain data and returns plain data.
 - Screens read `core/store` signals and change state only through `update()`.
 - The main bundle never imports `escobar/session`: Escobar loads on first use. The same goes for pinned cards on Today.
-- Copy is plain words. No "backend", "authority" or version numbers in the UI, apart from the version line in Settings.
-- UI copy never talks down to users or states the obvious, and the app explains nothing unless Google Play requires it or the owner explicitly asked for it (owner, 2026-10-01, D-COPY1-1). Labels that name a control or show data are not explaining and stay. The lines Play requires are listed in `docs/PLAY-SUBMISSION.md` ("In-app text Play requires"); they stay and must be true. `tests/copy-1.test.ts` pins every line COPY-1 removed.
+- Copy is plain words. No "backend", "authority" or version numbers in the UI, apart from the version line in Settings (owner, 2026-10-01, DOC-5).
+- Copy is clear and direct, written for a capable adult. It never labels itself as simplified or talks down: no "In plain words", "simply put", "in short", "don't worry", no "(this just means ...)" asides, no over-explaining of everyday things. Headings name the content ("Summary", "Full policy"). Headings (owner, 2026-10-01) are short labels of one to three words, a noun phrase: never a sentence, a "What ..."/"How ..." question, a qualifier such as "off by default" or ", and where", or a leading "The", "This" or "About"; the text under a heading explains it.
+- UI copy never talks down to users or states the obvious, and the app explains nothing unless Google Play requires it or the owner explicitly asked for it (owner, 2026-10-01, D-COPY1-1); no "Not medical advice" on a gym app (AGENTS.md, UI copy rule). Labels that name a control or show data are not explaining and stay. The lines Play requires are listed in `docs/PLAY-SUBMISSION.md` ("In-app text Play requires"); they stay and must be true. `tests/copy-1.test.ts` pins every line COPY-1 removed.
 
 ## State and side stores
 
