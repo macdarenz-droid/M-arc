@@ -15,7 +15,7 @@ import { EscobarLoop, type SendInput, type TurnResult } from './loop';
 import { httpTransport, checkHealth, type Transport } from './transport';
 import { buildManifest } from './context/manifest';
 import { currentFocus } from './palace/focus';
-import { emptyStore, legacyConversation, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
+import { clearStore, emptyStore, legacyConversation, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
 import { evictImages, imageData } from './images';
 import { escobarUi, estimateCost, loopView, offlineReason, online, proxyUrlOf, quotaResetAt } from './state';
 import { PROTECTED_MEMORY } from './tools/executor';
@@ -344,10 +344,9 @@ function modeFor(text: string): EscobarMode {
 
 /** Settings → Reset conversations. */
 export function resetConversations(): void {
-  dropLoop();
-  epoch++;
-  storeSig.value = saveStore(emptyStore()) ?? emptyStore();
-  activeConversation.value = null;
+  // DATA-02 (AUD-4): the replacing path, so another open tab drops its copy too. This tab's
+  // onStoreReplaced handler (above) drops the loop and what it holds.
+  clearStore();
 }
 
 /** Replace the active conversation after a proposal decision (apply.ts). */

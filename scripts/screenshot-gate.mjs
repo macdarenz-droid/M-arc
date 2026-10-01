@@ -6392,6 +6392,24 @@ for (const theme of ['silent-black', 'paper']) {
           const m2 = await plateState(app.page);
           if (m0.snap.mode !== 'mistake' || m1.snap.mode !== 'normal' || JSON.stringify(m2) !== JSON.stringify(m0)) P(`${T} A4 Mistake: ${JSON.stringify({ m0: m0.snap, m1: m1.snap, m2: m2.snap })}`);
           await click(app.page, `#${id}-mistake`);
+          // HT-6 review (#112): opened from Mistake, the close-up grows out of the chip where golden B's does. Golden B's
+          // openZoom leaves Mistake (hiding the "Also check your wrist" line) before it measures the chip.
+          {
+            const originFromMistake = async (pg, inApp) => {
+              await pg.click(`#${id}-mistake`);
+              await pg.click(`#${id}-chip-hand`);
+              if (inApp) await pg.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+              const o = await pg.evaluate(s => document.querySelector(s).style.transformOrigin, panelSel(id));
+              await click(pg, `${panelSel(id)}-close`);
+              if (inApp) await H.settleApp(pg); else await H.settle(pg);
+              return o;
+            };
+            const [oA, oG] = [await originFromMistake(app.page, true), await originFromMistake(gold.page, false)];
+            stats.mistakeOrigins = (stats.mistakeOrigins ?? 0) + 1;
+            // x as the chip check above: equal where the hand chip is golden B's first (the row gains HT-7's chips later)
+            const [xA, yA] = (oA || '').split(' '), [xG, yG] = (oG || '').split(' ');
+            if (!oA || !yA || yA !== yG || (firstG && xA !== xG)) P(`${T} open from Mistake: transform-origin app ${oA} vs golden ${oG}`);
+          }
         }
         if (theme === 'silent-black' && id === 'machine-chest-press') {
           // Android back closes the close-up first, then the sheet
@@ -6456,7 +6474,7 @@ for (const theme of ['silent-black', 'paper']) {
     // D-HT6-budget: each chunk at most its measured size + 10 % (tools/plates/gen/hands.mjs, pinned in hands.test)
     const { handCeiling } = await import('../tools/plates/gen/hands.mjs');
     for (const s of sizes) { const id = H.HT_PLATES.map(p => p[0]).find(i => s.f.startsWith(`hand-${i}-`)), c = id && handCeiling(id); if (!c || s.raw > c.raw || s.gz > c.gz) P(`A7: ${s.f} is ${s.raw} B raw / ${s.gz} B gz, over its ceiling ${c ? `${c.raw} / ${c.gz}` : '(none)'}`); }
-    console.log(`${tag} (${ht6.version()}): ${stats.pairs} close-up pages L3 (max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}), Right/Wrong words and icons on ${stats.words} pages, ${stats.anims} open animation lists, reduced motion in 5 themes, A6 ${stats.a6} plate pairs after open/close; hand chunks ${sizes.map(s => `${s.f.replace(/-[\w-]{8}\.js$/, '')} ${(s.raw / 1024).toFixed(1)}/${(s.gz / 1024).toFixed(1)} KB`).join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+    console.log(`${tag} (${ht6.version()}): ${stats.pairs} close-up pages L3 (max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}), Right/Wrong words and icons on ${stats.words} pages, ${stats.anims} open animation lists, reduced motion in 5 themes, A6 ${stats.a6} plate pairs after open/close, ${stats.mistakeOrigins ?? 0} opens from Mistake at golden B's origin; hand chunks ${sizes.map(s => `${s.f.replace(/-[\w-]{8}\.js$/, '')} ${(s.raw / 1024).toFixed(1)}/${(s.gz / 1024).toFixed(1)} KB`).join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   } finally {
     await ht6.close();
   }
@@ -6998,6 +7016,164 @@ for (const theme of ['silent-black', 'paper']) {
     await ctx.close();
   }
   if (!errors.some(e => e.startsWith('COPY-1 '))) console.log('COPY-1: Settings footer rights line (under the logo, above the version, hint style) and no removed Settings copy, verified in 5 themes');
+}
+
+// AUD-10: live workout, finish and past logging (audit UI-01, UI-03, UI-05, UI-09, OBS-LABELS).
+// One seeded split (bench, plank, farmer's carry): the past-session form saves a hold's seconds and
+// a carry's metres; the live inputs are named; Move up works by keyboard alone and saves the order a
+// drag saves; a substitute is picked by keyboard; Skip today keeps a logged set and the Finish
+// counters match the save; the time question will not save a future start. The pointer drag is the
+// "reorder" probe above, unchanged.
+{
+  const tag = 'AUD-10';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      splits: [{ id: 'aud10', name: 'Mixed', color: '#888888', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 2 }, { exerciseId: 'lib_plank', sets: 1 }, { exerciseId: 'lib_farmer_s_carry', sets: 1 }] }],
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') || '{}'));
+  const fillLabel = async (name, value) => {
+    const ok = await page.getByLabel(name, { exact: true }).fill(value, { timeout: 3000 }).then(() => true).catch(() => false);
+    if (!ok) errors.push(`${tag}: no field named "${name}"`);
+  };
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(300);
+
+  // UI-03: a past session saves the plank's seconds and the carry's metres and seconds as those fields.
+  await page.getByRole('button', { name: 'Log a past session' }).first().click(); await page.waitForTimeout(300);
+  const yesterday = (() => { const d = new Date(); d.setDate(d.getDate() - 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
+  await page.locator('dialog[open] input[type="date"]').fill(yesterday);
+  await fillLabel('Barbell Bench Press, set 1, reps', '8');
+  await fillLabel('Plank, set 1, seconds', '60');
+  await fillLabel("Farmer's Carry, set 1, metres", '40');
+  await fillLabel("Farmer's Carry, set 1, seconds", '35');
+  await settle(page); await page.screenshot({ path: `${OUT}/aud-10-past-session.png` });
+  await page.getByRole('button', { name: 'Save past session' }).click(); await page.waitForTimeout(400);
+  if (await page.getByRole('button', { name: 'Done', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Done', exact: true }).click(); await page.waitForTimeout(250); }
+  else { errors.push(`${tag}: the past session did not save`); await page.locator('dialog[open]').getByRole('button', { name: 'Close' }).first().click().catch(() => {}); await page.waitForTimeout(300); }
+  let pastId = null;
+  {
+    const first = (await stored()).sessions?.[0];
+    pastId = first?.id ?? null;
+    const past = first?.exercises ?? [];
+    const plank = past.find(e => e.exerciseId === 'lib_plank')?.sets?.[0];
+    const carry = past.find(e => e.exerciseId === 'lib_farmer_s_carry')?.sets?.[0];
+    if (plank?.durationSec !== 60 || plank?.reps) errors.push(`${tag}: the past plank saved ${JSON.stringify(plank)}, not durationSec 60`);
+    if (carry?.distanceM !== 40 || carry?.durationSec !== 35) errors.push(`${tag}: the past carry saved ${JSON.stringify(carry)}, not distanceM 40 and durationSec 35`);
+  }
+
+  // Start a live session (the daily check-in sheet comes first).
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  if (!(await page.locator('.reorder-item').first().isVisible().catch(() => false))) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400); }
+
+  // OBS-LABELS: every live set field has a name (the load field already had one). One card is open at a time.
+  const liveFields = [[0, ['Barbell Bench Press, set 1, reps', 'Barbell Bench Press, set 2, reps']], [1, ['Plank, set 1, seconds']], [2, ["Farmer's Carry, set 1, metres", "Farmer's Carry, set 1, seconds"]]];
+  for (const [i, names] of liveFields) {
+    const card = page.locator(`[data-entry-index="${i}"]`);
+    if (!(await visible(card.locator('.set-grid input').first(), 800))) { await card.locator('.exname').click(); await page.waitForTimeout(400); }
+    for (const name of names) {
+      const n = await page.getByLabel(name, { exact: true }).count();
+      if (n !== 1) errors.push(`${tag}: expected one live field named "${name}", found ${n}`);
+    }
+    const unnamed = await card.evaluate(el => [...el.querySelectorAll('input')].filter(f => !f.getAttribute('aria-label') && !f.labels?.length && !f.getAttribute('aria-labelledby')).length);
+    if (unnamed) errors.push(`${tag}: ${unnamed} live set field(s) on card ${i} have no accessible name`);
+  }
+  // Back to the first card open, as the session started.
+  await page.locator('[data-entry-index="0"] .exname').click(); await page.waitForTimeout(400);
+
+  // UI-09: keyboard only, the 2nd exercise moves up; the saved order is the one a drag saves (moveEntry).
+  const order0 = (await stored()).active?.entries?.map(e => e.exerciseId) ?? [];
+  const hidden = await page.evaluate(() => [...document.querySelectorAll('.reorder-move')].every(el => el.getBoundingClientRect().width <= 1));
+  if (!hidden) errors.push(`${tag}: a Move button is drawn on screen without keyboard focus`);
+  await page.locator('.live-top').getByRole('button', { name: 'Finish' }).focus();
+  let reached = false;
+  for (let k = 0; k < 120 && !reached; k++) {
+    await page.keyboard.press('Tab');
+    reached = await page.evaluate(() => document.activeElement?.getAttribute('aria-label') === 'Move up, Plank');
+  }
+  if (!reached) errors.push(`${tag}: Tab never reached "Move up, Plank"`);
+  else {
+    const shown = await page.evaluate(() => { const el = document.activeElement; const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return { w: r.width, h: r.height, outline: cs.outlineStyle }; });
+    if (!(shown.w > 20 && shown.h > 20) || shown.outline === 'none') errors.push(`${tag}: the focused Move button is not visible with a focus ring (${JSON.stringify(shown)})`);
+    await settle(page); await page.screenshot({ path: `${OUT}/aud-10-move-focused.png` });
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const order1 = (await stored()).active?.entries?.map(e => e.exerciseId) ?? [];
+    const want = [order0[1], order0[0], ...order0.slice(2)];
+    if (JSON.stringify(order1) !== JSON.stringify(want)) errors.push(`${tag}: keyboard Move up saved ${order1.join(',')}, expected ${want.join(',')}`);
+    const shownNames = await page.locator('.reorder-item .exname').allTextContents();
+    if (shownNames[0] !== 'Plank') errors.push(`${tag}: after Move up the list starts with ${shownNames[0]}, not Plank`);
+    const still = await page.evaluate(() => document.activeElement?.getAttribute('aria-label'));
+    if (still !== 'Move up, Plank') errors.push(`${tag}: focus left the moved exercise's Move up (now ${still})`);
+  }
+
+  // UI-09 (Train.tsx:952): a substitute is reached and picked by keyboard.
+  const benchCard = page.locator('.reorder-item').filter({ has: page.locator('.exname', { hasText: 'Barbell Bench Press' }) });
+  await benchCard.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Substitute exercise' }).click(); await page.waitForTimeout(300);
+  let onSub = false;
+  for (let k = 0; k < 20 && !onSub; k++) {
+    await page.keyboard.press('Tab');
+    onSub = await page.evaluate(() => !!document.activeElement?.closest('dialog[open] .list') && document.activeElement?.getAttribute('role') === 'button');
+  }
+  if (!onSub) { errors.push(`${tag}: Tab never reached a substitute in the sheet`); await page.locator('dialog[open]').getByRole('button', { name: 'Close' }).first().click().catch(() => {}); await page.waitForTimeout(300); }
+  else {
+    const subName = await page.evaluate(() => document.activeElement?.querySelector('.grow > div')?.textContent ?? '');
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const names = await page.locator('.reorder-item .exname').allTextContents();
+    if (!subName || !names.includes(subName) || names.includes('Barbell Bench Press')) errors.push(`${tag}: Enter on a substitute did not swap it in (picked "${subName}", list ${names.join(', ')})`);
+  }
+
+  // UI-01: log 60 x 8 on the first lift, Skip today, Finish: counters say 1 and 1, and the set is saved.
+  const liftAt = ((await stored()).active?.entries ?? []).findIndex(e => e.exerciseId !== 'lib_plank' && e.exerciseId !== 'lib_farmer_s_carry');
+  const lift = page.locator('.reorder-item').nth(liftAt);
+  if (!(await lift.locator('.set-grid input').first().isVisible().catch(() => false))) { await lift.locator('.exname').click(); await page.waitForTimeout(250); }
+  const liftId = (await stored()).active?.entries?.[liftAt]?.exerciseId;
+  const liftInputs = lift.locator('.set-grid input');
+  await liftInputs.nth(0).fill('60'); await liftInputs.nth(1).fill('8'); await liftInputs.nth(1).blur(); await page.waitForTimeout(300);
+  await lift.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Skip today' }).click(); await page.waitForTimeout(250);
+  await page.locator('.live-top').getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300);
+  const counters = [await page.locator('[data-finish-exercises]').textContent().catch(() => null), await page.locator('[data-finish-sets]').textContent().catch(() => null)];
+  if (counters[0] !== '1' || counters[1] !== '1') errors.push(`${tag}: the Finish counters read ${counters.join(' / ')}, expected 1 / 1`);
+  await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click(); await page.waitForTimeout(400);
+
+  // UI-05: a future start keeps Save off and the sheet open; Skip saves the guess instead.
+  if (!(await visible(page.getByRole('heading', { name: 'When did you train?' }), 3000))) errors.push(`${tag}: expected the time question after a scripted finish`);
+  else {
+    const tomorrow = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
+    await page.locator('dialog[open] input[type="date"]').fill(tomorrow); await page.waitForTimeout(150);
+    const save = page.getByRole('button', { name: 'Save', exact: true });
+    if (!(await save.isDisabled().catch(() => false))) errors.push(`${tag}: Save stays on for a start tomorrow`);
+    await save.click({ force: true, timeout: 2000 }).catch(() => {}); await page.waitForTimeout(300);
+    if (!(await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false))) errors.push(`${tag}: the time question closed on a future start`);
+    await settle(page); await page.screenshot({ path: `${OUT}/aud-10-future-start.png` });
+    await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(400);
+  }
+  {
+    const st = await stored();
+    const live = (st.sessions ?? []).find(x => x.id !== pastId);
+    const saved = live?.exercises?.find(e => e.exerciseId === liftId)?.sets ?? [];
+    if (!(saved.length === 1 && saved[0].kg === 60 && saved[0].reps === 8)) errors.push(`${tag}: the skipped lift saved ${JSON.stringify(saved)}, not one 60 x 8 set`);
+    if (live && Date.parse(live.startedAt) > Date.now()) errors.push(`${tag}: the live session was saved with a future start ${live.startedAt}`);
+    if (!live) errors.push(`${tag}: the live session was not saved`);
+  }
+  await ctx.close();
+  if (!errors.some(e => e.startsWith(`${tag}`))) console.log('AUD-10: past hold/carry fields, live field names, keyboard Move up and substitute, Skip today keeps logged sets, future start refused, verified');
 }
 
 await browser.close();
