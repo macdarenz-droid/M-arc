@@ -18,7 +18,7 @@ import { exerciseHistory, modeOf } from '@/brain/history';
 import { plannedThisWeek, weekSummary } from '@/brain/weekly';
 import { volumeChartWeeks } from './volumeChart';
 import { findExercise } from '@/core/exercises';
-import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel, bodyweightShare, effectiveLoadKg } from '@/brain/bodyweight';
+import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel, bodyweightShare, effectiveLoadKg, statHasReps, statLoadLabel, statReadout } from '@/brain/bodyweight';
 import { EffortBars, effortSplit, effortUsesSets } from '@/ui/EffortBars';
 import { progressHint, progressTrend, progressValue } from './progressTrend';
 import { DATA_LABEL } from '@/brain/trend';
@@ -175,6 +175,10 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   const [sharing, setSharing] = useState(false);
   const rowRef = useRef<HTMLDivElement>(null);
   const draggedRef = useRef(false);
+  // UI-02: the gesture effect below only re-runs on [session.id], so a swipe commit must read the
+  // latest edited session through this ref, not the `session` prop it closed over when it mounted.
+  const sessionRef = useRef(session);
+  sessionRef.current = session;
   // A5: swipe the row left to reveal a delete zone; past halfway (or a fast flick) it commits with
   // the same Undo as the editor's own Delete. Reuses gesture.ts's shared `track()` (A3).
   useEffect(() => {
@@ -220,9 +224,9 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
         const flung = !reduced() && d < 0 && v <= -FLING_PX_PER_MS && Math.abs(d) >= SWIPE_FLING_MIN_PX;
         if (!(armedNow || flung)) { springBack(); return; }
         setArmed(false);
-        if (reduced() || !card.animate) { deleteSessionWithUndo(session); return; }
+        if (reduced() || !card.animate) { deleteSessionWithUndo(sessionRef.current); return; }
         const anim = card.animate([{ transform: card.style.transform || 'none', opacity: 1 }, { transform: `translateX(-${width}px)`, opacity: 0 }], { duration: durFor('sheetExit'), easing: EASE.exit, fill: 'forwards' });
-        anim.finished.then(() => deleteSessionWithUndo(session)).catch(() => deleteSessionWithUndo(session));
+        anim.finished.then(() => deleteSessionWithUndo(sessionRef.current)).catch(() => deleteSessionWithUndo(sessionRef.current));
       },
       onCancel: springBack,
     });
@@ -261,9 +265,13 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   );
 }
 
-function setLabel(st: LoggedSet, u: 'kg' | 'lb', mode: ResistanceMode): string {
+/** UI-04: a carry/sled set shows distance, time and load together (any missing part left out), not just its time. */
+export function setLabel(st: LoggedSet, u: 'kg' | 'lb', mode: ResistanceMode): string {
+  if (mode === 'conditioning' && (st.distanceM || st.durationSec)) {
+    const parts = [st.distanceM ? `${st.distanceM} m` : null, st.durationSec ? `${st.durationSec}s` : null].filter(Boolean);
+    return st.kg ? `${parts.join(' · ')} @ ${formatLoad(st.kg, u)}` : parts.join(' · ');
+  }
   if (st.durationSec) return `${st.durationSec}s`;
-  if (st.distanceM) return `${st.distanceM} m${st.kg ? ` @ ${formatLoad(st.kg, u)}` : ''}`;
   const load = mode === 'bodyweight' || mode === 'assisted' ? modeLoadText({ kg: st.kg }, mode, u) : st.kg ? formatLoad(st.kg, u) : 'bw';
   return `${load} × ${st.reps ?? 0}${st.effort ? ` ${st.effort[0]!.toUpperCase()}` : ''}`;
 }
@@ -280,6 +288,9 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
   const [confirm, setConfirm] = useState(false);
   const setField = (ei: number, si: number, patch: Partial<LoggedSet>) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((s, j) => (j !== si ? s : { ...s, ...patch })) })) }));
+  // UI-04: a carry/sled set has no "zero it out" field that implies delete (distance and time can
+  // stand alone with reps at 0), so it gets the same explicit removal the rest of the editor uses.
+  const removeDraftSet = (ei: number, si: number) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.filter((_, j) => j !== si) })) }));
   const save = () => {
     const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(hasEntry) })).filter(e => e.sets.length) };
     // An edit that leaves no sets is a delete, with its Undo (UI-24).
@@ -295,21 +306,35 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   return (
     <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose} palace="history.session">
       <div class="stack">
-        {draft.exercises.map((e, ei) => (
-          <Card key={ei} class="card-quiet">
-            <b class="small">{e.name}</b>
-            <div class="stack-sm" style={{ marginTop: 8 }}>
-              {e.sets.map((st, si) => (
-                <div key={si} class="set-grid">
-                  <span class="set-index">{si + 1}</span>
-                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseDurationSec((ev.target as HTMLInputElement).value) ?? 0 })} /> : <WeightInput kg={st.kg} entered={st.entered} entryUnit={st.entered?.unit ?? u} displayUnit={u} placeholder={loadColumnLabel(modeOf(e.exerciseId, state.value.customExercises), st.entered?.unit ?? u)} ariaLabel={loadAriaLabel(modeOf(e.exerciseId, state.value.customExercises), st.entered?.unit ?? u)} onChange={v => setField(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setField(ei, si, st.kg != null ? { entered: { value: kgToDisplay(st.kg, (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg'), unit: (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg' } } : {})} />}
-                  {st.durationSec != null ? <span class="hint">seconds</span> : <input type="number" value={st.reps ?? ''} placeholder="reps" onInput={ev => setField(ei, si, { reps: parseReps((ev.target as HTMLInputElement).value) ?? 0 })} />}
-                  <select value={st.effort ?? ''} onChange={ev => setField(ei, si, { effort: ((ev.target as HTMLSelectElement).value || undefined) as LoggedSet['effort'] })}><option value="">—</option><option value="easy">Easy</option><option value="ideal">Ideal</option><option value="max">Max</option></select>
-                </div>
-              ))}
-            </div>
-          </Card>
-        ))}
+        {draft.exercises.map((e, ei) => {
+          const mode = modeOf(e.exerciseId, state.value.customExercises);
+          const isHold = mode === 'duration';
+          return (
+            <Card key={ei} class="card-quiet">
+              <b class="small">{e.name}</b>
+              <div class="stack-sm" style={{ marginTop: 8 }}>
+                {e.sets.map((st, si) => (
+                  <div key={si}>
+                    <div class="set-grid">
+                      <span class="set-index">{si + 1}</span>
+                      {isHold ? <input type="number" aria-label="Seconds" value={st.durationSec ?? ''} onInput={ev => setField(ei, si, { durationSec: parseDurationSec((ev.target as HTMLInputElement).value) ?? 0 })} /> : <WeightInput kg={st.kg} entered={st.entered} entryUnit={st.entered?.unit ?? u} displayUnit={u} placeholder={loadColumnLabel(mode, st.entered?.unit ?? u)} ariaLabel={loadAriaLabel(mode, st.entered?.unit ?? u)} onChange={v => setField(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setField(ei, si, st.kg != null ? { entered: { value: kgToDisplay(st.kg, (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg'), unit: (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg' } } : {})} />}
+                      {isHold ? <span class="hint">seconds</span> : <input type="number" aria-label="Reps" value={st.reps ?? ''} placeholder="reps" onInput={ev => setField(ei, si, { reps: parseReps((ev.target as HTMLInputElement).value) ?? 0 })} />}
+                      <select aria-label="Effort" value={st.effort ?? ''} onChange={ev => setField(ei, si, { effort: ((ev.target as HTMLSelectElement).value || undefined) as LoggedSet['effort'] })}><option value="">—</option><option value="easy">Easy</option><option value="ideal">Ideal</option><option value="max">Max</option></select>
+                    </div>
+                    {mode === 'conditioning' && (
+                      // UI-04: a carry/sled set edits its distance and time next to its load, matching Train's live entry (UI-20).
+                      <div class="row conditioning-extra" style={{ gap: 8, marginTop: 4 }}>
+                        <input type="number" aria-label="Distance in metres" placeholder="m" value={st.distanceM ?? ''} onInput={ev => { const v = Number((ev.target as HTMLInputElement).value); setField(ei, si, { distanceM: v >= 1 && v <= 1000 ? Math.round(v) : undefined }); }} />
+                        <input type="number" aria-label="Seconds" placeholder="s" value={st.durationSec ?? ''} onInput={ev => setField(ei, si, { durationSec: parseDurationSec((ev.target as HTMLInputElement).value) })} />
+                        <Button variant="quiet" size="sm" class="btn-icon" aria-label={`Delete set ${si + 1}`} onClick={() => removeDraftSet(ei, si)}><IconTrash size={16} /></Button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Card>
+          );
+        })}
         <p class="hint">Sets with 0 reps are removed on save.</p>
         <Button variant="primary" onClick={save}>Save changes</Button>
         {!confirm ? <Button variant="danger" onClick={() => setConfirm(true)}><IconTrash size={16} /> Delete session</Button> : <div class="row"><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" class="grow" onClick={remove}>Yes, delete</Button></div>}
@@ -475,7 +500,9 @@ function Stats() {
   const sparkIdx = sparkScrub ?? hist12.length - 1;
   const sparkSession = hist12[sparkIdx];
   const sparkStats = sparkSession ? lastTopStats(sparkSession, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
-  const sparkReadout = sparkSession && sparkStats ? `${sparkStats.load} × ${sparkStats.reps} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}` : '';
+  const sparkReadout = sparkSession && sparkStats
+    ? `${statReadout(sparkStats, mode, sparkSession.bestDistanceM, sparkSession.bestDurationSec, sparkSession.bestReps)} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}`
+    : '';
 
   return (
     <div class="stack" style={{ marginTop: 14 }}>
@@ -501,11 +528,18 @@ function Stats() {
               <div class="stack-sm" style={{ marginTop: 12 }}>
                 <ChartReadout text={sparkReadout} />
                 <Sparkline points={hist12.map(h => progressValue(h, mode))} dates={hist12.map(h => h.day)} height={96} labels scrub onScrubIndex={setSparkScrub} />
-                <div class="grid-3">
-                  <Stat value={lastTop!.load} label="last top load" />
-                  <Stat value={`${lastTop!.reps}`} label="reps at top" />
-                  <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${DATA_LABEL[t.confidence].toLowerCase()}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
-                </div>
+                {(() => {
+                  const lastHist = hist[hist.length - 1];
+                  const lastDistance = lastHist?.bestDistanceM ?? 0, lastDuration = lastHist?.bestDurationSec ?? 0, lastReps = lastHist?.bestReps ?? 0;
+                  const hasReps = statHasReps(mode, lastDistance, lastDuration, lastReps);
+                  return (
+                    <div class={hasReps ? 'grid-3' : 'grid-2'}>
+                      <Stat value={lastTop!.load} label={statLoadLabel(mode, lastDistance, lastDuration, lastReps)} />
+                      {hasReps && <Stat value={`${lastTop!.reps}`} label="reps at top" />}
+                      <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${DATA_LABEL[t.confidence].toLowerCase()}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
+                    </div>
+                  );
+                })()}
                 <EffortBars points={effortPoints} unit={effortInSets ? 'sets' : u} selected={selectedBar} onSelect={i => setSelectedBar(sel => (sel === i ? null : i))} />
                 {selectedBar != null && hist12[selectedBar] && (
                   <p class="hint">{formatDay(hist12[selectedBar]!.day)} · {hist12[selectedBar]!.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span>)}</p>

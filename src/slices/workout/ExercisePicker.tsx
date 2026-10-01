@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { Button, Chip, Field, Segmented, Sheet } from '@/ui/primitives';
+import { Button, Chip, Field, Row, Segmented, Sheet } from '@/ui/primitives';
 import { makeCustomExercise, searchExercises } from '@/core/exercises';
 import type { Exercise, ResistanceMode } from '@/core/models';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
@@ -30,13 +30,10 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
           <input autofocus placeholder="Search, e.g. chest press, lat pulldown" value={q} onInput={e => setQ((e.target as HTMLInputElement).value)} />
           <div class="list">
             {results.map(e => (
-              <div key={e.id} class="list-row pressable" onClick={() => onPick(e)}>
-                <div class="grow">
-                  <div>{e.name}</div>
-                  <div class="hint">{e.equipment} · {e.primary.map(muscleLabel).join(', ') || 'custom'}</div>
-                </div>
-                <span class="chip">Add</span>
-              </div>
+              <Row key={e.id} onClick={() => onPick(e)} trailing={<span class="chip">Add</span>}>
+                <div>{e.name}</div>
+                <div class="hint">{e.equipment} · {e.primary.map(muscleLabel).join(', ') || 'custom'}</div>
+              </Row>
             ))}
             {!results.length && <p class="muted small" style={{ padding: '12px 0' }}>Nothing matches.</p>}
           </div>

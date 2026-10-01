@@ -4649,6 +4649,167 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// AUD-11 (UI-02): editing a session, then swiping it away and undoing, restores the EDITED
+// session. The swipe gesture's effect only re-runs on [session.id] (A5), so before the fix the
+// Undo closed over the stale pre-edit session captured when the row first mounted.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-11 UI-02';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [{
+        id: 'aud11-ui02', splitId: 'sp1', splitName: 'Push', day: now.slice(0, 10), startedAt: now, endedAt: now, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench Press', sets: [{ kg: 60, reps: 5, effort: 'ideal' }] }],
+        logging: { mode: 'live', trainedAt: now, trainedEndAt: now, loggedAt: now, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+      }],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.waitForTimeout(200);
+  const kgInput = page.getByLabel('Load in kg');
+  await kgInput.fill('65'); await kgInput.blur();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.waitForTimeout(250);
+
+  const box = await page.locator('.swipe-row').first().boundingBox();
+  if (!box) errors.push(`${tag}: expected the session row after saving the edit`);
+  else {
+    await touchDrag(page, box.x + box.width * 0.9, box.y + box.height / 2, box.x + box.width * 0.15, box.y + box.height / 2, 300);
+    await page.waitForTimeout(400);
+    const undoBtn = page.locator('.toast button', { hasText: 'Undo' });
+    if (!(await visible(page.locator('.toast', { hasText: 'Session deleted' })))) errors.push(`${tag}: expected a "Session deleted" toast with Undo after the swipe`);
+    else {
+      await undoBtn.click().catch(() => errors.push(`${tag}: could not click the Undo button`));
+      // store.ts debounces its localStorage write by 250ms; wait past it before reading storage.
+      await page.waitForTimeout(400);
+      const kg = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions[0]?.exercises?.[0]?.sets?.[0]?.kg);
+      if (kg !== 65) errors.push(`${tag}: Undo restored kg ${kg}, expected the edited 65 kg (60 means Undo brought back a stale pre-edit session)`);
+    }
+  }
+  await ctx.close();
+}
+
+// AUD-11 (UI-04): a carry/sled set's editor shows and edits its load, distance and time together
+// (load no longer hides behind a timed carry's duration field), and removing one set uses an
+// explicit delete rather than needing every field zeroed to imply it.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-11 UI-04';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [{
+        id: 'aud11-ui04', splitId: 'sp1', splitName: 'Conditioning', day: now.slice(0, 10), startedAt: now, endedAt: now, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{
+          exerciseId: 'lib_farmer_s_carry', name: "Farmer's Carry",
+          sets: [{ kg: 32, distanceM: 40, durationSec: 35, effort: 'ideal' }, { kg: 34, distanceM: 45, durationSec: 38, effort: 'ideal' }],
+        }],
+        logging: { mode: 'live', trainedAt: now, trainedEndAt: now, loggedAt: now, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+      }],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.waitForTimeout(200);
+
+  const kgInputs = page.getByLabel('Load in kg');
+  const distInputs = page.getByLabel('Distance in metres');
+  const secInputs = page.getByLabel('Seconds');
+  if (!(await visible(kgInputs.first()))) errors.push(`${tag}: expected a visible load field for a timed carry set (it must not hide behind the duration field)`);
+  else {
+    const shown = { kg0: await kgInputs.nth(0).inputValue(), m0: await distInputs.nth(0).inputValue(), s0: await secInputs.nth(0).inputValue() };
+    if (shown.kg0 !== '32' || shown.m0 !== '40' || shown.s0 !== '35') errors.push(`${tag}: expected the first carry set to show 32 kg, 40 m, 35 s, got ${JSON.stringify(shown)}`);
+  }
+
+  // Edit the first set's distance. store.ts debounces its localStorage write by 250ms.
+  await distInputs.nth(0).fill('999'); await distInputs.nth(0).blur();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.waitForTimeout(400);
+  const afterEdit = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions[0].exercises[0].sets);
+  if (afterEdit?.[0]?.distanceM !== 999 || afterEdit?.[0]?.kg !== 32) errors.push(`${tag}: expected the edited distance (999 m, kg unchanged) to save, got ${JSON.stringify(afterEdit?.[0])}`);
+
+  // Delete the second set with its own explicit action, leaving the first set untouched.
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.waitForTimeout(200);
+  await page.getByLabel('Delete set 2').click();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.waitForTimeout(400);
+  const afterDelete = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions[0].exercises[0].sets);
+  if (afterDelete?.length !== 1 || afterDelete?.[0]?.distanceM !== 999) errors.push(`${tag}: expected the explicit delete to remove only set 2, got ${JSON.stringify(afterDelete)}`);
+  await ctx.close();
+}
+
+// AUD-11 (UI-11, review Low on #159): the Exercise progress card's chart readout for a hold is
+// built by a call site in History.tsx (statReadout), not by statReadout alone — covering only the
+// helper function left that call site free to regress back to the old "<load> × <reps>" form.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-11 UI-11';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, durationSec) => ({ id: `aud11-ui11-${offset}`, splitId: 'sp1', splitName: 'Core', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:01:00.000Z`, durationSec: 60, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_plank', name: 'Plank', sets: [{ durationSec, effort: 'ideal' }] }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:01:00.000Z`, loggedAt: `${day(offset)}T17:01:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess(7, 30), sess(0, 45)],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(300);
+
+  const readout = await page.locator('[data-palace="history.exercise-stats"] .chart-readout').first().innerText().catch(() => '');
+  if (!readout) errors.push(`${tag}: expected a chart readout for the plank's Exercise progress card`);
+  else {
+    if (readout.includes('×')) errors.push(`${tag}: a hold's readout should not show "× reps", got ${JSON.stringify(readout)}`);
+    if (!readout.includes('45s')) errors.push(`${tag}: expected the latest hold's 45s in the readout, got ${JSON.stringify(readout)}`);
+  }
+  if (await page.locator('[data-palace="history.exercise-stats"]').getByText('reps at top').count()) errors.push(`${tag}: a hold should have no "reps at top" tile`);
+  await ctx.close();
+}
+
 // QA12-3: under reduce, the drawing animation is skipped outright (not just faded fast). A
 // mutation that always calls beginElement() regardless of `reduce` would still pass every other
 // O1 probe (they only check timing), so assert the finished state directly, right after load.
@@ -7192,6 +7353,86 @@ for (const theme of ['silent-black', 'paper']) {
   }
   await ctx.close();
   if (!errors.some(e => e.startsWith(`${tag}`))) console.log('AUD-10: past hold/carry fields, live field names, keyboard Move up and substitute, Skip today keeps logged sets, future start refused, verified');
+}
+
+// AUD-12 (owner audit UI-08, UI-09): a fresh onboarding never shows (or saves) a sex the user has
+// not tapped, and the GoalSheet and Add-exercise choices — a Card with onClick and a plain
+// list-row — are reachable by real Tab presses and activate with Enter. tabTo walks Tab itself
+// (bounded) instead of assuming a stop count, so it still proves real keyboard reachability.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-12';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  const tabTo = async (selector, max = 25) => {
+    for (let i = 0; i < max; i++) {
+      if (await page.evaluate(sel => !!document.activeElement?.matches(sel), selector)) return true;
+      await page.keyboard.press('Tab');
+    }
+    return page.evaluate(sel => !!document.activeElement?.matches(sel), selector);
+  };
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+
+  // UI-08: saving onboarding without ever tapping Sex shows no segment lit, and saves nothing.
+  await page.getByRole('button', { name: 'Add my details' }).click(); await page.waitForTimeout(250);
+  if (await page.evaluate(() => !!document.querySelector('dialog[open] .seg[role="tablist"] button[aria-selected="true"]'))) {
+    errors.push(`${tag}: the onboarding Sex control shows a segment selected before it was ever tapped`);
+  }
+  await page.locator('label:has-text("Body weight") input').first().fill('80');
+  await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(300);
+  const savedSex = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') || '{}').profile?.sex);
+  if (savedSex !== undefined) errors.push(`${tag}: onboarding saved sex as ${JSON.stringify(savedSex)} without it being tapped`);
+
+  // UI-09: a GoalSheet choice (Coach.tsx's Card, kept keyboard-accessible through the Card fix
+  // in primitives.tsx) is reachable by Tab and Enter picks it.
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Change', exact: true }).click(); await page.waitForTimeout(300);
+  const GOAL_CARD = 'dialog[open] .card-press[role="button"]';
+  if (!(await tabTo(GOAL_CARD))) errors.push(`${tag}: could not reach a GoalSheet choice by Tab`);
+  else {
+    await page.keyboard.press('Enter'); await page.waitForTimeout(200);
+    if (!(await visible(page.locator('dialog[open]').getByText(/Apply \d+s rest/)))) errors.push(`${tag}: Enter on a focused GoalSheet choice did not pick a goal`);
+  }
+  await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+
+  // UI-09 (supervisor review fix on #156): an insight card's expand control is a separate real
+  // button (Coach.tsx's "Open <title>"), reachable by Tab even though the card itself stays
+  // mouse-only (it nests AskAbout and the Helpful/Not now buttons, so the Card fix skips it). The
+  // just-changed goal above leaves a "Goal changed" insight in the list to open.
+  const OPEN_INSIGHT = '[aria-label^="Open "]';
+  if (!(await tabTo(OPEN_INSIGHT))) errors.push(`${tag}: could not reach an insight's Open button by Tab`);
+  else {
+    const outline = await page.evaluate(() => getComputedStyle(document.activeElement).outlineStyle);
+    if (outline === 'none') errors.push(`${tag}: the focused insight Open button shows no focus ring (outlineStyle: ${outline})`);
+    const insightTitle = await page.evaluate(sel => document.activeElement?.getAttribute('aria-label')?.replace(/^Open /, ''), OPEN_INSIGHT);
+    await page.keyboard.press('Enter'); await page.waitForTimeout(250);
+    if (!insightTitle || !(await visible(page.locator('dialog[open] h2').getByText(insightTitle, { exact: true })))) errors.push(`${tag}: Enter on an insight's Open button did not open its sheet`);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+  }
+
+  // UI-09: an Add-exercise search result (ExercisePicker.tsx, now a Row instead of a click-only
+  // div) is reachable by Tab and Enter picks it.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  const tpl = page.getByRole('button', { name: 'Use Push / Pull / Legs' });
+  if (await tpl.isVisible().catch(() => false)) { await tpl.click(); await page.waitForTimeout(300); }
+  await page.locator('[data-palace="train.edit-split"]').first().click(); await page.waitForTimeout(300);
+  const dialogsBefore = await page.locator('dialog[open]').count();
+  await page.getByRole('button', { name: 'Add exercise', exact: true }).click();
+  await page.waitForSelector('dialog[open].nested'); await page.waitForTimeout(300);
+  const RESULT_ROW = 'dialog[open].nested .list-row.pressable';
+  if (!(await tabTo(RESULT_ROW))) errors.push(`${tag}: could not reach an Add-exercise result by Tab`);
+  else {
+    const picked = await page.evaluate(sel => document.activeElement?.querySelector('.grow > div')?.textContent?.trim(), RESULT_ROW);
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const dialogsAfter = await page.locator('dialog[open]').count();
+    if (dialogsAfter > dialogsBefore) errors.push(`${tag}: Enter on a focused Add-exercise result did not close the picker (${dialogsAfter} dialogs still open)`);
+    const splitText = await page.locator('dialog[open]').first().innerText().catch(() => '');
+    if (picked && !splitText.includes(picked)) errors.push(`${tag}: Enter on a focused Add-exercise result did not add "${picked}" to the split`);
+  }
+  await settle(page); await page.screenshot({ path: `${OUT}/aud-12-keyboard-access.png` });
+  await ctx.close();
+  if (!errors.some(e => e.startsWith(`${tag}:`))) console.log('AUD-12: onboarding Sex stays unset until tapped, and the GoalSheet, insight-open and Add-exercise choices are reachable and activate by keyboard');
 }
 
 await browser.close();
