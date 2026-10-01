@@ -25,21 +25,19 @@ export function profileCompleteness(profile: Profile): ProfileCompleteness {
   return { weight, height, age, sex, done, of: 4, complete: done === 4 };
 }
 
-/** BUG-8: the Profile sheet's own "Unlocks:" wording for each field (first item only). */
-const PROFILE_FIELD_INFO: Record<'age' | 'sex' | 'height' | 'weight', { label: string; unlocks: string }> = {
-  age: { label: 'birth year', unlocks: 'heart-rate zones' },
-  sex: { label: 'sex', unlocks: 'calories' },
-  height: { label: 'height', unlocks: 'calories' },
-  weight: { label: 'weight', unlocks: 'calories' },
+/** BUG-8: the name of each profile field as the Coach row lists it. */
+const PROFILE_FIELD_LABEL: Record<'age' | 'sex' | 'height' | 'weight', string> = {
+  age: 'birth year',
+  sex: 'sex',
+  height: 'height',
+  weight: 'weight',
 };
 
-/** BUG-8: names what's missing instead of the generic unlocks list; "All 4 details" once complete. */
+/** BUG-8: names what's missing; "All 4 details" once complete. COPY-1: the missing fields only (data), no "to unlock …". */
 export function missingProfileSummary(c: ProfileCompleteness): string {
   if (c.complete) return 'All 4 details';
   const missing = (['age', 'sex', 'height', 'weight'] as const).filter(k => !c[k]);
-  const labels = missing.map(k => PROFILE_FIELD_INFO[k].label);
-  const unlocks = [...new Set(missing.map(k => PROFILE_FIELD_INFO[k].unlocks))];
-  return `Add ${labels.join(' and ')} to unlock ${unlocks.join(', ')}`;
+  return `Missing: ${missing.map(k => PROFILE_FIELD_LABEL[k]).join(', ')}`;
 }
 
 export type OnboardingTrigger = 'first' | 'partial' | 'review' | 'watch';

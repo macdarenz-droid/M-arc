@@ -2,7 +2,7 @@ import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
 import { insights, hiddenInsights, today, week, activeDeload, deloadSuggestion } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
-import { IconChevron, IconInfo } from '@/ui/icons';
+import { IconChevron } from '@/ui/icons';
 import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
 import { pickCue, type Cue } from '@/brain/coach/cues';
 import { reviewWeek, weeklyReviewInsights } from '@/brain/coach/weeklyReview';
@@ -68,7 +68,7 @@ export function Coach() {
               </div>
             </Card>
           ))}
-          {!list.length && <Card class="card-quiet"><p class="small muted">No strong signals right now. Keep logging and rating effort.</p></Card>}
+          {!list.length && <Card class="card-quiet"><p class="small muted">No strong signals right now.</p></Card>}
           <HiddenNotes />
         </div>
       </Section>
@@ -89,17 +89,6 @@ export function Coach() {
 
       <WhatCoachCanSee />
 
-      <Section title="How the coach thinks" palace="coach.thinks">
-        <Card class="card-quiet">
-          <div class="stack-sm small muted">
-            <p><IconInfo size={16} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
-            <p>Two sessions under the range at max effort means one step down. More than four weeks away means repeat your last load once.</p>
-            <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and adjusts to your own history in both directions, within limits.</p>
-            <p>Missing effort ratings never count as easy or max. They lower confidence instead.</p>
-          </div>
-        </Card>
-      </Section>
-
       {openInsight && <InsightSheet insight={openInsight} onClose={() => setOpenInsight(null)} />}
     </div>
   );
@@ -115,7 +104,6 @@ export function GoalSheet({ onClose }: { onClose: () => void }) {
     <Sheet title="Training goal" onClose={onClose} palace="panel.goal">
       {!picked ? (
         <div class="stack-sm">
-          <p class="small muted">Your goal sets rep targets, effort target, rest suggestion, weekly heavy-set and volume guidance and the weight trend the coach watches. It does not change your exercises.</p>
           {GOALS.map(g => (
             <Card key={g.id} class="card-press" style={{ borderColor: g.id === s.goal ? 'var(--accent)' : undefined }} onClick={() => { changeGoal(g.id); setChangedTo(g.id); }}>
               <b>{g.name}</b><div class="hint">{g.tagline} · {g.mainReps[0]}–{g.mainReps[1]} reps · {g.bestFor}</div>
@@ -126,7 +114,7 @@ export function GoalSheet({ onClose }: { onClose: () => void }) {
         <div class="stack-sm">
           <Card class="card-accent">
             <b>{picked.name}</b>
-            <div class="hint">Main lifts {picked.mainReps[0]}–{picked.mainReps[1]} reps, accessories {picked.accessoryReps[0]}–{picked.accessoryReps[1]}. Your splits keep their exercises.</div>
+            <div class="hint">Main lifts {picked.mainReps[0]}–{picked.mainReps[1]} reps, accessories {picked.accessoryReps[0]}–{picked.accessoryReps[1]}.</div>
           </Card>
           <Button onClick={() => applyGoalRest(picked.id)}>Apply {picked.restDefaultSec}s rest</Button>
           <Button variant="quiet" onClick={() => addGoalTemplates(picked.id)}>Add starter templates for this goal</Button>
@@ -167,7 +155,7 @@ function Schedule() {
         <div class="row" style={{ justifyContent: 'space-between' }}>
           {WEEKDAYS.map(d => { const sp = s.splits.find(x => x.id === s.schedule[d]); return <div key={d} style={{ textAlign: 'center' }}><div class="hint">{WEEKDAY_LABEL[d][0]}</div><div style={{ width: 10, height: 10, borderRadius: '50%', margin: '4px auto 0', background: sp?.color ?? 'var(--surface-3)' }} /></div>; })}
         </div>
-        <p class="hint" style={{ marginTop: 8 }}>{active.length ? `${active.length} training days a week. Reminders and streaks follow this.` : 'No schedule. Set one so reminders and streaks know your rest days.'}</p>
+        <p class="hint" style={{ marginTop: 8 }}>{active.length ? `${active.length} training days a week.` : 'No schedule.'}</p>
       </Card>
     </Section>
   );
@@ -188,7 +176,7 @@ export function ScheduleSheet({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title="Weekly schedule" onClose={onClose} palace="panel.schedule">
       <div class="stack">
-        {!s.splits.length && <p class="small muted">Create a split first, then assign it to days.</p>}
+        {!s.splits.length && <p class="small muted">No splits yet.</p>}
         {WEEKDAYS.map(d => (
           <div key={d} class="row"><span style={{ width: 44 }} class="small">{WEEKDAY_LABEL[d]}</span>
             <select class="grow" value={s.schedule[d] ?? ''} onChange={e => set(d, (e.target as HTMLSelectElement).value || null)}><option value="">Rest</option>{s.splits.map(sp => <option key={sp.id} value={sp.id}>{sp.name}</option>)}</select>
@@ -258,7 +246,7 @@ export function WeeklyReviewSheet({ onClose }: { onClose: () => void }) {
                 <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
               </Card>
             ))}
-            {!items.length && <p class="small muted">Nothing stood out this week, good or bad.</p>}
+            {!items.length && <p class="small muted">Nothing stood out this week.</p>}
             <Button variant="quiet" onClick={() => { dismiss(); setOpen(false); }}>Dismiss until next week</Button>
           </div>
         </Sheet>
@@ -276,7 +264,7 @@ function DeloadCard() {
         <>
           <div class="eyebrow">Lighter week</div>
           <p style={{ marginTop: 6 }}>Day {lighterWeekDay(active, today.value)} of 7. {active.reason}</p>
-          <p class="hint" style={{ marginTop: 4 }}>Sets and load are reduced across your plan through {active.endDay}.</p>
+          <p class="hint" style={{ marginTop: 4 }}>Through {active.endDay}.</p>
         </>
       ) : (
         <>
@@ -315,7 +303,7 @@ function backIn(day: string): string {
   return `Not now · back in ${n} day${n === 1 ? '' : 's'}`;
 }
 
-/** 6.12.6: what the coach is actually working from right now, and what each missing input unlocks. */
+/** 6.12.6: what the coach is actually working from right now (COPY-1: data rows only, no unlock hints). */
 function WhatCoachCanSee() {
   const s = state.value;
   const recentSets = s.sessions.slice(-3).flatMap(x => x.exercises.flatMap(e => e.sets)).filter(isWorkingSet);
@@ -323,14 +311,14 @@ function WhatCoachCanSee() {
   const liveShare = recentSets.length ? recentSets.filter(x => x.fidelity === 'live').length / recentSets.length : null;
   const completeness = profileCompleteness(s.profile);
   const todayCheckIn = s.checkIns.find(c => c.day === today.value);
-  const rows: Array<{ label: string; value: string; unlocks?: string }> = [
+  const rows: Array<{ label: string; value: string }> = [
     { label: 'Sets logged', value: `${s.sessions.reduce((a, x) => a + x.exercises.reduce((b, e) => b + e.sets.length, 0), 0)} total` },
-    { label: 'Effort ratings', value: ratedShare != null ? `${Math.round(ratedShare * 100)}% of recent sets` : 'none yet', unlocks: ratedShare == null || ratedShare < 0.5 ? 'Rate sets so the coach can judge hard vs easy.' : undefined },
-    { label: 'Set timing', value: liveShare != null ? `${Math.round(liveShare * 100)}% logged live` : 'none yet', unlocks: liveShare != null && liveShare < 0.5 ? 'Logging as you go unlocks rest and pacing insights.' : undefined },
-    { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'not connected', unlocks: s.health.connected ? undefined : 'Sleep and resting heart rate unlock readiness.' },
-    { label: "Today's check-in", value: todayCheckIn ? 'added' : 'not added', unlocks: todayCheckIn ? undefined : 'Soreness-based swaps.' },
+    { label: 'Effort ratings', value: ratedShare != null ? `${Math.round(ratedShare * 100)}% of recent sets` : 'none yet' },
+    { label: 'Set timing', value: liveShare != null ? `${Math.round(liveShare * 100)}% logged live` : 'none yet' },
+    { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'not connected' },
+    { label: "Today's check-in", value: todayCheckIn ? 'added' : 'not added' },
     { label: 'Profile', value: missingProfileSummary(completeness) },
-    { label: 'Weigh-ins', value: `${s.weightLog.length} logged`, unlocks: s.weightLog.length < 7 ? 'A weight trend, not just a jump.' : undefined },
+    { label: 'Weigh-ins', value: `${s.weightLog.length} logged` },
   ];
   return (
     <Section title="What the coach can see" palace="coach.sees">
@@ -339,7 +327,6 @@ function WhatCoachCanSee() {
           {rows.map(r => (
             <Row key={r.label} trailing={<span class="hint num">{r.value}</span>}>
               <span class="small">{r.label}</span>
-              {r.unlocks && <div class="hint">{r.unlocks}</div>}
             </Row>
           ))}
         </div>

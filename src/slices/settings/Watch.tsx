@@ -62,7 +62,6 @@ export function WatchSheet({ onClose }: { onClose: () => void }) {
         {(denied || status.state === 'permission') && <p class="hint">{watchPermissionHint(needsLocation)}</p>}
         {(scanning || devices.length > 0) && (
           <div class="stack-sm">
-            {scanning && devices.length === 0 && <p class="small muted">Looking for broadcasting watches…</p>}
             {devices.map(d => (
               <Card key={d.address} class="card-press" onClick={() => pick(d.address, d.name)}>
                 <b class="small">{d.name}</b>
@@ -71,11 +70,11 @@ export function WatchSheet({ onClose }: { onClose: () => void }) {
             ))}
           </div>
         )}
-        {scanned && !scanning && devices.length === 0 && !denied && <p class="small muted">No watch found. Turn on heart-rate broadcast on the watch, keep it close, and scan again.</p>}
-        {w.deviceAddress && <Row trailing={<Button size="sm" variant="quiet" onClick={forget}>Forget watch</Button>}><span class="small">{w.deviceName ?? 'Saved watch'}</span><div class="hint">Remembered for auto-connect</div></Row>}
+        {scanned && !scanning && devices.length === 0 && !denied && <p class="small muted">No watch found. Turn on heart-rate broadcast on the watch, then scan again.</p>}
+        {w.deviceAddress && <Row trailing={<Button size="sm" variant="quiet" onClick={forget}>Forget watch</Button>}><span class="small">{w.deviceName ?? 'Saved watch'}</span></Row>}
         <Row trailing={<Toggle checked={w.autoConnectOnSession} onChange={v => update(x => ({ ...x, preferences: { ...x.preferences, watch: { ...x.preferences.watch, autoConnectOnSession: v } } }))} label="Auto-connect when a session starts" />}><span class="small">Auto-connect when a session starts</span></Row>
         <Button variant="quiet" size="sm" onClick={copyDiagnostics}>Copy watch diagnostics</Button>
-        <p class="hint">Readings stay on this device. No Bluetooth address or heart-rate value ever leaves your phone.</p>
+        <p class="hint">Watch readings stay on this phone. Session heart rate goes to Escobar only if Share health data is on.</p>
       </div>
     </Sheet>
   );

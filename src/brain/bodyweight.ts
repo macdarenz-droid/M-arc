@@ -111,7 +111,8 @@ export const loadColumnLabel = (mode: ResistanceMode, unit: LoadUnit): string =>
 export const loadAriaLabel = (mode: ResistanceMode, unit: LoadUnit): string =>
   mode === 'bodyweight' ? `Added load in ${unit}` : mode === 'assisted' ? `Assistance in ${unit}` : `Load in ${unit}`;
 
-export const NO_BODY_WEIGHT_HINT = 'Add your body weight in Settings to count bodyweight work';
+// COPY-1: data only (the counted load or its absence), no instructions.
+export const NO_BODY_WEIGHT_HINT = 'Body weight not set';
 
 /** The one Train line for a move with a share; null for moves without one. */
 export function bodyweightHint(ex: Exercise | undefined, bwKg: number | null, unit: LoadUnit): string | null {
@@ -119,7 +120,5 @@ export function bodyweightHint(ex: Exercise | undefined, bwKg: number | null, un
   if (share == null || !ex) return null;
   const base = effectiveLoadKg(undefined, ex.mode, share, bwKg);
   if (base == null) return NO_BODY_WEIGHT_HINT;
-  return ex.mode === 'assisted'
-    ? `Your body weight counts: ${approxLoadText(base, unit)}, minus the machine's help.`
-    : `Your body weight counts: ${approxLoadText(base, unit)}, plus anything you add.`;
+  return `Body-weight load ${approxLoadText(base, unit)}`;
 }

@@ -32,8 +32,8 @@ describe('the error card (QA-R1-8)', () => {
     const out = texts(b.render());
     expect(out).toContain('button:Reload');
     expect(out).toContain('button:Hold to delete everything');
-    // QA10-4: the hold button alone doesn't say what it deletes.
-    expect(out).toContain('Deletes every workout on this device. Save a copy first if unsure.');
+    // QA10-4: the hold button alone doesn't say what it deletes. COPY-1: that fact only, no advice after it.
+    expect(out).toContain('Deletes every workout on this device.');
   });
   it('the reset clears storage and the photo database', async () => {
     const clear = vi.fn();
