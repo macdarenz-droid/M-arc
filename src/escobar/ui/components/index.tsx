@@ -11,6 +11,7 @@ import { Sparkline } from '@/ui/Sparkline';
 import { EffortBars, type EffortPoint } from '@/ui/EffortBars';
 import { makeCtx } from '../../tools/context';
 import { summarize } from '../../tools/show';
+import { stripCitationTags } from '../present';
 
 type S = Record<string, unknown>;
 const num = (v: unknown): string => (typeof v === 'number' ? String(Math.round(v * 10) / 10) : '—');
@@ -48,7 +49,8 @@ export function ShowComponent({ component, params, caption, action }: { componen
   const s = useMemo<S | null>(() => { try { return summarize(component, params, makeCtx(app)); } catch { return null; } }, [component, key, app]);
   return (
     <Card class="esc-comp" data-component={component}>
-      {(caption || action) && <div class="row-between">{caption ? <div class="eyebrow">{caption}</div> : <span />}{action}</div>}
+      {/* BUG-31: captions and pinned card titles are the model's own text; fact tags never show. */}
+      {(caption || action) && <div class="row-between">{caption ? <div class="eyebrow">{stripCitationTags(caption)}</div> : <span />}{action}</div>}
       {!s ? <div class="esc-comp-empty small muted">Couldn’t draw that with the data on this phone.</div>
         : component === 'lift_trend' ? <LiftTrend s={s} /> : <Generic s={s} />}
     </Card>
