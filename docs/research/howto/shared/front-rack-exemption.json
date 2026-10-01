@@ -1,0 +1,175 @@
+{
+  "key": "front-rack-exemption",
+  "kind": "exemption",
+  "appliesTo": [
+    "front_squat"
+  ],
+  "appliesToWhy": "GA appendix B: front_squat is the on-body id with a front rack (\"front rack exempt, needs its source\"). goblet_squat holds a dumbbell or kettlebell, not a racked bar, and is not covered.",
+  "exempts": {
+    "archetype": "on-body",
+    "rule": "the on-body wrist range (extension 0 to 15 degrees, GA 3.1)",
+    "claim": [
+      "c1",
+      "c3"
+    ]
+  },
+  "reason": {
+    "text": "In the front rack the shoulders hold the bar and the hands only add security; reaching it needs the wrist bent far back, and a fingertip or open grip is acceptable.",
+    "claim": [
+      "c1",
+      "c2",
+      "c3",
+      "c4"
+    ]
+  },
+  "replacementRule": {
+    "text": "Bar in the channel between the throat and the top of the shoulders, elbows high, grip loose and as full as you can keep; fingertips on the bar are fine if the shoulders carry it.",
+    "claim": [
+      "c1",
+      "c2",
+      "c4",
+      "c5"
+    ]
+  },
+  "faults": [
+    {
+      "key": "bar-off-shoulders",
+      "label": "Bar on hands",
+      "what": "A full grip with the bar not resting on the shoulders, so the hands carry it.",
+      "claim": "c4"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "In a correct clean rack the shoulders hold the bar; the hands and arms only add security and should not do the main work of holding it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-rack"
+      ],
+      "quotes": [
+        {
+          "source": "cat-rack",
+          "text": "If the shoulder and bar positions are correct, the bar will remain secure without being held by the hands. The hands and arms provide added security, but should not be doing the primary work of holding the bar in place.",
+          "where": "article body"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "A lack of wrist mobility, in particular reduced wrist extension (bending the wrist back), is a common obstacle to the front rack and makes the bar harder to grip; a bar resting in the fingers instead of the top of the palm is a sign of it.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "gs-rack"
+      ],
+      "quotes": [
+        {
+          "source": "gs-rack",
+          "text": "A lack of wrist mobility is a common obstacle when it comes to the front rack. Specifically, reduced wrist extension makes it harder to grip the barbell comfortably and securely.",
+          "where": "1. Three-Part Wrist & Elbow Extension"
+        },
+        {
+          "source": "gs-rack",
+          "text": "If during your setup you can only just about get a few fingers under the bar, or the bar is precariously resting in your fingers as opposed to the top of your palm, this drill is for you.",
+          "where": "1. Three-Part Wrist & Elbow Extension"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "If a full grip is not possible because of body proportions or limited mobility, try other grip widths, and if that does not help, rack the bar with a partly open grip.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-rack"
+      ],
+      "quotes": [
+        {
+          "source": "cat-rack",
+          "text": "If you’re unable to hold a full grip on the bar because of your proportions or immobility, experiment with different grip widths. If this doesn’t resolve the problem, you’ll need to rack the bar with some degree of an open grip.",
+          "where": "article body"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "A fingertip rack with the bar supported by the shoulders is better than a full grip with the bar not fully supported by the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-rack"
+      ],
+      "quotes": [
+        {
+          "source": "cat-rack",
+          "text": "The priority is the bar’s direct support by the trunk, so a fingertip rack position is preferable to a full grip with the bar not fully supported by the shoulders.",
+          "where": "article body"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "For the front squat: bar in the channel between the throat and the top of the shoulders, hands wrapped round the bar as much as possible with the elbows high and the bar supported on the trunk, but the grip loose.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-frontsquat"
+      ],
+      "quotes": [
+        {
+          "source": "cat-frontsquat",
+          "text": "Place the bar in the channel between the throat and the highest points of the shoulders. Keep the hands wrapped around the bar as much as you can while keeping the elbows raised high and the bar securely supported on the trunk, but the grip loose.",
+          "where": "Front Squat description"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cat-rack",
+      "url": "https://www.catalystathletics.com/video/1402/Clean-Rack-Position/",
+      "title": "Clean Rack Position (Catalyst Athletics)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    },
+    {
+      "id": "gs-rack",
+      "url": "https://www.gymshark.com/blog/article/the-best-drills-to-improve-your-front-rack-mobility",
+      "title": "How To Improve Your Front Rack Mobility: Try These 6 Exercises (Gymshark Central)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    },
+    {
+      "id": "cat-frontsquat",
+      "url": "https://www.catalystathletics.com/exercise/78/Front-Squat/",
+      "title": "Front Squat (Catalyst Athletics Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    }
+  ],
+  "gaps": [
+    "No source gives a wrist extension angle for the front rack, so the exemption replaces the on-body range with the rule above and no number; the drawing check needs a range from the plate pose, recorded as a drawing convention.",
+    "No source read says the crossed-arm hold (front_squat c6) is a fix for wrist pain; it is not offered as one here."
+  ],
+  "notes": [
+    "Same rule sourced in cards/front_squat.json c2-c5 (Catalyst clean rack and front squat pages). Re-read both pages in full on 2026-10-01; quotes copied from that read. gs-rack (Gymshark coaching article, no named author) is new here and tagged WEAK.",
+    "The fault drawn for the hand zoom is the one the sources name (bar held by the hands, not the shoulders); the on-body fault waiter-tray (load arrow through the wrist) does not apply to the rack, where a bent-back wrist is expected."
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "key": "wrist-curl-exemption",
+  "kind": "exemption",
+  "appliesTo": [
+    "wrist_curl"
+  ],
+  "appliesToWhy": "GA appendix B: wrist_curl is the one curl-archetype id whose wrist is the moving joint.",
+  "exempts": {
+    "archetype": "curl",
+    "rule": "the curl wrist rule (wrist straight, in line with the forearm, while the elbow bends; see curl.json)",
+    "claim": [
+      "c1",
+      "c2"
+    ]
+  },
+  "reason": {
+    "text": "In the wrist curl the wrist itself is the joint that moves: it starts straight, bends back toward the floor on the way down, and rolls back up.",
+    "claim": [
+      "c1",
+      "c2"
+    ]
+  },
+  "replacementRule": {
+    "text": "The wrist moves slowly from straight into a backward bend and back; the forearm stays on its support and the grip stays closed.",
+    "claim": [
+      "c1",
+      "c2",
+      "c3"
+    ]
+  },
+  "faults": [
+    {
+      "key": "grip-opening",
+      "label": "Grip opening",
+      "what": "The fingers open on the way down and the weight rolls toward the fingertips.",
+      "claim": "c3"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "In the wrist curl the start position has the wrist straight (neither bent up nor down), with the forearms resting on a bench and the palms up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-wristcurl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-wristcurl",
+          "text": "Supinate your forearms (rotate the forearms so that the tops are along the bench and the palms are facing upward) keep your wrists in a neutral position (not in flexion or extension).",
+          "where": "ACE exercise steps: Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The wrist is the moving joint: it bends back toward the floor on the way down and rolls back up toward you on the way up, while the arms stay still.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-wristcurl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-wristcurl",
+          "text": "Inhale and slowly allow the wrists to move into extension (allow dumbbells to move towards the floor) without releasing your grip, extending your arms or leaning forward / backward.",
+          "where": "ACE exercise steps: Downward Phase"
+        },
+        {
+          "source": "ace-wristcurl",
+          "text": "Exhale and slowly contract your forearm flexor muscles (along the top of the forearm) rolling your wrists towards you in order to return the dumbbells back to the starting position.",
+          "where": "ACE exercise steps: Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Letting the grip open on the way down so the weight rolls to the fingertips raises the risk of wrist injury and of dropping the weight; squeeze the weight in both phases.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-wristcurl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-wristcurl",
+          "text": "Individuals sometimes release their grip during the lowering phase, allowing the dumbbells to roll towards their finger tips. While this may increase the load on the forearm muscles, it also increases the risk of wrist injury and dropping the dumbbells.",
+          "where": "ACE exercise steps: note after Step 4"
+        },
+        {
+          "source": "ace-wristcurl",
+          "text": "To increase strength think about squeezing the weights as hard as possible during both phases of the movement.",
+          "where": "ACE exercise steps: note after Step 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-wristcurl",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/30/wrist-curl-flexion/",
+      "title": "Wrist Curl - Flexion (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    }
+  ],
+  "gaps": [
+    "No source gives a safe end range (degrees) for the backward bend; the drawing uses the exercise card's pose, not a number from this card."
+  ],
+  "notes": [
+    "Same rule sourced in cards/wrist_curl.json c2, c3, c5 (ACE). Re-read the ACE page in full on 2026-10-01; quotes copied from that read.",
+    "LR-18: the card follows ACE (keep the grip) over StrengthLog (let the weight roll to the fingers); wrist_curl c5 states the conflict. This exemption follows LR-18 and cites ACE only."
+  ]
+}

@@ -1,0 +1,351 @@
+{
+  "key": "palm-flat",
+  "kind": "hand",
+  "appliesTo": [
+    "push_up",
+    "incline_push_up",
+    "diamond_push_up",
+    "pike_push_up",
+    "burpee",
+    "mountain_climbers",
+    "bear_crawl",
+    "bird_dog"
+  ],
+  "appliesToWhy": "GA appendix B lists 10 palm-flat ids. bench_dip (hands on a bench edge behind the body) and renegade_row (hands on dumbbell handles) are left out: no source read covers their hands, and their contact is not a flat palm on the floor. The rules below are sourced on the push-up, plank-position and hands-and-knees (bird dog) set-ups; other ids use them by inference (byRule lists where each rule is direct).",
+  "byRule": {
+    "shoulderOverHand": [
+      "push_up",
+      "bird_dog",
+      "mountain_climbers"
+    ],
+    "wholeHandDown": [
+      "push_up"
+    ],
+    "inferenceOnly": [
+      "incline_push_up",
+      "diamond_push_up",
+      "pike_push_up",
+      "burpee",
+      "bear_crawl"
+    ]
+  },
+  "contactPoint": {
+    "text": "Whole palm and fingers flat on the floor; push through the heel and outer edge of the palm.",
+    "claim": [
+      "c2",
+      "c5"
+    ]
+  },
+  "fingers": {
+    "text": "Fingers spread with space between them, hands facing forward.",
+    "claim": [
+      "c2",
+      "c4"
+    ]
+  },
+  "wrist": {
+    "text": "The floor sets the wrist bend; the check is position, not angle: shoulders directly over the hands at the top, forearms over the wrists at the bottom.",
+    "claim": [
+      "c1",
+      "c3",
+      "c6"
+    ]
+  },
+  "rightPose": {
+    "text": "Hands shoulder-width, flat, fingers spread and facing forward, directly under the shoulders.",
+    "claim": [
+      "c1",
+      "c2",
+      "c3",
+      "c4"
+    ]
+  },
+  "faults": [
+    {
+      "key": "hand-ahead",
+      "label": "Hands too far forward",
+      "what": "Hands wide and in front of the shoulders instead of under them.",
+      "claim": "c3"
+    },
+    {
+      "key": "cupped-palm",
+      "label": "Palm cupped",
+      "what": "Palm cupped or fingers lifted, so the heel of the hand takes all the pressure.",
+      "claim": "c2"
+    },
+    {
+      "key": "hands-rotated",
+      "label": "Hands turned",
+      "what": "Hands rotated to one side instead of facing forward.",
+      "claim": "c3"
+    }
+  ],
+  "soreWrist": {
+    "text": "Sore wrist: push up on the knuckles, which keeps the wrist straight, or hold dumbbells if the wrists lack flexibility; if it still hurts on the knuckles, stop.",
+    "claim": [
+      "c8",
+      "c9"
+    ]
+  },
+  "gripLine": {
+    "text": "Hands flat under your shoulders, fingers spread and facing forward, the whole hand pressing the floor.",
+    "claim": [
+      "c2",
+      "c3",
+      "c4"
+    ]
+  },
+  "cue": {
+    "text": "Whole hand on the floor.",
+    "claim": "c2"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "In the push-up the palms are flat, hands shoulder-width, fingers facing forward or turned slightly inward, with the shoulders directly over the hands.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushup",
+          "text": "Slowly bend forward to place your palms flat on the mat, positioning your hands shoulder-width apart with your fingers facing forward or turned slightly inward. Slowly shift your weight forward until your shoulders are positioned directly over your hands.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hands should face forward, not angled, with every part of the hand and fingers on the floor; cupping the palm or lifting the fingers puts all the pressure on the heel of the hand and leads to wrist discomfort.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pushwrist"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pushwrist",
+          "text": "Your hands should be facing forward, not angled, and all parts of your hand should make contact with the ground. Avoid cupping the palm or lifting up your fingers.",
+          "where": "Hand Position"
+        },
+        {
+          "source": "bm-pushwrist",
+          "text": "If you do this, the heel of your hand will take on all of the pressure and force, which inevitably leads to some wrist discomfort.",
+          "where": "Hand Position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Hands wide and far in front of the chest, relaxed hands, or hands rotated to one side strain the wrist; at the top of the push-up the hands sit directly under the shoulders, and hands in front of or behind the shoulders increase wrist pressure.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pushwrist"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pushwrist",
+          "text": "Beginners tend to keep their hands wide and far in front of the chest. They also relax their hands and fingers. Sometimes I even see people rotate their hands in one direction or another. All these positions place unnecessary strain on the wrist, leading to pain.",
+          "where": "Hand Position"
+        },
+        {
+          "source": "bm-pushwrist",
+          "text": "At the top of the push up, your hands should be directly under your shoulders. Placing your hands in front of or behind the shoulder will increase pressure on your wrists.",
+          "where": "Hand Position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Press the knuckles into the floor and spread the hands so there is space between each finger.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bws-pushup"
+      ],
+      "quotes": [
+        {
+          "source": "bws-pushup",
+          "text": "First, start by pushing your knuckle down to the floor. Spread your hands such that there's space between each of your fingers.",
+          "where": "Step 2: Stabilize And Activate"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "One coaching source says pushing through the heel and outside surface of the palm gives more force and steadier shoulders.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-pushup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushup",
+          "text": "Pushing through the heel and outside surface of your palm provides greater force in your press and stability to your shoulders.",
+          "where": "note after Step 5"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "On hands and knees (bird dog) the hands go directly under the shoulders, shoulder-width, fingers facing forward; at the bottom of a push-up the forearms sit on top of the wrists in a straight line.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-birddog",
+        "bws-pushup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-birddog",
+          "text": "Reposition your hands and knees as necessary so that your knees are directly under your hips and hands are directly under your shoulders.",
+          "where": "Step 2"
+        },
+        {
+          "source": "bws-pushup",
+          "text": "Forearms should end up on top of your wrists in a straight line - Avoid having your forearms bent at an angle.",
+          "where": "Step 1: Setup"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "In patients whose wrist hurt on the back while bearing weight with the wrist bent back (as in push-ups, planks, yoga and Pilates), MRI found a problem on the back of the wrist in 84 %, most often a hidden ganglion cyst. A patient chart review, not a risk rate for healthy lifters.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "nance-2017"
+      ],
+      "quotes": [
+        {
+          "source": "nance-2017",
+          "text": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses.",
+          "where": "Abstract: Purpose"
+        },
+        {
+          "source": "nance-2017",
+          "text": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist. Occult dorsal ganglion cysts are the most common cause of dorsal wrist pain, followed by partial scapholunate tears.",
+          "where": "Abstract: Conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "If wrists hurt in push-ups, knuckle push-ups keep the wrists aligned; holding dumbbells is an option when the wrists are not very flexible.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "bm-pushwrist",
+        "bws-pushup"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pushwrist",
+          "text": "Until then, incorporate some knuckle push ups in your program. These will ensure your wrists are aligned.",
+          "where": "If You Still Feel Wrist Pain"
+        },
+        {
+          "source": "bws-pushup",
+          "text": "You may need to hold onto dumbbells if your wrists aren't very flexible.",
+          "where": "Step 1: Setup"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "If wrist pain continues even on the knuckles, stop the push-ups and get the wrist assessed.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pushwrist"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pushwrist",
+          "text": "If you continue to have wrist pain even while doing push ups on your knuckles, stop until you’ve consulted with your physiotherapist to prevent further injury.",
+          "where": "If You Still Feel Wrist Pain"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-pushup",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/",
+      "title": "Push-Ups (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    },
+    {
+      "id": "bm-pushwrist",
+      "url": "https://breakingmuscle.com/avoid-these-push-up-mistakes-to-protect-your-wrists/",
+      "title": "Avoid These Push Up Mistakes to Protect Your Wrists (Breaking Muscle; Cassie Dionne, physiotherapist)",
+      "kind": "coach",
+      "year": 2021,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    },
+    {
+      "id": "bws-pushup",
+      "url": "https://builtwithscience.com/fitness-tips/how-to-do-push-up/",
+      "title": "How To Unlock Your Push-Up Strength (In 5 Minutes) (Built With Science, Jeremy Ethier)",
+      "kind": "coach",
+      "year": 2021,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    },
+    {
+      "id": "ace-birddog",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/14/bird-dog/",
+      "title": "Bird Dog (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    },
+    {
+      "id": "nance-2017",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29085728/",
+      "title": "Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study",
+      "kind": "peer-reviewed",
+      "year": 2017,
+      "pmid": "29085728",
+      "access": "abstract",
+      "checked": null
+    }
+  ],
+  "gaps": [
+    "Thumb rule: no source read says where the thumb goes (GA: \"spread, not wrapped\"); c4 spreads the fingers but does not name the thumb.",
+    "GA says the weight goes through the heel and the base of the index finger; no source read says so. The only source on where to push (c5, ACE) says the heel and the outside (little-finger) edge of the palm, so contactPoint follows c5.",
+    "No study read compares fists, knuckles or push-up handles with flat hands for wrist load or pain; c8 is coaching advice only.",
+    "Bench dip and renegade row hands are not covered (see appliesToWhy)."
+  ],
+  "notes": [
+    "Conflict: ACE allows fingers \"facing forward or turned slightly inward\" (c1); Breaking Muscle says facing forward, not angled (c2, c3). The default is forward (both allow it); the fault hands-rotated means turned clearly to one side. GA's fault fingers-in is replaced by hands-rotated, which a source names.",
+    "Nance 2017 (c7) is DATA for this group, as GA says, but it is a patient series: it shows what was found in people who already had pain, not how often push-ups cause it. It supports linking the wrist red-flag box, not a cause.",
+    "c9 is research data. Visible lines link the shared wrist box (LR-27) and never carry referral wording.",
+    "mountain_climbers: cards/mountain_climbers.json c3 places the body in a raised push-up position, so the push-up hand rules apply; c12 there cites Nance 2017 for the same wrist point."
+  ]
+}

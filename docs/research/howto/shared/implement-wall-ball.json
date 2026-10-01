@@ -1,0 +1,187 @@
+{
+  "key": "implement-wall-ball",
+  "kind": "implement",
+  "appliesTo": [
+    "wall_ball"
+  ],
+  "appliesToWhy": "GA appendix B hand archetype `implement` lists wall_ball; one card per implement.",
+  "implement": {
+    "text": "wall_ball",
+    "claim": "c1"
+  },
+  "contactPoint": {
+    "text": "Hands on the underside of the ball, not its sides.",
+    "claim": "c1"
+  },
+  "rightPose": {
+    "text": "Hands underneath the ball, wrists about six inches apart, elbows high in front, ball close to the body, hands near the middle of the face at the catch.",
+    "claim": [
+      "c1",
+      "c2",
+      "c3",
+      "c5"
+    ]
+  },
+  "faults": [
+    {
+      "key": "side-sandwich",
+      "label": "Hands on sides",
+      "what": "Hands sandwiching the ball from the sides with the elbows out.",
+      "claim": [
+        "c1",
+        "c2"
+      ]
+    }
+  ],
+  "gripLine": {
+    "text": "Catch the ball with your hands underneath it and your elbows high in front of you, close to your body.",
+    "claim": [
+      "c1",
+      "c2",
+      "c3"
+    ]
+  },
+  "cue": {
+    "text": "Hands under, elbows high.",
+    "claim": [
+      "c1",
+      "c2"
+    ]
+  },
+  "handRisks": [
+    {
+      "text": "Catching the ball on its sides can let it fall out of your hands.",
+      "claim": "c4"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Catch the ball with the hands underneath it rather than on its sides.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boxrox-wallball",
+        "boxlife-wallball"
+      ],
+      "quotes": [
+        {
+          "source": "boxrox-wallball",
+          "text": "Having your hands sandwiching the ball and your elbows out will reduce the efficiency of your throw. Instead, catch the ball with your hands underneath the ball and high elbows in front of you.",
+          "where": "Hand placement matters"
+        },
+        {
+          "source": "boxlife-wallball",
+          "text": "Ideally, you want to catch the med ball so that your hands are on the underside of the ball (as opposed to the sides)",
+          "where": "3. Catch in place"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Keep the elbows high in front of you, not out to the sides.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "boxrox-wallball"
+      ],
+      "quotes": [
+        {
+          "source": "boxrox-wallball",
+          "text": "Having your hands sandwiching the ball and your elbows out will reduce the efficiency of your throw. Instead, catch the ball with your hands underneath the ball and high elbows in front of you.",
+          "where": "Hand placement matters"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Catch the ball close to the body with the wrists about six inches apart.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "boxlife-wallball"
+      ],
+      "quotes": [
+        {
+          "source": "boxlife-wallball",
+          "text": "as close to your body as possible, with your wrists about six inches apart.",
+          "where": "3. Catch in place"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Catching the ball on its sides can let it fall out of the hands.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "boxlife-wallball"
+      ],
+      "quotes": [
+        {
+          "source": "boxlife-wallball",
+          "text": "Catching the med ball on its side can cause your chest to fall forward, making the ball feel heavier and even possibly falling out of your hands.",
+          "where": "3. Catch in place"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Catch while still standing, hands near the middle of the face, and only then start the squat.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boxlife-wallball",
+        "boxrox-wallball"
+      ],
+      "quotes": [
+        {
+          "source": "boxlife-wallball",
+          "text": "As the ball makes initial contact with your hands, you should still be standing with your hands near the middle of your face. Begin to squat once the ball has made contact.",
+          "where": "3. Catch in place"
+        },
+        {
+          "source": "boxrox-wallball",
+          "text": "It’s better to catch the ball with hips and arms extended, bring it to your chest and then start with your squat.",
+          "where": "Start squatting as you catch the ball"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "boxlife-wallball",
+      "url": "https://boxlifemagazine.com/5-tips-to-dominate-wall-balls/",
+      "title": "5 Tips To Dominate Wall Balls",
+      "kind": "coach",
+      "year": 2018,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    },
+    {
+      "id": "boxrox-wallball",
+      "url": "https://www.boxrox.com/?p=106154",
+      "title": "Seven Important Technique Tips to Improve Your Wall Ball Efficiency in CrossFit",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": null
+    }
+  ],
+  "gaps": [
+    "Thumb rule not sourced.",
+    "Wrist angle at catch or release not sourced (only the six-inch wrist spacing).",
+    "Only two coach/magazine sources; no textbook, CrossFit official page text (page did not render) or study found."
+  ],
+  "notes": [
+    "'Six inches' is from the quote; no other number used.",
+    "handRisks holds hand-related safety points the sources state (grip loss, over-gripping); one shared field name across the 5 implement cards."
+  ]
+}

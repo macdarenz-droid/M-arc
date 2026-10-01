@@ -1,0 +1,228 @@
+{
+ "key": "selector-pin",
+ "kind": "equipment-move",
+ "appliesTo": [
+  "machine_chest_press",
+  "incline_machine_press",
+  "shoulder_press",
+  "pec_fly",
+  "rear_delt_fly",
+  "machine_lateral_raise",
+  "machine_pullover",
+  "assisted_pull_up",
+  "leg_extension",
+  "seated_leg_curl",
+  "hip_abduction",
+  "hip_adduction",
+  "machine_crunch",
+  "cable_chest_press",
+  "cable_fly",
+  "low_to_high_cable_fly",
+  "high_to_low_cable_fly",
+  "cable_lateral_raise",
+  "cable_rear_delt_fly",
+  "face_pull",
+  "cable_external_rotation",
+  "triceps_pushdown",
+  "rope_triceps_pushdown",
+  "straight_bar_triceps_pushdown",
+  "single_arm_triceps_pushdown",
+  "overhead_cable_triceps_extension",
+  "straight_arm_pulldown",
+  "cable_shrug",
+  "cable_curl",
+  "bayesian_cable_curl",
+  "cable_kickback",
+  "cable_crunch",
+  "pallof_press",
+  "lat_pulldown",
+  "close_grip_pulldown",
+  "underhand_lat_pulldown",
+  "single_arm_lat_pulldown",
+  "seated_cable_row"
+ ],
+ "appliesToWhy": "Weight-stack machines: types the read manuals sell as stack machines (chest press, incline press, shoulder press, leg extension, seated leg curl, crunch, pulldown, seated row), or whose verified card or census row names a stack or selector pin (machine_lateral_raise, rear_delt_fly and pec_fly on the same pec deck, machine_pullover, assisted_pull_up with stackPin, hip_adduction and hip_abduction on the same machine); plus every census \"Cable\" or \"Cable / Machine\" station. Left out (no source read shows a stack version): lying_leg_curl, standing_leg_curl, standing_calf_raise, seated_calf_raise, horizontal_leg_press, chest_supported_row; plate-loaded leg_press, hack_squat, pendulum_squat, t_bar_row, leg_press_calf_raise; mixed-equipment rows upright_row (Cable / Barbell) and resisted_hip_flexion (Cable / Resistance Band).",
+ "move": "selector-pin",
+ "steps": [
+  {
+   "kind": "safety",
+   "text": "Push the selector pin all the way into the stack.",
+   "claim": "c1"
+  },
+  {
+   "kind": "safety",
+   "text": "A half-in pin can let the weights drop.",
+   "claim": "c1"
+  },
+  {
+   "kind": "safety",
+   "text": "Move the pin only while the whole stack is resting.",
+   "claim": "c3"
+  },
+  {
+   "kind": "safety",
+   "text": "Never pin the stack while it is lifted.",
+   "claim": "c2"
+  },
+  {
+   "kind": "safety",
+   "text": "Use only the machine's own pin. Add no extra weights.",
+   "claim": [
+    "c4",
+    "c5"
+   ]
+  }
+ ],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Before use, check the selector pin is fully inserted into the weight stack; a partly inserted pin can let weights fall unexpectedly.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "matrix-go-s34",
+    "lf-circuit",
+    "hs-mts"
+   ],
+   "quotes": [
+    {
+     "source": "matrix-go-s34",
+     "text": "Check to see that the selector pin is completely inserted into the weight stack.",
+     "where": "Warning, 6"
+    },
+    {
+     "source": "lf-circuit",
+     "text": "Fully insert weight selector pins. Partial insertion can cause weights to fall unexpectedly.",
+     "where": "Specific Operating Warnings, 5"
+    },
+    {
+     "source": "hs-mts",
+     "text": "Fully insert weight selector pins. Partial insertion can cause weights to fall unexpectedly.",
+     "where": "Specific Operating Warnings, 5"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Never use the machine with the weight stack pinned in a raised position.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "matrix-go-s34",
+    "lf-circuit"
+   ],
+   "quotes": [
+    {
+     "source": "matrix-go-s34",
+     "text": "NEVER use the machine with the weight stack pinned in an elevated position.",
+     "where": "Warning, 7"
+    },
+    {
+     "source": "lf-circuit",
+     "text": "Never pin the weight stack in an elevated position.",
+     "where": "Specific Operating Warnings, 5"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Never pull the selector pin out while any weights are lifted off the stack.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "lf-circuit",
+    "hs-mts"
+   ],
+   "quotes": [
+    {
+     "source": "lf-circuit",
+     "text": "Never remove selector pin if any weights are suspended.",
+     "where": "Specific Operating Warnings, 5"
+    },
+    {
+     "source": "hs-mts",
+     "text": "Never remove selector pin if any weights",
+     "where": "Specific Operating Warnings, 5"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Use only the selector pin supplied for the machine; substitutes are forbidden.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "lf-circuit"
+   ],
+   "quotes": [
+    {
+     "source": "lf-circuit",
+     "text": "Use only weight selector pins supplied by LIFE FITNESS on weight stacks. Substitutes are forbidden.",
+     "where": "Specific Operating Warnings, 2"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Do not add dumbbells or anything else to increase the stack weight; use only what the manufacturer provides.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "matrix-go-s34"
+   ],
+   "quotes": [
+    {
+     "source": "matrix-go-s34",
+     "text": "NEVER use dumbbells or other means to incrementally increase the weight resistance. Only use the means provided directly from the manufacturer.",
+     "where": "Warning, 8"
+    }
+   ]
+  }
+ ],
+ "gaps": [
+  "No source says the pin \"clicks\"; the candidate wording \"Push the pin all the way in until it clicks.\" is unsupported (pins differ: magnetic, spring, plain).",
+  "No source read shows a weight-stack version of the lying or standing leg curl, the calf raises, the horizontal leg press or the chest-supported row; add them when a source does."
+ ],
+ "notes": [
+  "Applied to cable stations as weight-stack machines; the stack is named for a cable station in cards/cable_curl.json c1 (\"step back from the stack\"). The manual warnings are written for all of the maker's weight stacks.",
+  "hip_adduction c5 already says \"make sure the selector pin is secure\" (Motra); this card gives the manufacturer wording.",
+  "The hs-mts c3 quote is cut at a PDF line break; the sentence continues \"are suspended.\""
+ ],
+ "sources": [
+  {
+   "id": "matrix-go-s34",
+   "url": "https://sport-tec.de/$WS/sport-tec/websale8_shop-sport-tec/benutzer/navigation/grafiken/anleitung/30263.pdf",
+   "title": "MATRIX GO Series GO-S34 Seated Row owner's manual (dealer-hosted PDF)",
+   "kind": "manufacturer",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": null
+  },
+  {
+   "id": "lf-circuit",
+   "url": "https://www.lifefitness.com.au/wp-content/uploads/2015/02/Circuit_Manual_11_081a_1_27.pdf",
+   "title": "Circuit Series Owners Manual (Life Fitness)",
+   "kind": "manufacturer",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": null
+  },
+  {
+   "id": "hs-mts",
+   "url": "https://www.lifefitness.com.au/wp-content/uploads/2015/02/MTS_Manual_11_08a_1_354.pdf",
+   "title": "Hammer Strength MTS Owners Manual (Life Fitness)",
+   "kind": "manufacturer",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": null
+  }
+ ]
+}
