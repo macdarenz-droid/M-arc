@@ -47,9 +47,10 @@ export function effortSplit(history: ExerciseSessionSummary[], mode: ResistanceM
   });
 }
 
-const fmtTotal = (v: number, sets: boolean): string => {
-  if (sets) return String(Math.round(v));
-  if (v >= 10_000) return `${(Math.round(v / 100) / 10).toLocaleString()}t`;
+/** OBS-TONNE: the "t" short form is a metric tonne (1,000 kg) — only right when the unit is kg. */
+export const fmtTotal = (v: number, unit: string): string => {
+  if (unit === 'sets') return String(Math.round(v));
+  if (unit === 'kg' && v >= 10_000) return `${(Math.round(v / 100) / 10).toLocaleString()}t`;
   return Math.round(v).toLocaleString();
 };
 
@@ -80,7 +81,7 @@ export function EffortBars({ points, unit, tappable = true, selected = null, onS
           const scale = tallest > 0 ? TALLEST_PX / tallest : 0;
           return (
             <Tag key={p.day} type={tappable ? 'button' : undefined} class="effort-bar-col" aria-pressed={tappable ? selected === i : undefined} onClick={tappable ? () => onSelect?.(i) : undefined}>
-              <span class="effort-bar-total num">{fmtTotal(total, isSets)}</span>
+              <span class="effort-bar-total num">{fmtTotal(total, unit)}</span>
               <div class="effort-bar-stack" style={{ height: `${Math.max(2, total * scale)}px` }}>
                 {p.easy > 0 && <i class="easy" style={{ height: `${p.easy * scale}px` }} />}
                 {p.ideal > 0 && <i class="ideal" style={{ height: `${p.ideal * scale}px` }} />}
@@ -93,7 +94,7 @@ export function EffortBars({ points, unit, tappable = true, selected = null, onS
         })}
       </div>
       <p class="hint">
-        Most work: {fmtTotal(totals[bestI]!, isSets)} {isSets ? 'sets' : unit} on {formatDay(points[bestI]!.day, { day: 'numeric', month: 'short' })}.
+        Most work: {fmtTotal(totals[bestI]!, unit)} {isSets ? 'sets' : unit} on {formatDay(points[bestI]!.day, { day: 'numeric', month: 'short' })}.
         {latest && latest.max === 0 && ' Latest session had no max sets.'}
       </p>
     </div>

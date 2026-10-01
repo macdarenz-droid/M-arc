@@ -336,6 +336,11 @@ describe('Stats lastTopStats', () => {
     const crunch = exerciseHistory([session('2026-09-22', [{ id: 'lib_crunch', sets: sets(0, 15) }])], 'lib_crunch')[0]!;
     expect(lastTopStats(crunch, findExercise('lib_crunch'), bw80, 'kg')).toEqual({ load: 'BW', reps: 15 });
   });
+
+  it('UI-11: a hold shows its longest time, not "0 kg" and "0" reps', () => {
+    const plank = exerciseHistory([session('2026-09-22', [{ id: 'lib_plank', sets: [{ durationSec: 45, effort: 'ideal' }] }])], 'lib_plank')[0]!;
+    expect(lastTopStats(plank, findExercise('lib_plank'), bw80, 'kg')).toEqual({ load: '45s', reps: 0 });
+  });
 });
 
 describe('Progression and records ignore body weight (pins)', () => {

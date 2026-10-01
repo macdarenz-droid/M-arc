@@ -97,8 +97,10 @@ export function modeLoadText(set: Pick<LoggedSet, 'kg' | 'entered'>, mode: Resis
  * reps must come from here too. Weighted and other modes: formatLoad(topKg) and topReps, unchanged.
  * An effective top of 0 (help >= body weight) falls back to today's text.
  */
-export function lastTopStats(h: Pick<ExerciseSessionSummary, 'day' | 'sets' | 'topKg' | 'topReps'>, ex: Exercise | undefined, bw: BodyWeightAt | undefined, unit: LoadUnit): { load: string; reps: number } {
+export function lastTopStats(h: Pick<ExerciseSessionSummary, 'day' | 'sets' | 'topKg' | 'topReps' | 'bestDurationSec'>, ex: Exercise | undefined, bw: BodyWeightAt | undefined, unit: LoadUnit): { load: string; reps: number } {
   const mode = ex?.mode ?? 'weighted';
+  // UI-11: a hold has no load or reps; its own stat is the longest time held that session.
+  if (mode === 'duration') return { load: `${h.bestDurationSec}s`, reps: 0 };
   if (mode !== 'bodyweight' && mode !== 'assisted') return { load: formatLoad(h.topKg, unit), reps: h.topReps };
   const top = topEffective(h.sets, mode, bodyweightShare(ex), bw?.(h.day) ?? null);
   return top && top.kg > 0 ? { load: approxLoadText(top.kg, unit), reps: top.reps } : { load: modeLoadText({ kg: h.topKg }, mode, unit), reps: h.topReps };

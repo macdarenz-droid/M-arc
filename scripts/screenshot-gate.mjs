@@ -4517,6 +4517,125 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// AUD-11 (UI-02): editing a session, then swiping it away and undoing, restores the EDITED
+// session. The swipe gesture's effect only re-runs on [session.id] (A5), so before the fix the
+// Undo closed over the stale pre-edit session captured when the row first mounted.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-11 UI-02';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [{
+        id: 'aud11-ui02', splitId: 'sp1', splitName: 'Push', day: now.slice(0, 10), startedAt: now, endedAt: now, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench Press', sets: [{ kg: 60, reps: 5, effort: 'ideal' }] }],
+        logging: { mode: 'live', trainedAt: now, trainedEndAt: now, loggedAt: now, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+      }],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.waitForTimeout(200);
+  const kgInput = page.getByLabel('Load in kg');
+  await kgInput.fill('65'); await kgInput.blur();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.waitForTimeout(250);
+
+  const box = await page.locator('.swipe-row').first().boundingBox();
+  if (!box) errors.push(`${tag}: expected the session row after saving the edit`);
+  else {
+    await touchDrag(page, box.x + box.width * 0.9, box.y + box.height / 2, box.x + box.width * 0.15, box.y + box.height / 2, 300);
+    await page.waitForTimeout(400);
+    const undoBtn = page.locator('.toast button', { hasText: 'Undo' });
+    if (!(await visible(page.locator('.toast', { hasText: 'Session deleted' })))) errors.push(`${tag}: expected a "Session deleted" toast with Undo after the swipe`);
+    else {
+      await undoBtn.click().catch(() => errors.push(`${tag}: could not click the Undo button`));
+      // store.ts debounces its localStorage write by 250ms; wait past it before reading storage.
+      await page.waitForTimeout(400);
+      const kg = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions[0]?.exercises?.[0]?.sets?.[0]?.kg);
+      if (kg !== 65) errors.push(`${tag}: Undo restored kg ${kg}, expected the edited 65 kg (60 means Undo brought back a stale pre-edit session)`);
+    }
+  }
+  await ctx.close();
+}
+
+// AUD-11 (UI-04): a carry/sled set's editor shows and edits its load, distance and time together
+// (load no longer hides behind a timed carry's duration field), and removing one set uses an
+// explicit delete rather than needing every field zeroed to imply it.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-11 UI-04';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [{
+        id: 'aud11-ui04', splitId: 'sp1', splitName: 'Conditioning', day: now.slice(0, 10), startedAt: now, endedAt: now, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{
+          exerciseId: 'lib_farmer_s_carry', name: "Farmer's Carry",
+          sets: [{ kg: 32, distanceM: 40, durationSec: 35, effort: 'ideal' }, { kg: 34, distanceM: 45, durationSec: 38, effort: 'ideal' }],
+        }],
+        logging: { mode: 'live', trainedAt: now, trainedEndAt: now, loggedAt: now, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+      }],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.waitForTimeout(200);
+
+  const kgInputs = page.getByLabel('Load in kg');
+  const distInputs = page.getByLabel('Distance in metres');
+  const secInputs = page.getByLabel('Seconds');
+  if (!(await visible(kgInputs.first()))) errors.push(`${tag}: expected a visible load field for a timed carry set (it must not hide behind the duration field)`);
+  else {
+    const shown = { kg0: await kgInputs.nth(0).inputValue(), m0: await distInputs.nth(0).inputValue(), s0: await secInputs.nth(0).inputValue() };
+    if (shown.kg0 !== '32' || shown.m0 !== '40' || shown.s0 !== '35') errors.push(`${tag}: expected the first carry set to show 32 kg, 40 m, 35 s, got ${JSON.stringify(shown)}`);
+  }
+
+  // Edit the first set's distance. store.ts debounces its localStorage write by 250ms.
+  await distInputs.nth(0).fill('999'); await distInputs.nth(0).blur();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.waitForTimeout(400);
+  const afterEdit = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions[0].exercises[0].sets);
+  if (afterEdit?.[0]?.distanceM !== 999 || afterEdit?.[0]?.kg !== 32) errors.push(`${tag}: expected the edited distance (999 m, kg unchanged) to save, got ${JSON.stringify(afterEdit?.[0])}`);
+
+  // Delete the second set with its own explicit action, leaving the first set untouched.
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.waitForTimeout(200);
+  await page.getByLabel('Delete set 2').click();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.waitForTimeout(400);
+  const afterDelete = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions[0].exercises[0].sets);
+  if (afterDelete?.length !== 1 || afterDelete?.[0]?.distanceM !== 999) errors.push(`${tag}: expected the explicit delete to remove only set 2, got ${JSON.stringify(afterDelete)}`);
+  await ctx.close();
+}
+
 // QA12-3: under reduce, the drawing animation is skipped outright (not just faded fast). A
 // mutation that always calls beginElement() regardless of `reduce` would still pass every other
 // O1 probe (they only check timing), so assert the finished state directly, right after load.
