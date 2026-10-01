@@ -386,6 +386,8 @@ export class EscobarLoop {
       unit: s.preferences.weightUnit, tone: s.escobar.tone,
     };
     for (let attempt = 0; ; attempt++) {
+      // AUD-2: no new request once the online coach is off, including the retry after a back-off.
+      if (!this.deps.getState().escobar.enabled) { this.abort('aborted'); return { stale: true }; }
       let shown = false;
       let text = '';
       const activity: Activity[] = [...this.view.activity];
