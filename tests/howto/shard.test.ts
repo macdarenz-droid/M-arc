@@ -126,3 +126,25 @@ describe('D-HT10-A5: the ht10-gate matrix 1/2 + 2/2', () => {
     } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });
+
+describe('D-HT10-A5b: the gate block and scripts/ht10-gate.mjs run the same tuples', () => {
+  it('both call runHt10, which takes its tuples only from ht10RunTuples', () => {
+    const gate = readFileSync('scripts/screenshot-gate.mjs', 'utf8');
+    const runner = readFileSync('scripts/ht10-gate.mjs', 'utf8');
+    const mod = readFileSync('tools/plates/fidelity/ht10.mjs', 'utf8');
+    const call = /\(await import\('\.\.\/tools\/plates\/fidelity\/ht10\.mjs'\)\)\.runHt10\(\{ errors, OUT, PORT, clock(: ht10Clock)? \}\)/;
+    expect(gate).toMatch(call);
+    expect(runner).toMatch(call);
+    const body = mod.slice(mod.indexOf('export async function runHt10'));
+    expect(body.match(/ht10RunTuples\(\)/g)).toHaveLength(1);
+    expect(body).not.toMatch(/htShard|ht10AllTuples|shardFromEnv/);
+  });
+  it('unset runs every tuple; 1/2 + 2/2 run every tuple exactly once', async () => {
+    const T = await import(/* @vite-ignore */ new URL('../../tools/plates/fidelity/ht10.mjs', import.meta.url).href) as { ht10RunTuples: (env: Record<string, string>) => Promise<{ tuples: Tuple[] }> };
+    const H = await import(/* @vite-ignore */ new URL('../../tools/plates/fidelity/harness.mjs', import.meta.url).href) as { ht10AllTuples: () => Promise<Tuple[]> };
+    const all = (await H.ht10AllTuples()).map(key).sort();
+    expect((await T.ht10RunTuples({})).tuples.map(key).sort()).toEqual(all);
+    const parts = [...(await T.ht10RunTuples({ MARC_HT_SHARD: '1/2' })).tuples, ...(await T.ht10RunTuples({ MARC_HT_SHARD: '2/2' })).tuples].map(key).sort();
+    expect(parts).toEqual(all);
+  });
+});
