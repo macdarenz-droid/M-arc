@@ -153,15 +153,39 @@ export function trimOldest(c: Conversation): Conversation | null {
   };
 }
 
-/** Writes the store. Returns the store as actually written (it may have been pruned), or null on failure. */
-export function saveStore(store: ConversationStore): ConversationStore | null {
+/** The photo ids a store's messages point at. */
+export function imageIds(store: ConversationStore): Set<string> {
+  const ids = new Set<string>();
+  for (const c of store.conversations) for (const m of c.messages) {
+    if (m.role === 'user' && Array.isArray(m.content)) for (const b of m.content) if (b.type === 'image_ref' && typeof b.id === 'string') ids.add(b.id);
+  }
+  return ids;
+}
+
+/** OBS-PHOTOS (AUD-4): the ids the saved store pointed at that the new one no longer does. */
+function prunedImageIds(previousRaw: string | null, next: ConversationStore): string[] {
+  if (!previousRaw || !previousRaw.includes('"image_ref"')) return [];
+  let before: Set<string>;
+  try { before = imageIds(sanitizeStore(JSON.parse(previousRaw))); } catch { return []; }
+  const kept = imageIds(next);
+  return [...before].filter(id => !kept.has(id));
+}
+
+/**
+ * Writes the store. Returns the store as actually written (it may have been pruned), or null on failure.
+ * Photos of pruned conversations and messages are deleted with them, unless `keepImages` (a restore,
+ * whose Undo puts the old conversations back).
+ */
+export function saveStore(store: ConversationStore, keepImages = false): ConversationStore | null {
   const s = storage();
   if (!s) return null;
   try {
     const clean = capCount({ ...store, conversations: store.conversations.map(c => ({ ...c, messages: c.messages.map(pruneImages) })) });
     const others = storageOverride ? 0 : 2 * bytes(s.getItem(STATE_KEY)) + bytes(s.getItem(HEART_KEY));
     const { store: fitted, raw } = fitToBudget(clean, others);
+    const pruned = keepImages ? [] : prunedImageIds(s.getItem(ESCOBAR_KEY), fitted);
     s.setItem(ESCOBAR_KEY, raw);
+    if (pruned.length) void import('./images').then(m => m.deleteImages(pruned)).catch(() => {});
     return fitted;
   } catch {
     return null;
@@ -267,7 +291,7 @@ export function exportAllEscobar(): ConversationStore { return loadStore(); }
 /** Restores the store from a backup. Anything malformed is dropped rather than failing the restore. */
 export function restoreEscobar(data: unknown): void {
   if (data === undefined || data === null) return;
-  saveStore(sanitizeStore(data));
+  saveStore(sanitizeStore(data), true);
   markReplaced();
   notifyReplaced();
 }

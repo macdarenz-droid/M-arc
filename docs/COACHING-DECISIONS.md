@@ -1264,3 +1264,23 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
   **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
   **Source**: card ESC-W-CITE, reserved_paths.
+
+## AUD-4: restore, reset and coach-storage integrity (2026-10-01)
+
+- **D-AUD4-1 Decided**: a backup whose live session has `entries:[null]` is repaired (the bad entry and bad sets are dropped and counted in "damaged items skipped"), not rejected. Anything that still fails while reading a file returns the normal "That file is not an M/ARC backup" answer instead of throwing (a malformed legacy file such as `completedExercises:[null]` is the tested case).
+  **Why**: `repairState` (ST-11) repairs instead of rejecting, so one damaged live entry never costs a person their whole history; the card's two DATA-01 bullets allow "repaired or rejected", and the throw is gone either way.
+  **Source**: card AUD-4, DATA-01.
+- **D-AUD4-2 Decided**: repair checks the fields each list's readers key on, nothing more: sessions and split exercises need `exerciseId`; body, health days and check-ins need `day`; weigh-ins need `day` and a finite `kg`; fresh marks `muscle` and `at`; custom exercises `id` and `name`; profile history `at` and `field`; insight feedback `id`, `day` and a known verdict. `onboarding.dismissedAt`, `recoveryModel` and `deload` are reset when they have the wrong shape.
+  **Why**: these are the fields the selectors, rules and brief read without checks (audit DATA-01). Stricter checks would drop records that readers handle today.
+  **Source**: card AUD-4, DATA-01; `src/app/selectors.ts`, `src/escobar/context/brief.ts`.
+- **D-AUD4-3 Decided**: DATA-02 uses no new saved key. The main-state listener treats `storage` events with `key:null` (another tab's `localStorage.clear()`) or a removed `marc.state.v1` as a deletion: it cancels the pending save, forgets the last saved copy (so no restore point is written from it) and reloads from storage. "Delete conversations" now uses `clearStore()`, which bumps the existing `marc.escobar.v1.replaced` key, so the other tab drops its copy.
+  **Why**: the owner allows this card no new tombstone key; both existing paths already carry the signal another tab needs.
+  **Source**: card AUD-4, DATA-02.
+- **D-AUD4-4 Decided**: when a save drops conversations or trims messages, the photos only they pointed at are deleted from memory and IndexedDB (ids saved before minus ids saved now). A restore and its Undo skip this, so Undo can bring back conversations with their photos. Photos never referenced by a saved message (one attached but not yet sent) are never touched.
+  **Why**: deleting by "not referenced now" would remove a photo attached in the composer before its message is saved.
+  **Source**: card AUD-4, OBS-PHOTOS.
+- **D-AUD4-5 Decided**: restoring a backup keeps this phone's coach on/off state, sharing flags, server URL and device identity (`withLocalTrust` in `escobarState.ts`, applied by `restoredState` in `backup.ts`). Everything else in the coach block (tone, memory, pins) is restored from the file. The import confirmation text is unchanged.
+  **Why**: owner's accepted default for OBS-ENDPOINT: where the coach sends data and what it may share are trust decisions made on this phone, not training data.
+  **Source**: card AUD-4 add-on, codex-audit.md "Restored endpoint and consent trust".
+- **D-AUD4-6 Decided**: the legacy lb backfill runs on the imported sessions (OBS-LB). The migration test's fixture user is an lb user, so its first set now carries `entered: 103.5 lb`; that expectation was corrected, not loosened.
+  **Source**: card AUD-4, OBS-LB.

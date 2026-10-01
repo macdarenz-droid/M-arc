@@ -27,7 +27,7 @@ import { isNative } from '@/native/capacitor';
 import { onReducedChange, osReducedMotion, motionPrefIsReduce, reduced, setMotionPref } from '@/ui/motion';
 import { APP_VERSION } from '@/core/version';
 import { addDays, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
-import { backupAgeDays, buildBackup, parseBackup } from './backup';
+import { backupAgeDays, buildBackup, parseBackup, restoredState } from './backup';
 import { sessionsToCsv } from './exportCsv';
 import { today } from '@/app/selectors';
 import { clearErrorReportQueue, reportCaught, resetErrorReporting } from '@/errors';
@@ -134,8 +134,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
   };
   const applyRestore = (r: PendingRestore) => {
     const before = snapshot();
-    // Health Connect permission belongs to this device, not the backup.
-    replaceState({ ...r.next, health: { connected: false } });
+    replaceState(restoredState(r.next, state.value));
     if (r.escobar !== undefined) restoreEscobar(r.escobar);
     if (r.heart !== undefined) restoreHeart(r.heart);
     afterReplace();
