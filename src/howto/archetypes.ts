@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ecb6493e18057c04ccbec3f58148c4c5b80afaa3a29f31108826781facbb0ca2
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=daa1f947e1a0075e4687ffda3c07d4242fb9e911445ce4b6f5903a3613bcdd92
 import type { RedFlagBlock } from './content-types';
 
 // GENERATED from tools/plates/layers/howto/shared.mjs (HT-5): the shared "Risks and when to stop" copy, one block
@@ -56,4 +56,3 @@ export const RED_FLAG_ELBOW: RedFlagBlock = {
   }
 };
 export const DISCLAIMER: string = "General guidance, not medical advice. If something hurts, stop and get it checked.";
-export const SHOW_EVIDENCE: boolean = true;

@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=7109c87d306712ab5818ad9ba8ef92a700dd8ae03667ad362d7f04ada037633a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=00e33396c6f446acce8ab8ca1155276ad43230238f1a78e6d5d6df8a283595a8
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_machine_chest_press",
   name: "Machine Chest Press",
-  hashes: { inputsSha256: "7109c87d306712ab5818ad9ba8ef92a700dd8ae03667ad362d7f04ada037633a", golden: "1fcf5153e9184711135d62da5d92ea8d3deed8b61a529b277bbb434a83ad530b" },
+  hashes: { inputsSha256: "00e33396c6f446acce8ab8ca1155276ad43230238f1a78e6d5d6df8a283595a8", golden: "1fcf5153e9184711135d62da5d92ea8d3deed8b61a529b277bbb434a83ad530b" },
   plate: {
     view: "side",
     normal: {
@@ -24,5 +24,468 @@ export default {
     tempo: "<div class=\"tempo\" role=\"img\" aria-label=\"Tempo: press 1 second, hold 0.3 seconds, return 1.5 seconds, rest 0.5 seconds\"><div class=\"tempo-seg move\" style=\"flex:1 1 0\"><i></i><div class=\"tempo-label\"><b>Press</b><span>1 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.3 1 0\"><i></i><div class=\"tempo-label\"><b>Hold</b><span>0.3 s</span></div></div><div class=\"tempo-seg move\" style=\"flex:1.5 1 0\"><i></i><div class=\"tempo-label\"><b>Return</b><span>1.5 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Rest</b><span>0.5 s</span></div></div></div>",
     alt: "Machine chest press, side view. Seated with the back flat on a slightly reclined pad and feet flat on the floor, the lifter presses vertical handles on a top-pivot lever arm from mid-chest height straight forward until the arms are long, elbows soft, shoulder blades kept on the pad.",
     mistakeAlt: "Machine Chest Press: the common mistake, drawn dashed in the mistake colour over the correct end position.",
+  },
+  rev: 1,
+  handling: {
+    "archetype": "push",
+    "orientation": "pronated",
+    "handle": "machine-grip",
+    "loadAxis": "along-forearm",
+    "handleChoice": {
+      "sore": "Sore wrist? Use the vertical handles.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "muyor2023"
+        ],
+        "note": "No chest difference between handle types (Muyor 2023); choosing vertical for a sore wrist is consensus."
+      }
+    },
+    "overBody": false,
+    "width": {
+      "text": "Pick handles that put your hands just outside your shoulders at the start. Line each forearm up behind its handle.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "muyor2023"
+        ]
+      }
+    },
+    "thumb": {
+      "mode": "wrapped",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ],
+        "note": "ACE: full grip, thumbs around the handles. The \"stops the handle rolling into the fingers\" mechanism is consensus."
+      }
+    },
+    "contact": "heel",
+    "wrist": {
+      "ext": [
+        0,
+        10
+      ],
+      "dev": [
+        -10,
+        10
+      ],
+      "limitText": "Wrist bending back past about 15 to 20 degrees? Stop and go lighter.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH",
+          "WEAK"
+        ],
+        "sources": [
+          "ace-chest-press",
+          "barbell-logic-grip",
+          "weiss1995",
+          "nance2017"
+        ],
+        "note": "Heel of palm and straight wrist: ACE plus coaching consensus. 0-10 deg target leans on Weiss 1995 (nerve pressure, not lifting). The 15-20 deg limit is coaching consensus. Nance 2017 is association only."
+      }
+    },
+    "pose": {
+      "view": "radial",
+      "forearm": 90,
+      "wrist": {
+        "ext": 8,
+        "dev": 0
+      },
+      "contactAt": 0.3,
+      "fingers": {
+        "curl": 1
+      },
+      "thumb": "wrapped",
+      "squeeze": "firm",
+      "handle": {
+        "profile": "press-horizontal",
+        "axis": "across",
+        "diameterMm": 32
+      },
+      "load": {
+        "kind": "push"
+      }
+    },
+    "faults": [
+      {
+        "key": "fingers-bent-back",
+        "label": "Wrist bent back",
+        "pose": {
+          "wrist": {
+            "ext": 35,
+            "dev": 0
+          },
+          "contactAt": 1.05,
+          "fingers": {
+            "curl": 0.92
+          },
+          "thumb": "loose"
+        },
+        "markers": [
+          "lever-arc"
+        ],
+        "alt": "Horizontal handle, side view. The handle has slid into the fingers, thumb loose. The wrist is bent far back. The push passes behind the wrist, bending it further."
+      }
+    ],
+    "gripLine": "Push through the heel of your palm, so your wrist stays straight. A wrapped thumb stops the handle rolling into your fingers.",
+    "cue": "Heel of palm, wrist straight."
+  },
+  contacts: [
+    "seat-back",
+    "standing-feet"
+  ],
+  setup: [
+    {
+      "kind": "adjust",
+      "text": "Set the seat so the handles meet mid-chest.",
+      "zoom": "seat-height",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ],
+        "note": "No study measures seat height on this machine; ACE setup plus consensus."
+      }
+    },
+    {
+      "kind": "adjust",
+      "text": "Start the handles at your chest, never behind it.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press",
+          "fees1998"
+        ]
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Sit right back, hips on the pad, feet flat.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ]
+      }
+    },
+    {
+      "kind": "grip",
+      "text": "Handle in the heel of your palm, wrist straight.",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH",
+          "WEAK"
+        ],
+        "sources": [
+          "ace-chest-press",
+          "barbell-logic-grip",
+          "weiss1995",
+          "nance2017"
+        ],
+        "note": "Heel of palm and straight wrist: ACE plus coaching consensus. 0-10 deg target leans on Weiss 1995 (nerve pressure, not lifting). The 15-20 deg limit is coaching consensus. Nance 2017 is association only."
+      }
+    },
+    {
+      "kind": "brace",
+      "text": "Set your shoulder blades down and back into the pad.",
+      "zoom": "blades",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ]
+      }
+    }
+  ],
+  posture: [
+    {
+      "key": "height",
+      "label": "Handles mid-chest",
+      "detail": "At the start the handles are at mid-chest height. They are level with the chest or just in front, never behind.",
+      "anchor": {
+        "pose": "start",
+        "at": "grip.r"
+      },
+      "zoom": "seat-height",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ],
+        "note": "No study measures seat height on this machine; ACE setup plus consensus."
+      }
+    },
+    {
+      "key": "blades",
+      "label": "Blades on pad",
+      "detail": "Upper back and shoulder blades stay on the pad to the end of each push. Normal small arch in the low back.",
+      "anchor": {
+        "pose": "end",
+        "at": "backUpper"
+      },
+      "zoom": "blades",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ]
+      }
+    },
+    {
+      "key": "wrist",
+      "label": "Straight wrist",
+      "detail": "Knuckles, wrist and forearm form one straight line. The forearm points the way the handle moves. The handle sits in the heel of the palm.",
+      "anchor": {
+        "pose": "end",
+        "at": "grip.r"
+      },
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH",
+          "WEAK"
+        ],
+        "sources": [
+          "ace-chest-press",
+          "barbell-logic-grip",
+          "weiss1995",
+          "nance2017"
+        ],
+        "note": "Heel of palm and straight wrist: ACE plus coaching consensus. 0-10 deg target leans on Weiss 1995 (nerve pressure, not lifting). The 15-20 deg limit is coaching consensus. Nance 2017 is association only."
+      }
+    },
+    {
+      "key": "elbows",
+      "label": "Elbows behind handles",
+      "detail": "Each elbow sits about level with its handle and right behind it, below shoulder height. The forearm points straight along the push. From above, horizontal handles put the elbows roughly 45 to 60 degrees out. With vertical handles they sit closer to the body. They never flare straight out level with the shoulders.",
+      "anchor": {
+        "pose": "start",
+        "at": "elbow.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press",
+          "fees1998"
+        ]
+      }
+    },
+    {
+      "key": "feet",
+      "label": "Sit right back",
+      "detail": "Both feet flat on the floor. Hips pushed back into the seat and back pad, no bridging.",
+      "anchor": {
+        "pose": "end",
+        "at": "ankle.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ]
+      }
+    },
+    {
+      "key": "soft",
+      "label": "Soft elbows",
+      "detail": "At the end, the arms are long with a small bend left in the elbows. The shoulder blades are still on the pad.",
+      "anchor": {
+        "pose": "end",
+        "at": "elbow.r"
+      },
+      "zoom": "blades",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ]
+      }
+    }
+  ],
+  zooms: [
+    {
+      "key": "hand",
+      "chip": "Hand",
+      "chipCaption": "Heel of palm",
+      "heading": "Hand: right and wrong",
+      "kind": "hand",
+      "feelRow": "wrist"
+    },
+    {
+      "key": "seat-height",
+      "chip": "Seat height",
+      "heading": "Seat height: right and wrong",
+      "kind": "posture",
+      "feelRow": "front-shoulders"
+    },
+    {
+      "key": "blades",
+      "chip": "Blades",
+      "heading": "Shoulder blades: right and wrong",
+      "kind": "posture",
+      "feelRow": "elbows"
+    }
+  ],
+  copy: {
+    "setupLine": "Set the seat so the handles meet mid-chest. Sit right back, feet flat, shoulder blades on the pad.",
+    "mistakeLine": "Never let your wrist fold back to finish a heavy rep. Drop the weight and push through the heel of your hand.",
+    "cueLine": "Handles at mid-chest."
+  },
+  mistakes: [
+    {
+      "key": "wrist",
+      "title": "Wrist bent back",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH",
+          "WEAK"
+        ],
+        "sources": [
+          "ace-chest-press",
+          "barbell-logic-grip",
+          "weiss1995",
+          "nance2017"
+        ],
+        "note": "Heel of palm and straight wrist: ACE plus coaching consensus. 0-10 deg target leans on Weiss 1995 (nerve pressure, not lifting). The 15-20 deg limit is coaching consensus. Nance 2017 is association only."
+      },
+      "fix": "Handle on the heel of your palm. Still bending? Go lighter."
+    },
+    {
+      "key": "seat-low",
+      "title": "Seat too low",
+      "zoom": "seat-height",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ],
+        "note": "No study measures seat height on this machine; ACE setup plus consensus."
+      },
+      "fix": "Raise the seat so the handles meet mid-chest."
+    },
+    {
+      "key": "round-lock",
+      "title": "Shoulders roll off, elbows lock",
+      "zoom": "blades",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ]
+      },
+      "fix": "Stop before your elbows lock. Rolling forward to finish? Go lighter."
+    }
+  ],
+  risks: [
+    {
+      "key": "wrist",
+      "text": "Pushing through a bent-back wrist squeezes the back of the wrist.",
+      "claim": {
+        "tags": [
+          "MECH",
+          "WEAK"
+        ],
+        "sources": [
+          "nance2017"
+        ],
+        "note": "Nance 2017: an MRI study of people with this pain; association, not cause."
+      }
+    },
+    {
+      "key": "shoulder",
+      "text": "Handles behind your chest, elbows out, stretch the front of your shoulder under load.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press",
+          "fees1998"
+        ]
+      }
+    },
+    {
+      "key": "elbow",
+      "text": "Snapping your elbows straight under heavy weight loads the joints, not the muscles.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-chest-press"
+        ]
+      }
+    }
+  ],
+  riskFlags: [
+    "wrist",
+    "elbow"
+  ],
+  redFlag: {
+    "name": "Wrist pain",
+    "now": "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.",
+    "doctor": "Tingling, keeps coming back, or no better after two weeks' rest? See a doctor.",
+    "claim": {
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-wrist-pain"
+      ]
+    }
+  },
+  sources: [
+    "ace-chest-press",
+    "muyor2023",
+    "weiss1995",
+    "nance2017",
+    "fees1998",
+    "snyder2012",
+    "calatayud2016",
+    "barbell-logic-grip",
+    "nhs-wrist-pain",
+    "nhs-elbow-pain"
+  ],
+  research: {
+    "card": "grip/research/machine_chest_press.json",
+    "rev": 1
   },
 } satisfies BuiltHowTo;

@@ -134,7 +134,6 @@ export const RED_FLAG_SHOULDER: RedFlagBlock = ${ser(shared.RED_FLAG_SHOULDER, '
 export const RED_FLAG_KNEE: RedFlagBlock = ${ser(shared.RED_FLAG_KNEE, '')};
 export const RED_FLAG_ELBOW: RedFlagBlock = ${ser(shared.RED_FLAG_ELBOW, '')};
 export const DISCLAIMER: string = ${JSON.stringify(shared.DISCLAIMER)};
-export const SHOW_EVIDENCE: boolean = ${JSON.stringify(shared.SHOW_EVIDENCE)};
 `;
 }
 

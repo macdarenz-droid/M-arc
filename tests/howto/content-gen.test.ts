@@ -152,7 +152,10 @@ describe('HT5-A5: archetypes.ts is generated from golden B\'s shared module, byt
     expect(archetypes.RED_FLAG_ELBOW).toEqual(shared.RED_FLAG_ELBOW);
     expect(archetypes.DISCLAIMER).toBe(shared.DISCLAIMER);
     expect(archetypes.DISCLAIMER).toBe('General guidance, not medical advice. If something hurts, stop and get it checked.');
-    expect(archetypes.SHOW_EVIDENCE).toBe(shared.SHOW_EVIDENCE);
+    // LR-23 (owner, 2026-09-30): no evidence labels in the UI; shared.mjs dropped SHOW_EVIDENCE, and the generator
+    // (tools/plates/gen/content.mjs) no longer emits it either.
+    expect('SHOW_EVIDENCE' in shared).toBe(false);
+    expect('SHOW_EVIDENCE' in archetypes).toBe(false);
   });
 
   it('no content row carries its own red-flag wording (C8 already proves this per row; this proves redFlag is always the shared block)', async () => {
