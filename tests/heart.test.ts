@@ -111,7 +111,8 @@ describe('downsampleToBuckets', () => {
 
 describe('bestObservedHrMax', () => {
   it('takes the highest validated plateau across sessions', () => {
-    const flat = (bpm: number): Array<[number, number]> => [[0, bpm], [5, bpm], [10, bpm], [15, bpm], [20, bpm]];
+    // AUD-7 (SCI-07): a plateau needs a lead-in from below, so each fixture ramps into it.
+    const flat = (bpm: number): Array<[number, number]> => [[0, bpm - 20], [5, bpm], [10, bpm], [15, bpm], [20, bpm], [25, bpm]];
     const seriesById = { a: flat(170), b: flat(185) };
     const r = bestObservedHrMax([{ id: 'a', endedAt: '2026-01-01T00:00:00Z' }, { id: 'b', endedAt: '2026-01-02T00:00:00Z' }], seriesById);
     expect(r?.bpm).toBe(185);

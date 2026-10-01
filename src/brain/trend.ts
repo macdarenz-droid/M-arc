@@ -14,8 +14,9 @@ export interface Trend {
   points: number;
 }
 
-export function trend(points: Array<{ day: string; value: number }>): Trend {
-  const usable = points.filter(p => Number.isFinite(p.value) && p.value > 0);
+/** `zeroOk`: zero is a real reading (AUD-8: an assisted set with no assistance), not a missing one. */
+export function trend(points: Array<{ day: string; value: number }>, zeroOk = false): Trend {
+  const usable = points.filter(p => Number.isFinite(p.value) && (zeroOk ? p.value >= 0 : p.value > 0));
   if (usable.length < 4) return { direction: 'unknown', slopePerWeek: 0, confidence: 'low', points: usable.length };
   const t0 = new Date(usable[0]!.day).getTime();
   const xs = usable.map(p => (new Date(p.day).getTime() - t0) / (7 * 86_400_000));
@@ -35,6 +36,15 @@ export function trend(points: Array<{ day: string; value: number }>): Trend {
 }
 
 /**
+ * AUD-8 (SCI-05): an assisted session's progress is its least-assisted working set, the hardest one,
+ * not its most-assisted back-off. A set logged with no assistance reads as zero.
+ */
+export function leastHelpKg(h: ExerciseSessionSummary): number {
+  const done = h.sets.filter(s => !h.held.includes(s) && (s.reps ?? 0) > 0);
+  return done.length ? Math.min(...done.map(s => s.kg ?? 0)) : h.topKg;
+}
+
+/**
  * QA-R3a-2: the trend of what counts as progress for the lift's mode. Weighted: the strength
  * estimate (or top load). Bodyweight: best reps. Duration: longest hold. Assisted: the assistance
  * load, with the direction inverted (less help is up); with it flat, the best reps, as in plateauStatus.
@@ -45,7 +55,7 @@ export function liftTrend(history: ExerciseSessionSummary[], mode: ResistanceMod
   if (mode === 'duration') return trend(recent.map(h => ({ day: h.day, value: h.bestDurationSec })));
   if (mode === 'assisted') {
     // QA2-FC-4: not the e1RM of the assistance, which rises with more reps and would read as down.
-    const help = trend(recent.map(h => ({ day: h.day, value: h.topKg })));
+    const help = trend(recent.map(h => ({ day: h.day, value: leastHelpKg(h) })), true);
     if (help.direction === 'up' || help.direction === 'down') return { ...help, direction: help.direction === 'up' ? 'down' : 'up', slopePerWeek: -help.slopePerWeek };
     const reps = trend(recent.map(h => ({ day: h.day, value: h.bestReps })));
     return reps.direction === 'unknown' && help.direction === 'flat' ? help : reps;
@@ -88,10 +98,10 @@ export function sinceLastBreak<T extends { day: string }>(history: T[]): T[] {
 type Series = Array<{ day: string; value: number }>;
 
 /** BR-04's total change: the fitted weekly slope times the weeks the points span. Null when the trend is unknown. */
-export function totalChange(points: Series): number | null {
-  const t = trend(points);
+export function totalChange(points: Series, zeroOk = false): number | null {
+  const t = trend(points, zeroOk);
   if (t.direction === 'unknown') return null;
-  const usable = points.filter(p => Number.isFinite(p.value) && p.value > 0);
+  const usable = points.filter(p => Number.isFinite(p.value) && (zeroOk ? p.value >= 0 : p.value > 0));
   return t.slopePerWeek * (daysBetween(usable[0]!.day, usable[usable.length - 1]!.day) / 7);
 }
 
@@ -134,7 +144,7 @@ function plateauJudged(history: ExerciseSessionSummary[], mode: ResistanceMode, 
   const pick = (rs: PlateauRow[]): PlateauPick => {
     if (mode === 'bodyweight') return { rows: rs, main: r => r.bestReps, tie: () => 0 };
     if (mode === 'duration') return { rows: rs, main: r => r.bestDurationSec, tie: () => 0 };
-    if (mode === 'assisted') return { rows: rs, main: r => r.topKg, tie: r => r.bestReps };
+    if (mode === 'assisted') return { rows: rs, main: leastHelpKg, tie: r => r.bestReps };
     const e = rs.filter(r => r.bestE1rm > 0);
     return e.length >= E1RM_MIN_SESSIONS ? { rows: e, main: r => r.bestE1rm, tie: () => 0 } : { rows: rs, main: r => r.topKg, tie: r => r.volume };
   };
@@ -172,7 +182,7 @@ export function plateauStatus(history: ExerciseSessionSummary[], mode: Resistanc
   const series = (f: (r: ExerciseSessionSummary) => number): Series => rows.map(r => ({ day: r.day, value: f(r) }));
 
   if (path === 'rule') {
-    const m = totalChange(series(main));
+    const m = totalChange(series(main), mode === 'assisted');
     const t = totalChange(series(tie));
     // Six sessions over six weeks is BR-04's evidence bar, so it is never low confidence.
     const confidence: Confidence = rows.length >= PLATEAU_HIGH_SESSIONS ? 'high' : 'medium';
@@ -182,7 +192,7 @@ export function plateauStatus(history: ExerciseSessionSummary[], mode: Resistanc
     return none;
   }
 
-  const m = trend(series(main));
+  const m = trend(series(main), mode === 'assisted');
   const t = trend(series(tie));
   const confidence = m.confidence === 'low' ? t.confidence : m.confidence;
   if (m.direction === 'up' || m.direction === 'down') return { status: (m.direction === 'up') === (flip === 1) ? 'progressing' : 'declining', confidence };

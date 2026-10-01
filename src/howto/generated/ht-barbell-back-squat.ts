@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=7109c87d306712ab5818ad9ba8ef92a700dd8ae03667ad362d7f04ada037633a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d5e987a440c22961f3d982cf45309a41f98e7f34809d725f1f8ac95a3404991c
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_barbell_back_squat",
   name: "Barbell Back Squat",
-  hashes: { inputsSha256: "7109c87d306712ab5818ad9ba8ef92a700dd8ae03667ad362d7f04ada037633a", golden: "6f8b671dc0b95f9fe171df82f154388ddc20c76dadcc6485d1e8eccfb7f5fae7" },
+  hashes: { inputsSha256: "d5e987a440c22961f3d982cf45309a41f98e7f34809d725f1f8ac95a3404991c", golden: "6f8b671dc0b95f9fe171df82f154388ddc20c76dadcc6485d1e8eccfb7f5fae7" },
   plate: {
     view: "side",
     normal: {
@@ -24,5 +24,461 @@ export default {
     tempo: "<div class=\"tempo\" role=\"img\" aria-label=\"Tempo: lower 2 seconds, drive up 1 second, brace 1 second\"><div class=\"tempo-seg move\" style=\"flex:2 1 0\"><i></i><div class=\"tempo-label\"><b>Lower</b><span>2 s</span></div></div><div class=\"tempo-seg move\" style=\"flex:1 1 0\"><i></i><div class=\"tempo-label\"><b>Drive up</b><span>1 s</span></div></div><div class=\"tempo-seg\" style=\"flex:1 1 0\"><i></i><div class=\"tempo-label\"><b>Brace</b><span>1 s</span></div></div></div>",
     alt: "High-bar barbell back squat, side view. The bar rests on the upper back over the middle of the foot. The lifter sits down until the thighs are about parallel, knees travelling forward over the toes, heels flat, trunk leaning about 40 degrees, and the bar moves in a straight vertical line.",
     mistakeAlt: "Barbell Back Squat: the common mistake, drawn dashed in the mistake colour over the correct end position.",
+  },
+  rev: 1,
+  handling: {
+    "archetype": "on-body",
+    "orientation": "pronated",
+    "handle": "bar-28",
+    "loadAxis": "along-forearm",
+    "overBody": false,
+    "width": {
+      "text": "A little wider than your shoulders. Go as narrow as is comfortable, so your forearms stay near upright. Use the rings on the bar to place your hands the same every set.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-back-squat",
+          "hk-squat",
+          "barbell-logic-squat-grip"
+        ],
+        "note": "No study sets an ideal width."
+      }
+    },
+    "thumb": {
+      "mode": "wrapped",
+      "options": [
+        {
+          "mode": "beside",
+          "when": "If wrapping bends your wrist back, rest your thumb over the bar."
+        }
+      ],
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nsca-summary",
+          "barbell-logic-squat-grip"
+        ],
+        "note": "NSCA teaches the closed grip (the only source for it). Barbell Logic teaches thumb-over with the bar in the heel of the palm. The bar sits on the back, so the thumb has no safety job here."
+      }
+    },
+    "contact": "heel",
+    "wrist": {
+      "ext": [
+        0,
+        15
+      ],
+      "dev": [
+        -10,
+        10
+      ],
+      "limitText": "Wrist folding back or taking weight? Your hands are holding the bar up.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "barbell-logic-squat-grip",
+          "hk-squat",
+          "schulz"
+        ],
+        "note": "Sources disagree: Human Kinetics teaches an extended wrist, Barbell Logic warns against over-extension. The card allows 0-15 deg and draws the line where the wrist starts carrying load. The 0-15 deg number is a coaching estimate."
+      }
+    },
+    "pose": {
+      "view": "radial",
+      "forearm": 180,
+      "wrist": {
+        "ext": 8,
+        "dev": 0
+      },
+      "contactAt": -0.1,
+      "fingers": {
+        "curl": 1
+      },
+      "thumb": "wrapped",
+      "squeeze": "light",
+      "handle": {
+        "profile": "bar-28",
+        "axis": "across",
+        "diameterMm": 28
+      },
+      "load": {
+        "kind": "on-body"
+      }
+    },
+    "faults": [
+      {
+        "key": "waiter-tray",
+        "label": "Bar in fingers",
+        "pose": {
+          "wrist": {
+            "ext": 42,
+            "dev": 0
+          },
+          "contactAt": 1.05,
+          "fingers": {
+            "curl": 0.92
+          }
+        },
+        "markers": [
+          "lever-arc"
+        ],
+        "alt": "Bar up in the fingers, hand bent back under it like a tray. The wrist bends about 40 degrees. The weight passes on the back-of-hand side, bending it further."
+      }
+    ],
+    "gripLine": "Your back holds the bar. Your hands just pin it, in the heel of your palm.",
+    "cue": "Your back holds the bar."
+  },
+  contacts: [
+    "standing-feet"
+  ],
+  setup: [
+    {
+      "kind": "safety",
+      "text": "Collars on, pins just below your lowest squat to catch a miss.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "nsca-summary",
+          "kerr2010",
+          "ace-back-squat"
+        ],
+        "note": "Pins: CL.safety. Collars: card setup step 3 (coaching consensus)."
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Squeeze your shoulder blades so the bar rests on muscle.",
+      "zoom": "bar-on-back",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "hk-squat"
+        ],
+        "note": "Bar on muscle, not bone, is consensus."
+      }
+    },
+    {
+      "kind": "brace",
+      "text": "Breathe into your belly, brace, and stand the bar up.",
+      "claim": {
+        "tags": [
+          "MECH",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "hackett2013",
+          "lander1992",
+          "nsca-summary"
+        ],
+        "note": "A held breath raises trunk pressure (Hackett 2013); the high-blood-pressure caution is consensus."
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Step back, feet hip to shoulder width, toes out a little.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "hk-squat",
+          "ace-back-squat",
+          "fry2003"
+        ],
+        "note": "Knee tracking and heels down are consensus; knees past the toes kept hip torque low (Fry 2003, n=7)."
+      }
+    },
+    {
+      "kind": "safety",
+      "text": "Stuck? Lower the bar onto the pins. Don't throw it.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nsca-summary"
+        ],
+        "note": "Coaching consensus (card)."
+      }
+    }
+  ],
+  posture: [
+    {
+      "key": "bar",
+      "label": "Bar on traps",
+      "detail": "The bar sits on the upper traps, just below the bony bump. It is centred and never on the neck bones.",
+      "anchor": {
+        "pose": "start",
+        "at": "backUpper"
+      },
+      "zoom": "bar-on-back",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "hk-squat"
+        ],
+        "note": "Bar on muscle, not bone, is consensus."
+      }
+    },
+    {
+      "key": "hands",
+      "label": "Wrists straight",
+      "detail": "Hands even, a little wider than the shoulders, forearms roughly upright, elbows down. Knuckles to forearm in a nearly straight line.",
+      "anchor": {
+        "pose": "start",
+        "at": "grip.r"
+      },
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-back-squat",
+          "hk-squat",
+          "barbell-logic-squat-grip"
+        ],
+        "note": "Everything about the hands is coaching consensus. No study measures wrist or elbow load in the back squat."
+      }
+    },
+    {
+      "key": "midfoot",
+      "label": "Bar over mid-foot",
+      "detail": "From the side, the bar stays over the middle of the foot, top to bottom.",
+      "anchor": {
+        "pose": "start",
+        "at": "grip.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "MECH"
+        ],
+        "sources": [
+          "glassbrook2017"
+        ],
+        "note": "Glassbrook 2017 says the centre of mass stays over the base of support; it does not name the mid-foot. The mid-foot line is consensus."
+      }
+    },
+    {
+      "key": "feet",
+      "label": "Knees follow toes",
+      "detail": "Feet hip to shoulder width, toes out a little, heels down. Each knee points where its foot points and may pass the toes.",
+      "anchor": {
+        "pose": "end",
+        "at": "knee.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "hk-squat",
+          "ace-back-squat",
+          "fry2003"
+        ],
+        "note": "Knee tracking and heels down are consensus; knees past the toes kept hip torque low (Fry 2003, n=7)."
+      }
+    },
+    {
+      "key": "back",
+      "label": "Back flat",
+      "detail": "The body leans forward but the back stays flat from hips to neck. Eyes ahead, neck in line.",
+      "anchor": {
+        "pose": "end",
+        "at": "backMid"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "hk-squat",
+          "glassbrook2017",
+          "fry2003"
+        ]
+      }
+    },
+    {
+      "key": "depth",
+      "label": "Hip at knee",
+      "detail": "At the bottom, the hip crease is at or below the top of the knee. If your lower back tucks under, stop a little higher.",
+      "anchor": {
+        "pose": "end",
+        "at": "hip.r"
+      },
+      "zoom": "depth",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-back-squat",
+          "kubo2019",
+          "bloomquist2013",
+          "caterisano2002"
+        ],
+        "note": "Full squats grew the glutes and inner thighs more than half squats (Kubo 2019); deep squats grew the front thigh more (Bloomquist 2013); glute share rises with depth (Caterisano 2002)."
+      }
+    }
+  ],
+  zooms: [
+    {
+      "key": "hand",
+      "chip": "Hand",
+      "heading": "Hand: right and wrong",
+      "kind": "hand",
+      "feelRow": "wrist"
+    },
+    {
+      "key": "bar-on-back",
+      "chip": "Bar on back",
+      "heading": "Bar on back: right and wrong",
+      "kind": "posture"
+    },
+    {
+      "key": "depth",
+      "chip": "Depth",
+      "heading": "Depth: right and wrong",
+      "kind": "posture"
+    }
+  ],
+  copy: {
+    "setupLine": "Set the bar at armpit height and the pins just below your lowest squat. Bar on your upper traps, then stand up.",
+    "mistakeLine": "If wrists or elbows ache after squats, your hands held the bar up. Let your back hold it.",
+    "gripLine": "Your back holds the bar. Your hands just pin it, in the heel of your palm."
+  },
+  mistakes: [
+    {
+      "key": "hands",
+      "title": "Hands holding the bar up",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "barbell-logic-squat-grip"
+        ]
+      },
+      "fix": "Elbows down, so your back holds the bar."
+    },
+    {
+      "key": "knees",
+      "title": "Knees caving or heels lifting",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "hk-squat"
+        ]
+      },
+      "fix": "Knees out over toes, heels down. Still caving? Go lighter."
+    },
+    {
+      "key": "hips",
+      "title": "Hips shoot up, back rounds",
+      "zoom": "depth",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "fry2003",
+          "hackett2013"
+        ]
+      },
+      "fix": "Brace. Chest and hips rise together."
+    }
+  ],
+  risks: [
+    {
+      "key": "back",
+      "text": "Hips shooting up or a rounding back loads your lower back far more.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "fry2003"
+        ],
+        "note": "Fry 2003, 7 lifters, a related lab set-up."
+      }
+    },
+    {
+      "key": "breath",
+      "text": "High blood pressure? Don't hold your breath long. Breathe out as you stand.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "hackett2013"
+        ],
+        "note": "Card fix text (mistake 4); Hackett 2013 is about bracing, not blood pressure."
+      }
+    }
+  ],
+  riskFlags: [
+    "wrist",
+    "knee"
+  ],
+  redFlag: {
+    "name": "Wrist pain",
+    "now": "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.",
+    "doctor": "Tingling, keeps coming back, or no better after two weeks' rest? See a doctor.",
+    "claim": {
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-wrist-pain"
+      ]
+    }
+  },
+  sources: [
+    "ace-back-squat",
+    "hk-squat",
+    "nsca-summary",
+    "barbell-logic-squat-grip",
+    "schulz",
+    "glassbrook2017",
+    "wretenberg1996",
+    "caterisano2002",
+    "kubo2019",
+    "bloomquist2013",
+    "paoli2009",
+    "clark2012",
+    "escamilla2001",
+    "contreras2015",
+    "fry2003",
+    "hackett2013",
+    "lander1992",
+    "kerr2010",
+    "nhs-wrist-pain",
+    "nhs-knee-pain"
+  ],
+  research: {
+    "card": "grip/research/barbell_back_squat.json",
+    "rev": 1
   },
 } satisfies BuiltHowTo;
