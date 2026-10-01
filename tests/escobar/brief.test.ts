@@ -114,3 +114,26 @@ describe('the brief without a session today is byte-identical to before QA8-6', 
     expect(nowLine.includes('no sessions logged yet')).toBe(plainSince == null);
   });
 });
+
+describe('BUG-33 the "now" line names the unit of the days since the last session', () => {
+  // Local clock times, so `npm run test:tz` pins the same line in New York and Manila.
+  const briefAt = async (lastDay: number) => {
+    const { freshState } = await import('@/core/models');
+    const { makeCtx } = await import('@/escobar/tools/context');
+    const { sessionAt } = await import('../helpers');
+    const { dayKey } = await import('@/core/dates');
+    const started = new Date(2026, 8, lastDay, 18, 0);
+    const session = { ...sessionAt(started.toISOString(), new Date(2026, 8, lastDay, 19, 0).toISOString(), []), day: dayKey(started) };
+    return buildBrief({ ctx: makeCtx({ ...freshState(), sessions: [session] }, new Date(2026, 8, 26, 4, 51).getTime()), mode: 'chat', turnIndex: 0, ledger: [] });
+  };
+  it('one day ago, at a 04:51 local clock', async () => {
+    const b = await briefAt(25);
+    expect(b.text.split('\n')[0]).toBe('now: sat 2026-09-26, night 04:51; last session 1 [f1] day ago');
+    expect(b.lines.now).toBe('sat 2026-09-26, night 04:51; last session 1 day ago');
+    expect(b.facts[0]).toMatchObject({ id: 'f1', value: 1, label: 'days since last session', unit: 'days' });
+  });
+  it('three days ago', async () => {
+    const b = await briefAt(23);
+    expect(b.text.split('\n')[0]).toBe('now: sat 2026-09-26, night 04:51; last session 3 [f1] days ago');
+  });
+});
