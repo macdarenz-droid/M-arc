@@ -500,7 +500,7 @@ function Stats() {
   const sparkSession = hist12[sparkIdx];
   const sparkStats = sparkSession ? lastTopStats(sparkSession, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
   const sparkReadout = sparkSession && sparkStats
-    ? `${statReadout(sparkStats, mode, sparkSession.bestDistanceM ?? 0)} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}`
+    ? `${statReadout(sparkStats, mode, sparkSession.bestDistanceM, sparkSession.bestDurationSec, sparkSession.bestReps)} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}`
     : '';
 
   return (
@@ -528,11 +528,12 @@ function Stats() {
                 <ChartReadout text={sparkReadout} />
                 <Sparkline points={hist12.map(h => progressValue(h, mode))} dates={hist12.map(h => h.day)} height={96} labels scrub onScrubIndex={setSparkScrub} />
                 {(() => {
-                  const lastDistance = hist[hist.length - 1]?.bestDistanceM ?? 0;
-                  const hasReps = statHasReps(mode, lastDistance);
+                  const lastHist = hist[hist.length - 1];
+                  const lastDistance = lastHist?.bestDistanceM ?? 0, lastDuration = lastHist?.bestDurationSec ?? 0, lastReps = lastHist?.bestReps ?? 0;
+                  const hasReps = statHasReps(mode, lastDistance, lastDuration, lastReps);
                   return (
                     <div class={hasReps ? 'grid-3' : 'grid-2'}>
-                      <Stat value={lastTop!.load} label={statLoadLabel(mode, lastDistance)} />
+                      <Stat value={lastTop!.load} label={statLoadLabel(mode, lastDistance, lastDuration, lastReps)} />
                       {hasReps && <Stat value={`${lastTop!.reps}`} label="reps at top" />}
                       <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                     </div>

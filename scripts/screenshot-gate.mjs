@@ -4636,6 +4636,48 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// AUD-11 (UI-11, review Low on #159): the Exercise progress card's chart readout for a hold is
+// built by a call site in History.tsx (statReadout), not by statReadout alone — covering only the
+// helper function left that call site free to regress back to the old "<load> × <reps>" form.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-11 UI-11';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, durationSec) => ({ id: `aud11-ui11-${offset}`, splitId: 'sp1', splitName: 'Core', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:01:00.000Z`, durationSec: 60, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_plank', name: 'Plank', sets: [{ durationSec, effort: 'ideal' }] }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:01:00.000Z`, loggedAt: `${day(offset)}T17:01:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess(7, 30), sess(0, 45)],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(300);
+
+  const readout = await page.locator('[data-palace="history.exercise-stats"] .chart-readout').first().innerText().catch(() => '');
+  if (!readout) errors.push(`${tag}: expected a chart readout for the plank's Exercise progress card`);
+  else {
+    if (readout.includes('×')) errors.push(`${tag}: a hold's readout should not show "× reps", got ${JSON.stringify(readout)}`);
+    if (!readout.includes('45s')) errors.push(`${tag}: expected the latest hold's 45s in the readout, got ${JSON.stringify(readout)}`);
+  }
+  if (await page.locator('[data-palace="history.exercise-stats"]').getByText('reps at top').count()) errors.push(`${tag}: a hold should have no "reps at top" tile`);
+  await ctx.close();
+}
+
 // QA12-3: under reduce, the drawing animation is skipped outright (not just faded fast). A
 // mutation that always calls beginElement() regardless of `reduce` would still pass every other
 // O1 probe (they only check timing), so assert the finished state directly, right after load.
