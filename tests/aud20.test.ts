@@ -99,6 +99,9 @@ describe('AUD-20 SCI-11: recovery and readiness copy states facts', () => {
     expect(sleepDriver(null, [300, 330], 450)).toBe('Sleep: 5h 15m a night over the last 2 nights (below your usual 7h 30m)');
     expect(sleepDriver(null, [300], 450)).toBe('Sleep: 5h a night over the last night (below your usual 7h 30m)');
     expect(sleepDriver(480, [480, 200, 200], 450)).toBe('Sleep: 4h 53m a night over the last 3 nights (below your usual 7h 30m)');
+    // AUD-1's 7 h floor: habitual short sleep is named against the floor, not as "your usual".
+    expect(sleepDriver(240, [240, 240, 240], 240)).toBe('Sleep: 4h last night (under 7h)');
+    expect(sleepDriver(null, [360, 360], 360)).toBe('Sleep: 6h a night over the last 2 nights (under 7h)');
   });
   it('readiness emits the sleep driver from real health days, and ES-12 still hides it', () => {
     const healthDays = Array.from({ length: 14 }, (_, i) => ({ day: addDays(today, -i), sleepMinutes: i < 3 ? 180 : 450, source: 'health_connect' as const, syncedAt: '2026-09-26T08:00:00Z' }));

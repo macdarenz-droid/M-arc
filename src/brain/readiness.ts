@@ -94,12 +94,13 @@ function hm(min: number): string {
 }
 
 /**
- * AUD-20 (SCI-11): the sleep driver states the hours and the user's usual, never that sleep caused
- * the score. Starts with "Sleep:" so ES-12's health filter (redactDrivers) still finds it.
+ * AUD-20 (SCI-11): the sleep driver states the hours against the user's usual (the 14-night
+ * median) or AUD-1's 7 h floor, never that sleep caused the score. Starts with "Sleep:" so ES-12's
+ * health filter (redactDrivers) still finds it.
  */
-export function sleepDriver(lastNight: number | null, last3: number[], usual: number): string {
-  const vs = (min: number) => `(${min < usual ? 'below your usual' : 'your usual'} ${hm(usual)})`;
-  if (lastNight != null && lastNight < usual) return `Sleep: ${hm(lastNight)} last night ${vs(lastNight)}`;
+export function sleepDriver(lastNight: number | null, last3: number[], usual: number, floor = SLEEP_NEED_FLOOR_MIN): string {
+  const vs = (min: number) => `(${min < usual ? `below your usual ${hm(usual)}` : min < floor ? `under ${hm(floor)}` : `your usual ${hm(usual)}`})`;
+  if (lastNight != null && (lastNight < usual || lastNight < floor)) return `Sleep: ${hm(lastNight)} last night ${vs(lastNight)}`;
   const mean = avg(last3);
   return `Sleep: ${hm(mean)} a night over the last ${last3.length === 1 ? 'night' : `${last3.length} nights`} ${vs(mean)}`;
 }

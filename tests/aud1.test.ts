@@ -84,7 +84,7 @@ describe('AUD-1 SCI-02: sleep sufficiency floor in readiness', () => {
     expect(result!.band).not.toBe('green');
     expect(result!.score).toBe(45);
     expect(result!.loadAdvice).toBe('no_increase');
-    expect(result!.drivers).toContain('sleep has been short recently');
+    expect(result!.drivers).toContain('Sleep: 4h last night (under 7h)'); // AUD-20: plain-fact driver text
     expect(low).toContain('sleep');
   });
 
