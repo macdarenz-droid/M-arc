@@ -7351,7 +7351,8 @@ for (const theme of ['silent-black', 'paper']) {
   }));
   // The dialog never scrolls; the visible top slides up by >= minTravel px (or the panel's height, when shorter), never moves down, settles at least
   // 100 ms before sampling ends with the panel's bottom on the viewport's bottom edge, and the page does not scroll.
-  const bug37Check = (tag, frames, { minTravel, sheets }) => {
+  // Reduced motion: an open never moves the visible top (still); the swap changes it in one step, never eased (oneStep).
+  const bug37Check = (tag, frames, { minTravel, sheets, still = false, oneStep = false }) => {
     const on = frames.filter(x => x.top != null && x.open === sheets);
     if (on.length < 10) { errors.push(`${tag}: only ${on.length} frames with ${sheets} sheet(s) open, expected >= 10`); return; }
     const scrolled = on.filter(x => x.scroll.some(s => s !== 0));
@@ -7361,6 +7362,8 @@ for (const theme of ['silent-black', 'paper']) {
     const travel = on[0].top - last.top, need = Math.min(minTravel, last.bottom - last.top - 1);
     if (travel < need) errors.push(`${tag}: the panel's visible top travelled only ${travel.toFixed(1)} px (${on[0].top.toFixed(1)} -> ${last.top.toFixed(1)}), expected >= ${need.toFixed(0)}`);
     for (let i = 1; i < on.length; i++) if (on[i].top > on[i - 1].top + 0.5) { errors.push(`${tag}: the panel's visible top moved down ${(on[i].top - on[i - 1].top).toFixed(1)} px at ${on[i].t.toFixed(0)} ms (${on[i - 1].top.toFixed(1)} -> ${on[i].top.toFixed(1)}), a bounce`); break; }
+    if (still) { const moved = on.filter(x => Math.abs(x.top - last.top) > 0.5); if (moved.length) errors.push(`${tag}: the panel's visible top moved under reduced motion in ${moved.length} of ${on.length} frames (${moved.slice(0, 4).map(x => x.top.toFixed(1)).join(', ')} vs rest ${last.top.toFixed(1)})`); }
+    if (oneStep) { const steps = on.slice(1).filter((x, i) => Math.abs(x.top - on[i].top) > 0.5).length; if (steps > 1) errors.push(`${tag}: the panel's visible top moved in ${steps} steps under reduced motion, expected one`); }
     const restAt = on.findIndex((x, i) => on.slice(i).every(y => Math.abs(y.top - last.top) <= 0.5));
     if (on.length - restAt < 5 || last.t - on[restAt].t < 100) errors.push(`${tag}: the panel did not settle at least 100 ms before sampling ended`);
     if (Math.abs(last.bottom - last.vh) > 1) errors.push(`${tag}: the panel ended at bottom ${last.bottom.toFixed(1)} px, not at rest on the viewport's bottom edge (${last.vh})`);
@@ -7392,15 +7395,15 @@ for (const theme of ['silent-black', 'paper']) {
       const ctx = await newCtx(); const page = await bug37Load(ctx, base, theme, true);
       const cdp = await ctx.newCDPSession(page); const throttle = () => cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
       const start = await bug37Start(page); await throttle();
-      await bug37Open(page, `${base} start sheet (checked in)`, () => start.click(), { minTravel, sheets: 1 });
+      await bug37Open(page, `${base} start sheet (checked in)`, () => start.click(), { minTravel, sheets: 1, still: reduce });
       const title = await page.locator('dialog.sheet[open] h2').first().textContent();
       if (!title?.startsWith('Before you start SPLIT 1')) errors.push(`${base}: expected the brief, got "${title}"`);
       await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
       await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
       await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(400);
       await throttle();
-      await bug37Open(page, `${base} Settings`, () => page.locator('[data-palace="today.settings"]').click(), { minTravel, sheets: 1 });
-      await bug37Open(page, `${base} Gyms nested in Settings`, () => page.getByRole('button', { name: 'Manage' }).first().click(), { minTravel, sheets: 2 });
+      await bug37Open(page, `${base} Settings`, () => page.locator('[data-palace="today.settings"]').click(), { minTravel, sheets: 1, still: reduce });
+      await bug37Open(page, `${base} Gyms nested in Settings`, () => page.getByRole('button', { name: 'Manage' }).first().click(), { minTravel, sheets: 2, still: reduce });
       if (!(await page.locator('dialog.sheet[open].nested').count())) errors.push(`${base}: the Gyms sheet did not open nested`);
       await ctx.close();
     }
@@ -7409,14 +7412,14 @@ for (const theme of ['silent-black', 'paper']) {
       const ctx = await newCtx(); const page = await bug37Load(ctx, base, theme, false);
       const cdp = await ctx.newCDPSession(page);
       const start = await bug37Start(page); await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
-      await bug37Open(page, `${base} check-in`, () => start.click(), { minTravel, sheets: 1 });
+      await bug37Open(page, `${base} check-in`, () => start.click(), { minTravel, sheets: 1, still: reduce });
       if ((await page.locator('dialog.sheet[open] h2').first().textContent()) !== 'Quick check-in') errors.push(`${base}: expected the check-in first`);
-      await bug37Open(page, `${base} check-in -> brief swap`, () => page.getByRole('button', { name: 'Skip' }).click(), { minTravel: reduce ? 0 : 20, sheets: 1 });
+      await bug37Open(page, `${base} check-in -> brief swap`, () => page.getByRole('button', { name: 'Skip' }).click(), { minTravel: reduce ? 0 : 20, sheets: 1, oneStep: reduce });
       if (!(await page.locator('dialog.sheet[open] h2').first().textContent())?.startsWith('Before you start SPLIT 1')) errors.push(`${base}: Skip did not lead to the brief`);
       await ctx.close();
     }
   }
-  if (!errors.some(e => e.startsWith('BUG-37 '))) console.log('BUG-37: every sheet dialog stays unscrolled on every frame, so the start sheet (both paths), Settings and a nested sheet slide up on screen once (visible top >= 300 px or the full panel height, never down, settled at rest), at 411 x 960 DPR 2.625 and 390 x 844 DPR 1, 1x and 4x CPU, Silent Black and Paper, and stay unscrolled and end at rest under reduced motion');
+  if (!errors.some(e => e.startsWith('BUG-37 '))) console.log('BUG-37: every sheet dialog stays unscrolled on every frame, so the start sheet (both paths), Settings and a nested sheet slide up on screen once (visible top >= 300 px or the full panel height, never down, settled at rest), at 411 x 960 DPR 2.625 and 390 x 844 DPR 1, 1x and 4x CPU, Silent Black and Paper, and under reduced motion stay unscrolled with the visible top still (the swap in one step), ending at rest');
 }
 
 // AUD-10: live workout, finish and past logging (audit UI-01, UI-03, UI-05, UI-09, OBS-LABELS).
