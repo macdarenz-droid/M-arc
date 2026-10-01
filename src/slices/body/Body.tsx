@@ -343,6 +343,13 @@ function bestEverHint(h: ExerciseSessionSummary[], mode: ResistanceMode, u: Load
   return `${bestReps || bestDur} ${bestDur ? 's' : 'reps'}`;
 }
 
+/** AUD-6 (UI-07): the muscle panel's "Full" column. Ready (90 %) is not full (97 %): a ready muscle still short of full shows its day. */
+export function muscleFullText(now: number, r: Pick<MuscleRecovery, 'recovering' | 'fullInHours' | 'beyondCap'>): string {
+  if (r.fullInHours != null && (r.recovering || r.fullInHours > 0)) return dayOrToday(now, r.fullInHours);
+  if (!r.recovering) return 'Now';
+  return r.beyondCap ? BEYOND_CAP_TEXT : 'When soreness eases';
+}
+
 /** One muscle, opened as the `muscle` panel (from the map, a list row, or Escobar). O2: a clear
  * recovery timeline (real dates, not "2d to 3d"), four facts, and Logged/Try next tabs. */
 export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: () => void }) {
@@ -367,7 +374,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
   const fillTone = r.recovering ? (r.pct < 40 ? 'negative' : 'warning') : 'positive';
   // BUG-17: past the 120 h window cap there is no clock time, but it is not soreness either.
   const readyText = !r.recovering ? 'Now' : r.readyInHours ? (readyDayWindow(now, r.readyInHours) ?? 'Now') : r.beyondCap ? BEYOND_CAP_TEXT : 'When soreness eases';
-  const fullText = !r.recovering ? 'Now' : r.fullInHours != null ? dayOrToday(now, r.fullInHours) : r.beyondCap ? BEYOND_CAP_TEXT : 'When soreness eases';
+  const fullText = muscleFullText(now, r);
   const accuracy = r.confidence === 'high' ? 'Good' : r.confidence === 'medium' ? 'Getting there' : 'Rough guess for now';
   const active = s.active;
 

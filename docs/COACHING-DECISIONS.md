@@ -1264,3 +1264,14 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
   **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
   **Source**: card ESC-W-CITE, reserved_paths.
+
+## AUD-6: recovery status correctness (AUD-6 builder, 2026-10-01)
+
+- **D-AUD6-1. Today's soreness caps a muscle with no log or a fresh mark; only a mark made today outranks it.** In `recoveryAt`'s early-return branch a rating of 4 or 5 in today's check-in gives the same cap as a logged muscle (60 %, not ready, `soreToday`, no clock times). A check-in has a day but no time, so a fresh mark from an earlier day is older than it and loses. A mark made today wins: "Mark as fresh" is a tap on that one muscle after seeing its state, and if soreness won the button would do nothing.
+  **Why**: SCI-03; the card asks for precedence for same-day marks. **Risk**: a user who marks fresh in the morning and then rates soreness 5 that evening stays at 100 %. Recovery: a check-in time stamp, which is new saved data and needs the owner's approval.
+  **Known limit**: an unlogged sore muscle still has `lastTrainedAt: null`, so its panel keeps "Not trained yet" and no timeline. Body.tsx outside the Full text is not in this card's write_scope.
+  **Source**: card AUD-6; `tests/recovery-aud6.test.ts`.
+- **D-AUD6-2. Only a rise in resting HR slows recovery.** `systemicFactor` uses the signed change (7-day mean minus 28-day mean over its SD) instead of its absolute value, matching readiness. A fall alone changes nothing; the audit's "unusual decreases with corroborating evidence" is not added, as the app has no such evidence.
+  **Why**: SCI-06 (Buchheit 2014: direction and context are needed). **Source**: card AUD-6.
+- **D-AUD6-3. "Full" in the muscle panel shows the model's full day whenever full time is left.** Ready (90 %) and full (97 %) stay distinct: a ready muscle with `fullInHours > 0` shows its day (the same `dayOrToday` text recovering muscles use), and "Now" only when full time is 0 or none. The rule lives in `muscleFullText` so it is tested directly.
+  **Why**: UI-07; the Ready times card already uses `fullInHours`. **Source**: card AUD-6.
