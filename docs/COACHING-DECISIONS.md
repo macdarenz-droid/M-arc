@@ -1537,6 +1537,18 @@ Measured on main (gate Chromium, 390 × 844, Silent Black and Paper, 1x and 4x C
 - **Decided (D-BUG36-3)**: on the swap the panel grows 32 px (597 → 629 px). Its top eases from the old position with the sheet's own duration and easing (`--dur-sheet`, drawer curve) instead of snapping; reduced motion snaps. The panel scrolls to its top and takes focus, since the focused button left with the old body.
   **Why**: keeps the existing easing, durations and reduced-motion behaviour; the opening slide is unchanged.
   **Source**: card BUG-36 task 2.
+## BUG-37: sheets slide up without a bounce on Android (BUG-37 builder, 2026-10-01)
+
+Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 DPR 1, Silent Black and Paper, 1x and 4x CPU): a modal `dialog.sheet` kept the UA's `overflow: auto`, so it was a scroll container sized to its panel. On every open the panel's `sheet-in` transform became scrollable overflow and showModal's focus scrolled the dialog by the same amount (start sheet scrollTop 629, 549, 450, ... 0; Settings 883, ...; nested Gyms 221, ...), so the panel's on-screen top never moved (331 px for the start sheet). On the phone the compositor's transform and the main thread's scroll fell out of step: the content jumped above its rest top, clipped, then eased back.
+
+- **Decided (D-BUG37-1)**: `.sheet { overflow: visible; }`, one BUG-37 block in `src/ui/styles.css` after the sheet rules. The dialog is no longer a scroll container, so neither focus nor a panel transform can scroll it; the panel keeps its own `overflow: auto`, `max-height: 92dvh` and sticky `.sheet-top`.
+  **Why**: `visible` over `clip`: both stop the scroll, but `clip` still cuts everything outside the dialog's box, which is the panel's rest box. A panel above its rest top (A3's rubber band, a StartSheet swap to a shorter body) would show its content sliding under a fixed edge, the same look as this bug. `.esc-sheet` already uses `visible`. No change in `primitives.tsx` was needed.
+  **Source**: card BUG-37 task 1; gate block BUG-37.
+- **Decided (D-BUG37-2)**: the gate block reads the panel's `getBoundingClientRect().top` (transform and every ancestor scroll included) and every open sheet dialog's `scrollTop` on each frame. The travel bound is 300 px, or the panel's height minus 1 px when the panel is shorter (nested Gyms is 221 px tall and cannot travel 300 px; it owes its whole height, a slide from the bottom edge).
+  **Why**: BUG-36's probe added the transform to the layout top and missed the scroll. The height bound is stricter than 300 px for any short panel, never looser.
+  **Source**: card BUG-37 task 2.
+- **Noted (D-BUG37-3)**: the StartSheet swap (check-in → Skip → brief) did not scroll the dialog on main in gate Chromium; the block keeps it as a guard (scroll 0, top never down, travel >= 20 px as in BUG-36). Reduced motion did not scroll on main either (`--shift-sheet: 0`); the block checks it stays unscrolled and ends at rest.
+  **Source**: gate run on `1fcd9c8` with the BUG-37 block.
 ## HT-5 review fixes (PR #116, FAIL @ a9c1ae1 -> fixed): field coverage, a tautological test, dead code, merge (HT-5 builder, 2026-10-01)
 
 - **Decided**: `content.mjs` exports `BASE_KEYS` (was module-private) and a new `PAGE_ONLY_KEYS = ['openItems']` - the named list the review asked for. `content-gen.test.ts` adds a real field-coverage test: the union of `Object.keys(default)` across the 8 vendored `*.howto.mjs` files must be in `BASE_KEYS`, in `{schema, id, name, plate, zooms, feel}`, or in `PAGE_ONLY_KEYS`; a second test reproduces the reviewer's `warmup` mutation in memory (spreads `leg_press`'s real default export plus the unmapped key, no disk write) and shows it fails the same check.
