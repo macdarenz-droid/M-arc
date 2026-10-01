@@ -3,21 +3,21 @@
   "budgets": [
     {
       "chunk": "HowToSheet-*.js",
-      "rawMax": 18545,
-      "gzMax": 7011,
-      "measuredRaw": 16859,
-      "measuredGz": 6373,
+      "rawMax": 21817,
+      "gzMax": 8205,
+      "measuredRaw": 19833,
+      "measuredGz": 7459,
       "setBy": "HT-9",
-      "reason": "Setup and Risks (plan 2.4 items 3, 7) plus HT-6's Look closer chips, Grip section, zoom host and hand-close-up registry all render in the shared HowToSheet chunk; measured + 10 % after merging HT-6's READY head."
+      "reason": "Setup and Risks (plan 2.4 items 3, 7) plus HT-6's Look closer chips, Grip section, zoom host and hand-close-up registry all render in the shared HowToSheet chunk; re-measured on the real build after merging HT-6's READY head and origin/main (HT-6's self-reported figures were pre-main-merge and undercounted)."
     },
     {
       "chunk": "HowToSheet-*.css",
-      "rawMax": 16861,
-      "gzMax": 3195,
-      "measuredRaw": 15328,
-      "measuredGz": 2904,
+      "rawMax": 18699,
+      "gzMax": 3439,
+      "measuredRaw": 16999,
+      "measuredGz": 3126,
       "setBy": "HT-9",
-      "reason": "text.css (setup + risks rules) plus HT-6's hand.css (close-up frame, chips, grip rules) in the shared chunk; measured + 10 % after merging HT-6's READY head."
+      "reason": "text.css (setup + risks rules) plus HT-6's hand.css (close-up frame, chips, grip rules) in the shared chunk; re-measured on the real build after merging HT-6's READY head and origin/main (HT-6's self-reported figures were pre-main-merge and undercounted)."
     },
     {
       "chunk": "ht-dumbbell-lateral-raise-*.js",
