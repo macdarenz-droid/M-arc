@@ -7278,9 +7278,9 @@ const ht10Clock = { t0: Date.now(), lines: [] };
     if (want('fixtures').length) {
       const F = m => fail('*', 'silent-black', 'fixtures', `fixtures: ${m}`);
       const c19 = H.ht10C19Inputs();
-      const { ctx, page } = await H.openAppTrain(ht10, PORT, 'silent-black');
-      try {
-        const pre = ids[0];
+      const { ctx, page } = await H.openAppTrain(ht10, PORT, 'silent-black').catch(e => ({ ctx: null, page: null, err: e }));
+      if (!ctx) F('crashed: could not open the app');
+      else try {
         const probe = () => page.evaluate(H.ht10DomProbe, [H.HT10_C10_EXEMPT, c19.pats, c19.words, c19.disclaimer, expectRisks, false]);
         const fx = [
           ['M10 (stub source section)', () => { const s = document.createElement('section'); s.dataset.section = 'ht10-m10'; s.innerHTML = '<details class="srcs" open><summary>Sources</summary><a href="https://example.org/x" target="_blank">Ref</a> <span class="ev ev-data">Measured</span></details>'; document.querySelector('dialog.sheet.ht [data-section]:last-of-type').after(s); }, [/<a> element/, /\[target\]/, /source\/evidence element/, /"Measured"/, /matches/]],
