@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-09-30 ~20:00 UTC · main `5178761` (LIB-25 #120) · by supervisor session `session_01Tc7uLSdp7LGknt8xc1i9dc` on the owner's current account. Section 8.0 lists the changes since the 16:35 capture. Rows in section 8 that this update did not re-check say so. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-01 ~01:00 UTC · main `dbd33b9` (BUG-32 #131) · by supervisor session `session_01Tc7uLSdp7LGknt8xc1i9dc` on the owner's current account. Section 8.0 lists the changes since the 20:00 capture. Rows in section 8 that this update did not re-check say so. Re-capture section 8 live right before each commit of this file.
 
 - The supervisor updates this file from time to time: at least every 3 hours while work is moving, and after every new owner rule or decision. See section 11.
 - Sections 0–7 and 9–11 change slowly. **Section 8 (Current state) goes stale within hours.** Treat it as a map, then re-check everything live.
@@ -628,109 +628,92 @@ The table is in `AGENTS.md`. Do not copy it here.
 
 ---
 
-## 8. Current state (2026-09-30 ~20:00 UTC; stale fast, re-check live)
+## 8. Current state (2026-10-01 ~01:00 UTC; stale fast, re-check live)
 
-### 8.0 Changes since the 16:35 capture (read first)
-- **main is now `5178761`.** Merged since 16:35 (UTC times from the merge commits):
-  - HT-4 #107 `a28cc8c` (17:05) and HT-3 #106 `1fc66ee` (17:36).
-  - SUP-1 #125 `60d2b6e` (18:06): this file and `docs/supervisor/scripts/` are on main.
-  - PLAY-1 #124 `aaf60d0` (18:51): a Privacy policy button in Settings, the healthcare line, and the Health Connect screen shows the policy. APK sent from run 36761561040, after the fingerprint step passed.
-  - LIB-25 #120 `5178761` (19:38): the poly primitive, engine only.
-- **HT lane** (the K1 order is unchanged):
-  - HT-3b #118: review FAILED at `db2f7c3` (behind main). Medium: the main-chunk size is not logged. Lows: the TaskDuration helper, the "verified" message, the leak-scan exception. The builder posted "HT-3b FIXED: 6d0bf12". The supervisor caught it up to `800f014`. A delta review is running (reviewer `session_01ME9cQyPXDGXsQGbvJFR8QQ`).
-  - HT-4b: builder `session_01BV1WjE8FkCUHKAdYu1AX8Y` stalled at 17:22 and resumed at 19:03. No PR yet.
-  - HT-5 #116 was retargeted to main.
-- **LIB-26 #123:** review PASSED; the medium was fixed at `005aa9f`. Retargeted to main and caught up to `62f4714`. It merges when CI is green.
-- **Coach bugs from the owner's phone** (reported ~18:52). They run as a Workflow: build, fresh reviewer, fix loop.
-  - BUG-31 #132: answers showed raw brief-form fact tags like `[f40]`. The number check read the tag digits as numbers, so real numbers got "Unverified number" and a repair round ran. The repair wording made the coach write "Restated with the numbers re-checked:". The fix: accept `[fN]` as a citation only when the id is in the ledger, strip leftovers at display, hold back partial tags while streaming, and new repair wording. It also carries BUG-33: the brief's "last session N ago" line lost its unit.
-  - BUG-32 #131: the crisis pre-screen missed common phrasings like "wanna die", "wish I was dead" and "better off without me". Its card drew at the top of the thread, out of view, and could show twice.
-  - ESC-W-CITE (Worker prompt): cite as `⟦f3⟧`, not `[f3]`, and answer again without mentioning the check. It is a Worker change, so it merges only on the owner's yes (6.10). No PR yet.
-- **Owner requests for 10-01** (his local morning, before 20:00 UTC on 09-30):
-  1. Privacy page: no talking-down headings ("In plain words"); his name as "Marc Darenz" unless Google Play requires the full name. Card DOC-5: PRs #134 (main) and #135 (website branch). Then the supervisor deploys the site (`website.yml`, `workflow_dispatch`, `confirm=deploy`) and checks the live page.
-  2. Settings: the "Not medical advice…" line goes unless Play requires it in the app, and the footer gets "© 2026 Marc Darenz. All rights reserved." (see 4.1). Card COPY-1: research, UI copy audit, build, review.
-  3. A new owner rule on UI copy (see 3.10). SUP #133 records it in `AGENTS.md` and `.claude/owner-rules.md`.
-- **ESC-REPORT:** W #129 was reviewed. Its only blocker was being behind main, and its code has not changed since the review. It waits on the owner's yes. The order is unchanged: W → the live `POST /reports {}` returns 400 → DOC-REPORT #127/#128 (after DOC-5, with the site deploy) → the app, #130.
-- **Working method:** ultracode is on for this session. The supervisor runs build, review and fix loops as Workflows (fresh-context agents, worktree isolation), and still checks each result on the exact commit before merging. The hourly Routine's prompt was refreshed at 20:00 UTC with the current order.
-- **Archived since 16:35:** the PLAY-1 builder `session_01CYz8c6ViJhmktGdTHKe5nj` and its reviewer `session_017U7tnw1zYAX4FeMNQ5x7YJ`.
+### 8.0 Changes since the 20:00 capture (read first)
+- **main is now `dbd33b9`.** Merged since 20:00 UTC:
+  - #133: the owner's UI copy rule, recorded in `AGENTS.md` and `.claude/owner-rules.md`.
+  - #120, #123: LIB-25 and LIB-26 (poly primitive, flat palm).
+  - #139: the stray `node_modules` symlink removed from main and ignored going forward.
+  - #118: HT-3b (speed and offline).
+  - #129: ESC-REPORT-W. The owner said yes ("Yes report"); the Worker deployed; the live `POST /reports {}` now returns 400 as designed.
+  - #138: ESC-W-CITE. The owner said yes; the Worker deployed (cite as `⟦f3⟧`, not `[f3]`).
+  - #134: DOC-5/6 main half. The policy names him "Marc Darenz"; headings are short labels, not sentences; the copy and heading rules are in force.
+  - #132: BUG-31 (coach fact tags). APK sent.
+  - #131: BUG-32 (crisis pre-screen phrasings; the card now sits under its own message).
+- **Website branch** (`claude/app-website-design-671lk8`): #135 and #141 merged (short headings, "Marc Darenz"), and #128 merged (reply reports). The site was deployed after each merge. The live https://macdarenz-droid.github.io/M-arc/privacy/ shows the short headings and "Reply reports".
+- **Owner rules added 2026-10-01** (verbatim where quoted):
+  - UI copy: "Stop putting words in ui that makes our users noob, or obvious... stop explaining something if it is not required by playstore unless i asked explicitly."
+  - Headings: "Stop describing the headers in sentences."
+  - Name: "Marc Darenz". Play does not require the full legal name; for a personal account Play shows the legal name and country anyway. Owner step: Play Console > Developer account > About you > Developer name.
+  - Settings: the medical line goes (D-COPY1-medical: Play's reminder lives in the store description, not the app). Footer: "© 2026 Marc Darenz. All rights reserved."
+- **Open lanes:**
+  - COPY-1 #137: fixing (builder `session_01Egz6B8CRkz1JvPocDPNMth`).
+  - DOC-REPORT #127: in CI.
+  - ESC-REPORT app #130: review after #127.
+  - BUG-34 #142: launch first frame, building.
+  - BUG-35 #152: building.
+  - HT-3c #143: delta review.
+  - HT-4b #140: fixing the history field.
+  - HT-7 #119: ruling D-HT7-L3-text in force — re-open once only for text-only diffs; geometry stays 0 px.
+  - AUD-1 #146, AUD-2 #147: review PASS.
+  - AUD-3 #145: review PASS; Worker change; waits on the owner's "yes cost limit".
+  - AUD-5 #148: review.
+  - AUD-7 #151: building.
+  - AUD-9 #150: review.
+  - AUD-4, AUD-6, AUD-8, AUD-10, AUD-11, AUD-12: held for collisions.
+  - Audit #144: triage posted on #144.
+  - Second audit #149: held until the weekly reset.
+- **Working method:** a weekly usage limit warning is in force (resets 2026-10-03 11:00 UTC). Heavy work runs in remote cloud sessions, not in-container Workflows (4 CPUs). One reviewer per PR.
+- This update did not re-check 8.3 (sessions), 8.4 (routines), 8.5 (Relay) or 8.6/8.7 beyond what the facts above change; re-check them live.
 
 ### 8.1 Main
-- Head: `5178761` (LIB-25 #120, merged 19:38 UTC).
-- Recent merges, newest first:
-  - PLAY-1 #124 `aaf60d0`
-  - SUP-1 #125 `60d2b6e`
-  - HT-3 #106 `1fc66ee`
-  - HT-4 #107 `a28cc8c`
-  - BUG-30 #126 `719cbbd`
-  - ESC-NC #122 `f8a54f4`
-  - ESC-NC-W #121 `0be62e1` (the Worker deployed; `/health` ok)
-  - DOC-2 #93 `6730bac`
-  - REL-3 #115 `e14c45b`
-  - Older: `git log --first-parent origin/main`.
-- DOC-3 #110 merged into the website branch (`2373589`) and is deployed.
-- Other branch heads (20:00): `claude/howto-options` `48153c4`, `claude/lr23-plan` `e4bfb08`, `claude/libht-research` `b1cd0ac`, `claude/esc-report-plan` `0e75aaa`.
+- Head: `dbd33b9` (BUG-32 #131).
+- Recent merges, newest first (since 20:00 UTC): BUG-32 #131, BUG-31 #132, DOC-5/6 main half #134, ESC-W-CITE #138, ESC-REPORT-W #129, HT-3b #118, node_modules symlink fix #139, LIB-26 #123, LIB-25 #120, SUP owner UI-copy rule #133.
+- Older: `git log --first-parent origin/main`.
+- Website branch (`claude/app-website-design-671lk8`): DOC-REPORT (b) #128, DOC-6 #141, DOC-5 #135 merged since 20:00 UTC; DOC-3 #110 merged earlier. All deployed; the live `/privacy/` page is current.
+- Other branch heads: not re-checked in this update.
 
-### 8.2 Open PRs (heads live at 20:01 UTC)
-| PR | Card | Head | State | Waiting on |
-|---|---|---|---|---|
-| #135 | DOC-5 website half | 40b8244 | draft; base is the website branch | Owner request 1 (8.0). Then the site deploy and a check of the live page. |
-| #134 | DOC-5 main half | 151cff8 | draft | Owner request 1 (8.0). It also adds the privacy-page copy line to 3.2 of this file. |
-| #133 | SUP: owner rule on UI copy | 523814a | open | A rule-file PR (`AGENTS.md`, `.claude/owner-rules.md`); see 2.2. |
-| #132 | BUG-31 (+ BUG-33) coach fact tags | 45c2e4c | draft | The coach-bug Workflow (build, fresh reviewer, fix loop). |
-| #131 | BUG-32 crisis pre-screen | e11bdea | draft | The same Workflow. |
-| #130 | ESC-REPORT (app) | 807e94d | draft | Last in the ESC-REPORT order: after W is live and after DOC-REPORT. |
-| #129 | ESC-REPORT-W (Worker) `[ready for review]` | ff6b0cb | reviewed; behind main (the only blocker); code unchanged since the review | The owner's yes for this PR (6.10). |
-| #128 | DOC-REPORT (b), website branch `[ready for review]` | 8a05249 | review passed | After W is live, and after DOC-5, with the site deploy. If it merges after 09-30, update the policy date in both copies. |
-| #127 | DOC-REPORT (a), main `[ready for review]` | 06aed58 | review passed | The same as #128. |
-| #123 | LIB-26 flat palm `[golden update]` | 62f4714 | review PASSED; medium fixed at `005aa9f`; retargeted to main; contains main | Merge when CI is green. |
-| #119 | HT-7 posture close-ups | 47654ff | not re-checked since 15:30 | The HT order. HT-4's C17 fix is now on main. It also needs HT-6's also-row sync. |
-| #118 | HT-3b speed and offline `[ready for review]` | 800f014 | review FAILED at `db2f7c3`; fix `6d0bf12`; caught up to `800f014`, contains main | The delta review (`session_01ME9cQyPXDGXsQGbvJFR8QQ`). Next in the HT order. |
-| #116 | HT-5 content generator | 19fc2bf | draft; retargeted to main | The HT order: after HT-4b. |
-| #113 | HT-9 set-up and risks | 0513003 | not re-checked since 15:30 | The HT order. Its "HT-9 C19" gate block needs the ESC-NC guard (merged, #122) and HT-4b. |
-| #112 | HT-6 grips, hand zoom | 4fade94 | not re-checked since 15:30 | The HT order. |
-| #111 | HT-8 feel map and shimmer | a8de1cf | not re-checked since 15:30 | The HT order. The "tripwire (net)" note is still **unverified**: the PR body defines it itself ("the median tap window minus the median idle window"), and its HANDOFF "Waiting on" names #117, HT-6's CSS and HT-3/4/5/6 merging, not the supervisor. Check the builder's session and triggers before answering. |
-| #109 | LIB-8 pilot A (19 pattern plates) | d7aa649 | draft | Fix round 3 (`d7aa649`) was checked by the supervisor, and the sheet went to the owner at 16:27: 18 plates, with the rear-delt fly held back. The owner's answers (8.6 item 4). Merges after LIB-2..LIB-4. |
-| #94 | PREM-PLAN `[parked]` | 08a0fef | green (15:30) | The owner: 4 decisions. |
-| #92 | PAY-1 `[parked]` | c8829be | green (15:30) | The owner: price and data approval. |
-| #88 | Wear Engine application 3 (docs) | 62dbdeb | green (15:30) | The owner: Huawei's reply. A Routine checks on 10-13. |
-| #3 | GT6 watch lab (codex) | 8fc26d8 | — | The watch agent. **Never merge.** |
-| #1 | Coach brain design | 9201140 | stale | No card or lane. Leave it. |
-
-**HT merge order (K1, settled 09-30 15:40, unchanged):** HT-4 #107 (merged) → HT-3 #106 (merged) → HT-3b #118 → HT-4b (no PR yet) → HT-5 #116 → HT-6 #112 → HT-7 #119 → HT-8 #111 → HT-9 #113 → HT-10.
-
-**Library order:** LIB-25 #120 (merged) → LIB-26 #123 → pilot A #109 (the sheet went to the owner at 16:27; his answers are pending).
-
-**ESC-REPORT order:** W #129 (owner's yes) → the live `POST /reports {}` returns 400 → DOC-REPORT #127/#128 (after DOC-5, with the site deploy) → the app, #130.
-
-### 8.3 Running and idle sessions (M/ARC, owner's current account; statuses from ~15:12 unless the row says otherwise, re-check live)
-| Session | Role | Model | Status |
+### 8.2 Open PRs (as of the 01:00 UTC capture; re-check heads live)
+| PR | Card | State | Waiting on |
 |---|---|---|---|
-| session_01Tc7uLSdp7LGknt8xc1i9dc | **Supervisor** (env `env_01Q4EctZ7hnAkbtoGSeRp3Kh`) | Opus | active (20:00); ultracode on |
-| session_01ME9cQyPXDGXsQGbvJFR8QQ | Reviewer: HT-3b #118 delta review | not recorded | reviewing (20:00); archive after its verdict |
-| session_01BV1WjE8FkCUHKAdYu1AX8Y | Builder: HT-4b (no PR yet) | not recorded | stalled at 17:22, resumed at 19:03 |
-| session_012au82Rjsy7wuXunToMGWWh | Reviewer: LR23-DOCS | Opus | verdict posted: PASS at 15:22 (`3f1bc49`); archive |
-| session_01Sj9sKFMGHCEuY9ZYoHdYzp | Builder: ESC-NC #122 | Opus | PR merged; archive if still open (5.9) |
-| session_01MQ4hHgRP67Wb6QBQ881nHC | Builder: LR23-DOCS (done: golden B `677f8e3`, cards `f9568ca`, research `1fc9dbc`; review fixes on `claude/howto-options` `6b86baa`) | Opus | idle; review passed, archive |
-| session_016SJvqQFXkpXzX1qJwJJKzy | Builder: ESC-NC-W #121 | Sonnet | PR merged; archive if still open (5.9) |
-| session_014BuXk6RhFgH9Ev7G5oPMGQ | Builder: HT-4 #107 | Sonnet | PR merged; archive if still open (5.9) |
-| session_01Jark5f37C56oQaSpFsGNqY | Builder: HT-3 #106 | Opus | PR merged; archive if still open (5.9) |
-| session_01V9STYSVSiJMKv46npD4DMU | Builder: HT-3b #118 | Sonnet | posted "HT-3b FIXED: 6d0bf12" |
-| session_01TojyzXtcz3DucYjhNoHpKs | Builder: HT-5 #116 | Sonnet | idle |
-| session_017W69UPzNEuk87SJye8gtM8 | Builder: HT-6 #112 | Opus | idle (local gate) |
-| session_01TLQREDwJgfPP2gbHAmEu9T | Builder: HT-7 #119 | Opus | idle |
-| session_01H5UEjJKi59q226yyhWp9So | Builder: HT-8 #111 | Opus | idle |
-| session_01JY7nLdZ112XUkSfYEukdvL | Builder: HT-9 #113 | Sonnet | idle |
-| session_01K2cJ5wL9yrEVDzD652Aopm | Builder: LIB-25 #120 (merged) and LIB-26 #123 | Opus | idle |
-| session_01RFiJ26snbpASbeBRXtDcY3 | LIB-8 lead #109 | Opus | idle |
-| session_01RiyaTXJTTd47mi9FGYN3Q3 | Drawer: arms and machines (`9d3b0a3`, READY) | Opus | idle |
-| session_01GCLapa58edPUhGCJ7vMhXy | Drawer: hinge and rows (`1bb7a3d`, READY) | Opus | completed |
-| session_019sM1eRfB8C2weX3GUirQY1 | Drawer: legs and core | Opus | need_input (waits on the flat palm) |
-| session_019xm4v7MYwsyabgwGXXZnZY | Best-practice review | Opus | completed; can be archived |
-| session_016zEoEcLZ9ezrNEtxJ6tPaS | Watch docs handover (target of the 10-13 Routine) | Opus | completed; keep it |
-| session_01L64AhnYjCfzhbqBbUcKK8J | Website design concepts | Opus | completed |
+| #152 | BUG-35 | building | — |
+| #150 | AUD-9 | review | — |
+| #151 | AUD-7 | building | — |
+| #148 | AUD-5 | review | — |
+| #149 | second audit | held until the weekly usage reset (2026-10-03 11:00 UTC) | — |
+| #146 | AUD-1 | review PASSED | merge |
+| #147 | AUD-2 | review PASSED | merge |
+| #145 | AUD-3 | review PASSED; Worker change | the owner's "yes cost limit" (6.10) |
+| #144 | audit triage | triage posted on #144 | supervisor follow-up |
+| #143 | HT-3c | delta review | reviewer verdict |
+| #142 | BUG-34 (launch first frame) | building | — |
+| #140 | HT-4b | fixing (the history field) | builder fix |
+| #137 | COPY-1 | fixing (builder `session_01Egz6B8CRkz1JvPocDPNMth`) | builder fix |
+| #130 | ESC-REPORT (app) | review | after #127 (DOC-REPORT) merges |
+| #127 | DOC-REPORT (a), main | in CI | CI, then merge |
+| #119 | HT-7 posture close-ups | ruling D-HT7-L3-text in force | re-open once only for text-only diffs; geometry stays 0 px |
+| #109 | LIB-8 pilot A | not re-checked in this update | the owner's answers on the pilot sheet (8.6) |
+| #113, #112, #111, #116 | HT-9, HT-6, HT-8, HT-5 | not re-checked in this update | the HT order |
+| #94 | PREM-PLAN `[parked]` | not re-checked | the owner: 4 decisions |
+| #92 | PAY-1 `[parked]` | not re-checked | the owner: price and data approval |
+| #88 | Wear Engine application 3 (docs) | not re-checked | the owner: Huawei's reply (Routine checks 10-13) |
+| #3 | GT6 watch lab (codex) | — | the watch agent. **Never merge.** |
+| #1 | Coach brain design | stale | no card or lane; leave it |
 
-Archived since the 16:35 capture: the PLAY-1 builder `session_01CYz8c6ViJhmktGdTHKe5nj` and its reviewer `session_017U7tnw1zYAX4FeMNQ5x7YJ`.
+Merged since the 20:00 capture (removed from this table): #118 HT-3b, #120 LIB-25, #123 LIB-26, #129 ESC-REPORT-W, #131 BUG-32, #132 BUG-31, #133 SUP owner UI-copy rule, #134 DOC-5/6 main half, #138 ESC-W-CITE, #139 node_modules symlink fix; website branch #128, #135, #141.
 
-**Other projects' sessions are in the same list. Touch only M/ARC sessions (tagged `marc:*` or titled for an M/ARC card). Never touch the rest.**
+**ESC-REPORT order:** W #129 (merged, owner's yes given) → the live `POST /reports {}` returns 400 (confirmed) → DOC-REPORT #127 (in CI) / #128 (merged) → the app, #130 (review after #127).
+
+**HT and Library merge orders:** not re-checked in this update; see K1 and section 5.1 for the standing order, and re-verify live.
+
+### 8.3 Running and idle sessions (M/ARC, owner's current account; not re-checked live in this update except the row below)
+| Session | Role | Status |
+|---|---|---|
+| session_01Tc7uLSdp7LGknt8xc1i9dc | **Supervisor** (env `env_01Q4EctZ7hnAkbtoGSeRp3Kh`) | active |
+| session_01Egz6B8CRkz1JvPocDPNMth | Builder: COPY-1 #137 | fixing |
+
+The full session list from the 20:00 capture (reviewers and builders for merged PRs #118, #120, #123, #131, #132) needs re-checking: archive any whose PR has since merged (5.9). **Other projects' sessions are in the same list. Touch only M/ARC sessions (tagged `marc:*` or titled for an M/ARC card). Never touch the rest.**
 
 ### 8.4 Routines and workflows (owner's current account)
 | ID | What | When |
@@ -747,7 +730,9 @@ Archived since the 16:35 capture: the PLAY-1 builder `session_01CYz8c6ViJhmktGdT
 
 The 09-30 one-shots were all due by 16:00 UTC. This update did not re-check their `last_run`.
 
-**Workflows.** Ultracode is on for this session, so build, review and fix loops run as Workflows in the supervisor session (fresh-context agents, worktree isolation). The supervisor still checks each result on the exact commit before merging. Running now: the coach bugs (BUG-31 #132 with BUG-33, BUG-32 #131). Earlier: the ESC-REPORT planning workflow `wf_e1e9c6e3-5fa`; its cards are at `claude/esc-report-plan` `docs/escobar/ESC-REPORT-CARDS.md` (`0e75aaa`). A container restart kills in-chat workflows (6.4).
+**Working method (01:00 UTC):** a weekly usage limit warning is in force; it resets 2026-10-03 11:00 UTC. Heavy work (builds, reviews) runs in remote cloud sessions, not in-container Workflows, which share only 4 CPUs. One reviewer per PR. The second audit (#149) is held until the reset.
+
+**Workflows.** A container restart kills in-chat workflows (6.4); resume from the cache. This update did not re-check which Workflows are still running.
 
 ### 8.5 Relay tracker snapshot (15:30; not re-checked in the 20:00 update)
 - Stage: Build. Architecture 55 %. 119 items: 78 done, 24 blocked, 0 open bugs.
@@ -768,7 +753,7 @@ The 09-30 one-shots were all due by 16:00 UTC. This update did not re-check thei
 
 ### 8.6 Owner to-dos (his side)
 1. The REL-3 phone steps (`docs/RELEASE-READINESS.md`).
-2. Worker PRs that need his own yes, per PR: ESC-REPORT-W #129 now, and ESC-W-CITE when it is ready. (ESC-NC-W #121 is merged and live.)
+2. Worker PRs that need his own yes, per PR: **done** for ESC-REPORT-W #129 and ESC-W-CITE #138 (both yes, both merged and deployed). AUD-3 #145 now waits on his "yes cost limit".
 3. OWN-1: offline key backups, in 2 places.
 4. The pilot sheet (sent 16:27): are the plates at his bar, and do we add a no-number "slow and controlled" line where the research gives no seconds? This also covers the golden B approval (D-LR23-2).
 5. Device checks (the DEV-CHECKS list in Relay). Play card 1 retake; card 6 finish screen.
@@ -783,29 +768,22 @@ The 09-30 one-shots were all due by 16:00 UTC. This update did not re-check thei
 10. **Done, do not re-ask:** error reports were switched on (09-30). The error-report token was never pasted; do not ask for it.
 
 ### 8.7 Next steps, in order
-1. On wake:
-   - re-arm the monitors (backdate `monitor.sh` with `SINCE`) and check branch heads by hand;
-   - check that every one-shot trigger in 8.4 fired;
-   - read the latest comment on every open PR;
-   - check which Workflows are still running (a restart kills them; resume from the cache).
-2. LIB-26 #123: merge when CI is green on a head that contains main.
-3. HT-3b #118: take the delta review's verdict (`session_01ME9cQyPXDGXsQGbvJFR8QQ`), then merge when it passes and CI is green. Archive the reviewer. Next in the HT order: HT-4b (its builder resumed at 19:03; no PR yet), then HT-5 #116 and on, per K1.
-4. Coach bugs: BUG-31 #132 (with BUG-33) and BUG-32 #131 through the Workflow (build, fresh reviewer, fix loop). Check each result on the exact commit, then merge and send the APK (6.9). ESC-W-CITE merges only on the owner's yes (6.10).
-5. The owner's 10-01 requests:
-   - DOC-5 #134 and #135, then deploy the site (`website.yml`, `workflow_dispatch`, `confirm=deploy`) and check the live page;
-   - COPY-1: research, UI copy audit, build, review;
-   - SUP #133 (the UI copy rule in `AGENTS.md` and `.claude/owner-rules.md`).
-6. ESC-REPORT: W #129 waits on the owner's yes (6.10). Then the order in 8.2.
-7. Pilot A #109: wait for the owner's answers on the sheet (8.6 item 4).
-8. LIB research: the next waves are LB7–LB10.
-9. HT-8's "tripwire (net)" question: unverified. Check the builder's session and triggers before answering (see the #111 row).
-10. Supervisor open actions from How-to plan 4.0:
-    - S-2: pin golden B (via HT-4 and HT-4b);
-    - S-3: post D-HT1..D-HT3 (status not verified);
-    - S-4: the "[golden update]" guard check (not landed);
-    - S-5: decide an app-wide main-chunk ceiling (status not verified).
-11. Fix the tracker drift (8.5). Archive the sessions whose PRs merged (8.3) and the completed sessions that are no longer needed.
-12. The owner's earlier ask to test "chest pain during my set" in the coach (16:35 capture): status not re-checked.
+1. On wake: re-arm the monitors, check that every open PR's latest comment is read, and check which cloud sessions and Workflows are still running (not re-checked live in this update).
+2. COPY-1 #137: take the fix round to green, review, merge.
+3. DOC-REPORT #127: watch CI, then merge; then the app #130 goes to review.
+4. HT-3c #143: take the delta review's verdict, then merge when it passes and CI is green.
+5. HT-4b #140: take the history-field fix to green.
+6. BUG-34 #142 and BUG-35 #152: take each build to review, then through the merge gate.
+7. AUD-1 #146 and AUD-2 #147: both reviewed PASS; merge both.
+8. AUD-3 #145: reviewed PASS, but it is a Worker change; send the owner one line asking for the cost-limit yes (6.10) before merging.
+9. AUD-5 #148, AUD-9 #150: take each review to a verdict.
+10. AUD-7 #151: take the build to review.
+11. AUD-4, AUD-6, AUD-8, AUD-10, AUD-11, AUD-12: held for collisions; re-check whether the collisions have cleared.
+12. Audit #144: the triage is posted; follow up as its replies land.
+13. Second audit #149: held until the weekly usage reset, 2026-10-03 11:00 UTC.
+14. HT-7 #119: apply ruling D-HT7-L3-text if a text-only diff review comes in; geometry changes stay refused.
+15. Pilot A #109: still waits on the owner's answers on the sheet (8.6 item 4); not re-checked in this update.
+16. Fix the tracker drift (8.5, stale since 15:30): archive sessions whose PRs merged, add rows for new cards.
 
 ### 8.8 Open conflicts (the inputs disagreed; resolve them live)
 (K4 and K5 were resolved on 09-30 and removed.)
@@ -852,6 +830,9 @@ The 09-30 one-shots were all due by 16:00 UTC. This update did not re-check thei
 | The owner asked for a workaround to the allow button (09-29 17:39). | Refused. Park the blocked item and do other work. |
 | The supervisor made its own errors to the owner: costs priced for the wrong country, "lower the seat" (should be "raise"), an icon called "32-bit" (it is 24-bit, no alpha). | Check against the live source before telling the owner. |
 | "Stop wasting tokens for now." | Pause the loop until he says continue. |
+| HT-3b and other How-to cards collided over the same size ceilings. | Budgets now live in one place, `tests/howto/budgets.json` (HT-3c). |
+| A reviewer was archived while its review was still in progress. | Check `post_turn_summary` and the posted verdict before `archive_session`. |
+| A stray `node_modules` symlink sat on main undetected (#139). | Check the whole PR diff, not just the card's files, before merging. |
 
 More incidents: `.claude/skills/supervisor/gotchas.md` and `.claude/skills/builder/gotchas.md`.
 
