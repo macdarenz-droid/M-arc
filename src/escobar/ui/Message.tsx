@@ -22,7 +22,7 @@ import type { Conversation, Fact, ProposalRecord, RenderedTurn, StoredMessage, U
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 type ToolUse = { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> };
-const toolUsesOf = (content: unknown[]): ToolUse[] => content.filter((b): b is ToolUse => isObj(b) && b.type === 'tool_use').map(b => ({ ...b, input: isObj(b.input) ? b.input : {} }));
+export const toolUsesOf = (content: unknown[]): ToolUse[] => content.filter((b): b is ToolUse => isObj(b) && b.type === 'tool_use').map(b => ({ ...b, input: isObj(b.input) ? b.input : {} }));
 const textOf = (content: unknown[]) => content.filter((b): b is { type: 'text'; text: string } => isObj(b) && b.type === 'text').map(b => b.text).join('');
 
 export interface UserTurn { kind: 'user'; index: number; msg: Extract<StoredMessage, { role: 'user' }> }
@@ -44,7 +44,7 @@ export function turnsOf(messages: StoredMessage[]): Turn[] {
   return out;
 }
 
-function toolResults(messages: StoredMessage[], indexes: number[]): Map<string, { content: string; isError: boolean }> {
+export function toolResults(messages: StoredMessage[], indexes: number[]): Map<string, { content: string; isError: boolean }> {
   const map = new Map<string, { content: string; isError: boolean }>();
   for (const i of indexes) {
     const m = messages[i];
