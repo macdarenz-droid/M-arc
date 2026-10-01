@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { HeartBpm, PulseLine } from '@/ui/PulseLine';
 import { useReorder } from './reorder';
@@ -55,7 +55,7 @@ import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
 import { firstWorkingSet, hasEntry, isWorkingSet, workingIndex } from '@/brain/exposure';
 import { haptic } from '@/native/haptics';
-import { durFor, reduced } from '@/ui/motion';
+import { durFor, EASE, reduced } from '@/ui/motion';
 import { celebrateOnce } from './celebrate';
 import { isNative } from '@/native/capacitor';
 
@@ -151,11 +151,13 @@ export function Train() {
   if (pendingTimeQuestion.value) return <TimeQuestionSheet summary={pendingTimeQuestion.value} onResolved={r => { pendingTimeQuestion.value = null; lastFinish.value = r; }} />;
   if (lastFinish.value) return <FinishScreen summary={lastFinish.value} onClose={() => { lastFinish.value = null; }} />;
   if (loggingPast.value) return <PastSessionEntry split={loggingPast.value} onClose={() => { loggingPast.value = null; }} onSaved={r => { loggingPast.value = null; lastFinish.value = r; }} />;
-  if (startingSplit.value) {
-    if (!todayCheckIn.value && !checkInDismissed.value) return <CheckInSheet split={startingSplit.value} onClose={() => { startingSplit.value = null; }} onDone={() => { checkInDismissed.value = true; }} />;
-    return <PreSessionSheet split={startingSplit.value} onClose={() => { startingSplit.value = null; }} onStart={() => { startSession(startingSplit.value!); startingSplit.value = null; }} />;
-  }
-  return live ? <LiveSession /> : <Splits />;
+  // BUG-36: the view stays rendered under the start sheet, so its scrim dims the page instead of an empty screen.
+  return (
+    <>
+      {live ? <LiveSession /> : <Splits />}
+      {startingSplit.value && <StartSheet split={startingSplit.value} />}
+    </>
+  );
 }
 
 /* ---------- Split list and editor ---------- */
@@ -977,6 +979,10 @@ function RatingRow({ value, onChange }: { value: 1 | 2 | 3 | 4 | 5 | undefined; 
 /** F2.2: optional, a few taps — sleep quality, mood, and soreness for today's target muscles. Shown once per day, before the pre-session brief. */
 /** The daily check-in. With a split, soreness asks about its muscles; without one (the `checkin` panel), about the least-recovered ones. */
 export function CheckInSheet({ split, onClose, onDone }: { split?: Split; onClose: () => void; onDone: () => void }) {
+  return <Sheet title="Quick check-in" onClose={onClose} palace="panel.checkin"><CheckInBody split={split} onDone={onDone} /></Sheet>;
+}
+
+function CheckInBody({ split, onDone }: { split?: Split; onDone: () => void }) {
   const s = state.value;
   usePalaceFocus('panel.checkin');
   const muscles = split
@@ -990,20 +996,49 @@ export function CheckInSheet({ split, onClose, onDone }: { split?: Split; onClos
   const [soreness, setSoreness] = useState<Partial<Record<MuscleId, 1 | 2 | 3 | 4 | 5>>>(draft.soreness);
   const save = () => { saveCheckIn(draft.day, { sleepQuality, mood, soreness }); onDone(); };
   return (
-    <Sheet title="Quick check-in" onClose={onClose} palace="panel.checkin">
-      <div class="stack">
-        <Field label="Sleep quality"><RatingRow value={sleepQuality} onChange={setSleepQuality} /></Field>
-        <Field label="Mood"><RatingRow value={mood} onChange={setMood} /></Field>
-        {muscles.map(m => (
-          <Field key={m} label={`${muscleLabel(m)} soreness`}><RatingRow value={soreness[m]} onChange={v => setSoreness(cur => ({ ...cur, [m]: v }))} /></Field>
-        ))}
-        <div class="row"><Button variant="quiet" onClick={onDone}>Skip</Button><Button variant="primary" class="grow" onClick={save}>Save</Button></div>
-      </div>
+    <div class="stack">
+      <Field label="Sleep quality"><RatingRow value={sleepQuality} onChange={setSleepQuality} /></Field>
+      <Field label="Mood"><RatingRow value={mood} onChange={setMood} /></Field>
+      {muscles.map(m => (
+        <Field key={m} label={`${muscleLabel(m)} soreness`}><RatingRow value={soreness[m]} onChange={v => setSoreness(cur => ({ ...cur, [m]: v }))} /></Field>
+      ))}
+      <div class="row"><Button variant="quiet" onClick={onDone}>Skip</Button><Button variant="primary" class="grow" onClick={save}>Save</Button></div>
+    </div>
+  );
+}
+
+/** BUG-36: Start opens one sheet. The check-in (once a day) gives way to the brief inside the same
+ * sheet, so the scrim stays put and the panel never drops and slides in a second time. */
+function StartSheet({ split }: { split: Split }) {
+  const checkIn = !todayCheckIn.value && !checkInDismissed.value;
+  const close = () => { startingSplit.value = null; };
+  const anchor = useRef<HTMLSpanElement>(null);
+  const swapFrom = useRef<number | null>(null);
+  const panel = () => anchor.current?.closest<HTMLElement>('.sheet-panel') ?? null;
+  // On the swap the panel's height changes, so its top would jump: it eases from the old top instead.
+  useLayoutEffect(() => {
+    const p = panel();
+    const before = swapFrom.current;
+    swapFrom.current = null;
+    if (!p || before == null) return;
+    p.scrollTop = 0;
+    p.focus();
+    const dy = before - p.getBoundingClientRect().top;
+    if (dy && !reduced() && p.animate) p.animate([{ transform: `translateY(${dy}px)` }, { transform: 'translateY(0)' }], { duration: durFor('sheet'), easing: EASE.drawer });
+  }, [checkIn]);
+  const done = () => { swapFrom.current = panel()?.getBoundingClientRect().top ?? null; checkInDismissed.value = true; };
+  const body = checkIn
+    ? <CheckInBody split={split} onDone={done} />
+    : <PreSessionBody split={split} onStart={() => { startSession(startingSplit.value!); startingSplit.value = null; }} />;
+  return (
+    <Sheet title={checkIn ? 'Quick check-in' : `Before you start ${split.name}`} onClose={close} palace={checkIn ? 'panel.checkin' : undefined}>
+      <span ref={anchor} hidden />
+      {body}
     </Sheet>
   );
 }
 
-function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: () => void; onStart: () => void }) {
+function PreSessionBody({ split, onStart }: { split: Split; onStart: () => void }) {
   const s = state.value;
   const age = s.profile.birthYear ? new Date().getFullYear() - s.profile.birthYear : null;
   // BR-08: the brief quotes the same target the set rows will show, with today's plan change
@@ -1017,21 +1052,19 @@ function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: (
   };
   const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split: planned, profile: s.profile, age, targetFor, unit: s.preferences.weightUnit });
   return (
-    <Sheet title={`Before you start ${split.name}`} onClose={onClose}>
-      <div class="stack">
-        <div class="row-between"><span class="hint">Today’s checks</span><AskAbout refTo={{ kind: 'session', id: `plan:${split.id}`, label: `Before ${split.name}` }} /></div>
-        {items.map(i => (
-          <Card key={i.id} class="insight" style={{ '--insight': INSIGHT_COLOR[i.category] }}>
-            <div class="insight-cat">{CATEGORY_LABEL[i.category]}</div>
-            <b class="small">{i.title}</b>
-            <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>
-            <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
-          </Card>
-        ))}
-        {!items.length && <p class="small muted">Nothing to flag.</p>}
-        <Button variant="primary" block onClick={onStart}><IconPlay /> Start {split.name}</Button>
-      </div>
-    </Sheet>
+    <div class="stack">
+      <div class="row-between"><span class="hint">Today’s checks</span><AskAbout refTo={{ kind: 'session', id: `plan:${split.id}`, label: `Before ${split.name}` }} /></div>
+      {items.map(i => (
+        <Card key={i.id} class="insight" style={{ '--insight': INSIGHT_COLOR[i.category] }}>
+          <div class="insight-cat">{CATEGORY_LABEL[i.category]}</div>
+          <b class="small">{i.title}</b>
+          <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>
+          <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
+        </Card>
+      ))}
+      {!items.length && <p class="small muted">Nothing to flag.</p>}
+      <Button variant="primary" block onClick={onStart}><IconPlay /> Start {split.name}</Button>
+    </div>
   );
 }
 

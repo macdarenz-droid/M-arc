@@ -1323,3 +1323,17 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (D-AUD3-6)**: with no quota binding at all, and on the soft KV fallback (used only when `QUOTA_DO` is not bound), behaviour is unchanged. `/health` still reports `quotas: !!(QUOTA_DO || QUOTA)` and the limits' values are unchanged.
   **Why**: a missing binding is a deploy choice that `/health` already shows, not an enforcement failure, and the KV path is documented as soft. Production binds `QUOTA_DO` (`wrangler.toml`).
   **Source**: card AUD-3 tasks 4–5.
+
+## BUG-36: the split start sheet opens in one slide (BUG-36 builder, 2026-10-01)
+
+Measured on main (gate Chromium, 390 × 844, Silent Black and Paper, 1x and 4x CPU, 8-exercise split with history): `Train()` returned only the start sheet while it was up, so the Splits view unmounted on the tap (53 of 56 frames with no Train view, page scroll 287 → 0 px) and the scrim dimmed an empty page (solid black in Silent Black). With no check-in today, Skip or Save unmounted the check-in sheet and mounted a new pre-session sheet: in one frame the visible panel's top dropped 247 → 844 px (597 px down), the scrim restarted at 0, and the new panel slid up to 215 px. That drop-and-rise is the bounce. The slide itself was clean: one direction, height fixed (629 px), nothing after rest.
+
+- **Decided (D-BUG36-1)**: the Train view stays rendered under the start sheet (`Train()` renders the view and the sheet together).
+  **Why**: no recorded decision makes the black page intended; every other sheet sits over its page. Keeping the view also keeps the scroll position.
+  **Source**: card BUG-36 task 2.
+- **Decided (D-BUG36-2)**: Start opens one sheet (`StartSheet`). The check-in and the brief are its two bodies; Skip or Save swaps the body and title inside the same dialog, so the scrim never restarts and the panel never leaves the screen. `CheckInSheet` stays for the `checkin` panel.
+  **Why**: the bounce came from a second sheet replacing the first. A close-then-open would still move the panel down then up.
+  **Source**: card BUG-36 task 2.
+- **Decided (D-BUG36-3)**: on the swap the panel grows 32 px (597 → 629 px). Its top eases from the old position with the sheet's own duration and easing (`--dur-sheet`, drawer curve) instead of snapping; reduced motion snaps. The panel scrolls to its top and takes focus, since the focused button left with the old body.
+  **Why**: keeps the existing easing, durations and reduced-motion behaviour; the opening slide is unchanged.
+  **Source**: card BUG-36 task 2.
