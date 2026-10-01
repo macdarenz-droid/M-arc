@@ -6,7 +6,7 @@ import type { ActiveSession, AppState, Exercise, LoggedSet, PlannedTarget, Recov
 import { newId } from '@/core/models';
 import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
-import { hasEntry } from '@/brain/exposure';
+import { hasEntry, isWorkingSet } from '@/brain/exposure';
 import { BURST_WINDOW_MS, LIVE_GAP_SEC, classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
 import { calibrateAfterSession, lastSummaryAlone, replayRecoveryModel } from '@/brain/recovery';
 import { dayKey, todayKey } from '@/core/dates';
@@ -515,6 +515,28 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
   return out;
 }
 
+/**
+ * AUD-10 (UI-01): the exercises Finish saves, and the Finish sheet counts from the same list.
+ * Sets that were never filled are dropped. "Skip today" skips what is left: an entry skipped
+ * after some sets were logged keeps those logged sets.
+ */
+export function savedExercises(a: ActiveSession): Session['exercises'] {
+  return a.entries
+    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(set => hasEntry(set) && (!e.skipped || isCommitted(set))).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}), ...(e.target ? { target: e.target } : {}) }))
+    .filter(e => e.sets.length);
+}
+
+/** AUD-10 (UI-01): the Finish sheet's exercise and set counts, read from what Finish will save. */
+export function finishCounts(a: ActiveSession): { exercises: number; sets: number } {
+  const working = savedExercises(a).map(e => e.sets.filter(isWorkingSet).length).filter(n => n > 0);
+  return { exercises: working.length, sets: working.reduce((n, k) => n + k, 0) };
+}
+
+/** AUD-10 (UI-05): a completed workout cannot start after now. Both timing paths use this. */
+export function startsInFuture(trainedAtLocal: string, nowMs = Date.now()): boolean {
+  return new Date(trainedAtLocal).getTime() > nowMs;
+}
+
 /** Turn the active session into history. Sets that were never filled are dropped. */
 export function finishSession(saveTemplate: boolean, opts: { note?: string } = {}): FinishSummary | null {
   const a = active();
@@ -522,10 +544,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
   const split = state.value.splits.find(s => s.id === a.splitId);
   const nowMs = Date.now();
   const timing = finishTiming(a, nowMs);
-  const exercises = a.entries
-    .filter(e => !e.skipped)
-    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}), ...(e.target ? { target: e.target } : {}) }))
-    .filter(e => e.sets.length);
+  const exercises = savedExercises(a);
   // BUG-28: nothing logged, so there is nothing to save. End the session exactly like a discard
   // (history untouched, today's Escobar override kept) instead of saving an empty session.
   if (!exercises.length) { discardSession(); return null; }
@@ -582,6 +601,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
 export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, durationMin: number, timeSource: SessionLogging['timeSource']): boolean {
   // QA-R2c-2: a cleared day or time leaves the session as it was saved at finish.
   if (!Number.isFinite(new Date(trainedAtLocal).getTime()) || !Number.isFinite(durationMin) || durationMin <= 0) return false;
+  if (startsInFuture(trainedAtLocal)) return false;
   const trainedAt = new Date(trainedAtLocal).toISOString();
   const trainedEndAt = new Date(new Date(trainedAtLocal).getTime() + durationMin * 60_000).toISOString();
   update(s => ({
@@ -607,7 +627,7 @@ export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, 
 export function logPastSession(input: { splitId: string; trainedAtLocal: string; durationMin: number; entries: Array<{ exerciseId: string; name: string; sets: LoggedSet[] }> }): FinishSummary | null {
   const split = state.value.splits.find(s => s.id === input.splitId);
   const exercises = input.entries.map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry) })).filter(e => e.sets.length);
-  if (!exercises.length) return null;
+  if (!exercises.length || startsInFuture(input.trainedAtLocal)) return null;
   const trainedAt = new Date(input.trainedAtLocal).toISOString();
   const trainedEndAt = new Date(new Date(input.trainedAtLocal).getTime() + input.durationMin * 60_000).toISOString();
   const logging = retroSessionLogging(trainedAt, trainedEndAt, 'user');

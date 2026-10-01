@@ -235,7 +235,6 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
     state.preferences.weightUnit = 'lb';
     // ST-09: an lb gym, so entry defaults to lb; RG-02: old loads display exactly as typed.
     state.units = freshUnits('lb', now);
-    state.sessions = backfillLegacyLbEntries(state.sessions);
   }
   const rest = w.sessionSettings?.restDefaultSec ?? w.restDefaultSec;
   if (typeof rest === 'number' && rest >= 15 && rest <= 600) state.preferences.restDefaultSec = rest;
@@ -259,7 +258,8 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
   if (legacy.bodyComp?.sex === 'male' || legacy.bodyComp?.sex === 'female') state.profile.sex = legacy.bodyComp.sex;
 
   state.splits = splits;
-  state.sessions = sessions;
+  // OBS-LB (AUD-4): the backfill runs on the imported sessions, so an lb user's loads display as typed.
+  state.sessions = state.preferences.weightUnit === 'lb' ? backfillLegacyLbEntries(sessions) : sessions;
   state.customExercises = customExercises;
   state.legacyImportedAt = now.toISOString();
   return state;
