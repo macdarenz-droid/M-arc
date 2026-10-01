@@ -7591,9 +7591,17 @@ for (const theme of ['silent-black', 'paper']) {
   /** HT-8 fix (#166): "Feel it" tapped before the feel section is in loads it, scrolls to it, focuses it and plays it. */
   async function earlyChip(theme) {
     const problems = [];
-    const { ctx, page } = await H.openAppTrain(b8, PORT, theme, { onError: onError(`app early chip ${theme}`) });
+    // service workers blocked in this context only, so the hold below sees the chunk request (a page route never sees
+    // a request the service worker answers)
+    const noSw = { newContext: o => b8.newContext({ ...o, serviceWorkers: 'block' }) };
+    const { ctx, page } = await H.openAppTrain(noSw, PORT, theme, { onError: onError(`app early chip ${theme}`) });
     try {
       const card = await H.openCard(page, 1);   // barbell back squat
+      // the feel chunk is held until the tap, as on a slow phone: once BUG-37's sheet is open, the chunk loads and the
+      // section is in before the chip has slid on screen, so without the hold no user-reachable tap comes first
+      let release, held = 0;
+      const hold = new Promise(r => { release = r; });
+      await ctx.route(/\/assets\/feel-[\w-]+\.js(\?|$)/, async route => { held++; await hold; await route.continue(); });
       await card.locator('button.ht-entry').click();
       // the first frame a user could tap the chip (the sheet dialog open, the chip on screen), before the feel section is
       // in: the sheet's opening effects (showModal, the plate API that binds HT-6's zoom host) run in a task after the
@@ -7614,6 +7622,7 @@ for (const theme of ['silent-black', 'paper']) {
         };
         tick();
       }));
+      release();
       if (!at.host || !at.empty) problems.push(`${theme}: the feel section was ${at.host ? 'already in' : 'missing'} at the tap, so the probe did not test a tap before the mount`);
       if (!at.emitted) problems.push(`${theme}: the "Feel it" tap on an open sheet sent no ht:feel-chip (HT-6's zoom host not bound)`);
       const ok = await page.waitForFunction(() => {
@@ -7630,6 +7639,7 @@ for (const theme of ['silent-black', 'paper']) {
         });
         problems.push(`${theme}: 4 s after an early "Feel it" tap: ${JSON.stringify(st)} (want loaded, in view, heading focused, playing)`);
       }
+      if (held !== 1) problems.push(`${theme}: the feel chunk was requested ${held} times, expected once (the hold did not apply)`);
     } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}`); } finally { await ctx.close(); }
     return problems;
   }
