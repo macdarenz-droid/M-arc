@@ -4790,6 +4790,144 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// BUG-34: the launch overlay animates from its first paint, even while the app bundle is still
+// loading. Chromium starts SMIL only at the load event (which waits for the bundle), so the SMIL
+// build showed a frozen frame first: the dot at the mark's (0,0) and a round cap at the line's end.
+// Every context below holds the bundle back 1500 ms, then samples the overlay at its first paint
+// and 100 ms later, in all 5 themes, at 1x and at 4x CPU throttling. A probe that saw no bundle
+// delay, no visible ink or no movement fails, so it can never pass on flat data.
+{
+  const tag = 'launch first frame (BUG-34)';
+  // The path's corners in the mark's own units, its length, and the nearest point on it to (x, y):
+  // how far off the path, and how far along it.
+  const P = [[8, 40], [16, 40], [22, 22], [30, 50], [36, 30], [40, 40], [56, 40]];
+  const nearest = (x, y) => { let best = { d: Infinity, s: 0 }, acc = 0;
+    for (let k = 1; k < P.length; k++) {
+      const [ax, ay] = P[k - 1], [bx, by] = P[k], dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy);
+      const u = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (len * len)));
+      const d = Math.hypot(x - ax - u * dx, y - ay - u * dy);
+      if (d < best.d) best = { d, s: acc + u * len };
+      acc += len;
+    }
+    return best; };
+  const L = nearest(56, 40).s;
+  const pix = await (await browser.newContext()).newPage();
+  // Every pixel that differs from the overlay background by more than 24/255 in a channel, mapped
+  // into the mark's units: how many there are, and how many lie farther than the dot's radius plus
+  // 1.5 units (edges, the settle scale) from the part of the path travelled so far, 0 to `reach`
+  // (+1.5). Distance to that part, not to the nearest leg: near a corner the next leg can be closer.
+  const strayInk = (b64, bg, ctm, cssWidth, reach) => pix.evaluate(async ([b64, bg, ctm, cssWidth, reach, P]) => {
+    const img = await new Promise(res => { const i = new Image(); i.onload = () => res(i); i.src = 'data:image/png;base64,' + b64; });
+    const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
+    const g = cv.getContext('2d'); g.drawImage(img, 0, 0);
+    const d = g.getImageData(0, 0, cv.width, cv.height).data;
+    const inv = new DOMMatrix(ctm).inverse();
+    const ratio = img.width / cssWidth; // CDP captures at CSS or device pixels depending on emulation
+    let ink = 0, stray = 0, first = null;
+    for (let y = 0; y < cv.height; y++) for (let x = 0; x < cv.width; x++) {
+      const k = (y * cv.width + x) * 4;
+      if (Math.max(Math.abs(d[k] - bg[0]), Math.abs(d[k + 1] - bg[1]), Math.abs(d[k + 2] - bg[2])) <= 24) continue;
+      ink++;
+      const m = new DOMPoint((x + 0.5) / ratio, (y + 0.5) / ratio).matrixTransform(inv);
+      let near = Infinity, acc = 0;
+      for (let j = 1; j < P.length && acc < reach + 1.5; j++) {
+        const [ax, ay] = P[j - 1], [bx, by] = P[j], dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy);
+        const umax = Math.min(1, (reach + 1.5 - acc) / len);
+        const u = Math.max(0, Math.min(umax, ((m.x - ax) * dx + (m.y - ay) * dy) / (len * len)));
+        near = Math.min(near, Math.hypot(m.x - ax - u * dx, m.y - ay - u * dy));
+        acc += len;
+      }
+      if (near > 3.1 + 1.5) { stray++; if (!first) first = `(${m.x.toFixed(1)}, ${m.y.toFixed(1)})`; }
+    }
+    return { ink, stray, first };
+  }, [b64, bg, ctm, cssWidth, reach, P]);
+  // Read two animation frames later, so the state is never behind the capture taken just before it.
+  const sample = page => page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => done((() => {
+    const launch = document.getElementById('launch');
+    const path = document.getElementById('launch-path');
+    const dot = document.getElementById('launch-dot');
+    if (!launch || !path || !dot) return null;
+    const m = path.parentNode.getScreenCTM();
+    const r = dot.getBoundingClientRect();
+    const c = new DOMPoint(r.x + r.width / 2, r.y + r.height / 2).matrixTransform(m.inverse());
+    const bg = getComputedStyle(launch).backgroundColor.match(/\d+/g).map(Number);
+    return { t: performance.now() - window.__marcLaunchT0, off: parseFloat(getComputedStyle(path).strokeDashoffset), dx: c.x, dy: c.y, ctm: [m.a, m.b, m.c, m.d, m.e, m.f], bg, booted: !!window.__bug34Ready, anims: document.getAnimations().filter(a => launch.contains(a.effect && a.effect.target)).length };
+  })())))));
+  const open = async (theme, rate, extra) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: extra.os || 'no-preference' });
+    await ctx.route(/\/assets\/index-[^/]*\.js$/, async r => { await new Promise(res => setTimeout(res, 1500)); await r.continue(); });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+    const cdp = await ctx.newCDPSession(page);
+    if (rate > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate });
+    await page.addInitScript(([t, motion]) => {
+      localStorage.setItem('marc.theme', t);
+      if (motion) localStorage.setItem('marc.motion', motion);
+      let inner;
+      Object.defineProperty(window, '__marcLaunchReady', { configurable: true, get() { return inner && (() => { window.__bug34Ready = true; inner(); }); }, set(fn) { inner = fn; } });
+      window.__bug34 = {};
+      new PerformanceObserver(l => { for (const e of l.getEntries()) if (e.name === 'first-paint') window.__bug34.fp = e.startTime; }).observe({ type: 'paint', buffered: true });
+      const tick = () => {
+        const p = document.getElementById('launch-path');
+        if (p && window.__bug34.anim === undefined && parseFloat(getComputedStyle(p).strokeDashoffset) < 100) window.__bug34.anim = performance.now();
+        if (window.__bug34.anim === undefined) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, [theme, extra.motion || null]);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'commit' });
+    await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number' && document.getElementById('launch-dot'), null, { timeout: 8000 });
+    // CDP's own capture, not page.screenshot(): that one waits for web fonts, which here means
+    // waiting out the held bundle, so it would never see the first frames.
+    return { ctx, page, shot: async () => (await cdp.send('Page.captureScreenshot', { format: 'png' })).data };
+  };
+  const timings = [];
+  for (const rate of [1, 4]) for (const theme of themes) {
+    const at = `${theme} ${rate}x`;
+    const { ctx, page, shot } = await open(theme, rate, {});
+    // Capture first, then read the state, so the state is never behind the pixels (it only moves forward).
+    const png1 = await shot(); const s1 = await sample(page);
+    if (!s1) { errors.push(`${tag} ${at}: #launch was gone at first paint`); await ctx.close(); continue; }
+    await page.waitForFunction(t => performance.now() - window.__marcLaunchT0 >= t, s1.t + 100, { timeout: 8000 });
+    const png2 = await shot(); const s2 = await sample(page);
+    await page.waitForFunction(() => performance.now() - window.__marcLaunchT0 >= 700, null, { timeout: 8000 });
+    const s3 = await sample(page);
+    if (!s2 || !s3) { errors.push(`${tag} ${at}: #launch was gone before the samples were taken`); await ctx.close(); continue; }
+    // The probe only means something while the bundle is still held back.
+    if (s1.booted || s2.booted || s3.booted) errors.push(`${tag} ${at}: the app booted before the samples (${Math.round(s3.t)} ms), so the bundle delay did not hold`);
+    // A1: at first paint and +100 ms the dot is on the path, and nothing is painted off the path or
+    // ahead of how far the dot and line have got (the SMIL build froze on the dot at 0,0 and a cap at 56,40).
+    const cssWidth = await page.evaluate(() => innerWidth);
+    for (const [n, s, png] of [['first paint', s1, png1], ['+100 ms', s2, png2]]) {
+      const dot = nearest(s.dx, s.dy);
+      if (dot.d > 0.6) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): the dot is ${dot.d.toFixed(1)} units off the path, at (${s.dx.toFixed(1)}, ${s.dy.toFixed(1)})`);
+      const reach = Math.max(dot.s, (100 - s.off) / 100 * L);
+      const px = await strayInk(png, s.bg, s.ctm, cssWidth, reach);
+      if (px.stray > 0) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): ${px.stray} painted pixels off the path or past the dot, first at ${px.first} (a stray dot or cap)`);
+      if (n === '+100 ms' && px.ink < 50) errors.push(`${tag} ${at} +100 ms: only ${px.ink} painted pixels, so there is nothing to measure`);
+    }
+    // A2: the line and dot visibly move within 100 ms of first paint, and keep moving.
+    if (!(s2.off < s1.off && s2.off < 100)) errors.push(`${tag} ${at}: strokeDashoffset did not drop within 100 ms of first paint (${s1.off} at ${Math.round(s1.t)} ms, ${s2.off} at ${Math.round(s2.t)} ms)`);
+    if (!(Math.hypot(s2.dx - s1.dx, s2.dy - s1.dy) > 0.1)) errors.push(`${tag} ${at}: the dot did not move within 100 ms of first paint`);
+    if (!(s3.off < s2.off - 10)) errors.push(`${tag} ${at}: at ${Math.round(s3.t)} ms strokeDashoffset is ${s3.off}, want at least 10 below ${s2.off}`);
+    if (rate === 4) timings.push(`${theme} ${JSON.stringify(await page.evaluate(() => ({ firstPaint: Math.round(window.__bug34.fp), firstAnimated: Math.round(window.__bug34.anim) })))}`);
+    await ctx.close();
+  }
+  // A3: under reduce (the OS setting, or the app's own marc.motion=reduce) the finished mark shows at
+  // once with no animation, before the bundle has loaded.
+  for (const [n, extra] of [['OS reduce', { os: 'reduce' }], ['marc.motion=reduce', { motion: 'reduce' }]]) {
+    const { ctx, page } = await open('paper', 1, extra);
+    const s = await sample(page);
+    if (!s) { errors.push(`${tag} ${n}: #launch was gone before the sample`); await ctx.close(); continue; }
+    if (s.booted) errors.push(`${tag} ${n}: the app booted before the sample`);
+    if (s.off !== 0) errors.push(`${tag} ${n}: strokeDashoffset should be 0 at once, got ${s.off}`);
+    if (Math.hypot(s.dx - 30, s.dy - 50) > 0.3) errors.push(`${tag} ${n}: the dot should sit at (30, 50), got (${s.dx.toFixed(1)}, ${s.dy.toFixed(1)})`);
+    if (s.anims !== 0) errors.push(`${tag} ${n}: ${s.anims} animations run inside #launch, want 0`);
+    await ctx.close();
+  }
+  await pix.context().close();
+  console.log(`${tag}: 5 themes x 1x/4x checked with the bundle held 1500 ms; 4x timings from navigation start: ${timings.join('; ')}`);
+}
+
 // A4: keepAwake is called on while a workout is live, and off once it ends. The NativeUi plugin
 // is mocked here (isNativePlatform forced true) since this gate runs the web build.
 {
