@@ -785,6 +785,11 @@ Facts below were checked live at 08:27-08:35 UTC (GitHub API, `git ls-remote`, `
 - **Owner defaults accepted** (offered as "I'll do my recommendation unless you say otherwise"; not objected to): SCI-10 and SCI-11 plain estimates (AUD-20, merged); OBS-ENDPOINT restore keeps coach settings (AUD-4, merged); UI-09 Move up/down (AUD-10, merged); DEV-01 skip (closed by decision).
 - **Owner approvals in sessions (10-01):** AUD-3 "Yes cost limit" (quoted on #145). HT-6's two HowToSheet budget entries, approved inside the HT-6 builder session after the classifier refused the edit (see 9).
 - **Owner report (~04:20):** "When i start split. The animation pop up of second screen feels like glitch bouncing." → BUG-36 (#163).
+- **Owner report (~10:30, with a screen recording on the train-6 APK):** "the black area is gone but the bounce fast animation that causing the text like to glitch or blurry is still there".
+  - The supervisor's frame-by-frame measurement: the panel pops in place; its content jumps up 140-158 device px, flickers for 4 frames, then eases back over about 230 ms.
+  - Cause, reproduced in local Chromium: `dialog.sheet` keeps the UA `overflow: auto`, so the panel's `sheet-in` transform plus the showModal autofocus scroll the dialog by exactly the transform each frame. The slide is cancelled. On the phone, compositor and main thread fall out of step, which gives the jump and the blur.
+  - It affects every `Sheet` (`.esc-sheet` already has `overflow: visible`). → **BUG-37** (#173).
+  - Owner, 10:38: "When reduced motion is off. Its fine. It just open normally". The video was recorded in normal-motion mode (the panel is opaque in frame 1, and the close slides about 700 px). So he means either the in-app toggle with on/off swapped, or Android's Remove animations not reaching the WebView. Not verifiable here: the post-fix device check covers both settings.
 - **Merge trains** (since 04:05): every app PR merges through a train. Procedure: 6.8.
 
 ### 8.1 Main
@@ -863,6 +868,12 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 
 **Other open lanes (not in the finish line):**
 - **BUG-36** #163 @ `76718cc` (split start sheet bounce): FAIL @ `d593c5e` 06:12 (Medium: the pixel probe passed on main; Low: click scroll) → FIXED `76718cc` 07:21 → **delta PASS @ `76718cc` 08:28** (0 / 0 / 0 / 0). In merge train 6 #170 (`claude/sup-merge-train-6`, head `1fc2d4d`, opened 08:31). At 08:50 `guard` was green and `source-gate` and `visual-gate-tz` were running. Check CI live.
+- **BUG-37** #173 (sheets bounce on Android; card text in the builder prompt, owner report in 8.0): Opus builder session_016NL6dV6aSfXNaqH53EhBJT on `claude/bug-37-sheet-dialog-scroll`, opened 10:35.
+  - Fix candidate `.sheet { overflow: visible }` checked locally: dialog scrollTop stays 0, and the panel slides 960 → 331 px.
+  - Evidence: a new add-only BUG-37 gate block that measures `getBoundingClientRect().top` and `dialog.scrollTop` every frame. It must fail on main.
+  - The How-to plate fidelity must not move (owner rule).
+  - Addendum 10:41 (trig_011Fj8rFWc6shTk2rkggGtpK): a four-way device check and a reduced-motion assert.
+  - Merges in a train when it passes; it is not in the HT order.
 - **COPY-2** #168 @ `eef365b` (headings, explaining lines): PASS on the partial head 08:06 (0 / 0 / 0 / 2 Lows). The builder reports a local, unpushed commit `340f7a1` with the registry fix ("Current week", Low 1) (from its session status, not on GitHub). Final push after BUG-36 merges: start-sheet title, the `{i.means && …}` guard (Low 2), the `readiness.ts:105` wording (AUD-20 Low 1), the registry fix, and a main merge. Then a delta review by the same reviewer.
 - **LIB-8** pilot A #109 @ `c6e5b66`: waits on LIB-2..LIB-4 and the owner's pilot sheet. Builder idle.
 - **Parked or not for merge:** #149 improvement audit (parked until the finish line); #158 Gym Finder docs (parked, owner talk first); #144 first-audit docs (parked; its triage is in `docs/research/first-audit/`); #94 PREMIUM-PLAN and #92 PAY-1 (parked, owner decisions); #88 Watch docs (draft, waits on Huawei); #3 watch agent's PR (never merge); #1 stale.
@@ -958,6 +969,8 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 ---
 
 ## 9. Lessons and gotchas (the incident → the rule)
+
+- **A motion probe must measure the box on screen, never a computed transform** (BUG-37, 10-01). BUG-36's probe added the panel's transform `m42` to its layout top and ignored the dialog's own `scrollTop`. It "saw" a 629 px slide that the scrolling dialog cancelled, and the owner's phone showed a jump instead. Measure `getBoundingClientRect()` (it includes every ancestor's scroll and transform) and assert that each scroll container on the way stays still.
 
 | Incident | Rule |
 |---|---|
