@@ -237,7 +237,7 @@ function GymSheet({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState('');
   const [renaming, setRenaming] = useState<string | null>(null);
   return (
-    <Sheet title="Where are you training?" onClose={() => { if (renaming) renameGym(renaming, name); onClose(); }}>
+    <Sheet title="Gym" onClose={() => { if (renaming) renameGym(renaming, name); onClose(); }}>
       <div class="stack">
         <div class="list">
           {s.units.gyms.map(g => (
@@ -331,7 +331,7 @@ function Splits() {
 
       {!s.splits.length && (
         <Card>
-          <Empty align="center" icon={<IconDumbbell size={24} />} title="No workouts yet" action={<div class="row"><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button></div>} />
+          <Empty align="center" icon={<IconDumbbell size={24} />} title="No workouts" action={<div class="row"><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button></div>} />
         </Card>
       )}
 
@@ -517,7 +517,7 @@ function LiveSession() {
 
       {picking && <ExercisePicker exclude={a.entries.map(e => e.exerciseId)} onClose={() => setPicking(false)} onPick={ex => { addExerciseToSession(ex); setPicking(false); }} />}
       {finishing && (
-        <Sheet title={remaining.length ? 'Exercises remaining' : 'Finish session?'} onClose={() => setFinishing(false)}>
+        <Sheet title={remaining.length ? 'Exercises remaining' : 'Finish session'} onClose={() => setFinishing(false)}>
           <div class="stack">
             {remaining.length > 0 && <p class="small muted">{remaining.length} exercise{remaining.length > 1 ? 's' : ''} not marked done.</p>}
             <div class="grid-3">
@@ -1123,7 +1123,7 @@ function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; on
   };
 
   return (
-    <Sheet title="When did you train?" onClose={() => resolve('schedule')}>
+    <Sheet title="Session time" onClose={() => resolve('schedule')}>
       <div class="stack">
         <p class="small muted">Looks like you logged this after training.</p>
         <div class="grid-2">
@@ -1274,11 +1274,11 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
         </Section>
       )}
       {learnCue && (
-        <Section title="Worth knowing">
+        <Section title="Coach fact">
           <Card class="card-quiet"><b class="small">{learnCue.title}</b><p class="small muted" style={{ marginTop: 4 }}>{learnCue.text}</p></Card>
         </Section>
       )}
-      <Section title="Muscles worked today">
+      <Section title="Muscles worked">
         <Card>
           <MuscleMap values={emphasis as never} mode="emphasis" />
           <div class="wrap" style={{ marginTop: 12 }}>{top.map(([m, v]) => <Chip key={m} tone="accent">{muscleLabel(m)} {v}%</Chip>)}</div>

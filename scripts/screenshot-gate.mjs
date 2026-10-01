@@ -200,7 +200,7 @@ for (const theme of themes) {
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400);
     // A scripted finish is always fast enough to be "compressed", so the time question shows up here every run.
-    if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) {
+    if (await page.getByRole('heading', { name: 'Session time' }).isVisible().catch(() => false)) {
       await shot('time-question');
       await page.getByRole('button', { name: 'Save', exact: true }).click();
       await page.waitForTimeout(400);
@@ -1444,7 +1444,7 @@ for (const theme of themes) {
   // I19: an empty History, on a fresh profile with no sessions yet, shows a designed empty state
   // (left-aligned, a title, no ghost rows) with a button that starts a session on Train.
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
-  if (!(await visible(page.getByText('Your finished workouts land here.')))) errors.push('fresh-profile: expected the History empty-state title');
+  if (!(await visible(page.getByText('No sessions', { exact: true })))) errors.push('fresh-profile: expected the History empty-state title');
   const emptyAlign = await page.locator('.empty').first().evaluate(el => getComputedStyle(el).textAlign);
   if (emptyAlign !== 'left' && emptyAlign !== 'start') errors.push(`fresh-profile: expected the History empty state left-aligned, computed text-align was ${emptyAlign}`);
   await settle(page); await page.screenshot({ path: `${OUT}/silent-black-history-empty.png` });
@@ -1637,7 +1637,7 @@ for (const theme of themes) {
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click();
   await page.waitForTimeout(400);
-  if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) {
+  if (await page.getByRole('heading', { name: 'Session time' }).isVisible().catch(() => false)) {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.waitForTimeout(400);
   }
@@ -5253,7 +5253,7 @@ for (const theme of ['silent-black', 'paper']) {
   if (!callsAfterStart.includes(true)) errors.push(`${tag}: expected keepAwake(true) once a workout went live, got ${JSON.stringify(callsAfterStart)}`);
   await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300);
   await page.getByRole('button', { name: /Finish and save|Just today/ }).click().catch(() => {}); await page.waitForTimeout(400);
-  if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(400); }
+  if (await page.getByRole('heading', { name: 'Session time' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(400); }
   const callsAfterFinish = await page.evaluate(() => window.__keepAwakeCalls.slice());
   if (callsAfterFinish[callsAfterFinish.length - 1] !== false) errors.push(`${tag}: expected keepAwake(false) once the workout finished, got ${JSON.stringify(callsAfterFinish)}`);
   // QA12-2: a one-shot "keepAwake(true) only once per app lifetime" mutation still passed the
@@ -7242,14 +7242,14 @@ for (const theme of ['silent-black', 'paper']) {
   await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click(); await page.waitForTimeout(400);
 
   // UI-05: a future start keeps Save off and the sheet open; Skip saves the guess instead.
-  if (!(await visible(page.getByRole('heading', { name: 'When did you train?' }), 3000))) errors.push(`${tag}: expected the time question after a scripted finish`);
+  if (!(await visible(page.getByRole('heading', { name: 'Session time' }), 3000))) errors.push(`${tag}: expected the time question after a scripted finish`);
   else {
     const tomorrow = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
     await page.locator('dialog[open] input[type="date"]').fill(tomorrow); await page.waitForTimeout(150);
     const save = page.getByRole('button', { name: 'Save', exact: true });
     if (!(await save.isDisabled().catch(() => false))) errors.push(`${tag}: Save stays on for a start tomorrow`);
     await save.click({ force: true, timeout: 2000 }).catch(() => {}); await page.waitForTimeout(300);
-    if (!(await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false))) errors.push(`${tag}: the time question closed on a future start`);
+    if (!(await page.getByRole('heading', { name: 'Session time' }).isVisible().catch(() => false))) errors.push(`${tag}: the time question closed on a future start`);
     await settle(page); await page.screenshot({ path: `${OUT}/aud-10-future-start.png` });
     await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(400);
   }
