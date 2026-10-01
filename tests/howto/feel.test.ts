@@ -430,7 +430,7 @@ describe('HT8-A5: named in text; rows are buttons with aria-expanded', () => {
 /** Text-only helpers golden B names nowhere (no note, left out of the spoken label); reported on PR #111. */
 export const GOLDEN_B_UNNAMED = ['lib_lat_pulldown:brachialis', 'lib_seated_cable_row:brachialis'];
 
-/** HT8-A6: measured 7,887-8,118 B gz per module (2026-09-30); ceiling = max measured + 10 %. */
+/** HT8-A6: measured 8,190-8,420 B gz per module (2026-10-01); ceiling 8,930 = an earlier max measured + 10 %, still above 8,420. */
 export const FEEL_MODULE_GZ = 8_930;
 describe('HT8-A6: chunk size', () => {
   it(`each feel-<chromeId> module is <= ${FEEL_MODULE_GZ} B gz (the plan's 24 KB start, lowered to measured + 10 %)`, () => {
