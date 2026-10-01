@@ -5835,7 +5835,7 @@ for (const theme of ['silent-black', 'paper']) {
   // The URL entered in the Play Console field, read from the submission doc itself so the two cannot drift.
   const PLAY_CONSOLE_PRIVACY_URL = readFileSync(join(ROOT, 'docs/PLAY-SUBMISSION.md'), 'utf8').match(/\*\*Privacy policy URL \(Play Console[^\n]*\n(https:\/\/\S+?)\s/)?.[1];
   if (!PLAY_CONSOLE_PRIVACY_URL) errors.push('PLAY-1: no "Privacy policy URL (Play Console…)" line in docs/PLAY-SUBMISSION.md');
-  const MEDICAL = 'Not medical advice. For medical advice, diagnosis or treatment, see a healthcare professional.';
+  // P3 retired by owner decision 2026-10-01 (COPY-1, D-COPY1-medical); the reminder is in the store description.
   for (const theme of themes) {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
     const page = await ctx.newPage();
@@ -5850,8 +5850,6 @@ for (const theme of ['silent-black', 'paper']) {
     if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
     await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
     const link = page.getByRole('link', { name: 'Privacy policy', exact: true });
-    const medical = page.locator('[data-palace="settings.medical"]');
-    await medical.scrollIntoViewIfNeeded().catch(() => {});
     if ((await link.count()) !== 1) errors.push(`${tag}: expected one "Privacy policy" link in Settings, found ${await link.count()}`);
     else {
       await link.scrollIntoViewIfNeeded().catch(() => {});
@@ -5860,16 +5858,6 @@ for (const theme of ['silent-black', 'paper']) {
       if (a.href !== PLAY_CONSOLE_PRIVACY_URL) errors.push(`${tag}: the privacy link's href is ${a.href}, not the Play Console URL ${PLAY_CONSOLE_PRIVACY_URL}`);
       if (a.target !== '_blank' || !/\bnoopener\b/.test(a.rel ?? '')) errors.push(`${tag}: the privacy link must open outside the app (target=_blank rel=noopener), got target=${a.target} rel=${a.rel}`);
       if (!a.section) errors.push(`${tag}: the privacy link is not in "Your data"`);
-    }
-    await medical.scrollIntoViewIfNeeded().catch(() => {});
-    if (!(await visible(medical))) errors.push(`${tag}: the healthcare reminder is not visible`);
-    else {
-      const m = await page.evaluate(() => {
-        const el = document.querySelector('[data-palace="settings.medical"]'), v = document.querySelector('[data-palace="settings.version"]');
-        return { text: el?.textContent?.trim(), above: !!(el && v && el.getBoundingClientRect().bottom <= v.getBoundingClientRect().top) };
-      });
-      if (m.text !== MEDICAL) errors.push(`${tag}: the healthcare reminder reads "${m.text}"`);
-      if (!m.above) errors.push(`${tag}: the healthcare reminder is not above the version line`);
     }
     await settle(page); await page.screenshot({ path: `${OUT}/${theme}-play-1-settings.png` });
     await ctx.close();
@@ -6364,6 +6352,66 @@ for (const theme of ['silent-black', 'paper']) {
     gb.cleanupScratchPage(dir);
   }
   console.log(`${tag} HT4-A6: state driver self-check, ${gb.IDS.length} exercises x ${gb.THEMES.length} themes, ${selfCheckBad} problems, no-match throw ${captureThrew ? 'verified' : 'NOT verified'}`);
+}
+
+// COPY-1 (owner, 2026-10-01; D-COPY1-1, D-COPY1-2, D-COPY1-medical): the Settings footer shows the owner's rights
+// line in the hint style, directly under the logo and above the version line, in all 5 themes; and the Settings
+// sheet no longer carries the explaining lines COPY-1 removed. The probe fails if it cannot see the footer or the
+// sheet's text at all. The medical line PLAY-1 used to show is gone (P3 retired, D-COPY1-medical: the reminder
+// moved to the store description) and the version line is the rights line's next sibling.
+{
+  const RIGHTS = '© 2026 Marc Darenz. All rights reserved.';
+  const GONE = [
+    'Each machine keeps its own entry unit', "Swaps today's reminder", 'Android may deliver the rest alert',
+    'Your choice stays on even if Android drops the queue', 'Always on when your phone asks for less motion',
+    'Android haptics', 'Browser vibration', 'Stays on while a workout is live', 'Everything stays on this device',
+    'Export a backup first if unsure', 'nothing else leaves the phone', 'Nothing leaves the phone',
+    'Leave empty for the built-in server', 'healthcare professional',
+  ];
+  for (const theme of themes) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    const tag = `COPY-1 ${theme}`;
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await page.addInitScript(([legacyJson, t]) => {
+      localStorage.setItem('marc.theme', t);
+      if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+    }, [JSON.stringify(legacy), theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+    await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+    const rights = page.locator('dialog[open] [data-palace="settings.rights"]');
+    await rights.scrollIntoViewIfNeeded().catch(() => {});
+    if ((await rights.count()) !== 1) errors.push(`${tag}: expected one rights line in the Settings footer, found ${await rights.count()}`);
+    else if (!(await visible(rights))) errors.push(`${tag}: the rights line is not visible`);
+    else {
+      const f = await rights.evaluate(el => {
+        const box = el.parentElement, logo = box?.querySelector('.logo'), version = document.querySelector('dialog[open] [data-palace="settings.version"]');
+        const r = el.getBoundingClientRect(), l = logo?.getBoundingClientRect(), v = version?.getBoundingClientRect();
+        return {
+          text: el.textContent?.trim(), hint: el.classList.contains('hint'), tag: el.tagName,
+          afterLogo: !!logo && logo.nextElementSibling === el, sameBox: !!version && version.parentElement === box,
+          below: !!l && l.bottom <= r.top + 0.5, above: !!v && r.bottom <= v.top + 0.5, height: r.height,
+          versionNextSibling: !!version && el.nextElementSibling === version,
+          noMedical: !document.querySelector('dialog[open] [data-palace="settings.medical"]'),
+        };
+      });
+      if (f.text !== RIGHTS) errors.push(`${tag}: the rights line reads ${JSON.stringify(f.text)}, not ${JSON.stringify(RIGHTS)}`);
+      if (!f.hint || f.tag !== 'P') errors.push(`${tag}: the rights line is not a hint paragraph (tag ${f.tag}, hint ${f.hint})`);
+      if (!f.afterLogo || !f.below) errors.push(`${tag}: the rights line does not sit directly under the logo (${JSON.stringify(f)})`);
+      if (!f.sameBox || !f.above) errors.push(`${tag}: the rights line is not above the version line in the footer (${JSON.stringify(f)})`);
+      if (!(f.height > 0)) errors.push(`${tag}: the rights line has no height`);
+      if (!f.versionNextSibling) errors.push(`${tag}: the version line does not directly follow the rights line (${JSON.stringify(f)})`);
+      if (!f.noMedical) errors.push(`${tag}: Settings still shows the medical reminder element`);
+    }
+    const sheetText = await page.locator('dialog[open]').first().innerText().catch(() => '');
+    if (!sheetText.includes('Your data') || !sheetText.includes('Version ')) errors.push(`${tag}: could not read the Settings sheet's text (${sheetText.length} chars)`);
+    else for (const g of GONE) if (sheetText.includes(g)) errors.push(`${tag}: Settings still shows "${g}"`);
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-copy-1-settings-footer.png` });
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith('COPY-1 '))) console.log('COPY-1: Settings footer rights line (under the logo, above the version, hint style) and no removed Settings copy, verified in 5 themes');
 }
 
 await browser.close();

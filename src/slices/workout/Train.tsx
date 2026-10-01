@@ -216,7 +216,6 @@ function GymSheet({ onClose }: { onClose: () => void }) {
             </div>
           </Card>
         )}
-        <p class="hint">Each gym remembers which unit each machine and rack uses. Your history keeps one unit for comparing progress.</p>
       </div>
     </Sheet>
   );
@@ -280,9 +279,7 @@ function Splits() {
 
       {!s.splits.length && (
         <Card>
-          <Empty align="center" icon={<IconDumbbell size={24} />} title="No workouts yet" action={<div class="row"><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button></div>}>
-            Start from a simple template or build your own split.
-          </Empty>
+          <Empty align="center" icon={<IconDumbbell size={24} />} title="No workouts yet" action={<div class="row"><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button></div>} />
         </Card>
       )}
 
@@ -314,7 +311,7 @@ function Splits() {
                   </Row>
                 );
               })}
-              {!split.exercises.length && <p class="muted small" style={{ padding: '10px 0' }}>Empty split. Tap edit to add exercises.</p>}
+              {!split.exercises.length && <p class="muted small" style={{ padding: '10px 0' }}>Empty split.</p>}
             </div>
             <Button variant="primary" block style={{ marginTop: 12 }} data-palace="train.start" disabled={!split.exercises.length} onClick={() => { startingSplit.value = split; }}><IconPlay /> Start {split.name}</Button>
             <Button variant="quiet" block data-palace="train.log-past" disabled={!split.exercises.length} onClick={() => { loggingPast.value = split; }}>Log a past session</Button>
@@ -370,11 +367,11 @@ function SplitEditor({ split, onClose, onDeleted }: { split: Split; onClose: () 
           })}
         </div>
         <Button onClick={() => setPicking(true)}><IconPlus size={16} /> Add exercise</Button>
-        <Field label="Focus muscles (optional, up to two)" hint="Tells the coach which muscles you want to bring up. It does not add exercises.">
+        <Field label="Focus muscles (up to two)">
           <div class="wrap">{MUSCLES.map(m => <Chip key={m.id} pressed={fresh.focus.includes(m.id)} onClick={() => setFocus(split.id, fresh.focus.includes(m.id) ? fresh.focus.filter(x => x !== m.id) : [...fresh.focus, m.id].slice(-2))}>{m.label}</Chip>)}</div>
         </Field>
         {!confirm ? <Button variant="danger" onClick={() => setConfirm(true)}>Delete split</Button>
-          : <Card class="card-quiet"><p class="small">Delete {fresh.name}? Your history stays. Only the template goes.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" onClick={() => { deleteSplit(split.id); onDeleted(); }}>Delete</Button></div></Card>}
+          : <Card class="card-quiet"><p class="small">Delete {fresh.name}? Your history stays.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" onClick={() => { deleteSplit(split.id); onDeleted(); }}>Delete</Button></div></Card>}
       </div>
       {picking && <ExercisePicker exclude={fresh.exercises.map(e => e.exerciseId)} onClose={() => setPicking(false)} onPick={ex => { if (!addExerciseToSplit(split.id, ex)) showToast('Already in this split'); setPicking(false); }} />}
     </Sheet>
@@ -466,7 +463,7 @@ function LiveSession() {
       {finishing && (
         <Sheet title={remaining.length ? 'Exercises remaining' : 'Finish session?'} onClose={() => setFinishing(false)}>
           <div class="stack">
-            {remaining.length > 0 && <p class="small muted">{remaining.length} exercise{remaining.length > 1 ? 's' : ''} not marked done. Anything with logged sets is still saved. Skipping does not remove them from your split.</p>}
+            {remaining.length > 0 && <p class="small muted">{remaining.length} exercise{remaining.length > 1 ? 's' : ''} not marked done.</p>}
             <div class="grid-3">
               <div class="stat"><b class="num" data-finish-duration><Elapsed a={a} /></b><span>duration</span></div>
               {(() => { const nEx = a.entries.filter(e => e.sets.some(isWorkingSet)).length; return <div class="stat"><b class="num">{nEx}</b><span>exercise{nEx === 1 ? '' : 's'}</span></div>; })()}
@@ -474,7 +471,7 @@ function LiveSession() {
             </div>
             <TrimmedEndNote a={a} />
             <EffortRepair a={a} />
-            <Field label="Session note (optional)"><textarea rows={2} maxLength={1000} value={sessionNote} placeholder="How it went, what to change" data-palace="train.session-note" onInput={e => setSessionNote((e.target as HTMLTextAreaElement).value)} /></Field>
+            <Field label="Session note"><textarea rows={2} maxLength={1000} value={sessionNote} placeholder="How it went, what to change" data-palace="train.session-note" onInput={e => setSessionNote((e.target as HTMLTextAreaElement).value)} /></Field>
             <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate, { note: sessionNote }); setSessionNote(''); setFinishing(false); if (!r) { showToast('Nothing logged, so nothing was saved'); return; } if (r.session.logging.flags.includes('compressed')) pendingTimeQuestion.value = r; else lastFinish.value = r; }} changed={changedFromPlan(a, split)} />
             <Button variant="quiet" onClick={() => setFinishing(false)}>Keep going</Button>
             <HoldButton size="sm" class="tap" label="Hold to discard" onConfirm={() => { discardSession(); setFinishing(false); }} />
@@ -527,7 +524,7 @@ function FinishChoice({ changed, onFinish }: { changed: boolean; onFinish: (save
   if (!changed) return <Button variant="primary" onClick={() => onFinish(false)}><IconCheck /> Finish and save</Button>;
   return (
     <div class="stack-sm">
-      <p class="small">You changed the exercises today. Keep the change for future sessions?</p>
+      <p class="small">Keep today's exercise changes for future sessions?</p>
       <div class="grid-2"><Button onClick={() => onFinish(false)}>Just today</Button><Button variant="primary" onClick={() => onFinish(true)}>Save for future</Button></div>
     </div>
   );
@@ -544,7 +541,7 @@ function Elapsed({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
 function TrimmedEndNote({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
   const t = finishTiming(a, nowMs.value);
   if (!t.trimmed) return null;
-  return <p class="small muted" data-finish-trimmed>Saved as ending at {formatTimeOfDay(new Date(t.endedAtMs).toISOString())}, {FINISH_MARGIN_SEC / 60} min after your last set. The time since is not counted.</p>;
+  return <p class="small muted" data-finish-trimmed>Saved as ending at {formatTimeOfDay(new Date(t.endedAtMs).toISOString())}, {FINISH_MARGIN_SEC / 60} min after your last set.</p>;
 }
 
 function LiveClock({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
@@ -844,7 +841,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <span class="hint">{lastHint}</span>
                     <span class="row" style={{ gap: 6 }}>
                       {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
-                      {pr && isCommitted(set) && <span title={prUnconfirmed ? 'This load is well above your usual. It counts as a record once you lift it again.' : undefined} class={`pr-badge ${set.id && popIds.has(set.id) ? 'pop' : ''}`}><IconTrophy size={16} /> {prUnconfirmed ? 'PR unconfirmed' : 'PR'}</span>}
+                      {pr && isCommitted(set) && <span class={`pr-badge ${set.id && popIds.has(set.id) ? 'pop' : ''}`}><IconTrophy size={16} /> {prUnconfirmed ? 'PR unconfirmed' : 'PR'}</span>}
                     </span>
                   </div>
                 )}
@@ -904,7 +901,6 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             {([[undefined, 'Normal set'], ['warmup', 'Mark as warm-up'], ['drop', 'Mark as drop set'], ['failure', 'Mark as to failure']] as const).map(([k, label]) => (
               <Button key={label} variant={entry.sets[setMenuAt]!.kind === k ? 'primary' : 'default'} onClick={() => { setSet(index, setMenuAt, k === 'failure' ? { kind: k, effort: 'max' } : { kind: k }); setSetMenuAt(null); }}>{label}</Button>
             ))}
-            <p class="hint">Warm-ups are kept but never counted. Drop sets count for volume but not records. To failure counts as max effort.</p>
             <Button variant="danger" disabled={entry.sets.length <= 1} onClick={() => {
               const n = setMenuAt!;
               const removed = entry.sets[n]!;
@@ -957,7 +953,7 @@ function SubstituteSheet({ exercise, custom, onPick, onClose }: { exercise: Exer
             <span class="chip">Swap</span>
           </div>
         ))}
-        {!subs.length && <p class="small muted" style={{ padding: '12px 0' }}>No substitutes with the same primary muscle in the library yet.</p>}
+        {!subs.length && <p class="small muted" style={{ padding: '12px 0' }}>No substitutes found.</p>}
       </div>
     </Sheet>
   );
@@ -996,7 +992,6 @@ export function CheckInSheet({ split, onClose, onDone }: { split?: Split; onClos
   return (
     <Sheet title="Quick check-in" onClose={onClose} palace="panel.checkin">
       <div class="stack">
-        <p class="hint">Feeds today's readiness. Takes a few seconds, skip any time.</p>
         <Field label="Sleep quality"><RatingRow value={sleepQuality} onChange={setSleepQuality} /></Field>
         <Field label="Mood"><RatingRow value={mood} onChange={setMood} /></Field>
         {muscles.map(m => (
@@ -1033,7 +1028,7 @@ function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: (
             <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
           </Card>
         ))}
-        {!items.length && <p class="small muted">Nothing to flag. Have a good session.</p>}
+        {!items.length && <p class="small muted">Nothing to flag.</p>}
         <Button variant="primary" block onClick={onStart}><IconPlay /> Start {split.name}</Button>
       </div>
     </Sheet>
@@ -1072,7 +1067,7 @@ function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; on
   return (
     <Sheet title="When did you train?" onClose={() => resolve('schedule')}>
       <div class="stack">
-        <p class="small muted">Looks like you logged this after training. Timing-based advice (rest, density, live heart data) needs to know when it actually happened.</p>
+        <p class="small muted">Looks like you logged this after training.</p>
         <div class="grid-2">
           <Field label="Day"><input type="date" value={day} onInput={e => setDay((e.target as HTMLInputElement).value)} /></Field>
           <Field label="Start time"><input type="time" value={time} onInput={e => setTime((e.target as HTMLInputElement).value)} /></Field>
