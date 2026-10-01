@@ -6539,7 +6539,7 @@ for (const theme of ['silent-black', 'paper']) {
     content[row.chromeId] = (await import(pathToFileURL(join(ROOT, `tools/plates/layers/exercises/${lib.slice(4)}.howto.mjs`)).href)).default;
   }
   const KEYS = Object.fromEntries(H.HT_PLATES.map(([id]) => [id, content[id].zooms.filter(z => z.kind === 'posture').map(z => z.key)]));
-  const stats = { pairs: 0, maxOff: 0, anims: 0, reduced: 0, restores: 0, controls: 0 };
+  const stats = { pairs: 0, maxOff: 0, anims: 0, reduced: 0, restores: 0, controls: 0, reopens: 0, probes: 0 };
   // A5 sizes, on the built chunks the gate serves
   const assets = readdirSync(join(ROOT, 'www/assets')), sizes = [];
   for (const [id] of H.HT_PLATES) {
@@ -6592,6 +6592,51 @@ for (const theme of ['silent-black', 'paper']) {
     }
     throw new Error(`the capture at ${JSON.stringify(clip)} never settled`);
   };
+  /** D-HT7-L3-text: the boxes of the open panel's SVG <text> elements, in device pixels of a capture of `clip`, each
+   *  widened by a quarter em on every side: glyph ink (the descenders of "p" and "y", the last glyph's anti-aliasing)
+   *  reaches up to 3 device px past Chrome's text box (measured on the squat's "Bony bump"). */
+  const textBoxes = (page, sel, clip) => page.evaluate(([sel, clip, dsf]) => [...document.querySelectorAll(`${sel} svg text`)].map(t => {
+    const r = t.getBoundingClientRect(), m = 0.25 * parseFloat(getComputedStyle(t).fontSize) * Math.abs(t.getScreenCTM().a);
+    return { label: t.textContent.trim(), x0: Math.floor((r.left - m - clip.x) * dsf), y0: Math.floor((r.top - m - clip.y) * dsf), x1: Math.ceil((r.right + m - clip.x) * dsf), y1: Math.ceil((r.bottom + m - clip.y) * dsf) };
+  }).filter(b => b.x1 > b.x0 && b.y1 > b.y0), [sel, clip, H.DEVICE.deviceScaleFactor]);
+  /** Every pixel that differs at all between two same-size captures, and how many lie outside all of `boxes`. */
+  const diffPixels = (page, a, b, boxes) => page.evaluate(async ([a64, b64, boxes]) => {
+    const load = async s => { const bm = await createImageBitmap(await (await fetch(`data:image/png;base64,${s}`)).blob()); const c = new OffscreenCanvas(bm.width, bm.height).getContext('2d'); c.drawImage(bm, 0, 0); return c.getImageData(0, 0, bm.width, bm.height); };
+    const [A, B] = [await load(a64), await load(b64)];
+    let n = 0, outside = 0; const hit = new Set();
+    for (let i = 0; i < A.data.length; i += 4) {
+      if (A.data[i] === B.data[i] && A.data[i + 1] === B.data[i + 1] && A.data[i + 2] === B.data[i + 2] && A.data[i + 3] === B.data[i + 3]) continue;
+      n++;
+      const x = (i / 4) % A.width, y = Math.floor(i / 4 / A.width), box = boxes.find(q => x >= q.x0 && x < q.x1 && y >= q.y0 && y < q.y1);
+      if (box) hit.add(box.label); else outside++;
+    }
+    return { n, outside, texts: [...hit] };
+  }, [a.toString('base64'), b.toString('base64'), boxes]);
+  /** L3 on one app capture against golden B's: 'pass' (the L3 rule), 'text' (every differing pixel inside an SVG
+   *  <text> box of the app's panel, so D-HT7-L3-text allows one re-open), or 'fail'. */
+  const l3 = async (page, sel, clip, a, b) => {
+    const d = await H.diffPng(page, a, b);
+    if (H.meetsRule(d)) return { verdict: 'pass', d };
+    if (!d.sameSize) return { verdict: 'fail', d, px: null };
+    const px = await diffPixels(page, a, b, await textBoxes(page, sel, clip));
+    return { verdict: px.n && !px.outside ? 'text' : 'fail', d, px };
+  };
+  /** D-HT7-L3-text's one re-open: Close, then the same chip once the page is idle, placed at viewport y `at`.
+   *  `before` (the planted probes only) runs on the open panel before it is placed. */
+  const reopen = async (page, id, k, sel, at, before) => {
+    await unplace(page, sel);
+    await page.click(`${sel}-close`);
+    await page.waitForSelector(`${sel}[hidden]`, { state: 'attached' });
+    await H.settleApp(page);
+    await page.click(`#${id}-chip-${k}`);
+    await page.waitForSelector(`${sel}:not([hidden])`);
+    await H.settleApp(page);
+    await page.mouse.move(0, 0);
+    if (before) await before();
+    const r = await place(page, sel, 'app', at); delete r.fits;
+    return { r, img: await shot(page, r) };
+  };
+  const offText = d => d.sameSize ? `${d.off} px off (${d.off1} by 1, max ${d.maxDelta})` : `size ${d.width}x${d.height} != ${d.otherWidth}x${d.otherHeight}`;
   /** Records every Element.animate() call on a close-up panel (both pages start it from their open script), with the
    *  transform origin set just before, so the opening animation is read as started, whatever the timing. */
   const recordAnims = page => page.evaluate(() => {
@@ -6670,23 +6715,54 @@ for (const theme of ['silent-black', 'paper']) {
           const d = await H.diffPng(app.page, ia, ig);
           stats.pairs++; stats.maxOff = Math.max(stats.maxOff, d.off);
           if (!(d.ink > 0.05)) P(`A3 L3 ${id}/${k}: the capture holds almost no ink (${d.ink}), nothing was compared`);
-          if (!H.meetsRule(d)) {
-            // evidence for the root cause (still a failure): both captures in screenshots/ht7-l3/ (CI uploads the folder
-            // on failure), and whether either page's pixels move after 1 s more
+          // D-HT7-L3-text: a mismatch whose every differing pixel lies inside an SVG <text> box gets one re-open once the
+          // page is idle, compared again at 0 px; any other mismatch, or a second one, fails. First captures kept.
+          const v = await l3(app.page, sel, ra, ia, ig);
+          if (v.verdict !== 'pass') {
             const ev = join(OUT, 'ht7-l3'), base = `${theme}${reduce ? '-r' : ''}-${id}-${k}`;
             mkdirSync(ev, { recursive: true });
-            await new Promise(r => setTimeout(r, 1000));
-            const [ja, jg] = await Promise.all([shot(app.page, ra), shot(g.page, rg)]);
             writeFileSync(join(ev, `${base}-app.png`), ia); writeFileSync(join(ev, `${base}-golden.png`), ig);
-            writeFileSync(join(ev, `${base}-app-1s.png`), ja); writeFileSync(join(ev, `${base}-golden-1s.png`), jg);
-            const [ca, cg, c2] = [await H.diffPng(app.page, ia, ja), await H.diffPng(app.page, ig, jg), await H.diffPng(app.page, ja, jg)];
-            P(`A3 L3 ${id}/${k}: ${d.sameSize ? `${d.off} px off (${d.off1} by 1, max ${d.maxDelta})` : `size ${d.width}x${d.height} != ${d.otherWidth}x${d.otherHeight}`}; 1 s later the app moved ${ca.off} px, golden B ${cg.off} px, and they are ${c2.off} px apart (captures in screenshots/ht7-l3/)`);
+            if (v.verdict === 'fail') P(`A3 L3 ${id}/${k}: ${offText(v.d)}${v.px ? `; ${v.px.outside} of ${v.px.n} differing px outside every SVG text box` : ''} (captures in screenshots/ht7-l3/)`);
+            else {
+              const { r, img } = await reopen(app.page, id, k, sel, ra.y);
+              writeFileSync(join(ev, `${base}-app-reopen.png`), img);
+              const same = r.x === ra.x && r.y === ra.y && r.width === ra.width && r.height === ra.height, d2 = same ? await H.diffPng(app.page, img, ig) : null;
+              stats.reopens++;
+              console.log(`${tag} ${theme}${reduce ? ' reduced' : ''}: L3 text re-open ${id}/${k}: ${v.px.n} px off, all inside SVG text ${JSON.stringify(v.px.texts)}; the second open is ${d2 ? offText(d2) : `at ${JSON.stringify(r)}`}`);
+              if (!d2 || !H.identical(d2)) P(`A3 L3 ${id}/${k}: ${offText(v.d)} inside SVG text, and the re-open is ${d2 ? offText(d2) : `at ${JSON.stringify(r)}, not ${JSON.stringify(ra)}`} (captures in screenshots/ht7-l3/)`);
+            }
           }
           if (ki === 0 && theme === 'silent-black' && !reduce) {   // control: the same capture half a pixel lower must fail
             await place(app.page, sel, 'app', ra.y + 0.5);
             const dc = await H.diffPng(app.page, await shot(app.page, ra), ig);
             if (H.meetsRule(dc)) P(`A3 L3 control ${id}/${k}: a 0.5 px shift still passes (${dc.off} px off)`);
             stats.controls++;
+          }
+          if (id === 'leg-press' && k === 'foot' && theme === 'silent-black' && !reduce) {
+            // D-HT7-L3-text's planted probes, on a crop with SVG text that has never varied: a non-text 1 px move fails with no re-open; a
+            // text-only difference passes only when the second open is exact
+            const plant = (what, on) => app.page.evaluate(([sel, what, on]) => {
+              const e = what === 'path'
+                ? [...document.querySelectorAll(`${sel} svg path`)].find(p => !p.closest('defs, clipPath, pattern, mask, text') && p.getBoundingClientRect().width > 4)
+                : document.querySelector(`${sel} svg text`);
+              if (what === 'path') { if (on) { e.dataset.ht7 = e.getAttribute('transform') ?? ''; e.setAttribute('transform', `translate(1 0) ${e.dataset.ht7}`); } else if ('ht7' in e.dataset) { if (e.dataset.ht7) e.setAttribute('transform', e.dataset.ht7); else e.removeAttribute('transform'); delete e.dataset.ht7; } }
+              else e.style.letterSpacing = on ? '0.05px' : '';
+            }, [sel, what, on]);
+            const placeAt = async () => { const r = await place(app.page, sel, 'app', ra.y); delete r.fits; return r; };
+            await plant('path', true);
+            const p1 = await l3(app.page, sel, await placeAt(), await shot(app.page, ra), ig);
+            await plant('path', false);
+            if (p1.verdict !== 'fail' || !p1.px?.outside) P(`A3 L3 probe ${id}/${k}: a path moved 1 px reads ${p1.verdict} (${JSON.stringify(p1.px)}), not an immediate non-text failure`);
+            await plant('text', true);
+            const p2 = await l3(app.page, sel, await placeAt(), await shot(app.page, ra), ig);
+            if (p2.verdict !== 'text') P(`A3 L3 probe ${id}/${k}: a text-only change reads ${p2.verdict} (${JSON.stringify(p2.px)}), not a text re-open`);
+            const kept = await reopen(app.page, id, k, sel, ra.y, () => plant('text', true));
+            if (H.identical(await H.diffPng(app.page, kept.img, ig))) P(`A3 L3 probe ${id}/${k}: a re-open that keeps the text change still reads 0 px`);
+            await plant('text', false);
+            const clean = await reopen(app.page, id, k, sel, ra.y);
+            const dc2 = await H.diffPng(app.page, clean.img, ig);
+            if (!H.identical(dc2)) P(`A3 L3 probe ${id}/${k}: an exact re-open reads ${offText(dc2)}`);
+            stats.probes++;
           }
           await Promise.all([unplace(app.page, sel), unplace(g.page, sel)]);
           // close, then the plate block is what it was
@@ -6718,8 +6794,9 @@ for (const theme of ['silent-black', 'paper']) {
   } finally {
     GB.cleanupScratchPage(dir);
   }
+  if (stats.probes !== 1) errors.push(`${tag}: ${stats.probes} D-HT7-L3-text probe runs, expected 1 (silent-black, leg press foot)`);
   if (stats.pairs < 80) errors.push(`${tag}: only ${stats.pairs} L3 pairs compared, expected 8 x 2 x 5 themes + reduced motion (>= 80)`);
-  console.log(`${tag}: ${stats.pairs} posture close-up L3 pairs (max ${stats.maxOff} px off), ${stats.anims} opening animation lists, ${stats.reduced} reduced-motion opens, ${stats.restores} plate restores, ${stats.controls} shift controls; posture chunks gz B: ${sizes.join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  console.log(`${tag}: ${stats.pairs} posture close-up L3 pairs (max ${stats.maxOff} px off), ${stats.anims} opening animation lists, ${stats.reduced} reduced-motion opens, ${stats.restores} plate restores, ${stats.controls} shift controls, ${stats.reopens} L3 text re-opens (D-HT7-L3-text), ${stats.probes} re-open probes; posture chunks gz B: ${sizes.join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
 // HT-4: the golden-B lock (L0-B), the crop-window/pose-classification live proof (HT4-A5), and the state driver
