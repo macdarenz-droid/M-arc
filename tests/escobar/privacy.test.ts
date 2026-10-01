@@ -7,7 +7,7 @@ import type { AppState } from '@/core/models';
 import type { StoredMessage } from '@/escobar/types';
 import { TODAY, ctxOf, sixMonthsState } from './fixtures';
 
-const HEALTH = /resting heart rate|HRV|sleep has been short/i;
+const HEALTH = /resting heart rate|HRV|^Sleep:/i;
 const withSharing = (health: boolean, body = true): AppState => {
   const s = sixMonthsState();
   // A week of resting HR well over the usual, so a health driver exists to be hidden.

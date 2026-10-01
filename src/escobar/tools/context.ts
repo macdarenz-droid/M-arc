@@ -89,7 +89,7 @@ export function coachCtx(ctx: ToolCtx): CoachContext {
 }
 
 /** Readiness drivers that come from health data (ES-12); check-in drivers stay. */
-const HEALTH_DRIVER = /resting heart rate|HRV|sleep has been short/i;
+const HEALTH_DRIVER = /resting heart rate|HRV|^Sleep:/i;
 export const redactDrivers = (drivers: string[], health: boolean): string[] => (health ? drivers : drivers.filter(d => !HEALTH_DRIVER.test(d)));
 
 /**

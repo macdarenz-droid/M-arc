@@ -70,10 +70,9 @@ export function sessionEnergy(input: SessionEnergyInput): SessionEnergy | null {
   const uncoveredMin = Math.max(0, minutes - minutesCovered);
   const grossKcal = coveredKcal + (quality >= 0.8 ? medianRate * uncoveredMin : 0);
   const activeKcal = Math.max(0, grossKcal - restingKcalPerMin * minutes);
-  const band = activeKcal * 0.25;
+  // AUD-20 (SCI-10): a plain estimate, no ± band; no error bound is validated for lifting.
   return {
     grossKcal: Math.round(grossKcal), activeKcal: Math.round(activeKcal),
-    low: Math.round(Math.max(0, activeKcal - band)), high: Math.round(activeKcal + band),
     minutes: Math.round(minutes), source: 'heart_rate',
     profileSnapshot: { kg: profile.bodyWeightKg, age: a, sex: profile.sex },
   };
@@ -85,10 +84,8 @@ export function energyFromHealthConnect(activeKcalInRange: number, minutes: numb
   if (!(activeKcalInRange >= 0) || !profile.bodyWeightKg || !profile.sex) return null;
   const a = age(profile, today);
   if (a == null) return null;
-  const band = activeKcalInRange * 0.10;
   return {
     grossKcal: Math.round(activeKcalInRange), activeKcal: Math.round(activeKcalInRange),
-    low: Math.round(Math.max(0, activeKcalInRange - band)), high: Math.round(activeKcalInRange + band),
     minutes: Math.round(minutes), source: 'health_connect',
     profileSnapshot: { kg: profile.bodyWeightKg, age: a, sex: profile.sex },
   };

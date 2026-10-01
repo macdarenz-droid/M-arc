@@ -67,7 +67,7 @@ function OnboardingForm({ onDone }: { onDone: () => void }) {
         <Field label={`Body weight (${u})`}><input type="text" inputMode="decimal" autofocus value={weight} onInput={e => setWeight((e.target as HTMLInputElement).value)} /></Field>
         <Field label="Height (cm)"><CommitNumber value={s.profile.heightCm} min={100} max={250} onCommit={v => setHeight(v, 'onboarding')} /></Field>
         <Field label="Birth year"><CommitNumber value={s.profile.birthYear} min={1900} max={new Date().getFullYear() - 10} integer onCommit={v => setBirthYear(v, 'onboarding')} /></Field>
-        <Field label="Sex"><Segmented value={s.profile.sex ?? 'male'} options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]} onChange={v => setSex(v, 'onboarding')} /></Field>
+        <Field label="Sex"><Segmented value={s.profile.sex} options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]} onChange={v => setSex(v, 'onboarding')} /></Field>
         <Field label="Training since">
           <div class="row"><input type="month" value={s.profile.trainingSince ?? ''} onInput={e => setTrainingSince((e.target as HTMLInputElement).value || undefined, 'onboarding')} /><Button variant="quiet" size="sm" onClick={() => setTrainingSince(new Date().toISOString().slice(0, 7), 'onboarding')}>I'm new</Button></div>
         </Field>

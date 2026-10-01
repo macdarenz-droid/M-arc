@@ -4649,6 +4649,167 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// AUD-11 (UI-02): editing a session, then swiping it away and undoing, restores the EDITED
+// session. The swipe gesture's effect only re-runs on [session.id] (A5), so before the fix the
+// Undo closed over the stale pre-edit session captured when the row first mounted.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-11 UI-02';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [{
+        id: 'aud11-ui02', splitId: 'sp1', splitName: 'Push', day: now.slice(0, 10), startedAt: now, endedAt: now, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench Press', sets: [{ kg: 60, reps: 5, effort: 'ideal' }] }],
+        logging: { mode: 'live', trainedAt: now, trainedEndAt: now, loggedAt: now, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+      }],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.waitForTimeout(200);
+  const kgInput = page.getByLabel('Load in kg');
+  await kgInput.fill('65'); await kgInput.blur();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.waitForTimeout(250);
+
+  const box = await page.locator('.swipe-row').first().boundingBox();
+  if (!box) errors.push(`${tag}: expected the session row after saving the edit`);
+  else {
+    await touchDrag(page, box.x + box.width * 0.9, box.y + box.height / 2, box.x + box.width * 0.15, box.y + box.height / 2, 300);
+    await page.waitForTimeout(400);
+    const undoBtn = page.locator('.toast button', { hasText: 'Undo' });
+    if (!(await visible(page.locator('.toast', { hasText: 'Session deleted' })))) errors.push(`${tag}: expected a "Session deleted" toast with Undo after the swipe`);
+    else {
+      await undoBtn.click().catch(() => errors.push(`${tag}: could not click the Undo button`));
+      // store.ts debounces its localStorage write by 250ms; wait past it before reading storage.
+      await page.waitForTimeout(400);
+      const kg = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions[0]?.exercises?.[0]?.sets?.[0]?.kg);
+      if (kg !== 65) errors.push(`${tag}: Undo restored kg ${kg}, expected the edited 65 kg (60 means Undo brought back a stale pre-edit session)`);
+    }
+  }
+  await ctx.close();
+}
+
+// AUD-11 (UI-04): a carry/sled set's editor shows and edits its load, distance and time together
+// (load no longer hides behind a timed carry's duration field), and removing one set uses an
+// explicit delete rather than needing every field zeroed to imply it.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-11 UI-04';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [{
+        id: 'aud11-ui04', splitId: 'sp1', splitName: 'Conditioning', day: now.slice(0, 10), startedAt: now, endedAt: now, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{
+          exerciseId: 'lib_farmer_s_carry', name: "Farmer's Carry",
+          sets: [{ kg: 32, distanceM: 40, durationSec: 35, effort: 'ideal' }, { kg: 34, distanceM: 45, durationSec: 38, effort: 'ideal' }],
+        }],
+        logging: { mode: 'live', trainedAt: now, trainedEndAt: now, loggedAt: now, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+      }],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.waitForTimeout(200);
+
+  const kgInputs = page.getByLabel('Load in kg');
+  const distInputs = page.getByLabel('Distance in metres');
+  const secInputs = page.getByLabel('Seconds');
+  if (!(await visible(kgInputs.first()))) errors.push(`${tag}: expected a visible load field for a timed carry set (it must not hide behind the duration field)`);
+  else {
+    const shown = { kg0: await kgInputs.nth(0).inputValue(), m0: await distInputs.nth(0).inputValue(), s0: await secInputs.nth(0).inputValue() };
+    if (shown.kg0 !== '32' || shown.m0 !== '40' || shown.s0 !== '35') errors.push(`${tag}: expected the first carry set to show 32 kg, 40 m, 35 s, got ${JSON.stringify(shown)}`);
+  }
+
+  // Edit the first set's distance. store.ts debounces its localStorage write by 250ms.
+  await distInputs.nth(0).fill('999'); await distInputs.nth(0).blur();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.waitForTimeout(400);
+  const afterEdit = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions[0].exercises[0].sets);
+  if (afterEdit?.[0]?.distanceM !== 999 || afterEdit?.[0]?.kg !== 32) errors.push(`${tag}: expected the edited distance (999 m, kg unchanged) to save, got ${JSON.stringify(afterEdit?.[0])}`);
+
+  // Delete the second set with its own explicit action, leaving the first set untouched.
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.waitForTimeout(200);
+  await page.getByLabel('Delete set 2').click();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.waitForTimeout(400);
+  const afterDelete = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions[0].exercises[0].sets);
+  if (afterDelete?.length !== 1 || afterDelete?.[0]?.distanceM !== 999) errors.push(`${tag}: expected the explicit delete to remove only set 2, got ${JSON.stringify(afterDelete)}`);
+  await ctx.close();
+}
+
+// AUD-11 (UI-11, review Low on #159): the Exercise progress card's chart readout for a hold is
+// built by a call site in History.tsx (statReadout), not by statReadout alone — covering only the
+// helper function left that call site free to regress back to the old "<load> × <reps>" form.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-11 UI-11';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, durationSec) => ({ id: `aud11-ui11-${offset}`, splitId: 'sp1', splitName: 'Core', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:01:00.000Z`, durationSec: 60, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_plank', name: 'Plank', sets: [{ durationSec, effort: 'ideal' }] }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:01:00.000Z`, loggedAt: `${day(offset)}T17:01:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess(7, 30), sess(0, 45)],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(300);
+
+  const readout = await page.locator('[data-palace="history.exercise-stats"] .chart-readout').first().innerText().catch(() => '');
+  if (!readout) errors.push(`${tag}: expected a chart readout for the plank's Exercise progress card`);
+  else {
+    if (readout.includes('×')) errors.push(`${tag}: a hold's readout should not show "× reps", got ${JSON.stringify(readout)}`);
+    if (!readout.includes('45s')) errors.push(`${tag}: expected the latest hold's 45s in the readout, got ${JSON.stringify(readout)}`);
+  }
+  if (await page.locator('[data-palace="history.exercise-stats"]').getByText('reps at top').count()) errors.push(`${tag}: a hold should have no "reps at top" tile`);
+  await ctx.close();
+}
+
 // QA12-3: under reduce, the drawing animation is skipped outright (not just faded fast). A
 // mutation that always calls beginElement() regardless of `reduce` would still pass every other
 // O1 probe (they only check timing), so assert the finished state directly, right after load.
@@ -7103,6 +7264,96 @@ for (const theme of ['silent-black', 'paper']) {
   if (!errors.some(e => e.startsWith('COPY-1 '))) console.log('COPY-1: Settings footer rights line (under the logo, above the version, hint style) and no removed Settings copy, verified in 5 themes');
 }
 
+// AUD-20 (SCI-10): session calories are a plain estimate, never a ± or "X to Y" band. A live
+// watch-stub session (bpm every 1 s) reaches the finish screen in all 5 themes; the probe fails
+// when no calorie line is found (nothing measured) or when any band shows.
+{
+  for (const theme of themes) {
+    const tag = `AUD-20 ${theme}`;
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+    await page.addInitScript((t) => {
+      window.CapacitorCustomPlatform = { name: 'android' };
+      const listeners = {};
+      let status = { state: 'idle', freshness: 'DISCONNECTED', message: 'Ready to connect' };
+      let bpm = 118;
+      const emitBpm = () => { bpm = bpm >= 150 ? 118 : bpm + 1; for (const cb of listeners.watchMeasurement || []) cb({ bpm, contact: true, rrMs: [], energyKj: null, receivedAtEpochMs: Date.now(), receivedAtElapsedMs: performance.now() }); };
+      const setStatus = s => { status = { ...status, ...s }; for (const cb of listeners.watchStatus || []) cb(status); };
+      window.Capacitor = {
+        isNativePlatform: () => true,
+        Plugins: {
+          WatchBridge: {
+            isSupported: async () => ({ supported: true }),
+            permissionState: async () => ({ granted: true, needsLocation: false }),
+            requestPermissions: async () => ({ granted: true }),
+            startScan: async () => { setTimeout(() => { for (const cb of listeners.watchDevice || []) cb({ address: 'AA:BB', name: 'Test Watch', advertisesHeartRate: true, paired: false, rssi: -50 }); }, 50); },
+            stopScan: async () => {},
+            connect: async () => { setStatus({ state: 'connected', freshness: 'LIVE', deviceName: 'Test Watch', message: 'Connected' }); emitBpm(); setInterval(emitBpm, 1000); },
+            disconnect: async () => { setStatus({ state: 'idle', freshness: 'DISCONNECTED', deviceName: undefined, message: 'Disconnected' }); },
+            status: async () => status,
+            addListener: async (event, cb) => { (listeners[event] ||= []).push(cb); return { remove: () => {} }; },
+          },
+        },
+      };
+      const now = new Date().toISOString();
+      localStorage.setItem('marc.theme', t);
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions: [], active: null, customExercises: [],
+        preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, theme);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'Train' }).click();
+    await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
+    await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /^Start / }).first().click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Skip' }).click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: /^Start / }).first().click();
+    await page.waitForTimeout(300);
+    await page.locator('.watch-pill').click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Scan for a watch' }).click();
+    await page.waitForTimeout(300);
+    await page.getByText('Test Watch').click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Close' }).click();
+    await page.waitForTimeout(200);
+    const inputs = page.locator('.set-grid input');
+    await inputs.nth(0).fill('50'); await inputs.nth(1).fill('10'); await inputs.nth(1).blur();
+    await page.locator('.effort button.ideal').first().click();
+    await page.waitForTimeout(2500);
+    await page.getByRole('button', { name: 'Finish' }).click();
+    await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click();
+    await page.waitForTimeout(400);
+    if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) {
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
+      await page.waitForTimeout(400);
+    }
+    const kcal = page.getByText(/kcal active/).first();
+    if (!(await visible(kcal))) errors.push(`${tag}: no calorie line on the finish screen, so nothing was measured`);
+    else {
+      const line = (await kcal.innerText()).trim();
+      const view = await page.locator('.view').first().innerText().catch(() => '');
+      if (!/^About \d+ kcal active\./.test(line)) errors.push(`${tag}: the calorie line is not a plain estimate: ${JSON.stringify(line)}`);
+      if (/±|\d+\s*(?:to|–|-)\s*\d+\s*kcal/.test(line) || view.includes('±')) errors.push(`${tag}: a calorie band is shown: ${JSON.stringify(line)}`);
+    }
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-aud20-finish-kcal.png` });
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith('AUD-20 '))) console.log('AUD-20: finish-screen calories read "About N kcal active." with no ± or range band, verified in 5 themes');
+}
+
 // AUD-10: live workout, finish and past logging (audit UI-01, UI-03, UI-05, UI-09, OBS-LABELS).
 // One seeded split (bench, plank, farmer's carry): the past-session form saves a hold's seconds and
 // a carry's metres; the live inputs are named; Move up works by keyboard alone and saves the order a
@@ -7261,8 +7512,88 @@ for (const theme of ['silent-black', 'paper']) {
   if (!errors.some(e => e.startsWith(`${tag}`))) console.log('AUD-10: past hold/carry fields, live field names, keyboard Move up and substitute, Skip today keeps logged sets, future start refused, verified');
 }
 
+// AUD-12 (owner audit UI-08, UI-09): a fresh onboarding never shows (or saves) a sex the user has
+// not tapped, and the GoalSheet and Add-exercise choices — a Card with onClick and a plain
+// list-row — are reachable by real Tab presses and activate with Enter. tabTo walks Tab itself
+// (bounded) instead of assuming a stop count, so it still proves real keyboard reachability.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'AUD-12';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  const tabTo = async (selector, max = 25) => {
+    for (let i = 0; i < max; i++) {
+      if (await page.evaluate(sel => !!document.activeElement?.matches(sel), selector)) return true;
+      await page.keyboard.press('Tab');
+    }
+    return page.evaluate(sel => !!document.activeElement?.matches(sel), selector);
+  };
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+
+  // UI-08: saving onboarding without ever tapping Sex shows no segment lit, and saves nothing.
+  await page.getByRole('button', { name: 'Add my details' }).click(); await page.waitForTimeout(250);
+  if (await page.evaluate(() => !!document.querySelector('dialog[open] .seg[role="tablist"] button[aria-selected="true"]'))) {
+    errors.push(`${tag}: the onboarding Sex control shows a segment selected before it was ever tapped`);
+  }
+  await page.locator('label:has-text("Body weight") input').first().fill('80');
+  await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(300);
+  const savedSex = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') || '{}').profile?.sex);
+  if (savedSex !== undefined) errors.push(`${tag}: onboarding saved sex as ${JSON.stringify(savedSex)} without it being tapped`);
+
+  // UI-09: a GoalSheet choice (Coach.tsx's Card, kept keyboard-accessible through the Card fix
+  // in primitives.tsx) is reachable by Tab and Enter picks it.
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Change', exact: true }).click(); await page.waitForTimeout(300);
+  const GOAL_CARD = 'dialog[open] .card-press[role="button"]';
+  if (!(await tabTo(GOAL_CARD))) errors.push(`${tag}: could not reach a GoalSheet choice by Tab`);
+  else {
+    await page.keyboard.press('Enter'); await page.waitForTimeout(200);
+    if (!(await visible(page.locator('dialog[open]').getByText(/Apply \d+s rest/)))) errors.push(`${tag}: Enter on a focused GoalSheet choice did not pick a goal`);
+  }
+  await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+
+  // UI-09 (supervisor review fix on #156): an insight card's expand control is a separate real
+  // button (Coach.tsx's "Open <title>"), reachable by Tab even though the card itself stays
+  // mouse-only (it nests AskAbout and the Helpful/Not now buttons, so the Card fix skips it). The
+  // just-changed goal above leaves a "Goal changed" insight in the list to open.
+  const OPEN_INSIGHT = '[aria-label^="Open "]';
+  if (!(await tabTo(OPEN_INSIGHT))) errors.push(`${tag}: could not reach an insight's Open button by Tab`);
+  else {
+    const outline = await page.evaluate(() => getComputedStyle(document.activeElement).outlineStyle);
+    if (outline === 'none') errors.push(`${tag}: the focused insight Open button shows no focus ring (outlineStyle: ${outline})`);
+    const insightTitle = await page.evaluate(sel => document.activeElement?.getAttribute('aria-label')?.replace(/^Open /, ''), OPEN_INSIGHT);
+    await page.keyboard.press('Enter'); await page.waitForTimeout(250);
+    if (!insightTitle || !(await visible(page.locator('dialog[open] h2').getByText(insightTitle, { exact: true })))) errors.push(`${tag}: Enter on an insight's Open button did not open its sheet`);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+  }
+
+  // UI-09: an Add-exercise search result (ExercisePicker.tsx, now a Row instead of a click-only
+  // div) is reachable by Tab and Enter picks it.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  const tpl = page.getByRole('button', { name: 'Use Push / Pull / Legs' });
+  if (await tpl.isVisible().catch(() => false)) { await tpl.click(); await page.waitForTimeout(300); }
+  await page.locator('[data-palace="train.edit-split"]').first().click(); await page.waitForTimeout(300);
+  const dialogsBefore = await page.locator('dialog[open]').count();
+  await page.getByRole('button', { name: 'Add exercise', exact: true }).click();
+  await page.waitForSelector('dialog[open].nested'); await page.waitForTimeout(300);
+  const RESULT_ROW = 'dialog[open].nested .list-row.pressable';
+  if (!(await tabTo(RESULT_ROW))) errors.push(`${tag}: could not reach an Add-exercise result by Tab`);
+  else {
+    const picked = await page.evaluate(sel => document.activeElement?.querySelector('.grow > div')?.textContent?.trim(), RESULT_ROW);
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const dialogsAfter = await page.locator('dialog[open]').count();
+    if (dialogsAfter > dialogsBefore) errors.push(`${tag}: Enter on a focused Add-exercise result did not close the picker (${dialogsAfter} dialogs still open)`);
+    const splitText = await page.locator('dialog[open]').first().innerText().catch(() => '');
+    if (picked && !splitText.includes(picked)) errors.push(`${tag}: Enter on a focused Add-exercise result did not add "${picked}" to the split`);
+  }
+  await settle(page); await page.screenshot({ path: `${OUT}/aud-12-keyboard-access.png` });
+  await ctx.close();
+  if (!errors.some(e => e.startsWith(`${tag}:`))) console.log('AUD-12: onboarding Sex stays unset until tapped, and the GoalSheet, insight-open and Add-exercise choices are reachable and activate by keyboard');
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified, and HT-9 Show (every setup "Show me" button opens its close-up through the zoom host, Silent Black and Paper) verified, and HT-9 Order (the sheet\'s sections render in golden B\'s order on all 8 exercises) verified, and COPY-1 (Settings footer rights line under the logo and above the version line, hint style, no removed Settings copy, no medical reminder) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified, and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified, and HT-9 Show (every setup "Show me" button opens its close-up through the zoom host, Silent Black and Paper) verified, and HT-9 Order (the sheet\'s sections render in golden B\'s order on all 8 exercises) verified, and COPY-1 (Settings footer rights line under the logo and above the version line, hint style, no removed Settings copy, no medical reminder) verified, and AUD-20 (finish-screen calories are a plain estimate with no band in 5 themes) verified.');
