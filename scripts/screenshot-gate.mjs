@@ -7203,13 +7203,12 @@ const ht10Clock = { t0: Date.now(), lines: [] };
       // the script's own failures are the sweep's to report (A1); here it only has to run, so L3 still compares after it
       // eslint-disable-next-line no-new-func
       const mutate = new Function('pre', `return (${src})(pre).then(() => {})`);
-      for (const theme of a2Themes) {
-        const plates = H.HT_PLATES.filter(p => want('a2', theme).some(t => t.id === p[0]));
-        const a2 = await H.ht3Fidelity(ht10, PORT, { themes: [theme], full: [], widths: [], plates, mutate }).catch(e => crashed(`A2 ${theme}`, e));
-        a2Pairs += a2.stats.pairs ?? 0;
-        for (const p of a2.problems) fail(owner('a2', theme, p), theme, 'a2', `A2 (after the full script): ${p}`);
-        if ((a2.stats.pairs ?? 0) < plates.length * 2) fail('*', theme, 'a2', `A2 ${theme}: only ${a2.stats.pairs ?? 0} plate pairs compared, expected ${plates.length * 2}`);
-      }
+      // one side-by-side run over every theme with A2 tuples; a theme's plates are the ids with an A2 tuple in it
+      const plates = H.HT_PLATES.filter(p => a2Themes.some(th => want('a2', th).some(t => t.id === p[0])));
+      const a2 = await H.ht3Fidelity(ht10, PORT, { themes: a2Themes, full: [], widths: [], plates, mutate }).catch(e => crashed('A2', e));
+      a2Pairs = a2.stats.pairs ?? 0;
+      for (const p of a2.problems) { const theme = H.HT_THEMES.find(th => p.startsWith(th)) ?? 'silent-black'; fail(owner('a2', theme, p), theme, 'a2', `A2 (after the full script): ${p}`); }
+      if (a2Pairs < plates.length * a2Themes.length * 2) fail('*', 'silent-black', 'a2', `A2: only ${a2Pairs} plate pairs compared, expected ${plates.length * a2Themes.length * 2}`);
     }
     const minSteps = want('sweep').length * 15;
     if (tot.steps < minSteps) fail('*', 'silent-black', 'sweep', `A1: only ${tot.steps} script steps probed, expected at least ${minSteps}`);

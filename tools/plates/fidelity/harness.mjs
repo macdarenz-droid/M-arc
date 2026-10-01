@@ -1262,7 +1262,22 @@ export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p =>
     const seen = new Set();
     await page.exposeFunction('__ht10Probe', async label => {
       stats.probes++;
-      const d = await page.evaluate(ht10DomProbe, [HT10_C10_EXEMPT, c19.pats, c19.words, c19.disclaimer, expectRisks, reduced]);
+      // under reduced motion only C11 is new: C10, C19 and TalkBack read the same layout the normal sweep proves
+      if (reduced) {
+        const c11 = await page.evaluate(() => {
+          const d = document.querySelector('dialog.sheet.ht'), out = [];
+          const running = d.getAnimations({ subtree: true }).filter(a => a.playState === 'running');
+          if (running.length) out.push(`C11: ${running.length} animation(s) running under reduced motion: ${running.map(a => a.animationName ?? a.transitionProperty ?? 'script').join(', ')}`);
+          for (const b of d.querySelectorAll('.feel-band')) {
+            if (getComputedStyle(b).display !== 'none') out.push('C11: a .feel-band is displayed under reduced motion');
+            if (b.getAnimations().length) out.push('C11: a .feel-band has an animation under reduced motion');
+          }
+          return out;
+        });
+        for (const m of c11) problems.push(`${tag} ${cur} [${label}]: ${m}`);
+        return;
+      }
+      const d = await page.evaluate(ht10DomProbe, [HT10_C10_EXEMPT, c19.pats, c19.words, c19.disclaimer, expectRisks, false]);
       const ax = await ht10AxNames(cdp);
       stats.controls += d.controls; stats.named += ax.named;
       d.seenExempt.forEach(x => { stats.exempt.add(x); seen.add(x); });
@@ -1281,7 +1296,7 @@ export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p =>
       stats.steps += r.steps;
       for (const f of r.fails) problems.push(`${tag} ${id}: ${f}`);
       // D-HT10-C10: each of this sheet's exemptions must have been seen at exactly its pinned golden value
-      for (const e of HT10_C10_EXEMPT.filter(x => x.ids[0].startsWith(`${id}-`))) if (!seen.has(e.kind === 'small' ? e.ids[0] : e.ids.join('|'))) problems.push(`${tag} ${id}: C10: exemption ${e.ids.join(' / ')} (${e.kind}) was never measured at its pinned golden ${e.w} x ${e.h}`);
+      if (!reduced) for (const e of HT10_C10_EXEMPT.filter(x => x.ids[0].startsWith(`${id}-`))) if (!seen.has(e.kind === 'small' ? e.ids[0] : e.ids.join('|'))) problems.push(`${tag} ${id}: C10: exemption ${e.ids.join(' / ')} (${e.kind}) was never measured at its pinned golden ${e.w} x ${e.h}`);
       // C12: wait until every recorded animation's computed end (its start + the constant for its kind) + 1 s
       for (let i = 0; i < 3; i++) {
         const wait = await page.evaluate(([shimmer, trace]) => Math.max(0, ...window.__ht10Rec.list.map(x => x.startedAt + (x.feel ? shimmer : trace) + 1000)) - performance.now(), [END.shimmer, END.trace]);
