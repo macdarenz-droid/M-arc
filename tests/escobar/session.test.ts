@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { loadStore, memoryStorage, setEscobarStorage } from '@/escobar/store';
 import { activeConversation, resetConversations, send, setTransport, startNewConversation, stop } from '@/escobar/session';
 import { escobarUi } from '@/escobar/state';
+import { update as updateApp } from '@/core/store';
 import type { StreamEvent, Transport } from '@/escobar/transport';
 
 const answer = (text: string): StreamEvent[] => [{ t: 'text', d: text }, { t: 'final', content: [{ type: 'text', text }], stop_reason: 'end_turn', usage: { input_tokens: 10, output_tokens: 5 }, model: 'm' }];
@@ -24,7 +25,8 @@ function gated() {
 }
 const tick = () => new Promise(r => setTimeout(r, 0));
 
-beforeEach(() => { setEscobarStorage(memoryStorage()); resetConversations(); escobarUi.value = { ...escobarUi.value, mode: 'chat', draft: '' }; });
+// AUD-2: a turn only reaches the transport while the online coach is on.
+beforeEach(() => { updateApp(s => ({ ...s, escobar: { ...s.escobar, enabled: true } })); setEscobarStorage(memoryStorage()); resetConversations(); escobarUi.value = { ...escobarUi.value, mode: 'chat', draft: '' }; });
 afterEach(() => { vi.useRealTimers(); setTransport(null); });
 
 describe('Escobar session ownership (ES-05, ES-06, ES-07)', () => {

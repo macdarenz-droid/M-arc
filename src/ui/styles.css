@@ -842,6 +842,11 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 /* PLAY-1: the Settings "Privacy policy" link is drawn as a button, without the link underline. */
 a.btn[data-palace="settings.privacy"] { text-decoration: none; }
 
+/* ESC-REPORT */
+.esc-report{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.esc-report-btn{position:relative;display:inline-flex;align-items:center;min-height:32px;color:var(--text-2)}
+.esc-report-btn::before{content:"";position:absolute;inset:-6px 0}
+
 /* HT-3: the How-to entry (HOWTO_LABEL) on the Train card (.why-row wraps). Pill as the sheet's own Trace pill, >= 44x44. */
 .ht-entry { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-2); font-size: var(--fs-small); font-weight: var(--fw-medium); }
 .ht-entry svg { color: var(--accent-text); }

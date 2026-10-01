@@ -539,6 +539,7 @@ The owner chose these from rendered samples. Build them as written and don't red
   - Calling `__marcCrash('x')` removes `#launch`, and the crash box is visible.
   - Owner device check: smooth on a cold start, and no white frame in Silent Black.
 - **Risk:** Low. The failure mode is an overlay that never leaves. The 4000 ms cap, the crash hook and `pointer-events:none` on ready cover it.
+- **Note (BUG-34, 2026-09-30):** the line and dot now run on CSS animations (`stroke-dashoffset` keyframes and `offset-path`), not SMIL. Chromium starts SMIL only at the load event, after the bundle, so the first frame froze. Timings, curves and the end frame are unchanged. See D-BUG34-1 to D-BUG34-4 in docs/COACHING-DECISIONS.md.
 
 #### O2 Muscle panel: recovery timeline (owner pick B) — must, b8
 - **User sees:** today's panel is scattered: three stats, a long sentence with "2d to 3d", a duplicate "at a glance" line, and an exercise list that repeats itself. It becomes one clear panel:
