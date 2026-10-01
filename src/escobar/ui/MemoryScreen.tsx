@@ -1,4 +1,4 @@
-/** "What Escobar knows" (§17.2, ES-27): every remembered item, with delete per item and "Forget everything". */
+/** "Memory" (§17.2, ES-27): every remembered item, with delete per item and "Forget everything". */
 import { useState } from 'preact/hooks';
 import { Button, Row, Sheet } from '@/ui/primitives';
 import { IconTrash } from '@/ui/icons';
@@ -18,7 +18,7 @@ export function MemoryScreen({ onClose }: { onClose: () => void }) {
   const items = state.value.escobar.memory;
   const setMemory = (fn: (m: typeof items) => typeof items) => update(s => ({ ...s, escobar: { ...s.escobar, memory: fn(s.escobar.memory) } }));
   return (
-    <Sheet title="What Escobar knows" onClose={onClose} palace="panel.memory">
+    <Sheet title="Memory" onClose={onClose} palace="panel.memory">
       <div class="stack-sm">
         {!items.length && <p class="small muted">Nothing yet.</p>}
         {items.map(m => (

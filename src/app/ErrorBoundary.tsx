@@ -93,7 +93,7 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
     return (
       <div class="app">
         <div class="card stack-sm" role="alert" style={{ margin: 16 }}>
-          <b>Something went wrong on this screen</b>
+          <b>Screen error</b>
           <p class="small">Your data is still on this device.</p>
           <div class="grid-2">
             <button type="button" class="btn btn-primary" onClick={() => location.reload()}>Reload</button>
