@@ -76,7 +76,8 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
   /** A synthesized activation (TalkBack) carries no pointer, so detail is 0. A real keyboard tap
    * is handled by onKeyUp instead (preventDefault in onKeyDown stops its own click). */
   private onHoldClick = (e: MouseEvent): void => {
-    if (e.detail !== 0) this.armTap();
+    if (e.detail !== 0) return;
+    this.armTap();
   };
 
   private onHoldKeyUp = (e: KeyboardEvent): void => {
@@ -93,13 +94,13 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
       <div class="app">
         <div class="card stack-sm" role="alert" style={{ margin: 16 }}>
           <b>Something went wrong on this screen</b>
-          <p class="small">Your data is still on this device. Reload to carry on, or save a copy of your data first. If reloading brings this back, save a copy, then reset.</p>
+          <p class="small">Your data is still on this device.</p>
           <div class="grid-2">
             <button type="button" class="btn btn-primary" onClick={() => location.reload()}>Reload</button>
             <button type="button" class="btn" onClick={() => void saveRescueCopy()}>Save a copy of my data</button>
           </div>
           {/* QA10-4: the hold button alone doesn't say what it deletes, unlike the confirm() it replaced. */}
-          <p class="hint">Deletes every workout on this device. Save a copy first if unsure.</p>
+          <p class="hint">Deletes every workout on this device.</p>
           <button
             type="button"
             class={`btn btn-danger hold ${holding ? 'holding' : ''}`}

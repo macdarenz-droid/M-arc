@@ -123,8 +123,17 @@ function confirmedRecords(currentIn: ExerciseSessionSummary, priorIn: ExerciseSe
     }
   }
   if (mode === 'bodyweight' || mode === 'assisted') {
-    const prev = Math.max(0, ...prior.map(p => p.bestReps));
-    if (current.bestReps > prev && prev > 0) out.push({ ...base, kind: 'best_reps', detail: `${current.bestReps} reps`, value: current.bestReps, previous: prev });
+    // AUD-8 (SCI-05): a rep record beats the prior sets done with as much help or as little added
+    // load, never an easier set's reps against a harder one. No load logged reads as zero.
+    const done = prior.flatMap(trusted);
+    const asEasy = (p: LoggedSet, s: LoggedSet) => (mode === 'assisted' ? (p.kg ?? 0) >= (s.kg ?? 0) : (p.kg ?? 0) <= (s.kg ?? 0));
+    let best: { reps: number; prev: number } | null = null;
+    for (const s of trusted(current)) {
+      const reps = s.reps ?? 0;
+      const prev = Math.max(0, ...done.filter(p => asEasy(p, s)).map(p => p.reps ?? 0));
+      if (prev > 0 && reps > prev && (!best || reps > best.reps)) best = { reps, prev };
+    }
+    if (best) out.push({ ...base, kind: 'best_reps', detail: `${best.reps} reps`, value: best.reps, previous: best.prev });
   }
   if (mode === 'duration' || mode === 'conditioning') {
     const prev = Math.max(0, ...prior.map(p => p.bestDurationSec));

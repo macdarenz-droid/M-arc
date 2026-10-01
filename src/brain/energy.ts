@@ -44,11 +44,13 @@ export interface SessionEnergyInput {
   today: string;
   /** signalQuality() over the same series. */
   quality: number;
+  /** NAT-02: the session's training seconds (pauses out). The series' wall span includes paused gaps, so it caps the minutes. */
+  activeSec?: number;
 }
 
 /** Integrates grossKcalPerMin over the session's valid minutes. Null below profile completeness or quality 0.5. */
 export function sessionEnergy(input: SessionEnergyInput): SessionEnergy | null {
-  const { series, profile, today, quality } = input;
+  const { series, profile, today, quality, activeSec } = input;
   if (!series.length || quality < 0.5) return null;
   const bmr = bmrKcalPerDay(profile, today);
   const a = age(profile, today);
@@ -59,7 +61,8 @@ export function sessionEnergy(input: SessionEnergyInput): SessionEnergy | null {
   const rates = series.map(([, bpm]) => grossKcalPerMin(bpm, profile, today)!).filter(r => Number.isFinite(r));
   if (!rates.length) return null;
   const minutesCovered = series.length * (5 / 60);
-  const totalSessionSec = series[series.length - 1]![0] - series[0]![0] + 5;
+  const spanSec = series[series.length - 1]![0] - series[0]![0] + 5;
+  const totalSessionSec = activeSec != null && activeSec > 0 ? Math.min(spanSec, Math.max(activeSec, minutesCovered * 60)) : spanSec;
   const minutes = totalSessionSec / 60;
   const coveredKcal = rates.reduce((sum, r) => sum + r * (5 / 60), 0);
   const sorted = [...rates].sort((x, y) => x - y);

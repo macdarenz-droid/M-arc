@@ -77,14 +77,12 @@ describe('HT5-A1: generated, not typed', () => {
     }
   });
 
-  it('hand-editing a generated text field fails freshness: patching the committed module breaks its own inputsSha256 header', () => {
+  it('the committed module holds the literal cue string a hand edit would change (freshness itself is `generate --check` in the gate, not a unit test: review finding, PR #116)', () => {
     const path = `src/howto/generated/ht-${rows['lib_machine_chest_press']!.slug}.ts`;
     const committed = readFileSync(path, 'utf8');
+    expect(committed).toContain('Heel of palm, wrist straight.');
     const tampered = committed.replace('Heel of palm, wrist straight.', 'Something else entirely.');
     expect(tampered).not.toBe(committed);
-    const header = committed.match(/inputsSha256=([0-9a-f]{64})/)![1]!;
-    expect(tampered.includes(header)).toBe(true); // the header line is unchanged...
-    expect(tampered).not.toBe(committed); // ...but the text under it no longer matches: `generate --check` (gate) fails
   });
 
   it('a mapping that drops a golden-B field fails field coverage: baseFieldsText only emits known BuiltHowTo keys', () => {
@@ -92,6 +90,31 @@ describe('HT5-A1: generated, not typed', () => {
     const text = content.baseFieldsText(withExtra);
     expect(text).not.toContain('bogus');
     expect(text).toContain('rev: 1');
+  });
+
+  // Review finding (PR #116, Medium): the test above only shows an *unknown* key is dropped; nothing checked that
+  // every key the 8 vendored files actually use is *mapped*. A field added to golden B with no home in BASE_KEYS
+  // would silently vanish from the app. ALWAYS_OK mirrors the reviewer's own allowance ({schema, id, name, plate,
+  // zooms, feel}); PAGE_ONLY_KEYS (content.mjs) is the named list for the rest (today: `openItems`, leg_press).
+  const ALWAYS_OK = ['schema', 'id', 'name', 'plate', 'zooms', 'feel'];
+  const knownKeys = () => new Set([...content.BASE_KEYS, ...ALWAYS_OK, ...content.PAGE_ONLY_KEYS]);
+
+  it('every key the 8 vendored golden-B files use is in BASE_KEYS, {schema,id,name,plate,zooms,feel}, or PAGE_ONLY_KEYS', async () => {
+    const known = knownKeys(), keys = new Set<string>();
+    for (const id of IDS) {
+      const mod = await import(/* @vite-ignore */ url(`tools/plates/layers/exercises/${id.slice(4)}.howto.mjs`));
+      for (const k of Object.keys(mod.default)) keys.add(k);
+    }
+    const unmapped = [...keys].filter(k => !known.has(k));
+    expect(unmapped, 'add the field to content.mjs\'s BASE_KEYS (persisted) or PAGE_ONLY_KEYS (page-only, named), and record it in COACHING-DECISIONS.md').toEqual([]);
+  });
+
+  it('reproduces the reviewer\'s mutation in memory: a new golden-B field with no home (e.g. leg_press + `warmup`) fails the check above', async () => {
+    const known = knownKeys();
+    const legPress = (await import(/* @vite-ignore */ url('tools/plates/layers/exercises/leg_press.howto.mjs'))).default;
+    const mutatedKeys = Object.keys({ ...legPress, warmup: 'Two light sets first.' });
+    const unmapped = mutatedKeys.filter(k => !known.has(k));
+    expect(unmapped).toEqual(['warmup']);
   });
 });
 

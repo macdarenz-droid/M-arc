@@ -159,9 +159,7 @@ function Log() {
             action={split
               ? <Button variant="primary" onClick={() => { requestStart(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
               : <Button variant="primary" onClick={() => go('train')}>Go to Train</Button>}
-          >
-            Log a session from Train, or start one now.
-          </Empty>
+          />
         )}
         <div class="stack-sm">{recent.map(x => <SessionCard key={x.id} session={x} onEdit={() => setEditing(x)} />)}</div>
       </Section>
@@ -311,7 +309,7 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
             </div>
           </Card>
         ))}
-        <p class="hint">Sets with 0 reps are removed on save. Each load is shown in the unit it was logged in; tap the pill to switch.</p>
+        <p class="hint">Sets with 0 reps are removed on save.</p>
         <Button variant="primary" onClick={save}>Save changes</Button>
         {!confirm ? <Button variant="danger" onClick={() => setConfirm(true)}><IconTrash size={16} /> Delete session</Button> : <div class="row"><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" class="grow" onClick={remove}>Yes, delete</Button></div>}
       </div>
@@ -488,7 +486,6 @@ function Stats() {
             {muscleRows.map(([m, v]) => { const prev = (w.previousMuscleSets as Record<string, number>)[m] ?? 0; return (
               <div key={m}><div class="row-between small"><span>{muscleLabel(m)}</span><span class="muted num">{v} sets{prev ? <span class={v >= prev ? 'positive-text' : 'warning-text'}> {v >= prev ? '+' : ''}{Math.round((v - prev) * 10) / 10}</span> : null}</span></div><div class="bar"><i style={{ width: `${(v / maxSets) * 100}%` }} /></div></div>
             ); })}
-            <p class="hint">Effective sets: a direct set counts 1, a set where the muscle only helps counts ½.</p>
           </div>
         )}
       </Card>
@@ -496,7 +493,7 @@ function Stats() {
       <WeeklyVolumeChart u={u} />
 
       <Section title="Exercise progress" palace="history.exercise-stats" aside={exercise ? <AskAbout refTo={{ kind: 'exercise', id: exercise, label: `${exerciseIds.find(([id]) => id === exercise)?.[1] ?? 'Exercise'} trend` }} /> : undefined}>
-        {!exerciseIds.length ? <Card class="card-quiet"><p class="small muted">Log two sessions of an exercise to see its trend.</p></Card> : (
+        {!exerciseIds.length ? <Card class="card-quiet"><p class="small muted">No trends yet.</p></Card> : (
           <Card>
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
@@ -515,14 +512,14 @@ function Stats() {
                 <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} class="stat-hist-row" trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}<span style={{ whiteSpace: 'nowrap' }}>{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
                 <p class="hint">{progressHint(mode)}</p>
               </div>
-            ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far. The trend line appears after the second.</p>}
+            ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far.</p>}
           </Card>
         )}
       </Section>
 
       <Section title="Records" palace="history.records" aside={<Chip tone="positive"><IconTrophy size={16} /> {records.length}</Chip>}>
         <Card>
-          {!records.length ? <p class="small muted">Records appear from your second session of an exercise onward.</p> : (
+          {!records.length ? <p class="small muted">No records yet.</p> : (
             <div class="list">{records.map((r, i) => <Row key={i} trailing={<span class="hint">{formatDay(r.day)}</span>}><div class="small">{r.exerciseName}</div><div class="hint">{PR_LABEL[r.kind]} · {r.detail}</div></Row>)}</div>
           )}
         </Card>
