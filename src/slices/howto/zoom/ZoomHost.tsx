@@ -92,6 +92,19 @@ export function createZoomHost(api: PlateApi, setup: ZoomSetup): ZoomHost {
   const also = root.querySelector<HTMLElement>('.ht-also');
   const syncAlso = () => { if (also && btnMis) also.hidden = btnMis.getAttribute('aria-pressed') !== 'true'; };
 
+  /**
+   * HT-7 (D-HT7-L3-text-9, F1): while the zoom-in runs, a close-up's SVG text is laid out with
+   * `text-rendering: geometricPrecision`; on finish or cancel that is removed and the layout flushed, so the text's
+   * font at rest is first made at the final scale. Without it, Chromium could keep a font made mid-zoom for the whole
+   * tab (the squat's "Bony bump" read 0.16 % narrower in about 1 open in 7).
+   */
+  function textAtRest(panel: HTMLElement, a: Animation) {
+    const texts = panel.querySelectorAll<SVGElement>('svg text');
+    texts.forEach(t => { t.style.textRendering = 'geometricPrecision'; });
+    const rest = () => { texts.forEach(t => { t.style.textRendering = ''; }); void panel.getBoundingClientRect(); };
+    a.finished.then(rest, rest);
+  }
+
   async function open(k: string, from?: HTMLElement | null) {
     if (openKey === k) { close(false); return; }            // a second tap closes it
     const t = ++ticket;
@@ -118,6 +131,7 @@ export function createZoomHost(api: PlateApi, setup: ZoomSetup): ZoomHost {
         const pr = panel.getBoundingClientRect(), fr = (from || panel).getBoundingClientRect();
         panel.style.transformOrigin = far ? '50% 0' : (fr.left + fr.width / 2 - pr.left).toFixed(0) + 'px ' + (fr.top + fr.height / 2 - pr.top).toFixed(0) + 'px';
         anim = panel.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: tok('--dur-enter', 240), easing: ease('--ease-enter') });
+        textAtRest(panel, anim);
       }
       anim.onfinish = () => { anim = null; };
     }
