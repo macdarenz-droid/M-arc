@@ -7595,21 +7595,27 @@ for (const theme of ['silent-black', 'paper']) {
     try {
       const card = await H.openCard(page, 1);   // barbell back squat
       await card.locator('button.ht-entry').click();
-      // the frame after the chip is first in the DOM (its layout effects have run; the feel mount needs two more frames)
+      // the first frame a user could tap the chip (the sheet dialog open, the chip on screen), before the feel section is
+      // in: the sheet's opening effects (showModal, the plate API that binds HT-6's zoom host) run in a task after the
+      // first frame, so "one frame after the chip is in the DOM" can still be a closed dialog (CI, Chrome 153, e64cdb7)
       const at = await page.evaluate(() => new Promise(res => {
         const tick = () => {
-          const chip = document.querySelector('dialog.sheet.ht .zx-chip[data-feel]');
-          if (!chip) { requestAnimationFrame(tick); return; }
-          requestAnimationFrame(() => {
-            const host = document.querySelector('dialog.sheet.ht [data-section="feel"]');
-            const empty = !!host && !host.querySelector('.feel');
-            chip.click();
-            res({ empty, host: !!host });
-          });
+          const chip = document.querySelector('dialog.sheet.ht .zx-chip[data-feel]'), d = chip?.closest('dialog');
+          const r = chip?.getBoundingClientRect();
+          if (!d?.open || !r || r.height === 0 || r.bottom <= 0 || r.top >= innerHeight) { requestAnimationFrame(tick); return; }
+          const host = document.querySelector('dialog.sheet.ht [data-section="feel"]');
+          const empty = !!host && !host.querySelector('.feel');
+          let emitted = false;
+          const seen = () => { emitted = true; };
+          d.addEventListener('ht:feel-chip', seen, true);
+          chip.click();
+          d.removeEventListener('ht:feel-chip', seen, true);
+          res({ empty, host: !!host, emitted });
         };
         tick();
       }));
       if (!at.host || !at.empty) problems.push(`${theme}: the feel section was ${at.host ? 'already in' : 'missing'} at the tap, so the probe did not test a tap before the mount`);
+      if (!at.emitted) problems.push(`${theme}: the "Feel it" tap on an open sheet sent no ht:feel-chip (HT-6's zoom host not bound)`);
       const ok = await page.waitForFunction(() => {
         const f = document.querySelector('dialog.sheet.ht .feel'), p = f?.closest('.sheet-panel');
         if (!f || !p) return false;
