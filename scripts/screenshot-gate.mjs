@@ -7634,6 +7634,8 @@ for (const theme of ['silent-black', 'paper']) {
 // Black and Paper, plus each sheet under reduced motion.
 {
   const BUG37_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press', 'lib_barbell_row', 'lib_lat_pulldown', 'lib_dumbbell_shoulder_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_biceps_curl', 'lib_triceps_pushdown'];
+  // COPY-2 (D-COPY2-swap2): the swap runs use two chest lifts so the brief stays taller than the check-in (fewer soreness rows)
+  const BUG37_SWAP_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press'];
   // The BUG-36 seed (an 8-exercise split with history), copied so this block stands alone.
   const bug37Seed = ([t, EX, checked]) => {
     if (localStorage.getItem('marc.state.v1')) return;
@@ -7687,11 +7689,11 @@ for (const theme of ['silent-black', 'paper']) {
     const sy = new Set(frames.map(x => Math.round(x.sy))); if (sy.size !== 1) errors.push(`${tag}: the page scrolled while the sheet opened (${[...sy].join(' -> ')})`);
   };
   const bug37Open = async (page, tag, click, opts) => { const f = bug37Sample(page); await click(); bug37Check(tag, await f, opts); };
-  const bug37Load = async (ctx, tag, theme, checked) => {
+  const bug37Load = async (ctx, tag, theme, checked, ex = BUG37_EX) => {
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
     page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
-    await page.addInitScript(bug37Seed, [theme, BUG37_EX, checked]);
+    await page.addInitScript(bug37Seed, [theme, ex, checked]);
     await page.goto(`http://localhost:${PORT}/`);
     await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
     return page;
@@ -7727,7 +7729,7 @@ for (const theme of ['silent-black', 'paper']) {
     }
     // Not checked in: the check-in opens, then Skip gives way to the brief in the same sheet (the StartSheet swap).
     {
-      const ctx = await newCtx(); const page = await bug37Load(ctx, base, theme, false);
+      const ctx = await newCtx(); const page = await bug37Load(ctx, base, theme, false, BUG37_SWAP_EX);
       const cdp = await ctx.newCDPSession(page);
       const start = await bug37Start(page); await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
       await bug37Open(page, `${base} check-in`, () => start.click(), { minTravel, sheets: 1, still: reduce });
