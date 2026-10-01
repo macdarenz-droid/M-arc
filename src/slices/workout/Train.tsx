@@ -30,7 +30,7 @@ import { loadableValues } from '@/brain/units';
 import { KG_PER_LB } from '@/core/units';
 import { setEntryTarget } from './session';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, restDone, restTimerIsFloor, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, finishTiming, FINISH_MARGIN_SEC, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, restDone, restTimerIsFloor, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishCounts, finishSession, finishTiming, FINISH_MARGIN_SEC, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, startsInFuture, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -133,6 +133,19 @@ export function setAsideRows(next: Pick<Suggestion, 'cutSets' | 'sets'>, sets: L
     const w = workingIndex(sets, j);
     return !!next.cutSets && w != null && w >= next.sets.length && !hasEntry(set);
   });
+}
+
+/**
+ * AUD-10 (UI-06): the live card's kg/lb taps change the gym the session is running in, which can
+ * differ from the active gym once another gym is made active mid-session.
+ */
+export function liveUnitActions(exerciseId: string, ex: Exercise | undefined, eu: LoadUnit, gymId = state.value.active?.gymId ?? activeGymId()) {
+  const other: LoadUnit = eu === 'kg' ? 'lb' : 'kg';
+  return {
+    flip: () => setExerciseUnit(exerciseId, other, 'user', gymId),
+    flipGroup: () => { if (ex) { const g = equipmentGroup(ex.equipment); setEquipmentUnit(g, other, gymId); showToast(`${other} for all ${g} here`); } },
+    fixUnit: (unit: LoadUnit) => setExerciseUnit(exerciseId, unit, 'suspect_fix', gymId),
+  };
 }
 
 export function isNextUpCandidate(core: string | null, committed: boolean, kind: LoggedSet['kind']): boolean {
@@ -452,6 +465,11 @@ function LiveSession() {
         <div class={`stack reorder-list${reorder.dragging ? ' dragging' : ''}`} ref={reorder.listRef}>
           {a.entries.map((entry, i) => (
             <div key={`${entry.exerciseId}#${a.entries.slice(0, i).filter(e => e.exerciseId === entry.exerciseId).length}`} class={`reorder-item ${reorder.isLifted(i) ? 'lifted' : ''}`} data-entry-index={i} style={reorder.styleFor(i)} onPointerDown={reorder.onPointerDown(i)}>
+              {/* AUD-10 (UI-09): hidden until focused, so touch users see no new buttons. */}
+              {(['up', 'down'] as const).map(dir => <button key={dir} type="button" class="btn reorder-move" data-move={dir} aria-label={`Move ${dir}, ${entry.name}`} aria-disabled={dir === 'up' ? i === 0 : i === a.entries.length - 1} onClick={() => {
+                const to = i + (dir === 'up' ? -1 : 1);
+                if (reorder.moveBy(i, dir === 'up' ? -1 : 1, a.entries.length)) requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(`[data-entry-index="${to}"] .reorder-move[data-move="${dir}"]`)?.focus());
+              }}>Move {dir}</button>)}
               <EntryCard index={i} entry={entry} open={open === i} onToggle={() => { if (reorder.clickAllowed()) setOpen(open === i ? -1 : i); }} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); scrollToEntry(next); }} />
             </div>
           ))}
@@ -466,8 +484,7 @@ function LiveSession() {
             {remaining.length > 0 && <p class="small muted">{remaining.length} exercise{remaining.length > 1 ? 's' : ''} not marked done.</p>}
             <div class="grid-3">
               <div class="stat"><b class="num" data-finish-duration><Elapsed a={a} /></b><span>duration</span></div>
-              {(() => { const nEx = a.entries.filter(e => e.sets.some(isWorkingSet)).length; return <div class="stat"><b class="num">{nEx}</b><span>exercise{nEx === 1 ? '' : 's'}</span></div>; })()}
-              {(() => { const nSets = a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0); return <div class="stat"><b class="num">{nSets}</b><span>set{nSets === 1 ? '' : 's'}</span></div>; })()}
+              {(() => { const { exercises: nEx, sets: nSets } = finishCounts(a); return <><div class="stat"><b class="num" data-finish-exercises>{nEx}</b><span>exercise{nEx === 1 ? '' : 's'}</span></div><div class="stat"><b class="num" data-finish-sets>{nSets}</b><span>set{nSets === 1 ? '' : 's'}</span></div></>; })()}
             </div>
             <TrimmedEndNote a={a} />
             <EffortRepair a={a} />
@@ -505,7 +522,8 @@ function WatchPill() {
 /** F9: before saving, the working sets that have no effort yet (max 12), rated inline. Skipping is fine. */
 function EffortRepair({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
   const [skipped, setSkipped] = useState(false);
-  const missing = a.entries.flatMap((e, i) => (e.skipped ? [] : e.sets.map((set, j) => ({ i, j, e, set })))).filter(x => isWorkingSet(x.set) && !x.set.effort).slice(0, 12);
+  // AUD-10 (UI-01): a skipped entry's logged sets are saved too, so they can be rated here.
+  const missing = a.entries.flatMap((e, i) => e.sets.map((set, j) => ({ i, j, e, set })).filter(x => !e.skipped || isCommitted(x.set))).filter(x => isWorkingSet(x.set) && !x.set.effort).slice(0, 12);
   if (skipped || !missing.length) return null;
   return (
     <div class="stack-sm" data-palace="train.effort-repair">
@@ -652,8 +670,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const sticky = s.exerciseNotes[entry.exerciseId];
   const barbell = !!(profile.plates?.length || profile.barKg) && mode === 'weighted';
   const best = useMemo(() => (mode === 'weighted' ? recentBestKg(s.sessions, entry.exerciseId, s.customExercises) : null), memoDeps);
-  const flip = () => setExerciseUnit(entry.exerciseId, eu === 'kg' ? 'lb' : 'kg');
-  const flipGroup = () => { if (ex) { const g = equipmentGroup(ex.equipment); setEquipmentUnit(g, eu === 'kg' ? 'lb' : 'kg'); showToast(`${eu === 'kg' ? 'lb' : 'kg'} for all ${g} here`); } };
+  const { flip, flipGroup, fixUnit } = liveUnitActions(entry.exerciseId, ex, eu);
   // A8: Enter moves kg -> reps -> the next set's kg, in DOM order; past the last field it blurs
   // (the reps field's blur already commits, same as tapping away).
   const onSetFieldKeyDown = (e: KeyboardEvent) => {
@@ -811,11 +828,11 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                 <div class={`set-grid ${isTimed ? 'duration' : ''} ${isCommitted(set) ? 'committed' : ''}`} data-set-aside={aside[j] ? '' : undefined} style={aside[j] ? { opacity: 0.55 } : undefined}>
                   <button type="button" class={`set-index set-kind ${set.kind ?? ''} ${isCommitted(set) ? 'committed' : ''}`} aria-label={isCommitted(set) ? `Set ${j + 1}, logged. Options` : `Set ${j + 1} options`} onClick={() => setSetMenuAt(j)}>{isCommitted(set) && set.kind !== 'warmup' && set.kind !== 'drop' && set.kind !== 'failure' ? <IconCheck size={16} /> : set.kind === 'warmup' ? 'W' : set.kind === 'drop' ? 'D' : set.kind === 'failure' ? 'F' : j + 1}</button>
                   {isTimed ? (
-                    <input type="number" inputMode="numeric" placeholder={aside[j] ? '' : String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
+                    <input type="number" inputMode="numeric" aria-label={`${entry.name}, set ${j + 1}, seconds`} placeholder={aside[j] ? '' : String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
                       <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={aside[j] ? '' : targetKgPh(target, prev, eu, mode)} ariaLabel={loadAriaLabel(mode, eu)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} setField onFieldKeyDown={onSetFieldKeyDown} />
-                      <input type="number" inputMode="numeric" placeholder={aside[j] ? '' : targetRepsPh(target, prev)} value={set.reps ?? ''} data-set-field="reps" enterKeyHint={j === entry.sets.length - 1 ? 'done' : 'next'} onFocus={e => (e.target as HTMLInputElement).select()} onKeyDown={onSetFieldKeyDown} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
+                      <input type="number" inputMode="numeric" aria-label={`${entry.name}, set ${j + 1}, reps`} placeholder={aside[j] ? '' : targetRepsPh(target, prev)} value={set.reps ?? ''} data-set-field="reps" enterKeyHint={j === entry.sets.length - 1 ? 'done' : 'next'} onFocus={e => (e.target as HTMLInputElement).select()} onKeyDown={onSetFieldKeyDown} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
                   <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => {
@@ -848,11 +865,11 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                 {mode === 'conditioning' && (
                   // UI-20: carries and sled work log distance and time next to load and reps.
                   <div class="row conditioning-extra" style={{ gap: 8, marginTop: 4 }}>
-                    <input type="number" inputMode="numeric" aria-label="Distance in metres" placeholder="m" value={set.distanceM ?? ''} onInput={e => { const v = Number((e.target as HTMLInputElement).value); setSet(index, j, { distanceM: v >= 1 && v <= 1000 ? Math.round(v) : undefined }); }} onBlur={() => commitSet(index, j)} />
-                    <input type="number" inputMode="numeric" aria-label="Seconds" placeholder="s" value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
+                    <input type="number" inputMode="numeric" aria-label={`${entry.name}, set ${j + 1}, metres`} placeholder="m" value={set.distanceM ?? ''} onInput={e => { const v = Number((e.target as HTMLInputElement).value); setSet(index, j, { distanceM: v >= 1 && v <= 1000 ? Math.round(v) : undefined }); }} onBlur={() => commitSet(index, j)} />
+                    <input type="number" inputMode="numeric" aria-label={`${entry.name}, set ${j + 1}, seconds`} placeholder="s" value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   </div>
                 )}
-                <SuspectChip set={set} best={best} dismissKey={`${s.active?.startedAt}|${entry.exerciseId}|${j}|${set.kg}`} onFix={alt => { setSet(index, j, { kg: alt.kg, entered: { value: alt.value, unit: alt.unit } }); setExerciseUnit(entry.exerciseId, alt.unit, 'suspect_fix'); }} />
+                <SuspectChip set={set} best={best} dismissKey={`${s.active?.startedAt}|${entry.exerciseId}|${j}|${set.kg}`} onFix={alt => { setSet(index, j, { kg: alt.kg, entered: { value: alt.value, unit: alt.unit } }); fixUnit(alt.unit); }} />
               </div>
             );
           }); })()}
@@ -945,13 +962,11 @@ function SubstituteSheet({ exercise, custom, onPick, onClose }: { exercise: Exer
     <Sheet title={`Substitute ${exercise.name}`} onClose={onClose}>
       <div class="list">
         {subs.map(e => (
-          <div key={e.id} class="list-row pressable" onClick={() => onPick(e)}>
-            <div class="grow">
-              <div>{e.name}</div>
-              <div class="hint">{e.equipment} · {e.primary.map(muscleLabel).join(', ')}</div>
-            </div>
-            <span class="chip">Swap</span>
-          </div>
+          // AUD-10 (UI-09): a Row, so each substitute is reachable and picked by keyboard too.
+          <Row key={e.id} onClick={() => onPick(e)} trailing={<span class="chip">Swap</span>}>
+            <div>{e.name}</div>
+            <div class="hint">{e.equipment} · {e.primary.map(muscleLabel).join(', ')}</div>
+          </Row>
         ))}
         {!subs.length && <p class="small muted" style={{ padding: '12px 0' }}>No substitutes found.</p>}
       </div>
@@ -1054,11 +1069,15 @@ function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; on
   const [guessTime] = useState(() => guessedEndsInFuture ? fallbackStart.toTimeString().slice(0, 5) : guessedTime);
   const [day, setDay] = useState(guessDay);
   const [time, setTime] = useState(guessTime);
-  const valid = !!day && !!time && parseMinutes(durText) != null;
+  // AUD-10 (UI-05): a start after now is not saved; Save stays off, as in "Log a past session".
+  const inFuture = !!day && !!time && startsInFuture(`${day}T${time}`);
+  const valid = !!day && !!time && parseMinutes(durText) != null && !inFuture;
 
   const resolve = (timeSource: 'user' | 'schedule' | 'default') => {
     // QA-R2c-2: Skip and close with a cleared field fall back to the guess the sheet opened with.
-    const at = day && time ? `${day}T${time}` : `${guessDay}T${guessTime}`;
+    // AUD-10 (UI-05): so does a start after now; Save never closes the sheet on a time it did not save.
+    const at = day && time && !inFuture ? `${day}T${time}` : `${guessDay}T${guessTime}`;
+    if (timeSource === 'user' && !valid) return;
     resolveSessionTiming(summary.session.id, at, duration, timeSource);
     const updated = state.value.sessions.find(x => x.id === summary.session.id)!;
     onResolved({ session: updated, changedTemplate: summary.changedTemplate });
@@ -1069,10 +1088,10 @@ function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; on
       <div class="stack">
         <p class="small muted">Looks like you logged this after training.</p>
         <div class="grid-2">
-          <Field label="Day"><input type="date" value={day} onInput={e => setDay((e.target as HTMLInputElement).value)} /></Field>
+          <Field label="Day"><input type="date" max={today.value} value={day} onInput={e => setDay((e.target as HTMLInputElement).value)} /></Field>
           <Field label="Start time"><input type="time" value={time} onInput={e => setTime((e.target as HTMLInputElement).value)} /></Field>
         </div>
-        <Field label="Duration (minutes)"><input type="text" inputMode="numeric" value={durText} onInput={e => setDurText((e.target as HTMLInputElement).value)} /></Field>
+        <Field label="Duration (minutes)" hint={inFuture ? 'That start time is in the future.' : undefined}><input type="text" inputMode="numeric" value={durText} onInput={e => setDurText((e.target as HTMLInputElement).value)} /></Field>
         <div class="row"><Button variant="quiet" onClick={() => resolve('schedule')}>Skip</Button><Button variant="primary" class="grow" disabled={!valid} onClick={() => resolve('user')}>Save</Button></div>
         <Button variant="quiet" size="sm" onClick={() => {
           // The session ends now; start is `duration` minutes before that (never a future timestamp).
@@ -1093,8 +1112,8 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
   const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 5)); // never defaults into the future
   const [durText, setDurText] = useState('60');
   const duration = parseMinutes(durText);
-  const startsInFuture = !!day && !!time && new Date(`${day}T${time}`).getTime() > Date.now();
-  const valid = !!day && !!time && duration != null && !startsInFuture;
+  const inFuture = !!day && !!time && startsInFuture(`${day}T${time}`);
+  const valid = !!day && !!time && duration != null && !inFuture;
   const [entries, setEntries] = useState(() => split.exercises.map(se => {
     const ex = findExercise(se.exerciseId, s.customExercises);
     return { exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: Array.from({ length: se.sets }, () => ({}) as import('@/core/models').LoggedSet) };
@@ -1114,28 +1133,49 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
     <Sheet title={`Log ${split.name}`} onClose={onClose}>
       <div class="stack">
         <div class="grid-2">
-          <Field label="Day"><input type="date" value={day} onInput={e => setDay((e.target as HTMLInputElement).value)} /></Field>
+          <Field label="Day"><input type="date" max={today.value} value={day} onInput={e => setDay((e.target as HTMLInputElement).value)} /></Field>
           <Field label="Start time"><input type="time" value={time} onInput={e => setTime((e.target as HTMLInputElement).value)} /></Field>
         </div>
-        <Field label="Duration (minutes)" hint={startsInFuture ? 'That start time is in the future.' : undefined}><input type="text" inputMode="numeric" value={durText} onInput={e => setDurText((e.target as HTMLInputElement).value)} /></Field>
-        {entries.map((entry, ei) => (
-          <Card key={entry.exerciseId}>
-            <b class="small">{entry.name}</b>
-            <div class="set-grid" style={{ marginTop: 6 }}><span class="set-index">Set</span><span class="hint">{loadColumnLabel(findExercise(entry.exerciseId, s.customExercises)?.mode ?? 'weighted', profileFor(entry.exerciseId).unit)}</span><span class="hint">reps</span><span class="hint">effort</span></div>
-            {entry.sets.map((set, si) => (
-              <div key={si} class="set-grid">
-                <span class="set-index">{si + 1}</span>
-                <WeightInput kg={set.kg} entered={set.entered} entryUnit={profileFor(entry.exerciseId).unit} displayUnit={u} ariaLabel={loadAriaLabel(findExercise(entry.exerciseId, s.customExercises)?.mode ?? 'weighted', profileFor(entry.exerciseId).unit)} onChange={v => patchSet(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setExerciseUnit(entry.exerciseId, profileFor(entry.exerciseId).unit === 'kg' ? 'lb' : 'kg')} />
-                <input type="number" inputMode="numeric" value={set.reps ?? ''} onInput={e => patchSet(ei, si, { reps: parseReps((e.target as HTMLInputElement).value) })} />
-                <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => patchSet(ei, si, { effort: set.effort === ef.v ? undefined : ef.v })}>{ef.l}</button>)}</div>
+        <Field label="Duration (minutes)" hint={inFuture ? 'That start time is in the future.' : undefined}><input type="text" inputMode="numeric" value={durText} onInput={e => setDurText((e.target as HTMLInputElement).value)} /></Field>
+        {entries.map((entry, ei) => {
+          // AUD-10 (UI-03): the same fields as the live card for each mode: seconds for a hold,
+          // and metres and seconds next to load and reps for a carry or sled.
+          const mode = findExercise(entry.exerciseId, s.customExercises)?.mode ?? 'weighted';
+          const isTimed = mode === 'duration';
+          const eu = profileFor(entry.exerciseId).unit;
+          return (
+            <Card key={entry.exerciseId}>
+              <b class="small">{entry.name}</b>
+              <div class={`set-grid ${isTimed ? 'duration' : ''}`} style={{ marginTop: 6 }}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{loadColumnLabel(mode, eu)}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
+              {entry.sets.map((set, si) => (
+                <div key={si}>
+                  <div class={`set-grid ${isTimed ? 'duration' : ''}`}>
+                    <span class="set-index">{si + 1}</span>
+                    {isTimed ? (
+                      <input type="number" inputMode="numeric" aria-label={`${entry.name}, set ${si + 1}, seconds`} value={set.durationSec ?? ''} onInput={e => patchSet(ei, si, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} />
+                    ) : (
+                      <>
+                        <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} ariaLabel={loadAriaLabel(mode, eu)} onChange={v => patchSet(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setExerciseUnit(entry.exerciseId, eu === 'kg' ? 'lb' : 'kg')} />
+                        <input type="number" inputMode="numeric" aria-label={`${entry.name}, set ${si + 1}, reps`} value={set.reps ?? ''} onInput={e => patchSet(ei, si, { reps: parseReps((e.target as HTMLInputElement).value) })} />
+                      </>
+                    )}
+                    <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => patchSet(ei, si, { effort: set.effort === ef.v ? undefined : ef.v })}>{ef.l}</button>)}</div>
+                  </div>
+                  {mode === 'conditioning' && (
+                    <div class="row conditioning-extra" style={{ gap: 8, marginTop: 4 }}>
+                      <input type="number" inputMode="numeric" aria-label={`${entry.name}, set ${si + 1}, metres`} placeholder="m" value={set.distanceM ?? ''} onInput={e => { const v = Number((e.target as HTMLInputElement).value); patchSet(ei, si, { distanceM: v >= 1 && v <= 1000 ? Math.round(v) : undefined }); }} />
+                      <input type="number" inputMode="numeric" aria-label={`${entry.name}, set ${si + 1}, seconds`} placeholder="s" value={set.durationSec ?? ''} onInput={e => patchSet(ei, si, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} />
+                    </div>
+                  )}
+                </div>
+              ))}
+              <div class="row">
+                <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: [...e.sets, {}] })))}><IconPlus size={16} /> Set</Button>
+                <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.slice(0, -1) })))} disabled={entry.sets.length <= 1}><IconMinus size={16} /> Set</Button>
               </div>
-            ))}
-            <div class="row">
-              <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: [...e.sets, {}] })))}><IconPlus size={16} /> Set</Button>
-              <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.slice(0, -1) })))} disabled={entry.sets.length <= 1}><IconMinus size={16} /> Set</Button>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
         <Button variant="primary" block disabled={!valid} onClick={save}>Save past session</Button>
       </div>
     </Sheet>

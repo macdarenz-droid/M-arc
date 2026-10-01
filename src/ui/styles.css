@@ -842,6 +842,11 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 /* PLAY-1: the Settings "Privacy policy" link is drawn as a button, without the link underline. */
 a.btn[data-palace="settings.privacy"] { text-decoration: none; }
 
+/* AUD-10 (UI-09): live reorder's Move up / Move down (Train.tsx), for keyboard and screen readers.
+   Hidden like .sr-only until focused; then drawn over the card's top-right corner with the focus ring. */
+.reorder-move:not(:focus) { position: absolute; width: 1px; height: 1px; min-height: 0; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.reorder-move:focus { position: absolute; top: 8px; right: 8px; z-index: 4; outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
 /* HT-3: the How-to entry (HOWTO_LABEL) on the Train card (.why-row wraps). Pill as the sheet's own Trace pill, >= 44x44. */
 .ht-entry { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-2); font-size: var(--fs-small); font-weight: var(--fw-medium); }
 .ht-entry svg { color: var(--accent-text); }

@@ -1287,3 +1287,23 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the app's own repair message in `src/escobar/verify.ts` (`repairInstruction`, which ends "then restate the answer.") and its test are not changed here. That app-side wording belongs to BUG-31, which does not depend on this Worker change and works with the old or the new prompt.
   **Why**: `src/**` is reserved for this card, and a Worker change is merged and deployed only by the owner, in its own PR.
   **Source**: card ESC-W-CITE, reserved_paths.
+
+## AUD-10: live workout, finish and past logging (AUD-10 builder, 2026-10-01)
+
+- **D-AUD10-1 Decided**: "Skip today" skips what is left of an exercise. Its logged (committed) sets are saved at Finish; sets that were only typed and never logged are dropped with the skip. The Finish sheet's exercise and set counts come from `savedExercises`, the same list `finishSession` saves, and the effort check before saving lists the skipped exercise's logged sets too. A skip still leaves the exercise out of "Save for future".
+  **Why**: the audit's remedy (UI-01) is to keep performed work and to count from the saved projection. A committed set is work that was done; a typed but unlogged row on an exercise the person then skipped is not. The template rule is unchanged because a skip is a one-day choice.
+  **Source**: card AUD-10, UI-01; `src/slices/workout/session.ts`.
+- **D-AUD10-2 Decided**: one rule, `startsInFuture`, refuses a start after now in both timing paths: `resolveSessionTiming` returns false and `logPastSession` returns null. In "When did you train?", Save stays off for a future start and shows the past-session form's existing line "That start time is in the future."; Skip and closing the sheet fall back to the guess the sheet opened with. Both date fields get `max` = today. The end of the interval is not bounded.
+  **Why**: the past-session form already refused a future start, so the same rule now covers both paths (UI-05). Bounding the end too would make the past-session form's own default (start now, 60 minutes) invalid; a start in the past with a long duration does not move the workout into a future day.
+  **Source**: card AUD-10, UI-05.
+- **D-AUD10-3 Decided**: the live card's kg/lb tap, long-press group change and suspect-unit fix all write to the session's gym (`active.gymId`, falling back to the active gym), through `liveUnitActions` in Train.tsx. `units.ts` needed no change: its functions already take a gym.
+  **Why**: the card already shows the session gym's units; the writes now go to the same gym (UI-06). Switching the session's gym when another gym is made active was not chosen, because it would change the targets of a session already under way.
+  **Source**: card AUD-10, UI-06.
+- **D-AUD10-4 Decided**: "Log a past session" uses the live card's fields for each mode: seconds for a hold, load and reps plus metres and seconds for a carry or sled, load and reps otherwise. No new saved fields: `durationSec` and `distanceM` already exist on a set.
+  **Source**: card AUD-10, UI-03.
+- **D-AUD10-5 Decided**: accessible names for set fields read "{exercise}, set {n}, reps" (or "seconds" or "metres"), on the live card and the past-session form. The carry's old names "Distance in metres" and "Seconds" become the same pattern. Substitutes are `Row`s (role button, Tab and Enter or Space), like the other pressable lists.
+  **Why**: OBS-LABELS asks for names that include the exercise, set and measurement; the column headers already use "reps", "seconds" and "m".
+  **Source**: card AUD-10, OBS-LABELS and UI-09 (Train.tsx substitute list).
+- **D-AUD10-6 Decided**: each live exercise has two buttons, "Move up" and "Move down", named "Move up, {exercise}" so the visible words start the name. They are hidden like `.sr-only` until they get focus, then drawn over the card's top-right corner with the focus ring, so touch users see nothing new. They call the same `onMove` a drop calls (`moveEntry` and the open-card follow), one place at a time; at either end the button is `aria-disabled` and does nothing (it stays focusable, so focus is not lost). After a move, focus goes back to the same button on the moved exercise.
+  **Why**: the owner's accepted default for UI-09 reorder. Reusing `onMove` makes the saved order identical to a drag's.
+  **Source**: card AUD-10 (owner default, UI-09 reorder); `src/slices/workout/reorder.ts` `moveBy`.
