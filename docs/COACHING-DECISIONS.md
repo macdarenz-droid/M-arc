@@ -1707,3 +1707,7 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
 - **Done**: the inline style is gone. `src/ui/styles.css` gets a class instead, next to `.insight-cat` and using the same shape as `.set-kind` (`all: unset` plus its own `:focus-visible` restated after it, because `all: unset` at equal specificity would otherwise beat the shared `:where()` rule too): `.insight-open { all: unset; display: inline-flex; cursor: pointer; border-radius: var(--radius-xs); }` and `.insight-open:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }`. Coach.tsx's button now reads `class="insight-open"` with no `style` prop.
   **Why**: a class can be targeted by a stylesheet rule; an inline style cannot, short of another inline style (which can't express `:focus-visible`). This file is append-only, so the addendum above is left as written and corrected here rather than edited.
   **Source**: supervisor review "## REVIEW AUD-12 @ b8636b8: FAIL" on PR #156.
+
+## LIB-3: plate QA gate (LIB-3 builder, 2026-10-01)
+
+Decisions are added here as the card is built (D-LIB3-*).
