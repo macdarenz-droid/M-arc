@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-01 ~09:00 UTC · main `958a3de` (merge train 5 #169, AUD-20) · by supervisor session `session_01Tc7uLSdp7LGknt8xc1i9dc` on the owner's current account. Rows in section 8 that this update did not re-check say so. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-01 ~10:20 UTC · main `1fcd9c8` (merge train 6 #170, BUG-36 + the 09:00 handover) · by supervisor session `session_01Tc7uLSdp7LGknt8xc1i9dc` on the owner's current account. Rows in section 8 that this update did not re-check say so. Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -186,6 +186,8 @@ Owner typos are kept as he wrote them.
 
 ### 4.1 Decisions (newest first within each group)
 
+- **Skills (owner, 10-01 09:20):** "I added few skills for u. Use whats necessary only. And still follow agents.md dont use skill for trial if available skill. Use when needed" (anthropic-skills: doc-coauthoring, internal-comms, learn, theme-factory, web-artifacts-builder). Use a skill only when a task truly needs it; AGENTS.md comes first.
+
 | Topic | Decision (verbatim where it matters) | When (UTC) | Recorded in |
 |---|---|---|---|
 | **Handover in the repo** | "Just keep updating the supervisor handoff too in repo whatever task is done. And whats left or parked, and important matters. Put source code or artifacts in repo too for ur research and architectures. So if i change acct. Another claude agent can continue. I have other pro max acct. Can use. Put how u manage workers, how u do parallels etc. Almost everything done by a supervisor" (full quote also in 3.9). Applied: this file rides in every merge train (section 11); research in `docs/research/`; tooling in `docs/supervisor/{scripts,workflows}/`; message texts in `docs/supervisor/PROMPTS.md`. | 10-01 08:28 | this file; Relay LOG |
@@ -272,8 +274,19 @@ Owner typos are kept as he wrote them.
 - HT-4's `ACTIVE_HANG` Right crops stay, as enumerated owner-approved poses.
 - **D-HT7-L3-text (10-01, on #119).** The L3 gate stays at 0 px. One re-open is allowed, only when every differing pixel lies inside an SVG `<text>` box; geometry changes are never re-opened. Built (`abcc221`), but it does not clear the squat "Bony bump" label variance. Accepting the variance is refused: AGENTS.md's "never loosen a check" holds whoever asks.
 - **D-HT7-L3-text-2..6 (10-01, on #119): every lead failed.** Tried: (a) local relayout, (b) zoom after `scrollend`, (d) rAF integer-scrollTop smooth scroll, (e) instant scroll, (g1/g2) commit the Mistake→normal mode before zoom, (h) pre-warm, (i) the golden's font face. Facts: golden B 0/300 bad vs the app 42/300 in the same runs under gate load; a bad state holds per tab (a fresh `<text>` in a bad tab is bad, a fresh tab is good). Nothing was shipped. A supervisor root-cause Workflow (4 lenses + a judge; script in `docs/supervisor/workflows/`) was running at 08:05. HT-7 is the critical path.
+- **D-HT7-L3-text-7 (10-01 09:26, on #119).** The root-cause Workflow (result: `docs/supervisor/workflows/ht7-label-variance-rootcause.result.md`) found that in Chromium 141 an SVG `<text>`'s font size includes outer CSS transforms (`CalculateScreenFontSizeScalingFactor`), so a mid-zoom layout can bake a ~18.69 px font into the label. E1 (logging only, in-page, no `place()`) showed 14/60 bad at rest with CTM exactly 1.91058, a fresh 4.9 text bad and 4.89 good, and neither `geometricPrecision` nor a `scale(1)` flip heals it: a per-tab font state.
+- **D-HT7-L3-text-8 (10-01 09:34): WITHDRAWN at 10:16.** It claimed the variance was local Chromium 141 only, from two clean CI runs. CI's Chrome 153 shows it too (run 36844228204, `source-gate`, silent-black, 1876 px inside "Bony bump"; earlier 45ac330). Two clean runs prove nothing about an intermittent failure.
+- **D-HT7-L3-text-9 (10-01 10:16, on #119).** Diagnostics E6 (open from the chip, not Mistake), E4a (FontFace add/delete in a bad tab), E4b (same-origin srcdoc iframe); fix candidates F1 (`geometricPrecision` on the crop text only while the enter animation runs) and F2 (start the zoom only after the plate's Mistake→normal animations finish). Ship only at 0/300 under gate load, L3 0 px, L4 unchanged, with a mutation check. If neither works, a golden or motion change is the owner's decision.
 - **HT-8 brachialis = golden-B gap (10-01 05:02, on #111).** The brachialis helper on lat pulldown and seated cable row is named nowhere in golden B's feel map. Not an HT-8 defect. Golden B gets a feel-note for both through the golden update (plan 2.8) before M1; that removes both `GOLDEN_B_UNNAMED` entries in `tests/howto/feel.test.ts`.
 - **HT-9 Setup placement (10-01).** The section order follows golden B: Look closer chips → grip → feel → setup → risks.
+- **D-HT7-L3-text-9 outcome (10-01 12:00).** F1 accepted. `ZoomHost.tsx` `textAtRest` applies `geometricPrecision` only while the zoom-in runs: 0 bad in 300 under gate load, L3 0 px, L4 80/80. Without it, 21 and 30 bad in 150. Gate block HT-7 adds a 30-open label check (emerald). HT-7 PASS @ `14fb8b7` 12:53. A follow-up (D-HT7-F1b) extends that check to all 5 themes; in emerald alone it catches F1's removal only 1 run in 3.
+- **D-SUP-CI-1 (10-01 11:30, #174).** `source-gate` and `visual-gate-tz` `timeout-minutes` 40 → 60. Measured: main 30.7 min, HT-9's head 38.2. No block or check changed. Follow-up GATE-SPLIT (after the finish line): shard the gate across jobs.
+- **D-HT10-A5c (10-01 11:30, #166).** The 30 min existing-job budget becomes "HT-10 adds at most 60 s to each existing job", measured head minus base.
+- **D-HT10-A3m and D-HT9-A3b (10-01 12:20, #166 and #113).**
+  - HT-3b's A3 check (no task over 100 ms at 4x while the sheet opens) is flaky on main itself: 1 run in 3 locally.
+  - HT-10 root-causes it on the full sheet: 0 of N ≥ 5 runs over 100 ms, without loosening A3.
+  - In HT-9's catch-up push, Setup and Risks mount in separate tasks.
+- **D-COPY2-swap (10-01 10:24, #168).** BUG-36's seed may change (the builder used a two-chest-lift split, since birthYear has no effect), with assertions byte-identical. A new add-only "COPY-2 swap" block covers the shrinking swap. The snap limit is max(16 px, travel/4); it reads `getBoundingClientRect()` after BUG-37's lesson.
 - **HT-9 review rulings (10-01 08:38, on #113, after the 08:37 FAIL).** Builder swap: AGENTS.md gives non-mechanical cards the strong model, and A1, A4 and A5 need new fidelity gate work, so the Sonnet builder is archived and an Opus builder continues on the same branch from `31bbe16`. The builder must: build A1 (an `HT-9` gate block, L3 of Setup and Risks against golden B in 5 themes, `goldenB.mjs` states), A4 (rendered copy equals the content strings, C7/C8 on the DOM), A5 (L3 after scrolling and opening everything) and the A3 duplicate red-flag fixture, each shown failing on a mutation; make the Show probe select `dialog.sheet.ht .setup .st-show`, tap each by id and assert exactly 17 (golden B's count), all 17 opening once HT-7 merges (until then posture kinds may be "pending HT-7", but the 5 hand-kind buttons must open); treat the 139 ms HT-3b A3 long task as real and render Setup and Risks out of the timed open; merge main now and after HT-7 and HT-8 (then `WANT` = `['hand','feel','setup','risks']`). The "Set it up" and "Risks and when to stop" headings are golden-B copy: they go into the golden-B update, not HT-9.
 - **D-HT10-C10 (10-01 06:15, option a).** Two approved golden-A tells fail C10 on the golden itself (lateral raise "dip" tell 32×44; squat "chest"/"drift" tells overlap 77×0.25 px). They are exempted as pinned golden facts, like O10, and pinned equal on both pages. An optional golden update is offered to the owner with O7/O10 in the finish-line message.
 - **D-HT10-A5 (10-01).** HT-10's sweeps run in their own CI job `ht10-gate`, two shards (`MARC_HT_SHARD` = `1/2`, `2/2`), once per push, not per time-zone variant. The existing jobs set `MARC_HT10_OWN_JOB=1`, so they skip the HT-10 block; with neither variable set (local runs) it runs the full set. A `writeProof` shows 1/2 + 2/2 cover every tuple exactly once. Time budgets: 25 min per shard, 30 min per existing job. **The supervisor wires the `.github` job (add-only) in HT-10's merge train** and adds `ht10-gate` to `ci-watch.sh`'s required set. How: 8.7 step 6.
@@ -764,7 +777,7 @@ The table is in `AGENTS.md`. Do not copy it here.
 
 ---
 
-## 8. Current state (2026-10-01 ~09:00 UTC; stale fast, re-check live)
+## 8. Current state (2026-10-01 ~12:55 UTC for 4.3, 8.0, 8.2 and 8.7 step 2; other parts ~09:00; stale fast, re-check live)
 
 Facts below were checked live at 08:27-08:35 UTC (GitHub API, `git ls-remote`, `get_session`, `list_triggers`, Relay items) unless marked "(not re-checked)". Re-checked at 08:50-08:55: the 8.1 APK table, the HT-8, HT-9 and BUG-36 rows in 8.2, 8.3, and the HT-7 check-in in 8.4.
 
@@ -780,14 +793,20 @@ Facts below were checked live at 08:27-08:35 UTC (GitHub API, `git ls-remote`, `
 - **Owner defaults accepted** (offered as "I'll do my recommendation unless you say otherwise"; not objected to): SCI-10 and SCI-11 plain estimates (AUD-20, merged); OBS-ENDPOINT restore keeps coach settings (AUD-4, merged); UI-09 Move up/down (AUD-10, merged); DEV-01 skip (closed by decision).
 - **Owner approvals in sessions (10-01):** AUD-3 "Yes cost limit" (quoted on #145). HT-6's two HowToSheet budget entries, approved inside the HT-6 builder session after the classifier refused the edit (see 9).
 - **Owner report (~04:20):** "When i start split. The animation pop up of second screen feels like glitch bouncing." → BUG-36 (#163).
+- **Owner report (~10:30, with a screen recording on the train-6 APK):** "the black area is gone but the bounce fast animation that causing the text like to glitch or blurry is still there".
+  - The supervisor's frame-by-frame measurement: the panel pops in place; its content jumps up 140-158 device px, flickers for 4 frames, then eases back over about 230 ms.
+  - Cause, reproduced in local Chromium: `dialog.sheet` keeps the UA `overflow: auto`, so the panel's `sheet-in` transform plus the showModal autofocus scroll the dialog by exactly the transform each frame. The slide is cancelled. On the phone, compositor and main thread fall out of step, which gives the jump and the blur.
+  - It affects every `Sheet` (`.esc-sheet` already has `overflow: visible`). → **BUG-37** (#173).
+  - Owner, 10:38: "When reduced motion is off. Its fine. It just open normally". The video was recorded in normal-motion mode (the panel is opaque in frame 1, and the close slides about 700 px). So he means either the in-app toggle with on/off swapped, or Android's Remove animations not reaching the WebView. Not verifiable here: the post-fix device check covers both settings.
 - **Merge trains** (since 04:05): every app PR merges through a train. Procedure: 6.8.
 
 ### 8.1 Main
-- **Head:** `958a3de` (train 5 #169). Verified with `git ls-remote`.
+- **Head:** `1fcd9c8` (train 6 #170). Verified with `git ls-remote`.
 - **Merged on 10-01 (UTC), newest first:**
 
 | Time | Merge | Carried |
 |---|---|---|
+| 09:40 | train 6 #170 `1fcd9c8` (`c10bb91`) | BUG-36 #163, handover #171 (playbook, PROMPTS, scripts, workflows, research) |
 | 07:56 | train 5 #169 `958a3de` (train head `7bf89dd`) | AUD-20 #162 (supervisor catch-up merge `361c7fa`, delta-reviewed) |
 | 06:42 | train 4 #167 `6a3b6b0` (`c1c2929`) | AUD-12 #156, AUD-11 #159, handover #165 |
 | 05:52 | train 3 #164 `170b828` (`371957f`) | AUD-10 #157, HT-6 #112 |
@@ -819,7 +838,7 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 | Card | PR @ head | State |
 |---|---|---|
 | HT-3c, HT-4b, HT-5, HT-6 | #143, #140, #116, #112 | merged (`42afd04`, `f1e514a`, train 1, train 3) |
-| HT-7 posture close-ups | #119 @ `75fd1a2` | **Critical path, no known fix.** The "Bony bump" label shapes wider on some opens: app 42/300 bad vs golden B 0/300 under gate load. Leads a, b, d, e, g1, g2, h and i all failed (D-HT7-L3-text-2..6). Same font file, platform font, computed style and CTM; the bad shaping is held per tab, a fresh tab is good. Builder idle since 08:02, waiting for a ruling. Supervisor root-cause workflow `wo2y8z1e0` (4 lenses + judge) started ~08:05, result pending. CI on `75fd1a2` running |
+| HT-7 posture close-ups | #119 @ `14fb8b7` | **PASS 12:53** (0 / 0 / 1 Medium: a stale PR-body HANDOFF, text only / 2 Lows → follow-up D-HT7-F1b). CI green (run 36850977824). **In merge train 7.** |
 | HT-8 feel map and shimmer | #111 @ `74a4e68` | Delta **PASS** 08:02 (0 / 0 / 0 / 1 Low). Low: the `HowToSheet-*.js` entry in `tests/howto/budgets.json` was not re-measured; fix on the next push (measured 22,178 / 7,898, ceiling 24,396 / 8,688, setBy "HT-8"); no ruling posted yet. **CI: `visual-gate-tz` RED on `74a4e68`**: HT-8 shimmer tripwire, app 124 ms vs golden B 93 ms, ratio 1.33 > 1.2 (the reviewer measured 0.41 locally). CI: run 36829910426, `visual-gate-tz` job 110263907276 failure; `source-gate` and `guard` green; `android-gate` skipped; head `74a4e6861be87ac03dc2fd24a8c414c5fa6dc2e7`. Not yet ruled. Head contains main `170b828`, not trains 4-5. Brachialis Low ruled a golden-B gap (05:02) |
 | HT-9 setup and risks | #113 @ `31bbe16` | READY 07:50, all 4 checks green. **REVIEW FAIL @ `31bbe16` 08:37** (1 Blocker: HT9-A1, A4, A5 and the A3 failure path have no evidence; 1 High: the "HT-9 Show" probe taps HT-6's buttons and lets dead setup buttons pass; 2 Medium; 3 Low). Supervisor rulings 08:38 (4.3): the Sonnet builder is archived; an Opus builder continues on the same branch from `31bbe16`. The head lacks trains 4-5 |
 | HT-10 sweeps, speed, release candidate | #166 @ `63131b0` | Building, not READY. Its sweeps found the HT-8 early "Feel it" defect (fixed in `74a4e68`) and the HT-9 setup "Show me" defect (fixed in `31bbe16`). Rulings: D-HT10-A5/A5b (own `ht10-gate` job, runner `scripts/ht10-gate.mjs`, module `tools/plates/fidelity/ht10.mjs`), D-HT10-A4 (How-to asset total = measured + 10 % in `budgets.json` `totals`: 2,552,519 B raw / 564,585 B gz for now), D-HT10-C10, D-HT10-7 (C11 allows golden A's 150 ms opacity crossfade under reduced motion only). Validates on a local merge of main + #119 + #111 + #113. CI on `63131b0` running |
@@ -857,6 +876,12 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 
 **Other open lanes (not in the finish line):**
 - **BUG-36** #163 @ `76718cc` (split start sheet bounce): FAIL @ `d593c5e` 06:12 (Medium: the pixel probe passed on main; Low: click scroll) → FIXED `76718cc` 07:21 → **delta PASS @ `76718cc` 08:28** (0 / 0 / 0 / 0). In merge train 6 #170 (`claude/sup-merge-train-6`, head `1fc2d4d`, opened 08:31). At 08:50 `guard` was green and `source-gate` and `visual-gate-tz` were running. Check CI live.
+- **BUG-37** #173 (sheets bounce on Android; card text in the builder prompt, owner report in 8.0): Opus builder session_016NL6dV6aSfXNaqH53EhBJT on `claude/bug-37-sheet-dialog-scroll`, opened 10:35.
+  - Fix candidate `.sheet { overflow: visible }` checked locally: dialog scrollTop stays 0, and the panel slides 960 → 331 px.
+  - Evidence: a new add-only BUG-37 gate block that measures `getBoundingClientRect().top` and `dialog.scrollTop` every frame. It must fail on main.
+  - The How-to plate fidelity must not move (owner rule).
+  - Addendum 10:41 (trig_011Fj8rFWc6shTk2rkggGtpK): a four-way device check and a reduced-motion assert.
+  - Merges in a train when it passes; it is not in the HT order.
 - **COPY-2** #168 @ `eef365b` (headings, explaining lines): PASS on the partial head 08:06 (0 / 0 / 0 / 2 Lows). The builder reports a local, unpushed commit `340f7a1` with the registry fix ("Current week", Low 1) (from its session status, not on GitHub). Final push after BUG-36 merges: start-sheet title, the `{i.means && …}` guard (Low 2), the `readiness.ts:105` wording (AUD-20 Low 1), the registry fix, and a main merge. Then a delta review by the same reviewer.
 - **LIB-8** pilot A #109 @ `c6e5b66`: waits on LIB-2..LIB-4 and the owner's pilot sheet. Builder idle.
 - **Parked or not for merge:** #149 improvement audit (parked until the finish line); #158 Gym Finder docs (parked, owner talk first); #144 first-audit docs (parked; its triage is in `docs/research/first-audit/`); #94 PREMIUM-PLAN and #92 PAY-1 (parked, owner decisions); #88 Watch docs (draft, waits on Huawei); #3 watch agent's PR (never merge); #1 stale.
@@ -916,7 +941,7 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 
 ### 8.7 Next steps, in order
 1. On wake: re-arm the PR monitor (backdate `SINCE`), read the latest comment on every open PR, check which sessions are idle, read PR heads with `git ls-remote refs/pull/N/head`.
-2. **HT-7:** when `wo2y8z1e0` returns, post ruling D-HT7-L3-text-7 on #119 and send it to the HT-7 builder by trigger (its own check-in fires 12:00). Never lower plate quality or loosen the check.
+2. **HT-7:** in merge train 7 with #174 (CI limit) and #172 (this handover). After the merge: send the APK; the HT-7 builder opens follow-up D-HT7-F1b (5-theme label check, COACHING note); one catch-up message each to HT-8 and HT-9; tell HT-10. Then HT-8 (catching up, root-causing its CI red), HT-9 (PASS @ `e57c6d8`, catch-up after HT-8), HT-10 in order. COPY-2 #168 and BUG-37 #173 go in train 8 once they pass.
 3. **HT-8 tripwire:** do not re-run `visual-gate-tz` on `74a4e68` to get green (6.6: re-runs only for a known infrastructure cause; a flake is fixed, never loosened). Send the failure to the HT-8 builder now (P4), while HT-8 waits on HT-7 anyway; never raise the 1.2 limit. Its fix moves the passed head, so the same reviewer delta-reviews it (P3) before HT-8 enters a train. The budgets Low rides that push. Before sending P4, post ruling D-HT8-tripwire on #111 (P7). It names what the builder may change (how the measurement is taken under load) and what it may not (the 1.2 limit, golden B, the plates).
 4. **HT-9:** await HT-9 FIXED from the Opus builder (rulings 08:38), then a delta review by the same reviewer, session_01PJvcYHhpMAhrZ7hjWvCK5T (P3).
 5. **HT-lane trains, in order:** HT-7 → HT-8 → HT-9 → HT-10 (one train may carry several, in order; never HT-8 before HT-7). Tell HT-10 each time an HT card merges.
@@ -955,6 +980,8 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 
 | Incident | Rule |
 |---|---|
+| BUG-37 (10-01): BUG-36's probe added the panel's transform `m42` to its layout top and ignored the dialog's own `scrollTop`. It "saw" a 629 px slide that the scrolling dialog cancelled, while the owner's phone showed a jump. | A motion probe measures the box on screen (`getBoundingClientRect()`, which includes every ancestor's scroll and transform) and asserts that each scroll container on the way stays still. Never a computed transform. |
+| The supervisor ruled HT-7's label variance "local Chromium 141 only" from two clean CI runs (D-HT7-L3-text-8); the next CI run showed it on Chrome 153 too. | An intermittent failure is never disproved by a few green runs. Compare rates (bad/opens) over enough runs, and keep a check strict until the cause is fixed. Also: local containers run Chromium 141 (Playwright 1194), CI runs Chrome 153 (v1243); note the version when comparing. |
 | Verdicts were missed: LT-2 for 1 hour (a connector reconnect), LT-3 for 40 minutes (wakes checked only CI). | Every tick and every wake reads the latest comment on every open PR before any merge step. |
 | The REL-1 builder was blocked for 1.5 hours unseen. V1-07 and V1-08 never started. | Every wake checks each session for blocked or idle, and starts every card whose dependencies allow it. |
 | One-shot triggers did not fire during the 09-29 14:00–15:30 outage. | Check that each pending trigger ran. Fallback: a PR comment. |
