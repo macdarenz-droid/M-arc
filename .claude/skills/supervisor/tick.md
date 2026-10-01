@@ -11,5 +11,7 @@ Every tick, work from live state, never from memory or from the message that wok
 4. Subscribe to activity on every open PR, so a green check or a comment wakes you straight away.
 5. When a CI run fails, run `/ci-log`. Open the full log before any code change based on it.
 6. When something slipped through that a rule would have caught, add one line to `gotchas.md` naming the incident.
+7. Merge through a merge train (since 2026-10-01) when one or more PRs have their final PASS and a frozen head. Follow `docs/supervisor/HANDOVER.md` 6.8 step by step; it is the only full description of a train.
+8. Every merge train carries a handover update: `docs/supervisor/HANDOVER.md` section 8 re-captured live (merged, left, parked, important) plus any new decision, ruling or gotcha, as one row of the train (HANDOVER section 11). If no train has carried one for 3 hours, push the update on its own.
 
 Send at most one message per builder per tick, and archive the original before starting its replacement, so two builders never push to one card.
