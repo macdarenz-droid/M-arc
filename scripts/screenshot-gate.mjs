@@ -6221,6 +6221,265 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// HT-6: the hand close-ups, the zoom host and the Look closer chips (card HT-6; GA 2.2-2.5, 5.1; plan 2.4-2.5, 2.9).
+// The app's sheet, opened from the real Train entry, against the golden-B page (tests/howto/golden/howto-layers.html,
+// hash-pinned by HT-4, served offline with the app's Inter woff2), per theme side by side:
+// - A5 L3: every page of every hand close-up (8 exercises x 5 themes), with the panel on its own layer in both pages
+//   at the same sub-pixel position (the HT-3 capture mode); the Right and Wrong words and their tick and cross are
+//   printed in every theme (words >= 3:1, icons >= 2:1 against their background); C16: the region is named by its heading, and each half is an
+//   image labelled "Right: …" / "Wrong: …"; C11: the open and close animations equal golden B's, and under reduced
+//   motion there are none;
+// - the Grip section with its handling mistakes (L3, every theme) and the hand chip's box (>= 44 px) equal golden B's;
+// - A4 through the zoom slot API: the plate box hidden and inert (the figure still mounted), Mistake cleared on open
+//   and put back on close, Back closes the close-up before the sheet, focus goes to the heading and back to the chip;
+// - A6: the HT-3 plate compare (L2b, F3, L3) still passes after each hand close-up was opened and closed;
+// - A7: hand-<id> chunks within their measured size + 10 % (D-HT6-budget), and no hand- request before the first tap;
+// - A8: the push hint on the Train card (Silent Black, Paper): exactly once on the chest press, with HOWTO_HINTS' text;
+//   none on the lat pulldown (a How-to, not push), the no-How-to control (firstWithoutHowTo) or a custom exercise.
+{
+  const tag = 'HT-6';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const { gzipSync } = await import('node:zlib');
+  const GB = readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'));
+  const ht6 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
+  const stats = { pairs: 0, offMax: 0, tall: 0, words: 0, anims: 0, a6: 0 };
+  const P = m => errors.push(`${tag}: ${m}`);
+  const panelSel = id => `#${id}-zoom-hand`;
+  const click = (page, sel) => page.evaluate(s => { const b = document.querySelector(s); if (!b) throw new Error(`no ${s}`); b.click(); }, sel);
+  const rectOf = (page, sel) => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }, sel);
+  /** The visible page of a panel: its words, icons, image labels, as the reader and the eye get them. */
+  const readPanel = (page, sel) => page.evaluate(sel => {
+    const p = document.querySelector(sel), pg = [...p.querySelectorAll('.zx-page')].find(x => !x.hidden) ?? p;
+    const lum = c => { const m = c.match(/[\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
+    const bgOf = e => { for (let x = e; x; x = x.parentElement) { const b = getComputedStyle(x).backgroundColor; if (b && !/rgba\(0, 0, 0, 0\)|transparent/.test(b)) return b; } return getComputedStyle(document.body).backgroundColor; };
+    const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+    const words = [...pg.querySelectorAll('text, b, span, strong, p, div')].filter(e => ![...e.children].some(c => c.textContent.trim()) && /^(Right|Wrong)$/.test(e.textContent.trim()))
+      .map(e => { const cs = getComputedStyle(e), col = e instanceof SVGElement ? cs.fill : cs.color, r = e.getBoundingClientRect(); return { w: e.textContent.trim(), ok: r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.opacity !== '0', c: contrast(col, bgOf(e)) }; });
+    const icon = d => [...pg.querySelectorAll('path')].filter(e => e.getAttribute('d') === d).map(e => { const cs = getComputedStyle(e), r = e.getBoundingClientRect(); return r.width > 0 && cs.stroke !== 'none' && !/rgba\(0, 0, 0, 0\)/.test(cs.stroke) ? contrast(cs.stroke, bgOf(e)) : 0; });
+    const h = document.getElementById(p.getAttribute('aria-labelledby') ?? '');
+    return {
+      words, tick: icon('M5 12l4 4L19 7'), cross: icon('M6 6l12 12M18 6L6 18'),
+      region: p.getAttribute('role') === 'region' && !!h && !!h.textContent.trim() && h.classList.contains('zx-h'),
+      right: [...pg.querySelectorAll('[role="img"][aria-label^="Right: "]')].length, wrong: [...pg.querySelectorAll('[role="img"][aria-label^="Wrong: "]')].length,
+      pages: p.querySelectorAll('.zx-page').length,
+    };
+  }, sel);
+  /** The open or close animation of a panel, as comparable data. */
+  const animsOf = (page, sel) => page.evaluate(s => document.querySelector(s).getAnimations().map(a => ({ k: a.effect.getKeyframes().map(f => ({ o: f.opacity, t: f.transform, off: f.offset })), d: a.effect.getTiming().duration, e: a.effect.getTiming().easing })), sel);
+  /** L3 of the open page of one close-up: the golden panel placed at the app panel's position, both on their own layer. */
+  const l3 = async (app, gold, id, label, sel = panelSel(id)) => {
+    // no smooth scroll left running in the golden page (its openZoom scrolls smoothly), both pages settled
+    await gold.evaluate(() => new Promise(r => { document.documentElement.style.scrollBehavior = 'auto'; let y = NaN, n = 0; const f = () => { n = scrollY === y ? n + 1 : 0; y = scrollY; if (n >= 3) r(); else requestAnimationFrame(f); }; f(); }));
+    // capture mode (D-HT3, as HT-3), set before the panel is placed: the panel on its own layer in both pages, rasterised
+    // from its own box. The open animation's transform-origin (set from the opener) stays on the panel and moves the
+    // layer's raster phase, so both pages capture at one origin; with no transform on screen it changes no pixel.
+    const saved = await Promise.all([app, gold].map(pg => pg.evaluate(s => { const e = document.querySelector(s), o = e.style.transformOrigin; e.style.willChange = 'transform'; e.style.transformOrigin = '0px 0px'; return o; }, sel)));
+    await H.settleApp(app); await H.settle(gold);
+    // the app panel just below the sheet's sticky header; a panel taller than the phone is captured at 390 x TALL_H
+    // in both pages (as HT-3 does), and one that still does not fit is an error, never a cut
+    const place = () => app.evaluate(s => { const z = document.querySelector(s), panel = z.closest('.sheet-panel'), top = panel.querySelector('.sheet-top').getBoundingClientRect().bottom; panel.scrollTop += z.getBoundingClientRect().top - (top + 8); const r = z.getBoundingClientRect(); return r.top >= top - 0.001 && r.bottom <= innerHeight + 0.001; }, sel);
+    let tall = false;
+    if (!(await place())) {
+      tall = true;
+      await Promise.all([app.setViewportSize({ width: 390, height: H.TALL_H }), gold.setViewportSize({ width: 390, height: H.TALL_H })]);
+      await H.settleApp(app);
+      if (!(await place())) P(`${id} ${label}: the close-up does not fit a 390 x ${H.TALL_H} viewport below the sheet header`);
+    }
+    await H.settleApp(app);
+    const at = await rectOf(app, sel);
+    // the golden panel moved to the same viewport position (the same sub-pixel phase), by the body's top margin
+    await gold.evaluate(([s, at]) => {
+      document.documentElement.style.overflowAnchor = 'none';
+      document.body.style.marginTop = '0px'; window.scrollTo({ top: 0, behavior: 'instant' });
+      for (let k = 0; k < 3; k++) { const r = document.querySelector(s).getBoundingClientRect(); if (r.top === at.y) break; document.body.style.marginTop = `${parseFloat(document.body.style.marginTop) + at.y - r.top}px`; }
+    }, [sel, at]);
+    await H.settleApp(app); await H.settle(gold);
+    const [ra, rg] = [await rectOf(app, sel), await rectOf(gold, sel)];
+    if (ra.x !== rg.x || ra.y !== rg.y || ra.width !== rg.width || ra.height !== rg.height) P(`${id} ${label}: panel box app ${JSON.stringify(ra)} vs golden ${JSON.stringify(rg)}`);
+    else {
+      const [a, g] = [await H.capture(app, ra), await H.capture(gold, rg)];
+      const d = await H.diffPng(app, a, g);
+      stats.pairs++; stats.offMax = Math.max(stats.offMax, d.off); if (tall) stats.tall++;
+      if (d.ink < 0.02) P(`${id} ${label}: the app capture is blank (ink ${d.ink})`);
+      if (!H.meetsRule(d)) {
+        P(`${id} ${label} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}${d.sameSize ? '' : `, sizes ${d.width}x${d.height} vs ${d.otherWidth}x${d.otherHeight}`})`);
+        const f = join(OUT, `ht6-${id}-${label.replace(/\W+/g, '_')}`); writeFileSync(`${f}-app.png`, a); writeFileSync(`${f}-golden.png`, g);
+      }
+    }
+    for (const [k, pg] of [app, gold].entries()) await pg.evaluate(([s, o]) => { const e = document.querySelector(s); e.style.willChange = ''; e.style.transformOrigin = o; }, [sel, saved[k]]);
+    if (tall) { await Promise.all([app.setViewportSize(H.DEVICE.viewport), gold.setViewportSize(H.DEVICE.viewport)]); await H.settleApp(app); }
+  };
+  const plateState = page => page.evaluate(() => {
+    const g = document.querySelector('dialog.sheet.ht .ht-golden'), fit = g.querySelector('.ht-plate-fit');
+    return { snap: g.htPlateApi.snapshot(), hidden: fit.hidden, inert: fit.inert, mounted: !!fit.querySelector('figure[data-mode="normal"]'), cue: g.querySelector('.cue-line').hidden, slot: g.querySelector('.ht-zoom-slot').hidden };
+  });
+  const run = async theme => {
+    const app = await H.openAppTrain(ht6, PORT, theme, { onError: m => P(`${theme} app page error: ${m}`) });
+    const gold = await H.openGolden(ht6, theme, { html: GB, onError: m => P(`${theme} golden page error: ${m}`) });
+    const reqs = []; app.page.on('request', r => reqs.push(r.url()));
+    try {
+      if (theme === 'silent-black' || theme === 'paper') {
+        const hints = [...readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8').matchAll(/^  "(lib_[a-z_]+)": ("(?:[^"\\]|\\.)*"),$/gm)].map(m => [m[1], JSON.parse(m[2])]);
+        const text = Object.fromEntries(hints);
+        if (!text.lib_machine_chest_press) P(`${theme} A8: no HOWTO_HINTS entry for the chest press`);
+        for (const [lib, want] of [['lib_machine_chest_press', text.lib_machine_chest_press], ['lib_lat_pulldown', null], [H.HT_NO_HOWTO, null], [H.HT_CUSTOM.id, null]]) {
+          const card = await H.openCard(app.page, H.HT_ORDER.indexOf(lib));
+          const got = await card.evaluate(c => [...c.querySelectorAll('p.hint.muted')].filter(p => !p.closest('.why-row ~ .ex-body')).map(p => p.textContent));
+          const shown = got.filter(t => Object.values(text).includes(t));
+          if (want ? JSON.stringify(shown) !== JSON.stringify([want]) : shown.length) P(`${theme} A8 ${lib}: hint lines ${JSON.stringify(got)}, expected ${want ? `"${want}" once` : 'none'}`);
+        }
+      }
+      for (const [id] of H.HT_PLATES) {
+        const index = H.HT_PLATES.findIndex(p => p[0] === id), T = `${theme} ${id}`;
+        await H.openHowTo(app.page, index);
+        if (theme === 'silent-black' && reqs.some(u => /\/assets\/hand-/.test(u) && u.includes(`hand-${id}-`))) P(`${T} A7: hand-${id} requested before the first tap`);
+        // the Grip section with its handling mistakes, at S0, pixel for pixel
+        await l3(app.page, gold.page, id, 'grip', `#${id}-grip`);
+        await app.page.evaluate(() => { document.querySelector('dialog.sheet.ht .sheet-panel').scrollTop = 0; });
+        await gold.page.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo({ top: 0, behavior: 'instant' }); });
+        const before = await plateState(app.page);
+        // a real tap in both pages (pointer modality: the heading takes focus without a focus ring, as on a phone)
+        await app.page.click(`#${id}-chip-hand`);
+        await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible', timeout: 8000 });
+        const [aA, aG] = await Promise.all([animsOf(app.page, panelSel(id)), (async () => { await gold.page.click(`#${id}-chip-hand`); return animsOf(gold.page, panelSel(id)); })()]);
+        stats.anims++;
+        if (JSON.stringify(aA) !== JSON.stringify(aG) || aA.length !== 1) P(`${T} C11 open animation: app ${JSON.stringify(aA)} vs golden ${JSON.stringify(aG)}`);
+        await H.settleApp(app.page); await H.settle(gold.page);
+        // A4: the plate box hidden and inert, the figure mounted, the cue line hidden, focus on the heading
+        const open = await plateState(app.page);
+        const focus = await app.page.evaluate(() => document.activeElement?.classList.contains('zx-h') ?? false);
+        if (!open.hidden || !open.inert || !open.mounted || !open.cue || open.slot || !focus) P(`${T} A4 open: ${JSON.stringify({ open, focus })}`);
+        const pages = (await readPanel(app.page, panelSel(id))).pages;
+        // the Look closer hand chip is golden B's size (>= 44 x 44) and, where it is golden B's first chip, at its place
+        // (the row gains its posture and feel chips with HT-7 and HT-8)
+        const [chA, chG] = [await rectOf(app.page, `#${id}-chip-hand`), await rectOf(gold.page, `#${id}-chip-hand`)];
+        const firstG = await gold.page.evaluate(i => document.getElementById(`${i}-chip-hand`).previousElementSibling === null, id);
+        if ((firstG && chA.x !== chG.x) || chA.width !== chG.width || chA.height !== chG.height || chA.height < 44 || chA.width < 44) P(`${T} chip: app ${JSON.stringify(chA)} vs golden ${JSON.stringify(chG)} (>= 44 x 44)`);
+        for (let i = 0; i < pages; i++) {
+          if (i) for (const pg of [app.page, gold.page]) await pg.locator(`${panelSel(id)} .zx-page:not([hidden]) .pager-btn[data-page="${i}"]`).click();
+          await l3(app.page, gold.page, id, `S2 page ${i + 1}`);
+          const r = await readPanel(app.page, panelSel(id));
+          if (!r.region) P(`${T} C16: the close-up region is not named by its heading`);
+          const hasPair = r.words.some(w => w.w === 'Right') || r.words.some(w => w.w === 'Wrong');
+          if (i === 0 || hasPair) {
+            stats.words++;
+            for (const w of ['Right', 'Wrong']) {
+              const ws = r.words.filter(x => x.w === w);
+              if (!ws.length || !ws.every(x => x.ok && x.c >= 3)) P(`${T} page ${i + 1}: the word ${w} is not printed readably (${JSON.stringify(ws)})`);
+            }
+            // printed: at least one tick and one cross drawn in a colour that stands off the panel (golden B's own accent
+            // tick is 2.7:1 in Midnight, so the bar is 2:1; the pixels themselves are held to golden B by L3 above)
+            if (!(Math.max(0, ...r.tick) >= 2) || !(Math.max(0, ...r.cross) >= 2)) P(`${T} page ${i + 1}: tick ${JSON.stringify(r.tick)} / cross ${JSON.stringify(r.cross)} icons not drawn readably`);
+            if (!r.right || !r.wrong) P(`${T} page ${i + 1} C16: halves labelled Right ${r.right}, Wrong ${r.wrong}`);
+          }
+        }
+        // closing: golden B's exit animation, the plate state back as before, focus back on the chip
+        const shut = async pg => { await pg.click(`${panelSel(id)}-close`); return animsOf(pg, panelSel(id)); };
+        const [cA, cG] = await Promise.all([shut(app.page), shut(gold.page)]);
+        if (JSON.stringify(cA) !== JSON.stringify(cG) || cA.length !== 1) P(`${T} C11 close animation: app ${JSON.stringify(cA)} vs golden ${JSON.stringify(cG)}`);
+        await H.settleApp(app.page); await H.settle(gold.page);
+        const after = await plateState(app.page), back = await app.page.evaluate(i => document.activeElement?.id === `${i}-chip-hand`, id);
+        if (JSON.stringify(after) !== JSON.stringify(before) || !back) P(`${T} A4 close: ${JSON.stringify({ before, after, back })}`);
+        if (theme === 'silent-black' || theme === 'paper') {
+          // opening clears Mistake (GA 2.2); closing puts it back
+          await click(app.page, `#${id}-mistake`);
+          const m0 = await plateState(app.page);
+          await click(app.page, `#${id}-chip-hand`);
+          await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+          const m1 = await plateState(app.page);
+          await click(app.page, `${panelSel(id)}-close`); await H.settleApp(app.page);
+          const m2 = await plateState(app.page);
+          if (m0.snap.mode !== 'mistake' || m1.snap.mode !== 'normal' || JSON.stringify(m2) !== JSON.stringify(m0)) P(`${T} A4 Mistake: ${JSON.stringify({ m0: m0.snap, m1: m1.snap, m2: m2.snap })}`);
+          await click(app.page, `#${id}-mistake`);
+          // HT-6 review (#112): opened from Mistake, the close-up grows out of the chip where golden B's does. Golden B's
+          // openZoom leaves Mistake (hiding the "Also check your wrist" line) before it measures the chip.
+          {
+            const originFromMistake = async (pg, inApp) => {
+              await pg.click(`#${id}-mistake`);
+              await pg.click(`#${id}-chip-hand`);
+              if (inApp) await pg.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+              const o = await pg.evaluate(s => document.querySelector(s).style.transformOrigin, panelSel(id));
+              await click(pg, `${panelSel(id)}-close`);
+              if (inApp) await H.settleApp(pg); else await H.settle(pg);
+              return o;
+            };
+            const [oA, oG] = [await originFromMistake(app.page, true), await originFromMistake(gold.page, false)];
+            stats.mistakeOrigins = (stats.mistakeOrigins ?? 0) + 1;
+            // x as the chip check above: equal where the hand chip is golden B's first (the row gains HT-7's chips later)
+            const [xA, yA] = (oA || '').split(' '), [xG, yG] = (oG || '').split(' ');
+            if (!oA || !yA || yA !== yG || (firstG && xA !== xG)) P(`${T} open from Mistake: transform-origin app ${oA} vs golden ${oG}`);
+          }
+        }
+        if (theme === 'silent-black' && id === 'machine-chest-press') {
+          // Android back closes the close-up first, then the sheet
+          await click(app.page, `#${id}-chip-hand`);
+          await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+          await H.settleApp(app.page);
+          await app.page.evaluate(() => history.back());
+          await app.page.waitForTimeout(600);
+          const s1 = await app.page.evaluate(i => ({ sheet: !!document.querySelector('dialog.sheet.ht'), zoom: !document.getElementById(`${i}-zoom-hand`)?.hidden }), id);
+          await app.page.evaluate(() => history.back());
+          await app.page.locator('dialog.sheet.ht').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+          const s2 = await app.page.evaluate(() => !!document.querySelector('dialog.sheet.ht'));
+          if (!s1.sheet || s1.zoom || s2) P(`${T} A4 Back: after one Back ${JSON.stringify(s1)}, after two the sheet is ${s2 ? 'still open' : 'closed'}`);
+          await H.settleApp(app.page);
+          if (!s2) continue;
+        }
+        await H.closeHowTo(app.page);
+        await gold.page.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo(0, 0); });
+      }
+      if (theme === 'silent-black') {
+        const hand = H.HT_PLATES.filter(([id]) => reqs.some(u => u.includes(`/assets/hand-${id}-`) && u.endsWith('.js')));
+        if (hand.length !== 8) P(`A7: ${hand.length} of the 8 hand chunks loaded on tap`);
+      }
+    } finally { await app.ctx.close(); await gold.ctx.close(); }
+  };
+  // C11 under reduced motion: no open or close animation (golden B: none), in every theme
+  const reduced = async theme => {
+    const app = await H.openAppTrain(ht6, PORT, theme, { reducedMotion: 'reduce', onError: m => P(`${theme} reduced app page error: ${m}`) });
+    try {
+      const id = 'machine-chest-press', index = H.HT_PLATES.findIndex(p => p[0] === id);
+      await H.openHowTo(app.page, index);
+      await click(app.page, `#${id}-chip-hand`);
+      await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+      const o = await animsOf(app.page, panelSel(id));
+      await click(app.page, `${panelSel(id)}-close`);
+      const c = await animsOf(app.page, panelSel(id)), shut = await app.page.evaluate(s => document.querySelector(s).hidden, panelSel(id));
+      if (o.length || c.length || !shut) P(`${theme} C11 reduced motion: open ${JSON.stringify(o)}, close ${JSON.stringify(c)}, closed at once ${shut}`);
+    } finally { await app.ctx.close(); }
+  };
+  try {
+    const failed = th => e => P(`${th} crashed: ${e.message.split('\n')[0]}`);   // a thrown probe is a failure, never a gate crash
+    await Promise.all(H.HT_THEMES.map(th => run(th).catch(failed(th))));
+    await Promise.all(H.HT_THEMES.map(th => reduced(th).catch(failed(`${th} reduced`))));
+    if (stats.pairs < 105) P(`only ${stats.pairs} pages compared, expected the 13 close-up pages and 8 grip sections in 5 themes (105)`);
+    // A6: the HT-3 plate compare, after each hand close-up was opened and closed (Silent Black and Paper, 390 px)
+    const openClose = async id => {
+      const wait = f => new Promise(r => { const t0 = performance.now(); const k = () => (f() || performance.now() - t0 > 5000 ? r() : requestAnimationFrame(k)); k(); });
+      const p = () => document.getElementById(`${id}-zoom-hand`);
+      document.getElementById(`${id}-chip-hand`).click();
+      await wait(() => p() && !p().hidden && !p().getAnimations().length);
+      document.getElementById(`${id}-zoom-hand-close`).click();
+      await wait(() => p().hidden && !document.querySelector('.ht-plate-fit').hidden);
+      window.__ht6OpenClosed = (window.__ht6OpenClosed ?? 0) + 1;
+    };
+    const a6 = await H.ht3Fidelity(ht6, PORT, { themes: H.HT_FULL, full: [], widths: [], mutate: openClose });
+    stats.a6 = a6.stats.pairs;
+    for (const p of a6.problems) P(`A6 (after a hand close-up opened and closed): ${p}`);
+    if (a6.stats.pairs < 32) P(`A6: only ${a6.stats.pairs} plate pairs compared, expected 8 x 2 themes x {N, M} (>= 32)`);
+    // A7: the built chunks
+    const sizes = readdirSync(join(ROOT, 'www/assets')).filter(f => /^hand-.*\.js$/.test(f)).map(f => { const b = readFileSync(join(ROOT, 'www/assets', f)); return { f, raw: b.length, gz: gzipSync(b).length }; });
+    if (sizes.length !== 8) P(`A7: ${sizes.length} hand-*.js chunks, expected 8`);
+    // D-HT6-budget: each chunk at most its measured size + 10 % (tools/plates/gen/hands.mjs, pinned in hands.test)
+    const { handCeiling } = await import('../tools/plates/gen/hands.mjs');
+    for (const s of sizes) { const id = H.HT_PLATES.map(p => p[0]).find(i => s.f.startsWith(`hand-${i}-`)), c = id && handCeiling(id); if (!c || s.raw > c.raw || s.gz > c.gz) P(`A7: ${s.f} is ${s.raw} B raw / ${s.gz} B gz, over its ceiling ${c ? `${c.raw} / ${c.gz}` : '(none)'}`); }
+    console.log(`${tag} (${ht6.version()}): ${stats.pairs} close-up pages L3 (max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}), Right/Wrong words and icons on ${stats.words} pages, ${stats.anims} open animation lists, reduced motion in 5 themes, A6 ${stats.a6} plate pairs after open/close, ${stats.mistakeOrigins ?? 0} opens from Mistake at golden B's origin; hand chunks ${sizes.map(s => `${s.f.replace(/-[\w-]{8}\.js$/, '')} ${(s.raw / 1024).toFixed(1)}/${(s.gz / 1024).toFixed(1)} KB`).join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally {
+    await ht6.close();
+  }
+}
+
 // HT-3b: speed, offline and footprint (card HT-3b; plan 2.5, 2.9, 2.10). A1's other half (the
 // esbuild-minified ids.ts + lazy.tsx size figure) is tests/howto/footprint.test.ts — a real build is not
 // needed for that; this is the content probe on the real index-*.js. A2: chunk budgets, each at its
@@ -6793,6 +7052,164 @@ for (const theme of ['silent-black', 'paper']) {
     await ctx.close();
   }
   if (!errors.some(e => e.startsWith('BUG-36 '))) console.log('BUG-36: the split start sheet slides up once (monotonic top, fixed height, nothing after rest), the check-in gives way to the brief in the same sheet without the scrim dropping, and the Train view stays visible under the scrim, in Silent Black and Paper at 1x and 4x CPU');
+}
+
+// AUD-10: live workout, finish and past logging (audit UI-01, UI-03, UI-05, UI-09, OBS-LABELS).
+// One seeded split (bench, plank, farmer's carry): the past-session form saves a hold's seconds and
+// a carry's metres; the live inputs are named; Move up works by keyboard alone and saves the order a
+// drag saves; a substitute is picked by keyboard; Skip today keeps a logged set and the Finish
+// counters match the save; the time question will not save a future start. The pointer drag is the
+// "reorder" probe above, unchanged.
+{
+  const tag = 'AUD-10';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      splits: [{ id: 'aud10', name: 'Mixed', color: '#888888', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 2 }, { exerciseId: 'lib_plank', sets: 1 }, { exerciseId: 'lib_farmer_s_carry', sets: 1 }] }],
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') || '{}'));
+  const fillLabel = async (name, value) => {
+    const ok = await page.getByLabel(name, { exact: true }).fill(value, { timeout: 3000 }).then(() => true).catch(() => false);
+    if (!ok) errors.push(`${tag}: no field named "${name}"`);
+  };
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(300);
+
+  // UI-03: a past session saves the plank's seconds and the carry's metres and seconds as those fields.
+  await page.getByRole('button', { name: 'Log a past session' }).first().click(); await page.waitForTimeout(300);
+  const yesterday = (() => { const d = new Date(); d.setDate(d.getDate() - 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
+  await page.locator('dialog[open] input[type="date"]').fill(yesterday);
+  await fillLabel('Barbell Bench Press, set 1, reps', '8');
+  await fillLabel('Plank, set 1, seconds', '60');
+  await fillLabel("Farmer's Carry, set 1, metres", '40');
+  await fillLabel("Farmer's Carry, set 1, seconds", '35');
+  await settle(page); await page.screenshot({ path: `${OUT}/aud-10-past-session.png` });
+  await page.getByRole('button', { name: 'Save past session' }).click(); await page.waitForTimeout(400);
+  if (await page.getByRole('button', { name: 'Done', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Done', exact: true }).click(); await page.waitForTimeout(250); }
+  else { errors.push(`${tag}: the past session did not save`); await page.locator('dialog[open]').getByRole('button', { name: 'Close' }).first().click().catch(() => {}); await page.waitForTimeout(300); }
+  let pastId = null;
+  {
+    const first = (await stored()).sessions?.[0];
+    pastId = first?.id ?? null;
+    const past = first?.exercises ?? [];
+    const plank = past.find(e => e.exerciseId === 'lib_plank')?.sets?.[0];
+    const carry = past.find(e => e.exerciseId === 'lib_farmer_s_carry')?.sets?.[0];
+    if (plank?.durationSec !== 60 || plank?.reps) errors.push(`${tag}: the past plank saved ${JSON.stringify(plank)}, not durationSec 60`);
+    if (carry?.distanceM !== 40 || carry?.durationSec !== 35) errors.push(`${tag}: the past carry saved ${JSON.stringify(carry)}, not distanceM 40 and durationSec 35`);
+  }
+
+  // Start a live session (the daily check-in sheet comes first).
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  if (!(await page.locator('.reorder-item').first().isVisible().catch(() => false))) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400); }
+
+  // OBS-LABELS: every live set field has a name (the load field already had one). One card is open at a time.
+  const liveFields = [[0, ['Barbell Bench Press, set 1, reps', 'Barbell Bench Press, set 2, reps']], [1, ['Plank, set 1, seconds']], [2, ["Farmer's Carry, set 1, metres", "Farmer's Carry, set 1, seconds"]]];
+  for (const [i, names] of liveFields) {
+    const card = page.locator(`[data-entry-index="${i}"]`);
+    if (!(await visible(card.locator('.set-grid input').first(), 800))) { await card.locator('.exname').click(); await page.waitForTimeout(400); }
+    for (const name of names) {
+      const n = await page.getByLabel(name, { exact: true }).count();
+      if (n !== 1) errors.push(`${tag}: expected one live field named "${name}", found ${n}`);
+    }
+    const unnamed = await card.evaluate(el => [...el.querySelectorAll('input')].filter(f => !f.getAttribute('aria-label') && !f.labels?.length && !f.getAttribute('aria-labelledby')).length);
+    if (unnamed) errors.push(`${tag}: ${unnamed} live set field(s) on card ${i} have no accessible name`);
+  }
+  // Back to the first card open, as the session started.
+  await page.locator('[data-entry-index="0"] .exname').click(); await page.waitForTimeout(400);
+
+  // UI-09: keyboard only, the 2nd exercise moves up; the saved order is the one a drag saves (moveEntry).
+  const order0 = (await stored()).active?.entries?.map(e => e.exerciseId) ?? [];
+  const hidden = await page.evaluate(() => [...document.querySelectorAll('.reorder-move')].every(el => el.getBoundingClientRect().width <= 1));
+  if (!hidden) errors.push(`${tag}: a Move button is drawn on screen without keyboard focus`);
+  await page.locator('.live-top').getByRole('button', { name: 'Finish' }).focus();
+  let reached = false;
+  for (let k = 0; k < 120 && !reached; k++) {
+    await page.keyboard.press('Tab');
+    reached = await page.evaluate(() => document.activeElement?.getAttribute('aria-label') === 'Move up, Plank');
+  }
+  if (!reached) errors.push(`${tag}: Tab never reached "Move up, Plank"`);
+  else {
+    const shown = await page.evaluate(() => { const el = document.activeElement; const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return { w: r.width, h: r.height, outline: cs.outlineStyle }; });
+    if (!(shown.w > 20 && shown.h > 20) || shown.outline === 'none') errors.push(`${tag}: the focused Move button is not visible with a focus ring (${JSON.stringify(shown)})`);
+    await settle(page); await page.screenshot({ path: `${OUT}/aud-10-move-focused.png` });
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const order1 = (await stored()).active?.entries?.map(e => e.exerciseId) ?? [];
+    const want = [order0[1], order0[0], ...order0.slice(2)];
+    if (JSON.stringify(order1) !== JSON.stringify(want)) errors.push(`${tag}: keyboard Move up saved ${order1.join(',')}, expected ${want.join(',')}`);
+    const shownNames = await page.locator('.reorder-item .exname').allTextContents();
+    if (shownNames[0] !== 'Plank') errors.push(`${tag}: after Move up the list starts with ${shownNames[0]}, not Plank`);
+    const still = await page.evaluate(() => document.activeElement?.getAttribute('aria-label'));
+    if (still !== 'Move up, Plank') errors.push(`${tag}: focus left the moved exercise's Move up (now ${still})`);
+  }
+
+  // UI-09 (Train.tsx:952): a substitute is reached and picked by keyboard.
+  const benchCard = page.locator('.reorder-item').filter({ has: page.locator('.exname', { hasText: 'Barbell Bench Press' }) });
+  await benchCard.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Substitute exercise' }).click(); await page.waitForTimeout(300);
+  let onSub = false;
+  for (let k = 0; k < 20 && !onSub; k++) {
+    await page.keyboard.press('Tab');
+    onSub = await page.evaluate(() => !!document.activeElement?.closest('dialog[open] .list') && document.activeElement?.getAttribute('role') === 'button');
+  }
+  if (!onSub) { errors.push(`${tag}: Tab never reached a substitute in the sheet`); await page.locator('dialog[open]').getByRole('button', { name: 'Close' }).first().click().catch(() => {}); await page.waitForTimeout(300); }
+  else {
+    const subName = await page.evaluate(() => document.activeElement?.querySelector('.grow > div')?.textContent ?? '');
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const names = await page.locator('.reorder-item .exname').allTextContents();
+    if (!subName || !names.includes(subName) || names.includes('Barbell Bench Press')) errors.push(`${tag}: Enter on a substitute did not swap it in (picked "${subName}", list ${names.join(', ')})`);
+  }
+
+  // UI-01: log 60 x 8 on the first lift, Skip today, Finish: counters say 1 and 1, and the set is saved.
+  const liftAt = ((await stored()).active?.entries ?? []).findIndex(e => e.exerciseId !== 'lib_plank' && e.exerciseId !== 'lib_farmer_s_carry');
+  const lift = page.locator('.reorder-item').nth(liftAt);
+  if (!(await lift.locator('.set-grid input').first().isVisible().catch(() => false))) { await lift.locator('.exname').click(); await page.waitForTimeout(250); }
+  const liftId = (await stored()).active?.entries?.[liftAt]?.exerciseId;
+  const liftInputs = lift.locator('.set-grid input');
+  await liftInputs.nth(0).fill('60'); await liftInputs.nth(1).fill('8'); await liftInputs.nth(1).blur(); await page.waitForTimeout(300);
+  await lift.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Skip today' }).click(); await page.waitForTimeout(250);
+  await page.locator('.live-top').getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300);
+  const counters = [await page.locator('[data-finish-exercises]').textContent().catch(() => null), await page.locator('[data-finish-sets]').textContent().catch(() => null)];
+  if (counters[0] !== '1' || counters[1] !== '1') errors.push(`${tag}: the Finish counters read ${counters.join(' / ')}, expected 1 / 1`);
+  await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click(); await page.waitForTimeout(400);
+
+  // UI-05: a future start keeps Save off and the sheet open; Skip saves the guess instead.
+  if (!(await visible(page.getByRole('heading', { name: 'When did you train?' }), 3000))) errors.push(`${tag}: expected the time question after a scripted finish`);
+  else {
+    const tomorrow = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
+    await page.locator('dialog[open] input[type="date"]').fill(tomorrow); await page.waitForTimeout(150);
+    const save = page.getByRole('button', { name: 'Save', exact: true });
+    if (!(await save.isDisabled().catch(() => false))) errors.push(`${tag}: Save stays on for a start tomorrow`);
+    await save.click({ force: true, timeout: 2000 }).catch(() => {}); await page.waitForTimeout(300);
+    if (!(await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false))) errors.push(`${tag}: the time question closed on a future start`);
+    await settle(page); await page.screenshot({ path: `${OUT}/aud-10-future-start.png` });
+    await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(400);
+  }
+  {
+    const st = await stored();
+    const live = (st.sessions ?? []).find(x => x.id !== pastId);
+    const saved = live?.exercises?.find(e => e.exerciseId === liftId)?.sets ?? [];
+    if (!(saved.length === 1 && saved[0].kg === 60 && saved[0].reps === 8)) errors.push(`${tag}: the skipped lift saved ${JSON.stringify(saved)}, not one 60 x 8 set`);
+    if (live && Date.parse(live.startedAt) > Date.now()) errors.push(`${tag}: the live session was saved with a future start ${live.startedAt}`);
+    if (!live) errors.push(`${tag}: the live session was not saved`);
+  }
+  await ctx.close();
+  if (!errors.some(e => e.startsWith(`${tag}`))) console.log('AUD-10: past hold/carry fields, live field names, keyboard Move up and substitute, Skip today keeps logged sets, future start refused, verified');
 }
 
 await browser.close();
