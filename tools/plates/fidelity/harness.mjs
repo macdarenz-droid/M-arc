@@ -994,7 +994,11 @@ export function ht10EndMs() {
   const enter = Math.max(...[...readFileSync(join(ROOT, 'src/ui/styles.css'), 'utf8').matchAll(/--dur-enter:\s*([\d.]+)ms/g)].map(m => +m[1]));
   if (!Number.isFinite(enter)) throw new Error('HT-10: --dur-enter not found in src/ui/styles.css');
   const trace = Math.max(sec('--ht-trace') + enter, sec('--ht-arrow-at') + sec('--ht-arrow-dur'));
-  return { shimmer, trace, max: Math.max(shimmer, trace) };
+  // under reduced motion the app's tokens keep short crossfades (HT-6 C11: "150/100 ms, or none"); the longest is C11's limit
+  const red = readFileSync(join(ROOT, 'src/ui/styles.css'), 'utf8').match(/html\[data-motion="reduce"\]\s*\{([^}]*)\}/);
+  if (!red) throw new Error('HT-10: no html[data-motion="reduce"] tokens in src/ui/styles.css');
+  const reducedFade = Math.max(...[...red[1].matchAll(/--dur-[\w-]+:\s*([\d.]+)ms/g)].map(m => +m[1]));
+  return { shimmer, trace, reducedFade, max: Math.max(shimmer, trace) };
 }
 
 /**
@@ -1512,7 +1516,12 @@ export async function ht10BuildB(browser, port) {
 /** C11 (reduced), C12 and C18 over the recorded animations (ht10Recorded), with `END` from ht10EndMs(). */
 export function ht10AnimProblems(rec, END, reduced = false) {
   const out = [];
-  if (reduced && rec.length) out.push(`C11: ${rec.length} animation(s) ran under reduced motion: ${[...new Set(rec.map(x => `${x.name} on ${x.target}`))].slice(0, 6).join('; ')}`);
+  // C11 (D-HT10-7): under reduced motion only a short crossfade may run (opacity only, done within the reduced tokens'
+  // longest duration); no movement, no shimmer, nothing longer
+  if (reduced) {
+    const bad = rec.filter(x => !(JSON.stringify(x.props) === '["opacity"]' && x.endTime !== 'Infinity' && x.endTime <= END.reducedFade + 1));
+    if (bad.length) out.push(`C11: ${bad.length} animation(s) under reduced motion that are not an opacity crossfade within ${END.reducedFade} ms: ${[...new Set(bad.map(x => `${x.name} (${x.props.join(', ')}, ${Math.round(x.endTime)} ms) on ${x.target}`))].slice(0, 6).join('; ')}`);
+  }
   for (const x of rec) {
     const limit = x.feel ? END.shimmer : END.trace;
     if (x.iterations === 'Infinity' || x.endTime === 'Infinity') out.push(`C12: "${x.name}" on ${x.target} never ends`);

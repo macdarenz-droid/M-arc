@@ -203,7 +203,9 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
         await page.evaluate(H.ht10Record);
         await page.evaluate(() => { const e = document.querySelector('dialog.sheet.ht .ht-golden'); e.animate([{ width: '300px' }, { width: '310px' }], 400); e.animate([{ opacity: 1 }, { opacity: 0.9 }], { duration: 400, iterations: Infinity }); });
         await page.waitForTimeout(200);
-        const am = H.ht10AnimProblems(await H.ht10Recorded(page), H.ht10EndMs());
+        const recd = await H.ht10Recorded(page);
+        const am = H.ht10AnimProblems(recd, H.ht10EndMs());
+        if (!H.ht10AnimProblems(recd, H.ht10EndMs(), true).some(p => /^C11: 2 animation\(s\) under reduced motion/.test(p))) F('C11: a width animation and an endless fade were not both reported under reduced motion');
         if (!am.some(p => /^C18: .*animates width/.test(p))) F(`C18: a width animation was not reported (${am.join('; ') || 'nothing'})`);
         if (!am.some(p => /^C12: .*never ends/.test(p))) F(`C12: an endless animation was not reported (${am.join('; ') || 'nothing'})`);
         await page.evaluate(() => document.querySelector('dialog.sheet.ht .ht-golden').getAnimations().forEach(a => a.cancel()));
