@@ -16,6 +16,9 @@ import {
   loadAriaLabel,
   bodyweightHint,
   lastTopStats,
+  statHasReps,
+  statLoadLabel,
+  statReadout,
   NO_BODY_WEIGHT_HINT,
 } from '@/brain/bodyweight';
 import { session, sets } from './helpers';
@@ -335,6 +338,55 @@ describe('Stats lastTopStats', () => {
 
     const crunch = exerciseHistory([session('2026-09-22', [{ id: 'lib_crunch', sets: sets(0, 15) }])], 'lib_crunch')[0]!;
     expect(lastTopStats(crunch, findExercise('lib_crunch'), bw80, 'kg')).toEqual({ load: 'BW', reps: 15 });
+  });
+
+  it('UI-11: a hold shows its longest time, not "0 kg" and "0" reps', () => {
+    const plank = exerciseHistory([session('2026-09-22', [{ id: 'lib_plank', sets: [{ durationSec: 45, effort: 'ideal' }] }])], 'lib_plank')[0]!;
+    expect(lastTopStats(plank, findExercise('lib_plank'), bw80, 'kg')).toEqual({ load: '45s', reps: 0 });
+  });
+
+  it('UI-11: a distance-logged carry shows its farthest distance, not "32 kg" and "0" reps', () => {
+    const carry = exerciseHistory([session('2026-09-22', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }] }])], 'lib_farmer_s_carry')[0]!;
+    expect(lastTopStats(carry, findExercise('lib_farmer_s_carry'), bw80, 'kg')).toEqual({ load: '40 m', reps: 0 });
+  });
+
+  it('a rep-based conditioning move (no distance) keeps the ordinary load/reps stat', () => {
+    const burpee = exerciseHistory([session('2026-09-22', [{ id: 'lib_burpee', sets: [{ reps: 12, effort: 'ideal' }] }])], 'lib_burpee')[0]!;
+    expect(lastTopStats(burpee, findExercise('lib_burpee'), bw80, 'kg').reps).toBe(12);
+  });
+
+  it('UI-11 (review, 08e13b2): a timed-only carry (no distance) shows its time, not "32 kg" and "0" reps', () => {
+    const carry = exerciseHistory([session('2026-09-22', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 32, durationSec: 35, effort: 'ideal' }] }])], 'lib_farmer_s_carry')[0]!;
+    expect(lastTopStats(carry, findExercise('lib_farmer_s_carry'), bw80, 'kg')).toEqual({ load: '35s', reps: 0 });
+  });
+});
+
+describe('statHasReps / statLoadLabel / statReadout (UI-11)', () => {
+  it('a hold has no reps tile and reads "longest hold"', () => {
+    expect(statHasReps('duration', 0)).toBe(false);
+    expect(statLoadLabel('duration', 0)).toBe('longest hold');
+    expect(statReadout({ load: '45s', reps: 0 }, 'duration', 0)).toBe('45s');
+  });
+
+  it('a distance-logged carry has no reps tile and reads "farthest distance"', () => {
+    expect(statHasReps('conditioning', 40)).toBe(false);
+    expect(statLoadLabel('conditioning', 40)).toBe('farthest distance');
+    expect(statReadout({ load: '40 m', reps: 0 }, 'conditioning', 40)).toBe('40 m');
+  });
+
+  it('a timed-only carry (no distance) has no reps tile and reads "longest time"', () => {
+    expect(statHasReps('conditioning', 0, 35, 0)).toBe(false);
+    expect(statLoadLabel('conditioning', 0, 35, 0)).toBe('longest time');
+    expect(statReadout({ load: '35s', reps: 0 }, 'conditioning', 0, 35, 0)).toBe('35s');
+  });
+
+  it('a rep-based conditioning move and every other mode keep the reps tile and the × reps readout', () => {
+    expect(statHasReps('conditioning', 0)).toBe(true);
+    expect(statLoadLabel('conditioning', 0)).toBe('last top load');
+    expect(statHasReps('conditioning', 0, 0, 12)).toBe(true);
+    expect(statHasReps('weighted', 0)).toBe(true);
+    expect(statLoadLabel('weighted', 0)).toBe('last top load');
+    expect(statReadout({ load: '60 kg', reps: 8 }, 'weighted', 0)).toBe('60 kg × 8');
   });
 });
 
