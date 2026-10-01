@@ -91,7 +91,7 @@ describe('COPY-2: renamed headings', () => {
   });
   it('the coach map names each renamed place by its new heading', () => {
     const reg = read('src/escobar/palace/registry.ts');
-    for (const [id, title] of [['body.full', 'Recovered muscles'], ['body.week-volume', 'Effective sets'], ['coach.week-line', 'Week summary'], ['coach.sees', 'Coach data'], ['panel.memory', 'Memory'], ['profile.about', 'Personal details'], ['today.week', 'Current week'], ['history.week', 'Weekly numbers']]) {
+    for (const [id, title] of [['body.full', 'Recovered muscles'], ['body.week-volume', 'Effective sets'], ['coach.week-line', 'Week summary'], ['coach.sees', 'Coach data'], ['panel.memory', 'Memory'], ['profile.about', 'Personal details'], ['today.week', 'Current week'], ['history.week', 'Current week']]) {
       expect(reg).toContain(`e('${id}', '${title}',`);
     }
     expect(reg).not.toMatch(/What the coach can see|What Escobar knows|About you|Worth knowing|This week in one line|Fully recovered|Effective sets this week|'This week'|This week in numbers/);
