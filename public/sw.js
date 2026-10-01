@@ -44,7 +44,9 @@ self.addEventListener('fetch', e => {
   // ST-03: navigations go to the network first so a new build is seen; the cached index is the fallback.
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then(res => {
-      if (res.ok) { const a = res.clone(), b = res.clone(); caches.open(CACHE).then(c => Promise.all([c.put(req, a), c.put(INDEX, b)])); }
+      if (res.ok) { const a = res.clone(), b = res.clone(); caches.open(CACHE).then(c => Promise.all([c.put(req, a), c.put(INDEX, b)])); return res; }
+      // A transient server failure (5xx) still has a working app cached; a permanent client error (4xx) does not.
+      if (res.status >= 500) return caches.match(req, MATCH).then(hit => hit || caches.match(INDEX, MATCH)).then(hit => hit || res);
       return res;
     }).catch(async () => (await caches.match(req, MATCH)) || (await caches.match(INDEX, MATCH)) || Response.error()));
     return;

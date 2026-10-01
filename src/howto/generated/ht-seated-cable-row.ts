@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=7109c87d306712ab5818ad9ba8ef92a700dd8ae03667ad362d7f04ada037633a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d5e987a440c22961f3d982cf45309a41f98e7f34809d725f1f8ac95a3404991c
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_seated_cable_row",
   name: "Seated Cable Row",
-  hashes: { inputsSha256: "7109c87d306712ab5818ad9ba8ef92a700dd8ae03667ad362d7f04ada037633a", golden: "256b78949ce47e1628c8201e1571cead8d6481cc80958734b135500a41b6fb34" },
+  hashes: { inputsSha256: "d5e987a440c22961f3d982cf45309a41f98e7f34809d725f1f8ac95a3404991c", golden: "256b78949ce47e1628c8201e1571cead8d6481cc80958734b135500a41b6fb34" },
   plate: {
     view: "side",
     normal: {
@@ -24,5 +24,472 @@ export default {
     tempo: "<div class=\"tempo\" role=\"img\" aria-label=\"Tempo: pull 1 second, hold 1 second, return 2 seconds, rest 0.5 seconds\"><div class=\"tempo-seg move\" style=\"flex:1 1 0\"><i></i><div class=\"tempo-label\"><b>Pull</b><span>1 s</span></div></div><div class=\"tempo-seg\" style=\"flex:1 1 0\"><i></i><div class=\"tempo-label\"><b>Hold</b><span>1 s</span></div></div><div class=\"tempo-seg move\" style=\"flex:2 1 0\"><i></i><div class=\"tempo-label\"><b>Return</b><span>2 s</span></div></div><div class=\"tempo-seg\" style=\"flex:0.5 1 0\"><i></i><div class=\"tempo-label\"><b>Rest</b><span>0.5 s</span></div></div></div>",
     alt: "Seated cable row, side view. Seated on a row bench, feet on the footrest with knees slightly bent, the lifter pulls a V-handle from straight arms to the upper belly, elbows back past the ribs, torso upright.",
     mistakeAlt: "Seated Cable Row: the common mistake, drawn dashed in the mistake colour over the correct end position.",
+  },
+  rev: 1,
+  handling: {
+    "archetype": "pull",
+    "orientation": "neutral",
+    "handle": "v-handle",
+    "loadAxis": "across",
+    "overBody": false,
+    "width": {
+      "text": "Set by the handle: about a fist's width apart, in front of your middle. Let your hands sit the way it sets them, wrists straight.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "WEAK"
+        ],
+        "sources": [
+          "deabreu2023",
+          "padovan2025grip",
+          "difonza2026"
+        ],
+        "note": "Close grip and elbows in favour the lats (de Abreu Vasconcelos; Padovan via Di Fonza). Di Fonza: width and arm angle were never tested together, so the V-handle is a reasonable start, not a proven best."
+      }
+    },
+    "thumb": {
+      "mode": "wrapped",
+      "options": [],
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "baechle-earle",
+          "nsca-low-row"
+        ],
+        "note": "No study compares full and thumbless grips on a row. The NSCA row text asks for a closed grip; the NSCA editors teach the thumb round the bar. Thumb on top is not offered: unmeasured on a row, and a V-handle has little room for it (card)."
+      }
+    },
+    "contact": "finger-base",
+    "wrist": {
+      "ext": [
+        0,
+        20
+      ],
+      "dev": [
+        -10,
+        10
+      ],
+      "limitText": "Curling wrists mean your grip is taking over. Finish the rep, then end the set.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "odriscoll1992"
+        ],
+        "note": "O'Driscoll 1992 (a dynamometer, applied by reasoning): grip strongest about 35 degrees back, weaker 10 to 15 degrees away. The 0 to 20 target and the end-the-set limit are consensus, not injury thresholds. A7 open: the lat pulldown card dropped its band."
+      }
+    },
+    "pose": {
+      "view": "radial",
+      "forearm": 180,
+      "wrist": {
+        "ext": 10,
+        "dev": 0
+      },
+      "contactAt": 1,
+      "fingers": {
+        "curl": 1
+      },
+      "thumb": "wrapped",
+      "squeeze": "firm",
+      "handle": {
+        "profile": "v-handle",
+        "axis": "across",
+        "strut": [
+          0.35,
+          -1
+        ]
+      },
+      "load": {
+        "kind": "pull"
+      }
+    },
+    "faults": [
+      {
+        "key": "curled-slip",
+        "label": "Curled, slipping",
+        "pose": {
+          "wrist": {
+            "ext": -30,
+            "dev": 0
+          },
+          "contactAt": 1.35,
+          "squeeze": "max",
+          "thumb": "wrapped"
+        },
+        "markers": [
+          "lever-arc",
+          "slip-arrow",
+          "tendon"
+        ],
+        "alt": "The wrist curls forward, palm turned toward the belly. The handle rolls toward the fingertips. The fist squeezes hard, forearm tendons standing out. The arms end up pulling."
+      }
+    ],
+    "gripLine": "Pull with your elbows, not your hands. Handle at the base of your fingers, thumbs wrapped, wrists straight.",
+    "cue": "Hands are hooks. Pull with elbows."
+  },
+  contacts: [
+    "foot-platform"
+  ],
+  setup: [
+    {
+      "kind": "load",
+      "text": "Clip on the V-handle. Start light.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nsca-low-row"
+        ],
+        "note": "\"Lighter than you think\" is card consensus."
+      }
+    },
+    {
+      "kind": "get-in",
+      "text": "Sit facing the stack, feet flat on the plate.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nsca-low-row",
+          "unmc-cable-row"
+        ]
+      }
+    },
+    {
+      "kind": "grip",
+      "text": "Bend your knees, not your back, to take the handle. Thumbs wrapped.",
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "baechle-earle",
+          "nsca-low-row"
+        ]
+      }
+    },
+    {
+      "kind": "position",
+      "text": "Sit tall, knees soft. Push back until the weight clears the stack.",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nsca-low-row",
+          "unmc-cable-row"
+        ],
+        "note": "Card consensus; the NSCA text asks for knees slightly flexed and kept there."
+      }
+    },
+    {
+      "kind": "brace",
+      "text": "Chest up, shoulders down before you pull. It's hardest at the start.",
+      "zoom": "back",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "nsca-low-row",
+          "unmc-cable-row",
+          "cronin2007"
+        ],
+        "note": "Cronin 2007: peak force comes in the first part of the pull, so the back is set before it starts."
+      }
+    }
+  ],
+  posture: [
+    {
+      "key": "feet",
+      "label": "Knees soft",
+      "detail": "Whole foot on the plate, hip width apart, knees slightly bent all set. Your legs brace you and stay still.",
+      "anchor": {
+        "at": "knee.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nsca-low-row",
+          "unmc-cable-row"
+        ],
+        "note": "Foot on platform has no zoom (chip limit, see chips); the plate shows the soft knees and its Mistake layer the legs pushing."
+      }
+    },
+    {
+      "key": "torso",
+      "label": "Torso still",
+      "detail": "Torso close to vertical, chest up, lower back in its natural curve. The angle is the same at the start and finish of every rep. No rocking forward to reach or back to pull.",
+      "anchor": {
+        "at": "backUpper"
+      },
+      "zoom": "back",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-seated-row",
+          "nsca-low-row",
+          "unmc-cable-row"
+        ]
+      }
+    },
+    {
+      "key": "finish",
+      "label": "Handle to belly",
+      "detail": "The handle finishes at the upper stomach. That is between your belly button and the bottom of your breastbone. The cable stays level or nearly level.",
+      "anchor": {
+        "at": "grips"
+      },
+      "zoom": "finish",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "nsca-low-row",
+          "unmc-cable-row"
+        ]
+      }
+    },
+    {
+      "key": "elbows",
+      "label": "Elbows by ribs",
+      "detail": "Elbows travel back low and close to the body and stop just behind the torso. Arms close to the body favour the lats and give the most force.",
+      "anchor": {
+        "at": "elbow.r"
+      },
+      "zoom": "finish",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "deabreu2023",
+          "ace-seated-row"
+        ],
+        "note": "Plate callout \"Elbows back\"."
+      }
+    },
+    {
+      "key": "blades",
+      "label": "Shoulders down",
+      "detail": "Shoulders stay away from the ears all set. At the end of the pull your shoulder blades move toward each other. On the way forward they slide apart under control. Let them move. A hard extra squeeze adds nothing measurable.",
+      "anchor": {
+        "at": "shoulderTop.r"
+      },
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "DATA"
+        ],
+        "sources": [
+          "ace-seated-row",
+          "lehman2004",
+          "padovan2025scap"
+        ],
+        "note": "The card's back-view \"shoulder blades\" zoom needs a back-view plate (5.2). The approved plate (golden A, owner rule) keeps its \"Squeeze blades\" callout unchanged; this checkpoint carries the verified wording (let the blades come back, no hard squeeze)."
+      }
+    },
+    {
+      "key": "wrists",
+      "label": "Wrists straight",
+      "detail": "Back of the hand in line with the forearm the whole way. Handle at the base of the fingers, no curl at the end.",
+      "anchor": {
+        "at": "grip.r"
+      },
+      "zoom": "hand",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "odriscoll1992"
+        ]
+      }
+    }
+  ],
+  zooms: [
+    {
+      "key": "hand",
+      "chip": "Hand",
+      "heading": "Hand: right and wrong",
+      "kind": "hand",
+      "feelRow": "wrist"
+    },
+    {
+      "key": "back",
+      "chip": "Back line",
+      "heading": "Back line: right and wrong",
+      "kind": "posture",
+      "feelRow": "low-back"
+    },
+    {
+      "key": "finish",
+      "chip": "Finish",
+      "heading": "Finish: right and wrong",
+      "kind": "posture",
+      "feelRow": "traps"
+    }
+  ],
+  chips: [
+    "hand",
+    "back",
+    "finish",
+    "feel"
+  ],
+  copy: {
+    "setupLine": "Feet flat, knees soft, sit tall with the weight off the stack. Pull the handle to your belly, torso still.",
+    "mistakeLine": "Don't rock to move the weight. If you have to swing, it's too heavy."
+  },
+  mistakes: [
+    {
+      "key": "rock",
+      "title": "Rocking your torso",
+      "zoom": "back",
+      "claim": {
+        "tags": [
+          "CONSENSUS"
+        ],
+        "sources": [
+          "ace-seated-row"
+        ]
+      },
+      "fix": "Pick a weight you can pull with a still torso."
+    },
+    {
+      "key": "round",
+      "title": "Rounding your lower back",
+      "zoom": "back",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "WEAK"
+        ],
+        "sources": [
+          "nsca-low-row",
+          "callaghan2001"
+        ]
+      },
+      "fix": "Arms go long, back stays tall."
+    },
+    {
+      "key": "shrug",
+      "title": "Shrugging and flaring elbows",
+      "zoom": "finish",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "deabreu2023",
+          "ace-seated-row"
+        ]
+      },
+      "fix": "Shoulders down, elbows tucked to your ribs."
+    }
+  ],
+  risks: [
+    {
+      "key": "back",
+      "text": "Rocking loads your lower back. Repeated rounding under load hurt discs in lab tests.",
+      "claim": {
+        "tags": [
+          "CONSENSUS",
+          "WEAK"
+        ],
+        "sources": [
+          "fenwick2009",
+          "callaghan2001"
+        ],
+        "note": "Not measured for this row; Callaghan 2001 used pig spines."
+      }
+    },
+    {
+      "key": "shoulder",
+      "text": "Shrugging loads your neck. Elbows too far back can pinch your shoulder.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "deabreu2023",
+          "dosanjos2024",
+          "ace-seated-row"
+        ]
+      }
+    },
+    {
+      "key": "wrist",
+      "text": "Curled wrists tire your forearms first and can make wrists sore over time.",
+      "claim": {
+        "tags": [
+          "DATA",
+          "CONSENSUS"
+        ],
+        "sources": [
+          "odriscoll1992"
+        ],
+        "note": "The grip-strength part is measured; the soreness link is consensus."
+      }
+    }
+  ],
+  riskFlags: [
+    "wrist",
+    "shoulder"
+  ],
+  redFlag: {
+    "name": "Wrist pain",
+    "now": "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.",
+    "doctor": "Tingling, keeps coming back, or no better after two weeks' rest? See a doctor.",
+    "claim": {
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-wrist-pain"
+      ]
+    }
+  },
+  sources: [
+    "deabreu2023",
+    "padovan2025grip",
+    "padovan2025scap",
+    "difonza2026",
+    "lehman2004",
+    "fujita2020",
+    "dosanjos2024",
+    "saeterbakken2015",
+    "fenwick2009",
+    "callaghan2001",
+    "cronin2007",
+    "odriscoll1992",
+    "ronai2019",
+    "ace-seated-row",
+    "nsca-low-row",
+    "unmc-cable-row",
+    "baechle-earle",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain"
+  ],
+  research: {
+    "card": "grip/research/seated_cable_row.json",
+    "rev": 1
   },
 } satisfies BuiltHowTo;

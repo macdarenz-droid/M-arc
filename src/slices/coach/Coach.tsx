@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { insights, hiddenInsights, today, week, activeDeload, deloadSuggestion } from '@/app/selectors';
+import { insights, hiddenInsights, today, week, activeDeload, deloadSuggestion, scheduledSplit, todayReadiness, recovery as recoverySelector } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
 import { IconChevron } from '@/ui/icons';
 import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
@@ -12,9 +12,12 @@ import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type AppState, type Weekday } from '@/core/models';
 import { WEEKDAY_LABEL, weekStart, daysBetween, formatLocalStamp } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
-import { suggestNext } from '@/brain/progression';
+import { suggestNext, type Suggestion } from '@/brain/progression';
 import { lighterWeekDay } from '@/brain/deload';
-import { profileFor } from '@/slices/workout/units';
+import { activeGymId, profileFor } from '@/slices/workout/units';
+import { todaySplit } from '@/slices/workout/session';
+import { loadMenu, loggedLoads } from '@/brain/units';
+import { recoveryPctFor } from '@/brain/recovery';
 import { exerciseHistory } from '@/brain/history';
 import { modeLoadText } from '@/brain/bodyweight';
 import { resyncReminders } from '../settings/reminders';
@@ -125,10 +128,32 @@ export function GoalSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
+/**
+ * AUD-8 (UI-12): an insight's target for today, from the inputs the live workout's target uses
+ * (Train.tsx EntryCard): today's readiness, the muscle's recovery, the lighter week, the gym's
+ * load menu, and the set count, load factor and swap of today's entry or plan.
+ */
+export function insightTarget(s: AppState, exerciseId: string): Suggestion {
+  const ex = findExercise(exerciseId, s.customExercises);
+  const gymId = s.active?.gymId ?? activeGymId();
+  const entry = s.active?.entries.find(e => e.exerciseId === exerciseId);
+  const split = scheduledSplit.value;
+  const planned = split ? todaySplit(split, s.escobar.todayOverride, today.value).exercises.find(x => x.exerciseId === exerciseId) : undefined;
+  const sets = entry ? entry.sets.filter(x => x.kind !== 'warmup').length || 1 : planned?.sets ?? 3;
+  const loadFactor = entry ? entry.loadFactor : planned?.loadFactor;
+  const menu = loadMenu(exerciseId, gymId, s.units, ex, loggedLoads(s.sessions, exerciseId, s.customExercises));
+  return suggestNext(s.sessions, exerciseId, s.goal, today.value, sets, s.customExercises, {
+    readiness: todayReadiness.value, recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoverySelector.value),
+    deload: activeDeload.value, lastDeload: s.deload, equipment: profileFor(exerciseId, gymId), menu,
+    ...(loadFactor != null ? { loadFactor } : {}),
+    ...(entry?.plannedId && entry.plannedId !== exerciseId ? { replacedExerciseId: entry.plannedId } : {}),
+  });
+}
+
 function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => void }) {
   const s = state.value;
   const ex = insight.exerciseId ? findExercise(insight.exerciseId, s.customExercises) : undefined;
-  const next = ex ? suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises, { deload: activeDeload.value, lastDeload: s.deload, equipment: profileFor(ex.id) }) : null;
+  const next = ex ? insightTarget(s, ex.id) : null;
   const hist = ex ? exerciseHistory(s.sessions, ex.id, s.customExercises).slice(-5).reverse() : [];
   return (
     <Sheet title={insight.title} onClose={onClose}>
@@ -179,7 +204,7 @@ export function ScheduleSheet({ onClose }: { onClose: () => void }) {
         {!s.splits.length && <p class="small muted">No splits yet.</p>}
         {WEEKDAYS.map(d => (
           <div key={d} class="row"><span style={{ width: 44 }} class="small">{WEEKDAY_LABEL[d]}</span>
-            <select class="grow" value={s.schedule[d] ?? ''} onChange={e => set(d, (e.target as HTMLSelectElement).value || null)}><option value="">Rest</option>{s.splits.map(sp => <option key={sp.id} value={sp.id}>{sp.name}</option>)}</select>
+            <select class="grow" aria-label={WEEKDAY_LABEL[d]} value={s.schedule[d] ?? ''} onChange={e => set(d, (e.target as HTMLSelectElement).value || null)}><option value="">Rest</option>{s.splits.map(sp => <option key={sp.id} value={sp.id}>{sp.name}</option>)}</select>
           </div>
         ))}
         {s.splits.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 6 }}>Quick arrange</div><div class="wrap">{[2, 3, 4, 5, 6].map(n => <Chip key={n} onClick={() => autoArrange(n)}>{n} days</Chip>)}</div></div>}
