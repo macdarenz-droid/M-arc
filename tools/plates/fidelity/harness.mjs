@@ -1549,3 +1549,11 @@ export function ht10CssProblems(css, where) {
   if (/\binfinite\b/.test(css)) out.push(`C12: ${where} says "infinite"`);
   return { problems: out, frames };
 }
+
+/** HT-10's work list (D-HT10-A5): per exercise and theme the sweep, the reduced-motion sweep and A2; once each, the rest. */
+export const HT10_PER_ID = ['sweep', 'reduced', 'a2'];
+export const HT10_ONCE = ['assets', 'build-b', 'fixtures', 'golden', 'speed'];
+export async function ht10AllTuples() {
+  const { htTuples } = await import('./shard.mjs');
+  return htTuples(HT_PLATES.map(p => p[0]), HT_THEMES, HT10_PER_ID, HT10_ONCE, 'silent-black');
+}

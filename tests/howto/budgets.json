@@ -91,5 +91,16 @@
       "setBy": "HT-5",
       "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
     }
+  ],
+  "totals": [
+    {
+      "chunk": "How-to total",
+      "rawMax": 2552519,
+      "gzMax": 564585,
+      "measuredRaw": 2320471,
+      "measuredGz": 513259,
+      "setBy": "HT-10",
+      "reason": "8 exercises with hand, posture and feel chunks; per-chunk entries pin each chunk"
+    }
   ]
 }

@@ -31,15 +31,50 @@ export function htShard(k, N) {
   };
 }
 
-/** Reads `MARC_HT_SHARD` ("k/N", e.g. "0/2"). Unset or empty gives {} (run everything); anything else malformed throws. */
+/**
+ * Reads `MARC_HT_SHARD` ("k/N", 1-based as CI matrix jobs name them: "1/2" and "2/2") into htShard's 0-based
+ * { k, N }. Unset or empty gives {} (run everything); anything else malformed throws.
+ */
 export function shardFromEnv(env = process.env) {
   const v = env.MARC_HT_SHARD;
   if (v == null || v === '') return {};
   const m = /^(\d+)\/(\d+)$/.exec(v);
-  if (!m) throw new Error(`MARC_HT_SHARD must be "k/N", got "${v}"`);
-  const k = Number(m[1]), N = Number(m[2]);
+  if (!m) throw new Error(`MARC_HT_SHARD must be "k/N" with 1 <= k <= N, got "${v}"`);
+  const k = Number(m[1]) - 1, N = Number(m[2]);
+  if (k < 0 || k >= N) throw new Error(`MARC_HT_SHARD must be "k/N" with 1 <= k <= N, got "${v}"`);
   htShard(k, N);   // validates
   return { k, N };
+}
+
+/**
+ * D-HT10-A5: whether gate block HT-10 runs in this job. It runs when MARC_HT_SHARD is set (an ht10-gate shard) and
+ * when it is unset (the full set, for local runs); it skips only in a job that sets MARC_HT10_OWN_JOB=1 without a
+ * shard (the existing gate jobs, once HT-10 has its own job).
+ */
+export const ht10Runs = (env = process.env) => !(env.MARC_HT10_OWN_JOB === '1' && !env.MARC_HT_SHARD);
+
+/** Every (id, theme, state) tuple: each id x theme x perIdState, plus each once-state as ('*', onceTheme, state). */
+export function htTuples(ids, themes, perIdStates, onceStates = [], onceTheme = themes[0]) {
+  return [
+    ...ids.flatMap(id => themes.flatMap(theme => perIdStates.map(state => ({ id, theme, state })))),
+    ...onceStates.map(state => ({ id: '*', theme: onceTheme, state })),
+  ];
+}
+
+/**
+ * The verdict over proof manifests (library plan 5.4): every manifest ran on one sha, and the (id, theme, state) rows
+ * of all manifests together cover `tuples` exactly once (none missing, none twice, none extra). Returns the problems.
+ */
+export function coverProblems(manifests, tuples) {
+  const out = [];
+  const shas = new Set(manifests.map(m => m.sha));
+  if (shas.size !== 1) out.push(`manifests ran on ${shas.size} shas: ${[...shas].join(', ')}`);
+  const key = t => `${t.id}|${t.theme}|${t.state}`;
+  const seen = new Map();
+  for (const m of manifests) for (const r of m.rows) seen.set(key(r), (seen.get(key(r)) ?? 0) + 1);
+  for (const t of tuples) { const n = seen.get(key(t)) ?? 0; if (n !== 1) out.push(`${key(t)} proven ${n} times`); seen.delete(key(t)); }
+  for (const k of seen.keys()) out.push(`${k} proven but not expected`);
+  return out;
 }
 
 const RESULTS = new Set(['pass', 'fail']);

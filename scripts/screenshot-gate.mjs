@@ -7129,7 +7129,12 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 //   chunk, the main-chunk probe, the shipped CSS (C18/C12), build B for each chunk kind. Golden: every exemption is
 //   proven on the golden page. Fixtures: M10-M12 (C19), a small and a nameless button, a width and an endless
 //   animation must each fail. A5: the HT blocks' gate time against HT3-A9's 300 s.
-{
+if (!(await import('../tools/plates/fidelity/shard.mjs')).ht10Runs()) {
+  // D-HT10-A5: HT-10 runs in its own ht10-gate job; this job only holds the existing blocks to their 30 min budget
+  const gateS = process.uptime();
+  console.log(`HT-10: skipped (MARC_HT10_OWN_JOB=1, no MARC_HT_SHARD); this gate run so far ${gateS.toFixed(1)} s of its 1800 s budget`);
+  if (gateS > 1800) errors.push(`HT-10 A5: this gate run took ${gateS.toFixed(1)} s, over the 30 min budget for the existing gate jobs (D-HT10-A5)`);
+} else {
   const tag = 'HT-10';
   const t0 = Date.now();
   const errorsBefore = errors.length;
@@ -7140,16 +7145,16 @@ const ht10Clock = { t0: Date.now(), lines: [] };
   const assetsDir = join(ROOT, 'www/assets');
   // final numbers (D-HT3, recorded by HT-10): measured on CI + margin, never above plan 2.9's 400 ms
   const TAP_CEIL_MS = 400;
-  const SHIMMER_RATIO = 1.2, S0_MAX = 700, LONG_TASK_MS = 100, GATE_BUDGET_S = 300;
-  const TOTAL_RAW = 1.6 * 1024 * 1024, TOTAL_GZ = 420 * 1024;
+  const SHIMMER_RATIO = 1.2, S0_MAX = 700, LONG_TASK_MS = 100;
+  // D-HT10-A4: the total How-to asset ceiling, measured + 10 %, in tests/howto/budgets.json (totals)
+  const TOTAL = JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).totals?.find(t => t.chunk === 'How-to total');
+  if (!TOTAL) throw new Error(`${tag}: no "How-to total" entry in tests/howto/budgets.json totals`);
+  const TOTAL_RAW = TOTAL.rawMax, TOTAL_GZ = TOTAL.gzMax;
+  const SHARD_BUDGET_S = 25 * 60;
   const expectRisks = existsSync(join(ROOT, 'src/slices/howto/sections/Risks.tsx'));
   const shard = S.shardFromEnv();
   const ids = H.HT_PLATES.map(p => p[0]);
-  const ONCE = ['assets', 'build-b', 'fixtures', 'golden', 'speed'];
-  const tuples = S.htShard(shard.k, shard.N)([
-    ...ids.flatMap(id => H.HT_THEMES.flatMap(theme => ['sweep', 'reduced', 'a2'].map(state => ({ id, theme, state })))),
-    ...ONCE.map(state => ({ id: '*', theme: 'silent-black', state })),
-  ]);
+  const tuples = S.htShard(shard.k, shard.N)(await H.ht10AllTuples());
   const want = (state, theme) => tuples.filter(t => t.state === state && (!theme || t.theme === theme));
   const failed = new Set();
   const key = (id, theme, state) => `${id}|${theme}|${state}`;
@@ -7328,18 +7333,18 @@ const ht10Clock = { t0: Date.now(), lines: [] };
   const CHECK = { sweep: 'C10 C12 C18 C19 TalkBack S0', reduced: 'C11 C10 C19 TalkBack', a2: 'S0 L3', assets: 'C17 C18 C12 size', 'build-b': 'offline build B', fixtures: 'failure fixtures', golden: 'exemptions on golden', speed: 'A3 speed' };
   S.writeProof(join(OUT, 'ht10-proof.json'), { sha, shard, rows: tuples.map(t => ({ id: t.id, check: CHECK[t.state], state: t.state, theme: t.theme, width: 390, result: failed.has(key(t.id, t.theme, t.state)) || (t.id !== '*' && failed.has(key('*', t.theme, t.state))) ? 'fail' : 'pass' })) });
 
-  // A5: the HT blocks' gate time (the clock above HT-1), this block included
+  // A5 (D-HT10-A5): each ht10-gate shard within 25 min; the full set (a local run) is logged with every HT block's time
   {
     const per = {};
     let prev = ht10Clock.t0;
     for (const [t, s] of ht10Clock.lines) { const m = /^(HT-\d+[a-z]?(?: C19)?)\b/.exec(s); if (m) per[m[1]] = (per[m[1]] ?? 0) + (t - prev); prev = t; }
     per[tag] = (per[tag] ?? 0) + (Date.now() - t0);
-    const total = Object.values(per).reduce((a, b) => a + b, 0) / 1000;
-    facts.time = `HT blocks ${total.toFixed(1)} s (${Object.entries(per).map(([k, v]) => `${k} ${(v / 1000).toFixed(1)}`).join(', ')}) against ${GATE_BUDGET_S} s`;
-    if (!shard.N && total > GATE_BUDGET_S) errors.push(`${tag} A5: the HT blocks took ${facts.time}; over budget, reported to the supervisor (other blocks are never edited to shard them)`);
+    const own = (Date.now() - t0) / 1000;
+    facts.time = `HT blocks ${(Object.values(per).reduce((a, b) => a + b, 0) / 1000).toFixed(1)} s (${Object.entries(per).map(([k, v]) => `${k} ${(v / 1000).toFixed(1)}`).join(', ')})`;
+    if (shard.N && own > SHARD_BUDGET_S) errors.push(`${tag} A5: shard ${shard.k + 1}/${shard.N} took ${own.toFixed(1)} s, over its ${SHARD_BUDGET_S} s budget (D-HT10-A5)`);
   }
   const n = errors.length - errorsBefore;
-  console.log(`${tag}${shard.N ? ` (shard ${shard.k}/${shard.N})` : ''}: ${tuples.length} tuples; ${Object.values(facts).join('; ')}; ${n ? `FAILED, ${n} problem(s) above` : 'all verified'}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  console.log(`${tag}${shard.N ? ` (shard ${shard.k + 1}/${shard.N})` : ''}: ${tuples.length} tuples; ${Object.values(facts).join('; ')}; ${n ? `FAILED, ${n} problem(s) above` : 'all verified'}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
 await browser.close();
