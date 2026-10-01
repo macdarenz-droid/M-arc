@@ -172,6 +172,10 @@ Owner typos are kept as he wrote them.
 
 | Topic | Decision (verbatim where it matters) | When (UTC) | Recorded in |
 |---|---|---|---|
+| **Focus and finish line** | "Park this audit improvement for now. Lets finish all the how to do first. And all the first audit fixes." Then: "Remind me when we finished all of the how to. And all first audit 32 items. Then after that we proceed." | 10-01 ~01:15, ~01:30 | 8.0; Relay LOG; the hourly Routine |
+| **Audit defaults** | SCI-10 plain calorie estimate; SCI-11 plain facts; OBS-ENDPOINT restore never changes coach, sharing, server or device id; UI-09 screen-reader-only reorder; DEV-01 skip. Offered as "I'll do my recommendation unless you say otherwise"; not objected to. | 10-01 ~00:40 | 8.0; AUD-4, AUD-10, AUD-20 |
+| **AUD-3 cost limit** | "Yes cost limit" (Worker PR #145). | 10-01 ~01:05 | quoted on #145 |
+| **HT-6 size budgets** | Approved in the HT-6 builder session: the two HowToSheet entries at measured + 10 % (D-HT3c-1), after the classifier refused the edit. | 10-01 ~02:45 | #112 |
 | **Settings copy (COPY-1)** | The "Not medical advice…" line in Settings goes, unless Play requires it in the app. The footer gets "© 2026 Marc Darenz. All rights reserved." He typed "In this section out, All right reserve"; the supervisor read "out" as "put" (neighbouring keys). The repo has no LICENSE, so all rights reserved is the true state. | 10-01, his local morning (before 20:00 UTC on 09-30) | card COPY-1 |
 | **LR-23 follow-up (D-LR23-9)** | "yes coach u merge it. Yes no contacg or links or hotline. We only say, seek for emergency help or advice if u still feel the numbness, pain etc after few hours or days. Based on the symptomps". The pattern (`LR23-PLAN.md`): "symptom → how long or how bad → what to do. Never a contact." "u merge it" delegated the merge of ESC-NC-W #121 to the supervisor. | 09-30 15:15 | Quoted on PR #121 (15:20); `LR23-PLAN.md` D-LR23-9; RULINGS LR-28 |
 | **Technical Plates (golden A)** | "The technical plates are approved. I like it. … When ur done with that and thought of a way to display in techbical plates. Then start building. U got my approval". Pinned at `claude/howto-options` `bc0f378`. | 09-30 03:17 | GOLDEN.json, HOWTO-BUILD-PLAN |
@@ -628,166 +632,123 @@ The table is in `AGENTS.md`. Do not copy it here.
 
 ---
 
-## 8. Current state (2026-10-01 ~01:00 UTC; stale fast, re-check live)
+## 8. Current state (2026-10-01 ~03:30 UTC; stale fast, re-check live)
 
-### 8.0 Changes since the 20:00 capture (read first)
-- **main is now `dbd33b9`.** Merged since 20:00 UTC:
-  - #133: the owner's UI copy rule, recorded in `AGENTS.md` and `.claude/owner-rules.md`.
-  - #120, #123: LIB-25 and LIB-26 (poly primitive, flat palm).
-  - #139: the stray `node_modules` symlink removed from main and ignored going forward.
-  - #118: HT-3b (speed and offline).
-  - #129: ESC-REPORT-W. The owner said yes ("Yes report"); the Worker deployed; the live `POST /reports {}` now returns 400 as designed.
-  - #138: ESC-W-CITE. The owner said yes; the Worker deployed (cite as `⟦f3⟧`, not `[f3]`).
-  - #134: DOC-5/6 main half. The policy names him "Marc Darenz"; headings are short labels, not sentences; the copy and heading rules are in force.
-  - #132: BUG-31 (coach fact tags). APK sent.
-  - #131: BUG-32 (crisis pre-screen phrasings; the card now sits under its own message).
-- **Website branch** (`claude/app-website-design-671lk8`): #135 and #141 merged (short headings, "Marc Darenz"), and #128 merged (reply reports). The site was deployed after each merge. The live https://macdarenz-droid.github.io/M-arc/privacy/ shows the short headings and "Reply reports".
-- **Owner rules added 2026-10-01** (verbatim where quoted):
-  - UI copy: "Stop putting words in ui that makes our users noob, or obvious... stop explaining something if it is not required by playstore unless i asked explicitly."
-  - Headings: "Stop describing the headers in sentences."
-  - Name: "Marc Darenz". Play does not require the full legal name; for a personal account Play shows the legal name and country anyway. Owner step: Play Console > Developer account > About you > Developer name.
-  - Settings: the medical line goes (D-COPY1-medical: Play's reminder lives in the store description, not the app). Footer: "© 2026 Marc Darenz. All rights reserved."
-- **Open lanes:**
-  - COPY-1 #137: fixing (builder `session_01Egz6B8CRkz1JvPocDPNMth`).
-  - DOC-REPORT #127: in CI.
-  - ESC-REPORT app #130: review after #127.
-  - BUG-34 #142: launch first frame, building.
-  - BUG-35 #152: building.
-  - HT-3c #143: delta review.
-  - HT-4b #140: fixing the history field.
-  - HT-7 #119: ruling D-HT7-L3-text in force — re-open once only for text-only diffs; geometry stays 0 px.
-  - AUD-1 #146, AUD-2 #147: review PASS.
-  - AUD-3 #145: review PASS; Worker change; waits on the owner's "yes cost limit".
-  - AUD-5 #148: review.
-  - AUD-7 #151: building.
-  - AUD-9 #150: review.
-  - AUD-4, AUD-6, AUD-8, AUD-10, AUD-11, AUD-12: held for collisions.
-  - Audit #144: triage posted on #144.
-  - Second audit #149: held until the weekly reset.
-- **Working method:** a weekly usage limit warning is in force (resets 2026-10-03 11:00 UTC). Heavy work runs in remote cloud sessions, not in-container Workflows (4 CPUs). One reviewer per PR.
-- This update did not re-check 8.3 (sessions), 8.4 (routines), 8.5 (Relay) or 8.6/8.7 beyond what the facts above change; re-check them live.
+### 8.0 Focus and finish line (owner, 10-01; read first)
+- **Owner, ~01:15:** "Park this audit improvement for now. Lets finish all the how to do first. And all the first audit fixes."
+- **Owner, ~01:30:** "Remind me when we finished all of the how to. And all first audit 32 items. Then after that we proceed."
+- **Finish line:** every row in 8.2's two checklists merged on main → push notification + chat message to the owner → then start the parked improvement audit (#149, cards AUD-13..19; its feature proposals stay owner decisions). "How-to" here means the HT lane to milestone M1 (HT-3c..HT-10). The 153-exercise library rollout (LIB lane) is the next How-to stage, outside this line.
+- **Parked with the improvement audit:** #149, and #158 (Gym Finder prototype docs, opened 01:58 by another session).
+- **Owner defaults accepted** (offered with "I'll do my recommendation unless you say otherwise"; not objected to, then "finish all the first audit fixes"):
+  - SCI-10: drop the calorie ± bands, show the plain estimate → AUD-20.
+  - SCI-11: plain facts, not causes the app cannot prove → AUD-20.
+  - OBS-ENDPOINT: restoring a backup never changes coach on/off, sharing, server URL or device id → folded into AUD-4.
+  - UI-09 reorder: keyboard/screen-reader Move up/down, hidden until focused, no new buttons on screen → folded into AUD-10.
+  - DEV-01 (Windows): skip; it counts as closed by his decision, and the reminder must say so.
+- **Owner approvals in sessions (10-01):** AUD-3 "Yes cost limit" (quoted on #145). HT-6's two HowToSheet budget entries, approved inside the HT-6 builder session after the auto-mode classifier refused the edit (see 9).
+- **Working method:** weekly usage warning in force (resets 2026-10-03 11:00 UTC). Builds and reviews run in cloud sessions; one Opus reviewer per PR; Sonnet only for mechanical cards. The CI queue is the bottleneck (often 15+ runs queued): builders post READY on local checks plus source-gate and visual-gate-tz, and the supervisor checks android-gate before merging. Cancel CI runs on heads that are already stale.
 
 ### 8.1 Main
-- Head: `dbd33b9` (BUG-32 #131).
-- Recent merges, newest first (since 20:00 UTC): BUG-32 #131, BUG-31 #132, DOC-5/6 main half #134, ESC-W-CITE #138, ESC-REPORT-W #129, HT-3b #118, node_modules symlink fix #139, LIB-26 #123, LIB-25 #120, SUP owner UI-copy rule #133.
+- Head: `f1e514a` (HT-4b #140).
+- Merged since the 01:00 capture, newest first: HT-4b #140 `f1e514a`, HT-3c #143 `42afd04`, AUD-3 #145 `7477b5d` (Worker deployed; /health ok; `POST /reports {}` = 400), DOC-REPORT main half #127 `3d3e4e1`.
 - Older: `git log --first-parent origin/main`.
-- Website branch (`claude/app-website-design-671lk8`): DOC-REPORT (b) #128, DOC-6 #141, DOC-5 #135 merged since 20:00 UTC; DOC-3 #110 merged earlier. All deployed; the live `/privacy/` page is current.
-- Other branch heads: not re-checked in this update.
 
-### 8.2 Open PRs (as of the 01:00 UTC capture; re-check heads live)
-| PR | Card | State | Waiting on |
-|---|---|---|---|
-| #152 | BUG-35 | building | — |
-| #150 | AUD-9 | review | — |
-| #151 | AUD-7 | building | — |
-| #148 | AUD-5 | review | — |
-| #149 | second audit | held until the weekly usage reset (2026-10-03 11:00 UTC) | — |
-| #146 | AUD-1 | review PASSED | merge |
-| #147 | AUD-2 | review PASSED | merge |
-| #145 | AUD-3 | review PASSED; Worker change | the owner's "yes cost limit" (6.10) |
-| #144 | audit triage | triage posted on #144 | supervisor follow-up |
-| #143 | HT-3c | delta review | reviewer verdict |
-| #142 | BUG-34 (launch first frame) | building | — |
-| #140 | HT-4b | fixing (the history field) | builder fix |
-| #137 | COPY-1 | fixing (builder `session_01Egz6B8CRkz1JvPocDPNMth`) | builder fix |
-| #130 | ESC-REPORT (app) | review | after #127 (DOC-REPORT) merges |
-| #127 | DOC-REPORT (a), main | in CI | CI, then merge |
-| #119 | HT-7 posture close-ups | ruling D-HT7-L3-text in force | re-open once only for text-only diffs; geometry stays 0 px |
-| #109 | LIB-8 pilot A | not re-checked in this update | the owner's answers on the pilot sheet (8.6) |
-| #113, #112, #111, #116 | HT-9, HT-6, HT-8, HT-5 | not re-checked in this update | the HT order |
-| #94 | PREM-PLAN `[parked]` | not re-checked | the owner: 4 decisions |
-| #92 | PAY-1 `[parked]` | not re-checked | the owner: price and data approval |
-| #88 | Wear Engine application 3 (docs) | not re-checked | the owner: Huawei's reply (Routine checks 10-13) |
-| #3 | GT6 watch lab (codex) | — | the watch agent. **Never merge.** |
-| #1 | Coach brain design | stale | no card or lane; leave it |
+### 8.2 Finish-line checklists (as of 03:30; re-check heads live)
+**How-to lane, merge order fixed (K1):**
 
-Merged since the 20:00 capture (removed from this table): #118 HT-3b, #120 LIB-25, #123 LIB-26, #129 ESC-REPORT-W, #131 BUG-32, #132 BUG-31, #133 SUP owner UI-copy rule, #134 DOC-5/6 main half, #138 ESC-W-CITE, #139 node_modules symlink fix; website branch #128, #135, #141.
-
-**ESC-REPORT order:** W #129 (merged, owner's yes given) → the live `POST /reports {}` returns 400 (confirmed) → DOC-REPORT #127 (in CI) / #128 (merged) → the app, #130 (review after #127).
-
-**HT and Library merge orders:** not re-checked in this update; see K1 and section 5.1 for the standing order, and re-verify live.
-
-### 8.3 Running and idle sessions (M/ARC, owner's current account; not re-checked live in this update except the row below)
-| Session | Role | Status |
+| Card | PR | State |
 |---|---|---|
-| session_01Tc7uLSdp7LGknt8xc1i9dc | **Supervisor** (env `env_01Q4EctZ7hnAkbtoGSeRp3Kh`) | active |
-| session_01Egz6B8CRkz1JvPocDPNMth | Builder: COPY-1 #137 | fixing |
+| HT-3c | #143 | merged `42afd04` |
+| HT-4b | #140 | merged `f1e514a` |
+| HT-5 content generator | #116 | review FAIL (field-coverage test missing) → fixed `59f8210` → delta review running |
+| HT-6 grips, hand close-ups, zoom host | #112 | READY `10e6d42` (owner-approved budgets) → review running |
+| HT-7 posture close-ups | #119 | paused until HT-6 merges (D-HT7-L3-text: the text-only re-open did not clear the variance; no third mechanism) |
+| HT-8 feel map and shimmer | #111 | has HT-3c, HT-4b, HT-5 merged in; waits for HT-6 READY, then READY. Its reviewer must check the C19 (d) feel-file count assertion (HT-4b review Low) |
+| HT-9 setup and risks | #113 | finishing; waits for HT-5 and HT-6 READY |
+| HT-10 sweeps, speed, release candidate | — | start its builder when HT-6 merges (plan wave 5) |
+| Golden-B text follow-up | — | from the HT-5 review: seated cable row setup[4] "It's hardest at the start." must be confirmed against cronin2007 or dropped from golden B (plan 2.8), before M1 is called done. Two research-data cite mismatches (difonza2026, weiss1995) and the HT-5 card's stale A4 cue example go with it |
 
-The full session list from the 20:00 capture (reviewers and builders for merged PRs #118, #120, #123, #131, #132) needs re-checking: archive any whose PR has since merged (5.9). **Other projects' sessions are in the same list. Touch only M/ARC sessions (tagged `marc:*` or titled for an M/ARC card). Never touch the rest.**
+**First audit, 32 findings (4 P1 + 28 P2):**
 
-### 8.4 Routines and workflows (owner's current account)
+| Card | Findings | PR | State |
+|---|---|---|---|
+| AUD-1 | SCI-01, SCI-02 | #146 | builder told to post READY (b7ea03a); then review |
+| AUD-2 | SEC-03 | #147 | review PASS @ 4dfefab; catch-up, merge (before AUD-4) |
+| AUD-3 | SEC-01 (Worker) | #145 | merged `7477b5d`; deploy checked |
+| AUD-4 | DATA-01, DATA-02 (+OBS-ENDPOINT, OBS-PHOTOS, OBS-LB) | #154 | review FAIL (its test breaks once AUD-2 is in; 3 Lows) → fixing |
+| AUD-5 | REL-01, UI-10 | #148 | review PASS @ 9b9f509; catch-up, merge |
+| AUD-6 | SCI-03, SCI-06, UI-07 | #153 | review PASS @ 70da8f9 (merges clean with AUD-1) |
+| AUD-7 | SCI-07, NAT-01, NAT-02, NAT-03 | #151 | code PASS @ ae49f00 (only staleness open); catch-up, merge |
+| AUD-8 | SCI-04, SCI-05, SCI-08, UI-12 | #155 | review PASS @ a8f5c4f |
+| AUD-9 | SCI-09 (+4 observations) | #150 | review PASS @ d12d603 |
+| AUD-10 | UI-01, UI-03, UI-05, UI-06, UI-09 (Train + reorder) | #157 | building; add-on after AUD-8 merges: Train's previews use the live target inputs |
+| AUD-11 | UI-02, UI-04, UI-11 (+OBS-TONNE) | #159 | READY 691e808 → review running |
+| AUD-12 | UI-08, UI-09 (rest) | #156 | review FAIL (Coach insight expand still mouse-only) → fixing; scope widened to that one Coach.tsx card |
+| AUD-20 | SCI-10, SCI-11 (+OBS-KNOW) | — | card text: 8.7 item 6. Start after AUD-1, AUD-6, AUD-7 and AUD-9 merge |
+| decision | DEV-01 | — | closed by the owner's "skip" default |
+
+**Other open lanes:** COPY-1 #137 review PASS @ 1ac5121, caught up to `f1e514a` at `9b53382`, CI running, merge next (AUD-8/10/11/12 build on its text). BUG-34 #142 review PASS @ 2b1a6dc (4 Lows; phone check wording: "no accent-coloured dot at the top left, no grey dot at the right end of the line"). BUG-35 #152 review FAIL (2 Highs: "kill me now" lookbehind, bare "in" after "disappear") → fixed `649c492` → delta review running. ESC-REPORT app #130 review PASS @ 82e0c5e; APK to the owner after it merges. LIB-8 pilot A #109 waits on LIB-2..LIB-4 and the owner's pilot sheet. #94, #92 parked; #88 watch docs; #3 never merge; #1 stale.
+
+**Suggested merge order** (one at a time, each caught up and green): COPY-1 → AUD-5 → AUD-2 → AUD-9 → AUD-7 → AUD-8 → BUG-34 → ESC-REPORT → AUD-6 → AUD-1 → then each as it passes; the HT lane always in K1 order (HT-5 → HT-6 → HT-7 → HT-8 → HT-9 → HT-10). Send the APK after app merges as batches allow (6.9).
+
+### 8.3 Running and idle sessions (M/ARC; 03:30)
+| Session | Role |
+|---|---|
+| session_01Tc7uLSdp7LGknt8xc1i9dc | **Supervisor** (env `env_01Q4EctZ7hnAkbtoGSeRp3Kh`) |
+| session_01TojyzXtcz3DucYjhNoHpKs / session_01DsPv57Tz2B8Go5PAWUTttN | HT-5 builder / reviewer |
+| session_017W69UPzNEuk87SJye8gtM8 / session_011ZZVD6ucm2ka1wZhhc4uKo | HT-6 builder / reviewer |
+| session_01TLQREDwJgfPP2gbHAmEu9T | HT-7 builder (paused) |
+| session_01H5UEjJKi59q226yyhWp9So | HT-8 builder |
+| session_01JY7nLdZ112XUkSfYEukdvL | HT-9 builder |
+| session_01JUWNaacGQv7bNHaDfzFFDX | AUD-1 builder |
+| session_014ky9rayKUjXhgWGZAQGyZm | AUD-2 builder (passed; keep until merged) |
+| session_012kUsb86eWbY6xehettcEs1 / session_01BWYfkS1FPMXUyWSZmHRdUt | AUD-4 builder / reviewer |
+| session_01LeK6Ak5qya9vhDMxrSkHRQ | AUD-6 builder (passed) |
+| session_01HSn4XxrRsdmvD3VdAB1BUF | AUD-7 builder (passed) |
+| session_01THUpDxyVAHHCNnMF7TX4vZ | AUD-8 builder (passed) |
+| session_01LWaP8vZxUAN7kEa1yF9iFN | AUD-9 builder (passed) |
+| session_01CNGCxWpMMqxW6bVLB4vHbG | AUD-10 builder |
+| session_01WrdHzxjpx4S7tbgMSBGXgR / session_01XFUAJ7mcsZAHknH6DfAFnq | AUD-11 builder (Sonnet) / reviewer |
+| session_01K1C4L4uK1QAenWYEKFH16B / session_019BNdBJXNZHzT1isAy1WMPP | AUD-12 builder (Sonnet) / reviewer |
+| session_01Egz6B8CRkz1JvPocDPNMth | COPY-1 fixer (passed) |
+| session_01TuvoksY2tBdSTXypttmrcG | BUG-34 builder (passed) |
+| session_01MtV5yUXR3Ka1BfEHPeKC75 / session_01LppPvkyuXG6UfQpN6nBNx1 | BUG-35 builder / reviewer |
+| session_012xKQbQcRRkuUpTT7aXsm2j | ESC-REPORT app builder (passed) |
+| session_01RFiJ26snbpASbeBRXtDcY3 | LIB-8 pilot A builder |
+
+Archive each reviewer after its verdict and each builder after its merge (5.9). The owner's own sessions (best-practice review, watch docs handover, website concepts, other projects) are not workers: never touch them.
+
+### 8.4 Routines and workflows
 | ID | What | When |
 |---|---|---|
-| trig_01CtcvAE1PGAtH4dkxLVQZsR | "M/ARC supervisor loop". The hourly tick into the supervisor session. Its prompt holds the full tick checklist, the current lane order and the HANDOVER item (refreshed at 20:00 UTC with the current order). Update the prompt when the order changes. | cron `58 * * * *` |
-| trig_01ArbGSmYEUErUDfr4mZP3vd | LIB-8 lead: merge the legs-core fix, rebuild the sheet, post "PILOT SHEET READY". | once, 09-30 15:26 |
-| trig_01E6uvusg1B39q9HjybuwUr2 | HT-3: check CI; catch up after HT-4 merges. | once, 15:21 |
-| trig_01BRL7DPhbWCpo5ZtvwoxyHQ | HT-8: merge moved heads, re-run the feel tests and the gate. | once, 15:18 |
-| trig_01RWtESp3CxGq5TP9TzntC56 | HT-6: act on the local gate run. | once, 15:42 |
-| trig_01FW3ZqybsafyYup7uZxLxBK | HT-9: stay current; the C19 block after the ESC-NC guard and HT-4b. | once, 15:43 |
-| trig_01UoRfQk1Rsbpdcnajz5bmh5 | HT-7: merge moved heads; waits on #112 and #107. | once, 15:51 |
-| trig_01LM69abWrcN9EhVqQKwsqNY | LIB-25/26: CI and threads; both stay draft until given a slot. | once, 16:00 |
+| trig_01CtcvAE1PGAtH4dkxLVQZsR | "M/ARC supervisor loop", the hourly tick into the supervisor session. Its prompt holds the focus, the finish line, the merge queue and the owner rules (updated 01:25 UTC 10-01). Update it when the order changes. | cron `58 * * * *` |
 | trig_01XBaJHD9jyLEXPUdpMpykLo | Watch docs session: ask the owner once whether Huawei replied. | once, 2026-10-13 09:00 |
 
-The 09-30 one-shots were all due by 16:00 UTC. This update did not re-check their `last_run`.
+All other one-shots up to 03:13 UTC have fired. No in-chat Workflows are running.
 
-**Working method (01:00 UTC):** a weekly usage limit warning is in force; it resets 2026-10-03 11:00 UTC. Heavy work (builds, reviews) runs in remote cloud sessions, not in-container Workflows, which share only 4 CPUs. One reviewer per PR. The second audit (#149) is held until the reset.
-
-**Workflows.** A container restart kills in-chat workflows (6.4); resume from the cache. This update did not re-check which Workflows are still running.
-
-### 8.5 Relay tracker snapshot (15:30; not re-checked in the 20:00 update)
-- Stage: Build. Architecture 55 %. 119 items: 78 done, 24 blocked, 0 open bugs.
-- **Running:** REL-1, LIB-HT, LIB-8, HT-7, OWN-NOSRC, LIB-26, ESC-REPORT, ESC-NC, PLAY-1.
-- **Review:** PROC-1, ARCH-1 (owner), HT-3, HT-4, ESC-NC-W.
-- **Ready:** OWN-1 (owner: back up the signing key and Huawei secrets offline, in 2 places), LIB-WAYOUT, LIB-TEMPO.
-- **Blocked:**
-  - the final QA chain: C-8, C-9, C-XC, C-10;
-  - OWN-2, OWN-4, LIB-1;
-  - the paused animation cards: F-GUIDE, FG-7, FG-8, V1-07..V1-11, V1-19;
-  - DEV-CHECKS, REL-PLAY, PAY-1, PREMIUM, PREM-PLAN, DOC-2, REL-AI-REPORT, HT-4b.
-- **Drift to fix:**
-  - HT-3b, HT-5, HT-6, HT-8, HT-9, LIB-25 and LR23-DOCS have no tracker rows;
-  - DOC-2 must be set to done (#93 merged 15:22, `6730bac`);
-  - every merge in 8.0 and 8.1 must be set to done, with evidence;
-  - check that the new cards (BUG-31, BUG-32, BUG-33, ESC-W-CITE, DOC-5, COPY-1) have rows;
-  - REL-AI-REPORT still reads parked (ESC-REPORT has probably replaced it).
+### 8.5 Relay tracker
+- Set to done with evidence on 10-01: AUD-3, HT-3c, HT-4b. Every other merge in 8.1 still needs its row set to done; HT-5..HT-10, AUD-1..AUD-12, AUD-20, COPY-1, BUG-34, BUG-35 may lack rows (add them as they merge).
+- LOG.md carries the 10-01 focus and finish-line entries.
 
 ### 8.6 Owner to-dos (his side)
-1. The REL-3 phone steps (`docs/RELEASE-READINESS.md`).
-2. Worker PRs that need his own yes, per PR: **done** for ESC-REPORT-W #129 and ESC-W-CITE #138 (both yes, both merged and deployed). AUD-3 #145 now waits on his "yes cost limit".
-3. OWN-1: offline key backups, in 2 places.
-4. The pilot sheet (sent 16:27): are the plates at his bar, and do we add a no-number "slow and controlled" line where the research gives no seconds? This also covers the golden B approval (D-LR23-2).
-5. Device checks (the DEV-CHECKS list in Relay). Play card 1 retake; card 6 finish screen.
-6. Parked, for him to decide later: ARCH-1 (21 decisions); PAY-1; PREM-PLAN; the Escobar-intelligence request (K11). PREM-PLAN's 4 decisions are:
-   - heart-rate rest and 3 themes to Premium;
-   - the 5-answer starter;
-   - prices and AI budgets;
-   - the PREM-1 Opus switch.
-7. The closed test (12 testers × 14 days). Then the store upload.
-8. Advised: set a spend limit on the AI key. Before a US release: he or a lawyer checks US state AI-chat laws (California SB 243, a New York law).
-9. **Closed:** whether the generic "get emergency help now" line should go. Answered 09-30 15:15 (D-LR23-9): no contacts, links or hotlines; the line stays for danger now only; everything else follows "symptom → how long or how bad → what to do".
-10. **Done, do not re-ask:** error reports were switched on (09-30). The error-report token was never pasted; do not ask for it.
+1. Phone checks on each APK sent (BUG-34's launch frame; ESC-REPORT's Report button; AUD-7's three watch and Health Connect checks, listed in #151).
+2. Approve, inside the builder session, any `tests/howto/budgets.json` raise the classifier refuses (expected for HT-5/7/8/9/10, as for HT-6).
+3. Still open from 01:00: the REL-3 phone steps; OWN-1 offline key backups in 2 places; the pilot sheet answers (LIB-8, also golden B approval D-LR23-2); DEV-CHECKS device list; Play Console developer name "Marc Darenz"; the parked decisions (ARCH-1, PAY-1, PREM-PLAN, K11); the closed test, then the store upload.
+4. Done, do not re-ask: "Yes cost limit"; HT-6 budgets; error reports switched on; the error-report token was never pasted.
 
 ### 8.7 Next steps, in order
-1. On wake: re-arm the monitors, check that every open PR's latest comment is read, and check which cloud sessions and Workflows are still running (not re-checked live in this update).
-2. COPY-1 #137: take the fix round to green, review, merge.
-3. DOC-REPORT #127: watch CI, then merge; then the app #130 goes to review.
-4. HT-3c #143: take the delta review's verdict, then merge when it passes and CI is green.
-5. HT-4b #140: take the history-field fix to green.
-6. BUG-34 #142 and BUG-35 #152: take each build to review, then through the merge gate.
-7. AUD-1 #146 and AUD-2 #147: both reviewed PASS; merge both.
-8. AUD-3 #145: reviewed PASS, but it is a Worker change; send the owner one line asking for the cost-limit yes (6.10) before merging.
-9. AUD-5 #148, AUD-9 #150: take each review to a verdict.
-10. AUD-7 #151: take the build to review.
-11. AUD-4, AUD-6, AUD-8, AUD-10, AUD-11, AUD-12: held for collisions; re-check whether the collisions have cleared.
-12. Audit #144: the triage is posted; follow up as its replies land.
-13. Second audit #149: held until the weekly usage reset, 2026-10-03 11:00 UTC.
-14. HT-7 #119: apply ruling D-HT7-L3-text if a text-only diff review comes in; geometry changes stay refused.
-15. Pilot A #109: still waits on the owner's answers on the sheet (8.6 item 4); not re-checked in this update.
-16. Fix the tracker drift (8.5, stale since 15:30): archive sessions whose PRs merged, add rows for new cards.
+1. On wake: re-arm the PR monitor (backdate `SINCE`), read the latest comment on every open PR, check which sessions are idle and waiting on CI.
+2. Merge queue per 8.2, one at a time: catch the head up with a merge commit, wait for all four checks, check the whole diff, merge, update FINISH-LINE and Relay, archive the passed builder.
+3. Each READY / FIXED post gets one Opus reviewer (or a delta review by the same reviewer).
+4. When HT-6 merges: start HT-10's builder; tell HT-7 to resume; tell HT-8 and HT-9 to merge HT-6's head and post READY.
+5. When AUD-8 merges: tell AUD-10 to apply its add-on (Train previews use the live target inputs).
+6. When AUD-1, AUD-6, AUD-7 and AUD-9 have merged, start AUD-20 (Opus). Card: SCI-10, the calorie display shows the plain estimate with no ± band; SCI-11, recovery/readiness/coach text states plain facts, not unproven causes, and confidence labels describe data completeness only; OBS-KNOW, knowledge.json sources stay data only (never sent to the model or shown, per cards.ts and LR-23), add a PMID or DOI only when verified, never a URL in src/, and narrow the 4 broad statements the audit names. No number or threshold changes.
+7. Golden-B follow-up (8.2) through the golden update procedure before M1 is called done.
+8. At the finish line: notify the owner (push + chat, naming DEV-01 as closed by his decision), then start the improvement audit lane.
 
 ### 8.8 Open conflicts (the inputs disagreed; resolve them live)
 (K4 and K5 were resolved on 09-30 and removed.)
-- **K1 · HT-4b position (settled 2026-09-30 15:40 by the supervisor).** The merge order is HT-4 → HT-3 → HT-3b → HT-4b → HT-5 → HT-6 → HT-7 → HT-8 → HT-9 → HT-10. Why: the HT-4b card puts its slot after HT-4 and before HT-5, and HT-5 must regenerate against HT-4b's re-vendored golden B. The Routine prompt carries the same order.
+- **K1 · HT-4b position (settled 2026-09-30 15:40 by the supervisor).** The merge order is HT-4 → HT-3 → HT-3b → HT-4b → HT-5 → HT-6 → HT-7 → HT-8 → HT-9 → HT-10, with HT-3c (budgets) before HT-4b. Why: the HT-4b card puts its slot after HT-4 and before HT-5, and HT-5 must regenerate against HT-4b's re-vendored golden B.
 - **K2 · Reviewer model.** The owner's 09-29 brief said Sonnet for "most reviews". AGENTS.md on main, the Routine and current practice use **Opus** for every reviewer and critic. Follow Opus.
 - **K3 · Trigger lead time.** Supervisor `SKILL.md` and the owner say 1–2 minutes ahead. The supervisor's notes say 2–4. Both work if the time is in the future.
 - **K6 · Owner quote times.** Relay records LR-23 at ~13:48, ESC-REPORT at ~14:55 and REL-3 at ~14:20. This file uses the chat times: 13:43, 14:41 and 14:14.
@@ -797,8 +758,10 @@ The 09-30 one-shots were all due by 16:00 UTC. This update did not re-check thei
 - **K10 · Who merges Worker PRs.** AGENTS.md says "the owner merges". The owner's 09-29 brief ("On my yes for that PR, merge it") and his 09-30 15:15 delegation for #121 ("yes coach u merge it") have the supervisor merge after a per-PR yes. Follow: the supervisor merges only after the owner's explicit yes for that exact PR, quoted on the PR. Never merge one without it.
 - **K11 · Escobar intelligence.** The owner asked on 09-29 11:25: "lets improve escobars intelligence and what else he can do." No card, lane or parked status was found for it. It is parked with PREM-PLAN here. Check whether PREM-PLAN #94 covers it (for example, the PREM-1 Opus switch) before giving it a card.
 - **K12 · Effort rule.** The owner's 09-29 11:25 "Use opus max lower, sonnet medium lowest. For high outputs" has no agreed reading, and `create_session` has no effort field. Apply it where a tool takes an effort setting, once the reading is settled; record the reading in Relay LOG.
+- **K13 · The first-audit triage's "AUD-3" in the AUD-6 and AUD-8 notes** means the SCI-01 card, which is AUD-1 (recovery.ts). AUD-3 is the Worker quota. Builders were told; no card owns brain/history.ts.
 
 ---
+
 
 ## 9. Lessons and gotchas (the incident → the rule)
 
@@ -833,6 +796,9 @@ The 09-30 one-shots were all due by 16:00 UTC. This update did not re-check thei
 | HT-3b and other How-to cards collided over the same size ceilings. | Budgets now live in one place, `tests/howto/budgets.json` (HT-3c). |
 | A reviewer was archived while its review was still in progress. | Check `post_turn_summary` and the posted verdict before `archive_session`. |
 | A stray `node_modules` symlink sat on main undetected (#139). | Check the whole PR diff, not just the card's files, before merging. |
+| The auto-mode classifier read a `tests/howto/budgets.json` ceiling raise (D-HT3c-1) as a test removal and blocked HT-6. | Never work around it, by any agent. Ask the owner for one approval message in that builder's session, naming the exact entries and values. Expect the same for later HT cards. |
+| Builders ended their turn "waiting on CI" while android-gate sat queued for over an hour, so READY was never posted. | Builders post READY on local checks plus source-gate and visual-gate-tz; the supervisor checks android-gate before merging. Nudge idle "waiting on CI" sessions on every tick. |
+| The 01:00 handover said AUD-1 and AUD-2 had passed review; neither had a verdict yet. | Write a state line only from a verdict comment you have read at that head. |
 
 More incidents: `.claude/skills/supervisor/gotchas.md` and `.claude/skills/builder/gotchas.md`.
 
