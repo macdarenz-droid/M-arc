@@ -7922,6 +7922,124 @@ for (const theme of ['silent-black', 'paper']) {
   if (!errors.some(e => e.startsWith('BUG-36 '))) console.log('BUG-36: the split start sheet slides up once (monotonic top, fixed height, nothing after rest), the check-in gives way to the brief in the same sheet without the scrim dropping, and the Train view stays visible under the scrim, in Silent Black and Paper at 1x and 4x CPU');
 }
 
+// BUG-37: every bottom sheet slides up on screen, with no bounce. Before, a modal dialog.sheet kept Chromium's UA
+// `overflow: auto`, so it was a scroll container sized to its panel: the panel's open transform (sheet-in) became
+// scrollable overflow and showModal's focus scrolled the dialog by the same amount (scrollTop 629, 549, ... 0 on main),
+// so the slide never reached the screen. On a phone the compositor's transform and the main thread's scroll fell out
+// of step: the content jumped up past the panel's rest top, clipped, then eased back (the owner's bounce and blur).
+// BUG-36's probe added the transform to the layout top and missed the scroll. This one reads what the screen shows:
+// each frame, the panel's getBoundingClientRect() (transform and every ancestor scroll included) and every open sheet
+// dialog's scrollTop. Covered: the start sheet on both paths (checked in; check-in -> Skip -> brief), Settings (an
+// ordinary Sheet) and Gyms nested in it (I6), at 411 x 960 DPR 2.625 and 390 x 844 DPR 1, at 1x and 4x CPU, in Silent
+// Black and Paper, plus each sheet under reduced motion.
+{
+  const BUG37_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press', 'lib_barbell_row', 'lib_lat_pulldown', 'lib_dumbbell_shoulder_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_biceps_curl', 'lib_triceps_pushdown'];
+  // The BUG-36 seed (an 8-exercise split with history), copied so this block stands alone.
+  const bug37Seed = ([t, EX, checked]) => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    const day = (o) => { const d = new Date(); d.setDate(d.getDate() - o); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (o) => ({ id: `s${o}`, splitId: 'sp1', splitName: 'SPLIT 1 UPPER BODY', day: day(o), startedAt: `${day(o)}T17:00:00.000Z`, endedAt: `${day(o)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+      exercises: EX.map(id => ({ exerciseId: id, name: id, sets: [0, 1, 2].map(() => ({ kg: 40, reps: 8, effort: 'ideal' })) })),
+      logging: { mode: 'live', trainedAt: `${day(o)}T17:00:00.000Z`, trainedEndAt: `${day(o)}T18:00:00.000Z`, loggedAt: `${day(o)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'SPLIT 1 UPPER BODY', color: '#6aa9ff', focus: [], createdAt: now, exercises: EX.map(id => ({ exerciseId: id, sets: 3 })) }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess(14), sess(10), sess(7), sess(3)], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 }, errorReportsAsked: true },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: checked ? [{ day: day(0), sleepQuality: 4 }] : [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      units: { gyms: [{ id: 'gym_default', name: 'My gym', defaultUnit: 'kg', createdAt: now }], activeGymId: 'gym_default', byExercise: {}, byEquipment: {} },
+    }));
+  };
+  // Every animation frame for ~900 ms from the tap: the top sheet's title, its panel's on-screen rect, the scrollTop
+  // of every open sheet dialog, the page scroll and the viewport height.
+  const bug37Sample = (page) => page.evaluate(() => new Promise(resolve => {
+    const out = []; const t0 = performance.now(); let n = 0;
+    const f = () => {
+      const ds = [...document.querySelectorAll('dialog.sheet[open]')]; const d = ds[ds.length - 1]; const r = d?.querySelector('.sheet-panel')?.getBoundingClientRect();
+      out.push({ t: performance.now() - t0, open: ds.length, title: d?.querySelector('h2')?.textContent ?? null, top: r ? r.top : null, bottom: r ? r.bottom : null,
+        scroll: ds.map(x => x.scrollTop), sy: scrollY, vh: innerHeight });
+      if (performance.now() - t0 < 900 && ++n < 400) requestAnimationFrame(f); else resolve(out);
+    };
+    requestAnimationFrame(f);
+  }));
+  // The dialog never scrolls; the visible top slides up by >= minTravel px (or the panel's height, when shorter), never moves down, settles at least
+  // 100 ms before sampling ends with the panel's bottom on the viewport's bottom edge, and the page does not scroll.
+  // Reduced motion: an open never moves the visible top (still); the swap changes it in one step, never eased (oneStep).
+  const bug37Check = (tag, frames, { minTravel, sheets, still = false, oneStep = false }) => {
+    const on = frames.filter(x => x.top != null && x.open === sheets);
+    if (on.length < 10) { errors.push(`${tag}: only ${on.length} frames with ${sheets} sheet(s) open, expected >= 10`); return; }
+    const scrolled = on.filter(x => x.scroll.some(s => s !== 0));
+    if (scrolled.length) errors.push(`${tag}: a sheet dialog scrolled in ${scrolled.length} of ${on.length} frames (scrollTop ${scrolled.slice(0, 6).map(x => x.scroll.join('/')).join(', ')}${scrolled.length > 6 ? ', ...' : ''}), the slide is cancelled on screen`);
+    const last = on[on.length - 1];
+    // A panel shorter than minTravel (Gyms, 221 px) owes its whole height: it slides in from the bottom edge.
+    const travel = on[0].top - last.top, h = last.bottom - last.top, need = h >= minTravel ? minTravel : h - 1;
+    if (travel < need) errors.push(`${tag}: the panel's visible top travelled only ${travel.toFixed(1)} px (${on[0].top.toFixed(1)} -> ${last.top.toFixed(1)}), expected >= ${need.toFixed(0)}`);
+    for (let i = 1; i < on.length; i++) if (on[i].top > on[i - 1].top + 0.5) { errors.push(`${tag}: the panel's visible top moved down ${(on[i].top - on[i - 1].top).toFixed(1)} px at ${on[i].t.toFixed(0)} ms (${on[i - 1].top.toFixed(1)} -> ${on[i].top.toFixed(1)}), a bounce`); break; }
+    if (still) { const moved = on.filter(x => Math.abs(x.top - last.top) > 0.5); if (moved.length) errors.push(`${tag}: the panel's visible top moved under reduced motion in ${moved.length} of ${on.length} frames (${moved.slice(0, 4).map(x => x.top.toFixed(1)).join(', ')} vs rest ${last.top.toFixed(1)})`); }
+    if (oneStep) { const steps = on.slice(1).filter((x, i) => Math.abs(x.top - on[i].top) > 0.5).length; if (steps > 1) errors.push(`${tag}: the panel's visible top moved in ${steps} steps under reduced motion, expected one`); }
+    const restAt = on.findIndex((x, i) => on.slice(i).every(y => Math.abs(y.top - last.top) <= 0.5));
+    if (on.length - restAt < 5 || last.t - on[restAt].t < 100) errors.push(`${tag}: the panel did not settle at least 100 ms before sampling ended`);
+    if (Math.abs(last.bottom - last.vh) > 1) errors.push(`${tag}: the panel ended at bottom ${last.bottom.toFixed(1)} px, not at rest on the viewport's bottom edge (${last.vh})`);
+    const sy = new Set(frames.map(x => Math.round(x.sy))); if (sy.size !== 1) errors.push(`${tag}: the page scrolled while the sheet opened (${[...sy].join(' -> ')})`);
+  };
+  const bug37Open = async (page, tag, click, opts) => { const f = bug37Sample(page); await click(); bug37Check(tag, await f, opts); };
+  const bug37Load = async (ctx, tag, theme, checked) => {
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+    await page.addInitScript(bug37Seed, [theme, BUG37_EX, checked]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    return page;
+  };
+  const bug37Start = async (page) => {
+    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(400);
+    const start = page.getByRole('button', { name: /^Start / }).first();
+    await start.evaluate(el => el.scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+    return start;
+  };
+  // The brief is the open sheet holding its own Start button (the check-in has none); title-free, so it holds whatever the title reads.
+  const bug37Brief = async (page) => (await page.locator('dialog.sheet[open]').getByRole('button', { name: /^Start SPLIT 1 UPPER BODY$/ }).count()) === 1;
+  const VIEWPORTS = [{ width: 411, height: 960, dpr: 2.625 }, { width: 390, height: 844, dpr: 1 }];
+  for (const vp of VIEWPORTS) for (const reduce of [false, true]) for (const theme of reduce ? ['silent-black'] : ['silent-black', 'paper']) for (const cpu of reduce ? [1] : [1, 4]) {
+    const base = `BUG-37 ${vp.width}x${vp.height}@${vp.dpr} ${theme} ${cpu}x CPU${reduce ? ' reduced motion' : ''}`;
+    const minTravel = reduce ? 0 : 300;
+    const newCtx = () => browser.newContext({ viewport: { width: vp.width, height: vp.height }, deviceScaleFactor: vp.dpr, isMobile: true, hasTouch: true, reducedMotion: reduce ? 'reduce' : 'no-preference' });
+    // Checked in: the start sheet opens on the brief; then, after a reload, Settings and Gyms nested in it.
+    {
+      const ctx = await newCtx(); const page = await bug37Load(ctx, base, theme, true);
+      const cdp = await ctx.newCDPSession(page); const throttle = () => cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
+      const start = await bug37Start(page); await throttle();
+      await bug37Open(page, `${base} start sheet (checked in)`, () => start.click(), { minTravel, sheets: 1, still: reduce });
+      if (!(await bug37Brief(page))) errors.push(`${base}: expected the brief, got "${await page.locator('dialog.sheet[open] h2').first().textContent()}"`);
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+      await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+      await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(400);
+      await throttle();
+      await bug37Open(page, `${base} Settings`, () => page.locator('[data-palace="today.settings"]').click(), { minTravel, sheets: 1, still: reduce });
+      await bug37Open(page, `${base} Gyms nested in Settings`, () => page.getByRole('button', { name: 'Manage' }).first().click(), { minTravel, sheets: 2, still: reduce });
+      if (!(await page.locator('dialog.sheet[open].nested').count())) errors.push(`${base}: the Gyms sheet did not open nested`);
+      await ctx.close();
+    }
+    // Not checked in: the check-in opens, then Skip gives way to the brief in the same sheet (the StartSheet swap).
+    {
+      const ctx = await newCtx(); const page = await bug37Load(ctx, base, theme, false);
+      const cdp = await ctx.newCDPSession(page);
+      const start = await bug37Start(page); await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
+      await bug37Open(page, `${base} check-in`, () => start.click(), { minTravel, sheets: 1, still: reduce });
+      if ((await page.locator('dialog.sheet[open] h2').first().textContent()) !== 'Quick check-in') errors.push(`${base}: expected the check-in first`);
+      await bug37Open(page, `${base} check-in -> brief swap`, () => page.getByRole('button', { name: 'Skip' }).click(), { minTravel: reduce ? 0 : 20, sheets: 1, oneStep: reduce });
+      if (!(await bug37Brief(page))) errors.push(`${base}: Skip did not lead to the brief`);
+      await ctx.close();
+    }
+  }
+  if (!errors.some(e => e.startsWith('BUG-37 '))) console.log('BUG-37: every sheet dialog stays unscrolled on every frame, so the start sheet (both paths), Settings and a nested sheet slide up on screen once (visible top >= 300 px or the full panel height, never down, settled at rest), at 411 x 960 DPR 2.625 and 390 x 844 DPR 1, 1x and 4x CPU, Silent Black and Paper, and under reduced motion stay unscrolled with the visible top still (the swap in one step), ending at rest');
+}
+
 // AUD-10: live workout, finish and past logging (audit UI-01, UI-03, UI-05, UI-09, OBS-LABELS).
 // One seeded split (bench, plank, farmer's carry): the past-session form saves a hold's seconds and
 // a carry's metres; the live inputs are named; Move up works by keyboard alone and saves the order a
