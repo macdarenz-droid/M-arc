@@ -2116,6 +2116,138 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// ESC-REPORT G1: the Report control under a finished mock reply, in all 5 themes (dev mode, mock
+// transport). Nothing may reach /reports, and nothing new is saved in localStorage.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `ESC-REPORT ${theme}`;
+  let reportRequests = 0;
+  page.on('request', r => { if (r.url().includes('/reports')) reportRequests++; });
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  const openSheet = async () => {
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+    await page.evaluate(() => document.querySelector('.toast button')?.click());
+    await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+    await page.locator('.esc-hall-input').click();
+    await page.waitForSelector('dialog.esc-sheet[open]'); await page.waitForTimeout(250);
+    const on = page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true });
+    if (await on.isVisible().catch(() => false)) { await on.click(); await page.waitForTimeout(200); }
+  };
+  const sendMock = async () => {
+    await page.locator('.esc-textarea').fill('How is my chest press going?');
+    await page.locator('.esc-send').click();
+    await page.waitForFunction(() => window.__escobar.status() === 'idle' && document.querySelector('.esc-turn .esc-report'), null, { timeout: 15000 }).catch(() => errors.push(`${tag}: the mock reply did not finish with a Report control`));
+    await page.waitForTimeout(200);
+  };
+  const focusText = () => page.evaluate(() => { const a = document.activeElement; return a ? `${a.tagName}|${a.className}|${a.textContent}` : ''; });
+  const storage = () => page.evaluate(() => JSON.stringify(Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)])));
+  const report = page.locator('.esc-report-btn');
+  const group = page.locator('.esc-report [role="group"]');
+  const reason = (name) => group.getByRole('button', { name, exact: true });
+
+  await openSheet();
+  await sendMock();
+  // 1. Exactly one Report button on the finished turn, and its text clears 4.5:1.
+  if ((await report.count()) !== 1) errors.push(`${tag}: expected exactly one Report button, found ${await report.count()}`);
+  if ((await report.first().textContent())?.trim() !== 'Report') errors.push(`${tag}: the Report button does not read "Report"`);
+  const contrast = await page.evaluate(() => {
+    const el = document.querySelector('.esc-report-btn');
+    if (!el) return null;
+    const parseRgba = str => {
+      let m = str.match(/rgba?\(([^)]+)\)/);
+      if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+      m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+      if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+      return null;
+    };
+    const fg = parseRgba(getComputedStyle(el).color);
+    if (!fg) return null;
+    let node = el, under = { r: 255, g: 255, b: 255 };
+    while (node) { const bg = parseRgba(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+    const lin = c2 => { const s2 = c2 / 255; return s2 <= 0.03928 ? s2 / 12.92 : Math.pow((s2 + 0.055) / 1.055, 2.4); };
+    const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+    const l1 = rl(fg) + 0.05, l2 = rl(under) + 0.05;
+    return l1 > l2 ? l1 / l2 : l2 / l1;
+  });
+  if (contrast == null) errors.push(`${tag}: could not measure the Report button's contrast`);
+  else if (contrast < 4.5) errors.push(`${tag}: Report button contrast ${contrast.toFixed(2)} < 4.5`);
+  // 2. What localStorage holds before any report. Two app writes are not the report's: the finished
+  // turn's usage save (wait for storage to settle) and the error queue's 'online' handler, which
+  // step 6's offline/online toggle fires (fire it once here, so A already holds its write).
+  await ctx.setOffline(true); await ctx.setOffline(false);
+  let before = await storage();
+  for (let t = 0; t < 10; t++) { await page.waitForTimeout(500); const now = await storage(); if (now === before) break; before = now; }
+  // 3. Open the reasons: Reason label, three reasons and Cancel.
+  await report.click(); await page.waitForTimeout(150);
+  if ((await report.getAttribute('aria-expanded')) !== 'true') errors.push(`${tag}: Report is not aria-expanded after a tap`);
+  for (const name of ['Offensive', 'Harmful', 'Wrong', 'Cancel']) if (!(await visible(reason(name)))) errors.push(`${tag}: expected the "${name}" button`);
+  if (!(await visible(group.getByText('Reason', { exact: true })))) errors.push(`${tag}: expected the "Reason" label`);
+  // Owner copy rule (2026-10-01): no explaining line in the control.
+  if (await group.locator('p.hint:not([role])').count()) errors.push(`${tag}: an explaining line shows under Report`);
+  if (!(await focusText()).endsWith('|Offensive')) errors.push(`${tag}: focus is not on Offensive after opening (${await focusText()})`);
+  const labelled = await page.evaluate(() => { const g = document.querySelector('.esc-report [role="group"]'); const id = g?.getAttribute('aria-labelledby'); return id ? document.querySelectorAll(`[id="${id}"]`).length : -1; });
+  if (labelled !== 1) errors.push(`${tag}: the group's aria-labelledby matches ${labelled} elements, expected 1`);
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-esc-report-open.png` });
+  // 4. Escape closes the reasons, not the sheet.
+  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  if (!(await page.locator('dialog.esc-sheet[open]').count())) { errors.push(`${tag}: Escape in the reasons closed the sheet`); await ctx.close(); continue; }
+  if (await group.count()) errors.push(`${tag}: Escape did not close the reasons`);
+  if (!(await focusText()).includes('esc-report-btn')) errors.push(`${tag}: focus is not back on Report after Escape (${await focusText()})`);
+  // 5. Cancel returns focus to Report.
+  await report.click(); await page.waitForTimeout(150);
+  await reason('Cancel').click(); await page.waitForTimeout(150);
+  if (await group.count()) errors.push(`${tag}: Cancel did not close the reasons`);
+  if (!(await focusText()).includes('esc-report-btn')) errors.push(`${tag}: focus is not back on Report after Cancel (${await focusText()})`);
+  // 6. Offline: a visible failure, and the reasons stay for the retry.
+  await ctx.setOffline(true);
+  await report.click(); await page.waitForTimeout(150);
+  await reason('Wrong').click();
+  if (!(await visible(page.locator('.esc-report [role="alert"]', { hasText: 'Couldn’t send. Check your connection and try again.' })))) errors.push(`${tag}: expected the offline failure alert`);
+  if ((await group.getByRole('button').count()) < 4) errors.push(`${tag}: the reasons are gone after a failure`);
+  if (theme === 'silent-black') { await settle(page); await page.screenshot({ path: `${OUT}/${theme}-esc-report-failed.png` }); }
+  // 7. Online again: a double tap sends once and ends on one focused "Reported. Thank you.".
+  await ctx.setOffline(false);
+  await reason('Wrong').dblclick();
+  const status = page.locator('.esc-report [role="status"]', { hasText: 'Reported. Thank you.' });
+  if (!(await visible(status))) errors.push(`${tag}: expected "Reported. Thank you."`);
+  await page.waitForTimeout(200);
+  if ((await status.count()) !== 1) errors.push(`${tag}: expected one "Reported. Thank you.", found ${await status.count()}`);
+  if (await page.locator('.esc-report [role="alert"]').count()) errors.push(`${tag}: an alert is still showing after the report was sent`);
+  if (!(await focusText()).endsWith('|Reported. Thank you.')) errors.push(`${tag}: focus is not on the sent status (${await focusText()})`);
+  if (theme === 'silent-black') { await settle(page); await page.screenshot({ path: `${OUT}/${theme}-esc-report-sent.png` }); }
+  // 8. Nothing new saved.
+  if ((await storage()) !== before) errors.push(`${tag}: localStorage changed during the report`);
+  // 9. The sent state survives leaving and coming back to the thread.
+  await page.getByRole('button', { name: 'Escobar menu' }).click(); await page.waitForTimeout(100);
+  await page.getByRole('menuitem', { name: 'Past conversations' }).click(); await page.waitForTimeout(200);
+  await page.locator('.esc-link').click(); await page.waitForTimeout(250);
+  if (!(await visible(status))) errors.push(`${tag}: "Reported. Thank you." is gone after Past conversations → Back`);
+  if (await report.count()) errors.push(`${tag}: the Report button came back after Past conversations → Back`);
+  // 11. No link, phone or mail target in the control.
+  if (await page.locator('.esc-report a[href], .esc-report [href^="tel:"], .esc-report [href^="mailto:"]').count()) errors.push(`${tag}: the Report control holds a link`);
+  if (/tel:|mailto:/.test((await page.locator('.esc-report').first().innerHTML().catch(() => '')))) errors.push(`${tag}: the Report control mentions tel: or mailto:`);
+  // 10. A fresh app run starts from Report again (memory only).
+  await openSheet();
+  await sendMock();
+  if ((await report.count()) !== 1) errors.push(`${tag}: after a reload the new reply should show Report, found ${await report.count()}`);
+  if (await page.locator('.esc-report [role="status"]').count()) errors.push(`${tag}: after a reload a reply shows as already reported`);
+  // 12. The drawer probe still reaches the drawer toggle while a Report button is on screen.
+  await page.locator('.esc-drawer-toggle').last().click(); await page.waitForTimeout(100);
+  if (!(await visible(page.locator('.esc-drawer-list')))) errors.push(`${tag}: .esc-drawer-toggle .last() did not open the drawer`);
+  // 13. Nothing reached /reports.
+  if (reportRequests !== 0) errors.push(`${tag}: ${reportRequests} request(s) to /reports`);
+  await ctx.close();
+}
+
 // Live heart line (owner's pick): a fake LIVE watch reading through the dev hook, the line and the
 // number on Train in all five themes, coloured by each theme's accent.
 for (const theme of themes) {
@@ -4790,6 +4922,144 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// BUG-34: the launch overlay animates from its first paint, even while the app bundle is still
+// loading. Chromium starts SMIL only at the load event (which waits for the bundle), so the SMIL
+// build showed a frozen frame first: the dot at the mark's (0,0) and a round cap at the line's end.
+// Every context below holds the bundle back 1500 ms, then samples the overlay at its first paint
+// and 100 ms later, in all 5 themes, at 1x and at 4x CPU throttling. A probe that saw no bundle
+// delay, no visible ink or no movement fails, so it can never pass on flat data.
+{
+  const tag = 'launch first frame (BUG-34)';
+  // The path's corners in the mark's own units, its length, and the nearest point on it to (x, y):
+  // how far off the path, and how far along it.
+  const P = [[8, 40], [16, 40], [22, 22], [30, 50], [36, 30], [40, 40], [56, 40]];
+  const nearest = (x, y) => { let best = { d: Infinity, s: 0 }, acc = 0;
+    for (let k = 1; k < P.length; k++) {
+      const [ax, ay] = P[k - 1], [bx, by] = P[k], dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy);
+      const u = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (len * len)));
+      const d = Math.hypot(x - ax - u * dx, y - ay - u * dy);
+      if (d < best.d) best = { d, s: acc + u * len };
+      acc += len;
+    }
+    return best; };
+  const L = nearest(56, 40).s;
+  const pix = await (await browser.newContext()).newPage();
+  // Every pixel that differs from the overlay background by more than 24/255 in a channel, mapped
+  // into the mark's units: how many there are, and how many lie farther than the dot's radius plus
+  // 1.5 units (edges, the settle scale) from the part of the path travelled so far, 0 to `reach`
+  // (+1.5). Distance to that part, not to the nearest leg: near a corner the next leg can be closer.
+  const strayInk = (b64, bg, ctm, cssWidth, reach) => pix.evaluate(async ([b64, bg, ctm, cssWidth, reach, P]) => {
+    const img = await new Promise(res => { const i = new Image(); i.onload = () => res(i); i.src = 'data:image/png;base64,' + b64; });
+    const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
+    const g = cv.getContext('2d'); g.drawImage(img, 0, 0);
+    const d = g.getImageData(0, 0, cv.width, cv.height).data;
+    const inv = new DOMMatrix(ctm).inverse();
+    const ratio = img.width / cssWidth; // CDP captures at CSS or device pixels depending on emulation
+    let ink = 0, stray = 0, first = null;
+    for (let y = 0; y < cv.height; y++) for (let x = 0; x < cv.width; x++) {
+      const k = (y * cv.width + x) * 4;
+      if (Math.max(Math.abs(d[k] - bg[0]), Math.abs(d[k + 1] - bg[1]), Math.abs(d[k + 2] - bg[2])) <= 24) continue;
+      ink++;
+      const m = new DOMPoint((x + 0.5) / ratio, (y + 0.5) / ratio).matrixTransform(inv);
+      let near = Infinity, acc = 0;
+      for (let j = 1; j < P.length && acc < reach + 1.5; j++) {
+        const [ax, ay] = P[j - 1], [bx, by] = P[j], dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy);
+        const umax = Math.min(1, (reach + 1.5 - acc) / len);
+        const u = Math.max(0, Math.min(umax, ((m.x - ax) * dx + (m.y - ay) * dy) / (len * len)));
+        near = Math.min(near, Math.hypot(m.x - ax - u * dx, m.y - ay - u * dy));
+        acc += len;
+      }
+      if (near > 3.1 + 1.5) { stray++; if (!first) first = `(${m.x.toFixed(1)}, ${m.y.toFixed(1)})`; }
+    }
+    return { ink, stray, first };
+  }, [b64, bg, ctm, cssWidth, reach, P]);
+  // Read two animation frames later, so the state is never behind the capture taken just before it.
+  const sample = page => page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => done((() => {
+    const launch = document.getElementById('launch');
+    const path = document.getElementById('launch-path');
+    const dot = document.getElementById('launch-dot');
+    if (!launch || !path || !dot) return null;
+    const m = path.parentNode.getScreenCTM();
+    const r = dot.getBoundingClientRect();
+    const c = new DOMPoint(r.x + r.width / 2, r.y + r.height / 2).matrixTransform(m.inverse());
+    const bg = getComputedStyle(launch).backgroundColor.match(/\d+/g).map(Number);
+    return { t: performance.now() - window.__marcLaunchT0, off: parseFloat(getComputedStyle(path).strokeDashoffset), dx: c.x, dy: c.y, ctm: [m.a, m.b, m.c, m.d, m.e, m.f], bg, booted: !!window.__bug34Ready, anims: document.getAnimations().filter(a => launch.contains(a.effect && a.effect.target)).length };
+  })())))));
+  const open = async (theme, rate, extra) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: extra.os || 'no-preference' });
+    await ctx.route(/\/assets\/index-[^/]*\.js$/, async r => { await new Promise(res => setTimeout(res, 1500)); await r.continue(); });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+    const cdp = await ctx.newCDPSession(page);
+    if (rate > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate });
+    await page.addInitScript(([t, motion]) => {
+      localStorage.setItem('marc.theme', t);
+      if (motion) localStorage.setItem('marc.motion', motion);
+      let inner;
+      Object.defineProperty(window, '__marcLaunchReady', { configurable: true, get() { return inner && (() => { window.__bug34Ready = true; inner(); }); }, set(fn) { inner = fn; } });
+      window.__bug34 = {};
+      new PerformanceObserver(l => { for (const e of l.getEntries()) if (e.name === 'first-paint') window.__bug34.fp = e.startTime; }).observe({ type: 'paint', buffered: true });
+      const tick = () => {
+        const p = document.getElementById('launch-path');
+        if (p && window.__bug34.anim === undefined && parseFloat(getComputedStyle(p).strokeDashoffset) < 100) window.__bug34.anim = performance.now();
+        if (window.__bug34.anim === undefined) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, [theme, extra.motion || null]);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'commit' });
+    await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number' && document.getElementById('launch-dot'), null, { timeout: 8000 });
+    // CDP's own capture, not page.screenshot(): that one waits for web fonts, which here means
+    // waiting out the held bundle, so it would never see the first frames.
+    return { ctx, page, shot: async () => (await cdp.send('Page.captureScreenshot', { format: 'png' })).data };
+  };
+  const timings = [];
+  for (const rate of [1, 4]) for (const theme of themes) {
+    const at = `${theme} ${rate}x`;
+    const { ctx, page, shot } = await open(theme, rate, {});
+    // Capture first, then read the state, so the state is never behind the pixels (it only moves forward).
+    const png1 = await shot(); const s1 = await sample(page);
+    if (!s1) { errors.push(`${tag} ${at}: #launch was gone at first paint`); await ctx.close(); continue; }
+    await page.waitForFunction(t => performance.now() - window.__marcLaunchT0 >= t, s1.t + 100, { timeout: 8000 });
+    const png2 = await shot(); const s2 = await sample(page);
+    await page.waitForFunction(() => performance.now() - window.__marcLaunchT0 >= 700, null, { timeout: 8000 });
+    const s3 = await sample(page);
+    if (!s2 || !s3) { errors.push(`${tag} ${at}: #launch was gone before the samples were taken`); await ctx.close(); continue; }
+    // The probe only means something while the bundle is still held back.
+    if (s1.booted || s2.booted || s3.booted) errors.push(`${tag} ${at}: the app booted before the samples (${Math.round(s3.t)} ms), so the bundle delay did not hold`);
+    // A1: at first paint and +100 ms the dot is on the path, and nothing is painted off the path or
+    // ahead of how far the dot and line have got (the SMIL build froze on the dot at 0,0 and a cap at 56,40).
+    const cssWidth = await page.evaluate(() => innerWidth);
+    for (const [n, s, png] of [['first paint', s1, png1], ['+100 ms', s2, png2]]) {
+      const dot = nearest(s.dx, s.dy);
+      if (dot.d > 0.6) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): the dot is ${dot.d.toFixed(1)} units off the path, at (${s.dx.toFixed(1)}, ${s.dy.toFixed(1)})`);
+      const reach = Math.max(dot.s, (100 - s.off) / 100 * L);
+      const px = await strayInk(png, s.bg, s.ctm, cssWidth, reach);
+      if (px.stray > 0) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): ${px.stray} painted pixels off the path or past the dot, first at ${px.first} (a stray dot or cap)`);
+      if (n === '+100 ms' && px.ink < 50) errors.push(`${tag} ${at} +100 ms: only ${px.ink} painted pixels, so there is nothing to measure`);
+    }
+    // A2: the line and dot visibly move within 100 ms of first paint, and keep moving.
+    if (!(s2.off < s1.off && s2.off < 100)) errors.push(`${tag} ${at}: strokeDashoffset did not drop within 100 ms of first paint (${s1.off} at ${Math.round(s1.t)} ms, ${s2.off} at ${Math.round(s2.t)} ms)`);
+    if (!(Math.hypot(s2.dx - s1.dx, s2.dy - s1.dy) > 0.1)) errors.push(`${tag} ${at}: the dot did not move within 100 ms of first paint`);
+    if (!(s3.off < s2.off - 10)) errors.push(`${tag} ${at}: at ${Math.round(s3.t)} ms strokeDashoffset is ${s3.off}, want at least 10 below ${s2.off}`);
+    if (rate === 4) timings.push(`${theme} ${JSON.stringify(await page.evaluate(() => ({ firstPaint: Math.round(window.__bug34.fp), firstAnimated: Math.round(window.__bug34.anim) })))}`);
+    await ctx.close();
+  }
+  // A3: under reduce (the OS setting, or the app's own marc.motion=reduce) the finished mark shows at
+  // once with no animation, before the bundle has loaded.
+  for (const [n, extra] of [['OS reduce', { os: 'reduce' }], ['marc.motion=reduce', { motion: 'reduce' }]]) {
+    const { ctx, page } = await open('paper', 1, extra);
+    const s = await sample(page);
+    if (!s) { errors.push(`${tag} ${n}: #launch was gone before the sample`); await ctx.close(); continue; }
+    if (s.booted) errors.push(`${tag} ${n}: the app booted before the sample`);
+    if (s.off !== 0) errors.push(`${tag} ${n}: strokeDashoffset should be 0 at once, got ${s.off}`);
+    if (Math.hypot(s.dx - 30, s.dy - 50) > 0.3) errors.push(`${tag} ${n}: the dot should sit at (30, 50), got (${s.dx.toFixed(1)}, ${s.dy.toFixed(1)})`);
+    if (s.anims !== 0) errors.push(`${tag} ${n}: ${s.anims} animations run inside #launch, want 0`);
+    await ctx.close();
+  }
+  await pix.context().close();
+  console.log(`${tag}: 5 themes x 1x/4x checked with the bundle held 1500 ms; 4x timings from navigation start: ${timings.join('; ')}`);
+}
+
 // A4: keepAwake is called on while a workout is live, and off once it ends. The NativeUi plugin
 // is mocked here (isNativePlatform forced true) since this gate runs the web build.
 {
@@ -5343,7 +5613,7 @@ for (const { theme, inset } of bug22Runs) {
     const dock = document.querySelector('.esc-dock').getBoundingClientRect();
     const shade = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dock-shade')) || 0;
     const log = document.querySelector('[data-palace="train.log-past"]');
-    const hint = [...document.querySelectorAll('.view p.hint')].find(p => p.textContent.includes('Change the goal in Coach'));
+    const hint = document.querySelector('.view [data-palace="train.targets"]');
     const lb = log?.getBoundingClientRect();
     const hit = lb ? document.elementFromPoint(lb.left + lb.width / 2, lb.top + lb.height / 2) : null;
     return { rows: document.querySelectorAll('[data-palace="train.split"] .list .row, [data-palace="train.split"] .list > *').length, limit: dock.top - shade, log: lb?.bottom ?? null, hint: hint?.getBoundingClientRect().bottom ?? null, tap: !!hit && log.contains(hit) };
@@ -5835,7 +6105,7 @@ for (const theme of ['silent-black', 'paper']) {
   // The URL entered in the Play Console field, read from the submission doc itself so the two cannot drift.
   const PLAY_CONSOLE_PRIVACY_URL = readFileSync(join(ROOT, 'docs/PLAY-SUBMISSION.md'), 'utf8').match(/\*\*Privacy policy URL \(Play Console[^\n]*\n(https:\/\/\S+?)\s/)?.[1];
   if (!PLAY_CONSOLE_PRIVACY_URL) errors.push('PLAY-1: no "Privacy policy URL (Play Console…)" line in docs/PLAY-SUBMISSION.md');
-  const MEDICAL = 'Not medical advice. For medical advice, diagnosis or treatment, see a healthcare professional.';
+  // P3 retired by owner decision 2026-10-01 (COPY-1, D-COPY1-medical); the reminder is in the store description.
   for (const theme of themes) {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
     const page = await ctx.newPage();
@@ -5850,8 +6120,6 @@ for (const theme of ['silent-black', 'paper']) {
     if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
     await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
     const link = page.getByRole('link', { name: 'Privacy policy', exact: true });
-    const medical = page.locator('[data-palace="settings.medical"]');
-    await medical.scrollIntoViewIfNeeded().catch(() => {});
     if ((await link.count()) !== 1) errors.push(`${tag}: expected one "Privacy policy" link in Settings, found ${await link.count()}`);
     else {
       await link.scrollIntoViewIfNeeded().catch(() => {});
@@ -5860,16 +6128,6 @@ for (const theme of ['silent-black', 'paper']) {
       if (a.href !== PLAY_CONSOLE_PRIVACY_URL) errors.push(`${tag}: the privacy link's href is ${a.href}, not the Play Console URL ${PLAY_CONSOLE_PRIVACY_URL}`);
       if (a.target !== '_blank' || !/\bnoopener\b/.test(a.rel ?? '')) errors.push(`${tag}: the privacy link must open outside the app (target=_blank rel=noopener), got target=${a.target} rel=${a.rel}`);
       if (!a.section) errors.push(`${tag}: the privacy link is not in "Your data"`);
-    }
-    await medical.scrollIntoViewIfNeeded().catch(() => {});
-    if (!(await visible(medical))) errors.push(`${tag}: the healthcare reminder is not visible`);
-    else {
-      const m = await page.evaluate(() => {
-        const el = document.querySelector('[data-palace="settings.medical"]'), v = document.querySelector('[data-palace="settings.version"]');
-        return { text: el?.textContent?.trim(), above: !!(el && v && el.getBoundingClientRect().bottom <= v.getBoundingClientRect().top) };
-      });
-      if (m.text !== MEDICAL) errors.push(`${tag}: the healthcare reminder reads "${m.text}"`);
-      if (!m.above) errors.push(`${tag}: the healthcare reminder is not above the version line`);
     }
     await settle(page); await page.screenshot({ path: `${OUT}/${theme}-play-1-settings.png` });
     await ctx.close();
@@ -5963,6 +6221,265 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// HT-6: the hand close-ups, the zoom host and the Look closer chips (card HT-6; GA 2.2-2.5, 5.1; plan 2.4-2.5, 2.9).
+// The app's sheet, opened from the real Train entry, against the golden-B page (tests/howto/golden/howto-layers.html,
+// hash-pinned by HT-4, served offline with the app's Inter woff2), per theme side by side:
+// - A5 L3: every page of every hand close-up (8 exercises x 5 themes), with the panel on its own layer in both pages
+//   at the same sub-pixel position (the HT-3 capture mode); the Right and Wrong words and their tick and cross are
+//   printed in every theme (words >= 3:1, icons >= 2:1 against their background); C16: the region is named by its heading, and each half is an
+//   image labelled "Right: …" / "Wrong: …"; C11: the open and close animations equal golden B's, and under reduced
+//   motion there are none;
+// - the Grip section with its handling mistakes (L3, every theme) and the hand chip's box (>= 44 px) equal golden B's;
+// - A4 through the zoom slot API: the plate box hidden and inert (the figure still mounted), Mistake cleared on open
+//   and put back on close, Back closes the close-up before the sheet, focus goes to the heading and back to the chip;
+// - A6: the HT-3 plate compare (L2b, F3, L3) still passes after each hand close-up was opened and closed;
+// - A7: hand-<id> chunks within their measured size + 10 % (D-HT6-budget), and no hand- request before the first tap;
+// - A8: the push hint on the Train card (Silent Black, Paper): exactly once on the chest press, with HOWTO_HINTS' text;
+//   none on the lat pulldown (a How-to, not push), the no-How-to control (firstWithoutHowTo) or a custom exercise.
+{
+  const tag = 'HT-6';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const { gzipSync } = await import('node:zlib');
+  const GB = readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'));
+  const ht6 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
+  const stats = { pairs: 0, offMax: 0, tall: 0, words: 0, anims: 0, a6: 0 };
+  const P = m => errors.push(`${tag}: ${m}`);
+  const panelSel = id => `#${id}-zoom-hand`;
+  const click = (page, sel) => page.evaluate(s => { const b = document.querySelector(s); if (!b) throw new Error(`no ${s}`); b.click(); }, sel);
+  const rectOf = (page, sel) => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }, sel);
+  /** The visible page of a panel: its words, icons, image labels, as the reader and the eye get them. */
+  const readPanel = (page, sel) => page.evaluate(sel => {
+    const p = document.querySelector(sel), pg = [...p.querySelectorAll('.zx-page')].find(x => !x.hidden) ?? p;
+    const lum = c => { const m = c.match(/[\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
+    const bgOf = e => { for (let x = e; x; x = x.parentElement) { const b = getComputedStyle(x).backgroundColor; if (b && !/rgba\(0, 0, 0, 0\)|transparent/.test(b)) return b; } return getComputedStyle(document.body).backgroundColor; };
+    const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+    const words = [...pg.querySelectorAll('text, b, span, strong, p, div')].filter(e => ![...e.children].some(c => c.textContent.trim()) && /^(Right|Wrong)$/.test(e.textContent.trim()))
+      .map(e => { const cs = getComputedStyle(e), col = e instanceof SVGElement ? cs.fill : cs.color, r = e.getBoundingClientRect(); return { w: e.textContent.trim(), ok: r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.opacity !== '0', c: contrast(col, bgOf(e)) }; });
+    const icon = d => [...pg.querySelectorAll('path')].filter(e => e.getAttribute('d') === d).map(e => { const cs = getComputedStyle(e), r = e.getBoundingClientRect(); return r.width > 0 && cs.stroke !== 'none' && !/rgba\(0, 0, 0, 0\)/.test(cs.stroke) ? contrast(cs.stroke, bgOf(e)) : 0; });
+    const h = document.getElementById(p.getAttribute('aria-labelledby') ?? '');
+    return {
+      words, tick: icon('M5 12l4 4L19 7'), cross: icon('M6 6l12 12M18 6L6 18'),
+      region: p.getAttribute('role') === 'region' && !!h && !!h.textContent.trim() && h.classList.contains('zx-h'),
+      right: [...pg.querySelectorAll('[role="img"][aria-label^="Right: "]')].length, wrong: [...pg.querySelectorAll('[role="img"][aria-label^="Wrong: "]')].length,
+      pages: p.querySelectorAll('.zx-page').length,
+    };
+  }, sel);
+  /** The open or close animation of a panel, as comparable data. */
+  const animsOf = (page, sel) => page.evaluate(s => document.querySelector(s).getAnimations().map(a => ({ k: a.effect.getKeyframes().map(f => ({ o: f.opacity, t: f.transform, off: f.offset })), d: a.effect.getTiming().duration, e: a.effect.getTiming().easing })), sel);
+  /** L3 of the open page of one close-up: the golden panel placed at the app panel's position, both on their own layer. */
+  const l3 = async (app, gold, id, label, sel = panelSel(id)) => {
+    // no smooth scroll left running in the golden page (its openZoom scrolls smoothly), both pages settled
+    await gold.evaluate(() => new Promise(r => { document.documentElement.style.scrollBehavior = 'auto'; let y = NaN, n = 0; const f = () => { n = scrollY === y ? n + 1 : 0; y = scrollY; if (n >= 3) r(); else requestAnimationFrame(f); }; f(); }));
+    // capture mode (D-HT3, as HT-3), set before the panel is placed: the panel on its own layer in both pages, rasterised
+    // from its own box. The open animation's transform-origin (set from the opener) stays on the panel and moves the
+    // layer's raster phase, so both pages capture at one origin; with no transform on screen it changes no pixel.
+    const saved = await Promise.all([app, gold].map(pg => pg.evaluate(s => { const e = document.querySelector(s), o = e.style.transformOrigin; e.style.willChange = 'transform'; e.style.transformOrigin = '0px 0px'; return o; }, sel)));
+    await H.settleApp(app); await H.settle(gold);
+    // the app panel just below the sheet's sticky header; a panel taller than the phone is captured at 390 x TALL_H
+    // in both pages (as HT-3 does), and one that still does not fit is an error, never a cut
+    const place = () => app.evaluate(s => { const z = document.querySelector(s), panel = z.closest('.sheet-panel'), top = panel.querySelector('.sheet-top').getBoundingClientRect().bottom; panel.scrollTop += z.getBoundingClientRect().top - (top + 8); const r = z.getBoundingClientRect(); return r.top >= top - 0.001 && r.bottom <= innerHeight + 0.001; }, sel);
+    let tall = false;
+    if (!(await place())) {
+      tall = true;
+      await Promise.all([app.setViewportSize({ width: 390, height: H.TALL_H }), gold.setViewportSize({ width: 390, height: H.TALL_H })]);
+      await H.settleApp(app);
+      if (!(await place())) P(`${id} ${label}: the close-up does not fit a 390 x ${H.TALL_H} viewport below the sheet header`);
+    }
+    await H.settleApp(app);
+    const at = await rectOf(app, sel);
+    // the golden panel moved to the same viewport position (the same sub-pixel phase), by the body's top margin
+    await gold.evaluate(([s, at]) => {
+      document.documentElement.style.overflowAnchor = 'none';
+      document.body.style.marginTop = '0px'; window.scrollTo({ top: 0, behavior: 'instant' });
+      for (let k = 0; k < 3; k++) { const r = document.querySelector(s).getBoundingClientRect(); if (r.top === at.y) break; document.body.style.marginTop = `${parseFloat(document.body.style.marginTop) + at.y - r.top}px`; }
+    }, [sel, at]);
+    await H.settleApp(app); await H.settle(gold);
+    const [ra, rg] = [await rectOf(app, sel), await rectOf(gold, sel)];
+    if (ra.x !== rg.x || ra.y !== rg.y || ra.width !== rg.width || ra.height !== rg.height) P(`${id} ${label}: panel box app ${JSON.stringify(ra)} vs golden ${JSON.stringify(rg)}`);
+    else {
+      const [a, g] = [await H.capture(app, ra), await H.capture(gold, rg)];
+      const d = await H.diffPng(app, a, g);
+      stats.pairs++; stats.offMax = Math.max(stats.offMax, d.off); if (tall) stats.tall++;
+      if (d.ink < 0.02) P(`${id} ${label}: the app capture is blank (ink ${d.ink})`);
+      if (!H.meetsRule(d)) {
+        P(`${id} ${label} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}${d.sameSize ? '' : `, sizes ${d.width}x${d.height} vs ${d.otherWidth}x${d.otherHeight}`})`);
+        const f = join(OUT, `ht6-${id}-${label.replace(/\W+/g, '_')}`); writeFileSync(`${f}-app.png`, a); writeFileSync(`${f}-golden.png`, g);
+      }
+    }
+    for (const [k, pg] of [app, gold].entries()) await pg.evaluate(([s, o]) => { const e = document.querySelector(s); e.style.willChange = ''; e.style.transformOrigin = o; }, [sel, saved[k]]);
+    if (tall) { await Promise.all([app.setViewportSize(H.DEVICE.viewport), gold.setViewportSize(H.DEVICE.viewport)]); await H.settleApp(app); }
+  };
+  const plateState = page => page.evaluate(() => {
+    const g = document.querySelector('dialog.sheet.ht .ht-golden'), fit = g.querySelector('.ht-plate-fit');
+    return { snap: g.htPlateApi.snapshot(), hidden: fit.hidden, inert: fit.inert, mounted: !!fit.querySelector('figure[data-mode="normal"]'), cue: g.querySelector('.cue-line').hidden, slot: g.querySelector('.ht-zoom-slot').hidden };
+  });
+  const run = async theme => {
+    const app = await H.openAppTrain(ht6, PORT, theme, { onError: m => P(`${theme} app page error: ${m}`) });
+    const gold = await H.openGolden(ht6, theme, { html: GB, onError: m => P(`${theme} golden page error: ${m}`) });
+    const reqs = []; app.page.on('request', r => reqs.push(r.url()));
+    try {
+      if (theme === 'silent-black' || theme === 'paper') {
+        const hints = [...readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8').matchAll(/^  "(lib_[a-z_]+)": ("(?:[^"\\]|\\.)*"),$/gm)].map(m => [m[1], JSON.parse(m[2])]);
+        const text = Object.fromEntries(hints);
+        if (!text.lib_machine_chest_press) P(`${theme} A8: no HOWTO_HINTS entry for the chest press`);
+        for (const [lib, want] of [['lib_machine_chest_press', text.lib_machine_chest_press], ['lib_lat_pulldown', null], [H.HT_NO_HOWTO, null], [H.HT_CUSTOM.id, null]]) {
+          const card = await H.openCard(app.page, H.HT_ORDER.indexOf(lib));
+          const got = await card.evaluate(c => [...c.querySelectorAll('p.hint.muted')].filter(p => !p.closest('.why-row ~ .ex-body')).map(p => p.textContent));
+          const shown = got.filter(t => Object.values(text).includes(t));
+          if (want ? JSON.stringify(shown) !== JSON.stringify([want]) : shown.length) P(`${theme} A8 ${lib}: hint lines ${JSON.stringify(got)}, expected ${want ? `"${want}" once` : 'none'}`);
+        }
+      }
+      for (const [id] of H.HT_PLATES) {
+        const index = H.HT_PLATES.findIndex(p => p[0] === id), T = `${theme} ${id}`;
+        await H.openHowTo(app.page, index);
+        if (theme === 'silent-black' && reqs.some(u => /\/assets\/hand-/.test(u) && u.includes(`hand-${id}-`))) P(`${T} A7: hand-${id} requested before the first tap`);
+        // the Grip section with its handling mistakes, at S0, pixel for pixel
+        await l3(app.page, gold.page, id, 'grip', `#${id}-grip`);
+        await app.page.evaluate(() => { document.querySelector('dialog.sheet.ht .sheet-panel').scrollTop = 0; });
+        await gold.page.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo({ top: 0, behavior: 'instant' }); });
+        const before = await plateState(app.page);
+        // a real tap in both pages (pointer modality: the heading takes focus without a focus ring, as on a phone)
+        await app.page.click(`#${id}-chip-hand`);
+        await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible', timeout: 8000 });
+        const [aA, aG] = await Promise.all([animsOf(app.page, panelSel(id)), (async () => { await gold.page.click(`#${id}-chip-hand`); return animsOf(gold.page, panelSel(id)); })()]);
+        stats.anims++;
+        if (JSON.stringify(aA) !== JSON.stringify(aG) || aA.length !== 1) P(`${T} C11 open animation: app ${JSON.stringify(aA)} vs golden ${JSON.stringify(aG)}`);
+        await H.settleApp(app.page); await H.settle(gold.page);
+        // A4: the plate box hidden and inert, the figure mounted, the cue line hidden, focus on the heading
+        const open = await plateState(app.page);
+        const focus = await app.page.evaluate(() => document.activeElement?.classList.contains('zx-h') ?? false);
+        if (!open.hidden || !open.inert || !open.mounted || !open.cue || open.slot || !focus) P(`${T} A4 open: ${JSON.stringify({ open, focus })}`);
+        const pages = (await readPanel(app.page, panelSel(id))).pages;
+        // the Look closer hand chip is golden B's size (>= 44 x 44) and, where it is golden B's first chip, at its place
+        // (the row gains its posture and feel chips with HT-7 and HT-8)
+        const [chA, chG] = [await rectOf(app.page, `#${id}-chip-hand`), await rectOf(gold.page, `#${id}-chip-hand`)];
+        const firstG = await gold.page.evaluate(i => document.getElementById(`${i}-chip-hand`).previousElementSibling === null, id);
+        if ((firstG && chA.x !== chG.x) || chA.width !== chG.width || chA.height !== chG.height || chA.height < 44 || chA.width < 44) P(`${T} chip: app ${JSON.stringify(chA)} vs golden ${JSON.stringify(chG)} (>= 44 x 44)`);
+        for (let i = 0; i < pages; i++) {
+          if (i) for (const pg of [app.page, gold.page]) await pg.locator(`${panelSel(id)} .zx-page:not([hidden]) .pager-btn[data-page="${i}"]`).click();
+          await l3(app.page, gold.page, id, `S2 page ${i + 1}`);
+          const r = await readPanel(app.page, panelSel(id));
+          if (!r.region) P(`${T} C16: the close-up region is not named by its heading`);
+          const hasPair = r.words.some(w => w.w === 'Right') || r.words.some(w => w.w === 'Wrong');
+          if (i === 0 || hasPair) {
+            stats.words++;
+            for (const w of ['Right', 'Wrong']) {
+              const ws = r.words.filter(x => x.w === w);
+              if (!ws.length || !ws.every(x => x.ok && x.c >= 3)) P(`${T} page ${i + 1}: the word ${w} is not printed readably (${JSON.stringify(ws)})`);
+            }
+            // printed: at least one tick and one cross drawn in a colour that stands off the panel (golden B's own accent
+            // tick is 2.7:1 in Midnight, so the bar is 2:1; the pixels themselves are held to golden B by L3 above)
+            if (!(Math.max(0, ...r.tick) >= 2) || !(Math.max(0, ...r.cross) >= 2)) P(`${T} page ${i + 1}: tick ${JSON.stringify(r.tick)} / cross ${JSON.stringify(r.cross)} icons not drawn readably`);
+            if (!r.right || !r.wrong) P(`${T} page ${i + 1} C16: halves labelled Right ${r.right}, Wrong ${r.wrong}`);
+          }
+        }
+        // closing: golden B's exit animation, the plate state back as before, focus back on the chip
+        const shut = async pg => { await pg.click(`${panelSel(id)}-close`); return animsOf(pg, panelSel(id)); };
+        const [cA, cG] = await Promise.all([shut(app.page), shut(gold.page)]);
+        if (JSON.stringify(cA) !== JSON.stringify(cG) || cA.length !== 1) P(`${T} C11 close animation: app ${JSON.stringify(cA)} vs golden ${JSON.stringify(cG)}`);
+        await H.settleApp(app.page); await H.settle(gold.page);
+        const after = await plateState(app.page), back = await app.page.evaluate(i => document.activeElement?.id === `${i}-chip-hand`, id);
+        if (JSON.stringify(after) !== JSON.stringify(before) || !back) P(`${T} A4 close: ${JSON.stringify({ before, after, back })}`);
+        if (theme === 'silent-black' || theme === 'paper') {
+          // opening clears Mistake (GA 2.2); closing puts it back
+          await click(app.page, `#${id}-mistake`);
+          const m0 = await plateState(app.page);
+          await click(app.page, `#${id}-chip-hand`);
+          await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+          const m1 = await plateState(app.page);
+          await click(app.page, `${panelSel(id)}-close`); await H.settleApp(app.page);
+          const m2 = await plateState(app.page);
+          if (m0.snap.mode !== 'mistake' || m1.snap.mode !== 'normal' || JSON.stringify(m2) !== JSON.stringify(m0)) P(`${T} A4 Mistake: ${JSON.stringify({ m0: m0.snap, m1: m1.snap, m2: m2.snap })}`);
+          await click(app.page, `#${id}-mistake`);
+          // HT-6 review (#112): opened from Mistake, the close-up grows out of the chip where golden B's does. Golden B's
+          // openZoom leaves Mistake (hiding the "Also check your wrist" line) before it measures the chip.
+          {
+            const originFromMistake = async (pg, inApp) => {
+              await pg.click(`#${id}-mistake`);
+              await pg.click(`#${id}-chip-hand`);
+              if (inApp) await pg.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+              const o = await pg.evaluate(s => document.querySelector(s).style.transformOrigin, panelSel(id));
+              await click(pg, `${panelSel(id)}-close`);
+              if (inApp) await H.settleApp(pg); else await H.settle(pg);
+              return o;
+            };
+            const [oA, oG] = [await originFromMistake(app.page, true), await originFromMistake(gold.page, false)];
+            stats.mistakeOrigins = (stats.mistakeOrigins ?? 0) + 1;
+            // x as the chip check above: equal where the hand chip is golden B's first (the row gains HT-7's chips later)
+            const [xA, yA] = (oA || '').split(' '), [xG, yG] = (oG || '').split(' ');
+            if (!oA || !yA || yA !== yG || (firstG && xA !== xG)) P(`${T} open from Mistake: transform-origin app ${oA} vs golden ${oG}`);
+          }
+        }
+        if (theme === 'silent-black' && id === 'machine-chest-press') {
+          // Android back closes the close-up first, then the sheet
+          await click(app.page, `#${id}-chip-hand`);
+          await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+          await H.settleApp(app.page);
+          await app.page.evaluate(() => history.back());
+          await app.page.waitForTimeout(600);
+          const s1 = await app.page.evaluate(i => ({ sheet: !!document.querySelector('dialog.sheet.ht'), zoom: !document.getElementById(`${i}-zoom-hand`)?.hidden }), id);
+          await app.page.evaluate(() => history.back());
+          await app.page.locator('dialog.sheet.ht').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+          const s2 = await app.page.evaluate(() => !!document.querySelector('dialog.sheet.ht'));
+          if (!s1.sheet || s1.zoom || s2) P(`${T} A4 Back: after one Back ${JSON.stringify(s1)}, after two the sheet is ${s2 ? 'still open' : 'closed'}`);
+          await H.settleApp(app.page);
+          if (!s2) continue;
+        }
+        await H.closeHowTo(app.page);
+        await gold.page.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo(0, 0); });
+      }
+      if (theme === 'silent-black') {
+        const hand = H.HT_PLATES.filter(([id]) => reqs.some(u => u.includes(`/assets/hand-${id}-`) && u.endsWith('.js')));
+        if (hand.length !== 8) P(`A7: ${hand.length} of the 8 hand chunks loaded on tap`);
+      }
+    } finally { await app.ctx.close(); await gold.ctx.close(); }
+  };
+  // C11 under reduced motion: no open or close animation (golden B: none), in every theme
+  const reduced = async theme => {
+    const app = await H.openAppTrain(ht6, PORT, theme, { reducedMotion: 'reduce', onError: m => P(`${theme} reduced app page error: ${m}`) });
+    try {
+      const id = 'machine-chest-press', index = H.HT_PLATES.findIndex(p => p[0] === id);
+      await H.openHowTo(app.page, index);
+      await click(app.page, `#${id}-chip-hand`);
+      await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+      const o = await animsOf(app.page, panelSel(id));
+      await click(app.page, `${panelSel(id)}-close`);
+      const c = await animsOf(app.page, panelSel(id)), shut = await app.page.evaluate(s => document.querySelector(s).hidden, panelSel(id));
+      if (o.length || c.length || !shut) P(`${theme} C11 reduced motion: open ${JSON.stringify(o)}, close ${JSON.stringify(c)}, closed at once ${shut}`);
+    } finally { await app.ctx.close(); }
+  };
+  try {
+    const failed = th => e => P(`${th} crashed: ${e.message.split('\n')[0]}`);   // a thrown probe is a failure, never a gate crash
+    await Promise.all(H.HT_THEMES.map(th => run(th).catch(failed(th))));
+    await Promise.all(H.HT_THEMES.map(th => reduced(th).catch(failed(`${th} reduced`))));
+    if (stats.pairs < 105) P(`only ${stats.pairs} pages compared, expected the 13 close-up pages and 8 grip sections in 5 themes (105)`);
+    // A6: the HT-3 plate compare, after each hand close-up was opened and closed (Silent Black and Paper, 390 px)
+    const openClose = async id => {
+      const wait = f => new Promise(r => { const t0 = performance.now(); const k = () => (f() || performance.now() - t0 > 5000 ? r() : requestAnimationFrame(k)); k(); });
+      const p = () => document.getElementById(`${id}-zoom-hand`);
+      document.getElementById(`${id}-chip-hand`).click();
+      await wait(() => p() && !p().hidden && !p().getAnimations().length);
+      document.getElementById(`${id}-zoom-hand-close`).click();
+      await wait(() => p().hidden && !document.querySelector('.ht-plate-fit').hidden);
+      window.__ht6OpenClosed = (window.__ht6OpenClosed ?? 0) + 1;
+    };
+    const a6 = await H.ht3Fidelity(ht6, PORT, { themes: H.HT_FULL, full: [], widths: [], mutate: openClose });
+    stats.a6 = a6.stats.pairs;
+    for (const p of a6.problems) P(`A6 (after a hand close-up opened and closed): ${p}`);
+    if (a6.stats.pairs < 32) P(`A6: only ${a6.stats.pairs} plate pairs compared, expected 8 x 2 themes x {N, M} (>= 32)`);
+    // A7: the built chunks
+    const sizes = readdirSync(join(ROOT, 'www/assets')).filter(f => /^hand-.*\.js$/.test(f)).map(f => { const b = readFileSync(join(ROOT, 'www/assets', f)); return { f, raw: b.length, gz: gzipSync(b).length }; });
+    if (sizes.length !== 8) P(`A7: ${sizes.length} hand-*.js chunks, expected 8`);
+    // D-HT6-budget: each chunk at most its measured size + 10 % (tools/plates/gen/hands.mjs, pinned in hands.test)
+    const { handCeiling } = await import('../tools/plates/gen/hands.mjs');
+    for (const s of sizes) { const id = H.HT_PLATES.map(p => p[0]).find(i => s.f.startsWith(`hand-${i}-`)), c = id && handCeiling(id); if (!c || s.raw > c.raw || s.gz > c.gz) P(`A7: ${s.f} is ${s.raw} B raw / ${s.gz} B gz, over its ceiling ${c ? `${c.raw} / ${c.gz}` : '(none)'}`); }
+    console.log(`${tag} (${ht6.version()}): ${stats.pairs} close-up pages L3 (max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}), Right/Wrong words and icons on ${stats.words} pages, ${stats.anims} open animation lists, reduced motion in 5 themes, A6 ${stats.a6} plate pairs after open/close, ${stats.mistakeOrigins ?? 0} opens from Mistake at golden B's origin; hand chunks ${sizes.map(s => `${s.f.replace(/-[\w-]{8}\.js$/, '')} ${(s.raw / 1024).toFixed(1)}/${(s.gz / 1024).toFixed(1)} KB`).join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally {
+    await ht6.close();
+  }
+}
+
 // HT-3b: speed, offline and footprint (card HT-3b; plan 2.5, 2.9, 2.10). A1's other half (the
 // esbuild-minified ids.ts + lazy.tsx size figure) is tests/howto/footprint.test.ts — a real build is not
 // needed for that; this is the content probe on the real index-*.js. A2: chunk budgets, each at its
@@ -6003,7 +6520,10 @@ for (const theme of ['silent-black', 'paper']) {
 
   // A1: content probe on the real main chunk (no plate-svg/u-stroke/feel-band, no generated-file string
   // outside ids.ts's own exports; exercises.json's content is excluded too — an exercise name or id
-  // legitimately shared with a generated file is already in main for unrelated reasons).
+  // legitimately shared with a generated file is already in main for unrelated reasons). HT-3c (B4): a
+  // string counts only when it is unique to generated How-to content — one that also appears anywhere in
+  // the app's own non-How-to source (src/** outside src/howto/** and src/slices/howto/**, e.g. the generic X-icon path in
+  // src/ui/icons.tsx) is main's own and not a leak.
   {
     const html = readFileSync(join(ROOT, 'www/index.html'), 'utf8');
     const indexJs = html.match(/src="\.\/assets\/(index-[\w-]+\.js)"/)[1];
@@ -6013,8 +6533,14 @@ for (const theme of ['silent-black', 'paper']) {
     const allowed = new Set([...idsSrc.matchAll(/"([^"]+)"/g)].map(m => m[1]));
     allowed.add('How to do it');
     const exercisesRaw = readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8');
-    const unescapeJs = s => s.replace(/\\(["'\\/bfnrt]|u[0-9a-fA-F]{4})/g, m => ({ '\\"': '"', "\\'": "'", '\\\\': '\\', '\\/': '/', '\\b': '\b', '\\f': '\f', '\\n': '\n', '\\r': '\r', '\\t': '\t' }[m] ?? String.fromCharCode(parseInt(m.slice(2), 16))));
     const genDir = join(ROOT, 'src/howto/generated');
+    const appSrc = [];
+    // Only non-How-to source excuses a string: src/howto/** and src/slices/howto/** ship How-to content too.
+    const howtoDirs = new Set([join(ROOT, 'src/howto'), join(ROOT, 'src/slices/howto')]);
+    const walkSrc = dir => { for (const e of readdirSync(dir, { withFileTypes: true })) { const f = join(dir, e.name); if (e.isDirectory()) { if (!howtoDirs.has(f)) walkSrc(f); } else appSrc.push(readFileSync(f, 'utf8')); } };
+    walkSrc(join(ROOT, 'src'));
+    const inAppSrc = str => appSrc.some(src => src.includes(str));
+    const unescapeJs = s => s.replace(/\\(["'\\/bfnrt]|u[0-9a-fA-F]{4})/g, m => ({ '\\"': '"', "\\'": "'", '\\\\': '\\', '\\/': '/', '\\b': '\b', '\\f': '\f', '\\n': '\n', '\\r': '\r', '\\t': '\t' }[m] ?? String.fromCharCode(parseInt(m.slice(2), 16))));
     const leaked = [];
     for (const f of readdirSync(genDir)) {
       const src = readFileSync(join(genDir, f), 'utf8');
@@ -6022,7 +6548,7 @@ for (const theme of ['silent-black', 'paper']) {
         if (m[1].length < 16) continue;
         const str = unescapeJs(m[1]);
         if (allowed.has(str) || exercisesRaw.includes(str)) continue;
-        if (idxBytes.includes(str)) { leaked.push(`${f}: "${str.slice(0, 60)}…"`); break; }
+        if (idxBytes.includes(str) && !inAppSrc(str)) { leaked.push(`${f}: "${str.slice(0, 60)}…"`); break; }
       }
     }
     if (leaked.length) errors.push(`${tag} A1: index-*.js leaks generated How-to content: ${leaked.join('; ')}`);
@@ -6030,31 +6556,25 @@ for (const theme of ['silent-black', 'paper']) {
     console.log(`${tag} A1: main chunk ${indexJs} is ${idxBytes.length} B raw / ${gzipSync(Buffer.from(idxBytes)).length} B gz (information only, no ceiling)`);
   }
 
-  // A2: chunk budgets, each at its measured value + 10% (the plan 2.9 start figures are the upper bound;
-  // this card lowers HowToSheet-*, the CSS and each ht-<slug>-* to the measured figures below).
+  // A2: chunk budgets. HT-3c (B1/B2, D-HT3c-1): every ceiling lives in tests/howto/budgets.json (measured
+  // + 10 %, with setBy and reason; tests/howto/budgets.test.ts checks the file). A chunk with no entry
+  // fails; each chunk's size, ceiling and headroom is printed.
   {
-    const CEIL = v => Math.ceil(v * 1.1);
-    const budget = (label, file, measured) => {
-      const { raw, gz } = sizeOf(file);
-      if (raw > CEIL(measured.raw)) errors.push(`${tag} A2: ${label} is ${raw} B raw, over ${CEIL(measured.raw)} (measured ${measured.raw} + 10%)`);
-      if (gz > CEIL(measured.gz)) errors.push(`${tag} A2: ${label} is ${gz} B gz, over ${CEIL(measured.gz)} (measured ${measured.gz} + 10%)`);
-      return `${label} ${raw}/${gz}`;
-    };
+    const BUDGETS = new Map(JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).budgets.map(b => [b.chunk, b]));
+    const HINT = 'raise it in tests/howto/budgets.json with setBy and reason (measured + 10 %)';
     const sizes = [];
-    sizes.push(budget('HowToSheet-*.js', oneOf(/^HowToSheet-[\w-]{8}\.js$/), { raw: 6321, gz: 2698 }));
-    sizes.push(budget('HowToSheet-*.css', oneOf(/^HowToSheet-[\w-]{8}\.css$/), { raw: 8695, gz: 1971 }));
-    const CHUNK_MEASURED = {
-      'dumbbell-lateral-raise': { raw: 63001, gz: 12535 }, 'barbell-back-squat': { raw: 92839, gz: 21072 },
-      'pull-up': { raw: 124238, gz: 28610 }, 'hanging-leg-raise': { raw: 117386, gz: 27998 },
-      'lat-pulldown': { raw: 111189, gz: 23863 }, 'seated-cable-row': { raw: 117043, gz: 25459 },
-      'leg-press': { raw: 93568, gz: 18076 }, 'machine-chest-press': { raw: 99249, gz: 20137 },
+    const budget = (label, file) => {
+      const { raw, gz } = sizeOf(file);
+      const b = BUDGETS.get(label);
+      if (!b) { errors.push(`${tag} A2: ${label} is ${raw} B raw / ${gz} B gz and has no entry in tests/howto/budgets.json; add one (measured + 10 %, with setBy and reason) instead of skipping the budget`); return; }
+      if (raw > b.rawMax) errors.push(`${tag} A2: ${label} is ${raw} B raw, over its ceiling ${b.rawMax} (set by ${b.setBy}); ${HINT}`);
+      if (gz > b.gzMax) errors.push(`${tag} A2: ${label} is ${gz} B gz, over its ceiling ${b.gzMax} (set by ${b.setBy}); ${HINT}`);
+      sizes.push(`${label} ${raw}/${gz} of ${b.rawMax}/${b.gzMax} (headroom ${b.rawMax - raw}/${b.gzMax - gz})`);
     };
-    for (const [id, row] of Object.entries(rows)) {
-      const measured = CHUNK_MEASURED[row.slug];
-      if (!measured) { errors.push(`${tag} A2: no measured baseline for ${row.slug} (${id}); add one instead of skipping the budget`); continue; }
-      sizes.push(budget(`ht-${row.slug}-*.js`, oneOf(new RegExp(`^ht-${row.slug}-[\\w-]{8}\\.js$`)), measured));
-    }
-    console.log(`${tag} A2 chunk sizes (raw/gz B, ceiling = measured + 10%): ${sizes.join(', ')}`);
+    budget('HowToSheet-*.js', oneOf(/^HowToSheet-[\w-]{8}\.js$/));
+    budget('HowToSheet-*.css', oneOf(/^HowToSheet-[\w-]{8}\.css$/));
+    for (const row of Object.values(rows)) budget(`ht-${row.slug}-*.js`, oneOf(new RegExp(`^ht-${row.slug}-[\\w-]{8}\\.js$`)));
+    console.log(`${tag} A2 chunk sizes (raw/gz B of ceiling, from tests/howto/budgets.json): ${sizes.join(', ')}`);
   }
 
   // A3a: no How-to chunk requested from launch until Today/Train is idle.
@@ -6270,247 +6790,6 @@ for (const theme of ['silent-black', 'paper']) {
     : `${tag}: FAILED, ${blockErrors} problem(s) above; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 
-// HT-6: the hand close-ups, the zoom host and the Look closer chips (card HT-6; GA 2.2-2.5, 5.1; plan 2.4-2.5, 2.9).
-// The app's sheet, opened from the real Train entry, against the golden-B page (tests/howto/golden/howto-layers.html,
-// hash-pinned by HT-4, served offline with the app's Inter woff2), per theme side by side:
-// - A5 L3: every page of every hand close-up (8 exercises x 5 themes), with the panel on its own layer in both pages
-//   at the same sub-pixel position (the HT-3 capture mode); the Right and Wrong words and their tick and cross are
-//   printed in every theme (words >= 3:1, icons >= 2:1 against their background); C16: the region is named by its heading, and each half is an
-//   image labelled "Right: …" / "Wrong: …"; C11: the open and close animations equal golden B's, and under reduced
-//   motion there are none;
-// - the Grip section with its handling mistakes (L3, every theme) and the hand chip's box (>= 44 px) equal golden B's;
-// - A4 through the zoom slot API: the plate box hidden and inert (the figure still mounted), Mistake cleared on open
-//   and put back on close, Back closes the close-up before the sheet, focus goes to the heading and back to the chip;
-// - A6: the HT-3 plate compare (L2b, F3, L3) still passes after each hand close-up was opened and closed;
-// - A7: hand-<id> chunks within their measured size + 10 % (D-HT6-budget), and no hand- request before the first tap;
-// - A8: the push hint on the Train card (Silent Black, Paper): exactly once on the chest press, with HOWTO_HINTS' text;
-//   none on the lat pulldown (a How-to, not push), the no-How-to control (firstWithoutHowTo) or a custom exercise.
-{
-  const tag = 'HT-6';
-  const t0 = Date.now();
-  const H = await import('../tools/plates/fidelity/harness.mjs');
-  const { gzipSync } = await import('node:zlib');
-  const GB = readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'));
-  const ht6 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
-  const stats = { pairs: 0, offMax: 0, tall: 0, words: 0, anims: 0, a6: 0 };
-  const P = m => errors.push(`${tag}: ${m}`);
-  const panelSel = id => `#${id}-zoom-hand`;
-  const click = (page, sel) => page.evaluate(s => { const b = document.querySelector(s); if (!b) throw new Error(`no ${s}`); b.click(); }, sel);
-  const rectOf = (page, sel) => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }, sel);
-  /** The visible page of a panel: its words, icons, image labels, as the reader and the eye get them. */
-  const readPanel = (page, sel) => page.evaluate(sel => {
-    const p = document.querySelector(sel), pg = [...p.querySelectorAll('.zx-page')].find(x => !x.hidden) ?? p;
-    const lum = c => { const m = c.match(/[\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
-    const bgOf = e => { for (let x = e; x; x = x.parentElement) { const b = getComputedStyle(x).backgroundColor; if (b && !/rgba\(0, 0, 0, 0\)|transparent/.test(b)) return b; } return getComputedStyle(document.body).backgroundColor; };
-    const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
-    const words = [...pg.querySelectorAll('text, b, span, strong, p, div')].filter(e => ![...e.children].some(c => c.textContent.trim()) && /^(Right|Wrong)$/.test(e.textContent.trim()))
-      .map(e => { const cs = getComputedStyle(e), col = e instanceof SVGElement ? cs.fill : cs.color, r = e.getBoundingClientRect(); return { w: e.textContent.trim(), ok: r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.opacity !== '0', c: contrast(col, bgOf(e)) }; });
-    const icon = d => [...pg.querySelectorAll('path')].filter(e => e.getAttribute('d') === d).map(e => { const cs = getComputedStyle(e), r = e.getBoundingClientRect(); return r.width > 0 && cs.stroke !== 'none' && !/rgba\(0, 0, 0, 0\)/.test(cs.stroke) ? contrast(cs.stroke, bgOf(e)) : 0; });
-    const h = document.getElementById(p.getAttribute('aria-labelledby') ?? '');
-    return {
-      words, tick: icon('M5 12l4 4L19 7'), cross: icon('M6 6l12 12M18 6L6 18'),
-      region: p.getAttribute('role') === 'region' && !!h && !!h.textContent.trim() && h.classList.contains('zx-h'),
-      right: [...pg.querySelectorAll('[role="img"][aria-label^="Right: "]')].length, wrong: [...pg.querySelectorAll('[role="img"][aria-label^="Wrong: "]')].length,
-      pages: p.querySelectorAll('.zx-page').length,
-    };
-  }, sel);
-  /** The open or close animation of a panel, as comparable data. */
-  const animsOf = (page, sel) => page.evaluate(s => document.querySelector(s).getAnimations().map(a => ({ k: a.effect.getKeyframes().map(f => ({ o: f.opacity, t: f.transform, off: f.offset })), d: a.effect.getTiming().duration, e: a.effect.getTiming().easing })), sel);
-  /** L3 of the open page of one close-up: the golden panel placed at the app panel's position, both on their own layer. */
-  const l3 = async (app, gold, id, label, sel = panelSel(id)) => {
-    // no smooth scroll left running in the golden page (its openZoom scrolls smoothly), both pages settled
-    await gold.evaluate(() => new Promise(r => { document.documentElement.style.scrollBehavior = 'auto'; let y = NaN, n = 0; const f = () => { n = scrollY === y ? n + 1 : 0; y = scrollY; if (n >= 3) r(); else requestAnimationFrame(f); }; f(); }));
-    // capture mode (D-HT3, as HT-3), set before the panel is placed: the panel on its own layer in both pages, rasterised
-    // from its own box. The open animation's transform-origin (set from the opener) stays on the panel and moves the
-    // layer's raster phase, so both pages capture at one origin; with no transform on screen it changes no pixel.
-    const saved = await Promise.all([app, gold].map(pg => pg.evaluate(s => { const e = document.querySelector(s), o = e.style.transformOrigin; e.style.willChange = 'transform'; e.style.transformOrigin = '0px 0px'; return o; }, sel)));
-    await H.settleApp(app); await H.settle(gold);
-    // the app panel just below the sheet's sticky header; a panel taller than the phone is captured at 390 x TALL_H
-    // in both pages (as HT-3 does), and one that still does not fit is an error, never a cut
-    const place = () => app.evaluate(s => { const z = document.querySelector(s), panel = z.closest('.sheet-panel'), top = panel.querySelector('.sheet-top').getBoundingClientRect().bottom; panel.scrollTop += z.getBoundingClientRect().top - (top + 8); const r = z.getBoundingClientRect(); return r.top >= top - 0.001 && r.bottom <= innerHeight + 0.001; }, sel);
-    let tall = false;
-    if (!(await place())) {
-      tall = true;
-      await Promise.all([app.setViewportSize({ width: 390, height: H.TALL_H }), gold.setViewportSize({ width: 390, height: H.TALL_H })]);
-      await H.settleApp(app);
-      if (!(await place())) P(`${id} ${label}: the close-up does not fit a 390 x ${H.TALL_H} viewport below the sheet header`);
-    }
-    await H.settleApp(app);
-    const at = await rectOf(app, sel);
-    // the golden panel moved to the same viewport position (the same sub-pixel phase), by the body's top margin
-    await gold.evaluate(([s, at]) => {
-      document.documentElement.style.overflowAnchor = 'none';
-      document.body.style.marginTop = '0px'; window.scrollTo({ top: 0, behavior: 'instant' });
-      for (let k = 0; k < 3; k++) { const r = document.querySelector(s).getBoundingClientRect(); if (r.top === at.y) break; document.body.style.marginTop = `${parseFloat(document.body.style.marginTop) + at.y - r.top}px`; }
-    }, [sel, at]);
-    await H.settleApp(app); await H.settle(gold);
-    const [ra, rg] = [await rectOf(app, sel), await rectOf(gold, sel)];
-    if (ra.x !== rg.x || ra.y !== rg.y || ra.width !== rg.width || ra.height !== rg.height) P(`${id} ${label}: panel box app ${JSON.stringify(ra)} vs golden ${JSON.stringify(rg)}`);
-    else {
-      const [a, g] = [await H.capture(app, ra), await H.capture(gold, rg)];
-      const d = await H.diffPng(app, a, g);
-      stats.pairs++; stats.offMax = Math.max(stats.offMax, d.off); if (tall) stats.tall++;
-      if (d.ink < 0.02) P(`${id} ${label}: the app capture is blank (ink ${d.ink})`);
-      if (!H.meetsRule(d)) {
-        P(`${id} ${label} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}${d.sameSize ? '' : `, sizes ${d.width}x${d.height} vs ${d.otherWidth}x${d.otherHeight}`})`);
-        const f = join(OUT, `ht6-${id}-${label.replace(/\W+/g, '_')}`); writeFileSync(`${f}-app.png`, a); writeFileSync(`${f}-golden.png`, g);
-      }
-    }
-    for (const [k, pg] of [app, gold].entries()) await pg.evaluate(([s, o]) => { const e = document.querySelector(s); e.style.willChange = ''; e.style.transformOrigin = o; }, [sel, saved[k]]);
-    if (tall) { await Promise.all([app.setViewportSize(H.DEVICE.viewport), gold.setViewportSize(H.DEVICE.viewport)]); await H.settleApp(app); }
-  };
-  const plateState = page => page.evaluate(() => {
-    const g = document.querySelector('dialog.sheet.ht .ht-golden'), fit = g.querySelector('.ht-plate-fit');
-    return { snap: g.htPlateApi.snapshot(), hidden: fit.hidden, inert: fit.inert, mounted: !!fit.querySelector('figure[data-mode="normal"]'), cue: g.querySelector('.cue-line').hidden, slot: g.querySelector('.ht-zoom-slot').hidden };
-  });
-  const run = async theme => {
-    const app = await H.openAppTrain(ht6, PORT, theme, { onError: m => P(`${theme} app page error: ${m}`) });
-    const gold = await H.openGolden(ht6, theme, { html: GB, onError: m => P(`${theme} golden page error: ${m}`) });
-    const reqs = []; app.page.on('request', r => reqs.push(r.url()));
-    try {
-      if (theme === 'silent-black' || theme === 'paper') {
-        const hints = [...readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8').matchAll(/^  "(lib_[a-z_]+)": ("(?:[^"\\]|\\.)*"),$/gm)].map(m => [m[1], JSON.parse(m[2])]);
-        const text = Object.fromEntries(hints);
-        if (!text.lib_machine_chest_press) P(`${theme} A8: no HOWTO_HINTS entry for the chest press`);
-        for (const [lib, want] of [['lib_machine_chest_press', text.lib_machine_chest_press], ['lib_lat_pulldown', null], [H.HT_NO_HOWTO, null], [H.HT_CUSTOM.id, null]]) {
-          const card = await H.openCard(app.page, H.HT_ORDER.indexOf(lib));
-          const got = await card.evaluate(c => [...c.querySelectorAll('p.hint.muted')].filter(p => !p.closest('.why-row ~ .ex-body')).map(p => p.textContent));
-          const shown = got.filter(t => Object.values(text).includes(t));
-          if (want ? JSON.stringify(shown) !== JSON.stringify([want]) : shown.length) P(`${theme} A8 ${lib}: hint lines ${JSON.stringify(got)}, expected ${want ? `"${want}" once` : 'none'}`);
-        }
-      }
-      for (const [id] of H.HT_PLATES) {
-        const index = H.HT_PLATES.findIndex(p => p[0] === id), T = `${theme} ${id}`;
-        await H.openHowTo(app.page, index);
-        if (theme === 'silent-black' && reqs.some(u => /\/assets\/hand-/.test(u) && u.includes(`hand-${id}-`))) P(`${T} A7: hand-${id} requested before the first tap`);
-        // the Grip section with its handling mistakes, at S0, pixel for pixel
-        await l3(app.page, gold.page, id, 'grip', `#${id}-grip`);
-        await app.page.evaluate(() => { document.querySelector('dialog.sheet.ht .sheet-panel').scrollTop = 0; });
-        await gold.page.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo({ top: 0, behavior: 'instant' }); });
-        const before = await plateState(app.page);
-        // a real tap in both pages (pointer modality: the heading takes focus without a focus ring, as on a phone)
-        await app.page.click(`#${id}-chip-hand`);
-        await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible', timeout: 8000 });
-        const [aA, aG] = await Promise.all([animsOf(app.page, panelSel(id)), (async () => { await gold.page.click(`#${id}-chip-hand`); return animsOf(gold.page, panelSel(id)); })()]);
-        stats.anims++;
-        if (JSON.stringify(aA) !== JSON.stringify(aG) || aA.length !== 1) P(`${T} C11 open animation: app ${JSON.stringify(aA)} vs golden ${JSON.stringify(aG)}`);
-        await H.settleApp(app.page); await H.settle(gold.page);
-        // A4: the plate box hidden and inert, the figure mounted, the cue line hidden, focus on the heading
-        const open = await plateState(app.page);
-        const focus = await app.page.evaluate(() => document.activeElement?.classList.contains('zx-h') ?? false);
-        if (!open.hidden || !open.inert || !open.mounted || !open.cue || open.slot || !focus) P(`${T} A4 open: ${JSON.stringify({ open, focus })}`);
-        const pages = (await readPanel(app.page, panelSel(id))).pages;
-        // the Look closer hand chip is golden B's size (>= 44 x 44) and, where it is golden B's first chip, at its place
-        // (the row gains its posture and feel chips with HT-7 and HT-8)
-        const [chA, chG] = [await rectOf(app.page, `#${id}-chip-hand`), await rectOf(gold.page, `#${id}-chip-hand`)];
-        const firstG = await gold.page.evaluate(i => document.getElementById(`${i}-chip-hand`).previousElementSibling === null, id);
-        if ((firstG && chA.x !== chG.x) || chA.width !== chG.width || chA.height !== chG.height || chA.height < 44 || chA.width < 44) P(`${T} chip: app ${JSON.stringify(chA)} vs golden ${JSON.stringify(chG)} (>= 44 x 44)`);
-        for (let i = 0; i < pages; i++) {
-          if (i) for (const pg of [app.page, gold.page]) await pg.locator(`${panelSel(id)} .zx-page:not([hidden]) .pager-btn[data-page="${i}"]`).click();
-          await l3(app.page, gold.page, id, `S2 page ${i + 1}`);
-          const r = await readPanel(app.page, panelSel(id));
-          if (!r.region) P(`${T} C16: the close-up region is not named by its heading`);
-          const hasPair = r.words.some(w => w.w === 'Right') || r.words.some(w => w.w === 'Wrong');
-          if (i === 0 || hasPair) {
-            stats.words++;
-            for (const w of ['Right', 'Wrong']) {
-              const ws = r.words.filter(x => x.w === w);
-              if (!ws.length || !ws.every(x => x.ok && x.c >= 3)) P(`${T} page ${i + 1}: the word ${w} is not printed readably (${JSON.stringify(ws)})`);
-            }
-            // printed: at least one tick and one cross drawn in a colour that stands off the panel (golden B's own accent
-            // tick is 2.7:1 in Midnight, so the bar is 2:1; the pixels themselves are held to golden B by L3 above)
-            if (!(Math.max(0, ...r.tick) >= 2) || !(Math.max(0, ...r.cross) >= 2)) P(`${T} page ${i + 1}: tick ${JSON.stringify(r.tick)} / cross ${JSON.stringify(r.cross)} icons not drawn readably`);
-            if (!r.right || !r.wrong) P(`${T} page ${i + 1} C16: halves labelled Right ${r.right}, Wrong ${r.wrong}`);
-          }
-        }
-        // closing: golden B's exit animation, the plate state back as before, focus back on the chip
-        const shut = async pg => { await pg.click(`${panelSel(id)}-close`); return animsOf(pg, panelSel(id)); };
-        const [cA, cG] = await Promise.all([shut(app.page), shut(gold.page)]);
-        if (JSON.stringify(cA) !== JSON.stringify(cG) || cA.length !== 1) P(`${T} C11 close animation: app ${JSON.stringify(cA)} vs golden ${JSON.stringify(cG)}`);
-        await H.settleApp(app.page); await H.settle(gold.page);
-        const after = await plateState(app.page), back = await app.page.evaluate(i => document.activeElement?.id === `${i}-chip-hand`, id);
-        if (JSON.stringify(after) !== JSON.stringify(before) || !back) P(`${T} A4 close: ${JSON.stringify({ before, after, back })}`);
-        if (theme === 'silent-black' || theme === 'paper') {
-          // opening clears Mistake (GA 2.2); closing puts it back
-          await click(app.page, `#${id}-mistake`);
-          const m0 = await plateState(app.page);
-          await click(app.page, `#${id}-chip-hand`);
-          await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
-          const m1 = await plateState(app.page);
-          await click(app.page, `${panelSel(id)}-close`); await H.settleApp(app.page);
-          const m2 = await plateState(app.page);
-          if (m0.snap.mode !== 'mistake' || m1.snap.mode !== 'normal' || JSON.stringify(m2) !== JSON.stringify(m0)) P(`${T} A4 Mistake: ${JSON.stringify({ m0: m0.snap, m1: m1.snap, m2: m2.snap })}`);
-          await click(app.page, `#${id}-mistake`);
-        }
-        if (theme === 'silent-black' && id === 'machine-chest-press') {
-          // Android back closes the close-up first, then the sheet
-          await click(app.page, `#${id}-chip-hand`);
-          await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
-          await H.settleApp(app.page);
-          await app.page.evaluate(() => history.back());
-          await app.page.waitForTimeout(600);
-          const s1 = await app.page.evaluate(i => ({ sheet: !!document.querySelector('dialog.sheet.ht'), zoom: !document.getElementById(`${i}-zoom-hand`)?.hidden }), id);
-          await app.page.evaluate(() => history.back());
-          await app.page.locator('dialog.sheet.ht').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
-          const s2 = await app.page.evaluate(() => !!document.querySelector('dialog.sheet.ht'));
-          if (!s1.sheet || s1.zoom || s2) P(`${T} A4 Back: after one Back ${JSON.stringify(s1)}, after two the sheet is ${s2 ? 'still open' : 'closed'}`);
-          await H.settleApp(app.page);
-          if (!s2) continue;
-        }
-        await H.closeHowTo(app.page);
-        await gold.page.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo(0, 0); });
-      }
-      if (theme === 'silent-black') {
-        const hand = H.HT_PLATES.filter(([id]) => reqs.some(u => u.includes(`/assets/hand-${id}-`) && u.endsWith('.js')));
-        if (hand.length !== 8) P(`A7: ${hand.length} of the 8 hand chunks loaded on tap`);
-      }
-    } finally { await app.ctx.close(); await gold.ctx.close(); }
-  };
-  // C11 under reduced motion: no open or close animation (golden B: none), in every theme
-  const reduced = async theme => {
-    const app = await H.openAppTrain(ht6, PORT, theme, { reducedMotion: 'reduce', onError: m => P(`${theme} reduced app page error: ${m}`) });
-    try {
-      const id = 'machine-chest-press', index = H.HT_PLATES.findIndex(p => p[0] === id);
-      await H.openHowTo(app.page, index);
-      await click(app.page, `#${id}-chip-hand`);
-      await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
-      const o = await animsOf(app.page, panelSel(id));
-      await click(app.page, `${panelSel(id)}-close`);
-      const c = await animsOf(app.page, panelSel(id)), shut = await app.page.evaluate(s => document.querySelector(s).hidden, panelSel(id));
-      if (o.length || c.length || !shut) P(`${theme} C11 reduced motion: open ${JSON.stringify(o)}, close ${JSON.stringify(c)}, closed at once ${shut}`);
-    } finally { await app.ctx.close(); }
-  };
-  try {
-    const failed = th => e => P(`${th} crashed: ${e.message.split('\n')[0]}`);   // a thrown probe is a failure, never a gate crash
-    await Promise.all(H.HT_THEMES.map(th => run(th).catch(failed(th))));
-    await Promise.all(H.HT_THEMES.map(th => reduced(th).catch(failed(`${th} reduced`))));
-    if (stats.pairs < 105) P(`only ${stats.pairs} pages compared, expected the 13 close-up pages and 8 grip sections in 5 themes (105)`);
-    // A6: the HT-3 plate compare, after each hand close-up was opened and closed (Silent Black and Paper, 390 px)
-    const openClose = async id => {
-      const wait = f => new Promise(r => { const t0 = performance.now(); const k = () => (f() || performance.now() - t0 > 5000 ? r() : requestAnimationFrame(k)); k(); });
-      const p = () => document.getElementById(`${id}-zoom-hand`);
-      document.getElementById(`${id}-chip-hand`).click();
-      await wait(() => p() && !p().hidden && !p().getAnimations().length);
-      document.getElementById(`${id}-zoom-hand-close`).click();
-      await wait(() => p().hidden && !document.querySelector('.ht-plate-fit').hidden);
-      window.__ht6OpenClosed = (window.__ht6OpenClosed ?? 0) + 1;
-    };
-    const a6 = await H.ht3Fidelity(ht6, PORT, { themes: H.HT_FULL, full: [], widths: [], mutate: openClose });
-    stats.a6 = a6.stats.pairs;
-    for (const p of a6.problems) P(`A6 (after a hand close-up opened and closed): ${p}`);
-    if (a6.stats.pairs < 32) P(`A6: only ${a6.stats.pairs} plate pairs compared, expected 8 x 2 themes x {N, M} (>= 32)`);
-    // A7: the built chunks
-    const sizes = readdirSync(join(ROOT, 'www/assets')).filter(f => /^hand-.*\.js$/.test(f)).map(f => { const b = readFileSync(join(ROOT, 'www/assets', f)); return { f, raw: b.length, gz: gzipSync(b).length }; });
-    if (sizes.length !== 8) P(`A7: ${sizes.length} hand-*.js chunks, expected 8`);
-    // D-HT6-budget: each chunk at most its measured size + 10 % (tools/plates/gen/hands.mjs, pinned in hands.test)
-    const { handCeiling } = await import('../tools/plates/gen/hands.mjs');
-    for (const s of sizes) { const id = H.HT_PLATES.map(p => p[0]).find(i => s.f.startsWith(`hand-${i}-`)), c = id && handCeiling(id); if (!c || s.raw > c.raw || s.gz > c.gz) P(`A7: ${s.f} is ${s.raw} B raw / ${s.gz} B gz, over its ceiling ${c ? `${c.raw} / ${c.gz}` : '(none)'}`); }
-    console.log(`${tag} (${ht6.version()}): ${stats.pairs} close-up pages L3 (max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}), Right/Wrong words and icons on ${stats.words} pages, ${stats.anims} open animation lists, reduced motion in 5 themes, A6 ${stats.a6} plate pairs after open/close; hand chunks ${sizes.map(s => `${s.f.replace(/-[\w-]{8}\.js$/, '')} ${(s.raw / 1024).toFixed(1)}/${(s.gz / 1024).toFixed(1)} KB`).join(', ')}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
-  } finally {
-    await ht6.close();
-  }
-}
-
 // HT-7: the posture close-ups (card HT-7; GA 2.2-2.3 S3; plan 2.7 L3, L4). The app's sheet, opened from the real Train
 // entry, against the golden-B page (built from the vendored layers, states reached through goldenB.mjs's driver), per
 // theme side by side in one browser. For each exercise and posture chip:
@@ -6524,7 +6803,7 @@ for (const theme of ['silent-black', 'paper']) {
 //   Close the plate block is pixel-identical to before the open, from normal and from Mistake (HT-3 proves that block
 //   equals the approved plate).
 // - A5: no posture chunk is fetched before the first posture tap, then exactly this exercise's, once; the built
-//   posture-*.js chunks are each <= 24 KB gz.
+//   posture-*.js chunks are each <= 24 KB gz and within their tests/howto/budgets.json ceiling.
 // - A6: two role=img halves with Right:/Wrong: labels in the open panel; every posture chip is >= 44 x 44.
 // - A2 (live): one #zdots in the document, and no duplicate id in the document with the close-up open.
 {
@@ -6542,11 +6821,16 @@ for (const theme of ['silent-black', 'paper']) {
   const stats = { pairs: 0, maxOff: 0, anims: 0, reduced: 0, restores: 0, controls: 0, reopens: 0, probes: 0 };
   // A5 sizes, on the built chunks the gate serves
   const assets = readdirSync(join(ROOT, 'www/assets')), sizes = [];
+  const budgets = new Map(JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).budgets.map(b => [b.chunk, b]));
   for (const [id] of H.HT_PLATES) {
     const f = assets.filter(a => new RegExp(`^posture-${id}-[\\w-]{8}\\.js$`).test(a));
     if (f.length !== 1) { errors.push(`${tag} A5: ${id}: expected one posture-${id}-*.js chunk, found ${f.join(', ') || 'none'}`); continue; }
-    const gz = gzipSync(readFileSync(join(ROOT, 'www/assets', f[0])), { level: 9 }).length;
+    const buf = readFileSync(join(ROOT, 'www/assets', f[0])), gz = gzipSync(buf, { level: 9 }).length;
     if (gz > 24 * 1024) errors.push(`${tag} A5: ${f[0]} is ${gz} B gz (limit 24576)`);
+    // D-HT6-budget / D-HT3c-1: the measured + 10 % ceiling in tests/howto/budgets.json (gzip at the default level, as HT-3b's A2)
+    const b = budgets.get(`posture-${id}-*.js`), gzd = gzipSync(buf).length;
+    if (!b) errors.push(`${tag} A5: posture-${id}-*.js has no entry in tests/howto/budgets.json`);
+    else if (buf.length > b.rawMax || gzd > b.gzMax) errors.push(`${tag} A5: ${f[0]} is ${buf.length} B raw / ${gzd} B gz, over its ceiling ${b.rawMax}/${b.gzMax} (set by ${b.setBy}); re-measure and raise it in tests/howto/budgets.json with setBy and reason`);
     sizes.push(`${id} ${gz}`);
   }
   if (process.env.HT7_DUMP) mkdirSync(process.env.HT7_DUMP, { recursive: true });
@@ -6893,6 +7177,224 @@ for (const theme of ['silent-black', 'paper']) {
     gb.cleanupScratchPage(dir);
   }
   console.log(`${tag} HT4-A6: state driver self-check, ${gb.IDS.length} exercises x ${gb.THEMES.length} themes, ${selfCheckBad} problems, no-match throw ${captureThrew ? 'verified' : 'NOT verified'}`);
+}
+
+// COPY-1 (owner, 2026-10-01; D-COPY1-1, D-COPY1-2, D-COPY1-medical): the Settings footer shows the owner's rights
+// line in the hint style, directly under the logo and above the version line, in all 5 themes; and the Settings
+// sheet no longer carries the explaining lines COPY-1 removed. The probe fails if it cannot see the footer or the
+// sheet's text at all. The medical line PLAY-1 used to show is gone (P3 retired, D-COPY1-medical: the reminder
+// moved to the store description) and the version line is the rights line's next sibling.
+{
+  const RIGHTS = '© 2026 Marc Darenz. All rights reserved.';
+  const GONE = [
+    'Each machine keeps its own entry unit', "Swaps today's reminder", 'Android may deliver the rest alert',
+    'Your choice stays on even if Android drops the queue', 'Always on when your phone asks for less motion',
+    'Android haptics', 'Browser vibration', 'Stays on while a workout is live', 'Everything stays on this device',
+    'Export a backup first if unsure', 'nothing else leaves the phone', 'Nothing leaves the phone',
+    'Leave empty for the built-in server', 'healthcare professional',
+  ];
+  for (const theme of themes) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    const tag = `COPY-1 ${theme}`;
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await page.addInitScript(([legacyJson, t]) => {
+      localStorage.setItem('marc.theme', t);
+      if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+    }, [JSON.stringify(legacy), theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+    await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+    const rights = page.locator('dialog[open] [data-palace="settings.rights"]');
+    await rights.scrollIntoViewIfNeeded().catch(() => {});
+    if ((await rights.count()) !== 1) errors.push(`${tag}: expected one rights line in the Settings footer, found ${await rights.count()}`);
+    else if (!(await visible(rights))) errors.push(`${tag}: the rights line is not visible`);
+    else {
+      const f = await rights.evaluate(el => {
+        const box = el.parentElement, logo = box?.querySelector('.logo'), version = document.querySelector('dialog[open] [data-palace="settings.version"]');
+        const r = el.getBoundingClientRect(), l = logo?.getBoundingClientRect(), v = version?.getBoundingClientRect();
+        return {
+          text: el.textContent?.trim(), hint: el.classList.contains('hint'), tag: el.tagName,
+          afterLogo: !!logo && logo.nextElementSibling === el, sameBox: !!version && version.parentElement === box,
+          below: !!l && l.bottom <= r.top + 0.5, above: !!v && r.bottom <= v.top + 0.5, height: r.height,
+          versionNextSibling: !!version && el.nextElementSibling === version,
+          noMedical: !document.querySelector('dialog[open] [data-palace="settings.medical"]'),
+        };
+      });
+      if (f.text !== RIGHTS) errors.push(`${tag}: the rights line reads ${JSON.stringify(f.text)}, not ${JSON.stringify(RIGHTS)}`);
+      if (!f.hint || f.tag !== 'P') errors.push(`${tag}: the rights line is not a hint paragraph (tag ${f.tag}, hint ${f.hint})`);
+      if (!f.afterLogo || !f.below) errors.push(`${tag}: the rights line does not sit directly under the logo (${JSON.stringify(f)})`);
+      if (!f.sameBox || !f.above) errors.push(`${tag}: the rights line is not above the version line in the footer (${JSON.stringify(f)})`);
+      if (!(f.height > 0)) errors.push(`${tag}: the rights line has no height`);
+      if (!f.versionNextSibling) errors.push(`${tag}: the version line does not directly follow the rights line (${JSON.stringify(f)})`);
+      if (!f.noMedical) errors.push(`${tag}: Settings still shows the medical reminder element`);
+    }
+    const sheetText = await page.locator('dialog[open]').first().innerText().catch(() => '');
+    if (!sheetText.includes('Your data') || !sheetText.includes('Version ')) errors.push(`${tag}: could not read the Settings sheet's text (${sheetText.length} chars)`);
+    else for (const g of GONE) if (sheetText.includes(g)) errors.push(`${tag}: Settings still shows "${g}"`);
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-copy-1-settings-footer.png` });
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith('COPY-1 '))) console.log('COPY-1: Settings footer rights line (under the logo, above the version, hint style) and no removed Settings copy, verified in 5 themes');
+}
+
+// AUD-10: live workout, finish and past logging (audit UI-01, UI-03, UI-05, UI-09, OBS-LABELS).
+// One seeded split (bench, plank, farmer's carry): the past-session form saves a hold's seconds and
+// a carry's metres; the live inputs are named; Move up works by keyboard alone and saves the order a
+// drag saves; a substitute is picked by keyboard; Skip today keeps a logged set and the Finish
+// counters match the save; the time question will not save a future start. The pointer drag is the
+// "reorder" probe above, unchanged.
+{
+  const tag = 'AUD-10';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      splits: [{ id: 'aud10', name: 'Mixed', color: '#888888', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 2 }, { exerciseId: 'lib_plank', sets: 1 }, { exerciseId: 'lib_farmer_s_carry', sets: 1 }] }],
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') || '{}'));
+  const fillLabel = async (name, value) => {
+    const ok = await page.getByLabel(name, { exact: true }).fill(value, { timeout: 3000 }).then(() => true).catch(() => false);
+    if (!ok) errors.push(`${tag}: no field named "${name}"`);
+  };
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(300);
+
+  // UI-03: a past session saves the plank's seconds and the carry's metres and seconds as those fields.
+  await page.getByRole('button', { name: 'Log a past session' }).first().click(); await page.waitForTimeout(300);
+  const yesterday = (() => { const d = new Date(); d.setDate(d.getDate() - 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
+  await page.locator('dialog[open] input[type="date"]').fill(yesterday);
+  await fillLabel('Barbell Bench Press, set 1, reps', '8');
+  await fillLabel('Plank, set 1, seconds', '60');
+  await fillLabel("Farmer's Carry, set 1, metres", '40');
+  await fillLabel("Farmer's Carry, set 1, seconds", '35');
+  await settle(page); await page.screenshot({ path: `${OUT}/aud-10-past-session.png` });
+  await page.getByRole('button', { name: 'Save past session' }).click(); await page.waitForTimeout(400);
+  if (await page.getByRole('button', { name: 'Done', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Done', exact: true }).click(); await page.waitForTimeout(250); }
+  else { errors.push(`${tag}: the past session did not save`); await page.locator('dialog[open]').getByRole('button', { name: 'Close' }).first().click().catch(() => {}); await page.waitForTimeout(300); }
+  let pastId = null;
+  {
+    const first = (await stored()).sessions?.[0];
+    pastId = first?.id ?? null;
+    const past = first?.exercises ?? [];
+    const plank = past.find(e => e.exerciseId === 'lib_plank')?.sets?.[0];
+    const carry = past.find(e => e.exerciseId === 'lib_farmer_s_carry')?.sets?.[0];
+    if (plank?.durationSec !== 60 || plank?.reps) errors.push(`${tag}: the past plank saved ${JSON.stringify(plank)}, not durationSec 60`);
+    if (carry?.distanceM !== 40 || carry?.durationSec !== 35) errors.push(`${tag}: the past carry saved ${JSON.stringify(carry)}, not distanceM 40 and durationSec 35`);
+  }
+
+  // Start a live session (the daily check-in sheet comes first).
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  if (!(await page.locator('.reorder-item').first().isVisible().catch(() => false))) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400); }
+
+  // OBS-LABELS: every live set field has a name (the load field already had one). One card is open at a time.
+  const liveFields = [[0, ['Barbell Bench Press, set 1, reps', 'Barbell Bench Press, set 2, reps']], [1, ['Plank, set 1, seconds']], [2, ["Farmer's Carry, set 1, metres", "Farmer's Carry, set 1, seconds"]]];
+  for (const [i, names] of liveFields) {
+    const card = page.locator(`[data-entry-index="${i}"]`);
+    if (!(await visible(card.locator('.set-grid input').first(), 800))) { await card.locator('.exname').click(); await page.waitForTimeout(400); }
+    for (const name of names) {
+      const n = await page.getByLabel(name, { exact: true }).count();
+      if (n !== 1) errors.push(`${tag}: expected one live field named "${name}", found ${n}`);
+    }
+    const unnamed = await card.evaluate(el => [...el.querySelectorAll('input')].filter(f => !f.getAttribute('aria-label') && !f.labels?.length && !f.getAttribute('aria-labelledby')).length);
+    if (unnamed) errors.push(`${tag}: ${unnamed} live set field(s) on card ${i} have no accessible name`);
+  }
+  // Back to the first card open, as the session started.
+  await page.locator('[data-entry-index="0"] .exname').click(); await page.waitForTimeout(400);
+
+  // UI-09: keyboard only, the 2nd exercise moves up; the saved order is the one a drag saves (moveEntry).
+  const order0 = (await stored()).active?.entries?.map(e => e.exerciseId) ?? [];
+  const hidden = await page.evaluate(() => [...document.querySelectorAll('.reorder-move')].every(el => el.getBoundingClientRect().width <= 1));
+  if (!hidden) errors.push(`${tag}: a Move button is drawn on screen without keyboard focus`);
+  await page.locator('.live-top').getByRole('button', { name: 'Finish' }).focus();
+  let reached = false;
+  for (let k = 0; k < 120 && !reached; k++) {
+    await page.keyboard.press('Tab');
+    reached = await page.evaluate(() => document.activeElement?.getAttribute('aria-label') === 'Move up, Plank');
+  }
+  if (!reached) errors.push(`${tag}: Tab never reached "Move up, Plank"`);
+  else {
+    const shown = await page.evaluate(() => { const el = document.activeElement; const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return { w: r.width, h: r.height, outline: cs.outlineStyle }; });
+    if (!(shown.w > 20 && shown.h > 20) || shown.outline === 'none') errors.push(`${tag}: the focused Move button is not visible with a focus ring (${JSON.stringify(shown)})`);
+    await settle(page); await page.screenshot({ path: `${OUT}/aud-10-move-focused.png` });
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const order1 = (await stored()).active?.entries?.map(e => e.exerciseId) ?? [];
+    const want = [order0[1], order0[0], ...order0.slice(2)];
+    if (JSON.stringify(order1) !== JSON.stringify(want)) errors.push(`${tag}: keyboard Move up saved ${order1.join(',')}, expected ${want.join(',')}`);
+    const shownNames = await page.locator('.reorder-item .exname').allTextContents();
+    if (shownNames[0] !== 'Plank') errors.push(`${tag}: after Move up the list starts with ${shownNames[0]}, not Plank`);
+    const still = await page.evaluate(() => document.activeElement?.getAttribute('aria-label'));
+    if (still !== 'Move up, Plank') errors.push(`${tag}: focus left the moved exercise's Move up (now ${still})`);
+  }
+
+  // UI-09 (Train.tsx:952): a substitute is reached and picked by keyboard.
+  const benchCard = page.locator('.reorder-item').filter({ has: page.locator('.exname', { hasText: 'Barbell Bench Press' }) });
+  await benchCard.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Substitute exercise' }).click(); await page.waitForTimeout(300);
+  let onSub = false;
+  for (let k = 0; k < 20 && !onSub; k++) {
+    await page.keyboard.press('Tab');
+    onSub = await page.evaluate(() => !!document.activeElement?.closest('dialog[open] .list') && document.activeElement?.getAttribute('role') === 'button');
+  }
+  if (!onSub) { errors.push(`${tag}: Tab never reached a substitute in the sheet`); await page.locator('dialog[open]').getByRole('button', { name: 'Close' }).first().click().catch(() => {}); await page.waitForTimeout(300); }
+  else {
+    const subName = await page.evaluate(() => document.activeElement?.querySelector('.grow > div')?.textContent ?? '');
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const names = await page.locator('.reorder-item .exname').allTextContents();
+    if (!subName || !names.includes(subName) || names.includes('Barbell Bench Press')) errors.push(`${tag}: Enter on a substitute did not swap it in (picked "${subName}", list ${names.join(', ')})`);
+  }
+
+  // UI-01: log 60 x 8 on the first lift, Skip today, Finish: counters say 1 and 1, and the set is saved.
+  const liftAt = ((await stored()).active?.entries ?? []).findIndex(e => e.exerciseId !== 'lib_plank' && e.exerciseId !== 'lib_farmer_s_carry');
+  const lift = page.locator('.reorder-item').nth(liftAt);
+  if (!(await lift.locator('.set-grid input').first().isVisible().catch(() => false))) { await lift.locator('.exname').click(); await page.waitForTimeout(250); }
+  const liftId = (await stored()).active?.entries?.[liftAt]?.exerciseId;
+  const liftInputs = lift.locator('.set-grid input');
+  await liftInputs.nth(0).fill('60'); await liftInputs.nth(1).fill('8'); await liftInputs.nth(1).blur(); await page.waitForTimeout(300);
+  await lift.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Skip today' }).click(); await page.waitForTimeout(250);
+  await page.locator('.live-top').getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300);
+  const counters = [await page.locator('[data-finish-exercises]').textContent().catch(() => null), await page.locator('[data-finish-sets]').textContent().catch(() => null)];
+  if (counters[0] !== '1' || counters[1] !== '1') errors.push(`${tag}: the Finish counters read ${counters.join(' / ')}, expected 1 / 1`);
+  await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click(); await page.waitForTimeout(400);
+
+  // UI-05: a future start keeps Save off and the sheet open; Skip saves the guess instead.
+  if (!(await visible(page.getByRole('heading', { name: 'When did you train?' }), 3000))) errors.push(`${tag}: expected the time question after a scripted finish`);
+  else {
+    const tomorrow = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
+    await page.locator('dialog[open] input[type="date"]').fill(tomorrow); await page.waitForTimeout(150);
+    const save = page.getByRole('button', { name: 'Save', exact: true });
+    if (!(await save.isDisabled().catch(() => false))) errors.push(`${tag}: Save stays on for a start tomorrow`);
+    await save.click({ force: true, timeout: 2000 }).catch(() => {}); await page.waitForTimeout(300);
+    if (!(await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false))) errors.push(`${tag}: the time question closed on a future start`);
+    await settle(page); await page.screenshot({ path: `${OUT}/aud-10-future-start.png` });
+    await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(400);
+  }
+  {
+    const st = await stored();
+    const live = (st.sessions ?? []).find(x => x.id !== pastId);
+    const saved = live?.exercises?.find(e => e.exerciseId === liftId)?.sets ?? [];
+    if (!(saved.length === 1 && saved[0].kg === 60 && saved[0].reps === 8)) errors.push(`${tag}: the skipped lift saved ${JSON.stringify(saved)}, not one 60 x 8 set`);
+    if (live && Date.parse(live.startedAt) > Date.now()) errors.push(`${tag}: the live session was saved with a future start ${live.startedAt}`);
+    if (!live) errors.push(`${tag}: the live session was not saved`);
+  }
+  await ctx.close();
+  if (!errors.some(e => e.startsWith(`${tag}`))) console.log('AUD-10: past hold/carry fields, live field names, keyboard Move up and substitute, Skip today keeps logged sets, future start refused, verified');
 }
 
 await browser.close();

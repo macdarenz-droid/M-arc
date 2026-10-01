@@ -3,6 +3,7 @@
 // mapping drops fails field coverage), HT5-A2 (the content checks green on all 8) and HT5-A4 (HOWTO_HINTS,
 // ids.ts's budget).
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { Source } from '../../src/howto/content-types';
 import exercises from '../../src/data/exercises.json';
@@ -16,6 +17,7 @@ import { checkC7 } from './checks/c7';
 import { checkC8 } from './checks/c8';
 import { checkC16 } from './checks/c16';
 import { checkC17 } from './checks/c17';
+import { checkC19Copy, checkC19Files, checkC19Shared, filesUnder, type CopyField, type SourceName } from './checks/c19';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -75,14 +77,12 @@ describe('HT5-A1: generated, not typed', () => {
     }
   });
 
-  it('hand-editing a generated text field fails freshness: patching the committed module breaks its own inputsSha256 header', () => {
+  it('the committed module holds the literal cue string a hand edit would change (freshness itself is `generate --check` in the gate, not a unit test: review finding, PR #116)', () => {
     const path = `src/howto/generated/ht-${rows['lib_machine_chest_press']!.slug}.ts`;
     const committed = readFileSync(path, 'utf8');
+    expect(committed).toContain('Heel of palm, wrist straight.');
     const tampered = committed.replace('Heel of palm, wrist straight.', 'Something else entirely.');
     expect(tampered).not.toBe(committed);
-    const header = committed.match(/inputsSha256=([0-9a-f]{64})/)![1]!;
-    expect(tampered.includes(header)).toBe(true); // the header line is unchanged...
-    expect(tampered).not.toBe(committed); // ...but the text under it no longer matches: `generate --check` (gate) fails
   });
 
   it('a mapping that drops a golden-B field fails field coverage: baseFieldsText only emits known BuiltHowTo keys', () => {
@@ -90,6 +90,31 @@ describe('HT5-A1: generated, not typed', () => {
     const text = content.baseFieldsText(withExtra);
     expect(text).not.toContain('bogus');
     expect(text).toContain('rev: 1');
+  });
+
+  // Review finding (PR #116, Medium): the test above only shows an *unknown* key is dropped; nothing checked that
+  // every key the 8 vendored files actually use is *mapped*. A field added to golden B with no home in BASE_KEYS
+  // would silently vanish from the app. ALWAYS_OK mirrors the reviewer's own allowance ({schema, id, name, plate,
+  // zooms, feel}); PAGE_ONLY_KEYS (content.mjs) is the named list for the rest (today: `openItems`, leg_press).
+  const ALWAYS_OK = ['schema', 'id', 'name', 'plate', 'zooms', 'feel'];
+  const knownKeys = () => new Set([...content.BASE_KEYS, ...ALWAYS_OK, ...content.PAGE_ONLY_KEYS]);
+
+  it('every key the 8 vendored golden-B files use is in BASE_KEYS, {schema,id,name,plate,zooms,feel}, or PAGE_ONLY_KEYS', async () => {
+    const known = knownKeys(), keys = new Set<string>();
+    for (const id of IDS) {
+      const mod = await import(/* @vite-ignore */ url(`tools/plates/layers/exercises/${id.slice(4)}.howto.mjs`));
+      for (const k of Object.keys(mod.default)) keys.add(k);
+    }
+    const unmapped = [...keys].filter(k => !known.has(k));
+    expect(unmapped, 'add the field to content.mjs\'s BASE_KEYS (persisted) or PAGE_ONLY_KEYS (page-only, named), and record it in COACHING-DECISIONS.md').toEqual([]);
+  });
+
+  it('reproduces the reviewer\'s mutation in memory: a new golden-B field with no home (e.g. leg_press + `warmup`) fails the check above', async () => {
+    const known = knownKeys();
+    const legPress = (await import(/* @vite-ignore */ url('tools/plates/layers/exercises/leg_press.howto.mjs'))).default;
+    const mutatedKeys = Object.keys({ ...legPress, warmup: 'Two light sets first.' });
+    const unmapped = mutatedKeys.filter(k => !known.has(k));
+    expect(unmapped).toEqual(['warmup']);
   });
 });
 
@@ -111,7 +136,6 @@ describe('HT5-A2: the content checks (C1-C4, C6-C8, C16, C17) pass on the genera
     const SOURCES = sourcesRegistry();
     const { byId } = await loadAll();
     const knownIds = new Set(exercises.map(e => e.id));
-    const allowedUrls = new Set(Object.values(SOURCES).map((s: any) => s.url));
 
     let bad: string[] = [];
     for (const [id, c] of byId) {
@@ -125,9 +149,37 @@ describe('HT5-A2: the content checks (C1-C4, C6-C8, C16, C17) pass on the genera
       bad = bad.concat(checkC16(c));
     }
     bad = bad.concat(checkC6(exercises.map(e => e.id), COVERAGE));
-    bad = bad.concat(checkC17(['tools/plates/gen/content.mjs', 'src/howto'].map(p => new URL(`../../${p}`, import.meta.url).pathname), allowedUrls));
+    bad = bad.concat(checkC17(['tools/plates/gen/content.mjs', 'src/howto'].map(p => new URL(`../../${p}`, import.meta.url).pathname)));
 
     expect(bad).toEqual([]);
+  });
+});
+
+describe('HT5-A2/LR-23: C19, no sources or contacts, on the generated output', () => {
+  it('(a) archetypes.ts passes: no SHOW_EVIDENCE, clean red-flag boxes and disclaimer', async () => {
+    const lint = await import(/* @vite-ignore */ url('tools/plates/layers/artifact/copy-lint.mjs'));
+    const rawModules = await Promise.all(IDS.map(id => import(/* @vite-ignore */ url(`tools/plates/layers/exercises/${id.slice(4)}.howto.mjs`))));
+    const names: SourceName[] = lint.sourceNamePatterns(rawModules);
+    const archetypes = { ...(await import('../../src/howto/archetypes')) };
+    expect(checkC19Shared(archetypes, 'archetypes', names)).toEqual([]);
+  });
+
+  it('(b) every copy field of all 8 generated contents passes (source notes excepted)', async () => {
+    const lint = await import(/* @vite-ignore */ url('tools/plates/layers/artifact/copy-lint.mjs'));
+    const rawModules = await Promise.all(IDS.map(id => import(/* @vite-ignore */ url(`tools/plates/layers/exercises/${id.slice(4)}.howto.mjs`))));
+    const names: SourceName[] = lint.sourceNamePatterns(rawModules);
+    const { byId } = await loadAll();
+    for (const [id, c] of byId) {
+      const fields: CopyField[] = lint.copyFields(c);
+      expect(checkC19Copy(fields, id, names), id).toEqual([]);
+    }
+  });
+
+  it('(c) every file under src/howto passes', () => {
+    const root = join(new URL('.', import.meta.url).pathname, '..', '..');
+    const files = filesUnder([join(root, 'src', 'howto')]);
+    expect(files.some(f => f.includes(join('src', 'howto', 'generated')))).toBe(true);
+    expect(checkC19Files(files)).toEqual([]);
   });
 });
 
@@ -156,7 +208,11 @@ describe('HT5-A5: archetypes.ts is generated from golden B\'s shared module, byt
     expect(archetypes.RED_FLAG_ELBOW).toEqual(shared.RED_FLAG_ELBOW);
     expect(archetypes.DISCLAIMER).toBe(shared.DISCLAIMER);
     expect(archetypes.DISCLAIMER).toBe('General guidance, not medical advice. If something hurts, stop and get it checked.');
-    expect(archetypes.SHOW_EVIDENCE).toBe(shared.SHOW_EVIDENCE);
+  });
+
+  it('never exports SHOW_EVIDENCE (LR-23: no evidence labels in the UI)', async () => {
+    const archetypes = await import('../../src/howto/archetypes');
+    expect('SHOW_EVIDENCE' in archetypes).toBe(false);
   });
 
   it('no content row carries its own red-flag wording (C8 already proves this per row; this proves redFlag is always the shared block)', async () => {

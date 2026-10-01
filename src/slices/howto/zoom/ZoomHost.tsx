@@ -88,6 +88,10 @@ export function createZoomHost(api: PlateApi, setup: ZoomSetup): ZoomHost {
     return p;
   }
 
+  // Golden setMode(): the Mistake view's "Also check your wrist" line shows only while Mistake is on.
+  const also = root.querySelector<HTMLElement>('.ht-also');
+  const syncAlso = () => { if (also && btnMis) also.hidden = btnMis.getAttribute('aria-pressed') !== 'true'; };
+
   async function open(k: string, from?: HTMLElement | null) {
     if (openKey === k) { close(false); return; }            // a second tap closes it
     const t = ++ticket;
@@ -95,7 +99,8 @@ export function createZoomHost(api: PlateApi, setup: ZoomSetup): ZoomHost {
     if (!panel || t !== ticket) return;
     const swap = openKey !== null;
     if (anim) { anim.cancel(); anim = null; }
-    if (!swap) { snap = api.snapshot(); api.clearMistake(); }
+    // golden openZoom leaves Mistake first (setMode('normal')), so the wrist line is gone before the chip is measured
+    if (!swap) { snap = api.snapshot(); api.clearMistake(); syncAlso(); }
     opener = from || null; openKey = k;
     setRegistered(true);
     show(k);
@@ -169,14 +174,11 @@ export function createZoomHost(api: PlateApi, setup: ZoomSetup): ZoomHost {
     if (openKey !== k) void open(k, from);
     else { const p = panelOf(k)!; p.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' }); p.querySelector<HTMLElement>('.zx-h')!.focus({ preventScroll: true }); }
   }));
-  // Golden setMode(): the Mistake view's "Also check your wrist" line shows only while Mistake is on.
-  const also = root.querySelector<HTMLElement>('.ht-also');
   if (also && btnMis && typeof MutationObserver !== 'undefined') {
-    const sync = () => { also.hidden = btnMis.getAttribute('aria-pressed') !== 'true'; };
-    const mo = new MutationObserver(sync);
+    const mo = new MutationObserver(syncAlso);
     mo.observe(btnMis, { attributes: true, attributeFilter: ['aria-pressed'] });
     off.push(() => mo.disconnect());
-    sync();
+    syncAlso();
   }
   // Golden B: Escape closes the open close-up. In the app it would cancel the dialog, so it is taken first.
   if (dialog) on(dialog, 'keydown', e => { if (e.key === 'Escape' && openKey !== null) { e.preventDefault(); e.stopPropagation(); close(false); } }, true);

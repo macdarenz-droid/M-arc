@@ -173,8 +173,49 @@ export type SafetySignal = 'crisis' | 'pain_mentioned' | 'medical' | 'disordered
 /**
  * ES-14: "end it after 3 sets" and "I hurt myself on squats" are not crises; ongoing self-harm
  * ("I've been hurting myself") still is.
+ * BUG-32: the everyday ways of saying the same thing: "wanna", "do not", "be alive", "exist",
+ * "wish I was dead", "no point in living", "not worth living", "better off without me", "nobody
+ * would miss me", "unalive myself", "cut myself", and "kms" (kill myself) only straight after a
+ * verb of intent, so a distance ("ran 5 kms", "10kms") never fires. Gym talk stays out: "be
+ * here" followed by a time, a day or a duration ("don't want to be here late"), and "cut myself"
+ * followed by "shaving", "on the bar" or "some slack". "want to die" still fires on gym hyperbole.
+ * BUG-35: "don't want to wake up" (not when "for leg day", "at 5am" or "early" follows), "wish I
+ * wasn't alive", "what's the point of living", "want it all to end", "want to disappear" (not
+ * "into the sauna"), "want to unalive", and "kill me now" unless a gym word, "lol" or a laughing
+ * emoji follows it in the same sentence. The `u` flag lets the emoji match.
  */
-const CRISIS = /\b(kill(ing)? myself|suicid\w*|end my life|end it all|want to die|don'?t want to (live|be here)|self[- ]?harm\w*|(want|going|trying) to hurt myself|harm(ing)? myself|hurt(ing)? myself on purpose|(been|keep|kept|started) hurting myself(?!\s+(on|at|during|doing|with|in|lifting|squatting|benching|training))|no reason to live|better off dead)\b/i;
+/** BUG-35: words that make "kill me now" gym hyperbole when they follow it in the same sentence. */
+const GYM_WORDS = String.raw`sets?|reps?|rounds?|laps?|burpees?|squats?|deadlifts?|lunges?|sprints?|bench|cardio|hiit|amrap|emom|wod|leg day|legs|workout|gym|pull-?ups?|push-?ups?`;
+const CRISIS = new RegExp(String.raw`\b(${[
+  String.raw`kill(ing)? myself`,
+  String.raw`suicid\w*`,
+  String.raw`end my life`,
+  String.raw`end it all`,
+  String.raw`(want to|wanna) die`,
+  String.raw`(don'?t|do not) (want to|wanna) (live|be alive|exist|be here(?!\s+((late|later|early|earlier)\b|(at|by|until|till|before|after|past|from|around) \d|(on|at) (the )?(weekends?|(mon|tues|wednes|thurs|fri|satur|sun)days?)\b|for (\d|an? (hour|minute)\b|hours\b|minutes\b|ages\b)|(too|so|that) (long|late|early)\b|all (day|night|morning|afternoon|evening)\b)))`,
+  String.raw`self[- ]?harm\w*`,
+  String.raw`((want|going|trying) to|wanna|gonna) hurt myself`,
+  String.raw`harm(ing)? myself`,
+  String.raw`hurt(ing)? myself on purpose`,
+  String.raw`(been|keep|kept|started) hurting myself(?!\s+(on|at|during|doing|with|in|lifting|squatting|benching|training))`,
+  String.raw`(((want|going|trying|need) to|wanna|gonna) cut|(been|keep|kept|started) cutting) myself(?!\s+((some|a|an|slack|off|short|loose|free|out|down|back|in|on|at|with|while|when|during|doing|shaving|by|from|opening|chopping|cooking)\b|to \d))`,
+  String.raw`cut(ting)? myself on purpose`,
+  String.raw`unaliv(e|ing) myself`,
+  String.raw`(((want|going|about|trying|need) to|wanna|gonna|finna|tryna) unalive|(thinking|thought) (about|of) unaliving)`,
+  String.raw`(don'?t|do not) (want to|wanna) wake up(?!\s+((for|before|at|by) (?!(all|any|another|anything|anyone|anybody|nothing|no ?one|much longer)\b)|((so|this|that|too) )?early\b|(on|at) (the )?(weekends?|(mon|tues|wednes|thurs|fri|satur|sun)days?)\b))`,
+  String.raw`wish i (wasn'?t|weren'?t|was not|were not) alive`,
+  String.raw`(what'?s|what is) the point (of|in) (living|being alive)`,
+  String.raw`(want|wanna|wish|need) (for )?(it all|everything) to (end|stop)`,
+  String.raw`((want|going|need) to|wanna|gonna) disappear(?!\s+((into|inside|under|behind)\b|in (the )?(sauna|steam room|pool|gym|bed)\b|to (the )?(gym|sauna|pool|beach|bed|couch)\b|for (a |the |\d+ )?(weekend|holiday|vacation|week|day|hour|minute)s?\b))`,
+  String.raw`kill me now(?![^.!?]*(\b(${GYM_WORDS}|lol|lmao|haha\w*|jk)\b|[\u{1F602}\u{1F923}\u{1F480}\u{1F605}]))`,
+  String.raw`((want|going|about|trying) to|wanna|gonna|finna|tryna) kms`,
+  String.raw`wish i (was|were) dead`,
+  String.raw`no reason to live`,
+  String.raw`no point (in )?living`,
+  String.raw`(isn'?t|not) worth living`,
+  String.raw`better off (dead|without me)`,
+  String.raw`(nobody|no one|no-one) would (even )?miss me`,
+].join('|')})\b`, 'iu');
 const MEDICAL = /\b(chest pain|chest (hurts|tight)|faint(ed|ing)?|passed out|black(ed)? out|dizz(y|iness)|heart (racing|palpitations)|palpitations|can'?t breathe)\b/i;
 const PAIN = /\b(sharp pain|shooting pain|stabbing|numb(ness)?|tingl\w*|pins and needles|radiat\w*|pain|hurts?|injur\w*|strain(ed)?|sprain(ed)?|tweak(ed)?|pulled (a|my))\b/i;
 const EATING = /\b(starv\w*|not eating|stop(ped)? eating|purg\w*|throw(ing)? up after|binge\w*|500 calories|800 calories|lose \d{2,} ?(kg|lb|pounds|kilos) in (a|one|two|\d) (week|month)|laxatives?|skip(ping)? (all )?meals|burn off (what|everything) i ate)\b/i;

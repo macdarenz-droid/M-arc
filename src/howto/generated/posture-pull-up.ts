@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=eb4002a5ee8b426590a689cac68e248119e6cd1526fca045bcc699400b385577
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=f2642aef761d371aed673e0c1ab549fe7ae645a851f33e71e6a272bc0ee897ce
 // The pull-up posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-pull-up.css';
 export const panels: Readonly<Record<string, string>> = {

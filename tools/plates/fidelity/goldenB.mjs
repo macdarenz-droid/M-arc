@@ -84,21 +84,34 @@ const settle = page => page.evaluate(() => new Promise(r => {
 /**
  * Captures one named state: asserts the selector matches something visible, non-empty, inside the 390 px sheet,
  * then screenshots it. Throws, naming `state`, on a selector match failure - never returns an empty buffer.
+ * `sel` may be a list of selectors (HT-4b: the risks section plus the disclaimer after it); every one must pass the
+ * same checks, and the capture is the page area that spans all of them.
  */
 export async function capture(page, sel, state) {
-  const problem = await page.evaluate(([sel, state]) => {
-    const e = document.querySelector(sel);
-    if (!e) return `${state}: selector matches nothing (${sel})`;
-    const r = e.getBoundingClientRect(), cs = getComputedStyle(e);
-    if (!r.width || !r.height || cs.display === 'none' || cs.visibility === 'hidden') return `${state}: not visible (${sel})`;
-    if (r.left < -0.5 || r.right > innerWidth + 0.5) return `${state}: outside the 390px sheet (${sel})`;
+  const sels = Array.isArray(sel) ? sel : [sel];
+  if (sels.length === 0) throw new Error(`${state}: no selector`);
+  const problem = await page.evaluate(([sels, state]) => {
+    for (const sel of sels) {
+      const e = document.querySelector(sel);
+      if (!e) return `${state}: selector matches nothing (${sel})`;
+      const r = e.getBoundingClientRect(), cs = getComputedStyle(e);
+      if (!r.width || !r.height || cs.display === 'none' || cs.visibility === 'hidden') return `${state}: not visible (${sel})`;
+      if (r.left < -0.5 || r.right > innerWidth + 0.5) return `${state}: outside the 390px sheet (${sel})`;
+    }
     return null;
-  }, [sel, state]);
+  }, [sels, state]);
   if (problem) throw new Error(problem);
-  const el = page.locator(sel).first();
+  const el = page.locator(sels[0]).first();
   await el.scrollIntoViewIfNeeded();
   await settle(page);
-  return el.screenshot({ animations: 'allow' });
+  if (sels.length === 1) return el.screenshot({ animations: 'allow' });
+  const clip = await page.evaluate(sels => {
+    const rs = sels.map(s => document.querySelector(s).getBoundingClientRect());
+    const x = Math.min(...rs.map(r => r.left)), y = Math.min(...rs.map(r => r.top));
+    const w = Math.max(...rs.map(r => r.right)) - x, h = Math.max(...rs.map(r => r.bottom)) - y;
+    return { x: x + scrollX, y: y + scrollY, width: w, height: h };
+  }, sels);
+  return page.screenshot({ clip, fullPage: true, animations: 'allow' });
 }
 
 /** S2: opens the hand or a posture zoom by its chip key. */
@@ -140,10 +153,6 @@ export async function assertAllSetupStepsShown(page, id) {
   const hidden = await page.evaluate(c => document.querySelectorAll(`${c} .st-list li[hidden]`).length, `#card-${id}`);
   if (hidden) throw new Error(`${id}: ${hidden} setup step(s) still hidden`);
 }
-export async function expandSources(page, id) {
-  await page.evaluate(sel => { document.querySelector(sel).open = true; }, `#card-${id} .srcs`);
-}
-const collapseSources = (page, id) => page.evaluate(sel => { document.querySelector(sel).open = false; }, `#card-${id} .srcs`);
 
 const setReduced = (page, on) => page.evaluate(v => { document.documentElement.dataset.motion = v ? 'reduce' : ''; }, on);
 
@@ -190,10 +199,10 @@ export async function assertReducedMotionNoShimmer(page, id) {
 
 /**
  * Every state the layer cards compare, for one exercise: hand zoom per key, posture zoom per chip, handling
- * mistake, feel map (rest, playing at a fixed frame, each row open), setup (every step already shown), sources
- * collapsed/expanded, risks. `group`+`isBaseline` mark states sharing a selector with a rest state, so selfCheck
- * can assert the open state's capture actually differs from rest (finding 3: a state that never opens anything
- * captures the same pixels as rest and would otherwise pass unnoticed). Returns [{ name, selector, ... }].
+ * mistake, feel map (rest, playing at a fixed frame, each row open), setup (every step already shown), risks with the
+ * owner's disclaimer after it (HT-4b: no sources states since LR-23). `group`+`isBaseline` mark states sharing a
+ * selector with a rest state, so selfCheck can assert the open state's capture actually differs from rest (finding 3:
+ * a state that never opens anything captures the same pixels as rest and would otherwise pass unnoticed). Returns [{ name, selector, ... }].
  */
 export async function statesFor(page, id) {
   const card = `#card-${id}`;
@@ -207,9 +216,7 @@ export async function statesFor(page, id) {
     { name: `${id}: feel at rest`, selector: `${card} .feel`, group: 'feel', isBaseline: true },
     { name: `${id}: feel playing (paused mid-sweep)`, selector: `${card} .feel`, group: 'feel', open: () => playFeelPaused(page, id), close: () => closeFeelPaused(page, id) },
     { name: `${id}: setup (every step shown)`, selector: `${card} .setup`, open: () => assertAllSetupStepsShown(page, id) },
-    { name: `${id}: risks`, selector: `${card} .risks` },
-    { name: `${id}: sources`, selector: `${card} .srcs`, group: 'sources', isBaseline: true },
-    { name: `${id}: sources expanded`, selector: `${card} .srcs`, group: 'sources', open: () => expandSources(page, id), close: () => collapseSources(page, id) },
+    { name: `${id}: risks`, selector: [`${card} .risks`, `${card} .ht-disclaimer`] },
   ];
   for (const z of zoomKeys) states.push({ name: `${id}: zoom ${z}`, selector: `#${id}-zoom-${z}`, open: () => openZoom(page, id, z), close: () => closeZoom(page, id, z) });
   for (const r of rows) states.push({ name: `${id}: feel row ${r}`, selector: `${card} .feel`, group: 'feel', open: () => openFeelRow(page, id, r) });
@@ -219,7 +226,7 @@ export async function statesFor(page, id) {
 /**
  * Self-check (HT4-A6): captures every state of `id` twice back to back and asserts 0 px difference between the two
  * captures (proves `capture` is deterministic and never silently returns an empty/blank buffer for two different
- * states), and - for every non-baseline state sharing a `group` with a baseline (grip/feel/sources) - asserts its
+ * states), and - for every non-baseline state sharing a `group` with a baseline (plate/feel) - asserts its
  * capture actually differs from that group's rest capture (proves the state really opened something; a state that
  * silently no-ops would otherwise pass the 0 px self-check for the wrong reason, the V1-08 bug in builder gotchas).
  * Runs under reduced motion by default (deterministic); `playFeelPaused`/`assertReducedMotionNoShimmer` manage their

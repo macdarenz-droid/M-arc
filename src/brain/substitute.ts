@@ -2,7 +2,9 @@
 import type { Exercise } from '@/core/models';
 import { LIBRARY } from '@/core/exercises';
 import { equipmentGroup } from './coach/cues';
-import { loadableNear, formatLoadable, type LoadMenu } from './units';
+import { formatLoadable, type Loadable, type LoadMenu } from './units';
+import { EPLEY_DIVISOR } from './e1rm';
+import { kgToDisplay } from '@/core/units';
 import { substitutionRatio } from '@/data/substitutionRatios';
 
 /** Same primary muscle as `exercise`, ranked by matching movement pattern then equipment group. */
@@ -24,27 +26,31 @@ export interface CarryOverStart {
 
 /**
  * LT-5 (docs/LOAD-AWARE-TARGETS.md §5): a starting estimate for a substitute exercise, carried over
- * from the replaced lift's strength estimate (its e1RM or top kg, canonical) through a sourced
- * pattern ratio (`src/data/substitutionRatios.ts`), then placed on the substitute's own load menu.
+ * from the replaced lift's estimated one-rep max (canonical kg) through a sourced pattern ratio
+ * (`src/data/substitutionRatios.ts`), then placed on the substitute's own load menu.
+ * AUD-8 (SCI-08): the ratio maps one max to another, so the input is an e1RM, never a working load;
+ * the load is solved for the requested reps and reps in reserve, then placed on `menu.rungsKg`.
  * Null with no sourced ratio for this pair, or nothing to place it on - the caller keeps today's
  * `startingLoadKg` behaviour (A3).
  */
-export function carryOverStart(replaced: Pick<Exercise, 'pattern' | 'equipment'>, substitute: Pick<Exercise, 'pattern' | 'equipment'>, replacedEstimateKg: number, menu: Pick<LoadMenu, 'profile' | 'rungsKg'>): CarryOverStart | null {
-  if (!(replacedEstimateKg > 0) || !menu.rungsKg.length) return null;
+export function carryOverStart(replaced: Pick<Exercise, 'pattern' | 'equipment'>, substitute: Pick<Exercise, 'pattern' | 'equipment'>, replacedE1rmKg: number, menu: Pick<LoadMenu, 'profile' | 'rungsKg'>, goal: { reps: number; rir: number }): CarryOverStart | null {
+  if (!(replacedE1rmKg > 0) || !menu.rungsKg.length) return null;
   if (replaced.pattern !== substitute.pattern) return null;
   const ratio = substitutionRatio(replaced.pattern, equipmentGroup(replaced.equipment), equipmentGroup(substitute.equipment));
   if (!ratio) return null;
-  const estimateKg = replacedEstimateKg * ratio.ratio;
-  const rung = chooseStartRung(estimateKg, menu);
-  const reps = Math.max(1, Math.min(20, Math.floor(30 * (estimateKg / rung.kg - 1))));
+  const estimateKg = replacedE1rmKg * ratio.ratio;
+  const rung = chooseStartRung(estimateKg / (1 + (goal.reps + goal.rir) / EPLEY_DIVISOR), menu);
+  const reps = Math.max(1, Math.min(20, Math.floor(EPLEY_DIVISOR * (estimateKg / rung.kg - 1) - goal.rir)));
   return { kg: rung.kg, reps, confidence: 'low', text: `Start around ${formatLoadable(rung)} for ${reps}` };
 }
 
 /**
- * Where the carry-over estimate lands on the substitute's menu: nearest real load at or below the
- * estimate, so the first session is achievable. The one call LT-2 can swap for its own rung choice
- * once it lands, without touching carryOverStart's shape.
+ * Where the carry-over load lands on the substitute's menu: the heaviest rung at or below it, so the
+ * first session is achievable, or the lightest rung when even that is heavier. AUD-8 (SCI-08):
+ * the menu's rungs include learned loads, which the profile's ladder alone would miss.
  */
-function chooseStartRung(estimateKg: number, menu: Pick<LoadMenu, 'profile'>) {
-  return loadableNear(estimateKg, menu.profile, 'down');
+function chooseStartRung(loadKg: number, menu: Pick<LoadMenu, 'profile' | 'rungsKg'>): Loadable {
+  const rungs = [...menu.rungsKg].sort((a, b) => a - b);
+  const kg = rungs.filter(k => k <= loadKg + 1e-6).at(-1) ?? rungs[0]!;
+  return { kg, value: kgToDisplay(kg, menu.profile.unit), unit: menu.profile.unit };
 }

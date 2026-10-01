@@ -49,23 +49,26 @@ export function downsampleToBuckets(samples: Array<{ tSec: number; bpm: number; 
   });
 }
 
+/** Two 5-second points with no bucket missing between them (SCI-07). */
+const adjacent = (a: [number, number], b: [number, number]): boolean => b[0] - a[0] <= 5;
+
 /**
  * A validated max within one session's series: 5+ consecutive 5-second points within 3 bpm
  * of each other (a plateau), reached by an ascending run into it (a ramp), value <= 220.
- * Anything else (a lone spike, a plateau reached by a drop) is rejected as noise.
+ * SCI-07: consecutive means no missing bucket, and the ramp is the adjacent point just before the
+ * plateau, below its highest point (as before); a plateau at the very start has no ramp. Anything else (a lone spike, readings scattered across a
+ * disconnect, a plateau with no lead-in or one reached by a drop) is rejected as noise.
  */
 export function observedHrMaxFromSeries(series: Array<[number, number]>): number | null {
-  const bpms = series.map(p => p[1]);
   // BR-12: the highest qualifying plateau, not the first one (usually the warm-up).
   let best: number | null = null;
-  for (let i = 0; i + 4 < bpms.length; i++) {
-    const window = bpms.slice(i, i + 5);
-    const plateau = Math.max(...window) - Math.min(...window) <= 3;
-    if (!plateau) continue;
+  for (let i = 1; i + 4 < series.length; i++) {
+    const run = series.slice(i - 1, i + 5);
+    if (!run.every((p, k) => k === 0 || adjacent(run[k - 1]!, p))) continue;
+    const window = run.slice(1).map(p => p[1]);
     const plateauMax = Math.max(...window);
-    if (plateauMax > 220) continue;
-    const rampedIn = i === 0 || bpms[i - 1]! < plateauMax;
-    if (!rampedIn) continue;
+    if (plateauMax - Math.min(...window) > 3 || plateauMax > 220) continue;
+    if (!(run[0]![1] < plateauMax)) continue;
     const mean = Math.round(window.reduce((a, b) => a + b, 0) / window.length);
     if (best == null || mean > best) best = mean;
   }
@@ -321,7 +324,8 @@ export function sessionDrift(input: DriftInput): DriftResult | null {
       // The series runs on wall-clock seconds; sessionSec (training time, pauses out, BUG-19) is only the 20-min gate.
       const end = Math.min(s.t + DRIFT.readyCapSec, at[s.i + 1] ?? Infinity);
       const after = series.filter(([t]) => t > s.t && t <= end);
-      const j = after.findIndex((_, k) => k + 2 < after.length && after.slice(k, k + 3).every(([, bpm]) => bpm <= readyBpm));
+      // SCI-07: three consecutive points means three adjacent 5-second buckets, not three readings across a gap.
+      const j = after.findIndex((_, k) => k + 2 < after.length && adjacent(after[k]!, after[k + 1]!) && adjacent(after[k + 1]!, after[k + 2]!) && after.slice(k, k + 3).every(([, bpm]) => bpm <= readyBpm));
       if (j >= 0) ready.push([s.i, after[j + 2]![0] - s.t]);
     }
   }

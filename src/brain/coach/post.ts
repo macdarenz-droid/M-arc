@@ -8,7 +8,7 @@ import { kgToDisplay } from '@/core/units';
 import { exerciseHistory, modeOf, type ExerciseSessionSummary } from '../history';
 import { formatRecordValue, recordsFor } from '../prs';
 import { findExercise } from '@/core/exercises';
-import { firstWorkingSet, isWorkingSet } from '../exposure';
+import { effortLabel, firstWorkingSet, isWorkingSet } from '../exposure';
 import { RIR_BY_EFFORT } from '../e1rm';
 import { rirMid } from '../retarget';
 import type { Insight } from './rules';
@@ -39,11 +39,11 @@ export function recordsInsight(session: Session, priorSessions: Session[], custo
   return out;
 }
 
-/** Effort shares of a session's rated working sets; null under 4 rated sets. */
+/** Effort shares of a session's rated working sets (a failure set is max); null under 4 rated sets. */
 function effortMix(session: Session): { n: number; easy: number; ideal: number; max: number } | null {
-  const rated = session.exercises.flatMap(e => e.sets).filter(isWorkingSet).filter(s => s.effort);
+  const rated = session.exercises.flatMap(e => e.sets).filter(isWorkingSet).filter(s => effortLabel(s));
   if (rated.length < 4) return null;
-  const share = (e: 'easy' | 'ideal' | 'max') => rated.filter(s => s.effort === e).length / rated.length;
+  const share = (e: 'easy' | 'ideal' | 'max') => rated.filter(s => effortLabel(s) === e).length / rated.length;
   return { n: rated.length, easy: share('easy'), ideal: share('ideal'), max: share('max') };
 }
 
@@ -167,7 +167,7 @@ export function planVerdictInsights(session: Session, goal?: GoalId, unit: LoadU
     const s1 = firstWorkingSet(ex.sets.filter(isWorkingSet));
     if (!t || !s1 || !(s1.kg! > 0) || !(s1.reps! > 0)) continue;
     if (Math.abs(s1.kg! - t.kg) < 0.011 && s1.reps === t.reps) continue;
-    const did = s1.kg! * (1 + (s1.reps! + RIR_BY_EFFORT[s1.effort ?? 'ideal']) / 30);
+    const did = s1.kg! * (1 + (s1.reps! + RIR_BY_EFFORT[effortLabel(s1) ?? 'ideal']) / 30);
     const plan = t.kg * (1 + (t.reps + rir) / 30);
     const pct = Math.round((did / plan - 1) * 100);
     const v = (kg: number) => kgToDisplay(kg, unit);

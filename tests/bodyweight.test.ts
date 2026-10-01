@@ -269,16 +269,16 @@ describe('Labels', () => {
 
 describe('bodyweightHint', () => {
   it('push-up with body weight', () => {
-    expect(bodyweightHint(findExercise('lib_push_up'), 80, 'kg')).toBe('Your body weight counts: ≈ 51 kg, plus anything you add.');
+    expect(bodyweightHint(findExercise('lib_push_up'), 80, 'kg')).toBe('Body-weight load ≈ 51 kg');
   });
 
   it('assisted pull-up with body weight', () => {
-    expect(bodyweightHint(findExercise('lib_assisted_pull_up'), 80, 'kg')).toBe("Your body weight counts: ≈ 80 kg, minus the machine's help.");
+    expect(bodyweightHint(findExercise('lib_assisted_pull_up'), 80, 'kg')).toBe('Body-weight load ≈ 80 kg');
   });
 
   it('no body weight -> the hint text', () => {
     expect(bodyweightHint(findExercise('lib_push_up'), null, 'kg')).toBe(NO_BODY_WEIGHT_HINT);
-    expect(NO_BODY_WEIGHT_HINT).toBe('Add your body weight in Settings to count bodyweight work');
+    expect(NO_BODY_WEIGHT_HINT).toBe('Body weight not set');
   });
 
   it('no share -> null', () => {

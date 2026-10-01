@@ -13,6 +13,7 @@ import { parseDirectives } from '../verify';
 import { onProposal, canApply, undoOpen, UNDO_WINDOW_MS } from '../apply';
 import { ShowComponent } from './components';
 import { Escalation } from './Escalation';
+import { ReportAnswer } from './Report';
 import { imageData, loadImage } from '../images';
 import { state } from '@/core/store';
 import { makeCtx } from '../tools/context';
@@ -22,7 +23,7 @@ import type { Conversation, Fact, ProposalRecord, RenderedTurn, StoredMessage, U
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 type ToolUse = { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> };
-const toolUsesOf = (content: unknown[]): ToolUse[] => content.filter((b): b is ToolUse => isObj(b) && b.type === 'tool_use').map(b => ({ ...b, input: isObj(b.input) ? b.input : {} }));
+export const toolUsesOf = (content: unknown[]): ToolUse[] => content.filter((b): b is ToolUse => isObj(b) && b.type === 'tool_use').map(b => ({ ...b, input: isObj(b.input) ? b.input : {} }));
 const textOf = (content: unknown[]) => content.filter((b): b is { type: 'text'; text: string } => isObj(b) && b.type === 'text').map(b => b.text).join('');
 
 export interface UserTurn { kind: 'user'; index: number; msg: Extract<StoredMessage, { role: 'user' }> }
@@ -44,7 +45,7 @@ export function turnsOf(messages: StoredMessage[]): Turn[] {
   return out;
 }
 
-function toolResults(messages: StoredMessage[], indexes: number[]): Map<string, { content: string; isError: boolean }> {
+export function toolResults(messages: StoredMessage[], indexes: number[]): Map<string, { content: string; isError: boolean }> {
   const map = new Map<string, { content: string; isError: boolean }>();
   for (const i of indexes) {
     const m = messages[i];
@@ -119,7 +120,7 @@ export function ProposalCard({ p, conversationId }: { p: ProposalRecord; convers
       {p.status === 'applied' && <div class="small row" style={{ gap: 8 }}><span class="muted">Applied</span>{open && <button type="button" class="esc-link" onClick={() => act('undo')}>Undo</button>}</div>}
       {p.status === 'dismissed' && <div class="small muted">Dismissed</div>}
       {p.status === 'undone' && <div class="small muted">Undone</div>}
-      {p.status === 'stale' && <div class="small muted">Out of date. Ask again for a fresh one.</div>}
+      {p.status === 'stale' && <div class="small muted">Out of date.</div>}
       {p.status === 'failed' && <div class="small muted">Couldn’t apply this.</div>}
     </Card>
   );
@@ -218,6 +219,7 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
       ))}
       {answerText && <AnswerText text={answerText} ledger={conv.ledger} unverified={r?.unverified} />}
       {!live && <Drawer uses={allUses} results={results} />}
+      {!live && <ReportAnswer conv={conv} indexes={indexes} />}
       {!live && last && !!r?.chips?.length && <div class="esc-chips">{r.chips.map(c => <button type="button" key={c} class="chip chip-btn" onClick={() => onChip?.(c)}>{c}</button>)}</div>}
     </div>
   );
