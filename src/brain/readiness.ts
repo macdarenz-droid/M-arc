@@ -102,7 +102,9 @@ export function sleepDriver(lastNight: number | null, last3: number[], usual: nu
   const vs = (min: number) => `(${min < usual ? `below your usual ${hm(usual)}` : min < floor ? `under ${hm(floor)}` : `your usual ${hm(usual)}`})`;
   if (lastNight != null && (lastNight < usual || lastNight < floor)) return `Sleep: ${hm(lastNight)} last night ${vs(lastNight)}`;
   const mean = avg(last3);
-  return `Sleep: ${hm(mean)} a night over the last ${last3.length === 1 ? 'night' : `${last3.length} nights`} ${vs(mean)}`;
+  // Reached only without last night's data, so the one night in the window is older: name it as such.
+  if (last3.length === 1) return `Sleep: ${hm(mean)} on your last logged night ${vs(mean)}`;
+  return `Sleep: ${hm(mean)} a night over the last ${last3.length} nights ${vs(mean)}`;
 }
 
 export type LoadAdvice = 'normal' | 'no_increase' | 'reduce';

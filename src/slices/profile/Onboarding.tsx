@@ -25,7 +25,7 @@ export function OnboardingSheet({ trigger, onClose }: { trigger: OnboardingTrigg
 
   if (trigger === 'review' && step === 'intro') {
     return (
-      <Sheet title="Still accurate?" onClose={exit}>
+      <Sheet title="Body weight" onClose={exit}>
         <div class="stack">
           <p class="small muted">Still {formatLoad(s.profile.bodyWeightKg, s.preferences.weightUnit)}?</p>
           <div class="row"><Button variant="quiet" onClick={exit}>Skip</Button><Button variant="primary" class="grow" onClick={() => setStep('form')}>Update</Button></div>
@@ -38,7 +38,7 @@ export function OnboardingSheet({ trigger, onClose }: { trigger: OnboardingTrigg
   if (step === 'intro') {
     const missing = [!c.weight && 'weight', !c.height && 'height', !c.age && 'birth year', !c.sex && 'sex'].filter(Boolean) as string[];
     return (
-      <Sheet title="Help the coach know you" onClose={exit}>
+      <Sheet title="Your details" onClose={exit}>
         <div class="stack">
           {trigger !== 'watch' && trigger !== 'first' && <p class="small muted">Missing: {missing.join(', ')}.</p>}
           <div class="row"><Button variant="quiet" onClick={exit}>Later</Button><Button variant="primary" class="grow" onClick={() => setStep('form')}>Add my details</Button></div>
@@ -62,7 +62,7 @@ function OnboardingForm({ onDone }: { onDone: () => void }) {
   };
 
   return (
-    <Sheet title="Add my details" onClose={onDone}>
+    <Sheet title="Your details" onClose={onDone}>
       <div class="stack">
         <Field label={`Body weight (${u})`}><input type="text" inputMode="decimal" autofocus value={weight} onInput={e => setWeight((e.target as HTMLInputElement).value)} /></Field>
         <Field label="Height (cm)"><CommitNumber value={s.profile.heightCm} min={100} max={250} onCommit={v => setHeight(v, 'onboarding')} /></Field>

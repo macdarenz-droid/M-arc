@@ -156,7 +156,7 @@ function Log() {
           <Empty
             align="start"
             icon={<IconCalendar size={24} />}
-            title="Your finished workouts land here."
+            title="No sessions"
             action={split
               ? <Button variant="primary" onClick={() => { requestStart(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
               : <Button variant="primary" onClick={() => go('train')}>Go to Train</Button>}
@@ -507,7 +507,7 @@ function Stats() {
   return (
     <div class="stack" style={{ marginTop: 14 }}>
       <Card data-palace="history.week">
-        <div class="eyebrow">This week</div>
+        <div class="eyebrow">Current week</div>
         <div class="grid-3" style={{ marginTop: 8 }}><Stat value={w.workouts} label="workouts" /><Stat value={w.sets} label="sets" /><Stat value={u === 'lb' ? `${Math.round(kgToDisplay(w.volumeKg, 'lb') / 100) / 10}k lb` : `${Math.round(w.volumeKg / 1000 * 10) / 10}t`} label="volume" /></div>
         {muscleRows.length > 0 && (
           <div class="stack-sm" style={{ marginTop: 14 }}>

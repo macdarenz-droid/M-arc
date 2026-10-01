@@ -71,7 +71,7 @@ function WhatEscobarKnows() {
   const n = state.value.escobar.memory.length;
   return (
     <Row palace="coach.knows" onClick={() => showPanel('memory')} trailing={<IconChevron size={16} />}>
-      <div><b class="small">What Escobar knows</b><div class="hint">{n ? `${n} thing${n === 1 ? '' : 's'} remembered` : 'Nothing remembered yet'}</div></div>
+      <div><b class="small">Memory</b><div class="hint">{n ? `${n} thing${n === 1 ? '' : 's'} remembered` : 'Nothing remembered yet'}</div></div>
     </Row>
   );
 }
