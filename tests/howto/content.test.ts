@@ -538,9 +538,10 @@ describe('HT4b-A4/A5: C19 no sources or contacts, each rule proven by a bad fixt
     expect(checkC19Files(files)).toEqual([]);
   });
 
-  it('(d) every generated feel-*.ts passes (none before HT-8; the fixture below proves the rule)', () => {
+  it('(d) every generated feel-*.ts passes (one per approved exercise, HT-8)', () => {
     const root = join(new URL('.', import.meta.url).pathname, '..', '..');
     const feel = filesUnder([join(root, 'src', 'howto', 'generated')]).filter(f => /(^|[\\/])feel-[^\\/]*\.ts$/.test(f));
+    expect(feel).toHaveLength(8);
     for (const f of feel) expect(checkC19Feel(f, names), f).toEqual([]);
   });
 
