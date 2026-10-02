@@ -706,7 +706,7 @@
   "anchorSource": "outside-hf",
   "anchorNote": "R-W0-2: Amber Sayer's Outside article (a named certified personal trainer; byline in the page metadata) read in full; its \"Resisted Hip Hikes\" is this exercise with a band anchored low, facing away (c13-c16). Motra and Kovo (cable, read in full) are app exercise-database pages that name no author, so every claim resting only on them is tagged WEAK. No ACE, NASM or PubMed technique source was found. Also read, not cited: The Prehab Guys (straight-knee kick, a different movement) and Wellen (loop band round both ankles, a marching variant; no named author).",
   "loadProgression": {
-    "text": "Start light; sets of 10-15 reps a leg; move to a stronger band or more weight as you get stronger.",
+    "text": "Start light; sets of 10-15 reps a leg; move to a band with more tension as you get stronger.",
     "claims": [
       "c11",
       "c9",
@@ -721,6 +721,7 @@
   "notes": [
     "Range conflict: Kovo lifts the thigh toward hip height (c2); Motra allows up to the knee near the chest (c3, c5). The plate draws the thigh about parallel, which both allow.",
     "The lower-back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28); the sheet cannot ship before the back-pain box.",
-    "Fix round 2026-10-02 (verify w0): A7/R-W0-2: claims resting only on motra-hf or kovo-hf tagged WEAK; a named source (Outside, Amber Sayer, CPT) added as anchor with c13-c17; setup and tempo now cite it; variantLine rewritten so it does not say the two versions share rules. The anchor is a band source while the plate draws the cable. Supervisor ruling R-W0-7 (2026-10-02, verify/w0.md): the bar is met. The movement is the same (low anchor behind, facing away, knee drive, hold, slow lower), and content.md 3.2 asks for an exercise-specific technique source. The cable-only setup stays on the WEAK full-access pages, and the plate draws nothing that only the band source gives."
+    "Fix round 2026-10-02 (verify w0): A7/R-W0-2: claims resting only on motra-hf or kovo-hf tagged WEAK; a named source (Outside, Amber Sayer, CPT) added as anchor with c13-c17; setup and tempo now cite it; variantLine rewritten so it does not say the two versions share rules. The anchor is a band source while the plate draws the cable. Supervisor ruling R-W0-7 (2026-10-02, verify/w0.md): the bar is met. The movement is the same (low anchor behind, facing away, knee drive, hold, slow lower), and content.md 3.2 asks for an exercise-specific technique source. The cable-only setup stays on the WEAK full-access pages, and the plate draws nothing that only the band source gives.",
+    "Recheck Low 1 (2026-10-02): loadProgression no longer says \"more weight\", which no cited claim supports; it follows c16 (a band with greater tension)."
   ]
 }

@@ -513,7 +513,7 @@
       "claim": "c8"
     },
     {
-      "mistake": "Torso twists away from the rowing side.",
+      "mistake": "Torso twists too far away from the rowing side.",
       "fix": "Widen your feet; if it still twists, go lighter.",
       "claim": "c7"
     },
