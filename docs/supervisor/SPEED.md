@@ -68,7 +68,7 @@ Measured 10-02 09:50 UTC by four read-only analysts (in-chat workflow `wf_8a28ca
 
 ### Proposals that need the owner (not applied)
 
-- **GATE-SPLIT rule exception.**
+- **GATE-SPLIT rule exception: APPROVED by the owner 10-02 ~10:30 ("1. Yes").** The AGENTS.md exception is written; the card is in 8.7.
   - The problem: splitting the existing gate across jobs means moving other tasks' blocks in `scripts/screenshot-gate.mjs`, which AGENTS.md makes add-only.
   - The proposal: after HT-10, allow the supervisor to assign existing blocks to shard jobs without editing them, only with an equivalence proof:
     - a block × time zone × theme coverage test, run for every K;
