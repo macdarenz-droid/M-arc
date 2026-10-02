@@ -1,0 +1,532 @@
+{
+  "id": "flutter_kicks",
+  "libId": "lib_flutter_kicks",
+  "name": "Flutter Kicks",
+  "family": "Hip flexion and leg raise (supine)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md 5.1: not in the A or B lists); census.json difficulty tier 2.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "floor-body"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Lie on the floor, legs straight, arms by the sides, palms flat on the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-fk",
+          "text": "Lie on the floor with your legs straight, arms to your sides, and palms flat against the ground.",
+          "where": "How to, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "With the lower back touching the floor, lift the feet several inches off the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-fk",
+          "text": "With your lower back in contact with the floor, take a breath and lift your feet several inches off the floor.",
+          "where": "How to, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Move the legs up and down alternately in short, crisp movements.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-fk",
+          "text": "Take another breath and begin moving your legs up and down alternatingly. Keep your movements short and crisp.",
+          "where": "How to, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Draw the shoulder blades down and together and use the abs to flatten the lower back to the floor, and keep it that way throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hawkes-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hawkes-fk",
+          "text": "Lying on your back, squeeze your shoulder blades down and together and use your abdominals to flatten your lower back to the floor. This needs to remain the same throughout",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Both feet come off the floor with the knees straight, and the legs kick from the hips.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hawkes-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hawkes-fk",
+          "text": "Next raise both feet off the floor with straight knees and essentially kick your legs at the hips",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keeping the lower back flat on the floor at all times keeps the abs working and doing most of the work of holding the legs up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-fk",
+          "text": "An important tip for a safe and effective flutter kick is to keep your lower back flat against the floor at all times. Doing so ensures that your abs stay engaged, provide stability, and do most of the work involved in keeping your legs in the air and moving.",
+          "where": "Performing flutter kicks safely"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "A common mistake is arching the lower back, which stresses the spine and makes the abs work less; keep the lower back on the floor from start to finish.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-fk",
+          "text": "A common mistake with the movement and numerous other ab exercises is arching the lower back. Doing so places unnecessary stress on your spine and lengthens the abs, preventing them from engaging as effectively.",
+          "where": "Mistakes"
+        },
+        {
+          "source": "hevy-fk",
+          "text": "Avoid the error by keeping your lower back in contact with the floor from start to finish.",
+          "where": "Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Short, controlled leg motions keep balance and the spine in a healthy position; uncontrolled legs make the lower back more likely to arch.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-fk",
+          "text": "The second tip for kicks is keeping the leg motions short and controlled. Doing so is vital for maintaining your balance and keeping your spine in a healthy position. Moving your legs uncontrollably leads to instability and increases the risk of arching your lower back.",
+          "where": "Performing flutter kicks safely"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The second mistake is moving the legs through a large range; the kicks should be short and quick.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-fk",
+          "text": "The second mistake with flutter kicks is moving your legs through an extended range of motion. Doing so isn't necessarily fatal, but the objective is to perform short and quick leg motions, alternating numerous times per set.",
+          "where": "Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The exercise works the hip flexors and the core: the rectus abdominis holds the legs up and the hip flexors help hold and move them.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-fk",
+        "hawkes-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-fk",
+          "text": "The primary muscle that works during the exercise is the rectus abdominis.",
+          "where": "Muscles worked"
+        },
+        {
+          "source": "hevy-fk",
+          "text": "Kicks also engage the five hip flexors. The collection of muscles assists the abs in keeping our legs in the air and moving up and down.",
+          "where": "Muscles worked"
+        },
+        {
+          "source": "hawkes-fk",
+          "text": "This exercise works your hip flexors and core",
+          "where": "intro"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "It should be pain free, or not raise existing pain, during the exercise, after it and the next day; muscle soreness 48-72 hours later is normal if it stays manageable.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hawkes-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hawkes-fk",
+          "text": "Like any exercise this should be pain free or shouldn't increase existing pain levels, during, after and the next day.",
+          "where": "intro"
+        },
+        {
+          "source": "hawkes-fk",
+          "text": "It is normal to feel some delayed onset muscle soreness between 48-72 hours but this should be manageable",
+          "where": "intro"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "For endurance: 30-50 kicks to fatigue, 3-5 sets, rests of 30 seconds at most; to make it harder, add ankle weights progressively.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hawkes-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hawkes-fk",
+          "text": "For endurance you should perform 30-50 kicks to fatigue",
+          "where": "dosage"
+        },
+        {
+          "source": "hawkes-fk",
+          "text": "You should perform 3-5 sets with no more than 30 second rests",
+          "where": "dosage"
+        },
+        {
+          "source": "hawkes-fk",
+          "text": "To make this exercise harder you can add ankles weight progressively",
+          "where": "progression"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Breathe as steadily as you can.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-fk"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-fk",
+          "text": "Breathe as steadily as you can and go for as long as your abs allow you.",
+          "where": "How to, step 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hevy-fk",
+      "url": "https://www.hevyapp.com/exercises/flutter-kicks/",
+      "title": "Flutter Kicks: How-to, Tips, Variations, Mistakes & More (Hevy; certified personal trainer)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "hawkes-fk",
+      "url": "https://hawkesphysiotherapy.co.uk/exercise/flutter-kicks/",
+      "title": "Flutter kicks (Hawkes Physiotherapy exercise page)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The lower back flat on the floor (c4, c6) and its fault, the arch (c7), and the small vertical kick (c3, c9) are sagittal.",
+    "equipment": "Floor line only.",
+    "frames": "Cycle convention: one half-cycle, one leg a few inches higher and the other lower, then switched; Trace follows the near foot. The two poses barely differ (census note).",
+    "start": "Lying on the back, arms by the sides, palms flat (c1); shoulder blades down, lower back flat on the floor (c4); both legs straight with the feet several inches off the floor (c2, c5).",
+    "end": "Near leg a little higher, far leg a little lower, knees straight, short range (c3, c5, c9); lower back still flat (c4).",
+    "checkpoints": [
+      {
+        "label": "Low back flat",
+        "what": "Abs press the lower back to the floor, and it stays there.",
+        "claim": [
+          "c4",
+          "c6"
+        ]
+      },
+      {
+        "label": "Feet low",
+        "what": "Both feet several inches off the floor, knees straight.",
+        "claim": [
+          "c2",
+          "c5"
+        ]
+      },
+      {
+        "label": "Short kicks",
+        "what": "Small, quick, alternating kicks from the hips.",
+        "claim": [
+          "c3",
+          "c9"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Lower back arches up off the floor as the legs kick.",
+      "why": "Hevy names it as the common mistake, stressing the spine (c7); bigger, uncontrolled kicks make it more likely (c8).",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Lower back stays on the floor",
+        "claim": "c6"
+      },
+      {
+        "text": "Kicks stay short and quick",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Cycle: short, crisp alternating kicks (c3); sets of 30-50 kicks for endurance (c12). No source gives a cadence.",
+      "claim": [
+        "c3",
+        "c12"
+      ]
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c1"
+    ],
+    "note": "Hand archetype none: palms rest flat on the floor by the sides (c1)."
+  },
+  "setup": [
+    {
+      "step": "Lie on your back, legs straight, arms at your sides, palms flat.",
+      "claim": "c1"
+    },
+    {
+      "step": "Draw your shoulder blades down and flatten your lower back to the floor.",
+      "claim": "c4"
+    },
+    {
+      "step": "Lift both feet several inches, knees straight.",
+      "claim": [
+        "c2",
+        "c5"
+      ]
+    },
+    {
+      "step": "Kick your legs up and down, alternating, in short quick moves.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Lower back flat on the floor.",
+      "claim": "c6"
+    },
+    {
+      "point": "Knees straight.",
+      "claim": "c5"
+    },
+    {
+      "point": "Feet several inches up.",
+      "claim": "c2"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Lower back arches off the floor.",
+      "fix": "Use your abs to press it flat again.",
+      "claim": [
+        "c7",
+        "c4"
+      ]
+    },
+    {
+      "mistake": "Big, sweeping kicks.",
+      "fix": "Keep the kicks short and controlled.",
+      "claim": [
+        "c9",
+        "c8"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "abs",
+        "claim": [
+          "c10",
+          "c6"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c10"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Belly",
+        "means": "Your abs hold your legs up.",
+        "fix": "",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the hips",
+        "means": "Your hip flexors move and hold the legs.",
+        "fix": "",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Muscle soreness 2 to 3 days later",
+        "means": "Normal if it stays manageable.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in the lower back, during, after or the next day",
+        "means": "This exercise should not cause or raise pain.",
+        "fix": "Don't train through the pain.",
+        "claim": "c11",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "An arched lower back puts stress on the spine.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Uncontrolled kicks make the back more likely to arch.",
+      "claim": "c8"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "low-back",
+      "kind": "posture",
+      "right": "Lower back pressed flat to the floor.",
+      "wrong": "Lower back arched off the floor.",
+      "claim": [
+        "c4",
+        "c7"
+      ]
+    },
+    {
+      "key": "kick-size",
+      "kind": "posture",
+      "right": "Short kicks, feet several inches up.",
+      "wrong": "Large, sweeping kicks.",
+      "claim": [
+        "c3",
+        "c9"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "proposal": {
+      "primary": [
+        "abs"
+      ],
+      "secondary": [
+        "hip_flexors"
+      ]
+    },
+    "why": "Library: hip_flexors primary; abs secondary. Hevy ranks the rectus abdominis as the primary muscle, with the hip flexors assisting (c10), and says the abs do most of the work of holding the legs up (c6). Hawkes names the hip flexors and core without ranking them (c10). Proposed: abs primary, hip_flexors secondary (ruling R-W0-4). A proposal for the LIB data card."
+  },
+  "anchorSource": "hevy-fk",
+  "anchorNote": "Hevy's flutter kicks guide (certified trainer) and Hawkes Physiotherapy's exercise page read in full. No ACE, NASM or PubMed technique source found for the supine flutter kick (PubMed 'flutter kick' hits are swimming studies, 2026-10-02).",
+  "loadProgression": {
+    "text": "Build to 30-50 kicks a set; ankle weights make it harder.",
+    "claims": [
+      "c12"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "Hands under the hips as an easier option (seen in search snippets, not in a page read).",
+    "Exact foot height in inches or degrees.",
+    "Head and neck position."
+  ],
+  "notes": [
+    "The back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28); its sheet cannot ship before the back-pain box.",
+    "The row timing (during, after, the next day; soreness 48-72 hours) follows owner D-LR23-9 and is sourced to c11.",
+    "Fix round 2026-10-02 (verify w0): A6 abs primary and hip_flexors secondary proposed, why corrected; A8 back-row fix is now \"Don't train through the pain.\"; A9 \"a few\" became \"several\"; A10 breath-holding mistake dropped (unsourced as a mistake) and risk 2 no longer says \"big\"."
+  ]
+}

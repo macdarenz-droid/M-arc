@@ -1,0 +1,231 @@
+{
+  "id": "pendulum_squat",
+  "checked": "2026-10-02",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sl-pendulum",
+      "text": "Adjust the machine so you can position your shoulders under the pads and feet on the platform.",
+      "status": "verbatim",
+      "closest": "Adjust the machine so you can position your shoulders under the pads and feet on the platform.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "sl-pendulum",
+      "text": "Place your feet slightly about hip-width apart on the platform.",
+      "status": "verbatim",
+      "closest": "Place your feet slightly about hip-width apart on the platform.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "wff-pend",
+      "text": "Feet are positioned roughly shoulder-width apart, toes angled out slightly to match individual hip anatomy.",
+      "status": "verbatim",
+      "closest": "Feet are positioned roughly shoulder-width apart, toes angled out slightly to match individual hip anatomy.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "sl-pendulum",
+      "text": "Engage your core and keep your back pressed against the backrest throughout the movement.",
+      "status": "verbatim",
+      "closest": "Engage your core and keep your back pressed against the backrest throughout the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "sl-pendulum",
+      "text": "Release the safety latch and lower yourself slowly by bending your knees until your thighs are parallel to the floor or slightly lower.",
+      "status": "verbatim",
+      "closest": "Release the safety latch and lower yourself slowly by bending your knees until your thighs are parallel to the floor or slightly lower.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "sl-pendulum",
+      "text": "Push back to the starting position by pushing through your heels and extend your knees. Remember to keep your torso upright during the entire movement.",
+      "status": "verbatim",
+      "closest": "Push back to the starting position by pushing through your heels and extend your knees. Remember to keep your torso upright during the entire movement.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "wff-pend",
+      "text": "The knees bend and the hips sink into the deep squat position. The torso remains upright the arc of the machine naturally maintains this position. The knees track over the toes throughout.",
+      "status": "verbatim",
+      "closest": "The knees bend and the hips sink into the deep squat position. The torso remains upright the arc of the machine naturally maintains this position. The knees track over the toes throughout.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "wff-pend",
+      "text": "Descend as deeply as the machine allows and mobility permits the goal is to reach a position where the thighs are at or below parallel to the floor.",
+      "status": "verbatim",
+      "closest": "Descend as deeply as the machine allows and mobility permits the goal is to reach a position where the thighs are at or below parallel to the floor.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "wff-pend",
+      "text": "Push through the full foot heel and ball driving back up through the pendulum arc to the starting position.",
+      "status": "verbatim",
+      "closest": "Push through the full foot heel and ball driving back up through the pendulum arc to the starting position.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "wff-pend",
+      "text": "Knees caving inward: Valgus collapse at the knee during the descent or ascent. Fix: actively drive the knees outward in line with the toes throughout. Reduce load if the collapse persists.",
+      "status": "verbatim",
+      "closest": "Knees caving inward: Valgus collapse at the knee during the descent or ascent. Fix: actively drive the knees outward in line with the toes throughout. Reduce load if the collapse persists.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "wff-pend",
+      "text": "Heels rising: Insufficient ankle mobility prevents the heels staying flat through the full depth. Fix: elevate the heels slightly on a plate or wedge while ankle mobility is developed.",
+      "status": "verbatim",
+      "closest": "Heels rising: Insufficient ankle mobility prevents the heels staying flat through the full depth. Fix: elevate the heels slightly on a plate or wedge while ankle mobility is developed.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "wff-pend",
+      "text": "Rushing the descent: Dropping into the bottom rather than controlling the lowering phase. Fix: a controlled two to three second descent on every rep.",
+      "status": "verbatim",
+      "closest": "Rushing the descent: Dropping into the bottom rather than controlling the lowering phase. Fix: a controlled two to three second descent on every rep.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "wff-pend",
+      "text": "Not reaching full depth: Stopping the descent before parallel, missing the most demanding portion of the movement. Fix: reduce load and descend to full depth.",
+      "status": "verbatim",
+      "closest": "Not reaching full depth: Stopping the descent before parallel, missing the most demanding portion of the movement. Fix: reduce load and descend to full depth.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "sl-pendulum",
+      "text": "Primary muscles worked: Quads Glutes Adductors",
+      "status": "verbatim",
+      "closest": "Primary muscles worked: Quads Glutes Adductors",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "wff-pend",
+      "text": "Primary: Quadriceps all four heads, with particularly significant emphasis on the rectus femoris and vastus lateralis due to the upright torso and deep range of motion.",
+      "status": "verbatim",
+      "closest": "Primary: Quadriceps all four heads, with particularly significant emphasis on the rectus femoris and vastus lateralis due to the upright torso and deep range of motion.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "wff-pend",
+      "text": "Secondary: Gluteus maximus, hamstrings, adductors, gastrocnemius (knee stability).",
+      "status": "verbatim",
+      "closest": "Secondary: Gluteus maximus, hamstrings, adductors, gastrocnemius (knee stability).",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sl-pendulum",
+      "text": "The pendulum squat is an effective exercise for isolating the quadriceps with minimal pressure on the back. The stabilized movement path of the machine allows for full control throughout, making it a safe and joint-friendly option.",
+      "status": "verbatim",
+      "closest": "The pendulum squat is an effective exercise for isolating the quadriceps with minimal pressure on the back. The stabilized movement path of the machine allows for full control throughout, making it a safe and joint-friendly option.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "wff-pend",
+      "text": "Sets of 8 to 12 repetitions at a challenging load, through full range, are the standard approach for strength and hypertrophy.",
+      "status": "verbatim",
+      "closest": "Sets of 8 to 12 repetitions at a challenging load, through full range, are the standard approach for strength and hypertrophy.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "wff-pend",
+      "text": "Depth consistency is tracked alongside load a deeper squat at the same load is meaningful progress, not just load increase.",
+      "status": "verbatim",
+      "closest": "Depth consistency is tracked alongside load a deeper squat at the same load is meaningful progress, not just load increase.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "xcel-pend",
+      "text": "Lifting heels off the platform during the descent. This shifts weight forward and strains your knees. Keep your whole foot planted.",
+      "status": "verbatim",
+      "closest": "Lifting heels off the platform during the descent. This shifts weight forward and strains your knees. Keep your whole foot planted.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "xcel-pend",
+      "text": "Bouncing at the bottom of the movement. This uses momentum instead of muscle and risks injury. Control the transition smoothly.",
+      "status": "verbatim",
+      "closest": "Bouncing at the bottom of the movement. This uses momentum instead of muscle and risks injury. Control the transition smoothly.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "xcel-pend",
+      "text": "Letting knees cave inward during the ascent. This stresses your knee joints and limits glute activation. Push knees out actively.",
+      "status": "verbatim",
+      "closest": "Letting knees cave inward during the ascent. This stresses your knee joints and limits glute activation. Push knees out actively.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "xcel-pend",
+      "text": "Grip handles firmly.",
+      "status": "verbatim",
+      "closest": "Grip handles firmly.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "boxlife-pend",
+      "text": "Once you've hit your rep count, re-engage the safety and make sure it's on before attempting to get off the machine.",
+      "status": "verbatim",
+      "closest": "Once you've hit your rep count, re-engage the safety and make sure it's on before attempting to get off the machine.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c17",
+      "source": "boxlife-pend",
+      "text": "It's a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
+      "status": "verbatim",
+      "closest": "It's a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c17",
+      "source": "yr-pend",
+      "text": "After your final rep, return to the top and make sure you are stable.",
+      "status": "verbatim",
+      "closest": "After your final rep, return to the top and make sure you are stable.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c17",
+      "source": "yr-pend",
+      "text": "Before stepping out, check that the weight is fully supported.",
+      "status": "verbatim",
+      "closest": "Before stepping out, check that the weight is fully supported.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c17",
+      "source": "yr-pend",
+      "text": "Stand tall → engage the safety → confirm it is locked → step out.",
+      "status": "verbatim",
+      "closest": "Stand tall → engage the safety → confirm it is locked → step out.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    }
+  ]
+}

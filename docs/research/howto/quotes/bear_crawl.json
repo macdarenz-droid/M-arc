@@ -1,0 +1,183 @@
+{
+  "id": "bear_crawl",
+  "checked": "2026-10-02",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-bearcrawl",
+      "text": "Start in a push-up position with the hands shoulder-width apart and the legs straight out directly behind the body about hip-width apart, keeping the knees bent.",
+      "status": "verbatim",
+      "closest": "Start in a push-up position with the hands shoulder-width apart and the legs straight out directly behind the body about hip-width apart, keeping the knees bent.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "ace-bearcrawl",
+      "text": "Move the left hand and the right leg forward to start crawling. Alternate the arm and leg movements while keeping the back straight and the hips and shoulders at the same height.",
+      "status": "verbatim",
+      "closest": "Move the left hand and the right leg forward to start crawling. Alternate the arm and leg movements while keeping the back straight and the hips and shoulders at the same height.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "ace-bc-shape",
+      "text": "Start in a table-top position on the floor with hands stacked directly under shoulders, knees bent and stacked directly under hips, and feet hip-width apart. Drive palms into the floor, engage core, and lift knees 2 inches off the ground.",
+      "status": "verbatim",
+      "closest": "Start in a table-top position on the floor with hands stacked directly under shoulders, knees bent and stacked directly under hips, and feet hip-width apart. Drive palms into the floor, engage core, and lift knees 2 inches off the ground.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "ace-bc-shape",
+      "text": "Keeping back flat and core engaged, move right arm and left leg forward 2 inches in a controlled manner. Then, move left arm and right leg forward 2 inches, keeping hips parallel with the floor.",
+      "status": "verbatim",
+      "closest": "Keeping back flat and core engaged, move right arm and left leg forward 2 inches in a controlled manner. Then, move left arm and right leg forward 2 inches, keeping hips parallel with the floor.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-bc",
+      "text": "When you lift your knees, don't lift your butt, too. Keep it in line with your back to fully engage your core.",
+      "status": "verbatim",
+      "closest": "When you lift your knees, don't lift your butt, too. Keep it in line with your back to fully engage your core.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-bc",
+      "text": "Much like in a plank, if your core is not strong enough yet, it can be hard to keep your back flat. If this is the case, start with a modification — like the bear plank — until you can build the strength to start moving.",
+      "status": "verbatim",
+      "closest": "Much like in a plank, if your core is not strong enough yet, it can be hard to keep your back flat. If this is the case, start with a modification — like the bear plank — until you can build the strength to start moving.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "bb-bc",
+      "text": "You want to try to avoid wiggling in your hips as you move. If you find they're moving too much, your steps may be too big. Try shortening your steps until your hips no longer sway.",
+      "status": "verbatim",
+      "closest": "You want to try to avoid wiggling in your hips as you move. If you find they're moving too much, your steps may be too big. Try shortening your steps until your hips no longer sway.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "bb-bc",
+      "text": "Be sure to tighten your core so you don't arch your back. This will help prevent potentially painful hyperextension or raising your hips too high for the movement to be effective.",
+      "status": "verbatim",
+      "closest": "Be sure to tighten your core so you don't arch your back. This will help prevent potentially painful hyperextension or raising your hips too high for the movement to be effective.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bb-bc",
+      "text": "Squeeze your core and avoid raising your butt the whole time to help get the most out of the exercise, as well as help avoid injury. Keep your knees close to the ground without touching it.",
+      "status": "verbatim",
+      "closest": "Squeeze your core and avoid raising your butt the whole time to help get the most out of the exercise, as well as help avoid injury. Keep your knees close to the ground without touching it.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bb-bc",
+      "text": "In the bear crawl, your core acts as a stabilizer to your entire body, so you can maintain proper form and have enough endurance to keep crawling.",
+      "status": "verbatim",
+      "closest": "In the bear crawl, your core acts as a stabilizer to your entire body, so you can maintain proper form and have enough endurance to keep crawling.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bb-bc",
+      "text": "Since your shoulders are helping to hold the weight of your upper body as you move forward and hold the position, the bear crawl is a low-impact way to strengthen them.",
+      "status": "verbatim",
+      "closest": "Since your shoulders are helping to hold the weight of your upper body as you move forward and hold the position, the bear crawl is a low-impact way to strengthen them.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bb-bc",
+      "text": "In the bear crawl, your quads have to work to keep your knees lifted off the ground and help to stabilize your whole body.",
+      "status": "verbatim",
+      "closest": "In the bear crawl, your quads have to work to keep your knees lifted off the ground and help to stabilize your whole body.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "ace-bc-shape",
+      "text": "During the bear crawl exercise, your shoulders will work overtime to keep your upper body stable as you step forward and backward.",
+      "status": "verbatim",
+      "closest": "During the bear crawl exercise, your shoulders will work overtime to keep your upper body stable as you step forward and backward.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bb-bc",
+      "text": "Although the core plays a large role in the bear crawl, it's not the only muscle that is activated by this exercise.",
+      "status": "verbatim",
+      "closest": "Although the core plays a large role in the bear crawl, it's not the only muscle that is activated by this exercise.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c9",
+      "source": "bb-bc",
+      "text": "The rectus abdominis are the muscles that make up what is commonly known as the “six-pack.”",
+      "status": "verbatim",
+      "closest": "The rectus abdominis are the muscles that make up what is commonly known as the “six-pack.”",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c9",
+      "source": "bb-bc",
+      "text": "Located on either side of the abdominal walls are the obliques.",
+      "status": "verbatim",
+      "closest": "Located on either side of the abdominal walls are the obliques.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c10",
+      "source": "bb-bc",
+      "text": "It can be beneficial to crawl for 15 to 30 seconds at a time until you can build up to more.",
+      "status": "verbatim",
+      "closest": "It can be beneficial to crawl for 15 to 30 seconds at a time until you can build up to more.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "bb-bc",
+      "text": "To emphasize the cardio benefits, try crawling for longer periods of time or go a little bit faster, but make sure to maintain good form throughout.",
+      "status": "verbatim",
+      "closest": "To emphasize the cardio benefits, try crawling for longer periods of time or go a little bit faster, but make sure to maintain good form throughout.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "ace-bc-shape",
+      "text": "A bear crawl is a lot like a moving high plank — you'll hold all of your body weight above the floor, with just your palms and toes touching the ground",
+      "status": "verbatim",
+      "closest": "A bear crawl is a lot like a moving high plank — you'll hold all of your body weight above the floor, with just your palms and toes touching the ground",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "nance-2017",
+      "text": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses.",
+      "status": "verbatim",
+      "closest": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "nance-2017",
+      "text": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist.",
+      "status": "verbatim",
+      "closest": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "ace-bc-shape",
+      "text": "Take 4 steps forward, then 4 steps backward.",
+      "status": "verbatim",
+      "closest": "Take 4 steps forward, then 4 steps backward.",
+      "note": ""
+    }
+  ]
+}

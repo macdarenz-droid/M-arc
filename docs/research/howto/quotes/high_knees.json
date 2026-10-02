@@ -1,0 +1,167 @@
+{
+  "id": "high_knees",
+  "checked": "2026-10-02",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "hl-hk",
+      "text": "Stand tall with your feet about hip-to-shoulder-width apart and your arms at your sides.",
+      "status": "verbatim",
+      "closest": "Stand tall with your feet about hip-to-shoulder-width apart and your arms at your sides.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "hl-hk",
+      "text": "Looking straight ahead, open your chest, and engage your core muscles.",
+      "status": "verbatim",
+      "closest": "Looking straight ahead, open your chest, and engage your core muscles.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "hl-hk",
+      "text": "Begin by bringing your right knee toward your chest, slightly above waist level. Simultaneously, move your left hand up in a pumping motion.",
+      "status": "verbatim",
+      "closest": "Begin by bringing your right knee toward your chest, slightly above waist level. Simultaneously, move your left hand up in a pumping motion.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "hl-hk",
+      "text": "Quickly lower your right leg and left hand.",
+      "status": "verbatim",
+      "closest": "Quickly lower your right leg and left hand.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "ace-cardio15",
+      "text": "Run in place, pumping your arms and lifting your knees up toward your chest. 2 High Knees = 1 rep",
+      "status": "verbatim",
+      "closest": "Run in place, pumping your arms and lifting your knees up toward your chest. 2 High Knees = 1 rep",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "bb-hk",
+      "text": "Explosively flex your right hip and knee, drawing your upper leg to at least 90 degrees of flexion using your hip flexors.",
+      "status": "verbatim",
+      "closest": "Explosively flex your right hip and knee, drawing your upper leg to at least 90 degrees of flexion using your hip flexors.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "bb-hk",
+      "text": "Place your feet hip-width apart and brace your full body. Maintain soft knees and slowly shift towards the balls of your feet.",
+      "status": "verbatim",
+      "closest": "Place your feet hip-width apart and brace your full body. Maintain soft knees and slowly shift towards the balls of your feet.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "bb-hk",
+      "text": "The goal is to spring between the ball of each foot, flexing your knees and hips on the working side to draw one knee as high as possible.",
+      "status": "verbatim",
+      "closest": "The goal is to spring between the ball of each foot, flexing your knees and hips on the working side to draw one knee as high as possible.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-hk",
+      "text": "If you find your knees getting so high that you arch into your back, you've gone too far. Revisit your technique and make sure you have a solid core brace.",
+      "status": "verbatim",
+      "closest": "If you find your knees getting so high that you arch into your back, you've gone too far. Revisit your technique and make sure you have a solid core brace.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "bb-hk",
+      "text": "If you're noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
+      "status": "verbatim",
+      "closest": "If you're noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "bb-hk",
+      "text": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That's OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
+      "status": "verbatim",
+      "closest": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That's OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c7",
+      "source": "bb-hk",
+      "text": "A lot of rotation occurs once your hip flexors start to fatigue. Take a break, shake it out, and come back fresh.",
+      "status": "verbatim",
+      "closest": "A lot of rotation occurs once your hip flexors start to fatigue. Take a break, shake it out, and come back fresh.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "hl-hk",
+      "text": "To start, aim for 30 seconds, with a 30-second rest between each set.",
+      "status": "verbatim",
+      "closest": "To start, aim for 30 seconds, with a 30-second rest between each set.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "hl-hk",
+      "text": "For example, instead of driving your knee up to your chest in a running motion, slowly lift and lower it in a marching or walking-in-place movement. This turns the move into a low impact exercise, which is easier on the joints (4).",
+      "status": "verbatim",
+      "closest": "For example, instead of driving your knee up to your chest in a running motion, slowly lift and lower it in a marching or walking-in-place movement. This turns the move into a low impact exercise, which is easier on the joints (4).",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "hl-hk",
+      "text": "If you want to increase the intensity of the traditional high knee exercise, simply lift your knees higher, move at a faster pace, or increase the duration or number of sets.",
+      "status": "verbatim",
+      "closest": "If you want to increase the intensity of the traditional high knee exercise, simply lift your knees higher, move at a faster pace, or increase the duration or number of sets.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "hl-hk",
+      "text": "Before you get started, make sure you're wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
+      "status": "verbatim",
+      "closest": "Before you get started, make sure you're wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-hk",
+      "text": "The hip flexor complex (for example, the iliopsoas and rectus femoris) helps pull your thigh into the top of the high knee position.",
+      "status": "verbatim",
+      "closest": "The hip flexor complex (for example, the iliopsoas and rectus femoris) helps pull your thigh into the top of the high knee position.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-hk",
+      "text": "They are essential for stabilizing your stance leg while helping to lift your working leg.",
+      "status": "verbatim",
+      "closest": "They are essential for stabilizing your stance leg while helping to lift your working leg.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "hl-hk",
+      "text": "High knees activate your quadriceps, hamstrings, calves, glutes, and hip flexors, helping improve muscular endurance, balance, and coordination in these muscles.",
+      "status": "verbatim",
+      "closest": "High knees activate your quadriceps, hamstrings, calves, glutes, and hip flexors, helping improve muscular endurance, balance, and coordination in these muscles.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "bb-hk",
+      "text": "Maintaining a full-body brace especially through your trunk keeps you from losing balance during rapid transitions between legs.",
+      "status": "verbatim",
+      "closest": "Maintaining a full-body brace especially through your trunk keeps you from losing balance during rapid transitions between legs.",
+      "note": ""
+    }
+  ]
+}

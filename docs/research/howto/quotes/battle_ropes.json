@@ -1,0 +1,167 @@
+{
+  "id": "battle_ropes",
+  "checked": "2026-10-02",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "hl-br",
+      "text": "Start with your feet hip-width apart, holding one rope in each hand. The ropes should have some slack.",
+      "status": "verbatim",
+      "closest": "Start with your feet hip-width apart, holding one rope in each hand. The ropes should have some slack.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "hl-br",
+      "text": "Bend your knees slightly, bring your shoulders back, and engage your core.",
+      "status": "verbatim",
+      "closest": "Bend your knees slightly, bring your shoulders back, and engage your core.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "hl-br",
+      "text": "Swing one rope up with your right hand. As you swing it back down, swing the other rope up with your left hand. The ropes should be moving opposite one another.",
+      "status": "verbatim",
+      "closest": "Swing one rope up with your right hand. As you swing it back down, swing the other rope up with your left hand. The ropes should be moving opposite one another.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "ace-br-total",
+      "text": "Waves – alternating, asymmetrical pattern with the primary direction of force toward the anchor",
+      "status": "verbatim",
+      "closest": "Waves – alternating, asymmetrical pattern with the primary direction of force toward the anchor",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "ace-br-emg",
+      "text": "All exercises were performed with feet shoulder-width apart, knees slightly bent, back straight, a slight forward lean of the torso, elbows extended, and handles held with a handshake grip.",
+      "status": "verbatim",
+      "closest": "All exercises were performed with feet shoulder-width apart, knees slightly bent, back straight, a slight forward lean of the torso, elbows extended, and handles held with a handshake grip.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "ace-br-emg",
+      "text": "The subject kept the arms in front of the torso by flexing the shoulders until the battle rope handles were approximately shoulder height, and then extended the shoulders until the handles were even with the waist.",
+      "status": "verbatim",
+      "closest": "The subject kept the arms in front of the torso by flexing the shoulders until the battle rope handles were approximately shoulder height, and then extended the shoulders until the handles were even with the waist.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "ace-br-emg",
+      "text": "The subject alternated the extension and flexion of each shoulder with each arm, so the arms moved in opposite directions.",
+      "status": "verbatim",
+      "closest": "The subject alternated the extension and flexion of each shoulder with each arm, so the arms moved in opposite directions.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "hl-br",
+      "text": "When lifting, swinging, and slamming heavy ropes, it's easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck. To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down, gently sliding them down and back throughout the movements.",
+      "status": "verbatim",
+      "closest": "When lifting, swinging, and slamming heavy ropes, it's easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck. To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down, gently sliding them down and back throughout the movements.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "hl-br",
+      "text": "Beginners tend to hold their breath as they swing the ropes. This can hinder your performance and make the exercises less enjoyable. As you increase your intensity, make sure you also increase your breathing.",
+      "status": "verbatim",
+      "closest": "Beginners tend to hold their breath as they swing the ropes. This can hinder your performance and make the exercises less enjoyable. As you increase your intensity, make sure you also increase your breathing.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "hl-br",
+      "text": "Perfect your form first. Before increasing the rope weight or your speed, make sure you're performing the moves properly.",
+      "status": "verbatim",
+      "closest": "Perfect your form first. Before increasing the rope weight or your speed, make sure you're performing the moves properly.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "hl-br",
+      "text": "It's best to start with a lighter and shorter rope, which is usually around 10 feet (3 meters) long and 1.5 inches (3.8 cm) thick.",
+      "status": "verbatim",
+      "closest": "It's best to start with a lighter and shorter rope, which is usually around 10 feet (3 meters) long and 1.5 inches (3.8 cm) thick.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "hl-br",
+      "text": "The farther you are from the anchor (where the rope is tethered), the harder it will be to move the ropes.",
+      "status": "verbatim",
+      "closest": "The farther you are from the anchor (where the rope is tethered), the harder it will be to move the ropes.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "hl-br",
+      "text": "Continue this movement for 30 seconds. Take a 30-second break and repeat for 3–4 reps or move on to the next exercise.",
+      "status": "verbatim",
+      "closest": "Continue this movement for 30 seconds. Take a 30-second break and repeat for 3–4 reps or move on to the next exercise.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "calatayud-2015",
+      "text": "Twenty-one volunteers participated in a repeated-measures study on 2 different occasions.",
+      "status": "verbatim",
+      "closest": "Twenty-one volunteers participated in a repeated-measures study on 2 different occasions.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "calatayud-2015",
+      "text": "Results showed that muscle activity ranged from 51%MVIC to 73%MVIC for AD, OBLIQ, and LUMB, whereas GM muscle activity was only 14-18%MVIC.",
+      "status": "verbatim",
+      "closest": "Results showed that muscle activity ranged from 51%MVIC to 73%MVIC for AD, OBLIQ, and LUMB, whereas GM muscle activity was only 14-18%MVIC.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "calatayud-2015",
+      "text": "Fitness practitioners aiming for higher OBLIQ activity should perform unilateral waves, whereas the bilateral variation of the movement can be used for higher LUMB activity.",
+      "status": "verbatim",
+      "closest": "Fitness practitioners aiming for higher OBLIQ activity should perform unilateral waves, whereas the bilateral variation of the movement can be used for higher LUMB activity.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "ace-br-emg",
+      "text": "Also, exercise with the battle rope was shown to positively affect grip strength, as reflected by the fact that the palmaris longus was contracting in excess of 75% of MVIC during all exercises.",
+      "status": "verbatim",
+      "closest": "Also, exercise with the battle rope was shown to positively affect grip strength, as reflected by the fact that the palmaris longus was contracting in excess of 75% of MVIC during all exercises.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "ace-br-emg",
+      "text": "All of the muscles were contracting above 40% MVIC during double alternating waves, except for the vastus medialis and the rectus abdominis.",
+      "status": "verbatim",
+      "closest": "All of the muscles were contracting above 40% MVIC during double alternating waves, except for the vastus medialis and the rectus abdominis.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "hl-br",
+      "text": "Most traditional battle rope exercises require your feet to be planted on the floor. Therefore, you can get your heart rate up without putting excessive strain on your lower body.",
+      "status": "verbatim",
+      "closest": "Most traditional battle rope exercises require your feet to be planted on the floor. Therefore, you can get your heart rate up without putting excessive strain on your lower body.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "ace-br-total",
+      "text": "Handshake (overhand) grip Microphone (underhand) grip When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
+      "status": "verbatim",
+      "closest": "Handshake (overhand) grip Microphone (underhand) grip When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    }
+  ]
+}

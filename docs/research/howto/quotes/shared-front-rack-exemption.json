@@ -1,0 +1,55 @@
+{
+ "id": "shared-front-rack-exemption",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "cat-rack",
+   "text": "If the shoulder and bar positions are correct, the bar will remain secure without being held by the hands. The hands and arms provide added security, but should not be doing the primary work of holding the bar in place.",
+   "status": "verbatim",
+   "closest": "If the shoulder and bar positions are correct, the bar will remain secure without being held by the hands. The hands and arms provide added security, but should not be doing the primary work of holding the bar in place.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "gs-rack",
+   "text": "A lack of wrist mobility is a common obstacle when it comes to the front rack. Specifically, reduced wrist extension makes it harder to grip the barbell comfortably and securely.",
+   "status": "verbatim",
+   "closest": "A lack of wrist mobility is a common obstacle when it comes to the front rack. Specifically, reduced wrist extension makes it harder to grip the barbell comfortably and securely.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "gs-rack",
+   "text": "If during your setup you can only just about get a few fingers under the bar, or the bar is precariously resting in your fingers as opposed to the top of your palm, this drill is for you.",
+   "status": "verbatim",
+   "closest": "If during your setup you can only just about get a few fingers under the bar, or the bar is precariously resting in your fingers as opposed to the top of your palm, this drill is for you.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "cat-rack",
+   "text": "If you’re unable to hold a full grip on the bar because of your proportions or immobility, experiment with different grip widths. If this doesn’t resolve the problem, you’ll need to rack the bar with some degree of an open grip.",
+   "status": "verbatim",
+   "closest": "If you’re unable to hold a full grip on the bar because of your proportions or immobility, experiment with different grip widths. If this doesn’t resolve the problem, you’ll need to rack the bar with some degree of an open grip.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "cat-rack",
+   "text": "The priority is the bar’s direct support by the trunk, so a fingertip rack position is preferable to a full grip with the bar not fully supported by the shoulders.",
+   "status": "verbatim",
+   "closest": "The priority is the bar’s direct support by the trunk, so a fingertip rack position is preferable to a full grip with the bar not fully supported by the shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "cat-frontsquat",
+   "text": "Place the bar in the channel between the throat and the highest points of the shoulders. Keep the hands wrapped around the bar as much as you can while keeping the elbows raised high and the bar securely supported on the trunk, but the grip loose.",
+   "status": "verbatim",
+   "closest": "Place the bar in the channel between the throat and the highest points of the shoulders. Keep the hands wrapped around the bar as much as you can while keeping the elbows raised high and the bar securely supported on the trunk, but the grip loose.",
+   "note": ""
+  }
+ ]
+}

@@ -1,0 +1,247 @@
+{
+ "key": "dumbbell-kickup",
+ "kind": "equipment-move",
+ "appliesTo": [
+  "dumbbell_bench_press",
+  "incline_dumbbell_press",
+  "dumbbell_shoulder_press",
+  "arnold_press"
+ ],
+ "appliesToWhy": "Dumbbell presses on a bench in the census (contact bench-lying or seat-back, equipment Dumbbells): flat and incline bench presses (bench variant) and seated presses (seated variant). dumbbell_fly and dumbbell_pullover are left out: no read source covers a kick-up for them (the pullover card has its own thigh-to-chest start, c21).",
+ "move": "dumbbell-kickup",
+ "postureArchetype": {
+  "key": "dumbbell-kickup",
+  "right": {
+   "text": "Dumbbells upright on thighs; lie back, legs help lift.",
+   "claim": [
+    "c1",
+    "c2"
+   ]
+  },
+  "wrong": null
+ },
+ "variants": {
+  "bench": {
+   "appliesTo": [
+    "dumbbell_bench_press",
+    "incline_dumbbell_press"
+   ],
+   "steps": [
+    {
+     "kind": "position",
+     "text": "Sit at the bench end, dumbbells upright on your thighs.",
+     "claim": "c1"
+    },
+    {
+     "kind": "get-in",
+     "text": "Lie back. Let your legs help lift them to your shoulders.",
+     "claim": "c2"
+    },
+    {
+     "kind": "finish",
+     "text": "After the last rep, keep your arms bent and sit up.",
+     "claim": "c4"
+    },
+    {
+     "kind": "finish",
+     "text": "The dumbbells come back to your thighs, as at the start.",
+     "claim": "c4"
+    }
+   ]
+  },
+  "seated": {
+   "appliesTo": [
+    "dumbbell_shoulder_press",
+    "arnold_press"
+   ],
+   "steps": [
+    {
+     "kind": "position",
+     "text": "Rest the dumbbells on your knees.",
+     "claim": "c3"
+    },
+    {
+     "kind": "get-in",
+     "text": "Kick them up into the pressing position.",
+     "claim": "c3"
+    }
+   ]
+  }
+ },
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Start sitting on the end of the bench with the dumbbells resting on their ends on the thighs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-db-bench",
+    "ff-db-bench",
+    "liftosaur-incline-db"
+   ],
+   "quotes": [
+    {
+     "source": "fv-db-bench",
+     "text": "Sit on the end of an exercise bench with a dumbbell in each hand. Rest the weights on their ends on your thighs.",
+     "where": "How to do the dumbbell bench press, step 1"
+    },
+    {
+     "source": "ff-db-bench",
+     "text": "Sit on the end of a bench with the dumbbells resting on your thighs",
+     "where": "Step 1"
+    },
+    {
+     "source": "liftosaur-incline-db",
+     "text": "Select a pair of dumbbells and place them on your thighs as you sit on the bench.",
+     "where": "Dumbbells"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Lie back and use the legs (thighs) to help lift the dumbbells to the shoulders, ending with them over the shoulders.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-db-bench",
+    "liftosaur-incline-db",
+    "hk-db-bench"
+   ],
+   "quotes": [
+    {
+     "source": "fv-db-bench",
+     "text": "Lie back and use your legs to help you lift the weights.",
+     "where": "How to do the dumbbell bench press, step 2"
+    },
+    {
+     "source": "liftosaur-incline-db",
+     "text": "Sit back on the bench, and use your thighs to help lift the dumbbells to shoulder height.",
+     "where": "Starting Position"
+    },
+    {
+     "source": "hk-db-bench",
+     "text": "Lean back into a supine position on the bench while positioning your hands and dumbbells over your shoulders.",
+     "where": "Beginning Position"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Seated press: hold the dumbbells on the knees, then kick them up into the pressing position. Written for the Arnold press; applied to the seated dumbbell shoulder press by inference.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "fitfather-arnold"
+   ],
+   "quotes": [
+    {
+     "source": "fitfather-arnold",
+     "text": "Hold the dumbbells on your knees to start, then kick them up into a normal shoulder press position",
+     "where": "walkthrough step 2"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Way out at the end of a set: with the arms bent, sit back up to the starting position (dumbbells on the thighs); the source also allows lowering them to the floor or handing them to spotters. One coach source; written for the flat bench and applied to the incline by inference.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "fv-db-bench"
+   ],
+   "quotes": [
+    {
+     "source": "fv-db-bench",
+     "text": "At the of your set, either lower the weights to the floor or, with your arms bent, just sit back up and return to your starting position. Alternatively, if you have spotters nearby, allow them to take the weights from you.",
+     "where": "How to do the dumbbell bench press, step 5"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "The same source says that if you get stuck in a dumbbell bench press you can drop the weights out to the side. Recorded as a conflict with the candidate rule; not used in any field.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "fv-db-bench"
+   ],
+   "quotes": [
+    {
+     "source": "fv-db-bench",
+     "text": "This is less of an issue with dumbbells because, if you get stuck, you can simply drop the weights out to the side.",
+     "where": "Benefits: Safety when training alone"
+    }
+   ]
+  }
+ ],
+ "gaps": [
+  "No source names a wrong kick-up or set-down pose, so postureArchetype.wrong is null. The candidate \"never dropped out to the sides\" is unsupported, and one source allows it when stuck (c5).",
+  "No source for setting the dumbbells down after a seated press (dumbbell_shoulder_press, arnold_press); it stays out (tier-A way out).",
+  "Set-down rests on one coach source (c4, WEAK); a second source (textbook or coach) is still wanted.",
+  "No injury data found for the kick-up or set-down."
+ ],
+ "notes": [
+  "Re-read and confirmed: incline_dumbbell_press c9 (liftosaur), arnold_press c5 (fitfather-arnold), dumbbell_bench_press c10 (hk-db-bench).",
+  "The c4 quote keeps the source typo \"At the of your set\".",
+  "A coach log on the dumbbell floor press (elitefts.com) brings the legs up to catch the dumbbells at the end; not cited (floor press, not bench)."
+ ],
+ "sources": [
+  {
+   "id": "fv-db-bench",
+   "url": "https://fitnessvolt.com/dumbbell-bench-press/",
+   "title": "Dumbbell Bench Press: Build Chest, Shoulders, and Arms Fast (Fitness Volt)",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "ff-db-bench",
+   "url": "https://www.fitfatherproject.com/?p=19659",
+   "title": "Dumbbell Bench Press: A Perfect Form Guide and Video Tutorial (The Fit Father Project)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "liftosaur-incline-db",
+   "url": "https://liftosaur.com/exercises/dumbbell-incline-bench-press",
+   "title": "Dumbbell Incline Bench Press - How To, Muscles Worked & Form Guide (Liftosaur)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "hk-db-bench",
+   "url": "https://us.humankinetics.com/blogs/excerpt/how-to-perform-a-dumbbell-bench-press",
+   "title": "How to perform a dumbbell bench press (Human Kinetics excerpt)",
+   "kind": "textbook",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "fitfather-arnold",
+   "url": "https://www.fitfatherproject.com/arnold-press-tutorial",
+   "title": "Arnold Press: Video Tutorial and Exercise Guide (The Fit Father Project)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  }
+ ]
+}

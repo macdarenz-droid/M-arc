@@ -1,0 +1,268 @@
+{
+ "key": "get-in-out",
+ "kind": "equipment-move",
+ "appliesTo": [
+  "machine_chest_press",
+  "incline_machine_press",
+  "pec_fly",
+  "shoulder_press",
+  "machine_lateral_raise",
+  "rear_delt_fly",
+  "lat_pulldown",
+  "close_grip_pulldown",
+  "underhand_lat_pulldown",
+  "single_arm_lat_pulldown",
+  "chest_supported_row",
+  "seated_cable_row",
+  "machine_pullover",
+  "leg_extension",
+  "seated_leg_curl",
+  "lying_leg_curl",
+  "leg_press",
+  "horizontal_leg_press",
+  "hack_squat",
+  "leg_press_calf_raise",
+  "hip_abduction",
+  "hip_adduction",
+  "seated_calf_raise",
+  "machine_crunch"
+ ],
+ "appliesToWhy": "census.json: equipment containing \"Machine\" (or \"Leg Press\") with contact seat-back, pivot-pad, brace-pad or foot-platform and a seated, reclined or lying pose, plus the seated cable stations (lat pulldowns, single_arm_lat_pulldown, seated_cable_row). Left out: standing_leg_curl, standing_calf_raise, pendulum_squat (standing), assisted_pull_up (kneel/hang, own mount step), t_bar_row (standing landmine), back_extension (no weight to return), preacher_curl (free EZ bar on a pad), cable_chest_press (standing in the census).",
+ "move": "get-in-out",
+ "steps": [
+  {
+   "kind": "safety",
+   "text": "If the machine has safety stops, set them to the right height.",
+   "claim": "c2"
+  },
+  {
+   "kind": "adjust",
+   "text": "Set the seat and pads before you sit down.",
+   "claim": "c1"
+  },
+  {
+   "kind": "adjust",
+   "text": "Check each adjusting pin is fully in its hole.",
+   "claim": "c1"
+  },
+  {
+   "kind": "get-in",
+   "text": "Sit or lie down in the start position.",
+   "claim": "c3"
+  },
+  {
+   "kind": "load",
+   "text": "Pick a weight you can lift and control.",
+   "claim": "c3"
+  },
+  {
+   "kind": "finish",
+   "text": "At the end, return the weight fully to its resting start.",
+   "claim": "c4"
+  },
+  {
+   "kind": "finish",
+   "text": "Lower the stack gently. Never let it slam.",
+   "claim": "c6"
+  }
+ ],
+ "variants": {
+  "thigh-pad": {
+   "appliesTo": [
+    "seated_leg_curl"
+   ],
+   "steps": [
+    {
+     "kind": "get-out",
+     "text": "Raise the thigh pad to its locked position, then get out.",
+     "claim": "c5"
+    }
+   ]
+  }
+ },
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Before using a machine, set the seat, pads and other adjusters to a comfortable start position, and make sure each adjusting pin or mechanism is fully engaged so nothing moves unexpectedly.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "matrix-go-s34",
+    "lf-circuit"
+   ],
+   "quotes": [
+    {
+     "source": "matrix-go-s34",
+     "text": "If applicable, adjust seat pads, leg pads, foot pads, range of motion adjustment, or any other type of adjustment mechanisms to a comfortable start position.",
+     "where": "Proper Usage, step 3"
+    },
+    {
+     "source": "matrix-go-s34",
+     "text": "Make certain that the adjusting mechanism is fully engaged to prevent unintentional movement and to avoid injury.",
+     "where": "Proper Usage, step 3"
+    },
+    {
+     "source": "lf-circuit",
+     "text": "When adjusting any seat, knee hold down pad, range of motion limiter, foothold pad or any other type of adjuster, make certain that the adjusting pin is fully engaged in the hole to avoid injury.",
+     "where": "Specific Operating Warnings, 6"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "If the machine has safety stops, set them to the right height before starting.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "matrix-go-s34"
+   ],
+   "quotes": [
+    {
+     "source": "matrix-go-s34",
+     "text": "If applicable, set safety stops to appropriate height.",
+     "where": "Proper Usage, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Then sit on the seat or bench, get into the exercise position, and use no more weight than you can safely lift and control.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "matrix-go-s34"
+   ],
+   "quotes": [
+    {
+     "source": "matrix-go-s34",
+     "text": "Sit on bench (if applicable) and get into appropriate position for exercise.",
+     "where": "Proper Usage, step 4"
+    },
+    {
+     "source": "matrix-go-s34",
+     "text": "Exercise using no more weight than you can safely lift and control.",
+     "where": "Proper Usage, step 5"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "When the set is done, return the weight to its fully supported start position.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "matrix-go-s34"
+   ],
+   "quotes": [
+    {
+     "source": "matrix-go-s34",
+     "text": "Return weight to its fully-supported start position.",
+     "where": "Proper Usage, step 7"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "On the seated leg curl, the manufacturer has you raise the thigh pad to its locked position and then exit the machine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "lf-circuit"
+   ],
+   "quotes": [
+    {
+     "source": "lf-circuit",
+     "text": "Raise the thigh pad to locked position and exit the machine.",
+     "where": "Circuit Series Seated Leg Curl, Performing the Exercise"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Gym rules ask members to lift in a controlled way without slamming weight stacks and to return weights gently to their resting position; the reasons given are equipment damage and noise, not injury.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "illinois-fit",
+    "utah-fit"
+   ],
+   "quotes": [
+    {
+     "source": "illinois-fit",
+     "text": "Lift weights in a controlled manner, refraining from slamming weight stacks.",
+     "where": "Safety"
+    },
+    {
+     "source": "utah-fit",
+     "text": "Dropping, throwing, or slamming weights or weight stacks, not only damages them, but also the floor.",
+     "where": "Never, drop or throw weights"
+    },
+    {
+     "source": "utah-fit",
+     "text": "A good practice to follow is to gently return the weights to their resting position.",
+     "where": "Never, drop or throw weights"
+    }
+   ]
+  }
+ ],
+ "gaps": [
+  "No source gives a general order for getting out (let go of the handles, then stand), except the seated leg curl (c5).",
+  "No source covers getting out of the reclined sleds (leg_press, hack_squat: locking the safety handles first) or the lying leg curl; each card must supply it.",
+  "Seat belts (machine_pullover) and foot bars are in the pullover card and the foot-bar card, not here.",
+  "No injury data on getting in or out of machines was searched for."
+ ],
+ "notes": [
+  "The Matrix steps are the generic \"Proper Usage\" list printed in a GO Series seated row manual; they are written for all Matrix strength machines, so they are applied to every seated and lying machine here (CONSENSUS, manufacturer).",
+  "The Matrix PDF is hosted by a dealer (sport-tec.de); no copy on the manufacturer site was found.",
+  "Steps c3 \"load\" and the stack-slam step (c6) only apply where there is a stack; on plate-loaded leg_press, hack_squat and seated_calf_raise the c6 step reads as \"return the weight gently\" (same source sentence).",
+  "Setup steps are capped at 5 per exercise by the lint; the per-card setup chooses which of these merge in."
+ ],
+ "sources": [
+  {
+   "id": "matrix-go-s34",
+   "url": "https://sport-tec.de/$WS/sport-tec/websale8_shop-sport-tec/benutzer/navigation/grafiken/anleitung/30263.pdf",
+   "title": "MATRIX GO Series GO-S34 Seated Row owner's manual (dealer-hosted PDF)",
+   "kind": "manufacturer",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "lf-circuit",
+   "url": "https://www.lifefitness.com.au/wp-content/uploads/2015/02/Circuit_Manual_11_081a_1_27.pdf",
+   "title": "Circuit Series Owners Manual (Life Fitness)",
+   "kind": "manufacturer",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "illinois-fit",
+   "url": "https://campusrec.illinois.edu/policies/fitness",
+   "title": "Fitness Area Policies (Campus Recreation, University of Illinois)",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "utah-fit",
+   "url": "https://hpc.utahtech.edu/fitness-center/",
+   "title": "Fitness Center (Human Performance Center, Utah Tech University)",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  }
+ ]
+}

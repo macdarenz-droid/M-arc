@@ -1,0 +1,103 @@
+{
+ "id": "shared-implement-jump-rope",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "jmu-rope-sec",
+   "text": "4. Grip the handles with a loose grip",
+   "status": "verbatim",
+   "closest": "4. Grip the handles with a loose grip",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "elevate-wrist",
+   "text": "Hold the handle firmly enough that it will not fly out of your hand and no firmer.",
+   "status": "verbatim",
+   "closest": "Hold the handle firmly enough that it will not fly out of your hand and no firmer.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "jmu-rope-sec",
+   "text": "(use thumb and index fingers)",
+   "status": "verbatim",
+   "closest": "(use thumb and index fingers)",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "jmu-rope-elem",
+   "text": "grip (use the thumb and index fingers)",
+   "status": "verbatim",
+   "closest": "grip (use the thumb and index fingers)",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "jmu-rope-sec",
+   "text": "2. Use the wrist to turn the rope",
+   "status": "verbatim",
+   "closest": "2. Use the wrist to turn the rope",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "elevate-wrist",
+   "text": "their arms barely move. The elbows stay close to the ribs, the hands sit a little in front of the hips, and the rope goes round on a small flick of the wrist.",
+   "status": "verbatim",
+   "closest": "their arms barely move. The elbows stay close to the ribs, the hands sit a little in front of the hips, and the rope goes round on a small flick of the wrist.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "jmu-rope-sec",
+   "text": "3. Keep hands near waist level",
+   "status": "verbatim",
+   "closest": "3. Keep hands near waist level",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "elevate-wrist",
+   "text": "The elbows stay close to the ribs, the hands sit a little in front of the hips",
+   "status": "verbatim",
+   "closest": "The elbows stay close to the ribs, the hands sit a little in front of the hips",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "elevate-wrist",
+   "text": "Most people hold the handles far too tight. A hard grip locks the wrist, and a locked wrist cannot flick.",
+   "status": "verbatim",
+   "closest": "Most people hold the handles far too tight. A hard grip locks the wrist, and a locked wrist cannot flick.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "elevate-wrist",
+   "text": "If your knuckles are white, that is your answer.",
+   "status": "verbatim",
+   "closest": "If your knuckles are white, that is your answer.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "elevate-wrist",
+   "text": "Jumping rope hurts your wrists for three reasons: your arms are turning the rope instead of your wrists, your handles are heavier or longer than the job needs, or you added volume faster than your forearms adapted to it.",
+   "status": "verbatim",
+   "closest": "Jumping rope hurts your wrists for three reasons: your arms are turning the rope instead of your wrists, your handles are heavier or longer than the job needs, or you added volume faster than your forearms adapted to it.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "elevate-wrist",
+   "text": "Sweat makes this worse, because a slippery handle gets squeezed harder.",
+   "status": "verbatim",
+   "closest": "Sweat makes this worse, because a slippery handle gets squeezed harder.",
+   "note": ""
+  }
+ ]
+}

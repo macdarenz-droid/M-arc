@@ -1,0 +1,231 @@
+{
+  "id": "renegade_row",
+  "checked": "2026-10-02",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ggr-rr",
+      "text": "Step your feet back into a push-up position with your hands shoulder-width apart, gripping the pair of dumbbells with a neutral grip.",
+      "status": "verbatim",
+      "closest": "Step your feet back into a push-up position with your hands shoulder-width apart, gripping the pair of dumbbells with a neutral grip.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "ggr-rr",
+      "text": "Step your feet wider than hip-width apart for a more supportive base.",
+      "status": "verbatim",
+      "closest": "Step your feet wider than hip-width apart for a more supportive base.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "ggr-rr",
+      "text": "Ensure your hands are underneath your shoulders, place your feet wider than hip-width apart, and squeeze your glutes to keep your lower back neutral. Your spine should be straight from head to glutes, and your legs straight.",
+      "status": "verbatim",
+      "closest": "Ensure your hands are underneath your shoulders, place your feet wider than hip-width apart, and squeeze your glutes to keep your lower back neutral. Your spine should be straight from head to glutes, and your legs straight.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "sl-renegade",
+      "text": "Keep your body in a straight line from head to heels, feet slightly wider than hip-width for balance.",
+      "status": "verbatim",
+      "closest": "Keep your body in a straight line from head to heels, feet slightly wider than hip-width for balance.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "ggr-rr",
+      "text": "Squeeze your glutes, engage your core, and row one dumbbell toward your same-side hip until the dumbbell touches your ribcage and your shoulder blades come together. Try to avoid excessive torso rotation.",
+      "status": "verbatim",
+      "closest": "Squeeze your glutes, engage your core, and row one dumbbell toward your same-side hip until the dumbbell touches your ribcage and your shoulder blades come together. Try to avoid excessive torso rotation.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "ggr-rr",
+      "text": "A good reference point is to row the dumbbell toward your hip until it brushes your ribcage.",
+      "status": "verbatim",
+      "closest": "A good reference point is to row the dumbbell toward your hip until it brushes your ribcage.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "sl-renegade",
+      "text": "Brace your core and row one weight toward your ribcage, keeping your elbow close to your body.",
+      "status": "verbatim",
+      "closest": "Brace your core and row one weight toward your ribcage, keeping your elbow close to your body.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "sl-renegade",
+      "text": "Lower the weight back to the ground with control.",
+      "status": "verbatim",
+      "closest": "Lower the weight back to the ground with control.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "ggr-rr",
+      "text": "Lower the dumbbell back to the ground and repeat on the other side.",
+      "status": "verbatim",
+      "closest": "Lower the dumbbell back to the ground and repeat on the other side.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c6",
+      "source": "ggr-rr",
+      "text": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it's more difficult.",
+      "status": "verbatim",
+      "closest": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it's more difficult.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "bb-rr",
+      "text": "Grip a pair of dumbbells (ideally hexagonal dumbbells that won't roll).",
+      "status": "verbatim",
+      "closest": "Grip a pair of dumbbells (ideally hexagonal dumbbells that won't roll).",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "ggr-rr",
+      "text": "There will be some upper-body rotation, but you don't want too much, as this will make the exercise easier and you'll lose some of the core strengthening benefits. If you rotate excessively, get your feet further apart for a broader support base.",
+      "status": "verbatim",
+      "closest": "There will be some upper-body rotation, but you don't want too much, as this will make the exercise easier and you'll lose some of the core strengthening benefits. If you rotate excessively, get your feet further apart for a broader support base.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "bb-rr",
+      "text": "Try not to let your torso twist too far away from the side you're rowing the dumbbell. If it does, use a lighter weight.",
+      "status": "verbatim",
+      "closest": "Try not to let your torso twist too far away from the side you're rowing the dumbbell. If it does, use a lighter weight.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bb-rr",
+      "text": "If you're trying to pull too much weight with this lift, you'll likely hike your shoulder and hip up and back to accomplish the range of motion you need.",
+      "status": "verbatim",
+      "closest": "If you're trying to pull too much weight with this lift, you'll likely hike your shoulder and hip up and back to accomplish the range of motion you need.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bb-rr",
+      "text": "If you're swinging the dumbbell or hiking up your hips, then scale back the weight.",
+      "status": "verbatim",
+      "closest": "If you're swinging the dumbbell or hiking up your hips, then scale back the weight.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "ggr-rr",
+      "text": "Avoid this by starting with a lighter weight than your usual row variation.",
+      "status": "verbatim",
+      "closest": "Avoid this by starting with a lighter weight than your usual row variation.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "ggr-rr",
+      "text": "Not only will you lose the muscle-building tension, but you can hurt your wrists when the dumbbells slam to the ground.",
+      "status": "verbatim",
+      "closest": "Not only will you lose the muscle-building tension, but you can hurt your wrists when the dumbbells slam to the ground.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bb-rr",
+      "text": "To maintain your wrist health, you've got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
+      "status": "verbatim",
+      "closest": "To maintain your wrist health, you've got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "bb-rr",
+      "text": "Yes. However, you need to be careful not to allow the kettlebells to tip over, which can result in wrist injuries or face planting onto the floor. Ideally, you would perform these with dumbbells.",
+      "status": "verbatim",
+      "closest": "Yes. However, you need to be careful not to allow the kettlebells to tip over, which can result in wrist injuries or face planting onto the floor. Ideally, you would perform these with dumbbells.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "ggr-rr",
+      "text": "The main muscles trained by the renegade row are latissimus dorsi, serratus anterior, rhomboids, middle traps, (upper back) obliques, rectus abdominis, anterior deltoids, biceps, and forearms.",
+      "status": "verbatim",
+      "closest": "The main muscles trained by the renegade row are latissimus dorsi, serratus anterior, rhomboids, middle traps, (upper back) obliques, rectus abdominis, anterior deltoids, biceps, and forearms.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-rr",
+      "text": "Your abdominals and obliques are used in the renegade row as stabilizers and anti-rotational muscles.",
+      "status": "verbatim",
+      "closest": "Your abdominals and obliques are used in the renegade row as stabilizers and anti-rotational muscles.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "sl-renegade",
+      "text": "Primary muscles worked: Lats Trapezius Rear Deltoids Rotator Cuff",
+      "status": "verbatim",
+      "closest": "Primary muscles worked: Lats Trapezius Rear Deltoids Rotator Cuff",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "sl-renegade",
+      "text": "The renegade row combines a plank hold with a rowing motion, making it a challenging full-body exercise. It strengthens the upper back and arms while also demanding core stability and control to prevent rotation.",
+      "status": "verbatim",
+      "closest": "The renegade row combines a plank hold with a rowing motion, making it a challenging full-body exercise. It strengthens the upper back and arms while also demanding core stability and control to prevent rotation.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "bb-rr",
+      "text": "Want to take it up a notch? Narrow your feet or add a push-up after each row. Want to make it easier? Widen your stance or elevate your hands even more.",
+      "status": "verbatim",
+      "closest": "Want to take it up a notch? Narrow your feet or add a push-up after each row. Want to make it easier? Widen your stance or elevate your hands even more.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "bb-rr",
+      "text": "If you're not ready to add weight to the movement, you can simply practice a dynamic plank variation where you focus on keeping your body still as you row the air with your hands. You can even start on your knees if need be.",
+      "status": "verbatim",
+      "closest": "If you're not ready to add weight to the movement, you can simply practice a dynamic plank variation where you focus on keeping your body still as you row the air with your hands. You can even start on your knees if need be.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "bb-rr",
+      "text": "For Muscle: Do three to four sets eight to 10 reps per side, maintaining squared hips and shoulders.",
+      "status": "verbatim",
+      "closest": "For Muscle: Do three to four sets eight to 10 reps per side, maintaining squared hips and shoulders.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "bb-rr",
+      "text": "Keep tension on the weight as you lower it. Be sure not to let your body fall to the same side.",
+      "status": "verbatim",
+      "closest": "Keep tension on the weight as you lower it. Be sure not to let your body fall to the same side.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "ggr-rr",
+      "text": "Reset between each rep to maintain a solid front plank position.",
+      "status": "verbatim",
+      "closest": "Reset between each rep to maintain a solid front plank position.",
+      "note": ""
+    }
+  ]
+}
