@@ -706,7 +706,7 @@
   "anchorSource": "outside-hf",
   "anchorNote": "R-W0-2: Amber Sayer's Outside article (a named certified personal trainer; byline in the page metadata) read in full; its \"Resisted Hip Hikes\" is this exercise with a band anchored low, facing away (c13-c16). Motra and Kovo (cable, read in full) are app exercise-database pages that name no author, so every claim resting only on them is tagged WEAK. No ACE, NASM or PubMed technique source was found. Also read, not cited: The Prehab Guys (straight-knee kick, a different movement) and Wellen (loop band round both ankles, a marching variant; no named author).",
   "loadProgression": {
-    "text": "Start light; sets of 10-15 reps a leg; move to a band with more tension as you get stronger.",
+    "text": "Start light; sets of 10-15 reps a leg; add resistance as you get stronger.",
     "claims": [
       "c11",
       "c9",
