@@ -46,7 +46,7 @@ export function Coach() {
 
   return (
     <div class="view">
-      <div class="topbar" data-palace="coach.header"><div><div class="eyebrow">Escobar</div><h1>What to do next</h1></div></div>
+      <div class="topbar" data-palace="coach.header"><div><div class="eyebrow">Escobar</div><h1>Next steps</h1></div></div>
 
       <Hall />
 
@@ -54,7 +54,7 @@ export function Coach() {
       <DeloadCard />
 
       <Card class="card-accent" data-palace="coach.week-line">
-        <div class="eyebrow">This week in one line</div>
+        <div class="eyebrow">Week summary</div>
         <p style={{ marginTop: 6 }}>{w.workouts} workout{w.workouts === 1 ? '' : 's'}, {w.sets} sets{w.records.length ? `, ${w.records.length} record${w.records.length > 1 ? 's' : ''}` : ''}. {w.grade.note}</p>
       </Card>
 
@@ -62,7 +62,7 @@ export function Coach() {
         <div class="stack-sm">
           {list.map(i => (
             <Card key={i.id} class="insight card-press" style={{ '--insight': INSIGHT_COLOR[i.category] }} onClick={() => setOpenInsight(i)}>
-              <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><span class="row" style={{ gap: 4 }}><AskAbout refTo={{ kind: 'insight', id: i.id, label: i.title }} /><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></span></div>
+              <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><span class="row" style={{ gap: 4 }}><AskAbout refTo={{ kind: 'insight', id: i.id, label: i.title }} /><button type="button" class="insight-open" aria-label={`Open ${i.title}`} onClick={e => { e.stopPropagation(); setOpenInsight(i); }}><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></button></span></div>
               <h3 style={{ margin: '4px 0 6px' }}>{i.title}</h3>
               <p class="small muted">{i.action}</p>
               <div class="row" style={{ marginTop: 8, gap: 8 }} onClick={e => e.stopPropagation()}>
@@ -85,7 +85,7 @@ export function Coach() {
       <Schedule />
 
       {cue && (
-        <Section title={cue.kind === 'learn' ? 'Worth knowing' : 'Coach tip'} palace="coach.tip" aside={<Button variant="quiet" size="sm" onClick={() => setCueSeed(n => n + 1)}>Another</Button>}>
+        <Section title={cue.kind === 'learn' ? 'Coach fact' : 'Coach tip'} palace="coach.tip" aside={<Button variant="quiet" size="sm" onClick={() => setCueSeed(n => n + 1)}>Another</Button>}>
           <Card class="card-quiet"><b class="small">{cue.title}</b><p class="small muted" style={{ marginTop: 4 }}>{cue.text}</p>{lastExercise && <span class="hint">About {lastExercise.name}</span>}</Card>
         </Section>
       )}
@@ -346,7 +346,7 @@ function WhatCoachCanSee() {
     { label: 'Weigh-ins', value: `${s.weightLog.length} logged` },
   ];
   return (
-    <Section title="What the coach can see" palace="coach.sees">
+    <Section title="Coach data" palace="coach.sees">
       <Card class="card-quiet">
         <div class="list">
           {rows.map(r => (

@@ -293,6 +293,11 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .sheet-top::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--border-subtle); opacity: 0; transition: opacity var(--dur-fast) var(--ease-standard); }
 .sheet-top.scrolled::after { opacity: 1; }
 .sheet-grab { width: 36px; height: 4px; border-radius: var(--radius-pill); background: var(--border-strong); margin: 4px auto 14px; }
+/* BUG-37: a modal dialog gets the UA's overflow: auto, which made .sheet a scroll container sized to its panel, so
+   showModal's focus scrolled it by the panel's open transform and cancelled the slide on screen (a bounce on
+   Android). Not a scroller, the panel's slide, drag, swap and exit transforms all reach the screen. Visible, not
+   clip, as .esc-sheet: a panel moving above its rest top (rubber band, a shrinking swap) stays whole. */
+.sheet { overflow: visible; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 
 /* F13: centred with left/right/margin-inline, never translateX(-50%) — the scale in toast-in
@@ -470,6 +475,11 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
    a small dot next to the category label carries the same information without a coloured border. */
 .insight-cat { color: var(--insight, var(--accent)); }
 .insight-cat::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--insight, var(--accent)); margin-right: 6px; vertical-align: middle; }
+/* AUD-12: the insight card's "Open" button (Coach.tsx) resets to look like the plain chevron it
+   wraps, same technique as .set-kind above — all:unset beats the zero-specificity :where()
+   focus-visible rule, so the ring is restated here at equal specificity to .insight-open. */
+.insight-open { all: unset; display: inline-flex; cursor: pointer; border-radius: var(--radius-xs); }
+.insight-open:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .chain { display: grid; gap: 10px; }
 .chain > div { display: grid; grid-template-columns: 84px 1fr; gap: 10px; font-size: var(--fs-body); }
 .chain > div > span:first-child { padding-top: 2px; }

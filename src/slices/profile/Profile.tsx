@@ -29,10 +29,10 @@ export function Profile({ onClose }: { onClose: () => void }) {
     <Sheet title="Your profile" onClose={onClose}>
       <div class="stack">
         <Card class="card-quiet">
-          <div class="eyebrow">{c.done} of {c.of} details for the coach</div>
+          <div class="eyebrow">{c.done} of {c.of} details</div>
         </Card>
 
-        <Section title="About you" palace="profile.about">
+        <Section title="Personal details" palace="profile.about">
           <Card class="stack-sm">
             <Field label="Birth year">
               <CommitNumber value={s.profile.birthYear} min={1900} max={new Date().getFullYear() - 10} integer onCommit={v => setBirthYear(v)} />
