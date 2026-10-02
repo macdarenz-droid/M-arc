@@ -293,6 +293,11 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .sheet-top::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--border-subtle); opacity: 0; transition: opacity var(--dur-fast) var(--ease-standard); }
 .sheet-top.scrolled::after { opacity: 1; }
 .sheet-grab { width: 36px; height: 4px; border-radius: var(--radius-pill); background: var(--border-strong); margin: 4px auto 14px; }
+/* BUG-37: a modal dialog gets the UA's overflow: auto, which made .sheet a scroll container sized to its panel, so
+   showModal's focus scrolled it by the panel's open transform and cancelled the slide on screen (a bounce on
+   Android). Not a scroller, the panel's slide, drag, swap and exit transforms all reach the screen. Visible, not
+   clip, as .esc-sheet: a panel moving above its rest top (rubber band, a shrinking swap) stays whole. */
+.sheet { overflow: visible; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 
 /* F13: centred with left/right/margin-inline, never translateX(-50%) — the scale in toast-in

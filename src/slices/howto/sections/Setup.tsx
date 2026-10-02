@@ -81,12 +81,15 @@ export function renderSetup(howTo: SectionProps['howTo'], open: boolean, onToggl
 }
 
 /** HT-3b A3 (supervisor ruling on #113): Setup and Risks are below the plate, so they render after its first paint,
- *  each in a task of its own (two frames, then a macrotask), never inside the timed open. */
-export function useAfterFirstPaint(): boolean {
+ *  each in a task of its own (`frames` frames, then a macrotask), never inside the timed open. Setup waits 2 frames;
+ *  Risks waits 3, so it mounts after the frame that laid out Setup and neither shares a task or a layout pass with
+ *  the other's (D-HT9-A3b). */
+export function useAfterFirstPaint(frames = 2): boolean {
   const [ready, setReady] = useState(false);
   useLayoutEffect(() => {
-    let raf = requestAnimationFrame(() => { raf = requestAnimationFrame(() => { timer = setTimeout(() => setReady(true), 0); }); });
-    let timer: ReturnType<typeof setTimeout> | undefined;
+    let left = frames, timer: ReturnType<typeof setTimeout> | undefined;
+    const tick = () => { if (--left > 0) raf = requestAnimationFrame(tick); else timer = setTimeout(() => setReady(true), 0); };
+    let raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); clearTimeout(timer); };
   }, []);
   return ready;

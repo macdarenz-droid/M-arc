@@ -53,5 +53,5 @@ export function renderRisks(howTo: SectionProps['howTo']) {
 }
 
 export function Risks({ howTo }: SectionProps) {
-  return useAfterFirstPaint() ? renderRisks(howTo) : null;
+  return useAfterFirstPaint(3) ? renderRisks(howTo) : null;   // one frame after Setup (D-HT9-A3b)
 }
