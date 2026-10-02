@@ -1805,3 +1805,29 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
 - **D-COPY2-swap (supervisor ruling on #168, applied).** BUG-36's block keeps its assertions and gets a seed-only change so its brief is again taller than the check-in. The ruling named `birthYear: 1960`, but that does not work: `preSessionInsights` keeps the top 3 cards by priority, and the 60+ card (priority 110) loses to the load-target cards (260). So the seed's split became two chest lifts, which leaves fewer soreness rows in the check-in. That meets the ruling's stated aim with no assertion changed. The new add-only "COPY-2 swap" block covers the shrinking swap: one direction (any reversal fails), a downward travel of at least 20 px, no frame step above max(16 px, travel / 4), one sheet throughout, and nothing moving for 100 ms after rest. The snap limit scales with travel because the measured ease over about 100 px peaks at 19.9 px a frame (12.7, 15.7, 19.9, 19.9, 11.5, …), which is smooth. A flat 16 px limit would flag a correct animation. Mutations: an overshoot easing (`cubic-bezier(0.3, 1.8, 0.5, 1)`) fails on reversal and snap in all 4 runs; a 1 ms ease (the old one-frame swap) fails on a 100 px snap in all 4 runs; with the code restored, all 4 pass.
 - **D-COPY2-swap position.** The COPY-2 swap block reads the panel's top with `panel.getBoundingClientRect().top`, which includes the transform and every ancestor's scroll (BUG-37, #173). Thresholds are unchanged. Re-run on that reading: overshoot easing fails (reversal and snap) and the 1 ms ease fails (100 px snap) in all 4 runs; with the code restored, all 4 pass.
 - **D-COPY2-swap2 (supervisor ruling on #168, applied).** BUG-37's check-in → brief swap runs now seed the same two-chest-lift split as BUG-36 (`BUG37_SWAP_EX`), so the brief stays taller than the check-in. Its checked-in runs (start sheet, Settings, nested Gyms) keep the 8-lift seed. The only helper change is an optional `ex` argument to `bug37Load` that defaults to `BUG37_EX`; every assertion and threshold is byte-identical. Blunting check: without `.sheet { overflow: visible }`, BUG-37 fails 96 times both on this head and on main fc38fb8, with the same split by run (24 each for start sheet, check-in, Settings, nested Gyms; its swap runs fail in neither), so the seed change removes no failure.
+
+## LIB-12 hand views and pairs (LIB-12 builder, 2026-10-02)
+
+Design note: the `LIB-12 CHECK-IN` comment on #191, updated after the joint design review (#191, #193) and the supervisor's rulings of 11:16 UTC.
+
+- **D-LIB12-1 (one registry)**: each view or pair is a `tools/plates/library/hands/hand-<key>.mjs` module in LIB-7's loader. Keys: palm-flat, cupped, front-rack, ball-contact and battle-rope. Each sets `VIEW`, and its `render` is that view's function. The `view-*.mjs` files hold drawing code only. Dispatch goes through LIB-7's `pairs.mjs` `renderPair(id)`, and the page goes through LIB-7's zoom wrapper. LIB-6 and golden B are not edited.
+  **Why**: two id registries would let one id be claimed twice without the check seeing it.
+- **D-LIB12-2 (drawing values)**: sizes with no source are passed explicitly as named drawing values, never read from golden-B `HANDLES`. They are flagged on the sheet and never shown as facts:
+  - battle-rope Ø;
+  - wall-ball Ø;
+  - goblet dumbbell head;
+  - front-rack bar 28 mm (golden B's `bar-28` value, passed explicitly).
+
+  The geometry-check bounds (5°, 20°, 6 mm, 40 mm, 15 mm, 30°) are test bounds, not facts.
+  **Why**: golden B's `HANDLES` are "typical gym handles, drawing values". The same footing applies here (supervisor ruling, 10-02).
+- **D-LIB12-3 (gaps, not drawn)**:
+  - bench_dip and renegade_row: palm-flat research excludes them.
+  - dumbbell_overhead_triceps_extension: no hand fault is sourced, and its own card zooms on the handle wrap.
+  - medicine_ball_slam: no placement or fault is sourced.
+  - kettlebell_swing: the radial renderer always draws the thumb, and no claim places it (only c5, "not thumbs up", by inference). The supervisor's ruling allows leaving the pair out.
+  - jump_rope: the thumb-and-index grip (c2) is not a `hand.mjs` thumb mode.
+  - sled_pull: its card's hand zoom has no Wrong, and no thumb source.
+  - weighted_dip and ab_wheel_rollout: no research card. The supervisor has requested research.
+- **D-LIB12-4 (goblet claims)**: the goblet pair cites only `cards/goblet_squat` g1, g2, g5 and g6. The palms are drawn as one outline under the head with no thumb or finger detail, because placement is unsourced for goblet and listed as a gap. `shared/cupped-thumb.json` applies only to the overhead extension.
+- **D-LIB12-5 (pilot sheets)**: cupped and front-rack renders go on pilot A (#109). Palm-flat, ball-contact and battle-rope go on pilot B. Plan 2.3.
+  **Source**: card LIB-12, plan 2.3, research 95342b1, census.json, review on #191 (11:12 UTC).
