@@ -1708,6 +1708,30 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
   **Why**: a class can be targeted by a stylesheet rule; an inline style cannot, short of another inline style (which can't express `:focus-visible`). This file is append-only, so the addendum above is left as written and corrected here rather than edited.
   **Source**: supervisor review "## REVIEW AUD-12 @ b8636b8: FAIL" on PR #156.
 
+## LIB-6: close-up renderer and layers page builder (LIB-6 builder, 2026-10-01)
+
+- **D-LIB6-1 (seam for LIB-2: close-up options)**: the renderer is `closeupApi(howtoModule, options)` (`tools/plates/library/render/closeups.mjs`). LIB-2's data tree provides `closeupOptions(id) → options` for library ids. The 8's records ship in `render/closeups-8.mjs` as `CLOSEUP_OPTIONS`, and LIB-2 may move them into its tree. LIB-6 creates no LIB-2 file.
+  **Why**: the plan says the renderer is "fed by `*.howto.mjs` data", and the bespoke parts become named options. The howto data already holds the drawing content (zooms, guides, thumb page, stills). The options hold only the sheet-level choices.
+- **D-LIB6-2 (seam for LIB-2: sources on a batch page)**: a new id's `exercises/<id>.mjs` and `exercises/<id>.howto.mjs` reach the page builder through `files: { rel: absPath }`, which copies them into the build mirror. Their shape is golden B's.
+- **D-LIB6-3 (target)**: the 8 close-up fragments are cut per card from the page bytes: the contiguous `<div class="zx">` panels plus the `/* close-ups: … */` CSS block. They are pinned as sha256 in `tests/library/closeups.test.ts`. They are identical in the LR-23 page on main (`e7b81413…`) and in b3a90af's page (`5aab1aca…`, the pin plan 2.6 cites), checked with `fragmentDiff` = [].
+  **Why**: the How-to lane's committed golden is the LR-23 page. Because the fragments are equal in both, one target satisfies both pins.
+- **D-LIB6-4 (proof at two levels)**:
+  - API level: every string `howto-layers.mjs` reads from a close-up source (each hand page, posture zoom or zoom section, chip row, CSS) `===` the frozen script's. This runs in vitest, about 11 s.
+  - Page level: the layers page built with all 8 on the renderer has sha256 `e7b81413…` and all fragments `===` golden B. These page builds run under `node --test tools/plates/library/test/*.test.mjs`, about 7 s each.
+  - Equal bytes render equal pixels, so L3 is 0 px.
+  - **Why**: the HT-4 precedent moved live page builds out of `npm test`. The gate is outside this card's write scope, so LIB-4 or the supervisor wires them into CI, add-only.
+- **D-LIB6-5 (two shells, named options)**: the renderer has two shells, as golden B does: `zoom` (the 5 `howto/render-*.mjs` scripts) and `zbox` (the 3 `exercises/*.howto-render.mjs` scripts). Code moved verbatim, with the same arithmetic in the same order. The shells contain no branches on exercise ids. All 8 reproduce byte for byte, so none stays on the frozen fallback.
+  - Each script's label-placement search fed only its report and never the drawing, so it was dropped.
+  - Small differences between the scripts were unified only where they change none of the 8 outputs, which the API proof checks. Examples: the signed drop arrow, `centerWrong`, mask trims, and the mistake-mask guide filter.
+- **D-LIB6-6 (layers page builder)**: `tools/plates/library/build-layers-page.mjs` runs the vendored `artifact/build-page.mjs` and `artifact/howto-layers.mjs` on a mirror, with 4 exact-once source patches: GROUPS, HOWTO_IDS, the close-up source per id, and the dispatch. Each patch throws if its anchor moves.
+  - So batch chrome is golden B's bytes and cannot drift.
+  - The 8's CSS comment labels keep golden B's script paths, because those bytes are pinned. A new id is labelled `library/render/closeups.mjs`.
+  - A `jump` option (default: golden B's line; `null` drops it) keeps a batch page without the chest press free of a dead link.
+- **D-LIB6-7 (body-map stomach fix as a page step)**: golden B applies the leg-raise script's REGION_FIX to every feel map on its page, as a side effect of loading that script. The builder applies it as an explicit, idempotent step (`render/region-fix.mjs`, logic verbatim), on by default.
+  **Why**: the approved maps have the fix. A page that draws the leg raise with the renderer, or has no leg raise at all, must keep the same maps.
+- **D-LIB6-8 (fallback)**: `{ legacy: true }` per id loads the frozen golden-B script exactly as `howto-layers.mjs` does. A test builds a page with pull-up and leg press on the fallback and their options removed, and gets `e7b81413`.
+  **Source**: card LIB-6, plan `docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md` 2.6, 2.7, 7.
+- **D-LIB6-9 (review Medium, 10-02: anchor check now in `npm test`)**: `tests/library/closeups.test.ts` now also runs D-LIB6-6's 4 patch anchors string-only (`patchHowtoLayers`, `patchBuildPage` on the vendored sources, no page build), so CI catches a moved anchor on every push instead of only on the page-level tests (`layers-page.test.mjs`, not yet wired into CI before LIB-4).
 ## COPY-2: headings as short labels, no explaining lines (COPY-2 builder, 2026-10-01)
 
 - **D-COPY2-scope.** In scope: static UI headings (Section, Sheet and Empty titles, eyebrows, h1-h4, `<b>` card titles) and the start sheet's check cards in `src/brain/coach/pre.ts`. Generated coach-note titles (rules.ts, post.ts, live.ts, weeklyReview.ts) state the finding, which is the data, so they stay; Escobar action titles ("Update height", "Add gym: …") name the action a proposal performs, a control label, so they stay. Imperative sheet titles that name the control that opened them ("Add exercise", "Edit split", "Log Push", "Substitute Bench") stay for the same reason. The How-to sheet is golden B and is listed on the PR for the golden update procedure.
