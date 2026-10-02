@@ -25,13 +25,13 @@
   "calves": 23
  },
  "vertices": {
-  "chest": 460,
+  "chest": 401,
   "upper_chest": 77,
-  "front_delts": 570,
+  "front_delts": 572,
   "side_delts": 287,
   "rear_delts": 290,
   "rotator_cuff": 109,
-  "biceps": 374,
+  "biceps": 385,
   "triceps": 838,
   "brachialis": 83,
   "forearms": 1442,
@@ -39,8 +39,8 @@
   "mid_back": 289,
   "upper_traps": 738,
   "lower_back": 243,
-  "abs": 373,
-  "obliques": 704,
+  "abs": 375,
+  "obliques": 726,
   "hip_flexors": 327,
   "quads": 1666,
   "hamstrings": 1151,
@@ -52,8 +52,11 @@
  "rules": {
   "chest": {
    "y": [
-    1.242,
+    1.232,
     1.437
+   ],
+   "low_at_armpit": [
+    1.332
    ],
    "phi": [
     0,

@@ -118,8 +118,14 @@ if abs(nip_y[0] - nip_y[1]) > 0.015:                              # the two side
     nip_y = [shoulder_y - 0.12] * 2
 nip_y = float(np.mean(nip_y))
 pec_low = nip_y - 0.05                                           # lower pec border (5th-6th rib), about 5 cm below the nipple
-RULES['chest'] = dict(y=(pec_low, clav_y), phi=(0, 72), x=(0.0, sh_x - 0.02))
-M['chest'] = t * soft(y, pec_low, clav_y - 0.02, 0.02) * ang_soft(phi, -1, 70, 12) * soft(ax, 0.008, sh_x - 0.035, 0.02)
+# the lower border is not level: it starts at the 6th rib beside the sternum, passes about 2 cm under the nipple
+# and rises to the front armpit fold (the pec's lower edge as it runs to the upper arm)
+pec_x = sh_x - 0.035
+pec_low_x = (nip_y - 0.06) + 0.10 * np.clip(ax / pec_x, 0, 1) ** 2.2
+RULES['chest'] = dict(y=(nip_y - 0.06, clav_y), low_at_armpit=(nip_y + 0.04,), phi=(0, 72), x=(0.0, sh_x - 0.02))
+M['chest'] = t * soft(y, pec_low_x, clav_y - 0.02, 0.02) * ang_soft(phi, -1, 70, 12) * soft(ax, 0.008, pec_x, 0.02)
+_nx = float(np.mean([abs(n_[0]) for n_ in NIPPLES]))
+print('pec lower border under the nipple: %.1f cm' % ((nip_y - ((nip_y - 0.06) + 0.10 * min(1, _nx / pec_x) ** 2.2)) * 100))
 up_split = clav_y - 0.055                                        # clavicular head: the upper third of the pec
 RULES['upper_chest'] = dict(y=(up_split, clav_y))
 M['upper_chest'] = M['chest'] * soft(y, up_split, clav_y, 0.012)

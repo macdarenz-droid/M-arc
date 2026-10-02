@@ -191,9 +191,28 @@ export class SeatedPress {
         rig.fk();
         fwd = rig.pos(s + 'Hand').sub(rig.pos(s + 'ForeArm')).normalize();
       }
-      const grip = powerGrip(rig, s, inHand, hf, { thumbOpp: state.thumbOpp ?? 45 });
+      // the fingers close on the real handle, carried into the hand's rest frame from where the hand ended up
+      rig.fk();
+      const Hw = rig.world[s + 'Hand'], Di = Hw.D.clone().invert();
+      const real = { centre: h.centre.clone().sub(Hw.p).applyQuaternion(Di).add(hf.wrist), axis: h.axis.clone().applyQuaternion(Di).normalize(), radius: inHand.radius };
+      const grip = powerGrip(rig, s, real, hf, { thumbOpp: state.thumbOpp ?? 45 });
       if (state.thumbLoose) grip.Thumb = { deltas: [axisAngle(hf.d, 0), axisAngle(hf.d, 0), axisAngle(hf.d, 0)] };
       applyGrip(rig, s, grip, 1);
+      // measured on the posed bones against the real handle (not the solver's plan): fingertip to the handle
+      // surface less the finger pad; thumb tip to its place over the fingers, carried by the hand
+      rig.fk();
+      const fm = rig.meta.fingers[s].fingers;
+      const posed = (bone, restPt) => { const w = rig.world[bone]; return restPt.clone().sub(rig.rest[bone].pw).applyQuaternion(w.D).add(w.p); };
+      const toAxis = (p) => { const w = p.clone().sub(h.centre); return w.sub(h.axis.clone().multiplyScalar(w.dot(h.axis))).length(); };
+      const touch = {};
+      for (const name of ['Index', 'Middle', 'Ring', 'Pinky']) {
+        const tip = posed(fm[name].bones[2], new V(...fm[name].jointsGl[3]));
+        touch[name] = +((toAxis(tip) - this.handle.radius - 0.0085) * 1000).toFixed(1);
+      }
+      if (grip.Thumb.target) {
+        const tip = posed(fm.Thumb.bones[2], new V(...fm.Thumb.jointsGl[3]));
+        touch.Thumb = +(tip.distanceTo(posed(s + 'Hand', grip.Thumb.target)) * 1000).toFixed(1);
+      }
       // report: elbow flexion, upper-arm angle to the torso, wrist bend
       const E = rig.pos(s + 'ForeArm'), W = rig.pos(s + 'Hand');
       const ua = E.clone().sub(shoulder).normalize(), fa = W.clone().sub(E).normalize();
@@ -201,6 +220,7 @@ export class SeatedPress {
         elbowFlex: rad2deg(ua.angleTo(fa)), flare: rad2deg(ua.angleTo(torsoDown)),
         wristSwing: rig.report[s + 'HandSwing'], pronation: rig.report[s + 'HandTwist'], handleSlant: oblique,
         reach: rig.report[s + 'ArmReach'], elbowBehindChest: E.z,
+        touch,
         gripGaps: Object.fromEntries(Object.entries(grip).map(([k, g]) => [k, +(g.tipGap * 1000).toFixed(1)])),
       };
     }

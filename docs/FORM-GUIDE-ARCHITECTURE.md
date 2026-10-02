@@ -39,7 +39,7 @@ Library count (src/data/exercises.json, 153 exercises): Bodyweight 34, Cable 22,
 
 ## 4. Meshy budget and prompting
 
-Balance on 2026-10-02: 2,830 credits. Prices from docs.meshy.ai/en/api/pricing (read 2026-10-02): text-to-image 9 (nano-banana-pro), multi-image-to-3D textured 30, rigging 5, remesh 5. Failed tasks are not charged.
+Balance on 2026-10-02: 2,830 credits; after the pilot 2,699 (131 spent, every task in `tools/motion/meshy-ledger.json`). Prices from docs.meshy.ai/en/api/pricing (read 2026-10-02): text-to-image 9 (nano-banana-pro), multi-image-to-3D textured 30, rigging 5, remesh 5. Failed tasks are not charged.
 
 | Item | Count | Credits each (with retries) | Total |
 |---|---|---|---|
@@ -57,6 +57,7 @@ Prompt rules, from Meshy's prompt guide (help.meshy.ai/en/articles/11972484) and
 5. Never ask for thin moving parts (cables, bars, handles) on machine bodies; they are built in code.
 6. One generation per asset; reuse task ids for any follow-up step (rig, remesh, convert) instead of generating again.
 7. Download every result the same day; non-Enterprise outputs are deleted after 3 days.
+8. For a machine, say where its pivots sit against the seat and pad ("pivots high above the back pad") and check that on the reference image against the measured real machine before paying for 3D. The pilot's first chest press body put the pivots in front of the face and cost a second body (39 credits).
 
 ## 5. Motion
 
@@ -68,11 +69,16 @@ For each exercise a small data file gives: the equipment and its settings (seat 
 4. Fingers take the grip pose for the handle profile (diameter, thumb wrapped).
 5. Clamp every joint to its researched range.
 
+Pilot, Machine Chest Press (`docs/design/motion-lab/`):
+- Machine body: Meshy's fused pressing arms are cut away in `machine_prep.py`; the top is raised 22 cm so the pivots sit about 0.77 m above the handle start, as on real overhead-pivot presses; the seat sits 9 cm lower on its post (`tools/motion/machines/chest-press.json`).
+- Each lever is one rigid part turned about its pivot, so the handle path is the true arc: it rises 22.5 cm and ends 15.9 cm above the shoulder joint, inside the 5–25 cm rise measured on Cybex, Life Fitness and Technogym presses. The arc ends where the elbow is 14° short of straight, found on the real pose.
+- The fingers close the way a hand closes: all joints together, each stopping where its phalanx meets the real handle, checked in 3D. The thumb closes over the index finger's middle phalanx.
+
 Mistakes are the same exercise with one rule broken (for example, seat too low moves the handles to the collarbones), shown with the theme's `--mistake` colour on the body part at fault.
 
 ## 6. Muscles
 
-Regions are stored per vertex (COLOR_0, which survives gltfpack/meshopt exactly; custom attributes do not). They are seeded from the app's own 2D map (`body-muscles`, already a devDependency, ids match `src/data/muscles.ts`), then checked on rendered views. Tiers come from the exercise's How-to feel data where it exists, else from `exercises.json`: Main (primary), Helps (secondary), Watch (the muscle that takes over in a mistake, for example upper traps on a shrug). Colours: Main `--ht-feel-main`, Helps the 45% accent mix with a rim so it reads on the body, Watch `--mistake`. A gentle pulse; none with reduced motion.
+Regions are stored per vertex (COLOR_0, which survives gltfpack/meshopt exactly; custom attributes do not). `tools/motion/regions.py` places them with surface-anatomy rules measured from the figure's own joints (ids match `src/data/muscles.ts`; every rule's numbers are written to `figure.regions.json` for review), then they are checked on rendered views. The pec's lower border is not level: it starts at the 6th rib beside the sternum, passes under the nipple and rises to the front armpit fold. Tiers come from the exercise's How-to feel data where it exists, else from `exercises.json`: Main (primary), Helps (secondary), Takes over (the muscle that takes over in a mistake, for example the front shoulders when the seat is too low). Colours: Main the theme accent, Helps the same accent weaker, Takes over `--mistake`. A gentle pulse; none with reduced motion.
 
 ## 7. In the app
 
@@ -90,7 +96,7 @@ Needs a decision before app wiring (the lab page in `docs/design/motion-lab/` do
 ## 8. Review and checks
 
 - Builder looks at every rendered frame set (start, middle, end, each mistake, grip close-up, five themes) against the research's reference photos, at human-eye level: contact, pose truth, grip, highlights in the right place, premium look.
-- Numeric probes (vitest): hand-to-handle distance ≤ 5 mm at every sampled time, pelvis on seat, back on pad, feet planted, joints inside their ranges, probes fail when nothing moves.
+- Numeric probes (`node tools/motion/probe.mjs <three dir>`, headless Chromium, 67 frames per mode, 17 checks): handle path and rise, start height at the nipple line, upper arm 45–70° from the torso, elbow 10–18° short of straight at the end, back on the pad and hips on the seat every frame, fingertips on the real handle (measured on the posed bones, within 8 mm and never more than 1 mm inside), thumb on its place, wrist bend ≤ 15°, and each mistake showing its fault. A still pose cannot pass. Mutation proofs, each failing as expected: elbows flared to 85°, fingers left open, thumb left open, roll-off without the trunk peel, and a still pose.
 - Copy: headings 1–3 words, no sources or advice boilerplate in the app (LR-23), at most 3 mistakes, key facts short and only from verified claims.
 
 ## 9. Risks
@@ -107,7 +113,7 @@ Needs a decision before app wiring (the lab page in `docs/design/motion-lab/` do
 
 ## 10. Plan and time frame
 
-1. Pilot, Machine Chest Press: figure, machine, motion, muscles, grip close-up, 3 mistakes, key facts, five themes, on a lab page for the owner. About a day of agent work.
+1. Pilot, Machine Chest Press: figure, machine, motion, muscles, grip close-up, 3 mistakes, key facts, five themes, on a lab page for the owner. Built 2026-10-02; waiting for the owner's look.
 2. The other 7 of Split 1, reusing the figure: 4 new machine bodies (incline press, pec deck, lat pulldown station, low row station), the dual cable station and the hex dumbbell. About 2–3 days after the pilot is approved.
 3. App wiring behind the How-to sheet, once the supervisor approves the dependency.
 4. The rest of the library in batches by equipment. About 2–3 weeks, mostly agent time; Meshy spend tracked per batch in this file.

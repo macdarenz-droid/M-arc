@@ -42,54 +42,34 @@ export function handDeltaFor(hf, inHand, worldAxis, worldPalm) {
 const distToLine = (p, c, a) => { const w = p.clone().sub(c); return w.sub(a.clone().multiplyScalar(w.dot(a))).length(); };
 
 /**
- * Wrap a joint chain around the handle in the chain's flexion plane (2D): each segment turns toward the palm
- * side until it is tangent to the handle circle, or until its end touches it if it is too short to reach the
- * tangent point. joints: rest positions J0..Jk; side: unit vector toward the palm side of the first segment.
- * Returns joint angles (radians, positive = flexion) and the flexion axis.
+ * Close a finger around the handle the way a hand closes: every joint flexes together, in proportion to its
+ * limit; when a phalanx meets the handle surface (checked in 3D against the real cylinder), it and the joints
+ * before it stop while the joints after it keep closing. joints: rest positions J0..Jk; side: toward the palm.
+ * Returns joint angles (radians, positive = flexion), the flexion axis and the tip's gap to the surface.
  */
-export function wrapPlanar(joints, inHand, side, limits, pad) {
+export function wrapClose(joints, inHand, side, limits, pad, step = 0.004) {
   const e1 = joints[1].clone().sub(joints[0]).normalize();
   const e2 = side.clone().sub(e1.clone().multiplyScalar(side.dot(e1))).normalize();
   const axis = new V().crossVectors(e1, e2).normalize();
-  const to2 = (p) => { const w = p.clone().sub(joints[0]); return [w.dot(e1), w.dot(e2)]; };
-  // handle axis meets the flexion plane at c (the handle runs across the fingers, close to the plane normal)
-  const a = inHand.axis, c3 = inHand.centre;
-  const t = axis.dot(a) !== 0 ? joints[0].clone().sub(c3).dot(axis) / axis.dot(a) : 0;
-  const [cx, cy] = to2(c3.clone().add(a.clone().multiplyScalar(t)));
-  const R = inHand.radius + pad;
-  const lens = []; for (let k = 0; k < joints.length - 1; k++) lens.push(joints[k + 1].distanceTo(joints[k]));
-  // rest angles of each segment in the plane (fingers are not perfectly straight at rest)
-  const restAng = []; for (let k = 0; k < joints.length - 1; k++) { const [x0, y0] = to2(joints[k]), [x1, y1] = to2(joints[k + 1]); restAng.push(Math.atan2(y1 - y0, x1 - x0)); }
-  let px = 0, py = 0, acc = 0, contact = false;
-  const angles = [];
-  for (let k = 0; k < lens.length; k++) {
-    const base = restAng[k] + acc;                 // this segment's direction if its joint stays straight
-    const dx = cx - px, dy = cy - py, dist = Math.hypot(dx, dy);
-    let th = 0;
-    if (dist > R + 1e-4) {
-      const toC = Math.atan2(dy, dx), tl = Math.sqrt(dist * dist - R * R);
-      const spread = lens[k] >= tl
-        ? Math.asin(R / dist)                                                         // tangent to the circle
-        : Math.acos(Math.max(-1, Math.min(1, (lens[k] ** 2 + dist ** 2 - R * R) / (2 * lens[k] * dist)))); // end touches
-      // already touching: the segment, kept straight, passes within R of the centre
-      const ux = Math.cos(base), uy = Math.sin(base);
-      const along = Math.max(0, Math.min(lens[k], dx * ux + dy * uy));
-      const penetrates = Math.hypot(px + ux * along - cx, py + uy * along - cy) < R;
-      // turning toward the palm (positive), the first contact is the candidate with the smallest positive turn
-      const turns = [toC + spread, toC - spread].map(x => posMod(x - base)).filter(d => d <= Math.PI);
-      th = penetrates || !turns.length ? 0 : Math.min(...turns);
-      if (lens[k] >= tl) contact = true;
+  const R = inHand.radius + pad, c = inHand.centre, a = inHand.axis;
+  const n = joints.length - 1;
+  const hits = (J, k) => { for (let i = 1; i <= 6; i++) if (distToLine(J[k].clone().lerp(J[k + 1], i / 6), c, a) < R) return true; return false; };
+  const angles = new Array(n).fill(0), frozen = new Array(n).fill(false);
+  // a phalanx already in the handle at rest does not move (the probe reports the overlap)
+  for (let k = 0; k < n; k++) if (hits(joints, k)) for (let j = 0; j <= k; j++) frozen[j] = true;
+  let J = joints;
+  for (let t = step; t <= 1 + 1e-9 && frozen.some(f => !f); t += step) {
+    for (;;) {
+      const next = angles.map((th, k) => frozen[k] ? th : Math.min(limits[k], limits[k] * t));
+      const Jn = chainPositions(joints, next, axis);
+      let hit = -1;
+      for (let k = 0; k < n && hit < 0; k++) if (frozen.slice(0, k + 1).some(f => !f) && hits(Jn, k)) hit = k;
+      if (hit < 0) { next.forEach((th, k) => { angles[k] = th; }); J = Jn; break; }
+      for (let j = 0; j <= hit; j++) frozen[j] = true;
     }
-    th = Math.max(0, Math.min(limits[k], th));
-    angles.push(th);
-    acc += th;
-    const h = restAng[k] + acc;
-    px += lens[k] * Math.cos(h); py += lens[k] * Math.sin(h);
   }
-  const tipDist = Math.hypot(cx - px, cy - py) - R;
-  return { angles, axis, tipGap: tipDist, contact };
+  return { angles, axis, tipGap: distToLine(J[n], c, a) - R, contact: frozen.some(Boolean) };
 }
-const posMod = (x) => ((x % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
 export const FINGER_LIMITS = [THREE.MathUtils.degToRad(90), THREE.MathUtils.degToRad(105), THREE.MathUtils.degToRad(85)];
 export const THUMB_LIMITS = [THREE.MathUtils.degToRad(55), THREE.MathUtils.degToRad(60), THREE.MathUtils.degToRad(80)];
@@ -102,7 +82,7 @@ export function powerGrip(rig, side, inHand, hf, { thumbOpp = 45 } = {}) {
     const joints = m[name].jointsGl.map(j => new V(...j));
     // the little finger is the shortest and bends furthest at its two end joints (PIP ~110, DIP ~90 deg)
     const lim = name === 'Pinky' ? [FINGER_LIMITS[0], THREE.MathUtils.degToRad(110), THREE.MathUtils.degToRad(90)] : FINGER_LIMITS;
-    const res = wrapPlanar(joints, inHand, hf.n, lim, 0.0085);
+    const res = wrapClose(joints, inHand, hf.n, lim, 0.0085);
     out[name] = { angles: res.angles, axes: res.angles.map(() => res.axis.clone()), tipGap: res.tipGap };
   }
   // thumb (closed grip, thumb over the fingers): the metacarpal turns in front of the palm, then the two
