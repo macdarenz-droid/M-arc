@@ -1,14 +1,17 @@
 // MO: the chest press's moving parts, built in code on the Meshy body (assets/chest-press.glb).
-// Measured on the prepared body (tools/motion/machine_prep.py, metres, x right, y up, z = the user's front):
-// pivot hubs at x = -0.215 / +0.225, y = 1.58, z = 0.285; seat top y = 0.48; back pad reclined ~11 deg.
+// Measured on the prepared body (tools/motion/machine_prep.py, metres, x = the figure's left, y up, z = the user's
+// front; Meshy task 01a0fdef, top raised 0.22 m in prep): pivot hubs centred at y = 1.784, z = 0.112 (circle fit
+// on the hub faces); the levers hang from the hubs' outer edge (x = +-0.44), where Meshy's own arms were; seat
+// cushion top y = 0.575 as made, set 9 cm lower (SEAT_SET) like a user would; pad plane fitted at load.
 import * as THREE from 'three';
 
 const V = THREE.Vector3;
 
 export const BODY = {
-  hubs: { Left: new V(0.225, 1.581, 0.286), Right: new V(-0.215, 1.579, 0.284) },   // figure's left = +x
-  seatTop: 0.483,
-  // back pad front plane (fitted in setup(), see measurePad)
+  hubs: { Left: new V(0.44, 1.784, 0.112), Right: new V(-0.44, 1.784, 0.112) },
+  seatTop: 0.575 - 0.09,
+  seatSet: -0.09,                                                  // seat lowered 9 cm on its post
+  seatFoot: { x: 0.144, z0: 0.115, z1: 0.455 },                  // (x, z unchanged by the seat setting)                  // cushion footprint: contact counts only over it
 };
 
 /** Find the back pad's front plane from the 'pad' material meshes above the seat. */

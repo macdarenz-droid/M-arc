@@ -49,7 +49,7 @@ export class SeatedPress {
     this.backV = regionVertices(this.skinned, this.regionIds, ['mid_back', 'lower_back', 'rotator_cuff', 'lats']);
     this.lowBackV = regionVertices(this.skinned, this.regionIds, ['lower_back']);
     this.bladeV = regionVertices(this.skinned, this.regionIds, ['mid_back', 'rotator_cuff']);
-    this.seatV = regionVertices(this.skinned, this.regionIds, ['glutes', 'hamstrings']);
+    this.seatV = regionVertices(this.skinned, this.regionIds, ['glutes']);           // the buttocks carry the seat contact
     this.hf = { Left: handFrame(rig, 'Left'), Right: handFrame(rig, 'Right') };
     this.hinge = {};
     for (const s of ['Left', 'Right']) {
@@ -65,16 +65,13 @@ export class SeatedPress {
     const recline = this.pad.recline + deg(state.extraLeanDeg || 0);
     const Dh = axisAngle(X, -recline);
     rig.set('Hips', Dh);
-    // upper back peel (roll-off mistake): flex the upper spine forward
-    if (state.upperFlexDeg) {
-      const D2 = Dh.clone().multiply(axisAngle(X, deg(state.upperFlexDeg) * 0.5));
-      rig.set('Spine01', D2);
-      rig.set('Spine', D2.clone().multiply(axisAngle(X, deg(state.upperFlexDeg) * 0.5)));
-    }
+    // upper back peel (roll-off mistake): the trunk bends forward from the low back (Spine02), so the whole
+    // upper back, blades included, leaves the pad while the pelvis stays on the seat
+    if (state.upperFlexDeg) rig.set('Spine02', Dh.clone().multiply(axisAngle(X, deg(state.upperFlexDeg))));
     // shoulder blades: retracted and depressed (back and down), or protracted in the roll-off mistake
     for (const [s, sx] of [['Left', 1], ['Right', -1]]) {
       const parent = rig.D['Spine'] || Dh;
-      const r = deg(state.retractDeg ?? this.retractDeg), dpr = deg(state.depressDeg ?? this.depressDeg);
+      const r = deg((state.retractDeg ?? this.retractDeg) + ((state.retractExtra || {})[s] || 0)), dpr = deg(state.depressDeg ?? this.depressDeg);
       const D = parent.clone().multiply(axisAngle(Yv, r * sx)).multiply(axisAngle(Z, -dpr * sx));
       rig.set(s + 'Shoulder', D);
     }
@@ -85,10 +82,9 @@ export class SeatedPress {
     rig.fk();
     for (const [s, sx] of [['Left', 1], ['Right', -1]]) {
       const hip = rig.pos(s + 'UpLeg');
-      const lt = rig.restLen(s + 'UpLeg', s + 'Leg'), ls = rig.restLen(s + 'Leg', s + 'Foot');
       const ankleY = rig.rest[s + 'Foot'].pw.y;
-      const kneeZ = hip.z + Math.sqrt(Math.max(0.01, lt * lt - Math.pow(hip.y - (ankleY + ls), 2)));
-      const target = new V(sx * this.feet.x, ankleY, kneeZ + this.feet.zAhead);
+      // feet flat on the floor a fixed distance in front of the seat's front edge, shins about vertical
+      const target = new V(sx * this.feet.x, ankleY, this.seatFoot.z1 + this.feet.ahead);
       const pole = new V(sx * 0.15, 0.3, 1).normalize();
       rig.limb(s + 'UpLeg', s + 'Leg', s + 'Foot', target, pole, this.hinge[s + 'UpLeg'], new Q());
     }
@@ -102,15 +98,30 @@ export class SeatedPress {
     let back = Infinity, seat = Infinity, blades = Infinity;
     for (const i of this.bladeV) { skinned.getVertexPosition(i, v); v.applyMatrix4(skinned.matrixWorld); blades = Math.min(blades, (v.z - (this.pad.a * v.y + this.pad.b)) / k); }
     for (const i of (this.lowerOnly ? this.lowBackV : this.backV)) { skinned.getVertexPosition(i, v); v.applyMatrix4(skinned.matrixWorld); back = Math.min(back, (v.z - (this.pad.a * v.y + this.pad.b)) / k); }
-    for (const i of this.seatV) { skinned.getVertexPosition(i, v); v.applyMatrix4(skinned.matrixWorld); seat = Math.min(seat, v.y - (this.seatTop + (this.seatDropNow || 0))); }
+    for (const i of this.seatV) {
+      skinned.getVertexPosition(i, v); v.applyMatrix4(skinned.matrixWorld);
+      const f = this.seatFoot; if (f && (Math.abs(v.x) > f.x || v.z < f.z0 || v.z > f.z1)) continue;   // only over the cushion
+      seat = Math.min(seat, v.y - (this.seatTop + (this.seatDropNow || 0)));
+    }
     return { back, seat, blades };
   }
 
   /** Place the hips so the back meets the pad and the hips meet the seat (both pressed in slightly). */
   placeHips(state) {
     const { rig } = this;
+    // the contact solve skins a few thousand vertices; its answer only depends on the torso posture, so cache it
+    const key = [state.seatDrop || 0, state.keepHips ? 1 : 0, (state.retractDeg ?? this.retractDeg).toFixed(1), JSON.stringify(state.retractExtra || {}), (state.upperFlexDeg || 0).toFixed(1), (state.extraLeanDeg || 0).toFixed(1)].join('|');
+    this.cache = this.cache || new Map();
+    const hit = this.cache.get(key);
+    if (hit) { rig.hips.set(0, hit.y, hit.z); this.legs(); this.lastContacts = hit.c; return; }
+    this._placeHips(state);
+    this.cache.set(key, { y: rig.hips.y, z: rig.hips.z, c: this.lastContacts });
+  }
+
+  _placeHips(state) {
+    const { rig } = this;
     const n = this.pad.normal;
-    if (this.hipsZ == null) { this.hipsZ = this.pad.zAt(0.6) + 0.12; this.hipsY = this.seatTop + 0.09; }
+    if (this.hipsZ == null) { this.hipsZ = this.pad.zAt(this.seatTop + 0.1) + 0.11; this.hipsY = this.seatTop + 0.09; }
     this.seatDropNow = state.seatDrop || 0;
     this.lowerOnly = !!state.lowerBackContact;
     if (state.keepHips && this.hipsY != null) {                    // roll-off: the pelvis stays where it sat

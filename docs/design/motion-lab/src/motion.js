@@ -2,6 +2,7 @@
 // and renders it in the current theme. renderAt(t) is pure (same t, same frame), for review and tests.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { Rig, metaToGl } from './rig.js';
 import { SeatedPress } from './seated.js';
 import * as S from './scene.js';
@@ -11,7 +12,7 @@ const V = THREE.Vector3;
 const ease = (x) => { const t = Math.min(1, Math.max(0, x)); return t * t * t * (10 - 15 * t + 6 * t * t); };   // minimum jerk
 
 async function loadGlb(src) {
-  const loader = new GLTFLoader();
+  const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);   // assets are meshopt-packed (gltfpack -cc)
   if (src instanceof ArrayBuffer) return new Promise((res, rej) => loader.parse(src, '', res, rej));
   return loader.loadAsync(src);
 }
@@ -38,7 +39,8 @@ export async function createMotion({ canvas, assets, themes, exercise, width, he
   const machRoot = machG.scene; scene.add(machRoot);
   const meshes = []; machRoot.traverse(o => { if (o.isMesh) meshes.push(o); });
   const seatNode = machRoot.getObjectByName('seat');
-  const seatBaseY = seatNode ? seatNode.position.y : 0;
+  const seatBaseY = (seatNode ? seatNode.position.y : 0) + (CP.BODY.seatSet || 0);
+  if (seatNode) seatNode.position.y = seatBaseY;
   machRoot.updateMatrixWorld(true);
   const seatMeshes = new Set(); if (seatNode) seatNode.traverse(o => { if (o.isMesh) seatMeshes.add(o); });
   const pad = CP.measurePad(meshes.filter(m => !seatMeshes.has(m)));
@@ -46,7 +48,7 @@ export async function createMotion({ canvas, assets, themes, exercise, width, he
 
   const setup = exercise.setup;
   const press = new SeatedPress({
-    rig, skinned, regionIds: regions.ids, pad, seatTop: CP.BODY.seatTop, feet: setup.feet, flareDeg: setup.flareDeg,
+    rig, skinned, regionIds: regions.ids, pad, seatTop: CP.BODY.seatTop, seatFoot: CP.BODY.seatFoot, feet: setup.feet, flareDeg: setup.flareDeg,
     retractDeg: setup.retractDeg, depressDeg: setup.depressDeg, handle: setup.handle, wristExtDeg: setup.wristExtDeg,
   });
 
@@ -122,21 +124,36 @@ export async function createMotion({ canvas, assets, themes, exercise, width, he
   const lockMode = Object.values(exercise.modes).find(md => md.state && md.state(1).endElbowFlexDeg === 0);
   // lock-out: the straightest elbow reachable along the arc under the mistake's posture (sampled; the arc
   // turns back toward the body past its far point, so the elbow angle is not monotonic in u)
-  let uLock = uEnd;
-  if (lockMode) { let best = Infinity; for (let k = 0; k <= 24; k++) { const uu = uEnd * 0.85 + (0.3 + uEnd * 0.15) * k / 24; const e = elbowAt(uu, lockMode.state(1)); if (e < best) { best = e; uLock = uu; } } }
+  let uLock = uEnd, lockExtra = {};
+  if (lockMode) {
+    const st1 = lockMode.state(1);
+    const worst = (uu, st) => { const r = poseAt(uu, st).report; return Math.max(r.Left.elbowFlex, r.Right.elbowFlex); };
+    let best = Infinity;
+    // the first point both elbows lock, within a short push past the normal end
+    for (let k = 0; k <= 24; k++) { const uu = uEnd * (0.95 + 0.5 * k / 24); const e = worst(uu, st1); if (e < best - 0.5) { best = e; uLock = uu; } if (e <= 5) break; }
+    // the figure's arms differ by a few mm; a side still bent at that point reaches by sliding its blade further
+    const r0 = poseAt(uLock, st1).report;
+    for (const side of ['Left', 'Right']) {
+      if (r0[side].elbowFlex <= 5) continue;
+      for (let extra = -2; extra >= -16; extra -= 2) { const ex = { ...lockExtra, [side]: extra }; if (poseAt(uLock, { ...st1, retractExtra: ex }).report[side].elbowFlex <= 5) { lockExtra = ex; break; } }
+    }
+  }
 
   function solve(t) {
     const ph = phaseAt(t); const u = progress(ph);
     const mode = exercise.modes[state.mode] || exercise.modes.right;
     const st = mode.state ? mode.state(u) : {};
+    if (st.endElbowFlexDeg === 0 && Object.keys(lockExtra).length) st.retractExtra = Object.fromEntries(Object.entries(lockExtra).map(([k, v]) => [k, v * u]));
     const uu = u * (st.endElbowFlexDeg === 0 ? uLock : uEnd);
     const { report, handles } = poseAt(uu, st);
     report.contacts = press.lastContacts; report.phase = ph.key; report.u = u;
-    report.handleY = handles.Left.centre.y; report.nippleY = chest.nippleY;
+    report.handleY = handles.Left.centre.y; report.nippleY = chest.nippleY; report.handle = handles.Left.centre.toArray(); report.nippleNow = press.measureChest(nippleIds).nippleY;
+    report.shoulder = rig.pos('LeftArm').toArray();
     // callout anchors (figure space)
     const anchors = {
       handle: handles.Left.centre.clone(),
       elbow: rig.pos('LeftForeArm'),
+      wrist: rig.pos('LeftHand'),
       blades: rig.pos('Spine').add(new V(0.06, -0.02, -0.12)),
     };
     last = { report, anchors, phase: ph, u };
@@ -171,7 +188,7 @@ export async function createMotion({ canvas, assets, themes, exercise, width, he
     if (state.customCam) { camera.position.set(...state.customCam.pos); camera.lookAt(new V(...state.customCam.target)); camera.updateMatrixWorld(); return; }
     const v = exercise.views[state.view] || exercise.views.three;
     const target = v.target === 'handle' ? last.anchors.handle.clone().add(new V(-0.02, -0.01, 0)) : new V(...v.target);
-    const yaw = THREE.MathUtils.degToRad(v.yaw), pitch = THREE.MathUtils.degToRad(v.pitch);
+    const yaw = THREE.MathUtils.degToRad(v.yaw + (state.yawOffset || 0)), pitch = THREE.MathUtils.degToRad(v.pitch);
     camera.position.set(target.x + v.dist * Math.sin(yaw) * Math.cos(pitch), target.y + v.dist * Math.sin(pitch), target.z + v.dist * Math.cos(yaw) * Math.cos(pitch));
     camera.lookAt(target);
     camera.updateMatrixWorld();
@@ -193,7 +210,7 @@ export async function createMotion({ canvas, assets, themes, exercise, width, he
 
   applyTheme(themes[0]); applyTiers();
   return {
-    renderer, scene, camera, rig, press, paths, chest, cycle, uEnd, uLock,
+    renderer, scene, camera, rig, press, paths, chest, cycle, uEnd, uLock, lockExtra,
     setTheme: (id) => applyTheme(themes.find(t => t.id === id) || themes[0]),
     setMode: (m) => { state.mode = m; },
     setView: (v) => { state.view = v; },

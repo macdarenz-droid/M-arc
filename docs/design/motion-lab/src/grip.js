@@ -91,7 +91,7 @@ export function wrapPlanar(joints, inHand, side, limits, pad) {
 }
 const posMod = (x) => ((x % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
-export const FINGER_LIMITS = [THREE.MathUtils.degToRad(90), THREE.MathUtils.degToRad(105), THREE.MathUtils.degToRad(80)];
+export const FINGER_LIMITS = [THREE.MathUtils.degToRad(90), THREE.MathUtils.degToRad(105), THREE.MathUtils.degToRad(85)];
 export const THUMB_LIMITS = [THREE.MathUtils.degToRad(55), THREE.MathUtils.degToRad(60), THREE.MathUtils.degToRad(80)];
 
 /** Power grip on a cylinder: per finger, the joint angles and the axis of each joint in its rest frame. */
@@ -100,7 +100,9 @@ export function powerGrip(rig, side, inHand, hf, { thumbOpp = 45 } = {}) {
   const out = {};
   for (const name of ['Index', 'Middle', 'Ring', 'Pinky']) {
     const joints = m[name].jointsGl.map(j => new V(...j));
-    const res = wrapPlanar(joints, inHand, hf.n, FINGER_LIMITS, 0.0085);
+    // the little finger is the shortest and bends furthest at its two end joints (PIP ~110, DIP ~90 deg)
+    const lim = name === 'Pinky' ? [FINGER_LIMITS[0], THREE.MathUtils.degToRad(110), THREE.MathUtils.degToRad(90)] : FINGER_LIMITS;
+    const res = wrapPlanar(joints, inHand, hf.n, lim, 0.0085);
     out[name] = { angles: res.angles, axes: res.angles.map(() => res.axis.clone()), tipGap: res.tipGap };
   }
   // thumb (closed grip, thumb over the fingers): the metacarpal turns in front of the palm, then the two
@@ -109,29 +111,42 @@ export function powerGrip(rig, side, inHand, hf, { thumbOpp = 45 } = {}) {
   const tj = m.Thumb.jointsGl.map(j => new V(...j));
   let oppAxis = hf.d.clone();
   if (new V().crossVectors(oppAxis, tj[3].clone().sub(tj[0])).dot(hf.n) < 0) oppAxis.negate();
-  const opp = THREE.MathUtils.degToRad(thumbOpp);
-  const qo = axisAngle(oppAxis, opp);
-  const J1 = tj[1].clone().sub(tj[0]).applyQuaternion(qo).add(tj[0]);
   const ij = m.Index.jointsGl.map(j => new V(...j));
   const pos = chainPositions(ij, out.Index.angles, out.Index.axes[0]);
   const mid = pos[1].clone().add(pos[2]).multiplyScalar(0.5);
   const outward = (() => { const w = mid.clone().sub(inHand.centre); return w.sub(inHand.axis.clone().multiplyScalar(w.dot(inHand.axis))).normalize(); })();
-  const target = mid.clone().add(outward.clone().multiplyScalar(0.016));
+  const onFinger = mid.clone().add(outward.clone().multiplyScalar(0.016));
+  // where the thumb cannot reach the index finger (handle slanted far across the palm) it closes on the handle
+  // itself, on the side away from the palm
+  const across = hf.n.clone().negate();
+  const thumbBase = tj[1].clone();
+  const w0 = thumbBase.clone().sub(inHand.centre); const along = inHand.axis.clone().multiplyScalar(w0.dot(inHand.axis));
+  const onHandle = inHand.centre.clone().add(along).add(across.sub(inHand.axis.clone().multiplyScalar(across.dot(inHand.axis))).normalize().multiplyScalar(inHand.radius + 0.009));
   const l1 = tj[2].distanceTo(tj[1]), l2 = tj[3].distanceTo(tj[2]);
-  const toT = target.clone().sub(J1); let dd = toT.length();
-  dd = Math.min(dd, l1 + l2 - 1e-4); const u = toT.normalize();
-  const a = (l1 * l1 - l2 * l2 + dd * dd) / (2 * dd), h = Math.sqrt(Math.max(0, l1 * l1 - a * a));
-  const away = (() => { const w = J1.clone().sub(inHand.centre); w.sub(inHand.axis.clone().multiplyScalar(w.dot(inHand.axis))); return w.sub(u.clone().multiplyScalar(w.dot(u))).normalize(); })();
-  const J2 = J1.clone().add(u.clone().multiplyScalar(a)).add(away.clone().multiplyScalar(h));
-  const J3 = J1.clone().add(u.clone().multiplyScalar(dd));
   const r12 = tj[2].clone().sub(tj[1]).normalize(), r23 = tj[3].clone().sub(tj[2]).normalize();
   let rn = new V().crossVectors(r12, r23); if (rn.length() < 1e-3) rn = new V().crossVectors(r12, hf.n); rn.normalize();
-  const p12 = J2.clone().sub(J1).normalize(), p23 = J3.clone().sub(J2).normalize();
-  const pn = new V().crossVectors(p12, p23).normalize();
-  // keep the rest bend sense: if the rest bend normal and the posed one disagree after the opposition turn, flip
-  const rnTurned = rn.clone().applyQuaternion(qo);
-  const pn2 = pn.dot(rnTurned) < 0 ? pn.clone().negate() : pn;
-  out.Thumb = { deltas: [qo, frameMap(r12, rn, p12, pn2), frameMap(r23, rn, p23, pn2)], target, tipGap: J3.distanceTo(target) };
+  // the metacarpal turns until the thumb can reach its place (a handle slanted across the palm needs more turn)
+  let best = null;
+  for (const target of [onFinger, onHandle]) for (let deg = thumbOpp - 10; deg <= thumbOpp + 35; deg += 2.5) {
+    if (target === onHandle && best && best.gap < 0.006) break;     // the finger target is reachable: keep it
+    const opp = THREE.MathUtils.degToRad(deg);
+    const qo = axisAngle(oppAxis, opp);
+    const J1 = tj[1].clone().sub(tj[0]).applyQuaternion(qo).add(tj[0]);
+    const toT = target.clone().sub(J1); const full = toT.length();
+    const dd = Math.min(full, l1 + l2 - 1e-4); const u = toT.normalize();
+    const gap = full - dd;
+    if (best && gap >= best.gap - 1e-4) continue;
+    const a = (l1 * l1 - l2 * l2 + dd * dd) / (2 * dd), h = Math.sqrt(Math.max(0, l1 * l1 - a * a));
+    const away = (() => { const w = J1.clone().sub(inHand.centre); w.sub(inHand.axis.clone().multiplyScalar(w.dot(inHand.axis))); return w.sub(u.clone().multiplyScalar(w.dot(u))).normalize(); })();
+    const J2 = J1.clone().add(u.clone().multiplyScalar(a)).add(away.clone().multiplyScalar(h));
+    const J3 = J1.clone().add(u.clone().multiplyScalar(dd));
+    const p12 = J2.clone().sub(J1).normalize(), p23 = J3.clone().sub(J2).normalize();
+    const pn = new V().crossVectors(p12, p23).normalize();
+    const rnTurned = rn.clone().applyQuaternion(qo);
+    const pn2 = pn.dot(rnTurned) < 0 ? pn.clone().negate() : pn;
+    best = { gap, deltas: [qo, frameMap(r12, rn, p12, pn2), frameMap(r23, rn, p23, pn2)], opp: deg, target };
+  }
+  out.Thumb = { deltas: best.deltas, target: best.target, tipGap: best.gap, opp: best.opp };
   return out;
 }
 

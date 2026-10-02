@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Motion Lab</title>
+<script>
+  // three.js: the CDN copy for the published page; ?local=<path> points at a local copy for offline review renders
+  (function () {
+    var q = new URLSearchParams(location.search), local = q.get('local');
+    var base = local || 'https://cdn.jsdelivr.net/npm/three@0.186.1/';
+    var s = document.createElement('script'); s.type = 'importmap';
+    s.textContent = JSON.stringify({ imports: { three: base + 'build/three.module.js', 'three/addons/': base + 'examples/jsm/' } });
+    document.currentScript.after(s);
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#08090a; --surface-1:#0f1011; --surface-2:#141516; --surface-3:#1b1c1f; --border-subtle:rgba(255,255,255,.06); --border:rgba(255,255,255,.10);
+          --text:#f7f8f8; --text-2:#8a8f98; --text-3:#62666d; --accent:#5e6ad2; --on-accent:#fff; --mistake:#eb5757; --radius-lg:16px; --radius-pill:999px; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 440px; margin: 0 auto; padding: 16px 16px 40px; }
+  .themes { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+  .themes button { flex: none; }
+  .eyebrow { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); font-weight: 600; margin: 4px 0 2px; }
+  h1 { font-size: 22px; font-weight: 700; margin: 0 0 12px; letter-spacing: -.01em; }
+  h2 { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); font-weight: 600; margin: 22px 0 8px; }
+  .stage { position: relative; background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 1 / 1.08; touch-action: pan-y; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .stage .phase { position: absolute; left: 14px; top: 12px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); font-weight: 600; }
+  .stage .play { position: absolute; right: 10px; top: 8px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface-1); color: var(--text); display: grid; place-items: center; cursor: pointer; }
+  .stage svg.lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .tag { position: absolute; transform: translate(-50%, -50%); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text); background: color-mix(in srgb, var(--surface-1) 86%, transparent); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; transition: opacity .2s; }
+  html.still .tag { transition: none; }
+  .tag.bad { color: var(--mistake); border-color: color-mix(in srgb, var(--mistake) 55%, transparent); }
+  .tempo { display: flex; gap: 4px; margin-top: 10px; }
+  .tempo div { position: relative; height: 34px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--border-subtle); padding: 5px 7px; overflow: hidden; }
+  .tempo b { display: block; font-size: 11px; font-weight: 600; }
+  .tempo span { font-size: 10px; color: var(--text-2); }
+  .tempo i { position: absolute; left: 0; bottom: 0; height: 2px; background: var(--accent); width: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { min-height: 36px; padding: 0 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: transparent; color: var(--text); font: 500 13px 'Inter', sans-serif; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .chip.bad[aria-pressed="true"] { background: var(--mistake); border-color: var(--mistake); color: #fff; }
+  .tell { margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle); font-size: 14px; line-height: 1.45; }
+  .tell b { color: var(--mistake); font-weight: 600; display: block; margin-bottom: 2px; }
+  .legend { display: grid; gap: 8px; font-size: 14px; }
+  .legend div { display: flex; gap: 10px; align-items: baseline; }
+  .legend em { font-style: normal; min-width: 84px; color: var(--text-2); font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; display: inline-flex; gap: 8px; align-items: center; }
+  .legend em i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .grip { font-size: 17px; font-weight: 500; line-height: 1.4; margin: 0; }
+  ul.facts { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; line-height: 1.45; color: var(--text); }
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="themes chips" id="themes"></div>
+  <div class="eyebrow">Motion</div>
+  <h1 id="name">Machine Chest Press</h1>
+  <div class="stage" id="stage">
+    <canvas id="c"></canvas>
+    <svg class="lines" id="lines"></svg>
+    <div class="phase" id="phase"></div>
+    <button class="play" id="play" aria-label="Pause">❚❚</button>
+  </div>
+  <div class="tempo" id="tempo"></div>
+  <h2>View</h2>
+  <div class="chips" id="views"></div>
+  <h2>Mistakes</h2>
+  <div class="chips" id="modes"></div>
+  <div class="tell" id="tell" hidden></div>
+  <h2>Muscles</h2>
+  <div class="legend" id="legend"></div>
+  <h2>Grip</h2>
+  <p class="grip" id="grip"></p>
+  <h2>Key facts</h2>
+  <ul class="facts" id="facts"></ul>
+</main>
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>

@@ -19,9 +19,9 @@ export default {
     // wrist neutral, 0-10 deg extension target (research posture.start.wrist)
     wristExtDeg: 5,
     // handle in the heel/middle of the palm, thumb wrapped (approved grip line; research grip.horizontal)
-    handle: { at: 0.47, oblique: 8, radius: 0.016 },
+    handle: { at: 0.45, oblique: 8, radius: 0.016 },
     // feet flat, about hip width (research setup step 5; width unverified)
-    feet: { x: 0.14, zAhead: 0.03 },
+    feet: { x: 0.14, ahead: 0.16 },
     // handle spacing: start ~155% of shoulder width, converging (design choice inside Muyor 2023's 150-200%)
     startHalfWidth: 0.31, endHalfWidth: 0.22,
     // end: elbows extended but not locked (ACE, Technogym); degrees not published, 14 deg chosen and reviewed
@@ -29,10 +29,12 @@ export default {
   },
   // feel map tiers: Main chest; Helps upper chest, triceps, front shoulders (approved How-to feel section)
   tiers: { chest: 1, upper_chest: 2, triceps: 2, front_delts: 2 },
+  muscleNames: { chest: 'Chest', upper_chest: 'Upper chest', triceps: 'Triceps', front_delts: 'Front shoulders' },
+  // tag text from the approved plate; `at` = screen offset (px) per view, no entry = not shown in that view
   callouts: [
-    { key: 'handles', text: 'Handles mid-chest', anchor: 'handle', phases: ['rest', 'press'] },
-    { key: 'blades', text: 'Blades on pad', anchor: 'blades', phases: ['press', 'hold', 'return'] },
-    { key: 'elbow', text: 'Elbow soft, not locked', anchor: 'elbow', phases: ['hold'] },
+    { key: 'handles', text: 'Handles mid-chest', anchor: 'handle', phases: ['rest', 'press'], at: { three: [92, 46], side: [-78, 52], front: [70, 56] } },
+    { key: 'blades', text: 'Blades on pad', anchor: 'blades', phases: ['return', 'rest'], at: { three: [84, -70], side: [66, -64] } },
+    { key: 'elbow', text: 'Elbow soft, not locked', anchor: 'elbow', phases: ['hold'], at: { three: [40, 70], side: [40, 74], front: [60, 60] } },
   ],
   modes: {
     right: { label: 'Right' },
@@ -41,6 +43,7 @@ export default {
       tell: 'Seat too low: handles up near your shoulders.',
       fix: 'Raise the seat until the handles meet the middle of your chest.',
       tiers: { front_delts: 3 },
+      tag: { text: 'Handles at the shoulders', anchor: 'handle', phases: ['rest', 'press', 'hold', 'return'], at: { three: [70, -86], side: [-70, -70], front: [60, -80] } },
       state: () => ({ seatDrop: -0.085 }),
     },
     wrist: {
@@ -48,6 +51,7 @@ export default {
       view: 'grip',
       tell: 'Handle in your fingers, wrist bent back, thumb loose.',
       fix: 'Push through the heel of your palm, so your wrist stays straight.',
+      tag: { text: 'Wrist bent back', anchor: 'wrist', phases: ['press', 'hold', 'return', 'rest'], at: { grip: [-40, -110], three: [70, 50], side: [-60, 60] } },
       state: () => ({ wristExtDeg: 32, gripAt: 0.6, thumbLoose: true }),
     },
     rolloff: {
@@ -56,7 +60,8 @@ export default {
       fix: 'Finish the press while your shoulder blades still touch the pad.',
       // grows over the press: blades slide forward round the ribs, the upper back peels off, elbows snap
       // straight; the pelvis stays on the seat (research mistakes[roll-off-lockout])
-      state: (u) => ({ retractDeg: 8 - 30 * u, upperFlexDeg: 16 * u, keepHips: true, endElbowFlexDeg: 0 }),
+      tag: { text: 'Off the pad', anchor: 'blades', phases: ['hold'], at: { three: [84, -70], side: [70, -60] } },
+      state: (u) => ({ retractDeg: 8 - 16 * u, upperFlexDeg: 8 * u, keepHips: true, endElbowFlexDeg: 0 }),
     },
   },
   grip: 'Heel of your palm, thumb wrapped, wrist straight.',
@@ -69,9 +74,9 @@ export default {
     'The foot bar is for getting in and out: push it to bring the handles to you, and set the weight down on it after the last rep.',
   ],
   views: {
-    three: { yaw: 38, pitch: 10, dist: 3.3, target: [0.0, 0.98, 0.25] },
-    side: { yaw: 90, pitch: 4, dist: 3.1, target: [0.0, 0.95, 0.3] },
-    front: { yaw: 8, pitch: 6, dist: 3.2, target: [0.0, 1.0, 0.2] },
-    grip: { yaw: 58, pitch: 22, dist: 0.62, target: 'handle' },
+    three: { yaw: 36, pitch: 9, dist: 3.75, target: [0.0, 1.02, 0.25] },
+    side: { yaw: 90, pitch: 4, dist: 3.9, target: [0.0, 1.05, 0.25] },
+    front: { yaw: 6, pitch: 5, dist: 4.2, target: [0.0, 1.1, 0.2] },
+    grip: { yaw: -38, pitch: 32, dist: 0.5, target: 'handle' },
   },
 };

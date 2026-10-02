@@ -81,6 +81,20 @@ pad = np.zeros(len(fc), bool)
 for box in spec.get('pad_boxes', []): pad |= in_box(fc, box)
 cls = np.where(metal, 2, np.where(pad, 1, 0))                     # 0 frame, 1 pad, 2 metal
 
+# parts Meshy fused into the body that are built in code instead (the moving lever arms): delete them
+if spec.get('remove_boxes'):
+    gone = in_box(fc, spec['remove_boxes'])
+    bpy.ops.object.mode_set(mode='EDIT')
+    bm_r = bmesh.from_edit_mesh(me); bm_r.faces.ensure_lookup_table()
+    doomed = [bm_r.faces[i] for i in np.where(gone)[0]]
+    keep_cls = cls[~gone]
+    bmesh.ops.delete(bm_r, geom=doomed, context='FACES')
+    bmesh.update_edit_mesh(me)
+    bpy.ops.object.mode_set(mode='OBJECT')
+    cls = keep_cls
+    fc = fc[~gone]
+
+meta_removed = int(spec.get('remove_boxes') and gone.sum() or 0)
 me.materials.clear()
 for name in ('frame', 'pad', 'metal'):
     m = bpy.data.materials.new(name); me.materials.append(m)
@@ -93,7 +107,7 @@ s = spec['height_m'] / H
 cbox = in_box(V, spec['centre_x_box'])
 cx = V[cbox, 0].mean() if cbox.any() else 0.0
 floor = V[:, 1].min()
-meta = {'object_matrix_identity': bool(np.allclose(MW, np.eye(4))), 'scale': s, 'raw_centre_x': float(cx), 'raw_floor_y': float(floor)}
+meta = {'removed_faces': meta_removed, 'object_matrix_identity': bool(np.allclose(MW, np.eye(4))), 'scale': s, 'raw_centre_x': float(cx), 'raw_floor_y': float(floor)}
 def to_m(p): return [(p[0] - cx) * s, (p[1] - floor) * s, p[2] * s]
 
 # ---- split moving parts into their own objects ----
@@ -129,6 +143,16 @@ for o in objs:
     bpy.ops.object.modifier_apply(modifier='dec')
     # glTF (x, y, z) is Blender (x, -z, y): centre x, floor (glTF y) to 0, then metres
     o.data.transform(Matrix.Scale(s, 4) @ Matrix.Translation(Vector((-cx, 0.0, -floor))))
+# raise the top section (pivot hubs) by `by` metres: rigid above `to`, stretched between `from` and `to`, so the
+# pivot sits where real overhead-pivot presses have it relative to the seat (research refs: 0.72-0.78 m above
+# the handle start)
+rt = spec.get('raise_top')
+if rt:
+    for v in ob.data.vertices:
+        z = v.co.z
+        if z >= rt['to']: v.co.z = z + rt['by']
+        elif z >= rt['from']: v.co.z = rt['from'] + (z - rt['from']) * (rt['to'] - rt['from'] + rt['by']) / (rt['to'] - rt['from'])
+    meta['raised_top'] = rt
 for o in objs:                                                   # crisp box edges, smooth round parts
     bpy.ops.object.select_all(action='DESELECT'); o.select_set(True); bpy.context.view_layer.objects.active = o
     bpy.ops.object.shade_smooth_by_angle(angle=np.radians(35))
