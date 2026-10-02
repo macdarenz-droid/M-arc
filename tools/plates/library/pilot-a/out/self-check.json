@@ -1,8 +1,8 @@
 {
- "pageSha": "dd253f6d349c0e0991af558aea4b0fef3d2c44ccb50f620cc72266e2b87571d4",
- "pageBytes": 1736759,
- "sheetSha": "09e9f21c592e9167bd3b7f2e5f8a46839fa4fc92a2bd20b629866ff0781788db",
- "sheetBytes": 3691228,
+ "pageSha": "f4dc5ec3dd6ba2bbeda27da1648074a6834dda907b2c022e7fdd3456f19c1e09",
+ "pageBytes": 1643179,
+ "sheetSha": "571490e2f268b2a149c3bfb3414a2b72378c781dea7b48d4c0452c26ee36daea",
+ "sheetBytes": 3457399,
  "warnings": "",
  "plates": [
   {
@@ -128,19 +128,6 @@
     "coverage": 0.151,
     "longestLeader": 69.8,
     "boxed": 0
-   },
-   "issues": []
-  },
-  {
-   "id": "dumbbell_fly",
-   "tier": "A",
-   "ok": true,
-   "flags": [],
-   "measures": {
-    "pxPerM": 146.29,
-    "coverage": 0.17,
-    "longestLeader": 45.1,
-    "boxed": 2
    },
    "issues": []
   },
