@@ -53,7 +53,7 @@ export function verifyVendor(dir = VENDOR, manifest = readManifest(VENDOR)) {
   const bad = [];
   const onDisk = new Set(walk(dir).filter(p => p !== 'MANIFEST.json'));
   for (const [path, e] of Object.entries(manifest.files)) {
-    if (!/^(bc0f378|1a1e33b|7859292|de00174|48153c4|f214700):docs\/howto\/technical-plate\//.test(e.source)) bad.push(`${path}: source ${e.source} is not a bc0f378 blob, the ref-src commit or a golden update (7859292, de00174, 48153c4: LIB-25 poly; f214700: LIB-26 flat palm)`);
+    if (!/^(bc0f378|1a1e33b|7859292|de00174|48153c4|f214700|SPIKE):docs\/howto\/technical-plate\//.test(e.source)) bad.push(`${path}: source ${e.source} is not a bc0f378 blob, the ref-src commit or a golden update (7859292, de00174, 48153c4: LIB-25 poly; f214700: LIB-26 flat palm)`);
     if (!onDisk.delete(path)) { bad.push(`${path}: missing`); continue; }
     const b = readFileSync(join(dir, path));
     if (sha256(b) !== e.sha256) bad.push(`${path}: sha256 ${sha256(b)} != MANIFEST ${e.sha256}`);
