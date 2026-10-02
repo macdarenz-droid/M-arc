@@ -1,0 +1,138 @@
+{
+ "measuredOn": [
+  "lib_dumbbell_lateral_raise",
+  "lib_barbell_back_squat",
+  "lib_pull_up",
+  "lib_hanging_leg_raise",
+  "lib_lat_pulldown",
+  "lib_seated_cable_row",
+  "lib_leg_press",
+  "lib_machine_chest_press"
+ ],
+ "traceLenMin": 22.11166712365521,
+ "deviationMin": 11.393836392164081,
+ "altWordsMax": 51,
+ "F1": [
+  123.91,
+  146.29
+ ],
+ "F3": [
+  49.33358107266614,
+  82.26061513715476
+ ],
+ "F4": [
+  2,
+  6
+ ],
+ "H9lineTypes": [
+  "barbell",
+  "cable",
+  "cableColumn",
+  "line",
+  "stack"
+ ],
+ "perPlate": {
+  "lib_dumbbell_lateral_raise": {
+   "traceLen": 89.149,
+   "leaderMax": 78.367,
+   "altWords": 51
+  },
+  "lib_barbell_back_squat": {
+   "traceLen": 61.57,
+   "leaderMax": 60.566,
+   "altWords": 51,
+   "pxPerM": 146.29,
+   "boxed": 4,
+   "deviation": 20.82
+  },
+  "lib_pull_up": {
+   "traceLen": 47.372,
+   "leaderMax": 59.096,
+   "altWords": 29,
+   "pxPerM": 123.91,
+   "boxed": 4,
+   "deviation": 34.332
+  },
+  "lib_hanging_leg_raise": {
+   "traceLen": 172.138,
+   "leaderMax": 81.181,
+   "altWords": 29,
+   "pxPerM": 129.34,
+   "boxed": 5,
+   "deviation": 29.241
+  },
+  "lib_lat_pulldown": {
+   "traceLen": 64.934,
+   "leaderMax": 49.334,
+   "altWords": 36,
+   "pxPerM": 132.58,
+   "boxed": 6,
+   "deviation": 29.505
+  },
+  "lib_seated_cable_row": {
+   "traceLen": 54.359,
+   "leaderMax": 65.235,
+   "altWords": 37,
+   "pxPerM": 146.29,
+   "boxed": 5,
+   "deviation": 24.863
+  },
+  "lib_leg_press": {
+   "traceLen": 22.112,
+   "leaderMax": 82.261,
+   "altWords": 43,
+   "pxPerM": 146.29,
+   "boxed": 3,
+   "deviation": 11.394
+  },
+  "lib_machine_chest_press": {
+   "traceLen": 40.607,
+   "leaderMax": 74.343,
+   "altWords": 49,
+   "pxPerM": 146.29,
+   "boxed": 2,
+   "deviation": 20.626
+  }
+ },
+ "H5": {
+  "silent-black": {
+   "label": 4.392015409278805,
+   "ink": 3.169702388998305,
+   "trace": 3.890121930371352,
+   "mistake": 5.252791079055821
+  },
+  "paper": {
+   "label": 3.698759600674494,
+   "ink": 2.4237549181229725,
+   "trace": 3.3396331024008226,
+   "mistake": 4.684293178963838
+  },
+  "midnight": {
+   "label": 3.568968220335988,
+   "ink": 3.186836478526076,
+   "trace": 2.656166323590064,
+   "mistake": 4.1214574683968435
+  },
+  "ember": {
+   "label": 4.502193373816138,
+   "ink": 3.088658897476811,
+   "trace": 6.178174287401997,
+   "mistake": 5.533479050465668
+  },
+  "emerald": {
+   "label": 3.8425767012022356,
+   "ink": 3.441351228486304,
+   "trace": 8.53771423088369,
+   "mistake": 4.535629737011594
+  }
+ },
+ "F2": [
+  0.19113061526277303,
+  0.5494338800179128
+ ],
+ "H4zoom": {
+  "340": 0.9106,
+  "360": 0.9162,
+  "390": 1
+ }
+}
