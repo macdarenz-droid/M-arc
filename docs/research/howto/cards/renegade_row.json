@@ -6,10 +6,11 @@
   "tier": "A",
   "tierNote": "Safety tier A (content.md 5.1, explosive or high-skill list); census.json difficulty tier 2.",
   "archetype": {
-    "hand": "palm-flat",
+    "hand": null,
     "contact": [
       "floor-body"
-    ]
+    ],
+    "handNote": "Census lists palm-flat, which does not apply: the hands hold dumbbell handles in a neutral grip (c1), and shared/palm-flat.json leaves renegade_row out. Proposal: a closed handle-grip hand key (LR-10, R-W0-5)."
   },
   "parent": null,
   "inherit": [],
@@ -94,12 +95,13 @@
     },
     {
       "id": "c5",
-      "text": "Keep the elbow close to the body on the row, and lower the weight to the ground with control.",
+      "text": "Keep the elbow close to the body on the row, lower the weight to the ground with control, and repeat on the other side.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "sl-renegade"
+        "sl-renegade",
+        "ggr-rr"
       ],
       "quotes": [
         {
@@ -111,6 +113,11 @@
           "source": "sl-renegade",
           "text": "Lower the weight back to the ground with control.",
           "where": "How to, step 4"
+        },
+        {
+          "source": "ggr-rr",
+          "text": "Lower the dumbbell back to the ground and repeat on the other side.",
+          "where": "How to, step 5"
         }
       ]
     },
@@ -506,7 +513,7 @@
       "claim": "c8"
     },
     {
-      "mistake": "Torso twists toward the rowing side.",
+      "mistake": "Torso twists away from the rowing side.",
       "fix": "Widen your feet; if it still twists, go lighter.",
       "claim": "c7"
     },
@@ -559,10 +566,13 @@
         "redFlag": null
       },
       {
-        "where": "Wrist pain",
-        "means": "Dumbbells set down hard or on a corner can hurt the wrists.",
-        "fix": "Lower with control and go lighter.",
-        "claim": "c9",
+        "where": "Wrists",
+        "means": "Dumbbells set down hard or on a corner can hurt them.",
+        "fix": "Lower with control; go lighter.",
+        "claim": [
+          "c9",
+          "c8"
+        ],
         "redFlag": "wrist"
       }
     ]
@@ -626,7 +636,7 @@
     "wayOut": null
   },
   "gaps": [
-    "Tier-A way out (LR-3): how to end a set safely from the plank when form fails (setting both dumbbells down, dropping to the knees). No source found; no way-out line is shown. Add to LIB-WAYOUT (dumbbell set-down).",
+    "Tier-A way out (LR-3, R-W0-5): how to end a set safely from the plank when form fails (a plank-specific set-down: dumbbells down, knees to the floor). No source found; no way-out line is shown. Joins LIB-WAYOUT as a plank set-down.",
     "Thumb position on the dumbbell handle (C4 wrapped-thumb rule applies to overBody and hang only; not sourced here)."
   ],
   "unsourced": [
@@ -635,7 +645,9 @@
     "How far apart the dumbbells sit, beyond shoulder-width."
   ],
   "notes": [
-    "Tier-A checks: way out in gaps (LR-3); load wording says go lighter (c7, c8, c9); the wrist row links the wrist box; 3 risk lines. No shared risk line applies (no bar over the face, no heavy two-leg lift, no jump).",
-    "No wrist-extension claim (Nance 2017): on dumbbell handles the wrist is neutral (c9), not bent back as in a plank on the palms."
+    "Tier-A checks: way out in gaps (LR-3, R-W0-5, LIB-WAYOUT plank set-down); load wording says go lighter (c7, c8, c9); the wrist row is a fault row linking the wrist box; 3 risk lines. No shared risk line applies (no bar over the face, no heavy two-leg lift, no jump).",
+    "No wrist-extension claim (Nance 2017): on dumbbell handles the wrist is neutral (c9), not bent back as in a plank on the palms.",
+    "Hand-key proposal (R-W0-5, LR-10): a closed handle grip for a floor-supported dumbbell, for the census/GA hand list; palm-flat removed from archetype.hand.",
+    "Fix round 2026-10-02 (verify w0): A2 twist direction follows c7 (\"away\"); A3 wrist row is a fault row citing c9 and c8; A18 GGR \"repeat on the other side\" quoted in c5; A19 palm-flat no longer listed."
   ]
 }

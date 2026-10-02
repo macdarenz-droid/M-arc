@@ -239,6 +239,11 @@
         },
         {
           "source": "west-2014",
+          "text": "Peak power output decreased after STS (baseline, 4,445 ± 705 vs. 0 minute, 3,464 ± 819 W; p = 0.001) and remained below baseline until recovering at both the 3- and 24-hour time points.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "west-2014",
           "text": "In conclusion, sled dragging provides an effective metabolic stimulus, with NMF restored after ≤3 hours of recovery.",
           "where": "abstract, conclusion"
         },
@@ -501,7 +506,18 @@
       "calves"
     ],
     "remove": [],
-    "why": "Library: quads and glutes primary; mid_back and core secondary. Gymshark names the quads, glutes and calves for the backward drag, with the arms and back working to stabilise (c7), and a braced torso (c8). Calves are proposed as a secondary; the rest matches. A proposal for the LIB data card."
+    "why": "Library: quads and glutes primary; mid_back and core secondary. Gymshark names the quads, glutes and calves for the backward drag, with the arms and back working to stabilise (c7), and a braced torso (c8). Calves are proposed as a secondary; the rest matches. A proposal for the LIB data card.",
+    "proposal": {
+      "primary": [
+        "quads",
+        "glutes"
+      ],
+      "secondary": [
+        "mid_back",
+        "core",
+        "calves"
+      ]
+    }
   },
   "anchorSource": "gs-sled",
   "anchorNote": "Gymshark Central's sled pull guide read in full (hand-over-hand, hip drive and backward drag). No ACE or NASM sled-pull page was found (NASM URL 404, 2026-10-02); PubMed has sled-towing sprint studies but none on rope-pull technique. West 2014 (abstract) gives one load and recovery data point for backward drags. The Workout Mag page was read but not cited (thin, with no named author).",
@@ -520,6 +536,7 @@
   "notes": [
     "The lower-back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28); the sheet cannot ship before the back-pain box.",
     "Tier B checklist: no machine depth or lockout; lower back covered (c8, c11).",
-    "Writer fix 2026-10-02: feel row 2 means changed from \"They help drive you back\" to stay within c7; quote re-read in gs-sled."
+    "Writer fix 2026-10-02: feel row 2 means changed from \"They help drive you back\" to stay within c7; quote re-read in gs-sled.",
+    "Fix round 2026-10-02 (verify w0): A20 c12 gains West 2014's peak-power sentence; R-W0-4 calves secondary recorded in libraryDiff.proposal."
   ]
 }

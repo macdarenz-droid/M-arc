@@ -324,6 +324,44 @@
           "where": "Step 1: setup"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "After the last rep, return to the top, lock the safety, check that it holds the weight, then step out; learn how the safety works before you start.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boxlife-pend",
+        "yr-pend"
+      ],
+      "quotes": [
+        {
+          "source": "boxlife-pend",
+          "text": "Once you've hit your rep count, re-engage the safety and make sure it's on before attempting to get off the machine.",
+          "where": "4. Squat with good form"
+        },
+        {
+          "source": "boxlife-pend",
+          "text": "It's a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
+          "where": "3. Get into position"
+        },
+        {
+          "source": "yr-pend",
+          "text": "After your final rep, return to the top and make sure you are stable.",
+          "where": "8. Re-rack the machine"
+        },
+        {
+          "source": "yr-pend",
+          "text": "Before stepping out, check that the weight is fully supported.",
+          "where": "8. Re-rack the machine"
+        },
+        {
+          "source": "yr-pend",
+          "text": "Stand tall → engage the safety → confirm it is locked → step out.",
+          "where": "8. Re-rack the machine"
+        }
+      ]
     }
   ],
   "sources": [
@@ -351,6 +389,26 @@
       "id": "xcel-pend",
       "url": "https://xcelerategyms.com/pendulum-squats/",
       "title": "Pendulum Squats: Step-by-Step Form Guide (XcelerateGyms blog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "boxlife-pend",
+      "url": "https://boxlifemagazine.com/pendulum-squat/",
+      "title": "The Pendulum Squat: Bridging the Gap Between Strength and Safety (BoxLife Magazine, Julien Raby)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "yr-pend",
+      "url": "https://www.yanrefitness.com/how-to-use-a-pendulum-squat-machine/",
+      "title": "How To Use A Pendulum Squat Machine (YR Fitness, machine maker's guide)",
       "kind": "coach",
       "year": null,
       "pmid": null,
@@ -452,10 +510,11 @@
       ]
     },
     {
-      "step": "Push back up through your whole foot.",
+      "step": "Push up through your whole foot. After the last rep, lock the safety and check it holds before you step out.",
       "claim": [
         "c5",
-        "c7"
+        "c7",
+        "c17"
       ]
     }
   ],
@@ -584,7 +643,17 @@
       "adductors"
     ],
     "remove": [],
-    "why": "Library: quads primary; glutes and hamstrings secondary. StrengthLog lists quads, glutes and adductors; FORM's trainers put the quads first and list glutes, hamstrings, adductors and calves as secondary (c12). Adductors are proposed as a secondary. A proposal for the LIB data card."
+    "why": "Library: quads primary; glutes and hamstrings secondary. StrengthLog lists quads, glutes and adductors; FORM's trainers put the quads first and list glutes, hamstrings, adductors and calves as secondary (c12). Adductors are proposed as a secondary. A proposal for the LIB data card.",
+    "proposal": {
+      "primary": [
+        "quads"
+      ],
+      "secondary": [
+        "glutes",
+        "hamstrings",
+        "adductors"
+      ]
+    }
   },
   "anchorSource": "sl-pendulum",
   "anchorNote": "StrengthLog's pendulum squat page (short) and FORM gym's trainer page read in full; the XcelerateGyms blog was read in full and is used only for risk consequences and the grip line (WEAK). No ACE or NASM page exists (NASM URL 404, 2026-10-02); PubMed has no pendulum-squat paper (9 hits, none on the machine). T Nation and MuscleWiki returned 403.",
@@ -596,7 +665,6 @@
   },
   "gaps": [],
   "unsourced": [
-    "Re-engaging the safety latch at the end of the set (machine depth catches, tier B).",
     "Lockout at the top (whether to straighten the knees fully).",
     "Breathing.",
     "Foot height on the platform for quad vs glute emphasis (search snippets only)."
@@ -604,6 +672,7 @@
   "notes": [
     "Stance width conflict: StrengthLog says about hip-width (c2), FORM about shoulder-width with toes out slightly (c2). The plate draws between the two; the setup line gives the range.",
     "The knee row links the shared knee box (redFlag 'knee').",
-    "c15 and c16 rest on a gym blog written in the first person; they are tagged WEAK."
+    "c15 and c16 rest on a gym blog written in the first person; they are tagged WEAK.",
+    "Fix round 2026-10-02 (verify w0): A1/R-W0-3: the re-latch and exit was moved out of unsourced and is now sourced (c17: BoxLife, named author; YR Fitness, a machine maker's guide; both read in full), so it is no longer a gap. Setup step 5 adds the lock-then-step-out line. The True Fitness PLS1400 manual PDF returned 404 and its ManualsLib copy covers assembly only; manualzz returned 403."
   ]
 }

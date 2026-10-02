@@ -158,10 +158,10 @@
     {
       "claim": "c14",
       "source": "ace-br-total",
-      "text": "When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
+      "text": "Handshake (overhand) grip Microphone (underhand) grip When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
       "status": "verbatim",
-      "closest": "When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
-      "note": ""
+      "closest": "Handshake (overhand) grip Microphone (underhand) grip When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
     }
   ]
 }

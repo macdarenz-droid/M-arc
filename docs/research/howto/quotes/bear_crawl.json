@@ -108,6 +108,30 @@
       "note": ""
     },
     {
+      "claim": "c9",
+      "source": "bb-bc",
+      "text": "Although the core plays a large role in the bear crawl, it's not the only muscle that is activated by this exercise.",
+      "status": "verbatim",
+      "closest": "Although the core plays a large role in the bear crawl, it's not the only muscle that is activated by this exercise.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c9",
+      "source": "bb-bc",
+      "text": "The rectus abdominis are the muscles that make up what is commonly known as the “six-pack.”",
+      "status": "verbatim",
+      "closest": "The rectus abdominis are the muscles that make up what is commonly known as the “six-pack.”",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c9",
+      "source": "bb-bc",
+      "text": "Located on either side of the abdominal walls are the obliques.",
+      "status": "verbatim",
+      "closest": "Located on either side of the abdominal walls are the obliques.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
       "claim": "c10",
       "source": "bb-bc",
       "text": "It can be beneficial to crawl for 15 to 30 seconds at a time until you can build up to more.",

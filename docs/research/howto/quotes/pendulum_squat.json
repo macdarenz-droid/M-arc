@@ -186,6 +186,46 @@
       "status": "verbatim",
       "closest": "Grip handles firmly.",
       "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "boxlife-pend",
+      "text": "Once you've hit your rep count, re-engage the safety and make sure it's on before attempting to get off the machine.",
+      "status": "verbatim",
+      "closest": "Once you've hit your rep count, re-engage the safety and make sure it's on before attempting to get off the machine.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c17",
+      "source": "boxlife-pend",
+      "text": "It's a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
+      "status": "verbatim",
+      "closest": "It's a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c17",
+      "source": "yr-pend",
+      "text": "After your final rep, return to the top and make sure you are stable.",
+      "status": "verbatim",
+      "closest": "After your final rep, return to the top and make sure you are stable.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c17",
+      "source": "yr-pend",
+      "text": "Before stepping out, check that the weight is fully supported.",
+      "status": "verbatim",
+      "closest": "Before stepping out, check that the weight is fully supported.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c17",
+      "source": "yr-pend",
+      "text": "Stand tall → engage the safety → confirm it is locked → step out.",
+      "status": "verbatim",
+      "closest": "Stand tall → engage the safety → confirm it is locked → step out.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
     }
   ]
 }

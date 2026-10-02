@@ -436,13 +436,13 @@
       {
         "muscleId": "quads",
         "claim": "c7"
-      }
-    ],
-    "secondary": [
+      },
       {
         "muscleId": "glutes",
         "claim": "c7"
-      },
+      }
+    ],
+    "secondary": [
       {
         "muscleId": "side_delts",
         "claim": "c13"
@@ -508,7 +508,16 @@
       "glutes"
     ],
     "remove": [],
-    "why": "Library: quads primary; side_delts secondary. NASM lists quads and glutes as primary (c7); glutes are proposed as a secondary. For the shoulders, WebMD names the front and back deltoids and NASM 'shoulder stabilizers' (c7, c13); no source names the side delts, but the arms rise out to the sides overhead, which is the side delts' action. side_delts is kept as a MECH/WEAK reading (c13). A proposal for the LIB data card."
+    "proposal": {
+      "primary": [
+        "quads",
+        "glutes"
+      ],
+      "secondary": [
+        "side_delts"
+      ]
+    },
+    "why": "Library: quads primary; side_delts secondary. NASM lists quads and glutes as the primary muscles (c7), so glutes are proposed as primary (ruling R-W0-4). For the shoulders, WebMD names the front and back deltoids and NASM \"shoulder stabilizers\" (c7, c13); no source names the side delts, but the arms rise overhead, which is the side delts' action, so side_delts is kept as a MECH/WEAK reading (c13). A proposal for the LIB data card."
   },
   "anchorSource": "nasm-jumping-jacks",
   "anchorNote": "NASM Exercise Library jumping jacks page read in full; Experience Life (Life Time) and WebMD (DPT-reviewed) read in full. No PubMed technique study found.",
@@ -527,6 +536,7 @@
   ],
   "notes": [
     "Open-position width: NASM says hip-width (c2), Experience Life a little wider than shoulder-width (c4). The plate draws about shoulder-width, between the two; the text says 'apart' and does not give a width.",
-    "The 'Shoulders' zoom label row uses c13 (WEAK) because the deltoid naming is general."
+    "The 'Shoulders' zoom label row uses c13 (WEAK) because the deltoid naming is general.",
+    "Fix round 2026-10-02 (verify w0): A14 glutes proposed as primary, as NASM lists them."
   ]
 }

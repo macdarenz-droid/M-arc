@@ -68,6 +68,14 @@
       "note": ""
     },
     {
+      "claim": "c5",
+      "source": "ggr-rr",
+      "text": "Lower the dumbbell back to the ground and repeat on the other side.",
+      "status": "verbatim",
+      "closest": "Lower the dumbbell back to the ground and repeat on the other side.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
       "claim": "c6",
       "source": "ggr-rr",
       "text": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it's more difficult.",

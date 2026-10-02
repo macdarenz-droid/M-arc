@@ -278,7 +278,7 @@
       "quotes": [
         {
           "source": "ace-br-total",
-          "text": "When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
+          "text": "Handshake (overhand) grip Microphone (underhand) grip When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
           "where": "grip types"
         }
       ]
@@ -474,6 +474,10 @@
         "claim": "c10"
       },
       {
+        "muscleId": "core",
+        "claim": "c10"
+      },
+      {
         "muscleId": "forearms",
         "claim": "c11"
       }
@@ -514,10 +518,6 @@
     {
       "risk": "Shrugged or hunched shoulders strain the neck.",
       "claim": "c6"
-    },
-    {
-      "risk": "Holding your breath while swinging.",
-      "claim": "c7"
     }
   ],
   "redFlags": [],
@@ -543,12 +543,24 @@
   "libraryDiff": {
     "add": [
       "front_delts",
-      "obliques"
+      "obliques",
+      "lower_back"
     ],
     "remove": [
       "side_delts"
     ],
-    "why": "Library: side_delts primary; core and forearms secondary. No source measured the side delts; the waves are shoulder flexion and extension in front of the body (c5), and EMG shows the front delts, obliques and lower back at 51-73 % of maximum (c10) and the forearm grip above 75 % (c11). Proposed: front_delts primary in place of side_delts; obliques secondary (c10); keep core and forearms. A proposal for the LIB data card, not applied here."
+    "proposal": {
+      "primary": [
+        "front_delts"
+      ],
+      "secondary": [
+        "core",
+        "forearms",
+        "obliques",
+        "lower_back"
+      ]
+    },
+    "why": "Library: side_delts primary; core and forearms secondary. No source measured the side delts; the waves are shoulder flexion and extension in front of the body (c5). EMG: front delts, obliques and lower back (lumbar erector spinae) at 51-73 % of maximum (c10); forearm grip above 75 % (c11). Proposed: front_delts primary in place of side_delts; obliques and lower_back secondary (c10); core kept, because the obliques and lower-back muscles measured are core muscles (c10); forearms kept (c11). Ruling R-W0-4. A proposal for the LIB data card."
   },
   "anchorSource": "hl-br",
   "anchorNote": "Healthline's battle rope how-to (medically reviewed by a CSCS) read in full; ACE's research summary and the Calatayud 2015 abstract give the study set-up and muscle data. ACE's 2017 'Beast Battle Ropes' article returned 403.",
@@ -568,6 +580,7 @@
   "notes": [
     "Two-arm waves, slams and circles are other battle-rope moves; the plate draws alternating waves, the most common beginner move in the anchor and the one with muscle data (c10, c12).",
     "feel.primary follows the libraryDiff proposal (front_delts) because no source supports side_delts; the supervisor decides at the LIB data card.",
-    "Writer fix 2026-10-02: feel row 2 means changed from \"Your core resists the alternating pull\" to follow c10 (obliques higher in unilateral waves); quote re-read in calatayud-2015."
+    "Writer fix 2026-10-02: feel row 2 means changed from \"Your core resists the alternating pull\" to follow c10 (obliques higher in unilateral waves); quote re-read in calatayud-2015.",
+    "Fix round 2026-10-02 (verify w0): A11 breath-holding dropped from risks (kept as a handling mistake); A12 lower_back added to libraryDiff, core kept in feel with its reason; A13 c14 quote extended to the grip names."
   ]
 }

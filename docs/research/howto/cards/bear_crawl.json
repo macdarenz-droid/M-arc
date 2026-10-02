@@ -157,7 +157,7 @@
     },
     {
       "id": "c9",
-      "text": "The core stabilises the whole body, the shoulders hold up the upper body, and the quads keep the knees lifted.",
+      "text": "The core stabilises the whole body (the rectus abdominis and the obliques are named), the shoulders hold up the upper body, and the quads keep the knees lifted.",
       "tags": [
         "CONSENSUS"
       ],
@@ -185,6 +185,21 @@
           "source": "ace-bc-shape",
           "text": "During the bear crawl exercise, your shoulders will work overtime to keep your upper body stable as you step forward and backward.",
           "where": "Improves Shoulder Stability"
+        },
+        {
+          "source": "bb-bc",
+          "text": "Although the core plays a large role in the bear crawl, it's not the only muscle that is activated by this exercise.",
+          "where": "Muscles Worked by the Bear Crawl"
+        },
+        {
+          "source": "bb-bc",
+          "text": "The rectus abdominis are the muscles that make up what is commonly known as the “six-pack.”",
+          "where": "Muscles Worked: rectus abdominis"
+        },
+        {
+          "source": "bb-bc",
+          "text": "Located on either side of the abdominal walls are the obliques.",
+          "where": "Muscles Worked: obliques"
         }
       ]
     },
@@ -430,7 +445,11 @@
   "feel": {
     "primary": [
       {
-        "muscleId": "core",
+        "muscleId": "abs",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "obliques",
         "claim": "c9"
       }
     ],
@@ -470,10 +489,10 @@
       {
         "where": "Pain on the back of the wrist",
         "means": "In people with this pain under load, scans often find a wrist problem.",
-        "fix": "Stop the exercise.",
+        "fix": "",
         "claim": "c11",
         "redFlag": "wrist",
-        "fixNote": "As in mountain_climbers: the shared wrist box carries what to do next and its timing (LR-27, D-LR23-9). No source gives a time for this row."
+        "fixNote": "No sourced stop line (LR-6); the shared wrist box and the owner line carry what to do."
       }
     ]
   },
@@ -510,9 +529,23 @@
     }
   ],
   "libraryDiff": {
-    "add": [],
+    "add": [
+      "abs",
+      "obliques"
+    ],
     "remove": [],
-    "why": "Library: core primary; front_delts and quads secondary. BarBend names the core (rectus abdominis, obliques), the deltoids and the quads (c9); SHAPE/ACE stresses the shoulders (c9). This matches; no change."
+    "proposal": {
+      "primary": [
+        "core",
+        "abs",
+        "obliques"
+      ],
+      "secondary": [
+        "front_delts",
+        "quads"
+      ]
+    },
+    "why": "Library: core primary (text-only, nothing to draw); front_delts and quads secondary. BarBend names the rectus abdominis and the obliques as the core muscles worked (c9), so abs and obliques are proposed as the drawn primary regions alongside core (content.md 8; ruling R-W0-4). No golden-B update is needed. A proposal for the LIB data card."
   },
   "anchorSource": "ace-bearcrawl",
   "anchorNote": "ACE Exercise Library bear crawl page read in full (short); the SHAPE how-to reprinted by ACE and BarBend's guide were read in full for setup detail and faults. PubMed has no technique or EMG study of the bear crawl (search 2026-10-02: 3 hits for \"bear crawl\", none on technique).",
@@ -531,6 +564,7 @@
   ],
   "notes": [
     "Two hand-placement wordings: ACE says hands shoulder-width apart from a push-up position (c1); SHAPE says hands stacked under the shoulders from table-top (c3). They agree; the plate draws c3.",
-    "Wrist zoom shows the right position only (LR-25): no source names a wrong hand position."
+    "Wrist zoom shows the right position only (LR-25): no source names a wrong hand position.",
+    "Fix round 2026-10-02 (verify w0): A4 feel row 4 fix emptied (no sourced stop line); A5 abs and obliques added as drawn primary regions with BarBend quotes in c9."
   ]
 }

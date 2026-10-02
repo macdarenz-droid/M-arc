@@ -307,7 +307,7 @@
       },
       {
         "label": "Feet low",
-        "what": "Both feet a few inches off the floor, knees straight.",
+        "what": "Both feet several inches off the floor, knees straight.",
         "claim": [
           "c2",
           "c5"
@@ -371,7 +371,7 @@
       "claim": "c4"
     },
     {
-      "step": "Lift both feet a few inches, knees straight.",
+      "step": "Lift both feet several inches, knees straight.",
       "claim": [
         "c2",
         "c5"
@@ -392,7 +392,7 @@
       "claim": "c5"
     },
     {
-      "point": "Feet a few inches up.",
+      "point": "Feet several inches up.",
       "claim": "c2"
     }
   ],
@@ -412,23 +412,21 @@
         "c9",
         "c8"
       ]
-    },
-    {
-      "mistake": "Holding your breath.",
-      "fix": "Breathe steadily.",
-      "claim": "c13"
     }
   ],
   "feel": {
     "primary": [
       {
-        "muscleId": "hip_flexors",
-        "claim": "c10"
+        "muscleId": "abs",
+        "claim": [
+          "c10",
+          "c6"
+        ]
       }
     ],
     "secondary": [
       {
-        "muscleId": "abs",
+        "muscleId": "hip_flexors",
         "claim": "c10"
       }
     ],
@@ -458,7 +456,7 @@
       {
         "where": "Pain in the lower back, during, after or the next day",
         "means": "This exercise should not cause or raise pain.",
-        "fix": "Stop the set. Don't train through the pain.",
+        "fix": "Don't train through the pain.",
         "claim": "c11",
         "redFlag": "back"
       }
@@ -470,7 +468,7 @@
       "claim": "c7"
     },
     {
-      "risk": "Big, uncontrolled kicks make the back more likely to arch.",
+      "risk": "Uncontrolled kicks make the back more likely to arch.",
       "claim": "c8"
     }
   ],
@@ -491,7 +489,7 @@
     {
       "key": "kick-size",
       "kind": "posture",
-      "right": "Short kicks, feet a few inches up.",
+      "right": "Short kicks, feet several inches up.",
       "wrong": "Large, sweeping kicks.",
       "claim": [
         "c3",
@@ -502,7 +500,15 @@
   "libraryDiff": {
     "add": [],
     "remove": [],
-    "why": "Library: hip_flexors primary; abs secondary. Hawkes Physiotherapy names the hip flexors and core (c10); Hevy puts the rectus abdominis first with the hip flexors assisting (c10). The sources split on which is primary; no EMG was found, so no change is proposed."
+    "proposal": {
+      "primary": [
+        "abs"
+      ],
+      "secondary": [
+        "hip_flexors"
+      ]
+    },
+    "why": "Library: hip_flexors primary; abs secondary. Hevy ranks the rectus abdominis as the primary muscle, with the hip flexors assisting (c10), and says the abs do most of the work of holding the legs up (c6). Hawkes names the hip flexors and core without ranking them (c10). Proposed: abs primary, hip_flexors secondary (ruling R-W0-4). A proposal for the LIB data card."
   },
   "anchorSource": "hevy-fk",
   "anchorNote": "Hevy's flutter kicks guide (certified trainer) and Hawkes Physiotherapy's exercise page read in full. No ACE, NASM or PubMed technique source found for the supine flutter kick (PubMed 'flutter kick' hits are swimming studies, 2026-10-02).",
@@ -520,6 +526,7 @@
   ],
   "notes": [
     "The back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28); its sheet cannot ship before the back-pain box.",
-    "The row timing (during, after, the next day; soreness 48-72 hours) follows owner D-LR23-9 and is sourced to c11."
+    "The row timing (during, after, the next day; soreness 48-72 hours) follows owner D-LR23-9 and is sourced to c11.",
+    "Fix round 2026-10-02 (verify w0): A6 abs primary and hip_flexors secondary proposed, why corrected; A8 back-row fix is now \"Don't train through the pain.\"; A9 \"a few\" became \"several\"; A10 breath-holding mistake dropped (unsourced as a mistake) and risk 2 no longer says \"big\"."
   ]
 }

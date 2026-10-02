@@ -139,7 +139,7 @@
     },
     {
       "id": "c7",
-      "text": "Legs rotating outward often comes with tired hip flexors; take a break.",
+      "text": "Some outward leg angle is OK; if rotation becomes very noticeable or grows over the set, often as the hip flexors tire, take a break.",
       "tags": [
         "CONSENSUS"
       ],
@@ -147,6 +147,11 @@
         "bb-hk"
       ],
       "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That's OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
+          "where": "Common mistakes: rotation"
+        },
         {
           "source": "bb-hk",
           "text": "A lot of rotation occurs once your hip flexors start to fatigue. Take a break, shake it out, and come back fresh.",
@@ -303,7 +308,7 @@
       },
       {
         "label": "Thigh to hip height",
-        "what": "Each knee comes up to about waist height, opposite arm pumping.",
+        "what": "Knee up to hip height or a little above, opposite arm pumping.",
         "claim": [
           "c2",
           "c3"
@@ -366,7 +371,7 @@
       ]
     },
     {
-      "step": "Drive one knee up to about waist height as the opposite arm pumps up.",
+      "step": "Drive one knee up to hip height or a little above as the opposite arm pumps up.",
       "claim": [
         "c2",
         "c3"
@@ -410,7 +415,7 @@
       "claim": "c6"
     },
     {
-      "mistake": "Legs start turning out.",
+      "mistake": "Legs turn out more and more as you tire.",
       "fix": "Take a break and come back fresh.",
       "claim": "c7"
     }
@@ -463,7 +468,7 @@
       "claim": "c5"
     },
     {
-      "risk": "Sore knees or ankles: wear supportive shoes and use a supportive floor or grass.",
+      "risk": "Knee or ankle issues? Wear supportive shoes; use a gym floor or grass.",
       "claim": "c10"
     }
   ],
@@ -509,6 +514,7 @@
   ],
   "notes": [
     "Healthline puts the knee 'slightly above waist level' (c2); BarBend says 'at least 90 degrees of flexion' (c3). The plate draws the thigh about horizontal, which meets both.",
-    "Writer fix 2026-10-02: risk 2 \"forgiving floor\" changed to \"supportive floor\" to match c10; quote re-read in hl-hk."
+    "Writer fix 2026-10-02: risk 2 \"forgiving floor\" changed to \"supportive floor\" to match c10; quote re-read in hl-hk.",
+    "Fix round 2026-10-02 (verify w0): A15 c7 gains the \"some rotation is OK\" sentence and the mistake says the turn-out grows; A16 risk reworded to people with knee or ankle issues; A17 knee height is \"hip height or a little above\"."
   ]
 }

@@ -86,6 +86,14 @@
     {
       "claim": "c7",
       "source": "bb-hk",
+      "text": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That's OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
+      "status": "verbatim",
+      "closest": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That's OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c7",
+      "source": "bb-hk",
       "text": "A lot of rotation occurs once your hip flexors start to fatigue. Take a break, shake it out, and come back fresh.",
       "status": "verbatim",
       "closest": "A lot of rotation occurs once your hip flexors start to fatigue. Take a break, shake it out, and come back fresh.",

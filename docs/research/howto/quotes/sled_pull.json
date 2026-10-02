@@ -134,6 +134,14 @@
     {
       "claim": "c12",
       "source": "west-2014",
+      "text": "Peak power output decreased after STS (baseline, 4,445 ± 705 vs. 0 minute, 3,464 ± 819 W; p = 0.001) and remained below baseline until recovering at both the 3- and 24-hour time points.",
+      "status": "verbatim",
+      "closest": "Peak power output decreased after STS (baseline, 4,445 ± 705 vs. 0 minute, 3,464 ± 819 W; p = 0.001) and remained below baseline until recovering at both the 3- and 24-hour time points.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c12",
+      "source": "west-2014",
       "text": "In conclusion, sled dragging provides an effective metabolic stimulus, with NMF restored after ≤3 hours of recovery.",
       "status": "verbatim",
       "closest": "In conclusion, sled dragging provides an effective metabolic stimulus, with NMF restored after ≤3 hours of recovery.",

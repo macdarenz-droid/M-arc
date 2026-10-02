@@ -218,6 +218,70 @@
       "status": "verbatim",
       "closest": "Stand tall and keep your standing leg steady",
       "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "outside-hf",
+      "text": "Secure a resistance band with a long loop around a low anchor point. Place the other end of the band around the top of your shoe.",
+      "status": "verbatim",
+      "closest": "Secure a resistance band with a long loop around a low anchor point. Place the other end of the band around the top of your shoe.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c13",
+      "source": "outside-hf",
+      "text": "Stand upright with good posture, facing away from the anchor point of the band. Make sure to stand far enough away to create tension in the band.",
+      "status": "verbatim",
+      "closest": "Stand upright with good posture, facing away from the anchor point of the band. Make sure to stand far enough away to create tension in the band.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c14",
+      "source": "outside-hf",
+      "text": "Keeping your core and glutes tight, drive your knee up to your chest, squeezing your hip flexors.",
+      "status": "verbatim",
+      "closest": "Keeping your core and glutes tight, drive your knee up to your chest, squeezing your hip flexors.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c14",
+      "source": "outside-hf",
+      "text": "You can also opt to hold onto something, such as a wall, for support.",
+      "status": "verbatim",
+      "closest": "You can also opt to hold onto something, such as a wall, for support.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c15",
+      "source": "outside-hf",
+      "text": "Hold and squeeze at the top position for 2-3 seconds. Slowly lower your leg back down, resisting the pull of the band by contracting your hip flexors.",
+      "status": "verbatim",
+      "closest": "Hold and squeeze at the top position for 2-3 seconds. Slowly lower your leg back down, resisting the pull of the band by contracting your hip flexors.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c16",
+      "source": "outside-hf",
+      "text": "Perform 10 to 15 reps before switching legs.",
+      "status": "verbatim",
+      "closest": "Perform 10 to 15 reps before switching legs.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c16",
+      "source": "outside-hf",
+      "text": "Over time, you can replace the current resistance band with one of greater tension. If you have trouble balancing, hold onto a wall or table for support.",
+      "status": "verbatim",
+      "closest": "Over time, you can replace the current resistance band with one of greater tension. If you have trouble balancing, hold onto a wall or table for support.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c17",
+      "source": "outside-hf",
+      "text": "The primary muscles in your hip flexors are the psoas major and the iliacus. Together, these muscles are referred to as the iliopsoas. Other important muscles in this group include the rectus femoris (one of your quad muscles), the sartorius, and the pectineus.",
+      "status": "verbatim",
+      "closest": "The primary muscles in your hip flexors are the psoas major and the iliacus. Together, these muscles are referred to as the iliopsoas. Other important muscles in this group include the rectus femoris (one of your quad muscles), the sartorius, and the pectineus.",
+      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
     }
   ]
 }
