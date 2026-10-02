@@ -2,7 +2,7 @@
 // (LIB-12's too) is a new file and no shared registry is edited. This loader builds the id index, `pairSpec(id)`,
 // `renderPair(id, opts)` (the key's own `render`, or golden-B `renderHandPair` unchanged, then the extras) and
 // `inputsFor(id)` (LIB-2's per-output inputs). Golden-B engine files and LIB-6's renderer are imported, never edited.
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { renderHandPair } from '../../layers/engine/hand.mjs';
@@ -67,9 +67,9 @@ export function pairSpec(id, index = INDEX) {
   return {
     id, key: mod.KEY, variant: cfg.variant, pair: `${mod.KEY}/${cfg.variant}`, mod, orientation: cfg.orientation,
     camera: ORIENTATIONS[cfg.orientation], loadAxis: V.loadAxis, wristRange: V.wristRange, contact: V.contact, handle: H,
-    right, rightNote: V.rightNote, altRight: V.alt,
+    right, rightNote: V.rightNote, altRight: V.alt, panelHeight: V.panelHeight,
     wrong: cfg.faults.map(k => ({ key: k, ...V.faults[k] })),
-    extras: { ...(H.ringMm ? { ringMm: H.ringMm } : {}), ...(cfg.orientation === 'unstated' ? { thumbSide: true } : {}) },
+    extras: { ...(H.ringMm ? { ringMm: H.ringMm } : {}), ...(V.loadLine === false ? { stripLoadLine: true } : {}), ...(cfg.orientation === 'unstated' ? { thumbSide: true } : {}) },
   };
 }
 
@@ -99,9 +99,56 @@ export function measured(svg) {
   for (const role of ['right', 'wrong']) {
     const part = svg.slice(svg.indexOf(`<g class="h-panel ${role}">`));
     const h = part.match(/<circle class="h-eq" cx="([\d.-]+)" cy="([\d.-]+)"/), w = part.match(/<circle class="h-joint wrist" cx="([\d.-]+)" cy="([\d.-]+)"/);
-    out[role] = { handle: h && [+h[1], +h[2]], wrist: w && [+w[1], +w[2]] };
+    const c = part.match(/<circle class="h-contact(?: m)?" cx="([\d.-]+)" cy="([\d.-]+)"/);
+    out[role] = { handle: h && [+h[1], +h[2]], wrist: w && [+w[1], +w[2]], contact: c && [+c[1], +c[2]] };
   }
   return out;
+}
+
+// Bend labels off the ink (plan 3.2 PQ-H1: no label over the figure). The engine sets each value on its wedge's bisector,
+// which can land on a curled hand; golden B moves such labels by hand (LIB-6 bendLabel). Here a label that would cover
+// its half's hand outline (the half's <defs> paths as polygons, the wedge included) moves to the first free spot on rings
+// round its wrist, forearm side first. The gate block measures the real boxes in the browser (isPointInFill).
+const LABEL_W = 7.2, LABEL_H = 12, LABEL_PAD = 2;      // --fs-meta 12 px, tabular digits; box estimate plus margin
+const poly = d => { const n = d.match(/-?[\d.]+/g).map(Number), ps = []; for (let i = 0; i + 1 < n.length; i += 2) ps.push([n[i], n[i + 1]]); return ps; };
+const inPoly = (p, ps) => { let c = false; for (let i = 0, j = ps.length - 1; i < ps.length; j = i++) {
+  const [xi, yi] = ps[i], [xj, yj] = ps[j]; if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
+const boxOf = (x, y, anchor, n) => { const w = n * LABEL_W, x0 = anchor === 'middle' ? x - w / 2 : anchor === 'end' ? x - w : x;
+  return [x0 - LABEL_PAD, y - 9 - LABEL_PAD, x0 + w + LABEL_PAD, y + 3 + LABEL_PAD]; };
+const boxHits = (b, inks) => { for (let i = 0; i <= 6; i++) for (let j = 0; j <= 3; j++) {
+  const p = [b[0] + (b[2] - b[0]) * i / 6, b[1] + (b[3] - b[1]) * j / 3]; if (inks.some(ps => inPoly(p, ps))) return true; } return false; };
+/** The h-val labels of a pair SVG whose estimated box covers its half's ink: [{ role, text, x, y }]. */
+export function labelsOnInk(svg, uid) {
+  const out = [];
+  for (const q of svg.matchAll(/<text class="h-val( m)?" x="([\d.-]+)" y="([\d.-]+)" text-anchor="(\w+)">([^<]*)<\/text>/g))
+    if (boxHits(boxOf(+q[2], +q[3], q[4], q[5].length), inksOf(svg, uid, !!q[1]))) out.push({ role: q[1] ? 'wrong' : 'right', text: q[5], x: +q[2], y: +q[3] });
+  return out;
+}
+function inksOf(svg, uid, wrong) {
+  const inks = [...svg.matchAll(new RegExp(`<path id="${uid}-${wrong ? 'w' : 'r'}-[a-z0-9-]+" d="([^"]+)"`, 'g'))].map(q => poly(q[1]));
+  const g = svg.indexOf(`<g class="h-panel ${wrong ? 'wrong' : 'right'}">`), arc = svg.slice(g).match(/<path class="h-arc" d="([^"]+)"/);
+  if (arc) { const a = arc[1].match(/M([\d.-]+) ([\d.-]+)L([\d.-]+) ([\d.-]+)A[\d.]+ [\d.]+ 0 0 [01] ([\d.-]+) ([\d.-]+)Z/);
+    if (!a) throw new Error('hand pairs: unreadable wedge'); inks.push([[+a[1], +a[2]], [+a[3], +a[4]], [+a[5], +a[6]]]); }
+  return inks;
+}
+function placeLabels(svg, uid, pw) {
+  const moved = [];
+  svg = svg.replace(/<text class="h-val( m)?" x="([\d.-]+)" y="([\d.-]+)" text-anchor="(\w+)">([^<]*)<\/text>/g, (m0, m, x, y, anchor, text) => {
+    const inks = inksOf(svg, uid, !!m), g = svg.indexOf(`<g class="h-panel ${m ? 'wrong' : 'right'}">`);
+    if (!boxHits(boxOf(+x, +y, anchor, text.length), inks)) return m0;
+    const wr = svg.slice(g).match(/<circle class="h-joint wrist" cx="([\d.-]+)" cy="([\d.-]+)"/), W = [+wr[1], +wr[2]];
+    const H = +svg.match(/viewBox="0 0 [\d.]+ ([\d.]+)"/)[1], x0 = m ? pw + 16 : 0;
+    const inside = b => b[0] >= x0 + 4 && b[2] <= x0 + pw - 4 && b[1] >= 70 && b[3] <= H - 4;
+    for (const r of [22, 30, 38, 46, 54]) for (let a = 0; a < 360; a += 15) {
+      // forearm side first: the hand lies toward +x in every LIB-7 pose, so start at 180 deg and sweep both ways
+      const t = (180 + (a % 2 === 0 ? 1 : -1) * Math.ceil(a / 2 / 15) * 15) * Math.PI / 180;
+      const px = W[0] + Math.cos(t) * r, py = W[1] + Math.sin(t) * r + 4, b = boxOf(px, py, 'middle', text.length);
+      if (inside(b) && !boxHits(b, inks)) { moved.push({ role: m ? 'wrong' : 'right', text, from: [+x, +y], to: [f2(px), f2(py)] });
+        return `<text class="h-val${m ?? ''}" x="${f2(px)}" y="${f2(py)}" text-anchor="middle">${text}</text>`; }
+    }
+    throw new Error(`hand pairs: no free spot for the ${text} label`);
+  });
+  return { svg, moved };
 }
 
 /** One rendered pair. opts: { uid, fault (key; default the first), panelHeight, index }. */
@@ -112,22 +159,44 @@ export function renderPair(id, opts = {}) {
   const render = s.mod.render ?? renderHandPair;
   const out = render({ uid: opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, camera: s.camera, loadAxis: s.loadAxis, markers: F.markers,
     right: s.right, wrong: mergePose(s.right, F.pose), rightNote: s.rightNote, wrongNote: F.label,
-    alt: { right: s.altRight, wrong: F.alt }, panelHeight: opts.panelHeight });
+    alt: { right: s.altRight, wrong: F.alt }, panelHeight: opts.panelHeight ?? s.panelHeight });
   let svg = out.svg, rings = null;
   if (s.extras.thumbSide) {
     svg = once(svg, '>SEEN FROM THE SIDE<', `>${THUMB_SIDE.toUpperCase()}<`, 'thumb-side label');
     svg = once(svg, 'aria-label="Seen from the side. ', `aria-label="${THUMB_SIDE}. `, 'thumb-side aria');
   }
+  // no force line where the load does not run along the forearm (golden-B's lateral raise does the same, LIB-6
+  // closeup/hand.mjs stripLoadLine): the line and its head in both halves, and the Right half's wrist tick
+  if (s.extras.stripLoadLine) {
+    const before = svg;
+    svg = svg.replace(/<path class="h-load( m)?" d="[^"]*"\/><path class="h-load-head( m)?" d="[^"]*"\/>/g, '').replace(/<path class="h-tick" d="[^"]*"\/>/g, '');
+    if (before === svg || /class="h-load/.test(svg)) throw new Error(`hand pairs: ${id}: load line not stripped cleanly`);
+  }
+  const uidUsed = opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, placed = placeLabels(svg, uidUsed, (358 - 16) / 2);
+  svg = placed.svg;
   if (s.extras.ringMm) ({ svg, rings } = addRings(svg, s.extras.ringMm, out.report.scalePxPerMm));
-  return { svg, spec: s, fault: F, report: { ...out.report, rings, measured: measured(svg) } };
+  return { svg, spec: s, fault: F, report: { ...out.report, rings, labelsMoved: placed.moved, measured: measured(svg) } };
 }
 
-/** The files one id's drawing reads (LIB-2 per-output inputsSha256): a change to another key never marks it stale. */
+/** The repo files a module reads through its relative imports, itself included (static `from './…'` specifiers). */
+export function importClosure(files) {
+  const seen = new Set(), todo = [...files];
+  while (todo.length) {
+    const f = todo.pop();
+    if (seen.has(f)) continue;
+    seen.add(f);
+    const src = readFileSync(join(ROOT, f), 'utf8');
+    for (const m of src.matchAll(/(?:^|\n)\s*(?:import|export)\s[^;]*?from\s+'(\.{1,2}\/[^']+)'/g)) todo.push(rel(join(ROOT, dirname(f), m[1])));
+  }
+  return seen;
+}
+
+/** The files one id's drawing reads (LIB-2 per-output inputsSha256): its key file and the mechanism, with everything they
+ *  import, plus the key's declared INPUTS (sizes matched to a composer). A change to another key never marks it stale. */
 export function inputsFor(id, index = INDEX) {
   const e = index.drawn.get(id);
   if (!e) throw new Error(`hand pairs: inputsFor: ${id} has no pair`);
   const lib = p => `tools/plates/library/${p}`;
-  return [...new Set([lib('hands/pairs.mjs'), lib('hands/zoom.mjs'), e.mod.FILE, ...(e.mod.INPUTS ?? []), ...(e.mod.VIEW_FILES ?? ['tools/plates/layers/engine/hand.mjs']),
-    lib('render/closeup/common.mjs')])].sort();
+  return [...new Set([...importClosure([lib('hands/pairs.mjs'), lib('hands/zoom.mjs'), e.mod.FILE, ...(e.mod.VIEW_FILES ?? [])]), ...(e.mod.INPUTS ?? [])])].sort();
 }
 

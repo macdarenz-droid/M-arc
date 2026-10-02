@@ -1805,3 +1805,37 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
 - **D-COPY2-swap (supervisor ruling on #168, applied).** BUG-36's block keeps its assertions and gets a seed-only change so its brief is again taller than the check-in. The ruling named `birthYear: 1960`, but that does not work: `preSessionInsights` keeps the top 3 cards by priority, and the 60+ card (priority 110) loses to the load-target cards (260). So the seed's split became two chest lifts, which leaves fewer soreness rows in the check-in. That meets the ruling's stated aim with no assertion changed. The new add-only "COPY-2 swap" block covers the shrinking swap: one direction (any reversal fails), a downward travel of at least 20 px, no frame step above max(16 px, travel / 4), one sheet throughout, and nothing moving for 100 ms after rest. The snap limit scales with travel because the measured ease over about 100 px peaks at 19.9 px a frame (12.7, 15.7, 19.9, 19.9, 11.5, …), which is smooth. A flat 16 px limit would flag a correct animation. Mutations: an overshoot easing (`cubic-bezier(0.3, 1.8, 0.5, 1)`) fails on reversal and snap in all 4 runs; a 1 ms ease (the old one-frame swap) fails on a 100 px snap in all 4 runs; with the code restored, all 4 pass.
 - **D-COPY2-swap position.** The COPY-2 swap block reads the panel's top with `panel.getBoundingClientRect().top`, which includes the transform and every ancestor's scroll (BUG-37, #173). Thresholds are unchanged. Re-run on that reading: overshoot easing fails (reversal and snap) and the 1 ms ease fails (100 px snap) in all 4 runs; with the code restored, all 4 pass.
 - **D-COPY2-swap2 (supervisor ruling on #168, applied).** BUG-37's check-in → brief swap runs now seed the same two-chest-lift split as BUG-36 (`BUG37_SWAP_EX`), so the brief stays taller than the check-in. Its checked-in runs (start sheet, Settings, nested Gyms) keep the 8-lift seed. The only helper change is an optional `ex` argument to `bug37Load` that defaults to `BUG37_EX`; every assertion and threshold is byte-identical. Blunting check: without `.sheet { overflow: visible }`, BUG-37 fails 96 times both on this head and on main fc38fb8, with the same split by run (24 each for start sheet, check-in, Settings, nested Gyms; its swap runs fail in neither), so the seed change removes no failure.
+## LIB-7: radial hand pairs (LIB-7 builder, 2026-10-02)
+
+Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 2026-10-02.
+
+- **D-LIB7-1, app chunk.** A pair chunk is named `src/howto/generated/handpair-<key>.ts`, so it never collides with HT-6's `hand-<chromeId>.ts`. `tests/howto/hands.test.ts` is not edited. The generator belongs to LIB-2 (supervisor ruling).
+- **D-LIB7-2, sizes.** Sizes are drawing values, as golden B's `HANDLES` are. Each module passes its diameter explicitly:
+  - dumbbell 32 mm with a 120 mm head;
+  - bar and EZ 28 mm;
+  - D-handle 30 mm;
+  - rope 28 mm with a 46 mm knob ring, matched to the plate's rope composer (`eq/rope.mjs:54`).
+- **D-LIB7-3, golden-B reuse.**
+  - `renderHandPair` is called unchanged. `HAND_PROP` and `HAND_OF_H` feed the placement check. The pilot and gate pages use golden B's zoom CSS, which includes `HAND_CSS`. The knob ring uses the existing `h-eq-thin` class.
+  - No golden-B value is read for a diameter.
+  - Golden-B engine files and LIB-6 files are not edited. A1 pins their outputs.
+- **D-LIB7-4, camera and orientation.** The camera follows golden-B `engine/hand.mjs:8-9`: a vertical handle is "seen from above", a horizontal bar "seen from the side". Orientation is carried per id from its claim:
+  - underhand draws the palm up;
+  - overhand draws the palm down;
+  - an id whose claims name no palm direction gets the label "Seen from the thumb side".
+- **D-LIB7-5, wrong angles.** No source gives the size of a wrong bend, so approved precedents are reused and flagged on the sheet:
+  - curled −30 (lat pulldown);
+  - bent back +30 on a curl;
+  - bent back +35 with the handle at 1.05 on a push (chest press).
+- **D-LIB7-6, bend labels.** A bend value whose box would cover its half's outline moves to the first free spot round its wrist, forearm side first. Golden B moved such labels by hand on the lateral raise, lat pulldown and seated row. Check G9 tests it in Node; the gate measures it in the browser.
+- **D-LIB7-7, force lines.** A force line is drawn only on along-forearm loads and pulls, which is where golden B draws one. Curls (gravity across a level forearm, like the lateral raise) and the rope (no source for its direction) have none.
+- **D-LIB7-8, panel height.** Curl and rope pairs use a 170 px panel. The scale is the same at 262 px, so only empty space goes.
+- **D-LIB7-gaps.** 14 ids are not drawn. Each is listed with its reason in its key's `GAPS`:
+  - the band (no band-hand claim; pilot A's band kind waits on research);
+  - cable_chest_press and the two cable flys (no bend direction in their claims);
+  - 7 ids with no research card;
+  - high_to_low_cable_fly (no hand zoom on its card);
+  - overhead_cable_triceps_extension (rope-rule gap 3);
+  - wrist_curl (exempt).
+  - sled_pull goes to LIB-12.
+- **D-LIB7-twist.** The hammer_curl (#c5) and cross_body_hammer_curl (#c7) Wrongs are wrist twists, which the radial view can't show. Those ids draw shared/curl.json's flexion and extension faults instead.

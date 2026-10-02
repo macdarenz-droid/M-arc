@@ -21,7 +21,7 @@ Each key is one file, `hands/hand-<key>.mjs`. It exports:
 - It discovers modules by filename, so there is no shared registry to edit. It builds `HAND_OF_ID` and throws if an id is drawn twice, or is drawn by one key and listed as a gap by another.
 - `pairSpec(id)` returns the record a pair needs: camera, loadAxis, right, the wrong pages, notes, alt and extras.
 - `renderPair(id, opts)` calls `module.render ?? renderHandPair` (golden-B, unchanged), then applies the extras: the rope knob ring, and the thumb-side camera label (D-LIB7-4).
-- `inputsFor(id)` lists everything that drawing depends on, for LIB-2's per-output `inputsSha256`: `pairs.mjs`, the id's key file, its view file (`layers/engine/hand.mjs` for radial), `zoom.mjs`, and the LIB-6 render files it uses (`render/closeup/common.mjs`, `thumb.mjs`). A change to another key never marks this id stale.
+- `inputsFor(id)` lists everything that drawing depends on, for LIB-2's per-output `inputsSha256`: the static import closure of `pairs.mjs`, `zoom.mjs` and the id's key file (with `VIEW_FILES`), plus the key's declared `INPUTS` (the rope's sizes are matched to `eq/rope.mjs`). Other key files are never in it, so a change to another key never marks this id stale.
 
 ### Zoom wrapper (`hands/zoom.mjs`, new path)
 - It builds the hand zoom page from `renderPair`, reusing LIB-6 helpers (`zoomTop`, `captions`, `pagerOf`, `feelLink`, `esc`).
@@ -120,6 +120,8 @@ Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 | G5 | `report.handle` and `handleDiameterMm` equal `HANDLE` | `diameterMm` dropped, so 32 is used |
 | G6 | Along-forearm gives `report.ok`; rope has `checks` {} with the reason recorded | push wrong at contact .3 |
 | G7 | The rope ring is concentric with the handle, with r = 23 mm × k | ring moved by 1 mm |
+| G6b | A force line only where golden B draws one: along-forearm loads (chest press) and pulls (lat pulldown); none on a gravity curl (lateral raise) or the rope (D-LIB7-7) | the curl's `loadLine: false` removed |
+| G9 | No bend value over the hand's outline (label placement, D-LIB7-6) | a moved label put back |
 | G8 | Palm direction and camera match the orientation, and the orientation equals the claim (the claim text holds a phrase from the pinned list: under = "underhand", "palms up", "palms-forward", "palms forward", "supinated"; over = "overhand", "palms down", "palms toward the feet"; neutral = "neutral", "palms facing the body", "palms facing each other") | reverse_curl drawn underhand |
 
 **A3. Sweeps.** `sweep(items, n)` throws when there are 0 items or the count is not n. It covers:
@@ -138,7 +140,7 @@ Mutations: [] input; a key file removed; an id in two keys; a gap id drawn; `sha
 |---|---|---|
 | H2 | Element, attribute and class vocabulary ⊆ golden-B hand SVGs; no colour literal; ids uid-prefixed and unique | `fill="#123"`; a duplicated id |
 | H7 | Two builds are byte-identical; per-id SVG size ≤ the golden-B hand-chunk ceiling | a random uid |
-| `inputsFor` | Covers the files the id reads | a key file dropped from the list |
+| `inputsFor` | The import closure: every file the id reads, no other key file | a new import must appear in the closure |
 
 **A5. Gate block "LIB-7"** (add-only), on Chromium 141 and Chrome 153.
 - Each drawn pair renders through `hands/zoom.mjs` in 5 themes at 390, 360 and 340 px.
@@ -165,3 +167,8 @@ Every test is shown red with its mutation and at 0 without it (gotcha V1-08).
 - **Pass:** every score ≥ 4. One fix round, then the supervisor.
 - LIB-12 uses the same sheet and `--plant`.
 - Pilot A shows curl, EZ, rope and D-handle (ruling). The band kind waits on research.
+
+## 6. Build decisions (recorded as D-LIB7-6 to D-LIB7-8 in docs/COACHING-DECISIONS.md)
+- **D-LIB7-6, bend labels.** A bend value whose box would cover its half's outline moves to the first free spot on rings round its wrist, forearm side first. Golden B moves such labels by hand (LIB-6 `bendLabel`). The gate measures the real boxes.
+- **D-LIB7-7, force lines.** No force line on curls (gravity across a level forearm, as on golden B's lateral raise) or on the rope (no source gives its direction).
+- **D-LIB7-8, panel height.** Level-forearm pairs (curl, rope) use a 170 px panel. The scale is unchanged at 262 and at 140 px, so this only cuts empty space (lateral raise 130, pull-up 250).
