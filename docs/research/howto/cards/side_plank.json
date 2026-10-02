@@ -321,7 +321,7 @@
   {
    "id": "ace-sideplank-mod",
    "url": "https://www.acefitness.org/resources/everyone/exercise-library/99/side-plank-modified/",
-   "title": "Ab Exercises | Side Plank (Modified) | ACE",
+   "title": "Ab Exercises | Side Plank (Modified)",
    "kind": "guideline",
    "year": null,
    "pmid": null,
@@ -558,6 +558,7 @@
  "notes": [
   "ACE's full Side Plank page (303) is a BOSU version, so it is not cited; ACE's Side Plank (Modified) page is used for the bent-knee version and the knee-pressure stop (c8).",
   "The knee row and risk restate ACE's own wording ('excessive pressure ... merits termination of this exercise', c8) with no added cause (LR-6).",
-  "Census pose 'roll' is R5 (not expressible): the plate waits on the engine (tracker), the text card is complete."
+  "Census pose 'roll' is R5 (not expressible): the plate waits on the engine (tracker), the text card is complete.",
+  "Fetcher check 2026-10-02: ace-sideplank-mod title set to the page's own title (no ' | ACE' suffix); no claim changed."
  ]
 }

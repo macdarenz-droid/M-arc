@@ -373,7 +373,7 @@
     {
       "id": "theraband-manual",
       "url": "https://www.theraband.com/static/version1771453261/frontend/Theraband/default/en_US/instructions/Resistance_Band-Tubing_Instruction_Manual(1).pdf",
-      "title": "Resistance Band & Tubing Instruction Manual (The Hygenic Corporation, TheraBand)",
+      "title": "Instruction Manual, Resistance Bands and Tubing (The Hygenic Corporation)",
       "kind": "guideline",
       "year": null,
       "pmid": null,
@@ -595,6 +595,6 @@
   "anchorSource": "sweat-bandrow",
   "notes": [
     "Census lists the contact as standing-feet, but the exercises.json alias ('seated band row') and census pose (floorsit) put this on the floor, so the contact is floor-body. The seated cable row's primary contact is foot-platform, so under content.md 2.3 this is its own parent card, not a difference card: the lines once inherited are written here as the band row's own lines (c3, c4). No band-row EMG study was found; all EMG claims are applied from an isometric seated row and a prone barbell row and tagged MECH. Colado 2010 (elastic tubing vs machines) was dropped: no line used it.",
-    "W1A band-hand claims (2026-10-02), added for LIB-7's band hand pair; no verified line was edited. Contact c11 (grip wrap), thumb c12 (palm wrap: band ends between thumb and palm), wrist c13 (straight, in line with the forearm), hand fault c14 (grip lost: the band snaps back). Neither source names which wrap to use for the row or the direction a wrist bends when the grip fails, so the band Wrong for the wrist stays a gap; the sourced fault with a direction is the band snapping back when the grip is lost (c14). grip.thumb, grip.handContact and grip.wrist still hold the earlier archetype-default text; switching them to c11-c13 is left to the verifier and LIB-7. The BeWise (Utah) band guide was found but could not be fetched (proxy refused bewise.utah.gov; web.archive.org unreachable), so it is not cited."
+    "W1A band-hand claims (2026-10-02), added for LIB-7's band hand pair; no verified line was edited. Contact c11 (grip wrap), thumb c12 (palm wrap: band ends between thumb and palm), wrist c13 (straight, in line with the forearm), hand fault c14 (grip lost: the band snaps back). Neither source names which wrap to use for the row or the direction a wrist bends when the grip fails, so the band Wrong for the wrist stays a gap; the sourced fault with a direction is the band snapping back when the grip is lost (c14). grip.thumb, grip.handContact and grip.wrist still hold the earlier archetype-default text; switching them to c11-c13 is left to the verifier and LIB-7. The BeWise (Utah) band guide was found but could not be fetched (proxy refused bewise.utah.gov; web.archive.org unreachable), so it is not cited. The theraband-manual title is descriptive: the PDF prints only 'Instruction Manual' and 'The Hygenic Corporation' (fetcher check 2026-10-02)."
   ]
 }
