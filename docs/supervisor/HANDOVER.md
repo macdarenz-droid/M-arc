@@ -875,7 +875,7 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 - **Library Phase-0 actions** (library plan section 7, checked 10-02): 1 HT-10 amendment built in #166, wiring pending (supervisor); 2 data-driven control done on main; 3 golden-B pin settled (LR-23 golden `6b86baa`, page `e7b81413…`); 4 null sources and disclaimer appear done (not counted); 5 the HT-3 CI stability condition has no evidence yet (GATE-FLAKE-1; it gates LIB-4 only); 6 research wave 0 running (above); 7 plan published, HT-12 replaced.
 - **Parked or not for merge:** #149 improvement audit (parked until the finish line); #158 Gym Finder (parked); #144 first-audit docs; #94 PREMIUM-PLAN and #92 PAY-1 (owner decisions); #88 Watch docs (waits on Huawei); #3 watch agent's PR (never merge); #1 stale.
 
-**Known transient on main:** none known. The 13 dead "Show me" buttons were fixed by HT-7's merge (train 7); HT-10's replacement builder confirms it on the full sheet.
+**Known transient on main:** the 13 handling-mistake "Show me" buttons should open now that HT-7 (their posture close-ups) is merged in train 7. Not verified by the new supervisor; HT-10's replacement builder checks it on the full sheet (its step 2).
 
 **Risks and mitigations:**
 - **The old account wakes at its weekly reset (2026-10-03 11:00 UTC).** Its hourly loop `trig_01CtcvAE1PGAtH4dkxLVQZsR` would wake the old supervisor, and two supervisors would run; old builders could push to the same branches. Mitigation: the owner disables the old account's Routines (asked 10-02, 8.6); every replacement builder runs `git pull --no-rebase` before each push and never forces; each tick compares card branch heads with the last push from a new-account session.
