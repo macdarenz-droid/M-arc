@@ -44,11 +44,13 @@ export interface SessionEnergyInput {
   today: string;
   /** signalQuality() over the same series. */
   quality: number;
+  /** NAT-02: the session's training seconds (pauses out). The series' wall span includes paused gaps, so it caps the minutes. */
+  activeSec?: number;
 }
 
 /** Integrates grossKcalPerMin over the session's valid minutes. Null below profile completeness or quality 0.5. */
 export function sessionEnergy(input: SessionEnergyInput): SessionEnergy | null {
-  const { series, profile, today, quality } = input;
+  const { series, profile, today, quality, activeSec } = input;
   if (!series.length || quality < 0.5) return null;
   const bmr = bmrKcalPerDay(profile, today);
   const a = age(profile, today);
@@ -59,7 +61,8 @@ export function sessionEnergy(input: SessionEnergyInput): SessionEnergy | null {
   const rates = series.map(([, bpm]) => grossKcalPerMin(bpm, profile, today)!).filter(r => Number.isFinite(r));
   if (!rates.length) return null;
   const minutesCovered = series.length * (5 / 60);
-  const totalSessionSec = series[series.length - 1]![0] - series[0]![0] + 5;
+  const spanSec = series[series.length - 1]![0] - series[0]![0] + 5;
+  const totalSessionSec = activeSec != null && activeSec > 0 ? Math.min(spanSec, Math.max(activeSec, minutesCovered * 60)) : spanSec;
   const minutes = totalSessionSec / 60;
   const coveredKcal = rates.reduce((sum, r) => sum + r * (5 / 60), 0);
   const sorted = [...rates].sort((x, y) => x - y);
@@ -67,10 +70,9 @@ export function sessionEnergy(input: SessionEnergyInput): SessionEnergy | null {
   const uncoveredMin = Math.max(0, minutes - minutesCovered);
   const grossKcal = coveredKcal + (quality >= 0.8 ? medianRate * uncoveredMin : 0);
   const activeKcal = Math.max(0, grossKcal - restingKcalPerMin * minutes);
-  const band = activeKcal * 0.25;
+  // AUD-20 (SCI-10): a plain estimate, no ± band; no error bound is validated for lifting.
   return {
     grossKcal: Math.round(grossKcal), activeKcal: Math.round(activeKcal),
-    low: Math.round(Math.max(0, activeKcal - band)), high: Math.round(activeKcal + band),
     minutes: Math.round(minutes), source: 'heart_rate',
     profileSnapshot: { kg: profile.bodyWeightKg, age: a, sex: profile.sex },
   };
@@ -82,10 +84,8 @@ export function energyFromHealthConnect(activeKcalInRange: number, minutes: numb
   if (!(activeKcalInRange >= 0) || !profile.bodyWeightKg || !profile.sex) return null;
   const a = age(profile, today);
   if (a == null) return null;
-  const band = activeKcalInRange * 0.10;
   return {
     grossKcal: Math.round(activeKcalInRange), activeKcal: Math.round(activeKcalInRange),
-    low: Math.round(Math.max(0, activeKcalInRange - band)), high: Math.round(activeKcalInRange + band),
     minutes: Math.round(minutes), source: 'health_connect',
     profileSnapshot: { kg: profile.bodyWeightKg, age: a, sex: profile.sex },
   };

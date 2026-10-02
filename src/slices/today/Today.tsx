@@ -70,7 +70,7 @@ export function Today() {
           <div class="stack-sm">
             <div class="eyebrow">Today</div>
             <h2>{done.map(d => d.splitName).join(' + ')} done</h2>
-            <p class="muted small">{done.reduce((a, d) => a + d.exercises.reduce((x, e) => x + e.sets.length, 0), 0)} sets logged. Recovery has started.</p>
+            <p class="muted small">{done.reduce((a, d) => a + d.exercises.reduce((x, e) => x + e.sets.length, 0), 0)} sets logged.</p>
             <div class="row"><Button onClick={() => go('body')}>View recovery</Button><Button variant="quiet" onClick={() => go('history')}>History</Button></div>
           </div>
         )}
@@ -88,16 +88,14 @@ export function Today() {
         {status === 'off' && split && (
           <div class="stack-sm" data-palace="today.day-off">
             <div class="eyebrow">Day off</div>
-            <h2>{split.name} can wait</h2>
-            <p class="muted small">Today counts as a rest day: your streak and this week's target leave it out.</p>
+            <h2>{split.name}</h2>
             <div class="row"><Button onClick={() => { setDayOff(today.value, false); requestStart(split); go('train'); }}><IconPlay /> Train anyway</Button><Button variant="quiet" onClick={() => setDayOff(today.value, false)}>Undo day off</Button></div>
           </div>
         )}
         {status === 'rest' && (
           <div class="stack-sm">
             <div class="eyebrow">Rest day</div>
-            <h2>{s.splits.length ? 'Nothing scheduled' : 'Set up your first workout'}</h2>
-            <p class="muted small">{s.splits.length ? 'Train anyway, or let today be recovery.' : 'Add a split with a few exercises. The coach learns from what you log.'}</p>
+            <h2>{s.splits.length ? 'Nothing scheduled' : 'First workout'}</h2>
             <Button onClick={() => go('train')}>{s.splits.length ? 'Choose a workout' : 'Open Train'}</Button>
           </div>
         )}
@@ -107,7 +105,7 @@ export function Today() {
 
       <Pins />
 
-      <Section title="This week" palace="today.week" aside={<span class="small muted">{w.grade.title}</span>}>
+      <Section title="Current week" palace="today.week" aside={<span class="small muted">{w.grade.title}</span>}>
         <Card>
           <div class="grid-3">
             <Stat value={w.workouts} label="workouts" />
@@ -123,7 +121,7 @@ export function Today() {
           <div class="row" style={{ alignItems: 'flex-start' }}>
             <div style={{ width: 120, flex: 'none' }}><MuscleMap values={values} mode="recovery" compact /></div>
             <div class="grow stack-sm">
-              {recovering.length === 0 && <p class="small">{ready ? 'Every muscle you have trained is fully recovered.' : 'Log a session and recovery shows up here.'}</p>}
+              {recovering.length === 0 && <p class="small">{ready ? 'Every muscle you have trained is fully recovered.' : 'No sessions yet.'}</p>}
               {recovering.slice(0, 4).map(r => (
                 <div key={r.muscle} class="row-between small">
                   <span>{muscleLabel(r.muscle)}</span>
@@ -143,7 +141,7 @@ export function Today() {
             <h3 style={{ margin: '4px 0 6px' }}>{top.title}</h3>
             <p class="small muted">{top.action}</p>
           </Card>
-        ) : <Card class="card-quiet"><p class="small muted">No strong signals right now. Keep logging and rating effort.</p></Card>}
+        ) : <Card class="card-quiet"><p class="small muted">No strong signals right now.</p></Card>}
       </Section>
 
       {s.preferences.showSpark && (
@@ -174,13 +172,13 @@ function Pins() {
 const BAND_LABEL = { green: 'Green', amber: 'Amber', red: 'Red' } as const;
 const ADVICE_COPY = { normal: null, no_increase: 'Keep loads steady today — skip any increases.', reduce: 'Keep the load, but consider one fewer set.' } as const;
 
-/** F2.1: a tier with reasons above "This week", or a quiet connect/check-in prompt when there is nothing to show yet. */
+/** F2.1: a tier with reasons above "Current week", or a quiet connect/check-in prompt when there is nothing to show yet. */
 function ReadinessCard() {
   const r = todayReadiness.value;
   if (!r) {
     return (
       <Section title="Readiness" palace="today.readiness">
-        <Card class="card-quiet"><p class="small muted">Connect a watch or add a check-in to see your readiness.</p></Card>
+        <Card class="card-quiet"><p class="small muted">No readiness yet.</p></Card>
       </Section>
     );
   }

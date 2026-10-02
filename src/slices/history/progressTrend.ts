@@ -9,6 +9,9 @@ import { liftTrend, trend, type Trend } from '@/brain/trend';
 
 export function progressTrend(hist: ExerciseSessionSummary[], mode: ResistanceMode): Trend {
   if (mode === 'assisted' || mode === 'bodyweight' || mode === 'duration') return liftTrend(hist, mode);
+  // UI-11: a carry or sled logs distance, not kg × reps, so an unloaded one has no e1RM or volume
+  // to plot (a flat line at 0) — fall back to the farthest distance that session, when there is one.
+  if (mode === 'conditioning') return trend(hist.map(h => ({ day: h.day, value: h.bestDistanceM || h.bestE1rm || h.volume })));
   return trend(hist.map(h => ({ day: h.day, value: h.bestE1rm || h.volume })));
 }
 
@@ -21,13 +24,15 @@ export function progressValue(h: ExerciseSessionSummary, mode: ResistanceMode): 
   if (mode === 'assisted') return -h.topKg;
   if (mode === 'bodyweight') return h.bestReps;
   if (mode === 'duration') return h.bestDurationSec;
+  if (mode === 'conditioning') return h.bestDistanceM || h.bestE1rm || h.topKg || h.bestReps;
   return h.bestE1rm || h.topKg || h.bestReps;
 }
 
-/** The hint under the card, describing what the trend actually follows for this mode. */
+/** The caption under the card: what the trend line plots for this mode (COPY-1: a caption, no explanation). */
 export function progressHint(mode: ResistanceMode): string {
-  if (mode === 'assisted') return 'Trend follows the assistance: less help is progress; with the same help, more reps.';
-  if (mode === 'bodyweight') return 'Trend follows your best reps.';
-  if (mode === 'duration') return 'Trend follows your longest hold.';
-  return 'Trend uses an estimated one-rep strength score from sets of 10 reps or fewer. It is a guide, not a test.';
+  if (mode === 'assisted') return 'Less assistance, then more reps';
+  if (mode === 'bodyweight') return 'Best reps';
+  if (mode === 'duration') return 'Longest hold';
+  if (mode === 'conditioning') return 'Farthest distance';
+  return 'Estimated one-rep max';
 }

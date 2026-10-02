@@ -32,7 +32,6 @@ export function EscobarSettings({ onClose }: { onClose: () => void }) {
       <Card class="stack-sm">
         <Row trailing={<Toggle checked={e.enabled} label="Online coach" onChange={on => { if (on) { onClose(); openEscobar(); } else set({ enabled: false }); }} />}>
           <span class="small">Online coach</span>
-          <div class="hint">{e.enabled ? 'On. Escobar answers with the model; nothing else leaves the phone.' : 'Off. Nothing leaves the phone.'}</div>
         </Row>
         {e.enabled && (
           <>
@@ -41,11 +40,11 @@ export function EscobarSettings({ onClose }: { onClose: () => void }) {
             <Field label="Tone"><Segmented value={e.tone} options={[{ value: 'warm', label: 'Warm' }, { value: 'direct', label: 'Direct' }]} onChange={v => set({ tone: v })} /></Field>
             {/* ES-26: the Proactive notes toggle returns when proactive moments ship. */}
             <Row trailing={<Toggle checked={e.memoryEnabled} label="Let Escobar remember" onChange={v => set({ memoryEnabled: v })} />}><span class="small">Let Escobar remember</span><div class="hint">Injuries, equipment and preferences you mention.</div></Row>
-            <Row trailing={<Button size="sm" onClick={() => { onClose(); showPanel('memory'); }}>View</Button>}><span class="small">What Escobar knows</span><div class="hint">{e.memory.length} item{e.memory.length === 1 ? '' : 's'}</div></Row>
+            <Row trailing={<Button size="sm" onClick={() => { onClose(); showPanel('memory'); }}>View</Button>}><span class="small">Memory</span><div class="hint">{e.memory.length} item{e.memory.length === 1 ? '' : 's'}</div></Row>
             <div class="small" data-palace="settings.escobar-usage">
               <b>Today</b> <span class="muted">{u.turns} question{u.turns === 1 ? '' : 's'} · {Math.round((u.inputTokens + u.cacheReadTokens) / 1000)}k in · {Math.round(u.outputTokens / 1000)}k out · about ${cost < 0.01 ? cost.toFixed(3) : cost.toFixed(2)}</span>
             </div>
-            <Field label="Server" hint="Leave empty for the built-in server."><div class="row" style={{ gap: 8 }}><input value={url} placeholder={ESCOBAR_PROXY_URL} inputMode="url" onInput={x => setUrl((x.target as HTMLInputElement).value)} /><Button size="sm" onClick={saveUrl}>Save server</Button></div></Field>
+            <Field label="Server"><div class="row" style={{ gap: 8 }}><input value={url} placeholder={ESCOBAR_PROXY_URL} inputMode="url" onInput={x => setUrl((x.target as HTMLInputElement).value)} /><Button size="sm" onClick={saveUrl}>Save server</Button></div></Field>
             {!confirm ? <Button variant="quiet" onClick={() => setConfirm(true)}>Reset conversations</Button> : (
               <Card class="card-quiet"><p class="small">Delete every conversation with Escobar? What he remembers stays until you clear it.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" onClick={() => { void Promise.all([import('../session').then(m => m.resetConversations()), import('../images').then(m => m.clearImages())]).then(() => showToast('Conversations deleted'), () => showToast('Could not load Escobar. Check your connection.')); setConfirm(false); }}>Delete conversations</Button></div></Card>
             )}

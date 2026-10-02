@@ -160,7 +160,8 @@ export function systemicFactor(healthDays: DailyHealth[], sessions: Session[], a
   const rhr28 = healthDays.filter(d => within(d.day, 28) && d.restingHr != null).map(d => d.restingHr!);
   if (rhr7.length && rhr28.length >= 2) {
     const sd = stddev(rhr28);
-    if (sd > 0 && Math.abs(avg(rhr7) - avg(rhr28)) / sd > SYSTEMIC_RHR_SD) factor *= SYSTEMIC_RHR_FACTOR;
+    // AUD-6 (SCI-06): only a rise is the adverse direction, as in readiness; a fall alone is not fatigue.
+    if (sd > 0 && (avg(rhr7) - avg(rhr28)) / sd > SYSTEMIC_RHR_SD) factor *= SYSTEMIC_RHR_FACTOR;
   }
 
   const ratio = acuteChronicRatio(sessions, ref);
@@ -348,11 +349,17 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
     const freshOverridesLast = last && freshMs >= last.at;
 
     if (!last || freshOverridesLast) {
+      // AUD-6 (SCI-03): today's soreness still caps a muscle with no log or a fresh mark. Only a mark made
+      // today outranks it; check-ins carry a day, not a time, so a mark from an earlier day is older.
+      const rating = checkIns.find(c => c.day === today)?.soreness?.[muscle];
+      const soreToday = rating != null && rating >= SORENESS_CAP_MIN_RATING && !(freshMs > -Infinity && dayKey(new Date(freshMs)) === today);
+      const pct = soreToday ? SORENESS_CAP_PCT : 100;
       return {
-        muscle, pct: 100, hoursLeft: 0, windowHours: 0,
+        muscle, pct, hoursLeft: 0, windowHours: 0,
         lastTrainedAt: last ? new Date(last.at).toISOString() : null, lastDay: last?.day ?? null,
-        personalized: false, recovering: false, ready: true, readyInHours: null, fullInHours: null,
+        personalized: false, recovering: pct < READY_PCT, ready: pct >= READY_PCT, readyInHours: null, fullInHours: null,
         confidence: 'low', drivers: [], systemicFactor: 1,
+        ...(soreToday ? { soreToday } : {}),
       };
     }
 
@@ -515,6 +522,9 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
     const meta = findExercise(ex.exerciseId, custom);
     if (!meta) continue;
     if (ex.sets.some(isWorkingSet)) meta.primary.forEach(m => trained.add(m));
+    // AUD-1 (SCI-01): e1RM compares lifted loads, so only modes whose kg is the load (BUG-18's
+    // loadIsChecked). Assisted kg is help and bodyweight kg is added load only: never evidence.
+    if (!loadIsChecked(ex.exerciseId, custom)) continue;
     // A cheap first check on every set, held ones included (BUG-24: held-out sets only rate lower).
     if (!ratedMax(exerciseHistory([newSession], ex.exerciseId, custom).at(-1))) continue;
     const prevAlone = prevSummary ? prevSummary(ex.exerciseId) : lastSummaryAlone(priorSessions, ex.exerciseId, custom);

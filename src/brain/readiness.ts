@@ -70,6 +70,11 @@ function zScore(value: number, series: number[]): number | null {
 export const READINESS_WEIGHTS = { checkIn: 0.35, sleep: 0.25, recovery: 0.15, rhr: 0.10, hrv: 0.10, load: 0.05 } as const;
 export const READINESS_GREEN_AT = 67;
 export const READINESS_RED_AT = 33;
+/**
+ * AUD-1 (SCI-02): the least sleep need the sleep part assumes, in minutes: the knowledge card
+ * sleep_duration's 7 h adult minimum (AASM/SRS consensus, Watson et al. 2015).
+ */
+export const SLEEP_NEED_FLOOR_MIN = 7 * 60;
 /** Under this many days of check-ins and sleep, the score reads as calibrating. */
 export const READINESS_CALIBRATING_DAYS = 14;
 /**
@@ -81,6 +86,26 @@ export const CHECKIN_CENTRE = 0.75;
 export const RHR_PERSONAL_MIN_DAYS = 14;
 /** ADAPT-2 (B-3): the smallest day-to-day resting-HR spread counted, in bpm, so a very steady watch still reads a small rise sanely. */
 export const RHR_MIN_SD = 1.5;
+
+/** "5h 10m", "7h". */
+function hm(min: number): string {
+  const m = Math.round(min), h = Math.floor(m / 60), r = m % 60;
+  return r ? `${h}h ${r}m` : `${h}h`;
+}
+
+/**
+ * AUD-20 (SCI-11): the sleep driver states the hours against the user's usual (the 14-night
+ * median) or AUD-1's 7 h floor, never that sleep caused the score. Starts with "Sleep:" so ES-12's
+ * health filter (redactDrivers) still finds it.
+ */
+export function sleepDriver(lastNight: number | null, last3: number[], usual: number, floor = SLEEP_NEED_FLOOR_MIN): string {
+  const vs = (min: number) => `(${min < usual ? `below your usual ${hm(usual)}` : min < floor ? `under ${hm(floor)}` : `your usual ${hm(usual)}`})`;
+  if (lastNight != null && (lastNight < usual || lastNight < floor)) return `Sleep: ${hm(lastNight)} last night ${vs(lastNight)}`;
+  const mean = avg(last3);
+  // Reached only without last night's data, so the one night in the window is older: name it as such.
+  if (last3.length === 1) return `Sleep: ${hm(mean)} on your last logged night ${vs(mean)}`;
+  return `Sleep: ${hm(mean)} a night over the last ${last3.length} nights ${vs(mean)}`;
+}
 
 export type LoadAdvice = 'normal' | 'no_increase' | 'reduce';
 export type ReadinessBand = 'green' | 'amber' | 'red';
@@ -193,12 +218,14 @@ export function readinessWithInputs(input: ReadinessInput): { result: ReadinessR
     }
   }
 
-  // Sleep hours (0.25): last night vs the 14-night need, and a 3-night debt. Bedtime regularity
+  // Sleep hours (0.25): last night vs the need, and a 3-night debt. AUD-1 (SCI-02): the need is
+  // the 14-night median (consistency) but never under the 7 h adult floor (sufficiency), so
+  // habitual short sleep never reads as enough. Bedtime regularity
   // (6.4's third component) has no source anywhere in this app yet, so the other two are
   // renormalised to fill the full 0.25 rather than leaving it permanently short — see decisions.
   let sleepScore: number | null = null;
   if (baselines.sleep14dMedian != null) {
-    const need = baselines.sleep14dMedian;
+    const need = Math.max(baselines.sleep14dMedian, SLEEP_NEED_FLOOR_MIN);
     const lastNight = healthDays.find(d => withinDays(d.day, today, 1) && d.sleepMinutes != null)?.sleepMinutes ?? null;
     const last3 = healthDays.filter(d => withinDays(d.day, today, 3) && d.sleepMinutes != null).map(d => d.sleepMinutes!);
     const lastNightScore = lastNight != null ? clamp(lastNight / need, 0, 1) : null;
@@ -208,7 +235,7 @@ export function readinessWithInputs(input: ReadinessInput): { result: ReadinessR
     if (lastNightScore != null && debtScore != null) sleepScore = w1 * lastNightScore + w2 * debtScore;
     else if (lastNightScore != null) sleepScore = lastNightScore;
     else if (debtScore != null) sleepScore = debtScore;
-    if (sleepScore != null && sleepScore < 0.5) drivers.push('sleep has been short recently');
+    if (sleepScore != null && sleepScore < 0.5) drivers.push(sleepDriver(lastNight, last3, baselines.sleep14dMedian));
   }
 
   // Recovery of today's target muscles (0.15), from 6.11.

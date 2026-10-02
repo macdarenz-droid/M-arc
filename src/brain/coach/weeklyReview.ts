@@ -11,7 +11,7 @@ import type { GoalId } from '@/data/goals';
 import { GOAL_BY_ID } from '@/data/goals';
 import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
-import { effectiveSetsByMuscle, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
+import { effectiveSetsByMuscle, effortLabel, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
 import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
 import { isFlatTotal, plateauSeries, plateauStatus, sinceLastBreak, trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
@@ -51,11 +51,11 @@ export function frequencyThisWeek(sessions: Session[], today: string, muscle: Mu
   return count;
 }
 
-/** Share of working sets rated max, over the given sessions. */
+/** Share of working sets rated max (a failure set is max), over the given sessions. */
 export function failureShare(sessions: Session[]): number {
   const sets = sessions.flatMap(s => s.exercises.flatMap(e => e.sets)).filter(isWorkingSet);
   if (!sets.length) return 0;
-  return sets.filter(s => s.effort === 'max').length / sets.length;
+  return sets.filter(s => effortLabel(s) === 'max').length / sets.length;
 }
 
 /** e1RM trend for one exercise, reusing the shared recency-weighted regression. */
@@ -109,11 +109,12 @@ export function adherenceRate(sessions: Session[], schedule: Record<string, stri
  * The weigh-in trend (BR-14): a least-squares line through the last 28 days (7+ entries spanning
  * 14+ days), as % of the mean weight per week. `trendKg` is the line's value on the last day.
  * The old EWMA started at the first entry and lagged, so a real loss read as half of it.
+ * Given `today`, the 28 days end today, so an old log gives no current trend (AUD-9 OBS-WEIGHT).
  */
-export function weightTrendPctPerWeek(log: WeightEntry[]): { trendKg: number; pctPerWeek: number } | null {
-  const sorted = [...log].sort((a, b) => a.day.localeCompare(b.day));
+export function weightTrendPctPerWeek(log: WeightEntry[], today?: string): { trendKg: number; pctPerWeek: number } | null {
+  const sorted = [...log].filter(e => today == null || e.day <= today).sort((a, b) => a.day.localeCompare(b.day));
   if (!sorted.length) return null;
-  const lastDay = sorted[sorted.length - 1]!.day;
+  const lastDay = today ?? sorted[sorted.length - 1]!.day;
   const recent = sorted.filter(e => daysBetween(e.day, lastDay) < 28);
   if (recent.length < 7) return null;
   const xs = recent.map(e => daysBetween(recent[0]!.day, e.day));
@@ -145,7 +146,7 @@ export function repMixShares(sessions: Session[], today: string, custom: Exercis
   const low = sets.filter(s => s.reps! <= 5).length / n;
   const mid = sets.filter(s => s.reps! >= 6 && s.reps! <= 12).length / n;
   const high = sets.filter(s => s.reps! >= 13).length / n;
-  const easyHigh = sets.filter(s => s.reps! >= 13 && s.effort === 'easy').length;
+  const easyHigh = sets.filter(s => s.reps! >= 13 && effortLabel(s) === 'easy').length;
   return { low, mid, high, n, easyHighShare: easyHigh / n };
 }
 
@@ -245,11 +246,11 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   // Failure share
   const fShare = failureShare(weekSessions);
   const workingCount = weekSessions.flatMap(s => s.exercises.flatMap(e => e.sets)).filter(isWorkingSet).length;
-  if (workingCount >= 12 && fShare > 0.5) {
+  if (workingCount >= 12 && fShare > g.failureShareCap) {
     out.push({
       id: 'weekly:failure-share', category: 'progress', priority: 170, cadence: 'weekly', kind: 'tip',
       title: `About ${Math.round(fShare * 100)}% of sets were max effort`,
-      noticed: `${Math.round(fShare * 100)}% of your working sets ${week} were rated max.`,
+      noticed: `${Math.round(fShare * 100)}% of your working sets ${week} were rated max; your goal keeps it under ${Math.round(g.failureShareCap * 100)}%.`,
       means: 'Training to failure adds at most a little extra growth and no extra strength, for a lot more fatigue.',
       action: 'Save max effort for the last set of an exercise, not every set.',
       evidence: { n: workingCount, window: week, confidence: 'medium' },
@@ -284,7 +285,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
         id: `weekly:e1rm:${id}`, category: 'progress', priority: 200, cadence: 'weekly', kind: 'progress', exerciseId: id,
         title: `${name}: ${dir === 'up' ? 'rising' : dir === 'down' ? 'falling' : 'flat'}`,
         noticed: dir === 'flat' ? `${name} has not moved in recent sessions.` : `${name} is trending ${dir}${rate}.`,
-        means: dir === 'up' ? 'Keep doing what you are doing.' : dir === 'down' ? 'Worth a lighter week before pushing again.' : 'The stimulus has stopped changing.',
+        means: dir === 'up' ? 'Keep doing what you are doing.' : dir === 'down' ? 'Worth a lighter week before pushing again.' : 'That is the point where the coach suggests a change.',
         action: dir === 'up' ? 'No change needed.' : dir === 'down' ? 'Ease off max effort for a week, then rebuild.' : 'Add a set, add load, or change the rep range for two weeks.',
         evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: p.confidence },
       });
@@ -298,7 +299,8 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
           id: `weekly:pace:${id}`, category: 'progress', priority: 190, cadence: 'weekly', kind: 'data', exerciseId: id,
           title: `${name}: ${pace} for your training age`,
           noticed: `${name} e1RM is moving about ${Math.abs(pctPerMonth).toFixed(1)}% a month.`,
-          means: `That is ${pace} compared with lifters at a similar training age (about ${lo} to ${hi}% a month).`,
+          // AUD-20 (SCI-11): the reference range is the app's policy, not a biological standard.
+          means: `The app's reference for your training age is about ${lo} to ${hi}% a month.`,
           action: pace === 'a typical pace' ? 'Keep the current approach.' : 'No change needed either way; expect the rate to settle over time.',
           evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: 'medium' },
         });
@@ -310,7 +312,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
         id: `weekly:stale:${id}`, category: 'progress', priority: 160, cadence: 'weekly', kind: 'tip', exerciseId: id,
         title: `${name}: same load for weeks`,
         noticed: `${name} has used the same load for 6 sessions running.`,
-        means: 'Nothing about the stimulus has changed, so progress has nowhere to come from.',
+        means: 'Its estimated 1RM has stayed flat with it.',
         action: 'Add a rep, add load, or swap in a similar exercise for a block.',
         evidence: { n: 6, window: '6 sessions', confidence: 'medium' },
       });
@@ -325,7 +327,8 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
         id: 'weekly:adherence', category: 'consistency', priority: 210, cadence: 'weekly', kind: 'plan',
         title: 'Fewer planned sessions than usual',
         noticed: `${Math.round(adherence * 100)}% of planned sessions over the last 4 weeks.`,
-        means: 'A schedule that keeps getting missed is a scheduling problem, not a willpower one.',
+        // AUD-20 (SCI-11): facts and the coach's line, no claim about why sessions were missed.
+        means: 'Below 60%, the coach suggests a schedule change.',
         action: 'Worth moving the hardest day to a slot that keeps working, even if it means fewer days.',
         evidence: { n: 28, window: 'last 4 weeks', confidence: 'medium' },
       });
@@ -334,7 +337,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
         id: 'weekly:adherence-good', category: 'consistency', priority: 140, cadence: 'weekly', kind: 'praise',
         title: 'Sticking to the plan',
         noticed: `${Math.round(adherence * 100)}% of planned sessions over the last 4 weeks.`,
-        means: 'Consistency is doing most of the work here.',
+        means: 'That is 85% or more of the plan.',
         action: 'Keep going.',
         evidence: { n: 28, window: 'last 4 weeks', confidence: 'medium' },
       });
@@ -344,11 +347,11 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   // Rep-range mix vs goal
   const mix = repMixShares(sessions, start, custom);
   if (mix.n >= 8) {
-    if (g.id === 'strength' && mix.low < 0.15) {
+    if (g.heavyShareMin != null && mix.low < g.heavyShareMin) {
       out.push({
         id: 'weekly:rep-mix', category: 'progress', priority: 150, cadence: 'weekly', kind: 'tip',
         title: `Few heavy sets ${week}`,
-        noticed: `Only ${Math.round(mix.low * 100)}% of main-lift sets were 1 to 5 reps.`,
+        noticed: `Only ${Math.round(mix.low * 100)}% of main-lift sets were 1 to 5 reps; your goal aims for at least ${Math.round(g.heavyShareMin * 100)}%.`,
         means: 'Heavy sets are what drives 1RM most directly for a strength goal.',
         action: 'Add one 3 to 5 rep top set on each main lift.',
         evidence: { n: mix.n, window: week, confidence: 'medium' },
@@ -366,7 +369,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   }
 
   // Body-weight trend vs goal
-  const wt = weightTrendPctPerWeek(weightLog);
+  const wt = weightTrendPctPerWeek(weightLog, today);
   if (wt) {
     const [lo, hi] = g.weightRatePctPerWeek ?? [-1, 1];
     const dir = wt.pctPerWeek < 0 ? 'down' : wt.pctPerWeek > 0 ? 'up' : 'flat';

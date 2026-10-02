@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { Button, Chip, Field, Segmented, Sheet } from '@/ui/primitives';
+import { Button, Chip, Field, Row, Segmented, Sheet } from '@/ui/primitives';
 import { makeCustomExercise, searchExercises } from '@/core/exercises';
 import type { Exercise, ResistanceMode } from '@/core/models';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
@@ -30,15 +30,12 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
           <input autofocus placeholder="Search, e.g. chest press, lat pulldown" value={q} onInput={e => setQ((e.target as HTMLInputElement).value)} />
           <div class="list">
             {results.map(e => (
-              <div key={e.id} class="list-row pressable" onClick={() => onPick(e)}>
-                <div class="grow">
-                  <div>{e.name}</div>
-                  <div class="hint">{e.equipment} · {e.primary.map(muscleLabel).join(', ') || 'custom'}</div>
-                </div>
-                <span class="chip">Add</span>
-              </div>
+              <Row key={e.id} onClick={() => onPick(e)} trailing={<span class="chip">Add</span>}>
+                <div>{e.name}</div>
+                <div class="hint">{e.equipment} · {e.primary.map(muscleLabel).join(', ') || 'custom'}</div>
+              </Row>
             ))}
-            {!results.length && <p class="muted small" style={{ padding: '12px 0' }}>Nothing matches. You can create it below.</p>}
+            {!results.length && <p class="muted small" style={{ padding: '12px 0' }}>Nothing matches.</p>}
           </div>
           <Button variant="quiet" onClick={() => { setCustom(true); setName(q); }}>Create a custom exercise</Button>
         </div>
@@ -50,7 +47,7 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
               {['Machine', 'Cable', 'Dumbbells', 'Barbell', 'Smith Machine', 'Bodyweight', 'Kettlebell', 'Band', 'Other'].map(x => <option key={x}>{x}</option>)}
             </select>
           </Field>
-          <Field label="How resistance works" hint="Decides what progress means for this exercise.">
+          <Field label="How resistance works">
             <select value={mode} onChange={e => setMode((e.target as HTMLSelectElement).value as ResistanceMode)}>
               <option value="weighted">Weighted: more load is progress</option>
               <option value="bodyweight">Bodyweight: more reps is progress</option>
@@ -64,7 +61,7 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
               {MUSCLES.map(m => <Chip key={m.id} pressed={primary.includes(m.id)} onClick={() => setPrimary(p => (p.includes(m.id) ? p.filter(x => x !== m.id) : [...p, m.id].slice(-2)))}>{m.label}</Chip>)}
             </div>
           </Field>
-          <Field label="Main lift or accessory" hint="Main lifts get your goal's main rep range; accessories get the accessory range.">
+          <Field label="Main lift or accessory">
             <Segmented value={role} options={[{ value: 'accessory', label: 'Accessory' }, { value: 'main', label: 'Main lift' }]} onChange={setRole} />
           </Field>
           <div class="row"><Button variant="quiet" onClick={() => setCustom(false)}>Back</Button><Button variant="primary" class="grow" disabled={!name.trim() || !primary.length} onClick={create}>Create and add</Button></div>

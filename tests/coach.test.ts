@@ -294,7 +294,7 @@ describe('recovery.scheduled-conflict / recovery.done-today (QA8-1)', () => {
       category: 'recovery', priority: firm ? 380 : 340,
       title: `SPLIT 2 - LOWER AND CORE today, but hamstrings is only ${pct}% recovered`,
       noticed: `SPLIT 2 - LOWER AND CORE is scheduled today and works hamstrings directly. It is about ${pct}% recovered.`,
-      means: firm ? 'Training this hard right now works against the muscle you are trying to build.' : 'You can still train productively at this level; the hardest sets just will not be at their best.',
+      means: firm ? 'Below 60%, the coach suggests moving the hard sets.' : 'That is short of the 90% ready line.', // AUD-20
       action: firm ? 'Swap to another split today, or keep SPLIT 2 - LOWER AND CORE light and put the hard sets elsewhere.' : 'Reorder SPLIT 2 - LOWER AND CORE so this muscle comes later, or go a little lighter on it today.',
       muscle: 'hamstrings',
     });

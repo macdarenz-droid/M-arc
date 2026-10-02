@@ -4,6 +4,7 @@
  * composer. Loaded lazily from App.tsx the first time Escobar opens.
  */
 import { dayKey } from '@/core/dates';
+import { Fragment } from 'preact';
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { todayReadiness } from '@/app/selectors';
@@ -18,15 +19,15 @@ import { escobarUi, loopView, offlineReason, online, quotaResetAt, registerEscob
 import * as S from '../session';
 import { goTo } from '../palace/navigate';
 import { Composer } from './Composer';
-import { EscobarTurnView, UserBubble, AnswerText, turnsOf, type UserTurn } from './Message';
+import { EscobarTurnView, UserBubble, AnswerText, turnsOf, toolResults, toolUsesOf, type Turn, type UserTurn } from './Message';
 import { Escalation } from './Escalation';
 import { starterChips } from './prompts';
 import { ThinkingLine } from './Thinking';
 import { PlanBoard, currentTurn, isPlanWork } from './PlanBoard';
-import type { ImageBlockRef } from '../types';
+import type { Conversation, ImageBlockRef } from '../types';
 import type { SendInput, TurnResult } from '../loop';
 
-export const EMPTY_LINE = 'I know every rep you’ve logged and every corner of this app. Ask me anything.';
+export const EMPTY_LINE = 'Ask me anything.';
 
 // I7: the exit animation lives here (it needs to measure and animate this component's own
 // panel), but it registers into state.ts rather than keeping its own module-level hook — state.ts
@@ -76,12 +77,10 @@ export function Explainer({ onDone }: { onDone?: () => void }) {
         <li>The parts of your history he asks for to answer, and your messages and photos.</li>
         <li>It goes through your M/ARC server to Anthropic, the model provider.</li>
       </ul>
-      <p class="small muted">The rest of your history stays on the phone. Every answer shows what he looked at.</p>
       <div class="list">
         <Row trailing={<Toggle checked={health} onChange={setHealth} label="Share health data" />}><span class="small">Share health data</span><div class="hint">Sleep, resting heart rate, heart rate during sessions.</div></Row>
         <Row trailing={<Toggle checked={body} onChange={setBody} label="Share body data" />}><span class="small">Share body data</span><div class="hint">Weight and body measurements.</div></Row>
       </div>
-      <p class="hint">You can change these any time in Settings → Escobar.</p>
       <Button variant="primary" block onClick={() => { S.setEscobarEnabled(true, { health, body }); onDone?.(); }}>Turn on Escobar</Button>
     </div>
   );
@@ -104,7 +103,22 @@ function PastConversations({ onBack }: { onBack: () => void }) {
 
 const bubbleOf = (i: SendInput): UserTurn['msg'] => ({ role: 'user', content: [{ type: 'text', text: i.text }, ...(i.images ?? [])], ...(i.contextRefs?.length ? { meta: { contextRefs: i.contextRefs } } : {}) });
 
-function Thread({ onChip }: { onChip: (t: string) => void }) {
+/** BUG-32: the kinds of escalate card an Escobar turn draws (EscobarTurnView's rule: a result that is not an error). */
+function escalatedKinds(conv: Conversation, indexes: number[]): Set<string> {
+  const results = toolResults(conv.messages, indexes);
+  const kinds = new Set<string>();
+  for (const i of indexes) {
+    const m = conv.messages[i];
+    if (m?.role !== 'assistant') continue;
+    for (const u of toolUsesOf(m.content)) {
+      const r = results.get(u.id);
+      if (u.name === 'escalate' && r && !r.isError) kinds.add(String(u.input.kind));
+    }
+  }
+  return kinds;
+}
+
+export function Thread({ onChip }: { onChip: (t: string) => void }) {
   const conv = S.activeConversation.value;
   const view = loopView.value;
   const busy = view.status !== 'idle';
@@ -115,6 +129,18 @@ function Thread({ onChip }: { onChip: (t: string) => void }) {
   const r = todayReadiness.value;
   const lastEscobar = turns.length - 1;
   const planWork = busy && isPlanWork(currentTurn(conv?.messages ?? []).uses, view.activity);
+  // BUG-32: each pre-screen card sits right under the message that raised it, in memory only.
+  const cards = S.safetyCards.value;
+  const committed = conv?.messages.length ?? 0;
+  const card = (c: S.SafetyCard) => <Escalation key={`${c.orphan ? 'gone' : 'card'}-${c.kind}-${c.at}`} kind={c.kind} />;
+  // One card, not two: a reply that draws the same card replaces the pre-screen one.
+  const cardsUnder = (at: number, reply: Turn | undefined) => {
+    const shown = conv && reply?.kind === 'escobar' ? escalatedKinds(conv, reply.indexes) : null;
+    return cards.filter(c => !c.orphan && c.at === at && !shown?.has(c.kind)).map(card);
+  };
+  // An unsent message that a later send replaced has left the thread; its card keeps that place.
+  const orphansIn = (after: number, upTo: number) => cards.filter(c => c.orphan && c.at > after && c.at <= upTo).map(card);
+  let lastUser = -1;
 
   if (!turns.length && !showPending && !last) {
     return (
@@ -127,12 +153,16 @@ function Thread({ onChip }: { onChip: (t: string) => void }) {
   }
   return (
     <div class="esc-thread-inner">
-      {S.safetyCards.value.map(k => <Escalation key={k} kind={k} />)}
-      {turns.map((t, i) => (t.kind === 'user'
-        ? <UserBubble key={t.index} msg={t.msg} />
-        : <EscobarTurnView key={t.indexes[0]} conv={conv!} indexes={t.indexes} live={busy && i === lastEscobar} last={i === lastEscobar} onChip={onChip} />))}
+      {turns.map((t, i) => {
+        if (t.kind !== 'user') return <EscobarTurnView key={t.indexes[0]} conv={conv!} indexes={t.indexes} live={busy && i === lastEscobar} last={i === lastEscobar} onChip={onChip} />;
+        const before = orphansIn(lastUser, t.index);
+        lastUser = t.index;
+        return <Fragment key={t.index}>{before}<UserBubble msg={t.msg} />{cardsUnder(t.index, turns[i + 1])}</Fragment>;
+      })}
+      {orphansIn(lastUser, Infinity)}
       {showPending && pending && <UserBubble msg={bubbleOf(pending.input)} />}
       {!busy && last?.notSent && <UserBubble msg={bubbleOf(last.input)} />}
+      {cards.filter(c => !c.orphan && c.at >= committed).map(card)}
       {busy && (
         <div class="esc-turn esc-live" aria-live="polite">
           {planWork ? <PlanBoard messages={conv?.messages ?? []} activity={view.activity} /> : (
@@ -296,7 +326,7 @@ export function EscobarSheet() {
     void S.send({ text: text || 'What do you see in this photo?', ...(images.length ? { images } : {}), ...(ref0 ? { contextRefs: [ref0] } : {}) });
   };
 
-  const notice = online.value === false ? `Escobar is offline.${offlineReason.value ? ` ${offlineReason.value}` : ''} He can still point you around the app.` : quotaResetAt.value && quotaResetAt.value > Date.now() ? 'Escobar is resting until tomorrow (daily limit reached).' : undefined;
+  const notice = online.value === false ? `Escobar is offline.${offlineReason.value ? ` ${offlineReason.value}` : ''}` : quotaResetAt.value && quotaResetAt.value > Date.now() ? 'Escobar is resting until tomorrow (daily limit reached).' : undefined;
   const mode = ui.mode === 'live' ? ' · live' : ui.mode === 'plan' ? ' · planning' : '';
 
   return (
@@ -312,7 +342,7 @@ export function EscobarSheet() {
             <div class="esc-menu" role="menu">
               <button type="button" role="menuitem" onClick={() => { setMenu(false); setPast(false); S.startNewConversation(); }}>New conversation</button>
               <button type="button" role="menuitem" onClick={() => { setMenu(false); setPast(true); }}>Past conversations</button>
-              <button type="button" role="menuitem" onClick={() => { setMenu(false); S.escobarToHalf(); showPanel('memory'); }}>What Escobar knows</button>
+              <button type="button" role="menuitem" onClick={() => { setMenu(false); S.escobarToHalf(); showPanel('memory'); }}>Memory</button>
               <button type="button" role="menuitem" onClick={() => { setMenu(false); requestClose(); void goTo('settings.escobar'); }}>Coach settings</button>
             </div>
           )}

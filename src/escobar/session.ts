@@ -15,7 +15,7 @@ import { EscobarLoop, type SendInput, type TurnResult } from './loop';
 import { httpTransport, checkHealth, type Transport } from './transport';
 import { buildManifest } from './context/manifest';
 import { currentFocus } from './palace/focus';
-import { emptyStore, legacyConversation, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
+import { clearStore, emptyStore, legacyConversation, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
 import { evictImages, imageData } from './images';
 import { escobarUi, estimateCost, loopView, offlineReason, online, proxyUrlOf, quotaResetAt } from './state';
 import { PROTECTED_MEMORY } from './tools/executor';
@@ -35,8 +35,15 @@ export const storeSig = signal<ConversationStore>(emptyStore());
 export const activeConversation = signal<Conversation | null>(null);
 /** The last turn's result, for "Not sent · Retry", refusals, offline replies and errors. */
 export const lastTurn = signal<(TurnResult & { input: SendInput }) | null>(null);
-/** Fixed safety cards raised by the pre-screen for the current conversation (§19). */
-export const safetyCards = signal<SafetySignal[]>([]);
+/**
+ * Fixed safety cards raised by the pre-screen for the current conversation (§19). BUG-32: each card
+ * belongs to the message that raised it and shows right under it: `at` is where the loop commits
+ * that message, `input` is the send (a Retry sends the same one). When a later send replaces an
+ * unsent message, the message leaves the thread and its card stays in its place (`orphan`).
+ * In memory only.
+ */
+export interface SafetyCard { kind: SafetySignal; at: number; input?: SendInput; orphan?: boolean }
+export const safetyCards = signal<SafetyCard[]>([]);
 /** The message being sent, shown until the loop commits it (the conversation length when sent). */
 export const pendingUser = signal<{ input: SendInput; at: number } | null>(null);
 
@@ -207,7 +214,13 @@ async function getLoop(mode: EscobarMode): Promise<EscobarLoop> {
     recordUsage,
     persist: c => { if (born !== epoch) return; if (mine()) persist(c); else persistQuietly(c); },
     onUpdate: v => { if (mine()) loopView.value = v; },
-    onSafety: s => { if (mine() && !safetyCards.value.includes(s)) safetyCards.value = [...safetyCards.value, s]; },
+    // BUG-32: raised before the loop commits anything, so the loop's length is this message's index.
+    onSafety: s => {
+      if (!mine()) return;
+      const at = created.conversation.messages.length;
+      if (safetyCards.value.some(c => !c.orphan && c.kind === s && c.at === at)) return;
+      safetyCards.value = [...safetyCards.value, { kind: s, at, input: pendingUser.value?.input }];
+    },
   });
   loop = created;
   return created;
@@ -219,6 +232,10 @@ export async function send(input: SendInput): Promise<TurnResult> {
     escobarUi.value = { ...escobarUi.value, draft: input.text };
     return { outcome: 'error', error: { code: 'invalid', message: 'Escobar is still answering.' }, outcomes: [], signals: [] };
   }
+  // BUG-32: an unsent message this send replaces leaves the thread; its card keeps its place.
+  const committed = activeConversation.value?.messages.length ?? 0;
+  const replaced = (c: SafetyCard): boolean => !c.orphan && c.at >= committed && c.input !== input;
+  if (safetyCards.value.some(replaced)) safetyCards.value = safetyCards.value.map(c => (replaced(c) ? { ...c, orphan: true } : c));
   const mode = modeFor(input.text);
   // First feedback within 150 ms (§21): show the message and "Thinking…" before any await.
   lastTurn.value = null;
@@ -266,6 +283,14 @@ export function setEscobarEnabled(on: boolean, sharing?: { health: boolean; body
   update(s => ({ ...s, escobar: { ...s.escobar, enabled: on, ...(sharing ? { sharing } : {}) } }));
   if (on) { importLegacyThread(); ensureDeviceId(); offlineUntil = 0; checkOnline(); }
 }
+
+/**
+ * AUD-2: the one operation behind every way the coach goes off (the Settings switch, a restore,
+ * setEscobarEnabled(false)): the running turn stops and ends as "Stopped.". The loop also checks
+ * `enabled` before each request, so no next step or retry starts (D-AUD2-1).
+ */
+function coachOff(): void { if (loop?.busy) loop.stop(); }
+state.subscribe(s => { if (!s.escobar.enabled) coachOff(); });
 
 /** RG-03: on first enable, the old coach chat becomes "Earlier conversation" (once). */
 function importLegacyThread(): void {
@@ -319,10 +344,9 @@ function modeFor(text: string): EscobarMode {
 
 /** Settings → Reset conversations. */
 export function resetConversations(): void {
-  dropLoop();
-  epoch++;
-  storeSig.value = saveStore(emptyStore()) ?? emptyStore();
-  activeConversation.value = null;
+  // DATA-02 (AUD-4): the replacing path, so another open tab drops its copy too. This tab's
+  // onStoreReplaced handler (above) drops the loop and what it holds.
+  clearStore();
 }
 
 /** Replace the active conversation after a proposal decision (apply.ts). */

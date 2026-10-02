@@ -15,6 +15,7 @@ import { exerciseHistory, type ExerciseSessionSummary } from '@/brain/history';
 import { modeLoadText } from '@/brain/bodyweight';
 import { FULL_PCT, READY_PCT } from '@/data/recovery';
 import type { MuscleRecovery } from '@/brain/recovery';
+import { DATA_LABEL } from '@/brain/trend';
 import type { LoadUnit, ResistanceMode } from '@/core/models';
 import { addExerciseToSession } from '@/slices/workout/session';
 import { showToast } from '@/app/toast';
@@ -54,7 +55,7 @@ export function Body() {
       <Card style={{ marginTop: 14 }} data-palace="body.map">
         <MuscleMap values={values} mode={mode} selected={selected} onSelect={m => setSelected(m)} />
         <div style={{ marginTop: 10 }}><MapLegend mode={mode} /></div>
-        <p class="hint" style={{ marginTop: 8 }}>Tap a muscle for details. {view === 'recovery' ? `Ready for hard work at ${READY_PCT}%, fully recovered at ${FULL_PCT}%. Recovery time depends on sets, load and effort, and adjusts to your own history in both directions, within limits.` : view === 'week' ? 'Shading follows effective sets this week.' : 'Levels are a relative measure of how much you have trained each muscle. Not a medical measurement.'}</p>
+        {view === 'recovery' && <p class="hint" style={{ marginTop: 8 }}>Ready at {READY_PCT}%, full at {FULL_PCT}%.</p>}
         {view === 'recovery' && wholeBody && <p class="hint" style={{ marginTop: 4 }}>Whole body: recovering about {Math.round((wholeBody.systemicFactor - 1) * 100)}% slower than usual this week.</p>}
       </Card>
 
@@ -63,8 +64,8 @@ export function Body() {
           <Section title="Ready times" palace="body.recovering" aside={<span class="small muted">{confidenceAside(rec)}</span>}>
             <ReadyTimesCard rec={rec} setSelected={setSelected} />
           </Section>
-          <Section title="Fully recovered" palace="body.full" aside={<span class="small muted">{fullyRecovered.length}</span>}>
-            <Card><div class="wrap">{fullyRecovered.map(r => <Chip key={r.muscle} tone="positive" onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)}</Chip>)}{!fullyRecovered.length && <span class="small muted">Trained muscles show here once fully recovered.</span>}</div></Card>
+          <Section title="Recovered muscles" palace="body.full" aside={<span class="small muted">{fullyRecovered.length}</span>}>
+            <Card><div class="wrap">{fullyRecovered.map(r => <Chip key={r.muscle} tone="positive" onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)}</Chip>)}{!fullyRecovered.length && <span class="small muted">None yet.</span>}</div></Card>
           </Section>
         </>
       )}
@@ -76,7 +77,7 @@ export function Body() {
       )}
 
       {view === 'week' && (
-        <Section title="Effective sets this week" palace="body.week-volume">
+        <Section title="Effective sets" palace="body.week-volume">
           <Card><div class="list">
             {volumeStatus.map(r => {
               const scaleMax = Math.max(r.thisWeekSets, r.band[1]) * 1.15 || 1;
@@ -112,13 +113,12 @@ const rtGroupInput = (r: MuscleRecovery) => ({ readyInHours: r.readyInHours, hou
  * so the line can only break at the dash, never inside "10 pm". */
 const nwParts = (text: string): string[] => text.split(' – ');
 
-/** The Section aside: a confidence summary across every muscle the card lists (Ready now + the day groups). */
+/** The Section aside: a data summary across every muscle the card lists (Ready now + the day groups). */
 function confidenceAside(rec: MuscleRecovery[]): string | undefined {
   const listed = rec.filter(r => r.lastTrainedAt && r.pct < FULL_PCT);
   if (!listed.length) return undefined;
   const first = listed[0]!.confidence;
-  const cap = first.charAt(0).toUpperCase() + first.slice(1);
-  return listed.every(r => r.confidence === first) ? `${cap} confidence` : 'Mixed confidence';
+  return listed.every(r => r.confidence === first) ? DATA_LABEL[first] : 'Mixed data';
 }
 
 function buildRtLayout(rec: MuscleRecovery[], now: number): RtLayout {
@@ -187,14 +187,13 @@ function RtDetail({ r, now, col, full, oneColumn, onOpen }: { r: MuscleRecovery;
   const headline = r.ready ? 'Ready' : r.soreToday && !r.readyInHours ? 'Sore today' : `${READY_PCT - r.pct}% to go`;
   const readyLine = r.ready ? 'Ready now' : readyGroupFor(now, rtGroupInput(r)).detailText;
   const fullLine = r.fullInHours != null ? `Full ${formatFullAt(now, r.fullInHours)}` : null;
-  const confidenceCap = r.confidence.charAt(0).toUpperCase() + r.confidence.slice(1);
   const caretLeft = full || oneColumn || col === 0 ? '28px' : 'calc(50% + 28px)';
   return (
     <button type="button" class="rt-detail" id={`rt-detail-${r.muscle}`} onClick={onOpen}>
       <span class="rt-caret" style={{ left: caretLeft }} aria-hidden="true" />
       <span class="rt-detail-row1"><b>{muscleLabel(r.muscle)}</b><span class="muted">{headline}</span></span>
       <span class="rt-detail-row2">{readyLine}</span>
-      <span class="rt-detail-row3">{[fullLine, `${confidenceCap} confidence`].filter((x): x is string => !!x).join(' · ')}</span>
+      <span class="rt-detail-row3">{[fullLine, DATA_LABEL[r.confidence]].filter((x): x is string => !!x).join(' · ')}</span>
       <IconChevron class="rt-detail-chevron" size={16} />
     </button>
   );
@@ -343,6 +342,13 @@ function bestEverHint(h: ExerciseSessionSummary[], mode: ResistanceMode, u: Load
   return `${bestReps || bestDur} ${bestDur ? 's' : 'reps'}`;
 }
 
+/** AUD-6 (UI-07): the muscle panel's "Full" column. Ready (90 %) is not full (97 %): a ready muscle still short of full shows its day. */
+export function muscleFullText(now: number, r: Pick<MuscleRecovery, 'recovering' | 'fullInHours' | 'beyondCap'>): string {
+  if (r.fullInHours != null && (r.recovering || r.fullInHours > 0)) return dayOrToday(now, r.fullInHours);
+  if (!r.recovering) return 'Now';
+  return r.beyondCap ? BEYOND_CAP_TEXT : 'When soreness eases';
+}
+
 /** One muscle, opened as the `muscle` panel (from the map, a list row, or Escobar). O2: a clear
  * recovery timeline (real dates, not "2d to 3d"), four facts, and Logged/Try next tabs. */
 export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: () => void }) {
@@ -367,8 +373,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
   const fillTone = r.recovering ? (r.pct < 40 ? 'negative' : 'warning') : 'positive';
   // BUG-17: past the 120 h window cap there is no clock time, but it is not soreness either.
   const readyText = !r.recovering ? 'Now' : r.readyInHours ? (readyDayWindow(now, r.readyInHours) ?? 'Now') : r.beyondCap ? BEYOND_CAP_TEXT : 'When soreness eases';
-  const fullText = !r.recovering ? 'Now' : r.fullInHours != null ? dayOrToday(now, r.fullInHours) : r.beyondCap ? BEYOND_CAP_TEXT : 'When soreness eases';
-  const accuracy = r.confidence === 'high' ? 'Good' : r.confidence === 'medium' ? 'Getting there' : 'Rough guess for now';
+  const fullText = muscleFullText(now, r);
   const active = s.active;
 
   return (
@@ -396,7 +401,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
             return <Row trailing={<span class="small">{logged[0]!.e.name} · {last.sets.length} {last.sets.length === 1 ? 'set' : 'sets'}</span>}><span class="small muted">Last session</span></Row>;
           })()}
           <Row trailing={<span class="small">{levels.level}</span>}><span class="small muted">Level</span></Row>
-          <Row trailing={<span class="small">{accuracy}{r.personalized ? ' · fitted to you' : ''}</span>}><span class="small muted">Accuracy</span></Row>
+          <Row trailing={<span class="small">{DATA_LABEL[r.confidence]}{r.personalized ? ' · fitted to you' : ''}</span>}><span class="small muted">Data</span></Row>
         </div>
         {r.drivers.length > 0 && <p class="hint">{r.drivers.map(d => d.text).join(' · ')}</p>}
 
@@ -404,7 +409,6 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
           {r.recovering && (
             <div class="stack-sm">
               <Button variant="quiet" size="sm" onClick={markFresh}>Mark as fresh</Button>
-              <span class="hint">Use it if this muscle already feels ready.</span>
             </div>
           )}
           <AskAbout refTo={{ kind: 'muscle', id: muscle, label: info.label }} label="Ask Escobar" class="btn-sm" />
@@ -472,7 +476,7 @@ function BodyFat() {
   return (
     <Section title="Body fat estimate" palace="body.bodyfat" aside={<Button variant="quiet" size="sm" onClick={() => setOpen(true)}>{last ? 'New reading' : 'Measure'}</Button>}>
       <Card>
-        {last ? <div class="row-between"><Stat value={`${last.bodyFatPct}%`} label={`on ${formatDay(last.day)}`} />{s.body.length > 1 && <span class="small muted">{s.body.length} readings · first {s.body[0]!.bodyFatPct}%</span>}</div> : <p class="small muted">Tape-measure estimate using the US Navy method. Track the trend, not one reading.</p>}
+        {last ? <div class="row-between"><Stat value={`${last.bodyFatPct}%`} label={`on ${formatDay(last.day)}`} />{s.body.length > 1 && <span class="small muted">{s.body.length} readings · first {s.body[0]!.bodyFatPct}%</span>}</div> : <p class="small muted">US Navy tape-measure estimate.</p>}
       </Card>
       {open && (
         <Sheet title="Body fat estimate" onClose={() => setOpen(false)}>
@@ -486,7 +490,6 @@ function BodyFat() {
               {sex === 'female' && <Field label={`Hip (${len})`}><input type="text" inputMode="decimal" value={hip} onInput={e => setHip((e.target as HTMLInputElement).value)} /></Field>}
             </div>
             <Card class="card-quiet"><Stat value={result != null ? `${result}%` : '—'} label="estimated body fat" /></Card>
-            <p class="hint">Typically within 3 to 4 points of lab methods. Not a medical measurement.</p>
             <Button variant="primary" disabled={result == null} onClick={save}>Save reading</Button>
           </div>
         </Sheet>

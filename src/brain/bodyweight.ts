@@ -97,11 +97,43 @@ export function modeLoadText(set: Pick<LoggedSet, 'kg' | 'entered'>, mode: Resis
  * reps must come from here too. Weighted and other modes: formatLoad(topKg) and topReps, unchanged.
  * An effective top of 0 (help >= body weight) falls back to today's text.
  */
-export function lastTopStats(h: Pick<ExerciseSessionSummary, 'day' | 'sets' | 'topKg' | 'topReps'>, ex: Exercise | undefined, bw: BodyWeightAt | undefined, unit: LoadUnit): { load: string; reps: number } {
+/** UI-11: a carry/sled logged by distance or time, not reps (a loaded carry, e.g. burpees, still
+ * logs reps and keeps the ordinary load/reps stat). */
+function isTimedOrDistanceCarry(mode: ResistanceMode, bestDistanceM: number, bestDurationSec: number, bestReps: number): boolean {
+  return mode === 'conditioning' && bestReps === 0 && (bestDistanceM > 0 || bestDurationSec > 0);
+}
+
+export function lastTopStats(h: Pick<ExerciseSessionSummary, 'day' | 'sets' | 'topKg' | 'topReps' | 'bestDurationSec' | 'bestDistanceM' | 'bestReps'>, ex: Exercise | undefined, bw: BodyWeightAt | undefined, unit: LoadUnit): { load: string; reps: number } {
   const mode = ex?.mode ?? 'weighted';
+  // UI-11: a hold has no load or reps; its own stat is the longest time held that session.
+  if (mode === 'duration') return { load: `${h.bestDurationSec}s`, reps: 0 };
+  // UI-11: a carry/sled logged by distance or time has no reps either; distance wins when both are logged.
+  if (isTimedOrDistanceCarry(mode, h.bestDistanceM, h.bestDurationSec, h.bestReps)) {
+    return { load: h.bestDistanceM > 0 ? `${h.bestDistanceM} m` : `${h.bestDurationSec}s`, reps: 0 };
+  }
   if (mode !== 'bodyweight' && mode !== 'assisted') return { load: formatLoad(h.topKg, unit), reps: h.topReps };
   const top = topEffective(h.sets, mode, bodyweightShare(ex), bw?.(h.day) ?? null);
   return top && top.kg > 0 ? { load: approxLoadText(top.kg, unit), reps: top.reps } : { load: modeLoadText({ kg: h.topKg }, mode, unit), reps: h.topReps };
+}
+
+/** UI-11: whether the Stats "reps at top" tile (and the sparkline readout's "× reps") applies —
+ * false for a hold (no reps at all) and for a carry/sled once it has a distance or time logged
+ * instead of reps (a rep-based conditioning move, e.g. burpees, keeps the reps tile). */
+export function statHasReps(mode: ResistanceMode, bestDistanceM: number, bestDurationSec = 0, bestReps = 0): boolean {
+  return mode !== 'duration' && !isTimedOrDistanceCarry(mode, bestDistanceM, bestDurationSec, bestReps);
+}
+
+/** UI-11: the sparkline's scrub readout — a hold or a distance/time-logged carry shows only its
+ * own number ("45s", "40 m"), everything else keeps the "<load> × <reps>" form. */
+export function statReadout(stats: { load: string; reps: number }, mode: ResistanceMode, bestDistanceM: number, bestDurationSec = 0, bestReps = 0): string {
+  return statHasReps(mode, bestDistanceM, bestDurationSec, bestReps) ? `${stats.load} × ${stats.reps}` : stats.load;
+}
+
+/** UI-11: the Stats "last top load" tile's label, picked by what that mode's value actually is. */
+export function statLoadLabel(mode: ResistanceMode, bestDistanceM: number, bestDurationSec = 0, bestReps = 0): string {
+  if (mode === 'duration') return 'longest hold';
+  if (isTimedOrDistanceCarry(mode, bestDistanceM, bestDurationSec, bestReps)) return bestDistanceM > 0 ? 'farthest distance' : 'longest time';
+  return 'last top load';
 }
 
 /** The kg column header / placeholder: "+kg" for bodyweight moves, else the unit. */
@@ -111,7 +143,8 @@ export const loadColumnLabel = (mode: ResistanceMode, unit: LoadUnit): string =>
 export const loadAriaLabel = (mode: ResistanceMode, unit: LoadUnit): string =>
   mode === 'bodyweight' ? `Added load in ${unit}` : mode === 'assisted' ? `Assistance in ${unit}` : `Load in ${unit}`;
 
-export const NO_BODY_WEIGHT_HINT = 'Add your body weight in Settings to count bodyweight work';
+// COPY-1: data only (the counted load or its absence), no instructions.
+export const NO_BODY_WEIGHT_HINT = 'Body weight not set';
 
 /** The one Train line for a move with a share; null for moves without one. */
 export function bodyweightHint(ex: Exercise | undefined, bwKg: number | null, unit: LoadUnit): string | null {
@@ -119,7 +152,5 @@ export function bodyweightHint(ex: Exercise | undefined, bwKg: number | null, un
   if (share == null || !ex) return null;
   const base = effectiveLoadKg(undefined, ex.mode, share, bwKg);
   if (base == null) return NO_BODY_WEIGHT_HINT;
-  return ex.mode === 'assisted'
-    ? `Your body weight counts: ${approxLoadText(base, unit)}, minus the machine's help.`
-    : `Your body weight counts: ${approxLoadText(base, unit)}, plus anything you add.`;
+  return `Body-weight load ${approxLoadText(base, unit)}`;
 }

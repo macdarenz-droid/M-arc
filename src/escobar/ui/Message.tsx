@@ -13,16 +13,17 @@ import { parseDirectives } from '../verify';
 import { onProposal, canApply, undoOpen, UNDO_WINDOW_MS } from '../apply';
 import { ShowComponent } from './components';
 import { Escalation } from './Escalation';
+import { ReportAnswer } from './Report';
 import { imageData, loadImage } from '../images';
 import { state } from '@/core/store';
 import { makeCtx } from '../tools/context';
 import { statusLabel } from '../tools/executor';
-import { drawerView, pastTense, splitCitations } from './present';
+import { drawerView, pastTense, splitCitations, stripCitationTags } from './present';
 import type { Conversation, Fact, ProposalRecord, RenderedTurn, StoredMessage, UserBlock } from '../types';
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 type ToolUse = { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> };
-const toolUsesOf = (content: unknown[]): ToolUse[] => content.filter((b): b is ToolUse => isObj(b) && b.type === 'tool_use').map(b => ({ ...b, input: isObj(b.input) ? b.input : {} }));
+export const toolUsesOf = (content: unknown[]): ToolUse[] => content.filter((b): b is ToolUse => isObj(b) && b.type === 'tool_use').map(b => ({ ...b, input: isObj(b.input) ? b.input : {} }));
 const textOf = (content: unknown[]) => content.filter((b): b is { type: 'text'; text: string } => isObj(b) && b.type === 'text').map(b => b.text).join('');
 
 export interface UserTurn { kind: 'user'; index: number; msg: Extract<StoredMessage, { role: 'user' }> }
@@ -44,7 +45,7 @@ export function turnsOf(messages: StoredMessage[]): Turn[] {
   return out;
 }
 
-function toolResults(messages: StoredMessage[], indexes: number[]): Map<string, { content: string; isError: boolean }> {
+export function toolResults(messages: StoredMessage[], indexes: number[]): Map<string, { content: string; isError: boolean }> {
   const map = new Map<string, { content: string; isError: boolean }>();
   for (const i of indexes) {
     const m = messages[i];
@@ -107,8 +108,9 @@ export function ProposalCard({ p, conversationId }: { p: ProposalRecord; convers
   return (
     <Card class="esc-proposal" data-proposal={p.status}>
       <div class="eyebrow">Proposal</div>
-      <b>{p.title}</b>
-      <table class="esc-diff small"><tbody>{p.preview.map((r, i) => <tr key={i}><th scope="row">{r.label}</th><td class="muted">{r.before ?? '—'}</td><td aria-hidden="true">→</td><td>{r.after}</td></tr>)}</tbody></table>
+      {/* BUG-31: a pin_card title is the model's own text ("Pin to Today: <title>", and its preview row). */}
+      <b>{stripCitationTags(p.title)}</b>
+      <table class="esc-diff small"><tbody>{p.preview.map((r, i) => <tr key={i}><th scope="row">{stripCitationTags(r.label)}</th><td class="muted">{r.before ?? '—'}</td><td aria-hidden="true">→</td><td>{r.after}</td></tr>)}</tbody></table>
       {p.status === 'awaiting' && (
         <div class="row" style={{ gap: 8 }}>
           <Button variant="primary" size="sm" disabled={busy || !canApply(p.kind)} onClick={() => act('apply')}>Apply</Button>
@@ -118,7 +120,7 @@ export function ProposalCard({ p, conversationId }: { p: ProposalRecord; convers
       {p.status === 'applied' && <div class="small row" style={{ gap: 8 }}><span class="muted">Applied</span>{open && <button type="button" class="esc-link" onClick={() => act('undo')}>Undo</button>}</div>}
       {p.status === 'dismissed' && <div class="small muted">Dismissed</div>}
       {p.status === 'undone' && <div class="small muted">Undone</div>}
-      {p.status === 'stale' && <div class="small muted">Out of date. Ask again for a fresh one.</div>}
+      {p.status === 'stale' && <div class="small muted">Out of date.</div>}
       {p.status === 'failed' && <div class="small muted">Couldn’t apply this.</div>}
     </Card>
   );
@@ -182,7 +184,9 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
   const answerText = r?.answer ?? (final ? parseDirectives(textOf(final.m.content)).text : '');
   const proposals = (conv.proposals ?? []).filter(p => p.messageIndex != null && indexes.includes(p.messageIndex));
   const visibleUse = (u: ToolUse) => { const r = results.get(u.id); return !!r && !r.isError && (u.name === 'show' || u.name === 'navigate' || u.name === 'escalate'); };
-  const hasPreamble = assistant.some(a => (a.m.meta.rendered.preamble ?? []).some(p => parseDirectives(p).plain.trim()));
+  // BUG-31: preambles and earlier drafts lose brief-form fact tags too, stored ones included.
+  const preambleText = (p: string) => stripCitationTags(parseDirectives(p).plain);
+  const hasPreamble = assistant.some(a => (a.m.meta.rendered.preamble ?? []).some(p => preambleText(p)));
   // While a turn is still running its tool steps show in the live area; draw nothing here until there is something to see.
   if (live && !answerText && !proposals.length && !hasPreamble && !allUses.some(visibleUse)) return null;
   return (
@@ -193,7 +197,7 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
         const pre = m.meta.rendered.preamble ?? [];
         return (
           <div key={i} class="stack-sm">
-            {pre.map((p, k) => <p key={k} class="esc-preamble">{parseDirectives(p).plain}</p>)}
+            {pre.map((p, k) => <p key={k} class="esc-preamble">{preambleText(p)}</p>)}
             {uses.map(u => {
               const res = results.get(u.id);
               if (!res || res.isError) return null;
@@ -211,10 +215,11 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
       })}
       {proposals.map(p => <ProposalCard key={p.id} p={p} conversationId={conv.id} />)}
       {earlier.filter(a => a.m.meta.rendered.revised).map(a => (
-        <details key={a.i} class="esc-revised small"><summary>Earlier draft (revised)</summary><p class="muted">{parseDirectives(textOf(a.m.content)).plain}</p></details>
+        <details key={a.i} class="esc-revised small"><summary>Earlier draft (revised)</summary><p class="muted">{stripCitationTags(parseDirectives(textOf(a.m.content)).plain)}</p></details>
       ))}
       {answerText && <AnswerText text={answerText} ledger={conv.ledger} unverified={r?.unverified} />}
       {!live && <Drawer uses={allUses} results={results} />}
+      {!live && <ReportAnswer conv={conv} indexes={indexes} />}
       {!live && last && !!r?.chips?.length && <div class="esc-chips">{r.chips.map(c => <button type="button" key={c} class="chip chip-btn" onClick={() => onChip?.(c)}>{c}</button>)}</div>}
     </div>
   );

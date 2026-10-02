@@ -1,0 +1,167 @@
+{
+  "$comment": "How-to chunk size ceilings read by the HT-3b gate block (D-HT3c-1). A card that grows a chunk re-measures it and sets rawMax/gzMax to measured + 10 % (rounded up), with its task ID in setBy and the reason for the growth.",
+  "budgets": [
+    {
+      "chunk": "HowToSheet-*.js",
+      "rawMax": 21083,
+      "gzMax": 7617,
+      "measuredRaw": 19166,
+      "measuredGz": 6924,
+      "setBy": "HT-7",
+      "reason": "HT-7 adds Posture.tsx (loads the posture close-up chunk on the first posture tap, mounts golden B's dot pattern once per document) and the posture line in the zoom registry, on top of HT-6's zoom host."
+    },
+    {
+      "chunk": "HowToSheet-*.css",
+      "rawMax": 22311,
+      "gzMax": 3649,
+      "measuredRaw": 20282,
+      "measuredGz": 3317,
+      "setBy": "HT-7",
+      "reason": "HT-7 adds posture.css: golden B's .plate drawing rules scoped to the close-up crops (with the reset against the app's weight-plate chip rule) and the .zdot rule, on top of HT-6's hand.css."
+    },
+    {
+      "chunk": "ht-dumbbell-lateral-raise-*.js",
+      "rawMax": 77365,
+      "gzMax": 16814,
+      "measuredRaw": 70331,
+      "measuredGz": 15285,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+    },
+    {
+      "chunk": "ht-barbell-back-squat-*.js",
+      "rawMax": 110349,
+      "gzMax": 26407,
+      "measuredRaw": 100317,
+      "measuredGz": 24006,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+    },
+    {
+      "chunk": "ht-pull-up-*.js",
+      "rawMax": 144539,
+      "gzMax": 34477,
+      "measuredRaw": 131399,
+      "measuredGz": 31342,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+    },
+    {
+      "chunk": "ht-hanging-leg-raise-*.js",
+      "rawMax": 136887,
+      "gzMax": 33692,
+      "measuredRaw": 124442,
+      "measuredGz": 30629,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+    },
+    {
+      "chunk": "ht-lat-pulldown-*.js",
+      "rawMax": 131048,
+      "gzMax": 29704,
+      "measuredRaw": 119134,
+      "measuredGz": 27003,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+    },
+    {
+      "chunk": "ht-seated-cable-row-*.js",
+      "rawMax": 137268,
+      "gzMax": 31203,
+      "measuredRaw": 124789,
+      "measuredGz": 28366,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+    },
+    {
+      "chunk": "ht-leg-press-*.js",
+      "rawMax": 111312,
+      "gzMax": 22892,
+      "measuredRaw": 101192,
+      "measuredGz": 20810,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+    },
+    {
+      "chunk": "ht-machine-chest-press-*.js",
+      "rawMax": 117593,
+      "gzMax": 24847,
+      "measuredRaw": 106902,
+      "measuredGz": 22588,
+      "setBy": "HT-5",
+      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+    },
+    {
+      "chunk": "posture-lateral-raise-*.js",
+      "rawMax": 137992,
+      "gzMax": 24815,
+      "measuredRaw": 125447,
+      "measuredGz": 22559,
+      "setBy": "HT-7",
+      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "posture-barbell-back-squat-*.js",
+      "rawMax": 73500,
+      "gzMax": 13315,
+      "measuredRaw": 66818,
+      "measuredGz": 12104,
+      "setBy": "HT-7",
+      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "posture-pull-up-*.js",
+      "rawMax": 99938,
+      "gzMax": 19002,
+      "measuredRaw": 90852,
+      "measuredGz": 17274,
+      "setBy": "HT-7",
+      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "posture-hanging-leg-raise-*.js",
+      "rawMax": 74572,
+      "gzMax": 17992,
+      "measuredRaw": 67792,
+      "measuredGz": 16356,
+      "setBy": "HT-7",
+      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "posture-lat-pulldown-*.js",
+      "rawMax": 120270,
+      "gzMax": 16824,
+      "measuredRaw": 109336,
+      "measuredGz": 15294,
+      "setBy": "HT-7",
+      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "posture-seated-cable-row-*.js",
+      "rawMax": 126906,
+      "gzMax": 17844,
+      "measuredRaw": 115369,
+      "measuredGz": 16221,
+      "setBy": "HT-7",
+      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "posture-leg-press-*.js",
+      "rawMax": 79881,
+      "gzMax": 11383,
+      "measuredRaw": 72619,
+      "measuredGz": 10348,
+      "setBy": "HT-7",
+      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "posture-machine-chest-press-*.js",
+      "rawMax": 115761,
+      "gzMax": 16470,
+      "measuredRaw": 105237,
+      "measuredGz": 14972,
+      "setBy": "HT-7",
+      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    }
+  ]
+}

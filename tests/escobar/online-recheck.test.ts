@@ -9,6 +9,8 @@ describe('after a dropped answer (QA-R4a-6)', () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ protocol: 2, key: true }), { status: 200, headers: { 'content-type': 'application/json' } })));
     const store = await import('@/escobar/store');
     const session = await import('@/escobar/session');
+    // AUD-2: a turn only reaches the transport while the online coach is on.
+    (await import('@/core/store')).update(s => ({ ...s, escobar: { ...s.escobar, enabled: true } }));
     const { online } = await import('@/escobar/state');
     store.setEscobarStorage(store.memoryStorage());
     const broken: Transport = { async *turn() { await Promise.resolve(); throw new TypeError('Failed to fetch'); } };
@@ -27,6 +29,8 @@ describe('still unreachable at the first re-check (QA2-FD-3)', () => {
     let up = false;
     vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ protocol: 2, key: up }), { status: 200 })));
     const session = await import('@/escobar/session');
+    // AUD-2: a turn only reaches the transport while the online coach is on.
+    (await import('@/core/store')).update(s => ({ ...s, escobar: { ...s.escobar, enabled: true } }));
     const { online } = await import('@/escobar/state');
     const { update } = await import('@/core/store');
     update(s => ({ ...s, escobar: { ...s.escobar, enabled: true } }));
@@ -47,6 +51,8 @@ describe('the offline reason after an answer (QA2-FD-6, QA2-FD-10)', () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ protocol: 2, key: true }), { status: 200 })));
     const store = await import('@/escobar/store');
     const session = await import('@/escobar/session');
+    // AUD-2: a turn only reaches the transport while the online coach is on.
+    (await import('@/core/store')).update(s => ({ ...s, escobar: { ...s.escobar, enabled: true } }));
     const { offlineReason } = await import('@/escobar/state');
     store.setEscobarStorage(store.memoryStorage());
     const ok: Transport = { async *turn() { await Promise.resolve(); yield { t: 'text', d: 'Hi.' }; yield { t: 'final', content: [{ type: 'text', text: 'Hi.' }], stop_reason: 'end_turn', usage: { input_tokens: 1, output_tokens: 1 }, model: 'claude-opus-5' }; } };

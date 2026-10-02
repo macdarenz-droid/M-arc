@@ -163,3 +163,35 @@ export function cleanReport(r: Report): Report {
   if (r.device !== undefined && LABEL.test(r.device)) out.device = r.device;
   return out;
 }
+
+/**
+ * POST /reports (ESC-REPORT-W): one coach reply the user reported. Strict shape, like `validateBatch`.
+ * The text is kept as sent (digits too, no `scrubMessage`), so the owner sees the reply that was flagged.
+ * Body size (24 KB) is checked by the caller before this runs.
+ */
+export const MAX_REPORT_BODY_BYTES = 24_576;
+export const MAX_REPORT_TEXT = 4000;
+export const REPORT_REASONS = new Set(['offensive', 'harmful', 'wrong']);
+/** Control characters, the same class the app strips; `\t` and `\n` are allowed. */
+export const REPORT_CONTROL_RE = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F]/;
+
+export interface ContentReport { reason: string; text: string; app: string }
+export type ReportValidation = { ok: true; body: ContentReport } | { ok: false; message: string };
+
+export function validateContentReport(raw: unknown): ReportValidation {
+  const no = (message: string): ReportValidation => ({ ok: false, message });
+  if (!isObj(raw)) return no('body must be a JSON object');
+  const keys = ['v', 'reason', 'text', 'app'];
+  const extra = only(raw, keys);
+  if (extra) return no(`unknown key ${extra}`);
+  const missing = keys.find(k => !(k in raw));
+  if (missing) return no(`missing key ${missing}`);
+  if (raw.v !== 1) return no('v must be 1');
+  if (typeof raw.reason !== 'string' || !REPORT_REASONS.has(raw.reason)) return no('reason must be offensive, harmful or wrong');
+  const text = raw.text;
+  if (typeof text !== 'string' || !text.trim()) return no('text must be a non-empty string');
+  if (text.length > MAX_REPORT_TEXT) return no(`text over ${MAX_REPORT_TEXT} characters`);
+  if (REPORT_CONTROL_RE.test(text)) return no('text has a control character');
+  if (typeof raw.app !== 'string' || !VERSION.test(raw.app)) return no('app must be a version');
+  return { ok: true, body: { reason: raw.reason, text, app: raw.app } };
+}

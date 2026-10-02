@@ -10,7 +10,7 @@ import { buildBrief } from './context/brief';
 import type { EscobarMode } from './context/modes';
 import { executeTool, genericLabel, statusLabel, type MemoryEffect, type ToolOutcome } from './tools/executor';
 import { makeCtx, redactDrivers, type ToolCtx } from './tools/context';
-import { DirectiveBuffer, checkGrounding, parseDirectives, repairInstruction, safetySignals, type ParsedAnswer, type SafetySignal } from './verify';
+import { DirectiveBuffer, checkGrounding, normalizeCitations, parseDirectives, repairInstruction, safetySignals, type ParsedAnswer, type SafetySignal } from './verify';
 import { findInApp, type PalaceEntry } from './palace/registry';
 import type { StreamEvent, Transport, ErrorCode } from './transport';
 import type { ContextRef, Conversation, Fact, ImageBlockRef, ProposalRecord, RenderedTurn, StoredMessage, UserBlock, Usage } from './types';
@@ -386,6 +386,8 @@ export class EscobarLoop {
       unit: s.preferences.weightUnit, tone: s.escobar.tone,
     };
     for (let attempt = 0; ; attempt++) {
+      // AUD-2: no new request once the online coach is off, including the retry after a back-off.
+      if (!this.deps.getState().escobar.enabled) { this.abort('aborted'); return { stale: true }; }
       let shown = false;
       let text = '';
       const activity: Activity[] = [...this.view.activity];
@@ -515,7 +517,8 @@ export class EscobarLoop {
         }
         const content = final.content;
         const uses = toolUses(content);
-        const preamble = uses.length ? textOf(content).trim() : '';
+        // BUG-31: brief-form tags ("38 [f41]") of known facts become canonical citations before parsing.
+        const preamble = uses.length ? normalizeCitations(textOf(content), this.conversation.ledger).trim() : '';
         const rendered: RenderedTurn = { activity: this.view.activity.map(a => ({ id: a.id, name: a.name, label: a.label })), ...(preamble ? { preamble: [preamble] } : {}) };
         this.commit([{ role: 'assistant', content, meta: { rendered, ...(final.usage ? { usage: final.usage as unknown as Usage } : {}), ...(final.model ? { model: final.model } : {}) } }]);
         if (preamble) this.update({ preamble: [...this.view.preamble, preamble], text: '' });
@@ -527,7 +530,7 @@ export class EscobarLoop {
           break;
         }
         if (!uses.length) {
-          const raw = textOf(content);
+          const raw = normalizeCitations(textOf(content), this.conversation.ledger);
           const parsed = parseDirectives(raw);
           const grounding = checkGrounding({ answer: raw, ledger: this.conversation.ledger, userTexts: this.userTexts() });
           const idx = this.conversation.messages.length - 1;

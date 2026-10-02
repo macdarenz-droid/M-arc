@@ -1,5 +1,6 @@
-// HT-4 (HT4-A3): C17, no network. Scans How-to source files for fetch(/XMLHttpRequest/Worker or an http(s) URL
-// outside the source citations (a URL string is allowed only as a Source.url value, never in code).
+// HT-4 (HT4-A3): C17, no network. Scans How-to source files for fetch(/XMLHttpRequest/Worker or an http(s) URL.
+// HT-4b (D-LR23-7, owner decision LR-23): no URL is allowed at all - the source citations are research data outside
+// src/ and are never shown - except the SVG and xlink namespace attributes below. The `allowedUrls` parameter is gone.
 //
 // D-HT4-C17 (supervisor ruling on PR #107, in reply to HT-7's note, 2026-09-30): golden B's own SVG markup carries
 // the XML namespace identifiers `xmlns="http://www.w3.org/2000/svg"` and `xmlns:xlink="http://www.w3.org/1999/xlink"`
@@ -23,7 +24,8 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const BANNED = [/\bfetch\s*\(/, /\bXMLHttpRequest\b/, /\bnew Worker\s*\(/];
-const URL_RE = /https?:\/\/[^\s'"`)]+/g;
+// `\\` ends a URL too (HT-4 round-4 review): an escaped-quote URL is reported without its trailing backslash.
+const URL_RE = /https?:\/\/[^\s'"`)\\]+/g;
 /** Exactly these whole attributes, either quote style, optionally backslash-escaped (matching escape on both
  *  sides), anchored so they can never match inside a longer attribute name - never a bare occurrence elsewhere. */
 const ALLOWED_XMLNS_ATTRS = [
@@ -38,8 +40,7 @@ function walk(dir: string): string[] {
   });
 }
 
-/** `allowedUrls` are the Source.url values already accounted for elsewhere (the source registry), never banned. */
-export function checkC17(dirs: readonly string[], allowedUrls: ReadonlySet<string> = new Set()): string[] {
+export function checkC17(dirs: readonly string[]): string[] {
   const bad: string[] = [];
   for (const dir of dirs) {
     let files: string[];
@@ -49,7 +50,7 @@ export function checkC17(dirs: readonly string[], allowedUrls: ReadonlySet<strin
       for (const re of BANNED) if (re.test(text)) bad.push(`C17: ${f}: matches ${re}`);
       let scanned = text;
       for (const re of ALLOWED_XMLNS_ATTRS) scanned = scanned.replace(re, m => ' '.repeat(m.length));
-      for (const m of scanned.matchAll(URL_RE)) if (!allowedUrls.has(m[0])) bad.push(`C17: ${f}: URL "${m[0]}" outside the source citations`);
+      for (const m of scanned.matchAll(URL_RE)) bad.push(`C17: ${f}: URL "${m[0]}" is not allowed`);
     }
   }
   return bad;

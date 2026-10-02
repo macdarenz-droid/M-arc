@@ -88,7 +88,7 @@ export async function scheduleRestDone(atMs: number): Promise<void> {
     await LocalNotifications.cancel({ notifications: [{ id: REST_ID }] });
     await LocalNotifications.schedule({
       notifications: [{
-        id: REST_ID, title: 'Rest done', body: 'Back to it. Your next set is ready.',
+        id: REST_ID, title: 'Rest done', body: 'Next set.',
         schedule: { at: new Date(atMs), allowWhileIdle: true }, channelId: CHANNELS.rest.id, extra: { type: 'rest' },
         isExactNotification: exactOk,
       }],
@@ -107,7 +107,7 @@ export async function testRestAlert(inMs = 5000): Promise<boolean> {
   try {
     await LocalNotifications.schedule({
       notifications: [{
-        id: TEST_REST_ID, title: 'Rest done', body: 'This is a test. Rest alerts will look like this.',
+        id: TEST_REST_ID, title: 'Rest done', body: 'Test',
         schedule: { at: new Date(Date.now() + inMs), allowWhileIdle: true }, channelId: CHANNELS.rest.id, extra: { type: 'rest' },
         isExactNotification: exactOk,
       }],
@@ -193,7 +193,7 @@ export async function syncBackupReminder(on: boolean, { prompt = false }: { prom
   await ensureChannels();
   try {
     await LocalNotifications.schedule({ notifications: [{
-      id: BACKUP_REMINDER_ID, title: 'Save a backup of your training', body: 'Everything lives on this phone. A backup file keeps it safe.',
+      id: BACKUP_REMINDER_ID, title: 'Save a backup of your training', body: '', // COPY-1: the title says it all
       schedule: { on: { weekday: 1, hour: 19, minute: 0 }, allowWhileIdle: false }, channelId: CHANNELS.silent.id, extra: { type: 'backup' },
       isExactNotification: false,
     }] });

@@ -29,21 +29,20 @@ export function Profile({ onClose }: { onClose: () => void }) {
     <Sheet title="Your profile" onClose={onClose}>
       <div class="stack">
         <Card class="card-quiet">
-          <div class="eyebrow">{c.done} of {c.of} details for the coach</div>
-          <p class="small muted" style={{ marginTop: 4 }}>Calories, heart-rate zones, recovery time and strength trends all depend on these once they're connected. Everything stays on this phone.</p>
+          <div class="eyebrow">{c.done} of {c.of} details</div>
         </Card>
 
-        <Section title="About you" palace="profile.about">
+        <Section title="Personal details" palace="profile.about">
           <Card class="stack-sm">
-            <Field label="Birth year" hint="Unlocks: heart-rate zones, age-adjusted recovery. ">
+            <Field label="Birth year">
               <CommitNumber value={s.profile.birthYear} min={1900} max={new Date().getFullYear() - 10} integer onCommit={v => setBirthYear(v)} />
               <span class="hint">{statusHint(s.profile.birthYear, lastChangeAt(s.profileHistory, 'birthYear'))}</span>
             </Field>
-            <Field label="Sex" hint="Unlocks: calories, relative-strength comparisons.">
+            <Field label="Sex">
               <Segmented value={s.profile.sex} options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]} onChange={v => setSex(v)} />
               <span class="hint">{statusHint(s.profile.sex, lastChangeAt(s.profileHistory, 'sex'))}</span>
             </Field>
-            <Field label="Height (cm)" hint="Unlocks: calories, body-fat estimate.">
+            <Field label="Height (cm)">
               <CommitNumber value={s.profile.heightCm} min={100} max={250} onCommit={v => setHeight(v)} />
               <span class="hint">{statusHint(s.profile.heightCm, lastChangeAt(s.profileHistory, 'heightCm'))}</span>
             </Field>
@@ -60,13 +59,13 @@ export function Profile({ onClose }: { onClose: () => void }) {
         <Section title="Training" palace="profile.training" aside={<Button variant="quiet" size="sm" onClick={() => setGoalOpen(true)}>Change goal</Button>}>
           <Card class="stack-sm">
             <Row trailing={<span class="hint">{goal.name}</span>}><span class="small">Goal</span></Row>
-            <Field label="Training since" hint="Unlocks: progress-rate expectations.">
+            <Field label="Training since">
               <div class="row">
                 <input type="month" value={s.profile.trainingSince ?? ''} onInput={e => setTrainingSince((e.target as HTMLInputElement).value || undefined)} />
                 <Button variant="quiet" size="sm" onClick={() => setTrainingSince(new Date().toISOString().slice(0, 7))}>I'm new</Button>
               </div>
             </Field>
-            <Field label="Planned days per week" hint="Your weekly target when no days are scheduled.">
+            <Field label="Planned days per week">
               <div class="row"><Button variant="quiet" size="sm" onClick={() => setPlannedDays(Math.max(1, (s.profile.plannedDays ?? 3) - 1))}>−</Button>{s.profile.plannedDays != null ? <b class="num small">{s.profile.plannedDays}</b> : <span class="small muted" data-testid="planned-days-unset">not set</span>}<Button variant="quiet" size="sm" onClick={() => setPlannedDays(Math.min(7, (s.profile.plannedDays ?? 3) + 1))}>+</Button></div>
             </Field>
           </Card>
@@ -95,7 +94,7 @@ function WeighIn() {
   };
 
   return (
-    <Field label={`Body weight (${u})`} hint="Also counts as the load on bodyweight exercises.">
+    <Field label={`Body weight (${u})`}>
       <div class="row"><input type="text" inputMode="decimal" value={value} onInput={e => { setValue((e.target as HTMLInputElement).value); setConfirming(false); }} /><Button size="sm" onClick={save}>Weigh in</Button></div>
       {confirming && <Card class="card-quiet"><p class="small">That's a big jump from {formatLoad(s.profile.bodyWeightKg, u)}. Save anyway?</p><div class="row" style={{ marginTop: 8 }}><Button variant="quiet" size="sm" onClick={() => setConfirming(false)}>Cancel</Button><Button size="sm" onClick={save}>Save {value} {u}</Button></div></Card>}
     </Field>
