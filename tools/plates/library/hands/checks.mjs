@@ -60,15 +60,6 @@ export function problemsOf(spec, pages) {
     // none on a gravity curl (lateral raise) or the rope, whose load direction no source gives
     const hasLoad = /class="h-load/.test(svg), wantLoad = spec.loadAxis === 'along-forearm' || spec.mod.VARIANTS[spec.variant].archetype === 'pull';
     if (hasLoad !== wantLoad) bad.push(`${at}: G6 force line ${hasLoad ? 'drawn' : 'missing'}`);
-    // G7: the knob ring, concentric with the drawn handle at the composer's size
-    if (spec.handle.ringMm) {
-      if (!R.rings || R.rings.length !== 2) bad.push(`${at}: G7 rings ${R.rings?.length ?? 0}`);
-      else for (const [i, role] of ['right', 'wrong'].entries()) {
-        const g = R.rings[i], h = M[role].handle;
-        if (Math.hypot(g.cx - h[0], g.cy - h[1]) > 0.01 || Math.abs(g.r - spec.handle.ringMm / 2 * R.scalePxPerMm) > 0.01) bad.push(`${at}: G7 ${role} ring off the handle`);
-        if (!svg.includes(`<circle class="h-eq-thin" cx="${g.cx}" cy="${g.cy}" r="${g.r}"/>`)) bad.push(`${at}: G7 ${role} ring not drawn`);
-      }
-    } else if (R.rings) bad.push(`${at}: G7 ring on a handle without one`);
     // G9: no bend value over the hand's outline (estimated boxes; the gate measures the real ones)
     for (const l of uid ? labelsOnInk(svg, uid) : []) bad.push(`${at}: G9 ${l.role} label ${l.text} on the hand`);
     // G8: palm direction (forearm level: underhand = palm up, handle above the wrist) and the camera label

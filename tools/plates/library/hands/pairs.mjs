@@ -69,7 +69,7 @@ export function pairSpec(id, index = INDEX) {
     camera: ORIENTATIONS[cfg.orientation], loadAxis: V.loadAxis, wristRange: V.wristRange, contact: V.contact, handle: H,
     right, rightNote: V.rightNote, altRight: V.alt, panelHeight: V.panelHeight,
     wrong: cfg.faults.map(k => ({ key: k, ...V.faults[k] })),
-    extras: { ...(H.ringMm ? { ringMm: H.ringMm } : {}), ...(V.loadLine === false ? { stripLoadLine: true } : {}), ...(cfg.orientation === 'unstated' ? { thumbSide: true } : {}) },
+    extras: { ...(V.loadLine === false ? { stripLoadLine: true } : {}), ...(cfg.orientation === 'unstated' ? { thumbSide: true } : {}) },
   };
 }
 
@@ -80,19 +80,6 @@ function once(svg, find, repl, what) {
   return svg.replace(find, repl);
 }
 const f2 = v => +v.toFixed(2);
-function addRings(svg, ringMm, k) {
-  const rings = [];
-  for (const role of ['right', 'wrong']) {
-    const g = `<g class="h-panel ${role}">`, i = svg.indexOf(g);
-    const c = svg.slice(i).match(/<circle class="h-eq" cx="([\d.-]+)" cy="([\d.-]+)" r="([\d.]+)"\/>/);
-    if (i < 0 || !c) throw new Error(`hand pairs: ring: no ${role} handle`);
-    const ring = { cx: +c[1], cy: +c[2], r: f2(ringMm / 2 * k), handleR: +c[3] };
-    rings.push(ring);
-    // behind everything in the panel (the knob sits past the little finger, away from the camera)
-    svg = once(svg, g, `${g}<circle class="h-eq-thin" cx="${ring.cx}" cy="${ring.cy}" r="${ring.r}"/>`, `ring ${role}`);
-  }
-  return { svg, rings };
-}
 /** Screen geometry measured on the rendered SVG: handle centre and wrist of each half. */
 export function measured(svg) {
   const out = {};
@@ -109,12 +96,26 @@ export function measured(svg) {
 // which can land on a curled hand; golden B moves such labels by hand (LIB-6 bendLabel). Here a label that would cover
 // its half's hand outline (the half's <defs> paths as polygons, the wedge included) moves to the first free spot on rings
 // round its wrist, forearm side first. The gate block measures the real boxes in the browser (isPointInFill).
-const LABEL_W = 7.2, LABEL_H = 12, LABEL_PAD = 2;      // --fs-meta 12 px, tabular digits; box estimate plus margin
-const poly = d => { const n = d.match(/-?[\d.]+/g).map(Number), ps = []; for (let i = 0; i + 1 < n.length; i += 2) ps.push([n[i], n[i + 1]]); return ps; };
+const LABEL_W = 7.2, LABEL_PAD = 3;      // --fs-meta 12 px, tabular digits; box estimate plus margin
+// a <defs> outline as a polygon: absolute M, L, H, V, Q, C and Z, curves flattened in 8 steps
+function poly(d) {
+  const ps = []; let cur = [0, 0];
+  for (const [, c, args] of d.matchAll(/([MLHVQCZ])([^MLHVQCZ]*)/g)) {
+    const n = (args.match(/-?[\d.]+(?:e-?\d+)?/g) ?? []).map(Number);
+    if (c === 'M' || c === 'L') for (let i = 0; i + 1 < n.length; i += 2) ps.push(cur = [n[i], n[i + 1]]);
+    else if (c === 'H') ps.push(cur = [n[0], cur[1]]);
+    else if (c === 'V') ps.push(cur = [cur[0], n[0]]);
+    else if (c === 'Q') for (let i = 0; i + 3 < n.length; i += 4) { const p0 = cur; for (let t = 1; t <= 8; t++) { const u = t / 8, a = (1 - u) ** 2, b = 2 * (1 - u) * u, e = u * u;
+      ps.push([a * p0[0] + b * n[i] + e * n[i + 2], a * p0[1] + b * n[i + 1] + e * n[i + 3]]); } cur = [n[i + 2], n[i + 3]]; }
+    else if (c === 'C') for (let i = 0; i + 5 < n.length; i += 6) { const p0 = cur; for (let t = 1; t <= 8; t++) { const u = t / 8, a = (1 - u) ** 3, b = 3 * (1 - u) ** 2 * u, e = 3 * (1 - u) * u * u, g = u ** 3;
+      ps.push([a * p0[0] + b * n[i] + e * n[i + 2] + g * n[i + 4], a * p0[1] + b * n[i + 1] + e * n[i + 3] + g * n[i + 5]]); } cur = [n[i + 4], n[i + 5]]; }
+  }
+  return ps;
+}
 const inPoly = (p, ps) => { let c = false; for (let i = 0, j = ps.length - 1; i < ps.length; j = i++) {
   const [xi, yi] = ps[i], [xj, yj] = ps[j]; if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
 const boxOf = (x, y, anchor, n) => { const w = n * LABEL_W, x0 = anchor === 'middle' ? x - w / 2 : anchor === 'end' ? x - w : x;
-  return [x0 - LABEL_PAD, y - 9 - LABEL_PAD, x0 + w + LABEL_PAD, y + 3 + LABEL_PAD]; };
+  return [x0 - LABEL_PAD, y - 12 - LABEL_PAD, x0 + w + LABEL_PAD, y + 4 + LABEL_PAD]; };
 const boxHits = (b, inks) => { for (let i = 0; i <= 6; i++) for (let j = 0; j <= 3; j++) {
   const p = [b[0] + (b[2] - b[0]) * i / 6, b[1] + (b[3] - b[1]) * j / 3]; if (inks.some(ps => inPoly(p, ps))) return true; } return false; };
 /** The h-val labels of a pair SVG whose estimated box covers its half's ink: [{ role, text, x, y }]. */
@@ -160,7 +161,7 @@ export function renderPair(id, opts = {}) {
   const out = render({ uid: opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, camera: s.camera, loadAxis: s.loadAxis, markers: F.markers,
     right: s.right, wrong: mergePose(s.right, F.pose), rightNote: s.rightNote, wrongNote: F.label,
     alt: { right: s.altRight, wrong: F.alt }, panelHeight: opts.panelHeight ?? s.panelHeight });
-  let svg = out.svg, rings = null;
+  let svg = out.svg;
   if (s.extras.thumbSide) {
     svg = once(svg, '>SEEN FROM THE SIDE<', `>${THUMB_SIDE.toUpperCase()}<`, 'thumb-side label');
     svg = once(svg, 'aria-label="Seen from the side. ', `aria-label="${THUMB_SIDE}. `, 'thumb-side aria');
@@ -174,8 +175,7 @@ export function renderPair(id, opts = {}) {
   }
   const uidUsed = opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, placed = placeLabels(svg, uidUsed, (358 - 16) / 2);
   svg = placed.svg;
-  if (s.extras.ringMm) ({ svg, rings } = addRings(svg, s.extras.ringMm, out.report.scalePxPerMm));
-  return { svg, spec: s, fault: F, report: { ...out.report, rings, labelsMoved: placed.moved, measured: measured(svg) } };
+  return { svg, spec: s, fault: F, report: { ...out.report, labelsMoved: placed.moved, measured: measured(svg) } };
 }
 
 /** The repo files a module reads through its relative imports, itself included (static `from './…'` specifiers). */

@@ -1,7 +1,7 @@
 // LIB-7 (hands/DESIGN.md §4): the radial hand pairs. A1 golden B unchanged with every pair module loaded; A2 the
 // C5-style geometry per drawn id (G1-G9) with a planted defect per check; A3 counted sweeps (keys, variants, drawn ids,
 // gaps, census scope, claim refs and the facts their texts carry); A4 the close-up QA LIB-3 will run (vocabulary, colour
-// literals, ids, determinism, size, inputsFor). The pixel checks are the gate block "LIB-7".
+// literals, ids, determinism, size, inputsFor). The pixel checks are the gate block "LIB-7" (tools/plates/library/hands/gate.mjs).
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
@@ -112,11 +112,6 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
   });
   it('G6: a push Wrong in the heel (lever not behind the wrist) fails', () => bites(withMods(m => { key(m, 'ez').VARIANTS.push.faults['bent-back'].pose.contactAt = 0.3; }), 'skull_crusher', /G6 lever checks/));
   it('G6: a force line on a gravity curl fails', () => bites(withMods(m => { delete key(m, 'curl').VARIANTS.bar.loadLine; }), 'barbell_curl', /G6 force line drawn/));
-  it('G7: a knob ring off the handle fails', () => {
-    const { spec, pages } = C.renderedPages('rope_triceps_pushdown');
-    pages[0].report.rings[0].cx += pages[0].report.scalePxPerMm;     // 1 mm
-    expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G7 right ring off the handle/);
-  });
   it('G8: an underhand id drawn palm down fails', () => {
     const { spec, pages } = C.renderedPages('barbell_curl'), m = pages[0].report.measured.right;
     m.handle[1] = m.wrist[1] + 10;                                   // the handle below the wrist: palm down
@@ -209,10 +204,9 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     const under = withMods(m => { key(m, 'ez').IDS.reverse_curl.orientation = 'under'; });
     expect(claimProblems(under, CLAIMS.claims).join('\n')).toMatch(/reverse_curl \(under\): cards\/reverse_curl.json#c1 does not state/);
   });
-  it('the rope sizes are the plate composer\'s (eq/rope.mjs thick 0.028, knob 0.046)', () => {
-    expect(readFileSync('tools/plates/library/eq/rope.mjs', 'utf8')).toMatch(/thick = 0\.028, knob = 0\.046/);
-    const r = key(P.MODULES, 'rope').HANDLE;
-    expect([r.diameterMm, r.ringMm]).toEqual([28, 46]);
+  it('the rope strand is the plate composer\'s (eq/rope.mjs thick 0.028)', () => {
+    expect(readFileSync('tools/plates/library/eq/rope.mjs', 'utf8')).toMatch(/thick = 0\.028\b/);
+    expect(key(P.MODULES, 'rope').HANDLE.diameterMm).toBe(28);
   });
 });
 

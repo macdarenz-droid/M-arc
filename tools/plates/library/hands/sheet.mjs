@@ -69,7 +69,7 @@ export async function buildSheet({ calibrate = false, plants = [] } = {}) {
       + pages.map(p => `<div class="hand-plate">${renderPair(s.id, { fault: p.fault.key, uid: `t${i}-${p.fault.key}`, index }).svg}</div>`).join('')
       + `<p class="lab">Closest approved (${esc(REFERENCE[V.archetype][0])})</p><div class="hand-plate ref">${refs[V.archetype].replace(/id="([^"]+)"/g, `id="r${i}-$1"`).replace(/#([a-z][\w-]*)/g, `#r${i}-$1`)}</div>`
       + `<p class="lab">Flags</p><ul>${[...new Set(flags)].map(f => `<li>${esc(f)}</li>`).join('') || '<li>none</li>'}<li>sizes: drawing values (D-LIB7-2); wrong angles: approved precedents (D-LIB7-5)</li></ul>`
-      + `<p class="lab">Checks</p><p>${problems.length ? problems.map(esc).join('<br>') : 'G1-G8 ok'}</p>`
+      + `<p class="lab">Checks</p><p>${problems.length ? problems.map(esc).join('<br>') : 'G1-G9 ok'}</p>`
       + `<details><summary>Claims</summary><ul>${claimLines.map(l => `<li>${esc(l)}</li>`).join('')}</ul></details></section>`);
   }
   if (calibrate) {

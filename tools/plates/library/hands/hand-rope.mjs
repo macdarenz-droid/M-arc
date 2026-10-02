@@ -1,11 +1,11 @@
-// LIB-7 key `rope` (hands/DESIGN.md §2): one hand on each rope end, up against its knob. Sizes match the plate's rope
-// composer (library/eq/rope.mjs:54, thick 0.028 m, knob 0.046 m): a 28 mm strand seen end-on and the 46 mm knob behind
-// the fist as a thin ring (golden-B's `h-eq-thin`, as its dumbbell head). Load in the fingers, lever check off (GA 3.1.1); no source gives the load's
+// LIB-7 key `rope` (hands/DESIGN.md §2): one hand on each rope end, up against its knob. The strand is the plate's rope
+// composer's (library/eq/rope.mjs:54, thick 0.028 m), seen end-on. The 46 mm knob lies behind the fist in this view and
+// is hidden by it (the gate measured a ring there drawing no pixel, D-LIB7-9), so the knob is carried by the Right note. Load in the fingers, lever check off (GA 3.1.1); no source gives the load's
 // direction, so no force line is drawn.
 import { RULES_FILE } from './radial-rules.mjs';
 
 export const KEY = 'rope', OWNER = 'LIB-7', VIEW = 'radial', INPUTS = [RULES_FILE, 'tools/plates/library/eq/rope.mjs'];
-export const HANDLE = { profile: 'rope', diameterMm: 28, ringMm: 46 };
+export const HANDLE = { profile: 'rope', diameterMm: 28 };
 export const VARIANTS = {
   push: {
     archetype: 'push', loadAxis: 'across', loadLine: false, panelHeight: 170, wristRange: [0, 15], contact: 'base',

@@ -1814,9 +1814,9 @@ Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 202
   - dumbbell 32 mm with a 120 mm head;
   - bar and EZ 28 mm;
   - D-handle 30 mm;
-  - rope 28 mm with a 46 mm knob ring, matched to the plate's rope composer (`eq/rope.mjs:54`).
+  - rope 28 mm, matched to the plate's rope composer (`eq/rope.mjs:54`).
 - **D-LIB7-3, golden-B reuse.**
-  - `renderHandPair` is called unchanged. `HAND_PROP` and `HAND_OF_H` feed the placement check. The pilot and gate pages use golden B's zoom CSS, which includes `HAND_CSS`. The knob ring uses the existing `h-eq-thin` class.
+  - `renderHandPair` is called unchanged. `HAND_PROP` and `HAND_OF_H` feed the placement check. The pilot and gate pages use golden B's zoom CSS, which includes `HAND_CSS`.
   - No golden-B value is read for a diameter.
   - Golden-B engine files and LIB-6 files are not edited. A1 pins their outputs.
 - **D-LIB7-4, camera and orientation.** The camera follows golden-B `engine/hand.mjs:8-9`: a vertical handle is "seen from above", a horizontal bar "seen from the side". Orientation is carried per id from its claim:
@@ -1830,6 +1830,7 @@ Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 202
 - **D-LIB7-6, bend labels.** A bend value whose box would cover its half's outline moves to the first free spot round its wrist, forearm side first. Golden B moved such labels by hand on the lateral raise, lat pulldown and seated row. Check G9 tests it in Node; the gate measures it in the browser.
 - **D-LIB7-7, force lines.** A force line is drawn only on along-forearm loads and pulls, which is where golden B draws one. Curls (gravity across a level forearm, like the lateral raise) and the rope (no source for its direction) have none.
 - **D-LIB7-8, panel height.** Curl and rope pairs use a 170 px panel. The scale is the same at 262 px, so only empty space goes.
+- **D-LIB7-9, no knob ring.** The rope's 46 mm knob lies behind the fist when seen from above. A ring drawn there drew no pixel in the gate (pages with and without it were identical), so it is dropped. The Right note "Against the knob" and the alt text carry the knob claim (shared/rope-rule.json#c1).
 - **D-LIB7-gaps.** 14 ids are not drawn. Each is listed with its reason in its key's `GAPS`:
   - the band (no band-hand claim; pilot A's band kind waits on research);
   - cable_chest_press and the two cable flys (no bend direction in their claims);
