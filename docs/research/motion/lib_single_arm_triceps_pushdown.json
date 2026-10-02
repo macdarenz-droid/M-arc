@@ -1,0 +1,846 @@
+{
+  "id": "lib_single_arm_triceps_pushdown",
+  "name": "Single-Arm Triceps Pushdown",
+  "researchedOn": "2026-10-02",
+  "confidenceKey": {
+    "measured": "a study measured it (goniometer, motion capture or EMG)",
+    "documented": "a guideline, manual or manufacturer states it",
+    "range, coach consensus": "coaching sources agree; no measured number",
+    "derived": "worked out from geometry or from the sources above; not measured directly",
+    "unverified": "no source found; do not present as fact"
+  },
+  "angleConventions": "Elbow flexion 0 deg = arm straight. Shoulder flexion 0 deg = upper arm hanging vertical beside the trunk. Torso lean 0 deg = trunk vertical.",
+  "appData": {
+    "exercisesJson": {
+      "equipment": "Cable",
+      "primary": [
+        "triceps"
+      ],
+      "secondary": [
+        "forearms"
+      ],
+      "stabilizers": [],
+      "pattern": "elbow_extension",
+      "aliases": [
+        "unilateral pushdown",
+        "one arm pushdown"
+      ]
+    },
+    "siblingExercises": "The library also has lib_triceps_pushdown, lib_rope_triceps_pushdown and lib_straight_bar_triceps_pushdown, all on the same high-pulley station, so one cable-station asset can serve all four with different attachments.",
+    "repoNotes": "docs/COACHING-DECISIONS.md (e) chose this single-arm id for Version 1; the owner was asked 'single-arm or two-arm?' (docs/FORM-GUIDE-PRODUCTION.md 10.6)."
+  },
+  "existingContentReview": {
+    "checked": [
+      "docs/research/howto/: no file for this id",
+      "src/data/coachCues.json: empty for this id",
+      "git 61e3e9c:src/formguide/research/lib_single_arm_triceps_pushdown.json (V1-02 research, removed from the app in 5e7f75c)"
+    ],
+    "keep": [
+      "Single D-handle at the high pulley, one hand.",
+      "Elbow pinned at the side, upper arm still (ACE).",
+      "Elbow drift forward and leaning into the weight as the two main mistakes."
+    ],
+    "flags": [
+      {
+        "item": "elbow_flex start 90 deg was 'illustrative'.",
+        "finding": "Now measured: two studies of the unilateral cable pushdown used a 90 to 0 deg elbow range set by goniometer (Villalba 2024; Maeo 2023). Keep 90 deg as the start, with sources.",
+        "src": [
+          "villalba2024",
+          "maeo2023"
+        ]
+      },
+      {
+        "item": "peakAt 0.35 'highest approaching the near-extended bottom', sourced to a fitnessprogramer instruction.",
+        "finding": "The quoted line only says to extend fully; it says nothing about when effort peaks. No EMG-by-angle data for the pushdown was found. Geometry points the other way: with the cable running close to vertical, the cable's lever arm about the elbow is longest near 90 deg and shrinks toward lockout. Treat the peak as unverified; do not ship the old value.",
+        "src": [
+          "fitnessprogramer-onearm"
+        ]
+      },
+      {
+        "item": "Grip was not specified (palm down vs palm up).",
+        "finding": "Sources split: fitnessprogramer, GettFit and Jefit use overhand; ExRx's one-arm pushdown uses underhand. Villalba 2024 tested both on this exact exercise. Default chosen below with reasons.",
+        "src": [
+          "fitnessprogramer-onearm",
+          "gettfit-onearm",
+          "jefit-onearm",
+          "exrx-onearm-pushdown",
+          "villalba2024"
+        ]
+      }
+    ]
+  },
+  "equipment": {
+    "modelThis": {
+      "station": "A selectorized dual adjustable pulley (functional trainer): two tall columns, each with a weight stack and a pulley carriage that slides on a vertical track and locks with a pop-pin; a swivelling pulley head on each carriage; joined at the top by a frame. Use one column, carriage locked at its highest position.",
+      "attachment": "One single D-handle (stirrup): steel D-ring at the top, two straps or side plates down to a rotating, knurled cylindrical grip.",
+      "why": "Villalba 2024 ran this exact exercise on a dual adjustable pulley cable station. The same asset serves every cable exercise in the library at any height, and ACE only requires the attachment to be above head height. Life Fitness ships its dual pulley with a triceps rope, short and long strap handles, so the other three pushdowns reuse the station.",
+      "confidence": "documented (machine type used in the study); choice of product is a design decision"
+    },
+    "parts": [
+      {
+        "part": "weight stack",
+        "detail": "selectorized plates on two guide rods, pin selector; top plate with a selector stem",
+        "src": [
+          "matrix-aura-guide",
+          "performancehealth-lf-dap"
+        ],
+        "confidence": "documented"
+      },
+      {
+        "part": "carriage and track",
+        "detail": "pulley carriage moves up and down the column and locks at set holes: 22 positions on Life Fitness Signature DAP (retailer spec), 17 on Matrix Aura G3-MS24 (retailer summary)",
+        "src": [
+          "topfitness-lf-dap",
+          "d2w-matrix-ms24"
+        ],
+        "confidence": "documented (retailer)"
+      },
+      {
+        "part": "pulleys",
+        "detail": "Matrix G3-MS24 parts list: pulleys of 115 mm and 90 mm diameter",
+        "src": [
+          "matrix-aura-guide"
+        ],
+        "confidence": "documented (manufacturer)"
+      },
+      {
+        "part": "cable ratio",
+        "detail": "Matrix G3-MS24 2:1 (91 kg stack = 45 kg at the handle); Life Fitness Signature DAP 4:1 (retailer: 2 x 177 kg stacks, 97.5 lb effective per side)",
+        "src": [
+          "d2w-matrix-ms24",
+          "topfitness-lf-dap"
+        ],
+        "confidence": "documented (retailer); one retailer lists LF stacks as 2 x 195 lb, a conflict"
+      },
+      {
+        "part": "D-handle",
+        "detail": "Rogue Single Handle: 8.5 in (216 mm) from top of D-ring to centre of grip; grip 5 in (127 mm) wide; 25 mm steel grip (28.5, 32, 45 mm aluminium options); grip spins on a shoulder bolt; 1.5 in nylon webbing. Other makers: 22 mm x 136 mm (K-Sport), 25 mm x 152 mm (Bells of Steel), 25 mm x 100 mm (Fringe).",
+        "src": [
+          "rogue-single-handle",
+          "handle-specs-summary"
+        ],
+        "confidence": "documented"
+      }
+    ],
+    "dimensions": {
+      "lifeFitnessSignatureDAP": {
+        "value": "113 x 156 x 240 cm (L x W x H)",
+        "src": [
+          "topfitness-lf-dap"
+        ],
+        "confidence": "documented (retailer); another retailer lists 44 x 62 x 95 in"
+      },
+      "matrixAuraG3MS24": {
+        "value": "single adjustable pulley column, 68 x 70 x 240 cm, 91 kg stack, max user 136 kg",
+        "src": [
+          "matrix-aura-guide"
+        ],
+        "confidence": "documented (manufacturer owner's guide)"
+      },
+      "matrixAuraG3MS53": {
+        "value": "dedicated triceps pressdown station (fixed high pulley), 85 x 59 x 240 cm, 91 kg stack",
+        "src": [
+          "matrix-aura-guide"
+        ],
+        "confidence": "documented (manufacturer owner's guide)"
+      },
+      "topPulleyHeight": {
+        "value": "frames are about 240 cm tall; the exact height of the pulley at the top carriage position was not found",
+        "src": [
+          "matrix-aura-guide",
+          "topfitness-lf-dap"
+        ],
+        "confidence": "unverified (pulley height)"
+      }
+    },
+    "variantsNotModelled": "Cable crossover (two towers further apart), single adjustable column (Matrix G3-MS24), and dedicated fixed-pulley pressdown stations (Matrix G3-MS53). Strap handles (Life Fitness ships these) look different from a steel D-handle.",
+    "recommendation": "If one manufacturer-documented geometry is needed for exact modelling, use the Matrix Aura owner's guide figures (column 68 x 70 x 240 cm, pulleys 115/90 mm) and the Rogue Single Handle dimensions; both come from the maker.",
+    "referenceUrls": [
+      "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf",
+      "https://shop.lifefitness.com/products/signature-series-dual-adjustable-pulley",
+      "https://www.roguefitness.com/single-handle-cable-attachment",
+      "https://journal.iusca.org/index.php/Journal/article/download/250/349"
+    ]
+  },
+  "setup": [
+    {
+      "step": 1,
+      "text": "Clip a single D-handle to the cable.",
+      "landmark": "none",
+      "src": [
+        "fitnessprogramer-onearm",
+        "gettfit-onearm"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 2,
+      "text": "Move the pulley carriage to its highest setting.",
+      "landmark": "pulley above head height",
+      "src": [
+        "ace-pushdown",
+        "gettfit-onearm"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 3,
+      "text": "Stand facing the machine, feet hip-width or in a staggered (walking) stance, knees slightly bent.",
+      "landmark": "feet under the hips",
+      "src": [
+        "ace-pushdown",
+        "villalba2024"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 4,
+      "text": "Take the handle in one hand, palm down, with a full grip: thumb wrapped round the handle.",
+      "landmark": "handle across the palm",
+      "src": [
+        "ace-pushdown",
+        "fitnessprogramer-onearm"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 5,
+      "text": "Stand close enough that the cable is taut with the elbow at 90 deg, so there is load at the top of the rep.",
+      "landmark": "the weight lifts off the stack at the start position",
+      "src": [
+        "barbend-pushdown",
+        "exrx-onearm-pushdown"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 6,
+      "text": "Set the working upper arm vertical with the elbow at the side, elbow bent to 90 deg and pointing down.",
+      "landmark": "elbow in line with the mid-point of the trunk",
+      "src": [
+        "ace-pushdown",
+        "villalba2024"
+      ],
+      "confidence": "measured"
+    },
+    {
+      "step": 7,
+      "text": "Brace the abs with a natural low-back arch; pull the shoulder blades back and down.",
+      "landmark": "shoulders level, chest up",
+      "src": [
+        "ace-pushdown"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 8,
+      "text": "Free hand on the hip or lightly on the machine frame.",
+      "landmark": "none",
+      "src": [
+        "onearm-freehand-summary"
+      ],
+      "confidence": "range, coach consensus (weak sources)"
+    }
+  ],
+  "posture": {
+    "start": {
+      "head_neck": {
+        "value": "neutral, eyes forward",
+        "src": [],
+        "confidence": "unverified (no pushdown source states it)"
+      },
+      "torso_spine": {
+        "value": "upright to slightly forward: 0-10 deg lean from the hips, spine neutral with its natural low-back curve, braced",
+        "src": [
+          "villalba2024",
+          "ace-pushdown",
+          "hussain2020",
+          "tricepsinfo-lean"
+        ],
+        "confidence": "range, coach consensus (Villalba: 'spine in anatomical position'; Hussain: 'torso slightly leaned forward'; one coach site gives about 10 deg)"
+      },
+      "scapulae": {
+        "value": "depressed and retracted (back and down)",
+        "src": [
+          "ace-pushdown"
+        ],
+        "confidence": "documented"
+      },
+      "shoulder": {
+        "value": "0 deg flexion and 0 deg abduction: upper arm vertical, elbow at the side; neutral rotation",
+        "src": [
+          "ace-pushdown",
+          "villalba2024"
+        ],
+        "confidence": "documented (rotation unverified)"
+      },
+      "elbow": {
+        "value": "90 deg flexion, pointing down",
+        "src": [
+          "villalba2024",
+          "maeo2023"
+        ],
+        "confidence": "measured"
+      },
+      "forearm": {
+        "value": "pronated (palm down) for the default model; forearm horizontal",
+        "src": [
+          "fitnessprogramer-onearm",
+          "gettfit-onearm",
+          "villalba2024"
+        ],
+        "confidence": "documented"
+      },
+      "wrist": {
+        "value": "neutral",
+        "src": [
+          "ace-pushdown"
+        ],
+        "confidence": "documented"
+      },
+      "hips": {
+        "value": "extended, or a slight hinge if leaning",
+        "src": [
+          "villalba2024"
+        ],
+        "confidence": "range, coach consensus"
+      },
+      "knees": {
+        "value": "slightly flexed",
+        "src": [
+          "villalba2024"
+        ],
+        "confidence": "documented"
+      },
+      "feet": {
+        "value": "hip-width or staggered, flat",
+        "src": [
+          "ace-pushdown"
+        ],
+        "confidence": "documented"
+      },
+      "freeArm": {
+        "value": "hand on hip or on the frame",
+        "src": [
+          "onearm-freehand-summary"
+        ],
+        "confidence": "range, coach consensus (weak)"
+      },
+      "cableLine": {
+        "value": "from the top pulley down to the handle, close to vertical and in front of the working arm",
+        "src": [
+          "exrx-onearm-pushdown"
+        ],
+        "confidence": "derived ('step close to cable')"
+      }
+    },
+    "mid": {
+      "elbow": {
+        "value": "about 45 deg",
+        "src": [],
+        "confidence": "derived (midpoint of 90 to 0)"
+      },
+      "shoulder": {
+        "value": "unchanged: upper arm vertical, elbow at the side",
+        "src": [
+          "ace-pushdown"
+        ],
+        "confidence": "documented"
+      },
+      "wrist": {
+        "value": "neutral",
+        "src": [
+          "ace-pushdown"
+        ],
+        "confidence": "documented"
+      },
+      "torso_scapulae": {
+        "value": "unchanged from start",
+        "src": [
+          "ace-pushdown"
+        ],
+        "confidence": "documented"
+      }
+    },
+    "end": {
+      "elbow": {
+        "value": "0 deg: fully straight without a forceful lock; brief pause",
+        "src": [
+          "villalba2024",
+          "maeo2023",
+          "ace-pushdown"
+        ],
+        "confidence": "measured (90 to 0 deg); ACE adds 'do not lock out'"
+      },
+      "hand": {
+        "value": "beside the front of the upper thigh",
+        "src": [
+          "jefit-onearm"
+        ],
+        "confidence": "documented"
+      },
+      "shoulder": {
+        "value": "0 deg; upper arm has not moved",
+        "src": [
+          "ace-pushdown"
+        ],
+        "confidence": "documented"
+      },
+      "wrist": {
+        "value": "neutral; knuckles in line with the forearm",
+        "src": [
+          "ace-pushdown",
+          "fitnessprogramer-onearm"
+        ],
+        "confidence": "documented"
+      },
+      "torso": {
+        "value": "same lean as the start; no extra hinge",
+        "src": [
+          "barbend-pushdown",
+          "kaizer-onearm"
+        ],
+        "confidence": "documented"
+      }
+    }
+  },
+  "grip": {
+    "defaultChoice": {
+      "value": "pronated (palm down) on a single D-handle",
+      "why": "Most how-to sources for this exercise use it (fitnessprogramer, GettFit, Jefit), and it is the PRON-H condition of the only study of this exact exercise. The palm-up version is a valid variant.",
+      "src": [
+        "fitnessprogramer-onearm",
+        "gettfit-onearm",
+        "jefit-onearm",
+        "villalba2024"
+      ],
+      "confidence": "documented"
+    },
+    "thumb": {
+      "value": "wrapped round the handle (full grip)",
+      "src": [
+        "ace-pushdown"
+      ],
+      "confidence": "documented"
+    },
+    "width": {
+      "value": "one hand, in line with the working shoulder",
+      "src": [],
+      "confidence": "derived (single handle, elbow at side)"
+    },
+    "handleInPalm": {
+      "value": "grip across the palm inside the D-ring; the frame or straps rise from both ends of the grip to the ring above the back of the hand",
+      "src": [
+        "rogue-single-handle"
+      ],
+      "confidence": "documented (handle shape); exact spot in the palm unverified"
+    },
+    "wristStack": {
+      "value": "wrist straight, not bent back under the load",
+      "src": [
+        "ace-pushdown",
+        "fitnessprogramer-onearm"
+      ],
+      "confidence": "documented"
+    },
+    "fingers": {
+      "value": "four fingers round the grip, thumb wrapped over",
+      "src": [
+        "ace-pushdown"
+      ],
+      "confidence": "documented"
+    },
+    "variants": [
+      {
+        "name": "supinated (palm up)",
+        "detail": "ExRx's one-arm pushdown uses it. Villalba 2024: higher long-head EMG than palm down (effect size 0.53), more wrist-extensor activity, and fewer reps at the same load.",
+        "src": [
+          "exrx-onearm-pushdown",
+          "villalba2024"
+        ],
+        "confidence": "measured"
+      },
+      {
+        "name": "neutral (palm in) with a D-handle or single rope",
+        "detail": "Listed as an option ('palm facing in or down').",
+        "src": [
+          "kaizer-onearm"
+        ],
+        "confidence": "range, coach consensus"
+      }
+    ]
+  },
+  "rangeTempoBreathing": {
+    "rom": {
+      "value": "elbow from 90 deg to 0 deg; ExRx goes deeper on the way up ('until forearm is close to upper arm'), letting the elbow rise a few inches",
+      "src": [
+        "villalba2024",
+        "maeo2023",
+        "exrx-onearm-pushdown"
+      ],
+      "confidence": "measured (90-0); deeper range is a documented variant"
+    },
+    "tempo": {
+      "value": "2 s down (extending), brief pause, 2 s up (returning)",
+      "src": [
+        "villalba2024",
+        "sbs-maeo"
+      ],
+      "confidence": "measured (Villalba metronome 2 s : 2 s; Maeo 2 s : 2 s per a summary)"
+    },
+    "breathing": {
+      "value": "breathe out while pressing down",
+      "src": [
+        "ace-pushdown"
+      ],
+      "confidence": "documented"
+    },
+    "sides": {
+      "value": "finish one arm, then the other",
+      "src": [
+        "exrx-onearm-pushdown"
+      ],
+      "confidence": "documented"
+    }
+  },
+  "muscles": {
+    "primary": {
+      "ids": [
+        "triceps"
+      ],
+      "src": [
+        "ace-pushdown",
+        "villalba2024"
+      ],
+      "confidence": "measured"
+    },
+    "secondary": {
+      "ids": [
+        "forearms"
+      ],
+      "note": "Wrist flexors (flexor carpi radialis) were most active palm-down, wrist extensors palm-up: the forearm holds the wrist straight against the cable.",
+      "src": [
+        "villalba2024"
+      ],
+      "confidence": "measured"
+    },
+    "stabilizers": {
+      "ids": [
+        "lats",
+        "rear_delts",
+        "core"
+      ],
+      "note": "Lats, teres major and rear delts hold the upper arm against the cable's forward pull (ExRx, summary). ACE asks for an abdominal brace.",
+      "src": [
+        "exrx-onearm-pushdown",
+        "ace-pushdown"
+      ],
+      "confidence": "documented (ExRx read as a summary only)"
+    },
+    "headsNote": {
+      "value": "In pushdowns the long head showed more EMG than the lateral head (ACE study: rope 81 vs 67, bar 75 vs 59, as % of triangle push-up). Villalba found only the long head changed with grip.",
+      "src": [
+        "ace-triceps-study",
+        "villalba2024"
+      ],
+      "confidence": "measured"
+    },
+    "peakEffort": {
+      "value": "not measured by angle in any source found",
+      "src": [],
+      "confidence": "unverified (geometry suggests the cable's lever arm is longest near 90 deg)"
+    },
+    "disagreementWithExercisesJson": {
+      "proposal": "Keep primary triceps and secondary forearms. Optionally add stabilizers lats, rear_delts, core.",
+      "why": "Forearm activity is measured (Villalba). The stabilizer roles come from ExRx (summary) and ACE's brace cue, not EMG.",
+      "src": [
+        "villalba2024",
+        "exrx-onearm-pushdown",
+        "ace-pushdown"
+      ]
+    }
+  },
+  "mistakes": [
+    {
+      "key": "elbow-forward",
+      "name": "Elbow drifting forward",
+      "looksLike": "On the way up the upper arm swings forward (shoulder flexes) and the elbow leaves the side; on the way down the arm pulls back like a straight-arm pulldown.",
+      "whyItMatters": "Recruits the lats and takes emphasis off the triceps.",
+      "fix": "Keep the elbow pinned at the side; let only the forearm move.",
+      "src": [
+        "ace-pushdown",
+        "fitnessprogramer-onearm",
+        "kaizer-onearm"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "key": "lean-over",
+      "name": "Leaning over the handle",
+      "looksLike": "The trunk hinges well forward and the shoulder rolls over the handle at the bottom, so body weight helps push it down; often with a knee dip.",
+      "whyItMatters": "Body weight and leg drive replace triceps work; a sign the load is too heavy.",
+      "fix": "Lighter load; keep the same slight lean from first rep to last.",
+      "src": [
+        "barbend-pushdown",
+        "kaizer-onearm",
+        "fitnessprogramer-onearm"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "key": "elbow-flare",
+      "name": "Elbow flaring out",
+      "looksLike": "The elbow drifts away from the ribs to the side (shoulder abducts) as the handle comes down.",
+      "whyItMatters": "Listed beside forward drift as a form fault: the upper arm should stay still so only the elbow moves.",
+      "fix": "Keep the elbow tucked against the side.",
+      "src": [
+        "fitnessprogramer-onearm"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "key": "wrist-bend",
+      "name": "Bending the wrist",
+      "looksLike": "The wrist bends back (extends) under a palm-down handle, or curls, so the knuckles are no longer in line with the forearm.",
+      "whyItMatters": "ACE asks for a neutral wrist; the forearm muscles are already working to hold it straight against the handle (Villalba EMG).",
+      "fix": "Keep the wrist straight; lighten the load if it bends.",
+      "src": [
+        "fitnessprogramer-onearm",
+        "ace-pushdown",
+        "villalba2024"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "key": "short-range",
+      "name": "Cutting the range",
+      "looksLike": "Reps stop short of a straight arm at the bottom, or turn around well below 90 deg at the top.",
+      "whyItMatters": "Leaves out part of the range the triceps should work through.",
+      "fix": "Straighten fully at the bottom and return to about 90 deg each rep.",
+      "src": [
+        "gettfit-onearm",
+        "fitnessprogramer-onearm",
+        "kaizer-onearm"
+      ],
+      "confidence": "documented"
+    }
+  ],
+  "keyFacts": [
+    {
+      "text": "In the same people over 12 weeks, overhead cable extensions grew the triceps 1.4 times more than pushdowns (+19.9% vs +13.9%), with lighter weights. Pushdowns still built muscle; pairing them with an overhead move covers the long head.",
+      "src": [
+        "maeo2023"
+      ],
+      "confidence": "measured"
+    },
+    {
+      "text": "Palm up vs palm down on this exact exercise: palm up gave more long-head activity but fewer reps at the same load; palm down worked the wrist flexors harder.",
+      "src": [
+        "villalba2024"
+      ],
+      "confidence": "measured"
+    },
+    {
+      "text": "The number on the stack is not the load at the handle: many dual-pulley stations run 2:1 or 4:1, so a 91 kg stack can be 45 kg at the handle. Weights don't transfer between machines.",
+      "src": [
+        "d2w-matrix-ms24",
+        "topfitness-lf-dap"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "text": "Rope pushdowns scored 74% and bar pushdowns 67% of the triceps activity of a triangle push-up; the long head outworked the lateral head in both.",
+      "src": [
+        "ace-triceps-study"
+      ],
+      "confidence": "measured"
+    }
+  ],
+  "visualReferences": [
+    {
+      "url": "https://journal.iusca.org/index.php/Journal/article/download/250/349",
+      "shows": "Villalba 2024 Figure 1: a person doing this exact single-arm pushdown at a dual adjustable pulley with a handle (PRON-H) and with a wrist strap; body position and distance from the machine."
+    },
+    {
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+      "shows": "ACE photos of the pushdown: attachment above head height, elbows at the sides, wrists neutral."
+    },
+    {
+      "url": "https://exrx.net/WeightExercises/Triceps/CBOneArmPushdown",
+      "shows": "ExRx one-arm pushdown animation (underhand grip); blocked to our fetcher, check in a browser."
+    },
+    {
+      "url": "https://fitnessprogramer.com/exercise/one-arm-triceps-pushdown/",
+      "shows": "Animated GIF of the overhand one-arm pushdown, upright shoulder-width stance."
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7047337/",
+      "shows": "Hussain 2020: two-arm bar pushdown posture with the torso slightly forward."
+    },
+    {
+      "url": "https://www.roguefitness.com/single-handle-cable-attachment",
+      "shows": "Single D-handle photos with dimensions (ring, webbing, rotating knurled grip)."
+    },
+    {
+      "url": "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf",
+      "shows": "Matrix Aura owner's guide: adjustable pulley column and triceps pressdown station drawings, dimensions and parts."
+    },
+    {
+      "url": "https://shop.lifefitness.com/products/signature-series-dual-adjustable-pulley",
+      "shows": "Life Fitness Signature dual adjustable pulley product photos (two columns, carriages, top frame)."
+    }
+  ],
+  "openQuestions": [
+    "Default grip: palm down chosen (most how-to sources; study condition PRON-H). Palm up is valid and ExRx uses it. Owner may choose.",
+    "Single-arm vs two-arm for Version 1 was asked of the owner in docs/FORM-GUIDE-PRODUCTION.md 10.6; this file assumes single-arm as the id says.",
+    "Exact torso lean in degrees is not measured anywhere found; 0-10 deg is a coach range.",
+    "Where to stand side-to-side relative to the pulley (cable in line with the working shoulder or centred on the body) is not stated by any source found.",
+    "Free-hand placement (hip or frame) comes from weak coaching sources only.",
+    "Where effort peaks through the range is not measured; do not animate a peak glow at a specific angle until sourced.",
+    "Height of the top pulley position on the chosen machine was not found; frames are about 240 cm.",
+    "Life Fitness DAP stack weight conflicts between retailers (2 x 390 lb at 4:1 vs 2 x 195 lb); Matrix figures come from the manufacturer guide.",
+    "ExRx and the Life Fitness product page were blocked to our fetcher; content from them here comes from search summaries or retailer copies."
+  ],
+  "sources": [
+    {
+      "id": "ace-pushdown",
+      "cite": "American Council on Exercise, Exercise Library: Triceps Pushdowns",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+      "kind": "guideline",
+      "read": "full"
+    },
+    {
+      "id": "exrx-onearm-pushdown",
+      "cite": "ExRx.net, Cable One Arm Pushdown (underhand grip; 'step close to cable to provide resistance at top of motion'; elbow may travel up a few inches at top)",
+      "url": "https://exrx.net/WeightExercises/Triceps/CBOneArmPushdown",
+      "kind": "reference library",
+      "read": "summary (Cloudflare block; search-result text)"
+    },
+    {
+      "id": "villalba2024",
+      "cite": "Villalba MM, Fujita RA, Iossi Junior C, Gomes MM. Forearm Position Influences Triceps Brachii Activation During Triceps Push-Down Exercise. Int J Strength Cond 2024;4(1). doi:10.47206/ijsc.v4i1.250",
+      "url": "https://journal.iusca.org/index.php/Journal/article/view/250",
+      "kind": "peer-reviewed EMG (single-arm pushdown, n=22)",
+      "read": "full text (PDF)"
+    },
+    {
+      "id": "maeo2023",
+      "cite": "Maeo S, Wu Y, Huang M, et al. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci 2023;23(7):1240-1250. doi:10.1080/17461391.2022.2100279",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35819335/",
+      "kind": "peer-reviewed training study (MRI, 12 weeks)",
+      "read": "abstract"
+    },
+    {
+      "id": "sbs-maeo",
+      "cite": "Stronger By Science, Research Spotlight: overhead extensions vs pushdowns (summary of Maeo 2023; reports 2 s eccentric / 2 s concentric cadence)",
+      "url": "https://www.strongerbyscience.com/research-spotlight-triceps/",
+      "kind": "research summary",
+      "read": "full (tool summary)"
+    },
+    {
+      "id": "hussain2020",
+      "cite": "Hussain J, Sundaraj K, Subramaniam ID. Muscle Fatigue in the Three Heads of Triceps Brachii During Intensity and Speed Variations of Triceps Push-Down Exercise. Front Physiol 2020;11:112. doi:10.3389/fphys.2020.00112",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7047337/",
+      "kind": "peer-reviewed EMG",
+      "read": "full text (tool summary)"
+    },
+    {
+      "id": "ace-triceps-study",
+      "cite": "Boehler B, Porcari JP, Kline D, Hendrix CR, Foster C, Anders M. ACE-sponsored research: Terrific Triceps (2011)",
+      "url": "https://acewebcontent.azureedge.net/certifiednews/images/article/pdfs/ACETricepsStudy.pdf",
+      "kind": "sponsored EMG study (n=15 women)",
+      "read": "full (PDF)"
+    },
+    {
+      "id": "fitnessprogramer-onearm",
+      "cite": "Fitness Programer, Cable One Arm Triceps Pushdown",
+      "url": "https://fitnessprogramer.com/exercise/one-arm-triceps-pushdown/",
+      "kind": "coach consensus",
+      "read": "full"
+    },
+    {
+      "id": "gettfit-onearm",
+      "cite": "GettFit (Mike Gettier), Overhand Single-Arm Tricep Pushdown",
+      "url": "https://www.gettfit.com/exercise-database/arms/overhand-single-arm-tricep-pushdown/",
+      "kind": "coach consensus",
+      "read": "full"
+    },
+    {
+      "id": "jefit-onearm",
+      "cite": "Jefit, Cable One-Arm Tricep Pushdown",
+      "url": "https://www.jefit.com/exercises/1334/cable-one-arm-tricep-pushdown",
+      "kind": "coach consensus",
+      "read": "full"
+    },
+    {
+      "id": "kaizer-onearm",
+      "cite": "Kaizer app, Single-Arm Cable Triceps Pushdown",
+      "url": "https://kaizer.app/en/exercises/extension-de-triceps-unilateral-en-polea",
+      "kind": "coach consensus (app content)",
+      "read": "full"
+    },
+    {
+      "id": "barbend-pushdown",
+      "cite": "BarBend (Mike Dewar, MS, CSCS), How to Do Triceps Pushdowns",
+      "url": "https://barbend.com/triceps-pushdown/",
+      "kind": "coach consensus",
+      "read": "full"
+    },
+    {
+      "id": "tricepsinfo-lean",
+      "cite": "triceps.info, Triceps Pushdown: Complete Form and Technique Guide (about 10 deg forward lean)",
+      "url": "https://triceps.info/exercises/triceps-pushdown-form-technique/",
+      "kind": "coach consensus (weak)",
+      "read": "summary (search-result text)"
+    },
+    {
+      "id": "onearm-freehand-summary",
+      "cite": "Search-result summary of single-arm pushdown guides (free hand on hip or frame; staggered stance)",
+      "url": "https://liftmanual.com/cable-one-arm-tricep-pushdown/",
+      "kind": "coach consensus (weak)",
+      "read": "summary (search-result text)"
+    },
+    {
+      "id": "matrix-aura-guide",
+      "cite": "Matrix Fitness, Aura Series owner's guide (G3-MS24 Adjustable Pulley, G3-MS53 Triceps Pressdown, spec table and parts list)",
+      "url": "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf",
+      "kind": "manufacturer manual",
+      "read": "full (spec table and G3-MS24 parts page)"
+    },
+    {
+      "id": "d2w-matrix-ms24",
+      "cite": "Design2Wellness, MATRIX Aura Series Adjustable Pulley G3-MS24 (2:1 ratio; 91 kg stack; 45 kg effective)",
+      "url": "https://design2wellness.com/aura-series-adjustable-pulley-g3-ms24.html",
+      "kind": "retailer spec",
+      "read": "full"
+    },
+    {
+      "id": "topfitness-lf-dap",
+      "cite": "Top Fitness, Life Fitness Signature Series Dual Adjustable Pulley (113 x 156 x 240 cm; 2 x 177 kg; 4:1; 22 carriage adjustments)",
+      "url": "https://www.topfitness.com/products/life-fitness-signature-series-dual-adjustable-pulley",
+      "kind": "retailer spec",
+      "read": "full"
+    },
+    {
+      "id": "performancehealth-lf-dap",
+      "cite": "Performance Health, Life Fitness Signature Series Dual Adjustable Pulley (44 x 62 x 95 in; two 195 lb stacks; 1:4 ratio; accessories)",
+      "url": "https://www.performancehealth.com/signature-series-dual-adjustable-pulley",
+      "kind": "retailer spec",
+      "read": "full"
+    },
+    {
+      "id": "rogue-single-handle",
+      "cite": "Rogue Fitness, Single Handle Cable Attachment",
+      "url": "https://www.roguefitness.com/single-handle-cable-attachment",
+      "kind": "manufacturer product page",
+      "read": "full"
+    },
+    {
+      "id": "handle-specs-summary",
+      "cite": "Search-result summary of D-handle specs (K-Sport 22 mm x 136 mm; Bells of Steel 25 mm x 152 mm; Fringe 25 mm x 100 mm)",
+      "url": "https://bellsofsteel.com/products/single-d-rubber-handle",
+      "kind": "manufacturer product pages",
+      "read": "summary (search-result text)"
+    }
+  ]
+}
