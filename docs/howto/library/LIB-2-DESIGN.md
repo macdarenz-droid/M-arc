@@ -245,3 +245,36 @@ Plus the AGENTS checks on the exact head: `npm run check`, `npm run test:tz`, th
 - **`coverage.ts` becomes generated:** today's hand-edit rule moves to its archetype data file; the PR says so.
 - **LIB-8 builder takeover** could fork two copies: the files move byte for byte and LIB-8 merges `main` after.
 - **Hash collision across future ids:** refused at generate time, so it can never ship silently.
+
+## 12. Addendum: hand-pair chunk generator (ruling D-LIB7-1)
+
+Added 2026-10-02 after the joint review of LIB-7 (#193) and LIB-12 (#191). Append-only: sections 1-11 are unchanged.
+Library hand close-ups are shared per pair key (plan 2.3), not per exercise, and LIB-7/LIB-12 ship only their
+tool-side sources. LIB-2's generator writes the app chunks.
+
+- **Name.** `src/howto/generated/handpair-<key>.ts`, one per key. It does not collide with HT-6's per-exercise
+  `hand-<chromeId>.ts`: the zoom registry's glob `../../../howto/generated/hand-*.ts`
+  (`src/slices/howto/zoom/registry.ts:18`) does not match `handpair-*`, and `tests/howto/hands.test.ts:32-33` (every
+  `hand-*` file is one of the 8) stays green and unedited.
+- **Generator.** A new plugin `tools/plates/gen/handpairs.mjs`. Its input is LIB-7's loader
+  `tools/plates/library/hands/pairs.mjs`, which finds the `hand-<key>.mjs` modules by filename and builds `HAND_OF_ID`
+  (it throws if an id is claimed twice). For each key it writes one module with the pair's markup, made through
+  `pairs.mjs`'s `renderPair` (LIB-7 owns the render path, #193 High 1), in the same shape as HT-6's chunks
+  (`ZoomChunk`), and only for keys that at least one shipped id uses.
+- **Per-output `inputsSha256` (6.1).** Each output passes `inputs = pairs.inputsFor(key)`: the loader, that key's
+  file, its view file, golden-B `engine/hand.mjs` and the LIB-6 render files it calls. So an edit to one key (or a
+  new LIB-12 view file) stales only the chunks that read it, never every pair.
+- **How `ht-index` loads a pair chunk.** `generated/ht-index.ts` (7) also exports `PAIR_OF: Partial<Record<LibId,
+  string>>` (shipped id → key, from `HAND_OF_ID`) and `PAIR_LOADERS: Record<string, () => Promise<ZoomChunk>>`, one
+  dynamic import per written key, so Vite splits each key into its own `handpair-<key>-*.js`. The zoom registry's
+  `hand` kind keeps its per-exercise lookup first (the 8 are unchanged) and, for a library id, loads
+  `PAIR_LOADERS[PAIR_OF[id]]`. That is the one wiring line in `registry.ts`, called out in the PR. Each pair chunk
+  gets a budget at measured + 10 % under the `budgets.json` rule, like any new chunk.
+- **Count assertion (L2-A21).** The number of `handpair-*.ts` files written equals the number of keys used by shipped
+  ids in the registry, and `PAIR_LOADERS` has exactly those keys; every shipped id with a hand close-up and no
+  per-exercise chunk has a `PAIR_OF` entry. Red on an empty registry (0 keys) and on a key with no file.
+- **Mutations.** (a) Make one key's `inputsFor` return the whole `hands/` folder: L2-A4's rule ("an unrelated edit
+  stales nothing") turns red when a LIB-12 view file changes. (b) Drop one key from `PAIR_LOADERS`: L2-A21 turns red.
+  (c) Rename the output to `hand-<key>.ts`: `hands.test.ts` turns red, unedited.
+- **Owner.** LIB-2 builds the plugin and the `ht-index` exports. LIB-7 and LIB-12 own `hands/**` and `inputsFor`.
+  Until LIB-2 merges, the pairs ship nothing to the app (D-LIB7-1 seam).
