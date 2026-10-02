@@ -10,7 +10,8 @@ Card GATE-SPLIT (owner approval 2026-10-02, AGENTS.md ownership-table exception)
 - A CI job set to `MARC_GATE_JOB=k/K` runs only the blocks the shared packer assigns to job k. With the variable unset (local `npm run gate`), it runs everything, as today.
 - Every job writes a proof file in HT-10's `writeProof` format.
 - One verdict job checks every proof file against the block list generated from the file at that exact sha. The verdict also covers HT-10's shards now and LIB-4's shards later.
-- Proposed K = 3 jobs per time zone, about 19-21 min per push.
+- `.github` stays add-only (supervisor ruling, 2026-10-02): `source-gate` and `visual-gate-tz` keep their names and steps and become shard 1/K of their time zone through a job-level env. Shards 2..K and `gate-verdict` are new jobs.
+- K = 3 per time zone and `ht10-gate` N = 4, both from one rule: each shard at most 15 min. Expect about 20 min for one push alone (about 22 at worst). With two pushes in flight, the later one can queue to about 30-35 min (2.2).
 
 ## 1. Measured time
 
@@ -95,53 +96,58 @@ From the CI log timestamps (UTC job), the gate splits into three parts:
 | K per TZ | Max job (local s) | ≈ CI gate step | Gate jobs | Peak jobs at once for one push |
 |---|---:|---:|---:|---:|
 | 1 (today) | 2,582 | 40 min | 2 | 3 (+ guard) |
-| 2 | 1,291 | 20 min | 4 | 8 |
-| **3** | **861** | **13.3 min** | **6** | **10** |
-| 4 | 646 | 10.0 min | 8 | 12 |
-| 5 | 517 | 8.0 min | 10 | 14 |
-| 8 | 323 | 5.0 min (HT-3 bound) | 16 | 20 |
+| 2 | 1,291 | 20 min | 4 | 4 + ht10 N |
+| **3** | **861** | **13.3 min** | **6** | **6 + ht10 N** |
+| 4 | 646 | 10.0 min | 8 | 8 + ht10 N |
+| 5 | 517 | 8.0 min | 10 | 10 + ht10 N |
+| 8 | 323 | 5.0 min (HT-3 bound) | 16 | 16 + ht10 N |
 
-### 2.2 Proposal: K = 3 per time zone (D-GATESPLIT-K)
+This table packs with no head start. The proposal in 2.2 adds `source-gate`'s head start.
 
-**Assignment** (local seconds, the same for UTC and Pacific/Auckland):
-- **Job 1** (861 s, 30 groups): BUG-12, QA13-5, O4, Plate*, QA11-1, ESC-NC, Live*, F5.1, I6.2, A9, A1, F8, QA10-3, I9, I11, AUD-11, O1.1, O2, COACH-FB, BUG-8, BUG-19, BUG-15, BUG-17, LT-3, HT-2, HT-3, HT-3b, AUD-20, BUG-37, AUD-10.
-- **Job 2** (860 s, 31 groups): BASE, I14, I18, R2, QA13-4, QA14-1, R6, I6.1, BUG-31, A3, I7, F13, I1, F9, BUG-18, QA5-1b, QA5-5b, Hotfix*, I10, QA12-3, O1.2, BUG-22, BUG-23, BUG-27, PLAY-1, HT-1, HT-7, HT-4, COPY-1, AUD-12, COPY-2.
-- **Job 3** (861 s, 29 groups): I15, I16, I17, BUG-10, QA6-2, I12, QA13-3, QA13-6, A6, QA4-5, Palace*, ESC-REPORT, R5, UI-1, A8, F5.2, O3, QA10-7, A5, QA12-1, BUG-34, A4, BUG-9, ADAPT-4, LT-4, FG-OFF, HT-6, HT-8, BUG-36.
-- **Plus**, after HT-10 merges: the group `HT-10` (its `MARC_HT10_OWN_JOB=1` skip branch, 60 s budget, D-HT10-A5c-2) and HT-10's clock lines (3.4).
+### 2.2 Proposal: K = 3, ht10 N = 4 (D-GATESPLIT-K, D-GATESPLIT-HT10)
 
-These lists are illustration only. The real assignment is computed by the code from `scripts/gate-times.json` at each sha (3.2), so no one maintains it by hand.
+**One rule for both systems: each shard at most 15 min on CI (`SHARD_TARGET_S = 900`).**
 
-**Expected wall time per push** (estimates from the measurements above):
+**K for the gate:** K = ceil(per-TZ CI load / 900 s), where load = gate seconds + HT-10's skip (at most 60 s, D-HT10-A5c-2) + head start.
+- `source-gate` (UTC shard 1) still runs its own steps before the gate: worker and relay checks, `npm run check` and `test:tz`, 3:38 measured.
+- So the packer gives it a head start of 200 s: 218 s minus the about 15 s of `npm ci` + build that every shard job also has. That is `offsets: { "UTC/1": 200 }` in `scripts/gate-times.json`, and `packShards(items, K, offsets)` starts that job's total at 200.
+- `visual-gate-tz` has no head start; its build is the same as a new shard's.
+- **UTC:** (2,397 + 60 + 200) / 900 = 2.95 → K = 3, about 886 s (14.8 min) per shard.
+- **Auckland:** (2,285 + 60) / 900 = 2.6 → 3, about 782 s (13.0 min). K is the same for both zones (the larger), so the plan and proofs stay symmetric.
 
-| Stage | Time |
-|---|---|
-| `web-build` (checkout, npm ci, build, validate, upload `www`) | ≈ 0.8 min |
-| gate job: setup ≈ 0.7 min (2.5 at worst) + gate 13.3 min × about 1.05 for imbalance on Chrome 153 | ≈ 14.7 min (16.5 at worst) |
-| `gate-verdict` (download proofs, check) | ≈ 0.5 min |
-| `android-gate` | 3.1 min |
-| job pick-up gaps | ≈ 0.5 min |
-| **Total** | **≈ 19.5 min (≈ 21.5 at worst)**, against 42-47 today |
+**N for `ht10-gate`:** N = ceil(total ht10 seconds / 900 s).
+- Until measured, the total is the budget: 2 shards × 25 min = 3,000 s (D-HT10-A5), so N = 4 and about 12.5 min per shard by budget.
+- After HT-10's first CI run, the supervisor re-applies the rule to the measured total. N = 2 if both shards measure at most 15 min.
+- htShard is modulo over tuples, so any N is valid, and `coverProblems` proves it.
 
-**Why 3 and not 4:**
-- K = 4 saves about 3 min more, but needs 12 runners at once per push.
-- SPEED.md measured queueing from about 15 running jobs, and several builder branches often push together.
-- At K = 3, two pushes in flight use about 20 jobs, the account's limit.
-- K is one number (`K` in `scripts/gate-times.json`). The supervisor may move it to 4 when few lanes are active. Nothing else changes.
+**Assignment at K = 3** (local seconds with UTC/1's head start of 215 s local-equivalent; Auckland packs the same blocks without the head start):
+- **Job 1 = `source-gate` / `visual-gate-tz`** (717 s of blocks, 29 groups): BASE, I15, QA13-3, QA13-5, Palace*, I6.1, BUG-31, ESC-REPORT, Live*, I6.2, A3, A1, BUG-18, QA5-5b, Hotfix*, QA10-3, QA10-7, I9, AUD-11, A4, COACH-FB, BUG-17, LT-3, ADAPT-4, BUG-27, PLAY-1, HT-8, COPY-1, COPY-2.
+- **Job 2** (932 s, 31 groups): I14, BUG-12, BUG-10, QA6-2, QA13-4, QA14-1, R6, Plate*, QA4-5, QA11-1, F5.1, I7, A9, F8, F5.2, O3, I10, A5, QA12-3, O1.1, BUG-19, BUG-15, LT-4, BUG-23, HT-1, HT-2, HT-3, HT-7, BUG-36, BUG-37, AUD-10.
+- **Job 3** (932 s, 30 groups): I18, I16, I17, R2, I12, QA13-6, O4, A6, ESC-NC, R5, UI-1, F13, I1, A8, F9, QA5-1b, I11, QA12-1, O2, O1.2, BUG-34, BUG-8, BUG-9, BUG-22, FG-OFF, HT-6, HT-3b, HT-4, AUD-20, AUD-12.
+- **Plus** `HT-10` and `HT-10.clock` after #166 (3.4).
+- These lists illustrate only. The code computes the plan from `scripts/gate-times.json` at each sha (3.2).
 
-**Jobs per push at K = 3:** 13 in total.
-- `guard`, `source-checks`, `web-build` and `android-gate`: 1 each.
-- `gate` (UTC and Auckland × 3): 6.
-- `ht10-gate`: 2.
-- `gate-verdict`: 1.
+**Time per push.** The total is the slowest path, max(gate path, ht10 path), plus what follows it. Estimates come from the measurements in 1.1.
 
-At peak 10 run at once: 6 gate, 2 ht10, `source-checks` and `guard`. The repo is public, so runner minutes are not billed (to verify on the owner's plan; SPEED.md also leaves this open).
+| Path | Steps | Typical | Worst |
+|---|---|---:|---:|
+| Gate, UTC/1 (`source-gate`) | 3:38 own steps + Chromium 0.4 + 717 s × 0.93 local→CI | ≈ 15.2 min | ≈ 17 (Chromium 2 min) |
+| Gate, other shards | setup ≈ 0.75 min + 932 s × 0.93 ≈ 14.4 min | ≈ 15.2 min | ≈ 17 |
+| ht10, per shard | setup ≈ 0.75 + 12.5 min (budget / 4) | ≈ 13.3 min | ≈ 15 |
+| Then | `gate-verdict` 0.5 + `android-gate` 3.1 + pick-up gaps 0.5 | 4.1 min | 4.1 |
+| **One push alone** | | **≈ 19.3 min** | **≈ 21** |
 
-**Not measured: `ht10-gate`.**
-- HT-10 has not run on main, and its shard budget is 25 min each (D-HT10-A5).
-- A shard longer than about 15 min becomes the critical path instead of the gate jobs.
-- The same mechanism fixes it: raise `MARC_HT_SHARD`'s N (htShard is modulo over tuples, so any N is valid and proven by `coverProblems`). The supervisor rules on N after HT-10's first CI run (D-GATESPLIT-HT10).
+**Capacity**, counted in jobs per push:
+- One push: `guard` 1, `source-gate` 1, `visual-gate-tz` 1, `gate-shard` 4, `ht10-gate` 4, `gate-verdict` 1, `android-gate` 1 = **13 jobs**.
+- Peak at once: **11**, which is 10 once `guard` (seconds long) ends: 2 existing gate jobs + 4 shards + 4 ht10.
+- Today: 4 jobs, peak 3-4.
 
-**Gate growth:** every new block adds time. The supervisor re-picks K when the longest gate job passes 15 min on CI. The verdict prints each job's seconds, so this is visible on every run.
+**Two overlapping pushes** (different branches; the same ref cancels its older run):
+- Peak 20-22 against the limit of about 20, with queueing measured from about 15 (SPEED.md). So the later push queues.
+- At worst its last 1-2 jobs wait for the first push's shortest shard, about 13-15 min. The later push then lands at about 30-35 min. One push alone, at about 20 min, is under the card's 25.
+- **The honest number:** about 20 min per push when pushes do not overlap. About 30-35 min for the later of two overlapping pushes, which is still under today's 42-47 for both.
+
+**Re-picking:** when ht10 is measured, N will likely drop, and so will the peak (N = 2 gives a peak of 8 and two pushes about 16-18, near the queueing threshold). The verdict prints each shard's gate seconds on every run. When any shard passes 900 s, the supervisor re-applies the rule (K or N + 1).
 
 ## 3. Selecting a block without changing what it checks
 
@@ -224,7 +230,8 @@ The block list is not a hand list. It is `Program.body` of the gate file, from t
 **HT-10 (after #166 merges):**
 - Gate block `HT-10` is a normal group, `if (gate.runs('HT-10'))` in front of its `if (!ht10Runs()) … else runHt10(…)`.
 - The gate jobs set `MARC_HT10_OWN_JOB=1` (8.7 step 6), so in exactly one gate job per time zone the skip branch runs and holds HT-10's own time to 60 s (D-HT10-A5c-2), unchanged.
-- HT-10's tuples run in `ht10-gate` (`MARC_HT_SHARD` 1/2, 2/2), outside the gate jobs.
+- HT-10's tuples run in `ht10-gate` (`MARC_HT_SHARD` k/N, with N = 4 by the 15 min rule until measured; 2.2), outside the gate jobs.
+- D-HT10-A5c-2's "30 min goal returns in GATE-SPLIT" lives in the verdict as `JOB_BUDGET_S` (4.2 item 9).
 - Locally, with both variables unset, everything runs, as now.
 
 **HT-10's clock** (`const ht10Clock` and its `{ console.log = … }` block above HT-1):
@@ -247,50 +254,99 @@ The block list is not a hand list. It is `Program.body` of the gate file, from t
 ## 4. Proof, verdict, equivalence tests
 
 ### 4.1 Proof file per gate job
-Each gate job writes `screenshots/gate-proof-<utc|auckland>-<k>of<K>.json` with `writeProof`:
+Each gate job writes `screenshots/gate-proof-<utc|auckland>-<k>of<K>.json` with `writeProof`. In the serial arrangement, `MARC_GATE_JOB` is unset and the file is `…-1of1.json`.
 - `sha`: `git rev-parse HEAD`, which must equal `GITHUB_SHA`.
 - One row per group that ran: `{ id: <key>, check: 'gate', state: <TZ>, theme: '*', width: null, result: 'pass' | 'fail' }`. The result is `fail` when the group added errors.
-- One row per theme the group was seen to use: `{ id: <key>, check: 'gate-theme', state: <TZ>, theme: <theme>, … }`. Seen means a screenshot written by that group whose name starts with a theme name. Groups that write no screenshot have no theme rows (limit in 5).
+- One `gate-theme` row per theme the group was seen to use: `{ id: <key>, check: 'gate-theme', state: <TZ>, theme: <theme>, … }`.
+  - "Seen" means a file the group wrote to `screenshots/` whose name matches the declared pattern `THEME_IN_NAME = /(?:^|[^a-z])(silent-black|paper|ember|emerald|midnight)(?:[^a-z]|$)/`, anywhere in the name, not only at the start.
+  - Groups that write no file matching it are listed in `meta.constructionOnly`. The verdict prints that list on every run, and the build PR records it from the first proof, because the theme proof for those groups is by construction only (5).
 - `meta`:
   - `job: { k, K }` and `tz`;
-  - `www`: sha-256 over the sorted `www/` files;
+  - `www`: sha-256 over the sorted `www/` files, with `sw.js`'s build stamp `marc-\d{14}` normalised to `marc-STAMP`. Each job builds its own `www` as today; the stamp is the build time (`scripts/sw-version.mjs:5`), and Vite's hashed names are content-based;
   - `chrome`: `browser.version()`;
-  - `plan`: sha-256 of the packing input (times file plus group list);
-  - `seconds` per group;
+  - `plan`: sha-256 of the packing input (times file, offsets, group list);
+  - `seconds` per group, and `gateSeconds` (first guard to `done()`);
+  - `files` per group, the screenshot names;
   - `errors`, the job's whole error list.
 
 ### 4.2 `gate-verdict`
-`needs:` every gate job and both `ht10-gate` shards, with `if: always()`. It fails when any of the following is true:
+`needs: [source-gate, visual-gate-tz, gate-shard, ht10-gate]`, with `if: always()`. It fails when any of the following is true:
 1. any needed job's result is not `success`;
 2. a manifest's `sha` is not `GITHUB_SHA`, or the manifests' shas differ;
-3. the number of gate manifests is not K per time zone, a `k` is missing or repeated, or K differs from `gate-times.json`;
-4. `coverProblems(gateRows, expected)` is not empty, where `expected` = the groups generated from the gate file at that sha (3.3) × `['UTC', 'Pacific/Auckland']`, minus `ALWAYS` keys. This catches a missing, duplicated (two manifests) or unexpected item;
-5. the gate row count is not groups × 2, and the `ALWAYS` rows are not exactly one per manifest (miscount);
+3. the number of gate manifests per time zone is wrong, or a `k` is missing or repeated.
+   - On `push`, K must equal `gate-times.json`'s K.
+   - K = 1 is accepted only when `GITHUB_EVENT_NAME` is `workflow_dispatch` with `arrangement: serial` (E8's arrangement A).
+4. `coverProblems(gateRows, expected)` is not empty, where `expected` = the groups generated from the gate file at that sha (3.3) × `GATE_TZS`, minus `ALWAYS` keys. This catches a missing, duplicated (in two manifests) or unexpected item;
+5. the gate row count is not groups × 2, or the `ALWAYS` rows are not exactly one per manifest (miscount);
 6. a `gate-theme` (key, TZ, theme) appears in two manifests, or a group's theme set differs between UTC and Auckland;
 7. `meta.www`, `meta.chrome` or `meta.plan` differ between manifests, or `meta.plan` differs from the verdict's own computation;
 8. any row's result is `fail`;
-9. the ht10 family: `coverProblems(ht10Rows, ht10RunTuples())` is not empty, or shard k of N is missing or repeated;
-10. the time-zone list is a constant in `ci-verdict.mjs` (`GATE_TZS`), not an input. Dropping Auckland from the workflow leaves its rows missing, so the verdict turns red.
+9. **the 30 min goal** (D-HT10-A5c-2: "the 30 min goal returns in GATE-SPLIT") lives here as `JOB_BUDGET_S = 1800`: any manifest's `meta.gateSeconds` over 1,800 s is red. Separately, any shard over `SHARD_TARGET_S = 900` is printed as "re-pick K/N" (2.2) and is not red. New shard jobs also get `timeout-minutes: 30` as a runaway limit; the existing jobs keep their 60 (`.github` is add-only);
+10. the ht10 family: `coverProblems(ht10Rows, ht10RunTuples())` is not empty, or shard k of N is missing or repeated;
+11. `GATE_TZS = ['UTC', 'Pacific/Auckland']` is a constant in `ci-verdict.mjs`, not an input. Dropping Auckland from the workflow leaves its rows missing, so the verdict turns red.
 
 **The APK:**
-- `android-gate` `needs: [source-checks, gate, ht10-gate, gate-verdict]`, so it starts only when every job and the verdict are green.
-- It checks out `GITHUB_SHA`, the same sha every manifest names.
-- Recommended (supervisor): it builds from the `www` artifact that the gate jobs tested (`web-build`), so the APK holds those exact bytes. Today each job builds its own `www`, and `sw.js` carries a build-time stamp (`scripts/sw-version.mjs:5`), so separate builds differ.
+- `android-gate.needs` gets `gate-shard`, `ht10-gate` and `gate-verdict` appended, so it starts only when every job and the verdict are green on `GITHUB_SHA`, the sha every manifest names.
+- Optional add-only check for the supervisor: a new `android-gate` step computes the same normalised `www` hash and compares it with the verdict's. Both builds come from the same sha, so a mismatch means a non-deterministic build.
 
 ### 4.3 Equivalence tests: each one, and the mutation that turns it red
 
-| # | What | Where | Mutation shown red |
-|---|---|---|---|
-| E1 | The block list is generated from the file and its count asserted. Every top-level statement is guarded or a declaration; keys are unique per group and contiguous; `ALWAYS` groups do not reference `errors` | `tests/gate-split.test.ts` (vitest, runs in `npm test`) | delete one guard line; repeat a key in two separate places; add `errors.push` to an `ALWAYS` group |
-| E2 | No shared state between groups: every binding declared at top level after `errors` is referenced by one group only; no writes to `process.env` or `globalThis`; no `let` at top level | same test, on the AST | make a second group read `bug22Runs` |
-| E3 | Partition: for K = 1..16 and the real group list, the jobs' sets are disjoint and their union is every group; unset selects everything | same test | an off-by-one `k` in `jobFromEnv`; `packShards` dropping its last item |
-| E4 | Each job reaches exactly its planned groups (`gate.done()`) | each CI gate job | make one guard return `false` in one job only (`MARC_GATE_SKIP_TEST=<key>`, a test-only seam that exists only in a scratch commit) |
-| E5 | Verdict unit tests: wrong sha, a missing manifest, a duplicated manifest, a dropped row, an extra row, a miscount, mixed `www`/`chrome`/`plan`, a `fail` row, a `needs` failure, missing Auckland | `tests/ci-verdict.test.ts` with fixture manifests | each of the ten listed is one test case that must fail |
-| E6 | **Dropping a proof row turns the verdict red on CI** | a scratch branch: a commit makes job 2 (UTC) delete one row before upload | verdict red, naming the key; then reverted |
-| E7 | Strip equivalence (3.1) | build PR, one time | edit one character inside any block → diff not empty |
-| E8 | **5 paired runs:** on one sha, run A = serial (`MARC_GATE_JOB` unset: one job per TZ, as today) and run B = split (K = 3). Five times each. Identical means, per TZ: the same set of (group, result) rows, the same error list (empty when green), the same screenshot file names, the same `gate-theme` rows | `workflow_dispatch` input `arrangement: serial | split` on the GATE-SPLIT branch; the verdict compares | any difference over the 5 pairs blocks adoption; root-cause it, never re-run to green |
-| E9 | **Seeded failure red in both arrangements:** a scratch commit breaks one app behaviour that a block outside job 1 checks (e.g. shrink a tap target that F8 checks). Serial: red. Split: exactly the job holding F8 is red, with the same error text, and the verdict is red (`fail` row) | scratch branch | — (this one is the mutation) |
-| E10 | Solo run (ordering): `MARC_GATE_JOB=k/90` for k = 1..90, each group alone, in UTC and in Pacific/Auckland. Every group passes alone, so none relies on an earlier group | local, one time (about 45 min each TZ); log in the PR | — |
+**E1: block list and guards** (`tests/gate-split.test.ts`, vitest, runs in `npm test`).
+- The block list is generated from the AST and its count asserted (3.3).
+- Every top-level statement after `const errors` is a `gate.runs` guard or a declaration.
+- Keys are unique per group and contiguous.
+- `ALWAYS` groups do not reference `errors`.
+- Mutations: delete one guard line; repeat a key in two separate places; add `errors.push` to an `ALWAYS` group.
+
+**E2: coupling over every module-scope binding** (same test). The bindings are everything declared at top level, before and after `errors`: `ROOT`, `OUT`, `PORT`, `server`, `stopping`, the helpers, `day`/`iso`/`rec`, `completed`, `i`, the `*Days` arrays, `timed`, `legacy`, `browser`, `themes`, `errors`, `gate`, `ESC_NC_*`, `bug22Runs`. Each rule has its own mutation:
+
+| Rule | Mutation shown red |
+|---|---|
+| R1. No group assigns to a module-scope binding or its members (`=`, `op=`, `++`, `--`, `delete`) | `legacy.preferences = {}` inside a group |
+| R2. No group calls a mutating method on one (`push`, `pop`, `shift`, `unshift`, `splice`, `sort`, `reverse`, `fill`, `copyWithin`, `set`, `add`, `delete`, `clear`, `Object.assign`/`defineProperty` on it). Two exceptions: `errors.push`, and `errors.splice` only in group `BASE` (line 254, its own injected entries) | `themes.push('x')`; `completed.sort()`; `errors.splice(0)` in a non-BASE group |
+| R3. A binding declared after `errors` is referenced by one group only. Only that group may mutate it (BUG-22 fills `bug22Runs`) | a second group reads `bug22Runs` or `ESC_NC_RE` |
+| R4. An unguarded declaration after `errors` has an initializer with no `await` and no reference to `errors`, `browser`, `page`, `ctx` or `gate` | `const n = errors.length;` and `const t = await browser.version();` added unguarded |
+| R5. No write to `process.env` or `globalThis`, no `process.chdir`, and no top-level `let`/`var`/`function`/`class` after `errors` | `process.env.TZ = 'UTC'` in a group; `let x = 0;` after `errors` |
+
+**E3: partition** (same test). For K = 1..16, with and without an offset, and for the real group list, the jobs' sets are disjoint and their union is every group. Unset selects everything.
+- Mutations: an off-by-one `k` in `jobFromEnv`; `packShards` dropping its last item.
+
+**E4: each job reaches exactly its planned groups** (`gate.done()`, every CI gate job).
+- Mutation: on a scratch commit only, a guard key in one group is changed to a key the plan gives another job. `done()` reports one planned key not reached and one not planned that ran.
+
+**E5: verdict unit tests** (`tests/ci-verdict.test.ts`, fixture manifests). Each is one case that must fail: wrong sha, a missing manifest, a duplicated manifest, a dropped row, an extra row, a miscount, mixed `www`/`chrome`/`plan`, a `fail` row, a `needs` failure, missing Auckland, K = 1 on a `push` event, `gateSeconds` = 1,801.
+
+**E6: dropping a proof row turns the verdict red on CI.** On a scratch branch, a commit makes `gate-shard` UTC 2/3 delete one row before upload.
+- Expected: verdict red, naming the key. Then reverted.
+
+**E7: strip equivalence**, every time.
+- `<base>` is the exact `origin/main` commit merged into the build head: the main parent of the latest merge commit, named in the PR.
+- `node scripts/gate-blocks.mjs --strip | diff <(git show <base>:scripts/screenshot-gate.mjs) -` must be empty.
+- It is re-run and posted after every merge of main, because GATE-FLAKE-1 (#179) and other tasks edit block bodies on main, and those edits must arrive through the base, never through GATE-SPLIT.
+- Mutation: edit one character inside any block → the diff is not empty.
+
+**E8: 5 paired runs**, compared by `scripts/gate-compare.mjs <dirA> <dirB>` (new).
+- Inputs: the downloaded proof artifacts of run A_i (`arrangement: serial` through `workflow_dispatch`: `source-gate` and `visual-gate-tz` with `MARC_GATE_JOB` unset, shard jobs skipped) and of run B_i (`arrangement: split`, K = 3), both on the same sha, for i = 1..5.
+- Per TZ, it compares:
+  - the set of (group, result) rows;
+  - the `gate-theme` rows;
+  - `meta.errors`, sorted;
+  - the union of `meta.files` (screenshot names), per group.
+- Exit 1 with the first difference. All 5 pairs must exit 0. A difference blocks adoption and is root-caused, never re-run to green.
+- Unit tests in `tests/gate-compare.test.ts`. Mutations, each red: one screenshot name dropped from one B manifest; one row's result flipped; one extra error string in B; one theme row missing in A.
+
+**E9: seeded failure, red in both arrangements.** A scratch commit shrinks a tap target that F8 checks (an app CSS change; no gate line touched). Both workflow runs must conclude `failure`.
+- `scripts/gate-compare.mjs --seeded F8 <dirA> <dirB>` then asserts, per TZ:
+  - in A, F8's row is `fail`;
+  - in B, exactly the shard whose plan holds F8 (job 2 in 2.2) has a `fail` row, only for F8, and every other shard's rows pass;
+  - F8's error strings are identical in A and B;
+  - the verdict on B is red.
+- It exits 1 with "seed did not bite" when F8 passes in either arrangement.
+
+**E10: solo run (ordering).** `MARC_GATE_JOB=k/N` for k = 1..N, where N = `node scripts/gate-blocks.mjs --count` (90 today, 92 with `HT-10` and `HT-10.clock`; never typed by hand). Each group runs alone, in UTC and in Pacific/Auckland, locally, one time (about 45 min each). Every group must pass alone.
+- Planted dependency, to prove E10 bites: on a scratch commit, add two test groups. `ZZ-P` writes `screenshots/.dep`; `ZZ-Q`, later in the file, pushes an error when the file is missing.
+- The full serial run passes, and the solo run of `ZZ-Q` fails, so E10 is red.
+- The dependency goes through a file, so E2's static rules do not see it; that is why E10 exists.
 
 The build is relied on only after E1-E10 pass on its final head, as the AGENTS.md exception requires.
 
@@ -315,52 +371,52 @@ The build is relied on only after E1-E10 pass on its final head, as the AGENTS.m
 - The unverified BUG-34 first-frame flake (SPEED.md) is reported there, not handled here.
 
 **Runner queueing.**
-- 10 concurrent jobs per push at K = 3. Two pushes in flight reach about 20, the limit.
+- 11 concurrent jobs per push at K = 3 and ht10 N = 4 (2.2). Two pushes in flight reach 20-22, at or over the limit, and the later push queues to about 30-35 min.
 - The workflow's `concurrency: cancel-in-progress` per ref already cancels superseded pushes on one branch.
 - A queue adds minutes and never skips a job, because the verdict requires all of them.
 - If queueing grows, the supervisor lowers K (one number). The proofs stay valid for any K.
 
 **Theme proof.**
 - Themes are proven by construction: the block bytes are unchanged (E7) and a group runs whole in one job (E1, E3), so each of its themes runs exactly once.
-- The `gate-theme` rows add an observed check for the groups that write theme-named screenshots. Groups that write none rely on construction alone.
+- The `gate-theme` rows add an observed check for each group that writes a file matching `THEME_IN_NAME` (4.1), anywhere in the name.
+- Groups that write no such file (no screenshot, or names without the theme) are listed in `meta.constructionOnly`. The verdict prints the list and the build PR records it, so it is explicit which groups rely on construction alone.
 - Observing themes inside pages was rejected: it would inject code into the pages under test and change timing probes.
 
 **Parser.**
 - `rollup/parseAst` comes through vite, so a vite major update could move it.
 - Mitigation: the test fails loudly if the import fails. A direct dev dependency needs the supervisor's OK (AGENTS.md); it is not added now.
 
-**What the supervisor wires in `.github` (add-only; the supervisor does it, not this card).** In `build-apk.yml`:
-1. `web-build`: checkout, npm ci, `npm run build`, the "Validate built web source" step, upload `www` as `MARC-www-gate`.
-2. `source-checks`: today's `source-gate` steps up to "Unit tests in two more time zones", without the gate.
-3. `gate`:
-   - `needs: web-build`;
-   - matrix `tz: [UTC, Pacific/Auckland]` × `job: [1, 2, 3]`;
-   - `env: TZ`, `MARC_GATE_JOB: ${{ matrix.job }}/3`, `MARC_HT10_OWN_JOB: '1'`, `MARC_GATE_PORT` per TZ as today;
-   - steps: download `www`, install Chromium, `npm run gate`, upload `screenshots/` as `MARC-gate-<tz>-<job>` (`if: always()`, error if no files);
-   - `timeout-minutes: 30` (runaway limit; a job is about 15 min).
-4. `ht10-gate` as in 8.7 step 6, plus upload of `screenshots/ht10-proof.json` per shard.
-5. `gate-verdict`: `needs: [gate, ht10-gate]`, `if: always()`, download every proof, `node scripts/ci-verdict.mjs`.
-6. `android-gate`: `needs: [source-checks, gate, ht10-gate, gate-verdict]`, optionally building from `MARC-www-gate`.
-7. `ci-watch.sh`'s required set: `guard`, `source-checks`, `gate` (6), `ht10-gate` (2), `gate-verdict`, `android-gate`.
+**What the supervisor wires in `.github`** (supervisor ruling 2026-10-02: add-only; nothing renamed or removed; the supervisor does it, not this card). In `build-apk.yml`:
+1. **`source-gate`** (UTC): unchanged steps. Add job-level `env: MARC_GATE_JOB: ${{ inputs.arrangement == 'serial' && '' || '1/3' }}` and `MARC_HT10_OWN_JOB: '1'` (8.7 step 6). It already uploads `screenshots/`, which holds the proof.
+2. **`visual-gate-tz`** (Auckland): unchanged steps. Add the same job-level env, plus a new step that uploads `screenshots/gate-proof-*.json` as `MARC-gate-proof-auckland-1` (`if: always()`). Its existing failure-only upload stays.
+3. **New `gate-shard`:**
+   - matrix `tz: [UTC, Pacific/Auckland]` × `k: [2, 3]`, with `if: inputs.arrangement != 'serial'`;
+   - `env: TZ`, `MARC_GATE_JOB: ${{ matrix.k }}/3`, `MARC_HT10_OWN_JOB: '1'`, and a `MARC_GATE_PORT` per shard;
+   - steps: checkout, setup-node, npm ci, `npm run build`, install Chromium, `npm run gate`, upload `screenshots/` as `MARC-gate-<tz>-<k>` (`if: always()`, error if no files);
+   - `timeout-minutes: 30`.
+4. **`ht10-gate`** as in 8.7 step 6, with a matrix of N shards (N by the rule in 2.2) and an upload of `screenshots/ht10-proof.json` per shard.
+5. **New `gate-verdict`:** `needs: [source-gate, visual-gate-tz, gate-shard, ht10-gate]`, `if: always()`. It downloads every proof and runs `node scripts/ci-verdict.mjs`.
+6. **`android-gate.needs`:** append `gate-shard`, `ht10-gate`, `gate-verdict`.
+7. **`on.workflow_dispatch.inputs.arrangement`:** `split` (default) or `serial`. This is E8's arrangement A; on `push` it is always `split`.
+8. **`ci-watch.sh`'s required set:** append `gate-shard` (4), `ht10-gate` (N), `gate-verdict`.
 
-**Transition:**
-- `source-gate` and `visual-gate-tz` stay until E8 passes. The serial arrangement is `workflow_dispatch` only, so a push is never gated twice for long.
-- Then the supervisor replaces them in one PR. Nothing ships between: `android-gate` keeps needing the full set.
+No transition PR is needed. Once wired, each push runs the split arrangement, and `android-gate` keeps needing every job.
 
 ## 6. Build plan after HT-10 merges
 
 Files and scope:
-- `scripts/gate-split.mjs`, `scripts/gate-blocks.mjs` (`--strip`, list), `scripts/gate-times.mjs`, `scripts/gate-times.json`, `scripts/ci-verdict.mjs`;
+- `scripts/gate-split.mjs`, `scripts/gate-blocks.mjs` (`--strip`, `--count`, list), `scripts/gate-times.mjs`, `scripts/gate-times.json` (with `K`, `offsets`), `scripts/ci-verdict.mjs`, `scripts/gate-compare.mjs`;
 - additive exports in `tools/plates/fidelity/shard.mjs`;
-- `tests/gate-split.test.ts`, `tests/ci-verdict.test.ts`;
+- `tests/gate-split.test.ts`, `tests/ci-verdict.test.ts`, `tests/gate-compare.test.ts`;
 - the guard and harness lines in `scripts/screenshot-gate.mjs` (exception only);
 - D-GATESPLIT-* entries.
 
 **Order:**
 1. E1-E5 and E7 locally.
 2. E10 locally.
-3. Ask the supervisor to wire the scratch matrix.
+3. Ask the supervisor to wire 5 (wiring list).
 4. E6, E8 and E9 on CI.
 5. READY.
+6. E7 is re-run and posted after every merge of main until merge.
 
 **Package changes:** none in `package.json` (`npm run gate` is unchanged).

@@ -1797,3 +1797,16 @@ Design note: `docs/qa/GATE-SPLIT-DESIGN.md`. Owner exception to the add-only gat
   **Why**: the gate's header comments come in several shapes (`// ID:`, `// ID (…):`, `// ID G1:`, and some with no ID), so a line scan would miss blocks. The AST cannot miss one.
 - **D-GATESPLIT-THEME Decided**: theme coverage is proven by construction: block bytes unchanged, and each group runs whole in one job. Observed `gate-theme` rows, from the theme-named screenshots each group writes, are added for every group that writes them.
   **Why**: observing the theme inside the pages would inject code into the pages under test and could shift timing probes.
+
+## GATE-SPLIT design: review fixes (GATE-SPLIT builder, 2026-10-02; review on #194 at 11:15 and the supervisor's rulings)
+
+- **D-GATESPLIT-GITHUB Decided** (supervisor ruling): `.github` stays add-only. `source-gate` and `visual-gate-tz` keep their names and steps and become shard 1/K of their time zone through a job-level `MARC_GATE_JOB`. A new `gate-shard` matrix (shards 2..K per time zone) and `gate-verdict` are added and appended to `android-gate.needs` and ci-watch's required set. The serial arrangement for E8 runs through `workflow_dispatch` (`arrangement: serial`). This supersedes the `source-checks`/`web-build` jobs in the first draft.
+  **Why**: renaming or removing jobs is not add-only. Each job keeps building its own `www`, so the proof's `www` hash normalises `sw.js`'s build-time stamp.
+- **D-GATESPLIT-K amended** (supersedes the K = 3 reasoning above): one rule for the gate and `ht10-gate`: each shard at most 15 min on CI (`SHARD_TARGET_S = 900`).
+  - Gate: K = ceil(per-TZ load / 900), with `source-gate`'s 200 s head start (its own pre-gate steps) packed as an offset: UTC (2,397 + 60 + 200) / 900 → K = 3.
+  - ht10: N = ceil(total / 900), with the total taken as the 25 min × 2 budget until measured: N = 4.
+  - Per push: about 19-21 min alone. Peak 11 jobs; two overlapping pushes reach 20-22 against the about-20 limit, so the later one can take about 30-35 min. Stated as the honest number.
+- **D-GATESPLIT-BUDGET Decided**: D-HT10-A5c-2's "30 min goal returns in GATE-SPLIT" lives in `gate-verdict` as `JOB_BUDGET_S = 1800`: a shard's `meta.gateSeconds` over it is red. Above 900 s, the verdict prints "re-pick K/N", which is not red. New shard jobs get `timeout-minutes: 30`; the existing jobs keep 60.
+- **D-GATESPLIT-COUPLING Decided**: E2 covers every module-scope binding, including those declared before `errors` (`legacy`, `themes`, `completed` and so on), with rules R1-R5 (assignment, mutating calls, single-owner bindings, pure unguarded initializers, no env/global writes), each with its own mutation.
+- **D-GATESPLIT-THEME amended**: a theme is observed through a declared pattern anywhere in a screenshot name (`THEME_IN_NAME`). Groups with no match are listed in the proof's `meta.constructionOnly` and printed by the verdict.
+- **D-GATESPLIT-COMPARE Decided**: E8 and E9 use `scripts/gate-compare.mjs <dirA> <dirB>` (with `--seeded <key>` for E9) over the downloaded proof artifacts of the two arrangements. E10 uses the generated group count and a planted file-based order dependency. E7's base is the exact main merged into the build head, and E7 is re-run after every merge of main.
