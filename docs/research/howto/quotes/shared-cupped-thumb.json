@@ -1,0 +1,55 @@
+{
+ "id": "shared-cupped-thumb",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "lifto-ote",
+   "text": "Grip the Dumbbell: Hold a single dumbbell with both hands. Your thumbs should wrap around the handle and fingers grip the body of the dumbbell.",
+   "status": "verbatim",
+   "closest": "Grip the Dumbbell: Hold a single dumbbell with both hands. Your thumbs should wrap around the handle and fingers grip the body of the dumbbell.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "lbeb-ote",
+   "text": "Place your palms against the inside of the dumbbell head. The handle should run between your thumb and finger.",
+   "status": "verbatim",
+   "closest": "Place your palms against the inside of the dumbbell head. The handle should run between your thumb and finger.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "hl-ote",
+   "text": "Hold the weight overhead by grasping the inside dumbbell plate surface with both hands, or by grasping both handles of the kettlebell.",
+   "status": "verbatim",
+   "closest": "Hold the weight overhead by grasping the inside dumbbell plate surface with both hands, or by grasping both handles of the kettlebell.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-ohext",
+   "text": "Stand in a split-stance position holding a dumbbell with both hands and wrap both hands around the dumbbell handle.",
+   "status": "verbatim",
+   "closest": "Stand in a split-stance position holding a dumbbell with both hands and wrap both hands around the dumbbell handle.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-ohext",
+   "text": "The dumbbell should be positioned directly over your head with your palms facing upwards and the dumbbell hanging vertically or angled slightly.",
+   "status": "verbatim",
+   "closest": "The dumbbell should be positioned directly over your head with your palms facing upwards and the dumbbell hanging vertically or angled slightly.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-ohext",
+   "text": "Maintain your balance and avoid changing the position of your head, torso, upper arms, wrists and feet.",
+   "status": "verbatim",
+   "closest": "Maintain your balance and avoid changing the position of your head, torso, upper arms, wrists and feet.",
+   "note": ""
+  }
+ ]
+}
