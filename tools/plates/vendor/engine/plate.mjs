@@ -28,14 +28,19 @@ const mergeDeep = (a, b) => {
 function makeCamera(spec, cam) {
   const side = spec.view === 'side', facing = spec.facing ?? 'right';
   const sx = side ? (w => (facing === 'left' ? -w[2] : w[2])) : (w => w[0]);
-  const P = w => [cam.x0 + sx(w) * cam.pxPerM, cam.y0 - w[1] * cam.pxPerM];
+  // ENGINE SPIKE: optional camera pitch (deg, front view only, default 0). Positive raises the camera toward the
+  // viewer's side and tilts it down: screen-up = y cos(p) - z sin(p). At 0 the original projection is used unchanged.
+  const pitch = side ? 0 : (spec.camera?.pitch ?? 0);
+  const pc = Math.cos(pitch * Math.PI / 180), ps = Math.sin(pitch * Math.PI / 180);
+  const P = pitch ? (w => [cam.x0 + sx(w) * cam.pxPerM, cam.y0 - (w[1] * pc - w[2] * ps) * cam.pxPerM])
+    : (w => [cam.x0 + sx(w) * cam.pxPerM, cam.y0 - w[1] * cam.pxPerM]);
   return { view: side ? 'side' : 'front', facing, near: side ? (facing === 'left' ? 'l' : 'r') : null, P, pxm: cam.pxPerM, ...cam };
 }
 
 // Everything drawn for one pose: body shapes + equipment items, in plate px.
 function drawPose(spec, body, q, cam, ctx) {
   const sk = fk(q, body), lm = landmarks(sk);
-  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand }).map(s => ({ ...s, part: partOf(s.key) }));
+  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand, ...(spec.torso ? { torso: spec.torso } : {}) }).map(s => ({ ...s, part: partOf(s.key) }));
   const eq = [];
   (spec.equipment ?? []).forEach((e, i) => {
     let ent = typeof e === 'function' ? e(lm, { ...ctx, q }) : e;
@@ -135,7 +140,7 @@ export function renderPlate(spec, { id = 'p', mistake = false, selected = null }
     };
     const grp = g => union(bodyIn.filter(s => s.group === g).map(s => def(`${tag}-${s.key}`, s.d)), g === 'far' ? 'far' : '');
     if (cam.view === 'side') return eqBlock('back') + grp('far') + eqBlock('center') + grp('trunk') + eqBlock('mid') + grp('near') + eqBlock('front');
-    return eqBlock('back') + grp('body') + eqBlock('center') + grp('legs') + eqBlock('mid') + grp('arms') + eqBlock('front');
+    return eqBlock('back') + grp('body') + eqBlock('center') + grp('legs') + grp('chest') + grp('headF') + eqBlock('mid') + grp('arms') + eqBlock('front');
   }
   void groups;
   const staticBack = E.eq.filter(it => it.z === 'back' && !eqMoving(it)).map(eqEl).join('');
