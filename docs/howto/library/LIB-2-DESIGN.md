@@ -162,7 +162,7 @@ it; they live in `batches/*.json`, so adding a batch changes no input of the 8's
 2. **Builder (L2-A2):** `build-page.mjs` with the 8's registry rows rebuilds the same bytes. LIB-8's
    `build-page.test.mjs` uses `node:test`, which vitest never runs (`vite.config.ts:26` includes only
    `tests/**/*.test.ts`), so the proof lives in `tests/howto/library-core.test.ts`.
-3. **Generated files:** `generate --check` passes, and the body-hash test of 6.1 (47 files, header and `hashes:` line
+3. **Generated files:** `generate --check` passes, and the body-hash test of 6.1 (45 untouched files of 50, header and `hashes:` line
    excluded) passes.
 4. **L2:** each `ht-<slug>.ts` fragment `===` its GOLDEN entry (unchanged `gen/plates.mjs` check).
 5. **L3:** HT-3's fidelity run on the 8 is unchanged (same harness; `HT_PLATES` derived; L2-A18 pins its order).
@@ -215,7 +215,7 @@ Every sweep asserts its count and has an empty-input case that must fail.
 |---|---|---|---|
 | L2-A1 | `golden.mjs --check` passes; page `e2bea90c…`, 860,766 B | — | change one byte of `pins.json` `pageSha256` |
 | L2-A2 | builder rebuilds golden A from registry rows of the 8 (vitest) | 8 rows; 0 rows red | swap two rows in `plates.json` order |
-| L2-A3 | body hashes of every generated file (header and `hashes:` line out) equal the committed list | 45 files listed, 50 generated; 0 red | change one character in `gen/hands.mjs` output text |
+| L2-A3 | body hashes of the 45 untouched generated files (header and `hashes:` line out) equal the committed list | 45 files listed, 50 generated; 0 red | change one character in `gen/hands.mjs` output text |
 | L2-A4 | adding a synthetic batch row changes no header or `hashes:` line of the 8's files | 50 files; 0 red | make `gen/content.mjs` return the plugin-wide inputs again |
 | L2-A5 | `generate --check` fails when `exercises.json` gains an id until regenerated | — | drop `exercises.json` from `gen/ids.mjs` inputs |
 | L2-A6 | `hasHowTo(id) === (id in LOADERS)` and hint equality; custom ids false | 153 ids; empty list red | add a non-shipped id to the hash set |
