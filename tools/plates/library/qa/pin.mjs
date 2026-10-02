@@ -6,9 +6,9 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { makeMirror } from '../../golden.mjs';
 import { approvedStrings, candidatesOf, goldenHtml } from './approved.mjs';
-import { dropMirror, loadEngine } from './engine.mjs';
+import { dropMirror, equipmentItems, loadEngine } from './engine.mjs';
 import { vocabularyOf } from './markup.mjs';
-import { nodeMetrics, rendersOf } from './node.mjs';
+import { movingLines, nodeMetrics, rendersOf } from './node.mjs';
 
 // The exact measured doubles: no rounding, so no bound is ever wider than the 8 measured (review L-1).
 const range = vs => [Math.min(...vs), Math.max(...vs)];
@@ -34,6 +34,8 @@ export function measureNodeEnvelope(cands, E) {
     F1: range(eng.map(x => x.m.pxPerM)),
     F3: range(ms.map(x => x.m.leaderMax)),
     F4: [Math.min(...eng.map(x => x.m.boxed)), Math.max(...eng.map(x => x.m.boxed))],
+    // D-LIB3-H9: the equipment types the 8 move without a poly twin (the approved standard for H9)
+    H9lineTypes: [...new Set(eng.flatMap(({ c }) => c.spec.mistake ? movingLines(equipmentItems(E, c.spec, rendersOf(c, E).normal.report)).map(m => m.type) : []))].sort(),
     perPlate: Object.fromEntries(ms.map(({ c, m }) => [c.id, Object.fromEntries(Object.entries(m).map(([k, v]) => [k, typeof v === 'number' ? +v.toFixed(3) : v]))])),
   };
 }

@@ -27,6 +27,11 @@ describe('LIB-3 pins: measured on the approved 8, never set by hand', { timeout:
     const fresh = pin.measureNodeEnvelope(base.cands, base.E);
     for (const [k, v] of Object.entries(fresh)) expect([k, base.pins.envelope[k]]).toEqual([k, v]);
   });
+  it('a pinned file edited by hand fails the pin check (P1: a line type added to H9lineTypes)', () => {
+    const fresh = pin.measureNodeEnvelope(base.cands, base.E);
+    expect(fresh.H9lineTypes).toEqual(base.pins.envelope.H9lineTypes);
+    for (const pm of muts.PIN_MUTATIONS) expect(pm.apply(base.pins.envelope).H9lineTypes).not.toEqual(fresh.H9lineTypes);
+  });
   it('the browser half of envelope.json is present (selftest.mjs re-measures it)', () => {
     expect(Object.keys(base.pins.envelope.H5).sort()).toEqual(['ember', 'emerald', 'midnight', 'paper', 'silent-black']);
     expect(base.pins.envelope.F2).toHaveLength(2);
@@ -60,7 +65,7 @@ describe('LIB-3 clean run on the approved 8', { timeout: T }, () => {
     const c = base.cands.find((x: any) => x.chromeId === 'pull-up');
     const r = await I.runQa({ ...c, id: 'lib_chin_up', mode: 'H' }, { ...base.ctx, browser: cleanBrowser(['lib_chin_up']) });
     expect(r.ok).toBe(false);
-    expect(nodeKeys(r)).toEqual(expect.arrayContaining(['H6:no-card', 'H9.moving-line:eq3.line.0']));
+    expect(nodeKeys(r)).toEqual(expect.arrayContaining(['H6:no-card']));
     expect(r.flags.F5.blocks && r.flags.F7.blocks).toBe(true);
     const named = await I.runQa({ ...c, id: 'lib_chin_up', mode: 'H', exemptions: ['F5', 'F7'] }, { ...base.ctx, browser: cleanBrowser(['lib_chin_up']) });
     expect([named.flags.F5.blocks, named.flags.F7.blocks, named.flags.F5.approved]).toEqual([false, false, true]);
@@ -159,6 +164,19 @@ describe('LIB-3 markup helpers', { timeout: T }, () => {
     expect(node.colourProblems('<mask id="a"><rect fill="rgb(255,0,0)"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:fn', 'H2.colour:t:fill=rgb(255,0,0)']);
     expect(node.colourProblems('<mask id="a"><rect style="fill:#fff"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:style']);
     expect(node.colourProblems('<mask id="a" fill="#fff"><rect fill="#fff"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:#fff', 'H2.colour:t:fill=#fff']);
+  });
+  it('H9 (D-LIB3-H9): a moving part of a pinned line type is allowed, any other type without poly is red', () => {
+    const at = (chromeId: string, add: (s: any) => any) => { const c = base.cands.find((x: any) => x.chromeId === chromeId), d = { ...c, spec: add(c.spec) };
+      return node.h9(d, { ...base.ctx, envelope: base.pins.envelope }, node.rendersOf(c, base.E)).map((p: any) => p.key); };
+    expect(base.pins.envelope.H9lineTypes).toEqual(['barbell', 'cable', 'cableColumn', 'line', 'stack']);
+    // a pinned type (line) moving between end and Mistake: allowed, at the approved standard
+    expect(at('hanging-leg-raise', s => ({ ...s, equipment: [...s.equipment, (lm: any, ctx: any) => ({ type: 'line', cls: 'eq-thin', pts: [[0, 0.3, ctx.pose === 'mistake' ? -0.6 : -0.7], [0, 0.4, -0.7]] })] }))).toEqual([]);
+    // a type the 8 never move without poly (rackUpright), moved: red
+    const moved = at('machine-chest-press', s => ({ ...s, equipment: s.equipment.map((e: any, i: number) => (i === 1 ? (lm: any, ctx: any) => ({ ...e, at: ctx.pose === 'mistake' ? [e.at[0], e.at[1], e.at[2] + 0.08] : e.at }) : e)) }));
+    expect(moved.length).toBeGreaterThan(0);
+    expect(moved.every((k: string) => k.startsWith('H9.moving-line:eq1.rackUpright.'))).toBe(true);
+    // the same rackUpright left static: clean
+    expect(at('machine-chest-press', s => s)).toEqual([]);
   });
   it('H3 deviation measures the same body point in both poses, also for an explicit-pose anchor (pilot A item 2)', () => {
     const c = base.cands.find((x: any) => x.chromeId === 'pull-up'), R = node.rendersOf(c, base.E);

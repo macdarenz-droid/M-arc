@@ -238,12 +238,21 @@ export function h9(c, ctx, R) {
   if (!R || !c.spec.mistake) return out;   // no render (H1 reports why) or no Mistake pose
   const it = equipmentItems(ctx.engine, c.spec, R.normal.report);
   for (const pose of ['end', 'mistake']) for (const [k, v] of it[pose] ?? []) if (v.unknown) out.push(P(`H9.type:${k}`, `${pose}: ${k} is not a PRIMITIVES type`));
-  const keys = new Set([...(it.end?.keys() ?? []), ...(it.mistake?.keys() ?? [])]);
+  // D-LIB3-H9: a moving part with no poly twin passes only if its type is one the 8 move that way (measured, pinned)
+  const approved = ctx.envelope.H9lineTypes;
+  if (!Array.isArray(approved)) out.push(P('H9.unpinned', 'no pinned H9lineTypes in envelope.json'));
+  for (const m of movingLines(it)) if (!approved?.includes(m.type)) out.push(P(`H9.moving-line:${m.k}`, `${m.k} (${m.type}, class ${m.cls}) moves between end and Mistake but has no poly, and the 8 never move a ${m.type} that way`));
+  return out;
+}
+
+/** Equipment parts that move between the end and Mistake poses and are drawn without a poly twin. */
+export function movingLines(it) {
+  const out = [], keys = new Set([...(it.end?.keys() ?? []), ...(it.mistake?.keys() ?? [])]);
   for (const k of keys) {
     const a = it.end?.get(k), b = it.mistake?.get(k), any = a ?? b;
     if (any.unknown || any.z === 'floor') continue;
     if (a?.d === b?.d) continue;
-    if ((a && !a.poly) || (b && !b.poly)) out.push(P(`H9.moving-line:${k}`, `${k} (${any.type}, class ${any.cls}) moves between end and Mistake but has no poly`));
+    if ((a && !a.poly) || (b && !b.poly)) out.push({ k, type: any.type, cls: any.cls });
   }
   return out;
 }

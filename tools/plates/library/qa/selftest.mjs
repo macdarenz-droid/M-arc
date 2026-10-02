@@ -9,6 +9,7 @@ import { browserResults, launch, measureBrowserEnvelope } from './browser.mjs';
 import { HARD, FLAGS, summary } from './index.mjs';
 import { measureNodeEnvelope, measureVocabulary } from './pin.mjs';
 import { BROWSER_MUTATIONS, NODE_MUTATIONS, cleanBase, prove } from './proof.mjs';
+import { PIN_MUTATIONS } from './mutations.mjs';
 
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -23,6 +24,11 @@ export async function selftest({ log = console.log } = {}) {
       if (!same(voc, base.pins.vocabulary)) bad.push('vocabulary.json differs from a fresh measurement on the 8');
       if (!same(env, base.pins.envelope)) bad.push(`envelope.json differs from a fresh measurement on the 8:\n  pinned ${JSON.stringify(base.pins.envelope)}\n  fresh  ${JSON.stringify(env)}`);
       log(`pins: vocabulary ${voc.elements.length} elements / ${voc.attributes.length} attributes / ${voc.classes.length} classes, envelope ${Object.keys(env).length} keys: ${bad.length ? 'DIFFER' : 'equal to a fresh measurement'}`);
+      for (const pm of PIN_MUTATIONS) {   // a hand edit of a pinned file must make the pin check red
+        const edited = pm.apply(base.pins[pm.file === 'envelope' ? 'envelope' : 'vocabulary']), fresh = pm.file === 'envelope' ? env : voc, red = !same(edited, fresh);
+        log(`${red ? 'RED as planted' : 'FAILED       '}  pins   ${pm.id}`);
+        if (!red) bad.push(`${pm.id}: the hand-edited pin equals a fresh measurement`);
+      }
       // 2. clean run
       for (const [, r] of base.reports) {
         log(`clean ${summary(r)}; exempted ${HARD.reduce((a, h) => a + r.hard[h].exempted.length, 0)}, exempt flags ${FLAGS.filter(f => r.flags[f].approved).join(',') || 'none'}`);

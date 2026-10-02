@@ -48,8 +48,10 @@ export const SPEC_MUTATIONS = [
     prepare: () => null, fn: s => ({ ...s, mistake: { ...s.mistake, pose: {} } }) },
   { id: 'M5 start equal to the end pose', check: 'PQ-H3', key: 'H3.start-is-end', target: 'seated-cable-row',
     prepare: () => null, fn: s => ({ ...s, poses: { ...s.poses, start: s.poses.end, via: [] } }) },
-  { id: 'M6 a moving line part', check: 'PQ-H9', key: 'H9.moving-line:', target: 'hanging-leg-raise',
-    prepare: () => null, fn: s => ({ ...s, equipment: [...s.equipment, (lm, ctx) => ({ type: 'line', cls: 'eq-thin', pts: [[0, 0.3, ctx.pose === 'mistake' ? -0.6 : -0.7], [0, 0.4, -0.7]] })] }) },
+  // D-LIB3-H9: a type the 8 never move without poly (rackUpright: static on the chest press), moved in the Mistake pose
+  { id: 'M6 an unapproved type (rackUpright) as a moving line part', check: 'PQ-H9', key: 'H9.moving-line:eq1.rackUpright.', target: 'machine-chest-press',
+    prepare: (E, s) => { const e = s.equipment[1]; if (e?.type !== 'rackUpright') throw new Error('mutation: equipment 1 is not the rackUpright'); return null; },
+    fn: s => ({ ...s, equipment: s.equipment.map((e, i) => (i === 1 ? (lm, ctx) => ({ ...e, at: ctx.pose === 'mistake' ? [e.at[0], e.at[1], e.at[2] + 0.08] : e.at }) : e)) }) },
   { id: 'M7 an unknown equipment type', check: 'PQ-H9', key: 'H9.type:', target: 'hanging-leg-raise', specOnly: true,
     prepare: () => null, fn: s => ({ ...s, equipment: [...s.equipment, { type: 'rope3d', at: [0, 0, 0] }] }) },
   { id: 'M8 two renders differ', check: 'PQ-H7', key: 'H7.determinism:', target: 'leg-press',
@@ -133,4 +135,10 @@ export const PAGE_MUTATIONS = [
   { id: 'F5 label text below 4.5:1', flag: 'F5', target: 'pull-up',
     controlCss: '#card-pull-up .plate .plate-meta, #card-pull-up .plate .plate-callout, #card-pull-up .plate .plate-arc-label * { color: var(--text); } #card-pull-up .plate .plate-callout::before { opacity: 0; }',
     css: '#card-pull-up .plate .plate-meta, #card-pull-up .plate .plate-callout, #card-pull-up .plate .plate-arc-label * { color: var(--border-subtle); } #card-pull-up .plate .plate-callout::before { opacity: 0; }' },
+];
+
+/** Pin mutations: a pinned file edited by hand instead of measured. The pin check (vitest node half, selftest.mjs
+ *  both halves) must report it as differing from a fresh measurement on the 8. */
+export const PIN_MUTATIONS = [
+  { id: 'P1 a line type added to H9lineTypes by hand', file: 'envelope', apply: env => ({ ...env, H9lineTypes: [...env.H9lineTypes, 'rackUpright'].sort() }) },
 ];
