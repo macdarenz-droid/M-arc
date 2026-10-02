@@ -1731,3 +1731,4 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
   **Why**: the approved maps have the fix. A page that draws the leg raise with the renderer, or has no leg raise at all, must keep the same maps.
 - **D-LIB6-8 (fallback)**: `{ legacy: true }` per id loads the frozen golden-B script exactly as `howto-layers.mjs` does. A test builds a page with pull-up and leg press on the fallback and their options removed, and gets `e7b81413`.
   **Source**: card LIB-6, plan `docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md` 2.6, 2.7, 7.
+- **D-LIB6-9 (review Medium, 10-02: anchor check now in `npm test`)**: `tests/library/closeups.test.ts` now also runs D-LIB6-6's 4 patch anchors string-only (`patchHowtoLayers`, `patchBuildPage` on the vendored sources, no page build), so CI catches a moved anchor on every push instead of only on the page-level tests (`layers-page.test.mjs`, not yet wired into CI before LIB-4).

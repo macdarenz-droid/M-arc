@@ -3,11 +3,12 @@
 // rows, CSS) === the frozen golden-B script's. Page-level proofs (renderer page = e7b81413, fragments, fallback) build
 // real pages and run under `node --test tools/plates/library/test/*.test.mjs`.
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
-let cmp: any, opts: any, fr: any, layers: any;
+let cmp: any, opts: any, fr: any, layers: any, blp: any, legacy: any;
 
 // sha256 of each card's close-up fragments (panels, css) in golden B, LR-23 page e7b81413 (identical in b3a90af's 5aab1aca).
 const GOLDEN_FRAGMENTS: Record<string, [string, string]> = {
@@ -27,6 +28,8 @@ describe('LIB-6 close-up renderer, API level', () => {
     opts = (await import(/* @vite-ignore */ url('tools/plates/library/render/closeups-8.mjs'))).CLOSEUP_OPTIONS;
     fr = await import(/* @vite-ignore */ url('tools/plates/library/render/fragments.mjs'));
     layers = await import(/* @vite-ignore */ url('tools/plates/layers.mjs'));
+    blp = await import(/* @vite-ignore */ url('tools/plates/library/build-layers-page.mjs'));
+    legacy = await import(/* @vite-ignore */ url('tools/plates/library/render/legacy.mjs'));
   });
 
   it('golden B (the committed approved page) holds the 8 pinned close-up fragments', () => {
@@ -56,4 +59,16 @@ describe('LIB-6 close-up renderer, API level', () => {
     expect(diff.map(d => d.split(':')[0])).toEqual(['pull_up.handZoom(p1)', 'pull_up.handZoom(p2)', 'dumbbell_lateral_raise.handZoom()',
       'seated_cable_row.CSS', 'machine_chest_press.zoomSection(hand)']);
   }, 120_000);
+
+  // review Medium (10-02): the API test above never reads the vendored chrome, so a moved patch anchor stayed
+  // green here while only the page test (layers-page.test.mjs:36-40, not yet in CI) caught it. String-only,
+  // same check at string level: no page build.
+  it('every patch anchor of the vendored chrome matches exactly once (a moved anchor throws)', () => {
+    const hl = readFileSync(join(layers.ROOT, 'tools/plates/layers/artifact/howto-layers.mjs'), 'utf8');
+    const bp = readFileSync(join(layers.ROOT, 'tools/plates/layers/artifact/build-page.mjs'), 'utf8');
+    const allLegacy = Object.fromEntries(Object.keys(legacy.LEGACY_SCRIPTS).map((k: string) => [k, { legacy: true }]));
+    const plan = blp.planOf({ groups: blp.GOLDEN_B_GROUPS, closeups: allLegacy });
+    expect(() => blp.patchHowtoLayers(hl, plan)).not.toThrow();
+    expect(() => blp.patchBuildPage(bp, { groups: blp.GOLDEN_B_GROUPS, jump: null })).not.toThrow();
+  });
 });
