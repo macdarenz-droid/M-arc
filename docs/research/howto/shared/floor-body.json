@@ -1,0 +1,220 @@
+{
+  "key": "floor-body",
+  "kind": "contact",
+  "appliesTo": [
+    "push_up",
+    "incline_push_up",
+    "glute_bridge",
+    "crunch",
+    "cable_crunch",
+    "reverse_crunch",
+    "plank",
+    "side_plank",
+    "ab_wheel_rollout",
+    "russian_twist",
+    "dead_bug",
+    "mountain_climbers",
+    "bear_crawl",
+    "renegade_row",
+    "pike_push_up",
+    "diamond_push_up",
+    "v_up",
+    "bicycle_crunch",
+    "flutter_kicks",
+    "hollow_body_hold",
+    "bird_dog",
+    "superman"
+  ],
+  "appliesToWhy": "census.json contactArchetype floor-body (22 ids, GA 3.2). GA gives this archetype no default checkpoints (\"per exercise\"); this card supplies two shared ones for the face-down support positions only (checkpoint appliesTo), and leaves the rest per exercise.",
+  "defaultCheckpoints": [
+    {
+      "key": "body-line",
+      "label": "Body in line",
+      "detail": "Torso stiff: the low back does not sag and the hips do not hike up.",
+      "claim": [
+        "c1",
+        "c2"
+      ],
+      "appliesTo": [
+        "push_up",
+        "plank"
+      ],
+      "byInference": [
+        "incline_push_up",
+        "diamond_push_up",
+        "mountain_climbers",
+        "renegade_row"
+      ],
+      "notFor": [
+        "pike_push_up (hips are meant to be high)"
+      ]
+    },
+    {
+      "key": "head-in-line",
+      "label": "Head in line",
+      "detail": "Head stays aligned with the spine.",
+      "claim": [
+        "c3",
+        "c4"
+      ],
+      "appliesTo": [
+        "push_up",
+        "bird_dog"
+      ],
+      "byInference": [
+        "incline_push_up",
+        "diamond_push_up",
+        "plank",
+        "mountain_climbers"
+      ]
+    }
+  ],
+  "defaultCrop": {
+    "text": "Side view of the whole body line, from head to heels (push-up and plank) or head to knees (hands and knees).",
+    "claim": [
+      "c1",
+      "c3"
+    ]
+  },
+  "prone": {
+    "see": "prone-checkpoints.json (superman, lying_leg_curl)"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "In the push-up the body is fully extended with no bend at the hips or knees, the torso braced; on the way down and up the low back must not sag and the hips must not hike up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushup",
+          "text": "Reposition your hands as needed to allow full extension of your body without any bend at the hips or knees.",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-pushup",
+          "text": "Slowly lower your body towards the floor while maintaining a rigid torso and head aligned with your spine. Do not allow your low back to sag or your hips to hike upwards during this downward phase.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "In the plank the torso and legs stay stiff, avoiding any sagging in the low back, hiking of the hips or bending of the knees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "Slowly lift your entire torso off the floor or mat, maintaining a stiff torso and legs. Avoid any arching (sagging) in your low back, hiking (upwards) in your hips or bending in the knees.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "In the push-up the head stays aligned with the spine on the way down and up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushup"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushup",
+          "text": "Press upwards through your arms while maintaining a rigid torso and head aligned with your spine.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "In the bird dog the head stays aligned with the spine throughout, and the limbs are raised only as high as the low back can be held without sagging.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-birddog"
+      ],
+      "quotes": [
+        {
+          "source": "ace-birddog",
+          "text": "Your head should remain aligned with the spine throughout the movement.",
+          "where": "Step 5"
+        },
+        {
+          "source": "ace-birddog",
+          "text": "Only raise the limbs to heights where the low back position can be maintained through the combined actions of the core and abdominal muscles.",
+          "where": "Step 6"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "In the plank, stop at once if the low back hurts.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-plank"
+      ],
+      "quotes": [
+        {
+          "source": "ace-plank",
+          "text": "If you experience any pain in the low back with this movement, stop the exercise immediately and consult with your doctor.",
+          "where": "note after Step 3"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-pushup",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/",
+      "title": "Push-Ups (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ace-plank",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/",
+      "title": "How To Do a Plank (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ace-birddog",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/14/bird-dog/",
+      "title": "Bird Dog (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "Lying face up (crunch, reverse crunch, dead bug, hollow body hold, v-up, bicycle crunch, flutter kicks, glute bridge), seated (russian twist), kneeling (cable crunch, ab wheel rollout), side plank, pike push-up and bear crawl have no shared checkpoint here: no source read gives one rule that holds across them. They stay per exercise, as GA 3.2 says.",
+    "No source read covers what the floor contact itself should be (mat, knees padded); not carried."
+  ],
+  "notes": [
+    "The two checkpoints match the push-up and plank sources directly; other face-down support ids use them by inference and their own cards must confirm (byInference lists).",
+    "c5 is research data; visible lines link the back box (back-pain-box.json, draft) and never carry referral wording (LR-27).",
+    "Same plank rule appears in cards/plank.json; same push-up position in cards/mountain_climbers.json c1, c3. ACE push-up, plank and bird dog pages read in full on 2026-10-01."
+  ]
+}

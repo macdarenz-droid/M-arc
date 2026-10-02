@@ -1,0 +1,215 @@
+{
+  "key": "curl",
+  "kind": "hand",
+  "appliesTo": [
+    "dumbbell_biceps_curl",
+    "alternating_dumbbell_curl",
+    "barbell_curl",
+    "ez_bar_curl",
+    "hammer_curl",
+    "cross_body_hammer_curl",
+    "cable_curl",
+    "bayesian_cable_curl",
+    "preacher_curl",
+    "incline_dumbbell_curl",
+    "concentration_curl",
+    "reverse_curl"
+  ],
+  "appliesToWhy": "GA appendix B curl list (13) minus wrist_curl, which is exempt (wrist-curl-exemption.json).",
+  "thumbRule": {
+    "text": "Closed grip, thumbs wrapped round the handle.",
+    "claim": [
+      "c1",
+      "c2"
+    ]
+  },
+  "wrist": {
+    "text": "Straight, in line with the forearm, neither bent up nor down, for the whole lift.",
+    "claim": [
+      "c3",
+      "c4"
+    ]
+  },
+  "rightPose": {
+    "text": "Closed grip, thumb wrapped, wrist straight in line with the forearm while the elbow bends.",
+    "claim": [
+      "c1",
+      "c3"
+    ]
+  },
+  "faults": [
+    {
+      "key": "wrist-curl-cheat",
+      "label": "Wrist curled",
+      "what": "Wrist bent forward (flexed) during the curl.",
+      "claim": [
+        "c3",
+        "c4"
+      ]
+    },
+    {
+      "key": "bent-back-bottom",
+      "label": "Wrist bent back",
+      "what": "Wrist bent back (extended), for example forced into a bend to keep the dumbbells against the sides at the bottom.",
+      "claim": [
+        "c3",
+        "c4",
+        "c5"
+      ]
+    }
+  ],
+  "widthNote": {
+    "text": "If holding the dumbbells against your sides bends the wrist, let them hang slightly out to keep it straight.",
+    "claim": "c5"
+  },
+  "gripLine": {
+    "text": "Wrap your thumbs round the handle and keep your wrists straight, in line with your forearms.",
+    "claim": [
+      "c1",
+      "c3"
+    ]
+  },
+  "cue": {
+    "text": "Keep your wrists straight.",
+    "claim": "c4"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "For dumbbell curls, take a closed grip with the thumbs wrapped round the handles.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seatedcurl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seatedcurl",
+          "text": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles)",
+          "where": "Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The hammer curl uses the same closed grip with the thumbs round the handles, palms facing the body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-hammer",
+          "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+          "where": "Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Keep the wrist neutral through the curl: avoid bending it forward (flexion) or back (extension).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seatedcurl",
+        "ace-hammer"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seatedcurl",
+          "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+          "where": "Upward Phase"
+        },
+        {
+          "source": "ace-hammer",
+          "text": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body)",
+          "where": "Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Keep the wrists straight during the curl; bent wrists put unnecessary load on them and can lead to discomfort or injury.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dbcurl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dbcurl",
+          "text": "Not locking your wrists. Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+          "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Because elbow structure differs, some people cannot hold the dumbbells against their sides at the bottom without bending the wrist; choose the dumbbell position that keeps the wrist straight with the forearm.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-seatedcurl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seatedcurl",
+          "text": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+          "where": "note after Step 4"
+        },
+        {
+          "source": "ace-seatedcurl",
+          "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+          "where": "note after Step 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-seatedcurl",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+      "title": "Seated Biceps Curl (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ace-hammer",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/",
+      "title": "Hammer Curl (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "sl-dbcurl",
+      "url": "https://www.strengthlog.com/dumbbell-curl/",
+      "title": "How to Dumbbell Curl: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "Contact point: no source read says where the handle sits in the palm (GA: across the middle of the palm). Drawn as GA's default, recorded as a drawing convention, not a claim.",
+    "The thumb and wrist rules are sourced on dumbbell curls (seated curl, hammer curl, standing curl). They are applied to barbell, EZ-bar, cable and preacher curls by inference; their own verified cards carry their own wrist claims (barbell_curl c8, ez_bar_curl c8, preacher_curl c8, reverse_curl c6, cable_curl c9).",
+    "The fault names wrist-curl-cheat and bent-back-bottom come from GA; the sources name the wrong positions (flexion, extension, a forced bend at the bottom), not a cheating motion. The labels describe positions only."
+  ],
+  "notes": [
+    "Same rules sourced in cards/dumbbell_biceps_curl.json c1, c6, c7 and cards/hammer_curl.json c1, c4, c10 (ACE, StrengthLog). Re-read ACE seated curl, ACE hammer curl and StrengthLog dumbbell curl in full on 2026-10-01; quotes copied from that read.",
+    "Reverse curls are overhand, hammer curls neutral and the rest underhand; orientation is a per-exercise drawing parameter (GA 3.3), not part of this rule."
+  ]
+}

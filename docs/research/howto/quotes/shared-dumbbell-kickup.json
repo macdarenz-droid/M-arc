@@ -1,0 +1,79 @@
+{
+ "id": "shared-dumbbell-kickup",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "fv-db-bench",
+   "text": "Sit on the end of an exercise bench with a dumbbell in each hand. Rest the weights on their ends on your thighs.",
+   "status": "verbatim",
+   "closest": "Sit on the end of an exercise bench with a dumbbell in each hand. Rest the weights on their ends on your thighs.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "ff-db-bench",
+   "text": "Sit on the end of a bench with the dumbbells resting on your thighs",
+   "status": "verbatim",
+   "closest": "Sit on the end of a bench with the dumbbells resting on your thighs",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "liftosaur-incline-db",
+   "text": "Select a pair of dumbbells and place them on your thighs as you sit on the bench.",
+   "status": "verbatim",
+   "closest": "Select a pair of dumbbells and place them on your thighs as you sit on the bench.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fv-db-bench",
+   "text": "Lie back and use your legs to help you lift the weights.",
+   "status": "verbatim",
+   "closest": "Lie back and use your legs to help you lift the weights.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "liftosaur-incline-db",
+   "text": "Sit back on the bench, and use your thighs to help lift the dumbbells to shoulder height.",
+   "status": "verbatim",
+   "closest": "Sit back on the bench, and use your thighs to help lift the dumbbells to shoulder height.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "hk-db-bench",
+   "text": "Lean back into a supine position on the bench while positioning your hands and dumbbells over your shoulders.",
+   "status": "verbatim",
+   "closest": "Lean back into a supine position on the bench while positioning your hands and dumbbells over your shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "fitfather-arnold",
+   "text": "Hold the dumbbells on your knees to start, then kick them up into a normal shoulder press position",
+   "status": "verbatim",
+   "closest": "Hold the dumbbells on your knees to start, then kick them up into a normal shoulder press position",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fv-db-bench",
+   "text": "At the of your set, either lower the weights to the floor or, with your arms bent, just sit back up and return to your starting position. Alternatively, if you have spotters nearby, allow them to take the weights from you.",
+   "status": "verbatim",
+   "closest": "At the of your set, either lower the weights to the floor or, with your arms bent, just sit back up and return to your starting position. Alternatively, if you have spotters nearby, allow them to take the weights from you.",
+   "note": "Source retrieved via WebFetch (direct curl blocked by Sucuri JS challenge); WebFetch confirmed this passage verbatim, keeping the source's own typo 'At the of your set'."
+  },
+  {
+   "claim": "c5",
+   "source": "fv-db-bench",
+   "text": "This is less of an issue with dumbbells because, if you get stuck, you can simply drop the weights out to the side.",
+   "status": "verbatim",
+   "closest": "This is less of an issue with dumbbells because, if you get stuck, you can simply drop the weights out to the side.",
+   "note": "Source retrieved via WebFetch (direct curl blocked by Sucuri JS challenge); WebFetch confirmed this passage verbatim."
+  }
+ ]
+}

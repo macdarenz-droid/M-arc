@@ -1,0 +1,201 @@
+{
+  "key": "prone-checkpoints",
+  "kind": "checkpoints",
+  "appliesTo": [
+    "lying_leg_curl",
+    "superman"
+  ],
+  "appliesToWhy": "census.json pose prone: lying_leg_curl and superman. GA 3.2 also names chest_supported_row and a chest-pad T-bar; the verified chest_supported_row card draws a seated chest-pad row (ACE) and t_bar_row draws the free-standing landmine row, so neither lies face down and both are left out.",
+  "checkpoints": [
+    {
+      "key": "hips-on-pad",
+      "label": "Hips on the pad",
+      "detail": "Front of the hips stays pressed against the pad; stop the curl before the hips lift.",
+      "claim": [
+        "c1",
+        "c2"
+      ],
+      "appliesTo": [
+        "lying_leg_curl"
+      ]
+    },
+    {
+      "key": "neck-in-line",
+      "label": "Neck in line",
+      "detail": "Head and neck stay neutral, eyes down; do not lift the head.",
+      "claim": [
+        "c3",
+        "c4"
+      ],
+      "appliesTo": [
+        "superman"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "On the lying leg curl keep the front of the hips against the pad; stop the curl before the hips begin to lift, and if the load pulls the pelvis off the bench, reduce the weight or stop slightly earlier.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-lyingcurl"
+      ],
+      "quotes": [
+        {
+          "source": "fv-lyingcurl",
+          "text": "Hold the handles, gently tighten your abs, and keep the front of your hips in contact with the pad.",
+          "where": "How to Do the Lying Leg Curl, 2. Brace before you curl"
+        },
+        {
+          "source": "fv-lyingcurl",
+          "text": "Stop when you reach the end of your controlled range or before your hips begin to lift.",
+          "where": "How to Do the Lying Leg Curl, 3. Curl through your available range"
+        },
+        {
+          "source": "fv-lyingcurl",
+          "text": "If the load pulls your pelvis off the bench, reduce the weight or stop the curl slightly earlier. Lifting the hips changes the position of the hamstrings and often introduces lower-back movement that does not help the target action.",
+          "where": "Hip and pelvis position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Lifting the hips off the pad is a common lying leg curl mistake; keep the hips pressed against the pad and avoid arching the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lifto-lyingcurl",
+        "ace-lyingcurl"
+      ],
+      "quotes": [
+        {
+          "source": "lifto-lyingcurl",
+          "text": "Curl the Legs: Bend your knees to lift the weighted lever towards your glutes. Keep your hips pressed against the pad.",
+          "where": "Execution"
+        },
+        {
+          "source": "lifto-lyingcurl",
+          "text": "Lifting hips off the pad.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "ace-lyingcurl",
+          "text": "Slowly exhale and contract your hamstrings, flexing (bending) the knees and moving the resistance pad i na controlled manner towards your butt. Avoid arching your back during this movement.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "In the superman hold keep a neutral head and neck by looking down at the ground; the head or neck moving out of line is a fault, cued with \"eyes down\".",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ucal-superman"
+      ],
+      "quotes": [
+        {
+          "source": "ucal-superman",
+          "text": "Keep neutral head/neck position throughout the exercise by looking down at the ground",
+          "where": "Technical points"
+        },
+        {
+          "source": "ucal-superman",
+          "text": "Head/neck to moving out of neutral line",
+          "where": "Avoid"
+        },
+        {
+          "source": "ucal-superman",
+          "text": "Cue \"Eyes down\"",
+          "where": "Avoid"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Keep the neck neutral in the superman; lifting the head too high is a common mistake that strains the neck.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lifto-superman"
+      ],
+      "quotes": [
+        {
+          "source": "lifto-superman",
+          "text": "Keep your neck in a neutral position; avoid straining it.",
+          "where": "Execution"
+        },
+        {
+          "source": "lifto-superman",
+          "text": "Avoid lifting your head too high to prevent neck strain.",
+          "where": "Form Tips"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "fv-lyingcurl",
+      "url": "https://fitnessvolt.com/24561/lying-leg-curl/",
+      "title": "Lying Leg Curl: Muscles Worked, Form, and Variations (FitnessVolt)",
+      "kind": "coach",
+      "year": 2026,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "lifto-lyingcurl",
+      "url": "https://www.liftosaur.com/exercises/leverage-machine-lying-leg-curl",
+      "title": "Leverage Machine Lying Leg Curl - How To, Muscles Worked & Form Guide (Liftosaur)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ace-lyingcurl",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/153/lying-hamstrings-curl/",
+      "title": "Lying Hamstrings Curl (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ucal-superman",
+      "url": "https://ucalgary.ca/shred-injuries/all-sports/field-hockey/superman-holds",
+      "title": "Superman holds (SHRED Injuries, Sport Injury Prevention Research Centre, University of Calgary)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "lifto-superman",
+      "url": "https://liftosaur.com/exercises/bodyweight-superman",
+      "title": "Bodyweight Superman - How To, Muscles Worked & Form Guide (Liftosaur)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "Neck in line on the lying leg curl: no source read gives a head or neck rule for it (ACE covers the low back only). The checkpoint is not applied there until sourced.",
+    "Hips on the floor for the superman: not a rule (the legs lift); no source read gives a hip checkpoint for it."
+  ],
+  "notes": [
+    "GA 3.2 named \"Hips stay on the pad\" and \"Neck in line\" as the two prone checkpoints with no source; each is now sourced for one exercise only (checkpoint appliesTo).",
+    "ACE lying hamstrings curl (GA's first place to check) was read in full on 2026-10-01: it says to brace and avoid arching the back but not to keep the hips down, so FitnessVolt (updated by an ACE-certified trainer, 2026) and Liftosaur carry the hip rule."
+  ]
+}

@@ -1,0 +1,249 @@
+{
+  "key": "implement-kettlebell-swing",
+  "kind": "implement",
+  "appliesTo": [
+    "kettlebell_swing"
+  ],
+  "appliesToWhy": "GA appendix B hand archetype `implement` lists kettlebell_swing; one card per implement.",
+  "implement": {
+    "text": "kettlebell_swing",
+    "claim": [
+      "c1"
+    ]
+  },
+  "contactPoint": {
+    "text": "Handle sits in the base of the fingers, not deep in the palm, fingers wrapped around it.",
+    "claim": "c2"
+  },
+  "thumbRule": {
+    "text": "Do not swing with the thumbs up.",
+    "claim": "c5"
+  },
+  "rightPose": {
+    "text": "Both hands side by side on the handle, palms facing down, handle in the base of the fingers, handle tilted toward you.",
+    "claim": [
+      "c1",
+      "c2",
+      "c3"
+    ]
+  },
+  "faults": [
+    {
+      "key": "palm-grip",
+      "label": "Palm grip",
+      "what": "Handle pushed deep into the palm instead of the base of the fingers, pinching the palm.",
+      "claim": "c2"
+    },
+    {
+      "key": "crush-grip",
+      "label": "Crush grip",
+      "what": "Fist clenched hard around the handle, a death grip instead of an easy hook grip.",
+      "claim": "c4"
+    }
+  ],
+  "gripLine": {
+    "text": "Both hands on the handle, palms facing down, handle in the base of the fingers, a strong grip but not a death grip.",
+    "claim": [
+      "c1",
+      "c2",
+      "c4"
+    ]
+  },
+  "cue": {
+    "text": "Hook the fingers, don't crush.",
+    "claim": [
+      "c2",
+      "c4"
+    ]
+  },
+  "handRisks": [
+    {
+      "text": "A full palm grip pinches the palm and causes calluses and blisters.",
+      "claim": "c2"
+    },
+    {
+      "text": "Over-gripping strains the wrist and forearm.",
+      "claim": "c4"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "For the two-hand swing both hands sit side by side on the handle with palms facing down (double overhand grip).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-kb-swing",
+        "nike-kb-swing"
+      ],
+      "quotes": [
+        {
+          "source": "hk-kb-swing",
+          "text": "Hand spacing: Place both hands next to each other on the handle of the kettlebell.",
+          "where": "Anatomic Focus"
+        },
+        {
+          "source": "hk-kb-swing",
+          "text": "Grip: Use a double overhand grip (pronate both hands).",
+          "where": "Anatomic Focus"
+        },
+        {
+          "source": "nike-kb-swing",
+          "text": "Hinge at your hips and grip the kettlebell with both hands, palms facing down.",
+          "where": "How to do a kettlebell swing, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The handle sits in the base of the fingers, not deep in the palm, so the fingers wrap around it; a full palm grip pinches the palm and causes calluses and blisters.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "sf-swing-grip"
+      ],
+      "quotes": [
+        {
+          "source": "sf-swing-grip",
+          "text": "the proper grip for the kettlebell swing is not a full grip where the handle is in the palm of the hand. This may feel like a solid grip, but this placement will pinch the palm at the base of the fingers and result in calluses and blisters.",
+          "where": "Details on Gripping the Kettlebell for Swings, para 2"
+        },
+        {
+          "source": "sf-swing-grip",
+          "text": "the front “face” of the handle (the part of the handle facing away from you) should be in the proximal phalanges of the fingers with the calluses not pinched by the handle. In doing so, your fingers will be able to wrap around the handle",
+          "where": "Details on Gripping the Kettlebell for Swings, para 3"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Tilt the kettlebell handle toward you when you take hold of it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sf-swing-grip",
+        "hk-kb-swing"
+      ],
+      "quotes": [
+        {
+          "source": "sf-swing-grip",
+          "text": "Tilting the kettlebell toward you also makes this grip detail easier to implement.",
+          "where": "Details on Gripping the Kettlebell for Swings, para 3"
+        },
+        {
+          "source": "hk-kb-swing",
+          "text": "Tilt the handle toward you, allowing it to become an extension of your arms.",
+          "where": "Execution, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Hold firmly but do not over-grip or crush the handle (an easy hook grip); over-gripping strains the wrist and forearm.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "sf-swing-grip",
+        "nike-kb-swing"
+      ],
+      "quotes": [
+        {
+          "source": "sf-swing-grip",
+          "text": "keep in mind that a strong grip is not necessarily a “death grip.” Over-gripping the handle can be the cause of many issues",
+          "where": "Details on Gripping the Kettlebell for Swings, para 4"
+        },
+        {
+          "source": "nike-kb-swing",
+          "text": "Have an easy hook grip as opposed to a crush grip so you don't overgrip, which can cause stress on the wrists and forearms.",
+          "where": "3. Arm path and grip"
+        },
+        {
+          "source": "nike-kb-swing",
+          "text": "Overgripping the handle: Gripping the handle too tightly strains the forearm and wrist muscles.",
+          "where": "Common Errors and Pitfalls"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "One kettlebell school rejects swinging with the thumbs up (hammer grip), saying that moving the bell fast that way risks the elbows at the bottom of the backswing; the article is mainly about cleans and one-arm and double work, so for the two-hand swing this is inference.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "sf-thumb"
+      ],
+      "quotes": [
+        {
+          "source": "sf-thumb",
+          "text": "Recently, we have seen a number of students coming to SFG Certifications who clean and swing with their thumbs up. I am here to put an end to this fashion.",
+          "where": "intro"
+        },
+        {
+          "source": "sf-thumb",
+          "text": "when you attempt to move kettlebells fast with the hammer grip, you are risking injuring your elbows on the bottom of the backswing.",
+          "where": "The Proper Thumb Position for StrongFirst, para 1"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hk-kb-swing",
+      "url": "https://us.humankinetics.com/blogs/excerpt/here-s-how-to-do-a-kettlebell-swing",
+      "title": "Here’s How to Do a Kettlebell Swing (excerpt from Kettlebell Strength Training Anatomy)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "nike-kb-swing",
+      "url": "https://www.nike.com/a/kettlebell-swings",
+      "title": "Kettlebell Swings: How To Do Them, Muscles Worked, and Common Mistakes",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "sf-swing-grip",
+      "url": "https://www.strongfirst.com/?p=70913",
+      "title": "Essential Details for Proper Swing Grip and the Kettlebell Halo",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "sf-thumb",
+      "url": "https://www.strongfirst.com/?p=31201",
+      "title": "The Proper Thumb Position in Kettlebell Pulls",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "Wrist rule for the swing (straight or neutral at the top of the swing) not found in a swing-specific source; the 'neutral wrist' line read was for the halo drill, not the swing.",
+    "Thumb rule for the two-hand swing specifically (wrap or not) not stated; only the one-school 'not thumbs up' line, written for cleans and swings in general.",
+    "No source read on losing grip of the bell (sweat, chalk, clear space) or on letting go safely."
+  ],
+  "notes": [
+    "Sources disagree on grip pressure: one textbook excerpt says to tighten the grip and 'Try to break the handle'; two coach sources say firm but not a death grip / easy hook grip. Card follows the latter, tagged WEAK.",
+    "PubMed searches (kettlebell hand injury, kettlebell swing grip) found nothing on grip or hand injury.",
+    "handRisks holds hand-related safety points the sources state (grip loss, over-gripping); one shared field name across the 5 implement cards."
+  ]
+}

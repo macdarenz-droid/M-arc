@@ -1,0 +1,87 @@
+{
+ "id": "shared-implement-battle-ropes",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "bos-ropes",
+   "text": "Grip: Hold the ends of the rope with a neutral grip (palms facing each other).",
+   "status": "verbatim",
+   "closest": "Grip: Hold the ends of the rope with a neutral grip (palms facing each other).",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bodbot-rope-waves",
+   "text": "Hold the end of the ropes in each hand, firm grip with palms facing each other.",
+   "status": "verbatim",
+   "closest": "Hold the end of the ropes in each hand, firm grip with palms facing each other.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "df-rope-grips",
+   "text": "Grip one end of the battle rope in each hand about 10cm from the end, holding the end of the rope too closely from the end can cause it to slide through your grip.",
+   "status": "verbatim",
+   "closest": "Grip one end of the battle rope in each hand about 10cm from the end, holding the end of the rope too closely from the end can cause it to slide through your grip.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "df-rope-grips",
+   "text": "Place the rope is in the palm of your hands, wrap your fingers around the rope and secure your grip by positioning your thumb over the fingers.",
+   "status": "verbatim",
+   "closest": "Place the rope is in the palm of your hands, wrap your fingers around the rope and secure your grip by positioning your thumb over the fingers.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "nike-ropes",
+   "text": "holding each end of the battle rope in your hands with an overhand grip (your thumbs should be on top).",
+   "status": "verbatim",
+   "closest": "holding each end of the battle rope in your hands with an overhand grip (your thumbs should be on top).",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bos-ropes",
+   "text": "Overgripping: Gripping the rope too tightly tires out your forearms. A firm but relaxed grip is best.",
+   "status": "verbatim",
+   "closest": "Overgripping: Gripping the rope too tightly tires out your forearms. A firm but relaxed grip is best.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "df-rope-circles",
+   "text": "don’t grip the battling rope too tightly otherwise you’ll fatigue the forearm muscles.",
+   "status": "verbatim",
+   "closest": "don’t grip the battling rope too tightly otherwise you’ll fatigue the forearm muscles.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "df-rope-grips",
+   "text": "a looser grip creates smoother waves with more fluidity and a greater range of motion in the shoulder, elbows and wrists.",
+   "status": "verbatim",
+   "closest": "a looser grip creates smoother waves with more fluidity and a greater range of motion in the shoulder, elbows and wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "nike-ropes",
+   "text": "With control and without bending your wrists, begin to move your hands up and down simultaneously with force. The movement should come from the shoulders as opposed to the lower arm.",
+   "status": "verbatim",
+   "closest": "With control and without bending your wrists, begin to move your hands up and down simultaneously with force. The movement should come from the shoulders as opposed to the lower arm.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bodbot-rope-waves",
+   "text": "lift rope up towards the ceiling by moving your arm up and flicking your wrist.",
+   "status": "verbatim",
+   "closest": "lift rope up towards the ceiling by moving your arm up and flicking your wrist.",
+   "note": ""
+  }
+ ]
+}

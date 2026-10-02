@@ -1,0 +1,243 @@
+{
+  "key": "implement-jump-rope",
+  "kind": "implement",
+  "appliesTo": [
+    "jump_rope"
+  ],
+  "appliesToWhy": "GA appendix B hand archetype `implement` lists jump_rope; one card per implement.",
+  "implement": {
+    "text": "jump_rope",
+    "claim": "c1"
+  },
+  "contactPoint": {
+    "text": "Handle held mainly by the thumb and index finger.",
+    "claim": "c2"
+  },
+  "thumbRule": {
+    "text": "Thumb and index finger do most of the gripping.",
+    "claim": "c2"
+  },
+  "wrist": {
+    "text": "The wrist turns the rope with a small flick; the arms barely move.",
+    "claim": "c3"
+  },
+  "rightPose": {
+    "text": "Loose hold on each handle, hands a little in front of the hips near waist level, elbows close to the ribs.",
+    "claim": [
+      "c1",
+      "c4"
+    ]
+  },
+  "faults": [
+    {
+      "key": "white-knuckle",
+      "label": "Too tight",
+      "what": "Fist clenched white-knuckle around the handle, locking the wrist.",
+      "claim": "c5"
+    }
+  ],
+  "gripLine": {
+    "text": "Hold the handles loosely, mainly with thumb and index finger, firm enough that they will not fly out.",
+    "claim": [
+      "c1",
+      "c2"
+    ]
+  },
+  "cue": {
+    "text": "Loose grip, small wrist flick.",
+    "claim": [
+      "c1",
+      "c3"
+    ]
+  },
+  "handRisks": [
+    {
+      "text": "Turning the rope with the arms instead of the wrists is one cause of wrist pain.",
+      "claim": "c6"
+    },
+    {
+      "text": "Sweaty handles get squeezed harder.",
+      "claim": "c6"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hold the handles with a loose grip, only firm enough that they will not fly out of the hand.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "jmu-rope-sec",
+        "elevate-wrist"
+      ],
+      "quotes": [
+        {
+          "source": "jmu-rope-sec",
+          "text": "4. Grip the handles with a loose grip",
+          "where": "cue 4"
+        },
+        {
+          "source": "elevate-wrist",
+          "text": "Hold the handle firmly enough that it will not fly out of your hand and no firmer.",
+          "where": "Grip pressure"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The handles are gripped mainly with the thumb and index fingers.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "jmu-rope-sec",
+        "jmu-rope-elem"
+      ],
+      "quotes": [
+        {
+          "source": "jmu-rope-sec",
+          "text": "(use thumb and index fingers)",
+          "where": "cue 4"
+        },
+        {
+          "source": "jmu-rope-elem",
+          "text": "grip (use the thumb and index fingers)",
+          "where": "cue 4"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The wrist turns the rope with a small flick, while the arms barely move.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "jmu-rope-sec",
+        "elevate-wrist"
+      ],
+      "quotes": [
+        {
+          "source": "jmu-rope-sec",
+          "text": "2. Use the wrist to turn the rope",
+          "where": "cue 2"
+        },
+        {
+          "source": "elevate-wrist",
+          "text": "their arms barely move. The elbows stay close to the ribs, the hands sit a little in front of the hips, and the rope goes round on a small flick of the wrist.",
+          "where": "intro, para 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Hands sit a little in front of the hips, near waist level, with the elbows close to the ribs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "jmu-rope-sec",
+        "elevate-wrist"
+      ],
+      "quotes": [
+        {
+          "source": "jmu-rope-sec",
+          "text": "3. Keep hands near waist level",
+          "where": "cue 3"
+        },
+        {
+          "source": "elevate-wrist",
+          "text": "The elbows stay close to the ribs, the hands sit a little in front of the hips",
+          "where": "intro, para 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Gripping too hard locks the wrist so it cannot flick; white knuckles mean the grip is too tight.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "elevate-wrist"
+      ],
+      "quotes": [
+        {
+          "source": "elevate-wrist",
+          "text": "Most people hold the handles far too tight. A hard grip locks the wrist, and a locked wrist cannot flick.",
+          "where": "Grip pressure"
+        },
+        {
+          "source": "elevate-wrist",
+          "text": "If your knuckles are white, that is your answer.",
+          "where": "Grip pressure"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Turning the rope with the arms instead of the wrists, with elbows out wide, is one stated cause of wrist pain; sweaty handles get squeezed harder.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "elevate-wrist"
+      ],
+      "quotes": [
+        {
+          "source": "elevate-wrist",
+          "text": "Jumping rope hurts your wrists for three reasons: your arms are turning the rope instead of your wrists, your handles are heavier or longer than the job needs, or you added volume faster than your forearms adapted to it.",
+          "where": "intro, para 1"
+        },
+        {
+          "source": "elevate-wrist",
+          "text": "Sweat makes this worse, because a slippery handle gets squeezed harder.",
+          "where": "Grip pressure"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "elevate-wrist",
+      "url": "https://www.elevaterope.com/blogs/articles/jump-rope-wrist-pain",
+      "title": "Why Does Jumping Rope Hurt My Wrists?",
+      "kind": "manufacturer",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "jmu-rope-elem",
+      "url": "https://www.cisat.jmu.edu/kin/ejc/pdfs/Elementary%20jump%20rope%20cues.pdf",
+      "title": "Jump Rope Cues (elementary)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "jmu-rope-sec",
+      "url": "https://www.cisat.jmu.edu/kin/ejc/pdfs/Secondary%20jump%20rope%20cues.pdf",
+      "title": "Jump Rope Cues (secondary)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "Thumb rule rests on one cue sheet (thumb and index fingers); exact thumb placement on the handle (along it or wrapped) not stated.",
+    "Only one drawable hand fault sourced (too tight); arms-turning/elbows-wide is not a hand close-up.",
+    "PubMed: two double-under biomechanics papers found (PMID 42514148, 27556961), neither gives a grip or wrist rule; not cited."
+  ],
+  "notes": [
+    "Elementary and secondary cue sheets come from the same program, so they count as one independent source.",
+    "Wrist-pain source is a rope maker's blog; its product advice (handle weights, bearings, wristbands) was left out.",
+    "handRisks holds hand-related safety points the sources state (grip loss, over-gripping); one shared field name across the 5 implement cards."
+  ]
+}

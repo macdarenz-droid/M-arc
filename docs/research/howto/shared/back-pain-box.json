@@ -1,0 +1,225 @@
+{
+  "key": "back-pain-box",
+  "kind": "red-flag-box",
+  "status": "draft",
+  "appliesTo": [
+    "landmine_row",
+    "pendlay_row",
+    "t_bar_row"
+  ],
+  "appliesToWhy": "The three verified cards that already link redFlag \"back\" (LR-28 ship order). content.md 5.3 says about 20 hinge, row, back-extension, crunch and leg-press sheets will link it; each joins appliesTo when its own card links the box (front_squat and goblet_squat carry NHS back claims but no back row link yet).",
+  "box": {
+    "name": {
+      "text": "Back pain",
+      "claim": "c1"
+    },
+    "now": {
+      "text": "Both legs numb, weak, tingling? Numb genitals or anus? Bladder, bowel, sex changes? Chest pain? Serious accident? Get emergency help now.",
+      "claim": "c1"
+    },
+    "doctor": {
+      "text": "No better in weeks? See a doctor.",
+      "claim": "c2"
+    },
+    "words": 30,
+    "boxClaim": {
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back"
+      ]
+    }
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The NHS says to get emergency care (999 or A&E) if back pain comes with: pain, tingling, weakness or numbness in both legs; loss of feeling around the genitals or anus; bladder or bowel changes; changes in sexual function; chest pain; or if it started after a serious accident.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back",
+          "text": "Immediate action required: Call 999 or go to A&E if:",
+          "where": "Immediate action required box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "changes in your bladder or bowels, such as difficulty peeing, or peeing or pooing yourself",
+          "where": "Immediate action required box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "changes in how your penis or vagina feels during sex, not being able to get or keep an erection, or not being able to orgasm",
+          "where": "Immediate action required box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "chest pain",
+          "where": "Immediate action required box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "it started after a serious accident, such as a car accident",
+          "where": "Immediate action required box"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The NHS says to see a doctor (GP) if back pain does not improve after a few weeks of treating it at home.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back",
+          "text": "Non-urgent advice: See a GP if:",
+          "where": "Non-urgent advice box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice box"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The NHS lists further reasons to see a doctor: it stops daily activities, worry or struggling to cope, weight loss without trying, a lump or swelling or a changed shape of the back, no better with rest or worse at night, worse when sneezing, coughing or pooing, or pain in the upper back between the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back",
+          "text": "it's stopping you doing your day-to-day activities",
+          "where": "Non-urgent advice box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "you've lost weight without trying to",
+          "where": "Non-urgent advice box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "there's a lump or swelling in your back, or your back has changed shape",
+          "where": "Non-urgent advice box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "it does not improve after resting or is worse at night",
+          "where": "Non-urgent advice box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "it's worse when sneezing, coughing or pooing",
+          "where": "Non-urgent advice box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "it's coming from the top of your back (between your shoulders), rather than your lower back",
+          "where": "Non-urgent advice box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "you're worried about the pain or you're struggling to cope",
+          "where": "Non-urgent advice box"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The NHS says to get urgent help the same day (an urgent GP appointment or 111) if back pain comes with feeling hot, cold, shivery or generally unwell, or is severe and sudden or getting worse quickly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back",
+          "text": "Urgent advice: Ask for an urgent GP appointment or get help from 111 if:",
+          "where": "Urgent advice box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "you feel hot, cold, shivery or generally unwell",
+          "where": "Urgent advice box"
+        },
+        {
+          "source": "nhs-back",
+          "text": "it's severe pain that starts suddenly, or it's getting worse quickly",
+          "where": "Urgent advice box"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Back pain usually improves within a few weeks; with exercises for back pain, the NHS says to stop if the pain gets worse.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back",
+          "text": "It usually improves within a few weeks but can sometimes last longer or keep coming back.",
+          "where": "Introduction"
+        },
+        {
+          "source": "nhs-back",
+          "text": "There are specific exercises and stretches you can do to help with back pain. But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "nhs-back",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain",
+      "kind": "guideline",
+      "year": 2026,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "The NHS same-day (urgent) triggers in c4 (sudden severe pain, pain getting worse quickly, feeling hot, cold, shivery or unwell) have no line in the box: the back box pattern (LR-27) has an emergency line and a doctor line only, and all three lines must fit 30 words. Supervisor decides whether they replace a trigger or the box gets a third line.",
+    "Only one of the NHS doctor triggers (no better after a few weeks) fits in the doctor line; c3's other triggers (worse at night, weight loss, lump or changed shape, upper back) are not shown."
+  ],
+  "notes": [
+    "Draft for the verifier and the supervisor (LR-27, LR-29); the owner sees it on pilot A. Status stays draft until they settle the wording.",
+    "Page read in full on 2026-10-01 (NHS page last reviewed 05 March 2026). It has three tiers: 999/A&E (c1, 6 triggers), urgent GP or 111 (c4, 2 triggers), and see a GP (c2, c3, 8 triggers).",
+    "Draft wording keeps all six NHS emergency triggers as the task asks, in 30 words by the lint count (name 2 + now 21 + doctor 7); no sentence over 15 words. The LR-27 draft (\"Numb or weak in both legs, numb around your genitals, or bladder or bowel changes?\") kept only three of the six; this draft adds sex changes, chest pain and serious accident.",
+    "Trade-offs to settle: (1) \"Both legs numb, weak, tingling?\" drops \"pain\" in both legs to fit; swapping \"tingling\" for \"painful\" is the other option. (2) \"Numb genitals or anus\" shortens \"a loss of feeling around your genitals or anus\". (3) \"Bladder, bowel, sex changes\" merges two NHS bullets. (4) The doctor line keeps a time (\"in weeks\", from \"a few weeks\") per LR-28 timing; \"a few\" was cut to fit. The lint TRIPLET pattern may flag \"numb, weak, tingling\" and \"Bladder, bowel, sex\" for review (flagged, not failed).",
+    "\"Get emergency help now.\" is the region-neutral line ruled in LR-11/LR-27 (D-LR23-1) in place of the NHS \"Call 999 or go to A&E\"; it is a ruling, not a source wording. The box names no number, service, website or link (LR-23, LR-27 R2). The current lint requires \"today\" in every box's now line; this box needs the add-only rule content.md 5.3 describes.",
+    "The same NHS page is already cited by front_squat c22, goblet_squat g13 and the back-row cards (landmine_row c19, pendlay_row c22, t_bar_row c22; c5 here covers their 'stop if your pain gets worse' line). Re-read in full here; no line copied."
+  ]
+}

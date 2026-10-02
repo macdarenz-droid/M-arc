@@ -1,0 +1,103 @@
+{
+ "id": "shared-implement-kettlebell-swing",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "hk-kb-swing",
+   "text": "Hand spacing: Place both hands next to each other on the handle of the kettlebell.",
+   "status": "verbatim",
+   "closest": "Hand spacing: Place both hands next to each other on the handle of the kettlebell.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "hk-kb-swing",
+   "text": "Grip: Use a double overhand grip (pronate both hands).",
+   "status": "verbatim",
+   "closest": "Grip: Use a double overhand grip (pronate both hands).",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nike-kb-swing",
+   "text": "Hinge at your hips and grip the kettlebell with both hands, palms facing down.",
+   "status": "verbatim",
+   "closest": "Hinge at your hips and grip the kettlebell with both hands, palms facing down.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sf-swing-grip",
+   "text": "the proper grip for the kettlebell swing is not a full grip where the handle is in the palm of the hand. This may feel like a solid grip, but this placement will pinch the palm at the base of the fingers and result in calluses and blisters.",
+   "status": "verbatim",
+   "closest": "the proper grip for the kettlebell swing is not a full grip where the handle is in the palm of the hand. This may feel like a solid grip, but this placement will pinch the palm at the base of the fingers and result in calluses and blisters.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sf-swing-grip",
+   "text": "the front “face” of the handle (the part of the handle facing away from you) should be in the proximal phalanges of the fingers with the calluses not pinched by the handle. In doing so, your fingers will be able to wrap around the handle",
+   "status": "verbatim",
+   "closest": "the front “face” of the handle (the part of the handle facing away from you) should be in the proximal phalanges of the fingers with the calluses not pinched by the handle. In doing so, your fingers will be able to wrap around the handle",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sf-swing-grip",
+   "text": "Tilting the kettlebell toward you also makes this grip detail easier to implement.",
+   "status": "verbatim",
+   "closest": "Tilting the kettlebell toward you also makes this grip detail easier to implement.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "hk-kb-swing",
+   "text": "Tilt the handle toward you, allowing it to become an extension of your arms.",
+   "status": "verbatim",
+   "closest": "Tilt the handle toward you, allowing it to become an extension of your arms.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sf-swing-grip",
+   "text": "keep in mind that a strong grip is not necessarily a “death grip.” Over-gripping the handle can be the cause of many issues",
+   "status": "verbatim",
+   "closest": "keep in mind that a strong grip is not necessarily a “death grip.” Over-gripping the handle can be the cause of many issues",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "nike-kb-swing",
+   "text": "Have an easy hook grip as opposed to a crush grip so you don't overgrip, which can cause stress on the wrists and forearms.",
+   "status": "verbatim",
+   "closest": "Have an easy hook grip as opposed to a crush grip so you don't overgrip, which can cause stress on the wrists and forearms.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "nike-kb-swing",
+   "text": "Overgripping the handle: Gripping the handle too tightly strains the forearm and wrist muscles.",
+   "status": "verbatim",
+   "closest": "Overgripping the handle: Gripping the handle too tightly strains the forearm and wrist muscles.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sf-thumb",
+   "text": "Recently, we have seen a number of students coming to SFG Certifications who clean and swing with their thumbs up. I am here to put an end to this fashion.",
+   "status": "verbatim",
+   "closest": "Recently, we have seen a number of students coming to SFG Certifications who clean and swing with their thumbs up. I am here to put an end to this fashion.",
+   "note": "Source retrieved via WebFetch (direct curl blocked by Sucuri JS challenge; web.archive.org failed twice with connection resets)."
+  },
+  {
+   "claim": "c5",
+   "source": "sf-thumb",
+   "text": "when you attempt to move kettlebells fast with the hammer grip, you are risking injuring your elbows on the bottom of the backswing.",
+   "status": "close",
+   "closest": "And when you attempt to move kettlebells fast with the hammer grip, you are risking injuring your elbows on the bottom of the backswing.",
+   "note": "Source retrieved via WebFetch (direct curl blocked; archive.org failed twice). Actual sentence starts with 'And' which the card's quote omits; otherwise identical."
+  }
+ ]
+}

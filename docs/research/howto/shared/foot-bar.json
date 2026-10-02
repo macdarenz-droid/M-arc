@@ -1,0 +1,196 @@
+{
+ "key": "foot-bar",
+ "kind": "equipment-move",
+ "appliesTo": [
+  "machine_chest_press",
+  "machine_pullover"
+ ],
+ "appliesToWhy": "Only ids where a read source shows a foot bar or foot lever: the seated chest press (university guide and two manufacturer pages) and the seated pullover (manufacturer page). incline_machine_press and shoulder_press are left out: no read source shows a foot assist on them.",
+ "move": "foot-bar",
+ "variants": {
+  "chest-press": {
+   "appliesTo": [
+    "machine_chest_press"
+   ],
+   "steps": [
+    {
+     "kind": "position",
+     "text": "Press the foot bar with your legs to bring the handles out.",
+     "claim": "c1"
+    },
+    {
+     "kind": "safety",
+     "text": "Sore shoulders? Always start with the foot bar.",
+     "claim": "c3"
+    },
+    {
+     "kind": "finish",
+     "text": "After the set, put your feet back on the foot bar.",
+     "claim": "c2"
+    },
+    {
+     "kind": "finish",
+     "text": "Then drop your arms and lower the handles slowly.",
+     "claim": "c2"
+    }
+   ]
+  },
+  "pullover": {
+   "appliesTo": [
+    "machine_pullover"
+   ],
+   "steps": [
+    {
+     "kind": "position",
+     "text": "Push the foot lever to bring the handles to you.",
+     "claim": "c4"
+    },
+    {
+     "kind": "safety",
+     "text": "This stops you over-reaching for the start.",
+     "claim": "c4"
+    }
+   ]
+  }
+ },
+ "claims": [
+  {
+   "id": "c1",
+   "text": "On a chest press with a foot pedal or foot bar, press it out with the legs to bring the handles to the start position.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mit-chest",
+    "legend-cp-prod"
+   ],
+   "quotes": [
+    {
+     "source": "mit-chest",
+     "text": "Once you have your weight selected, use your legs to press out the foot advance pedal. This will bring the handles to the start position.",
+     "where": "How to Setup & Use the Chest Press Machine"
+    },
+    {
+     "source": "legend-cp-prod",
+     "text": "Wide foot bar raises handles to starting position.",
+     "where": "Overview"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "After each set, put the feet back on the pedal, drop the arms to the sides and slowly lower the handles to their resting position; the maker says the foot assist eases both starting and ending.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mit-chest",
+    "legend-cp"
+   ],
+   "quotes": [
+    {
+     "source": "mit-chest",
+     "text": "After each set, place your feet back on the advance pedal. Then, drop your arms to your side and slowly lower the handles back to their resting position.",
+     "where": "How to Setup & Use the Chest Press Machine"
+    },
+    {
+     "source": "legend-cp",
+     "text": "The foot-assist pre-stretch lever arm allows for easy starting and ending exercise positions.",
+     "where": "Description"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "People with shoulder limitations should always use the foot pedal to set the handles to the start position.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "mit-chest"
+   ],
+   "quotes": [
+    {
+     "source": "mit-chest",
+     "text": "Those with shoulder limitations should always use the foot advance pedal when setting the handles to the start position.",
+     "where": "A Word of Caution and Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "On the seated pullover, the foot lever brings the handles to a comfortable start position, so you do not over-extend reaching for them.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "legend-pullover"
+   ],
+   "quotes": [
+    {
+     "source": "legend-pullover",
+     "text": "Foot lever brings the handles to a comfortable starting position.",
+     "where": "Overview"
+    },
+    {
+     "source": "legend-pullover",
+     "text": "The foot pedal brings the weight to you so you’re not over-extending and risking injury.",
+     "where": "Description"
+    }
+   ]
+  }
+ ],
+ "gaps": [
+  "Pullover set-down (feet back on the foot bar, arms off the pads, legs return the stack): sourced in cards/machine_pullover.json c5 from the Marquette page, but I could not re-read it (gomarquette.com blocks the fetch; archive.org unreachable). Stays out of this card until re-read (tier-A way out).",
+  "Pullover start detail (take the feet off the bar once the arms are on the pads) is likewise only in machine_pullover c3 (Marquette), not re-read.",
+  "No source read for a foot assist on the incline machine press or the machine shoulder press."
+ ],
+ "notes": [
+  "Same rule sourced in cards/machine_pullover.json c2, c3, c5 (Marquette); not re-read here, see gaps.",
+  "c3 is tagged WEAK: one university guide, no reason given beyond shoulder limitations.",
+  "The census has no verified machine_chest_press card yet; this card is its only foot-bar source."
+ ],
+ "sources": [
+  {
+   "id": "mit-chest",
+   "url": "https://mitrecsports.com/?p=11716",
+   "title": "How to Use the Chest Press Machine (MIT Recreation, Tyler DeLeon)",
+   "kind": "coach",
+   "year": 2019,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "legend-cp-prod",
+   "url": "https://www.legendfitness.com/product/selectedge-chest-press/",
+   "title": "SelectEDGE Chest Press (Legend Fitness)",
+   "kind": "manufacturer",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "legend-cp",
+   "url": "https://www.legendfitness.com/wp-content/uploads/900_ChestPress.pdf",
+   "title": "Chest Press (Part 900) product sheet (Legend Fitness)",
+   "kind": "manufacturer",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "legend-pullover",
+   "url": "https://www.legendfitness.com/product/selectedge-seated-pullover/",
+   "title": "SelectEDGE Seated Pullover (Legend Fitness)",
+   "kind": "manufacturer",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  }
+ ]
+}
