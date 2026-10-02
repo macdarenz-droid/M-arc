@@ -254,7 +254,7 @@ The block list is not a hand list. It is `Program.body` of the gate file, from t
 ## 4. Proof, verdict, equivalence tests
 
 ### 4.1 Proof file per gate job
-Each gate job writes `screenshots/gate-proof-<utc|auckland>-<k>of<K>.json` with `writeProof`. In the serial arrangement, `MARC_GATE_JOB` is unset and the file is `…-1of1.json`.
+Each gate job writes `screenshots/gate-proof-<utc|auckland>-<k>of<K>.json` with `writeProof`. In the serial arrangement, `MARC_GATE_JOB` is `1/1` (unset or empty locally, which runs everything the same way) and the file is `…-1of1.json`.
 - `sha`: `git rev-parse HEAD`, which must equal `GITHUB_SHA`.
 - One row per group that ran: `{ id: <key>, check: 'gate', state: <TZ>, theme: '*', width: null, result: 'pass' | 'fail' }`. The result is `fail` when the group added errors.
 - One `gate-theme` row per theme the group was seen to use: `{ id: <key>, check: 'gate-theme', state: <TZ>, theme: <theme>, … }`.
@@ -306,10 +306,10 @@ Each gate job writes `screenshots/gate-proof-<utc|auckland>-<k>of<K>.json` with 
 | R2. No group calls a mutating method on one (`push`, `pop`, `shift`, `unshift`, `splice`, `sort`, `reverse`, `fill`, `copyWithin`, `set`, `add`, `delete`, `clear`, `Object.assign`/`defineProperty` on it). Two exceptions: `errors.push`, and `errors.splice` only in group `BASE` (line 254, its own injected entries) | `themes.push('x')`; `completed.sort()`; `errors.splice(0)` in a non-BASE group |
 | R3. A binding declared after `errors` is referenced by one group only. Only that group may mutate it (BUG-22 fills `bug22Runs`) | a second group reads `bug22Runs` or `ESC_NC_RE` |
 | R4. An unguarded declaration after `errors` has an initializer with no `await` and no reference to `errors`, `browser`, `page`, `ctx` or `gate` | `const n = errors.length;` and `const t = await browser.version();` added unguarded |
-| R5. No write to `process.env` or `globalThis`, no `process.chdir`, and no top-level `let`/`var`/`function`/`class` after `errors` | `process.env.TZ = 'UTC'` in a group; `let x = 0;` after `errors` |
+| R5. No write to `process.env`, `globalThis` or `console` members, no `process.chdir`, and no top-level `let`/`var`/`function`/`class` after `errors`. The one allowed global write is the `HT-10.clock` group's `console.log = …` | `process.env.TZ = 'UTC'` in a group; `console.log = () => {}` in any group other than `HT-10.clock`; `let x = 0;` after `errors` |
 
-**E3: partition** (same test). For K = 1..16, with and without an offset, and for the real group list, the jobs' sets are disjoint and their union is every group. Unset selects everything.
-- Mutations: an off-by-one `k` in `jobFromEnv`; `packShards` dropping its last item.
+**E3: partition** (same test). For K = 1..16, with and without an offset, and for the real group list, the jobs' sets are disjoint and their union is every group. Unset, `''` (treated as unset) and `'1/1'` each select everything, and `'1/1'` names the proof `-1of1.json`.
+- Mutations: an off-by-one `k` in `jobFromEnv`; `packShards` dropping its last item; `''` parsed as an error, or `'1/1'` selecting nothing.
 
 **E4: each job reaches exactly its planned groups** (`gate.done()`, every CI gate job).
 - Mutation: on a scratch commit only, a guard key in one group is changed to a key the plan gives another job. `done()` reports one planned key not reached and one not planned that ran.
@@ -326,12 +326,13 @@ Each gate job writes `screenshots/gate-proof-<utc|auckland>-<k>of<K>.json` with 
 - Mutation: edit one character inside any block → the diff is not empty.
 
 **E8: 5 paired runs**, compared by `scripts/gate-compare.mjs <dirA> <dirB>` (new).
-- Inputs: the downloaded proof artifacts of run A_i (`arrangement: serial` through `workflow_dispatch`: `source-gate` and `visual-gate-tz` with `MARC_GATE_JOB` unset, shard jobs skipped) and of run B_i (`arrangement: split`, K = 3), both on the same sha, for i = 1..5.
+- Inputs: the downloaded proof artifacts of run A_i (`arrangement: serial` through `workflow_dispatch`: `source-gate` and `visual-gate-tz` with `MARC_GATE_JOB=1/1`, shard jobs skipped) and of run B_i (`arrangement: split`, K = 3), both on the same sha, for i = 1..5.
 - Per TZ, it compares:
   - the set of (group, result) rows;
   - the `gate-theme` rows;
   - `meta.errors`, sorted;
   - the union of `meta.files` (screenshot names), per group.
+- The pairs run one after the other: the workflow's `concurrency: cancel-in-progress` would cancel an overlapping run on the same ref. A cancelled run is dispatched again and is not counted.
 - Exit 1 with the first difference. All 5 pairs must exit 0. A difference blocks adoption and is root-caused, never re-run to green.
 - Unit tests in `tests/gate-compare.test.ts`. Mutations, each red: one screenshot name dropped from one B manifest; one row's result flipped; one extra error string in B; one theme row missing in A.
 
@@ -387,7 +388,7 @@ The build is relied on only after E1-E10 pass on its final head, as the AGENTS.m
 - Mitigation: the test fails loudly if the import fails. A direct dev dependency needs the supervisor's OK (AGENTS.md); it is not added now.
 
 **What the supervisor wires in `.github`** (supervisor ruling 2026-10-02: add-only; nothing renamed or removed; the supervisor does it, not this card). In `build-apk.yml`:
-1. **`source-gate`** (UTC): unchanged steps. Add job-level `env: MARC_GATE_JOB: ${{ inputs.arrangement == 'serial' && '' || '1/3' }}` and `MARC_HT10_OWN_JOB: '1'` (8.7 step 6). It already uploads `screenshots/`, which holds the proof.
+1. **`source-gate`** (UTC): unchanged steps. Add job-level `env: MARC_GATE_JOB: ${{ inputs.arrangement == 'serial' && '1/1' || '1/3' }}` (`'1/1'` = everything. `''` is falsy in Actions expressions and would fall through to `'1/3'`) and `MARC_HT10_OWN_JOB: '1'` (8.7 step 6). It already uploads `screenshots/`, which holds the proof.
 2. **`visual-gate-tz`** (Auckland): unchanged steps. Add the same job-level env, plus a new step that uploads `screenshots/gate-proof-*.json` as `MARC-gate-proof-auckland-1` (`if: always()`). Its existing failure-only upload stays.
 3. **New `gate-shard`:**
    - matrix `tz: [UTC, Pacific/Auckland]` × `k: [2, 3]`, with `if: inputs.arrangement != 'serial'`;
