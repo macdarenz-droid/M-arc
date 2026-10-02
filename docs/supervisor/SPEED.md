@@ -103,7 +103,30 @@ Measured 10-02 09:50 UTC by four read-only analysts (in-chat workflow `wf_8a28ca
   - engine holds resolved before LB2.
 - **Target:** no known unresolved blocking defect, backed by evidence. Zero bugs cannot be guaranteed.
 
-## 4. Throughput log (fill after each batch)
+## 4. Engine cases (spike 10-02, #190 "ENGINE SPIKE: 82ae2d4")
+
+The default path is byte-identical: golden A, golden B and pilot A are unchanged.
+
+| Id | Batch | Verdict | Fix |
+|---|---|---|---|
+| dumbbell_fly | LB2 (held) | GO | camera pitch ≈ 45 |
+| bent_over_dumbbell_rear_delt_fly (front view) | LB7 (held) | GO, conditional | pitch ≈ 15, a volume trunk and a depth rule |
+| side_plank | LB9 | GO | `root.roll` ≈ 70; its sag Mistake needs `trunk.lat` |
+| russian_twist | LB9 | GO | `trunk.yaw` ±35 and pitch 20 |
+| bicycle_crunch | LB9 | conditional | near top-down; the critic decides |
+
+- **Owner of the fix:** the enabler lane, as **LIB-20 amended**: one conditional `[golden update]` card for all five engine fields, through the plan 2.8 procedure.
+- **Prerequisites:** LIB-2 and LIB-3.
+- **When:** it merges before LB2's sheet if possible, otherwise the fly rolls to the next sheet. At the latest it merges before LB7.
+- **Acceptance:**
+  - L1 byte-identical;
+  - each default changed to 1 turns red;
+  - pitch is caught by a pinned front-view page, because golden A cannot see it (D-SPIKE-L1-blind);
+  - the calibrated critic gives R1, R4, R6 and R7 at 4 or more on the five ids;
+  - the owner's yes on the before-and-after sheet.
+- Held exercises stay at 0 until then.
+
+## 5. Throughput log (fill after each batch)
 
 | Batch | Ids accepted and integrated | Days | Packages/day | Fix rounds | CI runs | Notes |
 |---|---|---|---|---|---|---|
