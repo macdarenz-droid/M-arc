@@ -8080,12 +8080,15 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 //   request before Train is idle, the shimmer against the golden-B page. A4: C17 and the total size of every How-to
 //   chunk, the main-chunk probe, the shipped CSS (C18/C12), build B for each chunk kind. Golden: every exemption is
 //   proven on the golden page. Fixtures: M10-M12 (C19), a small and a nameless button, a width and an endless
-//   animation must each fail. A5: the HT blocks' gate time against HT3-A9's 300 s.
+//   animation must each fail. A5: each ht10-gate shard within 25 min (D-HT10-A5); the skipped block within 60 s (D-HT10-A5c).
+// D-HT10-A5c: HT-10 adds at most 60 s to each existing gate job (D-HT10-A5c-2: measured from here, before the
+// shard.mjs import, to the end of the skip branch; the whole job is held by its timeout-minutes, D-SUP-CI-1)
+const HT10_OWN_JOB_BUDGET_S = 60;
+const ht10T0 = Date.now();
 if (!(await import('../tools/plates/fidelity/shard.mjs')).ht10Runs()) {
-  // D-HT10-A5: HT-10 runs in its own ht10-gate job; this job only holds the existing blocks to their 30 min budget
-  const gateS = process.uptime();
-  console.log(`HT-10: skipped (MARC_HT10_OWN_JOB=1, no MARC_HT_SHARD); this gate run so far ${gateS.toFixed(1)} s of its 1800 s budget`);
-  if (gateS > 1800) errors.push(`HT-10 A5: this gate run took ${gateS.toFixed(1)} s, over the 30 min budget for the existing gate jobs (D-HT10-A5)`);
+  const ownS = (Date.now() - ht10T0) / 1000;
+  console.log(`HT-10: skipped (MARC_HT10_OWN_JOB=1, no MARC_HT_SHARD) in ${ownS.toFixed(1)} s of its ${HT10_OWN_JOB_BUDGET_S} s budget (D-HT10-A5c); this gate run so far ${process.uptime().toFixed(1)} s (information only)`);
+  if (ownS > HT10_OWN_JOB_BUDGET_S) errors.push(`HT-10 A5c: the skipped HT-10 block took ${ownS.toFixed(1)} s in this job, over its ${HT10_OWN_JOB_BUDGET_S} s budget (D-HT10-A5c)`);
 } else {
   await (await import('../tools/plates/fidelity/ht10.mjs')).runHt10({ errors, OUT, PORT, clock: ht10Clock });
 }
