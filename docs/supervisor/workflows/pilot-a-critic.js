@@ -107,6 +107,8 @@ Inputs (read only these paths; do not look anywhere else on disk):
 - Reference (owner-approved plates, the quality bar and house style): ${prep.workdir}/reference/*.png (states: dark = Silent Black theme, paper = Paper theme, mistake-dark = the Mistake view in Silent Black).
 - Candidates: ${prep.workdir}/set/P01 .. ${prep.workdir}/set/${labels[labels.length - 1]}, each with dark.png, paper.png, mistake-dark.png and facts.json (the verified research facts the drawing must match, and its safety tier). ${prep.workdir}/set/README.md lists them. Candidates: ${labels.join(', ')}.
 
+Ignore the tempo strip's phase list when judging: some plates have a Rest phase and some don't, by their research cards. It is not part of the rubric and says nothing about a plate's quality or origin.
+
 Rubric, score 1-5 per item for every candidate (5 = as good as the approved reference; 4 = acceptable, at the approved bar; 3 or less = a real problem a careful designer or coach would fix):
 - R1 pose truth (joint angles and body position match the facts and real technique);
 - R2 equipment realism and scale;
