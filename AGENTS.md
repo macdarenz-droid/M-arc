@@ -70,7 +70,7 @@ Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor k
 | `.github/**`, `scripts/prepare-android.sh`, `native/patch_manifest.py` | supervisor | Add checks only. |
 | `package.json`, `package-lock.json` | supervisor | No new dependency without the supervisor's OK. The lockfile comes from npm. |
 | Saved data shape (`src/core/models.ts`, `src/core/store.ts`, migrations) | the owner approves | New kinds of saved data need the owner's approval first. |
-| `scripts/screenshot-gate.mjs`, `tests/theme.test.ts` | shared, add-only | Add your own blocks, named with your task IDs. Never edit, move or delete another task's block. When merging `main`, keep both sides. |
+| `scripts/screenshot-gate.mjs`, `tests/theme.test.ts` | shared, add-only | Add your own blocks, named with your task IDs. Never edit, move or delete another task's block. When merging `main`, keep both sides. One exception (owner, 2026-10-02, GATE-SPLIT): after HT-10 merges, the supervisor's GATE-SPLIT card may assign existing blocks to parallel CI jobs without changing what any block checks. It needs an equivalence proof first: every block × time zone × theme runs exactly once per run; a proof file per job and a verdict job that fails on a wrong sha or a missing, duplicated or miscounted item; 5 paired runs with identical results; a seeded failure red in both arrangements; a mutation that drops a proof row turns the verdict red. |
 | `src/ui/styles.css` | the task card that owns shared styles | Others change only rules for components their card names, in one block marked with the task ID. |
 | `src/app/App.tsx`, `src/main.tsx` | supervisor | Smallest possible wiring change, called out in the PR. |
 
