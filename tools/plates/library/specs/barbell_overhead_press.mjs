@@ -43,8 +43,10 @@
 //   clear of that plate). Upright height RACK_H 2.4 m (tall commercial racks are 2.3-2.4 m): at 2.3 m the top
 //   cross-member would overlap the lockout plate in this projection and read as a collision (in 3D the plates sit
 //   outside the rack's width). Safety arms top at ARM_Y, 8 cm under the front-rack bar centre (6.6 cm under the
-//   shaft). No J-hooks: `rackUpright`'s hook points the way the figure faces, i.e. away from the lifter on the front
-//   upright; the plate shows the press after unracking, so hooks are not needed for the checkpoints.
+//   shaft). J-hooks (verified card plate.equipment "power rack with hooks at about shoulder height", setup c11): one
+//   empty hook on the front upright, pointing back toward the lifter (composer option `hookY`, the vendored
+//   rackUpright hook's shape and size; rackUpright's own hook would point out of the rack), its bearing surface at
+//   HOOK_Y = the front-rack bar's underside, so the bar was unracked at shoulder height (critic 10-02 tier A check).
 // Phase 2 (card plate section): callouts = the 3 verified plate.checkpoints (c5 forearms vertical, c6 head back then through,
 //  c7 over mid-foot); mistake = plate.mistake (c5: elbows back, forearms tilted, bar curves forward away from the face),
 //  tells = its two visible signs; tempo = plate.tempo (c17: up 1 s, down 2 s, pause 0, so no hold phase is invented).
@@ -194,6 +196,7 @@ const MIS_ELBOW_DOT = Array.from({ length: 13 }, (_, k) => [0, MIS_ELBOW[1] + EL
 // in the end pose only). 141 px/m, 96% of the reference.
 const RACK_FRONT = 0.50, RACK_BACK = -0.50, RACK_H = 2.40;   // power rack uprights (world z) and height (m)
 const ARM_Y = BAR0[1] - 0.08;                                 // safety arms: 8 cm under the front-rack bar (c11)
+const HOOK_Y = BAR0[1] - BAR_R;                               // J-hook bearing surface: the front-rack bar's underside (c1, c11)
 const PLATE_TOP = Math.max(BAR1[1] + 0.225, RACK_H), TOP_PX = 16;
 const CAMERA = { pxPerM: Math.min(REF_CAMERA.pxPerM, (REF_CAMERA.y0 - TOP_PX) / PLATE_TOP), x0: 179, y0: REF_CAMERA.y0 };
 
@@ -203,7 +206,7 @@ export default {
   poses: { start, via, end },
   equipment: [
     { type: 'floor', from: -0.75, to: 0.75 },
-    ...safetyArms({ front: RACK_FRONT, back: RACK_BACK, armY: ARM_Y, h: RACK_H }),
+    ...safetyArms({ front: RACK_FRONT, back: RACK_BACK, armY: ARM_Y, h: RACK_H, hookY: HOOK_Y }),
     // the 45 cm plate outline at the lockout only (four overlapping plate circles hid the head); the 50 mm sleeve dot
     // in every pose, so the start, ghosts and end bar positions read along the vertical path
     (lm, ctx) => [

@@ -16,6 +16,11 @@
 //  - Feet FOOT_X apart, toes slightly out (c1 sets no width): the knees then clear the pad, so the bench pad and post
 //    show between the shins and the shoulders beside the knees. The camera has no pitch (orthographic, horizontal), so
 //    the thighs hide the lower torso; a raised foot-end camera would show the chest and head (engine change, not made).
+//    Critic 10-02 R1 ("shorten the shins, knee tops at y 890-895 of the 780 px shot") is not met, by that limit: the
+//    rounded tops at y ~852 are the thigh roots (hip joints y 878, thigh hip-end radius 0.048 H = 24 px), not the
+//    knees (knee joints y 899, already over the feet: 346/434 vs ankles 347/433). The hips rest on the 43 cm pad, so
+//    no foot or knee placement lowers them (feet 18 cm further out drops the knees 16 px, tops unchanged); segment
+//    lengths and the camera pitch live in the locked engine (vendor/engine/body.mjs WINTER/RADII, plate.mjs makeCamera).
 // Sources: research card docs/research/howto/cards/dumbbell_fly.json (pilot-a/cards, verified), claims c1 (flat
 // bench, feet flat), c2 (blades down and back, five-point contact), c3 (start: dumbbells pressed up to shoulder width,
 // palms facing, slight elbow bend, neutral wrists), c4 (lower in a wide arc until the dumbbells are level with the

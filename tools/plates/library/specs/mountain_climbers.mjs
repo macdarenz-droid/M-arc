@@ -103,7 +103,8 @@ const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   hand: 'flat',
   id: 'mountain_climbers', name: 'Mountain Climbers', view: 'side', facing: 'right',
-  camera: { x0: 215, y0: 290 },
+  camera: { x0: 205, y0: 339 },   // floor at the approved framing (REF_CAMERA y0, as plank, critic 10-02); scale unchanged.
+                                  // x0 205 (was 215) and the boxed hands label: lower, the auto-placed label hit the plate edge
   poses: { start, via, end },
   equipment: [{ type: 'floor', from: -1.3, to: 0.55 }],
   checks: [
@@ -121,7 +122,7 @@ export default {
   trace: { point: 'knee.r', trim: [10, 12] },
   datum: [{ x: 0, from: 0, to: 0, line: LINE }],
   callouts: [
-    { key: 'hands', text: 'Hands under<br>shoulders', anchor: 'wrist.r', cue: 'Arms straight, hands right under the shoulders.' },
+    { key: 'hands', text: 'Hands under<br>shoulders', anchor: 'wrist.r', box: { left: 248, top: 282 }, cue: 'Arms straight, hands right under the shoulders.' },
     { key: 'line', text: 'Straight line', anchor: 'backUpper', cue: 'Keep one straight line from the back of the head to the heels.' },
     { key: 'knee', text: 'Knee to chest', anchor: 'knee.r', cue: 'Bring one knee toward the chest, then switch legs.' },
   ],

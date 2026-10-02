@@ -108,7 +108,7 @@ const onFloor = (landmark, tol = 0.5) => ({ landmark, plane: FLOOR, pose: 'all',
 
 export default {
   id: 'plank', name: 'Plank', view: 'side', facing: 'right',
-  camera: { x0: 205, y0: 250 },
+  camera: { x0: 205, y0: 339 },   // floor at the approved framing (REF_CAMERA y0, critic 10-02 R7); scale unchanged
   poses: { start, end },
   equipment: [{ type: 'floor', from: -1.35, to: 0.6 }],
   checks: [

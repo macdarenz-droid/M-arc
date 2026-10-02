@@ -106,9 +106,11 @@ const START_PHANTOM = (() => {
 })();
 
 // Mistake (card plate.mistake, c6): "stopping short: the handles finish well apart in front of the chest (partial
-// range)". The card gives no gap, so MIS_ANGLE stops the sweep with the hands about in front of the shoulders
-// (grip centres ~50 cm apart), a gap that reads at 390 px. Guide: a dimension line under the faulty hands.
-const MIS_ANGLE = 85;
+// range)". The card gives no gap, so MIS_ANGLE stops the sweep 67 deg from the side line (grip centres ~97 cm apart,
+// each hand ~26 cm outside its shoulder): the red dashed forearms, hands and handles then show at the stop, with the red
+// levers slanting out from the pivots, clear of the frame posts (critic 10-02 R5: at 85 deg the arms pointed at the
+// camera and the red levers ran down the posts). Guide: a dimension line under the faulty hands.
+const MIS_ANGLE = 67;
 const mistakePose = { reach: armsAt(MIS_ANGLE) };
 const GAP_Y = HANDLE_Y - GRIP / 2 - 0.05, gM = gripAt(MIS_ANGLE);
 const GAP = [[gM[0], GAP_Y, gM[2]], [-gM[0], GAP_Y, gM[2]]];

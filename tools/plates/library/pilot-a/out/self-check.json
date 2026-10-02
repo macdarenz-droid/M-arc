@@ -1,8 +1,8 @@
 {
- "pageSha": "895e92fa3c002a7ea899a7f89dc60b7427de00004d8fd05d46e3eb6aa882923b",
- "pageBytes": 1736415,
- "sheetSha": "72f3ef3d45f1c577b26971f77d790b0b2bacba90109187987a5d39f69018119f",
- "sheetBytes": 3691392,
+ "pageSha": "dd253f6d349c0e0991af558aea4b0fef3d2c44ccb50f620cc72266e2b87571d4",
+ "pageBytes": 1736759,
+ "sheetSha": "09e9f21c592e9167bd3b7f2e5f8a46839fa4fc92a2bd20b629866ff0781788db",
+ "sheetBytes": 3691228,
  "warnings": "",
  "plates": [
   {
@@ -112,7 +112,7 @@
    "flags": [],
    "measures": {
     "pxPerM": 134.58,
-    "coverage": 0.183,
+    "coverage": 0.184,
     "longestLeader": 75.8,
     "boxed": 3
    },
@@ -226,8 +226,8 @@
    ],
    "measures": {
     "pxPerM": 146.29,
-    "coverage": 0.111,
-    "longestLeader": 15.5,
+    "coverage": 0.112,
+    "longestLeader": 71.1,
     "boxed": 0
    },
    "issues": []
@@ -242,8 +242,8 @@
    "measures": {
     "pxPerM": 146.29,
     "coverage": 0.112,
-    "longestLeader": 33.4,
-    "boxed": 0
+    "longestLeader": 44,
+    "boxed": 1
    },
    "issues": []
   },
