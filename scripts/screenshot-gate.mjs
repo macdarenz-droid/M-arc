@@ -7394,7 +7394,11 @@ for (const theme of ['silent-black', 'paper']) {
             return btns.length;
           });
           if (!opened) break;
-          await H.settleApp(page);
+          // HT-8's feel rows keep their finished entry animation (fill: forwards) in document.getAnimations(), so
+          // H.settleApp's "no animation at all" never comes true here: wait until none is running (D-HT9-C19-settle)
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForFunction(() => document.getAnimations().every(a => a.playState !== 'running' && !a.pending), null, { timeout: 8000 });
+          await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
         }
         const found = await page.evaluate(([pats, words, disclaimer]) => {
           const dlg = document.querySelector('dialog.sheet.ht');
@@ -7538,7 +7542,8 @@ for (const theme of ['silent-black', 'paper']) {
 //   injected fixture) must be reported;
 // - HT-3b A3 split: Setup and Risks are inserted in a later frame than the plate (never inside the timed open);
 // - A5: the HT-3 plate compare (L2b, F3, L3) still passes after the sheet was scrolled to the end and every
-//   collapsed control (details, aria-expanded="false", zoom chips aside) was opened (Silent Black and Paper).
+//   collapsed control (details, aria-expanded="false", zoom chips aside) was opened (Silent Black and Paper); HT-8's
+//   feel rows are golden B's accordion, so exactly one row per feel section is open (D-HT9-A5-feel).
 {
   const tag = 'HT-9';
   const t0 = Date.now();
@@ -7705,17 +7710,32 @@ for (const theme of ['silent-black', 'paper']) {
     // A5: the HT-3 plate compare after the sheet was scrolled to the end and everything collapsed was opened
     const openAll = async () => {
       const A = 'dialog.sheet.ht';
-      const wait = f => new Promise((r, j) => { const t0 = performance.now(); const k = () => (f() ? r() : performance.now() - t0 > 5000 ? j(new Error('HT-9 A5: Setup/Risks never mounted')) : requestAnimationFrame(k)); k(); });
+      const wait = (f, what = 'Setup/Risks never mounted') => new Promise((r, j) => { const t0 = performance.now(); const k = () => (f() ? r() : performance.now() - t0 > 5000 ? j(new Error(`HT-9 A5: ${what}`)) : requestAnimationFrame(k)); k(); });
       await wait(() => document.querySelector(`${A} .ht-disclaimer`) && document.querySelector(`${A} .setup`));
       const panel = document.querySelector(`${A} .sheet-panel`);
+      // HT-8's feel section loads once it comes near: scroll to it and wait, so its rows are opened too
+      panel.scrollTop = panel.scrollHeight;
+      await wait(() => document.querySelector(`${A} .feel .fr-btn`), 'the feel section never mounted');
       for (let i = 0; i < 4; i++) {
         document.querySelectorAll(`${A} details:not([open])`).forEach(d => { d.open = true; });
-        document.querySelectorAll(`${A} [aria-expanded="false"]:not(.zx-chip)`).forEach(b => b.click());
+        document.querySelectorAll(`${A} [aria-expanded="false"]:not(.zx-chip):not(.fr-btn)`).forEach(b => b.click());
+        // HT-8's feel rows are golden B's accordion (one open at a time): open the last row of each feel section
+        document.querySelectorAll(`${A} .feel`).forEach(f => { const r = [...f.querySelectorAll('.fr-btn')].pop(); if (r?.getAttribute('aria-expanded') === 'false') r.click(); });
         panel.scrollTop = panel.scrollHeight;
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       }
       if (panel.scrollTop < 1 || panel.scrollTop + panel.clientHeight < panel.scrollHeight - 1) throw new Error(`HT-9 A5: the sheet did not scroll to the end (${panel.scrollTop}/${panel.scrollHeight})`);
-      if (document.querySelectorAll(`${A} [aria-expanded="false"]:not(.zx-chip), ${A} details:not([open])`).length) throw new Error('HT-9 A5: a collapsed control stayed closed');
+      if (document.querySelectorAll(`${A} [aria-expanded="false"]:not(.zx-chip):not(.fr-btn), ${A} details:not([open])`).length) throw new Error('HT-9 A5: a collapsed control stayed closed');
+      // every feel section has exactly one open row (D-HT9-A5-feel)
+      for (const f of document.querySelectorAll(`${A} .feel`)) if (f.querySelectorAll('.fr-btn[aria-expanded="true"]').length !== 1) throw new Error('HT-9 A5: a feel section does not have exactly one row open');
+      // HT-8's feel rows keep their finished entry animation (fill: forwards), which the harness's settleApp ("no
+      // animation at all") would wait on forever, and the harness's section hide/restore around each capture restarts
+      // it: each finished one inside the feel section has its end state written inline and is dropped, now and every
+      // time it ends again, so the page looks exactly the same (D-HT9-C19-settle)
+      const drop = el => { for (const a of el.getAnimations()) if (a.playState === 'finished') { a.commitStyles(); a.cancel(); } };
+      document.addEventListener('animationend', e => { if (e.target.closest?.('.feel')) drop(e.target); }, true);
+      await wait(() => document.getAnimations().every(a => a.playState !== 'running' && !a.pending), 'an animation kept running');
+      for (const a of document.getAnimations()) if (a.playState === 'finished' && a.effect?.target?.closest?.('.feel')) { a.commitStyles(); a.cancel(); }
     };
     const a5 = await H.ht3Fidelity(ht9, PORT, { themes: H.HT_FULL, full: [], widths: [], mutate: openAll });
     stats.a5 = a5.stats.pairs;
