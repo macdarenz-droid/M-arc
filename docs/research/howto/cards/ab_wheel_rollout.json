@@ -1,0 +1,624 @@
+{
+ "id": "ab_wheel_rollout",
+ "libId": "lib_ab_wheel_rollout",
+ "name": "Ab Wheel Rollout",
+ "family": "Anti-extension and static core",
+ "tier": "A",
+ "tierNote": "Safety tier A (content.md appendix B); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "push",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Kneel on a soft pad with the hands on the ab wheel, about shoulder-width apart, the wheel on the floor just in front of the knees.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-abwheel",
+    "sl-abex",
+    "bb-bestab"
+   ],
+   "quotes": [
+    {
+     "source": "sl-abwheel",
+     "text": "Sit with your knees on a soft pad, and place the ab wheel on the floor in front of you.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "sl-abex",
+     "text": "Start by kneeling on the floor with your hands on the ab wheel, placed directly in front of your knees.",
+     "where": "Ab wheel rollout, how to"
+    },
+    {
+     "source": "bb-bestab",
+     "text": "Kneel and grip a wheel or barbell, loaded with round plates, with your hands set shoulder-width apart.",
+     "where": "Ab rollout, how to"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Brace the core and slowly roll the wheel forward until the body is a straight line from knees to head, keeping the back straight the whole time.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-abex",
+    "sl-abwheel"
+   ],
+   "quotes": [
+    {
+     "source": "sl-abex",
+     "text": "Engage your core and slowly roll the wheel forward until your body forms a straight line from your knees to your head.",
+     "where": "Ab wheel rollout, how to"
+    },
+    {
+     "source": "sl-abex",
+     "text": "Be sure to keep your back straight and your core engaged throughout the entire movement.",
+     "where": "Ab wheel rollout, how to"
+    },
+    {
+     "source": "sl-abwheel",
+     "text": "Roll out as far as you can, and maintain a straight back throughout the movement.",
+     "where": "How to, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "As the arms reach forward overhead and the chest sinks toward the floor, do not let the low back arch.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bestab"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bestab",
+     "text": "Extend your hips toward the floor and let your chest sink forward toward the ground. Avoid arching your lower back as you extend your arms above your head.",
+     "where": "Ab rollout, how to"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Roll the wheel back toward the knees with control, pulling with the lats, to the start.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-abwheel",
+    "bb-bestab"
+   ],
+   "quotes": [
+    {
+     "source": "sl-abwheel",
+     "text": "Reverse the movement with control, and return to the starting position.",
+     "where": "How to, step 3"
+    },
+    {
+     "source": "bb-bestab",
+     "text": "Squeeze your lat muscles and pull yourself back to the starting position.",
+     "where": "Ab rollout, how to"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Move slowly: rolling out too fast raises the risk of the trunk twisting or arching. Start each rep with the core and glutes, not by pushing the wheel with the arms.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-abrollouts"
+   ],
+   "quotes": [
+    {
+     "source": "bb-abrollouts",
+     "text": "Tempo is important. Rolling out too fast and rushing through this movement can increase your risk of torso rotation/extension.",
+     "where": "Key takeaways"
+    },
+    {
+     "source": "bb-abrollouts",
+     "text": "Every rep cue yourself to squeeze the glutes and initiate the movement with the core, as opposed to starting the roll with the arms.",
+     "where": "Key takeaways"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "The rollout carries an inherent risk of injury and, without proper progressions, can injure the low back. One coach's readiness test: a one-minute plank with about 5-11 kg (10-25 lb), or an easy one-minute hollow-body hold.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-abrollouts"
+   ],
+   "quotes": [
+    {
+     "source": "bb-abrollouts",
+     "text": "The ab rollout is a slightly tougher core exercise, and without proper progressions can actually increase injury to areas like the lower back.",
+     "where": "Intro"
+    },
+    {
+     "source": "bb-abrollouts",
+     "text": "This is an exercise that comes with an inherent risk of injury, so they shouldn’t be performed haphazardly in a program.",
+     "where": "Key takeaways"
+    },
+    {
+     "source": "bb-abrollouts",
+     "text": "If you can hold a weighted plank with (10-25 lbs) for a minute, then there’s a good chance you can experiment with ab rollouts safely. Second, if you can perform a hollow body hold for a minute with ease.",
+     "where": "Readiness"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Progress by range: start with a short roll-out and go further as you get stronger; rolling against a wall sets a fixed stop, moved further away over time. Kneeling is the easier version; rolling out from the feet is much harder and suits experienced lifters.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-abrollouts",
+    "bb-bestab",
+    "sl-coreex",
+    "sl-abwheel",
+    "sl-abex"
+   ],
+   "quotes": [
+    {
+     "source": "bb-abrollouts",
+     "text": "try moving through a limited set range of motion before working to your full extension on the ab wheel.",
+     "where": "Progressions, ab wheel"
+    },
+    {
+     "source": "bb-bestab",
+     "text": "The farther forward you roll out from your body, the harder the move will be. So shorten your range of motion if need be.",
+     "where": "Ab rollout, coach's tip"
+    },
+    {
+     "source": "sl-coreex",
+     "text": "you can limit your range of motion by performing kneeling ab-wheels facing a wall. Have the wall stop you at a suitable distance, and then work on increasing your distance to the wall over time.",
+     "where": "Ab wheel roll-out"
+    },
+    {
+     "source": "sl-abwheel",
+     "text": "The exercise is easier when done on your knees, and harder when on your feet.",
+     "where": "Commentary"
+    },
+    {
+     "source": "sl-abex",
+     "text": "It’s suitable for experienced fitness enthusiasts looking for an even greater challenge.",
+     "where": "Regular vs kneeling"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Two people suffered spinal cord injury after falling during a standing rollout while drunk; the case report warns that misuse of ab rollers can cause extremely serious disability.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "yamane-2023"
+   ],
+   "quotes": [
+    {
+     "source": "yamane-2023",
+     "text": "In both cases, injuries occurred during the standing rollout by a patient in an inebriated state",
+     "where": "abstract, case presentation"
+    },
+    {
+     "source": "yamane-2023",
+     "text": "Because the use of abdominal rollers may result in extremely serious disabilities, it is necessary to emphasize the appropriate use of such equipment.",
+     "where": "abstract, conclusion"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "The abs are the target: the rectus abdominis holds the body straight, the obliques keep the upper body stable, the deep abs work, and the lats and chest also work.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-abwheel",
+    "sl-abex",
+    "bb-bestab"
+   ],
+   "quotes": [
+    {
+     "source": "sl-abwheel",
+     "text": "Primary muscles worked: Abs Secondary muscles worked: Obliques",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "sl-abex",
+     "text": "Your rectus abdominis gets a thorough thrashing as it works overtime to keep your entire body straight as you roll out and to bring you back to the starting position.",
+     "where": "Muscles worked"
+    },
+    {
+     "source": "sl-abex",
+     "text": "The internal and external oblique muscles are fully engaged to keep your upper body stable during the movement.",
+     "where": "Muscles worked"
+    },
+    {
+     "source": "bb-bestab",
+     "text": "Muscles Worked Abdominals, lats",
+     "where": "Ab rollout box"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "In an EMG study of 21 adults, the roll-out on a wheel device (the Power Wheel) was among the exercises with the highest upper and lower abdominal, internal oblique and lat activity, while low-back muscle activity was low; applied to the ab wheel by similarity.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "escamilla-2006"
+   ],
+   "quotes": [
+    {
+     "source": "escamilla-2006",
+     "text": "Upper and lower rectus abdominis, internal oblique, and latissimus dorsi muscle EMG activity were highest for the Power Wheel (pike, knee-up, and roll-out), hanging knee-up with straps, and reverse crunch inclined 30 degrees.",
+     "where": "abstract, results"
+    },
+    {
+     "source": "escamilla-2006",
+     "text": "Lumbar paraspinal muscle EMG activity was low and similar among exercises.",
+     "where": "abstract, results"
+    },
+    {
+     "source": "escamilla-2006",
+     "text": "Twenty-one men and women who were healthy and between 23 and 43 years of age were recruited for this study.",
+     "where": "abstract, subjects"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Sets and reps: 2-4 sets of 5-10.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bestab"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bestab",
+     "text": "Sets & Reps 2-4 x 5-10",
+     "where": "Ab rollout box"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "sl-abwheel",
+   "url": "https://www.strengthlog.com/kneeling-ab-wheel-roll-out/",
+   "title": "How to Do Kneeling Ab Wheel Roll-Out: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null
+  },
+  {
+   "id": "sl-abex",
+   "url": "https://www.strengthlog.com/ab-exercises/",
+   "title": "The 10 Best Ab Exercises for Muscle and Strength – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null
+  },
+  {
+   "id": "sl-coreex",
+   "url": "https://www.strengthlog.com/core-exercises/",
+   "title": "The 10 Best Core Exercises for Muscle & Strength – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null
+  },
+  {
+   "id": "bb-bestab",
+   "url": "https://barbend.com/best-ab-exercises/",
+   "title": "12 Best Ab Exercises and Workouts for Strength | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null
+  },
+  {
+   "id": "bb-abrollouts",
+   "url": "https://barbend.com/ab-rollouts/",
+   "title": "The Benefits of Ab Rollouts and Progressions to Perform Them | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null
+  },
+  {
+   "id": "escamilla-2006",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16649890/",
+   "title": "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training.",
+   "kind": "peer-reviewed",
+   "year": 2006,
+   "pmid": 16649890
+  },
+  {
+   "id": "yamane-2023",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37780607/",
+   "title": "Spinal cord injury without radiological abnormality due to a fall while using an abdominal roller: A report of two cases.",
+   "kind": "peer-reviewed",
+   "year": 2023,
+   "pmid": 37780607
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the knees-to-head line (c2), the low-back arch fault (c3) and the roll distance (c7) read from the side.",
+  "equipment": "Ab wheel composed (census 'abWheel', compose): a small wheel with a handle each side; a soft pad under the knees (c1); floor line.",
+  "start": "Kneeling on the pad, hands on the wheel handles about shoulder-width, wheel on the floor just in front of the knees (c1); core braced (c2).",
+  "end": "Rolled out: arms reaching forward overhead, chest low toward the floor, body a straight line from knees to head, low back not arched (c2, c3). Drawn at a moderate roll-out, the kneeling version (c7).",
+  "checkpoints": [
+   {
+    "label": "Straight line",
+    "what": "Knees to head in one line; back straight.",
+    "claim": "c2"
+   },
+   {
+    "label": "No back arch",
+    "what": "Low back doesn't arch as you reach.",
+    "claim": "c3"
+   },
+   {
+    "label": "Roll slowly",
+    "what": "Slow and controlled, out and back.",
+    "claim": "c5"
+   }
+  ],
+  "mistake": {
+   "what": "Low back arching (sagging toward the floor) at the far end of the roll-out.",
+   "why": "BarBend says avoid arching the low back (c3), that rolling out too fast raises the risk of extension (c5), and that without progressions the rollout can injure the low back (c6). No source ranks rollout faults.",
+   "claim": [
+    "c3",
+    "c5",
+    "c6"
+   ],
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Back stays straight all the way",
+    "claim": "c2"
+   },
+   {
+    "text": "The roll-out stays slow and steady",
+    "claim": "c5"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 0,
+   "claim": [
+    "c2",
+    "c4",
+    "c5"
+   ],
+   "text": "Drawing convention: 'down' is the roll-out, slow (c2, c5); 'up' is the roll back, controlled (c4). No source gives seconds."
+  },
+  "variantLine": "Kneeling version drawn (c1, c7). The standing roll-out is the hard version for experienced lifters (c7) and the one in the fall cases (c8)."
+ },
+ "grip": {
+  "type": "Both hands on the ab wheel's handles (c1).",
+  "width": "About shoulder-width (c1).",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "",
+  "claims": [
+   "c1"
+  ],
+  "note": "No rollout source gives the thumb, wrist or how the handle sits in the hand; listed in gaps for the push archetype check (LIB-12 hand pair)."
+ },
+ "setup": [
+  {
+   "step": "Kneel on a soft pad.",
+   "claim": "c1"
+  },
+  {
+   "step": "Hands on the wheel, about shoulder-width.",
+   "claim": "c1"
+  },
+  {
+   "step": "Wheel on the floor just in front of your knees.",
+   "claim": "c1"
+  },
+  {
+   "step": "Brace your core and squeeze your glutes.",
+   "claim": [
+    "c2",
+    "c5"
+   ]
+  },
+  {
+   "step": "New to it? Roll toward a wall that stops you.",
+   "claim": "c7"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Roll out slowly.",
+   "claim": "c5"
+  },
+  {
+   "point": "Knees to head in one straight line.",
+   "claim": "c2"
+  },
+  {
+   "point": "Low back doesn't arch.",
+   "claim": "c3"
+  },
+  {
+   "point": "Start with your core, not your arms.",
+   "claim": "c5"
+  },
+  {
+   "point": "Pull back with your lats, under control.",
+   "claim": "c4"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Low back arching at the far end.",
+   "fix": "Roll out less far.",
+   "claim": [
+    "c3",
+    "c7"
+   ]
+  },
+  {
+   "mistake": "Rolling out too fast.",
+   "fix": "Slow down so you control every inch.",
+   "claim": "c5"
+  },
+  {
+   "mistake": "Starting with the standing version.",
+   "fix": "Build up on your knees with a short roll-out.",
+   "claim": [
+    "c6",
+    "c7"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "core",
+    "claim": "c9"
+   },
+   {
+    "muscleId": "abs",
+    "claim": "c9"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "lats",
+    "claim": [
+     "c9",
+     "c10"
+    ]
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "lower_back",
+    "claim": "c6"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Front of the belly",
+    "means": "Your abs are holding your body straight.",
+    "fix": "",
+    "claim": "c9",
+    "redFlag": null
+   },
+   {
+    "where": "Under the arms",
+    "means": "Your lats pull you back in.",
+    "fix": "",
+    "claim": [
+     "c4",
+     "c9"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Low back",
+    "means": "Your back is arching on a roll-out that's too long or fast.",
+    "fix": "Roll out less far and slower.",
+    "claim": [
+     "c3",
+     "c5",
+     "c6",
+     "c7"
+    ],
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Rolling out too far or too fast can strain the low back.",
+   "claim": [
+    "c5",
+    "c6"
+   ]
+  },
+  {
+   "risk": "A fall in a standing rollout has caused serious spine injury.",
+   "claim": "c8"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "back-line",
+   "kind": "posture",
+   "right": "Straight line from knees to head.",
+   "wrong": "Low back arched, hips sagging.",
+   "claim": [
+    "c2",
+    "c3"
+   ]
+  },
+  {
+   "key": "range",
+   "kind": "posture",
+   "right": "Short roll-out you fully control.",
+   "wrong": null,
+   "claim": "c7"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "core and abs primary, lats secondary fit the sources (c9, c10). StrengthLog also names the obliques and the chest; front_delts stays a stabilizer (no source for or against)."
+ },
+ "anchorSource": "sl-abex",
+ "loadProgression": {
+  "text": "Lengthen the roll-out step by step; move to the standing version only when experienced.",
+  "claim": "c7"
+ },
+ "tierA": {
+  "wayOut": null,
+  "safetyPoints": [
+   "Load progression by range and kneeling-to-standing: c7, with the readiness test c6.",
+   "Range limiter: rolling toward a wall that stops the wheel (c7).",
+   "Safeties or J-hooks: not applicable.",
+   "Bar path clear of the neck: not applicable (no bar)."
+  ]
+ },
+ "gaps": [
+  "Way out (LR-3, LIB-WAYOUT): what to do when you can't roll back (lowering to the floor safely). No source found; no way-out line is shown.",
+  "Thumb and wrist on the wheel handles (push archetype, LIB-12 hand pair): no rollout source.",
+  "Fault ranking: no source names the most common rollout fault; the plate's mistake follows the low-back cue (c3, c5, c6)."
+ ],
+ "notes": [
+  "Anchor: StrengthLog's ab-exercises page (sl-abex) has the fullest how-to and muscles; its kneeling-rollout page (sl-abwheel) is short. Both read in full. BarBend has no single ab-wheel page (404); its best-ab-exercises and ab-rollouts pages are used.",
+  "c10 is the Power Wheel roll-out (a different wheel device), applied by similarity (MECH); StrengthLog cites the same paper for the ab wheel.",
+  "c8 is a two-case report; the shown risk line keeps 'has caused' and does not give a rate. The fall cases were standing rollouts after drinking; no line on alcohol is shown.",
+  "The back row restates the sources' own fault and fix (c3, c5, c6, c7), no added cause (LR-6); the back box link stays pending (LR-26, LR-27).",
+  "Range zoom wrong is null (LR-25)."
+ ]
+}
