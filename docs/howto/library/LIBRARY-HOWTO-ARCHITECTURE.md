@@ -1,6 +1,6 @@
 # Library How-to: architecture for all 153 exercises
 
-Written 2026-09-30 for the owner and the supervisor. Nothing in any repo was changed.
+Written 2026-09-30 for the owner and the supervisor. Approval and forecasting notes updated 2026-10-02; implementation scope and quality criteria are unchanged.
 Base: the judges' winner `design-hybrid.md`, with the grafts both judges named and the four rule conflicts fixed (list
 at the end of this header). Numbers come from `census.json`, `content.md`, `pipeline.md`, the HT plan and code I read;
 **est.** marks my own arithmetic. Batch, template and pilot membership was checked by script
@@ -29,6 +29,12 @@ document in place.
 
 ---
 
+## Approval update (2026-10-02)
+
+The owner's 2026-10-01 delegation, recorded in [HANDOVER section 4.1](https://github.com/macdarenz-droid/M-arc/blob/main/docs/supervisor/HANDOVER.md#41-decisions-newest-first-within-each-group), supersedes this plan's older waits for owner approval of individual library sheets and exercises: the supervisor approves per exercise; the owner monitors every output and flags changes for the next batch. The calibrated blind critic (two approved plates and two planted defects), PQ hard checks, independent PR review and the supervisor's own look at every plate all remain required. Every batch's sheet and APK still go to the owner.
+
+Read older references to "owner-approved" library anchors, per-plate flags, conventions and sheet yeses under that delegation. Record the actual approver and decision; never label a supervisor approval as the owner's. It does not authorize lowering goldens, omitting failed checks or bypassing a denial. The named list that changes the 153-exercise release scope, real-device checks, publication, Worker deployment, keys, new kinds of data, paid services and spending remain owner-controlled. Existing build-ahead restrictions and merge order remain in force.
+
 ## 0. Summary for the owner
 
 - **What gets built:** the other 145 library exercises get the same full "How to do it" as your approved 8: the
@@ -37,25 +43,25 @@ document in place.
   that is worse than your 8 or doesn't match its research. Then a separate reviewer compares it with your 8. That
   reviewer must first catch a planted flaw.
 - **Order:** first a pilot sheet of 19 "pattern" plates, one for each new kind of pose, machine or rule (bench,
-  deadlift, lunge, plank, curl, front view). The other plates copy only patterns you have approved. Then 10 batches:
+  deadlift, lunge, plank, curl, front view). The other plates copy only approved patterns. Then 10 batches:
   pulls and machines close to your 8, presses, hinges and rows, squats and lunges, arms, Smith and cable machines,
   shoulders and push-ups, leg machines, core, conditioning.
-- **What you approve:** the pilot sheet (about an hour), then one sheet per batch about every 2 days (20-30 minutes
-  each), plus a small second pilot sheet with batch 2. You see the exact plates that get locked. Once you say yes, CI
-  proves on every change that the app still shows exactly that.
+- **Approval:** the supervisor checks and approves each exercise under your 10-01 delegation. You still receive
+  every pilot and batch sheet and APK to monitor the output. CI proves the app keeps the exact approved bytes;
+  anything you flag is fixed in the next batch.
 - **Layers** (grips, close-ups, feel map, setup, risks) use the design you already approved. They ship on
   the checks and on research that has been checked against its sources, and you see them on the next sheet and on
   your phone. Any new kind of drawing (flat palm, rope, front rack) is shown to you first.
 - **Accuracy:** every claim quotes its source and is checked by a separate reviewer. Your safety line stays word for
   word; sources and evidence labels are research data only, never shown (LR-23). There is no paid expert, no money and no new data.
-- **Your phone:** after each batch merges you get the APK. The button appears only on exercises you approved.
+- **Your phone:** after each batch merges you get the APK. The button appears only on accepted, integrated exercises.
   Exercises not yet done look exactly as they do today.
-- **Time:** it starts as soon as the current How-to tasks (up to HT-10) finish, and takes about 4½ weeks (best
-  about 3½, worst about 8). The Play Store build waits for all 153 and one final full check.
+- **Time:** library integration follows HT-10 and the plan's dependencies. Section 9 explains the provisional
+  estimate and the measured reforecast after LB1 and LB2. Library acceptance and Play Store launch have separate dates.
 - **Last resort:** if an exercise can't reach your 8's quality after two tries, it goes on a named list with
   pictures. The likely ones are side plank, Russian twist and bicycle crunch. At release you decide whether to wait
   or ship without its button. Nothing is dropped quietly.
-- **What I need now:** a yes to this plan. Section 8 has 10 small decisions, each with a default, so no work waits.
+- **Decisions:** use the 10-01 approval arrangement above; section 8 retains the plan's decisions and owner-only release controls.
 
 ---
 
@@ -336,9 +342,10 @@ the end pose, a moving `line` part, a raw-spec override, and a colour literal.
   - Each plate shows normal and Mistake, its anchor or closest approved plate beside it, a Paper thumbnail, the
     critic's scores and every flag.
   - New layer design kinds appear only on pilot sheets (2.3, 4.3).
-  - He answers per exercise ("all yes except X: note").
-  - Ids he doesn't pass stay `review`: no button, and they roll to the next sheet. The rest merge.
-- **Pin.** After his yes, the supervisor adds one `[golden update]` commit to `tests/howto/golden/library/<batch>.json`.
+  - The supervisor looks at every plate and records approval per exercise, with the calibrated critic and PQ evidence.
+  - Ids that do not pass stay `review`: no button, and they roll to the next sheet. The rest may merge through the unchanged gates.
+  - The owner receives the sheet and APK to monitor; his flags are fixed in the next batch.
+- **Pin.** After that approval, the supervisor adds one `[golden update]` commit to `tests/howto/golden/library/<batch>.json`.
   - There is one file per batch (and per pilot), so parallel batches never conflict at a chain tail.
   - Each file is a hash chain whose first entry names the current head entry of `GOLDEN.json`.
   - Entries:
@@ -348,7 +355,7 @@ the end pose, a moving `line` part, a raw-spec override, and a colour literal.
     - the template sha and the parent entry's hash;
     - the card stamp hash;
     - exemptions;
-    - `approvedBy: 'owner'`, his words, the date and `decision: D-LIB-<batch>`.
+    - the actual approver (`approvedBy: 'supervisor'` for delegated approvals), the decision, date and `decision: D-LIB-<batch>`; retain existing owner approvals as recorded.
 
   `library/MANIFEST.json` pins every source (specs, templates, composers, hands, renderer, howto specs) to its
   approving entry.
@@ -630,8 +637,8 @@ Legend: `*` tier A · (P:X) template parent of X · (T) template child · (D) de
 hand-authored · pA / pB = anchor approved on pilot A / pilot B.
 
 ### 6.1 Pilot sheets (anchors first)
-- **Pilot A, card LIB-8: 19 plates, 10 of them tier A.** Drawn in phase 0 if builder slots free up, otherwise on days
-  0-3.
+- **Pilot A, card LIB-8: 19 plates, 10 of them tier A.** Drawn in phase 0 where the plan permits and capacity is available; otherwise forecast its timing from the
+  remaining dependencies and actual capacity under section 9.
   - It must be answered before LB1's `straight_arm_pulldown` (hinge) and `inverted_row` (supine) start, and before
     any LB2 child. LB1's D plates need only the 8, so they can start first.
   - Plates:
@@ -728,20 +735,21 @@ Totals: 145 ids; D 13, P 12, T 44, H 76; tier A 47. Checked by script.
 ### 6.3 Flow per batch, and the owner's approval
 1. **Research.** Cards are verified and stamped one batch ahead (4.3).
 2. **Build.**
+   - Before bulk production, validate a representative end-to-end exercise and the family's highest-risk case; reuse approved patterns and isolate exceptions.
    - The builder opens a draft PR with a design note for H plates and new composers, before bulk building (the "plan
      hard cards" rule). The supervisor reads it at the next tick.
    - Plates pass PQ-H, and layers pass the lint and checks.
    - The PR carries `origin/main`, merged with a merge commit.
 3. **The visual critic** runs (3.4), then the fresh **PR reviewer**. The reviewer covers code, scope, tests that bite,
    and the reader's view with its planted layer defects.
-4. **Owner sheet:** the plates of that batch, about every 2 days, 20-30 min, per exercise.
+4. **Review sheet:** supervisor approval per exercise under 3.5, then the sheet to the owner for monitoring.
 5. **Pin, merge `main`, full CI verdict, merge** in checklist order. Then the APK from that green run goes to the
    owner, with the fingerprint step checked.
 
-**Stalled-batch rule (owner decision 8):** a batch waiting on its sheet for more than 2 days moves to the end of the
-checklist, so it doesn't block the batches behind it. Merge order otherwise never changes. This works because each
-batch card's dependency on the previous batch (section 7) is checklist order only; its real prerequisites are the
-"Needs before it" column of 6.2, and a batch jumps ahead only when those are met.
+**Sheet delays:** the older two-day owner-response assumption is superseded by delegated supervisor approval.
+A delay now names the responsible reviewer or supervisor, evidence and unblock condition. Do not reorder batches
+automatically because the owner has not replied. Keep section 7's merge order and explicit build restrictions;
+a merge-order-only dependency permits build-ahead only where the plan already allows it.
 
 ---
 
@@ -821,7 +829,7 @@ new paths, and merges its dependencies' heads in before review. It still **merge
 6. **Back-pain box** wording (NHS-sourced triggers, 30 words or fewer, a region-neutral "Get emergency help now."
    instead of the UK-only "Call 999"), on pilot A. *Default: the critic-checked draft.*
 7. **Text-only feel state** where no drawn muscle is honest, on pilot B. *Default: yes.*
-8. **Stalled-batch rule** (6.3). *Default: yes.*
+8. **Sheet delays** follow the updated approval arrangement and dependency rules in 6.3.
 9. **Flags** (zoom scale on shrugs, wrist curl and likely the calf raises; drawable-fault Mistakes), approved per
    plate on the sheets.
    *Default: approve as named exemptions.*
@@ -848,57 +856,31 @@ verbatim, and "next batch" (plan O4, answered by this plan).
 
 ## 9. Time estimate
 
-**Assumptions** (each can move the total):
-1. Pace, from the first 8:
-   - H plates and parents 4 Opus-hours each; D and T plates 1.5 h;
-   - composers 2 h;
-   - layer spec 2 h full, 1 h difference;
-   - QA, critic and fixes 0.75 h per id;
-   - research 1.5 h per full card, 0.5 h per difference card and 1 h per shared card.
-2. Builders do about 16 productive hours a day in auto mode, with at most 4 at once.
-3. A full CI run takes about 30-35 min, and each batch needs about 3.
-4. The owner answers a sheet within about 1 day. This is the largest unknown.
-5. About 2 real content errors per first draft, so one fix round.
-6. Opus usage limits hold for about 1,370 agent-hours over about 5 weeks. **Not verified.**
+The 09-30 estimate was about 1,370 agent-hours and 3½–8 weeks after HT-10 (central estimate about 4½ weeks).
+Those were planning assumptions, not measured delivery dates. They included an owner-sheet reply wait that the
+10-01 delegation removed. Do not reuse that calendar as a current promise or subtract the old wait mechanically:
+review, fixes, CI and integration can still be the bottleneck.
 
-**Effort (est., agent-hours):**
+**Measure delivery:** accepted, integrated exercise packages, with verified research, plates, every required layer,
+approval, review and CI evidence. Record the exact commit or build. A drawn plate, approved anchor or held exercise
+is not a delivered package. Report delivered, in progress and held separately; held ids remain in the full agreed
+153-exercise scope unless the owner approves the named list. This is a throughput measure, not a worker quota.
 
-| Work | Hours |
-|---|---|
-| Plates: 88 full-effort (76 H + 12 parents) × 4 + 57 light (13 D + 44 T) × 1.5 | ≈ 440 |
-| Composers: 30 (13 shared + 17 single-use, 2.1) × 2 | ≈ 60 |
-| Layers: 94 × 2 + 51 × 1 | ≈ 240 |
-| QA, critics and fixes 145 × 0.75 ≈ 110; PR reviewers, content critics and safety checks ≈ 50 | ≈ 160 |
-| Research: 94 × 1.5 + 51 × 0.5 + 19 × 1 | ≈ 190 |
-| Enablers and RC: LIB-1..7, 12, 20, 23, HT-11 | ≈ 170 |
-| Supervisor | ≈ 110 |
-| **Total** | **≈ 1,370, about 93 % Opus** |
+**Reforecast after LB1, then after LB2:** use their actual accepted-package throughput, review wait, fix rounds,
+CI queue/run time and integration time from existing PR and CI records. Include remaining research, engine and
+composer work, risk-heavy families, required device checks and LIB-23 acceptance. Separate overlapping work from
+serial dependencies and label missing measurements. State a range and its assumptions, including available review
+and CI capacity and usage interruptions; update it when those assumptions materially change.
 
-**Calendar (day 0 = HT-10 merged; est.):**
+**Dependencies:** HT-10 → LIB-1/LIB-2 → LIB-3/LIB-4 and the remaining prerequisites → LB1/LB2 → later batches →
+LIB-23. Section 7 controls the precise merge order and build-ahead restrictions. Pilot approvals are the supervisor's
+under the 10-01 delegation; unapproved anchors still block their dependants. HT-11, LIB-12 and LIB-20 remain the
+specific enablers for the later batches that need them. Research runs ahead only as allowed by the plan.
 
-| Day | Milestone |
-|---|---|
-| before 0 | phase 0: supervisor actions; research wave 0; LIB-3, LIB-6, LIB-7 and pilot A built in free slots; pilot A sheet to the owner; E-R5 spike |
-| 0-3 | LIB-1 (half a day); LIB-2; LB1 drawing from LIB-2's first push |
-| 3-6 | LIB-2..LIB-8 merge; LB1 sheet |
-| 7 | **LB1 on the phone** |
-| 9 | LB2 (pilot B shown with its sheet) |
-| 10-11 | LIB-11, HT-11, LIB-12; LB3 on day 11 |
-| 13-25 | LB4 day 13, LB5a/b days 14-15, LB6 day 17, LB7 day 19, LB8 day 21, LIB-20 day 21, LB9 day 23, LB10 day 25 |
-| 25-29 | LIB-23 release candidate, owner device checks, named list |
-
-- **Expected:** about 4½ weeks after HT-10 merges (the calendar's day 29, plus a few days of slack for fix rounds
-  and late sheet answers).
-- **Best:** about 3½, with pilot A approved before day 0 and same-day replies.
-- **Worst:** about 8, with CI pixel instability like HT-3's, E-R5 reworked, a convention rejected on pilot A, or Opus
-  throughput halved by usage limits.
-- **Checkpoint:** the supervisor re-projects after LB2 and tells the owner if the end date moved by more than a week.
-
-**Critical path:** HT-10 → LIB-2 → LIB-3/LIB-4 → (LIB-5..LIB-8 merges, each a CI cycle) → LB1 → LB2 → … → LB10 → LIB-23.
-- On the path: the owner's answer on pilot A before LB1's hinge and supine plates and LB2's children start, HT-11
-  before LB3, LIB-12 before LB4, and LIB-20 before LB9.
-- Off the path: research runs one batch ahead.
-- If phase 0 gets no free builder slot, pilot A moves to days 0-3 and the path grows by about 3 days.
+**Two dates:** forecast acceptance of the full library separately from store launch. The library estimate includes
+integration, independent review, fixes, full regression/QA on the exact finished release candidate and required
+device checks. Store publication also depends on the owner's release and Play steps. No store date follows merely
+from finishing the drawings or merging the batches.
 
 ---
 
@@ -915,8 +897,8 @@ verbatim, and "next batch" (plan O4, answered by this plan).
 | 7 | Renderer can't reproduce all 8 | Legacy scripts frozen for any it can't; the 5 `render-*` must reproduce; critic and owner flag for the affected family |
 | 8 | CI pixel instability (HT-3 red today) | Entry condition of 5 identical reruns; golden-vs-golden 0 px per shard; root-cause, never retry; the threshold never changes (plan R6) |
 | 9 | Gate time or queueing | Shards sized by measurement; verdict proves full coverage; changed-id shards on drafts; full runs on ready heads and main |
-| 10 | Opus usage limits or cost (≈ 1,370 h) | D and T modes, difference cards, one critic per batch, no duplicate checks; degraded calendar named (up to 8 weeks); re-projection after LB2 |
-| 11 | Owner review fatigue (12 sheets) | Anchors front-loaded, so batch sheets hold plates only; flagged and tier-A items first; per-exercise answers; stalled-batch rule |
+| 10 | Opus usage limits or cost (≈ 1,370 h) | D and T modes, difference cards, one critic per batch, no duplicate checks; range with measured assumptions; reforecast after LB1 and LB2 |
+| 11 | Review backlog | Supervisor per-exercise approval, calibrated critic and PQ checks; flagged and tier-A items first; sheets and APKs still reach the owner for monitoring; measure review wait |
 | 12 | Content accuracy at volume | Quote-backed claims, an independent critic, planted mistakes, 10 % re-fetch, tier-A safety checker, strict C15 stamps |
 | 13 | Thin evidence blocks an id late | The 10 thin ids are researched in phase 0; `blocked:evidence` reaches the owner early |
 | 14 | Size and first-launch cost | HT-11 before LB3; per-chunk ceilings; fixed per-exercise mean; HT-11b trigger; rehearsal measures SW precache on the APK |
@@ -924,7 +906,7 @@ verbatim, and "next batch" (plan O4, answered by this plan).
 | 16 | Editing other tasks' gate blocks | HT-10 amended before it is built; library runner built from HT-3's exports; control made data-driven in HT-3 (fallback: plan R17 authority, owner told) |
 | 17 | Merge conflicts on generated files | Per-batch golden files; per-file `inputsSha256`; regenerate, never hand-merge; checklist order |
 | 18 | Scratchpad loss | Verified cards and pilot specs pushed to `claude/libht-research` and the pilot branch as they pass |
-| 19 | M1 slips or phase-0 slots never free | The library starts at HT-10 regardless; pilot A then lands on days 0-3 (+3 days) |
+| 19 | M1 slips or phase-0 slots never free | The library starts at HT-10 regardless; reforecast the pilot delay from actual capacity and dependencies (section 9) |
 | 20 | Pressure from a Play Store date | The only relief valve is the owner's named list; nothing ships below the bar |
 | 21 | Android font scale distorts plates | O9 pass rule on every plate; checked on the RC APK |
 | 22 | A new How-to entry changes another task's gate block (many blocks seed library ids, e.g. bench press in BUG-15, LT-3 and plate-sense) | LIB-1 runs the full existing gate on an all-153 build and lists every change; the app side is fixed, and a block whose own assertion assumes "no How-to" goes to the supervisor for that task's decision, never a silent edit |
