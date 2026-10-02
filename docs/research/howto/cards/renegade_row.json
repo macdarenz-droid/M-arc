@@ -1,0 +1,635 @@
+{
+  "id": "renegade_row",
+  "libId": "lib_renegade_row",
+  "name": "Renegade Row",
+  "family": "Row (plank row)",
+  "tier": "A",
+  "tierNote": "Safety tier A (content.md 5.1, explosive or high-skill list); census.json difficulty tier 2.",
+  "archetype": {
+    "hand": "palm-flat",
+    "contact": [
+      "floor-body"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set up in a push-up position on a pair of dumbbells, hands shoulder-width apart in a neutral grip, feet wider than hip-width for a steadier base.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-rr"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-rr",
+          "text": "Step your feet back into a push-up position with your hands shoulder-width apart, gripping the pair of dumbbells with a neutral grip.",
+          "where": "How to, step 2"
+        },
+        {
+          "source": "ggr-rr",
+          "text": "Step your feet wider than hip-width apart for a more supportive base.",
+          "where": "How to, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hands under the shoulders, glutes squeezed to keep the lower back neutral, spine straight from head to glutes, legs straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-rr"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-rr",
+          "text": "Ensure your hands are underneath your shoulders, place your feet wider than hip-width apart, and squeeze your glutes to keep your lower back neutral. Your spine should be straight from head to glutes, and your legs straight.",
+          "where": "Technique tips: front plank"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The body stays in a straight line from head to heels.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-renegade"
+      ],
+      "quotes": [
+        {
+          "source": "sl-renegade",
+          "text": "Keep your body in a straight line from head to heels, feet slightly wider than hip-width for balance.",
+          "where": "How to, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Row one dumbbell toward the same-side hip until it brushes the ribcage and the shoulder blades come together, without much torso rotation.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-rr"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-rr",
+          "text": "Squeeze your glutes, engage your core, and row one dumbbell toward your same-side hip until the dumbbell touches your ribcage and your shoulder blades come together. Try to avoid excessive torso rotation.",
+          "where": "How to, step 4"
+        },
+        {
+          "source": "ggr-rr",
+          "text": "A good reference point is to row the dumbbell toward your hip until it brushes your ribcage.",
+          "where": "Technique tips: range of motion"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the elbow close to the body on the row, and lower the weight to the ground with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-renegade"
+      ],
+      "quotes": [
+        {
+          "source": "sl-renegade",
+          "text": "Brace your core and row one weight toward your ribcage, keeping your elbow close to your body.",
+          "where": "How to, step 3"
+        },
+        {
+          "source": "sl-renegade",
+          "text": "Lower the weight back to the ground with control.",
+          "where": "How to, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Hex dumbbells, with six flat sides, are steadier and don't roll; kettlebells or round dumbbells are harder.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-rr",
+        "bb-rr"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-rr",
+          "text": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it's more difficult.",
+          "where": "Technique tips: hex dumbbells"
+        },
+        {
+          "source": "bb-rr",
+          "text": "Grip a pair of dumbbells (ideally hexagonal dumbbells that won't roll).",
+          "where": "How to, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Some upper-body rotation happens, but too much loses the core work: widen the feet, and if the torso still twists away, use a lighter weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-rr",
+        "bb-rr"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-rr",
+          "text": "There will be some upper-body rotation, but you don't want too much, as this will make the exercise easier and you'll lose some of the core strengthening benefits. If you rotate excessively, get your feet further apart for a broader support base.",
+          "where": "Technique tips: rotation"
+        },
+        {
+          "source": "bb-rr",
+          "text": "Try not to let your torso twist too far away from the side you're rowing the dumbbell. If it does, use a lighter weight.",
+          "where": "How to, step 2, form tip"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Going too heavy makes the shoulder and hip hike up and back; if the dumbbell swings or the hips hike, use less weight, and start lighter than your usual row.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-rr",
+        "ggr-rr"
+      ],
+      "quotes": [
+        {
+          "source": "bb-rr",
+          "text": "If you're trying to pull too much weight with this lift, you'll likely hike your shoulder and hip up and back to accomplish the range of motion you need.",
+          "where": "Common mistakes: going too heavy"
+        },
+        {
+          "source": "bb-rr",
+          "text": "If you're swinging the dumbbell or hiking up your hips, then scale back the weight.",
+          "where": "How to, step 3"
+        },
+        {
+          "source": "ggr-rr",
+          "text": "Avoid this by starting with a lighter weight than your usual row variation.",
+          "where": "Common mistakes: going too heavy"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Dumbbells set down too hard, or onto a corner, can hurt the wrists; keep the wrists neutral and lower with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-rr",
+        "bb-rr"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-rr",
+          "text": "Not only will you lose the muscle-building tension, but you can hurt your wrists when the dumbbells slam to the ground.",
+          "where": "Common mistakes: going too heavy"
+        },
+        {
+          "source": "bb-rr",
+          "text": "To maintain your wrist health, you've got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
+          "where": "Common mistakes: landing too hard"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Kettlebells can tip over, which can injure the wrists or drop you face-first onto the floor; dumbbells are the better choice.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-rr"
+      ],
+      "quotes": [
+        {
+          "source": "bb-rr",
+          "text": "Yes. However, you need to be careful not to allow the kettlebells to tip over, which can result in wrist injuries or face planting onto the floor. Ideally, you would perform these with dumbbells.",
+          "where": "FAQ: kettlebells"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The lats and upper back do the rowing; the abs and obliques stabilise and resist rotation; the front delts, biceps and forearms also work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-rr",
+        "bb-rr",
+        "sl-renegade"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-rr",
+          "text": "The main muscles trained by the renegade row are latissimus dorsi, serratus anterior, rhomboids, middle traps, (upper back) obliques, rectus abdominis, anterior deltoids, biceps, and forearms.",
+          "where": "FAQ: muscles"
+        },
+        {
+          "source": "bb-rr",
+          "text": "Your abdominals and obliques are used in the renegade row as stabilizers and anti-rotational muscles.",
+          "where": "Muscles worked: core"
+        },
+        {
+          "source": "sl-renegade",
+          "text": "Primary muscles worked: Lats Trapezius Rear Deltoids Rotator Cuff",
+          "where": "Muscles worked (list)"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The point is a plank hold plus a row, with the core working to prevent rotation.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-renegade"
+      ],
+      "quotes": [
+        {
+          "source": "sl-renegade",
+          "text": "The renegade row combines a plank hold with a rowing motion, making it a challenging full-body exercise. It strengthens the upper back and arms while also demanding core stability and control to prevent rotation.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Harder: narrower feet or a push-up after each row. Easier: wider feet or hands raised; or row with no weight, even from the knees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-rr"
+      ],
+      "quotes": [
+        {
+          "source": "bb-rr",
+          "text": "Want to take it up a notch? Narrow your feet or add a push-up after each row. Want to make it easier? Widen your stance or elevate your hands even more.",
+          "where": "Who should do it"
+        },
+        {
+          "source": "bb-rr",
+          "text": "If you're not ready to add weight to the movement, you can simply practice a dynamic plank variation where you focus on keeping your body still as you row the air with your hands. You can even start on your knees if need be.",
+          "where": "Who should do it: beginners"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "For muscle: 3 to 4 sets of 8 to 10 reps per side, hips and shoulders kept square.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-rr"
+      ],
+      "quotes": [
+        {
+          "source": "bb-rr",
+          "text": "For Muscle: Do three to four sets eight to 10 reps per side, maintaining squared hips and shoulders.",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Keep tension as the weight lowers and don't let the body fall to that side; reset the plank between reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-rr",
+        "ggr-rr"
+      ],
+      "quotes": [
+        {
+          "source": "bb-rr",
+          "text": "Keep tension on the weight as you lower it. Be sure not to let your body fall to the same side.",
+          "where": "How to, step 3, form tip"
+        },
+        {
+          "source": "ggr-rr",
+          "text": "Reset between each rep to maintain a solid front plank position.",
+          "where": "Kettlebell variation, step 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bb-rr",
+      "url": "https://barbend.com/renegade-row/",
+      "title": "Build a Big Back and Strong Core at Once With the Renegade Row (BarBend)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null
+    },
+    {
+      "id": "ggr-rr",
+      "url": "https://www.garagegymreviews.com/how-to-do-a-renegade-row",
+      "title": "How To Do a Renegade Row (Garage Gym Reviews; certified personal trainer)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    },
+    {
+      "id": "sl-renegade",
+      "url": "https://www.strengthlog.com/renegade-row/",
+      "title": "How to Do Renegade Rows: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The straight head-to-heel line (c2, c3), the row path to the ribcage with the elbow close (c4, c5) and the hip hiking up (c8) read from the side; rotation, the point of the exercise, cannot be drawn (census note).",
+    "equipment": "Two hex dumbbells on the floor under the shoulders (c2, c6); floor line.",
+    "frames": "Rep convention: one row, from both hands on the dumbbells to the near dumbbell at the ribcage; Trace follows the near dumbbell.",
+    "start": "High plank on two hex dumbbells, neutral grip, hands under the shoulders (c1, c2, c6); feet wider than hip-width (c1); straight line from head to heels (c3).",
+    "end": "Near dumbbell rowed to the ribcage, elbow close to the body (c4, c5); the far arm straight on its dumbbell; hips and shoulders level, body line unchanged (c3, c14).",
+    "checkpoints": [
+      {
+        "label": "Straight line",
+        "what": "Head to heels in one line, glutes squeezed.",
+        "claim": [
+          "c2",
+          "c3"
+        ]
+      },
+      {
+        "label": "Feet wide",
+        "what": "Feet wider than hip-width for a steady base.",
+        "claim": "c1"
+      },
+      {
+        "label": "Row to ribs",
+        "what": "Elbow close, dumbbell to the ribcage.",
+        "claim": [
+          "c4",
+          "c5"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "The hip hikes up as the dumbbell is rowed.",
+      "why": "BarBend ties it to going too heavy (c8).",
+      "claim": "c8",
+      "drawable": true,
+      "rankNote": "Too much torso rotation (c7) is the fault the sources stress most, but it is top- or front-view only."
+    },
+    "tells": [
+      {
+        "text": "Dumbbell brushes your ribcage",
+        "claim": "c4"
+      },
+      {
+        "text": "Body stays straight, head to heels",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Lower with control, keeping tension (c5, c15); reset the plank between reps (c15). No source gives seconds.",
+      "claim": [
+        "c5",
+        "c15"
+      ]
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Neutral grip on a hex dumbbell handle (c1, c6).",
+    "width": "Hands shoulder-width, under the shoulders (c1, c2).",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "Wrists neutral (c9).",
+    "claims": [
+      "c1",
+      "c2",
+      "c6",
+      "c9"
+    ],
+    "note": "The census hand archetype is palm-flat; the sources put the hands on dumbbell handles in a neutral grip, so the hand pair is a closed grip on a handle. The plate needs a hand-pair key for a floor-supported dumbbell grip (LR-10). No source on thumb position."
+  },
+  "setup": [
+    {
+      "step": "Set two hex dumbbells under your shoulders and grip them, palms facing in.",
+      "claim": [
+        "c1",
+        "c2",
+        "c6"
+      ]
+    },
+    {
+      "step": "Step your feet back into a push-up position, wider than hip-width.",
+      "claim": "c1"
+    },
+    {
+      "step": "Squeeze your glutes and brace; body straight from head to heels.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
+    },
+    {
+      "step": "Row one dumbbell to your ribcage, elbow close.",
+      "claim": [
+        "c4",
+        "c5"
+      ]
+    },
+    {
+      "step": "Lower it with control, reset, and row the other side.",
+      "claim": [
+        "c5",
+        "c15"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Straight line from head to heels.",
+      "claim": "c3"
+    },
+    {
+      "point": "Feet wider than hip-width.",
+      "claim": "c1"
+    },
+    {
+      "point": "Hips and shoulders stay square.",
+      "claim": "c14"
+    },
+    {
+      "point": "Wrists straight.",
+      "claim": "c9"
+    },
+    {
+      "point": "Elbow close as you row.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Hip and shoulder hike up as you row.",
+      "fix": "Use a lighter weight.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Torso twists toward the rowing side.",
+      "fix": "Widen your feet; if it still twists, go lighter.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Dumbbell lands hard or on a corner.",
+      "fix": "Lower it with control; go lighter.",
+      "claim": [
+        "c9",
+        "c8"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "core",
+        "claim": [
+          "c11",
+          "c12"
+        ]
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Side of the back, under the arm",
+        "means": "Your lats row the weight.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Belly and sides",
+        "means": "Your core stops your body twisting.",
+        "fix": "",
+        "claim": [
+          "c11",
+          "c12"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Wrist pain",
+        "means": "Dumbbells set down hard or on a corner can hurt the wrists.",
+        "fix": "Lower with control and go lighter.",
+        "claim": "c9",
+        "redFlag": "wrist"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Dumbbells slammed down, or landing on a corner, can hurt your wrists.",
+      "claim": "c9"
+    },
+    {
+      "risk": "Kettlebells can tip over: wrist injuries or a fall onto your face.",
+      "claim": "c10"
+    },
+    {
+      "risk": "Too much weight makes your hip and shoulder hike up.",
+      "claim": "c8"
+    }
+  ],
+  "redFlags": [
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "dumbbell-grip",
+      "kind": "hand",
+      "right": "Neutral grip on a hex dumbbell, wrist straight.",
+      "wrong": "Dumbbell landing on its corner.",
+      "claim": [
+        "c1",
+        "c6",
+        "c9"
+      ]
+    },
+    {
+      "key": "row-path",
+      "kind": "posture",
+      "right": "Elbow close, dumbbell at the ribcage, hips level.",
+      "wrong": "Hip and shoulder hiked up to lift the weight.",
+      "claim": [
+        "c4",
+        "c5",
+        "c8"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: lats primary; core and mid_back secondary. The sources name the lats first, the upper back (rhomboids, traps) and the core as stabilisers (c11, c12). Matches; obliques, rear and front delts, biceps and forearms are also named but not proposed."
+  },
+  "anchorSource": "bb-rr",
+  "anchorNote": "BarBend's renegade row guide and Garage Gym Reviews' how-to (both by certified trainers) read in full, with StrengthLog's exercise page. No ACE or NASM page exists (NASM URL 404, 2026-10-02) and PubMed has no 'renegade row' paper.",
+  "loadProgression": {
+    "text": "Start lighter than your usual row; progress with narrower feet or a push-up after each row.",
+    "claims": [
+      "c8",
+      "c13"
+    ]
+  },
+  "tierA": {
+    "wayOut": null
+  },
+  "gaps": [
+    "Tier-A way out (LR-3): how to end a set safely from the plank when form fails (setting both dumbbells down, dropping to the knees). No source found; no way-out line is shown. Add to LIB-WAYOUT (dumbbell set-down).",
+    "Thumb position on the dumbbell handle (C4 wrapped-thumb rule applies to overBody and hang only; not sourced here)."
+  ],
+  "unsourced": [
+    "Breathing.",
+    "Seconds per rep.",
+    "How far apart the dumbbells sit, beyond shoulder-width."
+  ],
+  "notes": [
+    "Tier-A checks: way out in gaps (LR-3); load wording says go lighter (c7, c8, c9); the wrist row links the wrist box; 3 risk lines. No shared risk line applies (no bar over the face, no heavy two-leg lift, no jump).",
+    "No wrist-extension claim (Nance 2017): on dumbbell handles the wrist is neutral (c9), not bent back as in a plank on the palms."
+  ]
+}
