@@ -5,7 +5,7 @@
 //   3. every planted mutation turns its check (or flag) red, and the clean target does not raise it.
 // Run: MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/qa/selftest.mjs
 import { fileURLToPath } from 'node:url';
-import { launch, measureBrowserEnvelope } from './browser.mjs';
+import { browserResults, launch, measureBrowserEnvelope } from './browser.mjs';
 import { HARD, FLAGS, summary } from './index.mjs';
 import { measureNodeEnvelope, measureVocabulary } from './pin.mjs';
 import { BROWSER_MUTATIONS, NODE_MUTATIONS, cleanBase, prove } from './proof.mjs';
@@ -28,6 +28,18 @@ export async function selftest({ log = console.log } = {}) {
         log(`clean ${summary(r)}; exempted ${HARD.reduce((a, h) => a + r.hard[h].exempted.length, 0)}, exempt flags ${FLAGS.filter(f => r.flags[f].approved).join(',') || 'none'}`);
         if (!r.ok) bad.push(`clean ${r.id} is not ok: ${HARD.flatMap(h => r.hard[h].problems.map(p => `${h} ${p.key}`)).join('; ')} ${FLAGS.filter(f => r.flags[f].blocks).join(',')}`);
         if (r.unusedExemptions.length) bad.push(`clean ${r.id}: exemptions that match nothing: ${r.unusedExemptions.join(', ')}`);
+      }
+      // 2b. fixture: part ids with dots (thigh.l, eq1.dumbbell.0-0) are not CSS selectors; the browser half must resolve
+      //     them by id. The pull-up with one used part renamed to a `.0-0` id must measure exactly like the clean pull-up.
+      {
+        const from = 'pull-up-n-st-thigh.l', to = 'pull-up-n-st-thigh.l.eq1.dumbbell.0-0', html = base.html.replaceAll(`"${from}"`, `"${to}"`).replaceAll(`"#${from}"`, `"#${to}"`);
+        const c = base.cands.find(x => x.chromeId === 'pull-up');
+        let got;
+        try { got = (await browserResults(browser, html, [c], base.E, base.pins.envelope)).get(c.id); } catch (e) { got = { threw: e.message.split('\n')[0] }; }
+        const keys = r => r.threw ? [`threw: ${r.threw}`] : [...r.H1, ...r.H4, ...r.H5].map(p => p.key).sort(), want = keys(base.ctx.browser.get(c.id));
+        const ok = html !== base.html && same(keys(got), want);
+        log(`fixture dotted part id (${to}): ${ok ? 'measured like the clean pull-up' : `FAILED ${JSON.stringify(keys(got))}`}`);
+        if (!ok) bad.push(`fixture dotted part id: ${JSON.stringify(keys(got))} != ${JSON.stringify(want)}`);
       }
       // 3. mutations: every hard check and every flag has its own planted mutation (D-LIB3-flags ruling 2)
       const all = [...NODE_MUTATIONS, ...BROWSER_MUTATIONS], covered = new Set(all.map(m => m.check ?? m.flag));

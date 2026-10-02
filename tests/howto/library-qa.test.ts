@@ -160,6 +160,19 @@ describe('LIB-3 markup helpers', { timeout: T }, () => {
     expect(node.colourProblems('<mask id="a"><rect style="fill:#fff"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:style']);
     expect(node.colourProblems('<mask id="a" fill="#fff"><rect fill="#fff"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:#fff', 'H2.colour:t:fill=#fff']);
   });
+  it('H3 deviation measures the same body point in both poses, also for an explicit-pose anchor (pilot A item 2)', () => {
+    const c = base.cands.find((x: any) => x.chromeId === 'pull-up'), R = node.rendersOf(c, base.E);
+    const withTells = (anchors: any[]) => ({ ...c, spec: { ...c.spec, mistake: { ...c.spec.mistake, tells: anchors.map((anchor, i) => ({ key: `t${i}`, text: 'x', anchor })) } } });
+    const implicit = node.deviation(withTells(['knee.r']), base.E, R);
+    expect(implicit).toBeGreaterThan(0);
+    // the same body point written with an explicit pose, as an `at` ref, an `along` ref and a "pose:landmark" string
+    const forms = [{ at: 'knee.r', pose: 'mistake' }, { at: 'knee.r', pose: 'end' }, { along: [{ at: 'knee.r', pose: 'mistake' }, 'knee.r'], t: 0 }, 'mistake:knee.r'];
+    const holds = (opts?: any) => forms.every(f => node.deviation(withTells([f]), base.E, R, opts) === implicit);
+    expect(holds()).toBe(true);
+    // planted mutation: the old resolver (the anchor's own pose wins in both lookups) reads 0 and turns this red
+    expect(holds({ inPose: (r: any) => r })).toBe(false);
+    expect(node.deviation(withTells([forms[0]]), base.E, R, { inPose: (r: any) => r })).toBe(0);
+  });
   it('a partial or empty browser half is refused, cell by cell, and an unmeasured contrast class is raised (review H-1, L-2)', async () => {
     const B = await import(/* @vite-ignore */ qa('browser.mjs'));
     const empty = B.judge(null, undefined, base.pins.envelope);

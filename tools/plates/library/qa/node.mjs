@@ -110,13 +110,24 @@ export function nodeMetrics(c, ctx, R) {
   return m;
 }
 
-/** Largest move (px) of a tell anchor from the end pose to the mistake pose. */
-export function deviation(c, E, R) {
+/** A tell anchor re-pinned to one pose: every pose it names (`pose:`, a "pose:landmark" string) becomes `pose`, so the
+ *  same body point is resolved in each pose. Fixed points (arrays) stay fixed. */
+export function anchorInPose(ref, pose) {
+  if (Array.isArray(ref)) return ref;
+  if (typeof ref === 'string') return `${pose}:${ref.includes(':') ? ref.split(':')[1] : ref}`;
+  const out = { ...ref, pose };
+  if (ref.at != null) out.at = anchorInPose(ref.at, pose);
+  if (ref.along) out.along = ref.along.map(r => anchorInPose(r, pose));
+  return out;
+}
+
+/** Largest move (px) of a tell anchor's body point from the end pose to the mistake pose. */
+export function deviation(c, E, R, { inPose = anchorInPose } = {}) {
   if (!c.spec.mistake?.pose) return 0;
   const L = poseLandmarks(E, c.spec), cam = cameraOf(c.spec, R.normal.report);
   let best = 0;
   for (const t of c.spec.mistake.tells ?? []) {
-    const a = resolvePoint(t.anchor, 'mistake', L.lm, cam), b = resolvePoint(t.anchor, 'end', L.lm, cam);
+    const a = resolvePoint(inPose(t.anchor, 'mistake'), 'mistake', L.lm, cam), b = resolvePoint(inPose(t.anchor, 'end'), 'end', L.lm, cam);
     best = Math.max(best, Math.hypot(a[0] - b[0], a[1] - b[1]));
   }
   return best;

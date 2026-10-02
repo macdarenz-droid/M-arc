@@ -38,7 +38,7 @@ const MEASURE = ([id, joints, mode, geo]) => {
   for (const el of svg.querySelectorAll('path, circle, use')) {
     if (skip(el) || !shown(el)) continue;
     const cs = getComputedStyle(el), sw = cs.stroke !== 'none' ? parseFloat(cs.strokeWidth) || 0 : 0, fill = cs.fill !== 'none';
-    const g = el.tagName === 'use' ? document.querySelector(el.getAttribute('href')) : el;
+    const g = el.tagName === 'use' ? document.getElementById(el.getAttribute('href').slice(1)) : el;   // by id: part ids carry dots (thigh.l, eq1.dumbbell.0-0)
     if (g) geoms.push({ g, sw, fill });
   }
   const pt = svg.createSVGPoint();
