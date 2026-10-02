@@ -1,7 +1,8 @@
 // LIB-7 pilot sheet for the hand pairs (hands/DESIGN.md §5): every distinct drawn picture at 390 px in Silent Black and
 // Paper, beside its closest approved golden-B hand (curl -> lateral raise, pull -> lat pulldown, push -> chest press),
 // with its ids, claims and flags. Writes <out>/hand-pairs.html and one full-page PNG per theme.
-//   node tools/plates/library/hands/sheet.mjs <out dir> [--calibrate] [--plant plant.json] [--chromium <path>]
+//   node tools/plates/library/hands/sheet.mjs <out dir> [--calibrate] [--plant plant.json] [--critic] [--chromium <path>]
+// --critic leaves out the check results and the variant names (planted tiles would show in them).
 // --calibrate mixes two approved golden-B pairs in as unlabelled tiles; the key goes to <out>/calibration-key.json, never
 // onto the sheet. --plant applies defects in memory (never committed): [{ "id", "op": "swap" }] swaps the Right and
 // Wrong poses of the id's first page, [{ "id", "op": "pose", "pose": {...} }] merges into its Right pose.
@@ -56,7 +57,7 @@ export function tiles(index) {
   return [...by.values()];
 }
 
-export async function buildSheet({ calibrate = false, plants = [] } = {}) {
+export async function buildSheet({ calibrate = false, plants = [], critic = false } = {}) {
   const index = indexOf(planted(MODULES, plants));
   const refs = {};
   for (const [arch, [id, page]] of Object.entries(REFERENCE)) refs[arch] = await approvedHand(id, page);
@@ -65,11 +66,11 @@ export async function buildSheet({ calibrate = false, plants = [] } = {}) {
     const s = t.spec, V = s.mod.VARIANTS[s.variant], { pages } = renderedPages(s.id, index);
     const problems = problemsOf(s, pages), flags = [...Object.values(V.claims).flat(), ...s.wrong.flatMap(w => w.claims)].filter(r => r.startsWith('ga:'));
     const claimLines = [...new Set([...Object.values(V.claims).flat(), ...s.wrong.flatMap(w => w.claims), ...t.ids.flatMap(id => index.drawn.get(id).cfg.claims)])].map(refText);
-    rows.push(`<section class="tile"><h2>${i + 1}. ${esc(s.pair)} · ${esc(s.orientation)}</h2><p class="ids">${t.ids.map(esc).join(', ')}</p>`
+    rows.push(`<section class="tile"><h2>${i + 1}. ${critic ? esc(s.key) : `${esc(s.pair)} · ${esc(s.orientation)}`}</h2><p class="ids">${t.ids.map(esc).join(', ')}</p>`
       + pages.map(p => `<div class="hand-plate">${renderPair(s.id, { fault: p.fault.key, uid: `t${i}-${p.fault.key}`, index }).svg}</div>`).join('')
       + `<p class="lab">Closest approved (${esc(REFERENCE[V.archetype][0])})</p><div class="hand-plate ref">${refs[V.archetype].replace(/id="([^"]+)"/g, `id="r${i}-$1"`).replace(/#([a-z][\w-]*)/g, `#r${i}-$1`)}</div>`
       + `<p class="lab">Flags</p><ul>${[...new Set(flags)].map(f => `<li>${esc(f)}</li>`).join('') || '<li>none</li>'}<li>sizes: drawing values (D-LIB7-2); wrong angles: approved precedents (D-LIB7-5)</li></ul>`
-      + `<p class="lab">Checks</p><p>${problems.length ? problems.map(esc).join('<br>') : 'G1-G9 ok'}</p>`
+      + (critic ? '' : `<p class="lab">Checks</p><p>${problems.length ? problems.map(esc).join('<br>') : 'G1-G9 ok'}</p>`)
       + `<details><summary>Claims</summary><ul>${claimLines.map(l => `<li>${esc(l)}</li>`).join('')}</ul></details></section>`);
   }
   if (calibrate) {
@@ -88,7 +89,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const args = process.argv.slice(2), out = resolve(args[0] ?? 'out/lib7-sheet');
   const plantAt = args.indexOf('--plant'), chrAt = args.indexOf('--chromium');
   const plants = plantAt >= 0 ? JSON.parse(readFileSync(args[plantAt + 1], 'utf8')) : [];
-  const { body, key } = await buildSheet({ calibrate: args.includes('--calibrate'), plants });
+  const { body, key } = await buildSheet({ calibrate: args.includes('--calibrate'), plants, critic: args.includes('--critic') });
   mkdirSync(out, { recursive: true });
   if (key.length) writeFileSync(join(out, 'calibration-key.json'), JSON.stringify(key, null, 1));
   const { chromium } = createRequire(join(ROOT, 'package.json'))('playwright');
