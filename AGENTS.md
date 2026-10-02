@@ -12,7 +12,12 @@ Use what's necessary for high-quality output and a fast workflow, while saving t
 - Keep token use low. Read only what the task needs, write short, don't repeat context. Spend more only when a task is complex and truly needs it.
 - Explain and summarise for the owner in plain, simple words.
 - UI copy (owner, 2026-10-01): never put words in the app or on the website that talk down to users or state the obvious ("In plain words", "Not medical advice" on a gym app). Explain nothing unless Google Play requires it (cite the policy) or the owner explicitly asked for it. Labels that name a control or show data stay. Plain words are for messages to the owner, not a label on user-facing text. Headings (owner, 2026-10-01) are short labels of one to three words, a noun phrase: never a sentence, a "What ..."/"How ..." question, a qualifier such as "off by default" or ", and where", or a leading "The", "This" or "About"; the text under a heading explains it.
-- During a task, post short plain-word updates only when something important changed.
+- Owner chat (owner, 2026-10-01): work in the background and keep the owner's chat quiet. Post there only:
+  - a new APK: its link, what changed, and what to check on the phone;
+  - a problem no agent can solve;
+  - a choice only the owner can make, or one where no option can be recommended;
+  - the finish-line reminder he asked for.
+  Everything else goes in the repo and on the PRs (HANDOVER, PR comments, Relay), never in his chat: progress, ticks, "no change", monitor echoes, plans, rulings, reviews and merges. Builders and reviewers never write to the owner.
 - Decide, don't ask. Research first, pick the best logical option, apply it, and record why. Ask the owner only for input or an action no AI agent can do (a payment, a login, a secret, a check on a real device).
 - No guessing, even on simple tasks. Check the code, docs or data first; if you cannot verify something, say so.
 - After each task, review what was built: the feature, its logic, how it works. Move on only if it meets the goal; otherwise fix or improve it first.
