@@ -1831,3 +1831,13 @@ Design note: the `LIB-12 CHECK-IN` comment on #191, updated after the joint desi
 - **D-LIB12-4 (goblet claims)**: the goblet pair cites only `cards/goblet_squat` g1, g2, g5 and g6. The palms are drawn as one outline under the head with no thumb or finger detail, because placement is unsourced for goblet and listed as a gap. `shared/cupped-thumb.json` applies only to the overhead extension.
 - **D-LIB12-5 (pilot sheets)**: cupped and front-rack renders go on pilot A (#109). Palm-flat, ball-contact and battle-rope go on pilot B. Plan 2.3.
   **Source**: card LIB-12, plan 2.3, research 95342b1, census.json, review on #191 (11:12 UTC).
+- **D-LIB12-6 (palm-flat and LIB-26's `flatPalm`)**: the palm-flat view reuses LIB-26's construction rules: the palm starts on the forearm's end, and its palm side runs straight on the surface past the knuckles. It does not call `flatPalm` itself. `flatPalm` tapers the fingers up off the palm line, so the fingertip sits more than 10 mm above the floor at 1.75 m. `tests/library/hand-views.test.ts` measures this. `shared/palm-flat.json#c2` ("all parts of your hand should make contact with the ground") rules that out at close-up scale.
+  **Why**: at plate scale the lift is about 1 px. In a close-up it reads as lifted fingers, which is the cupped-palm fault.
+- **D-LIB12-7 (battle-rope camera label)**: the neutral grip (c1) is seen from above. Golden B's "above" row prints YOU / MACHINE, which names a machine that is not there. So the battle-rope `render` draws golden-B `renderHandPair` unchanged with the side label, then renames the label and aria to "Seen from above". Each anchor must match exactly once.
+- **D-LIB12-8 (sweeps and counts)**: per key, drawn + gap = census scope, with the sources in each module's `CENSUS`:
+  - census aggregates: palm-flat 10, and the implement 5 split over battle-rope, ball-contact and implement;
+  - plan 2.3: cupped 2, front-rack 1, ball-contact 2;
+  - plan 2.3 pair keys: dip bar 1, ab wheel 1;
+  - sled_pull from LIB-7 §2.
+
+  Totals: 8 keys (5 drawn, 3 gap-only), 12 drawn ids, 9 gaps, 20 drawn pairs with their faults.
