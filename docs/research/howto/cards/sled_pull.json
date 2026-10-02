@@ -1,0 +1,525 @@
+{
+  "id": "sled_pull",
+  "libId": "lib_sled_pull",
+  "name": "Sled Pull",
+  "family": "Conditioning and carries (sled)",
+  "tier": "B",
+  "tierNote": "Safety tier B (content.md 5.1: sled); census.json difficulty tier 3.",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Backward drag: face the sled, grip the rope firmly with both hands, one stacked over the other, arms slightly bent, and step back to take up light tension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "Start facing the sled with the rope gripped firmly in both hands—one stacked over the other—arms slightly bent. Take a few steps back to create light tension in the rope.",
+          "where": "How to do backward sled drags, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Feet shoulder-width apart in a quarter squat, knees soft, chest up, core braced, shoulders over the hips rather than leaning far back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "Plant your feet shoulder-width apart and lower into a quarter-squat, keeping your knees soft, chest up and core engaged. Your shoulders should stay over your hips, not leaning too far back.",
+          "where": "How to do backward sled drags, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Step back one foot at a time, short, quick, controlled steps, driving through the midfoot with the rope close to the body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "To pull, step back one foot at a time, dragging the sled toward you. Each step should be short, quick, and controlled-think of driving through your midfoot while keeping the rope close to your body.",
+          "where": "How to do backward sled drags, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "As the sled comes closer, feed the rope through the hands in small, continuous pulls without slack, elbows tucked and wrists firm.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "As the sled moves closer, feed the rope through your hands with small, continuous pulls; don't let slack build. Keep your elbows tucked in and your wrists firm to maintain control.",
+          "where": "How to do backward sled drags, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Move the rope piling up at the feet aside so it does not tangle or trip you.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "As the rope piles up near your feet, flick or step it aside with small shuffles between steps to stop it tangling or tripping you.",
+          "where": "How to do backward sled drags, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Chin level and eyes forward; lead with the legs, not the arms, and don't yank the rope; exhale with each step back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "Keep your chin level and your gaze forward; looking down breaks posture and power.",
+          "where": "Backward drag cues"
+        },
+        {
+          "source": "gs-sled",
+          "text": "Lead with your legs, not your arms. The rope is there for connection, not to “yank” the load.",
+          "where": "Backward drag cues"
+        },
+        {
+          "source": "gs-sled",
+          "text": "Focus on breathing: exhale with each backward step to maintain core pressure.",
+          "where": "Backward drag cues"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The backward drag works the quads, glutes and calves, with the arms and back working to stabilise; it gives more quad activation than forward sled work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "It lights up your quads, glutes, and calves while still taxing your arms and back for stability.",
+          "where": "Backward drag: what it builds"
+        },
+        {
+          "source": "gs-sled",
+          "text": "Backward sled drags are an effective conditioning tool to add to your training regime, as they provide higher quadriceps activation and metabolic demand than forward variations",
+          "where": "Backward drag: what it builds"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "When the load is too heavy or the core gives way, the torso pitches back and the lower back takes the load, which puts the back at risk; stay braced and don't let the hips sag.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "When the pull becomes too heavy or your core gives way, it's easy to pitch your torso back and let your lower back take the load. But that robs your glutes, quads, and core of involvement - and puts your back at risk.",
+          "where": "Common mistakes: leaning too far back"
+        },
+        {
+          "source": "gs-sled",
+          "text": "Stay anchored, keep your torso braced, and don't let your hips sag.",
+          "where": "Common mistakes: leaning too far back"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Footwork and rope handling take practice; if rope handling slips you can trip, so start with lighter loads and shorter distances.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "The backward walk pull is energy-intensive and requires practice to coordinate the footwork with the rope pull. If your rope management slips, it's easy to lose rhythm or trip. Start with lighter loads and shorter distances before building toward race-day weights.",
+          "where": "Backward drag: watch out"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Under fatigue people clench the core and stop breathing well; keep a steady breathing rhythm.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "Under fatigue, people clench their core and stop breathing efficiently. That cuts your endurance. Keep a steady inhale/exhale rhythm tied to each pull or reset.",
+          "where": "Common mistakes: holding your breath"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Said of the hand-over-hand pull: if form slips and the back rounds, the lower spine is strained; keep the core tight and the shoulders back.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "gs-sled"
+      ],
+      "quotes": [
+        {
+          "source": "gs-sled",
+          "text": "If your form slips and your back rounds, it can place unnecessary strain on your lower spine, so it's important to keep your core tight and shoulders retracted throughout.",
+          "where": "Hand-over-hand pull: watch out"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "In 11 strength-trained men, 5 sets of 2 × 20 m maximal backward sled drags at 75 % of body mass dropped jump power, which was back to baseline within 3 hours.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "west-2014"
+      ],
+      "quotes": [
+        {
+          "source": "west-2014",
+          "text": "participants completed 5 sets of 2 × 20-m (30 second-recovery between drags and 120 second-recovery between sets) maximal backward sled drags (loaded with 75% body mass).",
+          "where": "abstract, methods"
+        },
+        {
+          "source": "west-2014",
+          "text": "In conclusion, sled dragging provides an effective metabolic stimulus, with NMF restored after ≤3 hours of recovery.",
+          "where": "abstract, conclusion"
+        },
+        {
+          "source": "west-2014",
+          "text": "backward sled drag training session (STS) in strength-trained men (n = 11).",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "gs-sled",
+      "url": "https://row.gymshark.com/blog/article/how-to-sled-pull",
+      "title": "Sled Pull Guide: How To Improve Your Technique, Training & Full-Body Strength (Gymshark Central)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "west-2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23575361/",
+      "title": "The metabolic, hormonal, biochemical, and neuromuscular function responses to a backward sled drag training session",
+      "kind": "peer-reviewed",
+      "year": 2014,
+      "pmid": "23575361",
+      "access": "abstract",
+      "checked": "2026-10-02"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The quarter squat with the shoulders over the hips (c2), the step back (c3) and the torso pitching back (c8) are sagittal.",
+    "equipment": "Sled (census need sled, missing) in front of the lifter on the floor, rope (census need rope, missing) from the sled to both hands, a short coil of rope at the feet (c5). Floor line.",
+    "frames": "Walk convention: one step, from both feet level in the quarter squat to the rear foot stepped back with the sled a little closer; Trace follows the stepping foot.",
+    "start": "Facing the sled, rope in both hands one over the other, arms slightly bent, light tension (c1); feet shoulder-width, quarter squat, knees soft, chest up, shoulders over hips (c2).",
+    "end": "One foot stepped back a short way, driving through the midfoot (c3); rope still close to the body, elbows tucked (c3, c4); torso angle unchanged (c2).",
+    "checkpoints": [
+      {
+        "label": "Quarter squat",
+        "what": "Knees soft, chest up, core braced.",
+        "claim": "c2"
+      },
+      {
+        "label": "Shoulders over hips",
+        "what": "Stay stacked; don't lean far back.",
+        "claim": "c2"
+      },
+      {
+        "label": "Short steps back",
+        "what": "Short, quick steps, driving through the midfoot.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Torso pitched back, the lower back taking the load.",
+      "why": "Gymshark names it under heavy load or a tired core and says it puts the back at risk (c8).",
+      "claim": "c8",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Shoulders stay over your hips",
+        "claim": "c2"
+      },
+      {
+        "text": "Short, quick steps back",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Walk: short, quick, controlled steps; exhale with each step (c3, c6). No source gives a step rate.",
+      "claim": [
+        "c3",
+        "c6"
+      ]
+    },
+    "variantLine": "The census equipment is a sled with a rope or harness. The plate draws the backward drag with the rope in hand, which matches the library's quads-and-glutes primary (c7) and the census walk motion. The hand-over-hand rope pull (c11) and the harness drag are other variants; c11 is the only claim taken from the hand-over-hand section."
+  },
+  "grip": {
+    "type": "Rope held in both hands, one stacked over the other, gripped firmly (c1).",
+    "width": "Hands together on the rope.",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "Wrists firm, elbows tucked in (c4).",
+    "claims": [
+      "c1",
+      "c4"
+    ],
+    "note": "No source on thumb position on the rope."
+  },
+  "setup": [
+    {
+      "step": "Face the sled, rope in both hands, one hand over the other.",
+      "claim": "c1"
+    },
+    {
+      "step": "Step back until the rope is lightly tight.",
+      "claim": "c1"
+    },
+    {
+      "step": "Feet shoulder-width, sink into a quarter squat, chest up, core braced.",
+      "claim": "c2"
+    },
+    {
+      "step": "Step back one foot at a time, short and quick.",
+      "claim": "c3"
+    },
+    {
+      "step": "Feed the rope through your hands as the sled comes in; push the slack aside.",
+      "claim": [
+        "c4",
+        "c5"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Shoulders over hips.",
+      "claim": "c2"
+    },
+    {
+      "point": "Knees soft, quarter squat.",
+      "claim": "c2"
+    },
+    {
+      "point": "Chin level, eyes forward.",
+      "claim": "c6"
+    },
+    {
+      "point": "Elbows tucked, wrists firm.",
+      "claim": "c4"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Leaning back so the lower back takes the load.",
+      "fix": "Brace and stay stacked; use a lighter sled.",
+      "claim": [
+        "c8",
+        "c2",
+        "c9"
+      ]
+    },
+    {
+      "mistake": "Yanking the rope with the arms.",
+      "fix": "Lead with your legs.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Rope piling up at your feet.",
+      "fix": "Flick or step it aside between steps.",
+      "claim": "c5"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c7"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c7"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "calves",
+        "claim": "c7"
+      },
+      {
+        "muscleId": "mid_back",
+        "claim": "c7"
+      },
+      {
+        "muscleId": "core",
+        "claim": "c8"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the thighs",
+        "means": "Your quads drive each step back.",
+        "fix": "",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Glutes",
+        "means": "They work on every step back.",
+        "fix": "",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Your torso is tipping back and your lower back is taking the load.",
+        "fix": "Brace, shoulders over hips, lighter sled.",
+        "claim": [
+          "c8",
+          "c2",
+          "c9"
+        ],
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Leaning back puts the load on your lower back.",
+      "claim": "c8"
+    },
+    {
+      "risk": "Slack rope at your feet can trip you.",
+      "claim": [
+        "c5",
+        "c9"
+      ]
+    },
+    {
+      "risk": "A rounded back strains the lower spine.",
+      "claim": "c11"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "rope-grip",
+      "kind": "hand",
+      "right": "Both hands on the rope, one over the other, wrists firm.",
+      "wrong": null,
+      "claim": [
+        "c1",
+        "c4"
+      ]
+    },
+    {
+      "key": "torso-stack",
+      "kind": "posture",
+      "right": "Shoulders over hips in a quarter squat.",
+      "wrong": "Torso pitched back, lower back loaded.",
+      "claim": [
+        "c2",
+        "c8"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "calves"
+    ],
+    "remove": [],
+    "why": "Library: quads and glutes primary; mid_back and core secondary. Gymshark names the quads, glutes and calves for the backward drag, with the arms and back working to stabilise (c7), and a braced torso (c8). Calves are proposed as a secondary; the rest matches. A proposal for the LIB data card."
+  },
+  "anchorSource": "gs-sled",
+  "anchorNote": "Gymshark Central's sled pull guide read in full (hand-over-hand, hip drive and backward drag). No ACE or NASM sled-pull page was found (NASM URL 404, 2026-10-02); PubMed has sled-towing sprint studies but none on rope-pull technique. West 2014 (abstract) gives one load and recovery data point for backward drags. The Workout Mag page was read but not cited (thin, with no named author).",
+  "loadProgression": {
+    "text": "Start with a lighter sled and shorter distances, and build up as your footwork and rope handling settle.",
+    "claims": [
+      "c9"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "A starting load in % of body weight for beginners.",
+    "Stance width for the hand-over-hand variant drawn as an option.",
+    "Harness set-up."
+  ],
+  "notes": [
+    "The lower-back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28); the sheet cannot ship before the back-pain box.",
+    "Tier B checklist: no machine depth or lockout; lower back covered (c8, c11).",
+    "Writer fix 2026-10-02: feel row 2 means changed from \"They help drive you back\" to stay within c7; quote re-read in gs-sled."
+  ]
+}

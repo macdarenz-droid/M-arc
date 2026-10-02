@@ -1,0 +1,175 @@
+{
+  "id": "jumping_jacks",
+  "checked": "2026-10-02",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "nasm-jumping-jacks",
+      "text": "Stand with feet together and your arms at your sides. Ensure adequate space around you for safe jumping and arm movement.",
+      "status": "verbatim",
+      "closest": "Stand with feet together and your arms at your sides. Ensure adequate space around you for safe jumping and arm movement.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "nasm-jumping-jacks",
+      "text": "Explosively jump while simultaneously abducting your legs and raising your arms overhead. Coordinate leg and arm movements to land with feet hip-width apart and arms overhead.",
+      "status": "verbatim",
+      "closest": "Explosively jump while simultaneously abducting your legs and raising your arms overhead. Coordinate leg and arm movements to land with feet hip-width apart and arms overhead.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "nasm-jumping-jacks",
+      "text": "Return your legs to together position while lowering your arms to your sides as you land. Immediately prepare for the next repetition in continuous fashion.",
+      "status": "verbatim",
+      "closest": "Return your legs to together position while lowering your arms to your sides as you land. Immediately prepare for the next repetition in continuous fashion.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "el-jj",
+      "text": "Jump both of your feet out a little wider than shoulder width apart while simultaneously bringing your arms over your head.",
+      "status": "verbatim",
+      "closest": "Jump both of your feet out a little wider than shoulder width apart while simultaneously bringing your arms over your head.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "el-jj",
+      "text": "Keep a slight bend in your knees and avoid locking them out.",
+      "status": "verbatim",
+      "closest": "Keep a slight bend in your knees and avoid locking them out.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "el-jj",
+      "text": "Maintain an upright posture, your shoulders stacked over your hips, throughout the move.",
+      "status": "verbatim",
+      "closest": "Maintain an upright posture, your shoulders stacked over your hips, throughout the move.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "el-jj",
+      "text": "Jump your feet to shoulder width or slightly wider apart and land softly with each jump.",
+      "status": "verbatim",
+      "closest": "Jump your feet to shoulder width or slightly wider apart and land softly with each jump.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "nasm-jumping-jacks",
+      "text": "Landing with straight knees or minimal knee bend, which increases joint stress",
+      "status": "verbatim",
+      "closest": "Landing with straight knees or minimal knee bend, which increases joint stress",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "nasm-jumping-jacks",
+      "text": "Jerky or uncontrolled landings, which increases impact stress and injury risk",
+      "status": "verbatim",
+      "closest": "Jerky or uncontrolled landings, which increases impact stress and injury risk",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "nasm-jumping-jacks",
+      "text": "Moving too quickly and sacrificing form for speed or total repetitions",
+      "status": "verbatim",
+      "closest": "Moving too quickly and sacrificing form for speed or total repetitions",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "nasm-jumping-jacks",
+      "text": "Performing continuous high-intensity jumping when fatigued, which compromises landing mechanics",
+      "status": "verbatim",
+      "closest": "Performing continuous high-intensity jumping when fatigued, which compromises landing mechanics",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "nasm-jumping-jacks",
+      "text": "Quadriceps – primary driver of knee extension and jumping power",
+      "status": "verbatim",
+      "closest": "Quadriceps – primary driver of knee extension and jumping power",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "nasm-jumping-jacks",
+      "text": "Glutes – generate hip extension power for vertical propulsion",
+      "status": "verbatim",
+      "closest": "Glutes – generate hip extension power for vertical propulsion",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "nasm-jumping-jacks",
+      "text": "Hamstrings Calf Muscles Shoulder Stabilizers Core Stabilizers",
+      "status": "verbatim",
+      "closest": "Hamstrings Calf Muscles Shoulder Stabilizers Core Stabilizers",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "nasm-jumping-jacks",
+      "text": "Beginners can perform step-out jacks (stepping instead of jumping) or reduced arm movements to lower impact while still developing cardiovascular fitness.",
+      "status": "verbatim",
+      "closest": "Beginners can perform step-out jacks (stepping instead of jumping) or reduced arm movements to lower impact while still developing cardiovascular fitness.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "nasm-jumping-jacks",
+      "text": "Perform jumping jacks in intervals: 30-60 seconds of work followed by brief rest periods.",
+      "status": "verbatim",
+      "closest": "Perform jumping jacks in intervals: 30-60 seconds of work followed by brief rest periods.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "el-jj",
+      "text": "Increase the difficulty by jumping higher or faster, by incorporating resistance bands, or by combining the move with squats, squat thrusts, and planks. Or pull back as needed by taking out the arm swing or replacing the jump with a side-to-side step.",
+      "status": "verbatim",
+      "closest": "Increase the difficulty by jumping higher or faster, by incorporating resistance bands, or by combining the move with squats, squat thrusts, and planks. Or pull back as needed by taking out the arm swing or replacing the jump with a side-to-side step.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "webmd-jj",
+      "text": "Always choose a flat and even surface for all jumping jack variations. Surfaces like rubber or grass absorb shock more effectively than cement or asphalt.",
+      "status": "verbatim",
+      "closest": "Always choose a flat and even surface for all jumping jack variations. Surfaces like rubber or grass absorb shock more effectively than cement or asphalt.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "webmd-jj",
+      "text": "Remember to maintain your posture and avoid slouching or twisting your toes outward.",
+      "status": "verbatim",
+      "closest": "Remember to maintain your posture and avoid slouching or twisting your toes outward.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "webmd-jj",
+      "text": "Shoulders. Jumping jacks also work your shoulder muscles in different areas, including anterior and posterior deltoids.",
+      "status": "verbatim",
+      "closest": "Shoulders. Jumping jacks also work your shoulder muscles in different areas, including anterior and posterior deltoids.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "nasm-jumping-jacks",
+      "text": "Explosively jump while simultaneously abducting your legs and raising your arms overhead.",
+      "status": "verbatim",
+      "closest": "Explosively jump while simultaneously abducting your legs and raising your arms overhead.",
+      "note": ""
+    }
+  ]
+}

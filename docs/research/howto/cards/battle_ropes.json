@@ -1,0 +1,573 @@
+{
+  "id": "battle_ropes",
+  "libId": "lib_battle_ropes",
+  "name": "Battle Ropes",
+  "family": "Conditioning and carries (rope waves)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md 5.1: not in the A or B lists); census.json difficulty tier 3.",
+  "archetype": {
+    "hand": "implement",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Stand with the feet hip-width apart, one rope end in each hand, with some slack in the ropes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-br"
+      ],
+      "quotes": [
+        {
+          "source": "hl-br",
+          "text": "Start with your feet hip-width apart, holding one rope in each hand. The ropes should have some slack.",
+          "where": "2. Unilateral waves, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Bend the knees slightly, bring the shoulders back and brace the core.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-br"
+      ],
+      "quotes": [
+        {
+          "source": "hl-br",
+          "text": "Bend your knees slightly, bring your shoulders back, and engage your core.",
+          "where": "2. Unilateral waves, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Alternating (unilateral) waves: as one hand swings its rope down, the other swings its rope up, so the ropes move opposite one another.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-br",
+        "ace-br-total"
+      ],
+      "quotes": [
+        {
+          "source": "hl-br",
+          "text": "Swing one rope up with your right hand. As you swing it back down, swing the other rope up with your left hand. The ropes should be moving opposite one another.",
+          "where": "2. Unilateral waves, step 3"
+        },
+        {
+          "source": "ace-br-total",
+          "text": "Waves – alternating, asymmetrical pattern with the primary direction of force toward the anchor",
+          "where": "ways to use the ropes"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "In a muscle-activity study, all rope exercises were done with the feet shoulder-width apart, knees slightly bent, back straight, a slight forward lean of the torso, elbows straight and a handshake grip.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "ace-br-emg"
+      ],
+      "quotes": [
+        {
+          "source": "ace-br-emg",
+          "text": "All exercises were performed with feet shoulder-width apart, knees slightly bent, back straight, a slight forward lean of the torso, elbows extended, and handles held with a handshake grip.",
+          "where": "Methods"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "In the alternating wave the arms stay in front of the body, each hand travelling from about shoulder height down to waist height, the arms moving in opposite directions.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "ace-br-emg"
+      ],
+      "quotes": [
+        {
+          "source": "ace-br-emg",
+          "text": "The subject kept the arms in front of the torso by flexing the shoulders until the battle rope handles were approximately shoulder height, and then extended the shoulders until the handles were even with the waist.",
+          "where": "Methods: double alternating arm waves"
+        },
+        {
+          "source": "ace-br-emg",
+          "text": "The subject alternated the extension and flexion of each shoulder with each arm, so the arms moved in opposite directions.",
+          "where": "Methods: double alternating arm waves"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Shoulder blades tend to lift or hunch forward, straining the neck; keep them down and back throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-br"
+      ],
+      "quotes": [
+        {
+          "source": "hl-br",
+          "text": "When lifting, swinging, and slamming heavy ropes, it's easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck. To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down, gently sliding them down and back throughout the movements.",
+          "where": "Tips: Mind your shoulders"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Beginners tend to hold their breath while swinging; breathe more as the intensity rises.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-br"
+      ],
+      "quotes": [
+        {
+          "source": "hl-br",
+          "text": "Beginners tend to hold their breath as they swing the ropes. This can hinder your performance and make the exercises less enjoyable. As you increase your intensity, make sure you also increase your breathing.",
+          "where": "Tips: Breathe"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Get the form right before adding rope weight or speed; start with a lighter, shorter rope (about 10 ft, 1.5 in thick); standing farther from the anchor makes the ropes harder to move.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-br"
+      ],
+      "quotes": [
+        {
+          "source": "hl-br",
+          "text": "Perfect your form first. Before increasing the rope weight or your speed, make sure you're performing the moves properly.",
+          "where": "Tips"
+        },
+        {
+          "source": "hl-br",
+          "text": "It's best to start with a lighter and shorter rope, which is usually around 10 feet (3 meters) long and 1.5 inches (3.8 cm) thick.",
+          "where": "How to get started"
+        },
+        {
+          "source": "hl-br",
+          "text": "The farther you are from the anchor (where the rope is tethered), the harder it will be to move the ropes.",
+          "where": "Tips: Increase the rope length"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "A starting dose: 30 seconds of waves, 30 seconds rest, 3 to 4 rounds.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-br"
+      ],
+      "quotes": [
+        {
+          "source": "hl-br",
+          "text": "Continue this movement for 30 seconds. Take a 30-second break and repeat for 3–4 reps or move on to the next exercise.",
+          "where": "2. Unilateral waves, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "In 21 volunteers, alternating and two-arm waves worked the front of the shoulder, the obliques and the lower-back muscles at 51-73 % of maximum; alternating waves worked the obliques more, two-arm waves the lower back more.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "calatayud-2015"
+      ],
+      "quotes": [
+        {
+          "source": "calatayud-2015",
+          "text": "Twenty-one volunteers participated in a repeated-measures study on 2 different occasions.",
+          "where": "abstract, methods"
+        },
+        {
+          "source": "calatayud-2015",
+          "text": "Results showed that muscle activity ranged from 51%MVIC to 73%MVIC for AD, OBLIQ, and LUMB, whereas GM muscle activity was only 14-18%MVIC.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "calatayud-2015",
+          "text": "Fitness practitioners aiming for higher OBLIQ activity should perform unilateral waves, whereas the bilateral variation of the movement can be used for higher LUMB activity.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The forearm grip muscle worked above 75 % of maximum in every rope exercise tested.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "ace-br-emg"
+      ],
+      "quotes": [
+        {
+          "source": "ace-br-emg",
+          "text": "Also, exercise with the battle rope was shown to positively affect grip strength, as reflected by the fact that the palmaris longus was contracting in excess of 75% of MVIC during all exercises.",
+          "where": "Discussion"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "In alternating waves every measured muscle passed the 40 % strength threshold except the thigh (vastus medialis) and the six-pack muscle.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "ace-br-emg"
+      ],
+      "quotes": [
+        {
+          "source": "ace-br-emg",
+          "text": "All of the muscles were contracting above 40% MVIC during double alternating waves, except for the vastus medialis and the rectus abdominis.",
+          "where": "Results"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "The feet stay planted, so the heart rate rises without much strain on the lower body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-br"
+      ],
+      "quotes": [
+        {
+          "source": "hl-br",
+          "text": "Most traditional battle rope exercises require your feet to be planted on the floor. Therefore, you can get your heart rate up without putting excessive strain on your lower body.",
+          "where": "Benefits: low impact"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Rope grips are named handshake (overhand) and microphone (underhand).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-br-total"
+      ],
+      "quotes": [
+        {
+          "source": "ace-br-total",
+          "text": "When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
+          "where": "grip types"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hl-br",
+      "url": "https://www.healthline.com/health/fitness/battle-rope-exercises",
+      "title": "How to Get Started with Battle Rope Exercises (Healthline; medically reviewed by a CSCS)",
+      "kind": "coach",
+      "year": 2022,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ace-br-emg",
+      "url": "https://acefitness.org/education-and-resources/professional/certified/research/7470/muscle-activation-during-battle-rope-exercises",
+      "title": "Muscle Activation During Battle Rope Exercises (ACE-sponsored research summary, Salzgeber, Porcari et al.)",
+      "kind": "secondary",
+      "year": 2019,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "calatayud-2015",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25853917/",
+      "title": "Muscle Activity During Unilateral vs. Bilateral Battle Rope Exercises",
+      "kind": "peer-reviewed",
+      "year": 2015,
+      "pmid": "25853917",
+      "access": "abstract",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ace-br-total",
+      "url": "https://www.acefitness.org/resources/pros/expert-articles/5396/total-body-battle-ropes-workout/",
+      "title": "Total-Body Battle Ropes Workout (ACE expert article)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The hands' shoulder-to-waist travel (c5), the soft knees and slight forward lean (c2, c4) and the shoulders hunching forward (c6) read from the side.",
+    "equipment": "Battle rope (census need battleRope, missing): two rope ends running forward to an anchor off-plate, some slack (c1). Floor line.",
+    "frames": "Cycle convention: one half-cycle, near hand from shoulder height to waist while the far hand rises (c5); Trace follows the near hand.",
+    "start": "Feet planted hip-width apart (c1), knees slightly bent, back straight, slight forward lean (c2, c4); near hand at about shoulder height, far hand at waist height, arms in front of the body (c5).",
+    "end": "Hands switched: near hand at waist height, far hand at shoulder height (c5); torso and legs unchanged (c13).",
+    "checkpoints": [
+      {
+        "label": "Soft knees",
+        "what": "Knees slightly bent, back straight, a slight forward lean.",
+        "claim": [
+          "c2",
+          "c4"
+        ]
+      },
+      {
+        "label": "Shoulders down",
+        "what": "Shoulder blades down and back, not lifting or hunching.",
+        "claim": "c6"
+      },
+      {
+        "label": "Shoulder to waist",
+        "what": "Each hand travels between shoulder and waist height, opposite the other.",
+        "claim": [
+          "c3",
+          "c5"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Shoulders hunch forward and lift toward the ears.",
+      "why": "Healthline names it as easy to slip into and as straining the neck (c6).",
+      "claim": "c6",
+      "drawable": true,
+      "rankNote": "No source ranks faults by frequency; breath-holding (c7) cannot be drawn."
+    },
+    "tells": [
+      {
+        "text": "Ropes move opposite each other",
+        "claim": "c3"
+      },
+      {
+        "text": "Shoulder blades stay down and back",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Cycle: continuous alternating waves, 30 seconds on, 30 seconds off (c9); no source gives a wave rate.",
+      "claim": "c9"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Handshake grip, one rope end in each hand (study set-up, c4; ACE naming, c14).",
+    "width": "Hands in front of the body, about shoulder-width.",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c1",
+      "c4",
+      "c14"
+    ],
+    "note": "Width is drawn from the feet and shoulder positions; no source gives a hand width. No source on grip pressure."
+  },
+  "setup": [
+    {
+      "step": "Feet hip-width apart, one rope end in each hand, a little slack in the ropes.",
+      "claim": "c1"
+    },
+    {
+      "step": "Bend your knees slightly and lean forward a little, back straight.",
+      "claim": [
+        "c2",
+        "c4"
+      ]
+    },
+    {
+      "step": "Shoulders back, core braced.",
+      "claim": "c2"
+    },
+    {
+      "step": "Swing one rope up as the other comes down, hands between shoulder and waist height.",
+      "claim": [
+        "c3",
+        "c5"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Feet planted, knees slightly bent.",
+      "claim": [
+        "c2",
+        "c13"
+      ]
+    },
+    {
+      "point": "Back straight, slight forward lean.",
+      "claim": "c4"
+    },
+    {
+      "point": "Shoulder blades down and back.",
+      "claim": "c6"
+    },
+    {
+      "point": "Arms in front of the body.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Shoulders creep up or hunch forward.",
+      "fix": "Slide your shoulder blades down and back.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Holding your breath.",
+      "fix": "Breathe harder as the pace rises.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Adding speed or a heavier rope too soon.",
+      "fix": "Get the form right first, then progress.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "obliques",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "lower_back",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "forearms",
+        "claim": "c11"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the shoulders",
+        "means": "They drive each wave.",
+        "fix": "",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Sides of the waist",
+        "means": "Your obliques work, more in alternating waves.",
+        "fix": "",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Forearms and grip",
+        "means": "Your grip works hard the whole time.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Neck and tops of the shoulders",
+        "means": "Shoulder blades lifting or hunching strains the neck.",
+        "fix": "Slide your shoulder blades down and back.",
+        "claim": "c6",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shrugged or hunched shoulders strain the neck.",
+      "claim": "c6"
+    },
+    {
+      "risk": "Holding your breath while swinging.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [],
+  "zooms": [
+    {
+      "key": "rope-grip",
+      "kind": "hand",
+      "right": "Handshake grip on each rope end.",
+      "wrong": null,
+      "claim": [
+        "c4",
+        "c14"
+      ]
+    },
+    {
+      "key": "shoulder-blades",
+      "kind": "posture",
+      "right": "Shoulder blades down and back.",
+      "wrong": "Shoulders lifted toward the ears.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "front_delts",
+      "obliques"
+    ],
+    "remove": [
+      "side_delts"
+    ],
+    "why": "Library: side_delts primary; core and forearms secondary. No source measured the side delts; the waves are shoulder flexion and extension in front of the body (c5), and EMG shows the front delts, obliques and lower back at 51-73 % of maximum (c10) and the forearm grip above 75 % (c11). Proposed: front_delts primary in place of side_delts; obliques secondary (c10); keep core and forearms. A proposal for the LIB data card, not applied here."
+  },
+  "anchorSource": "hl-br",
+  "anchorNote": "Healthline's battle rope how-to (medically reviewed by a CSCS) read in full; ACE's research summary and the Calatayud 2015 abstract give the study set-up and muscle data. ACE's 2017 'Beast Battle Ropes' article returned 403.",
+  "loadProgression": {
+    "text": "Get the form right first; then a heavier rope, or stand farther from the anchor.",
+    "claims": [
+      "c8"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "Wave rate or amplitude cue.",
+    "Hand width.",
+    "How tightly to grip.",
+    "Stance width: Healthline says hip-width (c1), the study used shoulder-width (c4); the plate draws hip-width."
+  ],
+  "notes": [
+    "Two-arm waves, slams and circles are other battle-rope moves; the plate draws alternating waves, the most common beginner move in the anchor and the one with muscle data (c10, c12).",
+    "feel.primary follows the libraryDiff proposal (front_delts) because no source supports side_delts; the supervisor decides at the LIB data card.",
+    "Writer fix 2026-10-02: feel row 2 means changed from \"Your core resists the alternating pull\" to follow c10 (obliques higher in unilateral waves); quote re-read in calatayud-2015."
+  ]
+}

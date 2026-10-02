@@ -1,0 +1,609 @@
+{
+  "id": "pendulum_squat",
+  "libId": "lib_pendulum_squat",
+  "name": "Pendulum Squat",
+  "family": "Leg press and squat machines",
+  "tier": "B",
+  "tierNote": "Safety tier B (content.md 5.1: machine-guided spinal load, hack and pendulum); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "foot-platform"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the machine so the shoulders sit under the pads and the feet are on the platform.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pendulum"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pendulum",
+          "text": "Adjust the machine so you can position your shoulders under the pads and feet on the platform.",
+          "where": "How to, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Feet about hip-width apart on the platform (StrengthLog); a gym's trainers use about shoulder-width with the toes turned out slightly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pendulum",
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pendulum",
+          "text": "Place your feet slightly about hip-width apart on the platform.",
+          "where": "How to, step 2"
+        },
+        {
+          "source": "wff-pend",
+          "text": "Feet are positioned roughly shoulder-width apart, toes angled out slightly to match individual hip anatomy.",
+          "where": "Setup"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Brace the core and keep the back pressed against the backrest the whole time.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pendulum"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pendulum",
+          "text": "Engage your core and keep your back pressed against the backrest throughout the movement.",
+          "where": "How to, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Release the safety latch and lower slowly by bending the knees until the thighs are parallel to the floor or a little lower.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pendulum"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pendulum",
+          "text": "Release the safety latch and lower yourself slowly by bending your knees until your thighs are parallel to the floor or slightly lower.",
+          "where": "How to, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Push back up through the heels, straightening the knees, torso upright throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pendulum"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pendulum",
+          "text": "Push back to the starting position by pushing through your heels and extend your knees. Remember to keep your torso upright during the entire movement.",
+          "where": "How to, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "On the way down the knees bend, the hips sink, the torso stays upright and the knees track over the toes; go as deep as the machine and your mobility allow, thighs at or below parallel.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "wff-pend",
+          "text": "The knees bend and the hips sink into the deep squat position. The torso remains upright the arc of the machine naturally maintains this position. The knees track over the toes throughout.",
+          "where": "Execution: descent"
+        },
+        {
+          "source": "wff-pend",
+          "text": "Descend as deeply as the machine allows and mobility permits the goal is to reach a position where the thighs are at or below parallel to the floor.",
+          "where": "Execution: depth"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Drive up through the whole foot, heel and ball.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "wff-pend",
+          "text": "Push through the full foot heel and ball driving back up through the pendulum arc to the starting position.",
+          "where": "Execution: ascent"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Knees caving inward: drive them out in line with the toes, and reduce the load if it keeps happening.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "wff-pend",
+          "text": "Knees caving inward: Valgus collapse at the knee during the descent or ascent. Fix: actively drive the knees outward in line with the toes throughout. Reduce load if the collapse persists.",
+          "where": "Common faults"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Heels rising, from limited ankle mobility: raise the heels slightly on a plate or wedge while the ankles improve.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "wff-pend",
+          "text": "Heels rising: Insufficient ankle mobility prevents the heels staying flat through the full depth. Fix: elevate the heels slightly on a plate or wedge while ankle mobility is developed.",
+          "where": "Common faults"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Dropping into the bottom instead of controlling the descent: lower over two to three seconds every rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "wff-pend",
+          "text": "Rushing the descent: Dropping into the bottom rather than controlling the lowering phase. Fix: a controlled two to three second descent on every rep.",
+          "where": "Common faults"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Stopping short of parallel misses the hardest part; reduce the load and go to full depth.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "wff-pend",
+          "text": "Not reaching full depth: Stopping the descent before parallel, missing the most demanding portion of the movement. Fix: reduce load and descend to full depth.",
+          "where": "Common faults"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The quads work most; the glutes, adductors and hamstrings help.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pendulum",
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pendulum",
+          "text": "Primary muscles worked: Quads Glutes Adductors",
+          "where": "Muscles worked (list)"
+        },
+        {
+          "source": "wff-pend",
+          "text": "Primary: Quadriceps all four heads, with particularly significant emphasis on the rectus femoris and vastus lateralis due to the upright torso and deep range of motion.",
+          "where": "Muscles worked"
+        },
+        {
+          "source": "wff-pend",
+          "text": "Secondary: Gluteus maximus, hamstrings, adductors, gastrocnemius (knee stability).",
+          "where": "Muscles worked"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "It isolates the quads with little pressure on the back, in a guided path.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pendulum"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pendulum",
+          "text": "The pendulum squat is an effective exercise for isolating the quadriceps with minimal pressure on the back. The stabilized movement path of the machine allows for full control throughout, making it a safe and joint-friendly option.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Typical sets: 8 to 12 reps at a challenging load through full range; a deeper squat at the same load counts as progress.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "wff-pend",
+          "text": "Sets of 8 to 12 repetitions at a challenging load, through full range, are the standard approach for strength and hypertrophy.",
+          "where": "Programming"
+        },
+        {
+          "source": "wff-pend",
+          "text": "Depth consistency is tracked alongside load a deeper squat at the same load is meaningful progress, not just load increase.",
+          "where": "Programming: progress"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Lifting the heels shifts the weight forward and strains the knees; bouncing at the bottom risks injury; knees caving on the way up stress the knee joints.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "xcel-pend"
+      ],
+      "quotes": [
+        {
+          "source": "xcel-pend",
+          "text": "Lifting heels off the platform during the descent. This shifts weight forward and strains your knees. Keep your whole foot planted.",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "xcel-pend",
+          "text": "Bouncing at the bottom of the movement. This uses momentum instead of muscle and risks injury. Control the transition smoothly.",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "xcel-pend",
+          "text": "Letting knees cave inward during the ascent. This stresses your knee joints and limits glute activation. Push knees out actively.",
+          "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Grip the handles firmly.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "xcel-pend"
+      ],
+      "quotes": [
+        {
+          "source": "xcel-pend",
+          "text": "Grip handles firmly.",
+          "where": "Step 1: setup"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-pendulum",
+      "url": "https://www.strengthlog.com/pendulum-squat/",
+      "title": "How to Do Pendulum Squat: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "wff-pend",
+      "url": "https://weareformfitness.com/training/equipment/specialist/pendulum-squat/",
+      "title": "Pendulum Squat: Muscles Worked and How to Use It (FORM gym trainers)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "xcel-pend",
+      "url": "https://xcelerategyms.com/pendulum-squats/",
+      "title": "Pendulum Squats: Step-by-Step Form Guide (XcelerateGyms blog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Depth (thighs to parallel, c4, c6), the back on the pad (c3), the upright torso (c5) and the heels lifting (c9) are sagittal.",
+    "equipment": "Pendulum squat machine (census need pendulum, missing): swinging arm on a pivot with shoulder pads and a back pad, a fixed foot platform, handles and a safety latch (c1, c4). Floor line.",
+    "frames": "Rep convention: start standing at the top of the arc, end at the bottom (thighs parallel or lower); Trace follows the knee.",
+    "start": "Standing on the platform, shoulders under the pads, back against the back pad (c1, c3); feet about hip- to shoulder-width (c2); latch released (c4).",
+    "end": "Knees bent, thighs parallel to the floor or a little lower (c4, c6); knees over the toes (c6); torso upright and back on the pad (c3, c5); heels flat (c9).",
+    "checkpoints": [
+      {
+        "label": "Back on the pad",
+        "what": "Core braced, back pressed against the backrest.",
+        "claim": "c3"
+      },
+      {
+        "label": "Thighs to parallel",
+        "what": "Lower until your thighs are parallel or a little lower.",
+        "claim": [
+          "c4",
+          "c6"
+        ]
+      },
+      {
+        "label": "Knees over toes",
+        "what": "Knees track over the toes, never caving in.",
+        "claim": [
+          "c6",
+          "c8"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Heels lift off the platform at the bottom.",
+      "why": "FORM's trainers list it among common faults, from limited ankle mobility (c9); it shifts the weight forward onto the knees (c15).",
+      "claim": [
+        "c9",
+        "c15"
+      ],
+      "drawable": true,
+      "rankNote": "FORM lists knees caving first (c8), but that needs a front view."
+    },
+    "tells": [
+      {
+        "text": "Back stays pressed to the pad",
+        "claim": "c3"
+      },
+      {
+        "text": "Whole foot stays on the platform",
+        "claim": [
+          "c7",
+          "c15"
+        ]
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Lower over two to three seconds (c10); no source gives the up phase or a pause.",
+      "claim": "c10"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Hands on the machine's handles, gripped firmly (c16).",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c16"
+    ],
+    "note": "Hand archetype balance. Only a weak blog line supports the grip; no source on hand position."
+  },
+  "setup": [
+    {
+      "step": "Set the machine so your shoulders sit under the pads and your feet are on the platform.",
+      "claim": "c1"
+    },
+    {
+      "step": "Feet about hip- to shoulder-width apart.",
+      "claim": "c2"
+    },
+    {
+      "step": "Brace your core and press your back into the pad.",
+      "claim": "c3"
+    },
+    {
+      "step": "Release the safety latch and lower slowly until your thighs are at least parallel.",
+      "claim": [
+        "c4",
+        "c10"
+      ]
+    },
+    {
+      "step": "Push back up through your whole foot.",
+      "claim": [
+        "c5",
+        "c7"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back against the pad.",
+      "claim": "c3"
+    },
+    {
+      "point": "Torso upright.",
+      "claim": "c5"
+    },
+    {
+      "point": "Knees over the toes.",
+      "claim": "c6"
+    },
+    {
+      "point": "Heels flat.",
+      "claim": "c9"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Knees cave inward.",
+      "fix": "Drive them out over your toes; go lighter if it keeps happening.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Dropping into the bottom.",
+      "fix": "Lower over two to three seconds.",
+      "claim": "c10"
+    },
+    {
+      "mistake": "Stopping above parallel.",
+      "fix": "Go lighter and use the full depth.",
+      "claim": "c11"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "glutes",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "adductors",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "hamstrings",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the thighs",
+        "means": "Your quads do most of the work.",
+        "fix": "",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Glutes and inner thighs",
+        "means": "They help the quads.",
+        "fix": "",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Knees",
+        "means": "Knees caving in or heels lifting puts strain on the knees.",
+        "fix": "Knees over your toes, whole foot down, lighter load.",
+        "claim": [
+          "c15",
+          "c8"
+        ],
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Knees caving in on the way up stresses the knee joints.",
+      "claim": "c15"
+    },
+    {
+      "risk": "Heels lifting shifts the weight forward onto the knees.",
+      "claim": "c15"
+    },
+    {
+      "risk": "Bouncing out of the bottom can cause injury.",
+      "claim": "c15"
+    }
+  ],
+  "redFlags": [
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "knee-track",
+      "kind": "posture",
+      "right": "Knees in line with the toes.",
+      "wrong": "Knees caving inward.",
+      "claim": "c8"
+    },
+    {
+      "key": "heels-flat",
+      "kind": "posture",
+      "right": "Heels flat at the bottom.",
+      "wrong": "Heels lifted off the platform.",
+      "claim": [
+        "c9",
+        "c15"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "adductors"
+    ],
+    "remove": [],
+    "why": "Library: quads primary; glutes and hamstrings secondary. StrengthLog lists quads, glutes and adductors; FORM's trainers put the quads first and list glutes, hamstrings, adductors and calves as secondary (c12). Adductors are proposed as a secondary. A proposal for the LIB data card."
+  },
+  "anchorSource": "sl-pendulum",
+  "anchorNote": "StrengthLog's pendulum squat page (short) and FORM gym's trainer page read in full; the XcelerateGyms blog was read in full and is used only for risk consequences and the grip line (WEAK). No ACE or NASM page exists (NASM URL 404, 2026-10-02); PubMed has no pendulum-squat paper (9 hits, none on the machine). T Nation and MuscleWiki returned 403.",
+  "loadProgression": {
+    "text": "Sets of 8 to 12 at a challenging load through full range; a deeper squat at the same load is progress too.",
+    "claims": [
+      "c14"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "Re-engaging the safety latch at the end of the set (machine depth catches, tier B).",
+    "Lockout at the top (whether to straighten the knees fully).",
+    "Breathing.",
+    "Foot height on the platform for quad vs glute emphasis (search snippets only)."
+  ],
+  "notes": [
+    "Stance width conflict: StrengthLog says about hip-width (c2), FORM about shoulder-width with toes out slightly (c2). The plate draws between the two; the setup line gives the range.",
+    "The knee row links the shared knee box (redFlag 'knee').",
+    "c15 and c16 rest on a gym blog written in the first person; they are tagged WEAK."
+  ]
+}

@@ -1,0 +1,514 @@
+{
+  "id": "high_knees",
+  "libId": "lib_high_knees",
+  "name": "High Knees",
+  "family": "Conditioning and carries (run in place)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md 5.1: not in the A or B lists); census.json difficulty tier 3.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Stand tall, feet about hip- to shoulder-width apart, arms at the sides, eyes ahead, chest open, core braced.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "Stand tall with your feet about hip-to-shoulder-width apart and your arms at your sides.",
+          "where": "How to, step 1"
+        },
+        {
+          "source": "hl-hk",
+          "text": "Looking straight ahead, open your chest, and engage your core muscles.",
+          "where": "How to, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Bring one knee toward the chest, slightly above waist level, while the opposite hand pumps up; lower both quickly and switch sides.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk",
+        "ace-cardio15"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "Begin by bringing your right knee toward your chest, slightly above waist level. Simultaneously, move your left hand up in a pumping motion.",
+          "where": "How to, step 3"
+        },
+        {
+          "source": "hl-hk",
+          "text": "Quickly lower your right leg and left hand.",
+          "where": "How to, step 4"
+        },
+        {
+          "source": "ace-cardio15",
+          "text": "Run in place, pumping your arms and lifting your knees up toward your chest. 2 High Knees = 1 rep",
+          "where": "Set #1, cardio"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The thigh comes up to at least 90 degrees of hip flexion, driven by the hip flexors.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "Explosively flex your right hip and knee, drawing your upper leg to at least 90 degrees of flexion using your hip flexors.",
+          "where": "How to, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Knees soft and weight toward the balls of the feet; spring from the ball of one foot to the other.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "Place your feet hip-width apart and brace your full body. Maintain soft knees and slowly shift towards the balls of your feet.",
+          "where": "How to, step 1"
+        },
+        {
+          "source": "bb-hk",
+          "text": "The goal is to spring between the ball of each foot, flexing your knees and hips on the working side to draw one knee as high as possible.",
+          "where": "How to, intro"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "If the knees go so high that the back arches, that is too far: brace the core.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "If you find your knees getting so high that you arch into your back, you've gone too far. Revisit your technique and make sure you have a solid core brace.",
+          "where": "Common mistakes: knees too high"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "If knee height slowly drops, take a short rest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "If you're noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
+          "where": "Common mistakes: knees not high enough"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Legs rotating outward often comes with tired hip flexors; take a break.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "A lot of rotation occurs once your hip flexors start to fatigue. Take a break, shake it out, and come back fresh.",
+          "where": "Common mistakes: rotation"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "To start: 30 seconds, then 30 seconds rest between sets.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "To start, aim for 30 seconds, with a 30-second rest between each set.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Easier: lift and lower the knee slowly as a march, which is lower impact; harder: knees higher, faster, longer or more sets.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "For example, instead of driving your knee up to your chest in a running motion, slowly lift and lower it in a marching or walking-in-place movement. This turns the move into a low impact exercise, which is easier on the joints (4).",
+          "where": "Variations: decrease the intensity and impact"
+        },
+        {
+          "source": "hl-hk",
+          "text": "If you want to increase the intensity of the traditional high knee exercise, simply lift your knees higher, move at a faster pace, or increase the duration or number of sets.",
+          "where": "Variations: increase the intensity"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Wear supportive shoes and use a supportive gym floor or grass, especially with knee or ankle issues.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "Before you get started, make sure you're wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
+          "where": "How to, intro"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The hip flexors pull the thigh up; the quads steady the standing leg and help lift the working one; the glutes, hamstrings and calves also work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk",
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "The hip flexor complex (for example, the iliopsoas and rectus femoris) helps pull your thigh into the top of the high knee position.",
+          "where": "Muscles worked: hip flexors"
+        },
+        {
+          "source": "bb-hk",
+          "text": "They are essential for stabilizing your stance leg while helping to lift your working leg.",
+          "where": "Muscles worked: quadriceps"
+        },
+        {
+          "source": "hl-hk",
+          "text": "High knees activate your quadriceps, hamstrings, calves, glutes, and hip flexors, helping improve muscular endurance, balance, and coordination in these muscles.",
+          "where": "Benefits"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "A full-body brace through the trunk keeps balance during the quick leg switches.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "Maintaining a full-body brace especially through your trunk keeps you from losing balance during rapid transitions between legs.",
+          "where": "Muscles worked: core"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hl-hk",
+      "url": "https://www.healthline.com/health/fitness/high-knees-benefits",
+      "title": "It's Time to Revisit the High Knees Exercise You Learned in PE (Healthline; medically reviewed by a NASM-CPT)",
+      "kind": "coach",
+      "year": 2021,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "bb-hk",
+      "url": "https://barbend.com/high-knees/",
+      "title": "Learn How to Do High Knees to Step Up Your Leg & Core Game (BarBend)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ace-cardio15",
+      "url": "https://www.acefitness.org/resources/everyone/blog/5430/rev-up-your-cardio-with-this-15-minute-drill/",
+      "title": "Rev up Your Cardio With This 15-Minute Drill (ACE blog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Thigh height (c2, c3), the tall chest (c1) and the back arching as the knee goes too high (c5) are sagittal.",
+    "equipment": "Floor line only.",
+    "frames": "Cycle convention: one half-cycle, from standing on the balls of the feet to one thigh at about hip height with the opposite arm pumped forward; Trace follows the driving knee.",
+    "start": "Standing tall, feet about hip-width apart, knees soft, weight toward the balls of the feet (c1, c4); chest open, eyes ahead (c1).",
+    "end": "One thigh up to at least 90 degrees of hip flexion, knee slightly above waist level (c2, c3); opposite hand pumped up (c2); stance foot on its ball (c4); trunk still upright (c5).",
+    "checkpoints": [
+      {
+        "label": "Chest tall",
+        "what": "Stand tall, eyes ahead, core braced.",
+        "claim": "c1"
+      },
+      {
+        "label": "Thigh to hip height",
+        "what": "Each knee comes up to about waist height, opposite arm pumping.",
+        "claim": [
+          "c2",
+          "c3"
+        ]
+      },
+      {
+        "label": "Balls of the feet",
+        "what": "Soft knees, springing from the ball of one foot to the other.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Knee driven so high that the lower back arches and the trunk tips back.",
+      "why": "BarBend names it as going too far (c5).",
+      "claim": "c5",
+      "drawable": true,
+      "rankNote": "No source ranks faults by frequency. Knee height dropping (c6) is also drawable; leg rotation (c7) is front-view only."
+    },
+    "tells": [
+      {
+        "text": "Thigh reaches about hip height",
+        "claim": "c3"
+      },
+      {
+        "text": "Chest stays tall",
+        "claim": "c1"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Cycle: quick, springy switches (c2, c4); 30 seconds on, 30 seconds rest to start (c8). No source gives a cadence.",
+      "claim": [
+        "c2",
+        "c8"
+      ]
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [],
+    "note": "Hand archetype none: the arms pump freely (c2)."
+  },
+  "setup": [
+    {
+      "step": "Stand tall, feet about hip-width apart, arms at your sides.",
+      "claim": "c1"
+    },
+    {
+      "step": "Brace your core and shift onto the balls of your feet, knees soft.",
+      "claim": [
+        "c1",
+        "c4"
+      ]
+    },
+    {
+      "step": "Drive one knee up to about waist height as the opposite arm pumps up.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
+    },
+    {
+      "step": "Lower it quickly and switch legs.",
+      "claim": "c2"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Chest tall, eyes ahead.",
+      "claim": "c1"
+    },
+    {
+      "point": "Thigh up to about hip height.",
+      "claim": "c3"
+    },
+    {
+      "point": "Lower back doesn't arch.",
+      "claim": "c5"
+    },
+    {
+      "point": "On the balls of your feet.",
+      "claim": "c4"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Knees so high your back arches.",
+      "fix": "Brace your core and keep the knee at hip height.",
+      "claim": [
+        "c5",
+        "c3"
+      ]
+    },
+    {
+      "mistake": "Knee height drops as you tire.",
+      "fix": "Take a short rest.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Legs start turning out.",
+      "fix": "Take a break and come back fresh.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "quads",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "core",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the hips",
+        "means": "Your hip flexors lift each thigh.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the thighs",
+        "means": "They steady the standing leg and help lift the other.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Belly",
+        "means": "Your core keeps you balanced as the legs switch.",
+        "fix": "",
+        "claim": "c12",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Driving the knees too high arches the lower back.",
+      "claim": "c5"
+    },
+    {
+      "risk": "Sore knees or ankles: wear supportive shoes and use a supportive floor or grass.",
+      "claim": "c10"
+    }
+  ],
+  "redFlags": [],
+  "zooms": [
+    {
+      "key": "knee-height",
+      "kind": "posture",
+      "right": "Thigh at about hip height, chest tall.",
+      "wrong": "Knee driven higher, lower back arched.",
+      "claim": [
+        "c3",
+        "c5"
+      ]
+    },
+    {
+      "key": "ball-of-foot",
+      "kind": "posture",
+      "right": "Standing foot on its ball, knee soft.",
+      "wrong": null,
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: hip_flexors primary; quads secondary. BarBend and Healthline name the hip flexors lifting the thigh and the quads steadying the stance leg (c11); the core is named as the balance brace (c12). Matches; no change."
+  },
+  "anchorSource": "hl-hk",
+  "anchorNote": "Healthline's high knees how-to (medically reviewed by a NASM-CPT) and BarBend's high knees guide read in full. No ACE or NASM exercise-library page exists for high knees (NASM URL 404, 2026-10-02); ACE's drill gives a one-line description. No PubMed technique study found.",
+  "loadProgression": {
+    "text": "Start at 30 seconds on, 30 seconds off; then knees higher, faster or longer.",
+    "claims": [
+      "c8",
+      "c9"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "Cadence (steps per second).",
+    "Arm angle at the elbow.",
+    "Breathing."
+  ],
+  "notes": [
+    "Healthline puts the knee 'slightly above waist level' (c2); BarBend says 'at least 90 degrees of flexion' (c3). The plate draws the thigh about horizontal, which meets both.",
+    "Writer fix 2026-10-02: risk 2 \"forgiving floor\" changed to \"supportive floor\" to match c10; quote re-read in hl-hk."
+  ]
+}

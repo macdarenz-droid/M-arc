@@ -1,0 +1,590 @@
+{
+  "id": "resisted_hip_flexion",
+  "libId": "lib_resisted_hip_flexion",
+  "name": "Resisted Hip Flexion",
+  "family": "Hip flexion and leg raise (standing cable)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md 5.1: not in the A or B lists); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Attach an ankle strap to a low cable pulley around one ankle; stand facing away from the machine with slight cable tension, holding something stable for balance if needed.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-hf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hf",
+          "text": "Attach ankle strap to low cable pulley and secure around one ankle. Stand facing away from machine with slight cable tension, holding stable object for balance if needed.",
+          "where": "How to perform, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Face away from the machine holding the frame, drive the knee up and forward against the cable until the thigh nears hip height, lower with control, then switch legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "kovo-hf"
+      ],
+      "quotes": [
+        {
+          "source": "kovo-hf",
+          "text": "Face away from the machine and hold the frame for balance. Drive your knee up and forward against the cable, lifting your thigh toward hip height, then lower with control and repeat before switching legs.",
+          "where": "How to do it"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Brace the core and stay upright; lift the strapped leg forward slowly, bending the knee toward the chest, and pause briefly at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-hf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hf",
+          "text": "Brace core and maintain upright posture.",
+          "where": "How to perform, step 2"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Slowly lift strapped leg forward, bending knee toward chest.",
+          "where": "How to perform, step 3"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Pause briefly at top to squeeze hip flexors.",
+          "where": "How to perform, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Lower the leg back with control, without letting the weight stack touch down or drop.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-hf",
+        "kovo-hf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hf",
+          "text": "Controlled lower leg back to start without letting weight stack touch.",
+          "where": "How to perform, step 5"
+        },
+        {
+          "source": "kovo-hf",
+          "text": "Control the cable back down rather than letting it drop",
+          "where": "cues"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Range: from the hip fully extended behind the body to the thigh parallel to the floor or the knee near the chest, without arching the lower back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-hf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hf",
+          "text": "From full hip extension behind body to thigh parallel to floor or knee near chest, without lumbar arch.",
+          "where": "Range of motion"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Core tight with no arching; lift with the hip, not momentum; hips level and square with no rotation; knee tracks straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-hf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hf",
+          "text": "Core tight, no arching.",
+          "where": "Form cues"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Lift with hip, not momentum.",
+          "where": "Form cues"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Hips level, no rotation.",
+          "where": "Form cues"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Knee tracks straight.",
+          "where": "Form cues"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Keep hips square throughout.",
+          "where": "How to perform"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Mistakes: leaning back or arching the lower back to lift higher, swinging the leg up, and letting the stack slam at the bottom.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "kovo-hf"
+      ],
+      "quotes": [
+        {
+          "source": "kovo-hf",
+          "text": "Don't lean back or arch your lower back to lift higher",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "kovo-hf",
+          "text": "Don't swing the leg up with momentum",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "kovo-hf",
+          "text": "Don't let the stack slam at the bottom",
+          "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Tempo 2-1-2; breathe in while lowering, out while lifting.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-hf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hf",
+          "text": "Inhale during lowering phase; exhale as you lift and squeeze.",
+          "where": "Breathing"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Tempo 2-1-2",
+          "where": "Tempo"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Typical sets: 10-15 reps with 60-90 seconds rest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-hf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hf",
+          "text": "Typical Rep Range 10-15 reps Rest Between Sets 60-90 seconds",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "It mainly works the hip flexors (iliopsoas), with the quads (rectus femoris) and the abs assisting.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "kovo-hf",
+        "motra-hf"
+      ],
+      "quotes": [
+        {
+          "source": "kovo-hf",
+          "text": "The cable standing hip flexion mainly works the hip flexors, with the lower abs, quads, and upper abs assisting.",
+          "where": "Muscles worked"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Hip Flexors10/10 Iliopsoas Quads7/10 Rectus Femoris",
+          "where": "Muscle breakdown"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Avoid it with acute hip or low-back pain; start light to learn the form; keep a neutral spine; stop if balancing causes strain.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-hf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hf",
+          "text": "Avoid if acute hip or low back pain present.",
+          "where": "Safety"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Use light weight initially for form.",
+          "where": "Safety"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Maintain neutral spine to protect lower back.",
+          "where": "Safety"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Stop if balance causes strain.",
+          "where": "Safety"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Feel the front of the hip and the lower abs pull the knee up; stand tall with the standing leg steady.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "kovo-hf"
+      ],
+      "quotes": [
+        {
+          "source": "kovo-hf",
+          "text": "Feel the front of your hip and lower abs pull your knee up",
+          "where": "cues"
+        },
+        {
+          "source": "kovo-hf",
+          "text": "Stand tall and keep your standing leg steady",
+          "where": "cues"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "motra-hf",
+      "url": "https://www.motra.com/exercises/cableStandingHipFlexorRaise",
+      "title": "Cable Standing Hip Flexor Raise: Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "kovo-hf",
+      "url": "https://www.kovofitness.com/exercises/cable-standing-hip-flexion",
+      "title": "Cable Standing Hip Flexion: How to Do It, Form & Muscles Worked (Kovo)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The thigh rising to parallel (c2, c5), the upright torso (c3) and the lean-back fault (c7) are sagittal.",
+    "equipment": "Cable column with a low pulley and an ankle cuff on the working ankle (census needs cable, ankleCuff); the cable runs back from the ankle to the pulley behind the lifter; one hand on the frame (c1, c2). Floor line.",
+    "frames": "Rep convention: start with the strapped leg slightly behind the body, end with the thigh about parallel to the floor; Trace follows the knee.",
+    "start": "Standing tall, facing away from the column, slight cable tension, hand on the frame (c1, c2); strapped hip extended behind the body (c5); core braced (c3).",
+    "end": "Strapped thigh about parallel to the floor, knee bent (c2, c3, c5); torso still upright, hips level (c3, c6); standing leg steady (c12).",
+    "checkpoints": [
+      {
+        "label": "Stand tall",
+        "what": "Upright, core braced, standing leg steady.",
+        "claim": [
+          "c3",
+          "c12"
+        ]
+      },
+      {
+        "label": "Thigh to hip height",
+        "what": "Knee drives up and forward until the thigh is about parallel.",
+        "claim": [
+          "c2",
+          "c5"
+        ]
+      },
+      {
+        "label": "No back arch",
+        "what": "Core tight; don't lean back to lift higher.",
+        "claim": [
+          "c6",
+          "c7"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Leaning back and arching the lower back to lift the knee higher.",
+      "why": "Kovo lists it first among mistakes (c7); Motra's range stops short of a lumbar arch (c5).",
+      "claim": [
+        "c7",
+        "c5"
+      ],
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Standing leg stays steady",
+        "claim": "c12"
+      },
+      {
+        "text": "Hips stay level, no twist",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "text": "Motra gives 2-1-2 (c8), read as 2 s up, 1 s pause at the top (c3), 2 s down.",
+      "claim": [
+        "c8",
+        "c3"
+      ]
+    },
+    "variantLine": "The library lists cable or resistance band. The plate draws the cable with an ankle cuff (census). No band source was read, so no band-specific line is given; the posture claims (c3, c5, c6, c7) are stated for the cable."
+  },
+  "grip": {
+    "type": "One hand holds the machine frame for balance (c1, c2).",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c1",
+      "c2"
+    ],
+    "note": "Hand archetype balance."
+  },
+  "setup": [
+    {
+      "step": "Strap the cuff to one ankle on a low cable.",
+      "claim": "c1"
+    },
+    {
+      "step": "Face away from the machine with a little tension; hold the frame.",
+      "claim": [
+        "c1",
+        "c2"
+      ]
+    },
+    {
+      "step": "Brace your core and stand tall.",
+      "claim": "c3"
+    },
+    {
+      "step": "Drive the knee up and forward until your thigh is about level.",
+      "claim": [
+        "c2",
+        "c5"
+      ]
+    },
+    {
+      "step": "Pause, then lower with control and switch legs after the set.",
+      "claim": [
+        "c3",
+        "c4",
+        "c2"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Upright, core tight.",
+      "claim": [
+        "c3",
+        "c6"
+      ]
+    },
+    {
+      "point": "Hips level and square.",
+      "claim": "c6"
+    },
+    {
+      "point": "Standing leg steady.",
+      "claim": "c12"
+    },
+    {
+      "point": "Knee travels straight forward.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Leaning back to lift higher.",
+      "fix": "Stand tall and stop at thigh level.",
+      "claim": [
+        "c7",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Swinging the leg up.",
+      "fix": "Lift slowly from the hip.",
+      "claim": [
+        "c7",
+        "c6",
+        "c3"
+      ]
+    },
+    {
+      "mistake": "Letting the stack slam down.",
+      "fix": "Lower with control.",
+      "claim": [
+        "c7",
+        "c4"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "quads",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "abs",
+        "claim": "c10"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the hip",
+        "means": "Your hip flexors lift the knee.",
+        "fix": "",
+        "claim": [
+          "c12",
+          "c10"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower belly",
+        "means": "Your abs help pull the knee up.",
+        "fix": "",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "You're leaning back or arching to lift higher.",
+        "fix": "Stand tall, core tight, lighter weight.",
+        "claim": [
+          "c7",
+          "c6",
+          "c11"
+        ],
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Arching the lower back to lift higher.",
+      "claim": [
+        "c7",
+        "c5"
+      ]
+    },
+    {
+      "risk": "Sudden, recent hip or lower-back pain: skip this exercise.",
+      "claim": "c11"
+    },
+    {
+      "risk": "Balancing on one leg can strain; stop if it does.",
+      "claim": "c11"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "torso-upright",
+      "kind": "posture",
+      "right": "Torso upright, thigh at hip height.",
+      "wrong": "Torso leaning back, lower back arched.",
+      "claim": [
+        "c3",
+        "c5",
+        "c7"
+      ]
+    },
+    {
+      "key": "ankle-cuff",
+      "kind": "posture",
+      "right": "Cuff around the ankle, cable taut behind you.",
+      "wrong": null,
+      "claim": "c1"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: hip_flexors primary; quads secondary; core stabiliser. Motra and Kovo name the hip flexors first, then the quads (rectus femoris) and the abs (c10). Matches; no change."
+  },
+  "anchorSource": "motra-hf",
+  "anchorNote": "Motra's cable standing hip flexor raise guide and Kovo's cable standing hip flexion page read in full. No ACE, NASM or PubMed technique source for the standing cable hip flexion was found (PubMed search 2026-10-02 on hip flexor strengthening with cable or band: no technique paper).",
+  "loadProgression": {
+    "text": "Start light to learn the form; sets of 10-15 reps.",
+    "claims": [
+      "c11",
+      "c9"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "Band set-up (anchor point, band tension).",
+    "Distance from the column.",
+    "Straight-leg vs bent-knee version: both sources bend the knee; a straight-leg band raise exists but was not read."
+  ],
+  "notes": [
+    "Range conflict: Kovo lifts the thigh toward hip height (c2); Motra allows up to the knee near the chest (c3, c5). The plate draws the thigh about parallel, which both allow.",
+    "The lower-back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28); the sheet cannot ship before the back-pain box."
+  ]
+}
