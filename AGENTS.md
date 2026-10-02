@@ -15,7 +15,8 @@ Use what's necessary for high-quality output and a fast workflow, while saving t
 - Owner chat (owner, 2026-10-01): work in the background and keep the owner's chat quiet. Post there only:
   - a new APK: its link, what changed, and what to check on the phone;
   - a problem no agent can solve;
-  - a choice only the owner can make, or one where no option can be recommended.
+  - a choice only the owner can make, or one where no option can be recommended;
+  - the finish-line reminder he asked for.
   Everything else goes in the repo and on the PRs (HANDOVER, PR comments, Relay), never in his chat: progress, ticks, "no change", monitor echoes, plans, rulings, reviews and merges. Builders and reviewers never write to the owner.
 - Decide, don't ask. Research first, pick the best logical option, apply it, and record why. Ask the owner only for input or an action no AI agent can do (a payment, a login, a secret, a check on a real device).
 - No guessing, even on simple tasks. Check the code, docs or data first; if you cannot verify something, say so.
