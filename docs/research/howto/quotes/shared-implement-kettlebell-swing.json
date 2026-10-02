@@ -95,9 +95,17 @@
    "claim": "c5",
    "source": "sf-thumb",
    "text": "when you attempt to move kettlebells fast with the hammer grip, you are risking injuring your elbows on the bottom of the backswing.",
-   "status": "close",
+   "status": "verbatim",
    "closest": "And when you attempt to move kettlebells fast with the hammer grip, you are risking injuring your elbows on the bottom of the backswing.",
-   "note": "Source retrieved via WebFetch (direct curl blocked; archive.org failed twice). Actual sentence starts with 'And' which the card's quote omits; otherwise identical."
+   "note": "Exact substring of the page sentence, which starts with 'And' (R-W0-6). Source retrieved via WebFetch (direct curl blocked; archive.org failed twice)."
+  },
+  {
+   "claim": "c6",
+   "source": "hk-kb-swing",
+   "text": "Grip: Use a double overhand grip (pronate both hands). Try to break the handle, thereby strongly activating the latissimus dorsi.",
+   "status": "verbatim",
+   "closest": "Grip: Use a double overhand grip (pronate both hands). Try to break the handle, thereby strongly activating the latissimus dorsi.",
+   "note": "Re-fetched 2026-10-02 (curl, 200)."
   }
  ]
 }

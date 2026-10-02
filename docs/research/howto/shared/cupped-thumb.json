@@ -22,8 +22,9 @@
     ]
   },
   "loadAxis": {
+    "value": "along-forearm",
     "text": "along-forearm: at the top the palms face up with the dumbbell hanging over the head, so the weight rests in the upturned palms.",
-    "claim": "c4"
+    "basis": "drawing decision for the lever check, read across from c4 (ACE's wrap-the-handle grip, palms up, dumbbell hanging over the head); not a sourced claim for the cupped grip"
   },
   "wrist": {
     "text": "Keep the wrist position unchanged through the set.",

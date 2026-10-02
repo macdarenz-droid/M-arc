@@ -14,14 +14,17 @@
       "claim": "c1"
     },
     "now": {
-      "text": "Both legs numb, weak, tingling? Numb genitals or anus? Bladder, bowel, sex changes? Chest pain? Serious accident? Get emergency help now.",
-      "claim": "c1"
+      "text": "Pain, numbness, tingling or weakness in both legs? Numb genitals or anus? Bladder, bowel or sexual changes? Chest pain? Serious accident? Get emergency help now. Sudden severe or fast-worsening pain? Hot, cold, shivery or unwell? See a doctor today.",
+      "claim": [
+        "c1",
+        "c4"
+      ]
     },
     "doctor": {
-      "text": "No better in weeks? See a doctor.",
+      "text": "No better in a few weeks? See a doctor.",
       "claim": "c2"
     },
-    "words": 30,
+    "words": 50,
     "boxClaim": {
       "tags": [
         "CONSENSUS"
@@ -29,6 +32,10 @@
       "sources": [
         "nhs-back"
       ]
+    },
+    "wordCap": {
+      "limit": 50,
+      "basis": "R-W0-1 (verify/w0.md): this box only; every other box stays at 30 (LR-27 R3)."
     }
   },
   "claims": [
@@ -211,15 +218,15 @@
     }
   ],
   "gaps": [
-    "The NHS same-day (urgent) triggers in c4 (sudden severe pain, pain getting worse quickly, feeling hot, cold, shivery or unwell) have no line in the box: the back box pattern (LR-27) has an emergency line and a doctor line only, and all three lines must fit 30 words. Supervisor decides whether they replace a trigger or the box gets a third line.",
-    "Only one of the NHS doctor triggers (no better after a few weeks) fits in the doctor line; c3's other triggers (worse at night, weight loss, lump or changed shape, upper back) are not shown."
+    "Only one of the NHS doctor triggers (no better after a few weeks) fits in the doctor line; c3's other triggers (worse at night, weight loss, lump or changed shape, upper back) are not shown.",
+    "appliesTo: flutter_kicks, resisted_hip_flexion and sled_pull set redFlag \"back\" in their W0A cards; each joins appliesTo once its card is verified (B13)."
   ],
   "notes": [
-    "Draft for the verifier and the supervisor (LR-27, LR-29); the owner sees it on pilot A. Status stays draft until they settle the wording.",
+    "Wording settled by supervisor ruling R-W0-1 (verify/w0.md, 2026-10-02); the owner sees it on pilot A (LR-27), so status stays draft until then.",
     "Page read in full on 2026-10-01 (NHS page last reviewed 05 March 2026). It has three tiers: 999/A&E (c1, 6 triggers), urgent GP or 111 (c4, 2 triggers), and see a GP (c2, c3, 8 triggers).",
-    "Draft wording keeps all six NHS emergency triggers as the task asks, in 30 words by the lint count (name 2 + now 21 + doctor 7); no sentence over 15 words. The LR-27 draft (\"Numb or weak in both legs, numb around your genitals, or bladder or bowel changes?\") kept only three of the six; this draft adds sex changes, chest pain and serious accident.",
-    "Trade-offs to settle: (1) \"Both legs numb, weak, tingling?\" drops \"pain\" in both legs to fit; swapping \"tingling\" for \"painful\" is the other option. (2) \"Numb genitals or anus\" shortens \"a loss of feeling around your genitals or anus\". (3) \"Bladder, bowel, sex changes\" merges two NHS bullets. (4) The doctor line keeps a time (\"in weeks\", from \"a few weeks\") per LR-28 timing; \"a few\" was cut to fit. The lint TRIPLET pattern may flag \"numb, weak, tingling\" and \"Bladder, bowel, sex\" for review (flagged, not failed).",
-    "\"Get emergency help now.\" is the region-neutral line ruled in LR-11/LR-27 (D-LR23-1) in place of the NHS \"Call 999 or go to A&E\"; it is a ruling, not a source wording. The box names no number, service, website or link (LR-23, LR-27 R2). The current lint requires \"today\" in every box's now line; this box needs the add-only rule content.md 5.3 describes.",
+    "Word count 50 (name 2 + now 39 + doctor 9), counted as the app's C7 box lint counts words (tests/howto/checks/c7.ts on main). R-W0-1 sets this box's cap at 50. That lint is not on this research branch; the build card that ships this box must add a named 50-word limit for the back box only (red at 51, green at 50), keep the 30 cap for every other box, and keep its \"today\" check (the now line has \"See a doctor today.\").",
+    "now line: all six c1 emergency triggers with \"or\" lists (both-legs pain restored, B1, B2), then the c4 same-day triggers in plain words (\"severe pain that starts suddenly, or it's getting worse quickly\" -> \"Sudden severe or fast-worsening pain?\"; \"hot, cold, shivery or generally unwell\" -> \"Hot, cold, shivery or unwell?\") ending \"See a doctor today.\". \"Numb genitals or anus\" shortens \"a loss of feeling around your genitals or anus\"; \"sexual changes\" covers c1's sex bullet.",
+    "\"Get emergency help now.\" is the region-neutral line ruled in LR-11/LR-27 (D-LR23-1) in place of the NHS \"Call 999 or go to A&E\"; it is a ruling, not a source wording. The box names no number, service, website or link (LR-23, LR-27 R2).",
     "The same NHS page is already cited by front_squat c22, goblet_squat g13 and the back-row cards (landmine_row c19, pendlay_row c22, t_bar_row c22; c5 here covers their 'stop if your pain gets worse' line). Re-read in full here; no line copied."
   ]
 }

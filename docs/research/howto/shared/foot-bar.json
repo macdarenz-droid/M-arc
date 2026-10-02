@@ -149,7 +149,7 @@
  "notes": [
   "Same rule sourced in cards/machine_pullover.json c2, c3, c5 (Marquette); not re-read here, see gaps.",
   "c3 is tagged WEAK: one university guide, no reason given beyond shoulder limitations.",
-  "The census has no verified machine_chest_press card yet; this card is its only foot-bar source."
+  "machine_chest_press is approved (golden), but its approved research has no foot-bar step: main's tools/plates/layers/exercises/machine_chest_press.howto.mjs says the foot bar was dropped from setup with \"no verified source yet\", and lib_machine_chest_press.json lists no foot-bar source. This branch holds only its generated sheet (src/howto/generated/ht-machine-chest-press.ts), with no foot-bar line. So no verified card sources this rule; this card is its only foot-bar source."
  ],
  "sources": [
   {

@@ -10,11 +10,11 @@
     "claim": "c1"
   },
   "contactPoint": {
-    "text": "Handle held mainly by the thumb and index finger.",
+    "text": "Handle held by the thumb and index finger.",
     "claim": "c2"
   },
   "thumbRule": {
-    "text": "Thumb and index finger do most of the gripping.",
+    "text": "Grip with the thumb and index finger.",
     "claim": "c2"
   },
   "wrist": {
@@ -86,7 +86,7 @@
     },
     {
       "id": "c2",
-      "text": "The handles are gripped mainly with the thumb and index fingers.",
+      "text": "The handles are gripped with the thumb and index fingers.",
       "tags": [
         "WEAK"
       ],
@@ -177,7 +177,7 @@
     },
     {
       "id": "c6",
-      "text": "Turning the rope with the arms instead of the wrists, with elbows out wide, is one stated cause of wrist pain; sweaty handles get squeezed harder.",
+      "text": "Turning the rope with the arms instead of the wrists is one stated cause of wrist pain; sweaty handles get squeezed harder.",
       "tags": [
         "WEAK"
       ],

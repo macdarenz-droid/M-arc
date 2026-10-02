@@ -192,6 +192,24 @@
           "where": "The Proper Thumb Position for StrongFirst, para 1"
         }
       ]
+    },
+    {
+      "id": "c6",
+      "text": "Conflict on grip pressure: the textbook excerpt says to try to break the handle, while two coach sources say hold firmly without over-gripping (c4). The card follows c4.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "hk-kb-swing"
+      ],
+      "quotes": [
+        {
+          "source": "hk-kb-swing",
+          "text": "Grip: Use a double overhand grip (pronate both hands). Try to break the handle, thereby strongly activating the latissimus dorsi.",
+          "where": "Anatomic Focus"
+        }
+      ]
     }
   ],
   "sources": [
@@ -242,7 +260,7 @@
     "No source read on losing grip of the bell (sweat, chalk, clear space) or on letting go safely."
   ],
   "notes": [
-    "Sources disagree on grip pressure: one textbook excerpt says to tighten the grip and 'Try to break the handle'; two coach sources say firm but not a death grip / easy hook grip. Card follows the latter, tagged WEAK.",
+    "Sources disagree on grip pressure; c6 states the conflict (LR-18 pattern) and the card follows c4 (firm, not a death grip), tagged WEAK.",
     "PubMed searches (kettlebell hand injury, kettlebell swing grip) found nothing on grip or hand injury.",
     "handRisks holds hand-related safety points the sources state (grip loss, over-gripping); one shared field name across the 5 implement cards."
   ]
