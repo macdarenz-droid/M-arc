@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-02 ~15:05 UTC · main `36b4b3f` (#185 owner chat rule; app = `94fd32c`, train 10) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. **ALL WORK PAUSED by the owner after train 11 (HT-9)**: see 8.0a first. Usage pause 11:33-13:40 UTC (account 5-hour limit) is over. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-02 ~17:05 UTC · main `000918e` (train 11 #195: HT-9, owner AGENTS text #186, handover #183) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. **ALL WORK PAUSED by the owner (13:57) after train 11**: read 8.0a first. The hourly routine is disabled. Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -806,6 +806,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 ### 8.0a PAUSE (owner, 10-02 13:57 UTC; read first)
 - **Owner:** "After this batch. Pause all work. As i am trying to create new animation with meshy on how to". The batch = HT-9 only: its delta review (PASS 14:5x @ `dc73c32`, 0/0/0/1), train 11 (HT-9 #113 + #186 + this handover #183), CI, merge, APK to the owner. Then everything stops.
+- **Batch done 17:00:** train 11 #195 merged at 16:05 (main `000918efdf87974931ad1a630dd0bc5839b6285d`, all 4 checks green on train head `f1f5195`). APK: main's gate run 37031786763, artifact MARC-DEBUG-APK 11240393150, fingerprint step success; sent to the owner 17:0x. Relay HT-9 done. HT-9 builder and reviewer archived. Routine `trig_016ECwLTU7XRLzsYVRrwLTGe` disabled 17:00.
 - **Resume only on the owner's word.** Then: (1) re-enable `trig_016ECwLTU7XRLzsYVRrwLTGe` (`update_trigger enabled=true`); (2) re-arm `monitor.sh`; (3) read every row below live (`git ls-remote`), then send each paused session one resume message (one-shot trigger), in 8.7 order. HT-10 gets "HT-9 merged" first: it is the finish-line card.
 - **Why paused:** the owner is trying Meshy-made animations for the How-to (his own experiment, repo Watch-test, session_01H2ZgdD61dVdfPNnwywv13H, not ours). If he picks Meshy output for plates, that is a new provider and a plate-pipeline decision (plan 2.8, golden A/B byte-locked): a design card and his yes come first; nothing is swapped silently.
 
@@ -813,7 +814,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 |---|---|---|---|
 | HT-10 #166 | session_01ShBYNJXt2nMtX1YLqpodA7 | idle; holds 2 local commits (`1988e4a` + long-task window fix), never told "HT-9 merged" | send "HT-9 merged" (train 11 sha): push, merge main, READY → fresh Opus reviewer → `ht10-gate` wiring (8.7 step 6) |
 | HT-9 #113 | session_01PnsUw3z3cqLz3qrELXJsm8 | done at `dc73c32` (merged in train 11) | archive after the merge; its Low (A5 "looks exactly the same" wording) rides HT-10 or the next push touching those lines |
-| GATE-FLAKE-1 #179 | session_01SHiSom5mnPpU198y2QLsUw | was finishing its step at 14:58 (HT-3 load runs 63/80, decision entries); read its PAUSED comment on #179 | finish statistics → READY → fresh Opus reviewer |
+| GATE-FLAKE-1 #179 | session_01SHiSom5mnPpU198y2QLsUw | had not stopped by 17:00 (it re-ran the gate on the new main); interrupted 17:0x and told to push and post "**Paused** GATE-FLAKE-1 @ <sha>" on #179 with its load-run numbers; read that comment | finish statistics → READY → fresh Opus reviewer |
 | LIB-3 #180 | session_01WTJ7zrNgXsvYij39bHCrLN | **delta PASS @ `4540d82`** (14:2x, 0/0/0/0); reviewer archived | frozen until its merge turn (after HT-10, LIB-2); then rerun the pilot A scorecard on `4540d82` |
 | LIB-7 #193 | session_01GaUBBUdEvc7JYd3caGTHwF | PAUSED `f971270`: mechanism, 4 drawn keys + band gap, G1-G9, sheet `--calibrate/--plant/--critic`, 28 tests, its gate block passes both browsers | LIB-12's 2 asks (diameter only for radial; sweeps filter by owner + joint no-overlap check), full check/gate, a fresh calibrated R8 critic |
 | LIB-7 R8 critic | (in-chat, discarded) | run started before the pause **discarded** under plan 3.4 (both approved pairs < 4; 1/2 plants) | its findings, checked first: concentration/bayesian curl orientation unstated (research or gaps); hammer curl "YOU ← MACHINE" label wrong for dumbbells; push Right heel vs mid-hand; rope knob does not read; Wrong label wording |
@@ -822,7 +823,8 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 | W1A research | session_01PtjyPPiXjaD1z4XjCuzrvL | PAUSED `7fdc9425` on `claude/libht-research-w1a`: 7 full cards (push_up, seated_leg_curl, crunch, side_plank, russian_twist, weighted_dip, ab_wheel_rollout) + resistance_band_row band-hand claims c11-c14; fetcher 195/195 verbatim | Opus verifier with plants (LR-29) → fixers → recheck → merge into `claude/libht-research` |
 | W0A tempo research | session_01MyriU6AJd74orFg41trqrm | PAUSED `16558393` on `claude/libht-research-tempo`: plank c12; mountain_climbers c13/c14 (by time, no steps per second); reverse_lunge c15/c16 (3 s down only from a tempo progression); box_jump gap | supervisor ruling on reverse_lunge's 3 s, then the verifier (with W1A or alone) |
 | LIB enabler, GATE-SPLIT | session_01SFDFkUMFSboiREUAPVWPa2, session_01Nf1EpvrcLEJ3uR8fW6zFW7 | idle until HT-10 | unchanged |
-| Hourly routine | `trig_016ECwLTU7XRLzsYVRrwLTGe` | **disabled** after train 11's APK | re-enable on resume |
+| Hourly routine | `trig_016ECwLTU7XRLzsYVRrwLTGe` | **disabled** 17:00 | re-enable on resume |
+| Error reports (owner Q 16:15) | in-chat workflow `wf_7fdf54b9-ae5` (3 Opus investigators + Opus judge) | **Proven end to end by the owner 16:50:27 UTC**: his restore of a non-backup JSON stored 1 row (kind `backup`, route `settings`) in D1 `marc-errors`; so the Worker secret is set and the gym hour's 0 rows meant no failures. The supervisor's zero-write probe was refused by the auto-mode classifier and not retried. | new card **ERR-CONTRACT**: a test that runs an app-built report (`src/errors/scrub.ts`, `installId.ts`, `sender.ts` body) through `escobar-worker/src/errorsValidate.ts` `validateBatch`. No test does today, and a mismatch is a 400 that the app deletes silently (`sender.ts:85-87`). App-side test only; no Worker change. |
 
 ### 8.0 Focus and finish line (owner, 10-01; read first)
 - **Takeover (10-02).** The owner paused all work at 18:17 UTC on 10-01 because of the old account's usage limit (W0B commit `c2f3dfbc`: "Paused by the owner (2026-10-01 18:17 UTC)"); workers posted PAUSED notes at 18:20. On 10-02 at ~07:47 he started a new supervisor on his other account with: "Read my repo. And continue based on lastsupervisor  handoff progress / Follow agents.md". The new supervisor is session_01FTBsxoLN135B3HvJ7sT676 (env `env_01G5Xfb4KD41z5wLtxq6nCAU`). Every old session and Routine is on the old account and unreachable from here (10.2a applies).
@@ -837,7 +839,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 - **Merge trains:** every app PR merges through a train (6.8).
 
 ### 8.1 Main
-- **Head at the 10:00 GitHub check:** `94fd32cf4a743ea62f60dce8bba21a2796205219` (train 10 #184, 10-02 09:40). Older merge/APK records below remain historical.
+- **Head:** `000918efdf87974931ad1a630dd0bc5839b6285d` (train 11 #195, 10-02 16:05: HT-9 #113, #186, handover #183). Before it: `36b4b3f` (#185 owner chat rule), `94fd32c` (train 10 #184, HT-8, 09:40). APK for train 11: run 37031786763, artifact 11240393150 (fingerprint success; sent 17:0x). Older merge/APK records below remain historical.
 - **Merged on 10-01 (UTC), newest first:**
 
 | Time | Merge | Carried |
@@ -864,7 +866,7 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 |---|---|---|
 | HT-3c..HT-7 | #143, #140, #116, #112, #119 | merged (HT-7 in train 7) |
 | HT-8 feel map and shimmer | #111 @ `0346aca` | **MERGED** in train 10 (#184 → main `94fd32c`, 10-02 09:39; all 4 checks green on `9af002f`). Relay done. APK: main's gate run 36991137718 on `94fd32c` (apk-watch `branch=main`, see 9). |
-| HT-9 setup and risks | #113 @ `dc73c321f4451cc733faed5e7996de4849be4fe3` | **Delta PASS 14:5x** (0/0/0/1; reviewer session_01FpbfdE7YTPoy5DCMtw5xMC). Merges in **train 11** (with #186 and this handover branch #183, which carries #187). The Low (A5's "looks exactly the same" lines in `scripts/screenshot-gate.mjs` and `docs/COACHING-DECISIONS.md`: styles same, compositing differs, no compare reads `.feel`) rides the next push that changes those lines. |
+| HT-9 setup and risks | #113 @ `dc73c321f4451cc733faed5e7996de4849be4fe3` | **MERGED** in train 11 #195 (main `000918e`, 16:05; APK run 37031786763). **Delta PASS 14:5x** (0/0/0/1; reviewer session_01FpbfdE7YTPoy5DCMtw5xMC). Merged in **train 11** (with #186 and this handover branch #183, which carries #187). The Low (A5's "looks exactly the same" lines in `scripts/screenshot-gate.mjs` and `docs/COACHING-DECISIONS.md`: styles same, compositing differs, no compare reads `.feel`) rides the next push that changes those lines. |
 | HT-10 sweeps, speed, release candidate | #166 @ `038cd4f` | Builder session_01ShBYNJXt2nMtX1YLqpodA7 holds 2 local commits (`1988e4a` D-HT10-A5c-2, plus the 09:33 long-task window fix: count only tasks with startTime ≥ window start in `harness.mjs`, routed from GATE-FLAKE-1). Waits for the supervisor's "HT-9 merged". Then READY → fresh Opus reviewer → supervisor `ht10-gate` wiring (8.7 step 6). Possible new flake outside GATE-FLAKE-1: BUG-34 launch first frame on `038cd4f` (job 110762812501), not verified. |
 
 **Golden-B follow-ups, before M1 is called done (through plan 2.8):**
