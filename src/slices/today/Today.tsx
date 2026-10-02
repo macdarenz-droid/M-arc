@@ -88,14 +88,14 @@ export function Today() {
         {status === 'off' && split && (
           <div class="stack-sm" data-palace="today.day-off">
             <div class="eyebrow">Day off</div>
-            <h2>{split.name} can wait</h2>
+            <h2>{split.name}</h2>
             <div class="row"><Button onClick={() => { setDayOff(today.value, false); requestStart(split); go('train'); }}><IconPlay /> Train anyway</Button><Button variant="quiet" onClick={() => setDayOff(today.value, false)}>Undo day off</Button></div>
           </div>
         )}
         {status === 'rest' && (
           <div class="stack-sm">
             <div class="eyebrow">Rest day</div>
-            <h2>{s.splits.length ? 'Nothing scheduled' : 'Set up your first workout'}</h2>
+            <h2>{s.splits.length ? 'Nothing scheduled' : 'First workout'}</h2>
             <Button onClick={() => go('train')}>{s.splits.length ? 'Choose a workout' : 'Open Train'}</Button>
           </div>
         )}
@@ -105,7 +105,7 @@ export function Today() {
 
       <Pins />
 
-      <Section title="This week" palace="today.week" aside={<span class="small muted">{w.grade.title}</span>}>
+      <Section title="Current week" palace="today.week" aside={<span class="small muted">{w.grade.title}</span>}>
         <Card>
           <div class="grid-3">
             <Stat value={w.workouts} label="workouts" />
@@ -172,7 +172,7 @@ function Pins() {
 const BAND_LABEL = { green: 'Green', amber: 'Amber', red: 'Red' } as const;
 const ADVICE_COPY = { normal: null, no_increase: 'Keep loads steady today — skip any increases.', reduce: 'Keep the load, but consider one fewer set.' } as const;
 
-/** F2.1: a tier with reasons above "This week", or a quiet connect/check-in prompt when there is nothing to show yet. */
+/** F2.1: a tier with reasons above "Current week", or a quiet connect/check-in prompt when there is nothing to show yet. */
 function ReadinessCard() {
   const r = todayReadiness.value;
   if (!r) {
