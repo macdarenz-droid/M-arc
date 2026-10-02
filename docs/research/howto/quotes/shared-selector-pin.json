@@ -1,0 +1,79 @@
+{
+ "id": "shared-selector-pin",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "matrix-go-s34",
+   "text": "Check to see that the selector pin is completely inserted into the weight stack.",
+   "status": "verbatim",
+   "closest": "Check to see that the selector pin is completely inserted into the weight stack.",
+   "note": "PDF wraps the sentence across two lines after the list number '6.'; text matches once line-wrap whitespace is normalized"
+  },
+  {
+   "claim": "c1",
+   "source": "lf-circuit",
+   "text": "Fully insert weight selector pins. Partial insertion can cause weights to fall unexpectedly.",
+   "status": "verbatim",
+   "closest": "Fully insert weight selector pins. Partial insertion can cause weights to fall unexpectedly.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "hs-mts",
+   "text": "Fully insert weight selector pins. Partial insertion can cause weights to fall unexpectedly.",
+   "status": "verbatim",
+   "closest": "Fully insert weight selector pins. Partial insertion can cause weights to fall unexpectedly.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "matrix-go-s34",
+   "text": "NEVER use the machine with the weight stack pinned in an elevated position.",
+   "status": "verbatim",
+   "closest": "NEVER use the machine with the weight stack pinned in an elevated position.",
+   "note": "PDF wraps the sentence across two lines after the list number '7.'; matches once line-wrap whitespace is normalized"
+  },
+  {
+   "claim": "c2",
+   "source": "lf-circuit",
+   "text": "Never pin the weight stack in an elevated position.",
+   "status": "verbatim",
+   "closest": "Never pin the weight stack in an elevated position.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "lf-circuit",
+   "text": "Never remove selector pin if any weights are suspended.",
+   "status": "verbatim",
+   "closest": "Never remove selector pin if any weights are suspended.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "hs-mts",
+   "text": "Never remove selector pin if any weights",
+   "status": "verbatim",
+   "closest": "Never remove selector pin if any weights",
+   "note": "quote is intentionally cut at the manual's PDF page/line break, as noted on the card"
+  },
+  {
+   "claim": "c4",
+   "source": "lf-circuit",
+   "text": "Use only weight selector pins supplied by LIFE FITNESS on weight stacks. Substitutes are forbidden.",
+   "status": "verbatim",
+   "closest": "Use only weight selector pins supplied by LIFE FITNESS on weight stacks. Substitutes are forbidden.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "matrix-go-s34",
+   "text": "NEVER use dumbbells or other means to incrementally increase the weight resistance. Only use the means provided directly from the manufacturer.",
+   "status": "verbatim",
+   "closest": "NEVER use dumbbells or other means to incrementally increase the weight resistance. Only use the means provided directly from the manufacturer.",
+   "note": "PDF wraps the sentence across three lines after the list number '8.'; matches once line-wrap whitespace is normalized"
+  }
+ ]
+}

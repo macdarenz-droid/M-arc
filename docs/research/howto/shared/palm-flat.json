@@ -293,7 +293,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": null
+      "checked": "2026-10-02"
     },
     {
       "id": "bm-pushwrist",
@@ -303,7 +303,7 @@
       "year": 2021,
       "pmid": null,
       "access": "full",
-      "checked": null
+      "checked": "2026-10-02"
     },
     {
       "id": "bws-pushup",
@@ -313,7 +313,7 @@
       "year": 2021,
       "pmid": null,
       "access": "full",
-      "checked": null
+      "checked": "2026-10-02"
     },
     {
       "id": "ace-birddog",
@@ -323,7 +323,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": null
+      "checked": "2026-10-02"
     },
     {
       "id": "nance-2017",
@@ -333,7 +333,7 @@
       "year": 2017,
       "pmid": "29085728",
       "access": "abstract",
-      "checked": null
+      "checked": "2026-10-02"
     }
   ],
   "gaps": [
