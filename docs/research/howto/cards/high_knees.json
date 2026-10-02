@@ -263,7 +263,9 @@
       "title": "It's Time to Revisit the High Knees Exercise You Learned in PE (Healthline; medically reviewed by a NASM-CPT)",
       "kind": "coach",
       "year": 2021,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "bb-hk",
@@ -271,7 +273,9 @@
       "title": "Learn How to Do High Knees to Step Up Your Leg & Core Game (BarBend)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "ace-cardio15",
@@ -279,7 +283,9 @@
       "title": "Rev up Your Cardio With This 15-Minute Drill (ACE blog)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {
@@ -457,7 +463,7 @@
       "claim": "c5"
     },
     {
-      "risk": "Sore knees or ankles: use supportive shoes and a forgiving floor or grass.",
+      "risk": "Sore knees or ankles: wear supportive shoes and use a supportive floor or grass.",
       "claim": "c10"
     }
   ],
@@ -502,6 +508,7 @@
     "Breathing."
   ],
   "notes": [
-    "Healthline puts the knee 'slightly above waist level' (c2); BarBend says 'at least 90 degrees of flexion' (c3). The plate draws the thigh about horizontal, which meets both."
+    "Healthline puts the knee 'slightly above waist level' (c2); BarBend says 'at least 90 degrees of flexion' (c3). The plate draws the thigh about horizontal, which meets both.",
+    "Writer fix 2026-10-02: risk 2 \"forgiving floor\" changed to \"supportive floor\" to match c10; quote re-read in hl-hk."
   ]
 }

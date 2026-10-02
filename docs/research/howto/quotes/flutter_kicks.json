@@ -1,0 +1,159 @@
+{
+  "id": "flutter_kicks",
+  "checked": "2026-10-02",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "hevy-fk",
+      "text": "Lie on the floor with your legs straight, arms to your sides, and palms flat against the ground.",
+      "status": "verbatim",
+      "closest": "Lie on the floor with your legs straight, arms to your sides, and palms flat against the ground.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "hevy-fk",
+      "text": "With your lower back in contact with the floor, take a breath and lift your feet several inches off the floor.",
+      "status": "verbatim",
+      "closest": "With your lower back in contact with the floor, take a breath and lift your feet several inches off the floor.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "hevy-fk",
+      "text": "Take another breath and begin moving your legs up and down alternatingly. Keep your movements short and crisp.",
+      "status": "verbatim",
+      "closest": "Take another breath and begin moving your legs up and down alternatingly. Keep your movements short and crisp.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "hawkes-fk",
+      "text": "Lying on your back, squeeze your shoulder blades down and together and use your abdominals to flatten your lower back to the floor. This needs to remain the same throughout",
+      "status": "verbatim",
+      "closest": "Lying on your back, squeeze your shoulder blades down and together and use your abdominals to flatten your lower back to the floor. This needs to remain the same throughout",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "hawkes-fk",
+      "text": "Next raise both feet off the floor with straight knees and essentially kick your legs at the hips",
+      "status": "verbatim",
+      "closest": "Next raise both feet off the floor with straight knees and essentially kick your legs at the hips",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "hevy-fk",
+      "text": "An important tip for a safe and effective flutter kick is to keep your lower back flat against the floor at all times. Doing so ensures that your abs stay engaged, provide stability, and do most of the work involved in keeping your legs in the air and moving.",
+      "status": "verbatim",
+      "closest": "An important tip for a safe and effective flutter kick is to keep your lower back flat against the floor at all times. Doing so ensures that your abs stay engaged, provide stability, and do most of the work involved in keeping your legs in the air and moving.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "hevy-fk",
+      "text": "A common mistake with the movement and numerous other ab exercises is arching the lower back. Doing so places unnecessary stress on your spine and lengthens the abs, preventing them from engaging as effectively.",
+      "status": "verbatim",
+      "closest": "A common mistake with the movement and numerous other ab exercises is arching the lower back. Doing so places unnecessary stress on your spine and lengthens the abs, preventing them from engaging as effectively.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "hevy-fk",
+      "text": "Avoid the error by keeping your lower back in contact with the floor from start to finish.",
+      "status": "verbatim",
+      "closest": "Avoid the error by keeping your lower back in contact with the floor from start to finish.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "hevy-fk",
+      "text": "The second tip for kicks is keeping the leg motions short and controlled. Doing so is vital for maintaining your balance and keeping your spine in a healthy position. Moving your legs uncontrollably leads to instability and increases the risk of arching your lower back.",
+      "status": "verbatim",
+      "closest": "The second tip for kicks is keeping the leg motions short and controlled. Doing so is vital for maintaining your balance and keeping your spine in a healthy position. Moving your legs uncontrollably leads to instability and increases the risk of arching your lower back.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "hevy-fk",
+      "text": "The second mistake with flutter kicks is moving your legs through an extended range of motion. Doing so isn't necessarily fatal, but the objective is to perform short and quick leg motions, alternating numerous times per set.",
+      "status": "verbatim",
+      "closest": "The second mistake with flutter kicks is moving your legs through an extended range of motion. Doing so isn't necessarily fatal, but the objective is to perform short and quick leg motions, alternating numerous times per set.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "hevy-fk",
+      "text": "The primary muscle that works during the exercise is the rectus abdominis.",
+      "status": "verbatim",
+      "closest": "The primary muscle that works during the exercise is the rectus abdominis.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "hevy-fk",
+      "text": "Kicks also engage the five hip flexors. The collection of muscles assists the abs in keeping our legs in the air and moving up and down.",
+      "status": "verbatim",
+      "closest": "Kicks also engage the five hip flexors. The collection of muscles assists the abs in keeping our legs in the air and moving up and down.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "hawkes-fk",
+      "text": "This exercise works your hip flexors and core",
+      "status": "verbatim",
+      "closest": "This exercise works your hip flexors and core",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "hawkes-fk",
+      "text": "Like any exercise this should be pain free or shouldn't increase existing pain levels, during, after and the next day.",
+      "status": "verbatim",
+      "closest": "Like any exercise this should be pain free or shouldn't increase existing pain levels, during, after and the next day.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "hawkes-fk",
+      "text": "It is normal to feel some delayed onset muscle soreness between 48-72 hours but this should be manageable",
+      "status": "verbatim",
+      "closest": "It is normal to feel some delayed onset muscle soreness between 48-72 hours but this should be manageable",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "hawkes-fk",
+      "text": "For endurance you should perform 30-50 kicks to fatigue",
+      "status": "verbatim",
+      "closest": "For endurance you should perform 30-50 kicks to fatigue",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "hawkes-fk",
+      "text": "You should perform 3-5 sets with no more than 30 second rests",
+      "status": "verbatim",
+      "closest": "You should perform 3-5 sets with no more than 30 second rests",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "hawkes-fk",
+      "text": "To make this exercise harder you can add ankles weight progressively",
+      "status": "verbatim",
+      "closest": "To make this exercise harder you can add ankles weight progressively",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "hevy-fk",
+      "text": "Breathe as steadily as you can and go for as long as your abs allow you.",
+      "status": "verbatim",
+      "closest": "Breathe as steadily as you can and go for as long as your abs allow you.",
+      "note": ""
+    }
+  ]
+}

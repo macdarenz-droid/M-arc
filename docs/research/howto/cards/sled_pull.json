@@ -257,7 +257,9 @@
       "title": "Sled Pull Guide: How To Improve Your Technique, Training & Full-Body Strength (Gymshark Central)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "west-2014",
@@ -265,7 +267,9 @@
       "title": "The metabolic, hormonal, biochemical, and neuromuscular function responses to a backward sled drag training session",
       "kind": "peer-reviewed",
       "year": 2014,
-      "pmid": "23575361"
+      "pmid": "23575361",
+      "access": "abstract",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {
@@ -432,7 +436,7 @@
       },
       {
         "where": "Glutes",
-        "means": "They help drive you back.",
+        "means": "They work on every step back.",
         "fix": "",
         "claim": "c7",
         "redFlag": null
@@ -515,6 +519,7 @@
   ],
   "notes": [
     "The lower-back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28); the sheet cannot ship before the back-pain box.",
-    "Tier B checklist: no machine depth or lockout; lower back covered (c8, c11)."
+    "Tier B checklist: no machine depth or lockout; lower back covered (c8, c11).",
+    "Writer fix 2026-10-02: feel row 2 means changed from \"They help drive you back\" to stay within c7; quote re-read in gs-sled."
   ]
 }

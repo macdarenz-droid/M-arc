@@ -264,7 +264,9 @@
       "title": "Bear Crawl (ACE Exercise Library)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "ace-bc-shape",
@@ -272,7 +274,9 @@
       "title": "How to Do the Bear Crawl Exercise to Boost Strength and Coordination (SHAPE, reprinted by ACE)",
       "kind": "coach",
       "year": 2022,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "bb-bc",
@@ -280,7 +284,9 @@
       "title": "Build an Unstoppable Core and Upper Body with the Bear Crawl (BarBend)",
       "kind": "coach",
       "year": 2025,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "nance-2017",
@@ -288,7 +294,9 @@
       "title": "Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study",
       "kind": "peer-reviewed",
       "year": 2017,
-      "pmid": "29085728"
+      "pmid": "29085728",
+      "access": "abstract",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {

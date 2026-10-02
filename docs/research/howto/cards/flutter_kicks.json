@@ -274,7 +274,9 @@
       "title": "Flutter Kicks: How-to, Tips, Variations, Mistakes & More (Hevy; certified personal trainer)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "hawkes-fk",
@@ -282,7 +284,9 @@
       "title": "Flutter kicks (Hawkes Physiotherapy exercise page)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {

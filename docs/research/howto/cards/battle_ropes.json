@@ -291,7 +291,9 @@
       "title": "How to Get Started with Battle Rope Exercises (Healthline; medically reviewed by a CSCS)",
       "kind": "coach",
       "year": 2022,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "ace-br-emg",
@@ -299,7 +301,9 @@
       "title": "Muscle Activation During Battle Rope Exercises (ACE-sponsored research summary, Salzgeber, Porcari et al.)",
       "kind": "secondary",
       "year": 2019,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "calatayud-2015",
@@ -307,7 +311,9 @@
       "title": "Muscle Activity During Unilateral vs. Bilateral Battle Rope Exercises",
       "kind": "peer-reviewed",
       "year": 2015,
-      "pmid": "25853917"
+      "pmid": "25853917",
+      "access": "abstract",
+      "checked": "2026-10-02"
     },
     {
       "id": "ace-br-total",
@@ -315,7 +321,9 @@
       "title": "Total-Body Battle Ropes Workout (ACE expert article)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {
@@ -481,7 +489,7 @@
       },
       {
         "where": "Sides of the waist",
-        "means": "Your core resists the alternating pull.",
+        "means": "Your obliques work, more in alternating waves.",
         "fix": "",
         "claim": "c10",
         "redFlag": null
@@ -559,6 +567,7 @@
   ],
   "notes": [
     "Two-arm waves, slams and circles are other battle-rope moves; the plate draws alternating waves, the most common beginner move in the anchor and the one with muscle data (c10, c12).",
-    "feel.primary follows the libraryDiff proposal (front_delts) because no source supports side_delts; the supervisor decides at the LIB data card."
+    "feel.primary follows the libraryDiff proposal (front_delts) because no source supports side_delts; the supervisor decides at the LIB data card.",
+    "Writer fix 2026-10-02: feel row 2 means changed from \"Your core resists the alternating pull\" to follow c10 (obliques higher in unilateral waves); quote re-read in calatayud-2015."
   ]
 }

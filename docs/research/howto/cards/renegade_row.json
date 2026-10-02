@@ -344,7 +344,9 @@
       "title": "Build a Big Back and Strong Core at Once With the Renegade Row (BarBend)",
       "kind": "coach",
       "year": 2024,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "ggr-rr",
@@ -352,7 +354,9 @@
       "title": "How To Do a Renegade Row (Garage Gym Reviews; certified personal trainer)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "sl-renegade",
@@ -360,7 +364,9 @@
       "title": "How to Do Renegade Rows: Muscles Worked & Proper Form (StrengthLog)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {

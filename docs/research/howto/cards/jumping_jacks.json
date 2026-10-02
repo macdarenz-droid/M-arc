@@ -285,7 +285,9 @@
       "title": "Jumping Jacks (NASM Exercise Library)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "el-jj",
@@ -293,7 +295,9 @@
       "title": "Break It Down: The Jumping Jack (Experience Life, Life Time)",
       "kind": "coach",
       "year": 2021,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "webmd-jj",
@@ -301,7 +305,9 @@
       "title": "How to Do Jumping Jacks (WebMD; medically reviewed by a DPT)",
       "kind": "coach",
       "year": 2026,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {

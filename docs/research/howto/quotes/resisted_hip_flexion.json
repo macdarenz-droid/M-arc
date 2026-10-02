@@ -1,0 +1,223 @@
+{
+  "id": "resisted_hip_flexion",
+  "checked": "2026-10-02",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "motra-hf",
+      "text": "Attach ankle strap to low cable pulley and secure around one ankle. Stand facing away from machine with slight cable tension, holding stable object for balance if needed.",
+      "status": "verbatim",
+      "closest": "Attach ankle strap to low cable pulley and secure around one ankle. Stand facing away from machine with slight cable tension, holding stable object for balance if needed.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "kovo-hf",
+      "text": "Face away from the machine and hold the frame for balance. Drive your knee up and forward against the cable, lifting your thigh toward hip height, then lower with control and repeat before switching legs.",
+      "status": "verbatim",
+      "closest": "Face away from the machine and hold the frame for balance. Drive your knee up and forward against the cable, lifting your thigh toward hip height, then lower with control and repeat before switching legs.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "motra-hf",
+      "text": "Brace core and maintain upright posture.",
+      "status": "verbatim",
+      "closest": "Brace core and maintain upright posture.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "motra-hf",
+      "text": "Slowly lift strapped leg forward, bending knee toward chest.",
+      "status": "verbatim",
+      "closest": "Slowly lift strapped leg forward, bending knee toward chest.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "motra-hf",
+      "text": "Pause briefly at top to squeeze hip flexors.",
+      "status": "verbatim",
+      "closest": "Pause briefly at top to squeeze hip flexors.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "motra-hf",
+      "text": "Controlled lower leg back to start without letting weight stack touch.",
+      "status": "verbatim",
+      "closest": "Controlled lower leg back to start without letting weight stack touch.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "kovo-hf",
+      "text": "Control the cable back down rather than letting it drop",
+      "status": "verbatim",
+      "closest": "Control the cable back down rather than letting it drop",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "motra-hf",
+      "text": "From full hip extension behind body to thigh parallel to floor or knee near chest, without lumbar arch.",
+      "status": "verbatim",
+      "closest": "From full hip extension behind body to thigh parallel to floor or knee near chest, without lumbar arch.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "motra-hf",
+      "text": "Core tight, no arching.",
+      "status": "verbatim",
+      "closest": "Core tight, no arching.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "motra-hf",
+      "text": "Lift with hip, not momentum.",
+      "status": "verbatim",
+      "closest": "Lift with hip, not momentum.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "motra-hf",
+      "text": "Hips level, no rotation.",
+      "status": "verbatim",
+      "closest": "Hips level, no rotation.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "motra-hf",
+      "text": "Knee tracks straight.",
+      "status": "verbatim",
+      "closest": "Knee tracks straight.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "motra-hf",
+      "text": "Keep hips square throughout.",
+      "status": "verbatim",
+      "closest": "Keep hips square throughout.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "kovo-hf",
+      "text": "Don't lean back or arch your lower back to lift higher",
+      "status": "verbatim",
+      "closest": "Don't lean back or arch your lower back to lift higher",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "kovo-hf",
+      "text": "Don't swing the leg up with momentum",
+      "status": "verbatim",
+      "closest": "Don't swing the leg up with momentum",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "kovo-hf",
+      "text": "Don't let the stack slam at the bottom",
+      "status": "verbatim",
+      "closest": "Don't let the stack slam at the bottom",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "motra-hf",
+      "text": "Inhale during lowering phase; exhale as you lift and squeeze.",
+      "status": "verbatim",
+      "closest": "Inhale during lowering phase; exhale as you lift and squeeze.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "motra-hf",
+      "text": "Tempo 2-1-2",
+      "status": "verbatim",
+      "closest": "Tempo 2-1-2",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "motra-hf",
+      "text": "Typical Rep Range 10-15 reps Rest Between Sets 60-90 seconds",
+      "status": "verbatim",
+      "closest": "Typical Rep Range 10-15 reps Rest Between Sets 60-90 seconds",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "kovo-hf",
+      "text": "The cable standing hip flexion mainly works the hip flexors, with the lower abs, quads, and upper abs assisting.",
+      "status": "verbatim",
+      "closest": "The cable standing hip flexion mainly works the hip flexors, with the lower abs, quads, and upper abs assisting.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "motra-hf",
+      "text": "Hip Flexors10/10 Iliopsoas Quads7/10 Rectus Femoris",
+      "status": "verbatim",
+      "closest": "Hip Flexors10/10 Iliopsoas Quads7/10 Rectus Femoris",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "motra-hf",
+      "text": "Avoid if acute hip or low back pain present.",
+      "status": "verbatim",
+      "closest": "Avoid if acute hip or low back pain present.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "motra-hf",
+      "text": "Use light weight initially for form.",
+      "status": "verbatim",
+      "closest": "Use light weight initially for form.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "motra-hf",
+      "text": "Maintain neutral spine to protect lower back.",
+      "status": "verbatim",
+      "closest": "Maintain neutral spine to protect lower back.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "motra-hf",
+      "text": "Stop if balance causes strain.",
+      "status": "verbatim",
+      "closest": "Stop if balance causes strain.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "kovo-hf",
+      "text": "Feel the front of your hip and lower abs pull your knee up",
+      "status": "verbatim",
+      "closest": "Feel the front of your hip and lower abs pull your knee up",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "kovo-hf",
+      "text": "Stand tall and keep your standing leg steady",
+      "status": "verbatim",
+      "closest": "Stand tall and keep your standing leg steady",
+      "note": ""
+    }
+  ]
+}
