@@ -37,6 +37,7 @@ Scripts cannot use `Date.now()`, `Math.random()` or a bare `new Date()`. Pass an
 | `marc-rating.js` | App rating: two read-only researchers in parallel (the code on main, the market). No args. Output: `docs/research/app-rating/`. | Done 10-01. |
 | `gym-finder-review.js` | Gym Finder (#158): three read-only agents in parallel (proposal, codebase fit, external constraints). No args. Output: `docs/research/gym-finder/gf-0.md` to `gf-2.md`. | Done 10-01. Gym Finder is **parked**: no rerun without the owner's approval. |
 | `gym-finder-redteam.js` | Gym Finder: one red-team agent attacks the draft plan. It reads its inputs from `origin/main:docs/research/gym-finder/`. Output: `docs/research/gym-finder/gf-redteam.md`. | Same as above. |
+| `pilot-a-critic.js` | Library pilot A (#109), plan 3.4: one Opus agent builds a blind set in the scratchpad (18 pilot plates, 2 hidden approved plates, 2 planted defects, shuffled, facts per plate, the answer key only in its output), then a fresh Opus critic scores R1-R10; plain code checks the calibration (hidden approved plates all at 4 or more, both plants scored below 4 on their item) and reruns a fresh critic up to 3 times. Args: `{"scratch": "<scratchpad dir>"}`. For another batch, change the branch, head, plate count and expected plates page sha in the prepare prompt. | Started 10-02 08:00 (`wf_1d2fcf84-613`) on `c6e5b66`. Result goes on #109. |
 
 ### HT-7 result
 
@@ -44,4 +45,4 @@ Done. Top cause (≈0.75): in Chromium 141 an SVG text's font size includes oute
 
 ## Other scripts from this session
 
-Many other Workflows ran in this supervisor session (for example the How-to plans and plate critics, the architecture review ARCH-1, the library How-to architecture, the Escobar report plan). Their scripts live only in the session's folder on the current account and are lost on an account switch; they are not kept here. Their results are in the research folders, the cards and `docs/COACHING-DECISIONS.md`. To redo one, rebuild it from the shape above and the matching research README.
+Many other Workflows ran in the first supervisor session (for example the How-to plans and plate critics, the architecture review ARCH-1, the library How-to architecture, the Escobar report plan). Their scripts live only in the session's folder on the current account and are lost on an account switch; they are not kept here. Their results are in the research folders, the cards and `docs/COACHING-DECISIONS.md`. To redo one, rebuild it from the shape above and the matching research README.
