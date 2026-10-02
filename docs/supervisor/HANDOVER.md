@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-02 ~13:55 UTC · main `36b4b3f` (#185 owner chat rule; app = `94fd32c`, train 10) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. **Usage pause 11:33-13:40 UTC** (account 5-hour limit): every worker stopped mid-turn; all were sent a resume message at 13:50 and the pilot A critic was resumed. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-02 ~15:05 UTC · main `36b4b3f` (#185 owner chat rule; app = `94fd32c`, train 10) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. **ALL WORK PAUSED by the owner after train 11 (HT-9)**: see 8.0a first. Usage pause 11:33-13:40 UTC (account 5-hour limit) is over. Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -804,6 +804,26 @@ The table is in `AGENTS.md`. Do not copy it here.
 
 The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unless marked otherwise. Session, Routine, Relay and unmentioned PR rows were not re-captured in this docs pass; read them as that historical snapshot and reconcile live before acting. The GitHub changes above supersede conflicting status rows below.
 
+### 8.0a PAUSE (owner, 10-02 13:57 UTC; read first)
+- **Owner:** "After this batch. Pause all work. As i am trying to create new animation with meshy on how to". The batch = HT-9 only: its delta review (PASS 14:5x @ `dc73c32`, 0/0/0/1), train 11 (HT-9 #113 + #186 + this handover #183), CI, merge, APK to the owner. Then everything stops.
+- **Resume only on the owner's word.** Then: (1) re-enable `trig_016ECwLTU7XRLzsYVRrwLTGe` (`update_trigger enabled=true`); (2) re-arm `monitor.sh`; (3) read every row below live (`git ls-remote`), then send each paused session one resume message (one-shot trigger), in 8.7 order. HT-10 gets "HT-9 merged" first: it is the finish-line card.
+- **Why paused:** the owner is trying Meshy-made animations for the How-to (his own experiment, repo Watch-test, session_01H2ZgdD61dVdfPNnwywv13H, not ours). If he picks Meshy output for plates, that is a new provider and a plate-pipeline decision (plan 2.8, golden A/B byte-locked): a design card and his yes come first; nothing is swapped silently.
+
+| Task | Session | Stop point (pushed) | Next on resume |
+|---|---|---|---|
+| HT-10 #166 | session_01ShBYNJXt2nMtX1YLqpodA7 | idle; holds 2 local commits (`1988e4a` + long-task window fix), never told "HT-9 merged" | send "HT-9 merged" (train 11 sha): push, merge main, READY → fresh Opus reviewer → `ht10-gate` wiring (8.7 step 6) |
+| HT-9 #113 | session_01PnsUw3z3cqLz3qrELXJsm8 | done at `dc73c32` (merged in train 11) | archive after the merge; its Low (A5 "looks exactly the same" wording) rides HT-10 or the next push touching those lines |
+| GATE-FLAKE-1 #179 | session_01SHiSom5mnPpU198y2QLsUw | was finishing its step at 14:58 (HT-3 load runs 63/80, decision entries); read its PAUSED comment on #179 | finish statistics → READY → fresh Opus reviewer |
+| LIB-3 #180 | session_01WTJ7zrNgXsvYij39bHCrLN | **delta PASS @ `4540d82`** (14:2x, 0/0/0/0); reviewer archived | frozen until its merge turn (after HT-10, LIB-2); then rerun the pilot A scorecard on `4540d82` |
+| LIB-7 #193 | session_01GaUBBUdEvc7JYd3caGTHwF | PAUSED `f971270`: mechanism, 4 drawn keys + band gap, G1-G9, sheet `--calibrate/--plant/--critic`, 28 tests, its gate block passes both browsers | LIB-12's 2 asks (diameter only for radial; sweeps filter by owner + joint no-overlap check), full check/gate, a fresh calibrated R8 critic |
+| LIB-7 R8 critic | (in-chat, discarded) | run started before the pause **discarded** under plan 3.4 (both approved pairs < 4; 1/2 plants) | its findings, checked first: concentration/bayesian curl orientation unstated (research or gaps); hammer curl "YOU ← MACHINE" label wrong for dumbbells; push Right heel vs mid-hand; rope knob does not read; Wrong label wording |
+| LIB-12 #191 | session_01PsmZzeKjrgwWHjNntDBpMD | PAUSED `3d70a94`; pilot A cupped (goblet) + front-rack renders posted on #109 | add them to the pilot A sheet; continue its card |
+| LIB-8 pilot A #109 | session_01XaegSQJXRSyfX5CyGxkfRk | idle at `1da9014`; critic `wf_3a60c2a3-e4c` **stopped** at 13:59 | resume the critic with `resumeFromRunId` (prep cached; script `pilot-a-critic.js`); then per-exercise approval or a fix round |
+| W1A research | session_01PtjyPPiXjaD1z4XjCuzrvL | PAUSED `7fdc9425` on `claude/libht-research-w1a`: 7 full cards (push_up, seated_leg_curl, crunch, side_plank, russian_twist, weighted_dip, ab_wheel_rollout) + resistance_band_row band-hand claims c11-c14; fetcher 195/195 verbatim | Opus verifier with plants (LR-29) → fixers → recheck → merge into `claude/libht-research` |
+| W0A tempo research | session_01MyriU6AJd74orFg41trqrm | PAUSED `16558393` on `claude/libht-research-tempo`: plank c12; mountain_climbers c13/c14 (by time, no steps per second); reverse_lunge c15/c16 (3 s down only from a tempo progression); box_jump gap | supervisor ruling on reverse_lunge's 3 s, then the verifier (with W1A or alone) |
+| LIB enabler, GATE-SPLIT | session_01SFDFkUMFSboiREUAPVWPa2, session_01Nf1EpvrcLEJ3uR8fW6zFW7 | idle until HT-10 | unchanged |
+| Hourly routine | `trig_016ECwLTU7XRLzsYVRrwLTGe` | **disabled** after train 11's APK | re-enable on resume |
+
 ### 8.0 Focus and finish line (owner, 10-01; read first)
 - **Takeover (10-02).** The owner paused all work at 18:17 UTC on 10-01 because of the old account's usage limit (W0B commit `c2f3dfbc`: "Paused by the owner (2026-10-01 18:17 UTC)"); workers posted PAUSED notes at 18:20. On 10-02 at ~07:47 he started a new supervisor on his other account with: "Read my repo. And continue based on lastsupervisor  handoff progress / Follow agents.md". The new supervisor is session_01FTBsxoLN135B3HvJ7sT676 (env `env_01G5Xfb4KD41z5wLtxq6nCAU`). Every old session and Routine is on the old account and unreachable from here (10.2a applies).
 - **Owner, 10-01 ~01:15:** "Park this audit improvement for now. Lets finish all the how to do first. And all the first audit fixes."
@@ -844,7 +864,7 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 |---|---|---|
 | HT-3c..HT-7 | #143, #140, #116, #112, #119 | merged (HT-7 in train 7) |
 | HT-8 feel map and shimmer | #111 @ `0346aca` | **MERGED** in train 10 (#184 → main `94fd32c`, 10-02 09:39; all 4 checks green on `9af002f`). Relay done. APK: main's gate run 36991137718 on `94fd32c` (apk-watch `branch=main`, see 9). |
-| HT-9 setup and risks | #113 (live head: `git ls-remote origin refs/pull/113/head`; `193d707` at 10:00) | PASS @ `e57c6d8` (10-01 12:31) is not evidence for later heads. **Catch-up push in progress:** replacement Opus builder session_01PnsUw3z3cqLz3qrELXJsm8 (09:41): merge main, `WANT` 4 sections, Show probe 17/17, D-HT9-A3b (Setup and Risks in separate tasks; GATE-FLAKE-1 input: `showModal` layout dominates the open's largest task, peaks at 100 ms). It posts `HT-9 FIXED: <sha>`; then a fresh Opus delta reviewer; then the train (with #186 and this handover branch, which carries #187). |
+| HT-9 setup and risks | #113 @ `dc73c321f4451cc733faed5e7996de4849be4fe3` | **Delta PASS 14:5x** (0/0/0/1; reviewer session_01FpbfdE7YTPoy5DCMtw5xMC). Merges in **train 11** (with #186 and this handover branch #183, which carries #187). The Low (A5's "looks exactly the same" lines in `scripts/screenshot-gate.mjs` and `docs/COACHING-DECISIONS.md`: styles same, compositing differs, no compare reads `.feel`) rides the next push that changes those lines. |
 | HT-10 sweeps, speed, release candidate | #166 @ `038cd4f` | Builder session_01ShBYNJXt2nMtX1YLqpodA7 holds 2 local commits (`1988e4a` D-HT10-A5c-2, plus the 09:33 long-task window fix: count only tasks with startTime ≥ window start in `harness.mjs`, routed from GATE-FLAKE-1). Waits for the supervisor's "HT-9 merged". Then READY → fresh Opus reviewer → supervisor `ht10-gate` wiring (8.7 step 6). Possible new flake outside GATE-FLAKE-1: BUG-34 launch first frame on `038cd4f` (job 110762812501), not verified. |
 
 **Golden-B follow-ups, before M1 is called done (through plan 2.8):**
@@ -897,7 +917,7 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 - LIB lane size: ~290 KB raw / 64 KB gz per exercise → 153 exercises ≈ 44 MB raw / 9.8 MB gz (plan 8.10: 8-11 MB). Shared parts first; a download server only with the owner's OK.
 - Account switch again: in-chat workflows, monitors and scratchpad files are lost. Mitigation: this file, `PROMPTS.md`, `docs/supervisor/scripts/` and `docs/supervisor/workflows/`.
 
-### 8.3 Running sessions (M/ARC, new account; status at 13:50 10-02)
+### 8.3 Sessions (M/ARC, new account; status at 15:05 10-02: all paused, see 8.0a)
 | Session | Role | Status |
 |---|---|---|
 | session_01FTBsxoLN135B3HvJ7sT676 | **Supervisor** (branch `ccr-4fb3081a-9puaq1`) | running |
@@ -982,7 +1002,7 @@ Archived 10-02: HT-8 reviewer, LIB-6 reviewer and fixer, LIB-3 reviewer, W0B fet
 | Incident | Rule |
 |---|---|
 | 10-02 11:33-13:40: the account hit its 5-hour usage limit; every worker and the in-chat critic stopped mid-turn ("You've hit your session limit"). | After the reset, check every session's state, send each a resume message (check git state, re-run the cut step), and resume workflows with `resumeFromRunId`. Count the pause in the schedule (SPEED.md). |
-| 10-02: a research writer's model usage showed Haiku: WebFetch and WebSearch summarise pages with a small model. | Owner rule: never Haiku. Research prompts say: fetch pages with curl and quote from the raw text, never WebFetch. |
+| 10-02: a research writer's model usage showed Haiku: WebFetch and WebSearch summarise pages with a small model. 14:58: W1A and W0A usage still showed Haiku web searches (their prompts banned only WebFetch). | Owner rule: never Haiku. Research and review prompts say: never WebFetch **or WebSearch**; search and fetch with curl and quote from the raw text. Quotes were curl-checked (W1A 195/195), so the cards stand; only the search step used Haiku. |
 | 10-02: `apk-watch.sh` on train 10's merge sha reported a *cancelled* run: a new branch cut from main (`claude/sup-skills-delivery-20261002`) had the same head sha, and its run was cancelled by the next push. | `apk-watch.sh` filters `branch=main` (10-02). Never send an APK from a run that is not main's. |
 | 10-02: the research branch had no card checker; both w0 fixers wrote their own one-off scripts. | Research quality must not rest on throwaway scripts: a committed card checker (quotes verbatim, refs, orphans, ≤ 50 words, shown-line lint) is a planned improvement (SPEED.md, class I). |
 | 10-02 speed assessment: 24 FAILs were tests that did not bite; 18 stale PR bodies; 12 FAILs only for "behind main". | PROMPTS.md P1/P4 now name mutations per criterion, require the HANDOFF refresh at READY/FIXED and include COACHING-DECISIONS.md in write_scope; the reviewer skill treats "behind main" as a note. Full analysis: `docs/supervisor/SPEED.md`. |

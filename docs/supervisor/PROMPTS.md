@@ -134,7 +134,7 @@ The heading `PASS|FAIL` is what reviewers post in practice. The reviewer skill s
 > The card (from the supervisor) is AUD-20: plain estimates, no false precision. […] **write_scope:** src/brain/energy.ts (the bands) and the energy display; src/brain/readiness.ts and src/brain/recovery.ts (text only); […] **Acceptance:** no "±" band is rendered for calories (a test and a gate probe); […]
 > Check these specially:
 > 1. The diff touches files outside that scope: src/core/models.ts […]. For each one, judge whether it is needed for the card. […] Enumerate every driver string readiness.ts can now produce, and test each against the new regex. A health driver leaking to the coach is a blocker.
-> 2. Verify every PMID/DOI the PR adds against PubMed or Crossref yourself (WebFetch). A wrong or unverifiable ID is a blocker. […]
+> 2. Verify every PMID/DOI the PR adds against PubMed or Crossref yourself (curl the page; never WebFetch or WebSearch, which run on Haiku). A wrong or unverifiable ID is a blocker. […]
 > 5. Tests fail on main and pass on this head. Nothing loosened. The gate block is add-only. Run `git diff --stat origin/main...e8a0e9c` […].
 > Post your verdict on #162 as "## REVIEW AUD-20 @ e8a0e9c: PASS|FAIL". […] Use a PASS heading only when nothing is blocking. […] Push nothing, then stop.
 
