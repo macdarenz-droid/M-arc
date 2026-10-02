@@ -1334,12 +1334,30 @@ export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p =>
 export const HT10_CHUNK_RE = /\/assets\/(HowToSheet-|ht-|hand-|feel-|posture-|zoom-)/;
 
 /**
+ * HT-10 (D-HT10-8, routed from GATE-FLAKE-1 #179): the long tasks that start inside a window, from this call to the
+ * returned stop(). perf.mjs observeLongTasks observes with buffered: true, so it also replays tasks from before the
+ * window (the page's boot task, the "mounting everything" step); this keeps only entries with startTime >= the
+ * window's start, and takes the records still queued at stop (takeRecords), as D-GATEFLAKE-3 does in gate block HT-3b.
+ * Returns durations in ms.
+ */
+export async function observeWindowLongTasks(page) {
+  await page.evaluate(() => {
+    const from = performance.now(), tasks = [];
+    const keep = entries => { for (const e of entries) if (e.startTime >= from) tasks.push(e.duration); };
+    const observer = new PerformanceObserver(list => keep(list.getEntries()));
+    observer.observe({ type: 'longtask', buffered: true });
+    window.__marcHt10StopLongTasks = () => { keep(observer.takeRecords()); observer.disconnect(); return tasks; };
+  });
+  return () => page.evaluate(() => window.__marcHt10StopLongTasks());
+}
+
+/**
  * HT10-A3 (plan 2.9, everything mounted, 4x CPU throttle): `measure(browser, port)` returns the raw numbers, the block
  * applies the ceilings. With everything mounted = the squat's sheet after one full ht10Script run, so every chunk of
  * every kind (sheet, plate, hand, posture, feel, zoom CSS) is loaded and its code has run once.
  * - early: How-to requests from launch until Train is idle (must be none);
  * - tap: tap-to-plate, 5 samples and their median (Date.now() around the tap and the visible normal figure, as HT-3b);
- * - longTasks: every long task while those 5 opens ran;
+ * - longTasks: every long task that started while those 5 opens ran (observeWindowLongTasks, D-HT10-8);
  * - control: the same observer around one open with a synthetic 150 ms task, which must be caught;
  * - s0: elements in the open sheet at S0, after everything was mounted;
  * - shimmer: the app's shimmer cost against the golden-B page's (perf.mjs shimmerCost), when the feel map is registered.
@@ -1387,11 +1405,11 @@ export async function ht10Speed(browser, port, { goldenB = null } = {}) {
     };
     const { reset } = await P.throttleCpu(page, 4);
     try {
-      const stop = await P.observeLongTasks(page);
+      const stop = await observeWindowLongTasks(page);
       out.tap = await P.medianOf(async i => { const dt = await open(); if (i === 0) out.s0 = await page.evaluate(() => document.querySelectorAll('dialog.sheet.ht *').length); await closeHowTo(page); return dt; }, 5);
       out.longTasks = (await stop()).map(d => Math.round(d));
       // failure path: a synthetic 150 ms task in an open must be caught by the same observer
-      const stopC = await P.observeLongTasks(page);
+      const stopC = await observeWindowLongTasks(page);
       await P.scheduleBusyTask(page, 150, 0);
       await open();
       await closeHowTo(page);

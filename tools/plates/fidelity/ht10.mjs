@@ -198,6 +198,18 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
         const ax = await H.ht10AxNames(cdp);
         if (!ax.problems.some(p => /button button\.ht10-noname has no accessible name/.test(p))) F(`TalkBack: a nameless button was not reported (${ax.problems.join('; ') || 'nothing'})`);
         await H.closeHowTo(page);
+        // A3 long-task window (D-HT10-8): a 150 ms task that ran before the window is replayed by perf.mjs's buffered
+        // observer (the false fail this guards against) and must not be counted; a 120 ms task inside it must be
+        const P = await import('./perf.mjs');
+        await P.scheduleBusyTask(page, 150, 0);   // a page task: Chromium does not report a busy loop run by evaluate itself
+        await page.waitForTimeout(300);
+        const stopOld = await P.observeLongTasks(page), stopWin = await H.observeWindowLongTasks(page);
+        await P.scheduleBusyTask(page, 120, 0);
+        await page.waitForTimeout(300);
+        const old = (await stopOld()).map(Math.round), win = (await stopWin()).map(Math.round);
+        if (!old.some(d => d >= 150)) F(`A3 window: the buffered observer did not replay the 150 ms task from before the window (${old.join(', ') || 'none'}), so this fixture proves nothing`);
+        if (win.some(d => d >= 150)) F(`A3 window: the 150 ms task from before the window was counted (${win.join(', ')})`);
+        if (!win.some(d => d >= 120 && d < 150)) F(`A3 window: the 120 ms task inside the window was not counted (${win.join(', ') || 'none'})`);
         // C18 / C12: a width animation and an endless one on the sheet
         await H.openHowTo(page, 0);
         await page.evaluate(H.ht10Record);
