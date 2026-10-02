@@ -342,7 +342,7 @@ export function EscobarSheet() {
             <div class="esc-menu" role="menu">
               <button type="button" role="menuitem" onClick={() => { setMenu(false); setPast(false); S.startNewConversation(); }}>New conversation</button>
               <button type="button" role="menuitem" onClick={() => { setMenu(false); setPast(true); }}>Past conversations</button>
-              <button type="button" role="menuitem" onClick={() => { setMenu(false); S.escobarToHalf(); showPanel('memory'); }}>What Escobar knows</button>
+              <button type="button" role="menuitem" onClick={() => { setMenu(false); S.escobarToHalf(); showPanel('memory'); }}>Memory</button>
               <button type="button" role="menuitem" onClick={() => { setMenu(false); requestClose(); void goTo('settings.escobar'); }}>Coach settings</button>
             </div>
           )}
