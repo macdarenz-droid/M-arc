@@ -13,6 +13,7 @@ Each key is one file, `hands/hand-<key>.mjs`. It exports:
 - `render?`, a function `(spec) -> { svg, report }`. It is left out for radial;
 - `HANDLE`: `{ profile, diameterMm, extras? }`. `diameterMm` is always given, because golden-B `hand.mjs:115` would otherwise fall back to 32 mm;
 - `VARIANTS`: `{ <variant>: { archetype, loadAxis, wristRange, contact, right, faults: { <fault>: { label, side, pose, markers, claims } }, claims } }`;
+- `INPUTS?`, `VIEW_FILES?`: extra files the drawing reads (for `inputsFor`). A variant may carry its own `handle`, which overrides `HANDLE`;
 - `IDS`: `{ <card id, no lib_>: { variant, orientation, faults: [<fault>], claims } }`.
 - `GAPS`: `{ <card id>: reason }`. These ids belong to this key's census scope but are not drawn.
 
