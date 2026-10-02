@@ -13,6 +13,8 @@ const ease = (x) => { const t = Math.min(1, Math.max(0, x)); return t * t * t * 
 
 async function loadGlb(src) {
   const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);   // assets are meshopt-packed (gltfpack -cc)
+  // embedded images through an <img> (blob: image) instead of fetch(blob:), which a locked-down page may refuse
+  loader.register((parser) => { parser.textureLoader = new THREE.TextureLoader(parser.options.manager); return { name: 'mo-img-texture' }; });
   if (src instanceof ArrayBuffer) return new Promise((res, rej) => loader.parse(src, '', res, rej));
   return loader.loadAsync(src);
 }

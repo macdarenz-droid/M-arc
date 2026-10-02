@@ -1,6 +1,7 @@
 // MO: motion lab page: theme pills, the 3D view with tags, tempo, views, mistakes, muscles, grip and facts.
 import { createMotion } from './motion.js';
 import exercise from './exercises/machineChestPress.js';
+import { palette } from './scene.js';
 
 const $ = (id) => document.getElementById(id);
 const q = new URLSearchParams(location.search);
@@ -26,8 +27,10 @@ if (!motion) { stage.textContent = ''; stage.style.display = 'none'; }
 
 // ---------- theme ----------
 const cssVar = { bg: '--bg', surface1: '--surface-1', surface2: '--surface-2', surface3: '--surface-3', borderSubtle: '--border-subtle', border: '--border', text: '--text', text2: '--text-2', text3: '--text-3', accent: '--accent', onAccent: '--on-accent', mistake: '--mistake' };
+let theme = themes[0];
 function setTheme(id) {
   const t = themes.find(x => x.id === id) || themes[0];
+  theme = t;
   for (const [k, v] of Object.entries(cssVar)) document.documentElement.style.setProperty(v, t.tokens[k]);
   document.documentElement.style.setProperty('--radius-lg', t.radius.lg);
   document.documentElement.style.colorScheme = t.tokens.colorScheme;
@@ -73,12 +76,13 @@ function legend() {
   const tiers = { ...exercise.tiers, ...(md.tiers || {}) };
   const names = exercise.muscleNames;
   const rows = [[1, 'Main'], [2, 'Helps'], [3, 'Takes over']];
-  const css = getComputedStyle(document.documentElement);
-  const accent = css.getPropertyValue('--accent'), bad = css.getPropertyValue('--mistake');
+  // dots in the colours the body shows: Helps is the accent laid over the figure's own colour, as in the shader
+  const pal = palette(theme);
+  const accent = theme.tokens.accent, bad = theme.tokens.mistake, helps = '#' + pal.body.clone().lerp(pal.helps, 0.45).getHexString();
   $('legend').innerHTML = rows.map(([tier, label]) => {
     const list = Object.entries(tiers).filter(([, t]) => t === tier).map(([m]) => names[m]);
     if (!list.length) return '';
-    const dot = tier === 3 ? bad : tier === 2 ? `color-mix(in srgb, ${accent} 45%, transparent)` : accent;
+    const dot = tier === 3 ? bad : tier === 2 ? helps : accent;
     return `<div><em><i style="background:${dot}"></i>${label}</em><span>${list.join(', ')}</span></div>`;
   }).join('');
 }
@@ -135,7 +139,10 @@ addEventListener('pointerup', () => { yawDrag.on = false; });
 addEventListener('pointermove', (e) => { if (!yawDrag.on) return; motion.state.yawOffset = yawDrag.yaw + (e.clientX - yawDrag.x) * 0.4; kick(); });
 addEventListener('resize', () => { ({ w, h } = size()); motion.resize(w, h); kick(); });
 
-setTheme(q.get('theme') || themes[0].id);
+// first theme follows the viewer: Paper on a light screen, Silent Black on a dark one
+const root = document.documentElement.dataset.theme;
+const light = root ? root === 'light' : matchMedia('(prefers-color-scheme: light)').matches;
+setTheme(q.get('theme') || (light && themes.some(x => x.id === 'paper') ? 'paper' : themes[0].id));
 setView(view); setMode(mode);
 requestAnimationFrame(frame);
 window.motionReady = () => drawn;

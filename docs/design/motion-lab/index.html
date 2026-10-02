@@ -43,12 +43,12 @@
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .chip { min-height: 36px; padding: 0 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: transparent; color: var(--text); font: 500 13px 'Inter', sans-serif; cursor: pointer; }
   .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-  .chip.bad[aria-pressed="true"] { background: var(--mistake); border-color: var(--mistake); color: #fff; }
+  .chip.bad[aria-pressed="true"] { background: var(--mistake); border-color: var(--mistake); color: var(--on-accent); }
   .tell { margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle); font-size: 14px; line-height: 1.45; }
   .tell b { color: var(--mistake); font-weight: 600; display: block; margin-bottom: 2px; }
-  .legend { display: grid; gap: 8px; font-size: 14px; }
-  .legend div { display: flex; gap: 10px; align-items: baseline; }
-  .legend em { font-style: normal; min-width: 84px; color: var(--text-2); font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; display: inline-flex; gap: 8px; align-items: center; }
+  .legend { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 14px; align-items: baseline; font-size: 14px; }
+  .legend div { display: contents; }
+  .legend em { font-style: normal; color: var(--text-2); font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; display: inline-flex; gap: 8px; align-items: center; }
   .legend em i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .grip { font-size: 17px; font-weight: 500; line-height: 1.4; margin: 0; }
   ul.facts { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; line-height: 1.45; color: var(--text); }
