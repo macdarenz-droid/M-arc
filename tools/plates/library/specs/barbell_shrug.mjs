@@ -202,5 +202,5 @@ export default {
     ],
   },
   pilot: { drawableFault: 'Top fault (rolling the shoulders, c3) is a rotation the engine cannot draw; drawn: bent arms pulling the bar (c4).' },
-  alt: 'Barbell shrug, side view. Standing tall with soft knees and straight hips, the bar hangs on straight arms in front of the thighs. Only the shoulders lift straight up toward the ears and lower again; the arms stay straight.',
+  alt: 'Barbell shrug, side view. Standing tall with soft knees and straight hips, the bar hangs on straight arms in front of the thighs. Only the shoulders lift straight up toward the ears and lower again. The arms stay straight.',
 };

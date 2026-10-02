@@ -89,9 +89,8 @@ const via = Array.from({ length: 9 }, (_, i) => (i + 1) / 10).map(t => ({
 const MISTAKE_HIP = BOX_H + 0.925, MISTAKE_TRUNK = 12;
 const MISTAKE = grounded(BOX_H, LAND_Z, MISTAKE_HIP, { tilt: MISTAKE_TRUNK - 6, trunk: 6, neck: -6, shoulder: { flex: ARMS_FWD }, elbow: 15 });
 
-// Full extension (c3) happens between the two frames, so its callout points at the rising part of the trace (the
-// near hip at via t = 0.2), where the drive off the floor shows.
-const RISE = landmarksOf(via[1], H)['hip.r'];
+// Full extension (c3) is the drive out of the take-off frame, so its callout ends on that frame's knee (the joint
+// that extends; critic 10-02 R4: a leader ending on the flight arc in empty space read as nothing), off the trace.
 
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] }, TOP = { point: [0, BOX_H, 0], normal: [0, 1, 0] };
 
@@ -121,7 +120,7 @@ export default {
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
     { key: 'load', text: 'Load and<br>swing', anchor: { at: 'grip.r', pose: 'start' }, cue: 'Bend the knees and hips while the arms swing back.' },
-    { key: 'extend', text: 'Full<br>extension', anchor: { at: RISE, off: [2, 0] }, cue: 'Take off by extending hips, knees and ankles as the arms swing up.' },
+    { key: 'extend', text: 'Full<br>extension', anchor: { at: 'knee.r', pose: 'start' }, cue: 'Take off by extending hips, knees and ankles as the arms swing up.' },
     { key: 'land', text: 'Soft knees', anchor: 'knee.r', cue: 'Land on the box with both feet, knees bent.' },
   ],
   mistake: {
@@ -131,7 +130,7 @@ export default {
     ],
     tells: [
       { key: 'straight', text: 'Knees straight', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The knees stay straight as the feet land on the box.' },
-      { key: 'stiff', text: 'Stiff landing', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'The legs don\'t bend to absorb the landing.' },
+      { key: 'stiff', text: 'Stiff landing', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 105, top: 92 }, cue: 'The legs don\'t bend to absorb the landing.' },
     ],
   },
   pilot: { note: 'Tempo left out: card gives no seconds (explosive take-off, step down, full rest; c11).' },

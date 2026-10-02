@@ -117,7 +117,7 @@ const GAP = [[gM[0], GAP_Y, gM[2]], [-gM[0], GAP_Y, gM[2]]];
 const tick = p => ({ kind: 'line', pts: [[p[0], p[1] + 0.025, p[2]], [p[0], p[1] - 0.025, p[2]]] });
 
 export default {
-  id: 'pec_fly', name: 'Pec Deck Fly', view: 'front',
+  id: 'pec_fly', name: 'Pec Fly', view: 'front',   // the census and card name (lib_pec_fly "Pec Fly"); the plate draws the handle machine (card variantLine)
   camera: { ...REF_CAMERA },
   poses: { start, end, via },
   equipment: [
@@ -142,7 +142,7 @@ export default {
   callouts: [
     { key: 'elbows', text: 'Soft<br>elbows', anchor: { at: 'elbow.l', pose: 'start' }, box: { left: 236, top: 214 }, cue: 'Keep a slight, fixed bend in the elbows.' },
     { key: 'height', text: 'Chest<br>height', anchor: { at: 'grip.r', pose: 'start' }, box: { left: 20, top: 244 }, cue: 'Set the seat so the arms move at chest-to-shoulder height.' },
-    { key: 'meet', text: 'Hands<br>meet', anchor: 'grips', box: { left: 73, top: 214 }, cue: 'Bring the handles together in front of the chest each rep.' },
+    { key: 'meet', text: 'Hands<br>meet', anchor: 'grips', box: { left: 79, top: 214 }, cue: 'Bring the handles together in front of the chest each rep.' },
   ],
   tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 2 }, { phase: 'Open', s: 2, move: true }],
   mistake: {
@@ -154,5 +154,5 @@ export default {
     ],
   },
   pilot: { note: 'pec_fly front view after critic run 2: pivots over the shoulders, straight levers clear of the head, frame to the floor; closed arms stay short foreshortened capsules (engine limit)' },
-  alt: 'Pec deck fly, front view. Seated with the back on the pad and feet flat, the lifter holds vertical handles with slightly bent elbows at chest height and sweeps the arms from out to the sides until the handles nearly meet in front of the chest.',
+  alt: 'Pec fly on the handle machine, front view. Seated with the back on the pad and feet flat, the lifter holds vertical handles with slightly bent elbows at chest height and sweeps the arms from out to the sides until the handles nearly meet in front of the chest.',
 };

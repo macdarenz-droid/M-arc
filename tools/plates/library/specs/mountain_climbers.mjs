@@ -103,10 +103,9 @@ const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   hand: 'flat',
   id: 'mountain_climbers', name: 'Mountain Climbers', view: 'side', facing: 'right',
-  camera: { x0: 205, y0: 339 },   // floor at the approved framing (REF_CAMERA y0, as plank, critic 10-02); scale unchanged.
-                                  // x0 205 (was 215) and the boxed hands label: lower, the auto-placed label hit the plate edge
+  camera: { fit: true, maxScale: 1.35, y0: 339 },   // D-LIB8-floor (as plank): floor at y 339, width-filling scale <= x1.35, 16 px side margins
   poses: { start, via, end },
-  equipment: [{ type: 'floor', from: -1.3, to: 0.55 }],
+  equipment: [{ type: 'floor', from: -1.15, to: 0.42 }],
   checks: [
     { landmark: 'wrist.r', plane: { point: [0, WRIST_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // palm flat on the floor (LIB-26)
     { landmark: 'wrist.r', plane: { point: SH, normal: [0, 0, 1] }, pose: 'all', tol: 0.5 },                // wrist under the shoulder
@@ -121,10 +120,12 @@ export default {
   ghosts: { count: 1, parts: ['leg.r'] },
   trace: { point: 'knee.r', trim: [10, 12] },
   datum: [{ x: 0, from: 0, to: 0, line: LINE }],
+  // D-LIB8-floor: labels spread into the space above the figure (boxed), 44 px hit boxes clear of each other at 340 px
+  //  (LIB-3 PQ-H4); "Hands under shoulders" ends on the shoulder (the wrist sits at the floor, under the label column).
   callouts: [
-    { key: 'hands', text: 'Hands under<br>shoulders', anchor: 'wrist.r', box: { left: 248, top: 282 }, cue: 'Arms straight, hands right under the shoulders.' },
-    { key: 'line', text: 'Straight line', anchor: 'backUpper', cue: 'Keep one straight line from the back of the head to the heels.' },
-    { key: 'knee', text: 'Knee to chest', anchor: 'knee.r', cue: 'Bring one knee toward the chest, then switch legs.' },
+    { key: 'hands', text: 'Hands under<br>shoulders', anchor: 'shoulder.r', box: { left: 236, top: 124 }, cue: 'Arms straight, hands right under the shoulders.' },
+    { key: 'line', text: 'Straight line', anchor: 'backUpper', box: { left: 96, top: 150 }, cue: 'Keep one straight line from the back of the head to the heels.' },
+    { key: 'knee', text: 'Knee to chest', anchor: 'knee.r', box: { left: 44, top: 214 }, cue: 'Bring one knee toward the chest, then switch legs.' },
   ],
   mistake: {
     pose: MISTAKE,
@@ -132,8 +133,8 @@ export default {
       { kind: 'arrow', from: { at: 'hip.r', pose: 'end' }, to: { at: 'hip.r', pose: 'mistake' } },
     ],
     tells: [
-      { key: 'hike', text: 'Hips hike', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'The hips hike up as the knee drives forward.' },
-      { key: 'line', text: 'Line breaks', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'Head to heels is no longer one straight line.' },
+      { key: 'hike', text: 'Hips hike', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 110, top: 150 }, cue: 'The hips hike up as the knee drives forward.' },
+      { key: 'line', text: 'Line breaks', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 236, top: 150 }, cue: 'Head to heels is no longer one straight line.' },
     ],
   },
   pilot: { note: 'Tempo left out: card gives no cadence (c4).' },

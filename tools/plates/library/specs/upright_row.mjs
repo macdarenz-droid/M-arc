@@ -12,8 +12,10 @@
 //  `barbell`: 2.2 m bar, 28 mm shaft, 50 mm sleeves, 45 cm plates edge-on (4.5 cm).
 // Geometry decisions (confirmed by the report `angles`, `contacts`, `checks` and `measure`):
 //  Standing as the reference front plate: pelvis, trunk and neck 0 (upright, c12), scapulae neutral. Feet: mid-soles
-//   26 cm apart (FOOT_X). The card says about shoulder width (c12); the engine's foot does not model eversion, and
-//   wider stances roll the sole off its contact, so the stance is narrower than the 45 cm shoulder width (not CARD).
+//   36 cm apart (FOOT_X), toes out 17 deg (critic 10-02 fidelity fix: "feet at shoulder width", c12; was 26 cm). The
+//   engine's foot does not model eversion, so a wider stance rolls the sole off its contact: 36 cm is the widest whose
+//   contact stays within the 0.5 cm limit (38 cm: 0.6 cm). With the foot's width the outer edges sit about at the
+//   45 cm shoulder width (shoulder joints +-0.227 m).
 //   Knees 5 deg soft (KNEE_SOFT, root height solved from it): a natural stance, not from the card.
 //  Grip (CARD c5, c7): hands 50 cm apart (GRIP_X = 0.25, wider than the shoulder joints at +-0.227 m).
 //  Start: arms straight (IK reach at full arm length less 0.1 mm, elbow 2 deg), bar hanging in front of the thighs.
@@ -34,12 +36,12 @@
 //   against the hanging line at the figure's left shoulder, 90 deg = level (c6).
 //  Framing: the reference camera, as the lateral raise. Coverage 0.258 is over the F2 range (0.100-0.246): the 2.2 m
 //   bar and its plates span the plate width; zooming out would shrink the figure below the 8, so F2 is reported.
-// CARD: GRIP_X (c5, c7), END_BAR_Y (solved: elbows level, c6), tempo (c10). Unsourced: FOOT_X (narrower than the
-//  card's shoulder width, engine limit), KNEE_SOFT, BAR_Z0, END_BAR_Z (the front view does not show depth).
+// CARD: GRIP_X (c5, c7), END_BAR_Y (solved: elbows level, c6), tempo (c10). Unsourced: FOOT_X (mid-soles a little
+//  inside the card's shoulder width, engine limit), KNEE_SOFT, BAR_Z0, END_BAR_Z (the front view does not show depth).
 import { WINTER, REF, landmarksOf } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-const FOOT_X = 0.13;                                   // mid-sole lateral offset (see header: engine limit)
+const FOOT_X = 0.18;                                   // mid-sole lateral offset (see header: widest the rigid foot allows)
 const KNEE_SOFT = 5;                                   // deg: knees soft (not from the card)
 const GRIP_X = 0.25;                                   // hand centre lateral offset: wider than shoulder width (CARD)
 const BAR_Z0 = 0.10;                                   // start: bar just in front of the thighs (m forward of the hips)
@@ -51,7 +53,7 @@ const ARM = (WINTER.upperArm + WINTER.forearm + REF.gripOff) * H - 0.0001;   // 
 const FOOT_Z = REF.mid * H;
 const LEG = (() => { const a = WINTER.thigh * H, b = WINTER.shank * H, k = KNEE_SOFT * R; return Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k)); })();
 const ROOT_Y = Math.sqrt(LEG * LEG - (FOOT_X - REF.hjcX * H) ** 2) + WINTER.ankleH * H;
-const feet = { l: { at: [FOOT_X, 0, FOOT_Z] }, r: { at: [-FOOT_X, 0, FOOT_Z] } };
+const feet = { l: { at: [FOOT_X, 0, FOOT_Z], toe: [0.3, 0, 1] }, r: { at: [-FOOT_X, 0, FOOT_Z], toe: [-0.3, 0, 1] } };
 const base = { root: { at: [0, ROOT_Y, 0], tilt: 0 }, trunk: 0, neck: 0, plant: feet };
 const S0 = landmarksOf(base, H)['shoulder.l'];
 const START_BAR_Y = S0[1] - Math.sqrt(ARM * ARM - (GRIP_X - S0[0]) ** 2 - (BAR_Z0 - S0[2]) ** 2);
@@ -112,7 +114,7 @@ export default {
     // c3
     { key: 'elbows', text: 'Elbows lead', anchor: 'elbow.l', cue: 'Lead with your elbows out to the sides, above your hands.' },
     // c6
-    { key: 'height', text: 'Shoulder<br>height', anchor: { at: 'shoulder.r', off: [-110, 0] }, prefer: 'above', cue: 'Stop when your elbows reach shoulder level.' },
+    { key: 'height', text: 'Shoulder<br>height', anchor: { at: 'shoulder.r', off: [-110, 0] }, prefer: 'above', box: { left: 4, top: 42 }, cue: 'Stop when your elbows reach shoulder level.' },
     // c3
     { key: 'bar', text: 'Bar close', anchor: 'grip.r', cue: 'Pull the bar straight up, close to your body.' },
   ],

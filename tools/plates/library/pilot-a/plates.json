@@ -1,5 +1,5 @@
 {
- "note": "Pilot A (library plan 6.1, card LIB-8). tier: content.md appendix B lists (A 47, B 27, C the rest); closest: census.json closestApproved; view: census view; class: the new pose class, rule or rig the plate anchors (plan 2.1, 2.2). extras: other renders shown beside the plate on the sheet (go/no-go alternates as spec ids, previews as image files in evidence/). held: plates kept off the sheet by a supervisor ruling, listed in one line each.",
+ "note": "Pilot A (library plan 6.1, card LIB-8). tier: content.md appendix B lists (A 47, B 27, C the rest); closest: census.json closestApproved; view: census view; class: the new pose class, rule or rig the plate anchors (plan 2.1, 2.2). extras: other renders shown beside the plate on the sheet (go/no-go alternates as spec ids, previews as image files in evidence/). held: plates kept off the sheet by a supervisor ruling, listed in one line each. rulings: a supervisor ruling that names a raised flag, printed with that flag on the sheet.",
  "plates": [
   {
    "id": "dumbbell_bench_press",
@@ -148,14 +148,20 @@
    "tier": "C",
    "closest": "hanging_leg_raise",
    "view": "side",
-   "class": "hold plate"
+   "class": "hold plate",
+   "rulings": {
+    "F1": "D-LIB8-floor (floor-horizontal class): floor at the approved y, scale up to x1.35 of 146.29 px/m to fill the width between the approved side margins"
+   }
   },
   {
    "id": "mountain_climbers",
    "tier": "C",
    "closest": "hanging_leg_raise",
    "view": "side",
-   "class": "cycle plate"
+   "class": "cycle plate",
+   "rulings": {
+    "F1": "D-LIB8-floor (floor-horizontal class): floor at the approved y, scale up to x1.35 of 146.29 px/m to fill the width between the approved side margins"
+   }
   }
  ],
  "cards": "cards/ = verified research cards copied from claude/libht-research e2a70bc"

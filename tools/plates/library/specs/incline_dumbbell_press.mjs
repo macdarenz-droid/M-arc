@@ -187,7 +187,7 @@ export default {
     ],
     tells: [
       { key: 'tilt', text: 'Forearm<br>tilted', anchor: { along: [{ at: 'elbow.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }], t: 0.5 }, cue: 'Your forearm leans instead of standing straight under the dumbbell.' },
-      { key: 'drift', text: 'Weight<br>drifts', anchor: { at: 'grip.r', pose: 'mistake', off: [8, -4] }, cue: 'Your dumbbell drifts off the line of the elbow at the bottom.' },
+      { key: 'drift', text: 'Weight<br>drifts', anchor: { at: 'grip.r', pose: 'mistake', off: [8, -4] }, box: { left: 189, top: 144 }, cue: 'Your dumbbell drifts off the line of the elbow at the bottom.' },
     ],
   },
   alt: 'Incline dumbbell press, side view. On a bench set to 45 degrees, head, back and hips on the pads, feet flat, the lifter lowers the dumbbells from straight arms above the shoulders to the upper chest, forearms vertical, then presses back up.',

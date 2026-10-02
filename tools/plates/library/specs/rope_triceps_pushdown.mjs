@@ -152,7 +152,7 @@ export default {
   callouts: [
     { key: 'elbows', text: 'Elbows in', anchor: 'elbow.r', box: { left: 36, top: 144 }, cue: 'Keep the upper arms at the sides from top to bottom.' },
     { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep the hands in line with the forearms, fists not curled.' },
-    { key: 'vertical', text: 'Vertical<br>finish', anchor: PLUMB_BOT, cue: 'At the bottom, line up the wrist, elbow and shoulder vertically.' },
+    { key: 'vertical', text: 'Vertical<br>finish', anchor: PLUMB_BOT, box: { left: 30, top: 256 }, cue: 'At the bottom, line up the wrist, elbow and shoulder vertically.' },
   ],
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 3, move: true }],
   mistake: {
@@ -163,7 +163,7 @@ export default {
     ],
     tells: [
       { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 34, top: 180 }, cue: 'The elbows drift forward off the sides as the rope comes up.' },
-      { key: 'lean', text: 'Leaning<br>in', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'The torso tips forward over the rope to start the press.' },
+      { key: 'lean', text: 'Leaning<br>in', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 54, top: 133 }, cue: 'The torso tips forward over the rope to start the press.' },
     ],
   },
   pilot: { note: 'rope now LIB-25 poly: sagging strands with clubbed ends read in the ghosts; at the solid bottom it sits mostly behind the forearm' },

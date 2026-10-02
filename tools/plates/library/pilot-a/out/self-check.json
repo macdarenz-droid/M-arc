@@ -1,8 +1,8 @@
 {
- "pageSha": "f4dc5ec3dd6ba2bbeda27da1648074a6834dda907b2c022e7fdd3456f19c1e09",
- "pageBytes": 1643179,
- "sheetSha": "571490e2f268b2a149c3bfb3414a2b72378c781dea7b48d4c0452c26ee36daea",
- "sheetBytes": 3457399,
+ "pageSha": "209cc0bfc0a6ac6e3d8c3a27787d511d2790fd247adbff9dba814fd3231835a6",
+ "pageBytes": 1642632,
+ "sheetSha": "3b2f1bb9fb3856ce7268604b769666c727b6efc238be4c056094a7cb33104720",
+ "sheetBytes": 3466727,
  "warnings": "",
  "plates": [
   {
@@ -31,7 +31,7 @@
     "pxPerM": 146.29,
     "coverage": 0.214,
     "longestLeader": 66.3,
-    "boxed": 0
+    "boxed": 1
    },
    "issues": []
   },
@@ -61,8 +61,8 @@
    "measures": {
     "pxPerM": 146.29,
     "coverage": 0.2,
-    "longestLeader": 27,
-    "boxed": 0
+    "longestLeader": 25,
+    "boxed": 1
    },
    "issues": []
   },
@@ -74,8 +74,8 @@
    "measures": {
     "pxPerM": 146.29,
     "coverage": 0.118,
-    "longestLeader": 65.1,
-    "boxed": 0
+    "longestLeader": 69.7,
+    "boxed": 1
    },
    "issues": []
   },
@@ -88,7 +88,7 @@
     "pxPerM": 146.29,
     "coverage": 0.125,
     "longestLeader": 27.6,
-    "boxed": 0
+    "boxed": 1
    },
    "issues": []
   },
@@ -140,9 +140,9 @@
    ],
    "measures": {
     "pxPerM": 146.29,
-    "coverage": 0.259,
-    "longestLeader": 62.2,
-    "boxed": 1
+    "coverage": 0.258,
+    "longestLeader": 62.7,
+    "boxed": 2
    },
    "issues": []
   },
@@ -169,7 +169,7 @@
    "measures": {
     "pxPerM": 146.29,
     "coverage": 0.207,
-    "longestLeader": 56.7,
+    "longestLeader": 51.9,
     "boxed": 3
    },
    "issues": []
@@ -185,7 +185,7 @@
     "pxPerM": 146.29,
     "coverage": 0.082,
     "longestLeader": 46.4,
-    "boxed": 0
+    "boxed": 1
    },
    "issues": []
   },
@@ -200,7 +200,7 @@
     "pxPerM": 133.79,
     "coverage": 0.183,
     "longestLeader": 66.5,
-    "boxed": 3
+    "boxed": 5
    },
    "issues": []
   },
@@ -209,13 +209,14 @@
    "tier": "C",
    "ok": true,
    "flags": [
+    "F1",
     "Note"
    ],
    "measures": {
-    "pxPerM": 146.29,
-    "coverage": 0.112,
-    "longestLeader": 71.1,
-    "boxed": 0
+    "pxPerM": 174.22,
+    "coverage": 0.152,
+    "longestLeader": 49.3,
+    "boxed": 4
    },
    "issues": []
   },
@@ -224,13 +225,15 @@
    "tier": "C",
    "ok": true,
    "flags": [
+    "F1",
+    "F3",
     "Note"
    ],
    "measures": {
-    "pxPerM": 146.29,
-    "coverage": 0.112,
-    "longestLeader": 44,
-    "boxed": 1
+    "pxPerM": 191.92,
+    "coverage": 0.178,
+    "longestLeader": 116.4,
+    "boxed": 5
    },
    "issues": []
   },
@@ -243,7 +246,7 @@
     "pxPerM": 133.79,
     "coverage": 0.186,
     "longestLeader": 66.4,
-    "boxed": 2
+    "boxed": 4
    },
    "issues": []
   }

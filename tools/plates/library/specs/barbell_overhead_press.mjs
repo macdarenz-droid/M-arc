@@ -160,23 +160,33 @@ function hiddenArm() {
 const START_ARM = hiddenArm();
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 // Mistake (card plate.mistake, c5): elbows back at the start, forearms tilted, so the bar curves forward away from
-// the face. Drawn where the faulty arm clears the torso and head: bar at forehead height (MIS_Y), MIS_FWD in front of
-// the mid-foot line, elbow IK pole back so the elbow sits ~7 cm behind the bar (4.5 cm in front of the chin) and the
-// forearm tilts ~18 deg (scratch probe). Only the arms and bar change (merged over the end pose). The faulty bar is
-// drawn as a sleeve circle and a 45 cm plate circle (both poly items that exist only in the mistake pose, so they
-// get the dashed --mistake outline); a bold arrow runs from the correct bar line to it, and a dashed plumb from it
-// lands ahead of the toes; a solid line along the tilted forearm shows the elbow behind the bar.
-const MIS_FWD = 0.20;                                  // m the bar has drifted forward of mid-foot (card: "away from the face")
-const MIS_Y = 1.70;                                    // m: forehead height
-const MIS_BAR = [0, MIS_Y, MIS_FWD];
-const mistakePose = { reach: hands(MIS_BAR, [0, -1, -0.55]) };
-// The faulty arm as dashed capsules (upper arm: shoulder to elbow; forearm: elbow to fist) and an elbow ring, drawn as Mistake
-// guides (world points): the engine's own faulty-arm outline is masked where it crosses the head, and a mistake-only
-// equipment item is masked there too, while guides are not (critic R5: a single guide line read as a leader).
-const FORE_R = [0.023 * H, 0.016 * H];                // Winter-model forearm half-widths at the elbow and the wrist (m)
-const UPPER_R = [0.030 * H, 0.022 * H];               // upper-arm half-widths at the shoulder and the elbow (m)
-const LM_MIS = landmarksOf({ ...end, reach: mistakePose.reach }, H);
-const MIS_ELBOW = LM_MIS['elbow.r'];
+// the face. Drawn AT THE RACK POSITION (critic 10-02 R5: the fault at forehead height sat over the solid locked-out
+// arm and did not read as elbows back): the start body, the bar eased just off the front of the shoulders (MIS_DZ,
+// MIS_DY), the elbow IK pole down and back in the sagittal plane (MIS_POLE, no flare), so the elbow sits 12.8 cm
+// behind and 30.9 cm below the bar and the forearm (33.5 cm in side view) tilts 22.5 deg, against -4.3 at the
+// correct start (misInfo). The engine's own faulty-arm outline lies inside the faulty (leaning) torso and is masked
+// there, so the faulty arm is drawn as Mistake guides, which are not masked: dashed capsules (upper arm, forearm) and
+// an elbow ring (`parts` limits the engine outline to the arms, so the leaning trunk is not outlined in red). A short
+// arrow runs from the correct start elbow (under the bar) to the faulty one. The drift is the light part: a thin dashed
+// path from the faulty bar curving forward-up to a sleeve-size ring MIS_FWD in front of mid-foot at forehead height
+// (MIS_Y) (the card gives no distance).
+const MIS_POLE = [0.05, -1, -1.5];                     // elbow IK pole: down and back, in the sagittal plane (elbows back, c5)
+const MIS_DZ = 0.04, MIS_DY = -0.065;                  // m: the faulty bar sits this far in front of and below its rack spot
+                                                       //  (eased off the shoulders), so the elbow can drop behind it
+const MIS_FWD = 0.20;                                  // m the bar drifts forward of mid-foot (card: "away from the face")
+const MIS_Y = 1.70;                                    // m: forehead height, where the drifting bar is drawn
+const mistakePose = { ...startBody, reach: {   // pole in the sagittal plane (no elbow flare), so the tilted forearm shows full length
+  l: { at: [GRIP_X, BAR0[1] + MIS_DY, BAR0[2] + MIS_DZ], pole: [MIS_POLE[0], MIS_POLE[1], MIS_POLE[2]] },
+  r: { at: [-GRIP_X, BAR0[1] + MIS_DY, BAR0[2] + MIS_DZ], pole: [-MIS_POLE[0], MIS_POLE[1], MIS_POLE[2]] } } };
+const LM_MIS = landmarksOf(mistakePose, H), LM_S = landmarksOf(start, H);
+const tiltOf = lm => +(Math.atan2(lm['grip.r'][2] - lm['elbow.r'][2], lm['grip.r'][1] - lm['elbow.r'][1]) / R).toFixed(1);
+export const misInfo = {
+  elbowBehindBarCm: +((LM_MIS['grip.r'][2] - LM_MIS['elbow.r'][2]) * 100).toFixed(1), elbowBelowBarCm: +((LM_MIS['grip.r'][1] - LM_MIS['elbow.r'][1]) * 100).toFixed(1),
+  forearmTiltDeg: tiltOf(LM_MIS), startForearmTiltDeg: tiltOf(LM_S), sideForearmCm: +(Math.hypot(LM_MIS['grip.r'][1] - LM_MIS['elbow.r'][1], LM_MIS['grip.r'][2] - LM_MIS['elbow.r'][2]) * 100).toFixed(1),
+};
+const MB = [0, BAR0[1] + MIS_DY, BAR0[2] + MIS_DZ];   // the faulty bar
+const DRIFT = Array.from({ length: 13 }, (_, k) => { const t = k / 12;   // quadratic curve from the faulty bar: up first, then forward
+  return [0, (1 - t) ** 2 * MB[1] + 2 * t * (1 - t) * MIS_Y + t * t * MIS_Y, (1 - t) ** 2 * MB[2] + 2 * t * (1 - t) * MB[2] + t * t * MIS_FWD]; });
 // closed capsule (side view, y-z plane) from a to b with end half-widths ra, rb
 function capsule(a, b, ra, rb) {
   const d = [0, b[1] - a[1], b[2] - a[2]], L = Math.hypot(d[1], d[2]);
@@ -187,10 +197,16 @@ function capsule(a, b, ra, rb) {
   for (let k = 0; k <= 6; k++) pts.push(at(a, ra, Math.PI / 2 + Math.PI * k / 6));
   return [...pts, pts[0]];
 }
+const FORE_R = [0.023 * H, 0.016 * H];                 // Winter-model forearm half-widths at the elbow and the wrist (m)
+const UPPER_R = [0.030 * H, 0.022 * H];                // upper-arm half-widths at the shoulder and the elbow (m)
+const MIS_ELBOW = LM_MIS['elbow.r'];
 const MIS_FORE = capsule(MIS_ELBOW, LM_MIS['grip.r'], FORE_R[0], FORE_R[1]);
 const MIS_UPPER = capsule(LM_MIS['shoulder.r'], MIS_ELBOW, UPPER_R[0], UPPER_R[1]);
 const ELBOW_DOT_R = 0.012;
 const MIS_ELBOW_DOT = Array.from({ length: 13 }, (_, k) => [0, MIS_ELBOW[1] + ELBOW_DOT_R * Math.sin(k * Math.PI / 6), MIS_ELBOW[2] + ELBOW_DOT_R * Math.cos(k * Math.PI / 6)]);
+const RING_R = 0.025;
+const MB_RING = Array.from({ length: 17 }, (_, k) => [0, MB[1] + RING_R * Math.sin(k * Math.PI / 8), MB[2] + RING_R * Math.cos(k * Math.PI / 8)]);
+const DRIFT_RING = Array.from({ length: 17 }, (_, k) => [0, MIS_Y + RING_R * Math.sin(k * Math.PI / 8), MIS_FWD + RING_R * Math.cos(k * Math.PI / 8)]);
 // Camera: the reference floor line (plate y 339) and the largest scale that keeps the 45 cm plate at lockout 16 px
 // under the plate top (the engine's `fit` measures every pose with the start context, so it cannot see an item drawn
 // in the end pose only). 141 px/m, 96% of the reference.
@@ -210,7 +226,6 @@ export default {
     // the 45 cm plate outline at the lockout only (four overlapping plate circles hid the head); the 50 mm sleeve dot
     // in every pose, so the start, ghosts and end bar positions read along the vertical path
     (lm, ctx) => [
-      ...(ctx.pose === 'mistake' ? [{ type: 'pulley', at: MIS_BAR, r: 0.225, part: 'misbar', z: 'front' }] : []),
       ctx.pose === 'end' ? { type: 'barbell', at: [0, lm.grips[1], lm.grips[2]], plates: [0.045], part: 'plate', z: 'back' } : null,
       { type: 'pulley', at: [0, lm.grips[1], lm.grips[2]], r: 0.025, part: 'bar', z: 'front' },
       // start bar dot, dashed, in front: the lockout arm covers the start layer (barbell_back_squat's workaround)
@@ -222,7 +237,7 @@ export default {
     { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'start', tol: 0.5 },        // bar over mid-foot
     { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'end', tol: 0.5 },
-    { landmark: 'grips', plane: { point: [0, 0, MIS_FWD], normal: [0, 0, 1] }, pose: 'mistake', tol: 0.5 },  // fault: 20 cm forward
+    { landmark: 'grips', plane: { point: [0, 0, BAR0[2] + MIS_DZ], normal: [0, 0, 1] }, pose: 'mistake', tol: 0.5 },   // fault: bar at the shoulders
     { landmark: 'chin', above: { point: [0, 0, -BAR_R], normal: [0, 0, -1] }, pose: 'start' },            // chin behind the bar
     { landmark: 'head', above: { point: [0, BAR1[1] - BAR_R, 0], normal: [0, -1, 0] }, pose: 'end' },      // bar over the head
   ],
@@ -240,17 +255,19 @@ export default {
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
+    parts: ['arm.r', 'arm.l'],
     guides: [
-      { kind: 'arrow', from: [0, MIS_Y, 0.03], to: { at: 'grip.r', pose: 'mistake', off: [-5, 0] } },
-      { kind: 'dashed', pts: MIS_UPPER },               // the faulty upper arm, shoulder to an elbow behind the bar
-      { kind: 'dashed', pts: MIS_FORE },                // the faulty forearm, tilting to the faulty bar
+      { kind: 'arrow', from: { at: 'elbow.r', pose: 'start' }, to: { at: 'elbow.r', pose: 'mistake' } },   // elbow goes back
+      { kind: 'dashed', pts: MIS_UPPER },               // the faulty upper arm, hanging behind the bar
+      { kind: 'dashed', pts: MIS_FORE },                // the faulty forearm, tilted up to the bar
       { kind: 'line', pts: MIS_ELBOW_DOT },              // the faulty elbow
-      // plumb from the faulty bar to the floor: it lands ahead of the toes, not over mid-foot
-      { kind: 'dashed', pts: [{ at: 'grip.r', pose: 'mistake', off: [0, 6] }, [0, 0, MIS_FWD]] },
+      { kind: 'dashed', pts: MB_RING },                 // the faulty bar (sleeve), eased off the shoulders
+      { kind: 'dashed', pts: DRIFT },                      // light: the bar's forward drift away from the face
+      { kind: 'dashed', pts: DRIFT_RING },
     ],
     tells: [
       { key: 'elbows', text: 'Elbows back', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'The elbows sit behind the bar, so your forearms tilt.' },
-      { key: 'drift', text: 'Bar drifts<br>forward', anchor: { at: 'grip.r', pose: 'mistake', off: [0, -26] }, cue: 'The bar curves forward, away from your face and mid-foot.' },
+      { key: 'drift', text: 'Bar drifts<br>forward', anchor: [0, MIS_Y + RING_R, MIS_FWD], cue: 'The bar curves forward, away from your face and mid-foot.' },
     ],
   },
   alt: 'Barbell overhead press, side view. The bar starts on the front of the shoulders, forearms vertical, body leaning slightly back from the hips. It travels straight up over mid-foot to locked arms overhead, the head moving forward under the bar.',

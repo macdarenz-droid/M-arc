@@ -136,7 +136,7 @@ export default {
   trace: { point: 'grip.r', trim: [12, 12] },
   datum: [{ x: 'elbow.r', from: 'elbow.r', to: { at: 'grip.r', off: [0, -16] }, mistake: false }],   // plumb through the elbow: the weight sits over it (c7)
   callouts: [
-    { key: 'five', text: 'Five<br>points', anchor: 'buttock', cue: 'Keep your head, shoulders, hips and both feet down the whole set.' },
+    { key: 'five', text: 'Five<br>points', anchor: 'buttock', box: { left: 266, top: 210 }, cue: 'Keep your head, shoulders, hips and both feet down the whole set.' },
     { key: 'depth', text: 'Down to<br>mid-chest', anchor: 'grip.r', cue: 'Lower the dumbbells to mid-chest, a little wide, and touch gently.' },
     { key: 'elbow', text: 'Weight<br>over elbow', anchor: 'elbow.r', cue: 'Keep each dumbbell over its elbow, forearm close to vertical.' },
   ],

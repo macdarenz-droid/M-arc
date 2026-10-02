@@ -148,7 +148,7 @@ export default {
     // c10
     { key: 'knee', text: 'Soft knee<br>15-20°', anchor: { at: 'knee.l', off: [8, 0] }, cue: 'Keep your standing knee bent about 15-20 degrees, not locked.' },
     // c9
-    { key: 'shin', text: 'Mid-shin', anchor: 'grip.r', cue: 'Stop the dumbbell at about mid-shin, in front of your standing leg.' },
+    { key: 'shin', text: 'Mid-shin', anchor: 'grip.r', box: { left: 260, top: 248 }, cue: 'Stop the dumbbell at about mid-shin, in front of your standing leg.' },
   ],
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Stand', s: 1, move: true }, { phase: 'Balance', s: 1 }],   // c16
   mistake: {

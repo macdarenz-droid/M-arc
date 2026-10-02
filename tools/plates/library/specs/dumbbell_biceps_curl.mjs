@@ -122,7 +122,7 @@ export default {
   callouts: [
     { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', cue: 'Keep the upper arms by your sides, never back, at most slightly forward on top.' },
     { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep the hand in line with the forearm, not bent up or down.' },
-    { key: 'still', text: 'Still<br>body', anchor: 'backUpper', cue: 'Keep the torso and knees still, so only the forearms travel.' },
+    { key: 'still', text: 'Still<br>body', anchor: 'backUpper', box: { left: 96, top: 108 }, cue: 'Keep the torso and knees still, so only the forearms travel.' },
   ],
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {

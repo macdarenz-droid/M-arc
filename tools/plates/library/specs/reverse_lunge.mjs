@@ -114,7 +114,10 @@ export default {
   poses: { start, via, end },
   equipment: [
     { type: 'floor', from: -1.3, to: 0.4 },
-    lm => bells(lm),
+    // one entry per dumbbell: the engine keys items by entry index + type + index within the primitive, so two dumbbells
+    // in one entry gave duplicate svg ids (LIB-3 PQ-H2; as pec_fly splits its composer items)
+    lm => bells(lm)[0],
+    lm => bells(lm)[1],
   ],
   checks: [
     { landmark: 'heel.r', plane: FLOOR, pose: 'all', tol: 0.5 },                        // front foot flat

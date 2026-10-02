@@ -161,7 +161,7 @@ export default {
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'not locked', box: { left: 44, top: 216 } },
   callouts: [
     { key: 'elbows', text: 'Elbows<br>pinned', anchor: 'elbow.r', cue: 'Keep the upper arms against the sides so only the forearms move.' },
-    { key: 'torso', text: 'Tall<br>torso', anchor: 'backUpper', cue: 'Stay upright or tilt slightly from the hips, back not arched.' },
+    { key: 'torso', text: 'Tall<br>torso', anchor: 'backUpper', box: { left: 66, top: 124 }, cue: 'Stay upright or tilt slightly from the hips, back not arched.' },
     { key: 'wrists', text: 'Neutral<br>wrists', anchor: 'wrist.r', cue: 'Keep the hands in line with the forearms from top to bottom.' },
   ],
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
@@ -174,7 +174,7 @@ export default {
     ],
     tells: [
       { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 34, top: 180 }, cue: 'The elbows drift forward off the sides as the bar comes up.' },
-      { key: 'lean', text: 'Leaning<br>in', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'The torso tips forward over the bar to start the press.' },
+      { key: 'lean', text: 'Leaning<br>in', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 54, top: 133 }, cue: 'The torso tips forward over the bar to start the press.' },
     ],
   },
   alt: 'Triceps pushdown, side view. Standing at a high cable tower with a slight forward lean, upper arms pinned at the sides, the lifter presses a straight bar from forearms about level down in an arc to straight arms in front of the thighs.',

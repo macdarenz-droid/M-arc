@@ -31,7 +31,7 @@ const APPROVED_CHROME = { lateral_raise: 'lateral-raise' };
 export function flagsOf(entry, measures, spec) {
   const f = [];
   const out = (k, v) => v < ENVELOPE[k][0] || v > ENVELOPE[k][1];
-  if (out('pxPerM', measures.pxPerM)) f.push({ id: 'F1', text: `Scale ${measures.pxPerM} px/m, approved ${ENVELOPE.pxPerM.join('-')}` });
+  if (out('pxPerM', measures.pxPerM)) f.push({ id: 'F1', text: `Scale ${measures.pxPerM} px/m, approved ${ENVELOPE.pxPerM.join('-')}${entry.rulings?.F1 ? `. Ruling ${entry.rulings.F1}` : ''}` });
   if (out('coverage', measures.coverage)) f.push({ id: 'F2', text: `Ink coverage ${measures.coverage}, approved ${ENVELOPE.coverage.join('-')}` });
   if (out('longestLeader', measures.longestLeader)) f.push({ id: 'F3', text: `Longest leader ${measures.longestLeader} px, approved up to ${ENVELOPE.longestLeader[1]}` });
   if (out('boxed', measures.boxed)) f.push({ id: 'F4', text: `${measures.boxed} hand-placed labels, approved up to ${ENVELOPE.boxed[1]}` });
