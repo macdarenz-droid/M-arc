@@ -44,7 +44,7 @@
     ]
   },
   "wrist": {
-    "text": "The floor sets the wrist bend; the check is position, not angle: shoulders directly over the hands at the top, forearms over the wrists at the bottom.",
+    "text": "Shoulders directly over the hands at the top, forearms over the wrists at the bottom.",
     "claim": [
       "c1",
       "c3",
@@ -85,6 +85,12 @@
     "claim": [
       "c8",
       "c9"
+    ],
+    "appliesTo": [
+      "push_up",
+      "incline_push_up",
+      "diamond_push_up",
+      "pike_push_up"
     ]
   },
   "gripLine": {

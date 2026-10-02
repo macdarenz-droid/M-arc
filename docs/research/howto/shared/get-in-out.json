@@ -31,6 +31,11 @@
  "move": "get-in-out",
  "steps": [
   {
+   "kind": "safety",
+   "text": "If the machine has safety stops, set them to the right height.",
+   "claim": "c2"
+  },
+  {
    "kind": "adjust",
    "text": "Set the seat and pads before you sit down.",
    "claim": "c1"
@@ -41,13 +46,8 @@
    "claim": "c1"
   },
   {
-   "kind": "safety",
-   "text": "If the machine has safety stops, set them first.",
-   "claim": "c2"
-  },
-  {
    "kind": "get-in",
-   "text": "Sit and get into the start position.",
+   "text": "Sit or lie down in the start position.",
    "claim": "c3"
   },
   {

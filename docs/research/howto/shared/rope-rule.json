@@ -91,9 +91,10 @@
     },
     {
       "id": "c3",
-      "text": "On the rope the grip is neutral (palms facing each other); for the overhead extension the rope is held with a neutral grip behind the head.",
+      "text": "For the overhead extension the rope is held with a neutral grip (palms facing each other) behind the head. Using the same neutral grip for the rope pushdown is an inference: no source read states the palm direction for the pushdown.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "MECH"
       ],
       "sources": [
         "motra-ohrope"

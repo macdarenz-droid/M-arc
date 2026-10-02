@@ -50,7 +50,7 @@
     {
       "key": "bent-back-bottom",
       "label": "Wrist bent back",
-      "what": "Wrist bent back (extended), for example forced into a bend to keep the dumbbells against the sides at the bottom.",
+      "what": "Wrist bent back (extended).",
       "claim": [
         "c3",
         "c4",
@@ -59,7 +59,7 @@
     }
   ],
   "widthNote": {
-    "text": "If holding the dumbbells against your sides bends the wrist, let them hang slightly out to keep it straight.",
+    "text": "If holding the dumbbells at your sides bends your wrists, hold them where your wrists stay straight.",
     "claim": "c5"
   },
   "gripLine": {
