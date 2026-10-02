@@ -4,7 +4,7 @@ The owner's rules. Relay's CONTRACT.md carries the same ones.
 
 ## ULTIMATE RULE (owner, 2026-09-26): above every other rule, mode or permission
 Use what's necessary for high-quality output and a fast workflow, while saving tokens.
-- Run agents in parallel when that makes the work faster or better. That is why we work in parallel.
+- Run agents in parallel when that makes the work faster or better. Prioritise true dependencies and bottlenecks; add workers only for independent work that review and CI capacity can absorb.
 - Never add agents that duplicate or re-check each other without need.
 - Use a strong model for hard judgement and a lighter one for mechanical steps. Do small things yourself.
 - Quality is never traded away: tests fail before and pass after, and nothing is loosened.
@@ -27,6 +27,8 @@ Use what's necessary for high-quality output and a fast workflow, while saving t
 Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor keeps this section current. If the Agent guard check fails, read docs/AGENT-RULES.md.
 
 **Procedures:** every builder, Claude or Codex, reads and follows `.claude/skills/builder/SKILL.md` before its first commit. Reviewers use `.claude/skills/reviewer/SKILL.md`, and the supervisor uses `.claude/skills/supervisor/SKILL.md`. Rules in `.claude/rules/` appear when you touch those files.
+
+**Phase delivery:** name the full deliverable, its acceptance evidence and its finish condition before building. Track implementation, release-candidate acceptance and store publication separately. Forecast the full agreed scope, including integration, review, fixes and required device checks; state assumptions and uncertainty rather than treating a build estimate as a release date.
 
 **Roles:**
 - **Supervisor** (one Claude session): owns the task board (Relay `tasks/TASKS.md`), the merge queue and these rules.
