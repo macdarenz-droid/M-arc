@@ -1,0 +1,223 @@
+{
+ "id": "seated_leg_curl",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-slc",
+   "text": "Adjust the machine so that you are correctly positioned. Your knees should be in line with the machine’s joint.",
+   "status": "verbatim",
+   "closest": "Adjust the machine so that you are correctly positioned. Your knees should be in line with the machine’s joint.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-slc",
+   "text": "The most important part here is to make sure that your knees align with the machine’s joint. Otherwise, the movement pattern will be off and might hurt.",
+   "status": "verbatim",
+   "closest": "The most important part here is to make sure that your knees align with the machine’s joint. Otherwise, the movement pattern will be off and might hurt.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-legcurl",
+   "text": "Adjust the seat so that the thigh pad will be snug just above your knees, but not too tightly, sandwiching your legs between it and the seat.",
+   "status": "verbatim",
+   "closest": "Adjust the seat so that the thigh pad will be snug just above your knees, but not too tightly, sandwiching your legs between it and the seat.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-legcurl",
+   "text": "Pull the seat back as much as you need to in order to accommodate your stomach.",
+   "status": "verbatim",
+   "closest": "Pull the seat back as much as you need to in order to accommodate your stomach.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-legcurl",
+   "text": "Adjust the ankle pad so that when you’re sitting down, it falls comfortably under your legs just above your shoes.",
+   "status": "verbatim",
+   "closest": "Adjust the ankle pad so that when you’re sitting down, it falls comfortably under your legs just above your shoes.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-legcurl",
+   "text": "Adjusting the pad too high will put a lot of unnecessary pressure on your calves. It will also reduce the effective range of motion of the exercise",
+   "status": "verbatim",
+   "closest": "Adjusting the pad too high will put a lot of unnecessary pressure on your calves. It will also reduce the effective range of motion of the exercise",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-legcurl",
+   "text": "keep the pad well below the belly of your calves.",
+   "status": "verbatim",
+   "closest": "keep the pad well below the belly of your calves.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-slc",
+   "text": "Adjust the back pad as well, so that you can keep your back flat against it.",
+   "status": "verbatim",
+   "closest": "Adjust the back pad as well, so that you can keep your back flat against it.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-legcurl",
+   "text": "Once you’re set up properly, grasp the handles on either side of you. Squeeze your hands and ground your hips down into the seat. On an exhale, contract your hamstrings to bend your knees and curl your feet underneath you.",
+   "status": "verbatim",
+   "closest": "Once you’re set up properly, grasp the handles on either side of you. Squeeze your hands and ground your hips down into the seat. On an exhale, contract your hamstrings to bend your knees and curl your feet underneath you.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-slc",
+   "text": "Push the weight down by bending your knees as far as possible.",
+   "status": "verbatim",
+   "closest": "Push the weight down by bending your knees as far as possible.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-slc",
+   "text": "brace your core and start the movement by curling your legs as far as possible. Keep the motion slow and controlled to maximize the muscle engagement.",
+   "status": "verbatim",
+   "closest": "brace your core and start the movement by curling your legs as far as possible. Keep the motion slow and controlled to maximize the muscle engagement.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-legcurl",
+   "text": "After you’ve fully contracted your hamstrings, slowly let your legs extend. Control the speed of the ascent. Avoid letting the weights clang against each other at the top of the rep. Just before they make contact, begin your next rep.",
+   "status": "verbatim",
+   "closest": "After you’ve fully contracted your hamstrings, slowly let your legs extend. Control the speed of the ascent. Avoid letting the weights clang against each other at the top of the rep. Just before they make contact, begin your next rep.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-slc",
+   "text": "Slowly let the weight back again.",
+   "status": "verbatim",
+   "closest": "Slowly let the weight back again.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-slc",
+   "text": "If you add more weight than you can control, it’s easy to start relying on the momentum and swinging the weight.",
+   "status": "verbatim",
+   "closest": "If you add more weight than you can control, it’s easy to start relying on the momentum and swinging the weight.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-slc",
+   "text": "Lower the weight, and keep the movement controlled and slow.",
+   "status": "verbatim",
+   "closest": "Lower the weight, and keep the movement controlled and slow.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-slc",
+   "text": "By not adjusting the leg pad and seat height to your body, the exercise will be very hard to perform, and it can lead to an ineffective and possibly painful exercise.",
+   "status": "verbatim",
+   "closest": "By not adjusting the leg pad and seat height to your body, the exercise will be very hard to perform, and it can lead to an ineffective and possibly painful exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-legcurl",
+   "text": "Especially if you’re new to the exercise, your calves might temporarily cramp, especially during either heavy or higher rep sets.",
+   "status": "verbatim",
+   "closest": "Especially if you’re new to the exercise, your calves might temporarily cramp, especially during either heavy or higher rep sets.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-legcurl",
+   "text": "With heavy loads, you might unconsciously recruit your calves to try and assist.",
+   "status": "verbatim",
+   "closest": "With heavy loads, you might unconsciously recruit your calves to try and assist.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-legcurl",
+   "text": "Try lowering the weight until your calves can come along for the ride.",
+   "status": "verbatim",
+   "closest": "Try lowering the weight until your calves can come along for the ride.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-legcurl",
+   "text": "Try pointing your toes instead of keeping your feet out as though you were standing regularly.",
+   "status": "verbatim",
+   "closest": "Try pointing your toes instead of keeping your feet out as though you were standing regularly.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "maeo-2021",
+   "text": "Training-induced increases in muscle volume were greater in Seated-Leg versus Prone-Leg for the whole hamstrings (+14% vs +9%)",
+   "status": "verbatim",
+   "closest": "Training-induced increases in muscle volume were greater in Seated-Leg versus Prone-Leg for the whole hamstrings (+14% vs +9%)",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "maeo-2021",
+   "text": "Hamstrings muscle size can be more effectively increased by seated than prone leg curl training, suggesting that training at long muscle lengths promotes muscle hypertrophy",
+   "status": "verbatim",
+   "closest": "Hamstrings muscle size can be more effectively increased by seated than prone leg curl training, suggesting that training at long muscle lengths promotes muscle hypertrophy",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "sl-slc",
+   "text": "Primary muscles worked: Hamstrings",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Hamstrings",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "sl-slc",
+   "text": "seated leg curls work your hamstrings at a longer muscle length than the lying leg curl since your hip is flexed more, and three out of four hamstrings head cross over your hip joint.",
+   "status": "verbatim",
+   "closest": "seated leg curls work your hamstrings at a longer muscle length than the lying leg curl since your hip is flexed more, and three out of four hamstrings head cross over your hip joint.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-legcurl",
+   "text": "For Muscle Mass: Perform 3-4 sets of 12-15 reps with a slow eccentric.",
+   "status": "verbatim",
+   "closest": "For Muscle Mass: Perform 3-4 sets of 12-15 reps with a slow eccentric.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "sl-slc",
+   "text": "For muscle growth, around 6–15 reps per set are something to aim for.",
+   "status": "verbatim",
+   "closest": "For muscle growth, around 6–15 reps per set are something to aim for.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  }
+ ]
+}

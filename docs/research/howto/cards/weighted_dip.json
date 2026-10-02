@@ -340,7 +340,9 @@
    "title": "How to Do Bar Dips: Muscles Worked & Proper Form – StrengthLog",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "bb-dips",
@@ -348,7 +350,9 @@
    "title": "How to Do Dips: Proper Form & Variations | BarBend",
    "kind": "coach",
    "year": 2024,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "bb-dipcorrect",
@@ -356,7 +360,9 @@
    "title": "Dip Correctly or Don't Dip at All | BarBend",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "mckenzie-2022",
@@ -364,7 +370,9 @@
    "title": "Bench, Bar, and Ring Dips: Do Kinematics and Muscle Activity Differ?",
    "kind": "peer-reviewed",
    "year": 2022,
-   "pmid": 36293792
+   "pmid": 36293792,
+   "access": "abstract",
+   "checked": "2026-10-02"
   },
   {
    "id": "acsm-2009",
@@ -372,7 +380,9 @@
    "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
    "kind": "guideline",
    "year": 2009,
-   "pmid": 19204579
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-10-02"
   }
  ],
  "plate": {

@@ -376,7 +376,9 @@
       "title": "Resistance Band & Tubing Instruction Manual (The Hygenic Corporation, TheraBand)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     },
     {
       "id": "sabf-bandrow",
@@ -384,7 +386,9 @@
       "title": "Seated Row With Band To Strengthen Upper Back - Sit and Be Fit",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {

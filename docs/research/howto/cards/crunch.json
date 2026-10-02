@@ -264,7 +264,9 @@
    "title": "Crunch | Exercise Library | ACE",
    "kind": "guideline",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "sl-crunch",
@@ -272,7 +274,9 @@
    "title": "How to Do Crunches: Muscles Worked & Proper Form – StrengthLog",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "bb-crunch",
@@ -280,7 +284,9 @@
    "title": "How to Do Crunches: Proper Form, Variations, & Benefits | BarBend",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "juker-1998",
@@ -288,7 +294,9 @@
    "title": "Quantitative intramuscular myoelectric activity of lumbar portions of psoas and the abdominal wall during a wide variety of tasks.",
    "kind": "peer-reviewed",
    "year": 1998,
-   "pmid": 9502361
+   "pmid": 9502361,
+   "access": "abstract",
+   "checked": "2026-10-02"
   }
  ],
  "plate": {

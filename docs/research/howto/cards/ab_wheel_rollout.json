@@ -309,7 +309,9 @@
    "title": "How to Do Kneeling Ab Wheel Roll-Out: Muscles Worked & Proper Form – StrengthLog",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "sl-abex",
@@ -317,7 +319,9 @@
    "title": "The 10 Best Ab Exercises for Muscle and Strength – StrengthLog",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "sl-coreex",
@@ -325,7 +329,9 @@
    "title": "The 10 Best Core Exercises for Muscle & Strength – StrengthLog",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "bb-bestab",
@@ -333,7 +339,9 @@
    "title": "12 Best Ab Exercises and Workouts for Strength | BarBend",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "bb-abrollouts",
@@ -341,7 +349,9 @@
    "title": "The Benefits of Ab Rollouts and Progressions to Perform Them | BarBend",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "escamilla-2006",
@@ -349,7 +359,9 @@
    "title": "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training.",
    "kind": "peer-reviewed",
    "year": 2006,
-   "pmid": 16649890
+   "pmid": 16649890,
+   "access": "abstract",
+   "checked": "2026-10-02"
   },
   {
    "id": "yamane-2023",
@@ -357,7 +369,9 @@
    "title": "Spinal cord injury without radiological abnormality due to a fall while using an abdominal roller: A report of two cases.",
    "kind": "peer-reviewed",
    "year": 2023,
-   "pmid": 37780607
+   "pmid": 37780607,
+   "access": "abstract",
+   "checked": "2026-10-02"
   }
  ],
  "plate": {

@@ -304,7 +304,9 @@
    "title": "Learn How to Do a Side Plank with Proper Form, Variations, and Benefits | BarBend",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "sl-sideplank",
@@ -312,7 +314,9 @@
    "title": "How to Do Side Plank: Muscles Worked & Proper Form – StrengthLog",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "ace-sideplank-mod",
@@ -320,7 +324,9 @@
    "title": "Ab Exercises | Side Plank (Modified) | ACE",
    "kind": "guideline",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "juker-1998",
@@ -328,7 +334,9 @@
    "title": "Quantitative intramuscular myoelectric activity of lumbar portions of psoas and the abdominal wall during a wide variety of tasks.",
    "kind": "peer-reviewed",
    "year": 1998,
-   "pmid": 9502361
+   "pmid": 9502361,
+   "access": "abstract",
+   "checked": "2026-10-02"
   },
   {
    "id": "mcgill-2009",
@@ -336,7 +344,9 @@
    "title": "Exercises for spine stabilization: motion/motor patterns, stability progressions, and clinical technique.",
    "kind": "peer-reviewed",
    "year": 2009,
-   "pmid": 19154838
+   "pmid": 19154838,
+   "access": "abstract",
+   "checked": "2026-10-02"
   }
  ],
  "plate": {

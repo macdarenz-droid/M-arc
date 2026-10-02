@@ -379,7 +379,9 @@
    "title": "Push-Ups | Exercise Library | ACE",
    "kind": "guideline",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "sl-pushup",
@@ -387,7 +389,9 @@
    "title": "How to Do Push-Up: Muscles Worked & Proper Form – StrengthLog",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "bb-pushup",
@@ -395,7 +399,9 @@
    "title": "How to Perform the Push-Up — Tips, Tricks, & Variations | BarBend",
    "kind": "coach",
    "year": 2024,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "kikuchi-2017",
@@ -403,7 +409,9 @@
    "title": "Low-load bench press and push-up induce similar muscle hypertrophy and strength gain.",
    "kind": "peer-reviewed",
    "year": 2017,
-   "pmid": 29541130
+   "pmid": 29541130,
+   "access": "abstract",
+   "checked": "2026-10-02"
   }
  ],
  "plate": {

@@ -328,7 +328,9 @@
    "title": "How to Do Seated Leg Curl: Muscles Worked & Proper Form – StrengthLog",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "bb-legcurl",
@@ -336,7 +338,9 @@
    "title": "Master the Leg Curl for Stronger Hamstrings and Heavier Deadlifts | BarBend",
    "kind": "coach",
    "year": null,
-   "pmid": null
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
   },
   {
    "id": "maeo-2021",
@@ -344,7 +348,9 @@
    "title": "Greater Hamstrings Muscle Hypertrophy but Similar Damage Protection after Training at Long versus Short Muscle Lengths.",
    "kind": "peer-reviewed",
    "year": 2021,
-   "pmid": 33009197
+   "pmid": 33009197,
+   "access": "abstract",
+   "checked": "2026-10-02"
   },
   {
    "id": "acsm-2009",
@@ -352,7 +358,9 @@
    "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
    "kind": "guideline",
    "year": 2009,
-   "pmid": 19204579
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-10-02"
   }
  ],
  "plate": {

@@ -1,0 +1,279 @@
+{
+ "id": "push_up",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-pushup",
+   "text": "Slowly bend forward to place your palms flat on the mat, positioning your hands shoulder-width apart with your fingers facing forward or turned slightly inward. Slowly shift your weight forward until your shoulders are positioned directly over your hands.",
+   "status": "verbatim",
+   "closest": "Slowly bend forward to place your palms flat on the mat, positioning your hands shoulder-width apart with your fingers facing forward or turned slightly inward. Slowly shift your weight forward until your shoulders are positioned directly over your hands.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-pushup",
+   "text": "Assume the starting position, with hands slightly wider than shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Assume the starting position, with hands slightly wider than shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-pushup",
+   "text": "Reposition your hands as needed to allow full extension of your body without any bend at the hips or knees. Stiffen your torso by contracting your core/abdominal muscles (\"bracing\"), your glute and quadriceps muscles and align your head with your spine.",
+   "status": "verbatim",
+   "closest": "Reposition your hands as needed to allow full extension of your body without any bend at the hips or knees. Stiffen your torso by contracting your core/abdominal muscles (\"bracing\"), your glute and quadriceps muscles and align your head with your spine.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-pushup",
+   "text": "Place your feet together with your ankles dorsiflexed (toes pointed towards your shins).",
+   "status": "verbatim",
+   "closest": "Place your feet together with your ankles dorsiflexed (toes pointed towards your shins).",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-pushup",
+   "text": "Try to form a straight line from head to feet, and brace your abdomen slightly.",
+   "status": "verbatim",
+   "closest": "Try to form a straight line from head to feet, and brace your abdomen slightly.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-pushup",
+   "text": "Slowly lower your body towards the floor while maintaining a rigid torso and head aligned with your spine. Do not allow your low back to sag or your hips to hike upwards during this downward phase.",
+   "status": "verbatim",
+   "closest": "Slowly lower your body towards the floor while maintaining a rigid torso and head aligned with your spine. Do not allow your low back to sag or your hips to hike upwards during this downward phase.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-pushup",
+   "text": "Continue to lower yourself until your chest or chin touch the mat/floor.",
+   "status": "verbatim",
+   "closest": "Continue to lower yourself until your chest or chin touch the mat/floor.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-pushup",
+   "text": "The torso and legs should descend together without breaking rigidity through the midline.",
+   "status": "verbatim",
+   "closest": "The torso and legs should descend together without breaking rigidity through the midline.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-pushup",
+   "text": "Press upwards through your arms while maintaining a rigid torso and head aligned with your spine. For extra strength think about pushing the floor away from you.",
+   "status": "verbatim",
+   "closest": "Press upwards through your arms while maintaining a rigid torso and head aligned with your spine. For extra strength think about pushing the floor away from you.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-pushup",
+   "text": "Continue pressing until the arms are fully extended at the elbows.",
+   "status": "verbatim",
+   "closest": "Continue pressing until the arms are fully extended at the elbows.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-pushup",
+   "text": "Poor trunk rigidity is among the most common technical faults for most gymgoers who perform the push-up.",
+   "status": "verbatim",
+   "closest": "Poor trunk rigidity is among the most common technical faults for most gymgoers who perform the push-up.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-pushup",
+   "text": "Many beginners will inadvertently sag at the hips or unknowingly let their lower backs fall into an arched position.",
+   "status": "verbatim",
+   "closest": "Many beginners will inadvertently sag at the hips or unknowingly let their lower backs fall into an arched position.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-pushup",
+   "text": "To remedy a sagging spine, actively contract your core, squeeze your glutes, and you can even think about tucking your pelvis “in and under” slightly, to create a minor posterior tilt.",
+   "status": "verbatim",
+   "closest": "To remedy a sagging spine, actively contract your core, squeeze your glutes, and you can even think about tucking your pelvis “in and under” slightly, to create a minor posterior tilt.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-pushup",
+   "text": "when viewed from the side in the starting position, your shoulders sit directly atop your elbows, which sit directly atop your wrists.",
+   "status": "verbatim",
+   "closest": "when viewed from the side in the starting position, your shoulders sit directly atop your elbows, which sit directly atop your wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-pushup",
+   "text": "Avoid having your palms planted too far in front (or behind) your body.",
+   "status": "verbatim",
+   "closest": "Avoid having your palms planted too far in front (or behind) your body.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-pushup",
+   "text": "Allow your elbows to flare outwards during the lowering phase.",
+   "status": "verbatim",
+   "closest": "Allow your elbows to flare outwards during the lowering phase.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-pushup",
+   "text": "An alternative position is to turn your hands to face forwards and keep your your elbows close to your sides during the downward phase. This shifts the emphasis from the chest muscles onto the triceps and may reduce stresses in the shoulder joint.",
+   "status": "verbatim",
+   "closest": "An alternative position is to turn your hands to face forwards and keep your your elbows close to your sides during the downward phase. This shifts the emphasis from the chest muscles onto the triceps and may reduce stresses in the shoulder joint.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-pushup",
+   "text": "Lower yourself as deep as you can, while inhaling.",
+   "status": "verbatim",
+   "closest": "Lower yourself as deep as you can, while inhaling.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-pushup",
+   "text": "push yourself up to straight arms again while exhaling.",
+   "status": "verbatim",
+   "closest": "push yourself up to straight arms again while exhaling.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-pushup",
+   "text": "Primary muscles worked: Chest Front Deltoid Secondary muscles worked: Triceps Abs",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Chest Front Deltoid Secondary muscles worked: Triceps Abs",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-pushup",
+   "text": "The prime movers involved in the push up are the pec major, anterior (front) deltoid, and triceps.",
+   "status": "verbatim",
+   "closest": "The prime movers involved in the push up are the pec major, anterior (front) deltoid, and triceps.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-pushup",
+   "text": "A hidden bonus with push-ups is that you also get some static training of your core, similar to that of the plank exercise.",
+   "status": "verbatim",
+   "closest": "A hidden bonus with push-ups is that you also get some static training of your core, similar to that of the plank exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-pushup",
+   "text": "In push-ups, you lift about 70% of your own body weight, but you can increase or decrease that amount by placing your feet or hands, respectively, on an elevation.",
+   "status": "verbatim",
+   "closest": "In push-ups, you lift about 70% of your own body weight, but you can increase or decrease that amount by placing your feet or hands, respectively, on an elevation.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-pushup",
+   "text": "In kneeling push-ups, you lift about 55% of your body weight.",
+   "status": "verbatim",
+   "closest": "In kneeling push-ups, you lift about 55% of your body weight.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-pushup",
+   "text": "You can also vary the exercise by placing your hands closer or wider apart, which will transfer more of the load to the triceps or chest, respectively.",
+   "status": "verbatim",
+   "closest": "You can also vary the exercise by placing your hands closer or wider apart, which will transfer more of the load to the triceps or chest, respectively.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "kikuchi-2017",
+   "text": "Push-up exercise with similar load to 40%1RM bench press is comparably effective for muscle hypertrophy and strength gain over an 8-week training period.",
+   "status": "verbatim",
+   "closest": "Push-up exercise with similar load to 40%1RM bench press is comparably effective for muscle hypertrophy and strength gain over an 8-week training period.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "kikuchi-2017",
+   "text": "Eighteen male participants",
+   "status": "verbatim",
+   "closest": "Eighteen male participants",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-pushup",
+   "text": "As a Beginner: 2-3 sets of up to 10 reps, focusing on your technique.",
+   "status": "verbatim",
+   "closest": "As a Beginner: 2-3 sets of up to 10 reps, focusing on your technique.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-pushup",
+   "text": "Simply placing a standard weight plate on your lower back while setting up is an easy way to ensure that you keep making gains once your body weight becomes too easy.",
+   "status": "verbatim",
+   "closest": "Simply placing a standard weight plate on your lower back while setting up is an easy way to ensure that you keep making gains once your body weight becomes too easy.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-pushup",
+   "text": "Maintain strict control of your tempo all the way down, particularly as you get closer to the floor, and touch it lightly with your chest.",
+   "status": "verbatim",
+   "closest": "Maintain strict control of your tempo all the way down, particularly as you get closer to the floor, and touch it lightly with your chest.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "ace-pushup",
+   "text": "Slowly lower your body towards the floor",
+   "status": "verbatim",
+   "closest": "Slowly lower your body towards the floor",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-pushup",
+   "text": "Brace the core tightly and try to “squeeze” the floor with your hands.",
+   "status": "verbatim",
+   "closest": "Brace the core tightly and try to “squeeze” the floor with your hands.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "ace-pushup",
+   "text": "Pushing through the heel and outside surface of your palm provides greater force in your press and stability to your shoulders.",
+   "status": "verbatim",
+   "closest": "Pushing through the heel and outside surface of your palm provides greater force in your press and stability to your shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-pushup",
+   "text": "Clear any stray objects or clutter from the exercise area before beginning, and ensure that the surface you’re using isn’t slippery or unstable.",
+   "status": "verbatim",
+   "closest": "Clear any stray objects or clutter from the exercise area before beginning, and ensure that the surface you’re using isn’t slippery or unstable.",
+   "note": ""
+  }
+ ]
+}

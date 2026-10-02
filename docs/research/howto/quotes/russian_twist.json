@@ -1,0 +1,143 @@
+{
+ "id": "russian_twist",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-coretwist",
+   "text": "Sit on the floor with your knees bent and your feet either on the ground or slightly lifted.",
+   "status": "verbatim",
+   "closest": "Sit on the floor with your knees bent and your feet either on the ground or slightly lifted.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-russiantwist",
+   "text": "Start by sitting on the ground with your legs lifted and extended out in front of you. Beginner trainees can reduce the difficulty of the exercise by bending the knees.",
+   "status": "verbatim",
+   "closest": "Start by sitting on the ground with your legs lifted and extended out in front of you. Beginner trainees can reduce the difficulty of the exercise by bending the knees.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-coretwist",
+   "text": "Hold a weight plate, medicine ball, or kettlebell with both hands in front of your chest.",
+   "status": "verbatim",
+   "closest": "Hold a weight plate, medicine ball, or kettlebell with both hands in front of your chest.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-russiantwist",
+   "text": "While keeping the torso erect, hold a weight, cable, or clasp your hands together at chest level.",
+   "status": "verbatim",
+   "closest": "While keeping the torso erect, hold a weight, cable, or clasp your hands together at chest level.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-coretwist",
+   "text": "Lean slightly back with a straight back and engaged core.",
+   "status": "verbatim",
+   "closest": "Lean slightly back with a straight back and engaged core.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-coretwist",
+   "text": "Twist your torso to one side and bring the weight toward your hip, keeping your hips stable.",
+   "status": "verbatim",
+   "closest": "Twist your torso to one side and bring the weight toward your hip, keeping your hips stable.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-coretwist",
+   "text": "Return to the center and rotate to the other side.",
+   "status": "verbatim",
+   "closest": "Return to the center and rotate to the other side.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-russiantwist",
+   "text": "allow the upper torso to rotate side to side, leading with your hands or the load you’re holding. The greater range of motion of the twist, the more challenging the movement is.",
+   "status": "verbatim",
+   "closest": "allow the upper torso to rotate side to side, leading with your hands or the load you’re holding. The greater range of motion of the twist, the more challenging the movement is.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-russiantwist",
+   "text": "It is important to keep the buttocks firmly planted on the floor to minimize leaning or loss of balance. Stay controlled and smooth.",
+   "status": "verbatim",
+   "closest": "It is important to keep the buttocks firmly planted on the floor to minimize leaning or loss of balance. Stay controlled and smooth.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-russiantwist",
+   "text": "To regress the movement, you can keep your feet on the floor, which will give greater stability. You can also restrict the degree of the twists, or just do a few twists and hold the end positions longer to build up isometric strength.",
+   "status": "verbatim",
+   "closest": "To regress the movement, you can keep your feet on the floor, which will give greater stability. You can also restrict the degree of the twists, or just do a few twists and hold the end positions longer to build up isometric strength.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-russiantwist",
+   "text": "Once you are able to do the reps slow and controlled, you can start to integrate more explosive twists or add resistance.",
+   "status": "verbatim",
+   "closest": "Once you are able to do the reps slow and controlled, you can start to integrate more explosive twists or add resistance.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-russiantwist",
+   "text": "Start by performing 3-4 sets of 10-15 repetitions, resting 60-90 seconds between, with additional loading as needed.",
+   "status": "verbatim",
+   "closest": "Start by performing 3-4 sets of 10-15 repetitions, resting 60-90 seconds between, with additional loading as needed.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-russiantwist",
+   "text": "Generally speaking, the Russian twist is a safe lower back exercise when done correctly, however some lifters may find it can be jarring if they do not pay close attention to staying controlled with the movement.",
+   "status": "verbatim",
+   "closest": "Generally speaking, the Russian twist is a safe lower back exercise when done correctly, however some lifters may find it can be jarring if they do not pay close attention to staying controlled with the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-russiantwist",
+   "text": "If you find it hurts your lower back, consider some of the Russian twist alternatives listed above",
+   "status": "verbatim",
+   "closest": "If you find it hurts your lower back, consider some of the Russian twist alternatives listed above",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-coretwist",
+   "text": "Primary muscles worked: Obliques Abs",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Obliques Abs",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-russiantwist",
+   "text": "While the Russian twist is a rotational movement, the abdominals are isometrically contracting to maintain a rigid position to support you while you stay upright in the movement.",
+   "status": "verbatim",
+   "closest": "While the Russian twist is a rotational movement, the abdominals are isometrically contracting to maintain a rigid position to support you while you stay upright in the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-russiantwist",
+   "text": "Adding load is a great way to increase power output, however the loads need to be lighter so that they do not distort your movement or slow you down.",
+   "status": "verbatim",
+   "closest": "Adding load is a great way to increase power output, however the loads need to be lighter so that they do not distort your movement or slow you down.",
+   "note": ""
+  }
+ ]
+}
