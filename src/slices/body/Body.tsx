@@ -64,7 +64,7 @@ export function Body() {
           <Section title="Ready times" palace="body.recovering" aside={<span class="small muted">{confidenceAside(rec)}</span>}>
             <ReadyTimesCard rec={rec} setSelected={setSelected} />
           </Section>
-          <Section title="Fully recovered" palace="body.full" aside={<span class="small muted">{fullyRecovered.length}</span>}>
+          <Section title="Recovered muscles" palace="body.full" aside={<span class="small muted">{fullyRecovered.length}</span>}>
             <Card><div class="wrap">{fullyRecovered.map(r => <Chip key={r.muscle} tone="positive" onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)}</Chip>)}{!fullyRecovered.length && <span class="small muted">None yet.</span>}</div></Card>
           </Section>
         </>
@@ -77,7 +77,7 @@ export function Body() {
       )}
 
       {view === 'week' && (
-        <Section title="Effective sets this week" palace="body.week-volume">
+        <Section title="Effective sets" palace="body.week-volume">
           <Card><div class="list">
             {volumeStatus.map(r => {
               const scaleMax = Math.max(r.thisWeekSets, r.band[1]) * 1.15 || 1;

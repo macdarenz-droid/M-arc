@@ -74,7 +74,7 @@ export function PlanBoard({ messages, activity }: { messages: StoredMessage[]; a
 
   return (
     <div class="plan-board" role="status" aria-live="polite">
-      <div class="plan-board-head"><span class="eyebrow">Building your plan</span><b>{title}</b></div>
+      <div class="plan-board-head"><span class="eyebrow">Plan draft</span><b>{title}</b></div>
       {draft ? (
         <div class="plan-days">
           {draft.map((d, i) => (

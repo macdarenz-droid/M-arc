@@ -208,7 +208,7 @@ export function executeTool(use: ToolUse, env: ExecEnv): ToolOutcome {
           return { ...base, effect: { type: 'forget', id }, content: JSON.stringify({ data: { forgotten: true, memoryId: id, undo: 'available' }, facts: {} }) };
         }
         // remember
-        if (!e.memoryEnabled) return { ...base, content: JSON.stringify({ data: { denied: 'memory_off', how: 'What Escobar knows → "Escobar may remember things I tell him"' }, facts: {} }) };
+        if (!e.memoryEnabled) return { ...base, content: JSON.stringify({ data: { denied: 'memory_off', how: 'Memory → "Escobar may remember things I tell him"' }, facts: {} }) };
         const kind = input.kind as MemoryKind;
         if (!MEMORY_KINDS.includes(kind) || kind === 'episode') throw new R.ToolError('kind must be fact, injury, equipment, preference, goal or agreement');
         const text = typeof input.text === 'string' ? input.text.replace(/\s+/g, ' ').trim() : '';
