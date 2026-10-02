@@ -3,13 +3,13 @@
 Card LIB-2 of the library plan (`claude/howto-options:docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md`, sections
 1, 2.7, 5.1-5.5 and the LIB-2 row of 7). Status: **design note only**. No LIB-2 code is written before HT-10 (#166)
 merges and LIB-1 reports its numbers. Every file and line below was read on `origin/main` at `94fd32c`.
-Revised after review "REVIEW LIB-2 design @ 1258c90" (1 blocker, 4 high, 7 medium, 3 low; all addressed).
+Revised after reviews "REVIEW LIB-2 design @ 1258c90" (15 findings) and "@ d61cefd" (8 findings); all addressed.
 
 ## 1. Goal
 
 Turn every place that names the 8 approved exercises into data, so a batch adds rows, not code. The 8 must come out
-unchanged: golden A `e2bea90c…` (860,766 B), the golden-B layers page, and every generated file's body except the
-two hash lines that this card changes on purpose (6.1).
+unchanged: golden A `e2bea90c…` (860,766 B), the golden-B layers page, and the bodies of the 45 generated files
+LIB-2 does not rewrite (6.1). The 5 generated files it does rewrite or add are proven by their own tests (6.1).
 
 ## 2. Prerequisites
 
@@ -27,7 +27,7 @@ covers.
 
 | File | What is written in | LIB-2 change |
 |---|---|---|
-| `tools/plates/golden.mjs:24-41` | `PINS` (golden A sha, bytes, font, ref-src md5) and `LIB_OF` (chrome id → lib id) | `LIB_OF` is derived from `tools/plates/plates.json` (every row already has `chromeId`). `PINS` moves to `tools/plates/pins.json` (the plan 5.3 data move); `golden.mjs` re-exports both names, so callers do not change. The values stay asserted by `vendor.test.ts:51,55` and `golden.test.ts:58`, unedited. |
+| `tools/plates/golden.mjs:24-41` | `PINS` (golden A sha, bytes, font, ref-src md5) and `LIB_OF` (chrome id → lib id) | `LIB_OF` is derived from `tools/plates/plates.json` (every row already has `chromeId`). `PINS` moves to `tools/plates/pins.json` (the plan 5.3 data move); `golden.mjs` re-exports both names, so callers do not change. `pins.json` joins `gen/plates.mjs`'s inputs (beside `golden.mjs`, `gen/plates.mjs:17`), so a pin edit stales the 8's files (L2-A20). The values stay asserted by `vendor.test.ts:51,55` and `golden.test.ts:58`, unedited. |
 | `tools/plates/golden.mjs:56` | `verifyVendor` source regex: a literal list of 6 commits | The allowed sources are read from `pins.json` `vendorSources[]`, each with its decision id. Same set, same message. |
 | `tools/plates/gen/plates.mjs:15-19, 74` | inputs are the whole vendor folder, `plates.json`, the golden fixture; `HOWTO_IDS` emitted from the 8 | Per-output inputs (6.1). `ids.ts` emission moves to a new plugin `gen/ids.mjs` (7). `moduleText` and `viewOf` keep their signatures and output (9). |
 | `tools/plates/gen/content.mjs:46-49` | inputs: every `exercises/<id>.howto.mjs` for every row | Per-output inputs (6.1). |
@@ -93,15 +93,24 @@ it; they live in `batches/*.json`, so adding a batch changes no input of the 8's
   - an output may carry its own `inputs` array; `render()` uses it for the header instead of the plugin-wide list;
   - `ctx.hashFor(path, inputs)` takes the same per-output list, so the body's `hashes:` line and the header agree;
   - each plugin passes, per output, only that id's files plus the shared files it reads.
-- **What changes for the 8, on purpose:** the header line of all 47 generated files (1 `ids.ts` + 1 `archetypes.ts`
-  + 33 `src/howto/generated/*` + 12 `src/slices/howto/css/*`) and the `hashes:` line of the 8 `ht-*.ts` bodies.
-  These bodies ship in the app chunks. The hash is fixed-length hex, so raw chunk bytes are unchanged; the gz size
-  of each of the 8 `ht-*` chunks is re-measured and recorded in `tests/howto/budgets.json` with `setBy: 'LIB-2'`.
-- **Identity proof that runs in CI's depth-1 checkout** (no base commit needed):
+- **Generated files before and after.** Today there are 47 (1 `ids.ts` + 1 `archetypes.ts` + 33
+  `src/howto/generated/*` + 12 `src/slices/howto/css/*`). After LIB-2 there are **50**:
+  - **45 untouched in body:** 32 `generated/*` (all but `index.ts`), `archetypes.ts` and the 12 css files. Their
+    header changes, and the 8 `ht-*.ts` among them also change their `hashes:` line. Nothing else in them changes.
+  - **5 rewritten or new:** `ids.ts` (body becomes the hash set), `generated/index.ts` (loses `LOADERS`), and the new
+    `generated/ht-index.ts`, `lib-id.ts` and generated `coverage.ts`. They are proven by L2-A6 (`hasHowTo` ⇔
+    `LOADERS`, 153 ids), L2-A9 (`ids.ts` size), L2-A10 (`ht-index` chunk) and L2-A13 (stage mapping, `c6.ts`).
+  - A test asserts exactly 50 generated files after the change (red on 49 or 51, and on an empty output).
+- **Identity proof for the 45, in CI's depth-1 checkout** (no base commit needed):
   `tests/howto/fixtures/generated-bodies.json` is committed **before** the core change, with
-  `sha256(body without line 1 and without the `hashes:` line)` for every generated file. The test regenerates in
-  memory, asserts exactly **47** files, and compares every entry. Red cases: an empty output list (count 0), a
-  missing file, one changed byte in any body.
+  `sha256(body without line 1 and without the `hashes:` line)` for those 45 files only. The test regenerates in
+  memory, asserts exactly **45** listed files are produced, and compares every entry. Red cases: an empty output
+  list, a missing file, one changed byte in any body.
+- **Budgets.** The 8 `ht-*` bodies ship in the app chunks. The hash is fixed-length hex, so raw chunk bytes stay the
+  same, but the gz sizes can move by a few bytes. `budgets.test.ts:36-37` require
+  `measuredGz ≤ gzMax ≤ ceil10(measuredGz)`, so the 8 `ht-*` entries are re-measured and `gzMax`/`rawMax` re-set to
+  measured + 10 % under the `budgets.json:2` rule (`setBy: 'LIB-2'`, with the reason). Each may move a few bytes up
+  or down. `budgets.test.ts` is not edited.
 
 ### 6.2 Per-batch golden files
 
@@ -136,7 +145,9 @@ it; they live in `batches/*.json`, so adding a batch changes no input of the 8's
   `LibId & { readonly __howto: true }` (branded), so `hasHowTo` stays a type guard. Types cost 0 bytes; the footprint
   test proves it.
 - **`ht-index` chunk.** `LOADERS` moves from `generated/index.ts` into `generated/ht-index.ts`, imported dynamically
-  by the sheet in parallel with the sheet chunk. Its budget is set once at measured + 10 %. The `HowToSheet` budget
+  by the sheet in parallel with the sheet chunk. It is typed `Partial<Record<LibId, () => Promise<{ default: BuiltHowTo }>>>`,
+  because `LibId` has 153 ids and `LOADERS` only the shipped ones (today's `Record<LibId, …>` would fail typecheck).
+  L2-A6 makes "every shipped id has a loader, and only those" exact. Its budget is set once at measured + 10 %. The `HowToSheet` budget
   and the main content probe stay unchanged.
 - **Total-size rule (plan 5.1), both limits.** HT-10 sets `totals[0]` to `gzMax` 564,585 B and `rawMax` 2,552,519 B
   (measured 513,259 / 2,320,471 B, + 10 %). LIB-2 makes both a rule over integers for N shipped ids:
@@ -159,7 +170,9 @@ it; they live in `batches/*.json`, so adding a batch changes no input of the 8's
 
 **Pilot A is not proven in LIB-2.** Its page `f4dc5ec3…` comes from LIB-8's `pilot-a/build.mjs`, `pilot-a/plates.json`
 and `specs/*` (#109, not on `main`). The proof moves to **LIB-8's merge**: after LIB-8 merges `main` (with LIB-2), its
-pilot page built through the registry must equal its pinned sha.
+pilot page built through the registry must equal its pinned sha. **Owner of that proof:** LIB-8's builder adds it
+to LIB-8's delta after its `main` merge (a test in `tests/howto/library-core.test.ts`), and the supervisor adds the line
+"pilot A page through the registry = pinned sha" to LIB-8's card acceptance.
 
 ## 9. Files LIB-2 owns, and collisions
 
@@ -202,8 +215,8 @@ Every sweep asserts its count and has an empty-input case that must fail.
 |---|---|---|---|
 | L2-A1 | `golden.mjs --check` passes; page `e2bea90c…`, 860,766 B | — | change one byte of `pins.json` `pageSha256` |
 | L2-A2 | builder rebuilds golden A from registry rows of the 8 (vitest) | 8 rows; 0 rows red | swap two rows in `plates.json` order |
-| L2-A3 | body hashes of every generated file (header and `hashes:` line out) equal the committed list | 47 files; 0 red | change one character in `gen/hands.mjs` output text |
-| L2-A4 | adding a synthetic batch row changes no header or `hashes:` line of the 8's files | 47 files; 0 red | make `gen/content.mjs` return the plugin-wide inputs again |
+| L2-A3 | body hashes of every generated file (header and `hashes:` line out) equal the committed list | 45 files listed, 50 generated; 0 red | change one character in `gen/hands.mjs` output text |
+| L2-A4 | adding a synthetic batch row changes no header or `hashes:` line of the 8's files | 50 files; 0 red | make `gen/content.mjs` return the plugin-wide inputs again |
 | L2-A5 | `generate --check` fails when `exercises.json` gains an id until regenerated | — | drop `exercises.json` from `gen/ids.mjs` inputs |
 | L2-A6 | `hasHowTo(id) === (id in LOADERS)` and hint equality; custom ids false | 153 ids; empty list red | add a non-shipped id to the hash set |
 | L2-A7 | an unknown `lib_` id with no collision is false | — | encode the complement set (the rejected hybrid design) |
@@ -213,18 +226,19 @@ Every sweep asserts its count and has an empty-input case that must fail.
 | L2-A11 | D/T proof: a synthetic D row (`lib_leg_press` + `{ camera.maxScale: 1.2 }`, fixture envelope) derives a spec that differs from the parent in exactly that key; `derive` refuses an unknown key, an out-of-envelope value, a view change | 1 row; 3 refusals | make `derive` return the parent unchanged; accept any key |
 | L2-A12 | registry refuses duplicate id, prefix clash, id not in `exercises.json`, zero rows | 8 rows | remove the duplicate check |
 | L2-A13 | stage mapping: `approved` ⇔ `shipped`; only `shipped` gives a button; `c6.ts` passes unedited | 153 ids; empty red | let `hasHowTo` return true for `approved-plate` |
-| L2-A14 | `verifyBatchChain`: each entry's `prev`; `base` = prefix hash of an existing GOLDEN entry; appending a synthetic entry to a copy of `GOLDEN.json` keeps every batch file green | N entries per file; 0-entry file red | edit one entry's `why`; point `base` at the head and append |
+| L2-A14 | `verifyBatchChain`: each entry's `prev`; `base` = prefix hash of an existing GOLDEN entry; appending a synthetic entry to a copy of `GOLDEN.json` keeps every batch file green | N entries per file; 0-entry file red | edit one entry's `why`; verifier mutation: compare `base.hash` with the hash of all current GOLDEN entries (the head), then append one entry, and the test must go red |
 | L2-A15 | total rule gives 564,585 gz and 2,552,519 raw for N = 8, and fails a batch over its N on either | — | round per id (`ceil(mean × 1.1) × N` gives 564,592); drop the raw rule |
 | L2-A16 | `firstWithoutHowTo()` = today's value on the 8 and moves on when an id ships | — | hard-code `lib_barbell_bench_press` |
 | L2-A17 | `ids.ts` and `ids-node.mjs` have byte-identical `SET` literals and agree on every id | 153 ids; empty red | edit one hash character in the Node twin |
 | L2-A18 | derived `HT_PLATES` equals today's literal pairs in order | 8 pairs; 0 red | sort rows by id |
 | L2-A19 | `moduleText(…, '0'.repeat(64))` sha for each of the 8 equals the committed value (LIB-3's H7 contract) | 8; 0 red | add a newline to `moduleText`'s output |
+| L2-A20 | `generate --check` fails after a `tools/plates/pins.json` edit until regenerated | — | drop `pins.json` from `gen/plates.mjs` inputs |
 
 Plus the AGENTS checks on the exact head: `npm run check`, `npm run test:tz`, the gate.
 
 ## 11. Risks
 
-- **Hash-line churn** in all 47 headers and the 8 `hashes:` lines at once: one reviewable core commit, proven by
+- **Hash-line churn** in all headers and the 8 `hashes:` lines at once: one reviewable core commit, proven by
   L2-A3; gz of the 8 chunks re-recorded.
 - **Generated-file count** slows typecheck or vitest at 153: LIB-1 measures; fallback `.js` + `.d.ts` (supervisor
   decision), never a skipped check.
