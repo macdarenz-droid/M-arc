@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-02 ~08:10 UTC · main `9ca7f07` (merge train 9 #182) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676` on the owner's other account, at the takeover (section 8.0). Section 8 was re-captured live at 07:50-08:10; rows it did not re-check say so. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-02 10:00 UTC · GitHub delivery snapshot below checked against main `94fd32cf4a743ea62f60dce8bba21a2796205219` (merge train 10 #184, HT-8). The supervisor's session, Routine and Relay details remain the 08:10 takeover capture unless explicitly updated. This docs-only clarification does not operate those sessions or claim fresh acceptance of their work.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -366,11 +366,11 @@ The supervisor never builds or reviews cards itself. It starts workers, steers t
 ### 5.2 Task states
 ready → running → review → integrating → done (merged and accepted).
 
-A blocked task names its reason and what unblocks it. Merged items are set to done, with evidence, in the same tick.
+A blocked task names its owner, reason, evidence and what unblocks it. Merged items are set to done, with exact-commit/build acceptance evidence, in the same tick.
 
 ### 5.3 Cards
 - **Fields** (`.claude/skills/builder/SKILL.md`): `id`, `outcome`, `base`, `depends_on`, `read_first`, `write_scope`, `reserved_paths`, `acceptance` (criterion IDs, including failure paths), `design_reference`, `connectivity`, `verification`, `risk_and_recovery`, `return`. Also `model` (`.claude/skills/supervisor/cards.md`).
-- Before a card is `ready`, run the collision check against other cards' write scopes (`cards.md`).
+- Before a card is `ready`, follow `cards.md` for explicit build/merge prerequisites, shared-file ownership and the collision check. Keep the approved plan's build-ahead restrictions.
 - **Hard cards** (animation, simulation, anything with several possible designs), owner 09-29: plan in phases first.
   1. Understand the problem.
   2. Draft competing designs.
@@ -788,16 +788,27 @@ The table is in `AGENTS.md`. Do not copy it here.
 
 ---
 
-## 8. Current state (2026-10-02 ~08:10 UTC, captured live at the takeover; stale fast, re-check live)
+## 8. Current state (GitHub snapshot 2026-10-02 10:00 UTC; stale fast, re-check live)
 
-Facts below were checked live at 07:50-08:10 UTC on 10-02 (GitHub API, `git ls-remote`, check runs, `get_session`, `list_triggers`, Relay) unless marked "(carried from 10-01, not re-checked)".
+**Current deliverable:** finish HT-9 → HT-10 and M1's existing acceptance requirements, then integrate the full 153-exercise library in its plan's order. Library build-ahead stays limited to the permissions already in the plan. Implementation, release-candidate acceptance and store publication are separate milestones; this snapshot supplies no new completion date.
+
+**Verified GitHub changes since the takeover capture:**
+- HT-8 merged in [train 10 #184](https://github.com/macdarenz-droid/M-arc/pull/184) at 09:40 UTC, main `94fd32cf4a743ea62f60dce8bba21a2796205219`. Its reviewed head was `0346aca`; that review is not evidence for later heads or APKs.
+- [HT-9 #113](https://github.com/macdarenz-droid/M-arc/pull/113) is open at `193d707e38a6be63a25043e47ba16e5b240865fd`. The recorded PASS is for older `e57c6d8`, not this head. Owner of the next action: the HT-9 builder/reviewer under the supervisor. Unblock: the [catch-up ruling](https://github.com/macdarenz-droid/M-arc/pull/113#issuecomment-5931535634), current-head delta review, green checks and the merge gate.
+- [HT-10 #166](https://github.com/macdarenz-droid/M-arc/pull/166) is open at `038cd4f5c6552433f822a42c5380644349dc9cd4`. Its [08:19 status](https://github.com/macdarenz-droid/M-arc/pull/166#issuecomment-5948066142) reports a passing local scratch combination, not final integrated acceptance. Owners: HT-10 builder/reviewer; supervisor for CI wiring. Unblock: HT-9 merged, final-head checks, the [A5c-2 ruling](https://github.com/macdarenz-droid/M-arc/pull/166#issuecomment-5948078940) and section 8.7's existing wiring/review gate. Any further permission denial still requires the owner's in-session action.
+- [Owner chat rule #185](https://github.com/macdarenz-droid/M-arc/pull/185) is open, with the owner's 10-02 yes recorded in its body. K14's older wait for that yes is historical; integration and checks remain outstanding.
+- No new release APK or device acceptance was verified in this docs pass. The current scope stays all 153 packages, including research, plates and layers; a held exercise is not delivered. Supervisor per-exercise approval follows section 4.1's 10-01 delegation, with sheets/APKs still sent for owner monitoring.
+
+**Procedure links:** card prerequisites and shared-file ownership: [cards.md](../../.claude/skills/supervisor/cards.md); bottlenecks and compact timing evidence: [tick.md](../../.claude/skills/supervisor/tick.md); merge trains: section 6.8; library acceptance and reforecast: [the existing library plan](https://github.com/macdarenz-droid/M-arc/blob/claude/howto-options/docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md). Keep those details in their canonical procedures. Record each block's owner, evidence and unblock condition, and each accepted result's exact commit/build evidence.
+
+The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unless marked otherwise. Session, Routine, Relay and unmentioned PR rows were not re-captured in this docs pass; read them as that historical snapshot and reconcile live before acting. The GitHub changes above supersede conflicting status rows below.
 
 ### 8.0 Focus and finish line (owner, 10-01; read first)
 - **Takeover (10-02).** The owner paused all work at 18:17 UTC on 10-01 because of the old account's usage limit (W0B commit `c2f3dfbc`: "Paused by the owner (2026-10-01 18:17 UTC)"); workers posted PAUSED notes at 18:20. On 10-02 at ~07:47 he started a new supervisor on his other account with: "Read my repo. And continue based on lastsupervisor  handoff progress / Follow agents.md". The new supervisor is session_01FTBsxoLN135B3HvJ7sT676 (env `env_01G5Xfb4KD41z5wLtxq6nCAU`). Every old session and Routine is on the old account and unreachable from here (10.2a applies).
 - **Owner, 10-01 ~01:15:** "Park this audit improvement for now. Lets finish all the how to do first. And all the first audit fixes."
 - **Owner, 10-01 ~01:30:** "Remind me when we finished all of the how to. And all first audit 32 items. Then after that we proceed."
 - **First audit: COMPLETE since 10-01 07:56** (train 5). 31 of 32 fixed on main; DEV-01 closed by the owner's "skip" default.
-- **Finish line waits only on HT-8 → HT-9 → HT-10** (HT-3c..HT-7 are merged; HT-7 in train 7). Then: push notification + chat message (DEV-01 closed by his decision, Gym Finder parked for a talk, the optional golden update in 8.6), then start the parked improvement audit (#149, AUD-13..19).
+- **Finish line now waits on HT-9 → HT-10** (HT-8 merged in train 10; earlier HT cards are merged). Then: push notification + chat message (DEV-01 closed by his decision, Gym Finder parked for a talk, the optional golden update in 8.6), then start the parked improvement audit (#149, AUD-13..19).
 - "How-to" means the HT lane to milestone M1. The 153-exercise library (LIB lane) is the next How-to stage; it builds early in free slots and merges after HT-10 in the plan's order.
 - **Gym Finder: PARKED, also after the finish line** (owner 10-01 07:30). No card, builder or research for #158 / GYM-0..6 without his approval.
 - **Usage (owner 10-01 08:10):** no throttling beyond AGENTS.md.
@@ -805,7 +816,7 @@ Facts below were checked live at 07:50-08:10 UTC on 10-02 (GitHub API, `git ls-r
 - **Merge trains:** every app PR merges through a train (6.8).
 
 ### 8.1 Main
-- **Head:** `9ca7f07` (train 9 #182, 10-01 17:48). Verified with `git ls-remote`.
+- **Head at the 10:00 GitHub check:** `94fd32cf4a743ea62f60dce8bba21a2796205219` (train 10 #184, 10-02 09:40). Older merge/APK records below remain historical.
 - **Merged on 10-01 (UTC), newest first:**
 
 | Time | Merge | Carried |
