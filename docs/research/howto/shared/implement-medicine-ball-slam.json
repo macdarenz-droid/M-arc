@@ -147,7 +147,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": null
+      "checked": "2026-10-02"
     },
     {
       "id": "hl-slam-ball",
@@ -157,7 +157,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": null
+      "checked": "2026-10-02"
     },
     {
       "id": "im-mb-slam",
@@ -167,7 +167,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": null
+      "checked": "2026-10-02"
     },
     {
       "id": "vit-mb-slam",
@@ -177,7 +177,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": null
+      "checked": "2026-10-02"
     },
     {
       "id": "wl-mb-slam",
@@ -187,7 +187,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": null
+      "checked": "2026-10-02"
     }
   ],
   "gaps": [
