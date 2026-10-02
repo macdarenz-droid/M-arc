@@ -43,18 +43,24 @@ const COLOUR_OK = /^(none|currentColor|url\(#[\w-]+\))$/;
 const HEX = /#[0-9a-fA-F]{3,8}(?![\w-])/g;
 const FN_COLOUR = /\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/i;
 const STYLE_COLOUR = /(^|;)\s*(fill|stroke|color|background|background-color|stop-color|border-color|outline-color)\s*:/i;
-const MASK = /<mask\b[^>]*>([\s\S]*?)<\/mask>/g;
+const MASK = /(<mask\b[^>]*>)([\s\S]*?)<\/mask>/g;   // [1] the mask tag (scanned with the rest), [2] its content
+
+// Colour literals in one stretch of markup; `ok` is the literals allowed there (the mask's #fff/#000, nothing elsewhere).
+function colourScan(markup, where, ok, inMask) {
+  const out = [], at = inMask ? ' in the mask (only #fff/#000)' : '';
+  for (const h of markup.match(HEX) ?? []) if (!ok.includes(h)) out.push(P(`H2.colour:${where}:${h}`, `${where}: colour literal ${h}${at}`));
+  if (FN_COLOUR.test(markup)) out.push(P(`H2.colour:${where}:fn`, `${where}: a colour function${at}`));
+  for (const t of tags(markup)) {
+    for (const a of COLOUR_ATTRS) if (t.attrs.has(a) && !COLOUR_OK.test(t.attrs.get(a)) && !ok.includes(t.attrs.get(a))) out.push(P(`H2.colour:${where}:${a}=${t.attrs.get(a)}`, `${where}: <${t.name} ${a}="${t.attrs.get(a)}">${at}`));
+    if (STYLE_COLOUR.test(t.attrs.get('style') ?? '')) out.push(P(`H2.colour:${where}:style`, `${where}: a colour in style="${t.attrs.get('style')}"${at}`));
+  }
+  return out;
+}
 
 export function colourProblems(markup, where) {
   const out = [];
-  for (const [, inner] of markup.matchAll(MASK)) for (const h of inner.match(HEX) ?? []) if (!['#fff', '#000'].includes(h)) out.push(P(`H2.colour:${where}:${h}`, `${where}: colour ${h} in the mask (only #fff/#000)`));
-  const rest = markup.replace(MASK, '');
-  for (const h of rest.match(HEX) ?? []) out.push(P(`H2.colour:${where}:${h}`, `${where}: colour literal ${h}`));
-  if (FN_COLOUR.test(rest)) out.push(P(`H2.colour:${where}:fn`, `${where}: a colour function`));
-  for (const t of tags(rest)) {
-    for (const a of COLOUR_ATTRS) if (t.attrs.has(a) && !COLOUR_OK.test(t.attrs.get(a))) out.push(P(`H2.colour:${where}:${a}=${t.attrs.get(a)}`, `${where}: <${t.name} ${a}="${t.attrs.get(a)}">`));
-    if (STYLE_COLOUR.test(t.attrs.get('style') ?? '')) out.push(P(`H2.colour:${where}:style`, `${where}: a colour in style="${t.attrs.get('style')}"`));
-  }
+  for (const [, , inner] of markup.matchAll(MASK)) out.push(...colourScan(inner, where, ['#fff', '#000'], true));
+  out.push(...colourScan(markup.replace(MASK, '$1</mask>'), where, [], false));
   if (/var\(/.test(markup)) out.push(P(`H2.var:${where}`, `${where}: var( in plate markup`));
   return out;
 }

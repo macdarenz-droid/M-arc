@@ -10,8 +10,8 @@ import { dropMirror, loadEngine } from './engine.mjs';
 import { vocabularyOf } from './markup.mjs';
 import { nodeMetrics, rendersOf } from './node.mjs';
 
-const lo = v => Math.floor(v * 1000) / 1000, hi = v => Math.ceil(v * 1000) / 1000;
-const range = vs => [lo(Math.min(...vs)), hi(Math.max(...vs))];
+// The exact measured doubles: no rounding, so no bound is ever wider than the 8 measured (review L-1).
+const range = vs => [Math.min(...vs), Math.max(...vs)];
 
 /** The pinned vocabulary: element, attribute and class names of the 8's svg and overlay fragments, sorted. */
 export function measureVocabulary(cands) {
@@ -28,8 +28,8 @@ export function measureNodeEnvelope(cands, E) {
   const ms = cands.map(c => ({ c, m: nodeMetrics(c, { engine: E }, rendersOf(c, E)) })), eng = ms.filter(x => x.c.spec);
   return {
     measuredOn: cands.map(c => c.id),
-    traceLenMin: lo(Math.min(...ms.map(x => x.m.traceLen))),
-    deviationMin: lo(Math.min(...eng.map(x => x.m.deviation))),
+    traceLenMin: Math.min(...ms.map(x => x.m.traceLen)),
+    deviationMin: Math.min(...eng.map(x => x.m.deviation)),
     altWordsMax: Math.max(...ms.map(x => x.m.altWords)),
     F1: range(eng.map(x => x.m.pxPerM)),
     F3: range(ms.map(x => x.m.leaderMax)),

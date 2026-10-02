@@ -109,16 +109,23 @@ export async function measurePage(browser, html, cands, E, { themes = THEMES, wi
   return { cards: out, errors };
 }
 
-/** PQ-H1 (browser half), H4, H5, F2, F5 of one card from its measurements, against the pinned envelope. */
+/** PQ-H1 (browser half), H4, H5, F2, F5 of one card from its measurements, against the pinned envelope. Every
+ *  THEMES x WIDTHS x mode cell must be measured: a partial browser half (narrowed opts, a lost shard) is refused. */
 export function judge(c, m, envelope) {
   const H1 = [], H4 = [], H5 = [], seen = new Set();
   const push = (arr, p) => { if (!seen.has(p.key)) { seen.add(p.key); arr.push(p); } };
+  m ??= {};
+  for (const theme of THEMES) for (const w of WIDTHS) for (const mode of ['normal', 'mistake'])
+    if (!m[theme]?.[w]?.[mode]) push(H1, P(`H1.browser:incomplete:${theme}:${w}:${mode}`, `${theme} at ${w} px, ${mode}: not measured`));
+  // H5 classes: each class the 8 measured in a theme must be measured on this plate in that theme, never skipped
+  const measured = new Set();
   let coverMin = Infinity, coverMax = -Infinity, labelMin = Infinity;
   for (const [theme, byW] of Object.entries(m)) for (const [w, at] of Object.entries(byW)) {
     if (!at.font) push(H1, P('H1.font', 'Inter Variable did not load'));
     if (at.scroll > 0) push(H1, P(`H1.hscroll:${w}`, `horizontal scroll of ${at.scroll} px at ${w} px`));
     for (const mode of ['normal', 'mistake']) {
       const d = at[mode];
+      if (!d) continue;   // raised above as H1.browser:incomplete
       if (+w === 390) {   // plate-px checks: the plate is 358 px wide here (no zoom), so they run once per theme
         d.labels.forEach((l, i) => {
           const t = l.text, name = `${mode}:${l.key}`;
@@ -146,7 +153,8 @@ export function judge(c, m, envelope) {
       if (d.tempo.scroll > d.tempo.client || d.tempo.out) push(H4, P(`H4.tempo:${w}`, `${w} px: tempo strip overflows (${d.tempo.scroll} > ${d.tempo.client}, ${d.tempo.out} labels outside)`));
       for (const cls of CLASSES) {
         const v = d.contrast[cls];
-        if (v == null) continue;
+        if (v == null) continue;   // not drawn in this cell; the class must still be measured somewhere in the theme (below)
+        measured.add(`${theme}:${cls}`);
         if (cls === 'label') labelMin = Math.min(labelMin, v);
         const floor = envelope.H5?.[theme]?.[cls];
         if (floor == null) push(H5, P(`H5.unpinned:${theme}:${cls}`, `no approved minimum for ${cls} in ${theme}`));
@@ -154,6 +162,8 @@ export function judge(c, m, envelope) {
       }
     }
   }
+  for (const theme of THEMES) for (const cls of Object.keys(envelope.H5?.[theme] ?? {}))
+    if (!measured.has(`${theme}:${cls}`)) push(H5, P(`H5.unmeasured:${theme}:${cls}`, `${theme}: no visible ${cls} element was measured, though the 8 have one`));
   const F2 = envelope.F2 ? { value: +coverMin.toFixed(4), range: envelope.F2, raised: coverMin < envelope.F2[0] || coverMax > envelope.F2[1] } : { value: coverMin, raised: true, why: 'no F2 envelope' };
   const F5 = { value: +labelMin.toFixed(2), min: F5_MIN, raised: !(labelMin >= F5_MIN) };
   return { H1, H4, H5, flags: { F2, F5 }, metrics: { cover: +coverMin.toFixed(4), labelContrast: +labelMin.toFixed(2) } };
@@ -171,18 +181,17 @@ export async function browserResults(browser, html, cands, E, envelope, opts) {
 export async function measureBrowserEnvelope(browser, html, cands, E) {
   const { cards, errors } = await measurePage(browser, html, cands, E);
   if (errors.length) throw new Error(`golden page errors: ${errors.join('; ')}`);
-  const lo = v => Math.floor(v * 1000) / 1000, hi = v => Math.ceil(v * 1000) / 1000, H5 = {}, covers = [];
+  const H5 = {}, covers = [];
   for (const c of cands) for (const theme of THEMES) for (const w of WIDTHS) for (const mode of ['normal', 'mistake']) {
     const d = cards[c.chromeId][theme][w][mode];
     for (const cls of CLASSES) if (d.contrast[cls] != null) (H5[theme] ??= {})[cls] = Math.min(H5[theme][cls] ?? Infinity, d.contrast[cls]);
     if (mode === 'normal' && w === 390) covers.push(d.cover);
   }
-  for (const t of Object.keys(H5)) for (const k of Object.keys(H5[t])) H5[t][k] = lo(H5[t][k]);
   const H4zoom = {};
   for (const w of WIDTHS) {
     const zs = new Set(cands.flatMap(c => THEMES.flatMap(t => ['normal', 'mistake'].map(m => cards[c.chromeId][t][w][m].zoom.toFixed(4)))));
     if (zs.size !== 1) throw new Error(`the approved chrome zoom at ${w} px differs between plates: ${[...zs]}`);
     H4zoom[w] = +[...zs][0];
   }
-  return { H5, F2: [lo(Math.min(...covers)), hi(Math.max(...covers))], H4zoom };
+  return { H5, F2: [Math.min(...covers), Math.max(...covers)], H4zoom };
 }

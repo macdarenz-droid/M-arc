@@ -1,6 +1,6 @@
 // LIB-3: the plate QA gate (library plan 3.2 PQ-H1..H10, 3.3 F1-F7), node half. The browser half (H1 boxes, H4,
 // H5, F2, F5) and its mutations run in tools/plates/library/qa/selftest.mjs, because Chromium is not installed when
-// CI runs `npm run check`; LIB-4 wires that script into CI (D-LIB3-2).
+// CI runs `npm run check`; LIB-4 wires that script into CI (D-LIB3-ci).
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const qa = (f: string) => new URL(`../../tools/plates/library/qa/${f}`, import.meta.url).href;
@@ -90,7 +90,7 @@ describe('LIB-3 mutations: each check turns red on its planted mutation, the cle
     for (const n of ['label 1 px onto the figure', 'contact 1 cm off', 'Trace below the minimum', 'Mistake equal to the end pose', 'a moving line part', 'a raw-spec override', 'a colour literal'])
       expect(ids.some((i: string) => i.endsWith(n))).toBe(true);
   });
-  for (const name of ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'F1', 'F4', 'M9', 'M10', 'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20', 'M21', 'M22', 'M23', 'F3', 'F6', 'F7']) {
+  for (const name of ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'F1', 'F4', 'M9', 'M10', 'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20', 'M21', 'M22', 'M23', 'M24', 'M25', 'F3', 'F6', 'F7']) {
     it(`${name} turns red`, async () => {
       const m = proof.NODE_MUTATIONS.find((x: any) => x.id.startsWith(`${name} `));
       expect(m).toBeTruthy();
@@ -153,6 +153,17 @@ describe('LIB-3 markup helpers', { timeout: T }, () => {
     expect(node.colourProblems('<path fill="#fff" d="M0 0"/>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:#fff', 'H2.colour:t:fill=#fff']);
     expect(node.colourProblems('<path style="stroke:red" d="M0 0"/>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:style']);
     expect(node.colourProblems('<path class="x" style="--o:var(--a)"/>', 't').map((p: any) => p.key)).toEqual(['H2.var:t']);
-    expect(node.colourProblems('<mask id="a"><rect fill="#f00"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:#f00']);
+    expect(node.colourProblems('<mask id="a"><rect fill="#f00"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:#f00', 'H2.colour:t:fill=#f00']);
+    // the full scan runs inside a mask too (review M-1): named colours, colour functions and style colours are red there
+    expect(node.colourProblems('<mask id="a"><rect fill="red"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:fill=red']);
+    expect(node.colourProblems('<mask id="a"><rect fill="rgb(255,0,0)"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:fn', 'H2.colour:t:fill=rgb(255,0,0)']);
+    expect(node.colourProblems('<mask id="a"><rect style="fill:#fff"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:style']);
+    expect(node.colourProblems('<mask id="a" fill="#fff"><rect fill="#fff"/></mask>', 't').map((p: any) => p.key)).toEqual(['H2.colour:t:#fff', 'H2.colour:t:fill=#fff']);
+  });
+  it('a partial or empty browser half is refused, cell by cell, and an unmeasured contrast class is raised (review H-1, L-2)', async () => {
+    const B = await import(/* @vite-ignore */ qa('browser.mjs'));
+    const empty = B.judge(null, undefined, base.pins.envelope);
+    expect(empty.H1.map((p: any) => p.key)).toEqual(B.THEMES.flatMap((t: string) => B.WIDTHS.flatMap((w: number) => ['normal', 'mistake'].map(m => `H1.browser:incomplete:${t}:${w}:${m}`))));
+    expect(empty.H5.map((p: any) => p.key)).toEqual(B.THEMES.flatMap((t: string) => Object.keys(base.pins.envelope.H5[t]).map(c => `H5.unmeasured:${t}:${c}`)));
   });
 });

@@ -44,7 +44,7 @@ async function pageProof(m, base, browser) {
   const html = m.html ? m.html(base.html) : base.html;
   if (m.html && html === base.html) throw new Error(`${m.id}: the html edit matched nothing`);
   const c = (await candidatesOf(html, base.E)).find(x => x.chromeId === m.target);
-  const bmap = await browserResults(browser, html, [c], base.E, base.pins.envelope, { css: m.css ?? null });
+  const bmap = await browserResults(browser, html, [c], base.E, base.pins.envelope, { css: m.css ?? null, ...m.opts });
   return { report: await runQa(c, { ...base.ctx, browser: bmap }) };
 }
 

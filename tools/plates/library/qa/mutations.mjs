@@ -4,7 +4,7 @@
 //   spec:      prepare(E, spec) -> arg (computed on the clean spec), then fn(spec, arg) runs inside a mirror's
 //              exercises/<id>.mjs (wrapSpec) and the gallery is rebuilt with the vendored build-page.
 //   candidate: apply(c) -> a changed candidate (fragments, card, research, census or derivation).
-//   page:      css and/or html edits of the built page (browser checks only).
+//   page:      css and/or html edits of the built page, or narrowed measuring opts (browser checks only).
 import { pathLength, pathsOf } from './markup.mjs';
 import { boxOf } from './labels.mjs';
 
@@ -67,6 +67,10 @@ export const SPEC_MUTATIONS = [
 export const CANDIDATE_MUTATIONS = [
   { id: 'M9 a colour literal', check: 'PQ-H2', key: 'H2.colour:', target: 'pull-up',
     apply: c => { const d = clone(c); d.plate.normal.svg = firstTag(d.plate.normal.svg, /<path class="trace"/, t => `${t} fill="#e11d48"`); return d; } },
+  { id: 'M24 a named colour in the mask', check: 'PQ-H2', key: 'H2.colour:mistakeSvg:fill=red', target: 'pull-up',
+    apply: c => { const d = clone(c); d.plate.mistake.svg = firstTag(d.plate.mistake.svg, /<mask\b[^>]*><rect [^>]*fill="#fff"/, t => t.replace('fill="#fff"', 'fill="red"')); return d; } },
+  { id: 'M25 a colour function in the mask', check: 'PQ-H2', key: 'H2.colour:mistakeSvg:fn', target: 'pull-up',
+    apply: c => { const d = clone(c); d.plate.mistake.svg = firstTag(d.plate.mistake.svg, /<mask\b[^>]*><rect [^>]*fill="#fff"/, t => t.replace('fill="#fff"', 'fill="rgb(255,0,0)"')); return d; } },
   { id: 'M10 a class the 8 never use', check: 'PQ-H2', key: 'H2.vocab:classes:glow', target: 'pull-up',
     apply: c => { const d = clone(c); d.plate.normal.svg = d.plate.normal.svg.replace('<path class="trace"', '<path class="trace glow"'); return d; } },
   { id: 'M11 a duplicate id', check: 'PQ-H2', key: 'H2.ids:dup:', target: 'pull-up',
@@ -121,6 +125,9 @@ export const PAGE_MUTATIONS = [
     html: h => h.replace('class="plate-callout" style="left:54.75%;top:39.11%"', 'class="plate-callout" style="left:88%;top:39.11%"') },
   { id: 'B7 tempo strip overflows', check: 'PQ-H4', key: 'H4.tempo:', target: 'pull-up', css: '#card-pull-up .tempo-label { min-width: 160px; }' },
   { id: 'B8 Trace contrast below the approved minimum', check: 'PQ-H5', key: 'H5.contrast:', target: 'pull-up', css: '#card-pull-up .plate .trace { stroke: var(--surface-2); }' },
+  // narrowed opts, as a mis-sharded LIB-4 job could pass: one theme at one width. Every other cell must be refused.
+  { id: 'B9 a partial browser half (1 theme x 1 width)', check: 'PQ-H1', key: 'H1.browser:incomplete:', target: 'pull-up', opts: { themes: ['silent-black'], widths: [390] } },
+  { id: 'B10 a contrast class with nothing drawn', check: 'PQ-H5', key: 'H5.unmeasured:', target: 'pull-up', css: '#card-pull-up .plate path.trace { display: none; }' },
   // The approved chrome itself measures 3.57:1 (D-LIB3-4), so the control lifts the label text to --text with no
   // selected-tell tint; the mutation then lowers it. Both runs differ from the control only in that one colour.
   { id: 'F5 label text below 4.5:1', flag: 'F5', target: 'pull-up',
