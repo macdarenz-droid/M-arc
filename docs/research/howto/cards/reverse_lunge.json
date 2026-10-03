@@ -557,7 +557,7 @@
       },
       {
         "where": "Lower back",
-        "means": "Leaning the chest forward makes the lower-back muscles work harder.",
+        "means": "Leaning the chest forward can make the lower-back muscles work harder.",
         "fix": "Stay upright; go lighter if you can't.",
         "claim": "c8",
         "redFlag": null
@@ -624,6 +624,7 @@
   "notes": [
     "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c15 (Fit&Well, Woolcock) and c16 (Peloton, Schumer) added. down: 3 is from the tempo progression, not the standard lunge; the supervisor decides whether the plate uses it.",
     "W1 fix round 2026-10-03: F04/R-W1-1 plate.tempo.down set to null; \"3 s down\" is a progression line only (c15), the default is \"lower slowly, rise a little quicker\" (c7, c16).",
-    "W1 fix round 2026-10-03: F23/R-W1-3 feel.rows[1].means no longer says \"usually means\"; it states the fault and its effect in c8's terms (EMG, WEAK)."
+    "W1 fix round 2026-10-03: F23/R-W1-3 feel.rows[1].means no longer says \"usually means\"; it states the fault and its effect in c8's terms (EMG, WEAK).",
+    "W1 lows round 2026-10-03: low 4: feel.rows[1].means keeps c8's hedge ('can make'; c8 is DATA and WEAK)."
   ]
 }

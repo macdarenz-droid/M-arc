@@ -159,6 +159,6 @@
   "unsourced": [
     "An EMG source for which muscles work most in the jump squat.",
     "Knee tracking on landing: only a jump-landing study in female athletes (j16, MECH/WEAK) was found; no jump-squat-specific source read.",
-    "Ankle red-flag row: box_jump has it via NHS sprains; not re-read here, so not linked."
+    "Ankle red-flag row: box_jump's ankle box now comes from the NHS ankle pain page (box_jump c14; nhs-sprains was dropped there, F21); not re-read here, so not linked. (W1 lows round 2026-10-03)"
   ]
 }
