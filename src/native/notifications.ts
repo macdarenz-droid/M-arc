@@ -128,8 +128,9 @@ export interface ReminderHealth { status: string; queued: number; ok: boolean }
  * Returns a plain-words status; never changes the user's preference.
  * `todayReadinessSummary` (F3.8) replaces today's body only: a day further out cannot know its
  * own readiness yet, since that depends on health data that has not happened.
+ * `planned` (BUG-38): a day in the map takes its split from the plan, or no reminder when null.
  */
-export async function syncTrainingReminders(reminders: Reminders, schedule: Record<Weekday, string | null>, splitName: (id: string) => string, completedDays: Set<string>, todayReadinessSummary?: string | null, { prompt = false }: { prompt?: boolean } = {}): Promise<ReminderHealth> {
+export async function syncTrainingReminders(reminders: Reminders, schedule: Record<Weekday, string | null>, splitName: (id: string) => string, completedDays: Set<string>, todayReadinessSummary?: string | null, { prompt = false, planned }: { prompt?: boolean; planned?: Map<string, string | null> } = {}): Promise<ReminderHealth> {
   if (!isNative()) return { status: 'Reminders need the Android app.', queued: 0, ok: false };
   await ensureChannels();
   let pending: Array<{ id: number }> = [];
@@ -143,7 +144,7 @@ export async function syncTrainingReminders(reminders: Reminders, schedule: Reco
   const today = todayKey();
   for (let i = 0; i < 56; i++) {
     const day = addDays(today, i);
-    const splitId = schedule[weekdayOf(day)];
+    const splitId = planned?.has(day) ? planned.get(day) : schedule[weekdayOf(day)];
     if (!splitId || completedDays.has(day)) continue;
     const at = parseDay(day);
     at.setHours(hh ?? 17, mm ?? 30, 0, 0);

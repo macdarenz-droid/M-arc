@@ -2,7 +2,7 @@ import { signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { syncTrainingReminders, type ReminderHealth } from '@/native/notifications';
 import { readinessSummaryText } from '@/brain/readiness';
-import { today, todayReadiness, sessionsToday } from '@/app/selectors';
+import { today, todayReadiness, todayPlan, sessionsToday } from '@/app/selectors';
 
 export const reminderHealth = signal<ReminderHealth>({ status: 'Not checked yet', queued: 0, ok: true });
 
@@ -20,5 +20,7 @@ export async function resyncReminders({ prompt = false }: { prompt?: boolean } =
   // marks today done too, even though its stored day is still yesterday's.
   if (sessionsToday.value.length) completed.add(today.value);
   const r = todayReadiness.value;
-  reminderHealth.value = await syncTrainingReminders(s.preferences.reminders, s.schedule, id => s.splits.find(sp => sp.id === id)?.name ?? 'Training', completed, r ? readinessSummaryText(r) : null, { prompt });
+  // BUG-38: the next 8 days follow the plan (a moved split, or none on a day done early).
+  const planned = new Map(todayPlan.value.days.map(d => [d.day, d.splitId]));
+  reminderHealth.value = await syncTrainingReminders(s.preferences.reminders, s.schedule, id => s.splits.find(sp => sp.id === id)?.name ?? 'Training', completed, r ? readinessSummaryText(r) : null, { prompt, planned });
 }
