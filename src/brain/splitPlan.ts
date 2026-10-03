@@ -58,26 +58,22 @@ export function splitPlan(i: SplitPlanInput): SplitPlan {
   const used = [...keyed.values()].sort((a, b) => (a.planDay === b.planDay ? (a.startedAt < b.startedAt ? -1 : a.startedAt > b.startedAt ? 1 : 0) : a.planDay < b.planDay ? -1 : 1));
   const planDays = new Set(used.map(u => u.planDay));
 
-  // Rules 1-2: which session counts for which day. A day counts at most one session.
+  // Rules 1-2: which session counts for which day (on-day, else early). A day counts at most one session.
   const counted = new Map<string, Used>();
   const rest: Used[] = [];
   for (const u of used) {
     if (own(u.planDay) === u.splitId) counted.set(u.planDay, u);
     else rest.push(u);
   }
+  // D-BUG38-2: no late step. A session after a missed day pays that split's debt in rule 3, so a
+  // late count could not change any output.
   for (const u of rest) {
-    let covered = false;
     for (let k = 1; k <= REACH; k++) {
       const e = addDays(u.planDay, k);
       const o = own(e);
       if (!o) continue;
-      if (o === u.splitId && !counted.has(e)) { counted.set(e, u); covered = true; }
+      if (o === u.splitId && !counted.has(e)) counted.set(e, u);
       break;
-    }
-    if (covered) continue;
-    for (let k = 1; k <= REACH; k++) {
-      const p = addDays(u.planDay, -k);
-      if (own(p) === u.splitId && !counted.has(p)) { counted.set(p, u); break; }
     }
   }
 

@@ -2014,7 +2014,7 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
 
 - **Rule (D-BUG38, from the card in docs/supervisor/verify/BUG-38.md).** Weekdays decide when you train. Your sessions decide which planned days are already covered. A split you skipped by training another one moves into the next day an early session freed up. `src/brain/splitPlan.ts` holds the one pure `splitPlan()`. It reads only `schedule`, `splits`, `sessions` and `daysOff`, so nothing new is saved.
   1. **Sessions used.** A session's plan day is today when it is in `trainedTodaySessions` (QA8-4); otherwise it is its stored day. Only plan days from T-17 to T count. Each (splitId, plan day) keeps its earliest session. A past day off has no slot.
-  2. **On-day, then early, then late.** A session counts for its own day when that day's split is its split. Otherwise, early: the first planned day within 3 days after it, if that day has its split. Otherwise, late: the latest unfilled day of its split within 3 days before. A day counts at most one session.
+  2. **On-day, then early.** A session counts for its own day when that day's split is its split. Otherwise, early: the first planned day within 3 days after it, if that day has its split. There is no late step (D-BUG38-2). A day counts at most one session.
   3. **Owed.** A split is owed only when another session took its day. It stays owed until a later session of that split, or until its weekday comes round again.
   4. **Walk** T-14..T+7. A day whose split was done early goes to the oldest owed split, never the day before that split's own day. Without an owed split the day is done early. Placing a split on a future day uses it up; so does placing it on today when nothing was trained today.
   5. **Outputs.** `today` keeps its split on a day off, with `off`. Also `doneEarly`, `next` (the first split in (T, T+7]) and `days` (T..T+7).
@@ -2029,13 +2029,14 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
   - coach.test.ts:275 is renamed "BUG-38: after any session today …". `priorHamSession` becomes `split_push`, and the test expects `recovery.done-today:split_chest` with "Done today: Push" and "Next: Upper on Mon".
   - coach.test.ts:284 changes only `priorHamSession` to `split_push`.
   - The old fixture (SPLIT 2 trained Friday) is pinned as done early by the new AC13 test.
-- **D-BUG38-memo.** Deviation from the card. The coach's plan is memoised per CoachContext (a WeakMap, `todayPlanOf`), not kept as a `Derived` field. tests/aud20.test.ts:76-78 (AUD-20's pin, outside this card) runs the rule with a hand-built `Derived`. The plan is still built once per context.
-- **D-BUG38-late.** The late step (rule 2) cannot change any output while rule 3's "paid" clause exists:
+- **D-BUG38-1 (supervisor ruling on #199, 10-03).** Deviation from the card. The coach's plan is memoised per CoachContext (a WeakMap, `todayPlanOf`), not kept as a `Derived` field. tests/aud20.test.ts:76-78 (AUD-20's pin, outside this card) runs the rule with a hand-built `Derived`. The plan is still built once per context.
+- **D-BUG38-2 (supervisor ruling on #199, 10-03).** The card's late step is removed because it was unobservable:
   - A late count only stops its past day from being displaced.
-  - That debt would be paid by the same session at a walk day ≤ T.
+  - That debt is paid by the same session in rule 3, at a walk day ≤ T.
   - A placement on a past day is never used up.
-  - So mutation M10a stays green by construction. The step is kept as the card states it. Dropping both the late step and the paid clause turns "A made up late is not owed again" red.
-- **D-BUG38-displace.** A session of a deleted split, or of a split on no weekday, counts for no slot, but it still takes that day from its own split (edge 5).
+  - So `today`, `doneEarly`, `next` and `days` (T..T+7) cannot change. The same holds for `readinessSeries`: for a past day D, a late count lands before D.
+  - AC10a's test is dropped. "a session after a missed day clears the debt" pins the outcome the late step was meant to give: dropping the paid clause turns it red.
+- **D-BUG38-3 (supervisor ruling on #199, 10-03).** A session of a deleted split, or of a split on no weekday, counts for no slot, but it still takes that day from its own split (edge 5, the revised coach.test fixture).
 - **Known limits.**
   - The 6-hour midnight switch (QA8-4) is pinned on both sides by the QA8-1 fixture test.
   - Past days are matched against the current schedule, the same limit as streak and adherence.

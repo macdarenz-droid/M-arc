@@ -96,19 +96,10 @@ describe('BUG-38 planner (src/brain/splitPlan.ts)', () => {
     expect(p.next).toEqual({ split: Z, day: '2026-09-30', weekday: 'wed' });
   });
 
-  it('A missed Mon, done Tue → next Wed B', () => {
-    const A = sp('a', 'A'), B = sp('b', 'B'), X = sp('x', 'X');
-    const schedule = sched({ mon: A.id, wed: B.id });
-    // Mon: X instead of A. Tue: A, made up late.
-    const sessions = [mk('2026-09-28', X), mk('2026-09-29', A)];
-    const p = plan({ schedule, splits: [A, B, X], sessions, today: '2026-09-29', now: local('2026-09-29', 19).getTime() });
-    expect(p.next).toEqual({ split: B, day: '2026-09-30', weekday: 'wed' });
-  });
-
-  it('A made up late is not owed again: a later freed day stays done early', () => {
+  it('a session after a missed day clears the debt: a later freed day stays done early', () => {
     const A = sp('a', 'A'), B = sp('b', 'B'), C = sp('c', 'C'), X = sp('x', 'X');
     const schedule = sched({ mon: A.id, thu: B.id, fri: C.id });
-    // Mon: X instead of A. Tue: A, made up late. Wed: B, early for Thu.
+    // Mon: X instead of A. Tue: A, which pays the debt. Wed: B, early for Thu.
     const sessions = [mk('2026-09-28', X), mk('2026-09-29', A), mk('2026-09-30', B)];
     const p = plan({ schedule, splits: [A, B, C, X], sessions, today: '2026-09-30', now: local('2026-09-30', 19).getTime() });
     expect(p.days.find(d => d.day === '2026-10-01')).toEqual({ day: '2026-10-01', splitId: null });
