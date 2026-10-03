@@ -3,12 +3,10 @@ import { mapHealthSummary } from '@/native/health';
 
 describe('mapHealthSummary', () => {
   it('maps a full summary to a daily record', () => {
-    const d = mapHealthSummary({ needsPermission: false, steps: 5092, sleepMinutes: 410, restingHR: 58, workoutHR: 132, activeCalories: 310, heartRateTime: '2026-09-22T06:00:00Z', sleepEndTime: '2026-09-22T06:30:00Z' }, '2026-09-22', '2026-09-22T12:00:00Z');
+    const d = mapHealthSummary({ needsPermission: false, steps: 5092, sleepMinutes: 410, restingHR: 58, activeCalories: 310, sleepEndTime: '2026-09-22T06:30:00Z' }, '2026-09-22', '2026-09-22T12:00:00Z');
     expect(d).toEqual({
       day: '2026-09-22',
       restingHr: 58,
-      latestHr: 132,
-      latestHrAt: '2026-09-22T06:00:00Z',
       sleepMinutes: 410,
       sleepEndAt: '2026-09-22T06:30:00Z',
       steps: 5092,
@@ -19,12 +17,22 @@ describe('mapHealthSummary', () => {
     });
   });
 
+  // PLAY-HR: an old native build (or a stray device) may still send workoutHR/heartRateTime; the
+  // plugin no longer reads heart rate, so the mapper must ignore them rather than crash or map them.
+  it('a native result that still carries workoutHR maps to a day with latestHr undefined, and the other 4 types map as before', () => {
+    const stale = { needsPermission: false, steps: 5092, sleepMinutes: 410, restingHR: 58, activeCalories: 310, workoutHR: 132, heartRateTime: '2026-09-22T06:00:00Z' } as unknown as Parameters<typeof mapHealthSummary>[0];
+    const d = mapHealthSummary(stale, '2026-09-22', '2026-09-22T12:00:00Z');
+    expect(d?.latestHr).toBeUndefined();
+    expect(d?.latestHrAt).toBeUndefined();
+    expect(d).toMatchObject({ steps: 5092, sleepMinutes: 410, restingHr: 58, activeCalories: 310 });
+  });
+
   it('returns null when permission is missing', () => {
-    expect(mapHealthSummary({ needsPermission: true, steps: 0, sleepMinutes: 0, restingHR: 0, workoutHR: 0, activeCalories: 0 }, '2026-09-22', '2026-09-22T12:00:00Z')).toBeNull();
+    expect(mapHealthSummary({ needsPermission: true, steps: 0, sleepMinutes: 0, restingHR: 0, activeCalories: 0 }, '2026-09-22', '2026-09-22T12:00:00Z')).toBeNull();
   });
 
   it('reads zero readings as absent, not zero', () => {
-    const d = mapHealthSummary({ needsPermission: false, steps: 0, sleepMinutes: 0, restingHR: 0, workoutHR: 0, activeCalories: 0 }, '2026-09-22', '2026-09-22T12:00:00Z');
+    const d = mapHealthSummary({ needsPermission: false, steps: 0, sleepMinutes: 0, restingHR: 0, activeCalories: 0 }, '2026-09-22', '2026-09-22T12:00:00Z');
     expect(d?.steps).toBeUndefined();
     expect(d?.restingHr).toBeUndefined();
     expect(d?.latestHr).toBeUndefined();
@@ -51,7 +59,8 @@ describe('health bridge (R5.1)', () => {
   });
 
   it('every granted type failing is nothing read, not a day of zeros', () => {
-    const failed = ['StepsRecord: X', 'SleepSessionRecord: X', 'HeartRateRecord: X'];
+    // PLAY-HR: 4 health types now (heart rate removed), so with 2 missing, 2 are granted.
+    const failed = ['StepsRecord: X', 'SleepSessionRecord: X'];
     expect(mapHealthSummary({ needsPermission: false, missing: ['READ_ACTIVE_CALORIES_BURNED', 'READ_RESTING_HEART_RATE'], failed }, day, at)).toBeNull();
     expect(mapHealthSummary({ needsPermission: false, missing: ['READ_ACTIVE_CALORIES_BURNED', 'READ_RESTING_HEART_RATE'], failed: failed.slice(1), steps: 10 }, day, at)?.steps).toBe(10);
   });
@@ -94,10 +103,10 @@ describe('a later partial sync keeps what the morning sync had (QA-R5a-1)', () =
     let r: HealthSummaryRawLike = { needsPermission: false, sleepMinutes: 420, restingHR: 55, steps: 1200, activeCalories: 40 };
     (globalThis as { Capacitor?: unknown }).Capacitor = { isNativePlatform: () => true, Plugins: { HealthConnectNative: { readSummary: async () => r } } };
     expect(await syncAndStoreHealth()).toBe(true);
-    r = { needsPermission: false, workoutHR: 72, steps: 3500, activeCalories: 130, failed: ['SleepSessionRecord: Timeout', 'RestingHeartRateRecord: Timeout'] };
+    r = { needsPermission: false, steps: 3500, activeCalories: 130, failed: ['SleepSessionRecord: Timeout', 'RestingHeartRateRecord: Timeout'] };
     expect(await syncAndStoreHealth()).toBe(false);
     const d = appState.value.healthDays.at(-1)!;
-    expect(d).toMatchObject({ sleepMinutes: 420, restingHr: 55, steps: 3500, latestHr: 72, activeCalories: 130 });
+    expect(d).toMatchObject({ sleepMinutes: 420, restingHr: 55, steps: 3500, activeCalories: 130 });
     expect(health.lastHealthError?.failed).toHaveLength(2);
   });
 });
