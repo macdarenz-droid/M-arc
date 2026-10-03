@@ -1,209 +1,223 @@
 {
   "id": "box_jump",
-  "checked": "2026-09-30",
+  "checked": "2026-10-03",
+  "fetcher": "sonnet source fetcher",
   "quotes": [
     {
       "claim": "c1",
       "source": "nasm-boxjump",
       "text": "Stand facing a sturdy box with feet hip-width apart and arms in a ready position.",
       "status": "verbatim",
-      "closest": "Stand facing a sturdy box with feet hip-width apart and arms in a ready position."
+      "closest": "Stand facing a sturdy box with feet hip-width apart and arms in a ready position.",
+      "note": ""
     },
     {
       "claim": "c1",
       "source": "cat-boxjump",
       "text": "Stand with feet around hip width, brace the trunk",
       "status": "verbatim",
-      "closest": "Stand with feet around hip width, brace the trunk"
+      "closest": "Stand with feet around hip width, brace the trunk",
+      "note": ""
     },
     {
       "claim": "c2",
       "source": "cat-boxjump",
       "text": "Stand with feet around hip width, brace the trunk, bend at the knees and hips to load the legs and swing the arms back, then swing the arms up as you push as aggressively as possible against the ground with the legs.",
       "status": "verbatim",
-      "closest": "Stand with feet around hip width, brace the trunk, bend at the knees and hips to load the legs and swing the arms back, then swing the arms up as you push as aggressively as possible against the ground with the legs."
+      "closest": "Stand with feet around hip width, brace the trunk, bend at the knees and hips to load the legs and swing the arms back, then swing the arms up as you push as aggressively as possible against the ground with the legs.",
+      "note": ""
     },
     {
       "claim": "c3",
       "source": "nasm-boxjump",
       "text": "Explosively extend your hips, knees, and ankles while swinging your arms upward to generate momentum.",
       "status": "verbatim",
-      "closest": "Explosively extend your hips, knees, and ankles while swinging your arms upward to generate momentum."
+      "closest": "Explosively extend your hips, knees, and ankles while swinging your arms upward to generate momentum.",
+      "note": ""
     },
     {
       "claim": "c4",
       "source": "cat-boxjump",
       "text": "Once off the floor, bend at the hips to lift the feet high enough to land on the box.",
       "status": "verbatim",
-      "closest": "Once off the floor, bend at the hips to lift the feet high enough to land on the box."
+      "closest": "Once off the floor, bend at the hips to lift the feet high enough to land on the box.",
+      "note": ""
     },
     {
       "claim": "c4",
       "source": "nasm-boxjump",
       "text": "Jump as high as needed to clear the box and land on it with both feet.",
       "status": "verbatim",
-      "closest": "Jump as high as needed to clear the box and land on it with both feet."
+      "closest": "Jump as high as needed to clear the box and land on it with both feet.",
+      "note": ""
     },
     {
       "claim": "c5",
       "source": "nasm-boxjump",
       "text": "Landing with straight knees, which increases joint stress and reduces proper force absorption",
       "status": "verbatim",
-      "closest": "Landing with straight knees, which increases joint stress and reduces proper force absorption"
+      "closest": "Landing with straight knees, which increases joint stress and reduces proper force absorption",
+      "note": ""
     },
     {
       "claim": "c6",
       "source": "nasm-boxjump",
       "text": "Step down from the box carefully (do not jump down to reduce impact stress).",
       "status": "verbatim",
-      "closest": "Step down from the box carefully (do not jump down to reduce impact stress)."
+      "closest": "Step down from the box carefully (do not jump down to reduce impact stress).",
+      "note": ""
     },
     {
       "claim": "c6",
       "source": "nasm-boxjump",
       "text": "Jumping down from the box, which creates excessive impact stress on joints",
       "status": "verbatim",
-      "closest": "Jumping down from the box, which creates excessive impact stress on joints"
+      "closest": "Jumping down from the box, which creates excessive impact stress on joints",
+      "note": ""
     },
     {
       "claim": "c7",
       "source": "cat-boxjump",
       "text": "Generally it's a good idea to use a box well under what you can actually jump onto so you can focus on jumping as high as possible and coming down onto the box",
       "status": "verbatim",
-      "closest": "Generally it's a good idea to use a box well under what you can actually jump onto so you can focus on jumping as high as possible and coming down onto the box"
+      "closest": "Generally it's a good idea to use a box well under what you can actually jump onto so you can focus on jumping as high as possible and coming down onto the box",
+      "note": ""
     },
     {
       "claim": "c7",
       "source": "nasm-boxjump",
       "text": "Selecting a box height too high, which compromises landing mechanics and increases injury risk",
       "status": "verbatim",
-      "closest": "Selecting a box height too high, which compromises landing mechanics and increases injury risk"
+      "closest": "Selecting a box height too high, which compromises landing mechanics and increases injury risk",
+      "note": ""
     },
     {
       "claim": "c8",
       "source": "nasm-boxjump",
       "text": "Beginners should start with a lower box height (12-18 inches) allowing comfortable landings and proper control. Progressively increase box height as explosive power and landing mechanics improve.",
       "status": "verbatim",
-      "closest": "Beginners should start with a lower box height (12-18 inches) allowing comfortable landings and proper control. Progressively increase box height as explosive power and landing mechanics improve."
+      "closest": "Beginners should start with a lower box height (12-18 inches) allowing comfortable landings and proper control. Progressively increase box height as explosive power and landing mechanics improve.",
+      "note": ""
     },
     {
       "claim": "c9",
       "source": "dossantos-2024",
       "text": "Overall, variations in box height did not influence box jump performance in recreationally trained individuals when the intent to perform a maximal-effort jump was emphasized.",
       "status": "verbatim",
-      "closest": "Overall, variations in box height did not influence box jump performance in recreationally trained individuals when the intent to perform a maximal-effort jump was emphasized."
+      "closest": "Overall, variations in box height did not influence box jump performance in recreationally trained individuals when the intent to perform a maximal-effort jump was emphasized.",
+      "note": "read via NCBI efetch (db=pmc) XML of PMC11166134; the PMC page itself is behind a captcha for curl"
     },
     {
       "claim": "c9",
       "source": "dossantos-2024",
       "text": "Peak force at 80% maximal box jump was significantly higher than 0% in the female cohort",
       "status": "verbatim",
-      "closest": "Peak force at 80% maximal box jump was significantly higher than 0% in the female cohort"
+      "closest": "Peak force at 80% maximal box jump was significantly higher than 0% in the female cohort",
+      "note": "read via NCBI efetch (db=pmc) XML of PMC11166134; the PMC page itself is behind a captcha for curl"
     },
     {
       "claim": "c10",
       "source": "janikov-2023",
       "text": "Finally, BJ significantly decreased peak impact force by ~51% compared to CMJ and HJ.",
       "status": "verbatim",
-      "closest": "Finally, BJ significantly decreased peak impact force by ~51% compared to CMJ and HJ."
+      "closest": "Finally, BJ significantly decreased peak impact force by ~51% compared to CMJ and HJ.",
+      "note": ""
     },
     {
       "claim": "c11",
       "source": "nasm-boxjump",
       "text": "Due to high neuromuscular demand, perform 3-5 sets of 3-5 repetitions with complete rest between sets. Never perform to failure with plyometrics, as fatigue significantly compromises landing mechanics and increases injury risk.",
       "status": "verbatim",
-      "closest": "Due to high neuromuscular demand, perform 3-5 sets of 3-5 repetitions with complete rest between sets. Never perform to failure with plyometrics, as fatigue significantly compromises landing mechanics and increases injury risk."
+      "closest": "Due to high neuromuscular demand, perform 3-5 sets of 3-5 repetitions with complete rest between sets. Never perform to failure with plyometrics, as fatigue significantly compromises landing mechanics and increases injury risk.",
+      "note": ""
     },
     {
       "claim": "c11",
       "source": "cat-boxjump",
       "text": "Box jumps should generally be done for 3-5 reps per set, with 3-10 sets.",
       "status": "verbatim",
-      "closest": "Box jumps should generally be done for 3-5 reps per set, with 3-10 sets."
+      "closest": "Box jumps should generally be done for 3-5 reps per set, with 3-10 sets.",
+      "note": ""
     },
     {
       "claim": "c12",
       "source": "nasm-boxjump",
       "text": "Quadriceps – primary driver of knee extension and explosive force production",
       "status": "verbatim",
-      "closest": "Quadriceps – primary driver of knee extension and explosive force production"
+      "closest": "Quadriceps – primary driver of knee extension and explosive force production",
+      "note": ""
     },
     {
       "claim": "c12",
       "source": "nasm-boxjump",
       "text": "Glutes – generate hip extension power for vertical propulsion",
       "status": "verbatim",
-      "closest": "Glutes – generate hip extension power for vertical propulsion"
+      "closest": "Glutes – generate hip extension power for vertical propulsion",
+      "note": ""
     },
     {
       "claim": "c12",
       "source": "nasm-boxjump",
       "text": "Gastrocnemius and Soleus – contribute plantarflexion power for ankle extension",
       "status": "verbatim",
-      "closest": "Gastrocnemius and Soleus – contribute plantarflexion power for ankle extension"
+      "closest": "Gastrocnemius and Soleus – contribute plantarflexion power for ankle extension",
+      "note": ""
     },
     {
       "claim": "c13",
       "source": "nasm-boxjump",
       "text": "Landing asymmetrically or with poor control, which increases imbalance and injury risk",
       "status": "verbatim",
-      "closest": "Landing asymmetrically or with poor control, which increases imbalance and injury risk"
+      "closest": "Landing asymmetrically or with poor control, which increases imbalance and injury risk",
+      "note": ""
     },
     {
       "claim": "c14",
-      "source": "nhs-sprains",
-      "text": "it's very painful, or the pain is getting worse",
+      "source": "nhs-ankle",
+      "text": "you have severe ankle pain you feel faint, dizzy or sick from the pain your ankle or foot has changed shape or is at an odd angle you heard a snap, grinding or popping noise at the time of injury you are not able to walk",
       "status": "verbatim",
-      "closest": "it's very painful, or the pain is getting worse"
+      "closest": "you have severe ankle pain you feel faint, dizzy or sick from the pain your ankle or foot has changed shape or is at an odd angle you heard a snap, grinding or popping noise at the time of injury you are not able to walk",
+      "note": ""
     },
     {
       "claim": "c14",
-      "source": "nhs-sprains",
-      "text": "you cannot put any weight on it or walk more than a few steps",
+      "source": "nhs-ankle",
+      "text": "ankle pain is stopping you doing normal activities the pain is getting worse or keeps coming back the pain has not improved after treating it at home for 2 weeks you have any tingling or loss of feeling in your foot",
       "status": "verbatim",
-      "closest": "you cannot put any weight on it or walk more than a few steps"
-    },
-    {
-      "claim": "c14",
-      "source": "nhs-sprains",
-      "text": "you heard a crack when you had your injury",
-      "status": "verbatim",
-      "closest": "you heard a crack when you had your injury"
-    },
-    {
-      "claim": "c14",
-      "source": "nhs-sprains",
-      "text": "the injured body part has changed shape or is pointing at an odd angle",
-      "status": "verbatim",
-      "closest": "the injured body part has changed shape or is pointing at an odd angle"
+      "closest": "ankle pain is stopping you doing normal activities the pain is getting worse or keeps coming back the pain has not improved after treating it at home for 2 weeks you have any tingling or loss of feeling in your foot",
+      "note": ""
     },
     {
       "claim": "c15",
       "source": "nhs-knee",
       "text": "Urgent advice: Get advice from 111 now if:",
       "status": "verbatim",
-      "closest": "Urgent advice: Get advice from 111 now if:"
+      "closest": "Urgent advice: Get advice from 111 now if:",
+      "note": ""
     },
     {
       "claim": "c15",
       "source": "nhs-knee",
       "text": "your knee is very painful",
       "status": "verbatim",
-      "closest": "your knee is very painful"
+      "closest": "your knee is very painful",
+      "note": ""
     },
     {
       "claim": "c15",
       "source": "nhs-knee",
       "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
       "status": "verbatim",
-      "closest": "your knee locks, gives way or painfully clicks – painless clicking is normal"
+      "closest": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "note": ""
     },
     {
       "claim": "c16",
       "source": "cat-boxjump",
       "text": "Demand on actual leg and hip power can be increased by removing the swinging of the arms—hold the hands loosely at the chest instead.",
       "status": "verbatim",
-      "closest": "Demand on actual leg and hip power can be increased by removing the swinging of the arms—hold the hands loosely at the chest instead."
+      "closest": "Demand on actual leg and hip power can be increased by removing the swinging of the arms—hold the hands loosely at the chest instead.",
+      "note": ""
     }
   ]
 }

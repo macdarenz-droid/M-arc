@@ -355,7 +355,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
     },
     {
       "id": "cat-boxjump",
@@ -365,7 +365,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
     },
     {
       "id": "dossantos-2024",
@@ -375,7 +375,7 @@
       "year": 2024,
       "pmid": "38863787",
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
     },
     {
       "id": "janikov-2023",
@@ -385,7 +385,7 @@
       "year": 2023,
       "pmid": "37218857",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
     },
     {
       "id": "nhs-knee",
@@ -395,7 +395,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
     },
     {
       "id": "nhs-ankle",
@@ -403,7 +403,9 @@
       "title": "Ankle pain (NHS, page last reviewed 20 November 2025)",
       "kind": "guideline",
       "year": 2025,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-03"
     }
   ],
   "plate": {
