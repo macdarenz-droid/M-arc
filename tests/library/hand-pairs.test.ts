@@ -186,6 +186,17 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     bites(withMods(m => { Object.assign(key(m, 'rope').VARIANTS.push.right, { contactAt: 1.15 }); key(m, 'rope').VARIANTS.push.contact = 'fingers'; }),
       'rope_triceps_pushdown', /G7 fist front [\d.]+ mm wide/);
   });
+  it('D-LIB7-17: the rope Right names the drawn contact, no knob wording; the knob rim stays inside the fist, and a rim that shows fails G7', () => {
+    const { spec, pages } = C.renderedPages('rope_triceps_pushdown');
+    expect(spec.rightNote).toBe('Middle of palm');
+    for (const p of pages) {
+      expect(p.svg).toContain('>MIDDLE OF PALM<');
+      const words = [...p.svg.matchAll(/>([^<>]+)</g)].map(q => q[1]).join(' ') + [...p.svg.matchAll(/aria-label="([^"]*)"/g)].map(q => q[1]).join(' ');
+      expect(words).not.toMatch(/knob/i);
+      for (const k of p.report.knobs) expect(C.knobRimOutside(p.svg, p.uid, k)).toBe(0);
+    }
+    bites(withMods(m => { key(m, 'rope').HANDLE.knobMm = 80; }), 'rope_triceps_pushdown', /G7 (right|wrong) knob rim shows past the fist on \d+ of 360 points but is drawn dashed/);
+  });
   it('D-LIB7-16a: the rope contact is the flagged drawing value ga:rope-fist-mid; every convention is cited by some pair', () => {
     expect(P.pairSpec('rope_triceps_pushdown').mod.VARIANTS.push.claims.contact).toEqual(['ga:rope-fist-mid']);
     const cited = new Set(P.MODULES.flatMap((m: any) => Object.values(m.VARIANTS ?? {}).flatMap((V: any) =>
@@ -326,14 +337,14 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
   it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
     // the LIB-7 radial sheet, byte for byte (sha256 of buildSheet().body). Re-pinned once for the calibrated critic's fixes
     // (10-03: rope, push, ez_bar_curl angled; D-LIB7-13..15) and for the delta review (D-LIB7-16: ez palm up, rope fist
-    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid); the approved pages stay pinned separately, unchanged.
+    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid; D-LIB7-17: rope label); the approved pages stay pinned separately, unchanged.
     // built from LIB-7's own key modules only, so another card's tiles never move this pin (D-LIB7-PIN); the filter must
     // keep all 5 LIB-7 modules, so the pin cannot silently shrink
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
     const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
     expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
-    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('dbe8969aa4c59fa5419de285c9ebed72692262a575e5d55282aa5740f2f29050');
-    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('65e93deaf449a3007342b8a827785fcfddc623f71ae2f0b5689a07621384057b');
+    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('6a4020426c7bc1afb1447273f51ae1a8ac69d7a5e8d9e67136aa0bc847fd8f89');
+    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('107e629210e2fd279390496ca53395b3e55bb60e32a4319a034453be16727dbe');
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },

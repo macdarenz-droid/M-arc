@@ -2,7 +2,7 @@
 // check reads the rendered pair (renderPair's report and the positions measured on its SVG). The sheet, the gate block and
 // tests/library/hand-pairs.test.ts all call these.
 import { HAND_PROP } from '../../layers/engine/hand.mjs';
-import { CAMERA_TEXT, labelsOnInk, PALM_UP, pairSpec, poly, renderPair } from './pairs.mjs';
+import { CAMERA_TEXT, inPoly, labelsOnInk, PALM_UP, pairSpec, poly, renderPair } from './pairs.mjs';
 
 const RAD = Math.PI / 180;
 /** The contact category's contactAt (golden-B precedents: chest press .3, lateral raise .6, lat pulldown 1.0). */
@@ -42,6 +42,15 @@ export function fistFrontMm(svg, uid, forearm, k) {
   const u = pts.map(p => p[0] * U[0] + p[1] * U[1]), f = Math.max(...u);
   const v = pts.filter((p, i) => u[i] >= f - FRONT_TOL_MM * k).map(p => p[0] * V[0] + p[1] * V[1]);
   return (Math.max(...v) - Math.min(...v)) / k;
+}
+
+/** Points (of 360) on a knob's rim that lie outside its half's hand outline (the <defs> paths). */
+export function knobRimOutside(svg, uid, k) {
+  const inks = [...svg.matchAll(new RegExp(`<path id="${uid}-${k.role[0]}-[a-z0-9-]+" d="([^"]+)"`, 'g'))].map(q => poly(q[1]));
+  if (!inks.length) return 360;
+  let n = 0;
+  for (let i = 0; i < 360; i++) { const t = i * RAD; if (!inks.some(ps => inPoly([k.cx + k.r * Math.cos(t), k.cy + k.r * Math.sin(t)], ps))) n++; }
+  return n;
 }
 
 /** Problems of one id's pages ([] = ok). Pure on the rendered reports, so a test can plant a defect in them. */
@@ -102,6 +111,9 @@ export function problemsOf(spec, pages) {
         const h = M[k.role].handle;
         if (!h || Math.hypot(k.cx - h[0], k.cy - h[1]) > 0.01 || Math.abs(k.r - spec.handle.knobMm / 2 * R.scalePxPerMm) > 0.01) bad.push(`${at}: G7 ${k.role} knob off the rope`);
         if (!svg.includes(`<circle class="h-eq-thin" cx="${k.cx}" cy="${k.cy}" r="${k.r}"/>`)) bad.push(`${at}: G7 ${k.role} knob not drawn`);
+        // the knob is drawn dashed whole, so none of its rim may reach past the fist (D-LIB7-17a: a rim that shows is solid)
+        const out = knobRimOutside(svg, uid, k);
+        if (out > 0) bad.push(`${at}: G7 ${k.role} knob rim shows past the fist on ${out} of 360 points but is drawn dashed`);
       }
     }
     // G7: a level fist (curls, the rope) closes square at the front, as curl 2 does (D-LIB7-16)

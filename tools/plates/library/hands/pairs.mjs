@@ -126,7 +126,7 @@ export function poly(d) {
   }
   return ps;
 }
-const inPoly = (p, ps) => { let c = false; for (let i = 0, j = ps.length - 1; i < ps.length; j = i++) {
+export const inPoly = (p, ps) => { let c = false; for (let i = 0, j = ps.length - 1; i < ps.length; j = i++) {
   const [xi, yi] = ps[i], [xj, yj] = ps[j]; if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
 const boxOf = (x, y, anchor, n) => { const w = n * LABEL_W, x0 = anchor === 'middle' ? x - w / 2 : anchor === 'end' ? x - w : x;
   return [x0 - LABEL_PAD, y - 12 - LABEL_PAD, x0 + w + LABEL_PAD, y + 4 + LABEL_PAD]; };
