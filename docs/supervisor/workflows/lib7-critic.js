@@ -1,9 +1,9 @@
 export const meta = {
   name: 'lib7-calibrated-critic',
-  description: 'Blind, calibrated visual critic for LIB-7 hand pairs (plan 3.4, close-ups): prepare a shuffled set of hand-pair crops with 2 hidden approved golden-B pairs and 2 planted defects, run a fresh Opus critic, check calibration, rerun if invalid',
+  description: 'Blind, calibrated visual critic for LIB-7 hand pairs (plan 3.4, close-ups): prepare a shuffled set of hand-pair crops with 2 hidden approved golden-B pairs and 2 planted defects, run a panel of 3 fresh Opus critics (medians, majority findings), check calibration, one more round if invalid',
   phases: [
     { title: 'Prepare', detail: 'render the LIB-7 sheet, hidden approved pairs and two planted copies into a blind set' },
-    { title: 'Critic', detail: 'fresh Opus critic scores every hand pair C1-C7' },
+    { title: 'Critic', detail: 'a panel of 3 fresh Opus critics scores every hand pair C1-C7; medians decide' },
   ],
 }
 
@@ -114,19 +114,32 @@ For every item scored 3 or less, give a finding: the item, the problem, where (p
 Return every candidate in ${labels.join(', ')} with scores and findings. The label field must be exactly the folder name (for example "H01"): the calibration check matches on it.`
 
 phase('Critic')
+// D-CRITIC-CAL2 (10-03): a round is a PANEL of 3 independent critics. Per pair and item the score is the median of the
+// three; a finding counts when at least 2 of the 3 critics score that item 3 or less. Calibration runs on the medians.
+const median = (xs) => { const v = xs.filter(x => typeof x === 'number').sort((a, b) => a - b); return v.length ? v[Math.floor((v.length - 1) / 2)] : null }
 const runs = []
 let final = null
-for (let n = 1; n <= 3 && !final; n++) {
-  const res = await agent(criticPrompt(n), { label: `critic run ${n}`, phase: 'Critic', schema: CRITIC_SCHEMA })
-  if (!res) { runs.push({ n, valid: false, reasons: ['critic returned nothing'] }); continue }
-  const byLabel = Object.fromEntries(res.pairs.map(p => [p.label, p]))
+for (let r = 1; r <= 2 && !final; r++) {
+  const panel = (await parallel([1, 2, 3].map(i => () => agent(criticPrompt(`${r}.${i}`), { label: `critic ${r}.${i}`, phase: 'Critic', schema: CRITIC_SCHEMA })))).filter(Boolean)
+  if (panel.length < 3) { runs.push({ round: r, valid: false, reasons: [`only ${panel.length} of 3 critics returned`] }); continue }
+  const agg = prep.candidates.map(c => {
+    const per = panel.map(res => res.pairs.find(p => p.label === c.label)).filter(Boolean)
+    const scores = Object.fromEntries(ITEMS.map(k => [k, median(per.map(p => p.scores[k]))]))
+    const findings = ITEMS.flatMap(k => {
+      const low = per.filter(p => typeof p.scores[k] === 'number' && p.scores[k] <= 3).length
+      const fs = per.flatMap(p => (p.findings || []).filter(f => f.item === k))
+      return low >= 2 ? [{ item: k, flaggedBy: low, problems: fs.map(f => ({ problem: f.problem, where: f.where, fix: f.fix })) }] : []
+    })
+    return { label: c.label, scores, findings, raw: per.map(p => p.scores), seen: per.length }
+  })
+  const byLabel = Object.fromEntries(agg.map(p => [p.label, p]))
   const reasons = []
   for (const c of prep.candidates) {
     const p = byLabel[c.label]
-    if (!p) { reasons.push(`${c.label} missing`); continue }
+    if (!p || p.seen < 3) { reasons.push(`${c.label} missing from ${3 - (p ? p.seen : 0)} critic(s)`); continue }
     if (c.kind === 'approved') {
       const low = ITEMS.filter(k => p.scores[k] < 4)
-      if (low.length) reasons.push(`hidden approved ${c.key} (${c.label}) scored below 4: ${low.map(k => k + '=' + p.scores[k]).join(', ')}`)
+      if (low.length) reasons.push(`hidden approved ${c.key} (${c.label}) median below 4: ${low.map(k => k + '=' + p.scores[k]).join(', ')}`)
     }
     if (c.kind === 'plant') {
       // D-CRITIC-CAL: caught on its target item, or on any item where the unplanted original scores >= 4 (the drop is the plant's)
@@ -134,14 +147,14 @@ for (let n = 1; n <= 3 && !final; n++) {
       const orig = prep.candidates.find(o => o.kind === 'drawn' && JSON.stringify(o.ids) === JSON.stringify(c.ids))
       const op = orig && byLabel[orig.label]
       const other = op ? ITEMS.filter(k => p.scores[k] < 4 && op.scores[k] >= 4) : []
-      if (!((typeof target === 'number' && target < 4) || other.length)) reasons.push(`plant ${c.key} (${c.label}, ${c.plantItem}: ${c.plantDescription}) not caught (score ${target})`)
+      if (!((typeof target === 'number' && target < 4) || other.length)) reasons.push(`plant ${c.key} (${c.label}, ${c.plantItem}: ${c.plantDescription}) not caught (median ${target})`)
       else if (!(typeof target === 'number' && target < 4)) log(`plant ${c.key} (${c.label}) caught on ${other.join(', ')} instead of ${c.plantItem}`)
     }
   }
   const valid = reasons.length === 0
-  runs.push({ n, valid, reasons })
-  log(`critic run ${n}: ${valid ? 'VALID' : 'discarded: ' + reasons.join('; ')}`)
-  if (valid) final = res
+  runs.push({ round: r, valid, reasons })
+  log(`critic round ${r} (panel of 3): ${valid ? 'VALID' : 'discarded: ' + reasons.join('; ')}`)
+  if (valid) final = { pairs: agg, notes: panel.map(x => x.notes).filter(Boolean).join('\n---\n') }
 }
 
 const key = Object.fromEntries(prep.candidates.map(c => [c.label, c]))
