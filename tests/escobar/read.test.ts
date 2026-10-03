@@ -3,6 +3,9 @@ import * as R from '@/escobar/tools/read';
 import { FIXTURES, ctxOf, sixMonthsState, twoWeeksState, emptyState, NOW, TODAY } from './fixtures';
 import { addDays as addDaysLocal } from '@/core/dates';
 import { session, sets } from '../helpers';
+import { makeCtx, readinessToday } from '@/escobar/tools/context';
+import { freshState, emptySchedule } from '@/core/models';
+import { sessionAt as at } from '../helpers';
 
 const bytes = (v: unknown) => JSON.stringify(v).length;
 const CASES: Array<[string, (ctx: ReturnType<typeof ctxOf>) => unknown, number]> = [
@@ -391,5 +394,26 @@ describe('lift history after a lighter week (BUG-15)', () => {
   it('the lift_trend card reads plateaued, not declining', async () => {
     const { summarize } = await import('@/escobar/tools/show');
     expect((summarize('lift_trend', { exerciseId: bench, weeks: 12 }, ctxOf(state())) as { plateau: string }).plateau).toBe('plateaued');
+  });
+});
+
+describe('BUG-38: Escobar follows the plan (D-BUG38)', () => {
+  const local = (day: string, h: number) => { const [y, m, d] = day.split('-').map(Number); return new Date(y!, m! - 1, d!, h, 0); };
+  const sp = (id: string, name: string, exerciseId: string) => ({ id, name, color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId, sets: 3 }] });
+  const S1 = sp('split_1', 'SPLIT 1 - UPPER BODY', 'lib_barbell_bench_press'), S2 = sp('split_2', 'SPLIT 2 - LOWER AND CORE', 'lib_seated_leg_curl');
+  const S3 = sp('split_3', 'SPLIT 3', 'lib_lat_pulldown'), S4 = sp('split_4', 'SPLIT 4 - CONDITIONING', 'lib_standing_calf_raise');
+  const mk = (day: string, s: typeof S1) => ({ ...at(local(day, 17).toISOString(), local(day, 18).toISOString(), [{ id: s.exercises[0]!.exerciseId, sets: sets(60, 8, 'max', 4) }], s.id), day, splitName: s.name });
+  const own = (extra = {}) => ({ ...freshState(), splits: [S1, S2, S3, S4], schedule: { ...emptySchedule(), tue: S1.id, thu: S4.id, sat: S2.id, sun: S3.id }, sessions: [mk('2026-09-29', S1), mk('2026-10-01', S4), mk('2026-10-03', S3)], ...extra });
+
+  it('BUG-38: readinessToday gives the same sentence', () => {
+    const ctx = makeCtx(own({ checkIns: [{ day: '2026-10-03', sleepQuality: 4, mood: 4 }] }), local('2026-10-03', 19).getTime());
+    const r = readinessToday(ctx);
+    expect(r).not.toBeNull();
+    expect(r!.postSessionAdvice).toBe('Today\'s session is done. Recover well; SPLIT 2 - LOWER AND CORE is next on Sun.');
+  });
+
+  it('OWN Sunday: overview.scheduled is SPLIT 2 with movedFrom \'sat\'', () => {
+    const o = R.getOverview({}, makeCtx(own(), local('2026-10-04', 8).getTime()));
+    expect(o.scheduled).toEqual({ splitId: 'split_2', split: 'SPLIT 2 - LOWER AND CORE', exercises: 1, movedFrom: 'sat' });
   });
 });

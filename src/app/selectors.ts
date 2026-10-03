@@ -2,7 +2,7 @@
 import { computed } from '@preact/signals';
 import { state } from '@/core/store';
 import { getSeries } from '@/core/heartStore';
-import { weekdayOf, daysBetween, trainedTodaySessions, nextScheduled } from '@/core/dates';
+import { daysBetween, trainedTodaySessions } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
 import { deloadOffer, hiddenBackOnBoard, hiddenInsightIds, rankInsights, runInsightRules, type CoachContext } from '@/brain/coach/rules';
@@ -10,6 +10,7 @@ import { plannedSessions, trainingStreak, weekSummary } from '@/brain/weekly';
 import { shouldShowOnboarding } from '@/brain/onboarding';
 import { watchStatus } from '@/native/watch';
 import { bodyWeightResolver } from '@/brain/bodyweight';
+import { splitPlan } from '@/brain/splitPlan';
 
 import { minuteNow, today } from './clock';
 
@@ -17,16 +18,6 @@ export { today, nowMs, minuteNow, acquireTicker, refreshClock } from './clock';
 
 export const unit = computed(() => state.value.preferences.weightUnit);
 export const splitById = (id: string) => state.value.splits.find(s => s.id === id);
-export const scheduledSplitId = computed(() => state.value.schedule[weekdayOf(today.value)]);
-export const scheduledSplit = computed(() => { const id = scheduledSplitId.value; return id ? splitById(id) : undefined; });
-/** QA8-2: the next scheduled split after today, resolved to the actual Split. */
-export const nextScheduledSplit = computed(() => {
-  const n = nextScheduled(state.value.schedule, today.value);
-  if (!n) return null;
-  const split = splitById(n.splitId);
-  return split ? { split, weekday: n.weekday } : null;
-});
-
 /**
  * QA-R2d-1: one computed per state field. A computed only notifies when its value changes
  * identity, so typing into a live set (a new `active`) no longer re-runs recovery and readiness.
@@ -35,6 +26,11 @@ const field = <K extends keyof typeof state.value>(k: K) => computed(() => state
 const sessions = field('sessions'), customExercises = field('customExercises'), profile = field('profile'), healthDays = field('healthDays');
 const checkIns = field('checkIns'), freshMarks = field('freshMarks'), recoveryModel = field('recoveryModel');
 const weightLog = field('weightLog');
+const schedule = field('schedule'), splits = field('splits'), daysOff = field('daysOff');
+/** BUG-38: today's and the next split, from the sessions done (D-BUG38). Never reads state.value whole. */
+export const todayPlan = computed(() => splitPlan({ schedule: schedule.value, splits: splits.value, sessions: sessions.value, daysOff: daysOff.value, today: today.value, now: minuteNow.value }));
+/** Today's split, or undefined on a day off (UI-R03). */
+export const scheduledSplit = computed(() => { const t = todayPlan.value.today; return t && !t.off ? t.split : undefined; });
 export const bodyWeightAt = computed(() => bodyWeightResolver({ weightLog: weightLog.value, profile: profile.value }));
 
 export const recovery = computed(() => recoveryStatus({ sessions: sessions.value, custom: customExercises.value, now: minuteNow.value, profile: profile.value, healthDays: healthDays.value, checkIns: checkIns.value, freshMarks: freshMarks.value, recoveryModel: recoveryModel.value }));
@@ -47,7 +43,7 @@ export const todayReadiness = computed(() => readiness({
   checkInHistory: checkIns.value.filter(c => c.day !== today.value && daysBetween(c.day, today.value) <= 30),
   recovery: recovery.value,
   scheduledSplit: scheduledSplit.value,
-  next: nextScheduledSplit.value,
+  next: todayPlan.value.next,
   custom: customExercises.value,
   sessions: sessions.value,
 }));

@@ -44,7 +44,13 @@ export function planted(mods, plants) {
   return copy;
 }
 
-const refText = r => r.startsWith('ga:') ? `${r} (convention: ${CONVENTIONS[r]})` : `${r}: ${CLAIMS.claims[r] ?? '(unresolved)'}`;
+// A claim's text: the pinned research extract first, then the citing module's own CLAIMS_TEXT (a key whose research is
+// not in claims.json brings its text with it), then "(unresolved)" (D-LIB7-SHEET).
+const refText = (r, mod) => r.startsWith('ga:') ? `${r} (convention: ${CONVENTIONS[r]})` : `${r}: ${CLAIMS.claims[r] ?? mod?.CLAIMS_TEXT?.[r] ?? '(unresolved)'}`;
+// Golden-B radial keys keep the G1-G9 label and the D-LIB7 flags; a key with its own view labels its own checks and flags.
+const isRadial = mod => mod.VIEW === 'radial' && !mod.render;
+const RADIAL_FLAG = '<li>sizes: drawing values (D-LIB7-2); wrong angles: approved precedents (D-LIB7-5)</li>';
+const checksLine = (mod, problems) => problems.length ? problems.map(esc).join('<br>') : isRadial(mod) ? 'G1-G9 ok' : mod.checks ? 'Checks: ok' : 'Checks: none';
 /** Distinct pictures: ids whose pages draw identical SVGs (uid aside) share one tile. */
 export function tiles(index) {
   const by = new Map();
@@ -65,12 +71,12 @@ export async function buildSheet({ calibrate = false, plants = [], critic = fals
   for (const [i, t] of tiles(index).entries()) {
     const s = t.spec, V = s.mod.VARIANTS[s.variant], { pages } = renderedPages(s.id, index);
     const problems = problemsOf(s, pages), flags = [...Object.values(V.claims ?? {}).flat(), ...s.wrong.flatMap(w => w.claims ?? [])].filter(r => r.startsWith('ga:'));
-    const claimLines = [...new Set([...Object.values(V.claims ?? {}).flat(), ...s.wrong.flatMap(w => w.claims ?? []), ...t.ids.flatMap(id => index.drawn.get(id).cfg.claims ?? [])])].map(refText);
+    const claimLines = [...new Set([...Object.values(V.claims ?? {}).flat(), ...s.wrong.flatMap(w => w.claims ?? []), ...t.ids.flatMap(id => index.drawn.get(id).cfg.claims ?? [])])].map(ref => refText(ref, s.mod));
     rows.push(`<section class="tile"><h2>${i + 1}. ${critic ? esc(s.key) : `${esc(s.pair)} · ${esc(s.orientation)}`}</h2><p class="ids">${t.ids.map(esc).join(', ')}</p>`
       + pages.map(p => `<div class="hand-plate">${renderPair(s.id, { fault: p.fault.key, uid: `t${i}-${p.fault.key}`, index }).svg}</div>`).join('')
       + (refs[V.archetype] ? `<p class="lab">Closest approved (${esc(REFERENCE[V.archetype][0])})</p><div class="hand-plate ref">${refs[V.archetype].replace(/id="([^"]+)"/g, `id="r${i}-$1"`).replace(/#([a-z][\w-]*)/g, `#r${i}-$1`)}</div>` : '')
-      + `<p class="lab">Flags</p><ul>${[...new Set(flags)].map(f => `<li>${esc(f)}</li>`).join('') || '<li>none</li>'}${(V.flags ?? []).map(f => `<li>${esc(f)}</li>`).join('')}<li>sizes: drawing values (D-LIB7-2); wrong angles: approved precedents (D-LIB7-5)</li></ul>`
-      + (critic ? '' : `<p class="lab">Checks</p><p>${problems.length ? problems.map(esc).join('<br>') : 'G1-G9 ok'}</p>`)
+      + `<p class="lab">Flags</p><ul>${[...new Set(flags)].map(f => `<li>${esc(f)}</li>`).join('') || '<li>none</li>'}${(V.flags ?? []).map(f => `<li>${esc(f)}</li>`).join('')}${isRadial(s.mod) ? RADIAL_FLAG : (s.mod.FLAGS ?? []).map(f => `<li>${esc(f)}</li>`).join('')}</ul>`
+      + (critic ? '' : `<p class="lab">Checks</p><p>${checksLine(s.mod, problems)}</p>`)
       + `<details><summary>Claims</summary><ul>${claimLines.map(l => `<li>${esc(l)}</li>`).join('')}</ul></details></section>`);
   }
   if (calibrate) {
