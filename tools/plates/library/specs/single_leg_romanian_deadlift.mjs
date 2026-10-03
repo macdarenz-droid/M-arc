@@ -111,6 +111,21 @@ const mistBody = spine => { const b = { ...end, trunk: spine, scap: { pro: M_PRO
 const M_SPINE = solve(sp => { const S = landmarksOf(mistBody(sp), H)['shoulder.r']; return Math.hypot(S[0] - M_DB[0], S[1] - M_DB[1], S[2] - M_DB[2]) - REACH; }, END.spine, 80);
 const ML = landmarksOf(mistBody(M_SPINE), H);
 const mistakePose = { trunk: M_SPINE, scap: { pro: M_PRO }, reach: { ...hang(ML), r: { at: M_DB, pole: [-0.2, 0, -1] } } };
+// The rounded back (critic 10-03 R5): the engine's own faulty back outline lies inside the solid trunk and is masked
+// there, so the rounding is drawn as a dashed Mistake guide (guides are not masked), as romanian_deadlift's hump: a
+// convex curve from the sacrum (the pelvis does not move) up to an apex ROUND_UP above the correct back between
+// mid-back and upper back, then curling down over the shoulders to the faulty neck, where the red faulty head
+// continues it. A short arrow points down onto the apex, where the BACK ROUNDS tell ends.
+const ROUND_UP = 0.05;
+const LM_E = landmarksOf(end, H), LM_M = landmarksOf({ ...end, ...mistakePose }, H);
+const ROUND_APEX = [0, (LM_E.backMid[1] + LM_E.backUpper[1]) / 2 + ROUND_UP, (LM_E.backMid[2] + LM_E.backUpper[2]) / 2];
+const ROUND_PTS = (() => {   // Catmull-Rom through sacrum, apex, a shoulder point outside the faulty upper back, faulty neck
+  const sh = [0, (ROUND_APEX[1] + LM_M.neck[1]) / 2 + 0.03, (ROUND_APEX[2] + LM_M.neck[2]) / 2 + 0.03];
+  const P = [LM_M.sacrum, ROUND_APEX, sh, LM_M.neck], g = i => P[Math.max(0, Math.min(P.length - 1, i))], out = [];
+  for (let i = 0; i < P.length - 1; i++) for (let k = 0; k < 8; k++) { const t = k / 8, p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+    out.push([0, 1, 2].map(d => 0.5 * (2 * p1[d] + (-p0[d] + p2[d]) * t + (2 * p0[d] - 5 * p1[d] + 4 * p2[d] - p3[d]) * t * t + (-p0[d] + 3 * p1[d] - 3 * p2[d] + p3[d]) * t * t * t))); }
+  return [...out, LM_M.neck];
+})();
 
 
 // Dumbbell in the near right hand, handle across the body (pronated, x axis): the side view shows the hex end-on.
@@ -154,12 +169,13 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arc-arrow', center: { at: 'lumbar', pose: 'mistake' }, r: 52, a0: -105, a1: -25 },
+      { kind: 'dashed', pts: ROUND_PTS },                                                     // the rounded back (R5)
+      { kind: 'arrow', from: [0, ROUND_APEX[1] + 0.12, ROUND_APEX[2]], to: [0, ROUND_APEX[1] + 0.015, ROUND_APEX[2]] },
       { kind: 'arrow', from: { at: 'grip.r', pose: 'end' }, to: { at: 'grip.r', pose: 'mistake' } },
     ],
     tells: [
       // c7 (plate.mistake)
-      { key: 'round', text: 'Back<br>rounds', anchor: 'backUpper', cue: 'The back and shoulders round as you reach down.' },
+      { key: 'round', text: 'Back<br>rounds', anchor: ROUND_APEX, cue: 'The back and shoulders round as you reach down.' },
       // c7, c9 (handlingMistakes: reaching the dumbbell to the floor)
       { key: 'low', text: 'Dumbbell<br>too low', anchor: 'grip.r', cue: 'The dumbbell is reached to the floor, well past mid-shin.' },
     ],

@@ -152,6 +152,10 @@ export default {
       { key: 'sag', text: 'Low back<br>sags', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 150, top: 192 }, cue: 'The low back sags toward the floor.' },
     ],
   },
-  pilot: { note: 'Tempo left out: card gives Hold 5+ s only, no Set or Rest seconds (c6).' },
+  // Tempo (supervisor, from the wave-1 research c12): hold 10-60 s. A range, not one number: the locked page builder
+  // prints `${s} s` and uses s as the segment's flex weight, so the single Hold segment shows "10–60 s" (its flex value
+  // is not a number, which only drops the weight of the one segment). The card text follows when the research merges.
+  tempo: [{ phase: 'Hold', s: '10–60' }],
+  pilot: { note: 'Tempo: hold 10–60 s (wave-1 research c12); the card text follows when the research merges.' },
   alt: 'Forearm plank, side view. From lying face down propped on the forearms, elbows under the shoulders and toes tucked, the hips lift until the body forms one straight line from the head to the heels, knees straight, shoulders over the elbows.',
 };

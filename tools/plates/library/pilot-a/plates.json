@@ -164,5 +164,36 @@
    }
   }
  ],
- "cards": "cards/ = verified research cards copied from claude/libht-research e2a70bc"
+ "cards": "cards/ = verified research cards copied from claude/libht-research e2a70bc",
+ "handsNote": "hands: LIB-12 hand renders shown on the sheet only (not plates), renderPair(id) from tools/plates/library/hands/pairs.mjs on claude/lib-12-hand-views 06519f9 (LIB-7 loader aacebf5 merged), Silent Black and Paper at 390 px; flags as the LIB-12 note on PR #109 (2026-10-02 14:10).",
+ "hands": [
+  {
+   "key": "cupped",
+   "id": "goblet_squat",
+   "name": "Cupped hold (goblet)",
+   "images": [
+    "evidence/lib12-cupped-silent-black.png",
+    "evidence/lib12-cupped-paper.png"
+   ],
+   "flags": [
+    "New hand kind (plan 2.3)",
+    "Drawing values (D-LIB12-2), not sourced: dumbbell head 180 mm across, 70 mm thick, handle 32 mm",
+    "Thumb and fingers not drawn: no goblet source places them, so the palms are one outline"
+   ]
+  },
+  {
+   "key": "front-rack",
+   "id": "front_squat",
+   "name": "Front rack",
+   "images": [
+    "evidence/lib12-front-rack-silent-black.png",
+    "evidence/lib12-front-rack-paper.png"
+   ],
+   "flags": [
+    "New hand kind (plan 2.3)",
+    "Drawing value (D-LIB12-2), not sourced: bar 28 mm (golden B's value)",
+    "Wrist: no number drawn; the front-rack exemption replaces the on-body range"
+   ]
+  }
+ ]
 }

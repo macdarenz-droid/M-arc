@@ -1,8 +1,8 @@
 {
- "pageSha": "209cc0bfc0a6ac6e3d8c3a27787d511d2790fd247adbff9dba814fd3231835a6",
- "pageBytes": 1642632,
- "sheetSha": "3b2f1bb9fb3856ce7268604b769666c727b6efc238be4c056094a7cb33104720",
- "sheetBytes": 3466727,
+ "pageSha": "b2a9b9dfff02ac16a3f32b9076ef74e497e910e17449d02f8d7e040ecdbfe7a2",
+ "pageBytes": 1710802,
+ "sheetSha": "cbf69db05af5e3c06245c40e2998673a816741b9c6b48f5635e43de3e0cc4847",
+ "sheetBytes": 3653602,
  "warnings": "",
  "plates": [
   {
@@ -60,8 +60,8 @@
    ],
    "measures": {
     "pxPerM": 146.29,
-    "coverage": 0.2,
-    "longestLeader": 25,
+    "coverage": 0.24,
+    "longestLeader": 40.2,
     "boxed": 1
    },
    "issues": []
@@ -113,7 +113,7 @@
    "measures": {
     "pxPerM": 134.58,
     "coverage": 0.184,
-    "longestLeader": 75.8,
+    "longestLeader": 79.6,
     "boxed": 3
    },
    "issues": []
@@ -125,8 +125,8 @@
    "flags": [],
    "measures": {
     "pxPerM": 146.29,
-    "coverage": 0.151,
-    "longestLeader": 69.8,
+    "coverage": 0.142,
+    "longestLeader": 41.4,
     "boxed": 0
    },
    "issues": []
@@ -209,8 +209,7 @@
    "tier": "C",
    "ok": true,
    "flags": [
-    "F1",
-    "Note"
+    "F1"
    ],
    "measures": {
     "pxPerM": 174.22,
@@ -226,8 +225,7 @@
    "ok": true,
    "flags": [
     "F1",
-    "F3",
-    "Note"
+    "F3"
    ],
    "measures": {
     "pxPerM": 191.92,

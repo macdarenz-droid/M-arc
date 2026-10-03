@@ -1,8 +1,10 @@
 // Box jump, side view, figure facing screen right, box in front.
 // View: side (card plate.view). Take-off loading, the landing knee bend and the box height are sagittal.
-// Airborne class: two frames only (card plate.frames), the take-off (dashed start) and the landing (solid end). No
-// mid-air body is drawn (ghosts count 0); the flight exists only as the trace, which follows the near hip along a
-// jump arc built from via key poses (root positions on a parabola; the via bodies are never drawn).
+// Airborne class: the loading frame (dashed start), the landing (solid end) and one ghost, the take-off at full
+// extension (on the balls, legs straight, arms up; critic 10-03 R4: the FULL EXTENSION callout needs an extended pose
+// to point at). The card's plate.frames name take-off and landing; the ghost is that take-off's extended instant, so
+// no mid-air body is drawn. The trace follows the near hip from the crouch through the extension along the jump arc
+// (via key poses: a curved rise, then root positions on a parabola; only the extension via is drawn).
 // Form (research card box_jump, claims): c1 stand facing a sturdy box, feet about hip width; c2 load: brace, bend the
 //  knees and hips, swing the arms back; c3 take off extending hips, knees and ankles as the arms swing up; c4 bend the
 //  hips to lift the feet onto the box, land with both feet; c5 land with the knees bent (straight knees = the fault);
@@ -20,7 +22,7 @@
 //   hanging_leg_raise.mjs does over its bar, so neither frame tips over.
 // Plate text (card box_jump plate, verified: claude/libht-research e2a70bc):
 //  Callouts = the 3 plate.checkpoints: c2 load and swing (on the take-off frame's hands), c3 full extension (on the
-//   rising trace: it happens between the two drawn frames), c5 soft knees (the landing checkpoint).
+//   extension ghost's straight knee), c5 soft knees (the landing checkpoint).
 //  Mistake = plate.mistake (c5, drawable): landing on the box with straight, stiff knees (MISTAKE_HIP, same feet).
 //   Tells: the card's plate.tells are cues of good form ("Both feet land together, knees bent", "You step down, never
 //   jump down"), so the tells restate the fault: knees straight, stiff landing (c5). Flagged on PR #109.
@@ -28,7 +30,7 @@
 //  Tempo: left out. The card gives no seconds ("explosive take-off; step down; full rest", c11).
 // CARD (checked against card v2): from the card: BOX_H 45 cm (inside the beginner 30-45 cm, c8), knees and hips bent
 //  with the arms back at take-off (c2), both feet on the box with the knees bent (c4, c5), FOOT_X (hip width, c1).
-//  Not in the card, left flagged: TAKEOFF_HIP / TAKEOFF_TRUNK / ARMS_BACK and LAND_HIP / LAND_TRUNK (how deep: no
+//  Not in the card, left flagged: TAKEOFF_HIP / TAKEOFF_TRUNK / ARMS_BACK, the EXT_* extension angles and LAND_HIP / LAND_TRUNK (how deep: no
 //  number), BOX_Z0 (distance to the box), MISTAKE_HIP (how straight the Mistake knees are: near locked).
 import { landmarksOf } from '../engine.mjs';
 
@@ -68,20 +70,51 @@ function grounded(y, z, hipY, angles) {
 const start = grounded(0, 0, TAKEOFF_HIP, { tilt: TAKEOFF_TRUNK - 6, trunk: 6, neck: -12, shoulder: { ext: ARMS_BACK }, elbow: 5, ankle: 0 });
 const end = grounded(BOX_H, LAND_Z, LAND_HIP, { tilt: LAND_TRUNK - 6, trunk: 6, neck: -10, shoulder: { flex: ARMS_FWD }, elbow: 15 });
 
-// Flight: the hip on a parabola from the take-off hip to the landing hip, apex APEX m above the landing hip. The
-// via poses carry only root positions and a tucked, arms-up shape for the interpolation; they are never drawn.
+// Full extension (c3, critic 10-03 R4): the take-off pose drawn as the plate's one ghost (key pose at t = 0.5, where
+// the engine draws a single ghost): the same feet on the balls (heels up EXT_HEEL deg), knees EXT_KNEE deg, hips
+// straight, the whole body leaning EXT_LEAN toward the box, arms swung up EXT_ARMS deg of flexion. The FULL
+// EXTENSION leader ends on this pose's knee. Drawing values (the card gives no angles): EXT_*.
+const EXT_HEEL = 35, EXT_KNEE = 4, EXT_LEAN = 18, EXT_ARMS = 150;
+const kneeAngle = lm => { const a = [0, 1, 2].map(i => lm['hip.r'][i] - lm['knee.r'][i]), b = [0, 1, 2].map(i => lm['ankle.r'][i] - lm['knee.r'][i]);
+  return 180 - Math.acos((a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) / Math.hypot(...a) / Math.hypot(...b)) * 180 / Math.PI; };
+const BALL0 = landmarksOf(start, H)['ball.r'];
+const ext = (() => {
+  const th = EXT_HEEL * Math.PI / 180, n = [0, Math.cos(th), Math.sin(th)], t = [0, -Math.sin(th), Math.cos(th)];
+  const plant = { l: { at: [FOOT_X, 0, BALL0[2]], normal: n, toe: t, ref: 'ball' }, r: { at: [-FOOT_X, 0, BALL0[2]], normal: n, toe: t, ref: 'ball' } };
+  const lean = EXT_LEAN * Math.PI / 180;                       // hip forward of the ankle along the lean
+  const pose = y => { const A = [0, extAnkleY(th), BALL0[2] - 0.12 * Math.cos(th)];
+    return { root: { at: [0, y, A[2] + (y - A[1]) * Math.tan(lean)], tilt: -EXT_LEAN + 6 }, trunk: 6, neck: -6, shoulder: { flex: EXT_ARMS }, elbow: 10, plant }; };
+  let lo = 0.8, hi = 1.15;                                      // root height: knee bend EXT_KNEE
+  for (let i = 0; i < 50; i++) { const mid = (lo + hi) / 2; if (kneeAngle(landmarksOf(pose(mid), H)) > EXT_KNEE) lo = mid; else hi = mid; }
+  return pose((lo + hi) / 2);
+})();
+function extAnkleY(th) { return 0.039 * H * Math.cos(th) + 0.12 * Math.sin(th); }   // ankle height on the balls (approx: sets the lean line only; the IK places the leg)
+const EXT_KNEE_PT = landmarksOf(ext, H)['knee.r'];
+
+// Flight: the hip on a parabola from the take-off (full extension) hip to the landing hip, apex APEX m above the
+// landing hip. The vias carry a tucked, arms-up shape for the interpolation; they are never drawn.
 const APEX = 0.25;
-const P0 = start.root.at, P1 = end.root.at;
+const P0 = ext.root.at, P1 = end.root.at;
 const arc = t => {
   const y0 = P0[1], y1 = P1[1], top = y1 + APEX;
   // quadratic through (0, y0), (1, y1) with its maximum `top`: y = y0 + b t - a t^2
   const k = Math.sqrt(top - y0) , l = Math.sqrt(top - y1), tp = k / (k + l), a = (top - y0) / (tp * tp);
   return [0, top - a * (t - tp) ** 2, P0[2] + (P1[2] - P0[2]) * t];
 };
-const via = Array.from({ length: 9 }, (_, i) => (i + 1) / 10).map(t => ({
-  root: { at: arc(t), tilt: 20 }, trunk: 6, neck: -8, shoulder: { flex: 60 + 60 * Math.sin(Math.PI * t) }, elbow: 15,
-  hip: 60 + 20 * t, knee: 70 + 20 * Math.sin(Math.PI * t), ankle: -10,
-}));
+// keys: start (t 0), six rising keys, full extension (t 0.5, the ghost), six flight keys, end (t 1): the same number
+// of keys on each side puts the extension at t = 0.5, and enough flight keys keep the traced hip arc smooth.
+// The rising hip follows a quadratic curve from the crouch to the extension whose end tangent is the flight
+// parabola's take-off direction, so the traced hip path has no corner at take-off.
+const ARC_D = (() => { const a = arc(0), b = arc(0.01); return [0, (b[1] - a[1]) / 0.01, (b[2] - a[2]) / 0.01]; })();
+const RISE_C = (() => { const L = Math.hypot(ext.root.at[1] - start.root.at[1], ext.root.at[2] - start.root.at[2]) * 0.5, n = Math.hypot(ARC_D[1], ARC_D[2]);
+  return [0, ext.root.at[1] - ARC_D[1] / n * L, ext.root.at[2] - ARC_D[2] / n * L]; })();
+const riseAt = k => start.root.at.map((v, i) => (1 - k) ** 2 * v + 2 * k * (1 - k) * RISE_C[i] + k * k * ext.root.at[i]);
+const rise = k => ({ root: { at: riseAt(k), tilt: start.root.tilt + (ext.root.tilt - start.root.tilt) * k },
+  trunk: 6, neck: -8, shoulder: k < 0.5 ? { ext: ARMS_BACK * (1 - 2 * k) } : { flex: EXT_ARMS * (2 * k - 1) }, elbow: 8,
+  plant: k < 0.5 ? start.plant : ext.plant });
+const fly = t => ({ root: { at: arc(t), tilt: 20 }, trunk: 6, neck: -8, shoulder: { flex: 120 - 20 * t }, elbow: 15,
+  hip: 30 + 50 * t, knee: 30 + 50 * Math.sin(Math.PI * t), ankle: -10 });
+const via = [...[1, 2, 3, 4, 5, 6].map(k => rise(k / 7)), ext, ...[1, 2, 3, 4, 5, 6].map(k => fly(k / 7))];
 
 // Mistake (card plate.mistake, c5): landing on the box with straight, stiff knees. Same feet on the box; the hips stay
 // high (MISTAKE_HIP), knees almost locked, trunk nearly upright, centre of mass over mid-foot as the other frames.
@@ -89,8 +122,6 @@ const via = Array.from({ length: 9 }, (_, i) => (i + 1) / 10).map(t => ({
 const MISTAKE_HIP = BOX_H + 0.925, MISTAKE_TRUNK = 12;
 const MISTAKE = grounded(BOX_H, LAND_Z, MISTAKE_HIP, { tilt: MISTAKE_TRUNK - 6, trunk: 6, neck: -6, shoulder: { flex: ARMS_FWD }, elbow: 15 });
 
-// Full extension (c3) is the drive out of the take-off frame, so its callout ends on that frame's knee (the joint
-// that extends; critic 10-02 R4: a leader ending on the flight arc in empty space read as nothing), off the trace.
 
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] }, TOP = { point: [0, BOX_H, 0], normal: [0, 1, 0] };
 
@@ -116,11 +147,11 @@ export default {
     { landmark: 'heel.r', plane: TOP, pose: 'mistake', tol: 0.5 },                          // stiff landing: same feet on the box
     { landmark: 'ball.r', plane: TOP, pose: 'mistake', tol: 0.5 },
   ],
-  ghosts: { count: 0 },
+  ghosts: { count: 1 },                                   // t = 0.5: the full-extension take-off pose (via[3])
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
     { key: 'load', text: 'Load and<br>swing', anchor: { at: 'grip.r', pose: 'start' }, cue: 'Bend the knees and hips while the arms swing back.' },
-    { key: 'extend', text: 'Full<br>extension', anchor: { at: 'knee.r', pose: 'start' }, cue: 'Take off by extending hips, knees and ankles as the arms swing up.' },
+    { key: 'extend', text: 'Full<br>extension', anchor: EXT_KNEE_PT, cue: 'Take off by extending hips, knees and ankles as the arms swing up.' },
     { key: 'land', text: 'Soft knees', anchor: 'knee.r', cue: 'Land on the box with both feet, knees bent.' },
   ],
   mistake: {
@@ -130,9 +161,9 @@ export default {
     ],
     tells: [
       { key: 'straight', text: 'Knees straight', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The knees stay straight as the feet land on the box.' },
-      { key: 'stiff', text: 'Stiff landing', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 105, top: 92 }, cue: 'The legs don\'t bend to absorb the landing.' },
+      { key: 'stiff', text: 'Stiff landing', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 12, top: 110 }, cue: 'The legs don\'t bend to absorb the landing.' },
     ],
   },
-  pilot: { note: 'Tempo left out: card gives no seconds (explosive take-off, step down, full rest; c11).' },
+  pilot: { note: 'No tempo strip: no sourced seconds (explosive take-off, step down, full rest; c11).' },
   alt: 'Box jump, side view. Take-off frame: feet hip width, knees and hips bent, arms swung back. The hips arc up and forward onto a knee-high box. Landing frame: both feet flat on the box, knees and hips bent to absorb the landing, arms forward.',
 };

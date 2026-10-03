@@ -144,6 +144,8 @@ export default {
       { key: 'weight', text: 'Weight tips<br>forward', anchor: { along: M_PLUMB, t: 0.3 }, cue: 'The weight tips onto the front foot instead of both.' },
     ],
   },
-  pilot: { note: 'Tempo left out: card gives no seconds, only a controlled, slow descent (c7).' },
+  // Tempo (ruling R-W1-1): the default is "Lower slowly, rise a little quicker" (c7, c16), with no seconds; "3 s down"
+  // is a progression only (c15). The locked strip needs seconds for every phase, so no strip is drawn (never invented).
+  pilot: { note: 'No tempo strip: ruling R-W1-1, the default is "lower slowly, rise a little quicker" (c7, c16) with no seconds; 3 s down is a progression (c15).' },
   alt: 'Reverse lunge with dumbbells, side view. From standing tall, one leg steps back and the body lowers until the front thigh is parallel and the rear knee hovers just above the floor, front shin near vertical, front foot flat, rear foot on the ball, trunk upright, dumbbells hanging at the sides.',
 };

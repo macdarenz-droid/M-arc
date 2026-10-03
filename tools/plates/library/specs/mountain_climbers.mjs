@@ -137,6 +137,10 @@ export default {
       { key: 'line', text: 'Line breaks', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 236, top: 150 }, cue: 'Head to heels is no longer one straight line.' },
     ],
   },
-  pilot: { note: 'Tempo left out: card gives no cadence (c4).' },
+  // Tempo (ruling R-W1-2, wave-1 research verify w1.md): the default is the beginner row, timed sets of 15 s on and
+  // 15 s off (c13); 20/20 and 30/30 are progressions and 20 s on, 10 s off only a labelled HIIT option (c14). No steps
+  // per second (unsourced). The card text follows when the research merges.
+  tempo: [{ phase: 'Work', s: 15, move: true }, { phase: 'Rest', s: 15 }],
+  pilot: { note: 'Tempo per ruling R-W1-2 (c13: 15 s on, 15 s off); the card text follows when the research merges.' },
   alt: 'Mountain climbers, side view. High plank on straight arms, hands under the shoulders, body in one line from head to heels. One knee drives forward under the chest while the other leg stays straight back on the toes, hips level.',
 };

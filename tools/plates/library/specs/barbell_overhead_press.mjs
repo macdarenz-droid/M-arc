@@ -29,9 +29,9 @@
 //   The `checks` prove the ends: chin 2.9 cm behind the bar surface at the start, head 31 cm under the bar at lockout.
 //  Drawn: the 45 cm plate outline at lockout only (four plate circles over the head hid it), the 50 mm sleeve dot in
 //   every pose (start dashed, 2 ghosts, end), trace of the grip (the vertical bar path), mid-foot plumb line (datum,
-//   as the squat). The lockout arm and trunk cover the whole start arm, so it is redrawn as dashed hidden lines (the
-//   approved pull_up method) with the start bar dot (the squat's workaround); the leaning start trunk and head show as
-//   the engine's own dashed start pose behind the figure.
+//   as the squat). The lockout arm and trunk cover the whole start arm, so it is redrawn over the end figure as a
+//   ghost-style outline (START_ARM, critic 10-03 R1) with the start bar dot (the squat's workaround); the leaning start
+//   trunk and head show as the engine's own dashed start pose behind the figure.
 //  Camera: reference floor line, scale set so the rack top (2.4 m, above the lockout plate) is 16 px under the plate
 //   edge: 134.6 px/m (92% of the reference, inside the 8's 123.9-146.3; pull_up and lat_pulldown also scale down).
 //  Labels: the rack leaves two label columns, left of the rear upright and right of the front one; "Forearms
@@ -122,10 +122,8 @@ const via = [
   { ...body(LEAN_VIA2, lm => [0, 0, lm['shoulder.r'][2] - SH0 * (1 - VIA2_SH)]), reach: hands([0, HEAD_TOP0 + 0.10, 0], POLE_UP) },
 ];
 const BAR_R = 0.014;
-// Start arm as hidden lines (pull_up's method): the lockout arm and trunk cover the whole front-rack arm, so the
-// engine's dashed start layer is invisible there. Redraw the start near arm (upper arm, forearm, fist: the outline
-// of their union) dashed over the end figure, only where the end figure covers it. Engine body shapes, sampled on
-// the same Catmull-Rom spline it draws, on a 1000 px/m probe camera, mapped back to world metres for 'line'.
+// Start arm: the lockout arm and trunk cover the whole front-rack arm, so the engine's dashed start layer is invisible
+// there; the arm is redrawn over the end figure (START_ARM below).
 const cr = (ps, k = 8) => {
   const n = ps.length, g = i => ps[(i + n) % n], out = [];
   for (let i = 0; i < n; i++) {
@@ -136,28 +134,19 @@ const cr = (ps, k = 8) => {
   }
   return out;
 };
-const inside = (p, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-  const [xi, yi] = poly[i], [xj, yj] = poly[j];
-  if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
-function hiddenArm() {
+// Arm outlines of a pose as world polylines (side view, x = 0): the engine's own body shapes (bodyShapes), sampled on
+// the Catmull-Rom spline it draws, on a 1000 px/m probe camera, mapped back to world metres.
+const ARM_KEYS = s => ['shcap', 'upper', 'elbowcap', 'fore', 'fist'].map(k => `${k}.${s}`);
+function armShapes(pose, keys) {
   const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
-  const shapesOf = pose => bodyShapes(fk(resolve(normPose(pose, bd), bd).q, bd), probe)
-    .map(s => ({ key: s.key, pts: s.key.includes('cap') ? s.poly : cr(s.poly, s.key.startsWith('fist') ? 4 : 8) }));
-  const arm = shapesOf(start).filter(s => ['upper.r', 'fore.r', 'fist.r'].includes(s.key));
-  const cover = shapesOf(end).map(s => s.pts), items = [];
-  for (const s of arm) {
-    const others = arm.filter(o => o !== s).map(o => o.pts);
-    const vis = s.pts.map(p => !others.some(o => inside(p, o)) && cover.some(c => inside(p, c)));
-    const n = s.pts.length, i0 = vis.indexOf(false);
-    if (i0 < 0) { items.push([...s.pts, s.pts[0]]); continue; }
-    let run = [];
-    for (let k = 1; k <= n; k++) { const i = (i0 + k) % n;
-      if (vis[i]) run.push(s.pts[i]); else { if (run.length > 2) items.push(run); run = []; } }
-    if (run.length > 2) items.push(run);
-  }
-  return items.map(r => ({ type: 'line', pts: r.map(([x, y]) => [0, -y / 1000, x / 1000]), cls: 'eq-line m-line', z: 'front', part: 'startarm' }));
+  return bodyShapes(fk(resolve(normPose(pose, bd), bd).q, bd), probe).filter(sh => keys.includes(sh.key))
+    .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
 }
-const START_ARM = hiddenArm();
+// R1 (critic 10-03): the start (front-rack) arm drawn so it reads on its own over the lockout figure: each part of the
+// near arm as a closed 'eq' outline (card-surface fill, text-3 line: the ghost look), on top of the end figure, so it
+// separates from the torso instead of the earlier hidden dashed lines folded inside it. The FOREARMS VERTICAL leader
+// ends on this forearm.
+const START_ARM = armShapes(start, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']).map(pts => ({ type: 'poly', pts, cls: 'eq', z: 'front', part: 'startarm' }));
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 // Mistake (card plate.mistake, c5): elbows back at the start, forearms tilted, so the bar curves forward away from
 // the face. Drawn AT THE RACK POSITION (critic 10-02 R5: the fault at forehead height sat over the solid locked-out
@@ -165,8 +154,9 @@ const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Mat
 // MIS_DY), the elbow IK pole down and back in the sagittal plane (MIS_POLE, no flare), so the elbow sits 12.8 cm
 // behind and 30.9 cm below the bar and the forearm (33.5 cm in side view) tilts 22.5 deg, against -4.3 at the
 // correct start (misInfo). The engine's own faulty-arm outline lies inside the faulty (leaning) torso and is masked
-// there, so the faulty arm is drawn as Mistake guides, which are not masked: dashed capsules (upper arm, forearm) and
-// an elbow ring (`parts` limits the engine outline to the arms, so the leaning trunk is not outlined in red). A short
+// there, so the faulty arm is drawn as Mistake guides, which are not masked: the engine's own faulty-arm outline as
+// dashed red polylines on a light surface (MIS_HALO; `parts` limits the masked engine outline to the arms, so the
+// leaning trunk is not outlined in red). A short
 // arrow runs from the correct start elbow (under the bar) to the faulty one. The drift is the light part: a thin dashed
 // path from the faulty bar curving forward-up to a sleeve-size ring MIS_FWD in front of mid-foot at forehead height
 // (MIS_Y) (the card gives no distance).
@@ -187,23 +177,12 @@ export const misInfo = {
 const MB = [0, BAR0[1] + MIS_DY, BAR0[2] + MIS_DZ];   // the faulty bar
 const DRIFT = Array.from({ length: 13 }, (_, k) => { const t = k / 12;   // quadratic curve from the faulty bar: up first, then forward
   return [0, (1 - t) ** 2 * MB[1] + 2 * t * (1 - t) * MIS_Y + t * t * MIS_Y, (1 - t) ** 2 * MB[2] + 2 * t * (1 - t) * MB[2] + t * t * MIS_FWD]; });
-// closed capsule (side view, y-z plane) from a to b with end half-widths ra, rb
-function capsule(a, b, ra, rb) {
-  const d = [0, b[1] - a[1], b[2] - a[2]], L = Math.hypot(d[1], d[2]);
-  const u = [0, d[1] / L, d[2] / L], n = [0, -u[2], u[1]];
-  const at = (p, r, t) => [0, p[1] + (n[1] * Math.cos(t) + u[1] * Math.sin(t)) * r, p[2] + (n[2] * Math.cos(t) + u[2] * Math.sin(t)) * r];
-  const pts = [];
-  for (let k = 0; k <= 6; k++) pts.push(at(b, rb, -Math.PI / 2 + Math.PI * k / 6));
-  for (let k = 0; k <= 6; k++) pts.push(at(a, ra, Math.PI / 2 + Math.PI * k / 6));
-  return [...pts, pts[0]];
-}
-const FORE_R = [0.023 * H, 0.016 * H];                 // Winter-model forearm half-widths at the elbow and the wrist (m)
-const UPPER_R = [0.030 * H, 0.022 * H];                // upper-arm half-widths at the shoulder and the elbow (m)
-const MIS_ELBOW = LM_MIS['elbow.r'];
-const MIS_FORE = capsule(MIS_ELBOW, LM_MIS['grip.r'], FORE_R[0], FORE_R[1]);
-const MIS_UPPER = capsule(LM_MIS['shoulder.r'], MIS_ELBOW, UPPER_R[0], UPPER_R[1]);
-const ELBOW_DOT_R = 0.012;
-const MIS_ELBOW_DOT = Array.from({ length: 13 }, (_, k) => [0, MIS_ELBOW[1] + ELBOW_DOT_R * Math.sin(k * Math.PI / 6), MIS_ELBOW[2] + ELBOW_DOT_R * Math.cos(k * Math.PI / 6)]);
+// R5 (critic 10-03): in the Mistake view the lockout arm is faded (its parts redrawn over it as 'eq' outlines, the
+// ghost look, end layer, Mistake only), and the faulty front-rack arm is drawn on a card-surface patch of its own
+// (same method) with the engine's faulty-arm outline as dashed red guides on top, so it separates from the torso.
+const FADE_ARM = [...armShapes(end, ARM_KEYS('l')), ...armShapes(end, ARM_KEYS('r'))].map(pts => ({ type: 'poly', pts, cls: 'eq', z: 'front', part: 'fadearm' }));
+const MIS_ARM = armShapes({ ...end, ...mistakePose }, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']);
+const MIS_HALO = MIS_ARM.map(pts => ({ type: 'poly', pts, cls: 'eq', z: 'front', part: 'misarm' }));
 const RING_R = 0.025;
 const MB_RING = Array.from({ length: 17 }, (_, k) => [0, MB[1] + RING_R * Math.sin(k * Math.PI / 8), MB[2] + RING_R * Math.cos(k * Math.PI / 8)]);
 const DRIFT_RING = Array.from({ length: 17 }, (_, k) => [0, MIS_Y + RING_R * Math.sin(k * Math.PI / 8), MIS_FWD + RING_R * Math.cos(k * Math.PI / 8)]);
@@ -227,6 +206,7 @@ export default {
     // in every pose, so the start, ghosts and end bar positions read along the vertical path
     (lm, ctx) => [
       ctx.pose === 'end' ? { type: 'barbell', at: [0, lm.grips[1], lm.grips[2]], plates: [0.045], part: 'plate', z: 'back' } : null,
+      ...(ctx.pose === 'end' && ctx.mistake ? [...FADE_ARM, ...MIS_HALO] : []),
       { type: 'pulley', at: [0, lm.grips[1], lm.grips[2]], r: 0.025, part: 'bar', z: 'front' },
       // start bar dot, dashed, in front: the lockout arm covers the start layer (barbell_back_squat's workaround)
       ...(ctx.pose === 'end' ? [...(ctx.mistake ? [] : START_ARM), { type: 'line', cls: 'eq-line m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
@@ -247,7 +227,7 @@ export default {
   datum: [{ x: [0, 0, 0], from: 349, to: 20 }],
   measure: { vertex: 'shoulder.r', from: 'down', to: 'elbow.r', radius: 20, title: 'Shoulder', value: 'straight up', box: { left: 258, top: 172 } },
   callouts: [
-    { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: [{ at: 'elbow.r', pose: 'start' }, { at: 'grip.r', pose: 'start' }], t: 0.45, off: [-4, 0] }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
+    { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: [{ at: 'elbow.r', pose: 'start' }, { at: 'grip.r', pose: 'start' }], t: 0.45 }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
     { key: 'head', text: 'Head<br>through', anchor: 'chin', cue: 'Lean back slightly from the hips, then move under the bar as it passes.',
       guide: [{ at: 'ear', pose: 'start' }, 'ear'], box: { left: 258, top: 96 } },
     { key: 'midfoot', text: 'Over<br>mid-foot', anchor: { at: 'grip.r', off: [6, -2] }, cue: 'Lock out with the bar over your shoulders and mid-foot.' },
@@ -258,9 +238,7 @@ export default {
     parts: ['arm.r', 'arm.l'],
     guides: [
       { kind: 'arrow', from: { at: 'elbow.r', pose: 'start' }, to: { at: 'elbow.r', pose: 'mistake' } },   // elbow goes back
-      { kind: 'dashed', pts: MIS_UPPER },               // the faulty upper arm, hanging behind the bar
-      { kind: 'dashed', pts: MIS_FORE },                // the faulty forearm, tilted up to the bar
-      { kind: 'line', pts: MIS_ELBOW_DOT },              // the faulty elbow
+      ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty arm: elbow behind the bar, forearm tilted
       { kind: 'dashed', pts: MB_RING },                 // the faulty bar (sleeve), eased off the shoulders
       { kind: 'dashed', pts: DRIFT },                      // light: the bar's forward drift away from the face
       { kind: 'dashed', pts: DRIFT_RING },

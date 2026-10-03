@@ -15,7 +15,9 @@ import { ROOT, FIXTURE, sha256 } from '../../golden.mjs';
 const here = dirname(fileURLToPath(import.meta.url));
 const LIB = join(here, '..');
 export const OUT_DIR = join(here, 'out');
-const ALL = JSON.parse(readFileSync(join(here, 'plates.json'), 'utf8')).plates;
+const PLATES_JSON = JSON.parse(readFileSync(join(here, 'plates.json'), 'utf8'));
+const ALL = PLATES_JSON.plates;
+const HANDS = PLATES_JSON.hands ?? [];   // LIB-12 hand renders: shown on the sheet only (evidence images), never on the plates page
 const PILOT = ALL.filter(p => !p.held);   // held plates stay off both pages (supervisor ruling), one line each on the sheet
 const HELD = ALL.filter(p => p.held);
 const CARDS = join(here, 'cards');   // verified research cards (card v2), copied from claude/libht-research
@@ -127,6 +129,7 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
     if (altSpecs.length) await reportPlates(altSpecs.map(specPath), { shotsDir: join(OUT, 'shots') });
     const page = await (await browser.newContext()).newPage();
     for (const p of LIST) for (const x of p.extras ?? []) x.url = await webp(page, readFileSync(x.spec ? join(OUT, 'shots', `${x.spec}-dark-plate.png`) : join(here, x.image)));
+    for (const h of HANDS) h.urls = await Promise.all(h.images.map(f => webp(page, readFileSync(join(here, f)))));
   } finally { await browser.close(); }
 
   // 5. the sheet: the plates page with a row per card (card + aside), heading with the plates page sha
@@ -154,6 +157,17 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
     const re = new RegExp(`(<article class="sheet-card" id="card-${cid}"[\\s\\S]*?</article>)`);
     if (!re.test(sheet)) throw new Error(`${cid}: card not found in the sheet`);
     sheet = sheet.replace(re, `<div class="pilot-row" id="row-${cid}">$1${aside}</div>`);
+  }
+  // LIB-12 hand renders (sheet only): one row per hand kind, Silent Black and Paper, with its flags
+  if (HANDS.length) {
+    const rows = HANDS.map(h => `<div class="pilot-row" id="row-hand-${h.key}"><aside class="pilot-aside" aria-label="${esc(h.name)}: hand render">
+  <div class="pilot-meta"><span><b>${esc(h.name)}</b> · ${esc(h.id.replace(/_/g, ' '))}</span></div>
+  <ul class="pilot-flags">${h.flags.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
+  <div class="pilot-shots">${h.urls.map((u, i) => `<figure>${img(u, `${h.name}: ${i ? 'Paper' : 'Silent Black'}`, 'shot')}<figcaption>${i ? 'Paper' : 'Silent Black'}</figcaption></figure>`).join('')}</div>
+</aside></div>`).join('\n');
+    const end = sheet.lastIndexOf('\n</main>');
+    if (end < 0) throw new Error('sheet: </main> not found');
+    sheet = `${sheet.slice(0, end)}\n<section class="group" id="group-hands" aria-labelledby="group-hands-title"><h2 class="group-title" id="group-hands-title">Hand renders</h2>\n${rows}\n</section>${sheet.slice(end)}`;
   }
   const sheetFile = join(OUT, 'pilot-a-sheet.html');
   writeFileSync(sheetFile, sheet);

@@ -1,6 +1,6 @@
 // Romanian deadlift (barbell), side view, figure facing screen right.
 // View: side. Everything a coach checks (hips travelling back, soft knees, trunk angle, a neutral spine, the bar
-// sliding down the thighs over mid-foot) is sagittal.
+// sliding down the legs) is sagittal.
 // Sources: research card docs/research/howto/cards/romanian_deadlift.json (card v2, verified at claude/libht-research e2a70bc): claims c1-c7, c9, c10, c20
 //  (ace-romanian-deadlift, sl-romanian-deadlift, nasm-rdl, acsm2009). Callouts = the card's 3 plate.checkpoints
 //  (c2 Hips back, c3 Bar close, c5 Flat back); Mistake = plate.mistake (c7); tempo = plate.tempo (c20: 2 s down,
@@ -16,19 +16,21 @@
 //  Hinge method (as barbell_back_squat key()): trunk inclination = pelvis tilt + lumbar flexion (spine near
 //   neutral, c5, c10). For each key pose the root is SOLVED, not placed by eye: its height gives the knee angle
 //   exactly, its fore-aft position makes the bar (hanging at arm's length from the shoulders) sit exactly over
-//   mid-foot AND 5 mm in front of the near leg's drawn surface (thigh, kneecap or shin): the bar slides down the
-//   legs (c3). `checks` prove the bar over mid-foot at start and end.
+//   mid-foot (start) or the arms hang ARM_BACK (end, via), AND the bar sits 5 mm in front of the near leg's drawn
+//   surface (thigh, kneecap or shin): the bar slides down the legs (c3). `checks` prove the start bar over mid-foot.
 //  Start (c1): standing, bar on the front of the thighs; the trunk lean (17 deg) is SOLVED so the shoulders sit
 //   straight over the bar (arms plumb); spine neutral.
-//  End (CARD c6, bar at about mid-shin): the trunk angle is SOLVED so the bar centre is at the height of the
-//   mid-point of the near shank (knee to ankle joint centres), proved by a `checks` plane at MID_SHIN (0.0 cm).
-//   Result: thorax 95 deg from vertical (5 deg below horizontal) = pelvis 90 + lumbar 5, hip flexion 105 deg, neck
-//   in line with the thorax. The trunk angle is not a card number; it follows from c4 and c6.
-//   Balance (Winter 2009 segment masses, scratch script): body COM 5.6 cm behind mid-foot standing and 5.2 cm
-//   ahead at the bottom, with a bar of 0.8 x body mass 3.1 cm behind and 2.9 cm ahead: inside the foot (heel -12,
-//   toe +13 cm) throughout.
-//  One via pose (half the bottom trunk angle) is solved the same way, so the traced bar path is vertical over
-//   mid-foot and the bar never passes through the thighs between key poses.
+//  End (CARD c6, bar at about mid-shin; critic 10-03 R1: hips well back, a loaded arm hanging near vertical): the
+//   straight arms hang ARM_BACK (10 deg) back from vertical, the root's fore-aft position is SOLVED so the bar
+//   touches the shin (BAR_GAP), and the trunk angle so the bar centre is at the height of the mid-point of the near
+//   shank, proved by a `checks` plane at MID_SHIN (0.0 cm). Result (rdlInfo): hips 40 cm behind mid-foot (28 cm
+//   behind the heel), thighs 30 deg and shins 15 deg back from vertical at the fixed 15 deg knee, trunk 82 deg from
+//   vertical, shoulders 6 cm ahead of mid-foot, the bar 6 cm behind it against the shin. The earlier bottom kept the
+//   bar over mid-foot with the hips only 6 cm behind the heels, so the arm hung 27 deg back (critic R1). No mid-foot
+//   plumb line: the bar drifts 6 cm back along the legs (c3, bar close), which the card allows (c6: depth, c4: knees).
+//   The trunk angle is not a card number; it follows from c4, c6 and ARM_BACK.
+//  One via pose (half the bottom trunk angle) is solved the same way, so the bar slides along the legs between key
+//   poses and never passes through the thighs.
 //  Mistake (c7, plate.mistake + handlingMistakes "rounding the lower back to get the bar lower"): feet, knees and
 //   hips as in the correct bottom; the pelvis tucks M_TUCK (25 deg, illustrative: the card gives no number) and the
 //   lumbar spine flexes until the hanging bar's 45 cm plates reach the floor (solved: 39 deg lumbar flexion). The
@@ -36,7 +38,8 @@
 //   lower back (sacrum to mid-back, 10 px hump: the pose alone draws ~3 px), a red arrow onto its top where the
 //   LOWER BACK ROUNDS tell ends, and an arrow from the correct bar to the faulty one.
 // CARD: KNEE (c4, 15 deg), bottom bar height (c6, mid-shin), stance (c10) and grip (c9) widths; tempo (c20).
-// Unsourced (not on the card, geometry choices above): the 5 deg lumbar flexion, 5 deg toe-out, the 5 mm bar gap.
+// Unsourced (not on the card, geometry choices above): the 5 deg lumbar flexion, 5 deg toe-out, the 5 mm bar gap,
+//  ARM_BACK (10 deg: the critic's "within about 10 degrees of vertical").
 import { landmarksOf, RADII } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -80,25 +83,35 @@ const bisect = (f, a, b) => {
 const hipY = (z, knee, incl, spine) => bisect(y => kneeOf(landmarksOf(body(y, z, incl, spine), H)) - knee, 0.5, 0.935);
 // Bar over mid-foot at arm's length below the shoulders.
 const barFor = lm => { const S = lm['shoulder.r'], dx = GRIP_X - Math.abs(S[0]); return [0, S[1] - Math.sqrt(REACH ** 2 - S[2] ** 2 - dx * dx), 0]; };
-function key(knee, incl, spine) {
-  const gapAt = z => { const lm = landmarksOf(body(hipY(z, knee, incl, spine), z, incl, spine), H); return legGap(lm, barFor(lm)) - BAR_GAP; };
-  const z = bisect(gapAt, -0.40, -0.04);
-  const pose = body(hipY(z, knee, incl, spine), z, incl, spine), bar = barFor(landmarksOf(pose, H));
-  return { ...pose, reach: { l: { at: [GRIP_X, bar[1], 0], pole: [0.2, 0, -1] }, r: { at: [-GRIP_X, bar[1], 0], pole: [-0.2, 0, -1] } } };
+// Bar at arm's length from the shoulders, the straight arm hanging ARM_BACK deg back from vertical (critic 10-03 R1:
+// a loaded arm hangs near vertical; 27 deg read as pulled back).
+const ARM_BACK = 10;
+const Z_HANG = [-0.45, -0.25];                         // root fore-aft bracket for the hanging-arm solve (one contact, in front of the shin)
+const hangFor = lm => { const S = lm['shoulder.r'], dx = GRIP_X - Math.abs(S[0]), L = Math.sqrt(REACH ** 2 - dx * dx);
+  return [0, S[1] - L * Math.cos(ARM_BACK * R), S[2] - L * Math.sin(ARM_BACK * R)]; };
+function key(knee, incl, spine, hang = barFor, zr = [-0.40, -0.04]) {
+  const gapAt = z => { const lm = landmarksOf(body(hipY(z, knee, incl, spine), z, incl, spine), H); return legGap(lm, hang(lm)) - BAR_GAP; };
+  const z = bisect(gapAt, ...zr);
+  const pose = body(hipY(z, knee, incl, spine), z, incl, spine), bar = hang(landmarksOf(pose, H));
+  return { ...pose, reach: { l: { at: [GRIP_X, bar[1], bar[2]], pole: [0.2, 0, -1] }, r: { at: [-GRIP_X, bar[1], bar[2]], pole: [-0.2, 0, -1] } } };
 }
 
 // Mid-shin (CARD c6): the bottom trunk angle is SOLVED so the bar centre sits at the height of the mid-point of the
 // near shank (knee to ankle joint centres). Not a card number: it follows from the knee angle and the depth.
 const midShin = lm => (lm['knee.r'][1] + lm['ankle.r'][1]) / 2;
-const barDepth = incl => { const lm = landmarksOf(key(KNEE, incl, END_SPINE), H); return lm.grips[1] - midShin(lm); };
-const END_INCL = bisect(barDepth, 50, 110);
+const barDepth = incl => { const lm = landmarksOf(key(KNEE, incl, END_SPINE, hangFor, Z_HANG), H); return lm.grips[1] - midShin(lm); };
+const END_INCL = bisect(barDepth, 70, 100);
 // Standing: the trunk lean is SOLVED so the shoulders sit straight over the bar (arms hanging plumb, bar resting on
 // the thighs over mid-foot, c1).
 const START_INCL = bisect(incl => landmarksOf(key(KNEE, incl, START_SPINE), H)['shoulder.r'][2], 0, 30);
 const start = key(KNEE, START_INCL, START_SPINE);
-const via = [key(KNEE, END_INCL / 2, VIA_SPINE)];
-const end = key(KNEE, END_INCL, END_SPINE);
+const via = [key(KNEE, END_INCL / 2, VIA_SPINE, hangFor, Z_HANG)];
+const end = key(KNEE, END_INCL, END_SPINE, hangFor, Z_HANG);
 const LE = landmarksOf(end, H), MID_SHIN = midShin(LE);
+const angleFromVertical = (a, b) => Math.atan2(Math.abs(a[2] - b[2]), Math.abs(a[1] - b[1])) / R;
+export const rdlInfo = { endIncl: +END_INCL.toFixed(1), hipZ: +LE['hip.r'][2].toFixed(3), heelZ: +LE['heel.r'][2].toFixed(3), barZ: +LE.grips[2].toFixed(3),
+  shoulderZ: +LE['shoulder.r'][2].toFixed(3), armDeg: +angleFromVertical(LE['shoulder.r'], LE['grip.r']).toFixed(1),
+  thighDeg: +angleFromVertical(LE['hip.r'], LE['knee.r']).toFixed(1), shinDeg: +((LE['knee.r'][2] - LE['ankle.r'][2]) / Math.hypot(LE['knee.r'][1] - LE['ankle.r'][1], LE['knee.r'][2] - LE['ankle.r'][2])).toFixed(3) };
 
 // Mistake (card plate.mistake, c7): the lower back rounds as the bar is reached down. Hips, knees and feet stay as in
 // the correct bottom; the pelvis tucks (M_TUCK) and the lumbar spine flexes until the hanging bar's 45 cm plates
@@ -154,15 +167,12 @@ export default {
     { landmark: 'heel.l', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'ball.l', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'start', tol: 0.5 }, // bar over mid-foot
-    { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'end', tol: 0.5 },
     { landmark: 'grips', plane: { point: [0, MID_SHIN, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0.5 }, // c6 mid-shin
     { landmark: 'grips', above: { point: [0, PLATE_R, 0], normal: [0, 1, 0] }, pose: 'mistake' },      // plates on, not in, the floor
   ],
   startParts: ['trunk', 'leg.r', 'arm.r'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  // Mid-foot plumb line (as the squat): the bar travels down it. Extended shin: the reference ray of the knee arc.
-  datum: [{ x: [0, 0, 0], from: 349, to: 60 }],
   // R4 (round 3): the knee angle drawn AT the knee (as barbell_row): the arc between thigh and shin, round the back of
   // the knee. The earlier flexion arc (shin extension to thigh) was only 15 deg wide at 28 px and floated on the thigh.
   measure: { vertex: 'knee.r', from: 'hip.r', to: 'ankle.r', radius: 18, title: 'Knee', value: 'about 15° bend', expect: 180 - KNEE },
@@ -190,5 +200,5 @@ export default {
       { key: 'reach', text: 'Bar<br>too low', anchor: 'grip.r', cue: 'The bar is reached down to the floor by rounding the back.' },
     ],
   },
-  alt: 'Romanian deadlift, side view. Standing tall with the bar at the thighs and knees about 15 degrees bent, the lifter pushes the hips back with a flat back, keeping the knee bend fixed and the bar close to the legs down to about mid-shin, over the middle of the foot.',
+  alt: 'Romanian deadlift, side view. Standing tall with the bar at the thighs and knees about 15 degrees bent, the lifter pushes the hips back with a flat back, keeping the knee bend fixed and the bar close to the legs down to about mid-shin.',
 };
