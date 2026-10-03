@@ -241,6 +241,29 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     const noRange = P.indexOf(withMods(m => { key(m, 'curl').VARIANTS.dumbbell.wristRange = null; }));
     expect(C.pairProblems('hammer_curl', noRange).join('\n')).toMatch(/G1 no wrist range/);
   }, 60_000);
+  it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
+    // the LIB-7 radial sheet, byte for byte as before the ruling (sha256 of buildSheet().body on 66c13ef + main 4aa1b2a)
+    const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
+    expect(sha256((await sheet.buildSheet()).body)).toBe('626f842527a8415d94c5f6c88b15340f9d54834033345cd0d561784d14388689');
+    expect(sha256((await sheet.buildSheet({ critic: true })).body)).toBe('0d4c054d82c1649ed7d4376445738536d5283a247c2368a5ea00bf343464af51');
+    const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
+      render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
+      VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },
+        faults: { f: { label: 'Wrist bent back', side: 'extended', pose: {}, markers: [], claims: ['shared/zz-view.json#c2'] } } } },
+      IDS: { zz_planted_id: { variant: 'v', orientation: 'unstated', faults: ['f'], claims: [] } }, ...extra });
+    const lib7 = clone().filter((m: any) => m.OWNER === 'LIB-7');
+    const tileOf = (body: string) => body.slice(body.indexOf('zz_planted_id'));
+    const withText = tileOf((await sheet.buildSheet({ mods: [...lib7, own({ CLAIMS_TEXT: { 'shared/zz-view.json#c1': 'Planted claim text one.' },
+      FLAGS: ['planted flag'], checks: () => [] })] })).body);
+    expect(withText).toContain('shared/zz-view.json#c1: Planted claim text one.');
+    expect(withText).toContain('shared/zz-view.json#c2: (unresolved)');     // not in claims.json nor CLAIMS_TEXT
+    expect(withText).toContain('<li>planted flag</li>');
+    expect(withText).toContain('Checks: ok');
+    expect(withText).not.toContain('D-LIB7-2');
+    expect(withText).not.toContain('G1-G9 ok');
+    const failing = tileOf((await sheet.buildSheet({ mods: [...lib7, own({ checks: () => ['zz: planted problem'] })] })).body);
+    expect(failing).toContain('zz: planted problem');
+  }, 120_000);
   it('diameter: a radial key without one fails; a non-radial view without a handle is allowed (LIB-12 ask)', () => {
     expect(() => P.pairSpec('rope_triceps_pushdown', P.indexOf(withMods(m => { delete key(m, 'rope').HANDLE.diameterMm; })))).toThrow(/no explicit handle diameter/);
     const flat = { KEY: 'zz-flat', OWNER: 'LIB-12', VIEW: 'palm-flat', FILE: 'x', render: () => ({ svg: '<svg></svg>', report: {} }),
