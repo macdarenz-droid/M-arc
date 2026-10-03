@@ -2681,6 +2681,14 @@ for (const theme of ['silent-black', 'paper']) {
   const dist10 = box.height * 0.1;
   await touchDrag(page, box.x + box.width / 2, box.y + 10, box.x + box.width / 2, box.y + 10 + dist10, Math.round(dist10 / 0.15));
   await page.waitForTimeout(450);
+  // GATE-FLAKE-1 (D-GATEFLAKE-1): read the panel once its spring-back has really finished (bounded at 2 s), then
+  // one rendered frame. The fixed 450 ms alone raced the animation: a renderer that produced no frame in that
+  // window still held the spring-back pending, so the panel read its first keyframe, the full drag offset.
+  await page.evaluate(() => {
+    const p = [...document.querySelectorAll('dialog.sheet[open] .sheet-panel')].at(-1);
+    const done = Promise.all((p?.getAnimations() ?? []).map(a => a.finished.catch(() => {})));
+    return Promise.race([done, new Promise(r => setTimeout(r, 2000))]).then(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  });
   const tyBack = await panelTy();
   if (tyBack !== 0) errors.push(`${tag}: expected the panel back at ty 0 after a short drag, got ${tyBack}`);
   if (!(await openCount())) errors.push(`${tag}: a short 10%-of-height drag closed the sheet`);
@@ -4930,8 +4938,13 @@ for (const theme of ['silent-black', 'paper']) {
     return { inLaunch: !!el?.closest('#launch'), inDialog: !!el?.closest('dialog[open]') };
   }, [cx, cy]);
   if (!hit.inLaunch || hit.inDialog) errors.push(`${tag}: at 300ms the centre point should hit #launch, not a dialog: ${JSON.stringify(hit)}`);
+  // GATE-FLAKE-1 (D-GATEFLAKE-2): the 300 ms from tap to removal run from when the tap actually landed (its
+  // pointerdown on the page clock), not from a nominal 300 ms. Under CPU load the click itself can land at
+  // 400-500 ms, and a fixed 600 ms deadline then failed an overlay that left 240 ms after the tap.
+  await page.evaluate(() => addEventListener('pointerdown', e => { window.__qa12TapAt ??= e.timeStamp - window.__marcLaunchT0; }, { capture: true, once: true }));
   await page.mouse.click(cx, cy);
-  await elapsedAtLeast(page, 600);
+  const tapAt = await page.waitForFunction(() => window.__qa12TapAt, null, { timeout: 2000 }).then(h => h.jsonValue()).catch(() => 300);
+  await elapsedAtLeast(page, Math.max(300, tapAt) + 300);
   if (await page.evaluate(() => !!document.getElementById('launch'))) errors.push(`${tag}: a real mouse click at 300ms should have removed #launch by 600ms`);
   if (!(await visible(page.locator('dialog[open]')))) errors.push(`${tag}: expected the onboarding sheet to open once #launch is gone`);
   await ctx.close();
@@ -6758,7 +6771,18 @@ for (const theme of ['silent-black', 'paper']) {
     const { ctx, page } = await H.openAppTrain(browser, PORT, 'silent-black');
     await H.openCard(page, squatIdx);
     const { reset } = await P.throttleCpu(page, 4);
-    const stopLongTasks = await P.observeLongTasks(page);
+    // GATE-FLAKE-1 (D-GATEFLAKE-3): P.observeLongTasks observes with buffered: true, which also replays the
+    // page's own boot task (startTime about 100 ms, unthrottled, seconds before these opens) into this budget.
+    // Only tasks that start once the opens are observed count.
+    const stopLongTasks = await page.evaluate(() => {
+      const from = performance.now();
+      const tasks = [];
+      const keep = entries => { for (const e of entries) if (e.startTime >= from) tasks.push(e.duration); };
+      const observer = new PerformanceObserver(list => keep(list.getEntries()));
+      observer.observe({ type: 'longtask', buffered: true });
+      // Entries still queued at stop() are taken, not dropped.
+      window.__marcStopOpenLongTasks = () => { keep(observer.takeRecords()); observer.disconnect(); return tasks; };
+    }).then(() => () => page.evaluate(() => window.__marcStopOpenLongTasks()));
     const { median, samples } = await P.medianOf(async () => {
       const tr0 = Date.now();
       await page.locator('button.ht-entry').click();
