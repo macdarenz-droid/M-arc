@@ -89,12 +89,12 @@ export function problemsOf(spec, pages) {
     // none on a gravity curl (lateral raise) or the rope, whose load direction no source gives
     const hasLoad = /class="h-load/.test(svg), wantLoad = spec.loadAxis === 'along-forearm' || spec.mod.VARIANTS[spec.variant].archetype === 'pull';
     if (hasLoad !== wantLoad) bad.push(`${at}: G6 force line ${hasLoad ? 'drawn' : 'missing'}`);
-    // G6: a push Right on the heel draws no force line, as golden B's squat Right (D-LIB7-18a): the contact, the pivot and
-    // the wrist tick stay; a variant that routes its line through the pivot instead gets the pivot checks below
+    // G6: a push Right on the heel draws no force line and so no wrist tick, as golden B's squat Right (D-LIB7-18a/b): the
+    // contact dot and the pivot stay; a variant that routes its line through the pivot instead gets the pivot checks below
     const Vr = spec.mod.VARIANTS[spec.variant], rightPart = svg.slice(svg.indexOf('<g class="h-panel right">'), svg.indexOf('<g class="h-panel wrong">'));
     if (Vr.archetype === 'push' && spec.contact === 'heel' && !Vr.loadThroughPivot) {
       if (/class="h-load"/.test(rightPart)) bad.push(`${at}: G6 push Right draws a force line`);
-      if (!/class="h-tick"/.test(rightPart)) bad.push(`${at}: G6 push Right lost its wrist tick`);
+      if (/class="h-tick"/.test(rightPart)) bad.push(`${at}: G6 push Right with no force line draws a wrist tick`);
       if (!/class="h-contact"/.test(rightPart)) bad.push(`${at}: G6 push Right lost its contact dot`);
     }
     // G6: a Right line routed through the wrist pivot passes within 0.5 px of it and runs along the forearm axis (D-LIB7-14, 18)

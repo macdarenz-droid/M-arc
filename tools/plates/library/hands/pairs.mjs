@@ -191,16 +191,18 @@ function knobRings(svg, knobMm, k) {
   }
   return { svg, knobs };
 }
-/** The Right half without its force line (golden-B squat Right precedent, D-LIB7-18a): the line and its head go; the
- *  contact dot, the pivot and the engine's reference wrist tick stay. The Wrong half keeps its line (the lever it shows). */
+/** The Right half without its force line (golden-B squat Right precedent, D-LIB7-18a/b): the line, its head and the
+ *  wrist tick that marks where the line crosses the wrist go; the contact dot and the pivot stay. The Wrong half keeps
+ *  its line (the lever it shows). */
 function rightNoLoad(svg) {
   const at = svg.indexOf('<g class="h-panel right">'), end = svg.indexOf('<g class="h-panel wrong">');
   if (at < 0 || end < at) throw new Error('hand pairs: right without load: no panels');
   const part = svg.slice(at, end), re = /<path class="h-load" d="[^"]*"\/><path class="h-load-head" d="[^"]*"\/>/g;
   const n = part.match(re)?.length ?? 0;
   if (n !== 1) throw new Error(`hand pairs: right without load: ${n} Right force lines, expected 1`);
-  if (!/<path class="h-tick" d="[^"]*"\/>/.test(part)) throw new Error('hand pairs: right without load: no wrist tick');
-  return svg.slice(0, at) + part.replace(re, '') + svg.slice(end);
+  const tick = /<path class="h-tick" d="[^"]*"\/>/g, t = part.match(tick)?.length ?? 0;
+  if (t !== 1) throw new Error(`hand pairs: right without load: ${t} wrist ticks, expected 1`);
+  return svg.slice(0, at) + part.replace(re, '').replace(tick, '') + svg.slice(end);
 }
 /** A push on the heel runs through the wrist: the Right half's force line is drawn straight down the forearm axis through
  *  the wrist pivot, starting level with the contact, same length (D-LIB7-18; the Wrong half keeps the engine's line

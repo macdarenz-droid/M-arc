@@ -26,7 +26,7 @@ export const curlVariant = ({ wristClaims = CURL_WRIST, bentBackClaims = ['share
 
 /** Push: handle in the heel of the palm, thumb wrapped, wrist straight; Wrong: bent back with the handle in the fingers.
  *  The Right is golden B's approved squat Right (contactAt -0.1, wrist 8 deg; D-LIB7-14, measured by G4) and, as there,
- *  draws no force line: the contact dot, the pivot and the engine's wrist tick (D-LIB7-18a, G6); the forearm stands vertical, as in the pushdown and the skull crusher, so a
+ *  draws no force line and no wrist tick: the contact dot and the pivot (D-LIB7-18a/b, G6); the forearm stands vertical, as in the pushdown and the skull crusher, so a
  *  single handle with no stated orientation implies none (D-LIB7-12). */
 export const pushVariant = ({ thumbClaims, wristClaims, bentBackClaims, handle }) => ({
   archetype: 'push', loadAxis: 'along-forearm', rightLoad: false,
