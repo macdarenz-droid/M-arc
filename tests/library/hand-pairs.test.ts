@@ -170,7 +170,8 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     expect(C.problemsOf(ez.spec, bf).join('\n')).toMatch(/G8 palm down for the angled grip/);
   });
   it('no two drawn ids of one variant with different palm directions draw the same hand', () => {
-    const ids = C.sweep(P.INDEX.drawn.keys(), 14, 'drawn ids'), bad: string[] = [];
+    // LIB-7's own drawn ids only, so another card's drawn ids never move this count (D-LIB7-PIN2)
+    const ids = C.sweep([...P.INDEX.drawn].filter(([, e]: any) => e.mod.OWNER === 'LIB-7').map(([id]: any) => id), 14, 'LIB-7 drawn ids'), bad: string[] = [];
     for (const a of ids) for (const b of ids) {
       const A = P.pairSpec(a), B = P.pairSpec(b);
       if (a >= b || A.pair !== B.pair || !!A.right.mirror === !!B.right.mirror) continue;
