@@ -150,21 +150,21 @@ const START_ARM = armShapes(start, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 // Mistake (card plate.mistake, c5): elbows back at the start, forearms tilted, so the bar curves forward away from
 // the face. Drawn AT THE RACK POSITION (critic 10-02 R5: the fault at forehead height sat over the solid locked-out
-// arm and did not read as elbows back; 10-03 R5: draw it clear of the torso, the elbow well back and lower): the
-// start body, the bar eased off the shoulders, 3 cm forward and 15 cm down (MIS_DZ, MIS_DY), the elbow IK pole down
-// and back square to the shoulder-bar line (MIS_POLE, no flare). The elbow then sits 27.7 cm behind and 20.1 cm below
-// the bar, behind the back line, and the forearm (34.2 cm in side view) tilts 54 deg, against -4.3 at the correct
-// start (misInfo). The engine's own faulty-arm outline lies inside the faulty (leaning) torso and is masked there, so
+// arm and did not read as elbows back; 10-03 R5, twice: the bar on the front delts outside the chest outline, the elbow
+// behind it, the forearm tilted ~30 deg): the start body, the bar eased off the shoulders 19 cm forward and 7 cm down
+// (MIS_DZ, MIS_DY), the elbow IK pole down and back (MIS_POLE, little flare). The elbow then sits 17.5 cm behind and
+// 29.2 cm below the bar and the forearm (34.0 cm in side view) tilts 30.9 deg, against -4.3 at the correct start
+// (misInfo). The engine's own faulty-arm outline lies inside the faulty (leaning) torso and is masked there, so
 // the faulty arm is drawn as Mistake guides, which are not masked: the engine's faulty-arm outline as dashed red
 // polylines (`parts` limits the masked engine outline to the arms, so the leaning trunk is not outlined in red). A
 // short arrow runs from the correct start elbow (under the bar) to the faulty one. The drift is the light part: a thin
-// dashed path from the faulty bar curving forward-up to a sleeve-size ring MIS_FWD in front of mid-foot at forehead
-// height (MIS_Y) (the card gives no distance).
-const MIS_POLE = [0.05, -0.77, -0.63];                // elbow IK pole: down and back, square to the shoulder-bar line (elbows back, c5)
-const MIS_DZ = 0.03, MIS_DY = -0.15;                   // m: the faulty bar sits this far in front of and below its rack spot
+// dashed path from the faulty bar curving up and forward, in front of the face, to a sleeve-size ring MIS_FWD in front
+// of mid-foot above forehead height (MIS_Y), with an arrowhead (the card gives no distance).
+const MIS_POLE = [0.05, -0.6, -0.8];                   // elbow IK pole: down and back (elbows back, c5), forearm ~30 deg
+const MIS_DZ = 0.19, MIS_DY = -0.07;                   // m: the faulty bar sits this far in front of and below its rack spot
                                                        //  (eased off the shoulders), so the elbow can drop behind it
-const MIS_FWD = 0.20;                                  // m the bar drifts forward of mid-foot (card: "away from the face")
-const MIS_Y = 1.70;                                    // m: forehead height, where the drifting bar is drawn
+const MIS_FWD = 0.34;                                  // m the bar drifts forward of mid-foot (card: "away from the face")
+const MIS_Y = 1.78;                                    // m: forehead height, where the drifting bar is drawn
 const mistakePose = { ...startBody, reach: {   // pole in the sagittal plane (no elbow flare), so the tilted forearm shows full length
   l: { at: [GRIP_X, BAR0[1] + MIS_DY, BAR0[2] + MIS_DZ], pole: [MIS_POLE[0], MIS_POLE[1], MIS_POLE[2]] },
   r: { at: [-GRIP_X, BAR0[1] + MIS_DY, BAR0[2] + MIS_DZ], pole: [-MIS_POLE[0], MIS_POLE[1], MIS_POLE[2]] } } };
@@ -176,10 +176,19 @@ export const misInfo = {
 };
 const MB = [0, BAR0[1] + MIS_DY, BAR0[2] + MIS_DZ];   // the faulty bar
 const DRIFT = Array.from({ length: 13 }, (_, k) => { const t = k / 12;   // quadratic curve from the faulty bar: up first, then forward
-  return [0, (1 - t) ** 2 * MB[1] + 2 * t * (1 - t) * MIS_Y + t * t * MIS_Y, (1 - t) ** 2 * MB[2] + 2 * t * (1 - t) * MB[2] + t * t * MIS_FWD]; });
-// R5 (critic 10-03): in the Mistake view the lockout arm is faded (its parts redrawn over it as 'eq' outlines, the
-// ghost look, end layer, Mistake only); the start arm is not drawn there, and the faulty arm has no patch under it.
-const FADE_ARM = [...armShapes(end, ARM_KEYS('l')), ...armShapes(end, ARM_KEYS('r'))].map(pts => ({ type: 'poly', pts, cls: 'eq', z: 'front', part: 'fadearm' }));
+  return [0, (1 - t) ** 2 * MB[1] + 2 * t * (1 - t) * MIS_Y + t * t * MIS_Y, (1 - t) ** 2 * MB[2] + 2 * t * (1 - t) * MB[2] + t * t * (MIS_FWD - 0.025)]; });   // ends at the ring (RING_R)
+// R5 (critic 10-03, twice): in the Mistake view the lockout arm is faded to the start-pose ghost look: each arm part
+// redrawn over it, grown 1.5 plate px (GROW) so the body's 2 px outline is covered, as a card-coloured fill with a thin
+// dashed outline ('eq m-line', end layer, Mistake only). The start arm is not drawn there.
+const GROW = 1.5 / Math.min(REF_CAMERA.pxPerM, (REF_CAMERA.y0 - 16) / Math.max(BAR1[1] + 0.225, 2.40));   // CAMERA.pxPerM (below)
+function grow(pts) {                                  // offsets a closed side-view polygon (world [x, y, z]) outward by GROW
+  const n = pts.length, area = pts.reduce((a, p, i) => { const q = pts[(i + 1) % n]; return a + p[2] * q[1] - q[2] * p[1]; }, 0), sg = Math.sign(area);
+  return pts.map((p, i) => {
+    const a = pts[(i + n - 1) % n], b = pts[(i + 1) % n], nz = (b[1] - a[1]) * sg, ny = -(b[2] - a[2]) * sg, l = Math.hypot(nz, ny) || 1;
+    return [p[0], p[1] + ny / l * GROW, p[2] + nz / l * GROW];
+  });
+}
+const FADE_ARM = [...armShapes(end, ARM_KEYS('l')), ...armShapes(end, ARM_KEYS('r'))].map(pts => ({ type: 'poly', pts: grow(pts), cls: 'eq m-line', z: 'front', part: 'fadearm' }));
 const MIS_ARM = armShapes({ ...end, ...mistakePose }, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']);
 const RING_R = 0.025;
 const MB_RING = Array.from({ length: 17 }, (_, k) => [0, MB[1] + RING_R * Math.sin(k * Math.PI / 8), MB[2] + RING_R * Math.cos(k * Math.PI / 8)]);
@@ -240,6 +249,7 @@ export default {
       { kind: 'dashed', pts: MB_RING },                 // the faulty bar (sleeve), eased off the shoulders
       { kind: 'dashed', pts: DRIFT },                      // light: the bar's forward drift away from the face
       { kind: 'dashed', pts: DRIFT_RING },
+      { kind: 'arrow', from: [0, MIS_Y, MIS_FWD - 0.11], to: [0, MIS_Y, MIS_FWD - RING_R] },   // arrowhead: the drift's direction
     ],
     tells: [
       { key: 'elbows', text: 'Elbows back', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'The elbows sit behind the bar, so your forearms tilt.' },

@@ -126,21 +126,27 @@ const M_SPINE = bisect(sp => hangFrom(landmarksOf(mistOf(sp), H))[1] - PLATE_R -
 const MIST_BAR = hangFrom(landmarksOf(mistOf(M_SPINE), H));
 const mistakePose = { root: mistOf(M_SPINE).root, trunk: M_SPINE,
   reach: { l: { at: [GRIP_X, MIST_BAR[1], MIST_BAR[2]], pole: [0.2, 0, -1] }, r: { at: [-GRIP_X, MIST_BAR[1], MIST_BAR[2]], pole: [-0.2, 0, -1] } } };
-// R5 (round 3): the engine bends the spine at one lumbar point and blends the outline over ~10 cm, so the drawn hump
-// of the rounded back is only ~3 px. A dashed curve along the lower back (mistake guides are drawn on top, not
-// masked) shows the rounding: from the sacrum to the mid-back of the faulty pose, bulging HUMP (7 cm, 10 px) out
-// of the straight line between them at its middle. The red arrow points at the top of that hump.
-const HUMP = 0.07;
-const LM_M = landmarksOf({ ...end, ...mistakePose }, H);
+// R5 (round 3; critic 10-03 on e82d415: "one continuous convex arc from the hip to the dropped shoulders, ~30 px above
+// the flat back"): the engine bends the spine at one lumbar point and blends the outline over ~10 cm, so the drawn
+// hump is only ~3 px. A dashed Mistake guide (guides are not masked) draws the rounded back as one quadratic arc from
+// the faulty sacrum (hip) to the faulty neck (the dropped shoulders), its middle HUMP above the middle of the correct
+// flat back (sacrum to upper back of the end pose); the red faulty head continues it, lowered. A red arrow points at
+// the arc's top from outside. HUMP 9.4 cm = 13.7 plate px = ~30 px in the 780 px shots.
+const HUMP = 0.094;
+const LM_M = landmarksOf({ ...end, ...mistakePose }, H), LM_E0 = landmarksOf(end, H);
 const HUMP_PTS = (() => {
-  const A = LM_M.sacrum, B = LM_M.backMid, M = A.map((v, i) => (v + B[i]) / 2), d = [0, B[1] - A[1], B[2] - A[2]], L = Math.hypot(...d);
+  const A = LM_M.sacrum, B = LM_M.neck, flat = LM_E0.sacrum.map((v, i) => (v + LM_E0.backUpper[i]) / 2);
+  const d = [0, LM_E0.backUpper[1] - LM_E0.sacrum[1], LM_E0.backUpper[2] - LM_E0.sacrum[2]], L = Math.hypot(...d);
   let n = [0, -d[2] / L, d[1] / L];
-  if ((LM_M.chest[1] - M[1]) * n[1] + (LM_M.chest[2] - M[2]) * n[2] > 0) n = n.map(v => -v);   // away from the chest
-  const C = M.map((v, i) => v + n[i] * 2 * HUMP);                                                // quadratic control point
-  const pts = Array.from({ length: 13 }, (_, k) => { const t = k / 12; return A.map((v, i) => (1 - t) ** 2 * v + 2 * t * (1 - t) * C[i] + t * t * B[i]); });
-  return { pts, apex: pts[6], n };
+  if (n[1] < 0) n = n.map(v => -v);                                                              // up, away from the chest
+  const P = flat.map((v, i) => v + n[i] * HUMP), C = P.map((v, i) => 2 * v - (A[i] + B[i]) / 2);   // the arc passes P at t = 0.5
+  const pts = Array.from({ length: 17 }, (_, k) => { const t = k / 16; return A.map((v, i) => (1 - t) ** 2 * v + 2 * t * (1 - t) * C[i] + t * t * B[i]); });
+  return { pts, apex: pts[8], n };
 })();
 const HUMP_OUT = k => HUMP_PTS.apex.map((v, i) => v + HUMP_PTS.n[i] * k);
+// The ROUNDS tell: anchored on the faulty lumbar landmark (it moves 13 px between the correct and the faulty pose,
+// LIB-3 PQ-H3) with a fixed offset that puts the leader end on the arc above it.
+const ROUND_OFF = (() => { const t = 0.42, a = HUMP_PTS.pts[Math.round(t * 16)], b = LM_M.lumbar; return [+((a[2] - b[2]) * 146.29).toFixed(2), +(-(a[1] - b[1]) * 146.29).toFixed(2)]; })();
 
 
 // Bar: the side-view barbell draws the near 45 cm plate as an outline over the figure and the 50 mm sleeve as a
@@ -204,11 +210,12 @@ export default {
       // the rounded lower back (R5): dashed hump along the back, red arrow onto its top
       { kind: 'dashed', pts: HUMP_PTS.pts },
       { kind: 'arrow', from: HUMP_OUT(0.12), to: HUMP_OUT(0.015) },
+      { kind: 'dashed', pts: Array.from({ length: 25 }, (_, k) => [0, MIST_BAR[1] + PLATE_R * Math.sin(k * Math.PI / 12), MIST_BAR[2] + PLATE_R * Math.cos(k * Math.PI / 12)]) },   // the faulty plate, unmasked, on the floor
       { kind: 'arrow', from: { at: 'grip.r', pose: 'end' }, to: { at: 'grip.r', pose: 'mistake' } },
     ],
     tells: [
       // c7 (plate.mistake)
-      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'lumbar', pose: 'mistake' }, cue: 'The lower back rounds at the bottom of the rep.' },
+      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'lumbar', pose: 'mistake', off: ROUND_OFF }, cue: 'The lower back rounds at the bottom of the rep.' },
       // c7 (handlingMistakes: rounding to get the bar lower), c5
       { key: 'reach', text: 'Bar<br>too low', anchor: 'grip.r', cue: 'The bar is reached down to the floor by rounding the back.' },
     ],
