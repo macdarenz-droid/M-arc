@@ -2034,6 +2034,37 @@ All three were probe bugs; the app behaved correctly in every failing run. Each 
 - **Budgets**: on this head, `HowToSheet-*.js` measures 28076 / 9752 B, over HT-8's 27168 / 9375 ceiling, and `HowToSheet-*.css` measures 27581 / 4486 B. The new ceilings are measured + 10 %: 30884 / 10728 and 30340 / 4935.
 - **Source**: supervisor rulings on #113, 2026-10-01 12:32 (comment 5931535634), and the catch-up message of 2026-10-02.
 
+## D-BUG38: next split follows the sessions done (BUG-38 builder, 2026-10-03)
+
+- **Rule (D-BUG38, from the card in docs/supervisor/verify/BUG-38.md).** Weekdays decide when you train. Your sessions decide which planned days are already covered. A split you skipped by training another one moves into the next day an early session freed up. `src/brain/splitPlan.ts` holds the one pure `splitPlan()`. It reads only `schedule`, `splits`, `sessions` and `daysOff`, so nothing new is saved.
+  1. **Sessions used.** A session's plan day is today when it is in `trainedTodaySessions` (QA8-4); otherwise it is its stored day. Only plan days from T-17 to T count. Each (splitId, plan day) keeps its earliest session. A past day off has no slot.
+  2. **On-day, then early.** A session counts for its own day when that day's split is its split. Otherwise, early: the first planned day within 3 days after it, if that day has its split. There is no late step (D-BUG38-2). A day counts at most one session.
+  3. **Owed.** A split is owed only when another session took its day. It stays owed until a later session of that split, or until its weekday comes round again.
+  4. **Walk** T-14..T+7. A day whose split was done early goes to the oldest owed split, never the day before that split's own day. Without an owed split the day is done early. Placing a split on a future day uses it up; so does placing it on today when nothing was trained today.
+  5. **Outputs.** `today` keeps its split on a day off, with `off`. Also `doneEarly`, `next` (the first split in (T, T+7]) and `days` (T..T+7).
+- **Consumers.** All of them read this one function:
+  - selectors: `todayPlan` is built from per-field computeds, never from `state.value` whole. `scheduledSplit` is undefined on a day off (UI-R03).
+  - The coach: `derive`, `readinessSeries` (one plan per day, now = 23:59:59) and the scheduled-conflict rule.
+  - Escobar: `splitPlanOf`, `readinessToday`, the brief and `get_overview` (`movedFrom`).
+  - Reminders (`planned` map) and the Today card (`sessionCardState`).
+  - `nextScheduledSplitOf`, `nextScheduledSplitFor` and `scheduledSplitId` are deleted.
+- **D-BUG38-coach.** No `scheduled-conflict` on a day off (UI-R03). After any session today, the coach names what was done ("Done today: A + B", "A + B are done for today.") and gives the plan's next split. It never warns about today's own plan, which revises QA8-1 point 3 (LIVE-QA-8.md:20, :23). The "Below 60%" warning lines stay byte-identical; the AUD-20 follow-up owns them.
+- **D-BUG38-pins.** The card's exact edits are made and nothing else changed:
+  - coach.test.ts:275 is renamed "BUG-38: after any session today …". `priorHamSession` becomes `split_push`, and the test expects `recovery.done-today:split_chest` with "Done today: Push" and "Next: Upper on Mon".
+  - coach.test.ts:284 changes only `priorHamSession` to `split_push`.
+  - The old fixture (SPLIT 2 trained Friday) is pinned as done early by the new AC13 test.
+- **D-BUG38-1 (supervisor ruling on #199, 10-03).** Deviation from the card. The coach's plan is memoised per CoachContext (a WeakMap, `todayPlanOf`), not kept as a `Derived` field. tests/aud20.test.ts:76-78 (AUD-20's pin, outside this card) runs the rule with a hand-built `Derived`. The plan is still built once per context.
+- **D-BUG38-2 (supervisor ruling on #199, 10-03).** The card's late step is removed because it was unobservable:
+  - A late count only stops its past day from being displaced.
+  - That debt is paid by the same session in rule 3, at a walk day ≤ T.
+  - A placement on a past day is never used up.
+  - So `today`, `doneEarly`, `next` and `days` (T..T+7) cannot change. The same holds for `readinessSeries`: for a past day D, a late count lands before D.
+  - AC10a's test is dropped. "a session after a missed day clears the debt" pins the outcome the late step was meant to give: dropping the paid clause turns it red.
+- **D-BUG38-3 (supervisor ruling on #199, 10-03).** A session of a deleted split, or of a split on no weekday, counts for no slot, but it still takes that day from its own split (edge 5, the revised coach.test fixture).
+- **Known limits.**
+  - The 6-hour midnight switch (QA8-4) is pinned on both sides by the QA8-1 fixture test.
+  - Past days are matched against the current schedule, the same limit as streak and adherence.
+  - A snooze on the old `recovery.done-today:<scheduled id>` may not match the new id, which is keyed by the split done. The note lasts one day.
 ## PLAY-PREP (2026-10-03)
 - **D-PLAY-PREP-1.** The Play forms in `docs/PLAY-SUBMISSION.md` follow one data-flow inventory, traced to file:line on `000918e`. Where code cannot show something (Anthropic's and Google's retention, Cloudflare platform logs), the inventory says "not verified". The earlier draft's stale citations and two wrong claims are fixed: height is never sent to the coach (`src/escobar/context/brief.ts:104-113`), and diagnostics are "Crash logs" plus "Diagnostics", not one type.
 - **D-PLAY-PREP-2.** Data safety "Shared": No for every type. Play's definition (answer/10787469, read 2026-10-03) excludes transfers to a service provider that processes data for the developer on his instructions; Cloudflare hosts the developer's Worker and Anthropic answers requests the Worker makes with the developer's key. A custom coach server is a transfer the user starts, also excluded. Risk: if Play's review reads Anthropic as a third party, the answer for the coach rows flips to Shared: Yes with the same purposes; the form can be updated without a new release.
