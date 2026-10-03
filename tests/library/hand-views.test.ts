@@ -195,17 +195,19 @@ describe('LIB-12 A6: close-up QA (H2 vocabulary, H7 determinism)', () => {
 });
 
 describe('LIB-12 A7: inputsFor covers each id\'s view files', () => {
-  it('every drawn id lists its key file, view file and view-common', () => {
+  // What each LIB-12 id's drawing reads: its key file and, for a drawn view, the view file and view-common.
+  const needs = (m: any) => [m.FILE, ...(m.VIEW === 'radial' ? [] : [`tools/plates/library/hands/view-${m.VIEW}.mjs`, 'tools/plates/library/hands/view-common.mjs'])];
+  const missing = (m: any, list: string[]) => needs(m).filter(f => !list.includes(f));
+  it('every drawn id lists its key file, view file and view-common, and no other LIB-12 view', () => {
     for (const m of mods.filter(q => q.OWNER === 'LIB-12')) for (const id of Object.keys(m.IDS)) {
       const ins = pairs.inputsFor(id);
-      expect(ins).toContain(m.FILE);
-      for (const f of m.INPUTS ?? []) expect(ins).toContain(f);
+      expect([id, missing(m, ins)]).toEqual([id, []]);
+      expect([id, ins.filter((f: string) => /hands\/view-(?!common)/.test(f) && f !== `tools/plates/library/hands/view-${m.VIEW}.mjs`)]).toEqual([id, []]);
     }
-    expect(pairs.inputsFor('goblet_squat')).not.toContain('tools/plates/library/hands/view-palm-flat.mjs');
   });
-  it('mutation: a key module without INPUTS misses its view file', () => {
-    const cu = mods.find(m => m.KEY === 'cupped'), idx = pairs.indexOf(mods.map(m => (m === cu ? { ...m, INPUTS: undefined } : m)));
-    expect(pairs.inputsFor('goblet_squat', idx)).not.toContain('tools/plates/library/hands/view-cupped.mjs');
+  it('mutation: a list without the view file is red', () => {
+    const cu = mods.find(m => m.KEY === 'cupped'), ins = pairs.inputsFor('goblet_squat').filter((f: string) => !f.endsWith('view-cupped.mjs'));
+    expect(missing(cu, ins)).toEqual(['tools/plates/library/hands/view-cupped.mjs']);
   });
 });
 
