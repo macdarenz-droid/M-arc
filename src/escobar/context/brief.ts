@@ -13,7 +13,7 @@ import { coachInsights } from '@/brain/coach/rules';
 import { plannedThisWeek, weekSummary, daysSinceLastSession } from '@/brain/weekly';
 import { resolveProfile } from '@/brain/units';
 import { lighterWeekDay } from '@/brain/deload';
-import { activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, scheduledSplitFor, todayOverrideOf, type ToolCtx } from '../tools/context';
+import { activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, splitPlanOf, todayOverrideOf, type ToolCtx } from '../tools/context';
 import { MODE_ADDENDUM, type EscobarMode } from './modes';
 import { addFact } from '../ledger';
 import type { Fact } from '../types';
@@ -75,10 +75,15 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const f = ctx.focus;
   L.screen = f ? `${f.id}${f.details ? ' ' + Object.entries(f.details).map(([k, v]) => `${k}=${v}`).join(' ') : ''}` : 'unknown';
 
-  const split = scheduledSplitFor(ctx);
+  const plan = splitPlanOf(ctx);
+  const t = plan.today;
   const r = readinessToday(ctx);
   const parts: string[] = [];
-  parts.push(split ? `scheduled ${one(split.name)} (splitId ${split.id})` : 'rest day');
+  // BUG-38/UI-R03 (D-BUG38): the plan's split for today, a day off, or a split already done early.
+  if (t?.off) parts.push(`day off, ${one(t.split.name)} planned (splitId ${t.split.id})`);
+  else if (t) parts.push(`scheduled ${one(t.split.name)} (splitId ${t.split.id})${t.movedFrom ? `, moved from ${weekdayOf(t.movedFrom)}` : ''}`);
+  else if (plan.doneEarly) parts.push(`${one(plan.doneEarly.split.name)} done early on ${weekdayOf(plan.doneEarly.on)}`);
+  else parts.push('rest day');
   if (r) parts.push(`readiness ${r.band} ${num(r.score, 'readiness score today')}${r.calibrating ? ' calibrating' : ''}, advice ${r.loadAdvice}${r.postSessionAdvice ? ` (${one(r.postSessionAdvice)})` : ''}${e.sharing.health && r.drivers.length ? ` (${r.drivers.join('; ')})` : ''}`);
   else parts.push('readiness none (no check-in or health data)');
   const deload = activeDeloadOf(ctx);
@@ -116,7 +121,7 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   if (s.goal === DEFAULT_GOAL && !s.profileHistory.some(c => c.field === 'goal' && (c.source === 'user' || c.source === 'onboarding'))) L.goal = 'default, not chosen';
 
   const gym = s.units.gyms.find(x => x.id === s.units.activeGymId);
-  const entryUnits = (split?.exercises ?? []).map(x => {
+  const entryUnits = (t?.split.exercises ?? []).map(x => {
     const ex = exerciseOf(ctx, x.exerciseId);
     const p = resolveProfile(x.exerciseId, s.units.activeGymId, s.units, ex);
     return p.unit !== gym?.defaultUnit ? `${one(exerciseName(ctx, x.exerciseId))} ${p.unit}` : null;

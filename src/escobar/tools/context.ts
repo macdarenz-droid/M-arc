@@ -4,12 +4,13 @@
  * signals, so tools stay pure and testable.
  */
 import type { AppState, Exercise } from '@/core/models';
-import { daysBetween, dayKey, weekdayOf, nextScheduled } from '@/core/dates';
+import { daysBetween, dayKey } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { recoveryPctFor, recoveryStatus, type MuscleRecovery } from '@/brain/recovery';
 import { resolveProfile } from '@/brain/units';
 import { readiness, type ReadinessResult } from '@/brain/readiness';
 import type { CoachContext } from '@/brain/coach/rules';
+import { splitPlan, type SplitPlan } from '@/brain/splitPlan';
 
 export interface ToolCtx {
   state: AppState;
@@ -29,7 +30,7 @@ export function makeCtx(state: AppState, now = Date.now(), extra: Partial<ToolCt
   return { state, now, today: dayKey(new Date(now)), ...extra };
 }
 
-const cache = new WeakMap<ToolCtx, { recovery?: MuscleRecovery[]; readiness?: ReadinessResult | null; coach?: CoachContext }>();
+const cache = new WeakMap<ToolCtx, { recovery?: MuscleRecovery[]; readiness?: ReadinessResult | null; coach?: CoachContext; plan?: SplitPlan }>();
 const memo = (ctx: ToolCtx) => { let m = cache.get(ctx); if (!m) { m = {}; cache.set(ctx, m); } return m; };
 
 export function recoveryAt(ctx: ToolCtx, atMs = ctx.now): MuscleRecovery[] {
@@ -49,17 +50,17 @@ export function hoursLeftOut(r: MuscleRecovery): number | null {
   return r.soreToday && r.hoursLeft === 0 ? null : Math.round(r.hoursLeft);
 }
 
-export function scheduledSplitFor(ctx: ToolCtx, day = ctx.today) {
-  const id = ctx.state.schedule[weekdayOf(day)];
-  return id ? ctx.state.splits.find(sp => sp.id === id) : undefined;
+/** BUG-38 (D-BUG38): today's and the next split, from the sessions done. */
+export function splitPlanOf(ctx: ToolCtx): SplitPlan {
+  const m = memo(ctx);
+  const s = ctx.state;
+  return (m.plan ??= splitPlan({ schedule: s.schedule, splits: s.splits, sessions: s.sessions, daysOff: s.daysOff, today: ctx.today, now: ctx.now }));
 }
 
-/** QA8-2: the next scheduled split after `day`, resolved to the actual Split. */
-export function nextScheduledSplitFor(ctx: ToolCtx, day = ctx.today) {
-  const n = nextScheduled(ctx.state.schedule, day);
-  if (!n) return null;
-  const split = ctx.state.splits.find(sp => sp.id === n.splitId);
-  return split ? { split, weekday: n.weekday } : null;
+/** Today's split from the plan; undefined on a day off (UI-R03). */
+export function scheduledSplitFor(ctx: ToolCtx) {
+  const t = splitPlanOf(ctx).today;
+  return t && !t.off ? t.split : undefined;
 }
 
 export function readinessToday(ctx: ToolCtx): ReadinessResult | null {
@@ -69,7 +70,7 @@ export function readinessToday(ctx: ToolCtx): ReadinessResult | null {
   m.readiness = readiness({
     today: ctx.today, now: ctx.now, healthDays: s.healthDays, checkIn: s.checkIns.find(c => c.day === ctx.today),
     checkInHistory: s.checkIns.filter(c => c.day !== ctx.today && daysBetween(c.day, ctx.today) <= 30),
-    recovery: recoveryAt(ctx), scheduledSplit: scheduledSplitFor(ctx), next: nextScheduledSplitFor(ctx),
+    recovery: recoveryAt(ctx), scheduledSplit: scheduledSplitFor(ctx), next: splitPlanOf(ctx).next,
     custom: s.customExercises, sessions: s.sessions,
   });
   return m.readiness;
