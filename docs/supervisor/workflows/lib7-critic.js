@@ -71,7 +71,7 @@ const prep = await agent(`You prepare the input set for a BLIND, CALIBRATED visu
 
 Repo: /home/user/M-arc (GitHub macdarenz-droid/M-arc; run git fetch origin). Read only what you need:
 - Plan: docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md on origin/claude/howto-options, section "3.4 Visual critic" (git show origin/claude/howto-options:<path>).
-- LIB-7: branch origin/claude/lib-7-radial-pairs (head 1114bc10315497c8776df35546225327b2c84e3e expected; record the real head). Tooling is in tools/plates/library/hands/: DESIGN.md, pairs.mjs (MODULES, renderPair, pairSpec), sheet.mjs (node tools/plates/library/hands/sheet.mjs <out> [--calibrate] [--plant plant.json] [--critic] [--chromium <path>]; --plant ops: {"id","op":"swap"} swaps Right and Wrong of the id's first page, {"id","op":"pose","pose":{...}} merges into its Right pose), the drawn keys hand-*.mjs, claims.json.
+- LIB-7: branch origin/claude/lib-7-radial-pairs (head f3e285c1326b6232c1df584bf46119acf168e56a expected; record the real head). Tooling is in tools/plates/library/hands/: DESIGN.md, pairs.mjs (MODULES, renderPair, pairSpec), sheet.mjs (node tools/plates/library/hands/sheet.mjs <out> [--calibrate] [--plant plant.json] [--critic] [--chromium <path>]; --plant ops: {"id","op":"swap"} swaps Right and Wrong of the id's first page, {"id","op":"pose","pose":{...}} merges into its Right pose), the drawn keys hand-*.mjs, claims.json.
 - The approved golden-B hand close-ups (the owner-approved bar) are rendered by the same close-up API (sheet.mjs approvedHand / closeups.mjs).
 
 Steps:
