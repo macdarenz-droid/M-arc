@@ -1020,7 +1020,7 @@ export function ht10EndMs() {
  * one (the sweep); ht3Fidelity's `mutate` runs it without (HT10-A2). Ends with everything closed: no close-up, no
  * feel row, Mistake off, the default callout, the sheet scrolled to the top. Returns { steps, fails, tapped }, where
  * `tapped` counts the Look closer chips, "Show me" buttons and feel rows it tapped (the sweep checks them against golden
- * B's counts for the sheet); a "Show me" or feel row that is not on screen is a fail, never skipped.
+ * B's counts for the sheet); a chip, "Show me" or feel row that is not on screen is a fail, never skipped.
  */
 export async function ht10Script(pre) {
   const q = s => document.querySelector(s), qa = s => [...document.querySelectorAll(s)];
@@ -1067,6 +1067,7 @@ export async function ht10Script(pre) {
   // 4. every Look closer chip: its close-up, each of its pages, closed again
   for (const chip of qa('dialog.sheet.ht .zx-chip[data-zoom]')) {
     const k = chip.dataset.zoom;
+    if (!shown(chip)) { fails.push(`chip ${k}: not on screen to tap`); continue; }
     tapped.chips++;
     chip.click();
     const p = await until(() => shown(q(`#${pre}-zoom-${k}`))) ? q(`#${pre}-zoom-${k}`) : null;

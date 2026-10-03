@@ -237,9 +237,11 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
         const ax = await H.ht10AxNames(cdp);
         if (!ax.problems.some(p => /button button\.ht10-noname has no accessible name/.test(p))) F(`TalkBack: a nameless button was not reported (${ax.problems.join('; ') || 'nothing'})`);
         await H.closeHowTo(page);
-        // A1 tap counts (review of #166, High): a hidden "Show me" fails as not on screen and its sheet's count falls
-        // short of golden B's, instead of being skipped
-        const hid = await H.ht10Sweep(ht10, PORT, 'silent-black', { ids: ['barbell-back-squat'], expectRisks, golden: goldenCounts ?? await H.ht10GoldenCounts(ht10), inject: () => { document.querySelector('dialog.sheet.ht .st-show').style.display = 'none'; } });
+        // A1 tap counts (review of #166, High): a hidden Look closer chip and a hidden "Show me" each fail as not on
+        // screen and their sheet's counts fall short of golden B's, instead of being skipped
+        const hid = await H.ht10Sweep(ht10, PORT, 'silent-black', { ids: ['barbell-back-squat'], expectRisks, golden: goldenCounts ?? await H.ht10GoldenCounts(ht10), inject: () => { document.querySelector('dialog.sheet.ht .st-show').style.display = 'none'; document.querySelector('dialog.sheet.ht .zx-chip[data-zoom]').style.display = 'none'; } });
+        if (!hid.problems.some(p => /barbell-back-squat: chip [\w-]+: not on screen to tap/.test(p))) F(`A1: a hidden Look closer chip was not reported as not on screen (${hid.problems.slice(0, 3).join('; ') || 'nothing'})`);
+        if (!hid.problems.some(p => /tapped \d+ Look closer chips, golden B has \d+/.test(p))) F(`A1: a hidden Look closer chip did not make the sheet's tap count fall short of golden B's (${hid.problems.slice(0, 3).join('; ') || 'nothing'})`);
         if (!hid.problems.some(p => /\(barbell-back-squat-[^)]*\): not on screen to tap/.test(p))) F(`A1: a hidden "Show me" was not reported as not on screen (${hid.problems.slice(0, 3).join('; ') || 'nothing'})`);
         if (!hid.problems.some(p => /tapped \d+ "Show me" buttons, golden B has \d+/.test(p))) F(`A1: a hidden "Show me" did not make the sheet's tap count fall short of golden B's (${hid.problems.slice(0, 3).join('; ') || 'nothing'})`);
         // A3 long-task window (D-HT10-8): a 150 ms task that ran before the window is replayed by perf.mjs's buffered
