@@ -1963,6 +1963,30 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
   **Why**: a class can be targeted by a stylesheet rule; an inline style cannot, short of another inline style (which can't express `:focus-visible`). This file is append-only, so the addendum above is left as written and corrected here rather than edited.
   **Source**: supervisor review "## REVIEW AUD-12 @ b8636b8: FAIL" on PR #156.
 
+## LIB-6: close-up renderer and layers page builder (LIB-6 builder, 2026-10-01)
+
+- **D-LIB6-1 (seam for LIB-2: close-up options)**: the renderer is `closeupApi(howtoModule, options)` (`tools/plates/library/render/closeups.mjs`). LIB-2's data tree provides `closeupOptions(id) → options` for library ids. The 8's records ship in `render/closeups-8.mjs` as `CLOSEUP_OPTIONS`, and LIB-2 may move them into its tree. LIB-6 creates no LIB-2 file.
+  **Why**: the plan says the renderer is "fed by `*.howto.mjs` data", and the bespoke parts become named options. The howto data already holds the drawing content (zooms, guides, thumb page, stills). The options hold only the sheet-level choices.
+- **D-LIB6-2 (seam for LIB-2: sources on a batch page)**: a new id's `exercises/<id>.mjs` and `exercises/<id>.howto.mjs` reach the page builder through `files: { rel: absPath }`, which copies them into the build mirror. Their shape is golden B's.
+- **D-LIB6-3 (target)**: the 8 close-up fragments are cut per card from the page bytes: the contiguous `<div class="zx">` panels plus the `/* close-ups: … */` CSS block. They are pinned as sha256 in `tests/library/closeups.test.ts`. They are identical in the LR-23 page on main (`e7b81413…`) and in b3a90af's page (`5aab1aca…`, the pin plan 2.6 cites), checked with `fragmentDiff` = [].
+  **Why**: the How-to lane's committed golden is the LR-23 page. Because the fragments are equal in both, one target satisfies both pins.
+- **D-LIB6-4 (proof at two levels)**:
+  - API level: every string `howto-layers.mjs` reads from a close-up source (each hand page, posture zoom or zoom section, chip row, CSS) `===` the frozen script's. This runs in vitest, about 11 s.
+  - Page level: the layers page built with all 8 on the renderer has sha256 `e7b81413…` and all fragments `===` golden B. These page builds run under `node --test tools/plates/library/test/*.test.mjs`, about 7 s each.
+  - Equal bytes render equal pixels, so L3 is 0 px.
+  - **Why**: the HT-4 precedent moved live page builds out of `npm test`. The gate is outside this card's write scope, so LIB-4 or the supervisor wires them into CI, add-only.
+- **D-LIB6-5 (two shells, named options)**: the renderer has two shells, as golden B does: `zoom` (the 5 `howto/render-*.mjs` scripts) and `zbox` (the 3 `exercises/*.howto-render.mjs` scripts). Code moved verbatim, with the same arithmetic in the same order. The shells contain no branches on exercise ids. All 8 reproduce byte for byte, so none stays on the frozen fallback.
+  - Each script's label-placement search fed only its report and never the drawing, so it was dropped.
+  - Small differences between the scripts were unified only where they change none of the 8 outputs, which the API proof checks. Examples: the signed drop arrow, `centerWrong`, mask trims, and the mistake-mask guide filter.
+- **D-LIB6-6 (layers page builder)**: `tools/plates/library/build-layers-page.mjs` runs the vendored `artifact/build-page.mjs` and `artifact/howto-layers.mjs` on a mirror, with 4 exact-once source patches: GROUPS, HOWTO_IDS, the close-up source per id, and the dispatch. Each patch throws if its anchor moves.
+  - So batch chrome is golden B's bytes and cannot drift.
+  - The 8's CSS comment labels keep golden B's script paths, because those bytes are pinned. A new id is labelled `library/render/closeups.mjs`.
+  - A `jump` option (default: golden B's line; `null` drops it) keeps a batch page without the chest press free of a dead link.
+- **D-LIB6-7 (body-map stomach fix as a page step)**: golden B applies the leg-raise script's REGION_FIX to every feel map on its page, as a side effect of loading that script. The builder applies it as an explicit, idempotent step (`render/region-fix.mjs`, logic verbatim), on by default.
+  **Why**: the approved maps have the fix. A page that draws the leg raise with the renderer, or has no leg raise at all, must keep the same maps.
+- **D-LIB6-8 (fallback)**: `{ legacy: true }` per id loads the frozen golden-B script exactly as `howto-layers.mjs` does. A test builds a page with pull-up and leg press on the fallback and their options removed, and gets `e7b81413`.
+  **Source**: card LIB-6, plan `docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md` 2.6, 2.7, 7.
+- **D-LIB6-9 (review Medium, 10-02: anchor check now in `npm test`)**: `tests/library/closeups.test.ts` now also runs D-LIB6-6's 4 patch anchors string-only (`patchHowtoLayers`, `patchBuildPage` on the vendored sources, no page build), so CI catches a moved anchor on every push instead of only on the page-level tests (`layers-page.test.mjs`, not yet wired into CI before LIB-4).
 ## GATE-FLAKE-1: three timing checks root-caused (2026-10-01)
 
 All three were probe bugs; the app behaved correctly in every failing run. Each fix changes only the named probe's waiting or sampling; every assertion line is byte-identical (ruling D-GATEFLAKE-0).
@@ -1999,6 +2023,88 @@ All three were probe bugs; the app behaved correctly in every failing run. Each 
 - **D-COPY2-swap position.** The COPY-2 swap block reads the panel's top with `panel.getBoundingClientRect().top`, which includes the transform and every ancestor's scroll (BUG-37, #173). Thresholds are unchanged. Re-run on that reading: overshoot easing fails (reversal and snap) and the 1 ms ease fails (100 px snap) in all 4 runs; with the code restored, all 4 pass.
 - **D-COPY2-swap2 (supervisor ruling on #168, applied).** BUG-37's check-in → brief swap runs now seed the same two-chest-lift split as BUG-36 (`BUG37_SWAP_EX`), so the brief stays taller than the check-in. Its checked-in runs (start sheet, Settings, nested Gyms) keep the 8-lift seed. The only helper change is an optional `ex` argument to `bug37Load` that defaults to `BUG37_EX`; every assertion and threshold is byte-identical. Blunting check: without `.sheet { overflow: visible }`, BUG-37 fails 96 times both on this head and on main fc38fb8, with the same split by run (24 each for start sheet, check-in, Settings, nested Gyms; its swap runs fail in neither), so the seed change removes no failure.
 
+## LIB-12 hand views and pairs (LIB-12 builder, 2026-10-02)
+
+Design note: the `LIB-12 CHECK-IN` comment on #191, updated after the joint design review (#191, #193) and the supervisor's rulings of 11:16 UTC.
+
+- **D-LIB12-1 (one registry)**: each view or pair is a `tools/plates/library/hands/hand-<key>.mjs` module in LIB-7's loader. Keys: palm-flat, cupped, front-rack, ball-contact and battle-rope. Each sets `VIEW`, and its `render` is that view's function. The `view-*.mjs` files hold drawing code only. Dispatch goes through LIB-7's `pairs.mjs` `renderPair(id)`, and the page goes through LIB-7's zoom wrapper. LIB-6 and golden B are not edited.
+  **Why**: two id registries would let one id be claimed twice without the check seeing it.
+- **D-LIB12-2 (drawing values)**: sizes with no source are passed explicitly as named drawing values, never read from golden-B `HANDLES`. They are flagged on the sheet and never shown as facts:
+  - battle-rope Ø;
+  - wall-ball Ø;
+  - goblet dumbbell head;
+  - front-rack bar 28 mm (golden B's `bar-28` value, passed explicitly).
+
+  The geometry-check bounds (5°, 20°, 6 mm, 40 mm, 15 mm, 30°) are test bounds, not facts.
+  **Why**: golden B's `HANDLES` are "typical gym handles, drawing values". The same footing applies here (supervisor ruling, 10-02).
+- **D-LIB12-3 (gaps, not drawn)**:
+  - bench_dip and renegade_row: palm-flat research excludes them.
+  - dumbbell_overhead_triceps_extension: no hand fault is sourced, and its own card zooms on the handle wrap.
+  - medicine_ball_slam: no placement or fault is sourced.
+  - kettlebell_swing: the radial renderer always draws the thumb, and no claim places it (only c5, "not thumbs up", by inference). The supervisor's ruling allows leaving the pair out.
+  - jump_rope: the thumb-and-index grip (c2) is not a `hand.mjs` thumb mode.
+  - sled_pull: its card's hand zoom has no Wrong, and no thumb source.
+  - weighted_dip and ab_wheel_rollout: no research card. The supervisor has requested research.
+- **D-LIB12-4 (goblet claims)**: the goblet pair cites only `cards/goblet_squat` g1, g2, g5 and g6. The palms are drawn as one outline under the head with no thumb or finger detail, because placement is unsourced for goblet and listed as a gap. `shared/cupped-thumb.json` applies only to the overhead extension.
+- **D-LIB12-5 (pilot sheets)**: cupped and front-rack renders go on pilot A (#109). Palm-flat, ball-contact and battle-rope go on pilot B. Plan 2.3.
+  **Source**: card LIB-12, plan 2.3, research 95342b1, census.json, review on #191 (11:12 UTC).
+- **D-LIB12-6 (palm-flat and LIB-26's `flatPalm`)**: the palm-flat view reuses LIB-26's construction rules: the palm starts on the forearm's end, and its palm side runs straight on the surface past the knuckles. It does not call `flatPalm` itself. `flatPalm` tapers the fingers up off the palm line, so the fingertip sits more than 10 mm above the floor at 1.75 m. `tests/library/hand-views.test.ts` measures this. `shared/palm-flat.json#c2` ("all parts of your hand should make contact with the ground") rules that out at close-up scale.
+  **Why**: at plate scale the lift is about 1 px. In a close-up it reads as lifted fingers, which is the cupped-palm fault.
+- **D-LIB12-7 (battle-rope camera label)**: the neutral grip (c1) is seen from above. Golden B's "above" row prints YOU / MACHINE, which names a machine that is not there. So the battle-rope `render` draws golden-B `renderHandPair` unchanged with the side label, then renames the label and aria to "Seen from above". Each anchor must match exactly once.
+- **D-LIB12-8 (sweeps and counts)**: per key, drawn + gap = census scope, with the sources in each module's `CENSUS`:
+  - census aggregates: palm-flat 10, and the implement 5 split over battle-rope, ball-contact and implement;
+  - plan 2.3: cupped 2, front-rack 1, ball-contact 2;
+  - plan 2.3 pair keys: dip bar 1, ab wheel 1;
+  - sled_pull from LIB-7 §2.
+
+  Totals: 8 keys (5 drawn, 3 gap-only), 12 drawn ids, 9 gaps, 20 drawn pairs with their faults.
+## LIB-7: radial hand pairs (LIB-7 builder, 2026-10-02)
+
+Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 2026-10-02.
+
+- **D-LIB7-1, app chunk.** A pair chunk is named `src/howto/generated/handpair-<key>.ts`, so it never collides with HT-6's `hand-<chromeId>.ts`. `tests/howto/hands.test.ts` is not edited. The generator belongs to LIB-2 (supervisor ruling).
+- **D-LIB7-2, sizes.** Sizes are drawing values, as golden B's `HANDLES` are. Each module passes its diameter explicitly:
+  - dumbbell 32 mm with a 120 mm head;
+  - bar and EZ 28 mm;
+  - D-handle 30 mm;
+  - rope 28 mm, matched to the plate's rope composer (`eq/rope.mjs:54`).
+- **D-LIB7-3, golden-B reuse.**
+  - `renderHandPair` is called unchanged. `HAND_PROP` and `HAND_OF_H` feed the placement check. The pilot and gate pages use golden B's zoom CSS, which includes `HAND_CSS`.
+  - No golden-B value is read for a diameter.
+  - Golden-B engine files and LIB-6 files are not edited. A1 pins their outputs.
+- **D-LIB7-4, camera and orientation.** The camera follows golden-B `engine/hand.mjs:8-9`: a vertical handle is "seen from above", a horizontal bar "seen from the side". Orientation is carried per id from its claim:
+  - underhand draws the palm up;
+  - overhand draws the palm down;
+  - an id whose claims name no palm direction gets the label "Seen from the thumb side".
+- **D-LIB7-5, wrong angles.** No source gives the size of a wrong bend, so approved precedents are reused and flagged on the sheet:
+  - curled −30 (lat pulldown);
+  - bent back +30 on a curl;
+  - bent back +35 with the handle at 1.05 on a push (chest press).
+- **D-LIB7-6, bend labels.** A bend value whose box would cover its half's outline moves to the first free spot round its wrist, forearm side first. Golden B moved such labels by hand on the lateral raise, lat pulldown and seated row. Check G9 tests it in Node; the gate measures it in the browser.
+- **D-LIB7-7, force lines.** A force line is drawn only on along-forearm loads and pulls, which is where golden B draws one. Curls (gravity across a level forearm, like the lateral raise) and the rope (no source for its direction) have none.
+- **D-LIB7-8, panel height.** Curl and rope pairs use a 170 px panel. The scale is the same at 262 px, so only empty space goes.
+- **D-LIB7-9, no knob ring.** The rope's 46 mm knob lies behind the fist when seen from above. A ring drawn there drew no pixel in the gate (pages with and without it were identical), so it is dropped. The Right note "Against the knob" and the alt text carry the knob claim (shared/rope-rule.json#c1).
+- **D-LIB7-gaps.** 14 ids are not drawn. Each is listed with its reason in its key's `GAPS`:
+  - the band (no band-hand claim; pilot A's band kind waits on research);
+  - cable_chest_press and the two cable flys (no bend direction in their claims);
+  - 7 ids with no research card;
+  - high_to_low_cable_fly (no hand zoom on its card);
+  - overhead_cable_triceps_extension (rope-rule gap 3);
+  - wrist_curl (exempt).
+  - sled_pull goes to LIB-12.
+- **D-LIB7-twist.** The hammer_curl (#c5) and cross_body_hammer_curl (#c7) Wrongs are wrist twists, which the radial view can't show. Those ids draw shared/curl.json's flexion and extension faults instead.
+- **D-LIB7-10, Wrong labels.** Every LIB-7 Wrong reads "Wrist curled" (flexed) or "Wrist bent back" (extended). These are shared/curl.json's labels and golden B's chest press label. A test fails on any other wording.
+- **D-LIB7-11, no YOU/MACHINE row on dumbbells.** For a neutral dumbbell grip, golden B's "seen from above" orientation row (YOU ← MACHINE →) is replaced by "Seen from above" alone. The rope keeps the row. Check G8 tests both.
+- **D-LIB7-12, a level forearm needs a stated orientation.** A level-forearm curl shows the palm up or down, so an id with no orientation claim is not drawn. concentration_curl and bayesian_cable_curl moved to the gaps: their cards and curl.json name no palm direction for them. Count: 14 drawn, 16 gaps.
+- **LIB-12 asks (supervisor OK, 2026-10-02).**
+  - A diameter is required only for radial keys or a key with a handle profile.
+  - LIB-7's sweeps filter by `OWNER`.
+  - A joint check fails when one id is claimed by a LIB-7 and a LIB-12 module.
+- **R8 findings (discarded critic run, checked one by one).**
+  - Fixed: c (wording, D-LIB7-10); the hammer-curl machine row (D-LIB7-11); concentration_curl and bayesian_cable_curl orientation (D-LIB7-12).
+  - Not changed: "push Right mid-hand". It uses golden B's heel contact (.3), measured by G4.
+  - Not changed: "rope knob does not read". The knob lies behind the fist in the radial view (D-LIB7-9). The pilot sheet flags it, and "Against the knob" carries the claim.
+
 ## GATE-FLAKE-1: HT-3 L4 and before/after evidence (2026-10-02)
 
 - **D-GATEFLAKE-4 Decided** (HT-3 L4 Trace timeout): after the Trace's animations finished, the probe gave `.tracing` 1 s to go with `page.waitForFunction(..., { timeout: 1000 })`. That 1 s ran in Playwright's driver, not in the page, so a renderer that answered CDP late failed the app page and the golden page at once on a Trace that had already ended. The 1 s now runs on the page's own clock, inside one page call: wait for the finish (capped at 10 s, so a Trace that never finishes fails instead of hanging the gate), then check `.tracing`, then watch its class for up to 1 s. Both assertion lines are byte-identical. Mutation: removing the app's `animationend` → `endTrace` listener fails it on the app page only (golden passes), with "Trace did not end by itself in the app page" and "Trace is still aria-pressed=true" on every full theme × plate.
@@ -2033,6 +2139,12 @@ All three were probe bugs; the app behaved correctly in every failing run. Each 
 - **D-HT9-A5-feel.** HT-8's feel rows are golden B's accordion: opening one closes the others. So "every collapsed control opened" means every other control opened, plus exactly one open row per feel section (the last row). A5 first scrolls to the end and waits for the feel section to mount, so its rows are really there. It throws if a feel section has more or less than one open row.
 - **Budgets**: on this head, `HowToSheet-*.js` measures 28076 / 9752 B, over HT-8's 27168 / 9375 ceiling, and `HowToSheet-*.css` measures 27581 / 4486 B. The new ceilings are measured + 10 %: 30884 / 10728 and 30340 / 4935.
 - **Source**: supervisor rulings on #113, 2026-10-01 12:32 (comment 5931535634), and the catch-up message of 2026-10-02.
+- **D-LIB12-9 (pose drawing values, review Low on #191 @ 1ff38b6)**: D-LIB12-2 named the sizes. The pose values below are drawing values too. No source gives a number for any of them. Each is chosen to show its claim clearly and to sit inside its view's check bound. They are flagged on the sheet like the sizes, and never shown as facts.
+  - **wall-ball:** Right palms 47° below the horizontal, so the wrists land at c3's 152 mm, and forearms at 95°. Wrong palms at 0° on the sides, forearms at 25° (elbows out).
+  - **front-rack:** Right upper arm 10° above the horizontal, bar on the shelf. Wrong upper arm 25° below the horizontal, bar lifted 20 mm and moved 40 mm forward, held in the palm.
+  - **goblet:** Wrong weight 60 mm off the chest.
+  - **palm-flat:** cupped Wrong palm tilted 10° about the heel, which gives a 6.7 mm mid-palm gap. Hand-ahead Wrong forearm tilted 25°.
+  - The front-rack Wrong's lowered elbows now also cite `cards/front_squat.json#c7` ("Keep the elbows high, or the bar may slip"), pinned in `lib12-claims.json`.
 
 ## D-BUG38: next split follows the sessions done (BUG-38 builder, 2026-10-03)
 
@@ -2076,3 +2188,9 @@ All three were probe bugs; the app behaved correctly in every failing run. Each 
 - **D-PLAY-HR-1 (supervisor, 2026-10-03).** `READ_HEART_RATE` is removed by card PLAY-HR (branch `claude/play-hr`): no user-facing feature used it (session heart rate comes from the Bluetooth watch; the Health Connect reading reached only the sync Details sheet), and Play's Health Connect guidance (answer/12991134) forbids requesting data types the app does not need. The Health apps declaration names 4 permissions, category "Activity and Fitness", use case "Fitness, wellness and coaching". The owner may tick the category now; the Health Connect permission declaration and the closed-test release wait for the first Play bundle built after PLAY-HR merges. Bundle 37.1.0.47 and earlier still declare `READ_HEART_RATE` and must not go to testers.
 - **PLAY-PREP review round 1** (#198 @ 48e72e1): fixed every finding as the reviewer wrote it: false permission reasons, missing Data safety details (height, BMI, body fat, safety flags, steps and calories gated, the reply-report purpose on Other info), listing claims, and the timing of the Health apps step.
 - **D-PLAY-HR-1, correction (delta review on #198 @ f381135).** The cutoff "bundle 37.1.0.47 and earlier" in D-PLAY-HR-1 is wrong: later bundles (runs 48 to 52, including the first upload-signed one) still declare `READ_HEART_RATE`. The rule is: only a bundle built from a `main` commit that contains PLAY-HR's merge may be uploaded, and its manifest is checked first for no `android.permission.health.READ_HEART_RATE`.
+- **D-LIB7-13 (replaces D-LIB7-9), rope.** The rope is drawn as a plain section with its 46 mm knob dashed over the fist, coaxial, from the plate composer. It sits in the fingers (contactAt 1.15, GA 3.1.1 drawing value). Check G7 tests it (calibrated critic, 2026-10-03).
+- **D-LIB7-14, push Right.** The handle sits low in the heel, as on golden B's approved squat Right (contactAt -0.1, wrist 8°). The Right force line is re-aimed through the wrist pivot. G4 and G6 test it.
+- **D-LIB7-15, EZ angled grip.** ez_bar_curl's claims (#c1 angled sections, #c2 semi-supinated) name the angled grip. It is drawn with orientation `angled`, labelled "Seen along the angled grip", in its own tile. preacher_curl names no angle and stays underhand.
+- **D-LIB7-16, delta review on #193 @ bfacafb.** ez_bar_curl's angled grip is drawn palm up: the camera looks along the angled section, so the hand shows as an underhand grip does; the camera words carry the angle, and G8 checks it. The rope fist is curl 2's squared fist (contactAt .6) instead of GA 3.1.1's load in the fingers, which golden B draws as a point; G7 measures the fist's front. The push drawing values (-0.1, 8°) are flagged on the sheet.
+- **D-LIB7-16a, rope contact (ruling on #193).** Case 1 applied: no rope_triceps_pushdown claim names where the load sits (shared/rope-rule.json c1-c6; gap 1 says no source does). The .6 square-fist contact is cited as the flagged drawing value `ga:rope-fist-mid`, and the unused `ga:rope-fingers` is removed.
+- **D-LIB7-17 (ruling D-LIB7-17a), rope label.** Case 1 by claim (shared/rope-rule.json#c1, hand against the knob), but no one view shows both #c1 and the #c6 wrist curl, which turns about the rope's own axis; #c6 decides. The top view stays, the Right note is the drawn contact "Middle of palm" (ga:rope-fist-mid), the knob wording is dropped, #c1 stays cited. The knob rim lies wholly inside the fist outline (at least 2.6 mm in), so it stays dashed; G7 checks this.
