@@ -41,104 +41,137 @@ Owner rule (D-COPY1-1): the app explains nothing unless Google Play requires it 
 
 **Developer name (owner step, DOC-5):** in Play Console, open Developer account > About you, set "Developer name" to exactly "Marc Darenz" and save, so the listing names the same developer as the policy ("M/ARC is made by Marc Darenz."). Google reviews the change before it shows on Play. On the same page, check that the developer email shown on Play is the policy's contact address, and keep each app's support email the same. Play does not require the full legal name in the policy: the policy must name either the developer shown on the listing or the app, and it names the app (https://support.google.com/googleplay/android-developer/answer/10144311). For a personal account, Play still shows the legal name from the Google Payments profile, the country and the developer email next to the app, whatever the policy says, and the full address too if the app is ever monetised (https://support.google.com/googleplay/android-developer/answer/13628312). The Developer profile page in Play Console shows exactly what is public.
 
-**AI-generated content:** Play requires an in-app way to report or flag offensive AI replies (https://support.google.com/googleplay/android-developer/answer/13985936). Card ESC-REPORT adds a Report button under every finished coach reply; picking a reason sends the reply text, the reason and the app version to the built-in Cloudflare server, which keeps it 90 days, then deletes it. Release to Play only after ESC-REPORT-W is live (POST /reports {} answers 400) and ESC-REPORT has merged.
+**AI-generated content:** Play requires an in-app way to report or flag offensive AI replies (https://support.google.com/googleplay/android-developer/answer/13985936). Every finished coach reply has a Report button (`src/escobar/ui/Message.tsx:222`). Picking a reason (Offensive, Harmful or Wrong) sends exactly three items to the developer's built-in Cloudflare Worker (`src/escobar/report.ts:24,96,126`):
+- the reply **as shown**, up to 4,000 characters: answer, preamble lines, chart captions, proposal titles, revised drafts and suggestion chips (`src/escobar/report.ts:37-63`). A reply can repeat personal details from the conversation, such as split names, weights, health numbers the user shared, or anything the user wrote about themselves, so a report can contain personal and health information;
+- the reason;
+- the app version.
+
+No install id, device id or conversation id goes with it. **Who receives it and why:** the developer (Marc Darenz), through Cloudflare as his service provider, to review offensive, harmful or wrong AI output, as Play's AI-generated content policy asks. It is stored in Cloudflare D1 (`content_reports`, `escobar-worker/src/errorsStore.ts:29,98`) and deleted 90 days after the first report (`escobar-worker/src/errorsStore.ts:20,106`, daily cron `escobar-worker/wrangler.toml:86`). It is never sent to Anthropic. Release to Play only after ESC-REPORT-W is live (POST /reports {} answers 400).
+
+
+## Data-flow inventory (PLAY-PREP, 2026-10-03)
+
+Every kind of data the app touches, traced in code on `origin/main` at `000918e`. Play's terms ([Data safety help](https://support.google.com/googleplay/android-developer/answer/10787469), read 2026-10-03): **collected** means sent off the phone; data only processed on the phone is not collected. **Shared** means sent to a third party; sending to a **service provider** that processes it for the developer is not sharing, and neither is a transfer the user starts and expects. All forms below follow this table.
+
+| Data | On the phone | Sent off the phone, to whom | Kept off the phone | Deleted |
+|---|---|---|---|---|
+| Workouts, sets, weights, reps, splits, schedule, exercise notes, check-ins, weigh-ins, measurements | localStorage key `marc.state.v1` (`src/core/store.ts:17,353`), shape in `src/core/models.ts:169,192,284,308,344` | Only while the coach is on, and only what the coach's tools ask for (`src/escobar/tools/executor.ts:140-142`); body data only with "Share body data" on (`src/escobar/tools/executor.ts:87`). To the coach Worker, then Anthropic. | Worker: no conversation is stored (`escobar-worker/src/handler.ts` has no storage call on `/v2/turn`, line 100). Anthropic: up to 30 days (privacy policy "Recipients"; Anthropic's terms, not verifiable in code) | "Reset everything" (`src/slices/settings/Settings.tsx:76-84,245-246`); uninstall |
+| Profile: name, birth year, sex, height, body weight, training start, planned days, goal | `src/core/models.ts:268-282` | Coach on: goal, training age, planned days, sex, age (`src/escobar/context/brief.ts:105-111`); weight only with "Share body data" on (`src/escobar/context/brief.ts:112`). **Name and height are never sent** (not in `brief.ts:104-113`) | As above | As above |
+| Health Connect, read-only: steps, sleep, heart rate, resting heart rate, active calories | Permissions `native/patch_manifest.py:25-29`, read in `native/HealthConnectNativePlugin.java:51-55,82-86`; stored as `healthDays` (`src/core/models.ts:503`). The app never writes to Health Connect (no write call in the plugin) | Only with "Share health data" on (off by default, `src/core/models.ts:476`; gate `src/escobar/tools/executor.ts:86`; redaction `src/escobar/loop.ts:106-203`) | As above | As above. Health Connect's own copy stays in Health Connect |
+| Readiness score and muscle recovery (worked out on the phone, partly from sleep and resting heart rate) | Computed, not stored separately | **Whenever the coach is on, even with "Share health data" off**; the numbers behind them only with it on (`src/escobar/context/brief.ts:82,93-94`) | As above | As above |
+| Live heart rate from a Bluetooth watch or strap | `native/watch/WatchService.java:19,69-80` (heart-rate service 0x180D); session heart rate saved with the workout | Session heart rate goes to the coach only with "Share health data" on (Watch sheet line, privacy policy "Online coach") | As above | As above |
+| Coach conversation, coach memory, safety flags from the user's message | localStorage key `marc.escobar.v1` (`src/escobar/store.ts:10`) | While the coach is on: message, conversation so far and the per-turn summary (`src/escobar/context/brief.ts:25`), with the device id header (`src/escobar/transport.ts:84`). The coach is off until the user turns it on through the first-enable explainer (`src/core/models.ts:473`, `src/escobar/ui/EscobarSheet.tsx:68,351`) | As above | As above |
+| Photos attached to a coach message | Picked with the system picker and shrunk to 900 px (`src/native/photo.ts:10,45-54`); kept in IndexedDB `marc-escobar-img` (`src/escobar/images.ts:1-7`) | Once, with that message, while the coach is on (`src/escobar/loop.ts:218-226`, unsent photos only) | As above | "Reset everything" clears them (`src/slices/settings/Settings.tsx:80`) |
+| Share-card photo | Held in memory for the share sheet only (`src/slices/share/ShareSheet.tsx:97-102`) | Never by the app. The user may share the finished image through Android's share sheet (`src/native/share.ts:42`), a user-initiated transfer | Nothing | Gone when the sheet closes |
+| Coach device id (random) | `src/escobar/session.ts:81-90` | Header `x-escobar-device` on every coach request (`src/escobar/transport.ts:84`) | Worker quota counters per device id and per IP, deleted after 3 days (`escobar-worker/src/quotaDO.ts:25`) | Counters age out |
+| Reply report (user taps Report and picks a reason) | Not stored; "reported" is memory only (`src/escobar/report.ts:70-71`) | `{v, reason, text, app}` to the built-in Worker `/reports` (`src/escobar/report.ts:24,96,126`), even with a custom coach server (`src/escobar/state.ts:11`). The text is the reply as shown and can hold personal and health details (`src/escobar/report.ts:37-63`) | Cloudflare D1 `content_reports`: reason, app, text, text hash, count (`escobar-worker/src/errorsStore.ts:29,98`); IP only as a keyed hash for rate limits (`escobar-worker/src/errorsStore.ts:45-50`) | 90 days after the first report (`escobar-worker/src/errorsStore.ts:20,106`; cron `escobar-worker/wrangler.toml:86`) |
+| Error reports (opt-in, off until the user says yes) | Queue of at most 20 (`src/errors/queue.ts:6`); consent `preferences.errorReports`, unset = off (`src/core/models.ts:263`, `src/errors/index.ts:24-25,58-60`); switch `src/slices/settings/Settings.tsx:240-241`, one-time ask `src/errors/AskSheet.tsx:10` | To the built-in Worker `/errors` (`src/errors/sender.ts:65`). Fields after cleaning (`src/errors/types.ts:10-24`): install id, time, app version, platform, screen name, kind, error name, message (digits to `#`, quotes removed, 300 characters, `src/errors/scrub.ts:8,21-35`), app-bundle stack frames only (at most 15, `src/errors/scrub.ts:9,40`), fingerprint, count. Android version and device model are allowed fields but the app does not fill them (`src/errors/index.ts:61-70`) | Cloudflare D1 `marc-errors` (`escobar-worker/wrangler.toml:80-81`); IP only as a keyed hash (`escobar-worker/src/errorsStore.ts:45-50`) | 90 days (`escobar-worker/src/errorsStore.ts:20,105`); switching off clears the queue (`src/slices/settings/Settings.tsx:240`) |
+| Error-report install id (random) | `src/errors/installId.ts:16-26` | In every error report | With the report, 90 days | "Reset everything" makes a new one (`src/errors/index.ts:80-84`) |
+| Coach server reachability check | Nothing | `GET /health`, no data (`src/escobar/transport.ts:117`); the server sees the IP | Not stored (`escobar-worker/src/handler.ts:97`) | n/a |
+| Backups the user exports | A file the user saves or shares (`src/native/share.ts:12`) | Only where the user sends it (user-initiated) | n/a | User's own file |
+| Android Auto Backup | `android:allowBackup="true"` from Capacitor's generated Android project (not in this repo; confirmed in the bundle manifest of run 37031786762) | Google's backup to the user's Google account, run by Android, when the user has backup on | Google, under the user's account | User turns backup off; not verified in code: what Google keeps after that |
+| IP address | n/a | Seen by Cloudflare on every request | Only as keyed hashes for rate limits, deleted within the hour or day (`escobar-worker/src/errorsStore.ts:45-50,62,107`); coach quota keys per IP, 3 days (`escobar-worker/src/quotaDO.ts:25`) | Ages out |
+
+Not verified in code: what Anthropic and Google keep (their own terms), and whether Cloudflare's platform logs hold IP addresses beyond the Worker's own code.
 
 ## Data safety form
 
+Answers follow the inventory above. Google can reword the form; read each question in the Console.
+
 **Does your app collect or share any of the required user data types?** Yes.
+**Is all of the user data collected by your app encrypted in transit?** Yes. Every request goes to an `https://` URL (`src/escobar/state.ts:11`; the Worker is served by Cloudflare over HTTPS only).
+**Do you provide a way for users to request that their data is deleted?** Yes: "Reset everything" in the app (`src/slices/settings/Settings.tsx:245-246`) and email macdarenz@gmail.com. Nothing off the phone is linked to a person; error reports and reply reports delete themselves after 90 days.
 
-| Data type | Collected? | Shared off-device? | Where | Encrypted in transit? | Ephemeral? | Required or optional? | Purpose |
-|---|---|---|---|---|---|---|---|
-| Health and fitness (heart rate, resting heart rate, sleep, steps, active calories) | Yes, via Android Health Connect, read-only | Only if the user turns on "Share health data" (off by default) | To the coach Worker, then Anthropic, only while Escobar is on and answering | Yes, HTTPS (Cloudflare Workers serve HTTPS only) | No | Optional | App functionality (the AI coach) |
-| Health and fitness (readiness score, muscle recovery) | Computed on-device from the above | Sent whenever Escobar is on, even with "Share health data" off (the score, not the underlying numbers) | Same as above | Yes | No | Optional | App functionality |
-| Fitness (workouts, sets, weights, reps, splits, schedule) | Yes, on-device | Only the specific workout history Escobar's tools ask for, while Escobar is on | Same as above | Yes | No | Optional | App functionality |
-| Personal info (age, sex, height, weight, training experience, goal) | Yes, on-device | Sent in the coach's per-turn summary whenever Escobar is on; weight only if "Share body data" is also on | Same as above | Yes | No | Optional | App functionality |
-| Photos | Yes, if the user attaches one to a coach message | Sent once, with that message, while Escobar is on | Same as above | Yes | No | Optional | App functionality |
-| Messages (Other in-app messages) | Yes: coach conversation text, and a coach reply the user reports | Coach text: sent whenever Escobar is on. A reported reply: only when the user taps Report and picks a reason | Coach Worker (conversation passed on to Anthropic; a reported reply is stored in Cloudflare D1 for 90 days and never sent to Anthropic) | Yes | No | Optional | App functionality; Fraud prevention, security, and compliance |
-| App activity (Other actions) | The reason picked when reporting a reply (Offensive, Harmful or Wrong) | Only when the user taps Report and picks a reason | Coach Worker, stored in Cloudflare D1 for 90 days | Yes | No | Optional | App functionality; Fraud prevention, security, and compliance |
-| Device or other IDs | A random per-device id, not linked to identity | Sent with every coach request | Coach Worker | Yes | No | Optional | App functionality, abuse prevention (daily quota) |
-| Diagnostics (crash logs) | Only if the user turns on "Send anonymous error reports" (off by default) | Yes, when on | Same Cloudflare Worker, different endpoint | Yes | No | Optional | Analytics (crash/error fixing) |
+Per data type. **Shared: No** for every row: Cloudflare (the Worker host) and Anthropic (the AI model, called by the Worker with the developer's key) process data on the developer's behalf, which Play counts as service providers, not sharing (D-PLAY-PREP-2). **Ephemeral: No** for every row: Anthropic may keep requests up to 30 days, and reports stay 90 days. **Optional** for every row: the coach and error reports are off until the user turns them on, and a reply report is sent only when the user picks a reason.
 
-**Play Console answers for reply reports:** for Messages → Other in-app messages and for App activity → Other actions, each gets these answers:
-- Collected: Yes.
-- Shared: No (Cloudflare processes it for the developer as a service provider).
-- Processed ephemerally: No.
-- Required or optional: Optional.
-- Purposes: App functionality, and Fraud prevention, security, and compliance.
+| Play category → type | Collected | What, and when | Purposes |
+|---|---|---|---|
+| Personal info → Other info | Yes | Age, sex, training experience, planned days, goal, sent while the coach is on (`src/escobar/context/brief.ts:105-111`) | App functionality |
+| Health and fitness → Health info | Yes | Heart rate, resting heart rate, sleep, body weight and measurements: only with "Share health data" or "Share body data" on. Readiness score and muscle recovery: whenever the coach is on (`src/escobar/context/brief.ts:82,93-94,112`). Health details a reply report may contain (`src/escobar/report.ts:37-63`) | App functionality; Fraud prevention, security, and compliance (reply reports) |
+| Health and fitness → Fitness info | Yes | Workouts, sets, weights, reps, splits, schedule, steps, active calories, as the coach asks for them (`src/escobar/tools/executor.ts:140-142`); fitness details in a reply report | App functionality; Fraud prevention, security, and compliance (reply reports) |
+| Messages → Other in-app messages | Yes | Coach conversation while the coach is on; a reported reply (`src/escobar/report.ts:24`) | App functionality; Fraud prevention, security, and compliance (reply reports) |
+| Photos and videos → Photos | Yes | A photo the user attaches to a coach message, sent once (`src/escobar/loop.ts:218-226`) | App functionality |
+| App activity → App interactions | Yes | The screen the user is on, in the coach summary (`src/escobar/context/brief.ts:25`) and in error reports (`src/errors/types.ts:17`) | App functionality; Analytics |
+| App activity → Other user-generated content | Yes | Exercise notes, coach memory notes, gym and split names, when the coach is on | App functionality |
+| App activity → Other actions | Yes | The reason picked when reporting a reply (`src/escobar/report.ts:16`) | Fraud prevention, security, and compliance |
+| App info and performance → Crash logs | Yes | Error reports, opt-in (`src/errors/types.ts:10-24`) | Analytics |
+| App info and performance → Diagnostics | Yes | App version, platform, error kind and count in error reports | Analytics |
+| Device or other IDs → Device or other IDs | Yes | Random coach device id (`src/escobar/transport.ts:84`); random error-report install id (`src/errors/installId.ts:16-26`) | App functionality; Fraud prevention, security, and compliance; Analytics |
 
-Code references:
-- On-device data model: `src/core/models.ts` (workouts, profile, `DailyHealth`).
-- Health Connect is read-only, native plugin: `src/native/health.ts:1-4`, `native/HealthConnectNativePlugin.java:51-55,82-86`.
-- Sharing toggles (off by default): `src/escobar/ui/SettingsSection.tsx:39-40`, `src/escobar/ui/EscobarSheet.tsx:81-82`.
-- Toggle enforcement (a tool call is refused while its toggle is off): `src/escobar/tools/executor.ts:86-87`.
-- Readiness/recovery sent regardless of the health toggle: `src/escobar/context/brief.ts:79-94` (per D-DOC1, `docs/COACHING-DECISIONS.md:742`), `src/escobar/tools/read.ts:173,322` (unshared data never leaves the phone for insights).
-- Coach request transport: `src/escobar/transport.ts`, `src/escobar/session.ts`.
-- Anthropic upstream (server-side only, never sees the phone's IP): `escobar-worker/src/anthropic.ts`.
-- Random device id, not account-linked: `src/escobar/state.ts` (device id), `escobar-worker/src/quotaDO.ts` (per-device/per-IP counters, deleted after 3 days).
-- Error reports: allowlist and cleaning `src/errors/scrub.ts:1-9`, random install id `src/errors/installId.ts:16-25`, send path `src/errors/sender.ts:44-60`, server-side storage/retention `escobar-worker/src/errorsStore.ts` (90-day purge, `escobar-worker/wrangler.toml` daily cron), consent switch default off — see `docs/ERROR-REPORTS.md:30-31`.
-- Encryption in transit: Cloudflare Workers only serve HTTPS; there is no HTTP fallback configured anywhere in `escobar-worker/wrangler.toml` or `escobar-worker/src/handler.ts`.
-- Reply reports: `src/escobar/report.ts` (ESC-REPORT), server-side storage and 90-day purge `escobar-worker/src/errorsStore.ts` `content_reports` (ESC-REPORT-W).
+Not collected: location (`ACCESS_FINE_LOCATION` is only for Bluetooth scans on Android 11 and older, `native/patch_manifest.py:45`; `BLUETOOTH_SCAN` is `neverForLocation`, `native/patch_manifest.py:41`), contacts, calendar, files, audio, web history, financial info, name, email, phone, user ids, installed apps, search history, purchase history.
 
-**Is all of the collected data encrypted in transit?** Yes — every request goes over HTTPS
-(Cloudflare Workers don't serve plain HTTP).
+## Health apps declaration
 
-**Do you provide a way for users to request that their data be deleted?** Yes, in-app:
-"Reset workout data" → "Reset everything" (`src/slices/settings/Settings.tsx:69,239`) erases
-on-device data and issues a new install id (`src/errors/installId.ts:26-27`, reset call site in
-`src/core/store.ts:354-357`). There is no account, so there's nothing server-side tied to a
-person to delete on request; error reports are already anonymous and self-delete after 90 days.
-Reply reports are not linked to a person and are deleted 90 days after the first report.
-Contact for questions: macdarenz@gmail.com.
+Play Console → App content → Health apps. The form's category list is not verifiable here; pick the fitness and activity tracking categories that match: workout logging, heart rate and recovery. Do not pick medical, disease management or clinical categories (the app makes no such claim).
 
-**Is data collection required or optional?** All network sharing (Escobar, error reports, reply reports) is optional: Escobar and error reports are off by default, and a reply report is sent only when the user taps Report and picks a reason.
+**Health Connect permissions** (in the bundle manifest of run 37031786762; declared in `native/patch_manifest.py:25-29`). All five are read-only; the app never writes to Health Connect.
+- `READ_STEPS`, `READ_SLEEP`, `READ_RESTING_HEART_RATE`, `READ_ACTIVE_CALORIES_BURNED`: feed the readiness score and recovery model shown in the app, and, only if the user turns on "Share health data", the coach's advice (`src/escobar/context/brief.ts:82`).
+- `READ_HEART_RATE`: session heart rate on the workout summary (zones, average, max), and the same readiness and coach uses.
+- Health Connect's privacy rationale screen shows the same privacy policy (`native/PermissionsRationaleActivity.java:21-22`).
 
-**Does your app comply with the Health Connect permissions declaration / Google's Health apps
-policy?** See the section below.
+**Bluetooth:** `BLUETOOTH_SCAN` (`neverForLocation`), `BLUETOOTH_CONNECT`, and for Android 11 and older `BLUETOOTH`, `BLUETOOTH_ADMIN` and `ACCESS_FINE_LOCATION` (`native/patch_manifest.py:41-45`) read live heart rate from a paired watch or chest strap. The app does not read or use location.
 
-## Health apps declaration (Health Connect)
+## Foreground service declaration
 
-Permissions declared in `native/patch_manifest.py:25-30`:
-- `android.permission.health.READ_STEPS`
-- `android.permission.health.READ_SLEEP`
-- `android.permission.health.READ_HEART_RATE`
-- `android.permission.health.READ_ACTIVE_CALORIES_BURNED`
-- `android.permission.health.READ_RESTING_HEART_RATE`
+Play Console → App content → Foreground service permissions. Required because the app targets API 36 and uses `FOREGROUND_SERVICE_CONNECTED_DEVICE` (`native/patch_manifest.py:46-47`; service type `connectedDevice`, `native/patch_manifest.py:79-89`). Play asks, per type: a description, the user impact if the task is deferred or interrupted, a video link, and a use case ([answer/13392821](https://support.google.com/googleplay/android-developer/answer/13392821), read 2026-10-03).
 
-All five are **read-only**; the app never writes to Health Connect (`docs/PRIVACY-POLICY.md`
-"On-device data"). Purpose for each, as actually used in the app:
-- **Steps, sleep, active calories, resting heart rate:** feed the on-device readiness score and
-  recovery model shown on the Today/Coach screens, and, if the user shares health data, inform
-  the AI coach's advice (`src/escobar/context/brief.ts:79-94`).
-- **Heart rate:** live/session heart rate for the workout finish-card summary (zones, average,
-  max) and the same readiness/coach uses above.
+- **Type:** Connected device.
+- **Use case:** keeping a connection to a Bluetooth heart-rate monitor (pick the Console's closest preset, or enter it).
+- **Description:** When the user connects a Bluetooth heart-rate watch or chest strap during a workout, the app keeps the connection and records heart rate while the screen is off or another app is open. The service starts only from the user's Connect action (`native/watch/WatchService.java:69-80`), shows an ongoing notification with a Disconnect button (`native/watch/WatchService.java:243-248`), and stops when the user disconnects (`native/watch/WatchService.java:103,123`).
+- **If deferred:** heart rate is not recorded until the connection starts; the workout log itself is unaffected.
+- **If interrupted:** heart-rate samples for that gap are missing from the session summary; the app shows "Paused" and the user reconnects.
+- **Video:** owner step. Record on the phone: open a workout, connect a watch or strap, show the notification, lock the screen, unlock, tap Disconnect. Upload it unlisted and paste the link.
 
-The app also requests Bluetooth permissions to read live heart rate from a paired watch or chest
-strap (`native/patch_manifest.py:40-46`); on Android 11 and older this requires location
-permission for BLE scanning only — the app does not read or use device location
-(`docs/PRIVACY-POLICY.md` "On-device data").
+**Exact alarms:** the app requests `SCHEDULE_EXACT_ALARM` (`native/patch_manifest.py:24`) for workout reminders. Play's declaration covers only `USE_EXACT_ALARM`, which the app does not request ([answer/13161072](https://support.google.com/googleplay/android-developer/answer/13161072), read 2026-10-03). No declaration.
+
+**Photos:** the app uses the system picker and does not request `READ_MEDIA_IMAGES` (not in the bundle manifest), so no photo permission declaration.
 
 ## Content rating questionnaire
 
-- Violence: none.
-- Sexual content: none.
-- Profanity: none scripted by the app; user-entered free text (coach messages, exercise notes)
-  is never shown to other users — unknown whether Google's questionnaire treats private,
-  non-shared user text as "user-generated content" for rating purposes; answer conservatively as
-  no shared/public user-generated content, since nothing the user types is visible to anyone but
-  themselves and, if Escobar is on, the AI coach.
-- Controlled substances, gambling, user interaction with other users: none — there is no
-  multiplayer, chat-with-other-users, or social feature anywhere in the app.
-- Shares personal or health info with third parties: yes, only if the user opts in to Escobar
-  (see the data safety form above) — relevant to the questionnaire's data-collection branch.
-- Expected rating: Everyone / PEGI 3 equivalent, subject to the target-audience answer below.
+- Category: a fitness and workout tracker. Pick the closest IARC category on the form (labels not verified here).
+- Violence, sexual content, profanity, controlled substances, gambling: none scripted by the app.
+- Users interacting or exchanging content with other users: No. There is no account, feed, chat between users or public profile. The AI coach talks only to the user who wrote to it, and what a user writes is never shown to anyone else.
+- Shares the user's location: No (see Data safety).
+- Digital purchases: No (no billing library; nothing is sold in the app).
+- If the form asks about AI-generated content: Yes. The coach writes replies with a large language model, and every reply can be reported in the app (`src/escobar/ui/Message.tsx:222`). Not verified: whether the current IARC form has this question.
+- Expected rating: Everyone / PEGI 3 equivalent.
 
 ## Target audience and content
 
-**Target age group:** 18+ only (`docs/PRIVACY-POLICY.md` "Children";
-D-DOC2 in `docs/COACHING-DECISIONS.md`). Do not select an audience that includes children in the
-Play Console's target audience section, and do not complete the "Ads" section as child-directed.
+**Target age group:** 18 and over only (`docs/PRIVACY-POLICY.md` "Children"; D-DOC2 in `docs/COACHING-DECISIONS.md`). Do not pick any age group under 18. **Appeals to children:** No.
 
 ## Ads
 
-**Does your app contain ads?** No. No ad SDK or ad dependency exists in `package.json`
-(`dependencies`/`devDependencies`), and no ad-serving code exists in `src/`.
+**Does your app contain ads?** No. No ad SDK or ad dependency is in `package.json`, and no ad code is in `src/`.
+
+## App access
+
+All functionality is available without special access: there is no login. The coach needs a network connection and is turned on in the app; no credentials are needed.
+
+## Store listing draft
+
+Every claim maps to shipped code. Owner rules: no contacts, links or sources in the text (LR-23); nothing that states the obvious or talks down (AGENTS.md UI copy). The How-to has full guides for 8 exercises today (`src/howto/generated/ht-*.ts`); the 153-exercise library arrives in batches, so the listing says 8 until more ship. Update this section when a batch ships.
+
+**App name (30 max):** M/ARC (`capacitor.config.json:3`)
+
+**Short description (80 max, 64 used):**
+> Workout log with targets, recovery map and an optional AI coach.
+
+**Full description:**
+> Log every set, weight and rep. M/ARC sets the next target from your own history and marks personal records as you lift.
+>
+> - Today: your planned workout and a readiness score.
+> - Body: a front and back muscle map showing which muscles have recovered.
+> - Progress: weekly volume and a trend per exercise.
+> - How-to: step-by-step form guides for 8 exercises.
+> - Heart rate from a Bluetooth watch or chest strap, and steps, sleep and heart rate from Health Connect, read-only.
+> - Escobar, an optional AI coach that reads your log. Off until you turn it on; health and body data are sent only if you switch on sharing.
+> - Share cards for finished workouts.
+> - Five themes.
+>
+> No account, no ads. Your data stays on your phone unless you turn on the coach or error reports.
+>
+> M/ARC is not a medical device and does not diagnose, treat, cure, or prevent any medical condition.
+> For medical advice, diagnosis or treatment, consult a healthcare professional.
+
+Claim → code: targets (`src/brain/retarget.ts`, `src/slices/workout/Train.tsx:27-28,108-109`), PR badge (`src/slices/workout/Train.tsx:903`), planned workout and readiness on Today (`src/slices/today/Today.tsx:104,176`), muscle map (`src/slices/body/Body.tsx`), weekly volume and lift trend (`src/slices/history/volumeChart.ts`, `src/slices/history/progressTrend.ts`), 8 guides (`src/howto/generated/ht-*.ts`), Bluetooth heart rate (`native/watch/WatchService.java:19`), Health Connect read-only (`native/patch_manifest.py:25-29`), coach off by default (`src/core/models.ts:473,476`), share cards (`src/slices/share/cards.ts:1-5`), five themes (`src/theme/themes.ts:8`), no ads (see Ads).

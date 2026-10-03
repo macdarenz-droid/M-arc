@@ -77,17 +77,23 @@ The owner approved this on 2026-09-26. It runs after item 9 and the fix loop for
 - versionCode is `major × 1,000,000 + run number` and versionName is `<package.json version>.<run number>`, the release-apk.yml rule. Both rise on every run.
 - targetSdk is 36 or higher. From 31 August 2026, Play requires API level 36 (Android 16) for new apps and updates: https://developer.android.com/google/play/requirements/target-sdk
 - Every 32-bit native library has a 64-bit variant.
+- Every native library for arm64-v8a and x86_64 has ELF `PT_LOAD` segments aligned to 16 KB or more (PLAY-PREP), Google's 16 KB page-size requirement: https://developer.android.com/guide/practices/page-sizes . A library stored uncompressed in the `.aab` has its zip offset reported, not enforced: Play builds the installed APKs with bundletool, which aligns them itself (D-PLAY-PREP-3). `python3 scripts/check-play-bundle.py --self-test` proves the check on committed fixtures (a 4 KB-aligned library fails, a 16 KB one passes). Bundle of run 37031786762 (`000918e`): targetSdk 36, no native libraries at all, so the check passes.
 
-**Still needed, and who does it**
-- Owner:
-  - the Play developer account;
-  - the Play App Signing choice;
-  - the upload-key signing step (a separate PR after that choice; the bundle stays unsigned until then);
-  - a closed test with 12 testers for 14 days;
-  - GitHub Pages for the privacy policy (PR #93);
-  - the store forms (content rating, target audience, data safety, app access).
-- Agents:
-  - the listing text, the data-safety drafts and the screenshots (branch `claude/play-store-cards`).
+**Owner steps, in order** (PLAY-PREP, 2026-10-03). "Now" means it can start before the exercise library is finished; "Later" waits for what it names. Every form draft is in `docs/PLAY-SUBMISSION.md`.
+1. **Now. Check the developer account.** Play Console → Settings → Developer account → About you (or Account details): note the account type (personal or organisation) and the date it was created. A personal account created after 13 November 2023 must run a closed test with at least 12 testers opted in for 14 days in a row before it can apply for production (step 8). An organisation account, or a personal one created before that date, skips that wait. Tell an agent which it is.
+2. **Now. Create the app.** Play Console → Create app: name M/ARC, default language, App, Free. The package name is fixed by the first bundle you upload and must be `com.mrcdrnzz.dailytracker` (`capacitor.config.json`; the bundle check pins it).
+3. **Now. The three key steps**, exactly as in "Google Play: signing keys (REL-3)" below: create the upload key, put Google's encryption public key on GitHub, hand the permanent key to Google. Step 2 of REL-3 needs the app from step 2 here.
+4. **Now. Fill the App content forms**, from `docs/PLAY-SUBMISSION.md`:
+   - Privacy policy: the URL at the top of that file (it must load first; see "Owner does", item 2).
+   - Ads: "Ads". App access: "App access". Target audience: "Target audience and content". Content rating: "Content rating questionnaire". Data safety: "Data-flow inventory" and "Data safety form". Health apps: "Health apps declaration". Foreground service: "Foreground service declaration" (record the short video it names on your phone).
+   - Store listing: "Store listing draft", plus "Store listing: required lines". The screenshots wait for branch `claude/play-store-cards` (after HT-10).
+   - The developer name and email: "Developer name (owner step, DOC-5)".
+5. **Now. Set up the closed test.** Test and release → Testing → Closed testing → create a track (Play's default is "Closed testing - Alpha"). Add a testers list with the Gmail addresses of at least 12 testers (more is safer: a tester who leaves breaks the 14 days in a row), the countries, and the feedback email.
+6. **Later: needs a signed bundle.** Upload the bundle to the closed-test track and roll it out; the 14 days start when the 12 testers have opted in. Blocker: no CI job signs the Play bundle with the upload key yet (only `play-create-upload-key.yml` uses it). That signing step is a separate PR touching signing, so it needs your approval; ask the supervisor for it after REL-3 step 1. The bundle is the `MARC-PLAY-AAB-UNSIGNED` build of the same commit once signed, from a commit whose gate is green.
+7. **Later: after the release checks.** Keep testers using the build for the 14 days. Before applying, re-run the full regression and the real-phone test script on the final build ("Owner does", item 5), and update the store listing if the How-to has grown (it says 8 guides today).
+8. **Later: after step 7.** Apply for production access: Dashboard → Apply for production. Play asks about the closed test (how testers were found, feedback, what changed) and about the app's readiness. Approval is not automatic. Once granted, create the production release from the tested bundle.
+
+Agents keep the drafts in `docs/PLAY-SUBMISSION.md` in line with the code; screenshots stay on `claude/play-store-cards`.
 
 **Version-code risk:** play-bundle.yml and release-apk.yml count their runs separately. On 2026-09-30, release-apk.yml had never run and debug builds use versionCode 1, so every code above 37,000,000 is higher than anything a phone has seen. If the owner later sideloads many release APKs, a Play build could carry a lower code than one of them. That only matters if Play's app-signing key is the same key as the sideload key; with a different key, the two cannot update each other anyway.
 
