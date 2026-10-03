@@ -239,6 +239,26 @@ describe('LIB-12 on LIB-7\'s pilot and critic sheet (review Blocker, #191 @ 1ff3
   }, 180_000);
 });
 
+describe('LIB-12 palm directions (D-LIB7-PIN2): ids of one variant with different palm directions never draw the same hand', () => {
+  // The drawing of one id and fault with its uid taken out, so two ids compare by ink alone.
+  const ink = (id: string, fault: string, index: any) => pairs.renderPair(id, { uid: 'x', fault, index }).svg;
+  function sameHands(index: any) {
+    const ids = common.sweep([...index.drawn].filter(([, e]: any) => e.mod.OWNER === 'LIB-12').map(([id]: any) => id), 12, 'LIB-12 drawn ids'), bad: string[] = [];
+    for (const a of ids) for (const b of ids) {
+      const A = pairs.pairSpec(a, index), B = pairs.pairSpec(b, index);
+      if (a >= b || A.pair !== B.pair || A.orientation === B.orientation) continue;
+      for (const w of A.wrong) if (B.wrong.some((x: any) => x.key === w.key) && ink(a, w.key, index) === ink(b, w.key, index)) bad.push(`${a} = ${b} (${w.key})`);
+    }
+    return bad;
+  }
+  it('holds for LIB-12\'s 12 drawn ids', () => { expect(sameHands(pairs.INDEX)).toEqual([]); });
+  it('mutation: a planted id of the same variant with the other palm direction is red', () => {
+    const pf = mods.find(m => m.KEY === 'palm-flat'), { push_up: up, ...rest } = pf.IDS;
+    const planted = mods.map(m => (m === pf ? { ...m, IDS: { ...rest, push_up: { ...up, orientation: 'under' } } } : m));
+    expect(sameHands(pairs.indexOf(planted))).toEqual(expect.arrayContaining([expect.stringMatching(/push_up \(cupped-palm\)$/)]));
+  });
+});
+
 describe('LIB-12 A1: golden B\'s 8 close-ups unchanged with every hand-*.mjs loaded', () => {
   it('compareCloseups on the 8 === [] after all key modules are imported', async () => {
     expect(mods.filter(m => m.OWNER === 'LIB-12').length).toBe(8);
