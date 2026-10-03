@@ -307,6 +307,23 @@
           "where": "Benefits"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "Progress by lengthening the interval before adding sets, and end the set as soon as the hips start bouncing rather than pushing to the clock.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lohre-mc"
+      ],
+      "quotes": [
+        {
+          "source": "lohre-mc",
+          "text": "Progress by extending the interval before adding sets, and end the set as soon as your hips start bouncing rather than pushing to the clock.",
+          "where": "FAQ: How many mountain climbers should I do?"
+        }
+      ]
     }
   ],
   "sources": [
@@ -396,13 +413,15 @@
       "up": null,
       "down": null,
       "pause": null,
-      "work": "15-30 s",
-      "rest": "10-30 s",
-      "text": "Cycle: switch legs quickly, as if running (c4); timed sets of 15 s on and 15 s off for beginners, up to 30 s on and 30 s off (c13); HIIT 20 s on, 10 s off (c14). Beginners may go slow and controlled (c14). No source gives steps per second.",
+      "sets": "2-3",
+      "work": "15 s",
+      "rest": "15 s",
+      "text": "Default (beginner): 2-3 sets of 15 s on, 15 s off (c13), switching legs quickly, as if running (c4); slow and controlled suits beginners (c14). Progressions: 20 s on/20 s off, then 30 s on/30 s off, lengthening the interval before adding sets; end the set when the hips start bouncing (c13, c15). High-intensity option only: 6-8 rounds of 20 s fast, 10 s rest (c14). No source gives steps per second.",
       "claim": [
-        "c4",
         "c13",
-        "c14"
+        "c4",
+        "c14",
+        "c15"
       ]
     },
     "variantLine": null
@@ -559,6 +578,14 @@
     "Where the driving foot lands (toe tap vs floating)."
   ],
   "notes": [
-    "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c13 (Julie Lohre) and c14 (Healthline) add timed work and rest; no source gives a cadence."
-  ]
+    "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c13 (Julie Lohre) and c14 (Healthline) add timed work and rest; no source gives a cadence.",
+    "W1 fix round 2026-10-03: F05/R-W1-2 tempo default is the beginner row (2-3 × 15 s on/15 s off, c13); 20/20 and 30/30 are progressions; 20/10 is labelled as the high-intensity option (c14). c15 adds Lohre's progression and stop cue; loadProgression added from c13 and c15."
+  ],
+  "loadProgression": {
+    "text": "Start with 2-3 sets of 15 seconds on, 15 off; lengthen the interval before adding sets; stop the set when your hips start bouncing.",
+    "claims": [
+      "c13",
+      "c15"
+    ]
+  }
 }
