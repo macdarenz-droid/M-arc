@@ -8837,6 +8837,44 @@ for (const theme of ['silent-black', 'paper']) {
   if (!errors.some(e => e.startsWith('COPY-2 swap '))) console.log('COPY-2 swap: a brief shorter than the check-in eases the same sheet down (one direction, >= 20 px, no step over max(16 px, travel / 4), still after rest), in Silent Black and Paper at 1x and 4x CPU');
 }
 
+
+// LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;
+// tools/plates/library/hands/gate-lib12.mjs). Every LIB-12 drawn pair in 5 themes at 390, 360 and 340 px: no horizontal
+// scroll, SVG and text inside the plate (H4); each ink class's contrast >= golden B's minimum for it, measured in the
+// same job (H5); Right and Wrong halves differ; two renders give identical pixels. Red when no pair loads.
+{
+  const tag = 'LIB-12';
+  const t0 = Date.now();
+  const { runLib12Gate } = await import('../tools/plates/library/hands/gate-lib12.mjs');
+  const lib12 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const { problems, stats } = await runLib12Gate(lib12);
+    for (const p of problems) errors.push(`${tag}: ${p}`);
+    if (stats.pairs !== 20 * 5) errors.push(`${tag}: ${stats.pairs} pair renders, expected 100 (20 pairs x 5 themes)`);
+    if (!problems.length) console.log(`${tag}: ${stats.pairs / 5} hand pairs x 5 themes x 3 widths fit, contrast >= golden B, Right != Wrong, stable (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
+  } finally {
+    await lib12.close();
+  }
+}
+
+// LIB-7: the radial hand pairs (card LIB-7; tools/plates/library/hands/DESIGN.md §4 A5). Every drawn library hand page,
+// rendered through hands/zoom.mjs with golden B's own zoom CSS, in 5 themes at 390, 360 and 340 px: no overflow (H4), each
+// ink class's contrast >= golden B's on its 8 hands in the same job (H5), bend values off the outline (G9, real boxes),
+// Right and Wrong hands different pixels, two renders identical. A self-check proves the block fails on no input.
+{
+  const tag = 'LIB-7';
+  const { lib7Gate } = await import('../tools/plates/library/hands/gate.mjs');
+  const lib7 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const empty = await lib7Gate(lib7, { index: { drawn: new Map(), gaps: new Map() } });
+    if (!empty.problems.some(p => /no hand pair page/.test(p))) errors.push(`${tag}: the block passes with no pages (self-check)`);
+    const t0 = Date.now(), r = await lib7Gate(lib7);
+    for (const p of r.problems) errors.push(`${tag}: ${p}`);
+    if (r.pages !== 24) errors.push(`${tag}: ${r.pages} pages, expected 24 (14 drawn ids)`);
+    console.log(`${tag} hand pairs (${lib7.version()}): ${r.pages} pages x ${r.themes} themes x ${r.widths} widths, ${r.shots} pixel shots, ${r.problems.length} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally { await lib7.close(); }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
