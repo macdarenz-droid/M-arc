@@ -824,6 +824,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 | Motion fix (owner's chest-press artifact) | branch claude/motion-upgrade-9n82lj, arch `0a45d00` | wf_1722fac2-942 reached verify-4. fix-4 and verify-5 died at the session limit. The open items are all muscle shading (fill and line edge mismatch, jagged contours, pec coverage short of the armpit) plus extra measurement rows. Page and assets: scratchpad `motion-fix/` (not in the repo). | Resume the workflow (script in this session's workflow scripts, loop up to 5 rounds). Publish the artifact only after a verify PASS, then send the owner the link only. |
 | GATE-SPLIT, LIB-2 enabler, LIB-3, research writers | #194, #189, #180, research branch | Idle until HT-10 (unchanged). | unchanged |
 
+**Arrived right after the pause (18:12, both posted on their PRs):**
+- **HT-10 FIXED @ `edeefd2`**: hidden-chip guard plus fixture (mutation 8/125 red), D-HT3 corrected to 68 ms. check, test:tz, both shards and the full gate pass locally on Chromium 141. CI: visual-gate-tz green. source-gate printed "Screenshot gate PASS" and was then cancelled by the 60 min timeout at 60:01, so android-gate was skipped. That is the job-time risk #201 removes. On resume: the same reviewer delta-reviews `b94e63a..edeefd2`, and CI evidence comes from the train with #201.
+- **DELTA REVIEW LIB-12 @ `1c672b0`: PASS** (0/0/0/2), all 4 CI checks green including the source-gate re-run (#191, issuecomment-5972033371). Its local gate failed only on the HT-3b A3 timing probe (149 ms, run alongside other jobs); that is the D-HT9-A3b follow-up. On resume: LIB-12 merges LIB-7 `1114bc1` (small delta), and the reviewer is archived after that.
+
 **New rulings today (all on their PRs):**
 - D-HT10-A3m: A3 limit = ceil(1.25 × max median, CI + container), capped at 400 ms.
 - D-LIB7-SHEET, D-LIB7-PIN, D-LIB7-16a, D-LIB7-17, D-LIB7-17a.
