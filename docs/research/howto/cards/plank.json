@@ -289,7 +289,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-03"
     }
   ],
   "plate": {
@@ -455,7 +455,7 @@
   },
   "risks": [
     {
-      "risk": "A sagging low back loads the lower back.",
+      "risk": "Low back sagging (arching) during the hold.",
       "claim": "c4"
     },
     {
@@ -496,6 +496,7 @@
     "Head and neck position."
   ],
   "notes": [
-    "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c12 adds Harvard Health's front-plank hold, rest and build-up; the hold and rest are no longer unsourced."
+    "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c12 adds Harvard Health's front-plank hold, rest and build-up; the hold and rest are no longer unsourced.",
+    "W1 fix round 2026-10-03: F22/R-W1-3 risks[0] now stays within c4's words; \"loads the lower back\" removed (no source says it)."
   ]
 }

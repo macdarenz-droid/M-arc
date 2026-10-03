@@ -281,33 +281,23 @@
     },
     {
       "id": "c14",
-      "text": "NHS: after an injury, get help from 111 if it is very painful or getting worse, or you cannot put weight on it; call 999 if you heard a crack or it changed shape.",
+      "text": "NHS ankle pain page: urgent help if the ankle pain is severe, you feel faint, dizzy or sick from the pain, the ankle or foot has changed shape or is at an odd angle, you heard a snap, grinding or popping noise at the time of injury, or you cannot walk. See a doctor if it stops normal activities, gets worse or keeps coming back, has not improved after 2 weeks of home treatment, or there is tingling or loss of feeling in the foot.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "nhs-sprains"
+        "nhs-ankle"
       ],
       "quotes": [
         {
-          "source": "nhs-sprains",
-          "text": "it's very painful, or the pain is getting worse",
-          "where": "Urgent advice box"
+          "source": "nhs-ankle",
+          "text": "you have severe ankle pain you feel faint, dizzy or sick from the pain your ankle or foot has changed shape or is at an odd angle you heard a snap, grinding or popping noise at the time of injury you are not able to walk",
+          "where": "Urgent advice box (contact NHS 111 if)"
         },
         {
-          "source": "nhs-sprains",
-          "text": "you cannot put any weight on it or walk more than a few steps",
-          "where": "Urgent advice box"
-        },
-        {
-          "source": "nhs-sprains",
-          "text": "you heard a crack when you had your injury",
-          "where": "Immediate action box"
-        },
-        {
-          "source": "nhs-sprains",
-          "text": "the injured body part has changed shape or is pointing at an odd angle",
-          "where": "Immediate action box"
+          "source": "nhs-ankle",
+          "text": "ankle pain is stopping you doing normal activities the pain is getting worse or keeps coming back the pain has not improved after treating it at home for 2 weeks you have any tingling or loss of feeling in your foot",
+          "where": "Non-urgent advice box (see a GP if)"
         }
       ]
     },
@@ -365,7 +355,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
     },
     {
       "id": "cat-boxjump",
@@ -375,7 +365,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
     },
     {
       "id": "dossantos-2024",
@@ -385,7 +375,7 @@
       "year": 2024,
       "pmid": "38863787",
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
     },
     {
       "id": "janikov-2023",
@@ -395,17 +385,7 @@
       "year": 2023,
       "pmid": "37218857",
       "access": "abstract",
-      "checked": "2026-09-30"
-    },
-    {
-      "id": "nhs-sprains",
-      "url": "https://www.nhs.uk/conditions/sprains-and-strains/",
-      "title": "Sprains and strains (NHS)",
-      "kind": "guideline",
-      "year": null,
-      "pmid": null,
-      "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
     },
     {
       "id": "nhs-knee",
@@ -415,7 +395,17 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-03"
+    },
+    {
+      "id": "nhs-ankle",
+      "url": "https://www.nhs.uk/symptoms/foot-pain/ankle-pain/",
+      "title": "Ankle pain (NHS, page last reviewed 20 November 2025)",
+      "kind": "guideline",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-03"
     }
   ],
   "plate": {
@@ -564,7 +554,7 @@
         "redFlag": "knee"
       },
       {
-        "where": "Ankle pain after a bad landing, can't take weight",
+        "where": "Ankle pain after a bad landing, or you can't walk on it",
         "means": "Not a training feeling.",
         "fix": "Stop jumping.",
         "claim": "c14",
@@ -578,19 +568,25 @@
       "claim": "c7"
     },
     {
-      "risk": "Landing with straight knees or unevenly (shared landing risk line).",
-      "claim": "c13"
+      "risk": "Landing with straight knees or unevenly.",
+      "claim": [
+        "c5",
+        "c13"
+      ]
     },
     {
       "risk": "Jumping down, or jumping while fatigued.",
-      "claim": "c11"
+      "claim": [
+        "c6",
+        "c11"
+      ]
     }
   ],
   "redFlags": [
     "knee",
     "ankle"
   ],
-  "redFlagNote": "ankle is a new shared box (content.md 5.3: added only if a jump row needs it, from the NHS page read in full); nhs-sprains supplies its triggers.",
+  "redFlagNote": "ankle is a new shared box (content.md 5.3: from the joint's own NHS page, read in full). Its triggers come from the NHS ankle pain page (c14), read in full on 2026-10-03; LR-23/LR-27 apply (no number, service or link in the shown box).",
   "zooms": [
     {
       "key": "landing-knees",
@@ -613,10 +609,9 @@
     "why": "Library: quads primary, glutes and calves secondary. NASM names quads, glutes and calves as drivers (c12), so all three are present; NASM calls glutes and calves primary, but no EMG source was found to justify moving them, so no change."
   },
   "loadProgression": {
-    "text": "Progress by box height, from 12-18 inches, only as landings stay controlled; box height did not change take-off performance.",
+    "text": "Progress by box height, from 12-18 inches, only as landings stay controlled.",
     "claims": [
-      "c8",
-      "c9"
+      "c8"
     ]
   },
   "tierA": {
@@ -634,12 +629,17 @@
     "Knee tracking over the toes on landing (front view).",
     "Where on the foot to land (whole foot vs forefoot).",
     "Box surface or stability checks beyond 'sturdy'.",
-    "Breathing."
+    "Breathing.",
+    "Tempo in seconds (take-off, landing, step-down): see notes."
   ],
   "gaps": [
-    "No sourced tempo: no named source read gives seconds for the take-off, the landing or the step-down (2026-10-02: NASM, Catalyst Athletics, Experience Life, Onnit, Outperform Sports). NASM says only to step down, reset and \"allow adequate recovery between repetitions\". Outperform Sports' 2-second hold belongs to a no-countermovement drill and its author is unnamed, so it is not used."
+    "Tier-A way out for a failed jump (falling short of the box, catching a toe, a missed landing): no source found (NASM and Catalyst have none). No line is shown. Joins LIB-WAYOUT."
   ],
   "notes": [
-    "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): no sourced seconds found; recorded in gaps."
+    "W1 fix round 2026-10-03: F20/R-W1-8 tempo: no named source read gives seconds for the take-off, the landing or the step-down (2026-10-02: NASM, Catalyst Athletics, Experience Life, Onnit, Outperform Sports). NASM says only to step down, reset and \"allow adequate recovery between repetitions\". Outperform Sports' 2-second hold belongs to a no-countermovement drill and its author is unnamed, so it is not used. Moved out of gaps (LR-20).",
+    "W1 fix round 2026-10-03: F08 failed-jump way out added to gaps (LIB-WAYOUT); no line shown.",
+    "W1 fix round 2026-10-03: F09 \"(shared landing risk line)\" removed from risks[1]; the shared landing risk line link is noted here; claims now [c5,c13] and [c6,c11].",
+    "W1 fix round 2026-10-03: F10 loadProgression no longer carries c9's performance finding; c9 stays as data.",
+    "W1 fix round 2026-10-03: F21/R-W1-8 c14 re-sourced from the NHS ankle pain page (the joint's own page, read in full); nhs-sprains dropped; ankle row \"where\" follows \"you are not able to walk\"."
   ]
 }

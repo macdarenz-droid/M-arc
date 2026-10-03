@@ -1,6 +1,6 @@
 {
   "id": "mountain_climbers",
-  "checked": "2026-09-30",
+  "checked": "2026-10-03",
   "quotes": [
     {
       "claim": "c1",
@@ -59,11 +59,25 @@
       "closest": "Bouncing on your toes. Some people find themselves bouncing on their toes as they drive their knees forward. This can add extra impact, especially for beginners, which might make it harder to keep the movement controlled."
     },
     {
+      "claim": "c7",
+      "source": "hinge-mc",
+      "text": "To adjust, focus on moving with smooth, intentional steps, almost as if you’re gliding your knees forward rather than bouncing.",
+      "status": "verbatim",
+      "closest": "To adjust, focus on moving with smooth, intentional steps, almost as if you’re gliding your knees forward rather than bouncing."
+    },
+    {
       "claim": "c8",
       "source": "hinge-mc",
       "text": "Some rounding in your back is natural, especially as you start to fatigue. If you feel your back rounding excessively, try focusing on drawing your shoulders down and back, which supports a neutral spine position.",
       "status": "verbatim",
       "closest": "Some rounding in your back is natural, especially as you start to fatigue. If you feel your back rounding excessively, try focusing on drawing your shoulders down and back, which supports a neutral spine position."
+    },
+    {
+      "claim": "c8",
+      "source": "hinge-mc",
+      "text": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement.",
+      "status": "verbatim",
+      "closest": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement."
     },
     {
       "claim": "c9",
@@ -129,26 +143,12 @@
       "closest": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist."
     },
     {
-      "claim": "c7",
-      "source": "hinge-mc",
-      "text": "To adjust, focus on moving with smooth, intentional steps, almost as if you’re gliding your knees forward rather than bouncing.",
-      "status": "verbatim",
-      "closest": "To adjust, focus on moving with smooth, intentional steps, almost as if you’re gliding your knees forward rather than bouncing."
-    },
-    {
-      "claim": "c8",
-      "source": "hinge-mc",
-      "text": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement.",
-      "status": "verbatim",
-      "closest": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement."
-    },
-    {
       "claim": "c13",
       "source": "lohre-mc",
       "text": "Mountain climbers are usually programmed by time rather than reps. Beginners should start with 2 to 3 sets of 15 seconds of work and 15 seconds of rest, which totals about 1 to 2 minutes.",
       "status": "verbatim",
       "closest": "Mountain climbers are usually programmed by time rather than reps. Beginners should start with 2 to 3 sets of 15 seconds of work and 15 seconds of rest, which totals about 1 to 2 minutes.",
-      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c13",
@@ -156,7 +156,7 @@
       "text": "At intermediate level, use 3 to 4 sets of 20 seconds on and 20 seconds off, and if you are well conditioned, 4 to 5 sets of 30 seconds on and 30 seconds off.",
       "status": "verbatim",
       "closest": "At intermediate level, use 3 to 4 sets of 20 seconds on and 20 seconds off, and if you are well conditioned, 4 to 5 sets of 30 seconds on and 30 seconds off.",
-      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c14",
@@ -164,7 +164,7 @@
       "text": "As part of an overall program focusing on muscular strength and conditioning, complete 2–3 sets of 10–15 slow and controlled repetitions.",
       "status": "verbatim",
       "closest": "As part of an overall program focusing on muscular strength and conditioning, complete 2–3 sets of 10–15 slow and controlled repetitions.",
-      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c14",
@@ -172,7 +172,7 @@
       "text": "As part of a cardiovascular program with a HIIT focus, complete 6–8 rounds of fast mountain climbers for 20 seconds, with a 10-second rest in between.",
       "status": "verbatim",
       "closest": "As part of a cardiovascular program with a HIIT focus, complete 6–8 rounds of fast mountain climbers for 20 seconds, with a 10-second rest in between.",
-      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c14",
@@ -180,7 +180,15 @@
       "text": "They can also be performed at a slow, controlled tempo, which is better for beginners.",
       "status": "verbatim",
       "closest": "They can also be performed at a slow, controlled tempo, which is better for beginners.",
-      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "lohre-mc",
+      "text": "Progress by extending the interval before adding sets, and end the set as soon as your hips start bouncing rather than pushing to the clock.",
+      "status": "verbatim",
+      "closest": "Progress by extending the interval before adding sets, and end the set as soon as your hips start bouncing rather than pushing to the clock.",
+      "note": ""
     }
   ]
 }
