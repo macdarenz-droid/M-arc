@@ -7,6 +7,7 @@
 // colours the views as it colours the 8. Golden-B hand.mjs is imported, never edited.
 import { HAND_CSS, HAND_OF_H, HAND_PROP } from '../../layers/engine/hand.mjs';
 import { f, pt, spline } from '../../layers/engine/geom.mjs';
+import { readFileSync } from 'node:fs';
 
 export { HAND_CSS, HAND_OF_H, HAND_PROP, f, pt, spline };
 export const RAD = Math.PI / 180;
@@ -173,3 +174,10 @@ export function cutLimb(P, Q, r1, r2, L) {
   const at = (X, w) => add(X, mul(n, w)), M = add(P, mul(u, L * 0.5));
   return [at(P, -r1), at(M, -(r1 + r2) / 2), at(C, -r2), add(at(C, -r2 / 2), mul(u, 3)), at(C, 0), add(at(C, r2 / 2), mul(u, -3)), at(C, r2), at(M, (r1 + r2) / 2), at(P, r1)];
 }
+
+/** LIB-7 checks.mjs hook for a key with its own render: the problems each rendered page's report carries. */
+export const reportChecks = (spec, pages) => pages.flatMap(p => (p.report.problems ?? [`no problems list in the report`]).map(x => `${spec.id}/${p.fault.key}: ${x}`));
+
+/** LIB-12's pinned claim extract (research 95342b1): `<file>#<cid>` -> text. Each drawn key exports it as CLAIMS_TEXT so
+ *  a sheet resolves its refs from the module that cites them. */
+export const LIB12_CLAIMS = JSON.parse(readFileSync(new URL('./lib12-claims.json', import.meta.url), 'utf8')).claims;

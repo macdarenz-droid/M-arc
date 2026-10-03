@@ -1,6 +1,6 @@
 // LIB-12 key cupped (hands/DESIGN.md §1 module shape; drawing code in view-cupped.mjs). Plan 2.3; goblet cites only its
 // own card (D-LIB12-4). Pilot A (D-LIB12-5).
-import { viewPair } from './view-common.mjs';
+import { LIB12_CLAIMS, reportChecks, viewPair } from './view-common.mjs';
 import { GOBLET_DUMBBELL, cuppedHalf, cuppedProblems } from './view-cupped.mjs';
 
 export const KEY = 'cupped', OWNER = 'LIB-12', VIEW = 'cupped';
@@ -34,3 +34,8 @@ export function render(spec) {
   const problems = cuppedProblems(out.report);
   return { svg: out.svg, report: { ...out.report, problems, ok: problems.length === 0 } };
 }
+
+/** The sheet's check hook (LIB-7 checks.mjs problemsOf): this view's own geometry checks. */
+export const checks = reportChecks;
+/** Claim texts for the refs this key cites (a sheet resolves them here). */
+export const CLAIMS_TEXT = LIB12_CLAIMS;

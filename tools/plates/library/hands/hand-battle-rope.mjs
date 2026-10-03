@@ -4,6 +4,7 @@
 // The neutral grip (c1) is seen from above, but golden B's "above" row reads YOU / MACHINE, which names a machine that
 // is not there. So render() draws the pair with the plain side label and renames it to "Seen from above" (D-LIB12-7).
 import { renderHandPair } from '../../layers/engine/hand.mjs';
+import { LIB12_CLAIMS, reportChecks } from './view-common.mjs';
 export const KEY = 'battle-rope', OWNER = 'LIB-12', VIEW = 'radial';
 export const HANDLE = { profile: 'battle-rope', diameterMm: 38 };   // drawing value, flagged (D-LIB12-2)
 const BR = 'shared/implement-battle-ropes.json';
@@ -48,3 +49,8 @@ export function battleRopeProblems(svg, report, spec) {
   if (!panel('wrong').includes('h-mark thin')) bad.push('wrong: no squeeze (tendon) marker (c4)');
   return bad;
 }
+
+/** The sheet's check hook (LIB-7 checks.mjs problemsOf): this key's own checks. */
+export const checks = reportChecks;
+/** Claim texts for the refs this key cites (a sheet resolves them here). */
+export const CLAIMS_TEXT = LIB12_CLAIMS;

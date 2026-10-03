@@ -1,7 +1,7 @@
 // LIB-12 key front-rack (hands/DESIGN.md §1 module shape; drawing code in view-front-rack.mjs). Plan 2.3; research
 // shared/front-rack-exemption.json and cards/front_squat.json. The on-body wrist range is replaced by the exemption, so
 // no wrist number is drawn or checked. Pilot A (D-LIB12-5).
-import { viewPair } from './view-common.mjs';
+import { LIB12_CLAIMS, reportChecks, viewPair } from './view-common.mjs';
 import { FRONT_RACK_BAR, frontRackHalf, frontRackProblems } from './view-front-rack.mjs';
 
 export const KEY = 'front-rack', OWNER = 'LIB-12', VIEW = 'front-rack';
@@ -33,3 +33,8 @@ export function render(spec) {
   const problems = frontRackProblems(out.report);
   return { svg: out.svg, report: { ...out.report, problems, ok: problems.length === 0 } };
 }
+
+/** The sheet's check hook (LIB-7 checks.mjs problemsOf): this view's own geometry checks. */
+export const checks = reportChecks;
+/** Claim texts for the refs this key cites (a sheet resolves them here). */
+export const CLAIMS_TEXT = LIB12_CLAIMS;

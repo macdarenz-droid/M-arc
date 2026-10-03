@@ -219,6 +219,24 @@ describe('LIB-12 A7: inputsFor covers each id\'s view files', () => {
   });
 });
 
+describe('LIB-12 on LIB-7\'s pilot and critic sheet (review Blocker, #191 @ 1ff38b6)', () => {
+  it('problemsOf reads each LIB-12 key\'s own checks: [] for every drawn id; a planted swap is red', async () => {
+    const C = await import(/* @vite-ignore */ url('tools/plates/library/hands/checks.mjs'));
+    const S = await import(/* @vite-ignore */ url('tools/plates/library/hands/sheet.mjs'));
+    const ids = common.sweep(mods.filter(m => m.OWNER === 'LIB-12').flatMap(m => Object.keys(m.IDS)), 12, 'sheet ids');
+    for (const id of ids) { const { spec, pages } = C.renderedPages(id, pairs.INDEX); expect([id, C.problemsOf(spec, pages)]).toEqual([id, []]); }
+    const idx = pairs.indexOf(S.planted(mods, [{ id: 'goblet_squat', op: 'swap' }])), { spec, pages } = C.renderedPages('goblet_squat', idx);
+    expect(C.problemsOf(spec, pages).join('\n')).toMatch(/goblet_squat\/weight-away: right: weight 60 mm off the chest/);
+  });
+  it('buildSheet runs with every module loaded, shows every LIB-12 id and resolves every LIB-12 claim', async () => {
+    const S = await import(/* @vite-ignore */ url('tools/plates/library/hands/sheet.mjs'));
+    const html = JSON.stringify(await S.buildSheet());
+    for (const id of mods.filter(m => m.OWNER === 'LIB-12').flatMap(m => Object.keys(m.IDS))) expect([id, html.includes(id)]).toEqual([id, true]);
+    const refs = Object.keys(CLAIMS.claims).filter(r => html.includes(`${r}: (unresolved)`));
+    expect(refs).toEqual([]);
+  }, 180_000);
+});
+
 describe('LIB-12 A1: golden B\'s 8 close-ups unchanged with every hand-*.mjs loaded', () => {
   it('compareCloseups on the 8 === [] after all key modules are imported', async () => {
     expect(mods.filter(m => m.OWNER === 'LIB-12').length).toBe(8);

@@ -1,6 +1,6 @@
 // LIB-12 key palm-flat (hands/DESIGN.md §1 module shape; drawing code in view-palm-flat.mjs). Plan 2.3; research
 // shared/palm-flat.json (claims below as <file>#<cid>, pinned in lib12-claims.json). Pilot B (D-LIB12-5).
-import { viewPair } from './view-common.mjs';
+import { LIB12_CLAIMS, reportChecks, viewPair } from './view-common.mjs';
 import { palmFlatHalf, palmFlatProblems } from './view-palm-flat.mjs';
 
 export const KEY = 'palm-flat', OWNER = 'LIB-12', VIEW = 'palm-flat';
@@ -39,3 +39,8 @@ export function render(spec) {
   const problems = palmFlatProblems(out.report, fault);
   return { svg: out.svg, report: { ...out.report, fault, problems, ok: problems.length === 0 } };
 }
+
+/** The sheet's check hook (LIB-7 checks.mjs problemsOf): this view's own geometry checks. */
+export const checks = reportChecks;
+/** Claim texts for the refs this key cites (a sheet resolves them here). */
+export const CLAIMS_TEXT = LIB12_CLAIMS;

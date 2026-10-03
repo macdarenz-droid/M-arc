@@ -1,6 +1,6 @@
 // LIB-12 key ball-contact (hands/DESIGN.md §1 module shape; drawing code in view-ball.mjs). Plan 2.3; research
 // shared/implement-wall-ball.json. Front camera (the spec's camera is not used). Pilot B (D-LIB12-5).
-import { viewPair } from './view-common.mjs';
+import { LIB12_CLAIMS, reportChecks, viewPair } from './view-common.mjs';
 import { WALL_BALL, ballHalf, ballProblems } from './view-ball.mjs';
 
 export const KEY = 'ball-contact', OWNER = 'LIB-12', VIEW = 'ball';
@@ -32,3 +32,8 @@ export function render(spec) {
   const problems = ballProblems(out.report);
   return { svg: out.svg, report: { ...out.report, problems, ok: problems.length === 0 } };
 }
+
+/** The sheet's check hook (LIB-7 checks.mjs problemsOf): this view's own geometry checks. */
+export const checks = reportChecks;
+/** Claim texts for the refs this key cites (a sheet resolves them here). */
+export const CLAIMS_TEXT = LIB12_CLAIMS;
