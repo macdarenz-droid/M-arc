@@ -126,7 +126,21 @@ const misReach = (() => { const E = landmarksOf(end, H), M = landmarksOf({ ...en
   return out; })();
 const mistakePose = { root: rootM, trunk: trunkM, neck: neckM, reach: misReach };
 const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
-const gapTo = lmMis.backMid, gapCm = padDist(gapTo), gapFrom = gapTo.map((v, i) => v - F.back.normal[i] * gapCm);
+// R5 (critic on ae7c8c0, 2 of 3): the engine blends the outline over the lumbar bend, so the drawn arch was only ~6 cm
+// (~17 px in the 780 px shots). A dashed red lumbar line (a Mistake guide, not masked) bows from the buttocks on the pad
+// to the upper back on the pad, its middle ARCH off the pad: 12.7 cm = 18.6 plate px = ~37 px in the 780 px shots. The
+// gap between the pad and the top of the bow is marked with the house gap marker (line with end ticks).
+const ARCH = 0.127;
+const onPad = p => p.map((v, i) => v - F.back.normal[i] * padDist(p));
+const ARCH_PTS = (() => {
+  const A = onPad(lmMis.buttock), B = lmMis.backUpper, P = A.map((v, i) => (v + B[i]) / 2 + F.back.normal[i] * ARCH);
+  const C = P.map((v, i) => 2 * v - (A[i] + B[i]) / 2);                                   // the bow passes P at t = 0.5
+  return Array.from({ length: 17 }, (_, k) => { const t = k / 16; return A.map((v, i) => (1 - t) ** 2 * v + 2 * t * (1 - t) * C[i] + t * t * B[i]); });
+})();
+// The gap itself: the region between the pad and the bow is cleared to the card colour ('eq', end layer, Mistake only),
+// so the solid (correct) figure does not hide it.
+const GAP_FILL = { type: 'poly', pts: [...ARCH_PTS, onPad(lmMis.backUpper)], cls: 'eq', z: 'front', part: 'archgap' };
+const gapTo = ARCH_PTS[8], gapCm = padDist(gapTo), gapFrom = onPad(gapTo);
 const PU = F.back.up, TICK = 2 / 146.29;
 const tick = p => ({ kind: 'line', pts: [p.map((v, i) => v - PU[i] * TICK), p.map((v, i) => v + PU[i] * TICK)] });
 export const mistakeInfo = () => ({ sacrumGapCm: +(padDist(lmMis.sacrum) * 100).toFixed(1), trunkDeg: +trunkM.toFixed(1), neckDeg: +neckM.toFixed(1), lowBackGapCm: +(gapCm * 100).toFixed(1), buttockGapCm: +(padDist(lmMis.buttock) * 100).toFixed(1) });
@@ -138,7 +152,7 @@ export default {
   equipment: [
     { type: 'floor', from: -0.75, to: 0.95 },
     ...inclineBench({ hinge: HINGE, back: BACK, seatTilt: SEAT_TILT, backLen: BACK_LEN, beamZ: BEAM_Z }),
-    (lm, ctx) => (ctx.pose === 'end' ? [...startArmPhantom, ...startDbPhantom] : null),
+    (lm, ctx) => (ctx.pose === 'end' ? [...startArmPhantom, ...startDbPhantom, ...(ctx.mistake ? [GAP_FILL] : [])] : null),
     lm => [{ type: 'dumbbell', at: lm['grip.l'], axis: [1, 0, 0], z: 'back', part: 'db.l' },
       { type: 'dumbbell', at: lm['grip.r'], axis: [1, 0, 0], z: 'front', part: 'db' }],
   ],
@@ -165,6 +179,7 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
+      { kind: 'dashed', pts: ARCH_PTS },                                                   // the arched low back
       { kind: 'line', pts: [gapFrom, gapTo] }, tick(gapFrom), tick(gapTo),                 // pad-to-low-back gap
       { kind: 'arrow', from: { at: 'navel', pose: 'mistake', off: [3, 0] }, to: { at: 'navel', pose: 'mistake', off: [20, -2] } },   // belly pushes forward
     ],
