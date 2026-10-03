@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-02 ~17:35 UTC · main `000918e` (train 11 #195: HT-9, owner AGENTS text #186, handover #183) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. **ALL WORK PAUSED by the owner** (13:57 after train 11; again 17:3x after the BUG-38 / audit check): read 8.0a first. The hourly routine is disabled. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-03 ~04:15 UTC · main `000918e` (train 11 #195) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. **RESUMED 10-03 04:05 on the owner's "Continue alk workers"** after the 10-02 pauses (8.0a keeps the stop points). The hourly routine is on again. Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 - **Owner:** "After this batch. Pause all work. As i am trying to create new animation with meshy on how to". The batch = HT-9 only: its delta review (PASS 14:5x @ `dc73c32`, 0/0/0/1), train 11 (HT-9 #113 + #186 + this handover #183), CI, merge, APK to the owner. Then everything stops.
 - **Batch done 17:00:** train 11 #195 merged at 16:05 (main `000918efdf87974931ad1a630dd0bc5839b6285d`, all 4 checks green on train head `f1f5195`). APK: main's gate run 37031786763, artifact MARC-DEBUG-APK 11240393150, fingerprint step success; sent to the owner 17:0x. Relay HT-9 done. HT-9 builder and reviewer archived. Routine `trig_016ECwLTU7XRLzsYVRrwLTGe` disabled 17:00.
 - **Second pause, 10-02 ~17:30:** the owner reported BUG-38 from his phone and asked to fix it and related bugs and to confirm the audit findings (17:1x). Then: "Pause everything for now. Byt save ur progress". Both in-chat workflows were stopped, the /loop was stopped, and the progress was saved to `docs/supervisor/verify/` and `docs/supervisor/workflows/`.
+- **Resumed 10-03 04:05 (owner: "Continue alk workers"):**
+  - routine re-enabled and `monitor.sh` re-armed;
+  - resume messages to HT-10 ("HT-9 merged", main `000918e`), GATE-FLAKE-1, LIB-7 (LIB-12's asks plus the discarded R8 critic's findings) and LIB-12;
+  - in-chat workflows resumed: BUG-38 design `wf_335c9c91-d12`, audit confirmation `wf_1b1d1523-fe5` and pilot A critic `wf_3a60c2a3-e4c` (args `{scratch}`);
+  - new: LR-29 verify of W1A + tempo on `claude/libht-verify-w1` @ `2815c124` (research plus W1A `7fdc9425` plus tempo `16558393`, merge commits), workflow `research-verify.js` (`wf_14147665-13f`).
 - **Resume only on the owner's word.** Then: (1) re-enable `trig_016ECwLTU7XRLzsYVRrwLTGe` (`update_trigger enabled=true`); (2) re-arm `monitor.sh`; (3) read every row below live (`git ls-remote`), then send each paused session one resume message (one-shot trigger), in 8.7 order. HT-10 gets "HT-9 merged" first: it is the finish-line card.
 - **Why paused:** the owner is trying Meshy-made animations for the How-to (his own experiment, repo Watch-test, session_01H2ZgdD61dVdfPNnwywv13H, not ours). If he picks Meshy output for plates, that is a new provider and a plate-pipeline decision (plan 2.8, golden A/B byte-locked): a design card and his yes come first; nothing is swapped silently.
 
