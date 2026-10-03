@@ -420,7 +420,7 @@
    {
     "where": "Low back",
     "means": "Uncontrolled twists can jar the back.",
-    "fix": "Slow down; if it still hurts, choose another core exercise.",
+    "fix": "Stop the set; choose another core exercise.",
     "claim": "c8",
     "redFlag": "back"
    }
@@ -469,6 +469,7 @@
   "ACE's 'Russian Twist' page (exercise-library/65) is a stability-ball version lying with the upper back on the ball, a different exercise, so it is not cited.",
   "No PubMed study of the floor Russian twist was found (esearch 'Russian twist obliques' and 'russian twist exercise' gave no relevant hit); the card rests on two coach sources, both read in full, which meets content.md 3.4's bar (anchor source and sourced core setup).",
   "Back zoom wrong is null (LR-25): no source describes the wrong back shape.",
-  "The back feel row restates BarBend's own fault and fix (c8), no added cause (LR-6); the back box link stays pending (LR-26, LR-27)."
+  "The back feel row restates BarBend's own fault and fix (c8), no added cause (LR-6); the back box link stays pending (LR-26, LR-27).",
+  "W1 fixer round 2026-10-03: F02 / R-W1-6: back row fix is now 'Stop the set; choose another core exercise.' (c8, LR-27); the slow-down cue stays on the fast, jerky twists mistake (handlingMistakes[1])."
  ]
 }

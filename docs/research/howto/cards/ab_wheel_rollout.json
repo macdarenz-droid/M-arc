@@ -225,7 +225,7 @@
   },
   {
    "id": "c9",
-   "text": "The abs are the target: the rectus abdominis holds the body straight, the obliques keep the upper body stable, the deep abs work, and the lats and chest also work.",
+   "text": "The abs are the target: the rectus abdominis holds the body straight, the obliques keep the upper body stable, and the lats also work.",
    "tags": [
     "CONSENSUS"
    ],
@@ -607,7 +607,7 @@
  "libraryDiff": {
   "add": [],
   "remove": [],
-  "why": "core and abs primary, lats secondary fit the sources (c9, c10). StrengthLog also names the obliques and the chest; front_delts stays a stabilizer (no source for or against)."
+  "why": "core and abs primary, lats secondary fit the sources (c9, c10). StrengthLog also names the obliques; front_delts stays a stabilizer (no source for or against)."
  },
  "anchorSource": "sl-abex",
  "loadProgression": {
@@ -633,6 +633,7 @@
   "c10 is the Power Wheel roll-out (a different wheel device), applied by similarity (MECH); StrengthLog cites the same paper for the ab wheel.",
   "c8 is a two-case report; the shown risk line keeps 'has caused' and does not give a rate. The fall cases were standing rollouts after drinking; no line on alcohol is shown.",
   "The back row restates the sources' own fault and fix (c3, c5, c6, c7), no added cause (LR-6); the back box link stays pending (LR-26, LR-27).",
-  "Range zoom wrong is null (LR-25)."
+  "Range zoom wrong is null (LR-25).",
+  "W1 fixer round 2026-10-03: F13: c9 drops 'the deep abs' and 'chest' (no quote supports them); libraryDiff.why drops the chest."
  ]
 }

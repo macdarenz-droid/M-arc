@@ -39,7 +39,7 @@
   },
   {
    "id": "c2",
-   "text": "Hands: fingertips resting lightly by the sides of the head, elbows wide, without gripping behind the neck; or arms crossed over the chest; or hands in front of the chest.",
+   "text": "Hands: hands behind the head with the shoulder blades squeezed and the elbows pulled back; or fingertips resting lightly by the sides of the head, elbows wide, without gripping behind the neck; or arms crossed over the chest; or hands in front of the chest.",
    "tags": [
     "CONSENSUS"
    ],
@@ -520,6 +520,7 @@
  "notes": [
   "Hands: ACE puts the hands behind the head, BarBend puts the fingertips by the ears or crosses the arms, StrengthLog holds them in front of the chest (c2). The plate draws crossed arms because BarBend recommends it for anyone who pulls on the head (c7).",
   "The back feel row restates ACE's fault (fast, hip-led curl tilting the pelvis and stressing the low back, c6) and its fix (LR-6); the back box link stays pending (LR-26, LR-27).",
-  "Tempo: plate.tempo.pause is 1 for ACE's brief hold at the top (c3). The numbers are a drawing convention, not ACSM (LR-15)."
+  "Tempo: plate.tempo.pause is 1 for ACE's brief hold at the top (c3). The numbers are a drawing convention, not ACSM (LR-15).",
+  "W1 fixer round 2026-10-03: F14: c2 text now includes ACE's hands-behind-head option, which its ACE quote states."
  ]
 }
