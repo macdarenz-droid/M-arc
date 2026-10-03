@@ -17,7 +17,7 @@ Use what's necessary for high-quality output and a fast workflow, while saving t
   - a problem no agent can solve;
   - a choice only the owner can make, or one where no option can be recommended;
   - the finish-line reminder he asked for.
-  Everything else goes in the repo and on the PRs (HANDOVER, PR comments, Relay), never in his chat: progress, ticks, "no change", monitor echoes, plans, rulings, reviews and merges. Builders and reviewers never write to the owner.
+  Everything else goes in the repo and on the PRs (HANDOVER, PR comments, Relay), never in his chat: progress, ticks, "no change", monitor echoes, plans, rulings, reviews and merges. Builders and reviewers never write to the owner. When a turn has nothing for him, the whole reply is exactly "." (owner, 2026-10-03).
 - Decide, don't ask. Research first, pick the best logical option, apply it, and record why. Ask the owner only for input or an action no AI agent can do (a payment, a login, a secret, a check on a real device).
 - No guessing, even on simple tasks. Check the code, docs or data first; if you cannot verify something, say so.
 - After each task, review what was built: the feature, its logic, how it works. Move on only if it meets the goal; otherwise fix or improve it first.
