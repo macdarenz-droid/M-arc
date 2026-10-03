@@ -57,15 +57,15 @@ export function tiles(index) {
   return [...by.values()];
 }
 
-export async function buildSheet({ calibrate = false, plants = [], critic = false } = {}) {
-  const index = indexOf(planted(MODULES, plants));
+export async function buildSheet({ calibrate = false, plants = [], critic = false, mods = MODULES } = {}) {
+  const index = indexOf(planted(mods, plants));
   const refs = {};
   for (const [arch, [id, page]] of Object.entries(REFERENCE)) refs[arch] = await approvedHand(id, page);
   const rows = [], key = [];
   for (const [i, t] of tiles(index).entries()) {
     const s = t.spec, V = s.mod.VARIANTS[s.variant], { pages } = renderedPages(s.id, index);
-    const problems = problemsOf(s, pages), flags = [...Object.values(V.claims).flat(), ...s.wrong.flatMap(w => w.claims)].filter(r => r.startsWith('ga:'));
-    const claimLines = [...new Set([...Object.values(V.claims).flat(), ...s.wrong.flatMap(w => w.claims), ...t.ids.flatMap(id => index.drawn.get(id).cfg.claims)])].map(refText);
+    const problems = problemsOf(s, pages), flags = [...Object.values(V.claims ?? {}).flat(), ...s.wrong.flatMap(w => w.claims ?? [])].filter(r => r.startsWith('ga:'));
+    const claimLines = [...new Set([...Object.values(V.claims ?? {}).flat(), ...s.wrong.flatMap(w => w.claims ?? []), ...t.ids.flatMap(id => index.drawn.get(id).cfg.claims ?? [])])].map(refText);
     rows.push(`<section class="tile"><h2>${i + 1}. ${critic ? esc(s.key) : `${esc(s.pair)} · ${esc(s.orientation)}`}</h2><p class="ids">${t.ids.map(esc).join(', ')}</p>`
       + pages.map(p => `<div class="hand-plate">${renderPair(s.id, { fault: p.fault.key, uid: `t${i}-${p.fault.key}`, index }).svg}</div>`).join('')
       + (refs[V.archetype] ? `<p class="lab">Closest approved (${esc(REFERENCE[V.archetype][0])})</p><div class="hand-plate ref">${refs[V.archetype].replace(/id="([^"]+)"/g, `id="r${i}-$1"`).replace(/#([a-z][\w-]*)/g, `#r${i}-$1`)}</div>` : '')

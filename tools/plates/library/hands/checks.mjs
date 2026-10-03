@@ -30,8 +30,12 @@ export function contactU(m, pose, k) {
 
 /** Problems of one id's pages ([] = ok). Pure on the rendered reports, so a test can plant a defect in them. */
 export function problemsOf(spec, pages) {
-  const bad = [], [lo, hi] = spec.wristRange;
   if (!pages.length) return [`${spec.id}: no pages`];
+  // G1-G9 read golden-B's radial report; a key with its own view (LIB-12) brings its own checks, or none here. Its
+  // wristRange may be null, which a destructuring default would not catch (LIB-12 review Blocker, 10-03)
+  if (spec.mod.VIEW !== 'radial' || spec.mod.render) return spec.mod.checks ? spec.mod.checks(spec, pages) : [];
+  if (!Array.isArray(spec.wristRange) || spec.wristRange.length !== 2) return [`${spec.id}: G1 no wrist range`];
+  const bad = [], [lo, hi] = spec.wristRange;
   for (const { fault: F, report: R, svg, uid } of pages) {
     const at = `${spec.id}/${F.key}`, M = R.measured;
     // G1, G2: Right inside the range; Wrong outside it on the side its claim names (so the two cannot swap)

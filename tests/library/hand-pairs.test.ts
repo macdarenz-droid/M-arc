@@ -225,6 +225,20 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(() => P.indexOf([...lib7(), { ...lib12, GAPS: { cable_fly: 'x' } }])).toThrow(/cable_fly is in d-handle and zz-planted/);
     expect(() => P.indexOf(P.MODULES)).not.toThrow();                // the real modules of every owner, as loaded
   });
+  it('a non-radial key with wristRange: null runs through the checks and the sheet (LIB-12 review Blocker)', async () => {
+    const view = { KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
+      render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
+      VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, contact: null, loadAxis: null, right: { view: 'zz-view' },
+        faults: { f: { label: 'Wrist bent back', side: 'extended', pose: {}, markers: [], claims: [] } } } },
+      IDS: { zz_planted_id: { variant: 'v', orientation: 'unstated', faults: ['f'], claims: [] } } };
+    const idx = P.indexOf([view]);
+    expect(C.pairProblems('zz_planted_id', idx)).toEqual([]);
+    const { body } = await sheet.buildSheet({ mods: [...clone().filter((m: any) => m.OWNER === 'LIB-7'), view] });
+    expect(body).toContain('zz_planted_id');
+    // the radial checks still run on radial keys: a radial key with no range is a problem, not a skip
+    const noRange = P.indexOf(withMods(m => { key(m, 'curl').VARIANTS.dumbbell.wristRange = null; }));
+    expect(C.pairProblems('hammer_curl', noRange).join('\n')).toMatch(/G1 no wrist range/);
+  }, 60_000);
   it('diameter: a radial key without one fails; a non-radial view without a handle is allowed (LIB-12 ask)', () => {
     expect(() => P.pairSpec('rope_triceps_pushdown', P.indexOf(withMods(m => { delete key(m, 'rope').HANDLE.diameterMm; })))).toThrow(/no explicit handle diameter/);
     const flat = { KEY: 'zz-flat', OWNER: 'LIB-12', VIEW: 'palm-flat', FILE: 'x', render: () => ({ svg: '<svg></svg>', report: {} }),
