@@ -80,7 +80,7 @@ export function pairSpec(id, index = INDEX) {
     right, rightNote: V.rightNote, altRight: V.alt, panelHeight: V.panelHeight,
     wrong: cfg.faults.map(k => ({ key: k, ...V.faults[k] })),
     extras: { ...(V.loadLine === false ? { stripLoadLine: true } : {}), ...(radial && H?.plain ? { plainHandle: true } : {}),
-      ...(radial && H?.knobMm ? { knobMm: H.knobMm } : {}), ...(radial && V.loadThroughPivot ? { loadThroughPivot: true } : {}), ...(radial && CAMERA_TEXT[cfg.orientation] ? { cameraText: CAMERA_TEXT[cfg.orientation] } : {}),
+      ...(radial && H?.knobMm ? { knobMm: H.knobMm } : {}), ...(radial && V.loadThroughPivot ? { loadThroughPivot: true } : {}), ...(radial && V.rightLoad === false ? { rightNoLoad: true } : {}), ...(radial && CAMERA_TEXT[cfg.orientation] ? { cameraText: CAMERA_TEXT[cfg.orientation] } : {}),
       // golden B's "seen from above" row names YOU and MACHINE; a hand-held weight has no machine, so it gets the camera
       // words alone (renderHandPair's side-camera label, reworded; D-LIB7-11)
       ...(radial && camera === 'above' && !V.machine ? { plainAbove: true } : {}), ...(radial ? { placeLabels: true } : {}) },
@@ -191,6 +191,17 @@ function knobRings(svg, knobMm, k) {
   }
   return { svg, knobs };
 }
+/** The Right half without its force line (golden-B squat Right precedent, D-LIB7-18a): the line and its head go; the
+ *  contact dot, the pivot and the engine's reference wrist tick stay. The Wrong half keeps its line (the lever it shows). */
+function rightNoLoad(svg) {
+  const at = svg.indexOf('<g class="h-panel right">'), end = svg.indexOf('<g class="h-panel wrong">');
+  if (at < 0 || end < at) throw new Error('hand pairs: right without load: no panels');
+  const part = svg.slice(at, end), re = /<path class="h-load" d="[^"]*"\/><path class="h-load-head" d="[^"]*"\/>/g;
+  const n = part.match(re)?.length ?? 0;
+  if (n !== 1) throw new Error(`hand pairs: right without load: ${n} Right force lines, expected 1`);
+  if (!/<path class="h-tick" d="[^"]*"\/>/.test(part)) throw new Error('hand pairs: right without load: no wrist tick');
+  return svg.slice(0, at) + part.replace(re, '') + svg.slice(end);
+}
 /** A push on the heel runs through the wrist: the Right half's force line is drawn straight down the forearm axis through
  *  the wrist pivot, starting level with the contact, same length (D-LIB7-18; the Wrong half keeps the engine's line
  *  behind the wrist, which is the lever it shows). forearm: the pose's forearm angle (golden-B makeProj: U toward the hand). */
@@ -241,6 +252,7 @@ export function renderPair(id, opts = {}) {
   let knobs = null, pivot = null;
   if (s.extras.knobMm) ({ svg, knobs } = knobRings(svg, s.extras.knobMm, out.report.scalePxPerMm));
   if (s.extras.loadThroughPivot) ({ svg, pivot } = loadThroughPivot(svg, s.right.forearm));
+  if (s.extras.rightNoLoad) svg = rightNoLoad(svg);
   const uidUsed = opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, placed = s.extras.placeLabels ? placeLabels(svg, uidUsed, (358 - 16) / 2) : { svg, moved: [] };
   svg = placed.svg;
   return { svg, spec: s, fault: F, report: { ...out.report, labelsMoved: placed.moved, knobs, pivot, measured: measured(svg) } };
