@@ -39,12 +39,14 @@ async function apiSha(id: string) {
   for (const [n, f] of cmp.apiCalls(api, mod.default)) h.update(`${n}\0${f()}\0`);
   return h.digest('hex');
 }
-async function approvedSvgs(): Promise<string[]> {
-  const out: string[] = [];
-  for (const id of Object.keys(opts)) {
-    const mod = await import(/* @vite-ignore */ url(`tools/plates/layers/exercises/${id}.howto.mjs`));
-    for (const [, f] of cmp.apiCalls(closeups.closeupApi(mod, opts[id]), mod.default)) for (const m of String(f()).matchAll(/<svg class="hand-svg"[\s\S]*?<\/svg>/g)) out.push(m[0]);
-  }
+// The approved golden-B hand SVGs, read from the committed golden-B page (its sha is checked here against
+// layers.PAGE_SHA256), not re-rendered: rendering every close-up of the 8 took over the 10 s hook limit on a loaded CI
+// runner (#191 source-gate @ 8945f3b). The vocabulary is the same set either way (checked once, 18 SVGs both ways).
+function approvedSvgs(): string[] {
+  const page = readFileSync('tests/howto/golden/howto-layers.html');
+  expect(layers.sha256(page)).toBe(layers.PAGE_SHA256);
+  const out = [...page.toString('utf8').matchAll(/<svg class="hand-svg"[\s\S]*?<\/svg>/g)].map(m => m[0]);
+  expect(out).toHaveLength(18);
   return out;
 }
 
@@ -291,7 +293,7 @@ function markupProblems(svg: string, uid: string, gold: ReturnType<typeof vocab>
 
 describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
   let gold: ReturnType<typeof vocab>;
-  beforeAll(async () => { gold = vocab(await approvedSvgs()); });
+  beforeAll(() => { gold = vocab(approvedSvgs()); });
   it('H2: markup within golden B\'s vocabulary, no colour literal, ids unique and uid-prefixed', () => {
     let n = 0;
     for (const id of lib7Drawn()) for (const w of P.pairSpec(id).wrong) {
