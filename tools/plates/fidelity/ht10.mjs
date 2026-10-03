@@ -18,6 +18,8 @@ export const HT10_TAP_MEDIANS = {
   ci: [
     { ms: 154, where: 'CI source-gate, Chrome 153.0.8010.12, ca313c7' },
     { ms: 147, where: 'CI visual-gate-tz, Chrome 153.0.8010.12, ca313c7' },
+    { ms: 154, where: 'CI source-gate, Chrome 153.0.8010.12, 3139d28' },
+    { ms: 140, where: 'CI visual-gate-tz, Chrome 153.0.8010.12, 3139d28' },
   ],
   container: [
     { ms: 251, where: 'reviewer container, full gate, Chromium 141.0.7390.37, ca313c7' },
