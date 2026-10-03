@@ -191,22 +191,25 @@ function knobRings(svg, knobMm, k) {
   }
   return { svg, knobs };
 }
-/** A push on the heel runs through the wrist: the Right half's force line is re-aimed from its handle end through the
- *  wrist pivot, same length (the Wrong half keeps the engine's line behind the wrist, which is the lever it shows). */
-function loadThroughPivot(svg) {
+/** A push on the heel runs through the wrist: the Right half's force line is drawn straight down the forearm axis through
+ *  the wrist pivot, starting level with the contact, same length (D-LIB7-18; the Wrong half keeps the engine's line
+ *  behind the wrist, which is the lever it shows). forearm: the pose's forearm angle (golden-B makeProj: U toward the hand). */
+function loadThroughPivot(svg, forearm) {
   const at = svg.indexOf('<g class="h-panel right">'), end = svg.indexOf('<g class="h-panel wrong">');
   let part = svg.slice(at, end);
   const line = part.match(/<path class="h-load" d="M([\d.-]+) ([\d.-]+)L([\d.-]+) ([\d.-]+)"\/>/), head = part.match(/<path class="h-load-head" d="[^"]*"\/>/);
   const w = part.match(/<circle class="h-joint wrist" cx="([\d.-]+)" cy="([\d.-]+)"/);
   if (!line || !head || !w) throw new Error('hand pairs: load through pivot: anchors missing');
   const A = [+line[1], +line[2]], B = [+line[3], +line[4]], W = [+w[1], +w[2]], L = Math.hypot(B[0] - A[0], B[1] - A[1]);
-  const d = [W[0] - A[0], W[1] - A[1]], dl = Math.hypot(...d), u = [d[0] / dl, d[1] / dl], E = [A[0] + u[0] * L, A[1] + u[1] * L];
+  const th = forearm * Math.PI / 180, u = [-Math.sin(th), -Math.cos(th)];          // away from the hand, along the axis
+  const a = (A[0] - W[0]) * u[0] + (A[1] - W[1]) * u[1], A0 = [W[0] + u[0] * a, W[1] + u[1] * a], E = [A0[0] + u[0] * L, A0[1] + u[1] * L];
+  if (!(a < 0)) throw new Error('hand pairs: load through pivot: the contact is not on the hand side of the wrist');
   const n = [-u[1], u[0]], tip = [E[0] + u[0] * 4, E[1] + u[1] * 4], sz = 6;
   const hd = `M${f2(tip[0] - u[0] * sz + n[0] * sz * .62)} ${f2(tip[1] - u[1] * sz + n[1] * sz * .62)}L${f2(tip[0])} ${f2(tip[1])}L${f2(tip[0] - u[0] * sz - n[0] * sz * .62)} ${f2(tip[1] - u[1] * sz - n[1] * sz * .62)}Z`;
-  part = part.replace(line[0], `<path class="h-load" d="M${f2(A[0])} ${f2(A[1])}L${f2(E[0])} ${f2(E[1])}"/>`).replace(head[0], `<path class="h-load-head" d="${hd}"/>`);
+  part = part.replace(line[0], `<path class="h-load" d="M${f2(A0[0])} ${f2(A0[1])}L${f2(E[0])} ${f2(E[1])}"/>`).replace(head[0], `<path class="h-load-head" d="${hd}"/>`);
   // the engine's tick marks where its own line crossed the wrist level; the re-aimed line crosses at the pivot itself
   part = part.replace(/<path class="h-tick" d="[^"]*"\/>/, '');
-  return { svg: svg.slice(0, at) + part + svg.slice(end), pivot: { from: [f2(A[0]), f2(A[1])], to: [f2(E[0]), f2(E[1])], wrist: W } };
+  return { svg: svg.slice(0, at) + part + svg.slice(end), pivot: { from: [f2(A0[0]), f2(A0[1])], to: [f2(E[0]), f2(E[1])], wrist: W } };
 }
 
 /** One rendered pair. opts: { uid, fault (key; default the first), panelHeight, index }. */
@@ -237,7 +240,7 @@ export function renderPair(id, opts = {}) {
   if (s.extras.plainHandle) svg = plainHandle(svg);
   let knobs = null, pivot = null;
   if (s.extras.knobMm) ({ svg, knobs } = knobRings(svg, s.extras.knobMm, out.report.scalePxPerMm));
-  if (s.extras.loadThroughPivot) ({ svg, pivot } = loadThroughPivot(svg));
+  if (s.extras.loadThroughPivot) ({ svg, pivot } = loadThroughPivot(svg, s.right.forearm));
   const uidUsed = opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, placed = s.extras.placeLabels ? placeLabels(svg, uidUsed, (358 - 16) / 2) : { svg, moved: [] };
   svg = placed.svg;
   return { svg, spec: s, fault: F, report: { ...out.report, labelsMoved: placed.moved, knobs, pivot, measured: measured(svg) } };

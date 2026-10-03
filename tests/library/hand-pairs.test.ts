@@ -146,6 +146,23 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     pages[0].report.pivot.to = [pages[0].report.pivot.to[0] + 30, pages[0].report.pivot.to[1]];
     expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G6 Right force line [\d.]+ px from the wrist pivot/);
   });
+  it('G6 (D-LIB7-18): the push Right force line runs straight down the forearm axis; 1114bc1\'s 15 deg slant fails', () => {
+    for (const id of ['single_arm_triceps_pushdown', 'skull_crusher']) {
+      const { spec, pages } = C.renderedPages(id), P0 = pages[0].report.pivot;
+      expect(C.problemsOf(spec, pages)).toEqual([]);
+      expect(P0.from[0]).toBe(P0.to[0]);                                  // vertical, as the Wrong's line
+      expect(P0.from[0]).toBe(P0.wrist[0]);                               // on the axis through the pivot
+      // the slant drawn on 1114bc1: the line rotated 15 deg about the pivot, path and report kept in step
+      const t = 15 * Math.PI / 180, rot = (p: any) => { const x = p[0] - P0.wrist[0], y = p[1] - P0.wrist[1];
+        return [+(P0.wrist[0] + x * Math.cos(t) - y * Math.sin(t)).toFixed(2), +(P0.wrist[1] + x * Math.sin(t) + y * Math.cos(t)).toFixed(2)]; };
+      const slant = structuredClone(pages), Q = slant[0].report.pivot, from = rot(P0.from), to = rot(P0.to);
+      slant[0].svg = slant[0].svg.replace(`d="M${P0.from[0]} ${P0.from[1]}L${P0.to[0]} ${P0.to[1]}"`, `d="M${from[0]} ${from[1]}L${to[0]} ${to[1]}"`);
+      Q.from = from; Q.to = to;
+      const out = C.problemsOf(spec, slant).join('\n');
+      expect(out).toMatch(/G6 Right force line 15\.0 deg off the forearm axis/);
+      expect(out).not.toMatch(/px from the wrist pivot|not drawn/);
+    }
+  });
   it('G8: an underhand id drawn palm down fails', () => {
     const { spec, pages } = C.renderedPages('barbell_curl'), m = pages[0].report.measured.right;
     m.handle[1] = m.wrist[1] + 10;                                   // the handle below the wrist: palm down
@@ -338,14 +355,14 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
   it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
     // the LIB-7 radial sheet, byte for byte (sha256 of buildSheet().body). Re-pinned once for the calibrated critic's fixes
     // (10-03: rope, push, ez_bar_curl angled; D-LIB7-13..15) and for the delta review (D-LIB7-16: ez palm up, rope fist
-    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid; D-LIB7-17: rope label); the approved pages stay pinned separately, unchanged.
+    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid; D-LIB7-17: rope label; D-LIB7-18: push line down the axis); the approved pages stay pinned separately, unchanged.
     // built from LIB-7's own key modules only, so another card's tiles never move this pin (D-LIB7-PIN); the filter must
     // keep all 5 LIB-7 modules, so the pin cannot silently shrink
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
     const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
     expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
-    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('6a4020426c7bc1afb1447273f51ae1a8ac69d7a5e8d9e67136aa0bc847fd8f89');
-    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('107e629210e2fd279390496ca53395b3e55bb60e32a4319a034453be16727dbe');
+    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('b728eeb85dd88f4a2f05bbe135cab0b38e6cb91d1f5227bbc009e21f813dce14');
+    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('206650e94d76f2e5b86c562e39061d3811600835888d40136b3c0200f267b885');
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },

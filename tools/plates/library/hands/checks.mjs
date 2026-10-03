@@ -34,7 +34,7 @@ export function contactU(m, pose, k) {
 /** The fist's front, in mm: how wide the Right hand's ink is across the forearm within 4 mm of its farthest point along
  *  it. A squared fist (curl 2, the approved lateral raise) is broad there; a fist closed round a handle in the fingers
  *  tapers to a point (critic run on #193, 10-03; D-LIB7-16). Read from the Right half's <defs> outlines. */
-export const FRONT_TOL_MM = 4, SQUARE_FRONT_MM = 20;
+export const FRONT_TOL_MM = 4, SQUARE_FRONT_MM = 20, AXIS_TOL_DEG = 2;
 export function fistFrontMm(svg, uid, forearm, k) {
   const th = forearm * RAD, U = [Math.sin(th), Math.cos(th)], V = [U[1], -U[0]];
   const pts = [...svg.matchAll(new RegExp(`<path id="${uid}-r-[a-z0-9-]+" d="([^"]+)"`, 'g'))].flatMap(q => poly(q[1]));
@@ -98,6 +98,9 @@ export function problemsOf(spec, pages) {
         const off = Math.hypot(A[0] + t * dx - W[0], A[1] + t * dy - W[1]);
         if (!(off <= 0.5 && t > 0 && t < 1)) bad.push(`${at}: G6 Right force line ${off.toFixed(1)} px from the wrist pivot`);
         if (!svg.includes(`d="M${A[0]} ${A[1]}L${E[0]} ${E[1]}"`)) bad.push(`${at}: G6 re-aimed force line not drawn`);
+        // and straight down the forearm axis, as the Wrong's line is (D-LIB7-18)
+        const th = spec.right.forearm * RAD, ang = Math.abs(Math.asin((dx * -Math.cos(th) - dy * -Math.sin(th)) / Math.hypot(dx, dy))) / RAD;
+        if (!(ang <= AXIS_TOL_DEG && dx * -Math.sin(th) + dy * -Math.cos(th) > 0)) bad.push(`${at}: G6 Right force line ${ang.toFixed(1)} deg off the forearm axis`);
       }
     }
     // G7: a rope reads as a rope: one plain section (no rigid-handle core) and its knob, coaxial, at the composer's size,
