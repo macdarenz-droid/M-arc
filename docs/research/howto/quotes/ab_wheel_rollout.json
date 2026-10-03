@@ -1,0 +1,239 @@
+{
+ "id": "ab_wheel_rollout",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-abwheel",
+   "text": "Sit with your knees on a soft pad, and place the ab wheel on the floor in front of you.",
+   "status": "verbatim",
+   "closest": "Sit with your knees on a soft pad, and place the ab wheel on the floor in front of you.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-abex",
+   "text": "Start by kneeling on the floor with your hands on the ab wheel, placed directly in front of your knees.",
+   "status": "verbatim",
+   "closest": "Start by kneeling on the floor with your hands on the ab wheel, placed directly in front of your knees.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-bestab",
+   "text": "Kneel and grip a wheel or barbell, loaded with round plates, with your hands set shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Kneel and grip a wheel or barbell, loaded with round plates, with your hands set shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-abex",
+   "text": "Engage your core and slowly roll the wheel forward until your body forms a straight line from your knees to your head.",
+   "status": "verbatim",
+   "closest": "Engage your core and slowly roll the wheel forward until your body forms a straight line from your knees to your head.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-abex",
+   "text": "Be sure to keep your back straight and your core engaged throughout the entire movement.",
+   "status": "verbatim",
+   "closest": "Be sure to keep your back straight and your core engaged throughout the entire movement.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-abwheel",
+   "text": "Roll out as far as you can, and maintain a straight back throughout the movement.",
+   "status": "verbatim",
+   "closest": "Roll out as far as you can, and maintain a straight back throughout the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-bestab",
+   "text": "Extend your hips toward the floor and let your chest sink forward toward the ground. Avoid arching your lower back as you extend your arms above your head.",
+   "status": "verbatim",
+   "closest": "Extend your hips toward the floor and let your chest sink forward toward the ground. Avoid arching your lower back as you extend your arms above your head.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-abwheel",
+   "text": "Reverse the movement with control, and return to the starting position.",
+   "status": "verbatim",
+   "closest": "Reverse the movement with control, and return to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-bestab",
+   "text": "Squeeze your lat muscles and pull yourself back to the starting position.",
+   "status": "verbatim",
+   "closest": "Squeeze your lat muscles and pull yourself back to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-abrollouts",
+   "text": "Tempo is important. Rolling out too fast and rushing through this movement can increase your risk of torso rotation/extension.",
+   "status": "verbatim",
+   "closest": "Tempo is important. Rolling out too fast and rushing through this movement can increase your risk of torso rotation/extension.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-abrollouts",
+   "text": "Every rep cue yourself to squeeze the glutes and initiate the movement with the core, as opposed to starting the roll with the arms.",
+   "status": "verbatim",
+   "closest": "Every rep cue yourself to squeeze the glutes and initiate the movement with the core, as opposed to starting the roll with the arms.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-abrollouts",
+   "text": "The ab rollout is a slightly tougher core exercise, and without proper progressions can actually increase injury to areas like the lower back.",
+   "status": "verbatim",
+   "closest": "The ab rollout is a slightly tougher core exercise, and without proper progressions can actually increase injury to areas like the lower back.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-abrollouts",
+   "text": "This is an exercise that comes with an inherent risk of injury, so they shouldn’t be performed haphazardly in a program.",
+   "status": "verbatim",
+   "closest": "This is an exercise that comes with an inherent risk of injury, so they shouldn’t be performed haphazardly in a program.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-abrollouts",
+   "text": "If you can hold a weighted plank with (10-25 lbs) for a minute, then there’s a good chance you can experiment with ab rollouts safely. Second, if you can perform a hollow body hold for a minute with ease.",
+   "status": "verbatim",
+   "closest": "If you can hold a weighted plank with (10-25 lbs) for a minute, then there’s a good chance you can experiment with ab rollouts safely. Second, if you can perform a hollow body hold for a minute with ease.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-abrollouts",
+   "text": "try moving through a limited set range of motion before working to your full extension on the ab wheel.",
+   "status": "verbatim",
+   "closest": "try moving through a limited set range of motion before working to your full extension on the ab wheel.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-bestab",
+   "text": "The farther forward you roll out from your body, the harder the move will be. So shorten your range of motion if need be.",
+   "status": "verbatim",
+   "closest": "The farther forward you roll out from your body, the harder the move will be. So shorten your range of motion if need be.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-coreex",
+   "text": "you can limit your range of motion by performing kneeling ab-wheels facing a wall. Have the wall stop you at a suitable distance, and then work on increasing your distance to the wall over time.",
+   "status": "verbatim",
+   "closest": "you can limit your range of motion by performing kneeling ab-wheels facing a wall. Have the wall stop you at a suitable distance, and then work on increasing your distance to the wall over time.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-abwheel",
+   "text": "The exercise is easier when done on your knees, and harder when on your feet.",
+   "status": "verbatim",
+   "closest": "The exercise is easier when done on your knees, and harder when on your feet.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-abex",
+   "text": "It’s suitable for experienced fitness enthusiasts looking for an even greater challenge.",
+   "status": "verbatim",
+   "closest": "It’s suitable for experienced fitness enthusiasts looking for an even greater challenge.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "yamane-2023",
+   "text": "In both cases, injuries occurred during the standing rollout by a patient in an inebriated state",
+   "status": "verbatim",
+   "closest": "In both cases, injuries occurred during the standing rollout by a patient in an inebriated state",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "yamane-2023",
+   "text": "Because the use of abdominal rollers may result in extremely serious disabilities, it is necessary to emphasize the appropriate use of such equipment.",
+   "status": "verbatim",
+   "closest": "Because the use of abdominal rollers may result in extremely serious disabilities, it is necessary to emphasize the appropriate use of such equipment.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-abwheel",
+   "text": "Primary muscles worked: Abs Secondary muscles worked: Obliques",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Abs Secondary muscles worked: Obliques",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-abex",
+   "text": "Your rectus abdominis gets a thorough thrashing as it works overtime to keep your entire body straight as you roll out and to bring you back to the starting position.",
+   "status": "verbatim",
+   "closest": "Your rectus abdominis gets a thorough thrashing as it works overtime to keep your entire body straight as you roll out and to bring you back to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-abex",
+   "text": "The internal and external oblique muscles are fully engaged to keep your upper body stable during the movement.",
+   "status": "verbatim",
+   "closest": "The internal and external oblique muscles are fully engaged to keep your upper body stable during the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-bestab",
+   "text": "Muscles Worked Abdominals, lats",
+   "status": "verbatim",
+   "closest": "Muscles Worked Abdominals, lats",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "escamilla-2006",
+   "text": "Upper and lower rectus abdominis, internal oblique, and latissimus dorsi muscle EMG activity were highest for the Power Wheel (pike, knee-up, and roll-out), hanging knee-up with straps, and reverse crunch inclined 30 degrees.",
+   "status": "verbatim",
+   "closest": "Upper and lower rectus abdominis, internal oblique, and latissimus dorsi muscle EMG activity were highest for the Power Wheel (pike, knee-up, and roll-out), hanging knee-up with straps, and reverse crunch inclined 30 degrees.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "escamilla-2006",
+   "text": "Lumbar paraspinal muscle EMG activity was low and similar among exercises.",
+   "status": "verbatim",
+   "closest": "Lumbar paraspinal muscle EMG activity was low and similar among exercises.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "escamilla-2006",
+   "text": "Twenty-one men and women who were healthy and between 23 and 43 years of age were recruited for this study.",
+   "status": "verbatim",
+   "closest": "Twenty-one men and women who were healthy and between 23 and 43 years of age were recruited for this study.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-bestab",
+   "text": "Sets & Reps 2-4 x 5-10",
+   "status": "verbatim",
+   "closest": "Sets & Reps 2-4 x 5-10",
+   "note": ""
+  }
+ ]
+}

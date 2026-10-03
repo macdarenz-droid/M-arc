@@ -1,0 +1,474 @@
+{
+ "id": "russian_twist",
+ "libId": "lib_russian_twist",
+ "name": "Russian Twist",
+ "family": "Rotation and lateral core",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 3 (R5: the engine cannot draw yaw).",
+ "archetype": {
+  "hand": "on-body",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Sit on the floor with the knees bent and the feet on the floor or slightly lifted; the harder version lifts and straightens the legs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-coretwist",
+    "bb-russiantwist"
+   ],
+   "quotes": [
+    {
+     "source": "sl-coretwist",
+     "text": "Sit on the floor with your knees bent and your feet either on the ground or slightly lifted.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "bb-russiantwist",
+     "text": "Start by sitting on the ground with your legs lifted and extended out in front of you. Beginner trainees can reduce the difficulty of the exercise by bending the knees.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Hold a weight plate, medicine ball or kettlebell in both hands in front of the chest, or clasp the hands together at chest height.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-coretwist",
+    "bb-russiantwist"
+   ],
+   "quotes": [
+    {
+     "source": "sl-coretwist",
+     "text": "Hold a weight plate, medicine ball, or kettlebell with both hands in front of your chest.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "bb-russiantwist",
+     "text": "While keeping the torso erect, hold a weight, cable, or clasp your hands together at chest level.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Lean back slightly with a straight back and the core braced.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-coretwist"
+   ],
+   "quotes": [
+    {
+     "source": "sl-coretwist",
+     "text": "Lean slightly back with a straight back and engaged core.",
+     "where": "How to, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Turn the trunk to one side, leading with the hands or the weight and bringing it toward the hip while the hips stay still; come back to the middle and turn to the other side. A bigger turn is harder.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-coretwist",
+    "bb-russiantwist"
+   ],
+   "quotes": [
+    {
+     "source": "sl-coretwist",
+     "text": "Twist your torso to one side and bring the weight toward your hip, keeping your hips stable.",
+     "where": "How to, step 4"
+    },
+    {
+     "source": "sl-coretwist",
+     "text": "Return to the center and rotate to the other side.",
+     "where": "How to, step 5"
+    },
+    {
+     "source": "bb-russiantwist",
+     "text": "allow the upper torso to rotate side to side, leading with your hands or the load you’re holding. The greater range of motion of the twist, the more challenging the movement is.",
+     "where": "How to, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Keep the buttocks planted on the floor so you don't lean or lose balance; move smoothly and under control.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-russiantwist"
+   ],
+   "quotes": [
+    {
+     "source": "bb-russiantwist",
+     "text": "It is important to keep the buttocks firmly planted on the floor to minimize leaning or loss of balance. Stay controlled and smooth.",
+     "where": "How to, coach's tip"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Easier: keep the feet on the floor for more stability, make the turn smaller, or do a few turns and hold the end positions longer.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-russiantwist"
+   ],
+   "quotes": [
+    {
+     "source": "bb-russiantwist",
+     "text": "To regress the movement, you can keep your feet on the floor, which will give greater stability. You can also restrict the degree of the twists, or just do a few twists and hold the end positions longer to build up isometric strength.",
+     "where": "FAQ, modify"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Only once the reps are slow and controlled, add load or faster twists; for core strength, 3-4 sets of 10-15 reps with 60-90 s rest, adding load as needed.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-russiantwist"
+   ],
+   "quotes": [
+    {
+     "source": "bb-russiantwist",
+     "text": "Once you are able to do the reps slow and controlled, you can start to integrate more explosive twists or add resistance.",
+     "where": "How to, coach's tip"
+    },
+    {
+     "source": "bb-russiantwist",
+     "text": "Start by performing 3-4 sets of 10-15 repetitions, resting 60-90 seconds between, with additional loading as needed.",
+     "where": "Programming, strength"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Done correctly the Russian twist is generally safe for the low back, but it can be jarring without control; if it hurts the low back, choose another core exercise.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-russiantwist"
+   ],
+   "quotes": [
+    {
+     "source": "bb-russiantwist",
+     "text": "Generally speaking, the Russian twist is a safe lower back exercise when done correctly, however some lifters may find it can be jarring if they do not pay close attention to staying controlled with the movement.",
+     "where": "FAQ"
+    },
+    {
+     "source": "bb-russiantwist",
+     "text": "If you find it hurts your lower back, consider some of the Russian twist alternatives listed above",
+     "where": "FAQ"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "The obliques are the target, with the abs also working; the rectus abdominis holds the trunk rigid while you stay upright.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-coretwist",
+    "bb-russiantwist"
+   ],
+   "quotes": [
+    {
+     "source": "sl-coretwist",
+     "text": "Primary muscles worked: Obliques Abs",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "bb-russiantwist",
+     "text": "While the Russian twist is a rotational movement, the abdominals are isometrically contracting to maintain a rigid position to support you while you stay upright in the movement.",
+     "where": "Muscles worked, rectus abdominis"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Light loads keep the twist fast; loads should not be so heavy that they distort the movement.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-russiantwist"
+   ],
+   "quotes": [
+    {
+     "source": "bb-russiantwist",
+     "text": "Adding load is a great way to increase power output, however the loads need to be lighter so that they do not distort your movement or slow you down.",
+     "where": "Programming, power"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-russiantwist",
+   "url": "https://barbend.com/russian-twists/",
+   "title": "Turn Your Core Training Up a Notch With the Russian Twist | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "sl-coretwist",
+   "url": "https://www.strengthlog.com/russian-twist/",
+   "title": "How to Do Core Twists: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  }
+ ],
+ "plate": {
+  "view": "front",
+  "viewWhy": "Census view is front: the trunk turning side to side while the hips and knees stay still (c4) reads from the front. Census poses floorsit and yaw are R5 (not expressible), so the plate waits on the engine; the card is complete.",
+  "equipment": "Floor line; optional medicine ball held at the chest (census 'medBallOptional'; c2).",
+  "start": "Seated on the floor, knees bent, feet on the floor (the easier version, c1, c6); trunk leaning slightly back with a straight back (c3); ball held in both hands in front of the chest (c2).",
+  "end": "Trunk turned to one side with the ball brought toward that hip (c4); hips, knees and buttocks unchanged (c4, c5).",
+  "checkpoints": [
+   {
+    "label": "Straight back",
+    "what": "Lean back slightly with a straight back.",
+    "claim": "c3"
+   },
+   {
+    "label": "Hips still",
+    "what": "Hips and buttocks stay planted as you turn.",
+    "claim": [
+     "c4",
+     "c5"
+    ]
+   },
+   {
+    "label": "Ball to hip",
+    "what": "The ball travels toward each hip.",
+    "claim": "c4"
+   }
+  ],
+  "mistake": {
+   "what": "Hips and knees swinging with the trunk instead of staying still.",
+   "why": "StrengthLog says to keep the hips stable while the torso twists (c4); BarBend says keep the buttocks planted to avoid leaning and losing balance (c5). No source ranks Russian-twist faults.",
+   "claim": [
+    "c4",
+    "c5"
+   ],
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Your hips don't move",
+    "claim": "c4"
+   },
+   {
+    "text": "Smooth, controlled turns",
+    "claim": "c5"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 1,
+   "pause": 0,
+   "claim": [
+    "c5",
+    "c7"
+   ],
+   "text": "Drawing convention: one turn each way, smooth and controlled (c5, c7); no source gives seconds. 'up' and 'down' mean the turn out and the turn back."
+  },
+  "variantLine": "Bodyweight / Weight: the plate draws the medicine-ball version (c2); every line holds with clasped hands too (c2), and load is added only once the reps are controlled (c7)."
+ },
+ "grip": {
+  "type": "Both hands on the ball (or plate or kettlebell) in front of the chest, or hands clasped (c2).",
+  "width": "",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "",
+  "claims": [
+   "c2"
+  ],
+  "note": "No Russian-twist source describes thumb, wrist or how the ball sits in the hands; left to the on-body archetype and listed in gaps."
+ },
+ "setup": [
+  {
+   "step": "Sit on the floor, knees bent, feet down.",
+   "claim": "c1"
+  },
+  {
+   "step": "Hold the ball in both hands in front of your chest.",
+   "claim": "c2"
+  },
+  {
+   "step": "Lean back slightly with a straight back.",
+   "claim": "c3"
+  },
+  {
+   "step": "Brace your core.",
+   "claim": "c3"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Turn your trunk; bring the ball toward each hip.",
+   "claim": "c4"
+  },
+  {
+   "point": "Hips and buttocks stay planted.",
+   "claim": [
+    "c4",
+    "c5"
+   ]
+  },
+  {
+   "point": "Back stays straight.",
+   "claim": "c3"
+  },
+  {
+   "point": "Smooth and controlled, not jerky.",
+   "claim": [
+    "c5",
+    "c8"
+   ]
+  },
+  {
+   "point": "Harder: lift your feet off the floor.",
+   "claim": "c1"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Hips swinging with the turn.",
+   "fix": "Keep your buttocks planted; turn only your trunk.",
+   "claim": [
+    "c4",
+    "c5"
+   ]
+  },
+  {
+   "mistake": "Fast, jerky twists.",
+   "fix": "Slow down until every rep is controlled.",
+   "claim": [
+    "c7",
+    "c8"
+   ]
+  },
+  {
+   "mistake": "A ball so heavy it changes the movement.",
+   "fix": "Use a lighter ball.",
+   "claim": "c10"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "obliques",
+    "claim": "c9"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "abs",
+    "claim": "c9"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "lower_back",
+    "claim": "c8"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Sides of the waist",
+    "means": "Your obliques are turning you.",
+    "fix": "",
+    "claim": "c9",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the belly",
+    "means": "Your abs are holding you upright.",
+    "fix": "",
+    "claim": "c9",
+    "redFlag": null
+   },
+   {
+    "where": "Low back",
+    "means": "Uncontrolled twists can jar the back.",
+    "fix": "Slow down; if it still hurts, choose another core exercise.",
+    "claim": "c8",
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Fast, uncontrolled twists can jar the low back.",
+   "claim": "c8"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "hips",
+   "kind": "posture",
+   "right": "Hips and knees still while the trunk turns.",
+   "wrong": "Hips and knees swinging with the trunk.",
+   "claim": [
+    "c4",
+    "c5"
+   ]
+  },
+  {
+   "key": "back",
+   "kind": "posture",
+   "right": "Slight lean back, back straight.",
+   "wrong": null,
+   "claim": "c3"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "obliques primary and abs secondary match the sources (c9)."
+ },
+ "anchorSource": "bb-russiantwist",
+ "gaps": [
+  "Hand on the ball: thumb, wrist and how the ball sits in the hands (no Russian-twist source).",
+  "Fault ranking: no source names the most common Russian-twist fault; the plate's mistake follows the hip-stability cue (c4, c5)."
+ ],
+ "notes": [
+  "StrengthLog's /russian-twist/ URL serves its 'Core Twists' page (title 'How to Do Core Twists'); its steps are the seated Russian twist with a weight, so it is cited as sl-coretwist.",
+  "ACE's 'Russian Twist' page (exercise-library/65) is a stability-ball version lying with the upper back on the ball, a different exercise, so it is not cited.",
+  "No PubMed study of the floor Russian twist was found (esearch 'Russian twist obliques' and 'russian twist exercise' gave no relevant hit); the card rests on two coach sources, both read in full, which meets content.md 3.4's bar (anchor source and sourced core setup).",
+  "Back zoom wrong is null (LR-25): no source describes the wrong back shape.",
+  "The back feel row restates BarBend's own fault and fix (c8), no added cause (LR-6); the back box link stays pending (LR-26, LR-27)."
+ ]
+}

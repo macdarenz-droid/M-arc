@@ -214,6 +214,99 @@
           "where": "instructions"
         }
       ]
+    },
+    {
+      "id": "c11",
+      "text": "Band hand contact: secure the band to the hand before use so it cannot slip; a 'grip wrap' lays the band flat in the palm with its end toward the little finger, wraps the long end round the back of the hand, and then grasps firmly. Wrapping twice helps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "theraband-manual"
+      ],
+      "quotes": [
+        {
+          "source": "theraband-manual",
+          "text": "Your elastic band or tubing should be securely attached to your hand or foot before use to avoid slippage and possible injury. “Double wrapping” the band may help secure it to your hand or foot.",
+          "where": "Handling the bands"
+        },
+        {
+          "source": "theraband-manual",
+          "text": "Lay the band flat in your hand with the end toward your pinky finger. Wrap the long end of the band around the back of your hand. Repeat as needed. Firmly grasp.",
+          "where": "Grip wrap"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Band thumb: in the 'palm wrap' the band ends start between the thumb and the palm, palms up; the palms then turn inward so the band wraps round the back of the hands, and the hands grasp firmly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "theraband-manual"
+      ],
+      "quotes": [
+        {
+          "source": "theraband-manual",
+          "text": "Begin with palms up and ends of band between the thumb and palm. Rotate your palms inward, bringing the band around the back of your hands. Repeat as needed. Firmly grasp.",
+          "where": "Palm wrap"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Band wrist: in the seated band row keep the wrists straight, in line with the forearms; the band lies flat, not twisted, and the load is set by where the hands grip the band ends.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sabf-bandrow"
+      ],
+      "quotes": [
+        {
+          "source": "sabf-bandrow",
+          "text": "Be sure to keep your wrists straight and in alignment with your forearm.",
+          "where": "Seated row, begin"
+        },
+        {
+          "source": "sabf-bandrow",
+          "text": "The band should be flat, not twisted.",
+          "where": "Seated row, starting position"
+        },
+        {
+          "source": "sabf-bandrow",
+          "text": "Adjust the exercise band to a tension level the provides enough resistance by changing where your hands grip the ends of the band.",
+          "where": "Seated row, note"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Band hand fault: losing the grip (or the band breaking) lets the band snap back, toward the head or face in exercises where it points that way. Control the band rather than letting it control you, never let it snap back, and avoid over-bending joints.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "theraband-manual"
+      ],
+      "quotes": [
+        {
+          "source": "theraband-manual",
+          "text": "snapping towards the face if grip is lost or if the band or tube breaks.",
+          "where": "Exercise caution"
+        },
+        {
+          "source": "theraband-manual",
+          "text": "remember to control the band or tubing rather than allowing it to control you. Do not allow the band or tubing to snap back.",
+          "where": "Practical exercise tips"
+        },
+        {
+          "source": "theraband-manual",
+          "text": "Avoid hyperextending or over-flexing joints when exercising.",
+          "where": "Practical exercise tips"
+        }
+      ]
     }
   ],
   "sources": [
@@ -276,6 +369,26 @@
       "pmid": 19204579,
       "access": "abstract",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "theraband-manual",
+      "url": "https://www.theraband.com/static/version1771453261/frontend/Theraband/default/en_US/instructions/Resistance_Band-Tubing_Instruction_Manual(1).pdf",
+      "title": "Instruction Manual, Resistance Bands and Tubing (The Hygenic Corporation)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "sabf-bandrow",
+      "url": "https://www.sitandbefit.org/seated-row-band-upper-body-strengthening/",
+      "title": "Seated Row With Band To Strengthen Upper Back - Sit and Be Fit",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {
@@ -481,6 +594,7 @@
   },
   "anchorSource": "sweat-bandrow",
   "notes": [
-    "Census lists the contact as standing-feet, but the exercises.json alias ('seated band row') and census pose (floorsit) put this on the floor, so the contact is floor-body. The seated cable row's primary contact is foot-platform, so under content.md 2.3 this is its own parent card, not a difference card: the lines once inherited are written here as the band row's own lines (c3, c4). No band-row EMG study was found; all EMG claims are applied from an isometric seated row and a prone barbell row and tagged MECH. Colado 2010 (elastic tubing vs machines) was dropped: no line used it."
+    "Census lists the contact as standing-feet, but the exercises.json alias ('seated band row') and census pose (floorsit) put this on the floor, so the contact is floor-body. The seated cable row's primary contact is foot-platform, so under content.md 2.3 this is its own parent card, not a difference card: the lines once inherited are written here as the band row's own lines (c3, c4). No band-row EMG study was found; all EMG claims are applied from an isometric seated row and a prone barbell row and tagged MECH. Colado 2010 (elastic tubing vs machines) was dropped: no line used it.",
+    "W1A band-hand claims (2026-10-02), added for LIB-7's band hand pair; no verified line was edited. Contact c11 (grip wrap), thumb c12 (palm wrap: band ends between thumb and palm), wrist c13 (straight, in line with the forearm), hand fault c14 (grip lost: the band snaps back). Neither source names which wrap to use for the row or the direction a wrist bends when the grip fails, so the band Wrong for the wrist stays a gap; the sourced fault with a direction is the band snapping back when the grip is lost (c14). grip.thumb, grip.handContact and grip.wrist still hold the earlier archetype-default text; switching them to c11-c13 is left to the verifier and LIB-7. The BeWise (Utah) band guide was found but could not be fetched (proxy refused bewise.utah.gov; web.archive.org unreachable), so it is not cited. The theraband-manual title is descriptive: the PDF prints only 'Instruction Manual' and 'The Hygenic Corporation' (fetcher check 2026-10-02)."
   ]
 }

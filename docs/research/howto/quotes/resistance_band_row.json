@@ -121,6 +121,69 @@
       "quote": "Control the movement back to the start position.",
       "status": "verbatim",
       "closest": "Control the movement back to the start position."
+    },
+    {
+      "claim": "c11",
+      "source": "theraband-manual",
+      "quote": "Your elastic band or tubing should be securely attached to your hand or foot before use to avoid slippage and possible injury. “Double wrapping” the band may help secure it to your hand or foot.",
+      "status": "verbatim",
+      "closest": "Your elastic band or tubing should be securely attached to your hand or foot before use to avoid slippage and possible injury. “Double wrapping” the band may help secure it to your hand or foot."
+    },
+    {
+      "claim": "c11",
+      "source": "theraband-manual",
+      "quote": "Lay the band flat in your hand with the end toward your pinky finger. Wrap the long end of the band around the back of your hand. Repeat as needed. Firmly grasp.",
+      "status": "verbatim",
+      "closest": "Lay the band flat in your hand with the end toward your pinky finger. Wrap the long end of the band around the back of your hand. Repeat as needed. Firmly grasp."
+    },
+    {
+      "claim": "c12",
+      "source": "theraband-manual",
+      "quote": "Begin with palms up and ends of band between the thumb and palm. Rotate your palms inward, bringing the band around the back of your hands. Repeat as needed. Firmly grasp.",
+      "status": "verbatim",
+      "closest": "Begin with palms up and ends of band between the thumb and palm. Rotate your palms inward, bringing the band around the back of your hands. Repeat as needed. Firmly grasp."
+    },
+    {
+      "claim": "c13",
+      "source": "sabf-bandrow",
+      "quote": "Be sure to keep your wrists straight and in alignment with your forearm.",
+      "status": "verbatim",
+      "closest": "Be sure to keep your wrists straight and in alignment with your forearm."
+    },
+    {
+      "claim": "c13",
+      "source": "sabf-bandrow",
+      "quote": "The band should be flat, not twisted.",
+      "status": "verbatim",
+      "closest": "The band should be flat, not twisted."
+    },
+    {
+      "claim": "c13",
+      "source": "sabf-bandrow",
+      "quote": "Adjust the exercise band to a tension level the provides enough resistance by changing where your hands grip the ends of the band.",
+      "status": "verbatim",
+      "closest": "Adjust the exercise band to a tension level the provides enough resistance by changing where your hands grip the ends of the band."
+    },
+    {
+      "claim": "c14",
+      "source": "theraband-manual",
+      "quote": "snapping towards the face if grip is lost or if the band or tube breaks.",
+      "status": "verbatim",
+      "closest": "snapping towards the face if grip is lost or if the band or tube breaks."
+    },
+    {
+      "claim": "c14",
+      "source": "theraband-manual",
+      "quote": "remember to control the band or tubing rather than allowing it to control you. Do not allow the band or tubing to snap back.",
+      "status": "verbatim",
+      "closest": "remember to control the band or tubing rather than allowing it to control you. Do not allow the band or tubing to snap back."
+    },
+    {
+      "claim": "c14",
+      "source": "theraband-manual",
+      "quote": "Avoid hyperextending or over-flexing joints when exercising.",
+      "status": "verbatim",
+      "closest": "Avoid hyperextending or over-flexing joints when exercising."
     }
   ]
 }

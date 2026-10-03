@@ -1,0 +1,642 @@
+{
+ "id": "push_up",
+ "libId": "lib_push_up",
+ "name": "Push-Up",
+ "family": "Push-up (template parent)",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "palm-flat",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Kneel, place the palms flat on the floor about shoulder-width apart (one source says slightly wider), fingers facing forward or turned slightly in, and shift forward until the shoulders are directly over the hands.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-pushup",
+    "sl-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "ace-pushup",
+     "text": "Slowly bend forward to place your palms flat on the mat, positioning your hands shoulder-width apart with your fingers facing forward or turned slightly inward. Slowly shift your weight forward until your shoulders are positioned directly over your hands.",
+     "where": "Starting position"
+    },
+    {
+     "source": "sl-pushup",
+     "text": "Assume the starting position, with hands slightly wider than shoulder-width apart.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Straighten the body fully with no bend at the hips or knees: brace the trunk, tense the glutes and thighs, keep the head in line with the spine, feet together; the body forms a straight line from head to feet.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-pushup",
+    "sl-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "ace-pushup",
+     "text": "Reposition your hands as needed to allow full extension of your body without any bend at the hips or knees. Stiffen your torso by contracting your core/abdominal muscles (\"bracing\"), your glute and quadriceps muscles and align your head with your spine.",
+     "where": "Starting position"
+    },
+    {
+     "source": "ace-pushup",
+     "text": "Place your feet together with your ankles dorsiflexed (toes pointed towards your shins).",
+     "where": "Starting position"
+    },
+    {
+     "source": "sl-pushup",
+     "text": "Try to form a straight line from head to feet, and brace your abdomen slightly.",
+     "where": "How to, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Lower slowly with the trunk rigid and the head in line, not letting the low back sag or the hips hike, until the chest or chin touches the floor; the torso and legs go down together.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-pushup",
+    "bb-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "ace-pushup",
+     "text": "Slowly lower your body towards the floor while maintaining a rigid torso and head aligned with your spine. Do not allow your low back to sag or your hips to hike upwards during this downward phase.",
+     "where": "Downward phase"
+    },
+    {
+     "source": "ace-pushup",
+     "text": "Continue to lower yourself until your chest or chin touch the mat/floor.",
+     "where": "Downward phase"
+    },
+    {
+     "source": "bb-pushup",
+     "text": "The torso and legs should descend together without breaking rigidity through the midline.",
+     "where": "How to, lower"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Press back up through the arms, as if pushing the floor away, keeping the trunk rigid, until the elbows are straight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "ace-pushup",
+     "text": "Press upwards through your arms while maintaining a rigid torso and head aligned with your spine. For extra strength think about pushing the floor away from you.",
+     "where": "Upward phase"
+    },
+    {
+     "source": "ace-pushup",
+     "text": "Continue pressing until the arms are fully extended at the elbows.",
+     "where": "Upward phase"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Poor trunk rigidity is among the most common push-up faults: the hips sag or the low back arches. Fix it by bracing the abs, squeezing the glutes and tucking the pelvis slightly under.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pushup",
+     "text": "Poor trunk rigidity is among the most common technical faults for most gymgoers who perform the push-up.",
+     "where": "Common mistakes"
+    },
+    {
+     "source": "bb-pushup",
+     "text": "Many beginners will inadvertently sag at the hips or unknowingly let their lower backs fall into an arched position.",
+     "where": "Common mistakes"
+    },
+    {
+     "source": "bb-pushup",
+     "text": "To remedy a sagging spine, actively contract your core, squeeze your glutes, and you can even think about tucking your pelvis “in and under” slightly, to create a minor posterior tilt.",
+     "where": "Common mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Seen from the side at the start, the shoulders sit over the elbows and the elbows over the wrists; hands planted too far in front of or behind the body break this.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pushup",
+     "text": "when viewed from the side in the starting position, your shoulders sit directly atop your elbows, which sit directly atop your wrists.",
+     "where": "Common mistakes, joint stacking"
+    },
+    {
+     "source": "bb-pushup",
+     "text": "Avoid having your palms planted too far in front (or behind) your body.",
+     "where": "Common mistakes, joint stacking"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "In the standard push-up the elbows flare out on the way down; turning the hands to face forward with the elbows close to the sides shifts work from the chest to the triceps and may reduce stress on the shoulder.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "ace-pushup",
+     "text": "Allow your elbows to flare outwards during the lowering phase.",
+     "where": "Downward phase"
+    },
+    {
+     "source": "ace-pushup",
+     "text": "An alternative position is to turn your hands to face forwards and keep your your elbows close to your sides during the downward phase. This shifts the emphasis from the chest muscles onto the triceps and may reduce stresses in the shoulder joint.",
+     "where": "Variation"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Breathe in on the way down and out on the way up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "sl-pushup",
+     "text": "Lower yourself as deep as you can, while inhaling.",
+     "where": "How to, step 3"
+    },
+    {
+     "source": "sl-pushup",
+     "text": "push yourself up to straight arms again while exhaling.",
+     "where": "How to, step 4"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "The chest, front shoulders and triceps do the pressing, and the core works to hold the body straight, much like a plank.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-pushup",
+    "bb-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "sl-pushup",
+     "text": "Primary muscles worked: Chest Front Deltoid Secondary muscles worked: Triceps Abs",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "bb-pushup",
+     "text": "The prime movers involved in the push up are the pec major, anterior (front) deltoid, and triceps.",
+     "where": "FAQ"
+    },
+    {
+     "source": "sl-pushup",
+     "text": "A hidden bonus with push-ups is that you also get some static training of your core, similar to that of the plank exercise.",
+     "where": "Commentary"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "A push-up lifts about 70% of body weight and a kneeling push-up about 55%; feet raised makes it harder, hands raised makes it easier. Hands closer shift load to the triceps, wider to the chest.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "sl-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "sl-pushup",
+     "text": "In push-ups, you lift about 70% of your own body weight, but you can increase or decrease that amount by placing your feet or hands, respectively, on an elevation.",
+     "where": "Commentary"
+    },
+    {
+     "source": "sl-pushup",
+     "text": "In kneeling push-ups, you lift about 55% of your body weight.",
+     "where": "Commentary"
+    },
+    {
+     "source": "sl-pushup",
+     "text": "You can also vary the exercise by placing your hands closer or wider apart, which will transfer more of the load to the triceps or chest, respectively.",
+     "where": "Commentary"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "In 18 young men over 8 weeks, push-ups set to a load like a 40% 1-RM bench press gave similar muscle growth and strength gain to that bench press.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "kikuchi-2017"
+   ],
+   "quotes": [
+    {
+     "source": "kikuchi-2017",
+     "text": "Push-up exercise with similar load to 40%1RM bench press is comparably effective for muscle hypertrophy and strength gain over an 8-week training period.",
+     "where": "abstract, conclusions"
+    },
+    {
+     "source": "kikuchi-2017",
+     "text": "Eighteen male participants",
+     "where": "abstract, methods"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Progression: beginners start with 2-3 sets of up to 10 reps; once body weight is too easy, a weight plate on the lower back adds load.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pushup",
+     "text": "As a Beginner: 2-3 sets of up to 10 reps, focusing on your technique.",
+     "where": "Programming"
+    },
+    {
+     "source": "bb-pushup",
+     "text": "Simply placing a standard weight plate on your lower back while setting up is an easy way to ensure that you keep making gains once your body weight becomes too easy.",
+     "where": "Variations, weighted"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Lower slowly and with strict control, especially near the floor, and touch it lightly with the chest; no push-up source gives seconds per phase.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "bb-pushup",
+    "ace-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pushup",
+     "text": "Maintain strict control of your tempo all the way down, particularly as you get closer to the floor, and touch it lightly with your chest.",
+     "where": "How to, coach's tip"
+    },
+    {
+     "source": "ace-pushup",
+     "text": "Slowly lower your body towards the floor",
+     "where": "Downward phase"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Brace hard and 'squeeze' the floor with the hands; pushing through the heel and outer edge of the palm gives more force and steadier shoulders.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-pushup",
+    "ace-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pushup",
+     "text": "Brace the core tightly and try to “squeeze” the floor with your hands.",
+     "where": "How to, setup"
+    },
+    {
+     "source": "ace-pushup",
+     "text": "Pushing through the heel and outside surface of your palm provides greater force in your press and stability to your shoulders.",
+     "where": "Tips"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Clear the floor of clutter and use a surface that is not slippery or unstable.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-pushup"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pushup",
+     "text": "Clear any stray objects or clutter from the exercise area before beginning, and ensure that the surface you’re using isn’t slippery or unstable.",
+     "where": "How to, setup"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ace-pushup",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/",
+   "title": "Push-Ups | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "sl-pushup",
+   "url": "https://www.strengthlog.com/push-up/",
+   "title": "How to Do Push-Up: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "bb-pushup",
+   "url": "https://barbend.com/push-up/",
+   "title": "How to Perform the Push-Up — Tips, Tricks, & Variations | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "kikuchi-2017",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29541130/",
+   "title": "Low-load bench press and push-up induce similar muscle hypertrophy and strength gain.",
+   "kind": "peer-reviewed",
+   "year": 2017,
+   "pmid": 29541130,
+   "access": "abstract",
+   "checked": "2026-10-02"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the body line (c2, c3), the sagging-hip fault (c5) and the shoulder-elbow-wrist stack (c6) are all read from the side.",
+  "equipment": "Floor line only (census need 'floor'); a mat is optional (ACE 'mat/floor', c3).",
+  "start": "Top: straight arms (c4), palms flat about shoulder-width with the shoulders over the hands (c1), shoulders over elbows over wrists (c6); body straight from head to heels, no bend at hips or knees, head in line, feet together on the toes (c2).",
+  "end": "Bottom: chest (or chin) touching the floor (c3); elbows bent and flared out to the side (c7, ACE standard form); trunk and legs still in one straight line (c3).",
+  "checkpoints": [
+   {
+    "label": "Straight line",
+    "what": "Head, hips and heels stay in one line; no sag, no hike.",
+    "claim": [
+     "c2",
+     "c3"
+    ]
+   },
+   {
+    "label": "Shoulders over hands",
+    "what": "Shoulders stacked over the elbows and wrists at the top.",
+    "claim": [
+     "c1",
+     "c6"
+    ]
+   },
+   {
+    "label": "Chest to floor",
+    "what": "Lower until the chest touches the floor lightly.",
+    "claim": [
+     "c3",
+     "c13"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Hips sag toward the floor and the low back arches.",
+   "why": "BarBend names poor trunk rigidity among the most common push-up faults, with sagging hips or an arched low back (c5); ACE says not to let the low back sag (c3).",
+   "claim": "c5",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Body moves as one piece",
+    "claim": "c3"
+   },
+   {
+    "text": "Chest touches the floor lightly",
+    "claim": "c13"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 0,
+   "claim": "c13",
+   "text": "Drawing convention: the sources say lower slowly and under strict control (c13) and give no seconds; 2 s down and 1 s up shows a slower lowering than lifting."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Palms flat on the floor (palm-flat hand pair; shared card docs/research/howto/shared/palm-flat.json).",
+  "width": "About shoulder-width; StrengthLog says slightly wider (c1).",
+  "thumb": "",
+  "handContact": "Whole palm on the floor; push through the heel and outer edge of the palm and 'squeeze' the floor (c14).",
+  "wrist": "Wrist under the shoulder at the top (c6). Wrist comfort and the sore-wrist options live in the shared palm-flat card.",
+  "claims": [
+   "c1",
+   "c6",
+   "c14"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Kneel, palms flat on the floor about shoulder-width apart.",
+   "claim": "c1"
+  },
+  {
+   "step": "Shift forward until your shoulders are over your hands.",
+   "claim": "c1"
+  },
+  {
+   "step": "Straighten your legs, feet together, body in one line.",
+   "claim": "c2"
+  },
+  {
+   "step": "Brace your trunk and tense your glutes and thighs.",
+   "claim": "c2"
+  },
+  {
+   "step": "Squeeze the floor with your hands.",
+   "claim": "c14"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Head in line with your spine.",
+   "claim": "c2"
+  },
+  {
+   "point": "Low back doesn't sag; hips don't hike.",
+   "claim": "c3"
+  },
+  {
+   "point": "Torso and legs move together.",
+   "claim": "c3"
+  },
+  {
+   "point": "Shoulders over elbows over wrists at the top.",
+   "claim": "c6"
+  },
+  {
+   "point": "Breathe in going down, out going up.",
+   "claim": "c8"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Hips sagging, low back arching.",
+   "fix": "Brace your abs, squeeze your glutes, tuck your pelvis slightly.",
+   "claim": "c5"
+  },
+  {
+   "mistake": "Hands too far in front of or behind your shoulders.",
+   "fix": "Stack your shoulders over your hands.",
+   "claim": "c6"
+  },
+  {
+   "mistake": "Dropping fast to the floor.",
+   "fix": "Lower under control and touch the floor lightly.",
+   "claim": "c13"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "chest",
+    "claim": "c9"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "triceps",
+    "claim": "c9"
+   },
+   {
+    "muscleId": "front_delts",
+    "claim": "c9"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "core",
+    "claim": "c9"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Chest, front of the shoulders, back of the arms",
+    "means": "The pressing muscles are working.",
+    "fix": "",
+    "claim": "c9",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the belly",
+    "means": "Your core is holding your body straight.",
+    "fix": "",
+    "claim": "c9",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the shoulder",
+    "means": "Flared elbows can load the shoulder more.",
+    "fix": "Turn your hands forward and keep your elbows close.",
+    "claim": "c7",
+    "redFlag": "shoulder"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Elbows kept close may ease stress on the shoulder.",
+   "claim": "c7"
+  },
+  {
+   "risk": "A cluttered or slippery floor makes the set unsafe.",
+   "claim": "c15"
+  }
+ ],
+ "redFlags": [
+  "shoulder"
+ ],
+ "zooms": [
+  {
+   "key": "hip-line",
+   "kind": "posture",
+   "right": "Head, hips and heels in one straight line.",
+   "wrong": "Hips sagging, low back arched.",
+   "claim": [
+    "c2",
+    "c5"
+   ]
+  },
+  {
+   "key": "stack",
+   "kind": "posture",
+   "right": "Shoulders over elbows over wrists.",
+   "wrong": "Hands planted far in front of the shoulders.",
+   "claim": "c6"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "chest primary with triceps and front_delts secondary and core as stabilizer fits the sources (c9). StrengthLog lists the front delt as primary and BarBend calls all three prime movers; the library's split is kept."
+ },
+ "anchorSource": "ace-pushup",
+ "loadProgression": {
+  "text": "Start with 2-3 sets of up to 10; add a plate on the lower back once body weight is easy.",
+  "claim": "c12"
+ },
+ "notes": [
+  "Hand: the palm-flat shared card (W0B) owns the hand rules (finger spread, sore-wrist options and the wrist row). This card adds only push-up-specific hand lines (c1, c6, c14).",
+  "The shoulder feel row uses ACE's 'may reduce stresses in the shoulder joint' (c7) as place + the source's fault + fix (LR-6); it carries no symptom-to-cause claim beyond that.",
+  "Elbow angle: ACE's standard form lets the elbows flare (c7); BarBend gives no elbow angle. The plate draws ACE's standard form; the elbows-close option is a text line only.",
+  "Tempo numbers are a drawing convention (plate.tempo.text); ACSM's 1-2 s is not cited because it is stated for intermediate to advanced lifters (LR-15)."
+ ]
+}
