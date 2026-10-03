@@ -44,9 +44,9 @@
   },
   {
    "id": "c2",
-   "text": "Stand between the bars, set the hands evenly, squeeze the shoulder blades together and grip the bars hard, then climb or jump up to the straight-arm start.",
+   "text": "Stand between the bars, set the hands evenly, squeeze the shoulder blades together and grip the bars hard, then climb up to the straight-arm start. The mount comes from the bodyweight bar dip, applied to the loaded dip by similarity.",
    "tags": [
-    "CONSENSUS"
+    "MECH"
    ],
    "sources": [
     "bb-dips",
@@ -466,7 +466,7 @@
    "claim": "c2"
   },
   {
-   "step": "Climb or jump up to straight arms.",
+   "step": "Climb up to straight arms.",
    "claim": "c2"
   },
   {
@@ -537,12 +537,7 @@
     "claim": "c11"
    }
   ],
-  "watch": [
-   {
-    "muscleId": "front_delts",
-    "claim": "c11"
-   }
-  ],
+  "watch": [],
   "rows": [
    {
     "where": "Chest and back of the arms",
@@ -582,7 +577,7 @@
    "claim": "c6"
   },
   {
-   "risk": "Dipping far below parallel stresses the shoulders.",
+   "risk": "Dipping far below parallel can stress the shoulders.",
    "claim": "c4"
   },
   {
@@ -638,7 +633,7 @@
   ]
  },
  "gaps": [
-  "Way out (LR-3, LIB-WAYOUT): getting on and off the bars with a loaded belt, and what to do when a rep fails (stepping down, setting the plate down). No source found; no way-out line is shown.",
+  "Way out (LR-3, LIB-WAYOUT, R-W1-5): the loaded mount and dismount (getting on and off the bars with a plate on the belt) and what to do when a rep fails. No source found; no way-out line is shown, and the shown setup gives no loaded jump.",
   "Thumb position on the dip bars (push archetype): no dip source.",
   "Wrist position over the bars: no dip source.",
   "Depth: StrengthLog's competition depth (shoulder below elbow) is deeper than BarBend's parallel; the card follows the more cautious line (parallel or slightly below, or as deep as is comfortable), c4."
@@ -646,6 +641,7 @@
  "notes": [
   "StrengthLog's 'bar dip' page is the anchor: it covers the weighted version (weight belt, c8 and its own 'heavy single in weighted bar dips' sets) and the bar-dip form in full. There is no StrengthLog or BarBend page for the weighted dip alone (both 404).",
   "c9 rests on one coach (physiotherapist Daniel Vadnal, reported by BarBend) and is tagged WEAK; it is used only for the tempo text, not a shown risk line.",
-  "The shoulder feel row restates the sources' own form faults (c4, c5, c6, c11) and their swap (c10), with no added cause (LR-6)."
+  "The shoulder feel row restates the sources' own form faults (c4, c5, c6, c11) and their swap (c10), with no added cause (LR-6).",
+  "W1 fixer round 2026-10-03: F03 / R-W1-5: setup[3] 'Climb or jump up' -> 'Climb up to straight arms.'; c2 text drops 'or jump', says the mount is from the bodyweight dip, tag CONSENSUS -> MECH; gaps[0] names the loaded mount and dismount under LIB-WAYOUT. F12: risks[1] keeps the source's hedge ('can stress'). F18: front_delts removed from feel.watch (stays secondary; the shoulder row carries the warning)."
  ]
 }

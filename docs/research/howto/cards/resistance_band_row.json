@@ -217,7 +217,7 @@
     },
     {
       "id": "c11",
-      "text": "Band hand contact: secure the band to the hand before use so it cannot slip; a 'grip wrap' lays the band flat in the palm with its end toward the little finger, wraps the long end round the back of the hand, and then grasps firmly. Wrapping twice helps.",
+      "text": "Band hand contact: secure the band to the hand before use so it cannot slip; a 'grip wrap' lays the band flat in the palm with its end toward the little finger, wraps the long end round the back of the hand, and then grasps firmly. Wrapping twice may help.",
       "tags": [
         "CONSENSUS"
       ],
@@ -256,9 +256,9 @@
     },
     {
       "id": "c13",
-      "text": "Band wrist: in the seated band row keep the wrists straight, in line with the forearms; the band lies flat, not twisted, and the load is set by where the hands grip the band ends.",
+      "text": "Band wrist (from the chair-seated band row, feet standing on the band; applied to the long-sit floor row by similarity): keep the wrists straight, in line with the forearms; the band lies flat, not twisted, and the load is set by where the hands grip the band ends.",
       "tags": [
-        "CONSENSUS"
+        "MECH"
       ],
       "sources": [
         "sabf-bandrow"
@@ -374,7 +374,7 @@
       "id": "theraband-manual",
       "url": "https://www.theraband.com/static/version1771453261/frontend/Theraband/default/en_US/instructions/Resistance_Band-Tubing_Instruction_Manual(1).pdf",
       "title": "Instruction Manual, Resistance Bands and Tubing (The Hygenic Corporation)",
-      "kind": "guideline",
+      "kind": "manufacturer",
       "year": null,
       "pmid": null,
       "access": "full",
@@ -437,12 +437,15 @@
   "grip": {
     "type": "Neutral, palms facing in, one band end in each hand (c3).",
     "width": "Set by where the band leaves the feet (c1).",
-    "thumb": "Wrapped round the band end: pull archetype default (GA 3.1). No exercise-specific source.",
-    "handContact": "No exercise-specific source for how a flat band end sits in the hand; left to the pull archetype default and flagged for the critic.",
-    "wrist": "No exercise-specific source for the wrist on a band row; pull archetype default (GA 3.1), flagged for the critic.",
+    "thumb": "TheraBand palm wrap: the band ends start between the thumb and palm, then wrap round the back of the hand (c12). Manufacturer manual, not row-specific.",
+    "handContact": "TheraBand grip wrap: band flat in the palm, end toward the little finger, long end wrapped round the back of the hand, grasped firmly; secure it so it cannot slip (c11).",
+    "wrist": "Straight, in line with the forearm (c13; from the chair-seated band row, MECH).",
     "claims": [
       "c1",
-      "c3"
+      "c3",
+      "c11",
+      "c12",
+      "c13"
     ]
   },
   "setup": [
@@ -595,6 +598,10 @@
   "anchorSource": "sweat-bandrow",
   "notes": [
     "Census lists the contact as standing-feet, but the exercises.json alias ('seated band row') and census pose (floorsit) put this on the floor, so the contact is floor-body. The seated cable row's primary contact is foot-platform, so under content.md 2.3 this is its own parent card, not a difference card: the lines once inherited are written here as the band row's own lines (c3, c4). No band-row EMG study was found; all EMG claims are applied from an isometric seated row and a prone barbell row and tagged MECH. Colado 2010 (elastic tubing vs machines) was dropped: no line used it.",
-    "W1A band-hand claims (2026-10-02), added for LIB-7's band hand pair; no verified line was edited. Contact c11 (grip wrap), thumb c12 (palm wrap: band ends between thumb and palm), wrist c13 (straight, in line with the forearm), hand fault c14 (grip lost: the band snaps back). Neither source names which wrap to use for the row or the direction a wrist bends when the grip fails, so the band Wrong for the wrist stays a gap; the sourced fault with a direction is the band snapping back when the grip is lost (c14). grip.thumb, grip.handContact and grip.wrist still hold the earlier archetype-default text; switching them to c11-c13 is left to the verifier and LIB-7. The BeWise (Utah) band guide was found but could not be fetched (proxy refused bewise.utah.gov; web.archive.org unreachable), so it is not cited. The theraband-manual title is descriptive: the PDF prints only 'Instruction Manual' and 'The Hygenic Corporation' (fetcher check 2026-10-02)."
+    "W1A band-hand claims (2026-10-02), added for LIB-7's band hand pair; no verified line was edited. Contact c11 (grip wrap), thumb c12 (palm wrap: band ends between thumb and palm), wrist c13 (straight, in line with the forearm), hand fault c14 (grip lost: the band snaps back). Neither source names which wrap to use for the row or the direction a wrist bends when the grip fails, so the band Wrong for the wrist stays a gap; c14 stays as a general rule to control the band and never let it snap back; its face-ward direction is not this row's (see gaps, F07). grip.thumb, grip.handContact and grip.wrist still hold the earlier archetype-default text; switching them to c11-c13 is left to the verifier and LIB-7. The BeWise (Utah) band guide was found but could not be fetched (proxy refused bewise.utah.gov; web.archive.org unreachable), so it is not cited. The theraband-manual title is descriptive: the PDF prints only 'Instruction Manual' and 'The Hygenic Corporation' (fetcher check 2026-10-02).",
+    "W1 fixer round 2026-10-03: F07: gap added for the row's most common band-hand fault and direction; the W1A note no longer calls c14 this row's directional fault. F15: c13 names its source setup (chair-seated row) and is tagged MECH. F16: grip.thumb/handContact/wrist now cite c11-c13, grip.claims adds them; theraband-manual kind guideline -> manufacturer; c11 'helps' -> 'may help'."
+  ],
+  "gaps": [
+    "Most common band-hand fault and its direction for this row (F07): no source ranks band-hand faults, and c14's face-ward snap belongs to the manual's starred exercises, not to this row anchored at the feet. LIB-7 must not draw a face-ward snap as this row's hand Wrong."
   ]
 }

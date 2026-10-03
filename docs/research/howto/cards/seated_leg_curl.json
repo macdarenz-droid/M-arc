@@ -387,12 +387,9 @@
    }
   ],
   "mistake": {
-   "what": "Knee out of line with the machine's pivot because the seat was not set.",
-   "why": "StrengthLog calls knee-to-pivot alignment the most important part (c1) and lists not adjusting the machine first among common mistakes (c9).",
-   "claim": [
-    "c1",
-    "c9"
-   ],
+   "what": "Ankle pad set high on the calves.",
+   "why": "BarBend: a pad set too high presses on the calves and shortens the range; keep it well below the calf muscle (c3). The knee-to-pivot fault (c1, c9) has no sourced direction, so it is not drawn (R-W1-7).",
+   "claim": "c3",
    "drawable": true
   },
   "tells": [
@@ -575,6 +572,7 @@
  "notes": [
   "The knee feel row restates the sources' fault (knees not aligned, c1; machine not adjusted, c9) and its fix, with no other symptom-to-cause claim (LR-6).",
   "knee-pivot zoom: wrong is null (LR-25): the sources say the knee must line up with the pivot but name no direction for the fault, so no wrong position is drawn.",
-  "Tempo numbers are a drawing convention (plate.tempo.text), not ACSM (LR-15)."
+  "Tempo numbers are a drawing convention (plate.tempo.text), not ACSM (LR-15).",
+  "W1 fixer round 2026-10-03: F06 / R-W1-7: plate.mistake changed from the knee-to-pivot fault (no sourced direction) to the ankle pad set high on the calves (c3), which has a direction and matches zooms[1]."
  ]
 }
