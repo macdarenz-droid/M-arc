@@ -4,7 +4,7 @@ import { viewPair } from './view-common.mjs';
 import { palmFlatHalf, palmFlatProblems } from './view-palm-flat.mjs';
 
 export const KEY = 'palm-flat', OWNER = 'LIB-12', VIEW = 'palm-flat';
-export const HANDLE = { profile: 'floor' };   // no handle: the hand lies on the floor
+// no HANDLE: the hand lies on the floor (pairs.mjs requires a diameter only for a radial grip or a named profile)
 export const INPUTS = ['tools/plates/library/hands/view-palm-flat.mjs', 'tools/plates/library/hands/view-common.mjs'];
 export const VIEW_FILES = ['tools/plates/layers/engine/hand.mjs', 'tools/plates/layers/engine/geom.mjs'];
 const PF = 'shared/palm-flat.json';

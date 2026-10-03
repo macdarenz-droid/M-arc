@@ -14,17 +14,12 @@ import { HERE, MODULES, renderPair } from './pairs.mjs';
 const ENGINE = join(HERE, '../../layers/engine');
 const THEMES = ['silent-black', 'paper', 'ember', 'emerald', 'midnight'], WIDTHS = [390, 360, 340];
 
-/** Every LIB-12 drawn id and fault, rendered through LIB-7's renderPair or (palm-flat, no handle) the key's render. */
+/** Every LIB-12 drawn id and fault, rendered through LIB-7's renderPair. */
 export function lib12Pairs(mods = MODULES) {
   const out = [];
   for (const m of mods.filter(q => q.OWNER === 'LIB-12')) for (const [id, cfg] of Object.entries(m.IDS)) for (const f of cfg.faults) {
     const uid = `g12-${id.replace(/_/g, '-')}-${f}`;
-    let svg;
-    try { svg = renderPair(id, { uid, fault: f }).svg; } catch (e) {
-      if (!/no explicit handle diameter/.test(e.message)) throw e;     // palm-flat until #193's handle rule allows it
-      const V = m.VARIANTS[cfg.variant], F = V.faults[f];
-      svg = m.render({ uid, right: V.right, wrong: { ...V.right, ...F.pose }, rightNote: V.rightNote, wrongNote: F.label, alt: { right: V.alt, wrong: F.alt } }).svg;
-    }
+    const { svg } = renderPair(id, { uid, fault: f });
     out.push({ id, fault: f, svg });
   }
   return out;

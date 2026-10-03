@@ -38,7 +38,7 @@ function lib12Sweep(all: any[]) {
   sweep(Array(drawn), 12, 'drawn ids'); sweep(Array(gaps), 9, 'gap ids');
   return pairs.indexOf(all);   // throws when an id is in two keys
 }
-/** The spec renderPair builds (pairs.mjs), without pairSpec's handle rule (palm-flat has no handle: asked on #193). */
+/** The spec renderPair builds (pairs.mjs), built here so a test can swap or change the halves. */
 const specOf = (m: any, id: string, fault: string, swap = false) => {
   const cfg = m.IDS[id], V = m.VARIANTS[cfg.variant], F = V.faults[fault];
   const right = m.VIEW === 'radial' ? { ...V.right, handle: { profile: m.HANDLE.profile, diameterMm: m.HANDLE.diameterMm } } : V.right, wrong = { ...right, ...F.pose };
@@ -82,6 +82,10 @@ describe('LIB-12 A2 + A3: geometry per view, Right and Wrong not swapped (R8 mac
   it('every drawn pair and fault passes its view checks', () => {
     const list = common.sweep(drawnPairs(), 20, 'view pairs');   // palm-flat 8 x 2 faults + goblet + front squat + wall ball + battle ropes
     for (const { m, id, f } of list) expect([id, f, m.render(specOf(m, id, f)).report.problems]).toEqual([id, f, []]);
+  });
+  it('every drawn id and fault renders through LIB-7\'s renderPair with no problem', () => {
+    const ids = mods.filter(m => m.OWNER === 'LIB-12').flatMap(m => Object.entries(m.IDS).flatMap(([id, c]: any) => c.faults.map((f: string) => [id, f])));
+    for (const [id, f] of common.sweep(ids, 20, 'renderPair pairs')) expect([id, f, pairs.renderPair(id, { fault: f }).report.problems]).toEqual([id, f, []]);
   });
   it('battle_ropes renders through pairs.mjs on golden-B renderHandPair with the explicit 38 mm rope', () => {
     const r = pairs.renderPair('battle_ropes');
