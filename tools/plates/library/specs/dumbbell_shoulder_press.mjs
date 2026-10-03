@@ -110,14 +110,21 @@ const startArmPhantom = (() => {
 // Mistake (card plate.mistake, c4): the low back arches away from the pad as the dumbbells go up. The pelvis tips
 // forward MIS_TILT on the seat (seat landmark stays on the seat), the lumbar spine extends until the upper back is back
 // on the pad (trunk solved), so the low back and the buttocks leave the pad. Arms keep the overhead grip.
-const MIS_TILT = 12;                                  // pelvis tips forward (deg): lumbar extends 26 deg, near its end range
+const MIS_TILT = 16;                                  // pelvis tips forward (deg): lumbar extends 35 deg (an exaggerated arch,
+                                                      //  so the tell anchors move >= 11.4 px, LIB-3 PQ-H3; 12 deg gave 9.0 px)
 const bis = (f, lo, hi) => { for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; } return (lo + hi) / 2; };
 const tiltM = REC.pose.root.tilt + MIS_TILT, rootM = { at: rootOnSeat(REC.seatPt, tiltM, H), tilt: tiltM };
 const padDist = p => (p[1] - F.back.point[1]) * F.back.normal[1] + (p[2] - F.back.point[2]) * F.back.normal[2];
 const trunkM = bis(t => padDist(landmarksOf({ ...end, root: rootM, trunk: t }, H).backUpper), -40, 20);
 const occM = n => fk(resolve(normPose({ ...end, root: rootM, trunk: trunkM, neck: n }, { height: H }), { height: H }).q, { height: H }).head([0, 0.955, -0.056]);
 const neckM = bis(n => padDist(occM(n)), -40, 40);                                  // back of the skull stays on the pad
-const mistakePose = { root: rootM, trunk: trunkM, neck: neckM };
+// The arch lowers and moves the shoulders, so the dumbbells move with them: each grip target is the end grip shifted
+// by its shoulder's displacement (the arms keep the lockout shape; without it the straight arms miss by 1 cm).
+const misReach = (() => { const E = landmarksOf(end, H), M = landmarksOf({ ...end, root: rootM, trunk: trunkM, neck: neckM }, H), out = {};
+  for (const sd of ['l', 'r']) { const d = [0, 1, 2].map(i => M[`shoulder.${sd}`][i] - E[`shoulder.${sd}`][i]);
+    out[sd] = { ...end.reach[sd], at: end.reach[sd].at.map((v, i) => v + d[i]) }; }
+  return out; })();
+const mistakePose = { root: rootM, trunk: trunkM, neck: neckM, reach: misReach };
 const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
 const gapTo = lmMis.backMid, gapCm = padDist(gapTo), gapFrom = gapTo.map((v, i) => v - F.back.normal[i] * gapCm);
 const PU = F.back.up, TICK = 2 / 146.29;

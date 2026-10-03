@@ -105,7 +105,7 @@ const startDbPhantom = [ring(startDb, 0.119 / 2, 6)].map(pts => ({ type: 'line',
 // Mistake (card plate.mistake, c6): the low back arches and the hips lift off the bench to press the weight. The
 // buttock rises MISTAKE_LIFT off the pad while the upper back and the skull stay on it (supine() with `lift`): the lumbar
 // spine extends 17 deg and the chin tucks. Arms keep the end grip; feet stay planted.
-const MISTAKE_LIFT = 0.07;                            // hips off the pad (m)
+const MISTAKE_LIFT = 0.08;                            // hips off the pad (m): 8 cm (was 7) so the tell anchors move >= 11.4 px (LIB-3 PQ-H3)
 const mistakePose = supine(BENCH_TOP, 0, { lift: MISTAKE_LIFT });
 const lmM = landmarksOf({ ...end, ...mistakePose }, H);
 const gapTop = lmM.buttock, gapBot = [0, BENCH_TOP, gapTop[2]], TICK = 2 / 146.29;

@@ -146,7 +146,7 @@ function armShapes(pose, keys) {
 // near arm as a closed 'eq' outline (card-surface fill, text-3 line: the ghost look), on top of the end figure, so it
 // separates from the torso instead of the earlier hidden dashed lines folded inside it. The FOREARMS VERTICAL leader
 // ends on this forearm.
-const START_ARM = armShapes(start, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']).map(pts => ({ type: 'poly', pts, cls: 'eq', z: 'front', part: 'startarm' }));
+const START_ARM = armShapes(start, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']).map(pts => ({ type: 'line', pts: [...pts, pts[0]], cls: 'eq-line m-line', z: 'front', part: 'startarm' }));
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 // Mistake (card plate.mistake, c5): elbows back at the start, forearms tilted, so the bar curves forward away from
 // the face. Drawn AT THE RACK POSITION (critic 10-02 R5: the fault at forehead height sat over the solid locked-out
@@ -160,8 +160,8 @@ const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Mat
 // arrow runs from the correct start elbow (under the bar) to the faulty one. The drift is the light part: a thin dashed
 // path from the faulty bar curving forward-up to a sleeve-size ring MIS_FWD in front of mid-foot at forehead height
 // (MIS_Y) (the card gives no distance).
-const MIS_POLE = [0.05, -1, -1.5];                     // elbow IK pole: down and back, in the sagittal plane (elbows back, c5)
-const MIS_DZ = 0.04, MIS_DY = -0.065;                  // m: the faulty bar sits this far in front of and below its rack spot
+const MIS_POLE = [0.05, -0.77, -0.63];                // elbow IK pole: down and back, square to the shoulder-bar line (elbows back, c5)
+const MIS_DZ = 0.03, MIS_DY = -0.15;                   // m: the faulty bar sits this far in front of and below its rack spot
                                                        //  (eased off the shoulders), so the elbow can drop behind it
 const MIS_FWD = 0.20;                                  // m the bar drifts forward of mid-foot (card: "away from the face")
 const MIS_Y = 1.70;                                    // m: forehead height, where the drifting bar is drawn
@@ -182,7 +182,6 @@ const DRIFT = Array.from({ length: 13 }, (_, k) => { const t = k / 12;   // quad
 // (same method) with the engine's faulty-arm outline as dashed red guides on top, so it separates from the torso.
 const FADE_ARM = [...armShapes(end, ARM_KEYS('l')), ...armShapes(end, ARM_KEYS('r'))].map(pts => ({ type: 'poly', pts, cls: 'eq', z: 'front', part: 'fadearm' }));
 const MIS_ARM = armShapes({ ...end, ...mistakePose }, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']);
-const MIS_HALO = MIS_ARM.map(pts => ({ type: 'poly', pts, cls: 'eq', z: 'front', part: 'misarm' }));
 const RING_R = 0.025;
 const MB_RING = Array.from({ length: 17 }, (_, k) => [0, MB[1] + RING_R * Math.sin(k * Math.PI / 8), MB[2] + RING_R * Math.cos(k * Math.PI / 8)]);
 const DRIFT_RING = Array.from({ length: 17 }, (_, k) => [0, MIS_Y + RING_R * Math.sin(k * Math.PI / 8), MIS_FWD + RING_R * Math.cos(k * Math.PI / 8)]);
@@ -206,7 +205,7 @@ export default {
     // in every pose, so the start, ghosts and end bar positions read along the vertical path
     (lm, ctx) => [
       ctx.pose === 'end' ? { type: 'barbell', at: [0, lm.grips[1], lm.grips[2]], plates: [0.045], part: 'plate', z: 'back' } : null,
-      ...(ctx.pose === 'end' && ctx.mistake ? [...FADE_ARM, ...MIS_HALO] : []),
+      ...(ctx.pose === 'end' && ctx.mistake ? FADE_ARM : []),
       { type: 'pulley', at: [0, lm.grips[1], lm.grips[2]], r: 0.025, part: 'bar', z: 'front' },
       // start bar dot, dashed, in front: the lockout arm covers the start layer (barbell_back_squat's workaround)
       ...(ctx.pose === 'end' ? [...(ctx.mistake ? [] : START_ARM), { type: 'line', cls: 'eq-line m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
