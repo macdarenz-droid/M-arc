@@ -15,15 +15,22 @@ export const KEY_FILE = /^hand-([a-z0-9-]+)\.mjs$/;
 // Grip orientation -> camera label (golden-B engine/hand.mjs:8-9: the handle is seen end-on, so a vertical handle is
 // "seen from above" and a horizontal bar "seen from the side"). 'under' draws the palm up (mirror), 'over' down.
 // 'unstated': no claim names the palm direction, so the label names the view only (D-LIB7-4).
-export const ORIENTATIONS = { under: 'side', over: 'side', neutral: 'above', unstated: 'side' };
+// 'angled': the EZ bar's angled section, half-way between palms up and palms in (D-LIB7-15): the camera looks along that
+// section, which the radial view always does, and the label says so instead of claiming palm up or palm in.
+export const ORIENTATIONS = { under: 'side', over: 'side', neutral: 'above', unstated: 'side', angled: 'side' };
 // Archetype defaults a card delegates to (GA 3.1, 3.1.1). Cited as `ga:<name>`; flagged on the sheet, never a claim.
 export const CONVENTIONS = {
   'ga:push-heel': 'GA 3.1 push: heel of the palm, low, over the forearm; extension 0 to 15',
   'ga:pull-base': 'GA 3.1 pull: base of the fingers and top edge of the palm; extension 0 to 25',
   'ga:curl-mid': 'GA 3.1 curl: across the middle of the palm; extension -10 to +10 (shared/curl.json gap 1)',
-  'ga:rope-fingers': 'GA 3.1.1 rope: load in the fingers, loadAxis across, lever check off (shared/rope-rule.json gap 1)',
+  'ga:rope-fist-mid': 'drawing value: the rope across the middle of the palm (contactAt .6), curl 2\'s square fist; no source says where the rope load sits (shared/rope-rule.json gap 1), and GA 3.1.1\'s load in the fingers draws a pointed fist in golden B (D-LIB7-16); loadAxis across, lever check off',
 };
-export const THUMB_SIDE = 'Seen from the thumb side';
+// Palm up for an underhand grip and for the EZ bar's angled grip: the camera looks along the angled section, so the hand,
+// square to that section, shows as a straight-bar underhand grip does from the side; the camera words carry the angle
+// (D-LIB7-16). The engine mirrors V for these.
+export const PALM_UP = new Set(['under', 'angled']);
+export const THUMB_SIDE = 'Seen from the thumb side', ALONG_ANGLED = 'Seen along the angled grip';
+export const CAMERA_TEXT = { unstated: THUMB_SIDE, angled: ALONG_ANGLED };
 
 /** Every key module in `dir`, sorted by filename. The file name must match the module's KEY. */
 export async function loadKeyModules(dir = HERE) {
@@ -65,14 +72,15 @@ export function pairSpec(id, index = INDEX) {
   // no handle (LIB-12's palm on the floor) has no honest diameter and passes none (LIB-12 ask, supervisor OK 10-02)
   if ((mod.VIEW === 'radial' || H?.profile) && !(H?.diameterMm > 0)) throw new Error(`hand pairs: ${mod.KEY}/${cfg.variant}: no explicit handle diameter`);
   const handle = H?.profile ? { profile: H.profile, diameterMm: H.diameterMm, ...(H.headMm ? { headMm: H.headMm } : {}) } : null;
-  const right = mergePose(V.right, { ...(handle ? { handle } : {}), ...(cfg.orientation === 'under' ? { mirror: true } : {}) });
+  const right = mergePose(V.right, { ...(handle ? { handle } : {}), ...(PALM_UP.has(cfg.orientation) ? { mirror: true } : {}) });
   const radial = mod.VIEW === 'radial' && !mod.render, camera = ORIENTATIONS[cfg.orientation];
   return {
     id, key: mod.KEY, variant: cfg.variant, pair: `${mod.KEY}/${cfg.variant}`, mod, orientation: cfg.orientation,
     camera, loadAxis: V.loadAxis, wristRange: V.wristRange, contact: V.contact, handle: H,
     right, rightNote: V.rightNote, altRight: V.alt, panelHeight: V.panelHeight,
     wrong: cfg.faults.map(k => ({ key: k, ...V.faults[k] })),
-    extras: { ...(V.loadLine === false ? { stripLoadLine: true } : {}), ...(radial && cfg.orientation === 'unstated' ? { thumbSide: true } : {}),
+    extras: { ...(V.loadLine === false ? { stripLoadLine: true } : {}), ...(radial && H?.plain ? { plainHandle: true } : {}),
+      ...(radial && H?.knobMm ? { knobMm: H.knobMm } : {}), ...(radial && V.loadThroughPivot ? { loadThroughPivot: true } : {}), ...(radial && CAMERA_TEXT[cfg.orientation] ? { cameraText: CAMERA_TEXT[cfg.orientation] } : {}),
       // golden B's "seen from above" row names YOU and MACHINE; a hand-held weight has no machine, so it gets the camera
       // words alone (renderHandPair's side-camera label, reworded; D-LIB7-11)
       ...(radial && camera === 'above' && !V.machine ? { plainAbove: true } : {}), ...(radial ? { placeLabels: true } : {}) },
@@ -104,7 +112,7 @@ export function measured(svg) {
 // round its wrist, forearm side first. The gate block measures the real boxes in the browser (isPointInFill).
 const LABEL_W = 7.2, LABEL_PAD = 3;      // --fs-meta 12 px, tabular digits; box estimate plus margin
 // a <defs> outline as a polygon: absolute M, L, H, V, Q, C and Z, curves flattened in 8 steps
-function poly(d) {
+export function poly(d) {
   const ps = []; let cur = [0, 0];
   for (const [, c, args] of d.matchAll(/([MLHVQCZ])([^MLHVQCZ]*)/g)) {
     const n = (args.match(/-?[\d.]+(?:e-?\d+)?/g) ?? []).map(Number);
@@ -118,7 +126,7 @@ function poly(d) {
   }
   return ps;
 }
-const inPoly = (p, ps) => { let c = false; for (let i = 0, j = ps.length - 1; i < ps.length; j = i++) {
+export const inPoly = (p, ps) => { let c = false; for (let i = 0, j = ps.length - 1; i < ps.length; j = i++) {
   const [xi, yi] = ps[i], [xj, yj] = ps[j]; if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
 const boxOf = (x, y, anchor, n) => { const w = n * LABEL_W, x0 = anchor === 'middle' ? x - w / 2 : anchor === 'end' ? x - w : x;
   return [x0 - LABEL_PAD, y - 12 - LABEL_PAD, x0 + w + LABEL_PAD, y + 4 + LABEL_PAD]; };
@@ -158,6 +166,49 @@ function placeLabels(svg, uid, pw) {
   return { svg, moved };
 }
 
+// Rope and push extras (critic run on #193, 10-03; D-LIB7-13, D-LIB7-14). Each throws when an anchor is missing.
+/** A rope seen end-on is one plain section: golden B's handle core ring and cross (a rigid handle's) are left out. */
+function plainHandle(svg) {
+  const before = svg.match(/<(?:circle|path) class="h-eq-core"[^>]*\/>/g)?.length ?? 0;
+  if (before !== 4) throw new Error(`hand pairs: plain handle: ${before} core marks, expected 4`);
+  return svg.replace(/<(?:circle|path) class="h-eq-core"[^>]*\/>/g, '');
+}
+/** The knob, coaxial with the rope and past the little-finger edge, so the fist hides it: a dashed outline (golden B's
+ *  hidden-equipment line, h-eq-thin) drawn over the hand at the composer's size. */
+function knobRings(svg, knobMm, k) {
+  const knobs = [];
+  for (const role of ['right', 'wrong']) {
+    const g = `<g class="h-panel ${role}">`, at = svg.indexOf(g);
+    if (at < 0) throw new Error(`hand pairs: knob: no ${role} panel`);
+    let depth = 0, close = -1;                                  // the panel's own closing </g>
+    const re = /<g[\s>]|<\/g>/g; re.lastIndex = at;
+    for (let m; (m = re.exec(svg));) { depth += m[0] === '</g>' ? -1 : 1; if (depth === 0) { close = m.index; break; } }
+    const c = svg.slice(at, close).match(/<circle class="h-eq" cx="([\d.-]+)" cy="([\d.-]+)" r="([\d.]+)"\/>/);
+    if (close < 0 || !c) throw new Error(`hand pairs: knob: no ${role} rope`);
+    const knob = { role, cx: +c[1], cy: +c[2], r: f2(knobMm / 2 * k) };
+    knobs.push(knob);
+    svg = svg.slice(0, close) + `<circle class="h-eq-thin" cx="${knob.cx}" cy="${knob.cy}" r="${knob.r}"/>` + svg.slice(close);
+  }
+  return { svg, knobs };
+}
+/** A push on the heel runs through the wrist: the Right half's force line is re-aimed from its handle end through the
+ *  wrist pivot, same length (the Wrong half keeps the engine's line behind the wrist, which is the lever it shows). */
+function loadThroughPivot(svg) {
+  const at = svg.indexOf('<g class="h-panel right">'), end = svg.indexOf('<g class="h-panel wrong">');
+  let part = svg.slice(at, end);
+  const line = part.match(/<path class="h-load" d="M([\d.-]+) ([\d.-]+)L([\d.-]+) ([\d.-]+)"\/>/), head = part.match(/<path class="h-load-head" d="[^"]*"\/>/);
+  const w = part.match(/<circle class="h-joint wrist" cx="([\d.-]+)" cy="([\d.-]+)"/);
+  if (!line || !head || !w) throw new Error('hand pairs: load through pivot: anchors missing');
+  const A = [+line[1], +line[2]], B = [+line[3], +line[4]], W = [+w[1], +w[2]], L = Math.hypot(B[0] - A[0], B[1] - A[1]);
+  const d = [W[0] - A[0], W[1] - A[1]], dl = Math.hypot(...d), u = [d[0] / dl, d[1] / dl], E = [A[0] + u[0] * L, A[1] + u[1] * L];
+  const n = [-u[1], u[0]], tip = [E[0] + u[0] * 4, E[1] + u[1] * 4], sz = 6;
+  const hd = `M${f2(tip[0] - u[0] * sz + n[0] * sz * .62)} ${f2(tip[1] - u[1] * sz + n[1] * sz * .62)}L${f2(tip[0])} ${f2(tip[1])}L${f2(tip[0] - u[0] * sz - n[0] * sz * .62)} ${f2(tip[1] - u[1] * sz - n[1] * sz * .62)}Z`;
+  part = part.replace(line[0], `<path class="h-load" d="M${f2(A[0])} ${f2(A[1])}L${f2(E[0])} ${f2(E[1])}"/>`).replace(head[0], `<path class="h-load-head" d="${hd}"/>`);
+  // the engine's tick marks where its own line crossed the wrist level; the re-aimed line crosses at the pivot itself
+  part = part.replace(/<path class="h-tick" d="[^"]*"\/>/, '');
+  return { svg: svg.slice(0, at) + part + svg.slice(end), pivot: { from: [f2(A[0]), f2(A[1])], to: [f2(E[0]), f2(E[1])], wrist: W } };
+}
+
 /** One rendered pair. opts: { uid, fault (key; default the first), panelHeight, index }. */
 export function renderPair(id, opts = {}) {
   const s = pairSpec(id, opts.index);
@@ -168,9 +219,9 @@ export function renderPair(id, opts = {}) {
     right: s.right, wrong: mergePose(s.right, F.pose), rightNote: s.rightNote, wrongNote: F.label,
     alt: { right: s.altRight, wrong: F.alt }, panelHeight: opts.panelHeight ?? s.panelHeight });
   let svg = out.svg;
-  if (s.extras.thumbSide) {
-    svg = once(svg, '>SEEN FROM THE SIDE<', `>${THUMB_SIDE.toUpperCase()}<`, 'thumb-side label');
-    svg = once(svg, 'aria-label="Seen from the side. ', `aria-label="${THUMB_SIDE}. `, 'thumb-side aria');
+  if (s.extras.cameraText) {
+    svg = once(svg, '>SEEN FROM THE SIDE<', `>${s.extras.cameraText.toUpperCase()}<`, 'camera label');
+    svg = once(svg, 'aria-label="Seen from the side. ', `aria-label="${s.extras.cameraText}. `, 'camera aria');
   }
   if (s.extras.plainAbove) {
     svg = once(svg, '>SEEN FROM THE SIDE<', '>SEEN FROM ABOVE<', 'plain-above label');
@@ -183,9 +234,13 @@ export function renderPair(id, opts = {}) {
     svg = svg.replace(/<path class="h-load( m)?" d="[^"]*"\/><path class="h-load-head( m)?" d="[^"]*"\/>/g, '').replace(/<path class="h-tick" d="[^"]*"\/>/g, '');
     if (before === svg || /class="h-load/.test(svg)) throw new Error(`hand pairs: ${id}: load line not stripped cleanly`);
   }
+  if (s.extras.plainHandle) svg = plainHandle(svg);
+  let knobs = null, pivot = null;
+  if (s.extras.knobMm) ({ svg, knobs } = knobRings(svg, s.extras.knobMm, out.report.scalePxPerMm));
+  if (s.extras.loadThroughPivot) ({ svg, pivot } = loadThroughPivot(svg));
   const uidUsed = opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, placed = s.extras.placeLabels ? placeLabels(svg, uidUsed, (358 - 16) / 2) : { svg, moved: [] };
   svg = placed.svg;
-  return { svg, spec: s, fault: F, report: { ...out.report, labelsMoved: placed.moved, measured: measured(svg) } };
+  return { svg, spec: s, fault: F, report: { ...out.report, labelsMoved: placed.moved, knobs, pivot, measured: measured(svg) } };
 }
 
 /** The repo files a module reads through its relative imports, itself included (static `from './…'` specifiers). */

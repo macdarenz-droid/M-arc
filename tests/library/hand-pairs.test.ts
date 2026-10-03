@@ -116,11 +116,100 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
   });
   it('G6: a push Wrong in the heel (lever not behind the wrist) fails', () => bites(withMods(m => { key(m, 'ez').VARIANTS.push.faults['bent-back'].pose.contactAt = 0.3; }), 'skull_crusher', /G6 lever checks/));
   it('G6: a force line on a gravity curl fails', () => bites(withMods(m => { delete key(m, 'curl').VARIANTS.bar.loadLine; }), 'barbell_curl', /G6 force line drawn/));
+  it('critic fixes (10-03): approved drawings byte-identical; rope plain with its knob; push line through the pivot; EZ angled label', () => {
+    // the pages the calibrated critic approved, sha256 over `id/fault\0svg\0` (computed on 23ac5bb before the fixes)
+    const APPROVED = ['dumbbell_biceps_curl', 'alternating_dumbbell_curl', 'incline_dumbbell_curl', 'hammer_curl', 'cross_body_hammer_curl', 'barbell_curl', 'cable_curl', 'preacher_curl', 'reverse_curl', 'single_arm_lat_pulldown'];
+    const h = createHash('sha256');
+    for (const id of APPROVED) for (const w of P.pairSpec(id).wrong) h.update(`${id}/${w.key}\0${P.renderPair(id, { fault: w.key }).svg}\0`);
+    expect(h.digest('hex')).toBe('2f9d3b7fb5a560d5cfbaac2ca5cecfa73b8d356ccad837ed101081e1aa172829');
+    const ez = P.renderPair('ez_bar_curl', { fault: 'curled' }).svg;
+    expect(ez).toContain('>SEEN ALONG THE ANGLED GRIP<');
+    expect(ez).toContain('aria-label="Seen along the angled grip.');
+  });
+  it('G7: a rope with a handle core, or without its knob, fails', () => {
+    const { spec, pages } = C.renderedPages('rope_triceps_pushdown');
+    expect(C.problemsOf(spec, pages)).toEqual([]);
+    const cored = structuredClone(pages);
+    cored[0].svg = cored[0].svg.replace('</svg>', '<circle class="h-eq-core" cx="1" cy="1" r="1"/></svg>');
+    expect(C.problemsOf(spec, cored).join('\n')).toMatch(/G7 rope drawn with a handle core/);
+    const k = pages[0].report.knobs[0];
+    const noKnob = structuredClone(pages);
+    noKnob[0].svg = noKnob[0].svg.replace(`<circle class="h-eq-thin" cx="${k.cx}" cy="${k.cy}" r="${k.r}"/>`, '');
+    expect(C.problemsOf(spec, noKnob).join('\n')).toMatch(/G7 right knob not drawn/);
+    const moved = structuredClone(pages);
+    moved[0].report.knobs[1].cx += 1;
+    expect(C.problemsOf(spec, moved).join('\n')).toMatch(/G7 wrong knob off the rope/);
+  });
+  it('G6: a push Right force line beside the wrist pivot fails', () => {
+    const { spec, pages } = C.renderedPages('single_arm_triceps_pushdown');
+    expect(C.problemsOf(spec, pages)).toEqual([]);
+    pages[0].report.pivot.to = [pages[0].report.pivot.to[0] + 30, pages[0].report.pivot.to[1]];
+    expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G6 Right force line [\d.]+ px from the wrist pivot/);
+  });
   it('G8: an underhand id drawn palm down fails', () => {
     const { spec, pages } = C.renderedPages('barbell_curl'), m = pages[0].report.measured.right;
     m.handle[1] = m.wrist[1] + 10;                                   // the handle below the wrist: palm down
     expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G8 palm down for underhand/);
   });
+  // delta review on #193 @ bfacafb (D-LIB7-16): ez_bar_curl's angled grip was drawn palm down, byte-identical to reverse_curl
+  const handInk = (id: string, fault: string) => { const uid = `hp-${id.replace(/_/g, '-')}-${fault}`;
+    return [...P.renderPair(id, { fault }).svg.matchAll(new RegExp(`<path id="${uid}-[rw]-[a-z0-9-]+" d="([^"]+)"`, 'g'))].map(q => q[1]).join('|'); };
+  it('D-LIB7-16: ez_bar_curl\'s angled grip is drawn palm up, never as reverse_curl\'s overhand', () => {
+    const m = P.renderPair('ez_bar_curl', { fault: 'curled' }).report.measured.right;
+    expect(m.handle[1]).toBeLessThan(m.wrist[1]);                     // palm up: the handle above the wrist
+    for (const f of ['bent-back', 'curled']) {
+      expect(handInk('ez_bar_curl', f)).not.toBe(handInk('reverse_curl', f));
+      expect(handInk('ez_bar_curl', f)).toBe(handInk('preacher_curl', f));   // same hand; the camera words carry the angle
+    }
+  });
+  it('G8: the angled grip drawn without the mirror (palm down) fails', () => {
+    const ez = C.renderedPages('ez_bar_curl');
+    expect(C.problemsOf(ez.spec, ez.pages)).toEqual([]);
+    // bfacafb's drawing: reverse_curl's unmirrored hand (its pages were byte-identical apart from the camera words)
+    const bf = C.renderedPages('reverse_curl').pages;
+    expect(C.problemsOf(ez.spec, bf).join('\n')).toMatch(/G8 palm down for the angled grip/);
+  });
+  it('no two drawn ids of one variant with different palm directions draw the same hand', () => {
+    const ids = C.sweep(P.INDEX.drawn.keys(), 14, 'drawn ids'), bad: string[] = [];
+    for (const a of ids) for (const b of ids) {
+      const A = P.pairSpec(a), B = P.pairSpec(b);
+      if (a >= b || A.pair !== B.pair || !!A.right.mirror === !!B.right.mirror) continue;
+      for (const w of A.wrong) if (B.wrong.some((x: any) => x.key === w.key) && handInk(a, w.key) === handInk(b, w.key)) bad.push(`${a} = ${b} (${w.key})`);
+    }
+    expect(bad).toEqual([]);
+  });
+  it('G7 fist front: the rope fist closes square like curl 2; the rope in the fingers (1.15) tapers to a point and fails', () => {
+    const { pages } = C.renderedPages('rope_triceps_pushdown'), p = pages[0];
+    const curl2 = C.renderedPages('alternating_dumbbell_curl').pages[0];
+    expect(C.fistFrontMm(p.svg, p.uid, 90, p.report.scalePxPerMm)).toBeGreaterThanOrEqual(C.SQUARE_FRONT_MM);
+    expect(C.fistFrontMm(curl2.svg, curl2.uid, 90, curl2.report.scalePxPerMm)).toBeGreaterThanOrEqual(C.SQUARE_FRONT_MM);
+    bites(withMods(m => { Object.assign(key(m, 'rope').VARIANTS.push.right, { contactAt: 1.15 }); key(m, 'rope').VARIANTS.push.contact = 'fingers'; }),
+      'rope_triceps_pushdown', /G7 fist front [\d.]+ mm wide/);
+  });
+  it('D-LIB7-17: the rope Right names the drawn contact, no knob wording; the knob rim stays inside the fist, and a rim that shows fails G7', () => {
+    const { spec, pages } = C.renderedPages('rope_triceps_pushdown');
+    expect(spec.rightNote).toBe('Middle of palm');
+    for (const p of pages) {
+      expect(p.svg).toContain('>MIDDLE OF PALM<');
+      const words = [...p.svg.matchAll(/>([^<>]+)</g)].map(q => q[1]).join(' ') + [...p.svg.matchAll(/aria-label="([^"]*)"/g)].map(q => q[1]).join(' ');
+      expect(words).not.toMatch(/knob/i);
+      for (const k of p.report.knobs) expect(C.knobRimOutside(p.svg, p.uid, k)).toBe(0);
+    }
+    bites(withMods(m => { key(m, 'rope').HANDLE.knobMm = 80; }), 'rope_triceps_pushdown', /G7 (right|wrong) knob rim shows past the fist on \d+ of 360 points but is drawn dashed/);
+  });
+  it('D-LIB7-16a: the rope contact is the flagged drawing value ga:rope-fist-mid; every convention is cited by some pair', () => {
+    expect(P.pairSpec('rope_triceps_pushdown').mod.VARIANTS.push.claims.contact).toEqual(['ga:rope-fist-mid']);
+    const cited = new Set(P.MODULES.flatMap((m: any) => Object.values(m.VARIANTS ?? {}).flatMap((V: any) =>
+      [...Object.values(V.claims ?? {}).flat(), ...Object.values(V.faults ?? {}).flatMap((f: any) => f.claims ?? [])])));
+    expect(Object.keys(P.CONVENTIONS).filter(k => !cited.has(k))).toEqual([]);
+  });
+  it('push flags its golden-B squat drawing values on the sheet (D-LIB7-14)', async () => {
+    const { body } = await sheet.buildSheet({ mods: P.MODULES.filter((m: any) => m.OWNER === 'LIB-7') });
+    for (const id of ['single_arm_triceps_pushdown', 'skull_crusher']) {
+      const tile = body.slice(body.indexOf(id)), end = tile.indexOf('</ul>');
+      expect(tile.slice(0, end)).toContain('heel contact -0.1 and wrist 8° are golden-B squat drawing values');
+    }
+  }, 60_000);
   it('G8: the thumb-side label is required where orientation is unstated', () => {
     const { spec, pages } = C.renderedPages('single_arm_triceps_pushdown');
     pages[0].svg = pages[0].svg.replace('aria-label="Seen from the thumb side.', 'aria-label="Seen from the side.');
@@ -162,7 +251,10 @@ const PHRASES: Record<string, RegExp> = {
   under: /underhand|palms up|palms-up|palms-forward|palms forward|supinated/i,
   over: /overhand|palms down|palms toward the feet/i,
   neutral: /neutral|palms facing the body|palms facing each other/i,
+  angled: /angled section|semi-supinated|half-way between palms up and palms in/i,
 };
+// a grip claim that names the EZ bar's angled section must be drawn as 'angled', never as plain underhand (D-LIB7-15)
+const ANGLED = /angled section|semi-supinated/i;
 // what a claim cited for each element must talk about (a wrong claim number reads as the wrong fact)
 const FACT: Record<string, RegExp> = { knob: /clubbed end|knob/i, thumb: /thumb/i, wrist: /wrist/i, fault: /wrist|flex|bend|bent/i };
 function claimProblems(mods: any[], claims: Record<string, string>) {
@@ -181,6 +273,7 @@ function claimProblems(mods: any[], claims: Record<string, string>) {
       if (c.orientation === 'unstated') { for (const r of c.claims) check(r, null, id); continue; }
       if (!c.claims.length) bad.push(`${id}: no orientation claim`);
       for (const r of c.claims) check(r, PHRASES[c.orientation]!, `${id} (${c.orientation})`);
+      if (c.orientation !== 'angled' && c.claims.some((r: string) => ANGLED.test(claims[r] ?? ''))) bad.push(`${id}: its claims name the angled EZ grip, drawn ${c.orientation}`);
     }
   }
   return bad;
@@ -242,14 +335,16 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(C.pairProblems('hammer_curl', noRange).join('\n')).toMatch(/G1 no wrist range/);
   }, 60_000);
   it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
-    // the LIB-7 radial sheet, byte for byte as before the ruling (sha256 of buildSheet().body on 66c13ef + main 4aa1b2a),
+    // the LIB-7 radial sheet, byte for byte (sha256 of buildSheet().body). Re-pinned once for the calibrated critic's fixes
+    // (10-03: rope, push, ez_bar_curl angled; D-LIB7-13..15) and for the delta review (D-LIB7-16: ez palm up, rope fist
+    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid; D-LIB7-17: rope label); the approved pages stay pinned separately, unchanged.
     // built from LIB-7's own key modules only, so another card's tiles never move this pin (D-LIB7-PIN); the filter must
     // keep all 5 LIB-7 modules, so the pin cannot silently shrink
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
     const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
     expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
-    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('626f842527a8415d94c5f6c88b15340f9d54834033345cd0d561784d14388689');
-    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('0d4c054d82c1649ed7d4376445738536d5283a247c2368a5ea00bf343464af51');
+    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('6a4020426c7bc1afb1447273f51ae1a8ac69d7a5e8d9e67136aa0bc847fd8f89');
+    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('107e629210e2fd279390496ca53395b3e55bb60e32a4319a034453be16727dbe');
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },
@@ -288,6 +383,8 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     const pulley = withMods(m => { key(m, 'rope').VARIANTS.push.claims.knob = ['cards/rope_triceps_pushdown.json#c1']; });
     const withPulley = { ...CLAIMS.claims, 'cards/rope_triceps_pushdown.json#c1': 'Fix a rope to the cable pulley at its top position (above head height).' };
     expect(claimProblems(pulley, withPulley).join('\n')).toMatch(/rope_triceps_pushdown.json#c1 does not state/);
+    const angledAsUnder = withMods(m => { key(m, 'ez').IDS.ez_bar_curl.orientation = 'under'; });
+    expect(claimProblems(angledAsUnder, CLAIMS.claims).join('\n')).toMatch(/ez_bar_curl: its claims name the angled EZ grip, drawn under/);
     const under = withMods(m => { key(m, 'ez').IDS.reverse_curl.orientation = 'under'; });
     expect(claimProblems(under, CLAIMS.claims).join('\n')).toMatch(/reverse_curl \(under\): cards\/reverse_curl.json#c1 does not state/);
   });

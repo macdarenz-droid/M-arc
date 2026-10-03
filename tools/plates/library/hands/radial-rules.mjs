@@ -25,13 +25,15 @@ export const curlVariant = ({ wristClaims = CURL_WRIST, bentBackClaims = ['share
 });
 
 /** Push: handle in the heel of the palm, thumb wrapped, wrist straight; Wrong: bent back with the handle in the fingers.
- *  Same contact as golden B's machine chest press (contactAt .3, measured by G4); the forearm stands vertical, as in
- *  the pushdown and the skull crusher, so a single handle with no stated orientation implies none (D-LIB7-12). */
+ *  The Right is golden B's approved squat Right (contactAt -0.1, wrist 8 deg; D-LIB7-14, measured by G4), with the force
+ *  line re-aimed through the wrist pivot (G6); the forearm stands vertical, as in the pushdown and the skull crusher, so a
+ *  single handle with no stated orientation implies none (D-LIB7-12). */
 export const pushVariant = ({ thumbClaims, wristClaims, bentBackClaims, handle }) => ({
-  archetype: 'push', loadAxis: 'along-forearm', wristRange: [0, 15], contact: 'heel', ...(handle ? { handle } : {}),
-  right: { view: 'radial', forearm: 180, wrist: { ext: 0, dev: 0 }, contactAt: 0.3, fingers: { curl: 1 }, thumb: 'wrapped', squeeze: 'firm', load: { kind: 'push' } },
+  archetype: 'push', loadAxis: 'along-forearm', loadThroughPivot: true,
+  flags: ['heel contact -0.1 and wrist 8° are golden-B squat drawing values, not claims (D-LIB7-14)'], wristRange: [0, 15], contact: 'heel', ...(handle ? { handle } : {}),
+  right: { view: 'radial', forearm: 180, wrist: { ext: 8, dev: 0 }, contactAt: -0.1, fingers: { curl: 1 }, thumb: 'wrapped', squeeze: 'firm', load: { kind: 'push' } },
   rightNote: 'Heel of palm',
-  alt: 'Wrist straight, handle in the heel of the palm, thumb wrapped. The push runs straight down the forearm.',
+  alt: 'Wrist straight, handle in the heel of the palm, thumb wrapped. The push runs through the wrist.',
   claims: { thumb: thumbClaims, wrist: wristClaims, contact: ['ga:push-heel'] },
   faults: {
     'bent-back': { label: 'Wrist bent back', side: 'extended', pose: { wrist: { ext: 35 }, contactAt: 1.05 }, markers: ['lever-arc'], claims: bentBackClaims,
