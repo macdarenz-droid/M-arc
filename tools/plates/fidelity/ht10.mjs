@@ -8,6 +8,32 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
+/**
+ * HT10-A3's tap-to-plate tripwire (D-HT10-A3m, recorded in D-HT3): every median it was set from, with where it ran
+ * (4x CPU throttle, the squat's sheet with everything mounted, 5 opens each). The limit is ceil(1.25 x the highest
+ * median), never above plan 2.9's 400 ms: it catches a real regression on either machine without flaking on the
+ * slower one. At least 3 medians each from CI and from an agent container (tests/howto/ht10-budgets.test.ts).
+ */
+export const HT10_TAP_MEDIANS = {
+  ci: [
+    { ms: 154, where: 'CI source-gate, Chrome 153.0.8010.12, ca313c7' },
+    { ms: 147, where: 'CI visual-gate-tz, Chrome 153.0.8010.12, ca313c7' },
+  ],
+  container: [
+    { ms: 251, where: 'reviewer container, full gate, Chromium 141.0.7390.37, ca313c7' },
+    { ms: 241, where: 'reviewer container, speed only, Chromium 141.0.7390.37, ca313c7' },
+    { ms: 236, where: 'reviewer container, speed only, Chromium 141.0.7390.37, ca313c7' },
+    { ms: 253, where: 'reviewer container, speed only, Chromium 141.0.7390.37, ca313c7' },
+    { ms: 171, where: 'builder container, speed only, Chromium 141.0.7390.37, 3139d28' },
+    { ms: 168, where: 'builder container, speed only, Chromium 141.0.7390.37, 3139d28' },
+    { ms: 160, where: 'builder container, speed only, Chromium 141.0.7390.37, 3139d28' },
+  ],
+};
+export const HT10_TAP_CAP_MS = 400;
+export const ht10TapLimit = (m = HT10_TAP_MEDIANS) => Math.min(HT10_TAP_CAP_MS, Math.ceil(1.25 * Math.max(...[...m.ci, ...m.container].map(x => x.ms))));
+/** The A3 verdict on a measured median: a problem when it is over `limit`, else null. */
+export const ht10TapProblem = (median, limit, samples = []) => (median > limit ? `tap-to-plate median ${median} ms${samples.length ? ` (samples ${samples.join(', ')})` : ''}, over ${limit} ms (D-HT10-A3m)` : null);
+
 /** The tuples this run proves: HT-10's full list, cut to MARC_HT_SHARD's shard when it is set. */
 export async function ht10RunTuples(env = process.env) {
   const H = await import('./harness.mjs');
@@ -30,8 +56,8 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
   const { gzipSync } = await import('node:zlib');
   const { existsSync } = await import('node:fs');
   const assetsDir = join(ROOT, 'www/assets');
-  // final numbers (D-HT3, recorded by HT-10): measured on CI + margin, never above plan 2.9's 400 ms
-  const TAP_CEIL_MS = 400;
+  // D-HT10-A3m (recorded in D-HT3): ceil(1.25 x the highest recorded median, CI and agent container), capped at 400 ms
+  const TAP_CEIL_MS = ht10TapLimit();
   const SHIMMER_RATIO = 1.2, S0_MAX = 700, LONG_TASK_MS = 100;
   // D-HT10-A4: the total How-to asset ceiling, measured + 10 %, in tests/howto/budgets.json (totals)
   const TOTAL = JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).totals?.find(t => t.chunk === 'How-to total');
@@ -58,7 +84,10 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
       for (const p of sp.problems) F(p);
       if (sp.tap) {
         if (sp.early.length) F(`How-to chunk(s) requested before Train was idle: ${sp.early.join(', ')}`);
-        if (sp.tap.median > TAP_CEIL_MS) F(`tap-to-plate median ${sp.tap.median} ms (samples ${sp.tap.samples.join(', ')}), over ${TAP_CEIL_MS} ms`);
+        const tapProblem = ht10TapProblem(sp.tap.median, TAP_CEIL_MS, sp.tap.samples);
+        if (tapProblem) F(tapProblem);
+        // the check is not blind: with its limit 1 ms under the measured median it must trip
+        if (!ht10TapProblem(sp.tap.median, sp.tap.median - 1)) F(`the tap-to-plate check did not trip with its limit 1 ms under the measured median ${sp.tap.median} ms`);
         if (sp.longTasks.some(d => d > LONG_TASK_MS)) F(`long task(s) over ${LONG_TASK_MS} ms while opening: ${sp.longTasks.join(', ')} ms`);
         if (!sp.control.some(d => d >= 150)) F(`the synthetic 150 ms task in an open was not caught (long tasks seen: ${sp.control.join(', ') || 'none'})`);
         if (!(sp.s0 > 0 && sp.s0 <= S0_MAX)) F(`${sp.s0} elements in the sheet at S0 with everything mounted (max ${S0_MAX})`);
