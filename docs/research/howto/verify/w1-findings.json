@@ -1,0 +1,216 @@
+{
+ "head": "2815c124527fb44008dbdde4c4b1a662cce71126",
+ "workflow": "wf_14147665-13f",
+ "refetched": {
+  "sources": 56,
+  "checked": 311,
+  "verbatim": 311,
+  "problems": [
+   "Scope: all 56 unique source URLs (60 source entries across the 12 cards) were re-fetched with curl -sL and a desktop Chrome user agent. That is every source, so it includes every tier-A source: weighted_dip 5, ab_wheel_rollout 7, box_jump 6. 311 of 311 card quotes are verbatim after normalising whitespace, quotes, dashes and space before punctuation.",
+   "pubmed.ncbi.nlm.nih.gov returned HTTP 203 for all 17 PubMed ids: a 'Cookies must be enabled' challenge page, and a cookie-jar retry did not help. Their abstracts were read through NCBI E-utilities efetch XML instead. PMC11166134 (dos Santos 2024) was read from its PMC page.",
+   "julielohre.com first served a bot-wait page ('One moment, please...'). A retry with a cookie jar served the full page (525 KB), and both c13 quotes are verbatim.",
+   "Numbers checked against the abstracts, all correct: Kikuchi 18 men, 8 weeks, 40% 1RM; Maeo 12 weeks, +14% vs +9%; Juker 15-35% vs <10%; McKenzie 13 men, 1.04 vs 0.83 mV; Escamilla 21 adults, aged 23-43; Yamane 2 cases, inebriated; Janikov ~51%; dos Santos 0-80%; Goulette 20 women; Bezerra 12 women, 30% BW, 20 vs 40; Nance 84%; ACSM 2-10% (its 1-2 s CON/ECC tempo is for intermediate-to-advanced lifters, as LR-15 says).",
+   "Not verified: the other pages box_jump's gap says were searched (Experience Life, Onnit, Outperform Sports); GA appendix B archetype names (hand/contact); census.json fields. Muscle ids were checked against origin/main src/data/muscles.ts, and libraryDiff against origin/main src/data/exercises.json (read-only)."
+  ]
+ },
+ "findings": [
+  {
+   "id": "F02",
+   "file": "docs/research/howto/cards/russian_twist.json",
+   "path": "feel.rows[2].fix",
+   "severity": "high",
+   "problem": "The low-back safety line has the user carry on through back pain (slow down, then switch only if it still hurts). The quote does not support this, and the LR-27 back-row pattern forbids it.",
+   "evidence": "fix: \"Slow down; if it still hurts, choose another core exercise.\" (c8). The bb-russiantwist quote says only \"If you find it hurts your lower back, consider some of the Russian twist alternatives\". Nothing says to keep going more slowly while it hurts. LR-27 fixed back rows to \"Stop the set. Don't train through the pain.\" and flagged a fix that \"implied carrying on once pain levels off\". The row links redFlag \"back\".",
+   "fix": "Use \"Stop the set; choose another core exercise.\" (c8). Keep \"Uncontrolled twists can jar the back\" as the means line, and move the slow-down cue to the fast, jerky twists mistake, which already exists."
+  },
+  {
+   "id": "F03",
+   "file": "docs/research/howto/cards/weighted_dip.json",
+   "path": "setup[1], setup[3]",
+   "severity": "high",
+   "problem": "The shown setup describes a loaded way onto the bars (belt on, then climb or jump up). No source supports it, and the card's own tier-A gap says it is unsourced (LR-3). The only mount quote is about the bodyweight bar dip.",
+   "evidence": "setup[1] \"Belt on, plate hanging low near your shins.\" (c8), then setup[3] \"Climb or jump up to straight arms.\" (c2). The c2 quote is sl-dip's unloaded \"climb or jump to get into the starting position\". gaps[0]: \"getting on and off the bars with a loaded belt ... No source found; no way-out line is shown.\" Jumping up with a plate hanging on a chain is the unsourced loaded mount the gap describes. The claim also carries no MECH or WEAK tag for applying a bodyweight source to the loaded case (CARD-V2).",
+   "fix": "Drop \"or jump\". Do not order the steps so that they imply a loaded jump, e.g. keep the belt step but show only \"Climb up to straight arms.\" Mark c2 as bodyweight-only (MECH) for the loaded case. The loaded mount and dismount stay in gaps under LIB-WAYOUT until a source is found."
+  },
+  {
+   "id": "F04",
+   "file": "docs/research/howto/cards/reverse_lunge.json",
+   "path": "plate.tempo.down",
+   "severity": "medium",
+   "problem": "The plate data sets 3 s down as the default tempo, but that number comes only from a progression level. Combining it with c16's 'a little quicker' rise produces a tempo no source gives.",
+   "evidence": "plate.tempo.down: 3. Re-fetched Fit&Well: the 3-second lowering is level \"3. Tempo reverse lunge\" of five levels, and level 1 (\"suitable for almost everyone\") has no seconds and moves on after \"three sets of 10 reps on each leg\". Its tempo version also rises \"slowly\", while Peloton's standard lunge (c16) is \"slowly lower ... a little quicker on the way up\". The card's own notes say \"down: 3 is from the tempo progression, not the standard lunge\".",
+   "fix": "Ruling recommendation: show 3 s down only as a progression line, not as the default. Following LR-15's principle, a tempo stated for one level is not the general default unless a novice-level source also gives it. Set down to null, or to a drawing convention labelled as such in plate.tempo.text (as the new cards do). Default words: \"Lower slowly, rise a little quicker\" (c7, c16). Progressions: \"3 s down\" (c15), then a 1-2 s bottom pause building to about 5 s (c16)."
+  },
+  {
+   "id": "F05",
+   "file": "docs/research/howto/cards/mountain_climbers.json",
+   "path": "plate.tempo.work, plate.tempo.rest",
+   "severity": "medium",
+   "problem": "The time ranges merge the HIIT protocol (20 s on, 10 s off) into the beginner-to-advanced ranges, so the plate allows combinations no source gives (e.g. 30 s on, 10 s off). A beginner could pick the HIIT rest.",
+   "evidence": "work \"15-30 s\", rest \"10-30 s\". Re-fetched Lohre (c13): beginners 15/15, intermediate 20/20, well conditioned 30/30, \"Start with 15 second intervals\". Healthline (c14): 10 s rest appears only for \"6\u20138 rounds of fast mountain climbers\" in a HIIT program, and \"a slow, controlled tempo ... is better for beginners\".",
+   "fix": "Ruling recommendation: time-based work may be the default, because a novice-level source gives it, so LR-15 does not bar it. The default must be the beginner row: 2-3 sets of 15 s on, 15 s off. 20/20 and 30/30 are progressions (Lohre: \"Progress by extending the interval before adding sets\"). 20/10 appears only as a labelled HIIT option. Keep 'no steps per second' as unsourced. Optionally add Lohre's verified stop cue (\"end the set as soon as your hips start bouncing rather than pushing to the clock\") as a claim."
+  },
+  {
+   "id": "F06",
+   "file": "docs/research/howto/cards/seated_leg_curl.json",
+   "path": "plate.mistake.drawable, zooms[0].wrong",
+   "severity": "medium",
+   "problem": "The plate mistake is marked drawable, but the card says no source gives the fault's direction. Drawing it means inventing whether the knee sits in front of or behind the pivot.",
+   "evidence": "plate.mistake.what \"Knee out of line with the machine's pivot\" with drawable: true, while notes[1] says \"the sources ... name no direction for the fault, so no wrong position is drawn\" and zooms[0].wrong is null. c1 and c9 give no direction.",
+   "fix": "Set drawable: false and draw the most common fault that has a direction: ankle pad high on the calves (c3, already a zoom with a wrong). Or find a source that gives the misalignment direction."
+  },
+  {
+   "id": "F07",
+   "file": "docs/research/howto/cards/resistance_band_row.json",
+   "path": "claims[c14], notes[1]",
+   "severity": "medium",
+   "problem": "The wave asked for the most common hand fault with its direction. c14 is not ranked as most common by any source, and its direction (toward the face) applies to the manual's starred exercises, not to this row, where the band is anchored at the feet.",
+   "evidence": "The re-fetched manual puts 'snapping towards the face if grip is lost' in a '* Caution' footnote on exercises such as shoulder external rotation and D2 flexion, and says 'Protect the eyes during exercises that may cause the band ... to snap back toward the head.' For the seated row, a lost grip lets the free end recoil toward the feet, and no source covers that. notes[1] calls c14 'the sourced fault with a direction'. No line cites c11-c14 yet.",
+   "fix": "Record 'most common band-hand fault and its direction for the row' in gaps. LIB-7 must not draw a face-ward snap as the band row's hand Wrong. c14 may stay as a general rule to control the band and never let it snap back."
+  },
+  {
+   "id": "F08",
+   "file": "docs/research/howto/cards/box_jump.json",
+   "path": "tierA.wayOut, gaps",
+   "severity": "medium",
+   "problem": "The tier-A way out is incomplete. Failing a rep (falling short of the box or catching a toe) has no source and is not listed in gaps, so it is missing from the owner's list of open tier-A gaps (LR-3, content.md 5.2).",
+   "evidence": "tierA.wayOut covers only \"Step down, never jump down; stop the set when tired.\" (c6, c11). gaps[0] is about tempo only. Re-fetched NASM and Catalyst contain no failed-jump guidance.",
+   "fix": "Add a gaps entry for the failed jump or missed landing (LIB-WAYOUT) and show no line for it until a source is found."
+  },
+  {
+   "id": "F09",
+   "file": "docs/research/howto/cards/box_jump.json",
+   "path": "risks[1]",
+   "severity": "medium",
+   "problem": "A shown risk line contains internal note text, and it cites a claim that covers only part of its words.",
+   "evidence": "risk: \"Landing with straight knees or unevenly (shared landing risk line).\" The parenthetical would render in the app. The line cites only c13 (asymmetric landing), but 'straight knees' is c5. risks[2] \"Jumping down, or jumping while fatigued.\" cites only c11, but 'jumping down' is c6.",
+   "fix": "Remove '(shared landing risk line)' and record the shared-line link in notes. Change the claims to [\"c5\",\"c13\"] and [\"c6\",\"c11\"]."
+  },
+  {
+   "id": "F10",
+   "file": "docs/research/howto/cards/box_jump.json",
+   "path": "loadProgression.text",
+   "severity": "low",
+   "problem": "The shown progression line includes a study finding that explains rather than instructs, and it reads as if box height does not matter, right next to 'progress by box height'.",
+   "evidence": "\"Progress by box height, from 12-18 inches, only as landings stay controlled; box height did not change take-off performance.\" The c9 quote is about performance with maximal intent in recreationally trained adults, not progression or safety.",
+   "fix": "Cut the clause after the semicolon and keep c9 as data only."
+  },
+  {
+   "id": "F11",
+   "file": "docs/research/howto/cards/side_plank.json",
+   "path": "risks[0]",
+   "severity": "low",
+   "problem": "The shown risk drops the source's hedge. It also generalises a caution from the modified (bent-knee) version.",
+   "evidence": "\"Heavy pressure on the inside of the top knee or foot strains those joints.\" ACE (c8, re-fetched verbatim): \"may cause undesirable stresses on those joints\". The quote is from Side Plank (Modified), where the inside of the upper foot rests on the mat. LR-27 keeps how sure a finding is.",
+   "fix": "Use \"Too much pressure on the inside of the top knee or foot may stress those joints.\""
+  },
+  {
+   "id": "F12",
+   "file": "docs/research/howto/cards/weighted_dip.json",
+   "path": "risks[1]",
+   "severity": "low",
+   "problem": "The shown risk drops the source's hedge.",
+   "evidence": "\"Dipping far below parallel stresses the shoulders.\" The bb-dips quote says \"Dipping too much deeper can put stress on your shoulder joints\".",
+   "fix": "Use \"Dipping far below parallel can stress the shoulders.\""
+  },
+  {
+   "id": "F13",
+   "file": "docs/research/howto/cards/ab_wheel_rollout.json",
+   "path": "claims[c9].text",
+   "severity": "low",
+   "problem": "The claim includes words that none of its quotes support.",
+   "evidence": "c9 text ends \"the deep abs work, and the lats and chest also work\". The quotes cover the abs, the obliques, the rectus abdominis, and 'Abdominals, lats'. None mentions the deep abs or the chest. libraryDiff.why repeats 'StrengthLog also names ... the chest' without a quote.",
+   "fix": "Drop 'deep abs' and 'chest', or add verbatim quotes that support them."
+  },
+  {
+   "id": "F14",
+   "file": "docs/research/howto/cards/crunch.json",
+   "path": "claims[c2]",
+   "severity": "low",
+   "problem": "One quote supports no part of the claim, and the claim leaves out what that source says.",
+   "evidence": "The ACE quote is \"Place your hands behind your head, squeezing your scapulae ... pulling your elbows back\". The c2 text lists fingertips by the head (BarBend), arms crossed, or hands in front of the chest (StrengthLog), and says nothing of ACE's hands-behind-head option.",
+   "fix": "Add ACE's option to the claim text, or drop the ACE quote from c2. notes[0] already describes the conflict."
+  },
+  {
+   "id": "F15",
+   "file": "docs/research/howto/cards/resistance_band_row.json",
+   "path": "claims[c13]",
+   "severity": "low",
+   "problem": "The wrist rule comes from a different setup (a chair row with the feet standing on the band). The claim does not say so and has no MECH tag (CARD-V2: never infer from another exercise without saying so).",
+   "evidence": "Re-fetched Sit and Be Fit: \"Sit with feet firmly planted on the ground ... Step on the band with both feet. Sit up tall.\" The card's row is the long-sit floor version, with the band around the soles (c1). c13 says only 'in the seated band row'.",
+   "fix": "Say in c13 that the source is the chair-seated band row, and add MECH."
+  },
+  {
+   "id": "F16",
+   "file": "docs/research/howto/cards/resistance_band_row.json",
+   "path": "grip.thumb, grip.handContact, grip.wrist, grip.claims; sources[theraband-manual].kind",
+   "severity": "low",
+   "problem": "The grip fields still hold the old 'no exercise-specific source / archetype default' text and do not cite c11-c13. The manual is labelled a guideline although it is a manufacturer document. c11's 'Wrapping twice helps' drops the source's 'may help'.",
+   "evidence": "grip.thumb: \"Wrapped round the band end: pull archetype default ... No exercise-specific source.\" grip.claims: [c1, c3]. The manual's own wording is \"'Double wrapping' the band may help\". content.md section 1 counts 'manufacturer' as a source kind.",
+   "fix": "In the LIB-7 pass, update the grip fields to cite c11-c13 (with the c13 caveat above), set kind to manufacturer, and change c11 to 'may help'."
+  },
+  {
+   "id": "F17",
+   "file": "docs/research/howto/cards/side_plank.json",
+   "path": "claims[c12].text",
+   "severity": "low",
+   "problem": "The claim drops the abstract's 'In general' and applies the finding to all three exercises without qualification. No shown line cites it.",
+   "evidence": "c12: \"Bracing the abdominal wall raised oblique activity in the curl-up, side bridge and bird dog.\" McGill 2009 abstract (efetch): \"In general, bracing of the abdominal wall enhanced activation of the obliques, but different techniques caused migration of muscle activity to other muscles.\"",
+   "fix": "Start the claim with 'In general,'."
+  },
+  {
+   "id": "F18",
+   "file": "docs/research/howto/cards/weighted_dip.json",
+   "path": "feel.secondary, feel.watch",
+   "severity": "low",
+   "problem": "front_delts appears both as secondary and as watch.",
+   "evidence": "secondary [front_delts (c11)] and watch [front_delts (c11)]. The library lists front_delts only as secondary.",
+   "fix": "Keep front_delts as secondary only. The shoulder feel row already covers the warning."
+  },
+  {
+   "id": "F19",
+   "file": "docs/research/howto/quotes/plank.json, mountain_climbers.json, reverse_lunge.json",
+   "path": "quotes[c12], quotes[c13,c14], quotes[c15,c16] .note",
+   "severity": "low",
+   "problem": "The tempo-wave quotes were checked by the writer, not by the separate fetcher. content.md 3.3 keeps those roles apart so that no agent grades its own reading.",
+   "evidence": "Each note reads: \"checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher\". My re-fetch found all 10 of these quotes verbatim, so no content changes, but the fetcher stamp is missing.",
+   "fix": "Record this critic's independent re-fetch as the verbatim check, or have the fetcher re-run on these quotes before the stamp."
+  },
+  {
+   "id": "F20",
+   "file": "docs/research/howto/cards/box_jump.json",
+   "path": "(quotes/box_jump.json missing); gaps[0]",
+   "severity": "low",
+   "problem": "The review set has no box_jump quotes file. The tempo gap sits in gaps, which LR-20 reserves for tier-A safety gaps, so it would land on the owner's tier-A gap list.",
+   "evidence": "There is no quotes/box_jump.json in the copy. I re-fetched the card's quotes for c1-c16 myself and all are verbatim. gaps[0] is the 'No sourced tempo' entry. LR-20: 'unsourced stays an allowed list for other unsourced points'.",
+   "fix": "Add the fetcher's quotes file. Move the tempo gap to unsourced and keep gaps for safety items (see the failed-jump finding)."
+  },
+  {
+   "id": "F21",
+   "file": "docs/research/howto/cards/box_jump.json",
+   "path": "redFlags[1] (ankle), claims[c14]",
+   "severity": "low",
+   "problem": "The new ankle box draws its triggers from the generic NHS sprains-and-strains page. content.md 5.3 requires the joint's own NHS page, read in full.",
+   "evidence": "redFlagNote: \"ankle is a new shared box ... nhs-sprains supplies its triggers.\" content.md 5.3: \"Ankle or hip: added only if a jump or lunge row needs one, from that joint's NHS page, read in full\".",
+   "fix": "Source the ankle box from the NHS ankle-pain page, or record why sprains-and-strains is the right page for it."
+  },
+  {
+   "id": "F22",
+   "file": "docs/research/howto/cards/plank.json",
+   "path": "risks[0]",
+   "severity": "low",
+   "problem": "This was already in the card (not this wave). Its claim does not support the shown risk wording.",
+   "evidence": "\"A sagging low back loads the lower back.\" (c4). The c4 quote only says \"Avoid any arching (sagging) in your low back\". Nothing says it loads the lower back.",
+   "fix": "Rephrase the risk within c4's words, or cite a source that says it."
+  },
+  {
+   "id": "F23",
+   "file": "docs/research/howto/cards/reverse_lunge.json",
+   "path": "feel.rows[1].means",
+   "severity": "low",
+   "problem": "This was already in the card (not this wave). It uses the 'usually means' clause that LR-6 forbids when no source links the symptom to the cause.",
+   "evidence": "\"Usually means the chest is leaning forward.\" (c8). c8 is EMG activity in other lunge types (tagged WEAK), not a link between a felt sensation and its cause.",
+   "fix": "Write it as place + fault + fix, e.g. means \"Chest leaning forward loads the lower back more.\""
+  }
+ ]
+}
