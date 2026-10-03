@@ -32,7 +32,7 @@
 //  plate.tempo says 3), no Rest phase. Measure: the end elbow, value "not locked" (c9).
 // Rope: drawn with LIB-25's poly rope composer (tapered, sagging strands with clubbed stoppers, a ferrule), which
 //  replaced the dumbbell-primitive strands that read as rigid mini-handles at 390 px (flagged on PR #109).
-import { landmarksOf } from '../engine.mjs';
+import { landmarksOf, bodyShapes, fk, resolve, normPose } from '../engine.mjs';
 import { rope, ropeGeometry, ROPE_ITEMS } from '../eq/rope.mjs';
 import { perItem } from '../eq/parts.mjs';
 
@@ -110,6 +110,21 @@ const cableLen = lm => { const f = ferruleOf(lm); return Math.hypot(f[1] - HEAD.
 // enough to read at 390 px. The rope strands carry `poly` and the composer adds the cable twin in the Mistake pose.
 const MIS_LEAN = 8, MIS_SHOULDER = 60, MIS_ELBOW = 100;   // extra lean; shoulder flexion relative to the leaning thorax
 const mistakePose = { root: { at: ROOT, tilt: TILT + MIS_LEAN }, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: MIS_ELBOW, wrist: 0 };
+// R5 (critic 10-03): the drifted upper arm drawn as the clear solid red segment: the engine's own outline of the faulty
+// near upper arm (side view, sampled on its Catmull-Rom spline) as a solid Mistake guide, and the faulty forearm and
+// hand as dashed guides, kept apart from the dashed leaning torso and head (the masked engine arm outline tangled with
+// them, so the near arm is no longer in `parts`).
+const misArm = (() => {
+  const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
+  const cr = ps => { const n = ps.length, g = i => ps[(i + n) % n], out = [];
+    for (let i = 0; i < n; i++) { const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+      for (let k = 0; k < 8; k++) { const t = k / 8, u = 1 - t, c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); } }
+    return out; };
+  const shapes = bodyShapes(fk(resolve(normPose({ ...end, ...mistakePose }, bd), bd).q, bd), probe);
+  const get = key => { const sh = shapes.find(x => x.key === key), pts = (key.includes('cap') ? sh.poly : cr(sh.poly)).map(([x, y]) => [0, -y / 1000, x / 1000]); return [...pts, pts[0]]; };
+  return { upper: get('upper.r'), rest: ['elbowcap.r', 'fore.r', 'fist.r'].map(get) };
+})();
 // c9 construction line (correct plate only, over the arm like the lat pulldown's lean rays): the plumb line through the
 // shoulder joint at the bottom, down past the hand, so wrist, elbow and shoulder read as one vertical line
 const lmEnd = landmarksOf(end, H), PLUMB_TOP = [0, S[1] + 0.02, S[2]], PLUMB_BOT = [0, lmEnd['grip.r'][1] - 0.12, S[2]];
@@ -157,8 +172,10 @@ export default {
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 3, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['torso', 'head', 'arm.r', 'rope'],   // far arm doubles the near one; the stack's travel is not the fault
+    parts: ['torso', 'head', 'rope'],   // the near arm is drawn as guides (R5); far arm doubles it; the stack's travel is not the fault
     guides: [
+      { kind: 'line', pts: misArm.upper },                                          // the drifted upper arm, solid (R5)
+      ...misArm.rest.map(pts => ({ kind: 'dashed', pts })),
       { kind: 'arc-arrow', center: 'shoulder.r', r: 50, a0: 88, a1: 58 },   // the upper arm swinging forward off the side
     ],
     tells: [

@@ -29,7 +29,7 @@
 //  card's top fault, elbows drifting forward as the bar comes up plus the swing forward (c6); tempo press 1 s, pause
 //  1 s, return 2 s (c12), no Rest phase (the card gives none). Measure: the end elbow, value "not locked" (c8), no
 //  number (the card gives none).
-import { landmarksOf } from '../engine.mjs';
+import { landmarksOf, bodyShapes, fk, resolve, normPose } from '../engine.mjs';
 
 const H = 1.75;
 const R = Math.PI / 180;
@@ -118,6 +118,21 @@ const cableLen = b => Math.hypot(b[1] - HEAD.y, b[2] - HEAD.z);
 // at 390 px. The bar's cable is a line (no `poly`), so the faulty cable is a dashed guide (the lat pulldown's method).
 const MIS_LEAN = 8, MIS_SHOULDER = 60, MIS_ELBOW = 110;   // extra forward lean, upper arm forward of the torso, elbow
 const mistakePose = { root: { at: ROOT, tilt: TILT + MIS_LEAN }, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: MIS_ELBOW, wrist: 0 };
+// R5 (critic 10-03): the drifted upper arm drawn as the clear solid red segment: the engine's own outline of the faulty
+// near upper arm (side view, sampled on its Catmull-Rom spline) as a solid Mistake guide, and the faulty forearm and
+// hand as dashed guides, kept apart from the dashed leaning torso and head (the masked engine arm outline tangled with
+// them, so the near arm is no longer in `parts`).
+const misArm = (() => {
+  const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
+  const cr = ps => { const n = ps.length, g = i => ps[(i + n) % n], out = [];
+    for (let i = 0; i < n; i++) { const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+      for (let k = 0; k < 8; k++) { const t = k / 8, u = 1 - t, c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); } }
+    return out; };
+  const shapes = bodyShapes(fk(resolve(normPose({ ...end, ...mistakePose }, bd), bd).q, bd), probe);
+  const get = key => { const sh = shapes.find(x => x.key === key), pts = (key.includes('cap') ? sh.poly : cr(sh.poly)).map(([x, y]) => [0, -y / 1000, x / 1000]); return [...pts, pts[0]]; };
+  return { upper: get('upper.r'), rest: ['elbowcap.r', 'fore.r', 'fist.r'].map(get) };
+})();
 const lmM = landmarksOf({ ...end, ...mistakePose }, H), MIS_BAR = barOf(lmM);
 
 export default {
@@ -167,8 +182,10 @@ export default {
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['torso', 'head', 'arm.r', 'bar'],   // far arm doubles the near one; the stack's travel is not the fault
+    parts: ['torso', 'head', 'bar'],   // the near arm is drawn as guides (R5); far arm doubles it; the stack's travel is not the fault
     guides: [
+      { kind: 'line', pts: misArm.upper },                                          // the drifted upper arm, solid (R5)
+      ...misArm.rest.map(pts => ({ kind: 'dashed', pts })),
       { kind: 'dashed', pts: [MIS_BAR, headTangent(MIS_BAR)] },
       { kind: 'arc-arrow', center: 'shoulder.r', r: 50, a0: 84, a1: 54 },   // the upper arm swinging forward off the side
     ],
