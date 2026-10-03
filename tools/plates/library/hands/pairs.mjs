@@ -23,7 +23,7 @@ export const CONVENTIONS = {
   'ga:push-heel': 'GA 3.1 push: heel of the palm, low, over the forearm; extension 0 to 15',
   'ga:pull-base': 'GA 3.1 pull: base of the fingers and top edge of the palm; extension 0 to 25',
   'ga:curl-mid': 'GA 3.1 curl: across the middle of the palm; extension -10 to +10 (shared/curl.json gap 1)',
-  'ga:rope-fingers': 'GA 3.1.1 rope: load in the fingers, loadAxis across, lever check off (shared/rope-rule.json gap 1)',
+  'ga:rope-fist-mid': 'drawing value: the rope across the middle of the palm (contactAt .6), curl 2\'s square fist; no source says where the rope load sits (shared/rope-rule.json gap 1), and GA 3.1.1\'s load in the fingers draws a pointed fist in golden B (D-LIB7-16); loadAxis across, lever check off',
 };
 // Palm up for an underhand grip and for the EZ bar's angled grip: the camera looks along the angled section, so the hand,
 // square to that section, shows as a straight-bar underhand grip does from the side; the camera words carry the angle

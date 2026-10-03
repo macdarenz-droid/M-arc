@@ -186,6 +186,12 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     bites(withMods(m => { Object.assign(key(m, 'rope').VARIANTS.push.right, { contactAt: 1.15 }); key(m, 'rope').VARIANTS.push.contact = 'fingers'; }),
       'rope_triceps_pushdown', /G7 fist front [\d.]+ mm wide/);
   });
+  it('D-LIB7-16a: the rope contact is the flagged drawing value ga:rope-fist-mid; every convention is cited by some pair', () => {
+    expect(P.pairSpec('rope_triceps_pushdown').mod.VARIANTS.push.claims.contact).toEqual(['ga:rope-fist-mid']);
+    const cited = new Set(P.MODULES.flatMap((m: any) => Object.values(m.VARIANTS ?? {}).flatMap((V: any) =>
+      [...Object.values(V.claims ?? {}).flat(), ...Object.values(V.faults ?? {}).flatMap((f: any) => f.claims ?? [])])));
+    expect(Object.keys(P.CONVENTIONS).filter(k => !cited.has(k))).toEqual([]);
+  });
   it('push flags its golden-B squat drawing values on the sheet (D-LIB7-14)', async () => {
     const { body } = await sheet.buildSheet({ mods: P.MODULES.filter((m: any) => m.OWNER === 'LIB-7') });
     for (const id of ['single_arm_triceps_pushdown', 'skull_crusher']) {
@@ -320,14 +326,14 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
   it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
     // the LIB-7 radial sheet, byte for byte (sha256 of buildSheet().body). Re-pinned once for the calibrated critic's fixes
     // (10-03: rope, push, ez_bar_curl angled; D-LIB7-13..15) and for the delta review (D-LIB7-16: ez palm up, rope fist
-    // square, push flags); the approved pages stay pinned separately, unchanged.
+    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid); the approved pages stay pinned separately, unchanged.
     // built from LIB-7's own key modules only, so another card's tiles never move this pin (D-LIB7-PIN); the filter must
     // keep all 5 LIB-7 modules, so the pin cannot silently shrink
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
     const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
     expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
-    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('d16a94185b0aed497b0f0248351e2a8a75f20496ed773d7e4047f782b010ba5a');
-    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('eb8390408c74e2339341216b66925fe10779e3988edf1911ab905a7854b93870');
+    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('dbe8969aa4c59fa5419de285c9ebed72692262a575e5d55282aa5740f2f29050');
+    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('65e93deaf449a3007342b8a827785fcfddc623f71ae2f0b5689a07621384057b');
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },

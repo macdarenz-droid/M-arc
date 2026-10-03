@@ -2,7 +2,7 @@
 // composer's (library/eq/rope.mjs:54, thick 0.028 m, knob 0.046 m), seen end-on as one plain section (no rigid-handle
 // core). The knob is coaxial with the strand, past the little-finger edge, so the fist hides it: it is drawn as golden B's
 // dashed hidden-equipment outline over the fist (D-LIB7-13, replacing D-LIB7-9). The fist is curl 2's squared fist
-// (contactAt .6, G7 fist front): golden B's fist closes to a point once the rope sits at .85 or more along the palm, so
+// (contactAt .6, `ga:rope-fist-mid`, G7 fist front): golden B's fist closes to a point once the rope sits at .85 or more along the palm, so
 // GA 3.1.1's "load in the fingers" is not drawn (D-LIB7-16); lever check off; no source gives the load's direction, so
 // no force line is drawn.
 import { RULES_FILE } from './radial-rules.mjs';
@@ -15,7 +15,7 @@ export const VARIANTS = {
     right: { view: 'radial', forearm: 90, wrist: { ext: 0, dev: 0 }, contactAt: 0.6, fingers: { curl: 1 }, thumb: 'wrapped', squeeze: 'firm', load: { kind: 'pull' } },
     rightNote: 'Against the knob',
     alt: 'Hand up against the knob at the end of the rope, thumb wrapped round it, wrist straight in line with the forearm.',
-    claims: { knob: ['shared/rope-rule.json#c1'], thumb: ['shared/rope-rule.json#c2'], wrist: ['shared/rope-rule.json#c4'], contact: ['ga:curl-mid'] },
+    claims: { knob: ['shared/rope-rule.json#c1'], thumb: ['shared/rope-rule.json#c2'], wrist: ['shared/rope-rule.json#c4'], contact: ['ga:rope-fist-mid'] },
     faults: {
       curled: { label: 'Wrist curled', side: 'flexed', pose: { wrist: { ext: -30 } }, markers: ['lever-arc'], claims: ['shared/rope-rule.json#c6'],
         alt: 'Wrist bent toward the palm as the rope is pushed down.' },
