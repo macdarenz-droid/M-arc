@@ -234,6 +234,8 @@ describe('LIB-12 on LIB-7\'s pilot and critic sheet (review Blocker, #191 @ 1ff3
     for (const id of mods.filter(m => m.OWNER === 'LIB-12').flatMap(m => Object.keys(m.IDS))) expect([id, html.includes(id)]).toEqual([id, true]);
     const refs = Object.keys(CLAIMS.claims).filter(r => html.includes(`${r}: (unresolved)`));
     expect(refs).toEqual([]);
+    for (const m of mods.filter(q => q.OWNER === 'LIB-12' && Object.keys(q.IDS).length)) expect([m.KEY, m.FLAGS]).toEqual([m.KEY, ['sizes and pose values: drawing values (D-LIB12-2, D-LIB12-9)']]);
+    expect(html.includes('sizes and pose values: drawing values (D-LIB12-2, D-LIB12-9)')).toBe(true);
   }, 180_000);
 });
 

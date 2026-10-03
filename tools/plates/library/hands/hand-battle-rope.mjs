@@ -54,3 +54,5 @@ export function battleRopeProblems(svg, report, spec) {
 export const checks = reportChecks;
 /** Claim texts for the refs this key cites (a sheet resolves them here). */
 export const CLAIMS_TEXT = LIB12_CLAIMS;
+/** Sheet flags (D-LIB7-SHEET): this key's unsourced values. */
+export const FLAGS = ['sizes and pose values: drawing values (D-LIB12-2, D-LIB12-9)'];
