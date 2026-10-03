@@ -70,6 +70,12 @@ export function problemsOf(spec, pages) {
     const cam = svg.match(/aria-label="([^.]*)\./)?.[1];
     const camWant = spec.orientation === 'unstated' ? THUMB_SIDE : spec.camera === 'above' ? 'Seen from above' : 'Seen from the side';
     if (cam !== camWant) bad.push(`${at}: G8 camera "${cam}", want "${camWant}"`);
+    // a level forearm shows the palm up or down, so it needs a stated orientation (D-LIB7-12); golden B's YOU/MACHINE
+    // row only where there is a machine (D-LIB7-11)
+    if (spec.orientation === 'unstated' && spec.right.forearm === 90) bad.push(`${at}: G8 a level forearm with no stated orientation`);
+    const machineRow = />MACHINE</.test(svg), V = spec.mod.VARIANTS[spec.variant];
+    if (machineRow && !V.machine) bad.push(`${at}: G8 a YOU/MACHINE row with no machine`);
+    if (spec.camera === 'above' && V.machine && !machineRow) bad.push(`${at}: G8 the YOU/MACHINE row is missing`);
   }
   return bad;
 }

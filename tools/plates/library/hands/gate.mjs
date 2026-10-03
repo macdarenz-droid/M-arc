@@ -19,10 +19,11 @@ const WIDTHS = [390, 360, 340];
 const GOLD = [['dumbbell_lateral_raise'], ['pull_up', 'p1'], ['pull_up', 'p2'], ['hanging_leg_raise', 'p1'], ['lat_pulldown', 'p1'], ['lat_pulldown', 'p2'],
   ['seated_cable_row'], ['machine_chest_press'], ['barbell_back_squat'], ['leg_press']];
 
-/** Every drawn page: [{ id, page, html }]. `index` lets a test plant a defect. */
-export function gatePages(index = INDEX) {
+/** Every drawn page of one owner's keys: [{ id, page, html }]. `index` lets a test plant a defect. */
+export function gatePages(index = INDEX, owner = 'LIB-7') {
   const out = [];
-  for (const id of index.drawn.keys()) {
+  for (const [id, e] of index.drawn) {
+    if (e.mod.OWNER !== owner) continue;
     const z = pairZoom(id, zoomTextsOf(id, index), {}, { index });
     for (const w of pairSpec(id, index).wrong) out.push({ id, page: w.key, html: z.handZoom(w.key) });
   }
@@ -75,8 +76,8 @@ const LABELS = () => {
   return bad;
 };
 
-export async function lib7Gate(browser, { index = INDEX, themes = THEME_IDS, widths = WIDTHS, out = null, css } = {}) {
-  const problems = [], pages = gatePages(index);
+export async function lib7Gate(browser, { index = INDEX, owner = 'LIB-7', themes = THEME_IDS, widths = WIDTHS, out = null, css } = {}) {
+  const problems = [], pages = gatePages(index, owner);
   if (!pages.length) return { problems: ['LIB-7: no hand pair page to check'], pages: 0 };
   const ctx = await browser.newContext({ deviceScaleFactor: 2 });
   const shots = { n: 0 };

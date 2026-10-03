@@ -60,16 +60,22 @@ export const INDEX = indexOf(MODULES);
 export function pairSpec(id, index = INDEX) {
   const e = index.drawn.get(id);
   if (!e) throw new Error(index.gaps.has(id) ? `hand pairs: ${id} is a gap: ${index.gaps.get(id).reason}` : `hand pairs: ${id} has no pair`);
-  const { mod, cfg } = e, V = mod.VARIANTS[cfg.variant], H = V.handle ?? mod.HANDLE;
-  if (!(H.diameterMm > 0)) throw new Error(`hand pairs: ${mod.KEY}/${cfg.variant}: no explicit handle diameter`);
-  const handle = { profile: H.profile, diameterMm: H.diameterMm, ...(H.headMm ? { headMm: H.headMm } : {}) };
-  const right = mergePose(V.right, { handle, ...(cfg.orientation === 'under' ? { mirror: true } : {}) });
+  const { mod, cfg } = e, V = mod.VARIANTS[cfg.variant], H = V.handle ?? mod.HANDLE ?? null;
+  // a radial hand closes round a handle, so it needs its diameter (golden-B falls back to 32 mm otherwise); a view with
+  // no handle (LIB-12's palm on the floor) has no honest diameter and passes none (LIB-12 ask, supervisor OK 10-02)
+  if ((mod.VIEW === 'radial' || H?.profile) && !(H?.diameterMm > 0)) throw new Error(`hand pairs: ${mod.KEY}/${cfg.variant}: no explicit handle diameter`);
+  const handle = H?.profile ? { profile: H.profile, diameterMm: H.diameterMm, ...(H.headMm ? { headMm: H.headMm } : {}) } : null;
+  const right = mergePose(V.right, { ...(handle ? { handle } : {}), ...(cfg.orientation === 'under' ? { mirror: true } : {}) });
+  const radial = mod.VIEW === 'radial' && !mod.render, camera = ORIENTATIONS[cfg.orientation];
   return {
     id, key: mod.KEY, variant: cfg.variant, pair: `${mod.KEY}/${cfg.variant}`, mod, orientation: cfg.orientation,
-    camera: ORIENTATIONS[cfg.orientation], loadAxis: V.loadAxis, wristRange: V.wristRange, contact: V.contact, handle: H,
+    camera, loadAxis: V.loadAxis, wristRange: V.wristRange, contact: V.contact, handle: H,
     right, rightNote: V.rightNote, altRight: V.alt, panelHeight: V.panelHeight,
     wrong: cfg.faults.map(k => ({ key: k, ...V.faults[k] })),
-    extras: { ...(V.loadLine === false ? { stripLoadLine: true } : {}), ...(cfg.orientation === 'unstated' ? { thumbSide: true } : {}) },
+    extras: { ...(V.loadLine === false ? { stripLoadLine: true } : {}), ...(radial && cfg.orientation === 'unstated' ? { thumbSide: true } : {}),
+      // golden B's "seen from above" row names YOU and MACHINE; a hand-held weight has no machine, so it gets the camera
+      // words alone (renderHandPair's side-camera label, reworded; D-LIB7-11)
+      ...(radial && camera === 'above' && !V.machine ? { plainAbove: true } : {}), ...(radial ? { placeLabels: true } : {}) },
   };
 }
 
@@ -158,13 +164,17 @@ export function renderPair(id, opts = {}) {
   const F = opts.fault ? s.wrong.find(w => w.key === opts.fault) : s.wrong[0];
   if (!F) throw new Error(`hand pairs: ${id}: no fault ${opts.fault}`);
   const render = s.mod.render ?? renderHandPair;
-  const out = render({ uid: opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, camera: s.camera, loadAxis: s.loadAxis, markers: F.markers,
+  const out = render({ uid: opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, camera: s.extras.plainAbove ? 'side' : s.camera, loadAxis: s.loadAxis, markers: F.markers,
     right: s.right, wrong: mergePose(s.right, F.pose), rightNote: s.rightNote, wrongNote: F.label,
     alt: { right: s.altRight, wrong: F.alt }, panelHeight: opts.panelHeight ?? s.panelHeight });
   let svg = out.svg;
   if (s.extras.thumbSide) {
     svg = once(svg, '>SEEN FROM THE SIDE<', `>${THUMB_SIDE.toUpperCase()}<`, 'thumb-side label');
     svg = once(svg, 'aria-label="Seen from the side. ', `aria-label="${THUMB_SIDE}. `, 'thumb-side aria');
+  }
+  if (s.extras.plainAbove) {
+    svg = once(svg, '>SEEN FROM THE SIDE<', '>SEEN FROM ABOVE<', 'plain-above label');
+    svg = once(svg, 'aria-label="Seen from the side. ', 'aria-label="Seen from above. ', 'plain-above aria');
   }
   // no force line where the load does not run along the forearm (golden-B's lateral raise does the same, LIB-6
   // closeup/hand.mjs stripLoadLine): the line and its head in both halves, and the Right half's wrist tick
@@ -173,7 +183,7 @@ export function renderPair(id, opts = {}) {
     svg = svg.replace(/<path class="h-load( m)?" d="[^"]*"\/><path class="h-load-head( m)?" d="[^"]*"\/>/g, '').replace(/<path class="h-tick" d="[^"]*"\/>/g, '');
     if (before === svg || /class="h-load/.test(svg)) throw new Error(`hand pairs: ${id}: load line not stripped cleanly`);
   }
-  const uidUsed = opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, placed = placeLabels(svg, uidUsed, (358 - 16) / 2);
+  const uidUsed = opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, placed = s.extras.placeLabels ? placeLabels(svg, uidUsed, (358 - 16) / 2) : { svg, moved: [] };
   svg = placed.svg;
   return { svg, spec: s, fault: F, report: { ...out.report, labelsMoved: placed.moved, measured: measured(svg) } };
 }

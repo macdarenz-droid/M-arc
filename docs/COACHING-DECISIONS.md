@@ -1840,3 +1840,14 @@ Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 202
   - wrist_curl (exempt).
   - sled_pull goes to LIB-12.
 - **D-LIB7-twist.** The hammer_curl (#c5) and cross_body_hammer_curl (#c7) Wrongs are wrist twists, which the radial view can't show. Those ids draw shared/curl.json's flexion and extension faults instead.
+- **D-LIB7-10, Wrong labels.** Every LIB-7 Wrong reads "Wrist curled" (flexed) or "Wrist bent back" (extended). These are shared/curl.json's labels and golden B's chest press label. A test fails on any other wording.
+- **D-LIB7-11, no YOU/MACHINE row on dumbbells.** For a neutral dumbbell grip, golden B's "seen from above" orientation row (YOU ← MACHINE →) is replaced by "Seen from above" alone. The rope keeps the row. Check G8 tests both.
+- **D-LIB7-12, a level forearm needs a stated orientation.** A level-forearm curl shows the palm up or down, so an id with no orientation claim is not drawn. concentration_curl and bayesian_cable_curl moved to the gaps: their cards and curl.json name no palm direction for them. Count: 14 drawn, 16 gaps.
+- **LIB-12 asks (supervisor OK, 2026-10-02).**
+  - A diameter is required only for radial keys or a key with a handle profile.
+  - LIB-7's sweeps filter by `OWNER`.
+  - A joint check fails when one id is claimed by a LIB-7 and a LIB-12 module.
+- **R8 findings (discarded critic run, checked one by one).**
+  - Fixed: c (wording, D-LIB7-10); the hammer-curl machine row (D-LIB7-11); concentration_curl and bayesian_cable_curl orientation (D-LIB7-12).
+  - Not changed: "push Right mid-hand". It uses golden B's heel contact (.3), measured by G4.
+  - Not changed: "rope knob does not read". The knob lies behind the fist in the radial view (D-LIB7-9). The pilot sheet flags it, and "Against the knob" carries the claim.

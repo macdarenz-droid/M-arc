@@ -18,10 +18,11 @@ export const IDS = {
   // the radial view can't show: recorded, not drawn; shared/curl.json's flexion and extension faults are drawn
   hammer_curl: { variant: 'dumbbell', orientation: 'neutral', faults: BOTH, claims: ['shared/curl.json#c2'] },
   cross_body_hammer_curl: { variant: 'dumbbell', orientation: 'neutral', faults: BOTH, claims: ['cards/cross_body_hammer_curl.json#c1'] },
-  concentration_curl: { variant: 'dumbbell', orientation: 'unstated', faults: BOTH, claims: [] },
   barbell_curl: { variant: 'bar', orientation: 'under', faults: ['bent-back', 'curled'], claims: ['cards/barbell_curl.json#c1'] },
   cable_curl: { variant: 'bar', orientation: 'under', faults: ['bent-back', 'curled'], claims: ['cards/cable_curl.json#c1'] },
 };
 export const GAPS = {
+  // a level forearm shows the palm up or down, so a curl needs its grip orientation from a claim (D-LIB7-12)
+  concentration_curl: 'no claim names the grip orientation (palm up or neutral); a level-forearm curl drawing would state one',
   wrist_curl: 'exempt: the wrist is the moving joint (shared/wrist-curl-exemption.json)',
 };

@@ -40,7 +40,6 @@
   "cards/single_arm_triceps_pushdown.json#grip.type": "One handle, full grip. The sources read do not say which way the palm faces; the drawing should use the plain handle hold without claiming an orientation.",
   "cards/skull_crusher.json#c1": "Closed grip with thumbs wrapped, palms toward the feet; lie on a flat bench with feet firmly on the floor.",
   "cards/skull_crusher.json#c3": "Keep the wrists neutral, neither bent forward nor back.",
-  "shared/curl.json#appliesTo": "dumbbell_biceps_curl, alternating_dumbbell_curl, barbell_curl, ez_bar_curl, hammer_curl, cross_body_hammer_curl, cable_curl, bayesian_cable_curl, preacher_curl, incline_dumbbell_curl, concentration_curl, reverse_curl",
   "shared/curl.json#c1": "For dumbbell curls, take a closed grip with the thumbs wrapped round the handles.",
   "shared/curl.json#c2": "The hammer curl uses the same closed grip with the thumbs round the handles, palms facing the body.",
   "shared/curl.json#c3": "Keep the wrist neutral through the curl: avoid bending it forward (flexion) or back (extension).",

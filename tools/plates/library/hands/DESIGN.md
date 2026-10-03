@@ -40,7 +40,7 @@ Each key is one file, `hands/hand-<key>.mjs`. It exports:
 - `HAND_CSS` styles the sheet and gate pages.
 - No golden-B value is read for a diameter; each module passes its own.
 
-## 2. Drawn pairs: 4 keys, 8 variants, 16 ids
+## 2. Drawn pairs: 4 keys, 7 variants, 14 ids
 Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 
 **Sizes are drawing values (D-LIB7-2).** These follow golden-B `HANDLES` and main's `eq/rope.mjs`:
@@ -60,25 +60,25 @@ Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 - Orientation is carried per id from its claim:
   - underhand or overhand bar → `side`;
   - neutral (handle vertical) → `above`;
-  - unstated orientation → the label "Seen from the thumb side", which states no orientation (the card for `single_arm_triceps_pushdown` asks for this).
+  - unstated orientation → the label "Seen from the thumb side", which states no orientation (the card for `single_arm_triceps_pushdown` asks for this). Only with a vertical forearm: a level forearm shows the palm up or down, so a level-forearm id with no orientation claim is a gap (D-LIB7-12, G8).
+  - a neutral grip on a hand-held weight is "seen from above" without golden B's YOU/MACHINE row, which names a machine (D-LIB7-11, G8).
 - **G8** checks the screen direction of the palm. Underhand puts the palm up. Overhand puts it down (`mirror`).
 
 | key/variant | id: orientation (claim) | right | wrong faults |
 |---|---|---|---|
-| curl/dumbbell | dumbbell_biceps_curl: under (cards/dumbbell_biceps_curl.json#c1); alternating_dumbbell_curl: under (cards/alternating_dumbbell_curl.json#c2); incline_dumbbell_curl: under (cards/incline_dumbbell_curl.json#c11); hammer_curl: neutral (shared/curl.json#c2); cross_body_hammer_curl: neutral (cards/cross_body_hammer_curl.json#c1); concentration_curl: unstated | thumb wrapped (shared/curl.json#c1, #c2); wrist straight, ext 0 in −10..10 (shared/curl.json#c3, #c4); middle of palm 0.6 (GA; curl.json gap 1) | `curled` −30 and `bent-back` +30 (shared/curl.json#c3, #c4, #c5) |
+| curl/dumbbell | dumbbell_biceps_curl: under (cards/dumbbell_biceps_curl.json#c1); alternating_dumbbell_curl: under (cards/alternating_dumbbell_curl.json#c2); incline_dumbbell_curl: under (cards/incline_dumbbell_curl.json#c11); hammer_curl: neutral (shared/curl.json#c2); cross_body_hammer_curl: neutral (cards/cross_body_hammer_curl.json#c1) | thumb wrapped (shared/curl.json#c1, #c2); wrist straight, ext 0 in −10..10 (shared/curl.json#c3, #c4); middle of palm 0.6 (GA; curl.json gap 1) | `curled` −30 and `bent-back` +30 (shared/curl.json#c3, #c4, #c5) |
 | curl/bar | barbell_curl: under (cards/barbell_curl.json#c1); cable_curl: under (cards/cable_curl.json#c1) | same as curl/dumbbell | `bent-back` (cards/barbell_curl.json#c8, cards/cable_curl.json#c9); `curled` (shared/curl.json#c3) |
 | ez/curl | ez_bar_curl: under (cards/ez_bar_curl.json#c1, #c2); preacher_curl: under (cards/preacher_curl.json#c1); reverse_curl: **over** (cards/reverse_curl.json#c1) | thumb wrapped (shared/curl.json#c1); wrist straight (cards/ez_bar_curl.json#c8, cards/preacher_curl.json#c8, cards/reverse_curl.json#c6) | `bent-back` (same claims); `curled` (shared/curl.json#c3) |
 | ez/push | skull_crusher: over, palms toward the feet (cards/skull_crusher.json#c1) | thumb wrapped (#c1); wrist neutral, ext 0..15 (cards/skull_crusher.json#c3, GA push); heel 0.3 (GA push) | `bent-back` +35, contact 1.05 (cards/skull_crusher.json#c3); along-forearm, lever checks on |
 | rope/push | rope_triceps_pushdown: neutral (shared/rope-rule.json#c3, an inference the card flags) | against the knob (shared/rope-rule.json#c1); thumb wrapped (#c2); wrist straight (#c4); fingers 1.0 and loadAxis across, lever check off (GA 3.1.1; rope-rule gap 1) | `curled` −30 (shared/rope-rule.json#c6) |
 | d-handle/push | single_arm_triceps_pushdown: unstated (cards/single_arm_triceps_pushdown.json, grip.type) | thumb wrapped (#c2); wrist neutral (#c9); heel 0.3 (GA push) | `bent-back` +35, contact 1.05 (#c9 inverse, as the card's `wrongNote` records) |
 | d-handle/pull | single_arm_lat_pulldown: unstated | base of fingers 1.0, thumb wrapped (inherited from lat_pulldown, recorded in the card); wrist not curled (cards/single_arm_lat_pulldown.json#c15) | `curled` −30 (#c15) |
-| d-handle/curl | bayesian_cable_curl: unstated | as curl/dumbbell (shared/curl.json, `appliesTo`) | `curled` and `bent-back` (shared/curl.json#c3, #c4) |
 
 **Faults that cannot be drawn in the radial view** are recorded but not drawn. These are wrist twists:
 - hammer_curl (cards/hammer_curl.json#c5);
 - cross_body_hammer_curl (#c7).
 
-## 3. Gaps: 14 ids, asserted not drawn
+## 3. Gaps: 16 ids, asserted not drawn
 - **band** (the module has `GAPS` only; the supervisor's ruling):
   - resistance_band_row: no hand zoom and no hand fault on the card. Pilot A's band kind waits on research for a band-hand claim. A 20 mm drawing value applies only once a pair exists.
   - resistance_band_pull_apart: no card.
@@ -86,18 +86,20 @@ Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
   - overhead_cable_triceps_extension: rope-rule gap 3 (needs a source first), and the card's Wrong is an elbow fault.
   - face_pull, cable_crunch: no card.
 - **d-handle:**
+  - bayesian_cable_curl: no claim names the grip orientation (D-LIB7-12).
   - cable_chest_press: c3 names no bend direction (supervisor ruling, the same as the flys).
   - cable_fly, low_to_high_cable_fly: c4/c6 name no direction.
   - high_to_low_cable_fly: no hand zoom.
   - cable_lateral_raise, cable_rear_delt_fly, cable_external_rotation, pallof_press: no card.
 - **curl:**
+  - concentration_curl: no claim names the grip orientation (D-LIB7-12).
   - wrist_curl: exempt (shared/wrist-curl-exemption.json).
 
 **Owned elsewhere:**
 - sled_pull goes to LIB-12 (implements).
 - dumbbell_overhead_triceps_extension goes to LIB-12 (cupped).
 
-**Scope check.** LIB-7's census scope has 30 ids, and 16 drawn + 14 gaps = 30. The scope is:
+**Scope check.** LIB-7's census scope has 30 ids, and 14 drawn + 16 gaps = 30. The scope is:
 - `byHandArchetype.curl` (13);
 - `equipmentByNeed`: band (2), ezBar not already counted (skull_crusher), rope minus sled_pull (2), ropeLikely (2), and singleHandle minus bayesian_cable_curl (10).
 
@@ -124,9 +126,10 @@ Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 
 **A3. Sweeps.** `sweep(items, n)` throws when there are 0 items or the count is not n. It covers:
 - 4 drawn keys plus band as a gap key;
-- 8 variants;
-- 16 drawn ids;
-- 14 gap ids;
+- 7 variants;
+- 14 drawn ids (LIB-7's keys only: sweeps filter by `OWNER`, so LIB-12's keys never move them);
+- 16 gap ids;
+- joint check: no id is claimed by a LIB-7 and a LIB-12 module;
 - scope 30 = census, with each `lib_` id once and its census archetype matching;
 - every `<file>#<cid>` resolving in that file at research 95342b1, through a pinned extract (`hands/claims.json`).
 
@@ -165,8 +168,13 @@ Every test is shown red with its mutation and at 0 without it (gotcha V1-08).
 - LIB-12 uses the same sheet and `--plant`.
 - Pilot A shows curl, EZ, rope and D-handle (ruling). The band kind waits on research.
 
-## 6. Build decisions (recorded as D-LIB7-6 to D-LIB7-9 in docs/COACHING-DECISIONS.md)
+## 6. Build decisions (recorded as D-LIB7-6 to D-LIB7-12 in docs/COACHING-DECISIONS.md)
 - **D-LIB7-6, bend labels.** A bend value whose box would cover its half's outline moves to the first free spot on rings round its wrist, forearm side first. Golden B moves such labels by hand (LIB-6 `bendLabel`). The gate measures the real boxes.
 - **D-LIB7-7, force lines.** No force line on curls (gravity across a level forearm, as on golden B's lateral raise) or on the rope (no source gives its direction).
 - **D-LIB7-9, no knob ring.** The rope's 46 mm knob lies behind the fist in the view from above. A ring drawn there drew no pixel in the gate (the page with and without it was identical), so it is not drawn. "Against the knob" is carried by the Right note and the alt text.
 - **D-LIB7-8, panel height.** Level-forearm pairs (curl, rope) use a 170 px panel. The scale is unchanged at 262 and at 140 px, so this only cuts empty space (lateral raise 130, pull-up 250).
+- **D-LIB7-10, Wrong labels.** One pair of words everywhere: "Wrist curled" (flexed) and "Wrist bent back" (extended). These are shared/curl.json's labels and golden B's chest press label. rope-rule's "Wrists curl" names the same fault.
+- **D-LIB7-11, no machine row on hand-held weights.** golden B's "seen from above" row prints YOU ← MACHINE →. A neutral grip on a dumbbell keeps the words "Seen from above" only. The rope keeps the row (it hangs from the cable machine).
+- **D-LIB7-12, a level forearm needs a stated orientation.** A curl drawn with a level forearm shows the palm up or down. concentration_curl and bayesian_cable_curl have no orientation claim, so they are gaps. The single-handle pushdown and pulldown stay drawn: their forearm is vertical, and the thumb-side label states no orientation.
+- **LIB-12 asks (supervisor OK, 10-02).** `pairSpec` needs a diameter only for radial keys or a key with a handle profile. Every LIB-7 count filters by `OWNER`.
+- **R8 finding c (push Right reads mid-hand), checked, not changed.** The push Right uses contactAt .3, golden B's chest-press heel value, and G4 measures the drawn contact at the heel position. The forearm is vertical, as in the pushdown and skull crusher, so the picture differs from the level chest press but not in placement.

@@ -52,6 +52,8 @@ async function approvedSvgs(): Promise<string[]> {
 const clone = () => P.MODULES.map((m: any) => ({ ...m, HANDLE: structuredClone(m.HANDLE), VARIANTS: structuredClone(m.VARIANTS ?? {}), IDS: structuredClone(m.IDS ?? {}), GAPS: { ...(m.GAPS ?? {}) } }));
 const withMods = (f: (mods: any[]) => void) => { const mods = clone(); f(mods); return mods; };
 const key = (mods: any[], k: string) => mods.find((m: any) => m.KEY === k);
+// LIB-7's drawn ids only: LIB-12's keys share the loader and never change these counts (LIB-12 ask, supervisor OK 10-02)
+const lib7Drawn = () => [...P.INDEX.drawn].filter(([, e]: any) => e.mod.OWNER === 'LIB-7').map(([id]: any) => id);
 
 beforeAll(async () => {
   P = await import(/* @vite-ignore */ url('tools/plates/library/hands/pairs.mjs'));
@@ -88,7 +90,7 @@ describe('LIB-7 A1: golden B unchanged with every hand-*.mjs loaded', () => {
 
 describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
   it('every drawn id has pages and no problem', () => {
-    const ids = C.sweep(P.INDEX.drawn.keys(), 16, 'drawn ids');
+    const ids = C.sweep(lib7Drawn(), 14, 'LIB-7 drawn ids');
     for (const id of ids) {
       const { spec, pages } = C.renderedPages(id);
       expect(pages.length).toBeGreaterThan(0);
@@ -118,9 +120,32 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G8 palm down for underhand/);
   });
   it('G8: the thumb-side label is required where orientation is unstated', () => {
-    const { spec, pages } = C.renderedPages('concentration_curl');
+    const { spec, pages } = C.renderedPages('single_arm_triceps_pushdown');
     pages[0].svg = pages[0].svg.replace('aria-label="Seen from the thumb side.', 'aria-label="Seen from the side.');
     expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G8 camera "Seen from the side", want "Seen from the thumb side"/);
+  });
+  it('G8: a level forearm with no stated orientation fails (D-LIB7-12)', () => {
+    const idx = P.indexOf(withMods(m => { delete key(m, 'curl').GAPS.concentration_curl; key(m, 'curl').IDS.concentration_curl = { variant: 'dumbbell', orientation: 'unstated', faults: ['curled'], claims: [] }; }));
+    expect(C.pairProblems('concentration_curl', idx).join('\n')).toMatch(/G8 a level forearm with no stated orientation/);
+  });
+  it('G8: a YOU/MACHINE row on a dumbbell fails, and the rope keeps its row (D-LIB7-11)', () => {
+    const { spec, pages } = C.renderedPages('hammer_curl');
+    expect(pages[0].svg).not.toMatch(/>MACHINE</);
+    expect(C.problemsOf(spec, pages)).toEqual([]);
+    pages[0].svg = pages[0].svg.replace('</svg>', '<text x="1" y="1">MACHINE</text></svg>');     // golden B's row back on a dumbbell
+    expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G8 a YOU\/MACHINE row with no machine/);
+    const rope = C.renderedPages('rope_triceps_pushdown');
+    expect(rope.pages[0].svg).toMatch(/>MACHINE</);
+    expect(C.problemsOf(rope.spec, rope.pages)).toEqual([]);
+    rope.pages[0].svg = rope.pages[0].svg.replace('>MACHINE<', '><');
+    expect(C.problemsOf(rope.spec, rope.pages).join('\n')).toMatch(/G8 the YOU\/MACHINE row is missing/);
+  });
+  it('one pair of Wrong labels: "Wrist curled" (flexed) and "Wrist bent back" (extended) (D-LIB7-10)', () => {
+    const LABEL: Record<string, string> = { flexed: 'Wrist curled', extended: 'Wrist bent back' };
+    const bad = (mods: any[]) => mods.filter((m: any) => m.OWNER === 'LIB-7').flatMap((m: any) => Object.entries<any>(m.VARIANTS ?? {}).flatMap(([v, V]) =>
+      Object.entries<any>(V.faults).filter(([, F]) => F.label !== LABEL[F.side]).map(([k, F]) => `${m.KEY}/${v}.${k}: ${F.label}`)));
+    expect(bad(P.MODULES)).toEqual([]);
+    expect(bad(withMods(m => { key(m, 'd-handle').VARIANTS.push.faults['bent-back'].label = 'Bent back'; }))).toEqual(['d-handle/push.bent-back: Bent back']);
   });
   it('G9: a bend value put back on the hand fails', () => {
     const { spec, pages } = C.renderedPages('barbell_curl'), p = pages[1], mv = p.report.labelsMoved[0];
@@ -166,14 +191,14 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(() => C.sweep([1, 2], 3, 'x')).toThrow(/2, expected 3/);
     expect(C.sweep(new Set([1, 2]), 2, 'x')).toEqual([1, 2]);
   });
-  it('5 LIB-7 key files: 4 drawn keys and band (gaps only), 8 variants, 16 drawn ids, 14 gaps', () => {
+  it('5 LIB-7 key files: 4 drawn keys and band (gaps only), 7 variants, 14 drawn ids, 16 gaps', () => {
     const mods = C.sweep(lib7(), 5, 'LIB-7 keys');
     expect(mods.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
     expect(C.sweep(mods.filter((m: any) => Object.keys(m.IDS ?? {}).length), 4, 'drawn keys').map((m: any) => m.KEY)).toEqual(['curl', 'd-handle', 'ez', 'rope']);
     expect(Object.keys(key(mods, 'band').IDS ?? {})).toEqual([]);
-    C.sweep(mods.flatMap((m: any) => Object.keys(m.VARIANTS ?? {}).map(v => `${m.KEY}/${v}`)), 8, 'variants');
-    C.sweep(mods.flatMap((m: any) => Object.keys(m.IDS ?? {})), 16, 'drawn ids');
-    C.sweep(mods.flatMap((m: any) => Object.keys(m.GAPS ?? {})), 14, 'gap ids');
+    C.sweep(mods.flatMap((m: any) => Object.keys(m.VARIANTS ?? {}).map(v => `${m.KEY}/${v}`)), 7, 'variants');
+    C.sweep(mods.flatMap((m: any) => Object.keys(m.IDS ?? {})), 14, 'drawn ids');
+    C.sweep(mods.flatMap((m: any) => Object.keys(m.GAPS ?? {})), 16, 'gap ids');
   });
   it('scope: drawn + gaps = the census ids of the LIB-7 kinds (30), sled_pull excepted (LIB-12), each once, archetypes matching', () => {
     const scope = new Set<string>([...CENSUS.byHandArchetype.curl, ...CENSUS.equipmentByNeed.band, ...CENSUS.equipmentByNeed.ezBar,
@@ -189,6 +214,22 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(() => C.sweep(noRope.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 keys')).toThrow(/4, expected 5/);
     expect(() => P.indexOf(withMods(m => { key(m, 'ez').IDS.hammer_curl = { variant: 'curl', orientation: 'neutral', faults: ['curled'], claims: [] }; }))).toThrow(/hammer_curl is in curl and ez/);
     expect(() => P.indexOf(withMods(m => { key(m, 'd-handle').IDS.cable_fly = { variant: 'push', orientation: 'unstated', faults: ['bent-back'], claims: [] }; }))).toThrow(/cable_fly is in d-handle and d-handle/);
+  });
+  it('joint check: no id is claimed by a LIB-7 and a LIB-12 module (drawn or gap)', () => {
+    const lib12 = { KEY: 'palm-flat', OWNER: 'LIB-12', VIEW: 'palm-flat', FILE: 'x', render: () => ({ svg: '', report: {} }),
+      VARIANTS: { floor: { archetype: 'palm-flat', right: { view: 'palm-flat' }, faults: { f: { label: 'x', side: 'flexed', pose: {}, claims: [] } } } }, IDS: {} as any, GAPS: {} as any };
+    expect(() => P.indexOf([...clone(), { ...lib12, IDS: { push_up: { variant: 'floor', orientation: 'unstated', faults: ['f'], claims: [] } } }])).not.toThrow();
+    expect(() => P.indexOf([...clone(), { ...lib12, IDS: { hammer_curl: { variant: 'floor', orientation: 'unstated', faults: ['f'], claims: [] } } }])).toThrow(/hammer_curl is in curl and palm-flat/);
+    expect(() => P.indexOf([...clone(), { ...lib12, GAPS: { cable_fly: 'x' } }])).toThrow(/cable_fly is in d-handle and palm-flat/);
+  });
+  it('diameter: a radial key without one fails; a non-radial view without a handle is allowed (LIB-12 ask)', () => {
+    expect(() => P.pairSpec('rope_triceps_pushdown', P.indexOf(withMods(m => { delete key(m, 'rope').HANDLE.diameterMm; })))).toThrow(/no explicit handle diameter/);
+    const flat = { KEY: 'palm-flat', OWNER: 'LIB-12', VIEW: 'palm-flat', FILE: 'x', render: () => ({ svg: '<svg></svg>', report: {} }),
+      VARIANTS: { floor: { archetype: 'palm-flat', right: { view: 'palm-flat' }, faults: { f: { label: 'x', side: 'flexed', pose: {}, claims: [] } } } },
+      IDS: { push_up: { variant: 'floor', orientation: 'unstated', faults: ['f'], claims: [] } } };
+    const s = P.pairSpec('push_up', P.indexOf([flat]));
+    expect([s.handle, s.right.handle, s.extras]).toEqual([null, {}, {}]);
+    expect(() => P.pairSpec('push_up', P.indexOf([{ ...flat, HANDLE: { profile: 'floor' } }]))).toThrow(/no explicit handle diameter/);
   });
   it('the claims extract is the research commit\'s, and every ref resolves and states its fact', () => {
     expect(CLAIMS.research).toBe('95342b1');
@@ -236,11 +277,11 @@ describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
   beforeAll(async () => { gold = vocab(await approvedSvgs()); });
   it('H2: markup within golden B\'s vocabulary, no colour literal, ids unique and uid-prefixed', () => {
     let n = 0;
-    for (const id of P.INDEX.drawn.keys()) for (const w of P.pairSpec(id).wrong) {
+    for (const id of lib7Drawn()) for (const w of P.pairSpec(id).wrong) {
       const uid = `q-${n++}`, { svg } = P.renderPair(id, { fault: w.key, uid });
       expect([id, w.key, markupProblems(svg, uid, gold)]).toEqual([id, w.key, []]);
     }
-    expect(n).toBe(28);
+    expect(n).toBe(24);
   });
   it('H2 failure paths: a new element, a colour literal, a duplicated id, a foreign id', () => {
     const { svg } = P.renderPair('hammer_curl', { uid: 'q' });
@@ -252,7 +293,7 @@ describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
   });
   it('H7: two builds are byte-identical; each id\'s hand zoom fits the largest golden-B hand chunk ceiling', () => {
     const cap = gen.handCeiling('pull-up');
-    for (const id of P.INDEX.drawn.keys()) {
+    for (const id of lib7Drawn()) {
       const z = Z.pairZoom(id, page.zoomTextsOf(id));
       const html = P.pairSpec(id).wrong.map((w: any) => z.handZoom(w.key)).join('');
       const again = P.pairSpec(id).wrong.map((w: any) => z.handZoom(w.key)).join('');
@@ -261,7 +302,7 @@ describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
     }
   });
   it('inputsFor: the id\'s key file and everything the drawing imports, no other key file, all present', () => {
-    for (const id of P.INDEX.drawn.keys()) {
+    for (const id of lib7Drawn()) {
       const files = P.inputsFor(id), mine = P.INDEX.drawn.get(id).mod.FILE;
       for (const f of files) expect([f, existsSync(join(layers.ROOT, f))]).toEqual([f, true]);
       for (const f of ['tools/plates/library/hands/pairs.mjs', 'tools/plates/library/hands/zoom.mjs', 'tools/plates/library/hands/radial-rules.mjs',
