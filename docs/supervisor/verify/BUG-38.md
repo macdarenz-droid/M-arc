@@ -1,6 +1,6 @@
 # BUG-38: next split ignores the split actually done
 
-**Status: PAUSED by the owner, 2026-10-02 ~17:30 UTC ("Pause everything for now. But save ur progress").** Investigation done; design and fix not started.
+**Status (2026-10-03 04:4x UTC):** design DONE (workflow wf_335c9c91-d12, Opus designer); the card is below and was accepted by the supervisor; a builder was started on it. UI-R03 (audit) is folded in. The audit confirmation also confirmed BUG-38 with its own test: docs/supervisor/verify/a3-tests/schedule/bug-38-next-after-swap.test.ts.
 
 - **Owner report (Sat 3 Oct, phone):** he skipped SPLIT 2 (lower and core) and did SPLIT 3 instead. Today then said "Today's session is done. Recover well; SPLIT 3 is next on Sun." and "the muscles for SPLIT 3 on Sun are not fully recovered". His words: "whatever split i do, it should not blindly guess whats my nxt split specially when its done." Scope he set: "fix this only or found any other bugs related", plus confirm the audit findings (see `audit-3-confirm.md`).
 - **Root cause (confirmed by the supervisor):** readiness gets `next` from `nextScheduledSplitFor` (`src/escobar/tools/context.ts:58`), which is `nextScheduled(state.schedule, day)`: a weekday lookup that never looks at the sessions actually done. It is shown at `src/brain/readiness.ts:247-248,327`. The coach rules (`src/brain/coach/rules.ts:245`) read a "next" split too.
@@ -13,6 +13,306 @@
   1. Re-run `docs/supervisor/workflows/next-split-design.js`. In the same session use `resumeFromRunId wf_335c9c91-d12`: the two investigators below are cached, and the designer was stopped before it finished.
   2. Fold in UI-R03 and anything the audit "schedule" group finds.
   3. Write the card, start one Opus builder, review it, merge it in a train, then send the APK.
+
+## Card (designer output, accepted by the supervisor 10-03)
+
+# BUG-38: next split follows the sessions done, not only the weekday (UI-R03 folded in)
+
+```
+id: BUG-38
+model: claude-opus-5-5
+base: main 000918ef
+depends_on: none
+build_prerequisites: none
+merge_prerequisites: review passed; checks green on a head that contains the latest main; every lower-numbered item on the owner's checklist already merged (supervisor checks this)
+shared-file owners: scripts/screenshot-gate.mjs is shared and add-only (this card adds one block named BUG-38); all other files in write_scope have no owner in AGENTS.md
+```
+
+## Outcome
+
+The app picks today's split and the next split with one pure function. The function reads only data the app already saves: `schedule`, `splits`, `sessions` and `daysOff`. When the owner skips SPLIT 2 and trains SPLIT 3, the app never names SPLIT 3 as next, and it never scores readiness on the SPLIT 3 muscles he has just trained.
+
+**Deliverable:** one PR. **Evidence:** the tests and gate probes under Acceptance; each one fails on 000918ef and passes on the PR head. **Finish condition:** the PR is merged in a train, the APK is sent, and the owner checks it on his phone (see Verification).
+
+## Root cause
+
+1. Both "today's split" and "next split" are weekday lookups that never read the sessions.
+   - `nextScheduled` (src/core/dates.ts:95-103) walks the schedule forward from tomorrow.
+   - Three copies turn its result into a split: src/app/selectors.ts:23-28, src/escobar/tools/context.ts:58-63 and src/brain/coach/rules.ts:169-174. rules.ts:242 calls it directly.
+   - "Today" is `schedule[weekdayOf(today)]` at selectors.ts:20-21, context.ts:52-55 and rules.ts:180, :232 and :749.
+2. Once any session is logged today, readiness switches its target muscles to that "next" split (src/brain/readiness.ts:180-183) and prints it (:247-248, :326-328).
+   - On Saturday, with `schedule.sun` = SPLIT 3, it named and scored the split he had just trained. The amber score itself was measured on the wrong muscles (:243-250, :297, :306-309).
+   - Nothing in the code remembers that SPLIT 2 was skipped.
+3. The same lookups ignore a day off. `recovery.scheduled-conflict` (rules.ts:229-280) has no `daysOff` check, which is audit finding UI-R03.
+   - These lookups also feed Escobar (context.ts:65-75, brief.ts:78-82, read.ts:124) and the reminder text (src/native/notifications.ts:146-152).
+
+## The rule (decision D-BUG38)
+
+Weekdays decide when you train. Your sessions decide which planned days are already covered. A split you skipped by training another split moves into the next day that an early session freed up.
+
+```ts
+// src/brain/splitPlan.ts (new), pure, no signals
+export interface PlanSlot { split: Split; day: string; weekday: Weekday; movedFrom?: string }
+export interface SplitPlan {
+  today: (PlanSlot & { off: boolean }) | null; // before today's sessions are counted; kept on a day off
+  doneEarly: { split: Split; on: string } | null; // today's own split was trained earlier and nothing moved in
+  next: PlanSlot | null;                         // first planned day in (T, T+7]
+  days: Array<{ day: string; splitId: string | null }>; // T..T+7, for reminders
+}
+export function splitPlan(i: { schedule; splits; sessions; daysOff; today: string; now: number }): SplitPlan
+```
+
+**Algorithm** (T = today):
+
+- **planDay(s):** a session's plan day is T if it is in `trainedTodaySessions(sessions, T, now)` (the QA8-4 rule, dates.ts:84-86). Otherwise it is `s.day`.
+- **Sessions used:** only those with a plan day from T-17 to T. Keep one session per (splitId, planDay), the one with the earliest `startedAt`, and order them by planDay, then `startedAt`. Sessions after T are ignored, so `readinessSeries` never sees future sessions.
+- **own(d):** the split in `schedule[weekdayOf(d)]`, or null when:
+  - that id is not in `splits`; or
+  - d is before T and d is in `daysOff` (RG-19, models.ts:526).
+
+  Today's own split is kept even on a day off, so the Today card can still show "Day off".
+
+1. **On-day.** A session counts for its own day when own(planDay) is its split.
+2. **Early or late.** Each session not yet counted, in order:
+   - **Early:** let E be the first day in (D, D+3] where own(E) is not null. If own(E) is this session's split and E is not yet counted, the session counts for E.
+   - **Late:** otherwise, take the latest day P in [D-3, D-1] where own(P) is this split and P is not yet counted. The session counts for P.
+   - **Neither:** the session counts for no day.
+
+   A day counts at most one session.
+3. **Owed.** A split is owed only when it was **displaced**: own(d) has no session counting for it, and some other session has planDay = d.
+   - It stays owed until a later session of that split is logged, or until its own weekday comes round again.
+4. **Walk.** Go through the days from T-14 to T+7. At each day d:
+   - Remove owed items whose own weekday is d, or that a session after their missed day has paid.
+   - If own(d) was counted by a session **before** d (done early), the day goes to the **oldest** owed split. Skip any split whose own weekday is d+1, so no split is placed the day before its own day.
+     - With no owed split, the day is "done early".
+     - An item placed on a future day, or on today when no session has been logged today, is not placed again.
+   - Otherwise the day keeps own(d).
+5. **Outputs.**
+   - `today` = the result for T, with `off` = whether T is in `daysOff`.
+   - `doneEarly` is set when today's own split was counted early and nothing moved in.
+   - `next` = the first day in (T, T+7] that has a split.
+   - `days` = the results for T..T+7.
+
+**Why this rule and not the others:**
+- **Calendar only (current main):** names the split just done. This is the bug.
+- **Full rotation** (always the most overdue split on the next training day): one miss pushes every split off its weekday for good. With three rest days a week, nothing brings the week back in line.
+  - That contradicts the recorded meaning of the schedule: "Which split on which weekday. Reminders and streaks follow it." (src/escobar/palace/registry.ts:91).
+  - It also breaks the spacing the owner chose.
+- **"Earliest unfilled slot" matching:** if last Sunday's SPLIT 3 was missed, Saturday's SPLIT 3 would count as last week's make-up, and the app would again say "SPLIT 3 is next on Sun". His history cannot be checked from here.
+- **"Any slot within 3 days":** the extra Legs sessions on Sun and Mon in tests/recovery-bug17.test.ts:78-85 would take Wednesday's Legs slot, and that test would fail.
+- **Owing every missed slot:** a plan set up mid-week would create debts that never existed, because nothing records when the schedule was set.
+
+"Most overdue" survives as rule 4: the oldest owed split goes first.
+
+**Edge cases:**
+
+| # | Case | Result |
+|---|---|---|
+| 1 | Owner: Sat plan SPLIT 2, did SPLIT 3; Sun plan SPLIT 3 | SPLIT 3 counts early for Sun, SPLIT 2 is owed and moves to Sun. Next is SPLIT 2 on Sun. Sunday's card shows SPLIT 2 under "Moved from Sat", and Sunday's reminder names SPLIT 2. |
+| 2 | Split done early on a rest day | The next planned day of that split is done early. Next skips it. That day shows "Done Thu" and gets no reminder. |
+| 3 | Two splits in one day | Each counts for one slot. The card already shows "A + B done" (Today.tsx:72). |
+| 4 | Rest day after, or nothing in 7 days | `next` is null, and the advice ends "Recover well." (readiness.ts:327). |
+| 5 | A split that is on no weekday | It counts for no slot. Today's split is owed and waits for a freed day. |
+| 6 | Same split twice a week | One session covers one slot. Legs today and Legs tomorrow keeps tomorrow as next. A on Tue when Tue was B: A covers Thu early, so B moves to Thu. |
+| 7 | Past session logged later | It counts on its own day straight away. For a past day, later sessions are ignored. |
+| 8 | Week boundary | The window rolls across days, not calendar weeks. A Sun-to-Mon swap works. |
+| 9 | Split renamed or deleted | Matching uses splitId, never the name. A deleted split's sessions count for nothing. Past days use the current schedule; that limit is accepted. |
+| 10 | No schedule | `today`, `next` and `doneEarly` are all null. No rotation is invented. |
+| 11 | Day off | Today's day off keeps its split with `off` (needed by the R6 gate block). A past day off has no slot and owes nothing. |
+| 12 | Session across midnight | Inside 6 hours it counts as today (QA8-4). After 6 hours its stored day applies. That switch at the 6-hour mark is a known limit, and a test pins both sides. |
+
+## Consumers (all on the one function)
+
+- **selectors.ts:**
+  - Add field computeds for `schedule`, `splits` and `daysOff`.
+  - Add `todayPlan = computed(splitPlan(...fields, today, minuteNow))`. It must never read `state.value` as a whole.
+  - `scheduledSplit` becomes today's split when it is not a day off, otherwise undefined (UI-R03).
+  - The readiness `next` comes from `todayPlan.next`.
+  - Delete `scheduledSplitId` and the old resolver.
+- **rules.ts:**
+  - `derive()` builds the plan once and adds it to `Derived`.
+  - `readinessSeries` builds a plan per day D, with now = D 23:59:59.
+  - Delete `nextScheduledSplitOf`.
+  - Rewrite `recovery.scheduled-conflict`:
+    - **Day off:** return nothing.
+    - **Any session today:** if today has neither a split nor `doneEarly`, return nothing. Otherwise:
+      - `worst` is the least-recovered, not-ready muscle among the primary muscles of the splits done today, taken from `ctx.splits` by splitId. If a split no longer exists, use the exercises that session logged.
+      - Output the done-today insight with id `recovery.done-today:<first done splitId>`.
+      - The `Next:` line and its warning use `plan.next`.
+      - It never warns about today's own plan. This revises QA8-1 point 3.
+    - **No session today:** today's split, or nothing. Warn as now. **Leave the warning lines (:269-279) byte-identical**, because AUD-20 follow-up (2) owns the "Below 60%" literal.
+- **escobar/tools/context.ts:**
+  - Memo `splitPlanOf(ctx)`.
+  - `scheduledSplitFor` reads today's split from the plan, and is undefined on a day off.
+  - Delete `nextScheduledSplitFor`.
+  - `readinessToday` uses `plan.next`.
+- **brief.ts and read.ts:** the brief and `get_overview` read the plan (wording under UI copy).
+- **reminders.ts and notifications.ts:**
+  - `resyncReminders` passes `planned: Map<day, splitId|null>` built from `days`.
+  - `syncTrainingReminders` takes it as an optional field in its last options object.
+  - For a day in the map, use the mapped split, or no reminder when it is null. Otherwise use `schedule[weekdayOf(day)]`, as now.
+- **Today.tsx and the new src/slices/today/cardState.ts:**
+  - `sessionCardState({ live, doneCount, plan })` returns `{ status: 'live'|'done'|'ready'|'off'|'early'|'rest', eyebrow, split? }`.
+  - Today.tsx renders from it. The 'early' state is: the eyebrow, the split name as h2, and a "Choose a workout" button that goes to Train.
+  - The 'done' card is unchanged. It is already honest because it reads the sessions (Today.tsx:72).
+- **Train tab default chip:** not changed. It never uses the schedule; it defaults to `s.splits[0]` (Train.tsx:296).
+- **readiness.ts:** not changed. Only its inputs change, so readiness.test.ts:124-145 stays valid.
+
+## UI copy (AGENTS.md: no explaining, headings 1-3 words)
+
+New user-facing strings, the only ones allowed:
+- Today card eyebrow, moved split: `Moved from {Ddd}`, e.g. "Moved from Sat".
+- Today card eyebrow, split already done early: `Done {Ddd}`, e.g. "Done Thu".
+- Coach done-today line when two or more splits were done today: `{A} + {B} are done for today.` With one split it stays the existing "{A} is done for today."
+
+Reused unchanged: "Scheduled today", "Choose a workout", "Done today: {names}" (joined with " + "), "Next: {split} on {Ddd}.", "Rest and recover.", "Today's session is done. Recover well; {split} is next on {Ddd}.", "{split} is ready when you are."
+
+For Escobar only (not shown in the app):
+- brief: `scheduled {name} (splitId {id}), moved from {weekday}`
+- brief: `day off, {name} planned (splitId {id})`
+- brief: `{name} done early on {weekday}`
+- `get_overview.scheduled` gets an optional `movedFrom: Weekday`
+
+These are worked out from the schedule and sessions Escobar already reads, so no new kind of data is sent.
+
+## read_first
+
+- .claude/skills/builder/SKILL.md and gotchas.md
+- docs/supervisor/verify/BUG-38.md (both investigator reports)
+- docs/qa/LIVE-QA-8.md:11-43 (QA8-1 to QA8-4)
+- src/core/dates.ts:79-103; src/brain/readiness.ts:141-183, 241-250, 326-336; src/brain/coach/rules.ts:168-195, 229-280, 736-767; src/app/selectors.ts:18-74; src/escobar/tools/context.ts:32-76
+- **Pins that must stay green unchanged:**
+  - tests/recovery-bug17.test.ts:65-85
+  - tests/coach.test.ts:260-273
+  - tests/readiness.test.ts:117-145
+  - tests/dates.test.ts:83-92
+  - tests/escobar/read.test.ts:39-44 (Pull scheduled; sixMonthsState sessions are all on their own day)
+- **Gate block R6** (scripts/screenshot-gate.mjs:1346-1368): it schedules one split on every day and needs "Take today off", then "Day off". The design keeps today's slot on a day off, so it passes. Do not edit that block.
+- **HANDOVER.md:909, AUD-20 follow-up (2):** leave rules.ts:269-279 byte-identical.
+
+## write_scope
+
+- **New:** src/brain/splitPlan.ts, src/slices/today/cardState.ts
+- **Changed source:** src/app/selectors.ts, src/brain/coach/rules.ts, src/escobar/tools/context.ts, src/escobar/context/brief.ts, src/escobar/tools/read.ts, src/slices/today/Today.tsx, src/slices/settings/reminders.ts, src/native/notifications.ts
+- **New tests:** tests/split-plan.test.ts, tests/today-card.test.ts
+- **Changed tests:** tests/coach.test.ts, tests/reminders.test.ts, tests/session.test.ts, tests/escobar/read.test.ts, tests/escobar/brief.test.ts
+- **Gate:** scripts/screenshot-gate.mjs, one add-only block named `BUG-38`
+- **Docs:**
+  - docs/COACHING-DECISIONS.md: a new entry "## D-BUG38: next split follows the sessions done (BUG-38 builder, date)" containing the rule above.
+  - docs/qa/LIVE-QA-8.md:20 and :23: a one-line note "Revised by D-BUG38".
+
+## reserved_paths
+
+- **No saved-data change:** src/core/models.ts, src/core/store.ts and migrations
+- **Not needed:** src/brain/readiness.ts. If a change there turns out to be needed, stop and tell the supervisor.
+- **Out of scope:** src/slices/workout/Train.tsx, src/ui/styles.css (use existing classes only)
+- **Shared, owned by others:** tests/theme.test.ts; every other task's gate block; native/wear/**, src/native/wearEngine.ts, src/slices/settings/WatchLab.tsx and Settings.tsx; escobar-worker/**; .github/**; package.json and package-lock.json; src/app/App.tsx and src/main.tsx
+
+## Acceptance
+
+Owner fixture "OWN":
+- **Splits:**
+  - S1 'SPLIT 1 - UPPER BODY' (lib_barbell_bench_press)
+  - S2 'SPLIT 2 - LOWER AND CORE' (lib_seated_leg_curl)
+  - S3 'SPLIT 3' (lib_lat_pulldown)
+  - S4 'SPLIT 4 - CONDITIONING' (lib_standing_calf_raise)
+- **Schedule:** {tue S1, thu S4, sat S2, sun S3}. Only Sat and Sun come from the owner's report; the other days are stand-ins.
+- **Sessions:** S1 2026-09-29, S4 2026-10-01, and S3 on Sat 2026-10-03 from 17:00 to 18:00 local.
+- **Now:** Sat 19:00 local. Build it with local wall-clock dates, as in tests/reminders.test.ts:30, so `npm run test:tz` passes.
+- **OWN-bare:** the same, with only the Saturday session.
+
+"Red on main" means the test fails when run on 000918ef for the reason given. A new-API test that is red only because the module is missing must have a behavioural partner marked (b).
+
+| ID | Criterion | Evidence (test name, fixture) | Red on main because | Mutation (must turn it red) |
+|---|---|---|---|---|
+| AC1 | Owner case in the planner | split-plan.test "BUG-38 owner: Sat SPLIT 3 done, SPLIT 2 skipped → next SPLIT 2 on Sun, moved from Sat, never SPLIT 3" (OWN and OWN-bare) | new module | M1: drop the early step (rule 2) |
+| AC2 | (b) Owner case in the coach | coach.test "BUG-38 owner: 'Done today: SPLIT 3', 'Next: SPLIT 2 - LOWER AND CORE on Sun.', no scheduled-conflict, no text containing 'SPLIT 3 is next'" (OWN) | main gives no done-today insight (SPLIT 2's hamstrings are untrained) | M2: rules.ts derive/conflict reads `next` from the calendar |
+| AC3 | (b) Owner case in readiness on Today and Escobar | split-plan.test "BUG-38 owner: todayReadiness.postSessionAdvice === \"Today's session is done. Recover well; SPLIT 2 - LOWER AND CORE is next on Sun.\"" (OWN plus today's check-in, via replaceState and setSystemTime; assert not null first); escobar/read.test "BUG-38: readinessToday gives the same sentence" | main says "SPLIT 3 is next on Sun" | M3: context.ts `next` back to `nextScheduled` |
+| AC4 | (b) Readiness history | split-plan.test "BUG-38: readinessSeries on Sun scores Sat with SPLIT 2 next, even after S2 was done Sun" (OWN plus S2 on Sun 10-04, index 1) | main says SPLIT 3 | M4: planner keeps sessions after T |
+| AC5 | Sunday display | today-card.test "BUG-38 owner Sunday: ready, 'Moved from Sat', SPLIT 2"; gate block BUG-38 probe 1, seeded relative to today: yesterday = A, today = B, B session yesterday; expects "Moved from {Ddd}", A as h2, "Start {A}" | gate shows "Scheduled today / B" | M5: eyebrow always "Scheduled today" |
+| AC6 | Done-early day | split-plan.test "C done Thu → Fri doneEarly {C, Thu}; next on Thu is not C"; today-card.test "early: 'Done Thu'"; gate probe 2 | gate shows "Scheduled today / C" | M6: map doneEarly to 'rest' |
+| AC7 | Repeated split stays valid | split-plan.test "Legs today and tomorrow, Legs done today → next Legs tomorrow"; recovery-bug17.test.ts:65-85 unchanged and green | n/a (guard) | M7: early may take any slot within 3 days (bug17 :78-85 turns red) |
+| AC8 | No owed debt that never existed | split-plan.test "plan set mid-week, no sessions → nothing moved; a session on a rest day owes nothing" | new module | M8: owe every missed past slot |
+| AC9 | Most overdue first, no day-before placement | split-plan.test "two displaced splits → the oldest fills the freed day" (Mon A, Tue B, Thu C, Fri D; C Mon, D Tue, C Wed); "a split is never placed the day before its own day" (Mon Z, Tue Y, Wed Z; Y on Mon → next Z on Wed) | new module | M9a: newest owed first; M9b: remove the guard |
+| AC10 | Late make-up; paid debts | split-plan.test "A missed Mon, done Tue → next Wed B"; "S2 owed, S2 done Wed with S4 also done Wed → Thu done early, next S2 Sat with no movedFrom" | new module | M10a: drop the late step; M10b: drop the paid-debt removal |
+| AC11 | Midnight (QA8-4) | split-plan.test "QA8-1 fixture: at 01:00 today = own S2; at 07:00 doneEarly {S2, Fri}" | new module | M11: use `s.day` for today's sessions |
+| AC12 | Day off (UI-R03) | coach.test "BUG-38/UI-R03: no scheduled-conflict on a day off" (red on main); today-card.test "off keeps the split"; R6 gate block green | main warns on a day off | M12a: apply daysOff to today; M12b: drop the day-off check in the rule |
+| AC13 | After any session today, no warning about today's plan | coach.test revisions (exact edits below); new "SPLIT 2 trained Fri counts as Sat's, done early: no warning Sat" (old fixture) | main warns | M13: restore "a different split keeps the warning" |
+| AC14 | Reminders | reminders.test "BUG-38: Sunday's reminder says 'SPLIT 2 - LOWER AND CORE is ready when you are.'" (OWN, time 20:00); "a day done early gets no reminder" | main says "SPLIT 3 is ready…" | M14: ignore the `planned` map |
+| AC15 | Readiness does not recompute on live-set edits | session.test "BUG-38: with a schedule, typing into a live set keeps todayReadiness identity" (assert not null first) | `nextScheduledSplit` reads all of `state.value` | M15: the plan computed reads `state.value` |
+| AC16 | Escobar stays honest | read.test "OWN Sunday: overview.scheduled is SPLIT 2 with movedFrom 'sat'"; brief.test "brief contains 'moved from sat'"; brief.test "day off line" | main gives SPLIT 3 / no day-off text | M16: `scheduledSplitFor` back to the weekday lookup |
+| AC17 | One source of truth | split-plan.test "source scan": `nextScheduled(` appears only in src/core/dates.ts; `nextScheduledSplitOf`, `nextScheduledSplitFor` and `scheduledSplitId` are gone from src; `schedule[weekdayOf(` appears only in weekly.ts, rules.ts (once, the week-start helper at :148), notifications.ts (once) and splitPlan.ts | the copies exist | M17: add back one `nextScheduled(` call in rules.ts |
+| AC18 | Remaining edges | split-plan.test: no schedule; unscheduled split; renamed split (same id, new name) and deleted split; two splits in a day; Sun-to-Mon swap; past session logged later (S2 logged for Sat → next Tue S1) | new module | M18: match on splitName instead of splitId |
+| AC19 | No regression | `npm run check`, `npm run test:tz` and the gate on the merged head | n/a | n/a |
+
+**Exact edits to pinned tests** (record in D-BUG38; no other test expectation may change; if one does, stop and tell the supervisor with the diff):
+- **coach.test.ts:275-282**
+  - Rename it to "BUG-38: after any session today the coach names what was done and never warns about today's plan".
+  - In its fixture, change `priorHamSession`'s splitId from `'split_lower'` to `'split_push'`, so SPLIT 2 is still pending.
+  - Expect no `scheduled-conflict`, and a `recovery.done-today:split_chest` insight with title "Done today: Push" and means containing "Next: Upper on Mon".
+- **coach.test.ts:284 onward** ("nothing done today, byte-identical")
+  - Change only `priorHamSession`'s splitId to `'split_push'`. Every assertion stays as it is.
+  - The old fixture (SPLIT 2 trained Friday) now means "done early", and the new AC13 test pins it.
+
+## design_reference
+
+D-BUG38 above; LIVE-QA-8 QA8-1 to QA8-4; RG-19 (models.ts:526); the investigator reports in docs/supervisor/verify/BUG-38.md.
+
+**Design check-in:** push splitPlan.ts and tests/split-plan.test.ts first, then post a short design note on the PR covering rules 1-5 as built and the test list. Wire the consumers only after the supervisor's next tick.
+
+## connectivity
+
+Offline only. No calls to the live coach, AI or Worker, and no network.
+
+## verification
+
+- `npm ci`
+- `npm run typecheck`
+- `npm test`
+- `npm run test:tz`
+- `npm run build`
+- `MARC_CHROMIUM=/opt/pw-browsers/chromium npm run gate`
+- Red-on-main proof: run the AC2, AC3, AC4, AC5, AC6, AC12, AC13, AC14, AC15, AC16 and AC17 tests and probes on 000918ef and paste the failing lines.
+- **Device check by the owner on the APK:**
+  1. On a planned day, train a different split. Readiness should name the skipped split as next.
+  2. Next day: the Today card shows "Moved from {day}", and the reminder names that split.
+
+## risk_and_recovery
+
+- **Results change in tests that use a schedule** (28 test files set one). Mitigation: only the listed edits are allowed; anything else means stop and escalate.
+- **A split moved next to one that shares muscles** (SPLIT 3 then SPLIT 2). Readiness and the warning measure SPLIT 2's real muscles; the app never forces a swap.
+- **The 6-hour midnight switch.** Pinned by AC11 and recorded.
+- **Past days are matched against the current schedule** after a mid-week edit. Same limit as streak and adherence; recorded.
+- **Speed.** The planner runs once per `readinessSeries` day. Pre-filter sessions to [T-17, T]; tests/perf/budgets.test.ts must stay green.
+- **Snoozes on done-today insights.** The id is now keyed by the split done, so an old snooze may not match. The insight lasts one day; accepted.
+- **Undo.** Revert the PR. No data shape changes.
+
+## Out of scope
+
+- The Train tab default chip (Train.tsx:296 uses `splits[0]`, not the schedule)
+- Weekly counts, streak and adherence (weekly.ts, weeklyReview.ts)
+- The Coach weekly grid (Coach.tsx:174-186)
+- Rotation or cascade modes, and any saved field
+- UI-R05 (onboarding draft)
+- Watch code
+
+## return
+
+- Draft PR URL and head sha
+- Table: AC to test name to red-on-main output to green output
+- Mutation table (M1 to M18, each seen red, then restored)
+- Changed paths checked against write_scope
+- `You will notice:` After you train a different split than planned, the app shows the skipped split next and moves it into the freed day.
+- The HANDOFF block
+
+---
+
+**For the owner:**
+
+1. The app picks "next" from the weekday plan alone and never checks what you actually trained. After SPLIT 3 on Saturday it said SPLIT 3 was next on Sunday and judged your readiness on muscles you had just worked.
+2. With the fix it reads your sessions. A split you already did counts as done, and a split you skipped by training something else moves into the day that frees up. Your weekly plan stays as you set it, and nothing new is saved.
+3. Example: Saturday was SPLIT 2 LOWER AND CORE and you did SPLIT 3. Today will say "SPLIT 2 - LOWER AND CORE is next on Sun". On Sunday the card shows SPLIT 2 marked "Moved from Sat", and the reminder names SPLIT 2.
+4. After that your normal week carries on. Your report only confirms Sat = SPLIT 2 and Sun = SPLIT 3; the other days in the tests are examples.
 
 ## Investigator reports (Opus, on main 000918e)
 

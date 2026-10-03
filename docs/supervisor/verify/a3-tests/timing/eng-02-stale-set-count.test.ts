@@ -34,10 +34,16 @@ describe('ENG-02: reductions apply to the current plan', () => {
     expect(usable(setAsideRows(next, blank(3))), `suggested ${next.sets.length} sets`).toBe(2);
   });
 
+  it('lighter week after a red-day session cut to 2 of 3: round(3*0.6) = 2 usable rows (no compounding)', () => {
+    const next = suggestNext(prior(2), BENCH, 'lean', TODAY, 3, [], { deload: week });
+    expect(usable(setAsideRows(next, blank(3))), `suggested ${next.sets.length} sets`).toBe(2);
+  });
+
   it('related: a carry in a lighter week also takes the set factor (only timed holds are exempt, D-A1)', () => {
-    const CARRY = 'lib_farmers_walk';
+    const CARRY = 'lib_farmer_s_carry';
     const carry = [session('2026-09-18', [{ id: CARRY, sets: Array.from({ length: 3 }, () => ({ kg: 24, distanceM: 40, effort: 'ideal' as const })) }])];
     const next = suggestNext(carry, CARRY, 'lean', TODAY, 3, [], { deload: week });
+    expect(next.mode, 'precondition: the carry takes its distance path').toBe('distance');
     expect(usable(setAsideRows(next, blank(3))), `mode ${next.mode}, ${next.sets.length} sets, cutSets ${next.cutSets}`).toBe(2);
   });
 });

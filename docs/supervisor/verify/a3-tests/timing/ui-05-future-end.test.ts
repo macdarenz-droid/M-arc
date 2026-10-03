@@ -26,6 +26,13 @@ describe('UI 05: completed workouts cannot end in the future', () => {
     expect(r).toBeNull();
   });
 
+  it("logPastSession refuses the form's own defaults: today, start = now (HH:MM), 60 min (Train.tsx:1185-1187)", () => {
+    replaceState({ ...freshState(), sessions: [] });
+    const r = logPastSession({ splitId: 'x', trainedAtLocal: '2026-09-22T12:00', durationMin: 60, entries: [bench] });
+    const end = state.value.sessions[0]?.endedAt;
+    expect(r, `saved end ${end}`).toBeNull();
+  });
+
   it('logPastSession rejects a non-finite or non-positive duration', () => {
     for (const d of [Number.NaN, 0, -30, Number.POSITIVE_INFINITY]) {
       replaceState({ ...freshState(), sessions: [] });
