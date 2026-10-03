@@ -272,17 +272,20 @@ describe('recovery.scheduled-conflict / recovery.done-today (QA8-1)', () => {
     expect(doneToday!.means).toContain('Next: Upper on Mon');
   });
 
-  it('a different, unscheduled split done today keeps the old warning when the scheduled split is still pending', () => {
-    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_lower');
+  it('BUG-38: after any session today the coach names what was done and never warns about today\'s plan', () => {
+    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_push');
     const todaysChestSession = session('2026-09-26', [{ id: bench, sets: sets(60, 8, 'ideal', 3) }], 'split_chest');
     const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T20:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [priorHamSession, todaysChestSession] };
     const out = coachInsights(ctx, 20);
-    expect(out.some(i => i.id.startsWith('scheduled-conflict'))).toBe(true);
-    expect(out.some(i => i.id.startsWith('recovery.done-today'))).toBe(false);
+    expect(out.some(i => i.id.startsWith('scheduled-conflict'))).toBe(false);
+    const done = out.find(i => i.id === 'recovery.done-today:split_chest');
+    expect(done).toBeDefined();
+    expect(done!.title).toBe('Done today: Push');
+    expect(done!.means).toContain('Next: Upper on Mon');
   });
 
   it('nothing done today: the old warning is byte-identical to main, field for field', () => {
-    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_lower');
+    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_push');
     const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T20:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [priorHamSession] };
     const out = coachInsights(ctx, 20);
     const warning = out.find(i => i.id.startsWith('scheduled-conflict'));
