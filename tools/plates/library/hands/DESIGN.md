@@ -47,7 +47,7 @@ Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 **Sizes are drawing values (D-LIB7-2).** These follow golden-B `HANDLES` and main's `eq/rope.mjs`:
 - dumbbell 32 mm with a 120 mm head ring;
 - bar and EZ 28 mm;
-- rope 28 mm, pinned to `eq/rope.mjs:54` (its 46 mm knob is hidden behind the fist in this view, D-LIB7-9);
+- rope 28 mm with its 46 mm knob, pinned to `eq/rope.mjs:54`: a plain section, the knob dashed over the fist (D-LIB7-13);
 - D-handle 30 mm.
 
 **Wrong angles are approved precedents, flagged (D-LIB7-5).** Their sizes are not sourced:
@@ -179,3 +179,24 @@ Every test is shown red with its mutation and at 0 without it (gotcha V1-08).
 - **D-LIB7-12, a level forearm needs a stated orientation.** A curl drawn with a level forearm shows the palm up or down. concentration_curl and bayesian_cable_curl have no orientation claim, so they are gaps. The single-handle pushdown and pulldown stay drawn: their forearm is vertical, and the thumb-side label states no orientation.
 - **LIB-12 asks (supervisor OK, 10-02).** `pairSpec` needs a diameter only for radial keys or a key with a handle profile. Every LIB-7 count filters by `OWNER`.
 - **R8 finding c (push Right reads mid-hand), checked, not changed.** The push Right uses contactAt .3, golden B's chest-press heel value, and G4 measures the drawn contact at the heel position. The forearm is vertical, as in the pushdown and skull crusher, so the picture differs from the level chest press but not in placement.
+
+## 7. Calibrated critic fixes (supervisor, 2026-10-03; the critic's valid run on #193)
+- **D-LIB7-13, rope (replaces D-LIB7-9).**
+  - The rope is drawn as one plain section: golden B's handle core ring and cross are removed, because they belong to a rigid handle.
+  - The 46 mm knob (`eq/rope.mjs:54`) is drawn coaxial with the strand, dashed over the fist with golden B's hidden-equipment line (`h-eq-thin`), in both halves.
+  - The rope moves into the fingers, contactAt 1.15 (GA 3.1.1: "the load sits in the fingers"). This is a drawing value, not a claim, and the sheet flags it.
+  - Check G7: a rope with a core, without its knob, or with a knob off the strand fails. It fails on the 23ac5bb drawing.
+- **D-LIB7-14, push Right (single_arm_triceps_pushdown, skull_crusher).**
+  - The handle sits low in the heel, as on golden B's approved squat Right (contactAt -0.1, wrist 8°; the squat file explains -0.1 as 0.45 of the palm length). It replaces the chest-press 0.3, which drew the handle against the finger fold.
+  - The Right force line is re-aimed from its handle end through the wrist pivot.
+  - Checks:
+    - G4: the heel category is now -0.1.
+    - G6: the Right line passes within 0.5 px of the pivot.
+  - Both fail on the 23ac5bb drawing.
+- **D-LIB7-15, EZ angled grip.**
+  - ez_bar_curl's claims name the angled grip: `cards/ez_bar_curl.json#c1` "underhand on its angled sections", and #c2 "semi-supinated (half-way between palms up and palms in)".
+  - It gets its own orientation, `angled`, labelled "Seen along the angled grip". The radial view always looks along the grip, and the label claims neither palm up nor palm in.
+  - The id therefore leaves the shared straight-bar tile and the approved list until the next critic run.
+  - preacher_curl's claim (#c1 "take the curl bar with an underhand grip") names no angle, so it stays underhand in that tile.
+  - A test fails when an id whose claims name the angled section is drawn as anything other than `angled`.
+- **Approved drawings unchanged.** The critic-approved pages are pinned by one sha256, computed on 23ac5bb: curl 1, curl 2, curl 3 without ez_bar_curl, reverse_curl and single_arm_lat_pulldown. The sheet's own pins were re-pinned once for these fixes.

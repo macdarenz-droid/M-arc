@@ -116,6 +116,36 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
   });
   it('G6: a push Wrong in the heel (lever not behind the wrist) fails', () => bites(withMods(m => { key(m, 'ez').VARIANTS.push.faults['bent-back'].pose.contactAt = 0.3; }), 'skull_crusher', /G6 lever checks/));
   it('G6: a force line on a gravity curl fails', () => bites(withMods(m => { delete key(m, 'curl').VARIANTS.bar.loadLine; }), 'barbell_curl', /G6 force line drawn/));
+  it('critic fixes (10-03): approved drawings byte-identical; rope plain with its knob; push line through the pivot; EZ angled label', () => {
+    // the pages the calibrated critic approved, sha256 over `id/fault\0svg\0` (computed on 23ac5bb before the fixes)
+    const APPROVED = ['dumbbell_biceps_curl', 'alternating_dumbbell_curl', 'incline_dumbbell_curl', 'hammer_curl', 'cross_body_hammer_curl', 'barbell_curl', 'cable_curl', 'preacher_curl', 'reverse_curl', 'single_arm_lat_pulldown'];
+    const h = createHash('sha256');
+    for (const id of APPROVED) for (const w of P.pairSpec(id).wrong) h.update(`${id}/${w.key}\0${P.renderPair(id, { fault: w.key }).svg}\0`);
+    expect(h.digest('hex')).toBe('2f9d3b7fb5a560d5cfbaac2ca5cecfa73b8d356ccad837ed101081e1aa172829');
+    const ez = P.renderPair('ez_bar_curl', { fault: 'curled' }).svg;
+    expect(ez).toContain('>SEEN ALONG THE ANGLED GRIP<');
+    expect(ez).toContain('aria-label="Seen along the angled grip.');
+  });
+  it('G7: a rope with a handle core, or without its knob, fails', () => {
+    const { spec, pages } = C.renderedPages('rope_triceps_pushdown');
+    expect(C.problemsOf(spec, pages)).toEqual([]);
+    const cored = structuredClone(pages);
+    cored[0].svg = cored[0].svg.replace('</svg>', '<circle class="h-eq-core" cx="1" cy="1" r="1"/></svg>');
+    expect(C.problemsOf(spec, cored).join('\n')).toMatch(/G7 rope drawn with a handle core/);
+    const k = pages[0].report.knobs[0];
+    const noKnob = structuredClone(pages);
+    noKnob[0].svg = noKnob[0].svg.replace(`<circle class="h-eq-thin" cx="${k.cx}" cy="${k.cy}" r="${k.r}"/>`, '');
+    expect(C.problemsOf(spec, noKnob).join('\n')).toMatch(/G7 right knob not drawn/);
+    const moved = structuredClone(pages);
+    moved[0].report.knobs[1].cx += 1;
+    expect(C.problemsOf(spec, moved).join('\n')).toMatch(/G7 wrong knob off the rope/);
+  });
+  it('G6: a push Right force line beside the wrist pivot fails', () => {
+    const { spec, pages } = C.renderedPages('single_arm_triceps_pushdown');
+    expect(C.problemsOf(spec, pages)).toEqual([]);
+    pages[0].report.pivot.to = [pages[0].report.pivot.to[0] + 30, pages[0].report.pivot.to[1]];
+    expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G6 Right force line [\d.]+ px from the wrist pivot/);
+  });
   it('G8: an underhand id drawn palm down fails', () => {
     const { spec, pages } = C.renderedPages('barbell_curl'), m = pages[0].report.measured.right;
     m.handle[1] = m.wrist[1] + 10;                                   // the handle below the wrist: palm down
@@ -162,7 +192,10 @@ const PHRASES: Record<string, RegExp> = {
   under: /underhand|palms up|palms-up|palms-forward|palms forward|supinated/i,
   over: /overhand|palms down|palms toward the feet/i,
   neutral: /neutral|palms facing the body|palms facing each other/i,
+  angled: /angled section|semi-supinated|half-way between palms up and palms in/i,
 };
+// a grip claim that names the EZ bar's angled section must be drawn as 'angled', never as plain underhand (D-LIB7-15)
+const ANGLED = /angled section|semi-supinated/i;
 // what a claim cited for each element must talk about (a wrong claim number reads as the wrong fact)
 const FACT: Record<string, RegExp> = { knob: /clubbed end|knob/i, thumb: /thumb/i, wrist: /wrist/i, fault: /wrist|flex|bend|bent/i };
 function claimProblems(mods: any[], claims: Record<string, string>) {
@@ -181,6 +214,7 @@ function claimProblems(mods: any[], claims: Record<string, string>) {
       if (c.orientation === 'unstated') { for (const r of c.claims) check(r, null, id); continue; }
       if (!c.claims.length) bad.push(`${id}: no orientation claim`);
       for (const r of c.claims) check(r, PHRASES[c.orientation]!, `${id} (${c.orientation})`);
+      if (c.orientation !== 'angled' && c.claims.some((r: string) => ANGLED.test(claims[r] ?? ''))) bad.push(`${id}: its claims name the angled EZ grip, drawn ${c.orientation}`);
     }
   }
   return bad;
@@ -242,14 +276,15 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(C.pairProblems('hammer_curl', noRange).join('\n')).toMatch(/G1 no wrist range/);
   }, 60_000);
   it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
-    // the LIB-7 radial sheet, byte for byte as before the ruling (sha256 of buildSheet().body on 66c13ef + main 4aa1b2a),
+    // the LIB-7 radial sheet, byte for byte (sha256 of buildSheet().body). Re-pinned once for the calibrated critic's fixes
+    // (10-03: rope, push, ez_bar_curl angled; D-LIB7-13..15); the approved pages stay pinned separately, unchanged.
     // built from LIB-7's own key modules only, so another card's tiles never move this pin (D-LIB7-PIN); the filter must
     // keep all 5 LIB-7 modules, so the pin cannot silently shrink
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
     const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
     expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
-    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('626f842527a8415d94c5f6c88b15340f9d54834033345cd0d561784d14388689');
-    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('0d4c054d82c1649ed7d4376445738536d5283a247c2368a5ea00bf343464af51');
+    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('5405e5347eb964a3805f5bb6c8244a37b70fb990a572f3434f2d6f855326b4fc');
+    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('1130e71cb70eecf71d5c3c40a7347ff31169e4d1e44a5d94ad52dc2abe848d4f');
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },
@@ -288,6 +323,8 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     const pulley = withMods(m => { key(m, 'rope').VARIANTS.push.claims.knob = ['cards/rope_triceps_pushdown.json#c1']; });
     const withPulley = { ...CLAIMS.claims, 'cards/rope_triceps_pushdown.json#c1': 'Fix a rope to the cable pulley at its top position (above head height).' };
     expect(claimProblems(pulley, withPulley).join('\n')).toMatch(/rope_triceps_pushdown.json#c1 does not state/);
+    const angledAsUnder = withMods(m => { key(m, 'ez').IDS.ez_bar_curl.orientation = 'under'; });
+    expect(claimProblems(angledAsUnder, CLAIMS.claims).join('\n')).toMatch(/ez_bar_curl: its claims name the angled EZ grip, drawn under/);
     const under = withMods(m => { key(m, 'ez').IDS.reverse_curl.orientation = 'under'; });
     expect(claimProblems(under, CLAIMS.claims).join('\n')).toMatch(/reverse_curl \(under\): cards\/reverse_curl.json#c1 does not state/);
   });

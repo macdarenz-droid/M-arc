@@ -2,11 +2,11 @@
 // check reads the rendered pair (renderPair's report and the positions measured on its SVG). The sheet, the gate block and
 // tests/library/hand-pairs.test.ts all call these.
 import { HAND_PROP } from '../../layers/engine/hand.mjs';
-import { labelsOnInk, pairSpec, renderPair, THUMB_SIDE } from './pairs.mjs';
+import { CAMERA_TEXT, labelsOnInk, pairSpec, renderPair } from './pairs.mjs';
 
 const RAD = Math.PI / 180;
 /** The contact category's contactAt (golden-B precedents: chest press .3, lateral raise .6, lat pulldown 1.0). */
-export const CONTACT_AT = { heel: 0.3, mid: 0.6, base: 1.0 };
+export const CONTACT_AT = { heel: -0.1, mid: 0.6, base: 1.0, fingers: 1.15 };
 
 /** items as an array, or a throw when it is empty or not exactly n long (a sweep that sees nothing fails). */
 export function sweep(items, n, what) {
@@ -22,10 +22,13 @@ export function renderedPages(id, index) {
   return { spec: s, pages: s.wrong.map(F => { const uid = `hp-${id.replace(/_/g, '-')}-${F.key}`, r = renderPair(id, { fault: F.key, uid, index }); return { fault: F, uid, report: r.report, svg: r.svg }; }) };
 }
 
-/** u (mm along the hand from the wrist) of the drawn contact dot, from the SVG and the pose's forearm direction. */
+/** u (mm along the hand from the wrist) of the drawn contact dot, from the SVG, the pose's forearm direction and its wrist
+ *  bend (golden-B makeProj: forearm frame U along the forearm, V turned 90 deg, mirrored for an underhand grip). */
 export function contactU(m, pose, k) {
-  const th = pose.forearm * RAD, U = [Math.sin(th), Math.cos(th)];
-  return ((m.contact[0] - m.wrist[0]) * U[0] + (m.contact[1] - m.wrist[1]) * U[1]) / k;
+  const th = pose.forearm * RAD, U = [Math.sin(th), Math.cos(th)], mi = pose.mirror ? -1 : 1, V = [mi * U[1], -mi * U[0]];
+  const d = [m.contact[0] - m.wrist[0], m.contact[1] - m.wrist[1]], a = (d[0] * U[0] + d[1] * U[1]) / k, b = (d[0] * V[0] + d[1] * V[1]) / k;
+  const e = (pose.wrist?.ext ?? 0) * RAD;
+  return a * Math.cos(e) + b * Math.sin(e);
 }
 
 /** Problems of one id's pages ([] = ok). Pure on the rendered reports, so a test can plant a defect in them. */
@@ -64,6 +67,30 @@ export function problemsOf(spec, pages) {
     // none on a gravity curl (lateral raise) or the rope, whose load direction no source gives
     const hasLoad = /class="h-load/.test(svg), wantLoad = spec.loadAxis === 'along-forearm' || spec.mod.VARIANTS[spec.variant].archetype === 'pull';
     if (hasLoad !== wantLoad) bad.push(`${at}: G6 force line ${hasLoad ? 'drawn' : 'missing'}`);
+    // G6: a push on the heel runs through the wrist pivot: the Right force line passes within 0.5 px of the pivot (D-LIB7-14)
+    if (spec.contact === 'heel' && spec.loadAxis === 'along-forearm') {
+      const P = R.pivot, W = M.right.wrist;
+      if (!P) bad.push(`${at}: G6 force line not re-aimed through the pivot`);
+      else {
+        const [A, E] = [P.from, P.to], dx = E[0] - A[0], dy = E[1] - A[1], t = ((W[0] - A[0]) * dx + (W[1] - A[1]) * dy) / (dx * dx + dy * dy);
+        const off = Math.hypot(A[0] + t * dx - W[0], A[1] + t * dy - W[1]);
+        if (!(off <= 0.5 && t > 0 && t < 1)) bad.push(`${at}: G6 Right force line ${off.toFixed(1)} px from the wrist pivot`);
+        if (!svg.includes(`d="M${A[0]} ${A[1]}L${E[0]} ${E[1]}"`)) bad.push(`${at}: G6 re-aimed force line not drawn`);
+      }
+    }
+    // G7: a rope reads as a rope: one plain section (no rigid-handle core) and its knob, coaxial, at the composer's size,
+    // dashed over the fist in both halves (D-LIB7-13)
+    if (spec.handle.profile === 'rope') {
+      if (!spec.handle.knobMm) bad.push(`${at}: G7 rope without a knob`);
+      if (/class="h-eq-core"/.test(svg)) bad.push(`${at}: G7 rope drawn with a handle core`);
+      const K = R.knobs ?? [];
+      if (K.length !== 2) bad.push(`${at}: G7 ${K.length} knobs, expected 2`);
+      for (const k of K) {
+        const h = M[k.role].handle;
+        if (!h || Math.hypot(k.cx - h[0], k.cy - h[1]) > 0.01 || Math.abs(k.r - spec.handle.knobMm / 2 * R.scalePxPerMm) > 0.01) bad.push(`${at}: G7 ${k.role} knob off the rope`);
+        if (!svg.includes(`<circle class="h-eq-thin" cx="${k.cx}" cy="${k.cy}" r="${k.r}"/>`)) bad.push(`${at}: G7 ${k.role} knob not drawn`);
+      }
+    }
     // G9: no bend value over the hand's outline (estimated boxes; the gate measures the real ones)
     for (const l of uid ? labelsOnInk(svg, uid) : []) bad.push(`${at}: G9 ${l.role} label ${l.text} on the hand`);
     // G8: palm direction (forearm level: underhand = palm up, handle above the wrist) and the camera label
@@ -72,7 +99,7 @@ export function problemsOf(spec, pages) {
       if (up !== (spec.orientation === 'under')) bad.push(`${at}: G8 palm ${up ? 'up' : 'down'} for ${spec.orientation}hand`);
     }
     const cam = svg.match(/aria-label="([^.]*)\./)?.[1];
-    const camWant = spec.orientation === 'unstated' ? THUMB_SIDE : spec.camera === 'above' ? 'Seen from above' : 'Seen from the side';
+    const camWant = CAMERA_TEXT[spec.orientation] ?? (spec.camera === 'above' ? 'Seen from above' : 'Seen from the side');
     if (cam !== camWant) bad.push(`${at}: G8 camera "${cam}", want "${camWant}"`);
     // a level forearm shows the palm up or down, so it needs a stated orientation (D-LIB7-12); golden B's YOU/MACHINE
     // row only where there is a machine (D-LIB7-11)
