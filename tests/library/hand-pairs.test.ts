@@ -39,12 +39,14 @@ async function apiSha(id: string) {
   for (const [n, f] of cmp.apiCalls(api, mod.default)) h.update(`${n}\0${f()}\0`);
   return h.digest('hex');
 }
-async function approvedSvgs(): Promise<string[]> {
-  const out: string[] = [];
-  for (const id of Object.keys(opts)) {
-    const mod = await import(/* @vite-ignore */ url(`tools/plates/layers/exercises/${id}.howto.mjs`));
-    for (const [, f] of cmp.apiCalls(closeups.closeupApi(mod, opts[id]), mod.default)) for (const m of String(f()).matchAll(/<svg class="hand-svg"[\s\S]*?<\/svg>/g)) out.push(m[0]);
-  }
+// The approved golden-B hand SVGs, read from the committed golden-B page (its sha is checked here against
+// layers.PAGE_SHA256), not re-rendered: rendering every close-up of the 8 took over the 10 s hook limit on a loaded CI
+// runner (#191 source-gate @ 8945f3b). The vocabulary is the same set either way (checked once, 18 SVGs both ways).
+function approvedSvgs(): string[] {
+  const page = readFileSync('tests/howto/golden/howto-layers.html');
+  expect(layers.sha256(page)).toBe(layers.PAGE_SHA256);
+  const out = [...page.toString('utf8').matchAll(/<svg class="hand-svg"[\s\S]*?<\/svg>/g)].map(m => m[0]);
+  expect(out).toHaveLength(18);
   return out;
 }
 
@@ -225,6 +227,20 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(() => P.indexOf([...lib7(), { ...lib12, GAPS: { cable_fly: 'x' } }])).toThrow(/cable_fly is in d-handle and zz-planted/);
     expect(() => P.indexOf(P.MODULES)).not.toThrow();                // the real modules of every owner, as loaded
   });
+  it('a non-radial key with wristRange: null runs through the checks and the sheet (LIB-12 review Blocker)', async () => {
+    const view = { KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
+      render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
+      VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, contact: null, loadAxis: null, right: { view: 'zz-view' },
+        faults: { f: { label: 'Wrist bent back', side: 'extended', pose: {}, markers: [], claims: [] } } } },
+      IDS: { zz_planted_id: { variant: 'v', orientation: 'unstated', faults: ['f'], claims: [] } } };
+    const idx = P.indexOf([view]);
+    expect(C.pairProblems('zz_planted_id', idx)).toEqual([]);
+    const { body } = await sheet.buildSheet({ mods: [...clone().filter((m: any) => m.OWNER === 'LIB-7'), view] });
+    expect(body).toContain('zz_planted_id');
+    // the radial checks still run on radial keys: a radial key with no range is a problem, not a skip
+    const noRange = P.indexOf(withMods(m => { key(m, 'curl').VARIANTS.dumbbell.wristRange = null; }));
+    expect(C.pairProblems('hammer_curl', noRange).join('\n')).toMatch(/G1 no wrist range/);
+  }, 60_000);
   it('diameter: a radial key without one fails; a non-radial view without a handle is allowed (LIB-12 ask)', () => {
     expect(() => P.pairSpec('rope_triceps_pushdown', P.indexOf(withMods(m => { delete key(m, 'rope').HANDLE.diameterMm; })))).toThrow(/no explicit handle diameter/);
     const flat = { KEY: 'zz-flat', OWNER: 'LIB-12', VIEW: 'palm-flat', FILE: 'x', render: () => ({ svg: '<svg></svg>', report: {} }),
@@ -277,7 +293,7 @@ function markupProblems(svg: string, uid: string, gold: ReturnType<typeof vocab>
 
 describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
   let gold: ReturnType<typeof vocab>;
-  beforeAll(async () => { gold = vocab(await approvedSvgs()); });
+  beforeAll(() => { gold = vocab(approvedSvgs()); });
   it('H2: markup within golden B\'s vocabulary, no colour literal, ids unique and uid-prefixed', () => {
     let n = 0;
     for (const id of lib7Drawn()) for (const w of P.pairSpec(id).wrong) {
@@ -304,6 +320,16 @@ describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
       expect([id, html.length <= cap.raw, gzipSync(html).length <= cap.gz]).toEqual([id, true, true]);
     }
   });
+  it('H7: a fresh import of the mechanism (cache-busting query) draws every page byte for byte as the loaded one', async () => {
+    const fresh = await import(/* @vite-ignore */ `${url('tools/plates/library/hands/pairs.mjs')}?h7=${Date.now()}`);
+    expect(fresh.renderPair).not.toBe(P.renderPair);
+    let n = 0;
+    for (const id of lib7Drawn()) for (const w of P.pairSpec(id).wrong) {
+      expect([id, w.key, fresh.renderPair(id, { fault: w.key }).svg === P.renderPair(id, { fault: w.key }).svg]).toEqual([id, w.key, true]);
+      n++;
+    }
+    expect(n).toBe(24);
+  });
   it('inputsFor: the id\'s key file and everything the drawing imports, no other key file, all present', () => {
     for (const id of lib7Drawn()) {
       const files = P.inputsFor(id), mine = P.INDEX.drawn.get(id).mod.FILE;
@@ -317,5 +343,8 @@ describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
   it('inputsFor failure path: an import the key adds is picked up (closure, not a hand list)', () => {
     const closure = P.importClosure(['tools/plates/library/hands/hand-ez.mjs']);
     expect([...closure].sort()).toEqual(['tools/plates/library/hands/hand-ez.mjs', 'tools/plates/library/hands/radial-rules.mjs']);
+    // a planted key file with one extra import, which itself re-exports from a third file: both must be in the closure
+    const F = 'tests/library/fixtures/hands';
+    expect([...P.importClosure([`${F}/hand-fixture.mjs`])].sort()).toEqual([`${F}/deep/leaf.mjs`, `${F}/extra.mjs`, `${F}/hand-fixture.mjs`]);
   });
 });
