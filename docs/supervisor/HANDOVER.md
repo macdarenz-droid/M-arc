@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-03 ~15:05 UTC · main `4aa1b2a` (train 12 #205) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-03 ~18:15 UTC · main `4aa1b2a` (train 12 #205) · PAUSED by the owner (8.0c) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -803,6 +803,33 @@ The table is in `AGENTS.md`. Do not copy it here.
 **Procedure links:** card prerequisites and shared-file ownership: [cards.md](../../.claude/skills/supervisor/cards.md); bottlenecks and compact timing evidence: [tick.md](../../.claude/skills/supervisor/tick.md); merge trains: section 6.8; library acceptance and reforecast: [the existing library plan](https://github.com/macdarenz-droid/M-arc/blob/claude/howto-options/docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md). Keep those details in their canonical procedures. Record each block's owner, evidence and unblock condition, and each accepted result's exact commit/build evidence.
 
 The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unless marked otherwise. Session, Routine, Relay and unmentioned PR rows were not re-captured in this docs pass; read them as that historical snapshot and reconcile live before acting. The GitHub changes above supersede conflicting status rows below.
+
+### 8.0c PAUSE 10-03 ~18:10 UTC (owner: "Pause all work for now."; read first, supersedes 8.0b where they differ)
+
+**Done at the pause:**
+- Routine `trig_016ECwLTU7XRLzsYVRrwLTGe` is **disabled**; the /loop is stopped; the watcher scripts are stopped.
+- Every non-archived worker on this account got a pause message: stop, push only tested green work to its own branch, post a one-line "Paused @ sha" on its PR, and wait for "resume".
+- The account hit its session limit twice today (13:10 and 18:10 UTC resets). Workers cut off by it show FAILED: the HT-10 builder, the LIB-12 builder and reviewer, and the pilot A builder.
+- main `4aa1b2a` (train 12). Owner chat rule: when nothing needs him, the reply is exactly ".".
+
+**Stop points (heads from `git ls-remote`, 18:10):**
+
+| Card | PR @ head | State | Next on resume |
+|---|---|---|---|
+| HT-10 (finish line) | #166 @ `edeefd2` | Delta FAIL @ `b94e63a` on 1 High (the chip loop had no shown() guard) + 1 Low (D-HT3 97→68). The builder pushed the fix `edeefd2` ("a hidden Look closer chip fails…; D-HT3 68 ms"), then hit the session limit before posting FIXED. | The builder confirms `edeefd2` (check, test:tz, shards + gate) and posts FIXED. Same reviewer session_01JCTQ1so1qCTyp8CFLTE1mP delta-reviews `b94e63a..edeefd2`. Then rebuild #201 on the final head, run train 13 (HT-10 + #201 + handover), APK, finish-line message (PROMPTS 10c), then the audit lane. |
+| HT-10 CI wiring | #201 @ `99c175c` | All 8 checks green with HT-10 `b94e63a`: source-gate 48.9 min (was 59.9), ht10 shards 5-7.6 min. | Merge HT-10's final head into it; it joins HT-10's train. |
+| LIB-7 | #193 @ `1114bc1` | Delta PASS @ `1114bc1` (0/0/0/0). Rulings D-LIB7-13…17a. The single critic @ `7dd184d` was valid: every pair at the bar except rope (fixed in `1114bc1`). The panel critic @ `1114bc1` (wf_4d223c0e-330): round 1 invalid (hidden machine_chest_press C3 median 3); round 2 died at the session limit. | Rerun the panel (`lib7-critic.js`, head `1114bc1`). machine_chest_press may be a weak anchor here too (see golden-B follow-up 7): if it fails again, record it and use lat_pulldown + another clean pair, fixed before the run. Frozen until its plan-order merge. Reviewer session_013iDRuPDJxLx2bxoTiDYYJT can be archived after the panel's final PASS. |
+| LIB-12 | #191 @ `1c672b0` | FIXED posted (base LIB-7 `23ac5bb`). Fresh delta reviewer session_01TSajZZVKcAzAiBgVGN8KHj FAILED at the session limit (no verdict on #191 at the pause). The source-gate BUG-34 launch probe was red once (app code = main); one rerun. | The reviewer resumes or a fresh one starts. Then LIB-12 merges LIB-7 `1114bc1` (small delta). If the BUG-34 probe fails again anywhere, open card GATE-FLAKE-2. |
+| Pilot A (LIB-8) | #109 @ `ae7c8c0` | Panel critic VALID (wf_afdf4915-c3f, D-CRITIC-CAL2). **15 approved:** reverse_lunge, barbell_overhead_press, single_leg_romanian_deadlift, pec_fly, box_jump, plank, romanian_deadlift, dumbbell_bench_press, triceps_pushdown, dumbbell_biceps_curl, barbell_row, upright_row, incline_dumbbell_press, rope_triceps_pushdown, mountain_climbers. **Back to fix:** dumbbell_shoulder_press (Mistake arch, R5 median 3). **Held:** barbell_shrug (H3), dumbbell_fly, rear-delt fly. | The builder (session_01XaegSQJXRSyfX5CyGxkfRk, FAILED at the limit) fixes the shoulder press Mistake only and posts PILOT-A FIXED. Then a panel round on the new head. |
+| Motion fix (owner's chest-press artifact) | branch claude/motion-upgrade-9n82lj, arch `0a45d00` | wf_1722fac2-942 reached verify-4. fix-4 and verify-5 died at the session limit. The open items are all muscle shading (fill and line edge mismatch, jagged contours, pec coverage short of the armpit) plus extra measurement rows. Page and assets: scratchpad `motion-fix/` (not in the repo). | Resume the workflow (script in this session's workflow scripts, loop up to 5 rounds). Publish the artifact only after a verify PASS, then send the owner the link only. |
+| GATE-SPLIT, LIB-2 enabler, LIB-3, research writers | #194, #189, #180, research branch | Idle until HT-10 (unchanged). | unchanged |
+
+**New rulings today (all on their PRs):**
+- D-HT10-A3m: A3 limit = ceil(1.25 × max median, CI + container), capped at 400 ms.
+- D-LIB7-SHEET, D-LIB7-PIN, D-LIB7-16a, D-LIB7-17, D-LIB7-17a.
+- D-PILOTA-R5: a valid result on the current head outranks an earlier approval.
+- D-CRITIC-CAL: a plant counts as caught on its target item or on any item its original passes.
+- D-CRITIC-CAL2: a critic round is a panel of 3 (medians, majority findings); anchors exclude golden plates with verified weak spots (golden-B follow-ups 6 and 7).
 
 ### 8.0b PAUSE 10-03 and TAKEOVER (read first; supersedes 8.0a-8.8 where they differ)
 > **TAKEOVER CANCELLED (owner, 10-03 ~10:25 UTC: "Changed my mind, just continue all task. Ill do other project in my other claude acct. Dont pause here").** This supervisor (session_01FTBsxoLN135B3HvJ7sT676) keeps running every lane; the 10:50 pause trigger was deleted. The owner's other account works on a different project and must not act on M/ARC. The note below is kept for history only.
