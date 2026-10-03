@@ -299,6 +299,50 @@
           "where": "Programming"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "In the tempo reverse lunge (a progression), take three seconds to lower to the bottom and stand up slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fw-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "fw-revlunge",
+          "text": "Bend both knees to 90° to lower—taking three seconds to get to the stopping point with your right knee should finish just above the floor.",
+          "where": "3. Tempo reverse lunge"
+        },
+        {
+          "source": "fw-revlunge",
+          "text": "Push through your left foot to stand upright slowly.",
+          "where": "3. Tempo reverse lunge"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Lower slowly and come up a little quicker; a progression is to pause at the bottom for one or two seconds, working up to about five.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pel-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "pel-revlunge",
+          "text": "\"So you want to slowly lower yourself down and then you can go a little quicker on the way up.\"",
+          "where": "Common mistakes: too fast"
+        },
+        {
+          "source": "pel-revlunge",
+          "text": "One easy way Schumer likes to progress reverse lunges is to spend more time at the bottom. Start by adding just one or two seconds, then you could work up to about five seconds.",
+          "where": "Progressions"
+        }
+      ]
     }
   ],
   "sources": [
@@ -351,6 +395,26 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "fw-revlunge",
+      "url": "https://www.fitandwell.com/exercise/bodyweight-exercises/five-levels-of-reverse-lunge-to-build-more-strength-balance-and-power-without-weights",
+      "title": "Five levels of reverse lunge (Fit&Well; Amber Woolcock, certified personal trainer)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "pel-revlunge",
+      "url": "https://www.onepeloton.com/blog/reverse-lunge",
+      "title": "Reverse Lunge: How to Do It, Benefits, & Variations (Peloton; Rebecca Schumer, physical therapist)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
     }
   ],
   "plate": {
@@ -395,10 +459,14 @@
     ],
     "tempo": {
       "up": null,
-      "down": null,
+      "down": 3,
       "pause": null,
-      "text": "Controlled, slow descent; no crash into the bottom. No source gives seconds.",
-      "claim": "c7"
+      "text": "Lower slowly, rise a little quicker (c7, c16). The only number found is three seconds down in a tempo progression (c15); no source gives seconds for the rise. A bottom pause of 1–2 s, up to about 5 s, is a progression (c16), not the base tempo.",
+      "claim": [
+        "c7",
+        "c15",
+        "c16"
+      ]
     },
     "variantLine": "exercises.json lists Dumbbells / Barbell. The plate draws dumbbells at the sides (c11). Stance, step, shin, trunk and weight-sharing claims (c1-c5) come from a barbell source (ACE) and a load-agnostic source (Catalyst), so they hold for both."
   },
@@ -549,8 +617,11 @@
   "anchorNote": "Catalyst Athletics reverse lunge page read in full; ACE reverse lunge page also read in full.",
   "unsourced": [
     "Knee tracking over the toes (front view) — no reverse-lunge source found.",
-    "Tempo in seconds.",
+    "Seconds for the rise (only \"a little quicker\", c16); the 3-second lowering comes from a tempo progression (c15).",
     "Thumb and wrist for the dumbbell hold.",
     "Breathing."
+  ],
+  "notes": [
+    "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c15 (Fit&Well, Woolcock) and c16 (Peloton, Schumer) added. down: 3 is from the tempo progression, not the standard lunge; the supervisor decides whether the plate uses it."
   ]
 }

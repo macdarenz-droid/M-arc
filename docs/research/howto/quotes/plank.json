@@ -106,6 +106,30 @@
       "text": "Finally, ADRET provoked a higher RPE compared with ABANT (p = 0.000), ABRET (p = 0.001), and ADANT (p = 0.015).",
       "status": "verbatim",
       "closest": "Finally, ADRET provoked a higher RPE compared with ABANT (p = 0.000), ABRET (p = 0.001), and ADANT (p = 0.015)."
+    },
+    {
+      "claim": "c12",
+      "source": "harvard-plank",
+      "text": "Front plank Reps: 1–6 Sets: 1 Hold: 10–60 seconds Rest: 30–60 seconds between reps",
+      "status": "verbatim",
+      "closest": "Front plank Reps: 1–6 Sets: 1 Hold: 10–60 seconds Rest: 30–60 seconds between reps",
+      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+    },
+    {
+      "claim": "c12",
+      "source": "harvard-plank",
+      "text": "\"If you can hold it for three seconds, try it for four. If you can hold it for four, try to get to 10 seconds,\" says Dr. Edward Phillips, assistant professor of physical medicine and rehabilitation at Harvard Medical School.",
+      "status": "verbatim",
+      "closest": "\"If you can hold it for three seconds, try it for four. If you can hold it for four, try to get to 10 seconds,\" says Dr. Edward Phillips, assistant professor of physical medicine and rehabilitation at Harvard Medical School.",
+      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+    },
+    {
+      "claim": "c12",
+      "source": "harvard-plank",
+      "text": "The ultimate goal is to be able to hold your plank for a full minute.",
+      "status": "verbatim",
+      "closest": "The ultimate goal is to be able to hold your plank for a full minute.",
+      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
     }
   ]
 }

@@ -141,6 +141,46 @@
       "text": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement.",
       "status": "verbatim",
       "closest": "Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement."
+    },
+    {
+      "claim": "c13",
+      "source": "lohre-mc",
+      "text": "Mountain climbers are usually programmed by time rather than reps. Beginners should start with 2 to 3 sets of 15 seconds of work and 15 seconds of rest, which totals about 1 to 2 minutes.",
+      "status": "verbatim",
+      "closest": "Mountain climbers are usually programmed by time rather than reps. Beginners should start with 2 to 3 sets of 15 seconds of work and 15 seconds of rest, which totals about 1 to 2 minutes.",
+      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+    },
+    {
+      "claim": "c13",
+      "source": "lohre-mc",
+      "text": "At intermediate level, use 3 to 4 sets of 20 seconds on and 20 seconds off, and if you are well conditioned, 4 to 5 sets of 30 seconds on and 30 seconds off.",
+      "status": "verbatim",
+      "closest": "At intermediate level, use 3 to 4 sets of 20 seconds on and 20 seconds off, and if you are well conditioned, 4 to 5 sets of 30 seconds on and 30 seconds off.",
+      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+    },
+    {
+      "claim": "c14",
+      "source": "hl-mc",
+      "text": "As part of an overall program focusing on muscular strength and conditioning, complete 2–3 sets of 10–15 slow and controlled repetitions.",
+      "status": "verbatim",
+      "closest": "As part of an overall program focusing on muscular strength and conditioning, complete 2–3 sets of 10–15 slow and controlled repetitions.",
+      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+    },
+    {
+      "claim": "c14",
+      "source": "hl-mc",
+      "text": "As part of a cardiovascular program with a HIIT focus, complete 6–8 rounds of fast mountain climbers for 20 seconds, with a 10-second rest in between.",
+      "status": "verbatim",
+      "closest": "As part of a cardiovascular program with a HIIT focus, complete 6–8 rounds of fast mountain climbers for 20 seconds, with a 10-second rest in between.",
+      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
+    },
+    {
+      "claim": "c14",
+      "source": "hl-mc",
+      "text": "They can also be performed at a slow, controlled tempo, which is better for beginners.",
+      "status": "verbatim",
+      "closest": "They can also be performed at a slow, controlled tempo, which is better for beginners.",
+      "note": "added in the tempo research (2026-10-02); checked by the writer by script against the raw page text fetched with curl, not by the separate fetcher"
     }
   ]
 }

@@ -619,13 +619,15 @@
       "c9"
     ]
   },
-  "tierA": { "wayOut": {
-    "text": "Step down, never jump down; stop the set when tired.",
-    "claims": [
-      "c6",
-      "c11"
-    ]
-  } },
+  "tierA": {
+    "wayOut": {
+      "text": "Step down, never jump down; stop the set when tired.",
+      "claims": [
+        "c6",
+        "c11"
+      ]
+    }
+  },
   "anchorSource": "nasm-boxjump",
   "anchorNote": "NASM box jumps page read in full; Catalyst Athletics box jump page also read in full.",
   "unsourced": [
@@ -633,5 +635,11 @@
     "Where on the foot to land (whole foot vs forefoot).",
     "Box surface or stability checks beyond 'sturdy'.",
     "Breathing."
+  ],
+  "gaps": [
+    "No sourced tempo: no named source read gives seconds for the take-off, the landing or the step-down (2026-10-02: NASM, Catalyst Athletics, Experience Life, Onnit, Outperform Sports). NASM says only to step down, reset and \"allow adequate recovery between repetitions\". Outperform Sports' 2-second hold belongs to a no-countermovement drill and its author is unnamed, so it is not used."
+  ],
+  "notes": [
+    "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): no sourced seconds found; recorded in gaps."
   ]
 }
