@@ -159,7 +159,8 @@ jobs:
           test -f "$PKG/NativeUiPlugin.java" || exit 1
           test -f "$PKG/watch/WatchBridgePlugin.java" || exit 1
           test -f "$PKG/watch/core/HeartRateMeasurement.java" || exit 1
-          grep -q 'android.permission.health.READ_HEART_RATE' android/app/src/main/AndroidManifest.xml || exit 1
+          for P in READ_STEPS READ_SLEEP READ_ACTIVE_CALORIES_BURNED; do grep -q "android.permission.health.$P\"" android/app/src/main/AndroidManifest.xml || exit 1; done
+          if grep -q 'android.permission.health.READ_HEART_RATE"' android/app/src/main/AndroidManifest.xml; then exit 1; fi
           grep -q 'android.permission.health.READ_RESTING_HEART_RATE' android/app/src/main/AndroidManifest.xml || exit 1
           grep -q 'android.permission.BLUETOOTH_CONNECT' android/app/src/main/AndroidManifest.xml || exit 1
           grep -q 'foregroundServiceType="connectedDevice"' android/app/src/main/AndroidManifest.xml || exit 1

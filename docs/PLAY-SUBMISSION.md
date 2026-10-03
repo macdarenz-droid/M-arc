@@ -155,7 +155,7 @@ All functionality is available without special access: there is no login. The co
 
 ## Store listing draft
 
-Every claim maps to shipped code. Owner rules: no contacts, links or sources in the text (LR-23); nothing that states the obvious or talks down (AGENTS.md UI copy). The How-to has full guides for 8 exercises today (`src/howto/generated/ht-*.ts`); the 153-exercise library arrives in batches, so the listing says 8 until more ship. Update this section when a batch ships.
+Every claim maps to shipped code. Owner rules: no contacts, links or sources in the text (LR-23); nothing that states the obvious or talks down (AGENTS.md UI copy). The How-to has full guides for 8 exercises today (`src/howto/generated/ht-*.ts`); the 153-exercise library arrives in batches. The listing names no count, so it stays true as batches ship (owner, 2026-10-03, entered in the Console). Claim the full library only once it has shipped.
 
 **App name (30 max):** M/ARC (`capacitor.config.json:3`)
 
@@ -168,7 +168,7 @@ Every claim maps to shipped code. Owner rules: no contacts, links or sources in 
 > - Today: your planned workout and a readiness score.
 > - Body: a front and back muscle map showing which muscles have recovered.
 > - Progress: weekly volume and a trend per exercise.
-> - How-to: step-by-step form guides for 8 exercises.
+> - How-to: step-by-step form guides with technical drawings.
 > - Heart rate from a Bluetooth watch or chest strap. Sleep and resting heart rate from Health Connect feed the readiness score.
 > - Escobar, an optional AI coach that reads your log. Off until you turn it on; health and body readings are sent only if you switch on sharing.
 > - Share cards for finished workouts.
@@ -179,4 +179,4 @@ Every claim maps to shipped code. Owner rules: no contacts, links or sources in 
 > M/ARC is not a medical device and does not diagnose, treat, cure, or prevent any medical condition.
 > For medical advice, diagnosis or treatment, consult a healthcare professional.
 
-Claim → code: targets (`src/brain/retarget.ts`, `src/slices/workout/Train.tsx:27-28,108-109`), PR badge (`src/slices/workout/Train.tsx:903`), planned workout and readiness on Today (`src/slices/today/Today.tsx:104,176`), muscle map (`src/slices/body/Body.tsx`), weekly volume and lift trend (`src/slices/history/volumeChart.ts`, `src/slices/history/progressTrend.ts`), 8 guides (`src/howto/generated/ht-*.ts`), Bluetooth heart rate (`native/watch/WatchService.java:19`), sleep and resting heart rate into readiness (`src/brain/readiness.ts:41-42`, `src/brain/recovery.ts:156`), coach off by default (`src/core/models.ts:473,476`), share cards (`src/slices/share/cards.ts:1-5`), five themes (`src/theme/themes.ts:8`), no ads (see Ads).
+Claim → code: targets (`src/brain/retarget.ts`, `src/slices/workout/Train.tsx:27-28,108-109`), PR badge (`src/slices/workout/Train.tsx:903`), planned workout and readiness on Today (`src/slices/today/Today.tsx:104,176`), muscle map (`src/slices/body/Body.tsx`), weekly volume and lift trend (`src/slices/history/volumeChart.ts`, `src/slices/history/progressTrend.ts`), guides with technical drawings (`src/howto/generated/ht-*.ts`, 8 today), Bluetooth heart rate (`native/watch/WatchService.java:19`), sleep and resting heart rate into readiness (`src/brain/readiness.ts:41-42`, `src/brain/recovery.ts:156`), coach off by default (`src/core/models.ts:473,476`), share cards (`src/slices/share/cards.ts:1-5`), five themes (`src/theme/themes.ts:8`), no ads (see Ads).

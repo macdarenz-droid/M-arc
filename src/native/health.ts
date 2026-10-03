@@ -11,9 +11,7 @@ export interface HealthSummaryRaw {
   steps?: number;
   sleepMinutes?: number;
   restingHR?: number;
-  workoutHR?: number;
   activeCalories?: number;
-  heartRateTime?: string;
   stepsTime?: string;
   activeCaloriesTime?: string;
   sleepEndTime?: string;
@@ -94,7 +92,7 @@ export function healthAvailable(): boolean {
 export const kcalGuard = (v: number | undefined): number | undefined => (v != null && v > 20_000 ? Math.round(v / 1000) : v);
 
 /** The types the plugin reads; `missing` and `failed` name them by these. */
-const HEALTH_TYPES = 5;
+const HEALTH_TYPES = 4;
 
 /** Pure: maps the plugin's raw summary to a day's health record. Zero readings read as absent, not zero. */
 export function mapHealthSummary(r: HealthSummaryRaw, day: string, syncedAt: string): DailyHealth | null {
@@ -110,8 +108,9 @@ export function mapHealthSummary(r: HealthSummaryRaw, day: string, syncedAt: str
     day,
     restingHr: (restingOnDay && r.restingHR) || undefined,
     ...(restingOnDay && r.restingHR && r.restingHRTime ? { restingHrAt: r.restingHRTime } : {}),
-    latestHr: r.workoutHR || undefined,
-    latestHrAt: r.heartRateTime,
+    // PLAY-HR: no feature reads session heart rate from Health Connect (it comes from the watch), so the
+    // plugin no longer sends workoutHR/heartRateTime. latestHr/latestHrAt stay in DailyHealth (models.ts)
+    // only so a day saved by an older build still loads.
     sleepMinutes: r.sleepSessions ? sleep?.minutes : r.sleepMinutes || undefined,
     sleepEndAt: r.sleepSessions ? sleep?.endAt : r.sleepEndTime,
     steps: r.steps || undefined,

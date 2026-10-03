@@ -12,7 +12,6 @@ import android.health.connect.ReadRecordsRequestUsingFilters;
 import android.health.connect.ReadRecordsResponse;
 import android.health.connect.TimeInstantRangeFilter;
 import android.health.connect.datatypes.ActiveCaloriesBurnedRecord;
-import android.health.connect.datatypes.HeartRateRecord;
 import android.health.connect.datatypes.RestingHeartRateRecord;
 import android.health.connect.datatypes.Record;
 import android.health.connect.datatypes.SleepSessionRecord;
@@ -50,7 +49,6 @@ import java.util.concurrent.TimeUnit;
                 @Permission(alias = "health", strings = {
                         "android.permission.health.READ_STEPS",
                         "android.permission.health.READ_SLEEP",
-                        "android.permission.health.READ_HEART_RATE",
                         "android.permission.health.READ_ACTIVE_CALORIES_BURNED",
                         "android.permission.health.READ_RESTING_HEART_RATE",
                 })
@@ -81,10 +79,9 @@ public class HealthConnectNativePlugin extends Plugin {
 
     static final String P_STEPS = "android.permission.health.READ_STEPS";
     static final String P_SLEEP = "android.permission.health.READ_SLEEP";
-    static final String P_HEART = "android.permission.health.READ_HEART_RATE";
     static final String P_CALORIES = "android.permission.health.READ_ACTIVE_CALORIES_BURNED";
     static final String P_RESTING = "android.permission.health.READ_RESTING_HEART_RATE";
-    static final String[] ALL = { P_STEPS, P_SLEEP, P_HEART, P_CALORIES, P_RESTING };
+    static final String[] ALL = { P_STEPS, P_SLEEP, P_CALORIES, P_RESTING };
 
     /** True when at least one data type may be read: each type is read on its own, so one refusal never blocks the rest. */
     private boolean hasReadPermissions() {
@@ -264,7 +261,6 @@ public class HealthConnectNativePlugin extends Plugin {
         out.put("steps", 0);
         out.put("sleepMinutes", 0);
         out.put("restingHR", 0);
-        out.put("workoutHR", 0);
         out.put("activeCalories", 0);
         return out;
     }
@@ -286,12 +282,11 @@ public class HealthConnectNativePlugin extends Plugin {
                 Instant start = end.minus(2, ChronoUnit.DAYS);
                 JSArray failed = new JSArray();
 
-                // Today's totals come from aggregates; the 48 h read keeps sleep and heart rate.
+                // Today's totals come from aggregates; the 48 h read keeps sleep and resting heart rate.
                 Long stepsTotal = aggregateIfGranted(P_STEPS, StepsRecord.STEPS_COUNT_TOTAL, "Steps", failed);
                 Energy energyTotal = aggregateIfGranted(P_CALORIES, ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL, "ActiveCalories", failed);
                 List<SleepSessionRecord> sleepRecords = readIfGranted(P_SLEEP, SleepSessionRecord.class, start, end, failed);
                 List<RestingHeartRateRecord> restingRecords = readIfGranted(P_RESTING, RestingHeartRateRecord.class, start, end, failed);
-                List<HeartRateRecord> heartRecords = readIfGranted(P_HEART, HeartRateRecord.class, start, end, failed);
 
                 long steps = stepsTotal == null ? 0 : stepsTotal;
 
@@ -333,17 +328,6 @@ public class HealthConnectNativePlugin extends Plugin {
                     }
                 }
 
-                long latestHr = 0;
-                Instant heartTime = null;
-                for (HeartRateRecord r : heartRecords) {
-                    for (HeartRateRecord.HeartRateSample s : r.getSamples()) {
-                        if (heartTime == null || s.getTime().isAfter(heartTime)) {
-                            heartTime = s.getTime();
-                            latestHr = s.getBeatsPerMinute();
-                        }
-                    }
-                }
-
                 // Energy.getInCalories() is small calories: kcal = / 1000.
                 long activeKcal = energyTotal == null ? 0 : Math.round(energyTotal.getInCalories() / 1000.0);
 
@@ -354,9 +338,7 @@ public class HealthConnectNativePlugin extends Plugin {
                 out.put("steps", steps);
                 out.put("sleepMinutes", sleepMinutes);
                 out.put("restingHR", resting);
-                out.put("workoutHR", latestHr);
                 out.put("activeCalories", activeKcal);
-                if (heartTime != null) out.put("heartRateTime", heartTime.toString());
                 if (stepsTotal != null) out.put("stepsTime", end.toString());
                 if (energyTotal != null) out.put("activeCaloriesTime", end.toString());
                 if (sleepEnd != null) out.put("sleepEndTime", sleepEnd.toString());
