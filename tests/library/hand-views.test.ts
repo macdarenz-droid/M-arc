@@ -30,7 +30,8 @@ function lib12Sweep(all: any[]) {
   for (const m of mine) {
     const s = SCOPE[m.KEY];
     if (!s) throw new Error(`no scope for ${m.KEY}`);
-    expect([m.KEY, Object.keys(m.IDS).sort(), Object.keys(m.GAPS).sort()]).toEqual([m.KEY, s.drawn, s.gaps]);
+    const [d, g] = [Object.keys(m.IDS).sort(), Object.keys(m.GAPS).sort()];
+    if (d.join() !== s.drawn.join() || g.join() !== s.gaps.join()) throw new Error(`${m.KEY}: drawn [${d}] gaps [${g}] differ from scope drawn [${s.drawn}] gaps [${s.gaps}]`);
     sweep([...Object.keys(m.IDS), ...Object.keys(m.GAPS)], s.drawn.length + s.gaps.length, `${m.KEY} scope`);
     if (m.CENSUS.count !== s.drawn.length + s.gaps.length && m.KEY !== 'implement') throw new Error(`${m.KEY}: census ${m.CENSUS.count}`);
     drawn += Object.keys(m.IDS).length; gaps += Object.keys(m.GAPS).length;
@@ -69,7 +70,10 @@ describe('LIB-12 A5: sweeps (drawn + gap = census scope per key)', () => {
     const imp = mods.find(m => m.KEY === 'implement'), pf = mods.find(m => m.KEY === 'palm-flat');
     const { kettlebell_swing: _k, ...rest } = imp.GAPS;
     const bad = mods.map(m => (m === imp ? { ...m, IDS: { kettlebell_swing: pf.IDS.push_up }, VARIANTS: pf.VARIANTS, GAPS: rest } : m));
-    expect(() => lib12Sweep(bad)).toThrow();
+    expect(() => lib12Sweep(bad)).toThrow(/sweep drawn keys: 6 items, expected 5/);                     // a gap key became a drawn key
+    const { bench_dip: _b, ...pfGaps } = pf.GAPS;                                                              // a gap drawn inside a drawn key
+    const bad2 = mods.map(m => (m === pf ? { ...m, IDS: { ...pf.IDS, bench_dip: pf.IDS.push_up }, GAPS: pfGaps } : m));
+    expect(() => lib12Sweep(bad2)).toThrow(/palm-flat: drawn \[bear_crawl,bench_dip,.*\] gaps \[renegade_row\] differ from scope/);
   });
   it('mutation: an id in two keys is red', () => {
     const fr = mods.find(m => m.KEY === 'front-rack');
@@ -231,4 +235,4 @@ describe('LIB-12 A1: golden B\'s 8 close-ups unchanged with every hand-*.mjs loa
   }, 120_000);
 });
 
-const CLAIMS_SHA = 'e04b0a47db31f9f5d58bd5888825537e4fea2efcf241cdf257df7196d9d48ee7';
+const CLAIMS_SHA = '6ad0a1da3c26819b875361f36db041889c38f83f0976983a175c834e63a54cf6';

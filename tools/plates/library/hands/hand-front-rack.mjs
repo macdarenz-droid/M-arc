@@ -17,9 +17,9 @@ export const VARIANTS = {
     drawn: { 'bar on the shoulders': [`${X}#c1`, `${X}#c5`, `${F}#c3`], 'loose grip, fingers on the bar': [`${X}#c4`, `${X}#c5`, `${F}#c4`], 'elbows high': [`${X}#c5`, `${F}#c4`] },
     faults: {
       'bar-off-shoulders': { label: 'Bar on hands', side: 'lifted', pose: { barLiftMm: 20, barForwardMm: 40, upperArmDeg: -25, barInPalm: true }, markers: [],
-        claims: [`${X}#c4`], alt: 'Bar lifted off the shoulders and held up in the hands, elbows down.' },
+        claims: [`${X}#c4`, `${F}#c7`], alt: 'Bar lifted off the shoulders and held up in the hands, elbows down.' },
     },
-    claims: [`${X}#c1`, `${X}#c4`, `${X}#c5`, `${F}#c3`, `${F}#c4`],
+    claims: [`${X}#c1`, `${X}#c4`, `${X}#c5`, `${F}#c3`, `${F}#c4`, `${F}#c7`],
   },
 };
 export const IDS = { front_squat: { variant: 'rack', orientation: 'under', faults: ['bar-off-shoulders'], claims: [`${X}#c5`] } };

@@ -2115,3 +2115,9 @@ Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 202
 - **D-HT9-A5-feel.** HT-8's feel rows are golden B's accordion: opening one closes the others. So "every collapsed control opened" means every other control opened, plus exactly one open row per feel section (the last row). A5 first scrolls to the end and waits for the feel section to mount, so its rows are really there. It throws if a feel section has more or less than one open row.
 - **Budgets**: on this head, `HowToSheet-*.js` measures 28076 / 9752 B, over HT-8's 27168 / 9375 ceiling, and `HowToSheet-*.css` measures 27581 / 4486 B. The new ceilings are measured + 10 %: 30884 / 10728 and 30340 / 4935.
 - **Source**: supervisor rulings on #113, 2026-10-01 12:32 (comment 5931535634), and the catch-up message of 2026-10-02.
+- **D-LIB12-9 (pose drawing values, review Low on #191 @ 1ff38b6)**: D-LIB12-2 named the sizes. The pose values below are drawing values too. No source gives a number for any of them. Each is chosen to show its claim clearly and to sit inside its view's check bound. They are flagged on the sheet like the sizes, and never shown as facts.
+  - **wall-ball:** Right palms 47° below the horizontal, so the wrists land at c3's 152 mm, and forearms at 95°. Wrong palms at 0° on the sides, forearms at 25° (elbows out).
+  - **front-rack:** Right upper arm 10° above the horizontal, bar on the shelf. Wrong upper arm 25° below the horizontal, bar lifted 20 mm and moved 40 mm forward, held in the palm.
+  - **goblet:** Wrong weight 60 mm off the chest.
+  - **palm-flat:** cupped Wrong palm tilted 10° about the heel, which gives a 6.8 mm mid-palm gap. Hand-ahead Wrong forearm tilted 25°.
+  - The front-rack Wrong's lowered elbows now also cite `cards/front_squat.json#c7` ("Keep the elbows high, or the bar may slip"), pinned in `lib12-claims.json`.
