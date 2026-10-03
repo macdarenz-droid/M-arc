@@ -304,6 +304,16 @@ describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
       expect([id, html.length <= cap.raw, gzipSync(html).length <= cap.gz]).toEqual([id, true, true]);
     }
   });
+  it('H7: a fresh import of the mechanism (cache-busting query) draws every page byte for byte as the loaded one', async () => {
+    const fresh = await import(/* @vite-ignore */ `${url('tools/plates/library/hands/pairs.mjs')}?h7=${Date.now()}`);
+    expect(fresh.renderPair).not.toBe(P.renderPair);
+    let n = 0;
+    for (const id of lib7Drawn()) for (const w of P.pairSpec(id).wrong) {
+      expect([id, w.key, fresh.renderPair(id, { fault: w.key }).svg === P.renderPair(id, { fault: w.key }).svg]).toEqual([id, w.key, true]);
+      n++;
+    }
+    expect(n).toBe(24);
+  });
   it('inputsFor: the id\'s key file and everything the drawing imports, no other key file, all present', () => {
     for (const id of lib7Drawn()) {
       const files = P.inputsFor(id), mine = P.INDEX.drawn.get(id).mod.FILE;
@@ -317,5 +327,8 @@ describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
   it('inputsFor failure path: an import the key adds is picked up (closure, not a hand list)', () => {
     const closure = P.importClosure(['tools/plates/library/hands/hand-ez.mjs']);
     expect([...closure].sort()).toEqual(['tools/plates/library/hands/hand-ez.mjs', 'tools/plates/library/hands/radial-rules.mjs']);
+    // a planted key file with one extra import, which itself re-exports from a third file: both must be in the closure
+    const F = 'tests/library/fixtures/hands';
+    expect([...P.importClosure([`${F}/hand-fixture.mjs`])].sort()).toEqual([`${F}/deep/leaf.mjs`, `${F}/extra.mjs`, `${F}/hand-fixture.mjs`]);
   });
 });
