@@ -7363,6 +7363,390 @@ for (const theme of ['silent-black', 'paper']) {
   console.log(`${tag} HT4-A6: state driver self-check, ${gb.IDS.length} exercises x ${gb.THEMES.length} themes, ${selfCheckBad} problems, no-match throw ${captureThrew ? 'verified' : 'NOT verified'}`);
 }
 
+// HT-9: gate block "HT-9 C19" (card HT-9; plan docs/howto/LR23-PLAN.md section 8, amendment D-LR23-8 item 5,
+// claude/lr23-plan). Owner decision LR-23, 2026-09-30: "Dont put any emergency or whatever contacts. Even the
+// source remove it in app ui." On the real app's How-to sheet, every approved exercise, all 5 themes, with every
+// <details> opened and every collapse button (aria-expanded="false") clicked: no link, no source/evidence UI, no
+// contact or source wording anywhere shown, and exactly one disclaimer after the last red-flag block. HT-10
+// re-runs this on the final sheet, once HT-6/7/8's zoom chips and feel rows also exist to open.
+{
+  const tag = 'HT-9 C19';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const disclaimerM = readFileSync(join(ROOT, 'src/howto/archetypes.ts'), 'utf8').match(/export const DISCLAIMER: string = "((?:[^"\\]|\\.)*)";/);
+  if (!disclaimerM) throw new Error(`${tag}: no DISCLAIMER in src/howto/archetypes.ts`);
+  const DISCLAIMER = JSON.parse(`"${disclaimerM[1]}"`);
+  const LABEL_WORDS = ['Measured', 'Mechanics', 'Coaching consensus', 'Weak for this use'];
+  const patterns = ['CONTACT_RE', 'SOURCE_RE', 'SOURCE_CS_RE'].map(k => ({ source: ESC_NC_RE[k].source, flags: ESC_NC_RE[k].flags }));
+  let bad = 0, sheets = 0;
+  await Promise.all(H.HT_THEMES.map(async theme => {   // themes side by side, each in its own context
+    const { ctx, page } = await H.openAppTrain(browser, PORT, theme, { onError: m => { errors.push(`${tag} ${theme}: page error: ${m}`); bad++; } });
+    try {
+      for (const [index, [, id]] of H.HT_PLATES.entries()) {
+        await H.openHowTo(page, index);
+        await page.locator('dialog.sheet.ht .ht-disclaimer').waitFor({ state: 'attached', timeout: 5000 });   // Setup and Risks mount after the plate's first paint
+        sheets++;
+        await page.evaluate(() => { document.querySelectorAll('dialog.sheet.ht details:not([open])').forEach(d => { d.open = true; }); });
+        for (let i = 0; i < 4; i++) {
+          const opened = await page.evaluate(() => {
+            const btns = [...document.querySelectorAll('dialog.sheet.ht [aria-expanded="false"]')];
+            btns.forEach(b => b.click());
+            return btns.length;
+          });
+          if (!opened) break;
+          // HT-8's feel rows keep their finished entry animation (fill: forwards) in document.getAnimations(), so
+          // H.settleApp's "no animation at all" never comes true here: wait until none is running (D-HT9-C19-settle)
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForFunction(() => document.getAnimations().every(a => a.playState !== 'running' && !a.pending), null, { timeout: 8000 });
+          await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+        }
+        const found = await page.evaluate(([pats, words, disclaimer]) => {
+          const dlg = document.querySelector('dialog.sheet.ht');
+          const problems = [];
+          const res = pats.map(p => new RegExp(p.source, p.flags));
+          const linkN = dlg.querySelectorAll('a').length;
+          if (linkN) problems.push(`${linkN} <a> element(s)`);
+          const targetN = dlg.querySelectorAll('[target]').length;
+          if (targetN) problems.push(`${targetN} [target] element(s)`);
+          const bannedN = dlg.querySelectorAll('.srcs,.src-cite,.src-ev,.src-key,.ev').length;
+          if (bannedN) problems.push(`${bannedN} banned-class element(s) (.srcs/.src-cite/.src-ev/.src-key/.ev)`);
+          for (const el of dlg.querySelectorAll('*')) {
+            const own = [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent.trim()).join(' ').trim();
+            if (own && words.includes(own)) problems.push(`element with own text "${own}" (an evidence label word)`);
+          }
+          const strings = [dlg.innerText];
+          for (const el of dlg.querySelectorAll('[aria-label],[title],[alt]')) {
+            for (const a of ['aria-label', 'title', 'alt']) { const v = el.getAttribute(a); if (v) strings.push(v); }
+          }
+          for (const s of strings) for (const re of res) { const m = s.match(re); if (m) problems.push(`"${m[0]}" matches ${re}`); }
+          const disclaimers = [...dlg.querySelectorAll('.ht-disclaimer')];
+          if (disclaimers.length !== 1) problems.push(`${disclaimers.length} .ht-disclaimer element(s), expected 1`);
+          else if (disclaimers[0].textContent !== disclaimer) problems.push(`disclaimer text "${disclaimers[0].textContent}" !== owner's text`);
+          const redflags = [...dlg.querySelectorAll('.redflag')];
+          if (redflags.length && disclaimers.length === 1) {
+            const last = redflags[redflags.length - 1];
+            const pos = last.compareDocumentPosition(disclaimers[0]);
+            if (!(pos & Node.DOCUMENT_POSITION_FOLLOWING)) problems.push('the disclaimer is not after the last .redflag');
+          }
+          return problems;
+        }, [patterns, LABEL_WORDS, DISCLAIMER]);
+        for (const p of found) { errors.push(`${tag} ${theme}/${id}: ${p}`); bad++; }
+        await H.closeHowTo(page);
+      }
+    } finally {
+      await ctx.close();
+    }
+  }));
+  console.log(`${tag}: ${H.HT_THEMES.length} themes x ${H.HT_PLATES.length} exercises (${sheets} sheets), ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+}
+
+// HT-9 critic fix (HT-10 sweep on #166, 2026-10-01; review of #113 finding 2): Setup's "Show me the ..." buttons
+// (dialog.sheet.ht .setup .st-show, never HT-6's .hm-show) must each open their close-up through HT-6's zoom host
+// (events.ts: Setup dispatches ht:zoom-open itself). Taps every setup button by its id, on every approved exercise,
+// in Silent Black and Paper. The ids must be golden B's own (17, `<id>-step-<n>-show` in howto-layers.html). A
+// button opens when its .zx panel shows, visible, with the plate box hidden; a tap that opens nothing fails. A hand
+// close-up (HT-6, key "hand") must always open; a posture close-up must open once HT-7's posture section is in this build, and
+// is counted as "pending HT-7" until then (supervisor ruling on #113).
+{
+  const tag = 'HT-9 Show';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const { existsSync } = await import('node:fs');
+  const HT7 = existsSync(join(ROOT, 'src/slices/howto/sections/Posture.tsx'));
+  const GOLD_IDS = [...new Set([...readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'), 'utf8').matchAll(/id="([a-z-]+-step-\d+-show)"/g)].map(m => m[1]))].sort();
+  if (GOLD_IDS.length !== 17) errors.push(`${tag}: golden B has ${GOLD_IDS.length} setup "Show me" buttons, expected 17`);
+  let bad = 0, opened = 0, pending = 0;
+  await Promise.all(['silent-black', 'paper'].map(async theme => {   // both themes side by side, each in its own context
+    const { ctx, page } = await H.openAppTrain(browser, PORT, theme, { onError: m => { errors.push(`${tag} ${theme}: page error: ${m}`); bad++; } });
+    const seen = [];
+    try {
+      for (const [index, [id]] of H.HT_PLATES.entries()) {
+        await H.openHowTo(page, index);
+        await page.locator('dialog.sheet.ht .setup').waitFor({ state: 'attached', timeout: 5000 });
+        await H.settleApp(page);
+        const btns = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet.ht .setup .st-show')].map(b => ({ id: b.id, key: b.dataset.zoom, hm: b.classList.contains('hm-show') })));
+        for (const btn of btns) {
+          seen.push(btn.id);
+          if (btn.hm) { errors.push(`${tag} ${theme}/${id}: ${btn.id} is a handling-mistake button inside Setup`); bad++; }
+          await page.evaluate(i => document.getElementById(i).click(), btn.id);
+          // a close-up that must open gets 8 s; a posture tap before HT-7 (pending, never counted as open) gets 1 s
+          const must = HT7 || btn.key === 'hand';
+          const shown = await page.locator(`dialog.sheet.ht .zx[data-zoom="${btn.key}"]`).waitFor({ state: 'visible', timeout: must ? 8000 : 1000 }).then(() => true).catch(() => false);
+          await H.settleApp(page);
+          const state = await page.evaluate(k => {
+            const dlg = document.querySelector('dialog.sheet.ht'), panel = dlg.querySelector(`.zx[data-zoom="${k}"]`);
+            if (!panel || panel.hidden) return 'no .zx panel opened';
+            const r = panel.getBoundingClientRect();
+            if (r.width <= 0 || r.height <= 0) return 'the panel has no visible size';
+            const plate = dlg.querySelector('.ht-plate-fit');
+            if (plate && !plate.hidden) return 'the plate box is not hidden with the close-up open';
+            return null;
+          }, btn.key);
+          if (shown && !state) opened++;
+          else if (!HT7 && btn.key !== 'hand') pending++;   // the hand close-up's key is "hand" in every generated How-to
+          else { errors.push(`${tag} ${theme}/${id}: ${btn.id} (${btn.key}): ${state ?? 'nothing opened'}`); bad++; }
+          await page.evaluate(() => document.querySelector('dialog.sheet.ht .zx:not([hidden]) .zx-close')?.click());
+          await H.settleApp(page);
+        }
+        await H.closeHowTo(page);
+      }
+    } finally {
+      await ctx.close();
+    }
+    if (JSON.stringify([...seen].sort()) !== JSON.stringify(GOLD_IDS)) { errors.push(`${tag} ${theme}: setup "Show me" ids ${JSON.stringify([...seen].sort())} !== golden B's ${JSON.stringify(GOLD_IDS)}`); bad++; }
+  }));
+  if (!HT7 && opened < 10) { errors.push(`${tag}: only ${opened} hand close-ups opened from Setup in 2 themes, expected 10 (5 hand-kind buttons)`); bad++; }
+  if (HT7 && pending) { errors.push(`${tag}: ${pending} posture buttons left pending with HT-7 in the build`); bad++; }
+  console.log(`${tag}: 2 themes x ${H.HT_PLATES.length} exercises, golden B's ${GOLD_IDS.length} setup "Show me" buttons tapped by id, ${opened} opened their close-up, ${pending} pending HT-7${HT7 ? '' : ' (HT-7 not in this build)'}, ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+}
+
+// HT-9 critic fix (supervisor ruling on #113, 2026-10-01): the sheet's sections must render in golden B's order
+// (tools/plates/layers/artifact/howto-layers.mjs: alsoRow+chips+gripSection, then feelSection, then setupSection,
+// then risksSection) - `hand`, `feel`, `setup`, `risks` (HT-8's `feel` between `hand` and `setup`). Setup used to render first, which pushed HT-6's "Look closer" chip row down and broke its pinned
+// "open from Mistake" transform-origin check. Checks every approved exercise's [data-section] DOM order, one theme
+// (the order does not vary by theme). Fails on 0381e91 (setup, hand, risks), passes after (hand, setup, risks).
+{
+  const tag = 'HT-9 Order';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  // HT-7's `posture` section renders nothing (golden B prints no posture section; it only holds the dot pattern), so
+  // the order counts the sections that render something, after Setup and Risks mount (D-HT9-ORDER2).
+  const WANT = ['hand', 'feel', 'setup', 'risks'];
+  let bad = 0;
+  const { ctx, page } = await H.openAppTrain(browser, PORT, 'silent-black', { onError: m => { errors.push(`${tag}: page error: ${m}`); bad++; } });
+  try {
+    for (const [index, [, id]] of H.HT_PLATES.entries()) {
+      await H.openHowTo(page, index);
+      await page.locator('dialog.sheet.ht .ht-disclaimer').waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});   // Setup and Risks mount after the plate's first paint
+      const order = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet.ht [data-section]')].filter(el => el.childNodes.length).map(el => el.dataset.section));
+      if (JSON.stringify(order) !== JSON.stringify(WANT)) { errors.push(`${tag} ${id}: section order ${JSON.stringify(order)} !== golden B's ${JSON.stringify(WANT)}`); bad++; }
+      await H.closeHowTo(page);
+    }
+  } finally {
+    await ctx.close();
+  }
+  console.log(`${tag}: ${H.HT_PLATES.length} exercises, golden-B order ${JSON.stringify(WANT)}, ${bad} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+}
+
+// HT-9: gate block "HT-9" (card HT-9 A1, A3, A4, A5; supervisor rulings on the #113 review, 2026-10-01). The app's
+// sheet, opened from the real Train entry, against golden B (tests/howto/golden/howto-layers.html, hash-pinned by
+// HT-4, served offline with the app's Inter woff2), states reached through HT-4's goldenB.mjs driver (statesFor,
+// assertAllSetupStepsShown), 8 exercises x 5 themes:
+// - A1 L3: the Setup section (every step shown), the Risks section and the disclaimer after it, each on its own layer
+//   at the same sub-pixel position in both pages, pixel for pixel by the HT-3 rule; a blank capture fails;
+// - A4 (C7/C8 on the screen): every text node of Setup, Risks and the disclaimer, in DOM order, equals the list built
+//   from the content strings (the generated ht-*.ts and archetypes.ts, bundled here by esbuild), headings read from
+//   golden B; golden B's own text nodes equal the same list;
+// - A3: one red-flag block per riskFlags entry, in that order, each of its three lines exactly once on the whole sheet
+//   (another joint's block 0 times), one disclaimer; failure path: a second copy of a red-flag line in Setup (an
+//   injected fixture) must be reported;
+// - HT-3b A3 split: Setup and Risks are inserted in a later frame than the plate (never inside the timed open);
+// - A5: the HT-3 plate compare (L2b, F3, L3) still passes after the sheet was scrolled to the end and every
+//   collapsed control (details, aria-expanded="false", zoom chips aside) was opened (Silent Black and Paper); HT-8's
+//   feel rows are golden B's accordion, so exactly one row per feel section is open (D-HT9-A5-feel).
+{
+  const tag = 'HT-9';
+  const t0 = Date.now();
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const GBm = await import('../tools/plates/fidelity/goldenB.mjs');
+  const GB = readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'));
+  const P = m => errors.push(`${tag}: ${m}`);
+  const stats = { pairs: 0, offMax: 0, tall: 0, copy: 0, a3: 0, fixture: false, split: null, a5: 0 };
+  // the content strings, from the generated modules themselves (never retyped here)
+  const { build: esb } = await import('esbuild');
+  const genDir = join(ROOT, 'src/howto/generated');
+  const htFiles = readdirSync(genDir).filter(f => /^ht-.*\.ts$/.test(f));
+  const entry = `${htFiles.map((f, i) => `import h${i} from ${JSON.stringify(join(genDir, f))};`).join('\n')}\nexport const HOWTOS = [${htFiles.map((_, i) => `h${i}`).join(', ')}];\nexport * from ${JSON.stringify(join(ROOT, 'src/howto/archetypes.ts'))};\n`;
+  const bundled = await esb({ stdin: { contents: entry, resolveDir: ROOT, loader: 'ts' }, bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' });
+  const C = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString('base64')}`);
+  const FLAG = { wrist: C.RED_FLAG, shoulder: C.RED_FLAG_SHOULDER, knee: C.RED_FLAG_KNEE, elbow: C.RED_FLAG_ELBOW };
+  const flagLines = Object.fromEntries(Object.entries(FLAG).map(([k, F]) => [k, [F.name, F.now, F.doctor]]));
+  const howToOf = lib => { const h = C.HOWTOS.find(x => x.id === lib); if (!h) throw new Error(`${tag}: no generated How-to for ${lib}`); return h; };
+  const APP = 'dialog.sheet.ht';
+  const appSel = (sel, id) => sel.replace(`#card-${id}`, APP);
+  /** The text nodes under `sel`, in DOM order (whitespace-only nodes skipped). */
+  const leaves = (page, sel) => page.evaluate(s => {
+    const e = document.querySelector(s);
+    if (!e) return null;
+    const w = document.createTreeWalker(e, NodeFilter.SHOW_TEXT), out = [];
+    for (let n = w.nextNode(); n; n = w.nextNode()) if (n.textContent.trim()) out.push(n.textContent);
+    return out;
+  }, sel);
+  /** Waits until Setup, Risks and the disclaimer are in the sheet (they mount after the plate's first paint). */
+  const mounted = async page => { for (const s of ['.setup', '.risks', '.ht-disclaimer']) await page.locator(`${APP} ${s}`).waitFor({ state: 'attached', timeout: 5000 }); await H.settleApp(page); };
+  /** A3, run in the app page: the red-flag blocks, each line once, one disclaimer. Returns the problems. */
+  const a3 = (page, flags) => page.evaluate(([flags, lines, disclaimer, APP]) => {
+    const dlg = document.querySelector(APP), bad = [];
+    const w = document.createTreeWalker(dlg, NodeFilter.SHOW_TEXT), texts = [];
+    for (let n = w.nextNode(); n; n = w.nextNode()) texts.push(n);
+    const order = [...dlg.querySelectorAll('.redflag')].map(e => e.id.replace(/^.*-redflag-/, ''));
+    if (JSON.stringify(order) !== JSON.stringify(flags)) bad.push(`red-flag blocks ${JSON.stringify(order)}, riskFlags ${JSON.stringify(flags)}`);
+    // a line two blocks share (knee and elbow end on the same "See a doctor" line) is expected once per shown block
+    for (const l of new Set(Object.values(lines).flat())) {
+      const owners = flags.filter(k => lines[k].includes(l));
+      const at = texts.filter(n => n.textContent === l);
+      if (at.length !== owners.length) bad.push(`the red-flag line "${l}" shows ${at.length} times, expected ${owners.length}`);
+      const homes = at.map(n => n.parentElement.closest('.risks .redflag')?.id.replace(/^.*-redflag-/, '') ?? null);
+      if (JSON.stringify(homes) !== JSON.stringify(owners.slice(0, at.length))) bad.push(`the red-flag line "${l}" sits in ${JSON.stringify(homes)}, expected ${JSON.stringify(owners)}`);
+    }
+    const d = texts.filter(n => n.textContent === disclaimer);
+    if (d.length !== 1 || dlg.querySelectorAll('.ht-disclaimer').length !== 1) bad.push(`the disclaimer shows ${d.length} times`);
+    return bad;
+  }, [flags, flagLines, C.DISCLAIMER, APP]);
+  const rectOf = (page, sel) => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }, sel);
+  /** A1: L3 of one element, the golden one placed at the app one's viewport position, both on their own layer. */
+  const l3 = async (app, gold, label, aSel, gSel) => {
+    await gold.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; });
+    const own = (pg, s, on) => pg.evaluate(([s, on]) => { document.querySelector(s).style.willChange = on ? 'transform' : ''; }, [s, on]);
+    await own(app, aSel, true); await own(gold, gSel, true);
+    await H.settleApp(app); await H.settle(gold);
+    const place = () => app.evaluate(s => { const z = document.querySelector(s), panel = z.closest('.sheet-panel'), top = panel.querySelector('.sheet-top').getBoundingClientRect().bottom; panel.scrollTop += z.getBoundingClientRect().top - (top + 8); const r = z.getBoundingClientRect(); return r.top >= top - 0.001 && r.bottom <= innerHeight + 0.001; }, aSel);
+    let tall = false;
+    if (!(await place())) {
+      tall = true;
+      await Promise.all([app.setViewportSize({ width: 390, height: H.TALL_H }), gold.setViewportSize({ width: 390, height: H.TALL_H })]);
+      await H.settleApp(app);
+      if (!(await place())) P(`${label}: does not fit a 390 x ${H.TALL_H} viewport below the sheet header`);
+    }
+    await H.settleApp(app);
+    const at = await rectOf(app, aSel);
+    await gold.evaluate(([s, at]) => {
+      document.documentElement.style.overflowAnchor = 'none';
+      document.body.style.marginTop = '0px'; window.scrollTo({ top: 0, behavior: 'instant' });
+      for (let k = 0; k < 3; k++) { const r = document.querySelector(s).getBoundingClientRect(); if (r.top === at.y) break; document.body.style.marginTop = `${parseFloat(document.body.style.marginTop) + at.y - r.top}px`; }
+    }, [gSel, at]);
+    await H.settleApp(app); await H.settle(gold);
+    const [ra, rg] = [await rectOf(app, aSel), await rectOf(gold, gSel)];
+    if (ra.x !== rg.x || ra.y !== rg.y || ra.width !== rg.width || ra.height !== rg.height) P(`${label}: box app ${JSON.stringify(ra)} vs golden ${JSON.stringify(rg)}`);
+    else {
+      const [a, g] = [await H.capture(app, ra), await H.capture(gold, rg)];
+      const d = await H.diffPng(app, a, g);
+      stats.pairs++; stats.offMax = Math.max(stats.offMax, d.off); if (tall) stats.tall++;
+      if (d.ink < 0.02) P(`${label}: the app capture is blank (ink ${d.ink})`);
+      if (!H.meetsRule(d)) {
+        P(`${label} L3: ${d.off} px off (max ${d.maxDelta}/255, ${d.off1} off by 1, of ${d.total}${d.sameSize ? '' : `, sizes ${d.width}x${d.height} vs ${d.otherWidth}x${d.otherHeight}`})`);
+        const f = join(OUT, `ht9-${label.replace(/\W+/g, '_')}`); writeFileSync(`${f}-app.png`, a); writeFileSync(`${f}-golden.png`, g);
+      }
+    }
+    await own(app, aSel, false); await own(gold, gSel, false);
+    await gold.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo(0, 0); });
+    if (tall) { await Promise.all([app.setViewportSize(H.DEVICE.viewport), gold.setViewportSize(H.DEVICE.viewport)]); await H.settleApp(app); }
+  };
+  const ht9 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
+  const run = async theme => {
+    const app = await H.openAppTrain(ht9, PORT, theme, { onError: m => P(`${theme} app page error: ${m}`) });
+    const gold = await H.openGolden(ht9, theme, { html: GB, onError: m => P(`${theme} golden page error: ${m}`) });
+    try {
+      for (const [index, [id, lib]] of H.HT_PLATES.entries()) {
+        const T = `${theme} ${id}`, h = howToOf(lib);
+        if (theme === 'silent-black' && index === 0) {
+          // HT-3b A3 split: the frame each part is inserted in, counted from before the tap
+          await H.openCard(app.page, index);
+          await app.page.evaluate(() => {
+            const w = window.__ht9Split = { frame: 0, at: {} };
+            const tick = () => { w.frame++; if (!w.done) requestAnimationFrame(tick); }; requestAnimationFrame(tick);
+            new MutationObserver(rs => {
+              for (const n of rs.flatMap(r => [...r.addedNodes])) {
+                if (n.nodeType !== 1) continue;
+                for (const [k, s] of [['plate', 'figure[data-mode="normal"]'], ['setup', '.setup'], ['risks', '.risks']]) if (!(k in w.at) && (n.matches(s) || n.querySelector(s))) w.at[k] = w.frame;
+              }
+            }).observe(document.body, { childList: true, subtree: true });
+          });
+        }
+        await H.openHowTo(app.page, index);
+        await mounted(app.page);
+        if (theme === 'silent-black' && index === 0) {
+          const at = await app.page.evaluate(() => { window.__ht9Split.done = true; return window.__ht9Split.at; });
+          stats.split = at;
+          if (!(at.plate >= 0 && at.setup > at.plate && at.risks > at.plate)) P(`${T} HT-3b A3 split: Setup and Risks inserted in frames ${at.setup}/${at.risks}, the plate in ${at.plate} (they must come later)`);
+          // D-HT9-A3b: Risks one frame after Setup, so neither shares a task or a layout pass with the other's
+          if (!(at.risks > at.setup)) P(`${T} HT-3b A3 split: Risks inserted in frame ${at.risks}, Setup in ${at.setup} (Risks must come in a later frame)`);
+        }
+        const states = await GBm.statesFor(gold.page, id);
+        const setupS = states.find(s => s.name === `${id}: setup (every step shown)`), risksS = states.find(s => s.name === `${id}: risks`);
+        if (!setupS || !risksS) { P(`${T}: goldenB.mjs has no setup/risks state`); continue; }
+        await setupS.open();
+        const hidden = await app.page.evaluate(A => ({ more: !!document.querySelector(`${A} .st-more`), hidden: document.querySelectorAll(`${A} .st-list li[hidden]`).length }), APP);
+        if (hidden.more || hidden.hidden) P(`${T}: every setup step should show (${JSON.stringify(hidden)})`);
+        // A1
+        const pairs = [['setup', setupS.selector], ...risksS.selector.map(s => [s.endsWith('.risks') ? 'risks' : 'disclaimer', s])];
+        if (pairs.length !== 3) P(`${T}: goldenB.mjs's risks state has ${risksS.selector.length} selectors, expected the section and the disclaimer`);
+        for (const [label, gSel] of pairs) await l3(app.page, gold.page, `${T} ${label}`, appSel(gSel, id), gSel);
+        // A4
+        const zoomChip = key => h.zooms.find(z => z.key === key)?.chip;
+        const head = s => gold.page.evaluate(s => document.querySelector(s)?.textContent ?? null, s);
+        const want = {
+          setup: [await head(`#${id}-setup-h`), ...h.setup.flatMap((s, i) => [String(i + 1), s.text, ...(s.zoom && zoomChip(s.zoom) ? [`Show me the ${zoomChip(s.zoom).toLowerCase()}`] : [])])],
+          risks: [await head(`#${id}-risks-h`), ...h.risks.map(r => r.text), ...(h.riskFlags ?? ['wrist']).flatMap(f => flagLines[f])],
+          disclaimer: [C.DISCLAIMER],
+        };
+        for (const [label, gSel] of pairs) {
+          const [la, lg] = [await leaves(app.page, appSel(gSel, id)), await leaves(gold.page, gSel)];
+          stats.copy++;
+          if (JSON.stringify(la) !== JSON.stringify(want[label])) P(`${T} A4 ${label}: on-screen copy ${JSON.stringify(la)} !== content strings ${JSON.stringify(want[label])}`);
+          if (JSON.stringify(lg) !== JSON.stringify(want[label])) P(`${T} A4 ${label}: golden B's copy ${JSON.stringify(lg)} !== content strings ${JSON.stringify(want[label])}`);
+        }
+        // A3, and once its failure path: a second copy of a red-flag line in Setup must fail
+        stats.a3++;
+        for (const b of await a3(app.page, h.riskFlags ?? ['wrist'])) P(`${T} A3: ${b}`);
+        if (theme === 'silent-black' && index === 0) {
+          const f = (h.riskFlags ?? ['wrist'])[0];
+          await app.page.evaluate(([A, t]) => { const p = document.createElement('p'); p.id = 'ht9-a3-fixture'; p.textContent = t; document.querySelector(`${A} .setup`).append(p); }, [APP, flagLines[f][1]]);
+          const caught = await a3(app.page, h.riskFlags ?? ['wrist']);
+          await app.page.evaluate(() => document.getElementById('ht9-a3-fixture').remove());
+          stats.fixture = caught.some(b => b.includes(`shows 2 times`));
+          if (!stats.fixture) P(`${T} A3 failure path: a second copy of the ${f} red-flag line in Setup was not caught (${JSON.stringify(caught)})`);
+        }
+        await H.closeHowTo(app.page);
+        await gold.page.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo(0, 0); });
+      }
+    } finally { await app.ctx.close(); await gold.ctx.close(); }
+  };
+  try {
+    const failed = th => e => P(`${th} crashed: ${e.message.split('\n')[0]}`);   // a thrown probe is a failure, never a gate crash
+    await Promise.all(H.HT_THEMES.map(th => run(th).catch(failed(th))));
+    if (stats.pairs < 120) P(`only ${stats.pairs} L3 pairs compared, expected Setup, Risks and the disclaimer on 8 exercises in 5 themes (120)`);
+    if (stats.copy < 120 || stats.a3 < 40) P(`A4/A3 ran ${stats.copy}/${stats.a3} times, expected 120/40`);
+    // A5: the HT-3 plate compare after the sheet was scrolled to the end and everything collapsed was opened
+    const openAll = async () => {
+      const A = 'dialog.sheet.ht';
+      const wait = (f, what = 'Setup/Risks never mounted') => new Promise((r, j) => { const t0 = performance.now(); const k = () => (f() ? r() : performance.now() - t0 > 5000 ? j(new Error(`HT-9 A5: ${what}`)) : requestAnimationFrame(k)); k(); });
+      await wait(() => document.querySelector(`${A} .ht-disclaimer`) && document.querySelector(`${A} .setup`));
+      const panel = document.querySelector(`${A} .sheet-panel`);
+      // HT-8's feel section loads once it comes near: scroll to it and wait, so its rows are opened too
+      panel.scrollTop = panel.scrollHeight;
+      await wait(() => document.querySelector(`${A} .feel .fr-btn`), 'the feel section never mounted');
+      for (let i = 0; i < 4; i++) {
+        document.querySelectorAll(`${A} details:not([open])`).forEach(d => { d.open = true; });
+        document.querySelectorAll(`${A} [aria-expanded="false"]:not(.zx-chip):not(.fr-btn)`).forEach(b => b.click());
+        // HT-8's feel rows are golden B's accordion (one open at a time): open the last row of each feel section
+        document.querySelectorAll(`${A} .feel`).forEach(f => { const r = [...f.querySelectorAll('.fr-btn')].pop(); if (r?.getAttribute('aria-expanded') === 'false') r.click(); });
+        panel.scrollTop = panel.scrollHeight;
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      }
+      if (panel.scrollTop < 1 || panel.scrollTop + panel.clientHeight < panel.scrollHeight - 1) throw new Error(`HT-9 A5: the sheet did not scroll to the end (${panel.scrollTop}/${panel.scrollHeight})`);
+      if (document.querySelectorAll(`${A} [aria-expanded="false"]:not(.zx-chip):not(.fr-btn), ${A} details:not([open])`).length) throw new Error('HT-9 A5: a collapsed control stayed closed');
+      // every feel section has exactly one open row (D-HT9-A5-feel)
+      for (const f of document.querySelectorAll(`${A} .feel`)) if (f.querySelectorAll('.fr-btn[aria-expanded="true"]').length !== 1) throw new Error('HT-9 A5: a feel section does not have exactly one row open');
+      // HT-8's feel rows keep their finished entry animation (fill: forwards), which the harness's settleApp ("no
+      // animation at all") would wait on forever, and the harness's section hide/restore around each capture restarts
+      // it: each finished one inside the feel section has its end state written inline and is dropped, now and every
+      // time it ends again, so the page looks exactly the same (D-HT9-C19-settle)
+      const drop = el => { for (const a of el.getAnimations()) if (a.playState === 'finished') { a.commitStyles(); a.cancel(); } };
+      document.addEventListener('animationend', e => { if (e.target.closest?.('.feel')) drop(e.target); }, true);
+      await wait(() => document.getAnimations().every(a => a.playState !== 'running' && !a.pending), 'an animation kept running');
+      for (const a of document.getAnimations()) if (a.playState === 'finished' && a.effect?.target?.closest?.('.feel')) { a.commitStyles(); a.cancel(); }
+    };
+    const a5 = await H.ht3Fidelity(ht9, PORT, { themes: H.HT_FULL, full: [], widths: [], mutate: openAll });
+    stats.a5 = a5.stats.pairs;
+    for (const p of a5.problems) P(`A5 (after scrolling to the end and opening everything): ${p}`);
+    if (a5.stats.pairs < 32) P(`A5: only ${a5.stats.pairs} plate pairs compared, expected 8 x 2 themes x {N, M} (>= 32)`);
+    console.log(`${tag} (${ht9.version()}): A1 ${stats.pairs} L3 pairs (Setup, Risks, disclaimer; max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}); A4 ${stats.copy} on-screen copy lists compared with the content strings; A3 ${stats.a3} sheets, duplicate red-flag fixture ${stats.fixture ? 'caught' : 'NOT caught'}; HT-3b A3 split (frames) ${JSON.stringify(stats.split)}; A5 ${stats.a5} plate pairs after opening everything; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally {
+    await ht9.close();
+  }
+}
+
 // HT-8: "Where you should feel it" (card HT-8; plan 2.5, 2.7, 2.9). The app's feel section, opened from the real Train
 // entry, against the pinned golden-B page (tools/plates/layers/artifact/technical-plates.html, served offline with
 // the app's Inter woff2), the golden card presented so its feel section sits at the app's exact viewport position,
@@ -8387,8 +8771,26 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// LIB-7: the radial hand pairs (card LIB-7; tools/plates/library/hands/DESIGN.md §4 A5). Every drawn library hand page,
+// rendered through hands/zoom.mjs with golden B's own zoom CSS, in 5 themes at 390, 360 and 340 px: no overflow (H4), each
+// ink class's contrast >= golden B's on its 8 hands in the same job (H5), bend values off the outline (G9, real boxes),
+// Right and Wrong hands different pixels, two renders identical. A self-check proves the block fails on no input.
+{
+  const tag = 'LIB-7';
+  const { lib7Gate } = await import('../tools/plates/library/hands/gate.mjs');
+  const lib7 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const empty = await lib7Gate(lib7, { index: { drawn: new Map(), gaps: new Map() } });
+    if (!empty.problems.some(p => /no hand pair page/.test(p))) errors.push(`${tag}: the block passes with no pages (self-check)`);
+    const t0 = Date.now(), r = await lib7Gate(lib7);
+    for (const p of r.problems) errors.push(`${tag}: ${p}`);
+    if (r.pages !== 24) errors.push(`${tag}: ${r.pages} pages, expected 24 (14 drawn ids)`);
+    console.log(`${tag} hand pairs (${lib7.version()}): ${r.pages} pages x ${r.themes} themes x ${r.widths} widths, ${r.shots} pixel shots, ${r.problems.length} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally { await lib7.close(); }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and AUD-20 (finish-screen calories are a plain estimate with no band in 5 themes) verified, and HT-7 (posture close-ups equal golden B in 5 themes: L3 pixels, opening animation, reduced motion, transform and opacity only; S1/S3 exclusive and the plate restored on Close; chunks on first open only, <= 24 KB gz; Right/Wrong images, 44 px chips, one #zdots, no duplicate ids) verified, and HT-8 (feel map equals golden B in 5 themes: S5 paused frames, S4, every S6 row, reduced-motion rest; band animation list; nothing running at end + 1 s; shimmer TaskDuration within 1.2x golden B at 4x; an early "Feel it" tap loads, scrolls to and plays the map) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and AUD-20 (finish-screen calories are a plain estimate with no band in 5 themes) verified, and HT-7 (posture close-ups equal golden B in 5 themes: L3 pixels, opening animation, reduced motion, transform and opacity only; S1/S3 exclusive and the plate restored on Close; chunks on first open only, <= 24 KB gz; Right/Wrong images, 44 px chips, one #zdots, no duplicate ids) verified, and HT-8 (feel map equals golden B in 5 themes: S5 paused frames, S4, every S6 row, reduced-motion rest; band animation list; nothing running at end + 1 s; shimmer TaskDuration within 1.2x golden B at 4x; an early "Feel it" tap loads, scrolls to and plays the map) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified, and HT-9 Show (golden B\'s 17 setup "Show me" buttons, tapped by id, open their close-up through the zoom host, Silent Black and Paper) verified, and HT-9 Order (the sheet\'s sections render in golden B\'s order on all 8 exercises) verified, and HT-9 (Setup, Risks and the disclaimer equal golden B at L3 in 5 themes, on-screen copy equals the content strings, one copy of each red-flag line with its duplicate fixture caught, Setup and Risks mounted after the plate\'s first paint, and the plate compare after scrolling and opening everything) verified, and COPY-1 (Settings footer rights line under the logo and above the version line, hint style, no removed Settings copy, no medical reminder) verified.');
