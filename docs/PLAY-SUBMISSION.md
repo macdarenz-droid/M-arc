@@ -110,7 +110,7 @@ Play Console → App content → Health apps. **Category:** tick only **"Activit
 - `READ_STEPS`: the optional AI coach reads daily steps, only after the user turns on "Share health data", to adjust training-load advice (`src/escobar/tools/schema.ts:139`, `src/escobar/tools/read.ts:378`).
 - `READ_ACTIVE_CALORIES_BURNED`: the optional AI coach reads daily active calories, only after the user turns on "Share health data", to adjust training-load advice (same lines).
 
-`READ_HEART_RATE` is removed by card PLAY-HR because no feature used it: session heart rate comes from the Bluetooth watch (`native/watch/WatchService.java`), and the Health Connect reading reached only the sync Details sheet (`src/slices/settings/HealthDiagnostic.tsx:14`) (D-PLAY-HR-1). **Submit the Health Connect permission declaration only with a bundle built after PLAY-HR merges**; bundle 37.1.0.47 and earlier still declare `READ_HEART_RATE`. Risk: declaring a permission with no user-facing use is a rejection risk under answer/12991134.
+`READ_HEART_RATE` is removed by card PLAY-HR because no feature used it: session heart rate comes from the Bluetooth watch (`native/watch/WatchService.java`), and the Health Connect reading reached only the sync Details sheet (`src/slices/settings/HealthDiagnostic.tsx:14`) (D-PLAY-HR-1). **Submit the Health Connect permission declaration only with a bundle built from a `main` commit that contains PLAY-HR's merge.** Before uploading, check that its manifest has no `android.permission.health.READ_HEART_RATE`. Risk: declaring a permission with no user-facing use is a rejection risk under answer/12991134.
 - Health Connect's privacy rationale screen shows the same privacy policy (`native/PermissionsRationaleActivity.java:21-22`).
 
 **Bluetooth:** `BLUETOOTH_SCAN` (`neverForLocation`), `BLUETOOTH_CONNECT`, and for Android 11 and older `BLUETOOTH`, `BLUETOOTH_ADMIN` and `ACCESS_FINE_LOCATION` (`native/patch_manifest.py:41-45`) read live heart rate from a paired watch or chest strap. The app does not read or use location.
@@ -132,12 +132,13 @@ Play Console → App content → Foreground service permissions. Required becaus
 
 ## Content rating questionnaire
 
-- Category: a fitness and workout tracker. Pick the closest IARC category on the form (labels not verified here).
-- Violence, sexual content, profanity, controlled substances, gambling: none scripted by the app.
-- Users interacting or exchanging content with other users: No. There is no account, feed, chat between users or public profile. The AI coach talks only to the user who wrote to it, and what a user writes is never shown to anyone else.
-- Shares the user's location: No (see Data safety).
-- Digital purchases: No (no billing library; nothing is sold in the app).
-- If the form asks about AI-generated content: Yes. The coach writes replies with a large language model, and every reply can be reported in the app (`src/escobar/ui/Message.tsx:222`). Not verified: whether the current IARC form has this question.
+Answers as the live Console form asks them (questions seen by the owner on 2026-10-03):
+- Category: **All Other App Types**.
+- Downloaded App: **No**.
+- User Content Sharing: **No**. There are no accounts and no content passes between users; the AI coach talks only to the user who wrote to it.
+- Online Content: **Yes**. The coach shows AI-generated replies, which the form's own examples include ("generated AI content"); every reply can be reported in the app (`src/escobar/ui/Message.tsx:222`).
+- Promotion or Sale of Age-Restricted Products: **No**.
+- Miscellaneous: shares the user's location **No**; digital goods **No**; cash rewards or NFTs **No**; web browser or search engine **No**; primarily news or educational **No**.
 - Expected rating: Everyone / PEGI 3 equivalent.
 
 ## Target audience and content
