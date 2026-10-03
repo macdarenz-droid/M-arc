@@ -1005,12 +1005,15 @@ export function ht10EndMs() {
  * The full interaction script. Runs in the page (serialisable: it references nothing outside itself), on an open
  * sheet whose chrome prefix is `pre`. After every step it awaits `window.__ht10Probe(label)` when the gate has exposed
  * one (the sweep); ht3Fidelity's `mutate` runs it without (HT10-A2). Ends with everything closed: no close-up, no
- * feel row, Mistake off, the default callout, the sheet scrolled to the top. Returns { steps, fails }.
+ * feel row, Mistake off, the default callout, the sheet scrolled to the top. Returns { steps, fails, tapped }, where
+ * `tapped` counts the Look closer chips, "Show me" buttons and feel rows it tapped (the sweep checks them against golden
+ * B's counts for the sheet); a "Show me" or feel row that is not on screen is a fail, never skipped.
  */
 export async function ht10Script(pre) {
   const q = s => document.querySelector(s), qa = s => [...document.querySelectorAll(s)];
   const dlg = q('dialog.sheet.ht'), panel = dlg.querySelector('.sheet-panel');
   const fails = [];
+  const tapped = { chips: 0, shows: 0, rows: 0 };
   let steps = 0;
   const P = async label => { steps++; if (window.__ht10Probe) await window.__ht10Probe(label); };
   const frame = () => new Promise(r => requestAnimationFrame(r));
@@ -1051,6 +1054,7 @@ export async function ht10Script(pre) {
   // 4. every Look closer chip: its close-up, each of its pages, closed again
   for (const chip of qa('dialog.sheet.ht .zx-chip[data-zoom]')) {
     const k = chip.dataset.zoom;
+    tapped.chips++;
     chip.click();
     const p = await until(() => shown(q(`#${pre}-zoom-${k}`))) ? q(`#${pre}-zoom-${k}`) : null;
     if (!p) { fails.push(`chip ${k}: its close-up did not open`); continue; }
@@ -1064,7 +1068,8 @@ export async function ht10Script(pre) {
   }
   // 5. every "Show me" (setup steps, handling mistakes)
   for (const b of qa('dialog.sheet.ht .st-show')) {
-    if (!shown(b)) continue;
+    if (!shown(b)) { fails.push(`"${b.textContent.trim()}" (${b.id}): not on screen to tap`); continue; }
+    tapped.shows++;
     b.click();
     if (!await until(() => openZoom())) { fails.push(`"${b.textContent.trim()}" (${b.id}): no close-up opened`); continue; }
     await settle(); await P(`show me ${b.id}`);
@@ -1084,9 +1089,8 @@ export async function ht10Script(pre) {
   const more = q('dialog.sheet.ht .fr-more');
   if (more && more.getAttribute('aria-expanded') !== 'true') await tap(more, 'feel rows: show more');
   for (const b of qa('dialog.sheet.ht .fr-btn')) {
-    if (!shown(b)) continue;
     const row = b.closest('.fr')?.dataset.row;
-    await tap(b, `feel row ${row}`);
+    if (await tap(b, `feel row ${row}`)) tapped.rows++;
     if (b.getAttribute('aria-expanded') === 'true') { b.click(); await settle(); }
   }
   // 7. everything else that expands ("All steps", details), all at once, then collapsed again
@@ -1108,7 +1112,24 @@ export async function ht10Script(pre) {
   if (def && def.getAttribute('aria-pressed') !== 'true') def.click();
   panel.scrollTop = 0;
   await settle(); await P('everything closed');
-  return { steps, fails };
+  return { steps, fails, tapped };
+}
+
+/**
+ * HT-10 (review of #166, High): golden B's control counts per exercise, the numbers each swept sheet's taps must match:
+ * Look closer chips with a close-up (`.zx-chip[data-zoom]`), "Show me" buttons (`.st-show`: setup steps and handling
+ * mistakes) and feel rows (`.fr-btn`), counted in each card of the golden-B page after its own script ran.
+ */
+export const HT10_GOLDEN_B = join(ROOT, 'tools/plates/layers/artifact/technical-plates.html');
+export async function ht10GoldenCounts(browser) {
+  const g = await openGolden(browser, 'silent-black', { html: readFileSync(HT10_GOLDEN_B) });
+  try {
+    return await g.page.evaluate(ids => Object.fromEntries(ids.map(id => {
+      const c = document.getElementById(`card-${id}`);
+      const n = s => (c ? c.querySelectorAll(s).length : -1);
+      return [id, { chips: n('.zx-chip[data-zoom]'), shows: n('.st-show'), rows: n('.fr-btn') }];
+    })), HT_PLATES.map(p => p[0]));
+  } finally { await g.ctx.close(); }
 }
 
 /**
@@ -1253,7 +1274,8 @@ export function ht10C19Inputs() {
  * no animation runs at all. `inject(pre)` (failure fixtures only) runs in the page after the sheet opens.
  * Returns { problems, stats }.
  */
-export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p => p[0]), reduced = false, expectRisks = true, inject = null } = {}) {
+export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p => p[0]), reduced = false, expectRisks = true, inject = null, golden = null } = {}) {
+  const want = golden ?? await ht10GoldenCounts(browser);
   const problems = [], stats = { sheets: 0, steps: 0, probes: 0, controls: 0, named: 0, anims: 0, paused: 0, exempt: new Set(), ms: 0 };
   const t0 = Date.now();
   const tag = `${theme}${reduced ? ' (reduced motion)' : ''}`;
@@ -1301,6 +1323,11 @@ export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p =>
       const r = await page.evaluate(ht10Script, id);
       stats.steps += r.steps;
       for (const f of r.fails) problems.push(`${tag} ${id}: ${f}`);
+      // every chip, "Show me" and feel row golden B has for this exercise was tapped, no more and no fewer
+      for (const [k, name] of [['chips', 'Look closer chips'], ['shows', '"Show me" buttons'], ['rows', 'feel rows']]) {
+        if (!(want[id]?.[k] >= 0)) problems.push(`${tag} ${id}: golden B has no card for ${id} to count its ${name}`);
+        else if (r.tapped[k] !== want[id][k]) problems.push(`${tag} ${id}: tapped ${r.tapped[k]} ${name}, golden B has ${want[id][k]}`);
+      }
       // D-HT10-C10: each of this sheet's exemptions must have been seen at exactly its pinned golden value
       if (!reduced) for (const e of HT10_C10_EXEMPT.filter(x => x.ids[0].startsWith(`${id}-`))) if (!seen.has(e.kind === 'small' ? e.ids[0] : e.ids.join('|'))) problems.push(`${tag} ${id}: C10: exemption ${e.ids.join(' / ')} (${e.kind}) was never measured at its pinned golden ${e.w} x ${e.h}`);
       // C12: wait until every recorded animation's computed end (its start + the constant for its kind) + 1 s

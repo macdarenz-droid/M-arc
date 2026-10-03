@@ -73,11 +73,12 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
     }
 
     // A1 sweeps and C11, then A2: each theme's tuples in its own context, the themes side by side
+    const goldenCounts = (want('sweep').length || want('reduced').length) ? await H.ht10GoldenCounts(ht10) : null;
     const runTheme = async theme => {
       const sw = want('sweep', theme).map(t => t.id), rd = want('reduced', theme).map(t => t.id);
       const out = [];
-      if (sw.length) out.push(['sweep', await H.ht10Sweep(ht10, PORT, theme, { ids: sw, expectRisks }).catch(e => crashed(`sweep ${theme}`, e))]);
-      if (rd.length) out.push(['reduced', await H.ht10Sweep(ht10, PORT, theme, { ids: rd, reduced: true, expectRisks }).catch(e => crashed(`reduced ${theme}`, e))]);
+      if (sw.length) out.push(['sweep', await H.ht10Sweep(ht10, PORT, theme, { ids: sw, expectRisks, golden: goldenCounts }).catch(e => crashed(`sweep ${theme}`, e))]);
+      if (rd.length) out.push(['reduced', await H.ht10Sweep(ht10, PORT, theme, { ids: rd, reduced: true, expectRisks, golden: goldenCounts }).catch(e => crashed(`reduced ${theme}`, e))]);
       return [theme, out];
     };
     const sweeps = await Promise.all(H.HT_THEMES.map(runTheme));
@@ -94,12 +95,19 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
       // the script's own failures are the sweep's to report (A1); here it only has to run, so L3 still compares after it
       // eslint-disable-next-line no-new-func
       const mutate = new Function('pre', `return (${src})(pre).then(() => {})`);
-      // one side-by-side run over every theme with A2 tuples; a theme's plates are the ids with an A2 tuple in it
-      const plates = H.HT_PLATES.filter(p => a2Themes.some(th => want('a2', th).some(t => t.id === p[0])));
-      const a2 = await H.ht3Fidelity(ht10, PORT, { themes: a2Themes, full: [], widths: [], plates, mutate, markup: false }).catch(e => crashed('A2', e));
-      a2Pairs = a2.stats.pairs ?? 0;
-      for (const p of a2.problems) { const theme = H.HT_THEMES.find(th => p.startsWith(th)) ?? 'silent-black'; fail(owner('a2', theme, p), theme, 'a2', `A2 (after the full script): ${p}`); }
-      if (a2Pairs < plates.length * a2Themes.length * 2) fail('*', 'silent-black', 'a2', `A2: only ${a2Pairs} plate pairs compared, expected ${plates.length * a2Themes.length * 2}`);
+      // the themes side by side, each comparing only this shard's (id, theme) pairs: a theme's plates are the ids with
+      // an A2 tuple in that theme (review of #166, Medium)
+      const runs = await Promise.all(a2Themes.map(async theme => {
+        const plates = H.HT_PLATES.filter(p => want('a2', theme).some(t => t.id === p[0]));
+        const a2 = await H.ht3Fidelity(ht10, PORT, { themes: [theme], full: [], widths: [], plates, mutate, markup: false }).catch(e => crashed(`A2 ${theme}`, e));
+        return { theme, plates, a2 };
+      }));
+      for (const { theme, plates, a2 } of runs) {
+        const pairs = a2.stats.pairs ?? 0;
+        a2Pairs += pairs;
+        for (const p of a2.problems) fail(owner('a2', theme, p), theme, 'a2', `A2 (after the full script): ${p}`);
+        if (pairs < plates.length * 2) fail('*', theme, 'a2', `A2 ${theme}: only ${pairs} plate pairs compared, expected at least ${plates.length * 2} (${plates.length} plates x normal/mistake)`);
+      }
     }
     const minSteps = want('sweep').length * 15;
     if (tot.steps < minSteps) fail('*', 'silent-black', 'sweep', `A1: only ${tot.steps} script steps probed, expected at least ${minSteps}`);
@@ -198,6 +206,11 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
         const ax = await H.ht10AxNames(cdp);
         if (!ax.problems.some(p => /button button\.ht10-noname has no accessible name/.test(p))) F(`TalkBack: a nameless button was not reported (${ax.problems.join('; ') || 'nothing'})`);
         await H.closeHowTo(page);
+        // A1 tap counts (review of #166, High): a hidden "Show me" fails as not on screen and its sheet's count falls
+        // short of golden B's, instead of being skipped
+        const hid = await H.ht10Sweep(ht10, PORT, 'silent-black', { ids: ['barbell-back-squat'], expectRisks, golden: goldenCounts ?? await H.ht10GoldenCounts(ht10), inject: () => { document.querySelector('dialog.sheet.ht .st-show').style.display = 'none'; } });
+        if (!hid.problems.some(p => /\(barbell-back-squat-[^)]*\): not on screen to tap/.test(p))) F(`A1: a hidden "Show me" was not reported as not on screen (${hid.problems.slice(0, 3).join('; ') || 'nothing'})`);
+        if (!hid.problems.some(p => /tapped \d+ "Show me" buttons, golden B has \d+/.test(p))) F(`A1: a hidden "Show me" did not make the sheet's tap count fall short of golden B's (${hid.problems.slice(0, 3).join('; ') || 'nothing'})`);
         // A3 long-task window (D-HT10-8): a 150 ms task that ran before the window is replayed by perf.mjs's buffered
         // observer (the false fail this guards against) and must not be counted; a 120 ms task inside it must be
         const P = await import('./perf.mjs');
