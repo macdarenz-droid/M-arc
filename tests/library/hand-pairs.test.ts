@@ -242,10 +242,14 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(C.pairProblems('hammer_curl', noRange).join('\n')).toMatch(/G1 no wrist range/);
   }, 60_000);
   it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
-    // the LIB-7 radial sheet, byte for byte as before the ruling (sha256 of buildSheet().body on 66c13ef + main 4aa1b2a)
+    // the LIB-7 radial sheet, byte for byte as before the ruling (sha256 of buildSheet().body on 66c13ef + main 4aa1b2a),
+    // built from LIB-7's own key modules only, so another card's tiles never move this pin (D-LIB7-PIN); the filter must
+    // keep all 5 LIB-7 modules, so the pin cannot silently shrink
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
-    expect(sha256((await sheet.buildSheet()).body)).toBe('626f842527a8415d94c5f6c88b15340f9d54834033345cd0d561784d14388689');
-    expect(sha256((await sheet.buildSheet({ critic: true })).body)).toBe('0d4c054d82c1649ed7d4376445738536d5283a247c2368a5ea00bf343464af51');
+    const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
+    expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
+    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('626f842527a8415d94c5f6c88b15340f9d54834033345cd0d561784d14388689');
+    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('0d4c054d82c1649ed7d4376445738536d5283a247c2368a5ea00bf343464af51');
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },
