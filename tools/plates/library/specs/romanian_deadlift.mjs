@@ -150,6 +150,16 @@ const barAt = lm => [0, lm.grips[1], lm.grips[2]];
 const START_BAR = barAt(landmarksOf(start, H));
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, START_BAR[1] + 0.025 * Math.sin(k * Math.PI / 8), START_BAR[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 
+// Closed hand (critic 10-03 note, as barbell_shrug R3): the engine draws the fist as a circle on the grip centre, past
+// the wrist, so a ~7 px (2x) gap showed between the forearm tip and the bar. A filled capsule from the wrist to the
+// grip (fist radius 3.5 cm at the bar, forearm tip 1.8 cm at the wrist) closes the hand; the bar is drawn on top.
+const HAND_R = 0.035, WRIST_R = 0.018;
+function handPoly(lm) {
+  const W = lm['wrist.r'], G = lm['grip.r'], d = [G[1] - W[1], G[2] - W[2]], L = Math.hypot(...d), u = [d[0] / L, d[1] / L], n = [-u[1], u[0]], pts = [];
+  for (let a = -90; a <= 90; a += 30) pts.push([G[0], G[1] + HAND_R * (Math.cos(a * R) * u[0] + Math.sin(a * R) * n[0]), G[2] + HAND_R * (Math.cos(a * R) * u[1] + Math.sin(a * R) * n[1])]);
+  for (let a = 90; a <= 270; a += 45) pts.push([G[0], W[1] + WRIST_R * (Math.cos(a * R) * u[0] + Math.sin(a * R) * n[0]), W[2] + WRIST_R * (Math.cos(a * R) * u[1] + Math.sin(a * R) * n[1])]);
+  return { type: 'poly', pts, curve: true, cls: 'eq-solid', z: 'front', part: 'hand' };
+}
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   id: 'romanian_deadlift', name: 'Romanian Deadlift', view: 'side', facing: 'right',
@@ -157,6 +167,7 @@ export default {
   poses: { start, via, end },
   equipment: [
     { type: 'floor', from: -0.75, to: 0.75 },
+    (lm, ctx) => (ctx.pose === 'start' ? null : handPoly(lm)),
     lm => ({ type: 'barbell', at: barAt(lm), plates: [0.045], part: 'bar', z: 'front' }),
     (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-cable m-line', pts: START_DOT, z: 'front', part: 'startbar' } : null),
     // Mistake only: the near 45 cm plate as a circle that carries poly (the barbell's plate outline is a line and

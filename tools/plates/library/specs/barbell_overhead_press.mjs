@@ -30,7 +30,7 @@
 //  Drawn: the 45 cm plate outline at lockout only (four plate circles over the head hid it), the 50 mm sleeve dot in
 //   every pose (start dashed, 2 ghosts, end), trace of the grip (the vertical bar path), mid-foot plumb line (datum,
 //   as the squat). The lockout arm and trunk cover the whole start arm, so it is redrawn over the end figure as a
-//   ghost-style outline (START_ARM, critic 10-03 R1) with the start bar dot (the squat's workaround); the leaning start
+//   dashed outline (START_ARM, critic 10-03 R1/R7) with the start bar dot (the squat's workaround); the leaning start
 //   trunk and head show as the engine's own dashed start pose behind the figure.
 //  Camera: reference floor line, scale set so the rack top (2.4 m, above the lockout plate) is 16 px under the plate
 //   edge: 134.6 px/m (92% of the reference, inside the 8's 123.9-146.3; pull_up and lat_pulldown also scale down).
@@ -142,24 +142,24 @@ function armShapes(pose, keys) {
   return bodyShapes(fk(resolve(normPose(pose, bd), bd).q, bd), probe).filter(sh => keys.includes(sh.key))
     .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
 }
-// R1 (critic 10-03): the start (front-rack) arm drawn so it reads on its own over the lockout figure: each part of the
-// near arm as a closed 'eq' outline (card-surface fill, text-3 line: the ghost look), on top of the end figure, so it
-// separates from the torso instead of the earlier hidden dashed lines folded inside it. The FOREARMS VERTICAL leader
-// ends on this forearm.
+// R1/R7 (critic 10-03): the start (front-rack) arm redrawn over the lockout figure as the dashed, unfilled start-pose
+// outline (every other plate's start convention): upper arm to the elbow ahead of the chest, vertical forearm up to
+// the racked bar. Unfilled, so the head and the solid lockout arm stay visible (a filled patch read as a third limb).
+// The FOREARMS VERTICAL leader ends on this forearm.
 const START_ARM = armShapes(start, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']).map(pts => ({ type: 'line', pts: [...pts, pts[0]], cls: 'eq-line m-line', z: 'front', part: 'startarm' }));
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 // Mistake (card plate.mistake, c5): elbows back at the start, forearms tilted, so the bar curves forward away from
 // the face. Drawn AT THE RACK POSITION (critic 10-02 R5: the fault at forehead height sat over the solid locked-out
-// arm and did not read as elbows back): the start body, the bar eased just off the front of the shoulders (MIS_DZ,
-// MIS_DY), the elbow IK pole down and back in the sagittal plane (MIS_POLE, no flare), so the elbow sits 12.8 cm
-// behind and 30.9 cm below the bar and the forearm (33.5 cm in side view) tilts 22.5 deg, against -4.3 at the
-// correct start (misInfo). The engine's own faulty-arm outline lies inside the faulty (leaning) torso and is masked
-// there, so the faulty arm is drawn as Mistake guides, which are not masked: the engine's own faulty-arm outline as
-// dashed red polylines on a light surface (MIS_HALO; `parts` limits the masked engine outline to the arms, so the
-// leaning trunk is not outlined in red). A short
-// arrow runs from the correct start elbow (under the bar) to the faulty one. The drift is the light part: a thin dashed
-// path from the faulty bar curving forward-up to a sleeve-size ring MIS_FWD in front of mid-foot at forehead height
-// (MIS_Y) (the card gives no distance).
+// arm and did not read as elbows back; 10-03 R5: draw it clear of the torso, the elbow well back and lower): the
+// start body, the bar eased off the shoulders, 3 cm forward and 15 cm down (MIS_DZ, MIS_DY), the elbow IK pole down
+// and back square to the shoulder-bar line (MIS_POLE, no flare). The elbow then sits 27.7 cm behind and 20.1 cm below
+// the bar, behind the back line, and the forearm (34.2 cm in side view) tilts 54 deg, against -4.3 at the correct
+// start (misInfo). The engine's own faulty-arm outline lies inside the faulty (leaning) torso and is masked there, so
+// the faulty arm is drawn as Mistake guides, which are not masked: the engine's faulty-arm outline as dashed red
+// polylines (`parts` limits the masked engine outline to the arms, so the leaning trunk is not outlined in red). A
+// short arrow runs from the correct start elbow (under the bar) to the faulty one. The drift is the light part: a thin
+// dashed path from the faulty bar curving forward-up to a sleeve-size ring MIS_FWD in front of mid-foot at forehead
+// height (MIS_Y) (the card gives no distance).
 const MIS_POLE = [0.05, -0.77, -0.63];                // elbow IK pole: down and back, square to the shoulder-bar line (elbows back, c5)
 const MIS_DZ = 0.03, MIS_DY = -0.15;                   // m: the faulty bar sits this far in front of and below its rack spot
                                                        //  (eased off the shoulders), so the elbow can drop behind it
@@ -178,8 +178,7 @@ const MB = [0, BAR0[1] + MIS_DY, BAR0[2] + MIS_DZ];   // the faulty bar
 const DRIFT = Array.from({ length: 13 }, (_, k) => { const t = k / 12;   // quadratic curve from the faulty bar: up first, then forward
   return [0, (1 - t) ** 2 * MB[1] + 2 * t * (1 - t) * MIS_Y + t * t * MIS_Y, (1 - t) ** 2 * MB[2] + 2 * t * (1 - t) * MB[2] + t * t * MIS_FWD]; });
 // R5 (critic 10-03): in the Mistake view the lockout arm is faded (its parts redrawn over it as 'eq' outlines, the
-// ghost look, end layer, Mistake only), and the faulty front-rack arm is drawn on a card-surface patch of its own
-// (same method) with the engine's faulty-arm outline as dashed red guides on top, so it separates from the torso.
+// ghost look, end layer, Mistake only); the start arm is not drawn there, and the faulty arm has no patch under it.
 const FADE_ARM = [...armShapes(end, ARM_KEYS('l')), ...armShapes(end, ARM_KEYS('r'))].map(pts => ({ type: 'poly', pts, cls: 'eq', z: 'front', part: 'fadearm' }));
 const MIS_ARM = armShapes({ ...end, ...mistakePose }, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']);
 const RING_R = 0.025;
