@@ -1,9 +1,9 @@
 export const meta = {
   name: 'pilot-a-calibrated-critic',
-  description: 'Blind, calibrated visual critic for library pilot A (plan 3.4): prepare a shuffled plate set with 2 hidden approved plates and 2 planted defects, run a fresh Opus critic, check calibration, rerun if invalid',
+  description: 'Blind, calibrated visual critic for library pilot A (plan 3.4): prepare a shuffled plate set with 2 hidden approved plates and 2 planted defects, run a panel of 3 fresh Opus critics (medians, majority findings), check calibration, one more round if invalid',
   phases: [
     { title: 'Prepare', detail: 'render pilot A, hidden approved plates and two planted defects into a blind set' },
-    { title: 'Critic', detail: 'fresh Opus critic scores every plate R1-R10' },
+    { title: 'Critic', detail: 'a panel of 3 fresh Opus critics scores every plate R1-R10; medians decide' },
   ],
 }
 
@@ -82,12 +82,12 @@ const prep = await agent(`You prepare the input set for a BLIND, CALIBRATED visu
 
 Repo: /home/user/M-arc (GitHub macdarenz-droid/M-arc; run git fetch origin). Read only what you need:
 - Plan: docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md on origin/claude/howto-options, section "3.4 Visual critic" (git show origin/claude/howto-options:<path>).
-- Pilot A: branch origin/claude/lib-8-pilot-a (head ae7c8c0dd12d7f151f605e6c64c536bcc341bace expected; record the real head). Tooling: tools/plates/library/pilot-a/build.mjs (builds the sheet, the plates page and 390 px @2x shots <id>-{dark,paper,mistake-dark}.png), tools/plates/library/report.mjs (<spec> --shots <dir>), specs in tools/plates/library/specs/, verified cards in tools/plates/library/pilot-a/cards/<id>.json, plates.json (the pilot list). The pilot sheet has 17 plates (the rear-delt fly and the dumbbell fly are held off the sheet); use exactly the plates on the sheet.
+- Pilot A: branch origin/claude/lib-8-pilot-a (head e6f39ffbdb77fedd0d782dff73ff01f5899e08a3 expected; record the real head). Tooling: tools/plates/library/pilot-a/build.mjs (builds the sheet, the plates page and 390 px @2x shots <id>-{dark,paper,mistake-dark}.png), tools/plates/library/report.mjs (<spec> --shots <dir>), specs in tools/plates/library/specs/, verified cards in tools/plates/library/pilot-a/cards/<id>.json, plates.json (the pilot list). The pilot sheet has 17 plates (the rear-delt fly and the dumbbell fly are held off the sheet); use exactly the plates on the sheet.
 - The 8 approved golden-A plates (the owner-approved reference) are built by the same engine; find their specs and how to render them at the same 390 px @2x in the same three states (look at how the golden-A page / build-page.mjs and report.mjs load them).
 
 Steps:
 1. Start clean: git worktree remove --force ${SCR}/critic-a/wt if it exists, then delete every other file and folder under ${SCR}/critic-a/ (old sets, plants, renders, scripts) EXCEPT result-*.json and critic-*.json. git fetch origin claude/lib-8-pilot-a; git worktree prune; git worktree add ${SCR}/critic-a/wt origin/claude/lib-8-pilot-a; in it run npm ci (needed for the build). Run node tools/plates/library/pilot-a/build.mjs and record the plates page sha256 (no expected value for this head; record it. Rebuild once more and confirm the same sha, report any difference, do not fix it). Chromium is at /opt/pw-browsers (MARC_CHROMIUM=/opt/pw-browsers/chromium if a script needs it).
-2. Hidden approved plates: pick 2 of the 8 approved plates that resemble pilot plates (on 09-30 the calibration used lat_pulldown and seated_cable_row; you may reuse them). Render each in the same three states, same size, same file naming as the pilot shots.
+2. Hidden approved plates: lat_pulldown plus ONE of pull_up, hanging_leg_raise or leg_press (pick the one that most resembles the pilot plates). Never seated_cable_row or machine_chest_press, and never barbell_back_squat (ruling D-CRITIC-CAL2: the supervisor verified a real weakness on the first two renders, golden-B follow-ups 6 and 7; the squat is tier A without a rack). They are not clean anchors. They may still sit in reference/. Render each in the same three states, same size, same file naming as the pilot shots.
 3. Reference set: the remaining 6 approved plates, rendered the same way, into ${SCR}/critic-a/reference/<id>-{dark,paper,mistake-dark}.png. The 2 hidden plates must NOT appear in the reference set.
 4. Planted defects: make 2 temporary copies (in ${SCR}/critic-a/plants/, never in the worktree's tracked files; if a spec must sit in the tree to render, copy it under a new untracked name and delete it after) of two DIFFERENT pilot plates, each with ONE defect that automation cannot catch and a careful designer would: e.g. a callout leader that ends on the wrong joint or body part (R4), or a Mistake drawn on the wrong leg/arm or a Mistake that shows a different fault than its label (R5), or a hand visibly not on the handle (R3). Keep the engine report ok. Render them like the others. Record which rubric item each plant targets.
 5. Assemble the blind set: ${SCR}/critic-a/set/P01 .. P21 (17 pilot + 2 hidden approved + 2 plants; the plants are EXTRA copies, so the two pilot originals of the planted plates also stay in the set). Shuffle the order so position reveals nothing (e.g. sort by sha256 of id+"m-arc-pilot-a"). Each P## folder holds: dark.png, paper.png, mistake-dark.png, and facts.json = the plate-relevant facts from that exercise's verified research card (its plate section: checkpoints, mistake, tells, tempo, the facts a drawing must match, and its safety tier). For the hidden approved plates use their verified cards in docs/research/howto/cards/ on origin/claude/libht-research (or golden-B content) in the same shape. facts.json must not reveal approved / planted / pilot status, file paths, or spec names that differ from the plate's exercise name. No other file in set/.
@@ -128,31 +128,50 @@ For every item scored 3 or less, give a finding: the item, the problem, where (p
 Return every candidate in ${labels.join(', ')} with scores and findings. The label field must be exactly the folder name (for example "P01"), with no exercise name added: the calibration check matches on it.`
 
 phase('Critic')
+// D-CRITIC-CAL2 (10-03): a round is a PANEL of 3 independent critics. Per plate and item the score is the median of the
+// three; a finding counts when at least 2 of the 3 critics score that item 3 or less. Calibration runs on the medians.
+const ITEMS = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9', 'R10']
+const median = (xs) => { const v = xs.filter(x => typeof x === 'number').sort((a, b) => a - b); return v.length ? v[Math.floor((v.length - 1) / 2)] : null }
 const runs = []
 let final = null
-for (let n = 1; n <= 3 && !final; n++) {
-  const res = await agent(criticPrompt(n), { label: `critic run ${n}`, phase: 'Critic', schema: CRITIC_SCHEMA })
-  if (!res) { runs.push({ n, valid: false, reasons: ['critic returned nothing'] }); continue }
-  const byLabel = Object.fromEntries(res.plates.map(p => [p.label, p]))
+for (let r = 1; r <= 2 && !final; r++) {
+  const panel = (await parallel([1, 2, 3].map(i => () => agent(criticPrompt(`${r}.${i}`), { label: `critic ${r}.${i}`, phase: 'Critic', schema: CRITIC_SCHEMA })))).filter(Boolean)
+  if (panel.length < 3) { runs.push({ round: r, valid: false, reasons: [`only ${panel.length} of 3 critics returned`] }); continue }
+  const agg = prep.candidates.map(c => {
+    const per = panel.map(res => res.plates.find(p => p.label === c.label)).filter(Boolean)
+    const scores = Object.fromEntries(ITEMS.map(k => [k, median(per.map(p => p.scores[k]))]))
+    const findings = ITEMS.flatMap(k => {
+      const fs = per.flatMap(p => (p.findings || []).filter(f => f.item === k).map(f => f))
+      const low = per.filter(p => typeof p.scores[k] === 'number' && p.scores[k] <= 3).length
+      return low >= 2 ? [{ item: k, flaggedBy: low, problems: fs.map(f => ({ problem: f.problem, where: f.where, fix: f.fix })) }] : []
+    })
+    return { label: c.label, scores, findings, raw: per.map(p => p.scores), seen: per.length }
+  })
+  const byLabel = Object.fromEntries(agg.map(p => [p.label, p]))
   const reasons = []
   for (const c of prep.candidates) {
     const p = byLabel[c.label]
-    if (!p) { reasons.push(`${c.label} missing`); continue }
+    if (!p || p.seen < 3) { reasons.push(`${c.label} missing from ${3 - (p ? p.seen : 0)} critic(s)`); continue }
     const sc = Object.entries(p.scores).filter(([k, v]) => v !== null && v !== undefined)
     if (c.kind === 'approved') {
       const low = sc.filter(([k, v]) => v < 4)
-      if (low.length) reasons.push(`hidden approved ${c.id} (${c.label}) scored below 4: ${low.map(([k, v]) => k + '=' + v).join(', ')}`)
+      if (low.length) reasons.push(`hidden approved ${c.id} (${c.label}) median below 4: ${low.map(([k, v]) => k + '=' + v).join(', ')}`)
     }
     if (c.kind === 'plant') {
+      // D-CRITIC-CAL: caught on its target item, or on any item where the unplanted original scores >= 4 (the drop is the plant's)
       const target = c.plantItem && p.scores[c.plantItem]
-      const caught = (typeof target === 'number' && target < 4)
-      if (!caught) reasons.push(`plant ${c.id} (${c.label}, ${c.plantItem}: ${c.plantDescription}) not caught (score ${target})`)
+      const orig = prep.candidates.find(o => o.kind === 'pilot' && o.id === c.id)
+      const op = orig && byLabel[orig.label]
+      const other = op ? sc.filter(([k, v]) => v < 4 && typeof op.scores[k] === 'number' && op.scores[k] >= 4).map(([k]) => k) : []
+      const caught = (typeof target === 'number' && target < 4) || other.length > 0
+      if (!caught) reasons.push(`plant ${c.id} (${c.label}, ${c.plantItem}: ${c.plantDescription}) not caught (median ${target})`)
+      else if (!(typeof target === 'number' && target < 4)) log(`plant ${c.id} (${c.label}) caught on ${other.join(', ')} instead of ${c.plantItem}`)
     }
   }
   const valid = reasons.length === 0
-  runs.push({ n, valid, reasons })
-  log(`critic run ${n}: ${valid ? 'VALID' : 'discarded: ' + reasons.join('; ')}`)
-  if (valid) final = res
+  runs.push({ round: r, valid, reasons })
+  log(`critic round ${r} (panel of 3): ${valid ? 'VALID' : 'discarded: ' + reasons.join('; ')}`)
+  if (valid) final = { plates: agg, notes: panel.map(x => x.notes).filter(Boolean).join('\n---\n') }
 }
 
 const key = Object.fromEntries(prep.candidates.map(c => [c.label, c]))
