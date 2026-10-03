@@ -1,0 +1,647 @@
+{
+ "id": "weighted_dip",
+ "libId": "lib_weighted_dip",
+ "name": "Weighted Dip",
+ "family": "Dip",
+ "tier": "A",
+ "tierNote": "Safety tier A (content.md appendix B); census.json difficulty tier 2.",
+ "archetype": {
+  "hand": "push",
+  "contact": [
+   "hang-support"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Use bars that let the hands sit about shoulder-width apart, or within about 5 cm (two inches) outside it; bars too wide make an awkward movement for the shoulders, bars too close make good depth hard.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dip",
+    "bb-dips"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dip",
+     "text": "Make sure to find bars where you can grip about shoulder-width apart. If the bars are too far away from each other, you’ll end up with a weird movement for your shoulders, and it will be hard to maintain a proper form.",
+     "where": "Proper form"
+    },
+    {
+     "source": "sl-dip",
+     "text": "If they are too close together, it will be hard to reach a good depth.",
+     "where": "Proper form"
+    },
+    {
+     "source": "bb-dips",
+     "text": "Stand between the dip bars, ideally ones that allow your hands to be relatively within two inches outside of shoulder width.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Stand between the bars, set the hands evenly, squeeze the shoulder blades together and grip the bars hard, then climb up to the straight-arm start. The mount comes from the bodyweight bar dip, applied to the loaded dip by similarity.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "bb-dips",
+    "sl-dip"
+   ],
+   "quotes": [
+    {
+     "source": "bb-dips",
+     "text": "Set your hands evenly on the bars. Squeeze your shoulder blades together and squeeze the bars hard.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "sl-dip",
+     "text": "Grip a dip station about shoulder-width apart, and climb or jump to get into the starting position.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "At the top, brace the core and keep the shoulders down and back; crossing the ankles with a slight knee bend steadies the body.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dip"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dip",
+     "text": "When you’ve jumped/climbed up to the starting position, make sure to embrace your core and to have a good posture. Keep your shoulders down and back.",
+     "where": "Proper form"
+    },
+    {
+     "source": "sl-dip",
+     "text": "By crossing your ankles and having a slight bend in your knees, you’ll help to make the movement even more stable.",
+     "where": "Proper form"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Lower with control, elbows going back rather than out, to about parallel (upper arm level with the floor, elbows near 90 degrees) or slightly below, or as deep as is comfortable; going much deeper stresses the shoulders.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dip",
+    "bb-dips"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dip",
+     "text": "Lower yourself with control until your shoulder is below your elbow, or as deep as you comfortably can.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "sl-dip",
+     "text": "Your elbows should go backward, not out, and your shoulders should stay down and back.",
+     "where": "Proper form"
+    },
+    {
+     "source": "bb-dips",
+     "text": "Flex your elbows and lower your body, keeping your torso upright and your core tight until your elbows are bent at 90 degrees.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "bb-dips",
+     "text": "With each rep, you’ll want to go down to parallel or slightly below parallel. But there can be too much of a good thing. Dipping too much deeper can put stress on your shoulder joints that you can easily avoid.",
+     "where": "Technique, range of motion"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Drive through the palms back to the top with the torso nearly upright, at most a slight forward lean; leaning too far forward loads the shoulders.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-dips"
+   ],
+   "quotes": [
+    {
+     "source": "bb-dips",
+     "text": "Drive through your palms to raise your body back to the starting position. Your torso should be nearly vertical, with perhaps a slight lean forward.",
+     "where": "How to, step 3"
+    },
+    {
+     "source": "bb-dips",
+     "text": "if you lean too far forward, you risk inappropriately engaging your shoulders.",
+     "where": "Technique, lean"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Shrugging the shoulders up toward the ears is a common mistake: it makes the dip less efficient, adds stress on the shoulder joint and can cause neck and shoulder discomfort.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dip"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dip",
+     "text": "Not keeping your shoulders down. By letting your shoulders shrug up towards your ears, you’ll make the movement less efficient, increase the stress on the shoulder joint, and could cause discomfort in the neck and shoulder area rather than exercising the targeted muscles.",
+     "where": "Common mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Other common mistakes: cutting reps short, and using momentum, swinging, arching the low back or flaring the elbows.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dip"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dip",
+     "text": "Half reps. Since the bar dip is quite a heavy exercise, it’s easy to start to cut off depth to be able to do more reps. Don’t do this.",
+     "where": "Common mistakes"
+    },
+    {
+     "source": "sl-dip",
+     "text": "Using momentum, swinging the body to complete the movement, arching your lower back, and/or flaring your elbows out to the sides, rather than relying on controlled, targeted muscle activation, is a common mistake while doing bar dips.",
+     "where": "Common mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Add load with a dip belt: put the belt round the waist and hang weight plates from it (a dumbbell held between the thighs or ankles works without a belt). Keep the weight from swinging and hang it low, near the shins or feet.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-dips",
+    "bb-dipcorrect"
+   ],
+   "quotes": [
+    {
+     "source": "bb-dips",
+     "text": "Secure a dip belt around your waist and add your desired amount of weight plates.",
+     "where": "Variations, weighted dip"
+    },
+    {
+     "source": "bb-dips",
+     "text": "If you don’t have access to a dip belt, you can hold a dumbbell between your thighs or ankles.",
+     "where": "Variations, weighted dip"
+    },
+    {
+     "source": "bb-dipcorrect",
+     "text": "When using a dip belt, maintain control of the weight. Allowing the weight to swing uncontrollably can disrupt form and lead to an unsteadiness.",
+     "where": "Tip, weighted dips"
+    },
+    {
+     "source": "bb-dipcorrect",
+     "text": "Position the weight as low as possible, ideally near the shins or feet.",
+     "where": "Tip, weighted dips"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "One physiotherapist-coach advises slow lowering of two to five seconds and says slow dips are gentler on the body, cutting the risk of chest-wall (rib cartilage) pain and shoulder, elbow or wrist injury.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "bb-dipcorrect"
+   ],
+   "quotes": [
+    {
+     "source": "bb-dipcorrect",
+     "text": "Focusing on slow, controlled descents of two to five seconds during dips can increase their effectiveness and difficulty, maximizing the benefits. Moreover, slow-tempo dips are gentler on the body, helping reduce the risk of costochondritis and shoulder, elbow, or wrist injuries.",
+     "where": "Tip, tempo"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Dips can feel stressful on the shoulders and breastbone for anyone new to them, so build volume gradually; they can aggravate some shoulders, and close-grip bench press, close-grip push-ups or cable pushdowns work the same muscles.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dip",
+    "bb-dips"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dip",
+     "text": "If you are unaccustomed to dips, they might feel quite stressful on your shoulders and sternum, and in that case (and actually in almost all cases), it might be a good idea to increase the training volume very gradually.",
+     "where": "Sets and reps"
+    },
+    {
+     "source": "bb-dips",
+     "text": "Dips are not inherently bad for the shoulders. However, the dip can sometimes aggravate the shoulders in some individuals.",
+     "where": "FAQ"
+    },
+    {
+     "source": "bb-dips",
+     "text": "lifters can also swap out dips for movements like close-grip bench presses, close-grip push-ups, and cable pushdowns",
+     "where": "FAQ"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "The chest, front shoulders and triceps do the work; the front of the shoulder can be taxed or aggravated, which may mean the form is off.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dip",
+    "bb-dips"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dip",
+     "text": "Primary muscles worked: Chest Front Deltoid Triceps",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "bb-dips",
+     "text": "Some individuals may find the dip can aggravate or tax the anterior shoulder capsule, which may mean your form is incorrect",
+     "where": "Muscles worked, front delts"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "In 13 experienced men, peak triceps activity was higher on the bar dip (1.04 mV) than the bench dip (0.83 mV); the authors call the bar dip a fitting step up from the bench dip.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "mckenzie-2022"
+   ],
+   "quotes": [
+    {
+     "source": "mckenzie-2022",
+     "text": "The mean peak triceps brachii activation was 0.83 ± 0.34 mV on the bench, 1.04 ± 0.27 mV on the bar, and 1.05 ± 0.40 mV on the ring. The bar dip is an appropriate progression from the bench dip due to the higher peak muscle activations.",
+     "where": "abstract"
+    },
+    {
+     "source": "mckenzie-2022",
+     "text": "Thirteen experienced males performed four repetitions of each dip variation.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Add weight only once body weight is no longer a challenge; keep weighted sets at five reps or more. Load progression: add 2-10% once you can do one or two reps more than the target.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-dips",
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "bb-dips",
+     "text": "If your body weight is no longer a challenge, you’ll need to add weight to your dips.",
+     "where": "Programming"
+    },
+    {
+     "source": "bb-dips",
+     "text": "I recommend training no less than five reps per set, which means the weight itself can vary based on your strength.",
+     "where": "FAQ"
+    },
+    {
+     "source": "acsm-2009",
+     "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+     "where": "abstract"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "sl-dip",
+   "url": "https://www.strengthlog.com/bar-dip/",
+   "title": "How to Do Bar Dips: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "bb-dips",
+   "url": "https://barbend.com/dips/",
+   "title": "How to Do Dips: Proper Form & Variations | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "bb-dipcorrect",
+   "url": "https://barbend.com/news/dip-correctly-or-dont-dip-at-all/",
+   "title": "Dip Correctly or Don't Dip at All | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "mckenzie-2022",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36293792/",
+   "title": "Bench, Bar, and Ring Dips: Do Kinematics and Muscle Activity Differ?",
+   "kind": "peer-reviewed",
+   "year": 2022,
+   "pmid": 36293792,
+   "access": "abstract",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-10-02"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; depth (c4), the near-upright torso (c5), the shrug fault (c6) and the hanging plate (c8) all read from the side.",
+  "equipment": "Parallel dip bars on a frame (census 'dipBars', missing), hands about shoulder-width (c1); dip belt round the waist with a plate hanging low on a chain, near the shins (c8; belt and plate are not drawn today, census note).",
+  "start": "Top: arms straight on the bars (c2), shoulders down and back, core braced (c3), torso nearly upright (c5), ankles crossed with a slight knee bend (c3), plate hanging still below (c8).",
+  "end": "Bottom: elbows bent to about 90 degrees with the upper arm about level with the floor (c4), elbows pointing back (c4), shoulders still down (c6), torso nearly upright with a slight lean (c5).",
+  "checkpoints": [
+   {
+    "label": "Shoulders down",
+    "what": "Shoulders stay down and back, away from the ears.",
+    "claim": [
+     "c3",
+     "c6"
+    ]
+   },
+   {
+    "label": "Elbows back",
+    "what": "Elbows travel back, not out.",
+    "claim": "c4"
+   },
+   {
+    "label": "Depth to parallel",
+    "what": "Upper arm about level with the floor; no deeper.",
+    "claim": "c4"
+   }
+  ],
+  "mistake": {
+   "what": "Shoulders shrugging up toward the ears at the bottom.",
+   "why": "StrengthLog lists not keeping the shoulders down first among bar-dip mistakes: it adds stress on the shoulder joint and can cause neck and shoulder discomfort (c6).",
+   "claim": "c6",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Shoulders stay away from your ears",
+    "claim": "c6"
+   },
+   {
+    "text": "The plate hangs still",
+    "claim": "c8"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 0,
+   "claim": [
+    "c4",
+    "c9"
+   ],
+   "text": "Lower with control (c4); one coach advises 2-5 s down (c9, WEAK). The plate uses 2 s down, 1 s up as a drawing convention."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Hands on parallel bars, set evenly, gripped hard (c2).",
+  "width": "About shoulder-width, or within about 5 cm outside it (c1).",
+  "thumb": "",
+  "handContact": "Drive through the palms on the way up (c5).",
+  "wrist": "",
+  "claims": [
+   "c1",
+   "c2",
+   "c5"
+  ],
+  "note": "No dip source gives the thumb or wrist position; listed in gaps for the push archetype check."
+ },
+ "setup": [
+  {
+   "step": "Pick bars about shoulder-width apart.",
+   "claim": "c1"
+  },
+  {
+   "step": "Belt on, plate hanging low near your shins.",
+   "claim": "c8"
+  },
+  {
+   "step": "Hands even on the bars; grip them hard.",
+   "claim": "c2"
+  },
+  {
+   "step": "Climb up to straight arms.",
+   "claim": "c2"
+  },
+  {
+   "step": "Brace, shoulders down and back, ankles crossed.",
+   "claim": "c3"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Shoulders down; no shrug.",
+   "claim": "c6"
+  },
+  {
+   "point": "Elbows go back, not out.",
+   "claim": "c4"
+  },
+  {
+   "point": "Torso nearly upright, slight lean at most.",
+   "claim": "c5"
+  },
+  {
+   "point": "Lower under control to about parallel.",
+   "claim": "c4"
+  },
+  {
+   "point": "The plate hangs still; no swinging.",
+   "claim": "c8"
+  },
+  {
+   "point": "Drive through your palms to the top.",
+   "claim": "c5"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Shoulders shrugging toward your ears.",
+   "fix": "Shoulders down and back through the whole rep.",
+   "claim": "c6"
+  },
+  {
+   "mistake": "Swinging, a swaying plate or flaring elbows.",
+   "fix": "Control the plate; elbows back.",
+   "claim": [
+    "c7",
+    "c8"
+   ]
+  },
+  {
+   "mistake": "Going far below parallel.",
+   "fix": "Stop at about parallel, or where it's comfortable.",
+   "claim": "c4"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "chest",
+    "claim": "c11"
+   },
+   {
+    "muscleId": "triceps",
+    "claim": "c11"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "front_delts",
+    "claim": "c11"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Chest and back of the arms",
+    "means": "The pressing muscles are working.",
+    "fix": "",
+    "claim": [
+     "c11",
+     "c12"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Breastbone, new to dips",
+    "means": "Dips can feel stressful here at first.",
+    "fix": "Build your sets up gradually.",
+    "claim": "c10",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the shoulder",
+    "means": "Your form may be off: shrug, lean or depth.",
+    "fix": "Shoulders down, torso upright, stop at parallel. If it still hurts, swap to close-grip bench press or pushdowns.",
+    "claim": [
+     "c11",
+     "c6",
+     "c5",
+     "c4",
+     "c10"
+    ],
+    "redFlag": "shoulder"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Shrugged shoulders add stress on the shoulder joint.",
+   "claim": "c6"
+  },
+  {
+   "risk": "Dipping far below parallel can stress the shoulders.",
+   "claim": "c4"
+  },
+  {
+   "risk": "A swinging plate makes you unsteady.",
+   "claim": "c8"
+  }
+ ],
+ "redFlags": [
+  "shoulder"
+ ],
+ "zooms": [
+  {
+   "key": "shoulders",
+   "kind": "posture",
+   "right": "Shoulders down and back at the bottom.",
+   "wrong": "Shoulders shrugged up toward the ears.",
+   "claim": [
+    "c3",
+    "c6"
+   ]
+  },
+  {
+   "key": "depth",
+   "kind": "posture",
+   "right": "Upper arm about level with the floor.",
+   "wrong": "Shoulders sunk far below the elbows.",
+   "claim": "c4"
+  },
+  {
+   "key": "plate",
+   "kind": "posture",
+   "right": "Plate hanging low and still.",
+   "wrong": "Plate swinging.",
+   "claim": "c8"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "chest and triceps primary, front_delts secondary fit the sources (c11, c12); StrengthLog lists the front delt as primary too, and the library's split is kept."
+ },
+ "anchorSource": "sl-dip",
+ "loadProgression": {
+  "text": "Add weight once body weight is easy; keep sets at 5+ reps; add 2-10% when you beat your target by one or two.",
+  "claim": "c13"
+ },
+ "tierA": {
+  "wayOut": null,
+  "safetyPoints": [
+   "Load progression: c13.",
+   "Safeties or J-hooks: not applicable (no bar in a rack).",
+   "Bar path clear of the neck: not applicable (no bar)."
+  ]
+ },
+ "gaps": [
+  "Way out (LR-3, LIB-WAYOUT, R-W1-5): the loaded mount and dismount (getting on and off the bars with a plate on the belt) and what to do when a rep fails. No source found; no way-out line is shown, and the shown setup gives no loaded jump.",
+  "Thumb position on the dip bars (push archetype): no dip source.",
+  "Wrist position over the bars: no dip source.",
+  "Depth: StrengthLog's competition depth (shoulder below elbow) is deeper than BarBend's parallel; the card follows the more cautious line (parallel or slightly below, or as deep as is comfortable), c4."
+ ],
+ "notes": [
+  "StrengthLog's 'bar dip' page is the anchor: it covers the weighted version (weight belt, c8 and its own 'heavy single in weighted bar dips' sets) and the bar-dip form in full. There is no StrengthLog or BarBend page for the weighted dip alone (both 404).",
+  "c9 rests on one coach (physiotherapist Daniel Vadnal, reported by BarBend) and is tagged WEAK; it is used only for the tempo text, not a shown risk line.",
+  "The shoulder feel row restates the sources' own form faults (c4, c5, c6, c11) and their swap (c10), with no added cause (LR-6).",
+  "W1 fixer round 2026-10-03: F03 / R-W1-5: setup[3] 'Climb or jump up' -> 'Climb up to straight arms.'; c2 text drops 'or jump', says the mount is from the bodyweight dip, tag CONSENSUS -> MECH; gaps[0] names the loaded mount and dismount under LIB-WAYOUT. F12: risks[1] keeps the source's hedge ('can stress'). F18: front_delts removed from feel.watch (stays secondary; the shoulder row carries the warning)."
+ ]
+}

@@ -1,0 +1,255 @@
+{
+ "id": "weighted_dip",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-dip",
+   "text": "Make sure to find bars where you can grip about shoulder-width apart. If the bars are too far away from each other, you’ll end up with a weird movement for your shoulders, and it will be hard to maintain a proper form.",
+   "status": "verbatim",
+   "closest": "Make sure to find bars where you can grip about shoulder-width apart. If the bars are too far away from each other, you’ll end up with a weird movement for your shoulders, and it will be hard to maintain a proper form.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-dip",
+   "text": "If they are too close together, it will be hard to reach a good depth.",
+   "status": "verbatim",
+   "closest": "If they are too close together, it will be hard to reach a good depth.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-dips",
+   "text": "Stand between the dip bars, ideally ones that allow your hands to be relatively within two inches outside of shoulder width.",
+   "status": "verbatim",
+   "closest": "Stand between the dip bars, ideally ones that allow your hands to be relatively within two inches outside of shoulder width.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-dips",
+   "text": "Set your hands evenly on the bars. Squeeze your shoulder blades together and squeeze the bars hard.",
+   "status": "verbatim",
+   "closest": "Set your hands evenly on the bars. Squeeze your shoulder blades together and squeeze the bars hard.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-dip",
+   "text": "Grip a dip station about shoulder-width apart, and climb or jump to get into the starting position.",
+   "status": "verbatim",
+   "closest": "Grip a dip station about shoulder-width apart, and climb or jump to get into the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-dip",
+   "text": "When you’ve jumped/climbed up to the starting position, make sure to embrace your core and to have a good posture. Keep your shoulders down and back.",
+   "status": "verbatim",
+   "closest": "When you’ve jumped/climbed up to the starting position, make sure to embrace your core and to have a good posture. Keep your shoulders down and back.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-dip",
+   "text": "By crossing your ankles and having a slight bend in your knees, you’ll help to make the movement even more stable.",
+   "status": "verbatim",
+   "closest": "By crossing your ankles and having a slight bend in your knees, you’ll help to make the movement even more stable.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-dip",
+   "text": "Lower yourself with control until your shoulder is below your elbow, or as deep as you comfortably can.",
+   "status": "verbatim",
+   "closest": "Lower yourself with control until your shoulder is below your elbow, or as deep as you comfortably can.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-dip",
+   "text": "Your elbows should go backward, not out, and your shoulders should stay down and back.",
+   "status": "verbatim",
+   "closest": "Your elbows should go backward, not out, and your shoulders should stay down and back.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-dips",
+   "text": "Flex your elbows and lower your body, keeping your torso upright and your core tight until your elbows are bent at 90 degrees.",
+   "status": "verbatim",
+   "closest": "Flex your elbows and lower your body, keeping your torso upright and your core tight until your elbows are bent at 90 degrees.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-dips",
+   "text": "With each rep, you’ll want to go down to parallel or slightly below parallel. But there can be too much of a good thing. Dipping too much deeper can put stress on your shoulder joints that you can easily avoid.",
+   "status": "verbatim",
+   "closest": "With each rep, you’ll want to go down to parallel or slightly below parallel. But there can be too much of a good thing. Dipping too much deeper can put stress on your shoulder joints that you can easily avoid.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-dips",
+   "text": "Drive through your palms to raise your body back to the starting position. Your torso should be nearly vertical, with perhaps a slight lean forward.",
+   "status": "verbatim",
+   "closest": "Drive through your palms to raise your body back to the starting position. Your torso should be nearly vertical, with perhaps a slight lean forward.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-dips",
+   "text": "if you lean too far forward, you risk inappropriately engaging your shoulders.",
+   "status": "verbatim",
+   "closest": "if you lean too far forward, you risk inappropriately engaging your shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-dip",
+   "text": "Not keeping your shoulders down. By letting your shoulders shrug up towards your ears, you’ll make the movement less efficient, increase the stress on the shoulder joint, and could cause discomfort in the neck and shoulder area rather than exercising the targeted muscles.",
+   "status": "verbatim",
+   "closest": "Not keeping your shoulders down. By letting your shoulders shrug up towards your ears, you’ll make the movement less efficient, increase the stress on the shoulder joint, and could cause discomfort in the neck and shoulder area rather than exercising the targeted muscles.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-dip",
+   "text": "Half reps. Since the bar dip is quite a heavy exercise, it’s easy to start to cut off depth to be able to do more reps. Don’t do this.",
+   "status": "verbatim",
+   "closest": "Half reps. Since the bar dip is quite a heavy exercise, it’s easy to start to cut off depth to be able to do more reps. Don’t do this.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-dip",
+   "text": "Using momentum, swinging the body to complete the movement, arching your lower back, and/or flaring your elbows out to the sides, rather than relying on controlled, targeted muscle activation, is a common mistake while doing bar dips.",
+   "status": "verbatim",
+   "closest": "Using momentum, swinging the body to complete the movement, arching your lower back, and/or flaring your elbows out to the sides, rather than relying on controlled, targeted muscle activation, is a common mistake while doing bar dips.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-dips",
+   "text": "Secure a dip belt around your waist and add your desired amount of weight plates.",
+   "status": "verbatim",
+   "closest": "Secure a dip belt around your waist and add your desired amount of weight plates.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-dips",
+   "text": "If you don’t have access to a dip belt, you can hold a dumbbell between your thighs or ankles.",
+   "status": "verbatim",
+   "closest": "If you don’t have access to a dip belt, you can hold a dumbbell between your thighs or ankles.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-dipcorrect",
+   "text": "When using a dip belt, maintain control of the weight. Allowing the weight to swing uncontrollably can disrupt form and lead to an unsteadiness.",
+   "status": "verbatim",
+   "closest": "When using a dip belt, maintain control of the weight. Allowing the weight to swing uncontrollably can disrupt form and lead to an unsteadiness.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-dipcorrect",
+   "text": "Position the weight as low as possible, ideally near the shins or feet.",
+   "status": "verbatim",
+   "closest": "Position the weight as low as possible, ideally near the shins or feet.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-dipcorrect",
+   "text": "Focusing on slow, controlled descents of two to five seconds during dips can increase their effectiveness and difficulty, maximizing the benefits. Moreover, slow-tempo dips are gentler on the body, helping reduce the risk of costochondritis and shoulder, elbow, or wrist injuries.",
+   "status": "verbatim",
+   "closest": "Focusing on slow, controlled descents of two to five seconds during dips can increase their effectiveness and difficulty, maximizing the benefits. Moreover, slow-tempo dips are gentler on the body, helping reduce the risk of costochondritis and shoulder, elbow, or wrist injuries.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-dip",
+   "text": "If you are unaccustomed to dips, they might feel quite stressful on your shoulders and sternum, and in that case (and actually in almost all cases), it might be a good idea to increase the training volume very gradually.",
+   "status": "verbatim",
+   "closest": "If you are unaccustomed to dips, they might feel quite stressful on your shoulders and sternum, and in that case (and actually in almost all cases), it might be a good idea to increase the training volume very gradually.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-dips",
+   "text": "Dips are not inherently bad for the shoulders. However, the dip can sometimes aggravate the shoulders in some individuals.",
+   "status": "verbatim",
+   "closest": "Dips are not inherently bad for the shoulders. However, the dip can sometimes aggravate the shoulders in some individuals.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-dips",
+   "text": "lifters can also swap out dips for movements like close-grip bench presses, close-grip push-ups, and cable pushdowns",
+   "status": "verbatim",
+   "closest": "lifters can also swap out dips for movements like close-grip bench presses, close-grip push-ups, and cable pushdowns",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "sl-dip",
+   "text": "Primary muscles worked: Chest Front Deltoid Triceps",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Chest Front Deltoid Triceps",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-dips",
+   "text": "Some individuals may find the dip can aggravate or tax the anterior shoulder capsule, which may mean your form is incorrect",
+   "status": "verbatim",
+   "closest": "Some individuals may find the dip can aggravate or tax the anterior shoulder capsule, which may mean your form is incorrect",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "mckenzie-2022",
+   "text": "The mean peak triceps brachii activation was 0.83 ± 0.34 mV on the bench, 1.04 ± 0.27 mV on the bar, and 1.05 ± 0.40 mV on the ring. The bar dip is an appropriate progression from the bench dip due to the higher peak muscle activations.",
+   "status": "verbatim",
+   "closest": "The mean peak triceps brachii activation was 0.83 ± 0.34 mV on the bench, 1.04 ± 0.27 mV on the bar, and 1.05 ± 0.40 mV on the ring. The bar dip is an appropriate progression from the bench dip due to the higher peak muscle activations.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "mckenzie-2022",
+   "text": "Thirteen experienced males performed four repetitions of each dip variation.",
+   "status": "verbatim",
+   "closest": "Thirteen experienced males performed four repetitions of each dip variation.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-dips",
+   "text": "If your body weight is no longer a challenge, you’ll need to add weight to your dips.",
+   "status": "verbatim",
+   "closest": "If your body weight is no longer a challenge, you’ll need to add weight to your dips.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-dips",
+   "text": "I recommend training no less than five reps per set, which means the weight itself can vary based on your strength.",
+   "status": "verbatim",
+   "closest": "I recommend training no less than five reps per set, which means the weight itself can vary based on your strength.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "acsm-2009",
+   "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "status": "verbatim",
+   "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  }
+ ]
+}

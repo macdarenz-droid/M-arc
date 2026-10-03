@@ -1,0 +1,175 @@
+{
+ "id": "crunch",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-crunch",
+   "text": "Lie in a supine (on your back) position on a mat with your knees bent, feet flat on the floor and heels 12 - 18\" from your tailbone.",
+   "status": "verbatim",
+   "closest": "Lie in a supine (on your back) position on a mat with your knees bent, feet flat on the floor and heels 12 - 18\" from your tailbone.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-crunch",
+   "text": "Lie on your back. Bend your knees and plant your feet hip-width apart.",
+   "status": "verbatim",
+   "closest": "Lie on your back. Bend your knees and plant your feet hip-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-crunch",
+   "text": "Place your fingertips just above your ears with your elbows splayed wide, pulling them back toward the ground. Press your fingertips gently onto the sides of your head rather than gripping behind your neck or ears. Alternatively, cross your arms over your chest.",
+   "status": "verbatim",
+   "closest": "Place your fingertips just above your ears with your elbows splayed wide, pulling them back toward the ground. Press your fingertips gently onto the sides of your head rather than gripping behind your neck or ears. Alternatively, cross your arms over your chest.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-crunch",
+   "text": "Lie on your back, with your hands in front of your chest and your knees bent to about 90 degrees.",
+   "status": "verbatim",
+   "closest": "Lie on your back, with your hands in front of your chest and your knees bent to about 90 degrees.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-crunch",
+   "text": "Place your hands behind your head, squeezing your scapulae (shoulder blades) together and pulling your elbows back without arching your low back. This elbow position should be maintained throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Place your hands behind your head, squeezing your scapulae (shoulder blades) together and pulling your elbows back without arching your low back. This elbow position should be maintained throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-crunch",
+   "text": "Exhale, contract your abdominal and core muscles and flex your chin slightly towards your chest while slowly curling your torso towards your thighs.",
+   "status": "verbatim",
+   "closest": "Exhale, contract your abdominal and core muscles and flex your chin slightly towards your chest while slowly curling your torso towards your thighs.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-crunch",
+   "text": "The movement should focus on pulling your rib cage towards your pelvis (the neck stays relaxed while the chin is tucked towards the neck).",
+   "status": "verbatim",
+   "closest": "The movement should focus on pulling your rib cage towards your pelvis (the neck stays relaxed while the chin is tucked towards the neck).",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-crunch",
+   "text": "Your feet, tailbone and lower back should remain in contact with the mat at all times. Continue curling up until your upper back is lifted off the mat. Hold this position briefly.",
+   "status": "verbatim",
+   "closest": "Your feet, tailbone and lower back should remain in contact with the mat at all times. Continue curling up until your upper back is lifted off the mat. Hold this position briefly.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-crunch",
+   "text": "Once your shoulder blades have left the ground, give your abs a final squeeze.",
+   "status": "verbatim",
+   "closest": "Once your shoulder blades have left the ground, give your abs a final squeeze.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-crunch",
+   "text": "When you’re aiming to do crunches, you’re intentionally keeping your range of motion small. Don’t give into the temptation to turn crunches into a whole different exercise.",
+   "status": "verbatim",
+   "closest": "When you’re aiming to do crunches, you’re intentionally keeping your range of motion small. Don’t give into the temptation to turn crunches into a whole different exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-crunch",
+   "text": "Gently inhale and slowly uncurl (lower) your torso back towards the mat in a controlled fashion keeping your feet, tailbone and low back in contact with the mat.",
+   "status": "verbatim",
+   "closest": "Gently inhale and slowly uncurl (lower) your torso back towards the mat in a controlled fashion keeping your feet, tailbone and low back in contact with the mat.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-crunch",
+   "text": "Individuals usually perform this movement too rapidly and recruit the hip flexors to assist with the upward phase. This technique tilts the pelvis anteriorly, increasing the stress on the low back and should be avoided.",
+   "status": "verbatim",
+   "closest": "Individuals usually perform this movement too rapidly and recruit the hip flexors to assist with the upward phase. This technique tilts the pelvis anteriorly, increasing the stress on the low back and should be avoided.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-crunch",
+   "text": "When you set up to perform crunches, slightly tuck your chin toward your chest. Maintain that position consistently, being careful not to bring your chin further down to your chest throughout the move.",
+   "status": "verbatim",
+   "closest": "When you set up to perform crunches, slightly tuck your chin toward your chest. Maintain that position consistently, being careful not to bring your chin further down to your chest throughout the move.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-crunch",
+   "text": "If you tend to yank your torso up and lead with your arms when your hands are by your ears, cross them over your chest instead.",
+   "status": "verbatim",
+   "closest": "If you tend to yank your torso up and lead with your arms when your hands are by your ears, cross them over your chest instead.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-crunch",
+   "text": "Your shoulders should stay relaxed throughout your reps. Instead of letting your shoulders curl forward, keep them in the same position the whole time.",
+   "status": "verbatim",
+   "closest": "Your shoulders should stay relaxed throughout your reps. Instead of letting your shoulders curl forward, keep them in the same position the whole time.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-crunch",
+   "text": "Primary muscles worked: Abs Secondary muscles worked: Obliques",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Abs Secondary muscles worked: Obliques",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-crunch",
+   "text": "The crunch primarily — and pretty exclusively — targets this core muscle.",
+   "status": "verbatim",
+   "closest": "The crunch primarily — and pretty exclusively — targets this core muscle.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "juker-1998",
+   "text": "All forms of sit-ups activated psoas (15-35% MVC) more than the curl-up (<10%)",
+   "status": "verbatim",
+   "closest": "All forms of sit-ups activated psoas (15-35% MVC) more than the curl-up (<10%)",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-crunch",
+   "text": "For Core Activation: To increase your mind-muscle connection with your abs, perform two to three sets of 12 to 15 very slow, deliberate reps.",
+   "status": "verbatim",
+   "closest": "For Core Activation: To increase your mind-muscle connection with your abs, perform two to three sets of 12 to 15 very slow, deliberate reps.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-crunch",
+   "text": "if you’re focused more on muscle mass, weighted crunches — or even just bodyweight crunches — divided into sets of 15 to 20 reps can be helpful.",
+   "status": "verbatim",
+   "closest": "if you’re focused more on muscle mass, weighted crunches — or even just bodyweight crunches — divided into sets of 15 to 20 reps can be helpful.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "sl-crunch",
+   "text": "you can increase the load by holding a weight against your chest.",
+   "status": "verbatim",
+   "closest": "you can increase the load by holding a weight against your chest.",
+   "note": ""
+  }
+ ]
+}

@@ -1,6 +1,6 @@
 {
   "id": "reverse_lunge",
-  "checked": "2026-09-30",
+  "checked": "2026-10-03",
   "quotes": [
     {
       "claim": "c1",
@@ -80,6 +80,13 @@
       "closest": "(straight = 20 ± 15, inclined = 40 ± 29)"
     },
     {
+      "claim": "c8",
+      "source": "bezerra-2021",
+      "text": "Twelve women (24 ± 3 years) were selected and performed the lunge exercise with an overload of 30% of body weight",
+      "status": "verbatim",
+      "closest": "Twelve women (24 ± 3 years) were selected and performed the lunge exercise with an overload of 30% of body weight"
+    },
+    {
       "claim": "c9",
       "source": "cat-revlunge",
       "text": "The reverse lunge strengthens the legs and hips and improves hip stability with the unilateral effort",
@@ -157,11 +164,36 @@
       "closest": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position."
     },
     {
-      "claim": "c8",
-      "source": "bezerra-2021",
-      "text": "Twelve women (24 ± 3 years) were selected and performed the lunge exercise with an overload of 30% of body weight",
+      "claim": "c15",
+      "source": "fw-revlunge",
+      "text": "Bend both knees to 90° to lower—taking three seconds to get to the stopping point with your right knee should finish just above the floor.",
       "status": "verbatim",
-      "closest": "Twelve women (24 ± 3 years) were selected and performed the lunge exercise with an overload of 30% of body weight"
+      "closest": "Bend both knees to 90° to lower—taking three seconds to get to the stopping point with your right knee should finish just above the floor.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "fw-revlunge",
+      "text": "Push through your left foot to stand upright slowly.",
+      "status": "verbatim",
+      "closest": "Push through your left foot to stand upright slowly.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "pel-revlunge",
+      "text": "\"So you want to slowly lower yourself down and then you can go a little quicker on the way up.\"",
+      "status": "verbatim",
+      "closest": "\"So you want to slowly lower yourself down and then you can go a little quicker on the way up.\"",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "pel-revlunge",
+      "text": "One easy way Schumer likes to progress reverse lunges is to spend more time at the bottom. Start by adding just one or two seconds, then you could work up to about five seconds.",
+      "status": "verbatim",
+      "closest": "One easy way Schumer likes to progress reverse lunges is to spend more time at the bottom. Start by adding just one or two seconds, then you could work up to about five seconds.",
+      "note": ""
     }
   ]
 }

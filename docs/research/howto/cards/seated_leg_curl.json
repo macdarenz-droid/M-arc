@@ -1,0 +1,578 @@
+{
+ "id": "seated_leg_curl",
+ "libId": "lib_seated_leg_curl",
+ "name": "Seated Leg Curl",
+ "family": "Knee machines (extension, curl)",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "balance",
+  "contact": [
+   "seat-back",
+   "pivot-pad"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Line the knees up with the machine's pivot: it is the most important part of the setup, and if it is off the movement is off and may hurt.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-slc"
+   ],
+   "quotes": [
+    {
+     "source": "sl-slc",
+     "text": "Adjust the machine so that you are correctly positioned. Your knees should be in line with the machine’s joint.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "sl-slc",
+     "text": "The most important part here is to make sure that your knees align with the machine’s joint. Otherwise, the movement pattern will be off and might hurt.",
+     "where": "Proper form"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Set the seat so the thigh pad sits snug just above the knees but not too tight, with the legs held between pad and seat; move the seat back if needed to make room for the stomach.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-legcurl"
+   ],
+   "quotes": [
+    {
+     "source": "bb-legcurl",
+     "text": "Adjust the seat so that the thigh pad will be snug just above your knees, but not too tightly, sandwiching your legs between it and the seat.",
+     "where": "How to"
+    },
+    {
+     "source": "bb-legcurl",
+     "text": "Pull the seat back as much as you need to in order to accommodate your stomach.",
+     "where": "How to"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Set the ankle pad under the lower legs just above the shoes; set too high it presses on the calves and shortens the range, so keep it well below the calf muscle.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-legcurl"
+   ],
+   "quotes": [
+    {
+     "source": "bb-legcurl",
+     "text": "Adjust the ankle pad so that when you’re sitting down, it falls comfortably under your legs just above your shoes.",
+     "where": "How to"
+    },
+    {
+     "source": "bb-legcurl",
+     "text": "Adjusting the pad too high will put a lot of unnecessary pressure on your calves. It will also reduce the effective range of motion of the exercise",
+     "where": "Common mistakes"
+    },
+    {
+     "source": "bb-legcurl",
+     "text": "keep the pad well below the belly of your calves.",
+     "where": "Common mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Set the back pad so the back stays flat against it.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-slc"
+   ],
+   "quotes": [
+    {
+     "source": "sl-slc",
+     "text": "Adjust the back pad as well, so that you can keep your back flat against it.",
+     "where": "Proper form"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Hold the handles at the sides, squeeze them and press the hips down into the seat; then, breathing out, bend the knees and curl the feet under you.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-legcurl"
+   ],
+   "quotes": [
+    {
+     "source": "bb-legcurl",
+     "text": "Once you’re set up properly, grasp the handles on either side of you. Squeeze your hands and ground your hips down into the seat. On an exhale, contract your hamstrings to bend your knees and curl your feet underneath you.",
+     "where": "How to"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Brace the core and bend the knees as far as you can, slowly and under control.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-slc"
+   ],
+   "quotes": [
+    {
+     "source": "sl-slc",
+     "text": "Push the weight down by bending your knees as far as possible.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "sl-slc",
+     "text": "brace your core and start the movement by curling your legs as far as possible. Keep the motion slow and controlled to maximize the muscle engagement.",
+     "where": "Proper form"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Let the legs straighten slowly with the speed controlled; start the next rep just before the weight plates touch, without letting them clang.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-legcurl",
+    "sl-slc"
+   ],
+   "quotes": [
+    {
+     "source": "bb-legcurl",
+     "text": "After you’ve fully contracted your hamstrings, slowly let your legs extend. Control the speed of the ascent. Avoid letting the weights clang against each other at the top of the rep. Just before they make contact, begin your next rep.",
+     "where": "How to"
+    },
+    {
+     "source": "sl-slc",
+     "text": "Slowly let the weight back again.",
+     "where": "How to, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Too much weight leads to using momentum and swinging it; lower the weight and keep the movement slow and controlled.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-slc"
+   ],
+   "quotes": [
+    {
+     "source": "sl-slc",
+     "text": "If you add more weight than you can control, it’s easy to start relying on the momentum and swinging the weight.",
+     "where": "Common mistakes"
+    },
+    {
+     "source": "sl-slc",
+     "text": "Lower the weight, and keep the movement controlled and slow.",
+     "where": "Common mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Not fitting the leg pad and seat height to your body makes the exercise hard to do, less effective and possibly painful.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-slc"
+   ],
+   "quotes": [
+    {
+     "source": "sl-slc",
+     "text": "By not adjusting the leg pad and seat height to your body, the exercise will be very hard to perform, and it can lead to an ineffective and possibly painful exercise.",
+     "where": "Common mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "The calves may cramp, mostly when new to the exercise and on heavy or high-rep sets; lower the weight, or point the toes instead of keeping the feet flexed as when standing.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-legcurl"
+   ],
+   "quotes": [
+    {
+     "source": "bb-legcurl",
+     "text": "Especially if you’re new to the exercise, your calves might temporarily cramp, especially during either heavy or higher rep sets.",
+     "where": "Common mistakes, calf cramps"
+    },
+    {
+     "source": "bb-legcurl",
+     "text": "With heavy loads, you might unconsciously recruit your calves to try and assist.",
+     "where": "Common mistakes, calf cramps"
+    },
+    {
+     "source": "bb-legcurl",
+     "text": "Try lowering the weight until your calves can come along for the ride.",
+     "where": "Common mistakes, calf cramps"
+    },
+    {
+     "source": "bb-legcurl",
+     "text": "Try pointing your toes instead of keeping your feet out as though you were standing regularly.",
+     "where": "Common mistakes, calf cramps"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Over 12 weeks, seated leg curls grew the whole hamstrings more than lying (prone) leg curls, +14% vs +9%, which the authors link to training the muscle at a longer length.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "maeo-2021"
+   ],
+   "quotes": [
+    {
+     "source": "maeo-2021",
+     "text": "Training-induced increases in muscle volume were greater in Seated-Leg versus Prone-Leg for the whole hamstrings (+14% vs +9%)",
+     "where": "abstract, results"
+    },
+    {
+     "source": "maeo-2021",
+     "text": "Hamstrings muscle size can be more effectively increased by seated than prone leg curl training, suggesting that training at long muscle lengths promotes muscle hypertrophy",
+     "where": "abstract, conclusion"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "The hamstrings are the target; sitting bends the hip more, and three of the four hamstring heads cross the hip, so they work at a longer length than in the lying curl.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-slc"
+   ],
+   "quotes": [
+    {
+     "source": "sl-slc",
+     "text": "Primary muscles worked: Hamstrings",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "sl-slc",
+     "text": "seated leg curls work your hamstrings at a longer muscle length than the lying leg curl since your hip is flexed more, and three out of four hamstrings head cross over your hip joint.",
+     "where": "Muscles worked"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "For muscle size, 3-4 sets of 12-15 reps with a slow lowering (one coach source), or about 6-15 reps per set (another).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-legcurl",
+    "sl-slc"
+   ],
+   "quotes": [
+    {
+     "source": "bb-legcurl",
+     "text": "For Muscle Mass: Perform 3-4 sets of 12-15 reps with a slow eccentric.",
+     "where": "Programming"
+    },
+    {
+     "source": "sl-slc",
+     "text": "For muscle growth, around 6–15 reps per set are something to aim for.",
+     "where": "Sets and reps"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+     "where": "abstract"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "sl-slc",
+   "url": "https://www.strengthlog.com/seated-leg-curl/",
+   "title": "How to Do Seated Leg Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "bb-legcurl",
+   "url": "https://barbend.com/leg-curls/",
+   "title": "Master the Leg Curl for Stronger Hamstrings and Heavier Deadlifts | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "maeo-2021",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33009197/",
+   "title": "Greater Hamstrings Muscle Hypertrophy but Similar Damage Protection after Training at Long versus Short Muscle Lengths.",
+   "kind": "peer-reviewed",
+   "year": 2021,
+   "pmid": 33009197,
+   "access": "abstract",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-10-02"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the knee-to-pivot line (c1), the pads (c2, c3) and the knee bend all read from the side.",
+  "equipment": "Seated leg curl machine composed from seat, back pad and roller pads (census 'legCurlMachine', compose): thigh pad snug just above the knees (c2), ankle pad under the lower legs just above the shoes (c3), machine pivot level with the knee (c1), handles at the sides of the seat (c5).",
+  "start": "Seated, back flat on the back pad (c4), hips pressed into the seat (c5), knees in line with the pivot (c1), legs out in front with the ankle pad just above the shoes (c3); hands on the side handles (c5).",
+  "end": "Knees bent as far as they go, feet curled under the seat (c5, c6); thighs, hips and back unchanged (c2, c4, c5).",
+  "checkpoints": [
+   {
+    "label": "Knee at pivot",
+    "what": "Knees line up with the machine's pivot.",
+    "claim": "c1"
+   },
+   {
+    "label": "Pad above knees",
+    "what": "Thigh pad snug just above the knees.",
+    "claim": "c2"
+   },
+   {
+    "label": "Pad above shoes",
+    "what": "Ankle pad just above the shoes, below the calves.",
+    "claim": "c3"
+   }
+  ],
+  "mistake": {
+   "what": "Ankle pad set high on the calves.",
+   "why": "BarBend: a pad set too high presses on the calves and shortens the range; keep it well below the calf muscle (c3). The knee-to-pivot fault (c1, c9) has no sourced direction, so it is not drawn (R-W1-7).",
+   "claim": "c3",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Knees stay at the pivot",
+    "claim": "c1"
+   },
+   {
+    "text": "Weights never clang between reps",
+    "claim": "c7"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 0,
+   "claim": [
+    "c7",
+    "c13"
+   ],
+   "text": "Drawing convention: the sources ask for a slow, controlled lowering (c7, c13) and give no seconds; 2 s down and 1 s up shows that."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Hands on the side handles, squeezed (c5).",
+  "width": "Handles fixed at the sides of the seat (c5).",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "",
+  "claims": [
+   "c5"
+  ],
+  "note": "Hand archetype balance: the hands steady the body, no hand zoom needed."
+ },
+ "setup": [
+  {
+   "step": "Set the seat so your knees line up with the pivot.",
+   "claim": "c1"
+  },
+  {
+   "step": "Thigh pad snug just above your knees.",
+   "claim": "c2"
+  },
+  {
+   "step": "Ankle pad just above your shoes.",
+   "claim": "c3"
+  },
+  {
+   "step": "Back flat against the back pad.",
+   "claim": "c4"
+  },
+  {
+   "step": "Grip the handles and press your hips into the seat.",
+   "claim": "c5"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Knees stay in line with the pivot.",
+   "claim": "c1"
+  },
+  {
+   "point": "Hips stay down in the seat.",
+   "claim": "c5"
+  },
+  {
+   "point": "Curl as far as you can, slow and controlled.",
+   "claim": "c6"
+  },
+  {
+   "point": "Breathe out as you curl.",
+   "claim": "c5"
+  },
+  {
+   "point": "Straighten slowly; don't let the weights clang.",
+   "claim": "c7"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Seat and pads not set to your body.",
+   "fix": "Line your knees up with the pivot; set both pads.",
+   "claim": [
+    "c1",
+    "c9"
+   ]
+  },
+  {
+   "mistake": "Ankle pad high on the calves.",
+   "fix": "Move it down to just above your shoes.",
+   "claim": "c3"
+  },
+  {
+   "mistake": "Swinging a weight that's too heavy.",
+   "fix": "Lower the weight; keep it slow.",
+   "claim": "c8"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "hamstrings",
+    "claim": "c12"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "calves",
+    "claim": "c10"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Back of the thighs",
+    "means": "The hamstrings are working.",
+    "fix": "",
+    "claim": "c12",
+    "redFlag": null
+   },
+   {
+    "where": "Calves, cramping",
+    "means": "Your calves are trying to help.",
+    "fix": "Lower the weight, or point your toes.",
+    "claim": "c10",
+    "redFlag": null
+   },
+   {
+    "where": "Knee",
+    "means": "Knees may be out of line with the pivot.",
+    "fix": "Stop and reset the seat so your knees line up.",
+    "claim": [
+     "c1",
+     "c9"
+    ],
+    "redFlag": "knee"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Knees out of line with the pivot can hurt.",
+   "claim": "c1"
+  },
+  {
+   "risk": "Too much weight turns the curl into a swing.",
+   "claim": "c8"
+  }
+ ],
+ "redFlags": [
+  "knee"
+ ],
+ "zooms": [
+  {
+   "key": "knee-pivot",
+   "kind": "posture",
+   "right": "Knee level with the machine's pivot.",
+   "wrong": null,
+   "claim": "c1"
+  },
+  {
+   "key": "ankle-pad",
+   "kind": "posture",
+   "right": "Ankle pad just above the shoes.",
+   "wrong": "Ankle pad high on the calves.",
+   "claim": "c3"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "hamstrings primary matches StrengthLog (c12); calves secondary is kept: BarBend says the calves may try to assist under heavy loads (c10)."
+ },
+ "anchorSource": "sl-slc",
+ "loadProgression": {
+  "text": "Add 2-10% once you beat your target reps by one or two.",
+  "claim": "c14"
+ },
+ "notes": [
+  "The knee feel row restates the sources' fault (knees not aligned, c1; machine not adjusted, c9) and its fix, with no other symptom-to-cause claim (LR-6).",
+  "knee-pivot zoom: wrong is null (LR-25): the sources say the knee must line up with the pivot but name no direction for the fault, so no wrong position is drawn.",
+  "Tempo numbers are a drawing convention (plate.tempo.text), not ACSM (LR-15).",
+  "W1 fixer round 2026-10-03: F06 / R-W1-7: plate.mistake changed from the knee-to-pivot fault (no sourced direction) to the ankle pad set high on the calves (c3), which has a direction and matches zooms[1]."
+ ]
+}

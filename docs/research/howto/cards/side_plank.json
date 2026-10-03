@@ -1,0 +1,565 @@
+{
+ "id": "side_plank",
+ "libId": "lib_side_plank",
+ "name": "Side Plank",
+ "family": "Rotation and lateral core",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 3 (R5: the engine cannot draw roll).",
+ "archetype": {
+  "hand": "none",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Lie on one side with the elbow under the shoulder and the top leg stacked on the bottom leg; knees bent or legs straight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-sideplank"
+   ],
+   "quotes": [
+    {
+     "source": "bb-sideplank",
+     "text": "Step 1 — Lie on one side with your elbow under your shoulder and your top leg stacked over your bottom leg. You can keep your knees bent or opt to keep your legs straight.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Press the elbow, hip and bottom foot into the floor and lift the hips as high as you can, aiming for a straight line from the ribs through the hips and bottom leg; brace the core and hold a straight line from head to feet.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-sideplank",
+    "sl-sideplank"
+   ],
+   "quotes": [
+    {
+     "source": "bb-sideplank",
+     "text": "Step 2 — Press your elbow, your hips, and your bottom foot into the ground. Raise your hips as high as you can, aiming to establish a straight line from your ribs through your hips and bottom leg.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "sl-sideplank",
+     "text": "Brace your core, and try to form and hold a straight line from your head to your feet.",
+     "where": "How to, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Hold the position as steadily as you can; the top arm rests on the hip or side.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-sideplank"
+   ],
+   "quotes": [
+    {
+     "source": "bb-sideplank",
+     "text": "Step 3 — Once you’ve found your optimal position, hold it as steadily as you’re able. Your top arm can rest on your hip or side with your arm straight or bent.",
+     "where": "How to, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Easier versions: put the top foot on the floor in front of the bottom foot for a wider base, or rest the bottom knee on the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-sideplank",
+    "sl-sideplank"
+   ],
+   "quotes": [
+    {
+     "source": "bb-sideplank",
+     "text": "You can make the side plank more accessible by placing your top foot on the ground in front of your bottom foot. This will widen your base of support and give you a stronger starting point, making balance less of an issue.",
+     "where": "FAQ, modify"
+    },
+    {
+     "source": "bb-sideplank",
+     "text": "You can also lower your bottom knee completely, letting it rest on the ground to give yourself more points of contact.",
+     "where": "FAQ, modify"
+    },
+    {
+     "source": "sl-sideplank",
+     "text": "Place the foot of the top leg in front of the other foot.",
+     "where": "How to, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Keep the hips up and steady; when the hips sink, the core does much less of the work.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-sideplank"
+   ],
+   "quotes": [
+    {
+     "source": "bb-sideplank",
+     "text": "Keeping your hips up — as though there’s an invisible string pulling them up toward the ceiling — is critical for an effective side plank. When your hips start to sink, your core muscles become much less involved in the movement.",
+     "where": "Common mistakes, letting hips sag"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Keep breathing: hold the brace and take big, slow belly breaths; forgetting to breathe is one of the biggest side-plank mistakes.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-sideplank"
+   ],
+   "quotes": [
+    {
+     "source": "bb-sideplank",
+     "text": "One of the biggest crimes you can commit during your side plank is forgetting to breathe.",
+     "where": "Common mistakes, not breathing"
+    },
+    {
+     "source": "bb-sideplank",
+     "text": "Hold your core in a strong brace during this lift, and take big, slow breaths through your abdomen.",
+     "where": "Common mistakes, not breathing"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Keep the bottom shoulder down, away from the ear, without shrugging; a soft mat under the elbow and forearm makes the arm more comfortable.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-sideplank"
+   ],
+   "quotes": [
+    {
+     "source": "bb-sideplank",
+     "text": "make sure you’re keeping your shoulder down and away from your ear. Continue to avoid shrugging your shoulder up toward your face even when the going gets tough.",
+     "where": "Common mistakes, shrugging"
+    },
+    {
+     "source": "bb-sideplank",
+     "text": "To further increase your arm’s comfort — which might be a reason your shoulder starts to shrug — place a soft yoga mat or exercise mat under your elbow and forearm.",
+     "where": "Common mistakes, shrugging"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Modified side plank: bottom knee bent to 90 degrees, elbow bent 90 degrees under the shoulder, head in line; breathe out, brace and lift the hips; breathe in and lower. Too much pressure on the inside of the top foot or knee means stop the exercise.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-sideplank-mod"
+   ],
+   "quotes": [
+    {
+     "source": "ace-sideplank-mod",
+     "text": "Bend your right leg to 90 degrees of flexion while keeping the left leg extended, with the inside surface of your left foot making contact with the mat.",
+     "where": "Starting position"
+    },
+    {
+     "source": "ace-sideplank-mod",
+     "text": "Raise your upper body to support yourself on your right arm, with your elbow bent to 90 degrees and positioned directly under your shoulder.",
+     "where": "Starting position"
+    },
+    {
+     "source": "ace-sideplank-mod",
+     "text": "Align your head with your spine and keep your hips and right knee in contact with the exercise mat.",
+     "where": "Starting position"
+    },
+    {
+     "source": "ace-sideplank-mod",
+     "text": "Inhale and gently return yourself to your starting position.",
+     "where": "Lowering phase"
+    },
+    {
+     "source": "ace-sideplank-mod",
+     "text": "Exhale, gently contract your abdominal / core muscles to stiffen your spine and lift your hips and right leg off the mat.",
+     "where": "Upward phase"
+    },
+    {
+     "source": "ace-sideplank-mod",
+     "text": "Any excessive pressure on the inside of your upper foot or upper knee may cause undesirable stresses on those joints and merits termination of this exercise.",
+     "where": "Tips"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Hold only as long as form stays good and keep both sides even, starting on the weaker side; some people manage 5-15 seconds and build a few seconds at a time toward 30-45, others aim for 30-60 seconds per side.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-sideplank"
+   ],
+   "quotes": [
+    {
+     "source": "bb-sideplank",
+     "text": "You should hold the side plank for as long as you can hold excellent form (and keep your time even on both sides). For some athletes, this may last five to 15 seconds.",
+     "where": "FAQ, how long"
+    },
+    {
+     "source": "bb-sideplank",
+     "text": "add to that time gradually, pushing your efforts further a few seconds at a time until you can approach a 30-second or even 45-second plank on either side.",
+     "where": "FAQ, how long"
+    },
+    {
+     "source": "bb-sideplank",
+     "text": "If you can, aim to hold the side plank for 30 to 60 seconds per side.",
+     "where": "FAQ, how long"
+    },
+    {
+     "source": "bb-sideplank",
+     "text": "Start your set on your weaker side.",
+     "where": "How to, coach's tip"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "The obliques are the target; the abs work as a secondary muscle, with the hips and shoulders holding you up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sideplank",
+    "bb-sideplank"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sideplank",
+     "text": "Primary muscles worked: Obliques Secondary muscles worked: Abs",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "bb-sideplank",
+     "text": "The side plank primarily works the sides of your core — your obliques. You’ll be involving your hips and shoulders, too, since those will be holding you up.",
+     "where": "Muscles worked"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "In an intramuscular EMG study of many tasks, the side bridge was the best of the isometric exercises tested for working the abdominal wall while keeping the deep hip flexor (psoas) low.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "juker-1998"
+   ],
+   "quotes": [
+    {
+     "source": "juker-1998",
+     "text": "Several isometric abdominal exercises were evaluated using the criteria of maximizing abdominal activation while minimizing psoas activity: the side (bridge) support exercise proved the best training method for the abdominal wall.",
+     "where": "abstract, results"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "In general, bracing the abdominal wall raised oblique activity in the curl-up, side bridge and bird dog.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "mcgill-2009"
+   ],
+   "quotes": [
+    {
+     "source": "mcgill-2009",
+     "text": "In general, bracing of the abdominal wall enhanced activation of the obliques",
+     "where": "abstract, results"
+    },
+    {
+     "source": "mcgill-2009",
+     "text": "To quantify several forms of the curl-up, side-bridge, and birddog exercises",
+     "where": "abstract, objective"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-sideplank",
+   "url": "https://barbend.com/side-plank/",
+   "title": "Learn How to Do a Side Plank with Proper Form, Variations, and Benefits | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "sl-sideplank",
+   "url": "https://www.strengthlog.com/side-plank/",
+   "title": "How to Do Side Plank: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "ace-sideplank-mod",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/99/side-plank-modified/",
+   "title": "Ab Exercises | Side Plank (Modified)",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "juker-1998",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/9502361/",
+   "title": "Quantitative intramuscular myoelectric activity of lumbar portions of psoas and the abdominal wall during a wide variety of tasks.",
+   "kind": "peer-reviewed",
+   "year": 1998,
+   "pmid": 9502361,
+   "access": "abstract",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "mcgill-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19154838/",
+   "title": "Exercises for spine stabilization: motion/motor patterns, stability progressions, and clinical technique.",
+   "kind": "peer-reviewed",
+   "year": 2009,
+   "pmid": 19154838,
+   "access": "abstract",
+   "checked": "2026-10-02"
+  }
+ ],
+ "plate": {
+  "view": "front",
+  "viewWhy": "Census view is front: facing the lifter, the straight line from head to feet and the sinking hip (c2, c5) read as a line from the side of the body. The census marks the pose 'roll' as not expressible (R5), so the plate waits on the engine; the card is complete.",
+  "equipment": "Floor line, mat under the elbow and forearm (c7).",
+  "frames": "Hold convention: entry (lying on the side, c1) then the held pose (c2).",
+  "start": "Entry: lying on one side, elbow under the shoulder, forearm on the floor, top leg stacked on the bottom leg (c1).",
+  "end": "Held pose: hips lifted so ribs, hips and bottom leg form a straight line, head to feet in one line (c2); bottom shoulder down, away from the ear (c7); top hand on the hip (c3).",
+  "checkpoints": [
+   {
+    "label": "Elbow under shoulder",
+    "what": "Bottom elbow sits under the shoulder.",
+    "claim": "c1"
+   },
+   {
+    "label": "Hips up",
+    "what": "Hips lifted into one line with the ribs and legs.",
+    "claim": [
+     "c2",
+     "c5"
+    ]
+   },
+   {
+    "label": "Shoulder down",
+    "what": "Bottom shoulder stays away from the ear.",
+    "claim": "c7"
+   }
+  ],
+  "mistake": {
+   "what": "Hips sinking toward the floor.",
+   "why": "BarBend: when the hips sink the core does much less of the work (c5); it is the one posture fault on its list (the others are breathing and shrugging).",
+   "claim": "c5",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "You can keep breathing",
+    "claim": "c6"
+   },
+   {
+    "text": "Hips stay level, not sinking",
+    "claim": "c5"
+   }
+  ],
+  "tempo": {
+   "set": null,
+   "hold": "5-60 s",
+   "rest": null,
+   "text": "Hold for as long as form stays good: 5-15 s for some, built a few seconds at a time toward 30-60 s per side (c9). No source sets the rest.",
+   "claim": "c9"
+  },
+  "variantLine": "Easier: top foot in front of the bottom foot, or bottom knee down (c4, c8). The plate draws the stacked-leg version (c1)."
+ },
+ "grip": {
+  "type": "",
+  "width": "",
+  "thumb": "",
+  "handContact": "Bottom forearm on the floor with the elbow under the shoulder (c1); top hand on the hip (c3).",
+  "wrist": "",
+  "claims": [
+   "c1",
+   "c3"
+  ],
+  "note": "Hand archetype none: no hand zoom."
+ },
+ "setup": [
+  {
+   "step": "Lie on your side, elbow under your shoulder.",
+   "claim": "c1"
+  },
+  {
+   "step": "Stack your top leg on your bottom leg.",
+   "claim": "c1"
+  },
+  {
+   "step": "Put a mat under your elbow and forearm.",
+   "claim": "c7"
+  },
+  {
+   "step": "Press elbow and bottom foot down and lift your hips.",
+   "claim": "c2"
+  },
+  {
+   "step": "Top hand on your hip.",
+   "claim": "c3"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Head to feet in one straight line.",
+   "claim": "c2"
+  },
+  {
+   "point": "Hips up; don't let them sink.",
+   "claim": "c5"
+  },
+  {
+   "point": "Bottom shoulder down, away from your ear.",
+   "claim": "c7"
+  },
+  {
+   "point": "Keep breathing, slow and deep.",
+   "claim": "c6"
+  },
+  {
+   "point": "Easier: top foot in front, or bottom knee down.",
+   "claim": "c4"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Hips sinking.",
+   "fix": "Lift your hips back in line; end the hold if you can't.",
+   "claim": [
+    "c5",
+    "c9"
+   ]
+  },
+  {
+   "mistake": "Holding your breath.",
+   "fix": "Keep the brace and take slow belly breaths.",
+   "claim": "c6"
+  },
+  {
+   "mistake": "Shrugging the bottom shoulder.",
+   "fix": "Shoulder down, away from your ear; pad the elbow.",
+   "claim": "c7"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "obliques",
+    "claim": "c10"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "core",
+    "claim": "c10"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Side of the waist, lower side",
+    "means": "Your obliques are holding you up.",
+    "fix": "",
+    "claim": [
+     "c10",
+     "c11"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Bottom shoulder",
+    "means": "The shoulder is shrugging up.",
+    "fix": "Shoulder down; pad the elbow.",
+    "claim": "c7",
+    "redFlag": null
+   },
+   {
+    "where": "Inside of the top knee or foot",
+    "means": "Too much pressure on that joint.",
+    "fix": "Stop the exercise.",
+    "claim": "c8",
+    "redFlag": "knee"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Too much pressure on the inside of the top knee or foot may stress those joints.",
+   "claim": "c8"
+  }
+ ],
+ "redFlags": [
+  "knee"
+ ],
+ "zooms": [
+  {
+   "key": "hip-line",
+   "kind": "posture",
+   "right": "Hips lifted in line with ribs and legs.",
+   "wrong": "Hips sinking toward the floor.",
+   "claim": [
+    "c2",
+    "c5"
+   ]
+  },
+  {
+   "key": "shoulder",
+   "kind": "posture",
+   "right": "Elbow under the shoulder, shoulder down.",
+   "wrong": "Shoulder shrugged up toward the ear.",
+   "claim": [
+    "c1",
+    "c7"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "obliques primary matches StrengthLog and BarBend (c10). StrengthLog lists abs as secondary; the library's core (text-only) covers it, so no change."
+ },
+ "anchorSource": "bb-sideplank",
+ "notes": [
+  "ACE's full Side Plank page (303) is a BOSU version, so it is not cited; ACE's Side Plank (Modified) page is used for the bent-knee version and the knee-pressure stop (c8).",
+  "The knee row and risk restate ACE's own wording ('excessive pressure ... merits termination of this exercise', c8) with no added cause (LR-6).",
+  "Census pose 'roll' is R5 (not expressible): the plate waits on the engine (tracker), the text card is complete.",
+  "Fetcher check 2026-10-02: ace-sideplank-mod title set to the page's own title (no ' | ACE' suffix); no claim changed.",
+  "W1 fixer round 2026-10-03: F11: risks[0] keeps ACE's hedge ('may stress'). F17: c12 text starts 'In general,' as the abstract does."
+ ]
+}

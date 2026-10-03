@@ -1,0 +1,526 @@
+{
+ "id": "crunch",
+ "libId": "lib_crunch",
+ "name": "Crunch",
+ "family": "Trunk flexion (crunch)",
+ "tier": "B",
+ "tierNote": "Safety tier B (content.md appendix B); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "none",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Lie on your back on a mat, knees bent, feet flat on the floor about hip-width apart, heels roughly 30-45 cm (12-18 in) from the tailbone.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-crunch",
+    "bb-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-crunch",
+     "text": "Lie in a supine (on your back) position on a mat with your knees bent, feet flat on the floor and heels 12 - 18\" from your tailbone.",
+     "where": "Starting position"
+    },
+    {
+     "source": "bb-crunch",
+     "text": "Lie on your back. Bend your knees and plant your feet hip-width apart.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Hands: hands behind the head with the shoulder blades squeezed and the elbows pulled back; or fingertips resting lightly by the sides of the head, elbows wide, without gripping behind the neck; or arms crossed over the chest; or hands in front of the chest.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-crunch",
+    "sl-crunch",
+    "ace-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-crunch",
+     "text": "Place your fingertips just above your ears with your elbows splayed wide, pulling them back toward the ground. Press your fingertips gently onto the sides of your head rather than gripping behind your neck or ears. Alternatively, cross your arms over your chest.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "sl-crunch",
+     "text": "Lie on your back, with your hands in front of your chest and your knees bent to about 90 degrees.",
+     "where": "How to, step 1"
+    },
+    {
+     "source": "ace-crunch",
+     "text": "Place your hands behind your head, squeezing your scapulae (shoulder blades) together and pulling your elbows back without arching your low back. This elbow position should be maintained throughout the exercise.",
+     "where": "Starting position"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Breathe out, brace, tuck the chin slightly and slowly curl the trunk toward the thighs, bringing the ribs toward the pelvis; feet, tailbone and low back stay on the mat while the upper back lifts off; hold briefly at the top.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-crunch",
+     "text": "Exhale, contract your abdominal and core muscles and flex your chin slightly towards your chest while slowly curling your torso towards your thighs.",
+     "where": "Upward phase"
+    },
+    {
+     "source": "ace-crunch",
+     "text": "The movement should focus on pulling your rib cage towards your pelvis (the neck stays relaxed while the chin is tucked towards the neck).",
+     "where": "Upward phase"
+    },
+    {
+     "source": "ace-crunch",
+     "text": "Your feet, tailbone and lower back should remain in contact with the mat at all times. Continue curling up until your upper back is lifted off the mat. Hold this position briefly.",
+     "where": "Upward phase"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Keep the range small: once the shoulder blades leave the floor, squeeze the abs and go back down; do not sit all the way up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-crunch",
+     "text": "Once your shoulder blades have left the ground, give your abs a final squeeze.",
+     "where": "How to, step 3"
+    },
+    {
+     "source": "bb-crunch",
+     "text": "When you’re aiming to do crunches, you’re intentionally keeping your range of motion small. Don’t give into the temptation to turn crunches into a whole different exercise.",
+     "where": "Common mistakes, sitting up too far"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Breathe in and slowly uncurl back to the mat under control, keeping the feet, tailbone and low back on the mat.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-crunch",
+     "text": "Gently inhale and slowly uncurl (lower) your torso back towards the mat in a controlled fashion keeping your feet, tailbone and low back in contact with the mat.",
+     "where": "Downward phase"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "The usual fault is going too fast and using the hip flexors to help on the way up; this tips the pelvis forward and adds stress on the low back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-crunch",
+     "text": "Individuals usually perform this movement too rapidly and recruit the hip flexors to assist with the upward phase. This technique tilts the pelvis anteriorly, increasing the stress on the low back and should be avoided.",
+     "where": "Tips"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Neck: tuck the chin slightly at the start and keep it there, without pulling it further down; the movement comes from the abs, not the neck. If the arms yank the head up, cross them over the chest.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-crunch",
+     "text": "When you set up to perform crunches, slightly tuck your chin toward your chest. Maintain that position consistently, being careful not to bring your chin further down to your chest throughout the move.",
+     "where": "Common mistakes, straining your neck"
+    },
+    {
+     "source": "bb-crunch",
+     "text": "If you tend to yank your torso up and lead with your arms when your hands are by your ears, cross them over your chest instead.",
+     "where": "Common mistakes, straining your neck"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Keep the shoulders relaxed and in the same place; only the abs curl.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-crunch",
+     "text": "Your shoulders should stay relaxed throughout your reps. Instead of letting your shoulders curl forward, keep them in the same position the whole time.",
+     "where": "Common mistakes, crunching with your shoulders"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "The abs (rectus abdominis) are the target; one source lists the obliques as secondary, another says the crunch works almost only the rectus abdominis.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-crunch",
+    "bb-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "sl-crunch",
+     "text": "Primary muscles worked: Abs Secondary muscles worked: Obliques",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "bb-crunch",
+     "text": "The crunch primarily — and pretty exclusively — targets this core muscle.",
+     "where": "Muscles worked"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "In an intramuscular EMG study, every form of sit-up worked the deep hip flexor (psoas) more than the curl-up did (15-35% vs under 10% of maximum).",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "juker-1998"
+   ],
+   "quotes": [
+    {
+     "source": "juker-1998",
+     "text": "All forms of sit-ups activated psoas (15-35% MVC) more than the curl-up (<10%)",
+     "where": "abstract, results"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "For muscle size, sets of 15-20 reps; to feel the abs work, 2-3 sets of 12-15 very slow, deliberate reps. Holding a weight against the chest adds load.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-crunch",
+    "sl-crunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-crunch",
+     "text": "For Core Activation: To increase your mind-muscle connection with your abs, perform two to three sets of 12 to 15 very slow, deliberate reps.",
+     "where": "Programming"
+    },
+    {
+     "source": "bb-crunch",
+     "text": "if you’re focused more on muscle mass, weighted crunches — or even just bodyweight crunches — divided into sets of 15 to 20 reps can be helpful.",
+     "where": "FAQ"
+    },
+    {
+     "source": "sl-crunch",
+     "text": "you can increase the load by holding a weight against your chest.",
+     "where": "Commentary"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ace-crunch",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/52/crunch/",
+   "title": "Crunch | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "sl-crunch",
+   "url": "https://www.strengthlog.com/crunch/",
+   "title": "How to Do Crunches: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "bb-crunch",
+   "url": "https://barbend.com/crunches/",
+   "title": "How to Do Crunches: Proper Form, Variations, & Benefits | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "juker-1998",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/9502361/",
+   "title": "Quantitative intramuscular myoelectric activity of lumbar portions of psoas and the abdominal wall during a wide variety of tasks.",
+   "kind": "peer-reviewed",
+   "year": 1998,
+   "pmid": 9502361,
+   "access": "abstract",
+   "checked": "2026-10-02"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the trunk curl (c3), the small range (c4) and the low back staying down (c3, c6) read from the side.",
+  "equipment": "Floor line, mat optional (c1).",
+  "start": "Lying on the back, knees bent, feet flat and hip-width, heels about 30-45 cm from the tailbone (c1); hands crossed over the chest (c2, the option that avoids pulling on the head, c7); chin slightly tucked (c7).",
+  "end": "Upper back and shoulder blades just off the floor, ribs drawn toward the pelvis (c3, c4); feet, tailbone and low back still on the floor (c3); chin position unchanged (c7).",
+  "checkpoints": [
+   {
+    "label": "Low back down",
+    "what": "Feet, tailbone and low back stay on the mat.",
+    "claim": "c3"
+   },
+   {
+    "label": "Shoulder blades up",
+    "what": "Curl only until the shoulder blades leave the floor.",
+    "claim": "c4"
+   },
+   {
+    "label": "Chin set",
+    "what": "Chin slightly tucked and held; the neck doesn't pull.",
+    "claim": "c7"
+   }
+  ],
+  "mistake": {
+   "what": "Jerking up fast with the hip flexors, pelvis tipping forward and the low back lifting.",
+   "why": "ACE says people usually do the crunch too fast and pull with the hip flexors, which tilts the pelvis and stresses the low back (c6).",
+   "claim": "c6",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Low back stays on the mat",
+    "claim": "c3"
+   },
+   {
+    "text": "Ribs move toward your hips",
+    "claim": "c3"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 1,
+   "claim": [
+    "c3",
+    "c5",
+    "c11"
+   ],
+   "text": "Drawing convention: the sources say curl up slowly, hold briefly at the top (c3) and uncurl slowly (c5, c11); no seconds are given."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "",
+  "width": "",
+  "thumb": "",
+  "handContact": "Fingertips light on the sides of the head (not gripping behind the neck), arms crossed over the chest, or hands in front of the chest (c2).",
+  "wrist": "",
+  "claims": [
+   "c2"
+  ],
+  "note": "Hand archetype none: no hand zoom."
+ },
+ "setup": [
+  {
+   "step": "Lie on your back, knees bent, feet flat and hip-width apart.",
+   "claim": "c1"
+  },
+  {
+   "step": "Cross your arms over your chest, or rest your fingertips by your ears.",
+   "claim": "c2"
+  },
+  {
+   "step": "Tuck your chin slightly and keep it there.",
+   "claim": "c7"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Breathe out and curl your ribs toward your hips.",
+   "claim": "c3"
+  },
+  {
+   "point": "Stop once your shoulder blades leave the floor.",
+   "claim": "c4"
+  },
+  {
+   "point": "Low back, tailbone and feet stay on the mat.",
+   "claim": "c3"
+  },
+  {
+   "point": "Shoulders relaxed; only your abs curl.",
+   "claim": "c8"
+  },
+  {
+   "point": "Breathe in and uncurl slowly.",
+   "claim": "c5"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Jerking up fast with the hip flexors.",
+   "fix": "Curl slowly; keep your low back on the mat.",
+   "claim": [
+    "c6",
+    "c3"
+   ]
+  },
+  {
+   "mistake": "Pulling on your head.",
+   "fix": "Cross your arms over your chest.",
+   "claim": "c7"
+  },
+  {
+   "mistake": "Sitting all the way up.",
+   "fix": "Stop when your shoulder blades leave the floor.",
+   "claim": "c4"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "abs",
+    "claim": "c9"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "obliques",
+    "claim": "c9"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "hip_flexors",
+    "claim": [
+     "c6",
+     "c10"
+    ]
+   }
+  ],
+  "rows": [
+   {
+    "where": "Front of the belly",
+    "means": "Your abs are doing the curl.",
+    "fix": "",
+    "claim": "c9",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the hips",
+    "means": "Your hip flexors are helping.",
+    "fix": "Slow down; keep your low back on the mat.",
+    "claim": [
+     "c6",
+     "c10"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Neck",
+    "means": "Your neck or arms are pulling.",
+    "fix": "Set your chin once; cross your arms.",
+    "claim": "c7",
+    "redFlag": null
+   },
+   {
+    "where": "Low back",
+    "means": "Pelvis tipping forward from a fast, hip-led curl.",
+    "fix": "Slow down; keep your low back on the mat.",
+    "claim": "c6",
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "A fast, hip-led crunch adds stress on the low back.",
+   "claim": "c6"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "low-back",
+   "kind": "posture",
+   "right": "Low back and tailbone on the mat, upper back lifted.",
+   "wrong": "Pelvis tipped forward, low back lifting.",
+   "claim": [
+    "c3",
+    "c6"
+   ]
+  },
+  {
+   "key": "chin",
+   "kind": "posture",
+   "right": "Chin slightly tucked, hands light or arms crossed.",
+   "wrong": "Hands pulling the head forward.",
+   "claim": [
+    "c2",
+    "c7"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "obliques"
+  ],
+  "remove": [],
+  "why": "Add obliques as secondary: StrengthLog lists them (c9). BarBend says the crunch works almost only the rectus abdominis, so obliques stay secondary, not primary."
+ },
+ "anchorSource": "ace-crunch",
+ "loadProgression": {
+  "text": "Hold a weight against your chest once bodyweight reps are easy.",
+  "claim": "c11"
+ },
+ "notes": [
+  "Hands: ACE puts the hands behind the head, BarBend puts the fingertips by the ears or crosses the arms, StrengthLog holds them in front of the chest (c2). The plate draws crossed arms because BarBend recommends it for anyone who pulls on the head (c7).",
+  "The back feel row restates ACE's fault (fast, hip-led curl tilting the pelvis and stressing the low back, c6) and its fix (LR-6); the back box link stays pending (LR-26, LR-27).",
+  "Tempo: plate.tempo.pause is 1 for ACE's brief hold at the top (c3). The numbers are a drawing convention, not ACSM (LR-15).",
+  "W1 fixer round 2026-10-03: F14: c2 text now includes ACE's hands-behind-head option, which its ACE quote states."
+ ]
+}
