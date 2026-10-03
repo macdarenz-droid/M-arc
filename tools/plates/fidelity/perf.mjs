@@ -70,3 +70,34 @@ export async function scheduleBusyTask(page, ms, delay = 0) {
     setTimeout(() => { const end = performance.now() + ms; while (performance.now() < end) { /* busy */ } }, delay);
   }, [ms, delay]);
 }
+
+/** The main thread's TaskDuration so far, in ms (CDP Performance metrics; `cdp` has Performance enabled). */
+export const taskDurationMs = async cdp => (await cdp.send('Performance.getMetrics')).metrics.find(m => m.name === 'TaskDuration').value * 1000;
+
+/**
+ * HT-10 (A3, plan 2.9 R10): the shimmer's main-thread cost at `rate`x CPU throttle on `page`, the same method as gate
+ * block HT-8 so the two pages are measured alike: `n` idle windows and `n` tap windows of `windowMs` each, interleaved,
+ * where a tap window starts by clicking `mapSel`; the cost is the median tap window minus the median idle window
+ * (what the page does anyway, such as the app's live-workout clock behind the sheet, is not the shimmer's).
+ * Returns { idle, runs, median, raw } in ms.
+ */
+export async function shimmerCost(page, mapSel, windowMs, { rate = 4, n = 3 } = {}) {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Performance.enable');
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate });
+  try {
+    const win = async tap => {
+      const m0 = await taskDurationMs(cdp);
+      if (tap) await page.evaluate(s => { const e = document.querySelector(s); if (!e) throw new Error(`no ${s}`); e.click(); }, mapSel);
+      await page.waitForTimeout(windowMs);
+      return Math.round(await taskDurationMs(cdp) - m0);
+    };
+    const idle = [], runs = [];
+    for (let k = 0; k < n; k++) { idle.push(await win(false)); runs.push(await win(true)); }
+    const med = xs => { const s = [...xs].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+    return { idle, runs, median: med(runs) - med(idle), raw: med(runs) };
+  } finally {
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+    await cdp.detach();
+  }
+}
