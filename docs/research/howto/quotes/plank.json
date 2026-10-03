@@ -1,6 +1,7 @@
 {
   "id": "plank",
   "checked": "2026-10-03",
+  "fetcher": "sonnet source fetcher",
   "quotes": [
     {
       "claim": "c1",

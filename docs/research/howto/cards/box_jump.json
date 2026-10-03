@@ -640,6 +640,7 @@
     "W1 fix round 2026-10-03: F08 failed-jump way out added to gaps (LIB-WAYOUT); no line shown.",
     "W1 fix round 2026-10-03: F09 \"(shared landing risk line)\" removed from risks[1]; the shared landing risk line link is noted here; claims now [c5,c13] and [c6,c11].",
     "W1 fix round 2026-10-03: F10 loadProgression no longer carries c9's performance finding; c9 stays as data.",
-    "W1 fix round 2026-10-03: F21/R-W1-8 c14 re-sourced from the NHS ankle pain page (the joint's own page, read in full); nhs-sprains dropped; ankle row \"where\" follows \"you are not able to walk\"."
+    "W1 fix round 2026-10-03: F21/R-W1-8 c14 re-sourced from the NHS ankle pain page (the joint's own page, read in full); nhs-sprains dropped; ankle row \"where\" follows \"you are not able to walk\".",
+    "W1 lows round 2026-10-03: low 5: c14 leaves out one NHS ankle-pain GP trigger, 'you have diabetes and foot pain' (re-read 2026-10-03), because GA 8 bans condition names in shown lines; every other NHS trigger stays (LR-27 R3)."
   ]
 }
