@@ -15,6 +15,9 @@ concurrency:
 jobs:
   source-gate:
     runs-on: ubuntu-latest
+    # HT-10 (D-HT10-A5b/A5c): this job skips gate block HT-10; job ht10-gate runs it, sharded.
+    env:
+      MARC_HT10_OWN_JOB: '1'
     # D-SUP-CI-1 (10-01): 40 -> 60. The full gate took 30.7 min on main 1fcd9c8 and 38.2 min on HT-9's
     # head; the HT lane, COPY-2 and BUG-37 add more. Every block still runs; this is a runaway limit, not a check.
     timeout-minutes: 60
@@ -73,6 +76,8 @@ jobs:
   # build; android-gate still waits for both, so nothing ships unless both pass.
   visual-gate-tz:
     runs-on: ubuntu-latest
+    env:
+      MARC_HT10_OWN_JOB: '1'  # as source-gate: HT-10 runs in job ht10-gate, in this job's time zone too
     timeout-minutes: 60  # D-SUP-CI-1, as source-gate
     steps:
       - uses: actions/checkout@v6
@@ -99,8 +104,46 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+  # HT-10's own gate job (D-HT10-A5b/A5c; supervisor wiring 2026-10-03, HANDOVER 8.7 step 6). Gate block HT-10
+  # runs only here: 2 shards (every tuple lands in exactly one, tools/plates/fidelity/shard.mjs) in each of the
+  # two time zones the gate covers (source-gate: the runner's UTC; visual-gate-tz: Pacific/Auckland), so every
+  # HT-10 tuple still runs once per time zone, as before the split. android-gate waits for all four legs.
+  ht10-gate:
+    name: ht10-gate (${{ matrix.shard }}, ${{ matrix.tz }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 35  # A5: each shard must finish within 25 min (checked inside the block)
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ['1/2', '2/2']
+        tz: ['UTC', 'Pacific/Auckland']
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build the web app
+        run: npm run build
+      - name: Install Chromium for the visual gate
+        run: npx playwright install --with-deps chromium
+      - name: Gate block HT-10, one shard
+        env:
+          TZ: ${{ matrix.tz }}
+          MARC_HT_SHARD: ${{ matrix.shard }}
+        run: node scripts/ht10-gate.mjs
+      - name: Upload the HT-10 proof and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-ht10-gate-${{ strategy.job-index }}
+          path: screenshots/
+          if-no-files-found: warn
+          retention-days: 30
+
   android-gate:
-    needs: [source-gate, visual-gate-tz]
+    needs: [source-gate, visual-gate-tz, ht10-gate]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
