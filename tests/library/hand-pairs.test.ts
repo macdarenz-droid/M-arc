@@ -151,6 +151,48 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     m.handle[1] = m.wrist[1] + 10;                                   // the handle below the wrist: palm down
     expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G8 palm down for underhand/);
   });
+  // delta review on #193 @ bfacafb (D-LIB7-16): ez_bar_curl's angled grip was drawn palm down, byte-identical to reverse_curl
+  const handInk = (id: string, fault: string) => { const uid = `hp-${id.replace(/_/g, '-')}-${fault}`;
+    return [...P.renderPair(id, { fault }).svg.matchAll(new RegExp(`<path id="${uid}-[rw]-[a-z0-9-]+" d="([^"]+)"`, 'g'))].map(q => q[1]).join('|'); };
+  it('D-LIB7-16: ez_bar_curl\'s angled grip is drawn palm up, never as reverse_curl\'s overhand', () => {
+    const m = P.renderPair('ez_bar_curl', { fault: 'curled' }).report.measured.right;
+    expect(m.handle[1]).toBeLessThan(m.wrist[1]);                     // palm up: the handle above the wrist
+    for (const f of ['bent-back', 'curled']) {
+      expect(handInk('ez_bar_curl', f)).not.toBe(handInk('reverse_curl', f));
+      expect(handInk('ez_bar_curl', f)).toBe(handInk('preacher_curl', f));   // same hand; the camera words carry the angle
+    }
+  });
+  it('G8: the angled grip drawn without the mirror (palm down) fails', () => {
+    const ez = C.renderedPages('ez_bar_curl');
+    expect(C.problemsOf(ez.spec, ez.pages)).toEqual([]);
+    // bfacafb's drawing: reverse_curl's unmirrored hand (its pages were byte-identical apart from the camera words)
+    const bf = C.renderedPages('reverse_curl').pages;
+    expect(C.problemsOf(ez.spec, bf).join('\n')).toMatch(/G8 palm down for the angled grip/);
+  });
+  it('no two drawn ids of one variant with different palm directions draw the same hand', () => {
+    const ids = C.sweep(P.INDEX.drawn.keys(), 14, 'drawn ids'), bad: string[] = [];
+    for (const a of ids) for (const b of ids) {
+      const A = P.pairSpec(a), B = P.pairSpec(b);
+      if (a >= b || A.pair !== B.pair || !!A.right.mirror === !!B.right.mirror) continue;
+      for (const w of A.wrong) if (B.wrong.some((x: any) => x.key === w.key) && handInk(a, w.key) === handInk(b, w.key)) bad.push(`${a} = ${b} (${w.key})`);
+    }
+    expect(bad).toEqual([]);
+  });
+  it('G7 fist front: the rope fist closes square like curl 2; the rope in the fingers (1.15) tapers to a point and fails', () => {
+    const { pages } = C.renderedPages('rope_triceps_pushdown'), p = pages[0];
+    const curl2 = C.renderedPages('alternating_dumbbell_curl').pages[0];
+    expect(C.fistFrontMm(p.svg, p.uid, 90, p.report.scalePxPerMm)).toBeGreaterThanOrEqual(C.SQUARE_FRONT_MM);
+    expect(C.fistFrontMm(curl2.svg, curl2.uid, 90, curl2.report.scalePxPerMm)).toBeGreaterThanOrEqual(C.SQUARE_FRONT_MM);
+    bites(withMods(m => { Object.assign(key(m, 'rope').VARIANTS.push.right, { contactAt: 1.15 }); key(m, 'rope').VARIANTS.push.contact = 'fingers'; }),
+      'rope_triceps_pushdown', /G7 fist front [\d.]+ mm wide/);
+  });
+  it('push flags its golden-B squat drawing values on the sheet (D-LIB7-14)', async () => {
+    const { body } = await sheet.buildSheet({ mods: P.MODULES.filter((m: any) => m.OWNER === 'LIB-7') });
+    for (const id of ['single_arm_triceps_pushdown', 'skull_crusher']) {
+      const tile = body.slice(body.indexOf(id)), end = tile.indexOf('</ul>');
+      expect(tile.slice(0, end)).toContain('heel contact -0.1 and wrist 8° are golden-B squat drawing values');
+    }
+  }, 60_000);
   it('G8: the thumb-side label is required where orientation is unstated', () => {
     const { spec, pages } = C.renderedPages('single_arm_triceps_pushdown');
     pages[0].svg = pages[0].svg.replace('aria-label="Seen from the thumb side.', 'aria-label="Seen from the side.');
@@ -277,14 +319,15 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
   }, 60_000);
   it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
     // the LIB-7 radial sheet, byte for byte (sha256 of buildSheet().body). Re-pinned once for the calibrated critic's fixes
-    // (10-03: rope, push, ez_bar_curl angled; D-LIB7-13..15); the approved pages stay pinned separately, unchanged.
+    // (10-03: rope, push, ez_bar_curl angled; D-LIB7-13..15) and for the delta review (D-LIB7-16: ez palm up, rope fist
+    // square, push flags); the approved pages stay pinned separately, unchanged.
     // built from LIB-7's own key modules only, so another card's tiles never move this pin (D-LIB7-PIN); the filter must
     // keep all 5 LIB-7 modules, so the pin cannot silently shrink
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
     const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
     expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
-    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('5405e5347eb964a3805f5bb6c8244a37b70fb990a572f3434f2d6f855326b4fc');
-    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('1130e71cb70eecf71d5c3c40a7347ff31169e4d1e44a5d94ad52dc2abe848d4f');
+    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('d16a94185b0aed497b0f0248351e2a8a75f20496ed773d7e4047f782b010ba5a');
+    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('eb8390408c74e2339341216b66925fe10779e3988edf1911ab905a7854b93870');
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },

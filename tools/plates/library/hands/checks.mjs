@@ -2,7 +2,7 @@
 // check reads the rendered pair (renderPair's report and the positions measured on its SVG). The sheet, the gate block and
 // tests/library/hand-pairs.test.ts all call these.
 import { HAND_PROP } from '../../layers/engine/hand.mjs';
-import { CAMERA_TEXT, labelsOnInk, pairSpec, renderPair } from './pairs.mjs';
+import { CAMERA_TEXT, labelsOnInk, PALM_UP, pairSpec, poly, renderPair } from './pairs.mjs';
 
 const RAD = Math.PI / 180;
 /** The contact category's contactAt (golden-B precedents: chest press .3, lateral raise .6, lat pulldown 1.0). */
@@ -29,6 +29,19 @@ export function contactU(m, pose, k) {
   const d = [m.contact[0] - m.wrist[0], m.contact[1] - m.wrist[1]], a = (d[0] * U[0] + d[1] * U[1]) / k, b = (d[0] * V[0] + d[1] * V[1]) / k;
   const e = (pose.wrist?.ext ?? 0) * RAD;
   return a * Math.cos(e) + b * Math.sin(e);
+}
+
+/** The fist's front, in mm: how wide the Right hand's ink is across the forearm within 4 mm of its farthest point along
+ *  it. A squared fist (curl 2, the approved lateral raise) is broad there; a fist closed round a handle in the fingers
+ *  tapers to a point (critic run on #193, 10-03; D-LIB7-16). Read from the Right half's <defs> outlines. */
+export const FRONT_TOL_MM = 4, SQUARE_FRONT_MM = 20;
+export function fistFrontMm(svg, uid, forearm, k) {
+  const th = forearm * RAD, U = [Math.sin(th), Math.cos(th)], V = [U[1], -U[0]];
+  const pts = [...svg.matchAll(new RegExp(`<path id="${uid}-r-[a-z0-9-]+" d="([^"]+)"`, 'g'))].flatMap(q => poly(q[1]));
+  if (!pts.length) return 0;
+  const u = pts.map(p => p[0] * U[0] + p[1] * U[1]), f = Math.max(...u);
+  const v = pts.filter((p, i) => u[i] >= f - FRONT_TOL_MM * k).map(p => p[0] * V[0] + p[1] * V[1]);
+  return (Math.max(...v) - Math.min(...v)) / k;
 }
 
 /** Problems of one id's pages ([] = ok). Pure on the rendered reports, so a test can plant a defect in them. */
@@ -91,12 +104,18 @@ export function problemsOf(spec, pages) {
         if (!svg.includes(`<circle class="h-eq-thin" cx="${k.cx}" cy="${k.cy}" r="${k.r}"/>`)) bad.push(`${at}: G7 ${k.role} knob not drawn`);
       }
     }
+    // G7: a level fist (curls, the rope) closes square at the front, as curl 2 does (D-LIB7-16)
+    if (spec.right.forearm === 90 && uid) {
+      const w = fistFrontMm(svg, uid, 90, R.scalePxPerMm);
+      if (!(w >= SQUARE_FRONT_MM)) bad.push(`${at}: G7 fist front ${w.toFixed(1)} mm wide, a square fist is at least ${SQUARE_FRONT_MM} mm`);
+    }
     // G9: no bend value over the hand's outline (estimated boxes; the gate measures the real ones)
     for (const l of uid ? labelsOnInk(svg, uid) : []) bad.push(`${at}: G9 ${l.role} label ${l.text} on the hand`);
-    // G8: palm direction (forearm level: underhand = palm up, handle above the wrist) and the camera label
-    if (spec.right.forearm === 90 && ['under', 'over'].includes(spec.orientation)) {
+    // G8: palm direction (forearm level: underhand and the EZ angled grip = palm up, handle above the wrist; D-LIB7-16)
+    // and the camera label
+    if (spec.right.forearm === 90 && ['under', 'over', 'angled'].includes(spec.orientation)) {
       const up = M.right.handle[1] < M.right.wrist[1];
-      if (up !== (spec.orientation === 'under')) bad.push(`${at}: G8 palm ${up ? 'up' : 'down'} for ${spec.orientation}hand`);
+      if (up !== PALM_UP.has(spec.orientation)) bad.push(`${at}: G8 palm ${up ? 'up' : 'down'} for ${spec.orientation === 'angled' ? 'the angled grip' : `${spec.orientation}hand`}`);
     }
     const cam = svg.match(/aria-label="([^.]*)\./)?.[1];
     const camWant = CAMERA_TEXT[spec.orientation] ?? (spec.camera === 'above' ? 'Seen from above' : 'Seen from the side');

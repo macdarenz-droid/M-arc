@@ -25,6 +25,10 @@ export const CONVENTIONS = {
   'ga:curl-mid': 'GA 3.1 curl: across the middle of the palm; extension -10 to +10 (shared/curl.json gap 1)',
   'ga:rope-fingers': 'GA 3.1.1 rope: load in the fingers, loadAxis across, lever check off (shared/rope-rule.json gap 1)',
 };
+// Palm up for an underhand grip and for the EZ bar's angled grip: the camera looks along the angled section, so the hand,
+// square to that section, shows as a straight-bar underhand grip does from the side; the camera words carry the angle
+// (D-LIB7-16). The engine mirrors V for these.
+export const PALM_UP = new Set(['under', 'angled']);
 export const THUMB_SIDE = 'Seen from the thumb side', ALONG_ANGLED = 'Seen along the angled grip';
 export const CAMERA_TEXT = { unstated: THUMB_SIDE, angled: ALONG_ANGLED };
 
@@ -68,7 +72,7 @@ export function pairSpec(id, index = INDEX) {
   // no handle (LIB-12's palm on the floor) has no honest diameter and passes none (LIB-12 ask, supervisor OK 10-02)
   if ((mod.VIEW === 'radial' || H?.profile) && !(H?.diameterMm > 0)) throw new Error(`hand pairs: ${mod.KEY}/${cfg.variant}: no explicit handle diameter`);
   const handle = H?.profile ? { profile: H.profile, diameterMm: H.diameterMm, ...(H.headMm ? { headMm: H.headMm } : {}) } : null;
-  const right = mergePose(V.right, { ...(handle ? { handle } : {}), ...(cfg.orientation === 'under' ? { mirror: true } : {}) });
+  const right = mergePose(V.right, { ...(handle ? { handle } : {}), ...(PALM_UP.has(cfg.orientation) ? { mirror: true } : {}) });
   const radial = mod.VIEW === 'radial' && !mod.render, camera = ORIENTATIONS[cfg.orientation];
   return {
     id, key: mod.KEY, variant: cfg.variant, pair: `${mod.KEY}/${cfg.variant}`, mod, orientation: cfg.orientation,
@@ -108,7 +112,7 @@ export function measured(svg) {
 // round its wrist, forearm side first. The gate block measures the real boxes in the browser (isPointInFill).
 const LABEL_W = 7.2, LABEL_PAD = 3;      // --fs-meta 12 px, tabular digits; box estimate plus margin
 // a <defs> outline as a polygon: absolute M, L, H, V, Q, C and Z, curves flattened in 8 steps
-function poly(d) {
+export function poly(d) {
   const ps = []; let cur = [0, 0];
   for (const [, c, args] of d.matchAll(/([MLHVQCZ])([^MLHVQCZ]*)/g)) {
     const n = (args.match(/-?[\d.]+(?:e-?\d+)?/g) ?? []).map(Number);
