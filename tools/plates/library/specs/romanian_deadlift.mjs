@@ -32,8 +32,10 @@
 //  One via pose (half the bottom trunk angle) is solved the same way, so the bar slides along the legs between key
 //   poses and never passes through the thighs.
 //  Mistake (c7, plate.mistake + handlingMistakes "rounding the lower back to get the bar lower"): feet, knees and
-//   hips as in the correct bottom; the pelvis tucks M_TUCK (25 deg, illustrative: the card gives no number) and the
-//   lumbar spine flexes until the hanging bar's 45 cm plates reach the floor (solved: 39 deg lumbar flexion). The
+//   hips as in the correct bottom; the pelvis tucks M_TUCK (30 deg, illustrative: the card gives no number;
+//   30, not 25, since the 10-03 bottom: with the arms near plumb the faulty bar moves only 8 px, so the tell anchors
+//   must show the rounding itself, LIB-3 PQ-H3 >= 11.4 px) and the
+//   lumbar spine flexes until the hanging bar's 45 cm plates reach the floor (solved: 52 deg lumbar flexion). The
 //   bar hangs plumb from the shoulders, so it also leaves the legs. Guides (round 3, R5): a dashed curve along the rounded
 //   lower back (sacrum to mid-back, 10 px hump: the pose alone draws ~3 px), a red arrow onto its top where the
 //   LOWER BACK ROUNDS tell ends, and an arrow from the correct bar to the faulty one.
@@ -117,7 +119,7 @@ export const rdlInfo = { endIncl: +END_INCL.toFixed(1), hipZ: +LE['hip.r'][2].to
 // the correct bottom; the pelvis tucks (M_TUCK) and the lumbar spine flexes until the hanging bar's 45 cm plates
 // reach the floor (c5: the bar does not need to touch the floor; handlingMistakes: rounding to get the bar lower).
 // M_TUCK is illustrative (the card gives no number); the rounding follows from the floor stop.
-const M_TUCK = 25, PLATE_R = 0.225, M_FLOOR_GAP = 0.004;
+const M_TUCK = 30, PLATE_R = 0.225, M_FLOOR_GAP = 0.004;
 const hangFrom = lm => { const S = lm['shoulder.r'], dx = GRIP_X - Math.abs(S[0]); return [0, S[1] - Math.sqrt(REACH ** 2 - dx * dx), S[2]]; };
 const mistOf = spine => ({ ...end, root: { at: end.root.at, tilt: END_INCL - END_SPINE - M_TUCK }, trunk: spine });
 const M_SPINE = bisect(sp => hangFrom(landmarksOf(mistOf(sp), H))[1] - PLATE_R - M_FLOOR_GAP, END_SPINE, 60);
@@ -178,11 +180,11 @@ export default {
   measure: { vertex: 'knee.r', from: 'hip.r', to: 'ankle.r', radius: 18, title: 'Knee', value: 'about 15° bend', expect: 180 - KNEE },
   callouts: [
     // c2
-    { key: 'hips', text: 'Hips back', anchor: 'buttock', cue: 'Move your hips back to lower the bar and keep the slight knee bend fixed.' },
+    { key: 'hips', text: 'Hips back', anchor: 'buttock', box: { left: 16, top: 176 }, cue: 'Move your hips back to lower the bar and keep the slight knee bend fixed.' },
     // c3
     { key: 'bar', text: 'Bar close', anchor: 'grip.r', cue: 'Keep the bar very close to your legs all the way down and up.' },
     // c5
-    { key: 'back', text: 'Flat back', anchor: 'backUpper', cue: 'Keep your back neutral and stop lowering where it would start to round.' },
+    { key: 'back', text: 'Flat back', anchor: 'backUpper', box: { left: 57, top: 126 }, cue: 'Keep your back neutral and stop lowering where it would start to round.' },
   ],
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Stand', s: 1, move: true }],   // c20 (pause 0: no hold)
   mistake: {
@@ -195,7 +197,7 @@ export default {
     ],
     tells: [
       // c7 (plate.mistake)
-      { key: 'round', text: 'Lower back<br>rounds', anchor: HUMP_PTS.pts[4], cue: 'The lower back rounds at the bottom of the rep.' },
+      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'lumbar', pose: 'mistake' }, cue: 'The lower back rounds at the bottom of the rep.' },
       // c7 (handlingMistakes: rounding to get the bar lower), c5
       { key: 'reach', text: 'Bar<br>too low', anchor: 'grip.r', cue: 'The bar is reached down to the floor by rounding the back.' },
     ],

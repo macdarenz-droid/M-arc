@@ -161,7 +161,7 @@ export default {
     ],
     tells: [
       { key: 'straight', text: 'Knees straight', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The knees stay straight as the feet land on the box.' },
-      { key: 'stiff', text: 'Stiff landing', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 12, top: 110 }, cue: 'The legs don\'t bend to absorb the landing.' },
+      { key: 'stiff', text: 'Stiff landing', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 12, top: 106 }, cue: 'The legs don\'t bend to absorb the landing.' },
     ],
   },
   pilot: { note: 'No tempo strip: no sourced seconds (explosive take-off, step down, full rest; c11).' },
