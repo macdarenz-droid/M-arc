@@ -105,6 +105,16 @@ describe('BUG-38 planner (src/brain/splitPlan.ts)', () => {
     expect(p.next).toEqual({ split: B, day: '2026-09-30', weekday: 'wed' });
   });
 
+  it('A made up late is not owed again: a later freed day stays done early', () => {
+    const A = sp('a', 'A'), B = sp('b', 'B'), C = sp('c', 'C'), X = sp('x', 'X');
+    const schedule = sched({ mon: A.id, thu: B.id, fri: C.id });
+    // Mon: X instead of A. Tue: A, made up late. Wed: B, early for Thu.
+    const sessions = [mk('2026-09-28', X), mk('2026-09-29', A), mk('2026-09-30', B)];
+    const p = plan({ schedule, splits: [A, B, C, X], sessions, today: '2026-09-30', now: local('2026-09-30', 19).getTime() });
+    expect(p.days.find(d => d.day === '2026-10-01')).toEqual({ day: '2026-10-01', splitId: null });
+    expect(p.next).toEqual({ split: C, day: '2026-10-02', weekday: 'fri' });
+  });
+
   it('S2 owed, S2 done Wed with S4 also done Wed → Thu done early, next S2 Sat with no movedFrom', () => {
     const wed = '2026-10-07';
     const sessions = [...OWN(), mk(wed, S2, 10), mk(wed, S4, 17)];

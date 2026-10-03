@@ -1418,6 +1418,68 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// BUG-38: the Today card follows the sessions done (D-BUG38). Seeded relative to the device's today.
+// Probe 1: yesterday = A, today = B, B trained yesterday -> A moved here ("Moved from {Ddd}", A, "Start A").
+// Probe 2: today = C only, C trained yesterday -> "Done {Ddd}", C, "Choose a workout".
+{
+  const tag = 'bug-38';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(300);
+  const base = await page.evaluate(() => localStorage.getItem('marc.state.v1'));
+  await page.close();
+  const seeded = await (async () => {
+    const p = await ctx.newPage();
+    return p.evaluate(([json]) => {
+      const st = JSON.parse(json);
+      const key = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const wd = d => ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][d.getDay()];
+      const now = new Date(), y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 10, 0);
+      const yEnd = new Date(y.getTime() + 3600_000);
+      const [A, B] = st.splits;
+      const template = st.sessions[0];
+      const sessionOf = sp => ({ ...template, id: `bug38-${sp.id}`, splitId: sp.id, splitName: sp.name, day: key(y), startedAt: y.toISOString(), endedAt: yEnd.toISOString(), durationSec: 3600 });
+      const empty = Object.fromEntries(['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(d => [d, null]));
+      const one = { ...st, daysOff: [], active: null, schedule: { ...empty, [wd(y)]: A.id, [wd(now)]: B.id }, sessions: [sessionOf(B)] };
+      const two = { ...st, daysOff: [], active: null, schedule: { ...empty, [wd(now)]: B.id }, sessions: [sessionOf(B)] };
+      return { one: JSON.stringify(one), two: JSON.stringify(two), a: A.name, b: B.name, ddd: y.toLocaleDateString('en-US', { weekday: 'short' }), template: !!template };
+    }, [base]).finally(() => p.close());
+  })();
+  if (!seeded.template) errors.push(`${tag}: the seed has no session to copy`);
+  const probe = async (json, n) => {
+    const p = await ctx.newPage();
+    p.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await p.addInitScript(([j, k]) => { if (!sessionStorage.getItem(k)) { sessionStorage.setItem(k, '1'); localStorage.setItem('marc.state.v1', j); } }, [json, `bug38.${n}`]);
+    await p.goto(`http://localhost:${PORT}/`); await p.waitForSelector('.nav'); await launchGone(p); await p.waitForTimeout(300);
+    await p.getByRole('button', { name: 'Later' }).click({ timeout: 1000 }).catch(() => {});
+    return p;
+  };
+  const card = p => p.locator('[data-palace="today.session-card"]');
+  // Probe 1.
+  const p1 = await probe(seeded.one, 1);
+  const eyebrow1 = await card(p1).locator('.eyebrow').allTextContents();
+  if (eyebrow1.length !== 1 || eyebrow1[0] !== `Moved from ${seeded.ddd}`) errors.push(`${tag}: probe 1 expected exactly one eyebrow "Moved from ${seeded.ddd}", got ${JSON.stringify(eyebrow1)}`);
+  const h1 = await card(p1).locator('h2').allTextContents();
+  if (h1.length !== 1 || h1[0] !== seeded.a) errors.push(`${tag}: probe 1 expected h2 "${seeded.a}", got ${JSON.stringify(h1)}`);
+  if ((await card(p1).getByRole('button', { name: `Start ${seeded.a}` }).count()) !== 1) errors.push(`${tag}: probe 1 expected one "Start ${seeded.a}" button`);
+  await settle(p1); await card(p1).screenshot({ path: `${OUT}/silent-black-bug38-moved.png` });
+  await p1.close();
+  // Probe 2.
+  const p2 = await probe(seeded.two, 2);
+  const eyebrow2 = await card(p2).locator('.eyebrow').allTextContents();
+  if (eyebrow2.length !== 1 || eyebrow2[0] !== `Done ${seeded.ddd}`) errors.push(`${tag}: probe 2 expected exactly one eyebrow "Done ${seeded.ddd}", got ${JSON.stringify(eyebrow2)}`);
+  const h2 = await card(p2).locator('h2').allTextContents();
+  if (h2.length !== 1 || h2[0] !== seeded.b) errors.push(`${tag}: probe 2 expected h2 "${seeded.b}", got ${JSON.stringify(h2)}`);
+  if ((await card(p2).getByRole('button', { name: 'Choose a workout' }).count()) !== 1) errors.push(`${tag}: probe 2 expected one "Choose a workout" button`);
+  await settle(p2); await card(p2).screenshot({ path: `${OUT}/silent-black-bug38-early.png` });
+  await p2.close();
+  await ctx.close();
+}
+
 // A fresh (non-legacy) profile so the onboarding form and a goal-change insight are visible
 // without the legacy fixture's own progress insights outranking them in the top 3.
 {
