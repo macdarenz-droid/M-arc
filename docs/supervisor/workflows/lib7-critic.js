@@ -129,8 +129,13 @@ for (let n = 1; n <= 3 && !final; n++) {
       if (low.length) reasons.push(`hidden approved ${c.key} (${c.label}) scored below 4: ${low.map(k => k + '=' + p.scores[k]).join(', ')}`)
     }
     if (c.kind === 'plant') {
+      // D-CRITIC-CAL: caught on its target item, or on any item where the unplanted original scores >= 4 (the drop is the plant's)
       const target = c.plantItem && p.scores[c.plantItem]
-      if (!(typeof target === 'number' && target < 4)) reasons.push(`plant ${c.key} (${c.label}, ${c.plantItem}: ${c.plantDescription}) not caught (score ${target})`)
+      const orig = prep.candidates.find(o => o.kind === 'drawn' && JSON.stringify(o.ids) === JSON.stringify(c.ids))
+      const op = orig && byLabel[orig.label]
+      const other = op ? ITEMS.filter(k => p.scores[k] < 4 && op.scores[k] >= 4) : []
+      if (!((typeof target === 'number' && target < 4) || other.length)) reasons.push(`plant ${c.key} (${c.label}, ${c.plantItem}: ${c.plantDescription}) not caught (score ${target})`)
+      else if (!(typeof target === 'number' && target < 4)) log(`plant ${c.key} (${c.label}) caught on ${other.join(', ')} instead of ${c.plantItem}`)
     }
   }
   const valid = reasons.length === 0

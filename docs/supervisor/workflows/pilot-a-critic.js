@@ -87,7 +87,7 @@ Repo: /home/user/M-arc (GitHub macdarenz-droid/M-arc; run git fetch origin). Rea
 
 Steps:
 1. Start clean: git worktree remove --force ${SCR}/critic-a/wt if it exists, then delete every other file and folder under ${SCR}/critic-a/ (old sets, plants, renders, scripts) EXCEPT result-*.json and critic-*.json. git fetch origin claude/lib-8-pilot-a; git worktree prune; git worktree add ${SCR}/critic-a/wt origin/claude/lib-8-pilot-a; in it run npm ci (needed for the build). Run node tools/plates/library/pilot-a/build.mjs and record the plates page sha256 (no expected value for this head; record it. Rebuild once more and confirm the same sha, report any difference, do not fix it). Chromium is at /opt/pw-browsers (MARC_CHROMIUM=/opt/pw-browsers/chromium if a script needs it).
-2. Hidden approved plates: pick 2 of the 8 approved plates that resemble pilot plates (on 09-30 the calibration used lat_pulldown and seated_cable_row; you may reuse them). Render each in the same three states, same size, same file naming as the pilot shots.
+2. Hidden approved plates: pick 2 of the 8 approved plates that resemble pilot plates: lat_pulldown plus one other. Never seated_cable_row (ruling D-CRITIC-CAL: its start ghost leans about 12° forward against its own "no rocking" facts, verified by the supervisor, so it is not a clean anchor). Render each in the same three states, same size, same file naming as the pilot shots.
 3. Reference set: the remaining 6 approved plates, rendered the same way, into ${SCR}/critic-a/reference/<id>-{dark,paper,mistake-dark}.png. The 2 hidden plates must NOT appear in the reference set.
 4. Planted defects: make 2 temporary copies (in ${SCR}/critic-a/plants/, never in the worktree's tracked files; if a spec must sit in the tree to render, copy it under a new untracked name and delete it after) of two DIFFERENT pilot plates, each with ONE defect that automation cannot catch and a careful designer would: e.g. a callout leader that ends on the wrong joint or body part (R4), or a Mistake drawn on the wrong leg/arm or a Mistake that shows a different fault than its label (R5), or a hand visibly not on the handle (R3). Keep the engine report ok. Render them like the others. Record which rubric item each plant targets.
 5. Assemble the blind set: ${SCR}/critic-a/set/P01 .. P21 (17 pilot + 2 hidden approved + 2 plants; the plants are EXTRA copies, so the two pilot originals of the planted plates also stay in the set). Shuffle the order so position reveals nothing (e.g. sort by sha256 of id+"m-arc-pilot-a"). Each P## folder holds: dark.png, paper.png, mistake-dark.png, and facts.json = the plate-relevant facts from that exercise's verified research card (its plate section: checkpoints, mistake, tells, tempo, the facts a drawing must match, and its safety tier). For the hidden approved plates use their verified cards in docs/research/howto/cards/ on origin/claude/libht-research (or golden-B content) in the same shape. facts.json must not reveal approved / planted / pilot status, file paths, or spec names that differ from the plate's exercise name. No other file in set/.
@@ -144,9 +144,14 @@ for (let n = 1; n <= 3 && !final; n++) {
       if (low.length) reasons.push(`hidden approved ${c.id} (${c.label}) scored below 4: ${low.map(([k, v]) => k + '=' + v).join(', ')}`)
     }
     if (c.kind === 'plant') {
+      // D-CRITIC-CAL: caught on its target item, or on any item where the unplanted original scores >= 4 (the drop is the plant's)
       const target = c.plantItem && p.scores[c.plantItem]
-      const caught = (typeof target === 'number' && target < 4)
+      const orig = prep.candidates.find(o => o.kind === 'pilot' && o.id === c.id)
+      const op = orig && byLabel[orig.label]
+      const other = op ? sc.filter(([k, v]) => v < 4 && typeof op.scores[k] === 'number' && op.scores[k] >= 4).map(([k]) => k) : []
+      const caught = (typeof target === 'number' && target < 4) || other.length > 0
       if (!caught) reasons.push(`plant ${c.id} (${c.label}, ${c.plantItem}: ${c.plantDescription}) not caught (score ${target})`)
+      else if (!(typeof target === 'number' && target < 4)) log(`plant ${c.id} (${c.label}) caught on ${other.join(', ')} instead of ${c.plantItem}`)
     }
   }
   const valid = reasons.length === 0
