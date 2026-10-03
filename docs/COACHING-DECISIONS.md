@@ -2119,5 +2119,5 @@ Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 202
   - **wall-ball:** Right palms 47° below the horizontal, so the wrists land at c3's 152 mm, and forearms at 95°. Wrong palms at 0° on the sides, forearms at 25° (elbows out).
   - **front-rack:** Right upper arm 10° above the horizontal, bar on the shelf. Wrong upper arm 25° below the horizontal, bar lifted 20 mm and moved 40 mm forward, held in the palm.
   - **goblet:** Wrong weight 60 mm off the chest.
-  - **palm-flat:** cupped Wrong palm tilted 10° about the heel, which gives a 6.8 mm mid-palm gap. Hand-ahead Wrong forearm tilted 25°.
+  - **palm-flat:** cupped Wrong palm tilted 10° about the heel, which gives a 6.7 mm mid-palm gap. Hand-ahead Wrong forearm tilted 25°.
   - The front-rack Wrong's lowered elbows now also cite `cards/front_squat.json#c7` ("Keep the elbows high, or the bar may slip"), pinned in `lib12-claims.json`.
