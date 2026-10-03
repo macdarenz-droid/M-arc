@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-03 ~12:20 UTC · main `5bc4712` (#203) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-03 ~18:15 UTC · main `4aa1b2a` (train 12 #205) · PAUSED by the owner (8.0c) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -804,6 +804,39 @@ The table is in `AGENTS.md`. Do not copy it here.
 
 The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unless marked otherwise. Session, Routine, Relay and unmentioned PR rows were not re-captured in this docs pass; read them as that historical snapshot and reconcile live before acting. The GitHub changes above supersede conflicting status rows below.
 
+**RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
+
+### 8.0c PAUSE 10-03 ~18:10 UTC (owner: "Pause all work for now."; read first, supersedes 8.0b where they differ)
+
+**Done at the pause:**
+- Routine `trig_016ECwLTU7XRLzsYVRrwLTGe` is **disabled**; the /loop is stopped; the watcher scripts are stopped.
+- Every non-archived worker on this account got a pause message: stop, push only tested green work to its own branch, post a one-line "Paused @ sha" on its PR, and wait for "resume".
+- The account hit its session limit twice today (13:10 and 18:10 UTC resets). Workers cut off by it show FAILED: the HT-10 builder, the LIB-12 builder and reviewer, and the pilot A builder.
+- main `4aa1b2a` (train 12). Owner chat rule: when nothing needs him, the reply is exactly ".".
+
+**Stop points (heads from `git ls-remote`, 18:10):**
+
+| Card | PR @ head | State | Next on resume |
+|---|---|---|---|
+| HT-10 (finish line) | #166 @ `edeefd2` | Delta FAIL @ `b94e63a` on 1 High (the chip loop had no shown() guard) + 1 Low (D-HT3 97→68). The builder pushed the fix `edeefd2` ("a hidden Look closer chip fails…; D-HT3 68 ms"), then hit the session limit before posting FIXED. | The builder confirms `edeefd2` (check, test:tz, shards + gate) and posts FIXED. Same reviewer session_01JCTQ1so1qCTyp8CFLTE1mP delta-reviews `b94e63a..edeefd2`. Then rebuild #201 on the final head, run train 13 (HT-10 + #201 + handover), APK, finish-line message (PROMPTS 10c), then the audit lane. |
+| HT-10 CI wiring | #201 @ `99c175c` | All 8 checks green with HT-10 `b94e63a`: source-gate 48.9 min (was 59.9), ht10 shards 5-7.6 min. | Merge HT-10's final head into it; it joins HT-10's train. |
+| LIB-7 | #193 @ `1114bc1` | Delta PASS @ `1114bc1` (0/0/0/0). Rulings D-LIB7-13…17a. The single critic @ `7dd184d` was valid: every pair at the bar except rope (fixed in `1114bc1`). The panel critic @ `1114bc1` (wf_4d223c0e-330): round 1 invalid (hidden machine_chest_press C3 median 3); round 2 died at the session limit. | Rerun the panel (`lib7-critic.js`, head `1114bc1`). machine_chest_press may be a weak anchor here too (see golden-B follow-up 7): if it fails again, record it and use lat_pulldown + another clean pair, fixed before the run. Frozen until its plan-order merge. Reviewer session_013iDRuPDJxLx2bxoTiDYYJT can be archived after the panel's final PASS. |
+| LIB-12 | #191 @ `1c672b0` | FIXED posted (base LIB-7 `23ac5bb`). Fresh delta reviewer session_01TSajZZVKcAzAiBgVGN8KHj FAILED at the session limit (no verdict on #191 at the pause). The source-gate BUG-34 launch probe was red once (app code = main); one rerun. | The reviewer resumes or a fresh one starts. Then LIB-12 merges LIB-7 `1114bc1` (small delta). If the BUG-34 probe fails again anywhere, open card GATE-FLAKE-2. |
+| Pilot A (LIB-8) | #109 @ `ae7c8c0` | Panel critic VALID (wf_afdf4915-c3f, D-CRITIC-CAL2). **15 approved:** reverse_lunge, barbell_overhead_press, single_leg_romanian_deadlift, pec_fly, box_jump, plank, romanian_deadlift, dumbbell_bench_press, triceps_pushdown, dumbbell_biceps_curl, barbell_row, upright_row, incline_dumbbell_press, rope_triceps_pushdown, mountain_climbers. **Back to fix:** dumbbell_shoulder_press (Mistake arch, R5 median 3). **Held:** barbell_shrug (H3), dumbbell_fly, rear-delt fly. | The builder (session_01XaegSQJXRSyfX5CyGxkfRk, FAILED at the limit) fixes the shoulder press Mistake only and posts PILOT-A FIXED. Then a panel round on the new head. |
+| Motion fix (owner's chest-press artifact) | branch claude/motion-upgrade-9n82lj, arch `0a45d00` | wf_1722fac2-942 reached verify-4. fix-4 and verify-5 died at the session limit. The open items are all muscle shading (fill and line edge mismatch, jagged contours, pec coverage short of the armpit) plus extra measurement rows. Page and assets: scratchpad `motion-fix/` (not in the repo). | Resume the workflow (script in this session's workflow scripts, loop up to 5 rounds). Publish the artifact only after a verify PASS, then send the owner the link only. |
+| GATE-SPLIT, LIB-2 enabler, LIB-3, research writers | #194, #189, #180, research branch | Idle until HT-10 (unchanged). | unchanged |
+
+**Arrived right after the pause (18:12, both posted on their PRs):**
+- **HT-10 FIXED @ `edeefd2`**: hidden-chip guard plus fixture (mutation 8/125 red), D-HT3 corrected to 68 ms. check, test:tz, both shards and the full gate pass locally on Chromium 141. CI: visual-gate-tz green. source-gate printed "Screenshot gate PASS" and was then cancelled by the 60 min timeout at 60:01, so android-gate was skipped. That is the job-time risk #201 removes. On resume: the same reviewer delta-reviews `b94e63a..edeefd2`, and CI evidence comes from the train with #201.
+- **DELTA REVIEW LIB-12 @ `1c672b0`: PASS** (0/0/0/2), all 4 CI checks green including the source-gate re-run (#191, issuecomment-5972033371). Its local gate failed only on the HT-3b A3 timing probe (149 ms, run alongside other jobs); that is the D-HT9-A3b follow-up. On resume: LIB-12 merges LIB-7 `1114bc1` (small delta), and the reviewer is archived after that.
+
+**New rulings today (all on their PRs):**
+- D-HT10-A3m: A3 limit = ceil(1.25 × max median, CI + container), capped at 400 ms.
+- D-LIB7-SHEET, D-LIB7-PIN, D-LIB7-16a, D-LIB7-17, D-LIB7-17a.
+- D-PILOTA-R5: a valid result on the current head outranks an earlier approval.
+- D-CRITIC-CAL: a plant counts as caught on its target item or on any item its original passes.
+- D-CRITIC-CAL2: a critic round is a panel of 3 (medians, majority findings); anchors exclude golden plates with verified weak spots (golden-B follow-ups 6 and 7).
+
 ### 8.0b PAUSE 10-03 and TAKEOVER (read first; supersedes 8.0a-8.8 where they differ)
 > **TAKEOVER CANCELLED (owner, 10-03 ~10:25 UTC: "Changed my mind, just continue all task. Ill do other project in my other claude acct. Dont pause here").** This supervisor (session_01FTBsxoLN135B3HvJ7sT676) keeps running every lane; the 10:50 pause trigger was deleted. The owner's other account works on a different project and must not act on M/ARC. The note below is kept for history only.
 >
@@ -837,6 +870,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 - 12:0x **REVIEW HT-10 @ `ca313c7`: FAIL** (2 Blockers: A3 tap limit still the 400 ms default, A3 numbers not in D-HT3; O9 list + mutation table missing. High: sweep does not count taps (Show me removed still passes). Medium: A2 not split per shard. Lows: D-HT10-A5 text, CI time). Ruling **D-HT10-A3m** on #166: A3 limit = ceil(1.25 × the highest median from ≥3 CI + ≥3 agent-container runs), capped at 400 ms, all numbers in D-HT3, probe 1 ms under the median goes red. Routed to the HT-10 builder; the same reviewer (session_01JCTQ1so1qCTyp8CFLTE1mP) does the delta.
 - 12:1x PILOT-A FIXED @ `ae7c8c0` (OHP + RDL Mistake only; other 15 byte-identical). Fresh calibrated critic wf_bbfec1c7-172 on `ae7c8c0` (script points at it; new plates page sha recorded by the run).
 - 12:2x Train 12 = BUG-38 #199 @ `45a09cd` + GATE-FLAKE-1 #179 @ `4ca1720` (PASS 09:4x; moved out of HT-10's train so the finish-line train is smaller; HT-10 merges main after train 12) + this handover row.
+- 12:2x-13:10 the account hit its session limit (reset 13:10). Workflows that died mid-run were resumed at 14:00. Workers report a seven-day "allowed_warning".
+- 13:59 **TRAIN 12 MERGED** #205 → main `4aa1b2a` (GATE-FLAKE-1 #179, BUG-38 #199, SUP #204; all 4 checks green on `9d043f4`). Relay BUG-38 and GATE-FLAKE-1 done. Archived the BUG-38 builder and reviewer and the GATE-FLAKE-1 builder. Debug APK run 37128066973 (artifact 11276767190, fingerprint step green). The Play AAB **37.1.0.62** (versionCode 37000062, sha256 `3bf887d1…d704`, upload cert `95:DC:ED:4A…`, no READ_HEART_RATE) was sent to the owner to upload as a closed-test release; he now installs through Play (keeps his data).
+- 14:0x LIB-12 had stalled since 09:49 on LIB-7's `sheet.mjs`. Ruling **D-LIB7-SHEET** (#193): refText falls back to the module's `CLAIMS_TEXT`; a key with its own `checks()` shows "Checks: ok"; flags come from an optional module `FLAGS` export; radial keys stay byte-identical. LIB-7 FIXED `656d45d`, delta PASS. Ruling **D-LIB7-PIN**: the sheet pin covers LIB-7's own modules only, with the same sha values. Test-only, accepted by the supervisor at `23ac5bb`.
+- 14:2x **LIB-7 calibrated critic** written (`docs/supervisor/workflows/lib7-critic.js`, C1-C7). It ran VALID on `656d45d`: curl 1, curl 2, curl 3, ez 6 and d-handle 5 approved. rope 8, d-handle 4 and ez 7 went back to fix, and the EZ grip tile was checked. LIB-7 FIXED `bfacafb` (D-LIB7-13/14/15). **Delta review FAIL** (ez_bar_curl `angled` renders the same as reverse_curl; the rope fist is still pointed; push values not flagged). Routed back; the same reviewer, session_013iDRuPDJxLx2bxoTiDYYJT, does the delta. Then the critic runs again.
+- 14:3x Pilot A critic on `ae7c8c0`: 3 of 3 runs invalid. The supervisor checked both reasons on the renders: the hidden seated_cable_row's start ghost leans about 12° against its own "no rocking" copy (golden-B follow-up 6), and the triceps plant was caught on R2 instead of R3. Ruling **D-CRITIC-CAL** (both critic scripts): a plant counts as caught on its target item or on any item its unplanted original passes, and seated_cable_row is no longer a hidden anchor. A fresh run, wf_caae19be-e80, is in progress.
+- 14:4x Motion fix (owner's chest-press artifact): verify-3 FAIL, all on muscle shading (fill and line edges disagree, jagged outlines, pec coverage stops short of the armpit) plus missing measurement rows. The loop was extended to 5 rounds and resumed. The artifact goes to the owner only after a verify PASS.
+- **Owner chat (10-03 ~14:55):** when nothing needs him, the reply is exactly "." (AGENTS.md "Owner chat", `.claude/owner-rules.md`).
 
 **Google Play (owner's Console, personal account, package com.mrcdrnzz.dailytracker): state at 07:30 UTC 10-03**
 - Keys: app signing key `05:66:9A:…:F1:F5` (Play App Signing, the permanent key); upload key `95:DC:ED:4A:…:07:9B` (secrets `MARC_UPLOAD_KEYSTORE_B64`, `MARC_UPLOAD_STORE_PASSWORD`; public cert in Relay `releases/upload_certificate.pem`). The workflow "M/ARC Play bundle" signs with the upload key on main pushes and manual runs (PLAY-SIGN #200), artifact `MARC-PLAY-AAB-UPLOAD-SIGNED`, pinned and self-tested (`scripts/check-play-signature.sh`).
@@ -945,6 +985,9 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 3. With them: the cite text differs across golden-B files for difonza2026 and weiss1995 (research data only), and the HT-5 card's A4 example cue is stale (golden B: "Heel of palm, wrist straight.").
 4. COPY-2's How-to heading list (not edited, golden B owns it): "Hand: right and wrong", "Look closer", "If you feel it in", "Option: thumb over the bar", "Thumb options, seen from the side".
 5. HT-9's "Set it up" and "Risks and when to stop" break the owner's heading rule; both are golden-B copy (HT-9 ruling 7, 08:38).
+6. Seated cable row (golden B): the dashed start ghost leans the torso about 12° forward (head about 45 px ahead of the finish head), while its own copy says "Sit tall; no rocking". 3 of 3 blind critic runs on pilot A `ae7c8c0` flagged it (R1=3), and the supervisor confirmed it on the render (10-03). Golden B is owner-approved and byte-locked, so it is recorded here and not changed. It is no longer used as a hidden calibration anchor (D-CRITIC-CAL).
+7. Machine chest press (golden B): the Mistake "OFF THE PAD" barely reads. The red dashed upper back sits only about 8-10 px in front of the solid back, so the back still looks on the pad; only the head shift and the arrow carry it. 2 of 3 blind critic runs on pilot A `ae7c8c0` scored it R5=3, and the supervisor confirmed it on the render (10-03). Recorded, not changed, and no longer a hidden anchor (D-CRITIC-CAL2).
+8. Machine chest press hand close-up (golden B): the Right says "HEEL OF PALM" but draws the handle inside the curled fingers at the front of the fist, the mid-palm fist of the lateral raise. 3 of 3 panel critics on LIB-7 `1114bc1` scored it C3 ≤3, and the supervisor confirmed it on the render (10-03 19:1x). Recorded, not changed. It is no longer a hidden anchor for the hand critic either.
 
 **First audit, 32 findings (4 P1 + 28 P2): COMPLETE 07:56.**
 
