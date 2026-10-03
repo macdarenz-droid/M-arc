@@ -235,5 +235,16 @@
       "setBy": "HT-7",
       "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
     }
+  ],
+  "totals": [
+    {
+      "chunk": "How-to total",
+      "rawMax": 2553647,
+      "gzMax": 563379,
+      "measuredRaw": 2321497,
+      "measuredGz": 512162,
+      "setBy": "HT-10",
+      "reason": "8 exercises with hand, posture and feel chunks; per-chunk entries pin each chunk. Final: re-measured on main 000918e (HT-7, HT-8, HT-9 merged)."
+    }
   ]
 }
