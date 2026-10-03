@@ -1987,6 +1987,16 @@ Measured on main `1fcd9c8` (gate Chromium, 411 × 960 DPR 2.625 and 390 × 844 D
 - **D-LIB6-8 (fallback)**: `{ legacy: true }` per id loads the frozen golden-B script exactly as `howto-layers.mjs` does. A test builds a page with pull-up and leg press on the fallback and their options removed, and gets `e7b81413`.
   **Source**: card LIB-6, plan `docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md` 2.6, 2.7, 7.
 - **D-LIB6-9 (review Medium, 10-02: anchor check now in `npm test`)**: `tests/library/closeups.test.ts` now also runs D-LIB6-6's 4 patch anchors string-only (`patchHowtoLayers`, `patchBuildPage` on the vendored sources, no page build), so CI catches a moved anchor on every push instead of only on the page-level tests (`layers-page.test.mjs`, not yet wired into CI before LIB-4).
+## GATE-FLAKE-1: three timing checks root-caused (2026-10-01)
+
+All three were probe bugs; the app behaved correctly in every failing run. Each fix changes only the named probe's waiting or sampling; every assertion line is byte-identical (ruling D-GATEFLAKE-0).
+
+- **D-GATEFLAKE-1 Decided** (A3 sheet swipe): after a short drag the probe read the panel at a fixed 450 ms. When the renderer produced no frame in that window, the spring-back animation was still pending, so the panel read its first keyframe: the full drag offset, 10 % of the 776.47 px panel = 77.6469 px, the exact CI value. Reproduced 10 of 10 by blocking the frame after release (a 700 ms rAF busy loop); the fixed probe passes the same 10 of 10 and the panel ends at 0, so the app's spring-back is sound. The probe now keeps the 450 ms, then waits for the panel's own animations to finish (bounded at 2 s) and one rendered frame. Mutation: a spring-back that never clears its follow transform fails it.
+  **Why**: waiting for the animation's `finished` reads the settled state; a longer fixed sleep would only move the race.
+- **D-GATEFLAKE-2 Decided** (QA12-1 launch skip, first run): the overlay always leaves 240 ms (its fade) after the tap, but the probe checked at a fixed 600 ms from launch while the click itself landed late under load (395 and 520 ms in the two failing runs of 20). The 300 ms budget from tap to removal now runs from the tap's own pointerdown time on the page clock (never earlier than 600 ms). Mutation: a tap that no longer skips the overlay fails it.
+- **D-GATEFLAKE-3 Decided** (HT-3b A3 long task): `P.observeLongTasks` observes with `buffered: true`, which replays the page's boot task (startTime about 100 ms, unthrottled, about 7 s before the opens) into the "while opening" budget. Under load that replayed entry alone went over 100 ms (196 ms, the first entry delivered, in one Chromium 141 run). The probe now counts only tasks that start once the opens are observed, and takes queued entries before disconnecting. A 150 ms task before the opens failed the old probe 5 of 5 and passes the new one 5 of 5. Mutation: a 150 ms busy loop in the How-to sheet's open fails it (150-155 ms on every open).
+  **Routed, not fixed here**: the opens' own largest task is Preact's effect flush after the sheet mounts, and most of it is `showModal()` in the shared Sheet forcing style and layout of the whole How-to content: 23-42 ms of a 45-67 ms task at 4x on a quiet machine (long-animation-frame attribution). Under heavy over-subscription (6 busy processes on 2 cores) wall-clock stretches it past 100 ms in about 1 of 20 runs on both browsers (109 and 115 ms). This is the How-to mount that HT-9 (#113) splits (D-HT9-A3b), so it is reported on GATE-FLAKE-1's PR for routing. The probe is not loosened for it.
+  **Open risk**: `tools/plates/fidelity/perf.mjs` (outside this card's write scope) keeps the buffered replay for any later caller; also reported on the PR.
 ## HT-9: review fixes for 31bbe16 (A1, A3, A4, A5, Show probe, long task) (HT-9 builder, 2026-10-01)
 
 - **Closes** the "Not done yet" items of the first HT-9 entry and findings 1-6 of "REVIEW HT-9 @ 31bbe16: FAIL" on #113, per the supervisor's rulings on that review.
@@ -2059,6 +2069,20 @@ Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 202
   - Not changed: "push Right mid-hand". It uses golden B's heel contact (.3), measured by G4.
   - Not changed: "rope knob does not read". The knob lies behind the fist in the radial view (D-LIB7-9). The pilot sheet flags it, and "Against the knob" carries the claim.
 
+## GATE-FLAKE-1: HT-3 L4 and before/after evidence (2026-10-02)
+
+- **D-GATEFLAKE-4 Decided** (HT-3 L4 Trace timeout): after the Trace's animations finished, the probe gave `.tracing` 1 s to go with `page.waitForFunction(..., { timeout: 1000 })`. That 1 s ran in Playwright's driver, not in the page, so a renderer that answered CDP late failed the app page and the golden page at once on a Trace that had already ended. The 1 s now runs on the page's own clock, inside one page call: wait for the finish (capped at 10 s, so a Trace that never finishes fails instead of hanging the gate), then check `.tracing`, then watch its class for up to 1 s. Both assertion lines are byte-identical. Mutation: removing the app's `animationend` → `endTrace` listener fails it on the app page only (golden passes), with "Trace did not end by itself in the app page" and "Trace is still aria-pressed=true" on every full theme × plate.
+  **Why**: a timer in the page measures the app; a timer in the driver also measures the CDP link.
+- **D-GATEFLAKE-5 Evidence** (merged head vs main 9ca7f07; each named probe cut out of the gate unchanged and run alone; Chromium 141 = /opt/pw-browsers, Chrome 153 = chrome-headless-shell 153.0.8010.12). "Natural" = 6 busy processes on 4 cores. "Provoked" = the same test-side stall added to both builds, modelling the measured cause: A3 a 700 ms busy frame after release; QA12-1 the click sent 250 ms late from Node; HT-3b A3 a 150 ms task at DOMContentLoaded (a heavy boot task); HT-3 L4 a 1.5 s busy task right after the Trace's `animationend` in both pages. Runs over the limit, main → head:
+
+  | Probe | 141 natural | 153 natural | 141 provoked | 153 provoked |
+  |---|---|---|---|---|
+  | A3 sheet swipe | 0/12 → 0/12 | 0/12 → 0/12 | 10/10 → 0/10 | 10/10 → 0/10 |
+  | QA12-1 launch skip | 3/12 → 0/12 | 0/12 → 0/12 | 10/10 → 0/10 | 10/10 → 0/10 |
+  | HT-3b A3 long task | 2/12 → 0/12 | 3/12 → 0/12 | 10/10 → 0/10 | 10/10 → 0/10 |
+  | HT-3 L4 Trace | 0/10 → 0/10 | 0/10 → 0/10 | 10/10 → 0/10 | 10/10 → 0/10 |
+
+  Provoked A3 on main read 77.6469 px every time, the CI value. Natural HT-3 L4 did not reproduce on this machine on either build, so its root cause rests on the provoked runs and the CI log pattern (both pages failing at once). Each mutation in D-GATEFLAKE-1..4 turns the changed probe red; the unmutated head passes in the runs above. Raw lists are on PR #179.
 ## HT-9: catch-up after HT-7 and HT-8 (supervisor rulings on #113, 2026-10-01 12:32) (HT-9 builder, 2026-10-02)
 
 - **Merge**: origin/main 94fd32c (train 10: HT-7, HT-8) with a merge commit. In the gate, the HT-9 blocks and HT-8's block are both kept, and the PASS line keeps every part of both sides. Main's line had lost its COPY-1 part in an earlier merge, while the COPY-1 block is still on main, so that part is kept. `sections/index.ts` runs hand, posture (HT-7), feel (HT-8), setup, risks.
@@ -2080,6 +2104,37 @@ Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 202
 - **Budgets**: on this head, `HowToSheet-*.js` measures 28076 / 9752 B, over HT-8's 27168 / 9375 ceiling, and `HowToSheet-*.css` measures 27581 / 4486 B. The new ceilings are measured + 10 %: 30884 / 10728 and 30340 / 4935.
 - **Source**: supervisor rulings on #113, 2026-10-01 12:32 (comment 5931535634), and the catch-up message of 2026-10-02.
 
+## D-BUG38: next split follows the sessions done (BUG-38 builder, 2026-10-03)
+
+- **Rule (D-BUG38, from the card in docs/supervisor/verify/BUG-38.md).** Weekdays decide when you train. Your sessions decide which planned days are already covered. A split you skipped by training another one moves into the next day an early session freed up. `src/brain/splitPlan.ts` holds the one pure `splitPlan()`. It reads only `schedule`, `splits`, `sessions` and `daysOff`, so nothing new is saved.
+  1. **Sessions used.** A session's plan day is today when it is in `trainedTodaySessions` (QA8-4); otherwise it is its stored day. Only plan days from T-17 to T count. Each (splitId, plan day) keeps its earliest session. A past day off has no slot.
+  2. **On-day, then early.** A session counts for its own day when that day's split is its split. Otherwise, early: the first planned day within 3 days after it, if that day has its split. There is no late step (D-BUG38-2). A day counts at most one session.
+  3. **Owed.** A split is owed only when another session took its day. It stays owed until a later session of that split, or until its weekday comes round again.
+  4. **Walk** T-14..T+7. A day whose split was done early goes to the oldest owed split, never the day before that split's own day. Without an owed split the day is done early. Placing a split on a future day uses it up; so does placing it on today when nothing was trained today.
+  5. **Outputs.** `today` keeps its split on a day off, with `off`. Also `doneEarly`, `next` (the first split in (T, T+7]) and `days` (T..T+7).
+- **Consumers.** All of them read this one function:
+  - selectors: `todayPlan` is built from per-field computeds, never from `state.value` whole. `scheduledSplit` is undefined on a day off (UI-R03).
+  - The coach: `derive`, `readinessSeries` (one plan per day, now = 23:59:59) and the scheduled-conflict rule.
+  - Escobar: `splitPlanOf`, `readinessToday`, the brief and `get_overview` (`movedFrom`).
+  - Reminders (`planned` map) and the Today card (`sessionCardState`).
+  - `nextScheduledSplitOf`, `nextScheduledSplitFor` and `scheduledSplitId` are deleted.
+- **D-BUG38-coach.** No `scheduled-conflict` on a day off (UI-R03). After any session today, the coach names what was done ("Done today: A + B", "A + B are done for today.") and gives the plan's next split. It never warns about today's own plan, which revises QA8-1 point 3 (LIVE-QA-8.md:20, :23). The "Below 60%" warning lines stay byte-identical; the AUD-20 follow-up owns them.
+- **D-BUG38-pins.** The card's exact edits are made and nothing else changed:
+  - coach.test.ts:275 is renamed "BUG-38: after any session today …". `priorHamSession` becomes `split_push`, and the test expects `recovery.done-today:split_chest` with "Done today: Push" and "Next: Upper on Mon".
+  - coach.test.ts:284 changes only `priorHamSession` to `split_push`.
+  - The old fixture (SPLIT 2 trained Friday) is pinned as done early by the new AC13 test.
+- **D-BUG38-1 (supervisor ruling on #199, 10-03).** Deviation from the card. The coach's plan is memoised per CoachContext (a WeakMap, `todayPlanOf`), not kept as a `Derived` field. tests/aud20.test.ts:76-78 (AUD-20's pin, outside this card) runs the rule with a hand-built `Derived`. The plan is still built once per context.
+- **D-BUG38-2 (supervisor ruling on #199, 10-03).** The card's late step is removed because it was unobservable:
+  - A late count only stops its past day from being displaced.
+  - That debt is paid by the same session in rule 3, at a walk day ≤ T.
+  - A placement on a past day is never used up.
+  - So `today`, `doneEarly`, `next` and `days` (T..T+7) cannot change. The same holds for `readinessSeries`: for a past day D, a late count lands before D.
+  - AC10a's test is dropped. "a session after a missed day clears the debt" pins the outcome the late step was meant to give: dropping the paid clause turns it red.
+- **D-BUG38-3 (supervisor ruling on #199, 10-03).** A session of a deleted split, or of a split on no weekday, counts for no slot, but it still takes that day from its own split (edge 5, the revised coach.test fixture).
+- **Known limits.**
+  - The 6-hour midnight switch (QA8-4) is pinned on both sides by the QA8-1 fixture test.
+  - Past days are matched against the current schedule, the same limit as streak and adherence.
+  - A snooze on the old `recovery.done-today:<scheduled id>` may not match the new id, which is keyed by the split done. The note lasts one day.
 ## PLAY-PREP (2026-10-03)
 - **D-PLAY-PREP-1.** The Play forms in `docs/PLAY-SUBMISSION.md` follow one data-flow inventory, traced to file:line on `000918e`. Where code cannot show something (Anthropic's and Google's retention, Cloudflare platform logs), the inventory says "not verified". The earlier draft's stale citations and two wrong claims are fixed: height is never sent to the coach (`src/escobar/context/brief.ts:104-113`), and diagnostics are "Crash logs" plus "Diagnostics", not one type.
 - **D-PLAY-PREP-2.** Data safety "Shared": No for every type. Play's definition (answer/10787469, read 2026-10-03) excludes transfers to a service provider that processes data for the developer on his instructions; Cloudflare hosts the developer's Worker and Anthropic answers requests the Worker makes with the developer's key. A custom coach server is a transfer the user starts, also excluded. Risk: if Play's review reads Anthropic as a third party, the answer for the coach rows flips to Shared: Yes with the same purposes; the form can be updated without a new release.
