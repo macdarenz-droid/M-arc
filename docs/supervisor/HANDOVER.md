@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-03 ~07:35 UTC · main `ff9b243` (PLAY-PREP #198) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-03 ~12:20 UTC · main `5bc4712` (#203) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -831,6 +831,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 - 09:52 LIB-7 DELTA PASS @ 66c13ef (0/0/0/1 carried Low: A2 radial/no-render assert; timeout root cause: golden vocab now read from the sha-pinned golden page). Reviewer archived. LIB-7 is ready for its calibrated R8 critic and its plan-order merge; CI on 66c13ef to confirm.
 - 10:0x Pilot A critic VALID (run 3) on b5e5703: 14 approved per exercise (list on #109); held: shrug (D-LIB8-shrug), triceps_pushdown + rope_triceps_pushdown (R5=3 elbows-drift cue, fix round sent), dumbbell_fly, rear-delt fly.
 - 10:1x Pilot A READY @ e82d415 (pushdown + rope pushdown R5 fix). plates page 2e121484…; only those 2 cards changed. Next: calibrated critic (pilot-a-critic.js with head e82d415 and that page sha), not started before the pause.
+- 11:09 BUG-38 READY @ `45a09cd`; fresh Opus reviewer session_01KoUZXZvBQqRGS4BawtFYje. **11:58 REVIEW PASS** (0/0/0/1 note; owner case red on main, green on head; check, test:tz, gate, CI green). Goes in train 12.
+- 11:4x Pilot A critic VALID on `e82d415` (run 2; hidden plates ≥4, both plants caught): triceps_pushdown + rope_triceps_pushdown **approved**. OHP + RDL back to fix (R5=3, Mistake view does not read), ruling **D-PILOTA-R5**: a valid run on the current head outranks an earlier approval (approval counts only for the commit it ran on). Still held: shrug (H3), dumbbell_fly, rear-delt fly.
+- 12:0x #203 handover refresh merged (main `5bc4712`).
+- 12:0x **REVIEW HT-10 @ `ca313c7`: FAIL** (2 Blockers: A3 tap limit still the 400 ms default, A3 numbers not in D-HT3; O9 list + mutation table missing. High: sweep does not count taps (Show me removed still passes). Medium: A2 not split per shard. Lows: D-HT10-A5 text, CI time). Ruling **D-HT10-A3m** on #166: A3 limit = ceil(1.25 × the highest median from ≥3 CI + ≥3 agent-container runs), capped at 400 ms, all numbers in D-HT3, probe 1 ms under the median goes red. Routed to the HT-10 builder; the same reviewer (session_01JCTQ1so1qCTyp8CFLTE1mP) does the delta.
+- 12:1x PILOT-A FIXED @ `ae7c8c0` (OHP + RDL Mistake only; other 15 byte-identical). Fresh calibrated critic wf_bbfec1c7-172 on `ae7c8c0` (script points at it; new plates page sha recorded by the run).
+- 12:2x Train 12 = BUG-38 #199 @ `45a09cd` + GATE-FLAKE-1 #179 @ `4ca1720` (PASS 09:4x; moved out of HT-10's train so the finish-line train is smaller; HT-10 merges main after train 12) + this handover row.
 
 **Google Play (owner's Console, personal account, package com.mrcdrnzz.dailytracker): state at 07:30 UTC 10-03**
 - Keys: app signing key `05:66:9A:…:F1:F5` (Play App Signing, the permanent key); upload key `95:DC:ED:4A:…:07:9B` (secrets `MARC_UPLOAD_KEYSTORE_B64`, `MARC_UPLOAD_STORE_PASSWORD`; public cert in Relay `releases/upload_certificate.pem`). The workflow "M/ARC Play bundle" signs with the upload key on main pushes and manual runs (PLAY-SIGN #200), artifact `MARC-PLAY-AAB-UPLOAD-SIGNED`, pinned and self-tested (`scripts/check-play-signature.sh`).
