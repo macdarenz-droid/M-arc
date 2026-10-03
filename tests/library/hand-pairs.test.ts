@@ -216,20 +216,23 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(() => P.indexOf(withMods(m => { key(m, 'd-handle').IDS.cable_fly = { variant: 'push', orientation: 'unstated', faults: ['bent-back'], claims: [] }; }))).toThrow(/cable_fly is in d-handle and d-handle/);
   });
   it('joint check: no id is claimed by a LIB-7 and a LIB-12 module (drawn or gap)', () => {
-    const lib12 = { KEY: 'palm-flat', OWNER: 'LIB-12', VIEW: 'palm-flat', FILE: 'x', render: () => ({ svg: '', report: {} }),
-      VARIANTS: { floor: { archetype: 'palm-flat', right: { view: 'palm-flat' }, faults: { f: { label: 'x', side: 'flexed', pose: {}, claims: [] } } } }, IDS: {} as any, GAPS: {} as any };
-    expect(() => P.indexOf([...clone(), { ...lib12, IDS: { push_up: { variant: 'floor', orientation: 'unstated', faults: ['f'], claims: [] } } }])).not.toThrow();
-    expect(() => P.indexOf([...clone(), { ...lib12, IDS: { hammer_curl: { variant: 'floor', orientation: 'unstated', faults: ['f'], claims: [] } } }])).toThrow(/hammer_curl is in curl and palm-flat/);
-    expect(() => P.indexOf([...clone(), { ...lib12, GAPS: { cable_fly: 'x' } }])).toThrow(/cable_fly is in d-handle and palm-flat/);
+    // LIB-7's real modules plus one planted LIB-12 module (a key and an id in no card), so LIB-12's real keys never collide
+    const lib7 = () => clone().filter((m: any) => m.OWNER === 'LIB-7');
+    const lib12 = { KEY: 'zz-planted', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x', render: () => ({ svg: '', report: {} }),
+      VARIANTS: { v: { archetype: 'palm-flat', right: { view: 'zz-view' }, faults: { f: { label: 'x', side: 'flexed', pose: {}, claims: [] } } } }, IDS: {} as any, GAPS: {} as any };
+    expect(() => P.indexOf([...lib7(), { ...lib12, IDS: { zz_planted_id: { variant: 'v', orientation: 'unstated', faults: ['f'], claims: [] } } }])).not.toThrow();
+    expect(() => P.indexOf([...lib7(), { ...lib12, IDS: { hammer_curl: { variant: 'v', orientation: 'unstated', faults: ['f'], claims: [] } } }])).toThrow(/hammer_curl is in curl and zz-planted/);
+    expect(() => P.indexOf([...lib7(), { ...lib12, GAPS: { cable_fly: 'x' } }])).toThrow(/cable_fly is in d-handle and zz-planted/);
+    expect(() => P.indexOf(P.MODULES)).not.toThrow();                // the real modules of every owner, as loaded
   });
   it('diameter: a radial key without one fails; a non-radial view without a handle is allowed (LIB-12 ask)', () => {
     expect(() => P.pairSpec('rope_triceps_pushdown', P.indexOf(withMods(m => { delete key(m, 'rope').HANDLE.diameterMm; })))).toThrow(/no explicit handle diameter/);
-    const flat = { KEY: 'palm-flat', OWNER: 'LIB-12', VIEW: 'palm-flat', FILE: 'x', render: () => ({ svg: '<svg></svg>', report: {} }),
+    const flat = { KEY: 'zz-flat', OWNER: 'LIB-12', VIEW: 'palm-flat', FILE: 'x', render: () => ({ svg: '<svg></svg>', report: {} }),
       VARIANTS: { floor: { archetype: 'palm-flat', right: { view: 'palm-flat' }, faults: { f: { label: 'x', side: 'flexed', pose: {}, claims: [] } } } },
-      IDS: { push_up: { variant: 'floor', orientation: 'unstated', faults: ['f'], claims: [] } } };
-    const s = P.pairSpec('push_up', P.indexOf([flat]));
+      IDS: { zz_planted_id: { variant: 'floor', orientation: 'unstated', faults: ['f'], claims: [] } } };
+    const s = P.pairSpec('zz_planted_id', P.indexOf([flat]));
     expect([s.handle, s.right.handle, s.extras]).toEqual([null, {}, {}]);
-    expect(() => P.pairSpec('push_up', P.indexOf([{ ...flat, HANDLE: { profile: 'floor' } }]))).toThrow(/no explicit handle diameter/);
+    expect(() => P.pairSpec('zz_planted_id', P.indexOf([{ ...flat, HANDLE: { profile: 'floor' } }]))).toThrow(/no explicit handle diameter/);
   });
   it('the claims extract is the research commit\'s, and every ref resolves and states its fact', () => {
     expect(CLAIMS.research).toBe('95342b1');
