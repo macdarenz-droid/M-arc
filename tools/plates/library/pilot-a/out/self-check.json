@@ -1,0 +1,252 @@
+{
+ "pageSha": "f9f87b82da0aea546bbc6f022f8ed680b5149930403c13f2ba3668bbcfc958d7",
+ "pageBytes": 1715569,
+ "sheetSha": "b198a6720cf4876fc121f6d537e8d45ff494b01b354f91aae6d585c345e44cc1",
+ "sheetBytes": 3664401,
+ "warnings": "",
+ "plates": [
+  {
+   "id": "barbell_row",
+   "tier": "A",
+   "ok": true,
+   "flags": [
+    "F2"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.096,
+    "longestLeader": 43.8,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "single_leg_romanian_deadlift",
+   "tier": "A",
+   "ok": true,
+   "flags": [
+    "F7"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.214,
+    "longestLeader": 66.3,
+    "boxed": 1
+   },
+   "issues": []
+  },
+  {
+   "id": "barbell_shrug",
+   "tier": "A",
+   "ok": true,
+   "flags": [
+    "F2",
+    "F7"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.079,
+    "longestLeader": 29.2,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "box_jump",
+   "tier": "A",
+   "ok": true,
+   "flags": [
+    "Note"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.24,
+    "longestLeader": 40.2,
+    "boxed": 1
+   },
+   "issues": []
+  },
+  {
+   "id": "dumbbell_bench_press",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.118,
+    "longestLeader": 69.7,
+    "boxed": 1
+   },
+   "issues": []
+  },
+  {
+   "id": "incline_dumbbell_press",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.125,
+    "longestLeader": 27.6,
+    "boxed": 1
+   },
+   "issues": []
+  },
+  {
+   "id": "dumbbell_shoulder_press",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.121,
+    "longestLeader": 24.7,
+    "boxed": 1
+   },
+   "issues": []
+  },
+  {
+   "id": "barbell_overhead_press",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 134.58,
+    "coverage": 0.184,
+    "longestLeader": 79.6,
+    "boxed": 3
+   },
+   "issues": []
+  },
+  {
+   "id": "romanian_deadlift",
+   "tier": "A",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.142,
+    "longestLeader": 45,
+    "boxed": 2
+   },
+   "issues": []
+  },
+  {
+   "id": "upright_row",
+   "tier": "B",
+   "ok": true,
+   "flags": [
+    "F2"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.258,
+    "longestLeader": 62.7,
+    "boxed": 2
+   },
+   "issues": []
+  },
+  {
+   "id": "reverse_lunge",
+   "tier": "B",
+   "ok": true,
+   "flags": [
+    "Note"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.181,
+    "longestLeader": 36.9,
+    "boxed": 0
+   },
+   "issues": []
+  },
+  {
+   "id": "pec_fly",
+   "tier": "B",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.207,
+    "longestLeader": 51.9,
+    "boxed": 3
+   },
+   "issues": []
+  },
+  {
+   "id": "dumbbell_biceps_curl",
+   "tier": "C",
+   "ok": true,
+   "flags": [
+    "F2"
+   ],
+   "measures": {
+    "pxPerM": 146.29,
+    "coverage": 0.082,
+    "longestLeader": 46.4,
+    "boxed": 1
+   },
+   "issues": []
+  },
+  {
+   "id": "rope_triceps_pushdown",
+   "tier": "C",
+   "ok": true,
+   "flags": [
+    "Note"
+   ],
+   "measures": {
+    "pxPerM": 133.79,
+    "coverage": 0.183,
+    "longestLeader": 66.5,
+    "boxed": 5
+   },
+   "issues": []
+  },
+  {
+   "id": "plank",
+   "tier": "C",
+   "ok": true,
+   "flags": [
+    "F1"
+   ],
+   "measures": {
+    "pxPerM": 174.22,
+    "coverage": 0.152,
+    "longestLeader": 49.3,
+    "boxed": 4
+   },
+   "issues": []
+  },
+  {
+   "id": "mountain_climbers",
+   "tier": "C",
+   "ok": true,
+   "flags": [
+    "F1",
+    "F3"
+   ],
+   "measures": {
+    "pxPerM": 191.92,
+    "coverage": 0.178,
+    "longestLeader": 116.4,
+    "boxed": 5
+   },
+   "issues": []
+  },
+  {
+   "id": "triceps_pushdown",
+   "tier": "C",
+   "ok": true,
+   "flags": [],
+   "measures": {
+    "pxPerM": 133.79,
+    "coverage": 0.186,
+    "longestLeader": 66.4,
+    "boxed": 4
+   },
+   "issues": []
+  }
+ ]
+}

@@ -1,0 +1,570 @@
+{
+  "id": "upright_row",
+  "libId": "lib_upright_row",
+  "name": "Upright Row",
+  "family": "SHRUG",
+  "tier": "B",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Overhand grip; pull the bar straight up, then lower it with control. StrengthLog's own top (bar at chin level) and width (slightly narrower than shoulders) are not used: they conflict with c2, c5 and c6.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-upright-row",
+          "text": "Grip the bar with an overhand grip",
+          "where": "How to Do Barbell Upright Row"
+        },
+        {
+          "source": "sl-upright-row",
+          "text": "Pull the bar straight up",
+          "where": "How to Do Barbell Upright Row"
+        },
+        {
+          "source": "sl-upright-row",
+          "text": "With control, lower the bar back to the starting position.",
+          "where": "How to Do Barbell Upright Row"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The upright row has a reputation for shoulder pain from impingement at the top; light weights, few sets at first and not raising the upper arms above shoulder height reduce the risk.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-upright-row",
+          "text": "you can mitigate the risk of shoulder pain by starting with light weights and a low number of sets and by avoiding elevating your upper arms above shoulder height at the top of the movement.",
+          "where": "Introduction"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Keep the bar close to the body and the elbows directly out to the sides; lift with the shoulders and traps, not the arms or wrists.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-upright-row",
+          "text": "Lift the barbell straight up, and keep it close to your body.",
+          "where": "Proper Form & Technique: Movement"
+        },
+        {
+          "source": "sl-upright-row",
+          "text": "Make sure to keep the elbows directly out to the sides. Ensure to lift with your shoulders and traps, not your arms or wrists.",
+          "where": "Proper Form & Technique: Movement"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Impingement usually comes from lifting the arm out to the side while it is rolled inward.",
+      "tags": [
+        "MECH",
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lesmills-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "lesmills-upright-row",
+          "text": "Generally, shoulder impingement occurs when you internally rotate the shoulder (roll the upper arm forward slightly) and then lift it out to the side.",
+          "where": "The problem with upright rows"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "A too-narrow grip, rounded shoulders and pulling the bar up under the chin (elbows above the shoulders) all raise impingement risk.",
+      "tags": [
+        "MECH",
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lesmills-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "lesmills-upright-row",
+          "text": "If you pull the bar right up under your chin it’s no good. Lifting your elbows above your shoulders is another road to increase the likelihood of shoulder impingement.",
+          "where": "Upright row technique mistakes #3"
+        },
+        {
+          "source": "lesmills-upright-row",
+          "text": "If your hands are too narrowly placed your shoulders will be internally rotated as you raise the bar up.",
+          "where": "Upright row technique mistakes #1"
+        },
+        {
+          "source": "lesmills-upright-row",
+          "text": "The second issue is having a scapula that’s protracted (shoulders rounded forward) and downwardly rotated.",
+          "where": "Upright row technique mistakes #2"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Les Mills' safer version: 'hands wide – at about hip-width' (wide as opposed to hands too close together), shoulder blades drawn back, and the bar only to the lower ribs with the elbows at shoulder level.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lesmills-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "lesmills-upright-row",
+          "text": "Have your hands wide – at about hip-width. If your hands are wide there’s less chance of internal rotation. Draw the shoulder blades back and stabilize them as you lift the bar.",
+          "where": "The right way to upright row"
+        },
+        {
+          "source": "lesmills-upright-row",
+          "text": "Limit how high you lift the bar. Only ever lift the bar to the lower ribs, with your elbows in line with shoulder level.",
+          "where": "The right way to upright row"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Wider grips gave more deltoid and trapezius activity and less biceps activity in trained men.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "mcallister2013"
+      ],
+      "quotes": [
+        {
+          "source": "mcallister2013",
+          "text": "The main findings of this investigation are increased deltoid and trapezius activity with increasing grip width, and correspondingly less BB activity. Therefore, those who seek to maximize involvement of the deltoid and trapezius muscles during the URR should use a wide grip.",
+          "where": "abstract"
+        },
+        {
+          "source": "mcallister2013",
+          "text": "Sixteen weight-trained men completed 2 repetitions each in the URR with 3 grip conditions: 50, 100, and 200% of the biacromial breadth (BAB).",
+          "where": "abstract (PMID 22362088, efetch 2026-09-30)"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "It mainly works the side delts, with front delts, trapezius and biceps secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-upright-row",
+          "text": "The barbell upright row is a shoulder exercise that primarily targets your lateral deltoids and secondary your front deltoids and trapezius.",
+          "where": "Which Muscles Does the Barbell Upright Row Work?"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "A cable upright row may feel easier on the shoulders than the barbell.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "sl-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-upright-row",
+          "text": "So if you feel like the barbell upright row might be a bit hard on your shoulder joints, you might want to give the cable version a go.",
+          "where": "Variations: Cable Upright Row"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, controlled.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009",
+        "sl-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "sl-upright-row",
+          "text": "With control, lower the bar back to the starting position.",
+          "where": "How to Do Barbell Upright Row"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The upright row suits moderate reps and lighter weights, not heavy strength work; add load in small steps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-upright-row",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "sl-upright-row",
+          "text": "The upright is an isolation exercise that lends itself better to moderate rep ranges and lighter weights with a controlled movement in this case.",
+          "where": "How Many Sets and Reps"
+        },
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Stand with feet about shoulder width, upright, light core tension and chest up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-upright-row",
+          "text": "Make sure to stand about shoulder-width apart and keep an upright position. Keep a light tension in your core and chest up.",
+          "where": "Proper Form & Technique: Positioning"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "The shoulder is one of the most common injury sites in resistance training (up to 36% of documented injuries).",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Wrap the thumbs around the bar.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-upright-row",
+      "url": "https://www.strengthlog.com/barbell-upright-row/",
+      "title": "How to Do Barbell Upright Row: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lesmills-upright-row",
+      "url": "https://www.lesmills.com/fit-planet/fitness/upright-rows",
+      "title": "Upright rows (Bryce Hastings, Les Mills Fit Planet)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "mcallister2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22362088/",
+      "title": "Effect of grip width on electromyographic activity during the upright row.",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": 22362088,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review.",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": 20508476,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "Grip width and elbow height against the shoulders are side-to-side and up-down positions (c5, c6) that only the front view shows; the census draws it front.",
+    "equipment": "Straight barbell (cable is the other listed option, see variantLine), floor line.",
+    "start": "Standing upright, feet about shoulder width (c12), arms straight, bar at the thighs, overhand grip about shoulder width or wider, never hands close together (c5, c7).",
+    "end": "Elbows out to the sides and level with the shoulders, not above (c2, c6), bar close to the body at the lower ribs (c6, c3).",
+    "checkpoints": [
+      {
+        "label": "Elbows lead",
+        "what": "Elbows go out to the sides and stay above the hands.",
+        "claim": "c3"
+      },
+      {
+        "label": "Shoulder height",
+        "what": "Stop when the elbows reach shoulder level.",
+        "claim": "c6"
+      },
+      {
+        "label": "Bar close",
+        "what": "The bar travels straight up close to the body.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Bar pulled up under the chin with the elbows above the shoulders.",
+      "why": "Raising the elbows above the shoulders raises impingement risk (c5), and the top is where upright-row shoulder pain comes from (c2).",
+      "claim": "c5",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Elbows stop at shoulder height",
+        "claim": "c6"
+      },
+      {
+        "text": "Elbows stay higher than hands",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c10"
+    },
+    "variantLine": "Barbell drawn. Cable version (low pulley, straight bar): all body and height claims (c2-c6, c12) hold; c9 says it may feel easier on the shoulders."
+  },
+  "grip": {
+    "type": "Overhand (palms toward the body).",
+    "width": "About shoulder width or wider; never hands close together (c5, c7). Not used: StrengthLog's 'slightly narrower than shoulder-width' (c1). Les Mills calls hip width 'wide' only as opposed to hands too close together (c6), and McAllister's wide grip was 200% of shoulder breadth, an EMG result, not a safety one (c7).",
+    "thumb": "Wrapped around the bar.",
+    "handContact": "Bar across the base of the fingers (pull archetype).",
+    "wrist": "Straight; don't lift with the wrists.",
+    "claims": [
+      "c1",
+      "c6",
+      "c7",
+      "c14",
+      "c3"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Stand upright, feet about shoulder width, chest up.",
+      "claim": "c12"
+    },
+    {
+      "step": "Overhand grip about shoulder width or wider, thumbs around the bar.",
+      "claim": "c7"
+    },
+    {
+      "step": "Draw the shoulder blades back before the first pull.",
+      "claim": "c6"
+    },
+    {
+      "step": "Start light, with few sets.",
+      "claim": "c2"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Elbows out to the sides, leading the bar.",
+      "claim": "c3"
+    },
+    {
+      "point": "Elbows no higher than the shoulders.",
+      "claim": "c2"
+    },
+    {
+      "point": "Bar close to the body.",
+      "claim": "c3"
+    },
+    {
+      "point": "Shoulders back, not rounded forward.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Pulling the bar up under the chin.",
+      "fix": "Stop at the lower ribs, elbows level with the shoulders.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Hands too close together.",
+      "fix": "Widen the grip to about shoulder width or more.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Lifting with the wrists and letting the elbows drop.",
+      "fix": "Lead with the elbows out to the sides.",
+      "claim": "c3"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "side_delts",
+        "claim": "c8"
+      },
+      {
+        "muscleId": "upper_traps",
+        "claim": "c7"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c8"
+      },
+      {
+        "muscleId": "biceps",
+        "claim": "c7"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Side of the shoulders",
+        "means": "Usually means the side delts are lifting.",
+        "fix": null,
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Mostly the biceps",
+        "means": "Usually means the grip is narrow.",
+        "fix": "Widen the grip.",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Pinch at the top of the shoulder near the top of the lift",
+        "means": "Usually means the elbows are going too high or the grip is too narrow.",
+        "fix": "Stop lower, widen the grip, go lighter.",
+        "claim": "c5",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder pinching at the top when the elbows rise above the shoulders.",
+      "claim": "c5"
+    },
+    {
+      "risk": "The shoulder is a common injury site in weight training.",
+      "claim": "c13"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "urow-grip",
+      "kind": "hand",
+      "right": "Overhand about shoulder width or wider, thumbs wrapped, wrists straight.",
+      "wrong": "Hands touching in the middle, wrists curled up.",
+      "claim": "c5"
+    },
+    {
+      "key": "urow-top",
+      "kind": "posture",
+      "right": "Elbows level with shoulders, bar at the lower ribs.",
+      "wrong": "Bar under the chin, elbows above the shoulders.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "front_delts"
+    ],
+    "remove": [],
+    "why": "Library primary side_delts, upper_traps and secondary biceps match (c7, c8). Add front_delts as secondary: StrengthLog names them (c8)."
+  },
+  "anchorSource": "lesmills-upright-row"
+}
