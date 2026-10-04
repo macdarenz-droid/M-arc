@@ -1,5 +1,5 @@
 /** Derived, memoised views over the store that several screens share. */
-import { computed } from '@preact/signals';
+import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { getSeries } from '@/core/heartStore';
 import { daysBetween, trainedTodaySessions } from '@/core/dates';
@@ -7,7 +7,7 @@ import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
 import { deloadOffer, hiddenBackOnBoard, hiddenInsightIds, rankInsights, runInsightRules, type CoachContext } from '@/brain/coach/rules';
 import { plannedSessions, trainingStreak, weekSummary } from '@/brain/weekly';
-import { shouldShowOnboarding } from '@/brain/onboarding';
+import { shouldShowOnboarding, type OnboardingTrigger } from '@/brain/onboarding';
 import { watchStatus } from '@/native/watch';
 import { bodyWeightResolver } from '@/brain/bodyweight';
 import { splitPlan } from '@/brain/splitPlan';
@@ -68,7 +68,9 @@ export const activeDeload = computed(() => { const d = state.value.deload; retur
 export const deloadSuggestion = computed(() => deloadOffer(coachContext.value));
 /** QA8-4: also counts a session that started before midnight and ended today, within the last 6 hours. */
 export const sessionsToday = computed(() => trainedTodaySessions(state.value.sessions, today.value, minuteNow.value));
+// UI-R05: an opened form stays until Save or close.
+export const heldOnboardingTrigger = signal<OnboardingTrigger | null>(null);
 export const onboardingTrigger = computed(() => {
   const justConnectedWatch = watchStatus.value.state === 'connected' && !state.value.onboarding.watchPromptedAt;
-  return shouldShowOnboarding(state.value.profile, state.value.onboarding, today.value, justConnectedWatch);
+  return heldOnboardingTrigger.value ?? shouldShowOnboarding(state.value.profile, state.value.onboarding, today.value, justConnectedWatch);
 });

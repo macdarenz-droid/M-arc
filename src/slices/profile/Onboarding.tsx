@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { Button, Card, CommitNumber, Field, Segmented, Sheet } from '@/ui/primitives';
 import { profileCompleteness, type OnboardingTrigger } from '@/brain/onboarding';
+import { heldOnboardingTrigger } from '@/app/selectors';
 import { GOALS, type GoalId } from '@/data/goals';
 import { changeGoal, completeOnboarding, dismissOnboarding, logWeight, markWatchPrompted, reviewOnboarding, setBirthYear, setHeight, setSex, setTrainingSince } from './profile';
 import { displayToKg, formatLoad, kgToDisplay } from '@/core/units';
@@ -17,18 +18,19 @@ export function OnboardingSheet({ trigger, onClose }: { trigger: OnboardingTrigg
   // a review postpones the next check 90 days, a watch prompt only ever fires once, anything
   // else counts as a "Later" dismissal.
   const exit = () => {
+    heldOnboardingTrigger.value = null;
     if (trigger === 'review') reviewOnboarding();
     else { if (trigger === 'watch') markWatchPrompted(); dismissOnboarding(); }
     onClose();
   };
-  const finishForm = () => { if (trigger === 'watch') markWatchPrompted(); completeOnboarding(); onClose(); };
+  const finishForm = () => { heldOnboardingTrigger.value = null; if (trigger === 'watch') markWatchPrompted(); completeOnboarding(); onClose(); };
 
   if (trigger === 'review' && step === 'intro') {
     return (
       <Sheet title="Body weight" onClose={exit}>
         <div class="stack">
           <p class="small muted">Still {formatLoad(s.profile.bodyWeightKg, s.preferences.weightUnit)}?</p>
-          <div class="row"><Button variant="quiet" onClick={exit}>Skip</Button><Button variant="primary" class="grow" onClick={() => setStep('form')}>Update</Button></div>
+          <div class="row"><Button variant="quiet" onClick={exit}>Skip</Button><Button variant="primary" class="grow" onClick={() => { heldOnboardingTrigger.value = trigger; setStep('form'); }}>Update</Button></div>
           <Button variant="quiet" size="sm" onClick={exit}>Looks right</Button>
         </div>
       </Sheet>
@@ -41,7 +43,7 @@ export function OnboardingSheet({ trigger, onClose }: { trigger: OnboardingTrigg
       <Sheet title="Your details" onClose={exit}>
         <div class="stack">
           {trigger !== 'watch' && trigger !== 'first' && <p class="small muted">Missing: {missing.join(', ')}.</p>}
-          <div class="row"><Button variant="quiet" onClick={exit}>Later</Button><Button variant="primary" class="grow" onClick={() => setStep('form')}>Add my details</Button></div>
+          <div class="row"><Button variant="quiet" onClick={exit}>Later</Button><Button variant="primary" class="grow" onClick={() => { heldOnboardingTrigger.value = trigger; setStep('form'); }}>Add my details</Button></div>
         </div>
       </Sheet>
     );
