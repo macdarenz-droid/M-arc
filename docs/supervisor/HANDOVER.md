@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-04 ~00:50 UTC · main `c542ae9` (train 13 #207) · FINISH LINE (8.0d) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-04 ~04:00 UTC · main `c542ae9` (train 13 #207; main's own run red on the GATE-FLAKE-2 flake) · 8.0d · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -819,6 +819,23 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 - **Library lane started:** LIB-1 scale rehearsal (session_01XCmaQYZNryUhoTH6ohTfTK, Opus because its steps cannot all be spelled out ahead; "[do not merge]" PR #209). LIB-2 enabler resumed to build (#189). GATE-SPLIT builder resumed to build (#194; supervisor wires .github add-only).
 - **Audit lane started:** cards A3-1..A3-7 in `docs/supervisor/verify/audit-3-cards.md` (26 of 26 still fail on c542ae9; rulings R1-R10 confirmed). Wave 1: A3-2 data safety (session_01BHzvrNQY3eVvGxctFKauYW) and A3-1 coach consent (session_01SpoCUhZ5jk7KeaemJVmrGc). A3-3 and A3-4 start when one of them reaches review; then A3-5 → A3-6, A3-7. Merge order A3-2 → A3-1 → A3-3 → A3-4.
 - **02:0x LIB-7 panel VALID @ `55e91e9`** under ruling **D-CRITIC-CAL3** (#193 issuecomment-5975538224). A low anchor item that the supervisor confirms on the render as a real golden defect does not invalidate the run, if the anchor is ≥ 4 elsewhere, the other anchor is fully ≥ 4 and both plants are caught. All 7 tiles were at the bar in both rounds, so **12 ids are approved**. The head is frozen. The run before it (wf_10265153-50a) was invalid: the prep's labels leaked the key (fixed in lib7-critic.js, D-LIB7-19b) and pull_up p1 is weak (follow-up 10). LIB-12 **delta PASS @ `28149bf`** (it contains LIB-7 f3e285c); it now merges 55e91e9 for a final small delta.
+- **04:00 live state (heads from ls-remote at each event):**
+
+| Card | PR @ head | State | Next |
+|---|---|---|---|
+| GATE-FLAKE-2 | #212 @ `02810de` | REVIEW PASS 0/0/2/0 (session_016xcEgxhsaUEjnk1Ppqytqp). The two Mediums are evidence precision (a vacuous "rest" sub-check; the D-GF2-1 repro text); the builder is fixing them. | FIXED → same reviewer delta → **train 14 first** (main is red until it lands). |
+| A3-2 data safety | #211 @ `4469c54` | READY; reviewer session_01AUXWduDH5q3xxt6h4od2YH running. | Train 14. |
+| A3-1 coach consent | #210 @ `08714ce` | REVIEW PASS 0/0/0/2 (session_01QE2wi5aKKSYaN3ijU6Z1by). Low: a same-value same-day weigh-in then Undo leaves profile and log disagreeing (R1 side effect; recorded, no change). | Train 14 after A3-2. |
+| A3-3 native races | #213 @ `9a37676` | REVIEW PASS 0/0/1/2 (session_019jPruvuJktDyUqMty57kpt). | Merges main after A3-2, carrying the M8 text fix and the training-guard test → delta → next train. |
+| A3-4 timing | #214 (building) | Ruling D-A3-4a: the pinned live-retarget test looks entries up by exerciseId (index lookup encoded the UI-R01 bug). | READY → fresh reviewer. |
+| A3-5 coach facts / A3-7 onboarding | building (session_01TvEw1S93oYzmjVZKb42nEv Opus; session_017qeZkExGzCXs4tkyY1k8bk Sonnet) | started 03:57 | A3-6 starts when A3-5 is in review. |
+| LIB-2 | #189 @ `ee14df8` | REVIEW FAIL 0/2/2/3 (session_01Xh8LgQJfevZDK8XyHYNFQR): generators not data-driven; L2-A4 untested; A2 ignores the registry; A5 untested. Sent to the enabler. | FIXED → same reviewer delta. |
+| LIB-1 | #209 (never merges) | measuring; its source-gate is red on purpose (153-id build). | Report comment → supervisor copies numbers into the plan. |
+| LIB-7 / LIB-12 | #193 @ `55e91e9` / #191 @ `0d268a7` | Both final PASS and frozen; LIB-12 reviewer archived. | Plan-order merges (LIB-6 → LIB-7 → … → LIB-12). |
+| Pilot A | #109 @ `e6f39ff` | 16 approved, frozen. | Plan-order merge after LIB-2..LIB-4. |
+| GATE-SPLIT | #194 (building) | design FINAL; builder resumed 00:20. | READY → reviewer; supervisor wires .github. |
+| Motion artifact | scratchpad motion-fix | Owner's phone showed "No 3D on this device" (02:3x screenshot). Workflow wf_6d484263-829 reproduces under emulated host constraints, inlines the models, adds a no-WebGL flipbook fallback, verifies adversarially. | Republish the same URL, then send the owner the link. |
+
 - Classifier note: a grep of `docs/supervisor/PROMPTS.md` was refused once (00:0x, "Interfere With Workloads", right after a standalone CI-run cancel). Not retried; prompts were written from the skills instead. Standalone-run cancels (6.8 step 7) are skipped until that is clear.
 
 ### 8.0c PAUSE 10-03 ~18:10 UTC (owner: "Pause all work for now."; read first, supersedes 8.0b where they differ)
