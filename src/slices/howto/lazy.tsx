@@ -14,6 +14,7 @@ export function HowToSheet(props: HowToSheetProps) {
   const [Comp, setComp] = useState<FunctionComponent<HowToSheetProps> | null>(null);
   useEffect(() => {
     let live = true;
+    void import('@/howto/generated/ht-index').catch(() => {});   // LIB-1: ht-index in parallel with the sheet
     void import('./HowToSheet').then(m => { if (live) setComp(() => m.HowToSheet); }).catch(() => { if (live) howToLoadFailed(props.onClose); });
     return () => { live = false; };
   }, []);
