@@ -53,6 +53,37 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
   });
 });
 
+/** L2-A4: the header and `hashes:` lines of `paths` in `a` and `b`; returns the problems. Red on an empty list. */
+export function hashLineProblems(paths: string[], a: Map<string, { text: string }>, b: Map<string, { text: string }>): string[] {
+  if (paths.length === 0) return ['no files compared'];
+  const lines = (t: string) => [t.split('\n')[0], (t.match(/^ *hashes: \{ inputsSha256: .*$/m) ?? [''])[0]];
+  const bad: string[] = [];
+  for (const p of paths) {
+    const x = a.get(p), y = b.get(p);
+    if (!x || !y) { bad.push(`${p}: not generated`); continue; }
+    if (JSON.stringify(lines(x.text)) !== JSON.stringify(lines(y.text))) bad.push(`${p}: header or hashes: line changed`);
+  }
+  return bad;
+}
+
+describe('L2-A4: a new library batch row stales none of the 8\'s generated files', () => {
+  it('with a synthetic batch row, the 54 fingerprinted files keep their header and the 8 ht- modules their hashes: line; the id files see the row', async () => {
+    const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const paths = Object.keys(fixture().bodies);
+    expect(paths).toHaveLength(54);
+    expect(paths.filter(p => /\/ht-[a-z-]+\.ts$/.test(p))).toHaveLength(8);
+    reg.__setExtraBatches(['tests/howto/fixtures/batches/lb-test.json']);
+    let withRow: Map<string, { text: string }>;
+    try {
+      expect(reg.rows()).toHaveLength(9);
+      withRow = await gen.render();
+    } finally { reg.__setExtraBatches([]); }
+    expect(hashLineProblems(paths, out, withRow)).toEqual([]);
+    for (const p of ['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts']) expect(withRow.get(p)!.text.split('\n')[0], p).not.toBe(out.get(p)!.text.split('\n')[0]);
+    expect(hashLineProblems([], out, withRow)).toEqual(['no files compared']);
+  }, 180_000);
+});
+
 describe('L2-A4 core: per-output inputs (HT-2 core, design 6.1)', () => {
   const P = 'tests/howto/fixtures/gen-per-output/plugin.mjs';
   it('an output with its own inputs is hashed over those only, in its header and through hashFor; one without keeps the plugin-wide list', async () => {
@@ -378,4 +409,34 @@ describe('L2-A2: the plates page builder (2.7, taken byte for byte from LIB-8 #1
     const swapped = { ...cfg, groups: cfg.groups.map((x: any) => ({ ...x, ids: [...x.ids].reverse() })) };
     expect(g.sha256((await bp.buildPlatesPage(swapped)).html)).not.toBe(g.PINS.pageSha256);
   }, 120_000);
+});
+
+describe('L2-A2 (registry): the plates page config comes from the registry, in order', () => {
+  it('pages/golden-a.json through the registry gives golden A\'s groups exactly (order and content) and rebuilds e2bea90c…', async () => {
+    const pp = await import(/* @vite-ignore */ url('tools/plates/library/plates-page.mjs'));
+    const bp = await import(/* @vite-ignore */ url('tools/plates/library/build-page.mjs'));
+    const g = await import(/* @vite-ignore */ url('tools/plates/golden.mjs'));
+    const cfg = await pp.pageConfig('tools/plates/library/pages/golden-a.json'), want = await bp.goldenAConfig();
+    expect(cfg.groups.flatMap((x: any) => x.ids)).toHaveLength(8);
+    expect(cfg.groups).toEqual(want.groups);
+    expect(Object.entries(cfg.sources)).toEqual(Object.entries(want.sources));
+    const { html } = await bp.buildPlatesPage(cfg);
+    expect(g.sha256(html)).toBe(g.PINS.pageSha256);
+    expect(html.length).toBe(g.PINS.pageBytes);
+  }, 120_000);
+  it('refuses a page with no ids and an id with no registry row', async () => {
+    const pp = await import(/* @vite-ignore */ url('tools/plates/library/plates-page.mjs'));
+    await expect(pp.pageConfig('tests/howto/fixtures/batches/lb-test.json')).rejects.toThrow(/names no ids/);
+    const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    await expect(pp.pageConfig('tools/plates/library/pages/golden-a.json', reg.rows().slice(1))).rejects.toThrow(/lib_dumbbell_lateral_raise has no registry row/);
+  });
+});
+
+describe('L2-A5: exercises.json is an input of ids.ts and its twin', () => {
+  it('a new exercises.json id stales ids.ts and ids-node.mjs (their per-output inputs name it)', async () => {
+    const idsGen = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));
+    for (const p of ['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/coverage.ts']) expect(idsGen.inputsFor(p), p).toContain('src/data/exercises.json');
+    const ids = out.get('src/howto/ids.ts')!;
+    expect(ids.writers).toEqual(['tools/plates/gen/content.mjs', 'tools/plates/gen/ids.mjs']);
+  });
 });

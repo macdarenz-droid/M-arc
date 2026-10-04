@@ -15,8 +15,11 @@ export const MODES = ['H', 'P', 'T', 'D'];
 export const isStage = s => STAGES.includes(s) || /^blocked:\S/.test(s) || /^left-out:\S/.test(s);
 
 const read = (root, p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
+let extraBatches = [];
+/** Test hook (L2-A4): extra repo-relative batch files read after the real ones, as if they were in BATCH_DIR. */
+export const __setExtraBatches = files => { extraBatches = [...files]; };
 /** The batch files, repo-relative, in name order. */
-export const batchFiles = (root = ROOT) => existsSync(join(root, BATCH_DIR)) ? readdirSync(join(root, BATCH_DIR)).filter(n => n.endsWith('.json')).sort().map(n => `${BATCH_DIR}/${n}`) : [];
+export const batchFiles = (root = ROOT) => [...(existsSync(join(root, BATCH_DIR)) ? readdirSync(join(root, BATCH_DIR)).filter(n => n.endsWith('.json')).sort().map(n => `${BATCH_DIR}/${n}`) : []), ...extraBatches];
 
 /** Every row: the 8 (mode 'golden', stage 'shipped') then the library rows. Throws on any inconsistency. */
 export function rows(root = ROOT, { plates = read(root, PLATES_JSON), batches = batchFiles(root).map(p => [p, read(root, p)]), exercises = read(root, EXERCISES_JSON) } = {}) {
@@ -43,6 +46,18 @@ export function rows(root = ROOT, { plates = read(root, PLATES_JSON), batches = 
     }
   }
   return out;
+}
+
+/** The approved 8 as plates.json has them ({ id: row }, file order), and what they are read from: plates.json and this
+ *  file only, never a batch file, so a new batch row stales none of the 8's generated files (L2-A4). */
+export const goldenRows = (root = ROOT) => read(root, PLATES_JSON);
+export const goldenInputs = () => [PLATES_JSON, 'tools/plates/library/registry.mjs'];
+/** The How-to content source of an id (design 3): golden B's vendored file for the 8, the library's own file for a
+ *  library row. Throws for an id the registry does not hold. */
+export function sourceOf(id, root = ROOT) {
+  if (id in goldenRows(root)) return `tools/plates/layers/exercises/${id.slice(4)}.howto.mjs`;
+  if (rows(root).some(r => r.id === id)) return `tools/plates/library/howto/${id}.howto.mjs`;
+  throw new Error(`registry: no row for ${id}`);
 }
 
 /** chromeId -> lib id, for every row. */
