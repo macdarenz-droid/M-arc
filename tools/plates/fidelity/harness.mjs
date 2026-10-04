@@ -1260,7 +1260,7 @@ export async function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks
       if (b.getAnimations().length) problems.push('C11: a .feel-band has an animation under reduced motion');
     }
   }
-  return { problems, controls: ctl.length, seenExempt };
+  return { problems, controls: ctl.length, seenExempt, measured: ctl.map(c => c.e.id).filter(Boolean) };
 }
 
 /** TalkBack (HT10-A1): every button, region and image in the sheet's accessibility tree has a name (CDP queryAXTree). */

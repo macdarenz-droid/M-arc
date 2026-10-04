@@ -229,26 +229,33 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
           for (const re of expect) if (!problems.some(p => re.test(p))) F(`${name}: the probe did not report ${re} (it reported ${problems.slice(0, 4).join('; ') || 'nothing'})`);
           await H.closeHowTo(page);
         }
-        // GATE-FLAKE-2 (D-GF2-2): the page's animations at 1/10 speed (CDP), so the hand close-up's scale(.9) entry runs
-        // 2.4 s and is still running when the probe starts. The probe must wait it out and report the close button at
-        // rest: nothing at its true 44 x 44, exactly 40 x 40 when it is really shrunk. An animation that outlasts the
-        // probe's bound is a named problem; an endless one is not waited for (C12 reports it).
+        // GATE-FLAKE-2 (D-GF2-2). Slowed: the page's animations at 1/10 speed (CDP), so the hand close-up's scale(.9)
+        // entry runs 2.4 s and is still running when the probe starts; the probe must wait it out, measure the close
+        // button and report it only at its true size (nothing at 44 x 44, exactly 40 x 40 when really shrunk). Settled:
+        // the close-up open at normal speed, its entry finished, then the button shrunk to 40 px, visible and still;
+        // any probe must report exactly 40 x 40. Each case fails as "not measured" when the button is not measured.
+        // An animation that outlasts the probe's bound is a named problem; an endless one is not waited for (C12's).
         const gi = H.HT_PLATES.findIndex(p => p[0] === 'machine-chest-press');
         const gcdp = await ctx.newCDPSession(page);
         await gcdp.send('Animation.enable');
-        const slowHand = async shrink => {
+        const SHRINK = () => { const s = document.createElement('style'); s.id = 'gf2-shrink'; s.textContent = '.ht .zx-close { width: 40px !important; height: 40px !important; }'; document.head.append(s); };
+        const handCase = async ({ slow, shrink }) => {
           await H.openHowTo(page, gi);
-          await gcdp.send('Animation.setPlaybackRate', { playbackRate: 0.1 });
+          if (slow) await gcdp.send('Animation.setPlaybackRate', { playbackRate: 0.1 });
           try {
-            if (shrink) await page.evaluate(() => { const s = document.createElement('style'); s.id = 'gf2-shrink'; s.textContent = '.ht .zx-close { width: 40px !important; height: 40px !important; }'; document.head.append(s); });
-            const moving = await page.evaluate(async () => {
+            if (shrink && slow) await page.evaluate(SHRINK);
+            const moving = await page.evaluate(async slow => {
               document.getElementById('machine-chest-press-chip-hand').click();
               const t0 = performance.now();
               let p;
               while (!(p = document.querySelector('#machine-chest-press-zoom-hand:not([hidden])')) && performance.now() - t0 < 8000) await new Promise(r => requestAnimationFrame(r));
-              return !!p && p.getAnimations().some(a => a.playState === 'running');
-            });
-            return { moving, problems: (await probe()).problems };
+              const on = !!p && p.getAnimations().some(a => a.playState === 'running');
+              if (!slow) while (p && p.getAnimations().length && performance.now() - t0 < 8000) await new Promise(r => requestAnimationFrame(r));
+              return on;
+            }, slow);
+            if (shrink && !slow) { await page.evaluate(SHRINK); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); }
+            const r = await probe();
+            return { moving, problems: r.problems, measured: r.measured.includes('machine-chest-press-zoom-hand-close') };
           } finally {
             await gcdp.send('Animation.setPlaybackRate', { playbackRate: 1 });
             await page.evaluate(async () => {
@@ -262,11 +269,16 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
           }
         };
         {
-          const rest = await slowHand(false), small = await slowHand(true);
-          if (!rest.moving || !small.moving) F('GF2: the hand close-up was not animating when the probe started, so this fixture proves nothing');
-          const hc = rest.problems.filter(p => /zoom-hand-close|still running/.test(p));
-          if (hc.length) F(`GF2: the probe measured the close-up mid-animation: ${hc.join('; ')}`);
-          if (!small.problems.some(p => /#machine-chest-press-zoom-hand-close is 40\.000 x 40\.000/.test(p))) F(`GF2: a close button shrunk to 40 px was not reported at 40.000 x 40.000 (${small.problems.slice(0, 4).join('; ') || 'nothing'})`);
+          const at40 = /#machine-chest-press-zoom-hand-close is 40\.000 x 40\.000/;
+          const cases = [['slowed, 44 px', { slow: true, shrink: false }], ['slowed, 40 px', { slow: true, shrink: true }], ['settled, 40 px', { slow: false, shrink: true }]];
+          for (const [name, o] of cases) {
+            const c = await handCase(o);
+            const said = c.problems.slice(0, 4).join('; ') || 'nothing';
+            if (o.slow && !c.moving) F(`GF2 ${name}: the hand close-up was not animating when the probe started, so this case proves nothing`);
+            if (!c.measured) F(`GF2 ${name}: the close button was not measured (${said})`);
+            const hc = c.problems.filter(p => /zoom-hand-close|still running/.test(p));
+            if (o.shrink ? !(hc.length === 1 && at40.test(hc[0])) : hc.length) F(`GF2 ${name}: expected ${o.shrink ? 'exactly "40.000 x 40.000"' : 'no problem'} on the close button, got ${hc.join('; ') || 'nothing'}`);
+          }
           await H.openHowTo(page, gi);
           await page.evaluate(() => { const s = document.querySelector('dialog.sheet.ht [data-section]'); s.animate([{ transform: 'scale(.9)' }, { transform: 'none' }], 60000); s.querySelector('button, summary, [role="button"]').animate([{ opacity: 1 }, { opacity: 0.9 }], { duration: 400, iterations: Infinity }); });
           const t = Date.now(), never = (await probe()).problems, ms = Date.now() - t;
