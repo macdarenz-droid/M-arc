@@ -6,17 +6,19 @@ export const KEY = 'd-handle', OWNER = 'LIB-7', VIEW = 'radial', INPUTS = [RULES
 export const HANDLE = { profile: 'd-handle', diameterMm: 30 };
 const PD = 'cards/single_arm_triceps_pushdown.json', LP = 'cards/single_arm_lat_pulldown.json';
 export const VARIANTS = {
+  // parked (D-LIB7-19a): no id draws it until golden-B follow-up 9; its claims stay so the drawing returns unchanged
+  // (single_arm_triceps_pushdown: orientation unstated, faults ['bent-back'], claims [`${PD}#grip.type`]).
   // bent back = the inverse of #c9 (wrist neutral), as the card's wrongNote records
   push: pushVariant({ thumbClaims: [`${PD}#c2`], wristClaims: [`${PD}#c9`], bentBackClaims: [`${PD}#c9`] }),
   // contact and thumb inherited from lat_pulldown, as the card's inherit list records
   pull: pullVariant({ thumbClaims: [`${LP}#inherit`], wristClaims: [`${LP}#c15`], curledClaims: [`${LP}#c15`] }),
 };
 export const IDS = {
-  single_arm_triceps_pushdown: { variant: 'push', orientation: 'unstated', faults: ['bent-back'], claims: [`${PD}#grip.type`] },
   single_arm_lat_pulldown: { variant: 'pull', orientation: 'unstated', faults: ['curled'], claims: [`${LP}#grip.type`] },
 };
 const NO_DIR = 'the claim names no bend direction and the radial view shows only flexion and extension';
 export const GAPS = {
+  single_arm_triceps_pushdown: 'golden-B follow-up 9: the engine cannot seat a heel push low and over the forearm (D-LIB7-19a); the push variant is parked until plan 2.8 fixes it',
   bayesian_cable_curl: 'no claim names the grip orientation; a level-forearm curl drawing would state one (D-LIB7-12)',
   cable_chest_press: `c3: ${NO_DIR} (supervisor ruling 2026-10-02)`,
   cable_fly: `c4: ${NO_DIR}`,

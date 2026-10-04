@@ -41,7 +41,7 @@ Each key is one file, `hands/hand-<key>.mjs`. It exports:
 - `HAND_CSS` styles the sheet and gate pages.
 - No golden-B value is read for a diameter; each module passes its own.
 
-## 2. Drawn pairs: 4 keys, 7 variants, 14 ids
+## 2. Drawn pairs: 4 keys, 7 variants, 12 ids (the two push rows are parked, D-LIB7-19a)
 Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 
 **Sizes are drawing values (D-LIB7-2).** These follow golden-B `HANDLES` and main's `eq/rope.mjs`:
@@ -70,16 +70,16 @@ Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 | curl/dumbbell | dumbbell_biceps_curl: under (cards/dumbbell_biceps_curl.json#c1); alternating_dumbbell_curl: under (cards/alternating_dumbbell_curl.json#c2); incline_dumbbell_curl: under (cards/incline_dumbbell_curl.json#c11); hammer_curl: neutral (shared/curl.json#c2); cross_body_hammer_curl: neutral (cards/cross_body_hammer_curl.json#c1) | thumb wrapped (shared/curl.json#c1, #c2); wrist straight, ext 0 in −10..10 (shared/curl.json#c3, #c4); middle of palm 0.6 (GA; curl.json gap 1) | `curled` −30 and `bent-back` +30 (shared/curl.json#c3, #c4, #c5) |
 | curl/bar | barbell_curl: under (cards/barbell_curl.json#c1); cable_curl: under (cards/cable_curl.json#c1) | same as curl/dumbbell | `bent-back` (cards/barbell_curl.json#c8, cards/cable_curl.json#c9); `curled` (shared/curl.json#c3) |
 | ez/curl | ez_bar_curl: under (cards/ez_bar_curl.json#c1, #c2); preacher_curl: under (cards/preacher_curl.json#c1); reverse_curl: **over** (cards/reverse_curl.json#c1) | thumb wrapped (shared/curl.json#c1); wrist straight (cards/ez_bar_curl.json#c8, cards/preacher_curl.json#c8, cards/reverse_curl.json#c6) | `bent-back` (same claims); `curled` (shared/curl.json#c3) |
-| ez/push | skull_crusher: over, palms toward the feet (cards/skull_crusher.json#c1) | thumb wrapped (#c1); wrist neutral, ext 0..15 (cards/skull_crusher.json#c3, GA push); heel 0.3 (GA push) | `bent-back` +35, contact 1.05 (cards/skull_crusher.json#c3); along-forearm, lever checks on |
+| ez/push (**parked**, D-LIB7-19a: a gap until golden-B follow-up 9) | skull_crusher: over, palms toward the feet (cards/skull_crusher.json#c1) | thumb wrapped (#c1); wrist neutral, ext 0..15 (cards/skull_crusher.json#c3, GA push); heel 0.3 (GA push) | `bent-back` +35, contact 1.05 (cards/skull_crusher.json#c3); along-forearm, lever checks on |
 | rope/push | rope_triceps_pushdown: neutral (shared/rope-rule.json#c3, an inference the card flags) | against the knob (shared/rope-rule.json#c1; not the Right note, D-LIB7-17); Right note "Middle of palm"; thumb wrapped (#c2); wrist straight (#c4); middle of the palm .6, curl 2's square fist (`ga:rope-fist-mid`, D-LIB7-16; rope-rule gap 1) and loadAxis across, lever check off | `curled` −30 (shared/rope-rule.json#c6) |
-| d-handle/push | single_arm_triceps_pushdown: unstated (cards/single_arm_triceps_pushdown.json, grip.type) | thumb wrapped (#c2); wrist neutral (#c9); heel 0.3 (GA push) | `bent-back` +35, contact 1.05 (#c9 inverse, as the card's `wrongNote` records) |
+| d-handle/push (**parked**, D-LIB7-19a: a gap until golden-B follow-up 9) | single_arm_triceps_pushdown: unstated (cards/single_arm_triceps_pushdown.json, grip.type) | thumb wrapped (#c2); wrist neutral (#c9); heel 0.3 (GA push) | `bent-back` +35, contact 1.05 (#c9 inverse, as the card's `wrongNote` records) |
 | d-handle/pull | single_arm_lat_pulldown: unstated | base of fingers 1.0, thumb wrapped (inherited from lat_pulldown, recorded in the card); wrist not curled (cards/single_arm_lat_pulldown.json#c15) | `curled` −30 (#c15) |
 
 **Faults that cannot be drawn in the radial view** are recorded but not drawn. These are wrist twists:
 - hammer_curl (cards/hammer_curl.json#c5);
 - cross_body_hammer_curl (#c7).
 
-## 3. Gaps: 16 ids, asserted not drawn
+## 3. Gaps: 18 ids, asserted not drawn (16, plus the 2 parked push ids, D-LIB7-19a)
 - **band** (the module has `GAPS` only; the supervisor's ruling):
   - resistance_band_row: no hand zoom and no hand fault on the card. Pilot A's band kind waits on research for a band-hand claim. A 20 mm drawing value applies only once a pair exists.
   - resistance_band_pull_apart: no card.
@@ -100,7 +100,7 @@ Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 - sled_pull goes to LIB-12 (implements).
 - dumbbell_overhead_triceps_extension goes to LIB-12 (cupped).
 
-**Scope check.** LIB-7's census scope has 30 ids, and 14 drawn + 16 gaps = 30. The scope is:
+**Scope check.** LIB-7's census scope has 30 ids, and 12 drawn + 18 gaps = 30 (14 + 16 before D-LIB7-19a). The scope is:
 - `byHandArchetype.curl` (13);
 - `equipmentByNeed`: band (2), ezBar not already counted (skull_crusher), rope minus sled_pull (2), ropeLikely (2), and singleHandle minus bayesian_cable_curl (10).
 
@@ -128,7 +128,7 @@ Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 **A3. Sweeps.** `sweep(items, n)` throws when there are 0 items or the count is not n. It covers:
 - 4 drawn keys plus band as a gap key;
 - 7 variants;
-- 14 drawn ids (LIB-7's keys only: sweeps filter by `OWNER`, so LIB-12's keys never move them);
+- 12 drawn ids (14 before D-LIB7-19a; LIB-7's keys only: sweeps filter by `OWNER`, so LIB-12's keys never move them);
 - 16 gap ids;
 - joint check: no id is claimed by a LIB-7 and a LIB-12 module;
 - scope 30 = census, with each `lib_` id once and its census archetype matching;
@@ -207,4 +207,6 @@ Every test is shown red with its mutation and at 0 without it (gotcha V1-08).
 - **D-LIB7-18, push Right load line (3-critic panel @ 1114bc1, C7, 2 of 3). Superseded by D-LIB7-18a.** The Right line ran about 15° off the forearm axis (from the contact through the pivot) while the Wrong's runs along it. It is now drawn straight down the forearm axis through the pivot, from the level of the contact, the same length; G6 fails a Right line more than 2° off the axis (1114bc1's measures 15°). The handle is not moved: golden B's palm puts the contact 12.3 px (handle centre 28.2 px) off the axis at the squat pose (contactAt -0.1, wrist 8°). The contact reaches the axis only at wrist 15° with contactAt about .3 (measured -0.4 px), which puts the handle 16 px higher, back against the finger fold the first critic run rejected, and draws the strain mark on the Right. So the handle stays in the heel and the line starts on the axis level with it.
 - **D-LIB7-18a, push Right without a force line (delta review @ 60ea214 failed: the line no longer started at the contact, and the reference wrist tick was stripped).** Golden-B squat Right precedent: the Right of single_arm_triceps_pushdown and skull_crusher draws no force line; it keeps the contact dot low in the heel, the wrist pivot and the engine's reference wrist tick. The Wrong is unchanged (its line behind the wrist is the lever it shows). G6 fails a push Right on the heel that draws a force line or loses its tick or contact dot; G6's pivot and axis checks stay for any Right whose line is routed through the pivot (`loadThroughPivot`), tested on a planted variant.
 - **D-LIB7-18b (amends D-LIB7-18a; delta review @ 93f5b2a, Medium).** Golden B's squat `loadLine: 'guide'` is no arrow and no tick (`barbell_back_squat.howto.mjs:19-20`, its render strips the Right's arrow and tick, `:119-120`); D-LIB7-18a's "reference wrist tick" misread it. The push Right now drops the tick with the line; the contact dot in the heel and the pivot stay. G6: a push Right with no force line draws no wrist tick.
+- **D-LIB7-19 (panel critic @ f3e285c, all 3 critics in both rounds, C3 = 3).** The two push Rights labelled HEEL OF PALM drew the handle mid-fist, about 83 px (2×) above the pivot and in front of the forearm, because they copied golden B's squat Right, which has the same defect (golden-B follow-up 9). The ruling asked for the handle low in the heel and over the forearm. Measured through golden B's engine (d-handle push Right, f3e285c: handle centre 42.1 px above the pivot and 28.2 px off the axis, radius 16.0 px): no pose at wrist 8-35° and contactAt -0.8 to -0.2 has both the height at most 23.1 px (0.55×) and the axis through the circle. A low handle always sits at least 25 px in front of the axis, and only about 35° (the Wrong's fault) brings the axis through it, high up (grid on #193).
+- **D-LIB7-19a (ruling, option 1).** single_arm_triceps_pushdown and skull_crusher become gaps citing golden-B follow-up 9: 12 drawn, 18 gaps, 22 pages. The push design is parked, not deleted: `radial-rules.mjs pushVariant`, the d-handle and ez `push` variants (each module's comment keeps the id's orientation, fault and claims), `rightNoLoad`, the D-LIB7-14/18a/18b decisions and G4/G6's push checks all stay. The push-only checks are idle while no push is drawn and keep their failure paths through a test fixture that draws the two ids again as they were (`redrawPush`). No tolerance changed. When plan 2.8 fixes follow-up 9, the ids move back to `IDS` and must meet D-LIB7-19's two rules, added to G4 then.
 - **Approved drawings unchanged.** The critic-approved pages are pinned by one sha256, computed on 23ac5bb: curl 1, curl 2, curl 3 without ez_bar_curl, reverse_curl and single_arm_lat_pulldown. The sheet's own pins were re-pinned once for these fixes.

@@ -8851,7 +8851,7 @@ for (const theme of ['silent-black', 'paper']) {
     if (!empty.problems.some(p => /no hand pair page/.test(p))) errors.push(`${tag}: the block passes with no pages (self-check)`);
     const t0 = Date.now(), r = await lib7Gate(lib7);
     for (const p of r.problems) errors.push(`${tag}: ${p}`);
-    if (r.pages !== 24) errors.push(`${tag}: ${r.pages} pages, expected 24 (14 drawn ids)`);
+    if (r.pages !== 22) errors.push(`${tag}: ${r.pages} pages, expected 22 (12 drawn ids; 2 push ids parked as gaps, D-LIB7-19a)`);
     console.log(`${tag} hand pairs (${lib7.version()}): ${r.pages} pages x ${r.themes} themes x ${r.widths} widths, ${r.shots} pixel shots, ${r.problems.length} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   } finally { await lib7.close(); }
 }
