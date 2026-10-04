@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-03 ~20:35 UTC · main `4aa1b2a` (train 12 #205) · RESUMED 19:08 (8.0c) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-04 ~04:00 UTC · main `c542ae9` (train 13 #207; main's own run red on the GATE-FLAKE-2 flake) · 8.0d · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,36 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
 
+### 8.0d FINISH LINE 10-04 ~00:50 UTC (read first; supersedes 8.0c where they differ)
+
+- **Train 13 merged** (#207 → main `c542ae9`, 23:58): HT-10 #166 @ `edeefd2` + HT-10 CI wiring #201 @ `1b6bd4e` + handover #206. All 8 checks were green on train head `cf7b936`. HT-10 reviewer and builder archived. No app code changed since train 12 (`git diff 4aa1b2a c542ae9` touches docs, tests, scripts, tools and .github only), so there is no new APK; the owner's phone build v37.1.0.62 is the release candidate app.
+- **Finish-line message sent** (push + chat, ~00:50): How-to done, 32 first-audit items closed (DEV-01 by his decision), Gym Finder parked, O9 phone checks, optional golden update (8.6 item 8) offered.
+- **main red on its own run 37163451459:** ht10-gate (2/2, UTC) C10 `#machine-chest-press-zoom-hand-close is 41.934 x 41.934` (emerald, wrist line); the identical tree passed on cf7b936. Likely measured mid-animation (0.953 scale). Card **GATE-FLAKE-2** (builder session_01WsKUhznFUd9S1xxKdvBMrP, branch claude/gate-flake-2): deterministic slow-animation repro red→green, seeded defects still caught, bounded wait. android-gate was skipped on that run (no APK needed: no app change).
+- **LIB-7 #193:** panel critic @ f3e285c invalid twice on the squat anchor; supervisor confirmed golden-B follow-up 9 on the render. D-LIB7-19 (push heel over the forearm) proved impossible in golden B's engine (builder grid), so D-LIB7-19a: the two push ids are gaps until follow-up 9 (12 drawn, 18 gaps). **Delta PASS @ `55e91e9`** (0/0/0/2 Lows ride the next push). Panel critic running on 55e91e9 with anchors lat_pulldown p1 + pull_up p1 (run wf_10265153-50a).
+- **Pilot A #109:** panel VALID @ `e6f39ff` (wf_cad21b92-9ed): all 17 at the bar; **16 approved** (D-PILOTA-R5, this head only); shrug held (D-LIB8-shrug), dumbbell_fly and rear-delt fly held. Head frozen.
+- **LIB-12 #191:** builder resumed to merge LIB-7 f3e285c (now 55e91e9) and post FIXED; then a delta review.
+- **Library lane started:** LIB-1 scale rehearsal (session_01XCmaQYZNryUhoTH6ohTfTK, Opus because its steps cannot all be spelled out ahead; "[do not merge]" PR #209). LIB-2 enabler resumed to build (#189). GATE-SPLIT builder resumed to build (#194; supervisor wires .github add-only).
+- **Audit lane started:** cards A3-1..A3-7 in `docs/supervisor/verify/audit-3-cards.md` (26 of 26 still fail on c542ae9; rulings R1-R10 confirmed). Wave 1: A3-2 data safety (session_01BHzvrNQY3eVvGxctFKauYW) and A3-1 coach consent (session_01SpoCUhZ5jk7KeaemJVmrGc). A3-3 and A3-4 start when one of them reaches review; then A3-5 → A3-6, A3-7. Merge order A3-2 → A3-1 → A3-3 → A3-4.
+- **02:0x LIB-7 panel VALID @ `55e91e9`** under ruling **D-CRITIC-CAL3** (#193 issuecomment-5975538224). A low anchor item that the supervisor confirms on the render as a real golden defect does not invalidate the run, if the anchor is ≥ 4 elsewhere, the other anchor is fully ≥ 4 and both plants are caught. All 7 tiles were at the bar in both rounds, so **12 ids are approved**. The head is frozen. The run before it (wf_10265153-50a) was invalid: the prep's labels leaked the key (fixed in lib7-critic.js, D-LIB7-19b) and pull_up p1 is weak (follow-up 10). LIB-12 **delta PASS @ `28149bf`** (it contains LIB-7 f3e285c); it now merges 55e91e9 for a final small delta.
+- **04:00 live state (heads from ls-remote at each event):**
+
+| Card | PR @ head | State | Next |
+|---|---|---|---|
+| GATE-FLAKE-2 | #212 @ `02810de` | REVIEW PASS 0/0/2/0 (session_016xcEgxhsaUEjnk1Ppqytqp). The two Mediums are evidence precision (a vacuous "rest" sub-check; the D-GF2-1 repro text); the builder is fixing them. | FIXED → same reviewer delta → **train 14 first** (main is red until it lands). |
+| A3-2 data safety | #211 @ `4469c54` | READY; reviewer session_01AUXWduDH5q3xxt6h4od2YH running. | Train 14. |
+| A3-1 coach consent | #210 @ `08714ce` | REVIEW PASS 0/0/0/2 (session_01QE2wi5aKKSYaN3ijU6Z1by). Low: a same-value same-day weigh-in then Undo leaves profile and log disagreeing (R1 side effect; recorded, no change). | Train 14 after A3-2. |
+| A3-3 native races | #213 @ `9a37676` | REVIEW PASS 0/0/1/2 (session_019jPruvuJktDyUqMty57kpt). | Merges main after A3-2, carrying the M8 text fix and the training-guard test → delta → next train. |
+| A3-4 timing | #214 (building) | Ruling D-A3-4a: the pinned live-retarget test looks entries up by exerciseId (index lookup encoded the UI-R01 bug). | READY → fresh reviewer. |
+| A3-5 coach facts / A3-7 onboarding | building (session_01TvEw1S93oYzmjVZKb42nEv Opus; session_017qeZkExGzCXs4tkyY1k8bk Sonnet) | started 03:57 | A3-6 starts when A3-5 is in review. |
+| LIB-2 | #189 @ `ee14df8` | REVIEW FAIL 0/2/2/3 (session_01Xh8LgQJfevZDK8XyHYNFQR): generators not data-driven; L2-A4 untested; A2 ignores the registry; A5 untested. Sent to the enabler. | FIXED → same reviewer delta. |
+| LIB-1 | #209 (never merges) | measuring; its source-gate is red on purpose (153-id build). | Report comment → supervisor copies numbers into the plan. |
+| LIB-7 / LIB-12 | #193 @ `55e91e9` / #191 @ `0d268a7` | Both final PASS and frozen; LIB-12 reviewer archived. | Plan-order merges (LIB-6 → LIB-7 → … → LIB-12). |
+| Pilot A | #109 @ `e6f39ff` | 16 approved, frozen. | Plan-order merge after LIB-2..LIB-4. |
+| GATE-SPLIT | #194 (building) | design FINAL; builder resumed 00:20. | READY → reviewer; supervisor wires .github. |
+| Motion artifact | scratchpad motion-fix | Owner's phone showed "No 3D on this device" (02:3x screenshot). Workflow wf_6d484263-829 reproduces under emulated host constraints, inlines the models, adds a no-WebGL flipbook fallback, verifies adversarially. | Republish the same URL, then send the owner the link. |
+
+- Classifier note: a grep of `docs/supervisor/PROMPTS.md` was refused once (00:0x, "Interfere With Workloads", right after a standalone CI-run cancel). Not retried; prompts were written from the skills instead. Standalone-run cancels (6.8 step 7) are skipped until that is clear.
+
 ### 8.0c PAUSE 10-03 ~18:10 UTC (owner: "Pause all work for now."; read first, supersedes 8.0b where they differ)
 
 **Done at the pause:**
@@ -990,6 +1020,9 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 6. Seated cable row (golden B): the dashed start ghost leans the torso about 12° forward (head about 45 px ahead of the finish head), while its own copy says "Sit tall; no rocking". 3 of 3 blind critic runs on pilot A `ae7c8c0` flagged it (R1=3), and the supervisor confirmed it on the render (10-03). Golden B is owner-approved and byte-locked, so it is recorded here and not changed. It is no longer used as a hidden calibration anchor (D-CRITIC-CAL).
 7. Machine chest press (golden B): the Mistake "OFF THE PAD" barely reads. The red dashed upper back sits only about 8-10 px in front of the solid back, so the back still looks on the pad; only the head shift and the arrow carry it. 2 of 3 blind critic runs on pilot A `ae7c8c0` scored it R5=3, and the supervisor confirmed it on the render (10-03). Recorded, not changed, and no longer a hidden anchor (D-CRITIC-CAL2).
 8. Machine chest press hand close-up (golden B): the Right says "HEEL OF PALM" but draws the handle inside the curled fingers at the front of the fist, the mid-palm fist of the lateral raise. 3 of 3 panel critics on LIB-7 `1114bc1` scored it C3 ≤3, and the supervisor confirmed it on the render (10-03 19:1x). Recorded, not changed. It is no longer a hidden anchor for the hand critic either.
+9. Barbell back squat hand close-up p1 (golden B): same defect as 8. The Right says "HEEL OF PALM" but draws the bar mid-fist, about 80 px (2×) above the wrist pivot and in front of the dashed forearm axis. 3 panel critics on LIB-7 `f3e285c` gave it a C3 median of 3 in both rounds. The supervisor confirmed it on the render (10-04 00:1x). Recorded, not changed here. It is no longer a hand-critic anchor; the anchors are now lat_pulldown p1 and pull_up p1 (D-LIB7-19). LIB-7's push Rights copied this pose; under D-LIB7-19a they are gaps until this is fixed.
+10. Pull-up hand close-up p1 (golden B): the Right says "TOP OF PALM" and draws a straight wrist with the bar mid-fist. Its own facts say "hook the bar where your fingers start" with the "wrist tipped back a little" (about 35°). Panel critics on LIB-7 `55e91e9` scored it C1/C4/C7 = 3 and C3 2-3 in both rounds. The supervisor confirmed this on the render (10-04 01:3x). Recorded, not changed. It is no longer an anchor; the anchors are lat_pulldown p1 and hanging_leg_raise p1, both of which read coherently (bar at the base of the fingers, load line through the wrist).
+11. Hanging leg raise hand close-up p1 (golden B), Wrong "SLIPPING OUT": the bar floats about 20 px (2×) below the opened fingers, and only the thumb's edge touches it. The "30°" label sits on the hand outline. 3 of 3 panel critics on LIB-7 `55e91e9` gave C3 a median of 3, and in round 2 also C7. The supervisor confirmed both on the render (10-04 02:0x). Recorded, not changed. Under D-CRITIC-CAL3 (below) the run stays valid.
 
 **First audit, 32 findings (4 P1 + 28 P2): COMPLETE 07:56.**
 
