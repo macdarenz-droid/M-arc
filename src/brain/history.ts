@@ -1,6 +1,6 @@
 /** Per-exercise history, derived once from sessions and reused by every engine. */
 import type { Effort, Exercise, LoggedSet, PlannedTarget, ResistanceMode, Session } from '@/core/models';
-import { findExercise } from '@/core/exercises';
+import { findExercise, LIBRARY } from '@/core/exercises';
 import { effectiveOneRm, RIR_BY_EFFORT } from './e1rm';
 import { repsAt } from './retarget';
 import { daysBetween } from '@/core/dates';
@@ -115,12 +115,17 @@ export function exerciseHistory(sessions: Session[], exerciseId: string, custom:
   return [...hit];
 }
 
+const LIBRARY_IDS = new Set(LIBRARY.map(e => e.id));
+
 function computeExerciseHistory(sessions: Session[], exerciseId: string, custom: Exercise[]): ExerciseSessionSummary[] {
   const meta = findExercise(exerciseId, custom);
   const ids = new Set([exerciseId, meta?.id].filter(Boolean) as string[]);
+  // UI-R02: a known id (library or custom) is authoritative; only an unresolved id falls back to its name.
+  const customIds = new Set(custom.map(c => c.id));
+  const known = (id: string) => LIBRARY_IDS.has(id) || customIds.has(id);
   const rows: Array<{ s: Session; sets: LoggedSet[]; target?: PlannedTarget }> = [];
   for (const s of sessions) {
-    const mine = s.exercises.filter(e => ids.has(e.exerciseId) || (meta && findExercise(e.name, custom)?.id === meta.id));
+    const mine = s.exercises.filter(e => ids.has(e.exerciseId) || (meta && !known(e.exerciseId) && findExercise(e.name, custom)?.id === meta.id));
     const sets = mine.flatMap(e => e.sets);
     if (!sets.some(isWorkingSet)) continue;
     const target = mine.find(e => e.target)?.target;
