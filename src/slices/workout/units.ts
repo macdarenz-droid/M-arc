@@ -7,7 +7,7 @@ import { newId, MAX_GYMS, type EquipmentProfile, type LoadUnit, type UnitsState 
 import { state, update } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { equipmentGroup } from '@/brain/coach/cues';
-import { defaultProfile, resolveProfile } from '@/brain/units';
+import { defaultProfile, menuProfile } from '@/brain/units';
 
 function patchUnits(fn: (u: UnitsState) => UnitsState): void {
   update(s => ({ ...s, units: fn(s.units) }));
@@ -18,7 +18,7 @@ export function activeGymId(): string { return state.value.units.activeGymId; }
 /** The profile Train should use for this exercise right now. */
 export function profileFor(exerciseId: string, gymId = activeGymId()): EquipmentProfile {
   const s = state.value;
-  return resolveProfile(exerciseId, gymId, s.units, findExercise(exerciseId, s.customExercises));
+  return menuProfile(exerciseId, gymId, s.units, findExercise(exerciseId, s.customExercises));
 }
 
 /**

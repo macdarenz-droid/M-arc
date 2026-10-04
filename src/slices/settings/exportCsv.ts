@@ -12,6 +12,14 @@ export function csvField(v: string | number | undefined | null): string {
   return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
+/**
+ * A3-2 QA CSV 01: a free-text cell that starts with a formula trigger gets a leading quote, so a
+ * spreadsheet shows it as text instead of running it (OWASP CSV injection). Numbers never pass here.
+ */
+export function csvText(v: string | undefined | null): string | undefined | null {
+  return typeof v === 'string' && /^[=+\-@\t\r]/.test(v) ? `'${v}` : v;
+}
+
 /** One row per filled-in set, oldest session first; `from`/`to` are inclusive day keys. */
 export function sessionsToCsv(sessions: Session[], unit: LoadUnit, from?: string, to?: string): string {
   const rows = [CSV_HEADER];
@@ -25,10 +33,10 @@ export function sessionsToCsv(sessions: Session[], unit: LoadUnit, from?: string
         const load = setLoadIn(set, unit);
         // The exercise note rides on its first set; the session note gets a row of its own.
         const note = n === 1 ? e.note : undefined;
-        rows.push([s.day, s.splitName, e.name, n, load, load != null ? unit : '', set.reps, set.effort, set.kind, set.durationSec, set.distanceM, note].map(csvField).join(','));
+        rows.push([s.day, csvText(s.splitName), csvText(e.name), n, load, load != null ? unit : '', set.reps, set.effort, set.kind, set.durationSec, set.distanceM, csvText(note)].map(csvField).join(','));
       }
     }
-    if (s.note) rows.push([s.day, s.splitName, '', '', '', '', '', '', '', '', '', s.note].map(csvField).join(','));
+    if (s.note) rows.push([s.day, csvText(s.splitName), '', '', '', '', '', '', '', '', '', csvText(s.note)].map(csvField).join(','));
   }
   return rows.join('\r\n') + '\r\n';
 }

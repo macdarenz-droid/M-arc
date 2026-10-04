@@ -7,7 +7,7 @@ import type { AppState, Exercise } from '@/core/models';
 import { daysBetween, dayKey } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { recoveryPctFor, recoveryStatus, type MuscleRecovery } from '@/brain/recovery';
-import { resolveProfile } from '@/brain/units';
+import { menuProfile } from '@/brain/units';
 import { readiness, type ReadinessResult } from '@/brain/readiness';
 import type { CoachContext } from '@/brain/coach/rules';
 import { splitPlan, type SplitPlan } from '@/brain/splitPlan';
@@ -99,8 +99,11 @@ export const redactDrivers = (drivers: string[], health: boolean): string[] => (
  */
 export function progressionCtxFor(ctx: ToolCtx, exerciseId: string, gymId?: string) {
   const s = ctx.state;
-  const equipment = resolveProfile(exerciseId, gymId ?? s.active?.gymId ?? s.units.activeGymId, s.units, exerciseOf(ctx, exerciseId));
-  const change = todayOverrideOf(ctx)?.changes.find(c => c.kind === 'load' && c.exerciseId === exerciseId);
+  const equipment = menuProfile(exerciseId, gymId ?? s.active?.gymId ?? s.units.activeGymId, s.units, exerciseOf(ctx, exerciseId));
+  // IMP-E01 (D-A3-5): during a workout, the factor Train uses is the live entry's own (set at start), so
+  // neither midnight nor another split's override changes it. With no workout, today's override.
+  const change = s.active ? undefined : todayOverrideOf(ctx)?.changes.find(c => c.kind === 'load' && c.exerciseId === exerciseId);
+  const loadFactor = s.active ? s.active.entries.find(e => e.exerciseId === exerciseId)?.loadFactor : change?.kind === 'load' ? change.factor : undefined;
   return {
     readiness: readinessToday(ctx),
     recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoveryAt(ctx)),
@@ -108,7 +111,7 @@ export function progressionCtxFor(ctx: ToolCtx, exerciseId: string, gymId?: stri
     // BUG-15: the saved lighter week, so an ended one is not the base for later targets.
     lastDeload: s.deload,
     equipment,
-    ...(change && change.kind === 'load' ? { loadFactor: change.factor } : {}),
+    ...(loadFactor != null ? { loadFactor } : {}),
   };
 }
 
