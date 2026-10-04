@@ -318,7 +318,8 @@ describe('recovery calibration sees what the app showed (QA-R2b-3, QA-R2b-5, QA-
   });
 });
 
-import { recovery, todayReadiness } from '@/app/selectors';
+import { recovery, today, todayReadiness } from '@/app/selectors';
+import { addDays, weekdayOf } from '@/core/dates';
 describe('typing into a live set does not recompute recovery (QA-R2d-1)', () => {
   it('recovery and readiness keep their identity across set edits', () => {
     start();
@@ -329,6 +330,17 @@ describe('typing into a live set does not recompute recovery (QA-R2d-1)', () => 
     expect(todayReadiness.value).toBe(t0);
     commitSet(0, 0);
     expect(recovery.value).toBe(r0);
+  });
+
+  it('BUG-38: with a schedule, typing into a live set keeps todayReadiness identity', () => {
+    const tue = today.value;
+    replaceState({ ...state.value, schedule: { ...state.value.schedule, [weekdayOf(tue)]: split.id, [weekdayOf(addDays(tue, 1))]: split.id }, checkIns: [{ day: tue, sleepQuality: 4, mood: 4 }] });
+    start();
+    const t0 = todayReadiness.value;
+    expect(t0).not.toBeNull();
+    setSet(0, 0, { kg: 60 });
+    setSet(0, 0, { reps: 8 });
+    expect(todayReadiness.value).toBe(t0);
   });
 });
 

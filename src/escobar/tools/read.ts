@@ -35,7 +35,7 @@ import { findInApp } from '../palace/registry';
 import { firstWorkingSet, isWorkingSet } from '@/brain/exposure';
 import { one } from '../context/brief';
 import {
-  progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, hoursLeftOut, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
+  progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, hoursLeftOut, readinessToday, recoveryAt, redactDrivers, splitPlanOf, todayOverrideOf, type ToolCtx,
 } from './context';
 
 export class ToolError extends Error {}
@@ -121,7 +121,9 @@ function least(ctx: ToolCtx, n = 3, atMs = ctx.now) {
 
 export function getOverview(_: unknown, ctx: ToolCtx) {
   const s = ctx.state;
-  const split = scheduledSplitFor(ctx);
+  // BUG-38/UI-R03: today's split from the plan, null on a day off; movedFrom when it moved here.
+  const t = splitPlanOf(ctx).today;
+  const split = t && !t.off ? t : null;
   const r = readinessToday(ctx);
   const planned = plannedThisWeek(s.schedule, s.daysOff, ctx.today);
   const w = weekSummary(s.sessions, ctx.today, s.customExercises, planned);
@@ -130,7 +132,7 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
   return capJson({
     today: ctx.today,
     weekday: weekdayOf(ctx.today),
-    scheduled: split ? { splitId: split.id, split: split.name, exercises: split.exercises.length } : null,
+    scheduled: split ? { splitId: split.split.id, split: split.split.name, exercises: split.split.exercises.length, ...(split.movedFrom ? { movedFrom: weekdayOf(split.movedFrom) } : {}) } : null,
     trainedToday: trainedTodaySessions(s.sessions, ctx.today, ctx.now).map(x => x.splitName),
     live: s.active ? { split: s.splits.find(x => x.id === s.active!.splitId)?.name ?? 'Workout' } : null,
     readiness: r ? { band: r.band, score: r.score, loadAdvice: r.loadAdvice, calibrating: r.calibrating } : null,
