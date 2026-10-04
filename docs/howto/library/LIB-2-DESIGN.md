@@ -278,3 +278,13 @@ tool-side sources. LIB-2's generator writes the app chunks.
   (c) Rename the output to `hand-<key>.ts`: `hands.test.ts` turns red, unedited.
 - **Owner.** LIB-2 builds the plugin and the `ht-index` exports. LIB-7 and LIB-12 own `hands/**` and `inputsFor`.
   Until LIB-2 merges, the pairs ship nothing to the app (D-LIB7-1 seam).
+
+## 13. As built (2026-10-04)
+
+Built on main c542ae9. Where the build differs from sections 1-12, the reason is recorded in
+`docs/COACHING-DECISIONS.md` (D-LIB2-loaders, -index, -hints, -ids-list, -bodies, -core-tests, -builder, -browser):
+- `ht-index.ts` is `src/howto/generated/loaders.ts` (chunk `loaders-*.js`), and it also exports `HOWTO_IDS`;
+- the identity list holds 54 files (it also covers 9 generated research JSON files), and the generator writes 60;
+- `HOWTO_HINTS` keeps its per-id lines (HT-6's gate block A8 parses them);
+- L2-A10 runs as the gate block `LIB-2`, and L2-A21 runs with a fixture pair loader until LIB-7 lands
+  `hands/pairs.mjs`.
