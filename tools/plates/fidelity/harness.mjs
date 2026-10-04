@@ -194,8 +194,10 @@ export const HT_PLATES = [
 export function firstWithoutHowTo() {
   const lib = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => e.id);
   const m = readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8').match(/export const HOWTO_IDS = \[([\s\S]*?)\] as const;/);
-  if (!m) throw new Error('firstWithoutHowTo: no HOWTO_IDS in src/howto/ids.ts');
-  const approved = new Set([...m[1].matchAll(/"([^"]+)"/g)].map(x => x[1]));
+  // LIB-1 measurement patch (never merged): LIB-2's hash-set ids.ts has no HOWTO_IDS literal; in the clone every id
+  // has a How-to, so treat all as approved and let the fallback below pick the control.
+  if (!m && !/const SET = /.test(readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8'))) throw new Error('firstWithoutHowTo: no HOWTO_IDS in src/howto/ids.ts');
+  const approved = new Set(m ? [...m[1].matchAll(/"([^"]+)"/g)].map(x => x[1]) : lib);
   const id = lib.find(i => !approved.has(i));
   // LIB-1 measurement patch (never merged): with all 153 ids cloned there is no id without a How-to, and the throw
   // above aborted the whole gate at FG-OFF (screenshot-gate.mjs:6224). To see every later block, fall back to the
