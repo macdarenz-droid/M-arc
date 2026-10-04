@@ -34,7 +34,7 @@ export function contactU(m, pose, k) {
 /** The fist's front, in mm: how wide the Right hand's ink is across the forearm within 4 mm of its farthest point along
  *  it. A squared fist (curl 2, the approved lateral raise) is broad there; a fist closed round a handle in the fingers
  *  tapers to a point (critic run on #193, 10-03; D-LIB7-16). Read from the Right half's <defs> outlines. */
-export const FRONT_TOL_MM = 4, SQUARE_FRONT_MM = 20;
+export const FRONT_TOL_MM = 4, SQUARE_FRONT_MM = 20, AXIS_TOL_DEG = 2;
 export function fistFrontMm(svg, uid, forearm, k) {
   const th = forearm * RAD, U = [Math.sin(th), Math.cos(th)], V = [U[1], -U[0]];
   const pts = [...svg.matchAll(new RegExp(`<path id="${uid}-r-[a-z0-9-]+" d="([^"]+)"`, 'g'))].flatMap(q => poly(q[1]));
@@ -89,8 +89,16 @@ export function problemsOf(spec, pages) {
     // none on a gravity curl (lateral raise) or the rope, whose load direction no source gives
     const hasLoad = /class="h-load/.test(svg), wantLoad = spec.loadAxis === 'along-forearm' || spec.mod.VARIANTS[spec.variant].archetype === 'pull';
     if (hasLoad !== wantLoad) bad.push(`${at}: G6 force line ${hasLoad ? 'drawn' : 'missing'}`);
-    // G6: a push on the heel runs through the wrist pivot: the Right force line passes within 0.5 px of the pivot (D-LIB7-14)
-    if (spec.contact === 'heel' && spec.loadAxis === 'along-forearm') {
+    // G6: a push Right on the heel draws no force line and so no wrist tick, as golden B's squat Right (D-LIB7-18a/b): the
+    // contact dot and the pivot stay; a variant that routes its line through the pivot instead gets the pivot checks below
+    const Vr = spec.mod.VARIANTS[spec.variant], rightPart = svg.slice(svg.indexOf('<g class="h-panel right">'), svg.indexOf('<g class="h-panel wrong">'));
+    if (Vr.archetype === 'push' && spec.contact === 'heel' && !Vr.loadThroughPivot) {
+      if (/class="h-load"/.test(rightPart)) bad.push(`${at}: G6 push Right draws a force line`);
+      if (/class="h-tick"/.test(rightPart)) bad.push(`${at}: G6 push Right with no force line draws a wrist tick`);
+      if (!/class="h-contact"/.test(rightPart)) bad.push(`${at}: G6 push Right lost its contact dot`);
+    }
+    // G6: a Right line routed through the wrist pivot passes within 0.5 px of it and runs along the forearm axis (D-LIB7-14, 18)
+    if (Vr.loadThroughPivot) {
       const P = R.pivot, W = M.right.wrist;
       if (!P) bad.push(`${at}: G6 force line not re-aimed through the pivot`);
       else {
@@ -98,6 +106,9 @@ export function problemsOf(spec, pages) {
         const off = Math.hypot(A[0] + t * dx - W[0], A[1] + t * dy - W[1]);
         if (!(off <= 0.5 && t > 0 && t < 1)) bad.push(`${at}: G6 Right force line ${off.toFixed(1)} px from the wrist pivot`);
         if (!svg.includes(`d="M${A[0]} ${A[1]}L${E[0]} ${E[1]}"`)) bad.push(`${at}: G6 re-aimed force line not drawn`);
+        // and straight down the forearm axis, as the Wrong's line is (D-LIB7-18)
+        const th = spec.right.forearm * RAD, ang = Math.abs(Math.asin((dx * -Math.cos(th) - dy * -Math.sin(th)) / Math.hypot(dx, dy))) / RAD;
+        if (!(ang <= AXIS_TOL_DEG && dx * -Math.sin(th) + dy * -Math.cos(th) > 0)) bad.push(`${at}: G6 Right force line ${ang.toFixed(1)} deg off the forearm axis`);
       }
     }
     // G7: a rope reads as a rope: one plain section (no rigid-handle core) and its knob, coaxial, at the composer's size,

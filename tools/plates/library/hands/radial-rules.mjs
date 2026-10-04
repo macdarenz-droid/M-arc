@@ -25,11 +25,11 @@ export const curlVariant = ({ wristClaims = CURL_WRIST, bentBackClaims = ['share
 });
 
 /** Push: handle in the heel of the palm, thumb wrapped, wrist straight; Wrong: bent back with the handle in the fingers.
- *  The Right is golden B's approved squat Right (contactAt -0.1, wrist 8 deg; D-LIB7-14, measured by G4), with the force
- *  line re-aimed through the wrist pivot (G6); the forearm stands vertical, as in the pushdown and the skull crusher, so a
+ *  The Right is golden B's approved squat Right (contactAt -0.1, wrist 8 deg; D-LIB7-14, measured by G4) and, as there,
+ *  draws no force line and no wrist tick: the contact dot and the pivot (D-LIB7-18a/b, G6); the forearm stands vertical, as in the pushdown and the skull crusher, so a
  *  single handle with no stated orientation implies none (D-LIB7-12). */
 export const pushVariant = ({ thumbClaims, wristClaims, bentBackClaims, handle }) => ({
-  archetype: 'push', loadAxis: 'along-forearm', loadThroughPivot: true,
+  archetype: 'push', loadAxis: 'along-forearm', rightLoad: false,
   flags: ['heel contact -0.1 and wrist 8° are golden-B squat drawing values, not claims (D-LIB7-14)'], wristRange: [0, 15], contact: 'heel', ...(handle ? { handle } : {}),
   right: { view: 'radial', forearm: 180, wrist: { ext: 8, dev: 0 }, contactAt: -0.1, fingers: { curl: 1 }, thumb: 'wrapped', squeeze: 'firm', load: { kind: 'push' } },
   rightNote: 'Heel of palm',

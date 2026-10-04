@@ -116,7 +116,7 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
   });
   it('G6: a push Wrong in the heel (lever not behind the wrist) fails', () => bites(withMods(m => { key(m, 'ez').VARIANTS.push.faults['bent-back'].pose.contactAt = 0.3; }), 'skull_crusher', /G6 lever checks/));
   it('G6: a force line on a gravity curl fails', () => bites(withMods(m => { delete key(m, 'curl').VARIANTS.bar.loadLine; }), 'barbell_curl', /G6 force line drawn/));
-  it('critic fixes (10-03): approved drawings byte-identical; rope plain with its knob; push line through the pivot; EZ angled label', () => {
+  it('critic fixes (10-03): approved drawings byte-identical; rope plain with its knob; EZ angled label', () => {
     // the pages the calibrated critic approved, sha256 over `id/fault\0svg\0` (computed on 23ac5bb before the fixes)
     const APPROVED = ['dumbbell_biceps_curl', 'alternating_dumbbell_curl', 'incline_dumbbell_curl', 'hammer_curl', 'cross_body_hammer_curl', 'barbell_curl', 'cable_curl', 'preacher_curl', 'reverse_curl', 'single_arm_lat_pulldown'];
     const h = createHash('sha256');
@@ -140,11 +140,52 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     moved[0].report.knobs[1].cx += 1;
     expect(C.problemsOf(spec, moved).join('\n')).toMatch(/G7 wrong knob off the rope/);
   });
-  it('G6: a push Right force line beside the wrist pivot fails', () => {
-    const { spec, pages } = C.renderedPages('single_arm_triceps_pushdown');
-    expect(C.problemsOf(spec, pages)).toEqual([]);
-    pages[0].report.pivot.to = [pages[0].report.pivot.to[0] + 30, pages[0].report.pivot.to[1]];
-    expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G6 Right force line [\d.]+ px from the wrist pivot/);
+  // a push variant that routes its Right line through the pivot (the 60ea214 drawing): G6's pivot and axis checks still
+  // hold for such a variant, though no LIB-7 push draws one since D-LIB7-18a
+  const viaPivot = () => P.indexOf(withMods(m => { for (const k of ['d-handle', 'ez']) { const V = key(m, k).VARIANTS.push; delete V.rightLoad; V.loadThroughPivot = true; } }));
+  it('G6 (D-LIB7-18a/b): a push Right draws no force line and no wrist tick, keeps its contact dot; the Wrong keeps its line', () => {
+    for (const id of ['single_arm_triceps_pushdown', 'skull_crusher']) {
+      const { spec, pages } = C.renderedPages(id);
+      expect(C.problemsOf(spec, pages)).toEqual([]);
+      for (const p of pages) {
+        const right = p.svg.slice(p.svg.indexOf('<g class="h-panel right">'), p.svg.indexOf('<g class="h-panel wrong">'));
+        const wrong = p.svg.slice(p.svg.indexOf('<g class="h-panel wrong">'));
+        expect(right).not.toMatch(/class="h-load/);
+        expect(right).not.toMatch(/class="h-tick"/);
+        expect(right).toMatch(/<circle class="h-contact" /);
+        expect(right).toMatch(/<circle class="h-joint wrist" /);
+        expect(wrong).toMatch(/<path class="h-load m" d="[^"]+"\/><path class="h-load-head m"/);
+        expect(p.report.pivot).toBeNull();
+      }
+      // 60ea214's drawing (a Right line down the axis through the pivot) under this spec fails
+      const drawn = C.renderedPages(id, viaPivot()).pages;
+      expect(C.problemsOf(spec, drawn).join('\n')).toMatch(/G6 push Right draws a force line/);
+      // and a Right that keeps its wrist tick (93f5b2a's drawing) fails
+      const tickKept = structuredClone(pages), r0 = tickKept[0].svg.indexOf('<g class="h-panel right">'), W = pages[0].report.measured.right.wrist;
+      tickKept[0].svg = tickKept[0].svg.slice(0, r0) + tickKept[0].svg.slice(r0).replace('<circle class="h-joint wrist"', `<path class="h-tick" d="M${W[0] + 6} ${W[1]}L${W[0] + 16} ${W[1]}"/><circle class="h-joint wrist"`);
+      expect(C.problemsOf(spec, tickKept).join('\n')).toMatch(/G6 push Right with no force line draws a wrist tick/);
+    }
+  });
+  it('G6: a Right line routed through the pivot that misses it, or slants off the forearm axis, fails', () => {
+    const idx = viaPivot();
+    for (const id of ['single_arm_triceps_pushdown', 'skull_crusher']) {
+      const { spec, pages } = C.renderedPages(id, idx), P0 = pages[0].report.pivot;
+      expect(C.problemsOf(spec, pages)).toEqual([]);
+      expect(P0.from[0]).toBe(P0.to[0]);
+      expect(P0.from[0]).toBe(P0.wrist[0]);
+      const beside = structuredClone(pages);
+      beside[0].report.pivot.to = [P0.to[0] + 30, P0.to[1]];
+      expect(C.problemsOf(spec, beside).join('\n')).toMatch(/G6 Right force line [\d.]+ px from the wrist pivot/);
+      // the slant drawn on 1114bc1: the line rotated 15 deg about the pivot, path and report kept in step
+      const t = 15 * Math.PI / 180, rot = (p: any) => { const x = p[0] - P0.wrist[0], y = p[1] - P0.wrist[1];
+        return [+(P0.wrist[0] + x * Math.cos(t) - y * Math.sin(t)).toFixed(2), +(P0.wrist[1] + x * Math.sin(t) + y * Math.cos(t)).toFixed(2)]; };
+      const slant = structuredClone(pages), Q = slant[0].report.pivot, from = rot(P0.from), to = rot(P0.to);
+      slant[0].svg = slant[0].svg.replace(`d="M${P0.from[0]} ${P0.from[1]}L${P0.to[0]} ${P0.to[1]}"`, `d="M${from[0]} ${from[1]}L${to[0]} ${to[1]}"`);
+      Q.from = from; Q.to = to;
+      const out = C.problemsOf(spec, slant).join('\n');
+      expect(out).toMatch(/G6 Right force line 15\.0 deg off the forearm axis/);
+      expect(out).not.toMatch(/px from the wrist pivot|not drawn/);
+    }
   });
   it('G8: an underhand id drawn palm down fails', () => {
     const { spec, pages } = C.renderedPages('barbell_curl'), m = pages[0].report.measured.right;
@@ -338,14 +379,14 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
   it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
     // the LIB-7 radial sheet, byte for byte (sha256 of buildSheet().body). Re-pinned once for the calibrated critic's fixes
     // (10-03: rope, push, ez_bar_curl angled; D-LIB7-13..15) and for the delta review (D-LIB7-16: ez palm up, rope fist
-    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid; D-LIB7-17: rope label); the approved pages stay pinned separately, unchanged.
+    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid; D-LIB7-17: rope label; D-LIB7-18a/b: push Right without a force line or tick); the approved pages stay pinned separately, unchanged.
     // built from LIB-7's own key modules only, so another card's tiles never move this pin (D-LIB7-PIN); the filter must
     // keep all 5 LIB-7 modules, so the pin cannot silently shrink
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
     const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
     expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
-    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('6a4020426c7bc1afb1447273f51ae1a8ac69d7a5e8d9e67136aa0bc847fd8f89');
-    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('107e629210e2fd279390496ca53395b3e55bb60e32a4319a034453be16727dbe');
+    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('ca474ca7afbc4b66388996160654ddd85dda1f61b9c7fe6f042a9600b11df12f');
+    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('29177516a869fdd1b9d04fbb9ab198a175fbc36b65c23aeb16ace9fea063456a');
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },
