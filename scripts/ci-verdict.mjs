@@ -25,7 +25,9 @@ const key = (r) => `${r.id}|${r.theme}|${r.state}`;
  */
 export function verdict({ gate, ht10 = [], gateSrc, times, sha, event, arrangement = 'split', needs = {}, ht10Tuples = null }) {
   const problems = [], notes = [];
-  for (const [job, n] of Object.entries(needs)) if (n?.result !== 'success') problems.push(`needed job ${job} ended ${n?.result ?? 'unknown'}`);
+  // in the serial arrangement (E8's A, workflow_dispatch only) the shard jobs are skipped on purpose
+  const maySkip = arrangement === 'serial' && event === 'workflow_dispatch' ? new Set(['gate-shard']) : new Set();
+  for (const [job, n] of Object.entries(needs)) if (n?.result !== 'success' && !(n?.result === 'skipped' && maySkip.has(job))) problems.push(`needed job ${job} ended ${n?.result ?? 'unknown'}`);
   if (!/^[0-9a-f]{40}$/.test(sha ?? '')) problems.push(`GITHUB_SHA is not a full sha: ${sha}`);
 
   // ---- gate family

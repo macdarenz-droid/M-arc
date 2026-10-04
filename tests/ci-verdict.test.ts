@@ -50,7 +50,8 @@ describe('E5: gate-verdict', () => {
     expect(run().problems).toEqual([]);
   });
   it('the serial arrangement passes only on workflow_dispatch', () => {
-    expect(run({ gate: proofs(1), event: 'workflow_dispatch', arrangement: 'serial' }).problems).toEqual([]);
+    expect(run({ gate: proofs(1), event: 'workflow_dispatch', arrangement: 'serial', needs: { 'gate-shard': { result: 'skipped' } } }).problems).toEqual([]);
+    red({ needs: { 'gate-shard': { result: 'skipped' } } }, /needed job gate-shard ended skipped/);
     red({ gate: proofs(1), event: 'push', arrangement: 'split' }, /expected gate proofs for jobs 1\.\.3 of 3/);
     red({ gate: proofs(1), event: 'push', arrangement: 'serial' }, /serial arrangement is allowed only on workflow_dispatch/);
   });

@@ -3,7 +3,7 @@
 // `await browser.close()` is either `if (gate.runs('<key>'))` in front of one statement, or a `const` declaration;
 // a group is the run of statements under one key. Also checks module-scope coupling (E2, rules R1-R5) and strips
 // the GATE-SPLIT lines back out (E7). Build and gate time only; never bundled.
-// CLI: node scripts/gate-blocks.mjs [--list | --count | --strip | --check] [file]
+// CLI: node scripts/gate-blocks.mjs [--list | --count | --checked-count | --strip | --check] [file]
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -260,6 +260,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const src = readFileSync(file, 'utf8');
   if (mode === '--strip') process.stdout.write(stripGate(src));
   else if (mode === '--count') console.log(parseGate(src).groups.length);
+  else if (mode === '--checked-count') console.log(parseGate(src).groups.filter(g => !ALWAYS.has(g.key)).length);   // E10: one job per checked group
   else if (mode === '--check') { const p = couplingProblems(src); if (p.length) { console.error(p.join('\n')); process.exit(1); } console.log(`gate blocks OK: ${parseGate(src).groups.length} groups`); }
   else for (const g of parseGate(src).groups) console.log(`${g.key}\t${g.line}\t${g.statements.length}`);
 }
