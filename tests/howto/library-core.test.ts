@@ -280,6 +280,9 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
     const arch = JSON.parse(readFileSync('tools/plates/library/coverage-archetypes.json', 'utf8')).archetypes;
     const withShip = [...reg.rows(), { id: 'lib_barbell_row', stage: 'shipped' }];
     expect(idsGen.coverageEntries(arch, withShip, exerciseIds()).find(([id]: [string]) => id === 'lib_barbell_row')[1]).toEqual({ status: 'approved' });
+    const plated = [...reg.rows(), { id: 'lib_barbell_row', stage: 'approved-plate' }];
+    expect(idsGen.coverageEntries(arch, plated, exerciseIds()).find(([id]: [string]) => id === 'lib_barbell_row')[1]).toEqual({ status: 'pending', archetype: arch.lib_barbell_row, stage: 'approved-plate' });
+    expect(reg.shippedIds(plated)).not.toContain('lib_barbell_row');
     expect(() => idsGen.coverageEntries({ ...arch, lib_barbell_row: null }, reg.rows(), exerciseIds())).toThrow(/no archetype/);
   });
   it('L2-A16: the gate\'s no-How-to control is the first exercises.json id that does not ship, and moves on when it ships', () => {
@@ -296,10 +299,9 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
 });
 
 describe('L2-A15: the How-to total ceiling is a per-id rule (plan 5.1)', () => {
-  /** ceil(measured x 11 x N / 80): the 8's measured total over 8, + 10 %, times N shipped ids, rounded once. */
-  const rule = (measured: number, n: number) => Math.ceil((measured * 11 * n) / 80);
   it('both totals equal the rule at the shipped count, and a batch over its N fails', async () => {
     const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const rule = (await import(/* @vite-ignore */ url('tools/plates/library/budgets/total.mjs'))).totalCeiling as (m: number, n: number) => number;
     const t = JSON.parse(readFileSync('tests/howto/budgets.json', 'utf8')).totals.find((x: any) => x.chunk === 'How-to total');
     const n = reg.shippedIds().length;
     expect(n).toBe(8);
