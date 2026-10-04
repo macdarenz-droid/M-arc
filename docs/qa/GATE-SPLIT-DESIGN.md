@@ -421,3 +421,18 @@ Files and scope:
 6. E7 is re-run and posted after every merge of main until merge.
 
 **Package changes:** none in `package.json` (`npm run gate` is unchanged).
+
+## 7. Build record (2026-10-04, after HT-10 merged in train 13)
+
+**Changes from the plan above**, all recorded as D-GATESPLIT-* entries:
+- **99 groups**; HT-9 and BUG-38 arrived after the design. Untagged legacy blocks are named from their header (D-GATESPLIT-KEYS).
+- **R3 refined.** Only a binding that some group mutates must belong to one group. Read-only `ESC_NC_RE` is shared by ESC-NC and HT-9 (D-GATESPLIT-R3).
+- **HT-3's `HT3_DUMP` write is replayed** in jobs that do not run HT-3 (D-GATESPLIT-REPLAY).
+- **Head-start offsets apply only at the configured K**, so E10's solo packing (K = groups) gives one group per job. The test failed before this fix and passes after.
+- **K = 4, not 3**, from the 15 min rule applied to CI's Chrome 153 proof: 2,604 s + 200 s head start = 2,804 s / 900 s → 4, about 701 s per shard. `ht10-gate`, measured on CI, takes 4:03-6:41 per shard, so N = 2 per time zone already meets the rule.
+- **The verdict compares a job's groups as sets**, because `writeProof` sorts rows. The local split run caught this; the test fixtures now sort like `writeProof`.
+
+**Measured on CI** (`63f4ad9`, guarded gate, serial):
+- `source-gate` gate step: 43:27. `visual-gate-tz`: 42:59. All 99 groups passed and the proof was written.
+- 66 groups write no theme-named file, so their theme proof is by construction only (listed in every proof).
+- Jobs queued for up to 14 min that night: the train 13 run was in flight at the same time.
