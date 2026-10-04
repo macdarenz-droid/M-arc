@@ -836,6 +836,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 | GATE-SPLIT | #194 (building) | design FINAL; builder resumed 00:20. | READY → reviewer; supervisor wires .github. |
 | Motion artifact | scratchpad motion-fix | Owner's phone showed "No 3D on this device" (02:3x screenshot). Workflow wf_6d484263-829 reproduces under emulated host constraints, inlines the models, adds a no-WebGL flipbook fallback, verifies adversarially. | Republish the same URL, then send the owner the link. |
 
+- **05:2x Motion artifact v2 republished** (same URL, version 2). Root cause of the owner's "No 3D on this device": the artifact host's CSP blocks fetch() of data: URIs (connect-src). The JSON/data: conversion on 10-03 introduced it, and wf_6d484263-829 reproduced it under host-like CSPs E4/E6/E10. Fix:
+  - both models are inlined as gzip+base64 and parsed with no fetch; textures use createImageBitmap from a Blob;
+  - three.js loads through a dynamic import, so a CDN failure no longer blanks the page;
+  - with no WebGL2 or a lost context, a flipbook plays: 248 WebP frames in flip/, 2 themes × 4 views × 31;
+  - the reason shows under "No 3D".
+  An env verifier and an adversarial reviewer passed it on 17 harness environments. 3D pixel parity holds and __mf.metrics() is unchanged. Known limit: no WebGL plus a blob:/data: host document leaves the flipbook unresolvable, and the reason is shown.
+- **04:34 CI note:** an android-gate job on #214 got no runner, and its builder quoted GitHub saying "account is locked due to a billing issue". A3-5's jobs also failed with 0 steps after 11 min queued. Train 14's jobs at 05:00 got runners normally. If it recurs, it goes to the owner (billing is his).
 - Classifier note: a grep of `docs/supervisor/PROMPTS.md` was refused once (00:0x, "Interfere With Workloads", right after a standalone CI-run cancel). Not retried; prompts were written from the skills instead. Standalone-run cancels (6.8 step 7) are skipped until that is clear.
 
 ### 8.0c PAUSE 10-03 ~18:10 UTC (owner: "Pause all work for now."; read first, supersedes 8.0b where they differ)
