@@ -137,8 +137,10 @@ export function restAndDensityInsight(session: Session, goal: GoalId | boolean, 
 
 /** |Delta duration| vs the median of the split's last 5 sessions. */
 export function durationDriftInsight(session: Session, priorSameSplit: Session[]): Insight | null {
-  if (priorSameSplit.length < 5) return null;
-  const durations = [...priorSameSplit].sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-5).map(s => s.durationSec).sort((a, b) => a - b);
+  // ENG-06 (6.17.4): the baseline is built from trusted timing only.
+  const trusted = priorSameSplit.filter(s => s.logging?.timingTrusted ?? true);
+  if (trusted.length < 5) return null;
+  const durations = [...trusted].sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-5).map(s => s.durationSec).sort((a, b) => a - b);
   const median = durations[Math.floor(durations.length / 2)]!;
   if (median <= 0) return null;
   const delta = (session.durationSec - median) / median;
@@ -150,7 +152,7 @@ export function durationDriftInsight(session: Session, priorSameSplit: Session[]
     noticed: `Ran ${minutes(session.durationSec)} min, your usual for ${session.splitName} is about ${minutes(median)} min.`,
     means: delta > 0 ? 'Idle time between sets is the most common cause.' : 'A tighter session, or fewer sets than usual.',
     action: delta > 0 ? 'Short on time next time? Superset the last couple of accessories.' : 'No change needed if everything got logged.',
-    evidence: { n: priorSameSplit.length, window: `${priorSameSplit.length} sessions`, confidence: 'medium' },
+    evidence: { n: trusted.length, window: `${trusted.length} sessions`, confidence: 'medium' },
   };
 }
 
@@ -200,7 +202,11 @@ export interface PostSessionInput {
 }
 
 export function postSessionInsights(input: PostSessionInput, limit = 4): Insight[] {
-  const { session, priorSessions, custom } = input;
+  const { session, custom } = input;
+  // ENG-07: a back-logged workout is compared only with earlier ones, as Escobar does (read.ts).
+  // The same array when nothing is later, so exerciseHistory's cache still hits.
+  const earlier = (s: Session) => s.startedAt < session.startedAt;
+  const priorSessions = input.priorSessions.every(earlier) ? input.priorSessions : input.priorSessions.filter(earlier);
   const goal: GoalId = input.goal ?? (input.isStrengthGoal ? 'strength' : DEFAULT_GOAL);
   const priorSameSplit = priorSessions.filter(s => s.splitId === session.splitId);
   const previous = priorSameSplit.filter(s => s.startedAt < session.startedAt).sort((a, b) => a.startedAt.localeCompare(b.startedAt)).at(-1) ?? null;
