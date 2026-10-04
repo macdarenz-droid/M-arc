@@ -32,6 +32,9 @@ const proofs = (K: number): Manifest[] => (V.GATE_TZS).flatMap(tz => {
     const run = KEYS.filter(k => ids.includes(k) || B.ALWAYS.has(k));
     const rows: Row[] = run.map(id => ({ id, check: 'gate', state: tz, theme: '*', width: null, result: 'pass' }));
     if (run.includes('BASE')) rows.push({ id: 'BASE', check: 'gate-theme', state: tz, theme: 'paper', width: null, result: 'pass' });
+    // sorted as writeProof writes them (id, check, state, theme, width)
+    const sk = (r: Row) => [r.id, r.check, r.state, r.theme, r.width ?? ''].join('\u0000');
+    rows.sort((x, y) => (sk(x) < sk(y) ? -1 : sk(x) > sk(y) ? 1 : 0));
     return {
       sha: SHA, shard: K > 1 ? { k: j, N: K } : null, rows,
       meta: { job: { k: j + 1, K }, tz, www: 'w1', chrome: '153', plan: G.planHash(KEYS, TIMES, tz), groups: KEYS.length, gateSeconds: 600, errors: [], files: Object.fromEntries(run.map(id => [id, id === 'BASE' ? ['paper-today.png'] : []])), constructionOnly: [] },
@@ -52,14 +55,14 @@ describe('E5: gate-verdict', () => {
   it('the serial arrangement passes only on workflow_dispatch', () => {
     expect(run({ gate: proofs(1), event: 'workflow_dispatch', arrangement: 'serial', needs: { 'gate-shard': { result: 'skipped' } } }).problems).toEqual([]);
     red({ needs: { 'gate-shard': { result: 'skipped' } } }, /needed job gate-shard ended skipped/);
-    red({ gate: proofs(1), event: 'push', arrangement: 'split' }, /expected gate proofs for jobs 1\.\.3 of 3/);
+    red({ gate: proofs(1), event: 'push', arrangement: 'split' }, new RegExp(`expected gate proofs for jobs 1\\.\\.${TIMES.K} of ${TIMES.K}`));
     red({ gate: proofs(1), event: 'push', arrangement: 'serial' }, /serial arrangement is allowed only on workflow_dispatch/);
   });
   it('mutation: a wrong sha is red', () => {
     const g = proofs(TIMES.K); g[1]!.sha = 'd'.repeat(40);
     red({ gate: g }, /ran on d{40}, not c{40}/);
   });
-  it('mutation: a missing manifest is red', () => red({ gate: proofs(TIMES.K).slice(1) }, /expected gate proofs for jobs 1\.\.3 of 3|proven 0 times/));
+  it('mutation: a missing manifest is red', () => red({ gate: proofs(TIMES.K).slice(1) }, new RegExp(`expected gate proofs for jobs 1\\.\\.${TIMES.K} of ${TIMES.K}|proven 0 times`)));
   it('mutation: a duplicated manifest is red', () => { const g = proofs(TIMES.K); red({ gate: [...g, g[0]] }, /proven 2 times/); });
   it('mutation: a dropped row is red (E6)', () => {
     const g = proofs(TIMES.K); const i = g[2]!.rows.findIndex(r => r.check === 'gate' && !B.ALWAYS.has(r.id));

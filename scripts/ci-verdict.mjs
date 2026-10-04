@@ -52,7 +52,8 @@ export function verdict({ gate, ht10 = [], gateSrc, times, sha, event, arrangeme
       if (m.meta?.groups !== keys.length) problems.push(`${tz} job ${m.meta?.job?.k}: saw ${m.meta?.groups} groups, the gate file has ${keys.length}`);
       const ran = m.rows.filter(r => r.check === 'gate' && !ALWAYS.has(r.id)).map(r => r.id);
       const want = plan[(m.meta?.job?.k ?? 0) - 1] ?? [];
-      if (ran.join() !== want.join()) problems.push(`${tz} job ${m.meta?.job?.k}: ran [${ran.join(', ')}], its plan is [${want.join(', ')}]`);
+      // writeProof sorts its rows, so compare as sets
+      if ([...ran].sort().join() !== [...want].sort().join()) problems.push(`${tz} job ${m.meta?.job?.k}: ran [${ran.join(', ')}], its plan is [${want.join(', ')}]`);
       for (const a of ALWAYS) { const n = m.rows.filter(r => r.check === 'gate' && r.id === a).length; if (n !== 1) problems.push(`${tz} job ${m.meta?.job?.k}: ALWAYS group ${a} proven ${n} times, expected once per job`); }
       const s = m.meta?.gateSeconds;
       if (!(s >= 0)) problems.push(`${tz} job ${m.meta?.job?.k}: no gateSeconds`);
