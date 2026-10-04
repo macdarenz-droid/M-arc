@@ -1,7 +1,12 @@
 name: M/ARC Play bundle (unsigned)
 
-# REL-2: builds the Play-ready Android App Bundle the same way release-apk.yml builds its release,
-# stops before signing (the upload-key step is owner-only), and proves Play's technical requirements.
+# REL-2: builds the Play-ready Android App Bundle the same way release-apk.yml builds its release
+# and proves Play's technical requirements.
+# PLAY-SIGN (owner, 2026-10-03: "I approve adding the upload-key signing step to .github/workflows/play-bundle.yml,
+# which reads the secrets MARC_UPLOAD_KEYSTORE_B64 and MARC_UPLOAD_STORE_PASSWORD to sign the Play bundle with the
+# upload key 95:DC:ED:4A."; REL-3): on main and on demand it also signs the bundle with the Play UPLOAD key
+# (pinned below), never the permanent app signing key, which Google Play holds. The upload key is read only from
+# repo secrets, checked against its pin before use, and removed from the runner at the end.
 on:
   workflow_dispatch:
   push:
@@ -11,6 +16,7 @@ on:
     paths:
       - '.github/workflows/play-bundle.yml'
       - 'scripts/check-play-bundle.py'
+      - 'scripts/check-play-signature.sh'
 
 permissions:
   contents: read
@@ -188,3 +194,93 @@ jobs:
             play-output/*.aab.sha256
           if-no-files-found: error
           retention-days: 90
+      - name: Sign the bundle with the upload key
+        # PLAY-SIGN: never on pull_request runs; PRs prove the unsigned bundle only.
+        if: github.event_name != 'pull_request'
+        shell: bash
+        env:
+          KS_B64: ${{ secrets.MARC_UPLOAD_KEYSTORE_B64 }}
+          PW: ${{ secrets.MARC_UPLOAD_STORE_PASSWORD }}
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          EXPECTED_UPLOAD_SHA256: '95:DC:ED:4A:3B:8A:66:67:D8:9B:ED:43:7A:E0:9A:B1:0E:25:7C:FA:6B:8E:2B:17:FA:49:EC:A8:EC:EC:07:9B'
+          PERMANENT_SHA256: '05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5'
+        run: |
+          set -euo pipefail
+          umask 077
+          [ -n "$KS_B64" ] || { echo '::error::Secret MARC_UPLOAD_KEYSTORE_B64 is missing. Run "Play - create upload key (one-off)" first (docs/RELEASE-READINESS.md).'; exit 1; }
+          [ -n "$PW" ] || { echo '::error::Secret MARC_UPLOAD_STORE_PASSWORD is missing.'; exit 1; }
+          [ "$EXPECTED_UPLOAD_SHA256" != "$PERMANENT_SHA256" ] || { echo '::error::The upload key pin equals the permanent key.'; exit 1; }
+          KS="$RUNNER_TEMP/marc-upload.p12"
+          printf '%s' "$KS_B64" | base64 -d > "$KS"
+          # The keystore must hold the pinned upload key before anything is signed with it.
+          # A wrong password or alias leaves KEY_FP empty, which fails the pin check below with a message.
+          KEY_FP="$(keytool -list -v -storetype PKCS12 -keystore "$KS" -alias upload -storepass:env PW 2>/dev/null | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1 || true)"
+          if [ "$KEY_FP" != "$EXPECTED_UPLOAD_SHA256" ]; then
+            rm -f "$KS"
+            echo "::error::The upload keystore holds '$KEY_FP', expected $EXPECTED_UPLOAD_SHA256. Nothing was signed."; exit 1
+          fi
+          AAB='android/app/build/outputs/bundle/release/app-release.aab'
+          SIGNED="play-output/MARC-v${VERSION_NAME}-upload-signed.aab"
+          jarsigner -keystore "$KS" -storetype PKCS12 -storepass:env PW -keypass:env PW \
+            -sigalg SHA256withRSA -digestalg SHA-256 -signedjar "$SIGNED" "$AAB" upload >/dev/null \
+            || { rm -f "$KS"; echo '::error::jarsigner could not sign the bundle with the upload key.'; exit 1; }
+          rm -f "$KS"
+          # Proof: the bundle verifies, its only signer is the pinned upload key, never the permanent key.
+          # Proof: the bundle verifies and its only signer is the pinned upload key (shared script, self-tested below).
+          bash scripts/check-play-signature.sh "$SIGNED" "$EXPECTED_UPLOAD_SHA256"
+          SIGNERS="$EXPECTED_UPLOAD_SHA256"
+          java -jar "$RUNNER_TEMP/bundletool.jar" validate --bundle "$SIGNED" >/dev/null
+          java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle "$SIGNED" > "$RUNNER_TEMP/manifest-signed.xml"
+          cmp -s "$RUNNER_TEMP/manifest.xml" "$RUNNER_TEMP/manifest-signed.xml" || { echo '::error::Signing changed the bundle manifest.'; exit 1; }
+          sha256sum "$SIGNED" > "$SIGNED.sha256"
+          cat "$SIGNED.sha256"
+          {
+            echo '### Play bundle signed with the upload key'
+            echo "Signer SHA-256: $SIGNERS"
+            echo 'Upload it to Play Console from the artifact MARC-PLAY-AAB-UPLOAD-SIGNED.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Self-test, the signature check passes only the expected signer
+        # No secrets: throwaway keys only, so it also runs on pull requests that change the check.
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          T="$RUNNER_TEMP/throwaway"; mkdir -p "$T"
+          AAB='android/app/build/outputs/bundle/release/app-release.aab'
+          TPW="$(openssl rand -hex 16)"; echo "::add-mask::$TPW"
+          for k in a b; do
+            keytool -genkeypair -storetype PKCS12 -keystore "$T/$k.p12" -alias "$k" -keyalg RSA -keysize 2048 -validity 1 \
+              -dname "CN=Throwaway $k" -storepass "$TPW" -keypass "$TPW" >/dev/null 2>&1
+            jarsigner -keystore "$T/$k.p12" -storetype PKCS12 -storepass "$TPW" -keypass "$TPW" \
+              -sigalg SHA256withRSA -digestalg SHA-256 -signedjar "$T/$k.aab" "$AAB" "$k" >/dev/null
+          done
+          FP_A="$(keytool -list -v -storetype PKCS12 -keystore "$T/a.p12" -alias a -storepass "$TPW" 2>/dev/null | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1)"
+          [ -n "$FP_A" ] || { echo '::error::Self-test could not read the throwaway fingerprint.'; exit 1; }
+          cp "$T/a.aab" "$T/tampered.aab"; cp "$T/a.aab" "$T/added.aab"
+          # tampered: a changed copy of the signed manifest; added: one extra file after signing.
+          python3 -c "import zipfile,sys; z=zipfile.ZipFile(sys.argv[1]); n=[i for i in z.namelist() if i.endswith('AndroidManifest.xml')][0]; d=z.read(n); z.close(); z=zipfile.ZipFile(sys.argv[1],'a'); z.writestr(n, d+b' '); z.close()" "$T/tampered.aab" 2>/dev/null
+          python3 -c "import zipfile,sys; z=zipfile.ZipFile(sys.argv[1],'a'); z.writestr('base/assets/added.txt', b'x'); z.close()" "$T/added.aab"
+          # Must pass: signed by the expected key.
+          bash scripts/check-play-signature.sh "$T/a.aab" "$FP_A" >/dev/null || { echo '::error::Self-test: the check rejected a correctly signed bundle.'; exit 1; }
+          # Must fail: another signer, the unsigned bundle, a changed entry, an added entry, a missing file.
+          for bad in "$T/b.aab" "$AAB" "$T/tampered.aab" "$T/added.aab" "$T/missing.aab"; do
+            if bash scripts/check-play-signature.sh "$bad" "$FP_A" >/dev/null 2>&1; then
+              echo "::error::Self-test: the check accepted $bad"; exit 1
+            fi
+            echo "signature check rejects $(basename "$bad")"
+          done
+          rm -rf "$T"
+      - name: Upload the upload-key signed bundle
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-PLAY-AAB-UPLOAD-SIGNED
+          path: |
+            play-output/*-upload-signed.aab
+            play-output/*-upload-signed.aab.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove key material from the runner
+        if: always()
+        shell: bash
+        run: rm -rf "$RUNNER_TEMP/marc-upload.p12" "$RUNNER_TEMP/throwaway"
