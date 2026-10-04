@@ -47,7 +47,6 @@ function valid<T>(list: unknown, counter: { dropped: number }, ok: (v: Record<st
 }
 
 const str = (v: unknown): v is string => typeof v === 'string';
-const strList = <T extends string>(v: unknown): T[] => (Array.isArray(v) ? v.filter(str) as T[] : []);
 const finite = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 const VERDICTS = ['helpful', 'snoozed'];
 
@@ -90,6 +89,7 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
   sessions.sort((a, b) => (a.startedAt ?? '') < (b.startedAt ?? '') ? -1 : (a.startedAt ?? '') > (b.startedAt ?? '') ? 1 : 0);
   const schedule = { ...(isObj(raw.schedule) ? raw.schedule : {}) } as Record<Weekday, string | null>;
   for (const d of Object.keys(schedule) as Weekday[]) { const v = schedule[d]; schedule[d] = typeof v === 'string' && splitIds.has(v) ? v : null; }
+  const strList = <T extends string>(v: unknown): T[] => (Array.isArray(v) ? v.filter(str) as T[] : []);
   // DATA-01 (AUD-4): every list is a list, and each element has the fields its readers key on.
   const lists = {
     body: valid<AppState['body'][number]>(raw.body, c, b => str(b.day)),
