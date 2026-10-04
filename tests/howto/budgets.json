@@ -3,21 +3,21 @@
   "budgets": [
     {
       "chunk": "HowToSheet-*.js",
-      "rawMax": 27168,
-      "gzMax": 9375,
-      "measuredRaw": 24698,
-      "measuredGz": 8522,
-      "setBy": "HT-8",
-      "reason": "HT-8's feel section (Feel.tsx, useFeelMap.ts, with the early chip/row replay, #166) on top of HT-6's sections and zoom host and HT-7's Posture.tsx (HT-7 alone: 19,166 / 6,924 B). Re-measured on main 1c5504f."
+      "rawMax": 30884,
+      "gzMax": 10728,
+      "measuredRaw": 28076,
+      "measuredGz": 9752,
+      "setBy": "HT-9",
+      "reason": "HT-9's Setup and Risks (Setup.tsx, Risks.tsx, plan 2.4 items 3, 7) on top of HT-8's feel section, HT-7's Posture.tsx and HT-6's sections and zoom host (HT-8 alone on main 94fd32c: 24,698 / 8,522 B). Re-measured after merging main 94fd32c."
     },
     {
       "chunk": "HowToSheet-*.css",
-      "rawMax": 28502,
-      "gzMax": 4684,
-      "measuredRaw": 25910,
-      "measuredGz": 4258,
-      "setBy": "HT-8",
-      "reason": "HT-8's feel.css (FEEL_CSS and the feel section rules) on top of HT-6's hand.css and HT-7's posture.css (HT-7 alone: 20,282 / 3,317 B). Re-measured on main 1c5504f."
+      "rawMax": 30340,
+      "gzMax": 4935,
+      "measuredRaw": 27581,
+      "measuredGz": 4486,
+      "setBy": "HT-9",
+      "reason": "HT-9's setup and risks rules (text.css) on top of HT-8's feel.css, HT-7's posture.css and HT-6's hand.css (HT-8 alone on main 94fd32c: 25,910 / 4,258 B). Re-measured after merging main 94fd32c."
     },
     {
       "chunk": "ht-dumbbell-lateral-raise-*.js",
@@ -234,6 +234,17 @@
       "measuredGz": 14972,
       "setBy": "HT-7",
       "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    }
+  ],
+  "totals": [
+    {
+      "chunk": "How-to total",
+      "rawMax": 2553647,
+      "gzMax": 563379,
+      "measuredRaw": 2321497,
+      "measuredGz": 512162,
+      "setBy": "HT-10",
+      "reason": "8 exercises with hand, posture and feel chunks; per-chunk entries pin each chunk. Final: re-measured on main 000918e (HT-7, HT-8, HT-9 merged)."
     }
   ]
 }

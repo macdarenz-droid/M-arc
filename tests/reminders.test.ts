@@ -70,3 +70,37 @@ describe('resyncReminders skips a day already trained (QA8-3, QA8-4)', () => {
     expect(todays.length).toBe(0);
   });
 });
+
+describe('BUG-38: reminders follow the plan (D-BUG38)', () => {
+  interface Note { body?: string; extra?: { day?: string; splitId?: string } }
+  const sp = (id: string, name: string, exerciseId: string): Split => ({ id, name, color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId, sets: 3 }] });
+  const S1 = sp('split_1', 'SPLIT 1 - UPPER BODY', 'lib_barbell_bench_press'), S2 = sp('split_2', 'SPLIT 2 - LOWER AND CORE', 'lib_seated_leg_curl');
+  const S3 = sp('split_3', 'SPLIT 3', 'lib_lat_pulldown'), S4 = sp('split_4', 'SPLIT 4 - CONDITIONING', 'lib_standing_calf_raise');
+  const mk = (d: number, s: Split, h = 17) => ({ ...sessionAt(local(2026, 10, d, h, 0).toISOString(), local(2026, 10, d, h + 1, 0).toISOString(), [], s.id), day: `2026-10-0${d}`, splitName: s.name });
+  const own = (sessions: ReturnType<typeof mk>[]) => ({
+    ...freshState(), splits: [S1, S2, S3, S4], schedule: { ...freshState().schedule, tue: S1.id, thu: S4.id, sat: S2.id, sun: S3.id }, sessions,
+    preferences: { ...freshState().preferences, reminders: { enabled: true, time: '20:00', style: 'silent' as const } },
+  });
+  const sunday = async (sessions: ReturnType<typeof mk>[]) => {
+    vi.setSystemTime(local(2026, 10, 3, 19, 0));
+    refreshClock();
+    replaceState(own(sessions));
+    await resyncReminders();
+    return (plugin.schedule.mock.calls[0]![0].notifications as Note[]).filter(n => n.extra?.day === '2026-10-04');
+  };
+
+  it('BUG-38: Sunday\'s reminder says \'SPLIT 2 - LOWER AND CORE is ready when you are.\'', async () => {
+    const sun = await sunday([mk(3, S3)]);
+    expect(sun.length).toBe(1);
+    expect(sun[0]!.body).toBe('SPLIT 2 - LOWER AND CORE is ready when you are.');
+    expect(sun[0]!.extra?.splitId).toBe(S2.id);
+  });
+
+  it('a day done early gets no reminder', async () => {
+    // SPLIT 2 and SPLIT 3 both on Sat: Sun's SPLIT 3 is done early.
+    const sun = await sunday([mk(3, S2, 10), mk(3, S3)]);
+    expect(sun.length).toBe(0);
+    // Tuesday still gets its reminder.
+    expect((plugin.schedule.mock.calls[0]![0].notifications as Note[]).filter(n => n.extra?.day === '2026-10-06').length).toBe(1);
+  });
+});

@@ -1,12 +1,13 @@
 #!/bin/bash
 # apk-watch.sh: waits for the build-apk workflow run on a commit (main's "M/ARC gate" run) to complete, then reports once.
+# Filters branch=main: a new branch cut from main has the same head sha, and its (cancelled) run was once read as the APK run (10-02).
 # Usage: ./apk-watch.sh <full sha>
 # Prints "APK run <id> <status> <conclusion> | steps: <the Sign / fingerprint step results> | artifacts: <name> id=<id> expired=<bool>". The artifact link is https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifacts/<id>.
 # Needs the agent proxy's GitHub auth for curl (no token is stored in this file).
 # Run with Bash run_in_background and timeout 7200000: the default 30 min kills it before the build finishes.
 SHA=$1; R=https://api.github.com/repos/macdarenz-droid/M-arc
 while true; do
-  out=$(curl -s "$R/actions/runs?head_sha=$SHA&per_page=20" | python3 -c "
+  out=$(curl -s "$R/actions/runs?head_sha=$SHA&branch=main&per_page=20" | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
 for r in d.get('workflow_runs',[]):
