@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=05dfa79bfb73148f734cdadc7c2807e88f2e5feeae8b71934a4a784cd9fad9ad
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=59ecbbcd028e12c0d47ac08fe5327cb15ad0039787b3507398e62cc6d470591f
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_barbell_back_squat",
   name: "Barbell Back Squat",
-  hashes: { inputsSha256: "05dfa79bfb73148f734cdadc7c2807e88f2e5feeae8b71934a4a784cd9fad9ad", golden: "6f8b671dc0b95f9fe171df82f154388ddc20c76dadcc6485d1e8eccfb7f5fae7" },
+  hashes: { inputsSha256: "59ecbbcd028e12c0d47ac08fe5327cb15ad0039787b3507398e62cc6d470591f", golden: "6f8b671dc0b95f9fe171df82f154388ddc20c76dadcc6485d1e8eccfb7f5fae7" },
   plate: {
     view: "side",
     normal: {

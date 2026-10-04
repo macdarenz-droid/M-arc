@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=05dfa79bfb73148f734cdadc7c2807e88f2e5feeae8b71934a4a784cd9fad9ad
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=59ecbbcd028e12c0d47ac08fe5327cb15ad0039787b3507398e62cc6d470591f
 // The only How-to module in the main bundle (plan 2.9: <= 2,048 B, no runtime imports).
 export const HOWTO_IDS = [
   "lib_dumbbell_lateral_raise",

@@ -14,7 +14,7 @@ export const LABEL = 'How to do it';
 
 export const inputs = () => [
   ...Object.keys(readManifest().files).map(p => `tools/plates/vendor/${p}`),
-  'tools/plates/vendor/MANIFEST.json', rel(FONT), 'tools/plates/golden.mjs', 'tools/plates/css.mjs',
+  'tools/plates/vendor/MANIFEST.json', rel(FONT), 'tools/plates/golden.mjs', 'tools/plates/pins.json', 'tools/plates/css.mjs',
   PLATES_JSON, rel(GOLDEN_JSON), rel(FIXTURE),
 ];
 
