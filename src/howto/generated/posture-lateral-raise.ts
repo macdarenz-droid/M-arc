@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=f9ee5de2d5a6c46aa55d08aac66467e50bb39f2823c493ce960230506f3949fe
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=321f4045d9c9939013241aa08fe05001320a098313035b8d33404b0838ce9fbe
 // The lateral-raise posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-lateral-raise.css';
 export const panels: Readonly<Record<string, string>> = {

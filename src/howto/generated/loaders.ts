@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=dba597200bae84732385f1232fac33fd6917656840722a141f6f6183fd1ac2db
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=61635fd91dd726e4931f3859abb57843c2dfabd7314e33547f1d04b7c3ae4df7
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -24,3 +24,7 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_leg_press: () => import('./ht-leg-press'),
   lib_machine_chest_press: () => import('./ht-machine-chest-press'),
 };
+
+// Hand pairs (LIB-2 design 12): exercise chrome id -> shared pair key, and one dynamic import per key.
+export const PAIR_OF: Readonly<Record<string, string>> = {};
+export const PAIR_LOADERS: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {};

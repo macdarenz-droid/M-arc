@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=dba597200bae84732385f1232fac33fd6917656840722a141f6f6183fd1ac2db
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=61635fd91dd726e4931f3859abb57843c2dfabd7314e33547f1d04b7c3ae4df7
 // Node twin of src/howto/ids.ts (tests and the gate's harness): the same SET literal and hash template, emitted
 // together by tools/plates/gen/ids.mjs.
 const SET = "-iP_LL1ph7znQeqzCCuZmQQpumCws7qIQaBHC1kw";

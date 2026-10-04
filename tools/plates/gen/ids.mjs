@@ -5,10 +5,11 @@
 //   src/howto/generated/loaders.ts        LOADERS: one dynamic import per shipped id (its own lazy chunk)
 //   src/howto/coverage.ts                  every exercises.json id's status (HT-4's C6 contract) and stage (plan 1)
 // content.mjs runs after this plugin and appends HOWTO_HINTS to ids.ts, as it did after plates.mjs.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from '../lib/inputs.mjs';
 import { EXERCISES_JSON, registryInputs, rows, shippedIds } from '../library/registry.mjs';
+import { PAIRS, loadPairs, pairsOf } from './handpairs.mjs';
 
 export const COVERAGE_DATA = 'tools/plates/library/coverage-archetypes.json';
 export const LABEL = 'How to do it';
@@ -74,7 +75,7 @@ export type LibId =
 ${ids.map(id => `  | ${JSON.stringify(id)}`).join('\n')};
 `;
 
-export const htIndexText = loaders => `import type { BuiltHowTo, LibId } from '../types';
+export const htIndexText = (loaders, pairOf = {}, keys = []) => `import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
 export const HOWTO_IDS = [
@@ -85,6 +86,10 @@ ${loaders.map(([id]) => `  ${JSON.stringify(id)},`).join('\n')}
 export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo }>>> = {
 ${loaders.map(([id, slug]) => `  ${id}: () => import('./ht-${slug}'),`).join('\n')}
 };
+
+// Hand pairs (LIB-2 design 12): exercise chrome id -> shared pair key, and one dynamic import per key.
+export const PAIR_OF: Readonly<Record<string, string>> = {${Object.entries(pairOf).map(([c, k]) => `\n  ${JSON.stringify(c)}: ${JSON.stringify(k)},`).join('')}${keys.length ? '\n' : ''}};
+export const PAIR_LOADERS: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {${keys.map(k => `\n  ${JSON.stringify(k)}: () => import('./handpair-${k}'),`).join('')}${keys.length ? '\n' : ''}};
 `;
 
 export function coverageText(entries) {
@@ -122,12 +127,14 @@ export function coverageEntries(archetypes, all, exerciseIds) {
   });
 }
 
-export const inputs = () => [...registryInputs(), COVERAGE_DATA];
+const pairsInputs = () => [...registryInputs(), ...(existsSync(join(ROOT, PAIRS)) ? [PAIRS] : [])];
+export const inputs = () => [...registryInputs(), COVERAGE_DATA, ...(existsSync(join(ROOT, PAIRS)) ? [PAIRS] : [])];
 /** Each output's own inputs (design 6.1), static so a header can be re-checked with no render. */
 export function inputsFor(path) {
   if (path === 'src/howto/lib-id.ts') return [EXERCISES_JSON];
   if (path === 'src/howto/coverage.ts') return [...registryInputs(), COVERAGE_DATA];
-  if (['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/generated/loaders.ts'].includes(path)) return registryInputs();
+  if (path === 'src/howto/generated/loaders.ts') return pairsInputs();
+  if (['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs'].includes(path)) return registryInputs();
   return undefined;
 }
 
@@ -137,11 +144,12 @@ export async function outputs() {
   const set = setOf(shipped, exerciseIds);
   const slugOf = new Map(all.map(r => [r.id, r.slug]));
   const archetypes = JSON.parse(readFileSync(join(ROOT, COVERAGE_DATA), 'utf8')).archetypes;
+  const { pairOf, keys } = pairsOf(await loadPairs(), shipped, all);
   return [
     { path: 'src/howto/ids.ts', text: idsText(set), inputs: inputsFor('src/howto/ids.ts') },
     { path: 'tools/plates/library/ids-node.mjs', text: idsNodeText(set), inputs: inputsFor('tools/plates/library/ids-node.mjs') },
     { path: 'src/howto/lib-id.ts', text: libIdText(exerciseIds), inputs: inputsFor('src/howto/lib-id.ts') },
-    { path: 'src/howto/generated/loaders.ts', text: htIndexText(shipped.map(id => [id, slugOf.get(id)])), inputs: inputsFor('src/howto/generated/loaders.ts') },
+    { path: 'src/howto/generated/loaders.ts', text: htIndexText(shipped.map(id => [id, slugOf.get(id)]), pairOf, keys), inputs: inputsFor('src/howto/generated/loaders.ts') },
     { path: 'src/howto/coverage.ts', text: coverageText(coverageEntries(archetypes, all, exerciseIds)), inputs: inputsFor('src/howto/coverage.ts') },
   ];
 }

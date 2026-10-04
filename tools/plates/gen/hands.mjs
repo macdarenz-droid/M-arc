@@ -124,11 +124,7 @@ export function chromeRules(css, selectors = CHROME_SELECTORS) {
 /** D-HT6-budget (supervisor, 2026-09-30): each built `hand-<id>-*.js` chunk (www/assets, gzip default level) may be at
  *  most its size measured at the ruling + 10 %, rounded up. No detail is cut to fit (golden B is the reference). The
  *  measured sizes are pinned in hands.test; gate block HT-6 holds the built chunks to `handCeiling`. */
-export const HAND_MEASURED = Object.freeze({
-  'lateral-raise': { raw: 26570, gz: 8134 }, 'barbell-back-squat': { raw: 34361, gz: 10629 }, 'pull-up': { raw: 84470, gz: 23896 },
-  'hanging-leg-raise': { raw: 44454, gz: 11445 }, 'lat-pulldown': { raw: 68272, gz: 19574 }, 'seated-cable-row': { raw: 23824, gz: 7673 },
-  'leg-press': { raw: 22227, gz: 7430 }, 'machine-chest-press': { raw: 24375, gz: 7426 },
-});
+export const HAND_MEASURED = Object.freeze(JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/budgets/hands.json'), 'utf8')).measured);   // LIB-2: data, same values
 export const handCeiling = id => { const m = HAND_MEASURED[id]; if (!m) throw new Error(`hands: no budget for ${id}`); return { raw: Math.ceil((m.raw * 11) / 10), gz: Math.ceil((m.gz * 11) / 10) }; };   // integer maths (84470 * 1.1 is 92917.00000000001)
 
 /** A single-quoted JS string literal of `s`: its value is `s` exactly, and the markup's double quotes stay unescaped,

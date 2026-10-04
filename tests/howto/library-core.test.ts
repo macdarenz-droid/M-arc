@@ -324,3 +324,58 @@ describe('L2-A19: moduleText, which LIB-3 H7 sizes chunks with, is byte-stable f
     for (const p of plates) { const id = g.LIB_OF[p.chromeId]; expect(g.sha256(pl.moduleText(id, p, latest.get(id), '0'.repeat(64))), id).toBe(want.shas[id]); }
   });
 });
+
+describe('L2-A21: hand-pair chunks (gen/handpairs.mjs, design 12, D-LIB7-1)', () => {
+  let hp: any, idsGen: any, reg: any;
+  const FIX = 'tests/howto/fixtures/handpairs/pairs.mjs';
+  beforeAll(async () => {
+    hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
+    idsGen = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));
+    reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+  });
+  it('on main (no LIB-7 pair loader yet) nothing is written and PAIR_OF / PAIR_LOADERS are empty', async () => {
+    const { PAIR_OF, PAIR_LOADERS } = await import('@/howto/generated/loaders');
+    expect(await hp.loadPairs()).toBeNull();
+    expect([...out.keys()].filter(p => p.includes('/handpair-'))).toEqual([]);
+    expect(Object.keys(PAIR_OF)).toEqual([]);
+    expect(hp.pairProblems(null, reg.shippedIds(), [], Object.keys(PAIR_LOADERS))).toEqual([]);
+  });
+  it('with a pair loader: one handpair-<key>.ts per key a shipped id uses, each hashed over its own key\'s inputs only; loaders gets PAIR_OF and one import per key', async () => {
+    const pairs = await hp.loadPairs(FIX);
+    const o = await hp.outputs({ pairsFile: FIX });
+    expect(o.map((x: any) => x.path)).toEqual(['src/howto/generated/handpair-bar-grip.ts', 'src/howto/generated/handpair-d-handle.ts']);
+    expect(o[0].inputs).toContain('tests/howto/fixtures/handpairs/bar-grip.json');
+    expect(o[0].inputs).not.toContain('tests/howto/fixtures/handpairs/d-handle.json');
+    expect(o[0].text).toContain('export const panel = "<div class=\\"zx\\" id=\\"pair-bar-grip\\"');
+    const { pairOf, keys } = hp.pairsOf(pairs, reg.shippedIds());
+    expect(pairOf).toEqual({ 'pull-up': 'bar-grip', 'lat-pulldown': 'bar-grip', 'leg-press': 'd-handle' });
+    const text = idsGen.htIndexText([], pairOf, keys);
+    expect(text.match(/import\('\.\/handpair-/g)).toHaveLength(2);
+    const loaderKeys = [...text.matchAll(/^ {2}"([a-z-]+)": \(\) => import\('\.\/handpair-/gm)].map(m => m[1]);
+    expect(hp.pairProblems(pairs, reg.shippedIds(), o.map((x: any) => x.path), loaderKeys)).toEqual([]);
+  });
+  it('red on an empty pair registry, a missing file and a key missing from PAIR_LOADERS; the name never matches HT-6\'s hand-*.ts', async () => {
+    const pairs = await hp.loadPairs(FIX), files = ['src/howto/generated/handpair-bar-grip.ts', 'src/howto/generated/handpair-d-handle.ts'];
+    expect(hp.pairProblems({ HAND_OF_ID: {} }, reg.shippedIds(), [], [])).toEqual(['empty pair registry']);
+    expect(hp.pairProblems(pairs, reg.shippedIds(), files.slice(1), ['bar-grip', 'd-handle'])).toHaveLength(1);
+    expect(hp.pairProblems(pairs, reg.shippedIds(), files, ['bar-grip'])).toHaveLength(1);
+    expect(hp.pairPath('curl')).not.toMatch(/\/hand-/);
+  });
+});
+
+describe('L2-A2: the plates page builder (2.7, taken byte for byte from LIB-8 #109) rebuilds golden A from the 8', () => {
+  it('golden A e2bea90c…, 860,766 B, from the vendored builder\'s 8 groups, which are exactly the registry\'s 8 rows', async () => {
+    const bp = await import(/* @vite-ignore */ url('tools/plates/library/build-page.mjs'));
+    const g = await import(/* @vite-ignore */ url('tools/plates/golden.mjs'));
+    const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const cfg = await bp.goldenAConfig();
+    const ids = cfg.groups.flatMap((x: any) => x.ids) as string[];
+    expect(ids).toHaveLength(8);
+    expect([...ids].sort()).toEqual(reg.rows().map((r: any) => r.src === 'ref-src' ? 'lateral_raise' : r.src.replace(/^exercises\//, '').replace(/\.mjs$/, '')).sort());
+    const { html } = await bp.buildPlatesPage(cfg);
+    expect(html.length).toBe(g.PINS.pageBytes);
+    expect(g.sha256(html)).toBe(g.PINS.pageSha256);
+    const swapped = { ...cfg, groups: cfg.groups.map((x: any) => ({ ...x, ids: [...x.ids].reverse() })) };
+    expect(g.sha256((await bp.buildPlatesPage(swapped)).html)).not.toBe(g.PINS.pageSha256);
+  }, 120_000);
+});
