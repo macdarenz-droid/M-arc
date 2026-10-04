@@ -22,7 +22,7 @@ vi.mock('@/native/capacitor', () => ({ isNative: () => true }));
 
 import { replaceState, update, state } from '@/core/store';
 import { freshState } from '@/core/models';
-import { scheduleRestDone, cancelRestDone, syncBackupReminder, backupReminderScheduled, BACKUP_REMINDER_ID } from '@/native/notifications';
+import { scheduleRestDone, cancelRestDone, syncTrainingReminders, syncBackupReminder, backupReminderScheduled, BACKUP_REMINDER_ID } from '@/native/notifications';
 import { resyncReminders, reminderHealth } from '@/slices/settings/reminders';
 import { refreshClock } from '@/app/selectors';
 
@@ -115,5 +115,18 @@ describe('IMP-N01 a superseded schedule call that lands late', () => {
     await older;
     expect(trainingIds().length).toBe(56);
     expect(reminderHealth.value.status).toBe('On. 56 of 56 reminders queued.');
+  });
+  it('training: a schedule call superseded in flight reports itself superseded, not a queued count', async () => {
+    const week = { sun: 'sp', mon: 'sp', tue: 'sp', wed: 'sp', thu: 'sp', fri: 'sp', sat: 'sp' } as const;
+    const reminders = { enabled: true, time: '20:00', style: 'silent' } as const;
+    const gate = lateSchedule();
+    const older = syncTrainingReminders(reminders, week, () => 'Push', new Set());
+    await flush();
+    expect(plugin.schedule).toHaveBeenCalledTimes(1);
+    const newer = await syncTrainingReminders(reminders, week, () => 'Push', new Set());
+    expect(newer.status).toBe('On. 56 of 56 reminders queued.');
+    gate.resolve();
+    const result = await older;
+    expect(result).toEqual({ status: 'Superseded by a newer request.', queued: 0, ok: false });
   });
 });
