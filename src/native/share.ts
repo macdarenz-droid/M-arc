@@ -3,10 +3,12 @@ import { Share } from '@capacitor/share';
 import { isNative } from './capacitor';
 import { pickFileRaw } from './filePicker';
 
+const EXPORT_DIR = 'MARC Exports';
+
 /** Save text on Android through the share sheet, or download it on the web. The message is empty when the sheet itself is the feedback (COPY-1). */
 export async function exportText(fileName: string, text: string, mime = 'application/json'): Promise<string> {
   if (isNative()) {
-    const path = `MARC Exports/${fileName}`;
+    const path = `${EXPORT_DIR}/${fileName}`;
     await Filesystem.writeFile({ path, data: text, directory: Directory.Cache, recursive: true, encoding: 'utf8' as never });
     const { uri } = await Filesystem.getUri({ path, directory: Directory.Cache });
     await Share.share({ title: fileName, url: uri, dialogTitle: 'Save or share your backup' });
@@ -31,6 +33,15 @@ async function blobToBase64(blob: Blob): Promise<string> {
 }
 
 const SHARE_DIR = 'MARC Share';
+
+/**
+ * A3-2 QA CACHE 01: Reset removes the plaintext copies that exports and shared cards leave in the
+ * app cache (PRIVACY-POLICY.md). Native only; a missing folder or a failed call is ignored.
+ */
+export async function clearExportCache(): Promise<void> {
+  if (!isNative()) return;
+  await Promise.all([EXPORT_DIR, SHARE_DIR].map(path => Filesystem.rmdir({ path, directory: Directory.Cache, recursive: true }).catch(() => undefined)));
+}
 
 /** Android's share sheet for a file written to the app cache. False when the person backs out. */
 async function shareCachedFile(fileName: string, base64: string, dialogTitle: string): Promise<boolean> {
