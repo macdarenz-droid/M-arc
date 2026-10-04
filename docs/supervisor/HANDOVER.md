@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-03 ~20:35 UTC · main `4aa1b2a` (train 12 #205) · RESUMED 19:08 (8.0c) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-04 ~00:50 UTC · main `c542ae9` (train 13 #207) · FINISH LINE (8.0d) · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -807,6 +807,18 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0d FINISH LINE 10-04 ~00:50 UTC (read first; supersedes 8.0c where they differ)
+
+- **Train 13 merged** (#207 → main `c542ae9`, 23:58): HT-10 #166 @ `edeefd2` + HT-10 CI wiring #201 @ `1b6bd4e` + handover #206. All 8 checks were green on train head `cf7b936`. HT-10 reviewer and builder archived. No app code changed since train 12 (`git diff 4aa1b2a c542ae9` touches docs, tests, scripts, tools and .github only), so there is no new APK; the owner's phone build v37.1.0.62 is the release candidate app.
+- **Finish-line message sent** (push + chat, ~00:50): How-to done, 32 first-audit items closed (DEV-01 by his decision), Gym Finder parked, O9 phone checks, optional golden update (8.6 item 8) offered.
+- **main red on its own run 37163451459:** ht10-gate (2/2, UTC) C10 `#machine-chest-press-zoom-hand-close is 41.934 x 41.934` (emerald, wrist line); the identical tree passed on cf7b936. Likely measured mid-animation (0.953 scale). Card **GATE-FLAKE-2** (builder session_01WsKUhznFUd9S1xxKdvBMrP, branch claude/gate-flake-2): deterministic slow-animation repro red→green, seeded defects still caught, bounded wait. android-gate was skipped on that run (no APK needed: no app change).
+- **LIB-7 #193:** panel critic @ f3e285c invalid twice on the squat anchor; supervisor confirmed golden-B follow-up 9 on the render. D-LIB7-19 (push heel over the forearm) proved impossible in golden B's engine (builder grid), so D-LIB7-19a: the two push ids are gaps until follow-up 9 (12 drawn, 18 gaps). **Delta PASS @ `55e91e9`** (0/0/0/2 Lows ride the next push). Panel critic running on 55e91e9 with anchors lat_pulldown p1 + pull_up p1 (run wf_10265153-50a).
+- **Pilot A #109:** panel VALID @ `e6f39ff` (wf_cad21b92-9ed): all 17 at the bar; **16 approved** (D-PILOTA-R5, this head only); shrug held (D-LIB8-shrug), dumbbell_fly and rear-delt fly held. Head frozen.
+- **LIB-12 #191:** builder resumed to merge LIB-7 f3e285c (now 55e91e9) and post FIXED; then a delta review.
+- **Library lane started:** LIB-1 scale rehearsal (session_01XCmaQYZNryUhoTH6ohTfTK, Opus because its steps cannot all be spelled out ahead; "[do not merge]" PR #209). LIB-2 enabler resumed to build (#189). GATE-SPLIT builder resumed to build (#194; supervisor wires .github add-only).
+- **Audit lane started:** cards A3-1..A3-7 in `docs/supervisor/verify/audit-3-cards.md` (26 of 26 still fail on c542ae9; rulings R1-R10 confirmed). Wave 1: A3-2 data safety (session_01BHzvrNQY3eVvGxctFKauYW) and A3-1 coach consent (session_01SpoCUhZ5jk7KeaemJVmrGc). A3-3 and A3-4 start when one of them reaches review; then A3-5 → A3-6, A3-7. Merge order A3-2 → A3-1 → A3-3 → A3-4.
+- Classifier note: a grep of `docs/supervisor/PROMPTS.md` was refused once (00:0x, "Interfere With Workloads", right after a standalone CI-run cancel). Not retried; prompts were written from the skills instead. Standalone-run cancels (6.8 step 7) are skipped until that is clear.
 
 ### 8.0c PAUSE 10-03 ~18:10 UTC (owner: "Pause all work for now."; read first, supersedes 8.0b where they differ)
 
