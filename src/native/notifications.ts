@@ -50,6 +50,25 @@ async function ensureChannels(): Promise<void> {
 }
 
 /**
+ * IMP-N01: one request counter per family (rest, training, backup), so the latest request wins.
+ * A request that finds a newer one started after an await stops. One whose schedule call already
+ * went out cancels its ids, except those the newer request has itself scheduled.
+ */
+interface Family { seq: number; issued: Set<number> }
+const families: Record<'rest' | 'training' | 'backup', Family> = {
+  rest: { seq: 0, issued: new Set() }, training: { seq: 0, issued: new Set() }, backup: { seq: 0, issued: new Set() },
+};
+function begin(f: Family): number { f.issued = new Set(); return ++f.seq; }
+async function scheduleLatest(f: Family, my: number, notifications: Parameters<typeof LocalNotifications.schedule>[0]['notifications']): Promise<boolean> {
+  f.issued = new Set(notifications.map(n => n.id));
+  await LocalNotifications.schedule({ notifications });
+  if (my === f.seq) return true;
+  const own = notifications.map(n => n.id).filter(id => !f.issued.has(id));
+  if (own.length) { try { await LocalNotifications.cancel({ notifications: own.map(id => ({ id })) }); } catch { /* best effort */ } }
+  return false;
+}
+
+/**
  * Whether notifications may be shown. Only a person's own tap (a Settings toggle) passes
  * `prompt: true`; launch and resume only check, so a refusal is never asked again on its own
  * (QA-R2a-2, QA-R6-13).
@@ -79,20 +98,21 @@ export async function refreshRestPermission(): Promise<boolean> {
 
 export async function scheduleRestDone(atMs: number): Promise<void> {
   if (!isNative()) return;
+  const rest = families.rest, my = begin(rest);
   // QA2-FB-4: the plugin asks for permission itself on Android 13+; a rest timer never should.
   // QA3-1: only a firm refusal skips scheduling. A never-asked ('prompt') state still schedules,
   // so the plugin's own Android 13+ prompt gets a chance to ask, as it did before eefa356.
-  if (await refreshRestPermission()) return;
+  if (await refreshRestPermission() || my !== rest.seq) return;
   await ensureChannels();
+  if (my !== rest.seq) return;
   try {
     await LocalNotifications.cancel({ notifications: [{ id: REST_ID }] });
-    await LocalNotifications.schedule({
-      notifications: [{
-        id: REST_ID, title: 'Rest done', body: 'Next set.',
-        schedule: { at: new Date(atMs), allowWhileIdle: true }, channelId: CHANNELS.rest.id, extra: { type: 'rest' },
-        isExactNotification: exactOk,
-      }],
-    });
+    if (my !== rest.seq) return;
+    await scheduleLatest(rest, my, [{
+      id: REST_ID, title: 'Rest done', body: 'Next set.',
+      schedule: { at: new Date(atMs), allowWhileIdle: true }, channelId: CHANNELS.rest.id, extra: { type: 'rest' },
+      isExactNotification: exactOk,
+    }]);
   } catch { /* best effort */ }
 }
 
@@ -118,6 +138,7 @@ export async function testRestAlert(inMs = 5000): Promise<boolean> {
 
 export async function cancelRestDone(): Promise<void> {
   if (!isNative()) return;
+  begin(families.rest);
   try { await LocalNotifications.cancel({ notifications: [{ id: REST_ID }] }); } catch { /* ignore */ }
 }
 
@@ -132,12 +153,18 @@ export interface ReminderHealth { status: string; queued: number; ok: boolean }
  */
 export async function syncTrainingReminders(reminders: Reminders, schedule: Record<Weekday, string | null>, splitName: (id: string) => string, completedDays: Set<string>, todayReadinessSummary?: string | null, { prompt = false, planned }: { prompt?: boolean; planned?: Map<string, string | null> } = {}): Promise<ReminderHealth> {
   if (!isNative()) return { status: 'Reminders need the Android app.', queued: 0, ok: false };
+  const training = families.training, my = begin(training);
+  const superseded: ReminderHealth = { status: 'Superseded by a newer request.', queued: 0, ok: false };
   await ensureChannels();
+  if (my !== training.seq) return superseded;
   let pending: Array<{ id: number }> = [];
   try { pending = (await LocalNotifications.getPending()).notifications.filter(n => n.id >= 730000 && n.id < 820000); } catch { /* ignore */ }
+  if (my !== training.seq) return superseded;
   if (pending.length) { try { await LocalNotifications.cancel({ notifications: pending.map(p => ({ id: p.id })) }); } catch { /* ignore */ } }
   if (!reminders.enabled) return { status: 'Off', queued: 0, ok: true };
+  if (my !== training.seq) return superseded;
   const granted = await ensurePermission({ prompt });
+  if (my !== training.seq) return superseded;
   if (!granted) return { status: 'On, but Android has not allowed notifications yet.', queued: 0, ok: false };
   const [hh, mm] = reminders.time.split(':').map(Number);
   const list: Parameters<typeof LocalNotifications.schedule>[0]['notifications'] = [];
@@ -161,7 +188,7 @@ export async function syncTrainingReminders(reminders: Reminders, schedule: Reco
   }
   if (!list.length) return { status: 'On. No upcoming scheduled days.', queued: 0, ok: true };
   try {
-    await LocalNotifications.schedule({ notifications: list });
+    if (!(await scheduleLatest(training, my, list))) return superseded;
     const after = (await LocalNotifications.getPending()).notifications.filter(n => n.id >= 730000 && n.id < 820000).length;
     return { status: `On. ${after} of ${list.length} reminders queued.`, queued: after, ok: after > 0 };
   } catch {
@@ -189,16 +216,23 @@ export const backupReminderScheduled = signal<boolean | null>(null);
 /** F5: a weekly, inexact "save a backup" note on Sundays at 19:00; cancelled when off. Returns whether it is scheduled. */
 export async function syncBackupReminder(on: boolean, { prompt = false }: { prompt?: boolean } = {}): Promise<boolean> {
   if (!isNative()) return false;
+  const backup = families.backup, my = begin(backup);
   try { await LocalNotifications.cancel({ notifications: [{ id: BACKUP_REMINDER_ID }] }); } catch { /* none pending */ }
-  if (!on || !(await ensurePermission({ prompt }))) { backupReminderScheduled.value = false; return false; }
+  if (my !== backup.seq) return false;
+  if (!on) { backupReminderScheduled.value = false; return false; }
+  const granted = await ensurePermission({ prompt });
+  // A newer request owns the signal; this one only stops.
+  if (my !== backup.seq) return false;
+  if (!granted) { backupReminderScheduled.value = false; return false; }
   await ensureChannels();
+  if (my !== backup.seq) return false;
   try {
-    await LocalNotifications.schedule({ notifications: [{
+    if (!(await scheduleLatest(backup, my, [{
       id: BACKUP_REMINDER_ID, title: 'Save a backup of your training', body: '', // COPY-1: the title says it all
       schedule: { on: { weekday: 1, hour: 19, minute: 0 }, allowWhileIdle: false }, channelId: CHANNELS.silent.id, extra: { type: 'backup' },
       isExactNotification: false,
-    }] });
+    }]))) return false;
     backupReminderScheduled.value = true;
     return true;
-  } catch { backupReminderScheduled.value = false; return false; }
+  } catch { if (my === backup.seq) backupReminderScheduled.value = false; return false; }
 }

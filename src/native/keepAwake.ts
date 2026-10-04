@@ -11,15 +11,31 @@ function nativeUiPlugin(): NativeUiPlugin | null {
 let webLock: WakeLockSentinel | null = null;
 let wantOn = false;
 let visBound = false;
+/** IMP-N03: the latest request; an older grant that lands later is released, never kept. */
+let lockSeq = 0;
+
+async function releaseLock(lock: WakeLockSentinel | null): Promise<void> {
+  try { await lock?.release(); } catch { /* already released */ }
+}
 
 async function acquireWebLock(): Promise<void> {
-  try { webLock = (await navigator.wakeLock?.request('screen')) ?? null; }
-  catch { webLock = null; }
+  const my = ++lockSeq;
+  let lock: WakeLockSentinel | null;
+  try { lock = (await navigator.wakeLock?.request('screen')) ?? null; }
+  catch { lock = null; }
+  if (!lock) return;
+  // The workout ended, or a newer request (a later tab return) started, while this one waited.
+  if (!wantOn || my !== lockSeq) { await releaseLock(lock); return; }
+  const old = webLock;
+  webLock = lock;
+  if (old && old !== lock) await releaseLock(old);
 }
 
 async function releaseWebLock(): Promise<void> {
-  try { await webLock?.release(); } catch { /* already released */ }
+  lockSeq++;
+  const old = webLock;
   webLock = null;
+  await releaseLock(old);
 }
 
 function onVisibility(): void {
