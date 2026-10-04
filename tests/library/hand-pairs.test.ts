@@ -54,6 +54,14 @@ function approvedSvgs(): string[] {
 const clone = () => P.MODULES.map((m: any) => ({ ...m, HANDLE: structuredClone(m.HANDLE), VARIANTS: structuredClone(m.VARIANTS ?? {}), IDS: structuredClone(m.IDS ?? {}), GAPS: { ...(m.GAPS ?? {}) } }));
 const withMods = (f: (mods: any[]) => void) => { const mods = clone(); f(mods); return mods; };
 const key = (mods: any[], k: string) => mods.find((m: any) => m.KEY === k);
+// the push ids, parked as gaps until golden-B follow-up 9 (D-LIB7-19a): this fixture draws them again, as they were, so
+// the push-only checks keep their failure paths while no push is drawn
+const PARKED: Record<string, [string, any]> = {
+  'd-handle': ['single_arm_triceps_pushdown', { variant: 'push', orientation: 'unstated', faults: ['bent-back'], claims: ['cards/single_arm_triceps_pushdown.json#grip.type'] }],
+  ez: ['skull_crusher', { variant: 'push', orientation: 'over', faults: ['bent-back'], claims: ['cards/skull_crusher.json#c1'] }],
+};
+const redrawPush = (mods: any[]) => { for (const [k, [id, cfg]] of Object.entries(PARKED)) { const m = key(mods, k); if (!(id in m.GAPS)) throw new Error(`${id} is not parked`); delete m.GAPS[id]; m.IDS[id] = structuredClone(cfg); } return mods; };
+const pushIdx = () => P.indexOf(redrawPush(clone()));
 // LIB-7's drawn ids only: LIB-12's keys share the loader and never change these counts (LIB-12 ask, supervisor OK 10-02)
 const lib7Drawn = () => [...P.INDEX.drawn].filter(([, e]: any) => e.mod.OWNER === 'LIB-7').map(([id]: any) => id);
 
@@ -92,7 +100,7 @@ describe('LIB-7 A1: golden B unchanged with every hand-*.mjs loaded', () => {
 
 describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
   it('every drawn id has pages and no problem', () => {
-    const ids = C.sweep(lib7Drawn(), 14, 'LIB-7 drawn ids');
+    const ids = C.sweep(lib7Drawn(), 12, 'LIB-7 drawn ids');
     for (const id of ids) {
       const { spec, pages } = C.renderedPages(id);
       expect(pages.length).toBeGreaterThan(0);
@@ -107,14 +115,14 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     expect(C.pairProblems('ez_bar_curl', idx).join('\n')).toMatch(/G1 right wrist 30 outside/);
   });
   it('G3: a loose thumb fails', () => bites(withMods(m => { key(m, 'rope').VARIANTS.push.right.thumb = 'loose'; }), 'rope_triceps_pushdown', /G3 right thumb loose/));
-  it('G4: a push handle on the fingers fails', () => bites(withMods(m => { key(m, 'd-handle').VARIANTS.push.right.contactAt = 1.0; }), 'single_arm_triceps_pushdown', /G4 right contact at/));
+  it('G4: a push handle on the fingers fails', () => bites(withMods(m => { redrawPush(m); key(m, 'd-handle').VARIANTS.push.right.contactAt = 1.0; }), 'single_arm_triceps_pushdown', /G4 right contact at/));
   it('G5: no explicit diameter throws; a renderer fallback is caught', () => {
     expect(() => P.pairSpec('rope_triceps_pushdown', P.indexOf(withMods(m => { delete key(m, 'rope').HANDLE.diameterMm; })))).toThrow(/no explicit handle diameter/);
     const { spec, pages } = C.renderedPages('rope_triceps_pushdown');
     pages[0].report.right.handleDiameterMm = 32;
     expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G5 right handle rope 32 mm, want rope 28 mm/);
   });
-  it('G6: a push Wrong in the heel (lever not behind the wrist) fails', () => bites(withMods(m => { key(m, 'ez').VARIANTS.push.faults['bent-back'].pose.contactAt = 0.3; }), 'skull_crusher', /G6 lever checks/));
+  it('G6: a push Wrong in the heel (lever not behind the wrist) fails', () => bites(withMods(m => { redrawPush(m); key(m, 'ez').VARIANTS.push.faults['bent-back'].pose.contactAt = 0.3; }), 'skull_crusher', /G6 lever checks/));
   it('G6: a force line on a gravity curl fails', () => bites(withMods(m => { delete key(m, 'curl').VARIANTS.bar.loadLine; }), 'barbell_curl', /G6 force line drawn/));
   it('critic fixes (10-03): approved drawings byte-identical; rope plain with its knob; EZ angled label', () => {
     // the pages the calibrated critic approved, sha256 over `id/fault\0svg\0` (computed on 23ac5bb before the fixes)
@@ -142,10 +150,11 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
   });
   // a push variant that routes its Right line through the pivot (the 60ea214 drawing): G6's pivot and axis checks still
   // hold for such a variant, though no LIB-7 push draws one since D-LIB7-18a
-  const viaPivot = () => P.indexOf(withMods(m => { for (const k of ['d-handle', 'ez']) { const V = key(m, k).VARIANTS.push; delete V.rightLoad; V.loadThroughPivot = true; } }));
+  const viaPivot = () => P.indexOf(withMods(m => { redrawPush(m); for (const k of ['d-handle', 'ez']) { const V = key(m, k).VARIANTS.push; delete V.rightLoad; V.loadThroughPivot = true; } }));
   it('G6 (D-LIB7-18a/b): a push Right draws no force line and no wrist tick, keeps its contact dot; the Wrong keeps its line', () => {
+    const parked = pushIdx();
     for (const id of ['single_arm_triceps_pushdown', 'skull_crusher']) {
-      const { spec, pages } = C.renderedPages(id);
+      const { spec, pages } = C.renderedPages(id, parked);
       expect(C.problemsOf(spec, pages)).toEqual([]);
       for (const p of pages) {
         const right = p.svg.slice(p.svg.indexOf('<g class="h-panel right">'), p.svg.indexOf('<g class="h-panel wrong">'));
@@ -212,7 +221,7 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
   });
   it('no two drawn ids of one variant with different palm directions draw the same hand', () => {
     // LIB-7's own drawn ids only, so another card's drawn ids never move this count (D-LIB7-PIN2)
-    const ids = C.sweep([...P.INDEX.drawn].filter(([, e]: any) => e.mod.OWNER === 'LIB-7').map(([id]: any) => id), 14, 'LIB-7 drawn ids'), bad: string[] = [];
+    const ids = C.sweep([...P.INDEX.drawn].filter(([, e]: any) => e.mod.OWNER === 'LIB-7').map(([id]: any) => id), 12, 'LIB-7 drawn ids'), bad: string[] = [];
     for (const a of ids) for (const b of ids) {
       const A = P.pairSpec(a), B = P.pairSpec(b);
       if (a >= b || A.pair !== B.pair || !!A.right.mirror === !!B.right.mirror) continue;
@@ -246,14 +255,14 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     expect(Object.keys(P.CONVENTIONS).filter(k => !cited.has(k))).toEqual([]);
   });
   it('push flags its golden-B squat drawing values on the sheet (D-LIB7-14)', async () => {
-    const { body } = await sheet.buildSheet({ mods: P.MODULES.filter((m: any) => m.OWNER === 'LIB-7') });
+    const { body } = await sheet.buildSheet({ mods: redrawPush(clone().filter((m: any) => m.OWNER === 'LIB-7')) });
     for (const id of ['single_arm_triceps_pushdown', 'skull_crusher']) {
       const tile = body.slice(body.indexOf(id)), end = tile.indexOf('</ul>');
       expect(tile.slice(0, end)).toContain('heel contact -0.1 and wrist 8° are golden-B squat drawing values');
     }
   }, 60_000);
   it('G8: the thumb-side label is required where orientation is unstated', () => {
-    const { spec, pages } = C.renderedPages('single_arm_triceps_pushdown');
+    const { spec, pages } = C.renderedPages('single_arm_triceps_pushdown', pushIdx());
     pages[0].svg = pages[0].svg.replace('aria-label="Seen from the thumb side.', 'aria-label="Seen from the side.');
     expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G8 camera "Seen from the side", want "Seen from the thumb side"/);
   });
@@ -328,14 +337,20 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(() => C.sweep([1, 2], 3, 'x')).toThrow(/2, expected 3/);
     expect(C.sweep(new Set([1, 2]), 2, 'x')).toEqual([1, 2]);
   });
-  it('5 LIB-7 key files: 4 drawn keys and band (gaps only), 7 variants, 14 drawn ids, 16 gaps', () => {
+  it('5 LIB-7 key files: 4 drawn keys and band (gaps only), 7 variants (push parked), 12 drawn ids, 18 gaps', () => {
     const mods = C.sweep(lib7(), 5, 'LIB-7 keys');
     expect(mods.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
     expect(C.sweep(mods.filter((m: any) => Object.keys(m.IDS ?? {}).length), 4, 'drawn keys').map((m: any) => m.KEY)).toEqual(['curl', 'd-handle', 'ez', 'rope']);
     expect(Object.keys(key(mods, 'band').IDS ?? {})).toEqual([]);
     C.sweep(mods.flatMap((m: any) => Object.keys(m.VARIANTS ?? {}).map(v => `${m.KEY}/${v}`)), 7, 'variants');
-    C.sweep(mods.flatMap((m: any) => Object.keys(m.IDS ?? {})), 14, 'drawn ids');
-    C.sweep(mods.flatMap((m: any) => Object.keys(m.GAPS ?? {})), 16, 'gap ids');
+    C.sweep(mods.flatMap((m: any) => Object.keys(m.IDS ?? {})), 12, 'drawn ids');
+    C.sweep(mods.flatMap((m: any) => Object.keys(m.GAPS ?? {})), 18, 'gap ids');
+    // the push ids are gaps citing golden-B follow-up 9; their variants stay, drawn by no id (D-LIB7-19a)
+    for (const [k, [id]] of Object.entries(PARKED)) {
+      expect(key(mods, k).GAPS[id]).toMatch(/^golden-B follow-up 9: /);
+      expect(key(mods, k).VARIANTS.push.archetype).toBe('push');
+      expect(Object.values(key(mods, k).IDS).some((c: any) => c.variant === 'push')).toBe(false);
+    }
   });
   it('scope: drawn + gaps = the census ids of the LIB-7 kinds (30), sled_pull excepted (LIB-12), each once, archetypes matching', () => {
     const scope = new Set<string>([...CENSUS.byHandArchetype.curl, ...CENSUS.equipmentByNeed.band, ...CENSUS.equipmentByNeed.ezBar,
@@ -379,14 +394,14 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
   it('sheet (D-LIB7-SHEET): claim text from the module\'s CLAIMS_TEXT, generic labels for own-view keys, radial sheets unchanged', async () => {
     // the LIB-7 radial sheet, byte for byte (sha256 of buildSheet().body). Re-pinned once for the calibrated critic's fixes
     // (10-03: rope, push, ez_bar_curl angled; D-LIB7-13..15) and for the delta review (D-LIB7-16: ez palm up, rope fist
-    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid; D-LIB7-17: rope label; D-LIB7-18a/b: push Right without a force line or tick); the approved pages stay pinned separately, unchanged.
+    // square, push flags; D-LIB7-16a: rope contact ga:rope-fist-mid; D-LIB7-17: rope label; D-LIB7-18a/b: push Right without a force line or tick; D-LIB7-19a: push ids parked as gaps); the approved pages stay pinned separately, unchanged.
     // built from LIB-7's own key modules only, so another card's tiles never move this pin (D-LIB7-PIN); the filter must
     // keep all 5 LIB-7 modules, so the pin cannot silently shrink
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
     const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
     expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
-    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('ca474ca7afbc4b66388996160654ddd85dda1f61b9c7fe6f042a9600b11df12f');
-    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('29177516a869fdd1b9d04fbb9ab198a175fbc36b65c23aeb16ace9fea063456a');
+    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('fcd57af5c3721f4139208bd1e23d154dc4619e283c1fae4532b66b61affec919');
+    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('5feecaf0384735f0e6d7358c133bbda423da0d918874b5f691fd0e0348de6403');
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },
@@ -466,7 +481,7 @@ describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
       const uid = `q-${n++}`, { svg } = P.renderPair(id, { fault: w.key, uid });
       expect([id, w.key, markupProblems(svg, uid, gold)]).toEqual([id, w.key, []]);
     }
-    expect(n).toBe(24);
+    expect(n).toBe(22);
   });
   it('H2 failure paths: a new element, a colour literal, a duplicated id, a foreign id', () => {
     const { svg } = P.renderPair('hammer_curl', { uid: 'q' });
@@ -494,7 +509,7 @@ describe('LIB-7 A4: close-up QA (LIB-3 PQ-H2, PQ-H7) and inputsFor', () => {
       expect([id, w.key, fresh.renderPair(id, { fault: w.key }).svg === P.renderPair(id, { fault: w.key }).svg]).toEqual([id, w.key, true]);
       n++;
     }
-    expect(n).toBe(24);
+    expect(n).toBe(22);
   });
   it('inputsFor: the id\'s key file and everything the drawing imports, no other key file, all present', () => {
     for (const id of lib7Drawn()) {
