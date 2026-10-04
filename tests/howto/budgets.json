@@ -234,6 +234,15 @@
       "measuredGz": 14972,
       "setBy": "HT-7",
       "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "loaders-*.js",
+      "rawMax": 1152,
+      "gzMax": 475,
+      "measuredRaw": 1047,
+      "measuredGz": 431,
+      "setBy": "LIB-2",
+      "reason": "LOADERS (one dynamic import per shipped id) moved from generated/index.ts, whose lazy chunk was an unbudgetable index-*.js, to generated/loaders.ts (library plan 5.2: its own lazy chunk, budget set once at measured + 10 %). Measured on the 8 (with the empty PAIR_OF / PAIR_LOADERS maps, design 12) at main c542ae9 + LIB-2."
     }
   ],
   "totals": [

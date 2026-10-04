@@ -9,16 +9,9 @@ import type {
  *  PR #116; supervisor ruling, same PR): the rendered crop/hand strings stay HT-7's/HT-6's own lazy files. */
 export type ZoomDescriptor = Pick<ZoomSpec, 'key' | 'chip' | 'chipCaption' | 'heading' | 'kind' | 'feelRow'>;
 
-/** The 8 library exercises with an approved Technical Plate (golden A, bc0f378). */
-export type LibId =
-  | 'lib_dumbbell_lateral_raise'
-  | 'lib_barbell_back_squat'
-  | 'lib_pull_up'
-  | 'lib_hanging_leg_raise'
-  | 'lib_lat_pulldown'
-  | 'lib_seated_cable_row'
-  | 'lib_leg_press'
-  | 'lib_machine_chest_press';
+/** Every library exercise id (src/data/exercises.json), generated in ./lib-id.ts (LIB-2, library plan 5.2). */
+import type { LibId } from './lib-id';
+export type { LibId };
 
 /** One callout or tell: its key and the cue text shown in the cue line (decoded, not HTML). */
 export interface PlateCue {

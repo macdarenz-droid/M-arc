@@ -8,6 +8,7 @@
 //   - `zdots`: the page's one hidden dot pattern (`ZDOTS`, howto-layers.mjs) that most crops fill their background
 //     with (`url(#zdots)`), proven to be in the page verbatim; Posture.tsx mounts it once per document;
 //   - an import of `css/zoom-<chromeId>.css` (HT-6 generates it: the exercise's scoped close-up rules). Never duplicated.
+import { goldenInputs, goldenRows } from '../library/registry.mjs';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -19,7 +20,7 @@ import { chromeRules, divAt, howtoCss, rewrite } from './hands.mjs';
 export const PLATES_JSON = 'tools/plates/plates.json';
 export const inputs = () => [
   ...Object.keys(readManifest().files).map(p => `tools/plates/layers/${p}`),
-  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', 'tools/plates/gen/hands.mjs', PLATES_JSON,
+  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', 'tools/plates/gen/hands.mjs', ...goldenInputs(),
 ];
 
 /** The page's rule for the dot pattern's dots (HOWTO_CSS). */
@@ -68,8 +69,8 @@ export function posturePanels(html, id) {
 
 const lit = s => JSON.stringify(s);
 
-export async function outputs() {
-  const rows = JSON.parse(readFileSync(join(ROOT, PLATES_JSON), 'utf8'));
+async function outputsOf() {
+  const rows = goldenRows();
   const mirror = makeMirror();
   try {
     const page = await buildLayerPage(mirror);
@@ -93,4 +94,12 @@ export async function outputs() {
   } finally {
     cleanupMirror(mirror);
   }
+}
+
+/** LIB-2 (design 6.1): each output's own inputs. Every zooms.mjs output is cut from one shared source (the golden
+ *  B page built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
+ *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4). */
+export const inputsFor = () => inputs();
+export async function outputs(ctx) {
+  return (await outputsOf(ctx)).map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }

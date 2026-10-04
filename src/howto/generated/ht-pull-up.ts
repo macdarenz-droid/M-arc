@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d5e987a440c22961f3d982cf45309a41f98e7f34809d725f1f8ac95a3404991c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=3e5e1606f3a3d76150b8cadccfd8047a4a9bc10da09b633dcf8f8f6b081f2eeb
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_pull_up",
   name: "Pull-up",
-  hashes: { inputsSha256: "d5e987a440c22961f3d982cf45309a41f98e7f34809d725f1f8ac95a3404991c", golden: "0f6f2a49b37027a1555b18b58145a32d3052bac9f144ba5eeab80ca247160231" },
+  hashes: { inputsSha256: "3e5e1606f3a3d76150b8cadccfd8047a4a9bc10da09b633dcf8f8f6b081f2eeb", golden: "0f6f2a49b37027a1555b18b58145a32d3052bac9f144ba5eeab80ca247160231" },
   plate: {
     view: "side",
     normal: {

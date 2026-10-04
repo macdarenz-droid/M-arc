@@ -5,7 +5,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { THEMES, themeToCss } from '@/theme/themes';
-import { HOWTO_IDS } from '@/howto/ids';
+import { HOWTO_IDS } from '@/howto/generated/loaders';   // LIB-2: the shipped id list lives in the lazy loaders chunk
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 let c: any, g: any;

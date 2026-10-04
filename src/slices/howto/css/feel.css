@@ -1,4 +1,4 @@
-/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=af7d956afa1747f5c6879a6ccd008f1af603c34f6de317148fcb231d88fd1beb */
+/* GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=79fc682dc8d480008ac8edec3ae8e48bf985617baab379d8627d9361f0e7ed58 */
 /* ht-tokens:start */
 .ht { --ht-feel-delay-0: 0ms; --ht-feel-main: color-mix(in srgb, var(--accent) 75%, var(--text)); --ht-feel-map-h: 280px; --ht-feel-mark-dur: 200ms; --ht-feel-sweep: 5200ms;  }
 @keyframes feel-sweep { 0% { transform: translateY(var(--feel-from)); animation-timing-function: cubic-bezier(.45,0,.55,1); } 46.154% { transform: translateY(var(--feel-to)); animation-timing-function: step-end; } 46.155% { transform: translateY(var(--feel-from)); } 53.846% { transform: translateY(var(--feel-from)); animation-timing-function: cubic-bezier(.45,0,.55,1); } 100% { transform: translateY(var(--feel-to)); } }

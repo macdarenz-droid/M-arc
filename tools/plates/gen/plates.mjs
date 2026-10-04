@@ -1,7 +1,8 @@
-// HT-2 plugin: the approved plates -> src/howto/generated/ht-<slug>.ts (x8), generated/index.ts, src/howto/ids.ts
-// and src/slices/howto/css/plate.css. It rebuilds the gallery from the vendored engine (HT-1's golden.mjs), refuses
+// HT-2 plugin: the approved plates -> src/howto/generated/ht-<slug>.ts (x8), generated/index.ts and
+// src/slices/howto/css/plate.css (ids.ts moved to gen/ids.mjs, LIB-2). It rebuilds the gallery from the vendored engine (HT-1's golden.mjs), refuses
 // unless the page is the approved one and every fragment matches its latest GOLDEN.json entry, then emits the
 // fragments as JSON string literals: the parsed strings are the golden bytes, never re-serialized.
+import { goldenInputs, goldenRows } from '../library/registry.mjs';
 import { readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
@@ -14,8 +15,8 @@ export const LABEL = 'How to do it';
 
 export const inputs = () => [
   ...Object.keys(readManifest().files).map(p => `tools/plates/vendor/${p}`),
-  'tools/plates/vendor/MANIFEST.json', rel(FONT), 'tools/plates/golden.mjs', 'tools/plates/css.mjs',
-  PLATES_JSON, rel(GOLDEN_JSON), rel(FIXTURE),
+  'tools/plates/vendor/MANIFEST.json', rel(FONT), 'tools/plates/golden.mjs', 'tools/plates/pins.json', 'tools/plates/css.mjs',
+  ...goldenInputs(), rel(GOLDEN_JSON), rel(FIXTURE),
 ];
 
 /** The view, from the plate's own meta label ("Front view" / "Side view"). */
@@ -69,34 +70,20 @@ export default {
 
 export const chunkName = slug => `ht-${slug}`;
 
-export function idsText(ids) {
-  return `// The only How-to module in the main bundle (plan 2.9: <= 2,048 B, no runtime imports).
-export const HOWTO_IDS = [
-${ids.map(i => `  ${lit(i)},`).join('\n')}
-] as const;
-export type HowToId = (typeof HOWTO_IDS)[number];
-export const HOWTO_LABEL = ${lit(LABEL)};
-export function hasHowTo(id: string): id is HowToId {
-  return (HOWTO_IDS as readonly string[]).includes(id);
-}
+/** LOADERS moved to generated/loaders.ts (LIB-2, design 7: its own lazy chunk, written by gen/ids.mjs). index.ts stays
+ *  as a re-export so '@/howto/generated' keeps its meaning. */
+export function indexText() {
+  return `// LOADERS live in ./loaders (LIB-2): one dynamic import per shipped id, in its own lazy chunk.
+export { LOADERS } from './loaders';
 `;
 }
 
-export function indexText(rows) {
-  return `import type { BuiltHowTo, LibId } from '../types';
-
-export const LOADERS: Record<LibId, () => Promise<{ default: BuiltHowTo }>> = {
-${rows.map(([id, slug]) => `  ${id}: () => import('./${chunkName(slug)}'),`).join('\n')}
-};
-`;
-}
-
-export async function outputs({ hashFor }) {
+async function outputsOf({ hashFor }) {
   const golden = JSON.parse(readFileSync(GOLDEN_JSON, 'utf8'));
   const chain = verifyChain(golden.entries);
   if (chain.length) throw new Error(`plates: GOLDEN.json chain:\n${chain.join('\n')}`);
   const latest = latestEntries(golden.entries), page = latest.get('page');
-  const rows = JSON.parse(readFileSync(join(ROOT, PLATES_JSON), 'utf8'));
+  const rows = goldenRows();
   const mirror = makeMirror();
   let built;
   try { built = await buildGallery(mirror); } finally { rmSync(mirror, { recursive: true, force: true }); }
@@ -115,8 +102,15 @@ export async function outputs({ hashFor }) {
     const path = `src/howto/generated/${chunkName(rows[id].slug)}.ts`;
     return { path, text: moduleText(id, byId.get(id), latest.get(id), hashFor(path)) };
   });
-  out.push({ path: 'src/howto/generated/index.ts', text: indexText(goldenIds.map(id => [id, rows[id].slug])) });
-  out.push({ path: 'src/howto/ids.ts', text: idsText(goldenIds) });
+  out.push({ path: 'src/howto/generated/index.ts', text: indexText() });
   out.push({ path: 'src/slices/howto/css/plate.css', text: rewriteCss(galleryCss(html)) });
   return out;
+}
+
+/** LIB-2 (design 6.1): each output's own inputs. Every plates.mjs output is cut from one shared source (the golden
+ *  A gallery built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
+ *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4). */
+export const inputsFor = () => inputs();
+export async function outputs(ctx) {
+  return (await outputsOf(ctx)).map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }

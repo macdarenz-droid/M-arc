@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d5e987a440c22961f3d982cf45309a41f98e7f34809d725f1f8ac95a3404991c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=cccdfb6dc7288d61a5376ca92e8e078908221f20244eb25a7885e9ef2403bd2f
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_seated_cable_row",
   name: "Seated Cable Row",
-  hashes: { inputsSha256: "d5e987a440c22961f3d982cf45309a41f98e7f34809d725f1f8ac95a3404991c", golden: "256b78949ce47e1628c8201e1571cead8d6481cc80958734b135500a41b6fb34" },
+  hashes: { inputsSha256: "cccdfb6dc7288d61a5376ca92e8e078908221f20244eb25a7885e9ef2403bd2f", golden: "256b78949ce47e1628c8201e1571cead8d6481cc80958734b135500a41b6fb34" },
   plate: {
     view: "side",
     normal: {

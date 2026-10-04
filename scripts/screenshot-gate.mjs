@@ -8874,6 +8874,50 @@ if (!(await import('../tools/plates/fidelity/shard.mjs')).ht10Runs()) {
   await (await import('../tools/plates/fidelity/ht10.mjs')).runHt10({ errors, OUT, PORT, clock: ht10Clock });
 }
 
+// LIB-2 (library plan 5.2; LIB-2 design 7, L2-A10): LOADERS is its own lazy chunk, generated/loaders.ts.
+// - exactly one loaders-*.js chunk, within its tests/howto/budgets.json ceiling; it holds one ht-<slug> import per
+//   shipped id; the main index-*.js and HowToSheet-*.js chunks do not hold the LOADERS map;
+// - no loaders-*.js request from launch until the first How-to tap (the page's resource timing, read before the tap, so
+//   a request at launch counts), and exactly one on that tap (Silent Black, Chromium: the only browser installed in
+//   this environment). The shipped ids come from the registry. Red on 0 shipped ids and on 0 requests seen.
+{
+  const tag = 'LIB-2';
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const { gzipSync } = await import('node:zlib');
+  const assets = readdirSync(join(ROOT, 'www/assets'));
+  const lj = assets.filter(f => /^loaders-[\w-]{8}\.js$/.test(f));
+  const REG = await import('../tools/plates/library/registry.mjs');
+  const regRows = REG.rows(), shippedSet = new Set(REG.shippedIds(regRows));
+  const shippedRows = regRows.filter(r => shippedSet.has(r.id));
+  if (shippedRows.length === 0) errors.push(`${tag} A10: no shipped rows`);
+  if (lj.length !== 1) errors.push(`${tag} A10: expected one loaders-*.js chunk, found ${lj.join(', ') || 'none'}`);
+  else {
+    const buf = readFileSync(join(ROOT, 'www/assets', lj[0])), gz = gzipSync(buf).length;
+    const b = JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).budgets.find(x => x.chunk === 'loaders-*.js');
+    if (!b) errors.push(`${tag} A10: loaders-*.js has no entry in tests/howto/budgets.json`);
+    else if (buf.length > b.rawMax || gz > b.gzMax) errors.push(`${tag} A10: ${lj[0]} is ${buf.length} B raw / ${gz} B gz, over its ceiling ${b.rawMax}/${b.gzMax}`);
+    const text = buf.toString('utf8');
+    for (const r of shippedRows) if (!new RegExp(`ht-${r.slug}-[\\w-]{8}\\.js`).test(text)) errors.push(`${tag} A10: ${lj[0]} does not import ht-${r.slug}`);
+    const holders = assets.filter(f => /^(index|HowToSheet)-[\w-]{8}\.js$/.test(f) && shippedRows.some(r => readFileSync(join(ROOT, 'www/assets', f), 'utf8').includes(`ht-${r.slug}-`)));
+    if (holders.length) errors.push(`${tag} A10: ${holders.join(', ')} hold the LOADERS imports`);
+    console.log(`${tag} A10: ${lj[0]} ${buf.length} B raw / ${gz} B gz${b ? ` of ${b.rawMax}/${b.gzMax}` : ''}`);
+  }
+  const lb = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
+  try {
+    const reqs = [];
+    const { ctx, page } = await H.openAppTrain(lb, PORT, 'silent-black', { onError: m => errors.push(`${tag} A10: page error: ${m}`) });
+    page.on('request', r => { if (/\/loaders-[\w-]{8}\.js$/.test(r.url())) reqs.push(r.url()); });
+    await H.openCard(page, 0);
+    await page.waitForTimeout(500);
+    const early = await page.evaluate(() => performance.getEntriesByType('resource').map(e => e.name).filter(n => /\/loaders-[\w-]{8}\.js$/.test(n)));
+    if (early.length || reqs.length) errors.push(`${tag} A10: loaders-*.js requested before the How-to tap: ${[...early, ...reqs].join(', ')}`);
+    await H.openHowTo(page, 0);
+    if (reqs.length !== 1) errors.push(`${tag} A10: expected one loaders-*.js request on the first How-to tap, saw ${reqs.length}`);
+    await ctx.close();
+  } finally { await lb.close(); }
+  if (!errors.some(e => e.startsWith(`${tag} `))) console.log(`${tag}: LOADERS in its own lazy loaders-*.js chunk within budget, holding every shipped ht- import, requested only on the How-to tap`);
+}
+
 await browser.close();
 stopping = true;
 server.kill();

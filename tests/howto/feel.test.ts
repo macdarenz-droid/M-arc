@@ -103,7 +103,7 @@ describe('HT8-A1: every state is golden B\'s vendored output, byte for byte', ()
     const tmp = mkdtempSync(join(tmpdir(), 'ht8-inset-'));
     try {
       cpSync(LAYERS, join(tmp, LAYERS), { recursive: true });
-      for (const p of core.coreFiles().concat(['tools/plates/gen/feel.mjs', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', 'tools/plates/plates.json'])) cpSync(p, join(tmp, p));
+      for (const p of core.coreFiles().concat(['tools/plates/gen/feel.mjs', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', 'tools/plates/plates.json', 'tools/plates/library/registry.mjs'])) cpSync(p, join(tmp, p), { recursive: true });   // LIB-2: the registry is a feel input (goldenInputs)
       const f = join(tmp, LAYERS, 'engine/feelmap.mjs'), src = readFileSync(f, 'utf8');
       expect(src).toContain('export const BAND_INSET = 0.15;');
       writeFileSync(f, src.replace('export const BAND_INSET = 0.15;', 'export const BAND_INSET = 0.16;'));

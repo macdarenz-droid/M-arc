@@ -1,0 +1,37 @@
+{
+  "$comment": "D-HT6-budget (supervisor, 2026-09-30): each built hand-<id>-*.js chunk (gzip default level) may be at most its size measured at the ruling + 10 %, rounded up. Moved verbatim from tools/plates/gen/hands.mjs HAND_MEASURED by LIB-2 (library plan 5.3); pinned in tests/howto/hands.test.ts.",
+  "measured": {
+    "lateral-raise": {
+      "raw": 26570,
+      "gz": 8134
+    },
+    "barbell-back-squat": {
+      "raw": 34361,
+      "gz": 10629
+    },
+    "pull-up": {
+      "raw": 84470,
+      "gz": 23896
+    },
+    "hanging-leg-raise": {
+      "raw": 44454,
+      "gz": 11445
+    },
+    "lat-pulldown": {
+      "raw": 68272,
+      "gz": 19574
+    },
+    "seated-cable-row": {
+      "raw": 23824,
+      "gz": 7673
+    },
+    "leg-press": {
+      "raw": 22227,
+      "gz": 7430
+    },
+    "machine-chest-press": {
+      "raw": 24375,
+      "gz": 7426
+    }
+  }
+}

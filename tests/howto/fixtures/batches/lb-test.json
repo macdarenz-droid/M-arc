@@ -1,0 +1,7 @@
+{
+  "$comment": "LIB-2 test fixture (L2-A4): one synthetic library batch row, injected through registry.__setExtraBatches; never in tools/plates/library/batches.",
+  "batch": "LB-TEST",
+  "rows": {
+    "lib_barbell_row": { "src": "library/specs/barbell_row.mjs", "slug": "barbell-row", "prefix": "barbell-row", "chromeId": "barbell-row", "mode": "H", "stage": "drawing" }
+  }
+}

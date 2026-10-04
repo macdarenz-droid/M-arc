@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Sheet } from '@/ui/primitives';
 import { HOWTO_LABEL, hasHowTo } from '@/howto/ids';
-import type { BuiltHowTo } from '@/howto/types';
+import type { BuiltHowTo, LibId } from '@/howto/types';
 import { howToLoadFailed } from './lazy';
 import { PlateApiContext, PlateView } from './PlateView';
 import type { PlateApi } from './usePlateState';
@@ -24,7 +24,8 @@ export function HowToSheet({ exerciseId, name, onClose }: HowToSheetProps) {
     let live = true;
     // generated/** is reached only through import() (D-HT1 A4); the data is in before the sheet slides in
     if (!hasHowTo(exerciseId)) { howToLoadFailed(onClose); return; }
-    void import('@/howto/generated').then(m => m.LOADERS[exerciseId]()).then(m => { if (live) setHowTo(m.default); }).catch(() => { if (live) howToLoadFailed(onClose); });
+    // LIB-2: LOADERS is its own lazy chunk (loaders) and Partial over LibId; a missing loader is a failed load
+    void import('@/howto/generated/loaders').then(m => { const load = m.LOADERS[exerciseId as LibId]; if (!load) throw new Error(`no loader for ${exerciseId}`); return load(); }).then(m => { if (live) setHowTo(m.default); }).catch(() => { if (live) howToLoadFailed(onClose); });
     return () => { live = false; };
   }, []);
   if (!howTo) return null;

@@ -18,8 +18,14 @@ export type ZoomLoader = (chromeId: string, key: string) => Promise<ZoomChunk>;
 const HAND_CHUNKS = import.meta.glob<ZoomChunk>('../../../howto/generated/hand-*.ts');
 const handChunk = (chromeId: string) => {
   const load = HAND_CHUNKS[`../../../howto/generated/hand-${chromeId}.ts`];
-  if (!load) return Promise.reject(new Error(`no hand close-up for ${chromeId}`));
-  return load();
+  if (load) return load();
+  // LIB-2 (design 12, D-LIB7-1): a library exercise's hand close-up is its shared pair chunk, handpair-<key>, found
+  // through the lazy loaders chunk; the 8 above are unchanged.
+  return import('../../../howto/generated/loaders').then(m => {
+    const key = m.PAIR_OF[chromeId], pair = key ? m.PAIR_LOADERS[key] : undefined;
+    if (!pair) throw new Error(`no hand close-up for ${chromeId}`);
+    return pair();
+  });
 };
 
 export const ZOOM_KINDS: Partial<Record<ZoomKind, ZoomLoader>> = {

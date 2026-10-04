@@ -5,15 +5,19 @@
 // Plugin contract (one module per plugin):
 //   export const inputs = () => string[]      repo-relative files it reads (static: no render needed to list them)
 //   export const after = string[]              optional: plugin paths whose outputs it may extend (run first)
-//   export async function outputs(ctx)         -> [{ path, text }]; ctx.prev: Map(path -> text) of earlier writers,
-//                                                ctx.hashFor(path): that file's inputsSha256 with this plugin as a writer
+//   export async function outputs(ctx)         -> [{ path, text, inputs? }]; ctx.prev: Map(path -> text) of earlier
+//                                                writers, ctx.hashFor(path, inputs?): that file's inputsSha256 with
+//                                                this plugin as a writer
+// Per-output inputs (LIB-2, library plan 5.3): an output may carry its own `inputs` (repo-relative files it was made
+// from); they replace the plugin-wide inputs() for that file's header, and hashFor(path, inputs) takes the same list,
+// so a file's inputsSha256 covers only what it was made from. Without `inputs` the plugin-wide list is used, as before.
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { ROOT, header, inputsSha256, parseHeader, pluginFiles } from './lib/inputs.mjs';
 
 /** The folders generated files live in; --check fails on a GENERATED file here that no plugin writes. */
-export const GENERATED_DIRS = ['src/howto', 'src/slices/howto/css'];
+export const GENERATED_DIRS = ['src/howto', 'src/slices/howto/css', 'tools/plates/library'];
 
 export async function loadPlugins(paths = pluginFiles()) {
   const mods = new Map();
@@ -37,12 +41,17 @@ export async function render(paths) {
   const plugins = await loadPlugins(paths), prev = new Map(), writers = new Map(), inputs = new Map();
   for (const { path, mod } of plugins) {
     const own = mod.inputs();
-    const hashFor = p => inputsSha256([...(writers.get(p) ?? []), path].sort(), [...(inputs.get(p) ?? []), ...own]);
+    const listOf = (oi, where) => {
+      if (oi === undefined) return own;
+      if (!Array.isArray(oi) || oi.length === 0 || oi.some(x => typeof x !== 'string' || !x)) throw new Error(`generate: ${path}: ${where} needs a non-empty list of input paths`);
+      return oi;
+    };
+    const hashFor = (p, oi) => inputsSha256([...(writers.get(p) ?? []), path].sort(), [...(inputs.get(p) ?? []), ...listOf(oi, `hashFor(${p})`)]);
     for (const o of await mod.outputs({ prev, hashFor })) {
       if (!o.path || typeof o.text !== 'string') throw new Error(`generate: ${path} returned a bad output`);
       prev.set(o.path, o.text);
       writers.set(o.path, [...new Set([...(writers.get(o.path) ?? []), path])].sort());
-      inputs.set(o.path, [...(inputs.get(o.path) ?? []), ...own]);
+      inputs.set(o.path, [...(inputs.get(o.path) ?? []), ...listOf(o.inputs, `output ${o.path}`)]);
     }
   }
   const out = new Map();
