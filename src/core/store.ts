@@ -47,6 +47,7 @@ function valid<T>(list: unknown, counter: { dropped: number }, ok: (v: Record<st
 }
 
 const str = (v: unknown): v is string => typeof v === 'string';
+const strList = <T extends string>(v: unknown): T[] => (Array.isArray(v) ? v.filter(str) as T[] : []);
 const finite = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 const VERDICTS = ['helpful', 'snoozed'];
 
@@ -96,7 +97,9 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
     weightLog: valid<AppState['weightLog'][number]>(raw.weightLog, c, w => str(w.day) && finite(w.kg)),
     checkIns: valid<AppState['checkIns'][number]>(raw.checkIns, c, ci => str(ci.day)),
     freshMarks: valid<AppState['freshMarks'][number]>(raw.freshMarks, c, f => str(f.muscle) && str(f.at)),
-    customExercises: valid<AppState['customExercises'][number]>(raw.customExercises, c, e => str(e.id) && str(e.name)),
+    // A3-2 DATA 01 (R3): a hand-made custom exercise keeps its record; missing or invalid lists become [].
+    customExercises: valid<AppState['customExercises'][number]>(raw.customExercises, c, e => str(e.id) && str(e.name))
+      .map(e => ({ ...e, primary: strList(e.primary), secondary: strList(e.secondary), stabilizers: strList(e.stabilizers), aliases: strList(e.aliases) }) as AppState['customExercises'][number]),
     profileHistory: valid<AppState['profileHistory'][number]>(raw.profileHistory, c, h => str(h.at) && str(h.field)),
     insightFeedback: valid<AppState['insightFeedback'][number]>(raw.insightFeedback, c, f => str(f.id) && str(f.day) && VERDICTS.includes(f.verdict as string)),
   };
@@ -388,9 +391,25 @@ export function deleteRescueCopy(storage: Storagelike = storageRef ?? localStora
   bootRecovered.value = false;
 }
 
+/**
+ * A3-2 DATA 02 (R4): another tab wrote or cleared the state since this tab's last read or write,
+ * and its storage event has not arrived (a frozen or back-forward cached tab). This tab takes what
+ * storage now holds instead of writing its old copy over it. Only deferred and flushed saves ask;
+ * an explicit replace, reset or boot write still wins.
+ */
+function storageMovedOn(): boolean {
+  if (!storageRef || lastGoodRaw == null) return false;
+  let stored: string | null;
+  try { stored = storageRef.getItem(STATE_KEY); } catch { return false; }
+  if (stored === lastGoodRaw) return false;
+  lastGoodRaw = stored;
+  state.value = loadState(storageRef).state;
+  return true;
+}
+
 function persistSoon(): void {
   if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => { saveTimer = null; persistNow(); }, 250);
+  saveTimer = setTimeout(() => { saveTimer = null; if (!storageMovedOn()) persistNow(); }, 250);
 }
 
 /** Apply a change to the state. The updater must return a new object (spread). */
@@ -417,7 +436,7 @@ export function resetState(next: AppState): void {
 
 export function flushSave(): void {
   if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
-  persistNow();
+  if (!storageMovedOn()) persistNow();
 }
 
 /**
