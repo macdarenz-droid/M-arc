@@ -99,7 +99,8 @@ export function touchedState(kind: string, input: Record<string, unknown>, s: Ap
     case 'propose_custom_exercise': return s.customExercises.map(e => e.name.toLowerCase());
     case 'propose_reminder': return s.preferences.reminders;
     case 'propose_setting': return [s.preferences.rest.mode, s.preferences.autoRest, s.preferences.restDefaultSec, s.preferences.weightUnit, s.preferences.showSpark, s.preferences.haptics];
-    case 'propose_equipment_profile': return [s.units.byExercise, s.units.byEquipment];
+    // IMP-E04: a gym deleted since the suggestion makes it stale; a change of active gym alone does not.
+    case 'propose_equipment_profile': return [s.units.byExercise, s.units.byEquipment, s.units.gyms.some(g => g.id === input.gymId)];
     case 'propose_gym': return s.units.gyms.map(g => g.name.toLowerCase());
     case 'pin_card': return s.escobar.pins.length;
     default: return null;
