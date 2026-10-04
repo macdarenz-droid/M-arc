@@ -22,7 +22,9 @@ export const tzSlug = (tz) => (tz === 'UTC' ? 'utc' : tz === 'Pacific/Auckland' 
 export function planFor(groupKeys, times, K, tz) {
   const items = groupKeys.filter(k => !ALWAYS.has(k)).map(id => ({ id, seconds: times.seconds?.[id] ?? times.default }));
   const offsets = Array.from({ length: K }, (_, j) => times.offsets?.[`${tz}/${j + 1}`] ?? 0);
-  return packShards(items, K, K > 1 ? offsets : []);
+  // offsets describe CI's own job layout (source-gate's head start), so they apply only at the configured K; a solo
+  // run (E10, K = groups) must give one group per job
+  return packShards(items, K, K === times.K ? offsets : []);
 }
 /** sha-256 of the packing input, so the verdict can prove every job packed the same plan. */
 export const planHash = (groupKeys, times, tz) => createHash('sha256').update(JSON.stringify({ groupKeys, seconds: times.seconds, default: times.default, offsets: times.offsets, tz })).digest('hex');

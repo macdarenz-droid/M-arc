@@ -143,6 +143,10 @@ describe('E3: job selection is a partition', () => {
     await gate.done();
     return { ran, errors, proof: readdirSync(OUT).filter(f => f.startsWith('gate-proof-')), OUT };
   };
+  it('E10 packing: K = the checked-group count gives exactly one group per job in both time zones', () => {
+    const keys = keysOf(SRC), n = keys.filter(k => !B.ALWAYS.has(k)).length;
+    for (const tz of ['UTC', 'Pacific/Auckland']) expect(G.planFor(keys, TIMES, n, tz).map(j => j.length)).toEqual(Array(n).fill(1));
+  });
   it('unset, empty and 1/1 each run every group and write -1of1; K = 3 jobs are disjoint and cover every group', async () => {
     const all = keysOf(SRC);
     for (const v of [undefined, '', '1/1']) {
