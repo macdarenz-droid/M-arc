@@ -197,7 +197,10 @@ export function firstWithoutHowTo() {
   if (!m) throw new Error('firstWithoutHowTo: no HOWTO_IDS in src/howto/ids.ts');
   const approved = new Set([...m[1].matchAll(/"([^"]+)"/g)].map(x => x[1]));
   const id = lib.find(i => !approved.has(i));
-  if (!id) throw new Error('firstWithoutHowTo: every library exercise has a How-to');
+  // LIB-1 measurement patch (never merged): with all 153 ids cloned there is no id without a How-to, and the throw
+  // above aborted the whole gate at FG-OFF (screenshot-gate.mjs:6224). To see every later block, fall back to the
+  // first library id outside the 8 (it HAS a How-to, so a block asserting "no How-to" on it shows up red).
+  if (!id) return lib.find(i => !HT_PLATES.some(p => p[1] === i));
   return id;
 }
 export const HT_NO_HOWTO = firstWithoutHowTo();
