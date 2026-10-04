@@ -440,3 +440,22 @@ describe('L2-A5: exercises.json is an input of ids.ts and its twin', () => {
     expect(ids.writers).toEqual(['tools/plates/gen/content.mjs', 'tools/plates/gen/ids.mjs']);
   });
 });
+
+describe('D-LIB2-layers: content.mjs narrows inputs per exercise', () => {
+  it('each of the 8 modules and research cards is hashed over its own exercise source only (8 ids)', async () => {
+    const content = await import(/* @vite-ignore */ url('tools/plates/gen/content.mjs'));
+    const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const rows = reg.goldenRows() as Record<string, { slug: string }>;
+    const ids = Object.keys(rows);
+    expect(ids).toHaveLength(8);
+    const sources = ids.map(id => reg.sourceOf(id));
+    for (const id of ids) {
+      const own = reg.sourceOf(id);
+      for (const path of [`src/howto/generated/ht-${rows[id]!.slug}.ts`, `docs/research/howto/${id}.json`]) {
+        const ins = content.inputsFor(path) as string[];
+        expect(ins, path).toContain(own);
+        expect(ins.filter(p => sources.includes(p)), path).toEqual([own]);
+      }
+    }
+  });
+});
