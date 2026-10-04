@@ -604,9 +604,8 @@ export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, 
   if (startsInFuture(trainedAtLocal)) return false;
   const trainedAt = new Date(trainedAtLocal).toISOString();
   const trainedEndAt = new Date(new Date(trainedAtLocal).getTime() + durationMin * 60_000).toISOString();
-  update(s => ({
-    ...s,
-    sessions: sortByStart(s.sessions.map(sess => {
+  update(s => {
+    const sessions = sortByStart(s.sessions.map(sess => {
       if (sess.id !== sessionId) return sess;
       const flags = dayKey(trainedAt) !== dayKey(sess.logging.loggedAt) ? [...new Set([...sess.logging.flags, 'midnight_crossing'])] : sess.logging.flags;
       return {
@@ -617,8 +616,10 @@ export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, 
         durationSec: durationMin * 60,
         logging: { ...sess.logging, trainedAt, trainedEndAt, timeSource, flags },
       };
-    })),
-  }));
+    }));
+    // ENG-05: a retime can reorder history, so the recovery model is rebuilt as History edits do (UI-12).
+    return { ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) };
+  });
   flushSave();
   return true;
 }
@@ -643,7 +644,11 @@ export function logPastSession(input: { splitId: string; trainedAtLocal: string;
     logging,
     gymId: state.value.units.activeGymId,
   };
-  update(s => ({ ...s, sessions: sortByStart([...s.sessions, session]) }));
+  // ENG-05: a session inserted into the past changes what later sessions were compared against.
+  update(s => {
+    const sessions = sortByStart([...s.sessions, session]);
+    return { ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) };
+  });
   flushSave();
   void haptic.confirm();
   return { session, changedTemplate: false };
