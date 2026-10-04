@@ -5,9 +5,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
-let gen: any, bodies: any, out: Map<string, { text: string; writers: string[]; hash: string }>;
+let gen: any, core: any, bodies: any, out: Map<string, { text: string; writers: string[]; hash: string }>;
 beforeAll(async () => {
   gen = await import(/* @vite-ignore */ url('tools/plates/generate.mjs'));
+  core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
   bodies = await import(/* @vite-ignore */ url('tools/plates/library/bodies.mjs'));
   out = await gen.render();
 }, 180_000);
@@ -49,5 +50,23 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
   it('the header and the hashes: line are the only lines ignored', () => {
     const t = '// GENERATED, do not edit. Written by tools/plates/generate.mjs (x). inputsSha256=' + '0'.repeat(64) + '\nexport default {\n  hashes: { inputsSha256: "' + '1'.repeat(64) + '", golden: "' + '2'.repeat(64) + '" },\n  a: 1,\n};\n';
     expect(bodies.body(t)).toBe('export default {\n  a: 1,\n};\n');
+  });
+});
+
+describe('L2-A4 core: per-output inputs (HT-2 core, design 6.1)', () => {
+  const P = 'tests/howto/fixtures/gen-per-output/plugin.mjs';
+  it('an output with its own inputs is hashed over those only, in its header and through hashFor; one without keeps the plugin-wide list', async () => {
+    const o = await gen.render([P]);
+    expect(o.size).toBe(2);
+    const own = core.inputsSha256([P], ['src/data/exercises.json']), wide = core.inputsSha256([P], ['tools/plates/plates.json']);
+    expect(own).not.toBe(wide);
+    expect(o.get('fixture/own.ts').hash).toBe(own);
+    expect(o.get('fixture/own.ts').text).toContain(`export const h = "${own}";`);
+    expect(o.get('fixture/wide.ts').hash).toBe(wide);
+    expect(o.get('fixture/wide.ts').text).toContain(`export const h = "${wide}";`);
+  });
+  it('an empty per-output input list is refused', async () => {
+    process.env.LIB2_EMPTY_INPUTS = '1';
+    try { await expect(gen.render([P])).rejects.toThrow(/needs a non-empty list of input paths/); } finally { delete process.env.LIB2_EMPTY_INPUTS; }
   });
 });
