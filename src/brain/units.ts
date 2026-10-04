@@ -160,6 +160,12 @@ export function loadMenu(exerciseId: string, gymId: string, units: UnitsState, e
   };
 }
 
+/** ENG-01 (LOAD-AWARE-TARGETS.md §2): the one profile every live number uses at this gym: its menu's,
+ * where another gym's exercise profile gives only the unit. Logged loads add rungs, not a profile. */
+export function menuProfile(exerciseId: string, gymId: string, units: UnitsState, exercise: Pick<Exercise, 'equipment'> | undefined): EquipmentProfile {
+  return loadMenu(exerciseId, gymId, units, exercise, []).profile;
+}
+
 /** LT-1: the size of a jump in percent of `fromKg` (negative for a step down); Infinity from nothing to a load. */
 export function jumpPct(fromKg: number, toKg: number): number {
   if (!(fromKg > 0)) return toKg > 0 ? Infinity : 0;
