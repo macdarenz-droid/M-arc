@@ -1,4 +1,4 @@
-import { state, update } from '@/core/store';
+import { replaceGeneration, state, update } from '@/core/store';
 import { healthAvailable, lastHealthError, syncHealth } from '@/native/health';
 
 /** Reads today's Health Connect summary and folds it into healthDays. `prompt` only from the Settings buttons. */
@@ -12,8 +12,10 @@ export function backgroundHealthSync(now = Date.now()): Promise<boolean> {
 
 export async function syncAndStoreHealth({ prompt = false }: { prompt?: boolean } = {}): Promise<boolean> {
   if (!healthAvailable()) return false;
+  const gen = replaceGeneration();
   const day = await syncHealth({ prompt });
-  if (!day) return false;
+  // IMP-N02: Reset, Restore or another tab replaced the state during the read; it belongs to the old state.
+  if (!day || gen !== replaceGeneration()) return false;
   update(s => {
     // QA-R5a-1: a later sync where a read failed (or came back empty) keeps what an earlier sync
     // that day already had, instead of replacing the whole day.

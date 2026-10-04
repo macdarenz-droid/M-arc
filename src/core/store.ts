@@ -318,7 +318,7 @@ function listenToOtherTabs(): void {
     if (e.key === null || (e.key === STATE_KEY && e.newValue === null)) {
       if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
       lastGoodRaw = null;
-      if (storageRef) state.value = loadState(storageRef).state;
+      if (storageRef) { generation++; state.value = loadState(storageRef).state; }
       return;
     }
     if (e.key !== STATE_KEY || !e.newValue) return;
@@ -328,6 +328,7 @@ function listenToOtherTabs(): void {
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     const localActive = state.value.active;
     const incoming = normalize(parsed);
+    generation++;
     state.value = incoming;
     lastGoodRaw = e.newValue;
     if (localActive && localActive.startedAt !== incoming.active?.startedAt) showToast('Updated from another tab');
@@ -418,7 +419,15 @@ export function update(fn: (s: AppState) => AppState): void {
   persistSoon();
 }
 
+/**
+ * IMP-N02: bumped whenever the whole state is replaced (Restore, Reset, Undo, another tab), so an
+ * async read started before it can tell its result belongs to the old state. Memory only.
+ */
+let generation = 0;
+export const replaceGeneration = (): number => generation;
+
 export function replaceState(next: AppState): void {
+  generation++;
   state.value = normalize(next);
   persistNow();
 }
