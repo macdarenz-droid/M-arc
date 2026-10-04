@@ -6,7 +6,7 @@ import { THEMES, THEME_IDS } from '@/theme/themes';
 import { setTheme, themeId } from '@/theme/engine';
 import { haptic, hapticSupport, setHapticsEnabled } from '@/native/haptics';
 import { keepAwakePref, setKeepAwakePref } from '@/native/keepAwake';
-import { exportText, pickFile } from '@/native/share';
+import { clearExportCache, exportText, pickFile } from '@/native/share';
 import { showToast } from '@/app/toast';
 import { openPanel, profileOpen } from '@/app/router';
 import { reminderHealth, resyncReminders } from './reminders';
@@ -81,6 +81,7 @@ function resetEverything(): void {
   try { localStorage.removeItem('marc.health.asked'); } catch { /* storage unavailable */ }
   clearShareSeen();
   resetErrorReporting();
+  void clearExportCache();
   afterReplace();
 }
 
