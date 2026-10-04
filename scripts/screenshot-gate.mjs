@@ -109,6 +109,8 @@ const legacy = {
 const browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), args: ['--no-sandbox', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
 const themes = ['silent-black', 'paper', 'ember', 'emerald', 'midnight'];
 const errors = [];
+const gate = (await import('./gate-split.mjs')).gateSplit({ errors, OUT, browser, file: fileURLToPath(import.meta.url) });
+if (gate.runs('BASE'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -296,6 +298,7 @@ for (const theme of themes) {
 // text — .hint, .eyebrow, .set-kind, the in-session autoregulation line (--accent-text) — plus the
 // composer's "About:" context chip (.chip-accent) and the Escobar Past-conversations Back link
 // (.esc-link), in all five themes.
+if (gate.runs('I14'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -390,6 +393,7 @@ for (const theme of themes) {
 
 // I18: every icon renders at the same 1.5px optical stroke weight regardless of its rendered
 // size — icons.tsx `base()` scales `stroke-width` by size instead of a fixed 1.8 literal.
+if (gate.runs('I18'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -420,6 +424,7 @@ for (const theme of themes) {
 
 // I15: colour means one thing — the selected effort chip is a soft tint (background alpha < .3),
 // not a solid fill, and its letter still clears 4.5:1 against the composited result, in all 5 themes.
+if (gate.runs('I15'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -475,6 +480,7 @@ for (const theme of themes) {
 
 // I16: elevation — tracks (.bar/.seg/an off .toggle) sit on a neutral overlay distinct from their
 // parent's background, and floating/sheet layers step up from a plain .card, in all 5 themes.
+if (gate.runs('I16'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -542,6 +548,7 @@ for (const theme of themes) {
 
 // I17: on one grid — Emerald's computed .set-kind and .esc-bubble radii equal its own theme
 // tokens (radius.sm 6px, radius.lg 12px, the global --radius-xs 4px — src/theme/themes.ts).
+if (gate.runs('I17'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -580,6 +587,7 @@ for (const theme of themes) {
 }
 
 // I17: no theme computes a negative border-radius anywhere (a calc()/max() expression gone wrong).
+if (gate.runs('I17'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -613,6 +621,7 @@ for (const theme of themes) {
 // average-height bar ends and never run through the value label; and on Exercise progress (the same
 // bench sessions, so the latest point is the min at 0.8x, flat at 1.0x, the max at 1.2x) the opaque
 // min/max labels must never cover the latest point's end dot.
+if (gate.runs('BUG-12'))
 {
   const tag = 'BUG-12 volume labels';
   const intersects = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
@@ -706,6 +715,7 @@ for (const theme of themes) {
 // "Recent" up and down as the owner paged. monthCells always pads to 42 cells / 6 rows — walk
 // back 13 months (any 13-month window spans a 5- and a 6-row month, whatever today's date is) and
 // check the card's height, "Recent"'s position and the day-cell count never move.
+if (gate.runs('BUG-10'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -738,6 +748,7 @@ for (const theme of themes) {
 }
 
 // R2.7 (UI-23): on a 360 px phone the set row keeps a typed 102.5 fully visible.
+if (gate.runs('R2'))
 {
   const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -765,6 +776,7 @@ for (const theme of themes) {
 // QA6-2: on Stats > Exercise progress, a bodyweight/assisted set label ("BW+10 kg × 5",
 // "20 kg assist") is longer than a plain kg one, so on a 360 px phone the date cell must not
 // overlap the set text.
+if (gate.runs('QA6-2'))
 {
   const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -819,6 +831,7 @@ for (const theme of themes) {
 }
 
 // I12: an undistorted sparkline (round end dot) and labelled, current-week-highlighted volume bars.
+if (gate.runs('I12'))
 {
   for (const width of [390, 560]) {
     const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2, isMobile: width < 500, hasTouch: width < 500, reducedMotion: 'reduce' });
@@ -876,6 +889,7 @@ for (const theme of themes) {
 }
 
 // QA13-3: the current-week volume bar's label must never eat into the bar's own height.
+if (gate.runs('QA13-3'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -929,6 +943,7 @@ for (const theme of themes) {
 
 // QA13-4: the sparkline's min/max labels must sit at the lowest/highest plotted point, not drift
 // down into the dates row below the chart.
+if (gate.runs('QA13-4'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -992,6 +1007,7 @@ for (const theme of themes) {
 }
 
 // QA13-5: an all-zero effort chart (no saved body weight) still keeps a 44px tap target per bar.
+if (gate.runs('QA13-5'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1032,6 +1048,7 @@ for (const theme of themes) {
 }
 
 // QA13-6: "Easy" and "Not rated" must read as clearly different, and each at ≥3:1 against the card.
+if (gate.runs('QA13-6'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1091,6 +1108,7 @@ for (const theme of themes) {
 }
 
 // O4: "Work done, by effort" bars per exercise — legend, no page scroll, no overlap, tap selects a bar.
+if (gate.runs('O4'))
 {
   for (const width of [360, 390]) {
     for (const theme of ['silent-black', 'paper']) {
@@ -1151,6 +1169,7 @@ for (const theme of themes) {
 }
 
 // A6: scrub the sparkline and the weekly volume bars with a finger or the keyboard.
+if (gate.runs('A6'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1287,6 +1306,7 @@ for (const theme of themes) {
 }
 
 // QA14-1: under full motion, letting go of a chart scrub must crossfade, not snap in one frame.
+if (gate.runs('QA14-1'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
   const page = await ctx.newPage();
@@ -1344,6 +1364,7 @@ for (const theme of themes) {
 }
 
 // R6: a day off on Today, a sticky setup note on a live card, logged warm-ups, and the CSV row in Settings.
+if (gate.runs('R6'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1421,6 +1442,7 @@ for (const theme of themes) {
 // BUG-38: the Today card follows the sessions done (D-BUG38). Seeded relative to the device's today.
 // Probe 1: yesterday = A, today = B, B trained yesterday -> A moved here ("Moved from {Ddd}", A, "Start A").
 // Probe 2: today = C only, C trained yesterday -> "Done {Ddd}", C, "Choose a workout".
+if (gate.runs('BUG-38'))
 {
   const tag = 'bug-38';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -1482,6 +1504,7 @@ for (const theme of themes) {
 
 // A fresh (non-legacy) profile so the onboarding form and a goal-change insight are visible
 // without the legacy fixture's own progress insights outranking them in the top 3.
+if (gate.runs('Onboarding'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1517,6 +1540,7 @@ for (const theme of themes) {
 
 // A fresh profile with >=5 sessions logged this calendar week, so the weekly review
 // card (6.13, cadence 'weekly') appears on Coach without waiting a real week.
+if (gate.runs('Weekly-review'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1564,6 +1588,7 @@ for (const theme of themes) {
 // A profile with 7+ days of elevated resting HR (F2.1), so the Today readiness card shows a real
 // tier with reasons instead of the empty "connect a watch" prompt, and a lift that would otherwise
 // suggest an increase holds instead once readiness is red (the progression hook, 6.4).
+if (gate.runs('Resting-HR'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1622,6 +1647,7 @@ for (const theme of themes) {
 // official CapacitorCustomPlatform escape hatch for reporting a non-web platform.
 // Plain viewport, no touch/mobile emulation: the touch-event path made clicks on the effort
 // buttons flaky here, unlike the theme passes above which never type into a live set mid-flow.
+if (gate.runs('Watch-stub'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1710,6 +1736,7 @@ for (const theme of themes) {
 
 // Plate Sense (§25): an lb dumbbell at a kg gym shows the entry pill in lb with the "≈ kg" reading
 // under it; a barbell target opens the plate sheet; a 2.2× slip shows the suspect chip. 5 themes.
+if (gate.runs('Plate-sense'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1801,6 +1828,7 @@ for (const theme of themes) {
 
 // QA4-5: the share sheet's Photo / Save / Share stay on screen and tappable on a short phone and a
 // tall one, with a 0, 24 or 48 px bottom safe area (set through --safe-area-inset-bottom).
+if (gate.runs('QA4-5'))
 for (const [w, h] of [[360, 640], [390, 844]]) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1840,6 +1868,7 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
 
 // Palace (§7, EV1): every registry entry resolves. goTo each id through the dev hooks and assert its
 // anchor is visible (silent-black), then screenshot three spotlights in all five themes.
+if (gate.runs('Palace'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1887,6 +1916,7 @@ for (const theme of themes) {
 // history.go(-n) instead of N separate history.back() calls). This block pins the regression on
 // its own terms — many settings.* hops in a row, the exact shape that exposed it — independent of
 // the broader loop above (whose >=65 threshold could mask a partial regression).
+if (gate.runs('I6.1'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1922,6 +1952,7 @@ for (const theme of themes) {
 // Chromium/WebView, regardless of n. With 2+ sheets open, ignorePops never reached 0, so goTo()
 // (which awaits closeAllSheets since the I6-regression fix) hung forever, and the next real Back
 // was silently swallowed (eaten decrementing a counter that never belonged to it).
+if (gate.runs('QA11-1'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -1961,12 +1992,14 @@ for (const theme of themes) {
 
 // ESC-NC: the LR-23 patterns, read from their single definition (tests/guards/no-contacts.ts), and the crisis copy.
 const ESC_NC_RE = Object.fromEntries([...readFileSync(join(ROOT, 'tests/guards/no-contacts.ts'), 'utf8').matchAll(/^export const (\w+) = \/(.*)\/([a-z]*);$/gm)].map(m => [m[1], new RegExp(m[2], m[3])]));
+if (gate.runs('ESC-NC'))
 if (Object.keys(ESC_NC_RE).length !== 4) throw new Error(`ESC-NC: expected 4 patterns in tests/guards/no-contacts.ts, read ${Object.keys(ESC_NC_RE).join(', ')}`);
 const ESC_NC_CRISIS = 'If things feel like too much, you don’t have to carry it alone. Talk to someone you trust, or a doctor. If you feel you might harm yourself, get emergency help now.';
 
 // Escobar (§23 EV5): the mock transport (marc.dev=1, in-memory store, no network) plays a recorded
 // conversation with a lift_trend chart, cited facts and a knowledge card (markers stripped, LR-23), a crisis card, chips and a proposal card. Screenshot it in all
 // five themes at 390 and 360 px, plus the dock on Today and the Hall; "Thinking…" within 150 ms.
+if (gate.runs('ESC-NC'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -2113,6 +2146,7 @@ for (const theme of themes) {
 // draft, the preamble or the caption, nor anywhere in the sheet at any moment (a MutationObserver
 // reads every DOM change), and the final answer carries no "Unverified number". The probe fails when
 // the scenario did not run: each surface must be there, in the shape the mock writes it.
+if (gate.runs('BUG-31'))
 {
   const theme = themes[0];
   const tag = `BUG-31 brief tags ${theme}`;
@@ -2180,6 +2214,7 @@ for (const theme of themes) {
 
 // ESC-REPORT G1: the Report control under a finished mock reply, in all 5 themes (dev mode, mock
 // transport). Nothing may reach /reports, and nothing new is saved in localStorage.
+if (gate.runs('ESC-REPORT'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -2312,6 +2347,7 @@ for (const theme of themes) {
 
 // Live heart line (owner's pick): a fake LIVE watch reading through the dev hook, the line and the
 // number on Train in all five themes, coloured by each theme's accent.
+if (gate.runs('Heart-line'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -2367,6 +2403,7 @@ for (const theme of themes) {
 
 // R5.5 service worker: an offline reload still renders the app, and after a new build (new cache,
 // the old Escobar chunk gone from the server) the already-open tab can still open Escobar.
+if (gate.runs('R5'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -2416,6 +2453,7 @@ for (const theme of themes) {
 // F5: motion smoke — full-motion (no-preference) run so a later batch's real animations are
 // exercised end to end, not just under the reduced-motion contexts above. HAS flags flip true as
 // their batch lands (F6 restFix, I6 sheetExit); until then each logs 'skipped' instead of failing.
+if (gate.runs('F5.1'))
 {
   const HAS = { restFix: true, sheetExit: true };
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
@@ -2536,6 +2574,7 @@ for (const theme of themes) {
 // kg/reps field has focus and stops on blur, holds briefly after an effort tap, stays off when idle
 // (A2), never runs under reduced motion (A3), paints only var(--text) and the accent (A4), and only
 // the open card's title ever animates (A6). Full motion, 390 px, Silent Black and Paper.
+if (gate.runs('UI-1'))
 for (const theme of ['silent-black', 'paper']) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -2632,6 +2671,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // I6: sheets rise from the edge and leave the same way, the header stays put while content
 // scrolls under it, and a second Back during one sheet's exit reaches the sheet below.
+if (gate.runs('I6.2'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -2698,6 +2738,7 @@ for (const theme of ['silent-black', 'paper']) {
 // A3: pulling a sheet down by its handle/title, or by its own content once scrolled to the top,
 // dismisses it past a quarter of its height or on a fast flick; short of both, it springs back.
 // Starting on scrollable content (not at its top) or on typed input never moves the sheet.
+if (gate.runs('A3'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -2831,6 +2872,7 @@ for (const theme of ['silent-black', 'paper']) {
 // I7: the Escobar sheet slides in like other sheets, tracks the finger between half and full
 // while dragging, and flings to the nearest detent (or closed) on release. Full motion — under
 // reduce the drag never live-follows, so there is nothing to measure mid-drag.
+if (gate.runs('I7'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -2933,6 +2975,7 @@ for (const theme of ['silent-black', 'paper']) {
 // F13: toast — a soft exit (no vanish-in-one-frame), a large enough and readable Undo, and
 // swipe-to-dismiss in any of the three directions it recognizes (never Undo on a swipe away).
 // The centring fix itself (no sideways jump) is QA5-4's existing probe, further down.
+if (gate.runs('F13'))
 {
   let ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   let page = await ctx.newPage();
@@ -3096,6 +3139,7 @@ for (const theme of ['silent-black', 'paper']) {
 // I1: the rest banner rises in with a running animation, its bar glides continuously via WAAPI
 // (rebuilt, not stepped, when the remaining time changes), its buttons are real tap targets, and
 // it exits (a `.leaving` class, then gone) instead of vanishing in one frame.
+if (gate.runs('I1'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -3163,6 +3207,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // A9: the rest banner shows what to do next, and falls back to the plain clock once nothing is
 // left to log on the open card.
+if (gate.runs('A9'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -3200,6 +3245,7 @@ for (const theme of ['silent-black', 'paper']) {
 // A1: tapping the next-up hint row ("Log as planned") fills and logs that set with exactly the
 // values it was already showing, moves on to the following set, and its wider tap target never
 // steals a tap from the effort row above it or the row below it.
+if (gate.runs('A1'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -3290,6 +3336,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // A8: the keyboard's action key moves kg -> reps -> the next set's kg (Done on the last set),
 // and focusing a filled field selects it so typing replaces the value instead of appending.
+if (gate.runs('A8'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -3341,6 +3388,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // F9: a small 'PR' pill with an inline trophy pops in once when a record set is logged — not
 // while it's still just a promising, uncommitted number — and does not replay on a tab switch.
+if (gate.runs('F9'))
 for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -3445,6 +3493,7 @@ for (const theme of themes) {
 
 // BUG-18: a record from a set the plausibility check flags (80 kg after 50 kg, over the 25 % jump
 // line) reads "PR unconfirmed"; a plausible one (55 kg) reads plain "PR".
+if (gate.runs('BUG-18'))
 {
   const ctx = await browser.newContext({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -3490,6 +3539,7 @@ for (const theme of themes) {
 // F8: every live control is a real >=44px tap target (QA-R7-1 style: elementFromPoint at its
 // centre +/-21px still resolves to it or a descendant), at both 390 and 360px, and the topbar
 // controls fit on one line even at 360px.
+if (gate.runs('F8'))
 for (const width of [390, 360]) {
   const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -3545,6 +3595,7 @@ for (const width of [390, 360]) {
 // QA5-1b..4b: a regression guard for QA5-1..4. Those fixes had no probe of their own — the gate
 // still passed against the pre-fix build, so undoing any of them would go unnoticed. In-app
 // Reduce motion only (OS no-preference), the exact path the original bugs were in.
+if (gate.runs('QA5-1b'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -3608,6 +3659,7 @@ for (const width of [390, 360]) {
 // on a mouse click) had no gate probe anywhere. Full motion (no reducedMotion key): under reduce,
 // .seg/.tab/etc. answer with opacity instead of scale (QA5-2), so scale/transform here would read
 // as unchanged for the wrong reason.
+if (gate.runs('QA5-5b'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -3643,6 +3695,7 @@ for (const width of [390, 360]) {
 
 // F5: determinism — Today, History and the live Train clock render byte-identical 300ms apart, so
 // an animation still settling on capture (rather than a real difference) never slips through.
+if (gate.runs('F5.2'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -3688,6 +3741,7 @@ for (const width of [390, 360]) {
 // page's clock (Playwright's clock.install, which starts ticking normally from that instant —
 // nothing else needs to change) to a fixed instant, and session times are hours-ago-from-that,
 // not from Date.now().
+if (gate.runs('O3'))
 {
   const RT_PINNED_NOW = new Date();
   RT_PINNED_NOW.setHours(12, 0, 0, 0);
@@ -4114,6 +4168,7 @@ for (const width of [390, 360]) {
 // including one with its notes sheet open — and resets an unsaved, still-focused input back to the
 // last-committed value. Playwright's virtual clock crosses that minute boundary deterministically,
 // without a real 60 s wait and without any date-dependent locator.
+if (gate.runs('Hotfix'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4166,6 +4221,7 @@ for (const width of [390, 360]) {
 // got. A typed-then-reverted edit leaves the local draft non-null (the browser's native 'change'
 // only fires when the value differs from what it was at focus time, so reverting to the original
 // text never fires it), so the stale draft masked whatever another tab or device had since saved.
+if (gate.runs('Hotfix'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4213,6 +4269,7 @@ for (const width of [390, 360]) {
 // without first blurring the note field (a real tap always blurs first and is unaffected — this
 // reproduces the no-blur path, e.g. the Sheet's own unmount) used to let the pending draft, once
 // flushed after the array had already shifted, land on whichever exercise now sat at that index.
+if (gate.runs('Hotfix'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4254,6 +4311,7 @@ for (const width of [390, 360]) {
 // QA10-3: F10's own acceptance checks (docs/UI-POLISH-PLAN.md F10) were never added, which is how
 // QA10-1 and QA10-2 shipped. Undo round-trips (identity-based, not index-based) for every removal,
 // plus the hold-to-confirm timing and its keyboard twin.
+if (gate.runs('QA10-3'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4332,6 +4390,7 @@ for (const width of [390, 360]) {
 
 // QA10-3 (continued): the split editor's Remove + Undo, and HoldButton's hold-timing / keyboard
 // tap-twice twin, each on a fresh session so they don't interact with the flow above.
+if (gate.runs('QA10-3'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4397,6 +4456,7 @@ for (const width of [390, 360]) {
 // it didn't just move the overflow somewhere else. Body is checked with real training history
 // loaded (the `legacy` fixture), so its Ready-times card (O3) renders real tiles, not an empty
 // state, in both a dark and a light theme.
+if (gate.runs('QA10-7'))
 for (const theme of ['silent-black', 'paper']) {
   const ctx = await browser.newContext({ viewport: { width: 320, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4439,6 +4499,7 @@ for (const theme of ['silent-black', 'paper']) {
 }
 
 // I9: tabs keep their own scroll position, and re-tapping the current tab glides back to the top.
+if (gate.runs('I9'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4474,6 +4535,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // I10: the segmented thumb glides to the selected option, the raw (thumb-less) .seg keeps its old
 // fill, split tabs scroll the active one into view, and a theme change fires a view transition.
+if (gate.runs('I10'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -4574,6 +4636,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // I11: hold-to-reorder lifts with depth, auto-scrolls near the edges, settles on drop, and every
 // long-press (including the unit-pill's) fires at the same 400ms.
+if (gate.runs('I11'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 700 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
@@ -4637,6 +4700,7 @@ for (const theme of ['silent-black', 'paper']) {
 }
 
 // A5: swipe a History session row left to delete it (with Undo); swipe the calendar to page months.
+if (gate.runs('A5'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4722,6 +4786,7 @@ for (const theme of ['silent-black', 'paper']) {
 // AUD-11 (UI-02): editing a session, then swiping it away and undoing, restores the EDITED
 // session. The swipe gesture's effect only re-runs on [session.id] (A5), so before the fix the
 // Undo closed over the stale pre-edit session captured when the row first mounted.
+if (gate.runs('AUD-11'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4778,6 +4843,7 @@ for (const theme of ['silent-black', 'paper']) {
 // AUD-11 (UI-04): a carry/sled set's editor shows and edits its load, distance and time together
 // (load no longer hides behind a timed carry's duration field), and removing one set uses an
 // explicit delete rather than needing every field zeroed to imply it.
+if (gate.runs('AUD-11'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4841,6 +4907,7 @@ for (const theme of ['silent-black', 'paper']) {
 // AUD-11 (UI-11, review Low on #159): the Exercise progress card's chart readout for a hold is
 // built by a call site in History.tsx (statReadout), not by statReadout alone — covering only the
 // helper function left that call site free to regress back to the old "<load> × <reps>" form.
+if (gate.runs('AUD-11'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -4883,6 +4950,7 @@ for (const theme of ['silent-black', 'paper']) {
 // QA12-3: under reduce, the drawing animation is skipped outright (not just faded fast). A
 // mutation that always calls beginElement() regardless of `reduce` would still pass every other
 // O1 probe (they only check timing), so assert the finished state directly, right after load.
+if (gate.runs('QA12-3'))
 {
   const tag = 'launch reduce draws nothing (QA12-3)';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -4926,6 +4994,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // O1: launch overlay "Bar path" timing, under full motion, measured from window.__marcLaunchT0
 // (set by the inline script in index.html at its very first line).
+if (gate.runs('O1.1'))
 {
   const elapsedAtLeast = (page, ms) => page.waitForFunction(target => performance.now() - window.__marcLaunchT0 >= target, ms, { timeout: 8000 });
   const tag = 'launch (O1)';
@@ -4953,6 +5022,7 @@ for (const theme of ['silent-black', 'paper']) {
 }
 
 // O1: a tap skips the overlay.
+if (gate.runs('O1.1'))
 {
   const elapsedAtLeast = (page, ms) => page.waitForFunction(target => performance.now() - window.__marcLaunchT0 >= target, ms, { timeout: 8000 });
   const tag = 'launch skip (O1)';
@@ -4985,6 +5055,7 @@ for (const theme of ['silent-black', 'paper']) {
 // <dialog> paints in the browser's top layer above any z-index including #launch's. Before the
 // fix, the dialog opened at 0ms and swallowed the tap meant to skip the launch overlay. Keeps
 // the existing seeded "launch skip (O1)" probe above; this is the unseeded case next to it.
+if (gate.runs('QA12-1'))
 {
   const elapsedAtLeast = (page, ms) => page.waitForFunction(target => performance.now() - window.__marcLaunchT0 >= target, ms, { timeout: 8000 });
   const tag = 'launch skip, first run (QA12-1)';
@@ -5013,6 +5084,7 @@ for (const theme of ['silent-black', 'paper']) {
 }
 
 // O2: Muscle panel — recovery timeline (real dates), facts, actions, Logged/Try next tabs.
+if (gate.runs('O2'))
 {
   // Computed from the real library, not hard-coded, so this stays correct if the library changes.
   const O2_GLUTES_DIRECT = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).filter(e => e.primary?.includes('glutes')).length;
@@ -5142,6 +5214,7 @@ for (const theme of ['silent-black', 'paper']) {
 }
 
 // O1: the theme colour map, and the crash hook clearing the overlay.
+if (gate.runs('O1.2'))
 {
   const tag = 'launch theme+crash (O1)';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
@@ -5164,6 +5237,7 @@ for (const theme of ['silent-black', 'paper']) {
 // Every context below holds the bundle back 1500 ms, then samples the overlay at its first paint
 // and 100 ms later, in all 5 themes, at 1x and at 4x CPU throttling. A probe that saw no bundle
 // delay, no visible ink or no movement fails, so it can never pass on flat data.
+if (gate.runs('BUG-34'))
 {
   const tag = 'launch first frame (BUG-34)';
   // The path's corners in the mark's own units, its length, and the nearest point on it to (x, y):
@@ -5298,6 +5372,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // A4: keepAwake is called on while a workout is live, and off once it ends. The NativeUi plugin
 // is mocked here (isNativePlatform forced true) since this gate runs the web build.
+if (gate.runs('A4'))
 {
   const tag = 'keepAwake (A4)';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
@@ -5351,6 +5426,7 @@ for (const theme of ['silent-black', 'paper']) {
 // same spot; saved feedback keeps one record per (note, day); the raw "Earlier this month" log is
 // gone; hidden notes sit behind one quiet row that opens to their titles, each with Show again;
 // a hidden note stays hidden after a reload.
+if (gate.runs('COACH-FB'))
 {
   const tag = 'COACH-FB';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -5424,6 +5500,7 @@ for (const theme of ['silent-black', 'paper']) {
 // BUG-8: a saved height/weight must not read "Not set" just because it has no profileHistory
 // entry, sex must not look chosen when it was never saved, and the Escobar tab's Profile row
 // must name what's missing (and read complete once it is).
+if (gate.runs('BUG-8'))
 {
   const tag = 'BUG-8';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -5482,6 +5559,7 @@ for (const theme of ['silent-black', 'paper']) {
 // opacity 0, translated one width sideways, which widened the whole page and stretched the fixed
 // bottom bar. On purpose, this context carries no reducedMotion — under reduce the animation
 // branch never runs at all, which is exactly how the existing A5 gate block missed this.
+if (gate.runs('BUG-9'))
 {
   const tag = 'BUG-9';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
@@ -5574,6 +5652,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // BUG-19 (DATES-F1): Finish long after the last set ends the session 5 min after that set, and the
 // finish sheet says so and shows that duration. Finishing right after the last set adds nothing.
+if (gate.runs('BUG-19'))
 {
   const tag = 'BUG-19 finish end time';
   for (const { label, lastAgoMin, expectNote, expectDur } of [
@@ -5637,6 +5716,7 @@ for (const theme of ['silent-black', 'paper']) {
 // a finished workout, never during a live one) as a plain banner (never a blocking modal — it
 // must not steal a tap meant for anything else), Yes/No are remembered across a reload, and no
 // request reaches the errors endpoint while consent is off.
+if (gate.runs('ITEM-7.5'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -5698,6 +5778,7 @@ for (const theme of ['silent-black', 'paper']) {
 // hint read at 4.5:1 or better, On queues an error locally (the wiring works) yet no request
 // ever reaches /errors (an automated browser never sends), and Off clears the queue and sticks
 // across a reload.
+if (gate.runs('ITEM-7.5'))
 for (const theme of ['silent-black', 'paper']) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -5781,10 +5862,13 @@ for (const theme of ['silent-black', 'paper']) {
 // device where it sits higher than the tokens say); a real tap at the button's centre at the scroll
 // end must open the sheet. Only the document may scroll (no nested scroller eating the end padding).
 const bug22Runs = [];
+if (gate.runs('BUG-22'))
 for (const theme of ['silent-black', 'paper']) for (const inset of ['none', 'env48', 'var48', 'raised60']) bug22Runs.push({ theme, inset });
 // The owner's Samsung (3-button navigation, larger default font): a 360x740 viewport, a 48px inset
 // written the SystemBars way, and every --fs-* token scaled 1.3x (standing in for WebView text zoom).
+if (gate.runs('BUG-22'))
 for (const theme of ['silent-black', 'paper']) bug22Runs.push({ theme, inset: 'samsung' });
+if (gate.runs('BUG-22'))
 for (const { theme, inset } of bug22Runs) {
   const ctx = await browser.newContext({ viewport: inset === 'samsung' ? { width: 360, height: 740 } : { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -5919,6 +6003,7 @@ for (const { theme, inset } of bug22Runs) {
 // BUG-15 (PROGRESSION-F6): a lighter week cuts 3 planned sets to 2, and the Train rows show it:
 // two rows carry the 0.9 × pre-week target (72.5 → 65 kg on the default barbell), the third is set
 // aside, and the header counts 2 sets.
+if (gate.runs('BUG-15'))
 {
   const tag = 'BUG-15 set cut rows';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -5962,6 +6047,7 @@ for (const { theme, inset } of bug22Runs) {
 // BUG-17 (RECOVERY-F1): a muscle with more than 120 h still to go reads "5+ days" on Today, the
 // Body ready-time tile and the muscle panel's Ready label, never "under 1h". Seed: a novice (no
 // training start), squat to max for 10 sets of 12 on three days in a row, the last ending 1.5 h ago.
+if (gate.runs('BUG-17'))
 {
   const tag = 'BUG-17 5+ days';
   const pinned = new Date(); pinned.setHours(12, 0, 0, 0);
@@ -6006,6 +6092,7 @@ for (const { theme, inset } of bug22Runs) {
 // LT-3 (docs/LOAD-AWARE-TARGETS.md §4): the live retarget. Plan 27.5 kg × 8 on the bench (last time 27.5 × 7), set 1
 // logged live at 32 kg × 5 at Max: rows 2 and 3 show 32 × 3 as their placeholders, and the autoregulation line reads
 // "32 kg is above today's plan: about 3 clean reps. Back to 27.5 for 8, or stay at 32 for 3." Never a "Try" line.
+if (gate.runs('LT-3'))
 {
   const tag = 'LT-3 live retarget';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -6047,6 +6134,7 @@ for (const { theme, inset } of bug22Runs) {
 
 // ADAPT-4 G1 (F-1): Profile shows "not set" for planned days per week when the user never set it (it
 // showed 3), and the number once it is set (tapping + from "not set" saves 4). Silent Black and Paper, 390 px.
+if (gate.runs('ADAPT-4'))
 for (const theme of ['silent-black', 'paper']) {
   const tag = `ADAPT-4 planned days (${theme})`;
   const now = new Date().toISOString();
@@ -6089,6 +6177,7 @@ for (const theme of ['silent-black', 'paper']) {
 // ADAPT-4 G2 (C-5, Coach.tsx scope extension 2026-09-29): a lifter with planned days 2 and no schedule who
 // trained twice last week sees the weekly-review card on Monday, and it says "last week" (on main it
 // needed 5 logged days). Silent Black and Paper, 390 px, clock pinned to a Monday noon.
+if (gate.runs('ADAPT-4'))
 for (const theme of ['silent-black', 'paper']) {
   const tag = `ADAPT-4 weekly review card (${theme})`;
   const pinned = new Date(2026, 8, 28, 12, 0, 0, 0); // Monday 2026-09-28, local
@@ -6132,6 +6221,7 @@ for (const theme of ['silent-black', 'paper']) {
 // reads `assumed` and the default ladder's 6 kg next rung (a 50% jump) breaks the 15% lean cap —
 // chooseRung's cap-break lever, `shouldAskWeight`'s trigger (verified against this exact fixture
 // in tests/escobar/read.test.ts).
+if (gate.runs('LT-4'))
 {
   const tag = 'LT-4 ask chip';
   const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
@@ -6178,6 +6268,7 @@ for (const theme of ['silent-black', 'paper']) {
 
 // BUG-23: abductors (label "Outer hips") are drawn on the back-view SVG (gluteus medius left/right
 // in src/svg/bodyMuscles.ts), so the Body tab's back map must show them, never the front one.
+if (gate.runs('BUG-23'))
 {
   const tag = 'BUG-23 abductors back view';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -6204,6 +6295,7 @@ for (const theme of ['silent-black', 'paper']) {
 // is in the entry chunk and in no other asset. G6: exactly one 44 px entry on the lateral-raise card, none on the
 // first library exercise without approved content (firstWithoutHowTo), and it opens the plate sheet. G7 also covers
 // the open How-to sheet.
+if (gate.runs('FG-OFF'))
 {
   const tag = 'FG-OFF';
   const assets = join(ROOT, 'www/assets');
@@ -6273,6 +6365,7 @@ for (const theme of ['silent-black', 'paper']) {
 // BUG-27: scrolling a page under the Android status bar must never show page text through it (seen
 // on the Escobar tab, scrolled to "Escobar's notes"). The status-bar area itself must stay painted
 // in --bg at every scroll position, in every theme. Silent Black and Paper, a 32px top inset.
+if (gate.runs('BUG-27'))
 {
   const tag = 'BUG-27 status bar backdrop';
   for (const theme of ['silent-black', 'paper']) {
@@ -6337,6 +6430,7 @@ for (const theme of ['silent-black', 'paper']) {
 // PLAY-1 (A1): Settings shows the "Privacy policy" link and the healthcare reminder in all 5 themes. The link's href
 // must equal the Play Console privacy policy field (docs/PLAY-SUBMISSION.md) and open outside the app the way every
 // external link does (target=_blank, noopener); the reminder sits above the version line.
+if (gate.runs('PLAY-1'))
 {
   // The URL entered in the Play Console field, read from the submission doc itself so the two cannot drift.
   const PLAY_CONSOLE_PRIVACY_URL = readFileSync(join(ROOT, 'docs/PLAY-SUBMISSION.md'), 'utf8').match(/\*\*Privacy policy URL \(Play Console[^\n]*\n(https:\/\/\S+?)\s/)?.[1];
@@ -6375,6 +6469,7 @@ for (const theme of ['silent-black', 'paper']) {
 // block HT-10 can add up the time of each HT block: the interval between two lines belongs to the block that printed
 // the second one. It only records; nothing printed changes.
 const ht10Clock = { t0: Date.now(), lines: [] };
+if (gate.runs('HT-10.clock'))
 {
   const log = console.log;
   console.log = (...a) => { ht10Clock.lines.push([Date.now(), String(a[0] ?? '').slice(0, 24)]); log(...a); };
@@ -6384,6 +6479,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // Google Fonts request routed to the app's Inter woff2) is captured twice at 390x844 DPR 2, per plate block (plate top
 // to tempo bottom), in 5 themes x {normal, mistake with the first tell}: every pair must diff 0 px, and the same block
 // shifted 1 px must fail the L3 rule. The harness (tools/plates/fidelity/harness.mjs) is what HT-3 compares the app with.
+if (gate.runs('HT-1'))
 {
   const tag = 'HT-1';
   const { goldenSelfCheck } = await import('../tools/plates/fidelity/harness.mjs');
@@ -6397,6 +6493,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // sha256 is the approved e2bea90c…, printing the first differing byte offset), then diffs every generated file.
 // A9: the app's own vite config bundles generated/index.ts into 8 ht-<slug>-*.js chunks, none matching FG-OFF's
 // chunk ban, each <= 150 KB raw / 36 KB gz, and each chunk's strings still hash to its GOLDEN.json entry.
+if (gate.runs('HT-2'))
 {
   const tag = 'HT-2';
   const { spawnSync } = await import('node:child_process');
@@ -6447,6 +6544,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // at the same sub-pixel position, and run with LCD text off, like a phone (D-HT3); two controls prove the phase matters.
 // Also: the entry only where approved content exists (bench press and a custom exercise have none), S0 on every open,
 // the S0 element budget, Back / Escape / drag-to-close, focus back on the entry, 44 px targets, no stored data.
+if (gate.runs('HT-3'))
 {
   const tag = 'HT-3';
   const t0 = Date.now();
@@ -6481,6 +6579,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // - A7: hand-<id> chunks within their measured size + 10 % (D-HT6-budget), and no hand- request before the first tap;
 // - A8: the push hint on the Train card (Silent Black, Paper): exactly once on the chest press, with HOWTO_HINTS' text;
 //   none on the lat pulldown (a How-to, not push), the no-How-to control (firstWithoutHowTo) or a custom exercise.
+if (gate.runs('HT-6'))
 {
   const tag = 'HT-6';
   const t0 = Date.now();
@@ -6734,6 +6833,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // app's own PlateSheet .plate chip unaffected by the How-to CSS. A5 (C17, LR-23): no fetch/XHR/Worker/http
 // URL in the built How-to chunks (the shared checker, xmlns literals excepted), no <a> tag, no target=, and
 // every href starts with #.
+if (gate.runs('HT-3b'))
 {
   const tag = 'HT-3b';
   const t0 = Date.now();
@@ -7062,6 +7162,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 //   posture-*.js chunks are each <= 24 KB gz and within their tests/howto/budgets.json ceiling.
 // - A6: two role=img halves with Right:/Wrong: labels in the open panel; every posture chip is >= 44 x 44.
 // - A2 (live): one #zdots in the document, and no duplicate id in the document with the close-up open.
+if (gate.runs('HT-7'))
 {
   const tag = 'HT-7';
   const t0 = Date.now();
@@ -7366,6 +7467,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // self-check (HT4-A6). Rebuilding the layer page and capturing every real renderPlate call both spawn `node
 // artifact/build-page.mjs` (~8-14s each); this is the one place they run - `npm test` only carries the fast,
 // file-read/synthetic-data proofs (review fix, PR #107, blocker 4).
+if (gate.runs('HT-4'))
 {
   const tag = 'HT-4';
   const { pathToFileURL } = await import('node:url');
@@ -7464,6 +7566,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // <details> opened and every collapse button (aria-expanded="false") clicked: no link, no source/evidence UI, no
 // contact or source wording anywhere shown, and exactly one disclaimer after the last red-flag block. HT-10
 // re-runs this on the final sheet, once HT-6/7/8's zoom chips and feel rows also exist to open.
+if (gate.runs('HT-9'))
 {
   const tag = 'HT-9 C19';
   const t0 = Date.now();
@@ -7542,6 +7645,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // button opens when its .zx panel shows, visible, with the plate box hidden; a tap that opens nothing fails. A hand
 // close-up (HT-6, key "hand") must always open; a posture close-up must open once HT-7's posture section is in this build, and
 // is counted as "pending HT-7" until then (supervisor ruling on #113).
+if (gate.runs('HT-9'))
 {
   const tag = 'HT-9 Show';
   const t0 = Date.now();
@@ -7600,6 +7704,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // then risksSection) - `hand`, `feel`, `setup`, `risks` (HT-8's `feel` between `hand` and `setup`). Setup used to render first, which pushed HT-6's "Look closer" chip row down and broke its pinned
 // "open from Mistake" transform-origin check. Checks every approved exercise's [data-section] DOM order, one theme
 // (the order does not vary by theme). Fails on 0381e91 (setup, hand, risks), passes after (hand, setup, risks).
+if (gate.runs('HT-9'))
 {
   const tag = 'HT-9 Order';
   const t0 = Date.now();
@@ -7639,6 +7744,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // - A5: the HT-3 plate compare (L2b, F3, L3) still passes after the sheet was scrolled to the end and every
 //   collapsed control (details, aria-expanded="false", zoom chips aside) was opened (Silent Black and Paper); HT-8's
 //   feel rows are golden B's accordion, so exactly one row per feel section is open (D-HT9-A5-feel).
+if (gate.runs('HT-9'))
 {
   const tag = 'HT-9';
   const t0 = Date.now();
@@ -7852,6 +7958,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // A5: row buttons >= 44 x 44. A6: feel chunks <= measured + 10 % gz, none requested before the How-to tap, one after.
 // Tripwire: main-thread TaskDuration over the tap-to-end + 1 s window minus an idle window of the same length, at 4x
 // CPU throttle, median of 5, app <= 1.2 x golden B, both measured here with the same code, interleaved, after the pixel runs.
+if (gate.runs('HT-8'))
 {
   const tag = 'HT-8';
   const t0 = Date.now();
@@ -8158,6 +8265,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // sheet no longer carries the explaining lines COPY-1 removed. The probe fails if it cannot see the footer or the
 // sheet's text at all. The medical line PLAY-1 used to show is gone (P3 retired, D-COPY1-medical: the reminder
 // moved to the store description) and the version line is the rights line's next sibling.
+if (gate.runs('COPY-1'))
 {
   const RIGHTS = '© 2026 Marc Darenz. All rights reserved.';
   const GONE = [
@@ -8216,6 +8324,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // AUD-20 (SCI-10): session calories are a plain estimate, never a ± or "X to Y" band. A live
 // watch-stub session (bpm every 1 s) reaches the finish screen in all 5 themes; the probe fails
 // when no calorie line is found (nothing measured) or when any band shows.
+if (gate.runs('AUD-20'))
 {
   for (const theme of themes) {
     const tag = `AUD-20 ${theme}`;
@@ -8308,6 +8417,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // panel off-screen in one frame (top 247 -> 844 px) and sliding a new one in with the scrim restarting at 0.
 // Frame-sampled at 390 x 844 in Silent Black and Paper, at 1x and 4x CPU, both paths: checked in today, and
 // check-in -> Skip -> brief. A 2-exercise split with history so Today's checks show.
+if (gate.runs('BUG-36'))
 {
   // COPY-2: two chest lifts keep the brief taller than the check-in (fewer soreness rows) after the explaining lines were removed
   const BUG36_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press'];
@@ -8422,6 +8532,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // dialog's scrollTop. Covered: the start sheet on both paths (checked in; check-in -> Skip -> brief), Settings (an
 // ordinary Sheet) and Gyms nested in it (I6), at 411 x 960 DPR 2.625 and 390 x 844 DPR 1, at 1x and 4x CPU, in Silent
 // Black and Paper, plus each sheet under reduced motion.
+if (gate.runs('BUG-37'))
 {
   const BUG37_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press', 'lib_barbell_row', 'lib_lat_pulldown', 'lib_dumbbell_shoulder_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_biceps_curl', 'lib_triceps_pushdown'];
   // COPY-2 (D-COPY2-swap2): the swap runs use two chest lifts so the brief stays taller than the check-in (fewer soreness rows)
@@ -8538,6 +8649,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // drag saves; a substitute is picked by keyboard; Skip today keeps a logged set and the Finish
 // counters match the save; the time question will not save a future start. The pointer drag is the
 // "reorder" probe above, unchanged.
+if (gate.runs('AUD-10'))
 {
   const tag = 'AUD-10';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
@@ -8694,6 +8806,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // not tapped, and the GoalSheet and Add-exercise choices — a Card with onClick and a plain
 // list-row — are reachable by real Tab presses and activate with Enter. tabTo walks Tab itself
 // (bounded) instead of assuming a stop count, so it still proves real keyboard reachability.
+if (gate.runs('AUD-12'))
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
@@ -8776,6 +8889,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // reversal is a bounce) and down by >= 20 px, no frame steps more than max(16 px, a quarter of the travel)
 // (a snap; a ~100 px ease peaks near 20 px a frame), one sheet throughout, and nothing moves or resizes for
 // >= 100 ms after it rests.
+if (gate.runs('COPY-2'))
 {
   const C2_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press', 'lib_barbell_row', 'lib_lat_pulldown', 'lib_dumbbell_shoulder_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_biceps_curl', 'lib_triceps_pushdown'];
   const c2Seed = ([t, EX]) => {
@@ -8866,6 +8980,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 // shard.mjs import, to the end of the skip branch; the whole job is held by its timeout-minutes, D-SUP-CI-1)
 const HT10_OWN_JOB_BUDGET_S = 60;
 const ht10T0 = Date.now();
+if (gate.runs('HT-10'))
 if (!(await import('../tools/plates/fidelity/shard.mjs')).ht10Runs()) {
   const ownS = (Date.now() - ht10T0) / 1000;
   console.log(`HT-10: skipped (MARC_HT10_OWN_JOB=1, no MARC_HT_SHARD) in ${ownS.toFixed(1)} s of its ${HT10_OWN_JOB_BUDGET_S} s budget (D-HT10-A5c); this gate run so far ${process.uptime().toFixed(1)} s (information only)`);
@@ -8874,6 +8989,7 @@ if (!(await import('../tools/plates/fidelity/shard.mjs')).ht10Runs()) {
   await (await import('../tools/plates/fidelity/ht10.mjs')).runHt10({ errors, OUT, PORT, clock: ht10Clock });
 }
 
+await gate.done();
 await browser.close();
 stopping = true;
 server.kill();
