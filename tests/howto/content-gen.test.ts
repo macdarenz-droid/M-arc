@@ -185,7 +185,8 @@ describe('HT5-A2/LR-23: C19, no sources or contacts, on the generated output', (
 
 describe('HT5-A4: HOWTO_HINTS (critic fix 8)', () => {
   it('holds golden B\'s handling.cue for push-archetype exercises with an approved plate, and nothing else', async () => {
-    const { HOWTO_HINTS, HOWTO_IDS } = await import('../../src/howto/ids');
+    const { HOWTO_HINTS } = await import('../../src/howto/ids');
+    const { HOWTO_IDS } = await import('../../src/howto/generated/loaders');   // LIB-2: the shipped list moved here
     const { byId } = await loadAll();
     const wantKeys = [...byId.entries()].filter(([, c]) => c.handling?.archetype === 'push').map(([id]) => id);
     expect(Object.keys(HOWTO_HINTS).sort()).toEqual(wantKeys.sort());

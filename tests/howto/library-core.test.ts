@@ -194,3 +194,131 @@ describe('L2-A14: per-batch golden files (verifyBatchChain)', () => {
     expect(g.verifyBatchChain({ ...f, base: { index: gl.length, hash: f.base.hash } }, gl).some((p: string) => /is not a GOLDEN.json entry/.test(p))).toBe(true);
   });
 });
+
+describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () => {
+  let idsGen: any, node: any, reg: any, h: any;
+  const exerciseIds = () => (JSON.parse(readFileSync('src/data/exercises.json', 'utf8')) as { id: string }[]).map(e => e.id);
+  beforeAll(async () => {
+    idsGen = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));
+    node = await import(/* @vite-ignore */ url('tools/plates/library/ids-node.mjs'));
+    reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    h = await import(/* @vite-ignore */ url('tools/plates/fidelity/harness.mjs'));
+  });
+
+  it('the generator writes 60 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts', () => {
+    expect(out.size).toBe(60);
+    for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts']) expect(out.has(p), p).toBe(true);
+  });
+
+  /** L2-A6: hasHowTo (both twins) against the LOADERS keys and the shipped rows, over every exercises.json id. */
+  async function idProblems(ids: string[]): Promise<string[]> {
+    if (ids.length === 0) return ['no exercise ids'];
+    const { hasHowTo } = await import('@/howto/ids');
+    const { LOADERS, HOWTO_IDS } = await import('@/howto/generated/loaders');
+    const shipped = new Set(reg.shippedIds()), bad: string[] = [];
+    for (const id of ids) {
+      const want = shipped.has(id);
+      if (hasHowTo(id) !== want) bad.push(`${id}: hasHowTo ${hasHowTo(id)}, shipped ${want}`);
+      if (node.hasHowTo(id) !== want) bad.push(`${id}: Node twin ${node.hasHowTo(id)}, shipped ${want}`);
+      if ((id in LOADERS) !== want) bad.push(`${id}: in LOADERS ${id in LOADERS}, shipped ${want}`);
+    }
+    if (JSON.stringify([...HOWTO_IDS]) !== JSON.stringify([...shipped])) bad.push('HOWTO_IDS != shipped rows in order');
+    return bad;
+  }
+  it('L2-A6/A17: for all 153 exercises.json ids, hasHowTo (ids.ts and its Node twin) is true exactly for the shipped ids, which are exactly the LOADERS keys', async () => {
+    expect(exerciseIds()).toHaveLength(153);
+    expect(await idProblems(exerciseIds())).toEqual([]);
+    expect(await idProblems([])).toEqual(['no exercise ids']);
+  });
+  it('L2-A7: unknown and custom ids are false in both twins', async () => {
+    const { hasHowTo } = await import('@/howto/ids');
+    for (const id of ['custom_1727000000000', 'lib_', '', 'LIB_PULL_UP', 'lib_pull_up ', 'lib_not_an_exercise', 'custom_lib_pull_up']) {
+      expect(hasHowTo(id), id).toBe(false);
+      expect(node.hasHowTo(id), id).toBe(false);
+    }
+  });
+  it('L2-A17: ids.ts and ids-node.mjs carry byte-identical SET and alphabet literals and the same hash body', () => {
+    const ts = readFileSync('src/howto/ids.ts', 'utf8'), js = readFileSync('tools/plates/library/ids-node.mjs', 'utf8');
+    const lit = (s: string, k: string) => s.match(new RegExp(`^const ${k} = (".*");$`, 'm'))?.[1];
+    expect(lit(ts, 'SET')).toBeTruthy();
+    expect(lit(ts, 'SET')).toBe(lit(js, 'SET'));
+    expect(lit(ts, 'A')).toBe(lit(js, 'A'));
+    expect(lit(ts, 'SET')!.length - 2).toBe(5 * reg.shippedIds().length);
+    for (const id of exerciseIds()) expect(node.hasHowTo(id), id).toBe(reg.shippedIds().includes(id));
+  });
+  it('L2-A8: a hash collision between a shipped id and any other id is refused; no shipped ids is refused', () => {
+    const real = idsGen.idHash;
+    expect(idsGen.setOf(['lib_pull_up'], exerciseIds())).toBe(real('lib_pull_up'));
+    expect(() => idsGen.setOf([], exerciseIds())).toThrow(/no shipped ids/);
+    expect(() => idsGen.setOf(['lib_nope'], exerciseIds())).toThrow(/is not in src\/data\/exercises.json/);
+    // two ids that collide under the real hash are searched for among synthetic names, so the refusal is real
+    const seen = new Map<string, string>(); let pair: [string, string] | null = null;
+    for (let i = 0; !pair && i < 200000; i++) { const id = `lib_x${i}`, t = real(id); if (seen.has(t)) pair = [seen.get(t)!, id]; else seen.set(t, id); }
+    expect(pair).not.toBeNull();
+    expect(() => idsGen.setOf([pair![0]], [...exerciseIds(), ...pair!])).toThrow(/hash collision/);
+  }, 60_000);
+  it('L2-A9: ids.ts (and with lazy.tsx) stays within 2,048 / 3,072 B raw with 153 synthetic shipped ids and the 8 hints', () => {
+    const set = exerciseIds().map(idsGen.idHash).join('');
+    const hints = readFileSync('src/howto/ids.ts', 'utf8').slice(readFileSync('src/howto/ids.ts', 'utf8').indexOf('export const HOWTO_HINTS'));
+    const at153 = `// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/ids.mjs). inputsSha256=${'0'.repeat(64)}\n${idsGen.idsText(set)}${hints}`;
+    expect(set).toHaveLength(765);
+    expect(at153.length).toBeLessThanOrEqual(2048);
+    expect(at153.length + readFileSync('src/slices/howto/lazy.tsx', 'utf8').length).toBeLessThanOrEqual(3072);
+  });
+  it('L2-A13: coverage stages map one rule: approved <=> shipped, every other id pending with an archetype; c6 passes', async () => {
+    const { COVERAGE } = await import('../../src/howto/coverage');
+    const { checkC6 } = await import('./checks/c6');
+    const entries = Object.entries(COVERAGE) as [string, any][];
+    expect(entries).toHaveLength(153);
+    const shipped = new Set(reg.shippedIds());
+    for (const [id, e] of entries) {
+      if (shipped.has(id)) expect(e, id).toEqual({ status: 'approved', stage: 'shipped' });
+      else { expect(e.status, id).toBe('pending'); expect(e.archetype, id).toBeTruthy(); expect(reg.isStage(e.stage) && e.stage !== 'shipped', id).toBe(true); }
+    }
+    expect(checkC6(exerciseIds(), COVERAGE)).toEqual([]);
+    expect(() => idsGen.coverageEntries({}, reg.rows(), exerciseIds())).toThrow(/must hold every exercises.json id once/);
+    const arch = JSON.parse(readFileSync('tools/plates/library/coverage-archetypes.json', 'utf8')).archetypes;
+    const withShip = [...reg.rows(), { id: 'lib_barbell_row', stage: 'shipped' }];
+    expect(idsGen.coverageEntries(arch, withShip, exerciseIds()).find(([id]: [string]) => id === 'lib_barbell_row')[1]).toEqual({ status: 'approved' });
+    expect(() => idsGen.coverageEntries({ ...arch, lib_barbell_row: null }, reg.rows(), exerciseIds())).toThrow(/no archetype/);
+  });
+  it('L2-A16: the gate\'s no-How-to control is the first exercises.json id that does not ship, and moves on when it ships', () => {
+    expect(h.firstWithoutHowTo()).toBe(exerciseIds().find(id => !reg.shippedIds().includes(id)));
+    expect(h.firstWithoutHowTo()).toBe('lib_dumbbell_bench_press');
+    const first = exerciseIds().find(id => !node.hasHowTo(id));
+    expect(first).toBe(h.HT_NO_HOWTO);
+  });
+  it('L2-A18: HT_PLATES, now read from plates.json, equals the literal pairs it replaced, in order (8 pairs)', () => {
+    expect(h.HT_PLATES).toEqual([['lateral-raise', 'lib_dumbbell_lateral_raise'], ['barbell-back-squat', 'lib_barbell_back_squat'], ['pull-up', 'lib_pull_up'],
+      ['hanging-leg-raise', 'lib_hanging_leg_raise'], ['lat-pulldown', 'lib_lat_pulldown'], ['seated-cable-row', 'lib_seated_cable_row'],
+      ['leg-press', 'lib_leg_press'], ['machine-chest-press', 'lib_machine_chest_press']]);
+  });
+});
+
+describe('L2-A15: the How-to total ceiling is a per-id rule (plan 5.1)', () => {
+  /** ceil(measured x 11 x N / 80): the 8's measured total over 8, + 10 %, times N shipped ids, rounded once. */
+  const rule = (measured: number, n: number) => Math.ceil((measured * 11 * n) / 80);
+  it('both totals equal the rule at the shipped count, and a batch over its N fails', async () => {
+    const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const t = JSON.parse(readFileSync('tests/howto/budgets.json', 'utf8')).totals.find((x: any) => x.chunk === 'How-to total');
+    const n = reg.shippedIds().length;
+    expect(n).toBe(8);
+    expect(t.gzMax).toBe(rule(t.measuredGz, n));
+    expect(t.rawMax).toBe(rule(t.measuredRaw, n));
+    expect(rule(t.measuredGz, 9)).toBeGreaterThan(t.gzMax);
+    expect(Math.ceil(t.measuredGz / 8 * 1.1) * n).not.toBe(t.gzMax);   // rounding per id would drift
+  });
+});
+
+describe('L2-A19: moduleText, which LIB-3 H7 sizes chunks with, is byte-stable for the 8', () => {
+  it('sha256(moduleText(id, plate, entry, "0" x 64)) equals the committed value for each of the 8', async () => {
+    const g = await import(/* @vite-ignore */ url('tools/plates/golden.mjs'));
+    const pl = await import(/* @vite-ignore */ url('tools/plates/gen/plates.mjs'));
+    const want = JSON.parse(readFileSync('tests/howto/fixtures/moduletext-shas.json', 'utf8'));
+    const latest = g.latestEntries(JSON.parse(readFileSync(g.GOLDEN_JSON, 'utf8')).entries);
+    const plates = g.extractPlates(readFileSync(g.FIXTURE, 'utf8'));
+    expect(plates).toHaveLength(8);
+    expect(want.count).toBe(8);
+    for (const p of plates) { const id = g.LIB_OF[p.chromeId]; expect(g.sha256(pl.moduleText(id, p, latest.get(id), '0'.repeat(64))), id).toBe(want.shas[id]); }
+  });
+});

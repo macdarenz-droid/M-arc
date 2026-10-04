@@ -4,8 +4,9 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { HOWTO_HINTS, HOWTO_IDS } from '@/howto/ids';
-import { LOADERS } from '@/howto/generated';
+import { HOWTO_HINTS } from '@/howto/ids';
+// LIB-2: the shipped id list moved out of the main bundle into the lazy loaders chunk (ids.ts keeps only hashes).
+import { HOWTO_IDS, LOADERS } from '@/howto/generated/loaders';
 
 const walk = (d: string): string[] => readdirSync(d).flatMap(n => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : [p]; });
 const TRAIN = readFileSync('src/slices/workout/Train.tsx', 'utf8');
@@ -26,7 +27,7 @@ describe('HT6-A8: the push hint', () => {
     expect(keys.length).toBeGreaterThan(0);
     for (const id of keys) expect(HOWTO_IDS as readonly string[]).toContain(id);
     for (const id of HOWTO_IDS) {
-      const h = (await LOADERS[id]()).default as unknown as { handling?: { archetype: string; cue?: string } };
+      const h = (await LOADERS[id]!()).default as unknown as { handling?: { archetype: string; cue?: string } };
       if (h.handling?.archetype === 'push') expect(HOWTO_HINTS[id], id).toBe(h.handling.cue);
       else expect(HOWTO_HINTS[id], id).toBeUndefined();
     }

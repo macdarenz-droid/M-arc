@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=76c67672c5c01d32fa11da7701dcfd82380e97b524d6eefcb0817e36103e927b
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=f9ee5de2d5a6c46aa55d08aac66467e50bb39f2823c493ce960230506f3949fe
 // The leg-press posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-leg-press.css';
 export const panels: Readonly<Record<string, string>> = {

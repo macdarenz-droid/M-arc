@@ -1,5 +1,5 @@
-// HT-2 plugin: the approved plates -> src/howto/generated/ht-<slug>.ts (x8), generated/index.ts, src/howto/ids.ts
-// and src/slices/howto/css/plate.css. It rebuilds the gallery from the vendored engine (HT-1's golden.mjs), refuses
+// HT-2 plugin: the approved plates -> src/howto/generated/ht-<slug>.ts (x8), generated/index.ts and
+// src/slices/howto/css/plate.css (ids.ts moved to gen/ids.mjs, LIB-2). It rebuilds the gallery from the vendored engine (HT-1's golden.mjs), refuses
 // unless the page is the approved one and every fragment matches its latest GOLDEN.json entry, then emits the
 // fragments as JSON string literals: the parsed strings are the golden bytes, never re-serialized.
 import { readFileSync, rmSync } from 'node:fs';
@@ -69,25 +69,11 @@ export default {
 
 export const chunkName = slug => `ht-${slug}`;
 
-export function idsText(ids) {
-  return `// The only How-to module in the main bundle (plan 2.9: <= 2,048 B, no runtime imports).
-export const HOWTO_IDS = [
-${ids.map(i => `  ${lit(i)},`).join('\n')}
-] as const;
-export type HowToId = (typeof HOWTO_IDS)[number];
-export const HOWTO_LABEL = ${lit(LABEL)};
-export function hasHowTo(id: string): id is HowToId {
-  return (HOWTO_IDS as readonly string[]).includes(id);
-}
-`;
-}
-
-export function indexText(rows) {
-  return `import type { BuiltHowTo, LibId } from '../types';
-
-export const LOADERS: Record<LibId, () => Promise<{ default: BuiltHowTo }>> = {
-${rows.map(([id, slug]) => `  ${id}: () => import('./${chunkName(slug)}'),`).join('\n')}
-};
+/** LOADERS moved to generated/loaders.ts (LIB-2, design 7: its own lazy chunk, written by gen/ids.mjs). index.ts stays
+ *  as a re-export so '@/howto/generated' keeps its meaning. */
+export function indexText() {
+  return `// LOADERS live in ./loaders (LIB-2): one dynamic import per shipped id, in its own lazy chunk.
+export { LOADERS } from './loaders';
 `;
 }
 
@@ -115,8 +101,7 @@ export async function outputs({ hashFor }) {
     const path = `src/howto/generated/${chunkName(rows[id].slug)}.ts`;
     return { path, text: moduleText(id, byId.get(id), latest.get(id), hashFor(path)) };
   });
-  out.push({ path: 'src/howto/generated/index.ts', text: indexText(goldenIds.map(id => [id, rows[id].slug])) });
-  out.push({ path: 'src/howto/ids.ts', text: idsText(goldenIds) });
+  out.push({ path: 'src/howto/generated/index.ts', text: indexText() });
   out.push({ path: 'src/slices/howto/css/plate.css', text: rewriteCss(galleryCss(html)) });
   return out;
 }

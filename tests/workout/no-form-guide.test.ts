@@ -145,7 +145,8 @@ describe('D-HT1 A4: the How-to is reached from main only through ids.ts', () => 
 // D-HT1 A5 (HT-3): the entry exists exactly where approved content exists, with no fallback.
 describe('D-HT1 A5: hasHowTo is true exactly for the approved plates', () => {
   it('true for the GOLDEN plate ids, false for every other library id and for custom ids; ids = LOADERS keys = generated files', async () => {
-    const { hasHowTo, HOWTO_IDS } = await import('@/howto/ids');
+    const { hasHowTo } = await import('@/howto/ids');
+    const { HOWTO_IDS } = await import('@/howto/generated/loaders');   // LIB-2: the shipped list moved here
     const { LOADERS } = await import('@/howto/generated');
     const golden = JSON.parse(readFileSync('tests/howto/golden/GOLDEN.json', 'utf8')) as { entries: { kind: string; id?: string }[] };
     const approved = [...new Set(golden.entries.filter(e => e.kind === 'plate').map(e => e.id!))].sort();

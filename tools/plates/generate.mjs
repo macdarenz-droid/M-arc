@@ -17,7 +17,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { ROOT, header, inputsSha256, parseHeader, pluginFiles } from './lib/inputs.mjs';
 
 /** The folders generated files live in; --check fails on a GENERATED file here that no plugin writes. */
-export const GENERATED_DIRS = ['src/howto', 'src/slices/howto/css'];
+export const GENERATED_DIRS = ['src/howto', 'src/slices/howto/css', 'tools/plates/library'];
 
 export async function loadPlugins(paths = pluginFiles()) {
   const mods = new Map();

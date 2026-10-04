@@ -1,0 +1,14 @@
+{
+  "$comment": "LIB-2 L2-A19: sha256 of gen/plates.mjs moduleText(id, plate, entry, \"0\".repeat(64)) for the 8, from the committed golden A fixture (LIB-3 #180 H7 sizes chunks with exactly this call). Taken at main c542ae9.",
+  "count": 8,
+  "shas": {
+    "lib_dumbbell_lateral_raise": "eb661218c691508f099c6b0d7449614c7bdbc5d76c0a2759ac3bfbdda560e36f",
+    "lib_barbell_back_squat": "d1ce073aed5eddb0cfc55ee22dcbd2987599285902a13d89f47d07027f53631f",
+    "lib_pull_up": "6c9f4bbe4e95df3ac666ddc50c19192952114aed727b325de1f04b547c9bb3cd",
+    "lib_hanging_leg_raise": "2d007ae8f8c6e0139e72093466da9714142968c705fd2a81d2fa06d1439d5e12",
+    "lib_lat_pulldown": "9d236f6405277d4c2f74c6185bd054d3fd2f52c44cdeaa6be7c9672c0c08a533",
+    "lib_seated_cable_row": "738690d31fdbaec999cbe9c974195140557900c2a3b3e4838cfcca9657e169f1",
+    "lib_leg_press": "b845190da385f1e10adb93c9ee4501d5519adf5fb10eb48ecf4655334feaee44",
+    "lib_machine_chest_press": "aeacdd8cf253c3a5bbe4f10137be6fb6565a664f3bdfe39e5be71c587be96c37"
+  }
+}

@@ -19,7 +19,7 @@ import { pathToFileURL } from 'node:url';
 import { ROOT } from '../lib/inputs.mjs';
 import { PLATES_JSON, chunkName } from './plates.mjs';
 
-export const after = ['tools/plates/gen/plates.mjs'];
+export const after = ['tools/plates/gen/plates.mjs', 'tools/plates/gen/ids.mjs'];
 
 const LAYERS = 'tools/plates/layers';
 const EXERCISES_DIR = join(ROOT, LAYERS, 'exercises');
@@ -125,7 +125,7 @@ export function patchModule(prevText, content, hash) {
 
 export function hintsText(idsPrevText, hints) {
   const entries = Object.keys(hints).map(id => `  ${JSON.stringify(id)}: ${JSON.stringify(hints[id])},`).join('\n');
-  return `${idsPrevText}export const HOWTO_HINTS: Partial<Record<HowToId, string>> = {\n${entries}\n};\n`;
+  return `${idsPrevText}export const HOWTO_HINTS: Readonly<Record<string, string>> = {\n${entries}\n};\n`;
 }
 
 export function archetypesText(shared) {
@@ -171,7 +171,7 @@ export async function outputs({ prev, hashFor }) {
 
   const idsPath = 'src/howto/ids.ts';
   const idsPrev = prev.get(idsPath);
-  if (!idsPrev) throw new Error('content: no plates.mjs output for ids.ts');
+  if (!idsPrev) throw new Error('content: no ids.mjs output for ids.ts');
   out.push({ path: idsPath, text: hintsText(idsPrev, hints) });
 
   const shared = await import(pathToFileURL(join(ROOT, SHARED_REL)).href);

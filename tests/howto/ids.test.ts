@@ -2,7 +2,9 @@
 // 2,048 B with no runtime imports; the LOADERS keys equal HOWTO_IDS, which equal the generated modules.
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { HOWTO_IDS, HOWTO_LABEL, hasHowTo } from '@/howto/ids';
+import { HOWTO_LABEL, hasHowTo } from '@/howto/ids';
+// LIB-2: the shipped id list and LOADERS live in the lazy loaders chunk; ids.ts keeps only hashes (library plan 5.2).
+import { HOWTO_IDS } from '@/howto/generated/loaders';
 import { LOADERS } from '@/howto/generated';
 import exercises from '@/data/exercises.json';
 import type { GoldenFile } from '@/howto/types';
@@ -37,7 +39,7 @@ describe('HT2-A5: ids.ts', () => {
   });
 
   it('each LOADERS entry imports its own generated module dynamically', () => {
-    const index = readFileSync('src/howto/generated/index.ts', 'utf8');
+    const index = readFileSync('src/howto/generated/loaders.ts', 'utf8');   // LIB-2: LOADERS moved here
     for (const id of HOWTO_IDS) expect(index).toContain(`  ${id}: () => import('./ht-${rows[id]!.slug}'),\n`);
     expect(index.match(/import\(/g)).toHaveLength(HOWTO_IDS.length);
     expect(index.match(/^import (?!type )/gm)).toBeNull();
