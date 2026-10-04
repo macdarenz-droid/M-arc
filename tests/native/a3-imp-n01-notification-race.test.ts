@@ -83,3 +83,37 @@ describe('IMP-N01 latest notification intent wins', () => {
     expect.soft(backupReminderScheduled.value).toBe(false);
   });
 });
+
+/** A3-3: a request whose schedule call already went out when a newer request started. */
+describe('IMP-N01 a superseded schedule call that lands late', () => {
+  function lateSchedule() {
+    const gate = deferred<void>();
+    plugin.schedule.mockImplementationOnce(async ({ notifications }: { notifications: N[] }) => { await gate.promise; for (const n of notifications) plugin.pending.set(n.id, n); return { notifications: [] }; });
+    return gate;
+  }
+  it('rest: Skip rest while the schedule call is in flight leaves nothing queued', async () => {
+    const gate = lateSchedule();
+    const older = scheduleRestDone(Date.now() + 90_000);
+    await flush();
+    expect(plugin.schedule).toHaveBeenCalledTimes(1);
+    await cancelRestDone();
+    gate.resolve();
+    await older;
+    expect(plugin.pending.has(REST_ID)).toBe(false);
+  });
+  it('training: an older On that lands after a newer On keeps the newer reminders queued', async () => {
+    const week = { sun: 'sp', mon: 'sp', tue: 'sp', wed: 'sp', thu: 'sp', fri: 'sp', sat: 'sp' };
+    replaceState({ ...freshState(), splits: [{ id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '', exercises: [] }], schedule: week as never,
+      preferences: { ...freshState().preferences, reminders: { enabled: true, time: '20:00', style: 'silent' } } });
+    const gate = lateSchedule();
+    const older = resyncReminders();
+    await flush();
+    expect(plugin.schedule).toHaveBeenCalledTimes(1);
+    await resyncReminders();
+    expect(reminderHealth.value.status).toBe('On. 56 of 56 reminders queued.');
+    gate.resolve();
+    await older;
+    expect(trainingIds().length).toBe(56);
+    expect(reminderHealth.value.status).toBe('On. 56 of 56 reminders queued.');
+  });
+});
