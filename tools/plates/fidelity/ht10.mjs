@@ -229,6 +229,52 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
           for (const re of expect) if (!problems.some(p => re.test(p))) F(`${name}: the probe did not report ${re} (it reported ${problems.slice(0, 4).join('; ') || 'nothing'})`);
           await H.closeHowTo(page);
         }
+        // GATE-FLAKE-2 (D-GF2-2): the page's animations at 1/10 speed (CDP), so the hand close-up's scale(.9) entry runs
+        // 2.4 s and is still running when the probe starts. The probe must wait it out and report the close button at
+        // rest: nothing at its true 44 x 44, exactly 40 x 40 when it is really shrunk. An animation that outlasts the
+        // probe's bound is a named problem; an endless one is not waited for (C12 reports it).
+        const gi = H.HT_PLATES.findIndex(p => p[0] === 'machine-chest-press');
+        const gcdp = await ctx.newCDPSession(page);
+        await gcdp.send('Animation.enable');
+        const slowHand = async shrink => {
+          await H.openHowTo(page, gi);
+          await gcdp.send('Animation.setPlaybackRate', { playbackRate: 0.1 });
+          try {
+            if (shrink) await page.evaluate(() => { const s = document.createElement('style'); s.id = 'gf2-shrink'; s.textContent = '.ht .zx-close { width: 40px !important; height: 40px !important; }'; document.head.append(s); });
+            const moving = await page.evaluate(async () => {
+              document.getElementById('machine-chest-press-chip-hand').click();
+              const t0 = performance.now();
+              let p;
+              while (!(p = document.querySelector('#machine-chest-press-zoom-hand:not([hidden])')) && performance.now() - t0 < 8000) await new Promise(r => requestAnimationFrame(r));
+              return !!p && p.getAnimations().some(a => a.playState === 'running');
+            });
+            return { moving, problems: (await probe()).problems };
+          } finally {
+            await gcdp.send('Animation.setPlaybackRate', { playbackRate: 1 });
+            await page.evaluate(async () => {
+              document.getElementById('gf2-shrink')?.remove();
+              const p = document.querySelector('dialog.sheet.ht .zx:not([hidden])');
+              p?.querySelector('.zx-close').click();
+              const t0 = performance.now();
+              while (p && !p.hidden && performance.now() - t0 < 4000) await new Promise(r => requestAnimationFrame(r));
+            });
+            await H.closeHowTo(page);
+          }
+        };
+        {
+          const rest = await slowHand(false), small = await slowHand(true);
+          if (!rest.moving || !small.moving) F('GF2: the hand close-up was not animating when the probe started, so this fixture proves nothing');
+          const hc = rest.problems.filter(p => /zoom-hand-close|still running/.test(p));
+          if (hc.length) F(`GF2: the probe measured the close-up mid-animation: ${hc.join('; ')}`);
+          if (!small.problems.some(p => /#machine-chest-press-zoom-hand-close is 40\.000 x 40\.000/.test(p))) F(`GF2: a close button shrunk to 40 px was not reported at 40.000 x 40.000 (${small.problems.slice(0, 4).join('; ') || 'nothing'})`);
+          await H.openHowTo(page, gi);
+          await page.evaluate(() => { const s = document.querySelector('dialog.sheet.ht [data-section]'); s.animate([{ transform: 'scale(.9)' }, { transform: 'none' }], 60000); s.querySelector('button, summary, [role="button"]').animate([{ opacity: 1 }, { opacity: 0.9 }], { duration: 400, iterations: Infinity }); });
+          const t = Date.now(), never = (await probe()).problems, ms = Date.now() - t;
+          if (!never.some(p => /^C10: 1 animation\(s\) on controls still running after 3000 ms, so their controls were not measured at rest: script on /.test(p))) F(`GF2: an animation that never settles within the bound was not named (${never.slice(0, 4).join('; ') || 'nothing'})`);
+          if (ms > 6000) F(`GF2: the probe took ${ms} ms with an unsettled animation, over its 3000 ms bound`);
+          await page.evaluate(() => document.querySelector('dialog.sheet.ht').getAnimations({ subtree: true }).forEach(a => a.cancel()));
+          await H.closeHowTo(page);
+        }
         // TalkBack: a nameless button
         await H.openHowTo(page, 0);
         await page.evaluate(() => { const b = document.createElement('button'); b.className = 'ht10-noname'; b.style.cssText = 'width:44px;height:44px'; document.querySelector('dialog.sheet.ht [data-section]').append(b); });
