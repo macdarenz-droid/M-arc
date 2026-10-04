@@ -45,7 +45,7 @@ for (const e of lib) {
   }
   // per-exercise close-up CSS, made unique by one rule so the bundler cannot fold identical files into one asset
   const css = join(CSS, `zoom-${s.chrome}.css`);
-  if (fs.existsSync(css)) fs.writeFileSync(join(CSS, `zoom-${nc}.css`), fs.readFileSync(css, 'utf8') + `\n.lib1-${nc}{--lib1:1}\n`);
+  if (fs.existsSync(css)) fs.writeFileSync(join(CSS, `zoom-${nc}.css`), fs.readFileSync(css, 'utf8') + `\n.ht .lib1-${nc}{order:0}\n`);
   loaders.push([e.id, `ht-${nc}`]); all.push(e.id);
 }
 if (all.length !== 153 || new Set(all).size !== 153) throw new Error(`expected 153 ids, got ${all.length}`);
