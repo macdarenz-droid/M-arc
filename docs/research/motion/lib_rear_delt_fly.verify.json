@@ -1,0 +1,540 @@
+{
+ "exercise": "lib_rear_delt_fly",
+ "verdicts": [
+  {
+   "claim": "Chosen model: selectorized dual Pec Fly / Rear Delt machine used facing the pad; 'every major brand sells this as one 2-in-1'",
+   "verdict": "corrected",
+   "correction": "The 2-in-1 is confirmed for LF Insignia, LF Signature, HS Select, Matrix Ultra/Versa and Technogym Selection 700. 'Every major brand' was not checked, and dedicated rear-delt-only machines were not searched. Say 'commonly' instead.",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/insignia-series-pectoral-fly-rear-deltoid",
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-pectoral-fly-rear-deltoid",
+    "https://images.jhtassets.com/6431a20cd43587c9f0909694a99536d8099d0972/original/named/UltraPecFlyRearDelt+IntelligentTrainingItc20+66306+85967+eng+au+ProductSellSheet.pdf",
+    "https://www.technogym.com/en-US/product/selection-700-dual-pectoral-percent2f-reverse-fly_MNNC.html"
+   ]
+  },
+  {
+   "claim": "Seat: pin-adjusted, Matrix Ultra 7 positions, spring assisted",
+   "verdict": "confirmed",
+   "correction": "Matrix sell sheet: '7 position seat', 'Spring assisted seat'.",
+   "sources": [
+    "https://images.jhtassets.com/6431a20cd43587c9f0909694a99536d8099d0972/original/named/UltraPecFlyRearDelt+IntelligentTrainingItc20+66306+85967+eng+au+ProductSellSheet.pdf"
+   ]
+  },
+  {
+   "claim": "Pad: one upright pad, back pad for pec fly, chest pad for rear delt; Matrix 'angled back pad'",
+   "verdict": "confirmed",
+   "correction": "Matrix: 'angled back pad'. Technogym: 'inclined chest and back pad'. LF manual: rear-delt use faces the pad. The angle in degrees is still unverified.",
+   "sources": [
+    "https://images.jhtassets.com/6431a20cd43587c9f0909694a99536d8099d0972/original/named/UltraPecFlyRearDelt+IntelligentTrainingItc20+66306+85967+eng+au+ProductSellSheet.pdf",
+    "https://www.technogym.com/en-US/product/selection-700-dual-pectoral-percent2f-reverse-fly_MNNC.html",
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26"
+   ]
+  },
+  {
+   "claim": "Lever arms rotate about a vertical axis above the shoulder; LF 'rotate the handles out and about the shoulder'; HS 'pivoting arms', red axis marker",
+   "verdict": "confirmed",
+   "correction": "LF manual verbatim: 'rotate the handles out and about the shoulder'. HS: 'Pivoting arms', 'Axis of rotation marked with red indicator to help cue correct alignment'. The pivot height is still unverified.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-pectoral-fly-rear-deltoid"
+   ]
+  },
+  {
+   "claim": "Start adjuster at top of each arm; Matrix 8 starts (4 pec, 4 rear delt); LF Signature 5 pec-fly starts",
+   "verdict": "confirmed",
+   "correction": "LF manual: 'overhead range of motion adjustments for each arm'. Matrix: '8 user arm start positions (4 for Pec Fly and 4 for Rear Delt)'. LF Signature 5 pec-fly starts is from retail listings via search summary only.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://images.jhtassets.com/6431a20cd43587c9f0909694a99536d8099d0972/original/named/UltraPecFlyRearDelt+IntelligentTrainingItc20+66306+85967+eng+au+ProductSellSheet.pdf",
+    "https://www.fitnesssuperstore.com/Life-Fitness-Signature-Pectoral-Fly-Rear-Deltoid-p/lfsigfly.htm"
+   ]
+  },
+  {
+   "claim": "Handles: vertical (neutral) + horizontal (pronated, LF rear-delt handle); Technogym neutral and prone; Matrix rotating/delt/oversized; thermo-rubber",
+   "verdict": "confirmed",
+   "correction": "LF manual: pec fly 'grip the vertical handles'; rear delt 'grip the horizontal handles firmly'. Technogym: 'Dual handles with neutral and prone grips'. Matrix: 'Rotating grips', 'delt grips', 'Oversized handles'. HS: 'extruded thermo rubber compound'.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://www.technogym.com/en-US/product/selection-700-dual-pectoral-percent2f-reverse-fly_MNNC.html",
+    "https://images.jhtassets.com/6431a20cd43587c9f0909694a99536d8099d0972/original/named/UltraPecFlyRearDelt+IntelligentTrainingItc20+66306+85967+eng+au+ProductSellSheet.pdf",
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-pectoral-fly-rear-deltoid"
+   ]
+  },
+  {
+   "claim": "Weight stack: HS 7x19 nylon-coated cable, 4.5 in and 6 in sealed-bearing pulleys",
+   "verdict": "confirmed",
+   "correction": "HS product page verbatim.",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-pectoral-fly-rear-deltoid"
+   ]
+  },
+  {
+   "claim": "Dimensions LF Insignia SS-FLY 203 x 197 x 203 cm, 130/152 kg stack, 321 kg",
+   "verdict": "confirmed",
+   "correction": "LF page: 79.9 x 77.6 x 80.1 in (203 x 197 x 203 cm); 260/305 lb (130/152 kg); 708 lb (321 kg).",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/insignia-series-pectoral-fly-rear-deltoid"
+   ]
+  },
+  {
+   "claim": "Dimensions LF Signature 142 x 147 x 204 cm, 145 kg stack, 304 kg",
+   "verdict": "unverified",
+   "correction": "Matches the retail listings, but only through a search summary; the page could not be opened (navigation only).",
+   "sources": [
+    "https://www.fitnesssuperstore.com/Life-Fitness-Signature-Pectoral-Fly-Rear-Deltoid-p/lfsigfly.htm",
+    "https://primofitnessusa.com/product/life-fitness-signature-series-pectoral-fly-rear-deltoid/"
+   ]
+  },
+  {
+   "claim": "Dimensions HS-FLY 124 x 142 x 180 cm, 138 kg stack, 263 kg",
+   "verdict": "confirmed",
+   "correction": "HS page: 49 x 56 x 71 in (124 x 142 x 180 cm); 295 lb (138 kg) stack; 580 lb (263 kg).",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-pectoral-fly-rear-deltoid"
+   ]
+  },
+  {
+   "claim": "Dimensions Matrix Ultra G7-S22 143.5 x 193.5 x 197 in use, 143.5 x 173.5 x 197 static, 329 kg",
+   "verdict": "confirmed",
+   "correction": "Sell sheet verbatim. Its inch figure for static width (54.1 in) does not match 173.5 cm; the cm values are used.",
+   "sources": [
+    "https://images.jhtassets.com/6431a20cd43587c9f0909694a99536d8099d0972/original/named/UltraPecFlyRearDelt+IntelligentTrainingItc20+66306+85967+eng+au+ProductSellSheet.pdf"
+   ]
+  },
+  {
+   "claim": "Dimensions Matrix Versa VS-S22 152 x 152 x 168 cm",
+   "verdict": "confirmed",
+   "correction": "Manual: '60\"L X 60\"W X 66\"H'. Stack 68 kg standard / 91 kg heavy (not in the research file).",
+   "sources": [
+    "https://www.jhta.com.au/wp-content/uploads/2021/03/VS-S22-Owners-Manual_Rev-1.3.pdf"
+   ]
+  },
+  {
+   "claim": "Dimensions Technogym Selection 700 Dual 150 x 123.8 x 199.1 cm, 50/65 kg stack, 300 kg",
+   "verdict": "confirmed",
+   "correction": "Technogym en-US page: 150 x 123.8 x 199.1 cm; 300 kg; standard stack 50 kg, plus 65 kg. A search summary claimed 90/130 kg; the official page contradicts it.",
+   "sources": [
+    "https://www.technogym.com/en-US/product/selection-700-dual-pectoral-percent2f-reverse-fly_MNNC.html"
+   ]
+  },
+  {
+   "claim": "Setup 1: set arms to rear-delt start so handles sit in front of the pad, close together; landmark: in front of the sternum",
+   "verdict": "corrected",
+   "correction": "LF: 'bringing the arms into the furthest back position'. BarBend: 'rotate the arms until they're parallel to each other'. Parallel lever arms hanging from pivots above the shoulders put the handles about shoulder width apart, in front of each shoulder, not together in front of the sternum. How close the handles start depends on the start setting (Matrix has 4 rear-delt starts). Use 'arms parallel, handles in front of the shoulders' as the default.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://barbend.com/reverse-pec-deck/",
+    "https://images.jhtassets.com/6431a20cd43587c9f0909694a99536d8099d0972/original/named/UltraPecFlyRearDelt+IntelligentTrainingItc20+66306+85967+eng+au+ProductSellSheet.pdf"
+   ]
+  },
+  {
+   "claim": "Setup 2: seat height so arms parallel to the floor; landmark handles at acromion height",
+   "verdict": "confirmed",
+   "correction": "LF: 'Adjust the seat height ... so arms are parallel to floor, while holding the inside handles'. BarBend: 'arms are parallel to the floor when you grab the handles'. The acromion landmark is derived.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Setup 3: chest against pad, sit tall, feet flat",
+   "verdict": "confirmed",
+   "correction": "Green Physique (Precor): 'plant your feet firmly on the ground. Your chest should be pressed up against the chest pad and your back should be straight'. Coaching source, page opened.",
+   "sources": [
+    "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine"
+   ]
+  },
+  {
+   "claim": "Setup 4: neutral grip on vertical handles; alternative palms down on horizontal",
+   "verdict": "confirmed",
+   "correction": "Schoenfeld 2013 (neutral vs pronated); BarBend: 'neutral, palms-facing grip, or go double overhand'. Note LF and Precor instructions use the horizontal (palms-down) handles.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/23302754/",
+    "https://barbend.com/reverse-pec-deck/",
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine"
+   ]
+  },
+  {
+   "claim": "Setup 5: elbows slightly bent, kept for the set",
+   "verdict": "confirmed",
+   "correction": "LF: 'keeping elbows slightly bent' and 'maintaining the arms in position as described in the setup'. BarBend says 'straightened elbow', so near-straight is also taught.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Setup 6: keep the stack off its rest between reps",
+   "verdict": "confirmed",
+   "correction": "LF: return 'without letting the resistance rest on the stack'.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26"
+   ]
+  },
+  {
+   "claim": "Start head/neck neutral",
+   "verdict": "unverified",
+   "correction": "No source, as the file says.",
+   "sources": []
+  },
+  {
+   "claim": "Start torso: upright, sternum on pad, slight forward lean equal to pad angle",
+   "verdict": "confirmed",
+   "correction": "Precor guide: chest on pad, back straight. Technogym: 'inclined chest and back pad'. The lean in degrees is unverified.",
+   "sources": [
+    "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine",
+    "https://www.technogym.com/en-US/product/selection-700-dual-pectoral-percent2f-reverse-fly_MNNC.html"
+   ]
+  },
+  {
+   "claim": "Start scapulae slightly protracted, not shrugged",
+   "verdict": "unverified",
+   "correction": "The only source is a TikTok search summary (not a readable page). No opened source describes scapular position at the start.",
+   "sources": [
+    "https://www.tiktok.com/discover/how-to-do-rear-delt-fly-on-pec-deck-jeff-nippard"
+   ]
+  },
+  {
+   "claim": "Start shoulder: about 90 degrees flexion, hands close together in front of chest",
+   "verdict": "corrected",
+   "correction": "90 degrees flexion (arms parallel to floor) is confirmed by LF and BarBend. 'Hands close together' conflicts with BarBend's parallel arms (see setup 1). Default to the hands in front of the shoulders.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Start shoulder rotation: neutral grip = humerus near neutral, thumbs up; pronated = humerus internally rotated, elbows out",
+   "verdict": "corrected",
+   "correction": "Pronated part confirmed (ExRx overhand: 'internally rotate shoulders so elbows are also at height of shoulders'). Neutral part is contested. ExRx parallel-grip page: 'Grasp parallel handles with thumbs up ... Slightly bend elbows and internally rotate shoulders so elbows are also at height of shoulders', and 'keeping elbows pointed high'. Schoenfeld only says hand position alters shoulder rotation (neutral being less internally rotated). Mark this as coach disagreement. For the visual, the elbows should bow out to the sides, not hang with the elbow point down (see would_look_wrong). ExRx text came from search snippets; the page returns 403.",
+   "sources": [
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVRearLateralRaise",
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand",
+    "https://pubmed.ncbi.nlm.nih.gov/23302754/"
+   ]
+  },
+  {
+   "claim": "Start elbow 10-20 degrees, fixed",
+   "verdict": "confirmed",
+   "correction": "Coach consensus, as labelled. LF says 'slightly bent'; BarBend says 'straightened elbow'.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Start forearm: neutral = palms facing; pronated = palms down",
+   "verdict": "confirmed",
+   "correction": "LF (vertical vs horizontal handles), Schoenfeld (NEU vs PRO), BarBend.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://pubmed.ncbi.nlm.nih.gov/23302754/",
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Start wrist neutral",
+   "verdict": "unverified",
+   "correction": "No exercise-specific source, as the file says.",
+   "sources": []
+  },
+  {
+   "claim": "Start hips about 90, knees about 90, feet flat about hip width",
+   "verdict": "unverified",
+   "correction": "The feet-flat part comes from the Precor guide ('plant your feet firmly'). The angles have no source. On a seat set so a short user's hands reach shoulder-height handles, flat feet with 90-degree knees may not be possible.",
+   "sources": [
+    "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine"
+   ]
+  },
+  {
+   "claim": "Mid: arms horizontal, moving in a horizontal arc; elbows level with shoulders",
+   "verdict": "confirmed",
+   "correction": "LF: 'rotate the handles out and about the shoulder ... maintaining the arms in position'. ExRx: 'Keeping elbows pointed high' / 'keep arms at transverse plane of shoulders'.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVRearLateralRaise"
+   ]
+  },
+  {
+   "claim": "Mid scapulae moving from protracted toward neutral",
+   "verdict": "unverified",
+   "correction": "BarBend says only to avoid pinching the shoulder blades back. Nothing describes scapular motion through the arc.",
+   "sources": [
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "End shoulder: arms in line with body (frontal plane), about 90 abduction, at most about 10 degrees behind the body line",
+   "verdict": "confirmed",
+   "correction": "BarBend: 'until they're in line with your body'. ExRx: 'until elbows are just behind back'. LF: 'as far as can be controlled'. Precor guide: 'roughly in line with your shoulders'. The 10-degree cap is consensus.",
+   "sources": [
+    "https://barbend.com/reverse-pec-deck/",
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand",
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine"
+   ]
+  },
+  {
+   "claim": "End rotation: neutral grip palms forward, thumbs up; pronated palms down, thumbs forward",
+   "verdict": "confirmed",
+   "correction": "Geometrically correct: a handle fixed to a lever arm that turns 90 degrees about a vertical axis turns the palm from facing in to facing forward. Note the consequence: with the neutral handle and the elbow point kept down, the end position is 90 degrees abduction with about 90 degrees humeral external rotation (relative to the lateral-raise neutral). That is consistent with Schoenfeld's higher infraspinatus activity with the neutral grip.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/23302754/",
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26"
+   ]
+  },
+  {
+   "claim": "End scapulae: neutral to moderately retracted; coach disagreement",
+   "verdict": "confirmed",
+   "correction": "BarBend: 'Avoid pinching your shoulders back'. Precor guide: 'Squeeze your rear delts and rhomboids hard in this position'. The disagreement is real and no EMG comparison was found.",
+   "sources": [
+    "https://barbend.com/reverse-pec-deck/",
+    "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine"
+   ]
+  },
+  {
+   "claim": "End: chest on pad, no lean back; head, hips, knees, feet unchanged",
+   "verdict": "confirmed",
+   "correction": "Coach consensus (Precor guide: chest pressed against the pad).",
+   "sources": [
+    "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine"
+   ]
+  },
+  {
+   "claim": "Animator: place shoulder joint under the arm pivot",
+   "verdict": "confirmed",
+   "correction": "HS: 'Axis of rotation marked with red indicator to help cue correct alignment'. LF: 'about the shoulder'. The exact rule for rear-delt mode is unverified, as the file says.",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-pectoral-fly-rear-deltoid",
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26"
+   ]
+  },
+  {
+   "claim": "Animator: neutral handle turns palm from inward to forward; forearm itself does not rotate",
+   "verdict": "confirmed",
+   "correction": "Geometrically correct (see end rotation).",
+   "sources": []
+  },
+  {
+   "claim": "Default grip neutral: higher posterior deltoid (p=0.046) and infraspinatus (p=0.002), 19 trained men; LF placard uses horizontal handles",
+   "verdict": "confirmed",
+   "correction": "Schoenfeld abstract verbatim: 19 resistance-trained men, about 75% body weight, to failure; posterior deltoid p = 0.046 (95% CI 0.1-7.4% MVIC); infraspinatus p = 0.002 (3.7-13.6%). LF: 'grip the horizontal handles firmly'.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/23302754/",
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26"
+   ]
+  },
+  {
+   "claim": "Grip width: set by machine; about shoulder width or closer",
+   "verdict": "unverified",
+   "correction": "As labelled. BarBend's parallel-arm start implies about shoulder width.",
+   "sources": [
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Handle across mid-palm, push through heel of hand",
+   "verdict": "unverified",
+   "correction": "No source.",
+   "sources": []
+  },
+  {
+   "claim": "Thumb wrapped (LF 'grip firmly')",
+   "verdict": "unverified",
+   "correction": "LF says 'grip the horizontal handles firmly'; the thumb is not mentioned.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26"
+   ]
+  },
+  {
+   "claim": "Fingers all wrapped, firm but relaxed; wrist stacked",
+   "verdict": "unverified",
+   "correction": "No source.",
+   "sources": []
+  },
+  {
+   "claim": "Pronated handle requires internal rotation to keep elbows at shoulder height (ExRx)",
+   "verdict": "confirmed",
+   "correction": "ExRx overhand: 'internally rotate shoulders so elbows are also at height of shoulders' (search snippet; page 403).",
+   "sources": [
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand"
+   ]
+  },
+  {
+   "claim": "ROM: handles together in front of chest to arms in line with body; stack never touches",
+   "verdict": "corrected",
+   "correction": "The end and the stack rule are confirmed (BarBend, LF). The start should be 'arms parallel in front' by default (see setup 1).",
+   "sources": [
+    "https://barbend.com/reverse-pec-deck/",
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26"
+   ]
+  },
+  {
+   "claim": "Tempo about 2 s out, pause, 2 s back",
+   "verdict": "unverified",
+   "correction": "No exercise-specific source. Schoenfeld 2015 shows only that 0.5-8 s reps give similar growth across exercises.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/25601394/"
+   ]
+  },
+  {
+   "claim": "Breathing: exhale opening, inhale returning",
+   "verdict": "unverified",
+   "correction": "No source for this exercise.",
+   "sources": []
+  },
+  {
+   "claim": "rear_delts primary: reverse pec deck > seated row and inclined lat pulldown",
+   "verdict": "confirmed",
+   "correction": "Franke: posterior deltoid greater in reverse peck deck (P=0.001) than seated row and inclined lat pull-down; 12 trained men, 10RM.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/24947920/"
+   ]
+  },
+  {
+   "claim": "side_delts secondary: middle delt higher on reverse pec deck than inclined lat pulldown; Reinold 2004 prone horizontal abduction 87% middle, 88% posterior",
+   "verdict": "confirmed",
+   "correction": "Franke: middle deltoid greater in reverse peck deck (P=0.03) and seated row (P=0.03) than lat pull-down. Reinold 2004 (10 subjects, fine wire): prone horizontal abduction at 100 degrees with full ER, middle 87%, posterior 88%, supraspinatus 82% MVIC (related movement). ExRx lists lateral deltoid as a synergist.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/24947920/",
+    "https://pubmed.ncbi.nlm.nih.gov/15296366/",
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand"
+   ]
+  },
+  {
+   "claim": "rotator_cuff secondary: infraspinatus higher with neutral; ExRx lists infraspinatus, teres minor",
+   "verdict": "confirmed",
+   "correction": "Schoenfeld abstract; ExRx synergists: Infraspinatus, Teres Minor, Deltoid Lateral, Trapezius Middle, Trapezius Lower, Rhomboids (search snippet).",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/23302754/",
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand"
+   ]
+  },
+  {
+   "claim": "mid_back secondary: middle trap peaks in prone horizontal extension with ER; ExRx lists middle/lower trap, rhomboids",
+   "verdict": "confirmed",
+   "correction": "Ekstrom: middle trapezius highest in 'shoulder horizontal extension with external rotation' (prone, related movement). BarBend also lists middle trapezius.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/12774999/",
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand",
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Stabilizers: triceps and forearms (ExRx triceps brachii, wrist extensors)",
+   "verdict": "confirmed",
+   "correction": "ExRx stabilizers 'Triceps Brachii, Wrist Extensors' (search snippet; page 403). BarBend lists triceps as minor.",
+   "sources": [
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand",
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Mistake shrug: upper traps take over, usually too heavy",
+   "verdict": "confirmed",
+   "correction": "Coach consensus. BarBend: lifting too heavy 'causes compensatory movements and trap/lat involvement'. 'Shrug' itself is not named.",
+   "sources": [
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Mistake row: bending elbows shifts work to back and biceps",
+   "verdict": "corrected",
+   "correction": "Elbow bending as a fault is confirmed (LF 'maintaining the arms in position'; BarBend lists elbow bending). 'Biceps' has no source; remove it or keep only 'back'.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Mistake elbows-drop: low elbows bring in lats (ExRx); seat too low or too high misaligns resistance (BarBend)",
+   "verdict": "corrected",
+   "correction": "ExRx (parallel grip): elbows pointing down put 'greater emphasis on lateral deltoid and possibly Latissimus Dorsi if elbows drop below transverse plane of shoulders', and overhand 'minimize Latissimus Dorsi involvement'. So it is hedged ('possibly'), and it adds the side delt. BarBend names only 'sitting too low'. The 'seat too high' cause in 'looksLike' is logical but not from BarBend.",
+   "sources": [
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVRearLateralRaise",
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand",
+    "https://barbend.com/reverse-pec-deck/"
+   ]
+  },
+  {
+   "claim": "Mistake chest-off: torso rocks off pad, momentum",
+   "verdict": "confirmed",
+   "correction": "Coach consensus, as labelled (Precor guide: chest pressed against pad).",
+   "sources": [
+    "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine"
+   ]
+  },
+  {
+   "claim": "Mistake stack-rest",
+   "verdict": "confirmed",
+   "correction": "LF verbatim.",
+   "sources": [
+    "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26"
+   ]
+  },
+  {
+   "claim": "Mistake over-squeeze: coach disagreement",
+   "verdict": "confirmed",
+   "correction": "BarBend vs the Precor guide (see end scapulae). BarBend's 'part the air' cue is verbatim.",
+   "sources": [
+    "https://barbend.com/reverse-pec-deck/",
+    "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine"
+   ]
+  },
+  {
+   "claim": "Key fact: palms-facing grip produced more rear-delt and infraspinatus activity; rear-delt difference small",
+   "verdict": "confirmed",
+   "correction": "Schoenfeld abstract (posterior delt 95% CI 0.1-7.4% MVIC).",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/23302754/"
+   ]
+  },
+  {
+   "claim": "Key fact: reverse pec deck worked rear delts harder than seated rows or lat pulldowns",
+   "verdict": "confirmed",
+   "correction": "Franke (12 trained men; the pulldown was the inclined lat pull-down).",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/24947920/"
+   ]
+  },
+  {
+   "claim": "Key fact: middle deltoid higher on reverse pec deck than on lat pulldown",
+   "verdict": "confirmed",
+   "correction": "Franke (P=0.03). The seated row also beat the pulldown.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/24947920/"
+   ]
+  },
+  {
+   "claim": "Key fact: keeping elbows level with shoulders keeps the lats out",
+   "verdict": "corrected",
+   "correction": "ExRx says 'minimize Latissimus Dorsi involvement' and 'possibly Latissimus Dorsi'. Reword to 'keeps lat involvement low', and note it is a coaching source, not a study.",
+   "sources": [
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand",
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVRearLateralRaise"
+   ]
+  },
+  {
+   "claim": "Key fact: claims that the neutral handle shifts work to side delts are not supported (Schoenfeld recorded middle delt, significant only for rear delt and infraspinatus)",
+   "verdict": "unverified",
+   "correction": "The abstract reports the middle deltoid as recorded but gives no middle-deltoid result, so 'not supported' cannot be stated without the full text. ExRx claims elbows pointing down emphasise the lateral deltoid. It is also a negative, meta-style claim, not useful as user copy; drop it.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/23302754/",
+    "https://exrx.net/WeightExercises/DeltoidPosterior/LVRearLateralRaise"
+   ]
+  }
+ ],
+ "would_look_wrong": [
+  "Elbow bend with the neutral grip: if the humerus stays in neutral rotation (elbow point down) at the start, the 10-20 degree bend flexes in a vertical plane and lifts the hands above the elbows, which reads as a front raise or curl. ExRx cues 'internally rotate shoulders ... keeping elbows pointed high', so the bend should bow the elbows out to the sides, with the elbows and hands at shoulder height.",
+  "Start width: hands converged in front of the sternum (as written) contradicts BarBend's parallel arms. On most machines the handles at that setting sit in front of each shoulder. Converged hands also need extra horizontal adduction and would likely clip the chest pad edges.",
+  "End position, neutral grip: the palms must face forward because the handle turns with the lever. If the forearm or hand is animated to stay palms-in, the wrist will twist off the handle.",
+  "Arms travelling behind the body line: with the 'as far as can be controlled' wording, an animator may sweep well past the frontal plane. Stop at in-line to just behind (BarBend, ExRx). A big sweep with hard scapular pinch is the over-squeeze fault.",
+  "Shoulder not under the pivot: if the shoulder joint is offset from the lever axis, the hand will slide along or off the handle through the arc. Align them (HS axis marker).",
+  "Scapula at the start: if 'slightly protracted' is overdone, the shoulders round forward and the head juts, which reads as poor posture. Keep it minimal (the source is weak).",
+  "Seat/legs: knees at 90 degrees with feet flat may not fit once the seat is high enough for shoulder-height handles. Check the figure's leg length against the seat instead of forcing 90/90.",
+  "Pad angle: the torso lean must match the modelled pad. A vertical torso against an inclined pad (Technogym/Matrix describe angled pads) leaves a visible gap or clips through the pad.",
+  "Elbow height: elbows must not sag below the shoulders mid-arc (ExRx). Without an explicit constraint, IK arms tend to droop."
+ ],
+ "summary": "Equipment specs (LF Insignia, HS-FLY, Matrix Ultra/Versa, Technogym), the LF placard wording, Schoenfeld 2013, Franke 2015, Reinold 2004 and Ekstrom 2003 numbers all match the opened sources. ExRx was reachable only through search snippets (403). Main fixes: (1) the start 'hands together in front of the sternum' conflicts with BarBend's 'arms parallel to each other', which puts the handles in front of each shoulder; (2) the neutral-grip humerus rotation is contested: ExRx's parallel-grip page cues internal rotation with elbows pointed high, so the figure must bow the elbows outward, not let the elbow bend lift the hands; (3) 'elbows level keeps the lats out' should be 'minimizes', since ExRx says 'possibly lats' and also more side delt; (4) 'biceps' in the row mistake has no source; (5) the key fact that neutral grip does not shift work to the side delts cannot be supported from the abstract, so drop it; (6) LF Signature specs are search-summary only. Head, wrist, hip and knee angles, start scapula, tempo, breathing and thumb position are unverified."
+}

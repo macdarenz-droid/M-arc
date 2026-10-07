@@ -1,0 +1,796 @@
+{
+ "id": "lib_rear_delt_fly",
+ "name": "Rear Delt Fly",
+ "researchedOn": "2026-10-02",
+ "confidenceKey": {
+  "documented": "a source states it directly",
+  "derived": "calculated from a documented number; the method is given",
+  "range, coach consensus": "coaching sources agree on a range; no measured study",
+  "coach disagreement": "coaching sources conflict and no study settles it",
+  "unverified": "no source found; do not show to users as fact"
+ },
+ "appData": {
+  "exercisesJson": {
+   "equipment": "Machine",
+   "primary": [
+    "rear_delts"
+   ],
+   "secondary": [
+    "mid_back"
+   ],
+   "stabilizers": [],
+   "pattern": "horizontal_abduction",
+   "aliases": [
+    "reverse pec deck",
+    "rear delt machine fly"
+   ]
+  },
+  "existingHowto": "None. No docs/research/howto/lib_rear_delt_fly.json exists. docs/FORM-GUIDE-PRODUCTION.md:1015 already lists the owner question 'is the rear delt fly done on a reverse pec deck?'"
+ },
+ "equipment": {
+  "chosenModel": {
+   "what": "Selectorized dual-function Pec Fly / Rear Delt machine (reverse pec deck), used facing the pad.",
+   "why": "The app's aliases name the reverse pec deck. Every major brand sells this as one 2-in-1 selectorized machine: Life Fitness Insignia SS-FLY and Signature, Hammer Strength Select HS-FLY, Matrix Ultra G7-S22 and Versa VS-S22, Technogym Selection 700 Dual Pectoral/Reverse Fly. A plate-loaded version was not found in the sources read.",
+   "parts": [
+    {
+     "part": "seat",
+     "detail": "Pin-adjusted height (Matrix Ultra: 7 positions, spring assisted). The user sits facing the pad, legs straddling the seat post or with feet flat on the floor.",
+     "src": [
+      "matrix-g7s22",
+      "lf-insignia-manual"
+     ],
+     "confidence": "documented"
+    },
+    {
+     "part": "pad",
+     "detail": "One upright pad: back pad for pec fly, chest pad for rear delt. Matrix calls it an angled back pad.",
+     "src": [
+      "matrix-g7s22",
+      "lf-insignia-manual"
+     ],
+     "confidence": "documented (angle in degrees unverified)"
+    },
+    {
+     "part": "lever arms",
+     "detail": "Two independent arms hang from an overhead frame; each rotates about a vertical axis above the shoulder. The handles move in a horizontal arc around that axis (arc path, not linear, not converging press). LF: 'rotate the handles out and about the shoulder'; Hammer Strength: 'pivoting arms', 'axis of rotation marked with red indicator'.",
+     "src": [
+      "lf-insignia-manual",
+      "hs-fly",
+      "lf-signature-retail"
+     ],
+     "confidence": "documented (arc and pivots); exact pivot height unverified"
+    },
+    {
+     "part": "start-position adjuster",
+     "detail": "At the top of each arm (LF: 'overhead range of motion adjustments for each arm'). Pull the pin and rotate the arm. Matrix Ultra: 8 arm start positions, 4 for pec fly and 4 for rear delt. LF Signature: 5 pec fly start positions.",
+     "src": [
+      "lf-insignia-manual",
+      "matrix-g7s22",
+      "lf-signature-retail",
+      "barbend-rpd"
+     ],
+     "confidence": "documented"
+    },
+    {
+     "part": "handles",
+     "detail": "Dual handles on each arm: a vertical handle (neutral grip, used for pec fly) and a horizontal handle (pronated grip, the LF placard's rear-delt handle). Technogym: 'dual handles with neutral and prone grips'. Matrix: 'rotating grips', 'delt grips', 'oversized handles'. Grips are thermo-rubber (HS, LF).",
+     "src": [
+      "lf-insignia-manual",
+      "tg-sel700-dual",
+      "matrix-g7s22",
+      "hs-fly",
+      "lf-signature-retail"
+     ],
+     "confidence": "documented (orientations); grip diameter and length unverified"
+    },
+    {
+     "part": "weight stack and cable",
+     "detail": "Selector-pin weight stack driven by cable and pulleys (HS: 7x19 nylon-coated cable, sealed-bearing pulleys 4.5 in and 6 in). Stack position relative to the user varies by model.",
+     "src": [
+      "hs-fly"
+     ],
+     "confidence": "documented (HS); stack location per model unverified"
+    }
+   ],
+   "dimensions": [
+    {
+     "model": "Life Fitness Insignia SS-FLY",
+     "LxWxHcm": "203 x 197 x 203",
+     "stackKg": "130 standard / 152 heavy",
+     "machineKg": 321,
+     "src": [
+      "lf-insignia-page",
+      "lf-insignia-manual"
+     ]
+    },
+    {
+     "model": "Life Fitness Signature Pectoral Fly/Rear Deltoid",
+     "LxWxHcm": "142 x 147 x 204",
+     "stackKg": "145",
+     "machineKg": 304,
+     "src": [
+      "lf-signature-retail"
+     ]
+    },
+    {
+     "model": "Hammer Strength Select HS-FLY",
+     "LxWxHcm": "124 x 142 x 180",
+     "stackKg": "138",
+     "machineKg": 263,
+     "src": [
+      "hs-fly"
+     ]
+    },
+    {
+     "model": "Matrix Ultra G7-S22",
+     "LxWxHcm": "143.5 x 193.5 x 197 (in use), 143.5 x 173.5 x 197 (static)",
+     "stackKg": "heavy stack (value not in sell sheet text read)",
+     "machineKg": 329,
+     "src": [
+      "matrix-g7s22"
+     ]
+    },
+    {
+     "model": "Matrix Versa VS-S22",
+     "LxWxHcm": "152 x 152 x 168 (60 x 60 x 66 in)",
+     "src": [
+      "matrix-vss22-manual"
+     ]
+    },
+    {
+     "model": "Technogym Selection 700 Dual Pectoral/Reverse Fly",
+     "LxWxHcm": "150 x 123.8 x 199.1",
+     "stackKg": "50 standard / 65 plus (as listed)",
+     "machineKg": 300,
+     "src": [
+      "tg-sel700-dual"
+     ]
+    }
+   ],
+   "modelThis": "Generic, unbranded version: footprint about 145 cm deep x 150 cm wide x 200 cm tall; overhead frame with two arms; pad upright with a slight backward angle; dual handles on each arm (vertical + horizontal); pin-adjusted seat; stack behind a shroud. No logos (repo is public; no brand imitation)."
+  }
+ },
+ "setup": [
+  {
+   "step": 1,
+   "text": "Set both arms to the rear-delt start: pull the start adjuster at the top of each arm and rotate the arms so the handles sit in front of the pad, close together.",
+   "landmark": "handles in front of the sternum",
+   "src": [
+    "lf-insignia-manual",
+    "barbend-rpd"
+   ],
+   "confidence": "documented ('bringing the arms into the furthest back position' LF; 'rotate the arms until they're parallel to each other' BarBend)"
+  },
+  {
+   "step": 2,
+   "text": "Sit facing the pad. Adjust seat height so the arms are parallel to the floor while holding the handles.",
+   "landmark": "handles level with the shoulders (acromion)",
+   "src": [
+    "lf-insignia-manual",
+    "barbend-rpd",
+    "exrx-rf-overhand"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "step": 3,
+   "text": "Chest against the pad, sit tall, feet flat on the floor.",
+   "landmark": "sternum on the pad, knees about over ankles",
+   "src": [
+    "precor-gp"
+   ],
+   "confidence": "range, coach consensus"
+  },
+  {
+   "step": 4,
+   "text": "Grip: neutral (palms facing each other) on the vertical handles. Alternative: palms down on the horizontal handles.",
+   "landmark": "hands at shoulder height, in line with the arms",
+   "src": [
+    "schoenfeld2013",
+    "lf-insignia-manual",
+    "barbend-rpd"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "step": 5,
+   "text": "Elbows slightly bent and kept that way for the set.",
+   "landmark": "elbow",
+   "src": [
+    "lf-insignia-manual"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "step": 6,
+   "text": "Select the weight; lift the stack just off its rest before the first rep and keep it off between reps.",
+   "landmark": "weight stack",
+   "src": [
+    "lf-insignia-manual"
+   ],
+   "confidence": "documented ('without letting the resistance rest on the stack')"
+  }
+ ],
+ "posture": {
+  "start": {
+   "head_neck": {
+    "value": "neutral, in line with the trunk, eyes forward over the pad; head not pushed forward",
+    "src": [],
+    "confidence": "range, coach consensus (no source found for this exercise)"
+   },
+   "torso_spine": {
+    "value": "upright, sternum on the pad; slight forward lean equal to the pad angle; normal low-back curve",
+    "src": [
+     "precor-gp",
+     "matrix-g7s22"
+    ],
+    "confidence": "range, coach consensus"
+   },
+   "scapulae": {
+    "value": "relaxed forward (slightly protracted) from reaching to the handles; not shrugged",
+    "src": [
+     "nippard-rd-snippet"
+    ],
+    "confidence": "range, coach consensus (weak source)"
+   },
+   "shoulder": {
+    "value": "about 90 degrees flexion (upper arms horizontal, pointing forward), hands close together in front of the chest; exact horizontal adduction depends on the start setting",
+    "src": [
+     "lf-insignia-manual",
+     "barbend-rpd"
+    ],
+    "confidence": "documented (arms parallel to floor); adduction angle unverified"
+   },
+   "shoulder_rotation": {
+    "value": "neutral grip: humerus near neutral rotation, thumbs up. Pronated grip: humerus internally rotated, elbows pointing out to the sides at shoulder height.",
+    "src": [
+     "schoenfeld2013",
+     "exrx-rf-overhand"
+    ],
+    "confidence": "documented"
+   },
+   "elbow": {
+    "value": "10-20 degrees flexion, fixed",
+    "src": [
+     "lf-insignia-manual"
+    ],
+    "confidence": "range, coach consensus (LF: 'slightly bent'; BarBend: 'straightened')"
+   },
+   "forearm": {
+    "value": "neutral grip: mid-position, palms facing each other. Pronated: palms down.",
+    "src": [
+     "schoenfeld2013",
+     "lf-insignia-manual"
+    ],
+    "confidence": "documented"
+   },
+   "wrist": {
+    "value": "neutral, 0 degrees flexion/extension; knuckles in line with the forearm",
+    "src": [],
+    "confidence": "range, coach consensus (no exercise-specific source)"
+   },
+   "hips": {
+    "value": "about 90 degrees flexion, seated, pelvis upright",
+    "src": [],
+    "confidence": "unverified (follows from sitting tall on the seat)"
+   },
+   "knees": {
+    "value": "about 90 degrees flexion",
+    "src": [],
+    "confidence": "unverified"
+   },
+   "feet": {
+    "value": "flat on the floor, about hip width",
+    "src": [
+     "precor-gp"
+    ],
+    "confidence": "range, coach consensus"
+   }
+  },
+  "mid": {
+   "description": "Arms halfway open, about 45 degrees out from straight ahead.",
+   "shoulder": {
+    "value": "arms still horizontal at shoulder height, moving in a horizontal arc",
+    "src": [
+     "lf-insignia-manual",
+     "exrx-rf-overhand"
+    ],
+    "confidence": "documented"
+   },
+   "elbow": {
+    "value": "same small bend as start; elbows stay level with the shoulders",
+    "src": [
+     "lf-insignia-manual",
+     "exrx-rf-overhand"
+    ],
+    "confidence": "documented"
+   },
+   "scapulae": {
+    "value": "moving from protracted toward neutral; no elevation",
+    "src": [
+     "barbend-rpd"
+    ],
+    "confidence": "range, coach consensus"
+   },
+   "torso": {
+    "value": "chest stays on the pad",
+    "src": [
+     "precor-gp"
+    ],
+    "confidence": "range, coach consensus"
+   }
+  },
+  "end": {
+   "description": "Arms open to the sides, brief pause.",
+   "shoulder": {
+    "value": "arms in line with the body (frontal plane), about 90 degrees abduction, hands at shoulder height; at most about 10 degrees behind the body line",
+    "src": [
+     "barbend-rpd",
+     "exrx-rf-overhand",
+     "lf-insignia-manual"
+    ],
+    "confidence": "documented (BarBend 'in line with your body'; ExRx 'elbows just behind back'; LF 'as far as can be controlled'); the 10-degree cap is range, coach consensus"
+   },
+   "shoulder_rotation": {
+    "value": "neutral grip: palms face forward, thumbs up. Pronated: palms face down, thumbs forward.",
+    "src": [
+     "schoenfeld2013",
+     "lf-insignia-manual"
+    ],
+    "confidence": "derived from handle orientation"
+   },
+   "elbow": {
+    "value": "same 10-20 degree bend; elbows level with the shoulders",
+    "src": [
+     "lf-insignia-manual",
+     "exrx-rf-overhand"
+    ],
+    "confidence": "range, coach consensus"
+   },
+   "scapulae": {
+    "value": "neutral to moderately retracted, not squeezed hard together, not elevated",
+    "src": [
+     "barbend-rpd"
+    ],
+    "confidence": "coach disagreement (BarBend: avoid over-retraction; other coaches cue retraction); no EMG study compares them"
+   },
+   "wrist": {
+    "value": "neutral",
+    "src": [],
+    "confidence": "range, coach consensus"
+   },
+   "head_torso_hips_knees_feet": {
+    "value": "unchanged from start; chest on the pad, no lean back",
+    "src": [
+     "precor-gp"
+    ],
+    "confidence": "range, coach consensus"
+   }
+  },
+  "animatorNotes": [
+   "The machine arm and the human arm rotate about nearly the same vertical axis; place the figure's shoulder joint under the arm pivot so the hand stays on the handle through the arc (implied by HS 'axis of rotation' marker; exact alignment rule for rear-delt mode is unverified).",
+   "With the neutral handle, the palm turns from facing inward (start) to facing forward (end) because the handle turns with the lever arm; the forearm itself does not rotate.",
+   "Elbow angle must look identical in every frame."
+  ]
+ },
+ "grip": {
+  "default": "neutral on the vertical handles",
+  "whyDefault": "Neutral grip gave higher mean posterior deltoid (p=0.046) and infraspinatus (p=0.002) EMG than pronated on a reverse fly machine (19 trained men). Note: the LF Insignia placard tells users to grip the horizontal handles, so both are correct ways to use the machine.",
+  "orientation": {
+   "neutral": "palms facing each other, thumbs up",
+   "pronated": "palms down, thumbs pointing toward each other at start",
+   "src": [
+    "schoenfeld2013",
+    "lf-insignia-manual",
+    "exrx-rf-overhand"
+   ],
+   "confidence": "documented"
+  },
+  "width": {
+   "value": "set by the machine arms; at the start the hands are in front of the chest, about shoulder width or closer depending on start position",
+   "src": [
+    "barbend-rpd"
+   ],
+   "confidence": "unverified (exact distance)"
+  },
+  "handleInPalm": {
+   "value": "handle across the middle of the palm, hand in line with the forearm so the push goes through the heel of the hand and palm, not the fingertips",
+   "src": [],
+   "confidence": "range, coach consensus"
+  },
+  "thumb": {
+   "value": "wrapped (LF: 'grip the horizontal handles firmly')",
+   "src": [
+    "lf-insignia-manual"
+   ],
+   "confidence": "range, coach consensus ('firmly' implies a full grip; thumb position not stated)"
+  },
+  "fingers": {
+   "value": "all four fingers wrapped; grip firm but relaxed",
+   "src": [],
+   "confidence": "range, coach consensus"
+  },
+  "wrist": {
+   "value": "stacked, neutral",
+   "src": [],
+   "confidence": "range, coach consensus"
+  },
+  "handleOptions": [
+   {
+    "handle": "vertical (neutral)",
+    "effect": "more posterior deltoid and infraspinatus EMG than pronated",
+    "src": [
+     "schoenfeld2013"
+    ]
+   },
+   {
+    "handle": "horizontal (pronated)",
+    "effect": "manufacturer's rear-delt handle on LF Insignia; requires shoulder internal rotation to keep elbows at shoulder height (ExRx)",
+    "src": [
+     "lf-insignia-manual",
+     "exrx-rf-overhand"
+    ]
+   }
+  ]
+ },
+ "rangeTempoBreathing": {
+  "rom": {
+   "value": "from handles together in front of the chest to arms in line with the body; return without the stack touching down",
+   "src": [
+    "lf-insignia-manual",
+    "barbend-rpd"
+   ],
+   "confidence": "documented"
+  },
+  "tempo": {
+   "value": "about 2 s out, brief pause, about 2 s back",
+   "src": [
+    "schoenfeld2015"
+   ],
+   "confidence": "range, coach consensus (no exercise-specific tempo found; 0.5-8 s rep durations give similar growth across exercises)"
+  },
+  "breathing": {
+   "value": "exhale while opening the arms, inhale while returning",
+   "src": [],
+   "confidence": "range, coach consensus (no exercise-specific source; same pattern ACE gives for lateral raises)"
+  }
+ },
+ "muscles": {
+  "proposed": {
+   "primary": [
+    "rear_delts"
+   ],
+   "secondary": [
+    "mid_back",
+    "side_delts",
+    "rotator_cuff"
+   ],
+   "stabilizers": [
+    "triceps",
+    "forearms"
+   ]
+  },
+  "evidence": [
+   {
+    "muscle": "rear_delts",
+    "claim": "Reverse pec deck gave greater posterior deltoid activation than the seated row and inclined lat pulldown.",
+    "src": [
+     "franke2015",
+     "schoenfeld2013"
+    ]
+   },
+   {
+    "muscle": "side_delts",
+    "claim": "Middle deltoid was more active in the reverse pec deck than the inclined lat pulldown. In prone horizontal abduction at 100 degrees with external rotation (related move), middle deltoid reached 87% and posterior 88% MVIC.",
+    "src": [
+     "franke2015",
+     "reinold2004"
+    ]
+   },
+   {
+    "muscle": "rotator_cuff",
+    "claim": "Infraspinatus activity was recorded and higher with the neutral grip. ExRx lists infraspinatus and teres minor as synergists.",
+    "src": [
+     "schoenfeld2013",
+     "exrx-rf-overhand"
+    ]
+   },
+   {
+    "muscle": "mid_back",
+    "claim": "Middle trapezius peaks in shoulder horizontal extension with external rotation (prone, related move). ExRx lists middle and lower trapezius and rhomboids as synergists.",
+    "src": [
+     "ekstrom2003",
+     "exrx-rf-overhand"
+    ]
+   },
+   {
+    "muscle": "triceps, forearms",
+    "claim": "ExRx lists triceps brachii and wrist extensors as stabilizers (holding the elbow and wrist position).",
+    "src": [
+     "exrx-rf-overhand"
+    ]
+   }
+  ],
+  "disagreementWithExercisesJson": "exercises.json lists only mid_back as secondary. Add side_delts (Franke 2015, Reinold 2004) and rotator_cuff (Schoenfeld 2013) as secondary; triceps and forearms as stabilizers (ExRx, summary only). upper_traps should be a 'should not take over' muscle, not a target.",
+  "highlightPlan": "Solid highlight: rear_delts. Lighter: mid_back, side_delts. rotator_cuff is deep and has no drawn region. Back view needed (docs/FORM-GUIDE-PRODUCTION.md:127 notes the back view for horizontal abduction)."
+ },
+ "mistakes": [
+  {
+   "key": "shrug",
+   "name": "Shrugging",
+   "looksLike": "Shoulders rise toward the ears as the arms open; neck shortens.",
+   "whyItMatters": "Upper traps take over the pull, usually because the weight is too heavy.",
+   "fix": "Lighter weight; shoulders down; move only at the shoulder joint.",
+   "src": [
+    "barbend-rpd"
+   ],
+   "confidence": "range, coach consensus"
+  },
+  {
+   "key": "row",
+   "name": "Bending the elbows into a row",
+   "looksLike": "Elbows bend more as the arms open and the hands come back toward the body, like a row.",
+   "whyItMatters": "A row adds elbow flexion and shifts work to the back and biceps; the machine is set up for a fixed arm position.",
+   "fix": "Lock the small elbow bend from the setup and keep it.",
+   "src": [
+    "lf-insignia-manual",
+    "barbend-rpd"
+   ],
+   "confidence": "documented (LF: 'maintaining the arms in position as described in the setup')"
+  },
+  {
+   "key": "elbows-drop",
+   "name": "Elbows dropping below the shoulders",
+   "looksLike": "Seat too high, or the elbows sink as the arms open: the arms travel down and back instead of straight out.",
+   "whyItMatters": "Low elbows bring in the lats (ExRx). A seat too low or too high misaligns the resistance (BarBend).",
+   "fix": "Seat height so the arms are parallel to the floor; keep elbows level with the shoulders.",
+   "src": [
+    "exrx-rf-overhand",
+    "lf-insignia-manual",
+    "barbend-rpd"
+   ],
+   "confidence": "documented (setup) + summary-only source (lat claim)"
+  },
+  {
+   "key": "chest-off",
+   "name": "Chest leaving the pad",
+   "looksLike": "The torso rocks back off the pad to start each rep, then falls forward on the return.",
+   "whyItMatters": "Momentum replaces the rear-delt work.",
+   "fix": "Chest stays on the pad; slower reps.",
+   "src": [
+    "precor-gp"
+   ],
+   "confidence": "range, coach consensus"
+  },
+  {
+   "key": "stack-rest",
+   "name": "Resting the stack between reps",
+   "looksLike": "Plates clank down at the front of every rep; arms snap forward.",
+   "whyItMatters": "Life Fitness instructs returning the handles 'without letting the resistance rest on the stack' to keep tension.",
+   "fix": "Stop each return just before the plates touch.",
+   "src": [
+    "lf-insignia-manual"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "key": "over-squeeze",
+   "name": "Over-squeezing the shoulder blades",
+   "looksLike": "Arms swing far behind the body while the shoulder blades pinch hard together.",
+   "whyItMatters": "Shifts work to the mid back; BarBend lists over-retraction as a mistake. Other coaches cue a squeeze, so treat this as a coaching preference.",
+   "fix": "Stop when the arms line up with the body; think 'part the air with the arms'.",
+   "src": [
+    "barbend-rpd"
+   ],
+   "confidence": "coach disagreement"
+  }
+ ],
+ "keyFacts": [
+  {
+   "text": "Palms-facing grip produced more rear-delt and rotator-cuff (infraspinatus) activity than palms-down on a reverse fly machine. The rear-delt difference was small.",
+   "src": [
+    "schoenfeld2013"
+   ],
+   "note": "19 trained men, to failure at about 75% body weight; posterior delt 95% CI 0.1-7.4% MVIC."
+  },
+  {
+   "text": "The reverse pec deck worked the rear delts harder than seated rows or lat pulldowns.",
+   "src": [
+    "franke2015"
+   ],
+   "note": "12 trained men, 10RM sets; inclined lat pulldown."
+  },
+  {
+   "text": "Side delts work here too: middle deltoid activity was higher on the reverse pec deck than on the lat pulldown.",
+   "src": [
+    "franke2015",
+    "reinold2004"
+   ]
+  },
+  {
+   "text": "Keeping the elbows level with the shoulders keeps the lats out of the move.",
+   "src": [
+    "exrx-rf-overhand"
+   ],
+   "note": "ExRx comment read via search summary only; recheck the page before showing."
+  },
+  {
+   "text": "Claims that the neutral handle shifts work to the side delts are not supported: Schoenfeld 2013 recorded the middle deltoid and reported significant grip effects only for the rear delt and infraspinatus.",
+   "src": [
+    "schoenfeld2013"
+   ],
+   "confidence": "documented (abstract); middle-deltoid numbers not read"
+  }
+ ],
+ "visualReferences": [
+  {
+   "url": "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+   "shows": "LF Insignia owner's manual page: Pectoral Fly / Rear Deltoid setup and movement instructions.",
+   "useFor": "setup order, handle choice, seat rule"
+  },
+  {
+   "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/insignia-series-pectoral-fly-rear-deltoid",
+   "shows": "Product photos of the SS-FLY.",
+   "useFor": "machine silhouette, overhead arms, pad"
+  },
+  {
+   "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-pectoral-fly-rear-deltoid",
+   "shows": "Product photos of the HS-FLY; red axis-of-rotation marker.",
+   "useFor": "pivot location, compact frame"
+  },
+  {
+   "url": "https://images.jhtassets.com/6431a20cd43587c9f0909694a99536d8099d0972/original/named/UltraPecFlyRearDelt+IntelligentTrainingItc20+66306+85967+eng+au+ProductSellSheet.pdf",
+   "shows": "Matrix Ultra G7-S22 sell sheet photo and specs.",
+   "useFor": "rotating grips, angled pad, dimensions"
+  },
+  {
+   "url": "https://www.jhta.com.au/wp-content/uploads/2021/03/VS-S22-Owners-Manual_Rev-1.3.pdf",
+   "shows": "Matrix VS-S22 owner's manual with exploded assembly drawings of arms, pivots and stack.",
+   "useFor": "mechanical layout of arms, pivots, cable path"
+  },
+  {
+   "url": "https://www.technogym.com/en-HK/product/selection-700-dual-pectoral-reverse-fly_MNNC.html",
+   "shows": "Technogym Selection 700 Dual Pectoral/Reverse Fly with dual neutral/prone handles (page blocked to fetch; seen via search summary).",
+   "useFor": "dual-handle design"
+  },
+  {
+   "url": "https://barbend.com/reverse-pec-deck/",
+   "shows": "Coaching article with photos/video of the reverse pec deck.",
+   "useFor": "start and end positions, neutral vs overhand grip"
+  },
+  {
+   "url": "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand",
+   "shows": "ExRx animation, overhand grip version (blocked to fetch; not viewed).",
+   "useFor": "pronated variant, elbow height"
+  },
+  {
+   "url": "https://exrx.net/WeightExercises/DeltoidPosterior/LVRearLateralRaise",
+   "shows": "ExRx animation, parallel (neutral) grip version (blocked to fetch; not viewed).",
+   "useFor": "neutral variant"
+  }
+ ],
+ "openQuestions": [
+  "Owner's gym: is this done on a reverse pec deck, and which brand/model (already asked in docs/FORM-GUIDE-PRODUCTION.md:1015)?",
+  "Default grip: neutral chosen on EMG (Schoenfeld 2013); the LF placard uses the horizontal handles. A reviewer should confirm, and the guide can show both.",
+  "Handle grip diameter and length, distance between handles at the rear-delt start, pivot height and pad angle are not in any source read; take them from photos or a gym measurement.",
+  "Scapula at the end (retract or not) is coach disagreement with no direct EMG comparison found.",
+  "Arm height: shoulder height (LF, ExRx, BarBend) vs hands slightly below the shoulders (Nippard, search snippet only). Model shoulder height.",
+  "No exercise-specific tempo or breathing source; head/neck, wrist, hip and knee angles are coach consensus or unverified.",
+  "Schoenfeld 2013 and Franke 2015 methods (machine model, ROM, cadence) were not read; only abstracts.",
+  "ExRx pages could not be fetched (403); their content here comes from search summaries."
+ ],
+ "sources": [
+  {
+   "id": "lf-insignia-manual",
+   "cite": "Life Fitness Insignia Series Owner's Manual, Pectoral Fly / Rear Deltoid (SS-FLY), p. 26",
+   "url": "https://www.manualslib.com/manual/2627241/Life-Fitness-Insignia-Series.html?page=26",
+   "kind": "manufacturer manual",
+   "read": "full (page text quoted)"
+  },
+  {
+   "id": "lf-insignia-page",
+   "cite": "Life Fitness, Insignia Series Pectoral Fly/Rear Deltoid product page",
+   "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/insignia-series-pectoral-fly-rear-deltoid",
+   "kind": "manufacturer spec",
+   "read": "full"
+  },
+  {
+   "id": "lf-signature-retail",
+   "cite": "Fitness Superstore / Primo Fitness listings, Life Fitness Signature Series Pectoral Fly/Rear Deltoid",
+   "url": "https://www.fitnesssuperstore.com/Life-Fitness-Signature-Pectoral-Fly-Rear-Deltoid-p/lfsigfly.htm",
+   "kind": "retailer spec",
+   "read": "search summary"
+  },
+  {
+   "id": "hs-fly",
+   "cite": "Life Fitness, Hammer Strength Select Pectoral Fly/Rear Deltoid (HS-FLY) product page",
+   "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-pectoral-fly-rear-deltoid",
+   "kind": "manufacturer spec",
+   "read": "full"
+  },
+  {
+   "id": "matrix-g7s22",
+   "cite": "Matrix Fitness, Ultra Pec Fly / Rear Delt G7-S22 product sell sheet",
+   "url": "https://images.jhtassets.com/6431a20cd43587c9f0909694a99536d8099d0972/original/named/UltraPecFlyRearDelt+IntelligentTrainingItc20+66306+85967+eng+au+ProductSellSheet.pdf",
+   "kind": "manufacturer spec",
+   "read": "full (PDF text)"
+  },
+  {
+   "id": "matrix-vss22-manual",
+   "cite": "Matrix Fitness, Versa VS-S22 Pec Fly/Rear Delt Owner's Manual Rev 1.3",
+   "url": "https://www.jhta.com.au/wp-content/uploads/2021/03/VS-S22-Owners-Manual_Rev-1.3.pdf",
+   "kind": "manufacturer manual",
+   "read": "full (PDF text; no usage instructions inside)"
+  },
+  {
+   "id": "tg-sel700-dual",
+   "cite": "Technogym, Selection 700 Dual Pectoral / Reverse Fly product page",
+   "url": "https://www.technogym.com/en-HK/product/selection-700-dual-pectoral-reverse-fly_MNNC.html",
+   "kind": "manufacturer spec",
+   "read": "search summary (page returned 403)"
+  },
+  {
+   "id": "schoenfeld2013",
+   "cite": "Schoenfeld B, Sonmez RG, Kolber MJ, Contreras B, Harris R, Ozen S (2013) Effect of hand position on EMG activity of the posterior shoulder musculature during a horizontal abduction exercise. J Strength Cond Res 27(10):2644-9",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23302754/",
+   "kind": "peer-reviewed EMG",
+   "read": "abstract"
+  },
+  {
+   "id": "franke2015",
+   "cite": "Franke RdA, Botton CE, Rodrigues R, Pinto RS, Lima CS (2015) Analysis of anterior, middle and posterior deltoid activation during single and multijoint exercises. J Sports Med Phys Fitness 55(7-8):714-21",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24947920/",
+   "kind": "peer-reviewed EMG",
+   "read": "abstract"
+  },
+  {
+   "id": "reinold2004",
+   "cite": "Reinold MM et al. (2004) Electromyographic analysis of the rotator cuff and deltoid musculature during common shoulder external rotation exercises. J Orthop Sports Phys Ther 34(7):385-94",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15296366/",
+   "kind": "peer-reviewed EMG (fine wire)",
+   "read": "abstract"
+  },
+  {
+   "id": "ekstrom2003",
+   "cite": "Ekstrom RA, Donatelli RA, Soderberg GL (2003) Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. J Orthop Sports Phys Ther 33(5):247-58",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/12774999/",
+   "kind": "peer-reviewed EMG",
+   "read": "abstract"
+  },
+  {
+   "id": "schoenfeld2015",
+   "cite": "Schoenfeld BJ, Ogborn DI, Krieger JW (2015) Effect of repetition duration during resistance training on muscle hypertrophy: a systematic review and meta-analysis. Sports Med 45(4):577-85",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25601394/",
+   "kind": "meta-analysis",
+   "read": "abstract"
+  },
+  {
+   "id": "barbend-rpd",
+   "cite": "Dickson J (NASM-CPT, USAW-L2), How to Do the Reverse Pec Deck, BarBend, updated 6 Nov 2024",
+   "url": "https://barbend.com/reverse-pec-deck/",
+   "kind": "coaching",
+   "read": "summary of full page"
+  },
+  {
+   "id": "exrx-rf-overhand",
+   "cite": "ExRx.net, Lever Seated Reverse Fly (overhand grip)",
+   "url": "https://exrx.net/WeightExercises/DeltoidPosterior/LVReverseFlyOverhand",
+   "kind": "coaching reference",
+   "read": "search summary only (page returned 403)"
+  },
+  {
+   "id": "precor-gp",
+   "cite": "Green Physique, Precor Rear Delt Fly Machine instructions",
+   "url": "https://greenphysique.com/in-the-gym-equipment-instruction/precor-rear-delt-fly-machine",
+   "kind": "coaching",
+   "read": "search summary only"
+  },
+  {
+   "id": "nippard-rd-snippet",
+   "cite": "Search summary of Jeff Nippard reverse pec deck tips (TikTok discover pages)",
+   "url": "https://www.tiktok.com/discover/how-to-do-rear-delt-fly-on-pec-deck-jeff-nippard",
+   "kind": "coaching",
+   "read": "search summary only; weak"
+  }
+ ]
+}
