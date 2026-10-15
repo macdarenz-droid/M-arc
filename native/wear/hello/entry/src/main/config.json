@@ -1,14 +1,27 @@
 {
   "app": {
-    "bundleName": "com.example.hellowatch",
-    "vendor": "example",
-    "version": { "code": 1000000, "name": "1.0.0" },
-    "apiVersion": { "compatible": 6, "target": 6, "releaseType": "Release" }
+    "bundleName": "com.mrcdrnzz.dailytracker.watch",
+    "vendor": "marc",
+    "version": {
+      "code": 1000000,
+      "name": "1.0.0"
+    },
+    "apiVersion": {
+      "compatible": 6,
+      "target": 6,
+      "releaseType": "Release"
+    }
   },
   "deviceConfig": {},
   "module": {
-    "deviceType": [ "liteWearable" ],
-    "distro": { "deliveryWithInstall": true, "moduleName": "entry", "moduleType": "entry" },
+    "deviceType": [
+      "liteWearable"
+    ],
+    "distro": {
+      "deliveryWithInstall": true,
+      "moduleName": "entry",
+      "moduleType": "entry"
+    },
     "abilities": [
       {
         "name": "default",
@@ -16,14 +29,28 @@
         "label": "$string:app_name",
         "type": "page",
         "visible": true,
-        "skills": [ { "actions": [ "action.system.home" ], "entities": [ "entity.system.home" ] } ]
+        "skills": [
+          {
+            "actions": [
+              "action.system.home"
+            ],
+            "entities": [
+              "entity.system.home"
+            ]
+          }
+        ]
       }
     ],
     "js": [
       {
-        "pages": [ "pages/index/index" ],
+        "pages": [
+          "pages/index/index"
+        ],
         "name": "default",
-        "window": { "designWidth": 466, "autoDesignWidth": false }
+        "window": {
+          "designWidth": 466,
+          "autoDesignWidth": false
+        }
       }
     ]
   }

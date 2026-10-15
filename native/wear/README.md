@@ -21,8 +21,20 @@ python3 -I build/dump-bin.py <out-folder>/bin/entry-default-unsigned.bin       #
 - Whether a release build runs the `.js` or the jerry `.bc` snapshot it also contains.
 - Icon sizes (116 and 48 px were picked, not looked up).
 
-## Signing (needs the owner)
+## Signing
 
-`toolchains/lib/hap-sign-tool.jar sign-app -mode localSign -signAlg SHA256withECDSA -inForm bin -compatibleVersion 6` with a keystore (`.p12`), the debug certificate (`.cer`) and the debug profile (`.p7b`). The certificate and profile come from AppGallery Connect: a HarmonyOS app for the watch (bundle name), a debug certificate from our CSR, the watch registered by its UDID, and a debug profile tying them together. The keystore and its passwords are secrets: never commit them.
+`build/sign-lite-bin.sh` signs the unsigned `.bin` with `hap-sign-tool.jar sign-app -mode localSign -inForm bin -signAlg SHA256withECDSA -compatibleVersion 6`, using the watch debug keystore (`.p12`), the debug certificate (`.cer`) and the debug profile (`.p7b`). The keystore password comes from `MARC_WATCH_KEY_PWD`. The keystore, its password, the certificate and the profile are kept outside the repo: the owner holds them.
 
-The UDID comes from the Watch UDID tool in the Watch-test repo (`udid-tool/`), because DevEco Assistant is not available on the owner's phone. It read the GT 6's UDID on 2026-10-15; the value is kept out of this public repo.
+AppGallery Connect (2026-10-15): HarmonyOS app `com.mrcdrnzz.dailytracker.watch` (in its own project), the GT 6 registered as a sports watch by its UDID, a debug certificate from our EC P-256 CSR, and a debug profile for that app, certificate and watch, valid until 2027-10-15. Checked before use: the certificate carries our key, and the profile names this bundle, this certificate and the one watch.
+
+On 2026-10-15 the `hello/` app built and signed: the signed `.bin` is the unsigned one plus a 6,663-byte signature block that holds the certificate and the profile and ends with `hw signed app   1000`. This SDK's `verify-app` cannot check a `.bin` (it reads it as ELF), so the real check is the watch accepting the install.
+
+## Installing from a non-Huawei phone
+
+DevEco Assistant is only offered on Huawei phones. The candidate route is Gadgetbridge's File Installer (upstream 0.95.1), which uploads a signed `.bin` and leaves the signature check to the watch. It needs Gadgetbridge paired with the watch through the Huawei account ID, and it switches the watch between Gadgetbridge and Huawei Health. Not tried yet; the owner decides.
+
+The UDID came from the Watch UDID tool in the Watch-test repo (`udid-tool/`) on 2026-10-15; the value is kept out of this public repo.
+
+## Huawei console submissions
+
+Owner rule (2026-10-15): everything entered in the Huawei developer console is reviewed and red-teamed against the approved Wear Engine application before it is submitted. Two applications were rejected for inconsistent documents and form answers.
