@@ -1,0 +1,4 @@
+<div class="container">
+  <text class="title">{{ title }}</text>
+  <input type="button" class="btn" value="Tap" onclick="onTap"></input>
+</div>
