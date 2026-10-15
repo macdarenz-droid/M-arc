@@ -51,9 +51,9 @@ Question: can phone and watch exchange an identified request and an application 
 - **Pass:**
   - 5 watch sends give 5 matching acknowledgements on both screens, with the same ids, 0 bad and 0 lost;
   - negative control: with the phone receiver stopped, no acknowledgement arrives, and it comes back after reconnecting.
-- **Needs approval** (no supervisor session is running):
-  - the new Android dependency;
-  - two wiring lines outside the watch lane (`scripts/prepare-android.sh`, `.github/workflows/build-apk.yml`).
+- **Approved by the owner (2026-10-15, no supervisor session running):**
+  - the Wear Engine Android SDK in the debug APK only;
+  - the watch lane making the two wiring edits (`scripts/prepare-android.sh`, `.github/workflows/build-apk.yml`).
   The added CI check steps are add-only.
 - **Unverified until the device run:**
   - which phone `Message` accessor carries the watch's text;
