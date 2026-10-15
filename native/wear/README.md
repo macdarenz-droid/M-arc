@@ -30,7 +30,13 @@ The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sd
   - UDID source: the value read over Bluetooth is also the watch's own HiChain auth ID in the pairing exchange, and it stayed the same after a factory reset;
   - watch developer options (turned on before the third attempt) and the watch clock.
 - The Huawei account ID Gadgetbridge needs is not the AppGallery Connect developer ID. Entering the developer ID made the watch ask to delete the previous account's data and restart. Never confirm that prompt unless a reset is intended.
-- Next: timing probes (an unsigned file, a file with a broken hash, a file with an unsigned profile) show which step of the check fails.
+- Timing probes (2026-10-15, built from the SDK 3.2 build, time from the 10 % report to 103):
+  - unsigned file: refused at once, with no 101 or 10 % report;
+  - broken file hash: 1.03 s, after the app certificate chain and the hash;
+  - profile block not signed: 1.16 s, after the app signature as well;
+  - the real build: 2.02 s, so it also passes the profile's certificate chain (about 0.86 s more).
+  The refusal therefore comes from the profile step after its chain. Either the watch does not trust the profile's signer, or it rejects something in the profile's content (the UDID, or a field). The SDK 3.2 build, without source maps, failed the same way, so the package contents are not the cause.
+- Our debug profile came from "Certificates, app IDs, and profiles" (format version 2.0.0, with `app-identifier`, `acls` and an empty `permissions`). Both projects that report GT installs, hwgt6 (GT 6) and a lite-wearable sample repo, used the older "HAP Provision Profile" page. Next: a debug profile from that page.
 
 ## Not verified yet
 
