@@ -1,5 +1,7 @@
 # M/ARC watch app (HUAWEI WATCH GT 6)
 
+Owner rule (2026-10-15): red-team every output before it goes to the owner: builds, files, console entries and instructions. A fresh check tries to break it first.
+
 The watch lane's folder (`AGENTS.md`, file ownership). The GT 6 runs Lite Wearable JS apps (HML/CSS/JS, FA model, `deviceType: liteWearable`); see `docs/WATCH-ARCHITECTURE.md`.
 
 ## Build without DevEco Studio
