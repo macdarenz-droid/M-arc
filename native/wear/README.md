@@ -41,6 +41,25 @@ The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sd
 - **Installed (2026-10-15):** with that profile, DevEco Assistant on the owner's Galaxy Z Flip 7 installed the HAP through Huawei Health, and "M/ARC Watch" appeared in the GT 6 app list. The app opened to a black screen that did not react: M-arc's root `package.json` says `"type": "module"`, so webpack compiled the watch JS as ES modules, which left `require` and `exports` that the watch's engine does not have. `build-lite-bin.sh` now compiles a copy under a CommonJS `package.json`, and `build/check-lite-js.cjs` loads every compiled file in a bare engine context and fails the build if one would not load. It fails on the old output and passes on the new one.
 - **Runs (2026-10-15):** version 1.0.1 installed over 1.0.0 through DevEco Assistant and runs on the GT 6: the owner's photo shows "Tapped 9" above the blue Tap button, so rendering, touch and data binding work. Gate A question 1 is answered yes for the debug route (DevEco Assistant + Huawei Health on a Galaxy Z Flip 7, AGC debug certificate and profile). The Gadgetbridge File Installer route is untested with the correct UDID.
 
+## Gate A question 2 plan (2026-10-15)
+
+Question: can phone and watch exchange an identified request and an application acknowledgement through Wear Engine?
+
+- **Watch:** M/ARC Watch 1.0.2. The test page sends `{"t":"marc-a2","v":1,"k":"req","id":"<boot>-<seq>"}`, using Huawei's lite Wear Engine JS SDK copied in unchanged. It shows each send result and the matching acknowledgement with its round-trip time.
+- **Phone:** a hidden "Watch lab" sheet in M/ARC, opened by 7 taps on the Version line and present only when the plugin exists. A small Capacitor plugin wraps the Wear Engine Android SDK (`com.huawei.hms:wearengine`). The acknowledgement `{"k":"ack","id":<same>}` is built in TypeScript after the request is parsed and checked, so a send result of 207 alone never counts as an acknowledgement. The log is kept in memory only.
+- **Build scope:** the plugin and SDK go into the debug APK only, behind `MARC_WEAR_LAB=1`. New CI checks prove that release and Play builds carry neither.
+- **Pass:**
+  - 5 watch sends give 5 matching acknowledgements on both screens, with the same ids, 0 bad and 0 lost;
+  - negative control: with the phone receiver stopped, no acknowledgement arrives, and it comes back after reconnecting.
+- **Needs approval** (no supervisor session is running):
+  - the new Android dependency;
+  - two wiring lines outside the watch lane (`scripts/prepare-android.sh`, `.github/workflows/build-apk.yml`).
+  The added CI check steps are add-only.
+- **Unverified until the device run:**
+  - which phone `Message` accessor carries the watch's text;
+  - Wear Engine on Android 16, and the Huawei Health and HMS Core versions on the Flip 7;
+  - the exact fingerprint string forms.
+
 ## Not verified yet
 
 - Whether a release build runs the `.js` or the jerry `.bc` snapshot it also contains.
