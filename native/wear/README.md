@@ -25,4 +25,4 @@ python3 -I build/dump-bin.py <out-folder>/bin/entry-default-unsigned.bin       #
 
 `toolchains/lib/hap-sign-tool.jar sign-app -mode localSign -signAlg SHA256withECDSA -inForm bin -compatibleVersion 6` with a keystore (`.p12`), the debug certificate (`.cer`) and the debug profile (`.p7b`). The certificate and profile come from AppGallery Connect: a HarmonyOS app for the watch (bundle name), a debug certificate from our CSR, the watch registered by its UDID, and a debug profile tying them together. The keystore and its passwords are secrets: never commit them.
 
-The UDID comes from the Watch UDID tool in the Watch-test repo (`udid-tool/`), because DevEco Assistant is not available on the owner's phone.
+The UDID comes from the Watch UDID tool in the Watch-test repo (`udid-tool/`), because DevEco Assistant is not available on the owner's phone. It read the GT 6's UDID on 2026-10-15; the value is kept out of this public repo.
