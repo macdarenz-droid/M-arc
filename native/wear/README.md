@@ -15,6 +15,17 @@ python3 -I build/dump-bin.py <out-folder>/bin/entry-default-unsigned.bin       #
 
 `hello/` is a one-page test app (a text and a button). On 2026-10-15 it built in both modes from this folder: debug `.bin` 136,432 B, release 134,169 B (sizes move a little with the build paths). Its page JS is about 3 KB, far below the 48 KB page limit. `config.json` uses the older API 6 shape (ability and JS entry both named `default`, `apiVersion` 6), because a GT watch rejects hvigor's newer shape with install error 40 (community GT 6 project leonsuv/hwgt6).
 
+## Older SDK
+
+The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sdk/linux/js-linux-x64-3.2.11.9-Release.zip` and `toolchains-linux-x64-3.2.11.9-Release.zip` from `https://repo.huaweicloud.com/openharmony/os/3.2-Release/ohos-sdk-windows_linux-public.tar.gz`), the SDK level the community iPhone tool HuaSideload uses. Its compiler ships without packages: run `npm ci --ignore-scripts` in `js/build-tools/ace-loader` (Huawei's lockfile, Huawei's npm mirror, integrity-checked) and build with `NODE_OPTIONS=--openssl-legacy-provider` on Node 17 or later. The config and the signature block come out the same as with the 7.0 SDK.
+
+## First install attempt (2026-10-15)
+
+- Installed through Gadgetbridge 0.95.1's File Installer on the GT 6 (software 6.1.0.118): the upload finished and the watch answered 103, "install failed", which carries no reason.
+- HuaSideload's `check-watch-bin.py`, which encodes the watch installer's checks, rates the package OK.
+- The Huawei account ID Gadgetbridge needs is not the AppGallery Connect developer ID: entering that made the watch ask to delete the previous account's data and restart. Never confirm that prompt unless a reset is intended.
+- Still to rule out: watch developer mode, the UDID read over Bluetooth, and a newer signing rule on software 6.1.
+
 ## Not verified yet
 
 - Install and run on the GT 6. That needs signing (below) and a way to install from a Samsung phone; DevEco Assistant is only offered on Huawei phones.

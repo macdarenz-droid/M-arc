@@ -24,6 +24,7 @@ aceManifestPath="$I/manifest/$JSNAME/manifest.json" iconPath="$I/lite_res" img2b
   --env aceModuleRoot="$MAIN/js/$JSNAME" --env aceModuleBuild="$I/loader_out_lite/js/$JSNAME" \
   --env cachePath="$I/cache" --env buildMode="$MODE" --env deviceType=liteWearable
 sleep 1  # img2bin and jerry-snapshot run async in webpack done-hooks
+[ -f "$I/loader_out_lite/js/$JSNAME/app.js" ] || { echo "ERROR: compile failed, no app.js" >&2; exit 1; }
 [ -d "$I/loader_out_lite/js/$JSNAME/_releaseMap" ] && mv "$I/loader_out_lite/js/$JSNAME/_releaseMap" "$I/releaseMap"
 echo "== 4. restool"
 mkdir -p "$I/res_in" "$I/res"; cp -r "$MAIN/resources" "$I/res_in/"
@@ -34,6 +35,7 @@ cp "$I/res/config.json" "$L/config.json"
 cp -r "$I/loader_out_lite/." "$L/assets/"
 cp -r "$I/res/resources" "$L/assets/$MOD/"; cp -r "$I/lite_res/." "$L/assets/$MOD/resources/"
 cp "$I/res/resources.index" "$L/assets/$MOD/resources.index"
+find "$L/assets" -name '*.map' -delete   # source maps are not needed on the watch; the working community builds drop them
 echo "== 6. haptobin"
 mkdir -p "$OUT/bin"
 java -jar "$HAPTOBIN" --project-path "$L" --bin-path "$OUT/bin/$MOD-default-unsigned.bin" 2>&1 | filt

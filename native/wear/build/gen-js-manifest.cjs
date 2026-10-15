@@ -19,6 +19,7 @@ const m = {
   deviceType: c.module.deviceType,
   window: true,
   pages: js.pages,
+  type: abilities[0].type || 'page',
   compatibleSdkVersionStage: ''
 };
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
