@@ -36,7 +36,7 @@ The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sd
   - profile block not signed: 1.16 s, after the app signature as well;
   - the real build: 2.02 s, so it also passes the profile's certificate chain (about 0.86 s more).
   The refusal therefore comes from the profile step after its chain. Either the watch does not trust the profile's signer, or it rejects something in the profile's content (the UDID, or a field). The SDK 3.2 build, without source maps, failed the same way, so the package contents are not the cause.
-- Our debug profile came from "Certificates, app IDs, and profiles" (format version 2.0.0, with `app-identifier`, `acls` and an empty `permissions`). Both projects that report GT installs, hwgt6 (GT 6) and a lite-wearable sample repo, used the older "HAP Provision Profile" page. Next: a debug profile from that page.
+- Profile page: Huawei removed the older "HAP Provision Profile" page; its old help link now redirects to the "Certificates, app IDs, and profiles > Profiles" help. Huawei's GT-series lite-wearable guide (CN, updated 2026-08-19) links its debug-profile step to that page, and new apps can only be created as HarmonyOS NEXT records. So our profile comes from the documented route. Remaining suspect: the UDID. Huawei's documented source for a sports watch's UDID is DevEco Assistant's "Lite Wearable" tab, on a phone that is not on HarmonyOS NEXT.
 
 ## Not verified yet
 
