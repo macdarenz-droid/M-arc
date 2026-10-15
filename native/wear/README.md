@@ -38,3 +38,5 @@ The UDID came from the Watch UDID tool in the Watch-test repo (`udid-tool/`) on 
 ## Huawei console submissions
 
 Owner rule (2026-10-15): everything entered in the Huawei developer console is reviewed and red-teamed against the approved Wear Engine application before it is submitted. Two applications were rejected for inconsistent documents and form answers.
+
+The record, the console entries, the red-team findings and the pre-submission checklist are in `docs/WATCH-WEAR-ENGINE-APPLICATION.md` (sections 9 and 10). Signed builds carry the owner's name and the watch's UDID, so `.gitignore` here blocks built and signing files.

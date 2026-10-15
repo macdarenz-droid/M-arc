@@ -1,0 +1,8 @@
+# Built, signed and signing files never go in this public repo.
+*.bin
+*.hap
+*.p12
+*.jks
+*.cer
+*.p7b
+*.csr

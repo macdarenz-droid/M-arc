@@ -4,10 +4,12 @@ The one record of M/ARC's Huawei Wear Engine permission applications, both rejec
 
 Written 2026-09-29 by the Claude supervisor from primary sources. Since 2026-09-29 the Claude agent on the owner's other account keeps it (branch `claude/wear-engine-application-3`). Sources are listed in section 8.
 
-## 1. Where things stand (2026-09-29)
+## 1. Where things stand (2026-10-15)
+- **Application 3 was approved on 2026-10-15.** Huawei's email confirms it, and the console shows Wear Engine **Enabled** for `com.mrcdrnzz.dailytracker` with only Basic device information. The approved materials are the section 5.4 uploads and the section 3.2 description.
+- **The watch app now exists in AppGallery Connect** (section 9). Before anything else is entered in the console, use the checklist in section 10 (owner rule, 2026-10-15).
 - **Application 1** (submitted by 2026-09-23): rejected on 2026-09-24.
 - **Application 2** (submitted 2026-09-24): rejected on 2026-09-29.
-- **Wear Engine access:** none has been granted yet. Nothing on the watch that needs Wear Engine can be tested on the GT6 until it is.
+- **Wear Engine access:** granted on 2026-10-15 (Basic device information).
 - **Why application 2 was rejected (settled):** the form as submitted had **Launch specified app ticked**. The owner reopened the rejected application on 2026-09-29, shared a screenshot of it, and confirmed that it is application 2 as sent. Huawei's reason, "The permission to launch specified apps is not required for mobile apps", matches that tick. Huawei's docs explain it (section 3.1):
   - individual developers may apply only for Basic device information and Message notification;
   - the launch permission is for a watch app that opens an app on the phone, never for the phone app.
@@ -28,6 +30,8 @@ Written 2026-09-29 by the Claude supervisor from primary sources. Since 2026-09-
 | Old fingerprint (key gone, never used again) | `05:A0:B1:32…` |
 | Watch | HUAWEI WATCH GT 6 = "Harmony Lightweight Smart Wearable Device" on the form |
 | Developer | Individual developer, identity verification passed (before 2026-09-23) |
+| Watch app | "M/ARC Watch", HarmonyOS app, package `com.mrcdrnzz.dailytracker.watch`, in its own AGC project "M/ARC Watch" |
+| Watch in AGC | Device type "Sports watch" (the Wear Engine form calls it "Harmony Lightweight Smart Wearable Device") |
 
 **Fingerprint in AppGallery Connect.** Huawei still had the old `05:A0…` fingerprint. On 2026-09-24 the owner was told to add `05:66…` in AppGallery Connect and then delete `05:A0…`, before resubmitting. The path is ☰ → My projects → M/ARC → Project settings → General information → App information → SHA-256 certificate fingerprint.
 - The owner replied "Yeah all good. Submitted" on 2026-09-24. On 2026-09-29 the owner confirmed the old `05:A0…` fingerprint is deleted.
@@ -232,6 +236,7 @@ One line per reply or console message, newest last. Update the rest of this reco
 |---|---|---|---|
 | Sep 24, 2026, 6:22:16 PM | 1 | rejected | watch UX screenshots needed; the swipe-streaming probe; phone-inactive case; why not the internet |
 | Sep 29, 2026, 4:30:13 PM | 2 | rejected | "The permission to launch specified apps is not required for mobile apps." (Launch specified app was ticked) |
+| Oct 15, 2026 | 3 | approved | none (email: "has been approved"; console: Enabled, Basic device information only) |
 
 ## 5. Attachment contents
 5.1 to 5.3 are application 2 as submitted, transcribed from the owner's PDFs; 5.4 is application 3. The developer's name and email are replaced by [owner] because this repo is public. Upload the owner's PDF files, not this text. The C2 diagrams are drawn in the PDFs; they are described in words here.
@@ -422,10 +427,11 @@ All three are applied in application 3 (5.4).
 
 ## 7. Rules for whoever continues
 - **Ownership:**
-  - Watch code (`native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx`) belongs to the watch branch.
+  - Watch code (`native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx`) belongs to the watch lane (AGENTS.md, since 2026-10-15).
   - The Agent guard fails any `claude/*` branch that changes those paths.
   - Write watch docs under `docs/` on a `claude/*` branch.
 - **Never commit** keystores, signing profiles, app secrets, `agconnect-services.json`, device identifiers or private test reports. The repo is public.
+  - Signed watch builds count too: every signed `.bin` carries the debug certificate (the owner's verified name) and the profile (the watch's UDID). Never sign in public CI, attach a build to a PR or publish one. `native/wear/.gitignore` blocks them.
   - GATE-A.md notes that a Huawei app secret was shared earlier (it was pasted into a ChatGPT chat). Replacing it in Huawei's console is the owner's job.
 - **Never** change the phone signing key `05:66…`.
 - **Only the owner** logs in to Huawei, submits applications, emails Huawei and changes console settings. Agents prepare the text and check it.
@@ -459,3 +465,105 @@ All three are applied in application 3 (5.4).
 - Astra's chat, shared with the supervisor on 2026-09-23: application 1 steps, form ticks and description draft.
 - The repo: `docs/WATCH-ARCHITECTURE.md` and `docs/WATCH-INTEGRATION-NOTES.md` on main; `native/wear/GATE-A.md` and `docs/WATCH-PROGRESS.md` on `codex/gt6-gate-a-watch-lab`.
 - The owner's connected Gmail (checked 2026-09-29) has no Huawei review emails. The rejections are known only from the screenshots.
+
+## 9. Watch app in AppGallery Connect (2026-10-15)
+
+### 9.1 What was entered
+The owner entered these under Certificates, app IDs, and profiles:
+- **App ID:**
+  - a HarmonyOS app named "M/ARC Watch", package `com.mrcdrnzz.dailytracker.watch`, category App;
+  - in a new project "M/ARC Watch";
+  - no open capabilities.
+- **Device:** "GT 6", type Sports watch. The UDID came from the Watch UDID tool in the Watch-test repo; the value is kept out of this repo.
+- **Debug certificate** "marc-watch-debug": from our EC P-256 CSR, valid until 2027-10-15.
+- **Debug profile** "marc-watch-debug":
+  - debug type, for this bundle, this certificate and the one watch;
+  - no permissions or ACLs.
+
+Checked before use:
+- the certificate carries our key;
+- the profile names this bundle, this certificate and the watch.
+
+### 9.2 Red-team (2026-10-15)
+A fresh-context agent compared the entries and the watch plan with the approved materials. Nothing entered blocks anything or contradicts the approved application. Act on these:
+1. **Blocking before heart rate or calories travel between phone and watch:** file a Wear Engine Modify first. The approved message lists don't include them, and page 3 calls them sample values. Heart rate shown on the watch only, from the watch's own sensor, sends nothing between devices.
+2. **Blocking for the watch app's AppGallery release:**
+   - a watch section in the privacy policy;
+   - a way to reach the policy from inside the app;
+   - consent before reading health data;
+   - a reason for each sensitive permission.
+3. **Signed builds carry personal data:** the certificate holds the owner's name and the profile holds the watch's UDID (section 7).
+4. **The watch key can't be replaced:**
+   - updates need a certificate from the same CSR;
+   - the phone recognises the watch app by its package plus the certificate's public key;
+   - the owner keeps an encrypted backup of the `.p12`, its password and the CSR;
+   - the release certificate is requested from the same CSR (unverified whether AGC accepts one CSR for both types).
+5. **Before the first release, settle the name:**
+   - the "/" in "M/ARC Watch" may count as a special character (AppGallery Review Guideline 1.4; unverified);
+   - choose the store name once, then change the watch label, AGC and every document together.
+6. **Keep future Huawei text in line with the approved statements:**
+   - the phone app stays in the foreground;
+   - the user opens the watch app from the watch's app list (opening it from the phone needs new text);
+   - the phone-side handling of watch actions is not on `main` yet, though page 2 says "built and tested";
+   - data statements are copied from `docs/PRIVACY-POLICY.md` (error reports, reply reports, Android Auto Backup);
+   - keep the approved disclosure screen and the menu path Settings > Watch and health > Watch.
+7. **Before release:**
+   - AGC has no test track for watches, so sideload a release-signed build and test messaging before submitting;
+   - reviewers need a way to get the phone app. Listing it on AppGallery is the owner's call.
+
+Also:
+- **Project:** Huawei doesn't require the watch app to share the phone app's project; unverified for later steps. Keep it, and don't recreate the App ID.
+- **Gadgetbridge:**
+  - used for test installs only, because DevEco Assistant isn't offered on the owner's Samsung;
+  - never mention it in Huawei forms or listings;
+  - keep the account ID it uses out of this repo.
+
+## 10. Before any Huawei submission (checklist)
+
+Owner rule, 2026-10-15: everything entered in the Huawei console is reviewed and red-teamed before Submit. Every answer must be **Yes**. If one is No or "not sure", stop and fix it first.
+
+The values to compare against are in the identity table (section 2) and the privacy policy (`docs/PRIVACY-POLICY.md`).
+
+### 10.1 Every submission
+1. Is every field and upload written down, and did an agent who didn't write them check them? *(record, PR comment)*
+2. Do the app names, package names and App IDs match the identity table letter for letter? *(form vs identity table)*
+3. Does AGC show the phone's SHA-256 from the identity table, with no old fingerprint left? *(AGC → project M/ARC → Project settings → General information)*
+4. Does every sentence about where data goes match the current privacy policy? *(your text vs privacy policy)*
+5. Does every feature you describe exist on main, or is it clearly marked "proposed"? *(main branch, test results)*
+6. Is every upload free of personal details the form doesn't ask for, such as names, emails, device IDs, account IDs and serial numbers? *(each upload)*
+7. Did an agent give a "go" on a screenshot of the whole filled form? *(owner chat)*
+8. After Submit, is the record updated, with the reply-log line and the current state? *(record, section 4.5)*
+
+### 10.2 Wear Engine "Modify"
+1. Is only "Basic device information" ticked, with Message notification and Launch specified app unticked? *(form)*
+2. Is the device type still "Harmony Lightweight Smart Wearable Device"? *(form)*
+3. Do the two message lists (phone to watch, watch to phone) name every message the code sends, including any heart rate, calories, handshake or undo messages? *(protocol list in the record vs code)*
+4. Does the text still say the phone app must be in the foreground with Huawei Health in the background? If that changed, was the new behavior tested on the real phone and watch? *(form, test results)*
+5. Does the text say how the watch app is opened, and does the code do exactly that? *(description vs code)*
+6. Are the watch screens real screenshots of the current build, or labelled "proposed" with the sample values named? *(upload, watch screens page)*
+7. Do the screens show only data the message lists allow? *(screens vs message lists)*
+8. Are both uploads .xlsx files rebuilt from Huawei's current templates with `make_uploads.py`, each under 10 MB? *(upload slots, script)*
+9. Is the description plain text, with the form's counter at 1024 or less? *(form counter)*
+10. Do the authorization steps use the phone app's real menu names and buttons? *(.xlsx vs phone app)*
+11. Can the work wait one to two weeks for the review? *(plan)*
+
+### 10.3 Watch app release on AppGallery
+1. Is the AGC app name the same as the name on the watch? *(AGC App information vs `config.json` label)*
+2. Is the name 30 characters or fewer, with no special characters? *(AppGallery Review Guidelines 1.1, 1.4)*
+3. Is the release certificate made from the same CSR as before, with an encrypted backup of the key? *(AGC → Certificates; backup)*
+4. Does the release profile include every restricted permission the package declares? *(AGC → Profiles vs `config.json`)*
+5. Does each sensitive permission, such as heart rate, have a reason in the privacy description? *(Release app → Version information → Privacy description)*
+6. Is the privacy policy URL set, and does the policy cover the watch app and the phone-watch link? *(Version information → Privacy statement; privacy policy)*
+7. Can a user reach the privacy policy from inside the app? *(phone app, watch app; Guideline 7.1)*
+8. Is the supported device "Sports watch", not the default "Smart watch"? Device types can't be removed after release. *(App information → Devices supported)*
+9. Was a release-signed build installed on the watch, and did phone-watch messages work with it? *(test log)*
+10. Do the reviewer remarks explain how to test, including how to get the phone app? *(Version information → For reviewer)*
+11. Is health data read only after explicit consent, and used only for the workout features? *(code; Guidelines 7.8, 7.15)*
+
+### 10.4 Store listing
+1. Are there at least three real screenshots, the right way up, showing only features that work now? *(Guidelines 1.9, 1.14)*
+2. Does the listing leave out other device brands and app platforms? *(Guideline 1.16)*
+3. Does it leave out anything not yet tested on the device, such as background use, heart rate, calories or other watch models? *(Guideline 1.14; test results)*
+4. Are the category and content rating right for a sports app? *(Guidelines 1.10, 1.11)*
+5. Do the listing, the Wear Engine documents and the privacy policy say the same things about what is sent and where data is kept? *(compare all three)*
+6. Is the contact email the one chosen for every form? *(form vs record)*
