@@ -27,7 +27,6 @@ The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sd
   - package format: HuaSideload's `check-watch-bin.py` rates it OK;
   - signature: `build/verify-signed-bin.py` passes it (layout, signed hash, both PKCS#7 signatures and chains to Huawei CBG Root CA G2). The app signer is our certificate, and the profile's development certificate is the same certificate;
   - profile: it parses under the rules of OpenHarmony's `app_provision.c` (debug type, bundle name, UDID list). Its signer matches the "HOS Profile Management Debug" entry in `app_verify.c`'s trust list;
-  - UDID source: the value read over Bluetooth is also the watch's own HiChain auth ID in the pairing exchange, and it stayed the same after a factory reset;
   - watch developer options (turned on before the third attempt) and the watch clock.
 - The Huawei account ID Gadgetbridge needs is not the AppGallery Connect developer ID. Entering the developer ID made the watch ask to delete the previous account's data and restart. Never confirm that prompt unless a reset is intended.
 - Timing probes (2026-10-15, built from the SDK 3.2 build, time from the 10 % report to 103):
@@ -37,7 +36,8 @@ The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sd
   - the real build: 2.02 s, so it also passes the profile's certificate chain (about 0.86 s more).
   The refusal therefore comes from the profile step after its chain. Either the watch does not trust the profile's signer, or it rejects something in the profile's content (the UDID, or a field). The SDK 3.2 build, without source maps, failed the same way, so the package contents are not the cause.
 - Profile page: Huawei removed the older "HAP Provision Profile" page; its old help link now redirects to the "Certificates, app IDs, and profiles > Profiles" help. Huawei's GT-series lite-wearable guide (CN, updated 2026-08-19) links its debug-profile step to that page, and new apps can only be created as HarmonyOS NEXT records. So our profile comes from the documented route. Remaining suspect: the UDID. Huawei's documented source for a sports watch's UDID is DevEco Assistant's "Lite Wearable" tab, on a phone that is not on HarmonyOS NEXT.
-- Next: Huawei's own route. DevEco Assistant (AppGallery C102668469, package `com.huawei.deveco.assistant` 1.2.1.600, signed by CN=apkkey_devecoassistant_v1, OU=Huawei CBG; APK v2 signature checked 2026-10-15) reads the UDID on its "Lite Wearable" tab and installs a signed HAP from `/sdcard/haps/` through Huawei Health. It reports the watch's numbered error (Huawei's guide lists 30, 31, 40, 47 and others), which Gadgetbridge's 103 hides. Forum reports say it also runs on non-Huawei phones; not yet tried on the owner's Samsung.
+- Huawei's own route. DevEco Assistant (AppGallery C102668469, package `com.huawei.deveco.assistant` 1.2.1.600, signed by CN=apkkey_devecoassistant_v1, OU=Huawei CBG; APK v2 signature checked 2026-10-15) reads the UDID on its "Lite Wearable" tab and installs a signed HAP from `/sdcard/haps/` through Huawei Health. It reports the watch's numbered error (Huawei's guide lists 30, 31, 40, 47 and others), which Gadgetbridge's 103 hides. Forum reports say it also runs on non-Huawei phones; it ran on the owner's Galaxy Z Flip 7 (2026-10-15).
+- **Cause found (2026-10-15): wrong UDID.** DevEco Assistant's UDID differs from the tag 0x05 value we had registered, so the refusal was the profile's UDID check, which fits the timing probes. The GT 6 was added again in AppGallery Connect as "GT 6 DevEco" with the right UDID, and a new debug profile `marc-watch-debug-gt6` names only that device. Checked before signing: its signature and chain, debug type, this bundle, our certificate, and the one UDID.
 
 ## Not verified yet
 
@@ -57,7 +57,7 @@ On 2026-10-15 the `hello/` app built and signed: the signed `.bin` is the unsign
 
 DevEco Assistant is only offered on Huawei phones. The candidate route is Gadgetbridge's File Installer (upstream 0.95.1), which uploads a signed `.bin` and leaves the signature check to the watch. It needs Gadgetbridge paired with the watch through the Huawei account ID, and it switches the watch between Gadgetbridge and Huawei Health. In use since 2026-10-15; see the install attempts above.
 
-The UDID came from the Watch UDID tool in the Watch-test repo (`udid-tool/`) on 2026-10-15; the value is kept out of this public repo.
+The first UDID came from the Watch UDID tool in the Watch-test repo (`udid-tool/`): the security-negotiation tag 0x05 value, which is also the watch's HiChain auth ID. On the GT 6 that is **not** the UDID the installer checks. DevEco Assistant's "Lite Wearable" tab gives the right one (2026-10-15), and it matches the `deviceSn` the watch sends after pairing in its WeChat device message (service 0x37 data, product 8240). Values are kept out of this public repo.
 
 ## Huawei console submissions
 

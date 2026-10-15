@@ -474,7 +474,7 @@ The owner entered these under Certificates, app IDs, and profiles:
   - a HarmonyOS app named "M/ARC Watch", package `com.mrcdrnzz.dailytracker.watch`, category App;
   - in a new project "M/ARC Watch";
   - no open capabilities.
-- **Device:** "GT 6", type Sports watch. The UDID came from the Watch UDID tool in the Watch-test repo; the value is kept out of this repo.
+- **Device:** "GT 6", type Sports watch, with the UDID from the Watch UDID tool. That value proved wrong for the GT 6 (see `native/wear/README.md`). On 2026-10-15 the watch was added again as "GT 6 DevEco" with the UDID from DevEco Assistant, and the debug profile `marc-watch-debug-gt6` names only that device. The values are kept out of this repo.
 - **Debug certificate** "marc-watch-debug": from our EC P-256 CSR, valid until 2027-10-15.
 - **Debug profile** "marc-watch-debug":
   - debug type, for this bundle, this certificate and the one watch;
