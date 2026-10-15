@@ -42,7 +42,7 @@ if git rev-parse --verify -q "$BASE_REF" >/dev/null; then
       ;;
     claude/*)
       HIT=$(echo "$CHANGED" | grep -E '^(native/wear/|src/native/wearEngine\.ts|src/slices/settings/WatchLab\.tsx)' || true)
-      [ -z "$HIT" ] || err 'Claude builder in watch files' "this claude/* branch changes watch-owned files: $(echo $HIT | tr '\n' ' ')" 'revert these paths; they belong to codex/gt6-gate-a-watch-lab.'
+      [ -z "$HIT" ] || err 'Claude builder in watch files' "this claude/* branch changes watch-owned files: $(echo $HIT | tr '\n' ' ')" 'revert these paths; they belong to the watch lane (docs/AGENT-RULES.md).'
       ;;
   esac
   BEHIND=$(git rev-list --count "HEAD..$BASE_REF" 2>/dev/null || echo 0)

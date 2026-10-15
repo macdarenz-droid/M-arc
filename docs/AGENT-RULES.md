@@ -8,7 +8,7 @@ The step-by-step procedures for each role are in `.claude/skills/builder/SKILL.m
 |---|---|---|
 | Supervisor (Claude, acting for the owner) | its own docs branch | the task board, the merge queue, CI files and these rules |
 | Builders (Claude sessions, one per task) | `claude/*` | what their task card lists |
-| Watch companion (GPT/Codex) | `codex/gt6-gate-a-watch-lab` (Gates A–E of `docs/WATCH-ARCHITECTURE.md`) | `native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx`, its Watch-lab row in `Settings.tsx`, and its lines in the CI workflows |
+| Watch lane (one Claude session, owner handover 2026-10-15; the Codex branch `codex/gt6-gate-a-watch-lab` is retired) | `ccr-061c7350-tjvpo6` (Gates A–E of `docs/WATCH-ARCHITECTURE.md`) | `native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx`, its Watch-lab row in `Settings.tsx`, and its lines in the CI workflows |
 
 ## Why you are being watched
 
@@ -28,7 +28,7 @@ The step-by-step procedures for each role are in `.claude/skills/builder/SKILL.m
 | **Signing step removed**, **Fingerprint changed**, **Release fingerprint changed** | Restore the steps "Decode the permanent signing key", "Sign with the permanent key and verify the fingerprint" and the `EXPECTED_SHA256` value exactly as on `origin/main`. Never rotate, regenerate or replace the key. |
 | **Keystore committed**, **Key file committed** | Remove it (`git rm --cached`), add it to `.gitignore`, and tell the owner, because it is public now. Read keys only from secrets. |
 | **Watch agent outside its files** | The watch branch must not change `escobar-worker/`, `src/escobar/`, `src/brain/` or the remediation and QA docs. Revert those paths to `origin/main`. If the watch genuinely needs a change there, write it down for the owner instead. |
-| **Claude builder in watch files** | A `claude/*` branch must not change `native/wear/**`, `src/native/wearEngine.ts` or `WatchLab.tsx`. Revert those paths. |
+| **Claude builder in watch files** | A `claude/*` branch must not change `native/wear/**`, `src/native/wearEngine.ts` or `WatchLab.tsx`; they belong to the watch lane. Revert those paths. |
 | **Gate B files touched** (warning) | `session.ts`, `models.ts` and `store.ts` are allowed for Gate B only, built on the R2.8 identities already on `main` (`ActiveSession.id`, entry `id`, set `id`, set `status`). Do not create a second id scheme. |
 | **Behind main** (warning) | `git fetch origin main && git merge origin/main`. Keep both sides of every conflict, and never drop the signing steps or another agent's CI lines. |
 

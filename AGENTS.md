@@ -39,7 +39,7 @@ Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor k
 - **Supervisor** (one Claude session): owns the task board (Relay `tasks/TASKS.md`), the merge queue and these rules.
 - **Builders** (one session per task, on a `claude/*` branch): build and test only what their task card lists.
 - **Reviewer** (fresh context, on demand): checks a finished diff against its spec. Builders never approve their own work.
-- **Watch agent** (GPT/Codex, `codex/gt6-gate-a-watch-lab`): agents never merge its PR.
+- **Watch lane** (owner, 2026-10-15: "Yes u take over"): one Claude session builds the GT 6 companion (Gates A–E of `docs/WATCH-ARCHITECTURE.md`) on `ccr-061c7350-tjvpo6`. The Codex branch `codex/gt6-gate-a-watch-lab` (PR #3) is retired: kept for reference, never merged.
 
 **Agents may, without asking:** build, test and push on their own `claude/*` branch, and open draft PRs.
 
@@ -64,8 +64,8 @@ Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor k
 
 | Path | Owner | Rule for everyone else |
 |---|---|---|
-| `native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx` | watch agent | Never change. The guard fails the push. |
-| The Watch-lab row in `Settings.tsx`, the watch agent's lines in CI | watch agent | Never change. Only review catches these, not the guard. |
+| `native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx` | watch lane | Never change. The guard fails the push. |
+| The Watch-lab row in `Settings.tsx`, the watch lane's lines in CI | watch lane | Never change. Only review catches these, not the guard. |
 | `escobar-worker/**` | the owner deploys | Separate PR; the owner merges it. |
 | `.github/**`, `scripts/prepare-android.sh`, `native/patch_manifest.py` | supervisor | Add checks only. |
 | `package.json`, `package-lock.json` | supervisor | No new dependency without the supervisor's OK. The lockfile comes from npm. |
