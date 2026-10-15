@@ -6,7 +6,7 @@ The watch lane's folder (`AGENTS.md`, file ownership). The GT 6 runs Lite Wearab
 
 `build/build-lite-bin.sh` compiles a lite-wearable module to an unsigned `.bin` and `.hap` on Linux with Node 22 and Java 17+. It repeats the steps hvigor-ohos-plugin 6.26.8 runs (read from its source): JS manifest, image copy, the SDK's ace-loader lite webpack, `restool`, the `lite_source` layout, `haptobin_tool.jar`, then `app_packing_tool.jar --mode hap`.
 
-SDK: the public OpenHarmony 7.0 SDK, no login needed. From `https://repo.huaweicloud.com/openharmony/os/7.0-Release/ohos-sdk-windows_linux-public.tar.gz` take `ohos-sdk/linux/js-linux-x64-26.0.0.38-Beta.zip` (sha256 `1872b6cf…a486fe85d`) and `toolchains-linux-x64-26.0.0.38-Beta.zip` (sha256 `7b8bf76c…61b21236`), and unzip both into one folder.
+SDK: the public OpenHarmony 7.0 SDK, no login needed. From `https://repo.huaweicloud.com/openharmony/os/7.0-Release/ohos-sdk-windows_linux-public.tar.gz` take `ohos-sdk/linux/js-linux-x64-26.0.0.38-Beta.zip` (sha256 `1872b6cfbda0ae9a4a623d28212f570afd0895b971f6dee459a80da8486fe85d`) and `toolchains-linux-x64-26.0.0.38-Beta.zip` (sha256 `7b8bf76ce41e3815a6f6778e0a5ee93864c01c791d82b0de3f91ff0061b21236`), and unzip both into one folder.
 
 ```sh
 build/build-lite-bin.sh <sdk-folder> hello/entry/src/main <out-folder> debug   # or release
