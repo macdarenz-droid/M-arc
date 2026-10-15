@@ -74,7 +74,13 @@ Question: can phone and watch exchange an identified request and an application 
   - `npm test` and `npm run test:tz`: all pass (A2-2);
   - mutations each turn a test red: `lost()` with `>=`, `readAck` with `in`, one byte appended to `wearengine.js`.
 - Plugin: `WearEnginePlugin.java` compiles with `javac -Werror` against android-35, the wearengine 5.0.3.304 AAR, the hmf tasks jar and Capacitor 8.5.0. Every Huawei call it makes was checked with `javap`.
-- Not yet run on CI or on the devices: A2-5 (android-gate on the exact head), A2-6 (visual gate), and the device steps A2-7 to A2-9.
+- CI on `59998180` (run 38773205697), all green:
+  - guard, source-gate (with the new watch-lane tests), visual-gate-tz (A2-6), the ht10 shards and `bundle` (the Play build carries neither the plugin nor the app ID);
+  - android-gate (A2-5): the lab checks pass and the permanent-key fingerprint step reads `05:66:9A…CA:F1:F5`;
+  - debug APK: artifact `MARC-DEBUG-APK` 11994883964, zip sha256 `cf4421288ec80da3951ed9db0261a09dc072eca8d21ab271572496ff023061d9`.
+- The signed watch `.bin` comes from the debug build of the committed sources. The only differences are the three ASCII-folded comment characters in `wearengine.js`.
+- Install note: the owner's daily M/ARC comes from Play (versionCode 370000xx, signed with the same key). The debug APK's versionCode is lower, so Android refuses to install it over the Play app. The route is "Export backup" in Settings, uninstall, install the debug APK, then "Restore backup". Raising the debug versionCode instead would stop later Play updates.
+- Not yet run: the device steps A2-7 to A2-9.
 
 ## Not verified yet
 
