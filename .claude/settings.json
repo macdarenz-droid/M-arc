@@ -5,9 +5,6 @@
   },
   "permissions": {
     "deny": [
-      "Edit(/native/wear/**)",
-      "Edit(/src/native/wearEngine.ts)",
-      "Edit(/src/slices/settings/WatchLab.tsx)",
       "Agent(model:*haiku*)",
       "Agent(model:*fable*)",
       "Agent(Explore)",
