@@ -62,6 +62,20 @@ Question: can phone and watch exchange an identified request and an application 
   - Wear Engine on Android 16, and the Huawei Health and HMS Core versions on the Flip 7;
   - the exact fingerprint string forms.
 
+### Question 2 build record (2026-10-15)
+
+- Watch app 1.0.2 (`native/wear/hello`): built in debug mode with the 3.2 SDK (COMPILE RESULT:SUCCESS). `check-lite-js.cjs` passes: app.js 7,797 B and pages/index/index.js 37,541 B, all ASCII and under 48,000 B. The HAP was packed with the 7.0 SDK and signed with the debug certificate and profile `marc-watch-debug-gt6`.
+  - signed `.bin`: sha256 `df4f484a75cce69bd18c21a15e1501093780abc030f2fc3aa984735097438a80`, and `verify-signed-bin.py` passes;
+  - signed `.hap`: sha256 `826b076d76ae6421f594ac3c46194a98f1279bc4fe541a865ad46c31e5cfe299`, and `verify-app` passes;
+  - unsigned `.bin`: sha256 `82a3d1fbb53a7c6378829e2bcfd82a585a08dbc9900512e28594b4deeebd4411`.
+- Tests:
+  - `node --test 'native/wear/test/*.test.mjs'`: 11 pass (A2-1);
+  - `python3 -I -B -m unittest discover -s native/wear/test -p 'test_*.py'`: 20 pass (A2-4);
+  - `npm test` and `npm run test:tz`: all pass (A2-2);
+  - mutations each turn a test red: `lost()` with `>=`, `readAck` with `in`, one byte appended to `wearengine.js`.
+- Plugin: `WearEnginePlugin.java` compiles with `javac -Werror` against android-35, the wearengine 5.0.3.304 AAR, the hmf tasks jar and Capacitor 8.5.0. Every Huawei call it makes was checked with `javap`.
+- Not yet run on CI or on the devices: A2-5 (android-gate on the exact head), A2-6 (visual gate), and the device steps A2-7 to A2-9.
+
 ## Not verified yet
 
 - Whether a release build runs the `.js` or the jerry `.bc` snapshot it also contains.

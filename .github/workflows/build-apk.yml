@@ -36,6 +36,18 @@ jobs:
         run: npm run check
       - name: Unit tests in two more time zones
         run: npm run test:tz
+      # Watch lane, Gate A question 2: A2-1 (watch message logic) and A2-4 (prepare_android.py).
+      - name: Watch lane tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          # node --test takes files or globs, not a folder, and a glob that matches nothing passes.
+          TESTS=(native/wear/test/*.test.mjs)
+          [ "${#TESTS[@]}" -gt 0 ] || { echo '::error::no native/wear/test/*.test.mjs to run'; exit 1; }
+          node --test "${TESTS[@]}"
+          # Python 3.12+ exits 5 when discovery finds no tests.
+          python3 -I -m unittest discover -s native/wear/test -p 'test_*.py'
       - name: Validate built web source
         shell: bash
         run: |
@@ -162,6 +174,9 @@ jobs:
 
       - name: Generate the Android project
         shell: bash
+        # Watch lane (owner, 2026-10-15): the Wear Engine lab goes into this debug APK only.
+        env:
+          MARC_WEAR_LAB: '1'
         run: bash scripts/prepare-android.sh
 
       # CI-GRADLE-CACHE: reuse Gradle's downloaded dependencies between runs. Maven Central
@@ -210,6 +225,51 @@ jobs:
           grep -q 'android.permission.BLUETOOTH_CONNECT' android/app/src/main/AndroidManifest.xml || { echo '::error::watch Bluetooth permissions not patched into the manifest'; exit 1; }
           grep -q 'foregroundServiceType="connectedDevice"' android/app/src/main/AndroidManifest.xml || { echo '::error::WatchService foreground service type not patched into the manifest'; exit 1; }
 
+      # Watch lane, Gate A question 2 (A2-5): what MARC_WEAR_LAB=1 must have added to the project.
+      - name: Verify the Wear Engine lab in the Android project
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PYWEAR'
+          from pathlib import Path
+          import json, re
+          import xml.etree.ElementTree as ET
+          A = Path('android')
+          def fail(msg): raise SystemExit('::error::Wear Engine lab: ' + msg)
+          def block(text, opener, name, start=0, end=None):
+              end = len(text) if end is None else end
+              found = list(re.finditer(opener, text[start:end]))
+              if len(found) != 1: fail(f'{name}: expected one {opener!r} block, found {len(found)}')
+              i = body = start + found[0].end(); depth = 1
+              while i < end:
+                  depth += {'{': 1, '}': -1}.get(text[i], 0)
+                  if depth == 0: return body, i
+                  i += 1
+              fail(f'{name}: {opener!r} block is not closed')
+          REPO = "maven { url 'https://developer.huawei.com/repo/' }"
+          root = (A / 'build.gradle').read_text(encoding='utf-8')
+          s, e = block(root, r'\ballprojects\s*\{', 'build.gradle')
+          s, e = block(root, r'\brepositories\s*\{', 'build.gradle allprojects', s, e)
+          repos = [l.strip() for l in root[s:e].splitlines() if l.strip()]
+          if not repos or repos[-1] != REPO: fail(f'the Huawei repo must be the last allprojects repository, found {repos}')
+          if root.count('developer.huawei.com/repo') != 1: fail('build.gradle names the Huawei repo more than once')
+          if 'dependencyResolutionManagement' in (A / 'settings.gradle').read_text(encoding='utf-8'): fail('settings.gradle declares dependencyResolutionManagement, so allprojects repositories do not apply')
+          DEP = "implementation 'com.huawei.hms:wearengine:5.0.3.304'"
+          app = (A / 'app/build.gradle').read_text(encoding='utf-8')
+          s, e = block(app, r'(?m)^dependencies\s*\{', 'app/build.gradle')
+          if [l.strip() for l in app[s:e].splitlines()].count(DEP) != 1 or app.count('com.huawei.hms:wearengine') != 1: fail(f'app/build.gradle dependencies must hold {DEP} once and no other Wear Engine version')
+          NS = '{http://schemas.android.com/apk/res/android}'
+          apps = ET.parse(A / 'app/src/main/AndroidManifest.xml').getroot().findall('application')
+          ids = [m.get(NS + 'value') for a in apps for m in a.findall('meta-data') if m.get(NS + 'name') == 'com.huawei.hms.client.appid']
+          if len(apps) != 1 or ids != ['119100049']: fail(f'AndroidManifest.xml <application> must hold one com.huawei.hms.client.appid = 119100049, found {ids}')
+          CLS = 'com.mrcdrnzz.dailytracker.wear.WearEnginePlugin'
+          ours = [p for p in json.loads((A / 'app/src/main/assets/capacitor.plugins.json').read_text(encoding='utf-8')) if p.get('classpath') == CLS]
+          if len(ours) != 1 or not ours[0].get('pkg'): fail(f'capacitor.plugins.json must list {CLS} once with a pkg, found {ours}')
+          src = A / 'app/src/main/java/com/mrcdrnzz/dailytracker/wear/WearEnginePlugin.java'
+          if not src.is_file() or src.read_bytes() != Path('native/wear/android/WearEnginePlugin.java').read_bytes(): fail(f'{src} is missing or differs from native/wear/android/WearEnginePlugin.java')
+          print('Wear Engine lab wiring PASS: Huawei repo last,', DEP + ', appid 119100049,', CLS)
+          PYWEAR
+
       - name: Decode the permanent signing key
         shell: bash
         env:
@@ -244,6 +304,31 @@ jobs:
               if cls not in dex: raise SystemExit('::error::' + cls.decode() + ' is not in the APK dex')
           print('native classes present in', sys.argv[1])
           PYDEX
+
+      # Watch lane, Gate A question 2 (A2-5): Gradle resolved the pinned SDK, and the APK carries it.
+      - name: Verify the Wear Engine lab in the APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd android && ./gradlew --no-daemon -q :app:dependencies --configuration debugRuntimeClasspath) > "$RUNNER_TEMP/wear-deps.txt"
+          python3 - android/app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/wear-deps.txt" <<'PYWEAR'
+          import re, sys, zipfile
+          def fail(msg): raise SystemExit('::error::Wear Engine lab: ' + msg)
+          deps = open(sys.argv[2], encoding='utf-8').read().splitlines()
+          for mod, ver in (('com.huawei.hms:wearengine', '5.0.3.304'), ('com.huawei.hmf:tasks', '1.5.2.206')):
+              hits = [l for l in deps if mod + ':' in l]
+              exact = [l for l in hits if re.search(r'--- ' + re.escape(mod + ':' + ver) + r'( \(\*\))?$', l)]
+              if not hits or exact != hits: fail(f'debugRuntimeClasspath must resolve {mod}:{ver} only, found {hits}')
+              print('resolved', mod + ':' + ver)
+          z = zipfile.ZipFile(sys.argv[1])
+          dex = b''.join(z.read(n) for n in z.namelist() if n.startswith('classes') and n.endswith('.dex'))
+          for cls in (b'Lcom/mrcdrnzz/dailytracker/wear/WearEnginePlugin;', b'Lcom/huawei/wearengine/p2p/P2pClient;'):
+              if cls not in dex: fail(cls.decode() + ' is not in the APK dex')
+          # Binary XML keeps its strings as UTF-8 or UTF-16LE.
+          man, key = z.read('AndroidManifest.xml'), 'com.huawei.hms.client.appid'
+          if key.encode('utf-8') not in man and key.encode('utf-16-le') not in man: fail(key + ' is not in the APK manifest')
+          print('Wear Engine lab APK PASS:', sys.argv[1])
+          PYWEAR
 
       - name: Sign with the permanent key and verify the fingerprint
         shell: bash

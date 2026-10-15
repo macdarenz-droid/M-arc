@@ -6,3 +6,5 @@
 *.cer
 *.p7b
 *.csr
+!/android/
+__pycache__/

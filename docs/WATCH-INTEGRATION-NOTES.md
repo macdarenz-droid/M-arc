@@ -30,6 +30,7 @@ Rules:
 - Remediation R7 moves this duplicated generation into `scripts/prepare-android.sh`. Put Wear Engine patches there once it exists.
 - **Do not commit `agconnect-services.json` or the Huawei app secret**: the repo is **public**. Anything the phone genuinely needs, such as the app ID, is not a secret. Reset the app secret that was pasted into the ChatGPT chat.
 - CI verifies plugins by grepping `capacitor.plugins.json`. Add the Wear Engine plugin name there, and to the dex class check that R5.6 adds.
+- **Gate A question 2 lab (2026-10-15, watch lane):** the Wear Engine SDK and the `WearEngine` plugin go into the debug APK only. `build-apk.yml` sets `MARC_WEAR_LAB=1` on "Generate the Android project", and `scripts/prepare-android.sh` then runs `native/wear/android/prepare_android.py`. That script adds the Huawei repository (last), `com.huawei.hms:wearengine:5.0.3.304`, Huawei's keep rules, the `com.huawei.hms.client.appid` meta-data and a `capacitor.plugins.json` entry, and copies the plugin source. `patch_manifest.py` is not used for any of this, so release and Play builds leave it all out. Add-only checks in `release-apk.yml` and `play-bundle.yml` prove the plugin and the app ID are absent there.
 
 ## 3. File ownership and order with the remediation plan
 

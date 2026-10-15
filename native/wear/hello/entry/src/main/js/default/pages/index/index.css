@@ -6,18 +6,38 @@
   align-items: center;
   background-color: #000000;
 }
-.title {
-  width: 300px;
-  height: 60px;
-  font-size: 30px;
+.head {
+  width: 320px;
+  height: 28px;
+  font-size: 22px;
   color: #ffffff;
   text-align: center;
 }
+.row {
+  width: 360px;
+  height: 24px;
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+}
+.tally {
+  width: 360px;
+  height: 28px;
+  font-size: 22px;
+  color: #ffffff;
+  text-align: center;
+}
+.bar {
+  width: 290px;
+  height: 56px;
+  margin-top: 6px;
+  justify-content: space-between;
+  align-items: center;
+}
 .btn {
-  width: 200px;
-  height: 60px;
-  font-size: 28px;
-  margin-top: 20px;
+  width: 136px;
+  height: 50px;
+  font-size: 26px;
   background-color: #2f7bf5;
   color: #ffffff;
 }
