@@ -19,12 +19,18 @@ python3 -I build/dump-bin.py <out-folder>/bin/entry-default-unsigned.bin       #
 
 The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sdk/linux/js-linux-x64-3.2.11.9-Release.zip` and `toolchains-linux-x64-3.2.11.9-Release.zip` from `https://repo.huaweicloud.com/openharmony/os/3.2-Release/ohos-sdk-windows_linux-public.tar.gz`), the SDK level the community iPhone tool HuaSideload uses. Its compiler ships without packages: run `npm ci --ignore-scripts` in `js/build-tools/ace-loader` (Huawei's lockfile, Huawei's npm mirror, integrity-checked) and build with `NODE_OPTIONS=--openssl-legacy-provider` on Node 17 or later. The config and the signature block come out the same as with the 7.0 SDK.
 
-## First install attempt (2026-10-15)
+## First install attempts (2026-10-15)
 
-- Installed through Gadgetbridge 0.95.1's File Installer on the GT 6 (software 6.1.0.118): the upload finished and the watch answered 103, "install failed", which carries no reason.
-- HuaSideload's `check-watch-bin.py`, which encodes the watch installer's checks, rates the package OK.
-- The Huawei account ID Gadgetbridge needs is not the AppGallery Connect developer ID: entering that made the watch ask to delete the previous account's data and restart. Never confirm that prompt unless a reset is intended.
-- Still to rule out: watch developer mode, the UDID read over Bluetooth, and a newer signing rule on software 6.1.
+- Installed three times through Gadgetbridge 0.95.1's File Installer on the GT 6 (software 6.1.0.118). Each time the upload finished and the watch reported 101 (started), then 10 %, then 103 (failed) about 2.15 s later. 103 carries no reason.
+- In OpenHarmony's lite installer (`gt_bundle_installer.cpp`), 10 % is reported just before the signature and profile check and 50 % just after it, so the refusal sits in that check.
+- Ruled out:
+  - package format: HuaSideload's `check-watch-bin.py` rates it OK;
+  - signature: `build/verify-signed-bin.py` passes it (layout, signed hash, both PKCS#7 signatures and chains to Huawei CBG Root CA G2). The app signer is our certificate, and the profile's development certificate is the same certificate;
+  - profile: it parses under the rules of OpenHarmony's `app_provision.c` (debug type, bundle name, UDID list). Its signer matches the "HOS Profile Management Debug" entry in `app_verify.c`'s trust list;
+  - UDID source: the value read over Bluetooth is also the watch's own HiChain auth ID in the pairing exchange, and it stayed the same after a factory reset;
+  - watch developer options (turned on before the third attempt) and the watch clock.
+- The Huawei account ID Gadgetbridge needs is not the AppGallery Connect developer ID. Entering the developer ID made the watch ask to delete the previous account's data and restart. Never confirm that prompt unless a reset is intended.
+- Next: timing probes (an unsigned file, a file with a broken hash, a file with an unsigned profile) show which step of the check fails.
 
 ## Not verified yet
 
@@ -38,11 +44,11 @@ The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sd
 
 AppGallery Connect (2026-10-15): HarmonyOS app `com.mrcdrnzz.dailytracker.watch` (in its own project), the GT 6 registered as a sports watch by its UDID, a debug certificate from our EC P-256 CSR, and a debug profile for that app, certificate and watch, valid until 2027-10-15. Checked before use: the certificate carries our key, and the profile names this bundle, this certificate and the one watch.
 
-On 2026-10-15 the `hello/` app built and signed: the signed `.bin` is the unsigned one plus a 6,663-byte signature block that holds the certificate and the profile and ends with `hw signed app   1000`. This SDK's `verify-app` cannot check a `.bin` (it reads it as ELF), so the real check is the watch accepting the install.
+On 2026-10-15 the `hello/` app built and signed: the signed `.bin` is the unsigned one plus a 6,663-byte signature block that holds the certificate and the profile and ends with `hw signed app   1000`. This SDK's `verify-app` cannot check a `.bin` (it reads it as ELF); `build/verify-signed-bin.py <signed.bin> <root.pem>` checks it offline instead.
 
 ## Installing from a non-Huawei phone
 
-DevEco Assistant is only offered on Huawei phones. The candidate route is Gadgetbridge's File Installer (upstream 0.95.1), which uploads a signed `.bin` and leaves the signature check to the watch. It needs Gadgetbridge paired with the watch through the Huawei account ID, and it switches the watch between Gadgetbridge and Huawei Health. Not tried yet; the owner decides.
+DevEco Assistant is only offered on Huawei phones. The candidate route is Gadgetbridge's File Installer (upstream 0.95.1), which uploads a signed `.bin` and leaves the signature check to the watch. It needs Gadgetbridge paired with the watch through the Huawei account ID, and it switches the watch between Gadgetbridge and Huawei Health. In use since 2026-10-15; see the install attempts above.
 
 The UDID came from the Watch UDID tool in the Watch-test repo (`udid-tool/`) on 2026-10-15; the value is kept out of this public repo.
 
