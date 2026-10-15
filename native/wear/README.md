@@ -37,6 +37,7 @@ The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sd
   - the real build: 2.02 s, so it also passes the profile's certificate chain (about 0.86 s more).
   The refusal therefore comes from the profile step after its chain. Either the watch does not trust the profile's signer, or it rejects something in the profile's content (the UDID, or a field). The SDK 3.2 build, without source maps, failed the same way, so the package contents are not the cause.
 - Profile page: Huawei removed the older "HAP Provision Profile" page; its old help link now redirects to the "Certificates, app IDs, and profiles > Profiles" help. Huawei's GT-series lite-wearable guide (CN, updated 2026-08-19) links its debug-profile step to that page, and new apps can only be created as HarmonyOS NEXT records. So our profile comes from the documented route. Remaining suspect: the UDID. Huawei's documented source for a sports watch's UDID is DevEco Assistant's "Lite Wearable" tab, on a phone that is not on HarmonyOS NEXT.
+- Next: Huawei's own route. DevEco Assistant (AppGallery C102668469, package `com.huawei.deveco.assistant` 1.2.1.600, signed by CN=apkkey_devecoassistant_v1, OU=Huawei CBG; APK v2 signature checked 2026-10-15) reads the UDID on its "Lite Wearable" tab and installs a signed HAP from `/sdcard/haps/` through Huawei Health. It reports the watch's numbered error (Huawei's guide lists 30, 31, 40, 47 and others), which Gadgetbridge's 103 hides. Forum reports say it also runs on non-Huawei phones; not yet tried on the owner's Samsung.
 
 ## Not verified yet
 
@@ -46,7 +47,7 @@ The same script also builds with the public OpenHarmony 3.2 SDK (API 9, `ohos-sd
 
 ## Signing
 
-`build/sign-lite-bin.sh` signs the unsigned `.bin` with `hap-sign-tool.jar sign-app -mode localSign -inForm bin -signAlg SHA256withECDSA -compatibleVersion 6`, using the watch debug keystore (`.p12`), the debug certificate (`.cer`) and the debug profile (`.p7b`). The keystore password comes from `MARC_WATCH_KEY_PWD`. The keystore, its password, the certificate and the profile are kept outside the repo: the owner holds them.
+`build/sign-lite-bin.sh` signs the unsigned `.bin` with `hap-sign-tool.jar sign-app -mode localSign -inForm bin -signAlg SHA256withECDSA -compatibleVersion 6`. It then builds the signed HAP the way DevEco's debug build does (hvigor `LegacyPackageHap` then `SignHap`): `app_packing_tool --mode hap --bin-path` packs the signed `.bin` as `entry-default-signed.bin`, the zip is signed with `-inForm zip`, and `verify-app` checks the HAP. The packing step needs the 7.0 SDK. Signing uses the watch debug keystore (`.p12`), the debug certificate (`.cer`) and the debug profile (`.p7b`). The keystore password comes from `MARC_WATCH_KEY_PWD`. The keystore, its password, the certificate and the profile are kept outside the repo: the owner holds them.
 
 AppGallery Connect (2026-10-15): HarmonyOS app `com.mrcdrnzz.dailytracker.watch` (in its own project), the GT 6 registered as a sports watch by its UDID, a debug certificate from our EC P-256 CSR, and a debug profile for that app, certificate and watch, valid until 2027-10-15. Checked before use: the certificate carries our key, and the profile names this bundle, this certificate and the one watch.
 
