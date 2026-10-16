@@ -45,7 +45,8 @@ const HT: Tuple[] = ['a', 'b', 'c', 'd'].flatMap(id => ['paper', 'midnight'].map
 const ht10 = (N = 2) => V.GATE_TZS.flatMap(tz => Array.from({ length: N }, (_, k) => ({
   tz, manifest: { sha: SHA, shard: { k, N }, rows: HT.filter((_, i) => i % N === k).map(t => ({ ...t, check: 'C10', width: 390, result: 'pass' })) },
 })));
-const run = (over: Record<string, unknown> = {}) => V.verdict({ gate: proofs(TIMES.K), ht10: ht10(), ht10Tuples: HT, gateSrc: SRC, times: TIMES, sha: SHA, event: 'push', arrangement: 'split', needs: { 'source-gate': { result: 'success' } }, ...over });
+const OK_NEEDS = { 'source-gate': { result: 'success' }, 'visual-gate-tz': { result: 'success' }, 'gate-shard': { result: 'success' }, 'ht10-gate': { result: 'success' } };
+const run = (over: Record<string, unknown> = {}) => V.verdict({ gate: proofs(TIMES.K), ht10: ht10(), ht10Tuples: HT, gateSrc: SRC, times: TIMES, sha: SHA, event: 'push', arrangement: 'split', needs: OK_NEEDS, ...over });
 const red = (over: Record<string, unknown>, re: RegExp) => { const { problems } = run(over); expect(problems.join('\n')).toMatch(re); };
 
 describe('E5: gate-verdict', () => {
@@ -53,8 +54,11 @@ describe('E5: gate-verdict', () => {
     expect(run().problems).toEqual([]);
   });
   it('the serial arrangement passes only on workflow_dispatch', () => {
-    expect(run({ gate: proofs(1), event: 'workflow_dispatch', arrangement: 'serial', needs: { 'gate-shard': { result: 'skipped' } } }).problems).toEqual([]);
-    red({ needs: { 'gate-shard': { result: 'skipped' } } }, /needed job gate-shard ended skipped/);
+    expect(run({ gate: proofs(1), event: 'workflow_dispatch', arrangement: 'serial', needs: { ...OK_NEEDS, 'gate-shard': { result: 'skipped' } } }).problems).toEqual([]);
+    red({ needs: { ...OK_NEEDS, 'gate-shard': { result: 'skipped' } } }, /needed job gate-shard ended skipped/);
+    // the serial reference keeps today's 60 min timeout; the 30 min budget is for split shards (review of 0df9648, CI run 37182075671)
+    const slow = proofs(1); for (const m of slow) m.meta.gateSeconds = 2747.5;
+    expect(run({ gate: slow, event: 'workflow_dispatch', arrangement: 'serial', needs: { ...OK_NEEDS, 'gate-shard': { result: 'skipped' } } }).problems).toEqual([]);
     red({ gate: proofs(1), event: 'push', arrangement: 'split' }, new RegExp(`expected gate proofs for jobs 1\\.\\.${TIMES.K} of ${TIMES.K}`));
     red({ gate: proofs(1), event: 'push', arrangement: 'serial' }, /serial arrangement is allowed only on workflow_dispatch/);
   });
@@ -90,7 +94,23 @@ describe('E5: gate-verdict', () => {
     const g = proofs(TIMES.K); g[1]!.rows[0]!.result = 'fail';
     red({ gate: g }, /: fail/);
   });
-  it('mutation: a needed job that did not succeed is red', () => red({ needs: { 'gate-shard': { result: 'failure' } } }, /needed job gate-shard ended failure/));
+  it('mutation: a needed job that did not succeed is red', () => red({ needs: { ...OK_NEEDS, 'gate-shard': { result: 'failure' } } }, /needed job gate-shard ended failure/));
+  it('mutation: an empty or partial MARC_NEEDS is red', () => {
+    red({ needs: {} }, /needed job source-gate is missing from MARC_NEEDS/);
+    const { 'ht10-gate': _, ...partial } = OK_NEEDS;
+    red({ needs: partial }, /needed job ht10-gate is missing from MARC_NEEDS/);
+  });
+  it('collect drops a byte-identical copy of a proof (a failed visual-gate-tz uploads it twice), never two different proofs', async () => {
+    const { mkdtempSync, mkdirSync, writeFileSync, rmSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const d = mkdtempSync(join(tmpdir(), 'verdict-collect-'));
+    try {
+      const [a, b] = proofs(TIMES.K);
+      for (const [dir, m] of [['x', a], ['y', a], ['z', b]] as const) { mkdirSync(join(d, dir)); writeFileSync(join(d, dir, `gate-proof-${dir}.json`), JSON.stringify(m)); }
+      expect((V as unknown as { collect: (d: string) => { gate: unknown[] } }).collect(d).gate.length).toBe(2);
+    } finally { rmSync(d, { recursive: true, force: true }); }
+  });
   it('mutation: Auckland missing is red', () => red({ gate: proofs(TIMES.K).filter(m => m.meta.tz === 'UTC') }, /Pacific\/Auckland: expected gate proofs/));
   it('mutation: a gate step over 1,800 s is red; over 900 s is a note', () => {
     const g = proofs(TIMES.K); g[0]!.meta.gateSeconds = V.JOB_BUDGET_S + 1;
