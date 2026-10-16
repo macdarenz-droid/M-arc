@@ -365,7 +365,22 @@ export function substituteEntry(entry: number, ex: Exercise): void {
   // QA3-8b: keeps the slot's original planned exerciseId (through any earlier substitution too),
   // so templateFromSession can find it by lineage even after a reorder or another substitution.
   // LT-3: the stored target belongs to the replaced lift, so it goes with it.
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...withoutTarget(e), id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(e.sets.length), plannedId: e.plannedId ?? e.exerciseId })) }));
+  const e = active()?.entries[entry];
+  if (!e) return;
+  const plannedId = e.plannedId ?? e.exerciseId;
+  const kept = e.sets.filter(isCommitted);
+  if (!kept.length) {
+    patchActive(a => ({ ...a, entries: a.entries.map((x, i) => (i !== entry ? x : { ...withoutTarget(x), id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(x.sets.length), plannedId })) }));
+    return;
+  }
+  // A3-4 (UI-R01, R6): committed sets are never erased. The original keeps them and is finished;
+  // the substitute takes the working rows still to do, right after it.
+  const working = (sets: LoggedSet[]) => sets.filter(x => x.kind !== 'warmup').length;
+  const rows = Math.max(1, working(e.sets) - working(kept));
+  const sub = { id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(rows), done: false, skipped: false, plannedId, ...(e.loadFactor != null ? { loadFactor: e.loadFactor } : {}) };
+  // BUG-21: the set that started the rest stays behind, but substituting still keeps the timer as the floor.
+  if (restStartedBy && kept.some(x => x.id === restStartedBy!.setId)) restStartedBy = null;
+  patchActive(a => ({ ...a, entries: a.entries.flatMap((x, i) => (i !== entry ? [x] : [{ ...x, sets: kept, done: !x.skipped }, sub])) }));
 }
 
 export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {
@@ -604,9 +619,8 @@ export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, 
   if (startsInFuture(trainedAtLocal)) return false;
   const trainedAt = new Date(trainedAtLocal).toISOString();
   const trainedEndAt = new Date(new Date(trainedAtLocal).getTime() + durationMin * 60_000).toISOString();
-  update(s => ({
-    ...s,
-    sessions: sortByStart(s.sessions.map(sess => {
+  update(s => {
+    const sessions = sortByStart(s.sessions.map(sess => {
       if (sess.id !== sessionId) return sess;
       const flags = dayKey(trainedAt) !== dayKey(sess.logging.loggedAt) ? [...new Set([...sess.logging.flags, 'midnight_crossing'])] : sess.logging.flags;
       return {
@@ -617,8 +631,10 @@ export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, 
         durationSec: durationMin * 60,
         logging: { ...sess.logging, trainedAt, trainedEndAt, timeSource, flags },
       };
-    })),
-  }));
+    }));
+    // ENG-05: a retime can reorder history, so the recovery model is rebuilt as History edits do (UI-12).
+    return { ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) };
+  });
   flushSave();
   return true;
 }
@@ -643,7 +659,11 @@ export function logPastSession(input: { splitId: string; trainedAtLocal: string;
     logging,
     gymId: state.value.units.activeGymId,
   };
-  update(s => ({ ...s, sessions: sortByStart([...s.sessions, session]) }));
+  // ENG-05: a session inserted into the past changes what later sessions were compared against.
+  update(s => {
+    const sessions = sortByStart([...s.sessions, session]);
+    return { ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) };
+  });
   flushSave();
   void haptic.confirm();
   return { session, changedTemplate: false };

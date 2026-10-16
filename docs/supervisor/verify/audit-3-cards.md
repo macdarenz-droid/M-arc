@@ -86,6 +86,12 @@
 - **R9 (A3-7):** UI-R05 latches the trigger in a signal, so App.tsx is not touched.
 - **R10 (all):** no new gate blocks, because GATE-SPLIT #194 is about to assign the existing blocks to jobs. UI behaviour is proven by vnode-harness unit tests, and the full gate still runs for regression.
 
+**Follow-ups (supervisor, 2026-10-04 06:0x UTC):**
+- **R11 / card A3-5b (IMP-E05 done count).** Ruling: the coach's live-workout read reports the same done count that Train's card shows. Train counts typed sets (`Train.tsx:727`). `setsDone` and the `sets` list are filtered by that one rule, so the tool can never say `setsDone: 1` with `sets: []`. This keeps the coach and the screen in agreement; no new data.
+  - Card A3-5b starts after A3-5 merges. Its failing-first test is IMP-E05's second repro case, adjusted to the Train rule.
+- **Card A3-2b (QA CACHE 01 residual).** The `index.html` pre-load reset still leaves cache copies; A3-2's reviewer confirmed it (#211 issuecomment-5977111056). A3-2 reserved `index.html` and named this as a residual risk, so it gets its own card. It starts after A3-2 merges.
+  - Acceptance: after the pre-load reset, no app cache (SW caches and the native copy) holds pre-reset state. Prove it with a test that fails on main, plus a web control.
+
 ## 2. Collision check
 
 Write scopes of the seven cards against each other and against the open PRs. The PR diffs were taken from each branch against its merge base with main:

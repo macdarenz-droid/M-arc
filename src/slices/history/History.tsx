@@ -292,9 +292,23 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   // stand alone with reps at 0), so it gets the same explicit removal the rest of the editor uses.
   const removeDraftSet = (ei: number, si: number) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.filter((_, j) => j !== si) })) }));
   const save = () => {
-    const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(hasEntry) })).filter(e => e.sets.length) };
+    // A3-4 (UI-R04, plan 6.17.2): a corrected set is 'edited'. Matched by id; a legacy set with no
+    // id by position, only while its exercise kept its set count.
+    const exercises = draft.exercises.map((e, ei) => {
+      const was = session.exercises[ei]?.sets ?? [];
+      return { ...e, sets: e.sets.map((st, si) => {
+        const old = st.id ? was.find(w => w.id === st.id) : was.length === e.sets.length ? was[si] : undefined;
+        const same = !!old && old.kg === st.kg && old.reps === st.reps && old.effort === st.effort && old.durationSec === st.durationSec;
+        return same ? st : { ...st, fidelity: 'edited' as const };
+      }).filter(hasEntry) };
+    }).filter(e => e.sets.length);
     // An edit that leaves no sets is a delete, with its Undo (UI-24).
-    if (!cleaned.exercises.length) { remove(); return; }
+    if (!exercises.length) { remove(); return; }
+    // The live share is recomputed over the sets finishSession rated (committed working sets) plus
+    // any now edited; an edit never raises timing trust.
+    const rated = exercises.flatMap(e => e.sets).filter(st => st.kind !== 'warmup' && (st.at || st.fidelity));
+    const liveShare = rated.length ? rated.filter(st => (st.fidelity ?? 'live') === 'live').length / rated.length : draft.logging.liveShare;
+    const cleaned = { ...draft, exercises, logging: { ...draft.logging, liveShare, timingTrusted: draft.logging.timingTrusted && liveShare >= 0.7 } };
     // Every history edit relearns the recovery model from what is left (UI-12).
     update(s => withSessions(s, s.sessions.map(x => (x.id === session.id ? cleaned : x))));
     showToast('Session updated'); onClose();

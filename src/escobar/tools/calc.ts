@@ -5,7 +5,7 @@
 import { effectiveOneRm, loadForReps } from '@/brain/e1rm';
 import { daysBetween } from '@/core/dates';
 import { KG_PER_LB } from '@/core/units';
-import { defaultProfile, formatPerSide, plateBreakdown, resolveProfile } from '@/brain/units';
+import { defaultProfile, formatPerSide, plateBreakdown, menuProfile } from '@/brain/units';
 import { ToolError } from './read';
 import { exerciseOf, type ToolCtx } from './context';
 
@@ -64,7 +64,7 @@ export function calculate(input: { op?: string; args?: Args }, ctx: ToolCtx): Ca
       const units = ctx.state.units;
       const gym = units.gyms.find(g => g.id === units.activeGymId);
       let profile = typeof a.exerciseId === 'string' && exerciseOf(ctx, a.exerciseId)
-        ? resolveProfile(a.exerciseId, units.activeGymId, units, exerciseOf(ctx, a.exerciseId))
+        ? menuProfile(a.exerciseId, units.activeGymId, units, exerciseOf(ctx, a.exerciseId))
         : units.byEquipment[units.activeGymId]?.Barbell ?? defaultProfile('Barbell', gym?.defaultUnit ?? 'kg');
       if (!profile.plates?.length && !profile.barKg) profile = defaultProfile('Barbell', profile.unit);
       if (a.barKg != null) profile = { ...profile, barKg: n(a, 'barKg', 5, 30) };
