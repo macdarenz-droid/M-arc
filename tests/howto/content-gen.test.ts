@@ -183,15 +183,20 @@ describe('HT5-A2/LR-23: C19, no sources or contacts, on the generated output', (
   });
 });
 
-describe('HT5-A4: HOWTO_HINTS (critic fix 8)', () => {
+// LIB-2 (ruling D-LIB2-hints): the hints are read through the decoder howToHint over every exercises.json id; the
+// hinted set is what Object.keys(HOWTO_HINTS) was.
+describe('HT5-A4: the push hints (critic fix 8)', () => {
   it('holds golden B\'s handling.cue for push-archetype exercises with an approved plate, and nothing else', async () => {
-    const { HOWTO_HINTS } = await import('../../src/howto/ids');
+    const { howToHint } = await import('../../src/howto/ids');
+    const allIds = (JSON.parse(readFileSync('src/data/exercises.json', 'utf8')) as { id: string }[]).map(e => e.id);
+    expect(allIds).toHaveLength(153);
     const { HOWTO_IDS } = await import('../../src/howto/generated/loaders');   // LIB-2: the shipped list moved here
     const { byId } = await loadAll();
     const wantKeys = [...byId.entries()].filter(([, c]) => c.handling?.archetype === 'push').map(([id]) => id);
-    expect(Object.keys(HOWTO_HINTS).sort()).toEqual(wantKeys.sort());
-    for (const id of wantKeys) expect(HOWTO_HINTS[id as keyof typeof HOWTO_HINTS]).toBe(byId.get(id)!.handling.cue);
-    for (const id of HOWTO_IDS) if (!wantKeys.includes(id)) expect(HOWTO_HINTS[id]).toBeUndefined();
+    expect(wantKeys.length).toBeGreaterThan(0);
+    expect(allIds.filter(id => howToHint(id) !== undefined).sort()).toEqual(wantKeys.sort());
+    for (const id of wantKeys) expect(howToHint(id)).toBe(byId.get(id)!.handling.cue);
+    for (const id of HOWTO_IDS) if (!wantKeys.includes(id)) expect(howToHint(id)).toBeUndefined();
   });
 
   it('ids.ts stays <= 2,048 B with the hints counted', () => {

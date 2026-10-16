@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=72f46c5854720e5fd8f38a2f081feb4bcc1385ae5b5094b7de6b6d1cab9b902e
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=a48664879931462cdd5a5e4a11a5cdd799aed17988cb0077ce1e6b24d0dac619
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_leg_press",
   name: "Leg Press (45°)",
-  hashes: { inputsSha256: "72f46c5854720e5fd8f38a2f081feb4bcc1385ae5b5094b7de6b6d1cab9b902e", golden: "c441fcc806598fc3335d845b98674cae21e27bc15cf9619b2d2a4c864390198f" },
+  hashes: { inputsSha256: "a48664879931462cdd5a5e4a11a5cdd799aed17988cb0077ce1e6b24d0dac619", golden: "c441fcc806598fc3335d845b98674cae21e27bc15cf9619b2d2a4c864390198f" },
   plate: {
     view: "side",
     normal: {

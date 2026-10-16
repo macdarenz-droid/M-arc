@@ -1,14 +1,18 @@
 // LIB-2 plugin (library plan 5.2, 5.3; design 7): the id registries, from tools/plates/library/registry.mjs.
-//   src/howto/ids.ts                       hasHowTo over 5-character hashes of the shipped ids (main bundle, <= 2,048 B)
+//   src/howto/ids.ts                       hasHowTo and howToHint over 4-character hashes of the shipped ids (main
+//                                          bundle, <= 2,048 B, refused over it)
 //   tools/plates/library/ids-node.mjs      its Node twin, emitted from the same template (tests, the gate's harness)
 //   src/howto/lib-id.ts                    LibId: every exercises.json id (types only, generated once per exercises.json)
 //   src/howto/generated/loaders.ts        LOADERS: one dynamic import per shipped id (its own lazy chunk), and the
 //                                          per-chromeId HAND, POSTURE and FEEL chunk maps (D-LIB2-sheet-maps)
 //   src/howto/coverage.ts                  every exercises.json id's status (HT-4's C6 contract) and stage (plan 1)
-// content.mjs runs after this plugin and appends HOWTO_HINTS to ids.ts, as it did after plates.mjs.
+// ids.ts and its twin carry the push hints (content.mjs's pushHints, D-LIB2-hints); content.mjs, which runs after this
+// plugin, stays ids.ts's second writer: it checks the hints it renders are the ones written.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from '../lib/inputs.mjs';
+import { hintsOutputs } from '../library/ids-encoding.mjs';
+import { inputs as contentInputs, pushHints } from './content.mjs';
 import { EXERCISES_JSON, registryInputs, rows, shippedIds } from '../library/registry.mjs';
 import { PAIRS, loadPairs, pairsOf } from './handpairs.mjs';
 
@@ -16,64 +20,10 @@ import { PAIRS, loadPairs, pairsOf } from './handpairs.mjs';
 export const LAYERS = ['tools/plates/gen/hands.mjs', 'tools/plates/gen/zooms.mjs', 'tools/plates/gen/feel.mjs', 'tools/plates/gen/handpairs.mjs'];
 export const after = LAYERS;
 
+export const ENCODING = 'tools/plates/library/ids-encoding.mjs';
 export const COVERAGE_DATA = 'tools/plates/library/coverage-archetypes.json';
-export const LABEL = 'How to do it';
-export const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-
-/** The hash, as source text: FNV-1a 32-bit over UTF-16 code units, xor-folded to 30 bits, 5 base-64 characters. One
- *  template for both twins; `ts` adds the TypeScript annotations. */
-const hashSrc = ts => `function h(s${ts ? ': string' : ''})${ts ? ': string' : ''} {
-  let x = 0x811c9dc5;
-  for (let i = 0; i < s.length; i++) x = Math.imul(x ^ s.charCodeAt(i), 0x01000193) >>> 0;
-  x = (x ^ (x >>> 30)) & 0x3fffffff;
-  let o = '';
-  for (let k = 0; k < 5; k++) { o = A[x & 63] + o; x >>>= 6; }
-  return o;
-}`;
-const hasSrc = ts => `export function hasHowTo(id${ts ? ': string' : ''})${ts ? ': id is HowToId' : ''} {
-  if (!id.startsWith('lib_')) return false;
-  const t = h(id);
-  for (let i = 0; i < SET.length; i += 5) if (SET.startsWith(t, i)) return true;
-  return false;
-}`;
-
-// eslint-disable-next-line no-new-func
-const hashFn = new Function('A', `${hashSrc(false)}\nreturn h;`)(ALPHABET);
-/** The 5-character hash of an id (the same function both twins carry). */
-export const idHash = id => hashFn(id);
-
-/** The SET literal for `shipped`, refusing a collision between a shipped id and any other exercises.json id. */
-export function setOf(shipped, allIds) {
-  if (shipped.length === 0) throw new Error('ids: no shipped ids');
-  const byHash = new Map();
-  for (const id of allIds) {
-    const t = idHash(id);
-    if (byHash.has(t)) {
-      const other = byHash.get(t);
-      if (shipped.includes(id) || shipped.includes(other)) throw new Error(`ids: hash collision ${t} between ${other} and ${id}; salt or widen the hash (plan 5.2)`);
-    }
-    byHash.set(t, id);
-  }
-  for (const id of shipped) if (!allIds.includes(id)) throw new Error(`ids: shipped id ${id} is not in ${EXERCISES_JSON}`);
-  return shipped.map(idHash).join('');
-}
-
-export const idsText = set => `// Main-bundle How-to module (plan 2.9: <= 2,048 B, no imports). SET: hashes of the shipped ids (plan 5.2).
-export type HowToId = string & { readonly __howTo: true };
-export const HOWTO_LABEL = ${JSON.stringify(LABEL)};
-const SET = ${JSON.stringify(set)};
-const A = ${JSON.stringify(ALPHABET)};
-${hashSrc(true)}
-${hasSrc(true)}
-`;
-
-export const idsNodeText = set => `// Node twin of src/howto/ids.ts (tests and the gate's harness): the same SET literal and hash template, emitted
-// together by tools/plates/gen/ids.mjs.
-const SET = ${JSON.stringify(set)};
-const A = ${JSON.stringify(ALPHABET)};
-${hashSrc(false)}
-${hasSrc(false)}
-`;
+// The encoding (S, H, O and the decoder) lives in ../library/ids-encoding.mjs, shared with content.mjs (D-LIB2-hints).
+export { IDS_MAX, IDS_WRITERS, LABEL, hintsOutputs, idHash, idsBudget, idsNodeText, idsText, literals, setOf } from '../library/ids-encoding.mjs';
 
 export const libIdText = ids => `// Every library exercise id in src/data/exercises.json (library plan 5.2). Types only: costs no bundle bytes.
 export type LibId =
@@ -157,14 +107,16 @@ export function inputsFor(path) {
   if (path === 'src/howto/lib-id.ts') return [EXERCISES_JSON];
   if (path === 'src/howto/coverage.ts') return [...registryInputs(), COVERAGE_DATA];
   if (path === 'src/howto/generated/loaders.ts') return pairsInputs();
-  if (['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs'].includes(path)) return registryInputs();
+  // the encoding module is an input of both twins; content.mjs adds its own inputs as ids.ts's second writer
+  if (path === 'src/howto/ids.ts') return [...registryInputs(), ENCODING];
+  if (path === 'tools/plates/library/ids-node.mjs') return [...registryInputs(), ENCODING, ...contentInputs()];
   return undefined;
 }
 
 export async function outputs(ctx = {}) {
   const all = rows(), shipped = shippedIds(all);
   const exerciseIds = JSON.parse(readFileSync(join(ROOT, EXERCISES_JSON), 'utf8')).map(e => e.id);
-  const set = setOf(shipped, exerciseIds);
+  const twins = hintsOutputs(await pushHints(), shipped, exerciseIds);
   const slugOf = new Map(all.map(r => [r.id, r.slug]));
   const archetypes = JSON.parse(readFileSync(join(ROOT, COVERAGE_DATA), 'utf8')).archetypes;
   const { pairOf } = pairsOf(await loadPairs(), shipped, all);
@@ -173,8 +125,8 @@ export async function outputs(ctx = {}) {
   const byId = new Map(all.map(r => [r.id, r]));
   const maps = chunkMaps(shipped.map(id => byId.get(id)), has, pairOf);
   return [
-    { path: 'src/howto/ids.ts', text: idsText(set), inputs: inputsFor('src/howto/ids.ts') },
-    { path: 'tools/plates/library/ids-node.mjs', text: idsNodeText(set), inputs: inputsFor('tools/plates/library/ids-node.mjs') },
+    { path: 'src/howto/ids.ts', text: twins.ids, inputs: inputsFor('src/howto/ids.ts') },
+    { path: 'tools/plates/library/ids-node.mjs', text: twins.node, inputs: inputsFor('tools/plates/library/ids-node.mjs') },
     { path: 'src/howto/lib-id.ts', text: libIdText(exerciseIds), inputs: inputsFor('src/howto/lib-id.ts') },
     { path: 'src/howto/generated/loaders.ts', text: htIndexText(shipped.map(id => [id, slugOf.get(id)]), maps), inputs: inputsFor('src/howto/generated/loaders.ts') },
     { path: 'src/howto/coverage.ts', text: coverageText(coverageEntries(archetypes, all, exerciseIds)), inputs: inputsFor('src/howto/coverage.ts') },

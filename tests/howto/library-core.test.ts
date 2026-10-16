@@ -268,14 +268,16 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
       expect(node.hasHowTo(id), id).toBe(false);
     }
   });
-  it('L2-A17: ids.ts and ids-node.mjs carry byte-identical SET and alphabet literals and the same hash body', () => {
+  it('L2-A17: ids.ts and ids-node.mjs carry byte-identical S, H and O literals, and both decode every id the same', async () => {
     const ts = readFileSync('src/howto/ids.ts', 'utf8'), js = readFileSync('tools/plates/library/ids-node.mjs', 'utf8');
-    const lit = (s: string, k: string) => s.match(new RegExp(`^const ${k} = (".*");$`, 'm'))?.[1];
-    expect(lit(ts, 'SET')).toBeTruthy();
-    expect(lit(ts, 'SET')).toBe(lit(js, 'SET'));
-    expect(lit(ts, 'A')).toBe(lit(js, 'A'));
-    expect(lit(ts, 'SET')!.length - 2).toBe(5 * reg.shippedIds().length);
-    for (const id of exerciseIds()) expect(node.hasHowTo(id), id).toBe(reg.shippedIds().includes(id));
+    const lit = (s: string, k: string) => s.match(new RegExp(`^const ${k} = (.*);$`, 'm'))?.[1];
+    for (const k of ['S', 'H', 'O']) { expect(lit(ts, k), k).toBeTruthy(); expect(lit(ts, k), k).toBe(lit(js, k)); }
+    expect(JSON.parse(lit(ts, 'S')!).length).toBe(4 * reg.shippedIds().length);
+    const { howToHint } = await import('@/howto/ids');
+    for (const id of exerciseIds()) {
+      expect(node.hasHowTo(id), id).toBe(reg.shippedIds().includes(id));
+      expect(node.howToHint(id), id).toBe(howToHint(id));
+    }
   });
   it('L2-A8: a hash collision between a shipped id and any other id is refused; no shipped ids is refused', () => {
     const real = idsGen.idHash;
@@ -283,18 +285,41 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
     expect(() => idsGen.setOf([], exerciseIds())).toThrow(/no shipped ids/);
     expect(() => idsGen.setOf(['lib_nope'], exerciseIds())).toThrow(/is not in src\/data\/exercises.json/);
     // two ids that collide under the real hash are searched for among synthetic names, so the refusal is real
-    const seen = new Map<string, string>(); let pair: [string, string] | null = null;
+    const seen = new Map<string, string>(); let pair: [string, string] | null = null;   // 24-bit hash: found fast
     for (let i = 0; !pair && i < 200000; i++) { const id = `lib_x${i}`, t = real(id); if (seen.has(t)) pair = [seen.get(t)!, id]; else seen.set(t, id); }
     expect(pair).not.toBeNull();
     expect(() => idsGen.setOf([pair![0]], [...exerciseIds(), ...pair!])).toThrow(/hash collision/);
   }, 60_000);
-  it('L2-A9: ids.ts (and with lazy.tsx) stays within 2,048 / 3,072 B raw with 153 synthetic shipped ids and the 8 hints', () => {
-    const set = exerciseIds().map(idsGen.idHash).join('');
-    const hints = readFileSync('src/howto/ids.ts', 'utf8').slice(readFileSync('src/howto/ids.ts', 'utf8').indexOf('export const HOWTO_HINTS'));
-    const at153 = `// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/ids.mjs). inputsSha256=${'0'.repeat(64)}\n${idsGen.idsText(set)}${hints}`;
-    expect(set).toHaveLength(765);
-    expect(at153.length).toBeLessThanOrEqual(2048);
-    expect(at153.length + readFileSync('src/slices/howto/lazy.tsx', 'utf8').length).toBeLessThanOrEqual(3072);
+  /** L2-A9 worst case (ruling D-LIB2-hints-2): every exercises.json id ships and all its push ids are hinted, the first
+   *  `distinct` - 1 with their own 29-character text and the rest sharing the 8's text. */
+  const worst = async (distinct: number) => {
+    const enc = await import(/* @vite-ignore */ url('tools/plates/library/ids-encoding.mjs'));
+    const arch = JSON.parse(readFileSync('tools/plates/library/coverage-archetypes.json', 'utf8')).archetypes;
+    const ids = exerciseIds(), push = ids.filter(id => arch[id] === 'push' || id === 'lib_machine_chest_press');
+    const T = 'Heel of palm, wrist straight.';
+    const hints = Object.fromEntries(push.map((id, i) => [id, i < distinct - 1 ? `${T.slice(0, -2)}${String.fromCharCode(97 + i)}.` : T]));
+    return { push, hints, run: () => enc.hintsOutputs(hints, ids, ids) as { ids: string; node: string } };
+  };
+  const HEAD = 200;   // the core's header line for ids.ts, its newline included (its length does not depend on the hash)
+  it('L2-A9: the header line the budget counts is the real one', () => {
+    expect(readFileSync('src/howto/ids.ts', 'utf8').indexOf('\n') + 1).toBe(HEAD);
+  });
+  it('L2-A9 (i), (ii): 153 shipped, all 26 push ids hinted: one shared text fits (1,693 B), and so do 12 distinct 29-character texts (2,045 B); both decode', async () => {
+    for (const [distinct, size] of [[1, 1693], [12, 2045]] as const) {
+      const w = await worst(distinct);
+      expect(w.push).toHaveLength(26);
+      expect(new Set(Object.values(w.hints)).size).toBe(distinct);
+      const o = w.run();
+      expect(HEAD + Buffer.byteLength(o.ids), String(distinct)).toBe(size);
+      expect(HEAD + Buffer.byteLength(o.ids) + readFileSync('src/slices/howto/lazy.tsx', 'utf8').length).toBeLessThanOrEqual(3072);
+      const twin = await import(/* @vite-ignore */ `data:text/javascript,${encodeURIComponent(o.node)}`);
+      for (const id of exerciseIds()) expect(twin.howToHint(id), id).toBe(w.hints[id]);
+      expect(exerciseIds().every(id => twin.hasHowTo(id))).toBe(true);
+    }
+  });
+  it('L2-A9 (iii): 13 distinct 29-character texts are refused by the generator, with the size, the count and the fix', async () => {
+    expect((await worst(13)).run).toThrow(/^ids: src\/howto\/ids\.ts would be 2077 B raw, over its 2048 B limit \(plan 2\.9\), with 13 distinct hint text\(s\); share the hint text per archetype, or shorten it \(D-LIB2-hints\)$/);
+    expect((await worst(27)).run).toThrow(/would be 2493 B raw, over its 2048 B limit .* with 26 distinct hint text/);   // each push id its own text
   });
   it('L2-A13: coverage stages map one rule: approved <=> shipped, every other id pending with an archetype; c6 passes', async () => {
     const { COVERAGE } = await import('../../src/howto/coverage');

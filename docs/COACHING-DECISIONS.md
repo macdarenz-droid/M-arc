@@ -2207,3 +2207,27 @@ From the LIB-1 rehearsal (#209, report 5977306108) and the supervisor's reopenin
 - **D-LIB2-ht-tests.** Two other cards' tests pinned the globs and were edited to say the same thing about the new map, with nothing loosened. HT-2's `ids.test.ts` now counts `import('./ht-` per shipped id and refuses any other import kind, where it counted every `import(`. HT-7's `zooms.test.ts` now says that only `generated/loaders.ts` imports the posture chunks (8) and that `Posture.tsx` reads its `POSTURE`, where it said `Posture.tsx` holds the glob.
 - **D-LIB2-A4-block.** Ruling D-LIB2-A4: `ht10.mjs` is untouched. LIB-2's gate block adds A25 and A26. A25 is the superset How-to total over every HowToSheet-, ht-, hand-, handpair-, feel-, posture-, zoom- and loaders- asset, within the total ceiling at the shipped N; it is red on no How-to assets and on no loaders chunk. A26 runs C17 (the shared checker, plus no `<a>`, no `target=`, and only `#` hrefs) over the loaders-* and handpair-* chunks. The count change inside HT-10 A4 goes to LIB-4 before LIB-9.
 - **D-LIB2-hints-held.** Item 4 (the deduplicated hint encoding) is stopped for a ruling, as the card says to do when HT-6's A8 parser cannot read the encoding. Any encoding without id strings cannot be read by HT-6's A8 parser, which needs a `"lib_…": "<text>",` line (`scripts/screenshot-gate.mjs:6568`). Nor can such an encoding back `Object.keys(HOWTO_HINTS)` (HT-5 `content-gen.test.ts:192`, HT-6 `hint.test.ts:26`) or HT-6's pinned Train line `HOWTO_HINTS[ex.id]` (`Train.tsx:831`, `hint.test.ts:14`). It is also over 2,048 B in the worst case: measured at 153 ids with all 26 push ids hinted, the base (no hints) is 1,758 B, today's per-id lines 3,489 B, a one-character index per shipped id 2,280 B, and a 3-character index per push id 2,218 B. Details on #189. Nothing for item 4 is pushed.
+- **D-LIB2-hints (rulings D-LIB2-hints and D-LIB2-hints-2, supervisor 2026-10-16; replaces D-LIB2-hints-held and the old D-LIB2-hints).** `ids.ts` uses plan 5.2's deduplicated encoding, with the plan's 4-character fallback hash:
+  - **Encoding.**
+    - `S` holds 4-character, 24-bit FNV-1a hashes (char code 48 + 6 bits, so no alphabet literal), with the hinted ids first.
+    - `H` holds the distinct hint texts.
+    - `O` holds one letter per hinted id.
+    - Two functions read them: `hasHowTo(id)` and `howToHint(id) = H[O.charCodeAt(at(id)) - 65]`.
+    - The encoding lives in `tools/plates/library/ids-encoding.mjs`.
+  - **Writers.** `gen/ids.mjs` writes `ids.ts` and its Node twin with the hints, taken from `content.mjs`'s `pushHints()`. `content.mjs` stays `ids.ts`'s second writer and refuses a file without the hints it renders. That keeps HT-2's two-writer rule and the header the budget was measured with. `ids-node.mjs` keeps one writer.
+  - **Budget.** The generator refuses an `ids.ts` over 2,048 B raw, its GENERATED header included. The message names the size, the number of distinct texts and the fix.
+  - **Moved checks.** Same checks or more:
+    - `Train.tsx:831` calls `howToHint(ex.id)`.
+    - HT-6's `hint.test.ts`, HT-5's `content-gen.test.ts` HT5-A4 and HT-6's gate A8 now read the hints through the decoder over every `exercises.json` id. The gate reads them through the Node twin, whose literals and decoder L2-A17 proves equal to `ids.ts`'s on all 153 ids.
+    - Mutations: dropping the chest press hint, or changing its text, turns HT6-A8 and HT5-A4 red, as the old checks went red on d97edeb. Dropping it also makes the gate's A8 report "no hint for the chest press".
+  - **Known constraint for LB batches: 3 B of margin.** Measured at 153 shipped ids with all 26 push ids hinted:
+
+    | Hint texts | Size | Result |
+    |---|---|---|
+    | 1 shared | 1,693 B | fits |
+    | 12 distinct, 29 characters each | 2,045 B | fits, 3 B under the limit |
+    | 13 distinct | 2,077 B | refused |
+    | 26 distinct | 2,493 B | refused |
+
+    Each extra distinct 29-character text costs 32 B. A batch that adds its own hint text must share it per archetype or shorten it, and the generator says so (L2-A9 (i) to (iii); dropping the check turns (iii) red).
+  - **Side effect.** `content.mjs`'s source changed, so the 8 `ht-*.ts` header and `hashes:` lines change too. Their bodies otherwise stay the same (L2-A3).

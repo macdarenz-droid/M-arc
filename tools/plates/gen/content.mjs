@@ -13,11 +13,13 @@
 // The content checks (C1-C8, C16) still need the *full* `zooms`/`feel` to run (several read them directly), so
 // `loadContent()` returns the full normalized HowToContent (everything golden B authors, minus `plate`) for the
 // checks to run against, while `baseFieldsText()` narrows `zooms` to descriptors and leaves `feel` out entirely.
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT } from '../lib/inputs.mjs';
 import { chunkName } from './plates.mjs';
-import { goldenInputs, goldenRows, sourceOf } from '../library/registry.mjs';
+import { EXERCISES_JSON, goldenInputs, goldenRows, shippedIds, sourceOf } from '../library/registry.mjs';
+import { hintsOutputs } from '../library/ids-encoding.mjs';
 
 export const after = ['tools/plates/gen/plates.mjs', 'tools/plates/gen/ids.mjs'];
 
@@ -130,9 +132,14 @@ export function patchModule(prevText, content, hash) {
   return `${body}\n${baseFieldsText(content)}} satisfies BuiltHowTo;\n`;
 }
 
-export function hintsText(idsPrevText, hints) {
-  const entries = Object.keys(hints).map(id => `  ${JSON.stringify(id)}: ${JSON.stringify(hints[id])},`).join('\n');
-  return `${idsPrevText}export const HOWTO_HINTS: Readonly<Record<string, string>> = {\n${entries}\n};\n`;
+/** HT-5's push hints, golden B's handling.cue of each push-archetype exercise: lib id -> text (ids.mjs encodes them). */
+export async function pushHints() {
+  const hints = {};
+  for (const id of Object.keys(rowsOf())) {
+    const { content } = await loadContent(id);
+    if (content.handling && content.handling.archetype === 'push' && content.handling.cue) hints[id] = content.handling.cue;
+  }
+  return hints;
 }
 
 export function archetypesText(shared) {
@@ -176,10 +183,13 @@ export async function outputs({ prev, hashFor }) {
     out.push({ path, text: patchModule(prevText, content, hashFor(path, inputsFor(path))), inputs: inputsFor(path) });
   }
 
-  const idsPath = 'src/howto/ids.ts';
-  const idsPrev = prev.get(idsPath);
+  // ids.ts (D-LIB2-hints): ids.mjs encodes the push hints; this plugin, whose sources they come from, stays its second
+  // writer and refuses a file that does not hold the hints rendered here
+  const idsPath = 'src/howto/ids.ts', idsPrev = prev.get(idsPath);
   if (!idsPrev) throw new Error('content: no ids.mjs output for ids.ts');
-  out.push({ path: idsPath, text: hintsText(idsPrev, hints), inputs: inputsFor(idsPath) });
+  const want = hintsOutputs(hints, shippedIds(), JSON.parse(readFileSync(join(ROOT, EXERCISES_JSON), 'utf8')).map(e => e.id)).ids;
+  if (idsPrev !== want) throw new Error('content: ids.mjs wrote ids.ts without the push hints rendered here');
+  out.push({ path: idsPath, text: idsPrev, inputs: inputsFor(idsPath) });
 
   const shared = await import(pathToFileURL(join(ROOT, SHARED_REL)).href);
   out.push({ path: 'src/howto/archetypes.ts', text: archetypesText(shared), inputs: inputsFor('src/howto/archetypes.ts') });

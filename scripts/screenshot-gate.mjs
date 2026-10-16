@@ -6479,7 +6479,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
 //   and put back on close, Back closes the close-up before the sheet, focus goes to the heading and back to the chip;
 // - A6: the HT-3 plate compare (L2b, F3, L3) still passes after each hand close-up was opened and closed;
 // - A7: hand-<id> chunks within their measured size + 10 % (D-HT6-budget), and no hand- request before the first tap;
-// - A8: the push hint on the Train card (Silent Black, Paper): exactly once on the chest press, with HOWTO_HINTS' text;
+// - A8: the push hint on the Train card (Silent Black, Paper): exactly once on the chest press, with howToHint's text;
 //   none on the lat pulldown (a How-to, not push), the no-How-to control (firstWithoutHowTo) or a custom exercise.
 {
   const tag = 'HT-6';
@@ -6565,9 +6565,12 @@ const ht10Clock = { t0: Date.now(), lines: [] };
     const reqs = []; app.page.on('request', r => reqs.push(r.url()));
     try {
       if (theme === 'silent-black' || theme === 'paper') {
-        const hints = [...readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8').matchAll(/^  "(lib_[a-z_]+)": ("(?:[^"\\]|\\.)*"),$/gm)].map(m => [m[1], JSON.parse(m[2])]);
+        // LIB-2 (ruling D-LIB2-hints): the hints through the generated decoder (ids.ts's Node twin, same literals and
+        // template, L2-A17), over every exercises.json id
+        const twin = await import('../tools/plates/library/ids-node.mjs');
+        const hints = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => [e.id, twin.howToHint(e.id)]).filter(([, t]) => t !== undefined);
         const text = Object.fromEntries(hints);
-        if (!text.lib_machine_chest_press) P(`${theme} A8: no HOWTO_HINTS entry for the chest press`);
+        if (!text.lib_machine_chest_press) P(`${theme} A8: no hint for the chest press`);
         for (const [lib, want] of [['lib_machine_chest_press', text.lib_machine_chest_press], ['lib_lat_pulldown', null], [H.HT_NO_HOWTO, null], [H.HT_CUSTOM.id, null]]) {
           const card = await H.openCard(app.page, H.HT_ORDER.indexOf(lib));
           const got = await card.evaluate(c => [...c.querySelectorAll('p.hint.muted')].filter(p => !p.closest('.why-row ~ .ex-body')).map(p => p.textContent));

@@ -11,7 +11,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
-const COPY = ['index.html', 'vite.config.ts', 'package.json', 'tsconfig.json', 'public', 'src', 'tools/plates/gen', 'tools/plates/lib', 'tools/plates/library', 'tools/plates/plates.json'];
+const COPY = ['index.html', 'vite.config.ts', 'package.json', 'tsconfig.json', 'public', 'src', 'tools/plates'];
 const G = 'src/howto/generated', CSS = 'src/slices/howto/css';
 const token = c => new RegExp(`(?<![a-z0-9-])${c}(?![a-z0-9])`, 'g');
 
@@ -47,14 +47,10 @@ export async function syntheticRoot(src, n) {
   mkdirSync(batches, { recursive: true });
   for (const f of readdirSync(batches)) if (f.endsWith('.json')) rmSync(join(batches, f));
   if (n > 8) writeFileSync(join(batches, 'zz-synthetic.json'), JSON.stringify({ batch: 'SYNTH', rows: rowsOut }));
-  // the generator in the copy (its ROOT is the copy); ids.ts keeps the repo's HOWTO_HINTS tail, which content.mjs appends
+  // the generator in the copy (its ROOT is the copy): ids.ts and loaders.ts from the registry (ids.ts without the hints,
+  // which content.mjs adds; the sheet chunk does not depend on them)
   const gen = await import(pathToFileURL(join(root, 'tools/plates/gen/ids.mjs')).href);
-  const outs = await gen.outputs();
-  const idsTs = readFileSync(join(root, 'src/howto/ids.ts'), 'utf8'), at = idsTs.indexOf('export const HOWTO_HINTS');
-  for (const o of outs) {
-    if (o.path === 'src/howto/generated/loaders.ts') writeFileSync(join(root, o.path), o.text);
-    if (o.path === 'src/howto/ids.ts') writeFileSync(join(root, o.path), o.text + (at >= 0 ? idsTs.slice(at) : ''));
-  }
+  for (const o of await gen.outputs()) if (['src/howto/generated/loaders.ts', 'src/howto/ids.ts'].includes(o.path)) writeFileSync(join(root, o.path), o.text);
   const ids = [...eight, ...Object.keys(rowsOut)];
   return { root, ids, chromeIds: [...eight.map(id => plates[id].chromeId), ...Object.values(rowsOut).map(r => r.chromeId)] };
 }
