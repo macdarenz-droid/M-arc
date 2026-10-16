@@ -11,7 +11,7 @@ import { DEFAULT_GOAL, GOAL_BY_ID } from '@/data/goals';
 import { trainingAgeMonths, ageOf, possiblyMinor } from '@/brain/recovery';
 import { coachInsights } from '@/brain/coach/rules';
 import { plannedThisWeek, weekSummary, daysSinceLastSession } from '@/brain/weekly';
-import { resolveProfile } from '@/brain/units';
+import { menuProfile } from '@/brain/units';
 import { lighterWeekDay } from '@/brain/deload';
 import { activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, splitPlanOf, todayOverrideOf, type ToolCtx } from '../tools/context';
 import { MODE_ADDENDUM, type EscobarMode } from './modes';
@@ -123,7 +123,7 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const gym = s.units.gyms.find(x => x.id === s.units.activeGymId);
   const entryUnits = (t?.split.exercises ?? []).map(x => {
     const ex = exerciseOf(ctx, x.exerciseId);
-    const p = resolveProfile(x.exerciseId, s.units.activeGymId, s.units, ex);
+    const p = menuProfile(x.exerciseId, s.units.activeGymId, s.units, ex);
     return p.unit !== gym?.defaultUnit ? `${one(exerciseName(ctx, x.exerciseId))} ${p.unit}` : null;
   }).filter(Boolean);
   const groups = Object.entries(s.units.byEquipment[s.units.activeGymId] ?? {}).map(([k, p]) => `${k} ${p?.unit}`);
