@@ -591,3 +591,6 @@ Read 2026-10-16 from developer.huawei.com (EN and CN). The Wear Engine service a
 | Answering the watch while M/ARC is in the background or the phone is locked | no ban found | not declared: "M/ARC must be open in the foreground", "No always-on or unattended background operation is claimed" | not a saved-data item; needs a Modify before it ships (Gate D) |
 
 The Gate A heart-rate messages (`"k":"hr"`) were a lab test in the debug build on the owner's own devices, not the product scenario.
+
+### 11.3 Owner decision (2026-10-16)
+The owner approved the three "ask the owner" rows of 11.2, and the phone sending the watch the snapshot the application lists (exercise, target, set count, rest timer, theme). Everything stays on the phone. Heart rate saved from the watch and background answering stay out until a Wear Engine Modify is approved. `docs/PRIVACY-POLICY.md` needs a watch section before any release that includes the companion.
