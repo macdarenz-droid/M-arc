@@ -190,15 +190,15 @@ test('GATE-A-PROBE-2 page markup matches the page data', async () => {
   }
   // Only system modules whose typings the 3.2 SDK ships (js/api/@system.*.d.ts), and each subscription is undone.
   const sys = [...page.matchAll(/^import (\w+) from '@system\.(\w+)';$/gm)].map((m) => m[2]);
-  assert.deepEqual(sys, ['sensor', 'storage', 'vibrator']);
+  assert.deepEqual(sys, ['sensor', 'storage', 'vibrator', 'brightness']);
   assert.match(page, /sensor\.subscribeHeartRate\(/);
   assert.match(page, /sensor\.unsubscribeHeartRate\(\)/);
   assert.match(page, /clearInterval\(/);
 });
 
-test('GATE-A-PROBE-2 config: version 1.0.3 and the two permissions the lite installer can parse', () => {
+test('GATE-A-PROBE-2 config: version 1.0.4 and the two permissions the lite installer can parse', () => {
   const cfg = JSON.parse(readFileSync(path.join(MAIN, 'config.json'), 'utf8'));
-  assert.deepEqual(cfg.app.version, { code: 1000003, name: '1.0.3' });
+  assert.deepEqual(cfg.app.version, { code: 1000004, name: '1.0.4' });
   assert.equal(cfg.app.bundleName, 'com.mrcdrnzz.dailytracker.watch');
   const perms = cfg.module.reqPermissions;
   assert.deepEqual(perms.map((p) => p.name), ['ohos.permission.READ_HEALTH_DATA', 'ohos.permission.VIBRATE']);
@@ -210,4 +210,27 @@ test('GATE-A-PROBE-2 config: version 1.0.3 and the two permissions the lite inst
     assert.deepEqual(p.usedScene, { ability: ['default'], when: 'inuse' });
   }
   assert.equal(cfg.module.abilities[0].name, 'default');
+});
+
+// GATE-A-PROBE-2 screen-off follow-up: the GT 6 closed the app about 25 s after its screen went dark (device run J),
+// so 1.0.4 asks to keep the screen on while AUTO or HR runs and lets it go dark again on every stop.
+test('GATE-A-PROBE-2 keepWanted is true only for a running AUTO or HR', async () => {
+  const { keepWanted, MODES } = await load();
+  for (const m of MODES) {
+    assert.equal(keepWanted(m, true), m === 'AUTO' || m === 'HR', m);
+    assert.equal(keepWanted(m, false), false, m);
+  }
+  for (const odd of [undefined, '', 'auto', 'hr', 7]) assert.equal(keepWanted(odd, true), false, String(odd));
+  for (const odd of [undefined, 1, 'true', {}]) assert.equal(keepWanted('AUTO', odd), false, String(odd));
+});
+
+test('GATE-A-PROBE-2 page keeps the screen on when AUTO or HR starts and releases it on every stop', () => {
+  const page = readFileSync(path.join(JS, 'pages/index/index.js'), 'utf8');
+  assert.match(page, /^import brightness from '@system\.brightness';$/m);
+  assert.match(page, /brightness\.setKeepScreenOn\(\{\s*keepScreenOn: on,/);
+  const stop = page.slice(page.indexOf('function stop(vm, quiet) {'), page.indexOf('function setKeep('));
+  assert.match(stop, /setKeep\(vm, false, quiet\);\n\}/, 'stop always lets the screen go dark again');
+  assert.match(page, /else startTimer\(vm\);\n\s*setKeep\(vm, keepWanted\(mode, true\), false\);/);
+  assert.match(page, /onDestroy\(\) \{\n\s*stop\(this, true\);/, 'onDestroy releases it without touching the page');
+  assert.match(page, /onMode\(\) \{\n\s*stop\(this\);/, 'a mode change stops and releases it');
 });

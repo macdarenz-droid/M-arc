@@ -203,8 +203,13 @@ function slowTick(prev, now) {
   return prev > 0 && now - prev > GAP_MS ? now - prev : 0;
 }
 
+// The GT 6 closes the app about 25 s after the screen goes dark, so AUTO and HR ask to keep it on while running.
+function keepWanted(mode, on) {
+  return (mode === 'AUTO' || mode === 'HR') && on === true;
+}
+
 export {
   T, V, MAX_BYTES, LOST_MS, LATE_MS, EVERY_MS, GAP_MS, ROWS, ROW_CHARS, MODES, SIZES, HR_MIN, HR_MAX, PHONE_PKG, PHONE_FP,
   makeBoot, makeRequest, padRequest, makeHr, nextMode, utf8Length, readAck, lost, addRow, headLine, tallyLine,
-  ackRow, sizeRow, autoLine, hrLine, actLabel, nextCount, swipeRow, slowTick
+  ackRow, sizeRow, autoLine, hrLine, actLabel, nextCount, swipeRow, slowTick, keepWanted
 };

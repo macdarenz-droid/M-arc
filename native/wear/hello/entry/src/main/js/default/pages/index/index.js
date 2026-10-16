@@ -2,15 +2,16 @@ import { P2pClient, Message, Builder } from '../wearengine.js';
 import sensor from '@system.sensor';
 import storage from '@system.storage';
 import vibrator from '@system.vibrator';
+import brightness from '@system.brightness';
 import {
   PHONE_PKG, PHONE_FP, LATE_MS, EVERY_MS, ROWS, SIZES, makeBoot, makeRequest, padRequest, makeHr, nextMode,
   readAck, lost, addRow, headLine, tallyLine, ackRow, sizeRow, autoLine, hrLine, actLabel, nextCount, swipeRow,
-  slowTick
+  slowTick, keepWanted
 } from '../../common/a2.js';
 
 // Gate A test page. Modes: MSG one request per tap; AUTO a request every 5 s; SIZE five padded requests;
 // HR heart rate with a report every 5 s; KIT storage, vibration and swipes. Setup runs the Wear Engine setup
-// again. Every result goes on screen. SDK callbacks get no this, so each one closes over the page (vm).
+// again. AUTO and HR keep the screen on while running. Every result goes on screen. SDK callbacks get no this, so each one closes over the page (vm).
 var client = null;
 var boot = '';
 var seq = 0;
@@ -29,6 +30,7 @@ var sizes = [];
 var runs = 0; // a new SIZE run or a mode change stops the previous run
 var hr = { on: false, bpm: '', count: 0, at: 0, fail: '' };
 var kit = { launch: '?', vib: 'short' };
+var keep = false; // whether the screen is being kept on
 
 function reset() {
   n = { sent: 0, ack: 0, lost: 0, bad: 0, late: 0 };
@@ -181,7 +183,7 @@ function tick(vm) {
   }
 }
 
-function stop(vm) {
+function stop(vm, quiet) {
   if (timer !== null) {
     clearInterval(timer);
     timer = null;
@@ -193,6 +195,27 @@ function stop(vm) {
     } catch (e) {
       fail(vm, 'hr off', e);
     }
+  }
+  setKeep(vm, false, quiet);
+}
+
+// Asks the watch to keep the screen on (or lets it go dark again) and shows the result, except when quiet.
+function setKeep(vm, on, quiet) {
+  if (on === keep) return;
+  keep = on;
+  var word = on ? 'on' : 'off';
+  try {
+    brightness.setKeepScreenOn({
+      keepScreenOn: on,
+      success: function () {
+        if (!quiet) note(vm, 'keep ' + word + ' ok');
+      },
+      fail: function (data, code) {
+        if (!quiet) note(vm, 'x keep ' + word + ' ' + code + ' ' + data);
+      }
+    });
+  } catch (e) {
+    if (!quiet) fail(vm, 'keep', e);
   }
 }
 
@@ -398,6 +421,7 @@ export default {
           reset();
           if (mode === 'HR') startHr(vm);
           else startTimer(vm);
+          setKeep(vm, keepWanted(mode, true), false);
           tick(vm);
         }
       } else if (mode === 'SIZE') {
@@ -414,7 +438,7 @@ export default {
     if (mode === 'KIT') note(this, swipeRow(e));
   },
   onDestroy() {
-    stop(this);
+    stop(this, true);
     if (wait !== null) clearTimeout(wait);
     if (!client) return;
     try {
