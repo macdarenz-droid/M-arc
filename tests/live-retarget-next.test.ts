@@ -124,9 +124,12 @@ describe('D-A4 (a): the target is stored at commit and kept when the session fin
     commitSet(0, 0);
     setEntryTarget(active()!.entries[0]!.id, { kg: 27.5, reps: 8 });
     substituteEntry(0, findExercise('lib_dumbbell_bench_press')!);
-    expect(active()!.entries[0]!.target).toBeUndefined();
-    setEntryTarget(active()!.entries[0]!.id, { kg: 22.5, reps: 10 });
-    expect(active()!.entries[0]!.target).toEqual({ kg: 22.5, reps: 10 });
+    // D-A3-4a: with a committed set the original stays (R6), so entries are found by exercise.
+    const sub = () => active()!.entries.find(e => e.exerciseId === 'lib_dumbbell_bench_press')!;
+    expect(sub().target).toBeUndefined();
+    expect(active()!.entries.find(e => e.exerciseId === EX)!.target).toEqual({ kg: 27.5, reps: 8 });
+    setEntryTarget(sub().id, { kg: 22.5, reps: 10 });
+    expect(sub().target).toEqual({ kg: 22.5, reps: 10 });
   });
   it('repairState drops a malformed target on an active entry and keeps a valid one', () => {
     const entry = (id: string, target: unknown) => ({ id, exerciseId: EX, name: 'Bench', sets: [], done: false, skipped: false, target });
