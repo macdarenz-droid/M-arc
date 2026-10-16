@@ -19,7 +19,7 @@ vi.mock('@/slices/settings/reminders', () => ({ resyncReminders: vi.fn(async () 
 const { replaceState, state } = await import('@/core/store');
 const { freshState } = await import('@/core/models');
 const { App } = await import('@/app/App');
-const { heldOnboardingTrigger } = await import('@/app/selectors');
+const { heldOnboardingTrigger, refreshClock } = await import('@/app/selectors');
 const { OnboardingSheet } = await import('@/slices/profile/Onboarding');
 const { launchOverlayGone } = await import('@/app/launch');
 const { Button, Segmented } = await import('@/ui/primitives');
@@ -38,6 +38,7 @@ const sheetInApp = () => find(render([], () => App()), v => v.type === Onboardin
 beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date(2026, 9, 3, 10, 0));
+  refreshClock(); // the `today` signal otherwise stays at the real import-time day (daysBetween in case 4).
   const f = freshState();
   replaceState({ ...f, profile: { ...f.profile, bodyWeightKg: 80, heightCm: 180, birthYear: 1995 } }); // sex missing
   launchOverlayGone.value = true;
