@@ -355,5 +355,11 @@ export function updateConversation(c: Conversation): void {
   persist(c);
 }
 
+/** IMP-E02: save a decision on a conversation that is not the visible one, without switching to it (apply.ts). */
+export function updateConversationQuietly(c: Conversation): void {
+  if (loop && loop.conversation.id === c.id) loop.conversation = c;
+  persistQuietly(c);
+}
+
 // Stop mid-stream when the app goes to the background (§13).
 if (typeof document !== 'undefined') document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') background(); });
