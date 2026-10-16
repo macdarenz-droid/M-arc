@@ -92,6 +92,10 @@ Question: can phone and watch exchange an identified request and an application 
   - Negative control (A2-9): after the phone's Stop (`rx off`), the watch's two sends returned 206, with no acknowledgement (sent 2, ack 0). The watch app had been reopened, hence the new boot id `d4dg85`.
   - Reconnect (A2-9, second half; same morning): after Connect again, the 3 sends `gue55g-1..3` were each acknowledged with 207 (54, 65 and 76 ms on the phone). Across the session the phone counted rx 8, ack 8, dup 0 and bad 0.
   - Versions (A2-7): Huawei Health 16.1.6.310 (from Galaxy Store); HMS Core 6.16.4.352 (installed through DevEco Assistant).
+- **Gate A question 5 (2026-10-16): yes, with the phone app in the foreground.**
+  - With M/ARC Watch closed (watch face showing), the phone lab's Ping returned 201. The owner reports that M/ARC Watch then opened on its own, and the next ping returned 202.
+  - So a phone-side Start can bring up the closed watch companion.
+  - Not yet tested: the same with the phone app in the background or the phone locked.
 
 ## Not verified yet
 
