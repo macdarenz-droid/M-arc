@@ -75,7 +75,7 @@ Results, each with its `commandId`:
 
 ## Acceptance
 B1 to B13 each fail before the change and pass after. The PR lists, for each, the code change that turns its test red.
-- **B1:** new, added, warm-up and substitute sets get a unique id, `draft` and rev 0. `addSet` carries no timing, heart, flags, effort or kind.
+- **B1:** new, added, warm-up and substitute sets get a unique id and rev 0, and all but added sets get `draft`. Added sets keep `status` unset, which counts as draft, because the existing test `tests/session.test.ts:117` requires it (B14; amended after review). `addSet` carries no timing, heart, flags, effort or kind.
 - **B2:** `complete_set` saves the values, `at`, `receivedAt` and one receipt, read back from storage.
 - **B3:** a resend after a lost acknowledgement gets the identical result with `replayed`: one set, one rest, no write.
 - **B4:** a duplicate completion gives `already_committed`. A reused id with a different payload or session gives `id_conflict`.
@@ -100,6 +100,11 @@ B1 to B13 each fail before the change and pass after. The PR lists, for each, th
   - If a finish save fails, the retry overwrites its heart series.
   - Clock skew is only clamped here; estimating the offset is Gate C.
   - Recovery: revert the PR; v1 data stays readable.
+  - From the review, carried to Gate C:
+    - a watch Finish stores the heart series before the save, so a failed save followed by a phone Discard leaves an orphaned series;
+    - a `not_saved` caused by full storage has already removed the daily backup and shown the save error, as the phone's own save does;
+    - a `complete_set` without a load or effort clears what the phone had filled in; the Gate C protocol must say that the watch always sends the values it shows;
+    - the Gate C snapshot must read an unset `status` as draft.
 - **return:** the head commit; a table of criterion, test and red-making change; the check results; risks; and "You will notice: nothing visible".
 
 ## Forecast (builder hours; device time and Huawei review not included)
