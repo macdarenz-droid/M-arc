@@ -390,6 +390,26 @@ describe('WATCH-C review fixes', () => {
   });
 });
 
+describe('WATCH-C red team fixes', () => {
+  it('a phone edit while the snap after a result is still sending goes out once that send ends', async () => {
+    const sent: string[] = [];
+    const link = createLink({ send: t => { sent.push(t); return new Promise(ok => { setTimeout(() => ok(207), 400); }); }, log: () => undefined, connect: async () => undefined, doc: { visibilityState: 'visible', addEventListener: () => undefined } });
+    startSession(split);
+    void link.start();
+    await vi.advanceTimersByTimeAsync(1000);
+    const n = sent.length;
+    const done = link.receive(JSON.stringify(cmd()));
+    await vi.advanceTimersByTimeAsync(450); // res sent, the snap after it in flight
+    setSet(0, 1, { kg: 99, entered: { value: 99, unit: 'kg' }, reps: 3 });
+    await vi.advanceTimersByTimeAsync(5000);
+    await done;
+    const snaps = sent.slice(n).map(t => JSON.parse(t) as Snap & { k: string }).filter(m => m.k === 'snap');
+    expect(snaps.at(-1)!.set).toMatchObject({ w: 99, r: 3 });
+    expect(snaps).toHaveLength(2);
+    expect(buildSnapshot(state.value, Date.now(), null).set).toMatchObject({ w: 99, r: 3, rev: snaps.at(-1)!.set!.rev });
+  });
+});
+
 describe('WATCH-C the lab routes workout messages to the link', () => {
   it('mw messages go to the link, everything else to the lab as before', async () => {
     const sent: string[] = [];

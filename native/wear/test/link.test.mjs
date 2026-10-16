@@ -310,7 +310,7 @@ test('W3 the clock offset comes from the hello and snap pair with the lowest rou
   r.adv(20000); r.link.tick();
   const wt3 = JSON.parse(r.hellos()[2]).wt;
   r.adv(3000);
-  r.link.rx(snap({ wt: wt3, pt: wt3 + 1500 + 50000 })); // 3 s: worse, ignored
+  r.link.rx(snap({ wt: wt3, pt: wt3 + 1500 + 9000 })); // 3 s, and 2 s off: within its round trip, ignored
   r.link.rx(snap({ wt: T0 + 1, pt: T0 })); // not a hello this watch sent
   r.link.complete();
   assert.equal(JSON.parse(r.cmds()[0]).actionAt, r.now() + 7000);
@@ -623,4 +623,88 @@ test('W4 every watch source written for Gate C transforms to ES5 with esbuild, a
     const out = transformSync(src, { target: 'es5', loader: 'js' }).code;
     assert.doesNotMatch(out, /\b__\w+/, `${rel}: needs an esbuild helper`);
   }
+});
+
+// WATCH-C red team fixes (2026-10-16).
+test('W2 a result during start-up writes no index once a later slot read fails', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap());
+  r.link.complete();
+  r.link.rx(snap({ si: 2, set: set1({ id: 'set_a2' }) }));
+  r.link.complete();
+  assert.equal(store.map.get('mc_q'), '01');
+  const texts = ['mc_q0', 'mc_q1'].map((k) => store.map.get(k));
+  let once = true;
+  store.failGet = (k) => { if (k === 'mc_q1' && once) { once = false; return true; } return false; };
+  store.defer = true;
+  const b = await rig({ store, boot: 'bbbbbbbb', code: null });
+  store.step(); // the index
+  store.step(); // slot 0
+  b.link.rx(snap({ si: 3, set: set1({ id: 'set_a3' }) }));
+  assert.equal(b.cmds()[0], texts[0]);
+  b.link.rx(res(JSON.parse(texts[0]).commandId));
+  while (store.queue.length) store.step(); // slot 1 fails, then the removal's turn
+  assert.equal(store.map.get('mc_q'), '01');
+  store.defer = false;
+  const c = await rig({ store, boot: 'cccccccc', code: null });
+  assert.equal(c.link.view().st, '2 pending');
+  assert.equal(c.cmds()[0], texts[0]);
+});
+
+test('W3 a second Skip for a rest is not queued while one is being written or pending', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  store.defer = true;
+  r.link.rest('rest_skip');
+  r.link.rest('rest_skip');
+  while (store.queue.length) store.step();
+  store.defer = false;
+  r.link.rest('rest_skip');
+  r.link.rest('rest_add_30');
+  const kinds = () => store.map.get('mc_q').split('').map((i) => JSON.parse(store.map.get(`mc_q${i}`)).kind);
+  assert.deepEqual(kinds(), ['rest_skip', 'rest_add_30']);
+  // Once it is answered, the next rest can be skipped.
+  r.link.rx(res('abcd1234-1'));
+  r.link.rx(snap({ rest: { ...rest1, id: 'rest_2' } }));
+  r.link.rest('rest_skip');
+  assert.deepEqual(kinds(), ['rest_add_30', 'rest_skip']);
+});
+
+test('W3 Complete and the rest buttons wait until the outbox has loaded', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  r.link.complete();
+  r.link.rest('rest_skip');
+  store.defer = true;
+  const b = await rig({ store, boot: 'bbbbbbbb', code: null });
+  b.link.rx(snap({ rest: rest1 }));
+  assert.equal(b.link.view().can, false);
+  b.link.complete();
+  b.link.rest('rest_skip');
+  while (store.queue.length) store.step();
+  assert.equal(store.map.get('mc_q'), '01');
+  assert.equal(b.link.view().st, '2 pending');
+  assert.equal(b.link.view().can, false, 'the restored set is pending');
+});
+
+test('W3 a later pair replaces the offset when it differs by more than its own round trip', async () => {
+  const r = await rig({ code: null });
+  let h = JSON.parse(r.hellos()[0]).wt;
+  r.adv(40);
+  r.link.rx(snap({ wt: h, pt: h + 20 })); // offset 0, round trip 40 ms
+  r.adv(5000);
+  r.link.show();
+  h = JSON.parse(r.hellos()[r.hellos().length - 1]).wt;
+  r.adv(50);
+  r.link.rx(snap({ wt: h, pt: h + 25 - 60000 })); // the watch clock moved 60 s ahead: offset -60 s, round trip 50 ms
+  r.adv(1000);
+  r.link.show();
+  h = JSON.parse(r.hellos()[r.hellos().length - 1]).wt;
+  r.adv(4000);
+  r.link.rx(snap({ wt: h, pt: h + 2000 - 60000 + 3000 })); // 3 s off, but within its 4 s round trip: ignored
+  r.link.complete();
+  assert.equal(JSON.parse(r.cmds()[0]).actionAt, r.now() - 60000);
 });

@@ -205,7 +205,8 @@ export function createLink(deps: LinkDeps): Link {
       else deps.log(`mw res ${result.commandId} ${r}`);
       await sendSnap(null);
     } finally {
-      busy--;
+      // A change made while this answer was sending was skipped above; the changed-only check stops a duplicate.
+      if (--busy === 0) changed();
     }
   }
 

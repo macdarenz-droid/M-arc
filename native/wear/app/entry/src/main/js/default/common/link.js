@@ -1,11 +1,11 @@
-// WATCH-C: protocol mw v1, outbox, screen text (native/wear/README.md). ES5, ASCII.
+// WATCH-C link, outbox and screen text; see native/wear/README.md. ES5, ASCII.
 var T = 'mw', V = 1, APP = '1.1.0';
 var PHONE_PKG = 'com.mrcdrnzz.dailytracker';
 // build-apk.yml EXPECTED_SHA256
 var PHONE_FP = '05669AD2721C6ABAF9FDD4B9B84E2FB7944844B1DEF359845F015F2B67CAF1F5';
-var KEY = 'mc_q', SLOTS = 8; // index; slots mc_q0..7
+var KEY = 'mc_q', SLOTS = 8;
 var GAPS = [4000, 8000, 16000, 30000];
-var QUIET = 20000, LOST = 25000; // ms without a phone message
+var QUIET = 20000, LOST = 25000;
 var EFF = ['', 'easy', 'ideal', 'max'];
 var NAME = { easy: 'Easy', ideal: 'Ideal', max: 'Max' };
 var CH = 'Changed on phone', END = 'Workout ended';
@@ -25,7 +25,6 @@ function mss(ms) {
   return Math.floor(s / 60) + ':' + two(s % 60);
 }
 
-// command ids are <boot>-<seq>
 function makeBoot(rand) {
   var s = '';
   for (var i = 0; i < 8; i++) {
@@ -44,7 +43,6 @@ function read(text) {
   }
 }
 
-// fixed key order; sends the load and effort shown
 function makeCmd(id, snap, kind, at, effort) {
   var c = { t: T, v: V, k: 'cmd', commandId: id, sessionId: snap.sid, actionAt: at, kind: kind };
   var s = snap.set;
@@ -66,7 +64,6 @@ function okSnap(m) {
   return num(m.pt) && (m.sid === null || str(m.sid)) && (!m.rest || (str(m.rest.id) && num(m.rest.left)));
 }
 
-// the phone's three colours, else Silent Black
 function theme(th) {
   return th && th.length === 3 && str(th[0]) && str(th[1]) && str(th[2]) ? th : ['#08090a', '#f7f8f8', '#5e6ad2'];
 }
@@ -75,13 +72,12 @@ function theme(th) {
 function Link(io, boot) {
   var seq = 0, snapAt = 0, off = 0, rtt = -1, t0 = 0, lastRx = 0, failAt = 0, hb = 0;
   var q = [], jobs = [], hellos = [], busy = false, snap = null, due = Infinity;
-  var msg = '', stop = false, kept = false;
-  var lost = false; // unreadable index or slot: no index writes
-  var eff = null, effSet = ''; // effort tapped for effSet; null: the phone's
-  var done = '', wset = ''; // set last saved, set being written
+  var msg = '', stop = false, kept = false, ready = false;
+  var lost = false; // no index writes
+  var eff = null, effSet = '';
+  var done = '', wq = []; // the set last saved; Complete or Skip keys being written
 
   function paint() { if (io.paint) io.paint(); }
-  // storage calls run one at a time
   function queue(job) {
     jobs.push(job);
     if (!busy) next();
@@ -106,18 +102,17 @@ function Link(io, boot) {
     return s;
   }
   function entry(slot, text, m) {
-    return { slot: slot, text: text, id: m.commandId, set: m.setId || '', sent: 0, n: 0 };
+    return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, sent: 0, n: 0 };
   }
 
-  // Pending only after slot, read-back and index
   function add(text, set, at) {
-    if (set) wset = set;
+    if (set) wq.push(set);
     queue(function (fin) {
       var slot = -1;
       for (var i = SLOTS - 1; i >= 0; i--) if (slots().indexOf(String(i)) < 0) slot = i;
       function end(m) {
         msg = m;
-        if (wset === set) wset = '';
+        if (set) wq.splice(wq.indexOf(set), 1);
         paint();
         fin();
       }
@@ -139,7 +134,10 @@ function Link(io, boot) {
 
   function drop(i) {
     q.splice(i, 1);
-    if (!lost) queue(function (fin) { kv('set', KEY, slots(), fin); });
+    queue(function (fin) {
+      if (lost) return fin();
+      kv('set', KEY, slots(), fin);
+    });
   }
 
   function load() {
@@ -150,6 +148,7 @@ function Link(io, boot) {
         lost = !ok;
         function finish() {
           if (q.length) msg = q.length + ' pending';
+          ready = true;
           fin();
           hello();
           pump();
@@ -205,9 +204,11 @@ function Link(io, boot) {
   }
 
   function onSnap(m, now) {
-    if (hellos.indexOf(m.wt) >= 0 && (rtt < 0 || now - m.wt < rtt)) {
+    // lowest round trip, or a clock change
+    var o = Math.round(m.pt - (m.wt + now) / 2);
+    if (hellos.indexOf(m.wt) >= 0 && (rtt < 0 || now - m.wt < rtt || Math.abs(o - off) > now - m.wt)) {
       rtt = now - m.wt;
-      off = Math.round(m.pt - (m.wt + now) / 2);
+      off = o;
     }
     var id = m.set ? m.set.id : '';
     if (id !== effSet) eff = null;
@@ -221,7 +222,6 @@ function Link(io, boot) {
     }
   }
 
-  // only a receipt shows Saved; others retry
   function onRes(m) {
     for (var i = 0; i < q.length; i++) {
       if (q[i].id !== m.commandId) continue;
@@ -266,11 +266,14 @@ function Link(io, boot) {
   function shown() {
     return eff !== null ? eff : (snap && snap.set && snap.set.e) || '';
   }
+  function held(id) {
+    var h = wq.indexOf(id) >= 0;
+    for (var i = 0; i < q.length; i++) h = h || q[i].set === id;
+    return h;
+  }
   function can() {
     var s = snap && snap.sid ? snap.set : null;
-    var ok = !stop && s && s.r >= 1 && s.id !== done && s.id !== wset;
-    for (var i = 0; ok && i < q.length; i++) ok = q[i].set !== s.id;
-    return !!ok;
+    return !!(ready && !stop && s && s.r >= 1 && s.id !== done && !held(s.id));
   }
   function cmd(kind, set, effort) {
     var at = Math.round(io.now() + off);
@@ -321,7 +324,10 @@ function Link(io, boot) {
     start: function () { t0 = io.now(); load(); },
     show: function () { hello(); keepOn(true); },
     complete: function () { if (can()) cmd('complete_set', snap.set.id, shown()); },
-    rest: function (kind) { if (!stop && snap && snap.sid && snap.rest) cmd(kind, '', ''); },
+    rest: function (kind) {
+      var k = kind === 'rest_skip' && snap && snap.rest ? kind + snap.rest.id : '';
+      if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) cmd(kind, k, '');
+    },
     effort: function () {
       if (snap && snap.set) eff = EFF[(EFF.indexOf(shown()) + 1) % EFF.length];
       paint();

@@ -11,7 +11,7 @@ function paint() {
   for (var k in v) page[k] = v[k];
 }
 
-// the SDK calls all four callbacks unchecked
+// the SDK calls all four callbacks
 function send(text, done) {
   try {
     var b = new Builder();
@@ -33,7 +33,7 @@ function keep(on) {
   } catch (e) {}
 }
 
-// package name first: setPeerFingerPrint sends it along
+// package name first (Huawei's order)
 function connect() {
   try {
     client = new P2pClient();
