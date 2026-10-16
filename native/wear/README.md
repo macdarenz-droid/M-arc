@@ -96,6 +96,12 @@ Question: can phone and watch exchange an identified request and an application 
   - With M/ARC Watch closed (watch face showing), the phone lab's Ping returned 201. The owner reports that M/ARC Watch then opened on its own, and the next ping returned 202.
   - So a phone-side Start can bring up the closed watch companion.
   - Not yet tested: the same with the phone app in the background or the phone locked.
+- **Gate A question 4, first finding (2026-10-16): no acknowledgement while M/ARC is in the background.**
+  - With M/ARC in the background (Home pressed), a watch send got no acknowledgement on the watch.
+  - When M/ARC was opened again, the pending request was handled and the acknowledgement reached the watch (the `lyrlrg` pair: 90 and 56 ms measured from the moment the app's JS saw it).
+  - The lab builds the acknowledgement in the WebView's JS. That proves only that the JS path pauses in the background; it does not show whether the Wear Engine receiver itself got the message earlier.
+  - Next probe: answer in the native plugin as well and time-stamp the native receipt. That separates "Huawei delays delivery to a background app" from "the WebView pauses".
+  - Not yet tested: phone locked, watch display off, and a native watch workout running.
 
 ## Not verified yet
 
