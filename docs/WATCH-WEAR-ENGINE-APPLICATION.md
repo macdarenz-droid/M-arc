@@ -567,3 +567,27 @@ The values to compare against are in the identity table (section 2) and the priv
 4. Are the category and content rating right for a sports app? *(Guidelines 1.10, 1.11)*
 5. Do the listing, the Wear Engine documents and the privacy policy say the same things about what is sent and where data is kept? *(compare all three)*
 6. Is the contact email the one chosen for every form? *(form vs record)*
+
+## 11. Phone data check against Huawei's rules and the approved application (2026-10-16)
+
+Owner request, 2026-10-16: check what the phone may save for the watch companion against Huawei's current docs and the approved application 3 (sections 3.2 and 5), and ask the owner only about items that pass both.
+
+### 11.1 What Huawei's docs say
+Read 2026-10-16 from developer.huawei.com (EN and CN). The Wear Engine service agreement itself is not public and was not checked.
+- **Data received over P2P:** no Wear Engine rule limits how the app stores its own P2P data. The developer is the data controller: "Huawei serves as the end user data processor and you (the developer) serve as the end user data controller" (connectivity-Guides/personal-data-0000001051058037).
+- **Privacy policy and consent:** "your app provides end users with information about the SDK in its privacy policy. The SDK can only be accessed after obtaining end users' consent or other legal bases" (connectivity-Guides/sdk-data-security-0000000000019123, V20, 2026-05-29). `docs/PRIVACY-POLICY.md` does not mention the Huawei watch link yet; it must before any release.
+- **Heart rate is health data:** READ_HEALTH_DATA "Allows an application to obtain users' health data, such as heart rate" (harmonyos-guides/permissions-for-all-user). AppGallery Guidelines 7.8 require "explicit consent for processing of sensitive personal data", and 7.15 bars using health data for non-core functions. Huawei's SENSOR permission (the phone reading the watch's sensors) is for research institutions only ("人体传感器功能仅限专业研究机构使用", obtain-device-sensor-0000001056892057). No Huawei text says whether forwarding heart rate the watch app measured itself needs a Modify; unconfirmed.
+- **Background use:** no explicit ban found. Every source assumes both apps are active: "The phone app and wearable app must be launched at the same time" (P2P guide), and the template's example answer is "The phone app UI remains in the foreground and stays active."
+- **Changes:** "If your business scope changes and you need to modify the corresponding data permissions, click Modify and submit the application again" (apply page, EN V19, CN V32 2026-10-10). AppGallery 7.18: "The permissions requested by your app must comply with those claimed."
+
+### 11.2 What the phone would save, item by item
+| Phone saves | Huawei | Approved application | Result |
+|---|---|---|---|
+| Sets logged from the watch (weight, reps, effort), and pause, resume, finish and rest changes, as ordinary workout records | allowed (own data, stored locally) | declared: watch-to-phone commands; "Workout records are stored only on the phone" | ask the owner |
+| Each command's ID and result (receipt), so a resent command is applied once | allowed | declared: "The phone checks command IDs, applies each command once and sends a saved receipt" | ask the owner |
+| Workout bookkeeping the receipts need: session ID and status, revision numbers, the rest record (ID, length, end time), and the watch action time beside the phone's receive time | allowed | declared in substance: the snapshot (exercise, target, set count, rest timer) and once-only apply | ask the owner |
+| Heart rate measured by the watch, sent to the phone and saved | health data with extra rules | not declared: the watch-to-phone list has no heart rate, and "HR and calories are sample values" | not asked; needs a Modify first. The watch may still show its own heart rate on the watch |
+| The chosen watch's device ID or name, kept for reconnecting | device information | not declared | not asked; not needed: the phone uses the one connected watch |
+| Answering the watch while M/ARC is in the background or the phone is locked | no ban found | not declared: "M/ARC must be open in the foreground", "No always-on or unattended background operation is claimed" | not a saved-data item; needs a Modify before it ships (Gate D) |
+
+The Gate A heart-rate messages (`"k":"hr"`) were a lab test in the debug build on the owner's own devices, not the product scenario.
