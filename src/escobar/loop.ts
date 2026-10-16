@@ -373,21 +373,22 @@ export class EscobarLoop {
 
   /** Streams one step. Retries once for busy/timeout when nothing reached the screen yet. */
   private async step(messages: StoredMessage[], mode: EscobarMode, signal: AbortSignal, gen: number): Promise<{ final?: Extract<StreamEvent, { t: 'final' }>; error?: TurnResult['error']; refusal?: { category: string | null }; stale?: boolean }> {
-    const s = this.deps.getState();
     const windowed = windowMessages(this.conversation, messages);
     // After a trim the next brief is sent in full: the diff it would build on may be cut off.
     if (windowed !== messages) {
       this.trimmedThisTurn = true;
       if (this.conversation.briefLines) this.conversation = { ...this.conversation, briefLines: undefined };
     }
-    const body = {
-      protocol: 2, mode, appVersion: this.deps.appVersion, manifest: this.deps.manifest(),
-      messages: toRequestMessages(windowed, this.deps.imageData, s.escobar.sharing),
-      unit: s.preferences.weightUnit, tone: s.escobar.tone,
-    };
     for (let attempt = 0; ; attempt++) {
+      const s = this.deps.getState();
       // AUD-2: no new request once the online coach is off, including the retry after a back-off.
-      if (!this.deps.getState().escobar.enabled) { this.abort('aborted'); return { stale: true }; }
+      if (!s.escobar.enabled) { this.abort('aborted'); return { stale: true }; }
+      // COACH 01: each attempt is a new transmission, so the retry is built under the sharing switches as they are now.
+      const body = {
+        protocol: 2, mode, appVersion: this.deps.appVersion, manifest: this.deps.manifest(),
+        messages: toRequestMessages(windowed, this.deps.imageData, s.escobar.sharing),
+        unit: s.preferences.weightUnit, tone: s.escobar.tone,
+      };
       let shown = false;
       let text = '';
       const activity: Activity[] = [...this.view.activity];
