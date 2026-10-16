@@ -175,6 +175,7 @@ Card: `docs/watch-cards/WATCH-C.md`. Debug APK only (`MARC_WEAR_LAB=1`); the pri
   - The first entry chosen is the first one, in display order, that still has a set to log, so an entry whose sets are all logged but not marked done does not block the watch.
   - The lab's new controls are built in `watchLink.ts` and mounted in `WatchLab.tsx` with one line: the existing A2-6 test pins `WatchLab.tsx`'s own words, and a WATCH-C test pins the new ones.
 - **Build (2026-10-16, debug, 7.0 SDK, unsigned):** page sources 31,913 B (at most 32,000), compiled `pages/index/index.js` 42,621 B (aim at most 44,000), `check-lite-js.cjs` RESULT: OK. `.bin` 173,900 B, sha256 `d999c32490316d4962fc797e285483df18c505ae5c169567eb743e9cf222b77c` (after the red-team fixes). Not signed here: the owner signs it.
+- **Signed (2026-10-16):** `.bin` sha256 `ff8ad3781ac64516fc543b2f4e118d5e6a1ff95e8fe5dada4a51e36a9d520d57`, `.hap` `ded41fbaa7c191b571467fc6091f88947d7b9a53265690a5b96742e836ee96bb`, from the unsigned `.bin` above; `verify-signed-bin.py` and `verify-app` pass. Bundle `com.mrcdrnzz.dailytracker.watch`, version 1.1.0 (1001000), no permissions.
 - **Unverified until the device runs:** values longer than 128 characters in `@system.storage` (a cut value shows "Not saved"; fallback: 128-character chunks), `if` and colour bindings on the GT 6 (the community GT 6 app uses both on text), and whether Connect alone recovers the link after Bluetooth comes back.
 
 ## Not verified yet
