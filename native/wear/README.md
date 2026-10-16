@@ -1,6 +1,6 @@
 # M/ARC watch app (HUAWEI WATCH GT 6)
 
-Owner rule (2026-10-15): red-team every output before it goes to the owner: builds, files, console entries and instructions. A fresh check tries to break it first.
+Owner rule (2026-10-15, extended 2026-10-16): every output gets its review, then a separate red team, before it goes to the owner. That covers builds, files, console entries and instructions. The red team tries to break the output: the wrong file, data loss, a step that cannot be followed, a claim with no evidence.
 
 The watch lane's folder (`AGENTS.md`, file ownership). The GT 6 runs Lite Wearable JS apps (HML/CSS/JS, FA model, `deviceType: liteWearable`); see `docs/WATCH-ARCHITECTURE.md`.
 
