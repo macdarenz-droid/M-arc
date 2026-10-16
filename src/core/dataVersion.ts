@@ -15,6 +15,9 @@ const finite = (v: unknown): v is number => typeof v === 'number' && Number.isFi
 /** The version a save was written with: a whole number 0 or above, else 0. */
 export const savedVersion = (v: unknown): number => (typeof v === 'number' && Number.isInteger(v) && v >= 0 ? v : 0);
 
+/** A newer build's save: its command log is that build's to read and extend, never this one's. */
+export const fromNewerBuild = (s: Pick<AppState, 'dataVersion'>): boolean => savedVersion(s.dataVersion) > DATA_VERSION;
+
 /** Filled in, as brain/exposure `hasEntry` reads it (core does not import brain). */
 const filled = (s: LoggedSet): boolean => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0;
 

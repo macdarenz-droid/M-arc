@@ -6,7 +6,7 @@
  */
 import { WATCH_COMMAND_KINDS, type ActiveSession, type AppState, type CommandReceipt, type CommandRejectReason, type CommandResult, type Effort, type LoadUnit, type LoggedSet, type StoredCommandResult, type WatchCommandKind } from '@/core/models';
 import { commitNow, state } from '@/core/store';
-import { repairCommands } from '@/core/dataVersion';
+import { fromNewerBuild, repairCommands } from '@/core/dataVersion';
 import { enteredLoad } from '@/core/units';
 import { fnv } from '@/escobar/hash';
 import { addRestStep, commitStep, finishStep, isCommitted, pauseStep, resumeStep, skipRestStep, withActive, type Step } from './session';
@@ -116,6 +116,8 @@ export function handleWorkoutCommand(cmd: unknown, receivedAt = Date.now()): Com
   const c = parse(cmd);
   if ('reason' in c) return rejected(c.commandId, c.reason);
   const s = state.value;
+  // A newer build's save: its log is not this build's to read or extend (upgradeData leaves it).
+  if (fromNewerBuild(s)) return rejected(c.commandId, 'unsupported');
   const log = repairCommands(s.commands);
   const fp = fingerprint(c);
   // Rule 2: by id alone, so the same id for another session or payload is a conflict, never a new command.

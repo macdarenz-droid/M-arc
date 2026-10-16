@@ -372,6 +372,26 @@ describe('WATCH-B B10: rest, pause and resume', () => {
     expect(fx.scheduleRestDone).not.toHaveBeenCalled();
     expect(saved().commands.receipts).toHaveLength(3);
   });
+  it('while paused, +30 s adds to the held rest and sets no alarm; a held rest with 0 s left is stale', () => {
+    begin();
+    startRest(90);
+    const rest = a().rest!;
+    vi.advanceTimersByTime(30_000);
+    handleWorkoutCommand(cmd('pause'));
+    vi.advanceTimersByTime(120_000); // paused past the rest's original end: 60 s are still held
+    clearFx();
+    expect(handleWorkoutCommand(cmd('rest_add_30', { restId: rest.id }))).toMatchObject({ status: 'applied' });
+    expect(a().rest).toMatchObject({ id: rest.id, pausedRemainingSec: 90, endsAt: rest.endsAt });
+    expect(fx.scheduleRestDone).not.toHaveBeenCalled();
+    handleWorkoutCommand(cmd('resume'));
+    startRest(15);
+    const short = a().rest!;
+    vi.advanceTimersByTime(16_000);
+    handleWorkoutCommand(cmd('pause')); // the rest has ended: 0 s held
+    expect(a().rest!.pausedRemainingSec).toBe(0);
+    expect(handleWorkoutCommand(cmd('rest_add_30', { restId: short.id }))).toMatchObject({ status: 'rejected', reason: 'stale_rest' });
+    expect(a().rest!.pausedRemainingSec).toBe(0);
+  });
   it('skip ends the rest', () => {
     begin();
     startRest(90);
@@ -437,6 +457,17 @@ describe('WATCH-B B11: action times', () => {
     expect(a().entries[0]!.sets[0]).toMatchObject({ status: 'committed', at: new Date(T0 + 60_000).toISOString() });
     expect(a().rest).toEqual(rest);
     expect(fx.scheduleRestDone).not.toHaveBeenCalled();
+  });
+  it('a later set saved in another time format still keeps its rest', () => {
+    begin();
+    vi.advanceTimersByTime(150_000);
+    setSet(0, 1, { kg: 60, reps: 8 });
+    commitSet(0, 1);
+    setSet(0, 1, { at: '2026-09-22T09:02:30.000-01:00' }); // the same instant, T0 + 150 s, as text that sorts before 10:01Z
+    const rest = a().rest!;
+    vi.advanceTimersByTime(10_000);
+    expect(handleWorkoutCommand(complete(a().entries[0]!.sets[0]!.id!, { actionAt: T0 + 60_000 }))).toMatchObject({ status: 'applied' });
+    expect(a().rest).toEqual(rest);
   });
   it('a future actionAt is clamped to the receive time and flagged', () => {
     begin();
@@ -537,5 +568,37 @@ describe('WATCH-B B12: bad commands and the receipt cap', () => {
     begin();
     expect(state.value.commands.receipts.map(x => x.commandId)).toEqual([fin.commandId]);
     expect(handleWorkoutCommand(fin)).toMatchObject({ finish: 'discarded', replayed: true });
+  });
+});
+
+describe('WATCH-B B12, B13: a save from a newer build', () => {
+  const newer = {
+    receipts: [{ commandId: 'cmd-future-1', sessionId: 's_x', kind: 'undo_set', fp: 'ffffffff', result: { commandId: 'cmd-future-1', status: 'applied', sessionRev: 1, replayed: false }, actionAt: T0, receivedAt: T0 }],
+    closed: [{ sessionId: 's_y', status: 'finished', at: T0, epoch: 3 }],
+    cursor: 7,
+  };
+  const loadNewer = () => replaceState({ ...state.value, dataVersion: 2, commands: JSON.parse(JSON.stringify(newer)) as never });
+  it("the phone's Start, Finish and Discard leave its command log as that build wrote it", () => {
+    loadNewer();
+    begin();
+    expect(state.value.commands).toEqual(newer);
+    setSet(0, 0, { kg: 60, reps: 8 });
+    commitSet(0, 0);
+    finishSession(false);
+    expect(state.value.commands).toEqual(newer);
+    begin();
+    discardSession();
+    expect(saved().commands).toEqual(newer);
+    expect(saved().dataVersion).toBe(2);
+  });
+  it('a watch command gets unsupported, is not stored and writes nothing', () => {
+    loadNewer();
+    begin();
+    const snapshot = state.value;
+    const writes = mem.writes.length;
+    const c = complete(a().entries[0]!.sets[0]!.id!);
+    expect(handleWorkoutCommand(c)).toEqual({ commandId: c.commandId, status: 'rejected', reason: 'unsupported', replayed: false });
+    expect(state.value).toBe(snapshot);
+    expect(mem.writes.length).toBe(writes);
   });
 });

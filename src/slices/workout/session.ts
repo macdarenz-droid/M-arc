@@ -5,7 +5,7 @@
 import type { ActiveSession, AppState, ClosedSession, CommandLog, Exercise, LoggedSet, PlannedTarget, Preferences, RecoveryModel, RestState, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
 import { newId } from '@/core/models';
 import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
-import { MAX_CLOSED, repairCommands } from '@/core/dataVersion';
+import { MAX_CLOSED, fromNewerBuild, repairCommands } from '@/core/dataVersion';
 import { findExercise } from '@/core/exercises';
 import { hasEntry, isWorkingSet } from '@/brain/exposure';
 import { BURST_WINDOW_MS, LIVE_GAP_SEC, classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
@@ -56,16 +56,21 @@ function patchActive(fn: (a: ActiveSession) => ActiveSession): void {
  */
 export interface Step { active: ActiveSession; effects: () => void }
 
-/** WATCH-B: a new session keeps only the receipts of the last session that closed, so that session's finish can still be replayed. */
-function receiptsForNewSession(v: unknown): CommandLog {
-  const log = repairCommands(v);
+/**
+ * WATCH-B: a new session keeps only the receipts of the last session that closed, so that
+ * session's finish can still be replayed. A newer build's log is left as it is.
+ */
+function receiptsForNewSession(s: AppState): CommandLog {
+  if (fromNewerBuild(s)) return s.commands;
+  const log = repairCommands(s.commands);
   const last = log.closed[log.closed.length - 1];
   return { ...log, receipts: log.receipts.filter(r => r.sessionId === last?.sessionId) };
 }
 
-/** WATCH-B: a finished or discarded session is closed for good; a late command for it is refused. */
-function withClosed(v: unknown, sessionId: string | undefined, status: ClosedSession['status'], at: number): CommandLog {
-  const log = repairCommands(v);
+/** WATCH-B: a finished or discarded session is closed for good; a late command for it is refused. A newer build's log is left as it is. */
+function withClosed(s: AppState, sessionId: string | undefined, status: ClosedSession['status'], at: number): CommandLog {
+  if (fromNewerBuild(s)) return s.commands;
+  const log = repairCommands(s.commands);
   return sessionId ? { ...log, closed: [...log.closed.filter(c => c.sessionId !== sessionId), { sessionId, status, at }].slice(-MAX_CLOSED) } : log;
 }
 
@@ -106,7 +111,7 @@ export function startSession(split: Split): void {
     return { id: newId('e'), exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: blankSets(se.sets), done: false, skipped: false, ...(se.loadFactor != null ? { loadFactor: se.loadFactor } : {}) };
   });
   const startedAt = new Date().toISOString();
-  update(s => ({ ...s, active: { id: newId('s'), splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId, rev: 0 }, commands: receiptsForNewSession(s.commands) }));
+  update(s => ({ ...s, active: { id: newId('s'), splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId, rev: 0 }, commands: receiptsForNewSession(s) }));
   flushSave();
   resetHeartCapture();
   void haptic.confirm();
@@ -269,6 +274,12 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   return true;
 }
 
+/** WATCH-B: `at` is after `ms`, by instant; text order (`text`) only when `at` cannot be read. */
+function isLater(at: string, ms: number, text: string): boolean {
+  const t = Date.parse(at);
+  return Number.isFinite(t) ? t > ms : at > text;
+}
+
 /**
  * WATCH-B: the commit of a filled, uncommitted set at `now`, worked out without changing anything:
  * its time, rest, fidelity and heart, and the auto-rest it starts. `values` are saved with it (a
@@ -293,7 +304,7 @@ export function commitStep(a: ActiveSession, setId: string, now: number, prefs: 
   const restSec = gapSec != null ? Math.min(REST_MAX, Math.max(0, gapSec - setWorkSec(set))) : undefined;
   const at = new Date(now).toISOString();
   const next = patchedSetIn(a, setId, { ...values, at, restSec, fidelity, heart, status: 'committed' });
-  const later = latestOnly && a.entries.some(e => e.sets.some(x => x.id !== setId && !!x.at && x.at > at));
+  const later = latestOnly && a.entries.some(e => e.sets.some(x => x.id !== setId && !!x.at && isLater(x.at, now, at)));
   const rest = prefs.autoRest && fidelity === 'live' && set.kind !== 'warmup' && !later
     ? newRest(prefs.restDefaultSec, set.effort, preSetBpmFor(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)), now, !!a.pausedAt)
     : null;
@@ -694,7 +705,7 @@ function withFinished(s: AppState, a: ActiveSession, session: Session, saveTempl
       : s.splits,
     // QA-R2b-5: the prediction at finish sees the whole history, like the number the app showed.
     recoveryModel: calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => lastSummaryAlone(s.sessions, id, s.customExercises)),
-    commands: withClosed(s.commands, a.id, 'finished', nowMs),
+    commands: withClosed(s, a.id, 'finished', nowMs),
   };
 }
 
@@ -769,7 +780,7 @@ export function logPastSession(input: { splitId: string; trainedAtLocal: string;
 }
 
 /** WATCH-B: a discarded session is closed too. */
-const withDiscarded = (s: AppState, nowMs: number): AppState => ({ ...s, active: null, commands: withClosed(s.commands, s.active?.id, 'discarded', nowMs) });
+const withDiscarded = (s: AppState, nowMs: number): AppState => ({ ...s, active: null, commands: withClosed(s, s.active?.id, 'discarded', nowMs) });
 
 function afterDiscard(): void {
   pausedAtCommit.clear();
