@@ -459,3 +459,20 @@ describe('WATCH-C C3 the native ack never answers a workout message', () => {
   });
 });
 
+
+describe('WATCH-B follow-up: skipping or finishing an exercise on the phone stops a queued watch Complete', () => {
+  for (const [name, act] of [['skipEntry', () => skipEntry(0)], ['markDone', () => markDone(0)]] as const) {
+    it(`${name} raises the revision of the entry's open sets, so the command gets stale_revision`, () => {
+      startSession(split);
+      setSet(0, 0, { kg: 60, entered: { value: 60, unit: 'kg' }, reps: 8 });
+      commitSet(0, 0);
+      const before = a().entries.map(e => e.sets.map(s => s.rev));
+      const c = cmd({ setId: a().entries[0]!.sets[1]!.id, expectedRev: a().entries[0]!.sets[1]!.rev });
+      act();
+      expect(a().entries.map(e => e.sets.map(s => s.rev))).toEqual([[before[0]![0], before[0]![1]! + 1], ...before.slice(1)]);
+      expect(handleWorkoutCommand(c, Date.now())).toMatchObject({ status: 'rejected', reason: 'stale_revision' });
+      expect(a().entries[0]!.sets[1]!.status).not.toBe('committed');
+      expect(committed()).toHaveLength(1);
+    });
+  }
+});

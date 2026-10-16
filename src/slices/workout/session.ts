@@ -399,13 +399,16 @@ export function insertSet(sessionId: string, entryId: string, at: number, set: L
   });
 }
 
+/** WATCH-B follow-up (WATCH-C red team): skipping or finishing an entry raises its open sets' revisions, so a queued watch Complete for one gets stale_revision. */
+const bumpOpen = (sets: LoggedSet[]): LoggedSet[] => sets.map(s => (isCommitted(s) ? s : { ...s, rev: (s.rev ?? 0) + 1 }));
+
 export function markDone(entry: number, done = true): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, done, skipped: false })) }));
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, done, skipped: false, sets: bumpOpen(e.sets) })) }));
   if (done) void haptic.confirm(); else void haptic.tick();
 }
 
 export function skipEntry(entry: number, skipped = true): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, skipped, done: false })) }));
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, skipped, done: false, sets: bumpOpen(e.sets) })) }));
 }
 
 export function addExerciseToSession(ex: Exercise, sets = ex.defaultSets): void {
