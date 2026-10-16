@@ -9,8 +9,8 @@ type Feature = { id: string; chrome: number; probe: string };
 const features = FEATURES as Feature[];
 const html = readFileSync('index.html', 'utf8');
 const head = html.slice(0, html.indexOf('</head>'));
-const headScripts = [...head.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).join('\n');
-const inlineScripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
+const headScripts = [...head.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1] ?? '').join('\n');
+const inlineScripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1] ?? '');
 
 describe('OLD-ANDROID-1b floor', () => {
   it('(a) FLOOR is the highest Chrome version among FEATURES, 111', () => {
