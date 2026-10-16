@@ -42,9 +42,9 @@ test('1,000 generated ids are unique within one boot', async () => {
 test('readAck returns ack with the elapsed ms when the id matches', async () => {
   const { readAck } = await load();
   const pending = { 'abc123-1': 1000, 'abc123-2': 1200 };
-  assert.deepEqual(readAck(ack('abc123-1'), pending, 1450), { kind: 'ack', id: 'abc123-1', ms: 450, dup: false });
+  assert.deepEqual(readAck(ack('abc123-1'), pending, 1450), { kind: 'ack', id: 'abc123-1', ms: 450, dup: false, n: null, by: null });
   assert.deepEqual(Object.keys(pending), ['abc123-2']);
-  assert.deepEqual(readAck(ack('abc123-2', { dup: true }), pending, 1300), { kind: 'ack', id: 'abc123-2', ms: 100, dup: true });
+  assert.deepEqual(readAck(ack('abc123-2', { dup: true }), pending, 1300), { kind: 'ack', id: 'abc123-2', ms: 100, dup: true, n: null, by: null });
   assert.deepEqual(pending, {});
 });
 
@@ -103,10 +103,10 @@ test('lost() removes pending ids older than 10 s', async () => {
 
 test('screen lines', async () => {
   const { addRow, headLine, tallyLine, ROWS } = await load();
-  assert.equal(ROWS, 10, 'room for 5 sends and their 5 acknowledgements');
+  assert.equal(ROWS, 9, 'room for the status line and three buttons (GATE-A-PROBE-2)');
   const rows = [];
   for (let i = 1; i <= 12; i++) addRow(rows, `row ${i}`);
-  assert.deepEqual(rows, ['row 3', 'row 4', 'row 5', 'row 6', 'row 7', 'row 8', 'row 9', 'row 10', 'row 11', 'row 12']);
+  assert.deepEqual(rows, ['row 4', 'row 5', 'row 6', 'row 7', 'row 8', 'row 9', 'row 10', 'row 11', 'row 12']);
   addRow(rows, 'x'.repeat(40));
   assert.equal(rows[ROWS - 1], 'x'.repeat(30));
   assert.equal(headLine('306', 'ok', 'ok', 205), 'v306 fpok rxok png205');

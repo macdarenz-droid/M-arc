@@ -7,9 +7,9 @@
   background-color: #000000;
 }
 .head {
-  width: 320px;
-  height: 28px;
-  font-size: 22px;
+  width: 300px;
+  height: 26px;
+  font-size: 20px;
   color: #ffffff;
   text-align: center;
 }
@@ -21,23 +21,30 @@
   text-align: center;
 }
 .tally {
+  width: 380px;
+  height: 26px;
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+}
+.sub {
   width: 360px;
-  height: 28px;
-  font-size: 22px;
+  height: 26px;
+  font-size: 20px;
   color: #ffffff;
   text-align: center;
 }
 .bar {
-  width: 290px;
-  height: 56px;
-  margin-top: 6px;
+  width: 300px;
+  height: 50px;
+  margin-top: 4px;
   justify-content: space-between;
   align-items: center;
 }
 .btn {
-  width: 136px;
-  height: 50px;
-  font-size: 26px;
+  width: 94px;
+  height: 46px;
+  font-size: 22px;
   background-color: #2f7bf5;
   color: #ffffff;
 }

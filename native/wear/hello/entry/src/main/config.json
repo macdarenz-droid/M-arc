@@ -3,8 +3,8 @@
     "bundleName": "com.mrcdrnzz.dailytracker.watch",
     "vendor": "marc",
     "version": {
-      "code": 1000002,
-      "name": "1.0.2"
+      "code": 1000003,
+      "name": "1.0.3"
     },
     "apiVersion": {
       "compatible": 6,
@@ -22,6 +22,28 @@
       "moduleName": "entry",
       "moduleType": "entry"
     },
+    "reqPermissions": [
+      {
+        "name": "ohos.permission.READ_HEALTH_DATA",
+        "reason": "Heart rate test",
+        "usedScene": {
+          "ability": [
+            "default"
+          ],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.VIBRATE",
+        "reason": "Vibration test",
+        "usedScene": {
+          "ability": [
+            "default"
+          ],
+          "when": "inuse"
+        }
+      }
+    ],
     "abilities": [
       {
         "name": "default",

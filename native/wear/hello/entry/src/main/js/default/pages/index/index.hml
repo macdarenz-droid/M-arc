@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" onswipe="onSwipe">
   <text class="head">{{ head }}</text>
   <text class="row">{{ r0 }}</text>
   <text class="row">{{ r1 }}</text>
@@ -9,10 +9,11 @@
   <text class="row">{{ r6 }}</text>
   <text class="row">{{ r7 }}</text>
   <text class="row">{{ r8 }}</text>
-  <text class="row">{{ r9 }}</text>
   <text class="tally">{{ tally }}</text>
+  <text class="sub">{{ sub }}</text>
   <div class="bar">
-    <input type="button" class="btn" value="Send" onclick="onSend"></input>
+    <input type="button" class="btn" value="{{ act }}" onclick="onSend"></input>
     <input type="button" class="btn" value="Setup" onclick="onSetup"></input>
+    <input type="button" class="btn" value="Mode" onclick="onMode"></input>
   </div>
 </div>

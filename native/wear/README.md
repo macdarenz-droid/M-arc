@@ -103,6 +103,33 @@ Question: can phone and watch exchange an identified request and an application 
   - Next probe: answer in the native plugin as well and time-stamp the native receipt. That separates "Huawei delays delivery to a background app" from "the WebView pauses".
   - Not yet tested: phone locked, watch display off, and a native watch workout running.
 
+## Gate A probe 2 (watch 1.0.3, 2026-10-16)
+
+Questions 3, 4 and 6 in one device session.
+
+- **Message contract** (both sides; the 1.0.2 fields are unchanged):
+  - requests may carry `"p"` padding;
+  - heart-rate reports are `{"t":"marc-a2","v":1,"k":"hr","id":…,"bpm":20..250}`;
+  - acknowledgements add `"n"` (bytes received) and `"by":"js"|"native"`.
+- **Watch modes** (the Mode button cycles them; the first button changes its label per mode):
+  - MSG: one request per tap;
+  - AUTO: a request every 5 s, showing sent, ack, lost and late, the last ack's age and timer gaps;
+  - SIZE: 5 requests of 100, 200, 400, 800 and 1000 B, each row showing the n echoed back;
+  - HR: `@system.sensor` heart rate, with bpm, sample count and age, and a report every 5 s;
+  - KIT: a launch counter in `@system.storage`, short and long `@system.vibrator` tests, and swipes logged with direction.
+  - `config.json` now requests `ohos.permission.READ_HEALTH_DATA` and `ohos.permission.VIBRATE`. If the GT 6 refuses the install, the first fallback is a build without them.
+- **Phone lab:**
+  - every message is stamped on native receipt, and the row shows `js +<ms>` (when JS handled it, minus the receipt time);
+  - the "Native ack" toggle answers in Java at once, without waiting for JS;
+  - a 1 s liveness ticker logs `! native gap up <a>s real <b>s` when a tick runs more than 2 s late.
+- **Reading a background run:**
+  - an uptime gap means Android froze the M/ARC process (fixable with a foreground service);
+  - a real-time gap without an uptime gap means the phone slept;
+  - a late native receipt while the ticks kept time means the message was held before reaching the app;
+  - with Native ack on and no gaps, acknowledgements continuing in the background show that background replies can work.
+- **Build:** signed `.bin` sha256 `d592c2201a2c7253f25202f790e38b9eb6387d0a40820b2990fc5a4652ab99ee`, `.hap` `01f9e60920c09c2a9284cc6eeba201d130cb35972e8cb74b618f84071f5e2bb0`, unsigned `628b439e4ca0ba6ceaadd17d8c7d86633c1ce6fd28f220e913772fe99ba34bc5`. Page JS is 46,508 B. `verify-signed-bin.py`, `check-lite-js.cjs` and the 21 watch tests pass.
+- **Phone:** the 47 lab tests pass; the plugin compiles with `javac -Werror`. The two new source checks (strict JSON, ticker) fail on the pre-fix plugin and pass now.
+
 ## Not verified yet
 
 - Whether a release build runs the `.js` or the jerry `.bc` snapshot it also contains.
