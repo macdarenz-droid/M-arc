@@ -3,10 +3,13 @@
  * plugin; without it WatchLabEntry renders nothing and listens to nothing, so the Settings Version
  * line stays exactly as it is. With it, 7 taps on the Version line open the lab. Nothing is saved:
  * the Native ack toggle (GATE-A-PROBE-2) lives in the lab session's memory and starts off.
+ * WATCH-C: Connect also starts the workout link, whose panel (Hold results and its counters) is
+ * built in src/native/watchLink.ts.
  */
 import { useEffect, useState } from 'preact/hooks';
 import { Button, Row, Sheet, Toggle } from '@/ui/primitives';
 import { wearAvailable, watchLab } from '@/native/wearEngine';
+import { watchLink, WatchLinkPanel } from '@/native/watchLink';
 
 const LAB_TAPS = 7;
 const VERSION_LINE = '[data-palace="settings.version"]';
@@ -38,12 +41,13 @@ function WatchLabSheet({ onClose }: { onClose: () => void }) {
     <Sheet title="Watch lab" onClose={onClose}>
       <div class="stack-sm">
         <div class="grid-3">
-          <Button onClick={() => void lab.connect()}>Connect</Button>
+          <Button onClick={() => void watchLink().start()}>Connect</Button>
           <Button onClick={() => void lab.ping()}>Ping</Button>
           <Button onClick={() => void lab.stop()}>Stop</Button>
         </div>
         <Row trailing={<Toggle checked={lab.nativeAck.value} onChange={on => void lab.setNativeAck(on)} label="Native ack" />}><span class="small">Native ack</span></Row>
         <p class="small num">rx {c.rx} hr {c.hr} ack {c.ack} dup {c.dup} bad {c.bad}</p>
+        <WatchLinkPanel />
         <pre class="small" style={{ margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'ui-monospace, monospace' }}>{lab.rows.value.join('\n')}</pre>
       </div>
     </Sheet>

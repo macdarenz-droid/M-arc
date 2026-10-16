@@ -13,6 +13,9 @@
  * code sends nothing, and the plugin's result arrives as an "ack" log row. A background phone app
  * that still acks natively but shows a large js + time means the WebView paused, not Huawei.
  * Both the log and the Native ack state live in memory only. Tests: tests/watch-lab-a2.test.ts.
+ *
+ * WATCH-C (Gate C): a workout message ("t":"mw") goes to the route src/native/watchLink.ts sets, never
+ * to the lab's own parse and acknowledgement; post and note let that link send and log through here.
  */
 import { signal, type Signal } from '@preact/signals';
 import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor/core';
@@ -55,6 +58,16 @@ export type RejectReason = 'type' | 'size' | 'json' | 'shape' | 'id' | 'bpm';
 export type ParseResult = { ok: true; req: A2Request } | { ok: false; reason: RejectReason };
 /** Who built the acknowledgement: this code, or WearEnginePlugin.java with Native ack on. */
 export type AckBy = 'js' | 'native';
+
+/** WATCH-C: a workout-link message ("t":"mw"), which the lab hands to its route. */
+export function isWorkout(text: string): boolean {
+  try {
+    const m: unknown = JSON.parse(text);
+    return !!m && typeof m === 'object' && (m as { t?: unknown }).t === 'mw';
+  } catch {
+    return false;
+  }
+}
 
 /** Reads one message from the watch. Never throws. WearEnginePlugin.java's Wire.requestId follows the same rules. */
 export function parseRequest(text: unknown): ParseResult {
@@ -135,6 +148,12 @@ export interface Lab {
   setNativeAck(on: boolean): Promise<void>;
   /** Handles one 'message' event from the plugin. */
   receive(event: unknown): Promise<void>;
+  /** WATCH-C: where workout messages go, with the native receipt time (or now). */
+  route(fn: ((text: string, rxAt: number) => Promise<void>) | null): void;
+  /** WATCH-C: sends text to the watch; resolves the send result code, or why the call failed. */
+  post(text: string): Promise<number | string>;
+  /** WATCH-C: adds a log row. */
+  note(text: string): void;
 }
 
 /** The lab session over plugin (null off-device). Every action resolves; results land in rows. */
@@ -144,6 +163,7 @@ export function createLab(plugin: WearEnginePlugin | null, now: () => number = D
   const nativeAck = signal(false);
   const seen: string[] = [];
   const listening = { message: false, log: false };
+  let workout: ((text: string, rxAt: number) => Promise<void>) | null = null;
   const row = (text: string) => { rows.value = [text, ...rows.value].slice(0, LOG_ROWS); };
   const bump = (key: keyof LabCounts) => { counts.value = { ...counts.value, [key]: counts.value[key] + 1 }; };
   const call = <T>(run: (p: WearEnginePlugin) => Promise<T>) => settle(plugin && (() => run(plugin)), timeoutMs);
@@ -164,6 +184,8 @@ export function createLab(plugin: WearEnginePlugin | null, now: () => number = D
     const where = `type ${typeof e.type === 'number' ? e.type : '?'} data ${Number(e.dataLen) || 0} desc ${Number(e.descLen) || 0}${js}`;
     // The 2026-10-16 device run found the lite watch's text in data; desc stays as the fallback.
     const text = data || desc;
+    // WATCH-C: a workout message goes to the link, whatever "by" says.
+    if (workout && isEvent && isWorkout(text)) return workout(text, typeof e.rxAt === 'number' && Number.isFinite(e.rxAt) ? e.rxAt : at);
     const parsed = parseRequest(isEvent ? text : undefined);
     if (!parsed.ok) { bump('bad'); row(`bad ${parsed.reason} ${where}`); return; }
     const id = parsed.req.id;
@@ -202,6 +224,12 @@ export function createLab(plugin: WearEnginePlugin | null, now: () => number = D
     counts,
     nativeAck,
     receive,
+    route(fn) { workout = fn; },
+    async post(text: string) {
+      const r = await call(p => p.send({ text }));
+      return r.ok ? r.value?.code ?? '?' : r.error;
+    },
+    note: row,
     async connect() {
       // Listen first: the plugin drops events nobody listens to, and its first steps log at once.
       if (plugin && !(await listen())) return;
