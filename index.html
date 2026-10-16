@@ -154,7 +154,7 @@
           '<pre style="font-size:11px;line-height:1.4;color:#c7c7cd;background:#151519;border:1px solid #2a2a31;border-radius:8px;padding:10px;overflow:auto;white-space:pre-wrap;max-height:40vh;margin:0;"></pre>' +
           '<button type="button" data-rescue style="all:unset;background:#f1f1ee;color:#08090a;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;cursor:pointer;">Save a copy of my data</button>' +
           '<button type="button" data-reset style="all:unset;background:#c0392b;color:#fff;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;cursor:pointer;">Reset app data and reload</button>';
-        box.querySelector('pre').textContent = msg + '\n\n' + navigator.userAgent;
+        box.querySelector('pre').textContent = msg + '\n\n' + ((window.navigator && navigator.userAgent) || '');
         box.querySelector('[data-rescue]').addEventListener('click', function () { window.__marcRescue(); });
         box.querySelector('[data-reset]').addEventListener('click', function () {
           if (!confirm('This deletes every workout on this device. Continue?')) return;
@@ -182,12 +182,14 @@
     // OLD-ANDROID-1b: the app's module script runs before DOMContentLoaded, so by then it has
     // booted, failed visibly, or never ran (an engine without module scripts, an empty entry).
     // No fixed timer: a slow load holds DOMContentLoaded back too.
-    document.addEventListener('DOMContentLoaded', function () {
-      setTimeout(function () {
-        if (window.__marcUnsupported) { window.__marcUnsupportedShow(); return; }
-        if (!window.__marcBooted) window.__marcCrash(new Error('App did not start'));
-      }, 0);
-    });
+    try {
+      document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+          if (window.__marcUnsupported) { window.__marcUnsupportedShow(); return; }
+          if (!window.__marcBooted) window.__marcCrash(new Error('App did not start'));
+        }, 0);
+      });
+    } catch (e) {}
   </script>
 </head>
 <body>
