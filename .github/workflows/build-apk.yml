@@ -230,6 +230,59 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
 
+      - name: OLD-ANDROID-1 native API floor
+        shell: bash
+        run: |
+          set -euo pipefail
+          # OLD-ANDROID-1a: Capacitor reflects on every registered plugin's declared methods at launch.
+          # A member signature naming a type newer than minSdk 26 throws NoClassDefFoundError on older
+          # Android and the app never opens. Check the compiled classes, not the sources.
+          python3 - <<'PYFLOOR'
+          import glob, os, re, subprocess, sys
+          MIN = 26
+          def die(msg): raise SystemExit('::error::' + msg)
+          var = open('android/variables.gradle').read()
+          m = re.search(r'compileSdkVersion\s*=\s*(\d+)', var) or die('compileSdkVersion not found in android/variables.gradle')
+          sdk = os.environ.get('ANDROID_HOME') or os.environ.get('ANDROID_SDK_ROOT') or die('ANDROID_HOME is not set')
+          xml_path = os.path.join(sdk, 'platforms', 'android-' + m.group(1), 'data', 'api-versions.xml')
+          if not os.path.isfile(xml_path): die('missing ' + xml_path + ': the API floor cannot be checked')
+          since = {n: int(v) for n, v in re.findall(r'<class name="([^"]+)" since="(\d+)"', open(xml_path).read())}
+          if len(since) < 1000: die('api-versions.xml has only %d classes' % len(since))
+          mains = glob.glob('android/app/src/main/java/**/MainActivity.java', recursive=True)
+          if len(mains) != 1: die('expected one generated MainActivity.java, found %r' % mains)
+          src = open(mains[0]).read()
+          pkg = re.search(r'^package\s+([\w.]+);', src, re.M).group(1)
+          imports = {i.rsplit('.', 1)[1]: i for i in re.findall(r'^import\s+([\w.]+);', src, re.M)}
+          names = [pkg + '.MainActivity']
+          for n in re.findall(r'registerPlugin\(\s*([\w.]+)\.class\s*\)', src):
+              names.append(n if '.' in n else imports.get(n, pkg + '.' + n))
+          if len(names) < 2: die('no registerPlugin(...) calls found in ' + mains[0])
+          bad, files = [], {}
+          for fq in names:
+              rel = fq.replace('.', '/') + '.class'
+              hits = sorted(glob.glob('android/app/build/intermediates/javac/**/' + rel, recursive=True))
+              if not hits: die('compiled class not found for ' + fq)
+              files[fq] = hits[0]
+              out = subprocess.run(['javap', '-p', '-s', hits[0]], check=True, capture_output=True, text=True).stdout
+              member = None
+              for line in out.splitlines():
+                  t = line.strip()
+                  if t.startswith('descriptor:'):
+                      for ty in re.findall(r'L([^;<]+);', t):
+                          v = since.get(ty)
+                          if v is not None and v > MIN: bad.append('%s :: %s :: %s (API %d)' % (fq, member, ty.replace('/', '.'), v))
+                  elif t and not t.startswith(('Compiled from', '}')):
+                      member = t
+          for b in bad: print('::error::' + b)
+          print('checked', len(names), 'classes against', xml_path, ':', ', '.join(names))
+          hc = [f for q, f in files.items() if q.endswith('.HealthConnectNativePlugin')]
+          if len(hc) != 1: die('HealthConnectNativePlugin is not registered')
+          refs = subprocess.run(['javap', '-v', hc[0]], check=True, capture_output=True, text=True).stdout.count('android/health')
+          print('android/health references in the outer HealthConnectNativePlugin:', refs)
+          if refs: die('outer HealthConnectNativePlugin references android/health %d times; keep them in Api34' % refs)
+          if bad: sys.exit(1)
+          PYFLOOR
+
       - name: Verify native classes in the APK
         shell: bash
         run: |
