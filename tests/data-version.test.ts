@@ -59,6 +59,9 @@ describe('WATCH-B B13: data version 0 to 1', () => {
     const twice = load(once);
     expect(twice).toEqual(once);
     expect(times(twice)).toBe(times(once));
+    // The v0 step itself, run again on its own output, changes nothing either.
+    const { dataVersion: _v, ...unversioned } = once;
+    expect(load(unversioned)).toEqual(once);
   });
   it('a dataVersion 2 save is left alone', () => {
     const v2 = { ...v0(), dataVersion: 2, commands: { receipts: [{ from: 'a newer build' }], closed: [], cursor: 7 } };
