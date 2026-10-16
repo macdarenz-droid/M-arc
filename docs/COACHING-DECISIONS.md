@@ -2163,3 +2163,8 @@ All three were probe bugs; the app behaved correctly in every failing run. Each 
 - **D-A3-2b-3, no drift.** `src/native/share.ts` exports `EXPORT_CACHE_DIRS`, which `clearExportCache` uses; `tests/a3-2b-preload-cache.test.ts` fails when `index.html` lists other folders or another directory. The start-up reset reloads once the clear settles or after 2 s, as the crash card's `confirmReset` does. A failing or missing cache call never blocks the reset.
 - **Supersedes** the "Residual risk" line of D-A3-2.
 - **Device check (optional, owner):** export a backup on the phone, force the crash screen, tap Reset, then check that the app cache holds no `MARC Exports` folder.
+
+## A3-7b: onboarding hold on replace (2026-10-16)
+
+- **D-A3-7b-1, one clear point.** The store calls its replace listeners where it bumps the replace generation (IMP-N02): `replaceState` (Restore, Reset, Undo) and both branches of the other-tab listener. `selectors.ts` registers one listener that clears `heldOnboardingTrigger`. The store does not import app code, and a new replace path that bumps the generation clears the hold with no extra wiring. `App.tsx` is unchanged. The hold stays in memory only.
+- **D-A3-7b-2, catch-up reads stay out.** `storageMovedOn` (A3-2, a frozen tab catching up on a deferred save) does not bump the generation today, so it does not clear the hold either. Changing that is IMP-N02's call, not this card's; the residual case needs a tab frozen with the form open while another tab writes.
