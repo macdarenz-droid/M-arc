@@ -131,6 +131,27 @@ Questions 3, 4 and 6 in one device session.
 - **Red team (2026-10-16):** the files check out (hashes, signature, a rebuild from `git archive 329f78cf`). Installing the new debug APK over the 59998180 one keeps data: same package, key and versionCode 1. The device steps were rewritten from its findings (mode order, screen timeout, separate phases, phone screenshots).
 - **Phone:** the 47 lab tests pass; the plugin compiles with `javac -Werror`. The two new source checks (strict JSON, ticker) fail on the pre-fix plugin and pass now.
 
+### Probe 2 device run (2026-10-16)
+
+Debug APK from run 1988 (`71b53d88`) on a Samsung SM-F766B (Android 16, SDK 36). Watch 1.0.3 on the GT 6 (Atum-B19F, software 6.1.0.118(SP10C00M05)). The owner ran the steps, sitting in a parked car.
+
+- **A. Native ack off, phone app open:** 11 sent, 11 acknowledged, 0 lost. Round trip on the watch was 109 to 343 ms. The first two requests reached Java on time but JS only 9.3 s and 4.3 s later; the rest within 2 to 9 ms.
+- **B. Native ack off, phone app in the background (Home):** 9 of 9 acknowledged by JS, round trip 398 to 517 ms. After the run the ticker logged `native gap up 6.4s real 6.4s`.
+- **C. Native ack on, part on screen, then background:** 9 of 9 acknowledged natively. Round trip 93 to 207 ms on screen and 539 to 623 ms in the background. The native ack is not faster in the background, so the extra time is not JS.
+- **D. Native ack on, phone locked:** 6 of 6 acknowledged natively, round trip 207 to 290 ms, JS also live (5 to 23 ms). The log started over before D; the owner thinks he closed M/ARC by accident while locking, so that restart is not a finding.
+- **E. Huawei Strength workout running:** the GT 6 runs one app at a time. While the Huawei workout runs or is paused, no other app can be opened, and M/ARC Watch closes when the workout screen comes back (owner, and a ping answered 201 straight after). M/ARC Watch cannot run beside Huawei's workout; it has to be the workout app itself.
+- **F. Sizes, with the phone app idle in the background:** 100, 200, 400, 800 and 1000 B all answered 207 and echoed the exact byte count, natively, round trip 118 to 606 ms. Before them the ticker logged `native gap up 55.4s real 55.4s`: Android had frozen the M/ARC process for 55 s while the phone was awake. The first message woke it, Java answered within 43 to 94 ms, and JS saw the messages only 7.2 to 7.6 s later, when the owner opened the app.
+- **G. Heart rate:** `subscribeHeartRate` fails with 602 "Permission not declared" and no permission prompt appears, although the built `config.json` declares `ohos.permission.READ_HEALTH_DATA`. It still fails after uninstalling and installing 1.0.3 fresh. Cause not found yet.
+- **H. KIT:** the short and the long vibration were both felt. Swipes left, up, down and right all reach the app; a right swipe does not close it.
+- **I. Storage:** the launch counter read 12 after closing and reopening, so `@system.storage` keeps data across launches.
+
+What it answers:
+
+- **Question 4:** a backgrounded M/ARC can answer the watch, but only from Java once Android has frozen the app. An incoming Wear Engine message wakes the process and the native ack goes out at once, while the WebView runs only when the app is opened again. The first question 4 finding was this case. In B to D, JS kept up because traffic every 5 s started as soon as the app left the screen. The workout path therefore needs the native workout service the architecture recommends, not WebView JS.
+- **Question 6:** 1000 B messages work both ways, vibration and swipes work, and storage persists.
+- **Question 3:** open. Heart rate needs the permission problem solved first.
+- **Architecture:** Huawei's workout and M/ARC Watch cannot run together on the GT 6, so M/ARC Watch must measure heart rate and keep the workout itself. That makes question 3 a blocker for the C2 design.
+
 ## Not verified yet
 
 - Whether a release build runs the `.js` or the jerry `.bc` snapshot it also contains.
