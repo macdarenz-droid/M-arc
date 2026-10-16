@@ -230,7 +230,10 @@ test('GATE-A-PROBE-2 page keeps the screen on when AUTO or HR starts and release
   assert.match(page, /brightness\.setKeepScreenOn\(\{\s*keepScreenOn: on,/);
   const stop = page.slice(page.indexOf('function stop(vm, quiet) {'), page.indexOf('function setKeep('));
   assert.match(stop, /setKeep\(vm, false, quiet\);\n\}/, 'stop always lets the screen go dark again');
-  assert.match(page, /else startTimer\(vm\);\n\s*setKeep\(vm, keepWanted\(mode, true\), false\);/);
+  // only once a timer runs: a heart-rate start that throws starts none and must not hold the screen on
+  assert.match(page, /else startTimer\(vm\);\n\s*setKeep\(vm, keepWanted\(mode, timer !== null\), false\);/);
+  assert.match(page, /onShow\(\) \{\n(\s*\/\/.*\n)?\s*if \(keep\) \{\n\s*keep = false;\n\s*setKeep\(this, true, false\);/,
+    'the request is repeated when the page comes back on screen');
   assert.match(page, /onDestroy\(\) \{\n\s*stop\(this, true\);/, 'onDestroy releases it without touching the page');
   assert.match(page, /onMode\(\) \{\n\s*stop\(this\);/, 'a mode change stops and releases it');
 });

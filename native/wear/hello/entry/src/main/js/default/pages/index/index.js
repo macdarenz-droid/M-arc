@@ -398,6 +398,13 @@ export default {
     setup(this);
     count(this);
   },
+  onShow() {
+    // the keep-on request is repeated each time the page comes back on screen
+    if (keep) {
+      keep = false;
+      setKeep(this, true, false);
+    }
+  },
   onSetup() {
     setup(this);
   },
@@ -421,7 +428,7 @@ export default {
           reset();
           if (mode === 'HR') startHr(vm);
           else startTimer(vm);
-          setKeep(vm, keepWanted(mode, true), false);
+          setKeep(vm, keepWanted(mode, timer !== null), false);
           tick(vm);
         }
       } else if (mode === 'SIZE') {
