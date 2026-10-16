@@ -90,7 +90,8 @@ Question: can phone and watch exchange an identified request and an application 
     - the same ids appear on both screens, in the same order;
     - the watch's text arrives in the phone `Message`'s data (56 B), not its description, which settles that open point.
   - Negative control (A2-9): after the phone's Stop (`rx off`), the watch's two sends returned 206, with no acknowledgement (sent 2, ack 0). The watch app had been reopened, hence the new boot id `d4dg85`.
-  - Not yet observed: the second half of A2-9 (acknowledgements return after Connect again) and 3 of the 5 planned sends. They are carried into the next device session. The phone's Huawei Health and HMS Core versions are still to be recorded.
+  - Reconnect (A2-9, second half; same morning): after Connect again, the 3 sends `gue55g-1..3` were each acknowledged with 207 (54, 65 and 76 ms on the phone). Across the session the phone counted rx 8, ack 8, dup 0 and bad 0.
+  - Versions (A2-7): Huawei Health 16.1.6.310 (from Galaxy Store); HMS Core 6.16.4.352 (installed through DevEco Assistant).
 
 ## Not verified yet
 
