@@ -5,6 +5,7 @@ import { convertLegacy, LEGACY_KEY, readLegacy } from './migrate';
 import { legacySessionLogging } from './sessionLogging';
 import { normalizeEscobar, normalizeUnits } from './escobarState';
 import { backfillLegacyLbEntries, backfillLegacyLbSets } from './units';
+import { upgradeData } from './dataVersion';
 import { dayKey } from './dates';
 import { DEFAULT_GOAL, isGoalId } from '@/data/goals';
 import { showToast } from '@/app/toast';
@@ -144,7 +145,8 @@ function uncopiedSets(sets: LoggedSet[]): LoggedSet[] {
   return sets.map((set, i) => {
     const prev = sets[i - 1];
     if (!prev || !isObj(set) || !isObj(prev)) return set;
-    const copied = (set.at != null && set.at === prev.at) || (set.id != null && set.id === prev.id);
+    // WATCH-B: a watch set (receivedAt) is never such a copy; two can share a time clamped to one receipt.
+    const copied = (set.at != null && set.at === prev.at && set.receivedAt == null) || (set.id != null && set.id === prev.id);
     if (!copied) return set;
     const { at: _at, restSec: _r, fidelity: _f, heart: _h, status: _s, id: _id, ...kept } = set;
     return kept;
@@ -196,7 +198,8 @@ function healBodyReadings(body: AppState['body'], profile: Partial<AppState['pro
 function fill(s: AppState): AppState {
   const fresh = freshState();
   const weightUnit = s.preferences?.weightUnit === 'lb' ? 'lb' : 'kg';
-  return {
+  // WATCH-B: then up to the current data version, from the version it was saved with.
+  return upgradeData({
     ...fresh,
     ...s,
     profile: { ...fresh.profile, ...s.profile },
@@ -222,7 +225,7 @@ function fill(s: AppState): AppState {
     active: withActiveIds(s.active),
     daysOff: Array.isArray(s.daysOff) ? [...new Set(s.daysOff.filter((d): d is string => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)))].sort().slice(-MAX_DAYS_OFF) : [],
     exerciseNotes: cleanNotes(s.exerciseNotes),
-  };
+  }, s.dataVersion);
 }
 
 export type BootSource = 'saved' | 'backup' | 'legacy' | 'fresh';
@@ -337,16 +340,22 @@ const isQuotaError = (err: unknown): boolean => {
   return !!e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || e.code === 22 || e.code === 1014);
 };
 
+/** Saves the live state now (see write). */
+export function persistNow(): boolean {
+  return write(state.value);
+}
+
 /**
  * Main write first. On a full storage, the app's own backup copy goes first and the write is
  * retried once. The backup is a daily restore point: the state as it was before the first save
- * of each local day. It is best-effort and never reports an error.
+ * of each local day. It is best-effort and never reports an error. WATCH-B: takes the state to
+ * save, so commitNow can save one before it goes live.
  */
-export function persistNow(): boolean {
+function write(value: AppState): boolean {
   if (!storageRef) return false;
   const storage = storageRef;
   let raw: string;
-  try { raw = JSON.stringify(state.value); } catch (err) { saveError.value = 'Could not save. Free some storage space and try again.'; console.warn('save failed', err); return false; }
+  try { raw = JSON.stringify(value); } catch (err) { saveError.value = 'Could not save. Free some storage space and try again.'; console.warn('save failed', err); return false; }
   const before = lastGoodRaw;
   let freedSpace = false;
   try {
@@ -415,9 +424,23 @@ export function resetState(next: AppState): void {
   replaceState(next);
 }
 
-export function flushSave(): void {
+/** Saves now. Returns whether the save worked; the phone's callers may ignore it. */
+export function flushSave(): boolean {
   if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
-  persistNow();
+  return persistNow();
+}
+
+/**
+ * WATCH-B: applies a change only once it is saved, for a watch command that must not be answered
+ * before. The save includes any change still waiting for the debounced save, which it replaces. If
+ * the save fails, the state stays as it was, the pending save stays queued, and it returns false.
+ */
+export function commitNow(fn: (s: AppState) => AppState): boolean {
+  const next = fn(state.value);
+  if (!write(next)) return false;
+  if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+  state.value = next;
+  return true;
 }
 
 /**
