@@ -78,7 +78,7 @@ Question: can phone and watch exchange an identified request and an application 
   - guard, source-gate (with the new watch-lane tests), visual-gate-tz (A2-6), the ht10 shards and `bundle` (the Play build carries neither the plugin nor the app ID);
   - android-gate (A2-5): the lab checks pass and the permanent-key fingerprint step reads `05:66:9A…CA:F1:F5`;
   - debug APK: artifact `MARC-DEBUG-APK` 11994883964, zip sha256 `cf4421288ec80da3951ed9db0261a09dc072eca8d21ab271572496ff023061d9`.
-- The signed watch `.bin` comes from the debug build of the committed sources. The only differences are the three ASCII-folded comment characters in `wearengine.js`.
+- The signed watch `.bin` comes from the debug build of the committed sources. The only differences are the four ASCII-folded comment characters in `wearengine.js` (U+3002, U+FF1A, U+FF08, U+FF09).
 - Install note: the owner's daily M/ARC comes from Play (versionCode 370000xx, signed with the same key). The debug APK's versionCode is lower, so Android refuses to install it over the Play app. The route is "Export backup" in Settings, uninstall, install the debug APK, then "Restore backup". Raising the debug versionCode instead would stop later Play updates.
 - **Device run (2026-10-16, owner's Galaxy Z Flip 7 and GT 6; debug APK from `59998180`, watch 1.0.2 sha256 `826b076d…e299`): question 2 answered yes.**
   - Preconditions (A2-7):
@@ -117,7 +117,7 @@ Questions 3, 4 and 6 in one device session.
   - SIZE: 5 requests of 100, 200, 400, 800 and 1000 B, each row showing the n echoed back;
   - HR: `@system.sensor` heart rate, with bpm, sample count and age, and a report every 5 s;
   - KIT: a launch counter in `@system.storage`, short and long `@system.vibrator` tests, and swipes logged with direction.
-  - `config.json` now requests `ohos.permission.READ_HEALTH_DATA` and `ohos.permission.VIBRATE`. If the GT 6 refuses the install, the first fallback is a build without them.
+  - `config.json` now requests `ohos.permission.READ_HEALTH_DATA` and `ohos.permission.VIBRATE`. If the GT 6 refuses the install, the first fallback is a build without them: it is built and checked from `329f78cf` with only `reqPermissions` removed, `.hap` sha256 `52f6c3ac17e04b18464321b20aec7be5d4a8a16b7e755ebfaf6c23ec89025904`, and is kept private until needed.
 - **Phone lab:**
   - every message is stamped on native receipt, and the row shows `js +<ms>` (when JS handled it, minus the receipt time);
   - the "Native ack" toggle answers in Java at once, without waiting for JS;
@@ -128,6 +128,7 @@ Questions 3, 4 and 6 in one device session.
   - a late native receipt while the ticks kept time means the message was held before reaching the app;
   - with Native ack on and no gaps, acknowledgements continuing in the background show that background replies can work.
 - **Build:** signed `.bin` sha256 `d592c2201a2c7253f25202f790e38b9eb6387d0a40820b2990fc5a4652ab99ee`, `.hap` `01f9e60920c09c2a9284cc6eeba201d130cb35972e8cb74b618f84071f5e2bb0`, unsigned `628b439e4ca0ba6ceaadd17d8c7d86633c1ce6fd28f220e913772fe99ba34bc5`. Page JS is 46,508 B. `verify-signed-bin.py`, `check-lite-js.cjs` and the 21 watch tests pass.
+- **Red team (2026-10-16):** the files check out (hashes, signature, a rebuild from `git archive 329f78cf`). Installing the new debug APK over the 59998180 one keeps data: same package, key and versionCode 1. The device steps were rewritten from its findings (mode order, screen timeout, separate phases, phone screenshots).
 - **Phone:** the 47 lab tests pass; the plugin compiles with `javac -Werror`. The two new source checks (strict JSON, ticker) fail on the pre-fix plugin and pass now.
 
 ## Not verified yet
