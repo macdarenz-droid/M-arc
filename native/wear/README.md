@@ -80,7 +80,17 @@ Question: can phone and watch exchange an identified request and an application 
   - debug APK: artifact `MARC-DEBUG-APK` 11994883964, zip sha256 `cf4421288ec80da3951ed9db0261a09dc072eca8d21ab271572496ff023061d9`.
 - The signed watch `.bin` comes from the debug build of the committed sources. The only differences are the three ASCII-folded comment characters in `wearengine.js`.
 - Install note: the owner's daily M/ARC comes from Play (versionCode 370000xx, signed with the same key). The debug APK's versionCode is lower, so Android refuses to install it over the Play app. The route is "Export backup" in Settings, uninstall, install the debug APK, then "Restore backup". Raising the debug versionCode instead would stop later Play updates.
-- Not yet run: the device steps A2-7 to A2-9.
+- **Device run (2026-10-16, owner's Galaxy Z Flip 7 and GT 6; debug APK from `59998180`, watch 1.0.2 sha256 `826b076d…e299`): question 2 answered yes.**
+  - Preconditions (A2-7):
+    - watch: Wear Engine service version 402; fingerprint set OK; receiver registered OK; ping to the phone gave 205;
+    - phone: SM-F766B on Android 16 (SDK 36); Huawei Health authorisation OK; one bonded device, "Atum-B19F" on software 6.1.0.118(SP10C00M05), connected; receiver registered; ping to the watch gave 202 while the watch app was open (201 before it was).
+  - Requests and acknowledgements (A2-8), 2 of the planned 5 sends:
+    - watch: `> q1tyot-1 207`, `< ACK q1tyot-1 159ms`, `> q1tyot-2 207`, `< ACK q1tyot-2 496ms`; counters sent 2, ack 2, lost 0, bad 0;
+    - phone: `rx q1tyot-1 type 1 data 56 desc 0`, then `ack q1tyot-1 207 75ms`; the same for `q1tyot-2` (61 ms); counters rx 2, ack 2, dup 0, bad 0;
+    - the same ids appear on both screens, in the same order;
+    - the watch's text arrives in the phone `Message`'s data (56 B), not its description, which settles that open point.
+  - Negative control (A2-9): after the phone's Stop (`rx off`), the watch's two sends returned 206, with no acknowledgement (sent 2, ack 0). The watch app had been reopened, hence the new boot id `d4dg85`.
+  - Not yet observed: the second half of A2-9 (acknowledgements return after Connect again) and 3 of the 5 planned sends. They are carried into the next device session. The phone's Huawei Health and HMS Core versions are still to be recorded.
 
 ## Not verified yet
 
