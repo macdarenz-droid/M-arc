@@ -91,6 +91,10 @@
   - Card A3-5b starts after A3-5 merges. Its failing-first test is IMP-E05's second repro case, adjusted to the Train rule.
 - **Card A3-2b (QA CACHE 01 residual).** The `index.html` pre-load reset still leaves cache copies; A3-2's reviewer confirmed it (#211 issuecomment-5977111056). A3-2 reserved `index.html` and named this as a residual risk, so it gets its own card. It starts after A3-2 merges.
   - Acceptance: after the pre-load reset, no app cache (SW caches and the native copy) holds pre-reset state. Prove it with a test that fails on main, plus a web control.
+- **Card A3-7b (onboarding hold follow-ups, supervisor 2026-10-16).** From the A3-7 review (#216 issuecomment-6221141410), Lows 1 and 2.
+  - (1) Clear `heldOnboardingTrigger` whenever state is replaced (Reset, Restore), so a held review never shows over a reset profile. The fix sits in reserved store/App files.
+  - (2) Add a test for the hold on "Update" (mutation M4: remove the hold, which must turn the test red).
+  - It starts after A3-7 merges.
 
 ## 2. Collision check
 

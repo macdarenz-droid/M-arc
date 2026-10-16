@@ -54,6 +54,7 @@ import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
 import { firstWorkingSet, hasEntry, isWorkingSet, workingIndex } from '@/brain/exposure';
+import { doneSets } from './doneSets';
 import { haptic } from '@/native/haptics';
 import { durFor, EASE, reduced } from '@/ui/motion';
 import { celebrateOnce } from './celebrate';
@@ -724,7 +725,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     if (next) next.focus(); else target.blur();
   };
   const [subOpen, setSubOpen] = useState(false);
-  const logged = entry.sets.filter(isWorkingSet).length;
+  const logged = doneSets(entry.sets).length;
   const isTimed = mode === 'duration';
   // QA-R6-3: autoregulation reads the first working set; logged warm-ups sit in front of it.
   const firstSet = firstWorkingSet(entry.sets);
