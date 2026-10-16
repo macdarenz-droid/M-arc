@@ -1,4 +1,4 @@
-// WATCH-C: protocol mw v1, outbox and screen text (native/wear/README.md, Gate C). ES5, ASCII.
+// WATCH-C: protocol mw v1, outbox, screen text (native/wear/README.md). ES5, ASCII.
 var T = 'mw', V = 1, APP = '1.1.0';
 var PHONE_PKG = 'com.mrcdrnzz.dailytracker';
 // build-apk.yml EXPECTED_SHA256
@@ -8,8 +8,7 @@ var GAPS = [4000, 8000, 16000, 30000];
 var QUIET = 20000, LOST = 25000; // ms without a phone message
 var EFF = ['', 'easy', 'ideal', 'max'];
 var NAME = { easy: 'Easy', ideal: 'Ideal', max: 'Max' };
-var CH = 'Changed on phone';
-var END = 'Workout ended';
+var CH = 'Changed on phone', END = 'Workout ended';
 var WHY = { target_missing: CH, already_committed: CH, stale_revision: CH, stale_rest: CH, invalid_state: CH,
   session_closed: END, no_session: END, wrong_session: END, unsupported: 'Update needed' };
 
@@ -72,13 +71,13 @@ function theme(th) {
   return th && th.length === 3 && str(th[0]) && str(th[1]) && str(th[2]) ? th : ['#08090a', '#f7f8f8', '#5e6ad2'];
 }
 
-// io: store (@system.storage), send(text, done(code)), keep(on), now(), paint()
+// io: store, send(text, done(code)), keep(on), now(), paint()
 function Link(io, boot) {
   var seq = 0, snapAt = 0, off = 0, rtt = -1, t0 = 0, lastRx = 0, failAt = 0, hb = 0;
   var q = [], jobs = [], hellos = [], busy = false, snap = null, due = Infinity;
   var msg = '', stop = false, kept = false;
-  var lost = false; // unreadable index
-  var eff = null, effSet = ''; // effort picked for effSet; null: the phone's
+  var lost = false; // unreadable index or slot: no index writes
+  var eff = null, effSet = ''; // effort tapped for effSet; null: the phone's
   var done = '', wset = ''; // set last saved, set being written
 
   function paint() { if (io.paint) io.paint(); }
@@ -96,9 +95,9 @@ function Link(io, boot) {
     var once = false;
     function back(ok, v) { if (!once) cb(ok, v); once = true; }
     try {
-      io.store[op]({ key: key, value: value, default: '', success: function (v) { back(true, v); }, fail: function () { back(false, ''); } });
+      io.store[op]({ key: key, value: value, default: '', success: function (v) { back(true, v); }, fail: function () { back(false); } });
     } catch (e) {
-      back(false, '');
+      back(false);
     }
   }
   function slots() {
@@ -110,16 +109,15 @@ function Link(io, boot) {
     return { slot: slot, text: text, id: m.commandId, set: m.setId || '', sent: 0, n: 0 };
   }
 
-  // Pending only after the slot, its read-back and the index
+  // Pending only after slot, read-back and index
   function add(text, set, at) {
-    wset = set;
+    if (set) wset = set;
     queue(function (fin) {
       var slot = -1;
       for (var i = SLOTS - 1; i >= 0; i--) if (slots().indexOf(String(i)) < 0) slot = i;
       function end(m) {
         msg = m;
-        wset = '';
-        keepOn();
+        if (wset === set) wset = '';
         paint();
         fin();
       }
@@ -141,7 +139,7 @@ function Link(io, boot) {
 
   function drop(i) {
     q.splice(i, 1);
-    queue(function (fin) { kv('set', KEY, slots(), fin); });
+    if (!lost) queue(function (fin) { kv('set', KEY, slots(), fin); });
   }
 
   function load() {
@@ -155,8 +153,6 @@ function Link(io, boot) {
           fin();
           hello();
           pump();
-          keepOn();
-          paint();
         }
         function one() {
           while (ok && i < list.length) {
@@ -164,6 +160,7 @@ function Link(io, boot) {
             if ('01234567'.indexOf(slot) < 0 || keep.indexOf(slot) >= 0) continue;
             return kv('get', KEY + slot, '', function (ok2, t) {
               var m = ok2 ? read(t) : null;
+              lost = lost || !ok2;
               if (m && m.k === 'cmd' && str(m.commandId)) {
                 keep += slot;
                 q.push(entry(Number(slot), t, m));
@@ -171,7 +168,7 @@ function Link(io, boot) {
               one();
             });
           }
-          if (ok && keep !== list) kv('set', KEY, keep, finish);
+          if (!lost && keep !== list) kv('set', KEY, keep, finish);
           else finish();
         }
         one();
@@ -224,12 +221,12 @@ function Link(io, boot) {
     }
   }
 
-  // only a receipt shows Saved; others are retried
+  // only a receipt shows Saved; others retry
   function onRes(m) {
     for (var i = 0; i < q.length; i++) {
       if (q[i].id !== m.commandId) continue;
       if (m.status === 'applied') {
-        msg = 'Saved';
+        msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
         if (q[i].set) done = q[i].set;
       } else if (m.status === 'rejected') {
         msg = own(WHY, m.reason) ? WHY[m.reason] : 'Not saved';

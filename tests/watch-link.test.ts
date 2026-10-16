@@ -346,6 +346,50 @@ describe('WATCH-C C2 commands', () => {
   });
 });
 
+describe('WATCH-C review fixes', () => {
+  it('only a plain load gets a set: bodyweight, assisted and conditioning show the exercise without one', () => {
+    const other: Split = { ...split, id: 'sp2', exercises: [{ exerciseId: 'lib_push_up', sets: 1 }, { exerciseId: 'lib_assisted_pull_up', sets: 1 }, { exerciseId: 'lib_farmer_s_carry', sets: 1 }] };
+    replaceState({ ...state.value, splits: [other] });
+    startSession(other);
+    expect(['lib_push_up', 'lib_assisted_pull_up', 'lib_farmer_s_carry'].map(id => findExercise(id)!.mode)).toEqual(['bodyweight', 'assisted', 'conditioning']);
+    for (let i = 0; i < 3; i++) {
+      setSet(i, 0, { kg: 10, entered: { value: 10, unit: 'kg' }, reps: 8 });
+      expect(ids(snap())).toEqual([a().entries[i]!.name, 1, 1, null]);
+      markDone(i);
+    }
+  });
+  it('a change while a command is answered waits for its result: res first, then one snap', async () => {
+    const sent: string[] = [];
+    let release: () => void = () => undefined;
+    const link = createLink({
+      send: async t => { sent.push(t); if ((JSON.parse(t) as { k: string }).k === 'res') await new Promise<void>(ok => { release = ok; }); return 207; },
+      log: () => undefined, connect: async () => undefined, doc: { visibilityState: 'visible', addEventListener: () => undefined },
+    });
+    const kinds = () => sent.map(t => (JSON.parse(t) as { k: string }).k);
+    startSession(split);
+    await link.start();
+    vi.advanceTimersByTime(1000);
+    const done = link.receive(JSON.stringify(cmd()));
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(kinds()).toEqual(['snap', 'res']);
+    release();
+    await done;
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(kinds()).toEqual(['snap', 'res', 'snap']);
+    expect((JSON.parse(sent[2]!) as Snap).si).toBe(2);
+  });
+  it('a snapshot that throws is logged; no rejection escapes (RG-01)', async () => {
+    const rows: string[] = [];
+    const link = createLink({ send: async () => 207, log: t => { rows.push(t); }, snapshot: () => { throw new Error('boom'); }, connect: async () => undefined, doc: { visibilityState: 'visible', addEventListener: () => undefined } });
+    await expect(link.refresh()).resolves.toBeUndefined();
+    await expect(link.receive(hello(T0))).resolves.toBeUndefined();
+    await expect(link.start()).resolves.toBeUndefined();
+    link.changed();
+    await vi.advanceTimersByTimeAsync(SNAP_GAP_MS);
+    expect(rows.filter(r => r === 'mw snap boom').length).toBeGreaterThanOrEqual(3);
+  });
+});
+
 describe('WATCH-C the lab routes workout messages to the link', () => {
   it('mw messages go to the link, everything else to the lab as before', async () => {
     const sent: string[] = [];

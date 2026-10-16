@@ -150,16 +150,21 @@ export function createLink(deps: LinkDeps): Link {
   let following = false;
   const quiet = () => hidden() || hold.value || stopped;
 
+  /** Never rejects: the timer and the screen event do not wait for it, and an unhandled rejection shows the crash screen (RG-01). */
   async function sendSnap(wt: number | null, onlyIfChanged = false): Promise<void> {
-    if (quiet()) return;
-    const snap = snapshot(now(), wt);
-    const key = projection(snap);
-    if (onlyIfChanged && key === lastKey) return;
-    lastKey = key;
-    lastAt = now();
-    bump('snap');
-    const r = await deps.send(JSON.stringify(snap));
-    if (r !== SEND_OK) deps.log(`mw snap ${r}`);
+    try {
+      if (quiet()) return;
+      const snap = snapshot(now(), wt);
+      const key = projection(snap);
+      if (onlyIfChanged && key === lastKey) return;
+      lastKey = key;
+      lastAt = now();
+      bump('snap');
+      const r = await deps.send(JSON.stringify(snap));
+      if (r !== SEND_OK) deps.log(`mw snap ${r}`);
+    } catch (e) {
+      deps.log(`mw snap ${e instanceof Error ? e.message : String(e)}`);
+    }
   }
 
   function changed(): void {

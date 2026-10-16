@@ -3,7 +3,7 @@ import storage from '@system.storage';
 import brightness from '@system.brightness';
 import { PHONE_PKG, PHONE_FP, Link, makeBoot } from '../../common/link.js';
 
-// WATCH-C workout page: Wear Engine, storage and screen calls; the rest is in common/link.js.
+// WATCH-C page: Wear Engine, storage and screen calls; the rest is in common/link.js.
 var client = null, link = null, page = null, timer = null;
 
 function paint() {
@@ -62,7 +62,7 @@ export default {
     timer = setInterval(function () { link.tick(); }, 1000);
     paint();
   },
-  onShow() { if (link) link.show(); },
+  onShow() { link.show(); },
   onComplete() { link.complete(); },
   onEffort() { link.effort(); },
   onAdd() { link.rest('rest_add_30'); },

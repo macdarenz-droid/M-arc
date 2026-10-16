@@ -542,3 +542,85 @@ test('W4 page markup matches the page data and handlers', () => {
   assert.match(page, /clearInterval\(/);
   assert.match(page, /onDestroy\(\) \{[\s\S]*keep\(false\)/, 'onDestroy lets the screen go dark again');
 });
+
+// WATCH-C review fixes (2026-10-16).
+const rest1 = { id: 'rest_1', left: 60000, tot: 90000, p: false };
+
+test('W2 a listed slot that cannot be read at start stays listed; nothing rewrites the index or adds to it until the next start', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  for (let i = 0; i < 3; i++) r.link.rest('rest_add_30');
+  const texts = [0, 1, 2].map((i) => store.map.get(`mc_q${i}`));
+  let once = true;
+  store.failGet = (k) => { if (k === 'mc_q1' && once) { once = false; return true; } return false; };
+  const b = await rig({ store, boot: 'bbbbbbbb', code: null });
+  assert.equal(store.map.get('mc_q'), '012', 'the unread slot stays listed');
+  assert.equal(b.link.view().st, '2 pending');
+  assert.equal(b.cmds()[0], texts[0]);
+  b.link.rx(res(JSON.parse(texts[0]).commandId));
+  assert.equal(b.cmds()[b.cmds().length - 1], texts[2]);
+  b.link.rx(snap({ rest: rest1 }));
+  b.link.rest('rest_skip');
+  assert.equal(b.link.view().st, 'Not saved');
+  assert.equal(store.map.get('mc_q'), '012', 'the index is left as it was read');
+  const c = await rig({ store, boot: 'cccccccc', code: null });
+  assert.equal(c.link.view().st, '3 pending');
+  assert.equal(c.cmds()[0], texts[0]);
+  assert.equal(store.map.get('mc_q1'), texts[1]);
+});
+
+test('W3 Saved shows only once the outbox is empty; until then it counts what is still pending', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  r.link.complete();
+  r.link.rest('rest_skip');
+  r.link.rx(res('abcd1234-1'));
+  assert.equal(r.link.view().st, '1 pending');
+  r.adv(600000);
+  r.link.tick();
+  assert.equal(r.link.view().st, '1 pending');
+  r.link.rx(res('abcd1234-2'));
+  assert.equal(r.link.view().st, 'Saved');
+});
+
+test('W3 only a Complete holds the lock while it is written; a Skip tap meanwhile does not free it', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  store.defer = true;
+  r.link.complete();
+  r.link.rest('rest_skip');
+  assert.equal(r.link.view().can, false);
+  r.link.complete();
+  while (store.queue.length) store.step();
+  const kinds = [...store.map.entries()].filter(([k]) => k !== 'mc_q').map(([, v]) => JSON.parse(v).kind).sort();
+  assert.deepEqual(kinds, ['complete_set', 'rest_skip']);
+  assert.equal(r.link.view().can, false, 'still pending');
+  // A Skip written first: its end does not free the Complete queued behind it.
+  const s2 = fakeStore();
+  const w = await rig({ store: s2, code: null });
+  w.link.rx(snap({ rest: rest1 }));
+  s2.defer = true;
+  w.link.rest('rest_skip');
+  w.link.complete();
+  while (s2.queue.length && !s2.map.has('mc_q1')) s2.step();
+  w.link.complete();
+  while (s2.queue.length) s2.step();
+  assert.equal(s2.map.get('mc_q'), '01');
+  assert.equal([...s2.map.keys()].filter((k) => k !== 'mc_q').length, 2);
+});
+
+test('W4 every watch source written for Gate C transforms to ES5 with esbuild, and the page keeps only the onInit() { style', async () => {
+  const { transformSync } = await import('esbuild');
+  for (const rel of ['common/link.js', 'pages/index/index.js', 'app.js']) {
+    let src = readFileSync(path.join(JS, rel), 'utf8');
+    src = src.split('\n').filter((l) => !l.startsWith('import ') && !l.startsWith('export {')).join('\n').replace(/^export default \{/m, 'var page = {');
+    // The page-method style hello/ ran on the GT 6, and nothing else: two spaces in, on<Name>() {.
+    if (rel !== 'common/link.js') src = src.replace(/^ {2}(on[A-Z]\w*)\(\) \{/gm, '  $1: function () {');
+    assert.doesNotMatch(src, /\.\.\./, `${rel}: spread or rest`);
+    // esbuild refuses method shorthand, destructuring, default parameters, let, const and class at ES5.
+    const out = transformSync(src, { target: 'es5', loader: 'js' }).code;
+    assert.doesNotMatch(out, /\b__\w+/, `${rel}: needs an esbuild helper`);
+  }
+});
