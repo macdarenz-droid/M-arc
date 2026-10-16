@@ -364,14 +364,14 @@ describe('L2-A21: hand-pair chunks (gen/handpairs.mjs, design 12, D-LIB7-1)', ()
     idsGen = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));
     reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
   });
-  it('on main (no LIB-7 pair loader yet) nothing is written and PAIR_OF / PAIR_LOADERS are empty', async () => {
-    const { PAIR_OF, PAIR_LOADERS } = await import('@/howto/generated/loaders');
+  it('on main (no LIB-7 pair loader yet) nothing is written and HAND imports no hand pair', async () => {
     expect(await hp.loadPairs()).toBeNull();
     expect([...out.keys()].filter(p => p.includes('/handpair-'))).toEqual([]);
-    expect(Object.keys(PAIR_OF)).toEqual([]);
-    expect(hp.pairProblems(null, reg.shippedIds(), [], Object.keys(PAIR_LOADERS))).toEqual([]);
+    const loaders = readFileSync('src/howto/generated/loaders.ts', 'utf8');
+    expect(loaders).not.toMatch(/handpair-/);
+    expect(hp.pairProblems(null, reg.shippedIds(), [], [])).toEqual([]);
   });
-  it('with a pair loader: one handpair-<key>.ts per key a shipped id uses, each hashed over its own key\'s inputs only; loaders gets PAIR_OF and one import per key', async () => {
+  it('with a pair loader: one handpair-<key>.ts per key a shipped id uses, each hashed over its own key\'s inputs only; HAND maps each pair exercise to its key\'s chunk', async () => {
     const pairs = await hp.loadPairs(FIX);
     const o = await hp.outputs({ pairsFile: FIX });
     expect(o.map((x: any) => x.path)).toEqual(['src/howto/generated/handpair-bar-grip.ts', 'src/howto/generated/handpair-d-handle.ts']);
@@ -380,9 +380,11 @@ describe('L2-A21: hand-pair chunks (gen/handpairs.mjs, design 12, D-LIB7-1)', ()
     expect(o[0].text).toContain('export const panel = "<div class=\\"zx\\" id=\\"pair-bar-grip\\"');
     const { pairOf, keys } = hp.pairsOf(pairs, reg.shippedIds());
     expect(pairOf).toEqual({ 'pull-up': 'bar-grip', 'lat-pulldown': 'bar-grip', 'leg-press': 'd-handle' });
-    const text = idsGen.htIndexText([], pairOf, keys);
-    expect(text.match(/import\('\.\/handpair-/g)).toHaveLength(2);
-    const loaderKeys = [...text.matchAll(/^ {2}"([a-z-]+)": \(\) => import\('\.\/handpair-/gm)].map(m => m[1]);
+    expect(keys).toEqual(['bar-grip', 'd-handle']);
+    // with no per-id hand chunk (has = false), every pair exercise's HAND entry is its key's shared chunk
+    const text = idsGen.htIndexText([], idsGen.chunkMaps(reg.rows().filter((r: any) => reg.shippedIds().includes(r.id)), () => false, pairOf));
+    expect([...text.matchAll(/^ {2}"([a-z-]+)": \(\) => import\('\.\/handpair-([a-z-]+)'\)/gm)].map(m => [m[1], m[2]])).toEqual([['pull-up', 'bar-grip'], ['lat-pulldown', 'bar-grip'], ['leg-press', 'd-handle']]);
+    const loaderKeys = [...new Set([...text.matchAll(/import\('\.\/handpair-([a-z-]+)'\)/g)].map(m => m[1]))];
     expect(hp.pairProblems(pairs, reg.shippedIds(), o.map((x: any) => x.path), loaderKeys)).toEqual([]);
   });
   it('red on an empty pair registry, a missing file and a key missing from PAIR_LOADERS; the name never matches HT-6\'s hand-*.ts', async () => {

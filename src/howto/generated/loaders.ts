@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=b2613b112391b2660e7d3447627e84f2925fea2eaf3bb21ea09bace0a68cf9ea
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=62c3160df27c34f75269286d6ec07de0977f8f9b0f848f1cff4815a041c60475
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -25,6 +25,35 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_machine_chest_press: () => import('./ht-machine-chest-press'),
 };
 
-// Hand pairs (LIB-2 design 12): exercise chrome id -> shared pair key, and one dynamic import per key.
-export const PAIR_OF: Readonly<Record<string, string>> = {};
-export const PAIR_LOADERS: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {};
+// Per-chromeId chunks (D-LIB2-sheet-maps): the sheet chunk holds no per-id map, so it does not grow with the library.
+// HAND: the exercise's own hand chunk, else its shared hand pair (LIB-2 design 12).
+export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {
+  "lateral-raise": () => import('./hand-lateral-raise'),
+  "barbell-back-squat": () => import('./hand-barbell-back-squat'),
+  "pull-up": () => import('./hand-pull-up'),
+  "hanging-leg-raise": () => import('./hand-hanging-leg-raise'),
+  "lat-pulldown": () => import('./hand-lat-pulldown'),
+  "seated-cable-row": () => import('./hand-seated-cable-row'),
+  "leg-press": () => import('./hand-leg-press'),
+  "machine-chest-press": () => import('./hand-machine-chest-press'),
+};
+export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: Readonly<Record<string, string>>; readonly zdots: string }>>> = {
+  "lateral-raise": () => import('./posture-lateral-raise'),
+  "barbell-back-squat": () => import('./posture-barbell-back-squat'),
+  "pull-up": () => import('./posture-pull-up'),
+  "hanging-leg-raise": () => import('./posture-hanging-leg-raise'),
+  "lat-pulldown": () => import('./posture-lat-pulldown'),
+  "seated-cable-row": () => import('./posture-seated-cable-row'),
+  "leg-press": () => import('./posture-leg-press'),
+  "machine-chest-press": () => import('./posture-machine-chest-press'),
+};
+export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { readonly id: string; readonly pre: string; readonly section: string } }>>> = {
+  "lateral-raise": () => import('./feel-lateral-raise'),
+  "barbell-back-squat": () => import('./feel-barbell-back-squat'),
+  "pull-up": () => import('./feel-pull-up'),
+  "hanging-leg-raise": () => import('./feel-hanging-leg-raise'),
+  "lat-pulldown": () => import('./feel-lat-pulldown'),
+  "seated-cable-row": () => import('./feel-seated-cable-row'),
+  "leg-press": () => import('./feel-leg-press'),
+  "machine-chest-press": () => import('./feel-machine-chest-press'),
+};

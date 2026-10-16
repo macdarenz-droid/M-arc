@@ -2,7 +2,8 @@
 //   src/howto/ids.ts                       hasHowTo over 5-character hashes of the shipped ids (main bundle, <= 2,048 B)
 //   tools/plates/library/ids-node.mjs      its Node twin, emitted from the same template (tests, the gate's harness)
 //   src/howto/lib-id.ts                    LibId: every exercises.json id (types only, generated once per exercises.json)
-//   src/howto/generated/loaders.ts        LOADERS: one dynamic import per shipped id (its own lazy chunk)
+//   src/howto/generated/loaders.ts        LOADERS: one dynamic import per shipped id (its own lazy chunk), and the
+//                                          per-chromeId HAND, POSTURE and FEEL chunk maps (D-LIB2-sheet-maps)
 //   src/howto/coverage.ts                  every exercises.json id's status (HT-4's C6 contract) and stage (plan 1)
 // content.mjs runs after this plugin and appends HOWTO_HINTS to ids.ts, as it did after plates.mjs.
 import { existsSync, readFileSync } from 'node:fs';
@@ -10,6 +11,10 @@ import { join } from 'node:path';
 import { ROOT } from '../lib/inputs.mjs';
 import { EXERCISES_JSON, registryInputs, rows, shippedIds } from '../library/registry.mjs';
 import { PAIRS, loadPairs, pairsOf } from './handpairs.mjs';
+
+/** The layer plugins whose chunks loaders.ts maps (run first, so ctx.prev holds their outputs). */
+export const LAYERS = ['tools/plates/gen/hands.mjs', 'tools/plates/gen/zooms.mjs', 'tools/plates/gen/feel.mjs', 'tools/plates/gen/handpairs.mjs'];
+export const after = LAYERS;
 
 export const COVERAGE_DATA = 'tools/plates/library/coverage-archetypes.json';
 export const LABEL = 'How to do it';
@@ -75,7 +80,23 @@ export type LibId =
 ${ids.map(id => `  | ${JSON.stringify(id)}`).join('\n')};
 `;
 
-export const htIndexText = (loaders, pairOf = {}, keys = []) => `import type { BuiltHowTo, LibId } from '../types';
+/** The per-chromeId chunk maps, in shipped-row order (D-LIB2-sheet-maps): HAND is an exercise's own hand-<chromeId>
+ *  chunk, else its shared handpair-<key> chunk (design 12); POSTURE and FEEL are posture-<chromeId> and
+ *  feel-<chromeId> when written. `has(name)`: whether src/howto/generated/<name>.ts is an output. */
+export function chunkMaps(shippedRows, has, pairOf = {}) {
+  const hand = [], posture = [], feel = [];
+  for (const { chromeId: c } of shippedRows) {
+    if (has(`hand-${c}`)) hand.push([c, `hand-${c}`]);
+    else if (pairOf[c]) hand.push([c, `handpair-${pairOf[c]}`]);
+    if (has(`posture-${c}`)) posture.push([c, `posture-${c}`]);
+    if (has(`feel-${c}`)) feel.push([c, `feel-${c}`]);
+  }
+  return { hand, posture, feel };
+}
+
+const mapText = entries => `{${entries.map(([c, f]) => `\n  ${JSON.stringify(c)}: () => import('./${f}'),`).join('')}${entries.length ? '\n' : ''}}`;
+
+export const htIndexText = (loaders, { hand = [], posture = [], feel = [] } = {}) => `import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
 export const HOWTO_IDS = [
@@ -87,9 +108,11 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
 ${loaders.map(([id, slug]) => `  ${id}: () => import('./ht-${slug}'),`).join('\n')}
 };
 
-// Hand pairs (LIB-2 design 12): exercise chrome id -> shared pair key, and one dynamic import per key.
-export const PAIR_OF: Readonly<Record<string, string>> = {${Object.entries(pairOf).map(([c, k]) => `\n  ${JSON.stringify(c)}: ${JSON.stringify(k)},`).join('')}${keys.length ? '\n' : ''}};
-export const PAIR_LOADERS: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {${keys.map(k => `\n  ${JSON.stringify(k)}: () => import('./handpair-${k}'),`).join('')}${keys.length ? '\n' : ''}};
+// Per-chromeId chunks (D-LIB2-sheet-maps): the sheet chunk holds no per-id map, so it does not grow with the library.
+// HAND: the exercise's own hand chunk, else its shared hand pair (LIB-2 design 12).
+export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = ${mapText(hand)};
+export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: Readonly<Record<string, string>>; readonly zdots: string }>>> = ${mapText(posture)};
+export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { readonly id: string; readonly pre: string; readonly section: string } }>>> = ${mapText(feel)};
 `;
 
 export function coverageText(entries) {
@@ -127,7 +150,7 @@ export function coverageEntries(archetypes, all, exerciseIds) {
   });
 }
 
-const pairsInputs = () => [...registryInputs(), ...(existsSync(join(ROOT, PAIRS)) ? [PAIRS] : [])];
+const pairsInputs = () => [...registryInputs(), ...LAYERS.filter(p => p !== 'tools/plates/gen/handpairs.mjs'), ...(existsSync(join(ROOT, PAIRS)) ? [PAIRS] : [])];
 export const inputs = () => [...registryInputs(), COVERAGE_DATA, ...(existsSync(join(ROOT, PAIRS)) ? [PAIRS] : [])];
 /** Each output's own inputs (design 6.1), static so a header can be re-checked with no render. */
 export function inputsFor(path) {
@@ -138,18 +161,22 @@ export function inputsFor(path) {
   return undefined;
 }
 
-export async function outputs() {
+export async function outputs(ctx = {}) {
   const all = rows(), shipped = shippedIds(all);
   const exerciseIds = JSON.parse(readFileSync(join(ROOT, EXERCISES_JSON), 'utf8')).map(e => e.id);
   const set = setOf(shipped, exerciseIds);
   const slugOf = new Map(all.map(r => [r.id, r.slug]));
   const archetypes = JSON.parse(readFileSync(join(ROOT, COVERAGE_DATA), 'utf8')).archetypes;
-  const { pairOf, keys } = pairsOf(await loadPairs(), shipped, all);
+  const { pairOf } = pairsOf(await loadPairs(), shipped, all);
+  const gen = name => `src/howto/generated/${name}.ts`;
+  const has = ctx.prev ? name => ctx.prev.has(gen(name)) : name => existsSync(join(ROOT, gen(name)));
+  const byId = new Map(all.map(r => [r.id, r]));
+  const maps = chunkMaps(shipped.map(id => byId.get(id)), has, pairOf);
   return [
     { path: 'src/howto/ids.ts', text: idsText(set), inputs: inputsFor('src/howto/ids.ts') },
     { path: 'tools/plates/library/ids-node.mjs', text: idsNodeText(set), inputs: inputsFor('tools/plates/library/ids-node.mjs') },
     { path: 'src/howto/lib-id.ts', text: libIdText(exerciseIds), inputs: inputsFor('src/howto/lib-id.ts') },
-    { path: 'src/howto/generated/loaders.ts', text: htIndexText(shipped.map(id => [id, slugOf.get(id)]), pairOf, keys), inputs: inputsFor('src/howto/generated/loaders.ts') },
+    { path: 'src/howto/generated/loaders.ts', text: htIndexText(shipped.map(id => [id, slugOf.get(id)]), maps), inputs: inputsFor('src/howto/generated/loaders.ts') },
     { path: 'src/howto/coverage.ts', text: coverageText(coverageEntries(archetypes, all, exerciseIds)), inputs: inputsFor('src/howto/coverage.ts') },
   ];
 }

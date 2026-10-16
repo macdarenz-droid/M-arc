@@ -8893,9 +8893,15 @@ if (!(await import('../tools/plates/fidelity/shard.mjs')).ht10Runs()) {
   if (lj.length !== 1) errors.push(`${tag} A10: expected one loaders-*.js chunk, found ${lj.join(', ') || 'none'}`);
   else {
     const buf = readFileSync(join(ROOT, 'www/assets', lj[0])), gz = gzipSync(buf).length;
-    const b = JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).budgets.find(x => x.chunk === 'loaders-*.js');
-    if (!b) errors.push(`${tag} A10: loaders-*.js has no entry in tests/howto/budgets.json`);
-    else if (buf.length > b.rawMax || gz > b.gzMax) errors.push(`${tag} A10: ${lj[0]} is ${buf.length} B raw / ${gz} B gz, over its ceiling ${b.rawMax}/${b.gzMax}`);
+    // the per-id rule (D-LIB2-loaders-budget): the ceiling is recomputed from the 8's measurement at the shipped N
+    const b = JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).perId?.find(x => x.chunk === 'loaders-*.js');
+    const { perIdCeiling } = await import('../tools/plates/library/budgets/total.mjs');
+    if (!b) errors.push(`${tag} A10: loaders-*.js has no perId entry in tests/howto/budgets.json`);
+    else {
+      const n = shippedRows.length, rawMax = perIdCeiling(b.measuredRaw, n), gzMax = perIdCeiling(b.measuredGz, n);
+      if (b.n !== n || b.rawMax !== rawMax || b.gzMax !== gzMax) errors.push(`${tag} A10: the loaders-*.js entry (n ${b.n}, ${b.rawMax}/${b.gzMax}) is not the per-id rule at ${n} shipped ids (${rawMax}/${gzMax})`);
+      if (buf.length > rawMax || gz > gzMax) errors.push(`${tag} A10: ${lj[0]} is ${buf.length} B raw / ${gz} B gz, over its per-id ceiling ${rawMax}/${gzMax} at ${n} shipped ids`);
+    }
     const text = buf.toString('utf8');
     for (const r of shippedRows) if (!new RegExp(`ht-${r.slug}-[\\w-]{8}\\.js`).test(text)) errors.push(`${tag} A10: ${lj[0]} does not import ht-${r.slug}`);
     const holders = assets.filter(f => /^(index|HowToSheet)-[\w-]{8}\.js$/.test(f) && shippedRows.some(r => readFileSync(join(ROOT, 'www/assets', f), 'utf8').includes(`ht-${r.slug}-`)));
@@ -8916,6 +8922,54 @@ if (!(await import('../tools/plates/fidelity/shard.mjs')).ht10Runs()) {
     await ctx.close();
   } finally { await lb.close(); }
   if (!errors.some(e => e.startsWith(`${tag} `))) console.log(`${tag}: LOADERS in its own lazy loaders-*.js chunk within budget, holding every shipped ht- import, requested only on the How-to tap`);
+}
+
+// LIB-2 (ruling D-LIB2-A4, supervisor 2026-10-16; library plan 5.1, 5.6): HT-10 A4's total and C17 miss loaders-* and
+// handpair-* ("hand-" needs the dash). This block, not ht10.mjs, adds:
+// - A25: the superset How-to total over every HowToSheet-, ht-, hand-, handpair-, feel-, posture-, zoom- and loaders-
+//   asset, within the How-to total ceiling (tests/howto/budgets.json totals, the per-id rule of L2-A15 at the shipped N);
+// - A26: C17 (the shared checker, plus no <a>, no target=, every href starting with #) over loaders-*.js and handpair-*.js.
+// Red on 0 How-to assets and on no loaders-*.js chunk.
+{
+  const tag = 'LIB-2';
+  const { gzipSync } = await import('node:zlib');
+  const { perIdCeiling } = await import('../tools/plates/library/budgets/total.mjs');
+  const REG = await import('../tools/plates/library/registry.mjs');
+  const n = REG.shippedIds().length;
+  const assetsDir = join(ROOT, 'www/assets');
+  const all = readdirSync(assetsDir).filter(f => /^(HowToSheet-|ht-|hand-|handpair-|feel-|posture-|zoom-|loaders-)[\w-]+\.(js|css)$/.test(f));
+  const T = JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).totals?.find(t => t.chunk === 'How-to total');
+  if (!all.length) errors.push(`${tag} A25: no How-to assets in www/assets`);
+  if (!all.some(f => /^loaders-[\w-]{8}\.js$/.test(f))) errors.push(`${tag} A25: no loaders-*.js chunk among the How-to assets`);
+  if (!T) errors.push(`${tag} A25: no "How-to total" entry in tests/howto/budgets.json totals`);
+  else {
+    const rawMax = perIdCeiling(T.measuredRaw, n), gzMax = perIdCeiling(T.measuredGz, n);
+    let raw = 0, gz = 0;
+    for (const f of all) { const b = readFileSync(join(assetsDir, f)); raw += b.length; gz += gzipSync(b).length; }
+    if (raw > Math.min(rawMax, T.rawMax) || gz > Math.min(gzMax, T.gzMax)) errors.push(`${tag} A25: the superset How-to total (${all.length} files) is ${raw} B raw / ${gz} B gz, over ${Math.min(rawMax, T.rawMax)} / ${Math.min(gzMax, T.gzMax)} at ${n} shipped ids`);
+    console.log(`${tag} A25: superset How-to total ${all.length} files (${all.filter(f => /^(loaders|handpair)-/.test(f)).length} loaders-/handpair- among them), ${raw} B raw / ${gz} B gz of ${Math.min(rawMax, T.rawMax)} / ${Math.min(gzMax, T.gzMax)}`);
+  }
+  const scanned = all.filter(f => /^(loaders|handpair)-[\w-]+\.js$/.test(f));
+  const { pathToFileURL } = await import('node:url');
+  const { mkdtempSync, copyFileSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { build } = await import('esbuild');
+  const c17 = await build({ entryPoints: [join(ROOT, 'tests/howto/checks/c17.ts')], bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' });
+  const dir = mkdtempSync(join(tmpdir(), 'lib2-c17-')), scan = join(dir, 'scan');
+  try {
+    mkdirSync(scan);
+    writeFileSync(join(dir, 'c17.mjs'), c17.outputFiles[0].text);
+    const { checkC17 } = await import(pathToFileURL(join(dir, 'c17.mjs')).href);
+    for (const f of scanned) copyFileSync(join(assetsDir, f), join(scan, f));
+    for (const m of checkC17([scan])) errors.push(`${tag} A26: C17: ${m}`);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+  for (const f of scanned) {
+    const s = readFileSync(join(assetsDir, f), 'utf8');
+    if (/<a[\s/>]/.test(s)) errors.push(`${tag} A26: C17: ${f} has an <a> tag`);
+    if (/\btarget\s*=/.test(s)) errors.push(`${tag} A26: C17: ${f} has a target= attribute`);
+    for (const m of s.matchAll(/\bhref=(["'])(.*?)\1/g)) if (!m[2].startsWith('#')) errors.push(`${tag} A26: C17: ${f} has href="${m[2].slice(0, 60)}"`);
+  }
+  if (!errors.some(e => / A2[56]: /.test(e) && e.startsWith(`${tag} `))) console.log(`${tag} A25/A26: superset How-to total within the per-id ceiling; C17 clean on ${scanned.join(', ')}`);
 }
 
 await browser.close();

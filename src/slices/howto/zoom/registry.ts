@@ -14,19 +14,14 @@ export interface ZoomChunk {
 export type ZoomLoader = (chromeId: string, key: string) => Promise<ZoomChunk>;
 
 /** The per-exercise hand chunks, one lazy import each (Vite splits every file into its own `hand-<id>-*.js`, with
- *  the exercise's close-up CSS, css/zoom-<id>.css, which a posture chunk imports too). */
-const HAND_CHUNKS = import.meta.glob<ZoomChunk>('../../../howto/generated/hand-*.ts');
-const handChunk = (chromeId: string) => {
-  const load = HAND_CHUNKS[`../../../howto/generated/hand-${chromeId}.ts`];
-  if (load) return load();
-  // LIB-2 (design 12, D-LIB7-1): a library exercise's hand close-up is its shared pair chunk, handpair-<key>, found
-  // through the lazy loaders chunk; the 8 above are unchanged.
-  return import('../../../howto/generated/loaders').then(m => {
-    const key = m.PAIR_OF[chromeId], pair = key ? m.PAIR_LOADERS[key] : undefined;
-    if (!pair) throw new Error(`no hand close-up for ${chromeId}`);
-    return pair();
-  });
-};
+ *  the exercise's close-up CSS, css/zoom-<id>.css, which a posture chunk imports too). LIB-2 (design 12, D-LIB7-1,
+ *  D-LIB2-sheet-maps): the map is the loaders module's HAND, already loaded by the sheet: an exercise's own hand
+ *  chunk, else its shared pair chunk handpair-<key>; the sheet chunk holds no per-id map. */
+const handChunk = (chromeId: string) => import('../../../howto/generated/loaders').then(m => {
+  const load = m.HAND[chromeId];
+  if (!load) throw new Error(`no hand close-up for ${chromeId}`);
+  return load();
+});
 
 export const ZOOM_KINDS: Partial<Record<ZoomKind, ZoomLoader>> = {
   hand: chromeId => handChunk(chromeId),

@@ -41,7 +41,9 @@ describe('HT2-A5: ids.ts', () => {
   it('each LOADERS entry imports its own generated module dynamically', () => {
     const index = readFileSync('src/howto/generated/loaders.ts', 'utf8');   // LIB-2: LOADERS moved here
     for (const id of HOWTO_IDS) expect(index).toContain(`  ${id}: () => import('./ht-${rows[id]!.slug}'),\n`);
-    expect(index.match(/import\(/g)).toHaveLength(HOWTO_IDS.length);
+    // LIB-2 (D-LIB2-sheet-maps): the other imports are the per-chromeId HAND, POSTURE and FEEL maps
+    expect(index.match(/import\('\.\/ht-/g)).toHaveLength(HOWTO_IDS.length);
+    expect(index.match(/import\('\.\/(?!ht-|hand-|handpair-|posture-|feel-)/g)).toBeNull();
     expect(index.match(/^import (?!type )/gm)).toBeNull();
   });
 
