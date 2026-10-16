@@ -34,6 +34,7 @@ import { loadableNear, loadableValues, loadMenu, loggedLoads, menuProfile } from
 import { findInApp } from '../palace/registry';
 import { firstWorkingSet, isWorkingSet } from '@/brain/exposure';
 import { elapsedSec, restRemainingSec } from '@/slices/workout/session';
+import { doneSets } from '@/slices/workout/doneSets';
 import { one } from '../context/brief';
 import {
   progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, hoursLeftOut, readinessToday, recoveryAt, redactDrivers, splitPlanOf, todayOverrideOf, type ToolCtx,
@@ -431,10 +432,12 @@ export function getLiveSession(_: unknown, ctx: ToolCtx) {
     // QA-R4b-5: like Train, weighted main lifts only; on an assisted lift more kg means more help.
     if (ex?.role === 'main' && ex.mode === 'weighted' && first && tgt?.kg != null && tgt.reps != null) autoreg = autoregulationSuggestion({ exerciseId: cur.exerciseId, exerciseName: cur.name, firstSet: first, targetKg: tgt.kg, targetReps: tgt.reps, historyCount: exerciseHistory(s.sessions, cur.exerciseId, s.customExercises).length, equipment: pctx.equipment, holdLoad: !!sug.holdLoad })?.action ?? null;
   }
+  // R11 (D-A3-5b): one list for the count and the sets, by Train's card rule (typed sets count).
+  const done = cur ? doneSets(cur.sets) : [];
   return capJson({
     active: true,
     split: s.splits.find(x => x.id === a.splitId)?.name ?? 'Workout', splitId: a.splitId, elapsedMin, paused: !!a.pausedAt,
-    current: cur ? { exerciseId: cur.exerciseId, exercise: cur.name, setsDone: cur.sets.filter(isWorkingSet).length, setsPlanned: cur.sets.filter(x => x.kind !== 'warmup').length, sets: cur.sets.filter(x => x.at).map(x => setOut(ctx, cur.exerciseId, x)) } : null,
+    current: cur ? { exerciseId: cur.exerciseId, exercise: cur.name, setsDone: done.length, setsPlanned: cur.sets.filter(x => x.kind !== 'warmup').length, sets: done.map(x => setOut(ctx, cur.exerciseId, x)) } : null,
     entries: a.entries.map(e => ({ exerciseId: e.exerciseId, exercise: e.name, done: e.done, skipped: e.skipped, sets: e.sets.length })),
     restSecLeft: restRemainingSec(a, ctx.now),
     adjustment: autoreg,

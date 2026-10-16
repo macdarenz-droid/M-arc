@@ -111,8 +111,9 @@ export function setGymDefaultUnit(gymId: string, unit: LoadUnit): void {
   patchUnits(u => ({ ...u, gyms: u.gyms.map(g => (g.id === gymId ? { ...g, defaultUnit: unit } : g)) }));
 }
 
-/** Removes a gym and its profiles. The last gym stays. */
+/** Removes a gym and its profiles. The last gym stays, and so does the live session's gym (UI-R06). */
 export function deleteGym(gymId: string): void {
+  if (state.value.active?.gymId === gymId) return;
   patchUnits(u => {
     if (u.gyms.length <= 1) return u;
     const gyms = u.gyms.filter(g => g.id !== gymId);
