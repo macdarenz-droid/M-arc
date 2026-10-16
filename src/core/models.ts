@@ -246,7 +246,7 @@ export type StoredCommandResult =
 /** `not_saved`: the save failed, nothing changed and nothing was kept, so the watch may send it again. */
 export type CommandResult = StoredCommandResult | { commandId: string; status: 'not_saved'; reason: 'storage_failed' };
 
-/** WATCH-B: one handled command. `fp` is the FNV-1a hash of everything it said, its session included. Times in ms. */
+/** WATCH-B: one handled command. `fp` is the 64-bit FNV-1a hash of everything it said, its session included. Times in ms. */
 export interface CommandReceipt {
   commandId: string;
   sessionId: string;
@@ -260,7 +260,7 @@ export interface CommandReceipt {
 /** WATCH-B: a session that ended, so a late command for it is refused, never applied. `at` in ms. */
 export interface ClosedSession { sessionId: string; status: 'finished' | 'discarded'; at: number }
 
-/** WATCH-B: receipts (at most 500) and the last 50 closed sessions, newest last. */
+/** WATCH-B: receipts (at most 500 per session; a new session keeps the last closed one's) and the last 50 closed sessions, newest last. */
 export interface CommandLog { receipts: CommandReceipt[]; closed: ClosedSession[] }
 
 export interface Reminders {

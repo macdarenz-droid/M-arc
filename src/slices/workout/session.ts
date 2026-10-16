@@ -191,7 +191,8 @@ function pausedSession(a: ActiveSession, now: number): ActiveSession {
 function resumedSession(a: ActiveSession, now: number): ActiveSession {
   if (!a.pausedAt) return a;
   const rest = a.rest?.pausedRemainingSec != null ? { ...a.rest, endsAt: now + a.rest.pausedRemainingSec * 1000, pausedRemainingSec: undefined, rev: (a.rest.rev ?? 0) + 1 } : a.rest;
-  return { ...a, pausedMs: a.pausedMs + (now - a.pausedAt), pausedAt: undefined, rest };
+  // A clock stepped back while paused adds no pause rather than a negative one.
+  return { ...a, pausedMs: a.pausedMs + Math.max(0, now - a.pausedAt), pausedAt: undefined, rest };
 }
 
 export function pauseSession(): void {
@@ -495,18 +496,22 @@ export function restDone(timeDone: boolean, heartReady: boolean, timerIsFloor: b
   return timeDone || (heartReady && !timerIsFloor);
 }
 
+/** WATCH-B: an ended rest that the phone starts again is a new rest, so a late watch +30 s for the old one is stale. */
+const restIdentity = (r: RestState, restarted: boolean): Pick<RestState, 'id' | 'rev'> => (restarted ? { id: newId('rest'), rev: 0 } : { id: r.id, rev: (r.rev ?? 0) + 1 });
+
 export function adjustRest(deltaSec: number): void {
   const a = active();
   if (!a?.rest) return;
   if (a.pausedAt) {
     const cur = a.rest.pausedRemainingSec ?? Math.max(0, Math.round((a.rest.endsAt - a.pausedAt) / 1000));
     const next = Math.max(5, Math.min(REST_MAX, cur + deltaSec));
-    patchActive(x => ({ ...x, rest: x.rest ? { ...x.rest, pausedRemainingSec: next, totalSec: Math.max(x.rest.totalSec, next), rev: (x.rest.rev ?? 0) + 1 } : x.rest }));
+    patchActive(x => ({ ...x, rest: x.rest ? { ...x.rest, pausedRemainingSec: next, totalSec: Math.max(x.rest.totalSec, next), ...restIdentity(x.rest, cur <= 0) } : x.rest }));
     return;
   }
+  const ended = a.rest.endsAt <= Date.now();
   const remaining = Math.max(0, (a.rest.endsAt - Date.now()) / 1000) + deltaSec;
   const endsAt = Date.now() + Math.max(5, Math.min(REST_MAX, remaining)) * 1000;
-  patchActive(x => ({ ...x, rest: x.rest ? { ...x.rest, endsAt, totalSec: Math.max(x.rest.totalSec, Math.round(remaining)), rev: (x.rest.rev ?? 0) + 1 } : x.rest }));
+  patchActive(x => ({ ...x, rest: x.rest ? { ...x.rest, endsAt, totalSec: Math.max(x.rest.totalSec, Math.round(remaining)), ...restIdentity(x.rest, ended) } : x.rest }));
   void scheduleRestDone(endsAt);
 }
 

@@ -145,8 +145,9 @@ function uncopiedSets(sets: LoggedSet[]): LoggedSet[] {
   return sets.map((set, i) => {
     const prev = sets[i - 1];
     if (!prev || !isObj(set) || !isObj(prev)) return set;
-    // WATCH-B: a watch set (receivedAt) is never such a copy; two can share a time clamped to one receipt.
-    const copied = (set.at != null && set.at === prev.at && set.receivedAt == null) || (set.id != null && set.id === prev.id);
+    // WATCH-B: a watch set (receivedAt) is never such a copy or its source; a watch set and the set
+    // next to it can share a millisecond.
+    const copied = (set.at != null && set.at === prev.at && set.receivedAt == null && prev.receivedAt == null) || (set.id != null && set.id === prev.id);
     if (!copied) return set;
     const { at: _at, restSec: _r, fidelity: _f, heart: _h, status: _s, id: _id, ...kept } = set;
     return kept;

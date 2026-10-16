@@ -16,10 +16,11 @@ vi.mock('@/native/haptics', async orig => {
 
 import { freshState, type AppState, type CommandReceipt, type LoggedSet, type Split } from '@/core/models';
 import { initStore, replaceState, state } from '@/core/store';
+import { fnv } from '@/escobar/hash';
 import { enteredLoad } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import {
-  addExerciseToSession, addSet, commitSet, discardSession, finishSession, isCommitted, logWarmups, moveEntry, setSet, startRest, startSession, substituteEntry,
+  addExerciseToSession, addSet, adjustRest, commitSet, discardSession, finishSession, isCommitted, logWarmups, moveEntry, pauseSession, resumeSession, setSet, startRest, startSession, substituteEntry,
 } from '@/slices/workout/session';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
 import { sessionAt, sets } from '../helpers';
@@ -114,7 +115,7 @@ describe('WATCH-B B2: complete_set saves the set', () => {
       id: set.id, status: 'committed', rev: 1, ...enteredLoad(135, 'lb'), reps: 8, effort: 'ideal',
       at: new Date(c.actionAt).toISOString(), receivedAt: new Date(Date.now()).toISOString(), fidelity: 'live',
     });
-    expect(back.commands.receipts).toEqual([{ commandId: c.commandId, sessionId: c.sessionId, kind: 'complete_set', fp: expect.stringMatching(/^[0-9a-f]{8}$/), result: r, actionAt: c.actionAt, receivedAt: Date.now() }]);
+    expect(back.commands.receipts).toEqual([{ commandId: c.commandId, sessionId: c.sessionId, kind: 'complete_set', fp: expect.stringMatching(/^[0-9a-f]{16}$/), result: r, actionAt: c.actionAt, receivedAt: Date.now() }]);
     // The rest starts at the watch's action time, and its alarm and haptic only after the save.
     expect(back.active!.rest).toMatchObject({ id: expect.any(String), rev: 0, endsAt: c.actionAt + 90_000 });
     expect(fx.scheduleRestDone).toHaveBeenCalledTimes(1);
@@ -600,5 +601,124 @@ describe('WATCH-B B12, B13: a save from a newer build', () => {
     expect(handleWorkoutCommand(c)).toEqual({ commandId: c.commandId, status: 'rejected', reason: 'unsupported', replayed: false });
     expect(state.value).toBe(snapshot);
     expect(mem.writes.length).toBe(writes);
+  });
+});
+
+describe('WATCH-B red team', () => {
+  const oldReceipt = (sessionId: string, i: number): CommandReceipt => {
+    const commandId = `old-${String(i).padStart(4, '0')}`;
+    return { commandId, sessionId, kind: 'pause', fp: '00000000', result: { commandId, status: 'rejected', reason: 'invalid_state', replayed: false }, actionAt: T0, receivedAt: T0 };
+  };
+  it('B12: the cap counts only the live session, so a full previous session does not block the next', () => {
+    begin();
+    const one = a().id!;
+    discardSession();
+    replaceState({ ...state.value, commands: { ...state.value.commands, receipts: Array.from({ length: 500 }, (_, i) => oldReceipt(one, i)) } });
+    begin();
+    expect(state.value.commands.receipts).toHaveLength(500);
+    expect(handleWorkoutCommand(cmd('pause'))).toMatchObject({ status: 'applied' });
+    expect(saved().commands.receipts).toHaveLength(501);
+  });
+  it('B4: a reused id whose payload collides with a 32-bit fingerprint is still a conflict', () => {
+    replaceState({ ...state.value, active: { id: 's_fixed01', splitId: 'sp', startedAt: new Date(T0).toISOString(), pausedMs: 0, rev: 0, entries: [{ id: 'e_fixed01', exerciseId: 'lib_barbell_bench_press', name: 'Bench', done: false, skipped: false, sets: [{ id: 'set_fixed01', status: 'draft', rev: 0 }] }] } });
+    vi.advanceTimersByTime(60_000);
+    const at = Date.now();
+    const fp32 = (value: number, reps: number) => fnv(JSON.stringify([1, 's_fixed01', 'complete_set', at, ['set_fixed01', 0, value, 'kg', reps, null]]));
+    expect(fp32(91.3, 9)).toBe(fp32(207, 12));
+    const send = (value: number, reps: number) => handleWorkoutCommand({ v: 1, commandId: 'samecmdid01', sessionId: 's_fixed01', actionAt: at, kind: 'complete_set', setId: 'set_fixed01', expectedRev: 0, load: { value, unit: 'kg' }, reps });
+    expect(send(91.3, 9)).toMatchObject({ status: 'applied' });
+    expect(send(207, 12)).toMatchObject({ status: 'rejected', reason: 'id_conflict' });
+    expect(a().entries[0]!.sets[0]).toMatchObject({ kg: 91.3, reps: 9 });
+  });
+  it('B4: a resend replays only when the stored session, kind and action time match too', () => {
+    begin();
+    vi.advanceTimersByTime(60_000);
+    const c = complete(a().entries[0]!.sets[0]!.id!);
+    handleWorkoutCommand(c);
+    const stored = state.value.commands.receipts[0]!;
+    for (const change of [{ sessionId: 's_elsewhere' }, { kind: 'pause' as const }, { actionAt: stored.actionAt - 1 }]) {
+      replaceState({ ...state.value, commands: { ...state.value.commands, receipts: [{ ...stored, ...change }] } });
+      expect(handleWorkoutCommand(c), JSON.stringify(change)).toMatchObject({ status: 'rejected', reason: 'id_conflict' });
+    }
+    replaceState({ ...state.value, commands: { ...state.value.commands, receipts: [stored] } });
+    expect(handleWorkoutCommand(c)).toMatchObject({ status: 'applied', replayed: true });
+  });
+  it('B12: only plain objects, and only their own fields, are read', () => {
+    begin();
+    const own = { v: 1, commandId: nextId(), sessionId: a().id, actionAt: Date.now() };
+    expect(handleWorkoutCommand(Object.assign(Object.create({ kind: 'finish' }), own))).toMatchObject({ status: 'rejected', reason: 'invalid' });
+    expect(state.value.active).not.toBeNull();
+    // Complete own fields on another prototype are refused too.
+    expect(handleWorkoutCommand(Object.assign(Object.create({ via: 'class' }), { ...own, commandId: nextId(), kind: 'pause' }))).toMatchObject({ status: 'rejected', reason: 'invalid' });
+    expect(a().pausedAt).toBeUndefined();
+    startRest(90);
+    Object.defineProperty(Object.prototype, 'restId', { value: a().rest!.id, configurable: true });
+    try {
+      expect(handleWorkoutCommand({ ...own, commandId: nextId(), kind: 'rest_skip' })).toMatchObject({ status: 'rejected', reason: 'invalid' });
+    } finally {
+      delete (Object.prototype as unknown as Record<string, unknown>).restId;
+    }
+    expect(a().rest).toBeDefined();
+    expect(state.value.commands.receipts).toHaveLength(0);
+    // JSON's own "__proto__" key is only a field: this pause stays a pause.
+    const raw: unknown = JSON.parse(`{"v":1,"commandId":"${nextId()}","sessionId":"${a().id}","actionAt":${Date.now()},"kind":"pause","__proto__":{"kind":"finish"}}`);
+    expect(handleWorkoutCommand(raw)).toMatchObject({ status: 'applied' });
+    expect(a().pausedAt).toBe(Date.now());
+  });
+  it('B11: a receive time that is not a finite number is replaced by the phone clock', () => {
+    begin();
+    vi.advanceTimersByTime(60_000);
+    expect(handleWorkoutCommand(complete(a().entries[0]!.sets[0]!.id!), NaN)).toMatchObject({ status: 'applied' });
+    expect(a().entries[0]!.sets[0]!.receivedAt).toBe(new Date(Date.now()).toISOString());
+    expect(state.value.commands.receipts[0]!.receivedAt).toBe(Date.now());
+    expect(handleWorkoutCommand(cmd('pause'), Number.POSITIVE_INFINITY)).toMatchObject({ status: 'applied' });
+    expect(a().pausedAt).toBe(Date.now());
+  });
+  it('B10: a clock that steps back while paused adds no negative pause, from the watch or the phone', () => {
+    begin();
+    vi.advanceTimersByTime(600_000);
+    handleWorkoutCommand(cmd('pause'));
+    vi.setSystemTime(Date.now() - 120_000);
+    handleWorkoutCommand(cmd('resume'));
+    expect(a().pausedMs).toBe(0);
+    pauseSession();
+    vi.setSystemTime(Date.now() - 120_000);
+    resumeSession();
+    expect(a().pausedMs).toBe(0);
+  });
+  it('B11: a phone set committed in the same millisecond as the watch set before it stays committed after a reload', () => {
+    begin();
+    vi.advanceTimersByTime(120_000);
+    const iso = new Date(Date.now()).toISOString();
+    const [s0, s1] = a().entries[0]!.sets;
+    handleWorkoutCommand(complete(s0!.id!));
+    setSet(0, 1, { kg: 60, reps: 8 });
+    commitSet(0, 1);
+    vi.advanceTimersByTime(300); // the phone's debounced save
+    initStore(mem);
+    expect(a().entries[0]!.sets.map(s => [s.id, s.status, s.at])).toEqual([[s0!.id, 'committed', iso], [s1!.id, 'committed', iso]]);
+  });
+  it('B10: a rest the phone restarts after it ended is a new rest, so a late +30 s is stale', () => {
+    begin();
+    startRest(60);
+    const first = a().rest!.id;
+    const late = cmd('rest_add_30', { restId: first });
+    vi.advanceTimersByTime(70_000);
+    adjustRest(30);
+    const restarted = a().rest!;
+    expect(restarted.id).not.toBe(first);
+    expect(handleWorkoutCommand(late)).toMatchObject({ status: 'rejected', reason: 'stale_rest' });
+    expect(a().rest).toEqual(restarted);
+    startRest(15);
+    vi.advanceTimersByTime(16_000);
+    pauseSession();
+    const held = a().rest!.id;
+    adjustRest(15); // a held rest at 0 s, restarted while paused
+    expect(a().rest!.id).not.toBe(held);
+    resumeSession();
+    startRest(60);
+    const running = a().rest!.id;
+    adjustRest(15); // time added to a running rest keeps it the same rest
+    expect(a().rest!.id).toBe(running);
   });
 });
