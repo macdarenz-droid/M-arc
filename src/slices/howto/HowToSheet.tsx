@@ -24,7 +24,7 @@ export function HowToSheet({ exerciseId, name, onClose }: HowToSheetProps) {
     let live = true;
     // generated/** is reached only through import() (D-HT1 A4); the data is in before the sheet slides in
     if (!hasHowTo(exerciseId)) { howToLoadFailed(onClose); return; }
-    void import('@/howto/generated').then(m => m.LOADERS[exerciseId]()).then(m => { if (live) setHowTo(m.default); }).catch(() => { if (live) howToLoadFailed(onClose); });
+    void import('@/howto/generated/ht-index').then(m => m.LOADERS[exerciseId]!()).then(m => { if (live) setHowTo(m.default); }).catch(() => { if (live) howToLoadFailed(onClose); });
     return () => { live = false; };
   }, []);
   if (!howTo) return null;
