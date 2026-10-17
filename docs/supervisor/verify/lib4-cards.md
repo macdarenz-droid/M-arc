@@ -657,6 +657,11 @@ The supervisor workflow wf_f45aa9b0-355 drafted these. It ran one Opus judge per
     - **X9c:** `runHt10` A5's per-shard time budget. For the library, LIB-4c's 1,800 s verdict covers it.
     - HT-3b A2's `HowToSheet-*.js` and `.css` budgets are build-wide and map to X4.
     - The count is **2,947** on the 8, not 2,979. `HT6/A6` and `HT9/A5` are one row per id and theme, covering N, M, T@2400 and R:end, so 64 rows each, equal to each block's printed "64 plate pairs". B1 pins 2,947.
+14. **B5 pair keys (D-LIB4-FIXTURE-4, 2026-10-17, on #232; amends item 4).** Today a pair panel is cut from one exercise's layers page and carries that exercise's ids (`#<chromeId>-zoom-hand`, its close button, its labelling), and `ZoomHost.tsx:85` inserts it unchanged. So a real panel cannot yet be shared by two ids.
+    - B5 runs now on 3 scratch ids with 3 separate pair keys, each panel cut from its own id's fixture page.
+    - The shared-key proof moves to LIB-7's card, under D-LIB9-HANDPAGE (item 10b): an exercise-neutral `pairPanel(key)`, LIB-6 drawing a library card's hand block from its pair key, the runner's HT-6 twin finding a shared-key panel by its pair markup, and HT6/A7-lazy with two ids on one key, each in a fresh context.
+    - D-LIB4-ENTRY gains: that shared-key proof passes before LIB-9 ships an id that shares a key.
+    - Nothing is loosened: no shared key can ship before LIB-7's exercise-neutral panel exists, and the check moves with the capability.
 
 ### 11.2 LIB-2b rulings (#234)
 
