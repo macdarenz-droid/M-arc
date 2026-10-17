@@ -1231,3 +1231,178 @@ Posting order:
     - Evidence: GATE-SPLIT READY (6241237372) and the reviewer's own check (6241344488, row c): one md5 across all 20 run × time-zone copies after the removal; A3 medians 128-184 ms against the 400 ms limit (`screenshot-gate.mjs:6983`), so every timing passed its own check in every run.
     - Why: HT-3's rerun rule tests that its pixel, walk, markup and layer results are deterministic. Timings are measurements that vary from run to run by nature, and each run already checks them against their own limits.
     - Why nothing is loosened: every result HT-3 checks must still match character for character, and every timing must still pass its limit in every run. This is a count of reruns, not a change to any check.
+
+## 13. LIB-9a design-note and slice rulings (D-LIB9a-NOTE, 2026-10-17 ~22:15 UTC; #245 @ `1a31cd46`)
+
+Read by a 3-lens review (card and rulings; code and tests in a worktree; the 2 plates rendered in Chromium beside 4 approved plates), a judge, and one adversarial check per ruling. Where that check corrected a ruling, the corrected text below is the ruling.
+
+Active LIB builders with this resume (D-LIB-LANE-ACTIVE): LIB-4a, LIB-4b, LIB-4c, LIB-9a = 4. LIB-5 is in Do 1 (no slot).
+
+### Scope of this resume
+- Merge origin/main (`b70ca58`: GATE-SPLIT and LIB-2b are on main) with a merge commit.
+- Make the fixes below: both highs first, then the mediums and lows.
+- Run Do 4 (the D path, Q5) and Do 6 for all 14 cards, copying from research head `9dbc7e0`. Re-copy once when research wave 2 and the 8's cards merge into `claude/libht-research`; I will name that head.
+- Run Do 7 on both slice plates: the two-build plates-page sha256 and the QA table, with A9 and every mutation shown red and then restored.
+- Post the full slice on this PR, then you are WAITING. **Do 5 (the bulk) is not yet open.** It opens on my look at that slice, with 'LIB-9a resume' again. Do 5(d) also still waits for the pilot A #109 review.
+- The 2-hour push limit until READY stays.
+
+### Rulings on DESIGN.md section 9
+
+#### Q1
+ACCEPT the rule change. The expected F7 on single_arm_lat_pulldown follows research, not this ruling.
+(a) Turn round the topFault rule in DESIGN.md section 4. The ruled note maps each card's faults to keys. Do 6 writes topFault from the card through that map, never from the spec. The rule has two cases:
+- drawable:true: topFault is the key of plate.mistake (for single_arm at 9dbc7e0, 'past', c10/c13).
+- drawable:false: topFault is the key of the top fault that the card itself names, in mistake.why or handlingMistakes, sourced. That key differs from the drawn Mistake's key, so F7 is raised and needs the owner's yes (plan 3.3, LIB-3 mutations.mjs:107).
+The spec's first Mistake tell carries plate.mistake's key and draws that fault.
+The content verifier gets both cases. It is red if a drawable:true topFault names anything other than plate.mistake, or if a drawable:false topFault equals the drawn fault. The same rule goes into D-LIB9-CARDFIELDS for later batches and for LIB-5's 8.
+Mutations: (1) one spec's first tell key changed turns F7 red; (2) on a test copy of one card set to drawable:false with topFault equal to the drawn key, the verifier fixture turns red.
+(b) Before the content verifier runs (A13), the research owner rules on single_arm_lat_pulldown under CARD-V2:36 and content.md:109. The card lists the twist (c6) first in handlingMistakes. Its viewWhy says the engine cannot draw the twist. The census names a sideways lean (c11). Every mistake why says 'Frequency is not measured'.
+- drawable:true stays only with a recorded reason that the past-end pull is the top fault, and handlingMistakes is reordered to match.
+- Otherwise drawable becomes false, and research names the top fault: the twist or the lean.
+Until this ruling is in, single_arm's expected F7 is undecided, and no Do 7 evidence for it counts. If research answers after the verifier has run, the Do 6 re-copy rule re-runs the verifier for that card. A drawable:false answer puts F7 into the expected set with a drawable-fault note, and the plate stays unchanged. LIB-9a never edits the card beyond its three keys.
+(c) Only after (b): the supervisor amends the LIB-9a card's Do 1 expected-flag line. If drawable:true is kept, the supervisor also amends plan 3.1:85 (removing single-arm pulldown from the drawable-fault list) and plan 3.3:303's count of 6.
+
+Why: D-LIB9-CARDFIELDS (item 9) says 'None is taken from the spec under test'. Under the note's rule, topFault is read from the spec (candidate.mjs:84 takes plate.mistake.firstKey from the built page), so F7 passes by construction. F7 is meant to compare the drawn fault with the card's top fault (plan 3.3, mutations.mjs:107-109). On a drawable-fault card those two differ, so an unconditional 'topFault = plate.mistake' would silence F7. On 9dbc7e0 the drawable:true on single_arm conflicts with the card's own viewWhy and handlingMistakes order, and with plan 3.1:85. That is a research question, and its answer must not be guessed (twist or lean).
+
+Why nothing is loosened: F7 runs on every row with zero exemptions on the authoring path, and its expected value now comes from the card, which is stricter than the note. A drawable-fault card keeps F7 and the owner's yes. The expected set and the plan change only after research has ruled on a verified card fact, and before any QA evidence for that id counts.
+
+#### Q2
+ACCEPT: start = the top (chin over the bar), end = the dead hang. Conditions:
+(a) Do 6 writes the card's tempo from c9 (up 2, down 3, pause 1 at the top) through the ruled Q3 map, never copied from the spec: [{phase:'Lower',s:3,move:true},{phase:'Pull',s:2,move:true},{phase:'Hold',s:1}]. H6 then checks the spec against it.
+(b) The pose map is fixed by this ruling and recorded in DESIGN.md and lb1/tempo.json. Card plate.start (the hang) = spec 'end'; card plate.end (chin over bar) = spec 'start'; the Mistake = 'mistake'. Do 6 writes every plateFacts pose through this map. A fact with no pose defaults to the spec's 'end' (node.mjs h6), so every fact about the top must say pose 'start'. The content verifier is given the map.
+(c) Per DRAWING-GUIDE section 4 ("Hidden start parts"), the top pose's pad, bracket and lever are redrawn as a dashed phantom: type `line`, cls 'eq-line m-line', added only when ctx.pose === 'end' (never in the 'mistake' pose), as machine_chest_press:143 does for its lever. leg_press:119-121 is the same engine workaround. The part must stay a `line` (an H9lineTypes type), so H9 passes on its own terms. A test proves the phantom is in the end pose and absent from the Mistake pose (fix 4).
+(d) The contact proof is fixed first (fix 2).
+(e) The alt text and the spec's header comment (line 14 still says "Start: dead hang") follow the drawn order.
+(f) DESIGN.md section 6 replaces "masked by the solid end figure / mostly hidden" with the true reason. The engine builds the Mistake as end pose + override (plate.mjs:78) and outlines what differs from the end pose (:208), drawn over the end figure (:265). So a bottom-of-rep fault reads correctly only against a hang end, as in leg_press. The section also records that this plate differs on purpose from pull_up, which draws the top solid, because this card's fault is at the bottom.
+(g) The critic judges the plate blind, under the plan 3.4 limit of one fix round and one recheck. If it names the order, or scores R5 below 4, the fallback is the card's order with:
+- the Mistake still drawn as a pose (never guides only), and every hard check, H3's Mistake outline and deviation included, still passing;
+- the (c) phantom moved to the hang;
+- the pose map set to identity and the tempo reordered through the Q3 map (Pull 2, Hold 1, Lower 3).
+Because that changes this card's tempo and pose fields after verification, tempo.json and the card are updated, the content verifier re-runs for this card, and QA re-runs before the recheck. If two rounds fail, the plate goes to the supervisor.
+Why:
+- plate.mjs:110-112 and :143: the start layer compares the start equipment with itself, so it never draws moving equipment in either order, which (c) fixes.
+- plate.mjs:78 and :208: the Mistake is relative to the end pose.
+- Precedents for starting with the lowering: the 8's leg_press (top start, Lower first, butt-wink fault at the bottom, drawn against the end pose), plus pilot A's dumbbell_bench_press, incline_dumbbell_press, romanian_deadlift and single_leg_romanian_deadlift. Pilot A's overhead presses start with Press.
+- Reviewer 3's card-order render shows the half hang reading as pull_up's "Chin short" fault.
+- The solid hang carries the card's "Knees on pad" and straight-arms checkpoint (c1, c3).
+Why nothing is loosened:
+- Both card positions, all 3 checkpoints, the card's Mistake and its exact tempo are drawn.
+- Every hard check, H6's equality and the verifier gate are unchanged, and the fallback is bound to them too.
+- The conditions only add drawing, bookkeeping and a re-verify.
+
+#### Q3
+ACCEPT the map, with corrected reasons and a stricter A11.
+
+The map:
+- Scope: lb1/tempo.json only. The 8's tempo stays LIB-5's under lib4-cards 12 item 13.
+- The concentric phase takes plate.tempo.up and the eccentric phase takes plate.tempo.down.
+- Hold takes plate.tempo.pause and comes right after the concentric phase. Hold is there if and only if pause > 0.
+- No Rest phase. The set of named constants for LB1 is empty.
+- Shape: {phase, s, move: true} for a moving phase and {phase, s} for Hold, in that key order, because H6 compares with JSON.stringify (qa/node.mjs:174).
+- Phase names and order: as in the note's section 4 table.
+- Order follows the card's plate.start, and the 13 other rows match it. assisted_pull_up's "Lower 3, Pull 2, Hold 1" stands only if Q2 is accepted. If Q2 is rejected, it is "Pull 2, Hold 1, Lower 3".
+
+tempo.json:
+- It records, per id, the phase rows, each row's source field (up, down or pause), and plate.tempo.claim.
+- Each card's tempo array is built only from tempo.json and that card's plate.tempo, never from a spec.
+
+The test (lb1-plates.test):
+- It holds its own copy of the ruled table (14 rows: names, order, source field) and the ruled constant set (empty), both copied from this ruling. It asserts tempo.json equals them. It never takes expected values from tempo.json or from a spec.
+- It asserts each card's tempo equals the array built from the table and plate.tempo.
+- It asserts Hold is present if and only if pause > 0.
+- It asserts each id's claim equals plate.tempo.claim.
+
+A11's "Rest changed" is replaced by the mutations below. Record this as an amendment of lib4-cards 12 item 9's mutation line, for LB1. Each turns red and is then restored:
+- (i) A Rest phase added to one card and its spec.
+- (ii) A constant added to tempo.json, with or without a ruling citation.
+- (iii) A Hold s that differs from the card's pause, set in both card and spec.
+- (iv) A Hold of 0 s added to close_grip_pulldown (pause 0) in card, spec and tempo.json.
+- (v) The Hold removed from chin_up (pause 1) in card, spec and tempo.json.
+- (vi) up and down swapped in tempo.json for assisted_pull_up (2/3), with card and spec rebuilt to match.
+
+Why:
+- No LB1 card sources a rest. plate.tempo holds only up, down and pause. ACSM's "3- to 5-min rest periods" is a rest between sets, not a rest phase in the rep.
+- A ruled constant would add a number that no verified card holds. D-LIB9-CARDFIELDS allows such a constant; it does not require one.
+- Precedent: pilot A's mountain_climbers (approved, e6f39ff) has a Rest only because research sources it (R-W1-2, c13).
+- Every s is a value from the verified card's plate.tempo. Several of those values are drawing conventions that the claims name as such (chin_up c8, hanging_knee_raise c9, inverted_row c6, assisted_pull_up c9). They stay allowed under item 9 and are re-checked by the planted-error verifier.
+- Mutations (iv) to (vi) close the branches that a "maps to a verified value" check leaves open. The engine would draw (iv) as a "Hold 0 s" segment (vendor sheet.mjs:83-86).
+
+Nothing is loosened:
+- H6's exact equality is unchanged.
+- No s comes from a spec.
+- The expected map lives in the test, not in the builder's file.
+- Every branch of the map has a red mutation.
+
+#### Q4
+ACCEPT the equivalent as A2's second mutation: the real assistMachine knee pad, drawn as a moving rackUpright, must turn H9.moving-line red, as LIB-3's M6 does. Conditions:
+(a) Keep 'moving box pad: H9 green' as a record of how the engine behaves, and make it assert its own premise:
+  - the swap replaced exactly one item, the z 'center' poly with part 'pad', in exactly one equipment entry i, in both the end and Mistake poses;
+  - the rendered eq<i>.box.0 exists in both poses and carries poly;
+  - its end and Mistake paths differ.
+  Then it cannot pass if the pad stops moving or the swap stops applying.
+(b) The mutation asserts exact equality: h9(mutated) toEqual(['H9.moving-line:eq<i>.rackUpright.1']), with i that same single swapped entry (17 on 1a31cd4). It also asserts that the clean run gives [].
+(c) The note and the test comment say exactly what goes red: 'a moving item with no poly whose type is not in H9lineTypes (rackUpright's hole marks, j=1, the key family of LIB-3's M6)'.
+(d) This does not count as A4's M6. A4 still runs LIB-3's M6 on its LB1 plate through runQa, on the node and browser halves.
+(e) The supervisor records the amended A2 wording on claude/sup-lib4-cards.
+
+Why: the box premise is false. Vendor box() returns bar() {d, poly} (equipment.mjs:301; geom.mjs:57-63), so plate.mjs:210-213 draws it in the Mistake and movingLines skips it. kneePad (circle and bar) also carries poly. The card's wording cannot turn red without editing LIB-3's H9 or the vendor engine, and both are reserved. A run on 1a31cd4 gives exactly ['H9.moving-line:eq17.rackUpright.1'], and the same rackUpright held still gives [].
+
+Why nothing is loosened: H9 and the pinned H9lineTypes are unchanged. The substitute targets the same real moving part and the same key family as M6. The exact key, the single-swap premise and keeping A4's M6 separate make it stricter than M6's prefix check, and it cannot pass vacuously.
+
+#### Q5
+ACCEPT, with the subject and the H10 scope corrected. All 14 rows stay mode H. A7 and A4's raw-spec mutation are proven in Do 4 on an in-memory D copy of lib_close_grip_pulldown, with its plan parent lib_lat_pulldown (content.md:459). Do 4 starts on 'LIB-9a resume', after origin/main (b70ca58, LIB-2b) is merged in with a merge commit. D-LIB9-AUTHORQA is posted (fc825957 item 8).
+
+Conditions:
+
+(a) Real path only. The test runs candidateOf('lib_close_grip_pulldown', { all, authoring: true }) and then runQa, reading PQ-H10, or calls h10 on that candidate. It never hand-builds a candidate or a derivation. Mutations are applied to candidateOf's output or its injected inputs, the same way LIB-3's mutations.mjs applies them.
+
+(b) Memory only.
+- `all` comes from rows(root, { batches: [...batchFiles(root).map(p => [p, read(p)]), ['tools/plates/library/lb1/rows.json', copy]] }).
+- In `copy`, the existing lib_close_grip_pulldown row is replaced, not added, with mode 'D', parent 'lib_lat_pulldown' and params { 'camera.maxScale': <a number> }. That is the only PARAMS key the engine reads.
+- So registry.mjs:49 and its duplicate-id check still apply.
+- Nothing is written to rows.json, batches/, tests/howto/golden/ or any other file. The copy's stage stays 'drawing'.
+
+(c) Clean first, then each mutation must turn red and be restored:
+- the clean copy is green on PQ-H10 (the parent rebuilt alone matches its GOLDEN.json fragments on main);
+- a key outside PARAMS (for example gripWidth) gives H10.unknown (A7);
+- a raw-spec key ('tempo') gives H10.raw (A4);
+- one byte of one parent fragment changed in memory gives H10.byte.
+
+(d) Mode test. lb1-plates.test.ts asserts that every rows.json row's mode equals the note: 14 H, 0 D. A7 loops over every D row in rows.json. The 0-D assertion is the guard for (f) and stays in place until (f) is fixed.
+
+(e) Note, section 1, gets three changes:
+- "proven in Do 4 (lb1-plates.test.ts)", since no H10 test exists at 1a31cd46;
+- subject lib_close_grip_pulldown → lib_lat_pulldown, because chin_up is only drawn in Do 5(b);
+- the envelope fact: qa/envelope.json names no PARAMS key, so derive() given that envelope (derive.mjs:2-3) refuses every param today, and no row can be a valid D.
+
+(f) Known H10 gap. It is recorded here and not fixed by LIB-9a, because qa/ is a reserved path.
+- On the real path, validateParams (qa/node.mjs:262-273) checks only key names against PARAMS (derive.mjs:4-12). It ignores PARAMS `values`, number ranges and the envelope, and it allows empty params.
+- Checked on main: 'bar.kind':'banana', 'camera.maxScale':99 and 'handedness':7 all pass H10.
+- The note's risks list it, and the clean copy's green is described as "H10's checks bite", never as "a valid D".
+- The supervisor routes an H10 value and envelope fix (with the mutations 'bar.kind':'banana' and an out-of-envelope camera.maxScale, each red) to whoever owns qa/, before any D row exists on any branch.
+
+### Fixes (from the review; each with its test or mutation listed in the PR)
+
+- **high** `tools/plates/library/specs/close_grip_pulldown.mjs:92 (stack composer)`: The stack lift has the wrong sign: LIFT0 + cableLen(start) - cableLen(lm). I compared it with lat_pulldown.mjs:112, which uses cableLen(lm) - cableLen(start). Today the stack never rises, and its cable runs down through the plates and below the floor. Use lat_pulldown's form. Add a test that fails on 1a31cd46: lift > LIFT0 at the end and in the Mistake, and the stack cable end at or above the stack top. Every stack-cloning spec in the bulk gets the same test. Re-run QA afterwards, because the fit box changes.
+- **high** `tools/plates/library/specs/assisted_pull_up.mjs (padTopOf, PAD_START/END/MIS, kneelRoot) with eq/assistMachine.mjs:54`: The contact proof cannot fail. The composer draws the pad from lm['knee.r'], and the checks plane comes from the same pose's knee, so the check always reads 0 cm (I confirmed this in the code). Drive the machine from named per-pose pad states (pad-top or lever angle) that do not depend on the knee being checked. The composer draws from ctx.pose's state, the checks plane uses the same constant, and the root and leg angles are solved to meet the pad. Add a test that reads the drawn pad poly in start, end and Mistake: knee.y minus pad-top = KNEE_R*H within 1 cm, and knee.z lies within the pad. These must turn red: the pad frozen at the start, and LEGS.knee 92 changed to 80. No knee.r contact plateFact may rely on these checks until this is fixed.
+- **medium** `tools/plates/library/lb1/DESIGN.md section 4 (topFault rule)`: Turn the rule round as ruled in Q1. The key comes from the card's plate.mistake through the ruled mapping, Do 6 writes it from the card, the spec's first Mistake tell must carry it, and the verifier checks it against the card. Add the mutation: one spec's first tell key changed turns F7 red.
+- **medium** `tools/plates/library/specs/assisted_pull_up.mjs (top pose = spec start)`: No pad, bracket or lever is drawn under the top pose's knees, because the engine draws no moving equipment in the start layer (vendor plate.mjs:110-114). Add leg_press's workaround (leg_press.mjs:119): a thin outline of the start pad, bracket and lever, added to the end pose only. Add a test that the end-pose items contain the start pad-top outline.
+- **medium** `tests/howto/lb1-plates.test.ts composer tests (assistMachine, chestRowMachine, dHandle)`: These tests check helper maths: assistGeometry's hypot equals the lever by construction. Instead, assert on the drawn items in every pose: the lever poly's centreline ends at the pivot and leverEnd (length within 1 mm), the dHandle rails end at the ring, and the chestRowMachine lever ends at a handle on its circle. R2's mutations own-2, own-3 and own-4 must turn red and be listed in the PR. Correct the composer headers that cite the old test as proof.
+- **medium** `tests/howto/lb1-plates.test.ts A5 'each plan 6.2 LB1 id once'`: JSON.parse merges duplicate keys, so new Set(Object.keys(...)).size cannot catch a duplicated row. Count each LB1 id's row key in the raw text of rows.json, or parse with a duplicate-key detector. List both A5 mutations (drop a row, duplicate a row) as red in the PR.
+- **medium** `tests/howto/lb1-plates.test.ts A9 'no LB1 id is in tests/howto/golden/library/'`: Two problems. A substring match on id.slice(4) wrongly flags lib_dumbbell_shoulder_press, and it misses a file that names an LB1 exercise only by its hyphen chromeId or slug, or that holds only page entries for batch LB1. Match whole tokens: \b(lib_)?<id>\b for the underscore forms and (^|[^a-z0-9-])<slug>([^a-z0-9-]|$) for the hyphen forms. Also fail on a file name derived from an LB1 batch file or matching /lb1/i, and on text naming batch 'LB1'. Mutations: a page-only lb1.json turns red; chin-up.layers.html with data-id='chin-up' turns red; a file naming only lib_dumbbell_shoulder_press stays green.
+- **medium** `PR #245 slice post (card Do 2)`: The post is not yet the full Do 2 slice. Merge origin/main (now b70ca58, which includes LIB-2b #234) with a merge commit. Then complete Do 4, Do 6 for all 14 cards, the content verifier, and Do 7 on both plates (the two-build plates-page sha256 and the QA table), with A9 and every mutation shown red and then restored. The supervisor names the research head (9dbc7e0 unless it has moved) and posts the Q3 tempo-map ruling, so Do 6 can run now.
+- **medium** `main: tools/plates/library/candidate.mjs:74 (schema: PARAMS) vs qa/node.mjs:268-271 validateParams`: I found this myself. derive.mjs PARAMS writes enums as {type:'enum', values} and numbers with no min or max, but validateParams reads s.enum and s.min/s.max. So on the real candidate path H10.value never fires: a bad enum value or an out-of-range number passes. LIB-3's M21-M23 use a test schema with `enum`, which hides this. The supervisor assigns the fix. Recommended: LIB-9a Do 4, which already edits candidate.mjs: pass validateParams a schema built from PARAMS plus the envelope. Its failing-before test is Q5's test copy with an enum param outside its values, which must turn H10.value red. It does not block LB1, because LB1 has 0 D rows.
+- **low** `tools/plates/library/lb1/DESIGN.md section 2`: inverted_row and straight_arm_pulldown also name their census closest plate among the 8 (seated_cable_row and lat_pulldown; verified in census.json @ 4a9fd86) next to pilot A's anchors, each with its approving sha (the 8 at bc0f378; pilot A at e6f39ff or the head D-PILOTA-R5 names). The pose class of close_grip, underhand and single_arm pulldown becomes 'seat + overhead' (verified).
+- **low** `tools/plates/library/eq/polybar.mjs and DESIGN.md section 5`: Ruling: polybar.mjs is accepted by name as a composer-support file, under the same rules (a new file, pure, PRIMITIVES-only output, no file reads, covered by the import scan). The note records it as such.
+- **low** `tools/plates/library/specs/assisted_pull_up.mjs header lines 13-17 and alt; lb1-plates.test.ts comment above swapPad; DESIGN.md section 9 item 4`: The header says start = the hang and end = the top. Correct it to the drawn order (start = top, end = hang) and add the note on the deliberate difference from pull_up. The alt text follows the drawn order: from chin over the bar, lower slowly to a straight-arm hang with the knees on the pad. Reword the rackUpright statement as ruled in Q4(c).
+- **low** `assisted_pull_up Mistake layout (arrow guide; misBody root)`: Move the 'missing range' arrow clear of the 'Arms bent' pill, so the leader and the arrow read as separate marks. The Mistake body sits 6.6 cm back from the start and end with a 2° lean, which can read as a swing (c8). Either keep the trunk equal to the hang and record the arc shift, or choose pivot and lever so it shrinks, and record which one in the header. Check that the arm fault still reads before the heavier red pad dashes, and give the critic this as a note.
+- **low** `close_grip_pulldown callouts and Mistake (spec:123, :127-135, header :17)`: Three changes. The 'Handle below chin' leader crosses the neck: give the callout an explicit box above or right of the handle. The faulty handle is hidden inside the solid arm: draw a dashed V-handle outline at MIS_G, as pull_up and hanging_leg_raise redraw hidden parts, and have the critic check R5 on this plate. Correct the header to say the elbows end at the front edge of the trunk, not in line with the hips.
+
+### Supervisor follow-ups (not yours)
+- Q1 (b): I settle single_arm_lat_pulldown's drawable question as research owner, inside the research verify that runs tonight (wave 2 plus the 8's cards). Until then its expected F7 is undecided, and no Do 7 evidence for it counts.
+- Q3 and Q4: I record the amended A11 and A2 mutation lines on `claude/sup-lib4-cards` (section 12).
+- Q5 (f): the H10 value and envelope gap in `qa/node.mjs` goes to a separate small card before any D row exists on any branch. LIB-9a does not touch `qa/`.
+
+### Amendments recorded here
+- Item 9's mutation line for LB1 (D-LIB9-CARDFIELDS, 'Rest changed → red') is replaced by Q3's six mutations (i)-(vi).
+- LIB-9a's A2 'box pad' mutation is replaced by Q4's exact-key rackUpright mutation, with the premise assertions of Q4 (a); A4 still runs LIB-3's M6.
