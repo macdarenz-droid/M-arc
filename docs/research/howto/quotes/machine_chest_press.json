@@ -1,0 +1,194 @@
+{
+  "id": "machine_chest_press",
+  "checked": null,
+  "sources": [
+    {
+      "id": "ace-chest-press",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "muyor2023",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "barbell-logic-grip",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "nance2017",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "snyder2012",
+      "access": null,
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-chest-press",
+      "quote": "Sit with your back firmly supported against the backrest. Adjust the seat height so that the handles are level with your mid-chest (around nipple level) and the handles are positioned no deeper than chest level (level with the front of your chest).",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "ace-chest-press",
+      "quote": "Grasp the handles firmly with a full grip (thumbs clasped around the handles) and maintain a neutral wrist position (i.e., wrists in line with your forearms).",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-chest-press",
+      "quote": "Position your feet firmly on the floor or on the foot rests to stabilize your body.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-chest-press",
+      "quote": "your abdominal muscles to stabilize your spine, but do not press your low back into the backrest. Maintain the natural arch in your low back and avoid arching your back throughout the exercise.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "ace-chest-press",
+      "quote": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-chest-press",
+      "quote": "Gently exhale and slowly perform a pressing movement, extending your elbows infront, while maintaining a neutral wrist position, and keep your head aligned with your spine while avoiding any arching your low back.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "ace-chest-press",
+      "quote": "Continue pressing until your elbows are fully extended, but not locked. Your shoulder blades should continue to make contact with the backrest and not round or bend forward.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "ace-chest-press",
+      "quote": "Pause momentarily then gently allow your elbows to flex (bend) in a slow, controlled manner while returning the bar back towards the starting position.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "ace-chest-press",
+      "quote": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest. This promotes instability within the muscles that hold the shoulder blades to the ribcage.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "ace-chest-press",
+      "quote": "focus initially on pressing while keeping your shoulder blades flat and firmly positioned against the backrest.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "muyor2023",
+      "quote": "the eccentric phase and the concentric phase were performed and recorded at a velocity of two seconds in each phase",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "muyor2023",
+      "quote": "Twenty physically active adults performed a set of 8 repetitions at 60% of the one repetition maximum.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "muyor2023",
+      "quote": "the clavicular portion of the pectoralis major had significantly greater muscle activity in the seated chest press exercise with a neutral grip (~30% of the maximal voluntary isometric contraction (MVIC)) than in the lying bench press exercise with a prone grip at 150% of the biacromial width (~25% MVIC).",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "muyor2023",
+      "quote": "The muscle activity of the anterior deltoid was not significantly different across any exercise or grip evaluated (~24% MVIC).",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "muyor2023",
+      "quote": "the PMMP showed the highest muscle activity in all exercises, except in the lying bench press exercise with a grip at 50% of the biacromial width.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "muyor2023",
+      "quote": "There were no significant differences in the muscle activity between the upper, middle, and lower portions of the pectoralis major and the AD in any exercise evaluated",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "ace-chest-press",
+      "quote": "perform a pressing movement, extending your elbows infront",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "barbell-logic-grip",
+      "quote": "The bar should sit as low in the heel of the palm as possible – stacked directly over the forearm bones.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "barbell-logic-grip",
+      "quote": "If the wrists bend back and the barbell rolls up into the fingers, that creates an unnecessary moment arm and an energy leak.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "nance2017",
+      "quote": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "nance2017",
+      "quote": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "snyder2012",
+      "quote": "During the 50% max lift with verbal instructions to focus on chest muscles, PM EMG activity increased by 22% over preinstruction activity (p = 0.005), whereas AD and TB activities were statistically unchanged.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "snyder2012",
+      "quote": "verbal technique instruction is effective in shifting muscle activity during a basic lift, but it may be less effective at higher intensities.",
+      "status": null,
+      "closest": null
+    }
+  ]
+}
