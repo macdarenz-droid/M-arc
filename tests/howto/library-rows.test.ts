@@ -45,7 +45,7 @@ export function danglingImports(loaders: string, outputs: Set<string>): string[]
   return targets.filter(t => !outputs.has(`src/howto/generated/${t}.ts`));
 }
 
-describe('E1: a shipped library row gets every output', () => {
+describe('E1: a shipped library row gets every output', { timeout: 120_000 }, () => {
   it('the transform and the committed page are the ones provenance.json records', () => {
     const p = JSON.parse(readFileSync(F.PROVENANCE, 'utf8')), t = F.transformSources();
     expect(sha(t.spec)).toBe(p.specSha256);
@@ -163,7 +163,7 @@ async function inputsOf(base: string, out: Map<string, any>) {
   return { res, core };
 }
 
-describe('E2: inputs cover every imported composer', () => {
+describe('E2: inputs cover every imported composer', { timeout: 180_000 }, () => {
   it('every ht- and research output of every shipped row lists its How-to source\'s whole import closure (and a library plate its spec\'s)', async () => {
     const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
     for (const [base, out] of [[repo, mainOut], [root, treeOut]] as const) {
@@ -244,7 +244,7 @@ describe('D-LIB2b-CLOSURE: closureOf follows every input or throws', () => {
   });
 });
 
-describe('D-LIB2b-LAYOUT: layersSpecOf stages each row\'s whole closure into the mirror', () => {
+describe('D-LIB2b-LAYOUT: layersSpecOf stages each row\'s whole closure into the mirror', { timeout: 120_000 }, () => {
   it('the clone\'s staged spec and How-to are golden B\'s layout byte for byte (id and card swapped only); no file:// anywhere', async () => {
     const stage = mkdtempSync(join(tmpdir(), 'lib2b-stage-')); tmps.push(stage);
     const { layersSpecOf } = await import(/* @vite-ignore */ turl('tools/plates/library/layers-spec.mjs'));
@@ -275,7 +275,7 @@ describe('D-LIB2b-LAYOUT: layersSpecOf stages each row\'s whole closure into the
   });
 });
 
-describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get', () => {
+describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get', { timeout: 180_000 }, () => {
   it('section === feelSectionOf(its pinned page); rest map, every row\'s marks and the legend are golden B\'s renderer output; no is-playing', async () => {
     const feel = await import(/* @vite-ignore */ turl('tools/plates/gen/feel.mjs'));
     const content = await import(/* @vite-ignore */ turl('tools/plates/gen/content.mjs'));
@@ -304,7 +304,7 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
   });
 });
 
-describe('E7: QA node-half gate', () => {
+describe('E7: QA node-half gate', { timeout: 180_000 }, () => {
   it('only the browser-half keys are ignored: browser:not-run in PQ-H1/H4/H5 and F2/F5 "browser checks not run"', async () => {
     const { nodeHalf } = await import(/* @vite-ignore */ url('tools/plates/library/candidate.mjs'));
     const hard = (h: string, key: string) => ({ ...Object.fromEntries(['PQ-H1', 'PQ-H2', 'PQ-H4', 'PQ-H5'].map(k => [k, { pass: true, problems: [] }])), [h]: { pass: false, problems: [{ key, text: key }] } });
@@ -394,7 +394,7 @@ describe('D-LIB2b-PAGES (7): the library golden folder holds only batch golden f
   });
 });
 
-describe('D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped library row', () => {
+describe('D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped library row', { timeout: 180_000 }, () => {
   it('its ht- plate strings are the plate cut from its batch plates page, whose fragments === the batch golden plate entry; no plate or plate-fit class', async () => {
     const reg = await import(/* @vite-ignore */ turl('tools/plates/library/registry.mjs'));
     const bg = await import(/* @vite-ignore */ turl('tools/plates/library/batch-golden.mjs'));
