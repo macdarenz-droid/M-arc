@@ -9243,6 +9243,111 @@ if (gate.runs('LIB-2'))
   if (!errors.some(e => / A2[56]: /.test(e) && e.startsWith(`${tag} `))) console.log(`${tag} A25/A26: superset How-to total within the per-id ceiling; C17 clean on ${scanned.join(', ')}`);
 }
 
+// BUG-41 (owner report 2026-10-17): the Exercise progress line, its metric label and the trend tile come
+// from one series. The owner's Rear Delt Fly (line rose, tile said Slipping) and Dumbbell Lateral Raise (line
+// fell at the end, tile said Improving) both read Improving with the line ending on its highest point; the label
+// sits directly under the line and names the plotted metric; the line is in the user's unit (lb run); a carry
+// with a distance in one of three sessions draws no line, raises no error and keeps its tiles, bars and rows.
+if (gate.runs('BUG-41'))
+{
+  const tag = 'BUG-41';
+  const { build: esbBug41 } = await import('esbuild');
+  const unitsJs = (await esbBug41({ entryPoints: [join(ROOT, 'src/core/units.ts')], bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' })).outputFiles[0].text;
+  const { kgToDisplay } = await import(`data:text/javascript;base64,${Buffer.from(unitsJs).toString('base64')}`);
+  const sparkFmt = (v) => String(Math.round(v * 10) / 10);
+  const LABELS = ['Estimated one-rep max', 'Top load', 'Volume', 'Farthest distance', 'Less assistance', 'Best reps', 'Longest hold'];
+  const S = (kg, reps, effort = 'ideal') => ({ kg, reps, effort });
+  const X3 = (kg, reps) => [S(kg, reps), S(kg, reps), S(kg, reps)];
+  // Offsets in days before today, from the owner's last session (18 Oct = 0), same order and gaps.
+  const back = (iso) => Math.round((Date.UTC(2026, 9, 18) - Date.parse(`${iso}T00:00:00Z`)) / 86_400_000);
+  const seed = [
+    ...[['2026-08-23', X3(26, 15)], ['2026-08-30', X3(26, 15)], ['2026-09-06', X3(26, 15)], ['2026-09-23', X3(26, 11)], ['2026-09-28', X3(26, 15)], ['2026-10-04', X3(26, 16)],
+      ['2026-10-06', [S(33, 12), S(33, 14)]], ['2026-10-11', [S(35.5, 9), S(35.5, 9), S(35.5, 9, 'max')]], ['2026-10-18', [S(35.5, 10, 'easy'), S(35.5, 10), S(35.5, 10, 'max')]]]
+      .map(([d, sets]) => ({ off: back(d), id: 'lib_rear_delt_fly', name: 'Rear Delt Fly', sets })),
+    ...[...['2026-09-23', '2026-09-25', '2026-09-27', '2026-09-29', '2026-10-01'].map(d => [d, X3(6, 10)]),
+      ['2026-10-04', [S(6, 14), S(6, 13)]], ['2026-10-06', [S(7, 13), S(7, 13), S(7, 12)]], ['2026-10-09', [S(7, 12), S(7, 11), S(7, 10, 'easy')]], ['2026-10-11', [S(7, 14), S(7, 14), S(7, 13)]],
+      ['2026-10-13', X3(7, 15)], ['2026-10-17', [S(7, 15), S(7, 10, 'max')]], ['2026-10-18', [S(7, 15, 'easy'), S(7, 15), S(7, 16, 'max')]]]
+      .map(([d, sets]) => ({ off: back(d), id: 'lib_dumbbell_lateral_raise', name: 'Dumbbell Lateral Raise', sets })),
+    ...[['2026-10-04', [S(30, 8)]], ['2026-10-11', [{ kg: 30, distanceM: 40, effort: 'ideal' }]], ['2026-10-18', [S(30, 8)]]]
+      .map(([d, sets]) => ({ off: back(d), id: 'lib_farmer_s_carry', name: "Farmer's Carry", sets })),
+  ].sort((a, b) => b.off - a.off);
+  const open = async (weightUnit) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} (${weightUnit}): ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} (${weightUnit}) console: ${m.text()}`); });
+    await page.addInitScript(({ seed, weightUnit }) => {
+      const now = new Date().toISOString();
+      const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+      const sessions = seed.map((x, i) => ({ id: `bug41-${i}`, splitId: 'sp1', splitName: 'Pull', day: day(x.off), startedAt: `${day(x.off)}T17:00:00.000Z`, endedAt: `${day(x.off)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+        exercises: [{ exerciseId: x.id, name: x.name, sets: x.sets }],
+        logging: { mode: 'live', trainedAt: `${day(x.off)}T17:00:00.000Z`, trainedEndAt: `${day(x.off)}T18:00:00.000Z`, loggedAt: `${day(x.off)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } }));
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions, active: null, customExercises: [],
+        preferences: { weightUnit, restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, { seed, weightUnit });
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+    await page.waitForTimeout(250);
+    await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+    await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(300);
+    return { ctx, page };
+  };
+  const card = '[data-palace="history.exercise-stats"]';
+  const read = (page, id) => page.selectOption(`${card} select`, id).then(() => page.waitForTimeout(300)).then(() => page.evaluate(({ card, LABELS }) => {
+    const root = document.querySelector(card);
+    const wrap = root?.querySelector('.sparkline-wrap');
+    const d = root?.querySelector('svg.sparkline path')?.getAttribute('d') ?? '';
+    const ys = [...d.matchAll(/[ML]\s*[-\d.]+\s+([-\d.]+)/g)].map(m => Number(m[1]));
+    return {
+      tile: [...(root?.querySelectorAll('.stat') ?? [])].find(el => /^trend/.test(el.querySelector('span')?.textContent ?? ''))?.querySelector('b')?.textContent ?? null,
+      stats: root?.querySelectorAll('.stat').length ?? 0,
+      after: wrap?.nextElementSibling?.textContent ?? null,
+      labels: [...(root?.querySelectorAll('.hint') ?? [])].filter(el => LABELS.includes(el.textContent.trim())).length,
+      max: root?.querySelector('.sparkline-minmax span')?.textContent ?? null,
+      readout: root?.querySelector('.chart-readout .readout-cur')?.textContent ?? '',
+      ys, paths: root?.querySelectorAll('svg.sparkline path').length ?? 0,
+      bars: root?.querySelectorAll('.effort-bar-col').length ?? 0,
+      rows: root?.querySelectorAll('.list .list-row').length ?? 0,
+    };
+  }, { card, LABELS }));
+  const endsHighest = (r) => r.ys.length >= 2 && r.ys[r.ys.length - 1] <= Math.min(...r.ys) + 0.05;
+  {
+    const { ctx, page } = await open('kg');
+    const rd = await read(page, 'lib_rear_delt_fly');
+    if (rd.tile !== 'Improving') errors.push(`${tag} Rear Delt: trend tile reads ${JSON.stringify(rd.tile)}, expected "Improving"`);
+    if (rd.after !== 'Top load') errors.push(`${tag} Rear Delt: the element after the line reads ${JSON.stringify(rd.after)}, expected "Top load"`);
+    if (rd.labels !== 1) errors.push(`${tag} Rear Delt: ${rd.labels} metric labels on the card, expected exactly 1`);
+    if (rd.max !== '35.5') errors.push(`${tag} Rear Delt: max y label ${JSON.stringify(rd.max)}, expected "35.5"`);
+    if (!rd.readout.includes('35.5 kg × 10')) errors.push(`${tag} Rear Delt: readout ${JSON.stringify(rd.readout)} lacks "35.5 kg × 10"`);
+    if (!endsHighest(rd)) errors.push(`${tag} Rear Delt: the line's last point is not its highest (y ${JSON.stringify(rd.ys)})`);
+    const lat = await read(page, 'lib_dumbbell_lateral_raise');
+    if (lat.tile !== 'Improving') errors.push(`${tag} Lateral: trend tile reads ${JSON.stringify(lat.tile)}, expected "Improving"`);
+    if (!endsHighest(lat)) errors.push(`${tag} Lateral: the line's last point is not its highest (y ${JSON.stringify(lat.ys)})`);
+    if (lat.ys.length !== lat.bars || !lat.bars) errors.push(`${tag} Lateral: ${lat.ys.length} line points vs ${lat.bars} effort bars`);
+    const car = await read(page, 'lib_farmer_s_carry');
+    if (car.paths !== 0) errors.push(`${tag} A10 carry: ${car.paths} sparkline path(s) drawn for a one-row series`);
+    if (!car.tile || car.stats < 2) errors.push(`${tag} A10 carry: tiles missing (${car.stats} stat tiles, trend ${JSON.stringify(car.tile)})`);
+    if (car.bars < 1) errors.push(`${tag} A10 carry: no effort bars`);
+    if (car.rows !== 3) errors.push(`${tag} A10 carry: ${car.rows} session rows, expected 3`);
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('lb');
+    const rd = await read(page, 'lib_rear_delt_fly');
+    const want = sparkFmt(kgToDisplay(35.5, 'lb'));
+    if (rd.max !== want) errors.push(`${tag} lb: max y label ${JSON.stringify(rd.max)}, expected ${JSON.stringify(want)} (35.5 kg in lb)`);
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith(`${tag} `))) console.log(`${tag}: Rear Delt and Lateral read Improving with the line ending highest, "Top load" under the line once, max label in kg and lb, readout 35.5 kg × 10, line points = bars; a one-row carry draws no line and keeps its tiles, bars and rows`);
+}
+
 await gate.done();
 await browser.close();
 stopping = true;
