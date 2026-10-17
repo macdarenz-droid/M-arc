@@ -1,15 +1,16 @@
 // LIB-4b: the per-id library runner's contract (tools/plates/library/fidelity/tuples.mjs, rows.mjs), its tuple counts
 // on the 8 against what the HT blocks observe (B1), the twin drift tripwire (B3) and a missing page (B6). The browser
 // runs (B2, B4, B5, B7, B8) are `node tools/plates/library/fidelity.mjs`, recorded on the PR.
-import { readFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error plain .mjs build tool, no types
-import { CHECKS, LIB_ONCE, PQH_STATES, libraryTuples, parseState, sourceFacts, statesOf } from '../../tools/plates/library/fidelity/tuples.mjs';
+import { CHECKS, LIB_ONCE, PQH_STATES, libraryTuples, parseState, plateKeys, sourceFacts, statesOf } from '../../tools/plates/library/fidelity/tuples.mjs';
 // @ts-expect-error plain .mjs build tool, no types
 import { recorder, rowProblems, stateOf } from '../../tools/plates/library/fidelity/rows.mjs';
 // @ts-expect-error plain .mjs build tool, no types
-import { TWINS, HARNESS_PINS, twinProblems } from '../../tools/plates/library/fidelity/twins.mjs';
+import { TWINS, readPins, twinProblems } from '../../tools/plates/library/fidelity/twins.mjs';
 // @ts-expect-error plain .mjs build tool, no types
 import { HT_PLATES, HT_THEMES, ht10AllTuples } from '../../tools/plates/fidelity/harness.mjs';
 
@@ -33,7 +34,7 @@ describe('LIB-4b contract', () => {
       { id: 'shard-2', theme: 'silent-black', state: 'self/0px@390' },
       { id: 'shard-2', theme: 'silent-black', state: 'self/1px-control@390' },
     ]);
-    expect(LIB_ONCE.run).toEqual([{ id: '*', theme: 'silent-black', state: 'qa-selftest/browser@*' }]);
+    expect(LIB_ONCE.run).toEqual(['qa-selftest/browser@*', 'guard/L-sections@390', 'guard/HT7-l3text@390', 'guard/HT9-A3-dup@390'].map(state => ({ id: '*', theme: 'silent-black', state })));
     expect(PQH_STATES).toEqual([...Array(10)].map((_, i) => `PQH/PQ-H${i + 1}@*`).concat('PQH/flags@*'));
   });
   it('every tuple of the 8 is unique per (id, theme), names a known check and encodes its width', async () => {
@@ -43,7 +44,9 @@ describe('LIB-4b contract', () => {
       const p = parseState(t.state);
       expect(CHECKS).toContain(p.check);
       expect([null, 390, 360, 340]).toContain(p.width);
+      expect(t.theme === '*').toBe(p.width === null);   // D-LIB4b-KEYS: theme-less exactly when width-less
     }
+    expect(ts).toHaveLength(2947);
   });
 });
 
@@ -76,7 +79,7 @@ describe('LIB-4b B1: tuples from source match what the HT blocks observe on the 
     expect(count(ts, t => t.check === 'HT6' && t.sub === 'A6') * 4).toBe(64);   // N, M, T@2400, R:end per row; HT-6 prints "A6 64 plate pairs"
     expect(count(ts, t => t.check === 'HT6' && t.sub === 'open-anim')).toBe(40);
     // HT-7: posture L3 pairs, 5 themes + the reduced-motion run (>= 80)
-    const ht7 = count(ts, t => t.check === 'HT7' && (t.sub.endsWith(':L3') || t.sub.endsWith(':reduced')));
+    const ht7 = count(ts, t => t.check === 'HT7' && !t.sub.startsWith('A2') && (t.sub.endsWith(':L3') || t.sub.endsWith(':reduced')));
     expect(ht7).toBe(96); expect(ht7).toBeGreaterThanOrEqual(80);
     expect(count(ts, t => t.check === 'HT7' && t.sub.endsWith(':control'))).toBe(8);
     // HT-8: pixel pairs S5/S4/S6 in 5 themes and the reduced rest in 2 (>= 200)
@@ -98,7 +101,9 @@ describe('LIB-4b B1: tuples from source match what the HT blocks observe on the 
     // one per id: entry, offline, L2 (page and chunk), PQH (10 hard checks + flags)
     expect(count(ts, t => t.check === 'entry')).toBe(8);
     expect(count(ts, t => t.check === 'offline')).toBe(8);
-    expect(count(ts, t => t.check === 'L2')).toBe(16);
+    expect(count(ts, t => t.check === 'L2')).toBe(24);   // page, chunk, chunk-size (D-LIB4b-SIZE)
+    expect(count(ts, t => t.sub === 'A5-size' || (t.check === 'HT8' && t.sub === 'size'))).toBe(16);
+    expect(count(ts, t => t.check === 'HT7' && (t.sub === 'A2' || t.sub === 'A2:reduced'))).toBe(48);   // D-LIB4b-COUNTS
     expect(count(ts, t => t.check === 'PQH')).toBe(88);
   });
   it('the narrow widths and the full matrix stay in HT_FULL only', async () => {
@@ -109,24 +114,48 @@ describe('LIB-4b B1: tuples from source match what the HT blocks observe on the 
 });
 
 describe('LIB-4b B3: the twin drift tripwire', () => {
-  it('every twinned gate group and harness function is at its pin', async () => {
-    expect(TWINS.map((t: { key: string }) => t.key).sort()).toEqual(['HT-3', 'HT-3b', 'HT-4', 'HT-6', 'HT-7', 'HT-8', 'HT-9']);
-    expect(HARNESS_PINS.length).toBeGreaterThan(0);
+  it('every twinned gate group and function is at its pin', async () => {
+    const keys = TWINS.map((t: { key: string }) => t.key);
+    for (const g of ['HT-2', 'HT-3', 'HT-3b', 'HT-4', 'HT-6', 'HT-7', 'HT-8', 'HT-9']) expect(keys).toContain(`gate:${g}`);
+    expect(Object.keys(readPins()).sort()).toEqual([...keys].sort());
     expect(await twinProblems()).toEqual([]);
   });
   it('one changed character in HT-7\'s or HT-4\'s block turns it red, naming the twin', async () => {
     const gate = readFileSync(join(ROOT, 'scripts/screenshot-gate.mjs'), 'utf8');
     for (const [key, marker] of [['HT-7', "const tag = 'HT-7';"], ['HT-4', "const tag = 'HT-4';"]] as const) {
       expect(gate.split(marker)).toHaveLength(2);
-      const bad: string[] = await twinProblems({ gate: gate.replace(marker, marker.replace("';", "' ;")) });
-      expect(bad.some(m => m.startsWith(`gate group ${key} changed`) && m.includes('re-check the library twin'))).toBe(true);
+      const bad: string[] = await twinProblems({ 'scripts/screenshot-gate.mjs': gate.replace(marker, marker.replace("';", "' ;")) });
+      expect(bad).toHaveLength(1);
+      expect(bad[0]).toMatch(new RegExp(`^gate:${key} changed .*re-check the library twin`));
     }
   });
-  it('a changed harness function the plate family re-implements turns it red', async () => {
-    const h = readFileSync(join(ROOT, 'tools/plates/fidelity/harness.mjs'), 'utf8');
-    const bad: string[] = await twinProblems({ harness: h.replace('if (d.ink < 0.05) P(`${id} ${label}: the capture is nearly blank', 'if (d.ink < 0.06) P(`${id} ${label}: the capture is nearly blank') });
+  it('a changed function a twin re-implements turns it red, a non-exported helper it reaches included', async () => {
+    const f = 'tools/plates/fidelity/harness.mjs', h = readFileSync(join(ROOT, f), 'utf8');
+    let bad: string[] = await twinProblems({ [f]: h.replace('if (d.ink < 0.05) P(`${id} ${label}: the capture is nearly blank', 'if (d.ink < 0.06) P(`${id} ${label}: the capture is nearly blank') });
     expect(bad).toHaveLength(1);
-    expect(bad[0]).toMatch(/^harness ht3Fidelity changed .*re-check the library twin fidelity\/plate\.mjs/);
+    expect(bad[0]).toMatch(/^tools\/plates\/fidelity\/harness\.mjs:ht3Fidelity changed .*re-check the library twin fidelity\/plate\.mjs/);
+    bad = await twinProblems({ [f]: h.replace("const TEXT_PROPS = ['font-family',", "const TEXT_PROPS = ['font-family', 'font-kerning',") });
+    expect(bad.some(m => m.startsWith('tools/plates/fidelity/harness.mjs:ht3Fidelity changed'))).toBe(true);
+    const g = 'tools/plates/fidelity/goldenB.mjs', gb = readFileSync(join(ROOT, g), 'utf8');
+    bad = await twinProblems({ [g]: gb.replace("if (refs.some(r => r !== undefined && deepEqual(pose, r))) return 'golden';", "if (refs.some(r => deepEqual(pose, r))) return 'golden';") });
+    expect(bad).toEqual([expect.stringMatching(/^tools\/plates\/fidelity\/goldenB\.mjs:classifyPose changed/)]);
+  });
+});
+
+describe('LIB-4b D-LIB4b-KEYS: keys bound to the pin', () => {
+  it('a module copy with one tell dropped makes libraryTuples throw "cues sha256 … != entry"', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'lib4b-keys-'));
+    try {
+      for (const d of ['src/howto/generated', 'tests/howto/golden']) mkdirSync(join(root, d), { recursive: true });
+      writeFileSync(join(root, 'tests/howto/golden/GOLDEN.json'), readFileSync(join(ROOT, 'tests/howto/golden/GOLDEN.json')));
+      const m = readFileSync(join(ROOT, 'src/howto/generated/ht-pull-up.ts'), 'utf8');
+      writeFileSync(join(root, 'src/howto/generated/ht-pull-up.ts'), m);
+      expect((await plateKeys('lib_pull_up', 'pull-up', root)).tells).toEqual(['kick', 'short']);
+      const dropped = m.replace(/, \{ key: "short", cue: "[^"]*" \}\]/, ']');
+      expect(dropped).not.toBe(m);
+      writeFileSync(join(root, 'src/howto/generated/ht-pull-up.ts'), dropped);
+      await expect(plateKeys('lib_pull_up', 'pull-up', root)).rejects.toThrow(/lib_pull_up: src\/howto\/generated\/ht-pull-up\.ts cues sha256 \w+ != entry/);
+    } finally { rmSync(root, { recursive: true, force: true }); }
   });
 });
 

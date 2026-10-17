@@ -1,0 +1,66 @@
+{
+ "gate:HT-2": {
+  "sha256": "af2fcf8dc51ff4340f15b8d9397e955f9cd1ee3cd5cd89e56698ea9c47d18a6f",
+  "map": []
+ },
+ "gate:HT-3": {
+  "sha256": "5267014f25a11bc0fa4c54c304728976dde2d97374ffb20ae559e8104b5eb957",
+  "map": []
+ },
+ "gate:HT-6": {
+  "sha256": "b3308c94ba5a24182981caf2de4bc45de0945e9be6be45401097cebbc5a21852",
+  "map": []
+ },
+ "gate:HT-3b": {
+  "sha256": "f5c6f80cfca165ec9d9c2b979287c3c1a442fa178b3b29b57313e97c6e51da08",
+  "map": []
+ },
+ "gate:HT-7": {
+  "sha256": "134205430bfbb55f971ac0e561cbce107debc22e85cfa6f8440d2e4bfa94ecfb",
+  "map": []
+ },
+ "gate:HT-4": {
+  "sha256": "d98dfb34a05ba8d27f77a962b2e1eda740e51c44dc565e4e524c31e838b918fe",
+  "map": []
+ },
+ "gate:HT-9": {
+  "sha256": "6bb3f58d03adf83925107a3738f4bc87a0465b6d665dbbf78ef014555a6a6923",
+  "map": []
+ },
+ "gate:HT-8": {
+  "sha256": "fcdd4f7de1eaaf4e797113f4896ec7fcf5b89e432cb819f73a6a2e7d1a136da6",
+  "map": []
+ },
+ "tools/plates/fidelity/harness.mjs:ht3Fidelity": {
+  "sha256": "338d01fe5dcc9688a93e515b5e5d830bd9c3559309dec22b9c4d8bc8aff0bb68",
+  "map": []
+ },
+ "tools/plates/fidelity/harness.mjs:ht3Behaviour": {
+  "sha256": "2ac69d5ecef772e706606d1250a76f03235b33139edaf239234e8918663e07bd",
+  "map": []
+ },
+ "tools/plates/fidelity/ht10.mjs:runHt10": {
+  "sha256": "2becf5f102021a946d53a08e96b3b9003f8e9137cbec92fb6fec616d26899948",
+  "map": []
+ },
+ "tools/plates/fidelity/goldenB.mjs:classifyPose": {
+  "sha256": "25156d575592ee03f3c56fb1b2610e6a7774260ee424838b97d7082c84def489",
+  "map": []
+ },
+ "tools/plates/fidelity/goldenB.mjs:classifyMistakePose": {
+  "sha256": "d17f2fe22218b35a9d8184e4c44dbea0e7e2f69dc6badd2ef04bf8ce6c6da12e",
+  "map": []
+ },
+ "tools/plates/fidelity/goldenB.mjs:validateCalls": {
+  "sha256": "20fc98c632f951a1b58a5bcc175a2aa39609665497dde27fa02cf4d4024f7f1e",
+  "map": []
+ },
+ "tools/plates/fidelity/goldenB.mjs:protectedFieldProblems": {
+  "sha256": "988d4cad9d68e03e43c114b065066d98b8a8133e6745a63a44b8f99a68546202",
+  "map": []
+ },
+ "tools/plates/fidelity/goldenB.mjs:fragmentProblems": {
+  "sha256": "7a2159d33370c076f531109cac0382b24a2d057ffa64f3736f0f38740170bce2",
+  "map": []
+ }
+}

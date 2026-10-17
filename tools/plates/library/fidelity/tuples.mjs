@@ -4,7 +4,8 @@
 // Show buttons), HT_THEMES, HT_FULL and the widths. The runner enumerates the same keys from the DOM, so a key missing
 // on either side is a missing row or an extra row, never a silent pass.
 // `state` = `<check>/<sub-state>@<width or *>`, unique per (id, theme), because coverProblems keys on id|theme|state.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { HT_FULL, HT_THEMES } from '../../fidelity/harness.mjs';
@@ -29,7 +30,8 @@ export const LIB_ONCE = {
     { id: `shard-${k}`, theme: 'silent-black', state: 'self/0px@390' },
     { id: `shard-${k}`, theme: 'silent-black', state: 'self/1px-control@390' },
   ],
-  run: [{ id: '*', theme: 'silent-black', state: 'qa-selftest/browser@*' }],
+  // D-LIB4b-GUARDS (contract amendment, lib4-cards 11.1 item 8): the guards of the runner's re-implemented checks
+  run: ['qa-selftest/browser@*', 'guard/L-sections@390', 'guard/HT7-l3text@390', 'guard/HT9-A3-dup@390'].map(state => ({ id: '*', theme: 'silent-black', state })),
 };
 
 /** A state's check family and width, parsed back (the runner asserts every row against this). */
@@ -39,11 +41,50 @@ export function parseState(state) {
   return { check: m[1], sub: m[2], width: m[3] === '*' ? null : +m[3] };
 }
 
-const cueKeys = (text, figure) => {
-  const m = new RegExp(`${figure}: \\{[\\s\\S]*?cues: \\[(.*?)\\],\\n`).exec(text);
-  if (!m) throw new Error(`tuples: no ${figure} cues in the plate module`);
-  return [...m[1].matchAll(/key: "([^"]+)"/g)].map(x => x[1]);
-};
+const sha = x => createHash('sha256').update(x).digest('hex');
+
+/**
+ * D-LIB4b-KEYS: the pinned `plate` entry of an id. For the 8, the latest GOLDEN.json plate entry; for a library id, the
+ * latest plate entry in the one tests/howto/golden/library/*.json file that holds it, after every such file passes
+ * verifyBatchChain. Throws, naming the id and the file, on anything else.
+ */
+export async function pinnedPlate(id, root = ROOT) {
+  const { latestEntries, verifyBatchChain } = await import('../../golden.mjs');
+  const golden = JSON.parse(readFileSync(join(root, 'tests/howto/golden/GOLDEN.json'), 'utf8')).entries;
+  const own = latestEntries(golden).get(id);
+  if (own?.kind === 'plate') return { entry: own, file: 'tests/howto/golden/GOLDEN.json' };
+  const dir = join(root, 'tests/howto/golden/library'), hits = [];
+  for (const f of existsSync(dir) ? readdirSync(dir).filter(n => n.endsWith('.json')).sort() : []) {
+    const rel = `tests/howto/golden/library/${f}`, file = JSON.parse(readFileSync(join(dir, f), 'utf8'));
+    const bad = verifyBatchChain(file, golden);
+    if (bad.length) throw new Error(`tuples: ${rel} fails verifyBatchChain: ${bad[0]}`);
+    const mine = file.entries.filter(e => e.kind === 'plate' && e.id === id);
+    if (mine.length) hits.push({ entry: mine[mine.length - 1], file: rel });
+  }
+  if (hits.length !== 1) throw new Error(`tuples: plate entry for ${id} in ${hits.length} files`);
+  return hits[0];
+}
+
+/**
+ * The plate keys of an id, bound to its pin (D-LIB4b-KEYS): the generated module's normal/mistake { firstKey, cues },
+ * whose `cues` fragment (as fragmentsOf hashes it) must equal the pinned entry's, and whose first cue is the firstKey.
+ */
+export async function plateKeys(id, slug, root = ROOT) {
+  const rel = `src/howto/generated/ht-${slug}.ts`, path = join(root, rel);
+  if (!existsSync(path)) throw new Error(`tuples: ${id}: no plate module ${rel}`);
+  const { entry, file } = await pinnedPlate(id, root);
+  let plate = null;
+  try {
+    const { transformSync } = await import('esbuild');
+    const js = transformSync(readFileSync(path, 'utf8'), { loader: 'ts', format: 'esm' }).code;
+    plate = (await import(`data:text/javascript;base64,${Buffer.from(js).toString('base64')}`)).default.plate;
+  } catch { plate = null; }
+  const pick = f => ({ firstKey: plate?.[f]?.firstKey, cues: plate?.[f]?.cues });
+  const got = plate ? sha(JSON.stringify({ normal: pick('normal'), mistake: pick('mistake') })) : 'unreadable';
+  if (got !== entry.fragments?.cues) throw new Error(`tuples: ${id}: ${rel} cues sha256 ${got} != entry ${entry.fragments?.cues} (${file})`);
+  for (const f of ['normal', 'mistake']) if (plate[f].cues[0]?.key !== plate[f].firstKey) throw new Error(`tuples: ${id}: ${rel} ${f} cues[0] is not its firstKey`);
+  return { normal: plate.normal.cues.map(c => c.key), tells: plate.mistake.cues.map(c => c.key), firstKey: plate.normal.firstKey };
+}
 
 /**
  * The source facts of one id: { id, chromeId, normal, tells, hand: { pages } | null, posture: [key], rows: [key],
@@ -52,7 +93,7 @@ const cueKeys = (text, figure) => {
 export async function sourceFacts(id, { root = ROOT, all = registryRows(root) } = {}) {
   const row = all.find(r => r.id === id);
   if (!row) throw new Error(`tuples: ${id} is not a registry row`);
-  const plate = readFileSync(join(root, `src/howto/generated/ht-${row.slug}.ts`), 'utf8');
+  const keys = await plateKeys(id, row.slug, root);
   const src = (await import(pathToFileURL(join(root, sourceOf(id, root))).href)).default;
   if (src.id !== id) throw new Error(`tuples: ${sourceOf(id, root)} holds ${src.id}, not ${id}`);
   const zooms = src.zooms ?? [];
@@ -60,7 +101,7 @@ export async function sourceFacts(id, { root = ROOT, all = registryRows(root) } 
   const chips = new Map(zooms.map(z => [z.key, z.chip]));
   return {
     id, chromeId: row.chromeId,
-    normal: cueKeys(plate, 'normal'), tells: cueKeys(plate, 'mistake'),
+    normal: keys.normal, tells: keys.tells, firstKey: keys.firstKey,
     // a hand close-up's pages: one per wrong grip, plus the thumb page (golden B's hand renderer)
     hand: hand ? { pages: hand.hand.wrong.length + (hand.hand.thumbPage ? 1 : 0) } : null,
     posture: zooms.filter(z => z.kind === 'posture').map(z => z.key),
@@ -75,7 +116,8 @@ export async function sourceFacts(id, { root = ROOT, all = registryRows(root) } 
 export function statesOf(f) {
   const out = [], add = (theme, check, sub, w = WIDTH) => out.push({ theme, state: `${check}/${sub}@${w ?? '*'}` });
   add('paper', 'entry', 'open');
-  add(NO_THEME, 'L2', 'page', null); add(NO_THEME, 'L2', 'chunk', null);
+  add(NO_THEME, 'L2', 'page', null); add(NO_THEME, 'L2', 'chunk', null); add(NO_THEME, 'L2', 'chunk-size', null);
+  add(NO_THEME, 'HT7', 'A5-size', null); add(NO_THEME, 'HT8', 'size', null);   // D-LIB4b-SIZE: one chunk in budget, or none when the source has none
   for (const s of PQH_STATES) out.push({ theme: NO_THEME, state: s });
   for (const s of ['protected', 'fragments', 'poses']) add(NO_THEME, 'HT4', `A5-${s}`, null);
   add('silent-black', 'offline', 'open');
@@ -104,7 +146,9 @@ export function statesOf(f) {
       if (t === 'silent-black') { add(t, 'HT6', 'A7-lazy'); add(t, 'HT6', 'back'); }
     }
     if (full) add(t, 'HT6', 'A8-hint');
-    // HT-7: each posture close-up
+    // HT-7: the sheet-level row (D-LIB4b-COUNTS: chip keys = source keys, no early fetch, data-motion, #zdots gone), then each posture close-up
+    add(t, 'HT7', 'A2');
+    if (t === 'paper') add(t, 'HT7', 'A2:reduced');
     for (const [i, k] of f.posture.entries()) {
       for (const s of ['L3', 'L4', 'A4', 'restore', 'A5', 'chip']) add(t, 'HT7', `${k}:${s}`);
       if (t === 'paper') add(t, 'HT7', `${k}:reduced`);
@@ -135,6 +179,7 @@ export async function libraryTuples(ids, { root = ROOT } = {}) {
   for (const id of ids) for (const s of statesOf(await sourceFacts(id, { root, all }))) out.push({ id, ...s });
   const seen = new Set();
   for (const t of out) {
+    if ((t.theme === NO_THEME) !== (parseState(t.state).width === null)) throw new Error(`libraryTuples: ${t.id} ${t.theme} ${t.state}: theme '*' must go with width '*' and only with it`);
     const k = `${t.id}|${t.theme}|${t.state}`;
     if (seen.has(k)) throw new Error(`libraryTuples: duplicate tuple ${k}`);
     seen.add(k);

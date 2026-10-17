@@ -20,6 +20,8 @@ export function rowProblems(r) {
   try { p = parseState(r.state); } catch (e) { return [e.message]; }
   if (p.check !== r.check) out.push(`${r.id}|${r.theme}|${r.state}: state does not begin with its check ${r.check}/`);
   if (p.width !== r.width) out.push(`${r.id}|${r.theme}|${r.state}: state does not end with its width @${r.width ?? '*'}`);
+  // D-LIB4b-KEYS: a per-id row is theme-less exactly when it is width-less (the once rows are fixed literals)
+  if (r.id !== '*' && !/^shard-\d+$/.test(r.id) && (r.theme === '*') !== (r.width === null)) out.push(`${r.id}|${r.theme}|${r.state}: theme '*' must go with width '*' and only with it`);
   return out;
 }
 

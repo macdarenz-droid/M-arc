@@ -8,11 +8,11 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { FIXTURE, GOLDEN_JSON, extractPlates, fragmentsOf, latestEntries } from '../golden.mjs';
+import { extractPlates, fragmentsOf } from '../golden.mjs';
 import { ROOT } from '../lib/inputs.mjs';
 import { rows as registryRows } from './registry.mjs';
-import { HT_CUSTOM, HT_FULL, HT_PLATES, HT_THEMES, fixtureLeakSection, fixtureSection, closeHowTo, openAppTrain, openCard, openHowTo, ht10GoldenCounts, ht10Script, ht10Sweep } from '../fidelity/harness.mjs';
-import { CHECKS, LIB_ONCE, NO_THEME, PQH_STATES, WIDTH, libraryTuples, sourceFacts } from './fidelity/tuples.mjs';
+import { HT_CUSTOM, HT_PLATES, HT_THEMES, fixtureLeakSection, fixtureSection, closeHowTo, openAppTrain, openCard, openHowTo, ht10GoldenCounts, ht10Script, ht10Sweep } from '../fidelity/harness.mjs';
+import { LIB_ONCE, NO_THEME, PQH_STATES, WIDTH, libraryTuples, pinnedPlate, sourceFacts } from './fidelity/tuples.mjs';
 import { recorder, stateOf } from './fidelity/rows.mjs';
 import { plateJob, plateStats } from './fidelity/plate.mjs';
 
@@ -29,14 +29,6 @@ export const golden8Pages = (root = ROOT) => {
   const plates = readFileSync(join(root, 'tests/howto/golden/technical-plates.html')), layers = readFileSync(join(root, GOLDEN_B));
   return Object.fromEntries(HT_PLATES.map(([, id]) => [id, { plates, layers }]));
 };
-
-/** Every pinned golden entry, latest per id: GOLDEN.json, then the batch files in name order. */
-export function goldenEntries(root = ROOT) {
-  const all = [...JSON.parse(readFileSync(join(root, 'tests/howto/golden/GOLDEN.json'), 'utf8')).entries];
-  const dir = join(root, 'tests/howto/golden/library');
-  if (existsSync(dir)) for (const f of readdirSync(dir).filter(n => n.endsWith('.json')).sort()) all.push(...JSON.parse(readFileSync(join(dir, f), 'utf8')).entries);
-  return latestEntries(all);
-}
 
 /** A worker pool: runs `jobs` (async thunks) at most `P` at a time. */
 async function pool(jobs, P) {
@@ -87,6 +79,7 @@ export async function libraryFidelity(browser, port, { ids, pages, P = 1, famili
     if (!ok(id)) continue;
     const j = job(id);
     if (families.includes('L2')) jobs.push(timed(id, 'L2', () => l2Job(ctx, j)));
+    for (const fam of ['L2', 'HT7', 'HT8']) if (families.includes(fam)) jobs.push(timed(id, fam, () => sizeJob(ctx, j, fam)));
     if (families.includes('PQH')) jobs.push(timed(id, 'PQH', () => pqhJob(ctx, j)));
     if (families.includes('entry') && themes.includes('paper')) jobs.push(timed(id, 'entry', () => entryJob(ctx, j)));
     if (twins.offline && themes.includes('silent-black')) jobs.push(timed(id, 'offline', () => twins.offline.run(ctx, { ...j, theme: 'silent-black' })));
@@ -102,12 +95,12 @@ export async function libraryFidelity(browser, port, { ids, pages, P = 1, famili
   const covers = new Set(families.flatMap(f => COVERS[f] ?? [f]));
   const want = (await libraryTuples(ids, { root })).filter(t => covers.has(t.state.split('/')[0]) && (t.theme === NO_THEME || themes.includes(t.theme)));
   const rows = R.finish(want, why);
-  return { rows, px: { ...R.pxByTuple }, seconds, stats, problems: R.problems };
+  return { rows, px: { ...R.pxByTuple }, seconds, stats, sizes: R.sizes ?? {}, problems: R.problems };
 }
 
 /** L2 (plan 3.6): the plates page's fragments and the bundled ht-<slug> chunk's fragments both equal the pinned entry. */
 async function l2Job({ R, pages, root }, { lib, chrome }) {
-  const entry = goldenEntries(root).get(lib), row = registryRows(root).find(r => r.id === lib);
+  const entry = (await pinnedPlate(lib, root).catch(() => null))?.entry, row = registryRows(root).find(r => r.id === lib);
   const page = stateOf('L2', 'page', null), chunk = stateOf('L2', 'chunk', null);
   if (!entry || entry.kind !== 'plate') { R.fail(lib, NO_THEME, page, 'no pinned plate entry'); R.fail(lib, NO_THEME, chunk, 'no pinned plate entry'); return; }
   const p = extractPlates(String(pages[lib].plates)).find(x => x.chromeId === chrome);
@@ -120,8 +113,31 @@ async function l2Job({ R, pages, root }, { lib, chrome }) {
   R.check(lib, NO_THEME, chunk, JSON.stringify(got) === JSON.stringify(entry.fragments) ? [] : [`the bundled ${f[0]} does not hold the pinned fragments`]);
 }
 
+/**
+ * D-LIB4b-SIZE: the per-id chunk size rows, from the served build (www/assets). L2/chunk-size: HT-2 A9's raw/gz limits and
+ * HT-3b A2's budgets.json entry; HT7/A5-size: HT-7 A5's 24 KB gz at level 9 and its entry; HT8/size: HT-8's entry. A
+ * missing entry fails; an id whose source has no posture zoom or no feel rows must have no such chunk.
+ */
+async function sizeJob({ R, root }, { lib, chrome, facts }, fam) {
+  const { gzipSync } = await import('node:zlib');
+  const assets = join(root, 'www/assets'), names = readdirSync(assets);
+  const budgets = new Map(JSON.parse(readFileSync(join(root, 'tests/howto/budgets.json'), 'utf8')).budgets.map(b => [b.chunk, b]));
+  const row = registryRows(root).find(r => r.id === lib);
+  const [state, prefix, want] = { L2: [stateOf('L2', 'chunk-size', null), `ht-${row.slug}`, true], HT7: [stateOf('HT7', 'A5-size', null), `posture-${chrome}`, facts.posture.length > 0], HT8: [stateOf('HT8', 'size', null), `feel-${chrome}`, facts.rows.length > 0] }[fam];
+  const files = names.filter(n => new RegExp(`^${prefix}-[\\w-]{8}\\.js$`).test(n)), bad = [];
+  if (!want) { R.check(lib, NO_THEME, state, files.length ? [`the source has none, but the build has ${files.join(', ')}`] : []); return; }
+  if (files.length !== 1) { R.fail(lib, NO_THEME, state, `expected one ${prefix}-*.js chunk, found ${files.join(', ') || 'none'}`); return; }
+  const b = readFileSync(join(assets, files[0])), raw = b.length, gz = gzipSync(b).length, e = budgets.get(`${prefix}-*.js`);
+  if (fam === 'L2' && (raw > 150 * 1024 || gz > 36 * 1024)) bad.push(`${files[0]} is ${raw} B raw / ${gz} B gz (limit 153600 / 36864)`);
+  if (fam === 'HT7' && gzipSync(b, { level: 9 }).length > 24 * 1024) bad.push(`${files[0]} is ${gzipSync(b, { level: 9 }).length} B gz (limit 24576)`);
+  if (!e) bad.push(`${prefix}-*.js has no entry in tests/howto/budgets.json`);
+  else if (raw > e.rawMax || gz > e.gzMax) bad.push(`${files[0]} is ${raw} B raw / ${gz} B gz, over its ceiling ${e.rawMax}/${e.gzMax} (set by ${e.setBy})`);
+  R.check(lib, NO_THEME, state, bad);
+  (R.sizes ??= {})[`${lib}|${state}`] = { file: files[0], raw, gz };
+}
+
 /** entry (HT3-A1, D-LIB4-CTRL 6): exactly one 44 px "How to do it" button on the id's card, and tapping it opens the sheet. */
-async function entryJob({ browser, port, R, order, custom, fixtures }, { lib, index }) {
+async function entryJob({ browser, port, R, order, custom, fixtures, root }, { lib, index, chrome, facts }) {
   const theme = 'paper', st = stateOf('entry', 'open', WIDTH), bad = [];
   const { ctx, page } = await openAppTrain(browser, port, theme, { order, custom, onError: m => bad.push(`page error: ${m}`) });
   try {
@@ -130,7 +146,22 @@ async function entryJob({ browser, port, R, order, custom, fixtures }, { lib, in
     const entry = card.locator('button.ht-entry');
     const n = await entry.count(), name = n === 1 ? (await entry.getAttribute('aria-label')) ?? (await entry.innerText()).trim() : null, b = n === 1 ? await entry.boundingBox() : null;
     if (n !== 1 || name !== 'How to do it' || !b || b.width < 44 || b.height < 44) bad.push(`A1: ${n} entries, name ${JSON.stringify(name)}, box ${JSON.stringify(b && [b.width, b.height])}`);
-    else { await openHowTo(page, index); await closeHowTo(page); }
+    else {
+      // D-LIB4b-X3: HT3-A3's S0 facts as the entry opens the sheet (title = the exercise's name, eyebrow, one pressed
+      // callout = the module's firstKey, no Mistake figure before the first tap, Mistake off, at most 700 elements)
+      await openHowTo(page, index);
+      const name = JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8')).find(e => e.id === lib)?.name;
+      const st = await page.evaluate(id => {
+        const d = document.querySelector('dialog.sheet.ht');
+        if (!d) return null;
+        return { els: d.querySelectorAll('*').length, mistakeFig: !!d.querySelector('.ht-plate[data-mode="mistake"]'), normalShown: !d.querySelector('.ht-plate[data-mode="normal"]').hidden,
+          pressed: [...d.querySelectorAll('.ht-plate[data-mode="normal"] .plate-callout[aria-pressed="true"]')].map(b => b.dataset.key), mistakeOn: document.getElementById(`${id}-mistake`)?.getAttribute('aria-pressed'),
+          eyebrow: d.querySelector('.sheet-head h2 .sheet-eyebrow')?.textContent, title: d.querySelector('.sheet-head h2')?.lastChild?.textContent, open: d.open };
+      }, chrome);
+      if (!st || st.els > 700 || st.mistakeFig || !st.normalShown || JSON.stringify(st.pressed) !== JSON.stringify([facts.firstKey]) || st.mistakeOn !== 'false' || st.eyebrow !== 'How to do it' || st.title !== name || !st.open)
+        bad.push(`A3: the first open is not S0 within 700 elements (title ${JSON.stringify(name)}, first key ${facts.firstKey}): ${JSON.stringify(st)}`);
+      await closeHowTo(page);
+    }
   } catch (e) { bad.push(e.message.split('\n')[0]); } finally { await ctx.close(); }
   R.check(lib, theme, st, bad);
 }
@@ -256,6 +287,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   for (const [k, v] of Object.entries(out.px)) { const id = k.split('|')[0]; pxId[id] = Math.max(pxId[id] ?? 0, v); }
   console.log(`rows ${out.rows.length} (${out.rows.length - fails.length} pass, ${fails.length} fail); browser ${browser.version()}; P ${P}; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   console.log(`max px off per id ${JSON.stringify(pxId)}`);
+  if (Object.keys(out.sizes).length) console.log(`chunk sizes raw/gz ${Object.entries(out.sizes).map(([k, v]) => `${k} ${v.file} ${v.raw}/${v.gz}`).join(', ')}`);
   console.log(`seconds per id ${JSON.stringify(Object.fromEntries(Object.entries(out.seconds.id).map(([k, v]) => [k, +v.toFixed(1)])))}`);
   console.log(`seconds per family ${JSON.stringify(Object.fromEntries(Object.entries(out.seconds.family).map(([k, v]) => [k, +v.toFixed(1)])))}`);
   if (arg('json')) writeFileSync(arg('json'), JSON.stringify(out, null, 1));
