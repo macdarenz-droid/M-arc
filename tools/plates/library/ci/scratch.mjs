@@ -131,7 +131,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     writeFileSync(join(root, MANIFEST), manifestText(await manifestOf(root)));
     const c = copyProblems(root);
     if (c.length) { console.error(`C16 copy diff:\n${c.join('\n')}`); process.exit(1); }
-    console.log(`scratch tree: ${commit(root, '[do not merge] LIB-4c scratch: 6 source-level scratch ids (D-LIB4c-1 a)')}`);
+    console.log(`scratch tree: ${commit(root, '[do not merge] [golden update] LIB-4c scratch: 6 source-level scratch ids and their MANIFEST.json rows (D-LIB4c-1 a)')}`);
   } else if (step === 'check') {
     const c = copyProblems(root);
     console.log(`C16 set: ${SCRATCH_4C.map(s => s.id).join(', ')}: outside LB1 and LB2, none taken, own keys`);
