@@ -25,7 +25,7 @@ Any other `v` shows "Update needed", and sending stops. Unknown `k` values and u
   - `th` is the theme, `[bg, text, accent]`.
 - **cmd** (watch, at most 400 B): WATCH-B's command plus `t` and `k`, with keys in a fixed order. It always carries the load and effort the watch shows (carried from WATCH-B).
 - **res** (phone, at most 200 B): `{t, v, k}` plus the `CommandResult`.
-- **Clock:** offset = `pt − (wt + arrival) / 2`, taken from the hello/snap pair with the lowest round trip, and stored. `actionAt` = watch time + offset, fixed at the tap.
+- **Clock:** offset = `pt − (wt + arrival) / 2`, taken from the hello/snap pair with the lowest round trip, and stored. `actionAt` = watch time + offset, fixed at the tap. The snap that answers a hello carries as `pt` the midpoint of the hello's native receipt and the snap's send, so the phone's JS delay drops out (amended after the 1.1.2 device run, 2026-10-17: 8 of 11 sets were `future_time` after a 2.5 h native gap).
 
 ## Watch outbox (`common/link.js`, ES5, storage injected)
 - **Persistence:** 8 slots, `mc_q0` to `mc_q7`, each holding the exact wire text. The index `mc_q` is written after the slot.
@@ -68,7 +68,7 @@ Each test fails before and passes after; existing tests are not edited; the PR n
 - **X1:** the watch's `link.js` builds a command from `buildSnapshot`; `handleWorkoutCommand` applies it and then returns the replay.
 
 ## Device runs (owner: PR-head debug APK, watch 1.1.0, auto rest on, lab Connect)
-- **D1:** 10 Completes, each Saved within 3 s with matching values. +30 s and Skip move the phone's rest.
+- **D1:** 10 Completes, each Saved within 3 s with matching values, with no `future_time` and a lab `lead` from −5 s to +1 s (added after the 1.1.2 run). +30 s and Skip move the phone's rest.
 - **D2, cut before the save:** phone Bluetooth off; tap Complete and note the Pending time; reopen the watch app (it shows "1 pending"); wait 60 s; Bluetooth on; Connect.
 - **D3, cut after the save:**
   1. Hold on; tap Complete. The lab shows `applied`; the watch shows Pending.

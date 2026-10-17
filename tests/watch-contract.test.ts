@@ -152,3 +152,32 @@ describe('WATCH-C 1.1.2 the ids the phone sends keep the watch slot under 120 B'
     expect(worst).toBeLessThanOrEqual(119 - 10);
   });
 });
+
+describe('WATCH-C 1.1.2 device run: a hello the phone JS sees late still gives the right clock', () => {
+  it('watch clock 37 s behind, JS sees the hello 20 s after Java, the cmd arrives 3 s after the tap: the set keeps the tap time', async () => {
+    const Link = await loadWatch();
+    startSession(split);
+    let watch: WatchLink | null = null;
+    const cmds: string[] = [];
+    const phone = createLink({ send: async t => { watch!.rx(t); return 207; }, log: () => undefined });
+    const send = (t: string, done: (c: number) => void) => {
+      const rxAt = Date.now();
+      if (JSON.parse(t).k === 'hello') setTimeout(() => { void phone.receive(t, rxAt); }, 20_000);
+      else cmds.push(t);
+      done(207);
+    };
+    watch = onWatch(Link, { store: watchStore(), send, keep: () => undefined, now: () => Date.now() - 37_000 }, 'k3x9qa03');
+    watch.start();
+    await vi.advanceTimersByTimeAsync(20_000);
+    expect(watch.view()).toMatchObject({ l1: 'Barbell Bench Press 1/2', can: true });
+    const tap = Date.now();
+    watch.complete();
+    expect(cmds).toHaveLength(1);
+    await vi.advanceTimersByTimeAsync(3_000);
+    await phone.receive(cmds[0]!, Date.now());
+    const set = state.value.active!.entries[0]!.sets[0]!;
+    expect(set.status).toBe('committed');
+    expect(set.flags ?? []).not.toContain('future_time');
+    expect(Math.abs(Date.parse(set.at!) - tap)).toBeLessThanOrEqual(1_000);
+  });
+});

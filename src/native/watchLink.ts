@@ -107,6 +107,13 @@ function word(r: CommandResult, m: Record<string, unknown>): string {
   return `${r.replayed ? 'replayed' : `applied rev ${r.sessionRev}`}${at}`;
 }
 
+/** The watch's action time minus the phone's native receipt, for a first answer: positive means the watch's clock offset runs ahead. */
+function lead(r: CommandResult, m: Record<string, unknown>, rxAt: number): string {
+  if ('replayed' in r && r.replayed) return '';
+  const d = typeof m.actionAt === 'number' && Number.isFinite(m.actionAt) ? m.actionAt - rxAt : NaN;
+  return Number.isFinite(d) ? `lead ${d < 0 ? '-' : '+'}${(Math.abs(d) / 1000).toFixed(1)}s ` : '';
+}
+
 export interface LinkCounts { hello: number; cmd: number; res: number; snap: number; held: number; hidden: number; bad: number }
 interface Doc { visibilityState: string; addEventListener(type: 'visibilitychange', fn: () => void): void }
 export interface LinkDeps {
@@ -152,11 +159,18 @@ export function createLink(deps: LinkDeps): Link {
   let following = false;
   const quiet = () => hidden() || hold.value || stopped;
 
-  /** Never rejects: the timer and the screen event do not wait for it, and an unhandled rejection shows the crash screen (RG-01). */
-  async function sendSnap(wt: number | null, onlyIfChanged = false): Promise<void> {
+  /**
+   * Never rejects: the timer and the screen event do not wait for it, and an unhandled rejection shows the crash screen (RG-01).
+   * A snap that answers a hello carries as `pt` the midpoint of the hello's native receipt (rxAt) and this send, so the
+   * watch's offset, pt - (wt + arrival) / 2, leaves out the time the phone's JS took to see the hello. After a long
+   * native gap that took seconds, and 8 of 11 sets in the 1.1.2 device run came out future_time.
+   */
+  async function sendSnap(wt: number | null, onlyIfChanged = false, rxAt?: number): Promise<void> {
     try {
       if (quiet()) return;
-      const snap = snapshot(now(), wt);
+      const t = now();
+      const built = snapshot(t, wt);
+      const snap = wt !== null && typeof rxAt === 'number' && Number.isFinite(rxAt) && rxAt < t ? { ...built, pt: Math.round((rxAt + t) / 2) } : built;
       const key = projection(snap);
       if (onlyIfChanged && key === lastKey) return;
       lastKey = key;
@@ -190,8 +204,9 @@ export function createLink(deps: LinkDeps): Link {
     if (stopped) return;
     if (m.k === 'hello') {
       bump('hello');
-      deps.log(`mw hello ${String(m.boot)} q${String(m.q)}`);
-      await sendSnap(typeof m.wt === 'number' ? m.wt : null);
+      // js: from the native receipt to this code, as the lab's own rows show it (Gate A question 4)
+      deps.log(`mw hello ${String(m.boot)} q${String(m.q)}${Number.isFinite(rxAt) ? ` js +${now() - rxAt}ms` : ''}`);
+      await sendSnap(typeof m.wt === 'number' ? m.wt : null, false, rxAt);
       return;
     }
     // A kind a later watch adds is ignored.
@@ -200,7 +215,7 @@ export function createLink(deps: LinkDeps): Link {
     try {
       const result = handle(m, rxAt);
       bump('cmd');
-      deps.log(`mw cmd ${result.commandId} ${String(m.kind)} ${String(m.setId ?? m.restId ?? '-')} ${word(result, m)}${hold.value ? ' held' : ''}`);
+      deps.log(`mw cmd ${result.commandId} ${String(m.kind)} ${String(m.setId ?? m.restId ?? '-')} ${lead(result, m, rxAt)}${word(result, m)}${hold.value ? ' held' : ''}`);
       if (hold.value) { bump('held'); return; }
       const r = await deps.send(JSON.stringify({ t: MW, v: MW_VERSION, k: 'res', ...result }));
       if (r === SEND_OK) bump('res');

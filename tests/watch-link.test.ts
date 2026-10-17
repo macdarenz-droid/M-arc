@@ -534,3 +534,38 @@ describe('WATCH-C D1: the snapshot follows the exercise in use on the phone', ()
     expect((JSON.parse(sent[1]!) as Snap).ex).toBe('Cable Fly');
   });
 });
+
+describe('WATCH-C 1.1.2 device run: the clock sample leaves out the phone JS delay', () => {
+  it("a hello seen by JS late is answered with pt at the midpoint of its native receipt and the send", async () => {
+    const r = rig();
+    startSession(split);
+    startRest(90);
+    vi.advanceTimersByTime(14_000);
+    const t = Date.now();
+    await r.link.receive(hello(T0 + 5), t - 14_000);
+    expect(r.last()).toMatchObject({ k: 'snap', pt: t - 7_000, wt: T0 + 5 });
+    expect(r.rows).toContain('mw hello abcd1234 q0 js +14000ms');
+    // the rest countdown is still taken at the send
+    expect(r.last().rest).toEqual(JSON.parse(JSON.stringify(buildSnapshot(state.value, t, T0 + 5))).rest);
+    expect(r.last().rest).toMatchObject({ left: 76_000 });
+  });
+  it('without a usable receipt time, and in snaps that answer no hello, pt is the send time', async () => {
+    const r = rig();
+    startSession(split);
+    vi.advanceTimersByTime(5_000);
+    const t = Date.now();
+    for (const rxAt of [t + 50, Number.NaN, t]) await r.link.receive(hello(T0 + 5), rxAt);
+    await r.link.refresh();
+    expect(r.sent.map(x => (JSON.parse(x) as Snap).pt)).toEqual([t, t, t, t]);
+  });
+  it("the lab row of a first answer shows the watch's lead over the native receipt; a replay shows none", async () => {
+    const r = rig();
+    startSession(split);
+    const c = cmd();
+    await r.link.receive(JSON.stringify(c), (c.actionAt as number) - 7_100);
+    await r.link.receive(JSON.stringify(c), (c.actionAt as number) + 400);
+    const rows = r.rows.filter(x => x.startsWith('mw cmd'));
+    expect(rows[0]).toMatch(/ set_\S+ lead \+7\.1s applied rev \d+ at \d\d:\d\d:\d\d future_time$/);
+    expect(rows[1]).toMatch(/ set_\S+ replayed at \d\d:\d\d:\d\d future_time$/);
+  });
+});
