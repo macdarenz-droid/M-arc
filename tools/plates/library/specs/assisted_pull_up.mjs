@@ -76,7 +76,7 @@ export default {
   trace: { point: 'chin', trim: [18, 8] },
   datum: [{ y: BAR_TOP, from: 20, to: 'start:chin' }],
   callouts: [
-    { key: 'pad', text: 'Knees<br>on pad', anchor: { at: 'knee.r', off: [-6, 10] }, box: { left: 24, top: 296 }, cue: 'Kneel on the pad and let it sink until the arms are straight.' },
+    { key: 'pad', text: 'Knees<br>on pad', anchor: { at: 'knee.r', off: [-6, 10] }, box: { left: 40, top: 294 }, cue: 'Kneel on the pad and let it sink until the arms are straight.' },
     { key: 'set', text: 'Shoulders<br>set', anchor: 'shoulderTop.r', cue: 'Draw the shoulder blades down and back before the elbows bend.' },
     { key: 'chin', text: 'Chin over<br>bar', anchor: { at: 'chin', pose: 'start' }, cue: 'Pull until the chin clears the bar, then lower to straight arms.' },
   ],
@@ -89,8 +89,8 @@ export default {
       { kind: 'arrow', from: { at: 'backMid', pose: 'mistake', off: [-20, 0] }, to: { at: 'backMid', pose: 'end', off: [-20, 0] } },
     ],
     tells: [
-      { key: 'partial', text: 'Arms<br>bent', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 40, top: 118 }, cue: 'The arms never straighten at the bottom: a half rep.' },
-      { key: 'high', text: 'Pad<br>stays up', anchor: { at: 'knee.r', pose: 'mistake', off: [-4, 12] }, box: { left: 8, top: 300 }, cue: 'The pad never sinks to the dead hang.' },
+      { key: 'partial', text: 'Arms<br>bent', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 58, top: 120 }, cue: 'The arms never straighten at the bottom: a half rep.' },
+      { key: 'high', text: 'Pad<br>stays up', anchor: { at: 'knee.r', pose: 'mistake', off: [-30, 14] }, box: { left: 26, top: 294 }, cue: 'The pad never sinks to the dead hang.' },
     ],
   },
   alt: 'Assisted pull-up, side view. Kneeling on the machine pad, overhand grip a little wider than the shoulders. From a straight-arm hang the body rises until the chin clears the bar.',

@@ -38,7 +38,7 @@ export function assistGeometry(m, knee, H = 1.75) {
   return { padTop: [rear, front], leverEnd, attach };
 }
 
-export const ASSIST_ITEMS = 18;
+export const ASSIST_ITEMS = 19;
 
 /**
  * cfg: { pivot, lever, bracket, pad, padBack, attach, tower: [near z, far z], h, bar: world bar centre, step: y,
