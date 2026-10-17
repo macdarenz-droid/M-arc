@@ -38,7 +38,8 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
     const S = await import(/* @vite-ignore */ url('tools/plates/library/scale/synthetic.mjs'));
     const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
     const shipped = new Set(reg.shippedIds()), chromeIds = reg.rows().filter((r: any) => shipped.has(r.id)).map((r: any) => r.chromeId);
-    expect(chromeIds).toHaveLength(8);
+    expect(chromeIds).toHaveLength(reg.shippedIds().length);   // LIB-4a (D-LIB4-PINS-2): the registry's count, the 8 today
+    expect(chromeIds.length).toBeGreaterThanOrEqual(8);
     const keys = S.mapKeys(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
     expect(mapProblems(keys, chromeIds)).toEqual([]);
     expect(mapProblems(keys, [])).toEqual(['no shipped chrome ids']);
@@ -66,12 +67,12 @@ describe('L2-A23: the loaders-*.js ceiling is a per-id rule (plan 5.2 "set once"
     const { perIdCeiling } = await import(/* @vite-ignore */ url('tools/plates/library/budgets/total.mjs'));
     const b = loadersBudget(), n = reg.shippedIds().length;
     expect(b).toBeTruthy();
-    expect(n).toBe(8);
+    expect(n).toBeGreaterThanOrEqual(8);   // LIB-4a (D-LIB4-PINS-2): the registry's shipped N, the 8 today
     expect(b.n).toBe(n);
     expect(b.rawMax).toBe(perIdCeiling(b.measuredRaw, n));
     expect(b.gzMax).toBe(perIdCeiling(b.measuredGz, n));
-    expect(perIdCeiling(b.measuredRaw, 9)).toBeGreaterThan(b.rawMax);
-    expect(perIdCeiling(b.measuredGz, 9)).toBeGreaterThan(b.gzMax);
+    expect(perIdCeiling(b.measuredRaw, n + 1)).toBeGreaterThan(b.rawMax);
+    expect(perIdCeiling(b.measuredGz, n + 1)).toBeGreaterThan(b.gzMax);
     expect(budgets().budgets.some((x: any) => x.chunk === 'loaders-*.js')).toBe(false);   // no fixed entry left beside it
   });
 });
