@@ -326,3 +326,17 @@ describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.
     try { expect(() => transformSources(SCRATCH[0], ROOT)).toThrow(/expected one copy edit/); } finally { COPY_EDITS.lat_pulldown = saved; }
   });
 });
+
+describe('LIB-4b B7: the P decision (D-LIB4-PAR)', () => {
+  it('P = n only at identical rows and px; a forced 1-row or 1-px difference keeps P = 1', async () => {
+    // @ts-expect-error plain .mjs build tool, no types
+    const { parVerdict } = await import('../../tools/plates/library/fidelity/par.mjs');
+    const run = () => ({ rows: [{ id: 'a', theme: 't', state: 'L3/N@390', result: 'pass' }, { id: 'a', theme: 't', state: 'L2/page@*', result: 'pass' }], px: { 'a|t|L3/N@390': 0 } });
+    expect(parVerdict(run(), run(), 4)).toMatchObject({ P: 4, diffs: [] });
+    const row = run(); row.rows[1]!.result = 'fail';
+    expect(parVerdict(run(), row, 4).P).toBe(1);
+    const px = run(); px.px['a|t|L3/N@390'] = 1;
+    expect(parVerdict(run(), px, 4).P).toBe(1);
+    expect(parVerdict({ rows: [], px: {} }, { rows: [], px: {} }, 4).P).toBe(1);
+  });
+});
