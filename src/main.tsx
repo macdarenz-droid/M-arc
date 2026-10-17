@@ -20,7 +20,7 @@ import { initErrorReporting, reportCaught } from './errors';
 import './ui/styles.css';
 
 /** A throw anywhere in here used to leave a silent blank screen with no signal to diagnose from — see the crash handler in index.html, which this reports to explicitly rather than relying only on the window 'error' event. */
-try {
+if (!(globalThis as { __marcUnsupported?: unknown }).__marcUnsupported) try {
   installThemeEngine();
   initStore();
   initErrorReporting();

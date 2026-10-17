@@ -75,6 +75,48 @@
     // Once the app has rendered (__marcBooted), later errors only log: the app handles them itself.
     // The rescue copy below duplicates src/core/rescue.ts on purpose: it must run before the bundle.
     window.__marcBooted = false;
+    // OLD-ANDROID-1b (D-OA1-FLOOR): the bundle needs module scripts, Array.prototype.at,
+    // Animation.prototype.finished and CSS color-mix() (Chrome 111). A WebView missing any of
+    // them gets one update screen instead of a parse error, a broken app or a blank page.
+    // Feature checks, not version numbers: Huawei numbers its WebView its own way.
+    // scripts/old-android-floor.mjs lists the same probes; tests/old-android-floor.test.ts keeps them equal.
+    (function () {
+      var miss = [];
+      function probe(id, missing) { try { if (missing()) miss.push(id); } catch (e) { miss.push(id); } }
+      probe('modules', function () { return !('noModule' in document.createElement('script')); });
+      probe('at', function () { return ![].at; });
+      probe('animation', function () { return !(window.Animation && 'finished' in Animation.prototype); });
+      probe('color-mix', function () { return !(window.CSS && CSS.supports && CSS.supports('color','color-mix(in srgb, red, red)')); });
+      window.__marcUnsupported = miss.length ? miss : null;
+    })();
+    var marcUnsupportedWaiting = false;
+    window.__marcUnsupportedShow = function () {
+      try {
+        var launchEl = document.getElementById('launch');
+        if (launchEl) launchEl.remove();
+      } catch (e) {}
+      try {
+        var app = document.getElementById('app');
+        if (!app) {
+          if (!marcUnsupportedWaiting) { marcUnsupportedWaiting = true; document.addEventListener('DOMContentLoaded', window.__marcUnsupportedShow); }
+          return;
+        }
+        if (app.getAttribute('data-unsupported')) return;
+        app.setAttribute('data-unsupported', '1');
+        app.setAttribute('data-crash-shown', '1');
+        var m = /Chrome\/(\d+)/.exec(navigator.userAgent);
+        var box = document.createElement('div');
+        box.style.cssText = 'position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483001;overflow:auto;display:flex;flex-direction:column;gap:14px;padding:24px 20px;font-family:system-ui,-apple-system,sans-serif;color:#f1f1ee;background:#08090a;box-sizing:border-box;';
+        box.innerHTML =
+          '<h1 style="font-size:18px;margin:0;">WebView update</h1>' +
+          '<p style="font-size:13px;line-height:1.5;color:#9a9aa2;margin:0;">M/ARC needs a newer Android System WebView.</p>' +
+          '<p data-webview style="font-size:11px;line-height:1.4;color:#c7c7cd;margin:0;"></p>' +
+          '<a href="market://details?id=com.google.android.webview" style="display:block;text-decoration:none;background:#f1f1ee;color:#08090a;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;">Open Play Store</a>';
+        box.querySelector('[data-webview]').textContent = 'WebView ' + (m ? m[1] : '?') + ' \u00b7 ' + (window.__marcUnsupported || []).join(', ');
+        app.textContent = '';
+        app.appendChild(box);
+      } catch (e) { /* nothing more we can do from here */ }
+    };
     window.__marcRescue = function () {
       var out = {};
       try {
@@ -112,7 +154,7 @@
           '<pre style="font-size:11px;line-height:1.4;color:#c7c7cd;background:#151519;border:1px solid #2a2a31;border-radius:8px;padding:10px;overflow:auto;white-space:pre-wrap;max-height:40vh;margin:0;"></pre>' +
           '<button type="button" data-rescue style="all:unset;background:#f1f1ee;color:#08090a;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;cursor:pointer;">Save a copy of my data</button>' +
           '<button type="button" data-reset style="all:unset;background:#c0392b;color:#fff;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;cursor:pointer;">Reset app data and reload</button>';
-        box.querySelector('pre').textContent = msg;
+        box.querySelector('pre').textContent = msg + '\n\n' + ((window.navigator && navigator.userAgent) || '');
         box.querySelector('[data-rescue]').addEventListener('click', function () { window.__marcRescue(); });
         box.querySelector('[data-reset]').addEventListener('click', function () {
           if (!confirm('This deletes every workout on this device. Continue?')) return;
@@ -127,8 +169,27 @@
         app.appendChild(box);
       } catch (e) { /* nothing more we can do from here */ }
     };
-    window.addEventListener('error', function (e) { if (window.__marcBooted) { console.error(e.error || e.message); return; } window.__marcCrash(e.error || e.message); });
-    window.addEventListener('unhandledrejection', function (e) { if (window.__marcBooted) { console.error(e.reason); return; } window.__marcCrash(e.reason); });
+    window.addEventListener('error', function (e) { if (window.__marcBooted) { console.error(e.error || e.message); return; } if (window.__marcUnsupported) { window.__marcUnsupportedShow(); return; } window.__marcCrash(e.error || e.message); });
+    window.addEventListener('unhandledrejection', function (e) { if (window.__marcBooted) { console.error(e.reason); return; } if (window.__marcUnsupported) { window.__marcUnsupportedShow(); return; } window.__marcCrash(e.reason); });
+    // OLD-ANDROID-1b: a script that fails to load fires 'error' on its own element only, which
+    // never bubbles to the listener above, so catch it in the capture phase.
+    window.addEventListener('error', function (e) {
+      var t = e.target;
+      if (window.__marcBooted || !t || t === window || t.tagName !== 'SCRIPT') return;
+      if (window.__marcUnsupported) { window.__marcUnsupportedShow(); return; }
+      window.__marcCrash(new Error('Could not load ' + (t.src || 'a script')));
+    }, true);
+    // OLD-ANDROID-1b: the app's module script runs before DOMContentLoaded, so by then it has
+    // booted, failed visibly, or never ran (an engine without module scripts, an empty entry).
+    // No fixed timer: a slow load holds DOMContentLoaded back too.
+    try {
+      document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+          if (window.__marcUnsupported) { window.__marcUnsupportedShow(); return; }
+          if (!window.__marcBooted) window.__marcCrash(new Error('App did not start'));
+        }, 0);
+      });
+    } catch (e) {}
   </script>
 </head>
 <body>
