@@ -180,6 +180,13 @@ Card: `docs/watch-cards/WATCH-C.md`. Debug APK only (`MARC_WEAR_LAB=1`); the pri
 - **Signed (2026-10-16):** `.bin` sha256 `ff8ad3781ac64516fc543b2f4e118d5e6a1ff95e8fe5dada4a51e36a9d520d57`, `.hap` `ded41fbaa7c191b571467fc6091f88947d7b9a53265690a5b96742e836ee96bb`, from the unsigned `.bin` above; `verify-signed-bin.py` and `verify-app` pass. Bundle `com.mrcdrnzz.dailytracker.watch`, version 1.1.0 (1001000), no permissions.
 - **Unverified until the device runs:** whether storage takes the JSON characters in a chunk unchanged (the read-back shows "Not saved" if not), `if` and colour bindings on the GT 6 (the community GT 6 app uses both on text), and whether Connect alone recovers the link after Bluetooth comes back.
 
+### Device run D1 with 1.1.1: crash and watch reset (2026-10-17)
+
+- **What worked:** the phone applied 3 `complete_set` commands and 1 `rest_skip` sent from the watch (lab: `mw cmd 4 res 4`; sets at 16:47:59, 16:48:49 and 16:49:39 phone time), so the chunked outbox, the link and `handleWorkoutCommand` work end to end.
+- **What failed:** the watch app restarted after every applied command (a new boot id in the next hello each time), then crashed on every reopen. After repeated reopening the watch went into "system recovery", restarted, lost its pairing with the phone and its installed apps (owner). The test workout was discarded.
+- **Likely cause, not confirmed:** storage callbacks that run synchronously, so the chain of about 10 storage calls per command (and the start-up reads of every pending slot) nests deeply on the watch's small stack. 1.1.0 failed at its first write and never ran the long chain. A pending slot left by a crash would then crash every start. Being checked against the OpenHarmony sources.
+- **Rules from now on:** no watch build goes to the owner until the cause is backed by evidence and the build has (1) every storage step started from a fresh stack, (2) a crash-loop guard that turns storage and messaging off after an unclean start, and (3) a test that fails on 1.1.1's nesting.
+
 ## Not verified yet
 
 - Whether a release build runs the `.js` or the jerry `.bc` snapshot it also contains.
