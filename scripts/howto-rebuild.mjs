@@ -66,7 +66,7 @@ export async function rebuildAll({ root = ROOT, all = rows(root), out = join(roo
     while (i < pages.length) {
       const p = pages[i++], dest = join(out, pageFileOf(p.file, p.kind)), why = [];
       const r = await child(['--page', p.file, p.kind, dest]);
-      if (r.code !== 0) why.push(`build failed: ${r.err.trim().split('\n').slice(-3).join(' | ')}`);
+      if (r.code !== 0) why.push(`build failed: ${r.err.trim().split('\n').pop()}`);
       else {
         const bytes = readFileSync(dest), got = sha256(bytes);
         pageShas[p.id] = got; files[p.id] = basename(dest);
@@ -100,7 +100,8 @@ export function changedPaths(root = ROOT) {
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   if (process.argv[2] === '--page') {
     const [file, kind, dest] = process.argv.slice(3);
-    const bytes = await buildPage(file, kind);
+    let bytes;
+    try { bytes = await buildPage(file, kind); } catch (e) { console.error(`howto-rebuild --page: ${e.message.split('\n').slice(0, 3).join(' | ')}`); process.exit(1); }
     mkdirSync(dirname(dest), { recursive: true });
     writeFileSync(dest, bytes);
     process.exit(0);

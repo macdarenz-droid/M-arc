@@ -57,3 +57,6 @@ export function libraryPlan({ ids, times }) {
   const hash = createHash('sha256').update(JSON.stringify({ ids: [...ids].sort(), times, K, c0: times.c0 ?? 0, offsets, target: SHARD_TARGET_S })).digest('hex');
   return { K, shards, hash, note, loads };
 }
+
+/** The ids of shard k (1-based, as CI matrix jobs name it) of a plan. */
+export const idsOfShard = (plan, k) => plan.shards[k - 1] ?? [];

@@ -6,6 +6,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { coverProblems } from '../../fidelity/shard.mjs';
 import { ROOT } from '../../lib/inputs.mjs';
+import { HT_PLATES } from '../../fidelity/harness.mjs';
 import { latestEntries } from '../../golden.mjs';
 import { LIBRARY_GOLDEN_DIR, rows, shippedIds } from '../registry.mjs';
 import { LIB_ONCE, libraryTuples } from '../fidelity/tuples.mjs';
@@ -61,8 +62,8 @@ export async function libraryVerdict({ lib, rebuild, gate = [], sha, ref, event,
   }
   if (!/^[0-9a-f]{40}$/.test(sha ?? '')) problems.push(`library: GITHUB_SHA is not a full sha: ${sha}`);
   const U = libraryIds(all), mode = modeOf({ ref, event });
-  const eight = all.filter(r => r.mode === 'golden').map(r => r.id);
-  if (!same([...U, ...eight].sort(), [...shippedIds(all)].sort())) problems.push(`library: library ids + the 8 (${U.length + eight.length}) differ from shippedIds() (${shippedIds(all).length})`);
+  const eight = HT_PLATES.map(p => p[1]);   // the 8 the HT blocks prove
+  if (!same([...U, ...eight].sort(), [...shippedIds(all)].sort())) problems.push(`library: library ids + the 8 (${U.length + eight.length}) differ from shippedIds() (${shippedIds(all).length}): ${shippedIds(all).filter(id => !U.includes(id) && !eight.includes(id)).join(', ')}`);
 
   // ---- the rebuild proof (L1) and the ids
   if (rebuild.length !== 1) problems.push(`library: expected one rebuild proof, got ${rebuild.length}`);

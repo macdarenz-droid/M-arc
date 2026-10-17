@@ -42,6 +42,10 @@ const CLASS5 = [
   p => p.startsWith('src/'),
 ];
 
+/** The class a path gets from the path rules alone (4, 5 or 6), before the lazy.tsx closure: src/** outside class 4's
+ *  patterns is class 4 when the closure holds it (affectedIds checks that), else 5. */
+export const staticClass = p => (CLASS4.some(f => f(p)) ? 4 : CLASS5.some(f => f(p)) ? 5 : 6);
+
 const HEADER = /^(?:\/\/|\/\*) GENERATED, do not edit\. Written by tools\/plates\/generate\.mjs \(([^)]*)\)\. inputsSha256=([0-9a-f]{64})/;
 const hashOfText = t => (t == null ? null : HEADER.exec(t)?.[2] ?? null);
 const readHead = (root, p) => (existsSync(join(root, p)) ? readFileSync(join(root, p), 'utf8') : null);
@@ -221,12 +225,13 @@ export async function affectedIds({ changed, base = 'FETCH_HEAD', root = ROOT, b
         continue;
       }
     }
-    if (CLASS4.some(f => f(p))) { reasons.push({ path: p, cls: 4, ids: 'all', why: 'shared input' }); continue; }
+    const sc = staticClass(p);
+    if (sc === 4) { reasons.push({ path: p, cls: 4, ids: 'all', why: 'shared input' }); continue; }
     if (p.startsWith('src/')) {
       const c = await lazySet();
       if (!c || c.includes(p)) { reasons.push({ path: p, cls: 4, ids: 'all', why: c ? `in the import closure of ${LAZY}` : `closure of ${LAZY} not built` }); continue; }
     }
-    if (CLASS5.some(f => f(p))) { reasons.push({ path: p, cls: 5, ids: [], why: 'neutral' }); continue; }
+    if (sc === 5) { reasons.push({ path: p, cls: 5, ids: [], why: 'neutral' }); continue; }
     reasons.push({ path: p, cls: 6, ids: 'all', why: 'unclassified path' });
   }
   for (const p of pending) {

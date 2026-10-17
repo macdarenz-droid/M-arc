@@ -9,7 +9,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSy
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { jobFromEnv, writeProof } from '../tools/plates/fidelity/shard.mjs';
-import { libraryPlan, readTimes } from '../tools/plates/library/ci/plan.mjs';
+import { idsOfShard, libraryPlan, readTimes } from '../tools/plates/library/ci/plan.mjs';
 import { PAGES_DIR } from './howto-rebuild.mjs';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -50,7 +50,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const pageShas = {};
   for (const [id, f] of Object.entries(plan.files ?? {})) { try { pageShas[id] = sha256(readFileSync(join(dir, f))); } catch { pageShas[id] = null; } }
   const { problems, hash } = inputProblems({ plan, rebuild, job, times: readTimes(ROOT), pages: pageShas });
-  const ids = plan.shards[job.k] ?? [];
+  const ids = idsOfShard(plan, k);
   const sha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
   if (env.GITHUB_SHA && env.GITHUB_SHA !== sha) problems.push(`this job checked out ${sha}, not the commit under test ${env.GITHUB_SHA}`);
   if (plan.sha !== sha) problems.push(`howto-rebuild planned ${plan.sha}, this job is on ${sha}`);
