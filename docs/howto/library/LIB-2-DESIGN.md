@@ -288,3 +288,34 @@ Built on main c542ae9. Where the build differs from sections 1-12, the reason is
 - `HOWTO_HINTS` keeps its per-id lines (HT-6's gate block A8 parses them);
 - L2-A10 runs as the gate block `LIB-2`, and L2-A21 runs with a fixture pair loader until LIB-7 lands
   `hands/pairs.mjs`.
+
+### 13.1 LIB-2b: library rows in the layer generators (2026-10-17)
+
+Card LIB-2b (D-LIB4-FIXTURE-2; rulings in `docs/supervisor/verify/lib4-cards.md` section 11, recorded as D-LIB2b-* in
+`docs/COACHING-DECISIONS.md`). It corrects section 3's last row and section 6 as built:
+- **Every layer plugin reads the registry's shipped rows** (`shippedRows()`): the 8 keep today's paths and bytes, and a
+  shipped library row gets the same kinds of output from its own sources: `ht-<slug>.ts` (its plate part is cut from
+  its batch plates page and its content part comes from `sourceOf(id)`), `docs/research/howto/<id>.json`, `feel-`,
+  `posture-` and `zoom-<chromeId>.css` (cut from its batch's pinned layers page), and its hand as its LIB-7 pair
+  (`handpair-<key>`), never `hand-<chromeId>`.
+- **Section 6.2 is corrected:** "no library page is committed" now reads: layers pages are committed and pinned; plates
+  pages are derived; L1 rebuilds both. A batch file names `pages: { plates, layers, layersConfig }`. Its batch golden
+  file `tests/howto/golden/library/<batch file>` pins one `page`, one `layers-page` and one `plate` entry per id. The
+  generator throws, naming the batch and the file, before it cuts anything from a page that is missing or differs
+  from its pin. A test keeps the folder to exactly the batch golden files and their pinned pages. Layers pages are
+  built only through `tools/plates/library/layers-spec.mjs` (`layersSpecOf`, LIB-6's builder spec as data).
+- **Section 6.1 is corrected:** each output's inputs are the transitive import closure of the data sources its text is
+  made from (`tools/plates/library/inputs-closure.mjs`, from esbuild's metafile, never hand-listed), plus the shared
+  files the plugin reads, for the 8 and for library rows alike. `ht-pull-up.ts` now lists `pull_up.mjs`,
+  `engine/hand.mjs`, `engine/body.mjs` and the rest of its 13-file closure plus `layers/MANIFEST.json`. The 8's
+  headers and `hashes:` lines changed; their bodies did not (L2-A3).
+- **Shared CSS:** `plate.css`, `hand.css`, `feel.css` and `posture.css` stay built from the 8's pages. A library page
+  must rebuild each of them byte for byte, or the generator throws.
+- **QA:** `gen/plates.mjs` gates each shipped library row on the QA node half (`tools/plates/library/candidate.mjs`
+  `candidateOf`, LIB-3's `runQa`) and throws `QaRefused` naming the id. Measured on the fixture row: 1.0 to 1.4 s per id
+  per generate (cached in-process).
+- **Loaders:** `gen/ids.mjs` runs after `plates.mjs` too. It throws unless every shipped row has its `ht-`, `feel-` and
+  `posture-` chunk and, unless its archetype is `none`, a hand chunk or pair, so no `loaders.ts` line can dangle.
+- **Risk (repo size):** about 43 MB working tree and 9-10 MB packed at 145 ids [est, 21 % gzip], plus one page per batch
+  golden update. Trigger: if packed growth under `tests/howto/golden/library/` passes 20 MB (2x the estimate), the
+  supervisor re-rules (for example, a content-addressed build cache) before the next pin.

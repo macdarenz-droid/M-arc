@@ -49,6 +49,7 @@ import { reviews as c15Reviews } from './fixtures/bad/c15-no-matching-review';
 import { mutate as c16Mutate } from './fixtures/bad/c16-missing-alt';
 import { mutate as c16ViewNoCamLabel } from './fixtures/bad/c16-view-no-camlabel';
 import { mutate as c16MissingWrongCrop } from './fixtures/bad/c16-missing-wrong-crop';
+import { SHIPPED } from './shipped-rows';
 
 /*
  * HT4-A2: this literal is machine_chest_press.howto.mjs's default export at the final compact-copy pin (b3a90af),
@@ -541,7 +542,8 @@ describe('HT4b-A4/A5: C19 no sources or contacts, each rule proven by a bad fixt
   it('(d) every generated feel-*.ts passes (one per approved exercise, HT-8)', () => {
     const root = join(new URL('.', import.meta.url).pathname, '..', '..');
     const feel = filesUnder([join(root, 'src', 'howto', 'generated')]).filter(f => /(^|[\\/])feel-[^\\/]*\.ts$/.test(f));
-    expect(feel).toHaveLength(8);
+    expect(feel).toHaveLength(SHIPPED.length);   // LIB-2b: one per shipped row
+    expect(feel.map(f => f.split(/[\\/]/).pop()).sort()).toEqual(SHIPPED.map(r => `feel-${r.chromeId}.ts`).sort());
     for (const f of feel) expect(checkC19Feel(f, names), f).toEqual([]);
   });
 
