@@ -325,6 +325,23 @@ describe('LIB-9a A8 (Do 4, D-LIB9-AUTHORQA): the authoring option', { timeout: T
   });
 });
 
+describe('LIB-9a Q-A (#245): candidate.mjs resolves the How-to source exactly as registry sourceOf does', () => {
+  // registry.mjs stays byte-identical (it is an input of every generated file); candidateOf resolves the source of a row
+  // in the injected rows itself. It must equal sourceOf for every main row and, with lb1/rows.json read as an extra
+  // batch file through the registry's own test hook, for the 14 LB1 rows.
+  it('equal to sourceOf for every main row and the 14 LB1 rows', () => {
+    for (const r of reg.rows()) expect(cand.howtoOf(r.id, undefined, all), r.id).toBe(reg.sourceOf(r.id));
+    reg.__setExtraBatches([ROWS]);
+    try { for (const id of IDS) expect(cand.howtoOf(id, undefined, all), id).toBe(reg.sourceOf(id)); } finally { reg.__setExtraBatches([]); }
+  });
+  it('mutations: a changed path is red; an unknown id throws', () => {
+    const changed = (id: string) => cand.howtoOf(id, undefined, all).replace('/howto/', '/how-to/');
+    expect(changed('lib_close_grip_pulldown')).not.toBe(reg.__setExtraBatches([ROWS]) ?? reg.sourceOf('lib_close_grip_pulldown'));
+    reg.__setExtraBatches([]);
+    expect(() => cand.howtoOf('lib_no_such_id', undefined, all)).toThrow(/no row/);
+  });
+});
+
 describe('LIB-9a A4, A6 and Q1: runQa node half on the LB1 slice', { timeout: T }, () => {
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
