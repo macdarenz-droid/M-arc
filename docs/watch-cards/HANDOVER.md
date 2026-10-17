@@ -2,6 +2,15 @@
 
 Last update: 2026-10-17, by the watch lane session (owner asked for a handover before its usage ran out). Read with `AGENTS.md`, `docs/WATCH-ARCHITECTURE.md`, the cards in this folder and `native/wear/README.md` (every device record).
 
+## Current task (emergency pickup)
+Exactly where the watch lane stopped, in order:
+1. **Building WATCH-C3** (`docs/watch-cards/WATCH-C3.md`): two builders started at `fff328ff`, one for the phone (`src/native/watchLink.ts`: `st`, `nx`, `rs`; `src/slices/workout/commands.ts`: round a watch load to 0.01; tests) and one for the watch (`native/wear/app`: 1.3.0 with no `<text if>`, logging the next sets while the phone is away, local rest, Rest done with OK and a vibration, the Adjust screen for kg and reps, the heart-rate line; tests). Not pushed. If their commits are not on the branch, start them again from the card.
+2. **Then:** cherry-pick both onto the branch; write the X3 contract test (the watch's `link.js` logs 3 sets offline from a real snap's `nx`, the phone applies them in order with their action times); run `npm run check`, `npm run test:tz`, `node --test 'native/wear/test/*.test.mjs'`; build the watch and run `check-lite-js`; push.
+3. **Then:** a fresh-context review, then a red team (JerryScript runs, heap, offline and Adjust edge cases), fix every finding with a test that fails before, and one last red team of the fixes.
+4. **Then:** sign 1.3.0 (owner's debug keystore files needed), verify, record the hashes in README, send it privately with numbered device steps (the card's F1–F6), and say a practice workout comes first.
+5. **CI:** the Play bundle job on `fff328ff` failed on a Maven outage; one re-run was requested. Check it; a second failure is real.
+6. **PR #221 body:** update the HANDOFF block at the end to the new head.
+
 ## Where things stand
 - **Branch:** `ccr-061c7350-tjvpo6`, draft PR #221 (not for merge). Head `fff328ff` or later. M/ARC gate green on `cd0e0b16` (run 2116). The Play bundle job failed on `fff328ff` with Maven artifacts not found (`kotlin-stdlib:2.2.0` and about 80 more): a repository outage, not code; one re-run was requested. If it fails again, it is real: look at it.
 - **Gates:** A done (Q1–Q6). B done (`WATCH-B.md`). C in progress: `WATCH-C.md` (protocol, outbox), `WATCH-C2.md` (C2 screens, Up next, watch 1.2.0), `WATCH-C3.md` (next build, not built yet).
