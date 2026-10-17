@@ -6577,7 +6577,7 @@ if (gate.runs('HT-3'))
 //   and put back on close, Back closes the close-up before the sheet, focus goes to the heading and back to the chip;
 // - A6: the HT-3 plate compare (L2b, F3, L3) still passes after each hand close-up was opened and closed;
 // - A7: hand-<id> chunks within their measured size + 10 % (D-HT6-budget), and no hand- request before the first tap;
-// - A8: the push hint on the Train card (Silent Black, Paper): exactly once on the chest press, with HOWTO_HINTS' text;
+// - A8: the push hint on the Train card (Silent Black, Paper): exactly once on the chest press, with howToHint's text;
 //   none on the lat pulldown (a How-to, not push), the no-How-to control (firstWithoutHowTo) or a custom exercise.
 if (gate.runs('HT-6'))
 {
@@ -6586,6 +6586,7 @@ if (gate.runs('HT-6'))
   const H = await import('../tools/plates/fidelity/harness.mjs');
   const { gzipSync } = await import('node:zlib');
   const GB = readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'));
+  const C11 = await import('./c11-anims.mjs');   // GATE-FLAKE-3: the animations recorded where they are created
   const ht6 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
   const stats = { pairs: 0, offMax: 0, tall: 0, words: 0, anims: 0, a6: 0 };
   const P = m => errors.push(`${tag}: ${m}`);
@@ -6609,8 +6610,6 @@ if (gate.runs('HT-6'))
       pages: p.querySelectorAll('.zx-page').length,
     };
   }, sel);
-  /** The open or close animation of a panel, as comparable data. */
-  const animsOf = (page, sel) => page.evaluate(s => document.querySelector(s).getAnimations().map(a => ({ k: a.effect.getKeyframes().map(f => ({ o: f.opacity, t: f.transform, off: f.offset })), d: a.effect.getTiming().duration, e: a.effect.getTiming().easing })), sel);
   /** L3 of the open page of one close-up: the golden panel placed at the app panel's position, both on their own layer. */
   const l3 = async (app, gold, id, label, sel = panelSel(id)) => {
     // no smooth scroll left running in the golden page (its openZoom scrolls smoothly), both pages settled
@@ -6664,9 +6663,12 @@ if (gate.runs('HT-6'))
     const reqs = []; app.page.on('request', r => reqs.push(r.url()));
     try {
       if (theme === 'silent-black' || theme === 'paper') {
-        const hints = [...readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8').matchAll(/^  "(lib_[a-z_]+)": ("(?:[^"\\]|\\.)*"),$/gm)].map(m => [m[1], JSON.parse(m[2])]);
+        // LIB-2 (ruling D-LIB2-hints): the hints through the generated decoder (ids.ts's Node twin, same literals and
+        // template, L2-A17), over every exercises.json id
+        const twin = await import('../tools/plates/library/ids-node.mjs');
+        const hints = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => [e.id, twin.howToHint(e.id)]).filter(([, t]) => t !== undefined);
         const text = Object.fromEntries(hints);
-        if (!text.lib_machine_chest_press) P(`${theme} A8: no HOWTO_HINTS entry for the chest press`);
+        if (!text.lib_machine_chest_press) P(`${theme} A8: no hint for the chest press`);
         for (const [lib, want] of [['lib_machine_chest_press', text.lib_machine_chest_press], ['lib_lat_pulldown', null], [H.HT_NO_HOWTO, null], [H.HT_CUSTOM.id, null]]) {
           const card = await H.openCard(app.page, H.HT_ORDER.indexOf(lib));
           const got = await card.evaluate(c => [...c.querySelectorAll('p.hint.muted')].filter(p => !p.closest('.why-row ~ .ex-body')).map(p => p.textContent));
@@ -6684,11 +6686,13 @@ if (gate.runs('HT-6'))
         await gold.page.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo({ top: 0, behavior: 'instant' }); });
         const before = await plateState(app.page);
         // a real tap in both pages (pointer modality: the heading takes focus without a focus ring, as on a phone)
-        await app.page.click(`#${id}-chip-hand`);
-        await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible', timeout: 8000 });
-        const [aA, aG] = await Promise.all([animsOf(app.page, panelSel(id)), (async () => { await gold.page.click(`#${id}-chip-hand`); return animsOf(gold.page, panelSel(id)); })()]);
+        const aA = await C11.captureAnims(app.page, panelSel(id), async () => {
+          await app.page.click(`#${id}-chip-hand`);
+          await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible', timeout: 8000 });
+        }, 'shown');
+        const aG = await C11.captureAnims(gold.page, panelSel(id), () => gold.page.click(`#${id}-chip-hand`), 'shown');
         stats.anims++;
-        if (JSON.stringify(aA) !== JSON.stringify(aG) || aA.length !== 1) P(`${T} C11 open animation: app ${JSON.stringify(aA)} vs golden ${JSON.stringify(aG)}`);
+        if (C11.c11Bad(aA, aG)) P(`${T} C11 open animation: app ${JSON.stringify(aA)} vs golden ${JSON.stringify(aG)}`);
         await H.settleApp(app.page); await H.settle(gold.page);
         // A4: the plate box hidden and inert, the figure mounted, the cue line hidden, focus on the heading
         const open = await plateState(app.page);
@@ -6719,9 +6723,9 @@ if (gate.runs('HT-6'))
           }
         }
         // closing: golden B's exit animation, the plate state back as before, focus back on the chip
-        const shut = async pg => { await pg.click(`${panelSel(id)}-close`); return animsOf(pg, panelSel(id)); };
+        const shut = pg => C11.captureAnims(pg, panelSel(id), () => pg.click(`${panelSel(id)}-close`), 'hidden');
         const [cA, cG] = await Promise.all([shut(app.page), shut(gold.page)]);
-        if (JSON.stringify(cA) !== JSON.stringify(cG) || cA.length !== 1) P(`${T} C11 close animation: app ${JSON.stringify(cA)} vs golden ${JSON.stringify(cG)}`);
+        if (C11.c11Bad(cA, cG)) P(`${T} C11 close animation: app ${JSON.stringify(cA)} vs golden ${JSON.stringify(cG)}`);
         await H.settleApp(app.page); await H.settle(gold.page);
         const after = await plateState(app.page), back = await app.page.evaluate(i => document.activeElement?.id === `${i}-chip-hand`, id);
         if (JSON.stringify(after) !== JSON.stringify(before) || !back) P(`${T} A4 close: ${JSON.stringify({ before, after, back })}`);
@@ -6785,11 +6789,13 @@ if (gate.runs('HT-6'))
     try {
       const id = 'machine-chest-press', index = H.HT_PLATES.findIndex(p => p[0] === id);
       await H.openHowTo(app.page, index);
-      await click(app.page, `#${id}-chip-hand`);
-      await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
-      const o = await animsOf(app.page, panelSel(id));
-      await click(app.page, `${panelSel(id)}-close`);
-      const c = await animsOf(app.page, panelSel(id)), shut = await app.page.evaluate(s => document.querySelector(s).hidden, panelSel(id));
+      const o = await C11.captureAnims(app.page, panelSel(id), async () => {
+        await click(app.page, `#${id}-chip-hand`);
+        await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+      }, 'shown');
+      // "closed at once": hidden in the same task as the tap
+      let shut = false;
+      const c = await C11.captureAnims(app.page, panelSel(id), async () => { shut = await app.page.evaluate(s => { document.querySelector(`${s}-close`).click(); return document.querySelector(s).hidden; }, panelSel(id)); }, 'hidden');
       if (o.length || c.length || !shut) P(`${theme} C11 reduced motion: open ${JSON.stringify(o)}, close ${JSON.stringify(c)}, closed at once ${shut}`);
     } finally { await app.ctx.close(); }
   };
@@ -8987,6 +8993,106 @@ if (!(await import('../tools/plates/fidelity/shard.mjs')).ht10Runs()) {
   if (ownS > HT10_OWN_JOB_BUDGET_S) errors.push(`HT-10 A5c: the skipped HT-10 block took ${ownS.toFixed(1)} s in this job, over its ${HT10_OWN_JOB_BUDGET_S} s budget (D-HT10-A5c)`);
 } else {
   await (await import('../tools/plates/fidelity/ht10.mjs')).runHt10({ errors, OUT, PORT, clock: ht10Clock });
+}
+
+// LIB-2 (library plan 5.2; LIB-2 design 7, L2-A10): LOADERS is its own lazy chunk, generated/loaders.ts.
+// - exactly one loaders-*.js chunk, within its tests/howto/budgets.json ceiling; it holds one ht-<slug> import per
+//   shipped id; the main index-*.js and HowToSheet-*.js chunks do not hold the LOADERS map;
+// - no loaders-*.js request from launch until the first How-to tap (the page's resource timing, read before the tap, so
+//   a request at launch counts), and exactly one on that tap (Silent Black, Chromium: the only browser installed in
+//   this environment). The shipped ids come from the registry. Red on 0 shipped ids and on 0 requests seen.
+if (gate.runs('LIB-2'))
+{
+  const tag = 'LIB-2';
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const { gzipSync } = await import('node:zlib');
+  const assets = readdirSync(join(ROOT, 'www/assets'));
+  const lj = assets.filter(f => /^loaders-[\w-]{8}\.js$/.test(f));
+  const REG = await import('../tools/plates/library/registry.mjs');
+  const regRows = REG.rows(), shippedSet = new Set(REG.shippedIds(regRows));
+  const shippedRows = regRows.filter(r => shippedSet.has(r.id));
+  if (shippedRows.length === 0) errors.push(`${tag} A10: no shipped rows`);
+  if (lj.length !== 1) errors.push(`${tag} A10: expected one loaders-*.js chunk, found ${lj.join(', ') || 'none'}`);
+  else {
+    const buf = readFileSync(join(ROOT, 'www/assets', lj[0])), gz = gzipSync(buf).length;
+    // the per-id rule (D-LIB2-loaders-budget): the ceiling is recomputed from the 8's measurement at the shipped N
+    const b = JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).perId?.find(x => x.chunk === 'loaders-*.js');
+    const { perIdCeiling } = await import('../tools/plates/library/budgets/total.mjs');
+    if (!b) errors.push(`${tag} A10: loaders-*.js has no perId entry in tests/howto/budgets.json`);
+    else {
+      const n = shippedRows.length, rawMax = perIdCeiling(b.measuredRaw, n), gzMax = perIdCeiling(b.measuredGz, n);
+      if (b.n !== n || b.rawMax !== rawMax || b.gzMax !== gzMax) errors.push(`${tag} A10: the loaders-*.js entry (n ${b.n}, ${b.rawMax}/${b.gzMax}) is not the per-id rule at ${n} shipped ids (${rawMax}/${gzMax})`);
+      if (buf.length > rawMax || gz > gzMax) errors.push(`${tag} A10: ${lj[0]} is ${buf.length} B raw / ${gz} B gz, over its per-id ceiling ${rawMax}/${gzMax} at ${n} shipped ids`);
+    }
+    const text = buf.toString('utf8');
+    for (const r of shippedRows) if (!new RegExp(`ht-${r.slug}-[\\w-]{8}\\.js`).test(text)) errors.push(`${tag} A10: ${lj[0]} does not import ht-${r.slug}`);
+    const holders = assets.filter(f => /^(index|HowToSheet)-[\w-]{8}\.js$/.test(f) && shippedRows.some(r => readFileSync(join(ROOT, 'www/assets', f), 'utf8').includes(`ht-${r.slug}-`)));
+    if (holders.length) errors.push(`${tag} A10: ${holders.join(', ')} hold the LOADERS imports`);
+    console.log(`${tag} A10: ${lj[0]} ${buf.length} B raw / ${gz} B gz${b ? ` of ${b.rawMax}/${b.gzMax}` : ''}`);
+  }
+  const lb = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
+  try {
+    const reqs = [];
+    const { ctx, page } = await H.openAppTrain(lb, PORT, 'silent-black', { onError: m => errors.push(`${tag} A10: page error: ${m}`) });
+    page.on('request', r => { if (/\/loaders-[\w-]{8}\.js$/.test(r.url())) reqs.push(r.url()); });
+    await H.openCard(page, 0);
+    await page.waitForTimeout(500);
+    const early = await page.evaluate(() => performance.getEntriesByType('resource').map(e => e.name).filter(n => /\/loaders-[\w-]{8}\.js$/.test(n)));
+    if (early.length || reqs.length) errors.push(`${tag} A10: loaders-*.js requested before the How-to tap: ${[...early, ...reqs].join(', ')}`);
+    await H.openHowTo(page, 0);
+    if (reqs.length !== 1) errors.push(`${tag} A10: expected one loaders-*.js request on the first How-to tap, saw ${reqs.length}`);
+    await ctx.close();
+  } finally { await lb.close(); }
+  if (!errors.some(e => e.startsWith(`${tag} `))) console.log(`${tag}: LOADERS in its own lazy loaders-*.js chunk within budget, holding every shipped ht- import, requested only on the How-to tap`);
+}
+
+// LIB-2 (ruling D-LIB2-A4, supervisor 2026-10-16; library plan 5.1, 5.6): HT-10 A4's total and C17 miss loaders-* and
+// handpair-* ("hand-" needs the dash). This block, not ht10.mjs, adds:
+// - A25: the superset How-to total over every HowToSheet-, ht-, hand-, handpair-, feel-, posture-, zoom- and loaders-
+//   asset, within the How-to total ceiling (tests/howto/budgets.json totals, the per-id rule of L2-A15 at the shipped N);
+// - A26: C17 (the shared checker, plus no <a>, no target=, every href starting with #) over loaders-*.js and handpair-*.js.
+// Red on 0 How-to assets and on no loaders-*.js chunk.
+if (gate.runs('LIB-2'))
+{
+  const tag = 'LIB-2';
+  const { gzipSync } = await import('node:zlib');
+  const { perIdCeiling } = await import('../tools/plates/library/budgets/total.mjs');
+  const REG = await import('../tools/plates/library/registry.mjs');
+  const n = REG.shippedIds().length;
+  const assetsDir = join(ROOT, 'www/assets');
+  const all = readdirSync(assetsDir).filter(f => /^(HowToSheet-|ht-|hand-|handpair-|feel-|posture-|zoom-|loaders-)[\w-]+\.(js|css)$/.test(f));
+  const T = JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).totals?.find(t => t.chunk === 'How-to total');
+  if (!all.length) errors.push(`${tag} A25: no How-to assets in www/assets`);
+  if (!all.some(f => /^loaders-[\w-]{8}\.js$/.test(f))) errors.push(`${tag} A25: no loaders-*.js chunk among the How-to assets`);
+  if (!T) errors.push(`${tag} A25: no "How-to total" entry in tests/howto/budgets.json totals`);
+  else {
+    const rawMax = perIdCeiling(T.measuredRaw, n), gzMax = perIdCeiling(T.measuredGz, n);
+    let raw = 0, gz = 0;
+    for (const f of all) { const b = readFileSync(join(assetsDir, f)); raw += b.length; gz += gzipSync(b).length; }
+    if (raw > Math.min(rawMax, T.rawMax) || gz > Math.min(gzMax, T.gzMax)) errors.push(`${tag} A25: the superset How-to total (${all.length} files) is ${raw} B raw / ${gz} B gz, over ${Math.min(rawMax, T.rawMax)} / ${Math.min(gzMax, T.gzMax)} at ${n} shipped ids`);
+    console.log(`${tag} A25: superset How-to total ${all.length} files (${all.filter(f => /^(loaders|handpair)-/.test(f)).length} loaders-/handpair- among them), ${raw} B raw / ${gz} B gz of ${Math.min(rawMax, T.rawMax)} / ${Math.min(gzMax, T.gzMax)}`);
+  }
+  const scanned = all.filter(f => /^(loaders|handpair)-[\w-]+\.js$/.test(f));
+  const { pathToFileURL } = await import('node:url');
+  const { mkdtempSync, copyFileSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { build } = await import('esbuild');
+  const c17 = await build({ entryPoints: [join(ROOT, 'tests/howto/checks/c17.ts')], bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' });
+  const dir = mkdtempSync(join(tmpdir(), 'lib2-c17-')), scan = join(dir, 'scan');
+  try {
+    mkdirSync(scan);
+    writeFileSync(join(dir, 'c17.mjs'), c17.outputFiles[0].text);
+    const { checkC17 } = await import(pathToFileURL(join(dir, 'c17.mjs')).href);
+    for (const f of scanned) copyFileSync(join(assetsDir, f), join(scan, f));
+    for (const m of checkC17([scan])) errors.push(`${tag} A26: C17: ${m}`);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+  for (const f of scanned) {
+    const s = readFileSync(join(assetsDir, f), 'utf8');
+    if (/<a[\s/>]/.test(s)) errors.push(`${tag} A26: C17: ${f} has an <a> tag`);
+    if (/\btarget\s*=/.test(s)) errors.push(`${tag} A26: C17: ${f} has a target= attribute`);
+    for (const m of s.matchAll(/\bhref=(["'])(.*?)\1/g)) if (!m[2].startsWith('#')) errors.push(`${tag} A26: C17: ${f} has href="${m[2].slice(0, 60)}"`);
+  }
+  if (!errors.some(e => / A2[56]: /.test(e) && e.startsWith(`${tag} `))) console.log(`${tag} A25/A26: superset How-to total within the per-id ceiling; C17 clean on ${scanned.join(', ')}`);
 }
 
 await gate.done();

@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-04 ~04:00 UTC · main `c542ae9` (train 13 #207; main's own run red on the GATE-FLAKE-2 flake) · 8.0d · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 06:30, resumed 08:35, takeover cancelled ~10:25: this supervisor continues (8.0b). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-17 ~02:30 UTC · main `c14212af` (train 18) · 8.0g · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -807,6 +807,82 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0g 10-17 ~02:30 UTC (read first; supersedes 8.0f where they differ)
+
+- **Train 18 merged** (main `c14212af`): GATE-FLAKE-3 #224.
+- **Train 19 (this one):**
+  - LIB-2 #189 @ 54d37f2: delta PASS 02:17, 0/0/0/0;
+  - LIB-3 #180 @ 4540d82: PASS, frozen. Merged onto main + LIB-2 with no conflicts; typecheck, `generate --check` (60 files) and vitest (2,882 tests) all green locally;
+  - `claude/sup-lib4-cards` @ f6debb0;
+  - this handover.
+  After it merges, send the APK. The How-to wiring changed (loaders and hints), so the phone check is: the 8 How-to sheets open and look the same.
+- **LIB-4 split** (`docs/supervisor/verify/lib4-cards.md`, rulings in section 1):
+  - LIB-4a #233 (session_01PKX7vT1vRteUZ15QynVS3Z): existing checks at scale.
+  - LIB-4b #232 (session_01MQ2BT4MiRoP2F1FhxjMC4B): the per-id runner. Its design note is posted.
+  - LIB-4c: after LIB-4b's design note.
+  - Ruling **D-LIB4-FIXTURE-2**: LIB-2's layer generators read only the 8, and their inputs miss imported composers. The new card **LIB-2b** (#234, session_01Xj1c9kPKCXgUcAGadGStg8, section 10, checklist slot 3a.1) fixes both. Its design note is posted. LIB-4b's B5 and LIB-4c's C4/C11-C14 wait for it, and D-LIB4-ENTRY gains LIB-2b.
+  - Ruling **D-LIB4-PINS-2** decides which card fixes each test pinned to the 8.
+  - AGENTS.md now has a pointer line for LIB-4a's edits in other tasks' blocks (plan risk 22).
+- **Gotcha:** a builder session can push only to its designated branch. A new card needs a new session (`outcome_branch` = the card's branch); a trigger cannot add a branch.
+- **Audit lane:** A3-7b #229 READY @ 3fe9b88, reviewer session_014LEkzSXYkmz1BrNfyPAjiN. The A3-1..A3-5 builders and reviewers are archived.
+- **Still open:**
+  - GATE-SPLIT #194 delta review of 5c8a8fa (reviewer session_01RXRCfEdijRcaieyozTaJsA, running);
+  - OLD-ANDROID-1b #227 building (session_01AKXZbhXZViXpgvhfT3UeEv);
+  - the watch lane (#221, Watch-test issue #4) has not replied.
+
+### 8.0f 10-16 ~22:15 UTC (read first; supersedes 8.0e where they differ)
+
+- **Train 16 merged** (#228 → main `8f64ab00`). It carried:
+  - A3-6 #218 @ 8b4633c;
+  - A3-7 #216 @ ec0ba2a (the supervisor's main merge plus a date-bomb test fix; delta PASS);
+  - A3-5b #223 @ 65c7698;
+  - A3-2b #222 @ 08fb932;
+  - handover #225.
+
+  All 8 checks were green on train head 67baa0b. The APK went to the owner: run 38965662947, fingerprint passed. Builders and reviewers for those cards are archived. The audit-3 lane is done except **A3-7b** (#229, session_01MQ1jw4YksgT3pxVJwWjFyv, building).
+- **Train 17 merged** (#230 → main `277bd6d5`, 10-16 ~23:20). It carried OLD-ANDROID-1a #226 @ d5f6f11, the native launch-crash fix for Android 8-13, plus HANDOVER 8.0f. All 8 checks were green on 3aff0d6. The APK goes to the owner with device checks D1/D3 (docs/supervisor/verify/old-android-1.md). Builder and reviewer archived.
+- **Train 18:** GATE-FLAKE-3 #224 (PASS @ 0d397b5), so main's C11 race is fixed.
+- **OLD-ANDROID-1a #226: PASS @ d5f6f11** (0/0/0/1). It rides train 17 alone, for speed (P0). Its reviewer is session_01PNvAhFyDVPgqA8UDe3APyr. **OLD-ANDROID-1b #227** is building; it was told to merge main for A3-2b's `index.html` block.
+- **GATE-FLAKE-3 #224:** READY @ 0d397b5. Reviewer session_01DN4ub4bS6GhaGK8x32xNuY.
+- **LIB-2 #189:**
+  - delta PASS @ b0ca732 covers items 1, 2, 3, 5 and 6;
+  - item 4 (ids.ts hints) is being built under rulings **D-LIB2-hints** (howToHint everywhere; HT-6 A8, hint.test and content-gen move onto the decoder) and **D-LIB2-hints-2** (the generator enforces the 2,048 B raw budget; 12 distinct 29-character texts fit; a 13th is refused; 3 B margin).
+- **GATE-SPLIT #194: FAIL @ 0df9648** (0/0/2/2).
+  - Medium 1: gate-split credits only new screenshot names.
+  - Medium 2: the proof sha comes from GITHUB_SHA instead of `git rev-parse HEAD`.
+  - The builder session_01Nf1EpvrcLEJ3uR8fW6zFW7 has been resumed. CI-only proofs still owed after #219: a 14-job verdict PASS, E6, the E8 pairs, E9 and E7.
+- **Watch lane:** no reply on #221 after 4 h. Also asked in **Watch-test issue #4** (the owner suggested his repo), which the monitor now polls too.
+
+### 8.0e RESTART 10-16 ~17:20 UTC (owner: "Start full work again"; read first, supersedes 8.0d where they differ)
+
+- **Pause.** The owner said "Pause all sessions" on 10-09 at ~08:35 and "Start full work again" on 10-16 at ~17:20. In between, the supervisor loop routine was disabled, and 84 stale ticks were drained. The loop (trig_016ECwLTU7XRLzsYVRrwLTGe) is enabled again. The Huawei reply check (trig_01PwNaFDcaAkLKMsYM6Q6Ssm) was deleted: Wear Engine application 3 was **approved on 2026-10-15**, per the watch lane's record (#221, `docs/WATCH-WEAR-ENGINE-APPLICATION.md` on its branch).
+- **Train 15 merged** (#220 → main `41807999`, 10-16 17:2x): A3-2 #211, A3-1 #210, A3-3 #213, A3-4 #214, A3-5 #215. All checks were green on the train head `b1a3c518`.
+  - main's own gate run 38939522305 then went red in **visual-gate-tz** (Auckland pass): `HT-6: silent-black lat-pulldown C11 close animation: app [..160 ms..] vs golden []`. The same tree had passed, which points to a race: the check reads getAnimations() one round trip after the click, so the golden's 160 ms animation can end before the read.
+  - Failed jobs were re-run once (allowed: identical tree passed). Card **GATE-FLAKE-3** fixes the race the GATE-FLAKE-2 way (builder session_01JnibAabiJgVDPDwpDgxpCL, #224).
+  - The train 15 APK goes to the owner once android-gate passes.
+- **P0 OLD-ANDROID-1** (owner, 10-10: "on older phones ... it crashes or never opens"). Record: `docs/supervisor/verify/old-android-1.md`.
+  - Most likely cause: a native crash on every launch on Android 8-13. HealthConnectNativePlugin has private methods whose signatures name Android-14 types, and Capacitor's getDeclaredMethods() throws NoClassDefFoundError before the WebView loads. This has been there since 2026-09-28.
+  - Web causes: the ES2020 bundle needs WebView 80+; a boot that fails silently stays blank; `.finished` needs 84 and `.at` needs 92.
+  - Cards, built in parallel:
+    - **OLD-ANDROID-1a** (native + CI javap floor): session_01PXNT6jPqQUKp9GfwGRR1HA;
+    - **OLD-ANDROID-1b** (WebView floor 111 by feature detection, update screen, boot watchdog): session_01AKXZbhXZViXpgvhfT3UeEv.
+  - Ruling **D-OA1-FLOOR**. 1a merges in its own train as soon as it passes.
+  - The owner is asked for the phone model, Android and WebView versions in the next APK message.
+- **LIB-2 reopened.** The LIB-1 triage found must-fix items (HowToSheet glob maps, the loaders budget rule, a synthetic-N build test, the ids.ts hint encoding). Ruling **D-LIB2-A4**: a superset total lives in LIB-2's own block, and the HT-10 A4 counts go to LIB-4 before LIB-9. The old enabler session was archived; replacement builder session_01XN9ZyZPBm9GvVUfgeJqTh2 (#189 issuecomment-6221134695).
+- **Audit lane:**
+  - A3-7 #216: PASS @ 582d898. The supervisor merged main in (`b6e4552`). The delta FAILed on a date-bomb test, fixed @ `ec0ba2a`; delta running.
+  - A3-6 #218: READY @ 8b4633c; reviewer session_01MFdeeWz1CMySdevT2eUBjE.
+  - A3-5b #223: READY @ 65c7698; reviewer session_0154FQEL6TYESUJhnGaeURch.
+  - A3-2b #222: READY @ 08fb932; reviewer session_01Y66kKfjCU8Fgy1WFsEBbq3.
+  - Merge order: A3-6 → A3-7 → A3-5b and A3-2b. A3-2b and OLD-ANDROID-1b both edit `index.html`.
+  - New follow-up card **A3-7b**: the onboarding hold must clear on Reset/Restore (reserved store/App files), plus a test for the hold on "Update" (A3-7 review Lows 1-2).
+- **GATE-SPLIT #194:** reviewer resumed (it stopped at the weekly limit on 10-04). #219 (the supervisor's .github wiring) waits for the PASS and the proofs.
+- **Watch lane** (owner, 2026-10-15: "Yes u take over"). Session_01GKeGChQ1wzd3vgzK2YixRG (not visible to this account's session tools) builds the GT 6 companion on branch `ccr-061c7350-tjvpo6`, in both repos.
+  - M-arc PR **#221** (Gates A-C, draft). It changes AGENTS.md and AGENT-RULES ownership from Codex to the watch lane, `.claude/settings.json` (drops the Edit denies), store/models/dataVersion (data version 1, the command log; the owner approved on 10-16, per the record's section 11.3), session.ts, Settings.tsx, three workflows (add-only) and one `prepare-android.sh` line.
+  - Coordination channel: #221 comments (**Supervisor** / **Watch lane** prefixes), issuecomments 6221160644 and 6221733706.
+  - #221 merges through the supervisor's trains, after four things: a review verdict posted on #221, a supervisor cross-lane review of the shared files, green CI on the latest main, and the owner's approvals quoted on the PR.
+  - Watch-test review done (wf_fb1a433a-e6c): the UDID tool still labels the HiChain ID as "UDID", and WatchService loses its diagnostics. M/ARC's own follow-ups: native/watch WatchService diagnostics loss, and no Java tests on native/watch/core in CI.
 
 ### 8.0d FINISH LINE 10-04 ~00:50 UTC (read first; supersedes 8.0c where they differ)
 

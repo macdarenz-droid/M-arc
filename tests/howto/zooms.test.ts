@@ -178,8 +178,12 @@ describe('HT7-A5: each posture-<id> chunk is at most 24 KB gz and imports only i
   it('nothing outside the zoom registry\'s loader reaches the chunks (they load on first open only)', () => {
     const hits = (dir: string): string[] => readdirSync(dir, { withFileTypes: true }).flatMap(e => e.isDirectory() ? hits(join(dir, e.name))
       : /\.(ts|tsx)$/.test(e.name) && readFileSync(join(dir, e.name), 'utf8').includes('generated/posture-') ? [join(dir, e.name)] : []);
-    expect(hits('src').filter(p => !p.startsWith('src/howto/generated'))).toEqual(['src/slices/howto/sections/Posture.tsx']);
-    expect(readFileSync('src/slices/howto/sections/Posture.tsx', 'utf8')).toMatch(/import\.meta\.glob<PostureModule>\('\.\.\/\.\.\/\.\.\/howto\/generated\/posture-\*\.ts'\)/);
+    // LIB-2 (D-LIB2-sheet-maps): the loader map is the lazy loaders chunk's POSTURE, which Posture.tsx reads
+    expect(hits('src').filter(p => !p.startsWith('src/howto/generated'))).toEqual([]);
+    const inGen = readdirSync('src/howto/generated').filter(f => readFileSync(join('src/howto/generated', f), 'utf8').includes("import('./posture-"));
+    expect(inGen).toEqual(['loaders.ts']);
+    expect(readFileSync('src/howto/generated/loaders.ts', 'utf8').match(/import\('\.\/posture-/g)).toHaveLength(IDS.length);
+    expect(readFileSync('src/slices/howto/sections/Posture.tsx', 'utf8')).toMatch(/import\('\.\.\/\.\.\/\.\.\/howto\/generated\/loaders'\)\.then\(m => m\.POSTURE\[chromeId\]\)/);
   });
 });
 

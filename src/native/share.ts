@@ -33,6 +33,8 @@ async function blobToBase64(blob: Blob): Promise<string> {
 }
 
 const SHARE_DIR = 'MARC Share';
+/** A3-2b: the cache folders every reset removes; index.html's start-up reset lists the same ones. */
+export const EXPORT_CACHE_DIRS: readonly string[] = [EXPORT_DIR, SHARE_DIR];
 
 /**
  * A3-2 QA CACHE 01: Reset removes the plaintext copies that exports and shared cards leave in the
@@ -40,7 +42,7 @@ const SHARE_DIR = 'MARC Share';
  */
 export async function clearExportCache(): Promise<void> {
   if (!isNative()) return;
-  await Promise.all([EXPORT_DIR, SHARE_DIR].map(path => Filesystem.rmdir({ path, directory: Directory.Cache, recursive: true }).catch(() => undefined)));
+  await Promise.all(EXPORT_CACHE_DIRS.map(path => Filesystem.rmdir({ path, directory: Directory.Cache, recursive: true }).catch(() => undefined)));
 }
 
 /** Android's share sheet for a file written to the app cache. False when the person backs out. */

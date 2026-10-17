@@ -11,7 +11,7 @@ import type { GoalId } from '@/data/goals';
 import { GOAL_BY_ID } from '@/data/goals';
 import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
-import { effectiveSetsByMuscle, effortLabel, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
+import { effectiveSetsByMuscle, effortLabel, hasWorkingSets, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
 import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
 import { isFlatTotal, plateauSeries, plateauStatus, sinceLastBreak, trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
@@ -176,7 +176,7 @@ export interface WeeklyReviewInput {
  * Planned = the schedule minus days off, else Profile.plannedDays, else 3; never below 2.
  */
 export function reviewWeek(sessions: Session[], today: string, plan?: WeekPlan): string | null {
-  const count = (start: string) => sessions.filter(s => s.day >= start && s.day < addDays(start, 7)).length;
+  const count = (start: string) => sessions.filter(s => s.day >= start && s.day < addDays(start, 7) && hasWorkingSets(s)).length;
   const thisWeek = weekStart(today);
   const lastWeek = addDays(thisWeek, -7);
   if (count(thisWeek) >= fullWeekSessions(plan, thisWeek)) return thisWeek;
@@ -196,7 +196,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   const plan: WeekPlan = { schedule: schedule as WeekPlan['schedule'], daysOff: input.daysOff ?? [], plannedDays: input.profile.plannedDays };
   const start = reviewWeek(sessions, today, plan) ?? weekStart(today);
   const week = start === weekStart(today) ? 'this week' : 'last week';
-  const weekSessions = sessions.filter(s => s.day >= start && s.day < addDays(start, 7));
+  const weekSessions = sessions.filter(s => s.day >= start && s.day < addDays(start, 7) && hasWorkingSets(s));
   const g = GOAL_BY_ID[goal];
 
   // Sets per muscle vs band
@@ -205,7 +205,10 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   if (trained.length && weekSessions.length >= fullWeekSessions(plan, start)) {
     // ADAPT-5 (C-4): one band everywhere. The reviewed week is judged by muscleVolumeStatus, as Body
     // and the coach judge it (level band, seeded by training age; 'under' only after two full weeks).
-    const status = new Map(muscleVolumeStatus(sessions, addDays(start, 7), custom, plan, input.profile.trainingSince).map(r => [r.muscle, r]));
+    // ENG-03: sessions after the reviewed week do not count toward its verdict (same array when none are).
+    const end = addDays(start, 7);
+    const upToEnd = sessions.every(s => s.day < end) ? sessions : sessions.filter(s => s.day < end);
+    const status = new Map(muscleVolumeStatus(upToEnd, end, custom, plan, input.profile.trainingSince).map(r => [r.muscle, r]));
     const flagged = trained.filter(m => status.get(m)?.status === 'under');
     const over = trained.filter(m => status.get(m)?.status === 'over');
     const m = flagged[0] ?? over[0];
