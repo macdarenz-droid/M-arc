@@ -7,6 +7,7 @@ import { dirname, join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { INLINE_ALLOW, inlineVars, lint } from './css.test';
+import { LIBRARY, SHIPPED } from './shipped-rows';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -38,7 +39,7 @@ describe('HT7-A1: every posture panel === golden B', () => {
   });
   it('one chunk per exercise, keyed by the chrome id, and no other posture chunk', () => {
     const files = readdirSync('src/howto/generated').filter(f => f.startsWith('posture-')).sort();
-    expect(files).toEqual(IDS.map(id => `posture-${id}.ts`).sort());
+    expect(files).toEqual(SHIPPED.map(r => `posture-${r.chromeId}.ts`).sort());   // LIB-2b: the registry's shipped rows
     expect(IDS).toHaveLength(8);
   });
   it.each(IDS)('%s: the panels are the page\'s posture close-ups, same keys, same order, each ===', id => {
@@ -58,6 +59,27 @@ describe('HT7-A1: every posture panel === golden B', () => {
       expect(p).toMatch(/clip-path="url\(#[a-z0-9-]+\)"/);
     }
     expect(n).toBe(16);
+  });
+  it('LIB-2b: each shipped library row\'s panels are its pinned page\'s posture close-ups (exact count), with its own source\'s keys and golden B\'s ZDOTS', async () => {
+    const cg = await import(/* @vite-ignore */ url('tools/plates/gen/content.mjs'));
+    let n = 0, want = 0;
+    for (const r of LIBRARY) {
+      const page = readFileSync(r.pages!.layers, 'utf8'), golden = gen.posturePanels(page, r.chromeId) as { key: string; panel: string }[];
+      const chunk = await import(/* @vite-ignore */ url(`src/howto/generated/posture-${r.chromeId}.ts`));
+      const zooms = (await cg.loadContent(r.id)).content.zooms.filter((z: any) => z.kind === 'posture');
+      want += zooms.length;
+      expect(Object.keys(chunk.panels)).toEqual(golden.map(g => g.key));
+      expect(golden.map(g => g.key)).toEqual(zooms.map((z: any) => z.key));
+      for (const g of golden) {
+        n++;
+        expect(chunk.panels[g.key] === g.panel, `${r.id}/${g.key}`).toBe(true);
+        expect(g.panel.startsWith(`<div class="zx" id="${r.chromeId}-zoom-${g.key}" data-zoom="${g.key}"`)).toBe(true);
+        expect((g.panel.match(/<svg\b/g) ?? []).length).toBeGreaterThanOrEqual(2);
+      }
+      expect(chunk.zdots === L.ZDOTS).toBe(true);
+      expect(page.split(L.ZDOTS)).toHaveLength(2);
+    }
+    expect(n).toBe(want);
   });
   it.each(IDS)('%s: zdots === golden B\'s ZDOTS, which the page holds exactly once', id => {
     expect(chunks[id]!.zdots === L.ZDOTS).toBe(true);
@@ -170,7 +192,7 @@ describe('HT7-A2: no duplicate id in one How-to, none between two', () => {
 });
 
 describe('HT7-A5: each posture-<id> chunk is at most 24 KB gz and imports only its close-up CSS', () => {
-  it.each(IDS)('%s', id => {
+  it.each(SHIPPED.map(r => r.chromeId))('%s', id => {   // LIB-2b: every shipped row, the 24 KB ceiling included
     expect(src(id).match(/^import .*$/gm)).toEqual([`import '../../slices/howto/css/zoom-${id}.css';`]);
     const s = readFileSync(`src/howto/generated/posture-${id}.ts`);
     expect(gzipSync(s, { level: 9 }).length).toBeLessThanOrEqual(24 * 1024);
@@ -182,7 +204,7 @@ describe('HT7-A5: each posture-<id> chunk is at most 24 KB gz and imports only i
     expect(hits('src').filter(p => !p.startsWith('src/howto/generated'))).toEqual([]);
     const inGen = readdirSync('src/howto/generated').filter(f => readFileSync(join('src/howto/generated', f), 'utf8').includes("import('./posture-"));
     expect(inGen).toEqual(['loaders.ts']);
-    expect(readFileSync('src/howto/generated/loaders.ts', 'utf8').match(/import\('\.\/posture-/g)).toHaveLength(IDS.length);
+    expect(readFileSync('src/howto/generated/loaders.ts', 'utf8').match(/import\('\.\/posture-/g)).toHaveLength(SHIPPED.length);
     expect(readFileSync('src/slices/howto/sections/Posture.tsx', 'utf8')).toMatch(/import\('\.\.\/\.\.\/\.\.\/howto\/generated\/loaders'\)\.then\(m => m\.POSTURE\[chromeId\]\)/);
   });
 });
