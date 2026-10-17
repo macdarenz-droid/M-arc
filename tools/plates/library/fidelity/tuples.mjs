@@ -36,7 +36,7 @@ export const LIB_ONCE = {
 
 /** A state's check family and width, parsed back (the runner asserts every row against this). */
 export function parseState(state) {
-  const m = /^([A-Za-z0-9]+)\/(.+)@(\d+|\*)$/.exec(state);
+  const m = /^([A-Za-z0-9-]+)\/(.+)@(\d+|\*)$/.exec(state);
   if (!m) throw new Error(`tuples: state "${state}" is not <check>/<sub-state>@<width or *>`);
   return { check: m[1], sub: m[2], width: m[3] === '*' ? null : +m[3] };
 }

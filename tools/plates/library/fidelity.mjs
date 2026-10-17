@@ -237,7 +237,7 @@ async function qaBase(ctx) {
  * `blind` (B2's guard mutations only) names a guard whose planted defect is not planted, so that guard must turn red.
  * Returns rows.
  */
-export async function onceStates(browser, port, k, { root = ROOT, blind = null } = {}) {
+export async function onceStates(browser, port, k, { root = ROOT, blind = null, skipSelftest = false } = {}) {
   const R = recorder(), [a, b] = LIB_ONCE.shard(k), tuples = [a, b];
   const { goldenSelfCheck } = await import('../fidelity/harness.mjs');
   const r = await goldenSelfCheck(browser);
@@ -247,8 +247,8 @@ export async function onceStates(browser, port, k, { root = ROOT, blind = null }
     const [qa, sec, l3text, a3dup] = LIB_ONCE.run;
     tuples.push(qa, sec, l3text, a3dup);
     const { selftest } = await import('./qa/selftest.mjs');
-    const lines = [], st = await selftest({ log: l => lines.push(l) }).then(x => x, e => ({ ok: false, error: e.message }));
-    R.check(qa.id, qa.theme, qa.state, st?.ok === false || st?.bad?.length ? [JSON.stringify(st).slice(0, 500)] : []);
+    // selftest() returns its problems (an empty list is a pass); `skipSelftest` (guard-mutation evidence runs only) leaves the row unproven, so it fails
+    if (!skipSelftest) R.check(qa.id, qa.theme, qa.state, await selftest({ log: () => {} }).then(bad => (Array.isArray(bad) ? bad : [`selftest returned ${JSON.stringify(bad)}`]), e => [`selftest crashed: ${e.message.split('\n')[0]}`]));
     R.check(sec.id, sec.theme, sec.state, await guardSections(browser, port, root, blind === 'L-sections'));
     const t7 = await import('./fidelity/twins/ht7.mjs');
     R.check(l3text.id, l3text.theme, l3text.state, t7.guardL3Text ? await t7.guardL3Text({ browser, port, root }, { blind: blind === 'HT7-l3text' }) : ['the HT-7 twin has no L3 text guard']);
@@ -316,7 +316,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const t0 = Date.now();
   let out;
   try {
-    out = arg('once') ? { rows: await onceStates(browser, PORT, +arg('once'), { blind: arg('blind') }), px: {}, sizes: {}, seconds: { id: {}, family: {} } }
+    out = arg('once') ? { rows: await onceStates(browser, PORT, +arg('once'), { blind: arg('blind'), skipSelftest: process.argv.includes('--skip-selftest') }), px: {}, sizes: {}, seconds: { id: {}, family: {} } }
       : await libraryFidelity(browser, PORT, { ids, pages, P, families, themes, fixtures, log: m => console.error(m) });
   } finally { await browser.close(); }
   const fails = out.rows.filter(r => r.result === 'fail');
