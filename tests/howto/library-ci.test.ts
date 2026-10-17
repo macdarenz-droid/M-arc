@@ -87,7 +87,7 @@ describe('C1: each shipped id is in exactly one shard', () => {
 describe('C2: integer-aware K (t = 271, c0 = 30)', () => {
   const times = { default: 271, c0: 30, once: { run: 0, shard: 0 }, ids: {} };
   it('K(0) = 1, K(4) = 2, K(14) = 5, K(145) = 49, every packed shard <= 900', () => {
-    for (const [n, K] of [[0, 1], [4, 2], [14, 5], [145, 49]]) {
+    for (const [n, K] of [[0, 1], [4, 2], [14, 5], [145, 49]] as [number, number][]) {
       const p = libraryPlan({ ids: items(n).map(x => x.id), times });
       expect([n, p.K]).toEqual([n, K]);
       for (const s of p.loads) expect(s).toBeLessThanOrEqual(900);
@@ -323,7 +323,7 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
 type Proof = { sha: string; shard: any; rows: any[]; meta: any };
 const rowOf = (t: any, result = 'pass') => { const p = parseState(t.state); return { sha: SHA, id: t.id, check: p.check, state: t.state, theme: t.theme, width: p.width, result }; };
 /** A green proof set at `root` for `ids` in `mode` (rebuild + shards + a gate proof). */
-async function greenSet(root: string, { ids, times, mode = 'full', all = registryRows(root) }: any) {
+async function greenSet(root: string, { ids, times, mode = 'full', all = registryRows(root) }: any): Promise<any> {
   const plan = libraryPlan({ ids, times }), { pages } = pinnedPages(root);
   const pageShas = Object.fromEntries(pages.map((p: any) => [p.id, p.pageSha256]));
   const rebuild: Proof = { sha: SHA, shard: null, rows: pages.map((p: any) => ({ sha: SHA, id: p.id, check: 'L1', state: `L1/${p.kind}@*`, theme: '*', width: null, result: 'pass' })), meta: { mode, base: null, changed: mode === 'affected' ? null : [], plan: { hash: plan.hash }, pageShas, baseValues: null } };
@@ -337,7 +337,7 @@ async function greenSet(root: string, { ids, times, mode = 'full', all = registr
   return { lib, rebuild: [rebuild], gate: [{ meta: { www: 'w', chrome: 'c' } }], plan, all };
 }
 const NEEDS = { 'howto-rebuild': { result: 'success' }, 'howto-shard': { result: 'success' } };
-const clone = <T,>(x: T): T => JSON.parse(JSON.stringify(x));
+const clone = (x: any): any => JSON.parse(JSON.stringify(x));
 
 describe('C6, C8: zero library ids on this tree', { timeout: 120_000 }, () => {
   const times = { default: 280.8, c0: 30, once: { run: 0, shard: 0 }, ids: {} };
@@ -416,8 +416,8 @@ describe('C5: the verdict family is red on every D-LIB4-VERDICT item (LIB-2b fix
   it('L1: a pinned page missing from the rebuild proof, a failed rebuild row, a rebuilt sha != pin; a shard page sha != the rebuild proof', async () => {
     await red(x => { x.rebuild[0].rows.pop(); }, /library L1: .* proven 0 times/);
     await red(x => { x.rebuild[0].rows[0].result = 'fail'; }, /library L1 .*: fail/);
-    await red(x => { const k = Object.keys(x.rebuild[0].meta.pageShas)[0]; x.rebuild[0].meta.pageShas[k] = '0'.repeat(64); for (const m of x.lib) m.meta.pageShas[k] = '0'.repeat(64); }, /rebuilt 000000000000 != pinned/);
-    await red(x => { const k = Object.keys(x.lib[1].meta.pageShas)[0]; x.lib[1].meta.pageShas[k] = '1'.repeat(64); }, /page shas differ from the rebuild proof/);
+    await red(x => { const k = Object.keys(x.rebuild[0].meta.pageShas)[0]!; x.rebuild[0].meta.pageShas[k] = '0'.repeat(64); for (const m of x.lib) m.meta.pageShas[k] = '0'.repeat(64); }, /rebuilt 000000000000 != pinned/);
+    await red(x => { const k = Object.keys(x.lib[1].meta.pageShas)[0]!; x.lib[1].meta.pageShas[k] = '1'.repeat(64); }, /page shas differ from the rebuild proof/);
     await red(x => { x.rebuild = []; }, /expected one rebuild proof, got 0/);
   });
   it('www differs from the gate family\'s; chrome differs; tz is not UTC', async () => {
@@ -540,7 +540,7 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
     expect([next.default, next.c0]).toEqual([t.default, t.c0]);
   });
   it('compare.mjs: identical runs pass; a dropped row, a flipped result or a changed px is the first difference', () => {
-    const run1 = [{ sha: SHA, rows: [{ id: 'a', theme: 't', state: 'L3/N@390', result: 'pass' }, { id: 'a', theme: 't', state: 'L3/M@390', result: 'pass' }], meta: { px: { 'a|t|L3/N@390': 0 } } }];
+    const run1: any = [{ sha: SHA, rows: [{ id: 'a', theme: 't', state: 'L3/N@390', result: 'pass' }, { id: 'a', theme: 't', state: 'L3/M@390', result: 'pass' }], meta: { px: { 'a|t|L3/N@390': 0 } } }];
     expect(firstDifference([run1, clone(run1), clone(run1)])).toBeNull();
     const drop = clone(run1); drop[0].rows.pop();
     expect(firstDifference([run1, drop])).toMatch(/rows/);
