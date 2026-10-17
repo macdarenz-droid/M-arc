@@ -531,7 +531,8 @@ describe('LIB-9a A11 and Q3: the card fields and the ruled tempo map', () => {
       const c = cardOf(id), claims = new Set(c.claims.map((x: any) => x.id));
       for (const f of c.plateFacts) expect(claims.has(f.claim), `${id} ${f.claim}`).toBe(true);
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h).toEqual({ research: { card: `docs/research/howto/cards/${id}.json` } });
+      // `id` too: the synthetic N = 153 measurement (library/scale/synthetic.mjs) reads any existing How-to source and checks its id
+      expect(h).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
   });
 });
