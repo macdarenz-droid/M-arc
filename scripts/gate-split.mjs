@@ -63,13 +63,15 @@ export function gateSplit({ errors, OUT, browser, file, env = process.env }) {
   for (const r of replays) if (r.at == null || !r.fn) throw new Error(`GATE-SPLIT: no group or replay for REPLAYED ${r.group} ${r.path}`);
   const reached = [], rows = new Map();
   let open = null;
-  const listOut = () => { try { return new Set(readdirSync(OUT)); } catch { return new Set(); } };
+  // name -> mtime and size, so a group is credited with every file it writes, new or rewritten (a stale screenshots/ or
+  // a name an earlier group in the same job wrote must not change what a group is credited with)
+  const listOut = () => { try { return new Map(readdirSync(OUT).map(f => { const st = statSync(join(OUT, f)); return [f, `${st.mtimeMs}:${st.size}`]; })); } catch { return new Map(); } };
   const close = () => {
     if (!open) return;
     const after = listOut();
     open.row.seconds += (Date.now() - open.t0) / 1000;
     open.row.errors += errors.length - open.e0;
-    for (const f of after) if (!open.files0.has(f) && !f.startsWith('gate-proof-')) open.row.files.add(f);
+    for (const [f, stamp] of after) if (open.files0.get(f) !== stamp && !f.startsWith('gate-proof-')) open.row.files.add(f);
     open = null;
   };
   const t0 = Date.now();
@@ -105,7 +107,9 @@ export function gateSplit({ errors, OUT, browser, file, env = process.env }) {
         for (const theme of seen) proofRows.push({ id: key, check: 'gate-theme', state: tz, theme, width: null, result: r.errors ? 'fail' : 'pass' });
         if (!seen.size && !ALWAYS.has(key)) constructionOnly.push(key);
       }
-      const sha = (env.GITHUB_SHA || '').slice(0, 40) || execSync('git rev-parse HEAD', { cwd: ROOT }).toString().trim();
+      // the commit this job actually checked out; the verdict compares it with the sha under test (GITHUB_SHA)
+      const sha = execSync('git rev-parse HEAD', { cwd: ROOT }).toString().trim();
+      if (env.GITHUB_SHA && env.GITHUB_SHA !== sha) errors.push(`GATE-SPLIT: this job checked out ${sha}, not the commit under test ${env.GITHUB_SHA}`);
       const meta = {
         job: { k: k + 1, K }, tz,
         www: wwwHash(), chrome: browser ? browser.version() : null,

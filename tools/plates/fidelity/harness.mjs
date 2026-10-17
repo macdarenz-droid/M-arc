@@ -4,6 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { hasHowTo } from '../library/ids-node.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 export const FONT = join(ROOT, 'node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2');
@@ -180,23 +181,19 @@ export async function goldenSelfCheck(browser, { html = readFileSync(GOLDEN_PAGE
 // HT-3: the app side. The gate's own build (vite preview on `port`) with a seeded split, the How-to sheet opened from
 // the real Train entry, and the comparisons against the golden page (plan 2.7: L2b, F3, L3, L4).
 
-/** The 8 approved plates in gallery order (GOLDEN chromeId -> library id); HT_ORDER adds the two controls. */
-export const HT_PLATES = [
-  ['lateral-raise', 'lib_dumbbell_lateral_raise'], ['barbell-back-squat', 'lib_barbell_back_squat'], ['pull-up', 'lib_pull_up'],
-  ['hanging-leg-raise', 'lib_hanging_leg_raise'], ['lat-pulldown', 'lib_lat_pulldown'], ['seated-cable-row', 'lib_seated_cable_row'],
-  ['leg-press', 'lib_leg_press'], ['machine-chest-press', 'lib_machine_chest_press'],
-];
+/** The 8 approved plates in gallery order (GOLDEN chromeId -> library id); HT_ORDER adds the two controls. LIB-2: read
+ *  from tools/plates/plates.json in file order (the same 8 pairs in the same order as the literal it replaced), so
+ *  HT-10's ht10Sweep, htTuples and ht10.mjs, which default to HT_PLATES, are fed with no line of theirs edited. */
+export const HT_PLATES = Object.entries(JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'))).map(([id, row]) => [row.chromeId, id]);
 /**
  * The gate's "no How-to" control (D-HT1): the first library id, in src/data/exercises.json order, for which hasHowTo()
- * is false (HOWTO_IDS read from the generated src/howto/ids.ts). Data-driven, so it moves on by itself when more
+ * is false (LIB-2: hasHowTo from the generated Node twin of src/howto/ids.ts). Data-driven, so it moves on by itself when more
  * exercises get approved content, and the gate block never needs an edit for it.
  */
 export function firstWithoutHowTo() {
   const lib = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => e.id);
-  const m = readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8').match(/export const HOWTO_IDS = \[([\s\S]*?)\] as const;/);
-  if (!m) throw new Error('firstWithoutHowTo: no HOWTO_IDS in src/howto/ids.ts');
-  const approved = new Set([...m[1].matchAll(/"([^"]+)"/g)].map(x => x[1]));
-  const id = lib.find(i => !approved.has(i));
+  if (lib.length === 0) throw new Error('firstWithoutHowTo: src/data/exercises.json has no ids');
+  const id = lib.find(i => !hasHowTo(i));
   if (!id) throw new Error('firstWithoutHowTo: every library exercise has a How-to');
   return id;
 }
@@ -1057,7 +1054,12 @@ export async function ht10Script(pre) {
   await tap(mis, 'Mistake on');
   for (const k of cycle(keys('mistake'))) await tap(q(`#${pre}-m-${k}`), `tell ${k}`);
   const also = q(`#${pre}-also-hand`);
-  if (shown(also)) { await tap(also, 'wrist line'); await closeZoom('wrist line closed'); }
+  // its close-up opens after the hand chunk loads: wait for it as the chips do, so the probe sees it (D-GF2-1)
+  if (shown(also)) {
+    also.click();
+    if (!await until(() => openZoom())) fails.push('wrist line: its close-up did not open');
+    await settle(); await P('wrist line'); await closeZoom('wrist line closed');
+  }
   if (mis.getAttribute('aria-pressed') === 'true') await tap(mis, 'Mistake off');
   // 3. Trace, probed while it runs and after its natural end
   const trace = q(`#${pre}-trace`);
@@ -1178,15 +1180,30 @@ export const ht10Recorded = page => page.evaluate(() => { const r = window.__ht1
  * the scroll is restored in the same task). C19 (LR-23, the HT-9 C19 sweep's checks): no link, target, source class,
  * evidence label or contact/source wording, and (once the Risks section is registered) exactly one disclaimer after the
  * last red-flag block. Reduced motion (C11): nothing running in the sheet and every feel band display:none.
+ * Async: it first waits for the controls to come to rest (D-GF2-1, bounded by `settleMs`).
  */
-export function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks, reduced]) {
+export async function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks, reduced, settleMs = 3000]) {
   const dlg = document.querySelector('dialog.sheet.ht');
   const panel = dlg.querySelector('.sheet-panel');
   const problems = [], seenExempt = [];
   const label = e => e.id ? `#${e.id}` : `${e.tagName.toLowerCase()}.${[...e.classList].join('.')} "${(e.getAttribute('aria-label') || e.textContent || '').trim().slice(0, 30)}"`;
+  const CTL = 'button, [role="button"], a[href], summary, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  // D-GF2-1: C10 measures at rest. A close-up opens after its chunk loads, so its scale(.9) entry can start after the
+  // script's settle and run while this probe reads; wait (on the page clock, at most settleMs) for every finite
+  // animation or transition on a control or on an element holding one. An endless one is C12's; one still running at
+  // the bound is a problem, never a silent pass.
+  const moving = () => dlg.getAnimations({ subtree: true }).filter(a => {
+    const t = a.effect?.target;
+    return a.playState === 'running' && Number.isFinite(a.effect.getComputedTiming().endTime) && !!t && (t.matches(CTL) || !!t.querySelector(CTL));
+  });
+  const w0 = performance.now();
+  while (moving().length && performance.now() - w0 < settleMs) await new Promise(r => requestAnimationFrame(r));
+  const still = moving();
+  if (still.length) problems.push(`C10: ${still.length} animation(s) on controls still running after ${settleMs} ms, so their controls were not measured at rest: ${[...new Set(still.map(a => `${a.animationName ?? a.transitionProperty ?? 'script'} on ${label(a.effect.target)}`))].slice(0, 6).join('; ')}`);
+  else await new Promise(r => requestAnimationFrame(r));
   const st = panel.scrollTop;
   panel.scrollTop = 0;
-  const ctl = [...dlg.querySelectorAll('button, [role="button"], a[href], summary, input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+  const ctl = [...dlg.querySelectorAll(CTL)]
     .filter(e => e !== dlg && e !== panel && e.checkVisibility({ visibilityProperty: true, opacityProperty: true }) && !e.closest('[inert]'))
     .map(e => ({ e, r: e.getBoundingClientRect() })).filter(c => c.r.width > 0 && c.r.height > 0);
   panel.scrollTop = st;
@@ -1240,7 +1257,7 @@ export function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks, redu
       if (b.getAnimations().length) problems.push('C11: a .feel-band has an animation under reduced motion');
     }
   }
-  return { problems, controls: ctl.length, seenExempt };
+  return { problems, controls: ctl.length, seenExempt, measured: ctl.map(c => c.e.id).filter(Boolean) };
 }
 
 /** TalkBack (HT10-A1): every button, region and image in the sheet's accessibility tree has a name (CDP queryAXTree). */

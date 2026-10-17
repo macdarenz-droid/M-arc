@@ -16,6 +16,8 @@ export const GATE_TZS = ['UTC', 'Pacific/Auckland'];
 export const JOB_BUDGET_S = 1800;
 /** The re-pick signal (2.2): any shard over it is reported, not red. */
 export const SHARD_TARGET_S = 900;
+/** The jobs gate-verdict needs; each must be present in MARC_NEEDS, so an empty or partial needs list is red. */
+export const REQUIRED_NEEDS = ['source-gate', 'visual-gate-tz', 'gate-shard', 'ht10-gate'];
 
 const key = (r) => `${r.id}|${r.theme}|${r.state}`;
 
@@ -27,6 +29,7 @@ export function verdict({ gate, ht10 = [], gateSrc, times, sha, event, arrangeme
   const problems = [], notes = [];
   // in the serial arrangement (E8's A, workflow_dispatch only) the shard jobs are skipped on purpose
   const maySkip = arrangement === 'serial' && event === 'workflow_dispatch' ? new Set(['gate-shard']) : new Set();
+  for (const job of REQUIRED_NEEDS) if (!(job in needs)) problems.push(`needed job ${job} is missing from MARC_NEEDS`);
   for (const [job, n] of Object.entries(needs)) if (n?.result !== 'success' && !(n?.result === 'skipped' && maySkip.has(job))) problems.push(`needed job ${job} ended ${n?.result ?? 'unknown'}`);
   if (!/^[0-9a-f]{40}$/.test(sha ?? '')) problems.push(`GITHUB_SHA is not a full sha: ${sha}`);
 
@@ -57,8 +60,9 @@ export function verdict({ gate, ht10 = [], gateSrc, times, sha, event, arrangeme
       for (const a of ALWAYS) { const n = m.rows.filter(r => r.check === 'gate' && r.id === a).length; if (n !== 1) problems.push(`${tz} job ${m.meta?.job?.k}: ALWAYS group ${a} proven ${n} times, expected once per job`); }
       const s = m.meta?.gateSeconds;
       if (!(s >= 0)) problems.push(`${tz} job ${m.meta?.job?.k}: no gateSeconds`);
-      else if (s > JOB_BUDGET_S) problems.push(`${tz} job ${m.meta?.job?.k}: gate step ${s} s, over the ${JOB_BUDGET_S} s budget (D-GATESPLIT-BUDGET)`);
-      else if (s > SHARD_TARGET_S) notes.push(`${tz} job ${m.meta?.job?.k}: ${s} s, over the ${SHARD_TARGET_S} s target: re-pick K (design 2.2)`);
+      // the 30 min goal is for split shards; the serial arrangement (E8's reference, today's layout) keeps its 60 min timeout
+      else if (K > 1 && s > JOB_BUDGET_S) problems.push(`${tz} job ${m.meta?.job?.k}: gate step ${s} s, over the ${JOB_BUDGET_S} s budget (D-GATESPLIT-BUDGET)`);
+      else if (K > 1 && s > SHARD_TARGET_S) notes.push(`${tz} job ${m.meta?.job?.k}: ${s} s, over the ${SHARD_TARGET_S} s target: re-pick K (design 2.2)`);
       if (!m.meta?.www) problems.push(`${tz} job ${m.meta?.job?.k}: no www hash`);
     }
   }
@@ -103,7 +107,10 @@ export function collect(dir) {
   const files = [];
   const walk = (d) => { for (const f of readdirSync(d)) { const p = join(d, f); if (statSync(p).isDirectory()) walk(p); else files.push(p); } };
   walk(dir);
-  const gate = files.filter(f => /^gate-proof-.+\.json$/.test(basename(f))).map(f => JSON.parse(readFileSync(f, 'utf8')));
+  // a failed visual-gate-tz uploads its proof in two artifacts; drop byte-identical copies (two jobs never write equal bytes)
+  const seen = new Set();
+  const gate = files.filter(f => /^gate-proof-.+\.json$/.test(basename(f))).map(f => readFileSync(f, 'utf8'))
+    .filter(t => !seen.has(t) && seen.add(t)).map(t => JSON.parse(t));
   const ht10 = files.filter(f => basename(f) === 'ht10-proof.json').map(f => {
     const jobFile = join(dirname(f), 'ht10-job.json');
     let job = {};

@@ -3,7 +3,9 @@
 // selection is a partition of the groups; E4 each job reaches exactly its plan; E7 stripping the GATE-SPLIT lines
 // gives a file with no guard left. Each rule has its mutation here, shown red.
 import { describe, it, expect, beforeAll, afterEach } from 'vitest';
-import { mkdtempSync, readFileSync, rmSync, readdirSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, readdirSync, writeFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
+const HEAD = execSync('git rev-parse HEAD').toString().trim();
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -50,7 +52,7 @@ describe('E1: generated block list', () => {
     const guards = SRC.split('\n').filter(l => /^if \(gate\.runs\('[^']+'\)\)$/.test(l)).length;
     expect(groups.reduce((a, g) => a + g.statements.length, 0)).toBe(guards);   // the syntax tree and the text agree
     expect(new Set(groups.map(g => g.key)).size).toBe(groups.length);
-    expect(groups.length).toBe(99);   // the generated count today; adding a block raises it with its own guard
+    expect(groups.length).toBe(101);   // the generated count today (99 + LIB-2 + OLD-ANDROID-1, main 49a2853); adding a block raises it with its own guard
     for (const a of B.ALWAYS) expect(groups.some(g => g.key === a)).toBe(true);
   });
   it('mutation: a block without its guard line is red', () => {
@@ -134,12 +136,13 @@ describe('E3: job selection is a partition', () => {
   let dirs: string[] = [];
   afterEach(() => { for (const d of dirs) rmSync(d, { recursive: true, force: true }); dirs = []; delete process.env.HT3_DUMP; });
   /** Drives gateSplit through every guard in file order, as the gate does; returns the groups it ran and the proof name. */
-  const drive = async (env: Record<string, string | undefined>, skip: string[] = []) => {
+  const drive = async (env: Record<string, string | undefined>, skip: string[] = [], during: (key: string, OUT: string) => void = () => {}, seed: (OUT: string) => void = () => {}) => {
     const OUT = mkdtempSync(join(tmpdir(), 'gate-split-')); dirs.push(OUT);
     const errors: string[] = [];
-    const gate = G.gateSplit({ errors, OUT, browser: null, file: B.GATE_FILE, env: { GITHUB_SHA: 'a'.repeat(40), ...env } });
+    seed(OUT);
+    const gate = G.gateSplit({ errors, OUT, browser: null, file: B.GATE_FILE, env: { GITHUB_SHA: HEAD, ...env } });
     const ran: string[] = [];
-    for (const k of keysOf(SRC)) if (!skip.includes(k) && gate.runs(k)) ran.push(k);
+    for (const k of keysOf(SRC)) if (!skip.includes(k) && gate.runs(k)) { ran.push(k); during(k, OUT); }
     await gate.done();
     return { ran, errors, proof: readdirSync(OUT).filter(f => f.startsWith('gate-proof-')), OUT };
   };
@@ -172,7 +175,7 @@ describe('E3: job selection is a partition', () => {
   it('the proof holds one gate row per group run, in writeProof format, with the plan and job in meta', async () => {
     const r = await drive({ MARC_GATE_JOB: '2/3', TZ: 'Pacific/Auckland' });
     const m = JSON.parse(readFileSync(join(r.OUT, r.proof[0]!), 'utf8'));
-    expect(m.sha).toBe('a'.repeat(40));
+    expect(m.sha).toBe(HEAD);
     expect(m.shard).toEqual({ k: 1, N: 3 });
     expect(m.meta.job).toEqual({ k: 2, K: 3 });
     expect(m.rows.filter((x: { check: string }) => x.check === 'gate').map((x: { id: string }) => x.id).sort()).toEqual([...r.ran].sort());
@@ -188,6 +191,37 @@ describe('E3: job selection is a partition', () => {
     delete process.env.HT3_DUMP;
     await drive({ MARC_GATE_JOB: `${holder + 1}/3`, TZ: 'UTC' });
     expect(process.env.HT3_DUMP).toBeUndefined();   // the block itself sets it when it runs; driving it here runs no body
+  });
+});
+
+describe('review fixes (0df9648 FAIL, Mediums)', () => {
+  let dirs: string[] = [];
+  afterEach(() => { for (const d of dirs) rmSync(d, { recursive: true, force: true }); dirs = []; });
+  const one = async (env: Record<string, string>, during: (k: string, OUT: string) => void, seed: (OUT: string) => void) => {
+    const OUT = mkdtempSync(join(tmpdir(), 'gate-split-')); dirs.push(OUT);
+    seed(OUT);
+    const errors: string[] = [];
+    const gate = G.gateSplit({ errors, OUT, browser: null, file: B.GATE_FILE, env: { TZ: 'UTC', MARC_GATE_JOB: '1/1', ...env } });
+    for (const k of keysOf(SRC)) if (gate.runs(k)) during(k, OUT);
+    await gate.done();
+    return { errors, m: JSON.parse(readFileSync(join(OUT, 'gate-proof-utc-1of1.json'), 'utf8')) };
+  };
+  it('a group is credited with a file it rewrites, even when screenshots/ already held that name', async () => {
+    const { m } = await one({ GITHUB_SHA: HEAD },
+      (k, OUT) => { if (k === 'BASE') writeFileSync(join(OUT, 'paper-today.png'), 'rewritten by BASE, longer'); },
+      OUT => writeFileSync(join(OUT, 'paper-today.png'), 'stale'));
+    expect(m.meta.files.BASE).toEqual(['paper-today.png']);
+    expect(m.rows.some((r: { id: string; check: string; theme: string }) => r.id === 'BASE' && r.check === 'gate-theme' && r.theme === 'paper')).toBe(true);
+    expect(m.meta.files.I14).toEqual([]);   // a group that writes nothing is credited with nothing
+  });
+  it('the proof sha is the checked-out commit; a job on another commit is red in the job and in the verdict', async () => {
+    const other = 'b'.repeat(40);
+    const { errors, m } = await one({ GITHUB_SHA: other }, () => {}, () => {});
+    expect(m.sha).toBe(HEAD);
+    expect(errors.join()).toMatch(new RegExp(`checked out ${HEAD}, not the commit under test ${other}`));
+    const V = await import(/* @vite-ignore */ new URL('../scripts/ci-verdict.mjs', import.meta.url).href);
+    const { problems } = V.verdict({ gate: [m], gateSrc: SRC, times: TIMES, sha: other, event: 'workflow_dispatch', arrangement: 'serial', needs: {} });
+    expect(problems.join()).toMatch(new RegExp(`ran on ${HEAD}, not ${other}`));
   });
 });
 

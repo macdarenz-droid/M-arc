@@ -2,7 +2,7 @@
 import type { Exercise, LoggedExercise, Session, Weekday } from '@/core/models';
 import { WEEKDAYS } from '@/core/models';
 import { addDays, daysBetween, weekStart, weekdayOf, trainedToday } from '@/core/dates';
-import { isWorkingSet, weeklyMuscleSets } from './exposure';
+import { hasWorkingSets, isWorkingSet, weeklyMuscleSets } from './exposure';
 import { recordsInWeek, type PersonalRecord } from './prs';
 import { modeOf } from './history';
 import type { MuscleId } from '@/data/muscles';
@@ -53,7 +53,7 @@ export interface WeekSummary {
 export function weekSummary(sessions: Session[], today: string, custom: Exercise[] = [], plannedPerWeek: number | null = 3, bw?: BodyWeightAt): WeekSummary {
   const start = weekStart(today);
   const end = addDays(start, 6);
-  const inWeek = sessions.filter(s => s.day >= start && s.day <= end);
+  const inWeek = sessions.filter(s => s.day >= start && s.day <= end && hasWorkingSets(s));
   const activeDays = [...new Set(inWeek.map(s => s.day))].sort();
   const { sets, volumeKg } = sessionTotals(inWeek, custom, bw);
   const weeks = weeklyMuscleSets(sessions, today, 2, custom);
