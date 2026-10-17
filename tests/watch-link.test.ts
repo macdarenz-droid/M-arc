@@ -20,13 +20,13 @@ vi.mock('@/slices/workout/Train', async orig => {
   return { ...real, entryTarget: (...args: Parameters<typeof real.entryTarget>) => (fx.target as ReturnType<typeof real.entryTarget> | null) ?? real.entryTarget(...args) };
 });
 
-import { freshState, newId, type AppState, type CommandResult, type LoadUnit, type LoggedSet, type Split } from '@/core/models';
+import { freshState, freshUnits, newId, type AppState, type CommandResult, type LoadUnit, type LoggedSet, type Split } from '@/core/models';
 import { initStore, replaceState, state } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { enteredLoad, kgToDisplay } from '@/core/units';
 import { setTheme } from '@/theme/engine';
 import { entryTarget, openEntryId } from '@/slices/workout/Train';
-import { addSet, commitSet, discardSession, logWarmups, markDone, moveEntry, setSet, skipEntry, startRest, startSession, substituteEntry, pauseSession } from '@/slices/workout/session';
+import { addSet, commitSet, discardSession, finishSession, logWarmups, markDone, moveEntry, setSet, skipEntry, startRest, startSession, substituteEntry, pauseSession } from '@/slices/workout/session';
 import { mergeAskAnswer, profileFor, saveProfile, setExerciseUnit } from '@/slices/workout/units';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
 import { createLab, watchLab, type WearEnginePlugin } from '@/native/wearEngine';
@@ -954,5 +954,154 @@ describe('WATCH-C3 P3: the snap carries the load step, the next open sets and th
     expect(p.rows.map(x => [x.set!.st, x.set!.w, x.lt])).toEqual(p.rows.map(() => [2.5, 999.75, { w: 187.25, u: 'kg', r: 100 }]));
     expect(text).toMatch(/^[\x20-\x7e]+$/);
     expect(bytes(text)).toBeLessThanOrEqual(MAX_PLAN_BYTES);
+  });
+});
+
+// WATCH-C4 P5 (add-only block): after a finish, the snap without a session carries fin, the finished session's id and
+// its highlight lines, for the watch's done screen.
+describe('WATCH-C4 P5: fin, the highlights of the workout just finished', () => {
+  const bytes = (t: string) => new TextEncoder().encode(t).length;
+  const four: Split = { ...split, id: 'sp_fin', exercises: ['lib_barbell_bench_press', 'lib_cable_fly', 'lib_dumbbell_bench_press', 'lib_plank'].map(exerciseId => ({ exerciseId, sets: 1 })) };
+  type Load = [kg: number, reps: number] | null;
+  /** A session two days ago with one set per exercise (null: not trained). */
+  const before = (bench: Load, fly: Load, db: Load = null) => sessionAt('2026-10-14T10:00:00.000Z', '2026-10-14T11:00:00.000Z',
+    ([['lib_barbell_bench_press', bench], ['lib_cable_fly', fly], ['lib_dumbbell_bench_press', db]] as const).filter(([, l]) => l).map(([id, l]) => ({ id, sets: [{ kg: l![0], reps: l![1], effort: 'ideal' as const }] })));
+  /** Today: one set per weighted exercise in `unit` (2 min apart), then a 60 s plank, then Finish on the phone. */
+  const train = (loads: Load[], unit: LoadUnit = 'kg') => {
+    startSession(four);
+    loads.forEach((l, i) => { if (!l) return; vi.advanceTimersByTime(120_000); setSet(i, 0, { ...enteredLoad(l[0], unit), reps: l[1], effort: 'ideal' }); expect(commitSet(i, 0)).toBe(true); });
+    vi.advanceTimersByTime(120_000);
+    setSet(3, 0, { durationSec: 60 });
+    expect(commitSet(3, 0)).toBe(true);
+    const id = a().id!;
+    const done = finishSession(false);
+    expect(done?.session.id).toBe(id);
+    return id;
+  };
+
+  it('3 new bests: the first 2 in workout order, then minutes and sets (the finish screen counts the warm-up), then kg lifted; at most 4 lines', () => {
+    replaceState({ ...state.value, sessions: [before([60, 8], [20, 10], [24, 8])] });
+    startSession(four);
+    logWarmups(0, [{ kg: 20, reps: 10 }]);
+    const id = a().id!;
+    [[62.5, 8], [22.5, 10], [26, 8]].forEach(([kg, reps], i) => { vi.advanceTimersByTime(120_000); setSet(i, i ? 0 : 1, { ...enteredLoad(kg!, 'kg'), reps, effort: 'ideal' }); expect(commitSet(i, i ? 0 : 1)).toBe(true); });
+    vi.advanceTimersByTime(120_000);
+    setSet(3, 0, { durationSec: 60 });
+    commitSet(3, 0);
+    const session = finishSession(false)!.session;
+    expect([session.durationSec, session.exercises.reduce((n, e) => n + e.sets.length, 0), session.exercises.length]).toEqual([480, 5, 4]);
+    // 62.5 x 8 + 22.5 x 10 + 26 x 8 = 933 kg; the 20 kg warm-up and the plank lift nothing.
+    expect(snap().fin).toEqual([id, ['Best: Barbel 62.5 kg x 8', 'Best: Cable 22.5 kg x 10', '8 min, 5 sets', '933 kg lifted']]);
+    // Nothing else changes in the snap without a session.
+    const { fin: _fin, ...rest } = snap(77);
+    expect(rest).toEqual({ t: 'mw', v: 1, k: 'snap', pt: Date.now(), wt: 77, srev: 0, sid: null, ex: null, si: 0, sn: 0, set: null, rest: null, th: ['#08090a', '#f7f8f8', '#5e6ad2'] });
+  });
+
+  it('1 new best; an exercise with no earlier session, or one only matched, is none', () => {
+    replaceState({ ...state.value, sessions: [before([60, 8], [20, 10])] });
+    const id = train([[60, 9], [20, 10], [26, 8]]);
+    expect(snap().fin).toEqual([id, ['Best: Barbell 60 kg x 9', '8 min, 4 sets', '948 kg lifted', '4 exercises']]);
+  });
+
+  it('0 new bests: lighter, first time, and an earlier session with no estimate (over 10 reps) is nothing to beat', () => {
+    replaceState({ ...state.value, sessions: [before([60, 8], [20, 12])] });
+    const id = train([[57.5, 8], [20, 10], [24, 8]]);
+    expect(snap().fin).toEqual([id, ['8 min, 4 sets', '852 kg lifted', '4 exercises']]);
+  });
+
+  it('a set of 1, an exercise of 1, nothing lifted: the singular words and no lifted line', () => {
+    startSession(four);
+    const id = a().id!;
+    setSet(3, 0, { durationSec: 60 });
+    commitSet(3, 0);
+    vi.advanceTimersByTime(30_000);
+    finishSession(false);
+    expect(snap().fin).toEqual([id, ['1 min, 1 set', '1 exercise']]);
+  });
+
+  it('the lb profile: the best and the load lifted in lb, whatever unit the app shows; mixed profiles fall back to it', () => {
+    replaceState({ ...state.value, units: freshUnits('lb'), preferences: { ...state.value.preferences, weightUnit: 'kg' }, sessions: [before([enteredLoad(135, 'lb').kg, 8], [enteredLoad(40, 'lb').kg, 10])] });
+    const id = train([[140, 8], [40, 10]], 'lb');
+    expect(profileFor('lib_barbell_bench_press').unit).toBe('lb');
+    // 140 x 8 + 40 x 10 = 1520 lb
+    expect(snap().fin).toEqual([id, ['Best: Barbell 140 lb x 8', '6 min, 3 sets', '1520 lb lifted', '3 exercises']]);
+    // A set saved without its typed unit shows in the profile unit.
+    replaceState({ ...state.value, sessions: state.value.sessions.map(x => (x.id !== id ? x : { ...x, exercises: x.exercises.map(e => ({ ...e, sets: e.sets.map(({ entered: _e, ...set }) => set) })) })) });
+    expect(snap().fin![1][0]).toBe('Best: Barbell 140 lb x 8');
+    // Profiles in kg and lb: the load lifted in the unit the app shows (kg).
+    setExerciseUnit('lib_cable_fly', 'kg');
+    expect(snap().fin![1][2]).toBe(`${Math.round(kgToDisplay(enteredLoad(140, 'lb').kg * 8 + enteredLoad(40, 'lb').kg * 10, 'kg'))} kg lifted`);
+  });
+
+  it('only after a finish: not after a discard or an empty finish, not with a session, not after 15 minutes', () => {
+    replaceState({ ...state.value, sessions: [before([60, 8], [20, 10])] });
+    const id = train([[60, 8]]);
+    expect(snap().fin![0]).toBe(id);
+    // An active session without an id (the store gives one on load) is still a session.
+    // The log decides: a session in history whose newest closed entry reads discarded sends none.
+    const closed = state.value.commands.closed;
+    expect('fin' in buildSnapshot({ ...state.value, commands: { ...state.value.commands, closed: [...closed.slice(0, -1), { ...closed[closed.length - 1]!, status: 'discarded' }] } }, Date.now(), null)).toBe(false);
+    const idless = buildSnapshot({ ...state.value, active: { splitId: four.id, startedAt: new Date().toISOString(), pausedMs: 0, entries: [] } }, Date.now(), null);
+    expect(idless).toMatchObject({ sid: null, set: null });
+    expect('fin' in idless).toBe(false);
+    // A new session: the snap is the session's, without fin.
+    startSession(four);
+    expect(snap().sid).toBe(a().id);
+    expect('fin' in snap()).toBe(false);
+    // Discarded: the newest closed session is the discard, so no fin, though the finish was a minute ago.
+    discardSession();
+    expect(state.value.commands.closed.map(c => c.status)).toEqual(['finished', 'discarded']);
+    expect('fin' in snap()).toBe(false);
+    // Finish with nothing logged ends the session like a discard.
+    startSession(four);
+    expect(finishSession(false)).toBeNull();
+    expect('fin' in snap()).toBe(false);
+    // The watch's own Finish: fin for 15 minutes, then none.
+    startSession(four);
+    const watched = a().id!;
+    vi.advanceTimersByTime(120_000);
+    expect(handleWorkoutCommand(cmd())).toMatchObject({ status: 'applied' });
+    expect(handleWorkoutCommand(cmd({ kind: 'finish' }))).toMatchObject({ status: 'applied', finish: 'saved' });
+    expect(snap().fin![0]).toBe(watched);
+    vi.advanceTimersByTime(15 * 60_000);
+    expect(snap().fin![0]).toBe(watched);
+    vi.advanceTimersByTime(1);
+    expect('fin' in snap()).toBe(false);
+  });
+
+  it('names fold to ASCII and shorten to fit 24 characters; with the longest names, numbers and ids the snap is at most 700 B', () => {
+    const long = 'Développé couché incliné × haltères très long';
+    // 487.75 kg: as long as a load gets under the 500 kg a typo starts at (the next test).
+    replaceState({ ...state.value, sessions: [before([400, 10], [9, 5], [400, 10])] });
+    startSession(four);
+    replaceState({ ...state.value, active: { ...a(), id: `s_${'x'.repeat(62)}`, entries: a().entries.map(e => ({ ...e, name: long })) } });
+    ([[487.75, 10], [10, 5], [487.75, 10]] as const).forEach(([kg, reps], i) => { vi.advanceTimersByTime(120_000); setSet(i, 0, { ...enteredLoad(kg, 'kg'), reps, effort: 'ideal' }); expect(commitSet(i, 0)).toBe(true); });
+    vi.advanceTimersByTime(120_000);
+    setSet(3, 0, { durationSec: 60 });
+    commitSet(3, 0);
+    finishSession(false);
+    const s = snap(8.64e15);
+    const text = JSON.stringify(s);
+    // The longer the numbers, the less of the name: 3 characters beside 487.75 kg x 10, 8 beside 10 kg x 5.
+    expect(s.fin).toEqual([`s_${'x'.repeat(62)}`, ['Best: Dev 487.75 kg x 10', 'Best: Developp 10 kg x 5', '8 min, 4 sets', '9805 kg lifted']]);
+    expect(s.fin![1].map(l => l.length)).toEqual([24, 24, 13, 14]);
+    expect(text).toMatch(/^[\x20-\x7e]+$/);
+    expect(bytes(text)).toBeLessThanOrEqual(MAX_SNAP_BYTES);
+  });
+
+  it('a set held as a typo (over 500 kg, never repeated) is not a best, as no record counts it', () => {
+    replaceState({ ...state.value, sessions: [before([400, 10], [20, 10])] });
+    const id = train([[600, 10], [22.5, 10]]);
+    expect(snap().fin).toEqual([id, ['Best: Cable 22.5 kg x 10', '6 min, 3 sets', '6225 kg lifted', '3 exercises']]);
+  });
+
+  it('more assistance, or added load on a body-weight exercise, is not a plain load, so never a best', () => {
+    const pull: Split = { ...split, id: 'sp_pull', exercises: [{ exerciseId: 'lib_assisted_pull_up', sets: 1 }, { exerciseId: 'lib_pull_up', sets: 1 }] };
+    replaceState({ ...state.value, splits: [pull], sessions: [sessionAt('2026-10-14T10:00:00.000Z', '2026-10-14T11:00:00.000Z', [{ id: 'lib_assisted_pull_up', sets: [{ kg: 30, reps: 8, effort: 'ideal' }] }, { id: 'lib_pull_up', sets: [{ kg: 5, reps: 8, effort: 'ideal' }] }])] });
+    startSession(pull);
+    const id = a().id!;
+    [[40, 8], [10, 8]].forEach(([kg, reps], i) => { vi.advanceTimersByTime(120_000); setSet(i, 0, { kg, reps, effort: 'ideal' }); expect(commitSet(i, 0)).toBe(true); });
+    finishSession(false);
+    expect(snap().fin).toEqual([id, ['4 min, 2 sets', '80 kg lifted', '2 exercises']]);
   });
 });

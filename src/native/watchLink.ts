@@ -2,8 +2,8 @@
  * WATCH-C (Gate C, docs/watch-cards/WATCH-C.md): the phone end of the workout link with the GT 6
  * companion (native/wear/app). Protocol "mw" v1, JSON of at most 1000 B each way:
  * - watch to phone: hello {t,v,k,app,boot,wt,q}, and cmd (WATCH-B's command with t and k);
- * - phone to watch: snap (buildSnapshot: at most 700 B, ASCII), plan (buildPlan, WATCH-C2: at most 1000 B, ASCII),
- *   and res {t,v,k} plus the CommandResult.
+ * - phone to watch: snap (buildSnapshot: at most 700 B, ASCII; WATCH-C4: fin, a finished workout's highlights), plan
+ *   (buildPlan, WATCH-C2: at most 1000 B, ASCII), and res {t,v,k} plus the CommandResult.
  * Debug APK only: the lab's Connect starts it. While M/ARC is hidden it neither handles nor sends, and
  * the watch sends again. Every cmd goes to handleWorkoutCommand and its result goes back whatever the
  * plugin's "by" says: Wire.requestId in WearEnginePlugin.java accepts only marc-a2, so Java never
@@ -12,13 +12,17 @@
  */
 import { h } from 'preact';
 import { signal, type Signal } from '@preact/signals';
-import type { ActiveSession, AppState, CommandResult, Effort, LoadUnit } from '@/core/models';
+import type { ActiveSession, AppState, CommandResult, Effort, LoadUnit, Session } from '@/core/models';
 import { state } from '@/core/store';
+import { repairCommands } from '@/core/dataVersion';
 import { findExercise } from '@/core/exercises';
-import { kgToDisplay } from '@/core/units';
+import { kgToDisplay, setLoadIn } from '@/core/units';
 import { previousSet } from '@/brain/progression';
 import { workingIndex } from '@/brain/exposure';
 import { loadableValues } from '@/brain/units';
+import { exerciseHistory, modeOf } from '@/brain/history';
+import { effectiveOneRm } from '@/brain/e1rm';
+import { workingTotals } from '@/brain/weekly';
 import { DEFAULT_THEME, THEMES, type ThemeId } from '@/theme/themes';
 import { themeId } from '@/theme/engine';
 import { Row, Toggle } from '@/ui/primitives';
@@ -39,6 +43,11 @@ export const SNAP_GAP_MS = 300;
 
 /** WATCH-C3: the most next open sets a snap carries (nx). */
 export const MAX_NEXT_SETS = 3;
+/** WATCH-C4: fin goes while the newest closed session was finished at most this long ago. */
+export const FIN_MS = 15 * 60_000;
+/** WATCH-C4: the most highlight lines fin carries, and the most of them that are new bests. */
+export const MAX_HL = 4;
+const MAX_HL_BESTS = 2;
 
 /**
  * The set the watch shows: load w in unit u (null: none), reps r, effort e, and where they came from (src).
@@ -61,6 +70,11 @@ export interface Snap {
    * set), each with its set number n (red team: sets done in between keep the watch's numbering), dropped from the end to keep the snap within 700 B; rs, the rest in seconds the phone starts after a live set (0: none).
    */
   nx?: NextSet[]; rs?: number;
+  /**
+   * WATCH-C4, only without a session: when the newest closed session was finished at most FIN_MS ago, its id and up to
+   * MAX_HL highlight lines (highlights), each ASCII and at most MAX_EX_CHARS characters. The watch adds its own heart rate.
+   */
+  fin?: [sessionId: string, hl: string[]];
 }
 /** An Up next row: entry id, name, sets committed (d) and not skipped (n), its open set as in snap, and last time for it. */
 export interface PlanRow { id: string; ex: string; d: number; n: number; set: SnapSet | null; lt: SnapLast | null }
@@ -141,16 +155,71 @@ function shownEntry(a: ActiveSession, openId: string | null): Entry | undefined 
 }
 
 /**
+ * WATCH-C4: a finished session's highlight lines, the first MAX_HL of, in order:
+ * - up to 2 new bests, in workout order: a plain load (as snapSet) whose best e1RM here beats the best of every earlier
+ *   session, held sets left out as in its history; it needs an earlier estimate to beat (a first session, or earlier
+ *   sets over 10 reps only, is none). "Best: <name> <w> <u> x <r>" with that set, in the snap's unit, the name shortened
+ *   to fit; a best whose numbers alone do not fit is left out;
+ * - its minutes and sets, as the finish screen counts them;
+ * - kg x reps of its working sets (workingTotals) in its loaded exercises' profile unit (the app's unit when they
+ *   differ), as a whole number; none when nothing was lifted, as the share card;
+ * - its exercises.
+ */
+function highlights(s: AppState, session: Session): string[] {
+  const unitOf = (exerciseId: string) => profileFor(exerciseId, session.gymId ?? activeGymId()).unit;
+  const bests: string[] = [];
+  for (const e of session.exercises.filter((x, i, all) => all.findIndex(y => y.exerciseId === x.exerciseId) === i)) {
+    if (bests.length === MAX_HL_BESTS) break;
+    if (modeOf(e.exerciseId, s.customExercises) !== 'weighted') continue;
+    const hist = exerciseHistory(s.sessions, e.exerciseId, s.customExercises);
+    const i = hist.findIndex(h => h.sessionId === session.id);
+    const cur = hist[i];
+    const prev = Math.max(0, ...hist.slice(0, i).map(h => h.bestE1rm));
+    if (!cur || !(prev > 0 && cur.bestE1rm > prev)) continue;
+    const set = cur.sets.find(x => !cur.held.includes(x) && effectiveOneRm(x.kg ?? 0, x.reps ?? 0, x.effort) === cur.bestE1rm);
+    if (!set) continue;
+    const u = set.entered?.unit ?? unitOf(e.exerciseId);
+    const tail = ` ${setLoadIn(set, u)} ${u} x ${set.reps}`;
+    const room = MAX_EX_CHARS - 'Best: '.length - tail.length;
+    if (room > 0) bests.push(`Best: ${asciiName(e.name).slice(0, room).trim()}${tail}`);
+  }
+  const sets = session.exercises.reduce((n, e) => n + e.sets.length, 0);
+  const n = session.exercises.length;
+  const units = new Set(session.exercises.filter(e => workingTotals([e], s.customExercises).volumeKg > 0).map(e => unitOf(e.exerciseId)));
+  const u = units.size === 1 ? [...units][0]! : s.preferences.weightUnit;
+  const lifted = Math.round(kgToDisplay(workingTotals(session.exercises, s.customExercises).volumeKg, u));
+  return [
+    ...bests,
+    `${Math.round(session.durationSec / 60)} min, ${sets} set${sets === 1 ? '' : 's'}`,
+    ...(lifted > 0 ? [`${lifted} ${u} lifted`] : []),
+    `${n} exercise${n === 1 ? '' : 's'}`,
+  ].slice(0, MAX_HL);
+}
+
+/** WATCH-C4: fin for the newest closed session, when it was finished at most FIN_MS before `now` and is in history. */
+function finished(s: AppState, now: number): Snap['fin'] {
+  const closed = repairCommands(s.commands).closed;
+  const last = closed[closed.length - 1];
+  const session = last?.status === 'finished' && now - last.at <= FIN_MS ? s.sessions.find(x => x.id === last.sessionId) : undefined;
+  return session && [session.id, highlights(s, session)];
+}
+
+/**
  * What the watch shows: the shown exercise (shownEntry) and its entry id, that set and last time for it,
  * the next open sets (WATCH-C3), the rest and the rest the phone starts after a live set (commitStep's
  * newRest, WATCH-C3), and the theme's background, text and accent. `wt` echoes the hello this answers.
+ * Without a session, fin (WATCH-C4): the highlights of a workout finished at most 15 minutes ago.
  */
 export function buildSnapshot(s: AppState, now: number, wt: number | null, theme: ThemeId = themeId.value, openId: string | null = openEntryId.value): Snap {
   const tk = (THEMES[theme] ?? THEMES[DEFAULT_THEME]).tokens;
   const base = { t: MW, v: MW_VERSION, k: 'snap', pt: now, wt } as const;
   const th: Snap['th'] = [tk.bg, tk.text, tk.accent];
   const a = s.active;
-  if (!a?.id) return { ...base, srev: 0, sid: null, ex: null, si: 0, sn: 0, set: null, rest: null, th };
+  if (!a?.id) {
+    // an active session without an id (older saves) is still a session: no fin
+    const fin = a ? undefined : finished(s, now);
+    return { ...base, srev: 0, sid: null, ex: null, si: 0, sn: 0, set: null, rest: null, th, ...(fin ? { fin } : {}) };
+  }
   const rest = a.rest?.id ? { id: a.rest.id, left: Math.max(0, restLeftMs(a, now)), tot: a.rest.totalSec * 1000, p: !!a.pausedAt } : null;
   const rs = s.preferences.autoRest ? Math.max(REST_MIN, Math.min(REST_MAX, s.preferences.restDefaultSec)) : 0;
   const head = { ...base, srev: a.rev ?? 0, sid: a.id };

@@ -21,7 +21,7 @@ export const FUTURE_SLACK_MS = 5_000;
 type Load = { value: number; unit: LoadUnit };
 type WatchCommand = { v: 1; commandId: string; sessionId: string; actionAt: number } & (
   | { kind: 'complete_set'; setId: string; expectedRev: number; load?: Load; reps: number; effort?: Effort }
-  | { kind: 'rest_add_30' | 'rest_skip'; restId: string }
+  | { kind: 'rest_add_30' | 'rest_add_15' | 'rest_sub_15' | 'rest_skip'; restId: string }
   | { kind: 'pause' | 'resume' | 'finish' }
 );
 
@@ -63,7 +63,7 @@ function parse(input: unknown): WatchCommand | { commandId: string; reason: 'uns
     }
     return { ...base, kind, setId, expectedRev, reps, ...(load ? { load } : {}), ...(effort ? { effort: effort as Effort } : {}) };
   }
-  if (kind === 'rest_add_30' || kind === 'rest_skip') return text(raw.restId) ? { ...base, kind, restId: raw.restId } : no('invalid');
+  if (kind === 'rest_add_30' || kind === 'rest_add_15' || kind === 'rest_sub_15' || kind === 'rest_skip') return text(raw.restId) ? { ...base, kind, restId: raw.restId } : no('invalid');
   return { ...base, kind };
 }
 
@@ -112,8 +112,15 @@ function outcome(s: AppState, a: ActiveSession, c: WatchCommand, receivedAt: num
       return applied(commitStep(a, c.setId, at, s.preferences, values, true));
     }
     case 'rest_add_30':
-      // An ended rest is never restarted because its +30 s arrived late (WATCH-ARCHITECTURE 6).
-      return a.rest?.id === c.restId && restLeftMs(a, receivedAt) > 0 ? applied(addRestStep(a, 30, receivedAt)) : { reason: 'stale_rest' };
+    case 'rest_add_15':
+    case 'rest_sub_15': {
+      // An ended rest is never restarted because its +30 s arrived late (WATCH-ARCHITECTURE 6); the same for +15 s and -15 s.
+      if (a.rest?.id !== c.restId || restLeftMs(a, receivedAt) <= 0) return { reason: 'stale_rest' };
+      if (c.kind !== 'rest_sub_15') return applied(addRestStep(a, c.kind === 'rest_add_30' ? 30 : 15, receivedAt));
+      // WATCH-C4: up to 15 s off, never below 5 s left (5 s or less: applied, unchanged). Whole seconds, so the
+      // deadline stays on a whole millisecond (addRestStep moves it by sec * 1000).
+      return applied(addRestStep(a, -Math.min(15, Math.max(0, Math.floor((restLeftMs(a, receivedAt) - 5_000) / 1000))), receivedAt));
+    }
     case 'rest_skip':
       return a.rest?.id === c.restId ? applied(skipRestStep(a)) : { reason: 'stale_rest' };
     case 'pause':

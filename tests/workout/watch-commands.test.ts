@@ -748,3 +748,89 @@ describe('WATCH-C3 P3: a watch load is saved rounded to 0.01', () => {
     expect(handleWorkoutCommand(c)).toMatchObject({ status: 'applied', replayed: true });
   });
 });
+
+// WATCH-C4 P4 (add-only block): the watch's -15 s and +15 s on the Rest screen, beside rest_add_30 (kept for older watches).
+describe('WATCH-C4 P4: rest_add_15 and rest_sub_15', () => {
+  const REST15 = ['rest_add_15', 'rest_sub_15'] as const;
+  /** A running rest of 60 s with `left` s to go. */
+  const running = (left: number) => { begin(); startRest(60); vi.advanceTimersByTime((60 - left) * 1000); clearFx(); return a().rest!; };
+  /** A rest held by a pause with `left` s to go. */
+  const held = (left: number) => { begin(); startRest(60); vi.advanceTimersByTime((60 - left) * 1000); expect(handleWorkoutCommand(cmd('pause'))).toMatchObject({ status: 'applied' }); vi.advanceTimersByTime(120_000); clearFx(); return a().rest!; };
+
+  it('are parsed and refused like rest_add_30: no rest id, a wrong or ended rest, another session, and a replay', () => {
+    for (const kind of REST15) {
+      begin();
+      startRest(90);
+      const rest = a().rest!;
+      const snapshot = state.value;
+      expect(handleWorkoutCommand(cmd(kind)), kind).toMatchObject({ status: 'rejected', reason: 'invalid', replayed: false });
+      expect(handleWorkoutCommand(cmd(kind, { restId: 7 })), kind).toMatchObject({ status: 'rejected', reason: 'invalid' });
+      expect(state.value).toBe(snapshot);
+      expect(handleWorkoutCommand(cmd(kind, { restId: 'rest_old' })), kind).toMatchObject({ status: 'rejected', reason: 'stale_rest', replayed: false });
+      expect(handleWorkoutCommand(cmd(kind, { restId: rest.id, sessionId: 's_other_session' })), kind).toMatchObject({ status: 'rejected', reason: 'wrong_session' });
+      vi.advanceTimersByTime(91_000);
+      clearFx();
+      expect(handleWorkoutCommand(cmd(kind, { restId: rest.id })), kind).toMatchObject({ status: 'rejected', reason: 'stale_rest' });
+      expect(a().rest).toEqual(rest);
+      expect(fx.scheduleRestDone).not.toHaveBeenCalled();
+      // A rest the phone replaced: a late step for the old one is stale too.
+      startRest(60);
+      expect(handleWorkoutCommand(cmd(kind, { restId: rest.id })), kind).toMatchObject({ status: 'rejected', reason: 'stale_rest' });
+      // A resend gets the same answer, replayed, and moves nothing again.
+      const c = cmd(kind, { restId: a().rest!.id });
+      const first = handleWorkoutCommand(c);
+      expect(first, kind).toMatchObject({ status: 'applied', replayed: false });
+      const after = a().rest!;
+      vi.advanceTimersByTime(1_000);
+      expect(handleWorkoutCommand(JSON.parse(JSON.stringify(c)))).toEqual({ ...first, replayed: true });
+      expect(a().rest).toEqual(after);
+      discardSession();
+    }
+  });
+
+  it('+15 s moves the end by 15 s and reschedules the rest-done notification to it', () => {
+    const rest = running(50);
+    expect(handleWorkoutCommand(cmd('rest_add_15', { restId: rest.id }))).toMatchObject({ status: 'applied' });
+    expect(a().rest).toMatchObject({ id: rest.id, rev: 1, endsAt: rest.endsAt + 15_000 });
+    expect(fx.scheduleRestDone.mock.calls).toEqual([[rest.endsAt + 15_000]]);
+  });
+
+  it('-15 s with 60, 12, 5 and 3 s left leaves 45, 5, 5 and 3 s; the notification moves to the new end', () => {
+    for (const [left, want] of [[60, 45], [12, 5], [5, 5], [3, 3]] as const) {
+      const rest = running(left);
+      expect(handleWorkoutCommand(cmd('rest_sub_15', { restId: rest.id })), `${left}`).toMatchObject({ status: 'applied', replayed: false });
+      expect([left, (a().rest!.endsAt - Date.now()) / 1000]).toEqual([left, want]);
+      expect(a().rest).toMatchObject({ id: rest.id, rev: 1, totalSec: 60 });
+      expect(fx.scheduleRestDone.mock.calls).toEqual([[Date.now() + want * 1000]]);
+      discardSession();
+    }
+  });
+
+  it('a paused rest moves its held time the same way, and sets no alarm', () => {
+    for (const [left, sub] of [[60, 45], [12, 5], [5, 5], [3, 3]] as const) {
+      const rest = held(left);
+      expect(rest.pausedRemainingSec).toBe(left);
+      expect(handleWorkoutCommand(cmd('rest_sub_15', { restId: rest.id })), `${left}`).toMatchObject({ status: 'applied' });
+      expect([left, a().rest!.pausedRemainingSec, a().rest!.endsAt]).toEqual([left, sub, rest.endsAt]);
+      expect(handleWorkoutCommand(cmd('rest_add_15', { restId: rest.id })), `${left}`).toMatchObject({ status: 'applied' });
+      expect([left, a().rest!.pausedRemainingSec]).toEqual([left, sub + 15]);
+      expect(fx.scheduleRestDone).not.toHaveBeenCalled();
+      discardSession();
+    }
+  });
+
+  it('receipts store the kind, and keep it through a reload, so a resend still replays', () => {
+    const rest = running(40);
+    const add = cmd('rest_add_15', { restId: rest.id });
+    const sub = cmd('rest_sub_15', { restId: rest.id });
+    const r1 = handleWorkoutCommand(add);
+    const r2 = handleWorkoutCommand(sub);
+    expect(saved().commands.receipts.map(x => [x.commandId, x.kind, x.result.status])).toEqual([[add.commandId, 'rest_add_15', 'applied'], [sub.commandId, 'rest_sub_15', 'applied']]);
+    const endsAt = a().rest!.endsAt;
+    initStore(mem);
+    expect(state.value.commands.receipts.map(x => x.kind)).toEqual(['rest_add_15', 'rest_sub_15']);
+    expect(handleWorkoutCommand(add)).toEqual({ ...r1, replayed: true });
+    expect(handleWorkoutCommand(sub)).toEqual({ ...r2, replayed: true });
+    expect(a().rest!.endsAt).toBe(endsAt);
+  });
+});

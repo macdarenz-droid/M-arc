@@ -14,7 +14,7 @@ vi.mock('@/native/haptics', async orig => {
 import { freshState, newId, type Split } from '@/core/models';
 import { initStore, replaceState, state } from '@/core/store';
 import { setTheme } from '@/theme/engine';
-import { setSet, startRest, startSession } from '@/slices/workout/session';
+import { commitSet, discardSession, finishSession, setSet, startRest, startSession } from '@/slices/workout/session';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
 import { buildPlan, buildSnapshot, createLink } from '@/native/watchLink';
 import { openEntryId } from '@/slices/workout/Train';
@@ -389,5 +389,34 @@ describe('WATCH-C3 X3 logging while M/ARC is closed: the watch logs from the sna
       [false, sets()[3]!.kg, sets()[3]!.reps, undefined],
     ]);
     expect(v()).toMatchObject({ sc: 1, sp: 'SET 4 OF 4' });
+  });
+});
+
+// WATCH-C4 X4 (add-only block): the done screen's highlights belong to the workout the watch was showing.
+describe('WATCH-C4 X4 highlights: after Finish on the phone, the snap names the session the watch had', () => {
+  it("the phone's link sends, after finishSession, a snap whose fin carries the session id of the snaps before it; after discardSession, none", async () => {
+    const sent: Array<Record<string, unknown>> = [];
+    const phone = createLink({ send: async t => { sent.push(JSON.parse(t) as Record<string, unknown>); return 207; }, log: () => undefined });
+    const settle = () => vi.advanceTimersByTimeAsync(400);
+    await phone.start();
+    for (const end of ['finish', 'discard'] as const) {
+      startSession(split);
+      await settle();
+      const had = sent[sent.length - 1]!.sid as string;
+      expect(had).toBe(state.value.active!.id);
+      vi.advanceTimersByTime(60_000);
+      setSet(0, 0, { kg: 60, reps: 8 });
+      expect(commitSet(0, 0)).toBe(true);
+      await settle();
+      const count = sent.length;
+      if (end === 'finish') expect(finishSession(false)?.session.id).toBe(had);
+      else discardSession();
+      await settle();
+      expect(sent.length).toBe(count + 1);
+      const after = sent[sent.length - 1]!;
+      expect(after).toMatchObject({ k: 'snap', sid: null, set: null });
+      if (end === 'finish') expect(after.fin).toEqual([had, ['1 min, 1 set', '480 kg lifted', '1 exercise']]);
+      else expect('fin' in after).toBe(false);
+    }
   });
 });

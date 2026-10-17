@@ -231,9 +231,12 @@ export interface ActiveSession {
   rev?: number;
 }
 
-/** WATCH-B: the commands the watch can send (Wear Engine application 3, approved data in 11.3). */
-export type WatchCommandKind = 'complete_set' | 'rest_add_30' | 'rest_skip' | 'pause' | 'resume' | 'finish';
-export const WATCH_COMMAND_KINDS: WatchCommandKind[] = ['complete_set', 'rest_add_30', 'rest_skip', 'pause', 'resume', 'finish'];
+/**
+ * WATCH-B: the commands the watch can send (Wear Engine application 3, approved data in 11.3). WATCH-C4: the Rest
+ * screen's +15 s and -15 s (owner, 2026-10-18); rest_add_30 stays for older watches.
+ */
+export type WatchCommandKind = 'complete_set' | 'rest_add_30' | 'rest_add_15' | 'rest_sub_15' | 'rest_skip' | 'pause' | 'resume' | 'finish';
+export const WATCH_COMMAND_KINDS: WatchCommandKind[] = ['complete_set', 'rest_add_30', 'rest_add_15', 'rest_sub_15', 'rest_skip', 'pause', 'resume', 'finish'];
 
 export type CommandRejectReason =
   | 'unsupported' | 'invalid' | 'id_conflict' | 'session_closed' | 'no_session' | 'wrong_session'
