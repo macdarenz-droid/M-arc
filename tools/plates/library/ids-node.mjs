@@ -1,7 +1,7 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=ceec6ab1d447ac72e33ef40b76ce4f4875481e80d0eeacc689d7833d9b484116
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=a0bd600d94dce3ed2304c486b2cf7f5673e0fccd42214cc6cb070f0f87274e53
 // Node twin of src/howto/ids.ts (tests and the gate's harness): the same literals and decoder template, emitted
 // together by tools/plates/gen/ids.mjs (D-LIB2-hints).
-const S = "2eTgR?oeeYPaW@NI22\\X@@[:2`_N8@HY";
+const S = "2eTgR?oeeYPaW@NI22\\X@@[:2`_N8@HYEhDkS?6[UchTTX2:^6E>Z3X5\\Oki<MJcNH10lD2LH@Yo^1dH<?i73a7a";
 const H = ["Heel of palm, wrist straight."];
 const O = "A";
 function at(s) {

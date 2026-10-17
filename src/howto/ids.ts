@@ -1,8 +1,8 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/ids.mjs). inputsSha256=2d0e28898451a49d0b6d8c4bce7902beb113a6b6f93d5519dbaf116e10d1b12a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/ids.mjs). inputsSha256=193c44259d9d6529aae4cb8042273826714422e65bc4341358e14cfac5afcd87
 // Main-bundle How-to module (plan 2.9, 5.2): 4-char hashes of the shipped ids, hinted ids first.
 export type HowToId = string & { readonly __howTo: true };
 export const HOWTO_LABEL = "How to do it";
-const S = "2eTgR?oeeYPaW@NI22\\X@@[:2`_N8@HY";
+const S = "2eTgR?oeeYPaW@NI22\\X@@[:2`_N8@HYEhDkS?6[UchTTX2:^6E>Z3X5\\Oki<MJcNH10lD2LH@Yo^1dH<?i73a7a";
 const H = ["Heel of palm, wrist straight."];
 const O = "A";
 function at(s: string): number {

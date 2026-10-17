@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=2001bbf56f24c52c85b28a857a11085046bec5a2b0985700459d1cf86392b7fc
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=0325c6df40d4535511531f38a63e5a41c4101b4615eb1bc4ac7887acc188cde3
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -11,6 +11,20 @@ export const HOWTO_IDS = [
   "lib_seated_cable_row",
   "lib_leg_press",
   "lib_machine_chest_press",
+  "lib_dumbbell_bench_press",
+  "lib_barbell_bench_press",
+  "lib_smith_machine_bench_press",
+  "lib_incline_machine_press",
+  "lib_incline_dumbbell_press",
+  "lib_incline_barbell_bench_press",
+  "lib_smith_machine_incline_press",
+  "lib_decline_bench_press",
+  "lib_cable_chest_press",
+  "lib_pec_fly",
+  "lib_cable_fly",
+  "lib_low_to_high_cable_fly",
+  "lib_high_to_low_cable_fly",
+  "lib_dumbbell_fly",
 ] as const;
 
 // One dynamic import per shipped id. Partial: LibId names every exercise, and only the shipped ones have a loader.
@@ -23,6 +37,20 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_seated_cable_row: () => import('./ht-seated-cable-row'),
   lib_leg_press: () => import('./ht-leg-press'),
   lib_machine_chest_press: () => import('./ht-machine-chest-press'),
+  lib_dumbbell_bench_press: () => import('./ht-dumbbell-bench-press'),
+  lib_barbell_bench_press: () => import('./ht-barbell-bench-press'),
+  lib_smith_machine_bench_press: () => import('./ht-smith-machine-bench-press'),
+  lib_incline_machine_press: () => import('./ht-incline-machine-press'),
+  lib_incline_dumbbell_press: () => import('./ht-incline-dumbbell-press'),
+  lib_incline_barbell_bench_press: () => import('./ht-incline-barbell-bench-press'),
+  lib_smith_machine_incline_press: () => import('./ht-smith-machine-incline-press'),
+  lib_decline_bench_press: () => import('./ht-decline-bench-press'),
+  lib_cable_chest_press: () => import('./ht-cable-chest-press'),
+  lib_pec_fly: () => import('./ht-pec-fly'),
+  lib_cable_fly: () => import('./ht-cable-fly'),
+  lib_low_to_high_cable_fly: () => import('./ht-low-to-high-cable-fly'),
+  lib_high_to_low_cable_fly: () => import('./ht-high-to-low-cable-fly'),
+  lib_dumbbell_fly: () => import('./ht-dumbbell-fly'),
 };
 
 // Per-chromeId chunks (D-LIB2-sheet-maps): the sheet chunk holds no per-id map, so it does not grow with the library.
@@ -36,6 +64,20 @@ export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: strin
   "seated-cable-row": () => import('./hand-seated-cable-row'),
   "leg-press": () => import('./hand-leg-press'),
   "machine-chest-press": () => import('./hand-machine-chest-press'),
+  "dumbbell-bench-press": () => import('./handpair-dumbbell-bench-press'),
+  "barbell-bench-press": () => import('./handpair-barbell-bench-press'),
+  "smith-machine-bench-press": () => import('./handpair-smith-machine-bench-press'),
+  "incline-machine-press": () => import('./handpair-incline-machine-press'),
+  "incline-dumbbell-press": () => import('./handpair-incline-dumbbell-press'),
+  "incline-barbell-bench-press": () => import('./handpair-incline-barbell-bench-press'),
+  "smith-machine-incline-press": () => import('./handpair-smith-machine-incline-press'),
+  "decline-bench-press": () => import('./handpair-decline-bench-press'),
+  "cable-chest-press": () => import('./handpair-cable-chest-press'),
+  "pec-fly": () => import('./handpair-pec-fly'),
+  "cable-fly": () => import('./handpair-cable-fly'),
+  "low-to-high-cable-fly": () => import('./handpair-low-to-high-cable-fly'),
+  "high-to-low-cable-fly": () => import('./handpair-high-to-low-cable-fly'),
+  "dumbbell-fly": () => import('./handpair-dumbbell-fly'),
 };
 export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: Readonly<Record<string, string>>; readonly zdots: string }>>> = {
   "lateral-raise": () => import('./posture-lateral-raise'),
@@ -46,6 +88,20 @@ export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: R
   "seated-cable-row": () => import('./posture-seated-cable-row'),
   "leg-press": () => import('./posture-leg-press'),
   "machine-chest-press": () => import('./posture-machine-chest-press'),
+  "dumbbell-bench-press": () => import('./posture-dumbbell-bench-press'),
+  "barbell-bench-press": () => import('./posture-barbell-bench-press'),
+  "smith-machine-bench-press": () => import('./posture-smith-machine-bench-press'),
+  "incline-machine-press": () => import('./posture-incline-machine-press'),
+  "incline-dumbbell-press": () => import('./posture-incline-dumbbell-press'),
+  "incline-barbell-bench-press": () => import('./posture-incline-barbell-bench-press'),
+  "smith-machine-incline-press": () => import('./posture-smith-machine-incline-press'),
+  "decline-bench-press": () => import('./posture-decline-bench-press'),
+  "cable-chest-press": () => import('./posture-cable-chest-press'),
+  "pec-fly": () => import('./posture-pec-fly'),
+  "cable-fly": () => import('./posture-cable-fly'),
+  "low-to-high-cable-fly": () => import('./posture-low-to-high-cable-fly'),
+  "high-to-low-cable-fly": () => import('./posture-high-to-low-cable-fly'),
+  "dumbbell-fly": () => import('./posture-dumbbell-fly'),
 };
 export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { readonly id: string; readonly pre: string; readonly section: string } }>>> = {
   "lateral-raise": () => import('./feel-lateral-raise'),
@@ -56,4 +112,18 @@ export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { r
   "seated-cable-row": () => import('./feel-seated-cable-row'),
   "leg-press": () => import('./feel-leg-press'),
   "machine-chest-press": () => import('./feel-machine-chest-press'),
+  "dumbbell-bench-press": () => import('./feel-dumbbell-bench-press'),
+  "barbell-bench-press": () => import('./feel-barbell-bench-press'),
+  "smith-machine-bench-press": () => import('./feel-smith-machine-bench-press'),
+  "incline-machine-press": () => import('./feel-incline-machine-press'),
+  "incline-dumbbell-press": () => import('./feel-incline-dumbbell-press'),
+  "incline-barbell-bench-press": () => import('./feel-incline-barbell-bench-press'),
+  "smith-machine-incline-press": () => import('./feel-smith-machine-incline-press'),
+  "decline-bench-press": () => import('./feel-decline-bench-press'),
+  "cable-chest-press": () => import('./feel-cable-chest-press'),
+  "pec-fly": () => import('./feel-pec-fly'),
+  "cable-fly": () => import('./feel-cable-fly'),
+  "low-to-high-cable-fly": () => import('./feel-low-to-high-cable-fly'),
+  "high-to-low-cable-fly": () => import('./feel-high-to-low-cable-fly'),
+  "dumbbell-fly": () => import('./feel-dumbbell-fly'),
 };
