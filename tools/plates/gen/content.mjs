@@ -17,12 +17,13 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT } from '../lib/inputs.mjs';
-import { PLATES_JSON, chunkName } from './plates.mjs';
+import { chunkName } from './plates.mjs';
+import { EXERCISES_JSON, goldenInputs, goldenRows, shippedIds, sourceOf } from '../library/registry.mjs';
+import { hintsOutputs } from '../library/ids-encoding.mjs';
 
-export const after = ['tools/plates/gen/plates.mjs'];
+export const after = ['tools/plates/gen/plates.mjs', 'tools/plates/gen/ids.mjs'];
 
 const LAYERS = 'tools/plates/layers';
-const EXERCISES_DIR = join(ROOT, LAYERS, 'exercises');
 const SHARED_REL = `${LAYERS}/howto/shared.mjs`;
 
 /** The base-file fields HT-5 writes into ht-<slug>.ts. `zooms` is narrowed to descriptors (below); `feel` stays out
@@ -41,13 +42,21 @@ export function zoomDescriptors(zooms) {
   return zooms.map(z => Object.fromEntries(DESCRIPTOR_KEYS.filter(k => z[k] !== undefined).map(k => [k, z[k]])));
 }
 
-const rowsOf = () => JSON.parse(readFileSync(join(ROOT, PLATES_JSON), 'utf8'));
+// LIB-2 (design 3, 6.1): the rows and each id's source path come from the registry; each output is hashed over only
+// what it was made from (an exercise's own source for its module and research card; every source for the shared files).
+const rowsOf = () => goldenRows();
 
-export const inputs = () => {
-  const out = [SHARED_REL];
-  for (const id of Object.keys(rowsOf())) out.push(`${LAYERS}/exercises/${id.slice(4)}.howto.mjs`);
-  return out;
-};
+export const inputs = () => [SHARED_REL, ...goldenInputs(), ...Object.keys(rowsOf()).map(id => sourceOf(id))];
+/** Each output's own inputs, static (no render), so a header can be re-checked and a new batch row stales nothing. */
+export function inputsFor(path) {
+  const rows = rowsOf();
+  for (const [id, row] of Object.entries(rows)) {
+    if (path === `src/howto/generated/${chunkName(row.slug)}.ts` || path === `docs/research/howto/${id}.json`) return [SHARED_REL, ...goldenInputs(), sourceOf(id)];
+  }
+  if (path === 'src/howto/archetypes.ts') return [SHARED_REL];
+  if (path === 'src/howto/ids.ts' || path === 'docs/research/howto/sources.json') return inputs();
+  return undefined;
+}
 
 /** Normalizes the plate engine's older PointRef spelling ({ landmark, pose?, dx?, dy? }, GA 4.1) to the one
  *  content-types.ts actually uses ({ at, pose?, off? }, the plate engine's own convention, SPEC.md 3): some golden-B
@@ -74,7 +83,7 @@ export function normalizeRefs(node) {
  *  access/checked/use/note; `use`/`note` are per-use evidence labels, already folded into each field's own Claim by
  *  golden B, so they are dropped when building the app-wide Source registry). */
 export async function loadContent(id) {
-  const file = join(EXERCISES_DIR, `${id.slice(4)}.howto.mjs`);
+  const file = join(ROOT, sourceOf(id));
   const mod = await import(pathToFileURL(file).href);
   const raw = mod.default;
   if (!raw || raw.id !== id) throw new Error(`content: ${file} default export id "${raw?.id}" != "${id}"`);
@@ -123,9 +132,14 @@ export function patchModule(prevText, content, hash) {
   return `${body}\n${baseFieldsText(content)}} satisfies BuiltHowTo;\n`;
 }
 
-export function hintsText(idsPrevText, hints) {
-  const entries = Object.keys(hints).map(id => `  ${JSON.stringify(id)}: ${JSON.stringify(hints[id])},`).join('\n');
-  return `${idsPrevText}export const HOWTO_HINTS: Partial<Record<HowToId, string>> = {\n${entries}\n};\n`;
+/** HT-5's push hints, golden B's handling.cue of each push-archetype exercise: lib id -> text (ids.mjs encodes them). */
+export async function pushHints() {
+  const hints = {};
+  for (const id of Object.keys(rowsOf())) {
+    const { content } = await loadContent(id);
+    if (content.handling && content.handling.archetype === 'push' && content.handling.cue) hints[id] = content.handling.cue;
+  }
+  return hints;
 }
 
 export function archetypesText(shared) {
@@ -166,23 +180,26 @@ export async function outputs({ prev, hashFor }) {
     const path = `src/howto/generated/${chunkName(rows[id].slug)}.ts`;
     const prevText = prev.get(path);
     if (!prevText) throw new Error(`content: no plates.mjs output for ${path}; content.mjs must run after plates.mjs`);
-    out.push({ path, text: patchModule(prevText, content, hashFor(path)) });
+    out.push({ path, text: patchModule(prevText, content, hashFor(path, inputsFor(path))), inputs: inputsFor(path) });
   }
 
-  const idsPath = 'src/howto/ids.ts';
-  const idsPrev = prev.get(idsPath);
-  if (!idsPrev) throw new Error('content: no plates.mjs output for ids.ts');
-  out.push({ path: idsPath, text: hintsText(idsPrev, hints) });
+  // ids.ts (D-LIB2-hints): ids.mjs encodes the push hints; this plugin, whose sources they come from, stays its second
+  // writer and refuses a file that does not hold the hints rendered here
+  const idsPath = 'src/howto/ids.ts', idsPrev = prev.get(idsPath);
+  if (!idsPrev) throw new Error('content: no ids.mjs output for ids.ts');
+  const want = hintsOutputs(hints, shippedIds(), JSON.parse(readFileSync(join(ROOT, EXERCISES_JSON), 'utf8')).map(e => e.id)).ids;
+  if (idsPrev !== want) throw new Error('content: ids.mjs wrote ids.ts without the push hints rendered here');
+  out.push({ path: idsPath, text: idsPrev, inputs: inputsFor(idsPath) });
 
   const shared = await import(pathToFileURL(join(ROOT, SHARED_REL)).href);
-  out.push({ path: 'src/howto/archetypes.ts', text: archetypesText(shared) });
+  out.push({ path: 'src/howto/archetypes.ts', text: archetypesText(shared), inputs: inputsFor('src/howto/archetypes.ts') });
 
   const sortedRegistry = Object.fromEntries(Object.keys(registry).sort().map(k => [k, registry[k]]));
-  out.push({ path: 'docs/research/howto/sources.json', text: `${JSON.stringify(sortedRegistry, null, 2)}\n` });
+  out.push({ path: 'docs/research/howto/sources.json', text: `${JSON.stringify(sortedRegistry, null, 2)}\n`, inputs: inputsFor('docs/research/howto/sources.json') });
   for (const id of ids) {
     const content = byId.get(id);
     const card = { id, rev: content.rev, research: content.research, sources: content.sources, riskFlags: content.riskFlags };
-    out.push({ path: `docs/research/howto/${id}.json`, text: `${JSON.stringify(card, null, 2)}\n` });
+    out.push({ path: `docs/research/howto/${id}.json`, text: `${JSON.stringify(card, null, 2)}\n`, inputs: inputsFor(`docs/research/howto/${id}.json`) });
   }
 
   return out;

@@ -20,25 +20,15 @@ export const GOLDEN_JSON = join(GOLDEN_DIR, 'GOLDEN.json');
 export const REF_FIXTURES = join(GOLDEN_DIR, 'ref-fixtures');
 export const FONT = join(ROOT, 'node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2');
 
-/** The pins from the card (HT1-A1, HT1-A2). */
-export const PINS = {
-  refSrcMd5: { 'ref-src/plate.mjs': '31e7bfe3555c0c456ed4417f503dc93f', 'ref-src/themes.mjs': '37495b3d37d1a6a284a380c9e517fb18' },
-  fontSha256: '3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62',
-  pageSha256: 'e2bea90c8312132b93a2ab0bc004cee6ef43edd22e8227720be3958f6b2dcf48',
-  pageBytes: 860766,
-};
+/** The pins from the card (HT1-A1, HT1-A2), as data in tools/plates/pins.json (LIB-2, library plan 5.3). */
+export const PINS_JSON = join(ROOT, 'tools/plates/pins.json');
+const pinsData = JSON.parse(readFileSync(PINS_JSON, 'utf8'));
+export const PINS = { refSrcMd5: pinsData.refSrcMd5, fontSha256: pinsData.fontSha256, pageSha256: pinsData.pageSha256, pageBytes: pinsData.pageBytes };
+const SOURCE_RE = new RegExp(`^(${pinsData.vendorSources.map(v => v.commit).join('|')}):docs\\/howto\\/technical-plate\\/`);
 
-/** Gallery chrome id -> app library id. Explicit, so nobody infers it from a slug (critic fix 18). */
-export const LIB_OF = {
-  'lateral-raise': 'lib_dumbbell_lateral_raise',
-  'barbell-back-squat': 'lib_barbell_back_squat',
-  'pull-up': 'lib_pull_up',
-  'hanging-leg-raise': 'lib_hanging_leg_raise',
-  'lat-pulldown': 'lib_lat_pulldown',
-  'seated-cable-row': 'lib_seated_cable_row',
-  'leg-press': 'lib_leg_press',
-  'machine-chest-press': 'lib_machine_chest_press',
-};
+/** Gallery chrome id -> app library id, read from each tools/plates/plates.json row's explicit chromeId (critic fix 18:
+ *  never inferred from a slug; LIB-2 made it data). Same keys, values and order as the literal it replaced. */
+export const LIB_OF = Object.fromEntries(Object.entries(JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'))).map(([id, row]) => [row.chromeId, id]));
 
 export const sha256 = x => createHash('sha256').update(x).digest('hex');
 const md5 = x => createHash('md5').update(x).digest('hex');
@@ -53,7 +43,7 @@ export function verifyVendor(dir = VENDOR, manifest = readManifest(VENDOR)) {
   const bad = [];
   const onDisk = new Set(walk(dir).filter(p => p !== 'MANIFEST.json'));
   for (const [path, e] of Object.entries(manifest.files)) {
-    if (!/^(bc0f378|1a1e33b|7859292|de00174|48153c4|f214700):docs\/howto\/technical-plate\//.test(e.source)) bad.push(`${path}: source ${e.source} is not a bc0f378 blob, the ref-src commit or a golden update (7859292, de00174, 48153c4: LIB-25 poly; f214700: LIB-26 flat palm)`);
+    if (!SOURCE_RE.test(e.source)) bad.push(`${path}: source ${e.source} ${pinsData.vendorSourceMessage}`);
     if (!onDisk.delete(path)) { bad.push(`${path}: missing`); continue; }
     const b = readFileSync(join(dir, path));
     if (sha256(b) !== e.sha256) bad.push(`${path}: sha256 ${sha256(b)} != MANIFEST ${e.sha256}`);
@@ -169,6 +159,23 @@ export function verifyChain(entries) {
     latest.set(key, i);
   });
   return bad;
+}
+
+/** The prefix hash of GOLDEN.json entries 0..index (LIB-2 design 6.2): what a batch file's `base.hash` names. GOLDEN.json
+ *  is append-only, so this value never changes after a later append. */
+export const prefixHash = (entries, index) => sha256(JSON.stringify(entries.slice(0, index + 1)));
+
+/** A per-batch golden file (tests/howto/golden/library/<batch>.json = { base: { index, hash }, entries }): its entries
+ *  follow verifyChain's rules within the file, and `base` names an existing GOLDEN.json entry by its prefix hash
+ *  (never the head, so a later GOLDEN.json append keeps every batch file green). Returns the problems. */
+export function verifyBatchChain(file, goldenEntries) {
+  const bad = [];
+  if (!file || !Array.isArray(file.entries) || file.entries.length === 0) return ['batch file: no entries'];
+  const b = file.base;
+  if (!b || !Number.isInteger(b.index) || typeof b.hash !== 'string') bad.push('batch file: base needs { index, hash }');
+  else if (b.index < 0 || b.index >= goldenEntries.length) bad.push(`batch file: base.index ${b.index} is not a GOLDEN.json entry (0..${goldenEntries.length - 1})`);
+  else if (prefixHash(goldenEntries, b.index) !== b.hash) bad.push(`batch file: base.hash does not match GOLDEN.json entries 0..${b.index} (an older GOLDEN entry was edited, or base points at the wrong entry)`);
+  return [...bad, ...verifyChain(file.entries)];
 }
 
 /** The latest entry per kind/id. */

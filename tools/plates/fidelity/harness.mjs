@@ -4,6 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { hasHowTo } from '../library/ids-node.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 export const FONT = join(ROOT, 'node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2');
@@ -180,23 +181,19 @@ export async function goldenSelfCheck(browser, { html = readFileSync(GOLDEN_PAGE
 // HT-3: the app side. The gate's own build (vite preview on `port`) with a seeded split, the How-to sheet opened from
 // the real Train entry, and the comparisons against the golden page (plan 2.7: L2b, F3, L3, L4).
 
-/** The 8 approved plates in gallery order (GOLDEN chromeId -> library id); HT_ORDER adds the two controls. */
-export const HT_PLATES = [
-  ['lateral-raise', 'lib_dumbbell_lateral_raise'], ['barbell-back-squat', 'lib_barbell_back_squat'], ['pull-up', 'lib_pull_up'],
-  ['hanging-leg-raise', 'lib_hanging_leg_raise'], ['lat-pulldown', 'lib_lat_pulldown'], ['seated-cable-row', 'lib_seated_cable_row'],
-  ['leg-press', 'lib_leg_press'], ['machine-chest-press', 'lib_machine_chest_press'],
-];
+/** The 8 approved plates in gallery order (GOLDEN chromeId -> library id); HT_ORDER adds the two controls. LIB-2: read
+ *  from tools/plates/plates.json in file order (the same 8 pairs in the same order as the literal it replaced), so
+ *  HT-10's ht10Sweep, htTuples and ht10.mjs, which default to HT_PLATES, are fed with no line of theirs edited. */
+export const HT_PLATES = Object.entries(JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'))).map(([id, row]) => [row.chromeId, id]);
 /**
  * The gate's "no How-to" control (D-HT1): the first library id, in src/data/exercises.json order, for which hasHowTo()
- * is false (HOWTO_IDS read from the generated src/howto/ids.ts). Data-driven, so it moves on by itself when more
+ * is false (LIB-2: hasHowTo from the generated Node twin of src/howto/ids.ts). Data-driven, so it moves on by itself when more
  * exercises get approved content, and the gate block never needs an edit for it.
  */
 export function firstWithoutHowTo() {
   const lib = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => e.id);
-  const m = readFileSync(join(ROOT, 'src/howto/ids.ts'), 'utf8').match(/export const HOWTO_IDS = \[([\s\S]*?)\] as const;/);
-  if (!m) throw new Error('firstWithoutHowTo: no HOWTO_IDS in src/howto/ids.ts');
-  const approved = new Set([...m[1].matchAll(/"([^"]+)"/g)].map(x => x[1]));
-  const id = lib.find(i => !approved.has(i));
+  if (lib.length === 0) throw new Error('firstWithoutHowTo: src/data/exercises.json has no ids');
+  const id = lib.find(i => !hasHowTo(i));
   if (!id) throw new Error('firstWithoutHowTo: every library exercise has a How-to');
   return id;
 }
