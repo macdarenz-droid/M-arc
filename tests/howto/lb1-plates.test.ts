@@ -111,9 +111,9 @@ describe('LIB-9a Do 3 / A2: composers', { timeout: T }, () => {
 
   it('band: both strands end on the fists and start on the sole loop', () => {
     const { lm } = items(apu, 'end'), out = band.band()(lm, {}), A = band.bandAnchor(lm, 'r', 0.008);
-    const ends = (it: any): number[][] => { const p = it.pts; return [[(p[6][1] + p[7][1]) / 2, (p[6][2] + p[7][2]) / 2], [(p[2][1] + p[3][1]) / 2, (p[2][2] + p[3][2]) / 2]]; };   // polyBar: a between pts 6/7, b between 2/3
+    const ends = (it: any): [[number, number], [number, number]] => { const p = it.pts; return [[(p[6][1] + p[7][1]) / 2, (p[6][2] + p[7][2]) / 2], [(p[2][1] + p[3][1]) / 2, (p[2][2] + p[3][2]) / 2]]; };   // polyBar: a between pts 6/7, b between 2/3
     for (const [i, side] of [[1, 'l'], [2, 'r']] as const) {
-      const [a, b] = ends(out[i]) as [number[], number[]];
+      const [a, b] = ends(out[i]);
       expect(Math.hypot(a[0] - A.leave[1], a[1] - A.leave[2])).toBeLessThan(0.002);
       expect(Math.hypot(b[0] - lm[`grip.${side}`][1], b[1] - lm[`grip.${side}`][2])).toBeLessThan(0.002);
     }
