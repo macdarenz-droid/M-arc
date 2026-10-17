@@ -46,6 +46,35 @@ export function danglingImports(loaders: string, outputs: Set<string>): string[]
   return targets.filter(t => !outputs.has(`src/howto/generated/${t}.ts`));
 }
 
+/** D-LIB2b-HANDCSS: problems with a library row's HAND line in a loaders.ts text. A shared handpair-<key> chunk imports
+ *  no CSS, so the line must load the row's zoom-<chromeId>.css first, then the pair chunk. Returns the pair key too. */
+export function handLineProblems(loaders: string, c: string): { key?: string; problems: string[] } {
+  const hand = loaders.slice(loaders.indexOf('export const HAND'), loaders.indexOf('export const POSTURE'));
+  const lines = hand.split('\n').filter(l => l.startsWith(`  ${JSON.stringify(c)}: `));
+  if (lines.length !== 1) return { problems: [`${c}: ${lines.length} HAND lines`] };
+  const m = lines[0]!.match(new RegExp(`^  ${JSON.stringify(c)}: \\(\\) => import\\('\\.\\./\\.\\./slices/howto/css/zoom-${c}\\.css'\\)\\.then\\(\\(\\) => import\\('\\./handpair-([a-z0-9-]+)'\\)\\),$`));
+  return m ? { key: m[1]!, problems: [] } : { problems: [`${c}: HAND line does not load zoom-${c}.css before its hand pair: ${lines[0]}`] };
+}
+
+/** D-LIB2b-HANDCSS in the built chunk graph (vite manifest + the built loaders chunk): the HAND entry for `c` preloads
+ *  the built zoom-<c>.css and only then imports the built handpair-<key> chunk, which itself has no css or imports. */
+export function builtHandCssProblems(www: string, c: string, key: string): string[] {
+  const man = JSON.parse(readFileSync(join(www, '.vite/manifest.json'), 'utf8'));
+  const css = man[`src/slices/howto/css/zoom-${c}.css`]?.file, pair = man[`src/howto/generated/handpair-${key}.ts`];
+  if (!css || !pair) return [`manifest: no zoom-${c}.css or handpair-${key}.ts entry`];
+  const bad: string[] = [];
+  if (pair.css?.length || pair.imports?.length) bad.push(`handpair-${key}: the pair chunk has css or imports`);
+  const js = readFileSync(join(www, man['src/howto/generated/loaders.ts'].file), 'utf8');
+  const deps = JSON.parse(js.match(/m\.f=(\[[^\]]*\])/)?.[1] ?? '[]') as string[];
+  const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const m = js.match(new RegExp(`${esc(JSON.stringify(c))}:\\(\\)=>(\\w+)\\(\\(\\)=>Promise\\.resolve\\(\\{\\}\\),__vite__mapDeps\\(\\[([\\d,]+)\\]\\),import\\.meta\\.url\\)\\.then\\(\\(\\)=>\\1\\(\\(\\)=>import\\("\\./([^"]+)"\\)`));
+  if (!m) return [...bad, `${c}: the built HAND entry does not preload a css before its pair chunk`];
+  const pre = m[2]!.split(',').map(i => deps[Number(i)]);
+  if (!pre.includes(`./${css.replace(/^assets\//, '')}`)) bad.push(`${c}: the built HAND entry preloads ${pre.join(', ')}, not ${css}`);
+  if (`assets/${m[3]}` !== pair.file) bad.push(`${c}: the built HAND entry imports ${m[3]}, not ${pair.file}`);
+  return bad;
+}
+
 describe('E1: a shipped library row gets every output', { timeout: 120_000 }, () => {
   it('the transform and the committed page are the ones provenance.json records', () => {
     const p = JSON.parse(readFileSync(F.PROVENANCE, 'utf8')), t = F.transformSources();
@@ -69,7 +98,7 @@ describe('E1: a shipped library row gets every output', { timeout: 120_000 }, ()
   it('the loaders map the clone: LOADERS, HAND (its pair), POSTURE and FEEL', () => {
     const t = treeOut.get('src/howto/generated/loaders.ts').text as string;
     expect(t).toContain("lib_cable_lateral_raise: () => import('./ht-cable-lateral-raise'),");
-    expect(t).toContain(`"cable-lateral-raise": () => import('./handpair-lib2b-scratch'),`);
+    expect(t).toContain(`"cable-lateral-raise": () => import('../../slices/howto/css/zoom-cable-lateral-raise.css').then(() => import('./handpair-lib2b-scratch')),`);
     expect(t).toContain(`"cable-lateral-raise": () => import('./posture-cable-lateral-raise'),`);
     expect(t).toContain(`"cable-lateral-raise": () => import('./feel-cable-lateral-raise'),`);
   });
@@ -77,9 +106,11 @@ describe('E1: a shipped library row gets every output', { timeout: 120_000 }, ()
   it('generate --check and npm run build pass on the tree', async () => {
     const c = await run(root, ['tools/plates/generate.mjs', '--check']);
     expect(c.out).toContain(`PASS, ${60 + CLONE_OUTPUTS.length} files fresh`);
-    const b = await run(root, ['node_modules/vite/bin/vite.js', 'build', '--logLevel', 'error']);
+    const b = await run(root, ['node_modules/vite/bin/vite.js', 'build', '--logLevel', 'error', '--manifest']);
     expect(b.code, b.out).toBe(0);
     expect(readdirSync(join(root, 'www/assets')).some(f => /^ht-cable-lateral-raise-[\w-]+\.js$/.test(f))).toBe(true);
+    // D-LIB2b-HANDCSS: in the built chunk graph, the clone's HAND loader waits for its zoom css, then loads its pair chunk
+    expect(builtHandCssProblems(join(root, 'www'), 'cable-lateral-raise', 'lib2b-scratch')).toEqual([]);
   }, 600_000);
 
   it('LIB-6 rebuild: where its builder exists the page rebuilds byte for byte through layersSpecOf; where it does not, render/ is absent too', async () => {
@@ -454,5 +485,36 @@ describe('D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped lib
       const changed = { ...p, tells: `${p.tells} ` };
       expect(golden.fragmentsOf(changed)).not.toEqual(e.fragments);
     }
+  });
+});
+
+describe('D-LIB2b-HANDCSS: a library row\'s HAND loader brings in its zoom css before its shared hand pair', () => {
+  it('for the repo\'s shipped library rows and the E1 tree\'s: one HAND line, zoom-<chromeId>.css then handpair-<key>; the pair chunk imports nothing; no hand-<chromeId>.ts', async () => {
+    const cases = await libraryCases();
+    expect(cases.at(-1)!.row.id).toBe(F.ID);
+    for (const { base, row } of cases) {
+      const c = row.chromeId, { key, problems } = handLineProblems(readFileSync(join(base, 'src/howto/generated/loaders.ts'), 'utf8'), c);
+      expect(problems, row.id).toEqual([]);
+      expect(existsSync(join(base, `src/slices/howto/css/zoom-${c}.css`)), row.id).toBe(true);
+      expect(readFileSync(join(base, `src/howto/generated/handpair-${key}.ts`), 'utf8')).not.toMatch(/\bimport\b/);
+      expect(existsSync(join(base, `src/howto/generated/hand-${c}.ts`)), row.id).toBe(false);
+    }
+  });
+  it('the 8\'s loaders.ts lines are unchanged by a library row: the tree\'s lines minus the library rows\' are the repo\'s (header aside)', () => {
+    const lib = [...LIBRARY, { id: F.ID, chromeId: 'cable-lateral-raise' }];
+    const mine = (l: string) => lib.some(r => l.includes(`"${r.chromeId}":`) || l.startsWith(`  ${r.id}:`) || l.includes(`  ${JSON.stringify(r.id)},`));
+    const of = (t: string) => t.split('\n').slice(1).filter(l => !mine(l));
+    const repo = of(readFileSync(new URL('../../src/howto/generated/loaders.ts', import.meta.url), 'utf8'));
+    const tree = of(readFileSync(join(root, 'src/howto/generated/loaders.ts'), 'utf8'));
+    expect(tree.length).toBeGreaterThan(40);
+    expect(tree).toEqual(repo);
+  });
+  it('failure path: a HAND line without the css, or with the css after the pair, is red', () => {
+    const t = readFileSync(join(root, 'src/howto/generated/loaders.ts'), 'utf8');
+    const line = `"cable-lateral-raise": () => import('../../slices/howto/css/zoom-cable-lateral-raise.css').then(() => import('./handpair-lib2b-scratch')),`;
+    expect(t).toContain(line);
+    expect(handLineProblems(t.replace(line, `"cable-lateral-raise": () => import('./handpair-lib2b-scratch'),`), 'cable-lateral-raise').problems).toHaveLength(1);
+    expect(handLineProblems(t.replace(line, `"cable-lateral-raise": () => import('./handpair-lib2b-scratch').then(m => import('../../slices/howto/css/zoom-cable-lateral-raise.css').then(() => m)),`), 'cable-lateral-raise').problems).toHaveLength(1);
+    expect(handLineProblems(t, 'cable-lateral-raise')).toEqual({ key: 'lib2b-scratch', problems: [] });
   });
 });

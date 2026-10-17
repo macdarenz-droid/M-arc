@@ -422,7 +422,8 @@ describe('L2-A21: hand-pair chunks (gen/handpairs.mjs, design 12, D-LIB7-1)', ()
     expect(keys).toEqual(['bar-grip', 'd-handle']);
     // with no per-id hand chunk (has = false), every pair exercise's HAND entry is its key's shared chunk
     const text = idsGen.htIndexText([], idsGen.chunkMaps(reg.rows().filter((r: any) => reg.shippedIds().includes(r.id)), () => false, pairOf));
-    expect([...text.matchAll(/^ {2}"([a-z-]+)": \(\) => import\('\.\/handpair-([a-z-]+)'\)/gm)].map(m => [m[1], m[2]])).toEqual([['pull-up', 'bar-grip'], ['lat-pulldown', 'bar-grip'], ['leg-press', 'd-handle']]);
+    // D-LIB2b-HANDCSS: each pair line loads that exercise's zoom-<chromeId>.css first (the shared chunk imports no CSS)
+    expect([...text.matchAll(/^ {2}"([a-z-]+)": \(\) => import\('\.\.\/\.\.\/slices\/howto\/css\/zoom-\1\.css'\)\.then\(\(\) => import\('\.\/handpair-([a-z-]+)'\)\),$/gm)].map(m => [m[1], m[2]])).toEqual([['pull-up', 'bar-grip'], ['lat-pulldown', 'bar-grip'], ['leg-press', 'd-handle']]);
     const loaderKeys = [...new Set([...text.matchAll(/import\('\.\/handpair-([a-z-]+)'\)/g)].map(m => m[1]))];
     expect(hp.pairProblems(pairs, reg.shippedIds(), o.map((x: any) => x.path), loaderKeys)).toEqual([]);
   });

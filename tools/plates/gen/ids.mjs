@@ -59,7 +59,10 @@ export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, ha
   }
 }
 
-const mapText = entries => `{${entries.map(([c, f]) => `\n  ${JSON.stringify(c)}: () => import('./${f}'),`).join('')}${entries.length ? '\n' : ''}}`;
+// D-LIB2b-HANDCSS: a shared handpair-<key> chunk imports no CSS (it stays exercise-neutral), so a pair's HAND line loads
+// that exercise's zoom-<chromeId>.css first; the 8's own hand-<chromeId>.ts imports it itself, and their lines are unchanged.
+const load = (c, f) => f.startsWith('handpair-') ? `import('../../slices/howto/css/zoom-${c}.css').then(() => import('./${f}'))` : `import('./${f}')`;
+const mapText = entries => `{${entries.map(([c, f]) => `\n  ${JSON.stringify(c)}: () => ${load(c, f)},`).join('')}${entries.length ? '\n' : ''}}`;
 
 export const htIndexText = (loaders, { hand = [], posture = [], feel = [] } = {}) => `import type { BuiltHowTo, LibId } from '../types';
 

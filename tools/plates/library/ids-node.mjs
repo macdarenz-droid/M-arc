@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=91ef667ee6404853d8ede4a099c54a6689b7bee12b6fb2bcc02a522d16580ad3
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=155570539c47e55e52f375c7302feb504219936e7fd0738f5ab35084162a4224
 // Node twin of src/howto/ids.ts (tests and the gate's harness): the same literals and decoder template, emitted
 // together by tools/plates/gen/ids.mjs (D-LIB2-hints).
 const S = "2eTgR?oeeYPaW@NI22\\X@@[:2`_N8@HY";
