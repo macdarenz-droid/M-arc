@@ -88,7 +88,6 @@ export async function run(ctx, { lib, chrome, index, theme }) {
     if (!a.fits) return fail(state, `the app's feel section (${a.h} px) does not fit under the sheet header`);
     const g = await placeGolden(gold, chrome, a);
     if (g.x !== a.x || g.y !== a.y || g.w !== a.w || g.h !== a.h) return fail(state, `golden ${JSON.stringify(g)} != app ${JSON.stringify(a)}`);
-    if (process.env.HT8_BITE && state === S(process.env.HT8_BITE)) await gold.evaluate(([x, y]) => { const i = document.createElement('i'); i.id = 'ht8-bite'; i.style.cssText = `position:fixed;left:${x + 20}px;top:${y + 20}px;width:1px;height:1px;background:#f00;z-index:2147483647`; document.querySelector('#ht8-present').append(i); }, [a.x, a.y]); // TEMP-BITE
     await frames2(app); await frames2(gold);
     const clip = { x: a.x, y: a.y, width: a.w, height: a.h };
     const [ia, ig] = [await app.screenshot({ clip, animations: anims, caret: 'hide' }), await gold.screenshot({ clip, animations: anims, caret: 'hide' })];
