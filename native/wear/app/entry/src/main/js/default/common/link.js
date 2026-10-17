@@ -1,9 +1,8 @@
-// WATCH-C link; see native/wear/README.md. ES5, ASCII, tabs.
+// WATCH-C link: native/wear/README.md
 var T = 'mw', V = 1, APP = '1.1.2';
 var PHONE_PKG = 'com.mrcdrnzz.dailytracker';
-// build-apk.yml EXPECTED_SHA256
 var PHONE_FP = '05669AD2721C6ABAF9FDD4B9B84E2FB7944844B1DEF359845F015F2B67CAF1F5';
-var KEY = 'mc_q', SLOTS = 8, GAPS = [4000, 8000, 16000, 30000], QUIET = 20000, LOST = 25000;
+var KEY = 'm2q', RUN = 'm2r';
 var EFF = ['', 'easy', 'ideal', 'max'], KINDS = { c: 'complete_set', a: 'rest_add_30', s: 'rest_skip' };
 var CH = 'Changed on phone', END = 'Workout ended';
 var WHY = { target_missing: CH, already_committed: CH, stale_revision: CH, stale_rest: CH, invalid_state: CH,
@@ -47,32 +46,28 @@ function okSnap(m) {
 	return num(m.pt) && (m.sid === null || str(m.sid)) && (!m.set || str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb')) && (!m.rest || str(r.id) && num(r.left));
 }
 
-function theme(th) {
-	return th && th.length === 3 && str(th[0]) && str(th[1]) && str(th[2]) ? th : ['#08090a', '#f7f8f8', '#5e6ad2'];
-}
-
 function Link(io, boot) {
 	var seq = 0, snapAt = 0, off = 0, rtt = -1, t0 = 0, lastRx = 0, failAt = 0, hb = 0, due = Infinity;
-	var q = [], jobs = [], hellos = [], wq = [], busy = false, snap = null, eff = null, effSet = '', done = '';
-	var wait = null, msg = '', stop = false, kept = false, ready = false, lost = false, on = false, pause = 0;
+	var q = [], jobs = [], hellos = [], wq = [], busy = 0, snap = null, eff = null, effSet = '', done = '';
+	var wait = null, msg = '', stop = 0, kept = false, ready = 0, lost = 0, on = 0, pause = 0, calm = 0, dead = 0;
 
-	function paint() { io.paint(); }
 	function queue(job) { jobs.push(job); if (!busy) next(); }
 	function next() { var job = jobs.shift(); busy = !!job; if (job) job(next); }
 	function later(fn) {
-		(io.defer || setTimeout)(function () { try { fn(); } catch (e) {} }, 0);
+		if (!dead) (io.defer || setTimeout)(function () { if (!dead) try { fn(); } catch (e) {} }, 0);
 	}
 	function kv(op, key, value, cb) {
-		var once = false;
+		var once = 0, o = { key: key, success: function (v) { back(true, v); }, fail: function () { back(false); } };
 		function back(ok, v) { if (!once) { once = true; wait = null; later(function () { cb(ok, v); }); } }
+		o[op === 'set' ? 'value' : 'default'] = value;
 		wait = { at: io.now(), back: back };
 		later(function () {
-			try { io.store[op]({ key: key, value: value, default: '', success: function (v) { back(true, v); }, fail: function () { back(false); } }); } catch (e) { back(false); }
+			try { io.store[op](o); } catch (e) { back(false); }
 		});
 	}
 	function text(v) {
-		var j = String(v).lastIndexOf(','), b = String(v).slice(0, j);
-		return j > 0 && String(sum(b) % 99991) === String(v).slice(j + 1) ? wire(b.split(',')) : '';
+		var j = String(v).lastIndexOf(','), b = String(v).slice(0, j), f = b.split(','), h = sum(b);
+		return h >= 0 && String(h % 99991) === String(v).slice(j + 1) && f.length === { c: 10, a: 5, s: 5 }[f[0]] ? wire(f) : '';
 	}
 	function slots() {
 		for (var s = '', i = 0; i < q.length; i++) s += q[i].slot;
@@ -82,16 +77,17 @@ function Link(io, boot) {
 		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, sent: 0, n: 0 };
 	}
 
-	function add(f, set, at) {
+	function add(code, set, effort) {
+		var at = Math.round(io.now() + off), s = snap.set, f = [code, boot + '-' + ++seq, snap.sid, at].concat(code === 'c' ? [s.id, s.rev, s.w == null ? '' : s.w, s.u, s.r, effort] : [snap.rest.id]);
 		var b = f.join(','), val = b + ',' + sum(b) % 99991, t = wire(f);
 		if (set) wq.push(set);
 		queue(function (fin) {
-			for (var slot = -1, i = SLOTS - 1; i >= 0; i--) if (slots().indexOf(String(i)) < 0) slot = i;
+			for (var slot = -1, i = 7; i >= 0; i--) if (slots().indexOf(String(i)) < 0) slot = i;
 			function end(m) {
 				msg = m;
 				if (set) wq.splice(wq.indexOf(set), 1);
 				fin();
-				paint();
+				io.paint();
 			}
 			if (slot < 0 && !lost) return end('Queue full');
 			if (lost || val.length > 119 || !(sum(val) >= 0) || text(val) !== t) return end('Not saved');
@@ -162,27 +158,30 @@ function Link(io, boot) {
 		failAt = io.now();
 		hb = hb ? Math.min(hb * 2, 30000) : 5000;
 		due = failAt + hb;
-		paint();
+		io.paint();
 	}
 	function run() {
 		queue(function (fin) {
-			kv('get', 'mc_run', '', function (ok, v) {
-				var p = String(v).split(','), c = +p[0] || 0, f = +p[1] || t0;
+			kv('get', RUN, '', function (ok, v) {
+				var p = String(v).split(','), c = +p[0], f = +p[1];
+				if (!ok) return fin(pause = t0);
+				if (!(c >= 0 && c < 100 && c % 1 === 0)) c = 0;
+				if (!(f > 0)) f = t0;
 				if (t0 < f || t0 - f > (c > 2 ? 599999 : 120000)) c = 0;
 				if (!c) f = t0;
 				pause = ++c > 2 ? f : 0;
-				kv('set', 'mc_run', c + ',' + f, function () {
+				kv('set', RUN, c + ',' + f, function () {
 					fin();
 					if (!pause) live();
 				});
 			});
 		});
 	}
-	function live() { pause = 0; on = true; io.connect(); load(); }
+	function live() { if (!dead) { pause = 0; on = io.now(); io.connect(); load(); } }
 	function hello() {
 		if (stop || !on) return;
 		var now = io.now();
-		due = now + QUIET;
+		due = now + 20000;
 		hellos.push(now);
 		if (hellos.length > 8) hellos.shift();
 		io.send(JSON.stringify({ t: T, v: V, k: 'hello', app: APP, boot: boot, wt: now, q: q.length }), sent);
@@ -233,22 +232,23 @@ function Link(io, boot) {
 		if (!stop) {
 			lastRx = now;
 			failAt = hb = 0;
-			due = now + QUIET;
+			due = now + 20000;
 			if (m.k === 'snap' && okSnap(m)) onSnap(m, now);
 			if (m.k === 'res') onRes(m);
 			keepOn();
 		}
-		paint();
+		io.paint();
 	}
 
 	function tick() {
 		var now = io.now(), e = q[0];
 		if (wait && now - wait.at > 5000) wait.back(false);
 		if (pause && now - pause > 599999) live();
-		if (!stop && e && e.sent && now - e.sent >= GAPS[Math.min(e.n, 4) - 1]) fire(e);
+		if (on && !calm && now - on > 30000) queue(function (fin) { kv('set', RUN, '0,' + t0, fin); }, calm = 1);
+		if (!stop && e && e.sent && now - e.sent >= Math.min(4000 << Math.min(e.n, 4) - 1, 30000)) fire(e);
 		if (!stop && now >= due) hello();
 		keepOn();
-		paint();
+		io.paint();
 	}
 
 	function shown() { return eff !== null ? eff : (snap && snap.set && snap.set.e) || ''; }
@@ -260,13 +260,10 @@ function Link(io, boot) {
 		var s = snap && snap.sid ? snap.set : null;
 		return !!(ready && !stop && s && s.r >= 1 && s.id !== done && !held(s.id));
 	}
-	function cmd(code, set, effort) {
-		var at = Math.round(io.now() + off), s = snap.set;
-		add([code, boot + '-' + ++seq, snap.sid, at].concat(code === 'c' ? [s.id, s.rev, s.w == null ? '' : s.w, s.u, s.r, effort] : [snap.rest.id]), set, at);
-	}
 
 	function view() {
-		var now = io.now(), s = snap && snap.sid && snap.set, r = snap && snap.sid && snap.rest, th = theme(snap && snap.th);
+		var now = io.now(), s = snap && snap.sid && snap.set, r = snap && snap.sid && snap.rest, th = snap && snap.th;
+		if (!(th && th.length === 3 && str(th[0]) && str(th[1]) && str(th[2]))) th = ['#08090a', '#f7f8f8', '#5e6ad2'];
 		var v = { l1: '', l2: '', eff: '', rest: '', st: msg, p1: '', p2: '', set: false, can: false, rs: false, add: false, bg: th[0], fg: th[1], ac: th[2], cb: '#3a3a3a' };
 		if (stop || pause) {
 			v.st = '';
@@ -274,7 +271,7 @@ function Link(io, boot) {
 			if (pause) v.l2 = 'Try again in 10 min';
 			return v;
 		}
-		if (failAt > 0 || (lastRx ? now - lastRx > LOST : now - t0 > 5000)) {
+		if (failAt > 0 || (lastRx ? now - lastRx > 25000 : now - t0 > 5000)) {
 			v.p1 = 'Phone not connected';
 			v.p2 = 'Open M/ARC on your phone';
 		}
@@ -305,15 +302,16 @@ function Link(io, boot) {
 	return {
 		rx: rx, tick: tick, view: view,
 		start: function () { t0 = io.now(); run(); },
+		die: function () { dead = 1; },
 		show: function () { hello(); keepOn(true); },
-		complete: function () { if (can()) cmd('c', snap.set.id, shown()); },
+		complete: function () { if (can()) add('c', snap.set.id, shown()); },
 		rest: function (kind) {
 			var k = kind === 'rest_skip' && snap && snap.rest ? kind + snap.rest.id : '';
-			if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) cmd(k ? 's' : 'a', k, '');
+			if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) add(k ? 's' : 'a', k, '');
 		},
 		effort: function () {
 			if (snap && snap.set) eff = EFF[(EFF.indexOf(shown()) + 1) % EFF.length];
-			paint();
+			io.paint();
 		}
 	};
 }

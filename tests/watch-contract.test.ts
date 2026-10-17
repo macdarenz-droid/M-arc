@@ -145,7 +145,7 @@ describe('WATCH-C 1.1.2 the ids the phone sends keep the watch slot under 120 B'
     watch.rx(JSON.stringify({ t: 'mw', v: 1, k: 'snap', pt: Date.now(), wt: null, srev: 1, sid, ex: 'Bench', si: 1, sn: 3, set: { id: setId, rev: 99999, w: 999.75, u: 'kg', r: 100, e: 'ideal' }, rest: null, th: null }));
     watch.complete();
     expect(watch.view().st).toMatch(/^Pending /);
-    const value = store.map.get('mc_q0')!;
+    const value = store.map.get('m2q0')!;
     // commandId "<boot>-1" here; a run's sequence can reach 99999 (4 more characters) and keep the margin.
     const worst = value.length + 4;
     console.log(`[WATCH-C 1.1.2] longest stored Complete ${worst} characters of 119: margin ${119 - worst}`);

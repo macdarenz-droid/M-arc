@@ -65,7 +65,7 @@ function fakeStore() {
 
 /** The wire text slot i holds: its fields and sum (1.1.2), rebuilt as the watch does. */
 function slotText(store, i) {
-  const v = store.map.get(`mc_q${i}`);
+  const v = store.map.get(`m2q${i}`);
   if (v === undefined) return undefined;
   const j = v.lastIndexOf(',');
   return String(sum(v.slice(0, j)) % 99991) === v.slice(j + 1) ? wire(v.slice(0, j).split(',')) : null;
@@ -77,7 +77,7 @@ async function putSlot(store, i, text) {
   try { m = JSON.parse(text); } catch { /* raw */ }
   const f = m && m.k === 'cmd' ? [CODE[m.kind], m.commandId, m.sessionId, m.actionAt, m.setId ?? m.restId,
     ...(m.kind === 'complete_set' ? [m.expectedRev, m.load ? m.load.value : '', m.load ? m.load.unit : '', m.reps, m.effort ?? ''] : [])] : null;
-  store.map.set(`mc_q${i}`, f ? `${f.join(',')},${sum(f.join(',')) % 99991}` : text);
+  store.map.set(`m2q${i}`, f ? `${f.join(',')},${sum(f.join(',')) % 99991}` : text);
 }
 
 /** A link with a fake clock, storage, radio and screen. code: the send result, or null for none yet. */
@@ -98,7 +98,7 @@ async function rig(o = {}) {
     defer: (fn) => { tasks.push(fn); },
   };
   // A start long after the last one, unless the test is about the restart guard.
-  if (!o.keepRun) store.map.delete('mc_run');
+  if (!o.keepRun) store.map.delete('m2r');
   const link = Link(io, o.boot ?? 'abcd1234');
   r.link = {};
   for (const k of Object.keys(link)) r.link[k] = (...a) => { calling = true; let out; try { out = link[k](...a); } finally { calling = false; } drain(); return out; };
@@ -166,7 +166,7 @@ test('W1 ids are valid for the phone and unique across boots; actionAt is fixed 
     const r = await rig({ boot });
     r.link.rx(snap({ rest: { id: 'rest_1', left: 60000, tot: 90000, p: false } }));
     for (let i = 0; i < 3; i++) r.link.rest('rest_add_30');
-    for (const i of r.store.map.get('mc_q')) ids.add(JSON.parse(slotText(r.store, i)).commandId);
+    for (const i of r.store.map.get('m2q')) ids.add(JSON.parse(slotText(r.store, i)).commandId);
   }
   assert.deepEqual([...ids].sort(), ['abcd1234-1', 'abcd1234-2', 'abcd1234-3', 'abcd1235-1', 'abcd1235-2', 'abcd1235-3']);
   for (const id of ids) assert.match(id, COMMAND_ID);
@@ -197,18 +197,18 @@ test('W2 Pending shows only after the slot and the index are written', async () 
     store.step();
   }
   // 1.1.2: the slot, its read-back, the index; nothing shows or goes before the last
-  assert.deepEqual(steps, ['set mc_q0', 'get mc_q0', 'set mc_q'].map((c) => [c, '', 0]));
+  assert.deepEqual(steps, ['set m2q0', 'get m2q0', 'set m2q'].map((c) => [c, '', 0]));
   assert.equal(r.link.view().st, `Pending ${new Date(T0).toTimeString().slice(0, 8)}`);
   assert.equal(r.cmds().length, 1);
-  assert.equal(store.map.get('mc_q'), '0');
+  assert.equal(store.map.get('m2q'), '0');
   assert.equal(slotText(store, 0), r.cmds()[0]);
 });
 
 test('W2 a failed write shows Not saved and sends nothing', async () => {
   for (const [name, setup] of [
-    ['slot write', (s) => { s.failSet = (k) => k === 'mc_q0'; }],
-    ['index write', (s) => { s.failSet = (k) => k === 'mc_q'; }],
-    ['read-back', (s) => { s.failGet = (k) => k === 'mc_q0'; }],
+    ['slot write', (s) => { s.failSet = (k) => k === 'm2q0'; }],
+    ['index write', (s) => { s.failSet = (k) => k === 'm2q'; }],
+    ['read-back', (s) => { s.failGet = (k) => k === 'm2q0'; }],
     ['value cut short', (s) => { s.cut = 40; }],
   ]) {
     const store = fakeStore();
@@ -221,17 +221,17 @@ test('W2 a failed write shows Not saved and sends nothing', async () => {
     for (let i = 0; i < 5; i++) { r.adv(31000); r.link.tick(); }
     r.link.rx(snap());
     assert.equal(r.cmds().length, 0, `${name}: nothing later either`);
-    assert.equal(store.map.get('mc_q') ?? '', '', `${name}: the index lists nothing`);
+    assert.equal(store.map.get('m2q') ?? '', '', `${name}: the index lists nothing`);
   }
   // An index that cannot be read at start: nothing is added over what it may list.
   const store = fakeStore();
-  store.failGet = (k) => k === 'mc_q';
+  store.failGet = (k) => k === 'm2q';
   const r = await rig({ store });
   r.link.rx(snap());
   r.link.complete();
   assert.equal(r.link.view().st, 'Not saved');
   assert.equal(r.cmds().length, 0);
-  assert.equal(store.calls.filter((c) => c.startsWith('set') && c !== 'set mc_run').length, 0);
+  assert.equal(store.calls.filter((c) => c.startsWith('set') && c !== 'set m2r').length, 0);
 });
 
 test('W2 a full outbox shows Queue full and drops nothing; a restart restores identical bytes', async () => {
@@ -239,7 +239,7 @@ test('W2 a full outbox shows Queue full and drops nothing; a restart restores id
   const r = await rig({ store, code: null });
   r.link.rx(snap({ rest: { id: 'rest_1', left: 60000, tot: 90000, p: false } }));
   for (let i = 0; i < 8; i++) r.link.rest('rest_add_30');
-  assert.equal(store.map.get('mc_q'), '01234567');
+  assert.equal(store.map.get('m2q'), '01234567');
   const before = new Map(store.map);
   r.link.rest('rest_skip');
   assert.equal(r.link.view().st, 'Queue full');
@@ -254,7 +254,7 @@ test('W2 a full outbox shows Queue full and drops nothing; a restart restores id
     again.link.rx(res(JSON.parse(texts[i]).commandId));
     assert.equal(again.cmds()[again.cmds().length - 1], i < 7 ? texts[i + 1] : texts[7]);
   }
-  assert.equal(store.map.get('mc_q'), '-', 'the empty index (1.1.2)');
+  assert.equal(store.map.get('m2q'), '-', 'the empty index (1.1.2)');
   // A removed slot is reused; the index keeps the oldest first.
   const s2 = fakeStore();
   const x = await rig({ store: s2, code: null });
@@ -262,19 +262,19 @@ test('W2 a full outbox shows Queue full and drops nothing; a restart restores id
   for (let i = 0; i < 3; i++) x.link.rest('rest_add_30');
   x.link.rx(res('abcd1234-1'));
   x.link.rest('rest_skip');
-  assert.equal(s2.map.get('mc_q'), '120');
+  assert.equal(s2.map.get('m2q'), '120');
   const y = await rig({ store: s2, code: null });
   assert.equal(y.link.view().st, '3 pending');
   assert.equal(y.cmds()[0], slotText(s2, 1));
   // Slots the index does not list, or that no longer hold a command, are not loaded.
   const s3 = fakeStore();
-  s3.map.set('mc_q', '3x3a5');
+  s3.map.set('m2q', '3x3a5');
   await putSlot(s3, 3, texts[2]);
   await putSlot(s3, 5, '{"t":"mw"');
   await putSlot(s3, 6, texts[3]);
   const z = await rig({ store: s3, code: null });
   assert.equal(z.link.view().st, '1 pending');
-  assert.equal(s3.map.get('mc_q'), '3');
+  assert.equal(s3.map.get('m2q'), '3');
 });
 
 test('W3 one command in flight, oldest first; resends at 4, 8 and 16 s, then every 30 s, and on each snap', async () => {
@@ -328,7 +328,7 @@ test('W3 results: applied and replayed show Saved, rejected shows its reason, no
     r.link.rx(res('abcd1234-999'));
     r.link.rx(res('abcd1234-1', extra));
     assert.equal(r.link.view().st, word ?? pending, JSON.stringify(extra));
-    assert.equal(r.store.map.get('mc_q'), left ? '0' : '-', JSON.stringify(extra));
+    assert.equal(r.store.map.get('m2q'), left ? '0' : '-', JSON.stringify(extra));
     if (left) {
       r.adv(4000); r.link.tick();
       assert.equal(r.cmds().length, 2, 'retried');
@@ -340,7 +340,7 @@ test('W3 results: applied and replayed show Saved, rejected shows its reason, no
   r.link.complete();
   r.link.rx(snap({ si: 2, set: set1({ id: 'set_a2' }) }));
   assert.match(r.link.view().st, /^Pending /);
-  assert.equal(r.store.map.get('mc_q'), '0');
+  assert.equal(r.store.map.get('m2q'), '0');
 });
 
 test('W3 the clock offset comes from the hello and snap pair with the lowest round trip', async () => {
@@ -444,7 +444,7 @@ test('W3 Complete is locked while that set is pending, and after Saved until a s
   r.link.complete();
   r.link.rx(snap());
   r.link.complete();
-  assert.equal(r.store.map.get('mc_q'), '0', 'one entry');
+  assert.equal(r.store.map.get('m2q'), '0', 'one entry');
   r.link.rx(res('abcd1234-1'));
   assert.equal(r.link.view().st, 'Saved');
   r.link.rx(snap());
@@ -463,7 +463,7 @@ test('W3 Complete is locked while that set is pending, and after Saved until a s
   w.link.complete();
   w.link.complete();
   while (store.queue.length) store.step();
-  assert.equal(store.map.get('mc_q'), '0');
+  assert.equal(store.map.get('m2q'), '0');
   // No reps to send: locked.
   const z = await rig();
   z.link.rx(snap({ set: set1({ r: null }) }));
@@ -599,9 +599,9 @@ test('W2 a listed slot that cannot be read at start stays listed; nothing rewrit
   for (let i = 0; i < 3; i++) r.link.rest('rest_add_30');
   const texts = [0, 1, 2].map((i) => slotText(store, i));
   let once = true;
-  store.failGet = (k) => { if (k === 'mc_q1' && once) { once = false; return true; } return false; };
+  store.failGet = (k) => { if (k === 'm2q1' && once) { once = false; return true; } return false; };
   const b = await rig({ store, boot: 'bbbbbbbb', code: null });
-  assert.equal(store.map.get('mc_q'), '012', 'the unread slot stays listed');
+  assert.equal(store.map.get('m2q'), '012', 'the unread slot stays listed');
   assert.equal(b.link.view().st, '2 pending');
   assert.equal(b.cmds()[0], texts[0]);
   b.link.rx(res(JSON.parse(texts[0]).commandId));
@@ -609,7 +609,7 @@ test('W2 a listed slot that cannot be read at start stays listed; nothing rewrit
   b.link.rx(snap({ rest: rest1 }));
   b.link.rest('rest_skip');
   assert.equal(b.link.view().st, 'Not saved');
-  assert.equal(store.map.get('mc_q'), '012', 'the index is left as it was read');
+  assert.equal(store.map.get('m2q'), '012', 'the index is left as it was read');
   const c = await rig({ store, boot: 'cccccccc', code: null });
   assert.equal(c.link.view().st, '3 pending');
   assert.equal(c.cmds()[0], texts[0]);
@@ -640,7 +640,7 @@ test('W3 only a Complete holds the lock while it is written; a Skip tap meanwhil
   assert.equal(r.link.view().can, false);
   r.link.complete();
   while (store.queue.length) store.step();
-  const kinds = [...store.map.get('mc_q')].map((i) => JSON.parse(slotText(store, i)).kind).sort();
+  const kinds = [...store.map.get('m2q')].map((i) => JSON.parse(slotText(store, i)).kind).sort();
   assert.deepEqual(kinds, ['complete_set', 'rest_skip']);
   assert.equal(r.link.view().can, false, 'still pending');
   // A Skip written first: its end does not free the Complete queued behind it.
@@ -650,11 +650,11 @@ test('W3 only a Complete holds the lock while it is written; a Skip tap meanwhil
   s2.defer = true;
   w.link.rest('rest_skip');
   w.link.complete();
-  while (s2.queue.length && !s2.map.has('mc_q1')) s2.step();
+  while (s2.queue.length && !s2.map.has('m2q1')) s2.step();
   w.link.complete();
   while (s2.queue.length) s2.step();
-  assert.equal(s2.map.get('mc_q'), '01');
-  assert.deepEqual([...s2.map.get('mc_q')].map((i) => JSON.parse(slotText(s2, i)).kind), ['rest_skip', 'complete_set']);
+  assert.equal(s2.map.get('m2q'), '01');
+  assert.deepEqual([...s2.map.get('m2q')].map((i) => JSON.parse(slotText(s2, i)).kind), ['rest_skip', 'complete_set']);
 });
 
 test('W4 every watch source written for Gate C transforms to ES5 with esbuild, and the page keeps only the onInit() { style', async () => {
@@ -681,10 +681,10 @@ test('W2 a result during start-up writes no index once a later slot read fails',
   r.link.complete();
   r.link.rx(snap({ si: 2, set: set1({ id: 'set_a2' }) }));
   r.link.complete();
-  assert.equal(store.map.get('mc_q'), '01');
+  assert.equal(store.map.get('m2q'), '01');
   const texts = [0, 1].map((i) => slotText(store, i));
   let once = true;
-  store.failGet = (k) => { if (k === 'mc_q1' && once) { once = false; return true; } return false; };
+  store.failGet = (k) => { if (k === 'm2q1' && once) { once = false; return true; } return false; };
   store.defer = true;
   const b = await rig({ store, boot: 'bbbbbbbb', code: null });
   store.step(); // the index
@@ -693,7 +693,7 @@ test('W2 a result during start-up writes no index once a later slot read fails',
   assert.equal(b.cmds()[0], texts[0]);
   b.link.rx(res(JSON.parse(texts[0]).commandId));
   while (store.queue.length) store.step(); // slot 1 fails, then the removal's turn
-  assert.equal(store.map.get('mc_q'), '01');
+  assert.equal(store.map.get('m2q'), '01');
   store.defer = false;
   const c = await rig({ store, boot: 'cccccccc', code: null });
   assert.equal(c.link.view().st, '2 pending');
@@ -711,7 +711,7 @@ test('W3 a second Skip for a rest is not queued while one is being written or pe
   store.defer = false;
   r.link.rest('rest_skip');
   r.link.rest('rest_add_30');
-  const kinds = () => store.map.get('mc_q').split('').map((i) => JSON.parse(slotText(store, i)).kind);
+  const kinds = () => store.map.get('m2q').split('').map((i) => JSON.parse(slotText(store, i)).kind);
   assert.deepEqual(kinds(), ['rest_skip', 'rest_add_30']);
   // Once it is answered, the next rest can be skipped.
   r.link.rx(res('abcd1234-1'));
@@ -733,7 +733,7 @@ test('W3 Complete and the rest buttons wait until the outbox has loaded', async 
   b.link.complete();
   b.link.rest('rest_skip');
   while (store.queue.length) store.step();
-  assert.equal(store.map.get('mc_q'), '01');
+  assert.equal(store.map.get('m2q'), '01');
   assert.equal(b.link.view().st, '2 pending');
   assert.equal(b.link.view().can, false, 'the restored set is pending');
 });
@@ -770,7 +770,7 @@ test('W2 every value stored is under 128 bytes: a slot is one value of under 120
     assert.ok(Buffer.byteLength(v) < 120, `${k}: ${Buffer.byteLength(v)} B`);
     assert.match(k, KEY_OK);
   }
-  assert.deepEqual([...store.map.keys()].sort(), ['mc_q', 'mc_q0', 'mc_run']);
+  assert.deepEqual([...store.map.keys()].sort(), ['m2q', 'm2q0', 'm2r']);
   assert.equal(slotText(store, 0), text);
   const again = await rig({ store, boot: 'yyyyyyyy', code: null });
   assert.equal(again.link.view().st, '1 pending');
@@ -780,7 +780,7 @@ test('W2 every value stored is under 128 bytes: a slot is one value of under 120
   const base = await rig({ store: fakeStore(), code: null });
   base.link.rx(snap({ sid: 's_1', set: set1({ id: 'set_mgv4k2xq_d4e5f6' }) }));
   base.link.complete();
-  const at120 = 's_' + 'x'.repeat(120 - base.store.map.get('mc_q0').length + 1);
+  const at120 = 's_' + 'x'.repeat(120 - base.store.map.get('m2q0').length + 1);
   for (const sid of [at120, 's_' + 'x'.repeat(60), 's_a b', 's_\u00e9t\u00e9', 's_a,b']) {
     const s2 = fakeStore();
     const b = await rig({ store: s2, code: null });
@@ -788,7 +788,7 @@ test('W2 every value stored is under 128 bytes: a slot is one value of under 120
     b.link.complete();
     assert.equal(b.link.view().st, 'Not saved', sid);
     assert.equal(b.cmds().length, 0);
-    assert.deepEqual(s2.calls.filter((c) => c.startsWith('set') && c !== 'set mc_run'), []);
+    assert.deepEqual(s2.calls.filter((c) => c.startsWith('set') && c !== 'set m2r'), []);
   }
 });
 
@@ -799,14 +799,14 @@ test('W2 a slot that no longer matches its sum is not loaded, and leaves the ind
   r.link.rest('rest_add_30');
   r.link.rest('rest_skip');
   const keep = slotText(store, 1);
-  for (const bad of [(s) => s.map.set('mc_q0', s.map.get('mc_q0').replace('abcd1234-1', 'abcd1234-9')), (s) => s.map.set('mc_q0', 'x'), (s) => s.map.set('mc_q0', s.map.get('mc_q0') + '0')]) {
+  for (const bad of [(s) => s.map.set('m2q0', s.map.get('m2q0').replace('abcd1234-1', 'abcd1234-9')), (s) => s.map.set('m2q0', 'x'), (s) => s.map.set('m2q0', s.map.get('m2q0') + '0')]) {
     const s2 = fakeStore();
     for (const [k, v] of store.map) s2.map.set(k, v);
     bad(s2);
     const b = await rig({ store: s2, boot: 'bbbbbbbb', code: null });
     assert.equal(b.link.view().st, '1 pending');
     assert.equal(b.cmds()[0], keep);
-    assert.equal(s2.map.get('mc_q'), '1');
+    assert.equal(s2.map.get('m2q'), '1');
   }
 });
 
@@ -818,14 +818,14 @@ test('W2 a slot value that cannot be read at start keeps its slot listed; new co
   r.link.rest('rest_skip');
   const texts = [0, 1].map((i) => slotText(store, i));
   let once = true;
-  store.failGet = (k) => { if (k === 'mc_q1' && once) { once = false; return true; } return false; };
+  store.failGet = (k) => { if (k === 'm2q1' && once) { once = false; return true; } return false; };
   const b = await rig({ store, boot: 'bbbbbbbb', code: null });
-  assert.equal(store.map.get('mc_q'), '01', 'still listed');
+  assert.equal(store.map.get('m2q'), '01', 'still listed');
   assert.equal(b.link.view().st, '1 pending');
   b.link.rx(snap({ rest: { ...rest1, id: 'rest_2' } }));
   b.link.rest('rest_add_30');
   assert.equal(b.link.view().st, 'Not saved');
-  assert.equal(store.map.get('mc_q'), '01');
+  assert.equal(store.map.get('m2q'), '01');
   assert.equal(slotText(store, 1), texts[1]);
   const c = await rig({ store, boot: 'cccccccc', code: null });
   assert.equal(c.link.view().st, '2 pending');
@@ -861,7 +861,7 @@ test('W2 a storage call that never calls back ends in Not saved after 5 s, a lat
   // At start-up a stuck index read takes the unreadable-index path: ready, hello, and Not saved.
   const store = fakeStore();
   let late = null;
-  store.run = (fn) => { if (!late && store.calls[store.calls.length - 1] === 'get mc_q') late = fn; else fn(); };
+  store.run = (fn) => { if (!late && store.calls[store.calls.length - 1] === 'get m2q') late = fn; else fn(); };
   const b = await rig({ store, code: null });
   b.link.rx(snap());
   assert.equal(b.hellos().length, 0);
@@ -880,7 +880,7 @@ const eight = async (store) => { // 8 pending rest commands from an earlier run
   const r = await rig({ store, boot: 'eeeeeeee', code: null });
   r.link.rx(snap({ rest: rest1 }));
   for (let i = 0; i < 8; i++) r.link.rest('rest_add_30');
-  assert.equal(store.map.get('mc_q'), '01234567');
+  assert.equal(store.map.get('m2q'), '01234567');
   return r;
 };
 
@@ -893,18 +893,18 @@ test('1.1.2 S1 nothing writes an empty value: the empty index is "-", read like 
   r.link.rx(res('abcd1234-1'));
   r.link.rx(res('abcd1234-2'));
   assert.equal(r.link.view().st, 'Saved');
-  assert.equal(store.map.get('mc_q'), '-');
+  assert.equal(store.map.get('m2q'), '-');
   // An index whose slots are all gone is rewritten as "-", never ""; "-" and a missing index read as empty, with no write.
   const s2 = fakeStore();
-  s2.map.set('mc_q', '35');
+  s2.map.set('m2q', '35');
   await rig({ store: s2, code: null });
-  assert.equal(s2.map.get('mc_q'), '-');
+  assert.equal(s2.map.get('m2q'), '-');
   for (const idx of ['-', undefined]) {
     const s3 = fakeStore();
-    if (idx) s3.map.set('mc_q', idx);
+    if (idx) s3.map.set('m2q', idx);
     const c = await rig({ store: s3, code: null });
     assert.equal(c.link.view().st, '');
-    assert.deepEqual(s3.calls.filter((x) => x.startsWith('set')), ['set mc_run']);
+    assert.deepEqual(s3.calls.filter((x) => x.startsWith('set')), ['set m2r']);
   }
   assert.deepEqual([...store.empty, ...s2.empty], []);
 });
@@ -915,16 +915,16 @@ test('1.1.2 S2 storage calls: a Complete is 3 (slot, read-back, index), a result
   r.link.rx(snap());
   store.calls.length = 0;
   r.link.complete();
-  assert.deepEqual(store.calls, ['set mc_q0', 'get mc_q0', 'set mc_q']);
+  assert.deepEqual(store.calls, ['set m2q0', 'get m2q0', 'set m2q']);
   store.calls.length = 0;
   r.link.rx(res('abcd1234-1'));
-  assert.deepEqual(store.calls, ['set mc_q']);
+  assert.deepEqual(store.calls, ['set m2q']);
   // Start-up: the restart count, then the index and each listed slot once.
   const s2 = fakeStore();
   await eight(s2);
   s2.calls.length = 0;
   await rig({ store: s2, boot: 'ffffffff', code: null });
-  assert.deepEqual(s2.calls, ['get mc_run', 'set mc_run', 'get mc_q', ...[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `get mc_q${i}`)]);
+  assert.deepEqual(s2.calls, ['get m2r', 'set m2r', 'get m2q', ...[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `get m2q${i}`)]);
 });
 
 test('1.1.2 S3 every storage call starts on a fresh stack: a store that answers at once is never re-entered', async () => {
@@ -951,12 +951,12 @@ test('1.1.2 S4 a third start within 120 s pauses messaging and the outbox until 
   const b = await rig({ store, t: t1 + 30000, keepRun: true, boot: 'bbbbbbbb', code: null });
   assert.equal(b.connects, 1, 'the second start runs, and resends once');
   assert.equal(b.cmds().length, 1);
-  assert.equal(store.map.get('mc_run'), `2,${t1}`);
+  assert.equal(store.map.get('m2r'), `2,${t1}`);
   store.calls.length = 0;
   const c = await rig({ store, t: t1 + 60000, keepRun: true, boot: 'cccccccc', code: null });
   assert.equal(c.connects, undefined, 'no receiver');
   assert.deepEqual(c.sent, [], 'no hello, no resend');
-  assert.deepEqual(store.calls, ['get mc_run', 'set mc_run'], 'no outbox, no other writes');
+  assert.deepEqual(store.calls, ['get m2r', 'set m2r'], 'no outbox, no other writes');
   c.link.show();
   c.link.rx(snap());
   c.link.complete();
@@ -974,7 +974,7 @@ test('1.1.2 S4 a third start within 120 s pauses messaging and the outbox until 
   assert.equal(d.cmds().length, 1);
   const e = await rig({ store, t: t1 + 600000, keepRun: true, boot: 'eeeeeeee', code: null });
   assert.equal(e.connects, 1);
-  assert.equal(store.map.get('mc_run'), `1,${t1 + 600000}`);
+  assert.equal(store.map.get('m2r'), `1,${t1 + 600000}`);
   // Three starts spread over more than 120 s are normal.
   const s2 = fakeStore();
   for (const [i, at] of [[1, 0], [2, 100000], [3, 230000]].map(([n, ms]) => [n, T0 + ms])) {
@@ -1001,4 +1001,93 @@ test('1.1.2 S5 a callback that throws is caught on its own stack, and the outbox
   throwing = false;
   assert.match(l.view().st, /^Pending /);
   assert.equal(sent.filter((x) => JSON.parse(x).k === 'cmd').length, 1);
+});
+
+// Review of 1.1.2 (49025d7f).
+test('1.1.2 S6 the restart count fails closed: an unreadable or silent count pauses without a write; a corrupt one counts from 0', async () => {
+  for (const [name, setup] of [['fails', (s) => { s.failGet = (k) => k === 'm2r'; }], ['never answers', (s) => { const run = s.run; s.run = (fn) => { if (s.calls[s.calls.length - 1] !== 'get m2r') run(fn); }; }]]) {
+    const store = fakeStore();
+    setup(store);
+    const r = await rig({ store, keepRun: true, code: null });
+    r.adv(5001); r.link.tick();
+    assert.equal(r.link.view().l1, 'Paused after restarts', name);
+    assert.equal(r.connects, undefined, name);
+    assert.deepEqual(store.calls.filter((c) => c.startsWith('set')), [], `${name}: no write`);
+    r.adv(600000); r.link.tick();
+    assert.equal(r.connects, 1, `${name}: the 10 min rule resumes it`);
+  }
+  for (const bad of ['-1000,' + T0, '1e9,' + T0, '0.5,' + T0, '100,' + T0, 'abc', ',', '-']) {
+    const store = fakeStore();
+    store.map.set('m2r', bad);
+    const r = await rig({ store, keepRun: true, code: null });
+    assert.equal(r.connects, 1, bad);
+    assert.equal(store.map.get('m2r'), `1,${T0}`, bad);
+  }
+  // A corrupt first-start time counts as now: with two starts behind it, this is the third.
+  const store = fakeStore();
+  store.map.set('m2r', '2,x');
+  const r = await rig({ store, keepRun: true, code: null });
+  assert.equal(r.link.view().l1, 'Paused after restarts');
+  assert.equal(store.map.get('m2r'), `3,${T0}`);
+});
+
+test('1.1.2 S7 a run that stays live for 30 s resets the count, so only quick restarts pause', async () => {
+  const store = fakeStore();
+  for (let i = 0; i < 4; i++) {
+    const r = await rig({ store, t: T0 + i * 40000, keepRun: true, code: null });
+    assert.equal(r.connects, 1, `open ${i + 1}`);
+    r.adv(30001); r.link.tick();
+    assert.equal(store.map.get('m2r'), `0,${T0 + i * 40000}`);
+    r.adv(5000); r.link.tick();
+    assert.deepEqual(store.calls.filter((c) => c === 'set m2r').length, 2 * (i + 1), 'one reset per run');
+  }
+  assert.deepEqual(store.empty, []);
+});
+
+test('1.1.2 S8 after onDestroy (die) nothing deferred runs: no connect, no storage call, no send', async () => {
+  const store = fakeStore();
+  const { Link } = await load();
+  let connects = 0;
+  const sent = [];
+  const l = Link({ store, now: () => T0, send: (x) => { sent.push(x); }, keep: () => {}, connect: () => { connects++; }, paint: () => {}, defer: (fn) => { tasks.push(fn); } }, 'dddddddd');
+  l.start();
+  l.die();
+  drain();
+  assert.deepEqual([connects, sent.length, store.calls.length], [0, 0, 0]);
+});
+
+test('1.1.2 S9 1.1.1 keys are never read; a stored slot needs a whole sum, a known kind and its exact field count', async () => {
+  const store = fakeStore();
+  store.map.set('mc_q', '');
+  store.map.set('mc_q0', '2,230,12345');
+  store.map.set('mc_q0_0', '{"t":"mw"');
+  store.map.set('mc_run', '5,' + T0);
+  const r = await rig({ store, code: null });
+  assert.equal(r.connects, 1);
+  assert.deepEqual(store.calls.filter((c) => c.includes('mc_')), []);
+  const good = ['a', 'abcd1234-1', 's_1', T0, 'rest_1'];
+  for (const [f, loads] of [
+    [good, true],
+    [['x', ...good.slice(1)], false],
+    [[...good, 0, 60, 'kg', 8, ''], false],
+    [['c', ...good.slice(1)], false],
+    [['a', 'abcd1234-1', 's 1', T0, 'rest_1'], false],
+  ]) {
+    const s2 = fakeStore();
+    const b = f.join(',');
+    s2.map.set('m2q', '0');
+    s2.map.set('m2q0', `${b},${String(sum(b) % 99991)}`);
+    const x = await rig({ store: s2, code: null });
+    assert.equal(x.link.view().st, loads ? '1 pending' : '', b);
+  }
+  // Each call carries only its documented fields: a get key and default, a set key and value.
+  const s3 = fakeStore();
+  const seen = [];
+  const { set, get } = s3;
+  s3.set = (o) => { seen.push(['set', ...Object.keys(o).sort()]); set(o); };
+  s3.get = (o) => { seen.push(['get', ...Object.keys(o).sort()]); get(o); };
+  const y = await rig({ store: s3, code: null });
+  y.link.rx(snap());
+  y.link.complete();
+  assert.deepEqual([...new Set(seen.map((x) => x.join(' ')))].sort(), ['get default fail key success', 'set fail key success value']);
 });
