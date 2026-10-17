@@ -725,3 +725,26 @@ describe('WATCH-B red team', () => {
     expect(a().rest!.id).toBe(running);
   });
 });
+
+// WATCH-C3 P3 (add-only block): a watch load is rounded to 0.01 before it is saved, so a float leftover of the
+// watch's steps is never stored or shown.
+describe('WATCH-C3 P3: a watch load is saved rounded to 0.01', () => {
+  it('102.50000000000001 kg is saved as 102.5, 135.00000000000003 lb as 135, and 999.754 kg as 999.75', () => {
+    begin();
+    const [s0, s1] = a().entries[0]!.sets;
+    const fly = a().entries[1]!.sets[0]!;
+    const c = complete(s0!.id!, { load: { value: 102.50000000000001, unit: 'kg' } });
+    expect(102.50000000000001).not.toBe(102.5);
+    expect(handleWorkoutCommand(c)).toMatchObject({ status: 'applied', replayed: false });
+    vi.advanceTimersByTime(60_000);
+    expect(handleWorkoutCommand(complete(s1!.id!, { load: { value: 135.00000000000003, unit: 'lb' } }))).toMatchObject({ status: 'applied' });
+    vi.advanceTimersByTime(60_000);
+    expect(handleWorkoutCommand(complete(fly.id!, { load: { value: 999.754, unit: 'kg' } }))).toMatchObject({ status: 'applied' });
+    const want = [enteredLoad(102.5, 'kg'), enteredLoad(135, 'lb'), enteredLoad(999.75, 'kg')];
+    expect(want.map(w => w.entered.value)).toEqual([102.5, 135, 999.75]);
+    expect(allSets().map(s => ({ kg: s.kg, entered: s.entered }))).toEqual(want);
+    expect(saved().active!.entries.flatMap(e => e.sets).map(s => ({ kg: s.kg, entered: s.entered }))).toEqual(want);
+    // The command as sent is still the one its receipt names: a resend replays it.
+    expect(handleWorkoutCommand(c)).toMatchObject({ status: 'applied', replayed: true });
+  });
+});

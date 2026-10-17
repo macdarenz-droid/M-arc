@@ -20,14 +20,14 @@ vi.mock('@/slices/workout/Train', async orig => {
   return { ...real, entryTarget: (...args: Parameters<typeof real.entryTarget>) => (fx.target as ReturnType<typeof real.entryTarget> | null) ?? real.entryTarget(...args) };
 });
 
-import { freshState, newId, type CommandResult, type LoggedSet, type Split } from '@/core/models';
+import { freshState, newId, type AppState, type CommandResult, type LoadUnit, type LoggedSet, type Split } from '@/core/models';
 import { initStore, replaceState, state } from '@/core/store';
 import { findExercise } from '@/core/exercises';
-import { kgToDisplay } from '@/core/units';
+import { enteredLoad, kgToDisplay } from '@/core/units';
 import { setTheme } from '@/theme/engine';
 import { entryTarget, openEntryId } from '@/slices/workout/Train';
 import { addSet, commitSet, discardSession, logWarmups, markDone, moveEntry, setSet, skipEntry, startRest, startSession, substituteEntry, pauseSession } from '@/slices/workout/session';
-import { profileFor } from '@/slices/workout/units';
+import { mergeAskAnswer, profileFor, saveProfile, setExerciseUnit } from '@/slices/workout/units';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
 import { createLab, watchLab, type WearEnginePlugin } from '@/native/wearEngine';
 import { MAX_PLAN_BYTES, MAX_SNAP_BYTES, SNAP_GAP_MS, buildPlan, buildSnapshot, createLink, watchLink, type LinkDeps, type Plan, type Snap } from '@/native/watchLink';
@@ -124,7 +124,7 @@ describe('WATCH-C C1 buildSnapshot', () => {
     const eu = profileFor('lib_barbell_bench_press', a().gymId).unit;
     const plan = entryTarget(state.value, e0).sets;
     expect(plan[0]!.kg).not.toBeNull();
-    expect(snap().set).toEqual({ id: e0.sets[0]!.id, rev: 0, w: kgToDisplay(plan[0]!.kg!, eu), u: eu, r: plan[0]!.reps, e: null, src: 't' });
+    expect(snap().set).toEqual({ id: e0.sets[0]!.id, rev: 0, w: kgToDisplay(plan[0]!.kg!, eu), u: eu, r: plan[0]!.reps, e: null, src: 't', st: 2.5 });
     setSet(0, 0, { kg: 61.235, entered: { value: 135, unit: 'lb' }, reps: 5, effort: 'max' });
     expect(snap().set).toMatchObject({ w: 135, u: 'lb', r: 5, e: 'max', src: 'd', rev: 1 });
     // No target load or reps: last time's set at the same position.
@@ -808,5 +808,151 @@ describe('WATCH-C2 P1: the snap names its entry and last time, and the plan feed
     await r.link.receive(hello(T0));
     expect(r.kinds()).toEqual(['snap']);
     expect(buildPlan(state.value).sid).toBeNull();
+  });
+});
+
+// WATCH-C3 P3 (docs/watch-cards/WATCH-C3.md): the load step st on each set the watch shows, the next open sets nx and
+// the rest length rs in the snap, and plan rows with st within 1000 B. The 0.01 rounding of a watch load is in
+// tests/workout/watch-commands.test.ts.
+describe('WATCH-C3 P3: the snap carries the load step, the next open sets and the rest length', () => {
+  const bytes = (t: string) => new TextEncoder().encode(t).length;
+  const e = (i: number) => a().entries[i]!;
+  const show = (i: number) => { openEntryId.value = e(i).id!; };
+  const load = (i: number, j: number, value: number, unit: LoadUnit = 'kg', reps = 8) => setSet(i, j, { ...enteredLoad(value, unit), reps });
+  const prefs = (p: Partial<AppState['preferences']>) => replaceState({ ...state.value, preferences: { ...state.value.preferences, ...p } });
+  const begin = (sp: Split) => { replaceState({ ...state.value, splits: [sp] }); startSession(sp); };
+  afterEach(() => { openEntryId.value = null; });
+
+  it('st: the gap in u from the loadable value at or below w to the next one; none in another unit or without a load', () => {
+    begin({ ...split, id: 'sp_gear', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 1 }, { exerciseId: 'lib_machine_chest_press', sets: 1 }, { exerciseId: 'lib_dumbbell_bench_press', sets: 1 }] });
+    const st = () => snap().set!.st;
+    // No load: no step.
+    fx.target = { sets: [{ kg: null, reps: 10, durationSec: null, note: '' }] };
+    expect(snap().set).toMatchObject({ w: null, r: 10 });
+    expect('st' in snap().set!).toBe(false);
+    // kg barbell: a 20 kg bar and 1.25 kg plates a side.
+    expect(profileFor('lib_barbell_bench_press', a().gymId)).toMatchObject({ unit: 'kg', barKg: 20 });
+    load(0, 0, 60);
+    expect(st()).toBe(2.5);
+    // lb on a kg profile: no step.
+    load(0, 0, 135, 'lb');
+    expect(snap().set).toMatchObject({ w: 135, u: 'lb' });
+    expect('st' in snap().set!).toBe(false);
+    // lb barbell: a 45 lb bar and 2.5 lb plates a side.
+    setExerciseUnit('lib_barbell_bench_press', 'lb');
+    expect(st()).toBe(5);
+    // Machine: a 5 kg stack; then a learned step (the ask chip: 43.5 after 40).
+    show(1);
+    load(1, 0, 40);
+    expect(st()).toBe(5);
+    saveProfile('exercise', 'lib_machine_chest_press', mergeAskAnswer(profileFor('lib_machine_chest_press', a().gymId), 40, 43.5));
+    load(1, 0, 42);
+    expect(st()).toBe(3.5);
+    // kg dumbbells: by 2 to 10, then by 2.5 (at 10 the gap above it); below the lightest the first gap, above the heaviest the last.
+    show(2);
+    for (const [w, step] of [[8, 2], [10, 2.5], [20, 2.5], [1, 2], [70, 2.5]] as const) { load(2, 0, w); expect([w, st()]).toEqual([w, step]); }
+    // The plan row's set carries the same step.
+    expect(buildPlan(state.value).rows[0]!.set).toEqual(snap().set);
+    expect(buildPlan(state.value).rows[0]!.set!.st).toBe(2.5);
+  });
+
+  it('nx: up to 3 open sets after set in the shown entry, each [id, rev, w, r] in set.u by the snap set rules', () => {
+    begin({ ...split, id: 'sp_nx', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 6 }, { exerciseId: 'lib_plank', sets: 1 }] });
+    // Today's target for the sets without a draft.
+    fx.target = { sets: [{ kg: 50, reps: 12, durationSec: null, note: '' }] };
+    const x = (j: number) => e(0).sets[j]!;
+    const row = (j: number, w: number | null, r: number | null) => [x(j).id, x(j).rev ?? 0, w, r];
+    for (const j of [1, 2, 3, 5]) load(0, j, 60 + 2.5 * j, 'kg', 10 - j);
+    expect(snap().set).toMatchObject({ id: x(0).id, w: 50, u: 'kg', r: 12, src: 't' });
+    expect(snap().nx).toEqual([row(1, 62.5, 9), row(2, 65, 8), row(3, 67.5, 7)]);
+    // Committed and skipped sets are passed over; a set without a draft shows the target.
+    setSet(0, 2, { status: 'skipped' });
+    expect(commitSet(0, 3)).toBe(true);
+    expect(snap().set!.id).toBe(x(0).id);
+    expect(snap().nx).toEqual([row(1, 62.5, 9), row(4, 50, 12), row(5, 72.5, 5)]);
+    // In the unit of the set shown: kg drafts and targets converted, an lb draft as typed.
+    load(0, 0, 135, 'lb');
+    expect(snap().nx).toEqual([row(1, kgToDisplay(62.5, 'lb'), 9), row(4, kgToDisplay(50, 'lb'), 12), row(5, kgToDisplay(72.5, 'lb'), 5)]);
+    load(0, 1, 140, 'lb', 9);
+    expect(snap().nx![0]).toEqual(row(1, 140, 9));
+    // The last open set has none after it.
+    load(0, 4, 70);
+    for (const j of [0, 1, 4]) { vi.advanceTimersByTime(120_000); expect(commitSet(0, j)).toBe(true); }
+    expect(snap().set!.id).toBe(x(5).id);
+    expect(snap().nx).toEqual([]);
+    // A timed set has no set to show, so no next sets; nothing left: none; no session: no nx.
+    vi.advanceTimersByTime(120_000);
+    expect(commitSet(0, 5)).toBe(true);
+    expect(snap()).toMatchObject({ ex: 'Plank', set: null, nx: [] });
+    markDone(1);
+    expect(snap()).toMatchObject({ eid: null, set: null, nx: [] });
+    expect('nx' in buildSnapshot(freshState(), Date.now(), null)).toBe(false);
+  });
+
+  it('nx goes from the end until the snap fits 700 B; with the app ids all 3 fit, with st', () => {
+    begin({ ...split, id: 'sp_nx', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 6 }] });
+    prefs({ restDefaultSec: 600 });
+    startRest(600);
+    const long = 'Développé couché incliné × haltères très long';
+    const big = (j: number) => `set_${j}${'y'.repeat(59)}`;
+    const fill = (eid: string, sid: string, id: (j: number) => string) => replaceState({ ...state.value, active: { ...a(), id: sid, rev: Number.MAX_SAFE_INTEGER, entries: a().entries.map((y, i) => (i ? y : { ...y, id: eid, name: long, sets: y.sets.map((z, j) => ({ ...z, id: id(j), rev: Number.MAX_SAFE_INTEGER, kg: 999.75, entered: { value: 999.75, unit: 'kg' as const }, reps: 100, effort: 'ideal' as const })) })) } });
+    fill(`e_${'q'.repeat(62)}`, `s_${'x'.repeat(62)}`, big);
+    const s = snap(8.64e15);
+    const text = JSON.stringify(s);
+    expect(s).toMatchObject({ set: { id: big(0), w: 999.75, u: 'kg', st: 2.5 }, rs: 600 });
+    expect(text).toMatch(/^[\x20-\x7e]+$/);
+    expect(bytes(text)).toBeLessThanOrEqual(MAX_SNAP_BYTES);
+    const all = [1, 2, 3].map(j => [big(j), Number.MAX_SAFE_INTEGER, 999.75, 100]);
+    expect(s.nx!.length).toBeGreaterThan(0);
+    expect(s.nx!.length).toBeLessThan(3);
+    expect(s.nx).toEqual(all.slice(0, s.nx!.length));
+    expect(bytes(text) + 1 + bytes(JSON.stringify(all[s.nx!.length]))).toBeGreaterThan(MAX_SNAP_BYTES);
+    fill(newId('e'), newId('s'), () => newId('set'));
+    const t = snap(8.64e15);
+    expect(t.nx!.map(v => v[0])).toEqual([1, 2, 3].map(j => e(0).sets[j]!.id));
+    expect(t.set!.st).toBe(2.5);
+    expect(bytes(JSON.stringify(t))).toBeLessThanOrEqual(MAX_SNAP_BYTES);
+  });
+
+  it("rs: the rest the phone starts after a live set (its default with auto rest on, in the phone's bounds), else 0", () => {
+    begin(split);
+    expect(state.value.preferences).toMatchObject({ autoRest: true, restDefaultSec: 90 });
+    expect(snap().rs).toBe(90);
+    prefs({ restDefaultSec: 150 });
+    expect(snap().rs).toBe(150);
+    expect(handleWorkoutCommand(cmd())).toMatchObject({ status: 'applied' });
+    expect(a().rest!.totalSec).toBe(150);
+    prefs({ restDefaultSec: 5 });
+    expect(snap().rs).toBe(15);
+    vi.advanceTimersByTime(120_000);
+    const next = e(0).sets[1]!;
+    expect(handleWorkoutCommand(cmd({ setId: next.id, expectedRev: next.rev ?? 0 }))).toMatchObject({ status: 'applied' });
+    expect(a().rest!.totalSec).toBe(15);
+    // Auto rest off: no rest after a set, and rs 0; with nothing left to log, rs still goes.
+    prefs({ autoRest: false });
+    expect(snap().rs).toBe(0);
+    vi.advanceTimersByTime(120_000);
+    const fly = e(1).sets[0]!;
+    const rest = a().rest;
+    expect(handleWorkoutCommand(cmd({ setId: fly.id, expectedRev: fly.rev ?? 0 }))).toMatchObject({ status: 'applied' });
+    expect(a().rest).toEqual(rest);
+    prefs({ autoRest: true });
+    markDone(2);
+    expect(snap()).toMatchObject({ eid: null, rs: 15 });
+    expect('rs' in buildSnapshot(freshState(), Date.now(), null)).toBe(false);
+  });
+
+  it('plan rows carry st, and 4 rows fit 1000 B with the app ids, the longest names and the largest revs', () => {
+    const six: Split = { ...split, id: 'sp6', exercises: ['lib_barbell_bench_press', 'lib_cable_fly', 'lib_plank', 'lib_dumbbell_bench_press', 'lib_push_up', 'lib_farmer_s_carry'].map(exerciseId => ({ exerciseId, sets: 2 })) };
+    replaceState({ ...state.value, sessions: [sessionAt('2026-10-14T10:00:00.000Z', '2026-10-14T11:00:00.000Z', [{ id: 'lib_barbell_bench_press', sets: [{ kg: 187.25, reps: 100 }, { kg: 187.25, reps: 100 }] }])] });
+    begin(six);
+    const long = 'Développé couché incliné × haltères très long';
+    replaceState({ ...state.value, active: { ...a(), id: newId('s'), rev: Number.MAX_SAFE_INTEGER, entries: a().entries.map(x => ({ ...x, id: newId('e'), exerciseId: 'lib_barbell_bench_press', name: long, sets: x.sets.map(y => ({ ...y, id: newId('set'), rev: Number.MAX_SAFE_INTEGER, kg: 999.75, entered: { value: 999.75, unit: 'kg' as const }, reps: 100, effort: 'ideal' as const })) })) } });
+    const p = buildPlan(state.value);
+    const text = JSON.stringify(p);
+    expect(p.rows).toHaveLength(4);
+    expect(p.rows.map(x => [x.set!.st, x.set!.w, x.lt])).toEqual(p.rows.map(() => [2.5, 999.75, { w: 187.25, u: 'kg', r: 100 }]));
+    expect(text).toMatch(/^[\x20-\x7e]+$/);
+    expect(bytes(text)).toBeLessThanOrEqual(MAX_PLAN_BYTES);
   });
 });

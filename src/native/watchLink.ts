@@ -18,11 +18,12 @@ import { findExercise } from '@/core/exercises';
 import { kgToDisplay } from '@/core/units';
 import { previousSet } from '@/brain/progression';
 import { workingIndex } from '@/brain/exposure';
+import { loadableValues } from '@/brain/units';
 import { DEFAULT_THEME, THEMES, type ThemeId } from '@/theme/themes';
 import { themeId } from '@/theme/engine';
 import { Row, Toggle } from '@/ui/primitives';
 import { entryTarget, openEntryId } from '@/slices/workout/Train';
-import { isCommitted } from '@/slices/workout/session';
+import { REST_MAX, REST_MIN, isCommitted } from '@/slices/workout/session';
 import { activeGymId, profileFor } from '@/slices/workout/units';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
 import { SEND_OK, watchLab } from './wearEngine';
@@ -36,8 +37,16 @@ export const MAX_EX_CHARS = 24;
 /** Snaps and plans for changes go at most this often; a hello's answer and the snap after a result go at once. */
 export const SNAP_GAP_MS = 300;
 
-/** The set the watch shows: load w in unit u (null: none), reps r, effort e, and where they came from (src). */
-export interface SnapSet { id: string; rev: number; w: number | null; u: LoadUnit; r: number | null; e: Effort | null; src: 'd' | 't' | 'l' | null }
+/** WATCH-C3: the most next open sets a snap carries (nx). */
+export const MAX_NEXT_SETS = 3;
+
+/**
+ * The set the watch shows: load w in unit u (null: none), reps r, effort e, and where they came from (src).
+ * st (WATCH-C3): the load step in u at w (loadStep); left out without a load or when u is not the profile's unit.
+ */
+export interface SnapSet { id: string; rev: number; w: number | null; u: LoadUnit; r: number | null; e: Effort | null; src: 'd' | 't' | 'l' | null; st?: number }
+/** WATCH-C3: an open set after the shown one: id, rev, load w in the shown set's unit and reps r (null: none). */
+export type NextSet = [id: string, rev: number, w: number | null, r: number | null];
 /** Last time's set at the same position, in the unit the set shows: load w and reps r (null: none). */
 export interface SnapLast { w: number | null; u: LoadUnit; r: number | null }
 /** left: ms to go, held while paused; tot: the rest's length in ms; p: paused. */
@@ -47,6 +56,11 @@ export interface Snap {
   ex: string | null; si: number; sn: number; set: SnapSet | null; rest: SnapRest | null; th: [string, string, string];
   /** WATCH-C2: the shown exercise's entry id, and last time for set. The snap without a session has neither (C1 pins it). */
   eid?: string | null; lt?: SnapLast | null;
+  /**
+   * WATCH-C3, also only with a session: nx, up to MAX_NEXT_SETS open sets after set in the shown entry (none without a
+   * set), dropped from the end to keep the snap within 700 B; rs, the rest in seconds the phone starts after a live set (0: none).
+   */
+  nx?: NextSet[]; rs?: number;
 }
 /** An Up next row: entry id, name, sets committed (d) and not skipped (n), its open set as in snap, and last time for it. */
 export interface PlanRow { id: string; ex: string; d: number; n: number; set: SnapSet | null; lt: SnapLast | null }
@@ -66,23 +80,52 @@ const restLeftMs = (a: ActiveSession, now: number): number => (a.pausedAt
  * unit it was entered in), else today's target (Train's entryTarget, the live card's), else last time's
  * set at the same position. Effort is the draft's only. Null for anything but a plain load: the
  * protocol has no load meaning yet (bodyweight added load, assistance) and a timed set has no reps.
- * lt (WATCH-C2): last time's set, in the unit the set shows.
+ * lt (WATCH-C2): last time's set, in the unit the set shows. `unit` (WATCH-C3, nx): show the load in this
+ * unit instead, a draft in another unit converted from its kg; `targets`: the entry's target sets when already known.
  */
-function snapSet(s: AppState, a: ActiveSession, entry: Entry, j: number): { set: SnapSet; lt: SnapLast | null } | null {
+function snapSet(s: AppState, a: ActiveSession, entry: Entry, j: number, unit?: LoadUnit, targets?: ReturnType<typeof entryTarget>['sets']): { set: SnapSet; lt: SnapLast | null } | null {
   const set = entry.sets[j]!;
   if ((findExercise(entry.exerciseId, s.customExercises)?.mode ?? 'weighted') !== 'weighted' || !set.id) return null;
-  const eu = profileFor(entry.exerciseId, a.gymId ?? activeGymId()).unit;
+  const profile = profileFor(entry.exerciseId, a.gymId ?? activeGymId());
+  const eu = profile.unit;
   const wj = workingIndex(entry.sets, j);
-  const plan = wj == null ? [] : entryTarget(s, entry).sets;
+  const plan = wj == null ? [] : targets ?? entryTarget(s, entry).sets;
   const target = wj == null ? undefined : plan[Math.min(wj, plan.length - 1)];
   const prev = wj == null ? null : previousSet(s.sessions, entry.exerciseId, wj, s.customExercises);
   const own = set.kg != null || set.reps != null || set.effort != null;
   const kg = set.kg ?? target?.kg ?? prev?.kg ?? null;
-  const w = set.entered ? set.entered.value : kg == null ? null : kgToDisplay(kg, eu);
+  const u = unit ?? set.entered?.unit ?? eu;
+  const w = set.entered && set.entered.unit === u ? set.entered.value : kg == null ? null : kgToDisplay(kg, u);
   const src = own ? 'd' : target && (target.kg != null || target.reps != null) ? 't' : prev ? 'l' : null;
-  const u = set.entered?.unit ?? eu;
   const lt = prev && (prev.kg != null || prev.reps != null) ? { w: prev.kg == null ? null : kgToDisplay(prev.kg, u), u, r: prev.reps ?? null } : null;
-  return { set: { id: set.id, rev: set.rev ?? 0, w, u, r: set.reps ?? target?.reps ?? prev?.reps ?? null, e: set.effort ?? null, src }, lt };
+  const st = w == null || u !== eu ? undefined : loadStep(loadableValues(profile), w);
+  return { set: { id: set.id, rev: set.rev ?? 0, w, u, r: set.reps ?? target?.reps ?? prev?.reps ?? null, e: set.effort ?? null, src, ...(st === undefined ? {} : { st }) }, lt };
+}
+
+/**
+ * WATCH-C3: the load step at w, in the unit of the loadable values (ascending): the gap from the value at or below w
+ * (within half a hundredth) to the next one; the first gap below the lowest, the last at or above the highest.
+ * Undefined with fewer than two values.
+ */
+function loadStep(values: number[], w: number): number | undefined {
+  if (values.length < 2) return undefined;
+  let i = 0;
+  while (i < values.length - 2 && values[i + 1]! <= w + 0.005) i++;
+  return Math.round((values[i + 1]! - values[i]!) * 1000) / 1000;
+}
+
+/** WATCH-C3: up to MAX_NEXT_SETS open sets after set j of the entry, as snapSet shows them in unit u; up to the first it cannot show. */
+function nextSets(s: AppState, a: ActiveSession, entry: Entry, j: number, u: LoadUnit): NextSet[] {
+  const out: NextSet[] = [];
+  const targets = entryTarget(s, entry).sets;
+  for (let k = j + 1; k < entry.sets.length && out.length < MAX_NEXT_SETS; k++) {
+    const x = entry.sets[k]!;
+    if (isCommitted(x) || x.status === 'skipped') continue;
+    const v = snapSet(s, a, entry, k, u, targets)?.set;
+    if (!v) break;
+    out.push([v.id, v.rev, v.w, v.r]);
+  }
+  return out;
 }
 
 /** The entry's first set that is neither committed nor skipped (an unset status counts as a draft), or -1; -1 for an entry done or skipped. */
@@ -99,7 +142,8 @@ function shownEntry(a: ActiveSession, openId: string | null): Entry | undefined 
 
 /**
  * What the watch shows: the shown exercise (shownEntry) and its entry id, that set and last time for it,
- * the rest, and the theme's background, text and accent. `wt` echoes the hello this answers.
+ * the next open sets (WATCH-C3), the rest and the rest the phone starts after a live set (commitStep's
+ * newRest, WATCH-C3), and the theme's background, text and accent. `wt` echoes the hello this answers.
  */
 export function buildSnapshot(s: AppState, now: number, wt: number | null, theme: ThemeId = themeId.value, openId: string | null = openEntryId.value): Snap {
   const tk = (THEMES[theme] ?? THEMES[DEFAULT_THEME]).tokens;
@@ -108,10 +152,16 @@ export function buildSnapshot(s: AppState, now: number, wt: number | null, theme
   const a = s.active;
   if (!a?.id) return { ...base, srev: 0, sid: null, ex: null, si: 0, sn: 0, set: null, rest: null, th };
   const rest = a.rest?.id ? { id: a.rest.id, left: Math.max(0, restLeftMs(a, now)), tot: a.rest.totalSec * 1000, p: !!a.pausedAt } : null;
+  const rs = s.preferences.autoRest ? Math.max(REST_MIN, Math.min(REST_MAX, s.preferences.restDefaultSec)) : 0;
   const head = { ...base, srev: a.rev ?? 0, sid: a.id };
   const entry = shownEntry(a, openId);
-  if (!entry) return { ...head, eid: null, ex: null, si: 0, sn: 0, set: null, lt: null, rest, th };
-  return { ...head, eid: entry.id ?? null, ex: asciiName(entry.name), si: openSet(entry) + 1, sn: entry.sets.length, ...shown(s, a, entry), rest, th };
+  if (!entry) return { ...head, eid: null, ex: null, si: 0, sn: 0, set: null, lt: null, nx: [], rest, rs, th };
+  const j = openSet(entry);
+  const cur = shown(s, a, entry);
+  const nx = cur.set ? nextSets(s, a, entry, j, cur.set.u) : [];
+  const snap: Snap = { ...head, eid: entry.id ?? null, ex: asciiName(entry.name), si: j + 1, sn: entry.sets.length, ...cur, nx, rest, rs, th };
+  while (nx.length && new TextEncoder().encode(JSON.stringify(snap)).length > MAX_SNAP_BYTES) nx.pop();
+  return snap;
 }
 
 /**

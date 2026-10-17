@@ -101,9 +101,9 @@ function outcome(s: AppState, a: ActiveSession, c: WatchCommand, receivedAt: num
       // too far ahead cannot be right, so the receive time is used; ahead is flagged.
       const future = c.actionAt > receivedAt + FUTURE_SLACK_MS;
       const at = future || c.actionAt < Date.parse(a.startedAt) ? receivedAt : Math.min(c.actionAt, receivedAt);
-      // Saved as a typed set is (enteredLoad); no load means none.
+      // Saved as a typed set is (enteredLoad), to 0.01 (WATCH-C3: a float leftover of the watch's steps is not kept); no load means none.
       const values: Partial<LoggedSet> = {
-        ...(c.load ? enteredLoad(c.load.value, c.load.unit) : { kg: undefined, entered: undefined }),
+        ...(c.load ? enteredLoad(Math.round(c.load.value * 100) / 100, c.load.unit) : { kg: undefined, entered: undefined }),
         reps: c.reps,
         effort: c.effort,
         receivedAt: new Date(receivedAt).toISOString(),
